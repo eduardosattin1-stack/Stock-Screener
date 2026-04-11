@@ -31,6 +31,31 @@ RISK_FREE = 0.045  # 10yr treasury ~4.5%
 TOP_N = 15
 SIGNAL_LOG = os.environ.get("SIGNAL_LOG", "signal_history.json")
 
+# Currency conversion cache
+_fx_cache: dict[str, float] = {}
+
+def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
+    """Get exchange rate. Returns 1.0 if same currency or lookup fails."""
+    if from_ccy == to_ccy:
+        return 1.0
+    key = f"{from_ccy}{to_ccy}"
+    if key in _fx_cache:
+        return _fx_cache[key]
+    data = fmp("forex", {"symbol": f"{from_ccy}/{to_ccy}"})
+    if data and data[0].get("price"):
+        rate = float(data[0]["price"])
+        _fx_cache[key] = rate
+        log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f}")
+        return rate
+    # Fallback hardcoded rates for common mismatches
+    fallback = {"CNYUSD": 0.14, "USDCNY": 7.1, "EURUSD": 1.08, "USDEUR": 0.93,
+                "GBPUSD": 1.27, "USDGBP": 0.79, "JPYUSD": 0.0067, "USDJPY": 150.0}
+    rate = fallback.get(key, 1.0)
+    _fx_cache[key] = rate
+    if rate != 1.0:
+        log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f} (fallback)")
+    return rate
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v5")
 
@@ -196,6 +221,33 @@ def get_quote(sym: str) -> Optional[dict]:
         "avg_volume": int(q.get("avgVolume", 0)),
         "currency": q.get("currency", "USD"),
     }
+
+def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
+    """Fetch up to 10 quotes per API call. Returns {symbol: quote_dict}."""
+    results = {}
+    for i in range(0, len(symbols), 10):
+        batch = symbols[i:i+10]
+        csv = ",".join(batch)
+        data = fmp("batch-quote", {"symbols": csv})
+        if not data:
+            continue
+        for q in data:
+            sym = q.get("symbol", "")
+            if not sym or float(q.get("price", 0)) <= 0:
+                continue
+            results[sym] = {
+                "price": float(q.get("price", 0)),
+                "sma50": float(q.get("priceAvg50", 0)),
+                "sma200": float(q.get("priceAvg200", 0)),
+                "year_high": float(q.get("yearHigh", 0)),
+                "year_low": float(q.get("yearLow", 0)),
+                "market_cap": float(q.get("marketCap", 0)),
+                "volume": int(q.get("volume", 0)),
+                "avg_volume": int(q.get("avgVolume", 0)),
+                "currency": q.get("currency", "USD"),
+            }
+    log.info(f"Batch quotes: {len(results)}/{len(symbols)} fetched")
+    return results
 
 # ---------------------------------------------------------------------------
 # 3. Technicals — computed from OHLCV chart data
@@ -463,7 +515,7 @@ def safe_cagr(start, end, years):
         return 0.0
     return (end / start) ** (1 / years) - 1
 
-def get_value(sym: str, price: float) -> dict:
+def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     """Full Buffett value analysis."""
     v = {
         "revenue_cagr_3y": 0, "eps_cagr_3y": 0,
@@ -554,7 +606,20 @@ def get_value(sym: str, price: float) -> dict:
             future_price = future_eps * terminal_pe
             v["intrinsic_buffett"] = future_price / (1.10 ** 5)
 
-    # Average intrinsic value
+    # Average intrinsic value — with currency normalization
+    # Detect reporting currency from financial statements
+    reported_ccy = "USD"
+    if inc and inc[-1].get("reportedCurrency"):
+        reported_ccy = inc[-1]["reportedCurrency"]
+    fx = get_fx_rate(reported_ccy, price_currency)
+    # DCF and Buffett intrinsic are in reporting currency → convert to price currency
+    if fx != 1.0:
+        log.info(f"  {sym}: converting intrinsic {reported_ccy}→{price_currency} (×{fx:.4f})")
+        if v["dcf_value"] > 0:
+            v["dcf_value"] *= fx
+        if v["intrinsic_buffett"] > 0:
+            v["intrinsic_buffett"] *= fx
+
     methods = [v["dcf_value"], v["intrinsic_buffett"]]
     valid = [m for m in methods if m > 0]
     if valid:
@@ -614,7 +679,9 @@ def get_value(sym: str, price: float) -> dict:
         v["classification"] = "QUALITY_GROWTH"
     elif v["revenue_cagr_3y"] > 0.15:
         v["classification"] = "GROWTH"
-    elif v["roe_avg"] < 0 or v["margin_of_safety"] < -0.20:
+    elif v["roe_avg"] < 0 or (v["margin_of_safety"] < -0.20
+          and not (v["piotroski"] >= 7 and v["gross_margin"] > 0.50)):
+        # Negative MoS alone doesn't mean SPECULATIVE if fundamentals are strong
         v["classification"] = "SPECULATIVE"
     else:
         v["classification"] = "NEUTRAL"
@@ -666,7 +733,7 @@ def compute_composite(tech: dict, analyst: dict, value: dict, price: float) -> t
     bull = tech["bull_score"]
     mos = value["margin_of_safety"]
 
-    if composite > 0.65 and mos > 0.15 and bull >= 6:
+    if composite > 0.60 and (mos > 0.10 or bull >= 7):
         signal = "BUY"
     elif composite > 0.50 and (mos > 0.05 or bull >= 5):
         signal = "WATCH"
@@ -688,13 +755,17 @@ def screen(symbols: list[str]) -> list[Stock]:
 
     log.info(f"Starting v5 screen of {total} symbols")
 
+    # Pre-fetch all quotes in batches of 10
+    all_quotes = get_quotes_batch(symbols)
+    log.info(f"Quotes loaded: {len(all_quotes)}/{total}")
+
     for i, sym in enumerate(symbols):
         if (i + 1) % 10 == 0:
             log.info(f"  Progress: {i+1}/{total} (passed: {len(results)})")
 
-        # Quote
-        q = get_quote(sym)
-        if not q or q["price"] <= 0:
+        # Quote (from batch, fallback to single)
+        q = all_quotes.get(sym)
+        if not q:
             skips["quote"] += 1
             continue
 
@@ -716,7 +787,7 @@ def screen(symbols: list[str]) -> list[Stock]:
         if t["bull_score"] <= 1 and a["target"] <= 0:
             continue
 
-        v = get_value(sym, price)
+        v = get_value(sym, price, q["currency"])
 
         # Composite
         composite, signal, penalty_reasons = compute_composite(t, a, v, price)
@@ -882,18 +953,23 @@ def save_signals(data: dict):
 def update_signal_history(stocks: list[Stock]):
     history = load_signals()
     today = datetime.now().strftime("%Y-%m-%d")
+    daily_signals = {}
     for s in stocks:
         key = s.symbol
         if key not in history:
             history[key] = {"entries": []}
-        history[key]["entries"].append({
+        entry = {
             "date": today, "price": s.price, "signal": s.signal,
             "composite": round(s.composite, 3), "bull": s.bull_score,
             "mos": round(s.margin_of_safety, 3),
-        })
+        }
+        history[key]["entries"].append(entry)
         # Keep last 60 entries
         history[key]["entries"] = history[key]["entries"][-60:]
+        daily_signals[key] = entry
     save_signals(history)
+    # Persist daily signals to GCS for tracking entry prices over time
+    gcs_upload(f"signals/{today}.json", daily_signals)
 
 # ---------------------------------------------------------------------------
 # 11. Main
