@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, AlertTriangle, ExternalLink, BarChart3 } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, AlertTriangle, ExternalLink, Plus, Check } from "lucide-react";
 
 const GCS_BASE = "https://storage.googleapis.com/screener-signals-carbonbridge/scans";
 
@@ -18,6 +18,10 @@ interface StockData {
   dcf_value: number; owner_earnings_yield: number; intrinsic_buffett: number;
   intrinsic_avg: number; margin_of_safety: number; value_score: number;
   composite: number; signal: string; classification: string; reasons: string[];
+}
+
+interface PortfolioEntry {
+  symbol: string; entry_price: number; entry_date: string; shares: number; notes: string;
 }
 
 const SIG_C: Record<string, string> = { BUY: "#2dd4a0", WATCH: "#e5a944", HOLD: "#7d8494", SELL: "#e5534b" };
@@ -38,11 +42,13 @@ function Metric({ label, value, color, sub }: { label: string; value: string; co
   );
 }
 
-function SectionHeader({ title }: { title: string }) {
+function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
-    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: "#4a5060", fontFamily: "var(--font-mono)",
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+      fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: "#4a5060", fontFamily: "var(--font-mono)",
       textTransform: "uppercase", marginBottom: 8, paddingBottom: 6, borderBottom: "1px solid #1e2433" }}>
       {title}
+      {action}
     </div>
   );
 }
@@ -81,40 +87,29 @@ function TargetBar({ price, target, dcf, buffett }: { price: number; target: num
         PRICE vs INTRINSIC VALUE
       </div>
       <div style={{ position: "relative", height: 40, background: "#0e1117", borderRadius: 4, border: "1px solid #161b26" }}>
-        {/* Price marker */}
         <div style={{ position: "absolute", left: `${pos(price)}%`, top: 0, bottom: 0, width: 2, background: "#c9cdd6", zIndex: 2 }}>
           <div style={{ position: "absolute", top: -16, left: -12, fontSize: 9, color: "#c9cdd6", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
             ${price.toFixed(0)}
           </div>
         </div>
-        {/* Target */}
         {target > 0 && (
           <div style={{ position: "absolute", left: `${pos(target)}%`, top: 8, width: 8, height: 8, borderRadius: "50%", background: "#e5a944", border: "2px solid #0e1117", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", bottom: -14, left: -8, fontSize: 8, color: "#e5a944", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
-              Target
-            </div>
+            <div style={{ position: "absolute", bottom: -14, left: -8, fontSize: 8, color: "#e5a944", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>Target</div>
           </div>
         )}
-        {/* DCF */}
         {dcf > 0 && (
           <div style={{ position: "absolute", left: `${pos(dcf)}%`, top: 20, width: 8, height: 8, borderRadius: "50%", background: "#3bc9db", border: "2px solid #0e1117", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", bottom: -14, left: -4, fontSize: 8, color: "#3bc9db", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
-              DCF
-            </div>
+            <div style={{ position: "absolute", bottom: -14, left: -4, fontSize: 8, color: "#3bc9db", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>DCF</div>
           </div>
         )}
-        {/* Buffett */}
         {buffett > 0 && buffett < max && (
           <div style={{ position: "absolute", left: `${pos(buffett)}%`, top: 14, width: 8, height: 8, borderRadius: 2, background: "#9775fa", border: "2px solid #0e1117", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", top: -14, left: -8, fontSize: 8, color: "#9775fa", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
-              Buffett
-            </div>
+            <div style={{ position: "absolute", top: -14, left: -8, fontSize: 8, color: "#9775fa", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>Buffett</div>
           </div>
         )}
-        {/* Green zone (undervalued) */}
         {dcf > price && (
           <div style={{ position: "absolute", left: `${pos(price)}%`, top: 0, bottom: 0,
-            width: `${pos(dcf) - pos(price)}%`, background: "#2dd4a010", borderLeft: "none" }} />
+            width: `${pos(dcf) - pos(price)}%`, background: "#2dd4a010" }} />
         )}
       </div>
     </div>
@@ -132,25 +127,107 @@ function BullDots({ score }: { score: number }) {
   );
 }
 
+// TradingView Advanced Chart Widget
+function TradingViewChart({ symbol }: { symbol: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    containerRef.current.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: symbol,
+      interval: "D",
+      timezone: "Europe/Amsterdam",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      backgroundColor: "#0e1117",
+      gridColor: "#161b2620",
+      hide_top_toolbar: false,
+      hide_legend: false,
+      allow_symbol_change: false,
+      save_image: false,
+      calendar: false,
+      studies: ["STD;SMA"],
+      support_host: "https://www.tradingview.com",
+      width: "100%",
+      height: "100%",
+    });
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "tradingview-widget-container__widget";
+    wrapper.style.height = "100%";
+    wrapper.style.width = "100%";
+
+    containerRef.current.appendChild(wrapper);
+    containerRef.current.appendChild(script);
+  }, [symbol]);
+
+  return (
+    <div ref={containerRef} className="tradingview-widget-container"
+      style={{ height: 380, background: "#0e1117", borderRadius: 5, border: "1px solid #161b26", overflow: "hidden" }} />
+  );
+}
+
+// Portfolio helpers
+function getPortfolio(): PortfolioEntry[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem("screener_portfolio") || "[]"); } catch { return []; }
+}
+function savePortfolio(p: PortfolioEntry[]) {
+  localStorage.setItem("screener_portfolio", JSON.stringify(p));
+}
+
 export default function StockDetail() {
   const params = useParams();
   const router = useRouter();
-  const symbol = typeof params?.symbol === "string" ? params.symbol : "";
+  const symbol = typeof params?.symbol === "string" ? params.symbol.toUpperCase() : "";
   const [stock, setStock] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [inPortfolio, setInPortfolio] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [shares, setShares] = useState("100");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (!symbol) return;
-    // Try GCS first
     fetch(`${GCS_BASE}/latest.json`)
       .then(r => r.json())
       .then(data => {
-        const found = data.stocks?.find((s: StockData) => s.symbol === symbol.toUpperCase());
+        const found = data.stocks?.find((s: StockData) => s.symbol === symbol);
         if (found) { setStock(found); setLoading(false); }
         else { setStock(null); setLoading(false); }
       })
       .catch(() => { setStock(null); setLoading(false); });
+
+    const pf = getPortfolio();
+    setInPortfolio(pf.some(p => p.symbol === symbol));
   }, [symbol]);
+
+  const addToPortfolio = () => {
+    if (!stock) return;
+    const pf = getPortfolio();
+    if (pf.some(p => p.symbol === symbol)) return;
+    pf.push({
+      symbol, entry_price: stock.price,
+      entry_date: new Date().toISOString().split("T")[0],
+      shares: parseInt(shares) || 100, notes,
+    });
+    savePortfolio(pf);
+    setInPortfolio(true);
+    setShowAddForm(false);
+  };
+
+  const removeFromPortfolio = () => {
+    const pf = getPortfolio().filter(p => p.symbol !== symbol);
+    savePortfolio(pf);
+    setInPortfolio(false);
+  };
 
   if (loading) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -192,30 +269,61 @@ export default function StockDetail() {
               color: sigColor, background: `${sigColor}12`, border: `1px solid ${sigColor}25` }}>{s.signal}</span>
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-            <span style={{ fontSize: 28, fontWeight: 600, color: "#e8eaf0", fontFamily: "var(--font-mono)" }}>${s.price.toFixed(2)}</span>
-            <span style={{ fontSize: 13, color: "#4a5060", fontFamily: "var(--font-mono)" }}>{s.currency}</span>
+            <span style={{ fontSize: 22, fontWeight: 700, color: "#e8eaf0", fontFamily: "var(--font-mono)" }}>
+              {s.currency === "USD" ? "$" : s.currency + " "}{s.price.toFixed(2)}
+            </span>
+            <span style={{ fontSize: 11, color: "#4a5060", fontFamily: "var(--font-mono)" }}>
+              52wk: {s.year_low.toFixed(0)}–{s.year_high.toFixed(0)}
+            </span>
           </div>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 11, color: "#4a5060", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Composite Score</div>
-          <div style={{ fontSize: 32, fontWeight: 700, fontFamily: "var(--font-mono)",
-            color: s.composite > 0.6 ? "#2dd4a0" : s.composite > 0.4 ? "#c9cdd6" : "#e5534b" }}>
-            {s.composite.toFixed(2)}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Portfolio button */}
+          {inPortfolio ? (
+            <div style={{ display: "flex", gap: 6 }}>
+              <span style={{ fontSize: 10, padding: "6px 10px", borderRadius: 3, fontFamily: "var(--font-mono)",
+                color: "#2dd4a0", background: "#2dd4a008", border: "1px solid #2dd4a020", display: "flex", alignItems: "center", gap: 4 }}>
+                <Check size={11} /> In Portfolio
+              </span>
+              <button onClick={removeFromPortfolio} style={{ fontSize: 9, padding: "6px 8px", borderRadius: 3,
+                fontFamily: "var(--font-mono)", color: "#e5534b", background: "none", border: "1px solid #e5534b20",
+                cursor: "pointer" }}>Remove</button>
+            </div>
+          ) : showAddForm ? (
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <input value={shares} onChange={e => setShares(e.target.value)} placeholder="Shares"
+                style={{ width: 60, padding: "5px 7px", fontSize: 11, fontFamily: "var(--font-mono)", background: "#0e1117",
+                  border: "1px solid #1e2433", borderRadius: 3, color: "#c9cdd6", outline: "none" }} />
+              <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)"
+                style={{ width: 120, padding: "5px 7px", fontSize: 11, fontFamily: "var(--font-mono)", background: "#0e1117",
+                  border: "1px solid #1e2433", borderRadius: 3, color: "#c9cdd6", outline: "none" }} />
+              <button onClick={addToPortfolio} style={{ fontSize: 10, padding: "5px 10px", borderRadius: 3,
+                fontFamily: "var(--font-mono)", fontWeight: 600, color: "#08090e", background: "#2dd4a0",
+                border: "none", cursor: "pointer" }}>Add</button>
+              <button onClick={() => setShowAddForm(false)} style={{ fontSize: 10, padding: "5px 8px", borderRadius: 3,
+                fontFamily: "var(--font-mono)", color: "#4a5060", background: "none", border: "1px solid #1e2433",
+                cursor: "pointer" }}>Cancel</button>
+            </div>
+          ) : (
+            <button onClick={() => setShowAddForm(true)} style={{ fontSize: 10, padding: "6px 12px", borderRadius: 3,
+              fontFamily: "var(--font-mono)", fontWeight: 600, color: "#2dd4a0", background: "#2dd4a008",
+              border: "1px solid #2dd4a020", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+              <Plus size={12} /> Add to Portfolio
+            </button>
+          )}
+          <div>
+            <div style={{ fontSize: 11, color: "#4a5060", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Composite Score</div>
+            <div style={{ fontSize: 32, fontWeight: 700, fontFamily: "var(--font-mono)",
+              color: s.composite > 0.6 ? "#2dd4a0" : s.composite > 0.4 ? "#c9cdd6" : "#e5534b" }}>
+              {s.composite.toFixed(2)}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Chart placeholder */}
-      <div style={{ background: "#0e1117", borderRadius: 5, border: "1px solid #161b26", padding: 20, marginBottom: 16, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ textAlign: "center" }}>
-          <BarChart3 size={32} color="#1e2433" />
-          <div style={{ fontSize: 11, color: "#2a3040", fontFamily: "var(--font-mono)", marginTop: 8 }}>
-            TradingView chart — integrate with charting library
-          </div>
-          <div style={{ fontSize: 10, color: "#1e2433", fontFamily: "var(--font-mono)", marginTop: 2 }}>
-            SMA50: {s.sma50.toFixed(0)} · SMA200: {s.sma200.toFixed(0)} · 52wk: {s.year_low.toFixed(0)}–{s.year_high.toFixed(0)}
-          </div>
-        </div>
+      {/* TradingView Chart */}
+      <div style={{ marginBottom: 16 }}>
+        <TradingViewChart symbol={s.symbol} />
       </div>
 
       {/* 3-column layout */}
@@ -228,9 +336,9 @@ export default function StockDetail() {
             <ScoreRing value={Math.round(s.rsi)} label="RSI" max={100} color={s.rsi > 70 ? "#e5534b" : s.rsi < 30 ? "#2dd4a0" : "#7d8494"} />
             <ScoreRing value={Math.round(s.adx)} label="ADX" max={60} color={s.adx > 25 ? "#e5a944" : "#4a5060"} />
           </div>
-          <Metric label="MACD" value={s.macd_signal} color={s.macd_signal.includes("bullish") ? "#2dd4a0" : "#e5534b"} />
-          <Metric label="Bollinger %B" value={s.bb_pct.toFixed(2)} />
-          <Metric label="Stoch RSI" value={s.stoch_rsi.toFixed(0)} />
+          <Metric label="MACD" value={s.macd_signal} color={s.macd_signal?.includes("bullish") ? "#2dd4a0" : "#e5534b"} />
+          <Metric label="Bollinger %B" value={s.bb_pct?.toFixed(2)} />
+          <Metric label="Stoch RSI" value={s.stoch_rsi?.toFixed(0)} />
           <Metric label="OBV Trend" value={s.obv_trend} color={s.obv_trend === "rising" ? "#2dd4a0" : s.obv_trend === "falling" ? "#e5534b" : "#7d8494"} />
           <div style={{ marginTop: 8 }}>
             <div style={{ fontSize: 9, color: "#3a4050", fontFamily: "var(--font-mono)", marginBottom: 4 }}>MOMENTUM</div>
@@ -250,7 +358,7 @@ export default function StockDetail() {
             sub={s.gross_margin_trend === "expanding" ? "↑ Expanding" : s.gross_margin_trend === "contracting" ? "↓ Contracting" : "→ Stable"} />
           <Metric label="Revenue CAGR 3Y" value={fmtPct(s.revenue_cagr_3y)} color={s.revenue_cagr_3y > 0.1 ? "#2dd4a0" : "#7d8494"} />
           <Metric label="EPS CAGR 3Y" value={fmtPct(s.eps_cagr_3y)} color={s.eps_cagr_3y > 0.1 ? "#2dd4a0" : "#7d8494"} />
-          <Metric label="Altman Z" value={s.altman_z.toFixed(1)} color={s.altman_z > 3 ? "#2dd4a0" : s.altman_z > 1.8 ? "#e5a944" : "#e5534b"}
+          <Metric label="Altman Z" value={s.altman_z?.toFixed(1)} color={s.altman_z > 3 ? "#2dd4a0" : s.altman_z > 1.8 ? "#e5a944" : "#e5534b"}
             sub={s.altman_z > 3 ? "Safe zone" : s.altman_z > 1.8 ? "Grey zone" : "⚠ Distress zone"} />
           <Metric label="OE Yield" value={fmtPct(s.owner_earnings_yield)}
             color={s.owner_earnings_yield > 0.045 ? "#2dd4a0" : "#7d8494"} sub="vs 4.5% risk-free" />
@@ -259,7 +367,6 @@ export default function StockDetail() {
         {/* Analyst + Valuation */}
         <div style={{ background: "#0e1117", borderRadius: 5, border: "1px solid #161b26", padding: "14px 16px" }}>
           <SectionHeader title="Analyst & Valuation" />
-          {/* EPS beats bar */}
           <div style={{ margin: "12px 0" }}>
             <div style={{ display: "flex", gap: 3, justifyContent: "center" }}>
               {Array.from({ length: s.eps_total || 1 }, (_, i) => (
@@ -276,7 +383,7 @@ export default function StockDetail() {
               EPS beats: {s.eps_beats}/{s.eps_total}
             </div>
           </div>
-          <Metric label="Price Target" value={fmtUsd(s.target)} sub={s.target > 0 ? `${s.upside > 0 ? "+" : ""}${s.upside.toFixed(1)}% upside` : ""} 
+          <Metric label="Price Target" value={fmtUsd(s.target)} sub={s.target > 0 ? `${s.upside > 0 ? "+" : ""}${s.upside?.toFixed(1)}% upside` : ""}
             color={s.upside > 20 ? "#2dd4a0" : s.upside > 0 ? "#7d8494" : "#e5534b"} />
           <Metric label="Buy Grades" value={s.grade_total > 0 ? `${s.grade_buy}/${s.grade_total}` : "—"}
             sub={s.grade_total > 0 ? `${(s.grade_score * 100).toFixed(0)}% bullish` : ""} />
@@ -284,8 +391,7 @@ export default function StockDetail() {
             color={s.margin_of_safety > 0.15 ? "#2dd4a0" : s.margin_of_safety > 0 ? "#5a9e7a" : "#e5534b"} />
           <Metric label="DCF Value" value={fmtUsd(s.dcf_value)} />
           <Metric label="Buffett Value" value={fmtUsd(s.intrinsic_buffett)} />
-          <Metric label="Value Score" value={s.value_score.toFixed(2)} color={s.value_score > 0.5 ? "#2dd4a0" : "#7d8494"} />
-
+          <Metric label="Value Score" value={s.value_score?.toFixed(2)} color={s.value_score > 0.5 ? "#2dd4a0" : "#7d8494"} />
           <TargetBar price={s.price} target={s.target} dcf={s.dcf_value} buffett={s.intrinsic_buffett} />
         </div>
       </div>
@@ -307,26 +413,23 @@ export default function StockDetail() {
         </div>
       )}
 
-      {/* Performance tracker placeholder */}
-      <div style={{ background: "#0e1117", borderRadius: 5, border: "1px solid #161b26", padding: "14px 16px", marginBottom: 16 }}>
-        <SectionHeader title="Performance Since Signal" />
-        <div style={{ textAlign: "center", padding: 24, color: "#2a3040", fontFamily: "var(--font-mono)", fontSize: 11 }}>
-          Performance tracking available after GCS signal history is populated.
-          <br />First signal date: {new Date().toLocaleDateString("en-GB")} at ${s.price.toFixed(2)}
-        </div>
-      </div>
-
-      {/* Transcript placeholder */}
+      {/* External links */}
       <div style={{ background: "#0e1117", borderRadius: 5, border: "1px solid #161b26", padding: "14px 16px" }}>
-        <SectionHeader title="Transcript Insights" />
-        <div style={{ textAlign: "center", padding: 24 }}>
-          <button style={{ background: "#151921", border: "1px solid #1e2433", borderRadius: 4, padding: "8px 16px",
-            color: "#7d8494", fontFamily: "var(--font-mono)", fontSize: 11, cursor: "pointer" }}>
-            Analyze Latest Earnings Call
-          </button>
-          <div style={{ fontSize: 9, color: "#2a3040", fontFamily: "var(--font-mono)", marginTop: 6 }}>
-            Requires ANTHROPIC_API_KEY — Claude will summarize the latest transcript
-          </div>
+        <SectionHeader title="Research" />
+        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+          {[
+            { label: "Yahoo Finance", url: `https://finance.yahoo.com/quote/${s.symbol}` },
+            { label: "TradingView", url: `https://www.tradingview.com/symbols/${s.symbol}` },
+            { label: "SEC Filings", url: `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${s.symbol}&type=10-K` },
+            { label: "Macrotrends", url: `https://www.macrotrends.net/stocks/charts/${s.symbol}` },
+          ].map(link => (
+            <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 10, padding: "5px 10px", borderRadius: 3, fontFamily: "var(--font-mono)",
+                color: "#4a5060", background: "#151921", border: "1px solid #1e2433", textDecoration: "none",
+                display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+              {link.label} <ExternalLink size={9} />
+            </a>
+          ))}
         </div>
       </div>
     </div>

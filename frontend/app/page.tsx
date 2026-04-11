@@ -26,11 +26,19 @@ interface ScanData {
   stocks: StockData[];
 }
 
+// Exchange-to-region mapping for client-side filtering
+const EXCHANGE_REGION: Record<string, string> = {
+  NASDAQ: "us", NYSE: "us", AMEX: "us",
+  XETRA: "eu", PAR: "eu", LSE: "eu", AMS: "eu", MIL: "eu", STO: "eu", SIX: "eu", BME: "eu",
+  JPX: "asia", HKSE: "asia", KSC: "asia", SHH: "asia", SHZ: "asia", BSE: "asia", SES: "asia", ASX: "asia",
+  SAO: "latam",
+};
+
 const REGIONS = [
-  { id: "nasdaq100", label: "US" },
-  { id: "europe", label: "EU" },
+  { id: "all", label: "ALL" },
+  { id: "us", label: "US" },
+  { id: "eu", label: "EU" },
   { id: "asia", label: "ASIA" },
-  { id: "global", label: "ALL" },
 ];
 
 const SIG_C: Record<string, string> = { BUY: "#2dd4a0", WATCH: "#e5a944", HOLD: "#7d8494", SELL: "#e5534b" };
@@ -71,7 +79,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [data, setData] = useState<ScanData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [region, setRegion] = useState("nasdaq100");
+  const [region, setRegion] = useState("all");
   const [sortKey, setSortKey] = useState<keyof StockData>("composite");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [sigFilter, setSigFilter] = useState("ALL");
@@ -80,20 +88,39 @@ export default function Dashboard() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${GCS_BASE}/latest-${region}.json`)
+    fetch(`${GCS_BASE}/latest.json`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((d: ScanData) => { setData(d); setSource("live"); setLoading(false); })
-      .catch(() => {
-        fetch(`${GCS_BASE}/latest.json`)
-          .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-          .then((d: ScanData) => { setData(d); setSource("live"); setLoading(false); })
-          .catch(() => { setData(null); setSource("offline"); setLoading(false); });
-      });
-  }, [region]);
+      .catch(() => { setData(null); setSource("offline"); setLoading(false); });
+  }, []);
+
+  // Client-side region filtering
+  const regionStocks = useMemo(() => {
+    if (!data?.stocks) return [];
+    if (region === "all") return data.stocks;
+    return data.stocks.filter(s => {
+      // Match by currency as a simple proxy when exchange isn't available
+      if (region === "us") return s.currency === "USD" || s.currency === "USX";
+      if (region === "eu") return ["EUR", "GBP", "CHF", "SEK", "DKK", "NOK"].includes(s.currency);
+      if (region === "asia") return ["JPY", "HKD", "KRW", "CNY", "INR", "SGD", "AUD", "TWD"].includes(s.currency);
+      return true;
+    });
+  }, [data, region]);
+
+  // Compute summary from filtered stocks
+  const sum = useMemo(() => {
+    const stocks = regionStocks;
+    return {
+      total: stocks.length,
+      buy: stocks.filter(s => s.signal === "BUY").length,
+      watch: stocks.filter(s => s.signal === "WATCH").length,
+      hold: stocks.filter(s => s.signal === "HOLD").length,
+      sell: stocks.filter(s => s.signal === "SELL").length,
+    };
+  }, [regionStocks]);
 
   const sorted = useMemo(() => {
-    if (!data?.stocks) return [];
-    let list = [...data.stocks];
+    let list = [...regionStocks];
     if (sigFilter !== "ALL") list = list.filter(s => s.signal === sigFilter);
     if (search) list = list.filter(s => s.symbol.toLowerCase().includes(search.toLowerCase()));
     list.sort((a, b) => {
@@ -101,14 +128,13 @@ export default function Dashboard() {
       return sortDir === "desc" ? bv - av : av - bv;
     });
     return list;
-  }, [data, sortKey, sortDir, sigFilter, search]);
+  }, [regionStocks, sortKey, sortDir, sigFilter, search]);
 
   const toggleSort = (key: keyof StockData) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
     else { setSortKey(key); setSortDir("desc"); }
   };
 
-  const sum = data?.summary || { total: 0, buy: 0, watch: 0, hold: 0, sell: 0 };
   const scanTime = data?.scan_date ? new Date(data.scan_date).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
 
   const th = (key: string, align: string = "right"): React.CSSProperties => ({
