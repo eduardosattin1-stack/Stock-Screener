@@ -223,31 +223,50 @@ def get_quote(sym: str) -> Optional[dict]:
     }
 
 def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
-    """Fetch up to 10 quotes per API call. Returns {symbol: quote_dict}."""
+    """Fetch quotes. Tries batch endpoint first, falls back to single quotes."""
     results = {}
-    for i in range(0, len(symbols), 10):
-        batch = symbols[i:i+10]
-        csv = ",".join(batch)
-        data = fmp("batch-quote", {"symbols": csv})
-        if not data:
-            continue
-        for q in data:
+    # Try batch first (10 per call)
+    first_batch = symbols[:10]
+    csv = ",".join(first_batch)
+    test = fmp("batch-quote", {"symbols": csv})
+    use_batch = test is not None and len(test) > 0
+
+    if use_batch:
+        log.info("batch-quote endpoint available — using batch mode")
+        for q in test:
             sym = q.get("symbol", "")
-            if not sym or float(q.get("price", 0)) <= 0:
-                continue
-            results[sym] = {
-                "price": float(q.get("price", 0)),
-                "sma50": float(q.get("priceAvg50", 0)),
-                "sma200": float(q.get("priceAvg200", 0)),
-                "year_high": float(q.get("yearHigh", 0)),
-                "year_low": float(q.get("yearLow", 0)),
-                "market_cap": float(q.get("marketCap", 0)),
-                "volume": int(q.get("volume", 0)),
-                "avg_volume": int(q.get("avgVolume", 0)),
-                "currency": q.get("currency", "USD"),
-            }
-    log.info(f"Batch quotes: {len(results)}/{len(symbols)} fetched")
+            if sym and float(q.get("price", 0)) > 0:
+                results[sym] = _parse_quote(q)
+        for i in range(10, len(symbols), 10):
+            batch = symbols[i:i+10]
+            data = fmp("batch-quote", {"symbols": ",".join(batch)})
+            if data:
+                for q in data:
+                    sym = q.get("symbol", "")
+                    if sym and float(q.get("price", 0)) > 0:
+                        results[sym] = _parse_quote(q)
+    else:
+        log.info("batch-quote not available — falling back to single quotes")
+        for sym in symbols:
+            q = get_quote(sym)
+            if q and q["price"] > 0:
+                results[sym] = q
+
+    log.info(f"Quotes loaded: {len(results)}/{len(symbols)}")
     return results
+
+def _parse_quote(q: dict) -> dict:
+    return {
+        "price": float(q.get("price", 0)),
+        "sma50": float(q.get("priceAvg50", 0)),
+        "sma200": float(q.get("priceAvg200", 0)),
+        "year_high": float(q.get("yearHigh", 0)),
+        "year_low": float(q.get("yearLow", 0)),
+        "market_cap": float(q.get("marketCap", 0)),
+        "volume": int(q.get("volume", 0)),
+        "avg_volume": int(q.get("avgVolume", 0)),
+        "currency": q.get("currency", "USD"),
+    }
 
 # ---------------------------------------------------------------------------
 # 3. Technicals — computed from OHLCV chart data
@@ -757,7 +776,6 @@ def screen(symbols: list[str]) -> list[Stock]:
 
     # Pre-fetch all quotes in batches of 10
     all_quotes = get_quotes_batch(symbols)
-    log.info(f"Quotes loaded: {len(all_quotes)}/{total}")
 
     for i, sym in enumerate(symbols):
         if (i + 1) % 10 == 0:
