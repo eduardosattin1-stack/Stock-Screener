@@ -42,15 +42,32 @@ def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
     if key in _fx_cache:
         return _fx_cache[key]
     data = fmp("forex", {"symbol": f"{from_ccy}/{to_ccy}"})
-    if data and data[0].get("price"):
+    if data and isinstance(data, list) and data[0].get("price"):
         rate = float(data[0]["price"])
-        _fx_cache[key] = rate
-        log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f}")
-        return rate
-    # Fallback hardcoded rates for common mismatches
-    fallback = {"CNYUSD": 0.14, "USDCNY": 7.1, "EURUSD": 1.08, "USDEUR": 0.93,
-                "GBPUSD": 1.27, "USDGBP": 0.79, "JPYUSD": 0.0067, "USDJPY": 150.0}
-    rate = fallback.get(key, 1.0)
+        if rate > 0:
+            _fx_cache[key] = rate
+            log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f}")
+            return rate
+    # Comprehensive fallback rates (approx, updated periodically)
+    _TO_USD = {
+        "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073, "JPY": 0.0067,
+        "INR": 0.012, "HKD": 0.128, "SGD": 0.75, "AUD": 0.65,
+        "EUR": 1.08, "GBP": 1.27, "CHF": 1.12, "SEK": 0.097,
+        "DKK": 0.145, "NOK": 0.093, "BRL": 0.18, "CAD": 0.73,
+        "MXN": 0.058, "ZAR": 0.055, "THB": 0.029, "IDR": 0.000063,
+        "MYR": 0.22, "PHP": 0.018, "PLN": 0.25, "CZK": 0.043,
+        "ILS": 0.28, "SAR": 0.27, "AED": 0.27, "USD": 1.0,
+    }
+    if to_ccy == "USD" and from_ccy in _TO_USD:
+        rate = _TO_USD[from_ccy]
+    elif from_ccy == "USD" and to_ccy in _TO_USD:
+        rate = 1.0 / _TO_USD[to_ccy]
+    elif from_ccy in _TO_USD and to_ccy in _TO_USD:
+        # Cross rate via USD
+        rate = _TO_USD[from_ccy] / _TO_USD[to_ccy]
+    else:
+        log.warning(f"FX {from_ccy}→{to_ccy}: unknown pair, using 1.0")
+        rate = 1.0
     _fx_cache[key] = rate
     if rate != 1.0:
         log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f} (fallback)")
@@ -625,25 +642,32 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             future_price = future_eps * terminal_pe
             v["intrinsic_buffett"] = future_price / (1.10 ** 5)
 
-    # Average intrinsic value — with currency normalization
-    # Detect reporting currency from financial statements
+    # Average intrinsic value — all math in reporting (local) currency
+    # Convert price to reporting currency if needed (e.g. TSM: USD→TWD)
     reported_ccy = "USD"
     if inc and inc[-1].get("reportedCurrency"):
         reported_ccy = inc[-1]["reportedCurrency"]
-    fx = get_fx_rate(reported_ccy, price_currency)
-    # DCF and Buffett intrinsic are in reporting currency → convert to price currency
-    if fx != 1.0:
-        log.info(f"  {sym}: converting intrinsic {reported_ccy}→{price_currency} (×{fx:.4f})")
-        if v["dcf_value"] > 0:
-            v["dcf_value"] *= fx
-        if v["intrinsic_buffett"] > 0:
-            v["intrinsic_buffett"] *= fx
+    local_price = price
+    if reported_ccy != price_currency:
+        fx = get_fx_rate(price_currency, reported_ccy)  # e.g. USD→TWD
+        local_price = price * fx
+        log.info(f"  {sym}: price {price_currency} {price:.2f} → {reported_ccy} {local_price:.2f} (×{fx:.4f})")
 
     methods = [v["dcf_value"], v["intrinsic_buffett"]]
     valid = [m for m in methods if m > 0]
     if valid:
         v["intrinsic_avg"] = sum(valid) / len(valid)
-        v["margin_of_safety"] = (v["intrinsic_avg"] - price) / price
+        v["margin_of_safety"] = (v["intrinsic_avg"] - local_price) / local_price
+
+    # Convert intrinsic values to price currency for display
+    if reported_ccy != price_currency:
+        fx_back = get_fx_rate(reported_ccy, price_currency)
+        if v["dcf_value"] > 0:
+            v["dcf_value"] *= fx_back
+        if v["intrinsic_buffett"] > 0:
+            v["intrinsic_buffett"] *= fx_back
+        if v["intrinsic_avg"] > 0:
+            v["intrinsic_avg"] *= fx_back
 
     # Value score (0-1)
     vs = 0.0
