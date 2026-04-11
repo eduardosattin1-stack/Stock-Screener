@@ -1,11 +1,31 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, TrendingDown, AlertTriangle, ChevronDown, ChevronRight, BarChart3, Shield, Target, Activity, RefreshCw } from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target } from "lucide-react";
 
 const GCS_URL = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
 
-// Embedded fallback data from first Nasdaq scan 2026-04-11
-const FALLBACK = {"scan_date":"2026-04-11T17:24:00","region":"nasdaq100","version":"v5","summary":{"total":100,"buy":0,"watch":22,"hold":62,"sell":16},"stocks":[
+interface StockData {
+  symbol: string; price: number; currency: string; market_cap: number;
+  sma50: number; sma200: number; year_high: number; year_low: number; volume: number;
+  rsi: number; macd_signal: string; adx: number; bb_pct: number; stoch_rsi: number;
+  obv_trend: string; bull_score: number;
+  target: number; upside: number; grade_buy: number; grade_total: number;
+  grade_score: number; eps_beats: number; eps_total: number;
+  revenue_cagr_3y: number; eps_cagr_3y: number; roe_avg: number;
+  roe_consistent: boolean; roic_avg: number; gross_margin: number;
+  gross_margin_trend: string; piotroski: number; altman_z: number;
+  dcf_value: number; owner_earnings_yield: number; intrinsic_buffett: number;
+  intrinsic_avg: number; margin_of_safety: number; value_score: number;
+  composite: number; signal: string; classification: string; reasons: string[];
+}
+
+interface ScanData {
+  scan_date: string; region: string; version: string;
+  summary: { total: number; buy: number; watch: number; hold: number; sell: number };
+  stocks: StockData[];
+}
+
+const FALLBACK: ScanData = {"scan_date":"2026-04-11T17:24:00","region":"nasdaq100","version":"v5","summary":{"total":100,"buy":0,"watch":22,"hold":62,"sell":16},"stocks":[
 {"symbol":"NVDA","price":188.63,"currency":"USD","sma50":145.2,"sma200":132.1,"year_high":195.95,"year_low":86.62,"market_cap":4584652476141,"volume":159395820,"rsi":61,"macd_signal":"bullish","adx":23,"bb_pct":0.72,"stoch_rsi":68,"obv_trend":"rising","bull_score":8,"target":278,"upside":47.3,"grade_buy":37,"grade_total":37,"grade_score":1.0,"eps_beats":7,"eps_total":7,"revenue_cagr_3y":1.0,"eps_cagr_3y":2.07,"roe_avg":0.59,"roe_consistent":false,"roic_avg":0.47,"gross_margin":0.71,"gross_margin_trend":"stable","piotroski":6,"altman_z":60.5,"dcf_value":238,"owner_earnings_yield":0.022,"intrinsic_buffett":168,"intrinsic_avg":203,"margin_of_safety":0.08,"value_score":0.55,"composite":0.66,"signal":"WATCH","classification":"QUALITY_GROWTH","reasons":[]},
 {"symbol":"NTES","price":112.72,"currency":"USD","sma50":108,"sma200":99,"year_high":119,"year_low":82,"market_cap":72000000000,"volume":3200000,"rsi":43,"macd_signal":"bullish","adx":34,"bb_pct":0.41,"stoch_rsi":77,"obv_trend":"flat","bull_score":5,"target":150,"upside":32.9,"grade_buy":0,"grade_total":1,"grade_score":0,"eps_beats":2,"eps_total":7,"revenue_cagr_3y":0.05,"eps_cagr_3y":0.2,"roe_avg":0.21,"roe_consistent":true,"roic_avg":0.18,"gross_margin":0.64,"gross_margin_trend":"expanding","piotroski":8,"altman_z":7.0,"dcf_value":220,"owner_earnings_yield":0.135,"intrinsic_buffett":868,"intrinsic_avg":544,"margin_of_safety":3.82,"value_score":0.75,"composite":0.65,"signal":"WATCH","classification":"DEEP_VALUE","reasons":[]},
 {"symbol":"PDD","price":100.17,"currency":"USD","sma50":112,"sma200":105,"year_high":164,"year_low":86,"market_cap":140000000000,"volume":12000000,"rsi":47,"macd_signal":"bullish","adx":12,"bb_pct":0.46,"stoch_rsi":63,"obv_trend":"flat","bull_score":4,"target":144,"upside":43.6,"grade_buy":0,"grade_total":0,"grade_score":0,"eps_beats":4,"eps_total":7,"revenue_cagr_3y":0.48,"eps_cagr_3y":0.44,"roe_avg":0.26,"roe_consistent":false,"roic_avg":0.22,"gross_margin":0.56,"gross_margin_trend":"contracting","piotroski":5,"altman_z":5.1,"dcf_value":279,"owner_earnings_yield":0.189,"intrinsic_buffett":2241,"intrinsic_avg":1260,"margin_of_safety":11.57,"value_score":0.8,"composite":0.62,"signal":"WATCH","classification":"DEEP_VALUE","reasons":[]},
@@ -22,10 +42,10 @@ const FALLBACK = {"scan_date":"2026-04-11T17:24:00","region":"nasdaq100","versio
 {"symbol":"SHOP","price":110.79,"currency":"USD","sma50":125,"sma200":118,"year_high":155,"year_low":72,"market_cap":142000000000,"volume":8000000,"rsi":39,"macd_signal":"bearish_cross","adx":18,"bb_pct":0.25,"stoch_rsi":22,"obv_trend":"falling","bull_score":0,"target":166,"upside":50.0,"grade_buy":12,"grade_total":18,"grade_score":0.67,"eps_beats":5,"eps_total":7,"revenue_cagr_3y":0.27,"eps_cagr_3y":0,"roe_avg":0.02,"roe_consistent":false,"roic_avg":0.01,"gross_margin":0.48,"gross_margin_trend":"stable","piotroski":6,"altman_z":53.3,"dcf_value":19,"owner_earnings_yield":0.015,"intrinsic_buffett":30,"intrinsic_avg":24.5,"margin_of_safety":-0.78,"value_score":0.08,"composite":0.22,"signal":"SELL","classification":"GROWTH","reasons":[]}
 ]};
 
-const SIGNAL_COLORS = { BUY: "#22c55e", WATCH: "#f59e0b", HOLD: "#94a3b8", SELL: "#ef4444" };
-const CLASS_COLORS = { DEEP_VALUE: "#22d3ee", VALUE: "#06b6d4", QUALITY_GROWTH: "#a78bfa", GROWTH: "#818cf8", SPECULATIVE: "#f87171", NEUTRAL: "#64748b", UNKNOWN: "#475569" };
+const SIGNAL_COLORS: Record<string, string> = { BUY: "#22c55e", WATCH: "#f59e0b", HOLD: "#94a3b8", SELL: "#ef4444" };
+const CLASS_COLORS: Record<string, string> = { DEEP_VALUE: "#22d3ee", VALUE: "#06b6d4", QUALITY_GROWTH: "#a78bfa", GROWTH: "#818cf8", SPECULATIVE: "#f87171", NEUTRAL: "#64748b", UNKNOWN: "#475569" };
 
-function formatNum(n, decimals = 1) {
+function formatNum(n: number | undefined | null, decimals: number = 1): string {
   if (n === undefined || n === null) return "—";
   if (Math.abs(n) >= 1e12) return `$${(n/1e12).toFixed(1)}T`;
   if (Math.abs(n) >= 1e9) return `$${(n/1e9).toFixed(1)}B`;
@@ -33,12 +53,12 @@ function formatNum(n, decimals = 1) {
   return n.toFixed(decimals);
 }
 
-function formatPct(n) {
+function formatPct(n: number | undefined | null): string {
   if (n === undefined || n === null) return "—";
   return `${(n * 100).toFixed(0)}%`;
 }
 
-function BullDots({ score }) {
+function BullDots({ score }: { score: number }) {
   return (
     <div style={{ display: "flex", gap: 3 }}>
       {Array.from({ length: 10 }, (_, i) => (
@@ -52,7 +72,7 @@ function BullDots({ score }) {
   );
 }
 
-function MoSBar({ value }) {
+function MoSBar({ value }: { value: number }) {
   const pct = Math.max(-1, Math.min(1, value));
   const width = Math.abs(pct) * 100;
   const color = pct > 0.15 ? "#22c55e" : pct > 0 ? "#86efac" : pct > -0.2 ? "#fbbf24" : "#ef4444";
@@ -70,17 +90,17 @@ function MoSBar({ value }) {
   );
 }
 
-function StockRow({ stock, expanded, onToggle }) {
+function StockRow({ stock, expanded, onToggle }: { stock: StockData; expanded: boolean; onToggle: () => void }) {
   const s = stock;
   return (
     <>
       <tr onClick={onToggle} style={{ cursor: "pointer", borderBottom: "1px solid #1e293b", transition: "background 0.15s" }}
-          onMouseEnter={e => e.currentTarget.style.background = "#0f172a"}
-          onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#0f172a"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
         <td style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
           {expanded ? <ChevronDown size={14} color="#64748b" /> : <ChevronRight size={14} color="#64748b" />}
           <span style={{ fontWeight: 700, letterSpacing: "0.05em", color: "#f8fafc" }}>{s.symbol}</span>
-          <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: CLASS_COLORS[s.classification] + "22", color: CLASS_COLORS[s.classification], fontWeight: 600 }}>
+          <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: (CLASS_COLORS[s.classification] || "#475569") + "22", color: CLASS_COLORS[s.classification] || "#475569", fontWeight: 600 }}>
             {s.classification?.replace("_", " ")}
           </span>
         </td>
@@ -89,7 +109,7 @@ function StockRow({ stock, expanded, onToggle }) {
         </td>
         <td style={{ padding: "10px 12px" }}>
           <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 4, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
-            background: SIGNAL_COLORS[s.signal] + "18", color: SIGNAL_COLORS[s.signal], border: `1px solid ${SIGNAL_COLORS[s.signal]}44` }}>
+            background: (SIGNAL_COLORS[s.signal] || "#64748b") + "18", color: SIGNAL_COLORS[s.signal] || "#64748b", border: `1px solid ${(SIGNAL_COLORS[s.signal] || "#64748b")}44` }}>
             {s.signal}
           </span>
         </td>
@@ -152,16 +172,16 @@ function StockRow({ stock, expanded, onToggle }) {
 }
 
 export default function Dashboard() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<ScanData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sortKey, setSortKey] = useState("composite");
-  const [sortDir, setSortDir] = useState("desc");
+  const [sortKey, setSortKey] = useState<keyof StockData>("composite");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [filter, setFilter] = useState("ALL");
-  const [expanded, setExpanded] = useState({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [source, setSource] = useState("embedded");
 
   useEffect(() => {
-    fetch(GCS_URL).then(r => r.json()).then(d => {
+    fetch(GCS_URL).then(r => r.json()).then((d: ScanData) => {
       setData(d); setSource("live"); setLoading(false);
     }).catch(() => {
       setData(FALLBACK); setSource("embedded"); setLoading(false);
@@ -173,23 +193,24 @@ export default function Dashboard() {
     let list = [...data.stocks];
     if (filter !== "ALL") list = list.filter(s => s.signal === filter);
     list.sort((a, b) => {
-      const av = a[sortKey] ?? 0, bv = b[sortKey] ?? 0;
+      const av = (a[sortKey] as number) ?? 0;
+      const bv = (b[sortKey] as number) ?? 0;
       return sortDir === "desc" ? bv - av : av - bv;
     });
     return list;
   }, [data, sortKey, sortDir, filter]);
 
-  const toggleSort = (key) => {
+  const toggleSort = (key: keyof StockData) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
     else { setSortKey(key); setSortDir("desc"); }
   };
 
   if (loading) return <div style={{ color: "#94a3b8", padding: 40, textAlign: "center", fontFamily: "'JetBrains Mono', monospace" }}>Loading scan data...</div>;
 
-  const sum = data?.summary || {};
+  const sum = data?.summary || { total: 0, buy: 0, watch: 0, hold: 0, sell: 0 };
   const scanDate = data?.scan_date ? new Date(data.scan_date).toLocaleString() : "—";
 
-  const headerStyle = (key) => ({
+  const headerStyle = (key: string): React.CSSProperties => ({
     padding: "8px 12px", textAlign: key === "symbol" ? "left" : "right", cursor: "pointer",
     fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: sortKey === key ? "#f59e0b" : "#64748b",
     userSelect: "none", whiteSpace: "nowrap", borderBottom: "2px solid #1e293b"
@@ -199,7 +220,6 @@ export default function Dashboard() {
     <div style={{ background: "#020617", color: "#e2e8f0", fontFamily: "'DM Sans', -apple-system, sans-serif", minHeight: "100vh", padding: "24px 20px" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 
-      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: "-0.02em" }}>
@@ -214,14 +234,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Signal Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
+        {([
           { label: "BUY", count: sum.buy, icon: <TrendingUp size={16} />, color: "#22c55e" },
           { label: "WATCH", count: sum.watch, icon: <Target size={16} />, color: "#f59e0b" },
           { label: "HOLD", count: sum.hold, icon: <Shield size={16} />, color: "#94a3b8" },
           { label: "SELL", count: sum.sell, icon: <TrendingDown size={16} />, color: "#ef4444" },
-        ].map(({ label, count, icon, color }) => (
+        ] as const).map(({ label, count, icon, color }) => (
           <div key={label} onClick={() => setFilter(f => f === label ? "ALL" : label)}
                style={{ background: filter === label ? color + "15" : "#0f172a", border: `1px solid ${filter === label ? color + "44" : "#1e293b"}`,
                  borderRadius: 8, padding: "14px 16px", cursor: "pointer", transition: "all 0.15s" }}>
@@ -234,7 +253,6 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Table */}
       <div style={{ background: "#0f172a", borderRadius: 8, border: "1px solid #1e293b", overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
