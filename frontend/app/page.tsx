@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, TrendingDown, AlertTriangle, ChevronDown, ChevronRight, BarChart3, Shield, Target, Activity, RefreshCw } from "lucide-react";
 
