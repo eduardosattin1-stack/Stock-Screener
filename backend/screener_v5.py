@@ -828,6 +828,53 @@ def load_signals() -> dict:
     except FileNotFoundError:
         return {}
 
+GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
+
+def gcs_upload(path: str, data: dict):
+    """Upload JSON to GCS using default service account (works on Cloud Run)."""
+    try:
+        # Get access token from metadata server
+        tok_resp = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=3
+        )
+        token = tok_resp.json().get("access_token", "")
+        if not token:
+            log.warning("GCS: no access token from metadata")
+            return
+
+        url = f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o"
+        r = requests.post(url, params={"uploadType": "media", "name": path},
+                          headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                          data=json.dumps(data, default=str), timeout=15)
+        if r.status_code in (200, 201):
+            log.info(f"GCS: uploaded {path}")
+        else:
+            log.warning(f"GCS: {r.status_code} uploading {path} → {r.text[:100]}")
+    except Exception as e:
+        log.warning(f"GCS: {e}")  # non-fatal, scan still works without GCS
+
+def save_scan_to_gcs(stocks: list, region: str):
+    """Save full scan results to GCS for dashboard consumption."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    payload = {
+        "scan_date": datetime.now().isoformat(),
+        "region": region,
+        "version": "v5",
+        "summary": {
+            "total": len(stocks),
+            "buy": sum(1 for s in stocks if s.signal == "BUY"),
+            "watch": sum(1 for s in stocks if s.signal == "WATCH"),
+            "hold": sum(1 for s in stocks if s.signal == "HOLD"),
+            "sell": sum(1 for s in stocks if s.signal == "SELL"),
+        },
+        "stocks": [asdict(s) for s in stocks],
+    }
+    # Write latest (dashboard reads this)
+    gcs_upload("scans/latest.json", payload)
+    # Write daily archive
+    gcs_upload(f"scans/{today}.json", payload)
+
 def save_signals(data: dict):
     with open(SIGNAL_LOG, "w") as f:
         json.dump(data, f, indent=2)
@@ -884,6 +931,9 @@ def main():
 
     # Save signals
     update_signal_history(results)
+
+    # Save to GCS for dashboard
+    save_scan_to_gcs(results, args.region)
 
     # Email
     today = datetime.now().strftime("%Y-%m-%d")
