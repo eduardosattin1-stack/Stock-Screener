@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, AlertTriangle, ExternalLink, Plus, Check } from "lucide-react";
 
-const GCS_BASE = "https://storage.googleapis.com/screener-signals-carbonbridge/scans";
+const GCS_BASE = "/api/gcs/scans";
 
 interface StockData {
   symbol: string; price: number; currency: string; market_cap: number;

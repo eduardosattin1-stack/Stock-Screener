@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, ChevronRight, TrendingUp, TrendingDown, DollarSign, BarChart3 } from "lucide-react";
 
-const GCS_BASE = "https://storage.googleapis.com/screener-signals-carbonbridge/scans";
+const GCS_BASE = "/api/gcs/scans";
 
 interface PortfolioEntry {
   symbol: string; entry_price: number; entry_date: string; shares: number; notes: string;
