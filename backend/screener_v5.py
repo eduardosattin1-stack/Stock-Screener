@@ -31,46 +31,38 @@ RISK_FREE = 0.045  # 10yr treasury ~4.5%
 TOP_N = 15
 SIGNAL_LOG = os.environ.get("SIGNAL_LOG", "signal_history.json")
 
-# Currency conversion cache
-_fx_cache: dict[str, float] = {}
+# ---------------------------------------------------------------------------
+# FX conversion — fallback table only (forex endpoint is NOT on REST stable)
+# ---------------------------------------------------------------------------
+
+# Rates: how many USD you get for 1 unit of foreign currency
+_FX_TO_USD = {
+    "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CHF": 1.12,
+    "JPY": 0.0067, "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073,
+    "HKD": 0.128, "INR": 0.012, "SGD": 0.75, "AUD": 0.65,
+    "CAD": 0.73, "NZD": 0.60, "SEK": 0.097, "NOK": 0.093,
+    "DKK": 0.145, "BRL": 0.18, "MXN": 0.058, "ZAR": 0.055,
+    "THB": 0.029, "IDR": 0.000063, "MYR": 0.22, "PHP": 0.018,
+    "PLN": 0.25, "CZK": 0.043, "ILS": 0.28, "SAR": 0.27,
+    "AED": 0.27, "TRY": 0.031, "HUF": 0.0027,
+}
 
 def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
-    """Get exchange rate. Returns 1.0 if same currency or lookup fails."""
+    """Get exchange rate using fallback table only.
+    Returns how many units of to_ccy you get for 1 unit of from_ccy."""
     if from_ccy == to_ccy:
         return 1.0
-    key = f"{from_ccy}{to_ccy}"
-    if key in _fx_cache:
-        return _fx_cache[key]
-    data = fmp("forex", {"symbol": f"{from_ccy}/{to_ccy}"})
-    if data and isinstance(data, list) and data[0].get("price"):
-        rate = float(data[0]["price"])
-        if rate > 0:
-            _fx_cache[key] = rate
-            log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f}")
-            return rate
-    # Comprehensive fallback rates (approx, updated periodically)
-    _TO_USD = {
-        "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073, "JPY": 0.0067,
-        "INR": 0.012, "HKD": 0.128, "SGD": 0.75, "AUD": 0.65,
-        "EUR": 1.08, "GBP": 1.27, "CHF": 1.12, "SEK": 0.097,
-        "DKK": 0.145, "NOK": 0.093, "BRL": 0.18, "CAD": 0.73,
-        "MXN": 0.058, "ZAR": 0.055, "THB": 0.029, "IDR": 0.000063,
-        "MYR": 0.22, "PHP": 0.018, "PLN": 0.25, "CZK": 0.043,
-        "ILS": 0.28, "SAR": 0.27, "AED": 0.27, "USD": 1.0,
-    }
-    if to_ccy == "USD" and from_ccy in _TO_USD:
-        rate = _TO_USD[from_ccy]
-    elif from_ccy == "USD" and to_ccy in _TO_USD:
-        rate = 1.0 / _TO_USD[to_ccy]
-    elif from_ccy in _TO_USD and to_ccy in _TO_USD:
-        # Cross rate via USD
-        rate = _TO_USD[from_ccy] / _TO_USD[to_ccy]
-    else:
-        log.warning(f"FX {from_ccy}→{to_ccy}: unknown pair, using 1.0")
-        rate = 1.0
-    _fx_cache[key] = rate
-    if rate != 1.0:
-        log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f} (fallback)")
+    from_usd = _FX_TO_USD.get(from_ccy)
+    to_usd = _FX_TO_USD.get(to_ccy)
+    if from_usd is None or to_usd is None:
+        log.warning(f"FX {from_ccy}→{to_ccy}: unknown currency, using 1.0")
+        return 1.0
+    if to_usd == 0:
+        return 1.0
+    # from_ccy → USD → to_ccy
+    # 1 from_ccy = from_usd USD = (from_usd / to_usd) to_ccy
+    rate = from_usd / to_usd
+    log.info(f"FX {from_ccy}→{to_ccy}: {rate:.4f}")
     return rate
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -552,7 +544,17 @@ def safe_cagr(start, end, years):
     return (end / start) ** (1 / years) - 1
 
 def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
-    """Full Buffett value analysis."""
+    """Full Buffett value analysis.
+
+    FX strategy: all intrinsic value calculations happen in the REPORTING
+    currency (e.g. TWD for TSM). We convert the trading price into that
+    currency for the MoS comparison, then convert intrinsic values BACK
+    to the trading currency for display.
+
+    Key fix: we do NOT call fmp("forex") — that endpoint is not on REST
+    stable and was returning garbage/inverted rates causing 1066% MoS.
+    We use the fallback table exclusively.
+    """
     v = {
         "revenue_cagr_3y": 0, "eps_cagr_3y": 0,
         "roe_avg": 0, "roe_consistent": False, "roic_avg": 0,
@@ -569,6 +571,24 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
 
     # Income statements (5 years)
     inc = fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5})
+
+    # Detect reporting currency early
+    reported_ccy = price_currency  # default: assume same as trading
+    if inc and len(inc) >= 1:
+        rc = inc[0].get("reportedCurrency") or inc[-1].get("reportedCurrency")
+        if rc:
+            reported_ccy = rc
+    fx_to_report = get_fx_rate(price_currency, reported_ccy)   # e.g. USD→TWD = 32.26
+    fx_to_price = get_fx_rate(reported_ccy, price_currency)     # e.g. TWD→USD = 0.031
+    need_fx = reported_ccy != price_currency
+
+    if need_fx:
+        log.info(f"  {sym}: reports in {reported_ccy}, trades in {price_currency} "
+                 f"(×{fx_to_report:.4f} / ×{fx_to_price:.6f})")
+
+    # Price in reporting currency (for MoS calculation)
+    local_price = price * fx_to_report if need_fx else price
+
     if inc and len(inc) >= 2:
         inc.sort(key=lambda x: x.get("date", ""))  # oldest first
         revs = [float(x.get("revenue", 0)) for x in inc]
@@ -615,19 +635,35 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         v["piotroski"] = int(scores[0].get("piotroskiScore", 0))
         v["altman_z"] = float(scores[0].get("altmanZScore", 0))
 
-    # DCF
+    # DCF — FMP returns this in the REPORTING currency
     dcf = fmp("discounted-cash-flow", {"symbol": sym})
     if dcf:
-        v["dcf_value"] = float(dcf[0].get("dcf", 0))
+        raw_dcf = float(dcf[0].get("dcf", 0))
+        # Sanity check: if DCF is already close to trading price, it's in price currency
+        # If it's wildly different AND we have a FX mismatch, it's in reporting currency
+        if need_fx and raw_dcf > 0:
+            # Check if DCF looks like it's in price currency already
+            ratio = raw_dcf / price if price > 0 else 0
+            if 0.1 < ratio < 10:
+                # DCF is within 10x of price — likely in price currency, convert to reporting
+                v["dcf_value"] = raw_dcf * fx_to_report
+                log.info(f"  {sym}: DCF {raw_dcf:.0f} looks like {price_currency}, "
+                         f"converted to {reported_ccy}: {v['dcf_value']:.0f}")
+            else:
+                # DCF is far from price — likely already in reporting currency
+                v["dcf_value"] = raw_dcf
+        else:
+            v["dcf_value"] = raw_dcf
 
-    # Owner earnings (annualize from quarterly)
+    # Owner earnings (annualize from quarterly) — in REPORTING currency
     oe = fmp("owner-earnings", {"symbol": sym, "limit": 4})
     if oe:
         annual_oe_ps = sum(float(x.get("ownersEarningsPerShare", 0)) for x in oe)
-        if price > 0:
-            v["owner_earnings_yield"] = annual_oe_ps / price
+        # OE is in reporting currency, divide by price in SAME currency
+        if local_price > 0:
+            v["owner_earnings_yield"] = annual_oe_ps / local_price
 
-    # Intrinsic value — Buffett earnings growth method
+    # Intrinsic value — Buffett earnings growth method (in REPORTING currency)
     if inc and len(inc) >= 2:
         inc.sort(key=lambda x: x.get("date", ""))
         latest_eps = float(inc[-1].get("epsDiluted", 0))
@@ -642,32 +678,28 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             future_price = future_eps * terminal_pe
             v["intrinsic_buffett"] = future_price / (1.10 ** 5)
 
-    # Average intrinsic value — all math in reporting (local) currency
-    # Convert price to reporting currency if needed (e.g. TSM: USD→TWD)
-    reported_ccy = "USD"
-    if inc and inc[-1].get("reportedCurrency"):
-        reported_ccy = inc[-1]["reportedCurrency"]
-    local_price = price
-    if reported_ccy != price_currency:
-        fx = get_fx_rate(price_currency, reported_ccy)  # e.g. USD→TWD
-        local_price = price * fx
-        log.info(f"  {sym}: price {price_currency} {price:.2f} → {reported_ccy} {local_price:.2f} (×{fx:.4f})")
-
+    # ── Margin of Safety — all in reporting currency ──
     methods = [v["dcf_value"], v["intrinsic_buffett"]]
     valid = [m for m in methods if m > 0]
-    if valid:
+    if valid and local_price > 0:
         v["intrinsic_avg"] = sum(valid) / len(valid)
         v["margin_of_safety"] = (v["intrinsic_avg"] - local_price) / local_price
+        if need_fx:
+            log.info(f"  {sym}: intrinsic_avg={v['intrinsic_avg']:.0f} {reported_ccy}, "
+                     f"local_price={local_price:.0f} {reported_ccy}, "
+                     f"MoS={v['margin_of_safety']:.1%}")
 
-    # Convert intrinsic values to price currency for display
-    if reported_ccy != price_currency:
-        fx_back = get_fx_rate(reported_ccy, price_currency)
-        if v["dcf_value"] > 0:
-            v["dcf_value"] *= fx_back
-        if v["intrinsic_buffett"] > 0:
-            v["intrinsic_buffett"] *= fx_back
-        if v["intrinsic_avg"] > 0:
-            v["intrinsic_avg"] *= fx_back
+    # ── Convert intrinsic values to price currency for display ──
+    if need_fx:
+        for key in ("dcf_value", "intrinsic_buffett", "intrinsic_avg"):
+            if v[key] > 0:
+                v[key] *= fx_to_price
+
+    # Sanity check: MoS should be between -1 and +10 for any reasonable stock
+    if abs(v["margin_of_safety"]) > 10:
+        log.warning(f"  {sym}: MoS {v['margin_of_safety']:.0%} looks wrong — "
+                    f"possible FX issue ({reported_ccy}/{price_currency}), capping at ±500%")
+        v["margin_of_safety"] = max(-5.0, min(5.0, v["margin_of_safety"]))
 
     # Value score (0-1)
     vs = 0.0
@@ -995,7 +1027,7 @@ def save_signals(data: dict):
 def update_signal_history(stocks: list[Stock]):
     history = load_signals()
     today = datetime.now().strftime("%Y-%m-%d")
-    daily_signals = {}
+    signal_list = []
     for s in stocks:
         key = s.symbol
         if key not in history:
@@ -1004,14 +1036,20 @@ def update_signal_history(stocks: list[Stock]):
             "date": today, "price": s.price, "signal": s.signal,
             "composite": round(s.composite, 3), "bull": s.bull_score,
             "mos": round(s.margin_of_safety, 3),
+            "target": round(s.target, 2) if s.target else 0,
         }
         history[key]["entries"].append(entry)
         # Keep last 60 entries
         history[key]["entries"] = history[key]["entries"][-60:]
-        daily_signals[key] = entry
+        signal_list.append({"symbol": s.symbol, **entry})
     save_signals(history)
-    # Persist daily signals to GCS for tracking entry prices over time
-    gcs_upload(f"signals/{today}.json", daily_signals)
+
+    # Save daily signal snapshot to GCS for frontend trend charts
+    # Format: {"date": "...", "signals": [{symbol, price, signal, composite, bull, mos, target}, ...]}
+    gcs_upload(f"signals/{today}.json", {
+        "date": today,
+        "signals": signal_list,
+    })
 
 # ---------------------------------------------------------------------------
 # 11. Main
