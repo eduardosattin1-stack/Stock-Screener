@@ -771,7 +771,7 @@ def get_news_sentiment(sym: str) -> dict:
     """Fetch recent stock news and estimate sentiment from title keywords."""
     result = {"sentiment": 0.0, "score": 0.5, "count": 0}
 
-    data = fmp("search-stock-news", {"symbols": sym, "limit": 15})
+    data = fmp("news/stock", {"symbols": sym, "limit": 15})
     if not data:
         return result
 
