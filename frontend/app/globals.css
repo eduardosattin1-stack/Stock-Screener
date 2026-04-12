@@ -1,27 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-base: #08090e;
-  --bg-surface: #0e1117;
-  --bg-elevated: #f0f2f5;
-  --bg-hover: #ebedf0;
-  --border: #e2e5ea;
-  --border-subtle: #ebedf0;
-  --text-primary: #1a1d24;
-  --text-secondary: #5a6270;
-  --text-muted: #8c939e;
-  --text-bright: #0d0f12;
+  --bg-base: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f9fafb;
+  --bg-hover: #f3f4f6;
+  --border: #e5e7eb;
+  --border-subtle: #f3f4f6;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-bright: #111827;
   --accent-green: #2d7a4f;
   --accent-green-light: #e8f5ee;
-  --accent-amber: #c47f17;
-  --accent-amber-light: #fef6e7;
-  --accent-red: #c53030;
-  --accent-red-light: #fde8e8;
-  --accent-cyan: #1a8a9e;
-  --accent-purple: #6c4dbd;
-  --accent-blue: #2b6cb0;
+  --accent-green-border: #b8dcc8;
+  --accent-amber: #d97706;
+  --accent-red: #dc2626;
+  --accent-cyan: #0891b2;
+  --accent-purple: #7c3aed;
+  --accent-blue: #2563eb;
   --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
