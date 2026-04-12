@@ -1,12 +1,17 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, AlertTriangle, ExternalLink, BarChart3, Loader2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, ChevronRight, RefreshCw, Loader2, Newspaper, BarChart2 } from "lucide-react";
 
-const GCS_BASE = "https://storage.googleapis.com/screener-signals-carbonbridge/scans";
-const FMP_PROXY = "/api/fmp"; // Next.js API route proxies to FMP with key
+// ── Paths ──────────────────────────────────────────────────────────────────────
+const GCS_SCANS = "/api/gcs/scans";
+const GCS_SIGNALS = "/api/gcs/signals";
+const CLOUD_RUN = "https://stock-screener-606056076947.europe-west1.run.app";
+const FMP = "/api/fmp";
 
-// ─── Types ───────────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────────────
+interface FactorScores { upside: number; technical: number; analyst: number; transcript: number; institutional: number; insider: number; earnings: number; news: number; proximity: number; catastrophe: number; }
+
 interface StockData {
   symbol: string; price: number; currency: string; market_cap: number;
   sma50: number; sma200: number; year_high: number; year_low: number; volume: number;
@@ -20,706 +25,155 @@ interface StockData {
   dcf_value: number; owner_earnings_yield: number; intrinsic_buffett: number;
   intrinsic_avg: number; margin_of_safety: number; value_score: number;
   composite: number; signal: string; classification: string; reasons: string[];
+  factor_scores?: FactorScores;
+  insider_score?: number; insider_net_buys?: number; insider_buy_ratio?: number;
+  inst_score?: number; inst_holders_change?: number; inst_accumulation?: number;
+  transcript_sentiment?: number; transcript_summary?: string; transcript_score?: number;
+  news_sentiment?: number; news_score?: number;
+  proximity_52wk?: number; proximity_score?: number;
+  earnings_momentum?: number; earnings_score?: number;
+  upside_score?: number; catastrophe_score?: number;
 }
 
-interface GrowthData {
-  revenueGrowth: number;
-  operatingIncomeGrowth: number;
-  epsdilutedGrowth: number;
-  dividendsPerShareGrowth: number;
-  freeCashFlowGrowth: number;
-  bookValueperShareGrowth: number;
-  threeYRevenueGrowthPerShare: number;
-  fiveYRevenueGrowthPerShare: number;
-  tenYRevenueGrowthPerShare: number;
-  threeYNetIncomeGrowthPerShare: number;
-  fiveYNetIncomeGrowthPerShare: number;
-  tenYNetIncomeGrowthPerShare: number;
-  threeYOperatingCFGrowthPerShare: number;
-  fiveYOperatingCFGrowthPerShare: number;
-  tenYOperatingCFGrowthPerShare: number;
-  threeYShareholdersEquityGrowthPerShare: number;
-  fiveYShareholdersEquityGrowthPerShare: number;
-  tenYShareholdersEquityGrowthPerShare: number;
-  threeYDividendperShareGrowthPerShare: number;
-  fiveYDividendperShareGrowthPerShare: number;
-  tenYDividendperShareGrowthPerShare: number;
-}
+interface SignalPoint { date: string; composite: number; signal: string; price: number; bull: number; mos: number; target?: number; }
+interface NewsItem { title: string; url: string; publishedDate: string; site: string; text: string; }
+interface GrowthData { revenueGrowth: number; operatingIncomeGrowth: number; epsdilutedGrowth: number; dividendsPerShareGrowth: number; freeCashFlowGrowth: number; bookValueperShareGrowth: number; threeYRevenueGrowthPerShare: number; fiveYRevenueGrowthPerShare: number; tenYRevenueGrowthPerShare: number; threeYNetIncomeGrowthPerShare: number; fiveYNetIncomeGrowthPerShare: number; tenYNetIncomeGrowthPerShare: number; threeYOperatingCFGrowthPerShare: number; fiveYOperatingCFGrowthPerShare: number; tenYOperatingCFGrowthPerShare: number; threeYShareholdersEquityGrowthPerShare: number; fiveYShareholdersEquityGrowthPerShare: number; tenYShareholdersEquityGrowthPerShare: number; threeYDividendperShareGrowthPerShare: number; fiveYDividendperShareGrowthPerShare: number; tenYDividendperShareGrowthPerShare: number; }
+interface RatioYear { date: string; fiscalYear: string; grossProfitMargin: number; operatingProfitMargin: number; netProfitMargin: number; returnOnEquity: number; returnOnAssets: number; returnOnCapitalEmployed: number; freeCashFlowOperatingCashFlowRatio: number; currentRatio: number; debtToEquityRatio: number; interestCoverageRatio: number; dividendPayoutRatio: number; revenuePerShare: number; netIncomePerShare: number; bookValuePerShare: number; freeCashFlowPerShare: number; operatingCashFlowPerShare: number; dividendPerShare: number; priceToEarningsRatio: number; priceToSalesRatio: number; priceToBookRatio: number; priceToFreeCashFlowRatio: number; priceToOperatingCashFlowRatio: number; priceToEarningsGrowthRatio: number; dividendYieldPercentage: number; }
 
-interface RatioYear {
-  date: string;
-  fiscalYear: string;
-  grossProfitMargin: number;
-  operatingProfitMargin: number;
-  netProfitMargin: number;
-  returnOnEquity: number;
-  returnOnAssets: number;
-  returnOnCapitalEmployed: number;
-  freeCashFlowOperatingCashFlowRatio: number;
-  currentRatio: number;
-  debtToEquityRatio: number;
-  interestCoverageRatio: number;
-  dividendPayoutRatio: number;
-  revenuePerShare: number;
-  netIncomePerShare: number;
-  bookValuePerShare: number;
-  freeCashFlowPerShare: number;
-  operatingCashFlowPerShare: number;
-  dividendPerShare: number;
-  // valuation
-  priceToEarningsRatio: number;
-  priceToSalesRatio: number;
-  priceToBookRatio: number;
-  priceToFreeCashFlowRatio: number;
-  priceToOperatingCashFlowRatio: number;
-  priceToEarningsGrowthRatio: number;
-  dividendYieldPercentage: number;
-}
+// ── Theme ──────────────────────────────────────────────────────────────────────
+const T = { bg:"#ffffff", card:"#ffffff", cardBorder:"#e5e7eb", cardShadow:"0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", text:"#1a1a1a", textMuted:"#6b7280", textLight:"#9ca3af", green:"#2d7a4f", greenLight:"#e8f5ee", greenBorder:"#b8dcc8", red:"#dc2626", redLight:"#fef2f2", amber:"#d97706", amberLight:"#fffbeb", blue:"#2563eb", purple:"#7c3aed", divider:"#f3f4f6", mono:"'JetBrains Mono','SF Mono',monospace", sans:"'DM Sans',-apple-system,sans-serif" };
+const SIG_C: Record<string,{bg:string;fg:string;border:string}> = { BUY:{bg:T.greenLight,fg:T.green,border:T.greenBorder}, WATCH:{bg:T.amberLight,fg:T.amber,border:"#fde68a"}, HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder}, SELL:{bg:T.redLight,fg:T.red,border:"#fecaca"} };
+const CLS_C: Record<string,string> = { DEEP_VALUE:T.blue, VALUE:T.blue, QUALITY_GROWTH:T.purple, GROWTH:T.purple, SPECULATIVE:T.red, NEUTRAL:T.textMuted };
+const FACTOR_ORDER = ["upside","technical","analyst","transcript","institutional","insider","earnings","news","proximity","catastrophe"];
+const FL: Record<string,string> = { upside:"Upside", technical:"Technical", analyst:"Analyst", transcript:"Transcript", institutional:"Institutional", insider:"Insider", earnings:"Earnings", news:"News", proximity:"52-Week", catastrophe:"Catastrophe" };
+const FW: Record<string,number> = { upside:15, technical:15, analyst:10, transcript:15, institutional:10, insider:10, earnings:10, news:5, proximity:5, catastrophe:5 };
 
-// ─── Constants ───────────────────────────────────────────────────────
-const SIG_C: Record<string, string> = { BUY: "#2dd4a0", WATCH: "#e5a944", HOLD: "#7d8494", SELL: "#e5534b" };
-const CLS_C: Record<string, string> = { DEEP_VALUE: "#3bc9db", VALUE: "#3bc9db", QUALITY_GROWTH: "#9775fa", GROWTH: "#9775fa", SPECULATIVE: "#e5534b", NEUTRAL: "#4a5060" };
+// ── Helpers ────────────────────────────────────────────────────────────────────
+const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
+const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0) return "—"; return `${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
+const annualize=(t:number|undefined,y:number):number|null=>{if(t==null||t<=-1) return null; return Math.pow(1+t,1/y)-1;};
+const gClr=(v:number|null)=>{if(v==null) return T.textLight; if(v>0.15) return T.green; if(v>0.05) return "#5a9e7a"; if(v>0) return T.textMuted; return T.red;};
+function inferFactors(s:StockData):FactorScores { if(s.factor_scores) return s.factor_scores; return { upside:Math.min(1,Math.max(0,(s.upside||0)/80)), technical:Math.min(1,(s.bull_score||0)/10), analyst:s.grade_score||0, transcript:s.transcript_score??0.5, institutional:s.inst_score??0.5, insider:s.insider_score??0.5, earnings:Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)), news:s.news_score??0.5, proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5), catastrophe:s.catastrophe_score??1 }; }
+async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}/${ep}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
-// ─── Formatters ──────────────────────────────────────────────────────
-const fmtPct = (n: number | null | undefined) => n == null ? "—" : `${(n * 100).toFixed(1)}%`;
-const fmtUsd = (n: number | null | undefined) => n == null || n === 0 ? "—" : `$${n.toFixed(0)}`;
-const fmtNum = (n: number | null | undefined, d = 1) => n == null ? "—" : n.toFixed(d);
+// ── Shared Components ──────────────────────────────────────────────────────────
+function Card({children,style}:{children:React.ReactNode;style?:React.CSSProperties}){return<div style={{background:T.card,borderRadius:8,border:`1px solid ${T.cardBorder}`,boxShadow:T.cardShadow,padding:"16px 18px",...style}}>{children}</div>;}
+function SH({title,icon,sub}:{title:string;icon?:React.ReactNode;sub?:string}){return<div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:T.green,fontFamily:T.mono,textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:`2px solid ${T.greenLight}`}}>{icon}{title}{sub&&<span style={{marginLeft:"auto",fontSize:9,color:T.textLight,fontWeight:400,textTransform:"none",letterSpacing:0}}>{sub}</span>}</div>;}
+function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){return<div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}><span style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500}}>{label}</span><span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span></div>{sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}</div>;}
+function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
-/** Annualize a cumulative growth: (1+total)^(1/years) - 1 */
-const annualize = (total: number | undefined, years: number): number | null => {
-  if (total == null || total <= -1) return null;
-  return Math.pow(1 + total, 1 / years) - 1;
-};
-
-const growthColor = (v: number | null) => {
-  if (v == null) return "#4a5060";
-  if (v > 0.15) return "#2dd4a0";
-  if (v > 0.05) return "#5a9e7a";
-  if (v > 0) return "#7d8494";
-  return "#e5534b";
-};
-
-// ─── Shared Components ───────────────────────────────────────────────
-function Metric({ label, value, color, sub }: { label: string; value: string; color?: string; sub?: string }) {
-  return (
-    <div style={{ padding: "8px 0", borderBottom: "1px solid var(--border-subtle)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <span style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 500 }}>{label}</span>
-        <span style={{ fontSize: 12, color: color || "var(--text-primary)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{value}</span>
-      </div>
-      {sub && <div style={{ fontSize: 9, color: "#3a4050", marginTop: 2, fontFamily: "var(--font-mono)" }}>{sub}</div>}
-    </div>
+// ── Factor Radar (hero visual) ─────────────────────────────────────────────────
+function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-36;const vals=FACTOR_ORDER.map(k=>(scores as any)[k]??0);const n=vals.length;
+  const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
+  const avg=vals.reduce((a,b)=>a+b,0)/n;const fill=avg>0.6?T.green:avg>0.4?T.amber:T.red;
+  return(
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;} )}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+24),ly=cy+Math.sin(a)*(r+24),v=vals[i],c=v>0.7?T.green:v>0.4?T.amber:T.red;return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#e5e7eb" strokeWidth={0.6}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={c} fontWeight="700">{(v*100).toFixed(0)}</text></g>;})}
+      <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={fill} stroke="#fff" strokeWidth={1.5}/>)}
+    </svg>
   );
 }
 
-function SectionHeader({ title, sub }: { title: string; sub?: string }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8, paddingBottom: 6, borderBottom: "1px solid var(--border)" }}>
-      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>
-        {title}
-      </div>
-      {sub && <div style={{ fontSize: 9, color: "#3a4050", fontFamily: "var(--font-mono)" }}>{sub}</div>}
-    </div>
-  );
-}
+function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number;detail:string}){const c=score>0.7?T.green:score>0.4?T.amber:T.red;return<div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}><div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:T.text}}>{name}</span><span style={{fontSize:9,fontFamily:T.mono,color:T.textLight}}>({weight}%)</span></div><span style={{fontSize:13,fontFamily:T.mono,fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span></div><div style={{height:5,borderRadius:3,background:T.divider,overflow:"hidden",marginBottom:4}}><div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:c,transition:"width 0.4s ease"}}/></div><div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.5}}>{detail}</div></div>;}
 
-function ScoreRing({ value, label, max, color }: { value: number; label: string; max: number; color: string }) {
-  const pct = Math.min(value / max, 1);
-  const radius = 28;
-  const circ = 2 * Math.PI * radius;
-  const offset = circ * (1 - pct);
-  return (
-    <div style={{ textAlign: "center" }}>
-      <svg width="68" height="68" viewBox="0 0 68 68">
-        <circle cx="34" cy="34" r={radius} fill="none" stroke="var(--bg-hover)" strokeWidth="4" />
-        <circle cx="34" cy="34" r={radius} fill="none" stroke={color} strokeWidth="4"
-          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-          transform="rotate(-90 34 34)" style={{ transition: "stroke-dashoffset 0.5s" }} />
-        <text x="34" y="32" textAnchor="middle" fill={color} fontSize="13" fontFamily="var(--font-mono)" fontWeight="600">{value}</text>
-        <text x="34" y="44" textAnchor="middle" fill="var(--text-muted)" fontSize="8" fontFamily="var(--font-mono)">/{max}</text>
-      </svg>
-      <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{label}</div>
-    </div>
-  );
-}
+function factorDetail(k:string,s:StockData):string{const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";switch(k){case"upside":return`Target ${c}${s.target?.toFixed(0)??"?"} (${s.upside>0?"+":""}${s.upside?.toFixed(1)??"?"}%) · DCF ${c}${s.dcf_value?.toFixed(0)??"?"} · MoS ${fmtPct(s.margin_of_safety)}`;case"technical":return`Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;case"analyst":return`Grades ${s.grade_buy}/${s.grade_total} buy · Score ${(s.grade_score*100).toFixed(0)}%`;case"transcript":return s.transcript_summary||"No transcript available";case"institutional":return s.inst_holders_change!=null?`Holders QoQ ${(s.inst_holders_change*100).toFixed(1)}% · Shares QoQ ${((s.inst_accumulation??0)*100).toFixed(1)}%`:"No data";case"insider":return s.insider_buy_ratio!=null?`Buy ratio ${s.insider_buy_ratio?.toFixed(1)} · Net buys ${s.insider_net_buys??0}`:"No data";case"earnings":return`EPS beats ${s.eps_beats}/${s.eps_total}${s.earnings_momentum!=null?` · Momentum ${s.earnings_momentum>0?"+":""}${(s.earnings_momentum*100).toFixed(1)}%`:""}`;case"news":return s.news_sentiment!=null?`Sentiment ${s.news_sentiment>0?"+":""}${s.news_sentiment.toFixed(2)}`:"No data";case"proximity":return`At ${s.proximity_52wk!=null?(s.proximity_52wk*100).toFixed(0):"?"}% of range · High ${c}${s.year_high?.toFixed(0)} Low ${c}${s.year_low?.toFixed(0)}`;case"catastrophe":{const f=(s.reasons||[]).filter(r=>r.includes("⚠"));return f.length?f.join(" · "):"No red flags";}default:return"";}}
 
-function TargetBar({ price, target, dcf, buffett }: { price: number; target: number; dcf: number; buffett: number }) {
-  const values = [price, target, dcf, buffett].filter(v => v > 0);
-  if (values.length < 2) return null;
-  const min = Math.min(...values) * 0.8;
-  const max = Math.max(...values) * 1.1;
-  const range = max - min;
-  const pos = (v: number) => ((v - min) / range * 100);
-  return (
-    <div style={{ marginTop: 12, padding: "12px 0" }}>
-      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8, fontWeight: 600, letterSpacing: "0.08em" }}>
-        PRICE vs INTRINSIC VALUE
-      </div>
-      <div style={{ position: "relative", height: 40, background: "var(--bg-surface)", borderRadius: 4, border: "1px solid var(--border-subtle)" }}>
-        <div style={{ position: "absolute", left: `${pos(price)}%`, top: 0, bottom: 0, width: 2, background: "var(--text-primary)", zIndex: 2 }}>
-          <div style={{ position: "absolute", top: -16, left: -12, fontSize: 9, color: "var(--text-primary)", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>${price.toFixed(0)}</div>
-        </div>
-        {target > 0 && (
-          <div style={{ position: "absolute", left: `${pos(target)}%`, top: 8, width: 8, height: 8, borderRadius: "50%", background: "var(--accent-amber)", border: "2px solid var(--bg-surface)", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", bottom: -14, left: -8, fontSize: 8, color: "var(--accent-amber)", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>Target</div>
-          </div>
-        )}
-        {dcf > 0 && (
-          <div style={{ position: "absolute", left: `${pos(dcf)}%`, top: 20, width: 8, height: 8, borderRadius: "50%", background: "var(--accent-cyan)", border: "2px solid var(--bg-surface)", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", bottom: -14, left: -4, fontSize: 8, color: "var(--accent-cyan)", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>DCF</div>
-          </div>
-        )}
-        {buffett > 0 && buffett < max && (
-          <div style={{ position: "absolute", left: `${pos(buffett)}%`, top: 14, width: 8, height: 8, borderRadius: 2, background: "var(--accent-purple)", border: "2px solid var(--bg-surface)", transform: "translateX(-4px)" }}>
-            <div style={{ position: "absolute", top: -14, left: -8, fontSize: 8, color: "var(--accent-purple)", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>Buffett</div>
-          </div>
-        )}
-        {dcf > price && (
-          <div style={{ position: "absolute", left: `${pos(price)}%`, top: 0, bottom: 0, width: `${pos(dcf) - pos(price)}%`, background: "#2dd4a010" }} />
-        )}
-      </div>
-    </div>
-  );
-}
+// ── MomentumPanel ──────────────────────────────────────────────────────────────
+function MomentumPanel({s}:{s:StockData}){const gc=s.sma50>s.sma200,p50=s.price>s.sma50,p200=s.price>s.sma200;const rz=s.rsi>70?"Overbought":s.rsi>60?"Bullish":s.rsi>40?"Neutral":s.rsi>30?"Bearish":"Oversold";const rc=s.rsi>70?T.red:s.rsi<30?T.green:s.rsi>60?T.green:s.rsi<40?T.amber:T.textMuted;const r52=s.year_high-s.year_low,p52=r52>0?((s.price-s.year_low)/r52)*100:50;const inds=[{l:"MACD",v:s.macd_signal,b:s.macd_signal?.includes("bullish")},{l:"ADX",v:s.adx?.toFixed(1),b:s.adx>25},{l:"BB%B",v:s.bb_pct?.toFixed(2),b:s.bb_pct>0.2&&s.bb_pct<0.8},{l:"StochRSI",v:s.stoch_rsi?.toFixed(0),b:s.stoch_rsi>20&&s.stoch_rsi<80},{l:"OBV",v:s.obv_trend,b:s.obv_trend==="rising"}];return<Card><SH title="Momentum" icon={<Activity size={12}/>}/><div style={{marginBottom:14}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><div style={{width:8,height:8,borderRadius:"50%",background:gc?T.green:T.red,boxShadow:`0 0 6px ${gc?T.green:T.red}40`}}/><span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:gc?T.green:T.red}}>{gc?"Golden Cross":"Death Cross"}</span></div><div style={{display:"flex",gap:6}}>{[{l:`Price ${p50?">":"<"} SMA50`,ok:p50,v:fmtPrice(s.sma50)},{l:`Price ${p200?">":"<"} SMA200`,ok:p200,v:fmtPrice(s.sma200)}].map((m,i)=><div key={i} style={{flex:1,padding:"6px 8px",borderRadius:6,fontSize:10,fontFamily:T.mono,background:m.ok?T.greenLight:T.redLight,color:m.ok?T.green:T.red,border:`1px solid ${m.ok?T.greenBorder:"#fecaca"}`}}><div style={{fontWeight:600}}>{m.l}</div><div style={{fontSize:9,opacity:0.8,marginTop:1}}>{m.v}</div></div>)}</div></div><div style={{marginBottom:14}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>RSI</span><span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:rc}}>{s.rsi?.toFixed(1)} — {rz}</span></div><div style={{position:"relative",height:8,borderRadius:4,overflow:"hidden",background:`linear-gradient(to right, ${T.green} 0%, ${T.green} 30%, ${T.divider} 30%, ${T.divider} 70%, ${T.red} 70%, ${T.red} 100%)`}}><div style={{position:"absolute",left:`${s.rsi}%`,top:-2,width:12,height:12,borderRadius:"50%",background:"#fff",border:`2px solid ${rc}`,transform:"translateX(-6px)",boxShadow:"0 1px 3px rgba(0,0,0,0.15)"}}/></div><div style={{display:"flex",justifyContent:"space-between",fontSize:8,fontFamily:T.mono,color:T.textLight,marginTop:2}}><span>Oversold</span><span>Neutral</span><span>Overbought</span></div></div><div style={{marginBottom:14}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>52-Week Range</span><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>{p52.toFixed(0)}%</span></div><div style={{position:"relative",height:6,borderRadius:3,background:T.divider}}><div style={{position:"absolute",left:0,top:0,bottom:0,width:`${p52}%`,borderRadius:3,background:`linear-gradient(to right, ${T.green}, ${p52>80?T.amber:T.green})`}}/><div style={{position:"absolute",left:`${p52}%`,top:-3,width:12,height:12,borderRadius:"50%",background:"#fff",border:`2px solid ${T.green}`,transform:"translateX(-6px)",boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}/></div><div style={{display:"flex",justifyContent:"space-between",fontSize:9,fontFamily:T.mono,color:T.textLight,marginTop:3}}><span>{fmtPrice(s.year_low,s.currency)}</span><span style={{fontWeight:600,color:T.text}}>{fmtPrice(s.price,s.currency)}</span><span>{fmtPrice(s.year_high,s.currency)}</span></div></div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4}}>{inds.map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"#fafafa",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}><span style={{color:T.textMuted,fontWeight:500}}>{d.l}</span><span style={{color:d.b?T.green:T.textMuted,fontWeight:600}}>{d.v}</span></div>)}</div><div style={{marginTop:12}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>Bull Score</span><span style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:s.bull_score>=7?T.green:s.bull_score>=4?T.amber:T.red}}>{s.bull_score}/10</span></div><div style={{display:"flex",gap:3}}>{Array.from({length:10},(_,i)=>{const a=i<s.bull_score,c=s.bull_score>=7?T.green:s.bull_score>=4?T.amber:T.red;return<div key={i} style={{flex:1,height:6,borderRadius:3,background:a?c:T.divider}}/>;})}</div></div></Card>;}
 
-function BullDots({ score }: { score: number }) {
-  const c = score >= 7 ? "#2dd4a0" : score >= 4 ? "#e5a944" : "#e5534b";
-  return (
-    <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
-      {Array.from({ length: 10 }, (_, i) => (
-        <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: i < score ? c : "var(--bg-hover)", border: "1px solid var(--border)" }} />
-      ))}
-    </div>
-  );
-}
+// ── AnalystTrend ────────────────────────────────────────────────────────────────
+function AnalystTrend({symbol}:{symbol:string}){const[points,setPoints]=useState<SignalPoint[]>([]);const[loading,setLoading]=useState(true);const canvasRef=useRef<HTMLCanvasElement>(null);useEffect(()=>{const f=async()=>{const res:SignalPoint[]=[];const today=new Date();const ps:Promise<void>[]=[];for(let i=0;i<30;i++){const d=new Date(today);d.setDate(d.getDate()-i);const ds=d.toISOString().split("T")[0];ps.push(fetch(`${GCS_SIGNALS}/${ds}.json`).then(r=>r.ok?r.json():null).then(data=>{if(data?.signals){const sig=data.signals.find((s:any)=>s.symbol===symbol);if(sig)res.push({date:ds,composite:sig.composite,signal:sig.signal,price:sig.price,bull:sig.bull,mos:sig.mos,target:sig.target});}}).catch(()=>{}));}await Promise.all(ps);res.sort((a,b)=>a.date.localeCompare(b.date));setPoints(res);setLoading(false);};f();},[symbol]);useEffect(()=>{const cv=canvasRef.current;if(!cv||points.length<2)return;const ctx=cv.getContext("2d");if(!ctx)return;const dpr=window.devicePixelRatio||1,w=cv.offsetWidth,h=cv.offsetHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const cs=points.map(p=>p.composite),mn=Math.min(...cs)*0.95,mx=Math.max(...cs)*1.05,rng=mx-mn||1;const gr=ctx.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(45,122,79,0.15)");gr.addColorStop(1,"rgba(45,122,79,0)");ctx.beginPath();ctx.moveTo(0,h);points.forEach((p,i)=>{ctx.lineTo((i/(points.length-1))*w,h-((p.composite-mn)/rng)*h);});ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();ctx.beginPath();points.forEach((p,i)=>{const x=(i/(points.length-1))*w,y=h-((p.composite-mn)/rng)*h;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.strokeStyle=T.green;ctx.lineWidth=2;ctx.lineJoin="round";ctx.stroke();},[points]);const trend=(()=>{if(points.length<3)return{l:"Insufficient",i:<Minus size={12}/>,c:T.textLight};const f3=points.slice(0,3).reduce((s,p)=>s+p.composite,0)/3,l3=points.slice(-3).reduce((s,p)=>s+p.composite,0)/3,d=l3-f3;if(d>0.03)return{l:"Rising",i:<TrendingUp size={12}/>,c:T.green};if(d<-0.03)return{l:"Falling",i:<TrendingDown size={12}/>,c:T.red};return{l:"Stable",i:<Minus size={12}/>,c:T.amber};})();if(loading)return<Card><SH title="Signal Trend (30d)" icon={<TrendingUp size={12}/>}/><div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading...</div></Card>;return<Card><SH title="Signal Trend (30d)" icon={<TrendingUp size={12}/>}/>{points.length<2?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Not enough data yet.</div>:<><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><div style={{display:"flex",alignItems:"center",gap:6}}><span style={{color:trend.c}}>{trend.i}</span><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:trend.c}}>{trend.l}</span></div><span style={{fontSize:10,fontFamily:T.mono,color:T.textLight}}>{points.length}pts</span></div><div style={{position:"relative",height:60}}><canvas ref={canvasRef} style={{width:"100%",height:"100%",display:"block"}}/></div><div style={{display:"flex",justifyContent:"space-between",fontSize:8,fontFamily:T.mono,color:T.textLight,marginTop:4}}><span>{points[0]?.date.slice(5)}</span><span>{points[points.length-1]?.date.slice(5)}</span></div></>}</Card>;}
 
-// ─── Growth Rates Table ──────────────────────────────────────────────
-function GrowthCell({ value }: { value: number | null }) {
-  if (value == null) return <td style={cellStyle}>—</td>;
-  const pct = (value * 100).toFixed(1);
-  return <td style={{ ...cellStyle, color: growthColor(value), fontWeight: 600 }}>{pct}%</td>;
-}
+// ── TranscriptInsights ─────────────────────────────────────────────────────────
+function TranscriptInsights({symbol}:{symbol:string}){const[analysis,setAnalysis]=useState<string|null>(null);const[loading,setLoading]=useState(false);const[error,setError]=useState<string|null>(null);const f=useCallback(async()=>{setLoading(true);setError(null);try{const r=await fetch(`${CLOUD_RUN}/transcript?symbol=${symbol}`);if(!r.ok)throw new Error(await r.text());const d=await r.json();setAnalysis(d.analysis||d.error||"No analysis.");}catch(e:any){setError(e.message);}finally{setLoading(false);}},[symbol]);return<Card><SH title="Transcript Insights" icon={<Brain size={12}/>}/>{analysis?<div><div style={{fontSize:11,lineHeight:1.7,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap"}}>{analysis}</div><button onClick={f} style={{marginTop:12,background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:10,fontFamily:T.mono,color:T.textMuted,display:"flex",alignItems:"center",gap:4}}><RefreshCw size={10}/> Refresh</button></div>:<div style={{textAlign:"center",padding:"20px 0"}}><button onClick={f} disabled={loading} style={{background:loading?T.divider:T.green,border:"none",borderRadius:6,padding:"10px 20px",color:loading?T.textMuted:"#fff",fontFamily:T.mono,fontSize:11,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"inline-flex",alignItems:"center",gap:6}}>{loading?<><RefreshCw size={12} style={{animation:"spin 1s linear infinite"}}/> Analyzing...</>:<><Brain size={12}/> Analyze Earnings Call</>}</button>{error&&<div style={{marginTop:8,fontSize:10,color:T.red,fontFamily:T.mono}}>{error}</div>}<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8}}>Claude AI analyzes the latest transcript</div></div>}</Card>;}
 
-const cellStyle: React.CSSProperties = {
-  padding: "6px 10px", textAlign: "right", fontSize: 11, fontFamily: "var(--font-mono)",
-  borderBottom: "1px solid var(--border-subtle)", whiteSpace: "nowrap",
-};
-const headerCellStyle: React.CSSProperties = {
-  ...cellStyle, color: "var(--text-muted)", fontWeight: 500, fontSize: 10, letterSpacing: "0.05em",
-};
-const labelCellStyle: React.CSSProperties = {
-  ...cellStyle, textAlign: "left", color: "var(--text-secondary)", fontWeight: 500,
-};
+// ── TargetBar ──────────────────────────────────────────────────────────────────
+function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){const vs=[price,target,dcf,buffett].filter(v=>v>0);if(vs.length<2)return null;const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);return<div style={{marginTop:12,padding:"12px 0"}}><div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:8,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div><div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>{dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`${T.green}12`,borderRadius:4}}/>}<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}><div style={{position:"absolute",top:-16,left:-14,fontSize:9,color:T.text,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>{fmtPrice(price,currency)}</div></div>{target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-8,fontSize:8,color:T.amber,fontFamily:T.mono,whiteSpace:"nowrap"}}>Target</div></div>}{dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-4,fontSize:8,color:T.blue,fontFamily:T.mono,whiteSpace:"nowrap"}}>DCF</div></div>}{buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}><div style={{position:"absolute",top:-14,left:-8,fontSize:8,color:T.purple,fontFamily:T.mono,whiteSpace:"nowrap"}}>Buffett</div></div>}</div></div>;}
 
-function GrowthRatesPanel({ data, loading }: { data: GrowthData | null; loading: boolean }) {
-  if (loading) return <PanelLoader label="Growth Rates" />;
-  if (!data) return <PanelEmpty label="Growth Rates" />;
+// ── News Feed ──────────────────────────────────────────────────────────────────
+function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(d)setNews(d as NewsItem[]);setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
 
-  const rows: { label: string; y1: number | null; y3: number | null; y5: number | null; y10: number | null }[] = [
-    {
-      label: "Revenue",
-      y1: data.revenueGrowth,
-      y3: annualize(data.threeYRevenueGrowthPerShare, 3),
-      y5: annualize(data.fiveYRevenueGrowthPerShare, 5),
-      y10: annualize(data.tenYRevenueGrowthPerShare, 10),
-    },
-    {
-      label: "Operating Income",
-      y1: data.operatingIncomeGrowth,
-      y3: null, y5: null, y10: null, // FMP doesn't have compound OpInc
-    },
-    {
-      label: "EPS (diluted)",
-      y1: data.epsdilutedGrowth,
-      y3: annualize(data.threeYNetIncomeGrowthPerShare, 3),
-      y5: annualize(data.fiveYNetIncomeGrowthPerShare, 5),
-      y10: annualize(data.tenYNetIncomeGrowthPerShare, 10),
-    },
-    {
-      label: "Dividends/Share",
-      y1: data.dividendsPerShareGrowth,
-      y3: annualize(data.threeYDividendperShareGrowthPerShare, 3),
-      y5: annualize(data.fiveYDividendperShareGrowthPerShare, 5),
-      y10: annualize(data.tenYDividendperShareGrowthPerShare, 10),
-    },
-    {
-      label: "Book Value/Share",
-      y1: data.bookValueperShareGrowth,
-      y3: annualize(data.threeYShareholdersEquityGrowthPerShare, 3),
-      y5: annualize(data.fiveYShareholdersEquityGrowthPerShare, 5),
-      y10: annualize(data.tenYShareholdersEquityGrowthPerShare, 10),
-    },
-    {
-      label: "Operating Cash Flow",
-      y1: null, // not a direct field
-      y3: annualize(data.threeYOperatingCFGrowthPerShare, 3),
-      y5: annualize(data.fiveYOperatingCFGrowthPerShare, 5),
-      y10: annualize(data.tenYOperatingCFGrowthPerShare, 10),
-    },
-    {
-      label: "Free Cash Flow",
-      y1: data.freeCashFlowGrowth,
-      y3: null, y5: null, y10: null,
-    },
-  ];
+// ── FMP Growth ─────────────────────────────────────────────────────────────────
+const cs_:React.CSSProperties={padding:"6px 10px",textAlign:"right",fontSize:11,fontFamily:T.mono,borderBottom:`1px solid ${T.divider}`,whiteSpace:"nowrap"};const hs_:React.CSSProperties={...cs_,color:T.textMuted,fontWeight:500,fontSize:10};const ls_:React.CSSProperties={...cs_,textAlign:"left",color:T.textMuted,fontWeight:500};function GC({v}:{v:number|null}){if(v==null)return<td style={cs_}>—</td>;return<td style={{...cs_,color:gClr(v),fontWeight:600}}>{(v*100).toFixed(1)}%</td>;}
+function GrowthPanel({data,loading}:{data:GrowthData|null;loading:boolean}){if(loading)return<Card><SH title="Growth Rates" sub="Compound Annual" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;if(!data)return null;const rows=[{l:"Revenue",y1:data.revenueGrowth,y3:annualize(data.threeYRevenueGrowthPerShare,3),y5:annualize(data.fiveYRevenueGrowthPerShare,5),y10:annualize(data.tenYRevenueGrowthPerShare,10)},{l:"EPS",y1:data.epsdilutedGrowth,y3:annualize(data.threeYNetIncomeGrowthPerShare,3),y5:annualize(data.fiveYNetIncomeGrowthPerShare,5),y10:annualize(data.tenYNetIncomeGrowthPerShare,10)},{l:"Dividends/Sh",y1:data.dividendsPerShareGrowth,y3:annualize(data.threeYDividendperShareGrowthPerShare,3),y5:annualize(data.fiveYDividendperShareGrowthPerShare,5),y10:annualize(data.tenYDividendperShareGrowthPerShare,10)},{l:"Book Value/Sh",y1:data.bookValueperShareGrowth,y3:annualize(data.threeYShareholdersEquityGrowthPerShare,3),y5:annualize(data.fiveYShareholdersEquityGrowthPerShare,5),y10:annualize(data.tenYShareholdersEquityGrowthPerShare,10)},{l:"Oper. CF",y1:null,y3:annualize(data.threeYOperatingCFGrowthPerShare,3),y5:annualize(data.fiveYOperatingCFGrowthPerShare,5),y10:annualize(data.tenYOperatingCFGrowthPerShare,10)},{l:"Free CF",y1:data.freeCashFlowGrowth,y3:null,y5:null,y10:null}];return<Card><SH title="Growth Rates" sub="Compound Annual" icon={<BarChart2 size={12}/>}/><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>1Y</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{rows.map(r=><tr key={r.l}><td style={ls_}>{r.l}</td><GC v={r.y1}/><GC v={r.y3}/><GC v={r.y5}/><GC v={r.y10}/></tr>)}</tbody></table></Card>;}
+function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const a5=(f:keyof RatioYear)=>{const vs=ratios.slice(0,5).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>5Y Avg</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number,av=a5(f);return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cv!=null&&th!=null&&cv>=th?T.green:T.text,fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(av,isR)}</td></tr>;})}</tbody></table></Card>;}
+function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ms:[string,keyof RatioYear][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["Div%","dividendYieldPercentage"]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}</tr></thead><tbody>{ms.map(([l,f])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(1):"—"}</td>;})}</tr>)}</tbody></table></div></Card>;}
 
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title="Growth Rates" sub="Compound Annual" />
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ ...headerCellStyle, textAlign: "left" }}>Metric</th>
-              <th style={headerCellStyle}>1 Yr</th>
-              <th style={headerCellStyle}>3 Yr</th>
-              <th style={headerCellStyle}>5 Yr</th>
-              <th style={headerCellStyle}>10 Yr</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <td style={labelCellStyle}>{r.label}</td>
-                <GrowthCell value={r.y1} />
-                <GrowthCell value={r.y3} />
-                <GrowthCell value={r.y5} />
-                <GrowthCell value={r.y10} />
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
+// ── Main Page ──────────────────────────────────────────────────────────────────
+export default function StockDetail(){
+  const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
+  const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
+  const[growthData,setGrowthData]=useState<GrowthData|null>(null);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
 
-// ─── Profitability Panel ─────────────────────────────────────────────
-function ProfitabilityPanel({ ratios, loading }: { ratios: RatioYear[]; loading: boolean }) {
-  if (loading) return <PanelLoader label="Profitability" />;
-  if (!ratios.length) return <PanelEmpty label="Profitability" />;
+  useEffect(()=>{if(!symbol)return;fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()).then(d=>{const f=d.stocks?.find((s:StockData)=>s.symbol===symbol.toUpperCase());setStock(f||null);setLoading(false);}).catch(()=>{setStock(null);setLoading(false);});},[symbol]);
+  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("financial-statement-growth",{symbol:sym,limit:1}),fmpFetch("metrics-ratios",{symbol:sym,period:"annual",limit:10})]).then(([g,r])=>{if(g?.length)setGrowthData(g[0]as GrowthData);if(r?.length)setRatios(r as RatioYear[]);setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
 
-  const current = ratios[0]; // most recent
-  const avg5 = (field: keyof RatioYear) => {
-    const vals = ratios.slice(0, 5).map(r => r[field] as number).filter(v => v != null && isFinite(v));
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-  };
+  if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
+  if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
 
-  const metrics: { label: string; field: keyof RatioYear; threshold?: number }[] = [
-    { label: "Return on Equity", field: "returnOnEquity", threshold: 0.15 },
-    { label: "Return on Assets", field: "returnOnAssets", threshold: 0.08 },
-    { label: "Return on Capital", field: "returnOnCapitalEmployed", threshold: 0.12 },
-    { label: "Gross Margin", field: "grossProfitMargin", threshold: 0.40 },
-    { label: "Operating Margin", field: "operatingProfitMargin", threshold: 0.15 },
-    { label: "Net Margin", field: "netProfitMargin", threshold: 0.10 },
-    { label: "FCF / Oper. CF", field: "freeCashFlowOperatingCashFlowRatio" },
-    { label: "Current Ratio", field: "currentRatio" },
-    { label: "Debt / Equity", field: "debtToEquityRatio" },
-    { label: "Interest Coverage", field: "interestCoverageRatio" },
-    { label: "Dividend Payout", field: "dividendPayoutRatio" },
-  ];
+  const s=stock, sigStyle=SIG_C[s.signal]||SIG_C.HOLD, clsColor=CLS_C[s.classification]||T.textMuted, scores=inferFactors(s);
 
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title="Profitability" sub={`FY ${current.fiscalYear}`} />
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ ...headerCellStyle, textAlign: "left" }}>Metric</th>
-            <th style={headerCellStyle}>Current</th>
-            <th style={headerCellStyle}>5Y Avg</th>
-          </tr>
-        </thead>
-        <tbody>
-          {metrics.map(({ label, field, threshold }) => {
-            const cur = current[field] as number;
-            const a5 = avg5(field);
-            const isRatio = !label.includes("Margin") && !label.includes("Return") && !label.includes("Payout") && !label.includes("FCF");
-            const fmt = (v: number | null) => {
-              if (v == null || !isFinite(v)) return "—";
-              if (isRatio) return v.toFixed(2);
-              return (v * 100).toFixed(1) + "%";
-            };
-            const clr = (v: number | null) => {
-              if (v == null || threshold == null) return "var(--text-primary)";
-              return v >= threshold ? "var(--accent-green)" : "var(--text-secondary)";
-            };
-            return (
-              <tr key={label}>
-                <td style={labelCellStyle}>{label}</td>
-                <td style={{ ...cellStyle, color: clr(cur), fontWeight: 600 }}>{fmt(cur)}</td>
-                <td style={{ ...cellStyle, color: "var(--text-secondary)" }}>{fmt(a5)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ─── Valuation History Panel ─────────────────────────────────────────
-function ValuationPanel({ ratios, loading }: { ratios: RatioYear[]; loading: boolean }) {
-  if (loading) return <PanelLoader label="Valuation History" />;
-  if (!ratios.length) return <PanelEmpty label="Valuation History" />;
-
-  // Show up to 10 years, most recent first → reverse for left-to-right chronological
-  const years = [...ratios].reverse();
-
-  const metrics: { label: string; field: keyof RatioYear; decimals?: number }[] = [
-    { label: "P/E", field: "priceToEarningsRatio", decimals: 1 },
-    { label: "P/S", field: "priceToSalesRatio", decimals: 1 },
-    { label: "P/B", field: "priceToBookRatio", decimals: 1 },
-    { label: "P/CF", field: "priceToOperatingCashFlowRatio", decimals: 1 },
-    { label: "P/FCF", field: "priceToFreeCashFlowRatio", decimals: 1 },
-    { label: "Div Yield %", field: "dividendYieldPercentage", decimals: 2 },
-  ];
-
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title="Valuation History" sub="Annual" />
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ ...headerCellStyle, textAlign: "left", position: "sticky", left: 0, background: "var(--bg-surface)", zIndex: 1 }}>Metric</th>
-              {years.map(y => (
-                <th key={y.fiscalYear} style={headerCellStyle}>{y.fiscalYear}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {metrics.map(({ label, field, decimals }) => (
-              <tr key={label}>
-                <td style={{ ...labelCellStyle, position: "sticky", left: 0, background: "var(--bg-surface)", zIndex: 1 }}>{label}</td>
-                {years.map(y => {
-                  const v = y[field] as number;
-                  const s = v != null && isFinite(v) && v > 0 ? v.toFixed(decimals ?? 1) : "—";
-                  return <td key={y.fiscalYear} style={{ ...cellStyle, color: "var(--text-primary)" }}>{s}</td>;
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// ─── Per-Share Data Panel ────────────────────────────────────────────
-function PerSharePanel({ ratios, loading }: { ratios: RatioYear[]; loading: boolean }) {
-  if (loading) return <PanelLoader label="Per Share Data" />;
-  if (!ratios.length) return <PanelEmpty label="Per Share Data" />;
-
-  const years = [...ratios].reverse();
-
-  const metrics: { label: string; field: keyof RatioYear }[] = [
-    { label: "Revenue / Share", field: "revenuePerShare" },
-    { label: "EPS", field: "netIncomePerShare" },
-    { label: "Book Value / Share", field: "bookValuePerShare" },
-    { label: "Oper. CF / Share", field: "operatingCashFlowPerShare" },
-    { label: "FCF / Share", field: "freeCashFlowPerShare" },
-    { label: "Dividends / Share", field: "dividendPerShare" },
-  ];
-
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title="Per Share Data" sub="Annual" />
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ ...headerCellStyle, textAlign: "left", position: "sticky", left: 0, background: "var(--bg-surface)", zIndex: 1 }}>Metric</th>
-              {years.map(y => (
-                <th key={y.fiscalYear} style={headerCellStyle}>{y.fiscalYear}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {metrics.map(({ label, field }) => (
-              <tr key={label}>
-                <td style={{ ...labelCellStyle, position: "sticky", left: 0, background: "var(--bg-surface)", zIndex: 1 }}>{label}</td>
-                {years.map(y => {
-                  const v = y[field] as number;
-                  const s = v != null && isFinite(v) ? v.toFixed(2) : "—";
-                  return <td key={y.fiscalYear} style={cellStyle}>{s}</td>;
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────
-const panelStyle: React.CSSProperties = {
-  background: "var(--bg-surface)", borderRadius: 5, border: "1px solid var(--border-subtle)", padding: "14px 16px", marginBottom: 16,
-};
-
-function PanelLoader({ label }: { label: string }) {
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title={label} />
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 24, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
-        <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-        Fetching from FMP...
-      </div>
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-    </div>
-  );
-}
-
-function PanelEmpty({ label }: { label: string }) {
-  return (
-    <div style={panelStyle}>
-      <SectionHeader title={label} />
-      <div style={{ textAlign: "center", padding: 24, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
-        No data available
-      </div>
-    </div>
-  );
-}
-
-// ─── FMP Fetch Helper ────────────────────────────────────────────────
-async function fmpFetch(endpoint: string, params: Record<string, string | number>) {
-  const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => qs.set(k, String(v)));
-  try {
-    const res = await fetch(`${FMP_PROXY}/${endpoint}?${qs.toString()}`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    return Array.isArray(data) ? data : data ? [data] : null;
-  } catch {
-    return null;
-  }
-}
-
-// ─── Main Component ──────────────────────────────────────────────────
-export default function StockDetail() {
-  const params = useParams();
-  const router = useRouter();
-  const symbol = typeof params?.symbol === "string" ? params.symbol : "";
-  const [stock, setStock] = useState<StockData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // FMP live data
-  const [growthData, setGrowthData] = useState<GrowthData | null>(null);
-  const [ratios, setRatios] = useState<RatioYear[]>([]);
-  const [fmpLoading, setFmpLoading] = useState(true);
-
-  // Load scan data from GCS
-  useEffect(() => {
-    if (!symbol) return;
-    fetch(`${GCS_BASE}/latest.json`)
-      .then(r => r.json())
-      .then(data => {
-        const found = data.stocks?.find((s: StockData) => s.symbol === symbol.toUpperCase());
-        if (found) { setStock(found); setLoading(false); }
-        else { setStock(null); setLoading(false); }
-      })
-      .catch(() => { setStock(null); setLoading(false); });
-  }, [symbol]);
-
-  // Fetch live FMP data
-  useEffect(() => {
-    if (!symbol) return;
-    setFmpLoading(true);
-    const sym = symbol.toUpperCase();
-
-    Promise.all([
-      fmpFetch("financial-statement-growth", { symbol: sym, limit: 1 }),
-      fmpFetch("metrics-ratios", { symbol: sym, period: "annual", limit: 10 }),
-    ]).then(([growthRes, ratiosRes]) => {
-      if (growthRes && growthRes.length) setGrowthData(growthRes[0] as GrowthData);
-      if (ratiosRes && ratiosRes.length) setRatios(ratiosRes as RatioYear[]);
-      setFmpLoading(false);
-    }).catch(() => setFmpLoading(false));
-  }, [symbol]);
-
-  if (loading) return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <span style={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: 12 }}>Loading {symbol}...</span>
-    </div>
-  );
-
-  if (!stock) return (
-    <div style={{ minHeight: "100vh", padding: 40 }}>
-      <button onClick={() => router.push("/")} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-mono)", fontSize: 12, marginBottom: 24 }}>
-        <ArrowLeft size={14} /> Back
-      </button>
-      <div style={{ textAlign: "center", padding: 60, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-        No data found for {symbol}. Run a scan first.
-      </div>
-    </div>
-  );
-
-  const s = stock;
-  const sigColor = SIG_C[s.signal] || "#7d8494";
-  const clsColor = CLS_C[s.classification] || "#4a5060";
-
-  return (
-    <div style={{ minHeight: "100vh", padding: "16px 20px", maxWidth: 1200, margin: "0 auto" }}>
-      {/* Back nav */}
-      <button onClick={() => router.push("/")} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer",
-        display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--font-mono)", fontSize: 11, marginBottom: 16, padding: 0 }}>
-        <ArrowLeft size={13} /> SCREENER/v5
-      </button>
+  return(
+    <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
+      <button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:5,fontFamily:T.mono,fontSize:11,marginBottom:16,padding:0}}><ArrowLeft size={13}/> SCREENER</button>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid var(--border)" }}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,paddingBottom:16,borderBottom:`1px solid ${T.divider}`}}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text-bright)", fontFamily: "var(--font-mono)", letterSpacing: "0.02em", margin: 0 }}>{s.symbol}</h1>
-            <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 3, border: `1px solid ${clsColor}30`, color: clsColor,
-              fontFamily: "var(--font-mono)", fontWeight: 600 }}>{s.classification?.replace("_", " ")}</span>
-            <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 3, fontWeight: 700, fontFamily: "var(--font-mono)", letterSpacing: "0.07em",
-              color: sigColor, background: `${sigColor}12`, border: `1px solid ${sigColor}25` }}>{s.signal}</span>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+            <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
+            <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
+            <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span>
           </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-            <span style={{ fontSize: 28, fontWeight: 600, color: "var(--text-bright)", fontFamily: "var(--font-mono)" }}>${s.price.toFixed(2)}</span>
-            <span style={{ fontSize: 13, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{s.currency}</span>
-          </div>
+          <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Composite Score</div>
-          <div style={{ fontSize: 32, fontWeight: 700, fontFamily: "var(--font-mono)",
-            color: s.composite > 0.6 ? "#2dd4a0" : s.composite > 0.4 ? "var(--text-primary)" : "#e5534b" }}>
-            {s.composite.toFixed(2)}
-          </div>
-        </div>
+        <div style={{textAlign:"right"}}><div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div><div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:s.composite>0.6?T.green:s.composite>0.4?T.text:T.red}}>{s.composite.toFixed(2)}</div></div>
       </div>
 
-      {/* Chart placeholder */}
-      <div style={{ background: "var(--bg-surface)", borderRadius: 5, border: "1px solid var(--border-subtle)", padding: 20, marginBottom: 16, minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ textAlign: "center" }}>
-          <BarChart3 size={32} color="var(--border)" />
-          <div style={{ fontSize: 11, color: "#2a3040", fontFamily: "var(--font-mono)", marginTop: 8 }}>
-            TradingView chart — integrate with charting library
-          </div>
-          <div style={{ fontSize: 10, color: "var(--border)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
-            SMA50: {s.sma50.toFixed(0)} · SMA200: {s.sma200.toFixed(0)} · 52wk: {s.year_low.toFixed(0)}–{s.year_high.toFixed(0)}
-          </div>
+      {/* TradingView */}
+      <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${s.symbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+
+      {/* ═══ FACTOR BREAKDOWN — Signature v6 ═══ */}
+      <Card style={{marginBottom:16}}>
+        <SH title="10-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)}`}/>
+        <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:24}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={scores}/></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]??0} detail={factorDetail(k,s)}/>)}</div>
         </div>
+      </Card>
+
+      {/* 3-column */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
+        <MomentumPanel s={s}/>
+        <Card>
+          <SH title="Buffett Value"/>
+          <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}><ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?T.green:s.piotroski>=5?T.amber:T.red}/></div>
+          <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?T.green:T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
+          <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?T.green:T.textMuted}/>
+          <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?T.green:T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
+          <Metric label="Rev CAGR 3Y" value={fmtPct(s.revenue_cagr_3y)} color={s.revenue_cagr_3y>0.1?T.green:T.textMuted}/>
+          <Metric label="EPS CAGR 3Y" value={fmtPct(s.eps_cagr_3y)} color={s.eps_cagr_3y>0.1?T.green:T.textMuted}/>
+          <Metric label="Altman Z" value={s.altman_z?.toFixed(1)} color={s.altman_z>3?T.green:s.altman_z>1.8?T.amber:T.red} sub={s.altman_z>3?"Safe zone":s.altman_z>1.8?"Grey zone":"⚠ Distress"}/>
+          <Metric label="OE Yield" value={fmtPct(s.owner_earnings_yield)} color={s.owner_earnings_yield>0.045?T.green:T.textMuted} sub="vs 4.5% risk-free"/>
+          <TargetBar price={s.price} target={s.target} dcf={s.dcf_value} buffett={s.intrinsic_buffett} currency={s.currency}/>
+        </Card>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}><AnalystTrend symbol={s.symbol}/><TranscriptInsights symbol={s.symbol}/></div>
       </div>
 
-      {/* 3-column layout: Technicals / Buffett / Analyst */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
-        {/* Technical */}
-        <div style={panelStyle}>
-          <SectionHeader title="Technicals" />
-          <div style={{ display: "flex", justifyContent: "center", gap: 16, margin: "12px 0" }}>
-            <ScoreRing value={s.bull_score} label="Bull" max={10} color={s.bull_score >= 7 ? "#2dd4a0" : s.bull_score >= 4 ? "#e5a944" : "#e5534b"} />
-            <ScoreRing value={Math.round(s.rsi)} label="RSI" max={100} color={s.rsi > 70 ? "#e5534b" : s.rsi < 30 ? "#2dd4a0" : "#7d8494"} />
-            <ScoreRing value={Math.round(s.adx)} label="ADX" max={60} color={s.adx > 25 ? "#e5a944" : "#4a5060"} />
-          </div>
-          <Metric label="MACD" value={s.macd_signal} color={s.macd_signal.includes("bullish") ? "#2dd4a0" : "#e5534b"} />
-          <Metric label="Bollinger %B" value={s.bb_pct.toFixed(2)} />
-          <Metric label="Stoch RSI" value={s.stoch_rsi.toFixed(0)} />
-          <Metric label="OBV Trend" value={s.obv_trend} color={s.obv_trend === "rising" ? "#2dd4a0" : s.obv_trend === "falling" ? "#e5534b" : "#7d8494"} />
-          <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: 9, color: "#3a4050", fontFamily: "var(--font-mono)", marginBottom: 4 }}>MOMENTUM</div>
-            <BullDots score={s.bull_score} />
-          </div>
-        </div>
+      {/* FMP */}
+      <GrowthPanel data={growthData} loading={fmpLoading}/>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
 
-        {/* Buffett Value */}
-        <div style={panelStyle}>
-          <SectionHeader title="Buffett Value" />
-          <div style={{ display: "flex", justifyContent: "center", gap: 16, margin: "12px 0" }}>
-            <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski >= 7 ? "#2dd4a0" : s.piotroski >= 5 ? "#e5a944" : "#e5534b"} />
-          </div>
-          <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg > 0.15 ? "#2dd4a0" : "#7d8494"} sub={s.roe_consistent ? "✓ Consistent >15% all years" : ""} />
-          <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg > 0.12 ? "#2dd4a0" : "#7d8494"} />
-          <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin > 0.5 ? "#2dd4a0" : "#7d8494"}
-            sub={s.gross_margin_trend === "expanding" ? "↑ Expanding" : s.gross_margin_trend === "contracting" ? "↓ Contracting" : "→ Stable"} />
-          <Metric label="Revenue CAGR 3Y" value={fmtPct(s.revenue_cagr_3y)} color={s.revenue_cagr_3y > 0.1 ? "#2dd4a0" : "#7d8494"} />
-          <Metric label="EPS CAGR 3Y" value={fmtPct(s.eps_cagr_3y)} color={s.eps_cagr_3y > 0.1 ? "#2dd4a0" : "#7d8494"} />
-          <Metric label="Altman Z" value={s.altman_z.toFixed(1)} color={s.altman_z > 3 ? "#2dd4a0" : s.altman_z > 1.8 ? "#e5a944" : "#e5534b"}
-            sub={s.altman_z > 3 ? "Safe zone" : s.altman_z > 1.8 ? "Grey zone" : "⚠ Distress zone"} />
-          <Metric label="OE Yield" value={fmtPct(s.owner_earnings_yield)}
-            color={s.owner_earnings_yield > 0.045 ? "#2dd4a0" : "#7d8494"} sub="vs 4.5% risk-free" />
-        </div>
+      {/* News */}
+      <div style={{marginBottom:16}}><NewsFeed symbol={s.symbol}/></div>
 
-        {/* Analyst + Valuation */}
-        <div style={panelStyle}>
-          <SectionHeader title="Analyst & Valuation" />
-          <div style={{ margin: "12px 0" }}>
-            <div style={{ display: "flex", gap: 3, justifyContent: "center" }}>
-              {Array.from({ length: s.eps_total || 1 }, (_, i) => (
-                <div key={i} style={{ width: 20, height: 20, borderRadius: 3,
-                  background: i < s.eps_beats ? "#2dd4a015" : "#e5534b15",
-                  border: `1px solid ${i < s.eps_beats ? "#2dd4a030" : "#e5534b20"}`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 9, color: i < s.eps_beats ? "#2dd4a0" : "#e5534b", fontFamily: "var(--font-mono)" }}>
-                  {i < s.eps_beats ? "✓" : "✗"}
-                </div>
-              ))}
-            </div>
-            <div style={{ textAlign: "center", fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 4 }}>
-              EPS beats: {s.eps_beats}/{s.eps_total}
-            </div>
-          </div>
-          <Metric label="Price Target" value={fmtUsd(s.target)} sub={s.target > 0 ? `${s.upside > 0 ? "+" : ""}${s.upside.toFixed(1)}% upside` : ""}
-            color={s.upside > 20 ? "#2dd4a0" : s.upside > 0 ? "#7d8494" : "#e5534b"} />
-          <Metric label="Buy Grades" value={s.grade_total > 0 ? `${s.grade_buy}/${s.grade_total}` : "—"}
-            sub={s.grade_total > 0 ? `${(s.grade_score * 100).toFixed(0)}% bullish` : ""} />
-          <Metric label="Margin of Safety" value={fmtPct(s.margin_of_safety)}
-            color={s.margin_of_safety > 0.15 ? "#2dd4a0" : s.margin_of_safety > 0 ? "#5a9e7a" : "#e5534b"} />
-          <Metric label="DCF Value" value={fmtUsd(s.dcf_value)} />
-          <Metric label="Buffett Value" value={fmtUsd(s.intrinsic_buffett)} />
-          <Metric label="Value Score" value={s.value_score.toFixed(2)} color={s.value_score > 0.5 ? "#2dd4a0" : "#7d8494"} />
-          <TargetBar price={s.price} target={s.target} dcf={s.dcf_value} buffett={s.intrinsic_buffett} />
-        </div>
-      </div>
+      {/* Signals */}
+      {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
 
-      {/* ═══════════════════════════════════════════════════════════════
-          NEW: Growth + Profitability + Valuation panels from FMP
-          ═══════════════════════════════════════════════════════════════ */}
-
-      {/* Growth Rates — full width */}
-      <GrowthRatesPanel data={growthData} loading={fmpLoading} />
-
-      {/* Profitability + Valuation — 2-column */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-        <ProfitabilityPanel ratios={ratios} loading={fmpLoading} />
-        <ValuationPanel ratios={ratios} loading={fmpLoading} />
-      </div>
-
-      {/* Per Share Data — full width */}
-      <PerSharePanel ratios={ratios} loading={fmpLoading} />
-
-      {/* Signal reasons */}
-      {s.reasons && s.reasons.length > 0 && (
-        <div style={panelStyle}>
-          <SectionHeader title="Active Signals" />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
-            {s.reasons.map((r, i) => (
-              <span key={i} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 3, fontFamily: "var(--font-mono)",
-                background: r.includes("⚠") ? "#e5534b10" : "#2dd4a008",
-                border: `1px solid ${r.includes("⚠") ? "#e5534b20" : "#2dd4a015"}`,
-                color: r.includes("⚠") ? "#e5534b" : "#7d8494" }}>
-                {r}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Transcript placeholder */}
-      <div style={panelStyle}>
-        <SectionHeader title="Transcript Insights" />
-        <div style={{ textAlign: "center", padding: 24 }}>
-          <button style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", borderRadius: 4, padding: "8px 16px",
-            color: "var(--text-secondary)", fontFamily: "var(--font-mono)", fontSize: 11, cursor: "pointer" }}>
-            Analyze Latest Earnings Call
-          </button>
-          <div style={{ fontSize: 9, color: "#2a3040", fontFamily: "var(--font-mono)", marginTop: 6 }}>
-            Requires ANTHROPIC_API_KEY — Claude will summarize the latest transcript
-          </div>
-        </div>
-      </div>
+      <Card style={{marginBottom:16}}><SH title="Performance Since Signal"/><div style={{textAlign:"center",padding:20,color:T.textLight,fontFamily:T.mono,fontSize:11}}>Performance tracking populates after signal history accumulates.<br/>First signal: {new Date().toLocaleDateString("en-GB")} at {fmtPrice(s.price,s.currency)}</div></Card>
     </div>
   );
 }

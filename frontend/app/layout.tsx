@@ -3,8 +3,8 @@ import "./globals.css";
 import Nav from "./nav";
 
 export const metadata: Metadata = {
-  title: "Stock Screener — Buffett Value + Technical + Analyst",
-  description: "AI-powered stock screener with Warren Buffett value investing methodology",
+  title: "CB Screener v6 — 10-Factor Stock Analysis",
+  description: "AI-powered stock screener with 10-factor composite scoring",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
