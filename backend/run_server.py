@@ -31,7 +31,6 @@ def analyze_transcript(symbol: str, transcript: str) -> str:
     if not transcript:
         return f"No transcript found for {symbol}."
 
-    # Truncate to ~80k chars to stay within context limits
     text = transcript[:80000]
 
     resp = requests.post(
@@ -47,11 +46,11 @@ def analyze_transcript(symbol: str, transcript: str) -> str:
             "messages": [{"role": "user", "content": f"""Analyze this earnings call transcript for {symbol}. Be concise and structured.
 
 Provide:
-1. **Key Themes** — 3-5 major topics discussed
-2. **Guidance** — any forward guidance on revenue, EPS, margins, or growth
-3. **Risks** — concerns raised by management or analysts
-4. **Competitive Position** — moat, market share, or competitive dynamics mentioned
-5. **Buffett Score** — rate 1-10 how well this company fits Warren Buffett's investment criteria based on what management discussed (durable competitive advantage, predictable earnings, honest/capable management, reinvestment opportunities)
+1. **Key Themes** - 3-5 major topics discussed
+2. **Guidance** - any forward guidance on revenue, EPS, margins, or growth
+3. **Risks** - concerns raised by management or analysts
+4. **Competitive Position** - moat, market share, or competitive dynamics mentioned
+5. **Buffett Score** - rate 1-10 how well this company fits Warren Buffett's investment criteria based on what management discussed (durable competitive advantage, predictable earnings, honest/capable management, reinvestment opportunities)
 
 Transcript:
 {text}"""}],
@@ -60,10 +59,9 @@ Transcript:
     )
 
     if resp.status_code != 200:
-        return f"Claude API error: {resp.status_code} — {resp.text[:200]}"
+        return f"Claude API error: {resp.status_code} - {resp.text[:200]}"
 
     data = resp.json()
-    # Extract text from content blocks
     return "".join(
         block.get("text", "") for block in data.get("content", []) if block.get("type") == "text"
     )
@@ -123,12 +121,11 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"status": "ok", "version": "v5"}).encode())
             return
 
-        # Default
         self.send_response(200)
         self._cors()
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
-        self.wfile.write(b"Stock Screener v5 — POST to run scan, GET /transcript?symbol=X for AI analysis")
+        self.wfile.write(b"Stock Screener v5 - POST to run scan, GET /transcript?symbol=X for AI analysis")
 
     def do_POST(self):
         try:
