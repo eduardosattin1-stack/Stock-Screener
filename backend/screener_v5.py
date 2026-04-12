@@ -26,7 +26,7 @@ SMTP_USER = os.environ.get("SMTP_USER", "")
 SMTP_PASS = os.environ.get("SMTP_PASS", "")
 EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
 
-RATE_LIMIT = 0.12  # seconds between API calls (3000/min on Ultimate)
+RATE_LIMIT = 0.04  # seconds between API calls (3000/min on Ultimate)
 RISK_FREE = 0.045  # 10yr treasury ~4.5%
 TOP_N = 15
 SIGNAL_LOG = os.environ.get("SIGNAL_LOG", "signal_history.json")
