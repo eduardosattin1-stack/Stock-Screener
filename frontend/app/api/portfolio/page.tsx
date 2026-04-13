@@ -99,25 +99,37 @@ export default function Portfolio(){
   };
 
   // NEW: Sync to Cloud Logic
-  const handleSync = async () => {
-    setIsSyncing(true);
+    const handleSync = async () => {
+    setSyncing(true);
     try {
-      const res = await fetch("/api/portfolio/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ positions: portfolio, history: history })
+      // 1. Prepare the data to match what your route.ts expects
+      const payload = {
+        positions: positions,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // 2. Send the POST request to your API
+      const response = await fetch('/api/portfolio/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
-      if (res.ok) {
-        alert("Successfully synced portfolio to Cloud!");
-        setSource("gcs");
-      } else {
-        alert("Failed to sync. Make sure your API route is configured.");
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
       }
-    } catch(e) {
-      alert("Network error during sync.");
+
+      setLastSynced(new Date());
+      alert('Sync successful! Google Cloud Storage updated.');
+    } catch (error) {
+      console.error('Sync failed:', error);
+      alert('Failed to sync. Make sure your Vercel Environment Variables are set.');
+    } finally {
+      setSyncing(false);
     }
-    setIsSyncing(false);
-  };
+    };
 
   const removePosition = (sym: string) => {
     const pos = portfolio.find(p => p.symbol === sym);
