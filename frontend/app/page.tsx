@@ -8,6 +8,7 @@ const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbrid
 // ── Types ───────────────────────────────────────────────────────────────────
 interface FactorScores { technical:number; quality:number; proximity:number; catalyst:number; transcript:number; upside:number; institutional:number; analyst:number; insider:number; earnings:number; }
 interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve:number; yield_level:number; vix:number; cpi_trend:number; gdp_momentum:number; }; }
+
 interface StockData {
   symbol:string; price:number; currency:string; market_cap:number;
   sma50:number; sma200:number; year_high:number; year_low:number; volume:number;
@@ -22,11 +23,23 @@ interface StockData {
   intrinsic_avg:number; margin_of_safety:number; value_score:number;
   composite:number; signal:string; classification:string; reasons:string[];
   factor_scores?:FactorScores;
-  quality_score?:number; catalyst_score?:number; catalyst_flags?:string[];
-  has_catalyst?:boolean; days_to_earnings?:number;
-  insider_score?:number; insider_net_buys?:number;
-  transcript_sentiment?:number; transcript_summary?:string; transcript_score?:number;
+  // v7 fields - ADDED MISSING TYPES HERE TO FIX VERCEL BUILD
+  quality_score?:number; 
+  catalyst_score?:number; 
+  catalyst_flags?:string[];
+  has_catalyst?:boolean; 
+  days_to_earnings?:number;
+  insider_score?:number; 
+  insider_net_buys?:number;
+  transcript_sentiment?:number; 
+  transcript_summary?:string; 
+  transcript_score?:number;
+  proximity_score?:number;   // Fixed missing property
+  earnings_score?:number;    // Fixed missing property
+  upside_score?:number;      // Fixed missing property
+  inst_score?:number;        // Fixed missing property
 }
+
 interface ScanData {
   scan_date:string; region:string; version:string;
   weights?:Record<string,number>;
@@ -60,10 +73,10 @@ function inferFactors(s:StockData):FactorScores {
     catalyst: s.catalyst_score ?? 0.5,
     transcript: s.transcript_score ?? 0.5,
     upside: s.upside_score ?? Math.min(1,Math.max(0,(s.upside||0)/80)),
-    institutional: 0.5,
+    institutional: s.inst_score ?? 0.5,
     analyst: s.grade_score || 0,
     insider: s.insider_score ?? 0.5,
-    earnings: Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),
+    earnings: s.earnings_score ?? Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),
   };
 }
 
@@ -243,20 +256,31 @@ export default function Dashboard(){
     fetch(GCS_URL).then(r=>{if(!r.ok)throw new Error();return r.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{fetch(GCS_FALLBACK).then(r=>r.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));});
     
     // SYNC KEY WITH PORTFOLIO PAGE: 'screener_portfolio'
-    const saved = JSON.parse(localStorage.getItem("screener_portfolio") || "[]");
-    setPortfolioSymbols(saved.map((p: any) => p.symbol));
+    const savedString = localStorage.getItem("screener_portfolio") || "[]";
+    try {
+      const saved = JSON.parse(savedString);
+      setPortfolioSymbols(saved.map((p: any) => p.symbol));
+    } catch(e) {
+      setPortfolioSymbols([]);
+    }
   },[]);
 
   const handleAdd = (e: React.MouseEvent, s: StockData) => {
     e.stopPropagation();
-    const current = JSON.parse(localStorage.getItem("screener_portfolio") || "[]");
+    const savedString = localStorage.getItem("screener_portfolio") || "[]";
+    let current = [];
+    try {
+        current = JSON.parse(savedString);
+    } catch(e) {
+        current = [];
+    }
+    
     if (!current.find((p: any) => p.symbol === s.symbol)) {
-      // Structure MUST match the Position interface in your portfolio page
       const newItem = { 
         symbol: s.symbol, 
         entry_price: s.price, 
         entry_date: new Date().toISOString().split('T')[0],
-        shares: 0, // Default for new tracked items
+        shares: 0, 
         notes: "",
         entry_composite: s.composite,
         entry_signal: s.signal
@@ -273,7 +297,10 @@ export default function Dashboard(){
     if(filter!=="ALL") list=list.filter(s=>s.signal===filter);
     if(classFilter!=="ALL") list=list.filter(s=>s.classification===classFilter);
     if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q));}
-    list.sort((a,b)=>{const av=(a[sortKey]as number)??0,bv=(b[sortKey]as number)??0;return sortDir==="desc"?bv-av:av-bv;});
+    list.sort((a,b)=>{
+      const av=(a[sortKey]as any)??0,bv=(b[sortKey]as any)??0;
+      return sortDir==="desc"? (bv > av ? 1 : -1) : (av > bv ? 1 : -1);
+    });
     return list;
   },[data,sortKey,sortDir,filter,classFilter,search]);
 
