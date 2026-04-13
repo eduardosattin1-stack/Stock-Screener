@@ -1,585 +1,349 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target, Search, Filter } from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target, Search, Filter, Zap, Star } from "lucide-react";
 
 const GCS_URL = "/api/gcs/scans/latest.json";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
 
-// ── Types (v6 superset, backward-compat with v5) ───────────────────────────
-interface FactorScores {
-  upside: number; technical: number; analyst: number; transcript: number;
-  institutional: number; insider: number; earnings: number; news: number;
-  proximity: number; catastrophe: number;
-}
-
+// ── Types ───────────────────────────────────────────────────────────────────
+interface FactorScores { technical:number; quality:number; proximity:number; catalyst:number; transcript:number; upside:number; institutional:number; analyst:number; insider:number; earnings:number; }
+interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve:number; yield_level:number; vix:number; cpi_trend:number; gdp_momentum:number; }; }
 interface StockData {
-  symbol: string; price: number; currency: string; market_cap: number;
-  sma50: number; sma200: number; year_high: number; year_low: number; volume: number;
-  rsi: number; macd_signal: string; adx: number; bb_pct: number; stoch_rsi: number;
-  obv_trend: string; bull_score: number;
-  target: number; upside: number; grade_buy: number; grade_total: number;
-  grade_score: number; eps_beats: number; eps_total: number;
-  revenue_cagr_3y: number; eps_cagr_3y: number; roe_avg: number;
-  roe_consistent: boolean; roic_avg: number; gross_margin: number;
-  gross_margin_trend: string; piotroski: number; altman_z: number;
-  dcf_value: number; owner_earnings_yield: number; intrinsic_buffett: number;
-  intrinsic_avg: number; margin_of_safety: number; value_score: number;
-  composite: number; signal: string; classification: string; reasons: string[];
-  // v6 fields (optional for backward compat)
-  factor_scores?: FactorScores;
-  insider_score?: number; insider_net_buys?: number; insider_buy_ratio?: number;
-  inst_score?: number; inst_holders_change?: number; inst_accumulation?: number;
-  transcript_sentiment?: number; transcript_summary?: string; transcript_score?: number;
-  news_sentiment?: number; news_score?: number;
-  proximity_52wk?: number; proximity_score?: number;
-  earnings_momentum?: number; earnings_score?: number;
-  upside_score?: number; catastrophe_score?: number;
+  symbol:string; price:number; currency:string; market_cap:number;
+  sma50:number; sma200:number; year_high:number; year_low:number; volume:number;
+  rsi:number; macd_signal:string; adx:number; bb_pct:number; stoch_rsi:number;
+  obv_trend:string; bull_score:number;
+  target:number; upside:number; grade_buy:number; grade_total:number;
+  grade_score:number; eps_beats:number; eps_total:number;
+  revenue_cagr_3y:number; eps_cagr_3y:number; roe_avg:number;
+  roe_consistent:boolean; roic_avg:number; gross_margin:number;
+  gross_margin_trend:string; piotroski:number; altman_z:number;
+  dcf_value:number; owner_earnings_yield:number; intrinsic_buffett:number;
+  intrinsic_avg:number; margin_of_safety:number; value_score:number;
+  composite:number; signal:string; classification:string; reasons:string[];
+  factor_scores?:FactorScores;
+  // v7 fields
+  quality_score?:number; catalyst_score?:number; catalyst_flags?:string[];
+  has_catalyst?:boolean; days_to_earnings?:number;
+  insider_score?:number; insider_net_buys?:number;
+  transcript_sentiment?:number; transcript_summary?:string; transcript_score?:number;
+  inst_score?:number; proximity_score?:number; earnings_score?:number;
+  upside_score?:number;
+  // v6 compat (removed in v7)
+  news_score?:number; news_sentiment?:number; catastrophe_score?:number;
 }
-
 interface ScanData {
-  scan_date: string; region: string; version: string;
-  weights?: Record<string, number>;
-  summary: { total: number; buy: number; watch: number; hold: number; sell: number };
-  stocks: StockData[];
+  scan_date:string; region:string; version:string;
+  weights?:Record<string,number>;
+  macro?:MacroData;
+  summary:{ total:number; buy:number; watch:number; hold:number; sell:number; strong_buy?:number };
+  stocks:StockData[];
 }
 
-// ── Theme constants ─────────────────────────────────────────────────────────
-const SIG = {
-  BUY:   { color: "#16a34a", bg: "#e8f5ee", border: "#b8dcc8" },
-  WATCH: { color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  HOLD:  { color: "#94a3b8", bg: "#f8fafc", border: "#e2e8f0" },
-  SELL:  { color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
-} as const;
-
-const CLS: Record<string, string> = {
-  DEEP_VALUE: "#2563eb", VALUE: "#0891b2", QUALITY_GROWTH: "#7c3aed",
-  GROWTH: "#818cf8", SPECULATIVE: "#dc2626", NEUTRAL: "#64748b", UNKNOWN: "#475569",
+// ── Signal & Classification colors ──────────────────────────────────────────
+const SIG: Record<string,{color:string;bg:string;border:string}> = {
+  "STRONG BUY": { color:"#8b5cf6", bg:"#f5f3ff", border:"#ddd6fe" },
+  BUY:   { color:"#10b981", bg:"#e8f5ee", border:"#b8dcc8" },
+  WATCH: { color:"#f59e0b", bg:"#fffbeb", border:"#fde68a" },
+  HOLD:  { color:"#6b7280", bg:"#f8fafc", border:"#e2e8f0" },
+  SELL:  { color:"#ef4444", bg:"#fef2f2", border:"#fecaca" },
 };
+const CLS: Record<string,string> = { DEEP_VALUE:"#2563eb", VALUE:"#0891b2", QUALITY_GROWTH:"#7c3aed", GROWTH:"#818cf8", SPECULATIVE:"#ef4444", NEUTRAL:"#64748b" };
 
-const FACTOR_LABELS: Record<string, string> = {
-  upside: "Upside", technical: "Technical", analyst: "Analyst",
-  transcript: "Transcript", institutional: "Institutional", insider: "Insider",
-  earnings: "Earnings", news: "News", proximity: "52-Week", catastrophe: "Catastrophe",
-};
-
-const FACTOR_ORDER = ["upside", "technical", "analyst", "transcript", "institutional", "insider", "earnings", "news", "proximity", "catastrophe"];
+// v7 factor config
+const FACTOR_ORDER = ["technical","quality","proximity","catalyst","transcript","upside","institutional","analyst","insider","earnings"];
+const FACTOR_LABELS: Record<string,string> = { technical:"Technical", quality:"Quality", proximity:"52-Week", catalyst:"Catalyst", transcript:"Transcript", upside:"Upside", institutional:"Institutional", analyst:"Analyst", insider:"Insider", earnings:"Earnings" };
+const FACTOR_WEIGHTS: Record<string,number> = { technical:35, quality:15, proximity:12, catalyst:8, transcript:7, upside:6, institutional:5, analyst:5, insider:4, earnings:3 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-const fmt = (n: number | null | undefined, d = 1) => n == null ? "—" : n.toFixed(d);
-const fmtPct = (n: number | null | undefined) => n == null ? "—" : `${(n * 100).toFixed(0)}%`;
-const fmtMcap = (n: number | null | undefined) => {
-  if (n == null) return "—";
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(1)}T`;
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(0)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(0)}M`;
-  return `$${n.toFixed(0)}`;
-};
+const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}%`;
+const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1e12) return `$${(n/1e12).toFixed(1)}T`; if(n>=1e9) return `$${(n/1e9).toFixed(0)}B`; if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`; return `$${n.toFixed(0)}`; };
 
-/** Build factor_scores from v5 data when v6 factor_scores is missing */
-function inferFactorScores(s: StockData): FactorScores {
-  if (s.factor_scores) return s.factor_scores;
+function inferFactors(s:StockData):FactorScores {
+  if(s.factor_scores) return s.factor_scores;
   return {
-    upside: Math.min(1, Math.max(0, (s.upside || 0) / 80)),
-    technical: Math.min(1, (s.bull_score || 0) / 10),
-    analyst: s.grade_score || 0,
+    technical: Math.min(1,(s.bull_score||0)/10),
+    quality: s.quality_score ?? Math.min(1, ((s.piotroski||0)/9*0.4 + Math.min(1,(s.altman_z||0)/10)*0.2 + Math.min(1,(s.roe_avg||0)/0.3)*0.2 + Math.min(1,(s.gross_margin||0))*0.2)),
+    proximity: s.proximity_score ?? (s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),
+    catalyst: s.catalyst_score ?? 0.5,
     transcript: s.transcript_score ?? 0.5,
+    upside: s.upside_score ?? Math.min(1,Math.max(0,(s.upside||0)/80)),
     institutional: s.inst_score ?? 0.5,
+    analyst: s.grade_score || 0,
     insider: s.insider_score ?? 0.5,
-    earnings: Math.min(1, (s.eps_beats || 0) / Math.max(1, s.eps_total || 1)),
-    news: s.news_score ?? 0.5,
-    proximity: s.proximity_score ?? (s.year_high > 0 ? (s.price - s.year_low) / (s.year_high - s.year_low) : 0.5),
-    catastrophe: s.catastrophe_score ?? 1,
+    earnings: s.earnings_score ?? Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),
   };
 }
 
-// ── Mini Radar Chart (SVG, 10 axes) ─────────────────────────────────────────
-function MiniRadar({ scores, size = 48 }: { scores: FactorScores; size?: number }) {
-  const cx = size / 2, cy = size / 2, r = size / 2 - 4;
-  const values = FACTOR_ORDER.map(k => (scores as any)[k] ?? 0);
-  const n = values.length;
-  const angle = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2;
-
-  // Background grid
-  const gridLevels = [0.33, 0.66, 1.0];
-  const gridPaths = gridLevels.map(level => {
-    const pts = Array.from({ length: n }, (_, i) => {
-      const a = angle(i);
-      return `${cx + Math.cos(a) * r * level},${cy + Math.sin(a) * r * level}`;
-    });
-    return pts.join(" ");
-  });
-
-  // Data polygon
-  const dataPoints = values.map((v, i) => {
-    const a = angle(i);
-    const dist = Math.max(0.05, v) * r;
-    return `${cx + Math.cos(a) * dist},${cy + Math.sin(a) * dist}`;
-  });
-
-  // Axis lines
-  const axes = Array.from({ length: n }, (_, i) => {
-    const a = angle(i);
-    return { x2: cx + Math.cos(a) * r, y2: cy + Math.sin(a) * r };
-  });
-
-  const avg = values.reduce((a, b) => a + b, 0) / n;
-  const fillColor = avg > 0.6 ? "#2d7a4f" : avg > 0.4 ? "#d97706" : "#dc2626";
-
-  return (
+// ── Mini Radar ──────────────────────────────────────────────────────────────
+function MiniRadar({scores,size=44}:{scores:FactorScores;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-4;const vals=FACTOR_ORDER.map(k=>(scores as any)[k]??0);const n=vals.length;
+  const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
+  const avg=vals.reduce((a,b)=>a+b,0)/n;const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
+  const data=vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ");
+  const grid=[0.33,0.66,1].map(lv=>Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" "));
+  return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {/* Grid */}
-      {gridPaths.map((pts, i) => (
-        <polygon key={i} points={pts} fill="none" stroke="#e2e8e4" strokeWidth={0.5} opacity={0.6} />
-      ))}
-      {/* Axes */}
-      {axes.map((a, i) => (
-        <line key={i} x1={cx} y1={cy} x2={a.x2} y2={a.y2} stroke="#e2e8e4" strokeWidth={0.4} />
-      ))}
-      {/* Data */}
-      <polygon points={dataPoints.join(" ")} fill={fillColor} fillOpacity={0.2} stroke={fillColor} strokeWidth={1.2} strokeLinejoin="round" />
-      {/* Dots at each vertex */}
-      {values.map((v, i) => {
-        const a = angle(i);
-        const dist = Math.max(0.05, v) * r;
-        return <circle key={i} cx={cx + Math.cos(a) * dist} cy={cy + Math.sin(a) * dist} r={1.5} fill={fillColor} />;
-      })}
+      {grid.map((p,i)=><polygon key={i} points={p} fill="none" stroke="#e2e8e4" strokeWidth={0.5} opacity={0.6}/>)}
+      {Array.from({length:n},(_,i)=><line key={i} x1={cx} y1={cy} x2={cx+Math.cos(ang(i))*r} y2={cy+Math.sin(ang(i))*r} stroke="#e2e8e4" strokeWidth={0.4}/>)}
+      <polygon points={data} fill={fill} fillOpacity={0.2} stroke={fill} strokeWidth={1.2} strokeLinejoin="round"/>
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={1.5} fill={fill}/>)}
     </svg>
   );
 }
 
 // ── Large Radar for expanded row ────────────────────────────────────────────
-function LargeRadar({ scores, size = 180 }: { scores: FactorScores; size?: number }) {
-  const cx = size / 2, cy = size / 2, r = size / 2 - 24;
-  const values = FACTOR_ORDER.map(k => (scores as any)[k] ?? 0);
-  const n = values.length;
-  const angle = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2;
-
-  const gridLevels = [0.25, 0.5, 0.75, 1.0];
-  const gridPaths = gridLevels.map(level => {
-    const pts = Array.from({ length: n }, (_, i) => {
-      const a = angle(i);
-      return `${cx + Math.cos(a) * r * level},${cy + Math.sin(a) * r * level}`;
-    });
-    return pts.join(" ");
-  });
-
-  const dataPoints = values.map((v, i) => {
-    const a = angle(i);
-    const dist = Math.max(0.05, v) * r;
-    return `${cx + Math.cos(a) * dist},${cy + Math.sin(a) * dist}`;
-  });
-
-  const avg = values.reduce((a, b) => a + b, 0) / n;
-  const fillColor = avg > 0.6 ? "#2d7a4f" : avg > 0.4 ? "#d97706" : "#dc2626";
-
-  return (
+function LargeRadar({scores,size=180}:{scores:FactorScores;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-24;const vals=FACTOR_ORDER.map(k=>(scores as any)[k]??0);const n=vals.length;
+  const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
+  const avg=vals.reduce((a,b)=>a+b,0)/n;const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
+  return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {gridPaths.map((pts, i) => (
-        <polygon key={i} points={pts} fill="none" stroke="#d1d5db" strokeWidth={0.6} opacity={0.5} />
-      ))}
-      {FACTOR_ORDER.map((k, i) => {
-        const a = angle(i);
-        const lx = cx + Math.cos(a) * (r + 16);
-        const ly = cy + Math.sin(a) * (r + 16);
-        return (
-          <g key={k}>
-            <line x1={cx} y1={cy} x2={cx + Math.cos(a) * r} y2={cy + Math.sin(a) * r} stroke="#d1d5db" strokeWidth={0.5} />
-            <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
-              fontSize={7} fontFamily="var(--font-mono)" fill="#6b7280" fontWeight="500">
-              {FACTOR_LABELS[k]?.slice(0, 6)}
-            </text>
-          </g>
-        );
-      })}
-      <polygon points={dataPoints.join(" ")} fill={fillColor} fillOpacity={0.15} stroke={fillColor} strokeWidth={1.5} strokeLinejoin="round" />
-      {values.map((v, i) => {
-        const a = angle(i);
-        const dist = Math.max(0.05, v) * r;
-        return <circle key={i} cx={cx + Math.cos(a) * dist} cy={cy + Math.sin(a) * dist} r={2.5} fill={fillColor} stroke="#fff" strokeWidth={1} />;
-      })}
+      {[0.25,0.5,0.75,1].map((lv,i)=>{const pts=Array.from({length:n},(_,j)=>`${cx+Math.cos(ang(j))*r*lv},${cy+Math.sin(ang(j))*r*lv}`).join(" ");return<polygon key={i} points={pts} fill="none" stroke="#d1d5db" strokeWidth={i===3?1:0.5} opacity={0.5}/>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+16),ly=cy+Math.sin(a)*(r+16),v=vals[i],c=v>0.7?"#2d7a4f":v>0.4?"#d97706":"#ef4444";return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5}/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize={7} fontFamily="var(--font-mono)" fill="#6b7280" fontWeight="500">{FACTOR_LABELS[k]?.slice(0,6)}</text></g>;})}
+      <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.15} stroke={fill} strokeWidth={1.5} strokeLinejoin="round"/>
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={2.5} fill={fill} stroke="#fff" strokeWidth={1}/>)}
     </svg>
   );
 }
 
-// ── Factor Score Bar (for expanded detail) ──────────────────────────────────
-function FactorBar({ name, weight, score, detail }: { name: string; weight: number; score: number; detail: string }) {
-  const color = score > 0.7 ? "#16a34a" : score > 0.4 ? "#d97706" : "#dc2626";
-  return (
-    <div style={{ padding: "6px 0", borderBottom: "1px solid var(--divider)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--text)" }}>{name}</span>
-          <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>({weight}%)</span>
-        </div>
-        <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", fontWeight: 700, color }}>{(score * 100).toFixed(0)}</span>
+// ── Factor Bar ──────────────────────────────────────────────────────────────
+function FactorBar({name,weight,score}:{name:string;weight:number;score:number}){
+  const c=score>0.7?"#10b981":score>0.4?"#f59e0b":"#ef4444";
+  return(
+    <div style={{padding:"5px 0",borderBottom:"1px solid var(--divider)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text)"}}>{name}</span><span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light)"}}>({weight}%)</span></div>
+        <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span>
       </div>
-      <div style={{ height: 5, borderRadius: 3, background: "var(--bg-elevated)", overflow: "hidden", marginBottom: 3 }}>
-        <div style={{ height: "100%", width: `${score * 100}%`, borderRadius: 3, background: color, transition: "width 0.4s ease" }} />
+      <div style={{height:4,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}><div style={{height:"100%",width:`${score*100}%`,borderRadius:2,background:c,transition:"width 0.3s"}}/></div>
+    </div>
+  );
+}
+
+// ── Catalyst Badges ─────────────────────────────────────────────────────────
+function CatalystBadges({s}:{s:StockData}){
+  const badges:{ label:string; color:string; bg:string }[]=[];
+  if(s.days_to_earnings!=null&&s.days_to_earnings>=0&&s.days_to_earnings<=14) badges.push({label:`Earn ${s.days_to_earnings}d`,color:"#d97706",bg:"#fffbeb"});
+  if(s.catalyst_flags?.some(f=>f.toLowerCase().includes("m&a"))) badges.push({label:"M&A",color:"#8b5cf6",bg:"#f5f3ff"});
+  if(s.catalyst_flags?.some(f=>f.toLowerCase().includes("upgrade"))) badges.push({label:"↑ Upgrade",color:"#10b981",bg:"#e8f5ee"});
+  if(s.catalyst_flags?.some(f=>f.toLowerCase().includes("downgrade"))) badges.push({label:"↓ Downgrade",color:"#ef4444",bg:"#fef2f2"});
+  if(!badges.length) return null;
+  return(
+    <div style={{display:"flex",gap:3,flexWrap:"wrap",marginTop:3}}>
+      {badges.map((b,i)=><span key={i} style={{fontSize:8,padding:"1px 5px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,color:b.color,background:b.bg}}>{b.label}</span>)}
+    </div>
+  );
+}
+
+// ── Macro Banner ────────────────────────────────────────────────────────────
+function MacroBanner({macro}:{macro?:MacroData}){
+  if(!macro) return null;
+  const cfg:{[k:string]:{emoji:string;label:string;color:string;bg:string;border:string}} = {
+    RISK_ON:  {emoji:"🟢",label:"RISK ON — Momentum favored",color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8"},
+    NEUTRAL:  {emoji:"⚪",label:"NEUTRAL — Base weights",color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0"},
+    CAUTIOUS: {emoji:"🟡",label:"CAUTIOUS — Quality over momentum",color:"#d97706",bg:"#fffbeb",border:"#fde68a"},
+    RISK_OFF: {emoji:"🔴",label:"RISK OFF — Defensive mode",color:"#ef4444",bg:"#fef2f2",border:"#fecaca"},
+  };
+  const c=cfg[macro.regime]||cfg.NEUTRAL;
+  const subs=macro.sub_scores||{};
+  const subItems:[string,number][]=[["Yield Curve",subs.yield_curve],["Yield Level",subs.yield_level],["VIX",subs.vix],["CPI",subs.cpi_trend],["GDP",subs.gdp_momentum]];
+  return(
+    <div style={{background:c.bg,border:`1px solid ${c.border}`,borderRadius:8,padding:"10px 16px",marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:14}}>{c.emoji}</span>
+        <span style={{fontSize:12,fontFamily:"var(--font-mono)",fontWeight:600,color:c.color}}>{c.label}</span>
+        <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:c.color,opacity:0.7}}>Score: {(macro.score*100).toFixed(0)}</span>
       </div>
-      <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)", lineHeight: 1.4 }}>{detail}</div>
-    </div>
-  );
-}
-
-// ── MoS Bar (margin of safety visual) ───────────────────────────────────────
-function MoSBar({ value }: { value: number }) {
-  const pct = Math.max(-1, Math.min(1, value));
-  const width = Math.abs(pct) * 100;
-  const color = pct > 0.15 ? "#16a34a" : pct > 0 ? "#86efac" : pct > -0.2 ? "#d97706" : "#dc2626";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ width: 70, height: 5, background: "var(--bg-elevated)", borderRadius: 3, position: "relative", overflow: "hidden" }}>
-        <div style={{
-          position: "absolute", height: "100%", borderRadius: 3, background: color,
-          ...(pct >= 0 ? { left: "50%", width: `${width / 2}%` } : { right: "50%", width: `${width / 2}%` })
-        }} />
-        <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 1, background: "var(--border)" }} />
+      <div style={{display:"flex",gap:8}}>
+        {subItems.map(([label,val])=>val!=null&&(
+          <div key={label} style={{textAlign:"center"}}>
+            <div style={{width:30,height:4,borderRadius:2,background:"#e5e7eb",overflow:"hidden"}}><div style={{height:"100%",width:`${(val??0)*100}%`,borderRadius:2,background:c.color,opacity:0.6}}/></div>
+            <div style={{fontSize:7,fontFamily:"var(--font-mono)",color:"#9ca3af",marginTop:2}}>{label}</div>
+          </div>
+        ))}
       </div>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color, fontWeight: 600 }}>{fmtPct(value)}</span>
     </div>
   );
 }
 
-// ── Insider Arrow ───────────────────────────────────────────────────────────
-function InsiderCell({ score, netBuys }: { score?: number; netBuys?: number }) {
-  if (score == null) return <span style={{ color: "var(--text-light)", fontSize: 10, fontFamily: "var(--font-mono)" }}>—</span>;
-  const buying = (netBuys ?? 0) > 0;
-  const color = score > 0.6 ? "#16a34a" : score > 0.4 ? "var(--text-muted)" : "#dc2626";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-      <span style={{ fontSize: 12, color }}>{buying ? "↑" : (netBuys ?? 0) < 0 ? "↓" : "→"}</span>
-      <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color }}>{(score * 100).toFixed(0)}</span>
-    </div>
-  );
-}
+// ── MoS Bar ─────────────────────────────────────────────────────────────────
+function MoSBar({value}:{value:number}){const p=Math.max(-1,Math.min(1,value)),w=Math.abs(p)*100,c=p>0.15?"#10b981":p>0?"#86efac":p>-0.2?"#d97706":"#ef4444";return<div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:70,height:5,background:"var(--bg-elevated,#edf0ee)",borderRadius:3,position:"relative",overflow:"hidden"}}><div style={{position:"absolute",height:"100%",borderRadius:3,background:c,...(p>=0?{left:"50%",width:`${w/2}%`}:{right:"50%",width:`${w/2}%`})}}/><div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"var(--border)"}}/></div><span style={{fontFamily:"var(--font-mono)",fontSize:11,color:c,fontWeight:600}}>{fmtPct(value)}</span></div>;}
 
-// ── Sentiment Cell ──────────────────────────────────────────────────────────
-function SentimentCell({ value }: { value?: number }) {
-  if (value == null) return <span style={{ color: "var(--text-light)", fontSize: 10, fontFamily: "var(--font-mono)" }}>—</span>;
-  const color = value > 0.3 ? "#16a34a" : value > -0.1 ? "var(--text-muted)" : "#dc2626";
-  const face = value > 0.3 ? "😊" : value > -0.1 ? "😐" : "😟";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-      <span style={{ fontSize: 11 }}>{face}</span>
-      <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color, fontWeight: 500 }}>{value > 0 ? "+" : ""}{value.toFixed(2)}</span>
-    </div>
-  );
-}
-
-// ── Composite Score Pill ────────────────────────────────────────────────────
-function ScorePill({ value }: { value: number }) {
-  const color = value > 0.65 ? "#16a34a" : value > 0.45 ? "#d97706" : "#dc2626";
-  const bg = value > 0.65 ? "#e8f5ee" : value > 0.45 ? "#fffbeb" : "#fef2f2";
-  return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-      <div style={{ width: 40, height: 4, borderRadius: 2, background: "var(--bg-elevated)", overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${value * 100}%`, borderRadius: 2, background: color }} />
-      </div>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color }}>{value.toFixed(2)}</span>
-    </div>
-  );
-}
-
-// ── Build factor detail text ────────────────────────────────────────────────
-function factorDetail(key: string, s: StockData): string {
-  const cur = s.currency === "EUR" ? "€" : s.currency === "GBP" ? "£" : "$";
-  switch (key) {
-    case "upside": return `Target ${cur}${s.target?.toFixed(0) ?? "?"} (${s.upside > 0 ? "+" : ""}${s.upside?.toFixed(1) ?? "?"}%) · DCF ${cur}${s.dcf_value?.toFixed(0) ?? "?"} · MoS ${fmtPct(s.margin_of_safety)}`;
-    case "technical": return `Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;
-    case "analyst": return `Grades ${s.grade_buy}/${s.grade_total} buy · Score ${(s.grade_score * 100).toFixed(0)}%`;
-    case "transcript": return s.transcript_summary || "No transcript available";
-    case "institutional": return s.inst_holders_change != null ? `Holders QoQ ${(s.inst_holders_change * 100).toFixed(1)}% · Shares QoQ ${((s.inst_accumulation ?? 0) * 100).toFixed(1)}%` : "No institutional data";
-    case "insider": return s.insider_buy_ratio != null ? `Buy ratio ${s.insider_buy_ratio?.toFixed(1)} · Net buys ${s.insider_net_buys ?? 0}` : "No insider data";
-    case "earnings": return `EPS beats ${s.eps_beats}/${s.eps_total} · Momentum ${s.earnings_momentum != null ? (s.earnings_momentum > 0 ? "+" : "") + (s.earnings_momentum * 100).toFixed(1) + "%" : "N/A"}`;
-    case "news": return s.news_sentiment != null ? `Sentiment ${s.news_sentiment > 0 ? "+" : ""}${s.news_sentiment.toFixed(2)}` : "No news data";
-    case "proximity": return `At ${s.proximity_52wk != null ? (s.proximity_52wk * 100).toFixed(0) : "?"}% of range · High ${cur}${s.year_high?.toFixed(0)} Low ${cur}${s.year_low?.toFixed(0)}`;
-    case "catastrophe": {
-      const flags = (s.reasons || []).filter(r => r.includes("⚠"));
-      return flags.length > 0 ? flags.join(" · ") : "No red flags";
-    }
-    default: return "";
-  }
-}
+// ── Score Pill ──────────────────────────────────────────────────────────────
+function ScorePill({value}:{value:number}){const c=value>0.65?"#10b981":value>0.45?"#d97706":"#ef4444";return<div style={{display:"inline-flex",alignItems:"center",gap:4}}><div style={{width:40,height:4,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}><div style={{height:"100%",width:`${value*100}%`,borderRadius:2,background:c}}/></div><span style={{fontFamily:"var(--font-mono)",fontSize:12,fontWeight:700,color:c}}>{value.toFixed(2)}</span></div>;}
 
 // ── Stock Row ───────────────────────────────────────────────────────────────
-function StockRow({ stock: s, expanded, onToggle, weights }: { stock: StockData; expanded: boolean; onToggle: () => void; weights: Record<string, number> }) {
-  const scores = inferFactorScores(s);
-  const sigStyle = SIG[s.signal as keyof typeof SIG] || SIG.HOLD;
-
-  return (
+function StockRow({stock:s,expanded,onToggle,weights}:{stock:StockData;expanded:boolean;onToggle:()=>void;weights:Record<string,number>}){
+  const scores=inferFactors(s);
+  const sigStyle=SIG[s.signal]||SIG.HOLD;
+  return(
     <>
-      <tr onClick={onToggle} style={{ cursor: "pointer", borderBottom: "1px solid var(--border-subtle)", transition: "background 0.12s" }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-        {/* Symbol + Classification */}
-        <td style={{ padding: "10px 12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {expanded ? <ChevronDown size={13} color="var(--text-light)" /> : <ChevronRight size={13} color="var(--text-light)" />}
-            <a href={`/stock/${s.symbol}`} onClick={e => e.stopPropagation()}
-              style={{ fontWeight: 700, letterSpacing: "0.04em", color: "var(--text)", fontSize: 13, fontFamily: "var(--font-mono)" }}>{s.symbol}</a>
-            <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, fontWeight: 600, fontFamily: "var(--font-mono)",
-              background: (CLS[s.classification] || "#475569") + "10", color: CLS[s.classification] || "#475569" }}>
-              {s.classification?.replace("_", " ")}
-            </span>
+      <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s"}}
+        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg-hover,#f0f4f1)";}}
+        onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
+        <td style={{padding:"10px 12px"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
+            <div>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
+                <span style={{fontSize:9,padding:"1px 5px",borderRadius:3,fontWeight:600,fontFamily:"var(--font-mono)",background:(CLS[s.classification]||"#475569")+"10",color:CLS[s.classification]||"#475569"}}>{s.classification?.replace("_"," ")}</span>
+                {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
+              </div>
+              <CatalystBadges s={s}/>
+            </div>
           </div>
         </td>
-        {/* Price */}
-        <td style={{ fontFamily: "var(--font-mono)", textAlign: "right", padding: "10px 12px", color: "var(--text)", fontSize: 12 }}>
-          {s.currency !== "USD" && <span style={{ fontSize: 9, color: "var(--text-light)", marginRight: 3 }}>{s.currency}</span>}
-          ${s.price?.toFixed(2)}
-        </td>
-        {/* Signal */}
-        <td style={{ padding: "10px 12px" }}>
-          <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 4, fontSize: 10, fontWeight: 700,
-            letterSpacing: "0.07em", fontFamily: "var(--font-mono)",
-            background: sigStyle.bg, color: sigStyle.color, border: `1px solid ${sigStyle.border}` }}>
-            {s.signal}
-          </span>
-        </td>
-        {/* Composite */}
-        <td style={{ padding: "10px 12px", textAlign: "right" }}><ScorePill value={s.composite} /></td>
-        {/* Radar */}
-        <td style={{ padding: "6px 8px", textAlign: "center" }}><MiniRadar scores={scores} size={44} /></td>
-        {/* Bull */}
-        <td style={{ padding: "10px 8px" }}>
-          <div style={{ display: "flex", gap: 2 }}>
-            {Array.from({ length: 10 }, (_, i) => {
-              const active = i < s.bull_score;
-              const c = s.bull_score >= 7 ? "#16a34a" : s.bull_score >= 4 ? "#d97706" : "#dc2626";
-              return <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: active ? c : "var(--bg-elevated)", border: `1px solid ${active ? c : "var(--border)"}` }} />;
-            })}
-          </div>
-        </td>
-        {/* MoS */}
-        <td style={{ padding: "10px 8px" }}><MoSBar value={s.margin_of_safety} /></td>
-        {/* Upside */}
-        <td style={{ fontFamily: "var(--font-mono)", textAlign: "right", padding: "10px 12px", fontSize: 12,
-          color: s.upside > 20 ? "#16a34a" : s.upside > 0 ? "var(--text-muted)" : "#dc2626", fontWeight: 600 }}>
-          {s.upside > 0 ? "+" : ""}{s.upside?.toFixed(0)}%
-        </td>
-        {/* Insider */}
-        <td style={{ padding: "10px 8px", textAlign: "center" }}>
-          <InsiderCell score={s.insider_score} netBuys={s.insider_net_buys} />
-        </td>
-        {/* Transcript */}
-        <td style={{ padding: "10px 8px" }}>
-          <SentimentCell value={s.transcript_sentiment} />
-        </td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}</td>
+        <td style={{padding:"10px 12px"}}><span style={{display:"inline-block",padding:"3px 10px",borderRadius:4,fontSize:10,fontWeight:700,letterSpacing:"0.07em",fontFamily:"var(--font-mono)",background:sigStyle.bg,color:sigStyle.color,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span></td>
+        <td style={{padding:"10px 12px",textAlign:"right"}}><ScorePill value={s.composite}/></td>
+        <td style={{padding:"6px 8px",textAlign:"center"}}><MiniRadar scores={scores} size={44}/></td>
+        <td style={{padding:"10px 8px"}}><div style={{display:"flex",gap:2}}>{Array.from({length:10},(_,i)=>{const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?"#d97706":"#ef4444";return<div key={i} style={{width:6,height:6,borderRadius:"50%",background:a?c:"var(--bg-elevated,#edf0ee)",border:`1px solid ${a?c:"var(--border,#e5e7eb)"}`}}/>;})}</div></td>
+        <td style={{padding:"10px 8px"}}><MoSBar value={s.margin_of_safety}/></td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
+        <td style={{padding:"10px 8px",textAlign:"center"}}>{s.insider_score!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:s.insider_score>0.6?"#10b981":s.insider_score>0.4?"var(--text-muted)":"#ef4444"}}>{(s.insider_net_buys??0)>0?"↑":(s.insider_net_buys??0)<0?"↓":"→"} {(s.insider_score*100).toFixed(0)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
+        <td style={{padding:"10px 8px"}}>{s.transcript_sentiment!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",color:s.transcript_sentiment>0.3?"#10b981":s.transcript_sentiment>-0.1?"var(--text-muted)":"#ef4444"}}>{s.transcript_sentiment>0.3?"😊":s.transcript_sentiment>-0.1?"😐":"😟"} {s.transcript_sentiment>0?"+":""}{s.transcript_sentiment.toFixed(2)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
       </tr>
-
-      {/* ─── Expanded Detail ─── */}
-      {expanded && (
-        <tr>
-          <td colSpan={10} style={{ padding: 0, background: "var(--bg-surface)" }}>
-            <div style={{ padding: "16px 20px 20px 40px", animation: "fadeIn 0.2s ease" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 24 }}>
-                {/* Radar */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                  <LargeRadar scores={scores} />
-                  <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-                    Avg: {((Object.values(scores).reduce((a, b) => a + b, 0)) / 10 * 100).toFixed(0)}
-                  </div>
-                </div>
-                {/* Factor Bars */}
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "var(--green)", fontFamily: "var(--font-mono)",
-                    marginBottom: 8, paddingBottom: 6, borderBottom: "2px solid var(--green-light)", textTransform: "uppercase" }}>
-                    10-Factor Breakdown
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
-                    {FACTOR_ORDER.map(key => (
-                      <FactorBar key={key} name={FACTOR_LABELS[key]} weight={(weights[key] || 0) * 100}
-                        score={(scores as any)[key] ?? 0} detail={factorDetail(key, s)} />
-                    ))}
-                  </div>
+      {expanded&&(
+        <tr><td colSpan={10} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+          <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
+            <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+                <LargeRadar scores={scores}/>
+                <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>{((Object.values(scores).reduce((a,b)=>a+b,0))/10*100).toFixed(0)} avg</div>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)",textTransform:"uppercase"}}>10-Factor Breakdown</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 24px"}}>
+                  {FACTOR_ORDER.map(k=><FactorBar key={k} name={FACTOR_LABELS[k]} weight={FACTOR_WEIGHTS[k]} score={(scores as any)[k]??0}/>)}
                 </div>
               </div>
-              {/* Transcript summary + reasons */}
-              {(s.transcript_summary || (s.reasons && s.reasons.length > 0)) && (
-                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
-                  {s.transcript_summary && (
-                    <div style={{ fontSize: 11, fontFamily: "var(--font-sans)", color: "var(--text-secondary)", marginBottom: 8, fontStyle: "italic" }}>
-                      "{s.transcript_summary}"
-                    </div>
-                  )}
-                  {s.reasons && s.reasons.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                      {s.reasons.map((r, i) => (
-                        <span key={i} style={{ fontSize: 9, padding: "2px 7px", borderRadius: 3, fontFamily: "var(--font-mono)",
-                          background: r.includes("⚠") ? "#fef2f2" : "var(--green-light)",
-                          border: `1px solid ${r.includes("⚠") ? "#fecaca" : "var(--green-border)"}`,
-                          color: r.includes("⚠") ? "#dc2626" : "var(--text-muted)" }}>{r}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
-          </td>
-        </tr>
+            {(s.transcript_summary||(s.catalyst_flags&&s.catalyst_flags.length>0)||(s.reasons&&s.reasons.length>0))&&(
+              <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid var(--border-subtle,#eef1ef)"}}>
+                {s.transcript_summary&&<div style={{fontSize:11,fontFamily:"var(--font-sans)",color:"var(--text-secondary,#475569)",marginBottom:8,fontStyle:"italic"}}>"{s.transcript_summary}"</div>}
+                {s.catalyst_flags&&s.catalyst_flags.length>0&&<div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{s.catalyst_flags.map((f,i)=><span key={i} style={{fontSize:9,padding:"2px 7px",borderRadius:3,fontFamily:"var(--font-mono)",color:"#8b5cf6",background:"#f5f3ff",border:"1px solid #ddd6fe",fontWeight:600}}>{f}</span>)}</div>}
+                {s.reasons&&s.reasons.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:9,padding:"2px 7px",borderRadius:3,fontFamily:"var(--font-mono)",background:r.includes("⚠")?"#fef2f2":"var(--green-light,#e8f5ee)",border:`1px solid ${r.includes("⚠")?"#fecaca":"var(--green-border,#b8dcc8)"}`,color:r.includes("⚠")?"#ef4444":"var(--text-muted,#6b7280)"}}>{r}</span>)}</div>}
+              </div>
+            )}
+          </div>
+        </td></tr>
       )}
     </>
   );
 }
 
 // ── Main Dashboard ──────────────────────────────────────────────────────────
-export default function Dashboard() {
-  const [data, setData] = useState<ScanData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [sortKey, setSortKey] = useState<keyof StockData>("composite");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [filter, setFilter] = useState("ALL");
-  const [search, setSearch] = useState("");
-  const [classFilter, setClassFilter] = useState("ALL");
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+export default function Dashboard(){
+  const[data,setData]=useState<ScanData|null>(null);const[loading,setLoading]=useState(true);
+  const[sortKey,setSortKey]=useState<keyof StockData>("composite");const[sortDir,setSortDir]=useState<"asc"|"desc">("desc");
+  const[filter,setFilter]=useState("ALL");const[search,setSearch]=useState("");const[classFilter,setClassFilter]=useState("ALL");
+  const[expanded,setExpanded]=useState<Record<string,boolean>>({});
 
-  useEffect(() => {
-    fetch(GCS_URL).then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then((d: ScanData) => { setData(d); setLoading(false); })
-      .catch(() => {
-        fetch(GCS_FALLBACK).then(r => r.json())
-          .then((d: ScanData) => { setData(d); setLoading(false); })
-          .catch(() => setLoading(false));
-      });
-  }, []);
+  useEffect(()=>{fetch(GCS_URL).then(r=>{if(!r.ok)throw new Error();return r.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{fetch(GCS_FALLBACK).then(r=>r.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));});},[]);
 
-  const weights = data?.weights || { upside: 0.15, technical: 0.15, analyst: 0.10, transcript: 0.15, institutional: 0.10, insider: 0.10, earnings: 0.10, news: 0.05, proximity: 0.05, catastrophe: 0.05 };
+  const weights=data?.weights||FACTOR_WEIGHTS;
 
-  const sorted = useMemo(() => {
-    if (!data?.stocks) return [];
-    let list = [...data.stocks];
-    if (filter !== "ALL") list = list.filter(s => s.signal === filter);
-    if (classFilter !== "ALL") list = list.filter(s => s.classification === classFilter);
-    if (search) {
-      const q = search.toUpperCase();
-      list = list.filter(s => s.symbol.includes(q));
-    }
-    list.sort((a, b) => {
-      const av = (a[sortKey] as number) ?? 0;
-      const bv = (b[sortKey] as number) ?? 0;
-      return sortDir === "desc" ? bv - av : av - bv;
-    });
+  const sorted=useMemo(()=>{
+    if(!data?.stocks) return [];
+    let list=[...data.stocks];
+    if(filter!=="ALL") list=list.filter(s=>s.signal===filter);
+    if(classFilter!=="ALL") list=list.filter(s=>s.classification===classFilter);
+    if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q));}
+    list.sort((a,b)=>{const av=(a[sortKey]as number)??0,bv=(b[sortKey]as number)??0;return sortDir==="desc"?bv-av:av-bv;});
     return list;
-  }, [data, sortKey, sortDir, filter, classFilter, search]);
+  },[data,sortKey,sortDir,filter,classFilter,search]);
 
-  const toggleSort = (key: keyof StockData) => {
-    if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
-    else { setSortKey(key); setSortDir("desc"); }
-  };
+  const toggleSort=(key:keyof StockData)=>{if(sortKey===key)setSortDir(d=>d==="desc"?"asc":"desc");else{setSortKey(key);setSortDir("desc");}};
 
-  if (loading) return (
-    <div style={{ color: "var(--text-muted)", padding: 60, textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 13 }}>
-      Loading scan data...
-    </div>
-  );
+  if(loading) return<div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
 
-  const sum = data?.summary || { total: 0, buy: 0, watch: 0, hold: 0, sell: 0 };
-  const scanDate = data?.scan_date ? new Date(data.scan_date).toLocaleString() : "—";
-  const classifications = [...new Set(data?.stocks?.map(s => s.classification) || [])].sort();
+  const sum=data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0};
+  const scanDate=data?.scan_date?new Date(data.scan_date).toLocaleString():"—";
+  const classifications=[...new Set(data?.stocks?.map(s=>s.classification)||[])].sort();
 
-  const headerStyle = (key: string, align: "left" | "right" | "center" = "right"): React.CSSProperties => ({
-    padding: "8px 12px", textAlign: align, cursor: "pointer",
-    fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", fontFamily: "var(--font-mono)",
-    color: sortKey === key ? "var(--green)" : "var(--text-light)",
-    userSelect: "none", whiteSpace: "nowrap", borderBottom: "2px solid var(--border)",
-    background: "var(--bg)",
+  const hs=(key:string,align:"left"|"right"|"center"="right"):React.CSSProperties=>({
+    padding:"8px 12px",textAlign:align,cursor:"pointer",fontSize:9,fontWeight:700,letterSpacing:"0.1em",fontFamily:"var(--font-mono)",
+    color:sortKey===key?"var(--green,#2d7a4f)":"var(--text-light,#9ca3af)",userSelect:"none",whiteSpace:"nowrap",borderBottom:"2px solid var(--border,#e5e7eb)",background:"var(--bg,#fff)"
   });
 
-  return (
-    <div style={{ padding: "20px 24px", maxWidth: 1440, margin: "0 auto" }}>
+  // Signal cards config
+  const signalCards = [
+    ...(sum.strong_buy ? [{ label:"STRONG BUY",count:sum.strong_buy,icon:<Star size={15}/>,s:SIG["STRONG BUY"] }] : []),
+    { label:"BUY",count:sum.buy,icon:<TrendingUp size={15}/>,s:SIG.BUY },
+    { label:"WATCH",count:sum.watch,icon:<Target size={15}/>,s:SIG.WATCH },
+    { label:"HOLD",count:sum.hold,icon:<Shield size={15}/>,s:SIG.HOLD },
+    { label:"SELL",count:sum.sell,icon:<TrendingDown size={15}/>,s:SIG.SELL },
+  ];
+
+  return(
+    <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-        <div>
-          <p style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 4 }}>
-            {data?.region?.toUpperCase()} · {scanDate} · {sum.total} stocks · {data?.version || "v5"}
-          </p>
-        </div>
-        <div style={{ fontSize: 9, color: "var(--text-light)", textAlign: "right", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>
-          {data?.weights ? FACTOR_ORDER.map(k => `${FACTOR_LABELS[k]} ${((data.weights as any)[k] * 100).toFixed(0)}%`).join(" · ") : "50% Value · 30% Tech · 20% Analyst"}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+        <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{data?.region?.toUpperCase()} · {scanDate} · {sum.total} stocks · {data?.version||"v7"}</p>
+        <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
+          {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
         </div>
       </div>
 
+      {/* Macro Banner */}
+      <MacroBanner macro={data?.macro}/>
+
       {/* Signal Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
-        {([
-          { label: "BUY", count: sum.buy, icon: <TrendingUp size={15} />, ...SIG.BUY },
-          { label: "WATCH", count: sum.watch, icon: <Target size={15} />, ...SIG.WATCH },
-          { label: "HOLD", count: sum.hold, icon: <Shield size={15} />, ...SIG.HOLD },
-          { label: "SELL", count: sum.sell, icon: <TrendingDown size={15} />, ...SIG.SELL },
-        ] as const).map(({ label, count, icon, color, bg, border }) => (
-          <div key={label} onClick={() => setFilter(f => f === label ? "ALL" : label)}
-            style={{
-              background: filter === label ? bg : "var(--bg)",
-              border: `1px solid ${filter === label ? border : "var(--border)"}`,
-              borderRadius: 8, padding: "12px 16px", cursor: "pointer", transition: "all 0.15s",
-              boxShadow: filter === label ? "var(--shadow-md)" : "var(--shadow-sm)",
-            }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{label}</span>
-              <span style={{ color }}>{icon}</span>
+      <div style={{display:"grid",gridTemplateColumns:`repeat(${signalCards.length},1fr)`,gap:10,marginBottom:20}}>
+        {signalCards.map(({label,count,icon,s:st})=>(
+          <div key={label} onClick={()=>setFilter(f=>f===label?"ALL":label)} style={{
+            background:filter===label?st.bg:"var(--bg)",border:`1px solid ${filter===label?st.border:"var(--border,#e5e7eb)"}`,
+            borderRadius:8,padding:"12px 16px",cursor:"pointer",transition:"all 0.15s",
+            boxShadow:filter===label?"0 1px 3px rgba(0,0,0,0.06)":"0 1px 2px rgba(0,0,0,0.04)"
+          }}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{label}</span>
+              <span style={{color:st.color}}>{icon}</span>
             </div>
-            <div style={{ fontSize: 26, fontWeight: 700, color, fontFamily: "var(--font-mono)", marginTop: 2 }}>{count || 0}</div>
+            <div style={{fontSize:26,fontWeight:700,color:st.color,fontFamily:"var(--font-mono)",marginTop:2}}>{count||0}</div>
           </div>
         ))}
       </div>
 
-      {/* Search + Classification Filter */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-        <div style={{ position: "relative", flex: 1, maxWidth: 280 }}>
-          <Search size={14} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search symbol..."
-            style={{ width: "100%", padding: "7px 10px 7px 32px", fontSize: 12, fontFamily: "var(--font-mono)",
-              border: "1px solid var(--border)", borderRadius: 6, background: "var(--bg)", color: "var(--text)",
-              outline: "none" }} />
+      {/* Search + Filter */}
+      <div style={{display:"flex",gap:10,marginBottom:12}}>
+        <div style={{position:"relative",flex:1,maxWidth:280}}>
+          <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol..." style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
-        <div style={{ position: "relative" }}>
-          <Filter size={12} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
-          <select value={classFilter} onChange={e => setClassFilter(e.target.value)}
-            style={{ padding: "7px 12px 7px 30px", fontSize: 11, fontFamily: "var(--font-mono)",
-              border: "1px solid var(--border)", borderRadius: 6, background: "var(--bg)", color: "var(--text)",
-              outline: "none", cursor: "pointer", appearance: "auto" }}>
+        <div style={{position:"relative"}}>
+          <Filter size={12} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
+          <select value={classFilter} onChange={e=>setClassFilter(e.target.value)} style={{padding:"7px 12px 7px 30px",fontSize:11,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none",cursor:"pointer",appearance:"auto"}}>
             <option value="ALL">All Classifications</option>
-            {classifications.map(c => <option key={c} value={c}>{c?.replace("_", " ")}</option>)}
+            {classifications.map(c=><option key={c} value={c}>{c?.replace("_"," ")}</option>)}
           </select>
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: "var(--bg)", borderRadius: 8, border: "1px solid var(--border)", overflow: "hidden", boxShadow: "var(--shadow-md)" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-            <thead>
-              <tr>
-                <th style={headerStyle("symbol", "left")} onClick={() => toggleSort("symbol")}>SYMBOL</th>
-                <th style={headerStyle("price")} onClick={() => toggleSort("price")}>PRICE</th>
-                <th style={headerStyle("signal", "left")} onClick={() => toggleSort("signal")}>SIGNAL</th>
-                <th style={headerStyle("composite")} onClick={() => toggleSort("composite")}>SCORE</th>
-                <th style={{ ...headerStyle("composite", "center"), cursor: "default" }}>RADAR</th>
-                <th style={headerStyle("bull_score", "left")} onClick={() => toggleSort("bull_score")}>BULL</th>
-                <th style={headerStyle("margin_of_safety", "left")} onClick={() => toggleSort("margin_of_safety")}>MoS</th>
-                <th style={headerStyle("upside")} onClick={() => toggleSort("upside")}>UPSIDE</th>
-                <th style={headerStyle("insider_score", "center")} onClick={() => toggleSort("insider_score" as any)}>INSIDER</th>
-                <th style={headerStyle("transcript_sentiment", "left")} onClick={() => toggleSort("transcript_sentiment" as any)}>TRNSCRPT</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map(s => (
-                <StockRow key={s.symbol} stock={s} weights={weights} expanded={!!expanded[s.symbol]}
-                  onToggle={() => setExpanded(e => ({ ...e, [s.symbol]: !e[s.symbol] }))} />
-              ))}
-            </tbody>
+      <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+            <thead><tr>
+              <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
+              <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
+              <th style={hs("signal","left")} onClick={()=>toggleSort("signal")}>SIGNAL</th>
+              <th style={hs("composite")} onClick={()=>toggleSort("composite")}>SCORE</th>
+              <th style={{...hs("composite","center"),cursor:"default"}}>RADAR</th>
+              <th style={hs("bull_score","left")} onClick={()=>toggleSort("bull_score")}>BULL</th>
+              <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")}>MoS</th>
+              <th style={hs("upside")} onClick={()=>toggleSort("upside")}>UPSIDE</th>
+              <th style={hs("insider_score","center")}>INSIDER</th>
+              <th style={hs("transcript_sentiment","left")}>TRNSCRPT</th>
+            </tr></thead>
+            <tbody>{sorted.map(s=><StockRow key={s.symbol} stock={s} weights={weights} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
           </table>
         </div>
-        {sorted.length === 0 && (
-          <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)" }}>
-            No stocks match this filter
-          </div>
-        )}
+        {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
-
-      <div style={{ textAlign: "center", marginTop: 14, fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-        {sum.total} screened · {sorted.length} shown · Click row to expand · Click column to sort
-      </div>
+      <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{sum.total} screened · {sorted.length} shown · Click row to expand · Click column to sort</div>
     </div>
   );
 }
