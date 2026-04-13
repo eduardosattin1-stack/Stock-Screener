@@ -241,39 +241,47 @@ class Stock:
 # ---------------------------------------------------------------------------
 
 REGIONS = {
-    "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
-    "sp500": [("NASDAQ", None, 10_000_000_000, 250), ("NYSE", None, 10_000_000_000, 250)],
+    "nasdaq100": [("NASDAQ", None, 5_000_000_000, 100)],
+    "sp500": [
+        ("NASDAQ", None, 1_000_000_000, 500), # Lowered to 1B for mid-cap growth (WIX)
+        ("NYSE", None, 1_000_000_000, 500)
+    ],
     "europe": [
-        ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
-        ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
-        ("MIL", "IT", 5_000_000_000, 15), ("STO", "SE", 5_000_000_000, 15),
-        ("SIX", "CH", 5_000_000_000, 15), ("BME", "ES", 5_000_000_000, 10),
+        ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
+        ("PAR", "FR", 1_000_000_000, 100),
+        ("LSE", "UK", 1_000_000_000, 100),
+        ("AMS", "NL", 500_000_000, 50),
+        ("STO", "SE", 500_000_000, 50),
+        ("HEL", "FI", 500_000_000, 50),      # ADDED: Finland (KEMPOWER)
+        ("OSL", "NO", 500_000_000, 50),      # ADDED: Norway
+        ("CPH", "DK", 500_000_000, 50),      # ADDED: Denmark
+        ("MIL", "IT", 1_000_000_000, 50),
+        ("SIX", "CH", 1_000_000_000, 50),
+        ("BME", "ES", 1_000_000_000, 50),
     ],
     "asia": [
-        ("JPX", "JP", 20_000_000_000, 40), ("HKSE", "HK", 10_000_000_000, 30),
-        ("KSC", "KR", 10_000_000_000, 20), ("SHH", "CN", 20_000_000_000, 30),
-        ("SHZ", "CN", 20_000_000_000, 20), ("BSE", "IN", 20_000_000_000, 20),
-        ("SES", "SG", 5_000_000_000, 10), ("ASX", "AU", 10_000_000_000, 20),
+        ("JPX", "JP", 5_000_000_000, 100),
+        ("HKSE", "HK", 5_000_000_000, 100),
+        ("KSC", "KR", 5_000_000_000, 50),
     ],
-    "brazil": [("SAO", "BR", 5_000_000_000, 30)],
-    "global": None,       # sp500 + europe (~685 stocks)
-    "global_all": None,   # sp500 + europe + asia (~900 stocks)
+    "brazil": [("SAO", "BR", 1_000_000_000, 50)],
+    "global": None,  # Will now include EVERY region above
 }
 
 def get_symbols(region: str) -> list[str]:
+    # If "global", iterate through every defined list in REGIONS
     if region == "global":
         syms = []
-        for r in ["sp500", "europe"]:
-            syms.extend(get_symbols(r))
+        # Dynamically include every key that has a list of configs
+        for r_name, config in REGIONS.items():
+            if config is not None:
+                syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
-    if region == "global_all":
-        syms = []
-        for r in ["sp500", "europe", "asia"]:
-            syms.extend(get_symbols(r))
-        return list(dict.fromkeys(syms))
+    
     configs = REGIONS.get(region)
     if configs is None:
-        configs = [(region.upper(), None, 5_000_000_000, 50)]
+        configs = [(region.upper(), None, 1_000_000_000, 50)]
+        
     symbols = []
     for exchange, country, min_cap, limit in configs:
         params = {
@@ -281,17 +289,13 @@ def get_symbols(region: str) -> list[str]:
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
-        if country:
-            params["country"] = country
+        if country: params["country"] = country
         data = fmp("company-screener", params)
         if data:
             batch = [d["symbol"] for d in data if "symbol" in d]
-            log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks (cap>{min_cap/1e9:.0f}B)")
+            log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
-        else:
-            log.warning(f"  {exchange}: screener returned no data")
     return list(dict.fromkeys(symbols))
-
 # ---------------------------------------------------------------------------
 # 2. Quote
 # ---------------------------------------------------------------------------
