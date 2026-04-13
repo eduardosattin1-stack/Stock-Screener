@@ -100,10 +100,10 @@ export default function Portfolio(){
 
   // NEW: Sync to Cloud Logic
 const handleSync = async () => {
-    setIsSyncing(true); // Fixed name
+    setIsSyncing(true);
     try {
       const payload = {
-        positions: positions,
+        positions: portfolio, // Matches your state name
         lastUpdated: new Date().toISOString(),
       };
 
@@ -121,11 +121,11 @@ const handleSync = async () => {
 
       setLastSynced(new Date());
       alert('Sync successful! Google Cloud Storage updated.');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sync failed:', error);
-      alert('Failed to sync. Make sure your Vercel Environment Variables are set.');
+      alert(`Sync failed: ${error.message}`);
     } finally {
-      setIsSyncing(false); // Fixed name
+      setIsSyncing(false);
     }
   };
 
