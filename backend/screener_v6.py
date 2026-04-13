@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
 """
-Stock Screener v6 — 10-Factor Composite Scoring
+Stock Screener v7 — 12-Factor ML-Optimized Composite Scoring
 Architecture: Two-pass (cheap screen → expensive enrichment)
-Factors: Upside 15% | Tech 15% | Analyst 10% | Transcript 15% | Institutional 10%
-         Insider 10% | Earnings 10% | News 5% | 52wk 5% | Catastrophe 5%
+New in v7: Quality factor, Catalyst factor, ML-optimized weights, Portfolio Monitor
+
+Factors (12):
+  Technical 18% | Upside 15% | Quality 10% | Transcript 10% | Catalyst 8%
+  Analyst 8% | Institutional 7% | Insider 7% | Earnings 5% | Proximity 5%
+  News 4% | Catastrophe 3%
+
+Modes:
+  --screen (default): Full universe screen → BUY/WATCH/HOLD/SELL signals
+  --monitor:          Re-score portfolio positions → HOLD/TRIM/SELL/ADD actions
+
+Signal Levels: STRONG BUY → BUY → WATCH → HOLD → SELL
 """
 
 import os, sys, json, math, time, logging, smtplib, argparse
@@ -63,22 +73,27 @@ def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
     rate = from_usd / to_usd
     return rate
 
-# Factor weights (must sum to 1.0)
+# Factor weights — v7 ML-optimized (must sum to 1.0)
 WEIGHTS = {
+    "technical": 0.18,
     "upside": 0.15,
-    "technical": 0.15,
-    "analyst": 0.10,
-    "transcript": 0.15,
-    "institutional": 0.10,
-    "insider": 0.10,
-    "earnings": 0.10,
-    "news": 0.05,
+    "quality": 0.10,       # NEW: Piotroski + Altman Z + ROE + GM
+    "transcript": 0.10,
+    "catalyst": 0.08,      # NEW: earnings calendar + news events + analyst moves
+    "analyst": 0.08,
+    "institutional": 0.07,
+    "insider": 0.07,
+    "earnings": 0.05,
     "proximity": 0.05,
-    "catastrophe": 0.05,
+    "news": 0.04,
+    "catastrophe": 0.03,
 }
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger("v6")
+log = logging.getLogger("v7")
+
+# Portfolio state path (GCS or local)
+PORTFOLIO_STATE = os.environ.get("PORTFOLIO_STATE", "portfolio_state.json")
 
 # ---------------------------------------------------------------------------
 # FMP API Client — all stable endpoints use ?symbol= query params
@@ -188,6 +203,15 @@ class Stock:
     # Upside (enhanced)
     upside_score: float = 0.0        # 0-1
 
+    # NEW v7: Quality factor
+    quality_score: float = 0.0       # 0-1 (Piotroski + Altman Z + ROE + ROIC + GM)
+
+    # NEW v7: Catalyst factor
+    catalyst_score: float = 0.5      # 0-1 (earnings calendar + news events + analyst moves)
+    catalyst_flags: list = field(default_factory=list)
+    has_catalyst: bool = False
+    days_to_earnings: int = -1
+
     # Composite
     composite: float = 0.0
     signal: str = "HOLD"
@@ -217,11 +241,17 @@ REGIONS = {
         ("SES", "SG", 5_000_000_000, 10), ("ASX", "AU", 10_000_000_000, 20),
     ],
     "brazil": [("SAO", "BR", 5_000_000_000, 30)],
-    "global": None,
+    "global": None,       # sp500 + europe (~685 stocks)
+    "global_all": None,   # sp500 + europe + asia (~900 stocks)
 }
 
 def get_symbols(region: str) -> list[str]:
     if region == "global":
+        syms = []
+        for r in ["sp500", "europe"]:
+            syms.extend(get_symbols(r))
+        return list(dict.fromkeys(syms))
+    if region == "global_all":
         syms = []
         for r in ["sp500", "europe", "asia"]:
             syms.extend(get_symbols(r))
@@ -424,8 +454,11 @@ def compute_stoch_rsi(closes, rsi_period=14, stoch_period=14):
     return (rsi_vals[-1] - lo) / (hi - lo) * 100
 
 def compute_obv_trend(closes, volumes, lookback=20):
-    if len(closes) < lookback + 1:
+    min_len = min(len(closes), len(volumes))
+    if min_len < lookback + 1:
         return "flat"
+    closes = closes[:min_len]
+    volumes = volumes[:min_len]
     obv = [0]
     for i in range(1, len(closes)):
         if closes[i] > closes[i-1]:
@@ -771,7 +804,7 @@ def get_news_sentiment(sym: str) -> dict:
     """Fetch recent stock news and estimate sentiment from title keywords."""
     result = {"sentiment": 0.0, "score": 0.5, "count": 0}
 
-    data = fmp("news/stock", {"symbols": sym, "limit": 15})
+    data = fmp("search-stock-news", {"symbols": sym, "limit": 15})
     if not data:
         return result
 
@@ -981,7 +1014,176 @@ def compute_catastrophe(tech: dict, value: dict, analyst: dict, insider: dict) -
     return result
 
 # ---------------------------------------------------------------------------
-# 12. NEW: Transcript Sentiment (Claude API) — EXPENSIVE, pass-2 only
+# 11b. NEW v7: Quality Factor (Piotroski + Altman Z + ROE + ROIC + GM)
+# ---------------------------------------------------------------------------
+
+def compute_quality_score(value: dict) -> dict:
+    """
+    Quality factor: combines financial health metrics into a single 0-1 score.
+    ML backtest found this is the #2 predictor of outperformance.
+    """
+    result = {"score": 0.0}
+
+    pio = value.get("piotroski", 5)
+    az = value.get("altman_z", 5.0)
+    roe = value.get("roe_avg", 0)
+    roic = value.get("roic_avg", 0)
+    gm = value.get("gross_margin", 0)
+
+    # Piotroski (40% of quality) — strongest single predictor
+    result["score"] += (pio / 9) * 0.40
+
+    # Altman Z (20%) — bankruptcy risk filter
+    result["score"] += min(az / 20, 1.0) * 0.20
+
+    # ROE (15%) — profitability
+    result["score"] += min(max(roe, 0) / 0.30, 1.0) * 0.15
+
+    # ROIC (10%) — capital efficiency
+    result["score"] += min(max(roic, 0) / 0.20, 1.0) * 0.10
+
+    # Gross margin (15%) — competitive moat
+    result["score"] += min(gm / 0.60, 1.0) * 0.15
+
+    result["score"] = min(result["score"], 1.0)
+    return result
+
+# ---------------------------------------------------------------------------
+# 11c. NEW v7: Catalyst Factor (event-driven scoring)
+# ---------------------------------------------------------------------------
+
+def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
+    """
+    Catalyst factor: detects upcoming events that could move the stock.
+    Scans: earnings calendar, recent analyst moves, M&A/activist news,
+    congressional trading, dividend changes.
+
+    Returns score 0-1: 0.5 = neutral (no events), >0.6 = positive catalyst,
+    <0.35 = negative catalyst (downgrades, miss-prone earnings).
+    """
+    result = {"score": 0.5, "flags": [], "has_catalyst": False,
+              "is_risky": False, "days_to_earnings": -1}
+    today = datetime.now()
+    today_str = today.strftime("%Y-%m-%d")
+
+    # ─── A) Upcoming Earnings ───────────────────────────────────
+    earnings_cal = fmp("earnings-calendar", {"symbol": sym})
+    if earnings_cal:
+        for e in earnings_cal:
+            report_date = e.get("date", "")
+            if report_date >= today_str:
+                try:
+                    days_until = (datetime.strptime(report_date, "%Y-%m-%d") - today).days
+                except:
+                    days_until = 999
+                result["days_to_earnings"] = days_until
+
+                if days_until <= 14:
+                    # Check beat history from analyst data or fresh fetch
+                    eps_beats = (analyst or {}).get("eps_beats", 0)
+                    eps_total = (analyst or {}).get("eps_total", 0)
+
+                    if eps_total == 0:
+                        # Fetch if not provided
+                        hist = fmp("earnings", {"symbol": sym, "limit": 8})
+                        if hist:
+                            for h in hist:
+                                a, e2 = h.get("epsActual"), h.get("epsEstimated")
+                                if a is not None and e2 is not None:
+                                    eps_total += 1
+                                    if float(a) >= float(e2):
+                                        eps_beats += 1
+
+                    beat_rate = eps_beats / eps_total if eps_total > 0 else 0.5
+
+                    if beat_rate >= 0.875:
+                        result["score"] += 0.30
+                        result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beat streak")
+                    elif beat_rate >= 0.75:
+                        result["score"] += 0.20
+                        result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beats")
+                    elif beat_rate >= 0.5:
+                        result["score"] += 0.10
+                        result["flags"].append(f"Earnings in {days_until}d, mixed history")
+                    else:
+                        result["score"] -= 0.10
+                        result["flags"].append(f"⚠ Earnings in {days_until}d, MISS-PRONE ({eps_beats}/{eps_total})")
+                break  # only care about next earnings
+
+    # ─── B) Recent Analyst Moves (last 7 days) ─────────────────
+    grades = fmp("grades", {"symbol": sym, "limit": 10})
+    if grades:
+        cutoff = (today - timedelta(days=7)).strftime("%Y-%m-%d")
+        recent = [g for g in grades if g.get("date", "") >= cutoff]
+
+        upgrades = sum(1 for g in recent if g.get("action") == "upgrade")
+        downgrades = sum(1 for g in recent if g.get("action") == "downgrade")
+
+        if upgrades >= 2:
+            result["score"] += 0.20
+            result["flags"].append(f"{upgrades} upgrades in 7d")
+        elif upgrades == 1:
+            result["score"] += 0.10
+            result["flags"].append(f"1 upgrade in 7d")
+
+        if downgrades >= 2:
+            result["score"] -= 0.25
+            result["flags"].append(f"⚠ {downgrades} downgrades in 7d")
+        elif downgrades == 1:
+            result["score"] -= 0.15
+            result["flags"].append(f"⚠ 1 downgrade in 7d")
+
+    # ─── C) M&A / Activist / Major Event News (last 14 days) ──
+    news = fmp("search-stock-news", {"symbols": sym, "limit": 10})
+    if news:
+        cutoff = (today - timedelta(days=14)).strftime("%Y-%m-%d")
+        ma_kw = {"acquisition", "acquire", "merger", "buyout", "takeover",
+                 "activist", "stake", "bid", "offer", "deal", "spin-off", "spinoff"}
+        pos_kw = {"approval", "fda", "patent", "contract", "partnership",
+                  "launch", "breakthrough", "record revenue"}
+        neg_kw = {"lawsuit", "investigation", "fraud", "recall",
+                  "warning", "subpoena", "sec inquiry", "delisting"}
+
+        for article in news:
+            pub = article.get("publishedDate", "")[:10]
+            if pub < cutoff:
+                continue
+            title = (article.get("title", "") + " " + article.get("text", "")[:300]).lower()
+
+            if any(kw in title for kw in ma_kw):
+                result["score"] += 0.25
+                result["flags"].append("M&A/activist activity detected")
+                break
+            if any(kw in title for kw in pos_kw):
+                result["score"] += 0.10
+                result["flags"].append("Positive catalyst in news")
+            if any(kw in title for kw in neg_kw):
+                result["score"] -= 0.15
+                result["flags"].append("⚠ Negative event in news")
+
+    # ─── D) Congressional Trading (last 30 days) ──────────────
+    try:
+        senate = fmp("senate-trading", {"symbol": sym})
+        if senate:
+            cutoff = (today - timedelta(days=30)).strftime("%Y-%m-%d")
+            recent_buys = sum(1 for t in senate
+                            if t.get("transactionDate", "") >= cutoff
+                            and "purchase" in t.get("type", "").lower())
+            if recent_buys >= 2:
+                result["score"] += 0.10
+                result["flags"].append(f"Congressional buying ({recent_buys} purchases)")
+    except:
+        pass
+
+    # Clamp and set flags
+    result["score"] = min(max(result["score"], 0.0), 1.0)
+    result["has_catalyst"] = result["score"] > 0.65
+    result["is_risky"] = result["score"] < 0.35
+
+    return result
+
+# ---------------------------------------------------------------------------
+# 12. Transcript Sentiment (Claude API) — EXPENSIVE, pass-2 only
 # ---------------------------------------------------------------------------
 
 def get_transcript_sentiment(sym: str) -> dict:
@@ -1127,56 +1329,69 @@ def get_institutional_flows(sym: str) -> dict:
     return result
 
 # ---------------------------------------------------------------------------
-# 14. Composite Score & Signal (10-factor)
+# 14. Composite Score & Signal (v7 — 12-factor ML-optimized)
 # ---------------------------------------------------------------------------
 
-def compute_composite_v6(
+def compute_composite_v7(
     tech: dict, analyst: dict, value: dict, price: float,
     insider: dict, news: dict, proximity: dict, earnings: dict,
-    upside: dict, catastrophe: dict, transcript: dict = None,
+    upside: dict, catastrophe: dict, quality: dict = None,
+    catalyst: dict = None, transcript: dict = None,
     institutional: dict = None,
 ) -> tuple:
     """
-    10-factor composite. Returns (composite, signal, factor_scores, reasons).
-    If transcript/institutional unavailable, redistribute their weight.
+    12-factor composite. Returns (composite, signal, factor_scores, reasons).
+    New in v7: quality factor, catalyst factor, STRONG BUY signal, catalyst override.
     """
 
     factors = {}
 
-    # 1. Upside potential (15%)
-    factors["upside"] = upside.get("score", 0)
-
-    # 2. Technical bull score (15%)
+    # 1. Technical (18%)
     factors["technical"] = tech["bull_score"] / 10
 
-    # 3. Analyst buy ratio (10%)
-    factors["analyst"] = analyst.get("grade_score", 0.5)
+    # 2. Upside potential (15%)
+    factors["upside"] = upside.get("score", 0)
 
-    # 4. Transcript sentiment (15%) — may be None
+    # 3. Quality (10%) — NEW v7
+    if quality:
+        factors["quality"] = quality.get("score", 0.5)
+    else:
+        factors["quality"] = None  # redistribute
+
+    # 4. Transcript sentiment (10%) — may be None
     if transcript and transcript.get("score", 0.5) != 0.5:
         factors["transcript"] = transcript["score"]
     else:
-        factors["transcript"] = None  # redistribute
+        factors["transcript"] = None
 
-    # 5. Institutional flows (10%) — may be None
+    # 5. Catalyst (8%) — NEW v7
+    if catalyst:
+        factors["catalyst"] = catalyst.get("score", 0.5)
+    else:
+        factors["catalyst"] = 0.5  # neutral if not computed
+
+    # 6. Analyst buy ratio (8%)
+    factors["analyst"] = analyst.get("grade_score", 0.5)
+
+    # 7. Institutional flows (7%) — may be None
     if institutional and institutional.get("score", 0.5) != 0.5:
         factors["institutional"] = institutional["score"]
     else:
-        factors["institutional"] = None  # redistribute
+        factors["institutional"] = None
 
-    # 6. Insider activity (10%)
+    # 8. Insider activity (7%)
     factors["insider"] = insider.get("score", 0.5)
 
-    # 7. Earnings momentum (10%)
+    # 9. Earnings momentum (5%)
     factors["earnings"] = earnings.get("score", 0.5)
 
-    # 8. News sentiment (5%)
-    factors["news"] = news.get("score", 0.5)
-
-    # 9. 52-week proximity (5%)
+    # 10. 52-week proximity (5%)
     factors["proximity"] = proximity.get("score", 0.5)
 
-    # 10. Catastrophe detector (5%) — inverted: high score = no catastrophe = good
+    # 11. News sentiment (4%)
+    factors["news"] = news.get("score", 0.5)
+
+    # 12. Catastrophe detector (3%)
     factors["catastrophe"] = catastrophe.get("score", 1.0)
 
     # Weight redistribution for missing factors
@@ -1189,7 +1404,6 @@ def compute_composite_v6(
             missing_weight += weight
             factors[factor] = 0.5  # neutral placeholder
 
-    # Redistribute missing weight proportionally to active factors
     if missing_weight > 0 and active_weights:
         total_active = sum(active_weights.values())
         for factor in active_weights:
@@ -1202,20 +1416,26 @@ def compute_composite_v6(
 
     # Collect reasons
     reasons = catastrophe.get("flags", [])
+    if catalyst:
+        reasons.extend(catalyst.get("flags", []))
 
-    # Signal classification
+    # ─── Signal Classification (v7 — 5 levels) ───
     bull = tech["bull_score"]
     mos = value.get("margin_of_safety", 0)
     ins = insider.get("score", 0.5)
-    trans = factors.get("transcript", 0.5)
+    qual = factors.get("quality", 0.5)
+    cat_score = (catalyst or {}).get("score", 0.5)
+    has_catalyst = (catalyst or {}).get("has_catalyst", False)
+    is_risky = (catalyst or {}).get("is_risky", False)
 
-    # Multi-factor signal: require agreement across dimensions
+    # Multi-factor bullish/bearish counts
     bullish_count = sum([
         composite > 0.60,
         bull >= 6,
         mos > 0.10,
         ins >= 0.6,
         factors["earnings"] >= 0.6,
+        qual >= 0.6,
     ])
     bearish_count = sum([
         composite < 0.30,
@@ -1225,6 +1445,7 @@ def compute_composite_v6(
         factors["earnings"] <= 0.3,
     ])
 
+    # Base signal
     if bullish_count >= 4 and composite > 0.55:
         signal = "BUY"
     elif bullish_count >= 3 and composite > 0.45:
@@ -1233,6 +1454,23 @@ def compute_composite_v6(
         signal = "SELL"
     else:
         signal = "HOLD"
+
+    # ─── Catalyst Overrides (v7) ───
+
+    # STRONG BUY: BUY signal + active catalyst
+    if signal == "BUY" and has_catalyst:
+        signal = "STRONG BUY"
+        reasons.append("CATALYST BOOST: " + ", ".join((catalyst or {}).get("flags", [])))
+
+    # Catalyst can promote HOLD → WATCH (event-driven opportunity)
+    if signal == "HOLD" and cat_score >= 0.75:
+        signal = "WATCH"
+        reasons.append("CATALYST OVERRIDE: " + ", ".join((catalyst or {}).get("flags", [])))
+
+    # Catalyst warning can demote BUY → WATCH
+    if signal == "BUY" and is_risky:
+        signal = "WATCH"
+        reasons.append("CATALYST WARNING: " + ", ".join((catalyst or {}).get("flags", [])))
 
     return composite, signal, factors, reasons
 
@@ -1245,8 +1483,8 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
     total = len(symbols)
     skips = {"quote": 0, "tech": 0}
 
-    log.info(f"Starting v6 screen of {total} symbols")
-    log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + news)")
+    log.info(f"Starting v7 screen of {total} symbols")
+    log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + news + quality + catalyst)")
 
     # Pre-fetch all quotes in batches
     all_quotes = get_quotes_batch(symbols)
@@ -1301,9 +1539,16 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         # Catastrophe detector (from existing data, no API call)
         cat = compute_catastrophe(t, v, a, ins)
 
+        # NEW v7: Quality factor (from existing value data, no API call)
+        qual = compute_quality_score(v)
+
+        # NEW v7: Catalyst factor (2-3 API calls: earnings-calendar, grades, news, senate)
+        cata = compute_catalyst_score(sym, analyst=a)
+
         # Compute pass-1 composite (no transcript or institutional yet)
-        composite, signal, factors, reasons = compute_composite_v6(
+        composite, signal, factors, reasons = compute_composite_v7(
             t, a, v, price, ins, nws, prox, earn, ups, cat,
+            quality=qual, catalyst=cata,
             transcript=None, institutional=None,
         )
 
@@ -1333,6 +1578,11 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
             earnings_momentum=earn["momentum"], earnings_score=earn["score"],
             upside_score=ups["score"],
             catastrophe_score=cat["score"],
+            quality_score=qual["score"],
+            catalyst_score=cata["score"],
+            catalyst_flags=cata.get("flags", []),
+            has_catalyst=cata.get("has_catalyst", False),
+            days_to_earnings=cata.get("days_to_earnings", -1),
             composite=composite, signal=signal,
             classification=v["classification"],
             reasons=t.get("bull_reasons", []) + reasons,
@@ -1342,7 +1592,8 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         # Stash raw data for pass 2
         s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
                    "insider": ins, "news": nws, "proximity": prox,
-                   "earnings": earn, "upside": ups, "catastrophe": cat, "quote": q}
+                   "earnings": earn, "upside": ups, "catastrophe": cat,
+                   "quality": qual, "catalyst": cata, "quote": q}
 
         pass1_stocks.append(s)
 
@@ -1375,11 +1626,12 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         s.inst_accumulation = inst["accumulation"]
         s.inst_score = inst["score"]
 
-        # Recompute composite with all 10 factors
-        composite, signal, factors, reasons = compute_composite_v6(
+        # Recompute composite with all 12 factors
+        composite, signal, factors, reasons = compute_composite_v7(
             raw["tech"], raw["analyst"], raw["value"], raw["price"],
             raw["insider"], raw["news"], raw["proximity"],
             raw["earnings"], raw["upside"], raw["catastrophe"],
+            quality=raw["quality"], catalyst=raw["catalyst"],
             transcript=trans, institutional=inst,
         )
 
@@ -1406,35 +1658,35 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
 def format_report(stocks: list[Stock], region: str) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
-        f"{'='*95}",
-        f"  STOCK SCREENER v6 — {region.upper()} — {now}",
-        f"  10-Factor: Upside 15% | Tech 15% | Analyst 10% | Transcript 15%",
-        f"             Institutional 10% | Insider 10% | Earnings 10% | News 5% | 52wk 5% | Catastrophe 5%",
-        f"{'='*95}\n",
+        f"{'='*100}",
+        f"  STOCK SCREENER v7 — {region.upper()} — {now}",
+        f"  12-Factor ML-Optimized: Tech 18% | Upside 15% | Quality 10% | Transcript 10% | Catalyst 8%",
+        f"                          Analyst 8% | Institutional 7% | Insider 7% | Earnings 5% | Proximity 5% | News 4% | Catastrophe 3%",
+        f"{'='*100}\n",
     ]
 
-    for signal_group in ["BUY", "WATCH", "HOLD", "SELL"]:
+    for signal_group in ["STRONG BUY", "BUY", "WATCH", "HOLD", "SELL"]:
         group = [s for s in stocks if s.signal == signal_group]
         if not group:
             continue
-        emoji = {"BUY": "🟢", "WATCH": "🟠", "HOLD": "🟡", "SELL": "🔴"}[signal_group]
+        emoji = {"STRONG BUY": "🟣", "BUY": "🟢", "WATCH": "🟠", "HOLD": "🟡", "SELL": "🔴"}[signal_group]
         lines.append(f"  {emoji} {signal_group} ({len(group)} stocks)")
-        lines.append(f"  {'─'*90}")
+        lines.append(f"  {'─'*95}")
 
         for s in group[:TOP_N]:
             lines.append(f"\n  {s.symbol:<12} {s.currency} {s.price:>8.2f}  │  Composite: {s.composite:.3f}  │  {s.classification}")
 
-            # Factor breakdown
+            # Factor breakdown (v7 — 12 factors)
             fs = s.factor_scores
             if fs:
                 factor_strs = []
-                for f in ["upside", "technical", "analyst", "transcript", "insider",
-                          "institutional", "earnings", "news", "proximity", "catastrophe"]:
+                for f in ["technical", "upside", "quality", "transcript", "catalyst",
+                          "analyst", "institutional", "insider", "earnings", "proximity",
+                          "news", "catastrophe"]:
                     val = fs.get(f, 0.5)
-                    bar = "█" * int(val * 5)
                     factor_strs.append(f"{f[:5]}:{val:.2f}")
-                lines.append(f"    Factors:    {' | '.join(factor_strs[:5])}")
-                lines.append(f"                {' | '.join(factor_strs[5:])}")
+                lines.append(f"    Factors:    {' | '.join(factor_strs[:6])}")
+                lines.append(f"                {' | '.join(factor_strs[6:])}")
 
             lines.append(f"    Technical:  Bull {s.bull_score}/10  RSI {s.rsi:.0f}  MACD {s.macd_signal}  ADX {s.adx:.0f}")
             lines.append(f"    Value:      MoS {s.margin_of_safety:+.0%}  ROE {s.roe_avg:.0%}  GM {s.gross_margin:.0%}({s.gross_margin_trend})")
@@ -1447,7 +1699,13 @@ def format_report(stocks: list[Stock], region: str) -> str:
 
             lines.append(f"    Analyst:    Target ${s.target:.0f} ({s.upside:+.1f}%)  Grades {s.grade_buy}/{s.grade_total} buy  EPS {s.eps_beats}/{s.eps_total} beats")
             lines.append(f"    Insider:    Buy ratio {s.insider_buy_ratio:.2f}  Net buys: {s.insider_net_buys}  Score: {s.insider_score:.2f}")
-            lines.append(f"    News:       Sentiment {s.news_sentiment:+.2f}  52wk: {s.proximity_52wk:.0%}")
+            lines.append(f"    Quality:    Score {s.quality_score:.2f}  │  News: {s.news_sentiment:+.2f}  │  52wk: {s.proximity_52wk:.0%}")
+
+            # v7: Catalyst info
+            if s.catalyst_flags:
+                lines.append(f"    Catalyst:   Score {s.catalyst_score:.2f} — {', '.join(s.catalyst_flags[:4])}")
+            elif s.days_to_earnings >= 0:
+                lines.append(f"    Catalyst:   Score {s.catalyst_score:.2f} — Earnings in {s.days_to_earnings}d")
 
             if s.transcript_summary:
                 lines.append(f"    Transcript: {s.transcript_sentiment:+.2f} — {s.transcript_summary}")
@@ -1524,10 +1782,11 @@ def save_scan_to_gcs(stocks: list, region: str):
     payload = {
         "scan_date": datetime.now().isoformat(),
         "region": region,
-        "version": "v6",
+        "version": "v7",
         "weights": WEIGHTS,
         "summary": {
             "total": len(stocks),
+            "strong_buy": sum(1 for s in stocks if s.signal == "STRONG BUY"),
             "buy": sum(1 for s in stocks if s.signal == "BUY"),
             "watch": sum(1 for s in stocks if s.signal == "WATCH"),
             "hold": sum(1 for s in stocks if s.signal == "HOLD"),
@@ -1555,18 +1814,230 @@ def update_signal_history(stocks: list[Stock]):
             "mos": round(s.margin_of_safety, 3),
             "insider": round(s.insider_score, 2),
             "transcript": round(s.transcript_score, 2),
+            "quality": round(s.quality_score, 2),
+            "catalyst": round(s.catalyst_score, 2),
             "target": s.target,
         })
         history[key]["entries"] = history[key]["entries"][-60:]
     save_signals(history)
 
 # ---------------------------------------------------------------------------
-# 19. Main
+# 19. Portfolio Monitor (v7 — daily re-scoring of held positions)
+# ---------------------------------------------------------------------------
+
+def load_portfolio_state() -> dict:
+    """Load portfolio state from local file or GCS."""
+    try:
+        with open(PORTFOLIO_STATE) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"positions": [], "history": []}
+
+def save_portfolio_state(state: dict):
+    with open(PORTFOLIO_STATE, "w") as f:
+        json.dump(state, f, indent=2, default=str)
+    # Also upload to GCS
+    gcs_upload("portfolio/state.json", state)
+
+def monitor_portfolio(skip_transcripts: bool = True) -> str:
+    """
+    Re-score all held positions. Called daily at market close.
+    Returns formatted alert report.
+    """
+    state = load_portfolio_state()
+    positions = state.get("positions", [])
+
+    if not positions:
+        log.info("No portfolio positions to monitor.")
+        return "No positions."
+
+    syms = [p["symbol"] for p in positions]
+    log.info(f"Monitoring {len(syms)} positions: {', '.join(syms)}")
+
+    # Get fresh quotes
+    quotes = get_quotes_batch(syms)
+    today = datetime.now()
+    today_str = today.strftime("%Y-%m-%d")
+
+    actions = []
+
+    for pos in positions:
+        sym = pos["symbol"]
+        q = quotes.get(sym)
+        if not q or q["price"] <= 0:
+            actions.append({"symbol": sym, "action": "ERROR", "reason": "No quote data"})
+            continue
+
+        price = q["price"]
+        entry_price = pos.get("entry_price", price)
+        entry_comp = pos.get("entry_composite", 0.5)
+        entry_signal = pos.get("entry_signal", "BUY")
+        entry_date = pos.get("entry_date", today_str)
+        peak_price = pos.get("peak_price", price)
+
+        # Compute fresh scores
+        t = get_technicals(sym, q)
+        if not t:
+            actions.append({"symbol": sym, "action": "ERROR", "reason": "No chart data"})
+            continue
+
+        a = get_analyst(sym)
+        if a["target"] > 0:
+            a["upside"] = (a["target"] - price) / price * 100
+        v = get_value(sym, price, q["currency"])
+        ins = get_insider_activity(sym)
+        nws = get_news_sentiment(sym)
+        prox = compute_52wk_proximity(q)
+        earn = compute_earnings_momentum(a)
+        ups = compute_upside_score(a, v, price)
+        cat_d = compute_catastrophe(t, v, a, ins)
+        qual = compute_quality_score(v)
+        cata = compute_catalyst_score(sym, analyst=a)
+
+        composite, signal, factors, reasons = compute_composite_v7(
+            t, a, v, price, ins, nws, prox, earn, ups, cat_d,
+            quality=qual, catalyst=cata,
+        )
+
+        # ─── Decision Rules ───
+        price_change = (price - entry_price) / entry_price
+        comp_change = (composite - entry_comp) / entry_comp if entry_comp > 0 else 0
+        try:
+            days_held = (today - datetime.strptime(entry_date, "%Y-%m-%d")).days
+        except:
+            days_held = 0
+
+        action = "HOLD"
+        urgency = "normal"
+        action_reasons = []
+
+        # RULE 1: Signal downgrade
+        buy_signals = {"STRONG BUY", "BUY"}
+        if entry_signal in buy_signals and signal in ("HOLD", "SELL"):
+            action = "SELL"
+            urgency = "high"
+            action_reasons.append(f"Signal downgrade: {entry_signal} → {signal}")
+
+        # RULE 2: Composite decay > 20%
+        if comp_change < -0.20:
+            action = "TRIM" if action != "SELL" else "SELL"
+            urgency = "high"
+            action_reasons.append(f"Composite decay: {entry_comp:.3f} → {composite:.3f} ({comp_change:+.0%})")
+
+        # RULE 3: Stop-loss at -15%
+        if price_change < -0.15:
+            action = "SELL"
+            urgency = "critical"
+            action_reasons.append(f"Stop-loss: {price_change:+.1%} from entry ${entry_price:.2f}")
+
+        # RULE 4: Trailing stop — gave back >50% of gains from peak
+        if peak_price > entry_price:
+            gain_from_entry = (peak_price - entry_price) / entry_price
+            current_from_peak = (price - peak_price) / peak_price
+            if gain_from_entry > 0.15 and current_from_peak < -0.10:
+                if action == "HOLD":
+                    action = "TRIM"
+                action_reasons.append(f"Trailing stop: peak ${peak_price:.2f}, now {current_from_peak:+.0%} from peak")
+
+        # RULE 5: Catalyst warning
+        if cata.get("is_risky") and action == "HOLD":
+            action = "TRIM"
+            urgency = "medium"
+            action_reasons.append(f"Catalyst warning: {', '.join(cata.get('flags', []))}")
+
+        # RULE 6: Catalyst override (strong catalyst can save a dip)
+        if cata.get("has_catalyst") and signal in ("BUY", "WATCH", "STRONG BUY"):
+            if action in ("TRIM", "SELL") and comp_change > -0.30:
+                action = "HOLD"
+                action_reasons.append(f"Catalyst override: {', '.join(cata.get('flags', []))}")
+
+        # RULE 7: Time decay
+        if days_held > 90 and signal not in ("BUY", "STRONG BUY"):
+            if action == "HOLD":
+                action = "TRIM"
+            action_reasons.append(f"Time decay: held {days_held}d, signal now {signal}")
+
+        # RULE 8: Composite improving → ADD
+        if comp_change > 0.15 and signal in ("BUY", "STRONG BUY") and price_change < 0.05:
+            action = "ADD"
+            action_reasons.append(f"Composite improving: {entry_comp:.3f} → {composite:.3f}")
+
+        # Update peak price
+        if price > peak_price:
+            pos["peak_price"] = price
+
+        # Update last monitor data
+        pos["last_monitor"] = today_str
+        pos["last_composite"] = round(composite, 3)
+        pos["last_signal"] = signal
+
+        actions.append({
+            "symbol": sym,
+            "action": action,
+            "urgency": urgency,
+            "current_price": price,
+            "entry_price": entry_price,
+            "pnl_pct": round(price_change * 100, 1),
+            "entry_composite": entry_comp,
+            "current_composite": round(composite, 3),
+            "comp_change_pct": round(comp_change * 100, 1),
+            "current_signal": signal,
+            "days_held": days_held,
+            "catalyst_score": round(cata.get("score", 0.5), 2),
+            "catalyst_flags": cata.get("flags", []),
+            "reasons": action_reasons,
+        })
+
+    # Save updated state
+    save_portfolio_state(state)
+
+    # Upload monitor results to GCS
+    gcs_upload("portfolio/monitor.json", {
+        "date": today_str, "actions": actions,
+    })
+
+    # Format alert report
+    lines = [
+        f"{'='*80}",
+        f"  PORTFOLIO MONITOR — {today_str}",
+        f"{'='*80}",
+    ]
+
+    for action_type in ["SELL", "TRIM", "ADD", "HOLD", "ERROR"]:
+        group = [a for a in actions if a["action"] == action_type]
+        if not group:
+            continue
+        emoji = {"SELL": "🔴", "TRIM": "🟡", "ADD": "⬆️", "HOLD": "🟢", "ERROR": "⚠️"}[action_type]
+        lines.append(f"\n  {emoji} {action_type} ({len(group)}):")
+        for a in group:
+            lines.append(f"    {a['symbol']:<8} ${a['current_price']:>8.2f}  PnL: {a['pnl_pct']:>+6.1f}%  Comp: {a['current_composite']:.3f} ({a['comp_change_pct']:+.0f}%)  Signal: {a['current_signal']}")
+            if a.get("reasons"):
+                for r in a["reasons"]:
+                    lines.append(f"      → {r}")
+
+    # Summary
+    total_pnl = sum(a["pnl_pct"] for a in actions if a.get("pnl_pct")) / len(actions) if actions else 0
+    sells = sum(1 for a in actions if a["action"] == "SELL")
+    trims = sum(1 for a in actions if a["action"] == "TRIM")
+    adds = sum(1 for a in actions if a["action"] == "ADD")
+
+    lines.append(f"\n  Summary: {len(actions)} positions | Avg PnL: {total_pnl:+.1f}%")
+    if sells: lines.append(f"  ⚠️  {sells} SELL signal(s) — action required!")
+    if trims: lines.append(f"  ⚠️  {trims} TRIM signal(s) — consider reducing")
+    if adds: lines.append(f"  ⬆️  {adds} ADD signal(s) — consider increasing")
+
+    report = "\n".join(lines)
+    print(report)
+    return report
+
+# ---------------------------------------------------------------------------
+# 20. Main
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Stock Screener v6")
-    parser.add_argument("--region", default=os.environ.get("SCREEN_INDEX", "nasdaq100"))
+    parser = argparse.ArgumentParser(description="Stock Screener v7")
+    parser.add_argument("--region", default=os.environ.get("SCREEN_INDEX", "global"),
+                        help="Region: nasdaq100, sp500, europe, global (default)")
     parser.add_argument("--symbols", default="", help="Comma-separated symbols")
     parser.add_argument("--top", type=int, default=TOP_N)
     parser.add_argument("--enrich", type=int, default=ENRICH_TOP_N,
@@ -1574,12 +2045,26 @@ def main():
     parser.add_argument("--email", action="store_true")
     parser.add_argument("--no-transcripts", action="store_true",
                         help="Skip Claude API transcript analysis")
+    parser.add_argument("--monitor", action="store_true",
+                        help="Portfolio monitor mode: re-score held positions")
     args = parser.parse_args()
 
     if not FMP_KEY:
         log.error("FMP_API_KEY not set!")
         sys.exit(1)
 
+    # ─── Monitor Mode ───
+    if args.monitor:
+        log.info("Running in PORTFOLIO MONITOR mode")
+        report = monitor_portfolio(skip_transcripts=args.no_transcripts)
+        today = datetime.now().strftime("%Y-%m-%d")
+        if args.email or SMTP_USER:
+            # Only email if there are non-HOLD actions
+            if any(word in report for word in ["SELL", "TRIM", "ADD"]):
+                send_email(f"⚠️ Portfolio Alert — {today}", report)
+        return report
+
+    # ─── Screen Mode (default) ───
     enrich_count = args.enrich
     skip_transcripts = args.no_transcripts
 
@@ -1609,7 +2094,7 @@ def main():
     # Email
     today = datetime.now().strftime("%Y-%m-%d")
     if args.email or SMTP_USER:
-        send_email(f"Screener v6: {args.region.upper()} — {today}", report)
+        send_email(f"Screener v7: {args.region.upper()} — {today}", report)
 
     return report
 
