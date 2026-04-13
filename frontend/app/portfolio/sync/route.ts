@@ -11,10 +11,13 @@ export async function POST(req: Request) {
     const file = bucket.file('portfolio/state.json');
 
     // Upload the structured JSON exactly how monitor_v7.py expects it
-    await file.save(JSON.stringify(body, null, 2), {
-      contentType: 'application/json',
-      cacheControl: 'no-cache', // Ensure the python script gets the freshest version
-    });
+await file.save(JSON.stringify(body, null, 2), {
+  metadata: {
+    contentType: 'application/json',
+    cacheControl: 'no-cache',
+  },
+  resumable: false, // Optional: often better for small JSON uploads
+});
 
     return NextResponse.json({ success: true });
   } catch (error) {
