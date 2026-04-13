@@ -2,7 +2,7 @@
 """
 Portfolio Monitor v7 — Daily Position Re-Scoring & Alert System
 ================================================================
-Standalone script that re-scores all held positions using screener_v7 factors.
+Standalone script that re-scores all held positions using screener_v6 factors.
 Generates HOLD / TRIM / SELL / ADD actions based on 8 ML-validated rules.
 
 Usage:
@@ -35,7 +35,7 @@ Alerts: Email if any action != HOLD
 import os, sys, json, time, logging, argparse
 from datetime import datetime, timedelta
 
-# Add parent dir to path so we can import screener_v7
+# Add parent dir to path so we can import screener_v6
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import requests
@@ -137,20 +137,20 @@ def save_state(state):
         log.info("State saved locally (GCS unavailable)")
 
 # ---------------------------------------------------------------------------
-# Import scoring functions from screener_v7
+# Import scoring functions from screener_v6
 # ---------------------------------------------------------------------------
 
 try:
-    from screener_v7 import (
+    from screener_v6 import (
         get_technicals, get_analyst, get_value, get_insider_activity,
         compute_52wk_proximity, compute_earnings_momentum, compute_upside_score,
         compute_catastrophe, compute_quality_score, compute_catalyst_score,
         compute_composite_v7, get_quotes_batch, WEIGHTS,
     )
-    log.info("Imported screener_v7 scoring functions")
+    log.info("Imported screener_v6 scoring functions")
 except ImportError as e:
-    log.error(f"Cannot import screener_v7: {e}")
-    log.error("Place monitor_v7.py in the same directory as screener_v7.py")
+    log.error(f"Cannot import screener_v6: {e}")
+    log.error("Place monitor_v7.py in the same directory as screener_v6.py")
     sys.exit(1)
 
 # Try macro overlay

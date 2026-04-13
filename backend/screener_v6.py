@@ -820,7 +820,7 @@ def get_news_sentiment(sym: str) -> dict:
     """Fetch recent stock news and estimate sentiment from title keywords."""
     result = {"sentiment": 0.0, "score": 0.5, "count": 0}
 
-    data = fmp("search-stock-news", {"symbols": sym, "limit": 15})
+    data = fmp("news/stock", {"symbols": sym, "limit": 15})
     if not data:
         return result
 
@@ -1150,7 +1150,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
             result["flags"].append(f"⚠ 1 downgrade in 7d")
 
     # ─── C) M&A / Activist / Major Event News (last 14 days) ──
-    news = fmp("search-stock-news", {"symbols": sym, "limit": 10})
+    news = fmp("news/stock", {"symbols": sym, "limit": 10})
     if news:
         cutoff = (today - timedelta(days=14)).strftime("%Y-%m-%d")
         ma_kw = {"acquisition", "acquire", "merger", "buyout", "takeover",
@@ -1178,17 +1178,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
                 result["flags"].append("⚠ Negative event in news")
 
     # ─── D) Congressional Trading (last 30 days) ──────────────
-    try:
-        senate = fmp("senate-trading", {"symbol": sym})
-        if senate:
-            cutoff = (today - timedelta(days=30)).strftime("%Y-%m-%d")
-            recent_buys = sum(1 for t in senate
-                            if t.get("transactionDate", "") >= cutoff
-                            and "purchase" in t.get("type", "").lower())
-            if recent_buys >= 2:
-                result["score"] += 0.10
-                result["flags"].append(f"Congressional buying ({recent_buys} purchases)")
-    except:
+
         pass
 
     # Clamp and set flags
