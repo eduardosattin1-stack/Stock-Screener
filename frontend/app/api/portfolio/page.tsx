@@ -39,6 +39,7 @@ export default function Portfolio(){
   const[tab,setTab]=useState<"positions"|"history">("positions");
   const[expandedRow,setExpandedRow]=useState<string|null>(null);
   const[source,setSource]=useState<"gcs"|"local">("local");
+  const [lastSynced, setLastSynced] = useState<Date | null>(null);
   
   // NEW: Modal State
   const [showModal, setShowModal] = useState(false);
