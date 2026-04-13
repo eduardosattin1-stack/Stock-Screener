@@ -99,16 +99,14 @@ export default function Portfolio(){
   };
 
   // NEW: Sync to Cloud Logic
-    const handleSync = async () => {
-    setSyncing(true);
+const handleSync = async () => {
+    setIsSyncing(true); // Fixed name
     try {
-      // 1. Prepare the data to match what your route.ts expects
       const payload = {
         positions: positions,
         lastUpdated: new Date().toISOString(),
       };
 
-      // 2. Send the POST request to your API
       const response = await fetch('/api/portfolio/sync', {
         method: 'POST',
         headers: {
@@ -127,9 +125,9 @@ export default function Portfolio(){
       console.error('Sync failed:', error);
       alert('Failed to sync. Make sure your Vercel Environment Variables are set.');
     } finally {
-      setSyncing(false);
+      setIsSyncing(false); // Fixed name
     }
-    };
+  };
 
   const removePosition = (sym: string) => {
     const pos = portfolio.find(p => p.symbol === sym);
