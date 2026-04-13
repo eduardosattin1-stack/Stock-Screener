@@ -42,44 +42,40 @@ Outputs:
 
 Requirements: requests, scikit-learn (pip install scikit-learn)
 """
-
+#!/usr/bin/env python3
 import os, sys, json, math, time, logging, argparse, csv, hashlib
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Tuple
 from dataclasses import dataclass, field, asdict
-
 import requests
 
 # ---------------------------------------------------------------------------
-# Import v6 core functions (if available), otherwise define locally
+# CORE DEPENDENCY: Must import screener_v6.py
 # ---------------------------------------------------------------------------
+
+# Explicitly add current directory to path so Docker finds the file
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from screener_v6 import (
         fmp, get_symbols, get_technicals, get_analyst, get_value,
         get_insider_activity, get_news_sentiment, compute_52wk_proximity,
         compute_earnings_momentum, compute_upside_score, compute_catastrophe,
-        compute_composite_v6, WEIGHTS, get_fx_rate, _FX_TO_USD, REGIONS,
+        WEIGHTS, get_fx_rate, _FX_TO_USD, REGIONS,
         FMP_KEY, FMP, RATE_LIMIT, RISK_FREE,
         get_quotes_batch, _parse_quote,
     )
+    # Re-init logger after import to ensure it uses the backtest name
     log = logging.getLogger("backtest")
-    log.info("Imported screener_v6 functions successfully")
-    HAVE_V6 = True
-except ImportError:
-    HAVE_V6 = False
-    log = logging.getLogger("backtest")
-    log.warning("screener_v6.py not found — using built-in functions")
+    log.info("Successfully linked to screener_v6.py logic.")
+except ImportError as e:
+    print(f"\nCRITICAL ERROR: screener_v6.py not found ({e})")
+    print("This backtest requires the core screener file to ensure logic parity.")
+    sys.exit(1)
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-
-if not HAVE_V6:
-    FMP_KEY = os.environ.get("FMP_API_KEY", "")
-    FMP = "https://financialmodelingprep.com/stable"
-    RATE_LIMIT = 0.04
-    RISK_FREE = 0.045
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("backtest")
@@ -87,78 +83,8 @@ log = logging.getLogger("backtest")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
 # ---------------------------------------------------------------------------
-# FMP Client (fallback if v6 not imported)
-# ---------------------------------------------------------------------------
-
-if not HAVE_V6:
-    _FX_TO_USD = {
-        "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CHF": 1.12,
-        "JPY": 0.0067, "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073,
-        "HKD": 0.128, "INR": 0.012, "SGD": 0.75, "AUD": 0.65,
-        "CAD": 0.73, "SEK": 0.097, "BRL": 0.18,
-    }
-
-    def get_fx_rate(from_ccy, to_ccy):
-        if from_ccy == to_ccy: return 1.0
-        f = _FX_TO_USD.get(from_ccy, 1.0)
-        t = _FX_TO_USD.get(to_ccy, 1.0)
-        return f / t if t else 1.0
-
-    def fmp(endpoint, params=None):
-        time.sleep(RATE_LIMIT)
-        url = f"{FMP}/{endpoint}"
-        p = {"apikey": FMP_KEY}
-        if params: p.update(params)
-        try:
-            r = requests.get(url, params=p, timeout=20)
-            if r.status_code != 200: return None
-            data = r.json()
-            if isinstance(data, dict) and "Error Message" in data: return None
-            if isinstance(data, dict): return [data]
-            return data if isinstance(data, list) else None
-        except:
-            return None
-
-    REGIONS = {
-        "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
-        "sp500": [("NASDAQ", None, 10_000_000_000, 250), ("NYSE", None, 10_000_000_000, 250)],
-        "europe": [
-            ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
-            ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
-            ("MIL", "IT", 5_000_000_000, 15), ("STO", "SE", 5_000_000_000, 15),
-            ("SIX", "CH", 5_000_000_000, 15), ("BME", "ES", 5_000_000_000, 10),
-        ],
-        "global": None,
-    }
-
-    def get_symbols(region):
-        if region == "global":
-            syms = []
-            for r in ["sp500", "europe"]:
-                syms.extend(get_symbols(r))
-            return list(dict.fromkeys(syms))
-        configs = REGIONS.get(region)
-        if configs is None:
-            configs = [(region.upper(), None, 5_000_000_000, 50)]
-        symbols = []
-        for exchange, country, min_cap, limit in configs:
-            params = {
-                "exchange": exchange, "marketCapMoreThan": min_cap,
-                "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
-                "limit": limit,
-            }
-            if country: params["country"] = country
-            data = fmp("company-screener", params)
-            if data:
-                batch = [d["symbol"] for d in data if "symbol" in d]
-                log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
-                symbols.extend(batch)
-        return list(dict.fromkeys(symbols))
-
-# ---------------------------------------------------------------------------
 # Cache for fundamentals (quarterly data — reuse within same quarter)
 # ---------------------------------------------------------------------------
-
 _CACHE = {}  # key: (sym, quarter_key) → data
 
 def cache_key(sym, date_str):
@@ -528,7 +454,8 @@ def compute_all_factors(sym, as_of_date, tech, fund, price):
     factors["insider"] = fund.get("insider_score", 0.5)
     
     # 6. News (5%) — neutral for historical backtest (can't get old news)
-    factors["news"] = 0.5
+    news_res = get_news_sentiment(sym)
+    factors["news"] = news_res["score"]
     
     # 7. 52wk proximity (5%)
     yh = tech.get("year_high", 0)
