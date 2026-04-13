@@ -24,6 +24,9 @@ from typing import Optional
 
 import requests
 
+# Macro regime overlay (imported after logging init below)
+HAS_MACRO = False
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -73,24 +76,36 @@ def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
     rate = from_usd / to_usd
     return rate
 
-# Factor weights — v7 ML-optimized (must sum to 1.0)
+# Factor weights — v7 ML-optimized from 1462-sample backtest (must sum to 1.0)
+# Source: combined NASDAQ + Europe, 6 monthly windows, Oct 2025 → Apr 2026
+# Removed: news (ML: 0.0%), catastrophe (ML: 0.2%) — confirmed zero signal
+# Macro regime applied as weight TILT, not as a factor (same for all stocks)
 WEIGHTS = {
-    "technical": 0.18,
-    "upside": 0.15,
-    "quality": 0.10,       # NEW: Piotroski + Altman Z + ROE + GM
-    "transcript": 0.10,
-    "catalyst": 0.08,      # NEW: earnings calendar + news events + analyst moves
-    "analyst": 0.08,
-    "institutional": 0.07,
-    "insider": 0.07,
-    "earnings": 0.05,
-    "proximity": 0.05,
-    "news": 0.04,
-    "catastrophe": 0.03,
+    "technical": 0.35,      # ML says 51% but capped — trend, momentum, RSI
+    "quality": 0.15,        # Piotroski + Altman Z + ROE + GM (ML: 14.6%)
+    "proximity": 0.12,      # 52wk position — near-high stocks keep running (ML: 11.5%)
+    "catalyst": 0.08,       # Earnings calendar + news events + analyst moves
+    "transcript": 0.07,     # Claude API earnings analysis (couldn't backtest)
+    "institutional": 0.05,  # 13F flows (couldn't backtest)
+    "upside": 0.06,         # Analyst targets + DCF (ML: 2.8%)
+    "analyst": 0.05,        # Grades + consensus (ML: 3.1%)
+    "insider": 0.04,        # Insider trade statistics (ML: 1.9%)
+    "earnings": 0.03,       # EPS beat rate (ML: 2.1% — Piotroski captures better)
 }
+# Removed factors: news, catastrophe — ML confirmed zero predictive power
+# Their combined 3% redistributed to upside (+1%) and analyst (+1%) and insider (+1%)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v7")
+
+# Macro regime overlay — tilts weights based on yield curve, VIX, CPI, GDP
+try:
+    from macro_regime import fetch_macro_regime, apply_macro_tilt, get_risk_free_rate
+    HAS_MACRO = True
+    log.info("Macro regime module loaded")
+except ImportError:
+    HAS_MACRO = False
+    log.info("macro_regime.py not found — running without macro overlay")
 
 # Portfolio state path (GCS or local)
 PORTFOLIO_STATE = os.environ.get("PORTFOLIO_STATE", "portfolio_state.json")
@@ -454,11 +469,8 @@ def compute_stoch_rsi(closes, rsi_period=14, stoch_period=14):
     return (rsi_vals[-1] - lo) / (hi - lo) * 100
 
 def compute_obv_trend(closes, volumes, lookback=20):
-    min_len = min(len(closes), len(volumes))
-    if min_len < lookback + 1:
+    if len(closes) < lookback + 1:
         return "flat"
-    closes = closes[:min_len]
-    volumes = volumes[:min_len]
     obv = [0]
     for i in range(1, len(closes)):
         if closes[i] > closes[i-1]:
@@ -527,6 +539,10 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
         "rsi": rsi, "macd_signal": macd["signal"], "adx": adx,
         "bb_pct": bb_pct, "stoch_rsi": stoch, "obv_trend": obv,
         "bull_score": score, "bull_reasons": reasons,
+        # v7: include quote fields for signal classification
+        "sma50": sma50, "sma200": sma200, "price": price,
+        "year_high": quote.get("year_high", 0),
+        "year_low": quote.get("year_low", 0),
     }
 
 # ---------------------------------------------------------------------------
@@ -1334,70 +1350,67 @@ def get_institutional_flows(sym: str) -> dict:
 
 def compute_composite_v7(
     tech: dict, analyst: dict, value: dict, price: float,
-    insider: dict, news: dict, proximity: dict, earnings: dict,
-    upside: dict, catastrophe: dict, quality: dict = None,
+    insider: dict, proximity: dict, earnings: dict,
+    upside: dict, quality: dict = None,
     catalyst: dict = None, transcript: dict = None,
     institutional: dict = None,
+    weights: dict = None,
 ) -> tuple:
     """
-    12-factor composite. Returns (composite, signal, factor_scores, reasons).
-    New in v7: quality factor, catalyst factor, STRONG BUY signal, catalyst override.
+    10-factor composite (v7). Returns (composite, signal, factor_scores, reasons).
+    Removed: news (ML: 0.0%), catastrophe (ML: 0.2%) — confirmed zero signal.
+    Macro regime applied as weight tilt via `weights` parameter.
     """
+    base_weights = weights or WEIGHTS
 
     factors = {}
 
-    # 1. Technical (18%)
+    # 1. Technical (35%)
     factors["technical"] = tech["bull_score"] / 10
 
-    # 2. Upside potential (15%)
+    # 2. Upside potential (6%)
     factors["upside"] = upside.get("score", 0)
 
-    # 3. Quality (10%) — NEW v7
+    # 3. Quality (15%)
     if quality:
         factors["quality"] = quality.get("score", 0.5)
     else:
-        factors["quality"] = None  # redistribute
+        factors["quality"] = None
 
-    # 4. Transcript sentiment (10%) — may be None
+    # 4. Transcript sentiment (7%) — may be None
     if transcript and transcript.get("score", 0.5) != 0.5:
         factors["transcript"] = transcript["score"]
     else:
         factors["transcript"] = None
 
-    # 5. Catalyst (8%) — NEW v7
+    # 5. Catalyst (8%)
     if catalyst:
         factors["catalyst"] = catalyst.get("score", 0.5)
     else:
-        factors["catalyst"] = 0.5  # neutral if not computed
+        factors["catalyst"] = 0.5
 
-    # 6. Analyst buy ratio (8%)
+    # 6. Analyst (5%)
     factors["analyst"] = analyst.get("grade_score", 0.5)
 
-    # 7. Institutional flows (7%) — may be None
+    # 7. Institutional (5%) — may be None
     if institutional and institutional.get("score", 0.5) != 0.5:
         factors["institutional"] = institutional["score"]
     else:
         factors["institutional"] = None
 
-    # 8. Insider activity (7%)
+    # 8. Insider (4%)
     factors["insider"] = insider.get("score", 0.5)
 
-    # 9. Earnings momentum (5%)
+    # 9. Earnings (3%)
     factors["earnings"] = earnings.get("score", 0.5)
 
-    # 10. 52-week proximity (5%)
+    # 10. Proximity (12%)
     factors["proximity"] = proximity.get("score", 0.5)
-
-    # 11. News sentiment (4%)
-    factors["news"] = news.get("score", 0.5)
-
-    # 12. Catastrophe detector (3%)
-    factors["catastrophe"] = catastrophe.get("score", 1.0)
 
     # Weight redistribution for missing factors
     active_weights = {}
     missing_weight = 0
-    for factor, weight in WEIGHTS.items():
+    for factor, weight in base_weights.items():
         if factors.get(factor) is not None:
             active_weights[factor] = weight
         else:
@@ -1409,48 +1422,82 @@ def compute_composite_v7(
         for factor in active_weights:
             active_weights[factor] += missing_weight * (active_weights[factor] / total_active)
     else:
-        active_weights = WEIGHTS.copy()
+        active_weights = base_weights.copy()
 
     # Compute weighted composite
-    composite = sum(factors[f] * active_weights.get(f, WEIGHTS[f]) for f in WEIGHTS)
+    composite = sum(factors[f] * active_weights.get(f, base_weights.get(f, 0)) for f in base_weights)
 
     # Collect reasons
-    reasons = catastrophe.get("flags", [])
+    reasons = []
     if catalyst:
         reasons.extend(catalyst.get("flags", []))
 
-    # ─── Signal Classification (v7 — 5 levels) ───
+    # ─── Signal Classification (v7 — ML-validated thresholds) ───
+    # Backtest insight: trend_strength + momentum + prox_raw are the real drivers
+    # Old v6 bullish_count was too strict (WATCH outperformed BUY)
+    
     bull = tech["bull_score"]
-    mos = value.get("margin_of_safety", 0)
-    ins = insider.get("score", 0.5)
     qual = factors.get("quality", 0.5)
     cat_score = (catalyst or {}).get("score", 0.5)
     has_catalyst = (catalyst or {}).get("has_catalyst", False)
     is_risky = (catalyst or {}).get("is_risky", False)
-
-    # Multi-factor bullish/bearish counts
-    bullish_count = sum([
-        composite > 0.60,
-        bull >= 6,
-        mos > 0.10,
-        ins >= 0.6,
-        factors["earnings"] >= 0.6,
-        qual >= 0.6,
+    
+    # Extract raw ML-validated signals from tech dict
+    sma50 = tech.get("sma50", 0)
+    sma200 = tech.get("sma200", 0)
+    price_val = tech.get("price", 0) or value.get("price", 0) or price
+    
+    # trend_strength = (SMA50 - SMA200) / SMA200 — #1 predictor
+    trend_str = (sma50 - sma200) / sma200 if sma200 > 0 else 0
+    
+    # momentum = (price - SMA50) / SMA50 — #2 predictor
+    momentum = (price_val - sma50) / sma50 if sma50 > 0 else 0
+    
+    # prox_raw from proximity dict
+    yh = tech.get("year_high", 0)
+    yl = tech.get("year_low", 0)
+    prox_raw = (price_val - yl) / (yh - yl) if yh > yl > 0 else 0.5
+    
+    # ─── ML-validated signal rules ───
+    # Winners had: trend_str > 0.30, momentum > 0, prox > 0.75
+    # Losers had:  trend_str < 0, momentum < 0, prox < 0.40
+    
+    momentum_score = sum([
+        trend_str > 0.30,           # strong uptrend
+        trend_str > 0.10,           # mild uptrend
+        momentum > 0,               # price above SMA50
+        momentum > 0.05,            # strong price momentum
+        prox_raw > 0.75,            # near 52wk high
+        prox_raw > 0.60,            # healthy position
+        bull >= 6,                  # technical bull score
     ])
-    bearish_count = sum([
-        composite < 0.30,
-        bull <= 2,
-        mos < -0.20,
-        ins <= 0.2,
-        factors["earnings"] <= 0.3,
+    
+    quality_score_check = sum([
+        qual >= 0.6,                # strong quality
+        composite > 0.55,           # decent composite
+        factors.get("earnings", 0.5) >= 0.6,  # good earnings
     ])
-
-    # Base signal
-    if bullish_count >= 4 and composite > 0.55:
-        signal = "BUY"
-    elif bullish_count >= 3 and composite > 0.45:
-        signal = "WATCH"
-    elif bearish_count >= 3 or composite < 0.25:
+    
+    bearish_score = sum([
+        trend_str < -0.05,          # downtrend
+        momentum < -0.05,           # price falling below SMA50
+        prox_raw < 0.30,            # near 52wk low
+        bull <= 2,                  # no technical support
+        composite < 0.30,           # weak composite
+    ])
+    
+    # Signal determination — momentum-first (ML-validated)
+    if momentum_score >= 5 and quality_score_check >= 2:
+        signal = "BUY"    # strong momentum + quality confirmation
+    elif momentum_score >= 5 and quality_score_check >= 1:
+        signal = "BUY"    # strong momentum + minimal quality
+    elif momentum_score >= 4 and composite > 0.50:
+        signal = "BUY"    # good momentum + decent composite
+    elif momentum_score >= 3 and composite > 0.45:
+        signal = "WATCH"  # moderate momentum
+    elif bearish_score >= 3:
+        signal = "SELL"   # multiple bearish signals
+    elif bearish_score >= 2 and composite < 0.35:
         signal = "SELL"
     else:
         signal = "HOLD"
@@ -1484,7 +1531,27 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
     skips = {"quote": 0, "tech": 0}
 
     log.info(f"Starting v7 screen of {total} symbols")
-    log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + news + quality + catalyst)")
+    log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + quality + catalyst)")
+
+    # ─── Macro Regime (called ONCE, shared across all stocks) ───
+    macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}, "tilts": {}}
+    active_weights = WEIGHTS.copy()
+    if HAS_MACRO:
+        try:
+            log.info("Fetching macro regime data...")
+            macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
+            active_weights = apply_macro_tilt(WEIGHTS, macro)
+            log.info(f"Macro: {macro['regime']} (score={macro['score']:.3f}) — weights tilted")
+            # Update RISK_FREE dynamically from treasury data
+            global RISK_FREE
+            rf = get_risk_free_rate(macro.get("rates", {}))
+            if rf > 0:
+                RISK_FREE = rf
+                log.info(f"RISK_FREE updated to {RISK_FREE:.3f} from 10yr treasury")
+        except Exception as e:
+            log.warning(f"Macro regime fetch failed: {e} — using base weights")
+            macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}}
+            active_weights = WEIGHTS.copy()
 
     # Pre-fetch all quotes in batches
     all_quotes = get_quotes_batch(symbols)
@@ -1524,9 +1591,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         # Insider Activity (1 API call)
         ins = get_insider_activity(sym)
 
-        # News Sentiment (1 API call)
-        nws = get_news_sentiment(sym)
-
         # 52-week proximity (from existing quote data, no API call)
         prox = compute_52wk_proximity(q)
 
@@ -1536,7 +1600,7 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         # Upside score (from existing data, no API call)
         ups = compute_upside_score(a, v, price)
 
-        # Catastrophe detector (from existing data, no API call)
+        # Catastrophe detector (from existing data, no API call) — kept for display only
         cat = compute_catastrophe(t, v, a, ins)
 
         # NEW v7: Quality factor (from existing value data, no API call)
@@ -1547,9 +1611,10 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
 
         # Compute pass-1 composite (no transcript or institutional yet)
         composite, signal, factors, reasons = compute_composite_v7(
-            t, a, v, price, ins, nws, prox, earn, ups, cat,
+            t, a, v, price, ins, prox, earn, ups,
             quality=qual, catalyst=cata,
             transcript=None, institutional=None,
+            weights=active_weights,
         )
 
         s = Stock(
@@ -1573,7 +1638,7 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
             margin_of_safety=v["margin_of_safety"], value_score=v["value_score"],
             insider_buy_ratio=ins["buy_ratio"], insider_net_buys=ins["net_buys"],
             insider_score=ins["score"],
-            news_sentiment=nws["sentiment"], news_score=nws["score"],
+            news_sentiment=0.0, news_score=0.0,  # removed from composite, kept for display
             proximity_52wk=prox["proximity"], proximity_score=prox["score"],
             earnings_momentum=earn["momentum"], earnings_score=earn["score"],
             upside_score=ups["score"],
@@ -1591,9 +1656,10 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
 
         # Stash raw data for pass 2
         s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
-                   "insider": ins, "news": nws, "proximity": prox,
-                   "earnings": earn, "upside": ups, "catastrophe": cat,
-                   "quality": qual, "catalyst": cata, "quote": q}
+                   "insider": ins, "proximity": prox,
+                   "earnings": earn, "upside": ups,
+                   "quality": qual, "catalyst": cata, "quote": q,
+                   "weights": active_weights}
 
         pass1_stocks.append(s)
 
@@ -1626,13 +1692,14 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
         s.inst_accumulation = inst["accumulation"]
         s.inst_score = inst["score"]
 
-        # Recompute composite with all 12 factors
+        # Recompute composite with all factors + transcripts + institutional
         composite, signal, factors, reasons = compute_composite_v7(
             raw["tech"], raw["analyst"], raw["value"], raw["price"],
-            raw["insider"], raw["news"], raw["proximity"],
-            raw["earnings"], raw["upside"], raw["catastrophe"],
+            raw["insider"], raw["proximity"],
+            raw["earnings"], raw["upside"],
             quality=raw["quality"], catalyst=raw["catalyst"],
             transcript=trans, institutional=inst,
+            weights=raw["weights"],
         )
 
         s.composite = composite
@@ -1649,21 +1716,29 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
     pass1_stocks.sort(key=lambda x: x.composite, reverse=True)
     log.info(f"Screen complete: {len(pass1_stocks)} total scored")
 
-    return pass1_stocks
+    return pass1_stocks, macro
 
 # ---------------------------------------------------------------------------
 # 16. Report Formatting
 # ---------------------------------------------------------------------------
 
-def format_report(stocks: list[Stock], region: str) -> str:
+def format_report(stocks: list[Stock], region: str, macro: dict = None) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
         f"{'='*100}",
         f"  STOCK SCREENER v7 — {region.upper()} — {now}",
-        f"  12-Factor ML-Optimized: Tech 18% | Upside 15% | Quality 10% | Transcript 10% | Catalyst 8%",
-        f"                          Analyst 8% | Institutional 7% | Insider 7% | Earnings 5% | Proximity 5% | News 4% | Catastrophe 3%",
-        f"{'='*100}\n",
+        f"  10-Factor ML-Optimized + Macro Overlay + Catalyst",
+        f"  Tech 35% | Quality 15% | Proximity 12% | Catalyst 8% | Transcript 7%",
+        f"  Institutional 5% | Upside 6% | Analyst 5% | Insider 4% | Earnings 3%",
     ]
+    if macro and macro.get("regime"):
+        r = macro
+        lines.append(f"  Macro: {r['regime']} (score={r['score']:.3f}) — "
+                     f"Curve={r.get('sub_scores',{}).get('yield_curve','?'):.2f} "
+                     f"VIX={r.get('sub_scores',{}).get('vix','?'):.2f} "
+                     f"CPI={r.get('sub_scores',{}).get('cpi_trend','?'):.2f} "
+                     f"GDP={r.get('sub_scores',{}).get('gdp_momentum','?'):.2f}")
+    lines.append(f"{'='*100}\n")
 
     for signal_group in ["STRONG BUY", "BUY", "WATCH", "HOLD", "SELL"]:
         group = [s for s in stocks if s.signal == signal_group]
@@ -1676,17 +1751,17 @@ def format_report(stocks: list[Stock], region: str) -> str:
         for s in group[:TOP_N]:
             lines.append(f"\n  {s.symbol:<12} {s.currency} {s.price:>8.2f}  │  Composite: {s.composite:.3f}  │  {s.classification}")
 
-            # Factor breakdown (v7 — 12 factors)
+            # Factor breakdown (v7 — 10 factors)
             fs = s.factor_scores
             if fs:
                 factor_strs = []
-                for f in ["technical", "upside", "quality", "transcript", "catalyst",
-                          "analyst", "institutional", "insider", "earnings", "proximity",
-                          "news", "catastrophe"]:
+                for f in ["technical", "quality", "proximity", "catalyst",
+                          "transcript", "institutional", "upside", "analyst",
+                          "insider", "earnings"]:
                     val = fs.get(f, 0.5)
                     factor_strs.append(f"{f[:5]}:{val:.2f}")
-                lines.append(f"    Factors:    {' | '.join(factor_strs[:6])}")
-                lines.append(f"                {' | '.join(factor_strs[6:])}")
+                lines.append(f"    Factors:    {' | '.join(factor_strs[:5])}")
+                lines.append(f"                {' | '.join(factor_strs[5:])}")
 
             lines.append(f"    Technical:  Bull {s.bull_score}/10  RSI {s.rsi:.0f}  MACD {s.macd_signal}  ADX {s.adx:.0f}")
             lines.append(f"    Value:      MoS {s.margin_of_safety:+.0%}  ROE {s.roe_avg:.0%}  GM {s.gross_margin:.0%}({s.gross_margin_trend})")
@@ -1699,7 +1774,7 @@ def format_report(stocks: list[Stock], region: str) -> str:
 
             lines.append(f"    Analyst:    Target ${s.target:.0f} ({s.upside:+.1f}%)  Grades {s.grade_buy}/{s.grade_total} buy  EPS {s.eps_beats}/{s.eps_total} beats")
             lines.append(f"    Insider:    Buy ratio {s.insider_buy_ratio:.2f}  Net buys: {s.insider_net_buys}  Score: {s.insider_score:.2f}")
-            lines.append(f"    Quality:    Score {s.quality_score:.2f}  │  News: {s.news_sentiment:+.2f}  │  52wk: {s.proximity_52wk:.0%}")
+            lines.append(f"    Quality:    Score {s.quality_score:.2f}  │  52wk: {s.proximity_52wk:.0%}")
 
             # v7: Catalyst info
             if s.catalyst_flags:
@@ -1777,13 +1852,19 @@ def gcs_upload(path: str, data: dict):
     except Exception as e:
         log.warning(f"GCS: {e}")
 
-def save_scan_to_gcs(stocks: list, region: str):
+def save_scan_to_gcs(stocks: list, region: str, macro: dict = None):
     today = datetime.now().strftime("%Y-%m-%d")
     payload = {
         "scan_date": datetime.now().isoformat(),
         "region": region,
         "version": "v7",
         "weights": WEIGHTS,
+        "macro": {
+            "regime": (macro or {}).get("regime", "NEUTRAL"),
+            "score": (macro or {}).get("score", 0.5),
+            "sub_scores": (macro or {}).get("sub_scores", {}),
+            "features": (macro or {}).get("features", {}),
+        },
         "summary": {
             "total": len(stocks),
             "strong_buy": sum(1 for s in stocks if s.signal == "STRONG BUY"),
@@ -1886,16 +1967,14 @@ def monitor_portfolio(skip_transcripts: bool = True) -> str:
             a["upside"] = (a["target"] - price) / price * 100
         v = get_value(sym, price, q["currency"])
         ins = get_insider_activity(sym)
-        nws = get_news_sentiment(sym)
         prox = compute_52wk_proximity(q)
         earn = compute_earnings_momentum(a)
         ups = compute_upside_score(a, v, price)
-        cat_d = compute_catastrophe(t, v, a, ins)
         qual = compute_quality_score(v)
         cata = compute_catalyst_score(sym, analyst=a)
 
         composite, signal, factors, reasons = compute_composite_v7(
-            t, a, v, price, ins, nws, prox, earn, ups, cat_d,
+            t, a, v, price, ins, prox, earn, ups,
             quality=qual, catalyst=cata,
         )
 
@@ -2079,17 +2158,17 @@ def main():
         return "No symbols found."
 
     # Screen
-    results = screen(symbols, enrich_top_n=enrich_count, skip_transcripts=skip_transcripts)
+    results, macro = screen(symbols, enrich_top_n=enrich_count, skip_transcripts=skip_transcripts)
 
     # Report
-    report = format_report(results[:args.top * 3], args.region)
+    report = format_report(results[:args.top * 3], args.region, macro=macro)
     print(report)
 
     # Save signals
     update_signal_history(results)
 
-    # Save to GCS
-    save_scan_to_gcs(results, args.region)
+    # Save to GCS (include macro metadata)
+    save_scan_to_gcs(results, args.region, macro=macro)
 
     # Email
     today = datetime.now().strftime("%Y-%m-%d")

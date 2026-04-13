@@ -3,14 +3,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, ChevronRight, RefreshCw, Loader2, Newspaper, BarChart2 } from "lucide-react";
 
-// ── Paths ──────────────────────────────────────────────────────────────────────
 const GCS_SCANS = "/api/gcs/scans";
 const GCS_SIGNALS = "/api/gcs/signals";
 const FMP = "/api/fmp";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface FactorScores { upside: number; technical: number; analyst: number; transcript: number; institutional: number; insider: number; earnings: number; news: number; proximity: number; catastrophe: number; }
-
 interface StockData {
   symbol: string; price: number; currency: string; market_cap: number;
   sma50: number; sma200: number; year_high: number; year_low: number; volume: number;
@@ -33,11 +31,10 @@ interface StockData {
   earnings_momentum?: number; earnings_score?: number;
   upside_score?: number; catastrophe_score?: number;
 }
-
 interface SignalPoint { date: string; composite: number; signal: string; price: number; bull: number; mos: number; target?: number; }
 interface NewsItem { title: string; url: string; publishedDate: string; site: string; text: string; }
-interface GrowthData { growthRevenue: number; growthOperatingIncome: number; growthEPSDiluted: number; growthNetIncome: number; growthEBITDA: number; growthGrossProfit: number; growthGrossProfitRatio: number; }
-interface RatioYear { date: string; fiscalYear: string; grossProfitMargin: number; operatingProfitMargin: number; netProfitMargin: number; returnOnEquity: number; returnOnAssets: number; returnOnCapitalEmployed: number; freeCashFlowOperatingCashFlowRatio: number; currentRatio: number; debtToEquityRatio: number; interestCoverageRatio: number; dividendPayoutRatio: number; revenuePerShare: number; netIncomePerShare: number; bookValuePerShare: number; freeCashFlowPerShare: number; operatingCashFlowPerShare: number; dividendPerShare: number; priceToEarningsRatio: number; priceToSalesRatio: number; priceToBookRatio: number; priceToFreeCashFlowRatio: number; priceToOperatingCashFlowRatio: number; priceToEarningsGrowthRatio: number; dividendYieldPercentage: number; }
+interface IncomeRow { date: string; calendarYear: string; revenue: number; grossProfit: number; operatingIncome: number; netIncome: number; epsdiluted: number; ebitda: number; }
+interface RatioYear { date: string; fiscalYear: string; calendarYear?: string; grossProfitMargin: number; operatingProfitMargin: number; netProfitMargin: number; returnOnEquity: number; returnOnAssets: number; returnOnCapitalEmployed: number; freeCashFlowOperatingCashFlowRatio: number; currentRatio: number; debtToEquityRatio: number; interestCoverageRatio: number; dividendPayoutRatio: number; revenuePerShare: number; netIncomePerShare: number; bookValuePerShare: number; freeCashFlowPerShare: number; operatingCashFlowPerShare: number; dividendPerShare: number; priceToEarningsRatio: number; priceToSalesRatio: number; priceToBookRatio: number; priceToFreeCashFlowRatio: number; priceToOperatingCashFlowRatio: number; priceToEarningsGrowthRatio: number; dividendYieldPercentage: number; }
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
 const T = { bg:"#ffffff", card:"#ffffff", cardBorder:"#e5e7eb", cardShadow:"0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", text:"#1a1a1a", textMuted:"#6b7280", textLight:"#9ca3af", green:"#2d7a4f", greenLight:"#e8f5ee", greenBorder:"#b8dcc8", red:"#dc2626", redLight:"#fef2f2", amber:"#d97706", amberLight:"#fffbeb", blue:"#2563eb", purple:"#7c3aed", divider:"#f3f4f6", mono:"'JetBrains Mono','SF Mono',monospace", sans:"'DM Sans',-apple-system,sans-serif" };
@@ -50,8 +47,8 @@ const FW: Record<string,number> = { upside:15, technical:15, analyst:10, transcr
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
 const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0) return "—"; return `${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
-const annualize=(t:number|undefined,y:number):number|null=>{if(t==null||t<=-1) return null; return Math.pow(1+t,1/y)-1;};
 const gClr=(v:number|null)=>{if(v==null) return T.textLight; if(v>0.15) return T.green; if(v>0.05) return "#5a9e7a"; if(v>0) return T.textMuted; return T.red;};
+function safeCagr(start:number, end:number, years:number): number|null { if(!start||!end||start<=0||end<=0||years<=0) return null; return Math.pow(end/start, 1/years)-1; }
 function inferFactors(s:StockData):FactorScores { if(s.factor_scores) return s.factor_scores; return { upside:Math.min(1,Math.max(0,(s.upside||0)/80)), technical:Math.min(1,(s.bull_score||0)/10), analyst:s.grade_score||0, transcript:s.transcript_score??0.5, institutional:s.inst_score??0.5, insider:s.insider_score??0.5, earnings:Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)), news:s.news_score??0.5, proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5), catastrophe:s.catastrophe_score??1 }; }
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
@@ -61,14 +58,14 @@ function SH({title,icon,sub}:{title:string;icon?:React.ReactNode;sub?:string}){r
 function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){return<div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}><span style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500}}>{label}</span><span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span></div>{sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}</div>;}
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
-// ── Factor Radar (hero visual) ─────────────────────────────────────────────────
+// ── Factor Radar ───────────────────────────────────────────────────────────────
 function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
   const cx=size/2,cy=size/2,r=size/2-36;const vals=FACTOR_ORDER.map(k=>(scores as any)[k]??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
   const avg=vals.reduce((a,b)=>a+b,0)/n;const fill=avg>0.6?T.green:avg>0.4?T.amber:T.red;
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;} )}
+      {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;})}
       {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+24),ly=cy+Math.sin(a)*(r+24),v=vals[i],c=v>0.7?T.green:v>0.4?T.amber:T.red;return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#e5e7eb" strokeWidth={0.6}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={c} fontWeight="700">{(v*100).toFixed(0)}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
       {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={fill} stroke="#fff" strokeWidth={1.5}/>)}
@@ -86,29 +83,145 @@ function MomentumPanel({s}:{s:StockData}){const gc=s.sma50>s.sma200,p50=s.price>
 // ── AnalystTrend ────────────────────────────────────────────────────────────────
 function AnalystTrend({symbol}:{symbol:string}){const[points,setPoints]=useState<SignalPoint[]>([]);const[loading,setLoading]=useState(true);const canvasRef=useRef<HTMLCanvasElement>(null);useEffect(()=>{const f=async()=>{const res:SignalPoint[]=[];const today=new Date();const ps:Promise<void>[]=[];for(let i=0;i<30;i++){const d=new Date(today);d.setDate(d.getDate()-i);const ds=d.toISOString().split("T")[0];ps.push(fetch(`${GCS_SIGNALS}/${ds}.json`).then(r=>r.ok?r.json():null).then(data=>{if(data?.signals){const sig=data.signals.find((s:any)=>s.symbol===symbol);if(sig)res.push({date:ds,composite:sig.composite,signal:sig.signal,price:sig.price,bull:sig.bull,mos:sig.mos,target:sig.target});}}).catch(()=>{}));}await Promise.all(ps);res.sort((a,b)=>a.date.localeCompare(b.date));setPoints(res);setLoading(false);};f();},[symbol]);useEffect(()=>{const cv=canvasRef.current;if(!cv||points.length<2)return;const ctx=cv.getContext("2d");if(!ctx)return;const dpr=window.devicePixelRatio||1,w=cv.offsetWidth,h=cv.offsetHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const cs=points.map(p=>p.composite),mn=Math.min(...cs)*0.95,mx=Math.max(...cs)*1.05,rng=mx-mn||1;const gr=ctx.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(45,122,79,0.15)");gr.addColorStop(1,"rgba(45,122,79,0)");ctx.beginPath();ctx.moveTo(0,h);points.forEach((p,i)=>{ctx.lineTo((i/(points.length-1))*w,h-((p.composite-mn)/rng)*h);});ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();ctx.beginPath();points.forEach((p,i)=>{const x=(i/(points.length-1))*w,y=h-((p.composite-mn)/rng)*h;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.strokeStyle=T.green;ctx.lineWidth=2;ctx.lineJoin="round";ctx.stroke();},[points]);const trend=(()=>{if(points.length<3)return{l:"Insufficient",i:<Minus size={12}/>,c:T.textLight};const f3=points.slice(0,3).reduce((s,p)=>s+p.composite,0)/3,l3=points.slice(-3).reduce((s,p)=>s+p.composite,0)/3,d=l3-f3;if(d>0.03)return{l:"Rising",i:<TrendingUp size={12}/>,c:T.green};if(d<-0.03)return{l:"Falling",i:<TrendingDown size={12}/>,c:T.red};return{l:"Stable",i:<Minus size={12}/>,c:T.amber};})();if(loading)return<Card><SH title="Signal Trend (30d)" icon={<TrendingUp size={12}/>}/><div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading...</div></Card>;return<Card><SH title="Signal Trend (30d)" icon={<TrendingUp size={12}/>}/>{points.length<2?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Not enough data yet.</div>:<><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><div style={{display:"flex",alignItems:"center",gap:6}}><span style={{color:trend.c}}>{trend.i}</span><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:trend.c}}>{trend.l}</span></div><span style={{fontSize:10,fontFamily:T.mono,color:T.textLight}}>{points.length}pts</span></div><div style={{position:"relative",height:60}}><canvas ref={canvasRef} style={{width:"100%",height:"100%",display:"block"}}/></div><div style={{display:"flex",justifyContent:"space-between",fontSize:8,fontFamily:T.mono,color:T.textLight,marginTop:4}}><span>{points[0]?.date.slice(5)}</span><span>{points[points.length-1]?.date.slice(5)}</span></div></>}</Card>;}
 
-// ── TranscriptInsights ─────────────────────────────────────────────────────────
-function TranscriptInsights({symbol}:{symbol:string}){const[analysis,setAnalysis]=useState<string|null>(null);const[loading,setLoading]=useState(false);const[error,setError]=useState<string|null>(null);const f=useCallback(async()=>{setLoading(true);setError(null);try{const r=await fetch(`/api/transcript?symbol=${symbol}`);if(!r.ok)throw new Error(await r.text());const d=await r.json();setAnalysis(d.analysis||d.error||"No analysis.");}catch(e:any){setError(e.message);}finally{setLoading(false);}},[symbol]);return<Card><SH title="Transcript Insights" icon={<Brain size={12}/>}/>{analysis?<div><div style={{fontSize:11,lineHeight:1.7,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap"}}>{analysis}</div><button onClick={f} style={{marginTop:12,background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:10,fontFamily:T.mono,color:T.textMuted,display:"flex",alignItems:"center",gap:4}}><RefreshCw size={10}/> Refresh</button></div>:<div style={{textAlign:"center",padding:"20px 0"}}><button onClick={f} disabled={loading} style={{background:loading?T.divider:T.green,border:"none",borderRadius:6,padding:"10px 20px",color:loading?T.textMuted:"#fff",fontFamily:T.mono,fontSize:11,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"inline-flex",alignItems:"center",gap:6}}>{loading?<><RefreshCw size={12} style={{animation:"spin 1s linear infinite"}}/> Analyzing...</>:<><Brain size={12}/> Analyze Earnings Call</>}</button>{error&&<div style={{marginTop:8,fontSize:10,color:T.red,fontFamily:T.mono}}>{error}</div>}<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8}}>Claude AI analyzes the latest transcript</div></div>}</Card>;}
+// ── TranscriptInsights (uses /api/transcript proxy) ────────────────────────────
+function TranscriptInsights({symbol}:{symbol:string}){const[analysis,setAnalysis]=useState<string|null>(null);const[loading,setLoading]=useState(false);const[error,setError]=useState<string|null>(null);const f=useCallback(async()=>{setLoading(true);setError(null);try{const r=await fetch(`/api/transcript?symbol=${symbol}`);const d=await r.json();if(d.error){setError(d.error);}else{setAnalysis(d.analysis||"No analysis.");}}catch(e:any){setError(e.message);}finally{setLoading(false);}},[symbol]);return<Card><SH title="Transcript Insights" icon={<Brain size={12}/>}/>{analysis?<div><div style={{fontSize:11,lineHeight:1.7,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap"}}>{analysis}</div><button onClick={f} style={{marginTop:12,background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:10,fontFamily:T.mono,color:T.textMuted,display:"flex",alignItems:"center",gap:4}}><RefreshCw size={10}/> Refresh</button></div>:<div style={{textAlign:"center",padding:"20px 0"}}><button onClick={f} disabled={loading} style={{background:loading?T.divider:T.green,border:"none",borderRadius:6,padding:"10px 20px",color:loading?T.textMuted:"#fff",fontFamily:T.mono,fontSize:11,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"inline-flex",alignItems:"center",gap:6}}>{loading?<><RefreshCw size={12} style={{animation:"spin 1s linear infinite"}}/> Analyzing...</>:<><Brain size={12}/> Analyze Earnings Call</>}</button>{error&&<div style={{marginTop:8,fontSize:10,color:T.red,fontFamily:T.mono,maxWidth:400,margin:"8px auto 0",lineHeight:1.5}}>{error}</div>}<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8}}>Claude AI analyzes the latest transcript</div></div>}</Card>;}
 
 // ── TargetBar ──────────────────────────────────────────────────────────────────
 function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){const vs=[price,target,dcf,buffett].filter(v=>v>0);if(vs.length<2)return null;const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);return<div style={{marginTop:12,padding:"12px 0"}}><div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:8,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div><div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>{dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`${T.green}12`,borderRadius:4}}/>}<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}><div style={{position:"absolute",top:-16,left:-14,fontSize:9,color:T.text,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>{fmtPrice(price,currency)}</div></div>{target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-8,fontSize:8,color:T.amber,fontFamily:T.mono,whiteSpace:"nowrap"}}>Target</div></div>}{dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-4,fontSize:8,color:T.blue,fontFamily:T.mono,whiteSpace:"nowrap"}}>DCF</div></div>}{buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}><div style={{position:"absolute",top:-14,left:-8,fontSize:8,color:T.purple,fontFamily:T.mono,whiteSpace:"nowrap"}}>Buffett</div></div>}</div></div>;}
 
 // ── News Feed ──────────────────────────────────────────────────────────────────
-function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(d)setNews(d as NewsItem[]);setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
+function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(d)setNews(d as NewsItem[]);setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.slice(0,8).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
 
-// ── FMP Growth ─────────────────────────────────────────────────────────────────
-const cs_:React.CSSProperties={padding:"6px 10px",textAlign:"right",fontSize:11,fontFamily:T.mono,borderBottom:`1px solid ${T.divider}`,whiteSpace:"nowrap"};const hs_:React.CSSProperties={...cs_,color:T.textMuted,fontWeight:500,fontSize:10};const ls_:React.CSSProperties={...cs_,textAlign:"left",color:T.textMuted,fontWeight:500};function GC({v}:{v:number|null}){if(v==null)return<td style={cs_}>—</td>;return<td style={{...cs_,color:gClr(v),fontWeight:600}}>{(v*100).toFixed(1)}%</td>;}
-function GrowthPanel({data,loading}:{data:GrowthData|null;loading:boolean}){if(loading)return<Card><SH title="Growth Rates" sub="Year-over-Year" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;if(!data)return null;const rows=[{l:"Revenue",v:data.growthRevenue},{l:"Gross Profit",v:data.growthGrossProfit},{l:"Operating Income",v:data.growthOperatingIncome},{l:"Net Income",v:data.growthNetIncome},{l:"EPS (diluted)",v:data.growthEPSDiluted},{l:"EBITDA",v:data.growthEBITDA}];return<Card><SH title="Growth Rates" sub="Year-over-Year" icon={<BarChart2 size={12}/>}/><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>YoY Growth</th></tr></thead><tbody>{rows.map(r=><tr key={r.l}><td style={ls_}>{r.l}</td><GC v={r.v}/></tr>)}</tbody></table></Card>;}
-function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const a5=(f:keyof RatioYear)=>{const vs=ratios.slice(0,5).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>5Y Avg</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number,av=a5(f);return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cv!=null&&th!=null&&cv>=th?T.green:T.text,fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(av,isR)}</td></tr>;})}</tbody></table></Card>;}
-function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ms:[string,keyof RatioYear][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["Div%","dividendYieldPercentage"]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}</tr></thead><tbody>{ms.map(([l,f])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(1):"—"}</td>;})}</tr>)}</tbody></table></div></Card>;}
+// ══════════════════════════════════════════════════════════════════════════════
+// FMP PANELS — Growth (1Y/3Y/5Y/10Y), Profitability (Cur/3Y/5Y/10Y), Valuation
+// ══════════════════════════════════════════════════════════════════════════════
+
+const cs_:React.CSSProperties={padding:"6px 10px",textAlign:"right",fontSize:11,fontFamily:T.mono,borderBottom:`1px solid ${T.divider}`,whiteSpace:"nowrap"};
+const hs_:React.CSSProperties={...cs_,color:T.textMuted,fontWeight:500,fontSize:10};
+const ls_:React.CSSProperties={...cs_,textAlign:"left",color:T.textMuted,fontWeight:500};
+function GC({v}:{v:number|null}){if(v==null)return<td style={cs_}>—</td>;return<td style={{...cs_,color:gClr(v),fontWeight:600}}>{(v*100).toFixed(1)}%</td>;}
+
+// Growth: compute CAGR from raw income statements
+function GrowthPanel({incomes,loading}:{incomes:IncomeRow[];loading:boolean}){
+  if(loading)return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
+  if(!incomes.length)return null;
+  // Sort oldest first
+  const sorted=[...incomes].sort((a,b)=>a.date.localeCompare(b.date));
+  const latest=sorted[sorted.length-1];
+  const n=sorted.length;
+
+  function cagr(field:keyof IncomeRow, years:number):number|null{
+    if(n<years+1) return null;
+    const start=sorted[n-1-years][field] as number;
+    const end=latest[field] as number;
+    return safeCagr(start,end,years);
+  }
+  function yoy(field:keyof IncomeRow):number|null{
+    if(n<2) return null;
+    const prev=sorted[n-2][field] as number;
+    const cur=latest[field] as number;
+    if(!prev||prev<=0) return null;
+    return (cur-prev)/prev;
+  }
+
+  const metrics:[string,keyof IncomeRow][]=[
+    ["Revenue","revenue"],["Gross Profit","grossProfit"],["Operating Income","operatingIncome"],
+    ["Net Income","netIncome"],["EPS (diluted)","epsdiluted"],["EBITDA","ebitda"]
+  ];
+
+  return(
+    <Card>
+      <SH title="Growth Rates" icon={<BarChart2 size={12}/>} sub={`FY ${latest.calendarYear}`}/>
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>1Y</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead>
+          <tbody>{metrics.map(([label,field])=>(
+            <tr key={label}>
+              <td style={ls_}>{label}</td>
+              <GC v={yoy(field)}/>
+              <GC v={cagr(field,3)}/>
+              <GC v={cagr(field,5)}/>
+              <GC v={cagr(field,10)}/>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+// Profitability: Current / 3Y / 5Y / 10Y averages
+function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){
+  if(loading||!ratios.length)return null;
+  const c=ratios[0];
+  const avgN=(f:keyof RatioYear,n:number)=>{const vs=ratios.slice(0,n).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length>=Math.min(n,2)?vs.reduce((a,b)=>a+b,0)/vs.length:null;};
+  const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];
+  const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};
+  return(
+    <Card>
+      <SH title="Profitability" sub={`FY ${c.fiscalYear}`}/>
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>3Y Avg</th><th style={hs_}>5Y Avg</th><th style={hs_}>10Y Avg</th></tr></thead>
+          <tbody>{ms.map(([l,f,th,isR])=>{
+            const cv=c[f]as number;
+            const cl=(v:number|null)=>v!=null&&th!=null&&v>=th?T.green:T.text;
+            return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cl(cv),fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,3),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,5),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,10),isR)}</td></tr>;
+          })}</tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+// Valuation History: chronological + TTM (latest year)
+function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){
+  if(loading||!ratios.length)return null;
+  const yrs=[...ratios].reverse(); // oldest first for display
+  const ttm=ratios[0]; // most recent = approximate TTM
+  const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["Div%","dividendYieldPercentage",2]];
+  return(
+    <Card>
+      <SH title="Valuation History" sub="Annual"/>
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr>
+            <th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>
+            {yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}
+            <th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th>
+          </tr></thead>
+          <tbody>{ms.map(([l,f,d])=>(
+            <tr key={l}>
+              <td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>
+              {yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}
+              <td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
-  const[growthData,setGrowthData]=useState<GrowthData|null>(null);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
+  const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
 
   useEffect(()=>{if(!symbol)return;fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()).then(d=>{const f=d.stocks?.find((s:StockData)=>s.symbol===symbol.toUpperCase());setStock(f||null);setLoading(false);}).catch(()=>{setStock(null);setLoading(false);});},[symbol]);
-  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement-growth",{symbol:sym,limit:1}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10})]).then(([g,r])=>{if(g?.length)setGrowthData(g[0]as GrowthData);if(r?.length)setRatios(r as RatioYear[]);setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
+
+  // Fetch FMP: income statements (11 years for 10Y CAGR) + ratios (10 years)
+  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();
+    Promise.all([
+      fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),
+      fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),
+    ]).then(([inc,rat])=>{
+      if(inc?.length) setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));
+      if(rat?.length) setRatios(rat as RatioYear[]);
+      setFmpLoading(false);
+    }).catch(()=>setFmpLoading(false));
+  },[symbol]);
 
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
   if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
@@ -135,7 +248,7 @@ export default function StockDetail(){
       {/* TradingView */}
       <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${s.symbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
 
-      {/* ═══ FACTOR BREAKDOWN — Signature v6 ═══ */}
+      {/* ═══ FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
         <SH title="10-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)}`}/>
         <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:24}}>
@@ -162,8 +275,8 @@ export default function StockDetail(){
         <div style={{display:"flex",flexDirection:"column",gap:14}}><AnalystTrend symbol={s.symbol}/><TranscriptInsights symbol={s.symbol}/></div>
       </div>
 
-      {/* FMP */}
-      <GrowthPanel data={growthData} loading={fmpLoading}/>
+      {/* FMP Panels */}
+      <GrowthPanel incomes={incomes} loading={fmpLoading}/>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
 
       {/* News */}
