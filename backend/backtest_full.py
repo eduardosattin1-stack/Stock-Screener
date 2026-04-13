@@ -1,26 +1,38 @@
 #!/usr/bin/env python3
 """
-Stock Screener v6 — FULL HISTORICAL BACKTEST + ML OPTIMIZER
+Stock Screener v7 — FULL HISTORICAL BACKTEST + ML OPTIMIZER
 =============================================================
 Runs on Cloud Run / Cloud Shell alongside screener_v6.py
 
 Usage:
+  # Recent 6 months (original mode):
   python backtest_full.py --region nasdaq100 --windows 6
-  python backtest_full.py --region sp500 --windows 12
-  python backtest_full.py --region global --windows 6
-  python backtest_full.py --train-only training_data.csv   # skip API, retrain ML
+
+  # Full 2024-2025 training (24 monthly windows):
+  python backtest_full.py --region global --from 2024-01-01 --to 2025-12-31
+
+  # Specific date range:
+  python backtest_full.py --region sp500 --from 2024-06-01 --to 2025-06-30
+
+  # Retrain ML from existing CSV:
+  python backtest_full.py --train-only combined_training.csv
 
 Architecture:
-  For each of N monthly windows (rolling back from today):
+  For each monthly window in the date range:
     1. Get stock universe (same as v6 company-screener)
     2. For each stock:
        a. Get historical price on window START date (from chart)
        b. Get historical price on window END date (from chart)
        c. Get chart data (200d before start) → compute technicals AS OF start
        d. Get fundamentals (quarterly — cached, same within quarter)
-       e. Compute all v6 factor scores using start price
-       f. Record: features + actual 1-month return
+       e. Compute all factor scores using start price
+       f. Record: features + actual 1-month return + time-to-target metrics
     3. Output: training_data.csv with ~(stocks × windows) samples
+
+Quarterly Retraining Cycle:
+  Q1: Train on rolling 24 months → deploy weights
+  Q2: Retrain with new quarter of data → update weights
+  Repeat. Compare predicted vs actual each quarter.
 
 Outputs:
   - training_data.csv: Full feature matrix + returns (for ML)
@@ -637,31 +649,71 @@ def get_closest_price(prices_dict, target_date, window=5):
 # Generate Monthly Windows
 # ---------------------------------------------------------------------------
 
-def generate_windows(num_windows=12):
-    """Generate monthly window pairs going back from today."""
+def generate_windows(num_windows=12, from_date=None, to_date=None, window_days=30):
+    """
+    Generate monthly window pairs.
+    
+    If from_date and to_date are given: generates windows spanning that range.
+    Otherwise: generates num_windows rolling back from today (original behavior).
+    
+    Each window is (start_date, end_date, label) where the stock is scored
+    on start_date and the 1-month return is measured to end_date.
+    """
     windows = []
-    today = datetime.now()
     
-    for i in range(num_windows):
-        end = today - timedelta(days=30 * i)
-        start = end - timedelta(days=30)
+    if from_date and to_date:
+        # Date range mode: generate monthly windows from start to end
+        start = datetime.strptime(from_date, "%Y-%m-%d")
+        end = datetime.strptime(to_date, "%Y-%m-%d")
         
-        # Snap to ~10th of month
-        end_d = end.replace(day=min(10, end.day)).strftime("%Y-%m-%d")
-        start_d = start.replace(day=min(10, start.day)).strftime("%Y-%m-%d")
+        cursor = start
+        while cursor < end:
+            # Window start: 10th of current month
+            w_start = cursor.replace(day=10)
+            
+            # Window end: 10th of NEXT month
+            if cursor.month == 12:
+                w_end = cursor.replace(year=cursor.year + 1, month=1, day=10)
+            else:
+                w_end = cursor.replace(month=cursor.month + 1, day=10)
+            
+            # Don't go past end date + buffer
+            if w_end > end + timedelta(days=15):
+                break
+            
+            start_d = w_start.strftime("%Y-%m-%d")
+            end_d = w_end.strftime("%Y-%m-%d")
+            label = f"{w_start.strftime('%b%y')}→{w_end.strftime('%b%y')}"
+            windows.append((start_d, end_d, label))
+            
+            # Advance cursor by 1 month
+            if cursor.month == 12:
+                cursor = cursor.replace(year=cursor.year + 1, month=1)
+            else:
+                cursor = cursor.replace(month=cursor.month + 1)
+    else:
+        # Original mode: rolling back from today
+        today = datetime.now()
+        for i in range(num_windows):
+            end = today - timedelta(days=window_days * i)
+            start = end - timedelta(days=window_days)
+            
+            end_d = end.replace(day=min(10, end.day)).strftime("%Y-%m-%d")
+            start_d = start.replace(day=min(10, start.day)).strftime("%Y-%m-%d")
+            
+            label = f"{start.strftime('%b%y')}→{end.strftime('%b%y')}"
+            windows.append((start_d, end_d, label))
         
-        label = f"{start.strftime('%b%y')}→{end.strftime('%b%y')}"
-        windows.append((start_d, end_d, label))
+        windows.reverse()
     
-    windows.reverse()
     return windows
 
 # ---------------------------------------------------------------------------
 # MAIN BACKTEST
 # ---------------------------------------------------------------------------
 
-def run_backtest(region="nasdaq100", num_windows=6):
-    log.info(f"Starting backtest: region={region}, windows={num_windows}")
+def run_backtest(region="nasdaq100", num_windows=6, from_date=None, to_date=None):
+    log.info(f"Starting backtest: region={region}, windows={num_windows}, from={from_date}, to={to_date}")
     
     # 1. Get stock universe
     log.info("Step 1: Getting stock universe...")
@@ -673,7 +725,7 @@ def run_backtest(region="nasdaq100", num_windows=6):
         return []
     
     # 2. Generate windows
-    windows = generate_windows(num_windows)
+    windows = generate_windows(num_windows, from_date=from_date, to_date=to_date)
     log.info(f"Step 2: {len(windows)} monthly windows: {windows[0][2]} → {windows[-1][2]}")
     
     # 3. Fetch S&P 500 benchmark
@@ -971,10 +1023,15 @@ def gcs_upload(path, data):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Stock Screener v6 — Full Backtest + ML")
+    parser = argparse.ArgumentParser(description="Stock Screener v7 — Full Backtest + ML")
     parser.add_argument("--region", default=os.environ.get("SCREEN_INDEX", "nasdaq100"),
                         help="Region: nasdaq100, sp500, europe, global")
-    parser.add_argument("--windows", type=int, default=6, help="Number of monthly windows (1-12)")
+    parser.add_argument("--windows", type=int, default=6,
+                        help="Number of monthly windows (used if --from/--to not given)")
+    parser.add_argument("--from", dest="from_date", default="",
+                        help="Start date YYYY-MM-DD (e.g. 2024-01-01)")
+    parser.add_argument("--to", dest="to_date", default="",
+                        help="End date YYYY-MM-DD (e.g. 2025-12-31)")
     parser.add_argument("--train-only", default="", help="CSV path to skip API and just train ML")
     parser.add_argument("--output", default=".", help="Output directory")
     args = parser.parse_args()
@@ -984,6 +1041,23 @@ def main():
         sys.exit(1)
     
     os.makedirs(args.output, exist_ok=True)
+    
+    # Validate date args
+    from_date = args.from_date if args.from_date else None
+    to_date = args.to_date if args.to_date else None
+    if from_date and not to_date:
+        to_date = datetime.now().strftime("%Y-%m-%d")
+        log.info(f"No --to given, using today: {to_date}")
+    if to_date and not from_date:
+        log.error("--to requires --from!")
+        sys.exit(1)
+    
+    if from_date and to_date:
+        # Calculate approximate number of windows for logging
+        d1 = datetime.strptime(from_date, "%Y-%m-%d")
+        d2 = datetime.strptime(to_date, "%Y-%m-%d")
+        approx_windows = max(1, int((d2 - d1).days / 30))
+        log.info(f"Date range: {from_date} → {to_date} (~{approx_windows} monthly windows)")
     
     if args.train_only:
         # Load existing training data
@@ -1000,7 +1074,12 @@ def main():
         log.info(f"  Loaded {len(training)} samples")
     else:
         # Run full backtest
-        training = run_backtest(region=args.region, num_windows=args.windows)
+        training = run_backtest(
+            region=args.region,
+            num_windows=args.windows,
+            from_date=from_date,
+            to_date=to_date,
+        )
         
         if not training:
             log.error("No training data generated!")
