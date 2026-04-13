@@ -296,6 +296,7 @@ def get_symbols(region: str) -> list[str]:
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
     return list(dict.fromkeys(symbols))
+
 # ---------------------------------------------------------------------------
 # 2. Quote
 # ---------------------------------------------------------------------------
@@ -672,16 +673,16 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         if roics:
             v["roic_avg"] = sum(roics) / len(roics)
 
-    # Financial scores
+    # ------------------- PATCHED: Financial scores (Bulletproofed for v7) -------------------
     scores = fmp("financial-scores", {"symbol": sym})
-    if scores:
-        v["piotroski"] = int(scores[0].get("piotroskiScore", 0))
-        v["altman_z"] = float(scores[0].get("altmanZScore", 0))
+    if scores and scores[0]:
+        v["piotroski"] = int(scores[0].get("piotroskiScore") or 0)
+        v["altman_z"] = float(scores[0].get("altmanZScore") or 0)
 
-    # DCF — FMP returns in REPORTING currency
+    # ------------------- PATCHED: DCF Section (Bulletproofed) -------------------
     dcf = fmp("discounted-cash-flow", {"symbol": sym})
-    if dcf:
-        raw_dcf = float(dcf[0].get("dcf", 0))
+    if dcf and dcf[0]:
+        raw_dcf = float(dcf[0].get("dcf") or 0)
         if need_fx and raw_dcf > 0:
             ratio = raw_dcf / price if price > 0 else 0
             if 0.1 < ratio < 10:
@@ -691,10 +692,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         else:
             v["dcf_value"] = raw_dcf
 
-    # Owner earnings — in REPORTING currency
+    # ------------------- PATCHED: Owner earnings Section (Bulletproofed) -------------------
     oe = fmp("owner-earnings", {"symbol": sym, "limit": 4})
     if oe:
-        annual_oe_ps = sum(float(x.get("ownersEarningsPerShare", 0)) for x in oe)
+        annual_oe_ps = sum(float(x.get("ownersEarningsPerShare") or 0) for x in oe)
         if local_price > 0:
             v["owner_earnings_yield"] = annual_oe_ps / local_price
 
@@ -1553,112 +1554,118 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N, skip_transcript
     # Pre-fetch all quotes in batches
     all_quotes = get_quotes_batch(symbols)
 
-    # ═══════════════ PASS 1: Cheap Data ═══════════════
+    # ═══════════════ PATCHED: PASS 1 with Error Resilience ═══════════════
     pass1_stocks = []
 
     for i, sym in enumerate(symbols):
-        if (i + 1) % 10 == 0:
-            log.info(f"  Pass 1: {i+1}/{total} (passed: {len(pass1_stocks)})")
+        try:
+            if (i + 1) % 10 == 0:
+                log.info(f"  Pass 1: {i+1}/{total} (passed: {len(pass1_stocks)})")
 
-        # Quote (from batch, fallback to single)
-        q = all_quotes.get(sym)
-        if not q or q["price"] <= 0:
-            skips["quote"] += 1
-            continue
-        price = q["price"]
+            # Quote (from batch, fallback to single)
+            q = all_quotes.get(sym)
+            if not q or q["price"] <= 0:
+                skips["quote"] += 1
+                continue
+            price = q["price"]
 
-        # Technicals (from OHLCV chart)
-        t = get_technicals(sym, q)
-        if not t:
+            # Technicals (from OHLCV chart)
+            t = get_technicals(sym, q)
+            if not t:
+                skips["tech"] += 1
+                continue
+
+            # Analyst (targets + grades + earnings)
+            a = get_analyst(sym)
+            if a["target"] > 0:
+                a["upside"] = (a["target"] - price) / price * 100
+
+            # Skip deep analysis for stocks with no momentum AND no analyst interest
+            if t["bull_score"] <= 1 and a["target"] <= 0:
+                continue
+
+            # Value / Buffett (FX-aware)
+            v = get_value(sym, price, q["currency"])
+
+            # Insider Activity (1 API call)
+            ins = get_insider_activity(sym)
+
+            # 52-week proximity (from existing quote data, no API call)
+            prox = compute_52wk_proximity(q)
+
+            # Earnings momentum (from existing analyst data, no API call)
+            earn = compute_earnings_momentum(a)
+
+            # Upside score (from existing data, no API call)
+            ups = compute_upside_score(a, v, price)
+
+            # Catastrophe detector (from existing data, no API call) — kept for display only
+            cat = compute_catastrophe(t, v, a, ins)
+
+            # NEW v7: Quality factor (from existing value data, no API call)
+            qual = compute_quality_score(v)
+
+            # NEW v7: Catalyst factor (2-3 API calls: earnings-calendar, grades, news, senate)
+            cata = compute_catalyst_score(sym, analyst=a)
+
+            # Compute pass-1 composite (no transcript or institutional yet)
+            composite, signal, factors, reasons = compute_composite_v7(
+                t, a, v, price, ins, prox, earn, ups,
+                quality=qual, catalyst=cata,
+                transcript=None, institutional=None,
+                weights=active_weights,
+            )
+
+            s = Stock(
+                symbol=sym, price=price, currency=q["currency"],
+                sma50=q["sma50"], sma200=q["sma200"],
+                year_high=q["year_high"], year_low=q["year_low"],
+                market_cap=q["market_cap"], volume=q["volume"],
+                rsi=t["rsi"], macd_signal=t["macd_signal"], adx=t["adx"],
+                bb_pct=t["bb_pct"], stoch_rsi=t["stoch_rsi"], obv_trend=t["obv_trend"],
+                bull_score=t["bull_score"],
+                target=a["target"], upside=a.get("upside", 0), grade_score=a["grade_score"],
+                grade_buy=a["grade_buy"], grade_total=a["grade_total"],
+                eps_beats=a["eps_beats"], eps_total=a["eps_total"],
+                revenue_cagr_3y=v["revenue_cagr_3y"], eps_cagr_3y=v["eps_cagr_3y"],
+                roe_avg=v["roe_avg"], roe_consistent=v["roe_consistent"],
+                roic_avg=v["roic_avg"], gross_margin=v["gross_margin"],
+                gross_margin_trend=v["gross_margin_trend"],
+                piotroski=v["piotroski"], altman_z=v["altman_z"],
+                dcf_value=v["dcf_value"], owner_earnings_yield=v["owner_earnings_yield"],
+                intrinsic_buffett=v["intrinsic_buffett"], intrinsic_avg=v["intrinsic_avg"],
+                margin_of_safety=v["margin_of_safety"], value_score=v["value_score"],
+                insider_buy_ratio=ins["buy_ratio"], insider_net_buys=ins["net_buys"],
+                insider_score=ins["score"],
+                news_sentiment=0.0, news_score=0.0,  # removed from composite, kept for display
+                proximity_52wk=prox["proximity"], proximity_score=prox["score"],
+                earnings_momentum=earn["momentum"], earnings_score=earn["score"],
+                upside_score=ups["score"],
+                catastrophe_score=cat["score"],
+                quality_score=qual["score"],
+                catalyst_score=cata["score"],
+                catalyst_flags=cata.get("flags", []),
+                has_catalyst=cata.get("has_catalyst", False),
+                days_to_earnings=cata.get("days_to_earnings", -1),
+                composite=composite, signal=signal,
+                classification=v["classification"],
+                reasons=t.get("bull_reasons", []) + reasons,
+                factor_scores=factors,
+            )
+
+            # Stash raw data for pass 2
+            s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
+                       "insider": ins, "proximity": prox,
+                       "earnings": earn, "upside": ups,
+                       "quality": qual, "catalyst": cata, "quote": q,
+                       "weights": active_weights}
+
+            pass1_stocks.append(s)
+
+        except Exception as e:
+            log.warning(f"  {sym}: SKIPPING DUE TO ERROR - {e}")
             skips["tech"] += 1
             continue
-
-        # Analyst (targets + grades + earnings)
-        a = get_analyst(sym)
-        if a["target"] > 0:
-            a["upside"] = (a["target"] - price) / price * 100
-
-        # Skip deep analysis for stocks with no momentum AND no analyst interest
-        if t["bull_score"] <= 1 and a["target"] <= 0:
-            continue
-
-        # Value / Buffett (FX-aware)
-        v = get_value(sym, price, q["currency"])
-
-        # Insider Activity (1 API call)
-        ins = get_insider_activity(sym)
-
-        # 52-week proximity (from existing quote data, no API call)
-        prox = compute_52wk_proximity(q)
-
-        # Earnings momentum (from existing analyst data, no API call)
-        earn = compute_earnings_momentum(a)
-
-        # Upside score (from existing data, no API call)
-        ups = compute_upside_score(a, v, price)
-
-        # Catastrophe detector (from existing data, no API call) — kept for display only
-        cat = compute_catastrophe(t, v, a, ins)
-
-        # NEW v7: Quality factor (from existing value data, no API call)
-        qual = compute_quality_score(v)
-
-        # NEW v7: Catalyst factor (2-3 API calls: earnings-calendar, grades, news, senate)
-        cata = compute_catalyst_score(sym, analyst=a)
-
-        # Compute pass-1 composite (no transcript or institutional yet)
-        composite, signal, factors, reasons = compute_composite_v7(
-            t, a, v, price, ins, prox, earn, ups,
-            quality=qual, catalyst=cata,
-            transcript=None, institutional=None,
-            weights=active_weights,
-        )
-
-        s = Stock(
-            symbol=sym, price=price, currency=q["currency"],
-            sma50=q["sma50"], sma200=q["sma200"],
-            year_high=q["year_high"], year_low=q["year_low"],
-            market_cap=q["market_cap"], volume=q["volume"],
-            rsi=t["rsi"], macd_signal=t["macd_signal"], adx=t["adx"],
-            bb_pct=t["bb_pct"], stoch_rsi=t["stoch_rsi"], obv_trend=t["obv_trend"],
-            bull_score=t["bull_score"],
-            target=a["target"], upside=a.get("upside", 0), grade_score=a["grade_score"],
-            grade_buy=a["grade_buy"], grade_total=a["grade_total"],
-            eps_beats=a["eps_beats"], eps_total=a["eps_total"],
-            revenue_cagr_3y=v["revenue_cagr_3y"], eps_cagr_3y=v["eps_cagr_3y"],
-            roe_avg=v["roe_avg"], roe_consistent=v["roe_consistent"],
-            roic_avg=v["roic_avg"], gross_margin=v["gross_margin"],
-            gross_margin_trend=v["gross_margin_trend"],
-            piotroski=v["piotroski"], altman_z=v["altman_z"],
-            dcf_value=v["dcf_value"], owner_earnings_yield=v["owner_earnings_yield"],
-            intrinsic_buffett=v["intrinsic_buffett"], intrinsic_avg=v["intrinsic_avg"],
-            margin_of_safety=v["margin_of_safety"], value_score=v["value_score"],
-            insider_buy_ratio=ins["buy_ratio"], insider_net_buys=ins["net_buys"],
-            insider_score=ins["score"],
-            news_sentiment=0.0, news_score=0.0,  # removed from composite, kept for display
-            proximity_52wk=prox["proximity"], proximity_score=prox["score"],
-            earnings_momentum=earn["momentum"], earnings_score=earn["score"],
-            upside_score=ups["score"],
-            catastrophe_score=cat["score"],
-            quality_score=qual["score"],
-            catalyst_score=cata["score"],
-            catalyst_flags=cata.get("flags", []),
-            has_catalyst=cata.get("has_catalyst", False),
-            days_to_earnings=cata.get("days_to_earnings", -1),
-            composite=composite, signal=signal,
-            classification=v["classification"],
-            reasons=t.get("bull_reasons", []) + reasons,
-            factor_scores=factors,
-        )
-
-        # Stash raw data for pass 2
-        s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
-                   "insider": ins, "proximity": prox,
-                   "earnings": earn, "upside": ups,
-                   "quality": qual, "catalyst": cata, "quote": q,
-                   "weights": active_weights}
-
-        pass1_stocks.append(s)
 
     # Sort by pass-1 composite
     pass1_stocks.sort(key=lambda x: x.composite, reverse=True)
