@@ -469,8 +469,11 @@ def compute_stoch_rsi(closes, rsi_period=14, stoch_period=14):
     return (rsi_vals[-1] - lo) / (hi - lo) * 100
 
 def compute_obv_trend(closes, volumes, lookback=20):
-    if len(closes) < lookback + 1:
+    min_len = min(len(closes), len(volumes))
+    if min_len < lookback + 1:
         return "flat"
+    closes = closes[:min_len]
+    volumes = volumes[:min_len]
     obv = [0]
     for i in range(1, len(closes)):
         if closes[i] > closes[i-1]:
