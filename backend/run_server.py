@@ -129,7 +129,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
-            from screener_v5 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
+            from screener_v6 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
             from datetime import datetime
             content_len = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(content_len)) if content_len else {}
