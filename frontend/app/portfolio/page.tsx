@@ -119,7 +119,41 @@ export default function Portfolio(){
     setIsSyncing(false);
   };
 
-  const removePosition=(sym:string)=>{const u=portfolio.filter(p=>p.symbol!==sym);setPortfolio(u); saveLocalPortfolio(u); setSource("local");};
+  const removePosition = (sym: string) => {
+    const pos = portfolio.find(p => p.symbol === sym);
+    if (!pos) return;
+
+    // 1. Ask the user for the exit price (defaults to current live price)
+    const currentPrice = liveData[sym]?.price || pos.entry_price;
+    const exitStr = window.prompt(`Closing ${sym}. Enter your final exit price:`, currentPrice.toString());
+    
+    // If they click Cancel on the prompt, abort the deletion
+    if (exitStr === null) return; 
+
+    const exitPrice = parseFloat(exitStr) || 0;
+    const pnl_pct = (exitPrice - pos.entry_price) / pos.entry_price;
+    const days_held = Math.floor((new Date().getTime() - new Date(pos.entry_date).getTime()) / (1000 * 3600 * 24));
+
+    // 2. Create the History record
+    const newHistoryEntry: HistoryEntry = {
+      symbol: sym,
+      action: "MANUAL SELL",
+      date: new Date().toISOString().split('T')[0],
+      entry_price: pos.entry_price,
+      exit_price: exitPrice,
+      pnl_pct: pnl_pct,
+      reason: "Closed manually via UI",
+      days_held: days_held >= 0 ? days_held : 0
+    };
+
+    // 3. Update the state: Remove from portfolio, add to history
+    const updatedPortfolio = portfolio.filter(p => p.symbol !== sym);
+    setPortfolio(updatedPortfolio);
+    setHistory([newHistoryEntry, ...history]); // Put newest history at the top
+    
+    saveLocalPortfolio(updatedPortfolio);
+    setSource("local"); // Prompts the user to hit "Sync to Cloud"
+  };
 
   const stats=useMemo(()=>{
     let totalCost=0,totalValue=0,winners=0,losers=0;
