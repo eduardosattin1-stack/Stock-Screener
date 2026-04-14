@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap, Plus, Edit2, CloudUpload } from "lucide-react";
+import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap } from "lucide-react";
 
 const GCS_SCANS = "/api/gcs/scans";
 const GCS_PORTFOLIO = "/api/gcs/portfolio";
@@ -39,19 +39,15 @@ export default function Portfolio(){
   const[tab,setTab]=useState<"positions"|"history">("positions");
   const[expandedRow,setExpandedRow]=useState<string|null>(null);
   const[source,setSource]=useState<"gcs"|"local">("local");
-  const [lastSynced, setLastSynced] = useState<Date | null>(null);
-  
-  // NEW: Modal State
-  const [showModal, setShowModal] = useState(false);
-  const [editForm, setEditForm] = useState({ symbol: '', entry_price: 0, shares: 0 });
-  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(()=>{
+    // Try GCS portfolio first, fall back to localStorage
     Promise.allSettled([
       fetch(`${GCS_PORTFOLIO}/state.json`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
       fetch(`${GCS_PORTFOLIO}/monitor.json`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
       fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()),
     ]).then(([stateRes,monitorRes,scanRes])=>{
+      // Portfolio state
       if(stateRes.status==="fulfilled"&&stateRes.value?.positions){
         setPortfolio(stateRes.value.positions);
         if(stateRes.value.history) setHistory(stateRes.value.history);
@@ -60,13 +56,16 @@ export default function Portfolio(){
         setPortfolio(getLocalPortfolio());
         setSource("local");
       }
+      // Monitor actions
       if(monitorRes.status==="fulfilled"){
         const m:Record<string,MonitorAction>={};
         const d=monitorRes.value;
-        if(Array.isArray(d)) d.forEach((a:MonitorAction)=>{m[a.symbol]=a;});
-        else if(d&&typeof d==="object") Object.values(d).forEach((a:any)=>{if(a.symbol)m[a.symbol]=a;});
+        // Handle both formats: { actions: [...] } wrapper OR flat array
+        const actions:MonitorAction[] = d?.actions ? d.actions : Array.isArray(d) ? d : [];
+        actions.forEach((a:MonitorAction)=>{if(a.symbol)m[a.symbol]=a;});
         setMonitors(m);
       }
+      // Scan data for live prices
       if(scanRes.status==="fulfilled"){
         const map:Record<string,StockData>={};
         scanRes.value.stocks?.forEach((s:StockData)=>{map[s.symbol]=s;});
@@ -77,94 +76,7 @@ export default function Portfolio(){
     });
   },[]);
 
-  // NEW: Save Position Logic
-  const handleSavePosition = () => {
-    const current = [...portfolio];
-    const idx = current.findIndex(p => p.symbol === editForm.symbol.toUpperCase());
-    if (idx >= 0) {
-      current[idx].shares = editForm.shares;
-      current[idx].entry_price = editForm.entry_price;
-    } else {
-      current.push({
-        symbol: editForm.symbol.toUpperCase(),
-        entry_price: editForm.entry_price,
-        shares: editForm.shares,
-        entry_date: new Date().toISOString().split('T')[0],
-        notes: "",
-      });
-    }
-    setPortfolio(current);
-    saveLocalPortfolio(current); // Always save locally as backup
-    setSource("local"); // Data is now out of sync with GCS until they click Sync
-    setShowModal(false);
-  };
-
-  // NEW: Sync to Cloud Logic
-const handleSync = async () => {
-    setIsSyncing(true);
-    try {
-      const payload = {
-        positions: portfolio, // Matches your state name
-        lastUpdated: new Date().toISOString(),
-      };
-
-      const response = await fetch('/api/portfolio/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
-      }
-
-      setLastSynced(new Date());
-      alert('Sync successful! Google Cloud Storage updated.');
-    } catch (error: any) {
-      console.error('Sync failed:', error);
-      alert(`Sync failed: ${error.message}`);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const removePosition = (sym: string) => {
-    const pos = portfolio.find(p => p.symbol === sym);
-    if (!pos) return;
-
-    // 1. Ask the user for the exit price (defaults to current live price)
-    const currentPrice = liveData[sym]?.price || pos.entry_price;
-    const exitStr = window.prompt(`Closing ${sym}. Enter your final exit price:`, currentPrice.toString());
-    
-    // If they click Cancel on the prompt, abort the deletion
-    if (exitStr === null) return; 
-
-    const exitPrice = parseFloat(exitStr) || 0;
-    const pnl_pct = (exitPrice - pos.entry_price) / pos.entry_price;
-    const days_held = Math.floor((new Date().getTime() - new Date(pos.entry_date).getTime()) / (1000 * 3600 * 24));
-
-    // 2. Create the History record
-    const newHistoryEntry: HistoryEntry = {
-      symbol: sym,
-      action: "MANUAL SELL",
-      date: new Date().toISOString().split('T')[0],
-      entry_price: pos.entry_price,
-      exit_price: exitPrice,
-      pnl_pct: pnl_pct,
-      reason: "Closed manually via UI",
-      days_held: days_held >= 0 ? days_held : 0
-    };
-
-    // 3. Update the state: Remove from portfolio, add to history
-    const updatedPortfolio = portfolio.filter(p => p.symbol !== sym);
-    setPortfolio(updatedPortfolio);
-    setHistory([newHistoryEntry, ...history]); // Put newest history at the top
-    
-    saveLocalPortfolio(updatedPortfolio);
-    setSource("local"); // Prompts the user to hit "Sync to Cloud"
-  };
+  const removePosition=(sym:string)=>{const u=portfolio.filter(p=>p.symbol!==sym);setPortfolio(u);if(source==="local")saveLocalPortfolio(u);};
 
   const stats=useMemo(()=>{
     let totalCost=0,totalValue=0,winners=0,losers=0;
@@ -191,12 +103,7 @@ const handleSync = async () => {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,paddingBottom:12,borderBottom:"1px solid #f3f4f6"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",letterSpacing:"0.02em",fontFamily:"var(--font-mono)"}}>PORTFOLIO<span style={{color:"#9ca3af",fontWeight:400}}>/tracker</span></span>
-          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:source==="gcs"?"#10b981":"#6b7280",background:source==="gcs"?"#e8f5ee":"#f8fafc",border:`1px solid ${source==="gcs"?"#b8dcc8":"#e2e8f0"}`}}>{source==="gcs"?"GCS":"Local (Unsynced)"}</span>
-          {source === "local" && (
-            <button onClick={handleSync} disabled={isSyncing} style={{display:"flex", alignItems:"center", gap:4, fontSize:10, padding:"4px 8px", borderRadius:4, border:"none", background:"#2563eb", color:"#fff", cursor:"pointer", fontFamily:"var(--font-mono)"}}>
-              <CloudUpload size={12}/> {isSyncing ? "Syncing..." : "Sync to Cloud"}
-            </button>
-          )}
+          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:source==="gcs"?"#10b981":"#6b7280",background:source==="gcs"?"#e8f5ee":"#f8fafc",border:`1px solid ${source==="gcs"?"#b8dcc8":"#e2e8f0"}`}}>{source==="gcs"?"GCS":"Local"}</span>
         </div>
         <span style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
       </div>
@@ -209,16 +116,11 @@ const handleSync = async () => {
         <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"#2d7a4f",fontFamily:"var(--font-mono)"}}>{stats.winners}</span><span style={{fontSize:12,color:"#9ca3af"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"#ef4444",fontFamily:"var(--font-mono)"}}>{stats.losers}</span></div></div>
       </div>
 
-      {/* Tabs & Controls */}
-      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
-        <div style={{display:"flex",gap:4}}>
-          {(["positions","history"] as const).map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 14px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:"none",borderRadius:5,cursor:"pointer",background:tab===t?"#e8f5ee":"transparent",color:tab===t?"#2d7a4f":"#6b7280",transition:"all 0.15s",textTransform:"capitalize"}}>{t}{t==="history"&&history.length>0&&` (${history.length})`}</button>
-          ))}
-        </div>
-        <button onClick={()=>{setEditForm({symbol:'',entry_price:0,shares:0}); setShowModal(true);}} style={{display:"flex", alignItems:"center", gap:6, padding:"6px 14px", fontSize:11, fontFamily:"var(--font-mono)", fontWeight:600, border:"1px solid #e5e7eb", borderRadius:5, cursor:"pointer", background:"#fff", color:"#1a1a1a"}}>
-          <Plus size={13}/> Add Position
-        </button>
+      {/* Tabs */}
+      <div style={{display:"flex",gap:4,marginBottom:16}}>
+        {(["positions","history"] as const).map(t=>(
+          <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 14px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:"none",borderRadius:5,cursor:"pointer",background:tab===t?"#e8f5ee":"transparent",color:tab===t?"#2d7a4f":"#6b7280",transition:"all 0.15s",textTransform:"capitalize"}}>{t}{t==="history"&&history.length>0&&` (${history.length})`}</button>
+        ))}
       </div>
 
       {tab==="positions"&&(
@@ -280,12 +182,10 @@ const handleSync = async () => {
                           </div>
                         </td>
                         <td style={{padding:"10px 6px",textAlign:"center"}}>
-                          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
-                            <button onClick={e=>{e.stopPropagation(); setEditForm({symbol:p.symbol, entry_price:p.entry_price, shares:p.shares}); setShowModal(true);}} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af"}}><Edit2 size={12}/></button>
-                            <button onClick={e=>{e.stopPropagation();removePosition(p.symbol);}} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af"}}><Trash2 size={12}/></button>
-                          </div>
+                          {source==="local"&&<button onClick={e=>{e.stopPropagation();removePosition(p.symbol);}} style={{background:"none",border:"none",cursor:"pointer",padding:4,borderRadius:3,color:"#9ca3af",transition:"color 0.15s"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color="#ef4444";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="#9ca3af";}}><Trash2 size={12}/></button>}
                         </td>
                       </tr>
+                      {/* Expanded monitor details */}
                       {isExpanded&&mon&&mon.reasons?.length>0&&(
                         <tr key={`${p.symbol}-detail`}><td colSpan={11} style={{padding:"0 12px 12px 40px",background:"#f8faf9"}}>
                           <div style={{display:"flex",gap:16,paddingTop:8}}>
@@ -356,36 +256,10 @@ const handleSync = async () => {
         )
       )}
 
-      {/* ADD / EDIT MODAL */}
-      {showModal && (
-        <div style={{position:"fixed", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,0.5)", zIndex:999, display:"flex", alignItems:"center", justifyContent:"center"}}>
-          <div style={{background:"#fff", padding:24, borderRadius:8, width:320, boxShadow:"0 4px 6px rgba(0,0,0,0.1)"}}>
-            <h3 style={{fontFamily:"var(--font-mono)", fontSize:14, marginBottom:16}}>{portfolio.find(p=>p.symbol===editForm.symbol.toUpperCase()) ? "Edit Position" : "Add Position"}</h3>
-            <div style={{display:"flex", flexDirection:"column", gap:12, marginBottom:20}}>
-              <div>
-                <label style={{fontSize:10, color:"#6b7280", fontFamily:"var(--font-mono)", fontWeight:700}}>SYMBOL</label>
-                <input value={editForm.symbol} onChange={e=>setEditForm({...editForm, symbol:e.target.value})} disabled={!!portfolio.find(p=>p.symbol===editForm.symbol.toUpperCase())} placeholder="AAPL" style={{width:"100%", padding:"8px", border:"1px solid #e5e7eb", borderRadius:4, marginTop:4, fontFamily:"var(--font-mono)", textTransform:"uppercase"}} />
-              </div>
-              <div>
-                <label style={{fontSize:10, color:"#6b7280", fontFamily:"var(--font-mono)", fontWeight:700}}>ENTRY PRICE ($)</label>
-                <input type="number" value={editForm.entry_price || ""} onChange={e=>setEditForm({...editForm, entry_price:parseFloat(e.target.value) || 0})} placeholder="150.00" style={{width:"100%", padding:"8px", border:"1px solid #e5e7eb", borderRadius:4, marginTop:4, fontFamily:"var(--font-mono)"}} />
-              </div>
-              <div>
-                <label style={{fontSize:10, color:"#6b7280", fontFamily:"var(--font-mono)", fontWeight:700}}>SHARES</label>
-                <input type="number" value={editForm.shares || ""} onChange={e=>setEditForm({...editForm, shares:parseFloat(e.target.value) || 0})} placeholder="10" style={{width:"100%", padding:"8px", border:"1px solid #e5e7eb", borderRadius:4, marginTop:4, fontFamily:"var(--font-mono)"}} />
-              </div>
-            </div>
-            <div style={{display:"flex", justifyContent:"flex-end", gap:8}}>
-              <button onClick={()=>setShowModal(false)} style={{padding:"8px 16px", borderRadius:4, border:"1px solid #e5e7eb", background:"#fff", cursor:"pointer", fontFamily:"var(--font-mono)", fontSize:11, fontWeight:600}}>Cancel</button>
-              <button onClick={handleSavePosition} style={{padding:"8px 16px", borderRadius:4, border:"none", background:"#2d7a4f", color:"#fff", cursor:"pointer", fontFamily:"var(--font-mono)", fontSize:11, fontWeight:600}}>Save Position</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div style={{textAlign:"center",marginTop:12,fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>
-        {source==="gcs"?"Positions in sync with Cloud Monitor":"Prices from latest scan · Stored locally"} · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
+        {source==="gcs"?"Positions from GCS · Monitor actions daily":"Prices from latest scan · Stored locally"} · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
       </div>
+      <style>{`@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }`}</style>
     </div>
   );
 }
