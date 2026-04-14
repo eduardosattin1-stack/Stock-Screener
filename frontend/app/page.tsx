@@ -33,6 +33,11 @@ interface StockData {
   factor_coverage?:number;
   factors_evaluated?:string[];
   factors_missing?:string[];
+  company_name?:string;
+  sector?:string;
+  industry?:string;
+  position_size_pct?:number;
+  peer_context?:{_evaluated?:boolean;peers?:{symbol:string;price:number;"52wk_position":number;vs_200d:number}[];divergence?:string;avg_peer_mom_200d?:number;stock_spread_vs_peers?:number};
   // v6 compat (removed in v7)
   news_score?:number; news_sentiment?:number; catastrophe_score?:number;
 }
@@ -41,6 +46,7 @@ interface ScanData {
   weights?:Record<string,number>;
   macro?:MacroData;
   summary:{ total:number; buy:number; watch:number; hold:number; sell:number; strong_buy?:number };
+  sector_concentration?:Record<string,{count:number;symbols:string[]}>;
   stocks:StockData[];
 }
 
@@ -148,11 +154,12 @@ function CatalystBadges({s}:{s:StockData}){
 // ── Macro Banner ────────────────────────────────────────────────────────────
 function MacroBanner({macro}:{macro?:MacroData}){
   if(!macro) return null;
-  const cfg:{[k:string]:{emoji:string;label:string;color:string;bg:string;border:string}} = {
-    RISK_ON:  {emoji:"🟢",label:"RISK ON — Momentum favored",color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8"},
-    NEUTRAL:  {emoji:"⚪",label:"NEUTRAL — Base weights",color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0"},
-    CAUTIOUS: {emoji:"🟡",label:"CAUTIOUS — Quality over momentum",color:"#d97706",bg:"#fffbeb",border:"#fde68a"},
-    RISK_OFF: {emoji:"🔴",label:"RISK OFF — Defensive mode",color:"#ef4444",bg:"#fef2f2",border:"#fecaca"},
+  const cfg:{[k:string]:{emoji:string;label:string;color:string;bg:string;border:string;cap:number}} = {
+    RISK_ON:  {emoji:"🟢",label:"RISK ON — Momentum favored",color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8",cap:100},
+    NEUTRAL:  {emoji:"⚪",label:"NEUTRAL — Base weights",color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0",cap:75},
+    CAUTIOUS: {emoji:"🟡",label:"CAUTIOUS — Quality over momentum",color:"#d97706",bg:"#fffbeb",border:"#fde68a",cap:75},
+    RISK_OFF: {emoji:"🔴",label:"RISK OFF — Defensive mode",color:"#ef4444",bg:"#fef2f2",border:"#fecaca",cap:50},
+    CRISIS:   {emoji:"🔴",label:"CRISIS — Capital preservation",color:"#ef4444",bg:"#fef2f2",border:"#fecaca",cap:25},
   };
   const c=cfg[macro.regime]||cfg.NEUTRAL;
   const subs=macro.sub_scores||{};
@@ -163,6 +170,7 @@ function MacroBanner({macro}:{macro?:MacroData}){
         <span style={{fontSize:14}}>{c.emoji}</span>
         <span style={{fontSize:12,fontFamily:"var(--font-mono)",fontWeight:600,color:c.color}}>{c.label}</span>
         <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:c.color,opacity:0.7}}>Score: {(macro.score*100).toFixed(0)}</span>
+        <span style={{fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,color:c.color,background:`${c.color}10`,padding:"2px 8px",borderRadius:3,border:`1px solid ${c.border}`}}>Position cap: {c.cap}%</span>
       </div>
       <div style={{display:"flex",gap:8}}>
         {subItems.map(([label,val])=>val!=null&&(
@@ -206,10 +214,11 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
               <CatalystBadges s={s}/>
+              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
             </div>
           </div>
         </td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}</td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}{s.position_size_pct!=null&&s.position_size_pct>0&&<div style={{fontSize:8,fontFamily:"var(--font-mono)",color:sigStyle.color,marginTop:2}}>Size: {s.position_size_pct.toFixed(0)}%</div>}</td>
         <td style={{padding:"10px 12px"}}><span style={{display:"inline-block",padding:"3px 10px",borderRadius:4,fontSize:10,fontWeight:700,letterSpacing:"0.07em",fontFamily:"var(--font-mono)",background:sigStyle.bg,color:sigStyle.color,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span></td>
         <td style={{padding:"10px 12px",textAlign:"right"}}><ScorePill value={s.composite}/></td>
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:10}}>{(()=>{const cov=s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length;return<span style={{color:cov>=8?"#10b981":cov>=5?"#d97706":"#ef4444",fontWeight:600}}>{cov}/10{cov<4&&" ⚠️"}</span>;})()}</td>
@@ -244,10 +253,58 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
                 {s.reasons&&s.reasons.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:9,padding:"2px 7px",borderRadius:3,fontFamily:"var(--font-mono)",background:r.includes("⚠")?"#fef2f2":"var(--green-light,#e8f5ee)",border:`1px solid ${r.includes("⚠")?"#fecaca":"var(--green-border,#b8dcc8)"}`,color:r.includes("⚠")?"#ef4444":"var(--text-muted,#6b7280)"}}>{r}</span>)}</div>}
               </div>
             )}
+            <PeerRow peer={s.peer_context}/>
           </div>
         </td></tr>
       )}
     </>
+  );
+}
+
+// ── Sector Concentration ────────────────────────────────────────────────────
+function SectorConcentration({data}:{data?:Record<string,{count:number;symbols:string[]}>}){
+  if(!data||Object.keys(data).length===0) return null;
+  const entries=Object.entries(data).sort((a,b)=>b[1].count-a[1].count);
+  const total=entries.reduce((s,e)=>s+e[1].count,0);
+  const maxCount=entries[0]?.[1]?.count||1;
+  return(
+    <div style={{background:"#fff",borderRadius:8,border:"1px solid var(--border,#e5e7eb)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"16px 18px",marginTop:16}}>
+      <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>Sector Concentration — BUY + STRONG BUY</div>
+      {entries.map(([sector,{count,symbols}])=>{const pct=total>0?count/total*100:0;const warn=pct>40;return(
+        <div key={sector} style={{marginBottom:8}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+            <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:warn?"#d97706":"var(--text,#1a1a1a)"}}>{warn?"⚠ ":""}{sector}</span>
+            <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)"}}>{count} ({pct.toFixed(0)}%)</span>
+          </div>
+          <div style={{height:6,borderRadius:3,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${(count/maxCount)*100}%`,borderRadius:3,background:warn?"#d97706":"#10b981",transition:"width 0.3s"}}/>
+          </div>
+          <div style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:2}}>{symbols.slice(0,8).join(" · ")}{symbols.length>8?` +${symbols.length-8}`:""}</div>
+        </div>
+      );})}
+    </div>
+  );
+}
+
+// ── Peer Context Row ────────────────────────────────────────────────────────
+function PeerRow({peer}:{peer:StockData["peer_context"]}){
+  if(!peer||!peer._evaluated||!peer.peers?.length) return null;
+  const divColors:Record<string,{color:string;bg:string;tip:string}>={
+    OUTPERFORMING:{color:"#10b981",bg:"#e8f5ee",tip:"Alpha — beating peers"},
+    SECTOR_TAILWIND:{color:"#3b82f6",bg:"#eff6ff",tip:"Rising tide — whole sector strong"},
+    SECTOR_HEADWIND:{color:"#d97706",bg:"#fffbeb",tip:"Sector weakness — headwind"},
+    LAGGING:{color:"#ef4444",bg:"#fef2f2",tip:"Underperforming peers"},
+  };
+  const d=peer.divergence?divColors[peer.divergence]:null;
+  return(
+    <div style={{marginTop:10,paddingTop:10,borderTop:"1px solid var(--border-subtle,#eef1ef)"}}>
+      <div style={{fontSize:9,fontWeight:600,letterSpacing:"0.08em",color:"var(--text-muted,#6b7280)",fontFamily:"var(--font-mono)",marginBottom:6}}>PEER COMPARISON</div>
+      <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        {peer.peers.map(p=><span key={p.symbol} style={{fontSize:10,fontFamily:"var(--font-mono)",color:p.vs_200d>0?"#10b981":"#ef4444"}}>{p.symbol} ({p.vs_200d>0?"+":""}{p.vs_200d.toFixed(0)}%)</span>)}
+        {peer.stock_spread_vs_peers!=null&&<span style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)"}}>spread: {peer.stock_spread_vs_peers>0?"+":""}{peer.stock_spread_vs_peers.toFixed(1)}pp</span>}
+        {d&&peer.divergence&&<span style={{fontSize:9,padding:"1px 6px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,color:d.color,background:d.bg}} title={d.tip}>{peer.divergence.replace("_"," ")}</span>}
+      </div>
+    </div>
   );
 }
 
@@ -364,6 +421,7 @@ export default function Dashboard(){
         {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{sum.total} screened · {sorted.length} shown · Green border = Top 20 · Click row to expand</div>
+      <SectorConcentration data={data?.sector_concentration}/>
     </div>
   );
 }
