@@ -303,6 +303,7 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
         dict with keys: regime, score, sub_scores, features, tilts, rates
     """
     import time
+    from datetime import datetime, timedelta
     sleep = rate_limit_func or (lambda: time.sleep(0.04))
 
     # 1. Treasury rates (latest)
@@ -312,8 +313,8 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     if rates_raw and isinstance(rates_raw, list) and len(rates_raw) > 0:
         rates = rates_raw[0]  # most recent day
 
-    # 2. VIX quote
-    vix_data = fmp_func("index-quote", {"symbol": "^VIX"})
+    # 2. VIX quote (PATCHED)
+    vix_data = fmp_func("quote", {"symbol": "^VIX"})
     sleep()
     vix_price = 20.0
     vix_sma200 = None
@@ -324,7 +325,9 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     # 3. CPI (need ~6 months of history)
     today = datetime.now()
     cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
-    cpi_raw = fmp_func("economics-indicators", {
+    
+    # PATCHED: changed to "economic-indicator"
+    cpi_raw = fmp_func("economic-indicator", {
         "name": "CPI", "country": "US",
         "from": cpi_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -338,7 +341,9 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
 
     # 4. GDP (need ~3 quarters)
     gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
-    gdp_raw = fmp_func("economics-indicators", {
+    
+    # PATCHED: changed to "economic-indicator"
+    gdp_raw = fmp_func("economic-indicator", {
         "name": "GDP", "country": "US",
         "from": gdp_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -351,7 +356,6 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
         )
 
     return _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values)
-
 
 # ---------------------------------------------------------------------------
 # HISTORICAL: Fetch macro data as of a past date (for backtest_full.py)
