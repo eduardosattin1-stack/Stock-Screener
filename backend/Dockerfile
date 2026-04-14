@@ -10,4 +10,5 @@ COPY macro_regime.py .
 COPY monitor_v7.py .
 COPY weekly_report.py .
 COPY run_time_job.py .
+COPY time_model_10pct.pkl .
 CMD ["python", "run_server.py"]

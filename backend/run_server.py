@@ -251,7 +251,7 @@ class Handler(BaseHTTPRequestHandler):
             self._cors()
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "ok", "version": "v7"}).encode())
+            self.wfile.write(json.dumps({"status": "ok", "version": "v7.1"}).encode())
             return
 
         self.send_response(200)
@@ -271,12 +271,12 @@ class Handler(BaseHTTPRequestHandler):
                 symbols = [s.strip().upper() for s in symbols_str.split(",")]
             else:
                 symbols = get_symbols(region)
-            results = screen(symbols)
-            report = format_report(results, region)
+            results, macro = screen(symbols)
+            report = format_report(results, region, macro=macro)
             update_signal_history(results)
-            save_scan_to_gcs(results, region)
+            save_scan_to_gcs(results, region, macro=macro)
             today = datetime.now().strftime("%Y-%m-%d")
-            send_email(f"Screener v6: {region.upper()} - {today}", report)
+            send_email(f"CB Screener v7.1: {region.upper()} — {today}", report)
             self.send_response(200)
             self._cors()
             self.send_header("Content-Type", "text/plain; charset=utf-8")
@@ -291,5 +291,5 @@ class Handler(BaseHTTPRequestHandler):
 
 
 port = int(os.environ.get("PORT", 8080))
-print(f"Screener v7 server on port {port}")
+print(f"Screener v7.1 server on port {port}")
 HTTPServer(("", port), Handler).serve_forever()
