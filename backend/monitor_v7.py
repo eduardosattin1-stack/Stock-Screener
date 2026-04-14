@@ -356,7 +356,7 @@ def run_monitor(state, dry_run=False):
         qual = compute_quality_score(v)
         cata = compute_catalyst_score(sym, analyst=a)
 
-        composite, signal, factors, reasons = compute_composite_v7(
+        composite, signal, factors, reasons, coverage = compute_composite_v7(
             t, a, v, price, ins, prox, earn, ups,
             quality=qual, catalyst=cata,
             weights=active_weights,
