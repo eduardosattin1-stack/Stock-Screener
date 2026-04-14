@@ -17,7 +17,7 @@ Regimes:
 Data sources (4 API calls for live, cached for backtest):
   1. Treasury rates  → yield curve slope + level
   2. VIX quote       → volatility regime
-  3. CPI data        → inflation trend (from economics-indicators)
+  3. CPI data        → inflation trend (economics-indicators; hardcoded fallback for stable REST)
   4. GDP data        → growth momentum
 
 Usage:
@@ -325,9 +325,9 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     # 3. CPI (need ~6 months of history)
     today = datetime.now()
     cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
-    
-    # PATCHED: changed to "economic-indicator"
-    cpi_raw = fmp_func("economic-indicator", {
+
+    # Try economics-indicators (works on MCP, 404 on stable REST)
+    cpi_raw = fmp_func("economics-indicators", {
         "name": "CPI", "country": "US",
         "from": cpi_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -338,12 +338,22 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
             [(d["date"], float(d["value"])) for d in cpi_raw if d.get("value")],
             reverse=True
         )
+    if not cpi_values:
+        # Fallback: stable REST doesn't have economics-indicators endpoint
+        # Source: BLS CPI-U. Update these values quarterly.
+        # Last updated: 2026-04-14 (from FMP MCP)
+        log.info("  CPI: using hardcoded fallback (economics-indicators not on stable REST)")
+        cpi_values = [
+            ("2026-03-01", 330.293), ("2026-02-01", 327.46),
+            ("2026-01-01", 326.588), ("2025-12-01", 326.031),
+            ("2025-11-01", 325.063), ("2025-09-01", 324.245),
+        ]
 
     # 4. GDP (need ~3 quarters)
     gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
-    
-    # PATCHED: changed to "economic-indicator"
-    gdp_raw = fmp_func("economic-indicator", {
+
+    # Try economics-indicators (works on MCP, 404 on stable REST)
+    gdp_raw = fmp_func("economics-indicators", {
         "name": "GDP", "country": "US",
         "from": gdp_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -354,6 +364,15 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
             [(d["date"], float(d["value"])) for d in gdp_raw if d.get("value")],
             reverse=True
         )
+    if not gdp_values:
+        # Fallback: stable REST doesn't have economics-indicators endpoint
+        # Source: BEA GDP. Update these values quarterly.
+        # Last updated: 2026-04-14 (from FMP MCP)
+        log.info("  GDP: using hardcoded fallback (economics-indicators not on stable REST)")
+        gdp_values = [
+            ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
+            ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
+        ]
 
     return _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values)
 
@@ -417,6 +436,17 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
             [(d["date"], float(d["value"])) for d in cpi_raw if d.get("value")],
             reverse=True
         )
+    if not cpi_values:
+        # Fallback: stable REST doesn't have economics-indicators endpoint
+        # For backtest historical mode, use hardcoded recent values as approximation
+        log.info("  CPI historical: using hardcoded fallback")
+        cpi_values = [
+            ("2026-03-01", 330.293), ("2026-02-01", 327.46),
+            ("2026-01-01", 326.588), ("2025-12-01", 326.031),
+            ("2025-11-01", 325.063), ("2025-09-01", 324.245),
+        ]
+        # Filter to only include values before as_of_date
+        cpi_values = [(d, v) for d, v in cpi_values if d <= as_of_date]
 
     # 4. GDP historical
     gdp_from = (as_of - timedelta(days=400)).strftime("%Y-%m-%d")
@@ -431,6 +461,15 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
             [(d["date"], float(d["value"])) for d in gdp_raw if d.get("value")],
             reverse=True
         )
+    if not gdp_values:
+        # Fallback: stable REST doesn't have economics-indicators endpoint
+        log.info("  GDP historical: using hardcoded fallback")
+        gdp_values = [
+            ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
+            ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
+        ]
+        # Filter to only include values before as_of_date
+        gdp_values = [(d, v) for d, v in gdp_values if d <= as_of_date]
 
     return _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values)
 
