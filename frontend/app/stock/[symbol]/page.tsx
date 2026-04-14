@@ -6,7 +6,7 @@ import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw,
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-interface FactorScores{technical:number;quality:number;proximity:number;catalyst:number;transcript:number;upside:number;institutional:number;analyst:number;insider:number;earnings:number;}
+interface FactorScores{technical:number|null;quality:number|null;proximity:number|null;catalyst:number|null;transcript:number|null;upside:number|null;institutional:number|null;analyst:number|null;insider:number|null;earnings:number|null;}
 interface StockData{
   symbol:string;price:number;currency:string;market_cap:number;
   sma50:number;sma200:number;year_high:number;year_low:number;volume:number;
@@ -28,6 +28,8 @@ interface StockData{
   transcript_sentiment?:number;transcript_summary?:string;transcript_score?:number;
   proximity_52wk?:number;proximity_score?:number;
   earnings_momentum?:number;earnings_score?:number;upside_score?:number;
+  hit_prob?:number;
+  factor_coverage?:number;factors_evaluated?:string[];factors_missing?:string[];
 }
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
@@ -41,9 +43,9 @@ const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 
 // v7 factors
-const FACTOR_ORDER=["technical","quality","proximity","catalyst","transcript","upside","institutional","analyst","insider","earnings"];
-const FL:Record<string,string>={technical:"Technical",quality:"Quality",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",upside:"Upside",institutional:"Institutional",analyst:"Analyst",insider:"Insider",earnings:"Earnings"};
-const FW:Record<string,number>={technical:35,quality:15,proximity:12,catalyst:8,transcript:7,upside:6,institutional:5,analyst:5,insider:4,earnings:3};
+const FACTOR_ORDER=["technical","quality","upside","proximity","catalyst","transcript","institutional","analyst","insider","earnings"];
+const FL:Record<string,string>={technical:"Technical",quality:"Quality",upside:"Upside",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",institutional:"Institutional",analyst:"Analyst",insider:"Insider",earnings:"Earnings"};
+const FW:Record<string,number>={technical:35,quality:14,upside:10,proximity:8,catalyst:8,transcript:7,institutional:5,analyst:5,insider:4,earnings:4};
 
 // ── Explanations & Tooltips ────────────────────────────────────────────────────
 const TOOLTIPS: Record<string, string> = {
@@ -87,40 +89,43 @@ const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
 const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0)return"—";return`${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
 const gClr=(v:number|null)=>{if(v==null)return T.textLight;if(v>0.15)return T.green;if(v>0.05)return"#5a9e7a";if(v>0)return T.textMuted;return T.red;};
 function safeCagr(s:number,e:number,y:number):number|null{if(!s||!e||s<=0||e<=0||y<=0)return null;return Math.pow(e/s,1/y)-1;}
-function inferFactors(s:StockData):FactorScores{if(s.factor_scores)return s.factor_scores;return{technical:Math.min(1,(s.bull_score||0)/10),quality:s.quality_score??Math.min(1,((s.piotroski||0)/9*0.4+Math.min(1,(s.altman_z||0)/10)*0.2+Math.min(1,(s.roe_avg||0)/0.3)*0.2+Math.min(1,(s.gross_margin||0))*0.2)),proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),catalyst:s.catalyst_score??0.5,transcript:s.transcript_score??0.5,upside:s.upside_score??Math.min(1,Math.max(0,(s.upside||0)/80)),institutional:s.inst_score??0.5,analyst:s.grade_score||0,insider:s.insider_score??0.5,earnings:s.earnings_score??Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1))};}
+function inferFactors(s:StockData):FactorScores{if(s.factor_scores)return s.factor_scores;return{technical:Math.min(1,(s.bull_score||0)/10),quality:s.quality_score??Math.min(1,((s.piotroski||0)/9*0.4+Math.min(1,(s.altman_z||0)/10)*0.2+Math.min(1,(s.roe_avg||0)/0.3)*0.2+Math.min(1,(s.gross_margin||0))*0.2)),upside:s.upside_score??Math.min(1,Math.max(0,(s.upside||0)/80)),proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),catalyst:s.catalyst_score??0.5,transcript:s.transcript_score??null,institutional:s.inst_score??null,analyst:s.grade_score||null,insider:s.insider_score??null,earnings:s.earnings_score??Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1))} as FactorScores;}
 function getProb(c:number){if(c>=0.90)return{p5:79,p10:72,p20:42,gain:25.7,dd:-9.1,speed:18};if(c>=0.85)return{p5:68,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.80)return{p5:65,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.75)return{p5:60,p10:44,p20:20,gain:12.8,dd:-10.8,speed:24};if(c>=0.70)return{p5:58,p10:44,p20:18,gain:12.8,dd:-10.8,speed:24};if(c>=0.65)return{p5:55,p10:43,p20:16,gain:12.1,dd:-10.3,speed:26};return{p5:48,p10:37,p20:12,gain:10.7,dd:-10.7,speed:22};}
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
 // ── Shared Components ──────────────────────────────────────────────────────────
 function Card({children,style}:{children:React.ReactNode;style?:React.CSSProperties}){return<div style={{background:T.card,borderRadius:8,border:`1px solid ${T.cardBorder}`,boxShadow:T.cardShadow,padding:"16px 18px",...style}}>{children}</div>;}
 function SH({title,icon,sub}:{title:string;icon?:React.ReactNode;sub?:string}){return<div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:T.green,fontFamily:T.mono,textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:`2px solid ${T.greenLight}`}}>{icon}{title}{sub&&<span style={{marginLeft:"auto",fontSize:9,color:T.textLight,fontWeight:400,textTransform:"none",letterSpacing:0}}>{sub}</span>}</div>;}
-
+function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){const tip=TOOLTIPS[label]||"";return<div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}><span title={tip} style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500,cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{label}</span><span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span></div>{sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}</div>;}
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
 // ── v7 Factor Radar ────────────────────────────────────────────────────────────
 function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-36;const vals=FACTOR_ORDER.map(k=>(scores as any)[k]??0);const n=vals.length;
+  const cx=size/2,cy=size/2,r=size/2-36;const raw=FACTOR_ORDER.map(k=>(scores as any)[k]);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
-  const avg=vals.reduce((a,b)=>a+b,0)/n;const fill=avg>0.6?T.green:avg>0.4?T.amber:T.red;
+  const evaluated=raw.filter(v=>v!=null);const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
+  const fill=avg>0.6?T.green:avg>0.4?T.amber:T.red;
+  const covCount=evaluated.length;
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+24),ly=cy+Math.sin(a)*(r+24),v=vals[i],c=v>0.7?"#10b981":v>0.4?T.amber:T.red;return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#e5e7eb" strokeWidth={0.6}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={c} fontWeight="700">{(v*100).toFixed(0)}</text></g>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+24),ly=cy+Math.sin(a)*(r+24),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke={isNull?"#e5e7eb":"#e5e7eb"} strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={fill} stroke="#fff" strokeWidth={1.5}/>)}
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.5}/>)}
+      <text x={cx} y={size-4} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>{covCount}/10 factors</text>
     </svg>
   );
 }
 
-// ── Components with Tooltips ───────────────────────────────────────────────────
-function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number;detail:string}){
+function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number|null;detail:string}){
+  if(score==null)return<div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`,opacity:0.45}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}><div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:"#d1d5db"}}>{name}</span><span style={{fontSize:9,fontFamily:T.mono,color:"#d1d5db"}}>({weight}%)</span></div><span style={{fontSize:11,fontFamily:T.mono,color:"#d1d5db",fontStyle:"italic"}}>no data</span></div><div style={{height:5,borderRadius:3,background:T.divider}}><div style={{height:"100%",width:0}}/></div><div style={{fontSize:10,fontFamily:T.mono,color:"#d1d5db",lineHeight:1.5}}>Weight redistributed to evaluated factors</div></div>;
   const c=score>0.7?"#10b981":score>0.4?T.amber:T.red;
-  const tip = TOOLTIPS[name] || "";
+  const tip=TOOLTIPS[name]||"";
   return(
     <div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
         <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-          <span title={tip} style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:T.text, cursor: tip ? "help" : "default", borderBottom: tip ? `1px dotted ${T.textLight}` : "none"}}>{name}</span>
+          <span title={tip} style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:T.text,cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{name}</span>
           <span style={{fontSize:9,fontFamily:T.mono,color:T.textLight}}>({weight}%)</span>
         </div>
         <span style={{fontSize:13,fontFamily:T.mono,fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span>
@@ -133,30 +138,19 @@ function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:n
   );
 }
 
-function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){
-  const tip = TOOLTIPS[label] || "";
-  return(
-    <div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}>
-        <span title={tip} style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500, cursor: tip ? "help" : "default", borderBottom: tip ? `1px dotted ${T.textLight}` : "none"}}>{label}</span>
-        <span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span>
-      </div>
-      {sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}
-    </div>
-  );
-}
-
 function factorDetail(k:string,s:StockData):string{const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";switch(k){case"upside":return`Target ${c}${s.target?.toFixed(0)??"?"} (${s.upside>0?"+":""}${s.upside?.toFixed(1)??"?"}%) · DCF ${c}${s.dcf_value?.toFixed(0)??"?"} · MoS ${fmtPct(s.margin_of_safety)}`;case"technical":return`Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;case"quality":return`Piotroski ${s.piotroski}/9 · Altman Z ${s.altman_z?.toFixed(1)} · ROE ${fmtPct(s.roe_avg)} · GM ${fmtPct(s.gross_margin)}`;case"analyst":return`Grades ${s.grade_buy}/${s.grade_total} buy · Score ${(s.grade_score*100).toFixed(0)}%`;case"transcript":return s.transcript_summary||"No transcript available";case"institutional":return s.inst_holders_change!=null?`Holders QoQ ${(s.inst_holders_change*100).toFixed(1)}% · Shares QoQ ${((s.inst_accumulation??0)*100).toFixed(1)}%`:"No data";case"insider":return s.insider_buy_ratio!=null?`Buy ratio ${s.insider_buy_ratio?.toFixed(1)} · Net buys ${s.insider_net_buys??0}`:"No data";case"earnings":return`EPS beats ${s.eps_beats}/${s.eps_total}${s.earnings_momentum!=null?` · Momentum ${s.earnings_momentum>0?"+":""}${(s.earnings_momentum*100).toFixed(1)}%`:""}`;case"catalyst":return s.catalyst_flags?.length?s.catalyst_flags.join(" · "):"No active catalysts";case"proximity":return`At ${s.proximity_52wk!=null?(s.proximity_52wk*100).toFixed(0):"?"}% of range · High ${c}${s.year_high?.toFixed(0)} Low ${c}${s.year_low?.toFixed(0)}`;default:return"";}}
 
 // ── Probability Card ───────────────────────────────────────────────────────────
-function ProbabilityCard({composite}:{composite:number}){
-  const p=getProb(composite);
-  const bars:[string,number,string][]=[
-    [`P(+5% in 30d)`,p.p5,"%"],[`P(+10% in 60d)`,p.p10,"%"],[`P(+20% in 60d)`,p.p20,"%"]
-  ];
+function ProbabilityCard({s}:{s:StockData}){
+  const isLive=s.hit_prob!=null&&s.hit_prob>0;
+  const pFallback=getProb(s.composite);
+  const p10=isLive?Math.round(s.hit_prob!*100):pFallback.p10;
+  const p5=isLive?Math.min(100,Math.round(p10*1.3)):pFallback.p5;
+  const p20=isLive?Math.max(0,Math.round(p10*0.45)):pFallback.p20;
+  const bars:[string,number][]=[["P(+5% in 30d)",p5],["P(+10% in 60d)",p10],["P(+20% in 60d)",p20]];
   return(
     <Card>
-      <SH title="ML Probability" icon={<BarChart2 size={12}/>} sub={`Composite ${composite.toFixed(2)}`}/>
+      <SH title={isLive?"Live ML Probability":"Historical Probability"} icon={<BarChart2 size={12}/>} sub={isLive?"Gradient Boosting":`Composite ${s.composite.toFixed(2)}`}/>
       {bars.map(([label,val])=>(
         <div key={label} style={{marginBottom:10}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
@@ -167,9 +161,9 @@ function ProbabilityCard({composite}:{composite:number}){
         </div>
       ))}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:12,paddingTop:12,borderTop:`1px solid ${T.divider}`}}>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:"#10b981",fontFamily:T.mono}}>+{p.gain}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max gain</div></div>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.red,fontFamily:T.mono}}>{p.dd}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max DD</div></div>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.text,fontFamily:T.mono}}>{p.speed}d</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Avg to +10%</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:"#10b981",fontFamily:T.mono}}>+{pFallback.gain}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max gain</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.red,fontFamily:T.mono}}>{pFallback.dd}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max DD</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.text,fontFamily:T.mono}}>{pFallback.speed}d</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Avg to +10%</div></div>
       </div>
     </Card>
   );
@@ -213,48 +207,67 @@ function CompositeChart({symbol}:{symbol:string}){
   );
 }
 
-// ── TargetBar (Redesigned with methodologies & fixed alignment) ────────────────
+// ── TargetBar (Redesigned with methodologies, fixed alignment & values) ────────
 function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){
   const vs=[price,target,dcf,buffett].filter(v=>v>0);
   if(vs.length<2)return null;
   const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);
-  
+  const c$=(v:number)=>fmtPrice(v,currency);
+
   return(
     <div style={{marginTop:12,padding:"12px 0"}}>
-      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:24,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div>
+      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:28,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div>
       
       <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
+        {/* Green upside highlight block */}
         {dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
         
+        {/* Current Price Line */}
         <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
           <div style={{position:"absolute",top:-22,left:"50%",transform:"translateX(-50%)",fontSize:11,color:T.text,fontFamily:T.mono,fontWeight:700,background:T.card,padding:"0 4px",whiteSpace:"nowrap"}}>
-            {fmtPrice(price,currency)}
+            {c$(price)}
           </div>
         </div>
         
-        {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
+        {/* Analyst Target */}
+        {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(target)}</div>
           <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Target</div>
         </div>}
         
-        {dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}>
+        {/* DCF */}
+        {dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(dcf)}</div>
           <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>DCF</div>
         </div>}
         
+        {/* Buffett */}
         {buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}>
-          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Buffett</div>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(buffett)}</div>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Buffett</div>
         </div>}
       </div>
 
+      {/* Methodology Legend */}
       <div style={{marginTop:24,paddingTop:12,borderTop:`1px dashed ${T.divider}`,fontSize:9,color:T.textMuted,fontFamily:T.mono,lineHeight:1.6}}>
-        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/><strong>Target:</strong> Wall St. 12-Month Consensus</div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:"50%",background:T.blue}}/><strong>DCF:</strong> 5-Year Discounted Cash Flow Model</div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:2,background:T.purple}}/><strong>Buffett:</strong> Owner Earnings Growth Model</div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/>
+          <strong>Target:</strong> Wall St. 12-Month Consensus
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:6,height:6,borderRadius:"50%",background:T.blue}}/>
+          <strong>DCF:</strong> 5-Year Discounted Cash Flow Model
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:6,height:6,borderRadius:2,background:T.purple}}/>
+          <strong>Buffett:</strong> Owner Earnings Growth Model
+        </div>
       </div>
     </div>
   );
 }
 
-// ── MomentumPanel (Updated with Tooltips) ──────────────────────────────────────
+// ── MomentumPanel ──────────────────────────────────────────────────────────────
 function MomentumPanel({s}:{s:StockData}){
   const gc=s.sma50>s.sma200,p50=s.price>s.sma50,p200=s.price>s.sma200;
   const rz=s.rsi>70?"Overbought":s.rsi>60?"Bullish":s.rsi>40?"Neutral":s.rsi>30?"Bearish":"Oversold";
@@ -392,16 +405,16 @@ export default function StockDetail(){
 
       {/* ═══ v7 FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
-        <SH title="10-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)}`}/>
+        <SH title="10-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)} · ${s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length}/10 factors`}/>
         <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:24}}>
           <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={scores}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]??0} detail={factorDetail(k,s)}/>)}</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]} detail={factorDetail(k,s)}/>)}</div>
         </div>
       </Card>
 
       {/* Probability + Catalyst + Composite History */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
-        <ProbabilityCard composite={s.composite}/>
+        <ProbabilityCard s={s}/>
         <CatalystTimeline s={s}/>
         <CompositeChart symbol={s.symbol}/>
       </div>
