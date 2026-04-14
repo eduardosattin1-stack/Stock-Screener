@@ -45,6 +45,42 @@ const FACTOR_ORDER=["technical","quality","proximity","catalyst","transcript","u
 const FL:Record<string,string>={technical:"Technical",quality:"Quality",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",upside:"Upside",institutional:"Institutional",analyst:"Analyst",insider:"Insider",earnings:"Earnings"};
 const FW:Record<string,number>={technical:35,quality:15,proximity:12,catalyst:8,transcript:7,upside:6,institutional:5,analyst:5,insider:4,earnings:3};
 
+// ── Explanations & Tooltips ────────────────────────────────────────────────────
+const TOOLTIPS: Record<string, string> = {
+  // Quality & Value
+  "ROE (avg)": "Return on Equity: How much profit a company generates with shareholders' money.",
+  "ROIC (avg)": "Return on Invested Capital: How efficiently a company uses debt and equity to generate profits.",
+  "Gross Margin": "Percentage of revenue remaining after deducting the cost of goods sold.",
+  "Rev CAGR 3Y": "Compound Annual Growth Rate of Revenue over the last 3 years.",
+  "EPS CAGR 3Y": "Compound Annual Growth Rate of Earnings Per Share over the last 3 years.",
+  "OE Yield": "Owner Earnings Yield: Warren Buffett's metric for free cash flow yield.",
+  "Piotroski": "0-9 score measuring financial health (profitability, leverage, liquidity, operating efficiency).",
+  "Altman Z": "Formula measuring the probability of entering bankruptcy. Scores > 3 are safe.",
+  
+  // Factors
+  "Technical": "Trend strength, moving averages, and RSI momentum.",
+  "Quality": "Piotroski health score, Altman Z bankruptcy risk, ROE, and Gross Margins.",
+  "Upside": "Agreement between Wall Street price targets and raw DCF intrinsic value.",
+  "Catalyst": "Recent M&A activity, earnings dates, or major analyst upgrades.",
+  "Transcript": "Sentiment analysis of management tone during earnings calls.",
+  "Institutional": "Quarter-over-quarter accumulation or distribution by funds.",
+  "Analyst": "Wall Street consensus buy/hold/sell ratios.",
+  "Insider": "Ratio of shares acquired vs disposed by corporate insiders.",
+  "Earnings": "Historical track record of beating EPS estimates.",
+  
+  // Momentum
+  "52-Week Range": "Proximity of the current price to its 52-week high.",
+  "Golden Cross": "Bullish signal: 50-day moving average crosses above the 200-day moving average.",
+  "Death Cross": "Bearish signal: 50-day moving average crosses below the 200-day moving average.",
+  "RSI": "Relative Strength Index: Measures momentum on a 0-100 scale. >70 is overbought, <30 is oversold.",
+  "MACD": "Trend-following momentum indicator showing the relationship between two moving averages.",
+  "ADX": "Average Directional Index: Measures the strength of a trend. >20 indicates a strong trend.",
+  "BB%B": "Bollinger Bands %B: Quantifies a security's price relative to its Bollinger Bands.",
+  "StochRSI": "Stochastic RSI: A measure of RSI relative to its high/low range over a set period.",
+  "OBV": "On-Balance Volume: Uses volume flow to predict changes in stock price.",
+  "Bull Score": "Composite technical score (0-10) based on moving averages, RSI, MACD, ADX, and volume trends."
+};
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
 const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0)return"—";return`${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
@@ -57,7 +93,7 @@ async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new U
 // ── Shared Components ──────────────────────────────────────────────────────────
 function Card({children,style}:{children:React.ReactNode;style?:React.CSSProperties}){return<div style={{background:T.card,borderRadius:8,border:`1px solid ${T.cardBorder}`,boxShadow:T.cardShadow,padding:"16px 18px",...style}}>{children}</div>;}
 function SH({title,icon,sub}:{title:string;icon?:React.ReactNode;sub?:string}){return<div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:T.green,fontFamily:T.mono,textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:`2px solid ${T.greenLight}`}}>{icon}{title}{sub&&<span style={{marginLeft:"auto",fontSize:9,color:T.textLight,fontWeight:400,textTransform:"none",letterSpacing:0}}>{sub}</span>}</div>;}
-function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){return<div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}><span style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500}}>{label}</span><span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span></div>{sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}</div>;}
+
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
 // ── v7 Factor Radar ────────────────────────────────────────────────────────────
@@ -75,7 +111,39 @@ function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
   );
 }
 
-function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number;detail:string}){const c=score>0.7?"#10b981":score>0.4?T.amber:T.red;return<div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}><div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:T.text}}>{name}</span><span style={{fontSize:9,fontFamily:T.mono,color:T.textLight}}>({weight}%)</span></div><span style={{fontSize:13,fontFamily:T.mono,fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span></div><div style={{height:5,borderRadius:3,background:T.divider,overflow:"hidden",marginBottom:4}}><div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:c,transition:"width 0.4s ease"}}/></div><div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.5}}>{detail}</div></div>;}
+// ── Components with Tooltips ───────────────────────────────────────────────────
+function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number;detail:string}){
+  const c=score>0.7?"#10b981":score>0.4?T.amber:T.red;
+  const tip = TOOLTIPS[name] || "";
+  return(
+    <div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+          <span title={tip} style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:T.text, cursor: tip ? "help" : "default", borderBottom: tip ? `1px dotted ${T.textLight}` : "none"}}>{name}</span>
+          <span style={{fontSize:9,fontFamily:T.mono,color:T.textLight}}>({weight}%)</span>
+        </div>
+        <span style={{fontSize:13,fontFamily:T.mono,fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span>
+      </div>
+      <div style={{height:5,borderRadius:3,background:T.divider,overflow:"hidden",marginBottom:4}}>
+        <div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:c,transition:"width 0.4s ease"}}/>
+      </div>
+      <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.5}}>{detail}</div>
+    </div>
+  );
+}
+
+function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){
+  const tip = TOOLTIPS[label] || "";
+  return(
+    <div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}>
+        <span title={tip} style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500, cursor: tip ? "help" : "default", borderBottom: tip ? `1px dotted ${T.textLight}` : "none"}}>{label}</span>
+        <span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span>
+      </div>
+      {sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}
+    </div>
+  );
+}
 
 function factorDetail(k:string,s:StockData):string{const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";switch(k){case"upside":return`Target ${c}${s.target?.toFixed(0)??"?"} (${s.upside>0?"+":""}${s.upside?.toFixed(1)??"?"}%) · DCF ${c}${s.dcf_value?.toFixed(0)??"?"} · MoS ${fmtPct(s.margin_of_safety)}`;case"technical":return`Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;case"quality":return`Piotroski ${s.piotroski}/9 · Altman Z ${s.altman_z?.toFixed(1)} · ROE ${fmtPct(s.roe_avg)} · GM ${fmtPct(s.gross_margin)}`;case"analyst":return`Grades ${s.grade_buy}/${s.grade_total} buy · Score ${(s.grade_score*100).toFixed(0)}%`;case"transcript":return s.transcript_summary||"No transcript available";case"institutional":return s.inst_holders_change!=null?`Holders QoQ ${(s.inst_holders_change*100).toFixed(1)}% · Shares QoQ ${((s.inst_accumulation??0)*100).toFixed(1)}%`:"No data";case"insider":return s.insider_buy_ratio!=null?`Buy ratio ${s.insider_buy_ratio?.toFixed(1)} · Net buys ${s.insider_net_buys??0}`:"No data";case"earnings":return`EPS beats ${s.eps_beats}/${s.eps_total}${s.earnings_momentum!=null?` · Momentum ${s.earnings_momentum>0?"+":""}${(s.earnings_momentum*100).toFixed(1)}%`:""}`;case"catalyst":return s.catalyst_flags?.length?s.catalyst_flags.join(" · "):"No active catalysts";case"proximity":return`At ${s.proximity_52wk!=null?(s.proximity_52wk*100).toFixed(0):"?"}% of range · High ${c}${s.year_high?.toFixed(0)} Low ${c}${s.year_low?.toFixed(0)}`;default:return"";}}
 
@@ -144,14 +212,132 @@ function CompositeChart({symbol}:{symbol:string}){
   );
 }
 
-// ── MomentumPanel ──────────────────────────────────────────────────────────────
-function MomentumPanel({s}:{s:StockData}){const gc=s.sma50>s.sma200,p50=s.price>s.sma50,p200=s.price>s.sma200;const rz=s.rsi>70?"Overbought":s.rsi>60?"Bullish":s.rsi>40?"Neutral":s.rsi>30?"Bearish":"Oversold";const rc=s.rsi>70?T.red:s.rsi<30?"#10b981":s.rsi>60?"#10b981":s.rsi<40?T.amber:T.textMuted;const r52=s.year_high-s.year_low,p52=r52>0?((s.price-s.year_low)/r52)*100:50;const inds=[{l:"MACD",v:s.macd_signal,b:s.macd_signal?.includes("bullish")},{l:"ADX",v:s.adx?.toFixed(1),b:s.adx>25},{l:"BB%B",v:s.bb_pct?.toFixed(2),b:s.bb_pct>0.2&&s.bb_pct<0.8},{l:"StochRSI",v:s.stoch_rsi?.toFixed(0),b:s.stoch_rsi>20&&s.stoch_rsi<80},{l:"OBV",v:s.obv_trend,b:s.obv_trend==="rising"}];return<Card><SH title="Momentum" icon={<Activity size={12}/>}/><div style={{marginBottom:14}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><div style={{width:8,height:8,borderRadius:"50%",background:gc?"#10b981":T.red,boxShadow:`0 0 6px ${gc?"#10b981":T.red}40`}}/><span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:gc?"#10b981":T.red}}>{gc?"Golden Cross":"Death Cross"}</span></div><div style={{display:"flex",gap:6}}>{[{l:`Price ${p50?">":"<"} SMA50`,ok:p50,v:fmtPrice(s.sma50)},{l:`Price ${p200?">":"<"} SMA200`,ok:p200,v:fmtPrice(s.sma200)}].map((m,i)=><div key={i} style={{flex:1,padding:"6px 8px",borderRadius:6,fontSize:10,fontFamily:T.mono,background:m.ok?T.greenLight:T.redLight,color:m.ok?"#10b981":T.red,border:`1px solid ${m.ok?T.greenBorder:"#fecaca"}`}}><div style={{fontWeight:600}}>{m.l}</div><div style={{fontSize:9,opacity:0.8,marginTop:1}}>{m.v}</div></div>)}</div></div><div style={{marginBottom:14}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>RSI</span><span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:rc}}>{s.rsi?.toFixed(1)} — {rz}</span></div><div style={{position:"relative",height:8,borderRadius:4,overflow:"hidden",background:`linear-gradient(to right, #10b981 0%, #10b981 30%, ${T.divider} 30%, ${T.divider} 70%, ${T.red} 70%, ${T.red} 100%)`}}><div style={{position:"absolute",left:`${s.rsi}%`,top:-2,width:12,height:12,borderRadius:"50%",background:"#fff",border:`2px solid ${rc}`,transform:"translateX(-6px)",boxShadow:"0 1px 3px rgba(0,0,0,0.15)"}}/></div></div><div style={{marginBottom:14}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>52-Week Range</span><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>{p52.toFixed(0)}%</span></div><div style={{position:"relative",height:6,borderRadius:3,background:T.divider}}><div style={{position:"absolute",left:0,top:0,bottom:0,width:`${p52}%`,borderRadius:3,background:`linear-gradient(to right, #10b981, ${p52>80?T.amber:"#10b981"})`}}/><div style={{position:"absolute",left:`${p52}%`,top:-3,width:12,height:12,borderRadius:"50%",background:"#fff",border:"2px solid #10b981",transform:"translateX(-6px)",boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}/></div><div style={{display:"flex",justifyContent:"space-between",fontSize:9,fontFamily:T.mono,color:T.textLight,marginTop:3}}><span>{fmtPrice(s.year_low,s.currency)}</span><span style={{fontWeight:600,color:T.text}}>{fmtPrice(s.price,s.currency)}</span><span>{fmtPrice(s.year_high,s.currency)}</span></div></div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4}}>{inds.map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"#fafafa",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}><span style={{color:T.textMuted,fontWeight:500}}>{d.l}</span><span style={{color:d.b?"#10b981":T.textMuted,fontWeight:600}}>{d.v}</span></div>)}</div><div style={{marginTop:12}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>Bull Score</span><span style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red}}>{s.bull_score}/10</span></div><div style={{display:"flex",gap:3}}>{Array.from({length:10},(_,i)=>{const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red;return<div key={i} style={{flex:1,height:6,borderRadius:3,background:a?c:T.divider}}/>;})}</div></div></Card>;}
+// ── TargetBar (Redesigned with methodologies & fixed alignment) ────────────────
+function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){
+  const vs=[price,target,dcf,buffett].filter(v=>v>0);
+  if(vs.length<2)return null;
+  const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);
+  
+  return(
+    <div style={{marginTop:12,padding:"12px 0"}}>
+      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:24,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div>
+      
+      <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
+        {dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
+        
+        <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
+          <div style={{position:"absolute",top:-22,left:"50%",transform:"translateX(-50%)",fontSize:11,color:T.text,fontFamily:T.mono,fontWeight:700,background:T.card,padding:"0 4px",whiteSpace:"nowrap"}}>
+            {fmtPrice(price,currency)}
+          </div>
+        </div>
+        
+        {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Target</div>
+        </div>}
+        
+        {dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>DCF</div>
+        </div>}
+        
+        {buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Buffett</div>
+        </div>}
+      </div>
+
+      <div style={{marginTop:24,paddingTop:12,borderTop:`1px dashed ${T.divider}`,fontSize:9,color:T.textMuted,fontFamily:T.mono,lineHeight:1.6}}>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/><strong>Target:</strong> Wall St. 12-Month Consensus</div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:"50%",background:T.blue}}/><strong>DCF:</strong> 5-Year Discounted Cash Flow Model</div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,borderRadius:2,background:T.purple}}/><strong>Buffett:</strong> Owner Earnings Growth Model</div>
+      </div>
+    </div>
+  );
+}
+
+// ── MomentumPanel (Updated with Tooltips) ──────────────────────────────────────
+function MomentumPanel({s}:{s:StockData}){
+  const gc=s.sma50>s.sma200,p50=s.price>s.sma50,p200=s.price>s.sma200;
+  const rz=s.rsi>70?"Overbought":s.rsi>60?"Bullish":s.rsi>40?"Neutral":s.rsi>30?"Bearish":"Oversold";
+  const rc=s.rsi>70?T.red:s.rsi<30?"#10b981":s.rsi>60?"#10b981":s.rsi<40?T.amber:T.textMuted;
+  const r52=s.year_high-s.year_low,p52=r52>0?((s.price-s.year_low)/r52)*100:50;
+  const crossTip=TOOLTIPS[gc?"Golden Cross":"Death Cross"];
+  
+  const inds=[
+    {l:"MACD",v:s.macd_signal,b:s.macd_signal?.includes("bullish")},
+    {l:"ADX",v:s.adx?.toFixed(1),b:s.adx>25},
+    {l:"BB%B",v:s.bb_pct?.toFixed(2),b:s.bb_pct>0.2&&s.bb_pct<0.8},
+    {l:"StochRSI",v:s.stoch_rsi?.toFixed(0),b:s.stoch_rsi>20&&s.stoch_rsi<80},
+    {l:"OBV",v:s.obv_trend,b:s.obv_trend==="rising"}
+  ];
+  
+  return(
+    <Card>
+      <SH title="Momentum" icon={<Activity size={12}/>}/>
+      <div style={{marginBottom:14}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:gc?"#10b981":T.red,boxShadow:`0 0 6px ${gc?"#10b981":T.red}40`}}/>
+          <span title={crossTip} style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:gc?"#10b981":T.red,cursor:"help",borderBottom:`1px dotted ${gc?"#10b98180":T.red+"80"}`}}>
+            {gc?"Golden Cross":"Death Cross"}
+          </span>
+        </div>
+        <div style={{display:"flex",gap:6}}>
+          {[{l:`Price ${p50?">":"<"} SMA50`,ok:p50,v:fmtPrice(s.sma50)},{l:`Price ${p200?">":"<"} SMA200`,ok:p200,v:fmtPrice(s.sma200)}].map((m,i)=>(
+            <div key={i} style={{flex:1,padding:"6px 8px",borderRadius:6,fontSize:10,fontFamily:T.mono,background:m.ok?T.greenLight:T.redLight,color:m.ok?"#10b981":T.red,border:`1px solid ${m.ok?T.greenBorder:"#fecaca"}`}}>
+              <div style={{fontWeight:600}}>{m.l}</div>
+              <div style={{fontSize:9,opacity:0.8,marginTop:1}}>{m.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+          <span title={TOOLTIPS["RSI"]} style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>RSI</span>
+          <span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:rc}}>{s.rsi?.toFixed(1)} — {rz}</span>
+        </div>
+        <div style={{position:"relative",height:8,borderRadius:4,overflow:"hidden",background:`linear-gradient(to right, #10b981 0%, #10b981 30%, ${T.divider} 30%, ${T.divider} 70%, ${T.red} 70%, ${T.red} 100%)`}}>
+          <div style={{position:"absolute",left:`${s.rsi}%`,top:-2,width:12,height:12,borderRadius:"50%",background:"#fff",border:`2px solid ${rc}`,transform:"translateX(-6px)",boxShadow:"0 1px 3px rgba(0,0,0,0.15)"}}/>
+        </div>
+      </div>
+      <div style={{marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+          <span title={TOOLTIPS["52-Week Range"]} style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>52-Week Range</span>
+          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>{p52.toFixed(0)}%</span>
+        </div>
+        <div style={{position:"relative",height:6,borderRadius:3,background:T.divider}}>
+          <div style={{position:"absolute",left:0,top:0,bottom:0,width:`${p52}%`,borderRadius:3,background:`linear-gradient(to right, #10b981, ${p52>80?T.amber:"#10b981"})`}}/>
+          <div style={{position:"absolute",left:`${p52}%`,top:-3,width:12,height:12,borderRadius:"50%",background:"#fff",border:"2px solid #10b981",transform:"translateX(-6px)",boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}/>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",fontSize:9,fontFamily:T.mono,color:T.textLight,marginTop:3}}>
+          <span>{fmtPrice(s.year_low,s.currency)}</span>
+          <span style={{fontWeight:600,color:T.text}}>{fmtPrice(s.price,s.currency)}</span>
+          <span>{fmtPrice(s.year_high,s.currency)}</span>
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4}}>
+        {inds.map((d,i)=>(
+          <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"#fafafa",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}>
+            <span title={TOOLTIPS[d.l]} style={{color:T.textMuted,fontWeight:500,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>{d.l}</span>
+            <span style={{color:d.b?"#10b981":T.textMuted,fontWeight:600}}>{d.v}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+          <span title={TOOLTIPS["Bull Score"]} style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>Bull Score</span>
+          <span style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red}}>{s.bull_score}/10</span>
+        </div>
+        <div style={{display:"flex",gap:3}}>
+          {Array.from({length:10},(_,i)=>{
+            const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red;
+            return <div key={i} style={{flex:1,height:6,borderRadius:3,background:a?c:T.divider}}/>;
+          })}
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 // ── TranscriptInsights ─────────────────────────────────────────────────────────
 function TranscriptInsights({symbol}:{symbol:string}){const[analysis,setAnalysis]=useState<string|null>(null);const[loading,setLoading]=useState(false);const[error,setError]=useState<string|null>(null);const[qFound,setQFound]=useState(0);const f=useCallback(async()=>{setLoading(true);setError(null);try{const r=await fetch(`/api/transcript?symbol=${symbol}&quarters=8`);const d=await r.json();if(d.error)setError(d.error);else{setAnalysis(d.analysis||"No analysis.");setQFound(d.quarters_found||0);}}catch(e:any){setError(e.message);}finally{setLoading(false);}},[symbol]);return<Card><SH title="Transcript Insights" icon={<Brain size={12}/>} sub={qFound>0?`${qFound} quarters analyzed`:""}/>{analysis?<div><div style={{fontSize:11,lineHeight:1.7,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap"}}>{analysis}</div><button onClick={f} style={{marginTop:12,background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:10,fontFamily:T.mono,color:T.textMuted,display:"flex",alignItems:"center",gap:4}}><RefreshCw size={10}/> Refresh</button></div>:<div style={{textAlign:"center",padding:"20px 0"}}><button onClick={f} disabled={loading} style={{background:loading?T.divider:T.green,border:"none",borderRadius:6,padding:"10px 20px",color:loading?T.textMuted:"#fff",fontFamily:T.mono,fontSize:11,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"inline-flex",alignItems:"center",gap:6}}>{loading?<><RefreshCw size={12} style={{animation:"spin 1s linear infinite"}}/> Analyzing 8 quarters...</>:<><Brain size={12}/> Analyze 2 Years of Earnings</>}</button>{error&&<div style={{marginTop:8,fontSize:10,color:T.red,fontFamily:T.mono,maxWidth:400,margin:"8px auto 0",lineHeight:1.5}}>{error}</div>}<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8}}>Claude analyzes narrative arc, tone shifts, guidance credibility across 8 quarters</div></div>}</Card>;}
-
-// ── TargetBar ──────────────────────────────────────────────────────────────────
-function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){const vs=[price,target,dcf,buffett].filter(v=>v>0);if(vs.length<2)return null;const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);return<div style={{marginTop:12,padding:"12px 0"}}><div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:8,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div><div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>{dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}><div style={{position:"absolute",top:-16,left:-14,fontSize:9,color:T.text,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>{fmtPrice(price,currency)}</div></div>{target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-8,fontSize:8,color:T.amber,fontFamily:T.mono,whiteSpace:"nowrap"}}>Target</div></div>}{dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}><div style={{position:"absolute",bottom:-14,left:-4,fontSize:8,color:T.blue,fontFamily:T.mono,whiteSpace:"nowrap"}}>DCF</div></div>}{buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}><div style={{position:"absolute",top:-14,left:-8,fontSize:8,color:T.purple,fontFamily:T.mono,whiteSpace:"nowrap"}}>Buffett</div></div>}</div></div>;}
 
 // ── News Feed ──────────────────────────────────────────────────────────────────
 function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(d)setNews(d as NewsItem[]);setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.slice(0,8).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
