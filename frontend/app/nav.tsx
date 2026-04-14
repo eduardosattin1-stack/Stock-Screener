@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Briefcase, Radio } from "lucide-react";
+import { BarChart3, Briefcase, Radio, TrendingUp } from "lucide-react";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -8,6 +8,7 @@ export default function Nav() {
   const links = [
     { href: "/", label: "Screener", icon: <BarChart3 size={13} /> },
     { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
+    { href: "/performance", label: "Performance", icon: <TrendingUp size={13} /> },
     { href: "/signals", label: "Signals", icon: <Radio size={13} /> },
   ];
   return (
