@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """
-Stock Screener v7 — FULL HISTORICAL BACKTEST + ML OPTIMIZER
-=============================================================
+Stock Screener v7.1 — FULL HISTORICAL BACKTEST + ML OPTIMIZER
+===============================================================
 Runs on Cloud Run / Cloud Shell alongside screener_v6.py
 
-Usage:
-  # Recent 6 months (original mode):
-  python backtest_full.py --region nasdaq100 --windows 6
+v7.1 additions (3 new features, all verified via MCP):
+  - Sector momentum: historical-sector-performance (with exchange param for EU)
+  - Congressional trading: senate-trading + house-trading (prefetched, filtered by disclosureDate)
+  - Institutional flow v2: positions-summary (13F net new, put/call, ownership change)
 
-  # Full 2024-2025 training (24 monthly windows):
-  python backtest_full.py --region global --from 2024-01-01 --to 2025-12-31
+13 factors total: technical 35% | quality 14% | upside 10% | proximity 7% |
+  catalyst 7% | transcript 5% | sector_momentum 4% | institutional 4% |
+  analyst 4% | insider 3% | earnings 3% | congressional 2% | institutional_flow 2%
+
+Usage:
+  # Full 4-year training (2022-2025):
+  python backtest_full.py --region global --from 2022-01-01 --to 2025-12-31
 
   # Specific date range:
   python backtest_full.py --region sp500 --from 2024-06-01 --to 2025-06-30
@@ -42,40 +48,40 @@ Outputs:
 
 Requirements: requests, scikit-learn (pip install scikit-learn)
 """
-#!/usr/bin/env python3
+
 import os, sys, json, math, time, logging, argparse, csv, hashlib
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Tuple
 from dataclasses import dataclass, field, asdict
+
 import requests
 
 # ---------------------------------------------------------------------------
-# CORE DEPENDENCY: Must import screener_v6.py
+# Import v6 core functions (if available), otherwise define locally
 # ---------------------------------------------------------------------------
-
-# Explicitly add current directory to path so Docker finds the file
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from screener_v6 import (
-        fmp, get_symbols, get_technicals, get_analyst, get_value,
-        get_insider_activity, get_news_sentiment, compute_52wk_proximity,
-        compute_earnings_momentum, compute_upside_score, compute_catastrophe,
-        WEIGHTS, get_fx_rate, _FX_TO_USD, REGIONS,
+        fmp, WEIGHTS, get_fx_rate, _FX_TO_USD, REGIONS,
         FMP_KEY, FMP, RATE_LIMIT, RISK_FREE,
-        get_quotes_batch, _parse_quote,
     )
-    # Re-init logger after import to ensure it uses the backtest name
     log = logging.getLogger("backtest")
-    log.info("Successfully linked to screener_v6.py logic.")
-except ImportError as e:
-    print(f"\nCRITICAL ERROR: screener_v6.py not found ({e})")
-    print("This backtest requires the core screener file to ensure logic parity.")
-    sys.exit(1)
+    log.info("Imported screener_v6 core functions")
+    HAVE_V6 = True
+except ImportError:
+    HAVE_V6 = False
+    log = logging.getLogger("backtest")
+    log.warning("screener_v6.py not found — using built-in functions")
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
+
+if not HAVE_V6:
+    FMP_KEY = os.environ.get("FMP_API_KEY", "")
+    FMP = "https://financialmodelingprep.com/stable"
+    RATE_LIMIT = 0.04
+    RISK_FREE = 0.045
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("backtest")
@@ -83,9 +89,93 @@ log = logging.getLogger("backtest")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
 # ---------------------------------------------------------------------------
+# FMP Client (fallback if v6 not imported)
+# ---------------------------------------------------------------------------
+
+if not HAVE_V6:
+    _FX_TO_USD = {
+        "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CHF": 1.12,
+        "JPY": 0.0067, "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073,
+        "HKD": 0.128, "INR": 0.012, "SGD": 0.75, "AUD": 0.65,
+        "CAD": 0.73, "SEK": 0.097, "BRL": 0.18,
+    }
+
+    def get_fx_rate(from_ccy, to_ccy):
+        if from_ccy == to_ccy: return 1.0
+        f = _FX_TO_USD.get(from_ccy, 1.0)
+        t = _FX_TO_USD.get(to_ccy, 1.0)
+        return f / t if t else 1.0
+
+    def fmp(endpoint, params=None):
+        time.sleep(RATE_LIMIT)
+        url = f"{FMP}/{endpoint}"
+        p = {"apikey": FMP_KEY}
+        if params: p.update(params)
+        try:
+            r = requests.get(url, params=p, timeout=20)
+            if r.status_code != 200: return None
+            data = r.json()
+            if isinstance(data, dict) and "Error Message" in data: return None
+            if isinstance(data, dict): return [data]
+            return data if isinstance(data, list) else None
+        except:
+            return None
+
+    REGIONS = {
+        "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
+        "sp500": [("NASDAQ", None, 10_000_000_000, 250), ("NYSE", None, 10_000_000_000, 250)],
+        "europe": [
+            ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
+            ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
+            ("MIL", "IT", 5_000_000_000, 15), ("STO", "SE", 5_000_000_000, 15),
+            ("SIX", "CH", 5_000_000_000, 15), ("BME", "ES", 5_000_000_000, 10),
+        ],
+        "global": None,
+    }
+
+# Always define our own get_symbols to ensure SYMBOL_META is populated
+def get_symbols(region):
+    if region == "global":
+        syms = []
+        for r in ["sp500", "europe"]:
+            syms.extend(get_symbols(r))
+        return list(dict.fromkeys(syms))
+    configs = REGIONS.get(region)
+    if configs is None:
+        configs = [(region.upper(), None, 5_000_000_000, 50)]
+    symbols = []
+    for exchange, country, min_cap, limit in configs:
+        params = {
+            "exchange": exchange, "marketCapMoreThan": min_cap,
+            "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
+            "limit": limit,
+        }
+        if country: params["country"] = country
+        data = fmp("company-screener", params)
+        if data:
+            batch = [d["symbol"] for d in data if "symbol" in d]
+            # Cache sector and exchange per symbol for new features
+            for d in data:
+                if "symbol" in d:
+                    SYMBOL_META[d["symbol"]] = {
+                        "sector": d.get("sector", ""),
+                        "exchange": d.get("exchangeShortName", exchange),
+                    }
+            log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
+            symbols.extend(batch)
+    return list(dict.fromkeys(symbols))
+
+# ---------------------------------------------------------------------------
 # Cache for fundamentals (quarterly data — reuse within same quarter)
 # ---------------------------------------------------------------------------
+
 _CACHE = {}  # key: (sym, quarter_key) → data
+
+# NEW v7.1: Additional caches for new features
+SYMBOL_META = {}        # sym → {sector, exchange} — populated by get_symbols()
+_CONGRESS_CACHE = {}    # sym → [trades] — ALL trades, fetched once per symbol
+_SECTOR_MOM_CACHE = {}  # "sector|exchange|YYYY-MM" → score
+_13F_CACHE = {}         # "sym|YYYY|Q" → data dict
 
 def cache_key(sym, date_str):
     """Generate cache key based on stock + fiscal quarter."""
@@ -413,20 +503,191 @@ def compute_quality_score(fundamentals):
     return min(score, 1.0)
 
 # ---------------------------------------------------------------------------
-# Compute all v6 factors for a stock at a point in time
+# NEW v7.1: Sector Momentum (cached per sector/exchange/month)
 # ---------------------------------------------------------------------------
 
+def compute_sector_momentum_bt(sector, exchange, as_of_date):
+    """
+    Compute sector momentum score for backtest.
+    Fetches 20-day sector performance ending on as_of_date.
+    Cached per (sector, exchange, month).
+    """
+    if not sector:
+        return 0.5
+    
+    dt = datetime.strptime(as_of_date[:10], "%Y-%m-%d")
+    cache_key = f"{sector}|{exchange}|{dt.strftime('%Y-%m')}"
+    if cache_key in _SECTOR_MOM_CACHE:
+        return _SECTOR_MOM_CACHE[cache_key]
+    
+    from_d = (dt - timedelta(days=35)).strftime("%Y-%m-%d")
+    to_d = as_of_date[:10]
+    
+    params = {"sector": sector, "from": from_d, "to": to_d}
+    if exchange and exchange not in ("NASDAQ", "NYSE"):
+        params["exchange"] = exchange
+    
+    data = fmp("historical-sector-performance", params)
+    if not data or len(data) < 5:
+        _SECTOR_MOM_CACHE[cache_key] = 0.5
+        return 0.5
+    
+    data.sort(key=lambda x: x.get("date", ""))
+    changes = [d.get("averageChange", 0) for d in data]
+    recent_20 = changes[-20:] if len(changes) >= 20 else changes
+    cum_20d = sum(recent_20)
+    
+    if cum_20d > 5.0: score = 1.0
+    elif cum_20d > 2.0: score = 0.80
+    elif cum_20d > 0: score = 0.60
+    elif cum_20d > -2.0: score = 0.40
+    elif cum_20d > -5.0: score = 0.20
+    else: score = 0.05
+    
+    _SECTOR_MOM_CACHE[cache_key] = score
+    return score
+
+# ---------------------------------------------------------------------------
+# NEW v7.1: Congressional Trading (prefetched, filtered by date)
+# ---------------------------------------------------------------------------
+
+def prefetch_congressional(symbols):
+    """
+    Prefetch all congressional trades for all symbols.
+    Called once at backtest start. ~1,800 API calls.
+    NOTE: senate-trading/house-trading may be MCP-only on some FMP tiers.
+    If REST returns None, gracefully sets empty list.
+    """
+    log.info(f"  Prefetching congressional data for {len(symbols)} symbols...")
+    fetched = 0
+    for i, sym in enumerate(symbols):
+        if (i + 1) % 50 == 0:
+            log.info(f"    Congressional: {i+1}/{len(symbols)} ({fetched} with data)")
+        
+        all_trades = []
+        for endpoint in ("senate-trading", "house-trading"):
+            data = fmp(endpoint, {"symbol": sym})
+            if data:
+                for t in data:
+                    trade_type = (t.get("type", "") or "").lower()
+                    is_buy = "purchase" in trade_type
+                    is_sell = "sale" in trade_type
+                    if is_buy or is_sell:
+                        all_trades.append({
+                            "disc": t.get("disclosureDate", ""),
+                            "txn": t.get("transactionDate", ""),
+                            "buy": is_buy,
+                        })
+        
+        _CONGRESS_CACHE[sym] = all_trades
+        if all_trades:
+            fetched += 1
+    
+    log.info(f"  Congressional prefetch done: {fetched}/{len(symbols)} have trades")
+
+def compute_congressional_score_bt(sym, as_of_date):
+    """
+    Compute congressional trading signal from prefetched data.
+    Looks at trades disclosed in the 90 days before as_of_date.
+    Uses disclosureDate (not transactionDate) to avoid look-ahead bias.
+    """
+    trades = _CONGRESS_CACHE.get(sym, [])
+    if not trades:
+        return 0.5  # no data = neutral
+    
+    dt = datetime.strptime(as_of_date[:10], "%Y-%m-%d")
+    cutoff = (dt - timedelta(days=90)).strftime("%Y-%m-%d")
+    end = as_of_date[:10]
+    
+    buys = sum(1 for t in trades if t["buy"] and cutoff <= t["disc"] <= end)
+    sells = sum(1 for t in trades if not t["buy"] and cutoff <= t["disc"] <= end)
+    net = buys - sells
+    total = buys + sells
+    
+    if total == 0: return 0.5
+    elif net >= 3: return 1.0
+    elif net >= 1: return 0.70
+    elif net == 0: return 0.50
+    elif net >= -2: return 0.30
+    else: return 0.10
+
+# ---------------------------------------------------------------------------
+# NEW v7.1: Institutional Flow v2 (13F positions-summary, cached per quarter)
+# ---------------------------------------------------------------------------
+
+def compute_inst_flow_v2_bt(sym, as_of_date):
+    """
+    Compute institutional flow from 13F positions-summary.
+    Uses the most recent quarter available before as_of_date (with 45-day lag).
+    Cached per (symbol, year, quarter).
+    Returns 0.5 for European stocks (no 13F data).
+    """
+    dt = datetime.strptime(as_of_date[:10], "%Y-%m-%d")
+    # 13F has ~45 day lag — use quarter from 60 days ago
+    ref = dt - timedelta(days=60)
+    q = (ref.month - 1) // 3 + 1
+    y = ref.year
+    
+    cache_key = f"{sym}|{y}|Q{q}"
+    if cache_key in _13F_CACHE:
+        return _13F_CACHE[cache_key]
+    
+    data = fmp("institutional-ownership/symbol-positions-summary",
+               {"symbol": sym, "year": y, "quarter": q})
+    
+    if not data or not isinstance(data, list) or len(data) == 0:
+        # Try previous quarter
+        q2 = q - 1 if q > 1 else 4
+        y2 = y if q > 1 else y - 1
+        cache_key2 = f"{sym}|{y2}|Q{q2}"
+        if cache_key2 in _13F_CACHE:
+            _13F_CACHE[cache_key] = _13F_CACHE[cache_key2]
+            return _13F_CACHE[cache_key]
+        data = fmp("institutional-ownership/symbol-positions-summary",
+                    {"symbol": sym, "year": y2, "quarter": q2})
+    
+    if not data or not isinstance(data, list) or len(data) == 0:
+        _13F_CACHE[cache_key] = 0.5
+        return 0.5
+    
+    d = data[0]
+    
+    net_new = (d.get("newPositions", 0) or 0) - (d.get("closedPositions", 0) or 0)
+    net_inc = (d.get("increasedPositions", 0) or 0) - (d.get("reducedPositions", 0) or 0)
+    pcr = d.get("putCallRatio", 0) or 0
+    own_chg = d.get("ownershipPercentChange", 0) or 0
+    
+    score = 0.5
+    if net_new > 50: score += 0.20
+    elif net_new > 10: score += 0.10
+    elif net_new < -50: score -= 0.20
+    elif net_new < -10: score -= 0.10
+    
+    if net_inc > 100: score += 0.15
+    elif net_inc > 0: score += 0.05
+    elif net_inc < -100: score -= 0.15
+    
+    if pcr > 2.0: score -= 0.10
+    elif pcr < 0.5: score += 0.10
+    
+    if own_chg > 3: score += 0.05
+    elif own_chg < -3: score -= 0.05
+    
+    result = max(0, min(1, score))
+    _13F_CACHE[cache_key] = result
+    return result
+
 def compute_all_factors(sym, as_of_date, tech, fund, price):
-    """Compute all v6 factor scores + quality for a stock at a specific date."""
+    """Compute all v7.1 factor scores (13 factors) for a stock at a specific date."""
     if not tech or price <= 0:
         return None
     
     factors = {}
     
-    # 1. Technical (15%)
+    # 1. Technical (35%)
     factors["technical"] = tech["bull_score"] / 10
     
-    # 2. Upside (15%) — analyst target + intrinsic value vs price
+    # 2. Upside (10%) — analyst target + intrinsic value vs price
     target = fund.get("target", 0)
     intrinsic = fund.get("intrinsic_buffett", 0)
     dcf = fund.get("dcf_value", 0)
@@ -441,23 +702,10 @@ def compute_all_factors(sym, as_of_date, tech, fund, price):
     elif target_up < -10 and intrinsic_up < -10: factors["upside"] = 0.0
     else: factors["upside"] = 0.25
     
-    # 3. Analyst (10%)
-    factors["analyst"] = fund.get("grade_score", 0.5)
+    # 3. Quality (14%) — Piotroski + Altman Z + ROE + ROIC + GM
+    factors["quality"] = compute_quality_score(fund)
     
-    # 4. Earnings momentum (10%)
-    eps_total = fund.get("eps_total", 0)
-    eps_beats = fund.get("eps_beats", 0)
-    beat_rate = eps_beats / eps_total if eps_total > 0 else 0.5
-    factors["earnings"] = beat_rate * 0.6 + 0.4 * 0.5  # simplified
-    
-    # 5. Insider (10%)
-    factors["insider"] = fund.get("insider_score", 0.5)
-    
-    # 6. News (5%) — neutral for historical backtest (can't get old news)
-    news_res = get_news_sentiment(sym)
-    factors["news"] = news_res["score"]
-    
-    # 7. 52wk proximity (5%)
+    # 4. Proximity (7%) — 52-week position
     yh = tech.get("year_high", 0)
     yl = tech.get("year_low", 0)
     if yh > yl > 0:
@@ -471,34 +719,52 @@ def compute_all_factors(sym, as_of_date, tech, fund, price):
     else:
         factors["proximity"] = 0.5
     
-    # 8. Catastrophe (5%)
-    cat = 1.0
-    az = fund.get("altman_z", 5.0)
-    pio = fund.get("piotroski", 5)
-    if 0 < az < 1.8: cat -= 0.25
-    if pio <= 2: cat -= 0.20
-    if tech["rsi"] > 85 or tech["rsi"] < 15: cat -= 0.15
-    if eps_total >= 3 and eps_beats == 0: cat -= 0.15
-    factors["catastrophe"] = max(cat, 0)
+    # 5. Catalyst (7%) — simplified for backtest (earnings proximity)
+    eps_total = fund.get("eps_total", 0)
+    eps_beats = fund.get("eps_beats", 0)
+    beat_rate = eps_beats / eps_total if eps_total > 0 else 0.5
+    # Catalyst approximation: high beat rate + recent positive surprises
+    surprises = fund.get("eps_surprises", [])
+    recent_surprise = surprises[-1] if surprises else 0
+    factors["catalyst"] = min(1.0, beat_rate * 0.5 + (0.5 if recent_surprise > 0.05 else 0.3))
     
-    # 9. Transcript (15%) — skip for backtest, redistribute
+    # 6. Transcript (5%) — skip for backtest, redistribute
     factors["transcript"] = None
     
-    # 10. Institutional (10%) — skip for backtest, redistribute
+    # 7. Analyst (4%)
+    factors["analyst"] = fund.get("grade_score", 0.5)
+    
+    # 8. Institutional (4%) — original QoQ (skip for backtest, redistribute)
     factors["institutional"] = None
     
-    # NEW: Quality factor
-    factors["quality"] = compute_quality_score(fund)
+    # 9. Insider (3%)
+    factors["insider"] = fund.get("insider_score", 0.5)
     
-    # Composite (using v6 weights with redistribution)
-    WEIGHTS_V6 = {
-        "upside": 0.15, "technical": 0.15, "analyst": 0.10, "transcript": 0.15,
-        "institutional": 0.10, "insider": 0.10, "earnings": 0.10,
-        "news": 0.05, "proximity": 0.05, "catastrophe": 0.05,
+    # 10. Earnings (3%)
+    factors["earnings"] = beat_rate * 0.6 + 0.4 * 0.5
+    
+    # 11. NEW: Sector momentum (4%) — from prefetched sector data
+    meta = SYMBOL_META.get(sym, {})
+    sector = meta.get("sector", "")
+    exchange = meta.get("exchange", "NASDAQ")
+    factors["sector_momentum"] = compute_sector_momentum_bt(sector, exchange, as_of_date)
+    
+    # 12. NEW: Congressional trading (2%) — from prefetched data
+    factors["congressional"] = compute_congressional_score_bt(sym, as_of_date)
+    
+    # 13. NEW: Institutional flow v2 (2%) — 13F positions-summary
+    factors["institutional_flow"] = compute_inst_flow_v2_bt(sym, as_of_date)
+    
+    # Composite (v7.1 weights — 13 factors)
+    WEIGHTS_V71 = {
+        "technical": 0.35, "quality": 0.14, "upside": 0.10, "proximity": 0.07,
+        "catalyst": 0.07, "transcript": 0.05, "sector_momentum": 0.04,
+        "institutional": 0.04, "analyst": 0.04, "insider": 0.03,
+        "earnings": 0.03, "congressional": 0.02, "institutional_flow": 0.02,
     }
     active = {}
     missing_w = 0
-    for f, w in WEIGHTS_V6.items():
+    for f, w in WEIGHTS_V71.items():
         if factors.get(f) is not None:
             active[f] = w
         else:
@@ -508,27 +774,52 @@ def compute_all_factors(sym, as_of_date, tech, fund, price):
         total_a = sum(active.values())
         for f in active: active[f] += missing_w * (active[f] / total_a)
     else:
-        active = WEIGHTS_V6.copy()
+        active = WEIGHTS_V71.copy()
     
-    composite = sum(factors[f] * active.get(f, WEIGHTS_V6.get(f, 0)) for f in WEIGHTS_V6)
+    composite = sum(factors[f] * active.get(f, WEIGHTS_V71.get(f, 0)) for f in WEIGHTS_V71)
     
-    # Signal
+    # Signal (v7.1 — composite bands + ML-validated bearish safety net)
     bull = tech["bull_score"]
-    mos = fund.get("margin_of_safety", 0)
-    ins = fund.get("insider_score", 0.5)
-    bullish_count = sum([composite > 0.60, bull >= 6, mos > 0.10, ins >= 0.6, factors["earnings"] >= 0.6])
+    sma50 = tech.get("sma50", 0)
+    sma200 = tech.get("sma200", 0)
+    trend_str = (sma50 - sma200) / sma200 if sma200 > 0 else 0
+    momentum = (price - sma50) / sma50 if sma50 > 0 else 0
+    prox_raw = (price - yl) / (yh - yl) if yh > yl > 0 else 0.5
+    pio = fund.get("piotroski", 5)
+    az = fund.get("altman_z", 5.0)
     
-    if bullish_count >= 4 and composite > 0.55: signal = "BUY"
-    elif bullish_count >= 3 and composite > 0.45: signal = "WATCH"
-    elif composite < 0.25: signal = "SELL"
+    momentum_score = sum([
+        trend_str > 0.30, trend_str > 0.10, momentum > 0,
+        momentum > 0.05, prox_raw > 0.75, prox_raw > 0.60, bull >= 6,
+    ])
+    quality_check = sum([
+        factors.get("quality", 0.5) >= 0.6,
+        composite > 0.55,
+        factors.get("earnings", 0.5) >= 0.6,
+    ])
+    bearish_score = sum([
+        trend_str < -0.05, momentum < -0.05, prox_raw < 0.30,
+        bull <= 2, composite < 0.30,
+    ])
+    
+    if momentum_score >= 5 and quality_check >= 1: signal = "BUY"
+    elif momentum_score >= 4 and composite > 0.50: signal = "BUY"
+    elif momentum_score >= 3 and composite > 0.45: signal = "WATCH"
+    elif bearish_score >= 3: signal = "SELL"
+    elif bearish_score >= 2 and composite < 0.35: signal = "SELL"
     else: signal = "HOLD"
     
-    # Additional raw features for ML
+    # STRONG BUY override
+    has_catalyst = factors.get("catalyst", 0.5) >= 0.70
+    if signal == "BUY" and has_catalyst:
+        signal = "STRONG BUY"
+    
+    # Additional raw features for ML (these become f_* columns in CSV)
     factors["bull_score_raw"] = bull
-    factors["momentum_20d"] = (price - tech.get("sma50", price)) / tech.get("sma50", price) if tech.get("sma50", 0) > 0 else 0
-    factors["trend_strength"] = (tech.get("sma50", 0) - tech.get("sma200", 0)) / tech.get("sma200", 1) if tech.get("sma200", 0) > 0 else 0
+    factors["momentum_20d"] = momentum
+    factors["trend_strength"] = trend_str
     factors["rsi"] = tech["rsi"]
-    factors["prox_raw"] = (price - yl) / (yh - yl) if yh > yl > 0 else 0.5
+    factors["prox_raw"] = prox_raw
     factors["piotroski"] = pio
     factors["altman_z"] = az
     
@@ -654,6 +945,11 @@ def run_backtest(region="nasdaq100", num_windows=6, from_date=None, to_date=None
     # 2. Generate windows
     windows = generate_windows(num_windows, from_date=from_date, to_date=to_date)
     log.info(f"Step 2: {len(windows)} monthly windows: {windows[0][2]} → {windows[-1][2]}")
+    
+    # 2b. NEW v7.1: Prefetch congressional trades (one-time, ~1,800 API calls)
+    log.info("Step 2b: Prefetching congressional trading data...")
+    prefetch_congressional(symbols)
+    log.info(f"  Symbol metadata: {len(SYMBOL_META)} stocks have sector/exchange info")
     
     # 3. Fetch S&P 500 benchmark
     log.info("Step 3: Fetching S&P 500 benchmark...")
