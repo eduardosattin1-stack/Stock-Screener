@@ -1,0 +1,138 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'What to do'
+        required: true
+        default: 'deploy-only'
+        type: choice
+        options:
+          - deploy-only
+          - run-sp500
+          - run-europe
+          - run-global
+          - run-backtest-sp500
+          - run-backtest-europe
+          - run-monitor
+          - run-weekly-report
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # ═══ ALWAYS: DEPLOY SERVICE + UPDATE JOBS ═══
+      - name: Deploy Cloud Run Service
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          cd backend
+          gcloud run deploy stock-screener \
+            --source=. \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --timeout=3600 \
+            --clear-base-image \
+            --update-env-vars=SCREEN_INDEX=nasdaq100
+
+      - name: Update Screener Jobs
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          IMAGE=$(gcloud run services describe stock-screener \
+            --region=europe-west1 \
+            --format='value(spec.template.spec.containers[0].image)')
+          echo "Image: $IMAGE"
+          gcloud run jobs update screener-sp500 --region=europe-west1 --image="$IMAGE" \
+            || echo "screener-sp500 not found, skipping"
+          gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
+            || echo "screener-global not found, skipping"
+
+      - name: Deploy Backtest Jobs
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          cd backend
+          gcloud run jobs deploy backtest-sp500 \
+            --source=. \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="backtest_full.py,--region,sp500,--from,2022-01-01,--to,2025-12-31"
+          gcloud run jobs deploy backtest-europe \
+            --source=. \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="backtest_full.py,--region,europe,--from,2022-01-01,--to,2025-12-31"
+
+      # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
+      - name: Run SP500 Scan
+        if: inputs.action == 'run-sp500'
+        run: |
+          gcloud run jobs execute screener-sp500 --region=europe-west1
+          echo "SP500 scan started. Check logs: gcloud run jobs executions list --job=screener-sp500 --region=europe-west1"
+
+      - name: Run Europe Scan (via HTTP)
+        if: inputs.action == 'run-europe'
+        run: |
+          curl -X POST "https://stock-screener-606056076947.europe-west1.run.app/" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+            -d '{"region":"europe"}' \
+            --max-time 3600 -o /tmp/result.txt -w "HTTP %{http_code}\n" || true
+          head -c 500 /tmp/result.txt
+          echo "Europe scan completed or timed out. Check GCS for results."
+
+      - name: Run Global Scan
+        if: inputs.action == 'run-global'
+        run: |
+          gcloud run jobs execute screener-global --region=europe-west1
+          echo "Global scan started. Check logs: gcloud run jobs executions list --job=screener-global --region=europe-west1"
+
+      # ═══ MANUAL: EXECUTE BACKTESTS ═══
+      - name: Run Backtest SP500
+        if: inputs.action == 'run-backtest-sp500'
+        run: |
+          gcloud run jobs execute backtest-sp500 --region=europe-west1
+          echo "Backtest SP500 started (~3-6 hours). Monitor: gcloud run jobs executions list --job=backtest-sp500 --region=europe-west1"
+
+      - name: Run Backtest Europe
+        if: inputs.action == 'run-backtest-europe'
+        run: |
+          gcloud run jobs execute backtest-europe --region=europe-west1
+          echo "Backtest Europe started (~3-6 hours). Monitor: gcloud run jobs executions list --job=backtest-europe --region=europe-west1"
+
+      # ═══ MANUAL: MONITOR + WEEKLY REPORT ═══
+      - name: Run Portfolio Monitor
+        if: inputs.action == 'run-monitor'
+        run: |
+          curl -X POST "https://stock-screener-606056076947.europe-west1.run.app/monitor" \
+            -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+            --max-time 300 -o /tmp/monitor.txt -w "HTTP %{http_code}\n" || true
+          cat /tmp/monitor.txt
+
+      - name: Run Weekly Report
+        if: inputs.action == 'run-weekly-report'
+        run: |
+          curl -X POST "https://stock-screener-606056076947.europe-west1.run.app/weekly-report" \
+            -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+            --max-time 300 -o /tmp/report.txt -w "HTTP %{http_code}\n" || true
+          cat /tmp/report.txt
