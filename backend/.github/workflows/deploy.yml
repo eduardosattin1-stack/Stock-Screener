@@ -5,12 +5,11 @@ on:
     branches: [main]
     paths:
       - 'backend/**'
-  workflow_dispatch:  # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,13 +22,21 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Deploy to Cloud Run
+      - name: Update Cloud Run Jobs with new image
         run: |
-          cd backend
-          gcloud run deploy stock-screener \
-            --source=. \
+          IMAGE=$(gcloud run services describe stock-screener \
             --region=europe-west1 \
-            --memory=1Gi \
-            --timeout=900 \
-            --clear-base-image \
-            --update-env-vars=SCREEN_INDEX=nasdaq100
+            --format='value(spec.template.spec.containers[0].image)')
+          echo "Updating jobs with image: $IMAGE"
+
+          gcloud run jobs update screener-sp500 \
+            --region=europe-west1 \
+            --image="$IMAGE" \
+            || echo "screener-sp500 job not found, skipping"
+
+          gcloud run jobs update screener-global \
+            --region=europe-west1 \
+            --image="$IMAGE" \
+            || echo "screener-global job not found, skipping"
+
+          echo "All jobs updated successfully"
