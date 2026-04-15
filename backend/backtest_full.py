@@ -379,16 +379,16 @@ def get_fundamentals_cached(sym, as_of_date):
     # Financial scores (Piotroski + Altman Z)
     scores = fmp("financial-scores", {"symbol": sym})
     if scores:
-        result["piotroski"] = int(scores[0].get("piotroskiScore", 5))
-        result["altman_z"] = float(scores[0].get("altmanZScore", 5.0))
+        result["piotroski"] = int(scores[0].get("piotroskiScore") or 5)
+        result["altman_z"] = float(scores[0].get("altmanZScore") or 5.0)
     
     # Income statement (for margins, growth)
     inc = fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5})
     if inc and len(inc) >= 2:
         inc.sort(key=lambda x: x.get("date", ""))
-        revs = [float(x.get("revenue", 0)) for x in inc]
-        eps_list = [float(x.get("epsDiluted", 0)) for x in inc]
-        gp_list = [float(x.get("grossProfit", 0)) for x in inc]
+        revs = [float(x.get("revenue") or 0) for x in inc]
+        eps_list = [float(x.get("epsDiluted") or 0) for x in inc]
+        gp_list = [float(x.get("grossProfit") or 0) for x in inc]
         
         n = len(revs)
         if n >= 4 and revs[0] > 0:
@@ -399,7 +399,7 @@ def get_fundamentals_cached(sym, as_of_date):
             result["gross_margin"] = gp_list[-1] / revs[-1]
         
         # Intrinsic value
-        latest_eps = float(inc[-1].get("epsDiluted", 0))
+        latest_eps = float(inc[-1].get("epsDiluted") or 0)
         if latest_eps > 0:
             base_growth = min(result["revenue_cagr_3y"], 0.30)
             future_eps = latest_eps
@@ -412,8 +412,8 @@ def get_fundamentals_cached(sym, as_of_date):
     km = fmp("key-metrics", {"symbol": sym, "period": "annual", "limit": 5})
     if km:
         km.sort(key=lambda x: x.get("date", ""))
-        roes = [float(x.get("returnOnEquity", 0)) for x in km]
-        roics = [float(x.get("returnOnInvestedCapital", 0)) for x in km]
+        roes = [float(x.get("returnOnEquity") or 0) for x in km]
+        roics = [float(x.get("returnOnInvestedCapital") or 0) for x in km]
         if roes:
             result["roe_avg"] = sum(roes) / len(roes)
             result["roe_consistent"] = all(r > 0.15 for r in roes)
@@ -423,12 +423,12 @@ def get_fundamentals_cached(sym, as_of_date):
     # DCF
     dcf = fmp("discounted-cash-flow", {"symbol": sym})
     if dcf:
-        result["dcf_value"] = float(dcf[0].get("dcf", 0))
+        result["dcf_value"] = float(dcf[0].get("dcf") or 0)
     
     # Owner earnings
     oe = fmp("owner-earnings", {"symbol": sym, "limit": 4})
     if oe:
-        annual_oe_ps = sum(float(x.get("ownersEarningsPerShare", 0)) for x in oe)
+        annual_oe_ps = sum(float(x.get("ownersEarningsPerShare") or 0) for x in oe)
         result["_annual_oe_ps"] = annual_oe_ps
     
     # Analyst targets
@@ -462,10 +462,10 @@ def get_fundamentals_cached(sym, as_of_date):
     ins_data = fmp("insider-trading/statistics", {"symbol": sym})
     if ins_data:
         recent = ins_data[:2] if len(ins_data) >= 2 else ins_data
-        total_acq = sum(d.get("totalAcquired", 0) for d in recent)
-        total_disp = sum(d.get("totalDisposed", 0) for d in recent)
+        total_acq = sum((d.get("totalAcquired") or 0) for d in recent)
+        total_disp = sum((d.get("totalDisposed") or 0) for d in recent)
         result["insider_buy_ratio"] = total_acq / total_disp if total_disp > 0 else (5.0 if total_acq > 0 else 0)
-        ratios = [d.get("acquiredDisposedRatio", 0) for d in recent]
+        ratios = [(d.get("acquiredDisposedRatio") or 0) for d in recent]
         avg_r = sum(ratios) / len(ratios) if ratios else 0
         if avg_r >= 2.0: result["insider_score"] = 1.0
         elif avg_r >= 1.0: result["insider_score"] = 0.75
