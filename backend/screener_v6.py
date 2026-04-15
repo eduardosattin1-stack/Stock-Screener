@@ -326,11 +326,11 @@ REGIONS = {
         ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
         ("PAR", "FR", 1_000_000_000, 100),
         ("LSE", "UK", 1_000_000_000, 100),
-        ("AMS", "NL", 500_000_000, 50),
-        ("STO", "SE", 500_000_000, 50),
-        ("HEL", "FI", 500_000_000, 50),      # ADDED: Finland (KEMPOWER)
-        ("OSL", "NO", 500_000_000, 50),      # ADDED: Norway
-        ("CPH", "DK", 500_000_000, 50),      # ADDED: Denmark
+        ("AMS", "NL", 1_000_000_000, 50),    # Raised from 500M — filters illiquid B-shares
+        ("STO", "SE", 1_000_000_000, 50),    # Raised from 500M
+        ("HEL", "FI", 1_000_000_000, 50),    # Raised from 500M
+        ("OSL", "NO", 1_000_000_000, 50),    # Raised from 500M
+        ("CPH", "DK", 1_000_000_000, 50),    # Raised from 500M
         ("MIL", "IT", 1_000_000_000, 50),
         ("SIX", "CH", 1_000_000_000, 50),
         ("BME", "ES", 1_000_000_000, 50),
@@ -362,6 +362,8 @@ def get_symbols(region: str) -> list[str]:
     for exchange, country, min_cap, limit in configs:
         params = {
             "exchange": exchange, "marketCapMoreThan": min_cap,
+            "volumeMoreThan": 100_000,     # filter illiquid stocks
+            "priceMoreThan": 1,            # filter penny stocks
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
@@ -1606,6 +1608,17 @@ def compute_composite_v7(
         bull <= 2,                  # no technical support
         composite < 0.30,           # weak composite
     ])
+
+    # ─── Coverage gate: thin-data stocks can't get BUY/STRONG BUY ───
+    # Prevents stocks with only 3-4 evaluated factors from inflating via
+    # weight redistribution. Requires 7+ factors for full composite range.
+    MIN_COVERAGE_FOR_FULL_SCORE = 7
+    COVERAGE_CAP = 0.75  # max composite when coverage < threshold
+
+    if coverage["count"] < MIN_COVERAGE_FOR_FULL_SCORE:
+        composite = min(composite, COVERAGE_CAP)
+        if composite == COVERAGE_CAP:
+            reasons.append(f"COVERAGE CAP: only {coverage['count']}/10 factors evaluated")
 
     # Signal from composite bands (primary) with bearish override (safety net)
     if bearish_count >= 3 or composite < 0.30:
