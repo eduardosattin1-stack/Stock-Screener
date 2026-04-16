@@ -12,4 +12,6 @@ COPY weekly_report.py .
 COPY run_time_job.py .
 COPY time_model_10pct.pkl .
 COPY run_scan_job.py .
+COPY *.py .
+COPY *.pkl .
 CMD ["python", "run_server.py"]
