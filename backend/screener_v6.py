@@ -2072,7 +2072,7 @@ def save_scan_to_gcs(stocks: list, region: str, macro: dict = None):
     }
     gcs_upload(f"scans/latest_{region}.json", payload)
     gcs_upload(f"scans/{today}_{region}.json", payload)
-
+    gcs_upload("scans/latest.json", payload)
 def save_signals(data: dict):
     with open(SIGNAL_LOG, "w") as f:
         json.dump(data, f, indent=2)
