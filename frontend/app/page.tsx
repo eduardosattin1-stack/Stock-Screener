@@ -1,9 +1,15 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target, Search, Filter, Zap, Star } from "lucide-react";
 
-const GCS_URL = "/api/gcs/scans/latest.json";
+const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
+const REGIONS = [
+  { key: "sp500", label: "S&P 500" },
+  { key: "europe", label: "Europe" },
+  { key: "global", label: "Global" },
+];
+function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
 
 // ── Types ───────────────────────────────────────────────────────────────────
 interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; }
@@ -314,8 +320,19 @@ export default function Dashboard(){
   const[sortKey,setSortKey]=useState<keyof StockData>("composite");const[sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const[filter,setFilter]=useState("ALL");const[search,setSearch]=useState("");const[classFilter,setClassFilter]=useState("ALL");
   const[expanded,setExpanded]=useState<Record<string,boolean>>({});
+  const[region,setRegion]=useState("sp500");
 
-  useEffect(()=>{fetch(GCS_URL).then(r=>{if(!r.ok)throw new Error();return r.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{fetch(GCS_FALLBACK).then(r=>r.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));});},[]);
+  const fetchRegion=useCallback((r:string)=>{
+    setLoading(true);setData(null);
+    fetch(gcsUrl(r)).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
+      // Fallback: try latest.json then direct GCS
+      fetch(`${GCS_BASE}/latest.json`).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
+        fetch(GCS_FALLBACK).then(res=>res.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));
+      });
+    });
+  },[]);
+
+  useEffect(()=>{fetchRegion(region);},[region,fetchRegion]);
 
   const weights=data?.weights||FACTOR_WEIGHTS;
 
@@ -355,7 +372,14 @@ export default function Dashboard(){
     <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
-        <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{data?.region?.toUpperCase()} · {scanDate} · {sum.total} stocks · {data?.version||"v7"}</p>
+        <div>
+          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+            {REGIONS.map(r=>(
+              <button key={r.key} onClick={()=>setRegion(r.key)} style={{padding:"5px 12px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:`1px solid ${region===r.key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,borderRadius:5,cursor:"pointer",background:region===r.key?"var(--green-light,#e8f5ee)":"transparent",color:region===r.key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",transition:"all 0.15s"}}>{r.label}</button>
+            ))}
+          </div>
+          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{data?.region?.toUpperCase()} · {scanDate} · {sum.total} stocks · {data?.version||"v7"}</p>
+        </div>
         <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
           {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
         </div>
