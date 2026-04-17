@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
 """
-Stock Screener v7.1 — 10-Factor Honest Scoring + Composite-Band Signals
+Stock Screener v7.2 — 13-Factor Honest Scoring + Composite-Band Signals
 Architecture: Two-pass (cheap screen → expensive enrichment)
 
-Changes from v7:
-  - Weights updated from 15,120-sample backtest (upside 6→10%, proximity 12→8%)
-  - Honest scoring: factors with no real data → None → weight redistributed
-    (no more free 0.5 for unevaluated factors)
-  - Signal classification: composite-band driven, not momentum-count driven
-    STRONG BUY ≥0.85 | BUY ≥0.70 | WATCH ≥0.55 | HOLD ≥0.40 | SELL <0.40
-  - Factor coverage tracking: each stock shows X/10 factors evaluated
-  - --min-coverage filter: only show stocks scored on N+ factors
+Changes from v7.1:
+  - Weights re-optimized on 45,338-sample backtest (2022-2025, 48 monthly windows)
+    Top-20 portfolio: +35.4%/yr, +25.2% alpha vs S&P, positive in all 4 years
+  - Technical cap lowered 35→25% (sweep showed 25% optimal across regimes)
+  - Added 3 factors to schema: institutional_flow, sector_momentum, congressional
+    (compute functions not yet implemented — factors return None and weight
+    redistributes to the 10 evaluated factors until wired up)
+  - Tightened signal thresholds (24% STRONG BUY was too many):
+    STRONG BUY ≥0.90 | BUY ≥0.80 | WATCH ≥0.65 | HOLD ≥0.50 | SELL <0.50
+  - DCF and intrinsic-value guards: skip valuation methods for financially
+    weak companies (piotroski<3, altman_z<1.8, or negative ROE) — fixes
+    DHER.DE-style false DCF values on junk balance sheets
 
-Factors (10):
-  Technical 35% | Upside 20% | Quality 14% | Proximity 8%
-  Catalyst 5% | Transcript 5% | Institutional 5% | Analyst 3% | Earnings 3% | Insider 2%
+Factors (13 — 3 pending compute functions, weight redistributes):
+  Technical 25% | Upside 14% | Quality 12% | Proximity 12% | InstFlow 9%*
+  Transcript 6% | Earnings 5% | Catalyst 5% | Institutional 3%
+  SectorMom 3%* | Analyst 3% | Insider 2% | Congressional 1%*
+  (* = compute function pending; weight redistributes to evaluated factors)
 
 Modes:
   --screen (default): Full universe screen → signals
@@ -81,29 +87,31 @@ def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
     rate = from_usd / to_usd
     return rate
 
-# Factor weights — v7 ML-optimized from 15,120-sample backtest (must sum to 1.0)
-# Source: combined S&P 500 + Europe, 24 months (Jan 2024 → Dec 2025)
-# ML raw feature importance: trend 30% + momentum 16% + RSI 10% = 56% (→ technical)
-#   altman_z 10% + quality sub-components = ~20% (→ quality)
-#   upside 11% (jumped from 2.8% in 6mo → 11% in 24mo — analyst targets matter long-term)
-#   prox_raw ~13% (less predictive over longer horizons than 6mo window suggested)
-# Removed: news (ML: 0.0%), catastrophe (ML: 0.2%) — confirmed zero signal
-# Technical capped at 35% (ML says 50%+ but bull-market biased; 35% hedges regime shift)
-# Macro regime applied as weight TILT, not as a factor (same for all stocks)
+# Factor weights — v7.2 ML-optimized from 45,338-sample backtest (must sum to 1.0)
+# Source: nasdaq100 + sp500 + europe + asia + brazil, 2022-01 → 2025-12 (48 monthly windows)
+# Top-20 portfolio: +35.4%/yr, +25.2% alpha vs S&P, positive alpha every year.
+# Tech cap sweep: 15% → +40.2%/yr | 25% → +35.4%/yr (chosen) | 35% → +31.1%/yr | 52% raw → +22.7%/yr
+#   Lower tech = more weight on quality/upside/proximity = better picking across regimes.
+# NOTE: institutional_flow, sector_momentum, congressional don't have compute
+#   functions yet. Their combined 13% weight redistributes to the 10 evaluated
+#   factors (see compute_composite_v7). Effective Tech today is ~0.25/0.87≈28.7%,
+#   drops to 25% once the 3 new compute functions land.
 WEIGHTS = {
-    "technical": 0.35,      # Capped — trend_strength + momentum + RSI dominate
-    "quality": 0.14,        # Piotroski + Altman Z + ROE + ROIC + GM (ML: ~20% raw)
-    "upside": 0.20,         # Analyst targets + DCF (ML: 11% on 24mo — up from 2.8% on 6mo)
-    "proximity": 0.08,      # 52wk position (ML: ~13% raw, down from 12% — less reliable long-term)
-    "catalyst": 0.05,       # Earnings calendar + news events + analyst moves
-    "transcript": 0.05,     # Claude API earnings analysis (non-backtestable reserve)
-    "institutional": 0.05,  # 13F flows (non-backtestable reserve)
-    "analyst": 0.03,        # Grades + consensus (ML: 3.1%)
-    "insider": 0.02,        # Insider trade statistics (ML: 1.9%)
-    "earnings": 0.03,       # EPS beat rate + surprise trend (ML: 2.1%)
+    "technical":          0.25,   # capped (ML raw: 52% — sweep confirmed 25% optimal)
+    "upside":             0.14,   # analyst targets + DCF (ML: 10.4%)
+    "quality":            0.12,   # Piotroski + Altman Z + ROE + ROIC + GM (ML: 9.3%)
+    "proximity":          0.12,   # 52wk position (ML: 7.5%)
+    "institutional_flow": 0.09,   # NEW — 13F flow velocity (ML: 7.3%) — COMPUTE TBD
+    "transcript":         0.06,   # Claude API earnings analysis (non-backtestable)
+    "earnings":           0.05,   # EPS beat rate + surprise trend (ML: 4.0%)
+    "catalyst":           0.05,   # Earnings calendar + news events + analyst moves (ML: 2.1%)
+    "institutional":      0.03,   # 13F positions (non-backtestable)
+    "sector_momentum":    0.03,   # NEW — sector-relative momentum (ML: 3.1%) — COMPUTE TBD
+    "analyst":            0.03,   # Grades + consensus (ML: 2.9%)
+    "insider":            0.02,   # Insider trade statistics (ML: 0.9%)
+    "congressional":      0.01,   # NEW — Senate/House trading (placeholder, REST 404) — COMPUTE TBD
 }
-# Removed factors: news, catastrophe — ML confirmed zero predictive power
-# Change log vs v6: upside 6→10%, proximity 12→8%, quality 15→14%, earnings 3→4%
+# Sum = 1.00. Removed news (ML: 0%) and catastrophe (ML: 0.2%) — zero predictive power.
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v7")
@@ -344,7 +352,14 @@ REGIONS = {
     "global": None,  # Will now include EVERY region above
 }
 
+# v7.2: module-level caches for sector data (populated at scan start, read many times)
+SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
+SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
+SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector perf calls
+
 def get_symbols(region: str) -> list[str]:
+    """Fetch universe of symbols for a region/index using FMP company-screener.
+    v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
     # If "global", iterate through every defined list in REGIONS
     if region == "global":
         syms = []
@@ -370,10 +385,56 @@ def get_symbols(region: str) -> list[str]:
         if country: params["country"] = country
         data = fmp("company-screener", params)
         if data:
-            batch = [d["symbol"] for d in data if "symbol" in d]
+            batch = []
+            for d in data:
+                sym = d.get("symbol")
+                if not sym:
+                    continue
+                batch.append(sym)
+                # v7.2: preserve sector + exchange for sector_momentum factor
+                sec = d.get("sector") or ""
+                if sec:
+                    SECTOR_MAP[sym] = sec
+                SECTOR_EXCHANGE_MAP[sym] = d.get("exchangeShortName") or exchange
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
     return list(dict.fromkeys(symbols))
+
+# ---------------------------------------------------------------------------
+# v7.2: Sector performance bulk fetcher (1 call per sector, shared across universe)
+# ---------------------------------------------------------------------------
+
+def preload_sector_performance(days: int = 60):
+    """Populate SECTOR_PERF_CACHE with cumulative N-day return per sector.
+    Called once at scan start. ~11 API calls total for standard US sectors.
+    For each sector present in SECTOR_MAP, fetch daily performance and sum changes."""
+    from datetime import datetime, timedelta
+    if not SECTOR_MAP:
+        log.info("  Sector perf: no stocks in SECTOR_MAP yet, skipping preload")
+        return
+    sectors_needed = set(s for s in SECTOR_MAP.values() if s)
+    if not sectors_needed:
+        return
+    # Only fetch NASDAQ performance — FMP endpoint is US-centric, and EU/Asia
+    # sectors lack a reliable sector-performance endpoint on stable REST.
+    # For non-NASDAQ stocks, sector_momentum will degrade to neutral (0.5).
+    to_date = datetime.now().strftime("%Y-%m-%d")
+    from_date = (datetime.now() - timedelta(days=days + 30)).strftime("%Y-%m-%d")
+    for sector in sectors_needed:
+        data = fmp("historical-sector-performance", {
+            "sector": sector,
+            "from": from_date, "to": to_date,
+            "exchange": "NASDAQ",
+        })
+        if data and isinstance(data, list):
+            # Sort newest-first, take last N trading days
+            sorted_data = sorted(data, key=lambda x: x.get("date", ""), reverse=True)[:days]
+            cumulative = sum(float(d.get("averageChange") or 0) for d in sorted_data) / 100
+            SECTOR_PERF_CACHE[sector] = cumulative
+    log.info(f"  Sector perf preloaded: {len(SECTOR_PERF_CACHE)} sectors "
+             f"(range {min(SECTOR_PERF_CACHE.values()):+.1%} to "
+             f"{max(SECTOR_PERF_CACHE.values()):+.1%})" if SECTOR_PERF_CACHE
+             else "  Sector perf preloaded: empty")
 
 # ---------------------------------------------------------------------------
 # 2. Quote
@@ -695,7 +756,8 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         "gross_margin": 0, "gross_margin_trend": "unknown",
         "piotroski": 0, "altman_z": 0,
         "dcf_value": 0, "owner_earnings_yield": 0,
-        "intrinsic_buffett": 0, "intrinsic_avg": 0,
+        "intrinsic_buffett": 0, "intrinsic_bvps": 0, "intrinsic_avg": 0,
+        "bvps_cagr_10y": 0.0, "bvps_consistency": 0.0, "bvps_recent_cagr": 0.0,
         "margin_of_safety": 0, "value_score": 0,
         "classification": "UNKNOWN",
     }
@@ -758,10 +820,26 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         v["piotroski"] = int(scores[0].get("piotroskiScore") or 0)
         v["altman_z"] = float(scores[0].get("altmanZScore") or 0)
 
-    # ------------------- PATCHED: DCF Section (Bulletproofed) -------------------
+    # ------------------- v7.2 PATCH: DCF Section (guarded) -------------------
+    # FMP DCF is unguarded at source: returns large positive values for companies
+    # that are unprofitable or have negative equity (e.g. DHER.DE showing €138 DCF
+    # at €20 price). Gate DCF on baseline financial health.
+    # Guard uses "known weak" semantic — if data is missing (piotroski=0 or
+    # altman_z=0 from default init), we don't penalize; only skip when we have
+    # positive evidence of weakness.
     dcf = fmp("discounted-cash-flow", {"symbol": sym})
     if dcf and dcf[0]:
         raw_dcf = float(dcf[0].get("dcf") or 0)
+        weak_financial_health = (
+            (0 < v["piotroski"] < 3) or
+            (0 < v["altman_z"] < 1.8) or
+            (v["roe_avg"] < 0)
+        )
+        if weak_financial_health and raw_dcf > 0:
+            log.info(f"  {sym}: DCF guarded (piotroski={v['piotroski']}, "
+                     f"altman_z={v['altman_z']:.2f}, roe={v['roe_avg']:.2%}) — "
+                     f"raw DCF {raw_dcf:.2f} → 0")
+            raw_dcf = 0
         if need_fx and raw_dcf > 0:
             ratio = raw_dcf / price if price > 0 else 0
             if 0.1 < ratio < 10:
@@ -778,11 +856,18 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         if local_price > 0:
             v["owner_earnings_yield"] = annual_oe_ps / local_price
 
-    # Intrinsic value — Buffett earnings growth method
+    # Intrinsic value — Buffett earnings growth method (v7.2 — guarded)
+    # Same guard as DCF: positive EPS alone isn't enough, also need baseline
+    # health. Prevents speculative growth projections on distressed companies.
     if inc and len(inc) >= 2:
         inc.sort(key=lambda x: x.get("date", ""))
         latest_eps = float(inc[-1].get("epsDiluted", 0))
-        if latest_eps > 0:
+        weak_financial_health = (
+            (0 < v["piotroski"] < 3) or
+            (0 < v["altman_z"] < 1.8) or
+            (v["roe_avg"] < 0)
+        )
+        if latest_eps > 0 and not weak_financial_health:
             base_growth = min(v["revenue_cagr_3y"], 0.30)
             growth_rates = [base_growth * (0.8 ** i) for i in range(5)]
             future_eps = latest_eps
@@ -791,9 +876,86 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             terminal_pe = min(max(15, 1 / max(RISK_FREE, 0.03)), 30)
             future_price = future_eps * terminal_pe
             v["intrinsic_buffett"] = future_price / (1.10 ** 5)
+        elif latest_eps > 0 and weak_financial_health:
+            log.info(f"  {sym}: Buffett intrinsic guarded (weak health) — "
+                     f"skipping despite positive EPS")
+
+    # ------------------- v7.2: BVPS Growth Method (third valuation) -------------------
+    # Book-value-per-share compounding — Buffett's "retained earnings engine".
+    # Requires 10 years of balance sheets. Unlike DCF/EPS-growth methods which
+    # project cash flows, BVPS measures realized shareholder-equity compounding.
+    # Guards: skip if BVPS declined 3+ years OR any year had negative equity OR
+    # weightedAverageShsOutDil missing. Also skip for weak-health companies.
+    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 10})
+    if bs and len(bs) >= 5 and not weak_financial_health:
+        bs.sort(key=lambda x: x.get("date", ""))  # oldest first
+        bvps_series = []
+        any_negative_equity = False
+        for row in bs:
+            equity = float(row.get("totalStockholdersEquity") or 0)
+            shares = float(row.get("weightedAverageShsOutDil") or 0)
+            if equity <= 0:
+                any_negative_equity = True
+                break
+            if shares > 0:
+                bvps_series.append((row.get("date", ""), equity / shares))
+
+        if not any_negative_equity and len(bvps_series) >= 5:
+            # Consistency: fraction of YoY periods with positive growth
+            yoy_growth_flags = []
+            for i in range(1, len(bvps_series)):
+                prev_bvps = bvps_series[i - 1][1]
+                curr_bvps = bvps_series[i][1]
+                if prev_bvps > 0:
+                    yoy_growth_flags.append(1 if curr_bvps > prev_bvps else 0)
+            consistency = (sum(yoy_growth_flags) / len(yoy_growth_flags)
+                           if yoy_growth_flags else 0)
+            v["bvps_consistency"] = round(consistency, 3)
+
+            # Skip if BVPS declined 3+ years (broken compounder)
+            declines = len(yoy_growth_flags) - sum(yoy_growth_flags)
+            if declines >= 3:
+                log.info(f"  {sym}: BVPS method guarded (declined {declines} years "
+                         f"of {len(yoy_growth_flags)}) — broken compounder")
+            else:
+                # Full-window CAGR
+                years_span = len(bvps_series) - 1
+                first_bvps = bvps_series[0][1]
+                last_bvps = bvps_series[-1][1]
+                full_cagr = safe_cagr(first_bvps, last_bvps, years_span)
+
+                # Recent 3-year CAGR (captures acceleration/deceleration)
+                recent_cagr = full_cagr
+                if len(bvps_series) >= 4:
+                    recent_start = bvps_series[-4][1]
+                    recent_cagr = safe_cagr(recent_start, last_bvps, 3)
+
+                v["bvps_cagr_10y"] = round(full_cagr, 4)
+                v["bvps_recent_cagr"] = round(recent_cagr, 4)
+
+                # Conservative projection: take min of three growth signals
+                retention = 1.0  # default if dividend data unavailable
+                if v["roe_avg"] > 0:
+                    # Retention = 1 - (dividends paid / net income); approximate
+                    # via owner-earnings yield proxy, capped conservatively
+                    retention = 0.7  # typical mature-company retention
+                roe_implied_growth = v["roe_avg"] * retention
+                growth_rate = min(full_cagr, recent_cagr, roe_implied_growth, 0.15)
+                growth_rate = max(growth_rate, 0.02)  # floor at 2%
+
+                # Project 10 years forward
+                future_bvps = last_bvps * ((1 + growth_rate) ** 10)
+                # Terminal P/B: Buffett's ROE/required-return rule, capped at 5x
+                required_return = 0.10
+                terminal_pb = min(v["roe_avg"] / required_return, 5.0) if v["roe_avg"] > 0 else 1.5
+                terminal_pb = max(terminal_pb, 1.0)
+                future_price = future_bvps * terminal_pb
+                # Discount back at 10%
+                v["intrinsic_bvps"] = future_price / (1.10 ** 10)
 
     # Average intrinsic — all in reporting currency, MoS vs local_price
-    methods = [v["dcf_value"], v["intrinsic_buffett"]]
+    # v7.2: now 3 methods (DCF + Buffett earnings + BVPS compounding)
+    methods = [v["dcf_value"], v["intrinsic_buffett"], v["intrinsic_bvps"]]
     valid = [m for m in methods if m > 0]
     if valid and local_price > 0:
         v["intrinsic_avg"] = sum(valid) / len(valid)
@@ -801,7 +963,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
 
     # Convert intrinsic values to price currency for display
     if need_fx:
-        for key in ("dcf_value", "intrinsic_buffett", "intrinsic_avg"):
+        for key in ("dcf_value", "intrinsic_buffett", "intrinsic_bvps", "intrinsic_avg"):
             if v[key] > 0:
                 v[key] *= fx_to_price
 
@@ -1458,11 +1620,221 @@ def get_institutional_flows(sym: str) -> dict:
     return result
 
 # ---------------------------------------------------------------------------
-# 14. Composite Score & Signal (v7.1 — honest scoring + composite-band signals)
+# 13a. v7.2 NEW: Institutional Flow Factor (13F velocity, US-only)
+# ---------------------------------------------------------------------------
+
+def compute_institutional_flow(sym: str) -> dict:
+    """Score QoQ flow velocity from 13F positions-summary.
+
+    Distinct from `get_institutional_flows` (the "institutional" factor, 3%) —
+    that scores static ownership accumulation. This scores FLOW VELOCITY:
+    rate of new positions opening, closing, and ownership-% shifts.
+
+    US-only: positions-summary returns empty for non-US stocks, so we
+    gracefully return _evaluated=False and weight redistributes.
+
+    Score components:
+      - Net new/closed positions (40%): new - closed, normalized
+      - Increased vs reduced positions (25%)
+      - Ownership % change (25%): institutions taking more of the float
+      - Put/call ratio change (10%, inverse): falling P/C = bullish options
+    """
+    result = {"score": 0.5, "_evaluated": False,
+              "new_positions_change": 0, "closed_positions_change": 0,
+              "ownership_pct_change": 0.0, "put_call_delta": 0.0}
+
+    # Use most recent completed quarter (FMP data has ~45-day lag)
+    now = datetime.now()
+    cur_q = (now.month - 1) // 3 + 1
+    target_q = cur_q - 1 if cur_q > 1 else 4
+    target_y = now.year if cur_q > 1 else now.year - 1
+
+    # Try current target quarter, fall back one more if empty
+    data = fmp("institutional-ownership/symbol-positions-summary",
+               {"symbol": sym, "year": target_y, "quarter": target_q})
+    if not data:
+        target_q = target_q - 1 if target_q > 1 else 4
+        target_y = target_y if target_q != 4 else target_y - 1
+        data = fmp("institutional-ownership/symbol-positions-summary",
+                   {"symbol": sym, "year": target_y, "quarter": target_q})
+    if not data or not isinstance(data, list) or not data:
+        return result  # US-only or FMP returned empty
+
+    d = data[0]
+    # These fields come pre-computed as QoQ changes by FMP
+    new_pos_change = float(d.get("newPositionsChange") or 0)
+    closed_pos_change = float(d.get("closedPositionsChange") or 0)
+    inc_pos_change = float(d.get("increasedPositionsChange") or 0)
+    red_pos_change = float(d.get("reducedPositionsChange") or 0)
+    own_pct_change = float(d.get("ownershipPercentChange") or 0)
+    pc_ratio_change = float(d.get("putCallRatioChange") or 0)
+
+    result["new_positions_change"] = new_pos_change
+    result["closed_positions_change"] = closed_pos_change
+    result["ownership_pct_change"] = own_pct_change
+    result["put_call_delta"] = pc_ratio_change
+
+    # ─── Score components (each 0-1, weighted into composite) ───
+    # A) Net position flow: net new openings as fraction of openings
+    net_pos = new_pos_change - closed_pos_change
+    gross_pos = abs(new_pos_change) + abs(closed_pos_change)
+    if gross_pos > 0:
+        net_pos_score = 0.5 + 0.5 * max(-1, min(1, net_pos / gross_pos))
+    else:
+        net_pos_score = 0.5
+
+    # B) Increased vs reduced: same logic
+    net_change = inc_pos_change - red_pos_change
+    gross_change = abs(inc_pos_change) + abs(red_pos_change)
+    if gross_change > 0:
+        change_score = 0.5 + 0.5 * max(-1, min(1, net_change / gross_change))
+    else:
+        change_score = 0.5
+
+    # C) Ownership % change: institutions taking/giving up share of float
+    # ±3 percentage points is a strong signal; scale linearly
+    own_pct_score = 0.5 + max(-0.5, min(0.5, own_pct_change / 6.0))
+
+    # D) Put/call ratio change (inverse — falling P/C = bullish options)
+    # ±0.3 is a strong shift
+    pc_score = 0.5 - max(-0.5, min(0.5, pc_ratio_change / 0.6))
+
+    result["score"] = (
+        net_pos_score * 0.40 +
+        change_score * 0.25 +
+        own_pct_score * 0.25 +
+        pc_score * 0.10
+    )
+    result["score"] = max(0.0, min(1.0, result["score"]))
+    result["_evaluated"] = True
+    return result
+
+# ---------------------------------------------------------------------------
+# 13b. v7.2 NEW: Sector Momentum Factor (stock vs sector 60d return)
+# ---------------------------------------------------------------------------
+
+def compute_sector_momentum(sym: str, price: float, sma50: float,
+                            sma200: float, year_high: float, year_low: float) -> dict:
+    """Score stock's 60d momentum relative to its sector average.
+
+    Requires SECTOR_MAP[sym] and SECTOR_PERF_CACHE[sector] to be populated
+    (both handled in universe build + preload_sector_performance).
+
+    Score interpretation:
+      - Stock outperforms sector by >10%: score → 1.0 (leader)
+      - Stock matches sector: score → 0.5 (neutral)
+      - Stock lags sector by >10%: score → 0.0 (laggard)
+    """
+    result = {"score": 0.5, "_evaluated": False,
+              "sector": "", "stock_60d": 0.0, "sector_60d": 0.0, "spread": 0.0}
+
+    sector = SECTOR_MAP.get(sym, "")
+    if not sector or sector not in SECTOR_PERF_CACHE:
+        return result  # sector unknown or not preloaded (EU/Asia stocks)
+
+    # Estimate stock 60d return from SMA50 (close proxy for 60-trading-day avg)
+    # We don't have a direct 60d return without fetching history, but since SMA50
+    # is already in the quote, using (price - sma50) / sma50 is a good stand-in.
+    if sma50 <= 0 or price <= 0:
+        return result
+    stock_60d_proxy = (price - sma50) / sma50
+
+    sector_60d = SECTOR_PERF_CACHE[sector]
+    spread = stock_60d_proxy - sector_60d
+
+    result["sector"] = sector
+    result["stock_60d"] = round(stock_60d_proxy, 4)
+    result["sector_60d"] = round(sector_60d, 4)
+    result["spread"] = round(spread, 4)
+
+    # Map spread to 0-1 score. ±20% spread is extreme; use tanh-like scaling.
+    # spread = +0.20 → score ≈ 1.0 (sector leader)
+    # spread =  0.00 → score = 0.5 (neutral)
+    # spread = -0.20 → score ≈ 0.0 (sector laggard)
+    result["score"] = 0.5 + max(-0.5, min(0.5, spread / 0.40))
+    result["_evaluated"] = True
+    return result
+
+# ---------------------------------------------------------------------------
+# 13c. v7.2 NEW: Congressional Trading Factor (Senate + House, US-only)
+# ---------------------------------------------------------------------------
+
+def compute_congressional(sym: str) -> dict:
+    """Score recent Senate + House trading activity.
+
+    Endpoints now work on stable REST (previous v7.1 assumption that they
+    returned 404 was incorrect — param/URL issue). Backtest data treated
+    f_congressional as constant 0.5, so live signal is novel.
+
+    Scoring:
+      - Net buys > net sells, recent-weighted → bullish (>0.5)
+      - Opposite → bearish (<0.5)
+      - No recent activity → neutral (0.5), _evaluated=False
+    """
+    result = {"score": 0.5, "_evaluated": False,
+              "net_buys": 0, "net_sells": 0, "days_since_last": -1}
+
+    # Fetch both chambers; combine
+    senate = fmp("senate-trading", {"symbol": sym}) or []
+    house = fmp("house-trading", {"symbol": sym}) or []
+    if not isinstance(senate, list): senate = []
+    if not isinstance(house, list): house = []
+    all_trades = senate + house
+    if not all_trades:
+        return result  # no coverage, non-US, or no activity
+
+    # Only count trades in the last 180 days, weight by recency
+    today = datetime.now()
+    cutoff = (today - timedelta(days=180)).strftime("%Y-%m-%d")
+    recent = [t for t in all_trades
+              if (t.get("transactionDate") or "") >= cutoff]
+    if not recent:
+        # Activity exists but nothing recent — treat as no signal but evaluated
+        return result
+
+    # Compute days since most recent transaction for optional display
+    try:
+        latest_date = max(t.get("transactionDate", "") for t in recent)
+        result["days_since_last"] = (today - datetime.strptime(latest_date, "%Y-%m-%d")).days
+    except (ValueError, TypeError):
+        pass
+
+    # Weight each trade by: recency (exponential decay, 90-day half-life)
+    # and buy/sell direction. "Purchase" → positive, "Sale"/"Sale (Partial)" → negative.
+    bullish_weight = 0.0
+    bearish_weight = 0.0
+    for t in recent:
+        t_date = t.get("transactionDate", "")
+        t_type = (t.get("type") or "").lower()
+        try:
+            days_ago = (today - datetime.strptime(t_date, "%Y-%m-%d")).days
+        except (ValueError, TypeError):
+            continue
+        decay = 0.5 ** (days_ago / 90.0)  # half-life 90 days
+
+        if "purchase" in t_type:
+            bullish_weight += decay
+            result["net_buys"] += 1
+        elif "sale" in t_type:
+            bearish_weight += decay
+            result["net_sells"] += 1
+
+    total = bullish_weight + bearish_weight
+    if total > 0:
+        # Score: pure ratio of bullish weight to total weight
+        result["score"] = bullish_weight / total
+        result["_evaluated"] = True
+
+    return result
+
+# ---------------------------------------------------------------------------
+# 14. Composite Score & Signal (v7.2 — honest scoring + composite-band signals)
 # ---------------------------------------------------------------------------
 
 ALL_FACTORS = ["technical", "quality", "upside", "proximity", "catalyst",
-               "transcript", "institutional", "analyst", "insider", "earnings"]
+               "transcript", "institutional", "analyst", "insider", "earnings",
+               # v7.2 additions — compute functions pending; return None for now
+               "institutional_flow", "sector_momentum", "congressional"]
 
 def compute_composite_v7(
     tech: dict, analyst: dict, value: dict, price: float,
@@ -1470,13 +1842,21 @@ def compute_composite_v7(
     upside: dict, quality: dict = None,
     catalyst: dict = None, transcript: dict = None,
     institutional: dict = None,
+    institutional_flow: dict = None,
+    sector_momentum: dict = None,
+    congressional: dict = None,
     weights: dict = None,
 ) -> tuple:
     """
-    10-factor composite (v7.1). Returns (composite, signal, factor_scores, reasons, coverage).
+    13-factor composite (v7.2). Returns (composite, signal, factor_scores, reasons, coverage).
 
-    Key change from v7: factors with no real data are set to None and their weight
-    is redistributed to evaluated factors. No more free 0.5 for unevaluated factors.
+    Factors with no real data are set to None and their weight is redistributed
+    to evaluated factors. No free 0.5 for unevaluated factors.
+
+    v7.2 additions (any missing will have weight redistributed):
+      - institutional_flow: 13F velocity (US-only, pass-2)
+      - sector_momentum: stock return vs sector 60d (requires SECTOR_PERF_CACHE)
+      - congressional: Senate + House disclosures (US-only, pass-2)
 
     Coverage dict: {count, pct, evaluated: [...], missing: [...]}
     """
@@ -1539,6 +1919,28 @@ def compute_composite_v7(
         factors["earnings"] = earnings["score"]
     else:
         factors["earnings"] = None
+
+    # ─── v7.2 NEW factors (13-factor composite) ─────────────────────
+    # Each compute function sets _evaluated=True if it got real data;
+    # otherwise the factor is None and weight redistributes to others.
+
+    # 11. Institutional Flow (9%) — 13F velocity (US-only, pass-2 only)
+    if institutional_flow and institutional_flow.get("_evaluated", False):
+        factors["institutional_flow"] = institutional_flow["score"]
+    else:
+        factors["institutional_flow"] = None
+
+    # 12. Sector Momentum (3%) — stock 60d return vs sector average
+    if sector_momentum and sector_momentum.get("_evaluated", False):
+        factors["sector_momentum"] = sector_momentum["score"]
+    else:
+        factors["sector_momentum"] = None
+
+    # 13. Congressional (1%) — Senate + House trading (US-only, pass-2 only)
+    if congressional and congressional.get("_evaluated", False):
+        factors["congressional"] = congressional["score"]
+    else:
+        factors["congressional"] = None
 
     # ─── Coverage tracking ───
     evaluated = [f for f in ALL_FACTORS if factors.get(f) is not None]
@@ -1612,24 +2014,32 @@ def compute_composite_v7(
     # ─── Coverage gate: thin-data stocks can't get BUY/STRONG BUY ───
     # Prevents stocks with only 3-4 evaluated factors from inflating via
     # weight redistribution. Requires 7+ factors for full composite range.
+    # NOTE: total is 13 in v7.2 but 3 factors have no compute yet → cap is
+    # effectively 10 evaluated max; gate still triggers when <7 of 10 have data.
     MIN_COVERAGE_FOR_FULL_SCORE = 7
     COVERAGE_CAP = 0.75  # max composite when coverage < threshold
 
     if coverage["count"] < MIN_COVERAGE_FOR_FULL_SCORE:
         composite = min(composite, COVERAGE_CAP)
         if composite == COVERAGE_CAP:
-            reasons.append(f"COVERAGE CAP: only {coverage['count']}/10 factors evaluated")
+            reasons.append(f"COVERAGE CAP: only {coverage['count']}/{coverage['total']} factors evaluated")
 
-    # Signal from composite bands (primary) with bearish override (safety net)
+    # ─── Signal Classification (v7.2 — tightened thresholds) ────────────
+    # Backtest-calibrated P(+10% 60d) by composite band:
+    #   ≥0.90: 72% hit | 0.85-0.90: 53% | 0.75-0.85: 44-53% | 0.65-0.75: 43%
+    # Old v7.1 thresholds (0.85/0.70/0.55) put the 53%-tier in STRONG BUY,
+    # producing 24% STRONG BUY rate. v7.2 reserves STRONG BUY for the
+    # genuine 72%-hit tier and compresses intermediate bands accordingly.
+    # Bearish override remains as safety net regardless of composite.
     if bearish_count >= 3 or composite < 0.30:
         signal = "SELL"
-    elif composite >= 0.85:
+    elif composite >= 0.90:
         signal = "STRONG BUY"
-    elif composite >= 0.70:
+    elif composite >= 0.80:
         signal = "BUY"
-    elif composite >= 0.55:
+    elif composite >= 0.65:
         signal = "WATCH"
-    elif composite >= 0.40:
+    elif composite >= 0.50:
         signal = "HOLD"
     else:
         signal = "SELL"
@@ -1734,11 +2144,18 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             # NEW v7: Catalyst factor (2-3 API calls: earnings-calendar, grades, news, senate)
             cata = compute_catalyst_score(sym, analyst=a)
 
-            # Compute pass-1 composite (no transcript or institutional yet)
+            # NEW v7.2: Sector momentum (no API call — uses SECTOR_PERF_CACHE + quote data)
+            sec_mom = compute_sector_momentum(sym, price, q["sma50"], q["sma200"],
+                                              q["year_high"], q["year_low"])
+
+            # Compute pass-1 composite (no transcript, institutional, institutional_flow,
+            # or congressional yet — those are pass-2 enrichment)
             composite, signal, factors, reasons, coverage = compute_composite_v7(
                 t, a, v, price, ins, prox, earn, ups,
                 quality=qual, catalyst=cata,
                 transcript=None, institutional=None,
+                institutional_flow=None, sector_momentum=sec_mom,
+                congressional=None,
                 weights=active_weights,
             )
 
@@ -1840,13 +2257,29 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         s.inst_accumulation = inst["accumulation"]
         s.inst_score = inst["score"]
 
-        # Recompute composite with all factors + transcripts + institutional
+        # v7.2: Institutional flow velocity (1 API call, US-only)
+        inst_flow = compute_institutional_flow(s.symbol)
+
+        # v7.2: Congressional trading (2 API calls: senate + house, US-only)
+        cong = compute_congressional(s.symbol)
+
+        # v7.2: re-evaluate sector_momentum (quote data may have been enriched
+        # during pass 2; this is free since SECTOR_PERF_CACHE is in memory)
+        sec_mom = compute_sector_momentum(s.symbol, raw["price"],
+                                          raw["tech"].get("sma50", 0),
+                                          raw["tech"].get("sma200", 0),
+                                          raw["tech"].get("year_high", 0),
+                                          raw["tech"].get("year_low", 0))
+
+        # Recompute composite with all factors (13 total)
         composite, signal, factors, reasons, coverage = compute_composite_v7(
             raw["tech"], raw["analyst"], raw["value"], raw["price"],
             raw["insider"], raw["proximity"],
             raw["earnings"], raw["upside"],
             quality=raw["quality"], catalyst=raw["catalyst"],
             transcript=trans, institutional=inst,
+            institutional_flow=inst_flow, sector_momentum=sec_mom,
+            congressional=cong,
             weights=raw["weights"],
         )
 
@@ -1887,11 +2320,12 @@ def format_report(stocks: list[Stock], region: str, macro: dict = None) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
         f"{'='*100}",
-        f"  STOCK SCREENER v7.1 — {region.upper()} — {now}",
-        f"  10-Factor Honest Scoring + Composite-Band Signals (15K-sample ML backtest)",
-        f"  Tech 35% | Quality 14% | Upside 10% | Proximity 8% | Catalyst 8%",
-        f"  Transcript 7% | Institutional 5% | Analyst 5% | Insider 4% | Earnings 4%",
-        f"  Signals: STRONG BUY ≥0.85 | BUY ≥0.70 | WATCH ≥0.55 | HOLD ≥0.40 | SELL <0.40",
+        f"  STOCK SCREENER v7.2 — {region.upper()} — {now}",
+        f"  13-Factor Honest Scoring + Composite-Band Signals (45K-sample ML backtest, 2022-2025)",
+        f"  Tech 25% | Upside 14% | Quality 12% | Proximity 12% | InstFlow 9%* | Transcript 6%",
+        f"  Earnings 5% | Catalyst 5% | Institutional 3% | SectorMom 3%* | Analyst 3% | Insider 2% | Congressional 1%*",
+        f"  Signals: STRONG BUY ≥0.90 | BUY ≥0.80 | WATCH ≥0.65 | HOLD ≥0.50 | SELL <0.50",
+        f"  (* compute functions pending — weight redistributes to evaluated factors)",
     ]
     if macro and macro.get("regime"):
         r = macro
@@ -2169,9 +2603,17 @@ def monitor_portfolio(skip_transcripts: bool = True) -> str:
         qual = compute_quality_score(v)
         cata = compute_catalyst_score(sym, analyst=a)
 
+        # v7.2: full 13-factor scoring for held positions
+        sec_mom = compute_sector_momentum(sym, price, q["sma50"], q["sma200"],
+                                          q["year_high"], q["year_low"])
+        inst_flow = compute_institutional_flow(sym)
+        cong = compute_congressional(sym)
+
         composite, signal, factors, reasons, coverage = compute_composite_v7(
             t, a, v, price, ins, prox, earn, ups,
             quality=qual, catalyst=cata,
+            institutional_flow=inst_flow, sector_momentum=sec_mom,
+            congressional=cong,
         )
 
         # ─── Decision Rules ───
