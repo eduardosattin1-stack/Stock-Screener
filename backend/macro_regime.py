@@ -31,9 +31,68 @@ Usage:
 """
 
 import logging
+import json
 from datetime import datetime, timedelta
 
 log = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# GCS last-known-good cache for macro indicators (v7.2)
+# ---------------------------------------------------------------------------
+# When FMP returns empty (brief API outages, rate limiting, etc.), we fall
+# back to the last successful fetch cached on GCS instead of stale hardcoded
+# values that drift quarterly. Fresh data always overwrites the cache.
+#
+# Cache path: gs://screener-signals-carbonbridge/macro/last_known_good.json
+# Format: {"CPI": [[date, value], ...], "GDP": [[date, value], ...]}
+
+_GCS_BUCKET = "screener-signals-carbonbridge"
+_MACRO_CACHE_PATH = "macro/last_known_good.json"
+
+def _gcs_token():
+    """Get GCE/Cloud Run metadata token. Returns None when running locally."""
+    try:
+        import requests
+        r = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=2,
+        )
+        return r.json().get("access_token") if r.status_code == 200 else None
+    except Exception:
+        return None
+
+def _load_macro_cache() -> dict:
+    """Best-effort load of last-known-good macro values from GCS."""
+    try:
+        import requests
+        tok = _gcs_token()
+        if not tok:
+            return {}
+        r = requests.get(
+            f"https://storage.googleapis.com/{_GCS_BUCKET}/{_MACRO_CACHE_PATH}",
+            headers={"Authorization": f"Bearer {tok}"}, timeout=5,
+        )
+        if r.status_code == 200:
+            return r.json()
+    except Exception as e:
+        log.debug(f"  macro cache load skipped: {e}")
+    return {}
+
+def _save_macro_cache(cache: dict):
+    """Best-effort save of last-known-good macro values to GCS."""
+    try:
+        import requests
+        tok = _gcs_token()
+        if not tok:
+            return
+        requests.post(
+            f"https://storage.googleapis.com/upload/storage/v1/b/{_GCS_BUCKET}/o",
+            params={"uploadType": "media", "name": _MACRO_CACHE_PATH},
+            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
+            data=json.dumps(cache), timeout=10,
+        )
+    except Exception as e:
+        log.debug(f"  macro cache save skipped: {e}")
 
 # ---------------------------------------------------------------------------
 # Regime definitions & weight tilts
@@ -44,48 +103,61 @@ log = logging.getLogger(__name__)
 REGIME_TILTS = {
     "RISK_ON": {
         # Expansion: favor momentum & growth over safety
-        "technical":     1.25,   # momentum works in risk-on
-        "quality":       0.85,   # less need for safety screens
-        "proximity":     0.80,   # near-52wk-high less penalizing
-        "catalyst":      1.10,   # events amplified in risk-on
-        "transcript":    0.90,
-        "institutional": 1.10,
-        "upside":        1.20,   # DCF targets more reliable in expansion
-        "analyst":       1.00,
-        "insider":       0.90,
-        "earnings":      1.00,
+        "technical":          1.25,   # momentum works in risk-on
+        "quality":            0.85,   # less need for safety screens
+        "proximity":          0.80,   # near-52wk-high less penalizing
+        "catalyst":           1.10,   # events amplified in risk-on
+        "transcript":         0.90,
+        "institutional":      1.10,
+        "upside":             1.20,   # DCF targets more reliable in expansion
+        "analyst":            1.00,
+        "insider":            0.90,
+        "earnings":           1.00,
+        # v7.2 additions — neutral tilts initially, hand-tune after live data
+        "institutional_flow": 1.15,   # flow velocity amplified in risk-on
+        "sector_momentum":    1.15,   # sector rotation matters more when momentum works
+        "congressional":      1.00,
     },
     "NEUTRAL": {
         # No tilt — use base weights as-is
         "technical": 1.0, "quality": 1.0, "proximity": 1.0,
         "catalyst": 1.0, "transcript": 1.0, "institutional": 1.0,
         "upside": 1.0, "analyst": 1.0, "insider": 1.0, "earnings": 1.0,
+        "institutional_flow": 1.0, "sector_momentum": 1.0, "congressional": 1.0,
     },
     "CAUTIOUS": {
         # Tightening: favor fundamentals & smart money over momentum
-        "technical":     0.75,   # momentum less reliable
-        "quality":       1.30,   # quality matters more
-        "proximity":     1.00,
-        "catalyst":      1.15,   # catalyst events become make-or-break
-        "transcript":    1.20,   # management guidance matters more
-        "institutional": 1.15,
-        "upside":        1.10,
-        "analyst":       1.10,
-        "insider":       1.25,   # insiders know first
-        "earnings":      1.15,
+        "technical":          0.75,   # momentum less reliable
+        "quality":            1.30,   # quality matters more
+        "proximity":          1.00,
+        "catalyst":           1.15,   # catalyst events become make-or-break
+        "transcript":         1.20,   # management guidance matters more
+        "institutional":      1.15,
+        "upside":             1.10,
+        "analyst":            1.10,
+        "insider":            1.25,   # insiders know first
+        "earnings":           1.15,
+        # v7.2 additions
+        "institutional_flow": 1.20,   # smart money positioning matters more in tightening
+        "sector_momentum":    0.85,   # sector trends less reliable
+        "congressional":      1.10,
     },
     "RISK_OFF": {
         # Crisis: full defensive — safety & quality over growth
-        "technical":     0.50,   # momentum is a TRAP in risk-off
-        "quality":       1.60,   # safety is king (Piotroski + Altman Z)
-        "proximity":     0.80,   # near-high may mean more to fall
-        "catalyst":      1.20,   # catalysts can save or kill in fear
-        "transcript":    1.30,   # listen to management closely
-        "institutional": 1.20,
-        "upside":        0.70,   # DCF models break in crisis
-        "analyst":       1.00,
-        "insider":       1.40,   # strongest signal in downturns
-        "earnings":      1.25,
+        "technical":          0.50,   # momentum is a TRAP in risk-off
+        "quality":            1.60,   # safety is king (Piotroski + Altman Z)
+        "proximity":          0.80,   # near-high may mean more to fall
+        "catalyst":           1.20,   # catalysts can save or kill in fear
+        "transcript":         1.30,   # listen to management closely
+        "institutional":      1.20,
+        "upside":             0.70,   # DCF models break in crisis
+        "analyst":            1.00,
+        "insider":            1.40,   # strongest signal in downturns
+        "earnings":           1.25,
+        # v7.2 additions
+        "institutional_flow": 1.25,   # distribution/accumulation velocity critical
+        "sector_momentum":    0.60,   # sectors crash together — noisy in crises
+        "congressional":      1.15,
     },
 }
 
@@ -326,9 +398,11 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     today = datetime.now()
     cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
 
-    # Try economics-indicators (works on MCP, 404 on stable REST)
+    # v7.2 fix: removed country=US (FMP stable REST rejects unknown params,
+    # returns 404). The economics-indicators endpoint DOES work on stable —
+    # it only takes name + from + to.
     cpi_raw = fmp_func("economics-indicators", {
-        "name": "CPI", "country": "US",
+        "name": "CPI",
         "from": cpi_from, "to": today.strftime("%Y-%m-%d")
     })
     sleep()
@@ -338,23 +412,35 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
             [(d["date"], float(d["value"])) for d in cpi_raw if d.get("value")],
             reverse=True
         )
-    if not cpi_values:
-        # Fallback: stable REST doesn't have economics-indicators endpoint
-        # Source: BLS CPI-U. Update these values quarterly.
-        # Last updated: 2026-04-14 (from FMP MCP)
-        log.info("  CPI: using hardcoded fallback (economics-indicators not on stable REST)")
-        cpi_values = [
-            ("2026-03-01", 330.293), ("2026-02-01", 327.46),
-            ("2026-01-01", 326.588), ("2025-12-01", 326.031),
-            ("2025-11-01", 325.063), ("2025-09-01", 324.245),
-        ]
+
+    # Persist fresh data to GCS on success; fall back to cache on failure
+    _macro_cache = _load_macro_cache()
+    if cpi_values:
+        _macro_cache["CPI"] = [[d, v] for d, v in cpi_values]
+        _save_macro_cache(_macro_cache)
+    else:
+        cached = _macro_cache.get("CPI") or []
+        if cached:
+            log.warning("  CPI: FMP returned empty, using GCS last-known-good")
+            cpi_values = [(d, v) for d, v in cached]
+        else:
+            # Only falls through if FMP fails AND GCS cache is empty
+            # (i.e. first run ever or running locally without GCS access).
+            # Hardcoded values are a last-resort safety net; fresh FMP data
+            # overwrites the GCS cache on every successful scan.
+            log.warning("  CPI: no data from FMP or GCS cache, using hardcoded seed")
+            cpi_values = [
+                ("2026-03-01", 330.293), ("2026-02-01", 327.46),
+                ("2026-01-01", 326.588), ("2025-12-01", 326.031),
+                ("2025-11-01", 325.063), ("2025-09-01", 324.245),
+            ]
 
     # 4. GDP (need ~3 quarters)
     gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
 
-    # Try economics-indicators (works on MCP, 404 on stable REST)
+    # v7.2 fix: same as CPI — removed country=US.
     gdp_raw = fmp_func("economics-indicators", {
-        "name": "GDP", "country": "US",
+        "name": "GDP",
         "from": gdp_from, "to": today.strftime("%Y-%m-%d")
     })
     sleep()
@@ -364,15 +450,22 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
             [(d["date"], float(d["value"])) for d in gdp_raw if d.get("value")],
             reverse=True
         )
-    if not gdp_values:
-        # Fallback: stable REST doesn't have economics-indicators endpoint
-        # Source: BEA GDP. Update these values quarterly.
-        # Last updated: 2026-04-14 (from FMP MCP)
-        log.info("  GDP: using hardcoded fallback (economics-indicators not on stable REST)")
-        gdp_values = [
-            ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
-            ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
-        ]
+
+    # Persist fresh data on success; fall back to cache on failure
+    if gdp_values:
+        _macro_cache["GDP"] = [[d, v] for d, v in gdp_values]
+        _save_macro_cache(_macro_cache)
+    else:
+        cached = _macro_cache.get("GDP") or []
+        if cached:
+            log.warning("  GDP: FMP returned empty, using GCS last-known-good")
+            gdp_values = [(d, v) for d, v in cached]
+        else:
+            log.warning("  GDP: no data from FMP or GCS cache, using hardcoded seed")
+            gdp_values = [
+                ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
+                ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
+            ]
 
     return _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values)
 
@@ -426,7 +519,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
     # 3. CPI historical
     cpi_from = (as_of - timedelta(days=270)).strftime("%Y-%m-%d")
     cpi_raw = fmp_func("economics-indicators", {
-        "name": "CPI", "country": "US",
+        "name": "CPI",
         "from": cpi_from, "to": as_of_date
     })
     sleep()
@@ -451,7 +544,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
     # 4. GDP historical
     gdp_from = (as_of - timedelta(days=400)).strftime("%Y-%m-%d")
     gdp_raw = fmp_func("economics-indicators", {
-        "name": "GDP", "country": "US",
+        "name": "GDP",
         "from": gdp_from, "to": as_of_date
     })
     sleep()
