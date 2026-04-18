@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target, Search, Filter, Zap, Star } from "lucide-react";
 
 const GCS_BASE = "/api/gcs/scans";
@@ -327,17 +327,14 @@ export default function Dashboard(){
   const[expanded,setExpanded]=useState<Record<string,boolean>>({});
   const[region,setRegion]=useState("sp500");
 
-  const fetchRegion=useCallback((r:string)=>{
-    setLoading(true);setData(null);
-    fetch(gcsUrl(r)).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
-      // Fallback: try latest.json then direct GCS
+  useEffect(()=>{
+    setLoading(true);
+    fetch(gcsUrl(region)).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
       fetch(`${GCS_BASE}/latest.json`).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
         fetch(GCS_FALLBACK).then(res=>res.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));
       });
     });
-  },[]);
-
-  useEffect(()=>{fetchRegion(region);},[region,fetchRegion]);
+  },[region]);
 
   const weights=data?.weights||FACTOR_WEIGHTS;
 
@@ -372,12 +369,11 @@ export default function Dashboard(){
 
   if(loading) return<div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
 
-  const sum=useMemo(()=>{
-    if(region!=="global") return data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0};
-    return{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length};
-  },[data,regionStocks,region]);
+  const sum=region==="global"
+    ?{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length}
+    :(data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0});
   const scanDate=data?.scan_date?new Date(data.scan_date).toLocaleString():"—";
-  const classifications=[...new Set(regionStocks.map(s=>s.classification)||[])].sort();
+  const classifications=[...new Set(regionStocks.map(s=>s.classification).filter(Boolean))].sort();
 
   const hs=(key:string,align:"left"|"right"|"center"="right"):React.CSSProperties=>({
     padding:"8px 12px",textAlign:align,cursor:"pointer",fontSize:9,fontWeight:700,letterSpacing:"0.1em",fontFamily:"var(--font-mono)",
