@@ -7,9 +7,12 @@ const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbrid
 const REGIONS = [
   { key: "sp500", label: "S&P 500" },
   { key: "europe", label: "Europe" },
-  { key: "global", label: "Global" },
+  { key: "global", label: "Rest of World" },
 ];
 function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
+const US_EXCHANGES = new Set(["NASDAQ","NYSE","AMEX","NYSEArca","PNK","OTC"]);
+const EU_EXCHANGES = new Set(["XETRA","PAR","LSE","AMS","MIL","STO","SIX","BME","HEL","OSL","CPH"]);
+const EU_COUNTRIES = new Set(["GB","DE","FR","NL","IT","SE","CH","ES","DK","NO","FI","IE","AT","BE","PT"]);
 
 // ── Types ───────────────────────────────────────────────────────────────────
 interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; }
@@ -44,6 +47,8 @@ interface StockData {
   industry?:string;
   position_size_pct?:number;
   peer_context?:{_evaluated?:boolean;peers?:{symbol:string;price:number;"52wk_position":number;vs_200d:number}[];divergence?:string;avg_peer_mom_200d?:number;stock_spread_vs_peers?:number};
+  exchange?:string;
+  country?:string;
   // v6 compat (removed in v7)
   news_score?:number; news_sentiment?:number; catastrophe_score?:number;
 }
@@ -336,23 +341,43 @@ export default function Dashboard(){
 
   const weights=data?.weights||FACTOR_WEIGHTS;
 
-  const sorted=useMemo(()=>{
+  // Filter stocks by region first (for accurate summary counts)
+  const regionStocks=useMemo(()=>{
     if(!data?.stocks) return [];
-    let list=[...data.stocks];
+    if(region!=="global") return data.stocks;
+    return data.stocks.filter(s=>{
+      const ex=s.exchange||"";const co=s.country||"";
+      if(ex||co){
+        if(US_EXCHANGES.has(ex)||co==="US") return false;
+        if(EU_EXCHANGES.has(ex)||EU_COUNTRIES.has(co)) return false;
+        return true;
+      }
+      if(!s.symbol.includes(".")) return false;
+      const suffix=s.symbol.split(".").pop()||"";
+      if(["DE","PA","L","AS","MI","ST","SW","MC","HE","OL","CO","BR","IR","VI","LI"].includes(suffix)) return false;
+      return true;
+    });
+  },[data,region]);
+
+  const sorted=useMemo(()=>{
+    let list=[...regionStocks];
     if(filter!=="ALL") list=list.filter(s=>s.signal===filter);
     if(classFilter!=="ALL") list=list.filter(s=>s.classification===classFilter);
-    if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q));}
+    if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q)||(s.company_name||"").toUpperCase().includes(q));}
     list.sort((a,b)=>{const av=(a[sortKey]as number)??0,bv=(b[sortKey]as number)??0;return sortDir==="desc"?bv-av:av-bv;});
     return list;
-  },[data,sortKey,sortDir,filter,classFilter,search]);
+  },[regionStocks,sortKey,sortDir,filter,classFilter,search]);
 
   const toggleSort=(key:keyof StockData)=>{if(sortKey===key)setSortDir(d=>d==="desc"?"asc":"desc");else{setSortKey(key);setSortDir("desc");}};
 
   if(loading) return<div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
 
-  const sum=data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0};
+  const sum=useMemo(()=>{
+    if(region!=="global") return data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0};
+    return{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length};
+  },[data,regionStocks,region]);
   const scanDate=data?.scan_date?new Date(data.scan_date).toLocaleString():"—";
-  const classifications=[...new Set(data?.stocks?.map(s=>s.classification)||[])].sort();
+  const classifications=[...new Set(regionStocks.map(s=>s.classification)||[])].sort();
 
   const hs=(key:string,align:"left"|"right"|"center"="right"):React.CSSProperties=>({
     padding:"8px 12px",textAlign:align,cursor:"pointer",fontSize:9,fontWeight:700,letterSpacing:"0.1em",fontFamily:"var(--font-mono)",
@@ -378,7 +403,7 @@ export default function Dashboard(){
               <button key={r.key} onClick={()=>setRegion(r.key)} style={{padding:"5px 12px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:`1px solid ${region===r.key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,borderRadius:5,cursor:"pointer",background:region===r.key?"var(--green-light,#e8f5ee)":"transparent",color:region===r.key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",transition:"all 0.15s"}}>{r.label}</button>
             ))}
           </div>
-          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{data?.region?.toUpperCase()} · {scanDate} · {sum.total} stocks · {data?.version||"v7"}</p>
+          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region==="global"&&data?.stocks?` (from ${data.stocks.length} global)`:""} · {data?.version||"v7"}</p>
         </div>
         <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
           {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
