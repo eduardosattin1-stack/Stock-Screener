@@ -113,6 +113,17 @@ WEIGHTS = {
 }
 # Sum = 1.00. Removed news (ML: 0%) and catastrophe (ML: 0.2%) — zero predictive power.
 
+EXCHANGE_TO_COUNTRY = {
+    "NASDAQ": "US", "NYSE": "US", "AMEX": "US", "PNK": "US", "OTC": "US",
+    "XETRA": "DE", "PAR": "FR", "LSE": "GB", "AMS": "NL", "MIL": "IT",
+    "STO": "SE", "SIX": "CH", "BME": "ES", "HEL": "FI", "OSL": "NO",
+    "CPH": "DK", "DUB": "IE", "LIS": "PT", "BRU": "BE", "VIE": "AT",
+    "JPX": "JP", "HKSE": "HK", "KSC": "KR", "KOE": "KR",
+    "SAO": "BR", "BSE": "IN", "NSE": "IN", "SES": "SG", "ASX": "AU",
+    "SHH": "CN", "SHZ": "CN", "TAI": "TW", "SET": "TH", "KLS": "MY",
+    "JKT": "ID", "MEX": "MX", "TSX": "CA", "NZE": "NZ",
+}
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v7")
 
@@ -221,6 +232,8 @@ class Stock:
     symbol: str = ""
     price: float = 0.0
     currency: str = "USD"
+    exchange: str = ""
+    country: str = ""
 
     # Quote
     sma50: float = 0.0
@@ -457,6 +470,7 @@ def _parse_quote(q: dict) -> dict:
         "volume": int(q.get("volume", 0)),
         "avg_volume": int(q.get("avgVolume", 0)),
         "currency": q.get("currency", "USD"),
+        "exchange": q.get("exchange", ""),
     }
 
 def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
@@ -2199,6 +2213,10 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 factors_evaluated=coverage["evaluated"],
                 factors_missing=coverage["missing"],
             )
+
+            # Exchange + country from quote data
+            s.exchange = q.get("exchange", "")
+            s.country = EXCHANGE_TO_COUNTRY.get(s.exchange, "")
 
             # Stash raw data for pass 2
             s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
