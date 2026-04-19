@@ -414,62 +414,6 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
-// ── Add to Portfolio (stock detail) ─────────────────────────────────────────
-// Price pre-fills from live scan but editable (user may have real fill price).
-function AddToPortfolioStock({stock:s}:{stock:StockData}){
-  const [open,setOpen]=useState(false);
-  const [shares,setShares]=useState("");
-  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
-  const [notes,setNotes]=useState("");
-  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
-  const [err,setErr]=useState("");
-  async function handleSave(){
-    const p=parseFloat(price), sh=parseFloat(shares);
-    if(!p||p<=0){setErr("Price required");return;}
-    if(!sh||sh<=0){setErr("Shares required");return;}
-    setStatus("saving");setErr("");
-    try {
-      const res=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes})});
-      if(!res.ok){const t=await res.text();throw new Error(t||`HTTP ${res.status}`);}
-      setStatus("saved");
-      setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1800);
-    } catch(e:any){setStatus("error");setErr(e.message||"Failed");}
-  }
-  if(!open){
-    return(
-      <button onClick={()=>setOpen(true)} style={{
-        fontSize:11,fontFamily:T.mono,fontWeight:600,padding:"6px 14px",borderRadius:5,
-        border:`1px solid ${T.greenLight}`,background:T.greenLight,color:T.green,
-        cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
-      }}>+ Add to Portfolio</button>
-    );
-  }
-  return(
-    <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 10px",borderRadius:6,
-      background:"#fff",border:`1px solid ${T.greenLight}`,fontSize:10,fontFamily:T.mono}}>
-      <span style={{color:T.textMuted,fontWeight:600}}>{s.symbol}</span>
-      <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}}
-        style={{width:58,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}} autoFocus/>
-      <span style={{color:T.textLight}}>@</span>
-      <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
-        style={{width:70,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}}/>
-      <input type="text" placeholder="notes" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={50}
-        style={{width:120,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}}/>
-      <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{
-        padding:"4px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",
-        background:status==="saved"?"#10b981":status==="error"?T.red:T.green,
-        color:"#fff",fontSize:11,fontFamily:T.mono,fontWeight:600,
-      }}>{status==="saving"?"...":status==="saved"?"✓":status==="error"?"!":"Save"}</button>
-      <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{
-        padding:"4px 8px",border:`1px solid ${T.divider}`,borderRadius:3,cursor:"pointer",
-        background:"#fff",color:T.textMuted,fontSize:11,fontFamily:T.mono,
-      }}>✕</button>
-      {err&&<span style={{color:T.red,fontSize:9,marginLeft:4}}>{err}</span>}
-    </div>
-  );
-}
-
 // ── Main Page ──────────────────────────────────────────────────────────────────
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
