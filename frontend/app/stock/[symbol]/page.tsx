@@ -6,7 +6,7 @@ import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw,
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-interface FactorScores{technical:number|null;quality:number|null;proximity:number|null;catalyst:number|null;transcript:number|null;upside:number|null;institutional:number|null;analyst:number|null;insider:number|null;earnings:number|null;}
+interface FactorScores{technical:number|null;quality:number|null;proximity:number|null;catalyst:number|null;transcript:number|null;upside:number|null;institutional:number|null;analyst:number|null;insider:number|null;earnings:number|null;institutional_flow?:number|null;sector_momentum?:number|null;congressional?:number|null;}
 interface StockData{
   symbol:string;price:number;currency:string;market_cap:number;
   sma50:number;sma200:number;year_high:number;year_low:number;volume:number;
@@ -43,9 +43,10 @@ const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 
 // v7 factors
-const FACTOR_ORDER=["technical","quality","upside","proximity","catalyst","transcript","institutional","analyst","insider","earnings"];
-const FL:Record<string,string>={technical:"Technical",quality:"Quality",upside:"Upside",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",institutional:"Institutional",analyst:"Analyst",insider:"Insider",earnings:"Earnings"};
-const FW:Record<string,number>={technical:35,quality:14,upside:10,proximity:8,catalyst:8,transcript:7,institutional:5,analyst:5,insider:4,earnings:4};
+// v7.2 factor config — 13 factors, same order as main page radar
+const FACTOR_ORDER=["technical","upside","quality","proximity","institutional_flow","transcript","earnings","catalyst","institutional","sector_momentum","analyst","insider","congressional"];
+const FL:Record<string,string>={technical:"Technical",quality:"Quality",upside:"Upside",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",institutional:"Inst Hold",analyst:"Analyst",insider:"Insider",earnings:"Earnings",institutional_flow:"Inst Flow",sector_momentum:"Sector Mom",congressional:"Congress"};
+const FW:Record<string,number>={technical:25,upside:14,quality:12,proximity:12,institutional_flow:9,transcript:6,earnings:5,catalyst:5,institutional:3,sector_momentum:3,analyst:3,insider:2,congressional:1};
 
 // ── Explanations & Tooltips ────────────────────────────────────────────────────
 const TOOLTIPS: Record<string, string> = {
@@ -89,7 +90,7 @@ const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
 const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0)return"—";return`${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
 const gClr=(v:number|null)=>{if(v==null)return T.textLight;if(v>0.15)return T.green;if(v>0.05)return"#5a9e7a";if(v>0)return T.textMuted;return T.red;};
 function safeCagr(s:number,e:number,y:number):number|null{if(!s||!e||s<=0||e<=0||y<=0)return null;return Math.pow(e/s,1/y)-1;}
-function inferFactors(s:StockData):FactorScores{if(s.factor_scores)return s.factor_scores;return{technical:Math.min(1,(s.bull_score||0)/10),quality:s.quality_score??Math.min(1,((s.piotroski||0)/9*0.4+Math.min(1,(s.altman_z||0)/10)*0.2+Math.min(1,(s.roe_avg||0)/0.3)*0.2+Math.min(1,(s.gross_margin||0))*0.2)),upside:s.upside_score??Math.min(1,Math.max(0,(s.upside||0)/80)),proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),catalyst:s.catalyst_score??0.5,transcript:s.transcript_score??null,institutional:s.inst_score??null,analyst:s.grade_score||null,insider:s.insider_score??null,earnings:s.earnings_score??Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1))} as FactorScores;}
+function inferFactors(s:StockData):FactorScores{if(s.factor_scores)return s.factor_scores;return{technical:Math.min(1,(s.bull_score||0)/10),quality:s.quality_score??Math.min(1,((s.piotroski||0)/9*0.4+Math.min(1,(s.altman_z||0)/10)*0.2+Math.min(1,(s.roe_avg||0)/0.3)*0.2+Math.min(1,(s.gross_margin||0))*0.2)),upside:s.upside_score??Math.min(1,Math.max(0,(s.upside||0)/80)),proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),catalyst:s.catalyst_score??0.5,transcript:s.transcript_score??null,institutional:s.inst_score??null,analyst:s.grade_score||null,insider:s.insider_score??null,earnings:s.earnings_score??Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),institutional_flow:null,sector_momentum:null,congressional:null} as FactorScores;}
 function getProb(c:number){if(c>=0.90)return{p5:79,p10:72,p20:42,gain:25.7,dd:-9.1,speed:18};if(c>=0.85)return{p5:68,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.80)return{p5:65,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.75)return{p5:60,p10:44,p20:20,gain:12.8,dd:-10.8,speed:24};if(c>=0.70)return{p5:58,p10:44,p20:18,gain:12.8,dd:-10.8,speed:24};if(c>=0.65)return{p5:55,p10:43,p20:16,gain:12.1,dd:-10.3,speed:26};return{p5:48,p10:37,p20:12,gain:10.7,dd:-10.7,speed:22};}
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
@@ -100,6 +101,51 @@ function Metric({label,value,color,sub}:{label:string;value:string;color?:string
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
 // ── v7 Factor Radar ────────────────────────────────────────────────────────────
+// ── Add to Portfolio (stock detail header) ───────────────────────────────────
+function AddToPortfolioStock({stock:s}:{stock:StockData}){
+  const [open,setOpen]=useState(false);
+  const [shares,setShares]=useState("");
+  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
+  const [notes,setNotes]=useState("");
+  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const [err,setErr]=useState("");
+  async function handleSave(){
+    const p=parseFloat(price),sh=parseFloat(shares);
+    if(!p||p<=0){setErr("Price required");return;}
+    if(!sh||sh<=0){setErr("Shares required");return;}
+    setStatus("saving");setErr("");
+    try{
+      const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes})});
+      if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+      setStatus("saved");setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
+    } catch(e:any){setStatus("error");setErr(e.message||"Failed");}
+  }
+  if(!open){
+    return(
+      <button onClick={()=>setOpen(true)} style={{fontSize:11,fontFamily:T.mono,fontWeight:600,padding:"6px 14px",borderRadius:5,border:`1px solid ${T.greenBorder}`,background:T.greenLight,color:T.green,cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}>+ Add to Portfolio</button>
+    );
+  }
+  return(
+    <div style={{padding:"10px 12px",borderRadius:6,background:"#fff",border:`1px solid ${T.greenBorder}`,display:"flex",flexDirection:"column",gap:6,minWidth:280}}>
+      <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
+        <span style={{color:T.textMuted,fontWeight:600}}>{s.symbol}</span>
+        <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} autoFocus
+          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+        <span style={{color:T.textLight}}>@</span>
+        <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
+          style={{width:70,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+      </div>
+      <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
+        style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+      <div style={{display:"flex",alignItems:"center",gap:6}}>
+        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"#10b981":status==="error"?T.red:T.green,color:"#fff",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Added":status==="error"?"! Retry":"Save"}</button>
+        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"#fff",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
+      </div>
+      {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
+    </div>
+  );
+}
+
 function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
   const cx=size/2,cy=size/2,r=size/2-36;const raw=FACTOR_ORDER.map(k=>(scores as any)[k]);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
@@ -109,10 +155,10 @@ function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+24),ly=cy+Math.sin(a)*(r+24),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke={isNull?"#e5e7eb":"#e5e7eb"} strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+22),ly=cy+Math.sin(a)*(r+22),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke={isNull?"#e5e7eb":"#e5e7eb"} strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-4} textAnchor="middle" dominantBaseline="middle" fontSize={8} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+6} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
       {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.5}/>)}
-      <text x={cx} y={size-4} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>{covCount}/10 factors</text>
+      <text x={cx} y={size-4} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>{covCount}/{FACTOR_ORDER.length} factors</text>
     </svg>
   );
 }
@@ -368,6 +414,62 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
+// ── Add to Portfolio (stock detail) ─────────────────────────────────────────
+// Price pre-fills from live scan but editable (user may have real fill price).
+function AddToPortfolioStock({stock:s}:{stock:StockData}){
+  const [open,setOpen]=useState(false);
+  const [shares,setShares]=useState("");
+  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
+  const [notes,setNotes]=useState("");
+  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const [err,setErr]=useState("");
+  async function handleSave(){
+    const p=parseFloat(price), sh=parseFloat(shares);
+    if(!p||p<=0){setErr("Price required");return;}
+    if(!sh||sh<=0){setErr("Shares required");return;}
+    setStatus("saving");setErr("");
+    try {
+      const res=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes})});
+      if(!res.ok){const t=await res.text();throw new Error(t||`HTTP ${res.status}`);}
+      setStatus("saved");
+      setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1800);
+    } catch(e:any){setStatus("error");setErr(e.message||"Failed");}
+  }
+  if(!open){
+    return(
+      <button onClick={()=>setOpen(true)} style={{
+        fontSize:11,fontFamily:T.mono,fontWeight:600,padding:"6px 14px",borderRadius:5,
+        border:`1px solid ${T.greenLight}`,background:T.greenLight,color:T.green,
+        cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
+      }}>+ Add to Portfolio</button>
+    );
+  }
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 10px",borderRadius:6,
+      background:"#fff",border:`1px solid ${T.greenLight}`,fontSize:10,fontFamily:T.mono}}>
+      <span style={{color:T.textMuted,fontWeight:600}}>{s.symbol}</span>
+      <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}}
+        style={{width:58,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}} autoFocus/>
+      <span style={{color:T.textLight}}>@</span>
+      <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
+        style={{width:70,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}}/>
+      <input type="text" placeholder="notes" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={50}
+        style={{width:120,padding:"4px 6px",border:`1px solid ${T.divider}`,borderRadius:3,fontSize:11,fontFamily:T.mono}}/>
+      <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{
+        padding:"4px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",
+        background:status==="saved"?"#10b981":status==="error"?T.red:T.green,
+        color:"#fff",fontSize:11,fontFamily:T.mono,fontWeight:600,
+      }}>{status==="saving"?"...":status==="saved"?"✓":status==="error"?"!":"Save"}</button>
+      <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{
+        padding:"4px 8px",border:`1px solid ${T.divider}`,borderRadius:3,cursor:"pointer",
+        background:"#fff",color:T.textMuted,fontSize:11,fontFamily:T.mono,
+      }}>✕</button>
+      {err&&<span style={{color:T.red,fontSize:9,marginLeft:4}}>{err}</span>}
+    </div>
+  );
+}
+
 // ── Main Page ──────────────────────────────────────────────────────────────────
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
@@ -397,7 +499,10 @@ export default function StockDetail(){
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
-        <div style={{textAlign:"right"}}><div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div><div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:s.composite>0.6?T.green:s.composite>0.4?T.text:T.red}}>{s.composite.toFixed(2)}</div></div>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
+          <AddToPortfolioStock stock={s}/>
+          <div style={{textAlign:"right"}}><div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div><div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:s.composite>0.6?T.green:s.composite>0.4?T.text:T.red}}>{s.composite.toFixed(2)}</div></div>
+        </div>
       </div>
 
       {/* TradingView */}
@@ -405,7 +510,7 @@ export default function StockDetail(){
 
       {/* ═══ v7 FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
-        <SH title="10-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)} · ${s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length}/10 factors`}/>
+        <SH title="13-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)} · ${s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length}/${FACTOR_ORDER.length} factors`}/>
         <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:24}}>
           <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={scores}/></div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]} detail={factorDetail(k,s)}/>)}</div>
@@ -447,4 +552,4 @@ export default function StockDetail(){
       {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
     </div>
   );
-} 
+}
