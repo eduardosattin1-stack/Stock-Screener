@@ -15,7 +15,7 @@ const EU_EXCHANGES = new Set(["XETRA","PAR","LSE","AMS","MIL","STO","SIX","BME",
 const EU_COUNTRIES = new Set(["GB","DE","FR","NL","IT","SE","CH","ES","DK","NO","FI","IE","AT","BE","PT"]);
 
 // ── Types ───────────────────────────────────────────────────────────────────
-interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; }
+interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; institutional_flow?:number|null; sector_momentum?:number|null; congressional?:number|null; }
 interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve:number; yield_level:number; vix:number; cpi_trend:number; gdp_momentum:number; }; }
 interface StockData {
   symbol:string; price:number; currency:string; market_cap:number;
@@ -72,15 +72,21 @@ const SIG: Record<string,{color:string;bg:string;border:string}> = {
 const CLS: Record<string,string> = { DEEP_VALUE:"#2563eb", VALUE:"#0891b2", QUALITY_GROWTH:"#7c3aed", GROWTH:"#818cf8", SPECULATIVE:"#ef4444", NEUTRAL:"#64748b" };
 
 // v7 factor config
-const FACTOR_ORDER = ["technical","quality","upside","proximity","catalyst","transcript","institutional","analyst","insider","earnings"];
-const FACTOR_LABELS: Record<string,string> = { technical:"Technical", quality:"Quality", proximity:"52-Week", catalyst:"Catalyst", transcript:"Transcript", upside:"Upside", institutional:"Institutional", analyst:"Analyst", insider:"Insider", earnings:"Earnings" };
-const FACTOR_WEIGHTS: Record<string,number> = { technical:35, quality:14, upside:10, proximity:8, catalyst:8, transcript:7, institutional:5, analyst:5, insider:4, earnings:4 };
+// v7.2 factor config — 13 factors, ordered by weight for natural radar clockwise reading
+const FACTOR_ORDER = ["technical","upside","quality","proximity","institutional_flow","transcript","earnings","catalyst","institutional","sector_momentum","analyst","insider","congressional"];
+// Short labels (≤10 chars) so radar vertex labels don't overlap at 13 vertices
+const FACTOR_LABELS: Record<string,string> = { technical:"Technical", quality:"Quality", proximity:"52-Week", catalyst:"Catalyst", transcript:"Transcript", upside:"Upside", institutional:"Inst Hold", analyst:"Analyst", insider:"Insider", earnings:"Earnings", institutional_flow:"Inst Flow", sector_momentum:"Sector Mom", congressional:"Congress" };
+// v7.2 weights from 45K-sample backtest (tech capped at 25%)
+const FACTOR_WEIGHTS: Record<string,number> = { technical:25, upside:14, quality:12, proximity:12, institutional_flow:9, transcript:6, earnings:5, catalyst:5, institutional:3, sector_momentum:3, analyst:3, insider:2, congressional:1 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}%`;
 const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1e12) return `$${(n/1e12).toFixed(1)}T`; if(n>=1e9) return `$${(n/1e9).toFixed(0)}B`; if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`; return `$${n.toFixed(0)}`; };
 
-function getProb(c:number){if(c>=0.90)return{p10:72,gain:25.7,dd:-9.1,speed:18};if(c>=0.85)return{p10:53,gain:17.9,dd:-9.8,speed:22};if(c>=0.80)return{p10:53,gain:17.9,dd:-9.8,speed:22};if(c>=0.75)return{p10:44,gain:12.8,dd:-10.8,speed:24};if(c>=0.70)return{p10:44,gain:12.8,dd:-10.8,speed:24};if(c>=0.65)return{p10:43,gain:12.1,dd:-10.3,speed:26};return{p10:37,gain:10.7,dd:-10.7,speed:22};}
+// getProb: fallback table for stocks without live hit_prob field (rare).
+// Numbers are rough approximations from v7.2 backtest calibration — the live ML
+// model's `hit_prob` on each stock is more accurate. See calibration docs.
+function getProb(c:number){if(c>=0.90)return{p10:85,gain:25.7,dd:-9.1,speed:18};if(c>=0.80)return{p10:75,gain:20.0,dd:-9.8,speed:22};if(c>=0.65)return{p10:62,gain:15.0,dd:-10.5,speed:26};if(c>=0.50)return{p10:50,gain:12.0,dd:-11.0,speed:30};return{p10:35,gain:9.0,dd:-11.0,speed:32};}
 
 function inferFactors(s:StockData):FactorScores {
   if(s.factor_scores) return s.factor_scores;
@@ -95,6 +101,10 @@ function inferFactors(s:StockData):FactorScores {
     analyst: s.grade_score || null,
     insider: s.insider_score ?? null,
     earnings: s.earnings_score ?? Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),
+    // v7.2 new factors — null when no factor_scores present (legacy scans, EU stocks, etc.)
+    institutional_flow: null,
+    sector_momentum: null,
+    congressional: null,
   } as FactorScores;
 }
 
@@ -125,7 +135,7 @@ function LargeRadar({scores,size=180}:{scores:FactorScores;size?:number}){
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {[0.25,0.5,0.75,1].map((lv,i)=>{const pts=Array.from({length:n},(_,j)=>`${cx+Math.cos(ang(j))*r*lv},${cy+Math.sin(ang(j))*r*lv}`).join(" ");return<polygon key={i} points={pts} fill="none" stroke="#d1d5db" strokeWidth={i===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+16),ly=cy+Math.sin(a)*(r+16),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#2d7a4f":(v??0)>0.4?"#d97706":"#ef4444");return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5} strokeDasharray={isNull?"2,2":"none"}/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize={7} fontFamily="var(--font-mono)" fill={isNull?"#d1d5db":"#6b7280"} fontWeight="500">{FACTOR_LABELS[k]?.slice(0,6)}</text></g>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+18),ly=cy+Math.sin(a)*(r+18),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#2d7a4f":(v??0)>0.4?"#d97706":"#ef4444");return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5} strokeDasharray={isNull?"2,2":"none"}/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize={6.5} fontFamily="var(--font-mono)" fill={isNull?"#d1d5db":"#6b7280"} fontWeight="500">{FACTOR_LABELS[k]}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.15} stroke={fill} strokeWidth={1.5} strokeLinejoin="round"/>
       {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={2.5} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1}/>)}
     </svg>
@@ -202,6 +212,75 @@ function MoSBar({value}:{value:number}){const p=Math.max(-1,Math.min(1,value)),w
 function ScorePill({value}:{value:number}){const c=value>0.65?"#10b981":value>0.45?"#d97706":"#ef4444";return<div style={{display:"inline-flex",alignItems:"center",gap:4}}><div style={{width:40,height:4,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}><div style={{height:"100%",width:`${value*100}%`,borderRadius:2,background:c}}/></div><span style={{fontFamily:"var(--font-mono)",fontSize:12,fontWeight:700,color:c}}>{value.toFixed(2)}</span></div>;}
 
 // ── Stock Row ───────────────────────────────────────────────────────────────
+// ── Add to Portfolio Button ─────────────────────────────────────────────────
+// Expands to an inline form when clicked. Price pre-fills from live scan but
+// is user-editable (real fill price may differ from scan price). Posts to
+// /api/portfolio/add which proxies to Cloud Run.
+function AddToPortfolioButton({stock:s}:{stock:StockData}){
+  const [open,setOpen]=useState(false);
+  const [shares,setShares]=useState("");
+  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
+  const [notes,setNotes]=useState("");
+  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const [err,setErr]=useState("");
+
+  async function handleSave(e:React.MouseEvent){
+    e.stopPropagation();
+    const p=parseFloat(price), sh=parseFloat(shares);
+    if(!p||p<=0){setErr("Price required");return;}
+    if(!sh||sh<=0){setErr("Shares required");return;}
+    setStatus("saving");setErr("");
+    try {
+      const res=await fetch("/api/portfolio/add",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes}),
+      });
+      if(!res.ok){const t=await res.text();throw new Error(t||`HTTP ${res.status}`);}
+      setStatus("saved");
+      setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
+    } catch(e:any) {
+      setStatus("error");setErr(e.message||"Failed");
+    }
+  }
+
+  if(!open){
+    return(
+      <button onClick={e=>{e.stopPropagation();setOpen(true);}} style={{
+        fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,padding:"4px 10px",
+        borderRadius:4,border:"1px solid var(--green-border,#b8dcc8)",background:"var(--green-light,#e8f5ee)",
+        color:"var(--green,#2d7a4f)",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
+      }}>+ Portfolio</button>
+    );
+  }
+
+  return(
+    <div onClick={e=>e.stopPropagation()} style={{
+      display:"flex",alignItems:"center",gap:6,padding:"4px 8px",
+      borderRadius:6,background:"#fff",border:"1px solid var(--green-border,#b8dcc8)",
+      fontSize:10,fontFamily:"var(--font-mono)",
+    }}>
+      <span style={{color:"var(--text-muted,#6b7280)",fontWeight:600,marginRight:2}}>{s.symbol}</span>
+      <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}}
+        style={{width:52,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}} autoFocus/>
+      <span style={{color:"var(--text-light,#9ca3af)"}}>@</span>
+      <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
+        style={{width:62,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}}/>
+      <input type="text" placeholder="notes" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={40}
+        style={{width:100,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}}/>
+      <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{
+        padding:"3px 8px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",
+        background:status==="saved"?"#10b981":status==="error"?"#ef4444":"var(--green,#2d7a4f)",
+        color:"#fff",fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
+      }}>{status==="saving"?"...":status==="saved"?"✓":status==="error"?"!":"Save"}</button>
+      <button onClick={e=>{e.stopPropagation();setOpen(false);setStatus("idle");setErr("");}} style={{
+        padding:"3px 6px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,cursor:"pointer",
+        background:"#fff",color:"var(--text-muted,#6b7280)",fontSize:10,fontFamily:"var(--font-mono)",
+      }}>✕</button>
+      {err&&<span style={{color:"#ef4444",fontSize:9,marginLeft:4}}>{err}</span>}
+    </div>
+  );
+}
+
 function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;weights:Record<string,number>;rank:number}){
   const scores=inferFactors(s);
   const sigStyle=SIG[s.signal]||SIG.HOLD;
@@ -232,7 +311,7 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}{s.position_size_pct!=null&&s.position_size_pct>0&&<div style={{fontSize:8,fontFamily:"var(--font-mono)",color:sigStyle.color,marginTop:2}}>Size: {s.position_size_pct.toFixed(0)}%</div>}</td>
         <td style={{padding:"10px 12px"}}><span style={{display:"inline-block",padding:"3px 10px",borderRadius:4,fontSize:10,fontWeight:700,letterSpacing:"0.07em",fontFamily:"var(--font-mono)",background:sigStyle.bg,color:sigStyle.color,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span></td>
         <td style={{padding:"10px 12px",textAlign:"right"}}><ScorePill value={s.composite}/></td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:10}}>{(()=>{const cov=s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length;return<span style={{color:cov>=8?"#10b981":cov>=5?"#d97706":"#ef4444",fontWeight:600}}>{cov}/10{cov<4&&" ⚠️"}</span>;})()}</td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:10}}>{(()=>{const cov=s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length;const total=FACTOR_ORDER.length;return<span style={{color:cov>=Math.ceil(total*0.7)?"#10b981":cov>=Math.ceil(total*0.5)?"#d97706":"#ef4444",fontWeight:600}}>{cov}/{total}{cov<Math.ceil(total*0.3)&&" ⚠️"}</span>;})()}</td>
         <td style={{padding:"6px 8px",textAlign:"center"}}><MiniRadar scores={scores} size={44}/></td>
         <td style={{padding:"10px 8px"}}><div style={{display:"flex",gap:2}}>{Array.from({length:10},(_,i)=>{const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?"#d97706":"#ef4444";return<div key={i} style={{width:6,height:6,borderRadius:"50%",background:a?c:"var(--bg-elevated,#edf0ee)",border:`1px solid ${a?c:"var(--border,#e5e7eb)"}`}}/>;})}</div></td>
         <td style={{padding:"10px 8px"}}><MoSBar value={s.margin_of_safety}/></td>
@@ -248,10 +327,15 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
             <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
                 <LargeRadar scores={scores}/>
-                <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>{((Object.values(scores).reduce((a,b)=>a+b,0))/10*100).toFixed(0)} avg</div>
+                <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
+                  {(()=>{const vals=Object.values(scores).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg
+                </div>
               </div>
               <div>
-                <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)",textTransform:"uppercase"}}>10-Factor Breakdown</div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
+                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>13-Factor Breakdown</div>
+                  <AddToPortfolioButton stock={s}/>
+                </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 24px"}}>
                   {FACTOR_ORDER.map(k=>{const w=weights[k];const pct=w!=null?(w<=1?Math.round(w*100):Math.round(w)):FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={pct} score={(scores as any)[k]}/>;})}
                 </div>
@@ -399,7 +483,7 @@ export default function Dashboard(){
               <button key={r.key} onClick={()=>setRegion(r.key)} style={{padding:"5px 12px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:`1px solid ${region===r.key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,borderRadius:5,cursor:"pointer",background:region===r.key?"var(--green-light,#e8f5ee)":"transparent",color:region===r.key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",transition:"all 0.15s"}}>{r.label}</button>
             ))}
           </div>
-          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region==="global"&&data?.stocks?` (from ${data.stocks.length} global)`:""} · {data?.version||"v7"}</p>
+          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region==="global"&&data?.stocks?` (from ${data.stocks.length} global)`:""} · {data?.version||"v7.2"}</p>
         </div>
         <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
           {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
