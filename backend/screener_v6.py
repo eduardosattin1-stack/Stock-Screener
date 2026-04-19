@@ -113,17 +113,6 @@ WEIGHTS = {
 }
 # Sum = 1.00. Removed news (ML: 0%) and catastrophe (ML: 0.2%) — zero predictive power.
 
-EXCHANGE_TO_COUNTRY = {
-    "NASDAQ": "US", "NYSE": "US", "AMEX": "US", "PNK": "US", "OTC": "US",
-    "XETRA": "DE", "PAR": "FR", "LSE": "GB", "AMS": "NL", "MIL": "IT",
-    "STO": "SE", "SIX": "CH", "BME": "ES", "HEL": "FI", "OSL": "NO",
-    "CPH": "DK", "DUB": "IE", "LIS": "PT", "BRU": "BE", "VIE": "AT",
-    "JPX": "JP", "HKSE": "HK", "KSC": "KR", "KOE": "KR",
-    "SAO": "BR", "BSE": "IN", "NSE": "IN", "SES": "SG", "ASX": "AU",
-    "SHH": "CN", "SHZ": "CN", "TAI": "TW", "SET": "TH", "KLS": "MY",
-    "JKT": "ID", "MEX": "MX", "TSX": "CA", "NZE": "NZ",
-}
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v7")
 
@@ -163,28 +152,39 @@ def predict_hit_prob(stock) -> float:
     if not HAS_ML_MODEL or ML_MODEL is None:
         return 0.0
     try:
-        # Build feature vector matching backtest column names
+        # Build feature vector matching backtest column names AND scales.
+        # v7.2 fix: backtest stores RAW values for piotroski/altman_z/rsi/bull_score,
+        # but prior code was sending normalized (0-1) values — a silent scale
+        # mismatch that has been biasing hit_prob. Now matches backtest_full.py exactly.
         fs = stock.factor_scores or {}
         feature_map = {
+            # Features stored as 0-1 in backtest (normalized factor scores)
             "f_technical": fs.get("technical", 0) or 0,
             "f_upside": fs.get("upside", 0) or 0,
             "f_analyst": fs.get("analyst", 0) or 0,
             "f_earnings": fs.get("earnings", 0) or 0,
             "f_insider": fs.get("insider", 0) or 0,
-            "f_news": 0.5,  # removed factor, neutral
+            "f_news": 0.5,  # removed factor — kept for old-pkl backward compat
             "f_proximity": fs.get("proximity", 0) or 0,
-            "f_catastrophe": stock.catastrophe_score,
+            "f_catastrophe": stock.catastrophe_score,  # removed from composite, kept for old pkls
             "f_transcript": fs.get("transcript", 0) or 0,
             "f_institutional": fs.get("institutional", 0) or 0,
             "f_quality": fs.get("quality", 0) or 0,
-            "f_bull_score_raw": stock.bull_score / 10,
+            # v7.2 NEW — all scored 0-1 in backtest
+            "f_catalyst": fs.get("catalyst", 0) or 0,
+            "f_institutional_flow": fs.get("institutional_flow", 0) or 0,
+            "f_sector_momentum": fs.get("sector_momentum", 0) or 0,
+            "f_congressional": fs.get("congressional", 0) or 0,  # may be constant in old data
+            # Features stored RAW in backtest — v7.2 fix: match raw scale
+            "f_bull_score_raw": float(stock.bull_score),          # was /10 (wrong)
+            "f_rsi": float(stock.rsi),                            # was /100 (wrong)
+            "f_piotroski": float(stock.piotroski),                # was /9 (wrong)
+            "f_altman_z": float(stock.altman_z),                  # was min(/20, 1) (wrong)
+            # These were already raw-matched
             "f_momentum_20d": (stock.price - stock.sma50) / stock.sma50 if stock.sma50 > 0 else 0,
             "f_trend_strength": (stock.sma50 - stock.sma200) / stock.sma200 if stock.sma200 > 0 else 0,
-            "f_rsi": stock.rsi / 100,
             "f_prox_raw": (stock.price - stock.year_low) / (stock.year_high - stock.year_low)
                           if stock.year_high > stock.year_low > 0 else 0.5,
-            "f_piotroski": stock.piotroski / 9,
-            "f_altman_z": min(stock.altman_z / 20, 1.0),
         }
         X = np.array([[feature_map.get(f, 0) for f in ML_FEATURES]])
         prob = ML_MODEL.predict_proba(X)[0][1]  # probability of class 1 (hit +10%)
@@ -232,8 +232,6 @@ class Stock:
     symbol: str = ""
     price: float = 0.0
     currency: str = "USD"
-    exchange: str = ""
-    country: str = ""
 
     # Quote
     sma50: float = 0.0
@@ -470,7 +468,6 @@ def _parse_quote(q: dict) -> dict:
         "volume": int(q.get("volume", 0)),
         "avg_volume": int(q.get("avgVolume", 0)),
         "currency": q.get("currency", "USD"),
-        "exchange": q.get("exchange", ""),
     }
 
 def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
@@ -1776,9 +1773,10 @@ def compute_sector_momentum(sym: str, price: float, sma50: float,
 def compute_congressional(sym: str) -> dict:
     """Score recent Senate + House trading activity.
 
-    Endpoints now work on stable REST (previous v7.1 assumption that they
-    returned 404 was incorrect — param/URL issue). Backtest data treated
-    f_congressional as constant 0.5, so live signal is novel.
+    FMP stable REST endpoints: `senate-trades` and `house-trades` (confirmed
+    per FMP docs, Apr 2026). Earlier v7.2 used `senate-trading`/`house-trading`
+    which returned 404 — fixed. Backtest data treated f_congressional as
+    constant 0.5, so live signal is novel.
 
     Scoring:
       - Net buys > net sells, recent-weighted → bullish (>0.5)
@@ -1789,8 +1787,10 @@ def compute_congressional(sym: str) -> dict:
               "net_buys": 0, "net_sells": 0, "days_since_last": -1}
 
     # Fetch both chambers; combine
-    senate = fmp("senate-trading", {"symbol": sym}) or []
-    house = fmp("house-trading", {"symbol": sym}) or []
+    # FMP stable REST endpoints are `senate-trades` and `house-trades` (per FMP docs)
+    # — NOT `senate-trading`/`house-trading` which return 404.
+    senate = fmp("senate-trades", {"symbol": sym}) or []
+    house = fmp("house-trades", {"symbol": sym}) or []
     if not isinstance(senate, list): senate = []
     if not isinstance(house, list): house = []
     all_trades = senate + house
@@ -2214,10 +2214,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 factors_missing=coverage["missing"],
             )
 
-            # Exchange + country from quote data
-            s.exchange = q.get("exchange", "")
-            s.country = EXCHANGE_TO_COUNTRY.get(s.exchange, "")
-
             # Stash raw data for pass 2
             s._raw = {"tech": t, "analyst": a, "value": v, "price": price,
                        "insider": ins, "proximity": prox,
@@ -2242,13 +2238,13 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         cov_dist = {}
         for s in pass1_stocks:
             cov_dist[s.factor_coverage] = cov_dist.get(s.factor_coverage, 0) + 1
-        log.info(f"  Coverage: avg {avg_cov:.1f}/10 factors | distribution: {dict(sorted(cov_dist.items()))}")
+        log.info(f"  Coverage: avg {avg_cov:.1f}/13 factors | distribution: {dict(sorted(cov_dist.items()))}")
 
     # Apply minimum coverage filter (default 0 = no filter)
     if min_coverage > 0:
         before = len(pass1_stocks)
         pass1_stocks = [s for s in pass1_stocks if s.factor_coverage >= min_coverage]
-        log.info(f"  Coverage filter (>={min_coverage}/10): {before} → {len(pass1_stocks)} stocks")
+        log.info(f"  Coverage filter (>={min_coverage}/13): {before} → {len(pass1_stocks)} stocks")
 
     # ═══════════════ PASS 2: Expensive Enrichment ═══════════════
     top_n = min(enrich_top_n, len(pass1_stocks))
@@ -2363,7 +2359,7 @@ def format_report(stocks: list[Stock], region: str, macro: dict = None) -> str:
         lines.append(f"  {'─'*95}")
 
         for s in group[:TOP_N]:
-            cov_str = f"[{s.factor_coverage}/10 factors]"
+            cov_str = f"[{s.factor_coverage}/13 factors]"
             lines.append(f"\n  {s.symbol:<12} {s.currency} {s.price:>8.2f}  │  Composite: {s.composite:.3f}  │  {s.classification}  │  {cov_str}")
 
             # Factor breakdown (v7.1 — only show evaluated factors, mark missing)
@@ -2414,9 +2410,9 @@ def format_report(stocks: list[Stock], region: str, macro: dict = None) -> str:
     avg_cov = sum(s.factor_coverage for s in stocks) / len(stocks) if stocks else 0
     full_cov = sum(1 for s in stocks if s.factor_coverage >= 8)
     lines.append(f"  SUMMARY: {len(stocks)} screened → {strong_buy_count} STRONG BUY, {buy_count} BUY, {watch_count} WATCH")
-    lines.append(f"  Coverage: avg {avg_cov:.1f}/10 factors | {full_cov} stocks with 8+ factors")
+    lines.append(f"  Coverage: avg {avg_cov:.1f}/13 factors | {full_cov} stocks with 8+ factors")
     if stocks:
-        lines.append(f"  Top composite: {stocks[0].symbol} ({stocks[0].composite:.3f}, {stocks[0].factor_coverage}/10 factors)")
+        lines.append(f"  Top composite: {stocks[0].symbol} ({stocks[0].composite:.3f}, {stocks[0].factor_coverage}/13 factors)")
 
     return "\n".join(lines)
 
@@ -2502,7 +2498,7 @@ def save_scan_to_gcs(stocks: list, region: str, macro: dict = None):
     payload = {
         "scan_date": datetime.now().isoformat(),
         "region": region,
-        "version": "v7.1",
+        "version": "v7.2",
         "weights": WEIGHTS,
         "macro": {
             "regime": (macro or {}).get("regime", "NEUTRAL"),
