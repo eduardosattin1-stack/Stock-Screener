@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap } from "lucide-react";
+import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap, Plus, X } from "lucide-react";
 
 const GCS_SCANS = "/api/gcs/scans";
 const GCS_PORTFOLIO = "/api/gcs/portfolio";
@@ -18,6 +18,8 @@ const SIG: Record<string,{color:string;bg:string;border:string}> = {
   HOLD:{color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0"},
   SELL:{color:"#ef4444",bg:"#fef2f2",border:"#fecaca"},
 };
+// Monitor actions are INFORMATIONAL — they don't trigger any UI state changes.
+// User explicitly closes positions via the Close button.
 const ACT_STYLE: Record<string,{color:string;bg:string;border:string;pulse?:boolean}> = {
   SELL:{color:"#ef4444",bg:"#fef2f2",border:"#fecaca",pulse:true},
   TRIM:{color:"#f59e0b",bg:"#fffbeb",border:"#fde68a"},
@@ -26,7 +28,24 @@ const ACT_STYLE: Record<string,{color:string;bg:string;border:string;pulse?:bool
 };
 
 function getLocalPortfolio():Position[]{if(typeof window==="undefined")return[];try{return JSON.parse(localStorage.getItem("screener_portfolio")||"[]");}catch{return[];}}
-function saveLocalPortfolio(p:Position[]){localStorage.setItem("screener_portfolio",JSON.stringify(p));}
+function clearLocalPortfolio(){if(typeof window!=="undefined")localStorage.removeItem("screener_portfolio");}
+
+// API helpers — posts to /api/portfolio/* which proxies to Cloud Run
+async function apiAdd(p:{symbol:string;entry_price:number;shares:number;notes:string}){
+  const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
+  if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+  return r.json();
+}
+async function apiClose(p:{symbol:string;exit_price:number;reason?:string}){
+  const r=await fetch("/api/portfolio/close",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
+  if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+  return r.json();
+}
+async function fetchGcsState(){
+  const r=await fetch(`${GCS_PORTFOLIO}/state.json?t=${Date.now()}`);
+  if(!r.ok) throw new Error("no state");
+  return r.json();
+}
 
 export default function Portfolio(){
   const router=useRouter();
@@ -38,45 +57,81 @@ export default function Portfolio(){
   const[scanDate,setScanDate]=useState("—");
   const[tab,setTab]=useState<"positions"|"history">("positions");
   const[expandedRow,setExpandedRow]=useState<string|null>(null);
-  const[source,setSource]=useState<"gcs"|"local">("local");
+  const[closingRow,setClosingRow]=useState<string|null>(null);
+  const[showAddModal,setShowAddModal]=useState(false);
+  const[errorMsg,setErrorMsg]=useState<string|null>(null);
 
-  useEffect(()=>{
-    // Try GCS portfolio first, fall back to localStorage
-    Promise.allSettled([
-      fetch(`${GCS_PORTFOLIO}/state.json`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
-      fetch(`${GCS_PORTFOLIO}/monitor.json`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
-      fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()),
-    ]).then(([stateRes,monitorRes,scanRes])=>{
-      // Portfolio state
-      if(stateRes.status==="fulfilled"&&stateRes.value?.positions){
-        setPortfolio(stateRes.value.positions);
-        if(stateRes.value.history) setHistory(stateRes.value.history);
-        setSource("gcs");
-      } else {
-        setPortfolio(getLocalPortfolio());
-        setSource("local");
+  // Load state: GCS is authoritative. On first load, migrate any legacy
+  // localStorage positions up to GCS, then clear localStorage.
+  async function refresh(){
+    try {
+      const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
+        fetchGcsState(),
+        fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
+        fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()),
+      ]);
+
+      let gcsPositions:Position[]=[];
+      let gcsHistory:HistoryEntry[]=[];
+      if(stateRes.status==="fulfilled"){
+        gcsPositions=stateRes.value?.positions||[];
+        gcsHistory=stateRes.value?.history||[];
       }
-      // Monitor actions
+
+      // One-time migration: if localStorage has positions not in GCS, push them up.
+      const localPortfolio=getLocalPortfolio();
+      if(localPortfolio.length>0){
+        const gcsSymbols=new Set(gcsPositions.map(p=>p.symbol));
+        const toMigrate=localPortfolio.filter(p=>!gcsSymbols.has(p.symbol));
+        if(toMigrate.length){
+          console.log(`Migrating ${toMigrate.length} positions from localStorage to GCS`);
+          for(const p of toMigrate){
+            try { await apiAdd({symbol:p.symbol,entry_price:p.entry_price,shares:p.shares,notes:p.notes||""}); }
+            catch(e){ console.error("migration failed for",p.symbol,e); }
+          }
+          // Re-fetch after migration
+          try { const fresh=await fetchGcsState(); gcsPositions=fresh?.positions||[]; gcsHistory=fresh?.history||[]; } catch{}
+        }
+        clearLocalPortfolio();
+      }
+
+      setPortfolio(gcsPositions);
+      setHistory(gcsHistory);
+
       if(monitorRes.status==="fulfilled"){
         const m:Record<string,MonitorAction>={};
         const d=monitorRes.value;
-        // Handle both formats: { actions: [...] } wrapper OR flat array
         const actions:MonitorAction[] = d?.actions ? d.actions : Array.isArray(d) ? d : [];
         actions.forEach((a:MonitorAction)=>{if(a.symbol)m[a.symbol]=a;});
         setMonitors(m);
       }
-      // Scan data for live prices
       if(scanRes.status==="fulfilled"){
         const map:Record<string,StockData>={};
         scanRes.value.stocks?.forEach((s:StockData)=>{map[s.symbol]=s;});
         setLiveData(map);
         setScanDate(scanRes.value.scan_date?new Date(scanRes.value.scan_date).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"—");
       }
+    } catch(e:any) {
+      console.error("Portfolio load failed:",e);
+      setErrorMsg("Failed to load portfolio from server");
+    } finally {
       setLoading(false);
-    });
-  },[]);
+    }
+  }
+  useEffect(()=>{refresh();},[]);
 
-  const removePosition=(sym:string)=>{const u=portfolio.filter(p=>p.symbol!==sym);setPortfolio(u);if(source==="local")saveLocalPortfolio(u);};
+  // User-initiated position close — prompts for exit price, writes to GCS.
+  // Does NOT use signal state; signal is informational only.
+  async function closePosition(sym:string,exitPrice:number,reason:string){
+    try {
+      setErrorMsg(null);
+      await apiClose({symbol:sym,exit_price:exitPrice,reason:reason||"User close"});
+      setClosingRow(null);
+      await refresh();
+    } catch(e:any) {
+      setErrorMsg(`Close failed: ${e.message}`);
+    }
+  }
 
   const stats=useMemo(()=>{
     let totalCost=0,totalValue=0,winners=0,losers=0;
@@ -103,9 +158,25 @@ export default function Portfolio(){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,paddingBottom:12,borderBottom:"1px solid #f3f4f6"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",letterSpacing:"0.02em",fontFamily:"var(--font-mono)"}}>PORTFOLIO<span style={{color:"#9ca3af",fontWeight:400}}>/tracker</span></span>
-          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:source==="gcs"?"#10b981":"#6b7280",background:source==="gcs"?"#e8f5ee":"#f8fafc",border:`1px solid ${source==="gcs"?"#b8dcc8":"#e2e8f0"}`}}>{source==="gcs"?"GCS":"Local"}</span>
+          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"#10b981",background:"#e8f5ee",border:"1px solid #b8dcc8"}}>CLOUD</span>
         </div>
-        <span style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
+          <button onClick={()=>setShowAddModal(true)} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"6px 12px",borderRadius:5,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase"}}><Plus size={12}/> Position</button>
+        </div>
+      </div>
+
+      {errorMsg&&(
+        <div style={{marginBottom:12,padding:"10px 14px",borderRadius:6,background:"#fef2f2",border:"1px solid #fecaca",display:"flex",alignItems:"center",gap:8}}>
+          <AlertTriangle size={14} color="#ef4444"/>
+          <span style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#ef4444",flex:1}}>{errorMsg}</span>
+          <button onClick={()=>setErrorMsg(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#ef4444"}}><X size={12}/></button>
+        </div>
+      )}
+
+      {/* Informational note about signal badges */}
+      <div style={{marginBottom:12,padding:"6px 12px",borderRadius:5,background:"#f8fafc",border:"1px solid #e2e8f0",fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+        <strong style={{color:"#1a1a1a"}}>Note:</strong> Signal and Action badges show the screener's current view — they are informational. Positions are only closed when you click Close.
       </div>
 
       {/* Summary cards */}
@@ -125,7 +196,7 @@ export default function Portfolio(){
 
       {tab==="positions"&&(
         portfolio.length===0?(
-          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><BarChart3 size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No positions yet</div><button onClick={()=>router.push("/")} style={{marginTop:16,fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer"}}>Open Screener</button></div>
+          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><BarChart3 size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No positions yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>setShowAddModal(true)} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer"}}>+ Add First Position</button><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#6b7280",background:"transparent",border:"1px solid #e5e7eb",cursor:"pointer"}}>Open Screener</button></div></div>
         ):(
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
@@ -182,9 +253,26 @@ export default function Portfolio(){
                           </div>
                         </td>
                         <td style={{padding:"10px 6px",textAlign:"center"}}>
-                          {source==="local"&&<button onClick={e=>{e.stopPropagation();removePosition(p.symbol);}} style={{background:"none",border:"none",cursor:"pointer",padding:4,borderRadius:3,color:"#9ca3af",transition:"color 0.15s"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color="#ef4444";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="#9ca3af";}}><Trash2 size={12}/></button>}
+                          <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===p.symbol?null:p.symbol);}} style={{
+                            fontSize:9,padding:"3px 10px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,
+                            border:closingRow===p.symbol?"1px solid #ef4444":"1px solid #e5e7eb",
+                            background:closingRow===p.symbol?"#fef2f2":"#fff",
+                            color:closingRow===p.symbol?"#ef4444":"#6b7280",
+                            cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
+                          }}>{closingRow===p.symbol?"Cancel":"Close"}</button>
                         </td>
                       </tr>
+                      {/* Close Position form — user-initiated exit */}
+                      {closingRow===p.symbol&&(
+                        <tr key={`${p.symbol}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"#fef2f2",borderTop:"1px solid #fecaca"}}>
+                          <ClosePositionForm
+                            position={p}
+                            currentPrice={cur}
+                            onConfirm={(exitPrice,reason)=>closePosition(p.symbol,exitPrice,reason)}
+                            onCancel={()=>setClosingRow(null)}
+                          />
+                        </td></tr>
+                      )}
                       {/* Expanded monitor details */}
                       {isExpanded&&mon&&mon.reasons?.length>0&&(
                         <tr key={`${p.symbol}-detail`}><td colSpan={11} style={{padding:"0 12px 12px 40px",background:"#f8faf9"}}>
@@ -257,9 +345,112 @@ export default function Portfolio(){
       )}
 
       <div style={{textAlign:"center",marginTop:12,fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>
-        {source==="gcs"?"Positions from GCS · Monitor actions daily":"Prices from latest scan · Stored locally"} · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
+        Positions synced to cloud · Monitor updates prices daily · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
       </div>
+
+      {showAddModal&&<AddPositionModal onClose={()=>setShowAddModal(false)} onAdded={async()=>{setShowAddModal(false);await refresh();}}/>}
+
       <style>{`@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }`}</style>
+    </div>
+  );
+}
+
+// ── Close Position Form ─────────────────────────────────────────────────────
+// Prompts for exit price (defaults to current scan price) and optional reason.
+// User-initiated only — never triggered by signal state.
+function ClosePositionForm({position,currentPrice,onConfirm,onCancel}:{
+  position:Position; currentPrice:number; onConfirm:(exitPrice:number,reason:string)=>void; onCancel:()=>void;
+}){
+  const [exitPrice,setExitPrice]=useState(currentPrice.toFixed(2));
+  const [reason,setReason]=useState("");
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  const pnl=parseFloat(exitPrice) > 0 ? (parseFloat(exitPrice)-position.entry_price)/position.entry_price*100 : 0;
+  async function handle(){
+    const p=parseFloat(exitPrice);
+    if(!p||p<=0){setErr("Exit price required");return;}
+    setSaving(true);setErr("");
+    try { await onConfirm(p,reason); }
+    catch(e:any){ setErr(e.message||"Failed"); setSaving(false); }
+  }
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+      <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"#ef4444"}}>Close {position.symbol}:</span>
+      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+        Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid #fecaca",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
+      </label>
+      <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:pnl>=0?"#10b981":"#ef4444",fontWeight:600}}>
+        P&L: {pnl>=0?"+":""}{pnl.toFixed(1)}%
+      </span>
+      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1,minWidth:160}}>
+        Reason <input type="text" value={reason} onChange={e=>setReason(e.target.value)} placeholder="optional — why you're selling" maxLength={80} style={{width:"100%",marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+      </label>
+      <button onClick={handle} disabled={saving} style={{padding:"5px 14px",border:"none",borderRadius:3,cursor:saving?"wait":"pointer",background:"#ef4444",color:"#fff",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>
+        {saving?"Closing…":"Confirm Close"}
+      </button>
+      <button onClick={onCancel} disabled={saving} style={{padding:"5px 10px",border:"1px solid #e5e7eb",borderRadius:3,cursor:"pointer",background:"#fff",color:"#6b7280",fontSize:11,fontFamily:"var(--font-mono)"}}>
+        Cancel
+      </button>
+      {err&&<span style={{color:"#ef4444",fontSize:10,fontFamily:"var(--font-mono)"}}>{err}</span>}
+    </div>
+  );
+}
+
+// ── Add Position Modal ──────────────────────────────────────────────────────
+function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}){
+  const [symbol,setSymbol]=useState("");
+  const [price,setPrice]=useState("");
+  const [shares,setShares]=useState("");
+  const [notes,setNotes]=useState("");
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  async function handle(){
+    const sy=symbol.trim().toUpperCase();
+    const p=parseFloat(price), sh=parseFloat(shares);
+    if(!sy){setErr("Symbol required");return;}
+    if(!p||p<=0){setErr("Price required");return;}
+    if(!sh||sh<=0){setErr("Shares required");return;}
+    setSaving(true);setErr("");
+    try {
+      await apiAdd({symbol:sy,entry_price:p,shares:sh,notes});
+      onAdded();
+    } catch(e:any){
+      setErr(e.message||"Failed");setSaving(false);
+    }
+  }
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:"20px 24px",minWidth:400,maxWidth:500}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)"}}>Add Position</span>
+          <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af"}}><X size={16}/></button>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+            Symbol
+            <input type="text" value={symbol} onChange={e=>{setSymbol(e.target.value);setErr("");}} placeholder="AAPL" autoFocus style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",textTransform:"uppercase"}}/>
+          </label>
+          <div style={{display:"flex",gap:10}}>
+            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1}}>
+              Entry price ($)
+              <input type="number" step="0.01" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}} placeholder="0.00" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
+            </label>
+            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1}}>
+              Shares
+              <input type="number" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} placeholder="0" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
+            </label>
+          </div>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+            Notes (optional)
+            <input type="text" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="thesis, stop-loss, etc." maxLength={100} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:12,fontFamily:"var(--font-mono)"}}/>
+          </label>
+          {err&&<div style={{color:"#ef4444",fontSize:11,fontFamily:"var(--font-mono)",padding:"4px 0"}}>{err}</div>}
+          <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:6}}>
+            <button onClick={onClose} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"1px solid #e5e7eb",background:"#fff",cursor:"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,color:"#6b7280"}}>Cancel</button>
+            <button onClick={handle} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"none",background:saving?"#9ca3af":"#2d7a4f",color:"#fff",cursor:saving?"wait":"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>{saving?"Saving…":"Add Position"}</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
