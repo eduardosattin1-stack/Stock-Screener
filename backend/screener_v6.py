@@ -377,6 +377,7 @@ SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-sc
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
 SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector perf calls
 COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
+EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earnings, populated lazily
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -1362,48 +1363,70 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
     today_str = today.strftime("%Y-%m-%d")
 
     # ─── A) Upcoming Earnings ───────────────────────────────────
-    earnings_cal = fmp("earnings-calendar", {"symbol": sym})
-    if earnings_cal:
-        for e in earnings_cal:
-            report_date = e.get("date", "")
-            if report_date >= today_str:
-                try:
-                    days_until = (datetime.strptime(report_date, "%Y-%m-%d") - today).days
-                except:
-                    days_until = 999
-                result["days_to_earnings"] = days_until
+    # FMP /stable/earnings-calendar does NOT honor a symbol filter — it
+    # returns the global calendar for a date range. Fetch 90 days forward
+    # ONCE per scan and cache per-symbol. Use date() arithmetic (not datetime)
+    # so a same-day scan doesn't read as "-1d" due to time-of-day drift.
+    today_date = today.date()
 
-                if days_until <= 14:
-                    # Check beat history from analyst data or fresh fetch
-                    eps_beats = (analyst or {}).get("eps_beats", 0)
-                    eps_total = (analyst or {}).get("eps_total", 0)
+    # Populate cache on first call: one global 90-day fetch, indexed by symbol
+    if not EARNINGS_CAL_CACHE:
+        end_date = (today + timedelta(days=90)).strftime("%Y-%m-%d")
+        all_events = fmp("earnings-calendar", {"from": today_str, "to": end_date})
+        if all_events and isinstance(all_events, list):
+            for ev in all_events:
+                s_ev = ev.get("symbol") or ""
+                d_ev = ev.get("date") or ""
+                if s_ev and d_ev >= today_str:
+                    EARNINGS_CAL_CACHE.setdefault(s_ev, []).append(ev)
+            for s_ev in EARNINGS_CAL_CACHE:
+                EARNINGS_CAL_CACHE[s_ev].sort(key=lambda e: e.get("date", ""))
+            log.info(f"  Earnings calendar cached: {len(EARNINGS_CAL_CACHE)} symbols with upcoming earnings in next 90d")
+        else:
+            # Mark as populated (empty) so we don't retry on every stock
+            EARNINGS_CAL_CACHE["__empty_sentinel__"] = []
 
-                    if eps_total == 0:
-                        # Fetch if not provided
-                        hist = fmp("earnings", {"symbol": sym, "limit": 8})
-                        if hist:
-                            for h in hist:
-                                a, e2 = h.get("epsActual"), h.get("epsEstimated")
-                                if a is not None and e2 is not None:
-                                    eps_total += 1
-                                    if float(a) >= float(e2):
-                                        eps_beats += 1
+    sym_events = EARNINGS_CAL_CACHE.get(sym, [])
+    if sym_events:
+        e = sym_events[0]
+        report_date = e.get("date", "")
+        try:
+            days_until = (datetime.strptime(report_date, "%Y-%m-%d").date() - today_date).days
+        except:
+            days_until = 999
+        result["days_to_earnings"] = days_until
 
-                    beat_rate = eps_beats / eps_total if eps_total > 0 else 0.5
+        if 0 <= days_until <= 14:
+            # Check beat history from analyst data or fresh fetch
+            eps_beats = (analyst or {}).get("eps_beats", 0)
+            eps_total = (analyst or {}).get("eps_total", 0)
 
-                    if beat_rate >= 0.875:
-                        result["score"] += 0.30
-                        result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beat streak")
-                    elif beat_rate >= 0.75:
-                        result["score"] += 0.20
-                        result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beats")
-                    elif beat_rate >= 0.5:
-                        result["score"] += 0.10
-                        result["flags"].append(f"Earnings in {days_until}d, mixed history")
-                    else:
-                        result["score"] -= 0.10
-                        result["flags"].append(f"⚠ Earnings in {days_until}d, MISS-PRONE ({eps_beats}/{eps_total})")
-                break  # only care about next earnings
+            if eps_total == 0:
+                # Fetch if not provided
+                hist = fmp("earnings", {"symbol": sym, "limit": 8})
+                if hist:
+                    for h in hist:
+                        a, e2 = h.get("epsActual"), h.get("epsEstimated")
+                        if a is not None and e2 is not None:
+                            eps_total += 1
+                            if float(a) >= float(e2):
+                                eps_beats += 1
+
+            beat_rate = eps_beats / eps_total if eps_total > 0 else 0.5
+
+            if beat_rate >= 0.875:
+                result["score"] += 0.30
+                result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beat streak")
+            elif beat_rate >= 0.75:
+                result["score"] += 0.20
+                result["flags"].append(f"Earnings in {days_until}d, {eps_beats}/{eps_total} beats")
+            elif beat_rate >= 0.5:
+                result["score"] += 0.10
+                result["flags"].append(f"Earnings in {days_until}d, mixed history")
+            else:
+                result["score"] -= 0.10
+                result["flags"].append(f"⚠ Earnings in {days_until}d, MISS-PRONE ({eps_beats}/{eps_total})")
+
 
     # ─── B) Recent Analyst Moves (last 7 days) ─────────────────
     grades = fmp("grades", {"symbol": sym, "limit": 10})
@@ -1467,7 +1490,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 
     # Catalyst is evaluated if ANY data source returned something
     # (even if no events found — absence of events IS information)
-    result["_evaluated"] = bool(earnings_cal or grades or news)
+    result["_evaluated"] = bool(EARNINGS_CAL_CACHE or grades or news)
 
     return result
 
