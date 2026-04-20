@@ -11,7 +11,7 @@ SYSTEM 1 — Signal performance (composite model)
   Re-entry: separate row per BUY→SELL cycle
 
 SYSTEM 2 — P(+10%) hit rate (ML time model)
-  Entry: p10 > 0.70 AND not currently tracked
+  Entry: p10 > 0.60 AND not currently tracked
   Exit:  price hits +10% from entry OR 60 days elapsed
   Result: did the ML prediction materialize within the window
   Re-entry: only after current window closes
@@ -52,7 +52,7 @@ STOCK_HISTORY_PREFIX = "stock_history"
 # Config
 HIT_THRESHOLD_PCT = 10.0     # P(+10%) target
 HIT_WINDOW_DAYS   = 60       # P(+10%) observation window
-P10_INCLUSION     = 0.70     # Minimum ML p10 for hit-rate tracking
+P10_INCLUSION     = 0.60     # Minimum ML p10 for hit-rate tracking
 STOCK_HISTORY_KEEP_DAYS = 365  # Trim stock_history beyond this
 
 
@@ -264,7 +264,7 @@ def _update_hitrate_tracks(stocks: list, today_str: str, region: str) -> tuple[i
     """
     Update hit_rate_tracking for System 2.
 
-    - Add new entries for stocks with p10 > 0.70 not currently tracked.
+    - Add new entries for stocks with p10 > 0.60 not currently tracked.
     - Update max_price for tracked entries.
     - Close windows that hit +10% OR exceed 60 days.
 
@@ -361,7 +361,7 @@ def _update_hitrate_tracks(stocks: list, today_str: str, region: str) -> tuple[i
     # ─── Rebuild open list ───
     open_entries = [e for e in open_entries if not e.pop("__closed__", False)]
 
-    # ─── Identify new p10 > 0.70 entries ───
+    # ─── Identify new p10 > 0.60 entries ───
     currently_open_syms = {e["symbol"] for e in open_entries}
 
     for s in stocks:
@@ -487,7 +487,7 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
 
     try:
         s2_new, s2_closed, s2_active = _update_hitrate_tracks(stocks, today_str, region)
-        log.info(f"  Hit-rate tracker (System 2): +{s2_new} new p10>0.70, {s2_closed} closed, {s2_active} active")
+        log.info(f"  Hit-rate tracker (System 2): +{s2_new} new p10>0.60, {s2_closed} closed, {s2_active} active")
     except Exception as e:
         log.error(f"signal_tracker System 2 failed: {e}", exc_info=True)
 
