@@ -113,16 +113,25 @@ def gcs_upload(path, data):
         return False
 
 def load_state():
-    """Load portfolio state from GCS, fallback to local file."""
+    """Load portfolio state from GCS, fallback to local file.
+
+    v7.2: normalizes schema on load — adds any missing top-level keys so
+    older state files from pre-v7.2 monitors upgrade transparently.
+    """
+    def _normalize(s):
+        s.setdefault("positions", [])
+        s.setdefault("history", [])
+        s.setdefault("last_monitor", "")
+        return s
     state = gcs_download(STATE_PATH)
     if state and "positions" in state:
         log.info(f"Loaded state from GCS: {len(state['positions'])} positions")
-        return state
+        return _normalize(state)
     try:
         with open(LOCAL_STATE) as f:
             state = json.load(f)
             log.info(f"Loaded state from local: {len(state.get('positions', []))} positions")
-            return state
+            return _normalize(state)
     except FileNotFoundError:
         return {"positions": [], "history": [], "last_monitor": ""}
 
@@ -191,7 +200,10 @@ def add_position(state, symbol, entry_price, shares=0, notes=""):
                 ups = compute_upside_score(a, v, q["price"])
                 qual = compute_quality_score(v)
                 cata = compute_catalyst_score(symbol, analyst=a)
-                entry_composite, entry_signal, _, _ = compute_composite_v7(
+                # v7.2: compute_composite_v7 returns 5 values (composite, signal,
+                # factors, reasons, coverage). Pre-v7.2 it returned 4 — legacy
+                # code here unpacked 4 and silently broke on add after the deploy.
+                entry_composite, entry_signal, _, _, _ = compute_composite_v7(
                     t, a, v, q["price"], ins, prox, earn, ups,
                     quality=qual, catalyst=cata,
                 )
@@ -225,6 +237,8 @@ def remove_position(state, symbol, exit_price=None, reason="Manual removal"):
     p = pos[0]
     pnl = ((exit_price - p["entry_price"]) / p["entry_price"] * 100) if exit_price else 0
 
+    # v7.2: gracefully upgrade older state files that don't have 'history' yet
+    state.setdefault("history", [])
     state["history"].append({
         "symbol": symbol,
         "action": "REMOVED",
