@@ -1,18 +1,3 @@
-"""
-Cloud Run HTTP server for CB Screener v7.2.
-
-Endpoints:
-  GET  /health                          — liveness check
-  GET  /transcript?symbol=X&quarters=8  — Claude earnings-call analysis
-  POST /                                — run scan (body: {region, symbols})
-  POST /portfolio/add                   — add position {symbol, entry_price, shares, notes}
-  POST /portfolio/close                 — close position {symbol, exit_price, reason}
-  GET  /portfolio/state                 — return current portfolio state.json
-
-Security note:
-  /portfolio/add and /portfolio/close are unauthenticated. Low-value write
-  target; worst case is restoring portfolio/state.json from GCS versioning.
-"""
 import os, json, traceback
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
@@ -24,16 +9,14 @@ FMP_KEY = os.environ.get("FMP_API_KEY", "")
 FMP_BASE = "https://financialmodelingprep.com/stable"
 
 
-# ---------------------------------------------------------------------------
-# Transcripts (unchanged from v7.1)
-# ---------------------------------------------------------------------------
-
 def get_transcripts(symbol: str, num_quarters: int = 8) -> list[dict]:
     """Fetch up to num_quarters of earning call transcripts, most recent first."""
     transcripts = []
     now = datetime.now()
+
+    # Generate candidate (year, quarter) pairs going back ~2.5 years
     candidates = []
-    for offset in range(num_quarters + 4):
+    for offset in range(num_quarters + 4):  # extra buffer for gaps
         m = now.month - offset * 3
         y = now.year
         while m <= 0:
@@ -42,6 +25,7 @@ def get_transcripts(symbol: str, num_quarters: int = 8) -> list[dict]:
         q = (m - 1) // 3 + 1
         if (y, q) not in candidates:
             candidates.append((y, q))
+
     for y, q in candidates:
         if len(transcripts) >= num_quarters:
             break
@@ -52,18 +36,21 @@ def get_transcripts(symbol: str, num_quarters: int = 8) -> list[dict]:
                 data = r.json()
                 if isinstance(data, list) and data and data[0].get("content"):
                     transcripts.append({
-                        "year": y, "quarter": q,
+                        "year": y,
+                        "quarter": q,
                         "date": data[0].get("date", ""),
                         "content": data[0]["content"],
                     })
         except Exception:
             continue
+
+    # Sort: oldest first (chronological for trend analysis)
     transcripts.sort(key=lambda t: (t["year"], t["quarter"]))
     return transcripts
 
 
 def analyze_transcripts(symbol: str, transcripts: list[dict]) -> str:
-    """Multi-quarter transcript analysis via Claude API."""
+    """Send multiple quarters of transcripts to Claude for evolution analysis."""
     if not ANTHROPIC_API_KEY:
         return "Error: ANTHROPIC_API_KEY not set on server."
     if not transcripts:
@@ -71,38 +58,72 @@ def analyze_transcripts(symbol: str, transcripts: list[dict]) -> str:
 
     n = len(transcripts)
     latest = transcripts[-1]
+
+    # If only 1 transcript, do single-quarter analysis
     if n == 1:
         return _analyze_single(symbol, latest)
 
+    # Build the multi-quarter prompt
+    # Truncate each transcript to fit context (~15K chars each for 8 quarters = ~120K)
     max_per_transcript = 120000 // max(n, 1)
-    blocks = []
+    transcript_blocks = []
     for t in transcripts:
         label = f"Q{t['quarter']} {t['year']} ({t['date']})"
         content = t["content"][:max_per_transcript]
-        blocks.append(f"=== {label} ===\n{content}")
-    combined = "\n\n".join(blocks)
+        transcript_blocks.append(f"=== {label} ===\n{content}")
+
+    combined = "\n\n".join(transcript_blocks)
 
     prompt = f"""You are analyzing {n} consecutive quarterly earnings call transcripts for {symbol}, spanning from Q{transcripts[0]['quarter']} {transcripts[0]['year']} to Q{latest['quarter']} {latest['year']}.
 
-Trace the evolution across quarters. Identify:
+Your job is to extract what ONLY transcripts reveal — the evolution of management's thinking, tone, and credibility over time. This is the investor's edge: first-hand access to management and analyst pushback that no metric captures.
 
-1. **Narrative Shifts** — how did management's framing evolve? What themes appeared, strengthened, or faded?
-2. **Guidance Track Record** — did guidance hold up? Beats, misses, revisions.
-3. **Tone Trajectory** — confident → defensive, or steady, or improving? Quote specific phrases.
-4. **Analyst Focus** — what concerns grew; what disappeared?
-5. **Strategic Pivots** — any clear shifts in priorities, capex, M&A, capital return?
-6. **Execution Quality** — consistent delivery on stated milestones? Name specific ones.
+Provide a structured analysis:
 
-INVESTMENT IMPLICATION
+## 1. NARRATIVE ARC
+How has management's core story evolved? What were they emphasizing 2 years ago vs now? Has the thesis shifted, expanded, or contracted? Are they still talking about the same growth drivers or have new ones emerged?
+
+## 2. TONE & CONFIDENCE SHIFT
+Rate management confidence trajectory: Rising / Stable / Declining
+- Compare the language, hedging, and assertiveness across quarters
+- Are they getting more or less specific with guidance?
+- Any shift from offensive (growth, investment, opportunity) to defensive (efficiency, cost-cutting, macro uncertainty) language?
+
+## 3. GUIDANCE CREDIBILITY
+- Track key guidance given in past calls vs actual results in subsequent calls
+- Did they deliver on promises? Over-deliver? Miss?
+- Score guidance reliability: High / Medium / Low
+- Any pattern of sandbagging (consistently beating low guidance)?
+
+## 4. ANALYST PRESSURE POINTS
+- What questions keep coming up that management deflects or gives non-answers to?
+- Any topics analysts pushed on that management later had to address with bad news?
+- What are analysts worried about that management isn't addressing?
+
+## 5. RED FLAGS & GREEN FLAGS
+🟢 Green flags (positive evolution):
+- List specific examples with quarter references
+
+🔴 Red flags (concerning shifts):
+- List specific examples with quarter references
+
+## 6. HIDDEN SIGNALS
+What subtle shifts in language or emphasis might signal future changes? Things like:
+- New terminology introduced or old terminology dropped
+- Changing how they discuss competition
+- Shifts in how they talk about capital allocation
+- Any management changes and what the new voices are saying differently
+
+## 7. INVESTMENT IMPLICATION
 Based on the trajectory of these transcripts, is the fundamental story:
-- STRENGTHENING
-- STABLE
-- DETERIORATING
-- PIVOTING
+- STRENGTHENING: Management executing well, narrative improving
+- STABLE: Consistent execution, no major shifts
+- DETERIORATING: Cracks appearing, defensive posture emerging
+- PIVOTING: Fundamental story changing (could be positive or negative)
 
 One-paragraph summary for an investor deciding whether to buy, hold, or sell.
 
-Be specific. Reference exact quarters. Quote brief phrases when they reveal tone shifts.
+Be specific. Reference exact quarters. Quote brief phrases when they reveal tone shifts. This analysis should give an investor an edge that no financial metric provides.
 
 Transcripts (chronological order):
 
@@ -122,16 +143,21 @@ Transcripts (chronological order):
         },
         timeout=120,
     )
+
     if resp.status_code != 200:
         return f"Claude API error: {resp.status_code} - {resp.text[:200]}"
+
     data = resp.json()
-    return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+    return "".join(
+        block.get("text", "") for block in data.get("content", []) if block.get("type") == "text"
+    )
 
 
 def _analyze_single(symbol: str, transcript: dict) -> str:
-    """Fallback: single-quarter analysis."""
+    """Fallback: analyze a single transcript when only one is available."""
     text = transcript["content"][:80000]
     label = f"Q{transcript['quarter']} {transcript['year']}"
+
     resp = requests.post(
         "https://api.anthropic.com/v1/messages",
         headers={
@@ -158,121 +184,21 @@ Transcript:
         },
         timeout=60,
     )
+
     if resp.status_code != 200:
         return f"Claude API error: {resp.status_code} - {resp.text[:200]}"
+
     data = resp.json()
-    return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+    return "".join(
+        block.get("text", "") for block in data.get("content", []) if block.get("type") == "text"
+    )
 
-
-# ---------------------------------------------------------------------------
-# v7.2 NEW: Portfolio CRUD handlers (user-authored positions)
-# ---------------------------------------------------------------------------
-
-def handle_portfolio_add(body: dict) -> tuple[int, dict]:
-    """POST /portfolio/add — user adds a position.
-    Uses monitor_v7.add_position + save_state, which persist to GCS.
-    """
-    try:
-        from monitor_v7 import load_state, save_state, add_position
-    except ImportError as e:
-        return 500, {"error": f"Backend module missing: {e}"}
-
-    symbol = (body.get("symbol") or "").strip().upper()
-    entry_price = float(body.get("entry_price") or 0)
-    shares = float(body.get("shares") or 0)
-    notes = (body.get("notes") or "").strip()[:200]
-
-    if not symbol:
-        return 400, {"error": "symbol required"}
-    if entry_price <= 0:
-        return 400, {"error": "entry_price must be positive"}
-    if shares <= 0:
-        return 400, {"error": "shares must be positive"}
-
-    state = load_state()
-    state = add_position(state, symbol, entry_price=entry_price,
-                         shares=shares, notes=notes)
-    save_state(state)
-    return 200, {
-        "ok": True, "symbol": symbol,
-        "positions": len(state.get("positions", [])),
-    }
-
-
-def handle_portfolio_close(body: dict) -> tuple[int, dict]:
-    """POST /portfolio/close — user closes a position.
-    Records exit in history via monitor_v7.remove_position.
-    """
-    try:
-        from monitor_v7 import load_state, save_state, remove_position
-    except ImportError as e:
-        return 500, {"error": f"Backend module missing: {e}"}
-
-    symbol = (body.get("symbol") or "").strip().upper()
-    exit_price = float(body.get("exit_price") or 0)
-    reason = (body.get("reason") or "User close").strip()[:200]
-
-    if not symbol:
-        return 400, {"error": "symbol required"}
-    if exit_price <= 0:
-        return 400, {"error": "exit_price must be positive"}
-
-    state = load_state()
-    if symbol not in [p["symbol"] for p in state.get("positions", [])]:
-        return 404, {"error": f"{symbol} not in portfolio"}
-
-    state = remove_position(state, symbol, exit_price=exit_price, reason=reason)
-    save_state(state)
-    return 200, {
-        "ok": True, "symbol": symbol,
-        "positions": len(state.get("positions", [])),
-        "history": len(state.get("history", [])),
-    }
-
-
-def handle_portfolio_state_get() -> tuple[int, dict]:
-    """GET /portfolio/state — return current portfolio state."""
-    try:
-        from monitor_v7 import load_state
-    except ImportError as e:
-        return 500, {"error": f"Backend module missing: {e}"}
-    state = load_state()
-    return 200, state
-
-
-# ---------------------------------------------------------------------------
-# HTTP Handler
-# ---------------------------------------------------------------------------
 
 class Handler(BaseHTTPRequestHandler):
     def _cors(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
-
-    def _json(self, status: int, payload: dict):
-        self.send_response(status)
-        self._cors()
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-        self.wfile.write(json.dumps(payload, default=str).encode("utf-8"))
-
-    def _text(self, status: int, text: str, ctype: str = "text/plain; charset=utf-8"):
-        self.send_response(status)
-        self._cors()
-        self.send_header("Content-Type", ctype)
-        self.end_headers()
-        self.wfile.write(text.encode("utf-8"))
-
-    def _read_body(self) -> dict:
-        length = int(self.headers.get("Content-Length", 0))
-        if length <= 0:
-            return {}
-        raw = self.rfile.read(length)
-        try:
-            return json.loads(raw)
-        except Exception:
-            return {}
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -283,82 +209,130 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         qs = parse_qs(parsed.query)
 
-        # ─── Transcript endpoint (v7.1) ───
         if parsed.path == "/transcript":
             symbol = qs.get("symbol", [""])[0].upper()
             if not symbol:
-                self._json(400, {"error": "Missing ?symbol= parameter"})
+                self.send_response(400)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Missing ?symbol= parameter"}).encode())
                 return
+
+            # Optional: ?quarters=8 (default 8, max 12)
             quarters = min(int(qs.get("quarters", ["8"])[0]), 12)
+
             try:
                 transcripts = get_transcripts(symbol, num_quarters=quarters)
                 analysis = analyze_transcripts(symbol, transcripts)
-                self._json(200, {
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({
                     "symbol": symbol,
                     "analysis": analysis,
                     "quarters_found": len(transcripts),
                     "quarters_requested": quarters,
-                    "date_range": (
-                        f"Q{transcripts[0]['quarter']} {transcripts[0]['year']} → "
-                        f"Q{transcripts[-1]['quarter']} {transcripts[-1]['year']}"
-                    ) if transcripts else "none",
+                    "date_range": f"Q{transcripts[0]['quarter']} {transcripts[0]['year']} → Q{transcripts[-1]['quarter']} {transcripts[-1]['year']}" if transcripts else "none",
                     "has_transcript": bool(transcripts),
-                })
+                }).encode())
             except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
                 traceback.print_exc()
-                self._json(500, {"error": str(e)})
             return
 
-        # ─── Portfolio state read ───
-        if parsed.path == "/portfolio/state":
-            try:
-                status, payload = handle_portfolio_state_get()
-                self._json(status, payload)
-            except Exception as e:
-                traceback.print_exc()
-                self._json(500, {"error": str(e)})
-            return
-
-        # ─── Health ───
         if parsed.path == "/health":
-            self._json(200, {"status": "ok", "version": "v7.2"})
+            self.send_response(200)
+            self._cors()
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "version": "v7.2"}).encode())
             return
 
-        # Default
-        self._text(200, "Stock Screener v7.2 - see /health, /transcript, /portfolio/*")
+        # v7.2: Signal performance tracker (System 1 — BUY/STRONG BUY → SELL cycles)
+        if parsed.path == "/performance/signal-tracks":
+            try:
+                from signal_tracker import read_signal_tracks
+                data = read_signal_tracks()
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "public, max-age=60")
+                self.end_headers()
+                self.wfile.write(json.dumps(data, default=str).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
+        # v7.2: P(+10%) hit-rate tracker (System 2 — 60d windows, p10 > 0.70)
+        if parsed.path == "/performance/hit-rates":
+            try:
+                from signal_tracker import read_hitrate_tracks
+                data = read_hitrate_tracks()
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "public, max-age=60")
+                self.end_headers()
+                self.wfile.write(json.dumps(data, default=str).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
+        # v7.2: Per-symbol (date, price, composite) history for stock-page chart
+        # URL form: /stock/{SYMBOL}/history
+        if parsed.path.startswith("/stock/") and parsed.path.endswith("/history"):
+            parts = parsed.path.strip("/").split("/")
+            # Expect: ["stock", "{SYMBOL}", "history"]
+            if len(parts) == 3 and parts[0] == "stock" and parts[2] == "history":
+                symbol = parts[1].upper()
+                try:
+                    from signal_tracker import read_stock_history
+                    rows = read_stock_history(symbol)
+                    self.send_response(200)
+                    self._cors()
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Cache-Control", "public, max-age=300")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "symbol": symbol,
+                        "rows": rows,   # [[date, price, composite], ...]
+                    }, default=str).encode())
+                except Exception as e:
+                    self.send_response(500)
+                    self._cors()
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"error": str(e)}).encode())
+                    traceback.print_exc()
+                return
+
+        self.send_response(200)
+        self._cors()
+        self.send_header("Content-Type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"Stock Screener v7 - GET /transcript?symbol=X&quarters=8 for multi-quarter AI analysis")
 
     def do_POST(self):
-        parsed = urlparse(self.path)
-
-        # ─── Portfolio add ───
-        if parsed.path == "/portfolio/add":
-            try:
-                body = self._read_body()
-                status, payload = handle_portfolio_add(body)
-                self._json(status, payload)
-            except Exception as e:
-                traceback.print_exc()
-                self._json(500, {"error": str(e)})
-            return
-
-        # ─── Portfolio close ───
-        if parsed.path == "/portfolio/close":
-            try:
-                body = self._read_body()
-                status, payload = handle_portfolio_close(body)
-                self._json(status, payload)
-            except Exception as e:
-                traceback.print_exc()
-                self._json(500, {"error": str(e)})
-            return
-
-        # ─── Default POST = run a scan ───
         try:
-            from screener_v6 import (
-                get_symbols, screen, format_report, send_email,
-                update_signal_history, save_scan_to_gcs,
-            )
-            body = self._read_body()
+            from screener_v6 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(content_len)) if content_len else {}
             region = body.get("region", os.environ.get("SCREEN_INDEX", "nasdaq100"))
             symbols_str = body.get("symbols", "")
             if symbols_str:
@@ -370,13 +344,20 @@ class Handler(BaseHTTPRequestHandler):
             update_signal_history(results)
             save_scan_to_gcs(results, region, macro=macro)
             today = datetime.now().strftime("%Y-%m-%d")
-            send_email(f"CB Screener v7.2: {region.upper()} — {today}", report)
-            self._text(200, report)
+            send_email(f"CB Screener v7.1: {region.upper()} — {today}", report)
+            self.send_response(200)
+            self._cors()
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(report.encode("utf-8"))
         except Exception as e:
+            self.send_response(500)
+            self._cors()
+            self.end_headers()
+            self.wfile.write(f"ERROR: {e}".encode("utf-8"))
             traceback.print_exc()
-            self._text(500, f"ERROR: {e}")
 
 
 port = int(os.environ.get("PORT", 8080))
-print(f"Screener v7.2 server on port {port}")
+print(f"Screener v7.1 server on port {port}")
 HTTPServer(("", port), Handler).serve_forever()
