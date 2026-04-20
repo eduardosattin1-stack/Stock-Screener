@@ -1467,20 +1467,19 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
             result["flags"].append(f"⚠ 1 downgrade in 7d")
 
     # ─── C) M&A / Activist / Major Event News (last 14 days) ──
-    # v7.2: FMP's `news/stock` endpoint IGNORES the symbols filter and returns
-    # global news. Using it here caused every keyword match on unrelated
-    # companies' news (e.g. "deal", "stake", "takeover") to attribute as a
-    # false-positive catalyst on whatever stock we were scoring. Example: CVS
-    # being tagged "M&A/activist activity detected" because unrelated MCW
-    # go-private news mentioned a take-private deal.
+    # v7.2: FMP's REST path `news/stock?symbols=X` is the symbol-filtered
+    # endpoint per FMP docs (https://site.financialmodelingprep.com/developer/
+    # docs/stable/search-stock-news → example URL uses /stable/news/stock).
     #
-    # Fix:
-    #   1. Use `news/search-stock-news` which actually respects the symbols
-    #      filter (confirmed via FMP MCP: stock-news returned 0/10 CVS
-    #      articles; search-stock-news returned 10/10 CVS articles).
-    #   2. Belt-and-suspenders: verify each article's `symbol` field matches
-    #      `sym` before scanning keywords. Drop anything that doesn't.
-    news = fmp("news/search-stock-news", {"symbols": sym, "limit": 10})
+    # Earlier in this session I misdiagnosed this via an MCP tool call — the
+    # MCP tool has its own endpoint name `stock-news` that maps to the
+    # unfiltered global feed, and `search-stock-news` (MCP name) that maps to
+    # the REST path `news/stock`. The REST-side path `news/search-stock-news`
+    # does NOT exist — it 404s. Cloud Run logs confirmed this with thousands
+    # of "FMP 404: news/search-stock-news → []" lines per scan.
+    #
+    # Keep per-article symbol verification as belt-and-suspenders.
+    news = fmp("news/stock", {"symbols": sym, "limit": 10})
     if news:
         cutoff = (today - timedelta(days=14)).strftime("%Y-%m-%d")
         ma_kw = {"acquisition", "acquire", "merger", "buyout", "takeover",
@@ -1492,7 +1491,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 
         sym_upper = sym.upper()
         for article in news:
-            # Guard: endpoint should filter, but verify each row just in case.
+            # Guard: if endpoint ever returns unrelated symbols, skip them.
             art_sym = (article.get("symbol", "") or "").upper()
             if art_sym and art_sym != sym_upper:
                 continue
