@@ -31,14 +31,20 @@ function getLocalPortfolio():Position[]{if(typeof window==="undefined")return[];
 function clearLocalPortfolio(){if(typeof window!=="undefined")localStorage.removeItem("screener_portfolio");}
 
 // API helpers — posts to /api/portfolio/* which proxies to Cloud Run
+async function readErrorBody(r:Response):Promise<string>{
+  const t=await r.text().catch(()=>"");
+  const isHtml=t.trimStart().toLowerCase().startsWith("<!doctype")||t.trimStart().startsWith("<");
+  const body=isHtml?"(server returned HTML page)":t.slice(0,120);
+  return `HTTP ${r.status}${body?` – ${body}`:""}`;
+}
 async function apiAdd(p:{symbol:string;entry_price:number;shares:number;notes:string}){
   const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
-  if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+  if(!r.ok) throw new Error(await readErrorBody(r));
   return r.json();
 }
 async function apiClose(p:{symbol:string;exit_price:number;reason?:string}){
   const r=await fetch("/api/portfolio/close",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
-  if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+  if(!r.ok) throw new Error(await readErrorBody(r));
   return r.json();
 }
 async function fetchGcsState(){
@@ -61,9 +67,15 @@ export default function Portfolio(){
   const[showAddModal,setShowAddModal]=useState(false);
   const[errorMsg,setErrorMsg]=useState<string|null>(null);
 
-  // Load state: GCS is authoritative. On first load, migrate any legacy
-  // localStorage positions up to GCS, then clear localStorage.
+  // Load state: GCS is single source of truth. v7.2: removed the
+  // localStorage migration — it was zombie-reviving closed positions
+  // because every refresh() would re-migrate any symbol not in GCS,
+  // including ones the user had just closed. Any remaining localStorage
+  // data is cleared unconditionally on every load.
   async function refresh(){
+    // Unconditional clear: if any legacy data is still sitting there,
+    // nuke it now so it can't cause ghost positions on any future refresh.
+    clearLocalPortfolio();
     try {
       const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
         fetchGcsState(),
@@ -76,23 +88,6 @@ export default function Portfolio(){
       if(stateRes.status==="fulfilled"){
         gcsPositions=stateRes.value?.positions||[];
         gcsHistory=stateRes.value?.history||[];
-      }
-
-      // One-time migration: if localStorage has positions not in GCS, push them up.
-      const localPortfolio=getLocalPortfolio();
-      if(localPortfolio.length>0){
-        const gcsSymbols=new Set(gcsPositions.map(p=>p.symbol));
-        const toMigrate=localPortfolio.filter(p=>!gcsSymbols.has(p.symbol));
-        if(toMigrate.length){
-          console.log(`Migrating ${toMigrate.length} positions from localStorage to GCS`);
-          for(const p of toMigrate){
-            try { await apiAdd({symbol:p.symbol,entry_price:p.entry_price,shares:p.shares,notes:p.notes||""}); }
-            catch(e){ console.error("migration failed for",p.symbol,e); }
-          }
-          // Re-fetch after migration
-          try { const fresh=await fetchGcsState(); gcsPositions=fresh?.positions||[]; gcsHistory=fresh?.history||[]; } catch{}
-        }
-        clearLocalPortfolio();
       }
 
       setPortfolio(gcsPositions);
