@@ -457,15 +457,12 @@ def run_monitor(state, dry_run=False):
         log.info(f"    {sym}: {action} | ${price:.2f} ({price_change:+.1%}) | "
                  f"Comp: {composite:.3f} ({comp_change:+.0%}) | Signal: {signal}")
 
-    # Auto-exit: move SELL positions to history
-    if not dry_run:
-        for a in actions:
-            if a["action"] == "SELL":
-                state = remove_position(
-                    state, a["symbol"],
-                    exit_price=a["current_price"],
-                    reason="; ".join(a["reasons"][:3])
-                )
+    # v7.2: Monitor NO LONGER auto-closes SELL positions.
+    # SELL signal is informational; user explicitly closes via
+    # /portfolio/close HTTP endpoint or the Close button on the portfolio UI.
+    # This separates "what the model thinks" from "what the user decides."
+    # The actions list above still records the SELL recommendation, which is
+    # emailed and displayed on the portfolio page. No state mutation here.
 
     # Format report
     report = format_monitor_report(actions, macro_regime)
@@ -522,7 +519,7 @@ def format_monitor_report(actions, macro_regime="NEUTRAL"):
         lines.append(f"  Summary: {len(actions)} positions | Avg PnL: {total_pnl:+.1f}% | "
                      f"Winners: {winners}/{len(actions)}")
         if sells:
-            lines.append(f"  ⚠️  {sells} SELL signal(s) — ACTION REQUIRED!")
+            lines.append(f"  ⚠️  {sells} SELL signal(s) — review and decide")
         if trims:
             lines.append(f"  ⚠️  {trims} TRIM signal(s) — consider reducing")
         if adds:
