@@ -235,11 +235,16 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
         method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes}),
       });
-      if(!res.ok){const t=await res.text();throw new Error(t||`HTTP ${res.status}`);}
+      if(!res.ok){
+        const t=await res.text().catch(()=>"");
+        const isHtml=t.trimStart().toLowerCase().startsWith("<!doctype")||t.trimStart().startsWith("<");
+        const body=isHtml?"(server returned HTML page)":t.slice(0,120);
+        throw new Error(`HTTP ${res.status}${body?` – ${body}`:""}`);
+      }
       setStatus("saved");
       setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
     } catch(e:any) {
-      setStatus("error");setErr(e.message||"Failed");
+      setStatus("error");setErr((e?.message||"Failed").slice(0,160));
     }
   }
 
@@ -304,8 +309,7 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
               <CatalystBadges s={s}/>
-              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}{s.exchange?` · ${s.exchange}`:""}{s.country&&s.country!=="US"?` ${s.country}`:""}</div>}
-              {!s.sector&&s.exchange&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.exchange}{s.country&&s.country!=="US"?` · ${s.country}`:""}</div>}
+              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
             </div>
           </div>
         </td>
