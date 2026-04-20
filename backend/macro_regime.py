@@ -17,7 +17,7 @@ Regimes:
 Data sources (4 API calls for live, cached for backtest):
   1. Treasury rates  → yield curve slope + level
   2. VIX quote       → volatility regime
-  3. CPI data        → inflation trend (economics-indicators; hardcoded fallback for stable REST)
+  3. CPI data        → inflation trend (economic-indicators; hardcoded fallback for stable REST)
   4. GDP data        → growth momentum
 
 Usage:
@@ -399,9 +399,9 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
 
     # v7.2 fix: removed country=US (FMP stable REST rejects unknown params,
-    # returns 404). The economics-indicators endpoint DOES work on stable —
+    # returns 404). The economic-indicators endpoint DOES work on stable —
     # it only takes name + from + to.
-    cpi_raw = fmp_func("economics-indicators", {
+    cpi_raw = fmp_func("economic-indicators", {
         "name": "CPI",
         "from": cpi_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -439,7 +439,7 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
 
     # v7.2 fix: same as CPI — removed country=US.
-    gdp_raw = fmp_func("economics-indicators", {
+    gdp_raw = fmp_func("economic-indicators", {
         "name": "GDP",
         "from": gdp_from, "to": today.strftime("%Y-%m-%d")
     })
@@ -518,7 +518,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
 
     # 3. CPI historical
     cpi_from = (as_of - timedelta(days=270)).strftime("%Y-%m-%d")
-    cpi_raw = fmp_func("economics-indicators", {
+    cpi_raw = fmp_func("economic-indicators", {
         "name": "CPI",
         "from": cpi_from, "to": as_of_date
     })
@@ -530,7 +530,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
             reverse=True
         )
     if not cpi_values:
-        # Fallback: stable REST doesn't have economics-indicators endpoint
+        # Fallback: FMP unavailable; hardcoded fallback for backtest
         # For backtest historical mode, use hardcoded recent values as approximation
         log.info("  CPI historical: using hardcoded fallback")
         cpi_values = [
@@ -543,7 +543,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
 
     # 4. GDP historical
     gdp_from = (as_of - timedelta(days=400)).strftime("%Y-%m-%d")
-    gdp_raw = fmp_func("economics-indicators", {
+    gdp_raw = fmp_func("economic-indicators", {
         "name": "GDP",
         "from": gdp_from, "to": as_of_date
     })
@@ -555,7 +555,7 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
             reverse=True
         )
     if not gdp_values:
-        # Fallback: stable REST doesn't have economics-indicators endpoint
+        # Fallback: FMP unavailable; hardcoded fallback for backtest
         log.info("  GDP historical: using hardcoded fallback")
         gdp_values = [
             ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
