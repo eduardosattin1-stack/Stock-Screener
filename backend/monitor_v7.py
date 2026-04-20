@@ -94,6 +94,39 @@ def gcs_download(path):
         pass
     return None
 
+def gcs_download_with_gen(path):
+    """Download JSON + object generation. Used for optimistic concurrency.
+
+    Returns: (data, generation_string) or (None, "0") if missing/error.
+    generation="0" is the special value to use on write to mean "only if the
+    object does not yet exist."
+    """
+    try:
+        tok = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=3
+        ).json().get("access_token", "")
+        if not tok:
+            # No metadata service (local dev) — fall back to public download, no gen
+            return gcs_download(path), None
+        r = requests.get(
+            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{path.replace('/', '%2F')}",
+            headers={"Authorization": f"Bearer {tok}"},
+            params={"alt": "json"}, timeout=10,
+        )
+        if r.status_code == 200:
+            meta = r.json()
+            gen = meta.get("generation", "0")
+            media_url = meta.get("mediaLink") or f"https://storage.googleapis.com/{GCS_BUCKET}/{path}"
+            rr = requests.get(media_url, headers={"Authorization": f"Bearer {tok}"}, timeout=10)
+            if rr.status_code == 200:
+                return rr.json(), gen
+        if r.status_code == 404:
+            return None, "0"  # object does not exist — generation=0 for conditional create
+    except Exception as e:
+        log.warning(f"gcs_download_with_gen {path} failed: {e}")
+    return None, None
+
 def gcs_upload(path, data):
     """Upload JSON to GCS (requires service account on Cloud Run)."""
     try:
@@ -111,6 +144,39 @@ def gcs_upload(path, data):
         return r.status_code in (200, 201)
     except:
         return False
+
+def gcs_upload_conditional(path, data, if_generation_match):
+    """Upload with optimistic concurrency. Returns True on success, False if
+    precondition failed (someone else wrote first), None on other errors.
+
+    if_generation_match: the generation string returned by gcs_download_with_gen
+    when we read the object, OR "0" to mean "object must not yet exist", OR
+    None to skip the precondition entirely (unsafe — only for migrations).
+    """
+    try:
+        tok = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=3
+        ).json().get("access_token", "")
+        if not tok: return None
+        params = {"uploadType": "media", "name": path}
+        if if_generation_match is not None:
+            params["ifGenerationMatch"] = str(if_generation_match)
+        r = requests.post(
+            f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
+            params=params,
+            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
+            data=json.dumps(data, default=str), timeout=15
+        )
+        if r.status_code in (200, 201):
+            return True
+        if r.status_code == 412:  # precondition failed — someone else wrote
+            return False
+        log.warning(f"gcs_upload_conditional {path}: {r.status_code} {r.text[:200]}")
+        return None
+    except Exception as e:
+        log.warning(f"gcs_upload_conditional {path} failed: {e}")
+        return None
 
 def load_state():
     """Load portfolio state from GCS, fallback to local file.
@@ -256,6 +322,104 @@ def remove_position(state, symbol, exit_price=None, reason="Manual removal"):
     state["positions"] = [p for p in state["positions"] if p["symbol"] != symbol]
     log.info(f"Removed position: {symbol} | PnL: {pnl:+.1f}%")
     return state
+
+# ---------------------------------------------------------------------------
+# Atomic portfolio transactions (v7.2)
+#
+# These wrap add_position / remove_position with optimistic concurrency control.
+# Why: Cloud Run's ThreadingHTTPServer can process POSTs concurrently, and
+# Cloud Run itself can run multiple instances. Without conditional writes, two
+# concurrent add/close requests both read state, both mutate their own copy,
+# and the second upload silently overwrites the first — positions vanish.
+#
+# With gcs_upload_conditional(..., if_generation_match=gen), the write fails
+# with 412 if the object changed since we read it. We retry the entire
+# read-modify-write cycle up to 3 times. This is cheap for the portfolio
+# workload (1-10 positions, tiny JSON, handful of writes per day).
+# ---------------------------------------------------------------------------
+
+def apply_atomic(mutate_fn, max_retries: int = 3):
+    """Load state, apply mutate_fn, save atomically. Retry on generation
+    conflict. mutate_fn takes (state) and returns (state, result_info).
+
+    result_info is a dict returned to the caller (e.g. {'position': {...}}
+    or {'ok': True}). Returns (state_after, result_info) on success, raises
+    RuntimeError after max_retries exhausted.
+    """
+    import time as _time
+    last_error = None
+    for attempt in range(max_retries):
+        state, gen = gcs_download_with_gen(STATE_PATH)
+
+        # Normalize shape (same as load_state does)
+        if state is None:
+            state = {"positions": [], "history": [], "last_monitor": ""}
+            gen = "0"  # object doesn't exist yet — require "create only"
+        state.setdefault("positions", [])
+        state.setdefault("history", [])
+        state.setdefault("last_monitor", "")
+
+        # Apply the mutation
+        state, result_info = mutate_fn(state)
+        state["last_updated"] = datetime.now().isoformat()
+
+        # Conditional write
+        # gen=None means we couldn't get a generation — fall back to unconditional
+        # write. This is the local-dev path where there's no metadata service.
+        if gen is None:
+            if gcs_upload(STATE_PATH, state):
+                log.info(f"State saved to GCS (unconditional — local dev)")
+                return state, result_info
+            raise RuntimeError("gcs_upload failed (local dev fallback)")
+
+        outcome = gcs_upload_conditional(STATE_PATH, state, if_generation_match=gen)
+        if outcome is True:
+            log.info(f"State saved to GCS (gen={gen}, attempt {attempt+1})")
+            # Also persist locally as a debug trail (ephemeral on Cloud Run).
+            try:
+                with open(LOCAL_STATE, "w") as f:
+                    json.dump(state, f, indent=2, default=str)
+            except Exception:
+                pass
+            return state, result_info
+        elif outcome is False:
+            last_error = "precondition_failed"
+            log.warning(f"State write conflict on attempt {attempt+1}/{max_retries} "
+                        f"(gen={gen} no longer current) — retrying")
+            _time.sleep(0.15 * (attempt + 1))  # small backoff
+            continue
+        else:
+            last_error = "upload_error"
+            log.warning(f"State write error on attempt {attempt+1}/{max_retries} — retrying")
+            _time.sleep(0.15 * (attempt + 1))
+            continue
+
+    raise RuntimeError(f"apply_atomic exhausted {max_retries} retries: {last_error}")
+
+
+def add_position_atomic(symbol, entry_price, shares=0, notes=""):
+    """Atomic wrapper around add_position. Read-modify-write with retry.
+    Returns the final state + dict with the new/updated position."""
+    def _mutate(state):
+        state = add_position(state, symbol, entry_price, shares=shares, notes=notes)
+        pos = next((p for p in state["positions"] if p["symbol"].upper() == symbol.upper()), {})
+        return state, {"position": pos}
+    return apply_atomic(_mutate)
+
+
+def remove_position_atomic(symbol, exit_price=None, reason="Manual removal"):
+    """Atomic wrapper around remove_position. Returns final state + dict with
+    removal result. Distinguishes 'not found' from 'removed'."""
+    def _mutate(state):
+        before = len(state.get("positions", []))
+        state = remove_position(state, symbol, exit_price=exit_price, reason=reason)
+        after = len(state.get("positions", []))
+        return state, {
+            "removed": before != after,
+            "symbol": symbol.upper(),
+            "positions_remaining": after,
+        }
+    return apply_atomic(_mutate)
 
 def list_positions(state):
     """Pretty-print current positions."""
