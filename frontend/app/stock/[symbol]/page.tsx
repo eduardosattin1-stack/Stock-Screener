@@ -116,9 +116,16 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
     setStatus("saving");setErr("");
     try{
       const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes})});
-      if(!r.ok) throw new Error(await r.text()||`HTTP ${r.status}`);
+      if(!r.ok){
+        // Keep the error message short: detect HTML bodies (Next.js 404 pages, etc.)
+        // and substitute a concise message instead of dumping 10KB into the UI.
+        const text=await r.text().catch(()=>"");
+        const isHtml=text.trimStart().toLowerCase().startsWith("<!doctype")||text.trimStart().startsWith("<");
+        const shortBody=isHtml?"(server returned HTML page)":text.slice(0,120);
+        throw new Error(`HTTP ${r.status}${shortBody?` – ${shortBody}`:""}`);
+      }
       setStatus("saved");setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
-    } catch(e:any){setStatus("error");setErr(e.message||"Failed");}
+    } catch(e:any){setStatus("error");setErr((e?.message||"Failed").slice(0,160));}
   }
   if(!open){
     return(
@@ -237,18 +244,211 @@ function CatalystTimeline({s}:{s:StockData}){
 }
 
 // ── Composite History Chart ────────────────────────────────────────────────────
-function CompositeChart({symbol}:{symbol:string}){
-  const[data,setData]=useState<CompositePoint[]>([]);const[loading,setLoading]=useState(true);const canvasRef=useRef<HTMLCanvasElement>(null);
-  useEffect(()=>{fetch(`/api/gcs/portfolio/composite_history.json`).then(r=>r.ok?r.json():null).then(d=>{if(d&&d[symbol])setData(d[symbol]);setLoading(false);}).catch(()=>setLoading(false));},[symbol]);
-  useEffect(()=>{const cv=canvasRef.current;if(!cv||data.length<2)return;const ctx=cv.getContext("2d");if(!ctx)return;const dpr=window.devicePixelRatio||1,w=cv.offsetWidth,h=cv.offsetHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const vals=data.map(p=>p.composite),mn=Math.min(...vals)*0.95,mx=Math.max(...vals)*1.05,rng=mx-mn||1;const gr=ctx.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(45,122,79,0.15)");gr.addColorStop(1,"rgba(45,122,79,0)");ctx.beginPath();ctx.moveTo(0,h);data.forEach((p,i)=>{ctx.lineTo((i/(data.length-1))*w,h-((p.composite-mn)/rng)*h);});ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();ctx.beginPath();data.forEach((p,i)=>{const x=(i/(data.length-1))*w,y=h-((p.composite-mn)/rng)*h;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.strokeStyle=T.green;ctx.lineWidth=2;ctx.lineJoin="round";ctx.stroke();},[data]);
-  if(loading)return<Card><SH title="Composite History" icon={<TrendingUp size={12}/>}/><div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading...</div></Card>;
-  if(data.length<2)return null;
-  const first=data[0],last=data[data.length-1],change=last.composite-first.composite;
+// ── SentimentCard — market positioning snapshot from data we already fetch ──
+// This is NOT an options/IV card. It reads insider + institutional flows, price
+// position in 52wk range, and short-term momentum to produce a plain-language
+// read on "what does positioning look like right now". Labeled honestly.
+function SentimentCard({s}:{s:StockData}){
+  // ─── Inputs (all from existing scan data) ───
+  const rsi = s.rsi ?? 50;
+  const prox = s.proximity_52wk ?? 0.5;              // 0 = at low, 1 = at high
+  const bull = s.bull_score ?? 5;                     // 0-10 technical composite
+  const insiderNet = s.insider_net_buys ?? 0;         // net buy txns (recent ~2q)
+  const insiderRatio = s.insider_buy_ratio ?? 0;      // acquired/disposed ratio
+  const instHold = s.inst_holders_change ?? 0;        // QoQ holder count change
+  const instAccum = s.inst_accumulation ?? 0;         // net shares accumulated
+  const macd = s.macd_signal || "";
+  const adx = s.adx ?? 0;
+
+  // ─── Derived reads ───
+  // 1. Insider posture
+  let insiderLabel="Neutral", insiderColor=T.textMuted, insiderDetail="No recent activity";
+  if(insiderNet>=3 || insiderRatio>=2){
+    insiderLabel="Accumulating"; insiderColor=T.green;
+    insiderDetail=`${insiderNet} net buys · ${insiderRatio.toFixed(1)}x acquired/disposed`;
+  } else if(insiderNet<=-3 || (insiderRatio>0 && insiderRatio<0.3)){
+    insiderLabel="Distributing"; insiderColor=T.red;
+    insiderDetail=`${insiderNet} net buys · ${insiderRatio.toFixed(1)}x acquired/disposed`;
+  } else if(insiderNet!==0 || insiderRatio!==0){
+    insiderDetail=`${insiderNet>0?"+":""}${insiderNet} net buys · ${insiderRatio.toFixed(1)}x ratio`;
+  }
+
+  // 2. Institutional posture
+  let instLabel="Flat", instColor=T.textMuted, instDetail="No QoQ change";
+  if(instAccum>0.02 || instHold>0.02){
+    instLabel="Accumulating"; instColor=T.green;
+    instDetail=`Holders ${(instHold*100).toFixed(1)}% QoQ · Shares ${(instAccum*100).toFixed(1)}%`;
+  } else if(instAccum<-0.02 || instHold<-0.02){
+    instLabel="Distributing"; instColor=T.red;
+    instDetail=`Holders ${(instHold*100).toFixed(1)}% QoQ · Shares ${(instAccum*100).toFixed(1)}%`;
+  } else if(instAccum!==0 || instHold!==0){
+    instDetail=`Holders ${(instHold*100).toFixed(1)}% · Shares ${(instAccum*100).toFixed(1)}%`;
+  }
+
+  // 3. Technical posture
+  let techLabel="Neutral", techColor=T.textMuted;
+  if(bull>=7 && (macd==="bullish"||macd==="Bullish")) {techLabel="Bullish"; techColor=T.green;}
+  else if(bull>=6) {techLabel="Constructive"; techColor=T.green;}
+  else if(bull<=3) {techLabel="Bearish"; techColor=T.red;}
+  else if(bull<=4) {techLabel="Weak"; techColor=T.amber;}
+
+  // 4. Range positioning — where in 52w range
+  let rangeLabel="Mid-range", rangeColor=T.textMuted;
+  if(prox>=0.85) {rangeLabel="Near highs"; rangeColor=T.amber;}
+  else if(prox>=0.65) {rangeLabel="Upper range"; rangeColor=T.green;}
+  else if(prox<=0.15) {rangeLabel="Near lows"; rangeColor=T.red;}
+  else if(prox<=0.35) {rangeLabel="Lower range"; rangeColor=T.amber;}
+
+  // 5. RSI overbought/oversold
+  let rsiLabel="—", rsiColor=T.textMuted;
+  if(rsi>=70) {rsiLabel="Overbought"; rsiColor=T.amber;}
+  else if(rsi<=30) {rsiLabel="Oversold"; rsiColor=T.amber;}
+  else if(rsi>=55) {rsiLabel="Strong"; rsiColor=T.green;}
+  else if(rsi<=45) {rsiLabel="Weak"; rsiColor=T.red;}
+  else rsiLabel="Balanced";
+
+  // 6. Trend strength (ADX)
+  let trendLabel="—";
+  if(adx>=35) trendLabel="Strong trend";
+  else if(adx>=25) trendLabel="Defined trend";
+  else if(adx>0) trendLabel="Choppy";
+
+  // ─── Plain-language synthesis ───
+  // Build a one-line read: which way do the flows + price agree, and which
+  // don't. The goal is helping the user pattern-match, not prescriptive calls.
+  const agreesBull = [
+    insiderLabel==="Accumulating",
+    instLabel==="Accumulating",
+    techLabel==="Bullish"||techLabel==="Constructive",
+    prox>=0.5,
+  ].filter(Boolean).length;
+  const agreesBear = [
+    insiderLabel==="Distributing",
+    instLabel==="Distributing",
+    techLabel==="Bearish"||techLabel==="Weak",
+    prox<0.3,
+  ].filter(Boolean).length;
+
+  let synthesis = "Mixed signals — flows, technicals, and price position don't agree.";
+  if(agreesBull>=3 && agreesBear===0){
+    synthesis = "Positioning is aligned bullish: insiders and institutions are adding, technicals confirm, price is in the upper range. Watch for overbought exhaustion if RSI crosses 70.";
+  } else if(agreesBear>=3 && agreesBull===0){
+    synthesis = "Positioning is aligned bearish: insiders and institutions are reducing, technicals are weak, price is in the lower range. Oversold bounces may be fragile.";
+  } else if(agreesBull>=2 && agreesBear<=1){
+    synthesis = "Lean bullish. Insider and/or institutional accumulation with constructive technicals. Not a unanimous read — size accordingly.";
+  } else if(agreesBear>=2 && agreesBull<=1){
+    synthesis = "Lean bearish. Distribution or weakness in 2+ of insider/inst/technical/price. Bounces may lack follow-through.";
+  } else if(insiderLabel==="Accumulating" && techLabel==="Weak"){
+    synthesis = "Divergence: insiders buying into weakness. Classic contrarian setup but patient — technicals say not yet.";
+  } else if(insiderLabel==="Distributing" && prox>=0.75){
+    synthesis = "Divergence: insiders selling near 52w highs. Possible distribution into strength — caution for late entries.";
+  } else if(prox>=0.85 && rsi>=70){
+    synthesis = "Extended. Price at highs + overbought RSI — risk of short-term mean reversion, not necessarily reversal.";
+  } else if(prox<=0.15 && rsi<=30){
+    synthesis = "Oversold at lows. Reflex bounce is common here but confirmation from flows would de-risk re-entry.";
+  }
+
+  const chip=(label:string,value:string,color:string,detail?:string)=>(
+    <div style={{padding:"8px 10px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:"#fafbfc"}}>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div style={{fontSize:12,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
+      {detail && <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1,lineHeight:1.3}}>{detail}</div>}
+    </div>
+  );
+
   return(
     <Card>
-      <SH title="Composite History" icon={<TrendingUp size={12}/>} sub={`${data.length} days · ${change>=0?"+":""}${(change*100).toFixed(1)}pts`}/>
-      <div style={{position:"relative",height:80}}><canvas ref={canvasRef} style={{width:"100%",height:"100%",display:"block"}}/></div>
-      <div style={{display:"flex",justifyContent:"space-between",fontSize:8,fontFamily:T.mono,color:T.textLight,marginTop:4}}><span>{first.date.slice(5)}</span><span>{last.date.slice(5)}</span></div>
+      <SH title="Sentiment Snapshot" icon={<Activity size={12}/>} sub="Positioning, not IV"/>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:10}}>
+        {chip("INSIDERS", insiderLabel, insiderColor, insiderDetail)}
+        {chip("INSTITUTIONS", instLabel, instColor, instDetail)}
+        {chip("TECHNICAL", techLabel, techColor, `Bull ${bull}/10 · ${trendLabel}${adx>0?` (ADX ${adx.toFixed(0)})`:""}`)}
+        {chip("52W RANGE", rangeLabel, rangeColor, `At ${(prox*100).toFixed(0)}% of range · RSI ${rsi.toFixed(0)} ${rsiLabel}`)}
+      </div>
+      <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55}}>
+        <span style={{fontWeight:600,color:T.green,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",display:"block",marginBottom:4}}>READ</span>
+        {synthesis}
+      </div>
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
+        Built from insider transactions, 13F flows, and price technicals. Does not include options IV or short interest — FMP stable REST doesn't expose those.
+      </div>
+    </Card>
+  );
+}
+
+// ── PriceCompositeChart — dual-line price + composite over scan history ────────
+function PriceCompositeChart({symbol}:{symbol:string}){
+  const[rows,setRows]=useState<[string,number,number][]>([]);
+  const[loading,setLoading]=useState(true);
+  const[err,setErr]=useState<string|null>(null);
+  useEffect(()=>{
+    fetch(`/api/stock/${encodeURIComponent(symbol)}/history`)
+      .then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
+      .then(d=>{setRows(Array.isArray(d?.rows)?d.rows:[]);setLoading(false);})
+      .catch(e=>{setErr(e.message||"Failed");setLoading(false);});
+  },[symbol]);
+  if(loading) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading history...</div></Card>;
+  if(err) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>{err}</div></Card>;
+  if(rows.length<2) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
+
+  const W=720,H=220,PL=46,PR=44,PT=14,PB=24;
+  const prices=rows.map(r=>r[1]);
+  const comps=rows.map(r=>r[2]);
+  const pMn=Math.min(...prices),pMx=Math.max(...prices);
+  const cMn=Math.min(...comps,0.3),cMx=Math.max(...comps,0.9);
+  const pad=0.02,pRng=(pMx-pMn)||1,cRng=(cMx-cMn)||1;
+  const xAt=(i:number)=>PL+((i)/(rows.length-1||1))*(W-PL-PR);
+  const yPrice=(v:number)=>PT+(1-((v-pMn)/pRng))*(H-PT-PB-4)+pad;
+  const yComp =(v:number)=>PT+(1-((v-cMn)/cRng))*(H-PT-PB-4)+pad;
+  const pricePath=rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yPrice(r[1]).toFixed(1)}`).join(" ");
+  const compPath =rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yComp (r[2]).toFixed(1)}`).join(" ");
+  const last=rows[rows.length-1],first=rows[0];
+  const pChg=first[1]>0?((last[1]-first[1])/first[1])*100:0;
+  const cChg=(last[2]-first[2])*100;
+  const fmtDate=(d:string)=>d.slice(5); // MM-DD
+  // X-axis labels: show ~5 evenly spaced dates
+  const tickIdxs=rows.length<=5?rows.map((_,i)=>i):[0,Math.floor(rows.length*0.25),Math.floor(rows.length*0.5),Math.floor(rows.length*0.75),rows.length-1];
+
+  return(
+    <Card>
+      <SH title="Price vs Composite" icon={<TrendingUp size={12}/>}
+        sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}% · Composite ${cChg>=0?"+":""}${cChg.toFixed(1)}pts`}/>
+      <div style={{overflow:"hidden"}}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto",display:"block"}} preserveAspectRatio="none">
+          {/* Horizontal gridlines at 25/50/75% of chart area */}
+          {[0.25,0.5,0.75].map(t=>(
+            <line key={t} x1={PL} x2={W-PR} y1={PT+t*(H-PT-PB)} y2={PT+t*(H-PT-PB)}
+              stroke={T.divider} strokeWidth={1} strokeDasharray="2 4"/>
+          ))}
+          {/* Price line (left axis, green) */}
+          <path d={pricePath} fill="none" stroke={T.green} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
+          {/* Composite line (right axis, purple) */}
+          <path d={compPath} fill="none" stroke={T.purple} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="4 2"/>
+          {/* End dots */}
+          <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={3} fill={T.green}/>
+          <circle cx={xAt(rows.length-1)} cy={yComp(last[2])} r={3} fill={T.purple}/>
+          {/* Y-axis labels, left: price */}
+          <text x={PL-6} y={yPrice(pMx)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMx.toFixed(2)}</text>
+          <text x={PL-6} y={yPrice(pMn)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMn.toFixed(2)}</text>
+          {/* Y-axis labels, right: composite */}
+          <text x={W-PR+6} y={yComp(cMx)+3} textAnchor="start" fontSize={9} fontFamily={T.mono} fill={T.purple}>{cMx.toFixed(2)}</text>
+          <text x={W-PR+6} y={yComp(cMn)+3} textAnchor="start" fontSize={9} fontFamily={T.mono} fill={T.purple}>{cMn.toFixed(2)}</text>
+          {/* X-axis date labels */}
+          {tickIdxs.map(i=>(
+            <text key={i} x={xAt(i)} y={H-6} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={T.textLight}>
+              {fmtDate(rows[i][0])}
+            </text>
+          ))}
+        </svg>
+      </div>
+      <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:6,fontSize:9,fontFamily:T.mono,color:T.textMuted}}>
+        <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
+          <span style={{display:"inline-block",width:18,height:2,background:T.green}}/> Price (left)
+        </span>
+        <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
+          <span style={{display:"inline-block",width:18,height:2,background:T.purple,backgroundImage:`repeating-linear-gradient(90deg,${T.purple} 0 4px,transparent 4px 6px)`}}/> Composite (right)
+        </span>
+      </div>
     </Card>
   );
 }
@@ -461,11 +661,16 @@ export default function StockDetail(){
         </div>
       </Card>
 
-      {/* Probability + Catalyst + Composite History */}
+      {/* Probability + Catalyst + Sentiment */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
         <ProbabilityCard s={s}/>
         <CatalystTimeline s={s}/>
-        <CompositeChart symbol={s.symbol}/>
+        <SentimentCard s={s}/>
+      </div>
+
+      {/* Price + Composite dual-line chart (full-width so axes have room) */}
+      <div style={{marginBottom:16}}>
+        <PriceCompositeChart symbol={s.symbol}/>
       </div>
 
       {/* 3-column: Momentum / Quality+Value / Transcript */}
