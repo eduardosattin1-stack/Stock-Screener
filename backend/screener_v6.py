@@ -233,6 +233,11 @@ class Stock:
     price: float = 0.0
     currency: str = "USD"
 
+    # v7.2: exchange/country/sector (populated from company-screener at universe build)
+    exchange: str = ""        # e.g. "NYSE", "NASDAQ", "XETRA", "LSE"
+    country: str = ""         # ISO-2 e.g. "US", "DE", "GB", "NL"
+    sector: str = ""          # e.g. "Healthcare", "Technology"
+
     # Quote
     sma50: float = 0.0
     sma200: float = 0.0
@@ -356,7 +361,11 @@ REGIONS = {
     ],
     "asia": [
         ("JPX", "JP", 5_000_000_000, 100),
-        ("HKSE", "HK", 5_000_000_000, 100),
+        # HKSE: no country filter — most major HKSE listings are mainland
+        # Chinese companies (country=CN) e.g. 9988.HK (BABA), 0700.HK (Tencent),
+        # 3690.HK (Meituan), 9618.HK (JD.com). Filtering by country=HK would
+        # miss all of them. Limit raised to 200 since this universe is bigger.
+        ("HKSE", None, 5_000_000_000, 200),
         ("KSC", "KR", 5_000_000_000, 50),
     ],
     "brazil": [("SAO", "BR", 1_000_000_000, 50)],
@@ -367,6 +376,7 @@ REGIONS = {
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
 SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector perf calls
+COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -402,11 +412,14 @@ def get_symbols(region: str) -> list[str]:
                 if not sym:
                     continue
                 batch.append(sym)
-                # v7.2: preserve sector + exchange for sector_momentum factor
+                # v7.2: preserve sector + exchange + country for scoring and UI filters
                 sec = d.get("sector") or ""
                 if sec:
                     SECTOR_MAP[sym] = sec
                 SECTOR_EXCHANGE_MAP[sym] = d.get("exchangeShortName") or exchange
+                co = d.get("country") or country or ""
+                if co:
+                    COUNTRY_MAP[sym] = co.upper()
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
     return list(dict.fromkeys(symbols))
@@ -1570,64 +1583,64 @@ Transcript excerpt:
 # ---------------------------------------------------------------------------
 
 def get_institutional_flows(sym: str) -> dict:
-    """Check institutional ownership changes. Score 0-1."""
+    """Check institutional ownership changes. Score 0-1.
+
+    v7.2 fix: 13F filings lag 45 days past quarter-end. Starting at CURRENT
+    quarter always returns None. The positions-summary endpoint already
+    contains QoQ change fields, so we only need ONE quarter's summary.
+
+    Starts one quarter back (most recent that should be reported) and falls
+    back further if empty.
+    """
     result = {"holders_change": 0.0, "accumulation": 0.0, "score": 0.5, "_evaluated": False}
 
     now = datetime.now()
-    # Current quarter
-    cur_q = (now.month - 1) // 3 + 1
-    cur_y = now.year
-    # Previous quarter
-    prev_q = cur_q - 1 if cur_q > 1 else 4
-    prev_y = cur_y if cur_q > 1 else cur_y - 1
+    cur_q_raw = (now.month - 1) // 3 + 1
+    # Start one full quarter back (filings not yet available for current)
+    q = cur_q_raw - 1 if cur_q_raw > 1 else 4
+    y = now.year if cur_q_raw > 1 else now.year - 1
 
-    cur_data = fmp("institutional-ownership/symbol-positions-summary",
-                   {"symbol": sym, "year": cur_y, "quarter": cur_q})
-    prev_data = fmp("institutional-ownership/symbol-positions-summary",
-                    {"symbol": sym, "year": prev_y, "quarter": prev_q})
+    data = fmp("institutional-ownership/symbol-positions-summary",
+               {"symbol": sym, "year": y, "quarter": q})
 
-    if not cur_data and not prev_data:
-        # Try one more quarter back
-        pp_q = prev_q - 1 if prev_q > 1 else 4
-        pp_y = prev_y if prev_q > 1 else prev_y - 1
-        cur_data = prev_data
-        prev_data = fmp("institutional-ownership/symbol-positions-summary",
-                        {"symbol": sym, "year": pp_y, "quarter": pp_q})
+    # If still empty (rare — e.g. very recent quarter still filing), try one more back
+    if not data:
+        q = q - 1 if q > 1 else 4
+        y = y if q != 4 else y - 1
+        data = fmp("institutional-ownership/symbol-positions-summary",
+                   {"symbol": sym, "year": y, "quarter": q})
 
-    if cur_data and prev_data:
-        cur_holders = len(cur_data) if isinstance(cur_data, list) else 0
-        prev_holders = len(prev_data) if isinstance(prev_data, list) else 0
+    # positions-summary returns a single SUMMARY object per quarter (not a
+    # list of holders). Read pre-computed QoQ fields directly.
+    if not data or not isinstance(data, list) or not data:
+        return result  # non-US or unlisted
 
-        if prev_holders > 0:
-            result["holders_change"] = (cur_holders - prev_holders) / prev_holders
+    d = data[0]
+    # investorsHoldingChange = holder count change QoQ (absolute # of institutions)
+    # ownershipPercentChange = institutional share of float change QoQ (percentage points)
+    last_holders = float(d.get("lastInvestorsHolding") or 0)
+    holders_delta = float(d.get("investorsHoldingChange") or 0)
+    result["holders_change"] = (holders_delta / last_holders) if last_holders > 0 else 0.0
 
-        # Check share accumulation trend
-        cur_shares = sum(float(h.get("shares", 0)) for h in cur_data) if isinstance(cur_data, list) else 0
-        prev_shares = sum(float(h.get("shares", 0)) for h in prev_data) if isinstance(prev_data, list) else 0
+    # ownership % change as fractional accumulation proxy
+    own_pct_delta = float(d.get("ownershipPercentChange") or 0)  # e.g. 2.85 = +2.85pp
+    result["accumulation"] = own_pct_delta / 100.0
 
-        if prev_shares > 0:
-            result["accumulation"] = (cur_shares - prev_shares) / prev_shares
+    # Score: combine holder-count trend + ownership-% trend
+    acc = result["accumulation"]
+    hc = result["holders_change"]
+    if acc > 0.02 and hc > 0.05:       # broad + concentrated buying
+        result["score"] = 1.0
+    elif acc > 0.01 or hc > 0.05:
+        result["score"] = 0.75
+    elif acc > -0.01 and hc > -0.05:
+        result["score"] = 0.5
+    elif acc < -0.02 or hc < -0.10:
+        result["score"] = 0.15
+    else:
+        result["score"] = 0.3
 
-        # Score
-        acc = result["accumulation"]
-        hc = result["holders_change"]
-        if acc > 0.10 and hc > 0.05:
-            result["score"] = 1.0   # strong accumulation
-        elif acc > 0.05 or hc > 0.05:
-            result["score"] = 0.75  # moderate accumulation
-        elif acc > -0.05 and hc > -0.05:
-            result["score"] = 0.5   # neutral
-        elif acc < -0.10 or hc < -0.10:
-            result["score"] = 0.15  # distribution
-        else:
-            result["score"] = 0.3   # mild reduction
-
-        result["_evaluated"] = True  # QoQ comparison available
-
-    elif cur_data:
-        result["score"] = 0.5  # only current data, neutral
-        result["_evaluated"] = True  # we know institutions hold it
-
+    result["_evaluated"] = True
     return result
 
 # ---------------------------------------------------------------------------
@@ -2175,6 +2188,9 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
 
             s = Stock(
                 symbol=sym, price=price, currency=q["currency"],
+                exchange=SECTOR_EXCHANGE_MAP.get(sym, ""),
+                country=COUNTRY_MAP.get(sym, ""),
+                sector=SECTOR_MAP.get(sym, ""),
                 sma50=q["sma50"], sma200=q["sma200"],
                 year_high=q["year_high"], year_low=q["year_low"],
                 market_cap=q["market_cap"], volume=q["volume"],
@@ -2362,19 +2378,29 @@ def format_report(stocks: list[Stock], region: str, macro: dict = None) -> str:
             cov_str = f"[{s.factor_coverage}/13 factors]"
             lines.append(f"\n  {s.symbol:<12} {s.currency} {s.price:>8.2f}  │  Composite: {s.composite:.3f}  │  {s.classification}  │  {cov_str}")
 
-            # Factor breakdown (v7.1 — only show evaluated factors, mark missing)
+            # Factor breakdown (v7.2 — show all 13 factors, mark missing with —)
             fs = s.factor_scores
             if fs:
+                # Short abbreviations so the line wraps cleanly on mobile
+                ABBR = {
+                    "technical": "techn", "quality": "quali", "upside": "upsid",
+                    "proximity": "proxi", "catalyst": "catal", "transcript": "trans",
+                    "institutional": "instS", "institutional_flow": "instF",
+                    "analyst": "analy", "insider": "insid", "earnings": "earni",
+                    "sector_momentum": "secMm", "congressional": "congr",
+                }
                 factor_strs = []
-                for f in ["technical", "quality", "upside", "proximity", "catalyst",
-                          "transcript", "institutional", "analyst", "insider", "earnings"]:
+                for f in ALL_FACTORS:
                     val = fs.get(f, 0.0)
+                    abbr = ABBR.get(f, f[:5])
                     if f in s.factors_evaluated:
-                        factor_strs.append(f"{f[:5]}:{val:.2f}")
+                        factor_strs.append(f"{abbr}:{val:.2f}")
                     else:
-                        factor_strs.append(f"{f[:5]}:  — ")
-                lines.append(f"    Factors:    {' | '.join(factor_strs[:5])}")
-                lines.append(f"                {' | '.join(factor_strs[5:])}")
+                        factor_strs.append(f"{abbr}:  — ")
+                # Wrap 5 per line for readability on mobile
+                for i in range(0, len(factor_strs), 5):
+                    prefix = "    Factors:   " if i == 0 else "               "
+                    lines.append(f"{prefix} {' | '.join(factor_strs[i:i+5])}")
             if s.factors_missing:
                 lines.append(f"    Missing:    {', '.join(s.factors_missing)}")
 
@@ -2811,6 +2837,14 @@ def main():
     if not symbols:
         log.error("No symbols to screen!")
         return "No symbols found."
+
+    # v7.2: preload sector performance cache — populates SECTOR_PERF_CACHE
+    # for compute_sector_momentum. Requires SECTOR_MAP (populated by get_symbols
+    # or, when --symbols is used, populated lazily during pass 1 via quote lookups).
+    # If --symbols was used, skip the preload (sector_momentum will degrade to
+    # neutral _evaluated=False for those custom symbols, which is correct).
+    if not args.symbols and SECTOR_MAP:
+        preload_sector_performance(days=60)
 
     # Screen
     results, macro = screen(symbols, enrich_top_n=enrich_count,
