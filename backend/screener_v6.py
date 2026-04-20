@@ -1208,7 +1208,16 @@ def compute_earnings_momentum(analyst: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
-    """Score based on target upside cross-checked with intrinsic value."""
+    """Score based on target upside cross-checked with intrinsic value.
+
+    v7.2: Caps extreme DCF values. FMP's DCF model is sensitive to WACC-g
+    spread compression — for low-beta defensives with high debt (e.g. CVS,
+    where beta=0.505 + $93B debt produces a WACC of 4.62% vs 2% terminal
+    growth), terminal values explode to multiples of market cap and per-share
+    DCF comes out 5-10x price. This is a methodology artifact, not signal.
+    When DCF exceeds 4x price, we treat it as unreliable and score on analyst
+    target alone.
+    """
     result = {"score": 0.0, "consensus_upside": 0, "dcf_upside": 0, "_evaluated": False}
 
     if price <= 0:
@@ -1219,14 +1228,20 @@ def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
     if target > 0:
         result["consensus_upside"] = (target - price) / price * 100
 
-    # DCF/intrinsic upside
+    # DCF/intrinsic upside — sanity-cap at 4x price
     dcf = value.get("dcf_value", 0)
     intrinsic = value.get("intrinsic_avg", 0)
+    dcf_ratio_sane = (intrinsic > 0 and price > 0 and intrinsic / price <= 4.0)
     if intrinsic > 0:
-        result["dcf_upside"] = (intrinsic - price) / price * 100
+        if dcf_ratio_sane:
+            result["dcf_upside"] = (intrinsic - price) / price * 100
+        else:
+            # Flag as unreliable rather than trust the blow-out number
+            result["dcf_upside"] = 0
+            result["dcf_unreliable"] = True
 
     # Evaluated if we have at least one valuation anchor
-    if target > 0 or intrinsic > 0:
+    if target > 0 or (intrinsic > 0 and dcf_ratio_sane):
         result["_evaluated"] = True
 
     # Cross-check scoring: both must agree for high score
@@ -1452,7 +1467,20 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
             result["flags"].append(f"⚠ 1 downgrade in 7d")
 
     # ─── C) M&A / Activist / Major Event News (last 14 days) ──
-    news = fmp("news/stock", {"symbols": sym, "limit": 10})
+    # v7.2: FMP's `news/stock` endpoint IGNORES the symbols filter and returns
+    # global news. Using it here caused every keyword match on unrelated
+    # companies' news (e.g. "deal", "stake", "takeover") to attribute as a
+    # false-positive catalyst on whatever stock we were scoring. Example: CVS
+    # being tagged "M&A/activist activity detected" because unrelated MCW
+    # go-private news mentioned a take-private deal.
+    #
+    # Fix:
+    #   1. Use `news/search-stock-news` which actually respects the symbols
+    #      filter (confirmed via FMP MCP: stock-news returned 0/10 CVS
+    #      articles; search-stock-news returned 10/10 CVS articles).
+    #   2. Belt-and-suspenders: verify each article's `symbol` field matches
+    #      `sym` before scanning keywords. Drop anything that doesn't.
+    news = fmp("news/search-stock-news", {"symbols": sym, "limit": 10})
     if news:
         cutoff = (today - timedelta(days=14)).strftime("%Y-%m-%d")
         ma_kw = {"acquisition", "acquire", "merger", "buyout", "takeover",
@@ -1462,7 +1490,12 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
         neg_kw = {"lawsuit", "investigation", "fraud", "recall",
                   "warning", "subpoena", "sec inquiry", "delisting"}
 
+        sym_upper = sym.upper()
         for article in news:
+            # Guard: endpoint should filter, but verify each row just in case.
+            art_sym = (article.get("symbol", "") or "").upper()
+            if art_sym and art_sym != sym_upper:
+                continue
             pub = article.get("publishedDate", "")[:10]
             if pub < cutoff:
                 continue
