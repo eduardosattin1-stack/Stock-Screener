@@ -304,7 +304,8 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
               <CatalystBadges s={s}/>
-              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
+              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}{s.exchange?` · ${s.exchange}`:""}{s.country&&s.country!=="US"?` ${s.country}`:""}</div>}
+              {!s.sector&&s.exchange&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.exchange}{s.country&&s.country!=="US"?` · ${s.country}`:""}</div>}
             </div>
           </div>
         </td>
@@ -423,9 +424,27 @@ export default function Dashboard(){
   const weights=data?.weights||FACTOR_WEIGHTS;
 
   // Filter stocks by region first (for accurate summary counts)
+  // v7.2: Europe and RoW both filter client-side as a safety net.
+  // If latest_europe.json is missing and we fall back to latest.json (which
+  // may contain Global or SP500 data), this prevents US/non-EU contamination.
   const regionStocks=useMemo(()=>{
     if(!data?.stocks) return [];
-    if(region!=="global") return data.stocks;
+    if(region==="sp500") return data.stocks;
+    if(region==="europe"){
+      return data.stocks.filter(s=>{
+        const ex=s.exchange||"";const co=s.country||"";
+        if(ex||co){
+          if(EU_EXCHANGES.has(ex)||EU_COUNTRIES.has(co)) return true;
+          if(US_EXCHANGES.has(ex)||co==="US") return false;
+          return false;  // unknown exchange + no EU country → exclude
+        }
+        // Fallback: suffix-based heuristic for older scans without exchange data
+        if(!s.symbol.includes(".")) return false;
+        const suffix=s.symbol.split(".").pop()||"";
+        return ["DE","PA","L","AS","MI","ST","SW","MC","HE","OL","CO","BR","IR","VI","LI"].includes(suffix);
+      });
+    }
+    // Rest of World: exclude US + EU
     return data.stocks.filter(s=>{
       const ex=s.exchange||"";const co=s.country||"";
       if(ex||co){
@@ -453,7 +472,10 @@ export default function Dashboard(){
 
   if(loading) return<div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
 
-  const sum=region==="global"
+  // v7.2: for sp500, trust backend summary. For europe/global, derive counts
+  // from client-filtered regionStocks so they stay correct when we fall back
+  // to latest.json.
+  const sum=region!=="sp500"
     ?{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length}
     :(data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0});
   const scanDate=data?.scan_date?new Date(data.scan_date).toLocaleString():"—";
@@ -483,7 +505,7 @@ export default function Dashboard(){
               <button key={r.key} onClick={()=>setRegion(r.key)} style={{padding:"5px 12px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:`1px solid ${region===r.key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,borderRadius:5,cursor:"pointer",background:region===r.key?"var(--green-light,#e8f5ee)":"transparent",color:region===r.key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",transition:"all 0.15s"}}>{r.label}</button>
             ))}
           </div>
-          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region==="global"&&data?.stocks?` (from ${data.stocks.length} global)`:""} · {data?.version||"v7.2"}</p>
+          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":region==="europe"?"EUROPE":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region!=="sp500"&&data?.stocks&&data.stocks.length!==sum.total?` (filtered from ${data.stocks.length})`:""} · {data?.version||"v7.2"}</p>
         </div>
         <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
           {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
