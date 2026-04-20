@@ -1,5 +1,5 @@
 import os, json, traceback
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import requests
@@ -329,6 +329,86 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(b"Stock Screener v7 - GET /transcript?symbol=X&quarters=8 for multi-quarter AI analysis")
 
     def do_POST(self):
+        parsed = urlparse(self.path)
+
+        # ───────────────────────────────────────────────────────────────────
+        # v7.2: /portfolio/add — add or update a position in the portfolio.
+        # Writes to GCS portfolio/state.json. Reuses monitor_v7.add_position
+        # so entry_composite gets computed and stored for forward tracking.
+        # Expected JSON body: {symbol, entry_price, shares, notes?}
+        # ───────────────────────────────────────────────────────────────────
+        if parsed.path == "/portfolio/add":
+            try:
+                from monitor_v7 import load_state, save_state, add_position
+                content_len = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(content_len)) if content_len else {}
+                symbol = (body.get("symbol") or "").upper().strip()
+                entry_price = float(body.get("entry_price") or 0)
+                shares = float(body.get("shares") or 0)
+                notes = (body.get("notes") or "")[:200]
+                if not symbol or entry_price <= 0:
+                    self.send_response(400); self._cors()
+                    self.send_header("Content-Type", "application/json"); self.end_headers()
+                    self.wfile.write(json.dumps({"error": "symbol and entry_price > 0 required"}).encode())
+                    return
+                state = load_state()
+                state = add_position(state, symbol, entry_price, shares=shares, notes=notes)
+                save_state(state)
+                self.send_response(200); self._cors()
+                self.send_header("Content-Type", "application/json"); self.end_headers()
+                # Return just the added/updated position, not the whole state
+                pos = next((p for p in state.get("positions", []) if p["symbol"] == symbol), {})
+                self.wfile.write(json.dumps({"ok": True, "position": pos}, default=str).encode())
+            except Exception as e:
+                self.send_response(500); self._cors()
+                self.send_header("Content-Type", "application/json"); self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
+        # ───────────────────────────────────────────────────────────────────
+        # v7.2: /portfolio/close — close an existing position, record in
+        # history. Expected JSON body: {symbol, exit_price, reason?}
+        # ───────────────────────────────────────────────────────────────────
+        if parsed.path == "/portfolio/close":
+            try:
+                from monitor_v7 import load_state, save_state, remove_position
+                content_len = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(content_len)) if content_len else {}
+                symbol = (body.get("symbol") or "").upper().strip()
+                exit_price = float(body.get("exit_price") or 0)
+                reason = (body.get("reason") or "User close")[:200]
+                if not symbol or exit_price <= 0:
+                    self.send_response(400); self._cors()
+                    self.send_header("Content-Type", "application/json"); self.end_headers()
+                    self.wfile.write(json.dumps({"error": "symbol and exit_price > 0 required"}).encode())
+                    return
+                state = load_state()
+                state = remove_position(state, symbol, exit_price=exit_price, reason=reason)
+                save_state(state)
+                self.send_response(200); self._cors()
+                self.send_header("Content-Type", "application/json"); self.end_headers()
+                self.wfile.write(json.dumps({"ok": True, "symbol": symbol}, default=str).encode())
+            except Exception as e:
+                self.send_response(500); self._cors()
+                self.send_header("Content-Type", "application/json"); self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
+        # ───────────────────────────────────────────────────────────────────
+        # Default: run a screener scan. Previously this handler matched any
+        # POST regardless of path — that caused `/portfolio/add` requests to
+        # kick off 12-minute NASDAQ scans instead of adding a position. Now
+        # gated to explicit scan paths ("/", "/scan") so POST-to-any-other-
+        # path rejects cleanly instead of running expensive work.
+        # ───────────────────────────────────────────────────────────────────
+        if parsed.path not in ("/", "/scan"):
+            self.send_response(404); self._cors()
+            self.send_header("Content-Type", "application/json"); self.end_headers()
+            self.wfile.write(json.dumps({"error": f"No POST handler for {parsed.path}"}).encode())
+            return
+
         try:
             from screener_v6 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
             content_len = int(self.headers.get("Content-Length", 0))
@@ -344,7 +424,7 @@ class Handler(BaseHTTPRequestHandler):
             update_signal_history(results)
             save_scan_to_gcs(results, region, macro=macro)
             today = datetime.now().strftime("%Y-%m-%d")
-            send_email(f"CB Screener v7.1: {region.upper()} — {today}", report)
+            send_email(f"CB Screener v7.2: {region.upper()} — {today}", report)
             self.send_response(200)
             self._cors()
             self.send_header("Content-Type", "text/plain; charset=utf-8")
@@ -359,5 +439,5 @@ class Handler(BaseHTTPRequestHandler):
 
 
 port = int(os.environ.get("PORT", 8080))
-print(f"Screener v7.1 server on port {port}")
-HTTPServer(("", port), Handler).serve_forever()
+print(f"Screener v7.2 server on port {port}")
+ThreadingHTTPServer(("", port), Handler).serve_forever()
