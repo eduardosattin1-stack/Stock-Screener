@@ -278,7 +278,7 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 2: P(+10%) HIT RATE (System 2 — 60d windows, p10 > 0.70)
+// TAB 2: P(+10%) HIT RATE (System 2 — 60d windows, p10 > 0.60)
 // ══════════════════════════════════════════════════════════════════════════════
 function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
   const [open, setOpen] = useState<HitRateOpen[]>([]);
@@ -301,6 +301,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
     const avgP10 = closed.reduce((a, c) => a + c.entry_p10, 0) / closed.length;
     // Buckets by predicted p10
     const buckets = [
+      { label: "0.60–0.70", min: 0.60, max: 0.70, n: 0, hits: 0 },
       { label: "0.70–0.80", min: 0.70, max: 0.80, n: 0, hits: 0 },
       { label: "0.80–0.90", min: 0.80, max: 0.90, n: 0, hits: 0 },
       { label: "0.90+",     min: 0.90, max: 1.01, n: 0, hits: 0 },
@@ -325,7 +326,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
     <>
       {stats && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
-          <KPI label="OPEN WINDOWS" value={String(open.length)} sub="p10 > 0.70 currently tracked" />
+          <KPI label="OPEN WINDOWS" value={String(open.length)} sub="p10 > 0.60 currently tracked" />
           <KPI label="CLOSED" value={String(stats.total)} sub={`${stats.hits} hits / ${stats.misses} misses`} />
           <KPI label="LIVE HIT RATE" value={`${stats.hit_rate.toFixed(0)}%`} color={stats.hit_rate >= 50 ? T.greenPos : T.red} sub={`vs. predicted avg ${stats.avg_predicted_p10.toFixed(0)}%`} />
           <KPI label="AVG MAX GAIN" value={`${stats.avg_gain >= 0 ? "+" : ""}${stats.avg_gain.toFixed(1)}%`} color={stats.avg_gain >= 0 ? T.greenPos : T.red} sub="Across all closed windows" />
@@ -336,7 +337,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
       {stats && stats.buckets.some(b => b.n > 0) && (
         <Card style={{ marginBottom: 20 }}>
           <SH title="Hit Rate by Predicted p10 Bucket" icon={<Award size={12} />} sub="Calibration check" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             {stats.buckets.map(b => {
               const rate = b.n > 0 ? (b.hits / b.n) * 100 : 0;
               return (
@@ -357,10 +358,10 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
 
       {/* Open windows */}
       <Card style={{ marginBottom: 20 }}>
-        <SH title={`Open Windows (${open.length})`} icon={<Radio size={12} />} sub="60-day countdown — p10 > 0.70" />
+        <SH title={`Open Windows (${open.length})`} icon={<Radio size={12} />} sub="60-day countdown — p10 > 0.60" />
         {open.length === 0 ? (
           <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-            No open windows. Opens when a stock is scanned with ML p(+10%) &gt; 0.70.
+            No open windows. Opens when a stock is scanned with ML p(+10%) &gt; 0.60.
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
