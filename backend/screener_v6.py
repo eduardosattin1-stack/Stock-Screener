@@ -2884,6 +2884,18 @@ def main():
     # Save to GCS (include macro metadata)
     save_scan_to_gcs(results, args.region, macro=macro)
 
+    # v7.2: Forward-only signal + hit-rate tracking. Runs after GCS upload.
+    # - System 1: BUY/STRONG BUY → SELL cycles
+    # - System 2: p10 > 0.70 60-day hit-rate windows
+    # - Stock history: per-symbol (date, price, composite) for chart
+    # Non-critical, swallow errors so a tracker bug can't fail the scan.
+    try:
+        from signal_tracker import update_from_scan
+        stocks_as_dicts = [asdict(s) for s in results]
+        update_from_scan(stocks_as_dicts, args.region)
+    except Exception as e:
+        log.warning(f"signal_tracker update failed (non-fatal): {e}")
+
     # Email
     today = datetime.now().strftime("%Y-%m-%d")
     if args.email or SMTP_USER:
