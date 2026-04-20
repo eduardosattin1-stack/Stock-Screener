@@ -376,6 +376,242 @@ function SentimentCard({s}:{s:StockData}){
   );
 }
 
+// ── CompanyProfileCard — business description + share structure + top holders ──
+// Fetches three FMP endpoints in parallel: company profile, shares float,
+// and top-10 13F holders. All are lightweight single-row lookups. No heavy
+// processing client-side — mostly display.
+//
+// One quirk worth knowing: both freeFloat and institutional ownershipPercent
+// can exceed 100% on some names. It's not a bug — shares borrowed for short-
+// selling end up double-counted when both the lender's fund and the short
+// seller's broker report them in 13F filings. We flag it honestly in the UI
+// rather than hiding the number.
+function CompanyProfileCard({symbol}:{symbol:string}){
+  type Profile={
+    companyName?:string; sector?:string; industry?:string; country?:string;
+    fullTimeEmployees?:string; ceo?:string; website?:string; ipoDate?:string;
+    description?:string; beta?:number; marketCap?:number; isAdr?:boolean;
+    exchangeFullName?:string; address?:string; city?:string; state?:string;
+  };
+  type Float={floatShares?:number; outstandingShares?:number; freeFloat?:number};
+  type Holder={
+    investorName:string; ownership:number; marketValue:number;
+    sharesNumber:number; changeInSharesNumberPercentage:number;
+    avgPricePaid:number; holdingPeriod:number; isNew:boolean;
+  };
+  type Positions={
+    investorsHolding?:number; investorsHoldingChange?:number;
+    ownershipPercent?:number; newPositions?:number; closedPositions?:number;
+  };
+
+  const [profile,setProfile]=useState<Profile|null>(null);
+  const [floatData,setFloatData]=useState<Float|null>(null);
+  const [holders,setHolders]=useState<Holder[]>([]);
+  const [positions,setPositions]=useState<Positions|null>(null);
+  const [loading,setLoading]=useState(true);
+  const [expanded,setExpanded]=useState(false);
+
+  useEffect(()=>{
+    let cancelled=false;
+    setLoading(true);
+    // Latest completed quarter — 13F lag is ~45d so use the previous quarter-end.
+    const now=new Date(); const q=Math.floor(now.getMonth()/3)+1;
+    const year13f=q===1?now.getFullYear()-1:now.getFullYear();
+    const quarter13f=q===1?4:q-1;
+
+    Promise.all([
+      fmpFetch("profile-symbol",{symbol}),
+      fmpFetch("shares-float",{symbol}),
+      fmpFetch("filings-extract-with-analytics-by-holder",
+        {symbol,year:year13f,quarter:quarter13f,limit:10}),
+      fmpFetch("positions-summary",{symbol,year:year13f,quarter:quarter13f}),
+    ]).then(([p,f,h,ps])=>{
+      if(cancelled) return;
+      setProfile(p?.[0]??null);
+      setFloatData(f?.[0]??null);
+      setHolders((h as Holder[])??[]);
+      setPositions((ps?.[0] as Positions)??null);
+      setLoading(false);
+    }).catch(()=>{if(!cancelled) setLoading(false);});
+
+    return ()=>{cancelled=true;};
+  },[symbol]);
+
+  const fmtBn=(n?:number)=>{
+    if(!n) return "—";
+    if(n>=1e12) return `$${(n/1e12).toFixed(2)}T`;
+    if(n>=1e9) return `$${(n/1e9).toFixed(2)}B`;
+    if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`;
+    return `$${(n/1e3).toFixed(0)}K`;
+  };
+  const fmtShares=(n?:number)=>{
+    if(!n) return "—";
+    if(n>=1e9) return `${(n/1e9).toFixed(2)}B`;
+    if(n>=1e6) return `${(n/1e6).toFixed(1)}M`;
+    if(n>=1e3) return `${(n/1e3).toFixed(0)}K`;
+    return String(n);
+  };
+  const ipoYear=profile?.ipoDate?profile.ipoDate.substring(0,4):"—";
+  const empCount=profile?.fullTimeEmployees?Number(profile.fullTimeEmployees).toLocaleString():"—";
+  const desc=profile?.description||"";
+  const descShort=desc.length>280?desc.substring(0,280).replace(/\s+\S*$/,"")+"…":desc;
+  const descLong=desc;
+
+  const floatRatio=floatData?.floatShares&&floatData?.outstandingShares
+    ?floatData.floatShares/floatData.outstandingShares:null;
+  const floatExceeds100=floatData?.freeFloat && floatData.freeFloat>100;
+
+  const instExceeds100=positions?.ownershipPercent && positions.ownershipPercent>100;
+
+  // Top 5 holders sorted by ownership desc (API returns by market value — re-sort)
+  const topHolders=[...holders].sort((a,b)=>(b.ownership||0)-(a.ownership||0)).slice(0,5);
+
+  if(loading){
+    return (
+      <Card>
+        <SH title="Company Profile" icon={<Activity size={12}/>}/>
+        <div style={{padding:"20px 0",textAlign:"center",color:T.textMuted,fontSize:11,fontFamily:T.mono}}>
+          <Loader2 size={14} style={{animation:"spin 1s linear infinite",verticalAlign:"middle",marginRight:6}}/>
+          Loading company data…
+        </div>
+      </Card>
+    );
+  }
+
+  if(!profile){
+    return (
+      <Card>
+        <SH title="Company Profile" icon={<Activity size={12}/>}/>
+        <div style={{padding:"20px 0",textAlign:"center",color:T.textMuted,fontSize:11,fontFamily:T.mono}}>
+          No profile data available.
+        </div>
+      </Card>
+    );
+  }
+
+  const metricBox=(label:string,value:string,sub?:string,color?:string)=>(
+    <div>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div style={{fontSize:13,color:color||T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
+      {sub && <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{sub}</div>}
+    </div>
+  );
+
+  return (
+    <Card>
+      <SH title="Company Profile" icon={<Activity size={12}/>}
+        sub={profile.exchangeFullName||profile.country||""}/>
+
+      {/* Top strip: identity */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:"4px 14px",fontSize:11,fontFamily:T.mono,color:T.textMuted,marginBottom:12,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
+        {profile.sector && <span><span style={{color:T.textLight}}>Sector:</span> <span style={{color:T.text,fontWeight:600}}>{profile.sector}</span></span>}
+        {profile.industry && <span><span style={{color:T.textLight}}>Industry:</span> <span style={{color:T.text,fontWeight:600}}>{profile.industry}</span></span>}
+        {profile.ceo && <span><span style={{color:T.textLight}}>CEO:</span> <span style={{color:T.text,fontWeight:600}}>{profile.ceo}</span></span>}
+        <span><span style={{color:T.textLight}}>Employees:</span> <span style={{color:T.text,fontWeight:600}}>{empCount}</span></span>
+        <span><span style={{color:T.textLight}}>IPO:</span> <span style={{color:T.text,fontWeight:600}}>{ipoYear}</span></span>
+        {profile.isAdr && <span style={{color:T.blue,fontWeight:600}}>ADR</span>}
+        {profile.website && <a href={profile.website} target="_blank" rel="noopener noreferrer" style={{color:T.green,textDecoration:"none",fontWeight:600}}>↗ website</a>}
+      </div>
+
+      {/* Business description */}
+      {desc && (
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>BUSINESS</div>
+          <div style={{fontSize:12,color:T.text,fontFamily:T.sans,lineHeight:1.55}}>
+            {expanded?descLong:descShort}
+            {desc.length>280 && (
+              <button onClick={()=>setExpanded(!expanded)} style={{marginLeft:6,background:"none",border:"none",color:T.green,cursor:"pointer",fontSize:11,fontFamily:T.mono,fontWeight:600,padding:0}}>
+                {expanded?"show less":"show more"}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Share structure */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+        {metricBox("MARKET CAP", fmtBn(profile.marketCap))}
+        {metricBox("SHARES OUT", fmtShares(floatData?.outstandingShares))}
+        {metricBox(
+          "FREE FLOAT",
+          floatData?.floatShares?fmtShares(floatData.floatShares):"—",
+          floatRatio?`${(floatRatio*100).toFixed(0)}% of outstanding`:undefined,
+          floatExceeds100?T.amber:undefined
+        )}
+        {metricBox(
+          "BETA",
+          profile.beta?profile.beta.toFixed(2):"—",
+          profile.beta?(profile.beta<0.8?"Defensive":profile.beta>1.2?"High volatility":"Market-like"):undefined,
+          profile.beta?(profile.beta<0.8?T.green:profile.beta>1.2?T.amber:T.textMuted):undefined
+        )}
+      </div>
+
+      {floatExceeds100 && (
+        <div style={{fontSize:10,color:T.amber,fontFamily:T.mono,marginBottom:10,padding:"6px 10px",background:T.amberLight,borderRadius:4,border:`1px solid #fde68a`}}>
+          ⚠ Free float exceeds 100% — typical when shares are heavily borrowed for short-selling (double-counted in reporting).
+        </div>
+      )}
+
+      {/* Institutional ownership summary */}
+      {positions && (
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14}}>
+          {metricBox("13F HOLDERS", String(positions.investorsHolding??"—"),
+            positions.investorsHoldingChange!==undefined && positions.investorsHoldingChange!==null
+              ?`${positions.investorsHoldingChange>0?"+":""}${positions.investorsHoldingChange} QoQ`
+              :undefined,
+            (positions.investorsHoldingChange??0)>0?T.green:(positions.investorsHoldingChange??0)<0?T.red:undefined)}
+          {metricBox("INST OWNERSHIP",
+            positions.ownershipPercent?`${positions.ownershipPercent.toFixed(0)}%`:"—",
+            instExceeds100?"incl. lent shares":undefined,
+            instExceeds100?T.amber:(positions.ownershipPercent??0)>70?T.green:undefined)}
+          {metricBox("NEW POSITIONS",
+            String(positions.newPositions??"—"),
+            "this quarter",
+            (positions.newPositions??0)>20?T.green:undefined)}
+          {metricBox("CLOSED POSITIONS",
+            String(positions.closedPositions??"—"),
+            "this quarter",
+            (positions.closedPositions??0)>20?T.red:undefined)}
+        </div>
+      )}
+
+      {/* Top 5 holders table */}
+      {topHolders.length>0 && (
+        <div>
+          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>TOP 5 INSTITUTIONAL HOLDERS</div>
+          <div style={{display:"grid",gridTemplateColumns:"2.5fr 0.7fr 0.9fr 0.9fr 0.9fr",gap:"4px 10px",fontSize:10,fontFamily:T.mono}}>
+            <div style={{color:T.textLight,fontWeight:600,paddingBottom:4,borderBottom:`1px solid ${T.divider}`}}>HOLDER</div>
+            <div style={{color:T.textLight,fontWeight:600,textAlign:"right",paddingBottom:4,borderBottom:`1px solid ${T.divider}`}}>% OWN</div>
+            <div style={{color:T.textLight,fontWeight:600,textAlign:"right",paddingBottom:4,borderBottom:`1px solid ${T.divider}`}}>VALUE</div>
+            <div style={{color:T.textLight,fontWeight:600,textAlign:"right",paddingBottom:4,borderBottom:`1px solid ${T.divider}`}}>Δ SHARES</div>
+            <div style={{color:T.textLight,fontWeight:600,textAlign:"right",paddingBottom:4,borderBottom:`1px solid ${T.divider}`}}>AVG COST</div>
+            {topHolders.map((h,i)=>{
+              const chg=h.changeInSharesNumberPercentage||0;
+              const chgColor=chg>1?T.green:chg<-1?T.red:T.textMuted;
+              const chgLabel=h.isNew?"NEW":`${chg>0?"+":""}${chg.toFixed(1)}%`;
+              return (
+                <div key={i} style={{display:"contents"}}>
+                  <div style={{color:T.text,fontWeight:600,padding:"5px 0",textTransform:"capitalize"}}>
+                    {h.investorName.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
+                    {h.holdingPeriod>=20 && <span style={{marginLeft:6,fontSize:9,color:T.textLight,fontWeight:400}}>since {Math.floor(h.holdingPeriod/4)}y</span>}
+                  </div>
+                  <div style={{color:T.text,textAlign:"right",padding:"5px 0"}}>{h.ownership.toFixed(2)}%</div>
+                  <div style={{color:T.text,textAlign:"right",padding:"5px 0"}}>{fmtBn(h.marketValue)}</div>
+                  <div style={{color:chgColor,textAlign:"right",padding:"5px 0",fontWeight:h.isNew?700:400}}>{chgLabel}</div>
+                  <div style={{color:T.textMuted,textAlign:"right",padding:"5px 0"}}>${h.avgPricePaid.toFixed(2)}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:10,lineHeight:1.4}}>
+            13F filings lag ~45 days. Data as of most recent completed quarter. Δ SHARES is QoQ position change.
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol}:{symbol:string}){
   const[rows,setRows]=useState<[string,number,number][]>([]);
@@ -693,6 +929,11 @@ export default function StockDetail(){
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]} detail={factorDetail(k,s)}/>)}</div>
         </div>
       </Card>
+
+      {/* Company profile — full-width context card, placed right under the factor panel */}
+      <div style={{marginBottom:16}}>
+        <CompanyProfileCard symbol={s.symbol}/>
+      </div>
 
       {/* Probability + Catalyst + Sentiment */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
