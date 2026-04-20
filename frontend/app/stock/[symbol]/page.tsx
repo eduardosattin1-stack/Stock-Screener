@@ -414,25 +414,17 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   useEffect(()=>{
     let cancelled=false;
     setLoading(true);
-    // Latest completed quarter — 13F lag is ~45d so use the previous quarter-end.
-    const now=new Date(); const q=Math.floor(now.getMonth()/3)+1;
-    const year13f=q===1?now.getFullYear()-1:now.getFullYear();
-    const quarter13f=q===1?4:q-1;
 
-    Promise.all([
-      fmpFetch("profile-symbol",{symbol}),
-      fmpFetch("shares-float",{symbol}),
-      fmpFetch("filings-extract-with-analytics-by-holder",
-        {symbol,year:year13f,quarter:quarter13f,limit:10}),
-      fmpFetch("positions-summary",{symbol,year:year13f,quarter:quarter13f}),
-    ]).then(([p,f,h,ps])=>{
-      if(cancelled) return;
-      setProfile(p?.[0]??null);
-      setFloatData(f?.[0]??null);
-      setHolders((h as Holder[])??[]);
-      setPositions((ps?.[0] as Positions)??null);
-      setLoading(false);
-    }).catch(()=>{if(!cancelled) setLoading(false);});
+    fetch(`/api/company/${encodeURIComponent(symbol)}`)
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(cancelled||!d) return;
+        setProfile(d.profile??null);
+        setFloatData(d.float??null);
+        setHolders((d.holders as Holder[])??[]);
+        setPositions((d.positions as Positions)??null);
+        setLoading(false);
+      }).catch(()=>{if(!cancelled) setLoading(false);});
 
     return ()=>{cancelled=true;};
   },[symbol]);
