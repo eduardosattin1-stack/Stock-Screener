@@ -333,13 +333,17 @@ class Handler(BaseHTTPRequestHandler):
 
         # ───────────────────────────────────────────────────────────────────
         # v7.2: /portfolio/add — add or update a position in the portfolio.
-        # Writes to GCS portfolio/state.json. Reuses monitor_v7.add_position
-        # so entry_composite gets computed and stored for forward tracking.
+        # Writes to GCS portfolio/state.json. Uses add_position_atomic to
+        # prevent race conditions between concurrent add/close requests
+        # (previously: two concurrent writes would silently lose one because
+        # both read the same state, both mutated their copy, and last-writer-
+        # wins overwrote the first). Now uses GCS object generation
+        # preconditions and retries on conflict.
         # Expected JSON body: {symbol, entry_price, shares, notes?}
         # ───────────────────────────────────────────────────────────────────
         if parsed.path == "/portfolio/add":
             try:
-                from monitor_v7 import load_state, save_state, add_position
+                from monitor_v7 import add_position_atomic
                 content_len = int(self.headers.get("Content-Length", 0))
                 body = json.loads(self.rfile.read(content_len)) if content_len else {}
                 symbol = (body.get("symbol") or "").upper().strip()
@@ -351,14 +355,10 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_header("Content-Type", "application/json"); self.end_headers()
                     self.wfile.write(json.dumps({"error": "symbol and entry_price > 0 required"}).encode())
                     return
-                state = load_state()
-                state = add_position(state, symbol, entry_price, shares=shares, notes=notes)
-                save_state(state)
+                _, result = add_position_atomic(symbol, entry_price, shares=shares, notes=notes)
                 self.send_response(200); self._cors()
                 self.send_header("Content-Type", "application/json"); self.end_headers()
-                # Return just the added/updated position, not the whole state
-                pos = next((p for p in state.get("positions", []) if p["symbol"] == symbol), {})
-                self.wfile.write(json.dumps({"ok": True, "position": pos}, default=str).encode())
+                self.wfile.write(json.dumps({"ok": True, **result}, default=str).encode())
             except Exception as e:
                 self.send_response(500); self._cors()
                 self.send_header("Content-Type", "application/json"); self.end_headers()
@@ -368,11 +368,15 @@ class Handler(BaseHTTPRequestHandler):
 
         # ───────────────────────────────────────────────────────────────────
         # v7.2: /portfolio/close — close an existing position, record in
-        # history. Expected JSON body: {symbol, exit_price, reason?}
+        # history. Uses remove_position_atomic for concurrency safety.
+        # Returns 404 if symbol is not in the current portfolio (previously
+        # silently returned 200 even when the position didn't exist, which
+        # made it hard to tell that a close had no effect).
+        # Expected JSON body: {symbol, exit_price, reason?}
         # ───────────────────────────────────────────────────────────────────
         if parsed.path == "/portfolio/close":
             try:
-                from monitor_v7 import load_state, save_state, remove_position
+                from monitor_v7 import remove_position_atomic
                 content_len = int(self.headers.get("Content-Length", 0))
                 body = json.loads(self.rfile.read(content_len)) if content_len else {}
                 symbol = (body.get("symbol") or "").upper().strip()
@@ -383,12 +387,19 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_header("Content-Type", "application/json"); self.end_headers()
                     self.wfile.write(json.dumps({"error": "symbol and exit_price > 0 required"}).encode())
                     return
-                state = load_state()
-                state = remove_position(state, symbol, exit_price=exit_price, reason=reason)
-                save_state(state)
+                _, result = remove_position_atomic(symbol, exit_price=exit_price, reason=reason)
+                if not result.get("removed"):
+                    self.send_response(404); self._cors()
+                    self.send_header("Content-Type", "application/json"); self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "ok": False,
+                        "error": f"Position {symbol} not found in portfolio",
+                        **result,
+                    }).encode())
+                    return
                 self.send_response(200); self._cors()
                 self.send_header("Content-Type", "application/json"); self.end_headers()
-                self.wfile.write(json.dumps({"ok": True, "symbol": symbol}, default=str).encode())
+                self.wfile.write(json.dumps({"ok": True, **result}, default=str).encode())
             except Exception as e:
                 self.send_response(500); self._cors()
                 self.send_header("Content-Type", "application/json"); self.end_headers()
