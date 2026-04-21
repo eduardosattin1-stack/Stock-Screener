@@ -162,6 +162,12 @@ class StrategyConfig:
     buy_threshold: float = 0.70
     watch_threshold: float = 0.55
     sell_threshold: float = 0.40
+    # Coverage penalty (v8.1)
+    # composite_effective = composite_raw * (coverage_pct ** coverage_alpha).
+    #   alpha=0.0 -> no penalty (control)
+    #   alpha=0.7 -> default (live screener v7.3 matches)
+    #   alpha=1.5 -> aggressive penalty
+    coverage_alpha: float = 0.7
     # Exits
     stop_loss: float = -0.12       # -12% from entry
     take_profit: float = 0.20      # +20% from entry
@@ -841,23 +847,40 @@ def compute_factors_v8(sym: str,
         factors["institutional_flow"] = 0.5
 
     # Composite with weight redistribution for missing factors.
+    # v8.1: Match live screener_v6 v7.3 math exactly — missing factors
+    # contribute ZERO to composite (not 0.5), and weight is redistributed
+    # proportionally to evaluated factors. Pre-penalty composite is kept as
+    # ``composite_raw`` so the sweep can test different coverage_alpha values
+    # post-hoc without rescanning.
     active = {}
     missing_w = 0.0
+    evaluated = []
+    missing = []
     for f, w in weights.items():
         if factors.get(f) is not None:
             active[f] = w
+            evaluated.append(f)
         else:
             missing_w += w
-            factors[f] = 0.5
+            missing.append(f)
+            # IMPORTANT: do NOT set factors[f] = 0.5 — that double-counts
+            # the weight (once redistributed to active, once as 0.5 * base).
     if missing_w > 0 and active:
         total_a = sum(active.values())
         for f in list(active.keys()):
             active[f] += missing_w * (active[f] / total_a)
-    else:
-        active = dict(weights)
+    elif not active:
+        return None  # no evaluated factors → can't score
 
-    composite = sum(factors[f] * active.get(f, weights.get(f, 0))
-                    for f in weights.keys())
+    # Sum only over evaluated factors (mirrors live screener line ~2130).
+    composite_raw = sum(factors[f] * active[f] for f in evaluated)
+    coverage_count = len(evaluated)
+    coverage_pct = coverage_count / len(weights) if weights else 0.0
+
+    # Null out missing factors so downstream code (classify_signal quality/
+    # technical gates) mirrors live behavior — matches screener_v6 line ~2135.
+    for f in missing:
+        factors[f] = None
 
     # Auxiliary / diagnostic features (for later ML feature-importance).
     factors["bull_score_raw"] = tech["bull_score"]
@@ -871,7 +894,11 @@ def compute_factors_v8(sym: str,
     factors["altman_z"] = fund.get("altman_z", 5.0)
 
     return {
-        "composite": composite,
+        "composite": composite_raw,           # alias for backward compat
+        "composite_raw": composite_raw,        # v8.1: pre-penalty composite
+        "coverage_count": coverage_count,      # v8.1: number of evaluated factors
+        "coverage_pct": coverage_pct,          # v8.1: coverage_count / total
+        "missing": missing,                    # v8.1: list of missing factor names
         "factors": factors,
     }
 
@@ -1035,14 +1062,30 @@ def build_scan_cache(universe: List[str],
                 if not scored:
                     continue
 
-                neutral_signal = classify_signal(scored["composite"],
+                # v8.1: neutral_signal uses the BASELINE coverage_alpha so it's
+                # diagnostic only; each sweep config reapplies its own alpha at
+                # classify time from composite_raw + coverage_pct.
+                baseline_penalized = (scored["composite_raw"]
+                                       * (scored["coverage_pct"]
+                                          ** baseline_cfg.coverage_alpha))
+                neutral_signal = classify_signal(baseline_penalized,
                                                  scored["factors"],
                                                  baseline_cfg)
                 record = {
                     "scan_date": scan_date,
                     "symbol": sym,
                     "price": price,
-                    "composite": scored["composite"],
+                    # v8.1: persist raw composite + coverage so the sweep can
+                    # test different coverage_alpha values without rescanning.
+                    "composite_raw": scored["composite_raw"],
+                    "coverage_count": scored["coverage_count"],
+                    "coverage_pct": scored["coverage_pct"],
+                    "missing": scored["missing"],
+                    # "composite" alias retained for backward-compat consumers;
+                    # defaults to RAW so callers that don't apply α see the
+                    # unpenalized value (and are obviously wrong if they expect
+                    # a live-matching number).
+                    "composite": scored["composite_raw"],
                     "factors": {k: v for k, v in scored["factors"].items()
                                 if not isinstance(v, list)},
                     "signal_neutral": neutral_signal,
@@ -1151,7 +1194,7 @@ def _execute_entry(portfolio: Portfolio,
         symbol=record["symbol"],
         entry_date=execution_date,
         entry_price=execution_price,
-        entry_composite=record["composite"],
+        entry_composite=record.get("_composite_eff", record["composite"]),
         entry_signal=record.get("_entry_signal", record.get("signal_neutral", "")),
         shares=shares,
         entry_cost_usd=shares * effective_price,
@@ -1289,9 +1332,17 @@ def simulate(config: StrategyConfig,
         raise ValueError(f"No scan dates in cache between {start_date} and {end_date}")
 
     # Build a date -> records map, and each record gets classified by this config.
+    # v8.1: Compute per-config effective composite from composite_raw + coverage_pct
+    # so each sweep config can test a different coverage_alpha without mutating
+    # the shared cache. Backward-compat fallback if cache is pre-v8.1 (treats
+    # composite field as raw and coverage_pct as 1.0 → no penalty applied).
     for d in scan_dates:
         for r in scan_cache[d]:
-            r["_signal"] = classify_signal(r["composite"], r["factors"], config)
+            comp_raw = r.get("composite_raw", r.get("composite", 0.0))
+            cov_pct = r.get("coverage_pct", 1.0)
+            comp_eff = comp_raw * (cov_pct ** config.coverage_alpha)
+            r["_composite_eff"] = comp_eff
+            r["_signal"] = classify_signal(comp_eff, r["factors"], config)
 
     # Fast symbol->record lookup per date (symbol held may not be in scan).
     per_date_syms: Dict[str, Dict[str, dict]] = {}
@@ -1337,7 +1388,7 @@ def simulate(config: StrategyConfig,
                                                      r["price"], config.slippage_model)
                 _execute_exit(portfolio, portfolio.positions[sym],
                               exec_date, exec_px, EXIT_SIGNAL,
-                              r["composite"], r["_signal"], config)
+                              r["_composite_eff"], r["_signal"], config)
 
         # ---- 3) Entries ----
         # Free slots after exits.
@@ -1346,9 +1397,9 @@ def simulate(config: StrategyConfig,
             floor = config.floor_for_date(regime_by_date.get(scan_date))
             candidates = [r for r in scan_cache[scan_date]
                           if r["_signal"] in config.entry_signals()
-                          and r["composite"] >= floor
+                          and r["_composite_eff"] >= floor
                           and r["symbol"] not in portfolio.positions]
-            candidates.sort(key=lambda r: r["composite"], reverse=True)
+            candidates.sort(key=lambda r: r["_composite_eff"], reverse=True)
 
             # Size calculation uses current portfolio value (MTM first).
             mtm_lookup = {s: r["price"] for s, r in records_today.items()}
@@ -1680,15 +1731,22 @@ def alpha_vs_spy(sim: SimulationResult, start: str, end: str) -> float:
 
 # Full parameter space per spec §3.3.
 SWEEP_SPACE = {
-    "composite_floor":      [0.70, 0.75, 0.80, 0.85],
+    # v8.1: grids widened downward — the coverage penalty shifts composites
+    # left, so the pre-penalty thresholds used by v7.x were too strict.
+    # Keep the old high values so α=0.0 (control) configs can still find them.
+    "composite_floor":      [0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85],
     "stop_loss":            [-0.08, -0.10, -0.12, -0.15, -0.20],
     "take_profit":          [0.15, 0.20, 0.25, 0.30],
     "time_stop_days":       [45, 60, 90, 120],
     "target_positions":     [3, 5, 7, 10],
-    "strong_buy_threshold": [0.80, 0.85, 0.90],
-    "buy_threshold":        [0.65, 0.70, 0.75],
-    "sell_threshold":       [0.30, 0.35, 0.40, 0.45],
+    "strong_buy_threshold": [0.65, 0.70, 0.75, 0.80, 0.85, 0.90],
+    "buy_threshold":        [0.50, 0.55, 0.60, 0.65, 0.70, 0.75],
+    "sell_threshold":       [0.25, 0.30, 0.35, 0.40, 0.45],
     "weighting":            ["equal", "composite-linear", "composite-squared"],
+    # v8.1: coverage penalty exponent. 0.0 = no penalty (control, keeps old
+    # behavior). 0.7 = live screener v7.3 default. 1.5 = aggressive. Include
+    # 0.0 so the sweep can tell us whether the penalty is a net positive.
+    "coverage_alpha":       [0.0, 0.5, 0.7, 1.0, 1.5],
 }
 
 
@@ -2301,6 +2359,7 @@ def _reload_sweep_results(csv_path: str,
                 buy_threshold=float(row.get("cfg_buy_threshold", 0.70)),
                 watch_threshold=float(row.get("cfg_watch_threshold", 0.55)),
                 sell_threshold=float(row.get("cfg_sell_threshold", 0.40)),
+                coverage_alpha=float(row.get("cfg_coverage_alpha", 0.7)),
                 stop_loss=float(row.get("cfg_stop_loss", -0.12)),
                 take_profit=float(row.get("cfg_take_profit", 0.20)),
                 time_stop_days=int(float(row.get("cfg_time_stop_days", 60))),
