@@ -1,42 +1,46 @@
 // Dedicated server route for the Company Profile card.
 //
-// Fetches four FMP endpoints in parallel (profile, shares-float, 13F top holders,
-// positions summary) and returns a single aggregated response. This bypasses the
-// generic /api/fmp proxy to avoid any endpoint-allow-list friction and reduces
-// the round-trips from 4 to 1 from the browser.
+// Fetches FMP endpoints in parallel (profile, shares-float, 13F top holders,
+// positions summary) and returns a single aggregated response. This bypasses
+// the generic /api/fmp proxy to avoid any endpoint-allow-list friction and
+// reduces the round-trips from 4 to 1 from the browser.
 //
 // Called from CompanyProfileCard as: GET /api/company/{symbol}
 //
-// ── v7.3 FIX (Track C.1) ────────────────────────────────────────────────────
+// -- v7.3 FIX (Track C.1) ----------------------------------------------------
 // Previous revision silently returned `{profile: null}` whenever the FMP
 // profile call failed (429 rate limit, transient 5xx, cold-start race) AND
 // cached that null for 3600s via Next's data cache. Users then saw
 // "No profile data available" on the stock page for an hour with no way to
-// tell why. Fixes applied here:
+// tell why. Fixes applied:
+//   1. `profile-symbol` fetched with `cache: "no-store"` -- never cache a
+//      null profile. Float / 13F calls keep the 1h revalidate.
+//   2. Per-endpoint failure reported in `errors{}` on the response body.
+//   3. FMP's {"Error Message": ...} shape is unwrapped as an error rather
+//      than passed through as data.
+//   4. Server-side `console.error` on each failure for Vercel log triage.
 //
-//  1. `profile-symbol` is now fetched with `cache: "no-store"` — we never
-//     want to cache a null profile. Float / 13F calls keep the 1h revalidate
-//     because they are stable and cheaper to replay.
-//  2. Per-endpoint failure is captured and reported in `errors{}` on the
-//     response body, so the client can render a useful diagnostic
-//     ("FMP 429 rate limited") and offer a Retry button instead of rendering
-//     a dead card.
-//  3. When an FMP call returns a non-array object with an `Error Message`
-//     field (FMP's error shape on some endpoints), we unwrap it as an error
-//     rather than silently passing the error object through as data.
-//  4. Server-side logging of failures via `console.error` so Vercel function
-//     logs surface the root cause.
-//
-// The response shape is a superset of the old shape — `profile`, `float`,
-// `holders`, `positions`, `quarter` are unchanged. A new optional `errors`
-// object carries per-endpoint diagnostics. Old clients ignoring `errors`
-// continue to work.
-const FMP_BASE = "https://financialmodelingprep.com/stable";
+// -- v7.3b FIX (Track C.1b) --------------------------------------------------
+// Production logs confirmed the deployed FMP key returns HTTP 404 for three
+// endpoints (profile-symbol, filings-extract-with-analytics-by-holder,
+// positions-summary) while shares-float works -- classic FMP plan-tier split.
+// The profile endpoint's "profile-symbol" path is newer and more plan-gated;
+// two legacy endpoints return the same payload under broader plan access.
+// This revision widens profile fetching to a fallback chain:
+//     /stable/profile-symbol?symbol=X   (original)
+//     /stable/profile?symbol=X          (alternative on /stable)
+//     /api/v3/profile/{X}               (legacy v3)
+// First endpoint returning a non-empty payload wins. Each attempt is logged
+// to `errors.profile_attempts` for diagnosis. Holders/positions have no
+// lower-tier alternatives and already degrade cleanly when null.
+const FMP_STABLE = "https://financialmodelingprep.com/stable";
+const FMP_V3 = "https://financialmodelingprep.com/api/v3";
 const FMP_KEY = process.env.FMP_API_KEY || "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA";
 
 type FmpResult<T> = { data: T[] | null; error: string | null };
 
-async function fmpGet<T = unknown>(
+async function fmpGetFrom<T = unknown>(
+  base: string,
   endpoint: string,
   params: Record<string, string | number>,
   opts: { noStore?: boolean } = {},
@@ -44,7 +48,7 @@ async function fmpGet<T = unknown>(
   const qs = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => qs.set(k, String(v)));
   qs.set("apikey", FMP_KEY);
-  const url = `${FMP_BASE}/${endpoint}?${qs}`;
+  const url = `${base}/${endpoint}?${qs}`;
   try {
     const init: RequestInit = opts.noStore
       ? { cache: "no-store" }
@@ -71,6 +75,46 @@ async function fmpGet<T = unknown>(
   }
 }
 
+async function fmpGet<T = unknown>(
+  endpoint: string,
+  params: Record<string, string | number>,
+  opts: { noStore?: boolean } = {},
+): Promise<FmpResult<T>> {
+  return fmpGetFrom<T>(FMP_STABLE, endpoint, params, opts);
+}
+
+/**
+ * Try a chain of profile endpoints until one returns data.
+ * Returns the first success, or a consolidated error + attempt log.
+ */
+async function fmpProfileChain(
+  sym: string,
+): Promise<FmpResult<Record<string, unknown>> & { attempts: string[] }> {
+  const attempts: string[] = [];
+  const tries: Array<{
+    label: string;
+    base: string;
+    endpoint: string;
+    params: Record<string, string | number>;
+  }> = [
+    { label: "stable/profile-symbol", base: FMP_STABLE, endpoint: "profile-symbol", params: { symbol: sym } },
+    { label: "stable/profile",        base: FMP_STABLE, endpoint: "profile",        params: { symbol: sym } },
+    { label: "v3/profile",            base: FMP_V3,     endpoint: `profile/${encodeURIComponent(sym)}`, params: {} },
+  ];
+  for (const t of tries) {
+    const r = await fmpGetFrom<Record<string, unknown>>(t.base, t.endpoint, t.params, { noStore: true });
+    if (r.data && r.data.length > 0) {
+      const first = r.data[0];
+      if (first && typeof first === "object" && !("_source" in first)) {
+        (first as Record<string, unknown>)._source = t.label;
+      }
+      return { data: r.data, error: null, attempts: [...attempts, `${t.label}: ok`] };
+    }
+    attempts.push(`${t.label}: ${r.error ?? "empty"}`);
+  }
+  return { data: null, error: "all profile endpoints failed", attempts };
+}
+
 export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string }> }) {
   const { symbol } = await ctx.params;
   const sym = (symbol || "").toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
@@ -82,10 +126,8 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
   const year13f = q === 1 ? now.getFullYear() - 1 : now.getFullYear();
   const quarter13f = q === 1 ? 4 : q - 1;
 
-  // Profile is the critical path for the card — NEVER cache a failure.
-  // Float / 13F are stable; cache them 1h.
   const [profileRes, floatRes, holdersRes, positionsRes] = await Promise.all([
-    fmpGet<Record<string, unknown>>("profile-symbol", { symbol: sym }, { noStore: true }),
+    fmpProfileChain(sym),
     fmpGet<Record<string, unknown>>("shares-float", { symbol: sym }),
     fmpGet<Record<string, unknown>>(
       "filings-extract-with-analytics-by-holder",
@@ -97,8 +139,11 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
     ),
   ]);
 
-  const errors: Record<string, string> = {};
-  if (profileRes.error) errors.profile = profileRes.error;
+  const errors: Record<string, string | string[]> = {};
+  if (profileRes.error) {
+    errors.profile = profileRes.error;
+    errors.profile_attempts = profileRes.attempts;
+  }
   if (floatRes.error) errors.float = floatRes.error;
   if (holdersRes.error) errors.holders = holdersRes.error;
   if (positionsRes.error) errors.positions = positionsRes.error;
@@ -113,8 +158,6 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
     ...(Object.keys(errors).length ? { errors } : {}),
   };
 
-  // If profile failed specifically, return 200 with error info but instruct
-  // caches NOT to persist. Downstream CDNs shouldn't save a bricked card.
   const profileFailed = !body.profile;
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   headers["Cache-Control"] = profileFailed
