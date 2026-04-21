@@ -1,48 +1,115 @@
 #!/usr/bin/env python3
 """
-Cloud Run Job entry point for stock screener scans.
-Runs a scan for the specified region and exits.
+run_scan_job.py — Cloud Run Job entrypoint for scheduled scans
+================================================================
+Runs a full screener scan, writes latest_{region}.json to GCS, and
+triggers post-scan tracking + rebalance + options suggestions.
 
-Usage (local):
-  SCREEN_INDEX=sp500 python run_scan_job.py
+Sequence (SP500 region example):
+  1. screener_v6.main() — full scan, writes latest_sp500.json
+  2. signal_tracker.update_from_scan() — BUY/SELL + p10 tracking
+  3. rebalance_engine.run_rebalance_from_scan() — compute close/open actions
+  4. tradier_options.suggest_spreads_for_portfolio() — options overlay candidates
 
-Usage (Cloud Run Job):
-  Set SCREEN_INDEX env var to: sp500, europe, global, nasdaq100, asia, brazil
+Only sp500 triggers rebalance + options (production strategy is US-only).
+Europe and global scans update trackers only.
+
+Invoked by:
+  - gcloud scheduler jobs run (via Cloud Scheduler)
+  - Manual GitHub Actions workflow_dispatch
+
+Region is passed via SCREEN_INDEX env var (set by the Cloud Run Job spec).
 """
-import os, sys, logging
+import os, sys, json, logging
 from datetime import datetime
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger("scan_job")
+# Make sibling modules importable
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s")
+log = logging.getLogger("run_scan_job")
+
+
+def _load_scan_from_gcs(region: str) -> list:
+    """Read latest_{region}.json back from GCS. Used as the authoritative
+    list of stocks for all post-scan hooks, to ensure what's tracked/
+    rebalanced is exactly what was persisted."""
+    import requests
+    url = f"https://storage.googleapis.com/screener-signals-carbonbridge/latest_{region}.json"
+    try:
+        r = requests.get(url, timeout=15)
+        if r.status_code == 200:
+            data = r.json()
+            if isinstance(data, dict):
+                return data.get("stocks", [])
+            if isinstance(data, list):
+                return data
+    except Exception as e:
+        log.warning(f"Could not reload scan from GCS: {e}")
+    return []
+
 
 def main():
     region = os.environ.get("SCREEN_INDEX", "sp500")
-    log.info(f"=== CB Screener Scan Job ===")
-    log.info(f"Region: {region}")
-    log.info(f"Started: {datetime.now().isoformat()}")
+    log.info(f"═══ Scan job starting: region={region} ═══")
 
+    # ─── 1. Run the screener ───
     try:
-        from screener_v6 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
-
-        symbols = get_symbols(region)
-        log.info(f"Symbols to scan: {len(symbols)}")
-
-        results, macro = screen(symbols)
-        log.info(f"Scan complete: {len(results)} results")
-
-        report = format_report(results, region, macro=macro)
-        update_signal_history(results)
-        save_scan_to_gcs(results, region, macro=macro)
-
-        today = datetime.now().strftime("%Y-%m-%d")
-        send_email(f"CB Screener v7.1: {region.upper()} — {today}", report)
-
-        log.info(f"Finished: {datetime.now().isoformat()}")
-        log.info(f"Top composite: {results[0].symbol if results else 'none'} ({results[0].composite:.3f})" if results else "No results")
-
+        import screener_v6
+        # screener_v6.main() reads args from sys.argv; we clear them first.
+        sys.argv = ["screener_v6.py", "--region", region]
+        screener_v6.main()
     except Exception as e:
-        log.error(f"Scan failed: {e}", exc_info=True)
+        log.error(f"Screener failed: {e}", exc_info=True)
         sys.exit(1)
+
+    log.info("Screener complete; running post-scan hooks…")
+
+    # ─── 2. Reload scan output ───
+    stocks = _load_scan_from_gcs(region)
+    if not stocks:
+        log.warning("Could not reload scan output — post-scan hooks skipped")
+        return
+    log.info(f"Loaded {len(stocks)} stocks from latest_{region}.json")
+
+    # ─── 3. Signal tracker (all regions) ───
+    try:
+        import signal_tracker
+        signal_tracker.update_from_scan(stocks, region)
+    except Exception as e:
+        log.error(f"signal_tracker failed: {e}", exc_info=True)
+
+    # ─── 4. Rebalance engine (sp500 only) ───
+    rebalance_report = {}
+    if region == "sp500":
+        try:
+            import rebalance_engine
+            rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
+            summary = rebalance_report.get("summary", {}) if rebalance_report else {}
+            if summary.get("actions_required"):
+                log.info(f"REBALANCE: {len(rebalance_report['closes'])} close(s), "
+                         f"{len(rebalance_report['opens'])} open(s)")
+        except Exception as e:
+            log.error(f"rebalance_engine failed: {e}", exc_info=True)
+    else:
+        log.info(f"Rebalance skipped (region={region}, production strategy is sp500-only)")
+
+    # ─── 5. Tradier options overlay (sp500 only, after rebalance) ───
+    if region == "sp500" and rebalance_report:
+        try:
+            import tradier_options
+            if not os.environ.get("TRADIER_TOKEN"):
+                log.info("TRADIER_TOKEN not set — options layer skipped")
+            else:
+                opt_result = tradier_options.suggest_spreads_for_portfolio(rebalance_report)
+                log.info(f"Options: {len(opt_result.get('suggestions', []))} suggested, "
+                         f"{len(opt_result.get('gated', []))} gated")
+        except Exception as e:
+            log.error(f"tradier_options failed: {e}", exc_info=True)
+
+    log.info(f"═══ Scan job complete: region={region} ═══")
+
 
 if __name__ == "__main__":
     main()
