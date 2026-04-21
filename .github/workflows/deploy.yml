@@ -102,6 +102,12 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="backtest_v8.py"
+            
+          gcloud run jobs update monitor-job --region=europe-west1 --image="$IMAGE" \
+            || echo "monitor-job not found, skipping"
+
+          gcloud run jobs update weekly-report-job --region=europe-west1 --image="$IMAGE" \
+            || echo "weekly-report-job not found, skipping"
 
       # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
       - name: Run SP500 Scan
