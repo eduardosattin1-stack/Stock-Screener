@@ -1,827 +1,167 @@
 #!/usr/bin/env python3
+"""Apply Track D.1 edits to monitor_v7.py.
+
+Monitor currently recomputes composite locally with only 10 of the 13
+factors the screener uses. The 3 missing high-weight factors
+(institutional_flow, sector_momentum, transcript) plus 2 low-weight ones
+(institutional, congressional) sum to 22 pct of weight. The compute function
+redistributes the missing weight across the remaining factors, so monitor's
+composite is a literally different weighted average than the scan's.
+Result: portfolio page shows a different number than the screener and
+stock pages for the same stock, same day.
+
+This patch:
+ 1. Adds a helper _load_scan_composites() that reads all three
+    latest_<region>.json snapshots from GCS and returns
+    {symbol: {composite, signal, price, _region}}.
+ 2. Calls that helper once at the top of run_monitor() and builds a
+    scan_lookup dict.
+ 3. Before each per-position compute_composite_v7() call, checks
+    scan_lookup. If the symbol is in any scan snapshot, uses the scan's
+    composite + signal directly. Otherwise falls back to the local
+    10-factor compute.
+
+Invariant: monitor's decision rules (8 RULES) keep reading `composite`
+and `signal` from the same variables, so no rule change needed. Rules
+that reference `cata`, `qual`, `t.bull_score` still work because we still
+call those local factor computes (they're cheap and needed by the rules).
+
+Result after this patch + running scan right before monitor:
+ - scan (15:00 CET, or whenever rescheduled) writes latest_<region>.json
+ - monitor reads it and uses the same composite
+ - portfolio page reads from state.json written by monitor
+ - screener page reads from latest_<region>.json
+ - stock page reads from latest_<region>.json
+ All four pages display the same composite for the same symbol.
 """
-Portfolio Monitor v7 — Daily Position Re-Scoring & Alert System
-================================================================
-Standalone script that re-scores all held positions using screener_v6 factors.
-Generates HOLD / TRIM / SELL / ADD actions based on 8 ML-validated rules.
-
-Usage:
-  # Daily monitor (Cloud Scheduler at 18:00 CET)
-  python monitor_v7.py
-
-  # Add a position
-  python monitor_v7.py --add KLAC --entry-price 1410.45 --shares 7
-
-  # Remove a position
-  python monitor_v7.py --remove ADBE
-
-  # List all positions
-  python monitor_v7.py --list
-
-  # Force re-score without email
-  python monitor_v7.py --dry-run
-
-Cloud Scheduler:
-  gcloud scheduler jobs create http screener-monitor \\
-    --schedule="0 17 * * 1-5" --time-zone="Europe/Amsterdam" \\
-    --uri="https://stock-screener-606056076947.europe-west1.run.app" \\
-    --http-method=POST --body='{"mode":"monitor"}' \\
-    --oidc-service-account-email=...
-
-State: portfolio/state.json on GCS (screener-signals-carbonbridge)
-Alerts: Email if any action != HOLD
-"""
-
-import os, sys, json, time, logging, argparse
-from datetime import datetime, timedelta
-
-# Add parent dir to path so we can import screener_v6
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-import requests
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger("monitor_v7")
-
-# ---------------------------------------------------------------------------
-# Config
-# ---------------------------------------------------------------------------
-
-FMP_KEY = os.environ.get("FMP_API_KEY", "")
-FMP = "https://financialmodelingprep.com/stable"
-RATE_LIMIT = 0.04
-
-GCS_BUCKET = "screener-signals-carbonbridge"
-STATE_PATH = "portfolio/state.json"
-MONITOR_PATH = "portfolio/monitor.json"
-LOCAL_STATE = "portfolio_state.json"
-
-SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
-SMTP_USER = os.environ.get("SMTP_USER", "")
-SMTP_PASS = os.environ.get("SMTP_PASS", "")
-EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
-
-# ---------------------------------------------------------------------------
-# FMP API (lightweight — only what the monitor needs)
-# ---------------------------------------------------------------------------
-
-def fmp(endpoint, params=None):
-    time.sleep(RATE_LIMIT)
-    p = {"apikey": FMP_KEY}
-    if params: p.update(params)
-    try:
-        r = requests.get(f"{FMP}/{endpoint}", params=p, timeout=20)
-        if r.status_code != 200: return None
-        d = r.json()
-        if isinstance(d, dict) and "Error Message" in d: return None
-        return [d] if isinstance(d, dict) else (d if isinstance(d, list) else None)
-    except:
-        return None
-
-# ---------------------------------------------------------------------------
-# GCS State Management
-# ---------------------------------------------------------------------------
-
-def gcs_download(path):
-    """Download JSON from GCS (public read)."""
-    url = f"https://storage.googleapis.com/{GCS_BUCKET}/{path}"
-    try:
-        r = requests.get(url, timeout=10)
-        if r.status_code == 200:
-            return r.json()
-    except:
-        pass
-    return None
-
-def gcs_download_with_gen(path):
-    """Download JSON + object generation. Used for optimistic concurrency.
-
-    Returns: (data, generation_string) or (None, "0") if missing/error.
-    generation="0" is the special value to use on write to mean "only if the
-    object does not yet exist."
-    """
-    try:
-        tok = requests.get(
-            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
-            headers={"Metadata-Flavor": "Google"}, timeout=3
-        ).json().get("access_token", "")
-        if not tok:
-            # No metadata service (local dev) — fall back to public download, no gen
-            return gcs_download(path), None
-        r = requests.get(
-            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{path.replace('/', '%2F')}",
-            headers={"Authorization": f"Bearer {tok}"},
-            params={"alt": "json"}, timeout=10,
-        )
-        if r.status_code == 200:
-            meta = r.json()
-            gen = meta.get("generation", "0")
-            media_url = meta.get("mediaLink") or f"https://storage.googleapis.com/{GCS_BUCKET}/{path}"
-            rr = requests.get(media_url, headers={"Authorization": f"Bearer {tok}"}, timeout=10)
-            if rr.status_code == 200:
-                return rr.json(), gen
-        if r.status_code == 404:
-            return None, "0"  # object does not exist — generation=0 for conditional create
-    except Exception as e:
-        log.warning(f"gcs_download_with_gen {path} failed: {e}")
-    return None, None
-
-def gcs_upload(path, data):
-    """Upload JSON to GCS (requires service account on Cloud Run)."""
-    try:
-        tok = requests.get(
-            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
-            headers={"Metadata-Flavor": "Google"}, timeout=3
-        ).json().get("access_token", "")
-        if not tok: return False
-        r = requests.post(
-            f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
-            params={"uploadType": "media", "name": path},
-            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
-            data=json.dumps(data, default=str), timeout=15
-        )
-        return r.status_code in (200, 201)
-    except:
-        return False
-
-def gcs_upload_conditional(path, data, if_generation_match):
-    """Upload with optimistic concurrency. Returns True on success, False if
-    precondition failed (someone else wrote first), None on other errors.
-
-    if_generation_match: the generation string returned by gcs_download_with_gen
-    when we read the object, OR "0" to mean "object must not yet exist", OR
-    None to skip the precondition entirely (unsafe — only for migrations).
-    """
-    try:
-        tok = requests.get(
-            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
-            headers={"Metadata-Flavor": "Google"}, timeout=3
-        ).json().get("access_token", "")
-        if not tok: return None
-        params = {"uploadType": "media", "name": path}
-        if if_generation_match is not None:
-            params["ifGenerationMatch"] = str(if_generation_match)
-        r = requests.post(
-            f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
-            params=params,
-            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
-            data=json.dumps(data, default=str), timeout=15
-        )
-        if r.status_code in (200, 201):
-            return True
-        if r.status_code == 412:  # precondition failed — someone else wrote
-            return False
-        log.warning(f"gcs_upload_conditional {path}: {r.status_code} {r.text[:200]}")
-        return None
-    except Exception as e:
-        log.warning(f"gcs_upload_conditional {path} failed: {e}")
-        return None
-
-def load_state():
-    """Load portfolio state from GCS, fallback to local file.
-
-    v7.2: normalizes schema on load — adds any missing top-level keys so
-    older state files from pre-v7.2 monitors upgrade transparently.
-    """
-    def _normalize(s):
-        s.setdefault("positions", [])
-        s.setdefault("history", [])
-        s.setdefault("last_monitor", "")
-        return s
-    state = gcs_download(STATE_PATH)
-    if state and "positions" in state:
-        log.info(f"Loaded state from GCS: {len(state['positions'])} positions")
-        return _normalize(state)
-    try:
-        with open(LOCAL_STATE) as f:
-            state = json.load(f)
-            log.info(f"Loaded state from local: {len(state.get('positions', []))} positions")
-            return _normalize(state)
-    except FileNotFoundError:
-        return {"positions": [], "history": [], "last_monitor": ""}
-
-def save_state(state):
-    """Save portfolio state to GCS + local."""
-    state["last_updated"] = datetime.now().isoformat()
-    with open(LOCAL_STATE, "w") as f:
-        json.dump(state, f, indent=2, default=str)
-    if gcs_upload(STATE_PATH, state):
-        log.info("State saved to GCS")
-    else:
-        log.info("State saved locally (GCS unavailable)")
-
-# ---------------------------------------------------------------------------
-# Import scoring functions from screener_v6
-# ---------------------------------------------------------------------------
-
-try:
-    from screener_v6 import (
-        get_technicals, get_analyst, get_value, get_insider_activity,
-        compute_52wk_proximity, compute_earnings_momentum, compute_upside_score,
-        compute_catastrophe, compute_quality_score, compute_catalyst_score,
-        compute_composite_v7, get_quotes_batch, WEIGHTS,
-    )
-    log.info("Imported screener_v6 scoring functions")
-except ImportError as e:
-    log.error(f"Cannot import screener_v6: {e}")
-    log.error("Place monitor_v7.py in the same directory as screener_v6.py")
-    sys.exit(1)
-
-# Try macro overlay
-try:
-    from macro_regime import fetch_macro_regime, apply_macro_tilt
-    HAS_MACRO = True
-except ImportError:
-    HAS_MACRO = False
-
-# ---------------------------------------------------------------------------
-# Portfolio CRUD Operations
-# ---------------------------------------------------------------------------
-
-def add_position(state, symbol, entry_price, shares=0, notes=""):
-    """Add a new position or update existing one."""
-    symbol = symbol.upper()
-    existing = [p for p in state["positions"] if p["symbol"] == symbol]
-    if existing:
-        log.info(f"Updating existing position: {symbol}")
-        pos = existing[0]
-        pos["entry_price"] = entry_price
-        pos["shares"] = shares or pos.get("shares", 0)
-        pos["notes"] = notes or pos.get("notes", "")
-    else:
-        # Get current composite for entry tracking
-        quotes = get_quotes_batch([symbol])
-        q = quotes.get(symbol)
-        entry_composite = 0.5
-        entry_signal = "UNKNOWN"
-        if q and q["price"] > 0:
-            t = get_technicals(symbol, q)
-            if t:
-                a = get_analyst(symbol)
-                v = get_value(symbol, q["price"], q["currency"])
-                ins = get_insider_activity(symbol)
-                prox = compute_52wk_proximity(q)
-                earn = compute_earnings_momentum(a)
-                ups = compute_upside_score(a, v, q["price"])
-                qual = compute_quality_score(v)
-                cata = compute_catalyst_score(symbol, analyst=a)
-                # v7.2: compute_composite_v7 returns 5 values (composite, signal,
-                # factors, reasons, coverage). Pre-v7.2 it returned 4 — legacy
-                # code here unpacked 4 and silently broke on add after the deploy.
-                entry_composite, entry_signal, _, _, _ = compute_composite_v7(
-                    t, a, v, q["price"], ins, prox, earn, ups,
-                    quality=qual, catalyst=cata,
-                )
-
-        pos = {
-            "symbol": symbol,
-            "entry_price": entry_price or (q["price"] if q else 0),
-            "entry_date": datetime.now().strftime("%Y-%m-%d"),
-            "entry_composite": round(entry_composite, 3),
-            "entry_signal": entry_signal,
-            "shares": shares,
-            "peak_price": entry_price or (q["price"] if q else 0),
-            "notes": notes,
-            "last_monitor": "",
-            "last_composite": 0,
-            "last_signal": "",
-        }
-        state["positions"].append(pos)
-        log.info(f"Added position: {symbol} @ ${entry_price:.2f} | "
-                 f"Composite: {entry_composite:.3f} | Signal: {entry_signal}")
-    return state
-
-def remove_position(state, symbol, exit_price=None, reason="Manual removal"):
-    """Remove a position and record in history."""
-    symbol = symbol.upper()
-    pos = [p for p in state["positions"] if p["symbol"] == symbol]
-    if not pos:
-        log.warning(f"Position not found: {symbol}")
-        return state
-
-    p = pos[0]
-    pnl = ((exit_price - p["entry_price"]) / p["entry_price"] * 100) if exit_price else 0
-
-    # v7.2: gracefully upgrade older state files that don't have 'history' yet
-    state.setdefault("history", [])
-    state["history"].append({
-        "symbol": symbol,
-        "action": "REMOVED",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "entry_price": p["entry_price"],
-        "entry_date": p["entry_date"],
-        "exit_price": exit_price or 0,
-        "pnl_pct": round(pnl, 1),
-        "reason": reason,
-        "days_held": (datetime.now() - datetime.strptime(p["entry_date"], "%Y-%m-%d")).days
-            if p.get("entry_date") else 0,
-    })
-    state["history"] = state["history"][-100:]  # keep last 100
-
-    state["positions"] = [p for p in state["positions"] if p["symbol"] != symbol]
-    log.info(f"Removed position: {symbol} | PnL: {pnl:+.1f}%")
-    return state
-
-# ---------------------------------------------------------------------------
-# Atomic portfolio transactions (v7.2)
-#
-# These wrap add_position / remove_position with optimistic concurrency control.
-# Why: Cloud Run's ThreadingHTTPServer can process POSTs concurrently, and
-# Cloud Run itself can run multiple instances. Without conditional writes, two
-# concurrent add/close requests both read state, both mutate their own copy,
-# and the second upload silently overwrites the first — positions vanish.
-#
-# With gcs_upload_conditional(..., if_generation_match=gen), the write fails
-# with 412 if the object changed since we read it. We retry the entire
-# read-modify-write cycle up to 3 times. This is cheap for the portfolio
-# workload (1-10 positions, tiny JSON, handful of writes per day).
-# ---------------------------------------------------------------------------
-
-def apply_atomic(mutate_fn, max_retries: int = 3):
-    """Load state, apply mutate_fn, save atomically. Retry on generation
-    conflict. mutate_fn takes (state) and returns (state, result_info).
-
-    result_info is a dict returned to the caller (e.g. {'position': {...}}
-    or {'ok': True}). Returns (state_after, result_info) on success, raises
-    RuntimeError after max_retries exhausted.
-    """
-    import time as _time
-    last_error = None
-    for attempt in range(max_retries):
-        state, gen = gcs_download_with_gen(STATE_PATH)
-
-        # Normalize shape (same as load_state does)
-        if state is None:
-            state = {"positions": [], "history": [], "last_monitor": ""}
-            gen = "0"  # object doesn't exist yet — require "create only"
-        state.setdefault("positions", [])
-        state.setdefault("history", [])
-        state.setdefault("last_monitor", "")
-
-        # Apply the mutation
-        state, result_info = mutate_fn(state)
-        state["last_updated"] = datetime.now().isoformat()
-
-        # Conditional write
-        # gen=None means we couldn't get a generation — fall back to unconditional
-        # write. This is the local-dev path where there's no metadata service.
-        if gen is None:
-            if gcs_upload(STATE_PATH, state):
-                log.info(f"State saved to GCS (unconditional — local dev)")
-                return state, result_info
-            raise RuntimeError("gcs_upload failed (local dev fallback)")
-
-        outcome = gcs_upload_conditional(STATE_PATH, state, if_generation_match=gen)
-        if outcome is True:
-            log.info(f"State saved to GCS (gen={gen}, attempt {attempt+1})")
-            # Also persist locally as a debug trail (ephemeral on Cloud Run).
-            try:
-                with open(LOCAL_STATE, "w") as f:
-                    json.dump(state, f, indent=2, default=str)
-            except Exception:
-                pass
-            return state, result_info
-        elif outcome is False:
-            last_error = "precondition_failed"
-            log.warning(f"State write conflict on attempt {attempt+1}/{max_retries} "
-                        f"(gen={gen} no longer current) — retrying")
-            _time.sleep(0.15 * (attempt + 1))  # small backoff
-            continue
-        else:
-            last_error = "upload_error"
-            log.warning(f"State write error on attempt {attempt+1}/{max_retries} — retrying")
-            _time.sleep(0.15 * (attempt + 1))
-            continue
-
-    raise RuntimeError(f"apply_atomic exhausted {max_retries} retries: {last_error}")
-
-
-def add_position_atomic(symbol, entry_price, shares=0, notes=""):
-    """Atomic wrapper around add_position. Read-modify-write with retry.
-    Returns the final state + dict with the new/updated position."""
-    def _mutate(state):
-        state = add_position(state, symbol, entry_price, shares=shares, notes=notes)
-        pos = next((p for p in state["positions"] if p["symbol"].upper() == symbol.upper()), {})
-        return state, {"position": pos}
-    return apply_atomic(_mutate)
-
-
-def remove_position_atomic(symbol, exit_price=None, reason="Manual removal"):
-    """Atomic wrapper around remove_position. Returns final state + dict with
-    removal result. Distinguishes 'not found' from 'removed'."""
-    def _mutate(state):
-        before = len(state.get("positions", []))
-        state = remove_position(state, symbol, exit_price=exit_price, reason=reason)
-        after = len(state.get("positions", []))
-        return state, {
-            "removed": before != after,
-            "symbol": symbol.upper(),
-            "positions_remaining": after,
-        }
-    return apply_atomic(_mutate)
-
-def list_positions(state):
-    """Pretty-print current positions."""
-    positions = state.get("positions", [])
-    if not positions:
-        print("  No positions in portfolio.")
-        return
-
-    # Get live quotes
-    syms = [p["symbol"] for p in positions]
-    quotes = get_quotes_batch(syms)
-
-    print(f"\n  {'='*85}")
-    print(f"  PORTFOLIO — {len(positions)} positions")
-    print(f"  {'='*85}")
-    print(f"  {'Sym':<8} {'Entry':>8} {'Current':>8} {'PnL':>7} {'Days':>5} "
-          f"{'Entry Comp':>10} {'Last Comp':>10} {'Signal':<10}")
-    print(f"  {'─'*85}")
-
-    total_pnl = 0
-    for p in positions:
-        q = quotes.get(p["symbol"], {})
-        current = q.get("price", 0)
-        pnl = ((current - p["entry_price"]) / p["entry_price"] * 100) if p["entry_price"] > 0 and current > 0 else 0
-        days = (datetime.now() - datetime.strptime(p["entry_date"], "%Y-%m-%d")).days if p.get("entry_date") else 0
-        emoji = "🟢" if pnl > 0 else "🔴"
-        total_pnl += pnl
-
-        print(f"  {p['symbol']:<8} ${p['entry_price']:>7.2f} ${current:>7.2f} {pnl:>+6.1f}% {days:>4}d "
-              f"{p.get('entry_composite', 0):>9.3f} {p.get('last_composite', 0):>9.3f} "
-              f"{p.get('last_signal', '?'):<10} {emoji}")
-
-    avg_pnl = total_pnl / len(positions) if positions else 0
-    print(f"  {'─'*85}")
-    print(f"  Average PnL: {avg_pnl:+.1f}% across {len(positions)} positions")
-
-    # History summary
-    hist = state.get("history", [])
-    if hist:
-        recent = hist[-5:]
-        print(f"\n  Last {len(recent)} exits:")
-        for h in recent:
-            print(f"    {h['date']} {h['symbol']:<8} {h.get('pnl_pct', 0):+.1f}% — {h.get('reason', '')}")
-
-# ---------------------------------------------------------------------------
-# Core Monitor Logic (8 Decision Rules)
-# ---------------------------------------------------------------------------
-
-def run_monitor(state, dry_run=False):
-    """
-    Re-score all held positions and generate actions.
-    Returns (actions_list, report_string).
-    """
-    positions = state.get("positions", [])
-    if not positions:
-        return [], "No positions to monitor."
-
-    syms = [p["symbol"] for p in positions]
-    log.info(f"Monitoring {len(syms)} positions: {', '.join(syms)}")
-
-    # Macro regime (once for all positions)
-    active_weights = WEIGHTS.copy()
-    macro_regime = "NEUTRAL"
-    if HAS_MACRO:
-        try:
-            macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
-            active_weights = apply_macro_tilt(WEIGHTS, macro)
-            macro_regime = macro.get("regime", "NEUTRAL")
-            log.info(f"Macro: {macro_regime} — weights tilted")
-        except Exception as e:
-            log.warning(f"Macro failed: {e}")
-
-    # Get all quotes at once
-    quotes = get_quotes_batch(syms)
-    today = datetime.now()
-    today_str = today.strftime("%Y-%m-%d")
-
-    actions = []
-
-    for pos in positions:
-        sym = pos["symbol"]
-        q = quotes.get(sym)
-        if not q or q["price"] <= 0:
-            actions.append({"symbol": sym, "action": "ERROR", "urgency": "low",
-                           "reasons": ["No quote data available"]})
-            continue
-
-        price = q["price"]
-        entry_price = pos.get("entry_price", price)
-        entry_comp = pos.get("entry_composite", 0.5)
-        entry_signal = pos.get("entry_signal", "BUY")
-        entry_date = pos.get("entry_date", today_str)
-        peak_price = pos.get("peak_price", price)
-
-        log.info(f"  Scoring {sym}...")
-
-        # Full v7 scoring
-        t = get_technicals(sym, q)
-        if not t:
-            actions.append({"symbol": sym, "action": "ERROR", "urgency": "low",
-                           "reasons": ["No chart data"]})
-            continue
-
-        a = get_analyst(sym)
-        if a["target"] > 0:
-            a["upside"] = (a["target"] - price) / price * 100
-        v = get_value(sym, price, q["currency"])
-        ins = get_insider_activity(sym)
-        prox = compute_52wk_proximity(q)
-        earn = compute_earnings_momentum(a)
-        ups = compute_upside_score(a, v, price)
-        qual = compute_quality_score(v)
-        cata = compute_catalyst_score(sym, analyst=a)
-
-        composite, signal, factors, reasons, coverage = compute_composite_v7(
-            t, a, v, price, ins, prox, earn, ups,
-            quality=qual, catalyst=cata,
-            weights=active_weights,
-        )
-
-        # ─── 8 Decision Rules ───
-        price_change = (price - entry_price) / entry_price if entry_price > 0 else 0
-        comp_change = (composite - entry_comp) / entry_comp if entry_comp > 0 else 0
-        try:
-            days_held = (today - datetime.strptime(entry_date, "%Y-%m-%d")).days
-        except:
-            days_held = 0
-
-        action = "HOLD"
-        urgency = "normal"
-        action_reasons = []
-
-        # RULE 1: Signal downgrade (BUY/STRONG BUY → HOLD or worse)
-        buy_signals = {"STRONG BUY", "BUY"}
-        if entry_signal in buy_signals and signal in ("HOLD", "SELL"):
-            action = "SELL"
-            urgency = "high"
-            action_reasons.append(f"Signal downgrade: {entry_signal} → {signal}")
-
-        # RULE 2: Composite decay > 20%
-        if comp_change < -0.20:
-            if action != "SELL":
-                action = "TRIM"
-            urgency = "high"
-            action_reasons.append(f"Composite decay: {entry_comp:.3f} → {composite:.3f} ({comp_change:+.0%})")
-
-        # RULE 3: Stop-loss at -15% from entry
-        if price_change < -0.15:
-            action = "SELL"
-            urgency = "critical"
-            action_reasons.append(f"Stop-loss triggered: {price_change:+.1%} from entry ${entry_price:.2f}")
-
-        # RULE 4: Trailing stop — if gained >15% then gave back >10% from peak
-        if peak_price > entry_price:
-            gain_from_entry = (peak_price - entry_price) / entry_price
-            drop_from_peak = (price - peak_price) / peak_price
-            if gain_from_entry > 0.15 and drop_from_peak < -0.10:
-                if action == "HOLD":
-                    action = "TRIM"
-                action_reasons.append(f"Trailing stop: peak ${peak_price:.2f} ({gain_from_entry:+.0%}), "
-                                     f"now {drop_from_peak:+.0%} from peak")
-
-        # RULE 5: Catalyst warning (new downgrade, negative news)
-        if cata.get("is_risky") and action == "HOLD":
-            action = "TRIM"
-            urgency = "medium"
-            action_reasons.append(f"Catalyst warning: {', '.join(cata.get('flags', []))}")
-
-        # RULE 6: Catalyst override (strong catalyst saves a dip)
-        if cata.get("has_catalyst") and signal in ("BUY", "WATCH", "STRONG BUY"):
-            if action in ("TRIM",) and comp_change > -0.30:
-                action = "HOLD"
-                action_reasons.append(f"Catalyst override: {', '.join(cata.get('flags', []))}")
-
-        # RULE 7: Time decay (>90 days and not BUY)
-        if days_held > 90 and signal not in ("BUY", "STRONG BUY"):
-            if action == "HOLD":
-                action = "TRIM"
-            action_reasons.append(f"Time decay: held {days_held}d, signal now {signal}")
-
-        # RULE 8: Composite improving → ADD
-        if comp_change > 0.15 and signal in ("BUY", "STRONG BUY") and price_change < 0.05:
-            action = "ADD"
-            action_reasons.append(f"Composite improving: {entry_comp:.3f} → {composite:.3f} ({comp_change:+.0%})")
-
-        # Update tracking
-        if price > peak_price:
-            pos["peak_price"] = price
-        pos["last_monitor"] = today_str
-        pos["last_composite"] = round(composite, 3)
-        pos["last_signal"] = signal
-
-        actions.append({
-            "symbol": sym,
-            "action": action,
-            "urgency": urgency,
-            "current_price": round(price, 2),
-            "entry_price": entry_price,
-            "pnl_pct": round(price_change * 100, 1),
-            "entry_composite": entry_comp,
-            "current_composite": round(composite, 3),
-            "comp_change_pct": round(comp_change * 100, 1),
-            "entry_signal": entry_signal,
-            "current_signal": signal,
-            "days_held": days_held,
-            "catalyst_score": round(cata.get("score", 0.5), 2),
-            "catalyst_flags": cata.get("flags", []),
-            "quality_score": round(qual.get("score", 0.5), 2),
-            "bull_score": t.get("bull_score", 0),
-            "reasons": action_reasons,
-        })
-
-        log.info(f"    {sym}: {action} | ${price:.2f} ({price_change:+.1%}) | "
-                 f"Comp: {composite:.3f} ({comp_change:+.0%}) | Signal: {signal}")
-
-    # v7.2: Monitor NO LONGER auto-closes SELL positions.
-    # SELL signal is informational; user explicitly closes via
-    # /portfolio/close HTTP endpoint or the Close button on the portfolio UI.
-    # This separates "what the model thinks" from "what the user decides."
-    # The actions list above still records the SELL recommendation, which is
-    # emailed and displayed on the portfolio page. No state mutation here.
-
-    # Format report
-    report = format_monitor_report(actions, macro_regime)
-
-    return actions, report
-
-# ---------------------------------------------------------------------------
-# Report Formatting
-# ---------------------------------------------------------------------------
-
-def format_monitor_report(actions, macro_regime="NEUTRAL"):
-    today_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-    lines = [
-        f"{'='*80}",
-        f"  PORTFOLIO MONITOR v7 — {today_str}",
-        f"  Macro: {macro_regime} | {len(actions)} positions tracked",
-        f"{'='*80}",
-    ]
-
-    has_actions = False
-    for action_type in ["SELL", "TRIM", "ADD", "HOLD", "ERROR"]:
-        group = [a for a in actions if a["action"] == action_type]
-        if not group:
-            continue
-        emoji = {"SELL": "🔴", "TRIM": "🟡", "ADD": "⬆️", "HOLD": "🟢", "ERROR": "⚠️"}[action_type]
-        if action_type in ("SELL", "TRIM", "ADD"):
-            has_actions = True
-
-        lines.append(f"\n  {emoji} {action_type} ({len(group)}):")
-        lines.append(f"  {'─'*75}")
-
-        for a in group:
-            comp_arrow = "↑" if a.get("comp_change_pct", 0) > 0 else "↓"
-            lines.append(
-                f"    {a['symbol']:<8} ${a['current_price']:>8.2f}  "
-                f"PnL: {a['pnl_pct']:>+6.1f}%  "
-                f"Comp: {a['current_composite']:.3f} ({a['comp_change_pct']:+.0f}%{comp_arrow})  "
-                f"Signal: {a['current_signal']}"
-            )
-            if a.get("catalyst_flags"):
-                lines.append(f"      Catalyst: {', '.join(a['catalyst_flags'][:3])}")
-            for r in a.get("reasons", []):
-                lines.append(f"      → {r}")
-
-    # Summary
-    if actions:
-        total_pnl = sum(a.get("pnl_pct", 0) for a in actions) / len(actions)
-        winners = sum(1 for a in actions if a.get("pnl_pct", 0) > 0)
-        sells = sum(1 for a in actions if a["action"] == "SELL")
-        trims = sum(1 for a in actions if a["action"] == "TRIM")
-        adds = sum(1 for a in actions if a["action"] == "ADD")
-
-        lines.append(f"\n  {'─'*75}")
-        lines.append(f"  Summary: {len(actions)} positions | Avg PnL: {total_pnl:+.1f}% | "
-                     f"Winners: {winners}/{len(actions)}")
-        if sells:
-            lines.append(f"  ⚠️  {sells} SELL signal(s) — review and decide")
-        if trims:
-            lines.append(f"  ⚠️  {trims} TRIM signal(s) — consider reducing")
-        if adds:
-            lines.append(f"  ⬆️  {adds} ADD signal(s) — consider increasing")
-        if not has_actions:
-            lines.append(f"  ✅ All positions healthy — no action needed")
-
-    return "\n".join(lines)
-
-# ---------------------------------------------------------------------------
-# Email Alert
-# ---------------------------------------------------------------------------
-
-def send_alert(subject, body):
-    if not SMTP_USER or not SMTP_PASS:
-        log.info("No SMTP credentials — skipping email")
-        return
-    try:
-        import smtplib
-        from email.mime.text import MIMEText
-        msg = MIMEText(body)
-        msg["Subject"] = subject
-        msg["From"] = SMTP_USER
-        msg["To"] = EMAIL_TO
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
-            s.starttls()
-            s.login(SMTP_USER, SMTP_PASS)
-            s.send_message(msg)
-        log.info(f"Alert email sent to {EMAIL_TO}")
-    except Exception as e:
-        log.warning(f"Email failed: {e}")
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
-def main():
-    parser = argparse.ArgumentParser(description="Portfolio Monitor v7")
-    parser.add_argument("--add", metavar="SYMBOL", help="Add a position")
-    parser.add_argument("--entry-price", type=float, default=0, help="Entry price for --add")
-    parser.add_argument("--shares", type=int, default=0, help="Number of shares for --add")
-    parser.add_argument("--notes", default="", help="Notes for --add")
-    parser.add_argument("--remove", metavar="SYMBOL", help="Remove a position")
-    parser.add_argument("--exit-price", type=float, default=0, help="Exit price for --remove")
-    parser.add_argument("--list", action="store_true", help="List all positions")
-    parser.add_argument("--dry-run", action="store_true", help="Score without executing sells or emailing")
-    parser.add_argument("--no-email", action="store_true", help="Skip email alerts")
-    parser.add_argument("--seed", metavar="FILE", help="Seed portfolio from JSON file")
-    args = parser.parse_args()
-
-    if not FMP_KEY:
-        log.error("FMP_API_KEY not set!")
-        sys.exit(1)
-
-    state = load_state()
-
-    # ─── Seed from file ───
-    if args.seed:
-        try:
-            with open(args.seed) as f:
-                seed_data = json.load(f)
-            for p in seed_data.get("positions", seed_data if isinstance(seed_data, list) else []):
-                state = add_position(
-                    state, p["symbol"],
-                    entry_price=p.get("entry_price", 0),
-                    shares=p.get("shares", 0),
-                    notes=p.get("notes", "")
-                )
-            save_state(state)
-            log.info(f"Seeded {len(state['positions'])} positions from {args.seed}")
-        except Exception as e:
-            log.error(f"Seed failed: {e}")
-        return
-
-    # ─── Add position ───
-    if args.add:
-        state = add_position(state, args.add, args.entry_price, args.shares, args.notes)
-        save_state(state)
-        print(f"✅ Added {args.add.upper()}")
-        list_positions(state)
-        return
-
-    # ─── Remove position ───
-    if args.remove:
-        state = remove_position(state, args.remove, args.exit_price)
-        save_state(state)
-        print(f"✅ Removed {args.remove.upper()}")
-        list_positions(state)
-        return
-
-    # ─── List positions ───
-    if args.list:
-        list_positions(state)
-        return
-
-    # ─── Run monitor (default) ───
-    if not state.get("positions"):
-        log.info("No positions to monitor. Use --add to add positions.")
-        return
-
-    actions, report = run_monitor(state, dry_run=args.dry_run)
-
-    print(report)
-
-    # Save updated state
-    if not args.dry_run:
-        save_state(state)
-
-    # Upload monitor results to GCS
-    gcs_upload(MONITOR_PATH, {
-        "date": datetime.now().isoformat(),
-        "actions": actions,
-    })
-
-    # Email alert (only if there are non-HOLD actions)
-    if not args.no_email and not args.dry_run:
-        has_action = any(a["action"] in ("SELL", "TRIM", "ADD") for a in actions)
-        if has_action:
-            today = datetime.now().strftime("%Y-%m-%d")
-            sells = sum(1 for a in actions if a["action"] == "SELL")
-            subj = f"{'🔴 ' if sells else ''}Portfolio Alert — {today}"
-            send_alert(subj, report)
-        else:
-            log.info("All positions HOLD — no alert needed")
-
-if __name__ == "__main__":
-    main()
+from pathlib import Path
+
+SRC = Path("/sessions/clever-intelligent-edison/mnt/uploads/monitor_v7 (2).py")
+DST = Path("/sessions/clever-intelligent-edison/mnt/outputs/patches/monitor_v7.py")
+
+text = SRC.read_text(encoding="utf-8")
+
+# Edit 1: insert _load_scan_composites() helper just before load_state()
+old1 = "def load_state():\n    \"\"\"Load portfolio state from GCS, fallback to local file."
+new1 = (
+    "def _load_scan_composites():\n"
+    "    \"\"\"Track D.1 - read latest_<region>.json from GCS for sp500/nasdaq/russell2000.\n"
+    "\n"
+    "    Returns {SYMBOL: {composite, signal, price, _region}}.\n"
+    "    Later regions overwrite earlier on collision (rare). Empty dict on\n"
+    "    failure - callers fall back to local compute.\n"
+    "\n"
+    "    This is the single source of truth for the composite across the app:\n"
+    "    portfolio page / stock page / screener page all eventually trace their\n"
+    "    composite value back to these JSON files.\n"
+    "    \"\"\"\n"
+    "    out = {}\n"
+    "    for region in (\"sp500\", \"nasdaq\", \"russell2000\"):\n"
+    "        data = gcs_download(f\"latest_{region}.json\")\n"
+    "        if not data:\n"
+    "            log.warning(f\"Scan snapshot latest_{region}.json not found - monitor will fall back to local compute for that region\")\n"
+    "            continue\n"
+    "        stocks = data.get(\"stocks\") if isinstance(data, dict) else data\n"
+    "        if not isinstance(stocks, list):\n"
+    "            continue\n"
+    "        n = 0\n"
+    "        for s in stocks:\n"
+    "            if not isinstance(s, dict):\n"
+    "                continue\n"
+    "            sym = s.get(\"symbol\")\n"
+    "            if not sym:\n"
+    "                continue\n"
+    "            out[str(sym).upper()] = {\n"
+    "                \"composite\": s.get(\"composite\"),\n"
+    "                \"signal\": s.get(\"signal\"),\n"
+    "                \"price\": s.get(\"price\"),\n"
+    "                \"_region\": region,\n"
+    "            }\n"
+    "            n += 1\n"
+    "        log.info(f\"Loaded {n} composites from latest_{region}.json\")\n"
+    "    return out\n"
+    "\n"
+    "def load_state():\n"
+    "    \"\"\"Load portfolio state from GCS, fallback to local file."
+)
+assert old1 in text, "edit 1 anchor (load_state docstring header) not found"
+assert text.count(old1) == 1, f"edit 1 anchor not unique: {text.count(old1)} matches"
+text = text.replace(old1, new1, 1)
+
+# Edit 2: build scan_lookup at top of run_monitor()
+old2 = (
+    "    # Get all quotes at once\n"
+    "    quotes = get_quotes_batch(syms)\n"
+    "    today = datetime.now()\n"
+    "    today_str = today.strftime(\"%Y-%m-%d\")\n"
+    "\n"
+    "    actions = []\n"
+)
+new2 = (
+    "    # Get all quotes at once\n"
+    "    quotes = get_quotes_batch(syms)\n"
+    "    today = datetime.now()\n"
+    "    today_str = today.strftime(\"%Y-%m-%d\")\n"
+    "\n"
+    "    # Track D.1: pre-load scan snapshots so composite reads are consistent\n"
+    "    # with the screener. Without this, monitor would recompute locally with\n"
+    "    # only 10 of 13 factors and produce a different number than the screener.\n"
+    "    scan_lookup = _load_scan_composites()\n"
+    "    log.info(f\"Scan snapshot lookup: {len(scan_lookup)} symbols indexed\")\n"
+    "\n"
+    "    actions = []\n"
+)
+assert old2 in text, "edit 2 anchor (quotes batch + actions init) not found"
+assert text.count(old2) == 1, f"edit 2 anchor not unique: {text.count(old2)} matches"
+text = text.replace(old2, new2, 1)
+
+# Edit 3: prefer scan composite per position
+old3 = (
+    "        composite, signal, factors, reasons, coverage = compute_composite_v7(\n"
+    "            t, a, v, price, ins, prox, earn, ups,\n"
+    "            quality=qual, catalyst=cata,\n"
+    "            weights=active_weights,\n"
+    "        )\n"
+)
+new3 = (
+    "        # Track D.1: prefer scan composite from latest_<region>.json.\n"
+    "        # The screener computes composite with 13 factors; monitor's local\n"
+    "        # fallback has only 10 (missing transcript, institutional,\n"
+    "        # institutional_flow, sector_momentum, congressional - 22 pct of weight).\n"
+    "        # When the symbol is in today's scan snapshot, use the scan value so\n"
+    "        # all pages agree. Only fall back to local compute when scan doesn't\n"
+    "        # cover the symbol (new add not yet scanned, delisted, off-region).\n"
+    "        snap = scan_lookup.get(sym)\n"
+    "        scan_comp = snap.get(\"composite\") if snap else None\n"
+    "        if snap and isinstance(scan_comp, (int, float)) and scan_comp > 0:\n"
+    "            composite = float(scan_comp)\n"
+    "            signal = str(snap.get(\"signal\") or \"HOLD\").upper()\n"
+    "            # Factors/reasons/coverage aren't used by decision rules downstream,\n"
+    "            # but keep a well-typed empty shape so any future reader doesn't\n"
+    "            # crash.\n"
+    "            factors = {}\n"
+    "            reasons = []\n"
+    "            coverage = {\"count\": 0, \"pct\": 0, \"evaluated\": [], \"missing\": []}\n"
+    "            log.info(f\"    {sym}: using scan composite {composite:.3f} from {snap.get('_region')}\")\n"
+    "        else:\n"
+    "            composite, signal, factors, reasons, coverage = compute_composite_v7(\n"
+    "                t, a, v, price, ins, prox, earn, ups,\n"
+    "                quality=qual, catalyst=cata,\n"
+    "                weights=active_weights,\n"
+    "            )\n"
+    "            log.warning(f\"    {sym}: not in scan snapshots - using local 10-factor fallback composite {composite:.3f}\")\n"
+)
+assert old3 in text, "edit 3 anchor (compute_composite_v7 call in run_monitor) not found"
+assert text.count(old3) == 1, f"edit 3 anchor not unique: {text.count(old3)} matches"
+text = text.replace(old3, new3, 1)
+
+DST.write_text(text, encoding="utf-8")
+
+# Report
+src_text = SRC.read_text(encoding="utf-8")
+src_lines = src_text.count("\n")
+dst_lines = text.count("\n")
+print(f"source: {src_lines} lines, {SRC.stat().st_size} bytes")
+print(f"dest:   {dst_lines} lines, {DST.stat().st_size} bytes")
+print(f"delta:  +{dst_lines - src_lines} lines, +{DST.stat().st_size - SRC.stat().st_size} bytes")
+print("OK")
