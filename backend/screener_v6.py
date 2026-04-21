@@ -363,6 +363,8 @@ class Stock:
 
     # Composite
     composite: float = 0.0
+    composite_raw: float = 0.0       # v7.3: pre-coverage-penalty composite
+    coverage_penalty: float = 1.0    # v7.3: multiplier applied to composite_raw
     signal: str = "HOLD"
     classification: str = ""
     reasons: list = field(default_factory=list)
@@ -2167,18 +2169,40 @@ def compute_composite_v7(
         composite < 0.30,           # weak composite
     ])
 
-    # ─── Coverage gate: thin-data stocks can't get BUY/STRONG BUY ───
-    # Prevents stocks with only 3-4 evaluated factors from inflating via
-    # weight redistribution. Requires 7+ factors for full composite range.
-    # NOTE: total is 13 in v7.2 but 3 factors have no compute yet → cap is
-    # effectively 10 evaluated max; gate still triggers when <7 of 10 have data.
-    MIN_COVERAGE_FOR_FULL_SCORE = 7
-    COVERAGE_CAP = 0.75  # max composite when coverage < threshold
-
-    if coverage["count"] < MIN_COVERAGE_FOR_FULL_SCORE:
-        composite = min(composite, COVERAGE_CAP)
-        if composite == COVERAGE_CAP:
-            reasons.append(f"COVERAGE CAP: only {coverage['count']}/{coverage['total']} factors evaluated")
+    # ─── Coverage penalty: continuous multiplier on composite ──────────
+    # v7.3 change: replaces the v7.2 hard cap (min(composite, 0.75) when
+    # <7 factors) with a continuous penalty: composite *= coverage_pct^α.
+    #
+    # Why the cap was broken:
+    #   - Rarely triggered (weight redistribution kept most thin-data
+    #     composites below 0.75 anyway)
+    #   - Binary: a stock at 7/13 got NO penalty while a stock at 6/13
+    #     was hard-capped, even though the evidence difference is small
+    #   - Inflation persisted for the 7–12/13 band (weight redistribution
+    #     boosted evaluated factors unboundedly)
+    #
+    # v7.3: continuous penalty so every missing factor shaves the composite.
+    # α=0.7 (default) applied to representative cases:
+    #   13/13 (pct=1.00): multiplier 1.00 — no change
+    #   11/13 (pct=0.85): multiplier 0.89
+    #   10/13 (pct=0.77): multiplier 0.83
+    #    9/13 (pct=0.69): multiplier 0.78
+    #    7/13 (pct=0.54): multiplier 0.66
+    #    6/13 (pct=0.46): multiplier 0.59
+    # α is a fixed constant here; the v8 backtest will sweep α to confirm
+    # the optimum. Change this value after the sweep completes.
+    COVERAGE_ALPHA = 0.7  # TODO: recalibrate from v8 sweep results
+    composite_raw = composite
+    composite = composite_raw * (coverage["pct"] ** COVERAGE_ALPHA)
+    coverage["penalty_multiplier"] = coverage["pct"] ** COVERAGE_ALPHA
+    coverage["composite_raw"] = composite_raw
+    coverage["alpha"] = COVERAGE_ALPHA
+    if coverage["count"] < len(ALL_FACTORS):
+        reasons.append(
+            f"COVERAGE: {coverage['count']}/{coverage['total']} factors — "
+            f"composite {composite_raw:.3f} × {coverage['penalty_multiplier']:.2f} "
+            f"→ {composite:.3f}"
+        )
 
     # ─── Signal Classification (v7.2 — tightened thresholds) ────────────
     # Backtest-calibrated P(+10% 60d) by composite band:
@@ -2372,6 +2396,8 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 has_catalyst=cata.get("has_catalyst", False),
                 days_to_earnings=cata.get("days_to_earnings", -1),
                 composite=composite, signal=signal,
+                composite_raw=coverage.get("composite_raw", composite),
+                coverage_penalty=coverage.get("penalty_multiplier", 1.0),
                 classification=v["classification"],
                 reasons=t.get("bull_reasons", []) + reasons,
                 factor_scores=factors,
@@ -2465,6 +2491,8 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         )
 
         s.composite = composite
+        s.composite_raw = coverage.get("composite_raw", composite)
+        s.coverage_penalty = coverage.get("penalty_multiplier", 1.0)
         s.signal = signal
         s.factor_scores = factors
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons
