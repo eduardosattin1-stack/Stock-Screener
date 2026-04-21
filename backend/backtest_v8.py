@@ -942,7 +942,8 @@ def build_scan_cache(universe: List[str],
                      dp: HistoricalDataProvider,
                      weights: Optional[Dict[str, float]] = None,
                      out_path: Optional[str] = None,
-                     resume: bool = True) -> Dict[str, List[dict]]:
+                     resume: bool = True,
+                     staging_dir: Optional[str] = None) -> Dict[str, List[dict]]:
     """
     Produce ``cache[date] = [ { symbol, price, composite, factors, signal_neutral } ]``.
 
@@ -954,13 +955,40 @@ def build_scan_cache(universe: List[str],
     If ``out_path`` is given we stream the cache as JSONL (one dict per line,
     tagged with scan_date) so partial progress is resumable. Set
     ``resume=False`` to ignore any existing file.
+
+    When ``staging_dir`` is provided (e.g. ``/tmp``), the JSONL is written to
+    a local path under that directory first and copied to ``out_path`` at the
+    end. This is critical when ``out_path`` points at a GCSFuse-mounted
+    bucket: GCSFuse does not support native GCS appends, so each ``f.write``
+    against an existing object triggers a full-object re-upload, and for
+    large caches (100+ MB) the final sync silently fails on container exit.
+    Staging locally turns 100k+ append operations into one sequential upload.
+    Resumability is preserved by copying any existing ``out_path`` into
+    staging on entry.
     """
+    import shutil
+
     cache: Dict[str, List[dict]] = defaultdict(list)
     already_done: set = set()
 
-    if out_path and resume and os.path.exists(out_path):
-        log.info("Resuming scan cache from %s", out_path)
-        with open(out_path, "r") as f:
+    # Resolve the actual file we'll write to. If staging is enabled we write
+    # locally and only copy to ``out_path`` at the end.
+    write_path: Optional[str] = out_path
+    final_path: Optional[str] = out_path
+    if out_path and staging_dir:
+        os.makedirs(staging_dir, exist_ok=True)
+        write_path = os.path.join(staging_dir, os.path.basename(out_path))
+        log.info("Staging scan cache at %s (final destination %s)",
+                 write_path, final_path)
+        # Seed the staging file with any existing remote progress so we can
+        # resume without re-scanning already-done (date, symbol) pairs.
+        if resume and os.path.exists(out_path):
+            log.info("Copying existing cache %s -> staging for resume", out_path)
+            shutil.copy2(out_path, write_path)
+
+    if write_path and resume and os.path.exists(write_path):
+        log.info("Resuming scan cache from %s", write_path)
+        with open(write_path, "r") as f:
             for line in f:
                 try:
                     r = json.loads(line)
@@ -970,7 +998,7 @@ def build_scan_cache(universe: List[str],
                     continue
         log.info("  %d prior scan records loaded", len(already_done))
 
-    fout = open(out_path, "a") if out_path else None
+    fout = open(write_path, "a") if write_path else None
     baseline_cfg = StrategyConfig()
 
     try:
@@ -1026,11 +1054,31 @@ def build_scan_cache(universe: List[str],
 
             if fout:
                 fout.flush()
+                try:
+                    os.fsync(fout.fileno())
+                except OSError:
+                    pass
             log.info("Scan %d/%d  %s  scored=%d",
                      d_idx, len(scan_dates), scan_date, scanned)
     finally:
         if fout:
             fout.close()
+        # If we staged locally, push the final artefact to the destination
+        # as a single big sequential write. This is the step that makes the
+        # GCSFuse path reliable for 100+ MB caches.
+        if final_path and write_path and final_path != write_path:
+            try:
+                os.makedirs(os.path.dirname(final_path) or ".", exist_ok=True)
+                log.info("Copying staged cache %s -> %s (%.1f MB)",
+                         write_path, final_path,
+                         os.path.getsize(write_path) / (1024 * 1024))
+                shutil.copy2(write_path, final_path)
+                log.info("Final scan cache written to %s", final_path)
+            except Exception as e:
+                log.error("FAILED to copy staged cache to %s: %s "
+                          "(staged file is still at %s)",
+                          final_path, e, write_path)
+                raise
 
     return cache
 
@@ -2173,8 +2221,10 @@ def cmd_scan(args) -> None:
              len(scan_dates), scan_dates[0], scan_dates[-1])
     out_path = os.path.join(args.out, "scan_cache.jsonl")
     os.makedirs(args.out, exist_ok=True)
+    staging_dir = getattr(args, "staging_dir", None)
     build_scan_cache(universe, scan_dates, dp, out_path=out_path,
-                     resume=not args.no_resume)
+                     resume=not args.no_resume,
+                     staging_dir=staging_dir)
     log.info("Scan cache written to %s", out_path)
 
 
@@ -2356,7 +2406,8 @@ def cmd_all(args) -> None:
         scan_args = argparse.Namespace(
             from_date=args.from_date, to_date=args.to_date,
             universe=args.universe, cadence=args.cadence,
-            out=args.out, no_resume=False)
+            out=args.out, no_resume=False,
+            staging_dir=getattr(args, "staging_dir", None))
         cmd_scan(scan_args)
 
     cache = load_scan_cache(scan_path)
@@ -2390,6 +2441,12 @@ def build_cli() -> argparse.ArgumentParser:
     s.add_argument("--no-resume", action="store_true",
                     help="Overwrite any existing scan cache")
     s.add_argument("--out", default="./out")
+    s.add_argument("--staging-dir", dest="staging_dir", default=None,
+                    help="Write the scan cache locally in this directory during "
+                         "execution, then copy to --out at the end. Strongly "
+                         "recommended (e.g. --staging-dir /tmp) when --out is a "
+                         "GCSFuse mount, since GCSFuse cannot handle append-mode "
+                         "writes on large growing files.")
     s.set_defaults(func=cmd_scan)
 
     # simulate
@@ -2447,6 +2504,9 @@ def build_cli() -> argparse.ArgumentParser:
     a.add_argument("--rescan", action="store_true")
     a.add_argument("--initial-cash", type=float, default=100_000.0)
     a.add_argument("--out", default="./out")
+    a.add_argument("--staging-dir", dest="staging_dir", default=None,
+                    help="See `scan --staging-dir` — recommended on Cloud Run "
+                         "with a GCSFuse-mounted --out.")
     a.set_defaults(func=cmd_all)
 
     return p
