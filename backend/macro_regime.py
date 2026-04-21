@@ -33,6 +33,7 @@ Usage:
 import logging
 import json
 from datetime import datetime, timedelta
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
@@ -689,6 +690,563 @@ def get_risk_free_rate(rates: dict) -> float:
 
 # ---------------------------------------------------------------------------
 # Quick test
+# ===========================================================================
+# v8 ADDITIONS — Track B.4 (backtest redesign)
+# ===========================================================================
+# Expands the v7 regime classifier with 4 new backtest-safe inputs:
+#   + unemploymentRate              (monthly, +7d publication lag)
+#   + consumerSentiment             (monthly, +14d publication lag)
+#   + smoothedUSRecessionProbabilities (monthly, +35d publication lag)
+#   + 10y-3m treasury spread        (daily)
+#
+# The v7 API is preserved untouched. v8 entry points:
+#   fetch_macro_regime_v8(fmp)
+#   fetch_macro_regime_v8_historical(fmp, as_of_date)
+#   regime_composite_floor(regime_data, base_floor)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Publication-lag guards (days) for monthly series — backtest only
+# ---------------------------------------------------------------------------
+_PUB_LAG_UNEMP = 7     # BLS releases first Friday of following month
+_PUB_LAG_SENT = 14     # UMich preliminary mid-month, final end-of-month
+_PUB_LAG_RECESSION = 35    # FRED smoothed recession prob lags a full month
+
+
+# ---------------------------------------------------------------------------
+# New sub-scores (each 0.0–1.0, higher = more RISK_ON)
+# ---------------------------------------------------------------------------
+
+def _score_unemployment_rate(values: list) -> float:
+    """
+    Unemployment rate level + trend.
+
+    Input: list of (date, value) tuples, newest first.
+            Values are percentages, e.g. 4.3 means 4.3%.
+
+    Interpretation:
+      - Low + falling     → strong labor market → RISK_ON
+      - Low + rising      → peak of cycle, concerning → CAUTIOUS
+      - High + falling    → recovery → NEUTRAL → RISK_ON
+      - High + rising     → recession → RISK_OFF
+
+    Scoring:
+      Absolute level: <4% = strong, 4-5% = fine, 5-6% = weakening,
+                      6-8% = recession risk, >8% = recession.
+      Trend: 3-month change is the dominant kicker — rising ≥0.4pp
+             over 3mo is a pre-recession signal.
+    """
+    if not values or len(values) < 1:
+        return 0.5
+
+    latest = values[0][1]
+
+    # Absolute level
+    if latest <= 3.5:
+        level = 1.0
+    elif latest <= 4.2:
+        level = 0.85
+    elif latest <= 5.0:
+        level = 0.65
+    elif latest <= 6.0:
+        level = 0.40
+    elif latest <= 7.5:
+        level = 0.20
+    else:
+        level = 0.0
+
+    # Trend: 3-month delta (if we have 4 points)
+    trend_penalty = 0.0
+    if len(values) >= 4:
+        three_mo_ago = values[3][1]
+        delta = latest - three_mo_ago    # positive = rising unemployment
+        if delta >= 0.6:
+            trend_penalty = 0.35        # Sahm-rule territory
+        elif delta >= 0.4:
+            trend_penalty = 0.20
+        elif delta >= 0.2:
+            trend_penalty = 0.10
+        elif delta <= -0.3:
+            trend_penalty = -0.10       # falling unemployment — bonus
+
+    score = level - trend_penalty
+    return max(0.0, min(1.0, score))
+
+
+def _score_consumer_sentiment(values: list) -> float:
+    """
+    University of Michigan Consumer Sentiment Index.
+
+    Long-run mean ~85. Values <60 indicate recessionary sentiment;
+    values >100 indicate euphoric consumers.
+
+    Scoring is LEVEL + TREND. Trend matters more than level for shorter
+    horizons — collapsing sentiment from 80→55 in 3 months is a sharper
+    signal than being stuck at 55.
+    """
+    if not values or len(values) < 1:
+        return 0.5
+
+    latest = values[0][1]
+
+    # Absolute level
+    if latest >= 95:
+        level = 1.0
+    elif latest >= 85:
+        level = 0.85
+    elif latest >= 75:
+        level = 0.65
+    elif latest >= 65:
+        level = 0.45
+    elif latest >= 55:
+        level = 0.25
+    else:
+        level = 0.10    # <55 is deeply recessionary
+
+    # Trend: 3-month change
+    trend_delta = 0.0
+    if len(values) >= 4:
+        three_mo_ago = values[3][1]
+        pct_change = (latest - three_mo_ago) / max(1.0, three_mo_ago)
+        if pct_change >= 0.10:
+            trend_delta = 0.15
+        elif pct_change >= 0.05:
+            trend_delta = 0.08
+        elif pct_change <= -0.10:
+            trend_delta = -0.15
+        elif pct_change <= -0.05:
+            trend_delta = -0.08
+
+    score = level + trend_delta
+    return max(0.0, min(1.0, score))
+
+
+def _score_recession_prob(values: list) -> float:
+    """
+    FRED smoothedUSRecessionProbabilities (decimal 0.0–1.0).
+
+    Direct inverse: higher recession prob → lower risk-on score.
+    This is by construction the most RISK_OFF-biased signal in the
+    composite; we dampen its influence via SUB_WEIGHTS_V8 below.
+    """
+    if not values or len(values) < 1:
+        return 0.5
+
+    latest = values[0][1]
+
+    # Invert & compress
+    # latest=0.00 → 1.0, latest=0.20 → 0.75, latest=0.50 → 0.30,
+    # latest=0.80 → 0.10, latest=1.00 → 0.0
+    if latest <= 0.05:
+        return 1.0
+    elif latest <= 0.15:
+        return 0.85
+    elif latest <= 0.30:
+        return 0.65
+    elif latest <= 0.50:
+        return 0.40
+    elif latest <= 0.75:
+        return 0.20
+    elif latest <= 0.90:
+        return 0.10
+    else:
+        return 0.0
+
+
+def _score_yield_curve_3m(rates: dict) -> float:
+    """
+    Classic NY-Fed recession indicator: 10y - 3m spread.
+
+    Historically a more reliable US-recession predictor than 10y-2y
+    (Estrella & Mishkin, 1996; updated by Engstrom & Sharpe, 2019).
+
+    Input: `rates` dict from treasury-rates endpoint with keys
+    `year10` and `month3` (percent).
+    """
+    y10 = rates.get("year10", 4.3)
+    m3 = rates.get("month3", 3.7)
+    spread_bp = (y10 - m3) * 100
+
+    if spread_bp >= 200:
+        return 1.0
+    elif spread_bp >= 100:
+        return 0.85
+    elif spread_bp >= 50:
+        return 0.70
+    elif spread_bp >= 20:
+        return 0.55
+    elif spread_bp >= 0:
+        return 0.35
+    elif spread_bp >= -50:
+        return 0.15
+    else:
+        return 0.0
+
+
+# ---------------------------------------------------------------------------
+# Composite weighting (v8)
+# ---------------------------------------------------------------------------
+
+# v7 used 5 sub-scores totaling 1.0. v8 adds 4 more. The 4 NEW sub-scores
+# total 0.35 (drawn down from the old signals). Rationale:
+#   - Unemployment & recession probability are direct recession signals;
+#     they need enough weight to affect the regime. 0.10 + 0.08 = 0.18.
+#   - Consumer sentiment is noisier but leads; 0.07.
+#   - 10y-3m spread complements 10y-2y; 0.10.
+SUB_WEIGHTS_V8 = {
+    "yield_curve":   0.15,    # 10y - 2y (was 0.25)
+    "yield_curve_3m": 0.10,   # NEW — 10y - 3m
+    "yield_level":   0.10,    # was 0.15
+    "vix":           0.18,    # was 0.25
+    "cpi_trend":     0.12,    # was 0.20
+    "gdp_momentum":  0.10,    # was 0.15
+    "unemployment":  0.10,    # NEW
+    "recession_prob": 0.08,   # NEW
+    "consumer_sentiment": 0.07,   # NEW
+}
+# sanity: must sum to 1.0
+# 0.15+0.10+0.10+0.18+0.12+0.10+0.10+0.08+0.07 = 1.00
+assert abs(sum(SUB_WEIGHTS_V8.values()) - 1.0) < 1e-6, \
+    f"SUB_WEIGHTS_V8 sums to {sum(SUB_WEIGHTS_V8.values())}, must be 1.0"
+
+
+# ---------------------------------------------------------------------------
+# Monthly-series fetch helpers (with backtest-safe lag filter)
+# ---------------------------------------------------------------------------
+
+def _fetch_monthly_series(
+    fmp_func, name: str, from_date: str, to_date: str,
+    as_of_date: Optional[str] = None, pub_lag_days: int = 14,
+) -> list:
+    """
+    Fetch a named monthly economic indicator from FMP. Returns a list of
+    (date, value) tuples, newest first.
+
+    If `as_of_date` is provided, we restrict to rows where:
+        date + pub_lag_days <= as_of_date
+    This guards against look-ahead — the backtest on date D only "sees"
+    values that WOULD have been publicly released by D.
+    """
+    raw = fmp_func("economics-indicators", {
+        "name": name, "from": from_date, "to": to_date,
+    })
+    if not raw or not isinstance(raw, list):
+        return []
+
+    values = []
+    for r in raw:
+        d = (r.get("date") or "")[:10]
+        v = r.get("value")
+        if not d or v is None:
+            continue
+        try:
+            v = float(v)
+        except (TypeError, ValueError):
+            continue
+        if as_of_date:
+            try:
+                release_date = (
+                    datetime.strptime(d, "%Y-%m-%d") + timedelta(days=pub_lag_days)
+                ).strftime("%Y-%m-%d")
+            except Exception:
+                continue
+            if release_date > as_of_date:
+                continue
+        values.append((d, v))
+
+    values.sort(reverse=True)    # newest first
+    return values
+
+
+# ---------------------------------------------------------------------------
+# LIVE fetch
+# ---------------------------------------------------------------------------
+
+def fetch_macro_regime_v8(fmp_func, rate_limit_func=None) -> dict:
+    """
+    v8 macro regime. Live mode.
+    """
+    import time
+    from datetime import datetime, timedelta
+    sleep = rate_limit_func or (lambda: time.sleep(0.04))
+
+    today = datetime.now()
+    today_str = today.strftime("%Y-%m-%d")
+
+    # --- Treasury rates ---
+    rates_raw = fmp_func("treasury-rates", {})
+    sleep()
+    rates = rates_raw[0] if (rates_raw and isinstance(rates_raw, list)) else {}
+
+    # --- VIX ---
+    vix_data = fmp_func("quote", {"symbol": "^VIX"})
+    sleep()
+    vix_price = 20.0
+    vix_sma200 = None
+    if vix_data and isinstance(vix_data, list) and vix_data:
+        vix_price = float(vix_data[0].get("price", 20))
+        vix_sma200 = float(vix_data[0].get("priceAvg200", 0)) or None
+
+    # --- CPI (v7 retained) ---
+    cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
+    cpi_values = _fetch_monthly_series(fmp_func, "CPI", cpi_from, today_str)
+    sleep()
+
+    # --- GDP (v7 retained) ---
+    gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
+    gdp_values = _fetch_monthly_series(fmp_func, "GDP", gdp_from, today_str)
+    sleep()
+
+    # --- NEW v8 series ---
+    unemp_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
+    unemp_values = _fetch_monthly_series(
+        fmp_func, "unemploymentRate", unemp_from, today_str
+    )
+    sleep()
+
+    sent_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
+    sent_values = _fetch_monthly_series(
+        fmp_func, "consumerSentiment", sent_from, today_str
+    )
+    sleep()
+
+    rec_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
+    rec_values = _fetch_monthly_series(
+        fmp_func, "smoothedUSRecessionProbabilities", rec_from, today_str
+    )
+    sleep()
+
+    # Persist any newly-fetched values to GCS last-known-good cache so the
+    # v7 fallback still has fresh data (v7 cache is shared).
+    cache = _load_macro_cache()
+    if cpi_values:
+        cache["CPI"] = [[d, v] for d, v in cpi_values]
+    if gdp_values:
+        cache["GDP"] = [[d, v] for d, v in gdp_values]
+    if unemp_values:
+        cache["unemploymentRate"] = [[d, v] for d, v in unemp_values]
+    if sent_values:
+        cache["consumerSentiment"] = [[d, v] for d, v in sent_values]
+    if rec_values:
+        cache["smoothedUSRecessionProbabilities"] = [[d, v] for d, v in rec_values]
+    try:
+        _save_macro_cache(cache)
+    except Exception:
+        pass
+
+    return _compute_regime_v8(
+        rates=rates,
+        vix_price=vix_price, vix_sma200=vix_sma200,
+        cpi_values=cpi_values, gdp_values=gdp_values,
+        unemp_values=unemp_values,
+        sent_values=sent_values,
+        rec_values=rec_values,
+    )
+
+
+# ---------------------------------------------------------------------------
+# HISTORICAL fetch (for backtest)
+# ---------------------------------------------------------------------------
+
+def fetch_macro_regime_v8_historical(
+    fmp_func, as_of_date: str, rate_limit_func=None
+) -> dict:
+    """
+    v8 macro regime. Backtest mode. Uses publication-lag guards on
+    monthly series to prevent look-ahead.
+    """
+    import time
+    sleep = rate_limit_func or (lambda: time.sleep(0.04))
+
+    as_of = datetime.strptime(as_of_date, "%Y-%m-%d")
+
+    # Treasury — daily; FMP accepts from/to
+    tr_from = (as_of - timedelta(days=10)).strftime("%Y-%m-%d")
+    rates_raw = fmp_func("treasury-rates", {"from": tr_from, "to": as_of_date})
+    sleep()
+    # FMP returns newest first
+    rates = {}
+    if rates_raw and isinstance(rates_raw, list):
+        for row in rates_raw:
+            d = (row.get("date") or "")[:10]
+            if d and d < as_of_date:
+                rates = row
+                break
+
+    # VIX — historical EOD chart
+    vix_from = (as_of - timedelta(days=250)).strftime("%Y-%m-%d")
+    vix_chart = fmp_func("historical-price-eod/full", {
+        "symbol": "^VIX", "from": vix_from, "to": as_of_date,
+    })
+    sleep()
+    vix_price = 20.0
+    vix_sma200 = None
+    if vix_chart and isinstance(vix_chart, list) and vix_chart:
+        sorted_vix = sorted(
+            [d for d in vix_chart if (d.get("date") or "")[:10] < as_of_date],
+            key=lambda x: x.get("date", ""),
+            reverse=True,
+        )
+        if sorted_vix:
+            vix_price = float(sorted_vix[0].get("close", 20))
+            closes = [float(x.get("close", 0)) for x in sorted_vix[:200]
+                      if x.get("close")]
+            if len(closes) >= 50:
+                vix_sma200 = sum(closes) / len(closes)
+
+    # CPI
+    cpi_from = (as_of - timedelta(days=270)).strftime("%Y-%m-%d")
+    cpi_values = _fetch_monthly_series(
+        fmp_func, "CPI", cpi_from, as_of_date,
+        as_of_date=as_of_date, pub_lag_days=14,
+    )
+    sleep()
+
+    # GDP
+    gdp_from = (as_of - timedelta(days=400)).strftime("%Y-%m-%d")
+    gdp_values = _fetch_monthly_series(
+        fmp_func, "GDP", gdp_from, as_of_date,
+        as_of_date=as_of_date, pub_lag_days=30,
+    )
+    sleep()
+
+    # v8 NEW series with proper lag guards
+    unemp_from = (as_of - timedelta(days=240)).strftime("%Y-%m-%d")
+    unemp_values = _fetch_monthly_series(
+        fmp_func, "unemploymentRate", unemp_from, as_of_date,
+        as_of_date=as_of_date, pub_lag_days=_PUB_LAG_UNEMP,
+    )
+    sleep()
+
+    sent_from = (as_of - timedelta(days=240)).strftime("%Y-%m-%d")
+    sent_values = _fetch_monthly_series(
+        fmp_func, "consumerSentiment", sent_from, as_of_date,
+        as_of_date=as_of_date, pub_lag_days=_PUB_LAG_SENT,
+    )
+    sleep()
+
+    rec_from = (as_of - timedelta(days=240)).strftime("%Y-%m-%d")
+    rec_values = _fetch_monthly_series(
+        fmp_func, "smoothedUSRecessionProbabilities", rec_from, as_of_date,
+        as_of_date=as_of_date, pub_lag_days=_PUB_LAG_RECESSION,
+    )
+    sleep()
+
+    return _compute_regime_v8(
+        rates=rates,
+        vix_price=vix_price, vix_sma200=vix_sma200,
+        cpi_values=cpi_values, gdp_values=gdp_values,
+        unemp_values=unemp_values,
+        sent_values=sent_values,
+        rec_values=rec_values,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Core computation
+# ---------------------------------------------------------------------------
+
+def _compute_regime_v8(
+    rates: dict,
+    vix_price: float, vix_sma200: Optional[float],
+    cpi_values: list, gdp_values: list,
+    unemp_values: list, sent_values: list, rec_values: list,
+) -> dict:
+    """Compute v8 regime from raw inputs."""
+    s_curve = _score_yield_curve(rates)
+    s_curve_3m = _score_yield_curve_3m(rates)
+    s_level = _score_yield_level(rates)
+    s_vix = _score_vix(vix_price, vix_sma200)
+    s_cpi = _score_cpi_trend(cpi_values)
+    s_gdp = _score_gdp_momentum(gdp_values)
+    s_unemp = _score_unemployment_rate(unemp_values)
+    s_sent = _score_consumer_sentiment(sent_values)
+    s_rec = _score_recession_prob(rec_values)
+
+    sub_scores = {
+        "yield_curve": s_curve,
+        "yield_curve_3m": s_curve_3m,
+        "yield_level": s_level,
+        "vix": s_vix,
+        "cpi_trend": s_cpi,
+        "gdp_momentum": s_gdp,
+        "unemployment": s_unemp,
+        "consumer_sentiment": s_sent,
+        "recession_prob": s_rec,
+    }
+
+    macro_score = sum(sub_scores[k] * SUB_WEIGHTS_V8[k] for k in SUB_WEIGHTS_V8)
+    regime = classify_regime(macro_score)
+
+    yield_spread_2y = (rates.get("year10", 4.3) - rates.get("year2", 3.8)) * 100
+    yield_spread_3m = (rates.get("year10", 4.3) - rates.get("month3", 3.7)) * 100
+
+    latest_unemp = unemp_values[0][1] if unemp_values else None
+    latest_sent = sent_values[0][1] if sent_values else None
+    latest_rec = rec_values[0][1] if rec_values else None
+
+    features = {
+        "macro_regime_score": round(macro_score, 4),
+        "macro_yield_spread_2y": round(yield_spread_2y, 2),
+        "macro_yield_spread_3m": round(yield_spread_3m, 2),
+        "macro_yield_level": round(rates.get("month3", 3.7), 2),
+        "macro_vix": round(vix_price, 2),
+        "macro_vix_vs_avg": round(vix_price / vix_sma200, 4) if vix_sma200 else 1.0,
+        "macro_cpi_score": round(s_cpi, 4),
+        "macro_gdp_score": round(s_gdp, 4),
+        "macro_unemployment": round(latest_unemp, 2) if latest_unemp is not None else None,
+        "macro_unemp_score": round(s_unemp, 4),
+        "macro_consumer_sentiment": round(latest_sent, 1) if latest_sent is not None else None,
+        "macro_sent_score": round(s_sent, 4),
+        "macro_recession_prob": round(latest_rec, 4) if latest_rec is not None else None,
+        "macro_recession_score": round(s_rec, 4),
+    }
+
+    log.info(f"  Macro v8 regime: {regime} (score={macro_score:.3f})")
+    log.info(f"    Curve2y={s_curve:.2f} Curve3m={s_curve_3m:.2f} "
+             f"Level={s_level:.2f} VIX={s_vix:.2f} CPI={s_cpi:.2f} "
+             f"GDP={s_gdp:.2f} U={s_unemp:.2f} Sent={s_sent:.2f} Rec={s_rec:.2f}")
+
+    return {
+        "regime": regime,
+        "score": round(macro_score, 4),
+        "sub_scores": sub_scores,
+        "features": features,
+        "tilts": REGIME_TILTS[regime],
+        "rates": rates,
+        "version": "v8",
+    }
+
+
+# ---------------------------------------------------------------------------
+# Composite-floor modulation (per handoff spec)
+# ---------------------------------------------------------------------------
+
+def regime_composite_floor(regime_data: dict, base_floor: float = 0.80) -> float:
+    """
+    Modulate the entry composite floor based on regime.
+
+    Per handoff spec:
+      - RISK_OFF   → raise floor (demand stronger signals)
+      - CAUTIOUS   → slight raise
+      - NEUTRAL    → unchanged
+      - RISK_ON    → slight lower (accept more candidates)
+    """
+    regime = regime_data.get("regime", "NEUTRAL")
+    adjustments = {
+        "RISK_ON":  -0.05,
+        "NEUTRAL":   0.00,
+        "CAUTIOUS": +0.03,
+        "RISK_OFF": +0.05,
+    }
+    delta = adjustments.get(regime, 0.0)
+    floor = max(0.50, min(0.95, base_floor + delta))
+    return round(floor, 4)
+
+
+# ---------------------------------------------------------------------------
+
+
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
