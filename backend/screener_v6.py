@@ -117,6 +117,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("v7")
 
 # Macro regime overlay — tilts weights based on yield curve, VIX, CPI, GDP
+# v8 (Track B.4): adds unemployment, consumer sentiment, recession prob,
+# 10y-3m spread, and composite-floor modulation. v7 API preserved.
 try:
     from macro_regime import fetch_macro_regime, apply_macro_tilt, get_risk_free_rate
     HAS_MACRO = True
@@ -124,6 +126,47 @@ try:
 except ImportError:
     HAS_MACRO = False
     log.info("macro_regime.py not found — running without macro overlay")
+
+# v8 expansion — optional, enabled only if macro_regime exposes v8 entry points
+HAS_MACRO_V8 = False
+if HAS_MACRO:
+    try:
+        from macro_regime import (
+            fetch_macro_regime_v8,
+            fetch_macro_regime_v8_historical,
+            regime_composite_floor,
+        )
+        HAS_MACRO_V8 = True
+        log.info("Macro regime v8 (9-sub-score expansion) available")
+    except ImportError:
+        log.info("Macro regime v8 functions not available — using v7 classifier")
+
+# Track B.1 — 8-K catalyst detection (replaces news-keyword scan)
+try:
+    import factor_8k_catalyst
+    HAS_8K_FACTOR = True
+    log.info("factor_8k_catalyst module loaded")
+except ImportError:
+    HAS_8K_FACTOR = False
+    log.info("factor_8k_catalyst.py not found — 8-K bump disabled")
+
+# Track B.5 — ETF passive flow velocity (live-only, disabled in backtest)
+try:
+    import factor_etf_flow_velocity
+    HAS_ETF_FLOW = True
+    log.info("factor_etf_flow_velocity module loaded")
+except ImportError:
+    HAS_ETF_FLOW = False
+    log.info("factor_etf_flow_velocity.py not found — ETF flow factor disabled")
+
+# Track B.2/B.3 — backtest safety stubs (forward-EPS guard, concentration blend)
+try:
+    import backtest_safety_stubs as _bs
+    HAS_BACKTEST_SAFETY = True
+    log.info("backtest_safety_stubs module loaded")
+except ImportError:
+    HAS_BACKTEST_SAFETY = False
+    log.info("backtest_safety_stubs.py not found — assuming live mode")
 
 # ML probability model — predicts P(+10% in 60d) per stock
 HAS_ML_MODEL = False
@@ -372,6 +415,13 @@ REGIONS = {
     "global": None,  # Will now include EVERY region above
 }
 
+# v8 deploy gate: Europe/Asia/Brazil are disabled because FMP coverage for non-US
+# fundamentals is sparse enough that MIN_COVERAGE_FOR_FULL_SCORE (7/13) isn't met,
+# clamping every non-US composite at COVERAGE_CAP=0.75. Track B factors (8-K,
+# ETF flow, macro v8) are US-only and widen that gap further. Revisit as a
+# deliberate v9 international build with a non-FMP data source.
+DISABLED_REGIONS = frozenset({"europe", "asia", "brazil"})
+
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
@@ -381,16 +431,23 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
-    v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
-    # If "global", iterate through every defined list in REGIONS
+    v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect.
+    v8: gated by DISABLED_REGIONS — non-US regions return [] until coverage improves."""
+    # v8 deploy gate: skip regions where the 13-factor composite is under-covered.
+    if region in DISABLED_REGIONS:
+        log.warning(f"Region '{region}' is disabled in v8 deploy (FMP coverage "
+                    f"clamps composite at COVERAGE_CAP). Returning empty universe.")
+        return []
+
+    # If "global", iterate through every defined list in REGIONS (excluding disabled).
     if region == "global":
         syms = []
-        # Dynamically include every key that has a list of configs
+        # Dynamically include every key that has a list of configs AND isn't disabled
         for r_name, config in REGIONS.items():
-            if config is not None:
+            if config is not None and r_name not in DISABLED_REGIONS:
                 syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
-    
+
     configs = REGIONS.get(region)
     if configs is None:
         configs = [(region.upper(), None, 1_000_000_000, 50)]
@@ -1363,7 +1420,8 @@ def compute_quality_score(value: dict) -> dict:
 # 11c. NEW v7: Catalyst Factor (event-driven scoring)
 # ---------------------------------------------------------------------------
 
-def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
+def compute_catalyst_score(sym: str, analyst: dict = None,
+                             as_of_date: str = None) -> dict:
     """
     Catalyst factor: detects upcoming events that could move the stock.
     Scans: earnings calendar, recent analyst moves, M&A/activist news,
@@ -1371,6 +1429,9 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 
     Returns score 0-1: 0.5 = neutral (no events), >0.6 = positive catalyst,
     <0.35 = negative catalyst (downgrades, miss-prone earnings).
+
+    Track B.1: SEC 8-K filings in last 14d bump score (+0.15 for 1, +0.25
+    for 2+). Backtest-safe via as_of_date arg.
     """
     result = {"score": 0.5, "flags": [], "has_catalyst": False,
               "is_risky": False, "days_to_earnings": -1, "_evaluated": False}
@@ -1514,6 +1575,19 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
     # ─── D) Congressional Trading (last 30 days) ──────────────
 
         pass
+
+    # ─── E) SEC 8-K catalyst (Track B.1) ───────────────
+    # 8-Ks are legally-mandated material-event disclosures.
+    # Bump score based on count of 8-Ks in last 14d.
+    # Backtest-safe: when as_of_date is set, lookup is strictly < that date.
+    if HAS_8K_FACTOR:
+        try:
+            bump = factor_8k_catalyst.score_8k_bump(sym, as_of_date=as_of_date)
+            if bump.get("_evaluated") and bump.get("count", 0) > 0:
+                result["score"] += bump["delta"]
+                result["flags"].extend(bump.get("flags", []))
+        except Exception as _e_8k:
+            log.debug(f"8-K bump failed for {sym}: {_e_8k}")
 
     # Clamp and set flags
     result["score"] = min(max(result["score"], 0.0), 1.0)
@@ -2150,14 +2224,25 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
     log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + quality + catalyst)")
 
     # ─── Macro Regime (called ONCE, shared across all stocks) ───
+    # Track B.4: prefer v8 classifier (9 sub-scores) when available
     macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}, "tilts": {}}
     active_weights = WEIGHTS.copy()
     if HAS_MACRO:
         try:
-            log.info("Fetching macro regime data...")
-            macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
+            if HAS_MACRO_V8:
+                log.info("Fetching macro regime v8 (9 sub-scores)...")
+                macro = fetch_macro_regime_v8(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
+            else:
+                log.info("Fetching macro regime v7...")
+                macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
             active_weights = apply_macro_tilt(WEIGHTS, macro)
-            log.info(f"Macro: {macro['regime']} (score={macro['score']:.3f}) — weights tilted")
+            log.info(f"Macro: {macro['regime']} (score={macro['score']:.3f}) "
+                     f"version={macro.get('version','v7')} — weights tilted")
+            # Expose regime-modulated composite floor for backtest/logging
+            if HAS_MACRO_V8:
+                floor = regime_composite_floor(macro, base_floor=0.80)
+                macro["composite_floor"] = floor
+                log.info(f"Composite floor under {macro['regime']}: {floor:.3f}")
             # Update RISK_FREE dynamically from treasury data
             global RISK_FREE
             rf = get_risk_free_rate(macro.get("rates", {}))
@@ -2168,6 +2253,17 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             log.warning(f"Macro regime fetch failed: {e} — using base weights")
             macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}}
             active_weights = WEIGHTS.copy()
+
+    # Track B.1: pre-populate 8-K filings cache once per scan
+    # (single FMP endpoint call covers all symbols for the last 14 days)
+    if HAS_8K_FACTOR:
+        try:
+            n_syms = factor_8k_catalyst.populate_8k_cache_live(
+                fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT)
+            )
+            log.info(f"8-K cache populated: {n_syms} symbols with filings in last 14d")
+        except Exception as e:
+            log.warning(f"8-K cache populate failed: {e} — bump will be skipped")
 
     # Pre-fetch all quotes in batches
     all_quotes = get_quotes_batch(symbols)
