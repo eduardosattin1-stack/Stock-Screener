@@ -83,6 +83,14 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="backtest_full.py,--region,europe,--from,2022-01-01,--to,2025-12-31"
+          gcloud run jobs deploy backtest-v8 \
+            --source=. \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="backtest_v8.py"
 
       # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
       - name: Run SP500 Scan
@@ -120,6 +128,12 @@ jobs:
         run: |
           gcloud run jobs execute backtest-europe --region=europe-west1
           echo "Backtest Europe started (~3-6 hours). Monitor: gcloud run jobs executions list --job=backtest-europe --region=europe-west1"
+          
+      - name: Run Backtest V8
+        if: inputs.action == 'run-backtest-v8'
+        run: |
+          gcloud run jobs execute backtest-v8 --region=europe-west1
+          echo "Backtest V8 started. Monitor: gcloud run jobs executions list --job=backtest-v8 --region=europe-west1"
 
       # ═══ MANUAL: MONITOR + WEEKLY REPORT ═══
       - name: Run Portfolio Monitor
