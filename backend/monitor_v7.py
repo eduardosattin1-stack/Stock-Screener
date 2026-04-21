@@ -190,10 +190,10 @@ def _load_scan_composites():
     composite value back to these JSON files.
     """
     out = {}
-    for region in ("sp500", "nasdaq", "russell2000"):
-        data = gcs_download(f"latest_{region}.json")
+    for region in ("sp500", "nasdaq", "global"):
+        data = gcs_download(f"scans/latest_{region}.json")
         if not data:
-            log.warning(f"Scan snapshot latest_{region}.json not found - monitor will fall back to local compute for that region")
+            log.warning(f"Scan snapshot scans/latest_{region}.json not found - monitor will fall back to local compute for that region")
             continue
         stocks = data.get("stocks") if isinstance(data, dict) else data
         if not isinstance(stocks, list):
@@ -212,7 +212,7 @@ def _load_scan_composites():
                 "_region": region,
             }
             n += 1
-        log.info(f"Loaded {n} composites from latest_{region}.json")
+        log.info(f"Loaded {n} composites from scans/latest_{region}.json")
     return out
 
 def load_state():
