@@ -10,7 +10,7 @@ review), followed by the existing weekly summary.
 Reads from GCS:
   rebalance/latest.json          (close X, open Y from rebalance_engine.py)
   options/latest_suggestions.json (Tradier spread candidates)
-  latest_sp500.json              (top picks for the weekly summary)
+  latest_sp500.json, latest_nasdaq.json, latest_russell2000.json (top picks for the weekly summary)
   portfolio/state.json           (current positions)
 
 Deploy: Cloud Run Job triggered by Cloud Scheduler Mon 06:00 CET
@@ -207,15 +207,40 @@ def format_portfolio_snapshot(rebalance: dict) -> str:
 # Top-of-universe snapshot (for context, not action)
 # ---------------------------------------------------------------------------
 def format_top_picks_snapshot() -> str:
-    scan = gcs_read("latest_sp500.json", {})
-    if not scan:
-        return "  (no recent sp500 scan available)\n"
-    stocks = scan.get("stocks", []) if isinstance(scan, dict) else []
+    stocks = []
+    
+    # Fetch SP500
+    scan_sp500 = gcs_read("latest_sp500.json", {})
+    if scan_sp500:
+        sp500_stocks = scan_sp500.get("stocks", []) if isinstance(scan_sp500, dict) else []
+        stocks.extend(sp500_stocks)
+        
+    # Fetch NASDAQ
+    scan_nasdaq = gcs_read("latest_nasdaq.json", {})
+    if scan_nasdaq:
+        nasdaq_stocks = scan_nasdaq.get("stocks", []) if isinstance(scan_nasdaq, dict) else []
+        stocks.extend(nasdaq_stocks)
+
+    # Fetch Russell 2000
+    scan_russell = gcs_read("latest_russell2000.json", {})
+    if scan_russell:
+        russell_stocks = scan_russell.get("stocks", []) if isinstance(scan_russell, dict) else []
+        stocks.extend(russell_stocks)
+
     if not stocks:
-        return "  (no recent sp500 scan available)\n"
-    stocks_sorted = sorted(stocks, key=lambda s: s.get("composite", 0), reverse=True)
+        return "  (no recent US scan available)\n"
+        
+    # Remove duplicates
+    seen_symbols = set()
+    unique_stocks = []
+    for stock in stocks:
+        if stock.get("symbol") not in seen_symbols:
+            unique_stocks.append(stock)
+            seen_symbols.add(stock.get("symbol"))
+            
+    stocks_sorted = sorted(unique_stocks, key=lambda s: s.get("composite", 0), reverse=True)
     top10 = stocks_sorted[:10]
-    lines = ["  Top-10 SP500+NASDAQ by composite (this week):"]
+    lines = ["  Top-10 US (SP500/NASDAQ/Russell2K) by composite (this week):"]
     for i, s in enumerate(top10, 1):
         lines.append(
             f"    {i:>2}. {s.get('symbol', ''):<8} {s.get('composite', 0):.3f}  "
