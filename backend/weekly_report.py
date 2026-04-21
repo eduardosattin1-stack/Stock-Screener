@@ -1,45 +1,46 @@
 #!/usr/bin/env python3
 """
-Weekly Report Generator — CB Screener v7
-==========================================
-Generates a weekly portfolio report with:
-  - Top 20 ranked picks (sorted by composite)
-  - Swap recommendations (what to buy/sell vs current holdings)
-  - Catalyst calendar (earnings, upgrades in next 21 days)
-  - Options candidates (high conviction + near-term catalyst)
-  - Composite erosion tracking (score history per position)
-  - Probability table from ML backtest
+Weekly Report with Action List — CB Screener v7.2 Phase 1
+==========================================================
+Produces the Monday 06:00 CET email. Leads with an ACTION LIST so Bruno
+knows what to execute in IBKR before markets open, followed by an OPTIONS
+OVERLAY CANDIDATES section (speculative, collecting data until July 2026
+review), followed by the existing weekly summary.
 
-Usage:
-  # Standalone (reads latest scan from GCS):
-  python weekly_report.py
+Reads from GCS:
+  rebalance/latest.json          (close X, open Y from rebalance_engine.py)
+  options/latest_suggestions.json (Tradier spread candidates)
+  latest_sp500.json              (top picks for the weekly summary)
+  portfolio/state.json           (current positions)
 
-  # With specific scan file:
-  python weekly_report.py --scan scans/latest.json
-
-  # With portfolio state:
-  python weekly_report.py --portfolio portfolio/state.json
-
-  # Email the report:
-  python weekly_report.py --email
-
-Output: GCS portfolio/weekly_report.json + email if configured
+Deploy: Cloud Run Job triggered by Cloud Scheduler Mon 06:00 CET
 """
-
-import os, sys, json, time, logging, argparse
-from datetime import datetime, timedelta
+import os, json, logging, smtplib
+from datetime import datetime
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 import requests
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Strategy constants (also exported from rebalance_engine for consistency)
+try:
+    from rebalance_engine import (
+        read_latest_rebalance,
+        TARGET_PORTFOLIO_SIZE, COMPOSITE_FLOOR,
+        STOP_LOSS_PCT, TAKE_PROFIT_PCT, TIME_STOP_DAYS,
+    )
+    from tradier_options import read_latest_suggestions
+except Exception as e:
+    logging.warning(f"Imports failed: {e} — running in reduced mode")
+    read_latest_rebalance = lambda: {}
+    read_latest_suggestions = lambda: {}
+    TARGET_PORTFOLIO_SIZE, COMPOSITE_FLOOR = 5, 0.80
+    STOP_LOSS_PCT, TAKE_PROFIT_PCT, TIME_STOP_DAYS = -0.12, 0.20, 60
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("weekly_report")
 
-FMP_KEY = os.environ.get("FMP_API_KEY", "")
-FMP = "https://financialmodelingprep.com/stable"
 GCS_BUCKET = "screener-signals-carbonbridge"
-RATE = 0.04
 
 SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
@@ -47,476 +48,244 @@ SMTP_USER = os.environ.get("SMTP_USER", "")
 SMTP_PASS = os.environ.get("SMTP_PASS", "")
 EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
 
-# ---------------------------------------------------------------------------
-# ML Probability Lookup Table (from 15,120 samples, 24 months)
-# ---------------------------------------------------------------------------
 
-PROBABILITY_TABLE = {
-    # composite_bucket: (P_5pct_30d, P_10pct_60d, P_20pct_60d, avg_max_gain, avg_max_dd, avg_days_to_10pct)
-    ">0.90":    (0.79, 0.72, 0.42, 25.7, -9.1, 18),
-    "0.85-0.90":(0.69, 0.53, 0.28, 17.9, -9.8, 22),
-    "0.80-0.85":(0.69, 0.53, 0.28, 17.9, -9.8, 22),  # same bucket as 0.75-0.85
-    "0.75-0.80":(0.61, 0.44, 0.19, 12.8, -10.8, 24),
-    "0.70-0.75":(0.61, 0.44, 0.19, 12.8, -10.8, 24),
-    "0.65-0.70":(0.59, 0.43, 0.18, 12.1, -10.3, 26),
-    "<0.65":    (0.53, 0.37, 0.20, 10.7, -10.7, 22),
-}
-
-def get_probability(composite):
-    """Look up ML probability metrics for a composite score."""
-    if composite >= 0.90: return PROBABILITY_TABLE[">0.90"]
-    elif composite >= 0.85: return PROBABILITY_TABLE["0.85-0.90"]
-    elif composite >= 0.80: return PROBABILITY_TABLE["0.80-0.85"]
-    elif composite >= 0.75: return PROBABILITY_TABLE["0.75-0.80"]
-    elif composite >= 0.70: return PROBABILITY_TABLE["0.70-0.75"]
-    elif composite >= 0.65: return PROBABILITY_TABLE["0.65-0.70"]
-    else: return PROBABILITY_TABLE["<0.65"]
-
-# ---------------------------------------------------------------------------
-# GCS I/O
-# ---------------------------------------------------------------------------
-
-def gcs_download(path):
+def gcs_read(path, default=None):
     url = f"https://storage.googleapis.com/{GCS_BUCKET}/{path}"
     try:
         r = requests.get(url, timeout=10)
         if r.status_code == 200:
             return r.json()
-    except:
+    except Exception:
         pass
-    return None
+    return default if default is not None else {}
 
-def gcs_upload(path, data):
-    try:
-        tok = requests.get(
-            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
-            headers={"Metadata-Flavor": "Google"}, timeout=3
-        ).json().get("access_token", "")
-        if not tok: return False
-        r = requests.post(
-            f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
-            params={"uploadType": "media", "name": path},
-            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
-            data=json.dumps(data, default=str), timeout=15
+
+# ---------------------------------------------------------------------------
+# Action list — the headline section Bruno actually acts on
+# ---------------------------------------------------------------------------
+def format_action_list(rebalance: dict) -> str:
+    if not rebalance or not rebalance.get("summary", {}).get("actions_required"):
+        return (
+            "  ✓ NO ACTION REQUIRED this week.\n"
+            f"  Holding {rebalance.get('summary', {}).get('positions_after_close', 0)}/{TARGET_PORTFOLIO_SIZE} positions.\n"
+            "  All stops, targets, and time-limits intact.\n"
         )
-        return r.status_code in (200, 201)
-    except:
-        return False
 
-# ---------------------------------------------------------------------------
-# FMP helpers
-# ---------------------------------------------------------------------------
+    lines = []
+    summary = rebalance.get("summary", {})
+    closes = rebalance.get("closes", [])
+    opens = rebalance.get("opens", [])
 
-def fmp(endpoint, params=None):
-    time.sleep(RATE)
-    p = {"apikey": FMP_KEY}
-    if params: p.update(params)
-    try:
-        r = requests.get(f"{FMP}/{endpoint}", params=p, timeout=20)
-        if r.status_code != 200: return None
-        d = r.json()
-        if isinstance(d, dict) and "Error Message" in d: return None
-        return [d] if isinstance(d, dict) else (d if isinstance(d, list) else None)
-    except:
-        return None
+    lines.append(f"  >>> ACTION REQUIRED: {len(closes)} close(s), {len(opens)} open(s) <<<\n")
 
-# ---------------------------------------------------------------------------
-# Composite History Tracking
-# ---------------------------------------------------------------------------
+    if closes:
+        lines.append(f"  ━━━ CLOSE ({len(closes)}) ━━━")
+        for c in closes:
+            rule = c["exit_rule"]
+            emoji = {"STOP_LOSS": "🔴", "TAKE_PROFIT": "🟢", "TIME_STOP": "🟡"}.get(rule, "•")
+            lines.append(
+                f"  {emoji} SELL {c['symbol']} at market  ({c['pnl_pct_display']}, "
+                f"{c['days_held']}d held)"
+            )
+            lines.append(
+                f"     entry ${c['entry_price']:.2f} → now ${c['exit_price']:.2f}  "
+                f"reason: {c['reason']}"
+            )
+        lines.append("")
 
-def load_composite_history():
-    """Load composite score history from GCS."""
-    data = gcs_download("portfolio/composite_history.json")
-    return data or {}
+    if opens:
+        lines.append(f"  ━━━ OPEN ({len(opens)}) — equal weight, {100//TARGET_PORTFOLIO_SIZE}% each ━━━")
+        for o in opens:
+            lines.append(
+                f"  🆕 BUY  {o['symbol']}  composite {o['composite']:.3f}  "
+                f"({o.get('classification', '')} · {o.get('signal', '')})"
+            )
+            lines.append(
+                f"     entry ${o['entry_price']:.2f}  "
+                f"STOP ${o['stop_loss_price']:.2f} (-12%)  "
+                f"TARGET ${o['take_profit_price']:.2f} (+20%)  "
+                f"TIME {o['time_stop_date']}"
+            )
+            if o.get("hit_prob"):
+                lines.append(
+                    f"     ML P(+10% in 60d): {o['hit_prob']*100:.0f}%  "
+                    f"upside to target: {o.get('upside_pct', 0):.0f}%"
+                )
+        lines.append("")
 
-def save_composite_history(history):
-    """Save composite history to GCS."""
-    gcs_upload("portfolio/composite_history.json", history)
-
-def update_composite_history(stocks, history=None):
-    """
-    Append today's composite scores for all Top 20 + held positions.
-    History format: { "SYMBOL": [ {date, composite, signal, price}, ... ] }
-    Keep last 90 days per symbol.
-    """
-    if history is None:
-        history = load_composite_history()
-    
-    today = datetime.now().strftime("%Y-%m-%d")
-    
-    for s in stocks:
-        sym = s.get("symbol", "")
-        if not sym:
-            continue
-        if sym not in history:
-            history[sym] = []
-        
-        # Don't duplicate same day
-        if history[sym] and history[sym][-1].get("date") == today:
-            history[sym][-1] = {
-                "date": today,
-                "composite": round(s.get("composite", 0), 3),
-                "signal": s.get("signal", ""),
-                "price": round(s.get("price", 0), 2),
-            }
-        else:
-            history[sym].append({
-                "date": today,
-                "composite": round(s.get("composite", 0), 3),
-                "signal": s.get("signal", ""),
-                "price": round(s.get("price", 0), 2),
-            })
-        
-        # Keep last 90 entries
-        history[sym] = history[sym][-90:]
-    
-    save_composite_history(history)
-    return history
-
-def compute_erosion(sym, history):
-    """
-    Compute composite score erosion metrics for a symbol.
-    Returns: { trend_7d, trend_30d, peak_composite, current_composite, days_since_peak }
-    """
-    entries = history.get(sym, [])
-    if not entries:
-        return None
-    
-    current = entries[-1]["composite"]
-    
-    # 7-day trend
-    if len(entries) >= 7:
-        week_ago = entries[-7]["composite"]
-        trend_7d = current - week_ago
-    else:
-        trend_7d = 0
-    
-    # 30-day trend
-    if len(entries) >= 30:
-        month_ago = entries[-30]["composite"]
-        trend_30d = current - month_ago
-    else:
-        trend_30d = 0
-    
-    # Peak
-    peak = max(e["composite"] for e in entries)
-    peak_idx = next(i for i, e in enumerate(entries) if e["composite"] == peak)
-    days_since_peak = len(entries) - 1 - peak_idx
-    erosion_pct = (current - peak) / peak * 100 if peak > 0 else 0
-    
-    return {
-        "current": round(current, 3),
-        "trend_7d": round(trend_7d, 3),
-        "trend_30d": round(trend_30d, 3),
-        "peak": round(peak, 3),
-        "days_since_peak": days_since_peak,
-        "erosion_pct": round(erosion_pct, 1),
-        "sparkline": [round(e["composite"], 3) for e in entries[-14:]],  # last 14 days
-    }
-
-# ---------------------------------------------------------------------------
-# Options Candidate Detection
-# ---------------------------------------------------------------------------
-
-def flag_options_candidate(stock):
-    """
-    Flag a stock as an options candidate if ALL conditions are met:
-    - Composite > 0.80
-    - Active catalyst (catalyst_score > 0.65)
-    - Earnings within 21 days
-    - Beat rate >= 75% (6/8 or better)
-    - Quality >= 0.50
-    
-    Returns: None or options dict with strategy suggestions
-    """
-    composite = stock.get("composite", 0)
-    catalyst_score = stock.get("catalyst_score", 0)
-    quality_score = stock.get("quality_score", 0)
-    days_to_earnings = stock.get("days_to_earnings", -1)
-    beat_rate = stock.get("eps_beat_rate", 0)
-    price = stock.get("price", 0)
-    
-    if not (composite > 0.80 and
-            catalyst_score > 0.65 and
-            0 < days_to_earnings <= 21 and
-            beat_rate >= 0.75 and
-            quality_score >= 0.50):
-        return None
-    
-    # Suggest strategies based on timeframe
-    prob = get_probability(composite)
-    p10 = prob[1]  # P(+10% in 60d)
-    
-    target_price = round(price * 1.10, 2)  # +10% target
-    
-    return {
-        "is_candidate": True,
-        "composite": composite,
-        "catalyst": stock.get("catalyst_flags", []),
-        "days_to_earnings": days_to_earnings,
-        "beat_rate": beat_rate,
-        "p_10pct_60d": p10,
-        "strategies": {
-            "conservative": f"Buy shares at ${price:.2f}, target ${target_price:.2f} (+10%)",
-            "moderate": f"Buy monthly call ~${round(price*1.02, 0):.0f} strike, 30-45 DTE",
-            "aggressive": f"Buy weekly call ~${round(price*1.05, 0):.0f} strike, earnings play ({days_to_earnings}d)",
-        },
-        "risk_note": f"Max expected drawdown: {prob[4]}%. Set stop at {prob[4]*1.2:.0f}%."
-    }
-
-# ---------------------------------------------------------------------------
-# Weekly Report Generation
-# ---------------------------------------------------------------------------
-
-def generate_weekly_report(scan_data, portfolio_state=None):
-    """
-    Generate the full weekly report.
-    
-    Args:
-        scan_data: Full scan JSON from GCS (scans/latest.json)
-        portfolio_state: Portfolio state JSON from GCS (portfolio/state.json)
-    
-    Returns: (report_text, report_json)
-    """
-    today = datetime.now()
-    today_str = today.strftime("%Y-%m-%d")
-    
-    stocks = scan_data.get("stocks", [])
-    macro = scan_data.get("macro", {})
-    
-    # Sort by composite, highest first
-    stocks.sort(key=lambda x: x.get("composite", 0), reverse=True)
-    
-    # Top 20
-    top20 = stocks[:20]
-    
-    # Current portfolio
-    held_symbols = set()
-    held_positions = {}
-    if portfolio_state and portfolio_state.get("positions"):
-        for p in portfolio_state["positions"]:
-            held_symbols.add(p["symbol"])
-            held_positions[p["symbol"]] = p
-    
-    # Composite history
-    comp_history = load_composite_history()
-    update_composite_history(top20 + [s for s in stocks if s.get("symbol") in held_symbols], comp_history)
-    
-    # ─── Top 20 with probabilities ───
-    top20_enriched = []
-    for s in top20:
-        sym = s.get("symbol", "")
-        comp = s.get("composite", 0)
-        prob = get_probability(comp)
-        erosion = compute_erosion(sym, comp_history)
-        options = flag_options_candidate(s)
-        
-        in_portfolio = sym in held_symbols
-        
-        top20_enriched.append({
-            "rank": len(top20_enriched) + 1,
-            "symbol": sym,
-            "price": s.get("price", 0),
-            "composite": comp,
-            "signal": s.get("signal", ""),
-            "classification": s.get("classification", ""),
-            "p_5pct_30d": prob[0],
-            "p_10pct_60d": prob[1],
-            "p_20pct_60d": prob[2],
-            "expected_max_gain": prob[3],
-            "expected_max_dd": prob[4],
-            "avg_days_to_10pct": prob[5],
-            "in_portfolio": in_portfolio,
-            "action": "HOLD" if in_portfolio else "NEW",
-            "erosion": erosion,
-            "options_candidate": options,
-            "catalyst_flags": s.get("catalyst_flags", []),
-            "quality_score": s.get("quality_score", 0),
-            "bull_score": s.get("bull_score", 0),
-            "factor_coverage": s.get("factor_coverage", 0),
-            "factors_evaluated": s.get("factors_evaluated", []),
-            "factors_missing": s.get("factors_missing", []),
-        })
-    
-    # ─── Swap Recommendations ───
-    top20_syms = set(s["symbol"] for s in top20)
-    
-    # Stocks to BUY (in top 20, not held)
-    to_buy = [s for s in top20_enriched if not s["in_portfolio"]]
-    
-    # Stocks to SELL (held, but dropped out of top 20)
-    to_sell = []
-    for sym in held_symbols:
-        if sym not in top20_syms:
-            # Find where it ranks now
-            rank = next((i+1 for i, s in enumerate(stocks) if s.get("symbol") == sym), 999)
-            stock_data = next((s for s in stocks if s.get("symbol") == sym), {})
-            erosion = compute_erosion(sym, comp_history)
-            to_sell.append({
-                "symbol": sym,
-                "current_rank": rank,
-                "composite": stock_data.get("composite", 0),
-                "signal": stock_data.get("signal", ""),
-                "erosion": erosion,
-                "reason": f"Dropped to rank #{rank}" + (
-                    f", composite eroding ({erosion['erosion_pct']:+.0f}% from peak)" 
-                    if erosion and erosion["erosion_pct"] < -10 else ""
-                ),
-            })
-    to_sell.sort(key=lambda x: x["current_rank"], reverse=True)  # worst rank first
-    
-    # ─── Catalyst Calendar (next 21 days) ───
-    catalysts = []
-    for s in top20_enriched:
-        if s.get("catalyst_flags"):
-            catalysts.append({
-                "symbol": s["symbol"],
-                "flags": s["catalyst_flags"],
-                "composite": s["composite"],
-                "in_portfolio": s["in_portfolio"],
-            })
-    
-    # ─── Options Candidates ───
-    options_picks = [s for s in top20_enriched if s.get("options_candidate")]
-    
-    # ─── Erosion Alerts ───
-    erosion_alerts = []
-    for sym in held_symbols:
-        er = compute_erosion(sym, comp_history)
-        if er and (er["erosion_pct"] < -15 or er["trend_7d"] < -0.05):
-            erosion_alerts.append({
-                "symbol": sym,
-                "current_composite": er["current"],
-                "peak_composite": er["peak"],
-                "erosion_pct": er["erosion_pct"],
-                "trend_7d": er["trend_7d"],
-                "days_since_peak": er["days_since_peak"],
-                "alert": "EROSION" if er["erosion_pct"] < -15 else "DECLINING",
-            })
-    
-    # ─── Format Text Report ───
-    report = format_report_text(
-        today_str, macro, top20_enriched, to_buy, to_sell,
-        catalysts, options_picks, erosion_alerts, held_symbols
-    )
-    
-    # ─── Build JSON (for frontend) ───
-    report_json = {
-        "date": today_str,
-        "macro": macro,
-        "top20": top20_enriched,
-        "swaps": {"buy": to_buy, "sell": to_sell},
-        "swap_count": len(to_buy),
-        "catalysts": catalysts,
-        "options_candidates": [s["symbol"] for s in options_picks],
-        "erosion_alerts": erosion_alerts,
-        "portfolio_overlap": len(held_symbols & top20_syms),
-        "portfolio_size": len(held_symbols),
-    }
-    
-    return report, report_json
-
-# ---------------------------------------------------------------------------
-# Text Report Formatting
-# ---------------------------------------------------------------------------
-
-def format_report_text(date, macro, top20, to_buy, to_sell, catalysts, options, erosion_alerts, held):
-    regime = macro.get("regime", "NEUTRAL")
-    regime_emoji = {"RISK_ON": "🟢", "NEUTRAL": "⚪", "CAUTIOUS": "🟡", "RISK_OFF": "🔴"}.get(regime, "⚪")
-    
-    lines = [
-        f"{'═'*80}",
-        f"  CB SCREENER — WEEKLY REPORT — {date}",
-        f"  Macro: {regime_emoji} {regime} ({macro.get('score', 0.5):.2f})",
-        f"  Portfolio: {len(held)} positions | {len(held & set(s['symbol'] for s in top20))}/{len(top20)} overlap with Top 20",
-        f"{'═'*80}",
-    ]
-    
-    # Swaps summary
-    if to_buy or to_sell:
-        lines.append(f"\n  📊 SWAPS THIS WEEK: {len(to_buy)} buy, {len(to_sell)} sell")
-        lines.append(f"  {'─'*75}")
-        for s in to_sell[:5]:
-            lines.append(f"    🔴 SELL  {s['symbol']:<8} — {s['reason']}")
-        for s in to_buy[:5]:
-            prob = get_probability(s["composite"])
-            lines.append(f"    🟢 BUY   {s['symbol']:<8} — Comp {s['composite']:.3f} | "
-                        f"P(+10%): {prob[1]*100:.0f}% | Signal: {s['signal']}")
-    else:
-        lines.append(f"\n  ✅ NO SWAPS NEEDED — portfolio aligned with Top 20")
-    
-    # Top 20
-    lines.append(f"\n  {'─'*85}")
-    lines.append(f"  TOP 20 PORTFOLIO {'':>53}")
-    lines.append(f"  {'#':>3} {'Sym':<8} {'Price':>8} {'Comp':>6} {'Signal':<12} "
-                f"{'P(+10%)':>8} {'MaxGain':>8} {'MaxDD':>7} {'Cov':>5} {'Action':<8}")
-    lines.append(f"  {'─'*85}")
-    
-    for s in top20:
-        status = "HOLD ✅" if s["in_portfolio"] else "⬆️ NEW"
-        options_flag = " ⚡" if s.get("options_candidate") else ""
-        erosion_flag = ""
-        if s.get("erosion") and s["erosion"]["trend_7d"] < -0.03:
-            erosion_flag = " ↘"
-        elif s.get("erosion") and s["erosion"]["trend_7d"] > 0.03:
-            erosion_flag = " ↗"
-        
-        cov = s.get("factor_coverage", 0)
-        cov_str = f"{cov}/10"
-        
+    cash = summary.get("cash_slots_remaining", 0)
+    if cash > 0:
+        qual = summary.get("qualifying_in_universe", 0)
         lines.append(
-            f"  {s['rank']:>3} {s['symbol']:<8} ${s['price']:>7.2f} {s['composite']:>5.3f} "
-            f"{s['signal']:<12} {s['p_10pct_60d']*100:>7.0f}% {s['expected_max_gain']:>+7.1f}% "
-            f"{s['expected_max_dd']:>+6.1f}% {cov_str:>5} {status}{options_flag}{erosion_flag}"
+            f"  💰 CASH: holding {cash} slot(s) empty — only {qual} stocks "
+            f"cleared composite ≥ {COMPOSITE_FLOOR:.2f} this week."
         )
-    
-    # Erosion alerts
-    if erosion_alerts:
-        lines.append(f"\n  ⚠️  COMPOSITE EROSION ALERTS:")
-        lines.append(f"  {'─'*75}")
-        for a in erosion_alerts:
-            lines.append(f"    {a['symbol']:<8} Peak {a['peak_composite']:.3f} → Now {a['current_composite']:.3f} "
-                        f"({a['erosion_pct']:+.0f}%) | 7d trend: {a['trend_7d']:+.3f} | "
-                        f"{'🔴 SELL CANDIDATE' if a['alert']=='EROSION' else '🟡 Watch closely'}")
-    
-    # Catalysts
-    if catalysts:
-        lines.append(f"\n  ⚡ CATALYST CALENDAR (next 21 days):")
-        lines.append(f"  {'─'*75}")
-        for c in catalysts:
-            held_mark = "✅" if c["in_portfolio"] else "  "
-            lines.append(f"    {held_mark} {c['symbol']:<8} {', '.join(c['flags'][:2])}")
-    
-    # Options candidates
-    if options:
-        lines.append(f"\n  🎯 OPTIONS CANDIDATES (high conviction + catalyst):")
-        lines.append(f"  {'─'*75}")
-        for s in options:
-            opt = s["options_candidate"]
-            lines.append(f"    {s['symbol']:<8} Comp {s['composite']:.3f} | P(+10%): {opt['p_10pct_60d']*100:.0f}% | "
-                        f"Beat rate: {opt['beat_rate']*100:.0f}%")
-            lines.append(f"      Conservative: {opt['strategies']['conservative']}")
-            lines.append(f"      Moderate:     {opt['strategies']['moderate']}")
-            lines.append(f"      Aggressive:   {opt['strategies']['aggressive']}")
-            lines.append(f"      Risk:         {opt['risk_note']}")
-    
-    lines.append(f"\n{'═'*85}")
-    lines.append(f"  Generated by CB Screener v7.1 | screener.carbonbridge.nl")
-    lines.append(f"{'═'*85}")
-    
+
+    lines.append("\n  IBKR bracket order template for each OPEN:")
+    lines.append("    Parent: BUY MKT (or LMT near shown entry price)")
+    lines.append("    Child 1: SELL STP at STOP price (attached)")
+    lines.append("    Child 2: SELL LMT at TARGET price (OCO with child 1)")
+    lines.append("    Manual: set calendar reminder for TIME date\n")
+
     return "\n".join(lines)
 
-# ---------------------------------------------------------------------------
-# Email
-# ---------------------------------------------------------------------------
 
-def send_email(subject, body):
+# ---------------------------------------------------------------------------
+# Options overlay section
+# ---------------------------------------------------------------------------
+def format_options_section(options_report: dict) -> str:
+    if not options_report:
+        return "  (Options layer not configured — set TRADIER_TOKEN to enable.)\n"
+
+    if options_report.get("error"):
+        return f"  ⚠ {options_report['error']}\n"
+
+    suggestions = options_report.get("suggestions", [])
+    gated = options_report.get("gated", [])
+    gates = options_report.get("entry_gates", {})
+
+    if not suggestions and not gated:
+        return "  No candidates evaluated this cycle (no new opens met base criteria).\n"
+
+    lines = [
+        "  ⚠ SPECULATIVE — accumulating data through July 2026 review.",
+        "  Do not size these as primary positions. Sugg. sizing: 1-2% per spread, max 5% total.",
+        "",
+        f"  Gates: composite ≥ {gates.get('composite_min', 0.85)} · "
+        f"p10 ≥ {gates.get('hit_prob_min', 0.65)} · "
+        f"IV rank ≤ {gates.get('iv_rank_max', 40)} · "
+        f"DTE ~ {gates.get('dte_target', 90)}d",
+        "",
+    ]
+
+    if suggestions:
+        lines.append(f"  ━━━ {len(suggestions)} CANDIDATE SPREAD(S) ━━━")
+        for s in suggestions:
+            econ = s.get("economics", {})
+            iv_str = ""
+            if s.get("iv_rank") is not None:
+                iv_str = f"  IVR: {s['iv_rank']:.0f} ({s.get('iv_samples', 0)} samples)"
+            lines.append(
+                f"  📈 {s['symbol']}  spot ${s['spot']:.2f}  "
+                f"composite {s['composite']:.2f}  p10 {s['hit_prob']*100:.0f}%{iv_str}"
+            )
+            lines.append(f"     {s['description']}")
+            lines.append(
+                f"     Max gain ${econ.get('max_gain_per_contract', 0):.0f}/contract  "
+                f"max loss ${econ.get('max_loss_per_contract', 0):.0f}  "
+                f"R/R {econ.get('risk_reward', 0):.1f}:1"
+            )
+            lines.append("")
+
+    if gated:
+        lines.append(f"  ━━━ {len(gated)} GATED (did not pass) ━━━")
+        for g in gated:
+            lines.append(f"  ✕ {g['symbol']}: {g.get('reason', 'unknown')}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Portfolio snapshot
+# ---------------------------------------------------------------------------
+def format_portfolio_snapshot(rebalance: dict) -> str:
+    portfolio = rebalance.get("portfolio_before", [])
+    if not portfolio:
+        return "  (no open positions)\n"
+    lines = [f"  Currently holding {len(portfolio)}/{TARGET_PORTFOLIO_SIZE} positions:"]
+    for p in portfolio:
+        lines.append(
+            f"    {p['symbol']:<8} entry {p.get('entry_date', '?')} "
+            f"@ ${p.get('entry_price', 0):.2f}  "
+            f"comp_at_entry {p.get('entry_composite', 0):.3f}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# Top-of-universe snapshot (for context, not action)
+# ---------------------------------------------------------------------------
+def format_top_picks_snapshot() -> str:
+    scan = gcs_read("latest_sp500.json", {})
+    if not scan:
+        return "  (no recent sp500 scan available)\n"
+    stocks = scan.get("stocks", []) if isinstance(scan, dict) else []
+    if not stocks:
+        return "  (no recent sp500 scan available)\n"
+    stocks_sorted = sorted(stocks, key=lambda s: s.get("composite", 0), reverse=True)
+    top10 = stocks_sorted[:10]
+    lines = ["  Top-10 SP500+NASDAQ by composite (this week):"]
+    for i, s in enumerate(top10, 1):
+        lines.append(
+            f"    {i:>2}. {s.get('symbol', ''):<8} {s.get('composite', 0):.3f}  "
+            f"{s.get('classification', ''):<14} {s.get('signal', ''):<12} "
+            f"${s.get('price', 0):.2f}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# Build the email
+# ---------------------------------------------------------------------------
+def build_report() -> tuple[str, str]:
+    today = datetime.now().strftime("%Y-%m-%d")
+    rebalance = read_latest_rebalance() or {}
+    options = read_latest_suggestions() or {}
+
+    summary = rebalance.get("summary", {})
+    has_action = summary.get("actions_required", False)
+
+    subject_prefix = "🔔 ACTION" if has_action else "CB Weekly"
+    subject = f"{subject_prefix} — CB Screener — {today}"
+
+    divider = "═" * 78
+    sub_divider = "─" * 78
+
+    body_parts = [
+        divider,
+        f"  CB SCREENER — WEEKLY ACTION REPORT — {today}",
+        f"  Strategy: top-{TARGET_PORTFOLIO_SIZE}, composite ≥ {COMPOSITE_FLOOR}, "
+        f"SL {STOP_LOSS_PCT*100:+.0f}%, TP {TAKE_PROFIT_PCT*100:+.0f}%, "
+        f"time {TIME_STOP_DAYS}d",
+        divider,
+        "",
+        "┃ 1. ACTION LIST (execute at market open)",
+        sub_divider,
+        format_action_list(rebalance),
+        "",
+        "┃ 2. CURRENT PORTFOLIO",
+        sub_divider,
+        format_portfolio_snapshot(rebalance),
+        "",
+        "┃ 3. OPTIONS OVERLAY CANDIDATES (speculative, Phase 2 assessment)",
+        sub_divider,
+        format_options_section(options),
+        "",
+        "┃ 4. UNIVERSE SNAPSHOT (for reference, not for action)",
+        sub_divider,
+        format_top_picks_snapshot(),
+        "",
+        divider,
+        "  Realistic live expectation: +22-35% CAGR, -20-30% MaxDD, Sharpe 0.8-1.2.",
+        "  Kill switches: 3-month negative vs S&P+ | win rate <55% over 30 trades |",
+        "  live DD > -25% | avg hold <15d or >50d. Quarterly review Jul 2026.",
+        divider,
+        "",
+        f"  Generated by CB Screener v7.2 | screener.carbonbridge.nl",
+        f"  Rebalance date: {rebalance.get('date', 'n/a')} · "
+        f"Options date: {options.get('date', 'n/a')}",
+        divider,
+    ]
+    return subject, "\n".join(body_parts)
+
+
+def send_email(subject: str, body: str):
     if not SMTP_USER or not SMTP_PASS:
-        log.info("No SMTP credentials — skipping email")
-        return
+        log.info("No SMTP credentials — printing report only")
+        print(body)
+        return False
     try:
-        import smtplib
-        from email.mime.text import MIMEText
         msg = MIMEText(body, "plain", "utf-8")
         msg["Subject"] = subject
         msg["From"] = SMTP_USER
@@ -526,70 +295,17 @@ def send_email(subject, body):
             s.login(SMTP_USER, SMTP_PASS)
             s.send_message(msg)
         log.info(f"Email sent to {EMAIL_TO}")
+        return True
     except Exception as e:
         log.warning(f"Email failed: {e}")
+        return False
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="CB Screener Weekly Report")
-    parser.add_argument("--scan", default="", help="Path to scan JSON (default: GCS latest)")
-    parser.add_argument("--portfolio", default="", help="Path to portfolio state JSON")
-    parser.add_argument("--email", action="store_true", help="Send report via email")
-    parser.add_argument("--output", default="", help="Save report text to file")
-    args = parser.parse_args()
-    
-    # Load scan data
-    if args.scan:
-        with open(args.scan) as f:
-            scan_data = json.load(f)
-    else:
-        scan_data = gcs_download("scans/latest.json")
-        if not scan_data:
-            log.error("Cannot load scan data from GCS")
-            sys.exit(1)
-    
-    # Load portfolio state
-    if args.portfolio:
-        with open(args.portfolio) as f:
-            portfolio_state = json.load(f)
-    else:
-        portfolio_state = gcs_download("portfolio/state.json")
-    
-    # Generate report
-    report_text, report_json = generate_weekly_report(scan_data, portfolio_state)
-    
-    print(report_text)
-    
-    # Save to GCS
-    gcs_upload("portfolio/weekly_report.json", report_json)
-    gcs_upload("portfolio/composite_history.json", load_composite_history())
-    log.info("Report saved to GCS")
-    
-    # Save locally
-    if args.output:
-        with open(args.output, "w") as f:
-            f.write(report_text)
-        log.info(f"Report saved to {args.output}")
-    
-    # Email
-    if args.email:
-        today = datetime.now().strftime("%Y-%m-%d")
-        swaps = report_json["swap_count"]
-        erosions = len(report_json["erosion_alerts"])
-        options_count = len(report_json["options_candidates"])
-        
-        subject = f"CB Screener — {today}"
-        if swaps > 0:
-            subject += f" — {swaps} swap{'s' if swaps > 1 else ''}"
-        if erosions > 0:
-            subject += f" — ⚠️ {erosions} erosion alert{'s' if erosions > 1 else ''}"
-        if options_count > 0:
-            subject += f" — ⚡ {options_count} options"
-        
-        send_email(subject, report_text)
+    subject, body = build_report()
+    log.info(f"Subject: {subject}")
+    send_email(subject, body)
+
 
 if __name__ == "__main__":
     main()
