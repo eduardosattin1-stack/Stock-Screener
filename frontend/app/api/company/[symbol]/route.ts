@@ -6,22 +6,68 @@
 // the round-trips from 4 to 1 from the browser.
 //
 // Called from CompanyProfileCard as: GET /api/company/{symbol}
+//
+// ── v7.3 FIX (Track C.1) ────────────────────────────────────────────────────
+// Previous revision silently returned `{profile: null}` whenever the FMP
+// profile call failed (429 rate limit, transient 5xx, cold-start race) AND
+// cached that null for 3600s via Next's data cache. Users then saw
+// "No profile data available" on the stock page for an hour with no way to
+// tell why. Fixes applied here:
+//
+//  1. `profile-symbol` is now fetched with `cache: "no-store"` — we never
+//     want to cache a null profile. Float / 13F calls keep the 1h revalidate
+//     because they are stable and cheaper to replay.
+//  2. Per-endpoint failure is captured and reported in `errors{}` on the
+//     response body, so the client can render a useful diagnostic
+//     ("FMP 429 rate limited") and offer a Retry button instead of rendering
+//     a dead card.
+//  3. When an FMP call returns a non-array object with an `Error Message`
+//     field (FMP's error shape on some endpoints), we unwrap it as an error
+//     rather than silently passing the error object through as data.
+//  4. Server-side logging of failures via `console.error` so Vercel function
+//     logs surface the root cause.
+//
+// The response shape is a superset of the old shape — `profile`, `float`,
+// `holders`, `positions`, `quarter` are unchanged. A new optional `errors`
+// object carries per-endpoint diagnostics. Old clients ignoring `errors`
+// continue to work.
 const FMP_BASE = "https://financialmodelingprep.com/stable";
 const FMP_KEY = process.env.FMP_API_KEY || "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA";
 
-async function fmpGet(endpoint: string, params: Record<string, string | number>) {
+type FmpResult<T> = { data: T[] | null; error: string | null };
+
+async function fmpGet<T = unknown>(
+  endpoint: string,
+  params: Record<string, string | number>,
+  opts: { noStore?: boolean } = {},
+): Promise<FmpResult<T>> {
   const qs = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => qs.set(k, String(v)));
   qs.set("apikey", FMP_KEY);
+  const url = `${FMP_BASE}/${endpoint}?${qs}`;
   try {
-    const r = await fetch(`${FMP_BASE}/${endpoint}?${qs}`, {
-      next: { revalidate: 3600 }, // cache 1hr — company profile data is stable
-    });
-    if (!r.ok) return null;
+    const init: RequestInit = opts.noStore
+      ? { cache: "no-store" }
+      : ({ next: { revalidate: 3600 } } as RequestInit);
+    const r = await fetch(url, init);
+    if (!r.ok) {
+      const msg = `FMP ${endpoint} HTTP ${r.status}`;
+      console.error(msg);
+      return { data: null, error: msg };
+    }
     const d = await r.json();
-    return Array.isArray(d) ? d : d ? [d] : null;
-  } catch {
-    return null;
+    if (d && !Array.isArray(d) && typeof d === "object" && "Error Message" in d) {
+      const em = String((d as { "Error Message": unknown })["Error Message"]);
+      console.error(`FMP ${endpoint} error: ${em}`);
+      return { data: null, error: `FMP error: ${em.slice(0, 120)}` };
+    }
+    if (Array.isArray(d)) return { data: d as T[], error: null };
+    if (d) return { data: [d as T], error: null };
+    return { data: null, error: `FMP ${endpoint} empty response` };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error(`FMP ${endpoint} threw: ${msg}`);
+    return { data: null, error: `fetch failed: ${msg.slice(0, 120)}` };
   }
 }
 
@@ -36,31 +82,46 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
   const year13f = q === 1 ? now.getFullYear() - 1 : now.getFullYear();
   const quarter13f = q === 1 ? 4 : q - 1;
 
-  const [profileArr, floatArr, holdersArr, positionsArr] = await Promise.all([
-    fmpGet("profile-symbol", { symbol: sym }),
-    fmpGet("shares-float", { symbol: sym }),
-    fmpGet("filings-extract-with-analytics-by-holder",
-      { symbol: sym, year: year13f, quarter: quarter13f, limit: 10 }),
-    fmpGet("positions-summary",
-      { symbol: sym, year: year13f, quarter: quarter13f }),
+  // Profile is the critical path for the card — NEVER cache a failure.
+  // Float / 13F are stable; cache them 1h.
+  const [profileRes, floatRes, holdersRes, positionsRes] = await Promise.all([
+    fmpGet<Record<string, unknown>>("profile-symbol", { symbol: sym }, { noStore: true }),
+    fmpGet<Record<string, unknown>>("shares-float", { symbol: sym }),
+    fmpGet<Record<string, unknown>>(
+      "filings-extract-with-analytics-by-holder",
+      { symbol: sym, year: year13f, quarter: quarter13f, limit: 10 },
+    ),
+    fmpGet<Record<string, unknown>>(
+      "positions-summary",
+      { symbol: sym, year: year13f, quarter: quarter13f },
+    ),
   ]);
+
+  const errors: Record<string, string> = {};
+  if (profileRes.error) errors.profile = profileRes.error;
+  if (floatRes.error) errors.float = floatRes.error;
+  if (holdersRes.error) errors.holders = holdersRes.error;
+  if (positionsRes.error) errors.positions = positionsRes.error;
 
   const body = {
     symbol: sym,
-    profile: profileArr?.[0] ?? null,
-    float: floatArr?.[0] ?? null,
-    holders: holdersArr ?? [],
-    positions: positionsArr?.[0] ?? null,
+    profile: profileRes.data?.[0] ?? null,
+    float: floatRes.data?.[0] ?? null,
+    holders: holdersRes.data ?? [],
+    positions: positionsRes.data?.[0] ?? null,
     quarter: { year: year13f, quarter: quarter13f },
+    ...(Object.keys(errors).length ? { errors } : {}),
   };
 
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
-    },
-  });
+  // If profile failed specifically, return 200 with error info but instruct
+  // caches NOT to persist. Downstream CDNs shouldn't save a bricked card.
+  const profileFailed = !body.profile;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  headers["Cache-Control"] = profileFailed
+    ? "no-store, max-age=0"
+    : "public, s-maxage=3600, stale-while-revalidate=7200";
+
+  return new Response(JSON.stringify(body), { status: 200, headers });
 }
 
 export const runtime = "nodejs";
