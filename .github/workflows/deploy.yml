@@ -15,6 +15,7 @@ on:
         options:
           - deploy-only
           - run-sp500
+          - run-nasdaq
           - run-europe
           - run-global
           - run-backtest-sp500
@@ -62,6 +63,16 @@ jobs:
             || echo "screener-sp500 not found, skipping"
           gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
             || echo "screener-global not found, skipping"
+            
+          # Deploy/Update the NASDAQ Job using the shared container image
+          gcloud run jobs deploy screener-nasdaq \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=3600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SCREEN_INDEX=nasdaq" \
+            --command="python3" \
+            --args="run_scan_job.py"
 
       - name: Deploy Backtest Jobs
         if: github.event_name == 'push' || inputs.action == 'deploy-only'
@@ -98,6 +109,12 @@ jobs:
         run: |
           gcloud run jobs execute screener-sp500 --region=europe-west1
           echo "SP500 scan started. Check logs: gcloud run jobs executions list --job=screener-sp500 --region=europe-west1"
+
+      - name: Run NASDAQ Scan
+        if: inputs.action == 'run-nasdaq'
+        run: |
+          gcloud run jobs execute screener-nasdaq --region=europe-west1
+          echo "NASDAQ scan started. Check logs: gcloud run jobs executions list --job=screener-nasdaq --region=europe-west1"
 
       - name: Run Europe Scan (via HTTP)
         if: inputs.action == 'run-europe'
