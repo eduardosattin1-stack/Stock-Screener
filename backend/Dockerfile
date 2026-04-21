@@ -1,19 +1,14 @@
 FROM python:3.12-slim
 WORKDIR /app
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY screener_v6.py .
-COPY run_server.py .
-COPY backtest_full.py .
-COPY backtest_v8.py .
-COPY backtest_time.py .
-COPY macro_regime.py .
-COPY monitor_v7.py .
-COPY weekly_report.py .
-COPY run_time_job.py .
-COPY time_model_10pct.pkl .
-COPY run_scan_job.py .
-COPY signal_tracker.py .
-COPY rebalance_engine.py .
-COPY tradier_options.py .
-CMD ["python", "run_server.py"] 
+
+# v8.1: copy all .py files plus the ML model, instead of an explicit COPY
+# list. Prevents the category of bugs where new modules (factor_8k_catalyst,
+# factor_etf_flow_velocity, backtest_safety_stubs) get added to the repo
+# but forgotten in the Dockerfile, silently leaving them out of the image.
+COPY *.py ./
+COPY time_model_10pct.pkl ./
+
+CMD ["python", "run_server.py"]
