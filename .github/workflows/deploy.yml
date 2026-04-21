@@ -90,7 +90,7 @@ jobs:
             --task-timeout=86400s \
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
-            --args="scripts/backtest_v8.py"
+            --args="backtest_v8.py"
 
       # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
       - name: Run SP500 Scan
