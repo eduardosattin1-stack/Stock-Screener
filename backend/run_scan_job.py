@@ -1,24 +1,16 @@
 #!/usr/bin/env python3
 """
-run_scan_job.py — Cloud Run Job entrypoint for scheduled scans
-================================================================
-Runs a full screener scan, writes latest_{region}.json to GCS, and
-triggers post-scan tracking + rebalance + options suggestions.
-
-Sequence (SP500 / NASDAQ example):
-  1. screener_v6.main() — full scan, writes latest_{region}.json
-  2. signal_tracker.update_from_scan() — BUY/SELL + p10 tracking
-  3. rebalance_engine.run_rebalance_from_scan() — compute close/open actions
-  4. tradier_options.suggest_spreads_for_portfolio() — options overlay candidates
-
-Only US regions (sp500, nasdaq, nasdaq100) trigger rebalance + options.
-Europe and global scans update trackers only.
+run_scan_job.py — Consolidated Cloud Run Job entrypoint for scheduled scans
+=============================================================================
+Sequentially runs full screener scans and triggers post-scan tracking,
+rebalancing, and options suggestions for multiple regions in a single run.
 
 Invoked by:
   - gcloud scheduler jobs run (via Cloud Scheduler)
   - Manual GitHub Actions workflow_dispatch
 
-Region is passed via SCREEN_INDEX env var (set by the Cloud Run Job spec).
+This job runs one time per day and iterates through the defined production
+strategy regions sequentially.
 """
 import os, sys, json, logging
 from datetime import datetime
@@ -51,64 +43,72 @@ def _load_scan_from_gcs(region: str) -> list:
 
 
 def main():
-    region = os.environ.get("SCREEN_INDEX", "sp500")
-    log.info(f"═══ Scan job starting: region={region} ═══")
+    # Define the regions you want to scan sequentially.
+    REGIONS_TO_SCAN = ["sp500", "nasdaq", "russell2000"]
+    log.info(f"═══ Consolidated Scan job starting: processing {len(REGIONS_TO_SCAN)} regions sequentially ═══")
 
-    # ─── 1. Run the screener ───
-    try:
-        import screener_v6
-        # screener_v6.main() reads args from sys.argv; we clear them first.
-        sys.argv = ["screener_v6.py", "--region", region]
-        screener_v6.main()
-    except Exception as e:
-        log.error(f"Screener failed: {e}", exc_info=True)
-        sys.exit(1)
+    import screener_v6
+    import signal_tracker
+    import rebalance_engine
+    import tradier_options
 
-    log.info("Screener complete; running post-scan hooks…")
+    for region in REGIONS_TO_SCAN:
+        log.info(f"═══ Processing region={region} ═══")
 
-    # ─── 2. Reload scan output ───
-    stocks = _load_scan_from_gcs(region)
-    if not stocks:
-        log.warning("Could not reload scan output — post-scan hooks skipped")
-        return
-    log.info(f"Loaded {len(stocks)} stocks from latest_{region}.json")
-
-    # ─── 3. Signal tracker (all regions) ───
-    try:
-        import signal_tracker
-        signal_tracker.update_from_scan(stocks, region)
-    except Exception as e:
-        log.error(f"signal_tracker failed: {e}", exc_info=True)
-
-    # ─── 4. Rebalance engine (US markets only) ───
-    rebalance_report = {}
-    if region in ["sp500", "nasdaq", "nasdaq100"]:
+        # ─── 1. Run the screener for this region ───
         try:
-            import rebalance_engine
-            rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
-            summary = rebalance_report.get("summary", {}) if rebalance_report else {}
-            if summary.get("actions_required"):
-                log.info(f"REBALANCE: {len(rebalance_report['closes'])} close(s), "
-                         f"{len(rebalance_report['opens'])} open(s)")
+            # screener_v6.main() reads args from sys.argv; we must update it for each iteration.
+            sys.argv = ["screener_v6.py", "--region", region]
+            screener_v6.main()
         except Exception as e:
-            log.error(f"rebalance_engine failed: {e}", exc_info=True)
-    else:
-        log.info(f"Rebalance skipped (region={region}, production strategy is US-only)")
+            log.error(f"[{region}] Screener failed: {e}", exc_info=True)
+            # Proceed to the next region if this one fails to keep the entire job from crashing.
+            continue 
 
-    # ─── 5. Tradier options overlay (US markets only, after rebalance) ───
-    if region in ["sp500", "nasdaq", "nasdaq100"] and rebalance_report:
+        log.info(f"[{region}] Screener complete; running post-scan hooks…")
+
+        # ─── 2. Reload scan output ───
+        stocks = _load_scan_from_gcs(region)
+        if not stocks:
+            log.warning(f"[{region}] Could not reload scan output — post-scan hooks skipped")
+            continue
+        log.info(f"[{region}] Loaded {len(stocks)} stocks from latest_{region}.json")
+
+        # ─── 3. Signal tracker (all regions) ───
         try:
-            import tradier_options
-            if not os.environ.get("TRADIER_TOKEN"):
-                log.info("TRADIER_TOKEN not set — options layer skipped")
-            else:
-                opt_result = tradier_options.suggest_spreads_for_portfolio(rebalance_report)
-                log.info(f"Options: {len(opt_result.get('suggestions', []))} suggested, "
-                         f"{len(opt_result.get('gated', []))} gated")
+            signal_tracker.update_from_scan(stocks, region)
         except Exception as e:
-            log.error(f"tradier_options failed: {e}", exc_info=True)
+            log.error(f"[{region}] signal_tracker failed: {e}", exc_info=True)
 
-    log.info(f"═══ Scan job complete: region={region} ═══")
+        # ─── 4. Rebalance engine (all production strategy regions) ───
+        rebalance_report = {}
+        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"]:
+            try:
+                rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
+                summary = rebalance_report.get("summary", {}) if rebalance_report else {}
+                if summary.get("actions_required"):
+                    log.info(f"[{region}] REBALANCE: {len(rebalance_report['closes'])} close(s), "
+                             f"{len(rebalance_report['opens'])} open(s)")
+            except Exception as e:
+                log.error(f"[{region}] rebalance_engine failed: {e}", exc_info=True)
+        else:
+            log.info(f"[{region}] Rebalance skipped (region={region}, production strategy is US-only)")
+
+        # ─── 5. Tradier options overlay (after rebalance) ───
+        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"] and rebalance_report:
+            try:
+                if not os.environ.get("TRADIER_TOKEN"):
+                    log.info(f"[{region}] TRADIER_TOKEN not set — options layer skipped")
+                else:
+                    opt_result = tradier_options.suggest_spreads_for_portfolio(rebalance_report)
+                    log.info(f"[{region}] Options: {len(opt_result.get('suggestions', []))} suggested, "
+                             f"{len(opt_result.get('gated', []))} gated")
+            except Exception as e:
+                log.error(f"[{region}] tradier_options failed: {e}", exc_info=True)
+
+        log.info(f"═══ Completed processing region={region} ═══")
+
+    log.info(f"═══ Consolidated Scan job complete ═══")
 
 
 if __name__ == "__main__":
