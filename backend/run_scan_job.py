@@ -5,13 +5,13 @@ run_scan_job.py — Cloud Run Job entrypoint for scheduled scans
 Runs a full screener scan, writes latest_{region}.json to GCS, and
 triggers post-scan tracking + rebalance + options suggestions.
 
-Sequence (SP500 region example):
-  1. screener_v6.main() — full scan, writes latest_sp500.json
+Sequence (SP500 / NASDAQ example):
+  1. screener_v6.main() — full scan, writes latest_{region}.json
   2. signal_tracker.update_from_scan() — BUY/SELL + p10 tracking
   3. rebalance_engine.run_rebalance_from_scan() — compute close/open actions
   4. tradier_options.suggest_spreads_for_portfolio() — options overlay candidates
 
-Only sp500 triggers rebalance + options (production strategy is US-only).
+Only US regions (sp500, nasdaq, nasdaq100) trigger rebalance + options.
 Europe and global scans update trackers only.
 
 Invoked by:
@@ -80,9 +80,9 @@ def main():
     except Exception as e:
         log.error(f"signal_tracker failed: {e}", exc_info=True)
 
-    # ─── 4. Rebalance engine (sp500 only) ───
+    # ─── 4. Rebalance engine (US markets only) ───
     rebalance_report = {}
-    if region == "sp500":
+    if region in ["sp500", "nasdaq", "nasdaq100"]:
         try:
             import rebalance_engine
             rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
@@ -93,10 +93,10 @@ def main():
         except Exception as e:
             log.error(f"rebalance_engine failed: {e}", exc_info=True)
     else:
-        log.info(f"Rebalance skipped (region={region}, production strategy is sp500-only)")
+        log.info(f"Rebalance skipped (region={region}, production strategy is US-only)")
 
-    # ─── 5. Tradier options overlay (sp500 only, after rebalance) ───
-    if region == "sp500" and rebalance_report:
+    # ─── 5. Tradier options overlay (US markets only, after rebalance) ───
+    if region in ["sp500", "nasdaq", "nasdaq100"] and rebalance_report:
         try:
             import tradier_options
             if not os.environ.get("TRADIER_TOKEN"):
