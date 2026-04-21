@@ -21,6 +21,7 @@ on:
           - run-backtest-europe
           - run-monitor
           - run-weekly-report
+          - run-backtest-v8
 
 jobs:
   deploy:
