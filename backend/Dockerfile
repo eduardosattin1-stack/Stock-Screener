@@ -13,4 +13,6 @@ COPY run_time_job.py .
 COPY time_model_10pct.pkl .
 COPY run_scan_job.py .
 COPY signal_tracker.py .
+COPY rebalance_engine.py .
+COPY tradier_options.py .
 CMD ["python", "run_server.py"] 
