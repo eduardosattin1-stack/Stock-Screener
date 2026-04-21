@@ -387,9 +387,15 @@ class Stock:
 
 REGIONS = {
     "nasdaq100": [("NASDAQ", None, 5_000_000_000, 100)],
+    # v8.1: lowered from $1B to $500M now that europe/asia/brazil are frozen —
+    # gives us the full US mid-cap universe while keeping scan time well under
+    # the Cloud Run Job 24h timeout. Liquidity filters (volumeMoreThan=100k,
+    # priceMoreThan=1) elsewhere in this module handle the small-cap tail.
+    # Limit raised to 5000 so FMP doesn't truncate the result set.
+    "nasdaq": [("NASDAQ", None, 500_000_000, 5000)],
     "sp500": [
-        ("NASDAQ", None, 1_000_000_000, 500), # Lowered to 1B for mid-cap growth (WIX)
-        ("NYSE", None, 1_000_000_000, 500)
+        ("NASDAQ", None, 500_000_000, 5000),
+        ("NYSE",   None, 500_000_000, 5000),
     ],
     "europe": [
         ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
