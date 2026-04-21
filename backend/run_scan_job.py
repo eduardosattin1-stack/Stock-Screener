@@ -9,7 +9,7 @@ Invoked by:
   - gcloud scheduler jobs run (via Cloud Scheduler targeting screener-sp500)
   - Manual GitHub Actions workflow_dispatch
 
-*NOTE: Hijacked to run both SP500 and NASDAQ sequentially in one job run.*
+*NOTE: Hijacked to run SP500, NASDAQ, and Russell 2000 sequentially in one job run.*
 """
 import os, sys, json, logging
 from datetime import datetime
@@ -40,7 +40,7 @@ def _load_scan_from_gcs(region: str) -> list:
 
 def main():
     # HARDCODED REGIONS TO SCAN SEQUENTIALLY
-    REGIONS_TO_SCAN = ["sp500", "nasdaq"]
+    REGIONS_TO_SCAN = ["sp500", "nasdaq", "russell2000"]
     log.info(f"═══ Scan job starting: processing {len(REGIONS_TO_SCAN)} regions sequentially ═══")
 
     import screener_v6
@@ -76,7 +76,7 @@ def main():
 
         # ─── 4. Rebalance engine ───
         rebalance_report = {}
-        if region in ["sp500", "nasdaq", "nasdaq100"]:
+        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"]:
             try:
                 rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
                 summary = rebalance_report.get("summary", {}) if rebalance_report else {}
@@ -87,7 +87,7 @@ def main():
                 log.error(f"[{region}] rebalance_engine failed: {e}", exc_info=True)
 
         # ─── 5. Tradier options overlay ───
-        if region in ["sp500", "nasdaq", "nasdaq100"] and rebalance_report:
+        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"] and rebalance_report:
             try:
                 if not os.environ.get("TRADIER_TOKEN"):
                     log.info(f"[{region}] TRADIER_TOKEN not set — options skipped")
