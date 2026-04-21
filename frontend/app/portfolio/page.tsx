@@ -206,7 +206,21 @@ export default function Portfolio(){
                   const cur=mon?.current_price||live?.price||p.entry_price;
                   const pnl=(cur-p.entry_price)*p.shares;const pnlPct=(cur-p.entry_price)/p.entry_price;
                   const val=cur*p.shares;const signal=mon?.current_signal||live?.signal||"—";
-                  const composite=mon?.current_composite||live?.composite||0;
+                  // ── Track C.2 FIX: split composite into named, provenance-aware values ──
+                  // Old code: `const composite=mon?.current_composite||live?.composite||0;`
+                  // rendered a single value with an ↑/↓ arrow (vs entry) and no way to
+                  // tell whether the number came from monitor (21:00 CET) or scan
+                  // (15:00 CET). When the two diverged (e.g. INVA: mon 0.91 vs scan
+                  // 0.84) the portfolio page silently picked mon and the screener
+                  // page showed scn — ambiguous. Arrow was vs entry but read as vs
+                  // screener. Fix below: keep `composite` so any downstream refs
+                  // still compile, but expose monComp/scanComp for the display.
+                  const monComp=mon?.current_composite??0;
+                  const scanComp=live?.composite??0;
+                  const nowComp=monComp||scanComp;
+                  const composite=nowComp;
+                  const compDiverged = monComp>0 && scanComp>0 && Math.abs(monComp-scanComp)>=0.05;
+                  const compSource: "monitor" | "scan" | null = monComp>0 ? "monitor" : (scanComp>0 ? "scan" : null);
                   const pnlColor=pnl>=0?"#2d7a4f":"#ef4444";
                   const sigStyle=SIG[signal]||SIG.HOLD;
                   const actStyle=mon?ACT_STYLE[mon.action]||ACT_STYLE.HOLD:null;
@@ -239,13 +253,31 @@ export default function Portfolio(){
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#6b7280",fontSize:11}}>{p.shares}</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#1a1a1a",fontSize:11}}>{fmtMoney(val)}</td>
                         <td style={{textAlign:"right",padding:"10px 12px"}}>{signal!=="—"?<span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:sigStyle.color,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{signal}</span>:<span style={{color:"#9ca3af",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
-                        <td style={{padding:"10px 12px",textAlign:"right"}}>
-                          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4}}>
-                            {p.entry_composite!=null&&composite>0&&(
-                              <span style={{fontSize:9,color:composite>=p.entry_composite?"#10b981":"#ef4444",fontFamily:"var(--font-mono)"}}>{composite>p.entry_composite?"↑":"↓"}</span>
-                            )}
-                            <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:composite>0.6?"#2d7a4f":composite>0.4?"#1a1a1a":"#ef4444",fontWeight:600}}>{composite>0?composite.toFixed(2):"—"}</span>
-                          </div>
+                        {/* ── Track C.2 FIX: composite column redesigned ──
+                            Primary line: `entry 0.81 → now 0.91` — entry muted, arrow colored vs entry, now bold.
+                            Secondary line (only when mon/scan diverge ≥0.05): `mon 0.91 · scn 0.84` in 8px mono.
+                            When no divergence: tiny MONITOR/SCAN provenance label so the value's source is always visible.
+                            Tooltip: full source+scan timestamp details. */}
+                        <td style={{padding:"10px 12px",textAlign:"right",verticalAlign:"top"}}
+                            title={(()=>{const parts=[];if(monComp>0)parts.push(`monitor ${monComp.toFixed(2)} (21:00 CET)`);if(scanComp>0)parts.push(`scan ${scanComp.toFixed(2)}${scanDate!=="—"?` (${scanDate})`:""}`);if(p.entry_composite!=null)parts.push(`entry ${p.entry_composite.toFixed(2)}`);return parts.join(" · ");})()}>
+                          {nowComp>0?(
+                            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:2}}>
+                              <div style={{display:"flex",alignItems:"baseline",justifyContent:"flex-end",gap:5}}>
+                                {p.entry_composite!=null&&(<>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>entry {p.entry_composite.toFixed(2)}</span>
+                                  <span style={{fontSize:9,color:nowComp>=p.entry_composite?"#10b981":"#ef4444",fontFamily:"var(--font-mono)"}}>{nowComp>p.entry_composite?"→↑":"→↓"}</span>
+                                </>)}
+                                <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:nowComp>0.6?"#2d7a4f":nowComp>0.4?"#1a1a1a":"#ef4444",fontWeight:600}}>{nowComp.toFixed(2)}</span>
+                              </div>
+                              {compDiverged?(
+                                <div style={{fontFamily:"var(--font-mono)",fontSize:8,color:"#9ca3af",letterSpacing:"0.02em"}}>mon {monComp.toFixed(2)} · scn {scanComp.toFixed(2)}</div>
+                              ):compSource?(
+                                <div style={{fontFamily:"var(--font-mono)",fontSize:7,color:"#c7cdd4",letterSpacing:"0.1em",textTransform:"uppercase"}}>{compSource}</div>
+                              ):null}
+                            </div>
+                          ):(
+                            <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"#9ca3af"}}>—</span>
+                          )}
                         </td>
                         <td style={{padding:"10px 6px",textAlign:"center"}}>
                           <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===p.symbol?null:p.symbol);}} style={{
