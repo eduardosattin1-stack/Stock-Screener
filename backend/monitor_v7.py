@@ -190,7 +190,7 @@ def _load_scan_composites():
     composite value back to these JSON files.
     """
     out = {}
-    for region in ("sp500", "nasdaq", "global"):
+    for region in ("global", "nasdaq", "sp500"):
         data = gcs_download(f"scans/latest_{region}.json")
         if not data:
             log.warning(f"Scan snapshot scans/latest_{region}.json not found - monitor will fall back to local compute for that region")
