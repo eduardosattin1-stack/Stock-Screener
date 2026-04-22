@@ -35,6 +35,14 @@ from typing import Optional
 
 import requests
 
+# v7.2.1: Tradier options enrichment (optional — graceful fallback if not available)
+try:
+    from tradier_options import enrich_stock as tradier_enrich_stock
+    TRADIER_AVAILABLE = True
+except Exception:
+    tradier_enrich_stock = None
+    TRADIER_AVAILABLE = False
+
 # Macro regime overlay (imported after logging init below)
 HAS_MACRO = False
 
@@ -117,8 +125,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("v7")
 
 # Macro regime overlay — tilts weights based on yield curve, VIX, CPI, GDP
-# v8 (Track B.4): adds unemployment, consumer sentiment, recession prob,
-# 10y-3m spread, and composite-floor modulation. v7 API preserved.
 try:
     from macro_regime import fetch_macro_regime, apply_macro_tilt, get_risk_free_rate
     HAS_MACRO = True
@@ -126,47 +132,6 @@ try:
 except ImportError:
     HAS_MACRO = False
     log.info("macro_regime.py not found — running without macro overlay")
-
-# v8 expansion — optional, enabled only if macro_regime exposes v8 entry points
-HAS_MACRO_V8 = False
-if HAS_MACRO:
-    try:
-        from macro_regime import (
-            fetch_macro_regime_v8,
-            fetch_macro_regime_v8_historical,
-            regime_composite_floor,
-        )
-        HAS_MACRO_V8 = True
-        log.info("Macro regime v8 (9-sub-score expansion) available")
-    except ImportError:
-        log.info("Macro regime v8 functions not available — using v7 classifier")
-
-# Track B.1 — 8-K catalyst detection (replaces news-keyword scan)
-try:
-    import factor_8k_catalyst
-    HAS_8K_FACTOR = True
-    log.info("factor_8k_catalyst module loaded")
-except ImportError:
-    HAS_8K_FACTOR = False
-    log.info("factor_8k_catalyst.py not found — 8-K bump disabled")
-
-# Track B.5 — ETF passive flow velocity (live-only, disabled in backtest)
-try:
-    import factor_etf_flow_velocity
-    HAS_ETF_FLOW = True
-    log.info("factor_etf_flow_velocity module loaded")
-except ImportError:
-    HAS_ETF_FLOW = False
-    log.info("factor_etf_flow_velocity.py not found — ETF flow factor disabled")
-
-# Track B.2/B.3 — backtest safety stubs (forward-EPS guard, concentration blend)
-try:
-    import backtest_safety_stubs as _bs
-    HAS_BACKTEST_SAFETY = True
-    log.info("backtest_safety_stubs module loaded")
-except ImportError:
-    HAS_BACKTEST_SAFETY = False
-    log.info("backtest_safety_stubs.py not found — assuming live mode")
 
 # ML probability model — predicts P(+10% in 60d) per stock
 HAS_ML_MODEL = False
@@ -253,7 +218,16 @@ def fmp(endpoint: str, params: dict = None) -> Optional[list]:
     try:
         r = requests.get(url, params=p, timeout=20)
         if r.status_code != 200:
-            log.warning(f"FMP {r.status_code}: {endpoint} → {r.text[:120]}")
+            # v7.2.2 Apr 22: expanded diagnostic. When we get a non-200 we log
+            # the full URL (apikey redacted) and a longer response body slice
+            # so we can distinguish between "endpoint doesn't exist" (404 with
+            # HTML or JSON error body) vs "wrong params" (400 with error msg)
+            # vs "key lacks permission" (403) vs "rate limited" (429).
+            redacted_url = r.url.replace(FMP_KEY, "***REDACTED***") if FMP_KEY else r.url
+            log.warning(
+                f"FMP {r.status_code}: {endpoint} → body={r.text[:300]!r} "
+                f"url={redacted_url}"
+            )
             return None
         data = r.json()
         if isinstance(data, dict) and "Error Message" in data:
@@ -363,8 +337,6 @@ class Stock:
 
     # Composite
     composite: float = 0.0
-    composite_raw: float = 0.0       # v7.3: pre-coverage-penalty composite
-    coverage_penalty: float = 1.0    # v7.3: multiplier applied to composite_raw
     signal: str = "HOLD"
     classification: str = ""
     reasons: list = field(default_factory=list)
@@ -381,21 +353,25 @@ class Stock:
     factors_evaluated: list = field(default_factory=list)   # names of factors with real data
     factors_missing: list = field(default_factory=list)     # names of factors with no data
 
+    # v7.2.1 Apr 21: Tradier options enrichment (populated for top-30 in Pass 2).
+    # tradier_iv_current: ATM 30d IV as decimal (e.g. 0.35 = 35% annualized)
+    # tradier_iv_rank:    0-100, where current IV sits in trailing 60d range. None if <20 samples.
+    # tradier_iv_samples: count of IV history days accumulated so far
+    # tradier_spread:     bull call spread suggestion dict, or None if gates fail
+    tradier_iv_current: float = None
+    tradier_iv_rank: float = None
+    tradier_iv_samples: int = 0
+    tradier_spread: dict = None
+
 # ---------------------------------------------------------------------------
 # 1. Stock Discovery (unchanged from v5)
 # ---------------------------------------------------------------------------
 
 REGIONS = {
     "nasdaq100": [("NASDAQ", None, 5_000_000_000, 100)],
-    # v8.1: lowered from $1B to $500M now that europe/asia/brazil are frozen —
-    # gives us the full US mid-cap universe while keeping scan time well under
-    # the Cloud Run Job 24h timeout. Liquidity filters (volumeMoreThan=100k,
-    # priceMoreThan=1) elsewhere in this module handle the small-cap tail.
-    # Limit raised to 5000 so FMP doesn't truncate the result set.
-    "nasdaq": [("NASDAQ", None, 500_000_000, 5000)],
     "sp500": [
-        ("NASDAQ", None, 500_000_000, 5000),
-        ("NYSE",   None, 500_000_000, 5000),
+        ("NASDAQ", None, 1_000_000_000, 500), # Lowered to 1B for mid-cap growth (WIX)
+        ("NYSE", None, 1_000_000_000, 500)
     ],
     "europe": [
         ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
@@ -423,13 +399,6 @@ REGIONS = {
     "global": None,  # Will now include EVERY region above
 }
 
-# v8 deploy gate: Europe/Asia/Brazil are disabled because FMP coverage for non-US
-# fundamentals is sparse enough that MIN_COVERAGE_FOR_FULL_SCORE (7/13) isn't met,
-# clamping every non-US composite at COVERAGE_CAP=0.75. Track B factors (8-K,
-# ETF flow, macro v8) are US-only and widen that gap further. Revisit as a
-# deliberate v9 international build with a non-FMP data source.
-DISABLED_REGIONS = frozenset({"europe", "asia", "brazil"})
-
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
@@ -439,23 +408,16 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
-    v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect.
-    v8: gated by DISABLED_REGIONS — non-US regions return [] until coverage improves."""
-    # v8 deploy gate: skip regions where the 13-factor composite is under-covered.
-    if region in DISABLED_REGIONS:
-        log.warning(f"Region '{region}' is disabled in v8 deploy (FMP coverage "
-                    f"clamps composite at COVERAGE_CAP). Returning empty universe.")
-        return []
-
-    # If "global", iterate through every defined list in REGIONS (excluding disabled).
+    v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
+    # If "global", iterate through every defined list in REGIONS
     if region == "global":
         syms = []
-        # Dynamically include every key that has a list of configs AND isn't disabled
+        # Dynamically include every key that has a list of configs
         for r_name, config in REGIONS.items():
-            if config is not None and r_name not in DISABLED_REGIONS:
+            if config is not None:
                 syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
-
+    
     configs = REGIONS.get(region)
     if configs is None:
         configs = [(region.upper(), None, 1_000_000_000, 50)]
@@ -789,7 +751,14 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
 def get_analyst(sym: str) -> dict:
     result = {"target": 0, "upside": 0, "grade_score": 0.5, "_grade_evaluated": False,
               "grade_buy": 0, "grade_total": 0, "eps_beats": 0, "eps_total": 0,
-              "eps_surprises": []}  # track individual surprise magnitudes
+              "eps_surprises": [],
+              # v7.2.1 Apr 20 — forward estimates (enrichment only, no score change yet).
+              # Blend into Upside factor at July 2026 review, after live calibration data.
+              "forward_eps_fy1": 0, "forward_eps_fy2": 0,
+              "forward_revenue_fy1": 0, "forward_revenue_fy2": 0,
+              "forward_pe": 0, "forward_eps_growth": 0,
+              "estimates_analysts_fy1": 0,
+              }  # track individual surprise magnitudes
 
     # Price target consensus
     pt = fmp("price-target-consensus", {"symbol": sym})
@@ -826,6 +795,34 @@ def get_analyst(sym: str) -> dict:
                 else:
                     surprise_pct = 1.0 if act_f > 0 else 0.0
                 result["eps_surprises"].append(surprise_pct)
+
+    # Forward analyst estimates (fiscal-year-ahead EPS / revenue)
+    # Endpoint returns years from oldest to newest historical estimates; the
+    # first entries are current/future FYs. We sort by date desc and pick the
+    # two nearest future years relative to today.
+    try:
+        est = fmp("analyst-estimates", {"symbol": sym, "period": "annual", "limit": 10})
+        if est and isinstance(est, list):
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            future = [e for e in est if str(e.get("date", "")) >= today_str]
+            future.sort(key=lambda e: e.get("date", ""))
+            if len(future) >= 1:
+                fy1 = future[0]
+                result["forward_eps_fy1"] = float(fy1.get("epsAvg") or 0)
+                result["forward_revenue_fy1"] = float(fy1.get("revenueAvg") or 0)
+                result["estimates_analysts_fy1"] = int(fy1.get("numAnalystsEps") or 0)
+            if len(future) >= 2:
+                fy2 = future[1]
+                result["forward_eps_fy2"] = float(fy2.get("epsAvg") or 0)
+                result["forward_revenue_fy2"] = float(fy2.get("revenueAvg") or 0)
+                # Forward EPS growth rate (FY2 vs FY1)
+                if result["forward_eps_fy1"] > 0:
+                    result["forward_eps_growth"] = (
+                        (result["forward_eps_fy2"] - result["forward_eps_fy1"])
+                        / result["forward_eps_fy1"]
+                    )
+    except Exception as e:
+        log.debug(f"analyst-estimates failed for {sym}: {e}")
 
     return result
 
@@ -1044,8 +1041,17 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
                 v["intrinsic_bvps"] = future_price / (1.10 ** 10)
 
     # Average intrinsic — all in reporting currency, MoS vs local_price
-    # v7.2: now 3 methods (DCF + Buffett earnings + BVPS compounding)
-    methods = [v["dcf_value"], v["intrinsic_buffett"], v["intrinsic_bvps"]]
+    # v7.2.2 Apr 22 — DCF REMOVED from composite scoring. Bruno's decision
+    # after observing DCF guard triggering on ~30% of scanned names due to
+    # WACC-g compression (low-beta defensives, high-debt industrials) and
+    # weak-health guard trips. Composite now relies on:
+    #   - intrinsic_buffett (earnings-compounded intrinsic)
+    #   - intrinsic_bvps (book-value-compounded intrinsic)
+    #   - analyst target (in compute_upside_score)
+    # dcf_value is still computed and stored on the Stock dict for display
+    # on the stock-page Quality & Value card, but does NOT feed into
+    # intrinsic_avg, margin_of_safety, or the composite. Reassess in July 2026.
+    methods = [v["intrinsic_buffett"], v["intrinsic_bvps"]]
     valid = [m for m in methods if m > 0]
     if valid and local_price > 0:
         v["intrinsic_avg"] = sum(valid) / len(valid)
@@ -1275,15 +1281,19 @@ def compute_earnings_momentum(analyst: dict) -> dict:
 def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
     """Score based on target upside cross-checked with intrinsic value.
 
-    v7.2: Caps extreme DCF values. FMP's DCF model is sensitive to WACC-g
-    spread compression — for low-beta defensives with high debt (e.g. CVS,
-    where beta=0.505 + $93B debt produces a WACC of 4.62% vs 2% terminal
-    growth), terminal values explode to multiples of market cap and per-share
-    DCF comes out 5-10x price. This is a methodology artifact, not signal.
-    When DCF exceeds 4x price, we treat it as unreliable and score on analyst
-    target alone.
+    v7.2.2 Apr 22: DCF removed from composite scoring. Intrinsic value now
+    averages only Buffett (earnings) + BVPS (book-value compounding), no DCF.
+    Sanity cap at 4x price still applies — catches any blow-out in either
+    method (Buffett can produce extreme values on high-ROE names; BVPS can
+    inflate on high-retention compounders).
+
+    v7.2 (previous): Caps extreme DCF values. FMP's DCF model is sensitive
+    to WACC-g spread compression. When DCF-based intrinsic exceeded 4x
+    price we treated as unreliable. That guard is retained for the
+    non-DCF intrinsic average.
     """
-    result = {"score": 0.0, "consensus_upside": 0, "dcf_upside": 0, "_evaluated": False}
+    result = {"score": 0.0, "consensus_upside": 0, "intrinsic_upside": 0,
+              "_evaluated": False}
 
     if price <= 0:
         return result
@@ -1293,37 +1303,36 @@ def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
     if target > 0:
         result["consensus_upside"] = (target - price) / price * 100
 
-    # DCF/intrinsic upside — sanity-cap at 4x price
-    dcf = value.get("dcf_value", 0)
+    # Intrinsic upside (Buffett + BVPS average) — sanity-cap at 4x price
     intrinsic = value.get("intrinsic_avg", 0)
-    dcf_ratio_sane = (intrinsic > 0 and price > 0 and intrinsic / price <= 4.0)
+    intrinsic_sane = (intrinsic > 0 and price > 0 and intrinsic / price <= 4.0)
     if intrinsic > 0:
-        if dcf_ratio_sane:
-            result["dcf_upside"] = (intrinsic - price) / price * 100
+        if intrinsic_sane:
+            result["intrinsic_upside"] = (intrinsic - price) / price * 100
         else:
             # Flag as unreliable rather than trust the blow-out number
-            result["dcf_upside"] = 0
-            result["dcf_unreliable"] = True
+            result["intrinsic_upside"] = 0
+            result["intrinsic_unreliable"] = True
 
     # Evaluated if we have at least one valuation anchor
-    if target > 0 or (intrinsic > 0 and dcf_ratio_sane):
+    if target > 0 or (intrinsic > 0 and intrinsic_sane):
         result["_evaluated"] = True
 
     # Cross-check scoring: both must agree for high score
     target_up = result["consensus_upside"]
-    dcf_up = result["dcf_upside"]
+    intr_up = result["intrinsic_upside"]
 
-    if target_up > 20 and dcf_up > 20:
+    if target_up > 20 and intr_up > 20:
         result["score"] = 1.0    # both say 20%+ upside
-    elif target_up > 10 and dcf_up > 10:
+    elif target_up > 10 and intr_up > 10:
         result["score"] = 0.8    # both say 10%+ upside
-    elif target_up > 10 or dcf_up > 10:
+    elif target_up > 10 or intr_up > 10:
         result["score"] = 0.6    # at least one says 10%+
-    elif target_up > 0 and dcf_up > 0:
+    elif target_up > 0 and intr_up > 0:
         result["score"] = 0.4    # both positive but modest
-    elif target_up > 0 or dcf_up > 0:
+    elif target_up > 0 or intr_up > 0:
         result["score"] = 0.25   # mixed signals
-    elif target_up < -10 and dcf_up < -10:
+    elif target_up < -10 and intr_up < -10:
         result["score"] = 0.0    # both say overvalued
     else:
         result["score"] = 0.15   # negative but not extreme
@@ -1428,8 +1437,7 @@ def compute_quality_score(value: dict) -> dict:
 # 11c. NEW v7: Catalyst Factor (event-driven scoring)
 # ---------------------------------------------------------------------------
 
-def compute_catalyst_score(sym: str, analyst: dict = None,
-                             as_of_date: str = None) -> dict:
+def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
     """
     Catalyst factor: detects upcoming events that could move the stock.
     Scans: earnings calendar, recent analyst moves, M&A/activist news,
@@ -1437,9 +1445,6 @@ def compute_catalyst_score(sym: str, analyst: dict = None,
 
     Returns score 0-1: 0.5 = neutral (no events), >0.6 = positive catalyst,
     <0.35 = negative catalyst (downgrades, miss-prone earnings).
-
-    Track B.1: SEC 8-K filings in last 14d bump score (+0.15 for 1, +0.25
-    for 2+). Backtest-safe via as_of_date arg.
     """
     result = {"score": 0.5, "flags": [], "has_catalyst": False,
               "is_risky": False, "days_to_earnings": -1, "_evaluated": False}
@@ -1548,11 +1553,26 @@ def compute_catalyst_score(sym: str, analyst: dict = None,
     # of "FMP 404: news/search-stock-news → []" lines per scan.
     #
     # Keep per-article symbol verification as belt-and-suspenders.
+    #
+    # v7.2.1 (Apr 20): tightened M&A keyword set. Previously fired on single
+    # words like "deal", "bid", "offer", "stake" — all common in routine
+    # financial news (analyst price targets, position disclosures, routine
+    # announcements). False positives on INVA, CVS, others. Now requires
+    # phrases that are genuinely M&A-specific or a confirmed activist action.
     news = fmp("news/stock", {"symbols": sym, "limit": 10})
     if news:
         cutoff = (today - timedelta(days=14)).strftime("%Y-%m-%d")
-        ma_kw = {"acquisition", "acquire", "merger", "buyout", "takeover",
-                 "activist", "stake", "bid", "offer", "deal", "spin-off", "spinoff"}
+        # M&A / activist — must be PHRASES, not single ambiguous words
+        ma_phrases = [
+            "acquisition of", "acquires ", "to acquire",
+            "merger with", "merger agreement", "to merge",
+            "buyout", "takeover bid", "tender offer",
+            "activist investor", "activist campaign", "activist stake",
+            "proxy fight", "hostile bid",
+            "spin-off", "spinoff", "spin off",
+            "definitive agreement", "strategic alternatives",
+            "going private", "leveraged buyout", "lbo ",
+        ]
         pos_kw = {"approval", "fda", "patent", "contract", "partnership",
                   "launch", "breakthrough", "record revenue"}
         neg_kw = {"lawsuit", "investigation", "fraud", "recall",
@@ -1569,7 +1589,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None,
                 continue
             title = (article.get("title", "") + " " + article.get("text", "")[:300]).lower()
 
-            if any(kw in title for kw in ma_kw):
+            if any(ph in title for ph in ma_phrases):
                 result["score"] += 0.25
                 result["flags"].append("M&A/activist activity detected")
                 break
@@ -1583,19 +1603,6 @@ def compute_catalyst_score(sym: str, analyst: dict = None,
     # ─── D) Congressional Trading (last 30 days) ──────────────
 
         pass
-
-    # ─── E) SEC 8-K catalyst (Track B.1) ───────────────
-    # 8-Ks are legally-mandated material-event disclosures.
-    # Bump score based on count of 8-Ks in last 14d.
-    # Backtest-safe: when as_of_date is set, lookup is strictly < that date.
-    if HAS_8K_FACTOR:
-        try:
-            bump = factor_8k_catalyst.score_8k_bump(sym, as_of_date=as_of_date)
-            if bump.get("_evaluated") and bump.get("count", 0) > 0:
-                result["score"] += bump["delta"]
-                result["flags"].extend(bump.get("flags", []))
-        except Exception as _e_8k:
-            log.debug(f"8-K bump failed for {sym}: {_e_8k}")
 
     # Clamp and set flags
     result["score"] = min(max(result["score"], 0.0), 1.0)
@@ -1728,8 +1735,20 @@ def get_institutional_flows(sym: str) -> dict:
 
     Starts one quarter back (most recent that should be reported) and falls
     back further if empty.
+
+    v7.2.1 Apr 20 — smart-money concentration layer:
+    Pull the per-holder 13F extract. Compute top-5 holder share of total 13F
+    holdings + the QoQ change in that concentration. Rising concentration
+    among top holders = smart money accumulating; falling = distribution.
+    Blended into score at 20% weight (small contribution so composite
+    distribution isn't disrupted mid-regime).
     """
-    result = {"holders_change": 0.0, "accumulation": 0.0, "score": 0.5, "_evaluated": False}
+    result = {"holders_change": 0.0, "accumulation": 0.0, "score": 0.5, "_evaluated": False,
+              # New fields (exposed to frontend + future ML retrain)
+              "top5_concentration": 0.0,       # % of total 13F holdings held by top 5
+              "top5_concentration_delta": 0.0, # QoQ change in that %
+              "top_holders": [],               # list of {name, ownership, delta} dicts
+              }
 
     now = datetime.now()
     cur_q_raw = (now.month - 1) // 3 + 1
@@ -1763,19 +1782,72 @@ def get_institutional_flows(sym: str) -> dict:
     own_pct_delta = float(d.get("ownershipPercentChange") or 0)  # e.g. 2.85 = +2.85pp
     result["accumulation"] = own_pct_delta / 100.0
 
-    # Score: combine holder-count trend + ownership-% trend
+    # ─── Smart-money concentration layer ───
+    # Pull per-holder extract for same quarter we just used (consistent data).
+    # Keep limit tight (top 10) — we only need top-5 aggregation.
+    try:
+        holders = fmp(
+            "institutional-ownership/extract-analytics/holder",
+            {"symbol": sym, "year": y, "quarter": q, "limit": 10},
+        )
+    except Exception:
+        holders = None
+
+    if holders and isinstance(holders, list):
+        # Sort by ownership (percent-of-float), take top 5
+        top5 = sorted(
+            holders, key=lambda h: float(h.get("ownership") or 0), reverse=True
+        )[:5]
+        if top5:
+            total_own = sum(float(h.get("ownership") or 0) for h in top5)
+            total_own_last = sum(float(h.get("lastOwnership") or 0) for h in top5)
+            result["top5_concentration"] = round(total_own, 2)
+            result["top5_concentration_delta"] = round(total_own - total_own_last, 2)
+            result["top_holders"] = [
+                {
+                    "name": h.get("investorName") or h.get("investorname") or "Unknown",
+                    "ownership": round(float(h.get("ownership") or 0), 2),
+                    "delta_pp": round(
+                        float(h.get("ownership") or 0) - float(h.get("lastOwnership") or 0), 2
+                    ),
+                    "shares_change_pct": round(
+                        float(h.get("changeInSharesNumberPercentage") or 0), 2
+                    ),
+                    "is_new": bool(h.get("isNew")),
+                }
+                for h in top5
+            ]
+
+    # ─── Score: original logic (80% weight) ───
     acc = result["accumulation"]
     hc = result["holders_change"]
     if acc > 0.02 and hc > 0.05:       # broad + concentrated buying
-        result["score"] = 1.0
+        base_score = 1.0
     elif acc > 0.01 or hc > 0.05:
-        result["score"] = 0.75
+        base_score = 0.75
     elif acc > -0.01 and hc > -0.05:
-        result["score"] = 0.5
+        base_score = 0.5
     elif acc < -0.02 or hc < -0.10:
-        result["score"] = 0.15
+        base_score = 0.15
     else:
-        result["score"] = 0.3
+        base_score = 0.3
+
+    # ─── Smart-money layer (20% weight) ───
+    # Concentration change: +2pp = strong accumulation, -2pp = strong distribution
+    conc_delta = result["top5_concentration_delta"]
+    if conc_delta > 2.0:
+        conc_score = 1.0
+    elif conc_delta > 0.5:
+        conc_score = 0.75
+    elif conc_delta > -0.5:
+        conc_score = 0.5
+    elif conc_delta > -2.0:
+        conc_score = 0.25
+    else:
+        conc_score = 0.1
+
+    # Blend: 80% existing logic, 20% concentration
+    result["score"] = round(0.8 * base_score + 0.2 * conc_score, 3)
 
     result["_evaluated"] = True
     return result
@@ -2175,40 +2247,18 @@ def compute_composite_v7(
         composite < 0.30,           # weak composite
     ])
 
-    # ─── Coverage penalty: continuous multiplier on composite ──────────
-    # v7.3 change: replaces the v7.2 hard cap (min(composite, 0.75) when
-    # <7 factors) with a continuous penalty: composite *= coverage_pct^α.
-    #
-    # Why the cap was broken:
-    #   - Rarely triggered (weight redistribution kept most thin-data
-    #     composites below 0.75 anyway)
-    #   - Binary: a stock at 7/13 got NO penalty while a stock at 6/13
-    #     was hard-capped, even though the evidence difference is small
-    #   - Inflation persisted for the 7–12/13 band (weight redistribution
-    #     boosted evaluated factors unboundedly)
-    #
-    # v7.3: continuous penalty so every missing factor shaves the composite.
-    # α=0.7 (default) applied to representative cases:
-    #   13/13 (pct=1.00): multiplier 1.00 — no change
-    #   11/13 (pct=0.85): multiplier 0.89
-    #   10/13 (pct=0.77): multiplier 0.83
-    #    9/13 (pct=0.69): multiplier 0.78
-    #    7/13 (pct=0.54): multiplier 0.66
-    #    6/13 (pct=0.46): multiplier 0.59
-    # α is a fixed constant here; the v8 backtest will sweep α to confirm
-    # the optimum. Change this value after the sweep completes.
-    COVERAGE_ALPHA = 0.7  # TODO: recalibrate from v8 sweep results
-    composite_raw = composite
-    composite = composite_raw * (coverage["pct"] ** COVERAGE_ALPHA)
-    coverage["penalty_multiplier"] = coverage["pct"] ** COVERAGE_ALPHA
-    coverage["composite_raw"] = composite_raw
-    coverage["alpha"] = COVERAGE_ALPHA
-    if coverage["count"] < len(ALL_FACTORS):
-        reasons.append(
-            f"COVERAGE: {coverage['count']}/{coverage['total']} factors — "
-            f"composite {composite_raw:.3f} × {coverage['penalty_multiplier']:.2f} "
-            f"→ {composite:.3f}"
-        )
+    # ─── Coverage gate: thin-data stocks can't get BUY/STRONG BUY ───
+    # Prevents stocks with only 3-4 evaluated factors from inflating via
+    # weight redistribution. Requires 7+ factors for full composite range.
+    # NOTE: total is 13 in v7.2 but 3 factors have no compute yet → cap is
+    # effectively 10 evaluated max; gate still triggers when <7 of 10 have data.
+    MIN_COVERAGE_FOR_FULL_SCORE = 7
+    COVERAGE_CAP = 0.75  # max composite when coverage < threshold
+
+    if coverage["count"] < MIN_COVERAGE_FOR_FULL_SCORE:
+        composite = min(composite, COVERAGE_CAP)
+        if composite == COVERAGE_CAP:
+            reasons.append(f"COVERAGE CAP: only {coverage['count']}/{coverage['total']} factors evaluated")
 
     # ─── Signal Classification (v7.2 — tightened thresholds) ────────────
     # Backtest-calibrated P(+10% 60d) by composite band:
@@ -2254,25 +2304,14 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
     log.info(f"Pass 1: Cheap screen (quote + chart + fundamentals + grades + earnings + insiders + quality + catalyst)")
 
     # ─── Macro Regime (called ONCE, shared across all stocks) ───
-    # Track B.4: prefer v8 classifier (9 sub-scores) when available
     macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}, "tilts": {}}
     active_weights = WEIGHTS.copy()
     if HAS_MACRO:
         try:
-            if HAS_MACRO_V8:
-                log.info("Fetching macro regime v8 (9 sub-scores)...")
-                macro = fetch_macro_regime_v8(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
-            else:
-                log.info("Fetching macro regime v7...")
-                macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
+            log.info("Fetching macro regime data...")
+            macro = fetch_macro_regime(fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT))
             active_weights = apply_macro_tilt(WEIGHTS, macro)
-            log.info(f"Macro: {macro['regime']} (score={macro['score']:.3f}) "
-                     f"version={macro.get('version','v7')} — weights tilted")
-            # Expose regime-modulated composite floor for backtest/logging
-            if HAS_MACRO_V8:
-                floor = regime_composite_floor(macro, base_floor=0.80)
-                macro["composite_floor"] = floor
-                log.info(f"Composite floor under {macro['regime']}: {floor:.3f}")
+            log.info(f"Macro: {macro['regime']} (score={macro['score']:.3f}) — weights tilted")
             # Update RISK_FREE dynamically from treasury data
             global RISK_FREE
             rf = get_risk_free_rate(macro.get("rates", {}))
@@ -2283,17 +2322,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             log.warning(f"Macro regime fetch failed: {e} — using base weights")
             macro = {"regime": "NEUTRAL", "score": 0.5, "features": {}}
             active_weights = WEIGHTS.copy()
-
-    # Track B.1: pre-populate 8-K filings cache once per scan
-    # (single FMP endpoint call covers all symbols for the last 14 days)
-    if HAS_8K_FACTOR:
-        try:
-            n_syms = factor_8k_catalyst.populate_8k_cache_live(
-                fmp, rate_limit_func=lambda: time.sleep(RATE_LIMIT)
-            )
-            log.info(f"8-K cache populated: {n_syms} symbols with filings in last 14d")
-        except Exception as e:
-            log.warning(f"8-K cache populate failed: {e} — bump will be skipped")
 
     # Pre-fetch all quotes in batches
     all_quotes = get_quotes_batch(symbols)
@@ -2402,8 +2430,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 has_catalyst=cata.get("has_catalyst", False),
                 days_to_earnings=cata.get("days_to_earnings", -1),
                 composite=composite, signal=signal,
-                composite_raw=coverage.get("composite_raw", composite),
-                coverage_penalty=coverage.get("penalty_multiplier", 1.0),
                 classification=v["classification"],
                 reasons=t.get("bull_reasons", []) + reasons,
                 factor_scores=factors,
@@ -2497,8 +2523,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         )
 
         s.composite = composite
-        s.composite_raw = coverage.get("composite_raw", composite)
-        s.coverage_penalty = coverage.get("penalty_multiplier", 1.0)
         s.signal = signal
         s.factor_scores = factors
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons
@@ -2506,6 +2530,22 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         s.factor_coverage_pct = coverage["pct"]
         s.factors_evaluated = coverage["evaluated"]
         s.factors_missing = coverage["missing"]
+
+        # v7.2.1: Tradier options enrichment.
+        # Only for US-listed symbols (no dot-suffix like .DE/.L/.PA).
+        # Runs AFTER composite/signal are final so we can gate on them.
+        # Wrapped in try/except — one flaky Tradier call must not break the scan.
+        if "." not in s.symbol and TRADIER_AVAILABLE:
+            try:
+                tradier_data = tradier_enrich_stock(
+                    s.symbol, s.composite, s.hit_prob
+                )
+                s.tradier_iv_current = tradier_data.get("iv_current")
+                s.tradier_iv_rank = tradier_data.get("iv_rank")
+                s.tradier_iv_samples = tradier_data.get("iv_samples", 0)
+                s.tradier_spread = tradier_data.get("spread")
+            except Exception as e:
+                log.debug(f"Tradier enrichment failed for {s.symbol}: {e}")
 
     # Clean up raw data
     for s in pass1_stocks:
