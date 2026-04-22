@@ -615,29 +615,33 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   );
 }
 
-// ── TradierSpreadCard — bull call spread suggestion from Tradier options data ──
-// Renders as a full-width card below the Probability/Catalyst/Sentiment row.
-// Only shown when s.tradier_spread is present (composite ≥ 0.60 + p10 ≥ 0.65 +
-// IV rank ≤ 40 + ~90 DTE expiration available). Hidden entirely otherwise —
-// most stock pages will not show this card, and that's the right default.
+// ── TradierOptionsCard — IV data + bull call spread suggestion from Tradier ──
+// v7.2.2 Apr 22: split IV display from spread suggestion. IV panel always
+// visible when Tradier has any data for the symbol (top-30 composite OR
+// hit_prob ≥ 0.65). Spread panel only renders when all gates pass:
+//   composite ≥ 0.60 AND hit_prob ≥ 0.65 AND IV rank ≤ 40
+// (IV rank gate is skipped until 20+ samples accumulated.)
 //
-// Data is produced by screener_v6.py Pass 2 via tradier_options.enrich_stock()
-// for the top-30 US symbols per scan. European symbols never populate this.
-function TradierSpreadCard({s}:{s:StockData}){
-  const sp=s.tradier_spread;
-  if(!sp) return null;
+// Data is produced by screener_v6.py Pass 2 via tradier_options.enrich_stock().
+// European symbols never populate this.
+function TradierOptionsCard({s}:{s:StockData}){
+  const hasIV=s.tradier_iv_current!=null||s.tradier_iv_rank!=null;
+  const hasSpread=s.tradier_spread!=null;
+  if(!hasIV&&!hasSpread) return null;
 
   const ivr=s.tradier_iv_rank;
   const iv=s.tradier_iv_current;
+  const samples=s.tradier_iv_samples||0;
   const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
-  const ivrLabel=ivr==null?"Not enough data":ivr<=30?"Cheap":ivr<=60?"Neutral":"Rich";
+  const ivrLabel=ivr==null?"Not enough data":ivr<=30?"Cheap options premium":ivr<=60?"Neutral options premium":"Rich options premium";
 
-  const netDebit=sp.net_debit;
-  const maxGain=sp.max_gain_per_contract;
-  const maxLoss=sp.max_loss_per_contract;
-  const rr=sp.risk_reward;
-  const rrColor=rr>=1.5?T.green:rr>=1.0?T.amber:T.red;
+  // Which gates are failing? Used to explain to user why no spread was suggested.
+  const gateFail:string[]=[];
+  if(s.composite<0.60) gateFail.push(`composite ${s.composite.toFixed(2)} < 0.60`);
+  if((s.hit_prob||0)<0.65) gateFail.push(`p(+10%) ${((s.hit_prob||0)*100).toFixed(0)}% < 65%`);
+  if(ivr!=null&&samples>=20&&ivr>40) gateFail.push(`IV rank ${ivr.toFixed(0)} > 40 (options too expensive)`);
 
+  const sp=s.tradier_spread;
   const metric=(label:string,value:string,sub?:string,color?:string)=>(
     <div>
       <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
@@ -648,55 +652,87 @@ function TradierSpreadCard({s}:{s:StockData}){
 
   return(
     <Card>
-      <SH title="Options Overlay — Bull Call Spread" icon={<Zap size={12}/>}
-        sub="Speculative · Tradier data · Phase 2 assessment"/>
+      <SH title="Options Data — Tradier" icon={<Zap size={12}/>}
+        sub={hasSpread?"Speculative overlay · bull call spread suggested":"IV data only · no spread gate cleared"}/>
 
-      {/* Context strip: why this was surfaced */}
-      <div style={{display:"flex",flexWrap:"wrap",gap:"4px 14px",fontSize:11,fontFamily:T.mono,color:T.textMuted,marginBottom:14,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
-        <span><span style={{color:T.textLight}}>Why shown:</span> <span style={{color:T.text,fontWeight:600}}>composite {s.composite.toFixed(2)} ≥ 0.60 · p(+10%) {((s.hit_prob||0)*100).toFixed(0)}% ≥ 65%</span></span>
-        {iv!=null&&<span><span style={{color:T.textLight}}>IV:</span> <span style={{color:T.text,fontWeight:600}}>{(iv*100).toFixed(0)}%</span></span>}
-        {ivr!=null&&<span><span style={{color:T.textLight}}>IV rank:</span> <span style={{color:ivrColor,fontWeight:700}}>{ivr.toFixed(0)} ({ivrLabel})</span></span>}
-        {ivr==null&&<span style={{color:T.amber,fontWeight:600}}>⚠ {s.tradier_iv_samples||0}/20 days — IV rank unreliable</span>}
+      {/* IV panel — always visible when Tradier has data */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:hasSpread?14:4,paddingBottom:hasSpread?14:0,borderBottom:hasSpread?`1px solid ${T.divider}`:"none"}}>
+        {metric(
+          "CURRENT IV",
+          iv!=null?`${(iv*100).toFixed(0)}%`:"—",
+          "ATM 30-day implied vol (annualized)"
+        )}
+        {metric(
+          "IV RANK",
+          ivr!=null?ivr.toFixed(0):"—",
+          samples<20?`${samples}/20 samples · rank not meaningful`:ivrLabel,
+          ivrColor
+        )}
+        {metric(
+          "SAMPLES",
+          `${samples}d`,
+          samples<20?`${20-samples} more days until meaningful rank`:"60-day rolling window"
+        )}
       </div>
 
-      {/* Contract detail */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-        {metric("SPOT",`$${sp.spot.toFixed(2)}`)}
-        {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,`mid $${sp.long_mid.toFixed(2)}`,T.green)}
-        {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,`mid $${sp.short_mid.toFixed(2)}`,T.red)}
-        {metric("EXPIRATION",sp.expiration,`${sp.dte}d to expiry`)}
-        {metric("NET DEBIT",`$${netDebit.toFixed(2)}`,"per share (×100/contract)")}
-        {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${sp.break_even_move_pct.toFixed(1)}% from spot`)}
-      </div>
+      {/* If no spread but has IV, explain why */}
+      {!hasSpread&&hasIV&&(
+        <div style={{padding:"8px 12px",borderRadius:5,background:T.bgSurface||"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
+          <span style={{fontWeight:600,color:T.text,marginRight:6}}>No spread suggestion:</span>
+          {gateFail.length>0?gateFail.join(" · "):"all gates clear (spread will appear in next scan)"}
+        </div>
+      )}
 
-      {/* Economics per contract */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14}}>
-        {metric("MAX GAIN",`+$${maxGain.toFixed(0)}`,"if stock ≥ short strike at expiration",T.green)}
-        {metric("MAX LOSS",`-$${maxLoss.toFixed(0)}`,"if stock ≤ long strike at expiration",T.red)}
-        {metric("RISK / REWARD",`${rr.toFixed(2)} : 1`,rr>=1.5?"favorable":rr>=1.0?"even":"unfavorable",rrColor)}
-      </div>
+      {/* Spread panel — only when hasSpread */}
+      {hasSpread&&sp&&(<>
+        {/* Context strip */}
+        <div style={{display:"flex",flexWrap:"wrap",gap:"4px 14px",fontSize:11,fontFamily:T.mono,color:T.textMuted,marginBottom:14,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
+          <span><span style={{color:T.textLight}}>Why shown:</span> <span style={{color:T.text,fontWeight:600}}>composite {s.composite.toFixed(2)} ≥ 0.60 · p(+10%) {((s.hit_prob||0)*100).toFixed(0)}% ≥ 65%</span></span>
+          {ivr==null&&<span style={{color:T.amber,fontWeight:600}}>⚠ {samples}/20 days — IV rank unreliable</span>}
+        </div>
 
-      {/* IBKR execution template */}
-      <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
-        <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
-        <div>Order type: <b>Debit Spread (Bull Call)</b></div>
-        <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
-        <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
-        <div>Net: pay no more than <b>${netDebit.toFixed(2)}/spread</b> (×100 = ${(netDebit*100).toFixed(0)}/contract)</div>
-      </div>
+        {/* Contract detail */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+          {metric("SPOT",`$${sp.spot.toFixed(2)}`)}
+          {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,`mid $${sp.long_mid.toFixed(2)}`,T.green)}
+          {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,`mid $${sp.short_mid.toFixed(2)}`,T.red)}
+          {metric("EXPIRATION",sp.expiration,`${sp.dte}d to expiry`)}
+          {metric("NET DEBIT",`$${sp.net_debit.toFixed(2)}`,"per share (×100/contract)")}
+          {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${sp.break_even_move_pct.toFixed(1)}% from spot`)}
+        </div>
 
-      {/* Sizing + caveats */}
-      <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
-        <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING &amp; CAVEATS</div>
-        This is a speculative overlay, not a primary position. Suggested sizing: <b>1-2% of portfolio per spread, max 5% total</b> in options overlay. Spreads can lose 100% of the debit if the stock closes below the long strike at expiration. Greeks and IV from Tradier (ORATS-sourced). Do not confuse with the cash-equity Phase 1 strategy.
-      </div>
+        {/* Economics per contract */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14}}>
+          {metric("MAX GAIN",`+$${sp.max_gain_per_contract.toFixed(0)}`,"if stock ≥ short strike at expiration",T.green)}
+          {metric("MAX LOSS",`-$${sp.max_loss_per_contract.toFixed(0)}`,"if stock ≤ long strike at expiration",T.red)}
+          {metric("RISK / REWARD",`${sp.risk_reward.toFixed(2)} : 1`,sp.risk_reward>=1.5?"favorable":sp.risk_reward>=1.0?"even":"unfavorable",sp.risk_reward>=1.5?T.green:sp.risk_reward>=1.0?T.amber:T.red)}
+        </div>
 
-      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
-        Accumulating data through July 2026 review. Performance of this overlay will be evaluated separately from the cash-equity strategy. No automated execution — you place the order manually in IBKR.
-      </div>
+        {/* IBKR execution template */}
+        <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
+          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
+          <div>Order type: <b>Debit Spread (Bull Call)</b></div>
+          <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
+          <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
+          <div>Net: pay no more than <b>${sp.net_debit.toFixed(2)}/spread</b> (×100 = ${(sp.net_debit*100).toFixed(0)}/contract)</div>
+        </div>
+
+        {/* Sizing caveats */}
+        <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
+          <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING &amp; CAVEATS</div>
+          Speculative overlay, not a primary position. Suggested sizing: <b>1-2% of portfolio per spread, max 5% total</b> in options overlay. Spreads can lose 100% of the debit if the stock closes below the long strike at expiration. Greeks and IV from Tradier (ORATS-sourced). Do not confuse with the cash-equity Phase 1 strategy.
+        </div>
+
+        <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
+          Accumulating data through July 2026 review. Performance of this overlay will be evaluated separately from the cash-equity strategy. No automated execution — you place the order manually in IBKR.
+        </div>
+      </>)}
     </Card>
   );
 }
+
+// Keep old name as alias so the existing render block doesn't break
+const TradierSpreadCard=TradierOptionsCard;
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol}:{symbol:string}){
@@ -1028,8 +1064,8 @@ export default function StockDetail(){
         <SentimentCard s={s}/>
       </div>
 
-      {/* Tradier options overlay — full-width, self-hides when no spread */}
-      {s.tradier_spread&&<div style={{marginBottom:16}}><TradierSpreadCard s={s}/></div>}
+      {/* Tradier options card — IV always when available, spread when gates pass */}
+      {(s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
       {/* Price + Composite dual-line chart (full-width so axes have room) */}
       <div style={{marginBottom:16}}>
