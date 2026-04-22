@@ -277,6 +277,135 @@ def compute_iv_rank(symbol: str) -> Optional[dict]:
 
 
 # ---------------------------------------------------------------------------
+# v7.2.3 Apr 22 — additional Tradier signals: PC ratio, term structure, earnings move
+# ---------------------------------------------------------------------------
+def _compute_pc_volume_ratio(chain: list) -> Optional[float]:
+    """Total put volume / total call volume across the full chain.
+
+    Interpretation:
+      < 0.5  : heavy call buying, bullish speculation
+      0.5-1.0: normal bullish / neutral
+      1.0-1.5: mild put buying, hedging or light bearishness
+      1.5-2.5: elevated put buying, fear or hedging
+      > 2.5  : extreme fear / heavy hedging
+
+    Returns None if no volume recorded.
+    """
+    call_vol = 0.0
+    put_vol = 0.0
+    for c in chain:
+        v = c.get("volume") or 0
+        if not v or v <= 0:
+            continue
+        opt_type = (c.get("option_type") or "").lower()
+        if opt_type == "call":
+            call_vol += v
+        elif opt_type == "put":
+            put_vol += v
+    if call_vol <= 0:
+        return None
+    return round(put_vol / call_vol, 3)
+
+
+def _pick_term_structure_expirations(expirations: list) -> dict:
+    """Given sorted list of expiration date strings, return closest to 30d/60d/90d.
+    Returns {'exp_30d': '2026-05-22', 'exp_60d': ..., 'exp_90d': ...} — each None if no match.
+    """
+    today = datetime.now().date()
+    result = {"exp_30d": None, "exp_60d": None, "exp_90d": None}
+    if not expirations:
+        return result
+
+    # Parse to (date, str) pairs with DTE
+    parsed = []
+    for e in expirations:
+        try:
+            d = datetime.strptime(e, "%Y-%m-%d").date()
+            dte = (d - today).days
+            if dte >= 5:  # avoid same-week expirations
+                parsed.append((dte, e))
+        except Exception:
+            continue
+    if not parsed:
+        return result
+
+    # Find closest to each target DTE
+    for target, key in [(30, "exp_30d"), (60, "exp_60d"), (90, "exp_90d")]:
+        best = min(parsed, key=lambda p: abs(p[0] - target))
+        # Only use if within ±20 days of target (avoid assigning a 7-day as the 30d slot)
+        if abs(best[0] - target) <= 20:
+            result[key] = best[1]
+    return result
+
+
+def _compute_implied_earnings_move(chain: list, spot: float) -> Optional[dict]:
+    """ATM straddle mid-price / spot → implied absolute % move.
+
+    Input: chain from the FIRST post-earnings expiration.
+    Output: {'pct': 4.5, 'call_mid': 6.20, 'put_mid': 5.80, 'straddle': 12.00}
+    None if no ATM contracts or missing prices.
+    """
+    if not chain or spot <= 0:
+        return None
+
+    # Find ATM strike (closest to spot)
+    strikes = set()
+    for c in chain:
+        s = c.get("strike")
+        if s:
+            strikes.add(float(s))
+    if not strikes:
+        return None
+    atm_strike = min(strikes, key=lambda k: abs(k - spot))
+
+    # Find ATM call + ATM put
+    atm_call = next((c for c in chain
+                     if c.get("strike") == atm_strike
+                     and (c.get("option_type") or "").lower() == "call"), None)
+    atm_put = next((c for c in chain
+                    if c.get("strike") == atm_strike
+                    and (c.get("option_type") or "").lower() == "put"), None)
+    if not atm_call or not atm_put:
+        return None
+
+    def _mid(c):
+        b, a = c.get("bid") or 0, c.get("ask") or 0
+        if b > 0 and a > 0:
+            return (b + a) / 2.0
+        return c.get("last") or 0
+
+    call_mid = _mid(atm_call)
+    put_mid = _mid(atm_put)
+    straddle = call_mid + put_mid
+    if straddle <= 0:
+        return None
+
+    return {
+        "pct": round(straddle / spot * 100, 2),  # implied absolute % move
+        "call_mid": round(call_mid, 2),
+        "put_mid": round(put_mid, 2),
+        "straddle": round(straddle, 2),
+        "strike": atm_strike,
+    }
+
+
+def _find_post_earnings_expiration(expirations: list, earnings_date_str: str) -> Optional[str]:
+    """First expiration >= earnings date (so the straddle prices the actual event)."""
+    try:
+        earnings_dt = datetime.strptime(earnings_date_str[:10], "%Y-%m-%d").date()
+    except Exception:
+        return None
+    for e in expirations:
+        try:
+            exp_dt = datetime.strptime(e, "%Y-%m-%d").date()
+            if exp_dt >= earnings_dt:
+                return e
+        except Exception:
+            continue
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Bull call spread builder
 # ---------------------------------------------------------------------------
 def _pick_expiration(expirations: list, target_days: int = DTE_TARGET) -> Optional[str]:
@@ -428,33 +557,48 @@ def build_spread_suggestion(symbol: str, composite: float, hit_prob: float) -> O
 
 
 # ---------------------------------------------------------------------------
-# Screener Pass-2 enrichment — called for every top-30 symbol during scan
+# Screener enrichment — called for every US stock with mkt cap > $1B
 # ---------------------------------------------------------------------------
-def enrich_stock(symbol: str, composite: float, hit_prob: float) -> dict:
+def enrich_stock(symbol: str, composite: float, hit_prob: float,
+                 earnings_date: Optional[str] = None,
+                 collect_term_structure: bool = True,
+                 collect_earnings_move: bool = True) -> dict:
     """
-    Called by screener_v6.py Pass 2 for each top-30 stock.
-    Returns a compact dict that gets merged into the stock's scan JSON:
+    Called by screener_v6.py for each US stock with market cap > $1B.
+    Returns dict merged into stock's scan JSON:
 
         {
-          "iv_current": 0.38 | None,        # ATM 30-day IV (decimal)
-          "iv_rank": 42.0 | None,           # 0-100, None if <20 samples
-          "iv_samples": 25,                 # days of IV history accumulated
-          "spread": {...} | None            # full spread suggestion, None if gated
+          "iv_current": 0.38 | None,              # ATM 30-day IV (decimal)
+          "iv_rank": 42.0 | None,                 # 0-100, None if <20 samples
+          "iv_samples": 25,                       # days of IV history
+          "spread": {...} | None,                 # full spread suggestion
+          "pc_ratio": 0.72 | None,                # put/call volume ratio (all contracts)
+          "iv_30d": 0.35 | None,                  # ATM IV at ~30 DTE
+          "iv_60d": 0.32 | None,                  # ATM IV at ~60 DTE
+          "iv_90d": 0.30 | None,                  # ATM IV at ~90 DTE
+          "term_structure": "backwardation"|"contango"|"flat"|None,
+          "implied_earnings_move": {...} | None,  # ATM straddle around earnings
         }
 
-    Frontend reads iv_current + iv_rank for the screener row columns.
-    Frontend reads spread for the TradierSpreadCard on the stock page.
+    API cost per stock:
+      - Base IV + spread:           3 calls (quote + expirations + one chain)
+      - Term structure:             +2 chain calls (60d, 90d if different from 30d)
+      - Implied earnings move:      +1 chain call (only if earnings_date within 60d)
+    Total: 3-6 calls per stock.
 
-    Always updates IV history (one sample per call per symbol per day),
-    so IV rank converges regardless of whether the stock passes spread gates.
-
-    Zero side effects on GCS other than IV history append.
+    Always updates IV history (one sample per call per symbol per day).
     """
     result = {
         "iv_current": None,
         "iv_rank": None,
         "iv_samples": 0,
         "spread": None,
+        "pc_ratio": None,
+        "iv_30d": None,
+        "iv_60d": None,
+        "iv_90d": None,
+        "term_structure": None,
+        "implied_earnings_move": None,
     }
 
     if not TRADIER_TOKEN:
@@ -527,9 +671,7 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float) -> dict:
         result["iv_rank"] = iv_data["iv_rank"]
         result["iv_samples"] = iv_data["samples"]
     elif iv_today:
-        # Not enough samples for rank yet — but we have today's IV, show it
         result["iv_current"] = round(iv_today, 4)
-        # Count samples from the history file directly
         try:
             path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
             history = _gcs_read(path, [])
@@ -537,8 +679,66 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float) -> dict:
         except Exception:
             result["iv_samples"] = 1
 
-    # Step 5: Spread suggestion — only build if gates pass and we have the
-    # ~90-DTE expiration (iv_exp may have fallen back to something shorter).
+    # Step 5: Put/call volume ratio — FREE (uses chain already fetched)
+    result["pc_ratio"] = _compute_pc_volume_ratio(chain)
+
+    # Step 6: IV term structure — 2 extra chain calls (30d / 60d / 90d)
+    # Store iv_30d from the chain we already have (if it's in the 30d bucket)
+    if collect_term_structure:
+        term_exps = _pick_term_structure_expirations(expirations)
+
+        def _get_atm_iv_for_exp(exp: Optional[str]) -> Optional[float]:
+            """Fetch chain for exp (unless it's the one we already have) and extract ATM IV."""
+            if not exp:
+                return None
+            if exp == iv_exp:
+                return round(iv_today, 4) if iv_today else None
+            try:
+                c = get_chain(symbol, exp)
+                v = _extract_atm_iv(c, spot) if c else None
+                return round(v, 4) if v else None
+            except Exception as e:
+                log.debug(f"Tradier term-structure chain failed for {symbol} {exp}: {e}")
+                return None
+
+        result["iv_30d"] = _get_atm_iv_for_exp(term_exps.get("exp_30d"))
+        result["iv_60d"] = _get_atm_iv_for_exp(term_exps.get("exp_60d"))
+        result["iv_90d"] = _get_atm_iv_for_exp(term_exps.get("exp_90d"))
+
+        # Classify the curve shape
+        ivs = [v for v in (result["iv_30d"], result["iv_60d"], result["iv_90d"]) if v]
+        if len(ivs) >= 2:
+            front = result["iv_30d"] or result["iv_60d"]
+            back = result["iv_90d"] or result["iv_60d"]
+            if front and back:
+                spread_pct = (front - back) / back * 100
+                if spread_pct > 5:
+                    result["term_structure"] = "backwardation"  # front > back (near-term event priced)
+                elif spread_pct < -5:
+                    result["term_structure"] = "contango"  # back > front (normal calm market)
+                else:
+                    result["term_structure"] = "flat"
+
+    # Step 7: Implied earnings move — 1 extra chain call (only if earnings coming)
+    if collect_earnings_move and earnings_date:
+        earn_exp = _find_post_earnings_expiration(expirations, earnings_date)
+        if earn_exp:
+            try:
+                # Reuse chain if possible
+                if earn_exp == iv_exp:
+                    earn_chain = chain
+                else:
+                    earn_chain = get_chain(symbol, earn_exp)
+                if earn_chain:
+                    iem = _compute_implied_earnings_move(earn_chain, spot)
+                    if iem:
+                        iem["expiration"] = earn_exp
+                        iem["earnings_date"] = earnings_date[:10]
+                        result["implied_earnings_move"] = iem
+            except Exception as e:
+                log.debug(f"Tradier earnings-move chain failed for {symbol}: {e}")
+
+    # Step 8: Spread suggestion — only if gates pass and we have the ~90-DTE expiration
     if (chosen_exp is None
             or composite < COMPOSITE_THRESHOLD
             or hit_prob < HIT_PROB_THRESHOLD):
