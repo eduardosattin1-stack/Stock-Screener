@@ -30,6 +30,17 @@ interface StockData{
   earnings_momentum?:number;earnings_score?:number;upside_score?:number;
   hit_prob?:number;
   factor_coverage?:number;factors_evaluated?:string[];factors_missing?:string[];
+  // v7.2.1 Tradier options enrichment
+  tradier_iv_current?:number|null;
+  tradier_iv_rank?:number|null;
+  tradier_iv_samples?:number;
+  tradier_spread?:{
+    strategy:string;spot:number;expiration:string;dte:number;
+    long_strike:number;short_strike:number;long_mid:number;short_mid:number;
+    net_debit:number;max_gain_per_contract:number;max_loss_per_contract:number;
+    break_even_price:number;break_even_move_pct:number;risk_reward:number;
+    description:string;
+  }|null;
 }
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
@@ -410,63 +421,24 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   const [positions,setPositions]=useState<Positions|null>(null);
   const [loading,setLoading]=useState(true);
   const [expanded,setExpanded]=useState(false);
-  // ── Track C.1 FIX (state additions) ──
-  // errorInfo carries per-endpoint diagnostics surfaced by /api/company
-  // when any FMP call failed. null when there's no error to report.
-  // retryTick forces the useEffect to re-run on user-click of Retry,
-  // bypasses any intermediate caches via cache: 'no-store' + cache-busting qs.
-  const [errorInfo,setErrorInfo]=useState<Record<string,string>|null>(null);
-  const [retryTick,setRetryTick]=useState(0);
 
   useEffect(()=>{
     let cancelled=false;
     setLoading(true);
-    setErrorInfo(null);
 
-    // Cache-bust on retry, and force no-store so the browser/Vercel edge
-    // don't serve a stale failure response from a previous attempt.
-    const bust = retryTick>0 ? `?_r=${retryTick}` : "";
-    fetch(`/api/company/${encodeURIComponent(symbol)}${bust}`, { cache: retryTick>0 ? "no-store" : "default" })
-      .then(async r=>{
-        const text = await r.text();
-        try { return JSON.parse(text); } catch { return null; }
-      })
+    fetch(`/api/company/${encodeURIComponent(symbol)}`)
+      .then(r=>r.ok?r.json():null)
       .then(d=>{
-        if(cancelled) return;
-        // Track C.1 FIX: ALWAYS clear loading, even on hard failure.
-        // Previous code: `if(cancelled||!d) return;` — early-returned before
-        // setLoading(false), leaving the card on "Loading…" forever on a
-        // route hard failure. Now we always fall through to setLoading(false).
-        if(d){
-          setProfile(d.profile??null);
-          setFloatData(d.float??null);
-          setHolders((d.holders as Holder[])??[]);
-          setPositions((d.positions as Positions)??null);
-          // v7.3 route adds an `errors` object when any FMP endpoint fails.
-          // Old route didn't, so `d.errors` is undefined → errorInfo stays null.
-          if(d.errors && typeof d.errors==="object" && Object.keys(d.errors).length>0){
-            setErrorInfo(d.errors as Record<string,string>);
-          } else {
-            setErrorInfo(null);
-          }
-        } else {
-          // Hard failure (non-JSON body, network abort, 5xx without body).
-          setProfile(null);
-          setFloatData(null);
-          setHolders([]);
-          setPositions(null);
-          setErrorInfo({ request: "/api/company failed or returned non-JSON" });
-        }
+        if(cancelled||!d) return;
+        setProfile(d.profile??null);
+        setFloatData(d.float??null);
+        setHolders((d.holders as Holder[])??[]);
+        setPositions((d.positions as Positions)??null);
         setLoading(false);
-      })
-      .catch(e=>{
-        if(cancelled) return;
-        setErrorInfo({ request: e instanceof Error ? e.message : String(e) });
-        setLoading(false);
-      });
+      }).catch(()=>{if(!cancelled) setLoading(false);});
 
     return ()=>{cancelled=true;};
-  },[symbol,retryTick]);
+  },[symbol]);
 
   const fmtBn=(n?:number)=>{
     if(!n) return "—";
@@ -510,32 +482,11 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   }
 
   if(!profile){
-    // ── Track C.1 FIX: surface the actual reason instead of a silent blank ──
-    // Old code rendered only "No profile data available." regardless of
-    // whether the FMP call had failed (rate limit, 5xx, bad cache) or the
-    // symbol genuinely has no profile (delisted, synthetic, etc.). The
-    // `errorInfo` object is populated from `d.errors` returned by the v7.3
-    // route so we can show what broke and offer a Retry button that
-    // bypasses caches.
-    const errList = errorInfo ? Object.entries(errorInfo) : [];
     return (
       <Card>
         <SH title="Company Profile" icon={<Activity size={12}/>}/>
         <div style={{padding:"20px 0",textAlign:"center",color:T.textMuted,fontSize:11,fontFamily:T.mono}}>
-          {errList.length>0 ? (
-            <div>
-              <div style={{color:T.red,fontWeight:600,marginBottom:6}}>Company profile temporarily unavailable</div>
-              <div style={{fontSize:10,color:T.textLight,lineHeight:1.6,marginBottom:10}}>
-                {errList.map(([k,v])=>(<div key={k}><span style={{color:T.textMuted}}>{k}:</span> {v}</div>))}
-              </div>
-              <button
-                onClick={()=>setRetryTick(t=>t+1)}
-                style={{fontSize:10,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.05em",padding:"6px 14px",borderRadius:4,border:`1px solid ${T.divider}`,background:"#fff",color:T.text,cursor:"pointer"}}
-              >RETRY</button>
-            </div>
-          ) : (
-            <div>No profile data available.</div>
-          )}
+          No profile data available.
         </div>
       </Card>
     );
@@ -660,6 +611,89 @@ function CompanyProfileCard({symbol}:{symbol:string}){
           </div>
         </div>
       )}
+    </Card>
+  );
+}
+
+// ── TradierSpreadCard — bull call spread suggestion from Tradier options data ──
+// Renders as a full-width card below the Probability/Catalyst/Sentiment row.
+// Only shown when s.tradier_spread is present (composite ≥ 0.60 + p10 ≥ 0.65 +
+// IV rank ≤ 40 + ~90 DTE expiration available). Hidden entirely otherwise —
+// most stock pages will not show this card, and that's the right default.
+//
+// Data is produced by screener_v6.py Pass 2 via tradier_options.enrich_stock()
+// for the top-30 US symbols per scan. European symbols never populate this.
+function TradierSpreadCard({s}:{s:StockData}){
+  const sp=s.tradier_spread;
+  if(!sp) return null;
+
+  const ivr=s.tradier_iv_rank;
+  const iv=s.tradier_iv_current;
+  const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
+  const ivrLabel=ivr==null?"Not enough data":ivr<=30?"Cheap":ivr<=60?"Neutral":"Rich";
+
+  const netDebit=sp.net_debit;
+  const maxGain=sp.max_gain_per_contract;
+  const maxLoss=sp.max_loss_per_contract;
+  const rr=sp.risk_reward;
+  const rrColor=rr>=1.5?T.green:rr>=1.0?T.amber:T.red;
+
+  const metric=(label:string,value:string,sub?:string,color?:string)=>(
+    <div>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div style={{fontSize:14,color:color||T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
+      {sub&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{sub}</div>}
+    </div>
+  );
+
+  return(
+    <Card>
+      <SH title="Options Overlay — Bull Call Spread" icon={<Zap size={12}/>}
+        sub="Speculative · Tradier data · Phase 2 assessment"/>
+
+      {/* Context strip: why this was surfaced */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:"4px 14px",fontSize:11,fontFamily:T.mono,color:T.textMuted,marginBottom:14,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
+        <span><span style={{color:T.textLight}}>Why shown:</span> <span style={{color:T.text,fontWeight:600}}>composite {s.composite.toFixed(2)} ≥ 0.60 · p(+10%) {((s.hit_prob||0)*100).toFixed(0)}% ≥ 65%</span></span>
+        {iv!=null&&<span><span style={{color:T.textLight}}>IV:</span> <span style={{color:T.text,fontWeight:600}}>{(iv*100).toFixed(0)}%</span></span>}
+        {ivr!=null&&<span><span style={{color:T.textLight}}>IV rank:</span> <span style={{color:ivrColor,fontWeight:700}}>{ivr.toFixed(0)} ({ivrLabel})</span></span>}
+        {ivr==null&&<span style={{color:T.amber,fontWeight:600}}>⚠ {s.tradier_iv_samples||0}/20 days — IV rank unreliable</span>}
+      </div>
+
+      {/* Contract detail */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+        {metric("SPOT",`$${sp.spot.toFixed(2)}`)}
+        {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,`mid $${sp.long_mid.toFixed(2)}`,T.green)}
+        {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,`mid $${sp.short_mid.toFixed(2)}`,T.red)}
+        {metric("EXPIRATION",sp.expiration,`${sp.dte}d to expiry`)}
+        {metric("NET DEBIT",`$${netDebit.toFixed(2)}`,"per share (×100/contract)")}
+        {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${sp.break_even_move_pct.toFixed(1)}% from spot`)}
+      </div>
+
+      {/* Economics per contract */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14}}>
+        {metric("MAX GAIN",`+$${maxGain.toFixed(0)}`,"if stock ≥ short strike at expiration",T.green)}
+        {metric("MAX LOSS",`-$${maxLoss.toFixed(0)}`,"if stock ≤ long strike at expiration",T.red)}
+        {metric("RISK / REWARD",`${rr.toFixed(2)} : 1`,rr>=1.5?"favorable":rr>=1.0?"even":"unfavorable",rrColor)}
+      </div>
+
+      {/* IBKR execution template */}
+      <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
+        <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
+        <div>Order type: <b>Debit Spread (Bull Call)</b></div>
+        <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
+        <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
+        <div>Net: pay no more than <b>${netDebit.toFixed(2)}/spread</b> (×100 = ${(netDebit*100).toFixed(0)}/contract)</div>
+      </div>
+
+      {/* Sizing + caveats */}
+      <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
+        <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING &amp; CAVEATS</div>
+        This is a speculative overlay, not a primary position. Suggested sizing: <b>1-2% of portfolio per spread, max 5% total</b> in options overlay. Spreads can lose 100% of the debit if the stock closes below the long strike at expiration. Greeks and IV from Tradier (ORATS-sourced). Do not confuse with the cash-equity Phase 1 strategy.
+      </div>
+
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
+        Accumulating data through July 2026 review. Performance of this overlay will be evaluated separately from the cash-equity strategy. No automated execution — you place the order manually in IBKR.
+      </div>
     </Card>
   );
 }
@@ -907,16 +941,6 @@ export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
-  // ── Track C.3 FIX: live quote state ──
-  // Scan price from the GCS JSON can be 6+ hours stale. We fetch a fresh
-  // FMP quote-short on mount and, if it diverges from the scan price by
-  // >1%, show both values with timestamps so the header no longer conflicts
-  // with the live TradingView chart below it.
-  const[liveQuote,setLiveQuote]=useState<{price:number;ts:number}|null>(null);
-  // scanDate: ISO string from the scan JSON (bestDate of the regional files,
-  // or latest.json.scan_date fallback). Rendered as Europe/Amsterdam time
-  // next to the scan price so the CET badge is always correct.
-  const[scanDate,setScanDate]=useState<string>("");
 
   // v7.2: Search the 3 region files in order (sp500 → europe → global), not
   // `latest.json`. `latest.json` is overwritten by whichever scan ran most
@@ -945,35 +969,12 @@ export default function StockDetail(){
       if(!best){
         fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()).then(d=>{
           const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
-          setStock(f||null);
-          // Track C.3: capture the scan timestamp for the CET badge on the header.
-          setScanDate(d?.scan_date||"");
-          setLoading(false);
+          setStock(f||null); setLoading(false);
         }).catch(()=>{setStock(null); setLoading(false);});
       } else {
-        setStock(best);
-        setScanDate(bestDate);
-        setLoading(false);
+        setStock(best); setLoading(false);
       }
     }).catch(()=>{setStock(null); setLoading(false);});
-  },[symbol]);
-
-  // ── Track C.3 FIX: live quote fetch ──
-  // Fires once per symbol on mount. Single fmpFetch("quote-short") call.
-  // Failure falls through silently — we still show the scan price.
-  useEffect(()=>{
-    if(!symbol)return;
-    let cancelled=false;
-    const sym=symbol.toUpperCase();
-    fmpFetch("quote-short",{symbol:sym}).then(d=>{
-      if(cancelled)return;
-      const q=Array.isArray(d)?d[0]:null;
-      const price=q && typeof q.price==="number" ? q.price : null;
-      if(price!=null && isFinite(price) && price>0){
-        setLiveQuote({price,ts:Date.now()});
-      }
-    }).catch(()=>{});
-    return ()=>{cancelled=true;};
   },[symbol]);
   useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10})]).then(([inc,rat])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length)setRatios(rat as RatioYear[]);setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
 
@@ -995,32 +996,7 @@ export default function StockDetail(){
             <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
           </div>
-          {/* ── Track C.3 FIX: header price ── show live over scan when
-              they differ by >1%; fall back to scan-only when live fetch fails. */}
-          {(()=>{
-            const scanP=s.price;
-            const liveP=liveQuote?.price;
-            const diverged=liveP!=null && scanP>0 && Math.abs(liveP-scanP)/scanP>0.01;
-            const scanTs=scanDate?new Date(scanDate):null;
-            const scanTsLabel=scanTs?scanTs.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Amsterdam"})+" CET":"";
-            const primary=liveP!=null?liveP:scanP;
-            return (
-              <div style={{display:"flex",flexDirection:"column",gap:2}}>
-                <div style={{display:"flex",alignItems:"baseline",gap:12}}>
-                  <span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(primary,s.currency)}</span>
-                  <span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span>
-                  {liveP!=null && !diverged && (
-                    <span style={{fontSize:9,color:T.textLight,fontFamily:T.mono,letterSpacing:"0.05em"}}>LIVE</span>
-                  )}
-                </div>
-                {diverged && (
-                  <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,lineHeight:1.4}}>
-                    Scan: {fmtPrice(scanP,s.currency)}{scanTsLabel?` (${scanTsLabel})`:""} · Live: {fmtPrice(liveP!,s.currency)}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+          <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
@@ -1051,6 +1027,9 @@ export default function StockDetail(){
         <CatalystTimeline s={s}/>
         <SentimentCard s={s}/>
       </div>
+
+      {/* Tradier options overlay — full-width, self-hides when no spread */}
+      {s.tradier_spread&&<div style={{marginBottom:16}}><TradierSpreadCard s={s}/></div>}
 
       {/* Price + Composite dual-line chart (full-width so axes have room) */}
       <div style={{marginBottom:16}}>
