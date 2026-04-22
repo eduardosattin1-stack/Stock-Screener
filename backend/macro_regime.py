@@ -987,48 +987,52 @@ def fetch_macro_regime_v8(fmp_func, rate_limit_func=None) -> dict:
         vix_price = float(vix_data[0].get("price", 20))
         vix_sma200 = float(vix_data[0].get("priceAvg200", 0)) or None
 
+    # --- Load GCS cache up-front (used for BOTH fallback on failure AND
+    #     write-on-success). Prior v8 only wrote to cache; never read from
+    #     it on failure, which meant any transient FMP 404/empty response
+    #     caused the 5 sub-scores to default to 0.50 neutral with no recovery.
+    #     v7.2.2 Apr 22 — fixed by matching v7's fallback pattern. ---
+    cache = _load_macro_cache()
+
+    def _fetch_or_cache(name: str, from_date: str) -> list:
+        """Fetch fresh monthly series; fall back to GCS cache if empty.
+        Updates cache in-place on successful fetch so the outer _save_macro_cache
+        call at the end persists only the fresh values.
+        """
+        vals = _fetch_monthly_series(fmp_func, name, from_date, today_str)
+        sleep()
+        if vals:
+            cache[name] = [[d, v] for d, v in vals]  # refresh cache
+            return vals
+        cached = cache.get(name) or []
+        if cached:
+            log.warning(
+                f"  {name}: FMP returned empty, using GCS last-known-good "
+                f"({len(cached)} rows)"
+            )
+            return [(d, v) for d, v in cached]
+        log.warning(f"  {name}: FMP empty AND GCS cache empty — neutral defaults will apply")
+        return []
+
     # --- CPI (v7 retained) ---
     cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
-    cpi_values = _fetch_monthly_series(fmp_func, "CPI", cpi_from, today_str)
-    sleep()
+    cpi_values = _fetch_or_cache("CPI", cpi_from)
 
     # --- GDP (v7 retained) ---
     gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
-    gdp_values = _fetch_monthly_series(fmp_func, "GDP", gdp_from, today_str)
-    sleep()
+    gdp_values = _fetch_or_cache("GDP", gdp_from)
 
     # --- NEW v8 series ---
     unemp_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
-    unemp_values = _fetch_monthly_series(
-        fmp_func, "unemploymentRate", unemp_from, today_str
-    )
-    sleep()
+    unemp_values = _fetch_or_cache("unemploymentRate", unemp_from)
 
     sent_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
-    sent_values = _fetch_monthly_series(
-        fmp_func, "consumerSentiment", sent_from, today_str
-    )
-    sleep()
+    sent_values = _fetch_or_cache("consumerSentiment", sent_from)
 
     rec_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
-    rec_values = _fetch_monthly_series(
-        fmp_func, "smoothedUSRecessionProbabilities", rec_from, today_str
-    )
-    sleep()
+    rec_values = _fetch_or_cache("smoothedUSRecessionProbabilities", rec_from)
 
-    # Persist any newly-fetched values to GCS last-known-good cache so the
-    # v7 fallback still has fresh data (v7 cache is shared).
-    cache = _load_macro_cache()
-    if cpi_values:
-        cache["CPI"] = [[d, v] for d, v in cpi_values]
-    if gdp_values:
-        cache["GDP"] = [[d, v] for d, v in gdp_values]
-    if unemp_values:
-        cache["unemploymentRate"] = [[d, v] for d, v in unemp_values]
-    if sent_values:
-        cache["consumerSentiment"] = [[d, v] for d, v in sent_values]
-    if rec_values:
-        cache["smoothedUSRecessionProbabilities"] = [[d, v] for d, v in rec_values]
+    # Persist the cache (updated in-place by successful fetches above)
     try:
         _save_macro_cache(cache)
     except Exception:
