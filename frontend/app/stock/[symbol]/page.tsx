@@ -753,7 +753,7 @@ function TradierOptionsCard({s}:{s:StockData}){
 
       {/* If no spread but has IV, explain why */}
       {!hasSpread&&hasIV&&(
-        <div style={{padding:"8px 12px",borderRadius:5,background:T.bgSurface||"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
+        <div style={{padding:"8px 12px",borderRadius:5,background:"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
           <span style={{fontWeight:600,color:T.text,marginRight:6}}>No spread suggestion:</span>
           {gateFail.length>0?gateFail.join(" · "):"all gates clear (spread will appear in next scan)"}
         </div>
