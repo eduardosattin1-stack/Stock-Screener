@@ -6,7 +6,7 @@ Runs on Cloud Run / Cloud Shell alongside screener_v6.py
 
 v7.1 additions (3 new features, all verified via MCP):
   - Sector momentum: historical-sector-performance (with exchange param for EU)
-  - Congressional trading: senate-trading + house-trading (prefetched, filtered by disclosureDate)
+  - Congressional trading: senate-trades + house-trades (prefetched, filtered by disclosureDate)
   - Institutional flow v2: positions-summary (13F net new, put/call, ownership change)
 
 13 factors total: technical 35% | quality 14% | upside 10% | proximity 7% |
@@ -123,7 +123,7 @@ if not HAVE_V6:
 
     REGIONS = {
         "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
-        "sp500": [("NASDAQ", None, 10_000_000_000, 250), ("NYSE", None, 10_000_000_000, 250)],
+        "sp500": [("NASDAQ", None, 1_000_000_000, 500), ("NYSE", None, 1_000_000_000, 500)],
         "europe": [
             ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
             ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
@@ -565,7 +565,7 @@ def prefetch_congressional(symbols):
             log.info(f"    Congressional: {i+1}/{len(symbols)} ({fetched} with data)")
         
         all_trades = []
-        for endpoint in ("senate-trading", "house-trading"):
+        for endpoint in ("senate-trades", "house-trades"):
             data = fmp(endpoint, {"symbol": sym})
             if data:
                 for t in data:
