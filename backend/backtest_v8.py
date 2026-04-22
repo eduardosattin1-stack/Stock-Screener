@@ -157,11 +157,13 @@ SLIP_NEXT_VWAP = "next_vwap"  # fill at VWAP approx of D+1 (pessimistic)
 class StrategyConfig:
     """Everything a sweep varies. Treat as immutable per simulation run."""
     # Entry gates
-    composite_floor: float = 0.80
-    strong_buy_threshold: float = 0.85
-    buy_threshold: float = 0.70
-    watch_threshold: float = 0.55
-    sell_threshold: float = 0.40
+    # v8.2: defaults lowered from v7.x (0.80/0.85/0.70/0.55/0.40) to match the
+    # actual composite_raw distribution observed in 638K-record v8.1 scan.
+    composite_floor: float = 0.45
+    strong_buy_threshold: float = 0.65
+    buy_threshold: float = 0.45
+    watch_threshold: float = 0.35
+    sell_threshold: float = 0.25
     # Coverage penalty (v8.1)
     # composite_effective = composite_raw * (coverage_pct ** coverage_alpha).
     #   alpha=0.0 -> no penalty (control)
@@ -1731,21 +1733,23 @@ def alpha_vs_spy(sim: SimulationResult, start: str, end: str) -> float:
 
 # Full parameter space per spec §3.3.
 SWEEP_SPACE = {
-    # v8.1: grids widened downward — the coverage penalty shifts composites
-    # left, so the pre-penalty thresholds used by v7.x were too strict.
-    # Keep the old high values so α=0.0 (control) configs can still find them.
-    "composite_floor":      [0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85],
+    # v8.2: Thresholds calibrated to the ACTUAL composite_raw distribution
+    # observed in the first real v8.1 scan (638K records, 2022–2026,
+    # sp500_nasdaq, $500M cap). Empirical percentiles:
+    #   p50=0.549  p75=0.639  p90=0.701  p99=0.790
+    # After coverage penalty (α≈0.7, cov≈0.8) scores shift ~10-15pp lower.
+    # Old v7.x grid centered at 0.70-0.90 produced ZERO trades across 800
+    # configs (logs showed all CAGR=0). Grid now centered at 0.35-0.70.
+    # α=0.0 control is kept in coverage_alpha so "penalty=off" remains testable.
+    "composite_floor":      [0.35, 0.40, 0.45, 0.50, 0.55, 0.60],
     "stop_loss":            [-0.08, -0.10, -0.12, -0.15, -0.20],
     "take_profit":          [0.15, 0.20, 0.25, 0.30],
     "time_stop_days":       [45, 60, 90, 120],
     "target_positions":     [3, 5, 7, 10],
-    "strong_buy_threshold": [0.65, 0.70, 0.75, 0.80, 0.85, 0.90],
-    "buy_threshold":        [0.50, 0.55, 0.60, 0.65, 0.70, 0.75],
-    "sell_threshold":       [0.25, 0.30, 0.35, 0.40, 0.45],
+    "strong_buy_threshold": [0.50, 0.55, 0.60, 0.65, 0.70, 0.75],
+    "buy_threshold":        [0.35, 0.40, 0.45, 0.50, 0.55, 0.60],
+    "sell_threshold":       [0.15, 0.20, 0.25, 0.30, 0.35, 0.40],
     "weighting":            ["equal", "composite-linear", "composite-squared"],
-    # v8.1: coverage penalty exponent. 0.0 = no penalty (control, keeps old
-    # behavior). 0.7 = live screener v7.3 default. 1.5 = aggressive. Include
-    # 0.0 so the sweep can tell us whether the penalty is a net positive.
     "coverage_alpha":       [0.0, 0.5, 0.7, 1.0, 1.5],
 }
 
@@ -1773,9 +1777,9 @@ def generate_sweep_configs(baseline: StrategyConfig,
 
     # Add the anchor corners: extreme but plausible.
     corners = [
-        replace(baseline, composite_floor=0.70, target_positions=10,
+        replace(baseline, composite_floor=0.35, target_positions=10,
                 config_id="corner_broad"),
-        replace(baseline, composite_floor=0.85, target_positions=3,
+        replace(baseline, composite_floor=0.60, target_positions=3,
                 config_id="corner_concentrated"),
         replace(baseline, take_profit=0.15, stop_loss=-0.08,
                 time_stop_days=45, config_id="corner_tight"),
@@ -2250,8 +2254,13 @@ def _resolve_universe(universe_arg: str) -> List[str]:
     if not HAVE_V7:
         raise RuntimeError("Universe resolution requires backtest_full import.")
     regions = {
-        "sp500_nasdaq": ["sp500"],
+        # v8.1: fixed — was previously ["sp500"] placeholder, now actually
+        # combines both. _get_symbols_v7 dedupes across calls so the overlap
+        # between NYSE-listed SP500 names and NASDAQ-listed SP500 names is
+        # handled transparently.
+        "sp500_nasdaq": ["sp500", "nasdaq"],
         "sp500": ["sp500"],
+        "nasdaq": ["nasdaq"],
         "nasdaq100": ["nasdaq100"],
         "europe": ["europe"],
         "global": ["global"],
