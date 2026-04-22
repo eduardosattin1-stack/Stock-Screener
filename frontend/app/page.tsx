@@ -6,8 +6,6 @@ const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
 const REGIONS = [
   { key: "sp500", label: "S&P 500" },
-  { key: "europe", label: "Europe" },
-  { key: "global", label: "Rest of World" },
 ];
 function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
 const US_EXCHANGES = new Set(["NASDAQ","NYSE","AMEX","NYSEArca","PNK","OTC"]);
@@ -424,7 +422,7 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 export default function Dashboard(){
   const[data,setData]=useState<ScanData|null>(null);const[loading,setLoading]=useState(true);
   const[sortKey,setSortKey]=useState<keyof StockData>("composite");const[sortDir,setSortDir]=useState<"asc"|"desc">("desc");
-  const[filter,setFilter]=useState("ALL");const[search,setSearch]=useState("");const[classFilter,setClassFilter]=useState("ALL");
+  const[filter,setFilter]=useState("ALL");const[search,setSearch]=useState("");const[classFilter,setClassFilter]=useState("ALL");const[probMin,setProbMin]=useState(0); // v7.2.2: min P(+10%) filter, 0-100
   const[expanded,setExpanded]=useState<Record<string,boolean>>({});
   const[region,setRegion]=useState("sp500");
 
@@ -479,10 +477,11 @@ export default function Dashboard(){
     let list=[...regionStocks];
     if(filter!=="ALL") list=list.filter(s=>s.signal===filter);
     if(classFilter!=="ALL") list=list.filter(s=>s.classification===classFilter);
+    if(probMin>0) list=list.filter(s=>(s.hit_prob??0)*100>=probMin); // v7.2.2: min p(+10%)
     if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q)||(s.company_name||"").toUpperCase().includes(q));}
     list.sort((a,b)=>{const av=(a[sortKey]as number)??0,bv=(b[sortKey]as number)??0;return sortDir==="desc"?bv-av:av-bv;});
     return list;
-  },[regionStocks,sortKey,sortDir,filter,classFilter,search]);
+  },[regionStocks,sortKey,sortDir,filter,classFilter,search,probMin]);
 
   const toggleSort=(key:keyof StockData)=>{if(sortKey===key)setSortDir(d=>d==="desc"?"asc":"desc");else{setSortKey(key);setSortDir("desc");}};
 
@@ -494,7 +493,19 @@ export default function Dashboard(){
   const sum=region!=="sp500"
     ?{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length}
     :(data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0});
-  const scanDate=data?.scan_date?new Date(data.scan_date).toLocaleString():"—";
+  // Format scan timestamp in Amsterdam time with explicit CET/CEST label.
+  // v7.2.2 Apr 22 — user requested explicit timezone indicator. timeZone option
+  // makes Chrome render the date in Amsterdam regardless of viewer's locale;
+  // timeZoneName: "short" emits "CET" in winter and "CEST" in summer.
+  const scanDate = data?.scan_date
+    ? new Date(data.scan_date).toLocaleString("en-GB", {
+        timeZone: "Europe/Amsterdam",
+        day: "2-digit", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+        timeZoneName: "short",
+        hour12: false,
+      })
+    : "—";
   const classifications=[...new Set(regionStocks.map(s=>s.classification).filter(Boolean))].sort();
 
   const hs=(key:string,align:"left"|"right"|"center"="right"):React.CSSProperties=>({
@@ -559,6 +570,17 @@ export default function Dashboard(){
           <select value={classFilter} onChange={e=>setClassFilter(e.target.value)} style={{padding:"7px 12px 7px 30px",fontSize:11,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none",cursor:"pointer",appearance:"auto"}}>
             <option value="ALL">All Classifications</option>
             {classifications.map(c=><option key={c} value={c}>{c?.replace("_"," ")}</option>)}
+          </select>
+        </div>
+        <div style={{position:"relative"}} title="Filter by minimum P(+10% in 60d) — ML-predicted probability of the stock hitting +10% within 60 days.">
+          <select value={probMin} onChange={e=>setProbMin(Number(e.target.value))} style={{padding:"7px 12px 7px 10px",fontSize:11,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:probMin>0?"var(--green-light,#e8f5ee)":"var(--bg)",color:probMin>0?"var(--green,#2d7a4f)":"var(--text)",outline:"none",cursor:"pointer",appearance:"auto",fontWeight:probMin>0?700:400}}>
+            <option value={0}>P(+10%) — Any</option>
+            <option value={40}>P(+10%) ≥ 40%</option>
+            <option value={50}>P(+10%) ≥ 50%</option>
+            <option value={60}>P(+10%) ≥ 60%</option>
+            <option value={65}>P(+10%) ≥ 65% (option gate)</option>
+            <option value={70}>P(+10%) ≥ 70%</option>
+            <option value={80}>P(+10%) ≥ 80%</option>
           </select>
         </div>
       </div>
