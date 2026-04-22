@@ -2318,6 +2318,16 @@ def cmd_simulate(args) -> None:
 
 def cmd_sweep(args) -> None:
     cache = load_scan_cache(args.scan_cache)
+    # v8.2 fix: the simulator needs _CHART_CACHE populated for mark-to-market
+    # and intraday SL/TP/time-stop checks. cmd_scan loaded charts as a side
+    # effect of HistoricalDataProvider.load_all_charts(); sweep runs in a
+    # fresh container so we must reload them here, otherwise _walk_forward_mtm
+    # exits early and every config produces an empty equity curve → CAGR=0.
+    universe = sorted({r["symbol"] for rows in cache.values() for r in rows})
+    log.info("Sweep: loading %d charts for MTM / intraday exits", len(universe))
+    dp = HistoricalDataProvider(universe, args.train_from, args.train_to)
+    dp.load_all_charts()
+
     baseline = StrategyConfig()
     configs = generate_sweep_configs(baseline, n_configs=args.n_configs, seed=args.seed)
     log.info("Running sweep: %d configs on %s → %s",
@@ -2332,6 +2342,13 @@ def cmd_sweep(args) -> None:
 
 def cmd_walkforward(args) -> None:
     cache = load_scan_cache(args.scan_cache)
+    # v8.2 fix: same as cmd_sweep — the simulator needs _CHART_CACHE for MTM
+    # and intraday exits. Load charts spanning both train and OOS windows.
+    universe = sorted({r["symbol"] for rows in cache.values() for r in rows})
+    log.info("Walkforward: loading %d charts (train+OOS windows)", len(universe))
+    dp = HistoricalDataProvider(universe, args.train_from, args.oos_to)
+    dp.load_all_charts()
+
     # Reload training configs from either a prior sweep CSV or re-run sweep.
     if args.sweep_results and os.path.exists(args.sweep_results):
         train_results = _reload_sweep_results(args.sweep_results, cache,
