@@ -41,6 +41,16 @@ interface StockData{
     break_even_price:number;break_even_move_pct:number;risk_reward:number;
     description:string;
   }|null;
+  // v7.2.3 expanded Tradier signals
+  tradier_pc_ratio?:number|null;
+  tradier_iv_30d?:number|null;
+  tradier_iv_60d?:number|null;
+  tradier_iv_90d?:number|null;
+  tradier_term_structure?:string|null;
+  tradier_implied_earnings_move?:{
+    pct:number;call_mid:number;put_mid:number;straddle:number;strike:number;
+    expiration:string;earnings_date:string;
+  }|null;
 }
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
@@ -627,7 +637,8 @@ function CompanyProfileCard({symbol}:{symbol:string}){
 function TradierOptionsCard({s}:{s:StockData}){
   const hasIV=s.tradier_iv_current!=null||s.tradier_iv_rank!=null;
   const hasSpread=s.tradier_spread!=null;
-  if(!hasIV&&!hasSpread) return null;
+  const hasPositioning=s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null;
+  if(!hasIV&&!hasSpread&&!hasPositioning) return null;
 
   const ivr=s.tradier_iv_rank;
   const iv=s.tradier_iv_current;
@@ -656,7 +667,7 @@ function TradierOptionsCard({s}:{s:StockData}){
         sub={hasSpread?"Speculative overlay · bull call spread suggested":"IV data only · no spread gate cleared"}/>
 
       {/* IV panel — always visible when Tradier has data */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:hasSpread?14:4,paddingBottom:hasSpread?14:0,borderBottom:hasSpread?`1px solid ${T.divider}`:"none"}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         {metric(
           "CURRENT IV",
           iv!=null?`${(iv*100).toFixed(0)}%`:"—",
@@ -674,6 +685,71 @@ function TradierOptionsCard({s}:{s:StockData}){
           samples<20?`${20-samples} more days until meaningful rank`:"60-day rolling window"
         )}
       </div>
+
+      {/* v7.2.3: Market positioning strip — PC ratio, term structure, earnings move */}
+      {(s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null)&&(
+        <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>MARKET POSITIONING</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14}}>
+
+            {/* Put/Call volume ratio */}
+            <div>
+              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>P/C VOL RATIO</div>
+              {s.tradier_pc_ratio!=null?(()=>{
+                const pc=s.tradier_pc_ratio;
+                const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";
+                const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;
+                return(<>
+                  <div style={{fontSize:16,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div>
+                  <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div>
+                </>);
+              })():(
+                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
+              )}
+            </div>
+
+            {/* IV term structure */}
+            <div>
+              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IV TERM STRUCTURE</div>
+              {(s.tradier_iv_30d!=null||s.tradier_iv_60d!=null||s.tradier_iv_90d!=null)?(()=>{
+                const ts=s.tradier_term_structure;
+                const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";
+                const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;
+                const iv30=s.tradier_iv_30d,iv60=s.tradier_iv_60d,iv90=s.tradier_iv_90d;
+                return(<>
+                  <div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}>
+                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span>
+                    <span style={{fontSize:9,color:T.textLight}}>→</span>
+                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span>
+                    <span style={{fontSize:9,color:T.textLight}}>→</span>
+                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span>
+                  </div>
+                  <div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div>
+                  <div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div>
+                </>);
+              })():(
+                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
+              )}
+            </div>
+
+            {/* Implied earnings move */}
+            <div>
+              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IMPLIED EARNINGS MOVE</div>
+              {s.tradier_implied_earnings_move?(()=>{
+                const iem=s.tradier_implied_earnings_move;
+                return(<>
+                  <div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div>
+                  <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div>
+                </>);
+              })():(<>
+                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
+                <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div>
+              </>)}
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* If no spread but has IV, explain why */}
       {!hasSpread&&hasIV&&(
@@ -1065,7 +1141,7 @@ export default function StockDetail(){
       </div>
 
       {/* Tradier options card — IV always when available, spread when gates pass */}
-      {(s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
+      {(s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
       {/* Price + Composite dual-line chart (full-width so axes have room) */}
       <div style={{marginBottom:16}}>
