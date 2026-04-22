@@ -42,6 +42,17 @@ interface StockData {
   factor_coverage?:number;
   factors_evaluated?:string[];
   factors_missing?:string[];
+  // v7.2.1 Tradier options enrichment (top-30 US stocks only)
+  tradier_iv_current?:number|null;
+  tradier_iv_rank?:number|null;
+  tradier_iv_samples?:number;
+  tradier_spread?:{
+    strategy:string;spot:number;expiration:string;dte:number;
+    long_strike:number;short_strike:number;long_mid:number;short_mid:number;
+    net_debit:number;max_gain_per_contract:number;max_loss_per_contract:number;
+    break_even_price:number;break_even_move_pct:number;risk_reward:number;
+    description:string;
+  }|null;
   company_name?:string;
   sector?:string;
   industry?:string;
@@ -322,12 +333,13 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
         <td style={{padding:"10px 8px"}}><MoSBar value={s.margin_of_safety}/></td>
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}}>{p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ML</span>}</td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>{(()=>{const ivr=s.tradier_iv_rank;const iv=s.tradier_iv_current;const samples=s.tradier_iv_samples||0;if(ivr==null&&iv==null)return<span style={{color:"var(--text-light,#9ca3af)"}} title="Top-30 only; 20+ days of IV history needed for rank">—</span>;if(ivr==null&&iv!=null){return<div title={`Current IV ${(iv*100).toFixed(0)}% · ${samples}/20 samples for rank`}><span style={{color:"var(--text-muted,#6b7280)",fontWeight:600}}>{(iv*100).toFixed(0)}%</span><div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{samples}/20</div></div>;}const rankColor=ivr!<=30?"#10b981":ivr!<=60?"#d97706":"#ef4444";return<div title={`IV Rank ${ivr!.toFixed(0)} (0=cheap, 100=rich) · Current IV ${iv?(iv*100).toFixed(0):"—"}% · ${samples}d samples`}><span style={{color:rankColor,fontWeight:700}}>{ivr!.toFixed(0)}</span>{iv!=null&&<div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{(iv*100).toFixed(0)}% IV</div>}</div>;})()}</td>
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 6px",fontSize:11}}><span style={{color:"#10b981",fontWeight:600}}>+{probFallback.gain}%</span><span style={{color:"var(--text-light,#9ca3af)",margin:"0 2px"}}>/</span><span style={{color:"#ef4444",fontWeight:600}}>{probFallback.dd}%</span></td>
         <td style={{padding:"10px 8px",textAlign:"center"}}>{s.insider_score!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:s.insider_score>0.6?"#10b981":s.insider_score>0.4?"var(--text-muted)":"#ef4444"}}>{(s.insider_net_buys??0)>0?"↑":(s.insider_net_buys??0)<0?"↓":"→"} {(s.insider_score*100).toFixed(0)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
         <td style={{padding:"10px 8px"}}>{s.transcript_sentiment!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",color:s.transcript_sentiment>0.3?"#10b981":s.transcript_sentiment>-0.1?"var(--text-muted)":"#ef4444"}}>{s.transcript_sentiment>0.3?"😊":s.transcript_sentiment>-0.1?"😐":"😟"} {s.transcript_sentiment>0?"+":""}{s.transcript_sentiment.toFixed(2)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={13} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -566,6 +578,7 @@ export default function Dashboard(){
               <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")}>MoS</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")}>UPSIDE</th>
               <th style={hs("composite","center")}>P(+10%)</th>
+              <th style={{...hs("composite","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in the trailing 60-day range. Lower = options cheaper.">IVR</th>
               <th style={hs("composite","right")}>GAIN/DD</th>
               <th style={hs("insider_score","center")}>INSIDER</th>
               <th style={hs("transcript_sentiment","left")}>TRNSCRPT</th>
