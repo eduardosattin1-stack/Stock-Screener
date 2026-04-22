@@ -21,7 +21,7 @@ STORAGE (GCS)
   options/latest_suggestions.json     today's list of candidate spreads
 
 PHASE 2 ENTRY GATES (applied before suggesting a spread):
-  composite   ≥ 0.85
+  composite   ≥ 0.60
   hit_prob    ≥ 0.65  (p10 from ML model)
   IV rank     ≤ 40    (only enter when premium is cheap relative to 60d history)
   position    already open in cash equity (spread = overlay, not standalone)
@@ -59,7 +59,9 @@ IV_HISTORY_PREFIX = "options/iv_history"
 SUGGESTIONS_PATH = "options/latest_suggestions.json"
 
 # Phase 2 entry gates — tune carefully with live data
-COMPOSITE_THRESHOLD = 0.85
+COMPOSITE_THRESHOLD = 0.60  # Lowered 2026-04-21 from 0.85 — wider overlay universe,
+                            # relies on hit_prob + IV rank as primary filters.
+                            # Reassess in July 2026 with live data.
 HIT_PROB_THRESHOLD = 0.65
 IV_RANK_MAX = 40        # only enter when IV is in bottom 40% of 60-day range
 DTE_TARGET = 90         # days to expiration — matches backtest horizon + buffer
@@ -423,6 +425,171 @@ def build_spread_suggestion(symbol: str, composite: float, hit_prob: float) -> O
             f"break-even +{econ['break_even_move_pct']:.1f}%"
         ),
     }
+
+
+# ---------------------------------------------------------------------------
+# Screener Pass-2 enrichment — called for every top-30 symbol during scan
+# ---------------------------------------------------------------------------
+def enrich_stock(symbol: str, composite: float, hit_prob: float) -> dict:
+    """
+    Called by screener_v6.py Pass 2 for each top-30 stock.
+    Returns a compact dict that gets merged into the stock's scan JSON:
+
+        {
+          "iv_current": 0.38 | None,        # ATM 30-day IV (decimal)
+          "iv_rank": 42.0 | None,           # 0-100, None if <20 samples
+          "iv_samples": 25,                 # days of IV history accumulated
+          "spread": {...} | None            # full spread suggestion, None if gated
+        }
+
+    Frontend reads iv_current + iv_rank for the screener row columns.
+    Frontend reads spread for the TradierSpreadCard on the stock page.
+
+    Always updates IV history (one sample per call per symbol per day),
+    so IV rank converges regardless of whether the stock passes spread gates.
+
+    Zero side effects on GCS other than IV history append.
+    """
+    result = {
+        "iv_current": None,
+        "iv_rank": None,
+        "iv_samples": 0,
+        "spread": None,
+    }
+
+    if not TRADIER_TOKEN:
+        return result
+
+    # Step 1: Get spot from Tradier quote. If Tradier has no data for this
+    # symbol (illiquid, OTC, foreign listing), return empty and move on.
+    try:
+        quote = get_quote(symbol)
+    except Exception as e:
+        log.debug(f"Tradier quote failed for {symbol}: {e}")
+        return result
+    if not quote or not quote.get("last"):
+        return result
+    spot = float(quote["last"])
+    if spot <= 0:
+        return result
+
+    # Step 2: Get expirations. Pick the ~90-DTE one we'll use for the chain.
+    try:
+        expirations = get_expirations(symbol)
+    except Exception as e:
+        log.debug(f"Tradier expirations failed for {symbol}: {e}")
+        return result
+    if not expirations:
+        return result
+    chosen_exp = _pick_expiration(expirations)
+
+    # If no suitable expiration (~90 DTE window), we can't build a spread.
+    # But we can still fetch a nearer-dated chain to pull IV for the IV rank.
+    iv_exp = chosen_exp
+    if not iv_exp:
+        # Fall back to the nearest future expiration that's >= 30 DTE
+        today = datetime.now().date()
+        valid = []
+        for exp in expirations:
+            try:
+                d = datetime.strptime(exp, "%Y-%m-%d").date()
+                if (d - today).days >= 30:
+                    valid.append((exp, (d - today).days))
+            except Exception:
+                continue
+        if valid:
+            valid.sort(key=lambda x: x[1])
+            iv_exp = valid[0][0]
+
+    if not iv_exp:
+        return result  # no usable expiration at all
+
+    # Step 3: Get chain (with Greeks/IV)
+    try:
+        chain = get_chain(symbol, iv_exp)
+    except Exception as e:
+        log.debug(f"Tradier chain failed for {symbol}: {e}")
+        return result
+    if not chain:
+        return result
+
+    # Step 4: Extract ATM IV, update rolling history, compute IV rank
+    iv_today = _extract_atm_iv(chain, spot)
+    if iv_today:
+        try:
+            update_iv_history(symbol, iv_today)
+        except Exception as e:
+            log.debug(f"IV history write failed for {symbol}: {e}")
+
+    iv_data = compute_iv_rank(symbol)
+    if iv_data:
+        result["iv_current"] = iv_data["current_iv"]
+        result["iv_rank"] = iv_data["iv_rank"]
+        result["iv_samples"] = iv_data["samples"]
+    elif iv_today:
+        # Not enough samples for rank yet — but we have today's IV, show it
+        result["iv_current"] = round(iv_today, 4)
+        # Count samples from the history file directly
+        try:
+            path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
+            history = _gcs_read(path, [])
+            result["iv_samples"] = len(history) if isinstance(history, list) else 0
+        except Exception:
+            result["iv_samples"] = 1
+
+    # Step 5: Spread suggestion — only build if gates pass and we have the
+    # ~90-DTE expiration (iv_exp may have fallen back to something shorter).
+    if (chosen_exp is None
+            or composite < COMPOSITE_THRESHOLD
+            or hit_prob < HIT_PROB_THRESHOLD):
+        return result
+
+    # IV-rank gate only applies if we have enough samples
+    if (result["iv_rank"] is not None
+            and result["iv_samples"] >= MIN_IV_SAMPLES_FOR_RANK
+            and result["iv_rank"] > IV_RANK_MAX):
+        return result
+
+    # If iv_exp != chosen_exp, we need the ~90-DTE chain for the spread
+    if chosen_exp != iv_exp:
+        try:
+            chain = get_chain(symbol, chosen_exp)
+        except Exception:
+            return result
+        if not chain:
+            return result
+
+    strikes = _pick_strikes(chain, spot)
+    if not strikes:
+        return result
+
+    econ = _spread_economics(strikes["long"], strikes["short"], spot)
+    today = datetime.now().date()
+    dte = (datetime.strptime(chosen_exp, "%Y-%m-%d").date() - today).days
+
+    result["spread"] = {
+        "strategy": "Bull call spread",
+        "spot": round(spot, 2),
+        "expiration": chosen_exp,
+        "dte": dte,
+        "long_strike": econ["long_strike"],
+        "short_strike": econ["short_strike"],
+        "long_mid": econ["long_mid"],
+        "short_mid": econ["short_mid"],
+        "net_debit": econ["net_debit"],
+        "max_gain_per_contract": econ["max_gain_per_contract"],
+        "max_loss_per_contract": econ["max_loss_per_contract"],
+        "break_even_price": econ["break_even_price"],
+        "break_even_move_pct": econ["break_even_move_pct"],
+        "risk_reward": econ["risk_reward"],
+        "description": (
+            f"Long {strikes['long']['strike']}C / Short {strikes['short']['strike']}C @ "
+            f"{chosen_exp} — debit ${econ['net_debit']:.2f}, max gain "
+            f"${econ['max_gain_per_contract']:.0f}/contract ({econ['risk_reward']:.1f}:1 R/R), "
+            f"break-even +{econ['break_even_move_pct']:.1f}%"
+        ),
+    }
+    return result
 
 
 # ---------------------------------------------------------------------------
