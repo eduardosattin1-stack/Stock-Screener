@@ -39,9 +39,15 @@ import requests
 try:
     from tradier_options import enrich_stock as tradier_enrich_stock
     TRADIER_AVAILABLE = True
-except Exception:
+    import logging as _tradier_log
+    _tradier_log.getLogger(__name__).info("Tradier options module imported — enrichment enabled")
+except Exception as _tradier_e:
     tradier_enrich_stock = None
     TRADIER_AVAILABLE = False
+    import logging as _tradier_log
+    _tradier_log.getLogger(__name__).warning(
+        f"Tradier options module FAILED to import — enrichment disabled. Error: {_tradier_e}"
+    )
 
 # Macro regime overlay (imported after logging init below)
 HAS_MACRO = False
@@ -362,6 +368,18 @@ class Stock:
     tradier_iv_rank: float = None
     tradier_iv_samples: int = 0
     tradier_spread: dict = None
+
+    # v7.2.3 Apr 22: expanded Tradier signals (populated for ALL US stocks mkt cap ≥ $1B)
+    # tradier_pc_ratio:             put/call VOLUME ratio across chain. <0.5 = bullish, >2 = fear
+    # tradier_iv_30d/60d/90d:       ATM IV at each point in term structure
+    # tradier_term_structure:       "backwardation" (near-term event priced) | "contango" (calm) | "flat"
+    # tradier_implied_earnings_move: dict with pct, straddle, call_mid, put_mid — for upcoming earnings
+    tradier_pc_ratio: float = None
+    tradier_iv_30d: float = None
+    tradier_iv_60d: float = None
+    tradier_iv_90d: float = None
+    tradier_term_structure: str = None
+    tradier_implied_earnings_move: dict = None
 
 # ---------------------------------------------------------------------------
 # 1. Stock Discovery (unchanged from v5)
@@ -2475,6 +2493,19 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
     top_n = min(enrich_top_n, len(pass1_stocks))
     log.info(f"Pass 2: Enriching top {top_n} with transcripts + institutional flows")
 
+    # v7.2.2 Apr 22: log Tradier enrichment status once so we can diagnose from logs
+    if TRADIER_AVAILABLE:
+        _has_token = bool(os.environ.get("TRADIER_TOKEN"))
+        _sandbox = os.environ.get("TRADIER_SANDBOX") == "1"
+        log.info(
+            f"Pass 2 Tradier status: module=loaded, token={'SET' if _has_token else 'MISSING'}, "
+            f"mode={'SANDBOX' if _sandbox else 'PRODUCTION'}"
+        )
+        if not _has_token:
+            log.warning("  TRADIER_TOKEN env var is NOT set — Tradier enrichment will return empty for all symbols")
+    else:
+        log.warning("Pass 2 Tradier status: module=NOT LOADED — all symbols will have empty Tradier fields")
+
     for i, s in enumerate(pass1_stocks[:top_n]):
         if (i + 1) % 5 == 0:
             log.info(f"  Pass 2: {i+1}/{top_n}")
@@ -2531,22 +2562,6 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         s.factors_evaluated = coverage["evaluated"]
         s.factors_missing = coverage["missing"]
 
-        # v7.2.1: Tradier options enrichment.
-        # Only for US-listed symbols (no dot-suffix like .DE/.L/.PA).
-        # Runs AFTER composite/signal are final so we can gate on them.
-        # Wrapped in try/except — one flaky Tradier call must not break the scan.
-        if "." not in s.symbol and TRADIER_AVAILABLE:
-            try:
-                tradier_data = tradier_enrich_stock(
-                    s.symbol, s.composite, s.hit_prob
-                )
-                s.tradier_iv_current = tradier_data.get("iv_current")
-                s.tradier_iv_rank = tradier_data.get("iv_rank")
-                s.tradier_iv_samples = tradier_data.get("iv_samples", 0)
-                s.tradier_spread = tradier_data.get("spread")
-            except Exception as e:
-                log.debug(f"Tradier enrichment failed for {s.symbol}: {e}")
-
     # Clean up raw data
     for s in pass1_stocks:
         if hasattr(s, '_raw'):
@@ -2562,6 +2577,85 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             s.hit_prob = predict_hit_prob(s)
         top_probs = [(s.symbol, s.hit_prob) for s in pass1_stocks[:5]]
         log.info(f"  Top 5 hit_prob: {top_probs}")
+
+    # ═══════════════ TRADIER: Universe-wide enrichment ═══════════════
+    # v7.2.3 Apr 22: expanded from top-30 / hit_prob≥0.65 to ALL US stocks
+    # with market cap > $1B. Captures IV, IV rank, PC volume ratio, IV term
+    # structure, and implied earnings move. Spread suggestions still gated
+    # on composite ≥ 0.60 + hit_prob ≥ 0.65 inside enrich_stock().
+    #
+    # Sequential to respect Tradier's 120/min rate limit.
+    # ~3000-4000 calls per scan over ~30 min.
+    if TRADIER_AVAILABLE:
+        MIN_MKT_CAP_FOR_TRADIER = 1_000_000_000  # $1B
+        tradier_candidates = [
+            s for s in pass1_stocks
+            if "." not in s.symbol
+            and (s.market_cap or 0) >= MIN_MKT_CAP_FOR_TRADIER
+        ]
+        log.info(
+            f"Tradier universe pass: enriching {len(tradier_candidates)} US stocks "
+            f"with mkt cap ≥ $1B. Est. ~{len(tradier_candidates)*4} API calls / "
+            f"~{len(tradier_candidates)*4/120:.0f} min at 120/min."
+        )
+
+        _count_iv = 0
+        _count_spread = 0
+        _count_pc = 0
+        _count_term = 0
+        _count_earn = 0
+        _count_fail = 0
+
+        for i, s in enumerate(tradier_candidates):
+            if (i + 1) % 50 == 0:
+                log.info(
+                    f"  Tradier: {i+1}/{len(tradier_candidates)} done "
+                    f"(IV:{_count_iv} spread:{_count_spread} "
+                    f"PC:{_count_pc} term:{_count_term} earn:{_count_earn} fail:{_count_fail})"
+                )
+
+            # Pass earnings date to enable implied-move calculation
+            earnings_date = None
+            if s.days_to_earnings is not None and 0 < s.days_to_earnings <= 60:
+                try:
+                    earn_dt = datetime.now() + timedelta(days=s.days_to_earnings)
+                    earnings_date = earn_dt.strftime("%Y-%m-%d")
+                except Exception:
+                    pass
+
+            try:
+                td = tradier_enrich_stock(
+                    s.symbol, s.composite, s.hit_prob,
+                    earnings_date=earnings_date,
+                    collect_term_structure=True,
+                    collect_earnings_move=bool(earnings_date),
+                )
+                s.tradier_iv_current = td.get("iv_current")
+                s.tradier_iv_rank = td.get("iv_rank")
+                s.tradier_iv_samples = td.get("iv_samples", 0)
+                s.tradier_spread = td.get("spread")
+                s.tradier_pc_ratio = td.get("pc_ratio")
+                s.tradier_iv_30d = td.get("iv_30d")
+                s.tradier_iv_60d = td.get("iv_60d")
+                s.tradier_iv_90d = td.get("iv_90d")
+                s.tradier_term_structure = td.get("term_structure")
+                s.tradier_implied_earnings_move = td.get("implied_earnings_move")
+
+                if s.tradier_iv_current is not None: _count_iv += 1
+                if s.tradier_spread is not None: _count_spread += 1
+                if s.tradier_pc_ratio is not None: _count_pc += 1
+                if s.tradier_term_structure is not None: _count_term += 1
+                if s.tradier_implied_earnings_move is not None: _count_earn += 1
+            except Exception as e:
+                _count_fail += 1
+                log.warning(f"  {s.symbol}: Tradier FAILED — {type(e).__name__}: {e}")
+
+        log.info(
+            f"Tradier universe pass complete: "
+            f"IV={_count_iv} spreads={_count_spread} PC={_count_pc} "
+            f"term_structure={_count_term} earnings_move={_count_earn} fails={_count_fail} "
+            f"out of {len(tradier_candidates)} candidates"
+        )
 
     log.info(f"Screen complete: {len(pass1_stocks)} total scored")
 
