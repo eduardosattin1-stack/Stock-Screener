@@ -1424,11 +1424,23 @@ def compute_quality_score(value: dict) -> dict:
     """
     Quality factor: combines financial health metrics into a single 0-1 score.
     ML backtest found this is the #2 predictor of outperformance.
+
+    Strict precondition (2026-04-23): piotroski and altman_z must be present
+    and non-None. Callers upstream now gate on this. If we reach here with
+    None, upstream is broken — fail loudly rather than silently defaulting.
     """
+    if value.get("piotroski") is None:
+        raise ValueError(
+            "compute_quality_score called with missing piotroski; "
+            "upstream data-quality gate should have excluded this row."
+        )
+    # altman_z may be None for Financial Services / Real Estate sectors
+    # where Altman's model doesn't apply. Redistribute its weight to
+    # Piotroski (the primary quality signal) when that happens.
     result = {"score": 0.0}
 
-    pio = value.get("piotroski", 5)
-    az = value.get("altman_z", 5.0)
+    pio = value["piotroski"]
+    az = value.get("altman_z")   # None for excluded sectors
     roe = value.get("roe_avg", 0)
     roic = value.get("roic_avg", 0)
     gm = value.get("gross_margin", 0)
@@ -1436,8 +1448,16 @@ def compute_quality_score(value: dict) -> dict:
     # Piotroski (40% of quality) — strongest single predictor
     result["score"] += (pio / 9) * 0.40
 
-    # Altman Z (20%) — bankruptcy risk filter
-    result["score"] += min(az / 20, 1.0) * 0.20
+    # Piotroski weight redistributes from 40% -> 60% when Altman Z is
+    # unavailable (Financial Services / Real Estate sectors, or non-USD
+    # reporters). Adjust Piotroski scoring post-hoc, then skip Altman term.
+    if az is None:
+        # Subtract the 0.40*Piotroski already added above, re-add at 0.60
+        pio = value["piotroski"]
+        result["score"] += (pio / 9) * 0.20   # 0.60 - 0.40 = 0.20 bump
+    else:
+        # Altman Z (20%) — bankruptcy risk filter
+        result["score"] += min(az / 20, 1.0) * 0.20
 
     # ROE (15%) — profitability
     result["score"] += min(max(roe, 0) / 0.30, 1.0) * 0.15

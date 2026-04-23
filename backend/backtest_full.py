@@ -124,6 +124,10 @@ if not HAVE_V6:
     REGIONS = {
         "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
         "sp500": [("NASDAQ", None, 1_000_000_000, 500), ("NYSE", None, 1_000_000_000, 500)],
+        # 2026-04-23: mid-cap universes. Market cap 2B-10B, country=US,
+        # USD reporting filtered downstream in Altman Z compute.
+        "midcap_nyse":   [("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300)],
+        "midcap_nasdaq": [("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300)],
         "europe": [
             ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
             ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
@@ -140,16 +144,31 @@ def get_symbols(region):
         for r in ["sp500", "europe"]:
             syms.extend(get_symbols(r))
         return list(dict.fromkeys(syms))
+    if region == "midcap":
+        # 2026-04-23: combined US mid-cap (NYSE + NASDAQ, $2-10B).
+        syms = []
+        for r in ["midcap_nyse", "midcap_nasdaq"]:
+            syms.extend(get_symbols(r))
+        return list(dict.fromkeys(syms))
     configs = REGIONS.get(region)
     if configs is None:
         configs = [(region.upper(), None, 5_000_000_000, 50)]
     symbols = []
-    for exchange, country, min_cap, limit in configs:
+    for cfg_tuple in configs:
+        # Support both 4-tuple (existing: exchange, country, min_cap, limit)
+        # and 5-tuple (new: exchange, country, min_cap, max_cap, limit).
+        if len(cfg_tuple) == 5:
+            exchange, country, min_cap, max_cap, limit = cfg_tuple
+        else:
+            exchange, country, min_cap, limit = cfg_tuple
+            max_cap = None
         params = {
             "exchange": exchange, "marketCapMoreThan": min_cap,
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
+        if max_cap is not None:
+            params["marketCapLowerThan"] = max_cap
         if country: params["country"] = country
         data = fmp("company-screener", params)
         if data:
@@ -379,8 +398,17 @@ def get_fundamentals_cached(sym, as_of_date):
     # Financial scores (Piotroski + Altman Z)
     scores = fmp("financial-scores", {"symbol": sym})
     if scores:
-        result["piotroski"] = int(scores[0].get("piotroskiScore") or 5)
-        result["altman_z"] = float(scores[0].get("altmanZScore") or 5.0)
+        # 2026-04-23: write None instead of silent default-to-5.
+        # Previous behaviour meant every stock got quality-neutral 5 when
+        # the key-metrics endpoint lacked these fields, masking real
+        # Piotroski/Altman signal. Callers should treat None as "exclude".
+        pio_raw = scores[0].get("piotroskiScore")
+        az_raw = scores[0].get("altmanZScore")
+        result["piotroski"] = int(pio_raw) if pio_raw is not None else None
+        try:
+            result["altman_z"] = float(az_raw) if az_raw is not None else None
+        except (TypeError, ValueError):
+            result["altman_z"] = None
     
     # Income statement (for margins, growth)
     inc = fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5})

@@ -10,3 +10,9 @@ build/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Session backup files created by patch scripts
+backend/*.bak_*
+backend/*.broken_*
+backend/patch_*.py
+backend/spot_check_*.py

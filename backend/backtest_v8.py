@@ -30,7 +30,7 @@ Design (see BACKTEST_V8_PROGRESS.md for full rationale):
     doesn't beat SPY by >= 5pp with similar DD behaviour.
 
 Anti-look-ahead discipline (Section 3.2 of handoff spec):
-  * Annual financials: filter FMP's `fillingDate < D` (NOT `date`)
+  * Annual financials: filter FMP's `filingDate < D` (NOT `date`)
   * Analyst grades: filter by grade `date < D`
   * Price target consensus: EXCLUDED (FMP exposes only latest snapshot)
   * Forward EPS / analyst-estimates: EXCLUDED (latest-only)
@@ -314,7 +314,7 @@ class HistoricalDataProvider:
     Caching strategy:
       * Price chart: loaded once per symbol over the full date range.
       * Annual financial statements: loaded once per symbol, filtered by
-        ``fillingDate`` (FMP's typo) at read time.
+        ``filingDate`` (FMP's typo) at read time.
       * Key metrics / balance sheet: ditto.
       * Insider stats, grades: loaded once, filtered by ``date`` at read.
       * 13F: cached per (sym, year, quarter) keyed by 60-day-lagged as-of.
@@ -385,7 +385,7 @@ class HistoricalDataProvider:
                 return row
         return None
 
-    # ---------- financial statements (fillingDate-filtered) -------------------
+    # ---------- financial statements (filingDate-filtered) -------------------
 
     def _load_annual_financials(self, sym: str) -> List[dict]:
         if sym in self._annual_financials:
@@ -394,21 +394,15 @@ class HistoricalDataProvider:
         data = fmp("income-statement", {"symbol": sym,
                                         "period": "annual", "limit": 15}) or []
         # Make sure each row has both `date` (fiscal period end) and
-        # `fillingDate` (actual SEC filing). If fillingDate missing, fall
+        # `filingDate` (actual SEC filing). If filingDate missing, fall
         # back to date + 90d as a conservative stand-in.
-        for row in data:
-            if not row.get("fillingDate"):
-                try:
-                    fd = (datetime.strptime(row.get("date", "")[:10], "%Y-%m-%d")
-                          + timedelta(days=90)).strftime("%Y-%m-%d")
-                    row["fillingDate"] = fd
-                except Exception:
-                    # If we cannot infer a safe availability stamp, mark the
-                    # row as future-dated so the `< as_of` filter excludes it.
-                    # Leaving it as an empty string would leak the row into
-                    # every past scan.
-                    row["fillingDate"] = "9999-12-31"
-        data.sort(key=lambda x: x.get("fillingDate", ""))
+        # Fix 2026-04-23: drop rows without a real SEC filingDate.
+        # Previously we synthesised fiscal_end + 90d as a stand-in, but FMP
+        # reliably returns filingDate for all three endpoints used here.
+        # The 90-day fallback was introducing ~56-day staleness bias (2022
+        # 10-Ks actually filed Oct 28 were being marked as available Dec 23).
+        data = [row for row in data if row.get("filingDate")]
+        data.sort(key=lambda x: x["filingDate"])
         self._annual_financials[sym] = data
         return data
 
@@ -417,20 +411,29 @@ class HistoricalDataProvider:
             return self._key_metrics[sym]
         data = fmp("key-metrics", {"symbol": sym,
                                    "period": "annual", "limit": 15}) or []
-        for row in data:
-            if not row.get("fillingDate"):
-                try:
-                    fd = (datetime.strptime(row.get("date", "")[:10], "%Y-%m-%d")
-                          + timedelta(days=90)).strftime("%Y-%m-%d")
-                    row["fillingDate"] = fd
-                except Exception:
-                    # If we cannot infer a safe availability stamp, mark the
-                    # row as future-dated so the `< as_of` filter excludes it.
-                    # Leaving it as an empty string would leak the row into
-                    # every past scan.
-                    row["fillingDate"] = "9999-12-31"
-        data.sort(key=lambda x: x.get("fillingDate", ""))
+        # Fix 2026-04-23: drop rows without a real SEC filingDate.
+        # Previously we synthesised fiscal_end + 90d as a stand-in, but FMP
+        # reliably returns filingDate for all three endpoints used here.
+        # The 90-day fallback was introducing ~56-day staleness bias (2022
+        # 10-Ks actually filed Oct 28 were being marked as available Dec 23).
+        data = [row for row in data if row.get("filingDate")]
+        data.sort(key=lambda x: x["filingDate"])
         self._key_metrics[sym] = data
+        return data
+
+    def _load_cashflow_statements(self, sym: str) -> List[dict]:
+        """Annual cash flow statements, filingDate-sorted.
+        Added 2026-04-23 to support PIT Piotroski computation.
+        Endpoint is `cash-flow-statement` (hyphenated), NOT `cashflow-statement`."""
+        if not hasattr(self, "_cashflow_statements"):
+            self._cashflow_statements = {}
+        if sym in self._cashflow_statements:
+            return self._cashflow_statements[sym]
+        data = fmp("cash-flow-statement",
+                   {"symbol": sym, "period": "annual", "limit": 10}) or []
+        data = [row for row in data if row.get("filingDate")]
+        data.sort(key=lambda x: x["filingDate"])
+        self._cashflow_statements[sym] = data
         return data
 
     def _load_balance_sheets(self, sym: str) -> List[dict]:
@@ -438,19 +441,13 @@ class HistoricalDataProvider:
             return self._balance_sheets[sym]
         data = fmp("balance-sheet-statement",
                    {"symbol": sym, "period": "annual", "limit": 10}) or []
-        for row in data:
-            if not row.get("fillingDate"):
-                try:
-                    fd = (datetime.strptime(row.get("date", "")[:10], "%Y-%m-%d")
-                          + timedelta(days=90)).strftime("%Y-%m-%d")
-                    row["fillingDate"] = fd
-                except Exception:
-                    # If we cannot infer a safe availability stamp, mark the
-                    # row as future-dated so the `< as_of` filter excludes it.
-                    # Leaving it as an empty string would leak the row into
-                    # every past scan.
-                    row["fillingDate"] = "9999-12-31"
-        data.sort(key=lambda x: x.get("fillingDate", ""))
+        # Fix 2026-04-23: drop rows without a real SEC filingDate.
+        # Previously we synthesised fiscal_end + 90d as a stand-in, but FMP
+        # reliably returns filingDate for all three endpoints used here.
+        # The 90-day fallback was introducing ~56-day staleness bias (2022
+        # 10-Ks actually filed Oct 28 were being marked as available Dec 23).
+        data = [row for row in data if row.get("filingDate")]
+        data.sort(key=lambda x: x["filingDate"])
         self._balance_sheets[sym] = data
         return data
 
@@ -458,21 +455,21 @@ class HistoricalDataProvider:
         if sym in self._owner_earnings:
             return self._owner_earnings[sym]
         data = fmp("owner-earnings", {"symbol": sym, "limit": 20}) or []
-        # owner-earnings has `date` (fiscal period end) but no fillingDate;
+        # owner-earnings has `date` (fiscal period end) but no filingDate;
         # use `date` + 60d as conservative availability date.
         for row in data:
-            if not row.get("fillingDate"):
+            if not row.get("filingDate"):
                 try:
                     fd = (datetime.strptime(row.get("date", "")[:10], "%Y-%m-%d")
                           + timedelta(days=60)).strftime("%Y-%m-%d")
-                    row["fillingDate"] = fd
+                    row["filingDate"] = fd
                 except Exception:
                     # If we cannot infer a safe availability stamp, mark the
                     # row as future-dated so the `< as_of` filter excludes it.
                     # Leaving it as an empty string would leak the row into
                     # every past scan.
-                    row["fillingDate"] = "9999-12-31"
-        data.sort(key=lambda x: x.get("fillingDate", ""))
+                    row["filingDate"] = "9999-12-31"
+        data.sort(key=lambda x: x.get("filingDate", ""))
         self._owner_earnings[sym] = data
         return data
 
@@ -528,13 +525,13 @@ class HistoricalDataProvider:
     def fundamentals_as_of(self, sym: str, as_of: str) -> dict:
         """
         Return a single dict of fundamental inputs that were AVAILABLE
-        strictly before ``as_of``. Everything filtered by fillingDate.
+        strictly before ``as_of``. Everything filtered by filingDate.
         """
         result = self._blank_fundamentals()
 
         # 1. Annual income statements — need at least 4 years for 3yr CAGRs.
         inc_all = self._load_annual_financials(sym)
-        inc = [r for r in inc_all if r.get("fillingDate", "") < as_of]
+        inc = [r for r in inc_all if r.get("filingDate", "") < as_of]
         if inc:
             # Sort by fiscal period end (date) ascending, take last 5.
             inc = sorted(inc, key=lambda r: r.get("date", ""))[-5:]
@@ -561,7 +558,7 @@ class HistoricalDataProvider:
 
         # 2. Key metrics for ROE / ROIC.
         km_all = self._load_key_metrics(sym)
-        km = [r for r in km_all if r.get("fillingDate", "") < as_of]
+        km = [r for r in km_all if r.get("filingDate", "") < as_of]
         if km:
             km = sorted(km, key=lambda r: r.get("date", ""))[-5:]
             roes = [self._f(r.get("returnOnEquity")) for r in km]
@@ -572,24 +569,24 @@ class HistoricalDataProvider:
             if roics:
                 result["roic_avg"] = sum(roics) / len(roics)
 
-        # 3. Piotroski / Altman-Z — computed from balance sheet + income
-        # history as of fillingDate. Rather than recomputing from first
-        # principles (complex) we fetch the score and filter by
-        # fillingDate of the *matching* annual statement.
-        # For simplicity we accept the latest score older than as_of from
-        # key-metrics (which typically contains these scores for FMP
-        # Ultimate subscribers). Fall back to 5 if not present.
-        if km:
-            latest = km[-1]
-            result["piotroski"] = int(latest.get("piotroskiScore") or 5)
-            try:
-                result["altman_z"] = float(latest.get("altmanZScore") or 5.0)
-            except (TypeError, ValueError):
-                result["altman_z"] = 5.0
+        # 3. Piotroski — computed from raw statements with filingDate
+        # gating (fix 2026-04-23). The original code read piotroskiScore
+        # from key-metrics which silently defaulted all stocks to 5.
+        # Altman Z moves to the caller site where `price` is in scope
+        # (uses the standard 1968 public-manufacturing variant).
+        from fundamental_scores_pit import compute_piotroski_pit
+        inc_full = self._load_annual_financials(sym)
+        bal_full = self._load_balance_sheets(sym)
+        cf_full  = self._load_cashflow_statements(sym)
+        pio_score, _ = compute_piotroski_pit(inc_full, bal_full, cf_full, as_of)
+        result["piotroski"] = pio_score      # None if insufficient history
+        # altman_z is populated at the caller — left as None here so the
+        # data-quality gate sees it if we ever forget.
+        result["altman_z"] = None
 
         # 4. Owner earnings per share (trailing 4 quarters).
         oe_all = self._load_owner_earnings(sym)
-        oe = [r for r in oe_all if r.get("fillingDate", "") < as_of]
+        oe = [r for r in oe_all if r.get("filingDate", "") < as_of]
         if oe:
             oe = sorted(oe, key=lambda r: r.get("date", ""))[-4:]
             annual_oe_ps = sum(self._f(r.get("ownersEarningsPerShare")) for r in oe)
@@ -681,7 +678,10 @@ class HistoricalDataProvider:
     @staticmethod
     def _blank_fundamentals() -> dict:
         return {
-            "piotroski": 5, "altman_z": 5.0, "dcf_value": 0.0,
+            # piotroski / altman_z intentionally absent — populated by
+            # fundamentals_as_of() when PIT computation succeeds, or left
+            # unset to signal "exclude from universe".
+            "dcf_value": 0.0,
             "roe_avg": 0.0, "roe_consistent": False, "roic_avg": 0.0,
             "gross_margin": 0.0,
             "revenue_cagr_3y": 0.0, "eps_cagr_3y": 0.0,
@@ -1049,6 +1049,41 @@ def build_scan_cache(universe: List[str],
                     continue
 
                 fund = dp.fundamentals_as_of(sym, scan_date)
+
+                # Altman Z: skip for sectors where the model is known to
+                # misfire. Financial Services (banks, payment processors,
+                # asset managers) and Real Estate (REITs) have structural
+                # balance-sheet profiles that Altman's 1968 non-financial
+                # manufacturing model treats as distress when they're
+                # healthy. Piotroski still applies to all sectors.
+                sym_sector = SYMBOL_META.get(sym, {}).get("sector", "")
+                ALTMAN_EXCLUDED_SECTORS = {"Financial Services", "Real Estate"}
+
+                if sym_sector in ALTMAN_EXCLUDED_SECTORS:
+                    fund["altman_z"] = None   # marker: not evaluated
+                else:
+                    # Compute Altman Z at the caller where price is in scope.
+                    # Uses the standard 1968 public manufacturing variant
+                    # (thresholds: safe > 2.99, grey 1.81-2.99, distress < 1.81).
+                    from fundamental_scores_pit import compute_altman_z_pit
+                    inc_full = dp._load_annual_financials(sym)
+                    bal_full = dp._load_balance_sheets(sym)
+                    az_score, _ = compute_altman_z_pit(
+                        inc_full, bal_full, scan_date,
+                        price_on_date=price, use_book_value=False)
+                    fund["altman_z"] = az_score
+
+                # Strict data-quality gate (2026-04-23):
+                #  - Piotroski is required for EVERY sector (ratio-based,
+                #    works universally). Missing → exclude.
+                #  - Altman Z is required for NON-financial/REIT sectors.
+                #    For Financial Services + Real Estate, altman_z is
+                #    intentionally None and we do not gate on it.
+                if fund.get("piotroski") is None:
+                    continue
+                if sym_sector not in ALTMAN_EXCLUDED_SECTORS:
+                    if fund.get("altman_z") is None:
+                        continue
 
                 if fund.get("intrinsic_buffett", 0) > 0:
                     fund["margin_of_safety"] = (fund["intrinsic_buffett"] - price) / price
@@ -2077,8 +2112,8 @@ def generate_report_md(train_results: List[SimulationResult],
     lines.append("")
     lines.append("Key correctness fixes carried into v8 scoring:")
     lines.append("")
-    lines.append("- Annual financials filtered by `fillingDate < scan_date` "
-                 "(FMP's `fillingDate` field, not `date`). v7.1 used the most "
+    lines.append("- Annual financials filtered by `filingDate < scan_date` "
+                 "(FMP's `filingDate` field, not `date`). v7.1 used the most "
                  "recent filings irrespective of whether they were yet public.")
     lines.append("- Analyst grades filtered by `date < scan_date`.")
     lines.append("- 13F positions-summary with 45-day lag and filing-date filter.")
