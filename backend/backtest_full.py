@@ -124,10 +124,6 @@ if not HAVE_V6:
     REGIONS = {
         "nasdaq100": [("NASDAQ", None, 20_000_000_000, 100)],
         "sp500": [("NASDAQ", None, 1_000_000_000, 500), ("NYSE", None, 1_000_000_000, 500)],
-        # 2026-04-23: mid-cap universes. Market cap 2B-10B, country=US,
-        # USD reporting filtered downstream in Altman Z compute.
-        "midcap_nyse":   [("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300)],
-        "midcap_nasdaq": [("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300)],
         "europe": [
             ("XETRA", "DE", 5_000_000_000, 40), ("PAR", "FR", 5_000_000_000, 30),
             ("LSE", "UK", 5_000_000_000, 40), ("AMS", "NL", 5_000_000_000, 20),
@@ -509,25 +505,47 @@ def get_fundamentals_cached(sym, as_of_date):
 # ---------------------------------------------------------------------------
 
 def compute_quality_score(fundamentals):
-    """Compute quality factor (0-1) from Piotroski, Altman Z, ROE, ROIC."""
-    pio = fundamentals.get("piotroski", 5)
-    az = fundamentals.get("altman_z", 5.0)
+    """Compute quality factor (0-1) from Piotroski, Altman Z, ROE, ROIC.
+
+    Strict precondition (2026-04-24): piotroski must be present and non-None.
+    altman_z may be None for Financial Services / Real Estate sectors where
+    Altman's model doesn't apply, or for non-USD reporters (unit-mismatched
+    D term). In those cases, the 20% Altman weight redistributes to
+    Piotroski, making it the 60% anchor.
+
+    This function is called by backtest_v8.build_scan_cache via HAVE_V7
+    import. Last night's scan crashed here because the None-safety that
+    was added to screener_v6.compute_quality_score was never ported to
+    this duplicate.
+    """
+    if fundamentals.get("piotroski") is None:
+        raise ValueError(
+            "compute_quality_score called with missing piotroski; "
+            "upstream data-quality gate should have excluded this row."
+        )
+
+    pio = fundamentals["piotroski"]
+    az = fundamentals.get("altman_z")   # None for excluded sectors / non-USD
     roe = fundamentals.get("roe_avg", 0)
     roic = fundamentals.get("roic_avg", 0)
     gm = fundamentals.get("gross_margin", 0)
-    
+
     score = 0.0
-    # Piotroski (40% of quality)
+    # Piotroski (40% of quality) — strongest single predictor
     score += (pio / 9) * 0.40
-    # Altman Z (20%)
-    score += min(az / 20, 1.0) * 0.20
+    # Altman Z: if available, 20% weight; if None, redistribute to Piotroski.
+    if az is None:
+        # Bump Piotroski from 40% to 60% total (add another 20%).
+        score += (pio / 9) * 0.20
+    else:
+        score += min(az / 20, 1.0) * 0.20
     # ROE (15%)
     score += min(max(roe, 0) / 0.30, 1.0) * 0.15
     # ROIC (10%)
     score += min(max(roic, 0) / 0.20, 1.0) * 0.10
     # Gross margin (15%)
     score += min(gm / 0.60, 1.0) * 0.15
-    
+
     return min(score, 1.0)
 
 # ---------------------------------------------------------------------------

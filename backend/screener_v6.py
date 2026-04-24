@@ -391,6 +391,11 @@ REGIONS = {
         ("NASDAQ", None, 1_000_000_000, 500), # Lowered to 1B for mid-cap growth (WIX)
         ("NYSE", None, 1_000_000_000, 500)
     ],
+    # 2026-04-23: US mid-cap universes, $2B-$10B market cap.
+    # 5-tuples: (exchange, country, min_cap, max_cap, limit).
+    # get_symbols below handles both 4-tuple and 5-tuple variants.
+    "midcap_nyse":   [("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300)],
+    "midcap_nasdaq": [("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300)],
     "europe": [
         ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
         ("PAR", "FR", 1_000_000_000, 100),
@@ -435,13 +440,27 @@ def get_symbols(region: str) -> list[str]:
             if config is not None:
                 syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
-    
+    # 2026-04-23: "midcap" combined universe — NYSE + NASDAQ $2-10B US.
+    if region == "midcap":
+        syms = []
+        for r in ["midcap_nyse", "midcap_nasdaq"]:
+            syms.extend(get_symbols(r))
+        return list(dict.fromkeys(syms))
+
     configs = REGIONS.get(region)
     if configs is None:
         configs = [(region.upper(), None, 1_000_000_000, 50)]
         
     symbols = []
-    for exchange, country, min_cap, limit in configs:
+    for cfg_tuple in configs:
+        # 2026-04-23: support both 4-tuple (existing: exchange, country,
+        # min_cap, limit) and 5-tuple (new: exchange, country, min_cap,
+        # max_cap, limit). Added for midcap universes ($2B-$10B band).
+        if len(cfg_tuple) == 5:
+            exchange, country, min_cap, max_cap, limit = cfg_tuple
+        else:
+            exchange, country, min_cap, limit = cfg_tuple
+            max_cap = None
         params = {
             "exchange": exchange, "marketCapMoreThan": min_cap,
             "volumeMoreThan": 100_000,     # filter illiquid stocks
@@ -449,6 +468,8 @@ def get_symbols(region: str) -> list[str]:
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
+        if max_cap is not None:
+            params["marketCapLowerThan"] = max_cap
         if country: params["country"] = country
         data = fmp("company-screener", params)
         if data:
