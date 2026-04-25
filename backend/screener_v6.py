@@ -497,6 +497,26 @@ def get_symbols(region: str) -> list[str]:
                     COUNTRY_MAP[sym] = co.upper()
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
+
+    # 2026-04-25: Intersect with strategy allowlist if one exists for this
+    # region. Allowlists encode the universe rules used to validate the v1.0
+    # strategy: $100M+ TTM revenue, no biotech, no Financials/REITs/Utilities,
+    # no specialty pharma, no recent rebrands. FMP's company-screener doesn't
+    # replicate these filters cleanly. Result: latest_{region}.json shrinks
+    # from FMP-screener size to validated-universe size, and downstream
+    # strategy_basket.py picks from a clean pool.
+    allowlist_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "strategy_allowlists", f"{region}.txt",
+    )
+    if os.path.exists(allowlist_path):
+        with open(allowlist_path) as f:
+            allowed = {ln.strip().upper() for ln in f
+                       if ln.strip() and not ln.startswith("#")}
+        before = len(symbols)
+        symbols = [s for s in symbols if s.upper() in allowed]
+        log.info(f"  [allowlist] {region}: {before} -> {len(symbols)} after filter")
+
     return list(dict.fromkeys(symbols))
 
 # ---------------------------------------------------------------------------
