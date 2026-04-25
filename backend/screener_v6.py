@@ -394,6 +394,14 @@ REGIONS = {
     # 2026-04-23: US mid-cap universes, $2B-$10B market cap.
     # 5-tuples: (exchange, country, min_cap, max_cap, limit).
     # get_symbols below handles both 4-tuple and 5-tuple variants.
+    #
+    # 2026-04-25: Combined "midcap" region — single scan over NYSE + NASDAQ
+    # midcaps. Produces latest_midcap.json which feeds strategy_basket.py.
+    # Schedule weekly Mon 06:00 CET via Cloud Scheduler.
+    "midcap": [
+        ("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300),
+        ("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300),
+    ],
     "midcap_nyse":   [("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300)],
     "midcap_nasdaq": [("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300)],
     "europe": [
@@ -2907,6 +2915,23 @@ def save_scan_to_gcs(stocks: list, region: str, macro: dict = None):
     gcs_upload(f"scans/latest_{region}.json", payload)
     gcs_upload(f"scans/{today}_{region}.json", payload)
     gcs_upload("scans/latest.json", payload)
+
+    # 2026-04-25: Strategy basket + performance tracker pipeline.
+    # Runs after scan upload for tracked regions. Failure is non-fatal —
+    # the scan completes regardless. Both modules are independently
+    # importable; missing imports only disable the basket pipeline.
+    if region in ("midcap", "sp500"):
+        try:
+            from strategy_basket  import generate as gen_basket
+            from strategy_tracker import update_history as track_basket
+            gen_basket(region,
+                       scan_results=[asdict(s) for s in stocks],
+                       scan_date=str(today))
+            track_basket(region)
+        except Exception as e:
+            logging.warning(f"[basket] {region} pipeline failed: {e}")
+
+
 def save_signals(data: dict):
     with open(SIGNAL_LOG, "w") as f:
         json.dump(data, f, indent=2)
