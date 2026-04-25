@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink
 const SIGNAL_TRACKS = "/api/performance/signal-tracks";
 const HIT_RATES     = "/api/performance/hit-rates";
 const GCS_PORTFOLIO = "/api/gcs/portfolio";
+const GCS_PERFORMANCE = "/api/gcs/performance";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 interface SignalTrackOpen {
@@ -35,7 +36,46 @@ interface PortfolioHistoryEntry {
   symbol: string; action: string; date: string;
   entry_price: number; entry_date: string;
   exit_price: number; pnl_pct: number; reason: string; days_held: number;
+  bucket?: "midcap" | "sp500" | null;
 }
+
+// Strategy tracker (gs://.../performance/strategy_history_{region}.json)
+interface StrategyWeekClosed {
+  entry_date: string;
+  exit_date: string;
+  n_positions: number;
+  basket_return_pct: number;
+  spy_return_pct: number;
+  alpha_pp: number;
+  positions: { symbol: string; entry: number; exit: number; return_pct: number }[];
+}
+interface StrategyHistory {
+  region: string;
+  strategy_version: string;
+  inception_date: string | null;
+  open_basket: { scan_date: string; basket: { symbol: string }[] } | null;
+  weeks: StrategyWeekClosed[];
+  summary: {
+    weeks_closed: number;
+    cum_strategy_return_pct: number;
+    cum_spy_return_pct: number;
+    cum_alpha_pp: number;
+    annualized_return_pct: number;
+    annualized_alpha_pp: number;
+    weeks_positive_alpha: number;
+    win_rate: number;
+    best_week_alpha_pp: number;
+    worst_week_alpha_pp: number;
+  } | null;
+  updated_at: string | null;
+}
+type BucketTag = "midcap" | "sp500" | null;
+type BucketFilter = "all" | "midcap" | "sp500" | "untagged";
+const PAGE_SIZE = 25;
+const EXPECTED_ANNUAL_ALPHA: Record<"midcap"|"sp500", number> = {
+  midcap: 19.95,
+  sp500:  7.03,
+};
 
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
@@ -461,109 +501,389 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
 // TAB 3: PORTFOLIO vs MODEL (side-by-side)
 // ══════════════════════════════════════════════════════════════════════════════
 function PortfolioVsModelTab({ router }: { router: ReturnType<typeof useRouter> }) {
-  const [myHistory, setMyHistory] = useState<PortfolioHistoryEntry[]>([]);
-  const [modelClosed, setModelClosed] = useState<SignalTrackClosed[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [myHistory, setMyHistory]   = useState<PortfolioHistoryEntry[]>([]);
+  const [midcapHist, setMidcapHist] = useState<StrategyHistory | null>(null);
+  const [sp500Hist, setSp500Hist]   = useState<StrategyHistory | null>(null);
+  const [loading, setLoading]       = useState(true);
+
+  const [filter, setFilter]         = useState<BucketFilter>("all");
+  const [yourPage, setYourPage]     = useState(1);
+  const [midcapPage, setMidcapPage] = useState(1);
+  const [sp500Page, setSp500Page]   = useState(1);
 
   useEffect(() => {
+    setLoading(true);
     Promise.allSettled([
       fetch(`${GCS_PORTFOLIO}/state.json?t=${Date.now()}`).then(r => r.json()),
-      fetch(SIGNAL_TRACKS).then(r => r.json()),
-    ]).then(([myRes, modelRes]) => {
-      if (myRes.status === "fulfilled") setMyHistory(myRes.value?.history || []);
-      if (modelRes.status === "fulfilled") setModelClosed(modelRes.value?.closed || []);
+      fetch(`${GCS_PERFORMANCE}/strategy_history_midcap.json?t=${Date.now()}`).then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_PERFORMANCE}/strategy_history_sp500.json?t=${Date.now()}`).then(r => r.ok ? r.json() : null),
+    ]).then(([myRes, midRes, spRes]) => {
+      if (myRes.status  === "fulfilled") setMyHistory(myRes.value?.history || []);
+      if (midRes.status === "fulfilled") setMidcapHist(midRes.value);
+      if (spRes.status  === "fulfilled") setSp500Hist(spRes.value);
       setLoading(false);
     });
   }, []);
 
+  const filteredHistory = useMemo(() => {
+    const sorted = [...myHistory].sort((a, b) => (a.date < b.date ? 1 : -1));
+    if (filter === "all")      return sorted;
+    if (filter === "untagged") return sorted.filter(t => !t.bucket);
+    return sorted.filter(t => t.bucket === filter);
+  }, [myHistory, filter]);
+
+  const youAlpha = useMemo(() => {
+    const calc = (bucket: "midcap" | "sp500") => {
+      const yourTrades = myHistory.filter(t => t.bucket === bucket);
+      if (yourTrades.length === 0) return null;
+      const yourMean = yourTrades.reduce((a, t) => a + t.pnl_pct, 0) / yourTrades.length;
+      return { count: yourTrades.length, meanPct: yourMean };
+    };
+    return { midcap: calc("midcap"), sp500: calc("sp500") };
+  }, [myHistory]);
+
   if (loading) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
+
+  const midWeeks = midcapHist?.weeks || [];
+  const spWeeks  = sp500Hist?.weeks  || [];
+  const midSummary = midcapHist?.summary;
+  const spSummary  = sp500Hist?.summary;
 
   return (
     <>
-      <Card style={{ marginBottom: 20, background: T.greenLight, borderColor: T.greenBorder }}>
+      <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
-          <strong>Side-by-side view.</strong> Left: your closed portfolio positions. Right: the composite model's closed BUY→SELL cycles over the same period. Use this to see where your decisions diverged from what the model would have done.
+          <strong>Three-panel view.</strong> Left: your closed trades (tag each by bucket
+          when you add it). Center: the midcap basket's weekly closures. Right: SP500.
+          Use the alpha banner above to see how your decisions compared to each model.
         </div>
       </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        {/* MY PORTFOLIO */}
+      <AlphaBanner
+        midcap={midSummary}
+        sp500={spSummary}
+        youMidcap={youAlpha.midcap}
+        youSp500={youAlpha.sp500}
+      />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+
+        {/* PANEL 1 — YOUR CLOSURES */}
         <Card>
-          <SH title={`Your Closures (${myHistory.length})`} icon={<TrendingUp size={12} />} sub="From portfolio history" />
-          {myHistory.length === 0 ? (
-            <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-              No closed portfolio positions yet.
+          <SH
+            title={`Your Closures (${filteredHistory.length})`}
+            icon={<TrendingUp size={12} />}
+            sub="From portfolio history"
+          />
+          <div style={{ display: "flex", gap: 5, padding: "8px 12px 6px", flexWrap: "wrap", borderBottom: `1px solid ${T.divider}` }}>
+            {(["all","midcap","sp500","untagged"] as BucketFilter[]).map(f => (
+              <button key={f} onClick={() => { setFilter(f); setYourPage(1); }}
+                style={{
+                  padding: "3px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 600,
+                  letterSpacing: "0.05em", textTransform: "uppercase",
+                  border: `1px solid ${filter===f ? T.greenBorder : T.border}`,
+                  borderRadius: 3, cursor: "pointer",
+                  background: filter===f ? T.greenLight : "transparent",
+                  color:      filter===f ? T.green : T.muted,
+                }}>{f}</button>
+            ))}
+          </div>
+
+          {filteredHistory.length === 0 ? (
+            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
+              {myHistory.length === 0 ? "No closed positions yet." : "No matches for this filter."}
             </div>
           ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead><tr>
-                  {["Symbol", "Entry", "Exit", "P&L", "Days", "Closed"].map((h, i) => (
-                    <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
-                  ))}
-                </tr></thead>
-                <tbody>
-                  {myHistory.slice().reverse().map((t, i) => {
-                    const pC = t.pnl_pct >= 0 ? T.greenPos : T.red;
-                    return (
-                      <tr key={`${t.symbol}-${t.date}-${i}`}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                        <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }} onClick={() => router.push(`/stock/${t.symbol}`)}>{t.symbol}</td>
-                        <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
-                        <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>${t.exit_price.toFixed(2)}</td>
-                        <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>{t.pnl_pct >= 0 ? "+" : ""}{t.pnl_pct.toFixed(1)}%</td>
-                        <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
-                        <td style={{ ...td, textAlign: "right", color: T.light, fontSize: 10 }}>{t.date}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <PaginatedTable
+              total={filteredHistory.length}
+              page={yourPage}
+              setPage={setYourPage}
+              header={["Sym", "Bucket", "Entry", "Exit", "P&L", "Days"]}
+              rows={filteredHistory.slice((yourPage-1)*PAGE_SIZE, yourPage*PAGE_SIZE).map((t, i) => {
+                const pC = t.pnl_pct >= 0 ? T.greenPos : T.red;
+                return (
+                  <tr key={`${t.symbol}-${t.date}-${i}`}>
+                    <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }}
+                        onClick={() => router.push(`/stock/${t.symbol}`)}>
+                      {t.symbol}
+                    </td>
+                    <td style={{ ...td, textAlign: "center" }}>
+                      <BucketChip tag={t.bucket || null} />
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>${t.exit_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>
+                      {t.pnl_pct >= 0 ? "+" : ""}{t.pnl_pct.toFixed(1)}%
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
+                  </tr>
+                );
+              })}
+            />
           )}
         </Card>
 
-        {/* MODEL */}
+        {/* PANEL 2 — MIDCAP MODEL */}
         <Card>
-          <SH title={`Model Closures (${modelClosed.length})`} icon={<Target size={12} />} sub="BUY → SELL cycles from tracker" />
-          {modelClosed.length === 0 ? (
-            <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-              No closed model cycles yet.
+          <SH
+            title={`Midcap Model (${midWeeks.length})`}
+            icon={<Target size={12} />}
+            sub={midcapHist?.inception_date ? `since ${midcapHist.inception_date.slice(0,10)}` : "weekly basket closures"}
+          />
+          {midWeeks.length === 0 ? (
+            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
+              No closed weeks yet — first one appears after next Monday's basket regenerates.
             </div>
           ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead><tr>
-                  {["Symbol", "Entry", "Exit", "P&L", "Max Gain", "Days", "Closed"].map((h, i) => (
-                    <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
-                  ))}
-                </tr></thead>
-                <tbody>
-                  {modelClosed.slice().reverse().slice(0, 100).map((t, i) => {
-                    const pC = t.realized_pnl_pct >= 0 ? T.greenPos : T.red;
-                    return (
-                      <tr key={`${t.symbol}-${t.exit_date}-${i}`}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                        <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }} onClick={() => router.push(`/stock/${t.symbol}`)}>{t.symbol}</td>
-                        <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
-                        <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>${t.exit_price.toFixed(2)}</td>
-                        <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>{t.realized_pnl_pct >= 0 ? "+" : ""}{t.realized_pnl_pct.toFixed(1)}%</td>
-                        <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{t.max_gain_pct.toFixed(1)}%</td>
-                        <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
-                        <td style={{ ...td, textAlign: "right", color: T.light, fontSize: 10 }}>{t.exit_date}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <PaginatedTable
+              total={midWeeks.length}
+              page={midcapPage}
+              setPage={setMidcapPage}
+              header={["Week", "N", "Strat", "SPY", "Alpha"]}
+              rows={[...midWeeks].reverse().slice((midcapPage-1)*PAGE_SIZE, midcapPage*PAGE_SIZE).map((w, i) => (
+                <tr key={`mid-${w.entry_date}-${i}`}>
+                  <td style={{ ...td, textAlign: "left", color: T.text, fontSize: 10 }}>
+                    {w.entry_date.slice(5)} → {w.exit_date.slice(5)}
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
+                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
+                              color: w.basket_return_pct >= 0 ? T.greenPos : T.red }}>
+                    {w.basket_return_pct >= 0 ? "+" : ""}{w.basket_return_pct.toFixed(2)}%
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                    {w.spy_return_pct >= 0 ? "+" : ""}{w.spy_return_pct.toFixed(2)}%
+                  </td>
+                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
+                              color: w.alpha_pp >= 0 ? T.greenPos : T.red }}>
+                    {w.alpha_pp >= 0 ? "+" : ""}{w.alpha_pp.toFixed(2)}pp
+                  </td>
+                </tr>
+              ))}
+            />
+          )}
+        </Card>
+
+        {/* PANEL 3 — SP500 MODEL */}
+        <Card>
+          <SH
+            title={`SP500 Model (${spWeeks.length})`}
+            icon={<Target size={12} />}
+            sub={sp500Hist?.inception_date ? `since ${sp500Hist.inception_date.slice(0,10)}` : "weekly basket closures"}
+          />
+          {spWeeks.length === 0 ? (
+            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
+              No closed weeks yet — first one appears after next Sunday's scheduled scan.
             </div>
+          ) : (
+            <PaginatedTable
+              total={spWeeks.length}
+              page={sp500Page}
+              setPage={setSp500Page}
+              header={["Week", "N", "Strat", "SPY", "Alpha"]}
+              rows={[...spWeeks].reverse().slice((sp500Page-1)*PAGE_SIZE, sp500Page*PAGE_SIZE).map((w, i) => (
+                <tr key={`sp-${w.entry_date}-${i}`}>
+                  <td style={{ ...td, textAlign: "left", color: T.text, fontSize: 10 }}>
+                    {w.entry_date.slice(5)} → {w.exit_date.slice(5)}
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
+                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
+                              color: w.basket_return_pct >= 0 ? T.greenPos : T.red }}>
+                    {w.basket_return_pct >= 0 ? "+" : ""}{w.basket_return_pct.toFixed(2)}%
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                    {w.spy_return_pct >= 0 ? "+" : ""}{w.spy_return_pct.toFixed(2)}%
+                  </td>
+                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
+                              color: w.alpha_pp >= 0 ? T.greenPos : T.red }}>
+                    {w.alpha_pp >= 0 ? "+" : ""}{w.alpha_pp.toFixed(2)}pp
+                  </td>
+                </tr>
+              ))}
+            />
           )}
         </Card>
       </div>
     </>
   );
+}
+
+// ── Helper components for the 3-panel view ────────────────────────────────
+function AlphaBanner({
+  midcap, sp500, youMidcap, youSp500,
+}: {
+  midcap?: StrategyHistory["summary"];
+  sp500?:  StrategyHistory["summary"];
+  youMidcap: { count: number; meanPct: number } | null;
+  youSp500:  { count: number; meanPct: number } | null;
+}) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+      <BucketAlphaCard label="MIDCAP" modelSummary={midcap} you={youMidcap} expected={EXPECTED_ANNUAL_ALPHA.midcap} />
+      <BucketAlphaCard label="SP500"  modelSummary={sp500}  you={youSp500}  expected={EXPECTED_ANNUAL_ALPHA.sp500} />
+    </div>
+  );
+}
+
+function BucketAlphaCard({
+  label, modelSummary, you, expected,
+}: {
+  label: string;
+  modelSummary?: StrategyHistory["summary"];
+  you: { count: number; meanPct: number } | null;
+  expected: number;
+}) {
+  const modelCumAlpha = modelSummary?.cum_alpha_pp ?? 0;
+  const modelAnnAlpha = modelSummary?.annualized_alpha_pp ?? 0;
+  const modelWeeks    = modelSummary?.weeks_closed ?? 0;
+  const modelWinRate  = modelSummary?.win_rate ?? 0;
+  const onTrack = modelWeeks > 0 && modelAnnAlpha >= expected * 0.7;
+  const accent  = modelWeeks === 0 ? T.muted : (onTrack ? T.greenPos : T.amber);
+
+  return (
+    <div style={{
+      background: "white", border: `1px solid ${T.border}`, borderRadius: 8,
+      padding: 14, position: "relative", overflow: "hidden",
+    }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: accent }} />
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+        <div>
+          <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.1em", color: T.muted }}>{label}</span>
+          <span style={{ marginLeft: 8, fontSize: 10, fontFamily: T.mono, color: T.light }}>
+            {modelWeeks > 0 ? `${modelWeeks} weeks closed` : "no closed weeks yet"}
+          </span>
+        </div>
+        <span style={{
+          fontSize: 9, padding: "2px 7px", borderRadius: 3, fontFamily: T.mono,
+          fontWeight: 700, letterSpacing: "0.05em",
+          background: modelWeeks === 0 ? T.divider : (onTrack ? T.greenLight : T.amberLight),
+          color:      modelWeeks === 0 ? T.muted   : (onTrack ? T.green       : T.amber),
+          border: `1px solid ${modelWeeks === 0 ? T.border : (onTrack ? T.greenBorder : "#fde68a")}`,
+        }}>
+          {modelWeeks === 0 ? "PENDING" : (onTrack ? "ON TRACK" : "BELOW EXP")}
+        </span>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+        <StatBlock
+          label="Model cum α"
+          value={`${modelCumAlpha >= 0 ? "+" : ""}${modelCumAlpha.toFixed(2)}pp`}
+          sub={modelWinRate ? `${(modelWinRate*100).toFixed(0)}% wins` : "—"}
+          color={modelCumAlpha >= 0 ? T.greenPos : T.red}
+        />
+        <StatBlock
+          label="Model ann. α"
+          value={`${modelAnnAlpha >= 0 ? "+" : ""}${modelAnnAlpha.toFixed(1)}pp`}
+          sub={`expected +${expected}pp/yr`}
+          color={modelAnnAlpha >= 0 ? T.greenPos : T.red}
+        />
+        <StatBlock
+          label="Your tagged"
+          value={you ? `${you.meanPct >= 0 ? "+" : ""}${you.meanPct.toFixed(1)}%` : "—"}
+          sub={you ? `${you.count} closed` : "tag trades to compare"}
+          color={you ? (you.meanPct >= 0 ? T.greenPos : T.red) : T.muted}
+        />
+      </div>
+    </div>
+  );
+}
+
+function StatBlock({
+  label, value, sub, color,
+}: { label: string; value: string; sub?: string; color: string }) {
+  return (
+    <div>
+      <div style={{ fontSize: 8, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase" }}>
+        {label}
+      </div>
+      <div style={{ marginTop: 2, fontSize: 16, fontFamily: T.mono, fontWeight: 700, color }}>
+        {value}
+      </div>
+      {sub && (
+        <div style={{ marginTop: 1, fontSize: 9, fontFamily: T.mono, color: T.light }}>{sub}</div>
+      )}
+    </div>
+  );
+}
+
+function BucketChip({ tag }: { tag: BucketTag }) {
+  if (!tag) {
+    return (
+      <span style={{
+        fontSize: 8, padding: "1px 5px", borderRadius: 3, fontFamily: T.mono,
+        background: T.divider, color: T.light, border: `1px solid ${T.border}`,
+        fontWeight: 600, letterSpacing: "0.05em",
+      }}>—</span>
+    );
+  }
+  const isMid = tag === "midcap";
+  return (
+    <span style={{
+      fontSize: 8, padding: "1px 5px", borderRadius: 3, fontFamily: T.mono,
+      fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase",
+      background: isMid ? T.greenLight  : "#eef2ff",
+      color:      isMid ? T.green       : "#4338ca",
+      border: `1px solid ${isMid ? T.greenBorder : "#c7d2fe"}`,
+    }}>{tag}</span>
+  );
+}
+
+function PaginatedTable({
+  total, page, setPage, header, rows,
+}: {
+  total: number;
+  page: number;
+  setPage: (n: number) => void;
+  header: string[];
+  rows: React.ReactNode;
+}) {
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  return (
+    <>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              {header.map((h, i) => (
+                <th key={h} style={{
+                  ...th,
+                  textAlign: i === 0 ? "left" : (header[i] === "Bucket" ? "center" : "right"),
+                }}>
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      </div>
+      {totalPages > 1 && (
+        <div style={{
+          padding: "8px 12px", borderTop: `1px solid ${T.divider}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          fontSize: 10, fontFamily: T.mono, color: T.muted,
+        }}>
+          <span>page {page} / {totalPages} · {total} total</span>
+          <span style={{ display: "flex", gap: 4 }}>
+            <button onClick={() => setPage(Math.max(1, page-1))} disabled={page === 1}
+              style={pageBtnStyle(page === 1)}>‹ prev</button>
+            <button onClick={() => setPage(Math.min(totalPages, page+1))} disabled={page === totalPages}
+              style={pageBtnStyle(page === totalPages)}>next ›</button>
+          </span>
+        </div>
+      )}
+    </>
+  );
+}
+
+function pageBtnStyle(disabled: boolean): React.CSSProperties {
+  return {
+    padding: "2px 8px", fontSize: 10, fontFamily: T.mono, fontWeight: 600,
+    border: `1px solid ${T.border}`, borderRadius: 3,
+    background: disabled ? T.divider : "white",
+    color: disabled ? T.light : T.muted,
+    cursor: disabled ? "not-allowed" : "pointer",
+  };
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
