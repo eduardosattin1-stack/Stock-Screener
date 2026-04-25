@@ -40,7 +40,7 @@ def _load_scan_from_gcs(region: str) -> list:
 
 def main():
     # HARDCODED REGIONS TO SCAN SEQUENTIALLY
-    REGIONS_TO_SCAN = ["sp500", "nasdaq", "russell2000"]
+    REGIONS_TO_SCAN = ["sp500", "midcap"]
     log.info(f"═══ Scan job starting: processing {len(REGIONS_TO_SCAN)} regions sequentially ═══")
 
     import screener_v6
