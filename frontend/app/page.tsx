@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, Shield, Target, Search, Filter, Zap, Star, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
+import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
 
 const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
 const REGIONS = [
   { key: "sp500", label: "S&P 500" },
+  { key: "midcap", label: "Midcap" },
 ];
 function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
 const US_EXCHANGES = new Set(["NASDAQ","NYSE","AMEX","NYSEArca","PNK","OTC"]);
@@ -182,34 +183,31 @@ function CatalystBadges({s}:{s:StockData}){
 }
 
 // ── Macro Banner ────────────────────────────────────────────────────────────
-function MacroBanner({macro}:{macro?:MacroData}){
+function MacroRibbon({macro}:{macro?:MacroData}){
   if(!macro) return null;
-  const cfg:{[k:string]:{emoji:string;label:string;color:string;bg:string;border:string;cap:number}} = {
-    RISK_ON:  {emoji:"🟢",label:"RISK ON — Momentum favored",color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8",cap:100},
-    NEUTRAL:  {emoji:"⚪",label:"NEUTRAL — Base weights",color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0",cap:75},
-    CAUTIOUS: {emoji:"🟡",label:"CAUTIOUS — Quality over momentum",color:"#d97706",bg:"#fffbeb",border:"#fde68a",cap:75},
-    RISK_OFF: {emoji:"🔴",label:"RISK OFF — Defensive mode",color:"#ef4444",bg:"#fef2f2",border:"#fecaca",cap:50},
-    CRISIS:   {emoji:"🔴",label:"CRISIS — Capital preservation",color:"#ef4444",bg:"#fef2f2",border:"#fecaca",cap:25},
-  };
-  const c=cfg[macro.regime]||cfg.NEUTRAL;
   const subs=macro.sub_scores||{};
-  const subItems:[string,number][]=[["Yield Curve",subs.yield_curve],["Yield Level",subs.yield_level],["VIX",subs.vix],["CPI",subs.cpi_trend],["GDP",subs.gdp_momentum]];
+  const items:[string,number|undefined][]=[
+    ["Yield curve", subs.yield_curve],
+    ["VIX", subs.vix],
+    ["CPI", subs.cpi_trend],
+    ["GDP", subs.gdp_momentum],
+  ];
+  const items_present = items.filter(([_,v])=>v!=null);
+  if(items_present.length === 0) return null;
   return(
-    <div style={{background:c.bg,border:`1px solid ${c.border}`,borderRadius:8,padding:"10px 16px",marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <span style={{fontSize:14}}>{c.emoji}</span>
-        <span style={{fontSize:12,fontFamily:"var(--font-mono)",fontWeight:600,color:c.color}}>{c.label}</span>
-        <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:c.color,opacity:0.7}}>Score: {(macro.score*100).toFixed(0)}</span>
-        <span style={{fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,color:c.color,background:`${c.color}10`,padding:"2px 8px",borderRadius:3,border:`1px solid ${c.border}`}}>Position cap: {c.cap}%</span>
-      </div>
-      <div style={{display:"flex",gap:8}}>
-        {subItems.map(([label,val])=>val!=null&&(
-          <div key={label} style={{textAlign:"center"}}>
-            <div style={{width:30,height:4,borderRadius:2,background:"#e5e7eb",overflow:"hidden"}}><div style={{height:"100%",width:`${(val??0)*100}%`,borderRadius:2,background:c.color,opacity:0.6}}/></div>
-            <div style={{fontSize:7,fontFamily:"var(--font-mono)",color:"#9ca3af",marginTop:2}}>{label}</div>
+    <div style={{display:"flex",alignItems:"center",gap:18,padding:"6px 14px",marginBottom:14,background:"transparent",borderTop:"1px solid var(--border-subtle,#eef1ef)",borderBottom:"1px solid var(--border-subtle,#eef1ef)"}}>
+      <span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",fontWeight:600,letterSpacing:"0.1em"}}>MACRO</span>
+      {items_present.map(([label,val])=>{
+        const v = val ?? 0;
+        const c = v>0.6 ? "#10b981" : v>0.4 ? "#d97706" : "#ef4444";
+        return(
+          <div key={label} style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{width:5,height:5,borderRadius:"50%",background:c,opacity:0.85}}/>
+            <span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)"}}>{label}</span>
           </div>
-        ))}
-      </div>
+        );
+      })}
+      <span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginLeft:"auto",fontStyle:"italic"}}>situational only — strategy is regime-agnostic</span>
     </div>
   );
 }
@@ -295,49 +293,109 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   );
 }
 
-function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;weights:Record<string,number>;rank:number}){
+// ── Strategy status decoration (basket / bucket / universe) ────────────────
+type StatusKind = "basket" | "bucket" | "universe";
+interface StrategyDeco {
+  status: StatusKind;
+  basketRank?: number;        // rank in current basket (if basket)
+  basketRegion?: "midcap"|"sp500"|"both";
+  inMidcap?: boolean;          // present in latest_midcap.json
+  inSp500?: boolean;           // present in latest_sp500.json
+}
+type StockWithDeco = StockData & { _deco?: StrategyDeco };
+
+function StatusBadge({deco,piotroski}:{deco?:StrategyDeco;piotroski:number}){
+  if(!deco){
+    return <span style={{fontSize:9,color:"var(--text-light,#9ca3af)",fontFamily:"var(--font-mono)"}}>—</span>;
+  }
+  if(deco.status === "basket"){
+    return(
+      <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:700,letterSpacing:"0.04em",fontFamily:"var(--font-mono)",background:"#e8f5ee",color:"#2d7a4f",border:"1px solid #b8dcc8"}}>
+        ⭐ #{deco.basketRank}
+      </span>
+    );
+  }
+  if(deco.status === "bucket"){
+    return(
+      <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:600,letterSpacing:"0.04em",fontFamily:"var(--font-mono)",background:"#fffbeb",color:"#92400e",border:"1px solid #fde68a"}}>
+        ◐ Pio {piotroski}
+      </span>
+    );
+  }
+  return <span style={{fontSize:9,color:"var(--text-light,#9ca3af)",fontFamily:"var(--font-mono)"}}>—</span>;
+}
+
+function RegionBadge({deco}:{deco?:StrategyDeco}){
+  if(!deco) return <span style={{fontSize:9,color:"var(--text-light,#9ca3af)",fontFamily:"var(--font-mono)"}}>—</span>;
+  const inBoth = deco.inMidcap && deco.inSp500;
+  const label = inBoth ? "M+S" : deco.inMidcap ? "M" : deco.inSp500 ? "S" : "—";
+  const color = inBoth ? "#7c3aed" : deco.inMidcap ? "#2d7a4f" : deco.inSp500 ? "#4338ca" : "var(--text-light,#9ca3af)";
+  const bg    = inBoth ? "#f5f3ff" : deco.inMidcap ? "#e8f5ee" : deco.inSp500 ? "#eef2ff" : "transparent";
+  const bd    = inBoth ? "#ddd6fe" : deco.inMidcap ? "#b8dcc8" : deco.inSp500 ? "#c7d2fe" : "transparent";
+  return(
+    <span style={{display:"inline-block",padding:"1px 5px",borderRadius:3,fontSize:9,fontWeight:700,letterSpacing:"0.05em",fontFamily:"var(--font-mono)",background:bg,color,border:`1px solid ${bd}`}}>{label}</span>
+  );
+}
+
+function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockWithDeco;expanded:boolean;onToggle:()=>void;weights:Record<string,number>;rank:number}){
   const scores=inferFactors(s);
-  const sigStyle=SIG[s.signal]||SIG.HOLD;
-  const isTop20=rank<=20;
+  const isInBasket = s._deco?.status === "basket";
   const isLive=s.hit_prob!=null&&s.hit_prob>0;
   const p10=isLive?Math.round(s.hit_prob!*100):getProb(s.composite).p10;
   const probFallback=getProb(s.composite);
   return(
     <>
-      <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s",borderLeft:isTop20?"3px solid #2d7a4f":"3px solid transparent"}}
+      <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s",borderLeft:isInBasket?"3px solid #2d7a4f":"3px solid transparent"}}
         onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg-hover,#f0f4f1)";}}
         onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
+        {/* SYMBOL + sector */}
         <td style={{padding:"10px 12px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
             <div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
-                {isTop20&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",fontWeight:700,color:"#2d7a4f",background:"#e8f5ee",borderRadius:3,padding:"0 4px",minWidth:16,textAlign:"center"}}>{rank}</span>}
                 <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
-                <span style={{fontSize:9,padding:"1px 5px",borderRadius:3,fontWeight:600,fontFamily:"var(--font-mono)",background:(CLS[s.classification]||"#475569")+"10",color:CLS[s.classification]||"#475569"}}>{s.classification?.replace("_"," ")}</span>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
-              <CatalystBadges s={s}/>
               {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
             </div>
           </div>
         </td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}{s.position_size_pct!=null&&s.position_size_pct>0&&<div style={{fontSize:8,fontFamily:"var(--font-mono)",color:sigStyle.color,marginTop:2}}>Size: {s.position_size_pct.toFixed(0)}%</div>}</td>
-        <td style={{padding:"10px 12px"}}><span style={{display:"inline-block",padding:"3px 10px",borderRadius:4,fontSize:10,fontWeight:700,letterSpacing:"0.07em",fontFamily:"var(--font-mono)",background:sigStyle.bg,color:sigStyle.color,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span></td>
-        <td style={{padding:"10px 12px",textAlign:"right"}}><ScorePill value={s.composite}/></td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:10}}>{(()=>{const cov=s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length;const total=FACTOR_ORDER.length;return<span style={{color:cov>=Math.ceil(total*0.7)?"#10b981":cov>=Math.ceil(total*0.5)?"#d97706":"#ef4444",fontWeight:600}}>{cov}/{total}{cov<Math.ceil(total*0.3)&&" ⚠️"}</span>;})()}</td>
-        <td style={{padding:"6px 8px",textAlign:"center"}}><MiniRadar scores={scores} size={44}/></td>
-        <td style={{padding:"10px 8px"}}><div style={{display:"flex",gap:2}}>{Array.from({length:10},(_,i)=>{const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?"#d97706":"#ef4444";return<div key={i} style={{width:6,height:6,borderRadius:"50%",background:a?c:"var(--bg-elevated,#edf0ee)",border:`1px solid ${a?c:"var(--border,#e5e7eb)"}`}}/>;})}</div></td>
+        {/* STATUS — basket / bucket / universe */}
+        <td style={{padding:"10px 8px",textAlign:"center"}}>
+          <StatusBadge deco={s._deco} piotroski={s.piotroski}/>
+        </td>
+        {/* REGION badge */}
+        <td style={{padding:"10px 6px",textAlign:"center"}}>
+          <RegionBadge deco={s._deco}/>
+        </td>
+        {/* PRICE */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}</td>
+        {/* PIO — the bucket-defining factor */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:600,color:s.piotroski<=3?"#92400e":"var(--text-muted,#6b7280)"}}>
+          {s.piotroski}
+        </td>
+        {/* COMPOSITE — demoted (smaller, no big bar) */}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted,#6b7280)",fontWeight:500}}>
+          {s.composite.toFixed(2)}
+        </td>
+        {/* VALUE (DCF MoS) */}
         <td style={{padding:"10px 8px"}}><MoSBar value={s.margin_of_safety}/></td>
+        {/* UPSIDE — analyst */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}}>{p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ML</span>}</td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>{(()=>{const ivr=s.tradier_iv_rank;const iv=s.tradier_iv_current;const samples=s.tradier_iv_samples||0;if(ivr==null&&iv==null)return<span style={{color:"var(--text-light,#9ca3af)"}} title="Top-30 only; 20+ days of IV history needed for rank">—</span>;if(ivr==null&&iv!=null){return<div title={`Current IV ${(iv*100).toFixed(0)}% · ${samples}/20 samples for rank`}><span style={{color:"var(--text-muted,#6b7280)",fontWeight:600}}>{(iv*100).toFixed(0)}%</span><div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{samples}/20</div></div>;}const rankColor=ivr!<=30?"#10b981":ivr!<=60?"#d97706":"#ef4444";return<div title={`IV Rank ${ivr!.toFixed(0)} (0=cheap, 100=rich) · Current IV ${iv?(iv*100).toFixed(0):"—"}% · ${samples}d samples`}><span style={{color:rankColor,fontWeight:700}}>{ivr!.toFixed(0)}</span>{iv!=null&&<div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{(iv*100).toFixed(0)}% IV</div>}</div>;})()}</td>
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 6px",fontSize:11}}><span style={{color:"#10b981",fontWeight:600}}>+{probFallback.gain}%</span><span style={{color:"var(--text-light,#9ca3af)",margin:"0 2px"}}>/</span><span style={{color:"#ef4444",fontWeight:600}}>{probFallback.dd}%</span></td>
-        <td style={{padding:"10px 8px",textAlign:"center"}}>{s.insider_score!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:s.insider_score>0.6?"#10b981":s.insider_score>0.4?"var(--text-muted)":"#ef4444"}}>{(s.insider_net_buys??0)>0?"↑":(s.insider_net_buys??0)<0?"↓":"→"} {(s.insider_score*100).toFixed(0)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
-        <td style={{padding:"10px 8px"}}>{s.transcript_sentiment!=null?<span style={{fontSize:11,fontFamily:"var(--font-mono)",color:s.transcript_sentiment>0.3?"#10b981":s.transcript_sentiment>-0.1?"var(--text-muted)":"#ef4444"}}>{s.transcript_sentiment>0.3?"😊":s.transcript_sentiment>-0.1?"😐":"😟"} {s.transcript_sentiment>0?"+":""}{s.transcript_sentiment.toFixed(2)}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
+        {/* P+10% — labeled experimental */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}} title="ML probability of touching +10% within prediction window. Experimental — known underconfidence in 0.4-0.8 bin.">
+          {p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ml</span>}
+        </td>
+        {/* GAIN/DD */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:11}}>
+          <span style={{color:"#10b981",fontWeight:600}}>+{probFallback.gain}%</span>
+          <span style={{color:"var(--text-light,#9ca3af)",margin:"0 2px"}}>/</span>
+          <span style={{color:"#ef4444",fontWeight:600}}>{probFallback.dd}%</span>
+        </td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={10} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -714,171 +772,201 @@ function StrategyBasketCard(){
 
 // ── Main Dashboard ──────────────────────────────────────────────────────────
 export default function Dashboard(){
-  const[data,setData]=useState<ScanData|null>(null);const[loading,setLoading]=useState(true);
-  const[sortKey,setSortKey]=useState<keyof StockData>("composite");const[sortDir,setSortDir]=useState<"asc"|"desc">("desc");
-  const[filter,setFilter]=useState("ALL");const[search,setSearch]=useState("");const[classFilter,setClassFilter]=useState("ALL");const[probMin,setProbMin]=useState(0); // v7.2.2: min P(+10%) filter, 0-100
+  const[sp500Data,setSp500Data]=useState<ScanData|null>(null);
+  const[midcapData,setMidcapData]=useState<ScanData|null>(null);
+  const[sp500Basket,setSp500Basket]=useState<{basket:{symbol:string;rank:number}[]}|null>(null);
+  const[midcapBasket,setMidcapBasket]=useState<{basket:{symbol:string;rank:number}[]}|null>(null);
+  const[loading,setLoading]=useState(true);
+
+  const[sortKey,setSortKey]=useState<keyof StockData|"piotroski">("composite");
+  const[sortDir,setSortDir]=useState<"asc"|"desc">("desc");
+  const[search,setSearch]=useState("");
+  const[statusFilter,setStatusFilter]=useState<"ALL"|"basket"|"bucket"|"universe">("ALL");
+  const[regionFilter,setRegionFilter]=useState<"ALL"|"midcap"|"sp500">("ALL");
   const[expanded,setExpanded]=useState<Record<string,boolean>>({});
-  const[region,setRegion]=useState("sp500");
 
   useEffect(()=>{
     setLoading(true);
-    fetch(gcsUrl(region)).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
-      fetch(`${GCS_BASE}/latest.json`).then(res=>{if(!res.ok)throw new Error();return res.json();}).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>{
-        fetch(GCS_FALLBACK).then(res=>res.json()).then((d:ScanData)=>{setData(d);setLoading(false);}).catch(()=>setLoading(false));
-      });
+    Promise.allSettled([
+      fetch(`${GCS_BASE}/latest_sp500.json?t=${Date.now()}`).then(r=>r.ok?r.json():null),
+      fetch(`${GCS_BASE}/latest_midcap.json?t=${Date.now()}`).then(r=>r.ok?r.json():null),
+      fetch(`${GCS_BASE}/strategy_basket_sp500.json?t=${Date.now()}`).then(r=>r.ok?r.json():null),
+      fetch(`${GCS_BASE}/strategy_basket_midcap.json?t=${Date.now()}`).then(r=>r.ok?r.json():null),
+    ]).then(([sp,mid,spB,midB])=>{
+      if(sp.status==="fulfilled")  setSp500Data(sp.value);
+      if(mid.status==="fulfilled") setMidcapData(mid.value);
+      if(spB.status==="fulfilled") setSp500Basket(spB.value);
+      if(midB.status==="fulfilled")setMidcapBasket(midB.value);
+      setLoading(false);
     });
-  },[region]);
+  },[]);
 
-  const weights=data?.weights||FACTOR_WEIGHTS;
+  // Reference data — prefer sp500 for weights/macro, fall back to midcap
+  const refData = sp500Data || midcapData;
+  const weights = refData?.weights || FACTOR_WEIGHTS;
 
-  // Filter stocks by region first (for accurate summary counts)
-  // v7.2: Europe and RoW both filter client-side as a safety net.
-  // If latest_europe.json is missing and we fall back to latest.json (which
-  // may contain Global or SP500 data), this prevents US/non-EU contamination.
-  const regionStocks=useMemo(()=>{
-    if(!data?.stocks) return [];
-    if(region==="sp500") return data.stocks;
-    if(region==="europe"){
-      return data.stocks.filter(s=>{
-        const ex=s.exchange||"";const co=s.country||"";
-        if(ex||co){
-          if(EU_EXCHANGES.has(ex)||EU_COUNTRIES.has(co)) return true;
-          if(US_EXCHANGES.has(ex)||co==="US") return false;
-          return false;  // unknown exchange + no EU country → exclude
-        }
-        // Fallback: suffix-based heuristic for older scans without exchange data
-        if(!s.symbol.includes(".")) return false;
-        const suffix=s.symbol.split(".").pop()||"";
-        return ["DE","PA","L","AS","MI","ST","SW","MC","HE","OL","CO","BR","IR","VI","LI"].includes(suffix);
-      });
+  // Build deduplicated, decorated stock list from both regions.
+  const decoratedStocks = useMemo<StockWithDeco[]>(()=>{
+    const sp500Stocks  = sp500Data?.stocks  || [];
+    const midcapStocks = midcapData?.stocks || [];
+    const sp500SymSet  = new Set(sp500Stocks.map(s=>s.symbol.toUpperCase()));
+    const midcapSymSet = new Set(midcapStocks.map(s=>s.symbol.toUpperCase()));
+
+    const sp500BasketMap  = new Map((sp500Basket?.basket||[]).map(b=>[b.symbol.toUpperCase(),b.rank]));
+    const midcapBasketMap = new Map((midcapBasket?.basket||[]).map(b=>[b.symbol.toUpperCase(),b.rank]));
+
+    // Dedupe by symbol — prefer the entry with more complete data
+    const merged = new Map<string,StockData>();
+    for (const s of sp500Stocks)  merged.set(s.symbol.toUpperCase(), s);
+    for (const s of midcapStocks) {
+      const key = s.symbol.toUpperCase();
+      if (!merged.has(key)) merged.set(key, s);
     }
-    // Rest of World: exclude US + EU
-    return data.stocks.filter(s=>{
-      const ex=s.exchange||"";const co=s.country||"";
-      if(ex||co){
-        if(US_EXCHANGES.has(ex)||co==="US") return false;
-        if(EU_EXCHANGES.has(ex)||EU_COUNTRIES.has(co)) return false;
-        return true;
-      }
-      if(!s.symbol.includes(".")) return false;
-      const suffix=s.symbol.split(".").pop()||"";
-      if(["DE","PA","L","AS","MI","ST","SW","MC","HE","OL","CO","BR","IR","VI","LI"].includes(suffix)) return false;
-      return true;
+
+    const result: StockWithDeco[] = [];
+    for (const [sym, s] of merged) {
+      const inMidcap = midcapSymSet.has(sym);
+      const inSp500  = sp500SymSet.has(sym);
+      const sp500Rank  = sp500BasketMap.get(sym);
+      const midcapRank = midcapBasketMap.get(sym);
+      const inAnyBasket = sp500Rank != null || midcapRank != null;
+      const inAnyBucket = (s.piotroski ?? 99) <= 3;
+
+      const status: StatusKind = inAnyBasket ? "basket" : inAnyBucket ? "bucket" : "universe";
+      const basketRank = midcapRank ?? sp500Rank;
+      const basketRegion: StrategyDeco["basketRegion"] =
+        midcapRank!=null && sp500Rank!=null ? "both" :
+        midcapRank!=null ? "midcap" :
+        sp500Rank!=null  ? "sp500"  : undefined;
+
+      result.push({ ...s, _deco: { status, basketRank, basketRegion, inMidcap, inSp500 }});
+    }
+    return result;
+  },[sp500Data,midcapData,sp500Basket,midcapBasket]);
+
+  // Apply filters + sort
+  const sorted = useMemo(()=>{
+    let list = [...decoratedStocks];
+    if (statusFilter !== "ALL") list = list.filter(s => s._deco?.status === statusFilter);
+    if (regionFilter !== "ALL") {
+      list = list.filter(s => regionFilter === "midcap" ? s._deco?.inMidcap : s._deco?.inSp500);
+    }
+    if (search) {
+      const q = search.toUpperCase();
+      list = list.filter(s => s.symbol.includes(q) || (s.company_name||"").toUpperCase().includes(q));
+    }
+    list.sort((a,b)=>{
+      // Custom: basket rank always sorts to top
+      const aR = a._deco?.basketRank ?? 999;
+      const bR = b._deco?.basketRank ?? 999;
+      if (aR !== bR) return aR - bR;
+      const av = (a as any)[sortKey] ?? 0;
+      const bv = (b as any)[sortKey] ?? 0;
+      return sortDir === "desc" ? bv - av : av - bv;
     });
-  },[data,region]);
-
-  const sorted=useMemo(()=>{
-    let list=[...regionStocks];
-    if(filter!=="ALL") list=list.filter(s=>s.signal===filter);
-    if(classFilter!=="ALL") list=list.filter(s=>s.classification===classFilter);
-    if(probMin>0) list=list.filter(s=>(s.hit_prob??0)*100>=probMin); // v7.2.2: min p(+10%)
-    if(search){const q=search.toUpperCase();list=list.filter(s=>s.symbol.includes(q)||(s.company_name||"").toUpperCase().includes(q));}
-    list.sort((a,b)=>{const av=(a[sortKey]as number)??0,bv=(b[sortKey]as number)??0;return sortDir==="desc"?bv-av:av-bv;});
     return list;
-  },[regionStocks,sortKey,sortDir,filter,classFilter,search,probMin]);
+  },[decoratedStocks, sortKey, sortDir, statusFilter, regionFilter, search]);
 
-  const toggleSort=(key:keyof StockData)=>{if(sortKey===key)setSortDir(d=>d==="desc"?"asc":"desc");else{setSortKey(key);setSortDir("desc");}};
+  const toggleSort = (key: keyof StockData | "piotroski") => {
+    if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
+    else { setSortKey(key); setSortDir("desc"); }
+  };
 
-  if(loading) return<div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
+  if (loading) return <div style={{color:"var(--text-muted)",padding:60,textAlign:"center",fontFamily:"var(--font-mono)",fontSize:13}}>Loading scan data...</div>;
 
-  // v7.2: for sp500, trust backend summary. For europe/global, derive counts
-  // from client-filtered regionStocks so they stay correct when we fall back
-  // to latest.json.
-  const sum=region!=="sp500"
-    ?{total:regionStocks.length,strong_buy:regionStocks.filter(s=>s.signal==="STRONG BUY").length,buy:regionStocks.filter(s=>s.signal==="BUY").length,watch:regionStocks.filter(s=>s.signal==="WATCH").length,hold:regionStocks.filter(s=>s.signal==="HOLD").length,sell:regionStocks.filter(s=>s.signal==="SELL").length}
-    :(data?.summary||{total:0,buy:0,watch:0,hold:0,sell:0,strong_buy:0});
-  // Format scan timestamp in Amsterdam time with explicit CET/CEST label.
-  // v7.2.2 Apr 22 — user requested explicit timezone indicator. timeZone option
-  // makes Chrome render the date in Amsterdam regardless of viewer's locale;
-  // timeZoneName: "short" emits "CET" in winter and "CEST" in summer.
-  const scanDate = data?.scan_date
-    ? new Date(data.scan_date).toLocaleString("en-GB", {
+  // Universe summary counts
+  const totalCount  = decoratedStocks.length;
+  const basketCount = decoratedStocks.filter(s => s._deco?.status === "basket").length;
+  const bucketCount = decoratedStocks.filter(s => s._deco?.status === "bucket").length;
+  const universeOnly = totalCount - basketCount - bucketCount;
+
+  // Date — pick whichever scan is newest
+  const newestScan = [sp500Data?.scan_date, midcapData?.scan_date].filter(Boolean).sort().pop();
+  const scanDate = newestScan
+    ? new Date(newestScan).toLocaleString("en-GB", {
         timeZone: "Europe/Amsterdam",
-        day: "2-digit", month: "short", year: "numeric",
-        hour: "2-digit", minute: "2-digit",
-        timeZoneName: "short",
-        hour12: false,
+        day:"2-digit", month:"short", year:"numeric",
+        hour:"2-digit", minute:"2-digit",
+        timeZoneName:"short", hour12:false,
       })
     : "—";
-  const classifications=[...new Set(regionStocks.map(s=>s.classification).filter(Boolean))].sort();
 
-  const hs=(key:string,align:"left"|"right"|"center"="right"):React.CSSProperties=>({
-    padding:"8px 12px",textAlign:align,cursor:"pointer",fontSize:9,fontWeight:700,letterSpacing:"0.1em",fontFamily:"var(--font-mono)",
-    color:sortKey===key?"var(--green,#2d7a4f)":"var(--text-light,#9ca3af)",userSelect:"none",whiteSpace:"nowrap",borderBottom:"2px solid var(--border,#e5e7eb)",background:"var(--bg,#fff)"
+  const hs = (key: keyof StockData | "piotroski" | "static", align: "left"|"right"|"center" = "right"): React.CSSProperties => ({
+    padding:"8px 12px", textAlign: align,
+    cursor: key === "static" ? "default" : "pointer",
+    fontSize:9, fontWeight:700, letterSpacing:"0.1em", fontFamily:"var(--font-mono)",
+    color: sortKey === key ? "var(--green,#2d7a4f)" : "var(--text-light,#9ca3af)",
+    userSelect:"none", whiteSpace:"nowrap",
+    borderBottom:"2px solid var(--border,#e5e7eb)", background:"var(--bg,#fff)",
   });
-
-  // Signal cards config
-  const signalCards = [
-    ...(sum.strong_buy ? [{ label:"STRONG BUY",count:sum.strong_buy,icon:<Star size={15}/>,s:SIG["STRONG BUY"] }] : []),
-    { label:"BUY",count:sum.buy,icon:<TrendingUp size={15}/>,s:SIG.BUY },
-    { label:"WATCH",count:sum.watch,icon:<Target size={15}/>,s:SIG.WATCH },
-    { label:"HOLD",count:sum.hold,icon:<Shield size={15}/>,s:SIG.HOLD },
-    { label:"SELL",count:sum.sell,icon:<TrendingDown size={15}/>,s:SIG.SELL },
-  ];
 
   return(
     <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
       {/* Header */}
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
-            {REGIONS.map(r=>(
-              <button key={r.key} onClick={()=>setRegion(r.key)} style={{padding:"5px 12px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:`1px solid ${region===r.key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,borderRadius:5,cursor:"pointer",background:region===r.key?"var(--green-light,#e8f5ee)":"transparent",color:region===r.key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",transition:"all 0.15s"}}>{r.label}</button>
-            ))}
-          </div>
-          <p style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:4}}>{region==="global"?"REST OF WORLD":region==="europe"?"EUROPE":(data?.region?.toUpperCase()||region.toUpperCase())} · {scanDate} · {sum.total} stocks{region!=="sp500"&&data?.stocks&&data.stocks.length!==sum.total?` (filtered from ${data.stocks.length})`:""} · {data?.version||"v7.2"}</p>
+          <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
+            CB Screener · {totalCount} stocks · v1.0 strategy
+          </p>
+          <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
+            {scanDate} · {basketCount} in basket · {bucketCount} in Pio≤3 bucket · {universeOnly} universe only
+          </p>
         </div>
         <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
-          {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
+          weights: {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
         </div>
       </div>
 
-      {/* Macro Banner */}
-      <MacroBanner macro={data?.macro}/>
+      {/* Macro ribbon — situational only */}
+      <MacroRibbon macro={refData?.macro}/>
 
-      {/* Strategy Basket */}
+      {/* Strategy basket card */}
       <StrategyBasketCard/>
 
-      {/* Signal Cards */}
-      <div style={{display:"grid",gridTemplateColumns:`repeat(${signalCards.length},1fr)`,gap:10,marginBottom:20}}>
-        {signalCards.map(({label,count,icon,s:st})=>(
-          <div key={label} onClick={()=>setFilter(f=>f===label?"ALL":label)} style={{
-            background:filter===label?st.bg:"var(--bg)",border:`1px solid ${filter===label?st.border:"var(--border,#e5e7eb)"}`,
-            borderRadius:8,padding:"12px 16px",cursor:"pointer",transition:"all 0.15s",
-            boxShadow:filter===label?"0 1px 3px rgba(0,0,0,0.06)":"0 1px 2px rgba(0,0,0,0.04)"
-          }}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{label}</span>
-              <span style={{color:st.color}}>{icon}</span>
-            </div>
-            <div style={{fontSize:26,fontWeight:700,color:st.color,fontFamily:"var(--font-mono)",marginTop:2}}>{count||0}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Search + Filter */}
-      <div style={{display:"flex",gap:10,marginBottom:12}}>
+      {/* Filters */}
+      <div style={{display:"flex",gap:10,marginBottom:12,marginTop:16,flexWrap:"wrap"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol..." style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol..."
+            style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
+                    border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
-        <div style={{position:"relative"}}>
-          <Filter size={12} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
-          <select value={classFilter} onChange={e=>setClassFilter(e.target.value)} style={{padding:"7px 12px 7px 30px",fontSize:11,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none",cursor:"pointer",appearance:"auto"}}>
-            <option value="ALL">All Classifications</option>
-            {classifications.map(c=><option key={c} value={c}>{c?.replace("_"," ")}</option>)}
-          </select>
+
+        {/* Status filter chips */}
+        <div style={{display:"flex",gap:4,alignItems:"center"}}>
+          {([
+            ["ALL",      `All (${totalCount})`],
+            ["basket",   `⭐ Basket (${basketCount})`],
+            ["bucket",   `◐ Bucket (${bucketCount})`],
+            ["universe", `Universe (${universeOnly})`],
+          ] as [typeof statusFilter,string][]).map(([key,label])=>(
+            <button key={key} onClick={()=>setStatusFilter(key)}
+              style={{
+                padding:"6px 11px",fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
+                border:`1px solid ${statusFilter===key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,
+                borderRadius:5,cursor:"pointer",
+                background:statusFilter===key?"var(--green-light,#e8f5ee)":"transparent",
+                color:statusFilter===key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",
+              }}>{label}</button>
+          ))}
         </div>
-        <div style={{position:"relative"}} title="Filter by minimum P(+10% in 60d) — ML-predicted probability of the stock hitting +10% within 60 days.">
-          <select value={probMin} onChange={e=>setProbMin(Number(e.target.value))} style={{padding:"7px 12px 7px 10px",fontSize:11,fontFamily:"var(--font-mono)",border:"1px solid var(--border)",borderRadius:6,background:probMin>0?"var(--green-light,#e8f5ee)":"var(--bg)",color:probMin>0?"var(--green,#2d7a4f)":"var(--text)",outline:"none",cursor:"pointer",appearance:"auto",fontWeight:probMin>0?700:400}}>
-            <option value={0}>P(+10%) — Any</option>
-            <option value={40}>P(+10%) ≥ 40%</option>
-            <option value={50}>P(+10%) ≥ 50%</option>
-            <option value={60}>P(+10%) ≥ 60%</option>
-            <option value={65}>P(+10%) ≥ 65% (option gate)</option>
-            <option value={70}>P(+10%) ≥ 70%</option>
-            <option value={80}>P(+10%) ≥ 80%</option>
-          </select>
+
+        {/* Region filter chips */}
+        <div style={{display:"flex",gap:4,alignItems:"center"}}>
+          {([
+            ["ALL","All regions"],
+            ["midcap","Midcap"],
+            ["sp500","SP500"],
+          ] as [typeof regionFilter,string][]).map(([key,label])=>(
+            <button key={key} onClick={()=>setRegionFilter(key)}
+              style={{
+                padding:"6px 11px",fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
+                border:`1px solid ${regionFilter===key?"var(--green-border,#b8dcc8)":"var(--border,#e5e7eb)"}`,
+                borderRadius:5,cursor:"pointer",
+                background:regionFilter===key?"var(--green-light,#e8f5ee)":"transparent",
+                color:regionFilter===key?"var(--green,#2d7a4f)":"var(--text-muted,#6b7280)",
+              }}>{label}</button>
+          ))}
         </div>
       </div>
 
@@ -888,27 +976,25 @@ export default function Dashboard(){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <thead><tr>
               <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
+              <th style={{...hs("static","center"),cursor:"default"}}>STATUS</th>
+              <th style={{...hs("static","center"),cursor:"default"}}>REGION</th>
               <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
-              <th style={hs("signal","left")} onClick={()=>toggleSort("signal")}>SIGNAL</th>
-              <th style={hs("composite")} onClick={()=>toggleSort("composite")}>SCORE</th>
-              <th style={hs("factor_coverage","center")}>COV</th>
-              <th style={{...hs("composite","center"),cursor:"default"}}>RADAR</th>
-              <th style={hs("bull_score","left")} onClick={()=>toggleSort("bull_score")}>BULL</th>
-              <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")}>MoS</th>
+              <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")}>PIO</th>
+              <th style={hs("composite")} onClick={()=>toggleSort("composite")}>COMP</th>
+              <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")} title="DCF Margin of Safety — negative = overvalued vs intrinsic">VALUE</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")}>UPSIDE</th>
-              <th style={hs("composite","center")}>P(+10%)</th>
-              <th style={{...hs("composite","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in the trailing 60-day range. Lower = options cheaper.">IVR</th>
-              <th style={hs("composite","right")}>GAIN/DD</th>
-              <th style={hs("insider_score","center")}>INSIDER</th>
-              <th style={hs("transcript_sentiment","left")}>TRNSCRPT</th>
+              <th style={{...hs("static","center"),cursor:"default"}} title="ML probability of touching +10%. Experimental.">P+10% ml</th>
+              <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
             </tr></thead>
             <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} weights={weights} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
           </table>
         </div>
         {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
-      <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{sum.total} screened · {sorted.length} shown · Green border = Top 20 · Click row to expand</div>
-      <SectorConcentration data={data?.sector_concentration}/>
+      <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+        {totalCount} screened · {sorted.length} shown · ⭐ = in current basket · ◐ = in Pio≤3 bucket · click row to expand
+      </div>
+      <SectorConcentration data={refData?.sector_concentration}/>
     </div>
   );
 }
