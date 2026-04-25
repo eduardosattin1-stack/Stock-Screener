@@ -6,9 +6,9 @@ import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp
 const GCS_SCANS = "/api/gcs/scans";
 const GCS_PORTFOLIO = "/api/gcs/portfolio";
 
-interface Position { symbol:string; entry_price:number; entry_date:string; shares:number; notes:string; entry_composite?:number; entry_signal?:string; peak_price?:number; last_composite?:number; last_signal?:string; }
+interface Position { symbol:string; entry_price:number; entry_date:string; shares:number; notes:string; bucket?:"midcap"|"sp500"|null; entry_composite?:number; entry_signal?:string; peak_price?:number; last_composite?:number; last_signal?:string; }
 interface MonitorAction { symbol:string; action:string; urgency:string; current_price:number; entry_price:number; pnl_pct:number; entry_composite:number; current_composite:number; comp_change_pct:number; entry_signal:string; current_signal:string; days_held:number; catalyst_score:number; catalyst_flags:string[]; quality_score:number; bull_score:number; reasons:string[]; }
-interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; }
+interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; }
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
 
 const SIG: Record<string,{color:string;bg:string;border:string}> = {
@@ -37,7 +37,7 @@ async function readErrorBody(r:Response):Promise<string>{
   const body=isHtml?"(server returned HTML page)":t.slice(0,120);
   return `HTTP ${r.status}${body?` – ${body}`:""}`;
 }
-async function apiAdd(p:{symbol:string;entry_price:number;shares:number;notes:string}){
+async function apiAdd(p:{symbol:string;entry_price:number;shares:number;notes:string;bucket?:"midcap"|"sp500"|null}){
   const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
   if(!r.ok) throw new Error(await readErrorBody(r));
   return r.json();
@@ -429,6 +429,7 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
   const [price,setPrice]=useState("");
   const [shares,setShares]=useState("");
   const [notes,setNotes]=useState("");
+  const [bucket,setBucket]=useState<"midcap"|"sp500"|"">("");
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
   async function handle(){
@@ -439,7 +440,7 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
     if(!sh||sh<=0){setErr("Shares required");return;}
     setSaving(true);setErr("");
     try {
-      await apiAdd({symbol:sy,entry_price:p,shares:sh,notes});
+      await apiAdd({symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
       onAdded();
     } catch(e:any){
       setErr(e.message||"Failed");setSaving(false);
@@ -467,6 +468,15 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
               <input type="number" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} placeholder="0" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
             </label>
           </div>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+            Strategy bucket (optional)
+            <select value={bucket} onChange={e=>setBucket(e.target.value as "midcap"|"sp500"|"")} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",background:"#fff",cursor:"pointer"}}>
+              <option value="">— None (untagged)</option>
+              <option value="midcap">Midcap basket</option>
+              <option value="sp500">S&amp;P 500 basket</option>
+            </select>
+            <span style={{fontSize:10,color:"#9ca3af",marginTop:2,display:"block"}}>tag this trade so the Performance page can compare it to the right model</span>
+          </label>
           <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
             Notes (optional)
             <input type="text" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="thesis, stop-loss, etc." maxLength={100} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:12,fontFamily:"var(--font-mono)"}}/>
