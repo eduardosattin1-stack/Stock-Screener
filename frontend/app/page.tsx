@@ -387,6 +387,26 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockWithDeco;
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}} title="ML probability of touching +10% within prediction window. Experimental — known underconfidence in 0.4-0.8 bin.">
           {p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ml</span>}
         </td>
+        {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>
+          {(()=>{
+            const ivr=s.tradier_iv_rank;
+            const iv=s.tradier_iv_current;
+            const samples=s.tradier_iv_samples||0;
+            if(ivr==null&&iv==null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Top-30 only; 20+ days of IV history needed for rank">—</span>;
+            if(ivr==null&&iv!=null){
+              return <div title={`Current IV ${(iv*100).toFixed(0)}% · ${samples}/20 samples for rank`}>
+                <span style={{color:"var(--text-muted,#6b7280)",fontWeight:600}}>{(iv*100).toFixed(0)}%</span>
+                <div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{samples}/20</div>
+              </div>;
+            }
+            const rankColor=ivr!<=30?"#10b981":ivr!<=60?"#d97706":"#ef4444";
+            return <div title={`IV Rank ${ivr!.toFixed(0)} (0=cheap, 100=rich) · Current IV ${iv?(iv*100).toFixed(0):"—"}% · ${samples}d samples`}>
+              <span style={{color:rankColor,fontWeight:700}}>{ivr!.toFixed(0)}</span>
+              {iv!=null&&<div style={{fontSize:7,color:"var(--text-light)",marginTop:1}}>{(iv*100).toFixed(0)}% IV</div>}
+            </div>;
+          })()}
+        </td>
         {/* GAIN/DD */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:11}}>
           <span style={{color:"#10b981",fontWeight:600}}>+{probFallback.gain}%</span>
@@ -395,7 +415,7 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockWithDeco;
         </td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={10} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={11} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -984,6 +1004,7 @@ export default function Dashboard(){
               <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")} title="DCF Margin of Safety — negative = overvalued vs intrinsic">VALUE</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")}>UPSIDE</th>
               <th style={{...hs("static","center"),cursor:"default"}} title="ML probability of touching +10%. Experimental.">P+10% ml</th>
+              <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in the trailing 60-day range. Lower = options cheaper. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
               <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
             </tr></thead>
             <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} weights={weights} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
