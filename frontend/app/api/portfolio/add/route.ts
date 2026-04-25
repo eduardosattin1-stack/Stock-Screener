@@ -12,10 +12,12 @@ export async function POST(req: Request) {
     return new Response("Invalid JSON body", { status: 400 });
   }
 
-  const { symbol, entry_price, shares, notes } = body || {};
+  const { symbol, entry_price, shares, notes, bucket } = body || {};
   if (!symbol || typeof symbol !== "string") return new Response("symbol required", { status: 400 });
   if (!entry_price || typeof entry_price !== "number" || entry_price <= 0) return new Response("entry_price required (positive number)", { status: 400 });
   if (shares == null || typeof shares !== "number" || shares <= 0) return new Response("shares required (positive number)", { status: 400 });
+  // bucket is optional; must be "midcap" | "sp500" | null/undefined
+  const validBucket = bucket === "midcap" || bucket === "sp500" ? bucket : null;
 
   try {
     const res = await fetch(`${CLOUD_RUN}/portfolio/add`, {
@@ -26,6 +28,7 @@ export async function POST(req: Request) {
         entry_price,
         shares,
         notes: (notes || "").slice(0, 200),
+        bucket: validBucket,
       }),
     });
     const text = await res.text();
