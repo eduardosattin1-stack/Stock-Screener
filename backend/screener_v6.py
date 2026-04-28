@@ -127,6 +127,35 @@ WEIGHTS = {
 }
 # Sum = 1.00. Removed news (ML: 0%) and catastrophe (ML: 0.2%) — zero predictive power.
 
+# ─── v8 Composite (Apr 2026) ────────────────────────────────────────────────
+# Five-factor structure replacing the 13-factor v7 composite. Designed to
+# answer Bruno's original five-factor brief: simplify, add net & FCF margin
+# scoring, add growth rates, add valuation explicitly, fold smart-money flows.
+# Mode-aware: same weights, but "momentum" factor swaps between bull_score
+# (Momentum mode) and reversal_score (Fallen Angel mode).
+WEIGHTS_V8 = {
+    "momentum":    0.25,  # bull_score / reversal_score depending on mode
+    "quality":     0.20,  # net margin 35% + FCF margin 35% + ROIC 30%
+    "growth":      0.20,  # rev + EPS + FCF, each 60/40 TTM/3yr
+    "value":       0.20,  # intrinsic upside 40% + P/FCF 30% + earnings yield 30%
+    "smart_money": 0.15,  # inst_flow + analyst + insider + transcript + earnings + congressional
+}
+# Sum = 1.00. Piotroski + Altman Z dropped from composite (visible on dashboard
+# only — see compute_quality_v8). DCF + intrinsic_buffett dropped from value
+# (kept on Stock dict for display but not in composite). Coverage gate retained.
+
+# Threshold ladders for absolute scoring (Bruno spec: absolute, not sector-relative)
+def _ladder(value, thresholds, scores):
+    """Return score from a sorted threshold ladder. thresholds and scores
+    must be the same length; thresholds in ascending order. Falls below the
+    lowest threshold → 0.0; above the highest → top score."""
+    if value is None or not isinstance(value, (int, float)):
+        return 0.0
+    for t, s in zip(thresholds, scores):
+        if value < t:
+            return s
+    return scores[-1]
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("v7")
 
@@ -347,6 +376,31 @@ class Stock:
     classification: str = ""
     reasons: list = field(default_factory=list)
 
+    # ─── v8 fields (Apr 2026) ─────────────────────────────────────────
+    # Margin-based quality components (computed from income + cashflow stmts)
+    net_margin: float = 0.0          # netIncome / revenue, TTM
+    fcf_margin: float = 0.0          # freeCashFlow / revenue, TTM
+    # Growth — TTM YoY and 3-year CAGR for the three core metrics
+    revenue_yoy: float = 0.0
+    eps_yoy: float = 0.0
+    fcf_yoy: float = 0.0
+    fcf_cagr_3y: float = 0.0
+    # Valuation ratios
+    p_fcf: float = 0.0               # price / FCF per share
+    earnings_yield: float = 0.0      # 1/PE; eps / price
+    # Forward intrinsic from BVPS projection (already computed in get_value)
+    intrinsic_bvps: float = 0.0
+    bvps_recent_cagr: float = 0.0    # 3yr BVPS CAGR (used in projection)
+    bvps_consistency: float = 0.0    # fraction of YoY BVPS-positive periods
+    bvps_upside: float = 0.0         # display-only: BVPS-only upside %
+    intrinsic_upside: float = 0.0    # combined upside % (BVPS + analyst avg)
+    # v8 reversal score for Fallen Angel mode
+    reversal_score: int = 0
+    # v8 5-factor composite — populated by compute_composite_v8
+    factors_v8: dict = field(default_factory=dict)
+    composite_v7: float = 0.0        # v7 composite kept side-by-side for diagnostics
+    mode: str = "momentum"           # "momentum" | "fallen_angel" — drives reversal vs bull score
+
     # ML probability prediction (GBM model, P(+10% in 60d))
     hit_prob: float = 0.0            # 0-1, from trained model; 0 if model not loaded
 
@@ -497,16 +551,7 @@ def get_symbols(region: str) -> list[str]:
                     COUNTRY_MAP[sym] = co.upper()
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
-        # 2026-04-28: Sector exclusion. The composite scoring formula was designed
-        # for non-financials and over-ranks banks/insurance/REITs because their
-        # ratio-based factors (P/S, ROIC, etc.) follow different economics.
-        # Same approach as biotech: exclude at the universe level, scoring stays
-        # untouched. Add sectors here as needed.
-        EXCLUDED_SECTORS = {"Financial Services"}
-        if EXCLUDED_SECTORS:
-           before = len(symbols)
-           symbols = [s for s in symbols if SECTOR_MAP.get(s, "") not in EXCLUDED_SECTORS]
-           log.info(f"  [sector exclude] {region}: {before} -> {len(symbols)} after dropping {EXCLUDED_SECTORS}")
+
     # 2026-04-25: Intersect with strategy allowlist if one exists for this
     # region. Allowlists encode the universe rules used to validate the v1.0
     # strategy: $100M+ TTM revenue, no biotech, no Financials/REITs/Utilities,
@@ -1205,6 +1250,69 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     if valid and local_price > 0:
         v["intrinsic_avg"] = sum(valid) / len(valid)
         v["margin_of_safety"] = (v["intrinsic_avg"] - local_price) / local_price
+
+    # ──────────────────────────────────────────────────────────────────
+    # v8 (Apr 2026): Margin, growth, and valuation-ratio fields
+    # Bruno's five-factor brief requires net margin, FCF margin, and three
+    # growth rates (revenue/EPS/FCF) in the composite. These are computed
+    # from the same income+cashflow data already loaded above, plus one
+    # extra cashflow fetch. Stored on the v dict and surfaced on Stock for
+    # compute_composite_v8 to read directly.
+    # ──────────────────────────────────────────────────────────────────
+    v["net_margin"] = 0.0
+    v["fcf_margin"] = 0.0
+    v["revenue_yoy"] = 0.0
+    v["eps_yoy"] = 0.0
+    v["fcf_yoy"] = 0.0
+    v["fcf_cagr_3y"] = 0.0
+    v["p_fcf"] = 0.0
+    v["earnings_yield"] = 0.0
+
+    # Net margin (most-recent year)
+    if inc and len(inc) >= 1:
+        latest_inc = inc[-1]  # already sorted oldest→newest above
+        rev_latest = float(latest_inc.get("revenue") or 0)
+        ni_latest = float(latest_inc.get("netIncome") or 0)
+        eps_latest = float(latest_inc.get("epsDiluted") or 0)
+        if rev_latest > 0:
+            v["net_margin"] = ni_latest / rev_latest
+        if local_price > 0 and eps_latest > 0:
+            v["earnings_yield"] = eps_latest / local_price
+
+    # Revenue and EPS growth — TTM YoY (most-recent two annual rows)
+    if inc and len(inc) >= 2:
+        rev_curr = float(inc[-1].get("revenue") or 0)
+        rev_prev = float(inc[-2].get("revenue") or 0)
+        if rev_prev > 0:
+            v["revenue_yoy"] = (rev_curr - rev_prev) / rev_prev
+        eps_curr = float(inc[-1].get("epsDiluted") or 0)
+        eps_prev = float(inc[-2].get("epsDiluted") or 0)
+        if eps_prev > 0 and eps_curr > 0:
+            v["eps_yoy"] = (eps_curr - eps_prev) / eps_prev
+
+    # FCF — fetch cashflow statement (one new API call per stock)
+    cf = fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 5})
+    if cf and len(cf) >= 1:
+        cf.sort(key=lambda x: x.get("date", ""))  # oldest → newest
+        fcf_series = [float(x.get("freeCashFlow") or 0) for x in cf]
+        # FCF margin (latest)
+        if inc and len(inc) >= 1:
+            rev_latest = float(inc[-1].get("revenue") or 0)
+            if rev_latest > 0 and fcf_series[-1]:
+                v["fcf_margin"] = fcf_series[-1] / rev_latest
+        # FCF YoY
+        if len(fcf_series) >= 2 and fcf_series[-2] > 0:
+            v["fcf_yoy"] = (fcf_series[-1] - fcf_series[-2]) / fcf_series[-2]
+        # FCF 3yr CAGR
+        if len(fcf_series) >= 4 and fcf_series[-4] > 0 and fcf_series[-1] > 0:
+            v["fcf_cagr_3y"] = safe_cagr(fcf_series[-4], fcf_series[-1], 3)
+        # P/FCF — needs FCF per share
+        if local_price > 0 and fcf_series[-1] > 0 and inc:
+            shares = float(inc[-1].get("weightedAverageShsOutDil") or 0)
+            if shares > 0:
+                fcf_per_share = fcf_series[-1] / shares
+                if fcf_per_share > 0:
+                    v["p_fcf"] = local_price / fcf_per_share
 
     # Convert intrinsic values to price currency for display
     if need_fx:
@@ -2469,6 +2577,291 @@ def compute_composite_v7(
     return composite, signal, factors, reasons, coverage
 
 # ---------------------------------------------------------------------------
+# 14b. Composite v8 — Five-factor (Apr 2026)
+# ---------------------------------------------------------------------------
+# Bruno's five-factor brief, locked in this session:
+#   Momentum 25%   — bull_score (Momentum mode) or reversal_score (Fallen Angel)
+#   Quality 20%    — net margin 35% + FCF margin 35% + ROIC 30%
+#                    Piotroski + Altman dropped from composite, kept on dashboard
+#   Growth 20%     — revenue + EPS + FCF, each = 60% TTM YoY + 40% 3yr CAGR
+#   Value 20%      — intrinsic upside 40% + P/FCF 30% + earnings yield 30%
+#                    Intrinsic = avg(BVPS-projected, analyst consensus)
+#                    DCF + intrinsic_buffett dropped from composite
+#   Smart Money 15% — institutional 25% + analyst 25% + insider 15% +
+#                     transcript 15% + earnings 15% + congressional 5%
+# Absolute thresholds (not sector-relative). Coverage gate retained.
+# ---------------------------------------------------------------------------
+
+def _score_growth(yoy, cagr_3y):
+    """Score a growth metric as 60/40 TTM-YoY / 3yr-CAGR blend.
+    Bruno spec: >25% top, 15-25%, 8-15%, 3-8%, 0-3%, <0%."""
+    def _to_score(g):
+        if g is None:
+            return None
+        if g < 0:    return 0.0
+        if g < 0.03: return 0.15
+        if g < 0.08: return 0.30
+        if g < 0.15: return 0.50
+        if g < 0.25: return 0.75
+        return 1.0
+    s_yoy = _to_score(yoy) if yoy is not None else None
+    s_cagr = _to_score(cagr_3y) if cagr_3y is not None else None
+    if s_yoy is None and s_cagr is None:
+        return None
+    if s_yoy is None:
+        return s_cagr
+    if s_cagr is None:
+        return s_yoy
+    return 0.6 * s_yoy + 0.4 * s_cagr
+
+
+def compute_quality_v8(value: dict) -> dict:
+    """v8 Quality: net margin (35%) + FCF margin (35%) + ROIC (30%).
+    Piotroski/Altman are NOT in the composite — they remain on the Stock
+    dict and dashboard for visual sanity-checks only.
+    Returns {"score": float|None, "_evaluated": bool, ...components}."""
+    nm = value.get("net_margin")
+    fm = value.get("fcf_margin")
+    roic = value.get("roic_avg")
+    # Net margin ladder (absolute): >20% best, 10-20%, 5-10%, 0-5%, <0%
+    nm_score = _ladder(nm, [0.0, 0.05, 0.10, 0.20], [0.0, 0.25, 0.5, 0.75, 1.0])
+    # FCF margin ladder: >15%, 8-15%, 3-8%, 0-3%, <0%
+    fm_score = _ladder(fm, [0.0, 0.03, 0.08, 0.15], [0.0, 0.25, 0.5, 0.75, 1.0])
+    # ROIC ladder: >20%, 15-20%, 10-15%, 5-10%, <5%
+    rc_score = _ladder(roic, [0.05, 0.10, 0.15, 0.20], [0.0, 0.25, 0.5, 0.75, 1.0])
+    components = []
+    weight_used = 0
+    if nm is not None:
+        components.append(("net_margin", nm_score, 0.35))
+        weight_used += 0.35
+    if fm is not None:
+        components.append(("fcf_margin", fm_score, 0.35))
+        weight_used += 0.35
+    if roic is not None and roic != 0:
+        components.append(("roic", rc_score, 0.30))
+        weight_used += 0.30
+    if weight_used == 0:
+        return {"score": None, "_evaluated": False,
+                "net_margin": nm, "fcf_margin": fm, "roic": roic}
+    score = sum(s * (w / weight_used) for _, s, w in components)
+    return {"score": round(score, 4), "_evaluated": True,
+            "net_margin": nm, "fcf_margin": fm, "roic": roic,
+            "net_margin_score": nm_score, "fcf_margin_score": fm_score,
+            "roic_score": rc_score}
+
+
+def compute_growth_v8(value: dict) -> dict:
+    """v8 Growth: revenue + EPS + FCF, each = 60/40 TTM-YoY / 3yr-CAGR.
+    Each sub-metric weighted 33/33/34. Sub-metric returns None if both
+    YoY and 3yr are missing → weight redistributed."""
+    rev = _score_growth(value.get("revenue_yoy"), value.get("revenue_cagr_3y"))
+    eps = _score_growth(value.get("eps_yoy"), value.get("eps_cagr_3y"))
+    fcf = _score_growth(value.get("fcf_yoy"), value.get("fcf_cagr_3y"))
+    components = []
+    weight_used = 0
+    if rev is not None:
+        components.append(("revenue", rev, 0.33)); weight_used += 0.33
+    if eps is not None:
+        components.append(("eps", eps, 0.33)); weight_used += 0.33
+    if fcf is not None:
+        components.append(("fcf", fcf, 0.34)); weight_used += 0.34
+    if weight_used == 0:
+        return {"score": None, "_evaluated": False}
+    score = sum(s * (w / weight_used) for _, s, w in components)
+    return {"score": round(score, 4), "_evaluated": True,
+            "revenue_score": rev, "eps_score": eps, "fcf_score": fcf}
+
+
+def compute_value_v8(value: dict, upside: dict) -> dict:
+    """v8 Value: intrinsic upside (40%) + P/FCF (30%) + earnings yield (30%).
+    Intrinsic upside uses the combined BVPS+analyst figure already produced
+    by compute_upside_score (renamed: result['intrinsic_upside'])."""
+    # Intrinsic upside ladder: from compute_upside_score in % (e.g. +25 = 25%)
+    iu_pct = upside.get("intrinsic_upside") if upside else None
+    iu_score = _ladder(iu_pct, [-30, -15, 0, 15, 30],
+                       [0.0, 0.15, 0.35, 0.6, 0.85, 1.0])
+    # P/FCF: lower is better. <15 = best, 15-25, 25-40, 40-60, >60 worst
+    p_fcf = value.get("p_fcf")
+    if p_fcf is None or p_fcf <= 0:
+        pf_score = None
+    else:
+        # invert: small ratio → high score
+        if p_fcf < 15:    pf_score = 1.0
+        elif p_fcf < 25:  pf_score = 0.75
+        elif p_fcf < 40:  pf_score = 0.5
+        elif p_fcf < 60:  pf_score = 0.25
+        else:             pf_score = 0.0
+    # Earnings yield: >8% best, 5-8%, 3-5%, 1-3%, <1%
+    ey = value.get("earnings_yield")
+    if ey is None or ey <= 0:
+        ey_score = None
+    else:
+        ey_score = _ladder(ey, [0.01, 0.03, 0.05, 0.08],
+                           [0.0, 0.25, 0.5, 0.75, 1.0])
+
+    components = []
+    weight_used = 0
+    if iu_score is not None and upside and upside.get("_evaluated"):
+        components.append(("intrinsic_upside", iu_score, 0.40))
+        weight_used += 0.40
+    if pf_score is not None:
+        components.append(("p_fcf", pf_score, 0.30))
+        weight_used += 0.30
+    if ey_score is not None:
+        components.append(("earnings_yield", ey_score, 0.30))
+        weight_used += 0.30
+    if weight_used == 0:
+        return {"score": None, "_evaluated": False}
+    score = sum(s * (w / weight_used) for _, s, w in components)
+    return {"score": round(score, 4), "_evaluated": True,
+            "intrinsic_upside_score": iu_score, "p_fcf_score": pf_score,
+            "earnings_yield_score": ey_score}
+
+
+def compute_smart_money_v8(insider, analyst, transcript, institutional_flow,
+                           earnings, congressional) -> dict:
+    """v8 Smart Money fold: institutional flow (25%) + analyst (25%) +
+    insider (15%) + transcript (15%) + earnings (15%) + congressional (5%).
+    Each sub-signal gates on its own _evaluated flag — missing components
+    have weight redistributed across what's available, same pattern as
+    compute_composite_v7."""
+    components = []
+    weight_used = 0
+    if institutional_flow and institutional_flow.get("_evaluated"):
+        components.append(("institutional_flow", institutional_flow.get("score", 0), 0.25))
+        weight_used += 0.25
+    if analyst and analyst.get("_grade_evaluated"):
+        components.append(("analyst", analyst.get("grade_score", 0.5), 0.25))
+        weight_used += 0.25
+    if insider and insider.get("_evaluated"):
+        components.append(("insider", insider.get("score", 0.5), 0.15))
+        weight_used += 0.15
+    if transcript and transcript.get("_evaluated"):
+        components.append(("transcript", transcript.get("score", 0.5), 0.15))
+        weight_used += 0.15
+    if earnings and earnings.get("_evaluated"):
+        components.append(("earnings", earnings.get("score", 0.5), 0.15))
+        weight_used += 0.15
+    if congressional and congressional.get("_evaluated"):
+        components.append(("congressional", congressional.get("score", 0.5), 0.05))
+        weight_used += 0.05
+    if weight_used == 0:
+        return {"score": None, "_evaluated": False, "components": []}
+    score = sum(s * (w / weight_used) for _, s, w in components)
+    return {"score": round(score, 4), "_evaluated": True,
+            "components": [(n, round(s, 3)) for n, s, _ in components]}
+
+
+def compute_composite_v8(
+    tech: dict, value: dict, upside: dict,
+    analyst: dict = None, insider: dict = None,
+    transcript: dict = None, institutional_flow: dict = None,
+    earnings: dict = None, congressional: dict = None,
+    mode: str = "momentum",
+) -> tuple:
+    """Five-factor composite (v8). Returns (composite, signal, factors_v8,
+    reasons, coverage).
+
+    Mode-aware: 'momentum' uses bull_score; 'fallen_angel' uses reversal_score.
+    Each sub-factor is None when no real data → weight redistributes across
+    evaluated factors. Coverage gate caps composite at 0.75 if <4/5 evaluated.
+    """
+    f = {}
+
+    # 1. Momentum — mode-dependent
+    if mode == "fallen_angel":
+        rev = tech.get("reversal_score", 0)
+        f["momentum"] = rev / 10 if rev is not None else None
+    else:
+        bull = tech.get("bull_score", 0)
+        f["momentum"] = bull / 10 if bull is not None else None
+
+    # 2. Quality
+    q = compute_quality_v8(value)
+    f["quality"] = q["score"]
+
+    # 3. Growth
+    g = compute_growth_v8(value)
+    f["growth"] = g["score"]
+
+    # 4. Value
+    val_block = compute_value_v8(value, upside)
+    f["value"] = val_block["score"]
+
+    # 5. Smart Money
+    sm = compute_smart_money_v8(insider, analyst, transcript, institutional_flow,
+                                earnings, congressional)
+    f["smart_money"] = sm["score"]
+
+    # ─── Coverage tracking ───
+    evaluated = [k for k, v in f.items() if v is not None]
+    missing = [k for k, v in f.items() if v is None]
+    coverage = {
+        "count": len(evaluated),
+        "total": 5,
+        "pct": len(evaluated) / 5,
+        "evaluated": evaluated,
+        "missing": missing,
+    }
+
+    # ─── Weight redistribution ───
+    active = {k: WEIGHTS_V8[k] for k in evaluated}
+    if active:
+        missing_weight = sum(WEIGHTS_V8[k] for k in missing)
+        total_active = sum(active.values())
+        if missing_weight > 0:
+            for k in active:
+                active[k] += missing_weight * (active[k] / total_active)
+        composite = sum(f[k] * active[k] for k in evaluated)
+    else:
+        composite = 0.0
+
+    # ─── Coverage gate ───
+    MIN_COVERAGE_V8 = 4
+    COVERAGE_CAP_V8 = 0.75
+    reasons = []
+    if coverage["count"] < MIN_COVERAGE_V8:
+        composite = min(composite, COVERAGE_CAP_V8)
+        if composite == COVERAGE_CAP_V8:
+            reasons.append(f"COVERAGE CAP: only {coverage['count']}/5 factors evaluated")
+
+    # ─── Bearish safety override ───
+    sma50 = tech.get("sma50", 0); sma200 = tech.get("sma200", 0)
+    price_val = tech.get("price", 0)
+    yh = tech.get("year_high", 0); yl = tech.get("year_low", 0)
+    trend_str = (sma50 - sma200) / sma200 if sma200 > 0 else 0
+    momentum_pct = (price_val - sma50) / sma50 if sma50 > 0 else 0
+    prox_raw = (price_val - yl) / (yh - yl) if yh > yl > 0 else 0.5
+    bull = tech.get("bull_score", 0)
+    bearish_count = sum([
+        trend_str < -0.05, momentum_pct < -0.10, prox_raw < 0.25,
+        bull <= 2, composite < 0.30,
+    ])
+    # Fallen-angel mode skips the proximity-based bearish trigger (low prox
+    # is the SETUP, not a death signal); keep the rest.
+    if mode == "fallen_angel":
+        bearish_count = sum([
+            trend_str < -0.05, momentum_pct < -0.10,
+            bull <= 1, composite < 0.30,
+        ])
+
+    # ─── Signal classification ───
+    if bearish_count >= 3 or composite < 0.30:
+        signal = "SELL"
+    elif composite >= 0.85:
+        signal = "STRONG BUY"
+    elif composite >= 0.75:
+        signal = "BUY"
+    elif composite >= 0.60:
+        signal = "WATCH"
+    elif composite >= 0.45:
+        signal = "HOLD"
+    else:
+        signal = "SELL"
+
+    return composite, signal, f, reasons, coverage
+
+# ---------------------------------------------------------------------------
 # 15. Main Screening Loop (Two-Pass Architecture)
 # ---------------------------------------------------------------------------
 
@@ -2564,13 +2957,22 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
 
             # Compute pass-1 composite (no transcript, institutional, institutional_flow,
             # or congressional yet — those are pass-2 enrichment)
-            composite, signal, factors, reasons, coverage = compute_composite_v7(
+            # v8 (Apr 2026): primary composite is now v8 (5-factor). v7 retained
+            # alongside for rollback/comparison only — stored as composite_v7.
+            composite_v7, signal_v7, factors_v7, reasons_v7, coverage_v7 = compute_composite_v7(
                 t, a, v, price, ins, prox, earn, ups,
                 quality=qual, catalyst=cata,
                 transcript=None, institutional=None,
                 institutional_flow=None, sector_momentum=sec_mom,
                 congressional=None,
                 weights=active_weights,
+            )
+            composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
+                t, v, ups,
+                analyst=a, insider=ins,
+                transcript=None, institutional_flow=None,
+                earnings=earn, congressional=None,
+                mode="momentum",
             )
 
             s = Stock(
@@ -2610,11 +3012,29 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 composite=composite, signal=signal,
                 classification=v["classification"],
                 reasons=t.get("bull_reasons", []) + reasons,
-                factor_scores=factors,
+                factor_scores=factors_v7,                     # legacy 13-factor for radar
                 factor_coverage=coverage["count"],
                 factor_coverage_pct=coverage["pct"],
                 factors_evaluated=coverage["evaluated"],
                 factors_missing=coverage["missing"],
+                # v8 (Apr 2026)
+                net_margin=v.get("net_margin", 0.0),
+                fcf_margin=v.get("fcf_margin", 0.0),
+                revenue_yoy=v.get("revenue_yoy", 0.0),
+                eps_yoy=v.get("eps_yoy", 0.0),
+                fcf_yoy=v.get("fcf_yoy", 0.0),
+                fcf_cagr_3y=v.get("fcf_cagr_3y", 0.0),
+                p_fcf=v.get("p_fcf", 0.0),
+                earnings_yield=v.get("earnings_yield", 0.0),
+                intrinsic_bvps=v.get("intrinsic_bvps", 0.0),
+                bvps_recent_cagr=v.get("bvps_recent_cagr", 0.0),
+                bvps_consistency=v.get("bvps_consistency", 0.0),
+                bvps_upside=ups.get("bvps_upside", 0.0),
+                intrinsic_upside=ups.get("intrinsic_upside", 0.0),
+                reversal_score=t.get("reversal_score", 0),
+                factors_v8=factors_v8,
+                composite_v7=composite_v7,
+                mode="momentum",
             )
 
             # Stash raw data for pass 2
@@ -2701,8 +3121,10 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                                           raw["tech"].get("year_high", 0),
                                           raw["tech"].get("year_low", 0))
 
-        # Recompute composite with all factors (13 total)
-        composite, signal, factors, reasons, coverage = compute_composite_v7(
+        # Recompute composite with all enrichment data
+        # v8 (Apr 2026): primary composite is now v8 with smart-money sub-signals
+        # filled in by pass-2 enrichment. v7 kept for diagnostics.
+        composite_v7, signal_v7, factors_v7, reasons_v7, coverage_v7 = compute_composite_v7(
             raw["tech"], raw["analyst"], raw["value"], raw["price"],
             raw["insider"], raw["proximity"],
             raw["earnings"], raw["upside"],
@@ -2712,10 +3134,19 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             congressional=cong,
             weights=raw["weights"],
         )
+        composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
+            raw["tech"], raw["value"], raw["upside"],
+            analyst=raw["analyst"], insider=raw["insider"],
+            transcript=trans, institutional_flow=inst_flow,
+            earnings=raw["earnings"], congressional=cong,
+            mode=getattr(s, "mode", "momentum"),
+        )
 
         s.composite = composite
         s.signal = signal
-        s.factor_scores = factors
+        s.factor_scores = factors_v7        # legacy 13-factor for radar
+        s.factors_v8 = factors_v8
+        s.composite_v7 = composite_v7
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons
         s.factor_coverage = coverage["count"]
         s.factor_coverage_pct = coverage["pct"]
@@ -3145,11 +3576,12 @@ def monitor_portfolio(skip_transcripts: bool = True) -> str:
         inst_flow = compute_institutional_flow(sym)
         cong = compute_congressional(sym)
 
-        composite, signal, factors, reasons, coverage = compute_composite_v7(
-            t, a, v, price, ins, prox, earn, ups,
-            quality=qual, catalyst=cata,
-            institutional_flow=inst_flow, sector_momentum=sec_mom,
-            congressional=cong,
+        composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
+            t, v, ups,
+            analyst=a, insider=ins,
+            transcript=None, institutional_flow=inst_flow,
+            earnings=earn, congressional=cong,
+            mode="momentum",
         )
 
         # ─── Decision Rules ───
