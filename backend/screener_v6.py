@@ -801,10 +801,95 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
     if quote["year_high"] > 0 and price > quote["year_high"] * 0.85:
         score += 1; reasons.append("Near 52wk high")
 
+    # ---------------------------------------------------------------------
+    # v8: Reversal score (10 signals) — for Fallen Angel mode
+    # Mirrors bull_score structure but scores reversal SETUPS (oversold
+    # bounces, MA reclaims, off-the-low patterns) rather than trend
+    # continuation. Used by v8 Fallen Angel mode; Momentum mode keeps using
+    # bull_score. Both scores are computed and returned; the consuming mode
+    # picks which to weight in the composite.
+    # ---------------------------------------------------------------------
+    rev_score = 0
+    rev_reasons = []
+    year_low = quote.get("year_low", 0)
+
+    # Historical indicator state (4w / 8w lookbacks) — recompute on
+    # truncated arrays. ~20 trading days = 4 calendar weeks.
+    if len(closes) > 35:
+        rsi_4w = compute_rsi(closes[:-20])
+        rsi_8w_min = min(compute_rsi(closes[:-i]) for i in (5, 10, 15, 20, 25, 30, 35, 40)
+                         if len(closes) > i + 15) if len(closes) > 50 else rsi
+        rsi_8w_min = min(rsi_8w_min, rsi)
+    else:
+        rsi_4w = rsi
+        rsi_8w_min = rsi
+
+    if len(closes) > 55:
+        macd_4w = compute_macd(closes[:-20])
+        bb_4w = compute_bollinger(closes[:-20])
+        stoch_4w_min = min(compute_stoch_rsi(closes[:-i]) for i in (5, 10, 15, 20)
+                           if len(closes) > i + 28)
+        stoch_4w_min = min(stoch_4w_min, stoch)
+    else:
+        macd_4w = {"signal": "neutral", "histogram": 0}
+        bb_4w = bb_pct
+        stoch_4w_min = stoch
+
+    sma50_20ago = sum(closes[-70:-20]) / 50 if len(closes) >= 70 else sma50
+
+    # 10w EMA (~50 trading days)
+    if len(closes) >= 50:
+        ema10w = sum(closes[:50]) / 50
+        mult = 2 / 51
+        for c in closes[50:]:
+            ema10w = (c - ema10w) * mult + ema10w
+        # 10w EMA value 4w ago, for reclaim detection
+        ema10w_4w = sum(closes[:50]) / 50
+        for c in closes[50:-20] if len(closes) > 70 else closes[50:]:
+            ema10w_4w = (c - ema10w_4w) * mult + ema10w_4w
+    else:
+        ema10w = closes[-1]
+        ema10w_4w = closes[-1]
+
+    # 1. RSI reclaiming from oversold
+    if 30 < rsi < 50 and rsi_8w_min < 30:
+        rev_score += 1; rev_reasons.append(f"RSI reclaim {rsi:.0f} (was <{rsi_8w_min:.0f})")
+    # 2. MACD cross up from negative
+    if macd["signal"] == "bullish_cross" or (macd["histogram"] > 0 and macd_4w["histogram"] < 0):
+        rev_score += 1; rev_reasons.append("MACD reversal")
+    # 3. Reclaim 10w EMA (Bruno's v8 fallen-angel trigger)
+    if price > ema10w and len(closes) >= 70 and closes[-21] < ema10w_4w:
+        rev_score += 1; rev_reasons.append("Reclaim 10w EMA")
+    # 4. Off 52w low (15-30%) — out of basement, not yet extended
+    if year_low > 0:
+        off_low_pct = (price - year_low) / year_low
+        if 0.15 < off_low_pct < 0.30:
+            rev_score += 1; rev_reasons.append(f"+{off_low_pct*100:.0f}% off low")
+    # 5. 50d SMA flattening or curling up
+    if sma50 >= sma50_20ago * 0.995:
+        rev_score += 1; rev_reasons.append("50d SMA stable/up")
+    # 6. ADX in trend-establishing range (15-25)
+    if 15 < adx < 25:
+        rev_score += 1; rev_reasons.append(f"ADX {adx:.0f}")
+    # 7. BB%B exiting lower band
+    if 0.2 < bb_pct < 0.5 and bb_4w < 0.2:
+        rev_score += 1; rev_reasons.append("BB%B reclaim")
+    # 8. StochRSI cross up from oversold
+    if stoch > 20 and stoch_4w_min < 20:
+        rev_score += 1; rev_reasons.append("StochRSI reclaim")
+    # 9. OBV inflecting up
+    if obv == "rising":
+        rev_score += 1; rev_reasons.append("OBV rising")
+    # 10. Below 200d but above 50d — fallen-angel territory with recovery
+    if 0 < sma200 and price < sma200 and price > sma50 > 0:
+        rev_score += 1; rev_reasons.append("Below 200d, above 50d")
+
     return {
         "rsi": rsi, "macd_signal": macd["signal"], "adx": adx,
         "bb_pct": bb_pct, "stoch_rsi": stoch, "obv_trend": obv,
         "bull_score": score, "bull_reasons": reasons,
+        # v8: reversal score for Fallen Angel mode
+        "reversal_score": rev_score, "reversal_reasons": rev_reasons,
         # v7: include quote fields for signal classification
         "sma50": sma50, "sma200": sma200, "price": price,
         "year_high": quote.get("year_high", 0),
@@ -1034,14 +1119,17 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             log.info(f"  {sym}: Buffett intrinsic guarded (weak health) — "
                      f"skipping despite positive EPS")
 
-    # ------------------- v7.2: BVPS Growth Method (third valuation) -------------------
-    # Book-value-per-share compounding — Buffett's "retained earnings engine".
-    # Requires 10 years of balance sheets. Unlike DCF/EPS-growth methods which
-    # project cash flows, BVPS measures realized shareholder-equity compounding.
-    # Guards: skip if BVPS declined 3+ years OR any year had negative equity OR
-    # weightedAverageShsOutDil missing. Also skip for weak-health companies.
-    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 10})
-    if bs and len(bs) >= 5 and not weak_financial_health:
+    # ------------------- v8: BVPS Forward Projection (simplified) -------------------
+    # Replaces v7.2's 10-year-with-terminal-P/B-and-discount-back formula.
+    # New: intrinsic_bvps = BVPS_now * (1 + g_bvps) ** BVPS_PROJ_YEARS
+    # where g_bvps = clip(3yr BVPS CAGR, 2%, 15%). No terminal P/B multiplier,
+    # no discount-back. Plain compound forward projection of book value.
+    # Combined with analyst consensus target in compute_upside_score (v8).
+    # Guards retained: declined 3+ years → skip; negative equity → skip;
+    # weak financial health → skip. Bvps_consistency kept for diagnostic.
+    BVPS_PROJ_YEARS = 5  # forward horizon — tune via constant
+    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 5})
+    if bs and len(bs) >= 4 and not weak_financial_health:
         bs.sort(key=lambda x: x.get("date", ""))  # oldest first
         bvps_series = []
         any_negative_equity = False
@@ -1054,7 +1142,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             if shares > 0:
                 bvps_series.append((row.get("date", ""), equity / shares))
 
-        if not any_negative_equity and len(bvps_series) >= 5:
+        if not any_negative_equity and len(bvps_series) >= 4:
             # Consistency: fraction of YoY periods with positive growth
             yoy_growth_flags = []
             for i in range(1, len(bvps_series)):
@@ -1072,40 +1160,20 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
                 log.info(f"  {sym}: BVPS method guarded (declined {declines} years "
                          f"of {len(yoy_growth_flags)}) — broken compounder")
             else:
-                # Full-window CAGR
-                years_span = len(bvps_series) - 1
-                first_bvps = bvps_series[0][1]
+                # Recent 3-year CAGR drives projection
                 last_bvps = bvps_series[-1][1]
-                full_cagr = safe_cagr(first_bvps, last_bvps, years_span)
-
-                # Recent 3-year CAGR (captures acceleration/deceleration)
-                recent_cagr = full_cagr
-                if len(bvps_series) >= 4:
-                    recent_start = bvps_series[-4][1]
-                    recent_cagr = safe_cagr(recent_start, last_bvps, 3)
-
-                v["bvps_cagr_10y"] = round(full_cagr, 4)
+                recent_start = bvps_series[-4][1]
+                recent_cagr = safe_cagr(recent_start, last_bvps, 3)
                 v["bvps_recent_cagr"] = round(recent_cagr, 4)
 
-                # Conservative projection: take min of three growth signals
-                retention = 1.0  # default if dividend data unavailable
-                if v["roe_avg"] > 0:
-                    # Retention = 1 - (dividends paid / net income); approximate
-                    # via owner-earnings yield proxy, capped conservatively
-                    retention = 0.7  # typical mature-company retention
-                roe_implied_growth = v["roe_avg"] * retention
-                growth_rate = min(full_cagr, recent_cagr, roe_implied_growth, 0.15)
-                growth_rate = max(growth_rate, 0.02)  # floor at 2%
+                # Diagnostic: full-window CAGR (kept for dashboard display)
+                years_span = len(bvps_series) - 1
+                first_bvps = bvps_series[0][1]
+                v["bvps_cagr_10y"] = round(safe_cagr(first_bvps, last_bvps, years_span), 4)
 
-                # Project 10 years forward
-                future_bvps = last_bvps * ((1 + growth_rate) ** 10)
-                # Terminal P/B: Buffett's ROE/required-return rule, capped at 5x
-                required_return = 0.10
-                terminal_pb = min(v["roe_avg"] / required_return, 5.0) if v["roe_avg"] > 0 else 1.5
-                terminal_pb = max(terminal_pb, 1.0)
-                future_price = future_bvps * terminal_pb
-                # Discount back at 10%
-                v["intrinsic_bvps"] = future_price / (1.10 ** 10)
+                # Clip growth rate and project forward (no terminal P/B, no discount)
+                g_clipped = max(0.02, min(recent_cagr, 0.15))
+                v["intrinsic_bvps"] = last_bvps * ((1 + g_clipped) ** BVPS_PROJ_YEARS)
 
     # Average intrinsic — all in reporting currency, MoS vs local_price
     # v7.2.2 Apr 22 — DCF REMOVED from composite scoring. Bruno's decision
@@ -1118,7 +1186,12 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     # dcf_value is still computed and stored on the Stock dict for display
     # on the stock-page Quality & Value card, but does NOT feed into
     # intrinsic_avg, margin_of_safety, or the composite. Reassess in July 2026.
-    methods = [v["intrinsic_buffett"], v["intrinsic_bvps"]]
+    # v8 (Apr 2026): Drop intrinsic_buffett from composite (kept on field for
+    # display only). Bruno's call — earnings-compounded projection is effectively
+    # DCF on EPS, conflicts with "BVPS + analyst consensus" valuation philosophy.
+    # intrinsic_avg now equals intrinsic_bvps; analyst target is averaged in
+    # downstream by compute_upside_score (v8).
+    methods = [v["intrinsic_bvps"]]
     valid = [m for m in methods if m > 0]
     if valid and local_price > 0:
         v["intrinsic_avg"] = sum(valid) / len(valid)
@@ -1346,63 +1419,72 @@ def compute_earnings_momentum(analyst: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
-    """Score based on target upside cross-checked with intrinsic value.
+    """Score based on combined BVPS-projection + analyst-consensus intrinsic.
 
-    v7.2.2 Apr 22: DCF removed from composite scoring. Intrinsic value now
-    averages only Buffett (earnings) + BVPS (book-value compounding), no DCF.
-    Sanity cap at 4x price still applies — catches any blow-out in either
-    method (Buffett can produce extreme values on high-ROE names; BVPS can
-    inflate on high-retention compounders).
+    v8 (Apr 2026): Replaces v7.2.2's tier-based cross-check between separate
+    intrinsic_avg and analyst target. New design averages BVPS-projected
+    forward price with analyst consensus to form a single intrinsic_combined
+    value, then scores upside vs current price on a graded ladder.
 
-    v7.2 (previous): Caps extreme DCF values. FMP's DCF model is sensitive
-    to WACC-g spread compression. When DCF-based intrinsic exceeded 4x
-    price we treated as unreliable. That guard is retained for the
-    non-DCF intrinsic average.
+    Removed: intrinsic_buffett from composite (still computed for display).
+    Removed: tier cross-check logic between independent target/intrinsic.
+    Kept: BVPS forward projection (now plain compound, no terminal P/B,
+          no discount-back — see compute_value v8 patch).
+    Kept: 4x price sanity cap on intrinsic_bvps (prevents blow-outs on
+          high-retention compounders).
+
+    Fields returned:
+      consensus_upside  - analyst-target upside % (display)
+      bvps_upside       - BVPS-projection upside % (display, new)
+      intrinsic_upside  - combined upside % (drives score)
+      score             - 0-1, threshold-laddered
+      _evaluated        - True if at least one signal exists
     """
-    result = {"score": 0.0, "consensus_upside": 0, "intrinsic_upside": 0,
-              "_evaluated": False}
+    result = {"score": 0.0, "consensus_upside": 0, "bvps_upside": 0,
+              "intrinsic_upside": 0, "_evaluated": False}
 
     if price <= 0:
         return result
 
-    # Analyst target upside
+    # Analyst-only upside (display)
     target = analyst.get("target", 0)
     if target > 0:
-        result["consensus_upside"] = (target - price) / price * 100
+        result["consensus_upside"] = round((target - price) / price * 100, 2)
 
-    # Intrinsic upside (Buffett + BVPS average) — sanity-cap at 4x price
-    intrinsic = value.get("intrinsic_avg", 0)
-    intrinsic_sane = (intrinsic > 0 and price > 0 and intrinsic / price <= 4.0)
-    if intrinsic > 0:
-        if intrinsic_sane:
-            result["intrinsic_upside"] = (intrinsic - price) / price * 100
-        else:
-            # Flag as unreliable rather than trust the blow-out number
-            result["intrinsic_upside"] = 0
-            result["intrinsic_unreliable"] = True
+    # BVPS-only upside (display) — sanity-cap at 4x price
+    intrinsic_bvps = value.get("intrinsic_bvps", 0)
+    bvps_sane = (intrinsic_bvps > 0 and intrinsic_bvps / price <= 4.0)
+    if intrinsic_bvps > 0 and bvps_sane:
+        result["bvps_upside"] = round((intrinsic_bvps - price) / price * 100, 2)
+    elif intrinsic_bvps > 0:
+        result["intrinsic_unreliable"] = True
 
-    # Evaluated if we have at least one valuation anchor
-    if target > 0 or (intrinsic > 0 and intrinsic_sane):
+    # Combined intrinsic — average available signals
+    components = []
+    if target > 0:
+        components.append(target)
+    if intrinsic_bvps > 0 and bvps_sane:
+        components.append(intrinsic_bvps)
+
+    if components:
+        intrinsic_combined = sum(components) / len(components)
+        upside_pct = (intrinsic_combined - price) / price * 100
+        result["intrinsic_upside"] = round(upside_pct, 2)
         result["_evaluated"] = True
 
-    # Cross-check scoring: both must agree for high score
-    target_up = result["consensus_upside"]
-    intr_up = result["intrinsic_upside"]
-
-    if target_up > 20 and intr_up > 20:
-        result["score"] = 1.0    # both say 20%+ upside
-    elif target_up > 10 and intr_up > 10:
-        result["score"] = 0.8    # both say 10%+ upside
-    elif target_up > 10 or intr_up > 10:
-        result["score"] = 0.6    # at least one says 10%+
-    elif target_up > 0 and intr_up > 0:
-        result["score"] = 0.4    # both positive but modest
-    elif target_up > 0 or intr_up > 0:
-        result["score"] = 0.25   # mixed signals
-    elif target_up < -10 and intr_up < -10:
-        result["score"] = 0.0    # both say overvalued
-    else:
-        result["score"] = 0.15   # negative but not extreme
+        # Threshold ladder
+        if upside_pct > 30:
+            result["score"] = 1.0
+        elif upside_pct > 15:
+            result["score"] = 0.85
+        elif upside_pct > 0:
+            result["score"] = 0.6
+        elif upside_pct > -15:
+            result["score"] = 0.35
+        elif upside_pct > -30:
+            result["score"] = 0.15
+        else:
+            result["score"] = 0.0
 
     return result
 
