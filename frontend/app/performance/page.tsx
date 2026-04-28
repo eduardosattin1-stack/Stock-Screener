@@ -91,7 +91,71 @@ interface BoringHistory {
   } | null;
   updated_at: string | null;
 }
-const PAGE_SIZE = 25;
+// ── COMPOSITE strategy tracker (gs://.../performance/strategy_history_composite.json) ─
+interface CompositePosition {
+  symbol: string;
+  entry_price: number;
+  entry_date: string;
+  composite_at_entry: number;
+  piotroski_at_entry: number | null;
+  last_price: number;
+  last_marked: string;
+  return_pct: number;
+}
+interface CompositeRotation {
+  date: string;
+  n_removed: number;
+  n_added: number;
+  removed: {
+    symbol: string;
+    entry_price: number;
+    exit_price: number;
+    entry_date: string;
+    exit_date: string;
+    return_pct: number;
+    days_held: number;
+    composite_at_entry: number | null;
+  }[];
+  added: {
+    symbol: string;
+    entry_price: number;
+    composite_at_entry: number;
+  }[];
+}
+interface CompositeWeeklyMark {
+  date: string;
+  basket_avg_return_pct: number;
+  spy_return_pct: number;
+  alpha_pp: number;
+  spy_price: number;
+  n_positions: number;
+  days_since_inception: number;
+}
+interface CompositeHistory {
+  region: string;
+  strategy_version: string;
+  inception_date: string | null;
+  spy_inception_price: number | null;
+  current_basket: CompositePosition[];
+  rotations: CompositeRotation[];
+  weekly_marks: CompositeWeeklyMark[];
+  summary: {
+    weeks_tracked: number;
+    n_positions_open: number;
+    n_rotations: number;
+    n_positions_closed: number;
+    open_avg_return_pct: number;
+    realized_avg_return_pct: number;
+    realized_wins: number;
+    realized_win_rate: number;
+    cum_basket_return_pct: number;
+    cum_spy_return_pct: number;
+    cum_alpha_pp: number;
+    annualized_return_pct: number;
+    annualized_alpha_pp: number;
+  } | null;
+  updated_at: string | null;
+}
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
   text: "#1a1a1a", muted: "#6b7280", light: "#9ca3af",
@@ -508,52 +572,38 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
   );
 }
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: BORING STRATEGY (paper-tracked: ps_ratio top-10, Pio≥7, 26w hold)
+// TAB 3: STRATEGIES (BORING 26w hold + COMPOSITE weekly rotation, side by side)
 // ══════════════════════════════════════════════════════════════════════════════
-function BoringStrategyTab() {
-  const [history, setHistory] = useState<BoringHistory | null>(null);
+function StrategiesTab() {
+  const [boring, setBoring] = useState<BoringHistory | null>(null);
+  const [composite, setComposite] = useState<CompositeHistory | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${GCS_PERFORMANCE}/strategy_history_boring.json?t=${Date.now()}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { setHistory(d); setLoading(false); })
-      .catch(() => { setLoading(false); });
+    Promise.allSettled([
+      fetch(`${GCS_PERFORMANCE}/strategy_history_boring.json?t=${Date.now()}`)
+        .then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_PERFORMANCE}/strategy_history_composite.json?t=${Date.now()}`)
+        .then(r => r.ok ? r.json() : null),
+    ]).then(([b, c]) => {
+      if (b.status === "fulfilled") setBoring(b.value);
+      if (c.status === "fulfilled") setComposite(c.value);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
     return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
   }
 
-  if (!history) {
+  if (!boring && !composite) {
     return (
       <Empty
         icon={<BarChart3 size={36} color={T.divider} />}
-        title="Strategy not initialized"
-        sub="The first basket will open after the next Friday scan completes."
+        title="No strategies running"
+        sub="Both BORING and COMPOSITE will populate after Friday's runner."
       />
     );
-  }
-
-  const ob = history.open_basket;
-  const weeks = history.weeks || [];
-  const summary = history.summary;
-  const marks = ob?.weekly_marks || [];
-  const lastMark = marks.length > 0 ? marks[marks.length - 1] : null;
-
-  // Build cumulative chart: closed cycles compounded + open-basket marks tail
-  const chartPoints: { date: string; strategy_pct: number; spy_pct: number }[] = [];
-  let cumStrat = 0;
-  let cumSpy = 0;
-  for (const w of weeks) {
-    cumStrat = (1 + cumStrat / 100) * (1 + w.basket_return_pct / 100) * 100 - 100;
-    cumSpy   = (1 + cumSpy   / 100) * (1 + w.spy_return_pct   / 100) * 100 - 100;
-    chartPoints.push({ date: w.exit_date, strategy_pct: cumStrat, spy_pct: cumSpy });
-  }
-  for (const m of marks) {
-    const stratNow = (1 + cumStrat / 100) * (1 + m.basket_return_pct / 100) * 100 - 100;
-    const spyNow   = (1 + cumSpy   / 100) * (1 + m.spy_return_pct   / 100) * 100 - 100;
-    chartPoints.push({ date: m.date, strategy_pct: stratNow, spy_pct: spyNow });
   }
 
   const fmtPct = (v: number | null | undefined, dp = 2) =>
@@ -561,77 +611,74 @@ function BoringStrategyTab() {
   const fmtPp = (v: number | null | undefined, dp = 2) =>
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
 
+  // Build combined cumulative chart
+  const chartPoints = buildCombinedChart(boring, composite);
+
   return (
     <>
-      {/* Hero */}
+      {/* Hero / methodology */}
       <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
-          <strong>BORING strategy</strong>: top-10 SP500 stocks with Piotroski ≥ 7,
-          ranked by P/S ascending, equal-weight, 26-week hold.
-          {history.inception_date && (
-            <> Inception: <strong>{history.inception_date.slice(0, 10)}</strong>.</>
-          )}
-          {" "}<em>{history.strategy_version}</em>
+          Two paper-tracked strategies, both equal-weighted SP500 top-10:
+          {" "}<strong>BORING</strong> (Pio≥7 by ps_ratio asc, 26w hold) and
+          {" "}<strong>COMPOSITE</strong> (top by composite score, weekly rotation).
+          Compared against SPY.
         </div>
       </Card>
 
-      {/* Hero stats — 4 numbers across */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
-        <BoringStatBox
-          label="CYCLES CLOSED"
-          value={`${summary?.weeks_closed ?? 0}`}
-          sub={ob ? "1 open" : "0 open"}
+      {/* Side-by-side stat cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+        <StrategyKPICard
+          title="BORING"
+          subtitle="26w hold · ps_ratio rank"
+          inception={boring?.inception_date}
+          summary={boring?.summary ? {
+            cycles: boring.summary.weeks_closed,
+            cum_alpha: boring.summary.cum_alpha_pp,
+            ann_return: boring.summary.annualized_return_pct,
+            win_rate: boring.summary.win_rate * 100,
+          } : null}
+          marks={boring?.open_basket?.weekly_marks}
+          openCount={boring?.open_basket?.basket?.length ?? 0}
         />
-        <BoringStatBox
-          label="CUM ALPHA"
-          value={fmtPp(summary?.cum_alpha_pp)}
-          sub="vs SPY"
-          accent={summary && summary.cum_alpha_pp > 0 ? "green" : (summary && summary.cum_alpha_pp < 0 ? "red" : undefined)}
-        />
-        <BoringStatBox
-          label="ANN. RETURN"
-          value={fmtPct(summary?.annualized_return_pct)}
-          sub={summary
-            ? `vs SPY ${fmtPct((summary.annualized_return_pct ?? 0) - (summary.annualized_alpha_pp ?? 0))}`
-            : ""}
-        />
-        <BoringStatBox
-          label="WIN RATE"
-          value={summary ? `${(summary.win_rate * 100).toFixed(0)}%` : "—"}
-          sub={summary ? `${summary.weeks_positive_alpha}/${summary.weeks_closed} cycles` : ""}
+        <StrategyKPICard
+          title="COMPOSITE"
+          subtitle="weekly rotation · composite rank"
+          inception={composite?.inception_date}
+          summary={composite?.summary ? {
+            cycles: composite.summary.n_rotations,
+            cum_alpha: composite.summary.cum_alpha_pp,
+            ann_return: composite.summary.annualized_return_pct,
+            win_rate: composite.summary.realized_win_rate * 100,
+            cyclesLabel: "rotations",
+            winRateLabel: "of closed positions",
+          } : null}
+          marks={composite?.weekly_marks?.map(m => ({
+            date: m.date,
+            basket_return_pct: m.basket_avg_return_pct,
+            spy_return_pct: m.spy_return_pct,
+            alpha_pp: m.alpha_pp,
+          }))}
+          openCount={composite?.current_basket?.length ?? 0}
         />
       </div>
 
-      {/* Cumulative chart */}
-      {chartPoints.length > 0 && (
+      {/* Combined chart */}
+      {chartPoints.length > 1 && (
         <Card style={{ marginBottom: 16 }}>
-          <SH title="CUMULATIVE RETURN — STRATEGY vs SPY" icon={<TrendingUp size={11} />} />
-          <BoringCumulativeChart points={chartPoints} />
+          <SH title="CUMULATIVE RETURN — BORING vs COMPOSITE vs SPY" icon={<TrendingUp size={11} />} />
+          <CombinedCumulativeChart points={chartPoints} />
         </Card>
       )}
 
-      {/* Open basket */}
-      {ob && (
+      {/* BORING details */}
+      {boring && boring.open_basket && (
         <Card style={{ marginBottom: 16 }}>
           <SH
-            title="OPEN BASKET"
+            title="BORING · OPEN BASKET"
             icon={<Target size={11} />}
-            sub={`${ob.inception_date} → ${ob.scheduled_exit_date}${lastMark ? ` · day ${lastMark.days_held}/182` : ""}`}
+            sub={`${boring.open_basket.inception_date} → ${boring.open_basket.scheduled_exit_date}`}
           />
-
-          {lastMark && (
-            <div style={{ display: "flex", gap: 16, marginBottom: 10, fontSize: 11, fontFamily: T.mono, alignItems: "baseline" }}>
-              <span>basket {fmtPct(lastMark.basket_return_pct)}</span>
-              <span style={{ color: T.muted }}>SPY {fmtPct(lastMark.spy_return_pct)}</span>
-              <span style={{ color: lastMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
-                alpha {fmtPp(lastMark.alpha_pp)}
-              </span>
-              <span style={{ color: T.muted, marginLeft: "auto", fontSize: 10 }}>
-                last marked {lastMark.date}
-              </span>
-            </div>
-          )}
-
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
@@ -643,7 +690,7 @@ function BoringStrategyTab() {
               </tr>
             </thead>
             <tbody>
-              {ob.basket.map((p, i) => (
+              {boring.open_basket.basket.map((p, i) => (
                 <tr key={p.symbol}>
                   <td style={{ ...td, color: T.muted }}>{i + 1}</td>
                   <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
@@ -657,37 +704,115 @@ function BoringStrategyTab() {
         </Card>
       )}
 
-      {/* Closed cycles */}
-      {weeks.length > 0 && (
-        <Card>
-          <SH title={`CLOSED CYCLES (${weeks.length})`} icon={<Clock size={11} />} />
+      {boring && boring.weeks && boring.weeks.length > 0 && (
+        <Card style={{ marginBottom: 16 }}>
+          <SH title={`BORING · CLOSED CYCLES (${boring.weeks.length})`} icon={<Clock size={11} />} />
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
                 <th style={{ ...th, textAlign: "left" }}>Entry</th>
                 <th style={{ ...th, textAlign: "left" }}>Exit</th>
-                <th style={{ ...th, textAlign: "right" }}>N</th>
                 <th style={{ ...th, textAlign: "right" }}>Basket</th>
                 <th style={{ ...th, textAlign: "right" }}>SPY</th>
                 <th style={{ ...th, textAlign: "right" }}>Alpha</th>
               </tr>
             </thead>
             <tbody>
-              {[...weeks].reverse().map((w, i) => (
+              {[...boring.weeks].reverse().map((w, i) => (
                 <tr key={i}>
                   <td style={td}>{w.entry_date}</td>
                   <td style={td}>{w.exit_date}</td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
                   <td style={{ ...td, textAlign: "right" }}>{fmtPct(w.basket_return_pct)}</td>
                   <td style={{ ...td, textAlign: "right", color: T.muted }}>{fmtPct(w.spy_return_pct)}</td>
                   <td style={{
                     ...td, textAlign: "right",
                     color: w.alpha_pp >= 0 ? T.green : T.red, fontWeight: 600,
-                  }}>
-                    {fmtPp(w.alpha_pp)}
-                  </td>
+                  }}>{fmtPp(w.alpha_pp)}</td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </Card>
+      )}
+
+      {/* COMPOSITE details */}
+      {composite && composite.current_basket && composite.current_basket.length > 0 && (
+        <Card style={{ marginBottom: 16 }}>
+          <SH
+            title="COMPOSITE · CURRENT BASKET"
+            icon={<Target size={11} />}
+            sub={`Inception ${composite.inception_date} · ${composite.summary?.n_rotations ?? 0} rotations`}
+          />
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={th}>#</th>
+                <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+                <th style={{ ...th, textAlign: "right" }}>Entry</th>
+                <th style={{ ...th, textAlign: "right" }}>Last</th>
+                <th style={{ ...th, textAlign: "right" }}>Return</th>
+                <th style={{ ...th, textAlign: "right" }}>Days</th>
+                <th style={{ ...th, textAlign: "right" }}>Comp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {composite.current_basket.map((p, i) => {
+                const daysHeld = Math.floor(
+                  (Date.now() - new Date(p.entry_date).getTime()) / (1000 * 60 * 60 * 24)
+                );
+                return (
+                  <tr key={p.symbol}>
+                    <td style={{ ...td, color: T.muted }}>{i + 1}</td>
+                    <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                    <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right" }}>${(p.last_price ?? p.entry_price).toFixed(2)}</td>
+                    <td style={{
+                      ...td, textAlign: "right",
+                      color: (p.return_pct ?? 0) >= 0 ? T.green : T.red, fontWeight: 600,
+                    }}>{fmtPct(p.return_pct)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{daysHeld}d</td>
+                    <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? 0).toFixed(3)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Card>
+      )}
+
+      {composite && composite.rotations && composite.rotations.length > 0 && (
+        <Card>
+          <SH title={`COMPOSITE · ROTATIONS (${composite.rotations.length})`} icon={<Clock size={11} />} />
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ ...th, textAlign: "left" }}>Date</th>
+                <th style={{ ...th, textAlign: "right" }}>Out</th>
+                <th style={{ ...th, textAlign: "right" }}>In</th>
+                <th style={{ ...th, textAlign: "left" }}>Removed</th>
+                <th style={{ ...th, textAlign: "left" }}>Added</th>
+                <th style={{ ...th, textAlign: "right" }}>Avg P&L (closed)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...composite.rotations].reverse().slice(0, 20).map((r, i) => {
+                const avgClosed = r.removed.length > 0
+                  ? r.removed.reduce((a, p) => a + (p.return_pct ?? 0), 0) / r.removed.length
+                  : null;
+                return (
+                  <tr key={i}>
+                    <td style={td}>{r.date}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_removed}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_added}</td>
+                    <td style={{ ...td, fontSize: 10 }}>{r.removed.map(x => x.symbol).join(", ")}</td>
+                    <td style={{ ...td, fontSize: 10 }}>{r.added.map(x => x.symbol).join(", ")}</td>
+                    <td style={{
+                      ...td, textAlign: "right",
+                      color: avgClosed !== null && avgClosed >= 0 ? T.green : T.red,
+                    }}>{fmtPct(avgClosed)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </Card>
@@ -696,32 +821,159 @@ function BoringStrategyTab() {
   );
 }
 
-// Helper: stat box for the BORING tab (slightly different shape than KPI)
-function BoringStatBox({
-  label, value, sub, accent,
-}: { label: string; value: string; sub?: string; accent?: "green" | "red" }) {
-  const color = accent === "green" ? T.green : accent === "red" ? T.red : T.text;
+// ── Helpers ─────────────────────────────────────────────────────────────
+
+interface ChartPoint {
+  date: string;
+  boring_pct: number | null;
+  composite_pct: number | null;
+  spy_boring_pct: number | null;
+  spy_composite_pct: number | null;
+}
+
+function buildCombinedChart(
+  boring: BoringHistory | null,
+  composite: CompositeHistory | null
+): ChartPoint[] {
+  // Collect all dates, then for each compute cumulative for each strategy
+  const dateSet = new Set<string>();
+
+  // BORING dates: closed cycle exits + open weekly marks
+  let boringPoints: { date: string; strat: number; spy: number }[] = [];
+  if (boring) {
+    let cumStrat = 0, cumSpy = 0;
+    for (const w of boring.weeks || []) {
+      cumStrat = (1 + cumStrat / 100) * (1 + w.basket_return_pct / 100) * 100 - 100;
+      cumSpy = (1 + cumSpy / 100) * (1 + w.spy_return_pct / 100) * 100 - 100;
+      boringPoints.push({ date: w.exit_date, strat: cumStrat, spy: cumSpy });
+      dateSet.add(w.exit_date);
+    }
+    for (const m of boring.open_basket?.weekly_marks || []) {
+      const stratNow = (1 + cumStrat / 100) * (1 + m.basket_return_pct / 100) * 100 - 100;
+      const spyNow = (1 + cumSpy / 100) * (1 + m.spy_return_pct / 100) * 100 - 100;
+      boringPoints.push({ date: m.date, strat: stratNow, spy: spyNow });
+      dateSet.add(m.date);
+    }
+  }
+
+  // COMPOSITE: weekly_marks already cumulative since inception
+  const compositePoints: { date: string; strat: number; spy: number }[] = [];
+  if (composite && composite.weekly_marks) {
+    for (const m of composite.weekly_marks) {
+      compositePoints.push({
+        date: m.date,
+        strat: m.basket_avg_return_pct,
+        spy: m.spy_return_pct,
+      });
+      dateSet.add(m.date);
+    }
+  }
+
+  // Sort dates ascending
+  const dates = Array.from(dateSet).sort();
+  const out: ChartPoint[] = [];
+  for (const d of dates) {
+    const b = boringPoints.find(p => p.date === d);
+    const c = compositePoints.find(p => p.date === d);
+    out.push({
+      date: d,
+      boring_pct: b?.strat ?? null,
+      composite_pct: c?.strat ?? null,
+      spy_boring_pct: b?.spy ?? null,
+      spy_composite_pct: c?.spy ?? null,
+    });
+  }
+  return out;
+}
+
+interface KPISummary {
+  cycles: number;
+  cum_alpha: number;
+  ann_return: number;
+  win_rate: number;
+  cyclesLabel?: string;
+  winRateLabel?: string;
+}
+
+function StrategyKPICard({
+  title, subtitle, inception, summary, marks, openCount,
+}: {
+  title: string;
+  subtitle: string;
+  inception: string | null | undefined;
+  summary: KPISummary | null;
+  marks?: { date: string; basket_return_pct: number; spy_return_pct: number; alpha_pp: number }[];
+  openCount: number;
+}) {
+  const lastMark = marks && marks.length > 0 ? marks[marks.length - 1] : null;
   return (
-    <Card style={{ padding: "12px 14px" }}>
-      <div style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, letterSpacing: "0.08em", fontWeight: 600 }}>
-        {label}
+    <Card>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: T.mono, color: T.text }}>{title}</span>
+        <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted }}>{subtitle}</span>
       </div>
-      <div style={{ fontSize: 20, fontWeight: 700, fontFamily: T.mono, color, marginTop: 4 }}>
-        {value}
+      <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginBottom: 12 }}>
+        {inception ? `Inception ${inception.slice(0, 10)} · ${openCount} positions open` : `Not running yet`}
       </div>
-      {sub && (
-        <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 2 }}>
-          {sub}
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, marginBottom: 10 }}>
+        <KPIMini
+          label={summary?.cyclesLabel?.toUpperCase() || "CYCLES CLOSED"}
+          value={summary ? `${summary.cycles}` : "—"}
+        />
+        <KPIMini
+          label="CUM ALPHA"
+          value={summary ? `${summary.cum_alpha >= 0 ? "+" : ""}${summary.cum_alpha.toFixed(2)}pp` : "—"}
+          accent={summary && summary.cum_alpha >= 0 ? "green" : (summary ? "red" : undefined)}
+        />
+        <KPIMini
+          label="ANN. RETURN"
+          value={summary ? `${summary.ann_return >= 0 ? "+" : ""}${summary.ann_return.toFixed(1)}%` : "—"}
+        />
+        <KPIMini
+          label="WIN RATE"
+          value={summary ? `${summary.win_rate.toFixed(0)}%` : "—"}
+          sub={summary?.winRateLabel || "vs SPY"}
+        />
+      </div>
+
+      {lastMark && (
+        <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted,
+                      borderTop: `1px solid ${T.divider}`, paddingTop: 8 }}>
+          Last mark {lastMark.date}: basket {lastMark.basket_return_pct >= 0 ? "+" : ""}
+          {lastMark.basket_return_pct.toFixed(2)}% · SPY {lastMark.spy_return_pct >= 0 ? "+" : ""}
+          {lastMark.spy_return_pct.toFixed(2)}% · alpha{" "}
+          <span style={{ color: lastMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
+            {lastMark.alpha_pp >= 0 ? "+" : ""}{lastMark.alpha_pp.toFixed(2)}pp
+          </span>
         </div>
       )}
     </Card>
   );
 }
 
-// Helper: cumulative chart for the BORING tab (SVG, no external chart lib)
-function BoringCumulativeChart({
-  points,
-}: { points: { date: string; strategy_pct: number; spy_pct: number }[] }) {
+function KPIMini({ label, value, sub, accent }: {
+  label: string; value: string; sub?: string; accent?: "green" | "red";
+}) {
+  const color = accent === "green" ? T.green : accent === "red" ? T.red : T.text;
+  return (
+    <div style={{ padding: "8px 10px", background: T.divider, borderRadius: 4 }}>
+      <div style={{ fontSize: 8, fontFamily: T.mono, color: T.muted, letterSpacing: "0.08em", fontWeight: 600 }}>
+        {label}
+      </div>
+      <div style={{ fontSize: 16, fontWeight: 700, fontFamily: T.mono, color, marginTop: 2 }}>
+        {value}
+      </div>
+      {sub && (
+        <div style={{ fontSize: 8, color: T.muted, fontFamily: T.mono, marginTop: 1 }}>
+          {sub}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
   if (points.length < 2) {
     return (
       <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, padding: "20px 0", textAlign: "center" }}>
@@ -729,18 +981,37 @@ function BoringCumulativeChart({
       </div>
     );
   }
-  const W = 700, H = 220, P = 30;
-  const allValues = points.flatMap(p => [p.strategy_pct, p.spy_pct]);
+  const W = 800, H = 240, P = 30;
+  const allValues: number[] = [];
+  for (const p of points) {
+    if (p.boring_pct !== null) allValues.push(p.boring_pct);
+    if (p.composite_pct !== null) allValues.push(p.composite_pct);
+    if (p.spy_boring_pct !== null) allValues.push(p.spy_boring_pct);
+    if (p.spy_composite_pct !== null) allValues.push(p.spy_composite_pct);
+  }
   const maxY = Math.max(...allValues, 5);
   const minY = Math.min(...allValues, -5);
   const xScale = (i: number) => P + (i / (points.length - 1)) * (W - 2 * P);
   const yScale = (v: number) => H - P - ((v - minY) / (maxY - minY || 1)) * (H - 2 * P);
-  const stratPath = points.map((p, i) =>
-    `${i === 0 ? "M" : "L"} ${xScale(i).toFixed(1)},${yScale(p.strategy_pct).toFixed(1)}`).join(" ");
-  const spyPath = points.map((p, i) =>
-    `${i === 0 ? "M" : "L"} ${xScale(i).toFixed(1)},${yScale(p.spy_pct).toFixed(1)}`).join(" ");
+
+  const buildPath = (key: keyof ChartPoint) => {
+    let path = "";
+    let started = false;
+    for (let i = 0; i < points.length; i++) {
+      const v = points[i][key] as number | null;
+      if (v === null) continue;
+      const cmd = started ? "L" : "M";
+      path += `${cmd} ${xScale(i).toFixed(1)},${yScale(v).toFixed(1)} `;
+      started = true;
+    }
+    return path;
+  };
+
+  const boringPath = buildPath("boring_pct");
+  const compositePath = buildPath("composite_pct");
+  // Use one SPY line (boring's, which has more points usually); fall back to composite's
+  const spyPath = buildPath(points.some(p => p.spy_boring_pct !== null) ? "spy_boring_pct" : "spy_composite_pct");
   const zeroY = yScale(0);
-  const last = points[points.length - 1];
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: H, fontFamily: T.mono }}>
@@ -748,20 +1019,17 @@ function BoringCumulativeChart({
       <line x1={P} x2={W - P} y1={zeroY} y2={zeroY} stroke={T.divider} strokeDasharray="2,3" />
       {/* SPY (gray) */}
       <path d={spyPath} fill="none" stroke={T.muted} strokeWidth="1.5" />
-      {/* Strategy (green) */}
-      <path d={stratPath} fill="none" stroke={T.green} strokeWidth="2" />
-      {/* Labels */}
-      <text x={P} y={P - 8} fontSize="9" fill={T.muted}>
-        Strategy (green) vs SPY (gray) · cumulative %
-      </text>
+      {/* COMPOSITE (purple) */}
+      <path d={compositePath} fill="none" stroke={T.purple} strokeWidth="2" />
+      {/* BORING (green) */}
+      <path d={boringPath} fill="none" stroke={T.green} strokeWidth="2" />
+      {/* Legend */}
+      <text x={P} y={P - 8} fontSize="9" fill={T.muted}>cumulative %</text>
+      <text x={P + 100} y={P - 8} fontSize="9" fill={T.green}>● BORING</text>
+      <text x={P + 180} y={P - 8} fontSize="9" fill={T.purple}>● COMPOSITE</text>
+      <text x={P + 280} y={P - 8} fontSize="9" fill={T.muted}>● SPY</text>
       <text x={P} y={zeroY - 4} fontSize="9" fill={T.muted}>0%</text>
-      <text x={W - P} y={H - 5} fontSize="9" fill={T.muted} textAnchor="end">{last.date}</text>
-      <text x={W - P - 70} y={yScale(last.strategy_pct) - 6} fontSize="10" fill={T.green} fontWeight="600">
-        {(last.strategy_pct >= 0 ? "+" : "") + last.strategy_pct.toFixed(1) + "%"}
-      </text>
-      <text x={W - P - 70} y={yScale(last.spy_pct) + 14} fontSize="10" fill={T.muted}>
-        SPY {(last.spy_pct >= 0 ? "+" : "") + last.spy_pct.toFixed(1) + "%"}
-      </text>
+      <text x={W - P} y={H - 5} fontSize="9" fill={T.muted} textAnchor="end">{points[points.length - 1].date}</text>
     </svg>
   );
 }
@@ -824,12 +1092,14 @@ function pageBtnStyle(disabled: boolean): React.CSSProperties {
   };
 }
 
+const PAGE_SIZE = 25;
+
 // ══════════════════════════════════════════════════════════════════════════════
 // Shell
 // ══════════════════════════════════════════════════════════════════════════════
 export default function Performance() {
   const router = useRouter();
-  const [tab, setTab] = useState<"signal" | "hitrate" | "boring">("signal");
+  const [tab, setTab] = useState<"signal" | "hitrate" | "strategies">("strategies");
 
   return (
     <div style={{ padding: "16px 20px", maxWidth: 1400, margin: "0 auto" }}>
@@ -840,18 +1110,18 @@ export default function Performance() {
           <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>/ tracking</span>
         </div>
         <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>
-          Forward-only tracking. System 1: composite signals. System 2: ML hit rate. System 3: BORING strategy paper-track.
+          Forward-only paper-tracking. Strategies: BORING (26w hold, ps_ratio rank) + COMPOSITE (weekly rotation, composite rank).
         </p>
       </div>
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: 6, marginBottom: 16, borderBottom: `1px solid ${T.divider}`, paddingBottom: 2 }}>
         {[
-          { key: "signal",  label: "Signal Performance", icon: <TrendingUp size={12} /> },
-          { key: "hitrate", label: "P(+10%) Hit Rate",   icon: <Target size={12} /> },
-          { key: "boring",  label: "BORING Strategy",    icon: <BarChart3 size={12} /> },
+          { key: "strategies", label: "Strategies",          icon: <BarChart3 size={12} /> },
+          { key: "signal",     label: "Signal Performance",  icon: <TrendingUp size={12} /> },
+          { key: "hitrate",    label: "P(+10%) Hit Rate",    icon: <Target size={12} /> },
         ].map(({ key, label, icon }) => (
-          <button key={key} onClick={() => setTab(key as "signal" | "hitrate" | "boring")}
+          <button key={key} onClick={() => setTab(key as "signal" | "hitrate" | "strategies")}
             style={{
               display: "flex", alignItems: "center", gap: 5, padding: "7px 16px", fontSize: 12,
               fontFamily: T.mono, fontWeight: 600, border: "none", borderRadius: 6,
@@ -866,9 +1136,9 @@ export default function Performance() {
       </div>
 
       {/* Tab content */}
-      {tab === "signal"  && <SignalPerfTab router={router} />}
-      {tab === "hitrate" && <HitRateTab router={router} />}
-      {tab === "boring"  && <BoringStrategyTab />}
+      {tab === "strategies" && <StrategiesTab />}
+      {tab === "signal"     && <SignalPerfTab router={router} />}
+      {tab === "hitrate"    && <HitRateTab router={router} />}
     </div>
   );
 }
