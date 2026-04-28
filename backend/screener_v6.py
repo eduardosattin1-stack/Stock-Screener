@@ -400,6 +400,17 @@ class Stock:
     factors_v8: dict = field(default_factory=dict)
     composite_v7: float = 0.0        # v7 composite kept side-by-side for diagnostics
     mode: str = "momentum"           # "momentum" | "fallen_angel" — drives reversal vs bull score
+    # ─── Option B (Apr 2026): dual-mode composites for UI toggle ─────
+    # Both modes computed for every stock so frontend can toggle without
+    # re-scanning. `composite` defaults to momentum view (matches existing
+    # screener table sort). Each mode also retains its own factors dict
+    # for the 5-axis radar.
+    composite_momentum: float = 0.0
+    composite_fallen_angel: float = 0.0
+    signal_momentum: str = "HOLD"
+    signal_fallen_angel: str = "HOLD"
+    factors_v8_momentum: dict = field(default_factory=dict)
+    factors_v8_fallen_angel: dict = field(default_factory=dict)
 
     # ML probability prediction (GBM model, P(+10% in 60d))
     hit_prob: float = 0.0            # 0-1, from trained model; 0 if model not loaded
@@ -2967,12 +2978,23 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 congressional=None,
                 weights=active_weights,
             )
-            composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
+            # Option B: compute both modes; default `composite` is momentum
+            comp_mom, sig_mom, factors_mom, _, coverage_mom = compute_composite_v8(
                 t, v, ups,
                 analyst=a, insider=ins,
                 transcript=None, institutional_flow=None,
                 earnings=earn, congressional=None,
                 mode="momentum",
+            )
+            comp_fa, sig_fa, factors_fa, _, _ = compute_composite_v8(
+                t, v, ups,
+                analyst=a, insider=ins,
+                transcript=None, institutional_flow=None,
+                earnings=earn, congressional=None,
+                mode="fallen_angel",
+            )
+            composite, signal, factors_v8, reasons, coverage = (
+                comp_mom, sig_mom, factors_mom, [], coverage_mom
             )
 
             s = Stock(
@@ -3035,6 +3057,12 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 factors_v8=factors_v8,
                 composite_v7=composite_v7,
                 mode="momentum",
+                composite_momentum=comp_mom,
+                composite_fallen_angel=comp_fa,
+                signal_momentum=sig_mom,
+                signal_fallen_angel=sig_fa,
+                factors_v8_momentum=factors_mom,
+                factors_v8_fallen_angel=factors_fa,
             )
 
             # Stash raw data for pass 2
@@ -3134,12 +3162,23 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             congressional=cong,
             weights=raw["weights"],
         )
-        composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
+        # Option B: compute both modes with pass-2 enrichment
+        comp_mom, sig_mom, factors_mom, _, coverage_mom = compute_composite_v8(
             raw["tech"], raw["value"], raw["upside"],
             analyst=raw["analyst"], insider=raw["insider"],
             transcript=trans, institutional_flow=inst_flow,
             earnings=raw["earnings"], congressional=cong,
-            mode=getattr(s, "mode", "momentum"),
+            mode="momentum",
+        )
+        comp_fa, sig_fa, factors_fa, _, _ = compute_composite_v8(
+            raw["tech"], raw["value"], raw["upside"],
+            analyst=raw["analyst"], insider=raw["insider"],
+            transcript=trans, institutional_flow=inst_flow,
+            earnings=raw["earnings"], congressional=cong,
+            mode="fallen_angel",
+        )
+        composite, signal, factors_v8, reasons, coverage = (
+            comp_mom, sig_mom, factors_mom, [], coverage_mom
         )
 
         s.composite = composite
@@ -3147,6 +3186,12 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
         s.factor_scores = factors_v7        # legacy 13-factor for radar
         s.factors_v8 = factors_v8
         s.composite_v7 = composite_v7
+        s.composite_momentum = comp_mom
+        s.composite_fallen_angel = comp_fa
+        s.signal_momentum = sig_mom
+        s.signal_fallen_angel = sig_fa
+        s.factors_v8_momentum = factors_mom
+        s.factors_v8_fallen_angel = factors_fa
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons
         s.factor_coverage = coverage["count"]
         s.factor_coverage_pct = coverage["pct"]
