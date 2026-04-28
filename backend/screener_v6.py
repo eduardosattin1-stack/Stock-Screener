@@ -497,7 +497,16 @@ def get_symbols(region: str) -> list[str]:
                     COUNTRY_MAP[sym] = co.upper()
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
-
+        # 2026-04-28: Sector exclusion. The composite scoring formula was designed
+        # for non-financials and over-ranks banks/insurance/REITs because their
+        # ratio-based factors (P/S, ROIC, etc.) follow different economics.
+        # Same approach as biotech: exclude at the universe level, scoring stays
+        # untouched. Add sectors here as needed.
+        EXCLUDED_SECTORS = {"Financial Services"}
+        if EXCLUDED_SECTORS:
+           before = len(symbols)
+           symbols = [s for s in symbols if SECTOR_MAP.get(s, "") not in EXCLUDED_SECTORS]
+           log.info(f"  [sector exclude] {region}: {before} -> {len(symbols)} after dropping {EXCLUDED_SECTORS}")
     # 2026-04-25: Intersect with strategy allowlist if one exists for this
     # region. Allowlists encode the universe rules used to validate the v1.0
     # strategy: $100M+ TTM revenue, no biotech, no Financials/REITs/Utilities,
