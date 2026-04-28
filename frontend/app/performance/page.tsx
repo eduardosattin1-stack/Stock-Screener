@@ -6,7 +6,6 @@ import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink
 // ── Data sources ────────────────────────────────────────────────────────────
 const SIGNAL_TRACKS = "/api/performance/signal-tracks";
 const HIT_RATES     = "/api/performance/hit-rates";
-const GCS_PORTFOLIO = "/api/gcs/portfolio";
 const GCS_PERFORMANCE = "/api/gcs/performance";
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -32,29 +31,52 @@ interface HitRateClosed extends HitRateOpen {
   exit_date: string; exit_reason: "hit_10pct" | "window_closed";
   hit: boolean; max_gain_pct: number;
 }
-interface PortfolioHistoryEntry {
-  symbol: string; action: string; date: string;
-  entry_price: number; entry_date: string;
-  exit_price: number; pnl_pct: number; reason: string; days_held: number;
-  bucket?: "midcap" | "sp500" | null;
+// ── BORING strategy tracker (gs://.../performance/strategy_history_boring.json) ────
+interface BoringPosition {
+  symbol: string;
+  entry: number;
+  exit: number | null;
+  return_pct: number | null;
 }
-
-// Strategy tracker (gs://.../performance/strategy_history_{region}.json)
-interface StrategyWeekClosed {
+interface BoringWeekClosed {
   entry_date: string;
   exit_date: string;
   n_positions: number;
   basket_return_pct: number;
   spy_return_pct: number;
   alpha_pp: number;
-  positions: { symbol: string; entry: number; exit: number; return_pct: number }[];
+  spy_entry_price: number;
+  spy_exit_price: number;
+  positions: BoringPosition[];
 }
-interface StrategyHistory {
+interface BoringWeeklyMark {
+  date: string;
+  basket_return_pct: number;
+  spy_return_pct: number;
+  alpha_pp: number;
+  spy_price: number;
+  days_held: number;
+  n_priced: number;
+}
+interface BoringOpenBasket {
+  scan_date: string;
+  inception_date: string;
+  scheduled_exit_date: string;
+  spy_entry_price: number;
+  basket: {
+    symbol: string;
+    entry_price: number;
+    ps_ratio_at_entry: number;
+    piotroski_at_entry: number;
+  }[];
+  weekly_marks: BoringWeeklyMark[];
+}
+interface BoringHistory {
   region: string;
   strategy_version: string;
   inception_date: string | null;
-  open_basket: { scan_date: string; basket: { symbol: string }[] } | null;
-  weeks: StrategyWeekClosed[];
+  open_basket: BoringOpenBasket | null;
+  weeks: BoringWeekClosed[];
   summary: {
     weeks_closed: number;
     cum_strategy_return_pct: number;
@@ -69,14 +91,7 @@ interface StrategyHistory {
   } | null;
   updated_at: string | null;
 }
-type BucketTag = "midcap" | "sp500" | null;
-type BucketFilter = "all" | "midcap" | "sp500" | "untagged";
 const PAGE_SIZE = 25;
-const EXPECTED_ANNUAL_ALPHA: Record<"midcap"|"sp500", number> = {
-  midcap: 19.95,
-  sp500:  7.03,
-};
-
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
   text: "#1a1a1a", muted: "#6b7280", light: "#9ca3af",
@@ -316,10 +331,6 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
     </>
   );
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TAB 2: P(+10%) HIT RATE (System 2 — 60d windows, p10 > 0.60)
-// ══════════════════════════════════════════════════════════════════════════════
 function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
   const [open, setOpen] = useState<HitRateOpen[]>([]);
   const [closed, setClosed] = useState<HitRateClosed[]>([]);
@@ -496,335 +507,262 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
     </>
   );
 }
-
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: PORTFOLIO vs MODEL (side-by-side)
+// TAB 3: BORING STRATEGY (paper-tracked: ps_ratio top-10, Pio≥7, 26w hold)
 // ══════════════════════════════════════════════════════════════════════════════
-function PortfolioVsModelTab({ router }: { router: ReturnType<typeof useRouter> }) {
-  const [myHistory, setMyHistory]   = useState<PortfolioHistoryEntry[]>([]);
-  const [midcapHist, setMidcapHist] = useState<StrategyHistory | null>(null);
-  const [sp500Hist, setSp500Hist]   = useState<StrategyHistory | null>(null);
-  const [loading, setLoading]       = useState(true);
-
-  const [filter, setFilter]         = useState<BucketFilter>("all");
-  const [yourPage, setYourPage]     = useState(1);
-  const [midcapPage, setMidcapPage] = useState(1);
-  const [sp500Page, setSp500Page]   = useState(1);
+function BoringStrategyTab() {
+  const [history, setHistory] = useState<BoringHistory | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    Promise.allSettled([
-      fetch(`${GCS_PORTFOLIO}/state.json?t=${Date.now()}`).then(r => r.json()),
-      fetch(`${GCS_PERFORMANCE}/strategy_history_midcap.json?t=${Date.now()}`).then(r => r.ok ? r.json() : null),
-      fetch(`${GCS_PERFORMANCE}/strategy_history_sp500.json?t=${Date.now()}`).then(r => r.ok ? r.json() : null),
-    ]).then(([myRes, midRes, spRes]) => {
-      if (myRes.status  === "fulfilled") setMyHistory(myRes.value?.history || []);
-      if (midRes.status === "fulfilled") setMidcapHist(midRes.value);
-      if (spRes.status  === "fulfilled") setSp500Hist(spRes.value);
-      setLoading(false);
-    });
+    fetch(`${GCS_PERFORMANCE}/strategy_history_boring.json?t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { setHistory(d); setLoading(false); })
+      .catch(() => { setLoading(false); });
   }, []);
 
-  const filteredHistory = useMemo(() => {
-    const sorted = [...myHistory].sort((a, b) => (a.date < b.date ? 1 : -1));
-    if (filter === "all")      return sorted;
-    if (filter === "untagged") return sorted.filter(t => !t.bucket);
-    return sorted.filter(t => t.bucket === filter);
-  }, [myHistory, filter]);
+  if (loading) {
+    return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
+  }
 
-  const youAlpha = useMemo(() => {
-    const calc = (bucket: "midcap" | "sp500") => {
-      const yourTrades = myHistory.filter(t => t.bucket === bucket);
-      if (yourTrades.length === 0) return null;
-      const yourMean = yourTrades.reduce((a, t) => a + t.pnl_pct, 0) / yourTrades.length;
-      return { count: yourTrades.length, meanPct: yourMean };
-    };
-    return { midcap: calc("midcap"), sp500: calc("sp500") };
-  }, [myHistory]);
+  if (!history) {
+    return (
+      <Empty
+        icon={<BarChart3 size={36} color={T.divider} />}
+        title="Strategy not initialized"
+        sub="The first basket will open after the next Friday scan completes."
+      />
+    );
+  }
 
-  if (loading) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
+  const ob = history.open_basket;
+  const weeks = history.weeks || [];
+  const summary = history.summary;
+  const marks = ob?.weekly_marks || [];
+  const lastMark = marks.length > 0 ? marks[marks.length - 1] : null;
 
-  const midWeeks = midcapHist?.weeks || [];
-  const spWeeks  = sp500Hist?.weeks  || [];
-  const midSummary = midcapHist?.summary;
-  const spSummary  = sp500Hist?.summary;
+  // Build cumulative chart: closed cycles compounded + open-basket marks tail
+  const chartPoints: { date: string; strategy_pct: number; spy_pct: number }[] = [];
+  let cumStrat = 0;
+  let cumSpy = 0;
+  for (const w of weeks) {
+    cumStrat = (1 + cumStrat / 100) * (1 + w.basket_return_pct / 100) * 100 - 100;
+    cumSpy   = (1 + cumSpy   / 100) * (1 + w.spy_return_pct   / 100) * 100 - 100;
+    chartPoints.push({ date: w.exit_date, strategy_pct: cumStrat, spy_pct: cumSpy });
+  }
+  for (const m of marks) {
+    const stratNow = (1 + cumStrat / 100) * (1 + m.basket_return_pct / 100) * 100 - 100;
+    const spyNow   = (1 + cumSpy   / 100) * (1 + m.spy_return_pct   / 100) * 100 - 100;
+    chartPoints.push({ date: m.date, strategy_pct: stratNow, spy_pct: spyNow });
+  }
+
+  const fmtPct = (v: number | null | undefined, dp = 2) =>
+    v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}%`;
+  const fmtPp = (v: number | null | undefined, dp = 2) =>
+    v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
 
   return (
     <>
+      {/* Hero */}
       <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
-          <strong>Three-panel view.</strong> Left: your closed trades (tag each by bucket
-          when you add it). Center: the midcap basket's weekly closures. Right: SP500.
-          Use the alpha banner above to see how your decisions compared to each model.
+          <strong>BORING strategy</strong>: top-10 SP500 stocks with Piotroski ≥ 7,
+          ranked by P/S ascending, equal-weight, 26-week hold.
+          {history.inception_date && (
+            <> Inception: <strong>{history.inception_date.slice(0, 10)}</strong>.</>
+          )}
+          {" "}<em>{history.strategy_version}</em>
         </div>
       </Card>
 
-      <AlphaBanner
-        midcap={midSummary}
-        sp500={spSummary}
-        youMidcap={youAlpha.midcap}
-        youSp500={youAlpha.sp500}
-      />
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-
-        {/* PANEL 1 — YOUR CLOSURES */}
-        <Card>
-          <SH
-            title={`Your Closures (${filteredHistory.length})`}
-            icon={<TrendingUp size={12} />}
-            sub="From portfolio history"
-          />
-          <div style={{ display: "flex", gap: 5, padding: "8px 12px 6px", flexWrap: "wrap", borderBottom: `1px solid ${T.divider}` }}>
-            {(["all","midcap","sp500","untagged"] as BucketFilter[]).map(f => (
-              <button key={f} onClick={() => { setFilter(f); setYourPage(1); }}
-                style={{
-                  padding: "3px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 600,
-                  letterSpacing: "0.05em", textTransform: "uppercase",
-                  border: `1px solid ${filter===f ? T.greenBorder : T.border}`,
-                  borderRadius: 3, cursor: "pointer",
-                  background: filter===f ? T.greenLight : "transparent",
-                  color:      filter===f ? T.green : T.muted,
-                }}>{f}</button>
-            ))}
-          </div>
-
-          {filteredHistory.length === 0 ? (
-            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-              {myHistory.length === 0 ? "No closed positions yet." : "No matches for this filter."}
-            </div>
-          ) : (
-            <PaginatedTable
-              total={filteredHistory.length}
-              page={yourPage}
-              setPage={setYourPage}
-              header={["Sym", "Bucket", "Entry", "Exit", "P&L", "Days"]}
-              rows={filteredHistory.slice((yourPage-1)*PAGE_SIZE, yourPage*PAGE_SIZE).map((t, i) => {
-                const pC = t.pnl_pct >= 0 ? T.greenPos : T.red;
-                return (
-                  <tr key={`${t.symbol}-${t.date}-${i}`}>
-                    <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }}
-                        onClick={() => router.push(`/stock/${t.symbol}`)}>
-                      {t.symbol}
-                    </td>
-                    <td style={{ ...td, textAlign: "center" }}>
-                      <BucketChip tag={t.bucket || null} />
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
-                    <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>${t.exit_price.toFixed(2)}</td>
-                    <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>
-                      {t.pnl_pct >= 0 ? "+" : ""}{t.pnl_pct.toFixed(1)}%
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
-                  </tr>
-                );
-              })}
-            />
-          )}
-        </Card>
-
-        {/* PANEL 2 — MIDCAP MODEL */}
-        <Card>
-          <SH
-            title={`Midcap Model (${midWeeks.length})`}
-            icon={<Target size={12} />}
-            sub={midcapHist?.inception_date ? `since ${midcapHist.inception_date.slice(0,10)}` : "weekly basket closures"}
-          />
-          {midWeeks.length === 0 ? (
-            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-              No closed weeks yet — first one appears after next Monday's basket regenerates.
-            </div>
-          ) : (
-            <PaginatedTable
-              total={midWeeks.length}
-              page={midcapPage}
-              setPage={setMidcapPage}
-              header={["Week", "N", "Strat", "SPY", "Alpha"]}
-              rows={[...midWeeks].reverse().slice((midcapPage-1)*PAGE_SIZE, midcapPage*PAGE_SIZE).map((w, i) => (
-                <tr key={`mid-${w.entry_date}-${i}`}>
-                  <td style={{ ...td, textAlign: "left", color: T.text, fontSize: 10 }}>
-                    {w.entry_date.slice(5)} → {w.exit_date.slice(5)}
-                  </td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
-                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
-                              color: w.basket_return_pct >= 0 ? T.greenPos : T.red }}>
-                    {w.basket_return_pct >= 0 ? "+" : ""}{w.basket_return_pct.toFixed(2)}%
-                  </td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                    {w.spy_return_pct >= 0 ? "+" : ""}{w.spy_return_pct.toFixed(2)}%
-                  </td>
-                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
-                              color: w.alpha_pp >= 0 ? T.greenPos : T.red }}>
-                    {w.alpha_pp >= 0 ? "+" : ""}{w.alpha_pp.toFixed(2)}pp
-                  </td>
-                </tr>
-              ))}
-            />
-          )}
-        </Card>
-
-        {/* PANEL 3 — SP500 MODEL */}
-        <Card>
-          <SH
-            title={`SP500 Model (${spWeeks.length})`}
-            icon={<Target size={12} />}
-            sub={sp500Hist?.inception_date ? `since ${sp500Hist.inception_date.slice(0,10)}` : "weekly basket closures"}
-          />
-          {spWeeks.length === 0 ? (
-            <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-              No closed weeks yet — first one appears after next Sunday's scheduled scan.
-            </div>
-          ) : (
-            <PaginatedTable
-              total={spWeeks.length}
-              page={sp500Page}
-              setPage={setSp500Page}
-              header={["Week", "N", "Strat", "SPY", "Alpha"]}
-              rows={[...spWeeks].reverse().slice((sp500Page-1)*PAGE_SIZE, sp500Page*PAGE_SIZE).map((w, i) => (
-                <tr key={`sp-${w.entry_date}-${i}`}>
-                  <td style={{ ...td, textAlign: "left", color: T.text, fontSize: 10 }}>
-                    {w.entry_date.slice(5)} → {w.exit_date.slice(5)}
-                  </td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
-                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
-                              color: w.basket_return_pct >= 0 ? T.greenPos : T.red }}>
-                    {w.basket_return_pct >= 0 ? "+" : ""}{w.basket_return_pct.toFixed(2)}%
-                  </td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                    {w.spy_return_pct >= 0 ? "+" : ""}{w.spy_return_pct.toFixed(2)}%
-                  </td>
-                  <td style={{ ...td, textAlign: "right", fontWeight: 700,
-                              color: w.alpha_pp >= 0 ? T.greenPos : T.red }}>
-                    {w.alpha_pp >= 0 ? "+" : ""}{w.alpha_pp.toFixed(2)}pp
-                  </td>
-                </tr>
-              ))}
-            />
-          )}
-        </Card>
+      {/* Hero stats — 4 numbers across */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
+        <BoringStatBox
+          label="CYCLES CLOSED"
+          value={`${summary?.weeks_closed ?? 0}`}
+          sub={ob ? "1 open" : "0 open"}
+        />
+        <BoringStatBox
+          label="CUM ALPHA"
+          value={fmtPp(summary?.cum_alpha_pp)}
+          sub="vs SPY"
+          accent={summary && summary.cum_alpha_pp > 0 ? "green" : (summary && summary.cum_alpha_pp < 0 ? "red" : undefined)}
+        />
+        <BoringStatBox
+          label="ANN. RETURN"
+          value={fmtPct(summary?.annualized_return_pct)}
+          sub={summary
+            ? `vs SPY ${fmtPct((summary.annualized_return_pct ?? 0) - (summary.annualized_alpha_pp ?? 0))}`
+            : ""}
+        />
+        <BoringStatBox
+          label="WIN RATE"
+          value={summary ? `${(summary.win_rate * 100).toFixed(0)}%` : "—"}
+          sub={summary ? `${summary.weeks_positive_alpha}/${summary.weeks_closed} cycles` : ""}
+        />
       </div>
+
+      {/* Cumulative chart */}
+      {chartPoints.length > 0 && (
+        <Card style={{ marginBottom: 16 }}>
+          <SH title="CUMULATIVE RETURN — STRATEGY vs SPY" icon={<TrendingUp size={11} />} />
+          <BoringCumulativeChart points={chartPoints} />
+        </Card>
+      )}
+
+      {/* Open basket */}
+      {ob && (
+        <Card style={{ marginBottom: 16 }}>
+          <SH
+            title="OPEN BASKET"
+            icon={<Target size={11} />}
+            sub={`${ob.inception_date} → ${ob.scheduled_exit_date}${lastMark ? ` · day ${lastMark.days_held}/182` : ""}`}
+          />
+
+          {lastMark && (
+            <div style={{ display: "flex", gap: 16, marginBottom: 10, fontSize: 11, fontFamily: T.mono, alignItems: "baseline" }}>
+              <span>basket {fmtPct(lastMark.basket_return_pct)}</span>
+              <span style={{ color: T.muted }}>SPY {fmtPct(lastMark.spy_return_pct)}</span>
+              <span style={{ color: lastMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
+                alpha {fmtPp(lastMark.alpha_pp)}
+              </span>
+              <span style={{ color: T.muted, marginLeft: "auto", fontSize: 10 }}>
+                last marked {lastMark.date}
+              </span>
+            </div>
+          )}
+
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={th}>#</th>
+                <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+                <th style={{ ...th, textAlign: "right" }}>Entry</th>
+                <th style={{ ...th, textAlign: "right" }}>P/S</th>
+                <th style={{ ...th, textAlign: "right" }}>Pio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ob.basket.map((p, i) => (
+                <tr key={p.symbol}>
+                  <td style={{ ...td, color: T.muted }}>{i + 1}</td>
+                  <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                  <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+                  <td style={{ ...td, textAlign: "right" }}>{p.ps_ratio_at_entry.toFixed(2)}</td>
+                  <td style={{ ...td, textAlign: "right" }}>{p.piotroski_at_entry}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      )}
+
+      {/* Closed cycles */}
+      {weeks.length > 0 && (
+        <Card>
+          <SH title={`CLOSED CYCLES (${weeks.length})`} icon={<Clock size={11} />} />
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ ...th, textAlign: "left" }}>Entry</th>
+                <th style={{ ...th, textAlign: "left" }}>Exit</th>
+                <th style={{ ...th, textAlign: "right" }}>N</th>
+                <th style={{ ...th, textAlign: "right" }}>Basket</th>
+                <th style={{ ...th, textAlign: "right" }}>SPY</th>
+                <th style={{ ...th, textAlign: "right" }}>Alpha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...weeks].reverse().map((w, i) => (
+                <tr key={i}>
+                  <td style={td}>{w.entry_date}</td>
+                  <td style={td}>{w.exit_date}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{w.n_positions}</td>
+                  <td style={{ ...td, textAlign: "right" }}>{fmtPct(w.basket_return_pct)}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{fmtPct(w.spy_return_pct)}</td>
+                  <td style={{
+                    ...td, textAlign: "right",
+                    color: w.alpha_pp >= 0 ? T.green : T.red, fontWeight: 600,
+                  }}>
+                    {fmtPp(w.alpha_pp)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      )}
     </>
   );
 }
 
-// ── Helper components for the 3-panel view ────────────────────────────────
-function AlphaBanner({
-  midcap, sp500, youMidcap, youSp500,
-}: {
-  midcap?: StrategyHistory["summary"];
-  sp500?:  StrategyHistory["summary"];
-  youMidcap: { count: number; meanPct: number } | null;
-  youSp500:  { count: number; meanPct: number } | null;
-}) {
+// Helper: stat box for the BORING tab (slightly different shape than KPI)
+function BoringStatBox({
+  label, value, sub, accent,
+}: { label: string; value: string; sub?: string; accent?: "green" | "red" }) {
+  const color = accent === "green" ? T.green : accent === "red" ? T.red : T.text;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-      <BucketAlphaCard label="MIDCAP" modelSummary={midcap} you={youMidcap} expected={EXPECTED_ANNUAL_ALPHA.midcap} />
-      <BucketAlphaCard label="SP500"  modelSummary={sp500}  you={youSp500}  expected={EXPECTED_ANNUAL_ALPHA.sp500} />
-    </div>
-  );
-}
-
-function BucketAlphaCard({
-  label, modelSummary, you, expected,
-}: {
-  label: string;
-  modelSummary?: StrategyHistory["summary"];
-  you: { count: number; meanPct: number } | null;
-  expected: number;
-}) {
-  const modelCumAlpha = modelSummary?.cum_alpha_pp ?? 0;
-  const modelAnnAlpha = modelSummary?.annualized_alpha_pp ?? 0;
-  const modelWeeks    = modelSummary?.weeks_closed ?? 0;
-  const modelWinRate  = modelSummary?.win_rate ?? 0;
-  const onTrack = modelWeeks > 0 && modelAnnAlpha >= expected * 0.7;
-  const accent  = modelWeeks === 0 ? T.muted : (onTrack ? T.greenPos : T.amber);
-
-  return (
-    <div style={{
-      background: "white", border: `1px solid ${T.border}`, borderRadius: 8,
-      padding: 14, position: "relative", overflow: "hidden",
-    }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: accent }} />
-
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
-        <div>
-          <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.1em", color: T.muted }}>{label}</span>
-          <span style={{ marginLeft: 8, fontSize: 10, fontFamily: T.mono, color: T.light }}>
-            {modelWeeks > 0 ? `${modelWeeks} weeks closed` : "no closed weeks yet"}
-          </span>
-        </div>
-        <span style={{
-          fontSize: 9, padding: "2px 7px", borderRadius: 3, fontFamily: T.mono,
-          fontWeight: 700, letterSpacing: "0.05em",
-          background: modelWeeks === 0 ? T.divider : (onTrack ? T.greenLight : T.amberLight),
-          color:      modelWeeks === 0 ? T.muted   : (onTrack ? T.green       : T.amber),
-          border: `1px solid ${modelWeeks === 0 ? T.border : (onTrack ? T.greenBorder : "#fde68a")}`,
-        }}>
-          {modelWeeks === 0 ? "PENDING" : (onTrack ? "ON TRACK" : "BELOW EXP")}
-        </span>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-        <StatBlock
-          label="Model cum α"
-          value={`${modelCumAlpha >= 0 ? "+" : ""}${modelCumAlpha.toFixed(2)}pp`}
-          sub={modelWinRate ? `${(modelWinRate*100).toFixed(0)}% wins` : "—"}
-          color={modelCumAlpha >= 0 ? T.greenPos : T.red}
-        />
-        <StatBlock
-          label="Model ann. α"
-          value={`${modelAnnAlpha >= 0 ? "+" : ""}${modelAnnAlpha.toFixed(1)}pp`}
-          sub={`expected +${expected}pp/yr`}
-          color={modelAnnAlpha >= 0 ? T.greenPos : T.red}
-        />
-        <StatBlock
-          label="Your tagged"
-          value={you ? `${you.meanPct >= 0 ? "+" : ""}${you.meanPct.toFixed(1)}%` : "—"}
-          sub={you ? `${you.count} closed` : "tag trades to compare"}
-          color={you ? (you.meanPct >= 0 ? T.greenPos : T.red) : T.muted}
-        />
-      </div>
-    </div>
-  );
-}
-
-function StatBlock({
-  label, value, sub, color,
-}: { label: string; value: string; sub?: string; color: string }) {
-  return (
-    <div>
-      <div style={{ fontSize: 8, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase" }}>
+    <Card style={{ padding: "12px 14px" }}>
+      <div style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, letterSpacing: "0.08em", fontWeight: 600 }}>
         {label}
       </div>
-      <div style={{ marginTop: 2, fontSize: 16, fontFamily: T.mono, fontWeight: 700, color }}>
+      <div style={{ fontSize: 20, fontWeight: 700, fontFamily: T.mono, color, marginTop: 4 }}>
         {value}
       </div>
       {sub && (
-        <div style={{ marginTop: 1, fontSize: 9, fontFamily: T.mono, color: T.light }}>{sub}</div>
+        <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 2 }}>
+          {sub}
+        </div>
       )}
-    </div>
+    </Card>
   );
 }
 
-function BucketChip({ tag }: { tag: BucketTag }) {
-  if (!tag) {
+// Helper: cumulative chart for the BORING tab (SVG, no external chart lib)
+function BoringCumulativeChart({
+  points,
+}: { points: { date: string; strategy_pct: number; spy_pct: number }[] }) {
+  if (points.length < 2) {
     return (
-      <span style={{
-        fontSize: 8, padding: "1px 5px", borderRadius: 3, fontFamily: T.mono,
-        background: T.divider, color: T.light, border: `1px solid ${T.border}`,
-        fontWeight: 600, letterSpacing: "0.05em",
-      }}>—</span>
+      <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, padding: "20px 0", textAlign: "center" }}>
+        Need at least 2 data points for chart. Currently {points.length}.
+      </div>
     );
   }
-  const isMid = tag === "midcap";
+  const W = 700, H = 220, P = 30;
+  const allValues = points.flatMap(p => [p.strategy_pct, p.spy_pct]);
+  const maxY = Math.max(...allValues, 5);
+  const minY = Math.min(...allValues, -5);
+  const xScale = (i: number) => P + (i / (points.length - 1)) * (W - 2 * P);
+  const yScale = (v: number) => H - P - ((v - minY) / (maxY - minY || 1)) * (H - 2 * P);
+  const stratPath = points.map((p, i) =>
+    `${i === 0 ? "M" : "L"} ${xScale(i).toFixed(1)},${yScale(p.strategy_pct).toFixed(1)}`).join(" ");
+  const spyPath = points.map((p, i) =>
+    `${i === 0 ? "M" : "L"} ${xScale(i).toFixed(1)},${yScale(p.spy_pct).toFixed(1)}`).join(" ");
+  const zeroY = yScale(0);
+  const last = points[points.length - 1];
+
   return (
-    <span style={{
-      fontSize: 8, padding: "1px 5px", borderRadius: 3, fontFamily: T.mono,
-      fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase",
-      background: isMid ? T.greenLight  : "#eef2ff",
-      color:      isMid ? T.green       : "#4338ca",
-      border: `1px solid ${isMid ? T.greenBorder : "#c7d2fe"}`,
-    }}>{tag}</span>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: H, fontFamily: T.mono }}>
+      {/* Zero baseline */}
+      <line x1={P} x2={W - P} y1={zeroY} y2={zeroY} stroke={T.divider} strokeDasharray="2,3" />
+      {/* SPY (gray) */}
+      <path d={spyPath} fill="none" stroke={T.muted} strokeWidth="1.5" />
+      {/* Strategy (green) */}
+      <path d={stratPath} fill="none" stroke={T.green} strokeWidth="2" />
+      {/* Labels */}
+      <text x={P} y={P - 8} fontSize="9" fill={T.muted}>
+        Strategy (green) vs SPY (gray) · cumulative %
+      </text>
+      <text x={P} y={zeroY - 4} fontSize="9" fill={T.muted}>0%</text>
+      <text x={W - P} y={H - 5} fontSize="9" fill={T.muted} textAnchor="end">{last.date}</text>
+      <text x={W - P - 70} y={yScale(last.strategy_pct) - 6} fontSize="10" fill={T.green} fontWeight="600">
+        {(last.strategy_pct >= 0 ? "+" : "") + last.strategy_pct.toFixed(1) + "%"}
+      </text>
+      <text x={W - P - 70} y={yScale(last.spy_pct) + 14} fontSize="10" fill={T.muted}>
+        SPY {(last.spy_pct >= 0 ? "+" : "") + last.spy_pct.toFixed(1) + "%"}
+      </text>
+    </svg>
   );
 }
 
@@ -891,7 +829,7 @@ function pageBtnStyle(disabled: boolean): React.CSSProperties {
 // ══════════════════════════════════════════════════════════════════════════════
 export default function Performance() {
   const router = useRouter();
-  const [tab, setTab] = useState<"signal" | "hitrate" | "compare">("signal");
+  const [tab, setTab] = useState<"signal" | "hitrate" | "boring">("signal");
 
   return (
     <div style={{ padding: "16px 20px", maxWidth: 1400, margin: "0 auto" }}>
@@ -902,7 +840,7 @@ export default function Performance() {
           <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>/ tracking</span>
         </div>
         <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>
-          Forward-only tracking from v7.2 deploy. System 1: composite model. System 2: ML time model.
+          Forward-only tracking. System 1: composite signals. System 2: ML hit rate. System 3: BORING strategy paper-track.
         </p>
       </div>
 
@@ -911,9 +849,9 @@ export default function Performance() {
         {[
           { key: "signal",  label: "Signal Performance", icon: <TrendingUp size={12} /> },
           { key: "hitrate", label: "P(+10%) Hit Rate",   icon: <Target size={12} /> },
-          { key: "compare", label: "Portfolio vs Model", icon: <BarChart3 size={12} /> },
+          { key: "boring",  label: "BORING Strategy",    icon: <BarChart3 size={12} /> },
         ].map(({ key, label, icon }) => (
-          <button key={key} onClick={() => setTab(key as "signal" | "hitrate" | "compare")}
+          <button key={key} onClick={() => setTab(key as "signal" | "hitrate" | "boring")}
             style={{
               display: "flex", alignItems: "center", gap: 5, padding: "7px 16px", fontSize: 12,
               fontFamily: T.mono, fontWeight: 600, border: "none", borderRadius: 6,
@@ -930,7 +868,7 @@ export default function Performance() {
       {/* Tab content */}
       {tab === "signal"  && <SignalPerfTab router={router} />}
       {tab === "hitrate" && <HitRateTab router={router} />}
-      {tab === "compare" && <PortfolioVsModelTab router={router} />}
+      {tab === "boring"  && <BoringStrategyTab />}
     </div>
   );
 }
