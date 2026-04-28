@@ -40,12 +40,11 @@ def _load_scan_from_gcs(region: str) -> list:
 
 def main():
     # HARDCODED REGIONS TO SCAN SEQUENTIALLY
-    REGIONS_TO_SCAN = ["sp500", "midcap"]
+    REGIONS_TO_SCAN = ["sp500"]
     log.info(f"═══ Scan job starting: processing {len(REGIONS_TO_SCAN)} regions sequentially ═══")
 
     import screener_v6
     import signal_tracker
-    import rebalance_engine
     import tradier_options
 
     for region in REGIONS_TO_SCAN:
@@ -74,28 +73,7 @@ def main():
         except Exception as e:
             log.error(f"[{region}] signal_tracker failed: {e}", exc_info=True)
 
-        # ─── 4. Rebalance engine ───
-        rebalance_report = {}
-        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"]:
-            try:
-                rebalance_report = rebalance_engine.run_rebalance_from_scan(stocks, region)
-                summary = rebalance_report.get("summary", {}) if rebalance_report else {}
-                if summary.get("actions_required"):
-                    log.info(f"[{region}] REBALANCE: {len(rebalance_report['closes'])} close(s), "
-                             f"{len(rebalance_report['opens'])} open(s)")
-            except Exception as e:
-                log.error(f"[{region}] rebalance_engine failed: {e}", exc_info=True)
-
-        # ─── 5. Tradier options overlay ───
-        if region in ["sp500", "nasdaq", "nasdaq100", "russell2000"] and rebalance_report:
-            try:
-                if not os.environ.get("TRADIER_TOKEN"):
-                    log.info(f"[{region}] TRADIER_TOKEN not set — options skipped")
-                else:
-                    opt_result = tradier_options.suggest_spreads_for_portfolio(rebalance_report)
-                    log.info(f"[{region}] Options: {len(opt_result.get('suggestions', []))} suggested")
-            except Exception as e:
-                log.error(f"[{region}] tradier_options failed: {e}", exc_info=True)
+       
 
         log.info(f"═══ Completed processing region={region} ═══")
 
