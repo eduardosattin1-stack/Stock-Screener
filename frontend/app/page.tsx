@@ -14,6 +14,9 @@ const EU_EXCHANGES = new Set(["XETRA","PAR","LSE","AMS","MIL","STO","SIX","BME",
 const EU_COUNTRIES = new Set(["GB","DE","FR","NL","IT","SE","CH","ES","DK","NO","FI","IE","AT","BE","PT"]);
 
 // ── Types ───────────────────────────────────────────────────────────────────
+interface FactorsV8 { momentum:number|null; quality:number|null; growth:number|null; value:number|null; smart_money:number|null; }
+// Legacy v7 factor scores (kept on the wire for diagnostic backwards-compat;
+// not rendered anywhere on the page).
 interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; institutional_flow?:number|null; sector_momentum?:number|null; congressional?:number|null; }
 interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve:number; yield_level:number; vix:number; cpi_trend:number; gdp_momentum:number; }; }
 interface StockData {
@@ -30,7 +33,7 @@ interface StockData {
   intrinsic_avg:number; margin_of_safety:number; value_score:number;
   composite:number; signal:string; classification:string; reasons:string[];
   factor_scores?:FactorScores;
-  // v7 fields
+  // v7 fields kept on the wire (diagnostic only, no longer drive composite)
   quality_score?:number; catalyst_score?:number; catalyst_flags?:string[];
   has_catalyst?:boolean; days_to_earnings?:number;
   insider_score?:number; insider_net_buys?:number;
@@ -61,6 +64,33 @@ interface StockData {
   country?:string;
   // v6 compat (removed in v7)
   news_score?:number; news_sentiment?:number; catastrophe_score?:number;
+  // ── v8 (Apr 2026): dual-mode 5-factor composite ──
+  // Both modes computed at scan time (Option B). The page binds to whichever
+  // mode the user selects via ModeToggle. `composite` defaults to momentum
+  // for backward-compat with sort/filter code that hasn't been migrated yet.
+  composite_momentum?:number;
+  composite_fallen_angel?:number;
+  signal_momentum?:string;
+  signal_fallen_angel?:string;
+  factors_v8?:FactorsV8;
+  factors_v8_momentum?:FactorsV8;
+  factors_v8_fallen_angel?:FactorsV8;
+  composite_v7?:number;
+  // v8 derived fields available on the row (used in expanded panel)
+  net_margin?:number;
+  fcf_margin?:number;
+  revenue_yoy?:number;
+  eps_yoy?:number;
+  fcf_yoy?:number;
+  fcf_cagr_3y?:number;
+  p_fcf?:number;
+  earnings_yield?:number;
+  intrinsic_bvps?:number;
+  bvps_recent_cagr?:number;
+  bvps_consistency?:number;
+  bvps_upside?:number;
+  intrinsic_upside?:number;
+  reversal_score?:number;
 }
 interface ScanData {
   scan_date:string; region:string; version:string;
@@ -81,13 +111,13 @@ const SIG: Record<string,{color:string;bg:string;border:string}> = {
 };
 const CLS: Record<string,string> = { DEEP_VALUE:"#2563eb", VALUE:"#0891b2", QUALITY_GROWTH:"#7c3aed", GROWTH:"#818cf8", SPECULATIVE:"#ef4444", NEUTRAL:"#64748b" };
 
-// v7 factor config
-// v7.2 factor config — 13 factors, ordered by weight for natural radar clockwise reading
-const FACTOR_ORDER = ["technical","upside","quality","proximity","institutional_flow","transcript","earnings","catalyst","institutional","sector_momentum","analyst","insider","congressional"];
-// Short labels (≤10 chars) so radar vertex labels don't overlap at 13 vertices
-const FACTOR_LABELS: Record<string,string> = { technical:"Technical", quality:"Quality", proximity:"52-Week", catalyst:"Catalyst", transcript:"Transcript", upside:"Upside", institutional:"Inst Hold", analyst:"Analyst", insider:"Insider", earnings:"Earnings", institutional_flow:"Inst Flow", sector_momentum:"Sector Mom", congressional:"Congress" };
-// v7.2 weights from 45K-sample backtest (tech capped at 25%)
-const FACTOR_WEIGHTS: Record<string,number> = { technical:25, upside:14, quality:12, proximity:12, institutional_flow:9, transcript:6, earnings:5, catalyst:5, institutional:3, sector_momentum:3, analyst:3, insider:2, congressional:1 };
+// v8 (Apr 2026) — 5-factor composite radar config
+// Replaces the v7 13-factor list. The order drives radar axis layout
+// (clockwise from top); FACTOR_WEIGHTS supplies the percent labels rendered
+// in the expanded factor breakdown.
+const FACTOR_ORDER = ["momentum","quality","growth","value","smart_money"];
+const FACTOR_LABELS: Record<string,string> = { momentum:"Momentum", quality:"Quality", growth:"Growth", value:"Value", smart_money:"Smart Money" };
+const FACTOR_WEIGHTS: Record<string,number> = { momentum:25, quality:20, growth:20, value:20, smart_money:15 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}%`;
@@ -98,31 +128,61 @@ const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1
 // model's `hit_prob` on each stock is more accurate. See calibration docs.
 function getProb(c:number){if(c>=0.90)return{p10:85,gain:25.7,dd:-9.1,speed:18};if(c>=0.80)return{p10:75,gain:20.0,dd:-9.8,speed:22};if(c>=0.65)return{p10:62,gain:15.0,dd:-10.5,speed:26};if(c>=0.50)return{p10:50,gain:12.0,dd:-11.0,speed:30};return{p10:35,gain:9.0,dd:-11.0,speed:32};}
 
-function inferFactors(s:StockData):FactorScores {
-  if(s.factor_scores) return s.factor_scores;
-  return {
-    technical: Math.min(1,(s.bull_score||0)/10),
-    quality: s.quality_score ?? Math.min(1, ((s.piotroski||0)/9*0.4 + Math.min(1,(s.altman_z||0)/10)*0.2 + Math.min(1,(s.roe_avg||0)/0.3)*0.2 + Math.min(1,(s.gross_margin||0))*0.2)),
-    upside: s.upside_score ?? Math.min(1,Math.max(0,(s.upside||0)/80)),
-    proximity: s.proximity_score ?? (s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),
-    catalyst: s.catalyst_score ?? 0.5,
-    transcript: s.transcript_score ?? null,
-    institutional: s.inst_score ?? null,
-    analyst: s.grade_score || null,
-    insider: s.insider_score ?? null,
-    earnings: s.earnings_score ?? Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),
-    // v7.2 new factors — null when no factor_scores present (legacy scans, EU stocks, etc.)
-    institutional_flow: null,
-    sector_momentum: null,
-    congressional: null,
-  } as FactorScores;
+// v8 mode-aware factor reader. Falls back to s.factors_v8 (no per-mode
+// breakdown) for stocks scanned before the dual-mode deploy. Last-resort
+// fallback returns an all-null FactorsV8 so the radar still renders five
+// dashed/empty axes rather than crashing.
+function readFactorsV8(s:StockData, mode:string):FactorsV8 {
+  const f = mode === "fallen_angel" ? (s.factors_v8_fallen_angel ?? s.factors_v8) : (s.factors_v8_momentum ?? s.factors_v8);
+  if (f) return f;
+  return { momentum:null, quality:null, growth:null, value:null, smart_money:null };
+}
+// Pull the active-mode composite, falling back to s.composite when the
+// dual-mode fields are absent (older scan JSON).
+function readComposite(s:StockData, mode:string):number {
+  if (mode === "fallen_angel") return s.composite_fallen_angel ?? s.composite ?? 0;
+  return s.composite_momentum ?? s.composite ?? 0;
+}
+function readSignal(s:StockData, mode:string):string {
+  if (mode === "fallen_angel") return s.signal_fallen_angel ?? s.signal ?? "HOLD";
+  return s.signal_momentum ?? s.signal ?? "HOLD";
 }
 
-// ── Mini Radar ──────────────────────────────────────────────────────────────
-function MiniRadar({scores,size=44}:{scores:FactorScores;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-4;const raw=FACTOR_ORDER.map(k=>(scores as any)[k]);const vals=raw.map(v=>v??0);const n=vals.length;
+// ── ModeToggle (v8) ─────────────────────────────────────────────────────────
+// Switches the entire table between Momentum and Fallen Angel views. Each
+// stock has both composites computed at scan time, so toggling is purely a
+// view state — no re-fetch. Default mode is Momentum (matches screener-table
+// historical convention; sort by FA composite by clicking the header).
+function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
+  const opts = [{k:"momentum",l:"Momentum"},{k:"fallen_angel",l:"Fallen Angel"}];
+  return(
+    <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+      {opts.map(o=>{
+        const active = o.k === mode;
+        return(
+          <button key={o.k} onClick={()=>onChange(o.k)} style={{
+            padding:"6px 14px",border:"none",cursor:"pointer",
+            background: active ? "var(--green,#2d7a4f)" : "transparent",
+            color: active ? "#fff" : "var(--text)",
+            fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",
+            transition:"background 0.15s",
+          }}>
+            {o.l}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Mini Radar (5-axis v8) ──────────────────────────────────────────────────
+// Used inline next to symbol in row when not expanded. With 5 axes each
+// vertex has more breathing room than the 13-axis legacy version, so we can
+// afford slightly bigger dots and a thicker stroke.
+function MiniRadar({scores,size=44}:{scores:FactorsV8;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-4;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
-  const evaluated=raw.filter(v=>v!=null);const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
+  const evaluated=raw.filter(v=>v!=null) as number[];const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
   const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
   const data=vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ");
   const grid=[0.33,0.66,1].map(lv=>Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" "));
@@ -130,24 +190,27 @@ function MiniRadar({scores,size=44}:{scores:FactorScores;size?:number}){
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((p,i)=><polygon key={i} points={p} fill="none" stroke="#e2e8e4" strokeWidth={0.5} opacity={0.6}/>)}
       {Array.from({length:n},(_,i)=><line key={i} x1={cx} y1={cy} x2={cx+Math.cos(ang(i))*r} y2={cy+Math.sin(ang(i))*r} stroke="#e2e8e4" strokeWidth={0.4}/>)}
-      <polygon points={data} fill={fill} fillOpacity={0.2} stroke={fill} strokeWidth={1.2} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={1.5} fill={raw[i]==null?"#d1d5db":fill}/>)}
+      <polygon points={data} fill={fill} fillOpacity={0.2} stroke={fill} strokeWidth={1.4} strokeLinejoin="round"/>
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={1.8} fill={raw[i]==null?"#d1d5db":fill}/>)}
     </svg>
   );
 }
 
-// ── Large Radar for expanded row ────────────────────────────────────────────
-function LargeRadar({scores,size=180}:{scores:FactorScores;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-24;const raw=FACTOR_ORDER.map(k=>(scores as any)[k]);const vals=raw.map(v=>v??0);const n=vals.length;
+// ── Large Radar for expanded row (5-axis v8) ────────────────────────────────
+// Bigger label area than the 13-axis version since five short labels fit
+// without overlap. Numerical score rendered next to each label for at-a-
+// glance reading inside the expanded factor breakdown panel.
+function LargeRadar({scores,size=180}:{scores:FactorsV8;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-30;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
-  const evaluated=raw.filter(v=>v!=null);const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
+  const evaluated=raw.filter(v=>v!=null) as number[];const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
   const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {[0.25,0.5,0.75,1].map((lv,i)=>{const pts=Array.from({length:n},(_,j)=>`${cx+Math.cos(ang(j))*r*lv},${cy+Math.sin(ang(j))*r*lv}`).join(" ");return<polygon key={i} points={pts} fill="none" stroke="#d1d5db" strokeWidth={i===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+18),ly=cy+Math.sin(a)*(r+18),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#2d7a4f":(v??0)>0.4?"#d97706":"#ef4444");return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5} strokeDasharray={isNull?"2,2":"none"}/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize={6.5} fontFamily="var(--font-mono)" fill={isNull?"#d1d5db":"#6b7280"} fontWeight="500">{FACTOR_LABELS[k]}</text></g>;})}
-      <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.15} stroke={fill} strokeWidth={1.5} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={2.5} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1}/>)}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+22),ly=cy+Math.sin(a)*(r+22),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#2d7a4f":(v??0)>0.4?"#d97706":"#ef4444");return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5} strokeDasharray={isNull?"3,2":"none"}/><text x={lx} y={ly-4} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily="var(--font-mono)" fill={isNull?"#d1d5db":"#6b7280"} fontWeight="600">{FACTOR_LABELS[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily="var(--font-mono)" fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
+      <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.15} stroke={fill} strokeWidth={1.8} strokeLinejoin="round"/>
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.2}/>)}
     </svg>
   );
 }
@@ -293,24 +356,41 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   );
 }
 
-function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;weights:Record<string,number>;rank:number}){
-  const scores=inferFactors(s);
-  const isLive=s.hit_prob!=null&&s.hit_prob>0;
-  const p10=isLive?Math.round(s.hit_prob!*100):getProb(s.composite).p10;
-  const probFallback=getProb(s.composite);
+function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number}){
+  // v8 mode-aware bindings. The user's mode toggle drives which composite,
+  // signal, and factor radar appear in the row. The "other" composite is
+  // shown in a small permanent column so divergences between modes pop
+  // visually without forcing a toggle flip.
+  const scoresActive = readFactorsV8(s, mode);
+  const scoresOther = readFactorsV8(s, mode === "fallen_angel" ? "momentum" : "fallen_angel");
+  const compActive = readComposite(s, mode);
+  const compOther = readComposite(s, mode === "fallen_angel" ? "momentum" : "fallen_angel");
+  const otherLabel = mode === "fallen_angel" ? "Mom" : "FA";
+  const otherIsHigher = compOther - compActive >= 0.10;
+  // hit_prob currently keys off the `composite` field which the backend
+  // sets to the Momentum composite by default (Option B convention). When
+  // FA mode is active the displayed P+10% lags slightly on FA-leaning
+  // stocks; acceptable because the ML model was trained on the v7 composite
+  // anyway. Document in tooltip rather than re-engineer.
+  const isLive = s.hit_prob != null && s.hit_prob > 0;
+  const p10 = isLive ? Math.round(s.hit_prob! * 100) : getProb(compActive).p10;
+  const probFallback = getProb(compActive);
+
   return(
     <>
       <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s",borderLeft:"3px solid transparent"}}
         onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg-hover,#f0f4f1)";}}
         onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
-        {/* SYMBOL + sector */}
+        {/* SYMBOL + sector + mini radar (5-axis active mode) */}
         <td style={{padding:"10px 12px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
+            <MiniRadar scores={scoresActive}/>
             <div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
+                {otherIsHigher&&<span style={{fontSize:8,padding:"1px 5px",borderRadius:3,background:"#fffbeb",color:"#d97706",fontFamily:"var(--font-mono)",fontWeight:700,border:"1px solid #fde68a"}} title={`${otherLabel} composite is ${(compOther-compActive).toFixed(2)} higher — switch mode to compare`}>↻ {otherLabel}+{(compOther-compActive).toFixed(2)}</span>}
               </div>
               {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
             </div>
@@ -318,20 +398,44 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
         </td>
         {/* PRICE */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}</td>
-        {/* PIO — the bucket-defining factor */}
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:600,color:s.piotroski<=3?"#92400e":"var(--text-muted,#6b7280)"}}>
+        {/* PIO — diagnostic only (not in v8 composite) */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:600,color:s.piotroski<=3?"#92400e":"var(--text-muted,#6b7280)"}} title="Piotroski 0-9 — diagnostic only, not in v8 composite">
           {s.piotroski}
         </td>
-        {/* COMPOSITE — demoted (smaller, no big bar) */}
-        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted,#6b7280)",fontWeight:500}}>
-          {s.composite.toFixed(2)}
+        {/* COMP (active mode) — primary, larger, colored by score */}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:13,color:compActive>0.7?"#10b981":compActive>0.5?"var(--text)":compActive>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
+          {compActive.toFixed(2)}
         </td>
-        {/* VALUE (DCF MoS) */}
-        <td style={{padding:"10px 8px"}}><MoSBar value={s.margin_of_safety}/></td>
-        {/* UPSIDE — analyst */}
+        {/* COMP (other mode) — secondary, smaller, amber if it's leading */}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:otherIsHigher?"#d97706":"var(--text-light,#9ca3af)",fontWeight:otherIsHigher?700:500}}
+          title={`${otherLabel} composite — ${otherIsHigher?"leads active mode by ≥0.10":"trails active mode"}`}>
+          {compOther.toFixed(2)}
+        </td>
+        {/* VALUE — sub-factor score from v8 Value (replaces DCF MoS) */}
+        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
+          {(()=>{const v = scoresActive.value;
+            if (v == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
+            const c = v>0.7?"#10b981":v>0.5?"var(--text-muted)":v>0.3?"#d97706":"#ef4444";
+            return <span style={{color:c,fontWeight:700}}>{(v*100).toFixed(0)}</span>;})()}
+        </td>
+        {/* GROWTH — v8 Growth factor score */}
+        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
+          {(()=>{const g = scoresActive.growth;
+            if (g == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
+            const c = g>0.7?"#10b981":g>0.5?"var(--text-muted)":g>0.3?"#d97706":"#ef4444";
+            return <span style={{color:c,fontWeight:700}}>{(g*100).toFixed(0)}</span>;})()}
+        </td>
+        {/* QUALITY — v8 Quality factor score */}
+        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
+          {(()=>{const q = scoresActive.quality;
+            if (q == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
+            const c = q>0.7?"#10b981":q>0.5?"var(--text-muted)":q>0.3?"#d97706":"#ef4444";
+            return <span style={{color:c,fontWeight:700}}>{(q*100).toFixed(0)}</span>;})()}
+        </td>
+        {/* UPSIDE — analyst consensus (v8 Value sub-component, kept for reference) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
         {/* P+10% — labeled experimental */}
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}} title="ML probability of touching +10% within prediction window. Experimental — known underconfidence in 0.4-0.8 bin.">
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}} title="ML probability of touching +10% within prediction window. Trained on legacy v7 composite — slight lag on FA-mode-leaning stocks.">
           {p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ml</span>}
         </td>
         {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
@@ -362,23 +466,30 @@ function StockRow({stock:s,expanded,onToggle,weights,rank}:{stock:StockData;expa
         </td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={11} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={12} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
-            <div style={{display:"grid",gridTemplateColumns:"180px 1fr",gap:24}}>
+            <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
-                <LargeRadar scores={scores}/>
+                <LargeRadar scores={scoresActive}/>
                 <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
-                  {(()=>{const vals=Object.values(scores).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg
+                  {(()=>{const vals=Object.values(scoresActive).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg · {mode==="fallen_angel"?"FA":"Momentum"} mode
                 </div>
               </div>
               <div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
-                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>13-Factor Breakdown</div>
+                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>5-Factor Breakdown · {mode==="fallen_angel"?"Fallen Angel":"Momentum"}</div>
                   <AddToPortfolioButton stock={s}/>
                 </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 24px"}}>
-                  {FACTOR_ORDER.map(k=>{const w=weights[k];const pct=w!=null?(w<=1?Math.round(w*100):Math.round(w)):FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={pct} score={(scores as any)[k]}/>;})}
+                <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
+                  {FACTOR_ORDER.map(k=>{const w=FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={w} score={(scoresActive as any)[k]}/>;})}
                 </div>
+                {/* Mode comparison strip */}
+                {compOther>0&&(
+                  <div style={{marginTop:10,padding:"8px 12px",borderRadius:5,background:otherIsHigher?"#fffbeb":"#f8faf9",border:`1px solid ${otherIsHigher?"#fde68a":"var(--border-subtle,#eef1ef)"}`,fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)",lineHeight:1.5}}>
+                    <span style={{fontWeight:700,color:otherIsHigher?"#d97706":"var(--text)"}}>{otherLabel} composite: {compOther.toFixed(2)}</span>
+                    {otherIsHigher && <span style={{marginLeft:6,color:"#d97706"}}>— leads active mode by {(compOther-compActive).toFixed(2)}, worth checking the {otherLabel==="FA"?"Fallen Angel":"Momentum"} view</span>}
+                  </div>
+                )}
               </div>
             </div>
             {(s.transcript_summary||(s.catalyst_flags&&s.catalyst_flags.length>0)||(s.reasons&&s.reasons.length>0))&&(
@@ -444,11 +555,34 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 }
 
 // ── Main Dashboard ──────────────────────────────────────────────────────────
+// Sortable keys exposed in the v8 main table.
+// Synthetic keys (active_comp, other_comp, value_score, growth_score,
+// quality_score) are computed at sort time from the active mode — letting
+// the user rank stocks by either composite or by any individual factor.
+type SortKey =
+  | "symbol" | "price" | "piotroski"
+  | "active_comp" | "other_comp"
+  | "value_score" | "growth_score" | "quality_score"
+  | "upside";
+
 export default function Dashboard(){
   const [data,setData]=useState<ScanData|null>(null);
   const [loading,setLoading]=useState(true);
 
-  const [sortKey,setSortKey]=useState<keyof StockData|"piotroski">("composite");
+  // v8: mode toggle drives entire table view (sort target, displayed
+  // composite, radar, factor breakdown). Persisted to localStorage so the
+  // user's preference survives reloads.
+  const [mode,setMode]=useState<string>("momentum");
+  useEffect(()=>{
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("cb_screener_mode");
+    if (saved === "fallen_angel" || saved === "momentum") setMode(saved);
+  },[]);
+  useEffect(()=>{
+    if (typeof window !== "undefined") window.localStorage.setItem("cb_screener_mode", mode);
+  },[mode]);
+
+  const [sortKey,setSortKey]=useState<SortKey>("active_comp");
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const [search,setSearch]=useState("");
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
@@ -461,25 +595,52 @@ export default function Dashboard(){
       .catch(()=>{ setLoading(false); });
   },[]);
 
-  const weights = data?.weights || FACTOR_WEIGHTS;
   const stocks: StockData[] = data?.stocks || [];
 
-  // Apply filters + sort
+  // Sort key extractor. Mode-aware so that toggling the mode re-ranks
+  // the table without changing the sort key. "active_comp" follows the
+  // selected mode; "other_comp" follows whichever isn't selected.
+  const extract = (s:StockData, key:SortKey):number => {
+    const fA = readFactorsV8(s, mode);
+    const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
+    switch(key){
+      case "active_comp":   return readComposite(s, mode);
+      case "other_comp":    return readComposite(s, otherMode);
+      case "value_score":   return fA.value ?? -1;
+      case "growth_score":  return fA.growth ?? -1;
+      case "quality_score": return fA.quality ?? -1;
+      case "piotroski":     return s.piotroski ?? 0;
+      case "upside":        return s.upside ?? 0;
+      case "price":         return s.price ?? 0;
+      case "symbol":        return s.symbol.charCodeAt(0); // alphabetic via numeric proxy
+      default:              return 0;
+    }
+  };
+
   const sorted = useMemo(()=>{
     let list = [...stocks];
     if (search) {
       const q = search.toUpperCase();
       list = list.filter(s => s.symbol.includes(q) || (s.company_name||"").toUpperCase().includes(q));
     }
-    list.sort((a,b)=>{
-      const av = (a as any)[sortKey] ?? 0;
-      const bv = (b as any)[sortKey] ?? 0;
-      return sortDir === "desc" ? bv - av : av - bv;
-    });
+    if (sortKey === "symbol") {
+      list.sort((a,b)=>{
+        const cmp = a.symbol.localeCompare(b.symbol);
+        return sortDir === "desc" ? -cmp : cmp;
+      });
+    } else {
+      list.sort((a,b)=>{
+        const av = extract(a, sortKey);
+        const bv = extract(b, sortKey);
+        return sortDir === "desc" ? bv - av : av - bv;
+      });
+    }
     return list;
-  },[stocks, sortKey, sortDir, search]);
+  // extract closes over `mode`; include it in deps so toggling mode re-sorts
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[stocks, sortKey, sortDir, search, mode]);
 
-  const toggleSort = (key: keyof StockData | "piotroski") => {
+  const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
     else { setSortKey(key); setSortDir("desc"); }
   };
@@ -496,7 +657,7 @@ export default function Dashboard(){
       })
     : "—";
 
-  const hs = (key: keyof StockData | "piotroski" | "static", align: "left"|"right"|"center" = "right"): React.CSSProperties => ({
+  const hs = (key: SortKey | "static", align: "left"|"right"|"center" = "right"): React.CSSProperties => ({
     padding:"8px 12px", textAlign: align,
     cursor: key === "static" ? "default" : "pointer",
     fontSize:9, fontWeight:700, letterSpacing:"0.1em", fontFamily:"var(--font-mono)",
@@ -504,6 +665,10 @@ export default function Dashboard(){
     userSelect:"none", whiteSpace:"nowrap",
     borderBottom:"2px solid var(--border,#e5e7eb)", background:"var(--bg,#fff)",
   });
+
+  // Mode-driven column labels
+  const activeCompLabel = mode === "fallen_angel" ? "COMP (FA)" : "COMP (MOM)";
+  const otherCompLabel  = mode === "fallen_angel" ? "MOM" : "FA";
 
   return(
     <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
@@ -514,24 +679,30 @@ export default function Dashboard(){
             CB Screener · {stocks.length} stocks · S&P 500
           </p>
           <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
-            {scanDate}
+            {scanDate} · v8 5-factor composite
           </p>
         </div>
-        <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.6}}>
-          composite weights (research only): {FACTOR_ORDER.slice(0,5).map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
+        <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
+          <ModeToggle mode={mode} onChange={setMode}/>
+          <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
+            {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
+          </div>
         </div>
       </div>
 
       {/* Macro ribbon — situational only */}
       <MacroRibbon macro={data?.macro}/>
 
-      {/* Filters — search only (status/region filters removed with strategy framework) */}
-      <div style={{display:"flex",gap:10,marginBottom:12,marginTop:16,flexWrap:"wrap"}}>
+      {/* Filters — search only */}
+      <div style={{display:"flex",gap:10,marginBottom:12,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
           <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol..."
             style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
                     border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
+        </div>
+        <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+          Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace("_"," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
         </div>
       </div>
 
@@ -542,21 +713,24 @@ export default function Dashboard(){
             <thead><tr>
               <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
               <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
-              <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")}>PIO</th>
-              <th style={hs("composite")} onClick={()=>toggleSort("composite")}>COMP</th>
-              <th style={hs("margin_of_safety","left")} onClick={()=>toggleSort("margin_of_safety")} title="DCF Margin of Safety — negative = overvalued vs intrinsic">VALUE</th>
-              <th style={hs("upside")} onClick={()=>toggleSort("upside")}>UPSIDE</th>
-              <th style={{...hs("static","center"),cursor:"default"}} title="ML probability of touching +10%. Experimental.">P+10% ml</th>
-              <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in the trailing 60-day range. Lower = options cheaper. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
+              <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
+              <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
+              <th style={hs("other_comp")} onClick={()=>toggleSort("other_comp")} title={`Composite for the inactive mode. Sortable — click to rank by ${otherCompLabel === "FA" ? "Fallen Angel" : "Momentum"} composite without switching the view.`}>{otherCompLabel}</th>
+              <th style={hs("value_score","center")} onClick={()=>toggleSort("value_score")} title="v8 Value factor score: intrinsic upside (40%) + P/FCF (30%) + earnings yield (30%)">VAL</th>
+              <th style={hs("growth_score","center")} onClick={()=>toggleSort("growth_score")} title="v8 Growth factor score: revenue + EPS + FCF, each 60% TTM YoY + 40% 3y CAGR">GRW</th>
+              <th style={hs("quality_score","center")} onClick={()=>toggleSort("quality_score")} title="v8 Quality factor score: net margin (35%) + FCF margin (35%) + ROIC (30%)">QUAL</th>
+              <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
+              <th style={{...hs("static","center"),cursor:"default"}} title="ML probability of touching +10%. Trained on legacy v7 composite.">P+10% ml</th>
+              <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
               <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
             </tr></thead>
-            <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} weights={weights} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
+            <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
           </table>
         </div>
         {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-        {stocks.length} screened · {sorted.length} shown · click row to expand
+        {stocks.length} screened · {sorted.length} shown · click row to expand · click any column header to sort
       </div>
       <SectorConcentration data={data?.sector_concentration}/>
     </div>
