@@ -51,7 +51,32 @@ interface StockData{
     pct:number;call_mid:number;put_mid:number;straddle:number;strike:number;
     expiration:string;earnings_date:string;
   }|null;
+  // ── v8 (Apr 2026) — 5-factor composite, dual-mode ──
+  net_margin?:number;
+  fcf_margin?:number;
+  revenue_yoy?:number;
+  eps_yoy?:number;
+  fcf_yoy?:number;
+  fcf_cagr_3y?:number;
+  p_fcf?:number;
+  earnings_yield?:number;
+  intrinsic_bvps?:number;
+  bvps_recent_cagr?:number;
+  bvps_consistency?:number;
+  bvps_upside?:number;
+  intrinsic_upside?:number;
+  reversal_score?:number;
+  factors_v8?:FactorsV8;
+  composite_v7?:number;
+  composite_momentum?:number;
+  composite_fallen_angel?:number;
+  signal_momentum?:string;
+  signal_fallen_angel?:string;
+  factors_v8_momentum?:FactorsV8;
+  factors_v8_fallen_angel?:FactorsV8;
+  mode?:string;
 }
+interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;value:number|null;smart_money:number|null;}
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
 interface IncomeRow{date:string;calendarYear:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
@@ -63,11 +88,14 @@ const T={bg:"#ffffff",card:"#ffffff",cardBorder:"#e5e7eb",cardShadow:"0 1px 3px 
 const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"#f5f3ff",fg:"#8b5cf6",border:"#ddd6fe"},BUY:{bg:T.greenLight,fg:"#10b981",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"#fde68a"},HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"#fecaca"}};
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 
-// v7 factors
-// v7.2 factor config — 13 factors, same order as main page radar
-const FACTOR_ORDER=["technical","upside","quality","proximity","institutional_flow","transcript","earnings","catalyst","institutional","sector_momentum","analyst","insider","congressional"];
-const FL:Record<string,string>={technical:"Technical",quality:"Quality",upside:"Upside",proximity:"52-Week",catalyst:"Catalyst",transcript:"Transcript",institutional:"Inst Hold",analyst:"Analyst",insider:"Insider",earnings:"Earnings",institutional_flow:"Inst Flow",sector_momentum:"Sector Mom",congressional:"Congress"};
-const FW:Record<string,number>={technical:25,upside:14,quality:12,proximity:12,institutional_flow:9,transcript:6,earnings:5,catalyst:5,institutional:3,sector_momentum:3,analyst:3,insider:2,congressional:1};
+// v8 (Apr 2026) — 5-factor composite radar
+// FACTOR_ORDER drives radar axis order (clockwise from top); FW = weights;
+// FL = display labels. The legacy 13-factor arrays were removed when the
+// dashboard switched to v8. If you need to inspect old 13-factor scores
+// they remain on the scan JSON under `factor_scores` (not rendered).
+const FACTOR_ORDER=["momentum","quality","growth","value","smart_money"];
+const FL:Record<string,string>={momentum:"Momentum",quality:"Quality",growth:"Growth",value:"Value",smart_money:"Smart Money"};
+const FW:Record<string,number>={momentum:25,quality:20,growth:20,value:20,smart_money:15};
 
 // ── Explanations & Tooltips ────────────────────────────────────────────────────
 const TOOLTIPS: Record<string, string> = {
@@ -111,7 +139,16 @@ const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
 const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0)return"—";return`${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
 const gClr=(v:number|null)=>{if(v==null)return T.textLight;if(v>0.15)return T.green;if(v>0.05)return"#5a9e7a";if(v>0)return T.textMuted;return T.red;};
 function safeCagr(s:number,e:number,y:number):number|null{if(!s||!e||s<=0||e<=0||y<=0)return null;return Math.pow(e/s,1/y)-1;}
-function inferFactors(s:StockData):FactorScores{if(s.factor_scores)return s.factor_scores;return{technical:Math.min(1,(s.bull_score||0)/10),quality:s.quality_score??Math.min(1,((s.piotroski||0)/9*0.4+Math.min(1,(s.altman_z||0)/10)*0.2+Math.min(1,(s.roe_avg||0)/0.3)*0.2+Math.min(1,(s.gross_margin||0))*0.2)),upside:s.upside_score??Math.min(1,Math.max(0,(s.upside||0)/80)),proximity:s.proximity_score??(s.year_high>0?(s.price-s.year_low)/(s.year_high-s.year_low):0.5),catalyst:s.catalyst_score??0.5,transcript:s.transcript_score??null,institutional:s.inst_score??null,analyst:s.grade_score||null,insider:s.insider_score??null,earnings:s.earnings_score??Math.min(1,(s.eps_beats||0)/Math.max(1,s.eps_total||1)),institutional_flow:null,sector_momentum:null,congressional:null} as FactorScores;}
+// v8: read factors_v8 for the active mode. Falls back to s.factors_v8 if the
+// per-mode dicts aren't present yet (older scan JSON). All five axes are
+// always defined keys, but values can be null (= no data, weight redistributed).
+function readFactorsV8(s:StockData,mode:string):FactorsV8{
+  const f=mode==="fallen_angel"?(s.factors_v8_fallen_angel??s.factors_v8):(s.factors_v8_momentum??s.factors_v8);
+  if(f) return f;
+  // last-resort fallback: empty radar (all null) — happens for stocks scanned
+  // before the v8 deploy and still cached in some flow.
+  return{momentum:null,quality:null,growth:null,value:null,smart_money:null};
+}
 function getProb(c:number){if(c>=0.90)return{p5:79,p10:72,p20:42,gain:25.7,dd:-9.1,speed:18};if(c>=0.85)return{p5:68,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.80)return{p5:65,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.75)return{p5:60,p10:44,p20:20,gain:12.8,dd:-10.8,speed:24};if(c>=0.70)return{p5:58,p10:44,p20:18,gain:12.8,dd:-10.8,speed:24};if(c>=0.65)return{p5:55,p10:43,p20:16,gain:12.1,dd:-10.3,speed:26};return{p5:48,p10:37,p20:12,gain:10.7,dd:-10.7,speed:22};}
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
@@ -174,18 +211,18 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
   );
 }
 
-function FactorRadar({scores,size=260}:{scores:FactorScores;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-36;const raw=FACTOR_ORDER.map(k=>(scores as any)[k]);const vals=raw.map(v=>v??0);const n=vals.length;
+function FactorRadar({scores,size=260}:{scores:FactorsV8;size?:number}){
+  const cx=size/2,cy=size/2,r=size/2-44;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
-  const evaluated=raw.filter(v=>v!=null);const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
+  const evaluated=raw.filter(v=>v!=null) as number[];const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
   const fill=avg>0.6?T.green:avg>0.4?T.amber:T.red;
   const covCount=evaluated.length;
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+22),ly=cy+Math.sin(a)*(r+22),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke={isNull?"#e5e7eb":"#e5e7eb"} strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-4} textAnchor="middle" dominantBaseline="middle" fontSize={8} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+6} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+28),ly=cy+Math.sin(a)*(r+28),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#e5e7eb" strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+9} textAnchor="middle" dominantBaseline="middle" fontSize={12} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3.5} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.5}/>)}
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={4} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.5}/>)}
       <text x={cx} y={size-4} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>{covCount}/{FACTOR_ORDER.length} factors</text>
     </svg>
   );
@@ -212,7 +249,39 @@ function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:n
   );
 }
 
-function factorDetail(k:string,s:StockData):string{const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";switch(k){case"upside":return`Target ${c}${s.target?.toFixed(0)??"?"} (${s.upside>0?"+":""}${s.upside?.toFixed(1)??"?"}%) · DCF ${c}${s.dcf_value?.toFixed(0)??"?"} · MoS ${fmtPct(s.margin_of_safety)}`;case"technical":return`Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;case"quality":return`Piotroski ${s.piotroski}/9 · Altman Z ${s.altman_z?.toFixed(1)} · ROE ${fmtPct(s.roe_avg)} · GM ${fmtPct(s.gross_margin)}`;case"analyst":return`Grades ${s.grade_buy}/${s.grade_total} buy · Score ${(s.grade_score*100).toFixed(0)}%`;case"transcript":return s.transcript_summary||"No transcript available";case"institutional":return s.inst_holders_change!=null?`Holders QoQ ${(s.inst_holders_change*100).toFixed(1)}% · Shares QoQ ${((s.inst_accumulation??0)*100).toFixed(1)}%`:"No data";case"insider":return s.insider_buy_ratio!=null?`Buy ratio ${s.insider_buy_ratio?.toFixed(1)} · Net buys ${s.insider_net_buys??0}`:"No data";case"earnings":return`EPS beats ${s.eps_beats}/${s.eps_total}${s.earnings_momentum!=null?` · Momentum ${s.earnings_momentum>0?"+":""}${(s.earnings_momentum*100).toFixed(1)}%`:""}`;case"catalyst":return s.catalyst_flags?.length?s.catalyst_flags.join(" · "):"No active catalysts";case"proximity":return`At ${s.proximity_52wk!=null?(s.proximity_52wk*100).toFixed(0):"?"}% of range · High ${c}${s.year_high?.toFixed(0)} Low ${c}${s.year_low?.toFixed(0)}`;default:return"";}}
+function factorDetail(k:string,s:StockData,mode:string):string{
+  const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
+  const pct=(v:number|undefined|null,d=1)=>v==null?"?":`${(v*100).toFixed(d)}%`;
+  const pctSigned=(v:number|undefined|null,d=1)=>v==null?"?":`${v>=0?"+":""}${(v*100).toFixed(d)}%`;
+  switch(k){
+    case"momentum":
+      if(mode==="fallen_angel"){
+        return `Reversal ${s.reversal_score??0}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · 52w ${(s.proximity_52wk!=null?s.proximity_52wk*100:0).toFixed(0)}% of range`;
+      }
+      return `Bull ${s.bull_score}/10 · RSI ${s.rsi?.toFixed(0)} · MACD ${s.macd_signal} · ADX ${s.adx?.toFixed(0)}`;
+    case"quality":
+      // Net 35 + FCF 35 + ROIC 30. Piotroski/Altman shown for context, not in score.
+      return `Net ${pct(s.net_margin)} · FCF ${pct(s.fcf_margin)} · ROIC ${pct(s.roic_avg)} · (Piotroski ${s.piotroski}/9 · Z ${s.altman_z?.toFixed(1)})`;
+    case"growth":
+      return `Rev ${pctSigned(s.revenue_yoy)} YoY / ${pctSigned(s.revenue_cagr_3y)} 3y · EPS ${pctSigned(s.eps_yoy)} / ${pctSigned(s.eps_cagr_3y)} · FCF ${pctSigned(s.fcf_yoy)} / ${pctSigned(s.fcf_cagr_3y)}`;
+    case"value":{
+      const iu=s.intrinsic_upside;
+      const pf=s.p_fcf;
+      const ey=s.earnings_yield;
+      return `Intrinsic ${iu==null?"?":(iu>=0?"+":"")+iu.toFixed(0)+"%"} · P/FCF ${pf?pf.toFixed(1)+"x":"?"} · EarnYld ${ey?(ey*100).toFixed(1)+"%":"?"}`;
+    }
+    case"smart_money":{
+      const parts:string[]=[];
+      if(s.grade_total)parts.push(`Grades ${s.grade_buy}/${s.grade_total}`);
+      if(s.insider_net_buys!=null)parts.push(`Insider net ${s.insider_net_buys>=0?"+":""}${s.insider_net_buys}`);
+      if(s.eps_total)parts.push(`EPS beats ${s.eps_beats}/${s.eps_total}`);
+      if(s.inst_holders_change!=null&&s.inst_holders_change!==0)parts.push(`Inst ${(s.inst_holders_change*100).toFixed(1)}% QoQ`);
+      if(s.transcript_sentiment)parts.push(`Tone ${s.transcript_sentiment>=0?"+":""}${s.transcript_sentiment.toFixed(2)}`);
+      return parts.length?parts.join(" · "):"No smart-money data yet";
+    }
+    default:return"";
+  }
+}
 
 // ── Probability Card ───────────────────────────────────────────────────────────
 function ProbabilityCard({s}:{s:StockData}){
@@ -887,63 +956,260 @@ function PriceCompositeChart({symbol}:{symbol:string}){
   );
 }
 
-// ── TargetBar (Redesigned with methodologies, fixed alignment & values) ────────
-function TargetBar({price,target,dcf,buffett,currency}:{price:number;target:number;dcf:number;buffett:number;currency?:string}){
-  const vs=[price,target,dcf,buffett].filter(v=>v>0);
+// v8 TargetBar: shows price + analyst consensus + BVPS-projected fair value
+// + the combined intrinsic that actually drives the Value factor score.
+// DCF and Buffett earnings-compounding intrinsic were removed from the v8
+// composite — they remain on the Stock dict for diagnostics but no longer
+// appear here. Keeping the chart simple matches the new five-factor brief.
+function TargetBar({price,target,bvps,combined,currency}:{price:number;target:number;bvps:number;combined:number;currency?:string}){
+  const vs=[price,target,bvps,combined].filter(v=>v>0);
   if(vs.length<2)return null;
-  const mn=Math.min(...vs)*0.8,mx=Math.max(...vs)*1.1,rng=mx-mn,pos=(v:number)=>((v-mn)/rng*100);
+  const mn=Math.min(...vs)*0.85,mx=Math.max(...vs)*1.10,rng=mx-mn||1,pos=(v:number)=>((v-mn)/rng*100);
   const c$=(v:number)=>fmtPrice(v,currency);
+  const upside=combined>0?((combined-price)/price*100):0;
+  const upColor=upside>15?T.green:upside>0?"#5a9e7a":upside>-15?T.amber:T.red;
 
   return(
     <div style={{marginTop:12,padding:"12px 0"}}>
-      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,marginBottom:28,fontWeight:600}}>PRICE vs INTRINSIC VALUE</div>
-      
-      <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
-        {/* Green upside highlight block */}
-        {dcf>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(dcf)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
-        
-        {/* Current Price Line */}
-        <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
-          <div style={{position:"absolute",top:-22,left:"50%",transform:"translateX(-50%)",fontSize:11,color:T.text,fontFamily:T.mono,fontWeight:700,background:T.card,padding:"0 4px",whiteSpace:"nowrap"}}>
-            {c$(price)}
-          </div>
-        </div>
-        
-        {/* Analyst Target */}
-        {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
-          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(target)}</div>
-          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Target</div>
-        </div>}
-        
-        {/* DCF */}
-        {dcf>0&&<div style={{position:"absolute",left:`${pos(dcf)}%`,top:8,width:8,height:8,borderRadius:"50%",background:T.blue,transform:"translateX(-4px)"}}>
-          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(dcf)}</div>
-          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>DCF</div>
-        </div>}
-        
-        {/* Buffett */}
-        {buffett>0&&buffett<mx&&<div style={{position:"absolute",left:`${pos(buffett)}%`,top:13,width:8,height:8,borderRadius:2,background:T.purple,transform:"translateX(-4px)"}}>
-          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(buffett)}</div>
-          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.purple,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Buffett</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28}}>
+        <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>PRICE vs INTRINSIC</div>
+        {combined>0&&<div style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:upColor}}>
+          {upside>=0?"+":""}{upside.toFixed(0)}% upside
         </div>}
       </div>
 
-      {/* Methodology Legend */}
+      <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
+        {/* Highlight from price to combined intrinsic */}
+        {combined>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(combined)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
+
+        {/* Current price line */}
+        <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
+          <div style={{position:"absolute",top:-22,left:"50%",transform:"translateX(-50%)",fontSize:11,color:T.text,fontFamily:T.mono,fontWeight:700,background:T.card,padding:"0 4px",whiteSpace:"nowrap"}}>{c$(price)}</div>
+        </div>
+
+        {/* Combined intrinsic — the figure that drives Value scoring */}
+        {combined>0&&<div style={{position:"absolute",left:`${pos(combined)}%`,top:6,width:10,height:10,borderRadius:"50%",background:T.green,transform:"translateX(-5px)",border:"2px solid white",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}>
+          <div style={{position:"absolute",top:-18,left:"50%",transform:"translateX(-50%)",fontSize:10,color:T.green,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(combined)}</div>
+          <div style={{position:"absolute",bottom:-18,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.green,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Combined</div>
+        </div>}
+
+        {/* Analyst consensus */}
+        {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(target)}</div>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Analyst</div>
+        </div>}
+
+        {/* BVPS projection (5-year forward) */}
+        {bvps>0&&<div style={{position:"absolute",left:`${pos(bvps)}%`,top:13,width:8,height:8,borderRadius:2,background:T.blue,transform:"translateX(-4px)"}}>
+          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(bvps)}</div>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>BVPS-5y</div>
+        </div>}
+      </div>
+
+      {/* Methodology key */}
       <div style={{marginTop:24,paddingTop:12,borderTop:`1px dashed ${T.divider}`,fontSize:9,color:T.textMuted,fontFamily:T.mono,lineHeight:1.6}}>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:T.green,border:"2px solid white",boxShadow:"0 0 0 1px "+T.green}}/>
+          <strong>Combined:</strong> avg of analyst + BVPS (drives Value score)
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/>
-          <strong>Target:</strong> Wall St. 12-Month Consensus
+          <strong>Analyst:</strong> Wall Street 12-month consensus
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
-          <div style={{width:6,height:6,borderRadius:"50%",background:T.blue}}/>
-          <strong>DCF:</strong> 5-Year Discounted Cash Flow Model
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}>
-          <div style={{width:6,height:6,borderRadius:2,background:T.purple}}/>
-          <strong>Buffett:</strong> Owner Earnings Growth Model
+          <div style={{width:6,height:6,borderRadius:2,background:T.blue}}/>
+          <strong>BVPS-5y:</strong> book value × (1+g)^5, g = 3yr CAGR clipped to [2%,15%]
         </div>
       </div>
     </div>
+  );
+}
+
+// ── ModeToggle: switches the dashboard between Momentum and Fallen Angel views.
+// Stock data is computed for both modes at scan time (Option B); this just
+// re-points the radar/factor/signal/composite bindings.
+function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>void;available:{momentum:boolean;fallen_angel:boolean}}){
+  const opts=[{k:"momentum",l:"Momentum"},{k:"fallen_angel",l:"Fallen Angel"}];
+  return(
+    <div style={{display:"inline-flex",border:`1px solid ${T.cardBorder}`,borderRadius:6,overflow:"hidden",background:"#fff"}}>
+      {opts.map(o=>{
+        const active=o.k===mode;
+        const ok=(available as any)[o.k];
+        return(
+          <button key={o.k} onClick={()=>ok&&onChange(o.k)} disabled={!ok}
+            style={{padding:"5px 12px",border:"none",cursor:ok?"pointer":"not-allowed",
+              background:active?T.green:"transparent",color:active?"#fff":(ok?T.text:T.textLight),
+              fontSize:10,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.04em"}}>
+            {o.l}{!ok&&" —"}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── BvpsBlock: the 3-row visual summary of book-value compounding.
+// Sits inside the Quality & Value card, above TargetBar. Surfaces the
+// pattern that drives the Value factor (current BVPS, 5-year forward
+// projection, recent CAGR, consistency).
+function BvpsBlock({s}:{s:StockData}){
+  const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
+  const bvpsRecent=s.bvps_recent_cagr??0;
+  const proj=s.intrinsic_bvps??0;
+  // Approximate current BVPS from projection: bvps_now = proj / (1+g)^5
+  const g=Math.max(0.02,Math.min(bvpsRecent,0.15));
+  const bvpsNow=proj>0?(proj/Math.pow(1+g,5)):0;
+  const totalGrowth=bvpsNow>0?((proj-bvpsNow)/bvpsNow)*100:0;
+  const cons=s.bvps_consistency??0;
+  const consColor=cons>=0.85?T.green:cons>=0.6?T.amber:T.red;
+  if(proj<=0)return null;
+  return(
+    <div style={{padding:"10px 12px",borderRadius:6,background:"#fafbfc",border:`1px solid ${T.divider}`,marginTop:10}}>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>BOOK VALUE PER SHARE</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 14px",fontSize:11,fontFamily:T.mono}}>
+        <span style={{color:T.textMuted}}>BVPS now</span>
+        <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{c}{bvpsNow.toFixed(2)}</span>
+        <span style={{color:T.textMuted}}>BVPS 5y proj.</span>
+        <span style={{textAlign:"right",fontWeight:600,color:T.green}}>{c}{proj.toFixed(2)} <span style={{fontSize:9,color:T.textLight,fontWeight:400}}>(+{totalGrowth.toFixed(0)}%)</span></span>
+        <span style={{color:T.textMuted}}>3y CAGR</span>
+        <span style={{textAlign:"right",fontWeight:600,color:bvpsRecent>0.10?T.green:bvpsRecent>0.05?T.amber:T.textMuted}}>{(bvpsRecent*100).toFixed(1)}%</span>
+        <span style={{color:T.textMuted}}>Consistency</span>
+        <span style={{textAlign:"right",fontWeight:600,color:consColor}}>{(cons*100).toFixed(0)}% YoY+</span>
+      </div>
+    </div>
+  );
+}
+
+// ── GrowthCard: dedicated card for the v8 Growth factor.
+// Each row shows YoY (TTM) and 3-year CAGR for the three core metrics that
+// feed Growth scoring: revenue, EPS, FCF. The 60/40 TTM-YoY / 3yr-CAGR
+// blend is what compute_composite_v8 actually scores; presenting both
+// numbers lets the user see whether growth is recent or sustained.
+function GrowthCard({s}:{s:StockData}){
+  const fmtG=(v:number|undefined)=>v==null?"—":`${v>=0?"+":""}${(v*100).toFixed(1)}%`;
+  const colG=(v:number|undefined)=>{
+    if(v==null)return T.textLight;
+    if(v>0.15)return T.green;
+    if(v>0.05)return"#5a9e7a";
+    if(v>0)return T.text;
+    if(v>-0.05)return T.amber;
+    return T.red;
+  };
+  const rows:[string,number|undefined,number|undefined][]=[
+    ["Revenue",s.revenue_yoy,s.revenue_cagr_3y],
+    ["EPS",s.eps_yoy,s.eps_cagr_3y],
+    ["FCF",s.fcf_yoy,s.fcf_cagr_3y],
+  ];
+  const score=s.factors_v8?.growth??s.factors_v8_momentum?.growth;
+  const scoreColor=score==null?T.textLight:score>0.7?T.green:score>0.4?T.amber:T.red;
+  return(
+    <Card>
+      <SH title="Growth" icon={<TrendingUp size={12}/>} sub={score!=null?`Score ${(score*100).toFixed(0)}/100`:"no data"}/>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"4px 10px",fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600,letterSpacing:"0.04em",marginBottom:6,paddingBottom:6,borderBottom:`1px solid ${T.divider}`}}>
+        <div></div>
+        <div style={{textAlign:"right"}}>YoY (TTM)</div>
+        <div style={{textAlign:"right"}}>3y CAGR</div>
+      </div>
+      {rows.map(([label,yoy,cagr])=>(
+        <div key={label} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"4px 10px",fontSize:12,fontFamily:T.mono,padding:"6px 0",borderBottom:`1px solid ${T.divider}`}}>
+          <div style={{color:T.text,fontWeight:600}}>{label}</div>
+          <div style={{textAlign:"right",color:colG(yoy),fontWeight:700}}>{fmtG(yoy)}</div>
+          <div style={{textAlign:"right",color:colG(cagr),fontWeight:700}}>{fmtG(cagr)}</div>
+        </div>
+      ))}
+      <div style={{marginTop:10,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.5}}>
+        Score = 60% TTM YoY + 40% 3y CAGR, equal weight rev/EPS/FCF. Top tier ≥25% growth, bottom tier ≤0%.
+      </div>
+      {score!=null&&(
+        <div style={{marginTop:10,height:5,borderRadius:3,background:T.divider,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:scoreColor,transition:"width 0.4s"}}/>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+// ── SmartMoneyCard: rolls up the six Smart Money sub-signals into one card.
+// Mirrors compute_smart_money_v8 weights (institutional 25 / analyst 25 /
+// insider 15 / transcript 15 / earnings 15 / congressional 5). Each row
+// shows the underlying datum + a status chip. The bar at the bottom shows
+// the rolled-up factor score that goes into the composite.
+function SmartMoneyCard({s}:{s:StockData}){
+  const score=s.factors_v8?.smart_money??s.factors_v8_momentum?.smart_money;
+  const scoreColor=score==null?T.textLight:score>0.6?T.green:score>0.4?T.amber:T.red;
+
+  type Row={label:string;weight:number;value:string;tone:"good"|"bad"|"neutral"|"none"};
+  const rows:Row[]=[];
+
+  // Institutional flow (25%)
+  if(s.inst_holders_change!=null||s.inst_accumulation!=null){
+    const h=s.inst_holders_change??0;
+    const tone=h>0.02?"good":h<-0.02?"bad":"neutral";
+    rows.push({label:"Inst flow",weight:25,
+      value:`Holders ${(h*100).toFixed(1)}% QoQ · Shares ${((s.inst_accumulation??0)*100).toFixed(1)}%`,
+      tone});
+  } else rows.push({label:"Inst flow",weight:25,value:"no data",tone:"none"});
+
+  // Analyst grades (25%)
+  if(s.grade_total){
+    const ratio=s.grade_total>0?s.grade_buy/s.grade_total:0;
+    rows.push({label:"Analyst",weight:25,
+      value:`${s.grade_buy}/${s.grade_total} buy · score ${(s.grade_score*100).toFixed(0)}`,
+      tone:ratio>0.6?"good":ratio<0.3?"bad":"neutral"});
+  } else rows.push({label:"Analyst",weight:25,value:"no recent grades",tone:"none"});
+
+  // Insider (15%)
+  if(s.insider_buy_ratio!=null||s.insider_net_buys!=null){
+    const nb=s.insider_net_buys??0;
+    rows.push({label:"Insider",weight:15,
+      value:`Buy ratio ${(s.insider_buy_ratio??0).toFixed(2)} · ${nb>=0?"+":""}${nb} net`,
+      tone:nb>=3?"good":nb<=-3?"bad":"neutral"});
+  } else rows.push({label:"Insider",weight:15,value:"no data",tone:"none"});
+
+  // Transcript (15%)
+  if(s.transcript_score!=null&&s.transcript_score!==0.5){
+    const ts=s.transcript_sentiment??0;
+    rows.push({label:"Transcript",weight:15,
+      value:`Tone ${ts>=0?"+":""}${ts.toFixed(2)} · score ${((s.transcript_score??0)*100).toFixed(0)}`,
+      tone:ts>0.2?"good":ts<-0.2?"bad":"neutral"});
+  } else rows.push({label:"Transcript",weight:15,value:"not yet analyzed",tone:"none"});
+
+  // Earnings beats (15%)
+  if(s.eps_total){
+    const beat=s.eps_total>0?s.eps_beats/s.eps_total:0;
+    rows.push({label:"Earnings",weight:15,
+      value:`${s.eps_beats}/${s.eps_total} beats · momentum ${((s.earnings_momentum??0)*100).toFixed(1)}%`,
+      tone:beat>0.7?"good":beat<0.4?"bad":"neutral"});
+  } else rows.push({label:"Earnings",weight:15,value:"no EPS history",tone:"none"});
+
+  // Congressional (5%)
+  rows.push({label:"Congress",weight:5,value:"placeholder (REST 404)",tone:"none"});
+
+  const toneColor=(t:Row["tone"])=>t==="good"?T.green:t==="bad"?T.red:t==="neutral"?T.textMuted:T.textLight;
+
+  return(
+    <Card>
+      <SH title="Smart Money" icon={<Brain size={12}/>} sub={score!=null?`Score ${(score*100).toFixed(0)}/100`:"no data"}/>
+      <div style={{display:"flex",flexDirection:"column",gap:0}}>
+        {rows.map(r=>(
+          <div key={r.label} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid ${T.divider}`,fontSize:11,fontFamily:T.mono,opacity:r.tone==="none"?0.5:1}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:6,flexShrink:0}}>
+              <span style={{color:T.text,fontWeight:600}}>{r.label}</span>
+              <span style={{fontSize:9,color:T.textLight}}>({r.weight}%)</span>
+            </div>
+            <span style={{color:toneColor(r.tone),fontWeight:600,fontSize:10,textAlign:"right"}}>{r.value}</span>
+          </div>
+        ))}
+      </div>
+      {score!=null&&(
+        <div style={{marginTop:10,height:5,borderRadius:3,background:T.divider,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:scoreColor,transition:"width 0.4s"}}/>
+        </div>
+      )}
+      <div style={{marginTop:8,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.4}}>
+        Missing sub-signals have their weight redistributed to the rest. No free 0.5 padding.
+      </div>
+    </Card>
   );
 }
 
@@ -1093,7 +1359,35 @@ export default function StockDetail(){
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
   if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
 
-  const s=stock,sigStyle=SIG_C[s.signal]||SIG_C.HOLD,clsColor=CLS_C[s.classification]||T.textMuted,scores=inferFactors(s);
+  const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
+
+  // ── Mode-aware bindings ──
+  // Option B: each stock has both Momentum and Fallen Angel composites computed
+  // at scan time. The selected mode determines which composite/signal/factors
+  // drive the dashboard. Default to Momentum unless the FA composite is
+  // materially higher (heuristic: FA wins by 0.10+) — that flag lets the user
+  // know FA mode is worth looking at without forcing them to discover the toggle.
+  const haveMom=s.factors_v8_momentum!=null||s.composite_momentum!=null;
+  const haveFA=s.factors_v8_fallen_angel!=null||s.composite_fallen_angel!=null;
+  const [mode,setMode]=useState<string>("momentum");
+  const compMode=mode==="fallen_angel"?(s.composite_fallen_angel??s.composite):(s.composite_momentum??s.composite);
+  const sigMode=mode==="fallen_angel"?(s.signal_fallen_angel??s.signal):(s.signal_momentum??s.signal);
+  const factorsMode=readFactorsV8(s,mode);
+  const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
+  const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
+
+  // Hint when Fallen Angel materially outscores Momentum
+  const faAdvantage=(s.composite_fallen_angel??0)-(s.composite_momentum??0);
+  const showFAHint=haveFA&&faAdvantage>=0.10&&mode==="momentum";
+
+  // Combined intrinsic for TargetBar (matches what compute_upside_score averages)
+  const intrinsicCombined=(()=>{
+    const t=s.target||0,b=s.intrinsic_bvps||0;
+    if(t>0&&b>0)return(t+b)/2;
+    if(t>0)return t;
+    if(b>0)return b;
+    return 0;
+  })();
 
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
@@ -1102,33 +1396,45 @@ export default function StockDetail(){
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,paddingBottom:16,borderBottom:`1px solid ${T.divider}`}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
-            <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span>
+            <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{sigMode}</span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
+            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom||true,fallen_angel:haveFA||false}}/>
+            {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid #fde68a",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
-          <div style={{textAlign:"right"}}><div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div><div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:s.composite>0.6?T.green:s.composite>0.4?T.text:T.red}}>{s.composite.toFixed(2)}</div></div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite ({mode==="fallen_angel"?"FA":"Mom"})</div>
+            <div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:compMode>0.6?T.green:compMode>0.4?T.text:T.red}}>{compMode.toFixed(2)}</div>
+            {haveFA&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:2}}>
+              {mode==="momentum"?`FA: ${(s.composite_fallen_angel??0).toFixed(2)}`:`Mom: ${(s.composite_momentum??0).toFixed(2)}`}
+            </div>}
+          </div>
         </div>
       </div>
 
       {/* TradingView */}
       <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${s.symbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
 
-      {/* ═══ v7 FACTOR BREAKDOWN ═══ */}
+      {/* ═══ v8 5-FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
-        <SH title="13-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`Composite ${s.composite.toFixed(2)} · ${s.factor_coverage??FACTOR_ORDER.filter(k=>(scores as any)[k]!=null).length}/${FACTOR_ORDER.length} factors`}/>
-        <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:24}}>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={scores}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>{FACTOR_ORDER.map(k=><FactorBar key={k} name={FL[k]} weight={FW[k]} score={(scores as any)[k]} detail={factorDetail(k,s)}/>)}</div>
+        <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`${mode==="fallen_angel"?"Fallen Angel":"Momentum"} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
+        <div style={{display:"grid",gridTemplateColumns:"300px 1fr",gap:24}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={factorsMode}/></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
+            {FACTOR_ORDER.map(k=>(
+              <FactorBar key={k} name={FL[k]} weight={FW[k]} score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
+            ))}
+          </div>
         </div>
       </Card>
 
-      {/* Company profile — full-width context card, placed right under the factor panel */}
+      {/* Company profile */}
       <div style={{marginBottom:16}}>
         <CompanyProfileCard symbol={s.symbol}/>
       </div>
@@ -1140,39 +1446,55 @@ export default function StockDetail(){
         <SentimentCard s={s}/>
       </div>
 
-      {/* Tradier options card — IV always when available, spread when gates pass */}
+      {/* Tradier options card */}
       {(s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
-      {/* Price + Composite dual-line chart (full-width so axes have room) */}
+      {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
         <PriceCompositeChart symbol={s.symbol}/>
       </div>
 
-      {/* 3-column: Momentum / Quality+Value / Transcript */}
+      {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
-        <MomentumPanel s={s}/>
         <Card>
           <SH title="Quality & Value" icon={<Shield size={12}/>}/>
-          <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}><ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"#10b981":s.piotroski>=5?T.amber:T.red}/><ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"#10b981":s.altman_z>1.8?T.amber:T.red}/></div>
+          {/* Piotroski + Altman are diagnostic only (not in v8 composite) */}
+          <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}>
+            <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"#10b981":s.piotroski>=5?T.amber:T.red}/>
+            <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"#10b981":s.altman_z>1.8?T.amber:T.red}/>
+          </div>
+          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only — not in v8 composite</div>
+          {/* Components that DO drive the v8 Quality/Value scores */}
+          <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"#10b981":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
+          <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"#10b981":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
           <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"#10b981":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
           <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?"#10b981":T.textMuted}/>
           <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"#10b981":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
-          <Metric label="Rev CAGR 3Y" value={fmtPct(s.revenue_cagr_3y)} color={s.revenue_cagr_3y>0.1?"#10b981":T.textMuted}/>
-          <Metric label="EPS CAGR 3Y" value={fmtPct(s.eps_cagr_3y)} color={s.eps_cagr_3y>0.1?"#10b981":T.textMuted}/>
-          <Metric label="OE Yield" value={fmtPct(s.owner_earnings_yield)} color={s.owner_earnings_yield>0.045?"#10b981":T.textMuted} sub="vs 4.5% risk-free"/>
-          <TargetBar price={s.price} target={s.target} dcf={s.dcf_value} buffett={s.intrinsic_buffett} currency={s.currency}/>
+          <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"#10b981":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
+          <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"#10b981":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
+          {/* BVPS visual block */}
+          <BvpsBlock s={s}/>
+          {/* TargetBar with v8 inputs (drops DCF + Buffett dots) */}
+          <TargetBar price={s.price} target={s.target} bvps={s.intrinsic_bvps??0} combined={intrinsicCombined} currency={s.currency}/>
         </Card>
+        <GrowthCard s={s}/>
+        <SmartMoneyCard s={s}/>
+      </div>
+
+      {/* Momentum panel + Transcript (kept side-by-side) */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
+        <MomentumPanel s={s}/>
         <TranscriptInsights symbol={s.symbol}/>
       </div>
 
-      {/* FMP Panels */}
+      {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
       <GrowthPanel incomes={incomes} loading={fmpLoading}/>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
 
       {/* News */}
       <div style={{marginBottom:16}}><NewsFeed symbol={s.symbol}/></div>
 
-      {/* Signals */}
+      {/* Active signals */}
       {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
     </div>
   );
