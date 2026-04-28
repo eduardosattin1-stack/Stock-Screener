@@ -101,21 +101,33 @@ def gcs_read(path: str, default=None):
 
 
 def gcs_write(path: str, data: dict, dry_run: bool = False):
+    """Authenticated write via metadata-server token + REST upload.
+    Matches the gcs_upload pattern in screener_v6.py (no google-cloud-storage dep)."""
     if dry_run:
         log.info(f"[DRY-RUN] Would write {path} ({len(json.dumps(data))} bytes)")
         return True
     try:
-        from google.cloud import storage  # type: ignore
-        client = storage.Client()
-        bucket = client.bucket(GCS_BUCKET)
-        blob = bucket.blob(path)
-        blob.cache_control = "no-cache, max-age=0"
-        blob.upload_from_string(
-            json.dumps(data, default=str, indent=2),
-            content_type="application/json",
+        tok_resp = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=3,
         )
-        log.info(f"Wrote gs://{GCS_BUCKET}/{path}")
-        return True
+        token = tok_resp.json().get("access_token", "")
+        if not token:
+            log.error(f"GCS write {path}: no access token from metadata server")
+            return False
+        url = f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o"
+        r = requests.post(
+            url,
+            params={"uploadType": "media", "name": path, "cacheControl": "no-cache, max-age=0"},
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            data=json.dumps(data, default=str, indent=2),
+            timeout=20,
+        )
+        if r.status_code in (200, 201):
+            log.info(f"Wrote gs://{GCS_BUCKET}/{path}")
+            return True
+        log.error(f"GCS write {path}: HTTP {r.status_code} → {r.text[:200]}")
+        return False
     except Exception as e:
         log.error(f"GCS write {path} failed: {e}")
         return False
