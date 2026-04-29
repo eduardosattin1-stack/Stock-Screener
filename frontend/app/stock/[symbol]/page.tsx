@@ -1319,6 +1319,11 @@ export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
+  // v8 mode toggle. MUST be declared at top of component (before any early
+  // returns) to satisfy Rules of Hooks — earlier version had this declared
+  // after the `if(loading)return` guard, which produced a different hook
+  // count on first vs subsequent renders and crashed the page.
+  const [mode,setMode]=useState<string>("momentum");
 
   // v7.2: Search the 3 region files in order (sp500 → europe → global), not
   // `latest.json`. `latest.json` is overwritten by whichever scan ran most
@@ -1369,7 +1374,6 @@ export default function StockDetail(){
   // know FA mode is worth looking at without forcing them to discover the toggle.
   const haveMom=s.factors_v8_momentum!=null||s.composite_momentum!=null;
   const haveFA=s.factors_v8_fallen_angel!=null||s.composite_fallen_angel!=null;
-  const [mode,setMode]=useState<string>("momentum");
   const compMode=mode==="fallen_angel"?(s.composite_fallen_angel??s.composite):(s.composite_momentum??s.composite);
   const sigMode=mode==="fallen_angel"?(s.signal_fallen_angel??s.signal):(s.signal_momentum??s.signal);
   const factorsMode=readFactorsV8(s,mode);
