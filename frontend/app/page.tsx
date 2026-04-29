@@ -148,6 +148,20 @@ function readSignal(s:StockData, mode:string):string {
   return s.signal_momentum ?? s.signal ?? "HOLD";
 }
 
+// v8 universe gate: a stock passes the gate for a mode iff its signal for
+// that mode is not "DISQUALIFIED". The backend writes "DISQUALIFIED" for
+// stocks failing the structural setup test (Momentum: trend intact + not
+// extended; Fallen Angel: deep drawdown + below SMA200 + Pio≥7 + Z>2.5 +
+// ROE>12% + cap>$2B). For older scan JSON without per-mode signals the
+// fallback is to assume qualified — better to over-show than under-show
+// during the migration window.
+function isQualified(s:StockData, mode:string):boolean {
+  const sig = mode === "fallen_angel" ? s.signal_fallen_angel : s.signal_momentum;
+  // Fallback: if per-mode signal is absent (legacy scan), let the row through
+  if (sig == null) return true;
+  return sig !== "DISQUALIFIED";
+}
+
 // ── ModeToggle (v8) ─────────────────────────────────────────────────────────
 // Switches the entire table between Momentum and Fallen Angel views. Each
 // stock has both composites computed at scan time, so toggling is purely a
@@ -364,9 +378,15 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
   const scoresActive = readFactorsV8(s, mode);
   const scoresOther = readFactorsV8(s, mode === "fallen_angel" ? "momentum" : "fallen_angel");
   const compActive = readComposite(s, mode);
-  const compOther = readComposite(s, mode === "fallen_angel" ? "momentum" : "fallen_angel");
+  const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
+  const compOther = readComposite(s, otherMode);
   const otherLabel = mode === "fallen_angel" ? "Mom" : "FA";
-  const otherIsHigher = compOther - compActive >= 0.10;
+  // Only flag a divergence chip when the OTHER mode also qualifies the stock
+  // (otherwise the chip would point at a 0.0 disqualified composite, which
+  // is meaningless and was misleading users into thinking NVDA was a fallen
+  // angel candidate). Magnitude threshold ≥0.10 unchanged.
+  const otherQualifies = isQualified(s, otherMode);
+  const otherIsHigher = otherQualifies && (compOther - compActive >= 0.10);
   // hit_prob currently keys off the `composite` field which the backend
   // sets to the Momentum composite by default (Option B convention). When
   // FA mode is active the displayed P+10% lags slightly on FA-leaning
@@ -406,10 +426,11 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:13,color:compActive>0.7?"#10b981":compActive>0.5?"var(--text)":compActive>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
           {compActive.toFixed(2)}
         </td>
-        {/* COMP (other mode) — secondary, smaller, amber if it's leading */}
+        {/* COMP (other mode) — secondary, smaller, amber if it's leading.
+            Shows "—" when the other mode disqualifies this stock. */}
         <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:otherIsHigher?"#d97706":"var(--text-light,#9ca3af)",fontWeight:otherIsHigher?700:500}}
-          title={`${otherLabel} composite — ${otherIsHigher?"leads active mode by ≥0.10":"trails active mode"}`}>
-          {compOther.toFixed(2)}
+          title={otherQualifies?`${otherLabel} composite — ${otherIsHigher?"leads active mode by ≥0.10":"trails active mode"}`:`${otherLabel} mode disqualifies this stock (failed setup gate)`}>
+          {otherQualifies ? compOther.toFixed(2) : "—"}
         </td>
         {/* VALUE — sub-factor score from v8 Value (replaces DCF MoS) */}
         <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
@@ -623,6 +644,15 @@ export default function Dashboard(){
       const q = search.toUpperCase();
       list = list.filter(s => s.symbol.includes(q) || (s.company_name||"").toUpperCase().includes(q));
     }
+    // v8 universe gate filter: hide stocks the active mode disqualifies
+    // (signal === "DISQUALIFIED"). Sort key "other_comp" is excluded from
+    // gating because it ranks by the inactive mode — the user explicitly
+    // wants to see the FA list while the active mode is Momentum, etc.
+    // Search overrides the gate too — if the user searched for a specific
+    // symbol they want to find it whether it qualifies or not.
+    if (!search && sortKey !== "other_comp") {
+      list = list.filter(s => isQualified(s, mode));
+    }
     if (sortKey === "symbol") {
       list.sort((a,b)=>{
         const cmp = a.symbol.localeCompare(b.symbol);
@@ -639,6 +669,14 @@ export default function Dashboard(){
   // extract closes over `mode`; include it in deps so toggling mode re-sorts
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[stocks, sortKey, sortDir, search, mode]);
+
+  // Hidden count for footer transparency. We compute this only when the
+  // gate filter is active (no search, normal sort), otherwise it would
+  // confusingly report "0 hidden" while showing disqualified stocks.
+  const hiddenCount = useMemo(()=>{
+    if (search || sortKey === "other_comp") return 0;
+    return stocks.filter(s => !isQualified(s, mode)).length;
+  },[stocks, search, sortKey, mode]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -730,7 +768,7 @@ export default function Dashboard(){
         {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-        {stocks.length} screened · {sorted.length} shown · click row to expand · click any column header to sort
+        {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} hidden by ${mode==="fallen_angel"?"FA":"Momentum"} setup gate`:""} · click row to expand · click any column header to sort
       </div>
       <SectorConcentration data={data?.sector_concentration}/>
     </div>
