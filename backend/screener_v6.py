@@ -2763,12 +2763,109 @@ def compute_smart_money_v8(insider, analyst, transcript, institutional_flow,
             "components": [(n, round(s, 3)) for n, s, _ in components]}
 
 
+def qualifies_momentum_v8(tech: dict, value: dict, market_cap: float = 0) -> tuple:
+    """Universe gate for Momentum mode. Stocks failing the gate get a `None`
+    composite for this mode and are filtered out of the Momentum-sorted list.
+    Returns (passes_bool, list_of_failure_reasons).
+
+    Gate criteria (Apr 2026, locked):
+      • price > sma_200       — trend intact
+      • off-52wk-high ≤ 25%   — not deeply broken; some pullback OK
+      • bull_score ≥ 5/10     — minimum technical confirmation
+      • revenue_yoy ≥ -10%    — not actively melting (allows mature/cyclical)
+
+    Symmetric in spirit to the FA gate: each gate enforces a structural
+    setup, not a fundamental quality threshold (those are scored, not gated).
+    """
+    fails = []
+    price = tech.get("price", 0) or 0
+    sma200 = tech.get("sma200", 0) or 0
+    yh = tech.get("year_high", 0) or 0
+    yl = tech.get("year_low", 0) or 0
+    bull = tech.get("bull_score", 0) or 0
+    rev_yoy = value.get("revenue_yoy") if value.get("revenue_yoy") is not None else 0
+
+    if price <= 0 or sma200 <= 0:
+        fails.append("missing_price_or_sma200")
+    elif price < sma200:
+        fails.append("below_sma200")
+
+    if yh > 0:
+        off_high = (yh - price) / yh
+        if off_high > 0.25:
+            fails.append(f"off_52wh_{off_high*100:.0f}%")
+    else:
+        fails.append("missing_year_high")
+
+    if bull < 5:
+        fails.append(f"bull_score_{bull}")
+
+    if rev_yoy < -0.10:
+        fails.append(f"rev_yoy_{rev_yoy*100:.0f}%")
+
+    return (len(fails) == 0, fails)
+
+
+def qualifies_fallen_angel_v8(tech: dict, value: dict, raw_quality: dict,
+                              market_cap: float = 0) -> tuple:
+    """Universe gate for Fallen Angel mode. Lifted from the v8 spec
+    (Bruno's Apr 2026 brief), with the weekly-RSI criterion dropped — daily
+    weekly-RSI history isn't precomputed and the price<sma_40w + drawdown
+    criteria already enforce "structurally oversold" without it.
+
+    Gate criteria:
+      • drawdown from 104w (≈ 52w as proxy) high > 35%
+      • price < sma_40w (≈ 200d SMA as proxy)
+      • Piotroski ≥ 7
+      • Altman Z > 2.5
+      • 5y avg ROE > 12%
+      • market cap > $2B
+
+    Note on proxies: 104w high → 52w high (we don't keep 2yr highs in scan
+    state today). 40w SMA → 200d SMA (close enough — 200 trading days ≈ 40
+    weeks). When backtest infrastructure rebuilds we should swap to true
+    104w/40w. Both proxies are slightly looser than spec, so the FA pool
+    will be marginally wider than spec intends — acceptable.
+    """
+    fails = []
+    price = tech.get("price", 0) or 0
+    sma200 = tech.get("sma200", 0) or 0
+    yh = tech.get("year_high", 0) or 0
+    pio = raw_quality.get("piotroski", 0) if raw_quality else 0
+    altz = raw_quality.get("altman_z", 0) if raw_quality else 0
+    roe = value.get("roe_avg", 0) if value else 0
+
+    if price <= 0 or yh <= 0:
+        fails.append("missing_price_or_high")
+    else:
+        drawdown = (yh - price) / yh
+        if drawdown < 0.35:
+            fails.append(f"drawdown_only_{drawdown*100:.0f}%")
+
+    if sma200 <= 0:
+        fails.append("missing_sma200")
+    elif price >= sma200:
+        fails.append("above_sma200")
+
+    if pio < 7:
+        fails.append(f"piotroski_{pio}")
+    if altz < 2.5:
+        fails.append(f"altman_z_{altz:.2f}")
+    if roe < 0.12:
+        fails.append(f"roe_avg_{roe*100:.0f}%")
+    if market_cap > 0 and market_cap < 2e9:
+        fails.append(f"mkt_cap_{market_cap/1e9:.1f}B")
+
+    return (len(fails) == 0, fails)
+
+
 def compute_composite_v8(
     tech: dict, value: dict, upside: dict,
     analyst: dict = None, insider: dict = None,
     transcript: dict = None, institutional_flow: dict = None,
     earnings: dict = None, congressional: dict = None,
     mode: str = "momentum",
+    raw_quality: dict = None, market_cap: float = 0,
 ) -> tuple:
     """Five-factor composite (v8). Returns (composite, signal, factors_v8,
     reasons, coverage).
@@ -2776,7 +2873,32 @@ def compute_composite_v8(
     Mode-aware: 'momentum' uses bull_score; 'fallen_angel' uses reversal_score.
     Each sub-factor is None when no real data → weight redistributes across
     evaluated factors. Coverage gate caps composite at 0.75 if <4/5 evaluated.
+
+    Universe gates (Apr 2026): each mode now requires the stock to pass a
+    structural setup gate. Failed gate → composite=0, signal="DISQUALIFIED",
+    factors_v8 all None. Frontend filters these out of the mode-sorted list.
+    Without gates the FA list was just the Momentum list with bull_score
+    swapped — i.e., not actually a different strategy. Gates make it one.
     """
+    # ─── Universe gate (mode-specific) ───
+    if mode == "fallen_angel":
+        passes, gate_fails = qualifies_fallen_angel_v8(
+            tech, value, raw_quality or {}, market_cap)
+    else:
+        passes, gate_fails = qualifies_momentum_v8(tech, value, market_cap)
+
+    if not passes:
+        # Stock disqualified for this mode. Return a fully-null factors dict
+        # and a "DISQUALIFIED" signal. Frontend hides these from the active
+        # mode's sorted list. They remain in the scan JSON so direct symbol
+        # navigation still works.
+        empty = {"momentum": None, "quality": None, "growth": None,
+                 "value": None, "smart_money": None}
+        coverage = {"count": 0, "total": 5, "pct": 0.0,
+                    "evaluated": [], "missing": list(empty.keys())}
+        gate_msg = "GATE: " + ", ".join(gate_fails[:3])
+        return (0.0, "DISQUALIFIED", empty, [gate_msg], coverage)
+
     f = {}
 
     # 1. Momentum — mode-dependent
@@ -2979,22 +3101,24 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
                 weights=active_weights,
             )
             # Option B: compute both modes; default `composite` is momentum
-            comp_mom, sig_mom, factors_mom, _, coverage_mom = compute_composite_v8(
+            comp_mom, sig_mom, factors_mom, reasons_mom, coverage_mom = compute_composite_v8(
                 t, v, ups,
                 analyst=a, insider=ins,
                 transcript=None, institutional_flow=None,
                 earnings=earn, congressional=None,
                 mode="momentum",
+                raw_quality=qual, market_cap=q.get("market_cap", 0),
             )
-            comp_fa, sig_fa, factors_fa, _, _ = compute_composite_v8(
+            comp_fa, sig_fa, factors_fa, reasons_fa, _ = compute_composite_v8(
                 t, v, ups,
                 analyst=a, insider=ins,
                 transcript=None, institutional_flow=None,
                 earnings=earn, congressional=None,
                 mode="fallen_angel",
+                raw_quality=qual, market_cap=q.get("market_cap", 0),
             )
             composite, signal, factors_v8, reasons, coverage = (
-                comp_mom, sig_mom, factors_mom, [], coverage_mom
+                comp_mom, sig_mom, factors_mom, reasons_mom, coverage_mom
             )
 
             s = Stock(
@@ -3163,22 +3287,24 @@ def screen(symbols: list[str], enrich_top_n: int = ENRICH_TOP_N,
             weights=raw["weights"],
         )
         # Option B: compute both modes with pass-2 enrichment
-        comp_mom, sig_mom, factors_mom, _, coverage_mom = compute_composite_v8(
+        comp_mom, sig_mom, factors_mom, reasons_mom, coverage_mom = compute_composite_v8(
             raw["tech"], raw["value"], raw["upside"],
             analyst=raw["analyst"], insider=raw["insider"],
             transcript=trans, institutional_flow=inst_flow,
             earnings=raw["earnings"], congressional=cong,
             mode="momentum",
+            raw_quality=raw["quality"], market_cap=s.market_cap or 0,
         )
-        comp_fa, sig_fa, factors_fa, _, _ = compute_composite_v8(
+        comp_fa, sig_fa, factors_fa, reasons_fa, _ = compute_composite_v8(
             raw["tech"], raw["value"], raw["upside"],
             analyst=raw["analyst"], insider=raw["insider"],
             transcript=trans, institutional_flow=inst_flow,
             earnings=raw["earnings"], congressional=cong,
             mode="fallen_angel",
+            raw_quality=raw["quality"], market_cap=s.market_cap or 0,
         )
         composite, signal, factors_v8, reasons, coverage = (
-            comp_mom, sig_mom, factors_mom, [], coverage_mom
+            comp_mom, sig_mom, factors_mom, reasons_mom, coverage_mom
         )
 
         s.composite = composite
@@ -3627,6 +3753,7 @@ def monitor_portfolio(skip_transcripts: bool = True) -> str:
             transcript=None, institutional_flow=inst_flow,
             earnings=earn, congressional=cong,
             mode="momentum",
+            raw_quality=qual, market_cap=q.get("market_cap", 0),
         )
 
         # ─── Decision Rules ───
