@@ -1361,6 +1361,18 @@ export default function StockDetail(){
   },[symbol]);
   useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10})]).then(([inc,rat])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length)setRatios(rat as RatioYear[]);setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
 
+  // v8: if the stock loaded into a mode that disqualifies it, auto-switch
+  // to the other mode if that one qualifies. Lands the user on a useful view
+  // by default. If neither qualifies (rare — both gates fail), stay where
+  // we are and the page will render the gate-failure summary block.
+  useEffect(()=>{
+    if (!stock) return;
+    const momOK = (stock.signal_momentum ?? stock.signal) !== "DISQUALIFIED";
+    const faOK  = (stock.signal_fallen_angel ?? "DISQUALIFIED") !== "DISQUALIFIED";
+    if (mode === "momentum" && !momOK && faOK) setMode("fallen_angel");
+    else if (mode === "fallen_angel" && !faOK && momOK) setMode("momentum");
+  },[stock, mode]);
+
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
   if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
 
@@ -1372,8 +1384,12 @@ export default function StockDetail(){
   // drive the dashboard. Default to Momentum unless the FA composite is
   // materially higher (heuristic: FA wins by 0.10+) — that flag lets the user
   // know FA mode is worth looking at without forcing them to discover the toggle.
-  const haveMom=s.factors_v8_momentum!=null||s.composite_momentum!=null;
-  const haveFA=s.factors_v8_fallen_angel!=null||s.composite_fallen_angel!=null;
+  // v8 mode availability: a mode is "available" iff the stock qualifies its
+  // setup gate. Using `signal !== "DISQUALIFIED"` instead of "fields present"
+  // means NVDA (which has both composites set but is disqualified by FA gate)
+  // shows the FA toggle option as disabled, not as a valid view.
+  const haveMom = (s.signal_momentum ?? s.signal) !== "DISQUALIFIED";
+  const haveFA  = (s.signal_fallen_angel ?? "DISQUALIFIED") !== "DISQUALIFIED";
   const compMode=mode==="fallen_angel"?(s.composite_fallen_angel??s.composite):(s.composite_momentum??s.composite);
   const sigMode=mode==="fallen_angel"?(s.signal_fallen_angel??s.signal):(s.signal_momentum??s.signal);
   const factorsMode=readFactorsV8(s,mode);
@@ -1405,7 +1421,7 @@ export default function StockDetail(){
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
             <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{sigMode}</span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
-            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom||true,fallen_angel:haveFA||false}}/>
+            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom,fallen_angel:haveFA}}/>
             {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid #fde68a",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
