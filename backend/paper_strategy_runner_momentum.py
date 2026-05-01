@@ -215,10 +215,8 @@ def open_first_basket(scan_date: str, picks: list[dict]) -> tuple[list, float]:
     positions = []
     for p in picks:
         positions.append({
-            "symbol": p["symbol"],
-            "entry_price": p["price"],
             "entry_date": scan_date,
-            "score_at_entry": p["score"],
+            "composite_at_entry": p["score"],
             "piotroski_at_entry": p["piotroski"],
             "signal_at_entry": p["signal"],
             "last_price": p["price"],
@@ -263,7 +261,7 @@ def rotate_basket(scan_date: str,
                 "exit_date": scan_date,
                 "return_pct": round(ret * 100, 4),
                 "days_held": days_held,
-                "score_at_entry": p.get("score_at_entry"),
+                "composite_at_entry": p.get("composite_at_entry"),
             })
             log.info(f"  ROTATED OUT  {p['symbol']:<6} "
                      f"entry ${p['entry_price']:.2f} -> exit ${exit_price:.2f} "
@@ -276,7 +274,7 @@ def rotate_basket(scan_date: str,
             "symbol": p["symbol"],
             "entry_price": p["price"],
             "entry_date": scan_date,
-            "score_at_entry": p["score"],
+            "composite_at_entry": p["score"],
             "piotroski_at_entry": p["piotroski"],
             "signal_at_entry": p["signal"],
             "last_price": p["price"],
@@ -286,7 +284,7 @@ def rotate_basket(scan_date: str,
         added_log.append({
             "symbol": p["symbol"],
             "entry_price": round(p["price"], 4),
-            "score_at_entry": round(p["score"], 4),
+            "composite_at_entry": round(p["score"], 4),
         })
         log.info(f"  ROTATED IN   {p['symbol']:<6} entry ${p['price']:.2f}")
 
