@@ -3219,7 +3219,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.intrinsic_buffett = value["intrinsic_buffett"]
         s.intrinsic_avg = value["intrinsic_avg"]
         s.margin_of_safety = value["margin_of_safety"]
-        s.value_score = value["value_score"]; p_s=v["p_s"],
+        s.value_score = value["value_score"]; p_s=v["p_s"]
         s.proximity_52wk = proximity["proximity"]; s.proximity_score = proximity["score"]
         s.earnings_momentum = earnings["momentum"]; s.earnings_score = earnings["score"]
         s.upside_score = upside["score"]
