@@ -157,7 +157,7 @@ def fmp_historical_close(symbol: str, date_str: str) -> Optional[float]:
         # 7-day window from entry_date forward to handle weekends & holidays
         end = (dt.date.fromisoformat(date_str) + dt.timedelta(days=7)).isoformat()
         r = requests.get(
-            f"{FMP_BASE}/historical-price-eod-light",
+            f"{FMP_BASE}/historical-price-eod/light",
             params={"symbol": symbol, "from": date_str, "to": end, "apikey": FMP_KEY},
             timeout=15,
         )
