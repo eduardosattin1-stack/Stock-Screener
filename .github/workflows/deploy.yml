@@ -20,6 +20,7 @@ on:
           - run-momentum
           - run-fa
           - run-paper-all
+          - run-monitor
 jobs:
   deploy:
     runs-on: ubuntu-latest
