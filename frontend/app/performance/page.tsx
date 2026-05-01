@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award } from "lucide-react";
 
+
 // ── Data sources ────────────────────────────────────────────────────────────
 const SIGNAL_TRACKS = "/api/performance/signal-tracks";
 const HIT_RATES     = "/api/performance/hit-rates";
