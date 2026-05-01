@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-paper_strategy_runner_momentum.py
+paper_strategy_runner_momentum.py 
 ==================================
 MOMENTUM strategy: top-10 SP500 stocks by composite_momentum (v8 momentum
 mode), equal-weight, weekly rotation.
