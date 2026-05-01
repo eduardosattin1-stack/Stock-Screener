@@ -58,7 +58,6 @@ interface BoringWeeklyMark {
   days_held: number;
   n_priced: number;
 }
-// Daily mark written by monitor_prices.py (side-channel, doesn't disturb runner schema)
 interface BoringDailyMark {
   price: number;
   return_pct: number;
@@ -85,7 +84,6 @@ interface BoringOpenBasket {
     piotroski_at_entry: number;
   }[];
   weekly_marks: BoringWeeklyMark[];
-  // Optional fields written by monitor_prices.py (may be undefined for old data)
   daily_last_marks?: Record<string, BoringDailyMark>;
   today_interim_mark?: BoringInterimMark;
 }
@@ -590,6 +588,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
 // TAB 3: STRATEGIES (BORING + COMPOSITE + MOMENTUM + FALLEN ANGEL)
 // ══════════════════════════════════════════════════════════════════════════════
 function StrategiesTab() {
+  // ── ALL HOOKS FIRST — Rules of Hooks: no early returns before all hooks called ─
   const [boring, setBoring] = useState<BoringHistory | null>(null);
   const [composite, setComposite] = useState<CompositeHistory | null>(null);
   const [momentum, setMomentum] = useState<CompositeHistory | null>(null);
@@ -615,6 +614,30 @@ function StrategiesTab() {
     });
   }, []);
 
+  // BORING: prefer today_interim_mark for the KPI card if newer than last weekly_mark
+  // CRITICAL: useMemo MUST be called on every render (Rules of Hooks). Hence no
+  // early-return guards above. Empty array fallback is safe when boring is null.
+  const boringMarksForCard = useMemo(() => {
+    if (!boring?.open_basket) return undefined;
+    const wm = boring.open_basket.weekly_marks || [];
+    const im = boring.open_basket.today_interim_mark;
+    if (!im) return wm;
+    const lastWeekly = wm[wm.length - 1];
+    if (!lastWeekly || im.date > lastWeekly.date) {
+      return [...wm, {
+        date: im.date,
+        basket_return_pct: im.basket_return_pct,
+        spy_return_pct: im.spy_return_pct,
+        alpha_pp: im.alpha_pp,
+        spy_price: im.spy_price ?? 0,
+        days_held: im.days_held,
+        n_priced: im.n_priced,
+      }];
+    }
+    return wm;
+  }, [boring]);
+
+  // ── Early returns AFTER all hooks ──────────────────────────────────────
   if (loading) {
     return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
   }
@@ -633,28 +656,6 @@ function StrategiesTab() {
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}%`;
   const fmtPp = (v: number | null | undefined, dp = 2) =>
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
-
-  // BORING: prefer today_interim_mark for the KPI card if newer than last weekly_mark
-  const boringMarksForCard = useMemo(() => {
-    if (!boring?.open_basket) return undefined;
-    const wm = boring.open_basket.weekly_marks || [];
-    const im = boring.open_basket.today_interim_mark;
-    if (!im) return wm;
-    // Append interim mark if more recent than last weekly mark
-    const lastWeekly = wm[wm.length - 1];
-    if (!lastWeekly || im.date > lastWeekly.date) {
-      return [...wm, {
-        date: im.date,
-        basket_return_pct: im.basket_return_pct,
-        spy_return_pct: im.spy_return_pct,
-        alpha_pp: im.alpha_pp,
-        spy_price: im.spy_price ?? 0,
-        days_held: im.days_held,
-        n_priced: im.n_priced,
-      }];
-    }
-    return wm;
-  }, [boring]);
 
   const chartPoints = buildCombinedChart(boring, composite, momentum, fa);
 
@@ -1072,8 +1073,6 @@ function buildCombinedChart(
 ): ChartPoint[] {
   const dateSet = new Set<string>();
 
-  // BORING: closed cycle exits + open weekly marks (cumulative compounding)
-  // Plus the today_interim_mark, if newer than the last weekly_mark
   let boringPoints: { date: string; strat: number; spy: number }[] = [];
   if (boring) {
     let cumStrat = 0, cumSpy = 0;
@@ -1089,7 +1088,6 @@ function buildCombinedChart(
       boringPoints.push({ date: m.date, strat: stratNow, spy: spyNow });
       dateSet.add(m.date);
     }
-    // Add today's interim mark if newer than latest weekly
     const im = boring.open_basket?.today_interim_mark;
     if (im) {
       const lastDate = boringPoints.length > 0 ? boringPoints[boringPoints.length - 1].date : null;
@@ -1102,7 +1100,6 @@ function buildCombinedChart(
     }
   }
 
-  // Composite/momentum/fa: weekly_marks already cumulative since inception
   const collectMarks = (h: CompositeHistory | null) => {
     const out: { date: string; strat: number; spy: number }[] = [];
     if (!h || !h.weekly_marks) return out;
@@ -1110,9 +1107,6 @@ function buildCombinedChart(
       out.push({ date: m.date, strat: m.basket_avg_return_pct, spy: m.spy_return_pct });
       dateSet.add(m.date);
     }
-    // Append a synthetic point at last_monitor_run if we have it AND it's newer
-    // than the last weekly_mark — uses summary.cum_basket_return_pct (which the
-    // monitor recomputes daily) so the chart curves daily.
     const lastMonitor = h.last_monitor_run;
     const lastWeekly = h.weekly_marks.length > 0 ? h.weekly_marks[h.weekly_marks.length - 1] : null;
     if (lastMonitor && h.summary &&
