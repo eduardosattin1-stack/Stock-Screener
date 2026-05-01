@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 
 """
 monitor_prices.py — Daily price refresh + portfolio alpha tracking
 ====================================================================
