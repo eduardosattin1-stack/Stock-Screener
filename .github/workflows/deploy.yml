@@ -14,13 +14,11 @@ on:
         options:
           - deploy-only
           - run-sp500
-          - run-nasdaq
-          - run-global
           - run-boring
           - run-composite
           - run-paper-email
-          - run-backtest-sp500
-          - run-backtest-v8
+          - run-momentum
+          - run-fa
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -82,6 +80,7 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner.py"
+            
           # COMPOSITE strategy runner (top-10 SP500 by composite, weekly rotation)
           gcloud run jobs deploy composite-runner \
             --image="$IMAGE" \
@@ -91,6 +90,27 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_composite.py"
+
+          # MOMENTUM strategy runner (top-10 SP500 by composite_momentum, weekly rotation)
+          gcloud run jobs deploy momentum-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_momentum.py"
+ 
+          # FALLEN ANGEL strategy runner (top-10 SP500 passing FA gate, weekly rotation)
+          gcloud run jobs deploy fa-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_fa.py"
+            
           # Combined weekly email (BORING + COMPOSITE)
           # NOTE: SMTP_USER/SMTP_PASS/EMAIL_TO must exist as GitHub secrets,
           # otherwise the email job will fall through to print-only mode.
@@ -149,6 +169,16 @@ jobs:
         run: |
           gcloud run jobs execute composite-runner --region=europe-west1
           echo "COMPOSITE runner started. Check logs: gcloud run jobs executions list --job=composite-runner --region=europe-west1"
+     - name: Run MOMENTUM Strategy Runner
+        if: inputs.action == 'run-momentum'
+        run: |
+          gcloud run jobs execute momentum-runner --region=europe-west1
+          echo "MOMENTUM runner started. Check logs: gcloud run jobs executions list --job=momentum-runner --region=europe-west1"
+     - name: Run FALLEN ANGEL Strategy Runner
+        if: inputs.action == 'run-fa'
+        run: |
+          gcloud run jobs execute fa-runner --region=europe-west1
+          echo "FA runner started. Check logs: gcloud run jobs executions list --job=fa-runner --region=europe-west1"
       - name: Run Paper-Tracking Email
         if: inputs.action == 'run-paper-email'
         run: |
