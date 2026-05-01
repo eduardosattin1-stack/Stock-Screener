@@ -169,12 +169,13 @@ jobs:
         run: |
           gcloud run jobs execute composite-runner --region=europe-west1
           echo "COMPOSITE runner started. Check logs: gcloud run jobs executions list --job=composite-runner --region=europe-west1"
-     - name: Run MOMENTUM Strategy Runner
+      - name: Run MOMENTUM Strategy Runner
         if: inputs.action == 'run-momentum'
         run: |
           gcloud run jobs execute momentum-runner --region=europe-west1
           echo "MOMENTUM runner started. Check logs: gcloud run jobs executions list --job=momentum-runner --region=europe-west1"
-     - name: Run FALLEN ANGEL Strategy Runner
+
+      - name: Run FALLEN ANGEL Strategy Runner
         if: inputs.action == 'run-fa'
         run: |
           gcloud run jobs execute fa-runner --region=europe-west1
