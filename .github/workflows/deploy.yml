@@ -110,6 +110,17 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_fa.py"
+
+          # ALL paper runners orchestrator (BORING + COMPOSITE + MOMENTUM + FA)
+          # — single Cloud Scheduler target that fans out to all 4 sequentially
+          gcloud run jobs deploy paper-all-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=1800s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="paper_runners_all.py"
             
           # Combined weekly email (BORING + COMPOSITE)
           # NOTE: SMTP_USER/SMTP_PASS/EMAIL_TO must exist as GitHub secrets,
@@ -122,6 +133,7 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},EMAIL_TO=${{ secrets.EMAIL_TO }}" \
             --command="python3" \
             --args="paper_weekly_email.py"
+            
       - name: Deploy Backtest Jobs
         if: github.event_name == 'push' || inputs.action == 'deploy-only'
         run: |
