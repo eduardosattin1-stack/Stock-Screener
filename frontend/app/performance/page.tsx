@@ -690,10 +690,11 @@ function StrategiesTab() {
           summary={composite?.summary ? {
             cycles: composite.summary.n_rotations,
             cum_alpha: composite.summary.cum_alpha_pp,
-            ann_return: composite.summary.annualized_return_pct,
+            ann_return: composite.summary.cum_basket_return_pct,
             win_rate: composite.summary.realized_win_rate * 100,
             cyclesLabel: "rotations",
             winRateLabel: "of closed positions",
+            annReturnLabel: "BASKET RTN",
           } : null}
           marks={composite?.weekly_marks?.map(m => ({
             date: m.date,
@@ -710,10 +711,11 @@ function StrategiesTab() {
           summary={momentum?.summary ? {
             cycles: momentum.summary.n_rotations,
             cum_alpha: momentum.summary.cum_alpha_pp,
-            ann_return: momentum.summary.annualized_return_pct,
+            ann_return: momentum.summary.cum_basket_return_pct,
             win_rate: momentum.summary.realized_win_rate * 100,
             cyclesLabel: "rotations",
             winRateLabel: "of closed positions",
+            annReturnLabel: "BASKET RTN",
           } : null}
           marks={momentum?.weekly_marks?.map(m => ({
             date: m.date,
@@ -730,10 +732,11 @@ function StrategiesTab() {
           summary={fa?.summary ? {
             cycles: fa.summary.n_rotations,
             cum_alpha: fa.summary.cum_alpha_pp,
-            ann_return: fa.summary.annualized_return_pct,
+            ann_return: fa.summary.cum_basket_return_pct,
             win_rate: fa.summary.realized_win_rate * 100,
             cyclesLabel: "rotations",
             winRateLabel: "of closed positions",
+            annReturnLabel: "BASKET RTN",
           } : null}
           marks={fa?.weekly_marks?.map(m => ({
             date: m.date,
@@ -906,7 +909,7 @@ function BoringBasketTable({
             return (
               <tr key={p.symbol}>
                 <td style={{ ...td, color: T.muted }}>{i + 1}</td>
-                <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                <td style={{ ...td, fontWeight: 600 }}>                   <a href={`/stock/${p.symbol}`} style={{ color: T.text, textDecoration: "none" }}>                     {p.symbol}                   </a>                 </td>
                 <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
                 {hasDaily && (
                   <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>
@@ -985,7 +988,7 @@ function BasketDetails({
             return (
               <tr key={p.symbol}>
                 <td style={{ ...td, color: T.muted }}>{i + 1}</td>
-                <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                <td style={{ ...td, fontWeight: 600 }}>                   <a href={`/stock/${p.symbol}`} style={{ color: T.text, textDecoration: "none" }}>                     {p.symbol}                   </a>                 </td>
                 <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
                 <td style={{ ...td, textAlign: "right" }}>${(p.last_price ?? p.entry_price).toFixed(2)}</td>
                 <td style={{
@@ -1034,8 +1037,22 @@ function RotationsTable({
                 <td style={td}>{r.date}</td>
                 <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_removed}</td>
                 <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_added}</td>
-                <td style={{ ...td, fontSize: 10 }}>{r.removed.map(x => x.symbol).join(", ")}</td>
-                <td style={{ ...td, fontSize: 10 }}>{r.added.map(x => x.symbol).join(", ")}</td>
+                <td style={{ ...td, fontSize: 10 }}>
+                  {r.removed.map((x, idx) => (
+                    <span key={x.symbol}>
+                      <a href={`/stock/${x.symbol}`} style={{ color: T.text, textDecoration: "none" }}>{x.symbol}</a>
+                      {idx < r.removed.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </td>
+                <td style={{ ...td, fontSize: 10 }}>
+                  {r.added.map((x, idx) => (
+                    <span key={x.symbol}>
+                      <a href={`/stock/${x.symbol}`} style={{ color: T.text, textDecoration: "none" }}>{x.symbol}</a>
+                      {idx < r.added.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </td>
                 <td style={{
                   ...td, textAlign: "right",
                   color: avgClosed !== null && avgClosed >= 0 ? T.green : T.red,
