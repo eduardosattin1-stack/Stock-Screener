@@ -216,7 +216,7 @@ export default function Portfolio(){
               <tbody>
                 {portfolio.map(p=>{
                   const live=liveData[p.symbol];const mon=monitors[p.symbol];
-                  const cur=mon?.current_price||live?.price||p.entry_price;
+                  const cur=p.last_price||mon?.current_price||live?.price||p.entry_price;
                   const pnl=(cur-p.entry_price)*p.shares;const pnlPct=(cur-p.entry_price)/p.entry_price;
                   const val=cur*p.shares;const signal=mon?.current_signal||live?.signal||"—";
                   // ── Track C.2 FIX: split composite into named, provenance-aware values ──
