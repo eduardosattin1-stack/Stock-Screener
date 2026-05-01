@@ -92,6 +92,9 @@ interface BoringHistory {
   updated_at: string | null;
 }
 // ── COMPOSITE strategy tracker (gs://.../performance/strategy_history_composite.json) ─
+// Same schema is reused for MOMENTUM (strategy_history_momentum.json) and
+// FALLEN ANGEL (strategy_history_fa.json) — all three are weekly-rotation
+// runners with identical output structure.
 interface CompositePosition {
   symbol: string;
   entry_price: number;
@@ -163,6 +166,7 @@ const T = {
   red: "#ef4444", redLight: "#fef2f2",
   amber: "#d97706", amberLight: "#fffbeb",
   purple: "#8b5cf6",
+  blue: "#3b82f6",
   border: "#e5e7eb", divider: "#f3f4f6",
   mono: "var(--font-mono, 'JetBrains Mono', monospace)",
   shadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
@@ -266,7 +270,6 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
     else { setSortKey(k); setSortDir("desc"); }
   };
 
-  // Aggregate stats
   const stats = useMemo(() => {
     if (closed.length === 0) return null;
     const wins = closed.filter(c => c.realized_pnl_pct > 0).length;
@@ -289,7 +292,6 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
 
   return (
     <>
-      {/* KPIs (only when we have closed data) */}
       {stats && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 20 }}>
           <KPI label="OPEN" value={String(open.length)} sub="Currently tracking" />
@@ -300,7 +302,6 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
         </div>
       )}
 
-      {/* Open tracks */}
       <Card style={{ marginBottom: 20 }}>
         <SH title={`Open Tracks (${sortedOpen.length})`} icon={<TrendingUp size={12} />} sub="BUY/STRONG BUY not yet downgraded to SELL" />
         {sortedOpen.length === 0 ? (
@@ -347,7 +348,6 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
         )}
       </Card>
 
-      {/* Closed cycles */}
       <Card>
         <SH title={`Closed Cycles (${closed.length})`} icon={<Clock size={12} />} sub="BUY → SELL completed — click column to sort" />
         {closed.length === 0 ? (
@@ -395,6 +395,7 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
     </>
   );
 }
+
 function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
   const [open, setOpen] = useState<HitRateOpen[]>([]);
   const [closed, setClosed] = useState<HitRateClosed[]>([]);
@@ -414,7 +415,6 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
     const hits = closed.filter(c => c.hit).length;
     const avgGain = closed.reduce((a, c) => a + c.max_gain_pct, 0) / closed.length;
     const avgP10 = closed.reduce((a, c) => a + c.entry_p10, 0) / closed.length;
-    // Buckets by predicted p10
     const buckets = [
       { label: "0.60–0.70", min: 0.60, max: 0.70, n: 0, hits: 0 },
       { label: "0.70–0.80", min: 0.70, max: 0.80, n: 0, hits: 0 },
@@ -448,7 +448,6 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
         </div>
       )}
 
-      {/* Hit-rate by bucket */}
       {stats && stats.buckets.some(b => b.n > 0) && (
         <Card style={{ marginBottom: 20 }}>
           <SH title="Hit Rate by Predicted p10 Bucket" icon={<Award size={12} />} sub="Calibration check" />
@@ -471,7 +470,6 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
         </Card>
       )}
 
-      {/* Open windows */}
       <Card style={{ marginBottom: 20 }}>
         <SH title={`Open Windows (${open.length})`} icon={<Radio size={12} />} sub="60-day countdown — p10 > 0.60" />
         {open.length === 0 ? (
@@ -525,7 +523,6 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
         )}
       </Card>
 
-      {/* Closed windows */}
       <Card>
         <SH title={`Closed Windows (${closed.length})`} icon={<Clock size={12} />} sub="60 days elapsed or +10% hit" />
         {closed.length === 0 ? (
@@ -571,12 +568,15 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
     </>
   );
 }
+
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: STRATEGIES (BORING 26w hold + COMPOSITE weekly rotation, side by side)
+// TAB 3: STRATEGIES (BORING + COMPOSITE + MOMENTUM + FALLEN ANGEL, 4 cards)
 // ══════════════════════════════════════════════════════════════════════════════
 function StrategiesTab() {
   const [boring, setBoring] = useState<BoringHistory | null>(null);
   const [composite, setComposite] = useState<CompositeHistory | null>(null);
+  const [momentum, setMomentum] = useState<CompositeHistory | null>(null);
+  const [fa, setFa] = useState<CompositeHistory | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -585,9 +585,15 @@ function StrategiesTab() {
         .then(r => r.ok ? r.json() : null),
       fetch(`${GCS_PERFORMANCE}/strategy_history_composite.json?t=${Date.now()}`)
         .then(r => r.ok ? r.json() : null),
-    ]).then(([b, c]) => {
+      fetch(`${GCS_PERFORMANCE}/strategy_history_momentum.json?t=${Date.now()}`)
+        .then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_PERFORMANCE}/strategy_history_fa.json?t=${Date.now()}`)
+        .then(r => r.ok ? r.json() : null),
+    ]).then(([b, c, m, f]) => {
       if (b.status === "fulfilled") setBoring(b.value);
       if (c.status === "fulfilled") setComposite(c.value);
+      if (m.status === "fulfilled") setMomentum(m.value);
+      if (f.status === "fulfilled") setFa(f.value);
       setLoading(false);
     });
   }, []);
@@ -596,12 +602,12 @@ function StrategiesTab() {
     return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
   }
 
-  if (!boring && !composite) {
+  if (!boring && !composite && !momentum && !fa) {
     return (
       <Empty
         icon={<BarChart3 size={36} color={T.divider} />}
         title="No strategies running"
-        sub="Both BORING and COMPOSITE will populate after Friday's runner."
+        sub="Strategy histories will appear here after the runners execute on Friday."
       />
     );
   }
@@ -611,23 +617,24 @@ function StrategiesTab() {
   const fmtPp = (v: number | null | undefined, dp = 2) =>
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
 
-  // Build combined cumulative chart
-  const chartPoints = buildCombinedChart(boring, composite);
+  const chartPoints = buildCombinedChart(boring, composite, momentum, fa);
 
   return (
     <>
       {/* Hero / methodology */}
       <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
-          Two paper-tracked strategies, both equal-weighted SP500 top-10:
-          {" "}<strong>BORING</strong> (Pio≥7 by ps_ratio asc, 26w hold) and
-          {" "}<strong>COMPOSITE</strong> (top by composite score, weekly rotation).
+          Four paper-tracked strategies, all SP500 universe, equal-weighted top-10:
+          {" "}<strong>BORING</strong> (Pio≥7 by ps_ratio asc, 26w hold) ·
+          {" "}<strong>COMPOSITE</strong> (top by v8 5-factor, weekly rotation) ·
+          {" "}<strong>MOMENTUM</strong> (top by composite_momentum, weekly rotation) ·
+          {" "}<strong>FALLEN ANGEL</strong> (FA gate qualifiers, weekly rotation, can be empty).
           Compared against SPY.
         </div>
       </Card>
 
-      {/* Side-by-side stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+      {/* 4 KPI cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
         <StrategyKPICard
           title="BORING"
           subtitle="26w hold · ps_ratio rank"
@@ -643,7 +650,7 @@ function StrategiesTab() {
         />
         <StrategyKPICard
           title="COMPOSITE"
-          subtitle="weekly rotation · composite rank"
+          subtitle="weekly rotation · v8 5-factor"
           inception={composite?.inception_date}
           summary={composite?.summary ? {
             cycles: composite.summary.n_rotations,
@@ -661,12 +668,52 @@ function StrategiesTab() {
           }))}
           openCount={composite?.current_basket?.length ?? 0}
         />
+        <StrategyKPICard
+          title="MOMENTUM"
+          subtitle="weekly rotation · momentum rank"
+          inception={momentum?.inception_date}
+          summary={momentum?.summary ? {
+            cycles: momentum.summary.n_rotations,
+            cum_alpha: momentum.summary.cum_alpha_pp,
+            ann_return: momentum.summary.annualized_return_pct,
+            win_rate: momentum.summary.realized_win_rate * 100,
+            cyclesLabel: "rotations",
+            winRateLabel: "of closed positions",
+          } : null}
+          marks={momentum?.weekly_marks?.map(m => ({
+            date: m.date,
+            basket_return_pct: m.basket_avg_return_pct,
+            spy_return_pct: m.spy_return_pct,
+            alpha_pp: m.alpha_pp,
+          }))}
+          openCount={momentum?.current_basket?.length ?? 0}
+        />
+        <StrategyKPICard
+          title="FALLEN ANGEL"
+          subtitle="weekly rotation · FA gate"
+          inception={fa?.inception_date}
+          summary={fa?.summary ? {
+            cycles: fa.summary.n_rotations,
+            cum_alpha: fa.summary.cum_alpha_pp,
+            ann_return: fa.summary.annualized_return_pct,
+            win_rate: fa.summary.realized_win_rate * 100,
+            cyclesLabel: "rotations",
+            winRateLabel: "of closed positions",
+          } : null}
+          marks={fa?.weekly_marks?.map(m => ({
+            date: m.date,
+            basket_return_pct: m.basket_avg_return_pct,
+            spy_return_pct: m.spy_return_pct,
+            alpha_pp: m.alpha_pp,
+          }))}
+          openCount={fa?.current_basket?.length ?? 0}
+        />
       </div>
 
-      {/* Combined chart */}
+      {/* Combined chart — 4 strategies + SPY */}
       {chartPoints.length > 1 && (
         <Card style={{ marginBottom: 16 }}>
-          <SH title="CUMULATIVE RETURN — BORING vs COMPOSITE vs SPY" icon={<TrendingUp size={11} />} />
+          <SH title="CUMULATIVE RETURN — 4 STRATEGIES vs SPY" icon={<TrendingUp size={11} />} />
           <CombinedCumulativeChart points={chartPoints} />
         </Card>
       )}
@@ -737,108 +784,197 @@ function StrategiesTab() {
 
       {/* COMPOSITE details */}
       {composite && composite.current_basket && composite.current_basket.length > 0 && (
-        <Card style={{ marginBottom: 16 }}>
-          <SH
-            title="COMPOSITE · CURRENT BASKET"
-            icon={<Target size={11} />}
-            sub={`Inception ${composite.inception_date} · ${composite.summary?.n_rotations ?? 0} rotations`}
-          />
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={th}>#</th>
-                <th style={{ ...th, textAlign: "left" }}>Symbol</th>
-                <th style={{ ...th, textAlign: "right" }}>Entry</th>
-                <th style={{ ...th, textAlign: "right" }}>Last</th>
-                <th style={{ ...th, textAlign: "right" }}>Return</th>
-                <th style={{ ...th, textAlign: "right" }}>Days</th>
-                <th style={{ ...th, textAlign: "right" }}>Comp</th>
-              </tr>
-            </thead>
-            <tbody>
-              {composite.current_basket.map((p, i) => {
-                const daysHeld = Math.floor(
-                  (Date.now() - new Date(p.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-                );
-                return (
-                  <tr key={p.symbol}>
-                    <td style={{ ...td, color: T.muted }}>{i + 1}</td>
-                    <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
-                    <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
-                    <td style={{ ...td, textAlign: "right" }}>${(p.last_price ?? p.entry_price).toFixed(2)}</td>
-                    <td style={{
-                      ...td, textAlign: "right",
-                      color: (p.return_pct ?? 0) >= 0 ? T.green : T.red, fontWeight: 600,
-                    }}>{fmtPct(p.return_pct)}</td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{daysHeld}d</td>
-                    <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? 0).toFixed(3)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Card>
+        <BasketDetails
+          title="COMPOSITE · CURRENT BASKET"
+          inception={composite.inception_date}
+          rotations={composite.summary?.n_rotations ?? 0}
+          basket={composite.current_basket}
+          fmtPct={fmtPct}
+        />
+      )}
+      {composite && composite.rotations && composite.rotations.length > 0 && (
+        <RotationsTable
+          title={`COMPOSITE · ROTATIONS (${composite.rotations.length})`}
+          rotations={composite.rotations}
+          fmtPct={fmtPct}
+        />
       )}
 
-      {composite && composite.rotations && composite.rotations.length > 0 && (
-        <Card>
-          <SH title={`COMPOSITE · ROTATIONS (${composite.rotations.length})`} icon={<Clock size={11} />} />
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={{ ...th, textAlign: "left" }}>Date</th>
-                <th style={{ ...th, textAlign: "right" }}>Out</th>
-                <th style={{ ...th, textAlign: "right" }}>In</th>
-                <th style={{ ...th, textAlign: "left" }}>Removed</th>
-                <th style={{ ...th, textAlign: "left" }}>Added</th>
-                <th style={{ ...th, textAlign: "right" }}>Avg P&L (closed)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...composite.rotations].reverse().slice(0, 20).map((r, i) => {
-                const avgClosed = r.removed.length > 0
-                  ? r.removed.reduce((a, p) => a + (p.return_pct ?? 0), 0) / r.removed.length
-                  : null;
-                return (
-                  <tr key={i}>
-                    <td style={td}>{r.date}</td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_removed}</td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_added}</td>
-                    <td style={{ ...td, fontSize: 10 }}>{r.removed.map(x => x.symbol).join(", ")}</td>
-                    <td style={{ ...td, fontSize: 10 }}>{r.added.map(x => x.symbol).join(", ")}</td>
-                    <td style={{
-                      ...td, textAlign: "right",
-                      color: avgClosed !== null && avgClosed >= 0 ? T.green : T.red,
-                    }}>{fmtPct(avgClosed)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {/* MOMENTUM details */}
+      {momentum && momentum.current_basket && momentum.current_basket.length > 0 && (
+        <BasketDetails
+          title="MOMENTUM · CURRENT BASKET"
+          inception={momentum.inception_date}
+          rotations={momentum.summary?.n_rotations ?? 0}
+          basket={momentum.current_basket}
+          fmtPct={fmtPct}
+        />
+      )}
+      {momentum && momentum.rotations && momentum.rotations.length > 0 && (
+        <RotationsTable
+          title={`MOMENTUM · ROTATIONS (${momentum.rotations.length})`}
+          rotations={momentum.rotations}
+          fmtPct={fmtPct}
+        />
+      )}
+
+      {/* FALLEN ANGEL details */}
+      {fa && fa.current_basket && fa.current_basket.length > 0 && (
+        <BasketDetails
+          title="FALLEN ANGEL · CURRENT BASKET"
+          inception={fa.inception_date}
+          rotations={fa.summary?.n_rotations ?? 0}
+          basket={fa.current_basket}
+          fmtPct={fmtPct}
+        />
+      )}
+      {fa && fa.current_basket && fa.current_basket.length === 0 && fa.inception_date && (
+        <Card style={{ marginBottom: 16 }}>
+          <SH
+            title="FALLEN ANGEL · NO POSITIONS"
+            icon={<Target size={11} />}
+            sub={`Inception ${fa.inception_date} · waiting for FA gate qualifiers`}
+          />
+          <div style={{ padding: "12px 4px", fontSize: 11, fontFamily: T.mono, color: T.muted }}>
+            No SP500 stocks currently pass the FA gate (drawdown {">"} 35%, Pio≥7, Altman {">"} 2.5,
+            ROE {">"} 12%, mkt cap {">"} $2B). Sitting in cash. Strategy retries each Friday.
+          </div>
         </Card>
+      )}
+      {fa && fa.rotations && fa.rotations.length > 0 && (
+        <RotationsTable
+          title={`FALLEN ANGEL · ROTATIONS (${fa.rotations.length})`}
+          rotations={fa.rotations}
+          fmtPct={fmtPct}
+        />
       )}
     </>
   );
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────────
+// ── Helpers — extracted so we don't repeat the same JSX 3 times for ─────
+// ── composite/momentum/fa basket + rotations tables. ────────────────────
+
+function BasketDetails({
+  title, inception, rotations, basket, fmtPct,
+}: {
+  title: string;
+  inception: string | null | undefined;
+  rotations: number;
+  basket: CompositePosition[];
+  fmtPct: (v: number | null | undefined, dp?: number) => string;
+}) {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <SH
+        title={title}
+        icon={<Target size={11} />}
+        sub={`Inception ${inception ?? "—"} · ${rotations} rotations`}
+      />
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={th}>#</th>
+            <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+            <th style={{ ...th, textAlign: "right" }}>Entry</th>
+            <th style={{ ...th, textAlign: "right" }}>Last</th>
+            <th style={{ ...th, textAlign: "right" }}>Return</th>
+            <th style={{ ...th, textAlign: "right" }}>Days</th>
+            <th style={{ ...th, textAlign: "right" }}>Score@entry</th>
+          </tr>
+        </thead>
+        <tbody>
+          {basket.map((p, i) => {
+            const daysHeld = Math.floor(
+              (Date.now() - new Date(p.entry_date).getTime()) / (1000 * 60 * 60 * 24)
+            );
+            return (
+              <tr key={p.symbol}>
+                <td style={{ ...td, color: T.muted }}>{i + 1}</td>
+                <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+                <td style={{ ...td, textAlign: "right" }}>${(p.last_price ?? p.entry_price).toFixed(2)}</td>
+                <td style={{
+                  ...td, textAlign: "right",
+                  color: (p.return_pct ?? 0) >= 0 ? T.green : T.red, fontWeight: 600,
+                }}>{fmtPct(p.return_pct)}</td>
+                <td style={{ ...td, textAlign: "right", color: T.muted }}>{daysHeld}d</td>
+                <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? 0).toFixed(3)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </Card>
+  );
+}
+
+function RotationsTable({
+  title, rotations, fmtPct,
+}: {
+  title: string;
+  rotations: CompositeRotation[];
+  fmtPct: (v: number | null | undefined, dp?: number) => string;
+}) {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <SH title={title} icon={<Clock size={11} />} />
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={{ ...th, textAlign: "left" }}>Date</th>
+            <th style={{ ...th, textAlign: "right" }}>Out</th>
+            <th style={{ ...th, textAlign: "right" }}>In</th>
+            <th style={{ ...th, textAlign: "left" }}>Removed</th>
+            <th style={{ ...th, textAlign: "left" }}>Added</th>
+            <th style={{ ...th, textAlign: "right" }}>Avg P&L (closed)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...rotations].reverse().slice(0, 20).map((r, i) => {
+            const avgClosed = r.removed.length > 0
+              ? r.removed.reduce((a, p) => a + (p.return_pct ?? 0), 0) / r.removed.length
+              : null;
+            return (
+              <tr key={i}>
+                <td style={td}>{r.date}</td>
+                <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_removed}</td>
+                <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.n_added}</td>
+                <td style={{ ...td, fontSize: 10 }}>{r.removed.map(x => x.symbol).join(", ")}</td>
+                <td style={{ ...td, fontSize: 10 }}>{r.added.map(x => x.symbol).join(", ")}</td>
+                <td style={{
+                  ...td, textAlign: "right",
+                  color: avgClosed !== null && avgClosed >= 0 ? T.green : T.red,
+                }}>{fmtPct(avgClosed)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </Card>
+  );
+}
+
+// ── Combined chart — 4 strategies + 1 SPY line ───────────────────────────
 
 interface ChartPoint {
   date: string;
   boring_pct: number | null;
   composite_pct: number | null;
-  spy_boring_pct: number | null;
-  spy_composite_pct: number | null;
+  momentum_pct: number | null;
+  fa_pct: number | null;
+  spy_pct: number | null;
 }
 
 function buildCombinedChart(
   boring: BoringHistory | null,
-  composite: CompositeHistory | null
+  composite: CompositeHistory | null,
+  momentum: CompositeHistory | null,
+  fa: CompositeHistory | null,
 ): ChartPoint[] {
-  // Collect all dates, then for each compute cumulative for each strategy
   const dateSet = new Set<string>();
 
-  // BORING dates: closed cycle exits + open weekly marks
+  // BORING: closed cycle exits + open weekly marks (cumulative compounding)
   let boringPoints: { date: string; strat: number; spy: number }[] = [];
   if (boring) {
     let cumStrat = 0, cumSpy = 0;
@@ -856,31 +992,36 @@ function buildCombinedChart(
     }
   }
 
-  // COMPOSITE: weekly_marks already cumulative since inception
-  const compositePoints: { date: string; strat: number; spy: number }[] = [];
-  if (composite && composite.weekly_marks) {
-    for (const m of composite.weekly_marks) {
-      compositePoints.push({
-        date: m.date,
-        strat: m.basket_avg_return_pct,
-        spy: m.spy_return_pct,
-      });
+  // Generic helper for weekly_marks-based strategies (composite/momentum/fa)
+  const collectMarks = (h: CompositeHistory | null) => {
+    const out: { date: string; strat: number; spy: number }[] = [];
+    if (!h || !h.weekly_marks) return out;
+    for (const m of h.weekly_marks) {
+      out.push({ date: m.date, strat: m.basket_avg_return_pct, spy: m.spy_return_pct });
       dateSet.add(m.date);
     }
-  }
+    return out;
+  };
 
-  // Sort dates ascending
+  const compositePoints = collectMarks(composite);
+  const momentumPoints = collectMarks(momentum);
+  const faPoints = collectMarks(fa);
+
   const dates = Array.from(dateSet).sort();
   const out: ChartPoint[] = [];
   for (const d of dates) {
     const b = boringPoints.find(p => p.date === d);
     const c = compositePoints.find(p => p.date === d);
+    const m = momentumPoints.find(p => p.date === d);
+    const f = faPoints.find(p => p.date === d);
+    const spy = b?.spy ?? c?.spy ?? m?.spy ?? f?.spy ?? null;
     out.push({
       date: d,
       boring_pct: b?.strat ?? null,
       composite_pct: c?.strat ?? null,
-      spy_boring_pct: b?.spy ?? null,
-      spy_composite_pct: c?.spy ?? null,
+      momentum_pct: m?.strat ?? null,
+      fa_pct: f?.strat ?? null,
+      spy_pct: spy,
     });
   }
   return out;
@@ -986,8 +1127,9 @@ function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
   for (const p of points) {
     if (p.boring_pct !== null) allValues.push(p.boring_pct);
     if (p.composite_pct !== null) allValues.push(p.composite_pct);
-    if (p.spy_boring_pct !== null) allValues.push(p.spy_boring_pct);
-    if (p.spy_composite_pct !== null) allValues.push(p.spy_composite_pct);
+    if (p.momentum_pct !== null) allValues.push(p.momentum_pct);
+    if (p.fa_pct !== null) allValues.push(p.fa_pct);
+    if (p.spy_pct !== null) allValues.push(p.spy_pct);
   }
   const maxY = Math.max(...allValues, 5);
   const minY = Math.min(...allValues, -5);
@@ -1009,25 +1151,25 @@ function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
 
   const boringPath = buildPath("boring_pct");
   const compositePath = buildPath("composite_pct");
-  // Use one SPY line (boring's, which has more points usually); fall back to composite's
-  const spyPath = buildPath(points.some(p => p.spy_boring_pct !== null) ? "spy_boring_pct" : "spy_composite_pct");
+  const momentumPath = buildPath("momentum_pct");
+  const faPath = buildPath("fa_pct");
+  const spyPath = buildPath("spy_pct");
   const zeroY = yScale(0);
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: H, fontFamily: T.mono }}>
-      {/* Zero baseline */}
       <line x1={P} x2={W - P} y1={zeroY} y2={zeroY} stroke={T.divider} strokeDasharray="2,3" />
-      {/* SPY (gray) */}
       <path d={spyPath} fill="none" stroke={T.muted} strokeWidth="1.5" />
-      {/* COMPOSITE (purple) */}
+      <path d={faPath} fill="none" stroke={T.amber} strokeWidth="2" />
+      <path d={momentumPath} fill="none" stroke={T.blue} strokeWidth="2" />
       <path d={compositePath} fill="none" stroke={T.purple} strokeWidth="2" />
-      {/* BORING (green) */}
       <path d={boringPath} fill="none" stroke={T.green} strokeWidth="2" />
-      {/* Legend */}
       <text x={P} y={P - 8} fontSize="9" fill={T.muted}>cumulative %</text>
       <text x={P + 100} y={P - 8} fontSize="9" fill={T.green}>● BORING</text>
       <text x={P + 180} y={P - 8} fontSize="9" fill={T.purple}>● COMPOSITE</text>
-      <text x={P + 280} y={P - 8} fontSize="9" fill={T.muted}>● SPY</text>
+      <text x={P + 280} y={P - 8} fontSize="9" fill={T.blue}>● MOMENTUM</text>
+      <text x={P + 380} y={P - 8} fontSize="9" fill={T.amber}>● FA</text>
+      <text x={P + 425} y={P - 8} fontSize="9" fill={T.muted}>● SPY</text>
       <text x={P} y={zeroY - 4} fontSize="9" fill={T.muted}>0%</text>
       <text x={W - P} y={H - 5} fontSize="9" fill={T.muted} textAnchor="end">{points[points.length - 1].date}</text>
     </svg>
@@ -1110,7 +1252,7 @@ export default function Performance() {
           <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>/ tracking</span>
         </div>
         <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>
-          Forward-only paper-tracking. Strategies: BORING (26w hold, ps_ratio rank) + COMPOSITE (weekly rotation, composite rank).
+          Forward-only paper-tracking. 4 strategies: BORING (26w hold) · COMPOSITE (rotation) · MOMENTUM (rotation) · FALLEN ANGEL (rotation, gate).
         </p>
       </div>
 
