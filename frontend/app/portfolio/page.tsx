@@ -250,7 +250,7 @@ export default function Portfolio(){
                             {isExpanded?<ChevronDown size={11} color="#9ca3af"/>:<ChevronRight size={11} color="#9ca3af"/>}
                             <div>
                               <a href={`/stock/${p.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)",fontSize:12,letterSpacing:"0.04em"}}>{p.symbol}</a>
-                              <div style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>{p.entry_date}</div>
+                             <div style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>                                 {p.entry_date}{(()=>{const d=Math.floor((Date.now()-new Date(p.entry_date).getTime())/86400000);return d>0?` · ${d}d`:"";})()}                               </div>
                             </div>
                           </div>
                         </td>
@@ -296,6 +296,7 @@ export default function Portfolio(){
                                   -3% to -10%  amber (watching)
                                   -10% to -25% orange (yellow alert)
                                   <-25% red (mental stop hit) */}
+ 
                               {p.drawdown_from_peak_pct!=null?(()=>{
                                 const dd=p.drawdown_from_peak_pct as number;
                                 const ddColor = dd<=-25?"#ef4444":dd<=-10?"#ea580c":dd<=-3?"#d97706":"#9ca3af";
@@ -304,6 +305,22 @@ export default function Portfolio(){
                                     <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>DD</span>
                                     <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:ddColor,fontWeight:dd<=-10?700:500}}>
                                       {dd.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                );
+                              })():null}
+                              {/* Tertiary: composite delta — entry → now (Δ%).
+                                  Green if composite improving ≥+0.05 from entry, red if eroding ≤-0.05, gray for noise.
+                                  Uses nowComp already computed earlier in the row body (mon || scan). */}
+                              {p.entry_composite!=null && nowComp>0?(()=>{
+                                const delta = nowComp - p.entry_composite;
+                                const pct = p.entry_composite > 0 ? (delta / p.entry_composite) * 100 : 0;
+                                const compColor = delta >= 0.05 ? "#2d7a4f" : delta <= -0.05 ? "#ef4444" : "#9ca3af";
+                                return (
+                                  <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>COMP</span>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:compColor}}>
+                                      {p.entry_composite.toFixed(2)}→{nowComp.toFixed(2)} ({pct>=0?"+":""}{pct.toFixed(0)}%)
                                     </span>
                                   </div>
                                 );
