@@ -41,6 +41,11 @@ interface StockData {
   inst_score?:number; proximity_score?:number; earnings_score?:number;
   upside_score?:number;
   hit_prob?:number;
+  // Smart Money Score (Apr 2026) — LTR-derived weighted factor score.
+  // Pass-2 / US-only. null for non-US stocks and rows below top-30.
+  smart_money_score?:number|null;
+  smart_money_components?:Record<string,number>;
+  smart_money_weight?:number;
   factor_coverage?:number;
   factors_evaluated?:string[];
   factors_missing?:string[];
@@ -84,6 +89,7 @@ interface StockData {
   fcf_yoy?:number;
   fcf_cagr_3y?:number;
   p_fcf?:number;
+  p_s?:number;                       // Apr 2026: price/sales ratio (latest annual)
   earnings_yield?:number;
   intrinsic_bvps?:number;
   bvps_recent_cagr?:number;
@@ -124,8 +130,14 @@ const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}
 const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1e12) return `$${(n/1e12).toFixed(1)}T`; if(n>=1e9) return `$${(n/1e9).toFixed(0)}B`; if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`; return `$${n.toFixed(0)}`; };
 
 // getProb: fallback table for stocks without live hit_prob field (rare).
-// Numbers are rough approximations from v7.2 backtest calibration — the live ML
-// model's `hit_prob` on each stock is more accurate. See calibration docs.
+// Numbers are rough approximations from v7.2 backtest calibration — used by
+// the GAIN/DD column for projected gain & drawdown ranges per composite band.
+// Note (Apr 2026): the P+10% column itself was removed after the LTR
+// investigation showed per-stock probabilities aren't trustworthy at the
+// 0.65 AUC ceiling. The Smart Money Score replaces it. hit_prob is still
+// computed in the backend and written to JSON for diagnostic purposes — it
+// just isn't rendered. probFallback below remains in use by GAIN/DD which
+// reads from this same backtest-calibration table keyed on composite.
 function getProb(c:number){if(c>=0.90)return{p10:85,gain:25.7,dd:-9.1,speed:18};if(c>=0.80)return{p10:75,gain:20.0,dd:-9.8,speed:22};if(c>=0.65)return{p10:62,gain:15.0,dd:-10.5,speed:26};if(c>=0.50)return{p10:50,gain:12.0,dd:-11.0,speed:30};return{p10:35,gain:9.0,dd:-11.0,speed:32};}
 
 // v8 mode-aware factor reader. Falls back to s.factors_v8 (no per-mode
@@ -387,13 +399,13 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
   // angel candidate). Magnitude threshold ≥0.10 unchanged.
   const otherQualifies = isQualified(s, otherMode);
   const otherIsHigher = otherQualifies && (compOther - compActive >= 0.10);
-  // hit_prob currently keys off the `composite` field which the backend
-  // sets to the Momentum composite by default (Option B convention). When
-  // FA mode is active the displayed P+10% lags slightly on FA-leaning
-  // stocks; acceptable because the ML model was trained on the v7 composite
-  // anyway. Document in tooltip rather than re-engineer.
-  const isLive = s.hit_prob != null && s.hit_prob > 0;
-  const p10 = isLive ? Math.round(s.hit_prob! * 100) : getProb(compActive).p10;
+  // Apr 2026: P+10% column was removed after the LTR investigation showed
+  // per-stock hit probabilities are not trustworthy at the 0.65 AUC ceiling
+  // (CHKP: model said 22% hit, actual 11%; NFLX: model said 31%, actual 30%).
+  // Smart Money Score replaces that column. hit_prob is still computed in
+  // the backend and written to JSON for diagnostics — it just isn't rendered.
+  // probFallback below remains in use by the GAIN/DD column which reads from
+  // a static backtest-calibration table keyed on composite.
   const probFallback = getProb(compActive);
 
   return(
@@ -421,6 +433,12 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         {/* PIO — diagnostic only (not in v8 composite) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:600,color:s.piotroski<=3?"#92400e":"var(--text-muted,#6b7280)"}} title="Piotroski 0-9 — diagnostic only, not in v8 composite">
           {s.piotroski}
+        </td>
+        {/* P/S — price/sales ratio (Apr 2026). Diagnostic only, not in composite.
+            Industry-dependent: tech 5-15 normal, banks 1-3 normal, biotech often n/m.
+            No color grading because what's "expensive" varies wildly by sector. */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 8px",fontSize:11,color:"var(--text-muted,#6b7280)"}} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">
+          {s.p_s && s.p_s > 0 ? s.p_s.toFixed(1) : <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>}
         </td>
         {/* COMP (active mode) — primary, larger, colored by score */}
         <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:13,color:compActive>0.7?"#10b981":compActive>0.5?"var(--text)":compActive>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
@@ -455,9 +473,19 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         </td>
         {/* UPSIDE — analyst consensus (v8 Value sub-component, kept for reference) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
-        {/* P+10% — labeled experimental */}
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:700,color:p10>60?"#10b981":p10>40?"#d97706":"#ef4444"}} title="ML probability of touching +10% within prediction window. Trained on legacy v7 composite — slight lag on FA-mode-leaning stocks.">
-          {p10}%{isLive&&<span style={{fontSize:7,color:"var(--text-light)",marginLeft:2}}>ml</span>}
+        {/* SMART$ — LTR-derived weighted score; pass-2 only, US-only.
+            Replaced P+10% column in Apr 2026 after LTR investigation showed
+            per-stock hit probabilities aren't trustworthy at the 0.65 AUC ceiling. */}
+        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
+          {(()=>{const sm = s.smart_money_score;
+            if (sm == null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Requires US data: 13F flow + accumulation are pass-2 enrichment, US-only.">—</span>;
+            const c = sm>0.7?"#10b981":sm>0.5?"var(--text-muted)":sm>0.3?"#d97706":"#ef4444";
+            const wt = s.smart_money_weight ?? 1.0;
+            const compStr = Object.entries(s.smart_money_components||{}).map(([k,v])=>`${k}=${(v*100).toFixed(0)}`).join(" · ");
+            const tip = wt < 1.0
+              ? `Score ${(sm*100).toFixed(0)} / max ${(wt*100).toFixed(0)} (some optional factors unavailable). Components: ${compStr}`
+              : `Full coverage. Components: ${compStr}`;
+            return <span style={{color:c,fontWeight:700}} title={tip}>{(sm*100).toFixed(0)}</span>;})()}
         </td>
         {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>
@@ -487,7 +515,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         </td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={12} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={13} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -581,10 +609,10 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 // quality_score) are computed at sort time from the active mode — letting
 // the user rank stocks by either composite or by any individual factor.
 type SortKey =
-  | "symbol" | "price" | "piotroski"
+  | "symbol" | "price" | "piotroski" | "p_s"
   | "active_comp" | "other_comp"
   | "value_score" | "growth_score" | "quality_score"
-  | "upside";
+  | "upside" | "smart_money";
 
 export default function Dashboard(){
   const [data,setData]=useState<ScanData|null>(null);
@@ -631,7 +659,9 @@ export default function Dashboard(){
       case "growth_score":  return fA.growth ?? -1;
       case "quality_score": return fA.quality ?? -1;
       case "piotroski":     return s.piotroski ?? 0;
+      case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
       case "upside":        return s.upside ?? 0;
+      case "smart_money":   return s.smart_money_score ?? -1;
       case "price":         return s.price ?? 0;
       case "symbol":        return s.symbol.charCodeAt(0); // alphabetic via numeric proxy
       default:              return 0;
@@ -752,13 +782,14 @@ export default function Dashboard(){
               <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
               <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
               <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
+              <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
               <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
               <th style={hs("other_comp")} onClick={()=>toggleSort("other_comp")} title={`Composite for the inactive mode. Sortable — click to rank by ${otherCompLabel === "FA" ? "Fallen Angel" : "Momentum"} composite without switching the view.`}>{otherCompLabel}</th>
               <th style={hs("value_score","center")} onClick={()=>toggleSort("value_score")} title="v8 Value factor score: intrinsic upside (40%) + P/FCF (30%) + earnings yield (30%)">VAL</th>
               <th style={hs("growth_score","center")} onClick={()=>toggleSort("growth_score")} title="v8 Growth factor score: revenue + EPS + FCF, each 60% TTM YoY + 40% 3y CAGR">GRW</th>
               <th style={hs("quality_score","center")} onClick={()=>toggleSort("quality_score")} title="v8 Quality factor score: net margin (35%) + FCF margin (35%) + ROIC (30%)">QUAL</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
-              <th style={{...hs("static","center"),cursor:"default"}} title="ML probability of touching +10%. Trained on legacy v7 composite.">P+10% ml</th>
+              <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (30%), trend strength (28%), institutional accumulation (20%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
               <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
               <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
             </tr></thead>
