@@ -201,6 +201,12 @@ jobs:
         run: |
           gcloud run jobs execute paper-email --region=europe-west1
           echo "Paper email started. Check logs: gcloud run jobs executions list --job=paper-email --region=europe-west1"
+
+      - name: Run Daily Price Monitor
+        if: inputs.action == 'run-monitor'
+        run: |
+          gcloud run jobs execute monitor-prices --region=europe-west1
+          echo "Monitor started. Check logs: gcloud run jobs executions list --job=monitor-prices --region=europe-west1"
       # ═══ MANUAL: EXECUTE BACKTESTS ═══
       - name: Run Backtest SP500
         if: inputs.action == 'run-backtest-sp500'
