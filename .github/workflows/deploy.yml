@@ -19,6 +19,7 @@ on:
           - run-paper-email
           - run-momentum
           - run-fa
+          - run-paper-all
 jobs:
   deploy:
     runs-on: ubuntu-latest
