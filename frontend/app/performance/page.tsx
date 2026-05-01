@@ -679,12 +679,7 @@ function StrategiesTab() {
           title="BORING"
           subtitle="26w hold · ps_ratio rank"
           inception={boring?.inception_date}
-          summary={boring?.summary ? {
-            cycles: boring.summary.weeks_closed,
-            cum_alpha: boring.summary.cum_alpha_pp,
-            ann_return: boring.summary.annualized_return_pct,
-            win_rate: boring.summary.win_rate * 100,
-          } : null}
+          summary={buildBoringSummary(boring)}
           marks={boringMarksForCard}
           openCount={boring?.open_basket?.basket?.length ?? 0}
         />
@@ -1152,6 +1147,59 @@ interface KPISummary {
   win_rate: number;
   cyclesLabel?: string;
   winRateLabel?: string;
+  // Optional overrides used for in-flight strategies (e.g. BORING showing
+  // synthetic stats before the first 26w cycle closes)
+  cyclesValueOverride?: string;       // e.g. "3 / 182" instead of "3"
+  cumAlphaLabel?: string;
+  annReturnLabel?: string;
+  annReturnValueOverride?: string;    // e.g. "+3.3%" raw return (not annualized)
+}
+// Build BORING KPI summary. If a 26-week cycle has closed (boring.summary
+// populated and weeks_closed > 0), use the runner's realized stats. Otherwise
+// synthesize from the open basket so the card isn't four em-dashes for 6 months.
+function buildBoringSummary(boring: BoringHistory | null): KPISummary | null {
+  if (!boring) return null;
+
+  // Closed-cycle path: use runner-computed summary
+  if (boring.summary && boring.summary.weeks_closed > 0) {
+    return {
+      cycles: boring.summary.weeks_closed,
+      cum_alpha: boring.summary.cum_alpha_pp,
+      ann_return: boring.summary.annualized_return_pct,
+      win_rate: boring.summary.win_rate * 100,
+    };
+  }
+
+  // In-flight path: synthesize from open basket
+  const ob = boring.open_basket;
+  if (!ob) return null;
+
+  // Latest mark = today_interim_mark (from monitor_prices.py daily) or last weekly_mark
+  const im = ob.today_interim_mark;
+  const lastWeekly = ob.weekly_marks?.[ob.weekly_marks.length - 1];
+  const latestMark = im ?? lastWeekly;
+  if (!latestMark) return null;
+
+  const daysHeld = im?.days_held ?? lastWeekly?.days_held ?? 0;
+
+  // Win rate = % of open basket positions currently in green
+  const dailyMarks = ob.daily_last_marks ?? {};
+  const positions = ob.basket ?? [];
+  const positiveCount = positions.filter(p =>
+    (dailyMarks[p.symbol]?.return_pct ?? 0) > 0
+  ).length;
+  const winRate = positions.length > 0 ? (positiveCount / positions.length) * 100 : 0;
+
+  return {
+    cycles: daysHeld,
+    cyclesValueOverride: `${daysHeld} / 182`,
+    cyclesLabel: "DAY OF HOLD",
+    cum_alpha: latestMark.alpha_pp,
+    ann_return: latestMark.basket_return_pct,
+    annReturnLabel: "BASKET RTN",     // raw return — NOT annualized while <30d
+    win_rate: winRate,
+    winRateLabel: "of open positions",
+  };
 }
 
 function StrategyKPICard({
@@ -1178,16 +1226,16 @@ function StrategyKPICard({
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, marginBottom: 10 }}>
         <KPIMini
           label={summary?.cyclesLabel?.toUpperCase() || "CYCLES CLOSED"}
-          value={summary ? `${summary.cycles}` : "—"}
+          value={summary ? (summary.cyclesValueOverride ?? `${summary.cycles}`) : "—"}
         />
         <KPIMini
-          label="CUM ALPHA"
+          label={summary?.cumAlphaLabel?.toUpperCase() || "CUM ALPHA"}
           value={summary ? `${summary.cum_alpha >= 0 ? "+" : ""}${summary.cum_alpha.toFixed(2)}pp` : "—"}
           accent={summary && summary.cum_alpha >= 0 ? "green" : (summary ? "red" : undefined)}
         />
         <KPIMini
-          label="ANN. RETURN"
-          value={summary ? `${summary.ann_return >= 0 ? "+" : ""}${summary.ann_return.toFixed(1)}%` : "—"}
+          label={summary?.annReturnLabel?.toUpperCase() || "ANN. RETURN"}
+          value={summary ? (summary.annReturnValueOverride ?? `${summary.ann_return >= 0 ? "+" : ""}${summary.ann_return.toFixed(1)}%`) : "—"}
         />
         <KPIMini
           label="WIN RATE"
