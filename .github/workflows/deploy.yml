@@ -56,15 +56,7 @@ jobs:
           gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
             || echo "screener-global not found, skipping"
 
-          # Deploy/Update the NASDAQ Job using the shared container image
-          gcloud run jobs deploy screener-nasdaq \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=2Gi \
-            --task-timeout=3600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SCREEN_INDEX=nasdaq" \
-            --command="python3" \
-            --args="run_scan_job.py"
+
       # ═══ ALWAYS: DEPLOY PAPER-TRACKING JOBS (BORING + COMPOSITE + EMAIL) ═══
       - name: Deploy Paper-Tracking Jobs
         if: github.event_name == 'push' || inputs.action == 'deploy-only'
@@ -111,6 +103,16 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_fa.py"
+
+          # Daily price monitor (refreshes display prices Mon-Fri 22:00 CET)
+          gcloud run jobs deploy monitor-prices \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=512Mi \
+            --task-timeout=300s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --command="python3" \
+            --args="monitor_prices.py"
 
           # ALL paper runners orchestrator (BORING + COMPOSITE + MOMENTUM + FA)
           # — single Cloud Scheduler target that fans out to all 4 sequentially
