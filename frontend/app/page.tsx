@@ -8,6 +8,7 @@ const REGIONS = [
   { key: "sp500", label: "S&P 500" },
   { key: "midcap", label: "Midcap" },
 ];
+
 function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
 const US_EXCHANGES = new Set(["NASDAQ","NYSE","AMEX","NYSEArca","PNK","OTC"]);
 const EU_EXCHANGES = new Set(["XETRA","PAR","LSE","AMS","MIL","STO","SIX","BME","HEL","OSL","CPH"]);
