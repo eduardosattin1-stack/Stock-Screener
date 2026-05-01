@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap, Plus, X } from "lucide-react";
