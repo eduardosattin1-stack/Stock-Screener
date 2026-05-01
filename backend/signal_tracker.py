@@ -177,9 +177,11 @@ def _update_signal_tracks(stocks: list, today_str: str, region: str) -> tuple[in
             entry["days_held"] = entry.get("days_held", 0)
 
         # SELL terminates the track
-        if signal == "SELL":
+        # Composite drop below 0.5 OR explicit SELL signal terminates the track.
+        # Tighter than the original SELL-only trigger — catches degraded positions
+        # before the screener formally downgrades to SELL.
+        if composite < 0.6 or signal == "SELL":
             ep = entry["entry_price"] or 0
-            realized_pnl = ((price - ep) / ep * 100) if ep > 0 else 0.0
             max_gain = ((entry["max_price"] - ep) / ep * 100) if ep > 0 else 0.0
             max_dd   = ((entry["min_price"] - ep) / ep * 100) if ep > 0 else 0.0
             closed_entry = dict(entry)
@@ -187,7 +189,7 @@ def _update_signal_tracks(stocks: list, today_str: str, region: str) -> tuple[in
                 "exit_date":      today_str,
                 "exit_price":     price,
                 "exit_composite": composite,
-                "exit_signal":    "SELL",
+                "exit_signal":    signal,  # was hardcoded "SELL" — now reflects actual exit signal
                 "realized_pnl_pct": round(realized_pnl, 2),
                 "max_gain_pct":     round(max_gain, 2),
                 "max_dd_pct":       round(max_dd, 2),
