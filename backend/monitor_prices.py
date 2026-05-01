@@ -1,43 +1,27 @@
 #!/usr/bin/env python3
 """
-monitor_prices.py — Daily price refresh
-========================================
-Runs Mon-Fri 22:00 CET (after US close). Refreshes `last_price` and
-display-only return fields on every open position across:
+monitor_prices.py — Daily price refresh + portfolio alpha tracking
+====================================================================
+Runs Mon-Fri 22:00 CET (after US close). Refreshes display fields on:
   - portfolio/state.json
   - performance/strategy_history_boring.json
   - performance/strategy_history_composite.json
   - performance/strategy_history_momentum.json
   - performance/strategy_history_fa.json
 
-Touches ONLY display/aggregate fields. Does NOT touch:
-  - weekly_marks (runner only)
-  - rotations (runner only)
-  - inception_date / spy_inception_price (runner only)
-  - realized stats (n_positions_closed, realized_avg, realized_win_rate)
+Per-position fields written to portfolio/state.json:
+  - last_price, last_updated, pnl_pct  (existing)
+  - peak_price                          (running max from daily samples)
+  - drawdown_from_peak_pct              (always ≤ 0)
+  - spy_price_at_entry                  (ONE-TIME backfill via FMP historical)
+  - alpha_vs_spy_pct                    (pnl_pct − SPY_return_since_entry)
 
-For weekly-rotation strategies (composite/momentum/fa), recomputes:
-  - current_basket[].last_price + return_pct + last_marked
-  - summary.open_avg_return_pct
-  - summary.cum_basket_return_pct  (mark-to-market vs spy_inception_price)
-  - summary.cum_spy_return_pct
-  - summary.cum_alpha_pp
-  - summary.annualized_return_pct + annualized_alpha_pp
-NOTE: cum_basket_return_pct here is "average open-position return since
-inception" — the same calc the runner does in its weekly mark. Realized
-positions (closed in rotations) are NOT reflected; they live in
-realized_avg_return_pct which the runner owns.
+Strategy histories — composite/momentum/fa: refreshes current_basket prices
+and recomputes summary aggregates. BORING uses side-channel daily_last_marks
++ today_interim_mark.
 
-For BORING (26w hold), refreshes:
-  - open_basket.basket positions: NO last_price field exists in schema,
-    so we add a daily_marks structure: open_basket.daily_last_marks[symbol]
-    = {price, ts}. Frontend reads this if present, falls back to entry.
-  - That keeps the existing schema untouched while adding fresh display.
-
-For portfolio:
-  - positions[].last_price + last_updated + pnl_pct (last - entry)/entry
-
-Idempotent. Safe to rerun. Single FMP batch call for the unioned symbol set.
+NEVER touches: weekly_marks, rotations, realized stats, inception_date.
+Idempotent. Safe to rerun.
 
 Usage:
   export FMP_API_KEY=...
@@ -63,7 +47,6 @@ FMP_KEY = os.environ.get("FMP_API_KEY", "")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 FMP_BASE = "https://financialmodelingprep.com/stable"
 
-# All files we touch — list at top so it's clear at a glance
 PORTFOLIO_PATH = "portfolio/state.json"
 STRATEGY_PATHS = {
     "boring":    "performance/strategy_history_boring.json",
@@ -122,7 +105,7 @@ def gcs_write(path: str, data: dict, dry_run: bool = False):
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# FMP price fetch (same pattern as runners, batched)
+# FMP price fetch
 # ─────────────────────────────────────────────────────────────────────────
 def fmp_quote(symbol: str) -> Optional[float]:
     if not FMP_KEY:
@@ -156,13 +139,47 @@ def fmp_quote_batch(symbols: list[str]) -> dict[str, float]:
         except Exception as e:
             log.warning(f"batch-quote-short chunk {i}: {e}")
         time.sleep(0.1)
-    # Fallback to single-quote for misses
     for s in symbols:
         if s not in out:
             p = fmp_quote(s)
             if p: out[s] = p
             time.sleep(0.05)
     return out
+
+
+def fmp_historical_close(symbol: str, date_str: str) -> Optional[float]:
+    """Fetch closing price on date_str (or nearest forward trading day if
+    date_str fell on weekend/holiday). Used ONLY for one-time backfill of
+    spy_price_at_entry. Idempotent — once stored, never refetched."""
+    if not FMP_KEY:
+        return None
+    try:
+        # 7-day window from entry_date forward to handle weekends & holidays
+        end = (dt.date.fromisoformat(date_str) + dt.timedelta(days=7)).isoformat()
+        r = requests.get(
+            f"{FMP_BASE}/historical-price-eod-light",
+            params={"symbol": symbol, "from": date_str, "to": end, "apikey": FMP_KEY},
+            timeout=15,
+        )
+        if r.status_code == 200:
+            data = r.json()
+            if isinstance(data, list) and data:
+                # FMP returns desc by date typically — normalize to asc
+                rows = sorted(data, key=lambda x: x.get("date", ""))
+                # First row at-or-after our date with a valid close
+                for row in rows:
+                    rd = (row.get("date") or "")[:10]
+                    px = row.get("price") or row.get("close")
+                    if rd >= date_str and px:
+                        return float(px)
+                # Fallback: any valid close in window
+                for row in rows:
+                    px = row.get("price") or row.get("close")
+                    if px:
+                        return float(px)
+    except Exception as e:
+        log.warning(f"FMP historical {symbol} {date_str}: {e}")
+    return None
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -175,26 +192,35 @@ def collect_symbols_from_portfolio(state: Optional[dict]) -> set[str]:
 
 
 def collect_symbols_from_strategy(history: Optional[dict], kind: str) -> set[str]:
-    """kind in {boring, composite, momentum, fa}."""
     if not history: return set()
     if kind == "boring":
         ob = history.get("open_basket") or {}
         basket = ob.get("basket") or []
         return {(p.get("symbol") or "").upper() for p in basket if p.get("symbol")}
-    # composite/momentum/fa
     basket = history.get("current_basket") or []
     return {(p.get("symbol") or "").upper() for p in basket if p.get("symbol")}
 
 
 def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: str) -> Optional[dict]:
-    """Update portfolio/state.json open positions with last_price/pnl_pct."""
+    """Per-position fields:
+       - last_price, last_updated, pnl_pct       (always)
+       - peak_price, drawdown_from_peak_pct      (always; peak grows over time)
+       - spy_price_at_entry                      (lazy backfill, one-time)
+       - alpha_vs_spy_pct                        (recomputed daily)
+    """
     if not state:
         return None
     positions = state.get("positions") or state.get("open") or []
     if not positions:
         log.info("[portfolio] no open positions")
+        state["last_monitor_run"] = today
         return state
+
+    spy_now = quotes.get("SPY")
     n_updated = 0
+    n_alpha_computed = 0
+    n_spy_backfilled = 0
+
     for p in positions:
         sym = (p.get("symbol") or "").upper()
         if not sym:
@@ -209,19 +235,59 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: st
             continue
         if entry_f <= 0:
             continue
+
+        # ── 1. Existing: price + pnl ─────────────────────────────────────
         p["last_price"] = round(cur, 4)
         p["last_updated"] = today
         p["pnl_pct"] = round((cur - entry_f) / entry_f * 100, 4)
+
+        # ── 2. NEW: peak & drawdown ──────────────────────────────────────
+        # peak_price is sampled daily (when monitor runs). It's a warning
+        # indicator, not a stop-loss exec — intraday spikes between 22:00 CET
+        # samples are not captured. For our purpose (visible drawdown gauge)
+        # this is fine.
+        prev_peak = p.get("peak_price")
+        if not isinstance(prev_peak, (int, float)) or prev_peak <= 0:
+            prev_peak = max(entry_f, cur)
+        new_peak = max(float(prev_peak), cur)
+        p["peak_price"] = round(new_peak, 4)
+        if new_peak > 0:
+            p["drawdown_from_peak_pct"] = round((cur - new_peak) / new_peak * 100, 4)
+        else:
+            p["drawdown_from_peak_pct"] = 0.0
+
+        # ── 3. NEW: spy_price_at_entry — ONE-TIME backfill ──────────────
+        # Skip if already cached (any positive number). Skip if no entry_date.
+        spy_at_entry = p.get("spy_price_at_entry")
+        if not isinstance(spy_at_entry, (int, float)) or spy_at_entry <= 0:
+            entry_date = (p.get("entry_date") or "")[:10]
+            if entry_date:
+                fetched = fmp_historical_close("SPY", entry_date)
+                if fetched and fetched > 0:
+                    p["spy_price_at_entry"] = round(fetched, 4)
+                    spy_at_entry = fetched
+                    n_spy_backfilled += 1
+                    log.info(f"[portfolio] backfilled spy_price_at_entry for {sym}: ${fetched:.2f} on {entry_date}")
+                # else: leave field absent; alpha will be undefined this run
+
+        # ── 4. NEW: alpha_vs_spy_pct ─────────────────────────────────────
+        if (isinstance(spy_at_entry, (int, float)) and spy_at_entry > 0
+                and spy_now and spy_now > 0):
+            spy_return_pct = (spy_now - float(spy_at_entry)) / float(spy_at_entry) * 100.0
+            p["alpha_vs_spy_pct"] = round(p["pnl_pct"] - spy_return_pct, 4)
+            n_alpha_computed += 1
+        # If we can't compute, leave field absent (frontend handles em-dash).
+
         n_updated += 1
-    log.info(f"[portfolio] refreshed {n_updated}/{len(positions)} positions")
+
+    log.info(f"[portfolio] refreshed {n_updated}/{len(positions)} positions "
+             f"(alpha computed for {n_alpha_computed}, spy backfilled {n_spy_backfilled})")
     state["last_monitor_run"] = today
     return state
 
 
 def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
                               today: str, kind: str) -> Optional[dict]:
-    """Update composite/momentum/fa current_basket + recompute open-basket
-    aggregates (Option A). Does NOT touch weekly_marks or rotations."""
     if not history:
         return None
     basket = history.get("current_basket") or []
@@ -237,7 +303,6 @@ def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
         cur = quotes.get(sym)
         entry = p.get("entry_price") or 0
         if cur is None or entry <= 0:
-            # Keep existing return_pct in computation if we can't refresh
             try:
                 rets.append(float(p.get("return_pct") or 0) / 100.0)
             except Exception:
@@ -251,8 +316,6 @@ def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
         n_updated += 1
     log.info(f"[{kind}] refreshed {n_updated}/{len(basket)} basket positions")
 
-    # Option A: recompute open-basket aggregates so KPI cards reflect today
-    # SPY for cum_alpha denominator
     spy_now = quotes.get("SPY")
     spy_inception = history.get("spy_inception_price") or 0
     if spy_now and spy_inception > 0:
@@ -261,10 +324,9 @@ def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
         cum_spy_pct = (history.get("summary") or {}).get("cum_spy_return_pct") or 0
 
     open_avg = (sum(rets) / len(rets) * 100.0) if rets else 0.0
-    cum_basket_pct = open_avg  # daily mark = open_avg, same as runner does
+    cum_basket_pct = open_avg
     cum_alpha_pp = cum_basket_pct - cum_spy_pct
 
-    # Annualization (only if we have inception date)
     inception = history.get("inception_date")
     ann_strategy = ann_alpha = 0.0
     if inception:
@@ -296,11 +358,6 @@ def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
 
 def refresh_strategy_boring(history: Optional[dict], quotes: dict[str, float],
                             today: str) -> Optional[dict]:
-    """BORING is 26w hold. Add a daily_last_marks side-dict so the
-    schema isn't disturbed (frontend can adopt this when convenient).
-    Also recompute open_basket.weekly_marks LAST entry's return_pct
-    in-place so the KPI card sees today's mark — does NOT append a new
-    weekly_mark (that's the runner's job)."""
     if not history:
         return None
     ob = history.get("open_basket")
@@ -325,11 +382,6 @@ def refresh_strategy_boring(history: Optional[dict], quotes: dict[str, float],
     ob["daily_last_marks"] = daily_marks
     log.info(f"[boring] refreshed {len(daily_marks)}/{len(basket)} positions")
 
-    # Recompute the LAST weekly_mark (display-only) — but only if it's
-    # today's date OR we add a "today" interim mark. To avoid polluting
-    # weekly_marks (runner-owned), we instead store a separate
-    # `today_interim_mark` on open_basket. Frontend can prefer this if
-    # present and newer than the latest weekly_mark.
     spy_now = quotes.get("SPY")
     spy_entry = ob.get("spy_entry_price") or 0
     spy_pct = (spy_now - spy_entry) / spy_entry * 100.0 if (spy_now and spy_entry > 0) else 0.0
@@ -365,29 +417,25 @@ def run(dry_run: bool = False):
     today = dt.date.today().isoformat()
     log.info(f"Monitor starting — {today}, dry_run={dry_run}")
 
-    # Read all 5 files
     portfolio = gcs_read(PORTFOLIO_PATH)
     histories = {kind: gcs_read(path) for kind, path in STRATEGY_PATHS.items()}
 
-    # Collect symbol union
     symbols: set[str] = set()
     symbols |= collect_symbols_from_portfolio(portfolio)
     for kind, h in histories.items():
         symbols |= collect_symbols_from_strategy(h, kind)
-    symbols.add("SPY")  # benchmark for strategy aggregates
+    symbols.add("SPY")
 
     log.info(f"Unioned symbol universe: {len(symbols)} unique tickers")
     if not symbols:
-        log.warning("No symbols to refresh — nothing to do")
+        log.warning("No symbols to refresh")
         return True
 
-    # Single batch fetch
     quotes = fmp_quote_batch(sorted(symbols))
     log.info(f"Fetched {len(quotes)}/{len(symbols)} prices from FMP")
     if "SPY" not in quotes:
-        log.warning("SPY price fetch failed — strategy aggregates may be stale")
+        log.warning("SPY price fetch failed — alpha & strategy aggregates may be stale")
 
-    # Refresh + write each file
     if portfolio is not None:
         portfolio = refresh_portfolio(portfolio, quotes, today)
         if portfolio is not None:
