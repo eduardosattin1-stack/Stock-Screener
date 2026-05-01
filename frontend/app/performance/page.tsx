@@ -31,7 +31,7 @@ interface HitRateClosed extends HitRateOpen {
   exit_date: string; exit_reason: "hit_10pct" | "window_closed";
   hit: boolean; max_gain_pct: number;
 }
-// ── BORING strategy tracker (gs://.../performance/strategy_history_boring.json) ────
+// ── BORING strategy tracker ────────────────────────────────────────────────
 interface BoringPosition {
   symbol: string;
   entry: number;
@@ -58,6 +58,21 @@ interface BoringWeeklyMark {
   days_held: number;
   n_priced: number;
 }
+// Daily mark written by monitor_prices.py (side-channel, doesn't disturb runner schema)
+interface BoringDailyMark {
+  price: number;
+  return_pct: number;
+  ts: string;
+}
+interface BoringInterimMark {
+  date: string;
+  basket_return_pct: number;
+  spy_return_pct: number;
+  alpha_pp: number;
+  spy_price: number | null;
+  days_held: number;
+  n_priced: number;
+}
 interface BoringOpenBasket {
   scan_date: string;
   inception_date: string;
@@ -70,6 +85,9 @@ interface BoringOpenBasket {
     piotroski_at_entry: number;
   }[];
   weekly_marks: BoringWeeklyMark[];
+  // Optional fields written by monitor_prices.py (may be undefined for old data)
+  daily_last_marks?: Record<string, BoringDailyMark>;
+  today_interim_mark?: BoringInterimMark;
 }
 interface BoringHistory {
   region: string;
@@ -90,11 +108,9 @@ interface BoringHistory {
     worst_week_alpha_pp: number;
   } | null;
   updated_at: string | null;
+  last_monitor_run?: string;
 }
-// ── COMPOSITE strategy tracker (gs://.../performance/strategy_history_composite.json) ─
-// Same schema is reused for MOMENTUM (strategy_history_momentum.json) and
-// FALLEN ANGEL (strategy_history_fa.json) — all three are weekly-rotation
-// runners with identical output structure.
+// ── COMPOSITE / MOMENTUM / FA strategy tracker ─────────────────────────────
 interface CompositePosition {
   symbol: string;
   entry_price: number;
@@ -158,6 +174,7 @@ interface CompositeHistory {
     annualized_alpha_pp: number;
   } | null;
   updated_at: string | null;
+  last_monitor_run?: string;
 }
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
@@ -227,7 +244,7 @@ const th: React.CSSProperties = { padding: "8px 10px", fontSize: 9, fontWeight: 
 const td: React.CSSProperties = { padding: "9px 10px", fontSize: 11, fontFamily: T.mono, borderBottom: `1px solid ${T.divider}` };
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 1: SIGNAL PERFORMANCE (System 1 — BUY/STRONG BUY → SELL cycles)
+// TAB 1: SIGNAL PERFORMANCE
 // ══════════════════════════════════════════════════════════════════════════════
 function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
   const [open, setOpen] = useState<SignalTrackOpen[]>([]);
@@ -570,7 +587,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: STRATEGIES (BORING + COMPOSITE + MOMENTUM + FALLEN ANGEL, 4 cards)
+// TAB 3: STRATEGIES (BORING + COMPOSITE + MOMENTUM + FALLEN ANGEL)
 // ══════════════════════════════════════════════════════════════════════════════
 function StrategiesTab() {
   const [boring, setBoring] = useState<BoringHistory | null>(null);
@@ -617,6 +634,28 @@ function StrategiesTab() {
   const fmtPp = (v: number | null | undefined, dp = 2) =>
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
 
+  // BORING: prefer today_interim_mark for the KPI card if newer than last weekly_mark
+  const boringMarksForCard = useMemo(() => {
+    if (!boring?.open_basket) return undefined;
+    const wm = boring.open_basket.weekly_marks || [];
+    const im = boring.open_basket.today_interim_mark;
+    if (!im) return wm;
+    // Append interim mark if more recent than last weekly mark
+    const lastWeekly = wm[wm.length - 1];
+    if (!lastWeekly || im.date > lastWeekly.date) {
+      return [...wm, {
+        date: im.date,
+        basket_return_pct: im.basket_return_pct,
+        spy_return_pct: im.spy_return_pct,
+        alpha_pp: im.alpha_pp,
+        spy_price: im.spy_price ?? 0,
+        days_held: im.days_held,
+        n_priced: im.n_priced,
+      }];
+    }
+    return wm;
+  }, [boring]);
+
   const chartPoints = buildCombinedChart(boring, composite, momentum, fa);
 
   return (
@@ -629,7 +668,7 @@ function StrategiesTab() {
           {" "}<strong>COMPOSITE</strong> (top by v8 5-factor, weekly rotation) ·
           {" "}<strong>MOMENTUM</strong> (top by composite_momentum, weekly rotation) ·
           {" "}<strong>FALLEN ANGEL</strong> (FA gate qualifiers, weekly rotation, can be empty).
-          Compared against SPY.
+          Compared against SPY. Prices refreshed daily Mon–Fri after US close.
         </div>
       </Card>
 
@@ -645,7 +684,7 @@ function StrategiesTab() {
             ann_return: boring.summary.annualized_return_pct,
             win_rate: boring.summary.win_rate * 100,
           } : null}
-          marks={boring?.open_basket?.weekly_marks}
+          marks={boringMarksForCard}
           openCount={boring?.open_basket?.basket?.length ?? 0}
         />
         <StrategyKPICard
@@ -710,7 +749,7 @@ function StrategiesTab() {
         />
       </div>
 
-      {/* Combined chart — 4 strategies + SPY */}
+      {/* Combined chart */}
       {chartPoints.length > 1 && (
         <Card style={{ marginBottom: 16 }}>
           <SH title="CUMULATIVE RETURN — 4 STRATEGIES vs SPY" icon={<TrendingUp size={11} />} />
@@ -718,7 +757,7 @@ function StrategiesTab() {
         </Card>
       )}
 
-      {/* BORING details */}
+      {/* BORING details — now with daily marks */}
       {boring && boring.open_basket && (
         <Card style={{ marginBottom: 16 }}>
           <SH
@@ -726,28 +765,12 @@ function StrategiesTab() {
             icon={<Target size={11} />}
             sub={`${boring.open_basket.inception_date} → ${boring.open_basket.scheduled_exit_date}`}
           />
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={th}>#</th>
-                <th style={{ ...th, textAlign: "left" }}>Symbol</th>
-                <th style={{ ...th, textAlign: "right" }}>Entry</th>
-                <th style={{ ...th, textAlign: "right" }}>P/S</th>
-                <th style={{ ...th, textAlign: "right" }}>Pio</th>
-              </tr>
-            </thead>
-            <tbody>
-              {boring.open_basket.basket.map((p, i) => (
-                <tr key={p.symbol}>
-                  <td style={{ ...td, color: T.muted }}>{i + 1}</td>
-                  <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
-                  <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
-                  <td style={{ ...td, textAlign: "right" }}>{p.ps_ratio_at_entry.toFixed(2)}</td>
-                  <td style={{ ...td, textAlign: "right" }}>{p.piotroski_at_entry}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <BoringBasketTable
+            basket={boring.open_basket.basket}
+            dailyMarks={boring.open_basket.daily_last_marks}
+            interimMark={boring.open_basket.today_interim_mark}
+            spyEntryPrice={boring.open_basket.spy_entry_price}
+          />
         </Card>
       )}
 
@@ -852,9 +875,84 @@ function StrategiesTab() {
   );
 }
 
-// ── Helpers — extracted so we don't repeat the same JSX 3 times for ─────
-// ── composite/momentum/fa basket + rotations tables. ────────────────────
+// ── BORING basket table — separate component because it has a different schema ─
+function BoringBasketTable({
+  basket, dailyMarks, interimMark, spyEntryPrice,
+}: {
+  basket: BoringOpenBasket["basket"];
+  dailyMarks: Record<string, BoringDailyMark> | undefined;
+  interimMark: BoringInterimMark | undefined;
+  spyEntryPrice: number;
+}) {
+  const fmtPct = (v: number | null | undefined, dp = 2) =>
+    v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}%`;
+  const fmtPp = (v: number | null | undefined, dp = 2) =>
+    v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
+  const hasDaily = dailyMarks && Object.keys(dailyMarks).length > 0;
 
+  return (
+    <>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={th}>#</th>
+            <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+            <th style={{ ...th, textAlign: "right" }}>Entry</th>
+            {hasDaily && <th style={{ ...th, textAlign: "right" }}>Last</th>}
+            {hasDaily && <th style={{ ...th, textAlign: "right" }}>Return</th>}
+            <th style={{ ...th, textAlign: "right" }}>P/S</th>
+            <th style={{ ...th, textAlign: "right" }}>Pio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {basket.map((p, i) => {
+            const dm = dailyMarks?.[p.symbol];
+            return (
+              <tr key={p.symbol}>
+                <td style={{ ...td, color: T.muted }}>{i + 1}</td>
+                <td style={{ ...td, fontWeight: 600 }}>{p.symbol}</td>
+                <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+                {hasDaily && (
+                  <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>
+                    {dm ? `$${dm.price.toFixed(2)}` : "—"}
+                  </td>
+                )}
+                {hasDaily && (
+                  <td style={{
+                    ...td, textAlign: "right",
+                    color: dm ? (dm.return_pct >= 0 ? T.green : T.red) : T.muted,
+                    fontWeight: 600,
+                  }}>
+                    {dm ? fmtPct(dm.return_pct) : "—"}
+                  </td>
+                )}
+                <td style={{ ...td, textAlign: "right" }}>{p.ps_ratio_at_entry.toFixed(2)}</td>
+                <td style={{ ...td, textAlign: "right" }}>{p.piotroski_at_entry}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {interimMark && (
+        <div style={{
+          fontSize: 10, fontFamily: T.mono, color: T.muted,
+          marginTop: 10, paddingTop: 8, borderTop: `1px solid ${T.divider}`,
+        }}>
+          Today's interim mark ({interimMark.date}, day {interimMark.days_held}/182):
+          basket {fmtPct(interimMark.basket_return_pct)} ·
+          {" "}SPY {fmtPct(interimMark.spy_return_pct)} ·
+          {" "}alpha{" "}
+          <span style={{ color: interimMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
+            {fmtPp(interimMark.alpha_pp)}
+          </span>
+          {" "}(refreshes daily, weekly mark every Friday)
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Helpers — composite/momentum/fa table ──────────────────────────────
 function BasketDetails({
   title, inception, rotations, basket, fmtPct,
 }: {
@@ -955,7 +1053,7 @@ function RotationsTable({
   );
 }
 
-// ── Combined chart — 4 strategies + 1 SPY line ───────────────────────────
+// ── Combined chart ────────────────────────────────────────────────────────
 
 interface ChartPoint {
   date: string;
@@ -975,6 +1073,7 @@ function buildCombinedChart(
   const dateSet = new Set<string>();
 
   // BORING: closed cycle exits + open weekly marks (cumulative compounding)
+  // Plus the today_interim_mark, if newer than the last weekly_mark
   let boringPoints: { date: string; strat: number; spy: number }[] = [];
   if (boring) {
     let cumStrat = 0, cumSpy = 0;
@@ -990,15 +1089,40 @@ function buildCombinedChart(
       boringPoints.push({ date: m.date, strat: stratNow, spy: spyNow });
       dateSet.add(m.date);
     }
+    // Add today's interim mark if newer than latest weekly
+    const im = boring.open_basket?.today_interim_mark;
+    if (im) {
+      const lastDate = boringPoints.length > 0 ? boringPoints[boringPoints.length - 1].date : null;
+      if (!lastDate || im.date > lastDate) {
+        const stratNow = (1 + cumStrat / 100) * (1 + im.basket_return_pct / 100) * 100 - 100;
+        const spyNow = (1 + cumSpy / 100) * (1 + im.spy_return_pct / 100) * 100 - 100;
+        boringPoints.push({ date: im.date, strat: stratNow, spy: spyNow });
+        dateSet.add(im.date);
+      }
+    }
   }
 
-  // Generic helper for weekly_marks-based strategies (composite/momentum/fa)
+  // Composite/momentum/fa: weekly_marks already cumulative since inception
   const collectMarks = (h: CompositeHistory | null) => {
     const out: { date: string; strat: number; spy: number }[] = [];
     if (!h || !h.weekly_marks) return out;
     for (const m of h.weekly_marks) {
       out.push({ date: m.date, strat: m.basket_avg_return_pct, spy: m.spy_return_pct });
       dateSet.add(m.date);
+    }
+    // Append a synthetic point at last_monitor_run if we have it AND it's newer
+    // than the last weekly_mark — uses summary.cum_basket_return_pct (which the
+    // monitor recomputes daily) so the chart curves daily.
+    const lastMonitor = h.last_monitor_run;
+    const lastWeekly = h.weekly_marks.length > 0 ? h.weekly_marks[h.weekly_marks.length - 1] : null;
+    if (lastMonitor && h.summary &&
+        (!lastWeekly || lastMonitor > lastWeekly.date)) {
+      out.push({
+        date: lastMonitor,
+        strat: h.summary.cum_basket_return_pct,
+        spy: h.summary.cum_spy_return_pct,
+      });
+      dateSet.add(lastMonitor);
     }
     return out;
   };
@@ -1245,18 +1369,16 @@ export default function Performance() {
 
   return (
     <div style={{ padding: "16px 20px", maxWidth: 1400, margin: "0 auto" }}>
-      {/* Header */}
       <div style={{ marginBottom: 16, paddingBottom: 10, borderBottom: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
           <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", color: T.text, fontFamily: T.mono }}>PERFORMANCE</span>
           <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>/ tracking</span>
         </div>
         <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>
-          Forward-only paper-tracking. 4 strategies: BORING (26w hold) · COMPOSITE (rotation) · MOMENTUM (rotation) · FALLEN ANGEL (rotation, gate).
+          Forward-only paper-tracking. 4 strategies: BORING (26w hold) · COMPOSITE (rotation) · MOMENTUM (rotation) · FALLEN ANGEL (rotation, gate). Daily price refresh.
         </p>
       </div>
 
-      {/* Tabs */}
       <div style={{ display: "flex", gap: 6, marginBottom: 16, borderBottom: `1px solid ${T.divider}`, paddingBottom: 2 }}>
         {[
           { key: "strategies", label: "Strategies",          icon: <BarChart3 size={12} /> },
@@ -1277,7 +1399,6 @@ export default function Performance() {
         ))}
       </div>
 
-      {/* Tab content */}
       {tab === "strategies" && <StrategiesTab />}
       {tab === "signal"     && <SignalPerfTab router={router} />}
       {tab === "hitrate"    && <HitRateTab router={router} />}
