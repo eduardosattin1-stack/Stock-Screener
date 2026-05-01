@@ -353,6 +353,7 @@ class Stock:
     intrinsic_avg: float = 0.0
     margin_of_safety: float = 0.0
     value_score: float = 0.0
+    p_s: float = 0.0  # Price/Sales ratio (latest annual): local_price / revenue_per_share
 
     # New v6 fields
     insider_buy_ratio: float = 0.0    # acquired/disposed ratio (recent 2 quarters)
@@ -1102,7 +1103,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         "dcf_value": 0, "owner_earnings_yield": 0,
         "intrinsic_buffett": 0, "intrinsic_bvps": 0, "intrinsic_avg": 0,
         "bvps_cagr_10y": 0.0, "bvps_consistency": 0.0, "bvps_recent_cagr": 0.0,
-        "margin_of_safety": 0, "value_score": 0,
+        "margin_of_safety": 0, "value_score": 0, "p_s": 0,
         "classification": "UNKNOWN",
         "_insufficient_history": False,
     }
@@ -1147,6 +1148,17 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
 
         if revs[-1] > 0 and gp_list[-1] > 0:
             v["gross_margin"] = gp_list[-1] / revs[-1]
+ 
+        # P/S ratio (latest annual). local_price is already in reported_ccy
+        # (set above via fx_to_report) and revs[-1] is in reported_ccy too,
+        # so revenue/share is in reported_ccy/share and local_price /
+        # rev_per_share is unitless. Uses diluted share count when present;
+        # falls back to basic shares.
+        latest_shares = float(inc[-1].get("weightedAverageShsOutDil") or inc[-1].get("weightedAverageShsOut") or 0)
+        if latest_shares > 0 and revs[-1] > 0:
+            rev_per_share = revs[-1] / latest_shares
+            if rev_per_share > 0:
+                v["p_s"] = local_price / rev_per_share
         margins = [gp / rev if rev > 0 else 0 for gp, rev in zip(gp_list, revs)]
         if len(margins) >= 3:
             if margins[-1] > margins[-3] + 0.02:
@@ -3207,7 +3219,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.intrinsic_buffett = value["intrinsic_buffett"]
         s.intrinsic_avg = value["intrinsic_avg"]
         s.margin_of_safety = value["margin_of_safety"]
-        s.value_score = value["value_score"]; s.classification = value["classification"]
+        s.value_score = value["value_score"]; p_s=v["p_s"],
         s.proximity_52wk = proximity["proximity"]; s.proximity_score = proximity["score"]
         s.earnings_momentum = earnings["momentum"]; s.earnings_score = earnings["score"]
         s.upside_score = upside["score"]
