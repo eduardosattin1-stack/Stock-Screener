@@ -409,7 +409,6 @@ class Stock:
     fcf_cagr_3y: float = 0.0
     # Valuation ratios
     p_fcf: float = 0.0               # price / FCF per share
-    p_s: float = 0.0                 # price / sales per share
     earnings_yield: float = 0.0      # 1/PE; eps / price
     # Forward intrinsic from BVPS projection (already computed in get_value)
     intrinsic_bvps: float = 0.0
