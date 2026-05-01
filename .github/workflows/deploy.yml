@@ -1,122 +1,26 @@
-name: Deploy to Cloud Run
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
-  workflow_dispatch:
-    inputs:
-      action:
-        description: 'What to do'
-        required: true
-        default: 'deploy-only'
-        type: choice
-        options:
-          - deploy-only
-          - run-sp500
-          - run-boring
-          - run-composite
-          - run-paper-email
-          - run-momentum
-          - run-fa
-          - run-paper-all
-          - run-monitor
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-      # ═══ ALWAYS: DEPLOY SERVICE + UPDATE JOBS ═══
-      - name: Deploy Cloud Run Service
-        if: github.event_name == 'push' || inputs.action == 'deploy-only'
-        run: |
-          cd backend
-          gcloud run deploy stock-screener \
-            --source=. \
-            --region=europe-west1 \
-            --memory=1Gi \
-            --timeout=3600 \
-            --clear-base-image \
-            --update-env-vars=SCREEN_INDEX=nasdaq100
-      - name: Update Screener Jobs
-        if: github.event_name == 'push' || inputs.action == 'deploy-only'
-        run: |
-          IMAGE=$(gcloud run services describe stock-screener \
-            --region=europe-west1 \
-            --format='value(spec.template.spec.containers[0].image)')
-          echo "Image: $IMAGE"
-          gcloud run jobs update screener-sp500 --region=europe-west1 --image="$IMAGE" \
-            || echo "screener-sp500 not found, skipping"
-          gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
-            || echo "screener-global not found, skipping"
+================================================================
+PATCHES for .github/workflows/deploy.yml
+Adds paper-all-runner (orchestrator that fires all 4 strategies sequentially)
+================================================================
 
+CRITICAL: All `- name:` blocks in the jobs steps list MUST be indented
+with EXACTLY 6 spaces (not 4, not 5, not 8). Bruno's memory documents
+this from the earlier YAML indent error — re-confirm with the existing
+runners (boring-runner, composite-runner, etc) before pasting.
 
-      # ═══ ALWAYS: DEPLOY PAPER-TRACKING JOBS (BORING + COMPOSITE + EMAIL) ═══
-      - name: Deploy Paper-Tracking Jobs
-        if: github.event_name == 'push' || inputs.action == 'deploy-only'
-        run: |
-          IMAGE=$(gcloud run services describe stock-screener \
-            --region=europe-west1 \
-            --format='value(spec.template.spec.containers[0].image)')
-          # BORING strategy runner (top-10 SP500 Pio≥7 by ps_ratio, 26w hold)
-          gcloud run jobs deploy boring-runner \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=1Gi \
-            --task-timeout=900s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="paper_strategy_runner.py"
-            
-          # COMPOSITE strategy runner (top-10 SP500 by composite, weekly rotation)
-          gcloud run jobs deploy composite-runner \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=1Gi \
-            --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="paper_strategy_runner_composite.py"
+================================================================
+PATCH 1 — Add deploy block for paper-all-runner
+================================================================
 
-          # MOMENTUM strategy runner (top-10 SP500 by composite_momentum, weekly rotation)
-          gcloud run jobs deploy momentum-runner \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=1Gi \
-            --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="paper_strategy_runner_momentum.py"
- 
-          # FALLEN ANGEL strategy runner (top-10 SP500 passing FA gate, weekly rotation)
-          gcloud run jobs deploy fa-runner \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=1Gi \
-            --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="paper_strategy_runner_fa.py"
+Location: Inside the "Deploy Paper-Tracking Jobs" step, AFTER the
+fa-runner block. Same indentation as other gcloud blocks in that step.
 
-          # Daily price monitor (refreshes display prices Mon-Fri 22:00 CET)
-          gcloud run jobs deploy monitor-prices \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=512Mi \
-            --task-timeout=300s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="monitor_prices.py"
+INSERT this block after the `fa-runner` deploy block:
 
-          # ALL paper runners orchestrator (BORING + COMPOSITE + MOMENTUM + FA)
-          # — single Cloud Scheduler target that fans out to all 4 sequentially
+          # Orchestrator — runs all 4 paper-tracking strategies sequentially
+          # in one Cloud Run Job execution. Used by Cloud Scheduler so all
+          # runners fire at the same wall-clock minute (eliminates SPY
+          # snapshot drift between strategies).
           gcloud run jobs deploy paper-all-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
@@ -125,96 +29,86 @@ jobs:
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
             --args="paper_runners_all.py"
-            
-          # Combined weekly email (BORING + COMPOSITE)
-          # NOTE: SMTP_USER/SMTP_PASS/EMAIL_TO must exist as GitHub secrets,
-          # otherwise the email job will fall through to print-only mode.
-          gcloud run jobs deploy paper-email \
-            --image="$IMAGE" \
-            --region=europe-west1 \
-            --memory=512Mi \
-            --task-timeout=300s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},EMAIL_TO=${{ secrets.EMAIL_TO }}" \
-            --command="python3" \
-            --args="paper_weekly_email.py"
-            
-      - name: Deploy Backtest Jobs
-        if: github.event_name == 'push' || inputs.action == 'deploy-only'
-        run: |
-          cd backend
-          gcloud run jobs deploy backtest-sp500 \
-            --source=. \
-            --region=europe-west1 \
-            --memory=2Gi \
-            --task-timeout=86400s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="backtest_full.py,--region,sp500,--from,2022-01-01,--to,2025-12-31"
-          gcloud run jobs deploy backtest-v8 \
-            --source=. \
-            --region=europe-west1 \
-            --memory=2Gi \
-            --task-timeout=86400s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
-            --command="python3" \
-            --args="backtest_v8.py"
-      # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
-      - name: Run SP500 Scan
-        if: inputs.action == 'run-sp500'
-        run: |
-          gcloud run jobs execute screener-sp500 --region=europe-west1
-          echo "SP500 scan started. Check logs: gcloud run jobs executions list --job=screener-sp500 --region=europe-west1"
-      - name: Run NASDAQ Scan
-        if: inputs.action == 'run-nasdaq'
-        run: |
-          gcloud run jobs execute screener-nasdaq --region=europe-west1
-          echo "NASDAQ scan started. Check logs: gcloud run jobs executions list --job=screener-nasdaq --region=europe-west1"
-      - name: Run Global Scan
-        if: inputs.action == 'run-global'
-        run: |
-          gcloud run jobs execute screener-global --region=europe-west1
-          echo "Global scan started. Check logs: gcloud run jobs executions list --job=screener-global --region=europe-west1"
-      # ═══ MANUAL: EXECUTE PAPER-TRACKING JOBS ═══
-      - name: Run BORING Strategy Runner
-        if: inputs.action == 'run-boring'
-        run: |
-          gcloud run jobs execute boring-runner --region=europe-west1
-          echo "BORING runner started. Check logs: gcloud run jobs executions list --job=boring-runner --region=europe-west1"
-      - name: Run COMPOSITE Strategy Runner
-        if: inputs.action == 'run-composite'
-        run: |
-          gcloud run jobs execute composite-runner --region=europe-west1
-          echo "COMPOSITE runner started. Check logs: gcloud run jobs executions list --job=composite-runner --region=europe-west1"
-      - name: Run MOMENTUM Strategy Runner
-        if: inputs.action == 'run-momentum'
-        run: |
-          gcloud run jobs execute momentum-runner --region=europe-west1
-          echo "MOMENTUM runner started. Check logs: gcloud run jobs executions list --job=momentum-runner --region=europe-west1"
 
-      - name: Run FALLEN ANGEL Strategy Runner
-        if: inputs.action == 'run-fa'
-        run: |
-          gcloud run jobs execute fa-runner --region=europe-west1
-          echo "FA runner started. Check logs: gcloud run jobs executions list --job=fa-runner --region=europe-west1"
-      - name: Run Paper-Tracking Email
-        if: inputs.action == 'run-paper-email'
-        run: |
-          gcloud run jobs execute paper-email --region=europe-west1
-          echo "Paper email started. Check logs: gcloud run jobs executions list --job=paper-email --region=europe-west1"
 
-      - name: Run Daily Price Monitor
-        if: inputs.action == 'run-monitor'
+================================================================
+PATCH 2 — Add 'run-all' to workflow_dispatch options
+================================================================
+
+Find the `inputs.action.options` list in `on.workflow_dispatch:`.
+It currently has options like deploy-only, run-sp500, run-boring,
+run-composite, run-momentum, run-fa, run-monitor, etc.
+
+INSERT this option (anywhere in the list, but typically grouped with
+the other run-* options):
+
+          - run-all
+
+
+================================================================
+PATCH 3 — Add manual execute step
+================================================================
+
+Location: Inside the jobs steps list, alongside the other "Run X"
+steps (e.g. "Run BORING Paper Strategy", "Run COMPOSITE Paper Strategy",
+"Run MOMENTUM Paper Strategy", "Run FA Paper Strategy").
+
+INSERT this step (6-space indent on `- name:`, matching existing siblings):
+
+      - name: Run All Paper Runners (Orchestrator)
+        if: inputs.action == 'run-all'
         run: |
-          gcloud run jobs execute monitor-prices --region=europe-west1
-          echo "Monitor started. Check logs: gcloud run jobs executions list --job=monitor-prices --region=europe-west1"
-      # ═══ MANUAL: EXECUTE BACKTESTS ═══
-      - name: Run Backtest SP500
-        if: inputs.action == 'run-backtest-sp500'
-        run: |
-          gcloud run jobs execute backtest-sp500 --region=europe-west1
-          echo "Backtest SP500 started (~3-6 hours). Monitor: gcloud run jobs executions list --job=backtest-sp500 --region=europe-west1"
-      - name: Run Backtest V8
-        if: inputs.action == 'run-backtest-v8'
-        run: |
-          gcloud run jobs execute backtest-v8 --region=europe-west1
-          echo "Backtest V8 started. Monitor: gcloud run jobs executions list --job=backtest-v8 --region=europe-west1"
+          gcloud run jobs execute paper-all-runner --region=europe-west1 --wait
+          echo "All-runner finished. Check logs: gcloud run jobs executions list --job=paper-all-runner --region=europe-west1"
+
+
+================================================================
+SANITY CHECK BEFORE COMMITTING
+================================================================
+
+After applying all 3 patches, the file should:
+
+1. Have 6 deploy blocks for runners total in "Deploy Paper-Tracking Jobs":
+   boring-runner, composite-runner, momentum-runner, fa-runner,
+   paper-all-runner (NEW), monitor-prices
+
+2. Have the `run-all` option visible in the GitHub Actions
+   "Run workflow" dropdown after push
+
+3. Have a "Run All Paper Runners (Orchestrator)" step that fires only
+   when inputs.action == 'run-all'
+
+================================================================
+WHY --wait IN THE EXECUTE STEP
+================================================================
+
+Other runners use fire-and-forget (no --wait). For paper-all-runner
+I included --wait so the GitHub Actions step blocks until the
+orchestrator finishes. That way:
+  - The Actions log shows pass/fail directly
+  - You don't have to dig into Cloud Run logs to confirm all 4 ran
+  - Total step duration ≈ 10-30 minutes (acceptable for manual triggers)
+
+If you prefer fire-and-forget like the others, drop `--wait` from
+the gcloud command.
+
+================================================================
+NEXT STEP — Cloud Scheduler (NOT in this patch)
+================================================================
+
+After this YAML lands, manually create a Cloud Scheduler entry:
+
+  Name:        paper-all-friday
+  Frequency:   30 22 * * 5      (Friday 22:30 CET, after US close)
+  Timezone:    Europe/Amsterdam
+  Target:      HTTP POST to:
+    https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/paper-all-runner:run
+  Auth:        OIDC token, same SA as other paper schedulers
+
+Once that's in place, all 4 strategies fire together every Friday and
+the SPY-snapshot-drift problem from earlier disappears.
+
+The individual run-boring / run-composite / run-momentum / run-fa
+manual triggers stay (useful for one-off debugging) but Cloud Scheduler
+should ONLY hit paper-all-runner going forward — disable any other
+paper-* schedulers to prevent double-firing.
