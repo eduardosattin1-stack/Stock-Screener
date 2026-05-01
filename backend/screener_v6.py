@@ -408,6 +408,7 @@ class Stock:
     fcf_cagr_3y: float = 0.0
     # Valuation ratios
     p_fcf: float = 0.0               # price / FCF per share
+    p_s: float = 0.0                 # price / sales per share
     earnings_yield: float = 0.0      # 1/PE; eps / price
     # Forward intrinsic from BVPS projection (already computed in get_value)
     intrinsic_bvps: float = 0.0
@@ -1326,6 +1327,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     v["fcf_yoy"] = 0.0
     v["fcf_cagr_3y"] = 0.0
     v["p_fcf"] = 0.0
+    v["p_s"] = 0.0
     v["earnings_yield"] = 0.0
 
     # Net margin (most-recent year)
@@ -1338,6 +1340,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             v["net_margin"] = ni_latest / rev_latest
         if local_price > 0 and eps_latest > 0:
             v["earnings_yield"] = eps_latest / local_price
+        # P/S — price / sales per share (Apr 2026)
+        shares_latest = float(latest_inc.get("weightedAverageShsOutDil") or 0)
+        if shares_latest > 0 and rev_latest > 0 and local_price > 0:
+            v["p_s"] = local_price / (rev_latest / shares_latest)
 
     # Revenue and EPS growth — TTM YoY (most-recent two annual rows)
     if inc and len(inc) >= 2:
@@ -3219,6 +3225,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.fcf_yoy = value.get("fcf_yoy", 0.0)
         s.fcf_cagr_3y = value.get("fcf_cagr_3y", 0.0)
         s.p_fcf = value.get("p_fcf", 0.0)
+        s.p_s = value.get("p_s", 0.0)
         s.earnings_yield = value.get("earnings_yield", 0.0)
         s.intrinsic_bvps = value.get("intrinsic_bvps", 0.0)
         s.bvps_recent_cagr = value.get("bvps_recent_cagr", 0.0)
