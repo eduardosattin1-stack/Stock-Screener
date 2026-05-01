@@ -6,7 +6,20 @@ import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp
 const GCS_SCANS = "/api/gcs/scans";
 const GCS_PORTFOLIO = "/api/gcs/portfolio";
 
-interface Position { symbol:string; entry_price:number; entry_date:string; shares:number; notes:string; bucket?:"midcap"|"sp500"|null; entry_composite?:number; entry_signal?:string; peak_price?:number; last_composite?:number; last_signal?:string; }
+interface Position {
+  symbol:string; entry_price:number; entry_date:string; shares:number; notes:string;
+  bucket?:"midcap"|"sp500"|null;
+  entry_composite?:number; entry_signal?:string;
+  last_composite?:number; last_signal?:string;
+  // Written by monitor_prices.py daily refresh:
+  last_price?:number;
+  last_updated?:string;
+  pnl_pct?:number;
+  peak_price?:number;
+  drawdown_from_peak_pct?:number;
+  spy_price_at_entry?:number;
+  alpha_vs_spy_pct?:number;
+}
 interface MonitorAction { symbol:string; action:string; urgency:string; current_price:number; entry_price:number; pnl_pct:number; entry_composite:number; current_composite:number; comp_change_pct:number; entry_signal:string; current_signal:string; days_held:number; catalyst_score:number; catalyst_flags:string[]; quality_score:number; bull_score:number; reasons:string[]; }
 interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; }
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
@@ -196,7 +209,7 @@ export default function Portfolio(){
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
               <thead><tr>
-                {["Symbol","Action","Entry","Current","P&L","P&L %","Shares","Value","Signal","Composite",""].map((h,i)=>(
+                {["Symbol","Action","Entry","Current","P&L","P&L %","Shares","Value","Signal","Alpha / DD",""].map((h,i)=>(
                   <th key={h||i} style={{...thStyle,textAlign:i===0?"left":i===10?"center":"right"}}>{h}</th>
                 ))}
               </tr></thead>
@@ -253,27 +266,48 @@ export default function Portfolio(){
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#6b7280",fontSize:11}}>{p.shares}</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#1a1a1a",fontSize:11}}>{fmtMoney(val)}</td>
                         <td style={{textAlign:"right",padding:"10px 12px"}}>{signal!=="—"?<span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:sigStyle.color,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{signal}</span>:<span style={{color:"#9ca3af",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
-                        {/* ── Track C.2 FIX: composite column redesigned ──
-                            Primary line: `entry 0.81 → now 0.91` — entry muted, arrow colored vs entry, now bold.
-                            Secondary line (only when mon/scan diverge ≥0.05): `mon 0.91 · scn 0.84` in 8px mono.
-                            When no divergence: tiny MONITOR/SCAN provenance label so the value's source is always visible.
-                            Tooltip: full source+scan timestamp details. */}
+                        {/* ── ALPHA / DD column ──────────────────────────────────────────
+                            Replaces COMPOSITE column. Composite remains accessible via:
+                              (a) hover tooltip on this cell
+                              (b) the expand-row drawer (click chevron)
+                            Primary: alpha_vs_spy_pct — "did this beat just buying SPY since I bought it?"
+                            Secondary: drawdown_from_peak_pct — color-coded warning indicator.
+                            Both fields written daily by monitor_prices.py. */}
                         <td style={{padding:"10px 12px",textAlign:"right",verticalAlign:"top"}}
-                            title={(()=>{const parts=[];if(monComp>0)parts.push(`monitor ${monComp.toFixed(2)} (21:00 CET)`);if(scanComp>0)parts.push(`scan ${scanComp.toFixed(2)}${scanDate!=="—"?` (${scanDate})`:""}`);if(p.entry_composite!=null)parts.push(`entry ${p.entry_composite.toFixed(2)}`);return parts.join(" · ");})()}>
-                          {nowComp>0?(
+                            title={(()=>{const parts=[];if(p.alpha_vs_spy_pct!=null)parts.push(`alpha ${p.alpha_vs_spy_pct>=0?"+":""}${p.alpha_vs_spy_pct.toFixed(2)}pp vs SPY since ${p.entry_date}`);if(p.peak_price!=null)parts.push(`peak $${p.peak_price.toFixed(2)}`);if(p.spy_price_at_entry!=null)parts.push(`SPY at entry $${p.spy_price_at_entry.toFixed(2)}`);if(monComp>0)parts.push(`composite mon ${monComp.toFixed(2)}`);if(scanComp>0)parts.push(`composite scn ${scanComp.toFixed(2)}`);if(p.entry_composite!=null)parts.push(`composite entry ${p.entry_composite.toFixed(2)}`);return parts.join(" · ");})()}>
+                          {(p.alpha_vs_spy_pct!=null||p.drawdown_from_peak_pct!=null)?(
                             <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:2}}>
-                              <div style={{display:"flex",alignItems:"baseline",justifyContent:"flex-end",gap:5}}>
-                                {p.entry_composite!=null&&(<>
-                                  <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>entry {p.entry_composite.toFixed(2)}</span>
-                                  <span style={{fontSize:9,color:nowComp>=p.entry_composite?"#10b981":"#ef4444",fontFamily:"var(--font-mono)"}}>{nowComp>p.entry_composite?"→↑":"→↓"}</span>
-                                </>)}
-                                <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:nowComp>0.6?"#2d7a4f":nowComp>0.4?"#1a1a1a":"#ef4444",fontWeight:600}}>{nowComp.toFixed(2)}</span>
-                              </div>
-                              {compDiverged?(
-                                <div style={{fontFamily:"var(--font-mono)",fontSize:8,color:"#9ca3af",letterSpacing:"0.02em"}}>mon {monComp.toFixed(2)} · scn {scanComp.toFixed(2)}</div>
-                              ):compSource?(
-                                <div style={{fontFamily:"var(--font-mono)",fontSize:7,color:"#c7cdd4",letterSpacing:"0.1em",textTransform:"uppercase"}}>{compSource}</div>
-                              ):null}
+                              {/* Primary: alpha vs SPY */}
+                              {p.alpha_vs_spy_pct!=null?(
+                                <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>ALPHA</span>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:12,fontWeight:700,color:p.alpha_vs_spy_pct>=0?"#2d7a4f":"#ef4444"}}>
+                                    {p.alpha_vs_spy_pct>=0?"+":""}{p.alpha_vs_spy_pct.toFixed(2)}pp
+                                  </span>
+                                </div>
+                              ):(
+                                <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>ALPHA</span>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"#9ca3af"}}>—</span>
+                                </div>
+                              )}
+                              {/* Secondary: drawdown from peak. Colored thresholds:
+                                  ≥-3%   muted gray (normal noise)
+                                  -3% to -10%  amber (watching)
+                                  -10% to -25% orange (yellow alert)
+                                  <-25% red (mental stop hit) */}
+                              {p.drawdown_from_peak_pct!=null?(()=>{
+                                const dd=p.drawdown_from_peak_pct as number;
+                                const ddColor = dd<=-25?"#ef4444":dd<=-10?"#ea580c":dd<=-3?"#d97706":"#9ca3af";
+                                return (
+                                  <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>DD</span>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:ddColor,fontWeight:dd<=-10?700:500}}>
+                                      {dd.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                );
+                              })():null}
                             </div>
                           ):(
                             <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"#9ca3af"}}>—</span>
@@ -372,7 +406,7 @@ export default function Portfolio(){
       )}
 
       <div style={{textAlign:"center",marginTop:12,fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>
-        Positions synced to cloud · Monitor updates prices daily · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
+        Positions synced to cloud · Monitor updates prices + alpha vs SPY daily · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
       </div>
 
       {showAddModal&&<AddPositionModal onClose={()=>setShowAddModal(false)} onAdded={async()=>{setShowAddModal(false);await refresh();}}/>}
