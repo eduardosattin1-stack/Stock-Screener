@@ -3264,8 +3264,26 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         return (s.bull_score / 10) + s.proximity_score + s.upside_score + s.quality_score
 
     pass1.sort(key=cheap_score, reverse=True)
-    enrich_pool = pass1[:ENRICH_TOP_N]
-    log.info(f"Pass 2: Enriching top {len(enrich_pool)} stocks with transcripts + 13F + congressional")
+
+    # Pass 2 enrichment cohort: top-30 by cheap composite UNION stocks with
+    # intrinsic_upside ≥ 20%. The top-30 catches momentum leaders that may
+    # have compressed upside; the upside floor catches deep-value names that
+    # cheap_score under-ranks. Dedup preserves order (top-30 first).
+    UPSIDE_FLOOR_PCT = 20.0
+    top_n_pool = pass1[:ENRICH_TOP_N]
+    top_n_syms = {s.symbol for s in top_n_pool}
+    upside_extra = [
+        s for s in pass1[ENRICH_TOP_N:]
+        if s.intrinsic_upside is not None
+        and s.intrinsic_upside >= UPSIDE_FLOOR_PCT
+        and s.symbol not in top_n_syms
+    ]
+    enrich_pool = top_n_pool + upside_extra
+    log.info(
+        f"Pass 2 cohort: top-{ENRICH_TOP_N} ({len(top_n_pool)}) "
+        f"+ upside≥{UPSIDE_FLOOR_PCT:.0f}% extras ({len(upside_extra)}) "
+        f"= {len(enrich_pool)} stocks"
+    )
 
     enriched_results = []
     for s in enrich_pool:
@@ -3361,9 +3379,18 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # ─── Tradier options enrichment (US stocks ≥ $1B mkt cap) ───
         if TRADIER_AVAILABLE and tradier_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
             try:
+                # tradier_options.enrich_stock signature is
+                # (symbol, composite, hit_prob, earnings_date=None, ...).
+                # Convert days_to_earnings (int) → ISO date string for that arg.
+                # -1 means "no upcoming earnings in next 90d" → pass None.
+                _earnings_date = None
+                if s.days_to_earnings is not None and s.days_to_earnings >= 0:
+                    _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
                 tradier_data = tradier_enrich_stock(
-                    s.symbol, s.price, s.composite,
-                    days_to_earnings=s.days_to_earnings,
+                    s.symbol,
+                    s.composite,
+                    s.hit_prob,
+                    earnings_date=_earnings_date,
                 )
                 if tradier_data:
                     s.tradier_iv_current = tradier_data.get("iv_current")
@@ -3389,7 +3416,8 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     # composite-band signal). They appear in the bottom of the JSON table for
     # context but with v8 factors null. This matches the user's request to
     # show enriched stocks at top; non-enriched still display.
-    non_enriched = pass1[ENRICH_TOP_N:]
+    enriched_syms = {s.symbol for s in enrich_pool}
+    non_enriched = [s for s in pass1 if s.symbol not in enriched_syms]
     for s in non_enriched:
         raw = s._raw
         # Pass-1 only has cheap data; pass None for pass-2-only inputs
