@@ -1852,49 +1852,57 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
             log.warning("  Earnings calendar bulk fetch returned no usable data; "
                         "relying on per-symbol fallback")
 
-    sym_events = EARNINGS_CAL_CACHE.get(sym, [])
+sym_events = EARNINGS_CAL_CACHE.get(sym, [])
+    days_until = None
     if sym_events:
         e = sym_events[0]
         report_date = e.get("date", "")
         try:
             days_until = (datetime.strptime(report_date, "%Y-%m-%d").date() - today_date).days
-        except:
-            days_until = 999
-        result["days_to_earnings"] = days_until
-    else:
-        # Per-symbol fallback: bulk calendar may have missed this stock due to
-        # pagination, FMP indexing lag, or a transient error on the first
-        # cache-populate call. Hit the cheap per-symbol endpoint to verify.
-        # Only fires when bulk gave us nothing for this sym — extra cost is
-        # bounded at ~one call per missing-from-cache stock per scan.
+        except Exception:
+            days_until = None
+
+    # May 2026 — the bulk earnings-calendar endpoint serves stale dates for
+    # some symbols. Repro: CVS bulk returned 2026-06-11, per-symbol returned
+    # 2026-05-06 (FMP's lastUpdated confirms 05-06 is current). When bulk
+    # says earnings is >14 days out, verify with per-symbol — for stocks
+    # actually reporting in <2 weeks, the bulk's stale date hides the catalyst
+    # entirely. The 14-day threshold matches the "earnings in N days" UI gate.
+    needs_verification = (
+        days_until is None or days_until > 14
+    )
+    if needs_verification:
+        sym_cal = None
         try:
-            sym_cal = fmp("earnings-calendar", {"symbol": sym, "from": today_str,
-                                                "to": (today + timedelta(days=90)).strftime("%Y-%m-%d")})
+            sym_cal = fmp("earnings", {"symbol": sym, "limit": 4})
         except Exception:
             sym_cal = None
-        # Fall back further to earnings-company if the symbol-filtered calendar
-        # also returns nothing. Per MCP testing, earnings-company has CVS even
-        # when earnings-calendar bulk doesn't.
-        if not sym_cal:
-            try:
-                sym_cal = fmp("earnings", {"symbol": sym, "limit": 4})
-            except Exception:
-                sym_cal = None
         if sym_cal and isinstance(sym_cal, list):
             future_events = sorted(
                 [ev for ev in sym_cal if (ev.get("date") or "") >= today_str],
                 key=lambda ev: ev.get("date", ""),
             )
             if future_events:
-                e = future_events[0]
-                report_date = e.get("date", "")
+                e_auth = future_events[0]
+                report_date_auth = e_auth.get("date", "")
                 try:
-                    days_until = (datetime.strptime(report_date, "%Y-%m-%d").date() - today_date).days
-                except:
-                    days_until = 999
-                result["days_to_earnings"] = days_until
-                # Backfill the cache so later stocks in the same scan benefit
-                EARNINGS_CAL_CACHE.setdefault(sym, []).append(e)
+                    days_until_auth = (datetime.strptime(report_date_auth, "%Y-%m-%d").date() - today_date).days
+                except Exception:
+                    days_until_auth = None
+                # Use the per-symbol date when it's sooner than the bulk's date
+                # (or when bulk had nothing). Never let a stale far-out date
+                # override an imminent earnings event.
+                if days_until_auth is not None and (
+                    days_until is None or days_until_auth < days_until
+                ):
+                    days_until = days_until_auth
+                    # Backfill the cache with the authoritative event for any
+                    # later code paths in the same scan that read it.
+                    EARNINGS_CAL_CACHE[sym] = [e_auth]
+
+    if days_until is not None:
+        result["days_to_earnings"] = days_until
+      
         if 0 <= days_until <= 14:
             # Check beat history from analyst data or fresh fetch
             eps_beats = (analyst or {}).get("eps_beats", 0)
