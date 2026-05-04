@@ -1463,9 +1463,9 @@ function TrackRecordTable({s}:{s:StockData}){
     return (last - first) / first;
   };
 
-  // Median helper for derived series
-  const median = (arr:(number|null)[]) => {
-    const valid = arr.filter(v=>v!=null) as number[];
+ // Median helper for derived series
+  const median = (arr:(number|null|undefined)[]) => {
+    const valid = arr.filter((v):v is number=>v!=null);
     if(!valid.length) return null;
     return [...valid].sort((a,b)=>a-b)[Math.floor(valid.length/2)];
   };
