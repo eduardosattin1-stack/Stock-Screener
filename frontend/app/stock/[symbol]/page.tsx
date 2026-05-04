@@ -1433,9 +1433,9 @@ function TrackRecordTable({s}:{s:StockData}){
 
   const rows = hist.rows;
   const c = s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
-  const fmtN = (n:number, d=2) => n==null?"—":n.toFixed(d);
-  const fmtP = (n?:number, d=1) => n==null?"—":(n*100).toFixed(d)+"%";
-  const fmtBn = (n:number) => n>=1000?`${(n/1000).toFixed(1)}B`:`${n.toFixed(0)}M`;
+  const fmtN = (n:number|null|undefined, d=2) => n==null?"—":n.toFixed(d);
+  const fmtP = (n:number|null|undefined, d=1) => n==null?"—":(n*100).toFixed(d)+"%";
+  const fmtBn = (n:number|null|undefined) => n==null?"—":(n>=1000?`${(n/1000).toFixed(1)}B`:`${n.toFixed(0)}M`);
 
   // Compute per-year derivatives
   const derived = rows.map((r,i)=>{
@@ -1472,8 +1472,8 @@ function TrackRecordTable({s}:{s:StockData}){
 
   type RowDef = {
     label:string;
-    fn:(r:any)=>number|null;
-    format:(v:number|null)=>string;
+    fn:(r:any)=>number|null|undefined;
+    format:(v:number|null|undefined)=>string;
     showCagr?:boolean;
     showCum?:boolean;
     showMedian?:boolean;
