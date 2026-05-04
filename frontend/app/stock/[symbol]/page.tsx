@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield } from "lucide-react";
 
@@ -70,7 +70,26 @@ interface StockData{
   bvps_consistency?:number;
   bvps_upside?:number;
   intrinsic_upside?:number;
-  reversal_score?:number;
+reversal_score?:number;
+  // Buffett 5-year valuation (May 2026)
+  buffett_method?:string;          // "bvps_roe" | "eps_cagr" | "fallback_analyst" | ""
+  buffett_g_assumed?:number;
+  buffett_roe_assumed?:number;
+  buffett_pe_median?:number;
+  buffett_eps_5y?:number;
+  buffett_future_price?:number;
+  buffett_fair_value?:number;
+  buffett_evaluated?:boolean;
+  buffett_fallback_reason?:string;
+  buffett_history?:{
+    rows:Array<{
+      year:string; bvps:number; eps:number; dps:number;
+      shares_mm:number; revenue_mm:number; net_income_mm:number;
+      equity_mm:number; pe:number|null;
+    }>;
+    medians?:{roe?:number; payout?:number; pe?:number};
+    cagrs?:{bvps_5y?:number; eps_5y?:number};
+  };
   factors_v8?:FactorsV8;
   composite_v7?:number;
   composite_momentum?:number;
@@ -1007,7 +1026,7 @@ function TargetBar({price,target,bvps,combined,currency}:{price:number;target:nu
         {/* BVPS projection (5-year forward) */}
         {bvps>0&&<div style={{position:"absolute",left:`${pos(bvps)}%`,top:13,width:8,height:8,borderRadius:2,background:T.blue,transform:"translateX(-4px)"}}>
           <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(bvps)}</div>
-          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>BVPS-5y</div>
+          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Fair Value</div>
         </div>}
       </div>
 
@@ -1023,7 +1042,7 @@ function TargetBar({price,target,bvps,combined,currency}:{price:number;target:nu
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:6,height:6,borderRadius:2,background:T.blue}}/>
-          <strong>BVPS-5y:</strong> book value × (1+g)^5, g = 3yr CAGR clipped to [2%,15%]
+          <strong>Fair Value:</strong> Buffett 5y future price discounted at 10% hurdle
         </div>
       </div>
     </div>
@@ -1053,33 +1072,76 @@ function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>
   );
 }
 
-// ── BvpsBlock: the 3-row visual summary of book-value compounding.
-// Sits inside the Quality & Value card, above TargetBar. Surfaces the
-// pattern that drives the Value factor (current BVPS, 5-year forward
-// projection, recent CAGR, consistency).
-function BvpsBlock({s}:{s:StockData}){
-  const c=s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
-  const bvpsRecent=s.bvps_recent_cagr??0;
-  const proj=s.intrinsic_bvps??0;
-  // Approximate current BVPS from projection: bvps_now = proj / (1+g)^5
-  const g=Math.max(0.02,Math.min(bvpsRecent,0.15));
-  const bvpsNow=proj>0?(proj/Math.pow(1+g,5)):0;
-  const totalGrowth=bvpsNow>0?((proj-bvpsNow)/bvpsNow)*100:0;
-  const cons=s.bvps_consistency??0;
-  const consColor=cons>=0.85?T.green:cons>=0.6?T.amber:T.red;
-  if(proj<=0)return null;
-  return(
+// ── BuffettBlock: 5-year projection summary (replaces BvpsBlock May 2026).
+// Shows the method used (BVPS×ROE vs direct EPS CAGR vs analyst fallback),
+// the assumptions, future price + fair value, and a flag when gate failed.
+function BuffettBlock({s}:{s:StockData}){
+  const c = s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
+  const evaluated = s.buffett_evaluated === true;
+  const method = s.buffett_method || "";
+  const isFallback = method === "fallback_analyst";
+
+  if(!evaluated && !isFallback){
+    // Neither Buffett nor analyst worked — render warning placeholder
+    return (
+      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid #fde68a`,marginTop:10}}>
+        <div style={{fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:4}}>VALUATION UNAVAILABLE</div>
+        <div style={{fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.5}}>
+          {s.buffett_fallback_reason || "Insufficient history for projection, no analyst target."}
+        </div>
+      </div>
+    );
+  }
+
+  if(isFallback){
+    // Analyst fallback — yellow flag, simpler block
+    return (
+      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid #fde68a`,marginTop:10}}>
+        <div style={{fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>⚠ ANALYST-ONLY FALLBACK</div>
+        <div style={{fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.5,marginBottom:6}}>
+          Buffett 5y projection unavailable: <span style={{color:T.amber,fontWeight:600}}>{s.buffett_fallback_reason}</span>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 14px",fontSize:11,fontFamily:T.mono}}>
+          <span style={{color:T.textMuted}}>Analyst target</span>
+          <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{c}{s.target?.toFixed(2) || "—"}</span>
+          <span style={{color:T.textMuted}}>Upside</span>
+          <span style={{textAlign:"right",fontWeight:600,color:s.upside>0?T.green:T.red}}>{s.upside>=0?"+":""}{s.upside?.toFixed(0) || 0}%</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Full Buffett projection
+  const methodLabel = method === "bvps_roe" ? "Buffett (BVPS × ROE)" : "Direct EPS CAGR";
+  const methodColor = method === "bvps_roe" ? T.green : T.blue;
+  const fairValue = s.buffett_fair_value || 0;
+  const futurePrice = s.buffett_future_price || 0;
+  const upside = s.intrinsic_upside ?? 0;
+  const upsideColor = upside>15?T.green : upside>0?"#5a9e7a" : upside>-15?T.amber : T.red;
+
+  return (
     <div style={{padding:"10px 12px",borderRadius:6,background:"#fafbfc",border:`1px solid ${T.divider}`,marginTop:10}}>
-      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>BOOK VALUE PER SHARE</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
+        <span style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>BUFFETT 5Y VALUATION</span>
+        <span style={{fontSize:9,color:methodColor,fontFamily:T.mono,fontWeight:600}}>{methodLabel}</span>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 14px",fontSize:11,fontFamily:T.mono}}>
-        <span style={{color:T.textMuted}}>BVPS now</span>
-        <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{c}{bvpsNow.toFixed(2)}</span>
-        <span style={{color:T.textMuted}}>BVPS 5y proj.</span>
-        <span style={{textAlign:"right",fontWeight:600,color:T.green}}>{c}{proj.toFixed(2)} <span style={{fontSize:9,color:T.textLight,fontWeight:400}}>(+{totalGrowth.toFixed(0)}%)</span></span>
-        <span style={{color:T.textMuted}}>3y CAGR</span>
-        <span style={{textAlign:"right",fontWeight:600,color:bvpsRecent>0.10?T.green:bvpsRecent>0.05?T.amber:T.textMuted}}>{(bvpsRecent*100).toFixed(1)}%</span>
-        <span style={{color:T.textMuted}}>Consistency</span>
-        <span style={{textAlign:"right",fontWeight:600,color:consColor}}>{(cons*100).toFixed(0)}% YoY+</span>
+        <span style={{color:T.textMuted}}>Growth assumption</span>
+        <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{((s.buffett_g_assumed||0)*100).toFixed(1)}%</span>
+        {method === "bvps_roe" && (<>
+          <span style={{color:T.textMuted}}>ROE (median 5y)</span>
+          <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{((s.buffett_roe_assumed||0)*100).toFixed(1)}%</span>
+        </>)}
+        <span style={{color:T.textMuted}}>P/E (median 5y)</span>
+        <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{(s.buffett_pe_median||0).toFixed(1)}x</span>
+        <span style={{color:T.textMuted}}>EPS in 5y</span>
+        <span style={{textAlign:"right",fontWeight:600,color:T.text}}>{c}{(s.buffett_eps_5y||0).toFixed(2)}</span>
+        <span style={{color:T.textMuted}}>Future price (5y)</span>
+        <span style={{textAlign:"right",fontWeight:700,color:T.green}}>{c}{futurePrice.toFixed(2)}</span>
+        <span style={{color:T.textMuted}}>Fair value today (10% hurdle)</span>
+        <span style={{textAlign:"right",fontWeight:700,color:T.green}}>{c}{fairValue.toFixed(2)}</span>
+        <span style={{color:T.textMuted}}>Margin of safety</span>
+        <span style={{textAlign:"right",fontWeight:700,color:upsideColor}}>{upside>=0?"+":""}{upside.toFixed(1)}%</span>
       </div>
     </div>
   );
@@ -1353,6 +1415,158 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
+// ── TrackRecordTable: 10-year financial history per the Buffettology
+// methodology spreadsheet. All data sourced from s.buffett_history (no
+// extra API calls — populated by screener_v6 at scan time).
+function TrackRecordTable({s}:{s:StockData}){
+  const hist = s.buffett_history;
+  if(!hist?.rows?.length){
+    return (
+      <Card>
+        <SH title="Track Record" icon={<BarChart2 size={12}/>}/>
+        <div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>
+          No track record data available for this stock.
+        </div>
+      </Card>
+    );
+  }
+
+  const rows = hist.rows;
+  const c = s.currency==="EUR"?"€":s.currency==="GBP"?"£":"$";
+  const fmtN = (n:number, d=2) => n==null?"—":n.toFixed(d);
+  const fmtP = (n?:number, d=1) => n==null?"—":(n*100).toFixed(d)+"%";
+  const fmtBn = (n:number) => n>=1000?`${(n/1000).toFixed(1)}B`:`${n.toFixed(0)}M`;
+
+  // Compute per-year derivatives
+  const derived = rows.map((r,i)=>{
+    const prev = i>0 ? rows[i-1] : null;
+    const bookYieldShare = prev && prev.bvps>0 ? r.eps/prev.bvps : null;
+    const roe = r.equity_mm>0 ? r.net_income_mm/r.equity_mm : null;
+    const payout = r.eps>0 && r.dps>=0 ? r.dps/r.eps : null;
+    const retention = payout!=null ? 1-payout : null;
+    return {...r, bookYieldShare, roe, payout, retention};
+  });
+
+  // CAGR helper
+  const cagr = (key:string) => {
+    if(rows.length<2) return null;
+    const first = (rows[0] as any)[key];
+    const last = (rows[rows.length-1] as any)[key];
+    if(!first || !last || first<=0 || last<=0) return null;
+    return Math.pow(last/first, 1/(rows.length-1)) - 1;
+  };
+  const cumGrowth = (key:string) => {
+    if(rows.length<2) return null;
+    const first = (rows[0] as any)[key];
+    const last = (rows[rows.length-1] as any)[key];
+    if(!first || !last || first<=0) return null;
+    return (last - first) / first;
+  };
+
+  // Median helper for derived series
+  const median = (arr:(number|null)[]) => {
+    const valid = arr.filter(v=>v!=null) as number[];
+    if(!valid.length) return null;
+    return [...valid].sort((a,b)=>a-b)[Math.floor(valid.length/2)];
+  };
+
+  type RowDef = {
+    label:string;
+    fn:(r:any)=>number|null;
+    format:(v:number|null)=>string;
+    showCagr?:boolean;
+    showCum?:boolean;
+    showMedian?:boolean;
+    cagrKey?:string;
+  };
+  const sections:{title:string; rows:RowDef[]}[] = [
+    {title:"INPUT DATA", rows:[
+      {label:"Book Value per Share (BV)", fn:r=>r.bvps, format:v=>v==null?"—":c+fmtN(v), showCagr:true, showCum:true, cagrKey:"bvps"},
+      {label:"Earnings per Share (EPS)", fn:r=>r.eps, format:v=>v==null?"—":c+fmtN(v), showCagr:true, showCum:true, cagrKey:"eps"},
+      {label:"Dividends per Share", fn:r=>r.dps, format:v=>v==null?"—":c+fmtN(v), showCagr:true, showCum:true, cagrKey:"dps"},
+      {label:"Shares Out (Millions)", fn:r=>r.shares_mm, format:v=>v==null?"—":fmtN(v,1), showCagr:true, showCum:true, cagrKey:"shares_mm"},
+      {label:"P/E (year-end)", fn:r=>r.pe, format:v=>v==null?"—":fmtN(v,1)+"x", showMedian:true},
+      {label:"Revenue", fn:r=>r.revenue_mm, format:v=>v==null?"—":c+fmtBn(v), showCagr:true, showCum:true, cagrKey:"revenue_mm"},
+      {label:"Net Income", fn:r=>r.net_income_mm, format:v=>v==null?"—":c+fmtBn(v), showCagr:true, showCum:true, cagrKey:"net_income_mm"},
+      {label:"Shareholder Equity", fn:r=>r.equity_mm, format:v=>v==null?"—":c+fmtBn(v), showCagr:true, showCum:true, cagrKey:"equity_mm"},
+    ]},
+    {title:"CALCULATED", rows:[
+      {label:"Book Yield (per Share)", fn:(r:any)=>r.bookYieldShare, format:v=>fmtP(v,1), showMedian:true},
+      {label:"Book Yield (ROE)", fn:(r:any)=>r.roe, format:v=>fmtP(v,1), showMedian:true},
+      {label:"Payout Ratio", fn:(r:any)=>r.payout, format:v=>fmtP(v,1), showMedian:true},
+      {label:"Retention Ratio", fn:(r:any)=>r.retention, format:v=>fmtP(v,1), showMedian:true},
+    ]},
+  ];
+
+  const cellStyle:React.CSSProperties = {padding:"6px 8px", textAlign:"right", fontSize:10, fontFamily:T.mono, borderBottom:`1px solid ${T.divider}`, whiteSpace:"nowrap"};
+  const headStyle:React.CSSProperties = {...cellStyle, color:T.textMuted, fontWeight:600, fontSize:9};
+  const labelStyle:React.CSSProperties = {...cellStyle, textAlign:"left", color:T.text, fontWeight:600, position:"sticky", left:0, background:T.card, zIndex:1};
+
+  return (
+    <Card>
+      <SH title="Track Record" icon={<BarChart2 size={12}/>} sub={`${rows.length} years · ${rows[0].year}–${rows[rows.length-1].year}`}/>
+
+      {/* Projection summary at top */}
+      {s.buffett_evaluated && (
+        <div style={{padding:"10px 12px",borderRadius:6,background:T.greenLight,border:`1px solid ${T.greenBorder}`,marginBottom:14,fontSize:11,fontFamily:T.mono,lineHeight:1.6}}>
+          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>BUFFETT 5Y VALUATION</div>
+          Method: <b>{s.buffett_method==="bvps_roe"?"BVPS × ROE":"Direct EPS CAGR"}</b> · 
+          g = {((s.buffett_g_assumed||0)*100).toFixed(1)}% · 
+          {s.buffett_method==="bvps_roe" && <>ROE = {((s.buffett_roe_assumed||0)*100).toFixed(1)}% · </>}
+          P/E = {(s.buffett_pe_median||0).toFixed(1)}x<br/>
+          EPS₅ = {c}{(s.buffett_eps_5y||0).toFixed(2)} → 
+          Future Price = <b>{c}{(s.buffett_future_price||0).toFixed(2)}</b> → 
+          Fair Value today = <b>{c}{(s.buffett_fair_value||0).toFixed(2)}</b> 
+          ({(s.intrinsic_upside||0)>=0?"+":""}{(s.intrinsic_upside||0).toFixed(1)}% MoS)
+        </div>
+      )}
+
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead>
+            <tr>
+              <th style={{...headStyle, textAlign:"left", position:"sticky", left:0, background:T.card, zIndex:2}}>Metric</th>
+              {rows.map(r=><th key={r.year} style={headStyle}>{r.year}</th>)}
+              <th style={{...headStyle, color:T.green, fontWeight:700}}>CAGR</th>
+              <th style={{...headStyle, color:T.green, fontWeight:700}}>Cum. Growth</th>
+              <th style={{...headStyle, color:T.purple, fontWeight:700}}>Median</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sections.map(sec=>(
+              <React.Fragment key={sec.title}>
+                <tr>
+                  <td colSpan={rows.length+4} style={{...cellStyle, textAlign:"left", color:T.textMuted, fontWeight:600, fontSize:9, paddingTop:14, paddingBottom:6, letterSpacing:"0.08em"}}>{sec.title}</td>
+                </tr>
+                {sec.rows.map((rd,i)=>{
+                  const series = derived.map(d=>rd.fn(d));
+                  const cagrVal = rd.showCagr && rd.cagrKey ? cagr(rd.cagrKey) : null;
+                  const cumVal = rd.showCum && rd.cagrKey ? cumGrowth(rd.cagrKey) : null;
+                  const medVal = rd.showMedian ? median(series) : null;
+                  return (
+                    <tr key={i}>
+                      <td style={labelStyle}>{rd.label}</td>
+                      {series.map((v,j)=><td key={j} style={cellStyle}>{rd.format(v)}</td>)}
+                      <td style={{...cellStyle,color:T.green,fontWeight:600}}>{cagrVal!=null?fmtP(cagrVal):"—"}</td>
+                      <td style={{...cellStyle,color:T.green,fontWeight:600}}>{cumVal!=null?fmtP(cumVal):"—"}</td>
+                      <td style={{...cellStyle,color:T.purple,fontWeight:600}}>{medVal!=null?rd.format(medVal):"—"}</td>
+                    </tr>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{marginTop:12,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
+        Methodology adapted from "The Buffett Approach to Valuation". Book Yield (per share) = EPS / prior-year BVPS. Book Yield (ROE) = NetIncome / Equity. Retention = 1 − Payout. P/E shown is fiscal-year-end ratio; the spreadsheet's intra-year high/low not available without per-day price history.
+      </div>
+    </Card>
+  );
+}
+
+
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
@@ -1362,6 +1576,9 @@ export default function StockDetail(){
   // after the `if(loading)return` guard, which produced a different hook
   // count on first vs subsequent renders and crashed the page.
   const [mode,setMode]=useState<string>("momentum");
+  // May 2026: stock-page tab system. "overview" = existing dashboard,
+  // "track" = Buffett 10y track record table.
+  const [activeTab, setActiveTab] = useState<"overview"|"track">("overview");
 
   // v7.2: Search the 3 region files in order (sp500 → europe → global), not
   // `latest.json`. `latest.json` is overwritten by whichever scan ran most
@@ -1476,9 +1693,29 @@ export default function StockDetail(){
         </div>
       </div>
 
-      {/* TradingView */}
+{/* TradingView */}
       <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${s.symbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
 
+      {/* Tab bar */}
+      <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
+        {(["overview","track"] as const).map(tab=>(
+          <button key={tab} onClick={()=>setActiveTab(tab)}
+            style={{
+              padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
+              fontFamily:T.mono,fontSize:11,fontWeight:600,letterSpacing:"0.05em",textTransform:"uppercase",
+              color:activeTab===tab?T.green:T.textMuted,
+              borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
+              marginBottom:-1,
+            }}>
+            {tab==="overview"?"Overview":"Track Record"}
+          </button>
+        ))}
+      </div>
+
+      {activeTab==="track" ? (
+        <TrackRecordTable s={s}/>
+      ) : (
+        <>
       {/* ═══ v8 5-FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
         <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`${mode==="fallen_angel"?"Fallen Angel":"Momentum"} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
@@ -1530,10 +1767,10 @@ export default function StockDetail(){
           <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"#10b981":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
           <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"#10b981":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
           <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"#10b981":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
-          {/* BVPS visual block */}
-          <BvpsBlock s={s}/>
-          {/* TargetBar with v8 inputs (drops DCF + Buffett dots) */}
-          <TargetBar price={s.price} target={s.target} bvps={s.intrinsic_bvps??0} combined={intrinsicCombined} currency={s.currency}/>
+          {/* Buffett 5y projection block */}
+          <BuffettBlock s={s}/>
+          {/* TargetBar — Price | Analyst target | Buffett fair value */}
+          <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} combined={s.buffett_fair_value??s.target??0} currency={s.currency}/>
         </Card>
         <GrowthCard s={s}/>
         <SmartMoneyCard s={s}/>
@@ -1552,8 +1789,10 @@ export default function StockDetail(){
       {/* News */}
       <div style={{marginBottom:16}}><NewsFeed symbol={s.symbol}/></div>
 
-      {/* Active signals */}
+{/* Active signals */}
       {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
+        </>
+      )}
     </div>
   );
 }
