@@ -29,6 +29,11 @@ interface StockData{
   proximity_52wk?:number;proximity_score?:number;
   earnings_momentum?:number;earnings_score?:number;upside_score?:number;
   hit_prob?:number;
+  // Smart Money Score (Apr 2026) — LTR-derived weighted factor score.
+  // Pass-2 / US-only. null for non-US stocks; partial coverage for pass-1.
+  smart_money_score?:number|null;
+  smart_money_components?:Record<string,number>;
+  smart_money_weight?:number;
   factor_coverage?:number;factors_evaluated?:string[];factors_missing?:string[];
   // v7.2.1 Tradier options enrichment
   tradier_iv_current?:number|null;
@@ -1129,85 +1134,118 @@ function GrowthCard({s}:{s:StockData}){
   );
 }
 
-// ── SmartMoneyCard: rolls up the six Smart Money sub-signals into one card.
-// Mirrors compute_smart_money_v8 weights (institutional 25 / analyst 25 /
-// insider 15 / transcript 15 / earnings 15 / congressional 5). Each row
-// shows the underlying datum + a status chip. The bar at the bottom shows
-// the rolled-up factor score that goes into the composite.
+// ── SmartMoneyCard: 6-factor LTR-derived breakdown.
+// Reads s.smart_money_components directly (populated by compute_smart_money_score
+// in the backend). Components are already post-multiplier, so what's shown
+// is what feeds the v8 composite's smart_money sub-factor.
+//
+// May 2026 — rewritten for Option C. Old version showed Analyst/Insider/
+// Transcript/Earnings rows that no longer drive the score (LTR found those
+// had little marginal predictive power). New version mirrors the 6 weights
+// in compute_smart_money_score: institutional_flow 30, trend 28, inst 20,
+// quality 10, sector 7, congressional 5.
 function SmartMoneyCard({s}:{s:StockData}){
-  const score=s.factors_v8?.smart_money??s.factors_v8_momentum?.smart_money;
-  const scoreColor=score==null?T.textLight:score>0.6?T.green:score>0.4?T.amber:T.red;
+  const sm = s.smart_money_score;
+  const wt = s.smart_money_weight ?? 0;
+  const comps = s.smart_money_components ?? {};
+  const scoreColor = sm == null ? T.textLight : sm > 0.6 ? T.green : sm > 0.4 ? T.amber : T.red;
 
-  type Row={label:string;weight:number;value:string;tone:"good"|"bad"|"neutral"|"none"};
-  const rows:Row[]=[];
+  // Underlying trend % for context
+  const trendPct = s.sma200 > 0 ? ((s.sma50 - s.sma200) / s.sma200) * 100 : 0;
 
-  // Institutional flow (25%)
-  if(s.inst_holders_change!=null||s.inst_accumulation!=null){
-    const h=s.inst_holders_change??0;
-    const tone=h>0.02?"good":h<-0.02?"bad":"neutral";
-    rows.push({label:"Inst flow",weight:25,
-      value:`Holders ${(h*100).toFixed(1)}% QoQ · Shares ${((s.inst_accumulation??0)*100).toFixed(1)}%`,
-      tone});
-  } else rows.push({label:"Inst flow",weight:25,value:"no data",tone:"none"});
+  // Factor catalog: [key, weight%, display label, fallback msg when missing]
+  const FACTORS:[string,number,string,string][] = [
+    ["institutional_flow", 30, "Inst flow",      "US-only · pass-2 only"],
+    ["trend_strength",     28, "Trend",          "missing SMA data"],
+    ["institutional",      20, "Inst accum",     "US-only · pass-2 only"],
+    ["quality",            10, "Quality",        "Piotroski/Altman missing"],
+    ["sector_momentum",     7, "Sector mom",     "non-NASDAQ stock"],
+    ["congressional",       5, "Congress",       "no recent trades"],
+  ];
 
-  // Analyst grades (25%)
-  if(s.grade_total){
-    const ratio=s.grade_total>0?s.grade_buy/s.grade_total:0;
-    rows.push({label:"Analyst",weight:25,
-      value:`${s.grade_buy}/${s.grade_total} buy · score ${(s.grade_score*100).toFixed(0)}`,
-      tone:ratio>0.6?"good":ratio<0.3?"bad":"neutral"});
-  } else rows.push({label:"Analyst",weight:25,value:"no recent grades",tone:"none"});
+  type Tone = "good"|"bad"|"neutral"|"none";
+  const toneColor = (t:Tone) => t==="good"?T.green : t==="bad"?T.red : t==="neutral"?T.textMuted : T.textLight;
 
-  // Insider (15%)
-  if(s.insider_buy_ratio!=null||s.insider_net_buys!=null){
-    const nb=s.insider_net_buys??0;
-    rows.push({label:"Insider",weight:15,
-      value:`Buy ratio ${(s.insider_buy_ratio??0).toFixed(2)} · ${nb>=0?"+":""}${nb} net`,
-      tone:nb>=3?"good":nb<=-3?"bad":"neutral"});
-  } else rows.push({label:"Insider",weight:15,value:"no data",tone:"none"});
+  const rows = FACTORS.map(([key, weight, label, missingMsg])=>{
+    const c = (comps as any)[key] as number|undefined;
+    if(c == null){
+      return { key, weight, label, score:null, detail:missingMsg, tone:"none" as Tone };
+    }
+    const tone:Tone = c > 0.6 ? "good" : c < 0.4 ? "bad" : "neutral";
 
-  // Transcript (15%)
-  if(s.transcript_score!=null&&s.transcript_score!==0.5){
-    const ts=s.transcript_sentiment??0;
-    rows.push({label:"Transcript",weight:15,
-      value:`Tone ${ts>=0?"+":""}${ts.toFixed(2)} · score ${((s.transcript_score??0)*100).toFixed(0)}`,
-      tone:ts>0.2?"good":ts<-0.2?"bad":"neutral"});
-  } else rows.push({label:"Transcript",weight:15,value:"not yet analyzed",tone:"none"});
+    let detail = `score ${(c*100).toFixed(0)}/100`;
+    switch(key){
+      case "institutional_flow":
+        if(c > 0.6) detail = `Accumulating · ${(c*100).toFixed(0)}/100`;
+        else if(c < 0.4) detail = `Distributing · ${(c*100).toFixed(0)}/100`;
+        else detail = `Neutral · ${(c*100).toFixed(0)}/100`;
+        break;
+      case "trend_strength": {
+        // Show raw trend % AND post-multiplier score so the user can see
+        // when distribution muted the trend contribution.
+        const rawTrendScore = (() => {
+          const t = trendPct/100;
+          if(t < -0.10) return 0.0;
+          if(t < -0.02) return 0.20;
+          if(t <  0.02) return 0.50;
+          if(t <  0.10) return 0.75;
+          return 1.0;
+        })();
+        const muted = rawTrendScore - c > 0.10;
+        detail = `${trendPct>=0?"+":""}${trendPct.toFixed(1)}% (50d vs 200d) · ${(c*100).toFixed(0)}/100`;
+        if(muted) detail += " · ⚠ muted by distribution";
+        break;
+      }
+      case "institutional":
+        if(s.inst_holders_change != null && s.inst_accumulation != null){
+          detail = `Holders ${(s.inst_holders_change*100).toFixed(1)}% QoQ · Shares ${(s.inst_accumulation*100).toFixed(1)}%`;
+        }
+        break;
+      case "quality":
+        detail = `Pio ${s.piotroski}/9 · Z ${s.altman_z?.toFixed(1)} · ${(c*100).toFixed(0)}/100`;
+        break;
+      case "sector_momentum":
+        detail = c > 0.6 ? `Sector leader · ${(c*100).toFixed(0)}` : c < 0.4 ? `Sector laggard · ${(c*100).toFixed(0)}` : `In line · ${(c*100).toFixed(0)}`;
+        break;
+      case "congressional":
+        detail = c > 0.6 ? `Net buying · ${(c*100).toFixed(0)}` : c < 0.4 ? `Net selling · ${(c*100).toFixed(0)}` : `Mixed · ${(c*100).toFixed(0)}`;
+        break;
+    }
+    return { key, weight, label, score:c, detail, tone };
+  });
 
-  // Earnings beats (15%)
-  if(s.eps_total){
-    const beat=s.eps_total>0?s.eps_beats/s.eps_total:0;
-    rows.push({label:"Earnings",weight:15,
-      value:`${s.eps_beats}/${s.eps_total} beats · momentum ${((s.earnings_momentum??0)*100).toFixed(1)}%`,
-      tone:beat>0.7?"good":beat<0.4?"bad":"neutral"});
-  } else rows.push({label:"Earnings",weight:15,value:"no EPS history",tone:"none"});
-
-  // Congressional (5%)
-  rows.push({label:"Congress",weight:5,value:"placeholder (REST 404)",tone:"none"});
-
-  const toneColor=(t:Row["tone"])=>t==="good"?T.green:t==="bad"?T.red:t==="neutral"?T.textMuted:T.textLight;
+  const subText = sm != null
+    ? `Score ${(sm*100).toFixed(0)}/100 · ${(wt*100).toFixed(0)}% coverage`
+    : "no data";
 
   return(
     <Card>
-      <SH title="Smart Money" icon={<Brain size={12}/>} sub={score!=null?`Score ${(score*100).toFixed(0)}/100`:"no data"}/>
+      <SH title="Smart Money" icon={<Brain size={12}/>} sub={subText}/>
       <div style={{display:"flex",flexDirection:"column",gap:0}}>
         {rows.map(r=>(
-          <div key={r.label} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid ${T.divider}`,fontSize:11,fontFamily:T.mono,opacity:r.tone==="none"?0.5:1}}>
+          <div key={r.key} style={{
+            display:"flex",alignItems:"center",justifyContent:"space-between",
+            padding:"7px 0",borderBottom:`1px solid ${T.divider}`,
+            fontSize:11,fontFamily:T.mono,
+            opacity:r.tone==="none"?0.5:1
+          }}>
             <div style={{display:"flex",alignItems:"baseline",gap:6,flexShrink:0}}>
               <span style={{color:T.text,fontWeight:600}}>{r.label}</span>
               <span style={{fontSize:9,color:T.textLight}}>({r.weight}%)</span>
             </div>
-            <span style={{color:toneColor(r.tone),fontWeight:600,fontSize:10,textAlign:"right"}}>{r.value}</span>
+            <span style={{color:toneColor(r.tone),fontWeight:600,fontSize:10,textAlign:"right",maxWidth:"65%"}}>
+              {r.detail}
+            </span>
           </div>
         ))}
       </div>
-      {score!=null&&(
+      {sm != null && (
         <div style={{marginTop:10,height:5,borderRadius:3,background:T.divider,overflow:"hidden"}}>
-          <div style={{height:"100%",width:`${score*100}%`,borderRadius:3,background:scoreColor,transition:"width 0.4s"}}/>
+          <div style={{height:"100%",width:`${sm*100}%`,borderRadius:3,background:scoreColor,transition:"width 0.4s"}}/>
         </div>
       )}
       <div style={{marginTop:8,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.4}}>
-        Missing sub-signals have their weight redistributed to the rest. No free 0.5 padding.
+        LTR-derived 6-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. No weight redistribution: missing factors lower the ceiling.
       </div>
     </Card>
   );
