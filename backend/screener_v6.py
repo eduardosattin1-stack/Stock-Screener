@@ -415,9 +415,25 @@ class Stock:
     bvps_recent_cagr: float = 0.0    # 3yr BVPS CAGR (used in projection)
     bvps_consistency: float = 0.0    # fraction of YoY BVPS-positive periods
     bvps_upside: float = 0.0         # display-only: BVPS-only upside %
-    intrinsic_upside: float = 0.0    # combined upside % (BVPS + analyst avg)
+    intrinsic_upside: float = 0.0    # Buffett 5y MoS at 10% hurdle (replaces old BVPS-blend method)
     # v8 reversal score for Fallen Angel mode
     reversal_score: int = 0
+
+    # ─── Buffett 5-year valuation (May 2026) ─────────────────────────
+    # Replaces the old BVPS-only projection. Two-method dispatch based on
+    # whether BVPS×ROE compounding matches reality (capital-intensive) or
+    # has decoupled (capital-light, use direct EPS CAGR).
+    buffett_method: str = ""              # "bvps_roe" | "eps_cagr" | "fallback_analyst"
+    buffett_g_assumed: float = 0.0        # growth rate used (clipped)
+    buffett_roe_assumed: float = 0.0      # ROE used (Method A only)
+    buffett_pe_median: float = 0.0        # median P/E used for terminal multiple
+    buffett_eps_5y: float = 0.0           # projected EPS 5 years out
+    buffett_future_price: float = 0.0     # = eps_5y × pe_median
+    buffett_fair_value: float = 0.0       # discounted to today at 10% hurdle
+    buffett_evaluated: bool = False
+    buffett_fallback_reason: str = ""     # populated when gate fails
+    # Track record arrays (11 years, oldest→newest) for stock-page tab
+    buffett_history: dict = field(default_factory=dict)
     # v8 5-factor composite — populated by compute_composite_v8
     factors_v8: dict = field(default_factory=dict)
     composite_v7: float = 0.0        # v7 composite kept side-by-side for diagnostics
@@ -1253,75 +1269,148 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     # Combined with analyst consensus target in compute_upside_score (v8).
     # Guards retained: declined 3+ years → skip; negative equity → skip;
     # weak financial health → skip. Bvps_consistency kept for diagnostic.
-    BVPS_PROJ_YEARS = 5  # forward horizon — tune via constant
-    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 5})
-    if bs and len(bs) >= 4 and not weak_financial_health:
-        bs.sort(key=lambda x: x.get("date", ""))  # oldest first
-        bvps_series = []
-        any_negative_equity = False
-        for row in bs:
-            equity = float(row.get("totalStockholdersEquity") or 0)
-            shares = float(row.get("weightedAverageShsOutDil") or 0)
-            if equity <= 0:
-                any_negative_equity = True
-                break
-            if shares > 0:
-                bvps_series.append((row.get("date", ""), equity / shares))
+# ──────────────────────────────────────────────────────────────────
+    # May 2026: Buffett 5-year valuation (replaces the BVPS-only forward
+    # projection). Pulls 11 years of statements + ratios, computes medians
+    # and CAGRs, stores a track record array for the stock-page tab, and
+    # runs the two-method projection.
+    # ──────────────────────────────────────────────────────────────────
+    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 11})
+    ratios = fmp("ratios", {"symbol": sym, "period": "annual", "limit": 11})
+    cf = fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 11})
 
-        if not any_negative_equity and len(bvps_series) >= 4:
-            # Consistency: fraction of YoY periods with positive growth
-            yoy_growth_flags = []
-            for i in range(1, len(bvps_series)):
-                prev_bvps = bvps_series[i - 1][1]
-                curr_bvps = bvps_series[i][1]
-                if prev_bvps > 0:
-                    yoy_growth_flags.append(1 if curr_bvps > prev_bvps else 0)
-            consistency = (sum(yoy_growth_flags) / len(yoy_growth_flags)
-                           if yoy_growth_flags else 0)
-            v["bvps_consistency"] = round(consistency, 3)
+    history_rows = []  # built oldest→newest, capped at 11
+    if bs and inc and len(bs) >= 5 and len(inc) >= 5:
+        bs_sorted = sorted(bs, key=lambda x: x.get("date", ""))
+        inc_sorted = sorted(inc, key=lambda x: x.get("date", ""))
+        ratios_by_year = {}
+        if ratios:
+            for r in ratios:
+                yr = (r.get("date") or "")[:4]
+                if yr:
+                    ratios_by_year[yr] = r
+        cf_by_year = {}
+        if cf:
+            for c in cf:
+                yr = (c.get("date") or "")[:4]
+                if yr:
+                    cf_by_year[yr] = c
 
-            # Skip if BVPS declined 3+ years (broken compounder)
-            declines = len(yoy_growth_flags) - sum(yoy_growth_flags)
-            if declines >= 3:
-                log.info(f"  {sym}: BVPS method guarded (declined {declines} years "
-                         f"of {len(yoy_growth_flags)}) — broken compounder")
-            else:
-                # Recent 3-year CAGR drives projection
-                last_bvps = bvps_series[-1][1]
-                recent_start = bvps_series[-4][1]
-                recent_cagr = safe_cagr(recent_start, last_bvps, 3)
-                v["bvps_recent_cagr"] = round(recent_cagr, 4)
+        # Align income + balance by year
+        bs_by_year = {(r.get("date") or "")[:4]: r for r in bs_sorted}
+        for inc_row in inc_sorted:
+            yr = (inc_row.get("date") or "")[:4]
+            if not yr or yr not in bs_by_year:
+                continue
+            bs_row = bs_by_year[yr]
+            r_row = ratios_by_year.get(yr, {})
+            cf_row = cf_by_year.get(yr, {})
 
-                # Diagnostic: full-window CAGR (kept for dashboard display)
-                years_span = len(bvps_series) - 1
-                first_bvps = bvps_series[0][1]
-                v["bvps_cagr_10y"] = round(safe_cagr(first_bvps, last_bvps, years_span), 4)
+            equity = float(bs_row.get("totalStockholdersEquity") or 0)
+            shares = float(inc_row.get("weightedAverageShsOutDil") or 0)
+            ni = float(inc_row.get("netIncome") or 0)
+            eps = float(inc_row.get("epsDiluted") or 0)
+            rev = float(inc_row.get("revenue") or 0)
+            div_paid = abs(float(cf_row.get("commonDividendsPaid") or 0))  # paid is negative in FMP
+            dps = (div_paid / shares) if shares > 0 else 0
+            bvps = (equity / shares) if shares > 0 and equity > 0 else 0
+            pe = float(r_row.get("priceToEarningsRatio") or 0)
+            history_rows.append({
+                "year": yr, "bvps": bvps, "eps": eps, "dps": dps,
+                "shares_mm": shares / 1e6 if shares else 0,
+                "revenue_mm": rev / 1e6 if rev else 0,
+                "net_income_mm": ni / 1e6 if ni else 0,
+                "equity_mm": equity / 1e6 if equity else 0,
+                "pe": pe if pe > 0 else None,
+            })
 
-                # Clip growth rate and project forward (no terminal P/B, no discount)
-                g_clipped = max(0.02, min(recent_cagr, 0.15))
-                v["intrinsic_bvps"] = last_bvps * ((1 + g_clipped) ** BVPS_PROJ_YEARS)
+    # Take last 5 years for projection math (most recent 5 entries)
+    recent5 = history_rows[-5:] if len(history_rows) >= 5 else history_rows
+    bvps_latest = recent5[-1]["bvps"] if recent5 else 0
+    eps_latest = recent5[-1]["eps"] if recent5 else 0
 
-    # Average intrinsic — all in reporting currency, MoS vs local_price
-    # v7.2.2 Apr 22 — DCF REMOVED from composite scoring. Bruno's decision
-    # after observing DCF guard triggering on ~30% of scanned names due to
-    # WACC-g compression (low-beta defensives, high-debt industrials) and
-    # weak-health guard trips. Composite now relies on:
-    #   - intrinsic_buffett (earnings-compounded intrinsic)
-    #   - intrinsic_bvps (book-value-compounded intrinsic)
-    #   - analyst target (in compute_upside_score)
-    # dcf_value is still computed and stored on the Stock dict for display
-    # on the stock-page Quality & Value card, but does NOT feed into
-    # intrinsic_avg, margin_of_safety, or the composite. Reassess in July 2026.
-    # v8 (Apr 2026): Drop intrinsic_buffett from composite (kept on field for
-    # display only). Bruno's call — earnings-compounded projection is effectively
-    # DCF on EPS, conflicts with "BVPS + analyst consensus" valuation philosophy.
-    # intrinsic_avg now equals intrinsic_bvps; analyst target is averaged in
-    # downstream by compute_upside_score (v8).
-    methods = [v["intrinsic_bvps"]]
-    valid = [m for m in methods if m > 0]
-    if valid and local_price > 0:
-        v["intrinsic_avg"] = sum(valid) / len(valid)
+    # Eligibility — count POSITIVE-EPS years in last 5
+    eps_positive_years_5y = sum(1 for r in recent5 if r["eps"] > 0)
+
+    # 5y CAGRs (need first and last positive)
+    bvps_cagr_5y = None
+    if len(recent5) >= 4 and recent5[0]["bvps"] > 0 and recent5[-1]["bvps"] > 0:
+        years_span = len(recent5) - 1
+        bvps_cagr_5y = safe_cagr(recent5[0]["bvps"], recent5[-1]["bvps"], years_span)
+
+    eps_cagr_5y = None
+    if len(recent5) >= 4 and recent5[0]["eps"] > 0 and recent5[-1]["eps"] > 0:
+        years_span = len(recent5) - 1
+        eps_cagr_5y = safe_cagr(recent5[0]["eps"], recent5[-1]["eps"], years_span)
+
+    # Median ROE over last 5 years (skip years with negative equity)
+    roe_series = []
+    for r in recent5:
+        if r["equity_mm"] > 0 and r["net_income_mm"]:
+            roe_series.append(r["net_income_mm"] / r["equity_mm"])
+    roe_median_5y = sorted(roe_series)[len(roe_series) // 2] if roe_series else None
+
+    # Median payout (display + retention identity check)
+    payout_series = []
+    for r in recent5:
+        if r["eps"] > 0 and r["dps"] >= 0:
+            payout_series.append(min(r["dps"] / r["eps"], 1.5))
+    payout_median_5y = sorted(payout_series)[len(payout_series) // 2] if payout_series else 0
+
+    # Median P/E over last 5 years (filter null/negative)
+    pe_series_5y = [r["pe"] for r in recent5 if r["pe"] is not None and r["pe"] > 0]
+    pe_median_5y = sorted(pe_series_5y)[len(pe_series_5y) // 2] if len(pe_series_5y) >= 3 else None
+
+    # Persist to v dict for compute_buffett_valuation + downstream display
+    v["bvps_latest"] = round(bvps_latest, 2)
+    v["eps_latest"] = round(eps_latest, 2)
+    v["bvps_cagr_5y"] = round(bvps_cagr_5y, 4) if bvps_cagr_5y is not None else None
+    v["eps_cagr_5y"] = round(eps_cagr_5y, 4) if eps_cagr_5y is not None else None
+    v["roe_median_5y"] = round(roe_median_5y, 4) if roe_median_5y is not None else None
+    v["pe_median_5y"] = round(pe_median_5y, 2) if pe_median_5y is not None else None
+    v["payout_median_5y"] = round(payout_median_5y, 4)
+    v["eps_positive_years_5y"] = eps_positive_years_5y
+
+    # Run Buffett valuation (gate-aware; falls through with _evaluated=False on failure)
+    buf = compute_buffett_valuation(v, sym, local_price, hurdle=0.10)
+    v["buffett_evaluated"] = buf["_evaluated"]
+    v["buffett_fallback_reason"] = buf["fallback_reason"]
+    v["buffett_method"] = buf["method"]
+    v["buffett_g_assumed"] = buf["g_assumed"]
+    v["buffett_roe_assumed"] = buf["roe_assumed"]
+    v["buffett_pe_median"] = buf["pe_median"]
+    v["buffett_eps_5y"] = buf["eps_5y"]
+    v["buffett_future_price"] = buf["future_price"]
+    v["buffett_fair_value"] = buf["fair_value"]
+    v["buffett_upside_pct"] = buf["upside_pct"]
+
+    # Convert future_price + fair_value to price currency for display if FX-mismatched
+    if need_fx and buf["_evaluated"]:
+        v["buffett_future_price"] *= fx_to_price
+        v["buffett_fair_value"] *= fx_to_price
+
+    # Track record array — last 11 years (oldest first)
+    v["buffett_history"] = {
+        "rows": history_rows,
+        "medians": {
+            "roe": v["roe_median_5y"],
+            "payout": v["payout_median_5y"],
+            "pe": v["pe_median_5y"],
+        },
+        "cagrs": {
+            "bvps_5y": v["bvps_cagr_5y"],
+            "eps_5y": v["eps_cagr_5y"],
+        },
+    }
+
+    # Legacy field — retain for any downstream code still reading it.
+    # Now points to Buffett fair_value so anything reading intrinsic_avg
+    # gets the new methodology automatically.
+    v["intrinsic_avg"] = v["buffett_fair_value"] if buf["_evaluated"] else 0
+    if v["intrinsic_avg"] > 0 and local_price > 0:
         v["margin_of_safety"] = (v["intrinsic_avg"] - local_price) / local_price
+    else:
+        v["margin_of_safety"] = 0
 
     # ──────────────────────────────────────────────────────────────────
     # v8 (Apr 2026): Margin, growth, and valuation-ratio fields
@@ -1391,10 +1480,13 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
                 if fcf_per_share > 0:
                     v["p_fcf"] = local_price / fcf_per_share
 
-    # Convert intrinsic values to price currency for display
+    # Convert intrinsic values to price currency for display.
+    # Note: buffett_future_price + buffett_fair_value were already converted
+    # above inside the Buffett block. dcf_value + intrinsic_buffett + 
+    # intrinsic_avg are kept for backward-compat but no longer drive scoring.
     if need_fx:
-        for key in ("dcf_value", "intrinsic_buffett", "intrinsic_bvps", "intrinsic_avg"):
-            if v[key] > 0:
+        for key in ("dcf_value", "intrinsic_buffett"):
+            if v.get(key, 0) > 0:
                 v[key] *= fx_to_price
 
     # Sanity check: MoS should be between -1 and +10
@@ -1611,74 +1703,146 @@ def compute_earnings_momentum(analyst: dict) -> dict:
 # ---------------------------------------------------------------------------
 # 10. NEW: Upside Potential (enhanced with DCF cross-check)
 # ---------------------------------------------------------------------------
+def project_future_eps_buffett(value_data: dict, sym: str) -> tuple:
+    """5-year EPS projection. Dispatches between BVPS×ROE and direct EPS CAGR.
 
+    Returns (eps_5y, method_name, _evaluated, fallback_reason).
+    method_name is "bvps_roe" or "eps_cagr". On gate failure returns
+    (None, None, False, reason_string).
+    """
+    bvps_today = value_data.get("bvps_latest", 0)
+    eps_today = value_data.get("eps_latest", 0)
+    bvps_cagr_5y = value_data.get("bvps_cagr_5y")
+    eps_cagr_5y = value_data.get("eps_cagr_5y")
+    roe_median_5y = value_data.get("roe_median_5y")
+    eps_positive = value_data.get("eps_positive_years_5y", 0)
+
+    # Gate: need solid 5y history
+    if eps_positive < 4:
+        return None, None, False, f"only {eps_positive}/5 profitable years"
+    if eps_today <= 0:
+        return None, None, False, "current EPS not positive"
+    if bvps_today <= 0:
+        return None, None, False, "negative book value"
+    if roe_median_5y is None or roe_median_5y <= 0:
+        return None, None, False, "median ROE not positive"
+
+    # Cap inputs
+    g_bvps_capped = max(0.02, min(bvps_cagr_5y or 0, 0.15))
+    g_eps_capped  = max(0.02, min(eps_cagr_5y or 0, 0.25))
+    roe_capped    = max(0.05, min(roe_median_5y, 0.30))
+
+    # Method A — Buffett classical
+    bvps_5y = bvps_today * (1 + g_bvps_capped) ** 5
+    eps_5y_a = bvps_5y * roe_capped
+
+    # Method B — direct EPS CAGR
+    eps_5y_b = eps_today * (1 + g_eps_capped) ** 5
+
+    # Dispatch: EPS growing >50% faster than BVPS = capital-light, use B
+    if (eps_cagr_5y is not None and bvps_cagr_5y is not None
+        and eps_cagr_5y > bvps_cagr_5y * 1.5 + 0.05):
+        return eps_5y_b, "eps_cagr", True, None
+    return eps_5y_a, "bvps_roe", True, None
+
+
+def compute_buffett_valuation(value_data: dict, sym: str,
+                              current_price: float, hurdle: float = 0.10) -> dict:
+    """Full Buffett 5y valuation. Returns dict with all fields needed by
+    Stock dataclass. _evaluated=False with fallback_reason on gate failure.
+    """
+    eps_5y, method, evaluated, reason = project_future_eps_buffett(value_data, sym)
+    if not evaluated:
+        return {"_evaluated": False, "fallback_reason": reason,
+                "method": "", "g_assumed": 0.0, "roe_assumed": 0.0,
+                "pe_median": 0.0, "eps_5y": 0.0, "future_price": 0.0,
+                "fair_value": 0.0, "upside_pct": 0.0}
+
+    pe_median = value_data.get("pe_median_5y")
+    if pe_median is None or pe_median <= 0:
+        return {"_evaluated": False, "fallback_reason": "no usable P/E history",
+                "method": "", "g_assumed": 0.0, "roe_assumed": 0.0,
+                "pe_median": 0.0, "eps_5y": 0.0, "future_price": 0.0,
+                "fair_value": 0.0, "upside_pct": 0.0}
+    pe_capped = max(8.0, min(pe_median, 50.0))
+
+    g_used = (value_data.get("eps_cagr_5y") if method == "eps_cagr"
+              else value_data.get("bvps_cagr_5y")) or 0
+    roe_used = value_data.get("roe_median_5y") if method == "bvps_roe" else 0
+
+    future_price = eps_5y * pe_capped
+    fair_value = future_price / (1 + hurdle) ** 5
+    upside_pct = (fair_value - current_price) / current_price * 100 if current_price > 0 else 0
+
+    return {
+        "_evaluated": True, "fallback_reason": "",
+        "method": method,
+        "g_assumed": round(g_used, 4),
+        "roe_assumed": round(roe_used, 4),
+        "pe_median": round(pe_capped, 2),
+        "eps_5y": round(eps_5y, 2),
+        "future_price": round(future_price, 2),
+        "fair_value": round(fair_value, 2),
+        "upside_pct": round(upside_pct, 2),
+    }
+                                
 def compute_upside_score(analyst: dict, value: dict, price: float) -> dict:
-    """Score based on combined BVPS-projection + analyst-consensus intrinsic.
-
-    v8 (Apr 2026): Replaces v7.2.2's tier-based cross-check between separate
-    intrinsic_avg and analyst target. New design averages BVPS-projected
-    forward price with analyst consensus to form a single intrinsic_combined
-    value, then scores upside vs current price on a graded ladder.
-
-    Removed: intrinsic_buffett from composite (still computed for display).
-    Removed: tier cross-check logic between independent target/intrinsic.
-    Kept: BVPS forward projection (now plain compound, no terminal P/B,
-          no discount-back — see compute_value v8 patch).
-    Kept: 4x price sanity cap on intrinsic_bvps (prevents blow-outs on
-          high-retention compounders).
+    """v9 (May 2026): Buffett 5-year MoS at 10% hurdle drives the score.
+    Two-method projection (BVPS×ROE or direct EPS CAGR) dispatched in
+    project_future_eps_buffett. Analyst target shown side-by-side as
+    1-year sanity check. Gate failure falls back to analyst-only with
+    a flag the UI surfaces.
 
     Fields returned:
-      consensus_upside  - analyst-target upside % (display)
-      bvps_upside       - BVPS-projection upside % (display, new)
-      intrinsic_upside  - combined upside % (drives score)
-      score             - 0-1, threshold-laddered
-      _evaluated        - True if at least one signal exists
+      consensus_upside       analyst-target upside % (display, 1y horizon)
+      buffett_upside         Buffett 5y MoS at 10% hurdle (score driver)
+      intrinsic_upside       same as buffett_upside (legacy field name)
+      score                  0-1 ladder
+      _evaluated             True if EITHER Buffett OR analyst gave us something
+      _valuation_method      "buffett" | "fallback_analyst" | "none"
+      _fallback_reason       why Buffett gate failed (if relevant)
     """
-    result = {"score": 0.0, "consensus_upside": 0, "bvps_upside": 0,
-              "intrinsic_upside": 0, "_evaluated": False}
+    result = {"score": 0.0, "consensus_upside": 0, "buffett_upside": 0,
+              "intrinsic_upside": 0, "_evaluated": False,
+              "_valuation_method": "none", "_fallback_reason": ""}
 
     if price <= 0:
         return result
 
-    # Analyst-only upside (display)
+    # Analyst-target upside (always shown as 1-year sanity check)
     target = analyst.get("target", 0)
     if target > 0:
         result["consensus_upside"] = round((target - price) / price * 100, 2)
 
-    # BVPS-only upside (display) — sanity-cap at 4x price
-    intrinsic_bvps = value.get("intrinsic_bvps", 0)
-    bvps_sane = (intrinsic_bvps > 0 and intrinsic_bvps / price <= 4.0)
-    if intrinsic_bvps > 0 and bvps_sane:
-        result["bvps_upside"] = round((intrinsic_bvps - price) / price * 100, 2)
-    elif intrinsic_bvps > 0:
-        result["intrinsic_unreliable"] = True
+    buffett_evaluated = value.get("buffett_evaluated", False)
 
-    # Combined intrinsic — average available signals
-    components = []
-    if target > 0:
-        components.append(target)
-    if intrinsic_bvps > 0 and bvps_sane:
-        components.append(intrinsic_bvps)
-
-    if components:
-        intrinsic_combined = sum(components) / len(components)
-        upside_pct = (intrinsic_combined - price) / price * 100
+    if buffett_evaluated:
+        # Primary path: Buffett 5y MoS drives score
+        upside_pct = value.get("buffett_upside_pct", 0)
+        result["buffett_upside"] = round(upside_pct, 2)
         result["intrinsic_upside"] = round(upside_pct, 2)
         result["_evaluated"] = True
+        result["_valuation_method"] = "buffett"
+    elif target > 0:
+        # Fallback: analyst-only. Flag for UI.
+        upside_pct = result["consensus_upside"]
+        result["intrinsic_upside"] = upside_pct
+        result["_evaluated"] = True
+        result["_valuation_method"] = "fallback_analyst"
+        result["_fallback_reason"] = value.get("buffett_fallback_reason",
+                                               "Buffett gate failed")
+    else:
+        # No usable signal at all
+        return result
 
-        # Threshold ladder
-        if upside_pct > 30:
-            result["score"] = 1.0
-        elif upside_pct > 15:
-            result["score"] = 0.85
-        elif upside_pct > 0:
-            result["score"] = 0.6
-        elif upside_pct > -15:
-            result["score"] = 0.35
-        elif upside_pct > -30:
-            result["score"] = 0.15
-        else:
-            result["score"] = 0.0
+    # Score ladder — same as before, applied to whichever upside_pct we got
+    upside_pct = result["intrinsic_upside"]
+    if upside_pct > 30:    result["score"] = 1.0
+    elif upside_pct > 15:  result["score"] = 0.85
+    elif upside_pct > 0:   result["score"] = 0.6
+    elif upside_pct > -15: result["score"] = 0.35
+    elif upside_pct > -30: result["score"] = 0.15
+    else:                  result["score"] = 0.0
 
     return result
 
@@ -3350,8 +3514,25 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.intrinsic_bvps = value.get("intrinsic_bvps", 0.0)
         s.bvps_recent_cagr = value.get("bvps_recent_cagr", 0.0)
         s.bvps_consistency = value.get("bvps_consistency", 0.0)
-        s.bvps_upside = upside.get("bvps_upside", 0.0)
+        s.bvps_upside = upside.get("buffett_upside", 0.0)  # repurposed for backward compat
         s.intrinsic_upside = upside.get("intrinsic_upside", 0.0)
+        # Buffett 5y valuation (May 2026)
+        s.buffett_method = value.get("buffett_method", "")
+        s.buffett_g_assumed = value.get("buffett_g_assumed", 0.0)
+        s.buffett_roe_assumed = value.get("buffett_roe_assumed", 0.0)
+        s.buffett_pe_median = value.get("buffett_pe_median", 0.0)
+        s.buffett_eps_5y = value.get("buffett_eps_5y", 0.0)
+        s.buffett_future_price = value.get("buffett_future_price", 0.0)
+        s.buffett_fair_value = value.get("buffett_fair_value", 0.0)
+        s.buffett_evaluated = value.get("buffett_evaluated", False)
+        s.buffett_fallback_reason = value.get("buffett_fallback_reason", "")
+        s.buffett_history = value.get("buffett_history", {})
+      
+        # Override method label when upside used the analyst fallback
+        if upside.get("_valuation_method") == "fallback_analyst":
+            s.buffett_method = "fallback_analyst"
+            if not s.buffett_fallback_reason:
+                s.buffett_fallback_reason = upside.get("_fallback_reason", "")
 
         # Stash raw scores for pass-2 composite (deferred until enrichment)
         s._raw = {
