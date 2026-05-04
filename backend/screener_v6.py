@@ -2026,51 +2026,77 @@ def compute_smart_money_score(institutional_flow: dict, institutional: dict,
     """Weighted sum across 6 LTR-validated factors. Returns:
         {score, _evaluated, components, weight_evaluated, missing}
 
-    score is None if any of the 4 core factors is missing.
-    weight_evaluated tells you what fraction of the 1.0 weight pool was
-    actually used (0.88 to 1.00 for stocks passing the core-4 gate).
+    May 2026 (Option C): no core-4 gate. Every stock with at least one
+    available factor gets a score. Pass-1 stocks naturally cap below
+    pass-2 stocks because available weights sum to ≤ 0.45 vs 1.00
+    full-coverage. The score's weight_evaluated already encodes coverage —
+    no need for a binary gate on top.
+
+    Trend confirmation multiplier (the key Option C fix):
+    when institutional_flow is available, the trend_strength contribution
+    is scaled by min(1.0, inst_flow.score * 2):
+      - inst_flow = 0.5 (neutral)        → multiplier = 1.0  (full credit)
+      - inst_flow = 0.25 (mild distrib)  → multiplier = 0.5  (half credit)
+      - inst_flow = 0.0 (strong distrib) → multiplier = 0.0  (no credit)
+      - inst_flow = 1.0 (accumulation)   → multiplier = 1.0  (capped)
+    Strong distribution kills trend's contribution; neutral or accumulation
+    lets trend through unmolested. Fixes the bull-trap pattern where MPWR-
+    style names ranked top of SMART$ while institutions were exiting:
+    distribution + uptrend now scores like distribution alone.
+
+    When institutional_flow is unavailable (pass-1 stocks), no multiplier
+    fires — trend contributes raw. Doesn't create gameability because
+    pass-1 stocks already cap at ~0.45 from missing weights.
+
+    score is None ONLY when zero factors are evaluated (extreme edge case
+    of missing SMA + missing quality). For pass-1 stocks the typical
+    output is score ≈ 0.20-0.45 from trend + quality + sector_mom.
     """
     components = {}
 
-    # Institutional flow (CORE) — 13F position velocity
+    # Institutional flow — must compute first since trend uses it
     if institutional_flow and institutional_flow.get("_evaluated"):
         components["institutional_flow"] = institutional_flow.get("score", 0)
 
-    # Trend strength (CORE) — raw ratio mapped to 0-1 ladder
+    # Trend strength — apply distribution-aware multiplier when inst_flow present
     if sma50 > 0 and sma200 > 0:
         ts = (sma50 - sma200) / sma200
-        components["trend_strength"] = _ladder(
+        trend_raw = _ladder(
             ts,
             [-0.10, -0.02, 0.02, 0.10],
             [0.0, 0.20, 0.50, 0.75, 1.0],
         )
+        if "institutional_flow" in components:
+            trend_mult = min(1.0, components["institutional_flow"] * 2)
+        else:
+            trend_mult = 1.0
+        components["trend_strength"] = trend_raw * trend_mult
 
-    # Institutional accumulation (CORE)
+    # Institutional accumulation
     if institutional and institutional.get("_evaluated"):
         components["institutional"] = institutional.get("score", 0.5)
 
-    # Quality (CORE) — Piotroski + Altman + ROE + ROIC + GM blend
+    # Quality — Piotroski + Altman + ROE + ROIC + GM blend
     if quality and quality.get("score") is not None:
         components["quality"] = quality["score"]
 
-    # Coverage gate — must have all 4 core factors
-    missing_core = SMART_MONEY_CORE - components.keys()
-    if missing_core:
-        return {
-            "score": None,
-            "_evaluated": False,
-            "components": components,
-            "weight_evaluated": 0.0,
-            "missing": sorted(set(SMART_MONEY_WEIGHTS.keys()) - components.keys()),
-        }
-
-    # Optional factors — added only if evaluated, no fallback
+    # Optional factors — added only if evaluated
     if sector_momentum and sector_momentum.get("_evaluated"):
         components["sector_momentum"] = sector_momentum.get("score", 0.5)
     if congressional and congressional.get("_evaluated"):
         components["congressional"] = congressional.get("score", 0.5)
 
-    # Weighted sum — NO redistribution
+    # Edge case: zero factors evaluated → None (no SMA + no quality + no flow)
+    if not components:
+        return {
+            "score": None,
+            "_evaluated": False,
+            "components": {},
+            "weight_evaluated": 0.0,
+            "missing": sorted(SMART_MONEY_WEIGHTS.keys()),
+        }
+
+    # Weighted sum — NO redistribution. Coverage encoded in score ceiling.
     score = sum(SMART_MONEY_WEIGHTS[k] * v for k, v in components.items())
     weight_used = sum(SMART_MONEY_WEIGHTS[k] for k in components)
 
