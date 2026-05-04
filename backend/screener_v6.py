@@ -1821,22 +1821,36 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
     # so a same-day scan doesn't read as "-1d" due to time-of-day drift.
     today_date = today.date()
 
-    # Populate cache on first call: one global 90-day fetch, indexed by symbol
+# Populate cache on first call: paginate through 90 days of global earnings.
+    # FMP's earnings-calendar appears to cap responses (~700 rows per day across
+    # all global exchanges). At 90 days that's tens of thousands of events —
+    # without pagination, late dates / less-liquid symbols get silently dropped.
+    # May 2026 fix: walk the window in 14-day chunks. CVS was missing from
+    # same-day scans despite FMP having the data — repro confirmed via MCP.
     if not EARNINGS_CAL_CACHE:
-        end_date = (today + timedelta(days=90)).strftime("%Y-%m-%d")
-        all_events = fmp("earnings-calendar", {"from": today_str, "to": end_date})
-        if all_events and isinstance(all_events, list):
-            for ev in all_events:
-                s_ev = ev.get("symbol") or ""
-                d_ev = ev.get("date") or ""
-                if s_ev and d_ev >= today_str:
-                    EARNINGS_CAL_CACHE.setdefault(s_ev, []).append(ev)
-            for s_ev in EARNINGS_CAL_CACHE:
-                EARNINGS_CAL_CACHE[s_ev].sort(key=lambda e: e.get("date", ""))
-            log.info(f"  Earnings calendar cached: {len(EARNINGS_CAL_CACHE)} symbols with upcoming earnings in next 90d")
+        chunk_days = 14
+        chunks_fetched = 0
+        for offset in range(0, 90, chunk_days):
+            chunk_start = (today + timedelta(days=offset)).strftime("%Y-%m-%d")
+            chunk_end = (today + timedelta(days=min(offset + chunk_days, 90))).strftime("%Y-%m-%d")
+            chunk = fmp("earnings-calendar", {"from": chunk_start, "to": chunk_end})
+            if chunk and isinstance(chunk, list):
+                chunks_fetched += 1
+                for ev in chunk:
+                    s_ev = ev.get("symbol") or ""
+                    d_ev = ev.get("date") or ""
+                    if s_ev and d_ev >= today_str:
+                        EARNINGS_CAL_CACHE.setdefault(s_ev, []).append(ev)
+        for s_ev in EARNINGS_CAL_CACHE:
+            EARNINGS_CAL_CACHE[s_ev].sort(key=lambda e: e.get("date", ""))
+        if EARNINGS_CAL_CACHE:
+            log.info(f"  Earnings calendar cached: {len(EARNINGS_CAL_CACHE)} symbols "
+                     f"with upcoming earnings in next 90d ({chunks_fetched}/7 chunks fetched)")
         else:
-            # Mark as populated (empty) so we don't retry on every stock
-            EARNINGS_CAL_CACHE["__empty_sentinel__"] = []
+            # Cache is empty for THIS scan but don't sentinel-block — the
+            # per-symbol fallback below will catch real upcoming earnings.
+            log.warning("  Earnings calendar bulk fetch returned no usable data; "
+                        "relying on per-symbol fallback")
 
     sym_events = EARNINGS_CAL_CACHE.get(sym, [])
     if sym_events:
@@ -1847,7 +1861,40 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
         except:
             days_until = 999
         result["days_to_earnings"] = days_until
-
+    else:
+        # Per-symbol fallback: bulk calendar may have missed this stock due to
+        # pagination, FMP indexing lag, or a transient error on the first
+        # cache-populate call. Hit the cheap per-symbol endpoint to verify.
+        # Only fires when bulk gave us nothing for this sym — extra cost is
+        # bounded at ~one call per missing-from-cache stock per scan.
+        try:
+            sym_cal = fmp("earnings-calendar", {"symbol": sym, "from": today_str,
+                                                "to": (today + timedelta(days=90)).strftime("%Y-%m-%d")})
+        except Exception:
+            sym_cal = None
+        # Fall back further to earnings-company if the symbol-filtered calendar
+        # also returns nothing. Per MCP testing, earnings-company has CVS even
+        # when earnings-calendar bulk doesn't.
+        if not sym_cal:
+            try:
+                sym_cal = fmp("earnings", {"symbol": sym, "limit": 4})
+            except Exception:
+                sym_cal = None
+        if sym_cal and isinstance(sym_cal, list):
+            future_events = sorted(
+                [ev for ev in sym_cal if (ev.get("date") or "") >= today_str],
+                key=lambda ev: ev.get("date", ""),
+            )
+            if future_events:
+                e = future_events[0]
+                report_date = e.get("date", "")
+                try:
+                    days_until = (datetime.strptime(report_date, "%Y-%m-%d").date() - today_date).days
+                except:
+                    days_until = 999
+                result["days_to_earnings"] = days_until
+                # Backfill the cache so later stocks in the same scan benefit
+                EARNINGS_CAL_CACHE.setdefault(sym, []).append(e)
         if 0 <= days_until <= 14:
             # Check beat history from analyst data or fresh fetch
             eps_beats = (analyst or {}).get("eps_beats", 0)
@@ -3216,6 +3263,20 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                                           q.get("sma200", 0),
                                           q.get("year_high", 0), q.get("year_low", 0))
 
+        # May 2026: institutional + insider + congressional moved from pass-2
+        # to pass-1 so every stock gets a full Smart Money Score and a
+        # populated SentimentCard. Cost: ~6 extra FMP calls per stock
+        # (positions-summary x2, holder-extract, insider-stats, senate-trades,
+        # house-trades). At 0.04s rate limit ≈ 0.24s/stock added.
+        # Transcripts (Claude API) + news stay in pass-2.
+        # Known minor inefficiency: get_institutional_flows and
+        # compute_institutional_flow both hit positions-summary independently;
+        # could be deduped in a future refactor.
+        inst_flow = compute_institutional_flow(sym)
+        inst = get_institutional_flows(sym)
+        cong = compute_congressional(sym)
+        insider = get_insider_activity(sym)
+
         # Build Stock
         s = Stock(symbol=sym, price=q["price"], currency=q.get("currency", "USD"))
         s.exchange = SECTOR_EXCHANGE_MAP.get(sym, "")
@@ -3255,6 +3316,19 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.has_catalyst = catalyst["has_catalyst"]
         s.days_to_earnings = catalyst.get("days_to_earnings", -1)
 
+        # Pass-1 institutional + insider (moved from pass-2 in May 2026).
+        # Pass-2 will overwrite with the same values for enriched stocks —
+        # idempotent. Non-enriched stocks now have these fields populated
+        # in the scan JSON, which feeds the SentimentCard for all stocks.
+        s.insider_buy_ratio = insider["buy_ratio"]
+        s.insider_net_buys = insider["net_buys"]
+        s.insider_score = insider["score"]
+        s.inst_holders_change = inst["holders_change"]
+        s.inst_accumulation = inst["accumulation"]
+        s.inst_score = inst["score"]
+
+        # ─── v8 fields populated from value ───
+
         # ─── v8 fields populated from value ───
         s.net_margin = value.get("net_margin", 0.0)
         s.fcf_margin = value.get("fcf_margin", 0.0)
@@ -3277,8 +3351,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             "proximity": proximity, "earnings": earnings,
             "upside": upside, "quality": quality, "catalyst": catalyst,
             "sec_mom": sec_mom,
+            "inst_flow": inst_flow, "inst": inst,
+            "cong": cong, "insider": insider,
         }
-
         pass1.append(s)
 
     log.info(f"Pass 1 complete: {len(pass1)} stocks scored cheaply")
@@ -3316,11 +3391,13 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         sym = s.symbol
         raw = s._raw
 
-        # Expensive enrichment
-        insider = get_insider_activity(sym)
-        inst = get_institutional_flows(sym)
-        inst_flow = compute_institutional_flow(sym)
-        cong = compute_congressional(sym)
+        # Pass-2 enrichment: only truly expensive calls remain (transcript
+        # hits Claude API, news is pass-2 to save FMP quota). insider, inst,
+        # inst_flow, cong all moved to pass-1 in May 2026.
+        insider = raw["insider"]
+        inst = raw["inst"]
+        inst_flow = raw["inst_flow"]
+        cong = raw["cong"]
         transcript = get_transcript_sentiment(sym)
         # Re-fetch news (cheap, but only for top-30 to save calls)
         news = get_news_sentiment(sym)
@@ -3446,24 +3523,24 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     non_enriched = [s for s in pass1 if s.symbol not in enriched_syms]
     for s in non_enriched:
         raw = s._raw
-        # Pass-1 only has cheap data; pass None for pass-2-only inputs
+        # May 2026: pass-1 now has full institutional/insider/congressional.
+        # Only transcript remains pass-2-only at this layer.
         composite_v7, signal_v7, factors_v7, reasons_v7, coverage_v7 = compute_composite_v7(
             raw["tech"], raw["analyst"], raw["value"], s.price,
-            {"score": 0.5, "_evaluated": False},  # insider not fetched
-            raw["proximity"], raw["earnings"], raw["upside"],
+            raw["insider"], raw["proximity"], raw["earnings"], raw["upside"],
             raw["quality"], raw["catalyst"],
-            None, None, None, raw["sec_mom"], None,
+            None, raw["inst"], raw["inst_flow"], raw["sec_mom"], raw["cong"],
         )
-        # Smart Money Score: pass-1 stocks miss institutional_flow / institutional /
-        # congressional (pass-2 only), so the core-4 gate fails → score = None.
-        # Compute anyway so the components dict reflects what IS evaluated
-        # (trend_strength + quality + sector_momentum at minimum).
+        # Smart Money Score now fully populated for non-enriched stocks too.
+        # Transcript isn't one of the 6 LTR factors, so SMART$ is identical
+        # between pass-1 and pass-2 cohorts. The pass-2 cohort only benefits
+        # from transcript-driven v7 composite + Tradier options overlay.
         sm = compute_smart_money_score(
-            institutional_flow=None,
-            institutional=None,
+            institutional_flow=raw["inst_flow"],
+            institutional=raw["inst"],
             quality=raw["quality"],
             sector_momentum=raw["sec_mom"],
-            congressional=None,
+            congressional=raw["cong"],
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
         )
