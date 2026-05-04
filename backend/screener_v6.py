@@ -2016,7 +2016,7 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
             log.warning("  Earnings calendar bulk fetch returned no usable data; "
                         "relying on per-symbol fallback")
 
-sym_events = EARNINGS_CAL_CACHE.get(sym, [])
+    sym_events = EARNINGS_CAL_CACHE.get(sym, [])
     days_until = None
     if sym_events:
         e = sym_events[0]
