@@ -9,6 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # factor_etf_flow_velocity, backtest_safety_stubs) get added to the repo
 # but forgotten in the Dockerfile, silently leaving them out of the image.
 COPY *.py ./
+COPY strategy_allowlists/ ./strategy_allowlists/
 COPY time_model_10pct.pkl ./
 
 CMD ["python", "run_server.py"]
