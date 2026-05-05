@@ -29,7 +29,7 @@ Modes:
 
 import os, sys, json, math, time, logging, smtplib, argparse
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from email.mime.text import MIMEText
 from typing import Optional
 
@@ -573,7 +573,30 @@ def get_symbols(region: str) -> list[str]:
     configs = REGIONS.get(region)
     if configs is None:
         configs = [(region.upper(), None, 1_000_000_000, 50)]
-        
+
+    # 2026-05-05: regions that MUST have an allowlist applied. Without the
+    # allowlist these regions overcollect (e.g. sp500 was just NYSE+NASDAQ
+    # ≥$1B, leaking ADRs and excluded sectors). If the file is missing at
+    # runtime, fail loud rather than silently scanning the wrong universe.
+    REQUIRES_ALLOWLIST = {"sp500"}
+    if region in REQUIRES_ALLOWLIST:
+        _required_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "strategy_allowlists", f"{region}.txt",
+        )
+        if not os.path.exists(_required_path):
+            raise RuntimeError(
+                f"Missing required allowlist for region '{region}': {_required_path}. "
+                f"Refusing to scan with an unfiltered universe. "
+                f"Verify Dockerfile copies strategy_allowlists/."
+            )
+
+    # 2026-05-05: sectors hard-excluded for the sp500 momentum universe.
+    # Per v1.0 strategy: no Financials, no Insurance, no REITs, no Utilities.
+    # Applied as a defense-in-depth strip *after* FMP returns results, in
+    # addition to the allowlist intersection below.
+    EXCLUDED_SECTORS = {"Financial Services", "Real Estate", "Utilities"}
+
     symbols = []
     for cfg_tuple in configs:
         # 2026-04-23: support both 4-tuple (existing: exchange, country,
@@ -594,6 +617,13 @@ def get_symbols(region: str) -> list[str]:
         if max_cap is not None:
             params["marketCapLowerThan"] = max_cap
         if country: params["country"] = country
+        # 2026-05-05: for sp500, force country=US and exclude alt share classes
+        # (defense-in-depth — the allowlist already restricts to US SP500
+        # tickers, but if the file is malformed we don't want non-US ADRs
+        # leaking through).
+        if region == "sp500":
+            params["country"] = "US"
+            params["includeAllShareClasses"] = "false"
         data = fmp("company-screener", params)
         if data:
             batch = []
@@ -601,9 +631,15 @@ def get_symbols(region: str) -> list[str]:
                 sym = d.get("symbol")
                 if not sym:
                     continue
+                sec = d.get("sector") or ""
+                # 2026-05-05: post-fetch sector strip for sp500. Catches
+                # any name that slipped into FMP's screener under the
+                # excluded-sector umbrella (Financial Services / REIT /
+                # Utility) before we intersect with the allowlist.
+                if region == "sp500" and sec in EXCLUDED_SECTORS:
+                    continue
                 batch.append(sym)
                 # v7.2: preserve sector + exchange + country for scoring and UI filters
-                sec = d.get("sector") or ""
                 if sec:
                     SECTOR_MAP[sym] = sec
                 SECTOR_EXCHANGE_MAP[sym] = d.get("exchangeShortName") or exchange
@@ -3902,10 +3938,18 @@ def gcs_download(blob_path: str) -> Optional[dict]:
 
 def save_scan_to_gcs(stocks: list[Stock], region: str = "global"):
     """Save scan results to GCS — both as latest_{region} and dated archive."""
-    today = datetime.now().strftime("%Y-%m-%d")
+    # 2026-05-05: scan_date is a full tz-aware ISO timestamp again. Frontend
+    # parses this with `new Date(...).toLocaleString(...)` to render the
+    # "last scan" label; if it's a date-only string (YYYY-MM-DD) JS interprets
+    # it as UTC midnight and shows ~02:00 CEST regardless of when the scan ran.
+    # The previously-introduced `scan_timestamp` field was never read by the
+    # frontend, so just put the timestamp back in `scan_date` and drop the
+    # extra field. Downstream consumers (monitor, portfolio, weekly email)
+    # that expect a full ISO string keep working.
+    now = datetime.now(timezone.utc)
+    today = now.strftime("%Y-%m-%d")
     payload = {
-        "scan_date": today,
-        "scan_timestamp": datetime.now().isoformat(),
+        "scan_date": now.isoformat(),
         "region": region,
         "stock_count": len(stocks),
         "stocks": [asdict(s) for s in stocks],
