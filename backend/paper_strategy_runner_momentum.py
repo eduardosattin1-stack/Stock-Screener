@@ -56,10 +56,10 @@ log = logging.getLogger("momentum_runner")
 FMP_KEY = os.environ.get("FMP_API_KEY", "")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
-STRATEGY_VERSION = "momentum-v1.0-2026-05-02"
+STRATEGY_VERSION = "momentum-v1.1-2026-05-06-global"
 TOP_N = 10
 
-LATEST_SCAN_PATH = "scans/latest_sp500.json"
+LATEST_SCAN_PATH = "scans/latest_global.json"
 HISTORY_PATH = "performance/strategy_history_momentum.json"
 BASKET_SNAPSHOT_PREFIX = "performance/baskets/"
 

@@ -542,7 +542,11 @@ REGIONS = {
         ("KSC", "KR", 5_000_000_000, 50),
     ],
     "brazil": [("SAO", "BR", 1_000_000_000, 50)],
-    "global": None,  # Will now include EVERY region above
+    # 2026-05-06: "global" is now a curated list of region keys (not None,
+    # which would mean "every non-None region"). Drops midcap per the May 2026
+    # narrowing — too noisy without an allowlist. Strategy runners read
+    # latest_global.json and pick from this clean cross-region universe.
+    "global": ["sp500", "europe", "asia", "brazil"],
 }
 
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
@@ -555,13 +559,17 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
     v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
-    # If "global", iterate through every defined list in REGIONS
+    # 2026-05-06: "global" is a curated list of region keys, not "every
+    # non-None region". REGIONS["global"] = ["sp500","europe","asia","brazil"]
+    # — midcap intentionally excluded.
     if region == "global":
         syms = []
-        # Dynamically include every key that has a list of configs
-        for r_name, config in REGIONS.items():
-            if config is not None:
-                syms.extend(get_symbols(r_name))
+        sub_regions = REGIONS.get("global") or []
+        if not isinstance(sub_regions, list):
+            log.warning("REGIONS['global'] is not a list; falling back to all-non-None regions")
+            sub_regions = [r for r, c in REGIONS.items() if c is not None and r != "global"]
+        for r_name in sub_regions:
+            syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
     # 2026-04-23: "midcap" combined universe — NYSE + NASDAQ $2-10B US.
     if region == "midcap":
@@ -591,10 +599,14 @@ def get_symbols(region: str) -> list[str]:
                 f"Verify Dockerfile copies strategy_allowlists/."
             )
 
-    # 2026-05-05: sectors hard-excluded for the sp500 momentum universe.
+    # 2026-05-05: sectors hard-excluded across ALL regions in the universe.
     # Per v1.0 strategy: no Financials, no Insurance, no REITs, no Utilities.
     # Applied as a defense-in-depth strip *after* FMP returns results, in
     # addition to the allowlist intersection below.
+    # 2026-05-06: extended from sp500-only to ALL regions. The global scan
+    # (sp500 + europe + asia + brazil) now applies the same structural
+    # filter across all regions, so europe/asia/brazil don't leak banks,
+    # insurers, REITs, or utilities through into strategy runners.
     EXCLUDED_SECTORS = {"Financial Services", "Real Estate", "Utilities"}
 
     symbols = []
@@ -632,11 +644,13 @@ def get_symbols(region: str) -> list[str]:
                 if not sym:
                     continue
                 sec = d.get("sector") or ""
-                # 2026-05-05: post-fetch sector strip for sp500. Catches
-                # any name that slipped into FMP's screener under the
-                # excluded-sector umbrella (Financial Services / REIT /
-                # Utility) before we intersect with the allowlist.
-                if region == "sp500" and sec in EXCLUDED_SECTORS:
+                # 2026-05-06: post-fetch sector strip applies to ALL regions
+                # (was sp500-only). Catches Financial Services / REIT / Utility
+                # names that slip into FMP's company-screener results across
+                # europe / asia / brazil too. Combined with the allowlist
+                # intersection below, this gives global scans the same clean
+                # structural filter that produced the 357-name SP500 baseline.
+                if sec in EXCLUDED_SECTORS:
                     continue
                 batch.append(sym)
                 # v7.2: preserve sector + exchange + country for scoring and UI filters

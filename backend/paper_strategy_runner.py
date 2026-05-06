@@ -65,14 +65,14 @@ FMP_KEY = os.environ.get("FMP_API_KEY", "")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
 # Strategy constants — FROZEN FOR PAPER TRACK 2026-04-28
-STRATEGY_VERSION = "boring-v1.0-2026-04-28"
+STRATEGY_VERSION = "boring-v1.1-2026-05-06-global"
 PIOTROSKI_MIN = 7
 TOP_N = 10
 HOLD_WEEKS = 26
 HOLD_DAYS = HOLD_WEEKS * 7  # 182 days exact
 
 # GCS paths
-LATEST_SCAN_PATH = "scans/latest_sp500.json"
+LATEST_SCAN_PATH = "scans/latest_global.json"
 HISTORY_PATH = "performance/strategy_history_boring.json"
 BASKET_SNAPSHOT_PREFIX = "performance/baskets/"
 
