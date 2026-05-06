@@ -9,7 +9,7 @@ Invoked by:
   - gcloud scheduler jobs run (via Cloud Scheduler targeting screener-sp500)
   - Manual GitHub Actions workflow_dispatch
 
-*NOTE: Hijacked to run SP500, NASDAQ, and Russell 2000 sequentially in one job run.*
+*NOTE: Single-region runner. Set REGIONS_TO_SCAN below to change. Currently: ["global"].*
 """
 import os, sys, json, logging
 from datetime import datetime
@@ -40,7 +40,7 @@ def _load_scan_from_gcs(region: str) -> list:
 
 def main():
     # HARDCODED REGIONS TO SCAN SEQUENTIALLY
-    REGIONS_TO_SCAN = ["sp500"]
+    REGIONS_TO_SCAN = ["global"]
     log.info(f"═══ Scan job starting: processing {len(REGIONS_TO_SCAN)} regions sequentially ═══")
 
     import screener_v6
