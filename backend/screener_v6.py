@@ -84,6 +84,10 @@ MIN_YEARS_HISTORY = 5
 # ---------------------------------------------------------------------------
 
 _FX_TO_USD = {
+    # Static fallback table — used when FMP forex endpoint is unavailable
+    # or returns nothing for a pair. Live rates are preferred (see get_fx_rate
+    # below) but these stay as a safety net so the screener degrades to
+    # approximate FX rather than failing the scan.
     "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CHF": 1.12,
     "JPY": 0.0067, "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073,
     "HKD": 0.128, "INR": 0.012, "SGD": 0.75, "AUD": 0.65,
@@ -94,18 +98,104 @@ _FX_TO_USD = {
     "AED": 0.27, "TRY": 0.031, "HUF": 0.0027,
 }
 
-def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
-    """Get exchange rate using fallback table only."""
+# Cached FX rates per scan run. Cleared between processes (Cloud Run Job
+# spawns a fresh container each invocation, so this is per-scan automatically).
+_FX_CACHE: dict[str, float] = {}
+
+# Maps ticker suffix to ISO currency code. Used as fallback when FMP's
+# `quote` endpoint omits the `currency` field (which it does for ALL non-US
+# stocks — confirmed by manual inspection of TSE/HKEX/LSE/SIX quotes).
+# Without this fallback, non-US prices were defaulting to USD and the entire
+# FX-conversion pipeline silently produced inflated local_price values,
+# corrupting P/S, intrinsic_upside, MoS, and value_score for ~600 stocks
+# in the global universe.
+#
+# Special case: GBX = pence sterling (1/100 GBP). LSE prices are quoted in
+# pence by convention. _parse_quote converts GBX→GBP at parse time so the
+# rest of the pipeline only ever sees GBP.
+SUFFIX_CURRENCY = {
+    # Asia
+    ".T":  "JPY",   ".HK": "HKD",   ".KS": "KRW",   ".KQ": "KRW",
+    ".SS": "CNY",   ".SZ": "CNY",   ".TW": "TWD",   ".SI": "SGD",
+    ".BO": "INR",   ".NS": "INR",   ".AX": "AUD",   ".NZ": "NZD",
+    ".KL": "MYR",   ".JK": "IDR",   ".BK": "THB",   ".HM": "PHP",
+    # Europe
+    ".SW": "CHF",   ".AS": "EUR",   ".PA": "EUR",   ".DE": "EUR",
+    ".F":  "EUR",   ".MI": "EUR",   ".HE": "EUR",   ".LS": "EUR",
+    ".MC": "EUR",   ".BR": "EUR",   ".VI": "EUR",   ".AT": "EUR",
+    ".IR": "EUR",   ".OL": "NOK",   ".CO": "DKK",   ".ST": "SEK",
+    ".HA": "EUR",   ".BE": "EUR",   ".PR": "CZK",   ".WA": "PLN",
+    ".BD": "HUF",   ".IS": "TRY",   ".L":  "GBX",   ".IL": "GBX",
+    # Americas
+    ".TO": "CAD",   ".V":  "CAD",   ".SA": "BRL",   ".MX": "MXN",
+    ".BA": "ARS",   ".SN": "CLP",
+    # Africa / Middle East
+    ".JO": "ZAR",   ".TA": "ILS",   ".CA": "EGP",   ".SR": "SAR",
+}
+
+
+def detect_currency_from_symbol(symbol: str) -> Optional[str]:
+    """Derive currency from ticker suffix. Returns None if no dot in symbol
+    (US convention) or suffix unknown. Used as fallback for non-US stocks
+    where FMP omits the currency field on the `quote` endpoint."""
+    if "." not in symbol:
+        return None
+    suffix = "." + symbol.rsplit(".", 1)[1]
+    return SUFFIX_CURRENCY.get(suffix)
+
+
+def _fmp_fx_pair(from_ccy: str, to_ccy: str) -> Optional[float]:
+    """Fetch a single FX pair from FMP's forex endpoint. Tries direct then
+    inverse. Returns None if FMP doesn't have the pair."""
     if from_ccy == to_ccy:
         return 1.0
+    # Direct: e.g. EURUSD = how many USD per EUR
+    data = fmp("quote-short", {"symbol": f"{from_ccy}{to_ccy}"})
+    if data and isinstance(data, list) and data:
+        rate = data[0].get("price")
+        if rate and float(rate) > 0:
+            return float(rate)
+    # Inverse: e.g. USDJPY = how many JPY per USD; we want JPY→USD = 1/rate
+    data = fmp("quote-short", {"symbol": f"{to_ccy}{from_ccy}"})
+    if data and isinstance(data, list) and data:
+        rate = data[0].get("price")
+        if rate and float(rate) > 0:
+            return 1.0 / float(rate)
+    return None
+
+
+def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
+    """Get exchange rate, FMP-live first then static fallback.
+
+    Cached per (from,to) pair within a single scan run via _FX_CACHE.
+    A typical global scan touches ~10 unique pairs, so we hit FMP forex
+    ~10 times total regardless of universe size.
+    """
+    if from_ccy == to_ccy:
+        return 1.0
+    key = f"{from_ccy}_{to_ccy}"
+    if key in _FX_CACHE:
+        return _FX_CACHE[key]
+
+    # Try FMP forex live first
+    rate = _fmp_fx_pair(from_ccy, to_ccy)
+    if rate is not None:
+        _FX_CACHE[key] = rate
+        return rate
+
+    # Fall back to static table
     from_usd = _FX_TO_USD.get(from_ccy)
     to_usd = _FX_TO_USD.get(to_ccy)
     if from_usd is None or to_usd is None:
-        log.warning(f"FX {from_ccy}→{to_ccy}: unknown currency, using 1.0")
+        log.warning(f"FX {from_ccy}→{to_ccy}: unknown currency in static "
+                    f"table, using 1.0 — pricing for this stock will be wrong")
+        _FX_CACHE[key] = 1.0
         return 1.0
     if to_usd == 0:
+        _FX_CACHE[key] = 1.0
         return 1.0
     rate = from_usd / to_usd
+    _FX_CACHE[key] = rate
     return rate
 
 # Factor weights — v7.2 ML-optimized from 45,338-sample backtest (must sum to 1.0)
@@ -731,16 +821,44 @@ def get_quote(sym: str) -> Optional[dict]:
     return _parse_quote(data[0])
 
 def _parse_quote(q: dict) -> dict:
+    """Parse FMP quote dict. Currency-aware:
+    - Trusts FMP's `currency` field when present (US stocks)
+    - Falls back to ticker suffix detection when missing (all non-US stocks)
+    - Converts GBX (pence) to GBP at parse time so downstream sees only GBP
+    """
+    sym = q.get("symbol", "")
+    currency = q.get("currency")
+    if not currency:
+        currency = detect_currency_from_symbol(sym) or "USD"
+
+    price = float(q.get("price") or 0)
+    sma50 = float(q.get("priceAvg50") or 0)
+    sma200 = float(q.get("priceAvg200") or 0)
+    year_high = float(q.get("yearHigh") or 0)
+    year_low = float(q.get("yearLow") or 0)
+
+    # GBX = pence sterling (1/100 GBP). LSE quotes are in pence by convention.
+    # Normalize to GBP at the boundary so the rest of the pipeline handles
+    # only ISO currency codes that match what `reportedCurrency` returns
+    # (which is always GBP, never GBX, in income statements).
+    if currency == "GBX":
+        price /= 100
+        sma50 /= 100
+        sma200 /= 100
+        year_high /= 100
+        year_low /= 100
+        currency = "GBP"
+
     return {
-        "price": float(q.get("price", 0)),
-        "sma50": float(q.get("priceAvg50", 0)),
-        "sma200": float(q.get("priceAvg200", 0)),
-        "year_high": float(q.get("yearHigh", 0)),
-        "year_low": float(q.get("yearLow", 0)),
-        "market_cap": float(q.get("marketCap", 0)),
-        "volume": int(q.get("volume", 0)),
-        "avg_volume": int(q.get("avgVolume", 0)),
-        "currency": q.get("currency", "USD"),
+        "price": price,
+        "sma50": sma50,
+        "sma200": sma200,
+        "year_high": year_high,
+        "year_low": year_low,
+        "market_cap": float(q.get("marketCap") or 0),
+        "volume": int(q.get("volume") or 0),
+        "avg_volume": int(q.get("avgVolume") or 0),
+        "currency": currency,
     }
 
 def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
