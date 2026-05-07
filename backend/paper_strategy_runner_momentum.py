@@ -215,6 +215,8 @@ def open_first_basket(scan_date: str, picks: list[dict]) -> tuple[list, float]:
     positions = []
     for p in picks:
         positions.append({
+            "symbol": p["symbol"],
+            "entry_price": p["price"],
             "entry_date": scan_date,
             "composite_at_entry": p["score"],
             "piotroski_at_entry": p["piotroski"],
