@@ -1605,7 +1605,7 @@ export default function StockDetail(){
       // Fallback to latest.json if nothing matched (first-deploy edge case
       // when a region file is missing). Better to show something than nothing.
       if(!best){
-        fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()).then(d=>{
+        fetch(`${GCS_SCANS}/latest_global.json`).then(r=>r.json()).then(d=>{
           const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
           setStock(f||null); setLoading(false);
         }).catch(()=>{setStock(null); setLoading(false);});

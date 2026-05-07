@@ -665,7 +665,7 @@ function StrategiesTab() {
       {/* Hero / methodology */}
       <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
-          Four paper-tracked strategies, all SP500 universe, equal-weighted top-10:
+          Four paper-tracked strategies, all global universe, equal-weighted top-10:
           {" "}<strong>BORING</strong> (Pio≥7 by ps_ratio asc, 26w hold) ·
           {" "}<strong>COMPOSITE</strong> (top by v8 5-factor, weekly rotation) ·
           {" "}<strong>MOMENTUM</strong> (top by composite_momentum, weekly rotation) ·
@@ -859,7 +859,7 @@ function StrategiesTab() {
             sub={`Inception ${fa.inception_date} · waiting for FA gate qualifiers`}
           />
           <div style={{ padding: "12px 4px", fontSize: 11, fontFamily: T.mono, color: T.muted }}>
-            No SP500 stocks currently pass the FA gate (drawdown {">"} 35%, Pio≥7, Altman {">"} 2.5,
+            No stocks currently pass the FA gate (drawdown {">"} 35%, Pio≥7, Altman {">"} 2.5,
             ROE {">"} 12%, mkt cap {">"} $2B). Sitting in cash. Strategy retries each Friday.
           </div>
         </Card>

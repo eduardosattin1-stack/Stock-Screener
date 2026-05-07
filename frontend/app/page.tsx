@@ -639,7 +639,7 @@ export default function Dashboard(){
 
   useEffect(()=>{
     setLoading(true);
-    fetch(`${GCS_BASE}/latest_sp500.json?t=${Date.now()}`)
+    fetch(`${GCS_BASE}/latest_global.json?t=${Date.now()}`)
       .then(r=>r.ok?r.json():null)
       .then(d=>{ setData(d); setLoading(false); })
       .catch(()=>{ setLoading(false); });
@@ -745,7 +745,7 @@ export default function Dashboard(){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
           <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
-            CB Screener · {stocks.length} stocks · S&P 500
+            CB Screener · {stocks.length} stocks · Global
           </p>
           <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
             {scanDate} · v8 5-factor composite
