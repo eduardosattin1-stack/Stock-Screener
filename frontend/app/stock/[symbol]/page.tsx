@@ -980,42 +980,44 @@ function PriceCompositeChart({symbol}:{symbol:string}){
   );
 }
 
-// v8 TargetBar: shows price + analyst consensus + BVPS-projected fair value
-// + the combined intrinsic that actually drives the Value factor score.
-// DCF and Buffett earnings-compounding intrinsic were removed from the v8
-// composite — they remain on the Stock dict for diagnostics but no longer
-// appear here. Keeping the chart simple matches the new five-factor brief.
-function TargetBar({price,target,bvps,combined,currency}:{price:number;target:number;bvps:number;combined:number;currency?:string}){
-  const vs=[price,target,bvps,combined].filter(v=>v>0);
+// v8 TargetBar: shows price + analyst consensus + Buffett 5y fair value.
+// 2026-05-06: simplified after May 2026 Buffett rewrite. Previously a third
+// "Combined" dot blended BVPS+analyst, but the backend retired that blend —
+// intrinsic_avg now equals buffett_fair_value exactly, so the Combined and
+// Fair Value dots showed the same number. Combined removed.
+// DCF and Buffett earnings-compounding intrinsic remain on the Stock dict
+// for diagnostics but no longer appear here. Keeping the chart simple
+// matches the new five-factor brief.
+function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps:number;currency?:string}){
+  const vs=[price,target,bvps].filter(v=>v>0);
   if(vs.length<2)return null;
   const mn=Math.min(...vs)*0.85,mx=Math.max(...vs)*1.10,rng=mx-mn||1,pos=(v:number)=>((v-mn)/rng*100);
   const c$=(v:number)=>fmtPrice(v,currency);
-  const upside=combined>0?((combined-price)/price*100):0;
+  // 2026-05-06: simplified after May 2026 Buffett rewrite. The bvps prop
+  // carries the Buffett 5y fair value (legacy name kept for diff stability).
+  // Previously a separate "Combined" dot blended BVPS+analyst, but the
+  // backend retired that blend — intrinsic_avg now equals buffett_fair_value
+  // exactly, so two dots showed the same number. Combined removed.
+  const upside=bvps>0?((bvps-price)/price*100):0;
   const upColor=upside>15?T.green:upside>0?"#5a9e7a":upside>-15?T.amber:T.red;
 
   return(
     <div style={{marginTop:12,padding:"12px 0"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28}}>
         <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>PRICE vs INTRINSIC</div>
-        {combined>0&&<div style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:upColor}}>
+        {bvps>0&&<div style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:upColor}}>
           {upside>=0?"+":""}{upside.toFixed(0)}% upside
         </div>}
       </div>
 
       <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
-        {/* Highlight from price to combined intrinsic */}
-        {combined>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(combined)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
+        {/* Highlight from price to fair value */}
+        {bvps>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(bvps)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
 
         {/* Current price line */}
         <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
           <div style={{position:"absolute",top:-22,left:"50%",transform:"translateX(-50%)",fontSize:11,color:T.text,fontFamily:T.mono,fontWeight:700,background:T.card,padding:"0 4px",whiteSpace:"nowrap"}}>{c$(price)}</div>
         </div>
-
-        {/* Combined intrinsic — the figure that drives Value scoring */}
-        {combined>0&&<div style={{position:"absolute",left:`${pos(combined)}%`,top:6,width:10,height:10,borderRadius:"50%",background:T.green,transform:"translateX(-5px)",border:"2px solid white",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}>
-          <div style={{position:"absolute",top:-18,left:"50%",transform:"translateX(-50%)",fontSize:10,color:T.green,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(combined)}</div>
-          <div style={{position:"absolute",bottom:-18,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.green,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Combined</div>
-        </div>}
 
         {/* Analyst consensus */}
         {target>0&&<div style={{position:"absolute",left:`${pos(target)}%`,top:18,width:8,height:8,borderRadius:"50%",background:T.amber,transform:"translateX(-4px)"}}>
@@ -1023,10 +1025,10 @@ function TargetBar({price,target,bvps,combined,currency}:{price:number;target:nu
           <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Analyst</div>
         </div>}
 
-        {/* BVPS projection (5-year forward) */}
-        {bvps>0&&<div style={{position:"absolute",left:`${pos(bvps)}%`,top:13,width:8,height:8,borderRadius:2,background:T.blue,transform:"translateX(-4px)"}}>
-          <div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(bvps)}</div>
-          <div style={{position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.blue,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Fair Value</div>
+        {/* Buffett 5y fair value — the figure that drives Value scoring */}
+        {bvps>0&&<div style={{position:"absolute",left:`${pos(bvps)}%`,top:6,width:10,height:10,borderRadius:"50%",background:T.green,transform:"translateX(-5px)",border:"2px solid white",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}>
+          <div style={{position:"absolute",top:-18,left:"50%",transform:"translateX(-50%)",fontSize:10,color:T.green,fontFamily:T.mono,fontWeight:700,whiteSpace:"nowrap"}}>{c$(bvps)}</div>
+          <div style={{position:"absolute",bottom:-18,left:"50%",transform:"translateX(-50%)",fontSize:9,color:T.green,fontFamily:T.mono,fontWeight:600,whiteSpace:"nowrap"}}>Fair Value</div>
         </div>}
       </div>
 
@@ -1034,15 +1036,11 @@ function TargetBar({price,target,bvps,combined,currency}:{price:number;target:nu
       <div style={{marginTop:24,paddingTop:12,borderTop:`1px dashed ${T.divider}`,fontSize:9,color:T.textMuted,fontFamily:T.mono,lineHeight:1.6}}>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:8,height:8,borderRadius:"50%",background:T.green,border:"2px solid white",boxShadow:"0 0 0 1px "+T.green}}/>
-          <strong>Combined:</strong> avg of analyst + BVPS (drives Value score)
+          <strong>Fair Value:</strong> Buffett 5y future price discounted at 10% hurdle (drives Value score)
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/>
           <strong>Analyst:</strong> Wall Street 12-month consensus
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}>
-          <div style={{width:6,height:6,borderRadius:2,background:T.blue}}/>
-          <strong>Fair Value:</strong> Buffett 5y future price discounted at 10% hurdle
         </div>
       </div>
     </div>
@@ -1605,7 +1603,7 @@ export default function StockDetail(){
       // Fallback to latest.json if nothing matched (first-deploy edge case
       // when a region file is missing). Better to show something than nothing.
       if(!best){
-        fetch(`${GCS_SCANS}/latest_global.json`).then(r=>r.json()).then(d=>{
+        fetch(`${GCS_SCANS}/latest.json`).then(r=>r.json()).then(d=>{
           const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
           setStock(f||null); setLoading(false);
         }).catch(()=>{setStock(null); setLoading(false);});
@@ -1654,15 +1652,6 @@ export default function StockDetail(){
   // Hint when Fallen Angel materially outscores Momentum
   const faAdvantage=(s.composite_fallen_angel??0)-(s.composite_momentum??0);
   const showFAHint=haveFA&&faAdvantage>=0.10&&mode==="momentum";
-
-  // Combined intrinsic for TargetBar (matches what compute_upside_score averages)
-  const intrinsicCombined=(()=>{
-    const t=s.target||0,b=s.intrinsic_bvps||0;
-    if(t>0&&b>0)return(t+b)/2;
-    if(t>0)return t;
-    if(b>0)return b;
-    return 0;
-  })();
 
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
@@ -1770,7 +1759,7 @@ export default function StockDetail(){
           {/* Buffett 5y projection block */}
           <BuffettBlock s={s}/>
           {/* TargetBar — Price | Analyst target | Buffett fair value */}
-          <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} combined={s.buffett_fair_value??s.target??0} currency={s.currency}/>
+          <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency}/>
         </Card>
         <GrowthCard s={s}/>
         <SmartMoneyCard s={s}/>
