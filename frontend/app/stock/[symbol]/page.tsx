@@ -160,7 +160,54 @@ const TOOLTIPS: Record<string, string> = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const fmtPct=(n:number|null|undefined)=>n==null?"—":`${(n*100).toFixed(1)}%`;
-const fmtPrice=(n:number|null|undefined,c?:string)=>{if(n==null||n===0)return"—";return`${c==="EUR"?"€":c==="GBP"?"£":"$"}${n.toFixed(2)}`;};
+
+// Currency symbol map. Stocks in the global universe come from many exchanges
+// reporting in different currencies; the backend now correctly tags currency
+// per ticker (2026-05-07 fix) and we should display the right symbol or code.
+// Codes (vs glyphs) are shown for currencies where the glyph is ambiguous
+// or absent on common keyboards (e.g. CHF, SEK, BRL).
+const CURRENCY_SYMBOL: Record<string, string> = {
+  USD: "$",  EUR: "€",  GBP: "£",  JPY: "¥",  CNY: "¥",  HKD: "HK$",
+  CHF: "CHF ", SEK: "kr ", NOK: "kr ", DKK: "kr ", AUD: "A$",  CAD: "C$",
+  NZD: "NZ$", SGD: "S$",  KRW: "₩",  INR: "₹",  BRL: "R$",  MXN: "Mex$",
+  TWD: "NT$", THB: "฿",  IDR: "Rp ", MYR: "RM ", PHP: "₱",  ILS: "₪",
+  TRY: "₺",  PLN: "zł ", CZK: "Kč ", HUF: "Ft ", ZAR: "R",   SAR: "SAR ",
+  AED: "AED ",
+};
+const fmtPrice=(n:number|null|undefined,c?:string)=>{
+  if(n==null||n===0)return"—";
+  const sym=CURRENCY_SYMBOL[c??""]??"$";
+  // For prices over 1000, drop decimals (avoids "¥30,060.00" being noise)
+  return n>=1000?`${sym}${n.toLocaleString(undefined,{maximumFractionDigits:0})}`:`${sym}${n.toFixed(2)}`;
+};
+
+// Convert FMP ticker format to TradingView's EXCHANGE:SYMBOL format. Without
+// this, non-US tickers like 1898.HK or 6857.T fail to load in the embedded
+// chart with "This symbol doesn't exist". US tickers (no suffix) pass through
+// untouched — TradingView accepts bare symbols like AAPL.
+const TV_EXCHANGE_MAP: Record<string, string> = {
+  // Asia
+  T: "TSE",  HK: "HKEX",  KS: "KRX",  KQ: "KRX",  SS: "SSE",  SZ: "SZSE",
+  TW: "TWSE", SI: "SGX",  AX: "ASX",  NZ: "NZX",  KL: "MYX",  JK: "IDX",
+  BK: "SET",  BO: "BSE",  NS: "NSE",
+  // Europe
+  SW: "SIX",       AS: "EURONEXT",  PA: "EURONEXT",  BR: "EURONEXT",
+  LS: "EURONEXT",  IR: "EURONEXT",  DE: "XETR",      F:  "XETR",
+  MI: "MIL",       HE: "OMXHEX",    OL: "OMXOSL",    ST: "OMXSTO",
+  CO: "OMXCOP",    L:  "LSE",       IL: "LSE",       MC: "BME",
+  WA: "GPW",       IS: "BIST",      VI: "VIE",       AT: "ATHEX",
+  // Americas / RoW
+  TO: "TSX",  V:  "TSXV",  SA: "BMFBOVESPA",  MX: "BMV",
+  JO: "JSE",  TA: "TASE",
+};
+function toTradingViewSymbol(symbol: string): string {
+  if (!symbol || !symbol.includes(".")) return symbol;
+  const idx = symbol.lastIndexOf(".");
+  const base = symbol.slice(0, idx);
+  const suffix = symbol.slice(idx + 1);
+  const exchange = TV_EXCHANGE_MAP[suffix];
+  return exchange ? `${exchange}:${base}` : symbol;
+}
 const gClr=(v:number|null)=>{if(v==null)return T.textLight;if(v>0.15)return T.green;if(v>0.05)return"#5a9e7a";if(v>0)return T.textMuted;return T.red;};
 function safeCagr(s:number,e:number,y:number):number|null{if(!s||!e||s<=0||e<=0||y<=0)return null;return Math.pow(e/s,1/y)-1;}
 // v8: read factors_v8 for the active mode. Falls back to s.factors_v8 if the
@@ -1683,7 +1730,7 @@ export default function StockDetail(){
       </div>
 
 {/* TradingView */}
-      <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${s.symbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+      <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
