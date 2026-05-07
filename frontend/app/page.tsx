@@ -130,6 +130,27 @@ const FACTOR_WEIGHTS: Record<string,number> = { momentum:25, quality:20, growth:
 const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}%`;
 const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1e12) return `$${(n/1e12).toFixed(1)}T`; if(n>=1e9) return `$${(n/1e9).toFixed(0)}B`; if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`; return `$${n.toFixed(0)}`; };
 
+// 2026-05-07: currency-aware price formatting for global universe.
+// Backend now correctly tags currency per ticker (.T → JPY, .HK → HKD, etc.)
+// after the suffix-detection fix. Display the right glyph instead of always
+// showing "$". Codes shown for currencies where the glyph is ambiguous.
+const CURRENCY_SYMBOL: Record<string, string> = {
+  USD: "$",  EUR: "€",  GBP: "£",  JPY: "¥",  CNY: "¥",  HKD: "HK$",
+  CHF: "CHF ", SEK: "kr ", NOK: "kr ", DKK: "kr ", AUD: "A$",  CAD: "C$",
+  NZD: "NZ$", SGD: "S$",  KRW: "₩",  INR: "₹",  BRL: "R$",  MXN: "Mex$",
+  TWD: "NT$", THB: "฿",  IDR: "Rp ", MYR: "RM ", PHP: "₱",  ILS: "₪",
+  TRY: "₺",  PLN: "zł ", CZK: "Kč ", HUF: "Ft ", ZAR: "R",   SAR: "SAR ",
+  AED: "AED ",
+};
+const fmtPrice = (n:number|null|undefined, c?:string) => {
+  if (n == null || n === 0) return "—";
+  const sym = CURRENCY_SYMBOL[c ?? ""] ?? "$";
+  // For prices over 1000 (JPY, KRW, IDR almost always), drop decimals
+  return n >= 1000
+    ? `${sym}${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+    : `${sym}${n.toFixed(2)}`;
+};
+
 // getProb: fallback table for stocks without live hit_prob field (rare).
 // Numbers are rough approximations from v7.2 backtest calibration — used by
 // the GAIN/DD column for projected gain & drawdown ranges per composite band.
@@ -430,7 +451,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
           </div>
         </td>
         {/* PRICE */}
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{s.currency!=="USD"&&<span style={{fontSize:9,color:"var(--text-light)",marginRight:3}}>{s.currency}</span>}${s.price?.toFixed(2)}</td>
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{fmtPrice(s.price, s.currency)}</td>
         {/* PIO — diagnostic only (not in v8 composite) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11,fontWeight:600,color:s.piotroski<=3?"#92400e":"var(--text-muted,#6b7280)"}} title="Piotroski 0-9 — diagnostic only, not in v8 composite">
           {s.piotroski}
@@ -639,7 +660,7 @@ export default function Dashboard(){
 
   useEffect(()=>{
     setLoading(true);
-    fetch(`${GCS_BASE}/latest_global.json?t=${Date.now()}`)
+    fetch(`${GCS_BASE}/latest_sp500.json?t=${Date.now()}`)
       .then(r=>r.ok?r.json():null)
       .then(d=>{ setData(d); setLoading(false); })
       .catch(()=>{ setLoading(false); });
@@ -745,7 +766,7 @@ export default function Dashboard(){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
           <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
-            CB Screener · {stocks.length} stocks · Global
+            CB Screener · {stocks.length} stocks · S&P 500
           </p>
           <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
             {scanDate} · v8 5-factor composite
