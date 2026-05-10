@@ -522,6 +522,16 @@ class Stock:
     signal_compounder: str = "DISQUALIFIED"
     fallen_angel_flag: bool = False
 
+    # Global Compounder (May 2026) — same scoring as SP500 Compounder, but
+    # the cohort drops the SP500 membership filter. Universe: all stocks
+    # with valid roe/pb/opmd metrics, excluding Fin/Ins/Healthcare. Lets us
+    # A/B test "does the SP500 filter add or destroy alpha?" live.
+    # Fields parallel the SP500 set. Raw inputs (roe_compounder, pb_compounder,
+    # opmargin_delta_compounder) are universe-independent — same for both.
+    compounder_score_global: Optional[float] = None
+    compounder_rank_global: Optional[int] = None
+    signal_compounder_global: str = "DISQUALIFIED"
+
 # ---------------------------------------------------------------------------
 # 1. Stock Discovery (unchanged from v5)
 # ---------------------------------------------------------------------------
@@ -3523,71 +3533,100 @@ def compute_composite_v8(
 COMPOUNDER_EXCLUDED_SECTORS: set = {"Financial Services", "Insurance", "Healthcare"}
 
 
-def compute_compounder_universe_scores(stocks: list) -> None:
-    """Mutates stocks: assigns compounder_score, compounder_rank,
-    signal_compounder. Runs once after all per-stock fundamentals exist.
-    """
-    cohort = []
-    excluded_count = 0
-    excluded_reasons = {"not_sp500": 0, "excluded_sector": 0, "missing_metric": 0}
-    for s in stocks:
-        # Default: DISQUALIFIED unless promoted below
-        s.signal_compounder = "DISQUALIFIED"
-        if s.symbol not in SP500_MEMBERS:
-            excluded_reasons["not_sp500"] += 1
-            excluded_count += 1
-            continue
-        if s.sector in COMPOUNDER_EXCLUDED_SECTORS:
-            excluded_reasons["excluded_sector"] += 1
-            excluded_count += 1
-            continue
-        if (s.roe_compounder is None or s.pb_compounder is None
-                or s.opmargin_delta_compounder is None):
-            excluded_reasons["missing_metric"] += 1
-            excluded_count += 1
-            continue
-        cohort.append(s)
-
-    log.info(
-        f"  Compounder cohort: {len(cohort)} qualified, "
-        f"{excluded_count} excluded "
-        f"(not_sp500={excluded_reasons['not_sp500']}, "
-        f"excluded_sector={excluded_reasons['excluded_sector']}, "
-        f"missing_metric={excluded_reasons['missing_metric']})"
-    )
-
+def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
+                            signal_attr: str, label: str) -> None:
+    """Shared helper: assigns score/rank/signal attributes for one cohort.
+    Mutates each Stock in the cohort. Empty cohort is a no-op."""
     if not cohort:
+        log.info(f"  Compounder/{label}: empty cohort — no scores assigned")
         return
 
     n = len(cohort)
     denom = max(n - 1, 1)
 
-    # Rank tables — index in sorted list determines percentile.
     sorted_roe = sorted(cohort, key=lambda x: x.roe_compounder, reverse=True)
-    sorted_pb = sorted(cohort, key=lambda x: x.pb_compounder)  # lower is better
+    sorted_pb = sorted(cohort, key=lambda x: x.pb_compounder)              # lower better
     sorted_opd = sorted(cohort, key=lambda x: x.opmargin_delta_compounder, reverse=True)
     roe_idx = {s.symbol: i for i, s in enumerate(sorted_roe)}
     pb_idx = {s.symbol: i for i, s in enumerate(sorted_pb)}
     opd_idx = {s.symbol: i for i, s in enumerate(sorted_opd)}
 
-    # Score = mean of three percentile ranks (best = 1.0).
     scored = []
     for s in cohort:
         roe_p = 1.0 - (roe_idx[s.symbol] / denom)
         pb_p = 1.0 - (pb_idx[s.symbol] / denom)
         opd_p = 1.0 - (opd_idx[s.symbol] / denom)
         score = (roe_p + pb_p + opd_p) / 3.0
-        s.compounder_score = round(score, 4)
-        s.signal_compounder = "QUALIFIED"
+        setattr(s, score_attr, round(score, 4))
+        setattr(s, signal_attr, "QUALIFIED")
         scored.append(s)
 
-    # 1-indexed rank by score DESC.
-    scored.sort(key=lambda x: x.compounder_score, reverse=True)
+    scored.sort(key=lambda x: getattr(x, score_attr), reverse=True)
     for i, s in enumerate(scored):
-        s.compounder_rank = i + 1
+        setattr(s, rank_attr, i + 1)
 
-    top5 = [(s.symbol, s.compounder_score) for s in scored[:5]]
-    log.info(f"  Compounder top-5: {top5}")
+    top5 = [(s.symbol, getattr(s, score_attr)) for s in scored[:5]]
+    log.info(f"  Compounder/{label} cohort: {n} qualified — top-5 {top5}")
+
+
+def compute_compounder_universe_scores(stocks: list) -> None:
+    """Mutates stocks: assigns BOTH SP500 and Global Compounder scores in one
+    pass. Runs once after all per-stock fundamentals exist.
+
+    SP500 cohort:  in SP500_MEMBERS, ex Fin/Ins/HC, all 3 metrics present.
+    Global cohort: any stock ex Fin/Ins/HC with all 3 metrics present (no
+                   SP500 filter).
+    """
+    sp500_cohort = []
+    global_cohort = []
+    excluded = {"excluded_sector": 0, "missing_metric": 0,
+                "global_qualified": 0, "sp500_qualified": 0}
+
+    for s in stocks:
+        # Reset both signals — must be set every call for stocks dropping
+        # in/out of cohorts between scans.
+        s.signal_compounder = "DISQUALIFIED"
+        s.signal_compounder_global = "DISQUALIFIED"
+
+        if s.sector in COMPOUNDER_EXCLUDED_SECTORS:
+            excluded["excluded_sector"] += 1
+            continue
+        if (s.roe_compounder is None or s.pb_compounder is None
+                or s.opmargin_delta_compounder is None):
+            excluded["missing_metric"] += 1
+            continue
+
+        # Global cohort: every qualifying stock ex Fin/Ins/HC.
+        global_cohort.append(s)
+        excluded["global_qualified"] += 1
+
+        # SP500 cohort: subset of global cohort that's in SP500_MEMBERS.
+        if s.symbol in SP500_MEMBERS:
+            sp500_cohort.append(s)
+            excluded["sp500_qualified"] += 1
+
+    log.info(
+        f"  Compounder cohorts: "
+        f"SP500={excluded['sp500_qualified']}, "
+        f"Global={excluded['global_qualified']} "
+        f"(excluded: sector={excluded['excluded_sector']}, "
+        f"missing_metric={excluded['missing_metric']})"
+    )
+
+    _rank_compounder_cohort(
+        sp500_cohort,
+        score_attr="compounder_score",
+        rank_attr="compounder_rank",
+        signal_attr="signal_compounder",
+        label="SP500",
+    )
+    _rank_compounder_cohort(
+        global_cohort,
+        score_attr="compounder_score_global",
+        rank_attr="compounder_rank_global",
+        signal_attr="signal_compounder_global",
+        label="Global",
+    )
 
 
 def compute_fallen_angel_flags(stocks: list) -> None:
