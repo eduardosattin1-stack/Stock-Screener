@@ -84,10 +84,6 @@ MIN_YEARS_HISTORY = 5
 # ---------------------------------------------------------------------------
 
 _FX_TO_USD = {
-    # Static fallback table — used when FMP forex endpoint is unavailable
-    # or returns nothing for a pair. Live rates are preferred (see get_fx_rate
-    # below) but these stay as a safety net so the screener degrades to
-    # approximate FX rather than failing the scan.
     "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CHF": 1.12,
     "JPY": 0.0067, "CNY": 0.14, "TWD": 0.031, "KRW": 0.00073,
     "HKD": 0.128, "INR": 0.012, "SGD": 0.75, "AUD": 0.65,
@@ -98,104 +94,18 @@ _FX_TO_USD = {
     "AED": 0.27, "TRY": 0.031, "HUF": 0.0027,
 }
 
-# Cached FX rates per scan run. Cleared between processes (Cloud Run Job
-# spawns a fresh container each invocation, so this is per-scan automatically).
-_FX_CACHE: dict[str, float] = {}
-
-# Maps ticker suffix to ISO currency code. Used as fallback when FMP's
-# `quote` endpoint omits the `currency` field (which it does for ALL non-US
-# stocks — confirmed by manual inspection of TSE/HKEX/LSE/SIX quotes).
-# Without this fallback, non-US prices were defaulting to USD and the entire
-# FX-conversion pipeline silently produced inflated local_price values,
-# corrupting P/S, intrinsic_upside, MoS, and value_score for ~600 stocks
-# in the global universe.
-#
-# Special case: GBX = pence sterling (1/100 GBP). LSE prices are quoted in
-# pence by convention. _parse_quote converts GBX→GBP at parse time so the
-# rest of the pipeline only ever sees GBP.
-SUFFIX_CURRENCY = {
-    # Asia
-    ".T":  "JPY",   ".HK": "HKD",   ".KS": "KRW",   ".KQ": "KRW",
-    ".SS": "CNY",   ".SZ": "CNY",   ".TW": "TWD",   ".SI": "SGD",
-    ".BO": "INR",   ".NS": "INR",   ".AX": "AUD",   ".NZ": "NZD",
-    ".KL": "MYR",   ".JK": "IDR",   ".BK": "THB",   ".HM": "PHP",
-    # Europe
-    ".SW": "CHF",   ".AS": "EUR",   ".PA": "EUR",   ".DE": "EUR",
-    ".F":  "EUR",   ".MI": "EUR",   ".HE": "EUR",   ".LS": "EUR",
-    ".MC": "EUR",   ".BR": "EUR",   ".VI": "EUR",   ".AT": "EUR",
-    ".IR": "EUR",   ".OL": "NOK",   ".CO": "DKK",   ".ST": "SEK",
-    ".HA": "EUR",   ".BE": "EUR",   ".PR": "CZK",   ".WA": "PLN",
-    ".BD": "HUF",   ".IS": "TRY",   ".L":  "GBX",   ".IL": "GBX",
-    # Americas
-    ".TO": "CAD",   ".V":  "CAD",   ".SA": "BRL",   ".MX": "MXN",
-    ".BA": "ARS",   ".SN": "CLP",
-    # Africa / Middle East
-    ".JO": "ZAR",   ".TA": "ILS",   ".CA": "EGP",   ".SR": "SAR",
-}
-
-
-def detect_currency_from_symbol(symbol: str) -> Optional[str]:
-    """Derive currency from ticker suffix. Returns None if no dot in symbol
-    (US convention) or suffix unknown. Used as fallback for non-US stocks
-    where FMP omits the currency field on the `quote` endpoint."""
-    if "." not in symbol:
-        return None
-    suffix = "." + symbol.rsplit(".", 1)[1]
-    return SUFFIX_CURRENCY.get(suffix)
-
-
-def _fmp_fx_pair(from_ccy: str, to_ccy: str) -> Optional[float]:
-    """Fetch a single FX pair from FMP's forex endpoint. Tries direct then
-    inverse. Returns None if FMP doesn't have the pair."""
-    if from_ccy == to_ccy:
-        return 1.0
-    # Direct: e.g. EURUSD = how many USD per EUR
-    data = fmp("quote-short", {"symbol": f"{from_ccy}{to_ccy}"})
-    if data and isinstance(data, list) and data:
-        rate = data[0].get("price")
-        if rate and float(rate) > 0:
-            return float(rate)
-    # Inverse: e.g. USDJPY = how many JPY per USD; we want JPY→USD = 1/rate
-    data = fmp("quote-short", {"symbol": f"{to_ccy}{from_ccy}"})
-    if data and isinstance(data, list) and data:
-        rate = data[0].get("price")
-        if rate and float(rate) > 0:
-            return 1.0 / float(rate)
-    return None
-
-
 def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
-    """Get exchange rate, FMP-live first then static fallback.
-
-    Cached per (from,to) pair within a single scan run via _FX_CACHE.
-    A typical global scan touches ~10 unique pairs, so we hit FMP forex
-    ~10 times total regardless of universe size.
-    """
+    """Get exchange rate using fallback table only."""
     if from_ccy == to_ccy:
         return 1.0
-    key = f"{from_ccy}_{to_ccy}"
-    if key in _FX_CACHE:
-        return _FX_CACHE[key]
-
-    # Try FMP forex live first
-    rate = _fmp_fx_pair(from_ccy, to_ccy)
-    if rate is not None:
-        _FX_CACHE[key] = rate
-        return rate
-
-    # Fall back to static table
     from_usd = _FX_TO_USD.get(from_ccy)
     to_usd = _FX_TO_USD.get(to_ccy)
     if from_usd is None or to_usd is None:
-        log.warning(f"FX {from_ccy}→{to_ccy}: unknown currency in static "
-                    f"table, using 1.0 — pricing for this stock will be wrong")
-        _FX_CACHE[key] = 1.0
+        log.warning(f"FX {from_ccy}→{to_ccy}: unknown currency, using 1.0")
         return 1.0
     if to_usd == 0:
-        _FX_CACHE[key] = 1.0
         return 1.0
     rate = from_usd / to_usd
-    _FX_CACHE[key] = rate
     return rate
 
 # Factor weights — v7.2 ML-optimized from 45,338-sample backtest (must sum to 1.0)
@@ -586,6 +496,32 @@ class Stock:
     tradier_term_structure: str = None
     tradier_implied_earnings_move: dict = None
 
+    # ─── v8 Compounder mode (May 2026) ────────────────────────────────────
+    # Universe-rank-based composite. Raw PIT inputs are computed per-stock
+    # in get_value(); the score is computed at end of screen() across the
+    # qualified cohort (SP500 ex Financial Services / Insurance / Healthcare,
+    # equity > 0, all 3 metrics present). Stocks outside the cohort get
+    # signal_compounder = "DISQUALIFIED" and compounder_score / rank = None.
+    #
+    # roe_compounder:              netIncome / totalStockholdersEquity (PIT,
+    #                              latest annual, capped at 1.0 to filter
+    #                              tiny-equity artifacts)
+    # pb_compounder:               local_price / (equity / shares_diluted)
+    # opmargin_delta_compounder:   (op_income/rev current) − (op_income/rev prior)
+    # compounder_score:            equal-weight blend of ROE, P/B-inverted,
+    #                              and OpMargin-delta percentile ranks (0..1)
+    # compounder_rank:             1-indexed rank within qualified cohort
+    # signal_compounder:           "QUALIFIED" | "DISQUALIFIED"
+    # fallen_angel_flag:           informational alert flag — rev_growth >15%,
+    #                              RSI<40, composite<0.50, price>$1, vol>100K
+    roe_compounder: Optional[float] = None
+    pb_compounder: Optional[float] = None
+    opmargin_delta_compounder: Optional[float] = None
+    compounder_score: Optional[float] = None
+    compounder_rank: Optional[int] = None
+    signal_compounder: str = "DISQUALIFIED"
+    fallen_angel_flag: bool = False
+
 # ---------------------------------------------------------------------------
 # 1. Stock Discovery (unchanged from v5)
 # ---------------------------------------------------------------------------
@@ -632,11 +568,7 @@ REGIONS = {
         ("KSC", "KR", 5_000_000_000, 50),
     ],
     "brazil": [("SAO", "BR", 1_000_000_000, 50)],
-    # 2026-05-06: "global" is now a curated list of region keys (not None,
-    # which would mean "every non-None region"). Drops midcap per the May 2026
-    # narrowing — too noisy without an allowlist. Strategy runners read
-    # latest_global.json and pick from this clean cross-region universe.
-    "global": ["sp500", "europe", "asia", "brazil"],
+    "global": None,  # Will now include EVERY region above
 }
 
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
@@ -646,20 +578,20 @@ SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector p
 COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
 EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earnings, populated lazily
 
+# v8 Compounder (May 2026): SP500 membership set, populated at scan start.
+# Used by compute_compounder_universe_scores() to gate the cohort.
+SP500_MEMBERS: set = set()
+
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
     v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
-    # 2026-05-06: "global" is a curated list of region keys, not "every
-    # non-None region". REGIONS["global"] = ["sp500","europe","asia","brazil"]
-    # — midcap intentionally excluded.
+    # If "global", iterate through every defined list in REGIONS
     if region == "global":
         syms = []
-        sub_regions = REGIONS.get("global") or []
-        if not isinstance(sub_regions, list):
-            log.warning("REGIONS['global'] is not a list; falling back to all-non-None regions")
-            sub_regions = [r for r, c in REGIONS.items() if c is not None and r != "global"]
-        for r_name in sub_regions:
-            syms.extend(get_symbols(r_name))
+        # Dynamically include every key that has a list of configs
+        for r_name, config in REGIONS.items():
+            if config is not None:
+                syms.extend(get_symbols(r_name))
         return list(dict.fromkeys(syms))
     # 2026-04-23: "midcap" combined universe — NYSE + NASDAQ $2-10B US.
     if region == "midcap":
@@ -689,14 +621,10 @@ def get_symbols(region: str) -> list[str]:
                 f"Verify Dockerfile copies strategy_allowlists/."
             )
 
-    # 2026-05-05: sectors hard-excluded across ALL regions in the universe.
+    # 2026-05-05: sectors hard-excluded for the sp500 momentum universe.
     # Per v1.0 strategy: no Financials, no Insurance, no REITs, no Utilities.
     # Applied as a defense-in-depth strip *after* FMP returns results, in
     # addition to the allowlist intersection below.
-    # 2026-05-06: extended from sp500-only to ALL regions. The global scan
-    # (sp500 + europe + asia + brazil) now applies the same structural
-    # filter across all regions, so europe/asia/brazil don't leak banks,
-    # insurers, REITs, or utilities through into strategy runners.
     EXCLUDED_SECTORS = {"Financial Services", "Real Estate", "Utilities"}
 
     symbols = []
@@ -734,13 +662,11 @@ def get_symbols(region: str) -> list[str]:
                 if not sym:
                     continue
                 sec = d.get("sector") or ""
-                # 2026-05-06: post-fetch sector strip applies to ALL regions
-                # (was sp500-only). Catches Financial Services / REIT / Utility
-                # names that slip into FMP's company-screener results across
-                # europe / asia / brazil too. Combined with the allowlist
-                # intersection below, this gives global scans the same clean
-                # structural filter that produced the 357-name SP500 baseline.
-                if sec in EXCLUDED_SECTORS:
+                # 2026-05-05: post-fetch sector strip for sp500. Catches
+                # any name that slipped into FMP's screener under the
+                # excluded-sector umbrella (Financial Services / REIT /
+                # Utility) before we intersect with the allowlist.
+                if region == "sp500" and sec in EXCLUDED_SECTORS:
                     continue
                 batch.append(sym)
                 # v7.2: preserve sector + exchange + country for scoring and UI filters
@@ -810,6 +736,23 @@ def preload_sector_performance(days: int = 60):
              f"{max(SECTOR_PERF_CACHE.values()):+.1%})" if SECTOR_PERF_CACHE
              else "  Sector perf preloaded: empty")
 
+
+def preload_sp500_members():
+    """Populate SP500_MEMBERS at scan start. One FMP call.
+    Used by compute_compounder_universe_scores() to gate the cohort.
+    Failure is non-fatal — empty set means Compounder cohort will be empty
+    and all stocks get signal_compounder='DISQUALIFIED'."""
+    global SP500_MEMBERS
+    try:
+        data = fmp("sp500-constituent")
+        if data and isinstance(data, list):
+            SP500_MEMBERS = {x.get("symbol") for x in data if x.get("symbol")}
+            log.info(f"  SP500 members preloaded: {len(SP500_MEMBERS)} symbols")
+        else:
+            log.warning("  SP500 members preload returned no data")
+    except Exception as e:
+        log.warning(f"  SP500 members preload failed: {e}")
+
 # ---------------------------------------------------------------------------
 # 2. Quote
 # ---------------------------------------------------------------------------
@@ -821,44 +764,16 @@ def get_quote(sym: str) -> Optional[dict]:
     return _parse_quote(data[0])
 
 def _parse_quote(q: dict) -> dict:
-    """Parse FMP quote dict. Currency-aware:
-    - Trusts FMP's `currency` field when present (US stocks)
-    - Falls back to ticker suffix detection when missing (all non-US stocks)
-    - Converts GBX (pence) to GBP at parse time so downstream sees only GBP
-    """
-    sym = q.get("symbol", "")
-    currency = q.get("currency")
-    if not currency:
-        currency = detect_currency_from_symbol(sym) or "USD"
-
-    price = float(q.get("price") or 0)
-    sma50 = float(q.get("priceAvg50") or 0)
-    sma200 = float(q.get("priceAvg200") or 0)
-    year_high = float(q.get("yearHigh") or 0)
-    year_low = float(q.get("yearLow") or 0)
-
-    # GBX = pence sterling (1/100 GBP). LSE quotes are in pence by convention.
-    # Normalize to GBP at the boundary so the rest of the pipeline handles
-    # only ISO currency codes that match what `reportedCurrency` returns
-    # (which is always GBP, never GBX, in income statements).
-    if currency == "GBX":
-        price /= 100
-        sma50 /= 100
-        sma200 /= 100
-        year_high /= 100
-        year_low /= 100
-        currency = "GBP"
-
     return {
-        "price": price,
-        "sma50": sma50,
-        "sma200": sma200,
-        "year_high": year_high,
-        "year_low": year_low,
-        "market_cap": float(q.get("marketCap") or 0),
-        "volume": int(q.get("volume") or 0),
-        "avg_volume": int(q.get("avgVolume") or 0),
-        "currency": currency,
+        "price": float(q.get("price", 0)),
+        "sma50": float(q.get("priceAvg50", 0)),
+        "sma200": float(q.get("priceAvg200", 0)),
+        "year_high": float(q.get("yearHigh", 0)),
+        "year_low": float(q.get("yearLow", 0)),
+        "market_cap": float(q.get("marketCap", 0)),
+        "volume": int(q.get("volume", 0)),
+        "avg_volume": int(q.get("avgVolume", 0)),
+        "currency": q.get("currency", "USD"),
     }
 
 def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
@@ -1697,6 +1612,50 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         v["classification"] = "SPECULATIVE"
     else:
         v["classification"] = "NEUTRAL"
+
+    # ──────────────────────────────────────────────────────────────────
+    # v8 Compounder mode (May 2026) — raw PIT inputs for universe ranking.
+    # The actual score (compounder_score) is computed at end of screen()
+    # across the qualified cohort; here we just emit the three raw metrics.
+    # All three are None on failure — the universe-ranker excludes any
+    # stock missing any of them.
+    # ──────────────────────────────────────────────────────────────────
+    v["roe_compounder"] = None
+    v["pb_compounder"] = None
+    v["opmargin_delta_compounder"] = None
+
+    # ROE: netIncome / totalStockholdersEquity (PIT, latest annual). Capped
+    # at 1.0 to filter tiny-equity / share-buyback artifacts where ROE is
+    # technically real but not informative for compounder ranking.
+    if bs and inc and len(bs) >= 1 and len(inc) >= 1:
+        bs_sorted_c = sorted(bs, key=lambda x: x.get("date", ""))
+        latest_bs = bs_sorted_c[-1]
+        latest_inc = inc[-1]  # inc is sorted oldest→newest above (line ~1235)
+        ni = float(latest_inc.get("netIncome") or 0)
+        eq = float(latest_bs.get("totalStockholdersEquity") or 0)
+        if eq > 0 and ni:
+            v["roe_compounder"] = min(ni / eq, 1.0)
+
+        # P/B: current_price / (equity / shares_diluted). Uses live price
+        # (local_price already FX-normalized to reportedCurrency above).
+        sh = float(latest_inc.get("weightedAverageShsOutDil")
+                   or latest_inc.get("weightedAverageShsOut") or 0)
+        if eq > 0 and sh > 0 and local_price > 0:
+            bvps = eq / sh
+            if bvps > 0:
+                v["pb_compounder"] = local_price / bvps
+
+    # OpMargin delta: (op_income/revenue current) − (op_income/revenue prior)
+    # operatingIncome is a top-level field on FMP income-statement.
+    if inc and len(inc) >= 2:
+        curr = inc[-1]
+        prev = inc[-2]
+        rev_c = float(curr.get("revenue") or 0)
+        rev_p = float(prev.get("revenue") or 0)
+        op_c = float(curr.get("operatingIncome") or 0)
+        op_p = float(prev.get("operatingIncome") or 0)
+        if rev_c > 0 and rev_p > 0:
+            v["opmargin_delta_compounder"] = (op_c / rev_c) - (op_p / rev_p)
 
     return v
 
@@ -3555,6 +3514,101 @@ def compute_composite_v8(
     return composite, signal, f, reasons, coverage
 
 # ---------------------------------------------------------------------------
+# v8 Compounder universe scoring (May 2026)
+# ---------------------------------------------------------------------------
+# Universe ranks ROE / P/B / OpMargin_delta across the qualified cohort
+# (SP500 ex Financial Services / Insurance / Healthcare; equity > 0 implicit
+# via roe/pb being None when equity ≤ 0). Equal-weight blend → 0..1 score.
+# Stocks outside cohort get signal_compounder = "DISQUALIFIED".
+COMPOUNDER_EXCLUDED_SECTORS: set = {"Financial Services", "Insurance", "Healthcare"}
+
+
+def compute_compounder_universe_scores(stocks: list) -> None:
+    """Mutates stocks: assigns compounder_score, compounder_rank,
+    signal_compounder. Runs once after all per-stock fundamentals exist.
+    """
+    cohort = []
+    excluded_count = 0
+    excluded_reasons = {"not_sp500": 0, "excluded_sector": 0, "missing_metric": 0}
+    for s in stocks:
+        # Default: DISQUALIFIED unless promoted below
+        s.signal_compounder = "DISQUALIFIED"
+        if s.symbol not in SP500_MEMBERS:
+            excluded_reasons["not_sp500"] += 1
+            excluded_count += 1
+            continue
+        if s.sector in COMPOUNDER_EXCLUDED_SECTORS:
+            excluded_reasons["excluded_sector"] += 1
+            excluded_count += 1
+            continue
+        if (s.roe_compounder is None or s.pb_compounder is None
+                or s.opmargin_delta_compounder is None):
+            excluded_reasons["missing_metric"] += 1
+            excluded_count += 1
+            continue
+        cohort.append(s)
+
+    log.info(
+        f"  Compounder cohort: {len(cohort)} qualified, "
+        f"{excluded_count} excluded "
+        f"(not_sp500={excluded_reasons['not_sp500']}, "
+        f"excluded_sector={excluded_reasons['excluded_sector']}, "
+        f"missing_metric={excluded_reasons['missing_metric']})"
+    )
+
+    if not cohort:
+        return
+
+    n = len(cohort)
+    denom = max(n - 1, 1)
+
+    # Rank tables — index in sorted list determines percentile.
+    sorted_roe = sorted(cohort, key=lambda x: x.roe_compounder, reverse=True)
+    sorted_pb = sorted(cohort, key=lambda x: x.pb_compounder)  # lower is better
+    sorted_opd = sorted(cohort, key=lambda x: x.opmargin_delta_compounder, reverse=True)
+    roe_idx = {s.symbol: i for i, s in enumerate(sorted_roe)}
+    pb_idx = {s.symbol: i for i, s in enumerate(sorted_pb)}
+    opd_idx = {s.symbol: i for i, s in enumerate(sorted_opd)}
+
+    # Score = mean of three percentile ranks (best = 1.0).
+    scored = []
+    for s in cohort:
+        roe_p = 1.0 - (roe_idx[s.symbol] / denom)
+        pb_p = 1.0 - (pb_idx[s.symbol] / denom)
+        opd_p = 1.0 - (opd_idx[s.symbol] / denom)
+        score = (roe_p + pb_p + opd_p) / 3.0
+        s.compounder_score = round(score, 4)
+        s.signal_compounder = "QUALIFIED"
+        scored.append(s)
+
+    # 1-indexed rank by score DESC.
+    scored.sort(key=lambda x: x.compounder_score, reverse=True)
+    for i, s in enumerate(scored):
+        s.compounder_rank = i + 1
+
+    top5 = [(s.symbol, s.compounder_score) for s in scored[:5]]
+    log.info(f"  Compounder top-5: {top5}")
+
+
+def compute_fallen_angel_flags(stocks: list) -> None:
+    """Informational alert flag — NOT a portfolio gate. Per v8 handover:
+    rev_growth_1y > 15% AND RSI < 40 AND composite < 0.50 AND price > $1
+    AND volume > 100K. Frontend may surface as a small badge.
+    """
+    count = 0
+    for s in stocks:
+        rev_yoy = s.revenue_yoy or 0.0
+        if (rev_yoy > 0.15
+                and s.rsi and s.rsi < 40
+                and s.composite is not None and s.composite < 0.50
+                and s.price > 1
+                and s.volume > 100_000):
+            s.fallen_angel_flag = True
+            count += 1
+    log.info(f"  Fallen Angel alerts: {count} stocks flagged")
+
+
+# ---------------------------------------------------------------------------
 # 15. Main Screening Loop (Two-Pass Architecture)
 # ---------------------------------------------------------------------------
 
@@ -3684,6 +3738,11 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.bvps_consistency = value.get("bvps_consistency", 0.0)
         s.bvps_upside = upside.get("buffett_upside", 0.0)  # repurposed for backward compat
         s.intrinsic_upside = upside.get("intrinsic_upside", 0.0)
+        # v8 Compounder mode raw inputs (May 2026) — score computed at end
+        # of screen() across the qualified cohort, not per-stock here.
+        s.roe_compounder = value.get("roe_compounder")
+        s.pb_compounder = value.get("pb_compounder")
+        s.opmargin_delta_compounder = value.get("opmargin_delta_compounder")
         # Buffett 5y valuation (May 2026)
         s.buffett_method = value.get("buffett_method", "")
         s.buffett_g_assumed = value.get("buffett_g_assumed", 0.0)
@@ -3942,6 +4001,18 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     # Combine enriched + non-enriched, sort by composite
     all_results = enriched_results + non_enriched
     all_results.sort(key=lambda s: s.composite, reverse=True)
+
+    # v8 Compounder universe scoring (May 2026) — runs once after every
+    # stock has its raw PIT inputs (roe_compounder / pb_compounder /
+    # opmargin_delta_compounder) populated. Stocks outside the qualified
+    # cohort get signal_compounder='DISQUALIFIED' and compounder_score=None.
+    log.info("v8 Compounder: ranking qualified cohort")
+    compute_compounder_universe_scores(all_results)
+
+    # v8 Fallen Angel alert flag (May 2026) — informational only.
+    log.info("v8 Fallen Angel: flagging alert candidates")
+    compute_fallen_angel_flags(all_results)
+
     return all_results
 
 # ---------------------------------------------------------------------------
@@ -4287,6 +4358,10 @@ def main():
 
     # Preload sector performance (one-time, used by compute_sector_momentum)
     preload_sector_performance(days=60)
+
+    # v8 Compounder (May 2026): preload SP500 membership once. Used by
+    # compute_compounder_universe_scores() to gate the cohort.
+    preload_sp500_members()
 
     # Run two-pass scan
     stocks = screen(symbols, top_n=args.top)
