@@ -1517,38 +1517,103 @@ function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(load
 // Data flow: GET /api/peers/{symbol} fans out the FMP calls server-side.
 // Multiples are unitless ratios so the comparison is currency-agnostic — a
 // JP-listed peer set for 6857.T compares fine even when one peer is an ADR.
+// ── Peer Comparison ────────────────────────────────────────────────────────────
+// Compares TTM multiples (P/E, P/S, P/B, P/FCF, EV/EBITDA) of the target
+// stock vs FMP's peer set, with optional user-added tickers. Sorted by
+// market cap. Median row reflects FMP peers only — user additions don't
+// pollute the reference but still get coloured against it.
+// Cells coloured: green if value < median * 0.95 (cheaper), amber if >
+// median * 1.05 (richer), neutral inside ±5% band.
+//
+// Data flow:
+//   FMP peers       → GET /api/peers/{symbol} (server fan-out, cached 1h)
+//   User additions  → fmpFetch("ratios-ttm",...) per ticker (client)
+// Multiples are unitless ratios so cross-currency peers compare directly.
 interface PeerRow{symbol:string;companyName:string;mktCap:number;pe:number|null;ps:number|null;pb:number|null;pfcf:number|null;evEbitda:number|null;}
 function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
   const router=useRouter();
   const[data,setData]=useState<{target:PeerRow|null;peers:PeerRow[]}|null>(null);
   const[loading,setLoading]=useState(true);
-  useEffect(()=>{if(!symbol)return;setLoading(true);fetch(`/api/peers/${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():null).then(d=>{if(d?.target&&Array.isArray(d.peers))setData({target:d.target,peers:d.peers});setLoading(false);}).catch(()=>setLoading(false));},[symbol]);
+  // User-added comparisons. Session-only — resets on page reload by design.
+  const[extras,setExtras]=useState<PeerRow[]>([]);
+  const[showInput,setShowInput]=useState(false);
+  const[input,setInput]=useState("");
+  const[addLoading,setAddLoading]=useState(false);
+  const[addError,setAddError]=useState("");
+  useEffect(()=>{if(!symbol)return;setLoading(true);setExtras([]);fetch(`/api/peers/${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():null).then(d=>{if(d?.target&&Array.isArray(d.peers))setData({target:d.target,peers:d.peers});setLoading(false);}).catch(()=>setLoading(false));},[symbol]);
+  // FMP sometimes returns 0 for an undefined multiple (e.g. negative
+  // earnings → P/E should be "n/a", not "0"). Treat ≤0 as null.
+  const safeNum=(v:any):number|null=>{const n=typeof v==="number"?v:parseFloat(v);return isFinite(n)&&n>0?n:null;};
+  async function addExtra(rawSym:string){
+    const sym=rawSym.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g,"");
+    setAddError("");
+    if(!sym){setAddError("enter a ticker");return;}
+    if(data?.target&&sym===data.target.symbol){setAddError("that's the current stock");return;}
+    if(extras.some(e=>e.symbol===sym)||data?.peers.some(p=>p.symbol===sym)){setAddError("already in table");return;}
+    setAddLoading(true);
+    try{
+      // NOTE: the FMP stable REST slug is "ratios-ttm", NOT "metrics-ratios-ttm".
+      // The /api/fmp proxy forwards e=ratios-ttm directly to /stable/ratios-ttm.
+      const res=await fmpFetch("ratios-ttm",{symbol:sym});
+      const row=Array.isArray(res)&&res.length?res[0]:null;
+      if(!row){setAddError(`no data for ${sym}`);return;}
+      const newRow:PeerRow={symbol:sym,companyName:"",mktCap:0,pe:safeNum(row.priceToEarningsRatioTTM),ps:safeNum(row.priceToSalesRatioTTM),pb:safeNum(row.priceToBookRatioTTM),pfcf:safeNum(row.priceToFreeCashFlowRatioTTM),evEbitda:safeNum(row.enterpriseValueMultipleTTM)};
+      // If every metric came back null the ticker probably doesn't exist or
+      // FMP doesn't cover it. Don't add a row of dashes.
+      if(newRow.pe==null&&newRow.ps==null&&newRow.pb==null&&newRow.pfcf==null&&newRow.evEbitda==null){setAddError(`no metrics for ${sym}`);return;}
+      setExtras(prev=>[...prev,newRow]);
+      setInput("");setShowInput(false);
+    }catch(e){setAddError("fetch failed");}
+    finally{setAddLoading(false);}
+  }
+  function removeExtra(sym:string){setExtras(prev=>prev.filter(e=>e.symbol!==sym));}
   if(loading)return<Card><SH title="Peer Comparison" sub="TTM multiples"/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
-  if(!data||!data.peers.length)return null;
+  // Render whenever target loaded, even if FMP returned no peers — manual
+  // add affordance needs to be reachable in that case.
+  if(!data||!data.target)return null;
   const{target,peers}=data;
   type NumKey="pe"|"ps"|"pb"|"pfcf"|"evEbitda";
   const cols:[string,NumKey][]=[["P/E","pe"],["P/S","ps"],["P/B","pb"],["P/FCF","pfcf"],["EV/EBITDA","evEbitda"]];
+  // Median computed from FMP peers only. User additions are coloured
+  // against this reference but don't change it.
   const median=(vs:number[])=>{if(!vs.length)return null;const s=[...vs].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
   const medians:Record<NumKey,number|null>={pe:null,ps:null,pb:null,pfcf:null,evEbitda:null};
   cols.forEach(([,k])=>{const vs=peers.map(p=>p[k]).filter((v):v is number=>v!=null);medians[k]=median(vs);});
   const cellColor=(v:number|null,med:number|null)=>{if(v==null||med==null)return T.text;if(v<med*0.95)return"#10b981";if(v>med*1.05)return"#d97706";return T.text;};
   const fmtNum=(v:number|null)=>v==null?"—":v.toFixed(1);
   const targetName=target?.companyName||companyName||symbol;
-  const renderRow=(row:PeerRow,opts:{isTarget?:boolean;isMedian?:boolean;label?:string}={})=>{
-    const{isTarget,isMedian,label}=opts;
-    const bg=isTarget?T.greenLight:isMedian?"#f8faf9":"transparent";
+  const renderRow=(row:PeerRow,opts:{isTarget?:boolean;isMedian?:boolean;isExtra?:boolean;label?:string}={})=>{
+    const{isTarget,isMedian,isExtra,label}=opts;
+    const bg=isTarget?T.greenLight:isMedian?"#f8faf9":isExtra?"#fffbeb":"transparent";
     const labelText=isMedian?"Peer median":label||row.symbol;
-    return<tr key={isMedian?"__median__":row.symbol} style={{background:bg}}>
+    return<tr key={isMedian?"__median__":(isExtra?"x_"+row.symbol:row.symbol)} style={{background:bg}}>
       <td style={{...ls_,position:"sticky",left:0,background:bg,zIndex:1,fontWeight:isTarget||isMedian?700:500,color:isMedian?T.textMuted:T.text}}>
-        {isTarget||isMedian?labelText:<button onClick={()=>router.push(`/stock/${encodeURIComponent(row.symbol)}`)} style={{background:"none",border:"none",padding:0,color:T.green,cursor:"pointer",fontFamily:T.mono,fontSize:11,fontWeight:600,textDecoration:"underline"}}>{row.symbol}</button>}
+        {isTarget||isMedian?labelText:<span style={{display:"inline-flex",alignItems:"center",gap:6}}>
+          <button onClick={()=>router.push(`/stock/${encodeURIComponent(row.symbol)}`)} style={{background:"none",border:"none",padding:0,color:T.green,cursor:"pointer",fontFamily:T.mono,fontSize:11,fontWeight:600,textDecoration:"underline"}}>{row.symbol}</button>
+          {isExtra&&<button onClick={()=>removeExtra(row.symbol)} title="Remove" style={{background:"none",border:"none",padding:"0 2px",color:T.textLight,cursor:"pointer",fontSize:11,lineHeight:1}}>✕</button>}
+        </span>}
         {!isTarget&&!isMedian&&row.companyName&&<span style={{display:"block",fontSize:9,color:T.textLight,fontWeight:400,marginTop:1}}>{row.companyName.slice(0,28)}</span>}
         {isTarget&&<span style={{display:"block",fontSize:9,color:T.textLight,fontWeight:400,marginTop:1}}>This stock</span>}
+        {isExtra&&!row.companyName&&<span style={{display:"block",fontSize:9,color:T.textLight,fontWeight:400,marginTop:1}}>added</span>}
       </td>
       {cols.map(([,k])=>{const v=row[k];const med=medians[k];const color=isMedian?T.textMuted:cellColor(v,med);return<td key={k} style={{...cs_,color,fontWeight:isTarget||isMedian?700:600}}>{fmtNum(v)}</td>;})}
     </tr>;
   };
   const medianRow:PeerRow={symbol:"__median__",companyName:"",mktCap:0,pe:medians.pe,ps:medians.ps,pb:medians.pb,pfcf:medians.pfcf,evEbitda:medians.evEbitda};
-  return<Card><SH title="Peer Comparison" sub={`TTM multiples · ${peers.length} peers`}/>
+  const subText=peers.length?`TTM multiples · ${peers.length} peers${extras.length?` + ${extras.length} added`:""}`:"TTM multiples · no FMP peers, add manually";
+  return<Card>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+      <SH title="Peer Comparison" sub={subText}/>
+      {!showInput?
+        <button onClick={()=>setShowInput(true)} style={{background:"none",border:`1px solid ${T.green}`,color:T.green,padding:"3px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}>+ Add ticker</button>
+        :<div style={{display:"flex",alignItems:"center",gap:6}}>
+          <input autoFocus value={input} onChange={e=>{setInput(e.target.value);setAddError("");}} onKeyDown={e=>{if(e.key==="Enter")addExtra(input);if(e.key==="Escape"){setShowInput(false);setInput("");setAddError("");}}} placeholder="e.g. NVDA" style={{padding:"4px 8px",border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,fontFamily:T.mono,width:90,outline:"none"}}/>
+          <button onClick={()=>addExtra(input)} disabled={addLoading} style={{background:T.green,color:"#fff",border:"none",padding:"4px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",opacity:addLoading?0.5:1}}>{addLoading?"...":"Add"}</button>
+          <button onClick={()=>{setShowInput(false);setInput("");setAddError("");}} title="Cancel" style={{background:"none",border:"none",padding:0,color:T.textLight,cursor:"pointer",fontSize:14,lineHeight:1}}>✕</button>
+        </div>
+      }
+    </div>
+    {addError&&<div style={{fontSize:10,color:"#d97706",fontFamily:T.mono,marginBottom:6}}>{addError}</div>}
     <div style={{overflowX:"auto"}}>
       <table style={{width:"100%",borderCollapse:"collapse"}}>
         <thead><tr>
@@ -1556,9 +1621,11 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
           {cols.map(([l])=><th key={l} style={hs_}>{l}</th>)}
         </tr></thead>
         <tbody>
-          {target&&renderRow(target,{isTarget:true,label:targetName.slice(0,28)||symbol})}
+          {renderRow(target,{isTarget:true,label:targetName.slice(0,28)||symbol})}
           {peers.map(p=>renderRow(p))}
-          {renderRow(medianRow,{isMedian:true})}
+          {peers.length>0&&renderRow(medianRow,{isMedian:true})}
+          {extras.length>0&&<tr><td colSpan={cols.length+1} style={{padding:"6px 8px",fontSize:9,color:T.textLight,fontFamily:T.mono,textTransform:"uppercase",letterSpacing:0.5,borderTop:`1px dashed ${T.border}`}}>Your comparisons</td></tr>}
+          {extras.map(p=>renderRow(p,{isExtra:true}))}
         </tbody>
       </table>
     </div>
@@ -1566,7 +1633,7 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
       <span style={{color:"#10b981",fontWeight:600}}>Green</span> = cheaper than peer median (&gt;5% below)
       &nbsp;·&nbsp;
       <span style={{color:"#d97706",fontWeight:600}}>Amber</span> = richer than peer median (&gt;5% above)
-      &nbsp;·&nbsp; Peers from FMP, sorted by market cap. Multiples are unitless so cross-currency peers compare directly.
+      &nbsp;·&nbsp; Peer median uses FMP peers only. Manual additions are scored against it but don't change it. Multiples are unitless so cross-currency comparison is meaningful.
     </div>
   </Card>;
 }
