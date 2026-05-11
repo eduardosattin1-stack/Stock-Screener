@@ -21,6 +21,8 @@ Caveats vs SP500 Compounder:
     GAAP / IFRS / Asian filings.
   - No backtest validation: the strategy was validated on SP500 cohort
     only (handover §3). Global is paper-tracked discovery, not validated.
+  - v1.1 (May 11 2026): roe_compounder switched to 3-year average per-year
+    capped at 1.0. Departs from handover-validated 1-year PIT spec.
 
 Same TOP_N=20, monthly cadence (28d), Top-40 hysteresis, 50% sector cap.
 
@@ -51,7 +53,7 @@ log = logging.getLogger("compounder_global_runner")
 FMP_KEY = os.environ.get("FMP_API_KEY", "")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
-STRATEGY_VERSION = "compounder-global-v1.0-2026-05-10"
+STRATEGY_VERSION = "compounder-global-v1.1-2026-05-11"
 TOP_N = 20                      # target basket size
 HYSTERESIS_TOP_N = 40           # current positions kept if still in top-40
 SECTOR_CAP_FRACTION = 0.50      # max 50% of basket in any one sector
