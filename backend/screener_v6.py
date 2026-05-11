@@ -528,38 +528,42 @@ class Stock:
     tradier_term_structure: str = None
     tradier_implied_earnings_move: dict = None
 
-    # ─── v8 Compounder mode (May 2026) ────────────────────────────────────
+    # ─── v8 Compounder mode (May 2026, v1.1 May 11) ────────────────────────
     # Universe-rank-based composite. Raw PIT inputs are computed per-stock
     # in get_value(); the score is computed at end of screen() across the
-    # qualified cohort (SP500 ex Financial Services / Insurance / Healthcare,
-    # equity > 0, all 3 metrics present). Stocks outside the cohort get
-    # signal_compounder = "DISQUALIFIED" and compounder_score / rank = None.
+    # qualified cohort. Two parallel cohorts: US-listed and Global.
     #
-    # roe_compounder:              netIncome / totalStockholdersEquity (PIT,
-    #                              latest annual, capped at 1.0 to filter
-    #                              tiny-equity artifacts)
-    # pb_compounder:               local_price / (equity / shares_diluted)
-    # opmargin_delta_compounder:   (op_income/rev current) − (op_income/rev prior)
-    # compounder_score:            equal-weight blend of ROE, P/B-inverted,
-    #                              and OpMargin-delta percentile ranks (0..1)
-    # compounder_rank:             1-indexed rank within qualified cohort
-    # signal_compounder:           "QUALIFIED" | "DISQUALIFIED"
-    # fallen_angel_flag:           informational alert flag — rev_growth >15%,
-    #                              RSI<40, composite<0.50, price>$1, vol>100K
+    # v1.1 changes vs v1.0:
+    #   - ROE: 1-yr PIT → 3-yr strict average (cyclical-rebound fix)
+    #   - US cohort: SP500-member gate → country=='US' + mcap>=$2B
+    #     (FMP's sp500-constituent was missing MRVL; new gate is more robust
+    #      and includes mid-caps like ONTO, PENG)
+    #   - Field rename for clarity: compounder_score → compounder_score_us
+    #
+    # roe_compounder:               3-YEAR AVERAGE of (netIncome / equity),
+    #                               capped at 1.0 per-year. Requires all 3
+    #                               years to have eq > 0 (strict). Universe-
+    #                               independent — same for both cohorts.
+    # pb_compounder:                local_price / (equity / shares_diluted), 1-yr
+    # opmargin_delta_compounder:    (op_income/rev current) − (op_income/rev prior), 1-yr
+    # compounder_score_us:          equal-weight blend (ROE/PB-inv/OpMd ranks)
+    #                               within US-listed cohort
+    # compounder_rank_us:           1-indexed rank within US cohort
+    # signal_compounder_us:         "QUALIFIED" | "DISQUALIFIED"
+    # compounder_score_global:      same blend, Global cohort (ex Fin/Ins/HC,
+    #                               any country, any mcap)
+    # compounder_rank_global:       1-indexed rank within Global cohort
+    # signal_compounder_global:     "QUALIFIED" | "DISQUALIFIED"
+    # fallen_angel_flag:            informational alert — rev_growth >15%,
+    #                               RSI<40, composite<0.50, price>$1, vol>100K
     roe_compounder: Optional[float] = None
     pb_compounder: Optional[float] = None
     opmargin_delta_compounder: Optional[float] = None
-    compounder_score: Optional[float] = None
-    compounder_rank: Optional[int] = None
-    signal_compounder: str = "DISQUALIFIED"
+    compounder_score_us: Optional[float] = None
+    compounder_rank_us: Optional[int] = None
+    signal_compounder_us: str = "DISQUALIFIED"
     fallen_angel_flag: bool = False
 
-    # Global Compounder (May 2026) — same scoring as SP500 Compounder, but
-    # the cohort drops the SP500 membership filter. Universe: all stocks
-    # with valid roe/pb/opmd metrics, excluding Fin/Ins/Healthcare. Lets us
-    # A/B test "does the SP500 filter add or destroy alpha?" live.
-    # Fields parallel the SP500 set. Raw inputs (roe_compounder, pb_compounder,
-    # opmargin_delta_compounder) are universe-independent — same for both.
     compounder_score_global: Optional[float] = None
     compounder_rank_global: Optional[int] = None
     signal_compounder_global: str = "DISQUALIFIED"
@@ -620,9 +624,12 @@ SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector p
 COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
 EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earnings, populated lazily
 
-# v8 Compounder (May 2026): SP500 membership set, populated at scan start.
-# Used by compute_compounder_universe_scores() to gate the cohort.
-SP500_MEMBERS: set = set()
+# v8 Compounder v1.1 (May 11 2026): SP500_MEMBERS cache + preload_sp500_members()
+# removed. The US cohort gate is now country=='US' + market_cap >= $2B + sector
+# ex Fin/Ins/HC (see compute_compounder_universe_scores). The prior SP500-member
+# gate was abandoned because FMP's sp500-constituent endpoint had data-quality
+# issues (e.g. MRVL was missing from its response). The new gate is more robust
+# and also includes mid-caps (ONTO, PENG) that the SP500 wouldn't have caught.
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -779,21 +786,7 @@ def preload_sector_performance(days: int = 60):
              else "  Sector perf preloaded: empty")
 
 
-def preload_sp500_members():
-    """Populate SP500_MEMBERS at scan start. One FMP call.
-    Used by compute_compounder_universe_scores() to gate the cohort.
-    Failure is non-fatal — empty set means Compounder cohort will be empty
-    and all stocks get signal_compounder='DISQUALIFIED'."""
-    global SP500_MEMBERS
-    try:
-        data = fmp("sp500-constituent")
-        if data and isinstance(data, list):
-            SP500_MEMBERS = {x.get("symbol") for x in data if x.get("symbol")}
-            log.info(f"  SP500 members preloaded: {len(SP500_MEMBERS)} symbols")
-        else:
-            log.warning("  SP500 members preload returned no data")
-    except Exception as e:
-        log.warning(f"  SP500 members preload failed: {e}")
+# preload_sp500_members() removed May 11 2026 — see SP500_MEMBERS comment above.
 
 # ---------------------------------------------------------------------------
 # 2. Quote
@@ -1657,29 +1650,48 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
 
     # ──────────────────────────────────────────────────────────────────
     # v8 Compounder mode (May 2026) — raw PIT inputs for universe ranking.
-    # The actual score (compounder_score) is computed at end of screen()
+    # The actual score (compounder_score_*) is computed at end of screen()
     # across the qualified cohort; here we just emit the three raw metrics.
     # All three are None on failure — the universe-ranker excludes any
     # stock missing any of them.
+    #
+    # v1.1 (May 11 2026): roe_compounder switched from 1-year PIT to 3-YEAR
+    # STRICT AVERAGE. v1.0 review found cyclical-rebound stocks dominating
+    # the top picks: CAG (+231% NI YoY) and EXE (+36.5pp OpMd from oil-price
+    # recovery). Per-year ROE is still capped at 1.0 before averaging; the
+    # average is mean of 3 years. Strict means ALL 3 years need eq > 0,
+    # else None. This departs from the handover-validated 1-yr spec —
+    # paper-track as discovery, not validation, and revisit in 6 weeks.
     # ──────────────────────────────────────────────────────────────────
     v["roe_compounder"] = None
     v["pb_compounder"] = None
     v["opmargin_delta_compounder"] = None
 
-    # ROE: netIncome / totalStockholdersEquity (PIT, latest annual). Capped
-    # at 1.0 to filter tiny-equity / share-buyback artifacts where ROE is
-    # technically real but not informative for compounder ranking.
+    # ROE: 3-YEAR STRICT AVERAGE. Requires 3 aligned annual reports with
+    # eq > 0 in EVERY year. Per-year cap at 1.0 still applied before mean.
+    if bs and inc and len(bs) >= 3 and len(inc) >= 3:
+        bs_sorted_c = sorted(bs, key=lambda x: x.get("date", ""))
+        # inc is sorted oldest→newest above (line ~1234)
+        roes = []
+        for i in range(-3, 0):
+            ni_i = float(inc[i].get("netIncome") or 0)
+            eq_i = float(bs_sorted_c[i].get("totalStockholdersEquity") or 0)
+            if eq_i <= 0:
+                roes = []
+                break
+            roes.append(min(ni_i / eq_i, 1.0))
+        if len(roes) == 3:
+            v["roe_compounder"] = sum(roes) / 3
+
+    # P/B and OpMargin-delta — unchanged. P/B is point-in-time by design.
+    # OpMargin-delta is also a "change" metric where smoothing would defeat
+    # the purpose. If post-launch top picks remain dominated by margin
+    # rebounds (e.g. EXE), revisit to smooth OpMd similarly.
     if bs and inc and len(bs) >= 1 and len(inc) >= 1:
         bs_sorted_c = sorted(bs, key=lambda x: x.get("date", ""))
         latest_bs = bs_sorted_c[-1]
-        latest_inc = inc[-1]  # inc is sorted oldest→newest above (line ~1235)
-        ni = float(latest_inc.get("netIncome") or 0)
+        latest_inc = inc[-1]
         eq = float(latest_bs.get("totalStockholdersEquity") or 0)
-        if eq > 0 and ni:
-            v["roe_compounder"] = min(ni / eq, 1.0)
-
-        # P/B: current_price / (equity / shares_diluted). Uses live price
-        # (local_price already FX-normalized to reportedCurrency above).
         sh = float(latest_inc.get("weightedAverageShsOutDil")
                    or latest_inc.get("weightedAverageShsOut") or 0)
         if eq > 0 and sh > 0 and local_price > 0:
@@ -1687,8 +1699,6 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             if bvps > 0:
                 v["pb_compounder"] = local_price / bvps
 
-    # OpMargin delta: (op_income/revenue current) − (op_income/revenue prior)
-    # operatingIncome is a top-level field on FMP income-statement.
     if inc and len(inc) >= 2:
         curr = inc[-1]
         prev = inc[-2]
@@ -3561,8 +3571,9 @@ def compute_composite_v8(
 # Universe ranks ROE / P/B / OpMargin_delta across the qualified cohort
 # (SP500 ex Financial Services / Insurance / Healthcare; equity > 0 implicit
 # via roe/pb being None when equity ≤ 0). Equal-weight blend → 0..1 score.
-# Stocks outside cohort get signal_compounder = "DISQUALIFIED".
+# Stocks outside cohort get signal_compounder_us / _global = "DISQUALIFIED".
 COMPOUNDER_EXCLUDED_SECTORS: set = {"Financial Services", "Insurance", "Healthcare"}
+COMPOUNDER_US_MIN_MCAP: float = 2_000_000_000  # $2B floor for US cohort (v1.1)
 
 
 def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
@@ -3602,55 +3613,67 @@ def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
 
 
 def compute_compounder_universe_scores(stocks: list) -> None:
-    """Mutates stocks: assigns BOTH SP500 and Global Compounder scores in one
-    pass. Runs once after all per-stock fundamentals exist.
+    """Mutates stocks: assigns BOTH US and Global Compounder scores in one pass.
+    Runs once after all per-stock fundamentals exist.
 
-    SP500 cohort:  in SP500_MEMBERS, ex Fin/Ins/HC, all 3 metrics present.
-    Global cohort: any stock ex Fin/Ins/HC with all 3 metrics present (no
-                   SP500 filter).
+    US cohort:     country=='US', mcap >= COMPOUNDER_US_MIN_MCAP ($2B), ex
+                   Fin/Ins/HC, all 3 metrics present. ADRs auto-excluded via
+                   country gate (TSM/BABA have country=='TW'/'CN'). v1.1
+                   replaced the prior SP500-member gate because FMP's
+                   sp500-constituent endpoint was unreliable (MRVL missing).
+    Global cohort: ex Fin/Ins/HC, all 3 metrics present (no country/mcap gate).
     """
-    sp500_cohort = []
+    us_cohort = []
     global_cohort = []
-    excluded = {"excluded_sector": 0, "missing_metric": 0,
-                "global_qualified": 0, "sp500_qualified": 0}
+    counters = {"excluded_sector": 0, "missing_metric": 0,
+                "us_failed_country": 0, "us_failed_mcap": 0,
+                "global_qualified": 0, "us_qualified": 0}
 
     for s in stocks:
-        # Reset both signals — must be set every call for stocks dropping
-        # in/out of cohorts between scans.
-        s.signal_compounder = "DISQUALIFIED"
+        # Reset both signals every call (stocks may move in/out between scans).
+        s.signal_compounder_us = "DISQUALIFIED"
         s.signal_compounder_global = "DISQUALIFIED"
 
         if s.sector in COMPOUNDER_EXCLUDED_SECTORS:
-            excluded["excluded_sector"] += 1
+            counters["excluded_sector"] += 1
             continue
         if (s.roe_compounder is None or s.pb_compounder is None
                 or s.opmargin_delta_compounder is None):
-            excluded["missing_metric"] += 1
+            counters["missing_metric"] += 1
             continue
 
         # Global cohort: every qualifying stock ex Fin/Ins/HC.
         global_cohort.append(s)
-        excluded["global_qualified"] += 1
+        counters["global_qualified"] += 1
 
-        # SP500 cohort: subset of global cohort that's in SP500_MEMBERS.
-        if s.symbol in SP500_MEMBERS:
-            sp500_cohort.append(s)
-            excluded["sp500_qualified"] += 1
+        # US cohort: subset that's US-listed + mcap >= $2B.
+        country = (s.country or "").upper()
+        if country != "US":
+            counters["us_failed_country"] += 1
+            continue
+        mcap = s.market_cap or 0
+        if mcap < COMPOUNDER_US_MIN_MCAP:
+            counters["us_failed_mcap"] += 1
+            continue
+        us_cohort.append(s)
+        counters["us_qualified"] += 1
 
     log.info(
         f"  Compounder cohorts: "
-        f"SP500={excluded['sp500_qualified']}, "
-        f"Global={excluded['global_qualified']} "
-        f"(excluded: sector={excluded['excluded_sector']}, "
-        f"missing_metric={excluded['missing_metric']})"
+        f"US={counters['us_qualified']}, "
+        f"Global={counters['global_qualified']} "
+        f"(excluded: sector={counters['excluded_sector']}, "
+        f"missing_metric={counters['missing_metric']}, "
+        f"us_failed_country={counters['us_failed_country']}, "
+        f"us_failed_mcap={counters['us_failed_mcap']})"
     )
 
     _rank_compounder_cohort(
-        sp500_cohort,
-        score_attr="compounder_score",
-        rank_attr="compounder_rank",
-        signal_attr="signal_compounder",
-        label="SP500",
+        us_cohort,
+        score_attr="compounder_score_us",
+        rank_attr="compounder_rank_us",
+        signal_attr="signal_compounder_us",
+        label="US",
     )
     _rank_compounder_cohort(
         global_cohort,
@@ -4101,11 +4124,13 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     all_results = enriched_results + non_enriched
     all_results.sort(key=lambda s: s.composite, reverse=True)
 
-    # v8 Compounder universe scoring (May 2026) — runs once after every
+    # v8 Compounder universe scoring (May 2026, v1.1) — runs once after every
     # stock has its raw PIT inputs (roe_compounder / pb_compounder /
-    # opmargin_delta_compounder) populated. Stocks outside the qualified
-    # cohort get signal_compounder='DISQUALIFIED' and compounder_score=None.
-    log.info("v8 Compounder: ranking qualified cohort")
+    # opmargin_delta_compounder) populated. Stocks outside each qualified
+    # cohort get signal_compounder_us / _global = 'DISQUALIFIED' and the
+    # corresponding score/rank = None. See compute_compounder_universe_scores
+    # for the US (country+mcap) and Global cohort definitions.
+    log.info("v8 Compounder: ranking US + Global cohorts")
     compute_compounder_universe_scores(all_results)
 
     # v8 Fallen Angel alert flag (May 2026) — informational only.
@@ -4458,9 +4483,8 @@ def main():
     # Preload sector performance (one-time, used by compute_sector_momentum)
     preload_sector_performance(days=60)
 
-    # v8 Compounder (May 2026): preload SP500 membership once. Used by
-    # compute_compounder_universe_scores() to gate the cohort.
-    preload_sp500_members()
+    # v8 Compounder v1.1 (May 11 2026): SP500 preload removed — US cohort now
+    # uses country=='US' + mcap>=$2B gate, no external membership list needed.
 
     # Run two-pass scan
     stocks = screen(symbols, top_n=args.top)
