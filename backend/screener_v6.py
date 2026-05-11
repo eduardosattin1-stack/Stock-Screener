@@ -587,9 +587,14 @@ class Stock:
 
 REGIONS = {
     "nasdaq100": [("NASDAQ", None, 5_000_000_000, 100)],
+    # v1.2 (May 2026): limits bumped from 500 → 5000 per exchange. FMP's
+    # company-screener returns results in an internal order that's not
+    # strictly market-cap descending — at limit=500 some $10B+ names like
+    # ONTO and ALAB were silently excluded. 5000 effectively captures all
+    # of NYSE/NASDAQ ≥$1B. No FMP cost change (one call per exchange).
     "sp500": [
-        ("NASDAQ", None, 1_000_000_000, 500), # Lowered to 1B for mid-cap growth (WIX)
-        ("NYSE", None, 1_000_000_000, 500)
+        ("NASDAQ", None, 1_000_000_000, 5000),
+        ("NYSE", None, 1_000_000_000, 5000)
     ],
     # 2026-04-23: US mid-cap universes, $2B-$10B market cap.
     # 5-tuples: (exchange, country, min_cap, max_cap, limit).
@@ -799,22 +804,10 @@ def get_symbols(region: str) -> list[str]:
     if configs is None:
         configs = [(region.upper(), None, 1_000_000_000, 50)]
 
-    # 2026-05-05: regions that MUST have an allowlist applied. Without the
-    # allowlist these regions overcollect (e.g. sp500 was just NYSE+NASDAQ
-    # ≥$1B, leaking ADRs and excluded sectors). If the file is missing at
-    # runtime, fail loud rather than silently scanning the wrong universe.
-    REQUIRES_ALLOWLIST = {"sp500"}
-    if region in REQUIRES_ALLOWLIST:
-        _required_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "strategy_allowlists", f"{region}.txt",
-        )
-        if not os.path.exists(_required_path):
-            raise RuntimeError(
-                f"Missing required allowlist for region '{region}': {_required_path}. "
-                f"Refusing to scan with an unfiltered universe. "
-                f"Verify Dockerfile copies strategy_allowlists/."
-            )
+    # v1.2 (May 2026): REQUIRES_ALLOWLIST gate removed (Bruno Option A).
+    # The sp500 region used to require strategy_allowlists/sp500.txt at
+    # runtime, blocking scans if the file was missing. With allowlists
+    # retired entirely, that check is dead.
 
     # 2026-05-05: sectors hard-excluded for the sp500 momentum universe.
     # Per v1.0 strategy: no Financials, no Insurance, no REITs, no Utilities.
@@ -879,24 +872,16 @@ def get_symbols(region: str) -> list[str]:
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
 
-    # 2026-04-25: Intersect with strategy allowlist if one exists for this
-    # region. Allowlists encode the universe rules used to validate the v1.0
-    # strategy: $100M+ TTM revenue, no biotech, no Financials/REITs/Utilities,
-    # no specialty pharma, no recent rebrands. FMP's company-screener doesn't
-    # replicate these filters cleanly. Result: latest_{region}.json shrinks
-    # from FMP-screener size to validated-universe size, and downstream
-    # strategy_basket.py picks from a clean pool.
-    allowlist_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "strategy_allowlists", f"{region}.txt",
-    )
-    if os.path.exists(allowlist_path):
-        with open(allowlist_path) as f:
-            allowed = {ln.strip().upper() for ln in f
-                       if ln.strip() and not ln.startswith("#")}
-        before = len(symbols)
-        symbols = [s for s in symbols if s.upper() in allowed]
-        log.info(f"  [allowlist] {region}: {before} -> {len(symbols)} after filter")
+    # v1.2 (May 2026): allowlist intersect REMOVED per Bruno's Option A.
+    # Allowlists existed to support the v1.0 BORING strategy (Piotroski≤3 +
+    # validated universe). BORING is retired. The remaining strategies
+    # (Compounder/Momentum/FA) have their own cohort gates (sector ex
+    # Fin/Ins/HC, mcap thresholds, etc.) — those are the real "validated
+    # universe" filters now. Allowlist plumbing is legacy.
+    #
+    # Also removed: the REQUIRES_ALLOWLIST gate higher up — sp500 region
+    # no longer needs an external allowlist since universe-build now catches
+    # the full NYSE/NASDAQ ≥$1B set via limit=5000.
 
     return list(dict.fromkeys(symbols))
 
@@ -4709,4 +4694,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# cache bust 1778541132
+# cache bust 1778542618
