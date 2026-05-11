@@ -155,7 +155,39 @@ const TOOLTIPS: Record<string, string> = {
   "BB%B": "Bollinger Bands %B.\n✅ Ideal: 0.2 - 0.8\n❌ Avoid: > 1.0 (Overextended)",
   "StochRSI": "Stochastic RSI.\n✅ Ideal: 20-80\n❌ Avoid: Prolonged extremes",
   "OBV": "On-Balance Volume.\n✅ Ideal: Rising (Accumulation)\n❌ Avoid: Falling (Distribution)",
-  "Bull Score": "Composite technical score (0-10).\n✅ Ideal: 7-10\n❌ Avoid: 0-3"
+  "Bull Score": "Composite technical score (0-10).\n✅ Ideal: 7-10\n❌ Avoid: 0-3",
+
+  // Sentiment Card
+  "INSIDERS": "Net insider buying/selling over recent 2 quarters.\nAccumulating (net buys + high acquired/disposed ratio) is bullish — insiders have non-public information.\n✅ Ideal: Accumulating (3+ net buys)\n❌ Avoid: Heavy distribution",
+  "INSTITUTIONS": "QoQ change in 13F institutional holder count and ownership %.\nRising holder count + rising ownership = broad accumulation.\n✅ Ideal: Holders +5% QoQ, Shares +2%\n❌ Avoid: Both declining",
+  "TECHNICAL": "Combined read of bull score (0-10), MACD direction, and ADX trend strength.\nBullish = high bull score + MACD bullish + strong trend (ADX>25).\n✅ Ideal: Bullish/Constructive\n❌ Avoid: Bearish + Weak ADX",
+  "52W RANGE": "Where current price sits between 52-week low (0%) and high (100%).\n65-85% = healthy uptrend. <20% = distressed. >95% = possibly extended.\n✅ Ideal: 60-80%\n❌ Avoid: <20% or >95%",
+
+  // Smart Money Card
+  "Inst Flow": "13F flow velocity — rate of new positions opening/closing + ownership % shift QoQ.\nMeasures institutional URGENCY, not just direction.\n✅ Ideal: > 60 (active accumulation)\n❌ Avoid: < 30 (active distribution)",
+  "Trend": "SMA50 vs SMA200 trend direction, modulated by institutional flow.\nStrong distribution kills trend credit (prevents bull traps).\n✅ Ideal: Golden cross + accumulation\n❌ Avoid: Death cross or uptrend + distribution",
+  "Inst Accum": "Static 13F ownership: are institutions holding more or less of the float?\nTop-5 concentration rising = smart money loading up.\n✅ Ideal: Rising concentration\n❌ Avoid: Top holders reducing",
+  "Quality SM": "Piotroski + Altman Z + ROE + ROIC + Gross Margin blend.\nSame as the v7 quality factor. Ensures smart money is flowing into fundamentally sound companies.\n✅ Ideal: > 60\n❌ Avoid: < 30",
+  "Sector Mom": "Stock's 60d return vs its sector average.\nOutperformance = sector leader, underperformance = laggard.\n✅ Ideal: > 50 (outperforming sector)\n❌ Avoid: < 30 (underperforming)",
+  "Congress": "Net Senate + House trading activity, recency-weighted (90d half-life).\nCongressional members trade on privileged information.\n✅ Ideal: Net buying\n❌ Avoid: Net selling or no coverage",
+
+  // Growth Rates Card
+  "Revenue": "Total top-line sales. Most stable growth metric — less manipulable than earnings.\n✅ Ideal: 10-25% CAGR (sustainable growth)\n❌ Avoid: Negative or >50% (unsustainable)",
+  "Gross Profit": "Revenue minus cost of goods sold. Measures pricing power and moat.\nExpanding gross profit faster than revenue = improving economics.\n✅ Ideal: Growing faster than revenue\n❌ Avoid: Shrinking while revenue grows",
+  "Operating Income": "Revenue minus COGS and operating expenses. Shows operational leverage.\nFaster growth than revenue = operating leverage kicking in.\n✅ Ideal: > Revenue growth rate\n❌ Avoid: Negative or declining",
+  "Net Income": "Bottom line profit after all expenses, taxes, interest.\nVolatile — one-time charges can distort. Cross-check with operating income.\n✅ Ideal: Positive and growing\n❌ Avoid: Negative trends",
+  "EPS": "Earnings per diluted share. Directly drives stock price via P/E multiple.\nShows if growth is reaching shareholders (not diluted away).\n✅ Ideal: > 15% CAGR\n❌ Avoid: Declining despite revenue growth (margin compression)",
+  "EBITDA": "Earnings before interest, taxes, depreciation, amortization.\nProxy for operating cash generation. Best for comparing across capital structures.\n✅ Ideal: Positive and growing\n❌ Avoid: Negative (company burns cash operationally)",
+  "FCF/Share": "Free cash flow per diluted share. The cash actually available to shareholders.\nMore honest than EPS — harder to manipulate with accounting.\n✅ Ideal: Positive and growing faster than EPS\n❌ Avoid: Negative (company needs external funding)",
+
+  // Valuation History Card
+  "P/E": "Price to Earnings. How many years of current earnings you pay for one share.\nLower = cheaper. Compare within sector, not across.\n✅ Ideal: Below 5yr median (relatively cheap)\n❌ Avoid: 2x+ above sector median",
+  "P/S": "Price to Sales. Revenue-based valuation — useful for unprofitable growth companies.\nIndustry-dependent: tech 5-15 normal, industrials 1-3 normal.\n✅ Ideal: Below historical median\n❌ Avoid: 3x+ above sector",
+  "P/B": "Price to Book Value. What you pay per dollar of net assets.\n<1 = trading below liquidation value (deep value or value trap).\n✅ Ideal: 1-3 for industrials, higher OK for capital-light\n❌ Avoid: Negative book value",
+  "P/FCF": "Price to Free Cash Flow. Like P/E but uses actual cash, not accounting earnings.\nMore conservative than P/E — ignores non-cash charges.\n✅ Ideal: < 20\n❌ Avoid: > 40 or negative FCF",
+  "EV/EBITDA": "Enterprise Value / EBITDA. Debt-adjusted valuation — the acquirer's P/E.\nBest for comparing companies with different capital structures.\n✅ Ideal: < 12 (value), 12-20 (fair)\n❌ Avoid: > 25",
+  "BVPS": "Book Value Per Share. Net assets per share — the liquidation floor.\nRising BVPS = company is getting richer over time.\n✅ Ideal: Steadily rising\n❌ Avoid: Declining (value destruction)",
+  "Div%": "Dividend yield. Annual dividend as percentage of stock price.\nHigh yield + declining price = potential value trap.\n✅ Ideal: 1-4% with growing payout\n❌ Avoid: >8% (likely unsustainable)"
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -509,13 +541,15 @@ function SentimentCard({s}:{s:StockData}){
     synthesis = "Oversold at lows. Reflex bounce is common here but confirmation from flows would de-risk re-entry.";
   }
 
-  const chip=(label:string,value:string,color:string,detail?:string)=>(
+  const chip=(label:string,value:string,color:string,detail?:string)=>{
+    const tip=TOOLTIPS[label]||"";
+    return(
     <div style={{padding:"8px 10px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:"#fafbfc"}}>
-      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div title={tip} style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{label}</div>
       <div style={{fontSize:12,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
       {detail && <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1,lineHeight:1.3}}>{detail}</div>}
     </div>
-  );
+  );};
 
   return(
     <Card>
@@ -1309,23 +1343,24 @@ function SmartMoneyCard({s}:{s:StockData}){
   // Underlying trend % for context
   const trendPct = s.sma200 > 0 ? ((s.sma50 - s.sma200) / s.sma200) * 100 : 0;
 
-  // Factor catalog: [key, weight%, display label, fallback msg when missing]
-  const FACTORS:[string,number,string,string][] = [
-    ["institutional_flow", 30, "Inst flow",      "US-only · pass-2 only"],
-    ["trend_strength",     28, "Trend",          "missing SMA data"],
-    ["institutional",      20, "Inst accum",     "US-only · pass-2 only"],
-    ["quality",            10, "Quality",        "Piotroski/Altman missing"],
-    ["sector_momentum",     7, "Sector mom",     "non-NASDAQ stock"],
-    ["congressional",       5, "Congress",       "no recent trades"],
+  // Factor catalog: [key, weight%, display label, fallback msg when missing, tooltip key]
+  const FACTORS:[string,number,string,string,string][] = [
+    ["institutional_flow", 30, "Inst flow",      "US-only · pass-2 only",    "Inst Flow"],
+    ["trend_strength",     28, "Trend",          "missing SMA data",         "Trend"],
+    ["institutional",      20, "Inst accum",     "US-only · pass-2 only",    "Inst Accum"],
+    ["quality",            10, "Quality",        "Piotroski/Altman missing", "Quality SM"],
+    ["sector_momentum",     7, "Sector mom",     "non-NASDAQ stock",         "Sector Mom"],
+    ["congressional",       5, "Congress",       "no recent trades",         "Congress"],
   ];
 
   type Tone = "good"|"bad"|"neutral"|"none";
   const toneColor = (t:Tone) => t==="good"?T.green : t==="bad"?T.red : t==="neutral"?T.textMuted : T.textLight;
 
-  const rows = FACTORS.map(([key, weight, label, missingMsg])=>{
+  const rows = FACTORS.map(([key, weight, label, missingMsg, tipKey])=>{
     const c = (comps as any)[key] as number|undefined;
+    const tip = TOOLTIPS[tipKey] || "";
     if(c == null){
-      return { key, weight, label, score:null, detail:missingMsg, tone:"none" as Tone };
+      return { key, weight, label, score:null, detail:missingMsg, tone:"none" as Tone, tip };
     }
     const tone:Tone = c > 0.6 ? "good" : c < 0.4 ? "bad" : "neutral";
 
@@ -1367,7 +1402,7 @@ function SmartMoneyCard({s}:{s:StockData}){
         detail = c > 0.6 ? `Net buying · ${(c*100).toFixed(0)}` : c < 0.4 ? `Net selling · ${(c*100).toFixed(0)}` : `Mixed · ${(c*100).toFixed(0)}`;
         break;
     }
-    return { key, weight, label, score:c, detail, tone };
+    return { key, weight, label, score:c, detail, tone, tip };
   });
 
   const subText = sm != null
@@ -1386,7 +1421,7 @@ function SmartMoneyCard({s}:{s:StockData}){
             opacity:r.tone==="none"?0.5:1
           }}>
             <div style={{display:"flex",alignItems:"baseline",gap:6,flexShrink:0}}>
-              <span style={{color:T.text,fontWeight:600}}>{r.label}</span>
+              <span title={r.tip} style={{color:T.text,fontWeight:600,cursor:r.tip?"help":"default",borderBottom:r.tip?`1px dotted ${T.textLight}`:"none"}}>{r.label}</span>
               <span style={{fontSize:9,color:T.textLight}}>({r.weight}%)</span>
             </div>
             <span style={{color:toneColor(r.tone),fontWeight:600,fontSize:10,textAlign:"right",maxWidth:"65%"}}>
@@ -1502,11 +1537,11 @@ const hs_:React.CSSProperties={...cs_,color:T.textMuted,fontWeight:500,fontSize:
 const ls_:React.CSSProperties={...cs_,textAlign:"left",color:T.textMuted,fontWeight:500};
 function GC({v}:{v:number|null}){if(v==null)return<td style={cs_}>—</td>;return<td style={{...cs_,color:gClr(v),fontWeight:600}}>{(v*100).toFixed(1)}%</td>;}
 
-function GrowthPanel({incomes,loading}:{incomes:IncomeRow[];loading:boolean}){if(loading)return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;if(!incomes.length)return null;const sorted=[...incomes].sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1];const n=sorted.length;function cagr(f:keyof IncomeRow,y:number):number|null{if(n<y+1)return null;return safeCagr(sorted[n-1-y][f]as number,latest[f]as number,y);}function yoy(f:keyof IncomeRow):number|null{if(n<2)return null;const prev=sorted[n-2][f]as number,cur=latest[f]as number;if(!prev||prev<=0)return null;return(cur-prev)/prev;}const ms:[string,keyof IncomeRow][]=[["Revenue","revenue"],["Gross Profit","grossProfit"],["Operating Income","operatingIncome"],["Net Income","netIncome"],["EPS","epsdiluted"],["EBITDA","ebitda"]];return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>} sub={`FY ${latest.calendarYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>1Y</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f])=><tr key={l}><td style={ls_}>{l}</td><GC v={yoy(f)}/><GC v={cagr(f,3)}/><GC v={cagr(f,5)}/><GC v={cagr(f,10)}/></tr>)}</tbody></table></div></Card>;}
+function GrowthPanel({incomes,loading,ratios}:{incomes:IncomeRow[];loading:boolean;ratios?:RatioYear[]}){if(loading)return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;if(!incomes.length)return null;const sorted=[...incomes].sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1];const n=sorted.length;function cagr(f:keyof IncomeRow,y:number):number|null{if(n<y+1)return null;return safeCagr(sorted[n-1-y][f]as number,latest[f]as number,y);}function yoy(f:keyof IncomeRow):number|null{if(n<2)return null;const prev=sorted[n-2][f]as number,cur=latest[f]as number;if(!prev||prev<=0)return null;return(cur-prev)/prev;}const ms:[string,keyof IncomeRow][]=[["Revenue","revenue"],["Gross Profit","grossProfit"],["Operating Income","operatingIncome"],["Net Income","netIncome"],["EPS","epsdiluted"],["EBITDA","ebitda"]];const fcfSorted=ratios?[...ratios].sort((a,b)=>a.date.localeCompare(b.date)):[];const fcfN=fcfSorted.length;const fcfLatest=fcfN>0?fcfSorted[fcfN-1]:null;function fcfYoy():number|null{if(fcfN<2)return null;const prev=fcfSorted[fcfN-2].freeCashFlowPerShare,cur=fcfSorted[fcfN-1].freeCashFlowPerShare;if(!prev||prev<=0)return null;return(cur-prev)/prev;}function fcfCagr(y:number):number|null{if(fcfN<y+1)return null;return safeCagr(fcfSorted[fcfN-1-y].freeCashFlowPerShare,fcfSorted[fcfN-1].freeCashFlowPerShare,y);}return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>} sub={`FY ${latest.calendarYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>1Y</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f])=><tr key={l}><td style={ls_}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td><GC v={yoy(f)}/><GC v={cagr(f,3)}/><GC v={cagr(f,5)}/><GC v={cagr(f,10)}/></tr>)}{fcfLatest&&<tr><td style={ls_}><span title={TOOLTIPS["FCF/Share"]||""} style={{cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>FCF/Share</span></td><GC v={fcfYoy()}/><GC v={fcfCagr(3)}/><GC v={fcfCagr(5)}/><GC v={fcfCagr(10)}/></tr>}</tbody></table></div></Card>;}
 
 function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const avgN=(f:keyof RatioYear,n:number)=>{const vs=ratios.slice(0,n).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length>=Math.min(n,2)?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number;const cl=(v:number|null)=>v!=null&&th!=null&&v>=th?"#10b981":T.text;return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cl(cv),fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,3),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,5),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,10),isR)}</td></tr>;})}</tbody></table></div></Card>;}
 
-function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
+function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
 // ── Peer Comparison ────────────────────────────────────────────────────────────
 // Compares TTM multiples (P/E, P/S, P/B, P/FCF, EV/EBITDA) of the target
@@ -1853,12 +1888,6 @@ function ComparisonTab({stockA,fmpA}:{
         <QualityValueCard s={stockB}/>
       </div>
  
-      {/* Growth */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
-        <GrowthCard s={stockA}/>
-        <GrowthCard s={stockB}/>
-      </div>
- 
       {/* Smart Money */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
         <SmartMoneyCard s={stockA}/>
@@ -1873,8 +1902,8 @@ function ComparisonTab({stockA,fmpA}:{
  
       {/* Growth Rates table (multi-year, FMP-sourced) */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
-        <GrowthPanel incomes={fmpA.incomes} loading={false}/>
-        <GrowthPanel incomes={fmpB?.incomes||[]} loading={!fmpB}/>
+        <GrowthPanel incomes={fmpA.incomes} loading={false} ratios={fmpA.ratios}/>
+        <GrowthPanel incomes={fmpB?.incomes||[]} loading={!fmpB} ratios={fmpB?.ratios}/>
       </div>
  
       {/* Profitability table */}
@@ -2213,7 +2242,7 @@ export default function StockDetail(){
       </div>
 
       {/* Tradier options card */}
-      {(s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
+      {(s.hit_prob>0||s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
@@ -2223,7 +2252,6 @@ export default function StockDetail(){
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
         <QualityValueCard s={s}/>
-        <GrowthCard s={s}/>
         <SmartMoneyCard s={s}/>
       </div>
 
@@ -2234,7 +2262,7 @@ export default function StockDetail(){
       </div>
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
-      <GrowthPanel incomes={incomes} loading={fmpLoading}/>
+      <GrowthPanel incomes={incomes} loading={fmpLoading} ratios={ratios}/>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>       <div style={{margin:"16px 0"}}><PeersPanel symbol={s.symbol} companyName={s.symbol}/></div>
 
       {/* News */}
