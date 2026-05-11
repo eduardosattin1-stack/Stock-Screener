@@ -369,6 +369,14 @@ class Stock:
     eps_beats: int = 0
     eps_total: int = 0
 
+    # PT revision velocity (v8 Smart Money, May 11 2026): 60d % delta in
+    # analyst PT consensus, derived from rolling GCS cache. None when no
+    # 60d history exists yet (first 60 days after deploy, or stocks with
+    # gaps). Both fields parallel: raw value for display, banded score
+    # 0..1 for Smart Money composite.
+    pt_velocity_60d: Optional[float] = None
+    pt_velocity_score: Optional[float] = None
+
     # Value / Buffett
     revenue_cagr_3y: float = 0.0
     eps_cagr_3y: float = 0.0
@@ -630,6 +638,138 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 # gate was abandoned because FMP's sp500-constituent endpoint had data-quality
 # issues (e.g. MRVL was missing from its response). The new gate is more robust
 # and also includes mid-caps (ONTO, PENG) that the SP500 wouldn't have caught.
+
+# PT revision velocity rolling cache (Smart Money v1.1, May 11 2026):
+# {symbol: [{"date": "YYYY-MM-DD", "pt": float}, ...]}
+# Loaded at scan start from gs://.../cache/analyst_pt_history.json. Appended
+# in get_analyst() per stock. Pruned (drop entries >90d old) + persisted at
+# scan end. Bootstrap: first 60 days after deploy, pt_velocity will be None
+# for most stocks since there's no 60d-old datapoint yet. Smart Money
+# composite handles this gracefully via the "evaluated factors only" pattern.
+PT_HISTORY_CACHE: dict[str, list] = {}
+PT_HISTORY_CACHE_PATH = "cache/analyst_pt_history.json"
+PT_VELOCITY_WINDOW_DAYS = 60        # target lookback window
+PT_VELOCITY_WINDOW_TOLERANCE = 14   # accept entries 60±14d old (46–74d) — handles weekend/holiday gaps
+PT_HISTORY_RETENTION_DAYS = 90      # prune entries older than this
+
+
+def preload_pt_history():
+    """Load PT velocity rolling cache from GCS at scan start. One-time read.
+    Failure is non-fatal — empty cache means all pt_velocity will be None
+    until enough scans accumulate (~60 days of daily scans)."""
+    global PT_HISTORY_CACHE
+    try:
+        data = gcs_download(PT_HISTORY_CACHE_PATH)
+        if isinstance(data, dict):
+            PT_HISTORY_CACHE = data
+            n_entries = sum(len(v) for v in PT_HISTORY_CACHE.values()
+                            if isinstance(v, list))
+            log.info(f"  PT history loaded: {len(PT_HISTORY_CACHE)} symbols, "
+                     f"{n_entries} datapoints")
+        else:
+            PT_HISTORY_CACHE = {}
+            log.info("  PT history: starting fresh (no prior cache)")
+    except Exception as e:
+        log.warning(f"  PT history load failed: {e}")
+        PT_HISTORY_CACHE = {}
+
+
+def persist_pt_history():
+    """Prune entries older than PT_HISTORY_RETENTION_DAYS and write back to
+    GCS at scan end. Failure is non-fatal but logged — next scan will work
+    from stale data, which is OK for a rolling-window signal."""
+    if not PT_HISTORY_CACHE:
+        log.info("  PT history: empty, skipping persist")
+        return
+    cutoff = (datetime.now() - timedelta(days=PT_HISTORY_RETENTION_DAYS)).strftime("%Y-%m-%d")
+    pruned: dict[str, list] = {}
+    n_dropped = 0
+    for sym, entries in PT_HISTORY_CACHE.items():
+        if not isinstance(entries, list):
+            continue
+        kept = [e for e in entries
+                if isinstance(e, dict) and e.get("date", "") >= cutoff]
+        n_dropped += len(entries) - len(kept)
+        if kept:
+            pruned[sym] = kept
+    try:
+        ok = gcs_upload(PT_HISTORY_CACHE_PATH, pruned)
+        if ok:
+            n_kept = sum(len(v) for v in pruned.values())
+            log.info(f"  PT history saved: {len(pruned)} symbols, "
+                     f"{n_kept} datapoints (pruned {n_dropped} >90d)")
+        else:
+            log.warning("  PT history persist returned False")
+    except Exception as e:
+        log.warning(f"  PT history persist failed: {e}")
+
+
+def compute_pt_velocity(symbol: str, current_pt: float, today_iso: str) -> tuple[Optional[float], Optional[float]]:
+    """Return (velocity_pct, score) for one stock.
+
+    Mutates PT_HISTORY_CACHE: appends today's (date, pt) datapoint if not
+    already present.
+
+    Velocity: (pt_now − pt_window_ago) / pt_window_ago, where pt_window_ago
+    is the historical PT entry whose date is closest to today − 60d, within
+    a tolerance of ±14 days. If no such entry exists (bootstrap period or
+    sparse history), returns (None, None) — Smart Money composite will skip
+    this factor for the stock.
+
+    Score banding (per design):
+      velocity > +10%  → 1.0   (strong upgrade momentum)
+      velocity > +5%   → 0.75
+      velocity > 0%    → 0.5   (slight upward bias)
+      velocity > −5%   → 0.25
+      velocity ≤ −5%   → 0.0   (downgrade momentum)
+    """
+    if not current_pt or current_pt <= 0:
+        return None, None
+
+    today = datetime.strptime(today_iso, "%Y-%m-%d").date() if isinstance(today_iso, str) else today_iso
+
+    # Append today's datapoint (idempotent on same-day re-runs)
+    sym_history = PT_HISTORY_CACHE.setdefault(symbol, [])
+    today_str = today.strftime("%Y-%m-%d")
+    if not any(e.get("date") == today_str for e in sym_history if isinstance(e, dict)):
+        sym_history.append({"date": today_str, "pt": float(current_pt)})
+
+    # Find 60d-ago entry within ±14d tolerance
+    target_date = today - timedelta(days=PT_VELOCITY_WINDOW_DAYS)
+    min_date = target_date - timedelta(days=PT_VELOCITY_WINDOW_TOLERANCE)
+    max_date = target_date + timedelta(days=PT_VELOCITY_WINDOW_TOLERANCE)
+
+    best_entry = None
+    best_distance = None
+    for e in sym_history:
+        if not isinstance(e, dict):
+            continue
+        date_str = e.get("date")
+        if not date_str:
+            continue
+        try:
+            entry_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if entry_date < min_date or entry_date > max_date:
+            continue
+        distance = abs((entry_date - target_date).days)
+        if best_distance is None or distance < best_distance:
+            best_entry = e
+            best_distance = distance
+
+    if not best_entry:
+        return None, None
+
+    pt_past = float(best_entry.get("pt") or 0)
+    if pt_past <= 0:
+        return None, None
+
+    velocity = (current_pt - pt_past) / pt_past
+    score = _ladder(velocity, [-0.05, 0.0, 0.05, 0.10],
+                    [0.0, 0.25, 0.5, 0.75, 1.0])
+    return velocity, score
+
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -1208,6 +1348,18 @@ def get_analyst(sym: str) -> dict:
                     )
     except Exception as e:
         log.debug(f"analyst-estimates failed for {sym}: {e}")
+
+    # PT revision velocity (Smart Money v1.1, May 11 2026): compute from
+    # rolling GCS cache. Returns (None, None) during bootstrap period
+    # (first ~60 days after deploy) and for stocks with no current PT.
+    result["pt_velocity_60d"] = None
+    result["pt_velocity_score"] = None
+    if result["target"] > 0:
+        today_iso = datetime.now().strftime("%Y-%m-%d")
+        velocity, score = compute_pt_velocity(sym, result["target"], today_iso)
+        if velocity is not None:
+            result["pt_velocity_60d"] = round(velocity, 4)
+            result["pt_velocity_score"] = round(score, 4)
 
     return result
 
@@ -2406,9 +2558,10 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 # ---------------------------------------------------------------------------
 
 SMART_MONEY_WEIGHTS = {
-    "institutional_flow":  0.30,  # 13F flow velocity (US-only, pass-2)
-    "trend_strength":      0.28,  # (sma50 - sma200) / sma200
+    "institutional_flow":  0.25,  # 13F flow velocity (US-only, pass-2) — was 0.30 pre-v1.1
+    "trend_strength":      0.23,  # (sma50 - sma200) / sma200 — was 0.28 pre-v1.1
     "institutional":       0.20,  # 13F static accumulation (US-only, pass-2)
+    "pt_velocity":         0.10,  # NEW v1.1 (May 11 2026): analyst PT 60d % delta
     "quality":             0.10,  # Piotroski + Altman + ROE + ROIC + GM
     "sector_momentum":     0.07,  # stock 60d vs sector 60d (NASDAQ only)
     "congressional":       0.05,  # Senate + House trades (US-only, pass-2)
@@ -2420,9 +2573,15 @@ SMART_MONEY_CORE = {"institutional_flow", "trend_strength",
 def compute_smart_money_score(institutional_flow: dict, institutional: dict,
                               quality: dict, sector_momentum: dict,
                               congressional: dict, sma50: float,
-                              sma200: float) -> dict:
-    """Weighted sum across 6 LTR-validated factors. Returns:
+                              sma200: float,
+                              pt_velocity_score: Optional[float] = None) -> dict:
+    """Weighted sum across 7 factors. Returns:
         {score, _evaluated, components, weight_evaluated, missing}
+
+    v1.1 (May 11 2026): added pt_velocity (analyst PT 60d % delta) at 10%
+    weight. instflow 30→25, trend 28→23, rest unchanged. PT velocity is
+    None during bootstrap (first ~60 days of scans) and for stocks with
+    no current PT — same "evaluated factors only" pattern as other factors.
 
     May 2026 (Option C): no core-4 gate. Every stock with at least one
     available factor gets a score. Pass-1 stocks naturally cap below
@@ -2447,8 +2606,8 @@ def compute_smart_money_score(institutional_flow: dict, institutional: dict,
     pass-1 stocks already cap at ~0.45 from missing weights.
 
     score is None ONLY when zero factors are evaluated (extreme edge case
-    of missing SMA + missing quality). For pass-1 stocks the typical
-    output is score ≈ 0.20-0.45 from trend + quality + sector_mom.
+    of missing SMA + missing quality + missing PT). For pass-1 stocks the
+    typical output is score ≈ 0.20-0.45 from trend + quality + sector_mom.
     """
     components = {}
 
@@ -2473,6 +2632,12 @@ def compute_smart_money_score(institutional_flow: dict, institutional: dict,
     # Institutional accumulation
     if institutional and institutional.get("_evaluated"):
         components["institutional"] = institutional.get("score", 0.5)
+
+    # PT revision velocity (v1.1 May 2026) — None means not yet evaluable
+    # (bootstrap period or stock has no current PT). Pattern matches other
+    # factors: drop from components rather than substituting a neutral 0.5.
+    if pt_velocity_score is not None:
+        components["pt_velocity"] = pt_velocity_score
 
     # Quality — Piotroski + Altman + ROE + ROIC + GM blend
     if quality and quality.get("score") is not None:
@@ -3810,6 +3975,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.grade_buy = analyst["grade_buy"]; s.grade_total = analyst["grade_total"]
         s.grade_score = analyst["grade_score"]
         s.eps_beats = analyst["eps_beats"]; s.eps_total = analyst["eps_total"]
+        # PT revision velocity (Smart Money v1.1)
+        s.pt_velocity_60d = analyst.get("pt_velocity_60d")
+        s.pt_velocity_score = analyst.get("pt_velocity_score")
         s.revenue_cagr_3y = value["revenue_cagr_3y"]
         s.eps_cagr_3y = value["eps_cagr_3y"]
         s.roe_avg = value["roe_avg"]; s.roe_consistent = value["roe_consistent"]
@@ -3967,6 +4135,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             congressional=cong,
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
+            pt_velocity_score=analyst.get("pt_velocity_score"),
         )
         s.smart_money_score = sm["score"]
         s.smart_money_components = sm["components"]
@@ -4081,6 +4250,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             congressional=raw["cong"],
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
+            pt_velocity_score=None,  # pass-1: no get_analyst() call; PT velocity unavailable
         )
         s.smart_money_score = sm["score"]      # None — core-4 not met
         s.smart_money_components = sm["components"]
@@ -4372,6 +4542,7 @@ def monitor_portfolio(state_path: str = PORTFOLIO_STATE):
             congressional=cong,
             sma50=q.get("sma50", 0),
             sma200=q.get("sma200", 0),
+            pt_velocity_score=analyst.get("pt_velocity_score"),
         )
 
         # v7 13-factor composite (kept for diagnostics)
@@ -4486,9 +4657,17 @@ def main():
     # v8 Compounder v1.1 (May 11 2026): SP500 preload removed — US cohort now
     # uses country=='US' + mcap>=$2B gate, no external membership list needed.
 
+    # Smart Money v1.1 (May 11 2026): preload PT revision velocity rolling
+    # cache. Used by get_analyst() per stock to compute 60d % delta.
+    preload_pt_history()
+
     # Run two-pass scan
     stocks = screen(symbols, top_n=args.top)
     log.info(f"Scan complete: {len(stocks)} stocks scored")
+
+    # Smart Money v1.1: prune + persist PT cache. Today's PT datapoints
+    # were appended during get_analyst() calls inside screen().
+    persist_pt_history()
 
     # Format + send + persist
     report = format_report(stocks, top_n=args.top, region=args.region)
@@ -4505,4 +4684,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# cache bust 1778489412
+# cache bust 1778493918
