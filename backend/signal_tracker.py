@@ -50,9 +50,9 @@ HITRATE_CLOSED_PATH = "hit_rate_tracking/closed.json"
 STOCK_HISTORY_PREFIX = "stock_history"
 
 # Config
-HIT_THRESHOLD_PCT = 10.0     # P(+10%) target
-HIT_WINDOW_DAYS   = 60       # P(+10%) observation window
-P10_INCLUSION     = 0.60     # Minimum ML p10 for hit-rate tracking
+HIT_THRESHOLD_PCT = 20.0     # Model now predicts +20% touches
+HIT_WINDOW_DAYS   = 28       # 4 weeks (20 trading days ≈ 28 calendar days)
+P10_INCLUSION     = 0.03     # D8+ threshold (top 30% by predicted prob)
 STOCK_HISTORY_KEEP_DAYS = 365  # Trim stock_history beyond this
 
 
