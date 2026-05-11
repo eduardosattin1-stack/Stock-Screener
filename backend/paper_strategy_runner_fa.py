@@ -2,21 +2,27 @@
 """
 paper_strategy_runner_fa.py
 ============================
-FALLEN ANGEL strategy: up to 10 SP500 stocks passing the FA gate
-(qualifies_fallen_angel_v8), ranked by composite_fallen_angel desc.
-Weekly rotation. Hold while qualifying — exit when stock no longer
-passes gate (which means either it recovered, or its fundamentals broke).
+FALLEN ANGEL strategy: up to 10 stocks flagged by compute_fallen_angel_flags
+(fallen_angel_flag == True), ranked by composite_fallen_angel desc.
+Weekly rotation. Hold while flagged — exit when stock no longer matches
+the flag pattern (recovered above composite 0.50, RSI cleared 40, etc.).
 
-Runs Friday 06:30 CET after the SP500 scan, alongside BORING, COMPOSITE,
-and MOMENTUM runners.
+Runs Friday 06:30 CET after the global scan, alongside Momentum + Compounder runners.
 
-Lifecycle differs from composite/momentum runners ONLY in the empty-basket
+v1.2 changes (May 11 2026):
+  - Selection switched from `signal_fallen_angel != "DISQUALIFIED"` (the
+    v8 FA gate: Pio≥7 + Altman>2.5 + drawdown>35% + ROE>12%) to the
+    `fallen_angel_flag` (rev>15% + RSI<40 + composite<0.50). The gate
+    and the flag described different stocks; Bruno chose flag as truth.
+  - signal_fallen_angel field is removed from scan output.
+
+Lifecycle differs from momentum/compounder runners ONLY in the empty-basket
 edge case: FA universe can be 0 stocks at any time (including inception).
 We record inception_date + spy_inception_price even with empty basket
 so later weeks share a clean Day-1 baseline against SPY.
 
 Pick rule:
-  1. Filter scan: signal_fallen_angel != "DISQUALIFIED"
+  1. Filter scan: fallen_angel_flag == True
   2. Sort by composite_fallen_angel DESC
   3. Take top-10 (could be 0)
 
@@ -57,7 +63,7 @@ log = logging.getLogger("fa_runner")
 FMP_KEY = os.environ.get("FMP_API_KEY", "")
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
-STRATEGY_VERSION = "fa-v1.1-2026-05-06-global"
+STRATEGY_VERSION = "fa-v1.2-2026-05-11-flag-based"
 TOP_N = 10
 
 LATEST_SCAN_PATH = "scans/latest_global.json"
@@ -176,8 +182,16 @@ def empty_history() -> dict:
 
 
 def select_top_n(scan_data: dict) -> list[dict]:
-    """Filter to non-disqualified FA candidates, sort by composite_fallen_angel,
-    take top-N. Returns up to 10 picks; empty list is a valid result."""
+    """Filter to fallen_angel_flag==True stocks, sort by composite_fallen_angel,
+    take top-N. Returns up to 10 picks; empty list is a valid result.
+
+    v1.2 (May 2026): switched from `signal_fallen_angel != "DISQUALIFIED"` to
+    `fallen_angel_flag == True`. The FA gate (qualifies_fallen_angel_v8) was
+    disabled in screener_v6.py — the FA-flag function (compute_fallen_angel_flags)
+    is now the single source of truth for "is this a Fallen Angel candidate?"
+    Criteria: rev_growth > 15%, RSI < 40, composite < 0.50, price > $1, volume > 100K.
+    Ranking within the flagged set is still by composite_fallen_angel desc.
+    """
     stocks = scan_data.get("stocks", []) if isinstance(scan_data, dict) else []
     if not stocks:
         log.error("Scan has no stocks")
@@ -185,25 +199,25 @@ def select_top_n(scan_data: dict) -> list[dict]:
 
     candidates = []
     for s in stocks:
+        if not s.get("fallen_angel_flag"):
+            continue
         comp_fa = s.get("composite_fallen_angel")
-        if comp_fa is None: continue
-        sig_fa = s.get("signal_fallen_angel")
-        if sig_fa == "DISQUALIFIED": continue
-        if comp_fa <= 0: continue
+        if comp_fa is None or comp_fa <= 0:
+            continue
         price = s.get("price")
-        if not price or price <= 0: continue
+        if not price or price <= 0:
+            continue
         candidates.append({
             "symbol": s.get("symbol", "").upper(),
             "score": float(comp_fa),
             "price": float(price),
             "piotroski": s.get("piotroski"),
             "altman_z": s.get("altman_z"),
-            "signal": sig_fa,
         })
 
     candidates.sort(key=lambda x: -x["score"])
     picks = candidates[:TOP_N]
-    log.info(f"FA qualifiers: {len(candidates)} total, taking top-{len(picks)}")
+    log.info(f"FA-flagged candidates: {len(candidates)} total, taking top-{len(picks)}")
     if picks:
         log.info(f"  Symbols: {[p['symbol'] for p in picks]}")
         log.info(f"  Scores:  {[round(p['score'], 3) for p in picks]}")
