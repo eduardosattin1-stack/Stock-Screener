@@ -1607,7 +1607,7 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
       {!showInput?
         <button onClick={()=>setShowInput(true)} style={{background:"none",border:`1px solid ${T.green}`,color:T.green,padding:"3px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}>+ Add ticker</button>
         :<div style={{display:"flex",alignItems:"center",gap:6}}>
-          <input autoFocus value={input} onChange={e=>{setInput(e.target.value);setAddError("");}} onKeyDown={e=>{if(e.key==="Enter")addExtra(input);if(e.key==="Escape"){setShowInput(false);setInput("");setAddError("");}}} placeholder="e.g. NVDA" style={{padding:"4px 8px",border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,fontFamily:T.mono,width:90,outline:"none"}}/>
+          <input autoFocus value={input} onChange={e=>{setInput(e.target.value);setAddError("");}} onKeyDown={e=>{if(e.key==="Enter")addExtra(input);if(e.key==="Escape"){setShowInput(false);setInput("");setAddError("");}}} placeholder="e.g. NVDA" style={{padding:"4px 8px",border:`1px solid ${T.cardBorder}`,borderRadius:4,fontSize:11,fontFamily:T.mono,width:90,outline:"none"}}/>
           <button onClick={()=>addExtra(input)} disabled={addLoading} style={{background:T.green,color:"#fff",border:"none",padding:"4px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",opacity:addLoading?0.5:1}}>{addLoading?"...":"Add"}</button>
           <button onClick={()=>{setShowInput(false);setInput("");setAddError("");}} title="Cancel" style={{background:"none",border:"none",padding:0,color:T.textLight,cursor:"pointer",fontSize:14,lineHeight:1}}>✕</button>
         </div>
@@ -1624,7 +1624,7 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
           {renderRow(target,{isTarget:true,label:targetName.slice(0,28)||symbol})}
           {peers.map(p=>renderRow(p))}
           {peers.length>0&&renderRow(medianRow,{isMedian:true})}
-          {extras.length>0&&<tr><td colSpan={cols.length+1} style={{padding:"6px 8px",fontSize:9,color:T.textLight,fontFamily:T.mono,textTransform:"uppercase",letterSpacing:0.5,borderTop:`1px dashed ${T.border}`}}>Your comparisons</td></tr>}
+          {extras.length>0&&<tr><td colSpan={cols.length+1} style={{padding:"6px 8px",fontSize:9,color:T.textLight,fontFamily:T.mono,textTransform:"uppercase",letterSpacing:0.5,borderTop:`1px dashed ${T.cardBorder}`}}>Your comparisons</td></tr>}
           {extras.map(p=>renderRow(p,{isExtra:true}))}
         </tbody>
       </table>
