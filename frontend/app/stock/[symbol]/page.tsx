@@ -1637,7 +1637,260 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
     </div>
   </Card>;
 }
+ // ── Helpers for the Side-by-Side Comparison tab ──────────────────────────────
+// Loads a stock's scan data by searching the three region files (sp500,
+// europe, global) and picking the freshest match. Returns null if the
+// symbol isn't present in any current scan — typical for tickers outside
+// the current scanning universe (e.g. ONTO, ALAB at time of writing).
+async function loadStockFromScans(symbol:string):Promise<StockData|null>{
+  const sym=symbol.toUpperCase();
+  const regions=["sp500","europe","global"] as const;
+  const results=await Promise.all(regions.map(r=>
+    fetch(`${GCS_SCANS}/latest_${r}.json`).then(res=>res.ok?res.json():null).catch(()=>null)
+  ));
+  let best:StockData|null=null;
+  let bestDate="";
+  results.forEach(d=>{
+    if(!d?.stocks) return;
+    const f=d.stocks.find((x:StockData)=>x.symbol===sym);
+    if(f && (d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
+  });
+  return best;
+}
  
+// Fetches the 10-year financial history bundle for one symbol — same calls
+// and same EV/EBITDA join logic that the main page's useEffect performs.
+// Used by the comparison tab to populate the right-hand stock's
+// GrowthPanel, ProfitPanel, and ValPanel.
+async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; ratios:RatioYear[]}>{
+  const sym=symbol.toUpperCase();
+  const [inc,rat,km]=await Promise.all([
+    fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),
+    fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),
+    fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),
+  ]);
+  const incomes:IncomeRow[]=inc?.length
+    ? inc.map((r:any)=>({
+        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
+        revenue:r.revenue, grossProfit:r.grossProfit,
+        operatingIncome:r.operatingIncome, netIncome:r.netIncome,
+        epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda,
+      }))
+    : [];
+  let ratios:RatioYear[]=[];
+  if(rat?.length){
+    const evByYear=new Map<string,number>();
+    (km||[]).forEach((k:any)=>{
+      if(k?.fiscalYear!=null && k.evToEBITDA!=null) evByYear.set(String(k.fiscalYear),k.evToEBITDA);
+    });
+    ratios=rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[];
+  }
+  return {incomes,ratios};
+}
+ 
+// ── QualityValueCard ─────────────────────────────────────────────────────────
+// Extracted from inline JSX in StockDetail so it can be re-used in the
+// side-by-side comparison tab. Includes Piotroski/Altman rings (diagnostic),
+// the v8 quality+value driver metrics, Buffett 5y valuation block, and the
+// Price vs Intrinsic target bar. No behavioural change vs the previous
+// inline version — same components, same data sources.
+function QualityValueCard({s}:{s:StockData}){
+  return(
+    <Card>
+      <SH title="Quality & Value" icon={<Shield size={12}/>}/>
+      <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}>
+        <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"#10b981":s.piotroski>=5?T.amber:T.red}/>
+        <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"#10b981":s.altman_z>1.8?T.amber:T.red}/>
+      </div>
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only — not in v8 composite</div>
+      <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"#10b981":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
+      <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"#10b981":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
+      <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"#10b981":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
+      <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?"#10b981":T.textMuted}/>
+      <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"#10b981":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
+      <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"#10b981":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
+      <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"#10b981":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
+      <BuffettBlock s={s}/>
+      <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency}/>
+    </Card>
+  );
+}
+ 
+// ── ComparisonTab ────────────────────────────────────────────────────────────
+// Side-by-side analysis of two stocks. "A" is whatever's loaded on the
+// page (stockA + already-fetched fmpA from StockDetail). "B" is picked
+// by the user — we load its scan data and FMP bundle in parallel on submit.
+//
+// Empty state: prompt for ticker. Loaded state: each scan-derived card and
+// FMP table is rendered twice (left = A, right = B) so the user can read
+// metrics directly across. 5-factor radar at top for at-a-glance composite.
+//
+// Scope: comparison stock must be in the current scan universe. Tickers
+// outside it show an error and the user is prompted to pick another.
+function ComparisonTab({stockA,fmpA}:{
+  stockA:StockData;
+  fmpA:{incomes:IncomeRow[]; ratios:RatioYear[]};
+}){
+  const [input,setInput]=useState("");
+  const [stockB,setStockB]=useState<StockData|null>(null);
+  const [fmpB,setFmpB]=useState<{incomes:IncomeRow[]; ratios:RatioYear[]}|null>(null);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState("");
+ 
+  async function handleSubmit(){
+    const sym=input.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g,"");
+    setError("");
+    if(!sym){setError("Enter a ticker"); return;}
+    if(sym===stockA.symbol){setError("Same stock — pick a different one"); return;}
+    setLoading(true);
+    try{
+      const [scan,fmp]=await Promise.all([
+        loadStockFromScans(sym),
+        loadFmpForStock(sym),
+      ]);
+      if(!scan){
+        setError(`${sym} isn't in the current scan universe. Currently SP500 only — try a large-cap US ticker.`);
+        setLoading(false);
+        return;
+      }
+      setStockB(scan);
+      setFmpB(fmp);
+    }catch(e:any){
+      setError(`Failed to load ${sym}: ${e?.message||"unknown error"}`);
+    }finally{
+      setLoading(false);
+    }
+  }
+ 
+  function reset(){
+    setStockB(null);
+    setFmpB(null);
+    setInput("");
+    setError("");
+  }
+ 
+  // Empty state — prompt for ticker
+  if(!stockB){
+    return(
+      <Card>
+        <SH title="Side-by-Side Comparison" icon={<Activity size={12}/>} sub="Compare any two stocks across all factor cards and multi-year tables"/>
+        <div style={{padding:"32px 24px",textAlign:"center"}}>
+          <div style={{fontSize:12,color:T.textMuted,fontFamily:T.sans,lineHeight:1.6,marginBottom:20,maxWidth:480,margin:"0 auto 20px"}}>
+            Pick a ticker to compare against <strong style={{color:T.text}}>{stockA.symbol}</strong>. You'll see Quality &amp; Value, Growth, Smart Money, Momentum, plus 10-year Growth Rates, Profitability, and Valuation History — both stocks laid out left/right.
+          </div>
+          <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:12}}>
+            <input autoFocus value={input}
+              onChange={e=>{setInput(e.target.value); setError("");}}
+              onKeyDown={e=>{if(e.key==="Enter") handleSubmit();}}
+              placeholder="e.g. MSFT"
+              style={{padding:"6px 12px",border:`1px solid ${T.cardBorder}`,borderRadius:5,fontSize:12,fontFamily:T.mono,width:120,outline:"none"}}/>
+            <button onClick={handleSubmit} disabled={loading}
+              style={{background:T.green,color:"#fff",border:"none",padding:"6px 16px",borderRadius:5,fontSize:11,fontFamily:T.mono,fontWeight:600,cursor:loading?"wait":"pointer",opacity:loading?0.6:1}}>
+              {loading?"Loading…":"Compare"}
+            </button>
+          </div>
+          {error && <div style={{fontSize:11,color:T.amber,fontFamily:T.mono,marginTop:8,lineHeight:1.4,maxWidth:420,margin:"8px auto 0"}}>{error}</div>}
+        </div>
+      </Card>
+    );
+  }
+ 
+  // Loaded state — side-by-side render
+  const ComparisonHeader=({s,isLeft}:{s:StockData; isLeft:boolean})=>{
+    const sigStyle=SIG_C[s.signal]||SIG_C.HOLD;
+    const compColor=s.composite>0.6?T.green:s.composite>0.4?T.text:T.red;
+    return(
+      <Card>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+          <div>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+              <span style={{fontSize:20,fontWeight:700,color:T.text,fontFamily:T.mono}}>{s.symbol}</span>
+              <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span>
+            </div>
+            <div style={{fontSize:18,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)} <span style={{fontSize:11,color:T.textMuted,fontWeight:400}}>{s.currency}</span></div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginBottom:2}}>COMPOSITE</div>
+            <div style={{fontSize:24,fontWeight:700,fontFamily:T.mono,color:compColor}}>{s.composite.toFixed(2)}</div>
+          </div>
+        </div>
+        {!isLeft && (
+          <button onClick={reset} style={{marginTop:6,fontSize:10,fontFamily:T.mono,color:T.green,background:"none",border:`1px solid ${T.greenBorder}`,padding:"3px 10px",borderRadius:4,cursor:"pointer",fontWeight:600}}>
+            Change ticker
+          </button>
+        )}
+      </Card>
+    );
+  };
+ 
+  return(
+    <>
+      {/* Symbol header strip */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <ComparisonHeader s={stockA} isLeft={true}/>
+        <ComparisonHeader s={stockB} isLeft={false}/>
+      </div>
+ 
+      {/* 5-factor radar */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <Card>
+          <SH title={`${stockA.symbol} · 5-Factor`}/>
+          <div style={{display:"flex",justifyContent:"center"}}>
+            <FactorRadar scores={readFactorsV8(stockA,"momentum")} size={220}/>
+          </div>
+        </Card>
+        <Card>
+          <SH title={`${stockB.symbol} · 5-Factor`}/>
+          <div style={{display:"flex",justifyContent:"center"}}>
+            <FactorRadar scores={readFactorsV8(stockB,"momentum")} size={220}/>
+          </div>
+        </Card>
+      </div>
+ 
+      {/* Quality & Value */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <QualityValueCard s={stockA}/>
+        <QualityValueCard s={stockB}/>
+      </div>
+ 
+      {/* Growth */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <GrowthCard s={stockA}/>
+        <GrowthCard s={stockB}/>
+      </div>
+ 
+      {/* Smart Money */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <SmartMoneyCard s={stockA}/>
+        <SmartMoneyCard s={stockB}/>
+      </div>
+ 
+      {/* Momentum */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <MomentumPanel s={stockA}/>
+        <MomentumPanel s={stockB}/>
+      </div>
+ 
+      {/* Growth Rates table (multi-year, FMP-sourced) */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <GrowthPanel incomes={fmpA.incomes} loading={false}/>
+        <GrowthPanel incomes={fmpB?.incomes||[]} loading={!fmpB}/>
+      </div>
+ 
+      {/* Profitability table */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <ProfitPanel ratios={fmpA.ratios} loading={false}/>
+        <ProfitPanel ratios={fmpB?.ratios||[]} loading={!fmpB}/>
+      </div>
+ 
+      {/* Valuation History table */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+        <ValPanel ratios={fmpA.ratios} loading={false}/>
+        <ValPanel ratios={fmpB?.ratios||[]} loading={!fmpB}/>
+      </div>
+    </>
+  );
+}
 // ── Main Page ──────────────────────────────────────────────────────────────────
 // ── TrackRecordTable: 10-year financial history per the Buffettology
 // methodology spreadsheet. All data sourced from s.buffett_history (no
@@ -1802,7 +2055,7 @@ export default function StockDetail(){
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"track">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"track"|"compare">("overview");
 
   // v7.2: Search the 3 region files in order (sp500 → europe → global), not
   // `latest.json`. `latest.json` is overwritten by whichever scan ran most
@@ -1913,7 +2166,7 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","track"] as const).map(tab=>(
+        {(["overview","track","compare"] as const).map(tab=>(
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -1922,15 +2175,18 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":"Track Record"}
+            {tab==="overview"?"Overview":tab==="track"?"Track Record":"Compare"}
           </button>
         ))}
       </div>
 
       {activeTab==="track" ? (
         <TrackRecordTable s={s}/>
+      ) : activeTab==="compare" ? (
+        <ComparisonTab stockA={s} fmpA={{incomes,ratios}}/>
       ) : (
         <>
+          
       {/* ═══ v8 5-FACTOR BREAKDOWN ═══ */}
       <Card style={{marginBottom:16}}>
         <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`${mode==="fallen_angel"?"Fallen Angel":"Momentum"} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
@@ -1965,28 +2221,7 @@ export default function StockDetail(){
       </div>
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
-        <Card>
-          <SH title="Quality & Value" icon={<Shield size={12}/>}/>
-          {/* Piotroski + Altman are diagnostic only (not in v8 composite) */}
-          <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}>
-            <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"#10b981":s.piotroski>=5?T.amber:T.red}/>
-            <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"#10b981":s.altman_z>1.8?T.amber:T.red}/>
-          </div>
-          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only — not in v8 composite</div>
-          {/* Components that DO drive the v8 Quality/Value scores */}
-          <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"#10b981":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
-          <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"#10b981":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
-          <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"#10b981":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
-          <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?"#10b981":T.textMuted}/>
-          <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"#10b981":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
-          <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"#10b981":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
-          <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"#10b981":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
-          {/* Buffett 5y projection block */}
-          <BuffettBlock s={s}/>
-          {/* TargetBar — Price | Analyst target | Buffett fair value */}
-          <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency}/>
-        </Card>
+        <QualityValueCard s={s}/>
         <GrowthCard s={s}/>
         <SmartMoneyCard s={s}/>
       </div>
