@@ -765,15 +765,13 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   );
 }
 
-// ── TradierOptionsCard — IV data + bull call spread suggestion from Tradier ──
-// v7.2.2 Apr 22: split IV display from spread suggestion. IV panel always
-// visible when Tradier has any data for the symbol (top-30 composite OR
-// hit_prob ≥ 0.65). Spread panel only renders when all gates pass:
-//   composite ≥ 0.60 AND hit_prob ≥ 0.65 AND IV rank ≤ 40
-// (IV rank gate is skipped until 20+ samples accumulated.)
-//
-// Data is produced by screener_v6.py Pass 2 via tradier_options.enrich_stock().
-// European symbols never populate this.
+// ── TradierOptionsCard — IV data + P20-gated bull call spread suggestion ──
+// May 2026: spread gate changed from composite+hit_prob to P20+IVR.
+//   NEW GATE: P20 ≥ 8% (model says elevated move probability)
+//             AND IVR ≤ 30 (options are cheap)
+// Includes P(breakeven) and P(max profit) estimates derived from the
+// backtest relationship between P20 and actual close distributions.
+// IV panel always visible when Tradier has any data for the symbol.
 function TradierOptionsCard({s}:{s:StockData}){
   const hasIV=s.tradier_iv_current!=null||s.tradier_iv_rank!=null;
   const hasSpread=s.tradier_spread!=null;
@@ -786,13 +784,32 @@ function TradierOptionsCard({s}:{s:StockData}){
   const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
   const ivrLabel=ivr==null?"Not enough data":ivr<=30?"Cheap options premium":ivr<=60?"Neutral options premium":"Rich options premium";
 
-  // Which gates are failing? Used to explain to user why no spread was suggested.
-  const gateFail:string[]=[];
-  if(s.composite<0.60) gateFail.push(`composite ${s.composite.toFixed(2)} < 0.60`);
-  if((s.hit_prob||0)<0.65) gateFail.push(`p(+10%) ${((s.hit_prob||0)*100).toFixed(0)}% < 65%`);
-  if(ivr!=null&&samples>=20&&ivr>40) gateFail.push(`IV rank ${ivr.toFixed(0)} > 40 (options too expensive)`);
+  // P20-based spread gate (May 2026)
+  const p20=s.hit_prob||0;
+  const p20pct=Math.round(p20*100);
+  const ivrOk=ivr!=null&&ivr<=30;
+  const p20Ok=p20>=0.08;
+  const spreadGatePass=p20Ok&&ivrOk&&hasSpread;
 
+  // Gate failure reasons for display
+  const gateFail:string[]=[];
+  if(!p20Ok) gateFail.push(`P20 ${p20pct}% < 8% (model sees low move probability)`);
+  if(ivr!=null&&ivr>30) gateFail.push(`IVR ${ivr.toFixed(0)} > 30 (options too expensive for edge)`);
+  if(ivr==null) gateFail.push(`IVR not available (${samples}/20 samples needed)`);
+  if(!hasSpread) gateFail.push("no spread data from Tradier");
+
+  // Probability estimates from backtest (May 2026 time_model_v2):
+  // P20 predicts P(touch +20% daily high in 4w). Spread breakeven is much
+  // lower than +20%, so P(breakeven) > P20. From backtest distributions:
+  //   D10 stocks: 26.3% touch +20%, ~55% close above +5%
+  //   Scaling: P(close above X%) ≈ P20 × (20 / X) × 0.7, capped at 0.75
+  // This is a heuristic, not a precise model — shown as "est." in UI.
   const sp=s.tradier_spread;
+  const bePct=sp?.break_even_move_pct||0;
+  const shortPct=sp?((sp.short_strike-sp.spot)/sp.spot*100):15;
+  const pBreakeven=bePct>0?Math.min(0.75, p20*(20/bePct)*0.7):0;
+  const pMaxProfit=shortPct>0?Math.min(0.55, p20*(20/shortPct)*0.6):0;
+
   const metric=(label:string,value:string,sub?:string,color?:string)=>(
     <div>
       <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
@@ -801,38 +818,47 @@ function TradierOptionsCard({s}:{s:StockData}){
     </div>
   );
 
+  // Signal strength label
+  const signalStrength=p20>=0.15&&ivrOk?"★ STRONG":p20>=0.08&&ivrOk?"MODERATE":"NO SIGNAL";
+  const signalColor=signalStrength==="★ STRONG"?"#8b5cf6":signalStrength==="MODERATE"?T.amber:T.textMuted;
+
   return(
     <Card>
-      <SH title="Options Data — Tradier" icon={<Zap size={12}/>}
-        sub={hasSpread?"Speculative overlay · bull call spread suggested":"IV data only · no spread gate cleared"}/>
+      <SH title="Options Intelligence" icon={<Zap size={12}/>}
+        sub={spreadGatePass?`Bull spread signal: P20 ${p20pct}% + IVR ${ivr?.toFixed(0)||"?"}`:"IV data · spread gate not cleared"}/>
 
-      {/* IV panel — always visible when Tradier has data */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+      {/* P20 + IVR signal strip — always visible */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         {metric(
-          "CURRENT IV",
-          iv!=null?`${(iv*100).toFixed(0)}%`:"—",
-          "ATM 30-day implied vol (annualized)"
+          "P20 (ML MODEL)",
+          p20>0?`${p20pct}%`:"—",
+          p20>=0.15?"D9-D10 · elevated move probability":p20>=0.08?"D7-D8 · moderate signal":"below threshold",
+          p20>=0.15?T.green:p20>=0.08?T.amber:T.textMuted
         )}
         {metric(
           "IV RANK",
           ivr!=null?ivr.toFixed(0):"—",
-          samples<20?`${samples}/20 samples · rank not meaningful`:ivrLabel,
+          samples<20?`${samples}/20 samples`:ivrLabel,
           ivrColor
         )}
         {metric(
-          "SAMPLES",
-          `${samples}d`,
-          samples<20?`${20-samples} more days until meaningful rank`:"60-day rolling window"
+          "CURRENT IV",
+          iv!=null?`${(iv*100).toFixed(0)}%`:"—",
+          "ATM 30d implied vol"
+        )}
+        {metric(
+          "SPREAD SIGNAL",
+          signalStrength,
+          spreadGatePass?"P20 ≥ 8% + IVR ≤ 30 = underpriced options":"gate not met",
+          signalColor
         )}
       </div>
 
-      {/* v7.2.3: Market positioning strip — PC ratio, term structure, earnings move */}
+      {/* Market positioning strip — PC ratio, term structure, earnings move */}
       {(s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null)&&(
         <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
           <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>MARKET POSITIONING</div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14}}>
-
-            {/* Put/Call volume ratio */}
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>P/C VOL RATIO</div>
               {s.tradier_pc_ratio!=null?(()=>{
@@ -847,8 +873,6 @@ function TradierOptionsCard({s}:{s:StockData}){
                 <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
               )}
             </div>
-
-            {/* IV term structure */}
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IV TERM STRUCTURE</div>
               {(s.tradier_iv_30d!=null||s.tradier_iv_60d!=null||s.tradier_iv_90d!=null)?(()=>{
@@ -871,8 +895,6 @@ function TradierOptionsCard({s}:{s:StockData}){
                 <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
               )}
             </div>
-
-            {/* Implied earnings move */}
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IMPLIED EARNINGS MOVE</div>
               {s.tradier_implied_earnings_move?(()=>{
@@ -886,25 +908,24 @@ function TradierOptionsCard({s}:{s:StockData}){
                 <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div>
               </>)}
             </div>
-
           </div>
         </div>
       )}
 
-      {/* If no spread but has IV, explain why */}
-      {!hasSpread&&hasIV&&(
+      {/* Gate NOT passed — explain why */}
+      {!spreadGatePass&&hasIV&&(
         <div style={{padding:"8px 12px",borderRadius:5,background:"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
           <span style={{fontWeight:600,color:T.text,marginRight:6}}>No spread suggestion:</span>
-          {gateFail.length>0?gateFail.join(" · "):"all gates clear (spread will appear in next scan)"}
+          {gateFail.join(" · ")}
         </div>
       )}
 
-      {/* Spread panel — only when hasSpread */}
-      {hasSpread&&sp&&(<>
-        {/* Context strip */}
+      {/* Spread panel — P20 ≥ 8% AND IVR ≤ 30 AND Tradier spread data exists */}
+      {spreadGatePass&&sp&&(<>
+        {/* Signal context strip */}
         <div style={{display:"flex",flexWrap:"wrap",gap:"4px 14px",fontSize:11,fontFamily:T.mono,color:T.textMuted,marginBottom:14,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
-          <span><span style={{color:T.textLight}}>Why shown:</span> <span style={{color:T.text,fontWeight:600}}>composite {s.composite.toFixed(2)} ≥ 0.60 · p(+10%) {((s.hit_prob||0)*100).toFixed(0)}% ≥ 65%</span></span>
-          {ivr==null&&<span style={{color:T.amber,fontWeight:600}}>⚠ {samples}/20 days — IV rank unreliable</span>}
+          <span><span style={{color:T.textLight}}>Gate:</span> <span style={{color:T.green,fontWeight:600}}>P20 {p20pct}% ≥ 8% · IVR {ivr?.toFixed(0)} ≤ 30</span></span>
+          <span style={{color:"#8b5cf6",fontWeight:600}}>Model predicts elevated +20% touch probability + options are cheap → edge</span>
         </div>
 
         {/* Contract detail */}
@@ -917,12 +938,40 @@ function TradierOptionsCard({s}:{s:StockData}){
           {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${sp.break_even_move_pct.toFixed(1)}% from spot`)}
         </div>
 
-        {/* Economics per contract */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,marginBottom:14}}>
-          {metric("MAX GAIN",`+$${sp.max_gain_per_contract.toFixed(0)}`,"if stock ≥ short strike at expiration",T.green)}
-          {metric("MAX LOSS",`-$${sp.max_loss_per_contract.toFixed(0)}`,"if stock ≤ long strike at expiration",T.red)}
+        {/* Economics + probability estimates */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+          {metric("MAX GAIN",`+$${sp.max_gain_per_contract.toFixed(0)}`,"stock ≥ short strike at expiry",T.green)}
+          {metric("MAX LOSS",`-$${sp.max_loss_per_contract.toFixed(0)}`,"stock ≤ long strike at expiry",T.red)}
           {metric("RISK / REWARD",`${sp.risk_reward.toFixed(2)} : 1`,sp.risk_reward>=1.5?"favorable":sp.risk_reward>=1.0?"even":"unfavorable",sp.risk_reward>=1.5?T.green:sp.risk_reward>=1.0?T.amber:T.red)}
+          {metric(
+            "P(BREAKEVEN) est.",
+            pBreakeven>0?`~${Math.round(pBreakeven*100)}%`:"—",
+            `stock closes above $${sp.break_even_price.toFixed(0)} (+${bePct.toFixed(0)}%)`,
+            pBreakeven>=0.50?T.green:pBreakeven>=0.35?T.amber:T.red
+          )}
+          {metric(
+            "P(MAX PROFIT) est.",
+            pMaxProfit>0?`~${Math.round(pMaxProfit*100)}%`:"—",
+            `stock closes above $${sp.short_strike.toFixed(0)} (+${shortPct.toFixed(0)}%)`,
+            pMaxProfit>=0.25?T.green:pMaxProfit>=0.15?T.amber:T.red
+          )}
         </div>
+
+        {/* Expected value estimate */}
+        {pBreakeven>0&&(()=>{
+          const ev=pMaxProfit*sp.max_gain_per_contract-(1-pBreakeven)*sp.max_loss_per_contract;
+          const evColor=ev>0?T.green:T.red;
+          return(
+            <div style={{padding:"10px 12px",borderRadius:5,background:ev>0?"#f0fdf4":"#fef2f2",border:`1px solid ${ev>0?"#bbf7d0":"#fecaca"}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:14}}>
+              <div style={{fontWeight:600,color:evColor,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE (per contract)</div>
+              <div>P(max profit) × gain − P(miss) × loss = <b style={{color:evColor}}>{ev>=0?"+":""}${ev.toFixed(0)}</b></div>
+              <div style={{fontSize:9,color:T.textMuted,marginTop:4}}>
+                {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = ${ev.toFixed(0)}/contract.
+                {ev>0?" Positive expected value — trade has statistical edge.":" Negative EV — model says odds don't justify the premium at current IVR."}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* IBKR execution template */}
         <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
@@ -936,11 +985,11 @@ function TradierOptionsCard({s}:{s:StockData}){
         {/* Sizing caveats */}
         <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
           <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING &amp; CAVEATS</div>
-          Speculative overlay, not a primary position. Suggested sizing: <b>1-2% of portfolio per spread, max 5% total</b> in options overlay. Spreads can lose 100% of the debit if the stock closes below the long strike at expiration. Greeks and IV from Tradier (ORATS-sourced). Do not confuse with the cash-equity Phase 1 strategy.
+          Speculative overlay, not a primary position. Suggested sizing: <b>1-2% of portfolio per spread, max 5% total</b> in options overlay. P(breakeven) and P(max profit) are <b>estimates</b> from the time_model_v2 backtest (OOS AUC 0.78) — not precise probabilities. Spreads can lose 100% of the debit if stock closes below the long strike at expiration.
         </div>
 
         <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
-          Accumulating data through July 2026 review. Performance of this overlay will be evaluated separately from the cash-equity strategy. No automated execution — you place the order manually in IBKR.
+          Model: time_model_v2 TOP3 ensemble (XGB+GBM+LGB), P(+20% daily high in 4w), OOS AUC 0.7836. Probabilities scaled from touch-probability to close-probability using backtest distributions. IV/Greeks from Tradier (ORATS-sourced). Not investment advice — this is a research tool.
         </div>
       </>)}
     </Card>
