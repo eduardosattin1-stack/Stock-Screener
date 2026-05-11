@@ -188,15 +188,26 @@ ML_FEATURES = None
 try:
     import joblib
     import numpy as np
-    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_10pct.pkl")
+HAS_ML_MODEL = False
+ML_MODELS = None
+ML_CALIBRATOR = None
+ML_FEATURES = None
+ML_MEDIANS = None
+try:
+    import joblib
+    import numpy as np
+    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_v2.pkl")
     if os.path.exists(model_path):
         model_data = joblib.load(model_path)
-        ML_MODEL = model_data["model"]
-        ML_FEATURES = model_data["features"]
+        ML_MODELS = model_data["models"]        # list of 3 models
+        ML_CALIBRATOR = model_data["calibrator"] # IsotonicRegression
+        ML_FEATURES = model_data["features"]     # 43 feature names
+        ML_MEDIANS = model_data["medians"]       # median fill values
         HAS_ML_MODEL = True
-        log.info(f"ML model loaded: {len(ML_FEATURES)} features, {model_path}")
+        log.info(f"ML v2 loaded: {len(ML_FEATURES)} features, {len(ML_MODELS)} models, "
+                 f"target={model_data.get('target','?')}, OOS AUC={model_data.get('oos_auc','?')}")
     else:
-        log.info("time_model_10pct.pkl not found — hit_prob will be 0")
+        log.info("time_model_v2.pkl not found — hit_prob will be 0")
 except ImportError:
     log.info("joblib/numpy not installed — ML model disabled")
 except Exception as e:
@@ -204,57 +215,85 @@ except Exception as e:
 
 
 def predict_hit_prob(stock) -> float:
-    """Predict P(+10% in 60d) using trained GBM model. Returns 0.0 if model unavailable.
-
-    Apr 2026: hit_prob is NO LONGER displayed on the dashboard (the LTR
-    investigation showed per-stock probabilities aren't trustworthy at the
-    0.65 AUC ceiling — CHKP model said 22%, actual 11%; NFLX said 31%, actual
-    30%). The score is still computed and written to JSON for diagnostic
-    purposes; the dashboard now shows the LTR-derived Smart Money Score in
-    its place. See compute_smart_money_score below.
-    """
-    if not HAS_ML_MODEL or ML_MODEL is None:
+    """Predict P(+20% daily high in 4 weeks) using v2 ensemble.
+    Returns 0.0 if model unavailable."""
+    if not HAS_ML_MODEL or ML_MODELS is None:
         return 0.0
     try:
-        # Build feature vector matching backtest column names AND scales.
-        # v7.2 fix: backtest stores RAW values for piotroski/altman_z/rsi/bull_score,
-        # but prior code was sending normalized (0-1) values — a silent scale
-        # mismatch that has been biasing hit_prob. Now matches backtest_full.py exactly.
-        fs = stock.factor_scores or {}
-        feature_map = {
-            # Features stored as 0-1 in backtest (normalized factor scores)
-            "f_technical": fs.get("technical", 0) or 0,
-            "f_upside": fs.get("upside", 0) or 0,
-            "f_analyst": fs.get("analyst", 0) or 0,
-            "f_earnings": fs.get("earnings", 0) or 0,
-            "f_insider": fs.get("insider", 0) or 0,
-            "f_news": 0.5,  # removed factor — kept for old-pkl backward compat
-            "f_proximity": fs.get("proximity", 0) or 0,
-            "f_catastrophe": stock.catastrophe_score,  # removed from composite, kept for old pkls
-            "f_transcript": fs.get("transcript", 0) or 0,
-            "f_institutional": fs.get("institutional", 0) or 0,
-            "f_quality": fs.get("quality", 0) or 0,
-            # v7.2 NEW — all scored 0-1 in backtest
-            "f_catalyst": fs.get("catalyst", 0) or 0,
-            "f_institutional_flow": fs.get("institutional_flow", 0) or 0,
-            "f_sector_momentum": fs.get("sector_momentum", 0) or 0,
-            "f_congressional": fs.get("congressional", 0) or 0,  # may be constant in old data
-            # Features stored RAW in backtest — v7.2 fix: match raw scale
-            "f_bull_score_raw": float(stock.bull_score),          # was /10 (wrong)
-            "f_rsi": float(stock.rsi),                            # was /100 (wrong)
-            "f_piotroski": float(stock.piotroski),                # was /9 (wrong)
-            "f_altman_z": float(stock.altman_z),                  # was min(/20, 1) (wrong)
-            # These were already raw-matched
-            "f_momentum_20d": (stock.price - stock.sma50) / stock.sma50 if stock.sma50 > 0 else 0,
-            "f_trend_strength": (stock.sma50 - stock.sma200) / stock.sma200 if stock.sma200 > 0 else 0,
-            "f_prox_raw": (stock.price - stock.year_low) / (stock.year_high - stock.year_low)
-                          if stock.year_high > stock.year_low > 0 else 0.5,
+        factors = stock.factor_scores if hasattr(stock, 'factor_scores') else {}
+
+        # Build feature vector — must match save_time_model_v2.py feature_cols
+        row = {}
+
+        # Technical features from factor_scores
+        tech_map = {
+            "f_momentum_20d": "momentum_20d",
+            "f_trend_strength": "trend_strength",
+            "f_rsi": "rsi",
+            "f_prox_raw": "prox_raw",
+            "f_quality": "quality",
+            "f_upside": "upside",
+            "f_analyst": "analyst",
+            "f_sector_momentum": "sector_momentum",
+            "f_institutional_flow": "institutional_flow",
+            "f_insider": "insider",
+            "f_catalyst": "catalyst",
+            "f_earnings": "earnings",
+            "f_bull_score_raw": "bull_score_raw",
         }
-        X = np.array([[feature_map.get(f, 0) for f in ML_FEATURES]])
-        prob = ML_MODEL.predict_proba(X)[0][1]  # probability of class 1 (hit +10%)
-        return round(float(prob), 3)
+        for feat_name, factor_key in tech_map.items():
+            row[feat_name] = factors.get(factor_key)
+
+        # Fundamental features — computed from stock attributes
+        # These should be precomputed during pass 2 and stored on the stock object
+        # For now, try to get from stock._fund_features if available
+        fund = getattr(stock, '_fund_features', {})
+        for k, v in fund.items():
+            row[k] = v
+
+        # Engineered features
+        rsi = row.get("f_rsi")
+        mom = row.get("f_momentum_20d")
+        roe = row.get("f_roe")
+        pb = row.get("f_pb")
+        rev_g = row.get("f_rev_growth")
+        quality = row.get("f_quality")
+        prox = row.get("f_prox_raw")
+
+        if rsi is not None and quality is not None:
+            row["f_rsi_x_quality"] = (100 - rsi) / 100 * quality
+        if rsi is not None and rev_g is not None:
+            row["f_rsi_x_revgrow"] = (100 - rsi) / 100 * min(rev_g, 2.0)
+        if roe is not None and pb is not None and pb > 0:
+            row["f_roe_over_pb"] = roe / pb
+        if mom is not None:
+            row["f_momentum_abs"] = abs(mom)
+        if prox is not None:
+            row["f_drawdown"] = 1.0 - prox
+
+        # Build numpy vector in feature order
+        vec = []
+        for f in ML_FEATURES:
+            val = row.get(f)
+            if val is None:
+                val = ML_MEDIANS.get(f, 0)
+            vec.append(float(val))
+
+        X = np.array([vec], dtype=np.float32)
+        X = np.clip(X, -100, 100)
+
+        # Average predictions from all 3 models
+        probs = [m.predict_proba(X)[0, 1] for m in ML_MODELS]
+        raw_prob = sum(probs) / len(probs)
+
+        # Apply isotonic calibration
+        if ML_CALIBRATOR is not None:
+            calibrated = ML_CALIBRATOR.predict([raw_prob])[0]
+            return round(float(calibrated), 4)
+        return round(float(raw_prob), 4)
+
     except Exception as e:
-        log.debug(f"ML predict failed for {stock.symbol}: {e}")
+        log.debug(f"ML predict failed for {getattr(stock, 'symbol', '?')}: {e}")
         return 0.0
 
 # Portfolio state path (GCS or local)
@@ -3933,7 +3972,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # Apr 2026: still computed for JSON diagnostics. Not displayed on
         # dashboard — Smart Money Score replaces it visually.
         s.hit_prob = predict_hit_prob(s)
-
+        # Compute fundamental features for ML model
+        if HAS_ML_MODEL:
+        s._fund_features = _compute_fund_features_for_ml(s.symbol, scan_date, s.price)
         # ─── Tradier options enrichment (US stocks ≥ $1B mkt cap) ───
         if TRADIER_AVAILABLE and tradier_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
             try:
