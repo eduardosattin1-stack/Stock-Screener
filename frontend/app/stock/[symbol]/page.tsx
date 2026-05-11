@@ -2242,7 +2242,7 @@ export default function StockDetail(){
       </div>
 
       {/* Tradier options card */}
-      {(s.hit_prob>0||s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
+      {((s.hit_prob??0)>0||s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
