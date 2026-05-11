@@ -799,6 +799,101 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   );
 }
 
+// ── P20Card — ML-derived move probability ladder + spread edge ───────────
+// Shows the model's prediction across multiple thresholds (+5%, +10%, +15%,
+// +20%) and the implied spread edge when combined with IVR.
+// Data source: s.hit_prob = P(+20% daily high in 4w) from time_model_v2.
+// Lower thresholds estimated from backtest distributions (labeled "est.").
+function P20Card({s}:{s:StockData}){
+  const p20 = s.hit_prob ?? 0;
+  if(p20 <= 0) return null;
+
+  const p20pct = p20 * 100;
+  const ivr = s.tradier_iv_rank;
+  const iv = s.tradier_iv_current;
+
+  // Scaled probabilities (heuristic from backtest OOS distributions)
+  const p5  = Math.min(p20 * 3.5, 0.80);
+  const p10 = Math.min(p20 * 2.2, 0.65);
+  const p15 = Math.min(p20 * 1.4, 0.50);
+
+  // Decile bucket (approximate from OOS thresholds)
+  const decile = p20>=0.17?10:p20>=0.07?9:p20>=0.05?8:p20>=0.03?7:p20>=0.02?6:p20>=0.013?5:p20>=0.009?4:p20>=0.006?3:p20>=0.004?2:1;
+
+  const signal = p20>=0.15?"STRONG":p20>=0.08?"MODERATE":p20>=0.03?"MILD":"WEAK";
+  const signalColor = signal==="STRONG"?T.green:signal==="MODERATE"?T.amber:T.textMuted;
+
+  const ivrOk = ivr!=null && ivr<=30;
+  const spreadEdge = p20>=0.08 && ivrOk;
+  const ivrLabel = ivr==null?"N/A":ivr<=25?"Cheap":ivr<=40?"Normal":ivr<=60?"Elevated":"Rich";
+
+  const metric=(label:string,value:string,sub?:string,color?:string)=>(
+    <div>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div style={{fontSize:14,color:color||T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
+      {sub&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{sub}</div>}
+    </div>
+  );
+
+  // Probability bar
+  const pBar=(threshold:string, pct:number, isRaw:boolean)=>{
+    const w=Math.max(pct,2);
+    const color=pct>=40?T.green:pct>=20?"#10b981":pct>=10?T.amber:T.textMuted;
+    return(
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:`1px solid ${T.divider}`}}>
+        <div style={{width:50,fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600,textAlign:"right"}}>{threshold}</div>
+        <div style={{flex:1,height:16,background:T.divider,borderRadius:3,overflow:"hidden",position:"relative"}}>
+          <div style={{width:`${w}%`,height:"100%",background:color,borderRadius:3,transition:"width 0.4s"}}/>
+          <span style={{position:"absolute",left:8,top:0,lineHeight:"16px",fontSize:10,fontFamily:T.mono,fontWeight:700,color:w>30?"#fff":T.text}}>{pct.toFixed(0)}%</span>
+        </div>
+        <div style={{width:36,fontSize:9,fontFamily:T.mono,color:T.textLight,textAlign:"right"}}>{isRaw?"model":"est."}</div>
+      </div>
+    );
+  };
+
+  return(
+    <Card>
+      <SH title="Move Probability (ML)" icon={<TrendingUp size={12}/>}
+        sub={`Decile ${decile} · ${signal} signal`}/>
+
+      {/* Top strip */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:10,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+        {metric("P(+20% IN 4W)",`${p20pct.toFixed(0)}%`,`D${decile} · ${(p20pct/5.3).toFixed(1)}x base rate`,signalColor)}
+        {metric("IV RANK",ivr!=null?ivr.toFixed(0):"—",ivrLabel,ivrOk?T.green:ivr!=null&&ivr>50?T.red:T.textMuted)}
+        {metric("SPREAD EDGE",spreadEdge?"★ YES":"NO",spreadEdge?"P20≥8% + IVR≤30":"gate not met",spreadEdge?"#8b5cf6":T.textMuted)}
+        {metric("CURRENT IV",iv!=null?`${(iv*100).toFixed(0)}%`:"—","ATM 30d annualized")}
+      </div>
+
+      {/* Probability ladder */}
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>
+        P(TOUCHING THRESHOLD IN 4 WEEKS)
+      </div>
+      {pBar("+5%", p5*100, false)}
+      {pBar("+10%", p10*100, false)}
+      {pBar("+15%", p15*100, false)}
+      {pBar("+20%", p20*100, true)}
+
+      {/* Spread edge explanation */}
+      {spreadEdge && (
+        <div style={{marginTop:12,padding:"10px 12px",borderRadius:5,background:"#f5f3ff",border:"1px solid #ddd6fe",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.6}}>
+          <div style={{fontWeight:600,color:"#8b5cf6",fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>★ SPREAD SIGNAL</div>
+          Model sees {p20pct.toFixed(0)}% chance of touching +20% ({(p20pct/5.3).toFixed(1)}x base rate).
+          Options are cheap (IVR {ivr?.toFixed(0)}). A bull spread with ~+5% breakeven has
+          roughly a <b>{(p5*100).toFixed(0)}% chance of profiting</b> — the market prices this at ~20%.
+          {p5>=0.50 && " That's above 50% — positive expected value at current premium levels."}
+        </div>
+      )}
+
+      {/* Methodology */}
+      <div style={{marginTop:10,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
+        time_model_v2 · TOP3 ensemble (XGB+GBM+LGB) · 43 features · OOS AUC 0.7836.
+        P(+20%) is direct model output; lower thresholds scaled from backtest distributions (est.).
+        D10 hit rate: 26.3% vs D1: 0.5% (53x odds ratio). Not investment advice.
+      </div>
+    </Card>
+  );
+}
+
 // ── TradierOptionsCard — IV data + P20-gated bull call spread suggestion ──
 // May 2026: spread gate changed from composite+hit_prob to P20+IVR.
 //   NEW GATE: P20 ≥ 8% (model says elevated move probability)
@@ -2234,14 +2329,16 @@ export default function StockDetail(){
         <CompanyProfileCard symbol={s.symbol}/>
       </div>
 
-      {/* Probability + Catalyst + Sentiment */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:16}}>
-        <ProbabilityCard s={s}/>
+      {/* Catalyst + Sentiment */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
         <CatalystTimeline s={s}/>
         <SentimentCard s={s}/>
       </div>
 
-      {/* Tradier options card */}
+      {/* P20 Move Probability Card — full width, shows probability ladder + spread edge */}
+      {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
+
+      {/* Tradier options card — spread suggestion + IV data */}
       {((s.hit_prob??0)>0||s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
 
       {/* Price + Composite chart */}
