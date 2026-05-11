@@ -104,7 +104,7 @@ interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
 interface IncomeRow{date:string;calendarYear:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
-interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;}
+interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
@@ -1506,8 +1506,71 @@ function GrowthPanel({incomes,loading}:{incomes:IncomeRow[];loading:boolean}){if
 
 function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const avgN=(f:keyof RatioYear,n:number)=>{const vs=ratios.slice(0,n).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length>=Math.min(n,2)?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number;const cl=(v:number|null)=>v!=null&&th!=null&&v>=th?"#10b981":T.text;return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cl(cv),fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,3),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,5),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,10),isR)}</td></tr>;})}</tbody></table></div></Card>;}
 
-function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
+function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}>{l}</td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
+// ── Peer Comparison ────────────────────────────────────────────────────────────
+// Compares TTM multiples (P/E, P/S, P/B, P/FCF, EV/EBITDA) of the target
+// stock vs FMP's peer set, sorted by market cap. Median row at the bottom.
+// Cells coloured: green if value < median * 0.95 (cheaper than peers),
+// amber if > median * 1.05 (richer), neutral inside ±5% band.
+//
+// Data flow: GET /api/peers/{symbol} fans out the FMP calls server-side.
+// Multiples are unitless ratios so the comparison is currency-agnostic — a
+// JP-listed peer set for 6857.T compares fine even when one peer is an ADR.
+interface PeerRow{symbol:string;companyName:string;mktCap:number;pe:number|null;ps:number|null;pb:number|null;pfcf:number|null;evEbitda:number|null;}
+function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
+  const router=useRouter();
+  const[data,setData]=useState<{target:PeerRow|null;peers:PeerRow[]}|null>(null);
+  const[loading,setLoading]=useState(true);
+  useEffect(()=>{if(!symbol)return;setLoading(true);fetch(`/api/peers/${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():null).then(d=>{if(d?.target&&Array.isArray(d.peers))setData({target:d.target,peers:d.peers});setLoading(false);}).catch(()=>setLoading(false));},[symbol]);
+  if(loading)return<Card><SH title="Peer Comparison" sub="TTM multiples"/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
+  if(!data||!data.peers.length)return null;
+  const{target,peers}=data;
+  type NumKey="pe"|"ps"|"pb"|"pfcf"|"evEbitda";
+  const cols:[string,NumKey][]=[["P/E","pe"],["P/S","ps"],["P/B","pb"],["P/FCF","pfcf"],["EV/EBITDA","evEbitda"]];
+  const median=(vs:number[])=>{if(!vs.length)return null;const s=[...vs].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+  const medians:Record<NumKey,number|null>={pe:null,ps:null,pb:null,pfcf:null,evEbitda:null};
+  cols.forEach(([,k])=>{const vs=peers.map(p=>p[k]).filter((v):v is number=>v!=null);medians[k]=median(vs);});
+  const cellColor=(v:number|null,med:number|null)=>{if(v==null||med==null)return T.text;if(v<med*0.95)return"#10b981";if(v>med*1.05)return"#d97706";return T.text;};
+  const fmtNum=(v:number|null)=>v==null?"—":v.toFixed(1);
+  const targetName=target?.companyName||companyName||symbol;
+  const renderRow=(row:PeerRow,opts:{isTarget?:boolean;isMedian?:boolean;label?:string}={})=>{
+    const{isTarget,isMedian,label}=opts;
+    const bg=isTarget?T.greenLight:isMedian?"#f8faf9":"transparent";
+    const labelText=isMedian?"Peer median":label||row.symbol;
+    return<tr key={isMedian?"__median__":row.symbol} style={{background:bg}}>
+      <td style={{...ls_,position:"sticky",left:0,background:bg,zIndex:1,fontWeight:isTarget||isMedian?700:500,color:isMedian?T.textMuted:T.text}}>
+        {isTarget||isMedian?labelText:<button onClick={()=>router.push(`/stock/${encodeURIComponent(row.symbol)}`)} style={{background:"none",border:"none",padding:0,color:T.green,cursor:"pointer",fontFamily:T.mono,fontSize:11,fontWeight:600,textDecoration:"underline"}}>{row.symbol}</button>}
+        {!isTarget&&!isMedian&&row.companyName&&<span style={{display:"block",fontSize:9,color:T.textLight,fontWeight:400,marginTop:1}}>{row.companyName.slice(0,28)}</span>}
+        {isTarget&&<span style={{display:"block",fontSize:9,color:T.textLight,fontWeight:400,marginTop:1}}>This stock</span>}
+      </td>
+      {cols.map(([,k])=>{const v=row[k];const med=medians[k];const color=isMedian?T.textMuted:cellColor(v,med);return<td key={k} style={{...cs_,color,fontWeight:isTarget||isMedian?700:600}}>{fmtNum(v)}</td>;})}
+    </tr>;
+  };
+  const medianRow:PeerRow={symbol:"__median__",companyName:"",mktCap:0,pe:medians.pe,ps:medians.ps,pb:medians.pb,pfcf:medians.pfcf,evEbitda:medians.evEbitda};
+  return<Card><SH title="Peer Comparison" sub={`TTM multiples · ${peers.length} peers`}/>
+    <div style={{overflowX:"auto"}}>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr>
+          <th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Company</th>
+          {cols.map(([l])=><th key={l} style={hs_}>{l}</th>)}
+        </tr></thead>
+        <tbody>
+          {target&&renderRow(target,{isTarget:true,label:targetName.slice(0,28)||symbol})}
+          {peers.map(p=>renderRow(p))}
+          {renderRow(medianRow,{isMedian:true})}
+        </tbody>
+      </table>
+    </div>
+    <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.5}}>
+      <span style={{color:"#10b981",fontWeight:600}}>Green</span> = cheaper than peer median (&gt;5% below)
+      &nbsp;·&nbsp;
+      <span style={{color:"#d97706",fontWeight:600}}>Amber</span> = richer than peer median (&gt;5% above)
+      &nbsp;·&nbsp; Peers from FMP, sorted by market cap. Multiples are unitless so cross-currency peers compare directly.
+    </div>
+  </Card>;
+}
+ 
 // ── Main Page ──────────────────────────────────────────────────────────────────
 // ── TrackRecordTable: 10-year financial history per the Buffettology
 // methodology spreadsheet. All data sourced from s.buffett_history (no
@@ -1708,7 +1771,7 @@ export default function StockDetail(){
       }
     }).catch(()=>{setStock(null); setLoading(false);});
   },[symbol]);
-  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10})]).then(([inc,rat])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length)setRatios(rat as RatioYear[]);setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
+  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10})]).then(([inc,rat,km])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length){const evByYear=new Map<string,number>();(km||[]).forEach((k:any)=>{if(k?.fiscalYear!=null&&k.evToEBITDA!=null)evByYear.set(String(k.fiscalYear),k.evToEBITDA);});setRatios(rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[]);}setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
 
   // v8: if the stock loaded into a mode that disqualifies it, auto-switch
   // to the other mode if that one qualifies. Lands the user on a useful view
@@ -1869,7 +1932,7 @@ export default function StockDetail(){
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
       <GrowthPanel incomes={incomes} loading={fmpLoading}/>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>       <div style={{margin:"16px 0"}}><PeersPanel symbol={s.symbol} companyName={s.symbol}/></div>
 
       {/* News */}
       <div style={{marginBottom:16}}><NewsFeed symbol={s.symbol}/></div>
