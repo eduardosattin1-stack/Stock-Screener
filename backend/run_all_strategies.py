@@ -43,7 +43,7 @@ logging.basicConfig(
 log = logging.getLogger("dispatcher")
 
 ENABLED = [
-    "paper_strategy_runner_compounder",
+    "paper_strategy_runner_compounder_us",
     "paper_strategy_runner_compounder_global",
     "paper_strategy_runner_momentum",
     "paper_strategy_runner_fa",
