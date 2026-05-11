@@ -2221,6 +2221,7 @@ export default function StockDetail(){
       </div>
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
+       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
         <QualityValueCard s={s}/>
         <GrowthCard s={s}/>
         <SmartMoneyCard s={s}/>
