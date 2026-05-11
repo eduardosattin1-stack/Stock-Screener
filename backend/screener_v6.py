@@ -3990,7 +3990,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.factors_missing = coverage_v7["missing"]
         s.mode = "momentum"  # default; frontend can flip via toggle
 
-      # ML probability + fundamental features for ML model
+        # ML probability + fundamental features for ML model
         if HAS_ML_MODEL:
             s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
         s.hit_prob = predict_hit_prob(s)
