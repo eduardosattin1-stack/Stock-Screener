@@ -1,10 +1,17 @@
 // Dedicated server route for the Peer Comparison panel on the stock detail page.
 //
-// Fan-out: 1 call to /stable/peers gets the peer list, then in parallel we
-// pull /stable/metrics-ratios-ttm for the target stock + every peer. Each TTM
-// row gives us P/E, P/S, P/B, P/FCF and enterpriseValueMultipleTTM (= EV/EBITDA
-// TTM) in a single payload — verified via FMP MCP before writing this file
-// (per project rule: don't guess endpoints).
+// Fan-out: 1 call to /stable/stock-peers gets the peer list, then in parallel
+// we pull /stable/ratios-ttm for the target stock + every peer. Each TTM row
+// gives us P/E, P/S, P/B, P/FCF and enterpriseValueMultipleTTM (= EV/EBITDA
+// TTM) in a single payload.
+//
+// IMPORTANT (May 2026 fix): the FMP stable REST endpoint slugs are
+//   /stable/stock-peers   (NOT /stable/peers — that 404s)
+//   /stable/ratios-ttm    (NOT /stable/metrics-ratios-ttm — that 404s)
+// The FMP MCP tool uses different friendly names internally (peers,
+// metrics-ratios-ttm) which don't correspond to the actual REST paths.
+// Always verify endpoints by fetching the docs page directly rather than
+// trusting MCP parameter names.
 //
 // Called from PeersPanel as: GET /api/peers/{symbol}
 //
@@ -53,8 +60,8 @@ async function fmpGet<T = unknown>(
   }
 }
 
-// Shape of metrics-ratios-ttm rows we care about. FMP returns dozens of fields
-// per row but we only use these five.
+// Shape of ratios-ttm rows we care about. FMP returns dozens of fields per
+// row but we only use these five.
 type TtmRow = {
   symbol?: string;
   priceToEarningsRatioTTM?: number;
@@ -108,7 +115,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
   if (!sym) return new Response("symbol required", { status: 400 });
 
   // 1. Get peer list. If this fails the whole panel gracefully degrades.
-  const peersRes = await fmpGet<PeerListRow>("peers", { symbol: sym });
+  const peersRes = await fmpGet<PeerListRow>("stock-peers", { symbol: sym });
   const errors: Record<string, string> = {};
   if (peersRes.error) errors.peers = peersRes.error;
 
@@ -123,7 +130,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
   // 2. Fetch TTM ratios for target + all peers in parallel.
   const allSymbols = [sym, ...rawPeers.map((p) => p.symbol!)];
   const ttmResults = await Promise.all(
-    allSymbols.map((s) => fmpGet<TtmRow>("metrics-ratios-ttm", { symbol: s })),
+    allSymbols.map((s) => fmpGet<TtmRow>("ratios-ttm", { symbol: s })),
   );
   const ttmBySymbol = new Map<string, TtmRow>();
   ttmResults.forEach((r, i) => {
