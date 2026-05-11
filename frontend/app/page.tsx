@@ -421,13 +421,13 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
   // angel candidate). Magnitude threshold ≥0.10 unchanged.
   const otherQualifies = isQualified(s, otherMode);
   const otherIsHigher = otherQualifies && (compOther - compActive >= 0.10);
-  // Apr 2026: P+10% column was removed after the LTR investigation showed
-  // per-stock hit probabilities are not trustworthy at the 0.65 AUC ceiling
-  // (CHKP: model said 22% hit, actual 11%; NFLX: model said 31%, actual 30%).
-  // Smart Money Score replaces that column. hit_prob is still computed in
-  // the backend and written to JSON for diagnostics — it just isn't rendered.
-  // probFallback below remains in use by the GAIN/DD column which reads from
-  // a static backtest-calibration table keyed on composite.
+  // May 2026: P20 column restored after time_model_v2 reached AUC 0.78
+  // (daily highs, +20%/4w target, TOP3 ensemble). hit_prob now represents
+  // P(+20% daily high in 4 weeks) instead of the old P(+10% in 60d).
+  // High P20 + Low IVR = bull spread signal (underpriced options on a
+  // stock the model predicts will move). probFallback below remains in
+  // use by the GAIN/DD column which reads from a static backtest-
+  // calibration table keyed on composite.
   const probFallback = getProb(compActive);
 
   return(
@@ -509,6 +509,19 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
               : `Full coverage. Components: ${compStr}`;
             return <span style={{color:c,fontWeight:700}} title={tip}>{(sm*100).toFixed(0)}</span>;})()}
         </td>
+        {/* P20 — P(+20% daily high in 4 weeks) from ML v2 ensemble.
+            High P20 + Low IVR = underpriced options → bull spread signal.
+            D10 stocks (P20 > 15%) touch +20% 26.3% of the time.
+            May 2026: restored to dashboard after time_model_v2 reached AUC 0.78. */}
+        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
+          {(()=>{const p = s.hit_prob;
+            if (p == null || p <= 0) return <span style={{color:"var(--text-light,#9ca3af)"}} title="ML model not loaded or not enriched">—</span>;
+            const pct = Math.round(p * 100);
+            const c = pct>=15?"#10b981":pct>=8?"#d97706":"var(--text-muted,#6b7280)";
+            const ivr = s.tradier_iv_rank;
+            const spread = (pct >= 15 && ivr != null && ivr <= 30) ? " ★" : "";
+            return <span style={{color:c,fontWeight:700}} title={`P(+20% daily high in 4w) = ${pct}%${ivr!=null?` · IVR ${ivr.toFixed(0)}`:""}${spread?" · SPREAD CANDIDATE: high P20 + low IVR":""}`}>{pct}%{spread&&<span style={{color:"#8b5cf6",fontSize:9}}>{spread}</span>}</span>;})()}
+        </td>
         {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>
           {(()=>{
@@ -537,7 +550,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         </td>
       </tr>
       {expanded&&(
-        <tr><td colSpan={13} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -634,7 +647,7 @@ type SortKey =
   | "symbol" | "price" | "piotroski" | "p_s"
   | "active_comp" | "other_comp"
   | "value_score" | "growth_score" | "quality_score"
-  | "upside" | "smart_money";
+  | "upside" | "smart_money" | "hit_prob";
 
 export default function Dashboard(){
   const [data,setData]=useState<ScanData|null>(null);
@@ -684,6 +697,7 @@ export default function Dashboard(){
       case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
       case "upside":        return s.upside ?? 0;
       case "smart_money":   return s.smart_money_score ?? -1;
+      case "hit_prob":      return s.hit_prob ?? -1;
       case "price":         return s.price ?? 0;
       case "symbol":        return s.symbol.charCodeAt(0); // alphabetic via numeric proxy
       default:              return 0;
@@ -812,6 +826,7 @@ export default function Dashboard(){
               <th style={hs("quality_score","center")} onClick={()=>toggleSort("quality_score")} title="v8 Quality factor score: net margin (35%) + FCF margin (35%) + ROIC (30%)">QUAL</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
               <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (30%), trend strength (28%), institutional accumulation (20%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
+              <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
               <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
               <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
             </tr></thead>
