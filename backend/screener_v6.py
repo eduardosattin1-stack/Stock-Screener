@@ -342,6 +342,8 @@ class Stock:
     exchange: str = ""        # e.g. "NYSE", "NASDAQ", "XETRA", "LSE"
     country: str = ""         # ISO-2 e.g. "US", "DE", "GB", "NL"
     sector: str = ""          # e.g. "Healthcare", "Technology"
+    company_name: str = ""    # human-readable name from FMP company-screener
+                              # (used by frontend name search; May 2026 v1.2)
 
     # Quote
     sma50: float = 0.0
@@ -434,7 +436,10 @@ class Stock:
 
     # Composite
     composite: float = 0.0
-    signal: str = "HOLD"
+    # signal field removed v1.2 (May 2026): BUY/HOLD/SELL semantics unused
+    # by runners (which sort by composite). Cohort signals are preserved:
+    # signal_momentum, signal_compounder_us, signal_compounder_global.
+    # Fallen-Angel cohort uses fallen_angel_flag (bool) instead of a signal.
     classification: str = ""
     reasons: list = field(default_factory=list)
 
@@ -485,8 +490,8 @@ class Stock:
     # for the 5-axis radar.
     composite_momentum: float = 0.0
     composite_fallen_angel: float = 0.0
-    signal_momentum: str = "HOLD"
-    signal_fallen_angel: str = "HOLD"
+    signal_momentum: str = "DISQUALIFIED"     # QUALIFIED if passes qualifies_momentum_v8 gate
+    # signal_fallen_angel removed v1.2 (May 2026): replaced by fallen_angel_flag (bool).
     factors_v8_momentum: dict = field(default_factory=dict)
     factors_v8_fallen_angel: dict = field(default_factory=dict)
 
@@ -630,6 +635,7 @@ SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-sc
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
 SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector perf calls
 COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
+COMPANY_NAME_MAP: dict[str, str] = {}     # {sym: "NVIDIA Corp"} for frontend name search (v1.2 May 2026)
 EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earnings, populated lazily
 
 # v8 Compounder v1.1 (May 11 2026): SP500_MEMBERS cache + preload_sp500_members()
@@ -865,6 +871,11 @@ def get_symbols(region: str) -> list[str]:
                 co = d.get("country") or country or ""
                 if co:
                     COUNTRY_MAP[sym] = co.upper()
+                # v1.2 (May 2026): persist companyName for frontend name search.
+                # FMP's company-screener returns this field — zero new API calls.
+                cn = d.get("companyName") or ""
+                if cn:
+                    COMPANY_NAME_MAP[sym] = cn
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
             symbols.extend(batch)
 
@@ -2782,6 +2793,53 @@ Transcript excerpt:
 # 13. NEW: Institutional Flows (FMP 13F symbol-positions-summary)
 # ---------------------------------------------------------------------------
 
+# v1.2 (May 2026): consolidate the FMP positions-summary call. Previously
+# get_institutional_flows() and compute_institutional_flow() each made the
+# same FMP call independently — double the API cost per stock with identical
+# results. Now both read from this module-level cache, populated on first
+# request per symbol.
+_INST_POSITIONS_SUMMARY_CACHE: dict[str, dict] = {}
+
+
+def _fetch_institutional_positions_summary(sym: str) -> Optional[dict]:
+    """Cached fetch of FMP institutional-ownership/symbol-positions-summary.
+    Returns the single summary dict for the most recent quarter with data
+    (one quarter back, then two if empty), or None if no data is available
+    (non-US stock or unlisted).
+
+    Cached per-symbol for the duration of the scan — same call returns
+    instantly on second use.
+    """
+    if sym in _INST_POSITIONS_SUMMARY_CACHE:
+        return _INST_POSITIONS_SUMMARY_CACHE[sym]
+
+    # 13F filings lag ~45 days past quarter-end. Start one quarter back.
+    now = datetime.now()
+    cur_q = (now.month - 1) // 3 + 1
+    q = cur_q - 1 if cur_q > 1 else 4
+    y = now.year if cur_q > 1 else now.year - 1
+
+    data = fmp("institutional-ownership/symbol-positions-summary",
+               {"symbol": sym, "year": y, "quarter": q})
+    if not data:
+        # One more quarter back as a fallback
+        q = q - 1 if q > 1 else 4
+        y = y if q != 4 else y - 1
+        data = fmp("institutional-ownership/symbol-positions-summary",
+                   {"symbol": sym, "year": y, "quarter": q})
+
+    if not data or not isinstance(data, list) or not data:
+        _INST_POSITIONS_SUMMARY_CACHE[sym] = None
+        return None
+
+    # Stash both the summary dict and the (year, quarter) it came from —
+    # callers that want the per-holder extract use this to query the same
+    # quarter consistently.
+    cached = {"summary": data[0], "year": y, "quarter": q}
+    _INST_POSITIONS_SUMMARY_CACHE[sym] = cached
+    return cached
+
+
 def get_institutional_flows(sym: str) -> dict:
     """Check institutional ownership changes. Score 0-1.
 
@@ -2806,28 +2864,14 @@ def get_institutional_flows(sym: str) -> dict:
               "top_holders": [],               # list of {name, ownership, delta} dicts
               }
 
-    now = datetime.now()
-    cur_q_raw = (now.month - 1) // 3 + 1
-    # Start one full quarter back (filings not yet available for current)
-    q = cur_q_raw - 1 if cur_q_raw > 1 else 4
-    y = now.year if cur_q_raw > 1 else now.year - 1
-
-    data = fmp("institutional-ownership/symbol-positions-summary",
-               {"symbol": sym, "year": y, "quarter": q})
-
-    # If still empty (rare — e.g. very recent quarter still filing), try one more back
-    if not data:
-        q = q - 1 if q > 1 else 4
-        y = y if q != 4 else y - 1
-        data = fmp("institutional-ownership/symbol-positions-summary",
-                   {"symbol": sym, "year": y, "quarter": q})
-
-    # positions-summary returns a single SUMMARY object per quarter (not a
-    # list of holders). Read pre-computed QoQ fields directly.
-    if not data or not isinstance(data, list) or not data:
+    # v1.2: use shared cache instead of direct FMP call
+    cached = _fetch_institutional_positions_summary(sym)
+    if not cached:
         return result  # non-US or unlisted
 
-    d = data[0]
+    d = cached["summary"]
+    y = cached["year"]
+    q = cached["quarter"]
     # investorsHoldingChange = holder count change QoQ (absolute # of institutions)
     # ownershipPercentChange = institutional share of float change QoQ (percentage points)
     last_holders = float(d.get("lastInvestorsHolding") or 0)
@@ -2932,24 +2976,12 @@ def compute_institutional_flow(sym: str) -> dict:
               "new_positions_change": 0, "closed_positions_change": 0,
               "ownership_pct_change": 0.0, "put_call_delta": 0.0}
 
-    # Use most recent completed quarter (FMP data has ~45-day lag)
-    now = datetime.now()
-    cur_q = (now.month - 1) // 3 + 1
-    target_q = cur_q - 1 if cur_q > 1 else 4
-    target_y = now.year if cur_q > 1 else now.year - 1
-
-    # Try current target quarter, fall back one more if empty
-    data = fmp("institutional-ownership/symbol-positions-summary",
-               {"symbol": sym, "year": target_y, "quarter": target_q})
-    if not data:
-        target_q = target_q - 1 if target_q > 1 else 4
-        target_y = target_y if target_q != 4 else target_y - 1
-        data = fmp("institutional-ownership/symbol-positions-summary",
-                   {"symbol": sym, "year": target_y, "quarter": target_q})
-    if not data or not isinstance(data, list) or not data:
+    # v1.2: use shared cache (same FMP call used by get_institutional_flows)
+    cached = _fetch_institutional_positions_summary(sym)
+    if not cached:
         return result  # US-only or FMP returned empty
 
-    d = data[0]
+    d = cached["summary"]
     # These fields come pre-computed as QoQ changes by FMP
     new_pos_change = float(d.get("newPositionsChange") or 0)
     closed_pos_change = float(d.get("closedPositionsChange") or 0)
@@ -3120,8 +3152,18 @@ def compute_congressional(sym: str) -> dict:
     return result
 
 # ---------------------------------------------------------------------------
-# 14. Composite Score & Signal (v7.2 — honest scoring + composite-band signals)
+# 14. Composite Score & Signal (v7.2 — DEPRECATED v1.2 May 2026)
 # ---------------------------------------------------------------------------
+# v7 13-factor composite is no longer used downstream. The only reason this
+# function still runs is to populate `factor_scores` dict — which feeds the
+# ML model's 13-feature vector (see predict_hit_prob). Truly removing v7
+# requires rewriting the ML feature builder to source features directly from
+# raw inputs. Scheduled for v1.3.
+#
+# In the meantime:
+#   - composite_v7 still emitted on every stock (diagnostic only; runners ignore)
+#   - signal_v7 ignored (no longer assigned to Stock; was BUY/HOLD/SELL)
+#   - factor_scores still populated (feeds ML model — DO NOT REMOVE)
 
 ALL_FACTORS = ["technical", "quality", "upside", "proximity", "catalyst",
                "transcript", "institutional", "analyst", "insider", "earnings",
@@ -3536,55 +3578,51 @@ def qualifies_momentum_v8(tech: dict, value: dict, market_cap: float = 0) -> tup
 
 def qualifies_fallen_angel_v8(tech: dict, value: dict, raw_quality: dict,
                               market_cap: float = 0) -> tuple:
-    """Universe gate for Fallen Angel mode. Lifted from the v8 spec
-    (Bruno's Apr 2026 brief), with the weekly-RSI criterion dropped — daily
-    weekly-RSI history isn't precomputed and the price<sma_40w + drawdown
-    criteria already enforce "structurally oversold" without it.
+    """=== DISABLED v1.2 (May 2026) === Preserved for revival.
 
-    Gate criteria:
-      • drawdown from 104w (≈ 52w as proxy) high > 35%
-      • price < sma_40w (≈ 200d SMA as proxy)
-      • Piotroski ≥ 7
-      • Altman Z > 2.5
-      • 5y avg ROE > 12%
-      • market cap > $2B
+    The FA gate diverged from the FA flag (in compute_fallen_angel_flags):
+    gate described "quality-deep-value oversold" (Pio≥7 + Altman Z>2.5 +
+    drawdown>35% + ROE>12%), flag describes "high-growth oversold"
+    (rev>15% + RSI<40 + composite<0.50). Different stocks. Bruno chose the
+    flag as the single source of truth (May 11 2026). compute_composite_v8
+    no longer calls this gate; every stock gets a composite_fallen_angel.
+    Basket selection by paper_strategy_runner_fa via fallen_angel_flag.
 
-    Note on proxies: 104w high → 52w high (we don't keep 2yr highs in scan
-    state today). 40w SMA → 200d SMA (close enough — 200 trading days ≈ 40
-    weeks). When backtest infrastructure rebuilds we should swap to true
-    104w/40w. Both proxies are slightly looser than spec, so the FA pool
-    will be marginally wider than spec intends — acceptable.
+    To revive: remove the early `return (True, [])` below; the original
+    gate body follows for reference.
     """
-    fails = []
-    price = tech.get("price", 0) or 0
-    sma200 = tech.get("sma200", 0) or 0
-    yh = tech.get("year_high", 0) or 0
-    pio = raw_quality.get("piotroski", 0) if raw_quality else 0
-    altz = raw_quality.get("altman_z", 0) if raw_quality else 0
-    roe = value.get("roe_avg", 0) if value else 0
-
-    if price <= 0 or yh <= 0:
-        fails.append("missing_price_or_high")
-    else:
-        drawdown = (yh - price) / yh
-        if drawdown < 0.35:
-            fails.append(f"drawdown_only_{drawdown*100:.0f}%")
-
-    if sma200 <= 0:
-        fails.append("missing_sma200")
-    elif price >= sma200:
-        fails.append("above_sma200")
-
-    if pio < 7:
-        fails.append(f"piotroski_{pio}")
-    if altz < 2.5:
-        fails.append(f"altman_z_{altz:.2f}")
-    if roe < 0.12:
-        fails.append(f"roe_avg_{roe*100:.0f}%")
-    if market_cap > 0 and market_cap < 2e9:
-        fails.append(f"mkt_cap_{market_cap/1e9:.1f}B")
-
-    return (len(fails) == 0, fails)
+    return (True, [])
+    # ─── Original gate (preserved below, never reached) ───
+    # fails = []
+    # price = tech.get("price", 0) or 0
+    # sma200 = tech.get("sma200", 0) or 0
+    # yh = tech.get("year_high", 0) or 0
+    # pio = raw_quality.get("piotroski", 0) if raw_quality else 0
+    # altz = raw_quality.get("altman_z", 0) if raw_quality else 0
+    # roe = value.get("roe_avg", 0) if value else 0
+    #
+    # if price <= 0 or yh <= 0:
+    #     fails.append("missing_price_or_high")
+    # else:
+    #     drawdown = (yh - price) / yh
+    #     if drawdown < 0.35:
+    #         fails.append(f"drawdown_only_{drawdown*100:.0f}%")
+    #
+    # if sma200 <= 0:
+    #     fails.append("missing_sma200")
+    # elif price >= sma200:
+    #     fails.append("above_sma200")
+    #
+    # if pio < 7:
+    #     fails.append(f"piotroski_{pio}")
+    # if altz < 2.5:
+    #     fails.append(f"altman_z_{altz:.2f}")
+    # if roe < 0.12:
+    #     fails.append(f"roe_avg_{roe*100:.0f}%")
+    # if market_cap > 0 and market_cap < 2e9:
+    #     fails.append(f"mkt_cap_{market_cap/1e9:.1f}B")
+    #
+    # return (len(fails) == 0, fails)
 
 
 def compute_composite_v8(
@@ -3605,24 +3643,30 @@ def compute_composite_v8(
     inst_flow + analyst + insider + transcript + earnings + congressional.
     `smart_money` arg is the dict returned by compute_smart_money_score.
 
-    Universe gates (Apr 2026): each mode now requires the stock to pass a
-    structural setup gate. Failed gate → composite=0, signal="DISQUALIFIED",
-    factors_v8 all None. Frontend filters these out of the mode-sorted list.
-    Without gates the FA list was just the Momentum list with bull_score
-    swapped — i.e., not actually a different strategy. Gates make it one.
+    v1.2 (May 2026):
+      - Fallen-Angel gate REMOVED: every stock gets a composite_fallen_angel
+        score. Basket selection is done by paper_strategy_runner_fa via
+        `fallen_angel_flag` (computed in compute_fallen_angel_flags). The
+        prior gate (Piotroski≥7 + Altman Z>2.5 + drawdown>35% + ROE>12%)
+        described "quality-deep-value oversold" while the flag describes
+        "high-growth oversold" — different stocks. Bruno's call: flag is
+        the source of truth, gate is dead.
+      - Signal simplified to QUALIFIED / DISQUALIFIED. The prior
+        BUY/HOLD/SELL/WATCH/STRONG BUY classification was confusing and
+        unused by runners (which sort by composite, not signal).
+      - Bearish safety net dropped (was: cap composite + force SELL when
+        3+ of trend/momentum/prox/bull/composite were bearish). Composite
+        now stands on its own; runners trust their cohort gates.
+    Universe gate retained for momentum mode (qualifies_momentum_v8).
     """
-    # ─── Universe gate (mode-specific) ───
+    # ─── Universe gate (momentum only — FA accepts every stock) ───
     if mode == "fallen_angel":
-        passes, gate_fails = qualifies_fallen_angel_v8(
-            tech, value, raw_quality or {}, market_cap)
+        passes, gate_fails = True, []
     else:
         passes, gate_fails = qualifies_momentum_v8(tech, value, market_cap)
 
     if not passes:
-        # Stock disqualified for this mode. Return a fully-null factors dict
-        # and a "DISQUALIFIED" signal. Frontend hides these from the active
-        # mode's sorted list. They remain in the scan JSON so direct symbol
-        # navigation still works.
+        # Stock disqualified for momentum mode. Return null factors + DISQUALIFIED.
         empty = {"momentum": None, "quality": None, "growth": None,
                  "value": None, "smart_money": None}
         coverage = {"count": 0, "total": 5, "pct": 0.0,
@@ -3653,10 +3697,6 @@ def compute_composite_v8(
     f["value"] = val_block["score"]
 
     # 5. Smart Money — sourced from compute_smart_money_score (LTR-derived)
-    # Apr 2026: replaces the previous v8 smart_money fold. Score is None for
-    # non-US stocks (institutional_flow data unavailable) and pass-1 stocks
-    # below top-30 (institutional/congressional not enriched yet); when None
-    # the weight redistributes to other evaluated factors.
     if smart_money and smart_money.get("_evaluated"):
         f["smart_money"] = smart_money.get("score")
     else:
@@ -3694,41 +3734,11 @@ def compute_composite_v8(
         if composite == COVERAGE_CAP_V8:
             reasons.append(f"COVERAGE CAP: only {coverage['count']}/5 factors evaluated")
 
-    # ─── Bearish safety override ───
-    sma50 = tech.get("sma50", 0); sma200 = tech.get("sma200", 0)
-    price_val = tech.get("price", 0)
-    yh = tech.get("year_high", 0); yl = tech.get("year_low", 0)
-    trend_str = (sma50 - sma200) / sma200 if sma200 > 0 else 0
-    momentum_pct = (price_val - sma50) / sma50 if sma50 > 0 else 0
-    prox_raw = (price_val - yl) / (yh - yl) if yh > yl > 0 else 0.5
-    bull = tech.get("bull_score", 0)
-    bearish_count = sum([
-        trend_str < -0.05, momentum_pct < -0.10, prox_raw < 0.25,
-        bull <= 2, composite < 0.30,
-    ])
-    # Fallen-angel mode skips the proximity-based bearish trigger (low prox
-    # is the SETUP, not a death signal); keep the rest.
-    if mode == "fallen_angel":
-        bearish_count = sum([
-            trend_str < -0.05, momentum_pct < -0.10,
-            bull <= 1, composite < 0.30,
-        ])
-
-    # ─── Signal classification ───
-    if bearish_count >= 3 or composite < 0.30:
-        signal = "SELL"
-    elif composite >= 0.85:
-        signal = "STRONG BUY"
-    elif composite >= 0.75:
-        signal = "BUY"
-    elif composite >= 0.60:
-        signal = "WATCH"
-    elif composite >= 0.45:
-        signal = "HOLD"
-    else:
-        signal = "SELL"
-
-    return composite, signal, f, reasons, coverage
+    # v1.2 (May 2026): bearish safety override + BUY/HOLD/SELL signal
+    # classification removed (Bruno #6 + #A.1). Stock score now stands as
+    # computed; runners filter by their own cohort gates (Compounder flag,
+    # FA flag, Momentum gate above) and sort by composite directly.
+    return composite, "QUALIFIED", f, reasons, coverage
 
 # ---------------------------------------------------------------------------
 # v8 Compounder universe scoring (May 2026)
@@ -3739,6 +3749,16 @@ def compute_composite_v8(
 # Stocks outside cohort get signal_compounder_us / _global = "DISQUALIFIED".
 COMPOUNDER_EXCLUDED_SECTORS: set = {"Financial Services", "Insurance", "Healthcare"}
 COMPOUNDER_US_MIN_MCAP: float = 2_000_000_000  # $2B floor for US cohort (v1.1)
+# v1.2 (May 2026): switched US cohort gate from country=='US' to US-listed
+# exchange. Catches foreign-domiciled non-ADR common shares listed on US
+# exchanges: WIX (IL), Coupang (KR), MNDY (IL), Sea/SE (SG), NU (KY), GRAB
+# (KY), CYBR (IL). Side effect: includes ADRs (TSM, BABA, ASML, NVO) — these
+# are real common-stock equivalents and acceptable in the universe. Sector
+# + mcap + metric gates still apply.
+COMPOUNDER_US_EXCHANGES: set = {
+    "NYSE", "NASDAQ", "AMEX", "NYSE Arca", "NYSEArca", "BATS",
+    "NASDAQ Global Select", "NASDAQ Global Market", "NASDAQ Capital Market",
+}
 
 
 def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
@@ -3781,17 +3801,19 @@ def compute_compounder_universe_scores(stocks: list) -> None:
     """Mutates stocks: assigns BOTH US and Global Compounder scores in one pass.
     Runs once after all per-stock fundamentals exist.
 
-    US cohort:     country=='US', mcap >= COMPOUNDER_US_MIN_MCAP ($2B), ex
-                   Fin/Ins/HC, all 3 metrics present. ADRs auto-excluded via
-                   country gate (TSM/BABA have country=='TW'/'CN'). v1.1
-                   replaced the prior SP500-member gate because FMP's
-                   sp500-constituent endpoint was unreliable (MRVL missing).
-    Global cohort: ex Fin/Ins/HC, all 3 metrics present (no country/mcap gate).
+    US cohort:     listed on a US exchange (NYSE/NASDAQ/AMEX/etc.), mcap >=
+                   COMPOUNDER_US_MIN_MCAP ($2B), ex Fin/Ins/HC, all 3 metrics
+                   present. v1.2 (May 2026): switched from country=='US' to
+                   exchange-based — catches WIX, Coupang, MNDY, etc. (foreign-
+                   domiciled non-ADR common shares on US exchanges). Now also
+                   includes ADRs (TSM/BABA/ASML/NVO) as a side effect; these
+                   are legitimate common-stock equivalents.
+    Global cohort: ex Fin/Ins/HC, all 3 metrics present (no exchange/mcap gate).
     """
     us_cohort = []
     global_cohort = []
     counters = {"excluded_sector": 0, "missing_metric": 0,
-                "us_failed_country": 0, "us_failed_mcap": 0,
+                "us_failed_exchange": 0, "us_failed_mcap": 0,
                 "global_qualified": 0, "us_qualified": 0}
 
     for s in stocks:
@@ -3811,10 +3833,10 @@ def compute_compounder_universe_scores(stocks: list) -> None:
         global_cohort.append(s)
         counters["global_qualified"] += 1
 
-        # US cohort: subset that's US-listed + mcap >= $2B.
-        country = (s.country or "").upper()
-        if country != "US":
-            counters["us_failed_country"] += 1
+        # US cohort: subset listed on a US exchange + mcap >= $2B.
+        exch = (s.exchange or "").strip()
+        if exch not in COMPOUNDER_US_EXCHANGES:
+            counters["us_failed_exchange"] += 1
             continue
         mcap = s.market_cap or 0
         if mcap < COMPOUNDER_US_MIN_MCAP:
@@ -3829,7 +3851,7 @@ def compute_compounder_universe_scores(stocks: list) -> None:
         f"Global={counters['global_qualified']} "
         f"(excluded: sector={counters['excluded_sector']}, "
         f"missing_metric={counters['missing_metric']}, "
-        f"us_failed_country={counters['us_failed_country']}, "
+        f"us_failed_exchange={counters['us_failed_exchange']}, "
         f"us_failed_mcap={counters['us_failed_mcap']})"
     )
 
@@ -3951,9 +3973,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # (positions-summary x2, holder-extract, insider-stats, senate-trades,
         # house-trades). At 0.04s rate limit ≈ 0.24s/stock added.
         # Transcripts (Claude API) + news stay in pass-2.
-        # Known minor inefficiency: get_institutional_flows and
-        # compute_institutional_flow both hit positions-summary independently;
-        # could be deduped in a future refactor.
+        # v1.2 (May 2026): get_institutional_flows and compute_institutional_flow
+        # now share a single positions-summary fetch via
+        # _fetch_institutional_positions_summary (deduplicated).
         inst_flow = compute_institutional_flow(sym)
         inst = get_institutional_flows(sym)
         cong = compute_congressional(sym)
@@ -3964,6 +3986,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.exchange = SECTOR_EXCHANGE_MAP.get(sym, "")
         s.country = COUNTRY_MAP.get(sym, "")
         s.sector = SECTOR_MAP.get(sym, "")
+        s.company_name = COMPANY_NAME_MAP.get(sym, "")
         s.sma50 = q.get("sma50", 0); s.sma200 = q.get("sma200", 0)
         s.year_high = q.get("year_high", 0); s.year_low = q.get("year_low", 0)
         s.market_cap = q.get("market_cap", 0); s.volume = q.get("volume", 0)
@@ -4165,14 +4188,15 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
 
         # Default `composite` field = momentum (matches existing dashboard sort)
         s.composite = comp_mom
-        s.signal = sig_mom
         s.factor_scores = factors_v7        # legacy 13-factor for radar
         s.factors_v8 = factors_mom          # default v8 view = momentum
         s.composite_v7 = composite_v7
         s.composite_momentum = comp_mom
         s.composite_fallen_angel = comp_fa
-        s.signal_momentum = sig_mom
-        s.signal_fallen_angel = sig_fa
+        s.signal_momentum = sig_mom         # QUALIFIED/DISQUALIFIED — used by momentum runner
+        # s.signal and s.signal_fallen_angel removed v1.2 (May 2026):
+        #   - signal (BUY/HOLD/SELL) was unused by runners (filter by composite)
+        #   - signal_fallen_angel replaced by fallen_angel_flag (see compute_fallen_angel_flags)
         s.factors_v8_momentum = factors_mom
         s.factors_v8_fallen_angel = factors_fa
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons_mom
@@ -4270,14 +4294,13 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             raw_quality=raw["value"], market_cap=s.market_cap,
         )
         s.composite = comp_mom
-        s.signal = sig_mom
         s.factor_scores = factors_v7
         s.factors_v8 = factors_mom
         s.composite_v7 = composite_v7
         s.composite_momentum = comp_mom
         s.composite_fallen_angel = comp_fa
-        s.signal_momentum = sig_mom
-        s.signal_fallen_angel = sig_fa
+        s.signal_momentum = sig_mom         # QUALIFIED/DISQUALIFIED — used by momentum runner
+        # s.signal and s.signal_fallen_angel removed v1.2 (May 2026)
         s.factors_v8_momentum = factors_mom
         s.factors_v8_fallen_angel = factors_fa
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons_v7
@@ -4323,23 +4346,18 @@ def format_report(stocks: list[Stock], top_n: int = TOP_N, region: str = "") -> 
     # Top picks
     top = stocks[:top_n]
     lines.append(f"\nTOP {len(top)} BY COMPOSITE:\n")
-    lines.append(f"{'#':>3} {'SYM':<10} {'PRICE':>10} {'COMP':>6} {'SIG':<10} {'CLASS':<14} {'BULL':>5} {'UPS%':>6} {'QUAL':>5} {'COV':>4}")
-    lines.append("-" * 100)
+    lines.append(f"{'#':>3} {'SYM':<10} {'PRICE':>10} {'COMP':>6} {'CLASS':<14} {'BULL':>5} {'UPS%':>6} {'QUAL':>5} {'COV':>4}")
+    lines.append("-" * 90)
     for i, s in enumerate(top, 1):
         lines.append(
-            f"{i:>3} {s.symbol:<10} {s.price:>10,.2f} {s.composite:>6.2f} {s.signal:<10} "
+            f"{i:>3} {s.symbol:<10} {s.price:>10,.2f} {s.composite:>6.2f} "
             f"{s.classification:<14} {s.bull_score:>5} {s.upside:>+6.1f} "
             f"{s.quality_score:>5.2f} {s.factor_coverage:>2}/{len(ALL_FACTORS):<2}"
         )
 
-    # Signal counts
-    counts = {}
-    for s in stocks:
-        counts[s.signal] = counts.get(s.signal, 0) + 1
-    lines.append(f"\nSIGNAL DISTRIBUTION ({len(stocks)} stocks):")
-    for sig in ("STRONG BUY", "BUY", "WATCH", "HOLD", "SELL"):
-        if sig in counts:
-            lines.append(f"  {sig:<11} {counts[sig]:>4} ({counts[sig] / len(stocks) * 100:>4.1f}%)")
+    # v1.2 (May 2026): "SIGNAL DISTRIBUTION" section removed — signal field
+    # (BUY/HOLD/SELL) eliminated. Composite distribution can be inferred from
+    # the TOP listing above.
 
     return "\n".join(lines)
 
@@ -4363,21 +4381,23 @@ def send_email(subject: str, body: str):
 
 
 def log_signals(stocks: list[Stock], path: str = SIGNAL_LOG):
-    """Append today's signals to history JSON. Used for hit-rate tracking."""
+    """Append today's high-composite stocks to history JSON. Used for hit-rate
+    tracking. v1.2 (May 2026): switched from signal-based filtering
+    (STRONG BUY/BUY/WATCH) to composite ≥ 0.60 — same intent, but consistent
+    with the removed BUY/HOLD/SELL signal field."""
     today = datetime.now().strftime("%Y-%m-%d")
     record = {
         "date": today,
         "signals": [
             {
                 "symbol": s.symbol,
-                "signal": s.signal,
                 "composite": round(s.composite, 4),
                 "price": s.price,
                 "classification": s.classification,
                 "factor_coverage": s.factor_coverage,
                 "factor_coverage_pct": round(s.factor_coverage_pct, 4),
             }
-            for s in stocks if s.signal in ("STRONG BUY", "BUY", "WATCH")
+            for s in stocks if s.composite >= 0.60
         ],
     }
     history = []
@@ -4661,6 +4681,11 @@ def main():
     # cache. Used by get_analyst() per stock to compute 60d % delta.
     preload_pt_history()
 
+    # v1.2 (May 2026): clear institutional positions-summary cache so that
+    # successive scans in the same Python process (rare, but possible in
+    # Cloud Run Jobs that re-invoke main()) don't reuse stale 13F data.
+    _INST_POSITIONS_SUMMARY_CACHE.clear()
+
     # Run two-pass scan
     stocks = screen(symbols, top_n=args.top)
     log.info(f"Scan complete: {len(stocks)} stocks scored")
@@ -4684,4 +4709,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# cache bust 1778493918
+# cache bust 1778541132
