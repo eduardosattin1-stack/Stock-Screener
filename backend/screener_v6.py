@@ -3682,7 +3682,36 @@ def compute_fallen_angel_flags(stocks: list) -> None:
 # ---------------------------------------------------------------------------
 # 15. Main Screening Loop (Two-Pass Architecture)
 # ---------------------------------------------------------------------------
-
+def _compute_fund_features_for_ml(sym, price, value_data):
+    """Extract fundamental features for ML model from already-loaded value data."""
+    r = {}
+    roe = value_data.get("roe_compounder")
+    if roe is not None:
+        r["f_roe"] = min(roe, 1.0) if roe > 0 else max(roe, -1.0)
+    pb = value_data.get("pb_compounder")
+    if pb is not None and pb > 0:
+        r["f_pb"] = pb
+    r["f_op_margin"] = value_data.get("net_margin")
+    r["f_op_margin_delta"] = value_data.get("opmargin_delta_compounder")
+    r["f_rev_growth"] = value_data.get("revenue_yoy")
+    r["f_eps_growth"] = value_data.get("eps_yoy")
+    r["f_buyback_yield"] = 0
+    r["f_piotroski_pit"] = value_data.get("piotroski", 0)
+    az = value_data.get("altman_z", 0)
+    r["f_altman_z_pit"] = min(max(az, 0), 20) if az else 0
+    r["f_current_ratio"] = 0
+    r["f_ps"] = value_data.get("p_s", 0)
+    r["f_pe"] = 0
+    ey = value_data.get("earnings_yield", 0)
+    if ey and ey > 0:
+        r["f_pe"] = 1.0 / ey
+    r["f_fcf_yield"] = value_data.get("fcf_margin", 0)
+    r["f_gross_margin"] = value_data.get("gross_margin", 0)
+    r["f_net_margin"] = value_data.get("net_margin", 0)
+    r["f_roa"] = 0
+    r["f_debt_equity"] = 0
+    return r
+  
 def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     log.info(f"Pass 1: Cheap screen on {len(symbols)} stocks")
     quotes = get_quotes_batch(symbols)
@@ -3961,41 +3990,10 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.factors_missing = coverage_v7["missing"]
         s.mode = "momentum"  # default; frontend can flip via toggle
 
-       def _compute_fund_features_for_ml(sym, price, value_data):
-        """Extract fundamental features for ML model from already-loaded value data."""
-        r = {}
-        # These are already computed in get_value() — just extract them
-        roe = value_data.get("roe_compounder")
-        if roe is not None:
-        r["f_roe"] = min(roe, 1.0) if roe > 0 else max(roe, -1.0)
-        pb = value_data.get("pb_compounder")
-        if pb is not None and pb > 0:
-        r["f_pb"] = pb
-        r["f_op_margin"] = value_data.get("net_margin")  # close proxy
-        r["f_op_margin_delta"] = value_data.get("opmargin_delta_compounder")
-        r["f_rev_growth"] = value_data.get("revenue_yoy")
-        r["f_eps_growth"] = value_data.get("eps_yoy")
-        r["f_buyback_yield"] = 0  # not readily available at this point
-        r["f_piotroski_pit"] = value_data.get("piotroski", 0)
-        az = value_data.get("altman_z", 0)
-        r["f_altman_z_pit"] = min(max(az, 0), 20) if az else 0
-        r["f_current_ratio"] = 0  # not in value dict
-        r["f_ps"] = value_data.get("p_s", 0)
-        r["f_pe"] = 0
-        ey = value_data.get("earnings_yield", 0)
-        if ey and ey > 0: r["f_pe"] = 1.0 / ey
-        r["f_fcf_yield"] = value_data.get("fcf_margin", 0)  # proxy
-        r["f_gross_margin"] = value_data.get("gross_margin", 0)
-        r["f_net_margin"] = value_data.get("net_margin", 0)
-        r["f_roa"] = 0
-        r["f_debt_equity"] = 0
-        return r
-        # Apr 2026: still computed for JSON diagnostics. Not displayed on
-        # dashboard — Smart Money Score replaces it visually.
-        s.hit_prob = predict_hit_prob(s)
-        # Compute fundamental features for ML model
+      # ML probability + fundamental features for ML model
         if HAS_ML_MODEL:
             s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
+        s.hit_prob = predict_hit_prob(s)
         # ─── Tradier options enrichment (US stocks ≥ $1B mkt cap) ───
         if TRADIER_AVAILABLE and tradier_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
             try:
