@@ -1,5 +1,5 @@
 requests>=2.31
-scikit-learn
+scikit-learn==1.8.0
 joblib
 numpy
 google-cloud-storage
