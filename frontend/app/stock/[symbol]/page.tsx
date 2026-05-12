@@ -111,6 +111,15 @@ reversal_score?:number;
   roe_compounder?:number|null;
   pb_compounder?:number|null;
   opmargin_delta_compounder?:number|null;
+  // v1.2 May 2026: per-factor percentile breakdown (Stock's rank within
+  // cohort on each metric, 1.0 = best). Used by CompounderBreakdownCard
+  // to render contribution bars alongside the composite score.
+  cmp_us_roe_pct?:number|null;
+  cmp_us_pb_pct?:number|null;
+  cmp_us_opd_pct?:number|null;
+  cmp_global_roe_pct?:number|null;
+  cmp_global_pb_pct?:number|null;
+  cmp_global_opd_pct?:number|null;
   pt_velocity_60d?:number|null;
   pt_velocity_score?:number|null;
   company_name?:string;
@@ -370,6 +379,83 @@ function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:n
       </div>
       <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.5}}>{detail}</div>
     </div>
+  );
+}
+
+// ── Compounder Breakdown Card — 3-factor cohort-relative scoring ──────────
+// v1.2 (May 2026). Renders the Compounder model's contribution bars:
+// ROE (3yr avg), P/B (lower is better — shown inverted as a percentile rank),
+// OpMargin Δ (3yr change). Each factor is equal-weighted at 33.3%; the
+// composite is the mean of the three percentiles within the chosen cohort
+// (US or Global). The card always renders so it sits beside the v8 5-Factor
+// card; it shows a disqualified state when the stock isn't in the chosen
+// cohort.
+//
+// Cohort selection:
+//   cohort="us"      — uses cmp_us_*_pct fields + compounder_score_us
+//   cohort="global"  — uses cmp_global_*_pct + compounder_score_global
+function CompounderBreakdownCard({s,cohort,active}:{
+  s:StockData; cohort:"us"|"global"; active:boolean;
+}){
+  const isUS = cohort==="us";
+  const score    = isUS ? s.compounder_score_us : s.compounder_score_global;
+  const rank     = isUS ? s.compounder_rank_us : s.compounder_rank_global;
+  const signal   = isUS ? s.signal_compounder_us : s.signal_compounder_global;
+  const roe_pct  = isUS ? s.cmp_us_roe_pct : s.cmp_global_roe_pct;
+  const pb_pct   = isUS ? s.cmp_us_pb_pct  : s.cmp_global_pb_pct;
+  const opd_pct  = isUS ? s.cmp_us_opd_pct : s.cmp_global_opd_pct;
+  const qualified = signal === "QUALIFIED";
+
+  const cohortLabel = isUS ? "US cohort" : "Global cohort";
+  const title = `Compounder (${isUS?"US":"Global"})`;
+  const sub = qualified
+    ? `${cohortLabel} · Composite ${(score??0).toFixed(2)} · Rank #${rank ?? "—"}`
+    : `${cohortLabel} · Not qualified for this cohort`;
+
+  // Raw metric values for the detail line under each bar
+  const roeRaw = s.roe_compounder;
+  const pbRaw  = s.pb_compounder;
+  const opdRaw = s.opmargin_delta_compounder;
+  const pct=(v:number|null|undefined,d=1)=>v==null?"?":`${(v*100).toFixed(d)}%`;
+  const num=(v:number|null|undefined,d=2)=>v==null?"?":v.toFixed(d);
+  const detailROE = `3yr avg ROE ${pct(roeRaw)}`;
+  const detailPB  = `P/B ${num(pbRaw,2)}× — lower is better, so rank inverts`;
+  const detailOPD = `OpMargin Δ ${roeRaw!=null && opdRaw!=null
+    ? (opdRaw>=0?"+":"") + (opdRaw*100).toFixed(1) + "pp 3yr"
+    : "?"}`;
+
+  const wrap:React.CSSProperties = {
+    marginBottom:0,
+    ...(active ? {boxShadow:`0 0 0 2px ${T.green}`, borderColor:T.green} : {}),
+  };
+
+  return(
+    <Card style={wrap}>
+      <SH title={title} icon={<BarChart2 size={12}/>} sub={sub}/>
+      {!qualified ? (
+        <div style={{padding:"24px 8px",display:"flex",alignItems:"center",
+          justifyContent:"center",fontSize:11,fontFamily:T.mono,color:T.textLight,
+          lineHeight:1.6,textAlign:"center"}}>
+          Stock is not part of the {isUS?"US":"Global"} Compounder cohort.<br/>
+          {isUS
+            ? "US gate: listed on US exchange, market cap ≥ $2B, ex Fin/Ins/HC."
+            : "Global gate: any market, ex Fin/Ins/HC, all 3 metrics present."}
+        </div>
+      ) : (
+        <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
+          <FactorBar name="ROE (3yr avg)"   weight={33} score={roe_pct ?? null} detail={detailROE}/>
+          <FactorBar name="P/B (inverted)"  weight={33} score={pb_pct  ?? null} detail={detailPB}/>
+          <FactorBar name="OpMargin Δ (3y)" weight={34} score={opd_pct ?? null} detail={detailOPD}/>
+          <div style={{marginTop:10,padding:"10px 12px",borderRadius:5,
+            background:T.greenLight,border:`1px solid ${T.greenBorder}`,
+            fontSize:10,fontFamily:T.mono,color:T.text,lineHeight:1.5}}>
+            <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:3}}>HOW THIS IS SCORED</div>
+            Each bar is this stock's percentile rank within the {cohortLabel.toLowerCase()}
+            on that metric (100 = best in cohort). Composite is the equal-weighted mean.
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -2368,18 +2454,50 @@ export default function StockDetail(){
       ) : (
         <>
           
-      {/* ═══ v8 5-FACTOR BREAKDOWN ═══ */}
-      <Card style={{marginBottom:16}}>
-        <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>} sub={`${mode==="fallen_angel"?"Fallen Angel":"Momentum"} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
-        <div style={{display:"grid",gridTemplateColumns:"300px 1fr",gap:24}}>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><FactorRadar scores={factorsMode}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
-            {FACTOR_ORDER.map(k=>(
-              <FactorBar key={k} name={FL[k]} weight={FW[k]} score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
-            ))}
+      {/* ═══ SCORING — side-by-side cards for every mode ═══ */}
+      {/* v1.2 (May 2026): the v8 5-Factor card always renders (it's the
+          general factor view used by Momentum and Fallen Angel). The
+          Compounder breakdown sits beside it, defaulting to the cohort
+          that matches the active mode. For Mom/FA, the Compounder card
+          shows US first, falling back to Global. The card matching the
+          active mode gets a highlight border.                            */}
+      {(()=>{
+        const modeLabel =
+          mode==="fallen_angel"     ? "Fallen Angel"
+          : mode==="compounder_us"  ? "Compounder US"
+          : mode==="compounder_global" ? "Compounder Global"
+          : "Momentum";
+        // Which Compounder cohort to display alongside (US preferred when
+        // the active mode isn't Compounder-specific; for CMP modes, show
+        // the matching cohort).
+        const cmpCohort: "us"|"global" =
+          mode==="compounder_global" ? "global"
+          : mode==="compounder_us"   ? "us"
+          : (haveCmpUS ? "us" : "global");
+        const v8Active = mode==="momentum" || mode==="fallen_angel";
+        const cmpActive = mode==="compounder_us" || mode==="compounder_global";
+        const v8Style: React.CSSProperties = v8Active
+          ? {marginBottom:0, boxShadow:`0 0 0 2px ${T.green}`, borderColor:T.green}
+          : {marginBottom:0};
+        return (
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
+            <Card style={v8Style}>
+              <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>}
+                sub={`${modeLabel} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:8}}>
+                <FactorRadar scores={factorsMode} size={220}/>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
+                {FACTOR_ORDER.map(k=>(
+                  <FactorBar key={k} name={FL[k]} weight={FW[k]}
+                    score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
+                ))}
+              </div>
+            </Card>
+            <CompounderBreakdownCard s={s} cohort={cmpCohort} active={cmpActive}/>
           </div>
-        </div>
-      </Card>
+        );
+      })()}
 
       {/* Company profile */}
       <div style={{marginBottom:16}}>
