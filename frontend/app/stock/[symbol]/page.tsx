@@ -19,7 +19,8 @@ interface StockData{
   gross_margin_trend:string;piotroski:number;altman_z:number;
   dcf_value:number;owner_earnings_yield:number;intrinsic_buffett:number;
   intrinsic_avg:number;margin_of_safety:number;value_score:number;
-  composite:number;signal:string;classification:string;reasons:string[];
+  composite:number;classification:string;reasons:string[];
+  // signal?:string;  // REMOVED v1.2 (May 2026) — BUY/HOLD/SELL semantics gone
   factor_scores?:FactorScores;
   quality_score?:number;catalyst_score?:number;catalyst_flags?:string[];
   has_catalyst?:boolean;days_to_earnings?:number;
@@ -95,9 +96,27 @@ reversal_score?:number;
   composite_momentum?:number;
   composite_fallen_angel?:number;
   signal_momentum?:string;
-  signal_fallen_angel?:string;
+  // signal_fallen_angel?:string;  // REMOVED v1.2 (May 2026) — replaced by fallen_angel_flag
   factors_v8_momentum?:FactorsV8;
   factors_v8_fallen_angel?:FactorsV8;
+
+  // ── v1.2 (May 2026): Compounder + Fallen Angel flag + PT velocity ──
+  fallen_angel_flag?:boolean;
+  compounder_score_us?:number|null;
+  compounder_score_global?:number|null;
+  compounder_rank_us?:number|null;
+  compounder_rank_global?:number|null;
+  signal_compounder_us?:string;
+  signal_compounder_global?:string;
+  roe_compounder?:number|null;
+  pb_compounder?:number|null;
+  opmargin_delta_compounder?:number|null;
+  pt_velocity_60d?:number|null;
+  pt_velocity_score?:number|null;
+  company_name?:string;
+  exchange?:string;
+  country?:string;
+  sector?:string;
   mode?:string;
 }
 interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;value:number|null;smart_money:number|null;}
@@ -1927,7 +1946,8 @@ function ComparisonTab({stockA,fmpA}:{
  
   // Loaded state — side-by-side render
   const ComparisonHeader=({s,isLeft}:{s:StockData; isLeft:boolean})=>{
-    const sigStyle=SIG_C[s.signal]||SIG_C.HOLD;
+    // v1.2 (May 2026): single BUY/HOLD/SELL signal badge removed.
+    // Composite score (right side of header) is now the only summary signal.
     const compColor=s.composite>0.6?T.green:s.composite>0.4?T.text:T.red;
     return(
       <Card>
@@ -1935,7 +1955,6 @@ function ComparisonTab({stockA,fmpA}:{
           <div>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
               <span style={{fontSize:20,fontWeight:700,color:T.text,fontFamily:T.mono}}>{s.symbol}</span>
-              <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{s.signal}</span>
             </div>
             <div style={{fontSize:18,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)} <span style={{fontSize:11,color:T.textMuted,fontWeight:400}}>{s.currency}</span></div>
           </div>
@@ -2221,10 +2240,12 @@ export default function StockDetail(){
   // to the other mode if that one qualifies. Lands the user on a useful view
   // by default. If neither qualifies (rare — both gates fail), stay where
   // we are and the page will render the gate-failure summary block.
+  // v1.2 (May 2026): FA mode availability now driven by fallen_angel_flag.
+  // signal_fallen_angel field removed. signal (BUY/HOLD/SELL) field removed.
   useEffect(()=>{
     if (!stock) return;
-    const momOK = (stock.signal_momentum ?? stock.signal) !== "DISQUALIFIED";
-    const faOK  = (stock.signal_fallen_angel ?? "DISQUALIFIED") !== "DISQUALIFIED";
+    const momOK = (stock.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
+    const faOK  = stock.fallen_angel_flag === true;
     if (mode === "momentum" && !momOK && faOK) setMode("fallen_angel");
     else if (mode === "fallen_angel" && !faOK && momOK) setMode("momentum");
   },[stock, mode]);
@@ -2235,19 +2256,16 @@ export default function StockDetail(){
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
 
   // ── Mode-aware bindings ──
-  // Option B: each stock has both Momentum and Fallen Angel composites computed
-  // at scan time. The selected mode determines which composite/signal/factors
-  // drive the dashboard. Default to Momentum unless the FA composite is
-  // materially higher (heuristic: FA wins by 0.10+) — that flag lets the user
-  // know FA mode is worth looking at without forcing them to discover the toggle.
-  // v8 mode availability: a mode is "available" iff the stock qualifies its
-  // setup gate. Using `signal !== "DISQUALIFIED"` instead of "fields present"
-  // means NVDA (which has both composites set but is disqualified by FA gate)
-  // shows the FA toggle option as disabled, not as a valid view.
-  const haveMom = (s.signal_momentum ?? s.signal) !== "DISQUALIFIED";
-  const haveFA  = (s.signal_fallen_angel ?? "DISQUALIFIED") !== "DISQUALIFIED";
+  // v1.2 (May 2026): Momentum availability uses signal_momentum.
+  // Fallen Angel availability uses fallen_angel_flag (boolean, replaces
+  // the old signal_fallen_angel gate). The single `signal` field is gone;
+  // sigMode is derived from per-mode signals only.
+  const haveMom = (s.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
+  const haveFA  = s.fallen_angel_flag === true;
   const compMode=mode==="fallen_angel"?(s.composite_fallen_angel??s.composite):(s.composite_momentum??s.composite);
-  const sigMode=mode==="fallen_angel"?(s.signal_fallen_angel??s.signal):(s.signal_momentum??s.signal);
+  const sigMode=mode==="fallen_angel"
+    ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
+    : (s.signal_momentum ?? "QUALIFIED");
   const factorsMode=readFactorsV8(s,mode);
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
   const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
