@@ -180,12 +180,14 @@ interface CompositePosition {
   symbol: string;
   entry_price: number;
   entry_date: string;
-  // Mode-appropriate entry score. Mom/FA baskets write composite_at_entry
-  // (the v8 5-factor composite); Compounder baskets write
-  // compounder_score_at_entry (the equal-weight rank percentile from ROE/PB/
-  // OpMΔ). Whichever is present is the one to display; the helper at the
-  // render site resolves to a single number.
+  // Mode-appropriate entry score. The four runners each write a different
+  // field name because each mode uses a different scoring system:
+  //   composite_at_entry          ← Momentum (v8 5-factor composite)
+  //   score_at_entry              ← Fallen Angel (FA-specific composite)
+  //   compounder_score_at_entry   ← Compounder US / Global (rank percentile)
+  // The renderer falls back across all three; whichever is present wins.
   composite_at_entry?: number;
+  score_at_entry?: number;
   compounder_score_at_entry?: number;
   compounder_rank_at_entry?: number | null;
   piotroski_at_entry: number | null;
@@ -206,12 +208,14 @@ interface CompositeRotation {
     return_pct: number;
     days_held: number;
     composite_at_entry?: number | null;
+    score_at_entry?: number | null;
     compounder_score_at_entry?: number | null;
   }[];
   added: {
     symbol: string;
     entry_price: number;
     composite_at_entry?: number;
+    score_at_entry?: number;
     compounder_score_at_entry?: number;
   }[];
 }
@@ -1051,7 +1055,7 @@ function BasketDetails({
                   color: (p.return_pct ?? 0) >= 0 ? T.green : T.red, fontWeight: 600,
                 }}>{fmtPct(p.return_pct)}</td>
                 <td style={{ ...td, textAlign: "right", color: T.muted }}>{daysHeld}d</td>
-                <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? p.compounder_score_at_entry ?? 0).toFixed(3)}</td>
+                <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? p.score_at_entry ?? p.compounder_score_at_entry ?? 0).toFixed(3)}</td>
               </tr>
             );
           })}
