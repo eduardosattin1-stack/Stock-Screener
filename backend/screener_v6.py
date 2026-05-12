@@ -35,6 +35,16 @@ from typing import Optional
 
 import requests
 
+# v1.3.0: FMP fundamentals cache (read-through GCS cache for slow-cadence data)
+try:
+    from fmp_cache import cached_fmp, reset_stats as _cache_reset, log_stats as _cache_log
+    HAS_FMP_CACHE = True
+except ImportError:
+    HAS_FMP_CACHE = False
+    def cached_fmp(endpoint, symbol, fetcher, **kw): return fetcher()
+    def _cache_reset(): pass
+    def _cache_log(): pass
+
 # v7.2.1: Tradier options enrichment (optional — graceful fallback if not available)
 try:
     from tradier_options import enrich_stock as tradier_enrich_stock
@@ -1461,8 +1471,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             else:
                 v["gross_margin_trend"] = "stable"
 
-    # Key metrics
-    km = fmp("key-metrics", {"symbol": sym, "period": "annual", "limit": 5})
+    # Key metrics (v1.3.0: cached — quarterly data, 5-day TTL)
+    km = cached_fmp(
+        "key-metrics", sym,
+        lambda: fmp("key-metrics", {"symbol": sym, "period": "annual", "limit": 5}),
+    )
     if km:
         km.sort(key=lambda x: x.get("date", ""))
         roes = [float(x.get("returnOnEquity", 0)) for x in km]
@@ -1474,7 +1487,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             v["roic_avg"] = sum(roics) / len(roics)
 
     # ------------------- PATCHED: Financial scores (Bulletproofed for v7) -------------------
-    scores = fmp("financial-scores", {"symbol": sym})
+    # v1.3.0: cached — quarterly data, 5-day TTL
+    scores = cached_fmp(
+        "financial-scores", sym,
+        lambda: fmp("financial-scores", {"symbol": sym}),
+    )
     if scores and scores[0]:
         v["piotroski"] = int(scores[0].get("piotroskiScore") or 0)
         v["altman_z"] = float(scores[0].get("altmanZScore") or 0)
@@ -4709,9 +4726,15 @@ def main():
     # Cloud Run Jobs that re-invoke main()) don't reuse stale 13F data.
     _INST_POSITIONS_SUMMARY_CACHE.clear()
 
+    # v1.3.0: reset FMP cache stats before scan
+    _cache_reset()
+
     # Run two-pass scan
     stocks = screen(symbols, top_n=args.top)
     log.info(f"Scan complete: {len(stocks)} stocks scored")
+
+    # v1.3.0: log FMP cache hit/miss summary
+    _cache_log()
 
     # Smart Money v1.1: prune + persist PT cache. Today's PT datapoints
     # were appended during get_analyst() calls inside screen().
