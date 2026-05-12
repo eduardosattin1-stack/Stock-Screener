@@ -184,7 +184,7 @@ log = logging.getLogger("v7")
 
 # Macro regime overlay — tilts weights based on yield curve, VIX, CPI, GDP
 try:
-    from macro_regime import fetch_macro_regime, apply_macro_tilt, get_risk_free_rate
+    from macro_regime import fetch_macro_regime, fetch_macro_regime_v8, apply_macro_tilt, get_risk_free_rate
     HAS_MACRO = True
     log.info("Macro regime module loaded")
 except ImportError:
@@ -4417,13 +4417,26 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     log.info("v8 Fallen Angel: flagging alert candidates")
     compute_fallen_angel_flags(all_results)
 
-    return all_results
+    # Macro regime overlay (v8) — fetch at scan-end so it's one-time per scan.
+    # Returns dict with regime, score, sub_scores, features. Failure is non-
+    # fatal: the scan results are valid without macro; the frontend ribbon
+    # simply won't render.
+    macro_data = None
+    if HAS_MACRO:
+        try:
+            macro_data = fetch_macro_regime_v8(fmp)
+            log.info(f"Macro v8: {macro_data.get('regime', '?')} "
+                     f"(score={macro_data.get('score', '?')})")
+        except Exception as e:
+            log.warning(f"Macro regime v8 fetch failed (non-fatal): {e}")
+
+    return all_results, macro_data
 
 # ---------------------------------------------------------------------------
 # 16. Output / Reporting
 # ---------------------------------------------------------------------------
 
-def format_report(stocks: list[Stock], top_n: int = TOP_N, region: str = "") -> str:
+def format_report(stocks: list[Stock], top_n: int = TOP_N, region: str = "", macro: dict = None) -> str:
     lines = []
     lines.append("=" * 100)
     lines.append(f"CB SCREENER v7.2 — {region.upper() if region else 'GLOBAL'}")
@@ -4540,7 +4553,7 @@ def gcs_download(blob_path: str) -> Optional[dict]:
         return None
 
 
-def save_scan_to_gcs(stocks: list[Stock], region: str = "global"):
+def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = None):
     """Save scan results to GCS — both as latest_{region} and dated archive."""
     # 2026-05-05: scan_date is a full tz-aware ISO timestamp again. Frontend
     # parses this with `new Date(...).toLocaleString(...)` to render the
@@ -4558,6 +4571,15 @@ def save_scan_to_gcs(stocks: list[Stock], region: str = "global"):
         "stock_count": len(stocks),
         "stocks": [asdict(s) for s in stocks],
     }
+    # Macro regime overlay — embedded at top level so the frontend MacroRibbon
+    # can render the current macro landscape without a separate API call.
+    if macro:
+        payload["macro"] = {
+            "regime":     macro.get("regime"),
+            "score":      macro.get("score"),
+            "sub_scores": macro.get("sub_scores"),
+            "version":    macro.get("version", "v7"),
+        }
     # Latest
     gcs_upload(f"scans/latest_{region}.json", payload)
     # Dated archive
@@ -4747,13 +4769,6 @@ def main():
 
     # Build universe + preload sector performance + scan
     log.info(f"Region: {args.region}")
-    if HAS_MACRO:
-        try:
-            macro = fetch_macro_regime()
-            log.info(f"Macro regime: {macro.get('regime', 'unknown')} (vix={macro.get('vix', 'n/a')}, "
-                     f"yield_curve={macro.get('yield_curve', 'n/a')}, cpi={macro.get('cpi_yoy', 'n/a')})")
-        except Exception as e:
-            log.warning(f"Macro regime fetch failed: {e}")
 
     symbols = get_symbols(args.region)
     log.info(f"Universe: {len(symbols)} stocks")
@@ -4776,8 +4791,8 @@ def main():
     # v1.3.0: reset FMP cache stats before scan
     _cache_reset()
 
-    # Run two-pass scan
-    stocks = screen(symbols, top_n=args.top)
+    # Run two-pass scan (returns tuple: stocks + macro regime data)
+    stocks, macro = screen(symbols, top_n=args.top)
     log.info(f"Scan complete: {len(stocks)} stocks scored")
 
     # v1.3.0: log FMP cache hit/miss summary
@@ -4788,7 +4803,7 @@ def main():
     persist_pt_history()
 
     # Format + send + persist
-    report = format_report(stocks, top_n=args.top, region=args.region)
+    report = format_report(stocks, top_n=args.top, region=args.region, macro=macro)
     print(report)
 
     if not args.no_email:
@@ -4797,7 +4812,7 @@ def main():
     log_signals(stocks)
 
     if not args.no_gcs:
-        save_scan_to_gcs(stocks, region=args.region)
+        save_scan_to_gcs(stocks, region=args.region, macro=macro)
 
 
 if __name__ == "__main__":

@@ -1932,9 +1932,11 @@ function FinancialChartsPanel({
                   );
                 })}
                 {/* X axis labels (years or quarters) */}
-                {(isQuarterly ? i % 4 === 3 : i % 2 === 1) && (
-                  <text x={xCenter} y={H-5} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={T.textLight}>
-                    {isQuarterly ? `${d.calendarYear?.slice(-2)}${d.period}` : (d.calendarYear?.slice(-2) || "—")}
+                {((isQuarterly ? i % 4 === 3 : i % 2 === 1) || d.isEstimate) && (
+                  <text x={xCenter} y={H-5} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={d.isEstimate ? T.blue : T.textLight}>
+                    {isQuarterly 
+                      ? `${d.calendarYear?.replace(/^20/, "")}${d.period}` 
+                      : (d.calendarYear?.replace(/^20/, "") || "—")}
                   </text>
                 )}
               </g>
@@ -2896,13 +2898,41 @@ export default function StockDetail(){
       fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:12}),
       fmpFetch("income-statement",{symbol:sym,period:"quarter",limit:21}),
       fmpFetch("balance-sheet-statement",{symbol:sym,period:"quarter",limit:21}),
-      fmpFetch("cash-flow-statement",{symbol:sym,period:"quarter",limit:21})
-    ]).then(([inc,rat,km,bs,cf,incQ,bsQ,cfQ])=>{
+      fmpFetch("cash-flow-statement",{symbol:sym,period:"quarter",limit:21}),
+      fmpFetch("analyst-estimates",{symbol:sym,limit:2})
+    ]).then(([inc,rat,km,bs,cf,incQ,bsQ,cfQ,est])=>{
       const mapInc = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, revenue:r.revenue, grossProfit:r.grossProfit, operatingIncome:r.operatingIncome, netIncome:r.netIncome, epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda});
       const mapBs = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities, totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt, cashAndCashEquivalents:r.cashAndCashEquivalents});
       const mapCf = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure, freeCashFlow:r.freeCashFlow});
 
-      if(inc?.length) setIncomes(inc.map(mapInc));
+      let finalIncomes = inc?.length ? inc.map(mapInc) : [];
+      
+      // Append consensus estimates as FY(e)
+      if (est?.length) {
+        // Sort ascending by date so we append the nearest future year first
+        const sortedEst = [...est].sort((a:any, b:any) => String(a.date).localeCompare(String(b.date)));
+        // Only take future estimates (date > last actual income date)
+        const lastActualDate = finalIncomes.length > 0 ? finalIncomes[0].date : "1900-01-01";
+        const futureEst = sortedEst.filter(e => e.date > lastActualDate);
+        
+        const mappedEst = futureEst.map(e => ({
+          date: e.date,
+          calendarYear: (e.date?.slice(0,4) || "FY") + "e",
+          period: "FY",
+          revenue: e.estimatedRevenueAvg,
+          grossProfit: 0, // FMP doesn't typically provide gross profit consensus easily in this endpoint
+          operatingIncome: e.estimatedEbitAvg || 0,
+          netIncome: e.estimatedNetIncomeAvg || 0,
+          epsdiluted: e.estimatedEpsAvg || 0,
+          ebitda: e.estimatedEbitdaAvg || 0,
+          isEstimate: true
+        }));
+        
+        // Final array puts oldest at the end (descending order), so we unshift future estimates to the start
+        finalIncomes = [...mappedEst.reverse(), ...finalIncomes];
+      }
+
+      setIncomes(finalIncomes);
       if(incQ?.length) setIncomesQ(incQ.map(mapInc));
       
       if(rat?.length){

@@ -19,7 +19,7 @@ interface FactorsV8 { momentum:number|null; quality:number|null; growth:number|n
 // Legacy v7 factor scores (kept on the wire for diagnostic backwards-compat;
 // not rendered anywhere on the page).
 interface FactorScores { technical:number|null; quality:number|null; proximity:number|null; catalyst:number|null; transcript:number|null; upside:number|null; institutional:number|null; analyst:number|null; insider:number|null; earnings:number|null; institutional_flow?:number|null; sector_momentum?:number|null; congressional?:number|null; }
-interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve:number; yield_level:number; vix:number; cpi_trend:number; gdp_momentum:number; }; }
+interface MacroData { regime:"RISK_ON"|"NEUTRAL"|"CAUTIOUS"|"RISK_OFF"; score:number; sub_scores:{ yield_curve?:number; yield_curve_3m?:number; yield_level?:number; vix?:number; cpi_trend?:number; gdp_momentum?:number; unemployment?:number; consumer_sentiment?:number; recession_prob?:number; }; version?:string; features?:Record<string,number|null>; }
 interface StockData {
   symbol:string; price:number; currency:string; market_cap:number;
   sma50:number; sma200:number; year_high:number; year_low:number; volume:number;

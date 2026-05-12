@@ -377,6 +377,39 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"status": "ok", "version": "v7.2"}).encode())
             return
 
+        # ── Macro regime — live (v8 9-signal composite) ──────────────────
+        # Returns current macro landscape: regime label, composite score,
+        # and sub-scores for yield curve, VIX, CPI, GDP, unemployment,
+        # consumer sentiment, recession probability. Cached for 5 minutes
+        # on client side to avoid hammering FMP on every page load.
+        if parsed.path == "/macro":
+            try:
+                from macro_regime import fetch_macro_regime_v8
+                from screener_v6 import fmp as fmp_func
+                data = fetch_macro_regime_v8(fmp_func)
+                # Strip tilts/features/rates for the frontend — keep it lean
+                out = {
+                    "regime":     data.get("regime"),
+                    "score":      data.get("score"),
+                    "sub_scores": data.get("sub_scores"),
+                    "features":   data.get("features"),
+                    "version":    data.get("version", "v8"),
+                }
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "public, max-age=300")
+                self.end_headers()
+                self.wfile.write(json.dumps(out).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
         # v7.2: Signal performance tracker (System 1 — BUY/STRONG BUY → SELL cycles)
         if parsed.path == "/performance/signal-tracks":
             try:
@@ -614,7 +647,7 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 symbols = get_symbols(region)
             results, macro = screen(symbols)
-            report = format_report(results, region, macro=macro)
+            report = format_report(results, region=region, macro=macro)
             update_signal_history(results)
             save_scan_to_gcs(results, region, macro=macro)
             today = datetime.now().strftime("%Y-%m-%d")
