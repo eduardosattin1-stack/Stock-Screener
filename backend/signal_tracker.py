@@ -1,30 +1,81 @@
 #!/usr/bin/env python3
 """
-Signal Tracker — CB Screener v7.2
-===================================
-Two independent tracking systems that observe scan outputs forward in time.
+Signal Tracker — CB Screener v1.2 (May 2026 — Commit 2)
+=========================================================
+Tracks ML model predictions over time using cohort-based cycles and validates
+calibration against the baseline distribution from training.
 
-SYSTEM 1 — Signal performance (composite model)
-  Entry: first appearance of BUY or STRONG BUY
-  Exit:  SELL signal (WATCH/HOLD do not end tracking)
-  Result: what would have happened buying on BUY, selling on SELL
-  Re-entry: separate row per BUY→SELL cycle
+WHAT IT DOES
+  For every enriched stock (any stock with hit_prob > 0, typically ~30–50 per
+  scan), store a forward-looking prediction with the calibrated decile bucket
+  and a computed options-spread EV. Track each prediction's outcome over a
+  28-day fate window. Roll predictions into 30-day cohorts ("cycles") for
+  aggregate accuracy measurement bucketed by decile.
 
-SYSTEM 2 — P(+10%) hit rate (ML time model)
-  Entry: p10 > 0.60 AND not currently tracked
-  Exit:  price hits +10% from entry OR 60 days elapsed
-  Result: did the ML prediction materialize within the window
-  Re-entry: only after current window closes
+PRIMARY METRIC: DECILE HIT RATES
+  Calibration baseline (from 21,650 OOS training samples):
+    D10 hit rate: 22.3%   D1 hit rate: 1.1%   (≈20× odds ratio)
+  A healthy model continues to produce that separation. If it stops, retrain.
 
-STORAGE (GCS)
-  signal_tracking/open.json       currently open BUY tracks
-  signal_tracking/closed.json     completed BUY→SELL cycles
-  hit_rate_tracking/open.json     currently open p10 windows
-  hit_rate_tracking/closed.json   completed p10 windows
-  stock_history/{SYMBOL}.json     [date, price, composite] per scan (for stock-page chart)
+KILL SWITCH
+  Rolling 90-day window D10 hit rate. If it drops below 10%, the model has
+  degraded materially and needs retraining. Surfaced in cycle archives and
+  logged on every scan.
 
-Both systems consume the same scan JSON and rely on reused quote prices —
-zero additional FMP calls per scan.
+CYCLE LIFECYCLE
+  A cycle is identified by the date it opened (cycle_id = YYYY-MM-DD).
+  Each cycle moves through three states:
+
+  COLLECTING  Days 0–30 from cycle open. Accepts new hit_prob>0 predictions.
+              At day 30, the cycle stops accepting new entries; the next
+              cycle opens immediately.
+  RESOLVING   Predictions still have open 28-day fate windows. No new
+              entries. Each prediction continues being marked hit/expired
+              as price action unfolds.
+  ARCHIVED    All predictions in the cycle have resolved. A summary
+              archived.json is written with aggregate stats (hit rate by
+              decile, signal strength, mean realized return, etc.) and a
+              calibration check comparing to baseline.
+
+EV METHODOLOGY (mirrors frontend TradierOptionsCard v3)
+  Computed for every prediction where price + IV permit spread synthesis.
+  spot, P20 from scan; spread synthesized: ATM long, +10% short, 30 DTE,
+  net_debit = width × clamp(IV × 0.65, 0.15, 0.50). When tradier_spread is
+  live, use those strikes/debits instead.
+
+  Probability ladder (calibrated on 21,650 OOS samples, May 2026):
+    P5  = min(P20 × 3.41, 0.80)   P(close ≥ +5%  in 4w)
+    P10 = min(P20 × 2.29, 0.65)   P(close ≥ +10% in 4w)
+    P15 = min(P20 × 1.49, 0.50)   P(close ≥ +15% in 4w)
+    P20 = P20 (raw model output)  P(touch +20% daily high in 4w)
+
+  Interpolated:
+    P(BE)  = interpolate(break_even_move_pct, ladder)
+    P(max) = interpolate(short_strike_move_pct, ladder)
+
+  EV (per contract):
+    EV = P(max) × max_gain − (1 − P(BE)) × max_loss
+
+  Stored as a sub-block on every prediction row when computable; absent on
+  rows where price/IV can't construct a spread. Used downstream for the
+  "what would each decile have made as spreads" P&L attribution.
+
+GCS LAYOUT
+  hit_rate_tracking/
+    current_cycle.json                  Pointer + state log
+    cycles/{cycle_id}/
+      predictions.jsonl                 Append-only: every hit_prob>0 entry
+      open.json                         Predictions still tracking
+      archived.json                     Written when cycle fully resolves
+    rolling_health.json                 Last 90d D10 hit rate + kill-switch flag
+
+  stock_history/{SYMBOL}.json           [date, price, composite] per scan
+                                        (unchanged from prior version)
+
+STORAGE NOTES
+  predictions.jsonl is immutable and survives forever — every prediction
+  the model has ever made, gsutil-fetchable for offline model validation
+  and re-training. open.json and archived.json are derived state.
 
 Invoked once per scan by run_scan_job.py after save_scan_to_gcs() completes.
 """
@@ -37,24 +88,50 @@ from typing import Optional
 log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# GCS I/O (uses same bucket + metadata-token pattern as macro_regime.py)
+# Configuration
 # ---------------------------------------------------------------------------
 
 GCS_BUCKET = "screener-signals-carbonbridge"
 
-# Canonical paths. Changing these breaks existing tracked state — don't.
-SIGNAL_OPEN_PATH   = "signal_tracking/open.json"
-SIGNAL_CLOSED_PATH = "signal_tracking/closed.json"
-HITRATE_OPEN_PATH   = "hit_rate_tracking/open.json"
-HITRATE_CLOSED_PATH = "hit_rate_tracking/closed.json"
-STOCK_HISTORY_PREFIX = "stock_history"
+# Tracking parameters (locked May 2026)
+P20_INCLUSION       = 0.0      # Track every stock with hit_prob > this
+HIT_THRESHOLD_PCT   = 20.0     # +20% from entry counts as hit
+HIT_WINDOW_DAYS     = 28       # 4 weeks ≈ 20 trading days
+CYCLE_LENGTH_DAYS   = 30       # New cycle every 30 calendar days
+STOCK_HISTORY_KEEP_DAYS = 365  # Trim chart history beyond this
 
-# Config
-HIT_THRESHOLD_PCT = 20.0     # Model now predicts +20% touches
-HIT_WINDOW_DAYS   = 28       # 4 weeks (20 trading days ≈ 28 calendar days)
-P10_INCLUSION     = 0.03     # D8+ threshold (top 30% by predicted prob)
-STOCK_HISTORY_KEEP_DAYS = 365  # Trim stock_history beyond this
+# Calibration baselines (from 21,650 OOS training samples, May 2026)
+# D10 should hit ~22.3%, D1 ~1.1%. We track this every cycle to detect drift.
+D10_CALIBRATION_HIT_RATE = 0.223
+D1_CALIBRATION_HIT_RATE  = 0.011
 
+# Kill-switch parameters: if the rolling 90-day D10 hit rate drops below the
+# threshold, the model has degraded materially and needs retraining.
+KILL_SWITCH_THRESHOLD       = 0.10
+KILL_SWITCH_WINDOW_DAYS     = 90
+
+# Calibrated probability ladder multipliers (21,650 OOS samples)
+P5_MULT  = 3.41
+P10_MULT = 2.29
+P15_MULT = 1.49
+
+# Synthesized spread structure
+SYNTH_SHORT_OFFSET = 0.10    # Short call strike at +10% from spot
+SYNTH_DTE_DAYS     = 30
+IV_FACTOR_MIN      = 0.15    # Floor on debit/width ratio
+IV_FACTOR_MAX      = 0.50    # Ceiling on debit/width ratio
+IV_FACTOR_SCALE    = 0.65    # Multiplier on annualized IV
+
+# Canonical GCS paths
+CYCLE_POINTER_PATH    = "hit_rate_tracking/current_cycle.json"
+CYCLES_PREFIX         = "hit_rate_tracking/cycles"
+ROLLING_HEALTH_PATH   = "hit_rate_tracking/rolling_health.json"
+STOCK_HISTORY_PREFIX  = "stock_history"
+
+
+# ---------------------------------------------------------------------------
+# GCS I/O (unchanged from prior version)
+# ---------------------------------------------------------------------------
 
 def _gcs_token() -> Optional[str]:
     """GCE/Cloud Run metadata token. None when running locally."""
@@ -69,7 +146,7 @@ def _gcs_token() -> Optional[str]:
         return None
 
 
-def _gcs_read(path: str, default: dict | list) -> dict | list:
+def _gcs_read(path: str, default):
     """Read JSON from GCS. Returns default on any failure."""
     try:
         import requests
@@ -90,19 +167,44 @@ def _gcs_read(path: str, default: dict | list) -> dict | list:
     return default
 
 
-def _gcs_write(path: str, data: dict | list) -> bool:
-    """Write JSON to GCS. Returns True on success."""
+def _gcs_read_text(path: str, default: str = "") -> str:
+    """Read raw text (for JSONL files) from GCS. Returns default on failure."""
+    try:
+        import requests
+        tok = _gcs_token()
+        if not tok:
+            return default
+        r = requests.get(
+            f"https://storage.googleapis.com/{GCS_BUCKET}/{path}",
+            headers={"Authorization": f"Bearer {tok}"}, timeout=10,
+        )
+        if r.status_code == 200:
+            return r.text
+        if r.status_code == 404:
+            return default
+        log.warning(f"GCS read-text {path}: {r.status_code}")
+    except Exception as e:
+        log.warning(f"GCS read-text {path} failed: {e}")
+    return default
+
+
+def _gcs_write(path: str, data, content_type: str = "application/json") -> bool:
+    """Write JSON (or raw text if data is str) to GCS. Returns True on success."""
     try:
         import requests
         tok = _gcs_token()
         if not tok:
             log.debug(f"GCS write {path}: no token (local mode)")
             return False
+        if isinstance(data, str):
+            body = data.encode("utf-8")
+        else:
+            body = json.dumps(data, default=str).encode("utf-8")
         r = requests.post(
             f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
             params={"uploadType": "media", "name": path},
-            headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
-            data=json.dumps(data, default=str), timeout=15,
+            headers={"Authorization": f"Bearer {tok}", "Content-Type": content_type},
+            data=body, timeout=15,
         )
         if r.status_code in (200, 201):
             return True
@@ -113,321 +215,764 @@ def _gcs_write(path: str, data: dict | list) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# System 1 — Signal performance (BUY/STRONG BUY → SELL)
+# EV calculation — Python mirror of frontend TradierOptionsCard v3
 # ---------------------------------------------------------------------------
 
-def _update_signal_tracks(stocks: list, today_str: str, region: str) -> tuple[int, int, int]:
+def _round_strike(spot: float) -> float:
+    """Round to broker-style strike increments: $5 for spot>=$50, $2.5 for
+    spot>=$10, else $1. Matches roundStrike() in TradierOptionsCard."""
+    inc = 5.0 if spot >= 50 else 2.5 if spot >= 10 else 1.0
+    return round(spot / inc) * inc
+
+
+def _interpolate_p(move_pct: float, ladder: list) -> float:
+    """Piecewise-linear interpolation across the calibrated probability ladder.
+    ladder: list of (move_pct, probability) tuples in ascending order.
+    Mirrors interpolateP() in TradierOptionsCard."""
+    if move_pct <= 0:
+        return 0.85
+    if move_pct <= ladder[0][0]:
+        return min(ladder[0][1] + (ladder[0][0] - move_pct) * 0.02, 0.90)
+    if move_pct >= ladder[-1][0]:
+        return max(ladder[-1][1] - (move_pct - ladder[-1][0]) * 0.01, 0.01)
+    for i in range(len(ladder) - 1):
+        x0, y0 = ladder[i]
+        x1, y1 = ladder[i + 1]
+        if x0 <= move_pct <= x1:
+            frac = (move_pct - x0) / (x1 - x0)
+            return y0 + (y1 - y0) * frac
+    return ladder[-1][1]
+
+
+def calculate_spread_ev(stock: dict) -> Optional[dict]:
+    """Compute the deployable options-spread EV for a P20-qualified stock.
+
+    Mirrors TradierOptionsCard v3 exactly: uses live tradier_spread when
+    present, else synthesizes a 30-DTE bull call spread (ATM long, +10% short)
+    with debit estimated from current IV.
+
+    Returns a dict with all spread components and EV calculation, or None if
+    not computable (no price, no P20, can't construct strikes, or spot < $1).
     """
-    Update signal_tracking for System 1.
+    p20 = stock.get("hit_prob") or 0
+    spot = stock.get("price") or 0
+    if p20 <= 0 or spot <= 0:
+        return None
+    # Penny stocks have no meaningful options market and the rounding logic
+    # produces degenerate strike pairs (e.g. long=$0). Skip below $1.
+    if spot < 1.0:
+        return None
 
-    - Add new entries for every BUY/STRONG BUY not currently tracked (this region).
-    - Update max/min/last fields for currently tracked entries.
-    - Close tracks when the stock appears with SELL signal.
+    # Calibrated probability ladder
+    p5  = min(p20 * P5_MULT,  0.80)
+    p10 = min(p20 * P10_MULT, 0.65)
+    p15 = min(p20 * P15_MULT, 0.50)
+    ladder = [(5.0, p5), (10.0, p10), (15.0, p15), (20.0, p20)]
 
-    Returns: (new_tracks, closed_tracks, active_tracks_after)
-    """
-    open_data = _gcs_read(SIGNAL_OPEN_PATH, {"entries": []})
-    closed_data = _gcs_read(SIGNAL_CLOSED_PATH, {"entries": []})
-
-    open_entries = open_data.get("entries", [])
-    closed_entries = closed_data.get("entries", [])
-
-    # Index current open tracks by (symbol, region, entry_date) — a stock can
-    # have multiple rows if it cycled through BUY→SELL→BUY. We only track the
-    # latest-open one per (symbol, region) pair; earlier ones were already closed.
-    open_by_sym_region: dict[tuple[str, str], dict] = {}
-    for e in open_entries:
-        key = (e["symbol"], e.get("region", "unknown"))
-        # Keep the most recent entry_date if duplicates exist
-        if key not in open_by_sym_region or e["entry_date"] > open_by_sym_region[key]["entry_date"]:
-            open_by_sym_region[key] = e
-
-    # Build today's scan lookup
-    scan_by_sym = {s["symbol"]: s for s in stocks}
-
-    new_count = 0
-    closed_count = 0
-
-    # ─── Update existing open tracks ───
-    for (sym, reg), entry in list(open_by_sym_region.items()):
-        if reg != region:
-            continue  # other region's tracks — don't touch
-        s = scan_by_sym.get(sym)
-        if s is None:
-            # Symbol not in today's scan. Could be delisted, filtered, or dropped
-            # from universe. Keep the track open but don't update prices.
-            continue
-
-        price = s.get("price", 0) or 0
-        composite = s.get("composite", 0) or 0
-        signal = s.get("signal", "HOLD")
-
-        # Update running extremes
-        entry["last_price"] = price
-        entry["last_composite"] = composite
-        entry["last_signal"] = signal
-        entry["last_updated"] = today_str
-        entry["max_price"] = max(entry.get("max_price", price), price)
-        entry["min_price"] = min(entry.get("min_price", price) or price, price)
-        try:
-            d0 = datetime.strptime(entry["entry_date"], "%Y-%m-%d")
-            d1 = datetime.strptime(today_str, "%Y-%m-%d")
-            entry["days_held"] = (d1 - d0).days
-        except Exception:
-            entry["days_held"] = entry.get("days_held", 0)
-
-        # SELL terminates the track
-        # Composite drop below 0.5 OR explicit SELL signal terminates the track.
-        # Tighter than the original SELL-only trigger — catches degraded positions
-        # before the screener formally downgrades to SELL.
-        if composite < 0.6 or signal == "SELL":
-            ep = entry["entry_price"] or 0
-            max_gain = ((entry["max_price"] - ep) / ep * 100) if ep > 0 else 0.0
-            max_dd   = ((entry["min_price"] - ep) / ep * 100) if ep > 0 else 0.0
-            closed_entry = dict(entry)
-            closed_entry.update({
-                "exit_date":      today_str,
-                "exit_price":     price,
-                "exit_composite": composite,
-                "exit_signal":    signal,  # was hardcoded "SELL" — now reflects actual exit signal
-                "realized_pnl_pct": round(realized_pnl, 2),
-                "max_gain_pct":     round(max_gain, 2),
-                "max_dd_pct":       round(max_dd, 2),
-            })
-            closed_entries.append(closed_entry)
-            # Remove from open set (drop from list below using a marker)
-            entry["__closed__"] = True
-            closed_count += 1
-
-    # ─── Rebuild open list without closed entries ───
-    open_entries = [e for e in open_entries if not e.pop("__closed__", False)]
-
-    # ─── Identify new BUY/STRONG BUY entries ───
-    # Key: anything in today's scan labeled BUY or STRONG BUY that doesn't
-    # have an already-open track for (symbol, region).
-    currently_open_keys = {(e["symbol"], e.get("region", "unknown")) for e in open_entries}
-
-    for s in stocks:
-        sig = s.get("signal")
-        if sig not in ("BUY", "STRONG BUY"):
-            continue
-        key = (s["symbol"], region)
-        if key in currently_open_keys:
-            continue  # already tracking this BUY cycle
-
-        price = s.get("price", 0) or 0
-        composite = s.get("composite", 0) or 0
-        if price <= 0:
-            continue  # skip entries with no price
-
-        new_entry = {
-            "symbol":          s["symbol"],
-            "region":          region,
-            "entry_date":      today_str,
-            "entry_price":     round(price, 4),
-            "entry_composite": round(composite, 4),
-            "entry_signal":    sig,
-            "sector":          s.get("sector", ""),
-            "industry":        s.get("industry", ""),
-            "classification":  s.get("classification", ""),
-            # Running fields
-            "last_price":      round(price, 4),
-            "last_composite":  round(composite, 4),
-            "last_signal":     sig,
-            "last_updated":    today_str,
-            "max_price":       round(price, 4),
-            "min_price":       round(price, 4),
-            "days_held":       0,
+    # Spread structure: live or synthesized
+    live_sp = stock.get("tradier_spread")
+    if live_sp and isinstance(live_sp, dict) and live_sp.get("long_strike") is not None:
+        sp = {
+            "spot": float(live_sp.get("spot", spot)),
+            "long_strike": float(live_sp["long_strike"]),
+            "short_strike": float(live_sp["short_strike"]),
+            "long_mid": float(live_sp.get("long_mid", 0)),
+            "short_mid": float(live_sp.get("short_mid", 0)),
+            "net_debit": float(live_sp["net_debit"]),
+            "max_gain_per_contract": float(live_sp["max_gain_per_contract"]),
+            "max_loss_per_contract": float(live_sp["max_loss_per_contract"]),
+            "break_even_price": float(live_sp["break_even_price"]),
+            "break_even_move_pct": float(live_sp["break_even_move_pct"]),
+            "expiration": live_sp.get("expiration"),
+            "dte": int(live_sp.get("dte", SYNTH_DTE_DAYS)),
         }
-        open_entries.append(new_entry)
-        new_count += 1
+        is_live = True
+    else:
+        long_strike = _round_strike(spot)
+        short_strike = _round_strike(spot * (1.0 + SYNTH_SHORT_OFFSET))
+        if short_strike <= long_strike:
+            return None
+        width = short_strike - long_strike
+        iv = stock.get("tradier_iv_current") or 0.30
+        iv_factor = min(IV_FACTOR_MAX, max(IV_FACTOR_MIN, iv * IV_FACTOR_SCALE))
+        net_debit = round(width * iv_factor * 100) / 100
+        if net_debit <= 0 or net_debit >= width:
+            return None
+        max_gain = (width - net_debit) * 100
+        max_loss = net_debit * 100
+        be_price = long_strike + net_debit
+        be_pct = ((be_price - spot) / spot) * 100
+        exp = datetime.now() + timedelta(days=SYNTH_DTE_DAYS)
+        while exp.weekday() != 4:  # Friday
+            exp += timedelta(days=1)
+        sp = {
+            "spot": spot,
+            "long_strike": long_strike,
+            "short_strike": short_strike,
+            "long_mid": round(net_debit * 0.65, 2),
+            "short_mid": round(net_debit * 0.35, 2),
+            "net_debit": net_debit,
+            "max_gain_per_contract": max_gain,
+            "max_loss_per_contract": max_loss,
+            "break_even_price": be_price,
+            "break_even_move_pct": be_pct,
+            "expiration": exp.strftime("%Y-%m-%d"),
+            "dte": SYNTH_DTE_DAYS,
+        }
+        is_live = False
 
-    # Cap closed history at 5000 entries to keep file size manageable
-    if len(closed_entries) > 5000:
-        closed_entries = closed_entries[-5000:]
+    # Interpolated probabilities and EV
+    short_pct = ((sp["short_strike"] - sp["spot"]) / sp["spot"]) * 100
+    p_be = _interpolate_p(sp["break_even_move_pct"], ladder)
+    p_max = _interpolate_p(short_pct, ladder)
+    ev = p_max * sp["max_gain_per_contract"] - (1 - p_be) * sp["max_loss_per_contract"]
+    ev_per_dollar = ev / sp["max_loss_per_contract"] if sp["max_loss_per_contract"] > 0 else 0
 
-    _gcs_write(SIGNAL_OPEN_PATH, {
-        "entries": open_entries,
-        "updated": datetime.utcnow().isoformat() + "Z",
-    })
-    _gcs_write(SIGNAL_CLOSED_PATH, {
-        "entries": closed_entries,
-        "updated": datetime.utcnow().isoformat() + "Z",
-    })
+    # Assessment ladder (mirrors frontend buckets)
+    if ev_per_dollar > 0.15:
+        assessment = "STRONG_EDGE"
+    elif ev_per_dollar > 0.05:
+        assessment = "MODERATE_EDGE"
+    elif ev_per_dollar > 0:
+        assessment = "MARGINAL_EDGE"
+    elif ev_per_dollar > -0.10:
+        assessment = "SLIGHT_NEGATIVE"
+    else:
+        assessment = "NO_EDGE"
 
-    return new_count, closed_count, len(open_entries)
+    return {
+        "is_live_spread": is_live,
+        "long_strike": sp["long_strike"],
+        "short_strike": sp["short_strike"],
+        "long_mid": sp["long_mid"],
+        "short_mid": sp["short_mid"],
+        "net_debit": sp["net_debit"],
+        "max_gain_per_contract": round(sp["max_gain_per_contract"], 2),
+        "max_loss_per_contract": round(sp["max_loss_per_contract"], 2),
+        "break_even_price": round(sp["break_even_price"], 2),
+        "break_even_move_pct": round(sp["break_even_move_pct"], 2),
+        "expiration": sp["expiration"],
+        "dte": sp["dte"],
+        "p_breakeven": round(p_be, 4),
+        "p_max_profit": round(p_max, 4),
+        "p5": round(p5, 4),
+        "p10": round(p10, 4),
+        "p15": round(p15, 4),
+        "ev_dollars": round(ev, 2),
+        "ev_per_dollar": round(ev_per_dollar, 4),
+        "assessment": assessment,
+    }
 
 
 # ---------------------------------------------------------------------------
-# System 2 — P(+10%) hit rate (60d windows)
+# Decile / signal-strength bucketing (matches frontend)
 # ---------------------------------------------------------------------------
 
-def _update_hitrate_tracks(stocks: list, today_str: str, region: str) -> tuple[int, int, int]:
+def _decile(p20: float) -> int:
+    """OOS-calibrated decile thresholds. Matches P20Card v2."""
+    if p20 >= 0.17: return 10
+    if p20 >= 0.07: return 9
+    if p20 >= 0.05: return 8
+    if p20 >= 0.03: return 7
+    if p20 >= 0.02: return 6
+    if p20 >= 0.013: return 5
+    if p20 >= 0.009: return 4
+    if p20 >= 0.006: return 3
+    if p20 >= 0.004: return 2
+    return 1
+
+
+def _signal_strength(p20: float) -> str:
+    if p20 >= 0.15: return "STRONG"
+    if p20 >= 0.08: return "MODERATE"
+    if p20 >= 0.03: return "MILD"
+    return "WEAK"
+
+
+# ---------------------------------------------------------------------------
+# Cycle management
+# ---------------------------------------------------------------------------
+
+def _load_cycle_state() -> dict:
+    """Read current_cycle.json. Returns a freshly-initialized state if not yet
+    written (first-run bootstrap)."""
+    default = {
+        "collecting_cycle_id": None,
+        "collecting_start": None,
+        "collecting_ends": None,
+        "resolving_cycle_ids": [],
+        "archived_cycle_ids": [],
+    }
+    state = _gcs_read(CYCLE_POINTER_PATH, default)
+    if not isinstance(state, dict):
+        return default
+    # Defensive: backfill any missing fields from default
+    for k, v in default.items():
+        state.setdefault(k, v)
+    return state
+
+
+def _save_cycle_state(state: dict) -> None:
+    _gcs_write(CYCLE_POINTER_PATH, state)
+
+
+def _open_new_cycle(state: dict, today_str: str) -> dict:
+    """Open a new collecting cycle starting today. Mutates and returns state."""
+    new_id = today_str
+    ends = (datetime.strptime(today_str, "%Y-%m-%d")
+            + timedelta(days=CYCLE_LENGTH_DAYS)).strftime("%Y-%m-%d")
+    state["collecting_cycle_id"] = new_id
+    state["collecting_start"] = today_str
+    state["collecting_ends"] = ends
+    # Initialize empty open.json so downstream code doesn't 404
+    _gcs_write(f"{CYCLES_PREFIX}/{new_id}/open.json", {"predictions": []})
+    log.info(f"  Cycle {new_id} opened (collects until {ends})")
+    return state
+
+
+def _advance_cycles_if_needed(state: dict, today_str: str) -> dict:
+    """Roll cycles forward when the collecting window expires.
+
+    If today is on/after collecting_ends, the current cycle moves to RESOLVING
+    and a new collecting cycle opens. Mutates and returns state.
     """
-    Update hit_rate_tracking for System 2.
+    # Bootstrap: no cycle has ever been opened.
+    if state["collecting_cycle_id"] is None:
+        return _open_new_cycle(state, today_str)
 
-    - Add new entries for stocks with p10 > 0.60 not currently tracked.
-    - Update max_price for tracked entries.
-    - Close windows that hit +10% OR exceed 60 days.
+    if today_str >= state["collecting_ends"]:
+        old_id = state["collecting_cycle_id"]
+        if old_id not in state["resolving_cycle_ids"]:
+            state["resolving_cycle_ids"].append(old_id)
+            log.info(f"  Cycle {old_id} → RESOLVING (collected for "
+                     f"{CYCLE_LENGTH_DAYS}d, predictions still tracking)")
+        _open_new_cycle(state, today_str)
+    return state
 
-    Returns: (new_tracks, closed_tracks, active_tracks_after)
+
+def _attempt_archive_resolving_cycles(state: dict, today_str: str) -> dict:
+    """For each cycle in RESOLVING state, if its open.json is empty, write
+    archived.json with summary stats and move to archived_cycle_ids.
+
+    Predictions in open.json get closed independently by _process_open_predictions
+    every day. Once all predictions for a cycle have resolved, this archiver
+    finalizes the summary.
     """
-    open_data = _gcs_read(HITRATE_OPEN_PATH, {"entries": []})
-    closed_data = _gcs_read(HITRATE_CLOSED_PATH, {"entries": []})
+    still_resolving = []
+    for cycle_id in state["resolving_cycle_ids"]:
+        open_data = _gcs_read(f"{CYCLES_PREFIX}/{cycle_id}/open.json",
+                              {"predictions": []})
+        open_preds = (open_data or {}).get("predictions", [])
+        if open_preds:
+            still_resolving.append(cycle_id)
+            continue
+        # All predictions resolved — compute summary and archive
+        summary = _compute_cycle_summary(cycle_id, today_str)
+        if _gcs_write(f"{CYCLES_PREFIX}/{cycle_id}/archived.json", summary):
+            state["archived_cycle_ids"].append(cycle_id)
+            log.info(f"  Cycle {cycle_id} → ARCHIVED "
+                     f"(n={summary['total_predictions']}, "
+                     f"hit_rate={summary['hit_rate']:.1%})")
+        else:
+            log.warning(f"  Cycle {cycle_id} archive write failed; will retry")
+            still_resolving.append(cycle_id)
+    state["resolving_cycle_ids"] = still_resolving
+    return state
 
-    open_entries = open_data.get("entries", [])
-    closed_entries = closed_data.get("entries", [])
 
-    # Hit-rate tracking is region-independent (same stock same window no matter
-    # which region scanned it), but we store the region for attribution. Use
-    # symbol alone as the "currently tracked" key.
-    open_by_sym: dict[str, dict] = {e["symbol"]: e for e in open_entries}
-    scan_by_sym = {s["symbol"]: s for s in stocks}
-    today = datetime.strptime(today_str, "%Y-%m-%d")
+def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
+    """Read the immutable predictions.jsonl for the cycle and roll up stats."""
+    raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+    preds = []
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            preds.append(json.loads(line))
+        except Exception:
+            continue
 
-    new_count = 0
-    closed_count = 0
+    if not preds:
+        return {
+            "cycle_id": cycle_id,
+            "archived_date": today_str,
+            "total_predictions": 0,
+            "hit_count": 0,
+            "hit_rate": 0.0,
+            "predictions": [],
+        }
 
-    # ─── Update existing open windows ───
-    for sym, entry in list(open_by_sym.items()):
-        s = scan_by_sym.get(sym)
-        if s is None:
-            # Not in today's scan — still age the window though
+    hit_count = sum(1 for p in preds if p.get("outcome") == "HIT")
+    expired_count = sum(1 for p in preds if p.get("outcome") == "EXPIRED")
+    n = len(preds)
+
+    # Mean realized return (final price at resolution vs entry)
+    realized_returns = [p.get("realized_return_pct", 0) for p in preds
+                        if p.get("realized_return_pct") is not None]
+    mean_realized = sum(realized_returns) / len(realized_returns) if realized_returns else 0
+
+    # Excursion stats — peak run-up and deepest drawdown observed within each
+    # prediction's fate window. These describe the risk shape of the strategy:
+    # high mean_max_high alongside high mean_max_drawdown means choppy paths.
+    max_highs = [p.get("max_high_observed_pct", 0) for p in preds
+                 if p.get("max_high_observed_pct") is not None]
+    max_dds = [p.get("max_drawdown_observed_pct", 0) for p in preds
+               if p.get("max_drawdown_observed_pct") is not None]
+    mean_max_high = sum(max_highs) / len(max_highs) if max_highs else 0
+    mean_max_drawdown = sum(max_dds) / len(max_dds) if max_dds else 0
+    worst_drawdown = min(max_dds) if max_dds else 0
+    best_runup = max(max_highs) if max_highs else 0
+
+    # Aggregate dollar EV vs realized P&L (assuming 1 contract per prediction)
+    sum_ev = sum(p.get("ev_dollars", 0) or 0 for p in preds)
+    # Realized contract P&L: hit → max_gain (price reached short strike);
+    # expired w/ final price ≥ breakeven → fractional; else → -max_loss.
+    sum_realized = 0
+    for p in preds:
+        outcome = p.get("outcome")
+        if outcome == "HIT":
+            sum_realized += p.get("max_gain_per_contract", 0) or 0
+        elif outcome == "EXPIRED":
+            sum_realized += (p.get("realized_contract_pnl", 0) or 0)
+
+    # Hit rate by decile and signal strength
+    by_decile = {}
+    by_signal = {}
+    for p in preds:
+        d = p.get("decile", 1)
+        sig = p.get("signal_strength", "WEAK")
+        by_decile.setdefault(d, {"n": 0, "hits": 0})
+        by_decile[d]["n"] += 1
+        if p.get("outcome") == "HIT":
+            by_decile[d]["hits"] += 1
+        by_signal.setdefault(sig, {"n": 0, "hits": 0})
+        by_signal[sig]["n"] += 1
+        if p.get("outcome") == "HIT":
+            by_signal[sig]["hits"] += 1
+    for d in by_decile:
+        by_decile[d]["hit_rate"] = round(
+            by_decile[d]["hits"] / by_decile[d]["n"], 4) if by_decile[d]["n"] else 0
+    for sig in by_signal:
+        by_signal[sig]["hit_rate"] = round(
+            by_signal[sig]["hits"] / by_signal[sig]["n"], 4) if by_signal[sig]["n"] else 0
+
+    return {
+        "cycle_id": cycle_id,
+        "archived_date": today_str,
+        "total_predictions": n,
+        "hit_count": hit_count,
+        "expired_count": expired_count,
+        "hit_rate": round(hit_count / n, 4),
+        "mean_realized_return_pct": round(mean_realized, 4),
+        "mean_max_runup_pct": round(mean_max_high, 4),
+        "mean_max_drawdown_pct": round(mean_max_drawdown, 4),
+        "best_runup_pct": round(best_runup, 4),
+        "worst_drawdown_pct": round(worst_drawdown, 4),
+        "aggregate_ev_dollars": round(sum_ev, 2),
+        "aggregate_realized_pnl_dollars": round(sum_realized, 2),
+        "ev_realization_ratio": round(sum_realized / sum_ev, 4) if sum_ev != 0 else 0,
+        "hit_rate_by_decile": by_decile,
+        "hit_rate_by_signal_strength": by_signal,
+        "calibration_check": _calibration_check(by_decile),
+        "predictions": preds,
+    }
+
+
+def _calibration_check(by_decile: dict) -> dict:
+    """Compare observed D10 and D1 hit rates against the training baseline.
+    Healthy: D10 hit rate well above D1, ideally near baseline 22.3% / 1.1%.
+    Returns metrics suitable for a UI calibration card."""
+    d10 = by_decile.get(10, {})
+    d1 = by_decile.get(1, {})
+    d10_hr = d10.get("hit_rate", 0)
+    d1_hr = d1.get("hit_rate", 0)
+    odds_ratio = (d10_hr / d1_hr) if d1_hr > 0 else None
+    baseline_odds = D10_CALIBRATION_HIT_RATE / D1_CALIBRATION_HIT_RATE
+
+    # Health flag: D10 must remain well above the kill switch threshold AND
+    # well above D1. If D10 < kill switch threshold, the model has degraded.
+    healthy = d10.get("n", 0) >= 5 and d10_hr >= KILL_SWITCH_THRESHOLD
+    return {
+        "d10_hit_rate": round(d10_hr, 4),
+        "d10_n": d10.get("n", 0),
+        "d1_hit_rate": round(d1_hr, 4),
+        "d1_n": d1.get("n", 0),
+        "d10_baseline": D10_CALIBRATION_HIT_RATE,
+        "d1_baseline": D1_CALIBRATION_HIT_RATE,
+        "observed_odds_ratio": round(odds_ratio, 2) if odds_ratio else None,
+        "baseline_odds_ratio": round(baseline_odds, 2),
+        "kill_switch_threshold": KILL_SWITCH_THRESHOLD,
+        "healthy": healthy,
+        "note": "D10 must exceed kill-switch threshold (10%) and ideally "
+                "track the 22.3% baseline. Sample size <5 in D10 → unstable.",
+    }
+
+
+# ---------------------------------------------------------------------------
+# Rolling 90-day D10 health monitor (kill switch)
+# ---------------------------------------------------------------------------
+
+def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
+    """Compute D10 hit rate over the trailing 90-day window across all
+    predictions (open + closed) and trigger kill-switch flag if below threshold.
+
+    Reads predictions.jsonl across all known cycles (collecting + resolving +
+    most-recent archived). Only counts predictions whose ENTRY date is within
+    the 90-day window. For OPEN predictions, only count those whose fate window
+    has closed (entry_date <= today - 28d) so we don't artificially deflate
+    the rate with still-unresolved D10 setups.
+    """
+    today_dt = datetime.strptime(today_str, "%Y-%m-%d")
+    window_start = today_dt - timedelta(days=KILL_SWITCH_WINDOW_DAYS)
+    resolution_cutoff = today_dt - timedelta(days=HIT_WINDOW_DAYS)
+
+    cycle_ids = []
+    if state.get("collecting_cycle_id"):
+        cycle_ids.append(state["collecting_cycle_id"])
+    cycle_ids.extend(state.get("resolving_cycle_ids", []))
+    # Most recent archived cycles too — bounded so we don't read everything.
+    cycle_ids.extend(state.get("archived_cycle_ids", [])[-6:])
+
+    # Dedupe last-known state of each (symbol, entry_date) — JSONL contains
+    # both entry rows and close rows; the close row supersedes the entry.
+    latest_by_key = {}
+    for cycle_id in cycle_ids:
+        raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line:
+                continue
             try:
-                d0 = datetime.strptime(entry["entry_date"], "%Y-%m-%d")
-                days_elapsed = (today - d0).days
+                row = json.loads(line)
             except Exception:
-                days_elapsed = entry.get("days_elapsed", 0)
-            entry["days_elapsed"] = days_elapsed
+                continue
+            key = (row.get("symbol"), row.get("entry_date"))
+            # Prefer rows where outcome != OPEN (closed rows are written after entry)
+            existing = latest_by_key.get(key)
+            if existing is None:
+                latest_by_key[key] = row
+            elif existing.get("outcome") == "OPEN" and row.get("outcome") != "OPEN":
+                latest_by_key[key] = row
 
-            # If window expired without update, close as "window_closed" with
-            # no new price data. max_price stays at last known value.
-            if days_elapsed >= HIT_WINDOW_DAYS:
-                ep = entry["entry_price"] or 0
-                max_gain = ((entry["max_price"] - ep) / ep * 100) if ep > 0 else 0.0
-                closed_entry = dict(entry)
-                closed_entry.update({
-                    "exit_date":    today_str,
-                    "exit_reason":  "window_closed",
-                    "hit":          max_gain >= HIT_THRESHOLD_PCT,
-                    "max_gain_pct": round(max_gain, 2),
-                    "hit_date":     entry.get("hit_date"),
-                })
-                closed_entries.append(closed_entry)
-                entry["__closed__"] = True
-                closed_count += 1
+    d10_n = 0
+    d10_hits = 0
+    d1_n = 0
+    d1_hits = 0
+    for row in latest_by_key.values():
+        entry_date_str = row.get("entry_date")
+        if not entry_date_str:
             continue
-
-        price = s.get("price", 0) or 0
-        if price <= 0:
-            continue
-
-        ep = entry["entry_price"] or 0
-        if price > entry.get("max_price", 0):
-            entry["max_price"] = price
-            # Record the first date we breach +10% (for reporting "days_to_hit")
-            if ep > 0 and not entry.get("hit_date"):
-                max_gain = (price - ep) / ep * 100
-                if max_gain >= HIT_THRESHOLD_PCT:
-                    entry["hit_date"] = today_str
         try:
-            d0 = datetime.strptime(entry["entry_date"], "%Y-%m-%d")
-            days_elapsed = (today - d0).days
+            entry_dt = datetime.strptime(entry_date_str, "%Y-%m-%d")
         except Exception:
-            days_elapsed = entry.get("days_elapsed", 0)
-        entry["days_elapsed"] = days_elapsed
-        entry["last_price"] = price
-        entry["last_updated"] = today_str
-
-        # ─── Exit conditions ───
-        max_gain = ((entry["max_price"] - ep) / ep * 100) if ep > 0 else 0.0
-        exit_reason = None
-        if max_gain >= HIT_THRESHOLD_PCT:
-            exit_reason = "hit_10pct"
-        elif days_elapsed >= HIT_WINDOW_DAYS:
-            exit_reason = "window_closed"
-
-        if exit_reason:
-            closed_entry = dict(entry)
-            closed_entry.update({
-                "exit_date":    today_str,
-                "exit_reason":  exit_reason,
-                "hit":          exit_reason == "hit_10pct",
-                "max_gain_pct": round(max_gain, 2),
-                "hit_date":     entry.get("hit_date"),
-            })
-            closed_entries.append(closed_entry)
-            entry["__closed__"] = True
-            closed_count += 1
-
-    # ─── Rebuild open list ───
-    open_entries = [e for e in open_entries if not e.pop("__closed__", False)]
-
-    # ─── Identify new p10 > 0.60 entries ───
-    currently_open_syms = {e["symbol"] for e in open_entries}
-
-    for s in stocks:
-        if s["symbol"] in currently_open_syms:
             continue
-        p10 = s.get("hit_prob") or s.get("p10") or 0
-        # hit_prob is stored as 0-1 in v7.2 JSONs
-        if p10 is None or p10 < P10_INCLUSION:
+        if entry_dt < window_start:
             continue
-        price = s.get("price", 0) or 0
-        if price <= 0:
+        # Skip not-yet-resolved predictions (entry_date > today - 28d AND outcome == OPEN)
+        outcome = row.get("outcome")
+        if outcome == "OPEN" and entry_dt > resolution_cutoff:
             continue
 
-        new_entry = {
-            "symbol":          s["symbol"],
-            "region":          region,
-            "entry_date":      today_str,
-            "entry_price":     round(price, 4),
-            "entry_composite": round(s.get("composite", 0) or 0, 4),
-            "entry_signal":    s.get("signal", ""),
-            "entry_p10":       round(p10, 4),
-            "sector":          s.get("sector", ""),
-            "industry":        s.get("industry", ""),
-            "classification":  s.get("classification", ""),
-            # Running fields
-            "last_price":      round(price, 4),
-            "last_updated":    today_str,
-            "max_price":       round(price, 4),
-            "days_elapsed":    0,
-            "hit_date":        None,
-        }
-        open_entries.append(new_entry)
-        new_count += 1
+        decile = row.get("decile")
+        hit = outcome == "HIT" or (row.get("max_high_observed_pct", 0) >= HIT_THRESHOLD_PCT)
+        if decile == 10:
+            d10_n += 1
+            if hit:
+                d10_hits += 1
+        elif decile == 1:
+            d1_n += 1
+            if hit:
+                d1_hits += 1
 
-    # Cap closed history at 5000 entries
-    if len(closed_entries) > 5000:
-        closed_entries = closed_entries[-5000:]
+    d10_hr = d10_hits / d10_n if d10_n > 0 else 0
+    d1_hr = d1_hits / d1_n if d1_n > 0 else 0
 
-    _gcs_write(HITRATE_OPEN_PATH, {
-        "entries": open_entries,
-        "updated": datetime.utcnow().isoformat() + "Z",
-    })
-    _gcs_write(HITRATE_CLOSED_PATH, {
-        "entries": closed_entries,
-        "updated": datetime.utcnow().isoformat() + "Z",
-    })
+    # Kill-switch fires when D10 sample is ≥10 (statistical floor) AND hit
+    # rate is below threshold. Below 10 D10 samples we don't have signal yet.
+    kill_switch_active = d10_n >= 10 and d10_hr < KILL_SWITCH_THRESHOLD
 
-    return new_count, closed_count, len(open_entries)
+    return {
+        "computed_date": today_str,
+        "window_days": KILL_SWITCH_WINDOW_DAYS,
+        "d10_n": d10_n,
+        "d10_hits": d10_hits,
+        "d10_hit_rate": round(d10_hr, 4),
+        "d1_n": d1_n,
+        "d1_hits": d1_hits,
+        "d1_hit_rate": round(d1_hr, 4),
+        "baseline_d10": D10_CALIBRATION_HIT_RATE,
+        "baseline_d1": D1_CALIBRATION_HIT_RATE,
+        "kill_switch_threshold": KILL_SWITCH_THRESHOLD,
+        "kill_switch_active": kill_switch_active,
+        "status": "DEGRADED" if kill_switch_active
+                  else "UNDER_SAMPLED" if d10_n < 10
+                  else "HEALTHY",
+    }
+
+
+def _save_rolling_health(health: dict) -> None:
+    """Persist the latest rolling health snapshot so /performance can show it
+    without recomputing on every UI fetch."""
+    _gcs_write(ROLLING_HEALTH_PATH, health)
+    if health.get("kill_switch_active"):
+        log.warning(
+            f"  ⚠ KILL SWITCH ACTIVE: D10 hit rate {health['d10_hit_rate']:.1%} "
+            f"over {KILL_SWITCH_WINDOW_DAYS}d window (threshold "
+            f"{KILL_SWITCH_THRESHOLD:.0%}, baseline "
+            f"{D10_CALIBRATION_HIT_RATE:.1%}). Model needs retraining."
+        )
+    else:
+        log.info(
+            f"  Rolling D10 health: {health['status']} — "
+            f"D10 {health['d10_hit_rate']:.1%} (n={health['d10_n']}), "
+            f"D1 {health['d1_hit_rate']:.1%} (n={health['d1_n']}), "
+            f"baseline D10={D10_CALIBRATION_HIT_RATE:.1%}"
+        )
 
 
 # ---------------------------------------------------------------------------
-# Stock history (for the price+composite chart on stock page)
+# Prediction tracking — entries, opens, closes
+# ---------------------------------------------------------------------------
+
+def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
+    """Append one prediction row to predictions.jsonl for the cycle.
+
+    GCS doesn't support native append, so we read-modify-write. The file is
+    small (≤30 rows per cycle in practice given P20≥25% gate), so cost is
+    negligible.
+    """
+    path = f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl"
+    existing = _gcs_read_text(path, "")
+    new_line = json.dumps(row, default=str)
+    body = existing + ("\n" if existing and not existing.endswith("\n") else "") + new_line + "\n"
+    return _gcs_write(path, body, content_type="text/plain")
+
+
+def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
+                            region: str) -> tuple[int, int]:
+    """Process today's scan. For each stock with P20 >= 25% that isn't already
+    being tracked in the collecting cycle, compute the EV and store a new
+    prediction (both in immutable JSONL and the cycle's open.json).
+
+    Returns (new_count, skipped_no_ev_count).
+    """
+    open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+    open_data = _gcs_read(open_path, {"predictions": []})
+    if not isinstance(open_data, dict):
+        open_data = {"predictions": []}
+    open_preds = open_data.get("predictions", [])
+
+    # Symbols already tracked in the current cycle (any state) — don't re-enter
+    already_in_cycle = {p["symbol"] for p in open_preds}
+
+    # Also check predictions.jsonl for symbols already entered this cycle even
+    # if they've since closed (so we don't double-enter same stock per cycle)
+    raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            already_in_cycle.add(json.loads(line)["symbol"])
+        except Exception:
+            continue
+
+    new_count = 0
+    skipped_no_price = 0
+    no_ev_count = 0
+
+    for s in stocks:
+        p20 = s.get("hit_prob") or 0
+        # Gate: any enriched stock (hit_prob > 0). This is the full ~30-50
+        # enriched stocks per scan, spanning all deciles D1-D10. Tracking the
+        # whole distribution is what lets us compute decile hit rates and
+        # validate that D10 keeps outperforming D1 by the expected ~20x.
+        if p20 <= P20_INCLUSION:
+            continue
+        sym = s.get("symbol")
+        if not sym or sym in already_in_cycle:
+            continue
+        price = s.get("price") or 0
+        if price <= 0:
+            skipped_no_price += 1
+            continue
+
+        # EV is OPTIONAL. Predictions still get tracked even when a spread
+        # can't be synthesized (very low price, no IV data). The decile-bucket
+        # hit-rate metric doesn't depend on EV — it only needs entry price
+        # and hit_prob.
+        ev_block = calculate_spread_ev(s)
+        if ev_block is None:
+            no_ev_count += 1
+
+        # Build mode qualifications (which baskets this stock was in)
+        modes = []
+        if s.get("signal") in ("BUY", "STRONG_BUY"):
+            modes.append("momentum")
+        if s.get("fallen_angel_flag"):
+            modes.append("fallen_angel")
+        if s.get("signal_compounder_us") == "QUALIFIED":
+            modes.append("compounder_us")
+        if s.get("signal_compounder_global") == "QUALIFIED":
+            modes.append("compounder_global")
+
+        pred = {
+            "symbol": sym,
+            "entry_date": today_str,
+            "cycle_id": cycle_id,
+            "region": region,
+            "entry_price": round(price, 4),
+            "target_price": round(price * (1 + HIT_THRESHOLD_PCT / 100), 4),
+            "fate_window_ends": (datetime.strptime(today_str, "%Y-%m-%d")
+                                 + timedelta(days=HIT_WINDOW_DAYS)).strftime("%Y-%m-%d"),
+            "p20": round(p20, 4),
+            "decile": _decile(p20),
+            "signal_strength": _signal_strength(p20),
+            "mode_qualifications": modes,
+            "composite": s.get("composite"),
+            "sector": s.get("sector"),
+            "country": s.get("country"),
+            "market_cap": s.get("market_cap"),
+            "ivr_at_entry": s.get("tradier_iv_rank"),
+            "iv_at_entry": s.get("tradier_iv_current"),
+            "outcome": "OPEN",
+            "max_high_observed_pct": 0.0,
+            "max_drawdown_observed_pct": 0.0,
+            "current_price": round(price, 4),
+            "last_updated": today_str,
+            "days_observed": 0,
+            "realized_return_pct": None,
+            "realized_contract_pnl": None,
+        }
+        # Merge EV/spread block when present; absent on rows that couldn't
+        # synthesize a spread.
+        if ev_block is not None:
+            pred.update(ev_block)
+
+        # Append to immutable JSONL (audit trail) and to open.json (active state)
+        if _append_prediction_jsonl(cycle_id, pred):
+            open_preds.append(pred)
+            new_count += 1
+            already_in_cycle.add(sym)
+        else:
+            log.warning(f"  Failed to append prediction for {sym}")
+
+    if new_count > 0:
+        _gcs_write(open_path, {"predictions": open_preds})
+
+    return new_count, no_ev_count
+
+
+def _process_open_predictions(stocks: list, today_str: str,
+                              state: dict) -> tuple[int, int]:
+    """For every cycle with active predictions (collecting OR resolving), update
+    each open prediction with today's price; mark HIT/EXPIRED as appropriate.
+
+    Returns (closed_count, still_open_count).
+    """
+    # Build lookup: symbol → current price for fast access
+    price_lookup = {s["symbol"]: s.get("price") or 0 for s in stocks if s.get("symbol")}
+
+    cycles_to_process = []
+    if state["collecting_cycle_id"]:
+        cycles_to_process.append(state["collecting_cycle_id"])
+    cycles_to_process.extend(state["resolving_cycle_ids"])
+
+    closed_total = 0
+    open_total = 0
+
+    for cycle_id in cycles_to_process:
+        open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+        open_data = _gcs_read(open_path, {"predictions": []})
+        if not isinstance(open_data, dict):
+            continue
+        preds = open_data.get("predictions", [])
+        if not preds:
+            continue
+
+        updated = []
+        for p in preds:
+            sym = p["symbol"]
+            entry_price = p["entry_price"]
+            current_price = price_lookup.get(sym, p.get("current_price", entry_price))
+
+            # Daily return from entry
+            gain_pct = ((current_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+
+            # Track peak run-up since entry (max_high)
+            if gain_pct > p.get("max_high_observed_pct", 0):
+                p["max_high_observed_pct"] = round(gain_pct, 4)
+            # Track deepest underwater since entry (max_drawdown — most-negative
+            # daily return observed). Stored as a negative percent so the field
+            # is interpretable directly: -15.0 means stock touched -15% from entry.
+            if gain_pct < p.get("max_drawdown_observed_pct", 0):
+                p["max_drawdown_observed_pct"] = round(gain_pct, 4)
+
+            days_in = (datetime.strptime(today_str, "%Y-%m-%d")
+                       - datetime.strptime(p["entry_date"], "%Y-%m-%d")).days
+            p["days_observed"] = days_in
+            p["current_price"] = round(current_price, 4)
+            p["last_updated"] = today_str
+
+            # Closure: HIT if max-high ever touched +20%, else EXPIRED after window
+            hit = p["max_high_observed_pct"] >= HIT_THRESHOLD_PCT
+            expired = days_in >= HIT_WINDOW_DAYS
+
+            if hit:
+                p["outcome"] = "HIT"
+                p["realized_return_pct"] = round(p["max_high_observed_pct"], 4)
+                p["realized_contract_pnl"] = p.get("max_gain_per_contract", 0)
+                p["resolution_date"] = today_str
+                # Re-append final state to JSONL so the audit trail has the close
+                _append_prediction_jsonl(cycle_id, p)
+                closed_total += 1
+                continue
+            if expired:
+                p["outcome"] = "EXPIRED"
+                p["realized_return_pct"] = round(gain_pct, 4)
+                # Spread payoff at expiration: full width payout if above short,
+                # linear in (price − long_strike) between strikes, 0 below long.
+                final_payoff = _spread_final_payoff(p, current_price)
+                p["realized_contract_pnl"] = round(
+                    final_payoff - (p.get("max_loss_per_contract", 0) or 0), 2)
+                p["resolution_date"] = today_str
+                _append_prediction_jsonl(cycle_id, p)
+                closed_total += 1
+                continue
+
+            # Still open
+            updated.append(p)
+            open_total += 1
+
+        _gcs_write(open_path, {"predictions": updated})
+
+    return closed_total, open_total
+
+
+def _spread_final_payoff(pred: dict, final_price: float) -> float:
+    """Bull call spread final payoff per contract at expiration."""
+    long_k = pred.get("long_strike", 0)
+    short_k = pred.get("short_strike", 0)
+    if final_price <= long_k:
+        return 0.0
+    if final_price >= short_k:
+        return (short_k - long_k) * 100
+    return (final_price - long_k) * 100
+
+
+# ---------------------------------------------------------------------------
+# Stock history (unchanged from v7.2)
 # ---------------------------------------------------------------------------
 
 def _update_stock_history(stocks: list, today_str: str):
-    """
-    Append today's (date, price, composite) to per-symbol history files.
-    One file per symbol. Limited to stocks with composite > 0 and price > 0.
+    """Append today's (date, price, composite) to per-symbol history files.
+    One file per symbol. Limited to stocks with composite > 0 and price > 0,
+    coverage >= 6 (to avoid noise from half-evaluated scans).
     """
     cutoff_date = (datetime.strptime(today_str, "%Y-%m-%d")
                    - timedelta(days=STOCK_HISTORY_KEEP_DAYS)).strftime("%Y-%m-%d")
 
-    # Throttle: only write history for stocks with composite coverage >= 6/13
-    # (otherwise we're storing noise from half-evaluated scans).
     written = 0
     for s in stocks:
         sym = s["symbol"]
@@ -442,8 +987,6 @@ def _update_stock_history(stocks: list, today_str: str):
         if not isinstance(history, list):
             history = []
 
-        # Dedup: if today's date is already the last entry, replace it (handles
-        # multiple scans per day — Europe + SP500 + Global).
         today_idx = next((i for i, row in enumerate(history)
                           if isinstance(row, list) and len(row) >= 1 and row[0] == today_str), -1)
         new_row = [today_str, round(price, 4), round(composite, 4)]
@@ -452,7 +995,6 @@ def _update_stock_history(stocks: list, today_str: str):
         else:
             history.append(new_row)
 
-        # Trim old entries
         history = [row for row in history
                    if isinstance(row, list) and len(row) >= 1 and row[0] >= cutoff_date]
 
@@ -467,13 +1009,12 @@ def _update_stock_history(stocks: list, today_str: str):
 # ---------------------------------------------------------------------------
 
 def update_from_scan(stocks: list, region: str, scan_date: str = None):
-    """
-    Update all tracking systems from a completed scan.
+    """Update all tracking from a completed scan.
 
     Args:
         stocks: list of stock dicts as written to latest_{region}.json
-        region: "sp500" | "europe" | "global" | etc.
-        scan_date: YYYY-MM-DD string. Defaults to today.
+        region: "sp500" | "global" | etc. (informational only on prediction row)
+        scan_date: YYYY-MM-DD. Defaults to today.
     """
     if not stocks:
         log.info("signal_tracker: no stocks, skipping update")
@@ -481,18 +1022,52 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
 
     today_str = scan_date or datetime.now().strftime("%Y-%m-%d")
 
+    # Cycle lifecycle (open new / advance / archive)
     try:
-        s1_new, s1_closed, s1_active = _update_signal_tracks(stocks, today_str, region)
-        log.info(f"  Signal tracker (System 1): +{s1_new} new BUY, {s1_closed} closed, {s1_active} active")
+        state = _load_cycle_state()
+        state = _advance_cycles_if_needed(state, today_str)
+        _save_cycle_state(state)
+        log.info(f"  Cycle state: collecting={state['collecting_cycle_id']}, "
+                 f"resolving={state['resolving_cycle_ids']}, "
+                 f"archived={len(state['archived_cycle_ids'])}")
     except Exception as e:
-        log.error(f"signal_tracker System 1 failed: {e}", exc_info=True)
+        log.error(f"signal_tracker cycle advance failed: {e}", exc_info=True)
+        return  # don't proceed without a valid cycle state
 
+    # New predictions enter the current collecting cycle. We track every stock
+    # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can
+    # compute the full decile distribution and validate calibration.
     try:
-        s2_new, s2_closed, s2_active = _update_hitrate_tracks(stocks, today_str, region)
-        log.info(f"  Hit-rate tracker (System 2): +{s2_new} new p10>0.60, {s2_closed} closed, {s2_active} active")
+        new_count, no_ev_count = _record_new_predictions(
+            stocks, today_str, state["collecting_cycle_id"], region)
+        log.info(f"  Predictions (hit_prob>0): +{new_count} new "
+                 f"({no_ev_count} without spread EV — price/IV missing)")
     except Exception as e:
-        log.error(f"signal_tracker System 2 failed: {e}", exc_info=True)
+        log.error(f"signal_tracker record predictions failed: {e}", exc_info=True)
 
+    # Update all open predictions (collecting + resolving cycles)
+    try:
+        closed, open_n = _process_open_predictions(stocks, today_str, state)
+        log.info(f"  Predictions update: {closed} closed today, {open_n} still open")
+    except Exception as e:
+        log.error(f"signal_tracker process open failed: {e}", exc_info=True)
+
+    # Try to archive any RESOLVING cycles whose predictions are all closed
+    try:
+        state = _attempt_archive_resolving_cycles(state, today_str)
+        _save_cycle_state(state)
+    except Exception as e:
+        log.error(f"signal_tracker archive resolving failed: {e}", exc_info=True)
+
+    # Rolling 90-day D10 health check + kill-switch alerting. Runs every scan
+    # so the dashboard can show live calibration status.
+    try:
+        health = _compute_rolling_d10_health(state, today_str)
+        _save_rolling_health(health)
+    except Exception as e:
+        log.error(f"signal_tracker rolling health failed: {e}", exc_info=True)
+
+    # Stock history (unchanged)
     try:
         _update_stock_history(stocks, today_str)
     except Exception as e:
@@ -500,23 +1075,57 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
 
 
 # ---------------------------------------------------------------------------
-# Standalone reader helpers (used by run_server.py HTTP endpoints)
+# Reader helpers (used by run_server.py HTTP endpoints)
 # ---------------------------------------------------------------------------
 
-def read_signal_tracks() -> dict:
-    """Return {open: [...], closed: [...]} for /performance/signal-tracks."""
-    return {
-        "open":   _gcs_read(SIGNAL_OPEN_PATH, {"entries": []}).get("entries", []),
-        "closed": _gcs_read(SIGNAL_CLOSED_PATH, {"entries": []}).get("entries", []),
-    }
+def read_cycle_state() -> dict:
+    """Pointer + lists for /performance/cycles."""
+    return _load_cycle_state()
 
 
-def read_hitrate_tracks() -> dict:
-    """Return {open: [...], closed: [...]} for /performance/hit-rates."""
-    return {
-        "open":   _gcs_read(HITRATE_OPEN_PATH, {"entries": []}).get("entries", []),
-        "closed": _gcs_read(HITRATE_CLOSED_PATH, {"entries": []}).get("entries", []),
+def read_rolling_health() -> dict:
+    """Latest 90-day D10 hit rate + kill-switch flag for the dashboard."""
+    default = {
+        "computed_date": None,
+        "window_days": KILL_SWITCH_WINDOW_DAYS,
+        "d10_n": 0, "d10_hits": 0, "d10_hit_rate": 0.0,
+        "d1_n": 0,  "d1_hits": 0,  "d1_hit_rate": 0.0,
+        "baseline_d10": D10_CALIBRATION_HIT_RATE,
+        "baseline_d1": D1_CALIBRATION_HIT_RATE,
+        "kill_switch_threshold": KILL_SWITCH_THRESHOLD,
+        "kill_switch_active": False,
+        "status": "NOT_YET_COMPUTED",
     }
+    data = _gcs_read(ROLLING_HEALTH_PATH, default)
+    return data if isinstance(data, dict) else default
+
+
+def read_cycle_open(cycle_id: str) -> dict:
+    """Return active open.json for a cycle (collecting or resolving)."""
+    data = _gcs_read(f"{CYCLES_PREFIX}/{cycle_id}/open.json", {"predictions": []})
+    return data if isinstance(data, dict) else {"predictions": []}
+
+
+def read_cycle_archived(cycle_id: str) -> Optional[dict]:
+    """Return archived.json for a fully-resolved cycle, or None if not yet."""
+    data = _gcs_read(f"{CYCLES_PREFIX}/{cycle_id}/archived.json", None)
+    return data if isinstance(data, dict) else None
+
+
+def read_cycle_predictions_jsonl(cycle_id: str) -> list:
+    """Return parsed list of all rows from predictions.jsonl. Each prediction
+    may appear multiple times (entry row, plus a close row when resolved)."""
+    raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+    rows = []
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except Exception:
+            continue
+    return rows
 
 
 def read_stock_history(symbol: str) -> list:
