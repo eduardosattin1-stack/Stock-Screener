@@ -218,7 +218,11 @@ export default function Portfolio(){
                   const live=liveData[p.symbol];const mon=monitors[p.symbol];
                   const cur=p.last_price||mon?.current_price||live?.price||p.entry_price;
                   const pnl=(cur-p.entry_price)*p.shares;const pnlPct=(cur-p.entry_price)/p.entry_price;
-                  const val=cur*p.shares;const signal=mon?.current_signal||live?.signal||"—";
+                  const val=cur*p.shares;
+                  // v1.2 (May 2026): live.signal removed. mon.current_signal is
+                  // still produced by monitor_v7 (separate concept from screener
+                  // signal). If monitor hasn't run yet (new position), show "—".
+                  const signal=mon?.current_signal||"—";
                   // ── Track C.2 FIX: split composite into named, provenance-aware values ──
                   // Old code: `const composite=mon?.current_composite||live?.composite||0;`
                   // rendered a single value with an ↑/↓ arrow (vs entry) and no way to
