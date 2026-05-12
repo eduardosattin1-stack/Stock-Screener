@@ -798,9 +798,9 @@ function CompanyProfileCard({symbol}:{symbol:string}){
   );
 }
 
+
 // ═══════════════════════════════════════════════════════════════════════
 // P20Card v2 — Pure ML probability card. No options data.
-// Drop-in replacement for the P20Card in page_stock.tsx.
 // ═══════════════════════════════════════════════════════════════════════
 
 function P20Card({s}:{s:StockData}){
@@ -810,18 +810,14 @@ function P20Card({s}:{s:StockData}){
   const p20pct = p20 * 100;
 
   // Calibrated multipliers from backtest (21,650 OOS samples, May 2026)
-  // D10: P(close+5%)=63.9% → 3.41x, P(close+10%)=43.0% → 2.29x,
-  //      P(close+15%)=28.0% → 1.49x, P(close+20%)=18.9% → 1.01x
   const p5  = Math.min(p20 * 3.41, 0.80);
   const p10 = Math.min(p20 * 2.29, 0.65);
   const p15 = Math.min(p20 * 1.49, 0.50);
 
-  // Decile bucket (approximate from OOS thresholds)
   const decile = p20>=0.17?10:p20>=0.07?9:p20>=0.05?8:p20>=0.03?7:p20>=0.02?6:p20>=0.013?5:p20>=0.009?4:p20>=0.006?3:p20>=0.004?2:1;
   const signal = p20>=0.15?"STRONG":p20>=0.08?"MODERATE":p20>=0.03?"MILD":"WEAK";
   const signalColor = signal==="STRONG"?T.green:signal==="MODERATE"?T.amber:T.textMuted;
 
-  // Probability bar
   const pBar=(threshold:string, pct:number, isRaw:boolean)=>{
     const w=Math.max(pct,2);
     const color=pct>=40?T.green:pct>=20?"#10b981":pct>=10?T.amber:T.textMuted;
@@ -841,8 +837,6 @@ function P20Card({s}:{s:StockData}){
     <Card>
       <SH title="Move Probability (ML)" icon={<TrendingUp size={12}/>}
         sub={`Decile ${decile} · ${signal} signal`}/>
-
-      {/* Headline: P20 + decile context */}
       <div style={{display:"flex",alignItems:"baseline",gap:12,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         <div>
           <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>P(+20% IN 4W)</div>
@@ -857,8 +851,6 @@ function P20Card({s}:{s:StockData}){
             : "Below the actionable threshold. Model sees limited near-term move probability."}
         </div>
       </div>
-
-      {/* Probability ladder */}
       <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>
         P(CLOSE ABOVE THRESHOLD IN 4 WEEKS)
       </div>
@@ -866,8 +858,6 @@ function P20Card({s}:{s:StockData}){
       {pBar("+10%", p10*100, false)}
       {pBar("+15%", p15*100, false)}
       {pBar("+20%", p20*100, true)}
-
-      {/* Methodology */}
       <div style={{marginTop:10,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
         time_model_v2 · TOP3 ensemble (XGB+GBM+LGB) · 43 features · OOS AUC 0.7836.
         P(+20%) is direct model output; lower thresholds scaled from calibrated backtest distributions.
@@ -879,42 +869,65 @@ function P20Card({s}:{s:StockData}){
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// TradierOptionsCard v2 — Always proposes spread. No gate.
+// TradierOptionsCard v3 — Always proposes a spread (live or estimated).
 // EV calculation drives the signal: green = edge, red = no edge.
-// Drop-in replacement for the TradierOptionsCard in page_stock.tsx.
 // ═══════════════════════════════════════════════════════════════════════
 
 function TradierOptionsCard({s}:{s:StockData}){
   const hasIV=s.tradier_iv_current!=null||s.tradier_iv_rank!=null;
-  const hasSpread=s.tradier_spread!=null;
   const hasPositioning=s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null;
-  if(!hasIV&&!hasSpread&&!hasPositioning) return null;
+  const p20=s.hit_prob||0;
+  if(!hasIV&&!hasPositioning&&p20<=0) return null;
 
   const ivr=s.tradier_iv_rank;
   const iv=s.tradier_iv_current;
   const samples=s.tradier_iv_samples||0;
   const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
   const ivrLabel=ivr==null?"Not enough data":ivr<=25?"Cheap premium":ivr<=40?"Normal":ivr<=60?"Elevated":"Rich — options expensive";
-
-  const p20=s.hit_prob||0;
   const p20pct=p20*100;
 
-  // Calibrated close probabilities from backtest (OOS 21,650 samples)
   const p5close  = Math.min(p20 * 3.41, 0.80);
   const p10close = Math.min(p20 * 2.29, 0.65);
   const p15close = Math.min(p20 * 1.49, 0.50);
 
-  const sp=s.tradier_spread;
+  const tradierSp = s.tradier_spread;
+  const isLive = tradierSp != null;
 
-  // Spread economics — always computed when spread data exists
-  const bePct=sp?.break_even_move_pct||0;
-  const shortPct=sp?((sp.short_strike-sp.spot)/sp.spot*100):0;
+  const roundStrike = (v:number):number => {
+    const inc = s.price>=50?5:s.price>=10?2.5:1;
+    return Math.round(v/inc)*inc;
+  };
 
-  // Interpolate P(breakeven) and P(max profit) from the calibrated ladder
-  // instead of arbitrary scaling. Uses linear interpolation between
-  // the 4 calibrated points: +5%→p5close, +10%→p10close, +15%→p15close, +20%→p20
+  // Synthesize estimated spread when Tradier doesn't provide one
+  const sp = tradierSp ?? (()=>{
+    const spot = s.price;
+    if(spot<=0 || p20<=0) return null;
+    const long_strike = roundStrike(spot);
+    const short_strike = roundStrike(spot*1.10);
+    if(short_strike <= long_strike) return null;
+    const width = short_strike - long_strike;
+    const ivAnn = iv ?? 0.30;
+    const ivFactor = Math.min(0.50, Math.max(0.15, ivAnn * 0.65));
+    const net_debit = Math.round(width * ivFactor * 100) / 100;
+    const max_gain = (width - net_debit) * 100;
+    const max_loss = net_debit * 100;
+    const break_even_price = long_strike + net_debit;
+    const break_even_move_pct = spot > 0 ? ((break_even_price - spot) / spot) * 100 : 0;
+    const risk_reward = max_loss > 0 ? max_gain / max_loss : 0;
+    const exp = new Date(); exp.setDate(exp.getDate() + 30);
+    while(exp.getDay() !== 5) exp.setDate(exp.getDate() + 1);
+    const expStr = exp.toISOString().slice(0,10);
+    return {
+      strategy:"Bull Call Spread (estimated)", spot, expiration:expStr, dte:30,
+      long_strike, short_strike, long_mid:net_debit*0.65, short_mid:net_debit*0.35,
+      net_debit, max_gain_per_contract:max_gain, max_loss_per_contract:max_loss,
+      break_even_price, break_even_move_pct, risk_reward,
+      description:"Estimated from current price + IV. Verify with broker.",
+    };
+  })();
+
   function interpolateP(movePct:number):number{
-    if(movePct<=0) return 0.85; // stock flat or down — high prob of being above 0
+    if(movePct<=0) return 0.85;
     const pts:[number,number][] = [[5,p5close],[10,p10close],[15,p15close],[20,p20]];
     if(movePct<=pts[0][0]) return Math.min(pts[0][1] + (pts[0][0]-movePct)*0.02, 0.90);
     if(movePct>=pts[pts.length-1][0]) return Math.max(pts[pts.length-1][1] - (movePct-pts[pts.length-1][0])*0.01, 0.01);
@@ -927,19 +940,16 @@ function TradierOptionsCard({s}:{s:StockData}){
     return p20;
   }
 
-  const pBreakeven = sp ? interpolateP(bePct) : 0;
-  const pMaxProfit = sp ? interpolateP(shortPct) : 0;
-
-  // Expected value per contract
+  const bePct = sp?.break_even_move_pct||0;
+  const shortPct = sp ? ((sp.short_strike-sp.spot)/sp.spot*100) : 0;
+  const pBreakeven = sp && p20>0 ? interpolateP(bePct) : 0;
+  const pMaxProfit = sp && p20>0 ? interpolateP(shortPct) : 0;
   const ev = sp ? (pMaxProfit * sp.max_gain_per_contract - (1-pBreakeven) * sp.max_loss_per_contract) : 0;
   const evPositive = ev > 0;
-
-  // EV per dollar risked (normalized)
   const evPerDollar = sp && sp.max_loss_per_contract > 0 ? ev / sp.max_loss_per_contract : 0;
 
-  // Signal assessment — purely EV-driven, no binary gate
-  const assessment = !sp ? "NO SPREAD DATA"
-    : ivr==null ? (evPositive ? "EV+ (IVR UNKNOWN)" : "EV− (IVR UNKNOWN)")
+  const assessment = !sp ? "NO DATA"
+    : p20<=0 ? "NO MODEL"
     : evPerDollar > 0.15 ? "★ STRONG EDGE"
     : evPerDollar > 0.05 ? "MODERATE EDGE"
     : evPerDollar > 0 ? "MARGINAL EDGE"
@@ -948,7 +958,6 @@ function TradierOptionsCard({s}:{s:StockData}){
   const assessColor = assessment.includes("STRONG") ? "#8b5cf6"
     : assessment.includes("MODERATE") ? T.green
     : assessment.includes("MARGINAL") ? T.amber
-    : assessment.includes("EV+") ? T.green
     : T.red;
 
   const metric=(label:string,value:string,sub?:string,color?:string)=>(
@@ -962,130 +971,68 @@ function TradierOptionsCard({s}:{s:StockData}){
   return(
     <Card>
       <SH title="Options Intelligence" icon={<Zap size={12}/>}
-        sub={sp ? `${assessment} · EV ${ev>=0?"+":""}$${ev.toFixed(0)}/contract` : "IV data only"}/>
+        sub={sp ? `${assessment} · EV ${ev>=0?"+":""}$${ev.toFixed(0)}/contract${!isLive?" · estimated":""}` : "IV data only"}/>
 
-      {/* IV strip — always visible */}
+      {/* IV strip */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-        {metric(
-          "IV RANK",
-          ivr!=null?ivr.toFixed(0):"—",
-          samples<20?`${samples}/20 samples`:ivrLabel,
-          ivrColor
-        )}
-        {metric(
-          "CURRENT IV",
-          iv!=null?`${(iv*100).toFixed(0)}%`:"—",
-          "ATM 30d annualized"
-        )}
-        {metric(
-          "P20 (MODEL)",
-          p20>0?`${p20pct.toFixed(0)}%`:"—",
-          p20>=0.15?"D9-D10":p20>=0.08?"D7-D8":p20>=0.03?"D5-D6":"low signal",
-          p20>=0.15?T.green:p20>=0.08?T.amber:T.textMuted
-        )}
-        {metric(
-          "ASSESSMENT",
-          assessment.replace("★ ",""),
-          sp ? `EV/risk: ${evPerDollar>=0?"+":""}${(evPerDollar*100).toFixed(0)}%` : "no spread available",
-          assessColor
-        )}
+        {metric("IV RANK",ivr!=null?ivr.toFixed(0):"—",samples<20?`${samples}/20 samples`:ivrLabel,ivrColor)}
+        {metric("CURRENT IV",iv!=null?`${(iv*100).toFixed(0)}%`:"—","ATM 30d annualized")}
+        {metric("P20 (MODEL)",p20>0?`${p20pct.toFixed(0)}%`:"—",p20>=0.15?"D9-D10":p20>=0.08?"D7-D8":p20>=0.03?"D5-D6":"low signal",p20>=0.15?T.green:p20>=0.08?T.amber:T.textMuted)}
+        {metric("ASSESSMENT",assessment.replace("★ ",""),sp?`EV/risk: ${evPerDollar>=0?"+":""}${(evPerDollar*100).toFixed(0)}%`:"",assessColor)}
       </div>
 
-      {/* Market positioning strip */}
+      {/* Market positioning */}
       {(s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null)&&(
         <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
           <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>MARKET POSITIONING</div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14}}>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>P/C VOL RATIO</div>
-              {s.tradier_pc_ratio!=null?(()=>{
-                const pc=s.tradier_pc_ratio;
-                const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";
-                const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;
-                return(<>
-                  <div style={{fontSize:16,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div>
-                  <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div>
-                </>);
-              })():(
-                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
-              )}
+              {s.tradier_pc_ratio!=null?(()=>{const pc=s.tradier_pc_ratio;const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;return(<><div style={{fontSize:16,color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
             </div>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IV TERM STRUCTURE</div>
-              {(s.tradier_iv_30d!=null||s.tradier_iv_60d!=null||s.tradier_iv_90d!=null)?(()=>{
-                const ts=s.tradier_term_structure;
-                const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";
-                const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;
-                const iv30=s.tradier_iv_30d,iv60=s.tradier_iv_60d,iv90=s.tradier_iv_90d;
-                return(<>
-                  <div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}>
-                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span>
-                    <span style={{fontSize:9,color:T.textLight}}>→</span>
-                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span>
-                    <span style={{fontSize:9,color:T.textLight}}>→</span>
-                    <span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span>
-                  </div>
-                  <div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div>
-                  <div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div>
-                </>);
-              })():(
-                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
-              )}
+              {(s.tradier_iv_30d!=null||s.tradier_iv_60d!=null||s.tradier_iv_90d!=null)?(()=>{const ts=s.tradier_term_structure;const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;const iv30=s.tradier_iv_30d,iv60=s.tradier_iv_60d,iv90=s.tradier_iv_90d;return(<><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span></div><div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div><div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
             </div>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IMPLIED EARNINGS MOVE</div>
-              {s.tradier_implied_earnings_move?(()=>{
-                const iem=s.tradier_implied_earnings_move;
-                return(<>
-                  <div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div>
-                  <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div>
-                </>);
-              })():(<>
-                <div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>
-                <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div>
-              </>)}
+              {s.tradier_implied_earnings_move?(()=>{const iem=s.tradier_implied_earnings_move;return(<><div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div></>);})():(<><div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div></>)}
             </div>
           </div>
         </div>
       )}
 
-      {/* ═══ SPREAD PROPOSAL — always shown when Tradier has spread data ═══ */}
-      {sp&&(<>
-        {/* Contract detail */}
-        <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>BULL CALL SPREAD PROPOSAL</div>
+      {/* ═══ SPREAD PROPOSAL ═══ */}
+      {sp&&p20>0&&(<>
+        {!isLive&&(
+          <div style={{padding:"6px 10px",borderRadius:4,background:T.amberLight,border:"1px solid #fde68a",fontSize:10,fontFamily:T.mono,color:T.amber,fontWeight:600,marginBottom:10,display:"inline-block"}}>
+            ⚠ ESTIMATED SPREAD — verify strikes and premiums with your broker before trading
+          </div>
+        )}
+        <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>
+          BULL CALL SPREAD {isLive?"(LIVE CHAIN)":"(ESTIMATED)"}
+        </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
           {metric("SPOT",`$${sp.spot.toFixed(2)}`)}
-          {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,`mid $${sp.long_mid.toFixed(2)}`,T.green)}
-          {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,`mid $${sp.short_mid.toFixed(2)}`,T.red)}
-          {metric("EXPIRATION",sp.expiration,`${sp.dte}d to expiry`)}
-          {metric("NET DEBIT",`$${sp.net_debit.toFixed(2)}`,"per share (×100/contract)")}
+          {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,isLive?`mid $${sp.long_mid.toFixed(2)}`:"ATM est.",T.green)}
+          {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,isLive?`mid $${sp.short_mid.toFixed(2)}`:"~+10% est.",T.red)}
+          {metric("EXPIRATION",sp.expiration,`~${sp.dte}d to expiry`)}
+          {metric("NET DEBIT",`$${sp.net_debit.toFixed(2)}`,isLive?"per share (×100)":"estimated from IV")}
           {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${bePct.toFixed(1)}% from spot`)}
         </div>
-
-        {/* Probability-driven economics — the core value-add */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
           {metric("MAX GAIN",`+$${sp.max_gain_per_contract.toFixed(0)}`,"stock ≥ short strike",T.green)}
           {metric("MAX LOSS",`-$${sp.max_loss_per_contract.toFixed(0)}`,"stock ≤ long strike",T.red)}
           {metric("RISK / REWARD",`${sp.risk_reward.toFixed(2)} : 1`,sp.risk_reward>=1.5?"favorable":sp.risk_reward>=1.0?"even":"unfavorable",sp.risk_reward>=1.5?T.green:sp.risk_reward>=1.0?T.amber:T.red)}
-          {metric(
-            "P(BREAKEVEN)",
-            `~${Math.round(pBreakeven*100)}%`,
-            `close ≥ $${sp.break_even_price.toFixed(0)} (+${bePct.toFixed(0)}%)`,
-            pBreakeven>=0.50?T.green:pBreakeven>=0.35?T.amber:T.red
-          )}
-          {metric(
-            "P(MAX PROFIT)",
-            `~${Math.round(pMaxProfit*100)}%`,
-            `close ≥ $${sp.short_strike.toFixed(0)} (+${shortPct.toFixed(0)}%)`,
-            pMaxProfit>=0.25?T.green:pMaxProfit>=0.15?T.amber:T.red
-          )}
+          {metric("P(BREAKEVEN)",`~${Math.round(pBreakeven*100)}%`,`close ≥ +${bePct.toFixed(0)}%`,pBreakeven>=0.50?T.green:pBreakeven>=0.35?T.amber:T.red)}
+          {metric("P(MAX PROFIT)",`~${Math.round(pMaxProfit*100)}%`,`close ≥ +${shortPct.toFixed(0)}%`,pMaxProfit>=0.25?T.green:pMaxProfit>=0.15?T.amber:T.red)}
         </div>
 
-        {/* EV block — the decision driver */}
+        {/* EV block */}
         <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"#f0fdf4":"#fef2f2",border:`1px solid ${evPositive?"#bbf7d0":"#fecaca"}`,marginBottom:14}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
             <div>
-              <div style={{fontWeight:600,color:evPositive?T.green:T.red,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE</div>
+              <div style={{fontWeight:600,color:evPositive?T.green:T.red,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!isLive?" (ESTIMATED)":""}</div>
               <div style={{fontSize:22,fontWeight:700,fontFamily:T.mono,color:evPositive?T.green:T.red}}>
                 {ev>=0?"+":""}${ev.toFixed(0)} <span style={{fontSize:11,fontWeight:500,color:T.textMuted}}>/ contract</span>
               </div>
@@ -1100,65 +1047,70 @@ function TradierOptionsCard({s}:{s:StockData}){
           <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.6}}>
             {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = <b style={{color:evPositive?T.green:T.red}}>{ev>=0?"+":""}${ev.toFixed(0)}</b>
           </div>
-
-          {/* Threshold indicators */}
           <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
             {[
-              {label:"P(BE) > 50%", ok:pBreakeven>=0.50, desc:"likely to break even"},
-              {label:"P(BE) > 60%", ok:pBreakeven>=0.60, desc:"strong breakeven odds"},
-              {label:"EV/risk > +10%", ok:evPerDollar>0.10, desc:"meaningful edge"},
-              {label:"IVR ≤ 30", ok:ivr!=null&&ivr<=30, desc:"cheap premium"},
+              {label:"P(BE) > 50%", ok:pBreakeven>=0.50},
+              {label:"P(BE) > 60%", ok:pBreakeven>=0.60},
+              {label:"EV/risk > +10%", ok:evPerDollar>0.10},
+              {label:"IVR ≤ 30", ok:ivr!=null&&ivr<=30},
             ].map((t,i)=>(
               <div key={i} style={{
                 padding:"3px 8px",borderRadius:4,fontSize:9,fontFamily:T.mono,fontWeight:600,
-                background:t.ok?"#f0fdf4":"#f9fafb",
-                color:t.ok?T.green:T.textLight,
+                background:t.ok?"#f0fdf4":"#f9fafb",color:t.ok?T.green:T.textLight,
                 border:`1px solid ${t.ok?"#bbf7d0":T.divider}`,
-              }}>
-                {t.ok?"✓":"○"} {t.label}
-              </div>
+              }}>{t.ok?"✓":"○"} {t.label}</div>
             ))}
           </div>
         </div>
 
-        {/* IBKR execution template */}
-        <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
-          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
-          <div>Order type: <b>Debit Spread (Bull Call)</b></div>
-          <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
-          <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
-          <div>Net: pay no more than <b>${sp.net_debit.toFixed(2)}/spread</b> (×100 = ${(sp.net_debit*100).toFixed(0)}/contract)</div>
-        </div>
+        {/* IBKR template for live spreads */}
+        {isLive&&(
+          <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
+            <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
+            <div>Order type: <b>Debit Spread (Bull Call)</b></div>
+            <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
+            <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
+            <div>Net: pay no more than <b>${sp.net_debit.toFixed(2)}/spread</b> (×100 = ${(sp.net_debit*100).toFixed(0)}/contract)</div>
+          </div>
+        )}
 
-        {/* Sizing caveats */}
+        {/* Broker lookup for estimated spreads */}
+        {!isLive&&(
+          <div style={{padding:"10px 12px",borderRadius:5,background:"#f5f3ff",border:"1px solid #ddd6fe",fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
+            <div style={{fontWeight:600,color:"#8b5cf6",fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VERIFY WITH BROKER</div>
+            Look up: <b>{s.symbol} {sp.long_strike}/{sp.short_strike} call spread</b>, ~30 DTE.
+            Actual premiums will differ — the EV above uses IV-estimated costs.
+            If real net debit is lower, EV improves; if higher, EV worsens.
+          </div>
+        )}
+
+        {/* Sizing */}
         <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
           <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING</div>
-          Speculative overlay: <b>1-2% of portfolio per spread, max 5% total</b>. P(breakeven) and P(max profit) are model estimates (AUC 0.78) — not exact probabilities. Spreads can lose 100% of debit. {!evPositive && <><b style={{color:T.red}}>EV is negative — the model says this trade does not have a statistical edge at current premiums.</b></>}
+          Speculative overlay: <b>1-2% of portfolio per spread, max 5% total</b>. Probabilities are model estimates (AUC 0.78). Spreads can lose 100% of debit. {!evPositive && <><b style={{color:T.red}}>EV is negative — no statistical edge at current premiums.</b></>}
         </div>
       </>)}
 
-      {/* No spread data from Tradier */}
-      {!sp&&hasIV&&(
+      {/* No spread possible (no P20 or can't construct) */}
+      {(!sp || p20<=0)&&hasIV&&(
         <div style={{padding:"8px 12px",borderRadius:5,background:"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
-          No spread data from Tradier{samples<20?` (IV rank needs ${20-samples} more daily samples)`:""}{!hasIV?" — IV data not available for this stock":""}.
-          Spread proposals appear once Tradier returns option chain data (US stocks ≥ $1B mkt cap).
+          {p20<=0
+            ? "ML model probability not available — spread EV cannot be calculated. IV data shown above for reference."
+            : "Spread estimation requires stock price > $0 and P20 > 0%."}
         </div>
       )}
 
       <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
         Probabilities from time_model_v2 (OOS AUC 0.7836), calibrated against 21,650 OOS samples.
-        IV/Greeks from Tradier (ORATS-sourced). EV = P(max profit) × gain − P(miss) × loss.
-        Not investment advice — research tool only.
+        {isLive?" IV/Greeks from Tradier (ORATS-sourced).":" Spread estimated from price + IV; verify with broker."}
+        {" "}EV = P(max profit) × gain − P(miss) × loss. Not investment advice.
       </div>
     </Card>
   );
 }
 
-// Keep old name as alias
-// const TradierSpreadCard=TradierOptionsCard;
-
 // Keep old name as alias so the existing render block doesn't break
-// const TradierSpreadCard=TradierOptionsCard;
+const TradierSpreadCard=TradierOptionsCard;
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol}:{symbol:string}){
