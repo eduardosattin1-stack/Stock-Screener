@@ -8,6 +8,9 @@ import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink
 const SIGNAL_TRACKS = "/api/performance/signal-tracks";
 const HIT_RATES     = "/api/performance/hit-rates";
 const GCS_PERFORMANCE = "/api/gcs/performance";
+// v1.2 (May 2026): cycles data is written directly to GCS by signal_tracker.py
+// and read via the standard /api/gcs proxy — no backend bridge needed.
+const GCS_CYCLES_ROOT = "/api/gcs/hit_rate_tracking";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 interface SignalTrackOpen {
@@ -31,6 +34,69 @@ interface HitRateOpen {
 interface HitRateClosed extends HitRateOpen {
   exit_date: string; exit_reason: "hit_10pct" | "window_closed";
   hit: boolean; max_gain_pct: number;
+}
+
+// ── v1.2 cycles types — matches signal_tracker.py output ──────────────────
+interface CycleState {
+  collecting_cycle_id: string | null;
+  collecting_start: string | null;
+  collecting_ends: string | null;
+  resolving_cycle_ids: string[];
+  archived_cycle_ids: string[];
+}
+interface RollingHealth {
+  computed_date: string | null;
+  window_days: number;
+  d10_n: number; d10_hits: number; d10_hit_rate: number;
+  d1_n: number;  d1_hits: number;  d1_hit_rate: number;
+  baseline_d10: number; baseline_d1: number;
+  kill_switch_threshold: number;
+  kill_switch_active: boolean;
+  status: "HEALTHY" | "DEGRADED" | "UNDER_SAMPLED" | "NOT_YET_COMPUTED";
+}
+interface Prediction {
+  symbol: string; entry_date: string; cycle_id: string; region: string;
+  entry_price: number; target_price: number; fate_window_ends: string;
+  p20: number; decile: number; signal_strength: string;
+  mode_qualifications: string[];
+  composite?: number; sector?: string; country?: string; market_cap?: number;
+  ivr_at_entry?: number; iv_at_entry?: number;
+  outcome: "OPEN" | "HIT" | "EXPIRED";
+  max_high_observed_pct: number;
+  max_drawdown_observed_pct: number;
+  current_price: number;
+  last_updated: string; days_observed: number;
+  realized_return_pct?: number | null;
+  realized_contract_pnl?: number | null;
+  resolution_date?: string;
+  // Optional EV/spread block — absent on rows that couldn't synthesize a spread
+  is_live_spread?: boolean;
+  long_strike?: number; short_strike?: number;
+  net_debit?: number;
+  max_gain_per_contract?: number; max_loss_per_contract?: number;
+  break_even_price?: number; break_even_move_pct?: number;
+  p_breakeven?: number; p_max_profit?: number;
+  ev_dollars?: number; ev_per_dollar?: number;
+  assessment?: string;
+}
+interface CycleSummary {
+  cycle_id: string; archived_date: string;
+  total_predictions: number;
+  hit_count: number; expired_count: number; hit_rate: number;
+  mean_realized_return_pct: number;
+  mean_max_runup_pct: number; mean_max_drawdown_pct: number;
+  best_runup_pct: number; worst_drawdown_pct: number;
+  aggregate_ev_dollars: number; aggregate_realized_pnl_dollars: number;
+  ev_realization_ratio: number;
+  hit_rate_by_decile: Record<string, { n: number; hits: number; hit_rate: number }>;
+  hit_rate_by_signal_strength: Record<string, { n: number; hits: number; hit_rate: number }>;
+  calibration_check: {
+    d10_hit_rate: number; d10_n: number; d1_hit_rate: number; d1_n: number;
+    d10_baseline: number; d1_baseline: number;
+    observed_odds_ratio: number | null; baseline_odds_ratio: number;
+    kill_switch_threshold: number; healthy: boolean;
+  };
+  predictions: Prediction[];
 }
 // ── BORING strategy tracker ────────────────────────────────────────────────
 interface BoringPosition {
@@ -1376,12 +1442,466 @@ function pageBtnStyle(disabled: boolean): React.CSSProperties {
 
 const PAGE_SIZE = 25;
 
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CyclesTab — v1.2 (Commit 2, May 2026)
+// ══════════════════════════════════════════════════════════════════════════════
+// P20 ML-prediction cycles + calibration tracking. Three layers:
+//   1. Top:    current collecting cycle live stats + kill-switch banner
+//   2. Middle: rolling 90-day D10 hit rate (model-health card)
+//   3. Bottom: archived cycles list — click a card for the per-prediction
+//              breakdown with hit/expire outcomes and EV vs realized P&L
+//
+// All data is read directly from GCS via /api/gcs proxy. No backend endpoint
+// changes needed — signal_tracker.py writes these files on every scan.
+//
+// ══════════════════════════════════════════════════════════════════════════════
+
+function CyclesTab() {
+  const [state, setState]   = useState<CycleState | null>(null);
+  const [health, setHealth] = useState<RollingHealth | null>(null);
+  const [archives, setArchives] = useState<Record<string, CycleSummary>>({});
+  // Open predictions for any cycle that's currently collecting or resolving.
+  // Keyed by cycle_id so we can render multiple cycles in parallel.
+  const [openCycles, setOpenCycles] = useState<Record<string, Prediction[]>>({});
+  const [selectedArchive, setSelectedArchive] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+
+  // Initial load — state + health, then fan out to cycle files.
+  useEffect(() => {
+    const t = Date.now();
+    Promise.all([
+      fetch(`${GCS_CYCLES_ROOT}/current_cycle.json?t=${t}`).then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_CYCLES_ROOT}/rolling_health.json?t=${t}`).then(r => r.ok ? r.json() : null),
+    ])
+      .then(([s, h]: [CycleState | null, RollingHealth | null]) => {
+        setState(s);
+        setHealth(h);
+
+        if (!s) { setLoading(false); return; }
+
+        // Fetch open predictions for collecting + resolving cycles in parallel.
+        const liveIds = [
+          ...(s.collecting_cycle_id ? [s.collecting_cycle_id] : []),
+          ...s.resolving_cycle_ids,
+        ];
+        const openPromises = liveIds.map(id =>
+          fetch(`${GCS_CYCLES_ROOT}/cycles/${id}/open.json?t=${t}`)
+            .then(r => r.ok ? r.json() : null)
+            .then((d: { predictions?: Prediction[] } | null) => ({ id, preds: d?.predictions || [] }))
+            .catch(() => ({ id, preds: [] }))
+        );
+
+        // Fetch the most recent N archived cycles (show last 12 by default).
+        const archivedToFetch = s.archived_cycle_ids.slice(-12);
+        const archivePromises = archivedToFetch.map(id =>
+          fetch(`${GCS_CYCLES_ROOT}/cycles/${id}/archived.json?t=${t}`)
+            .then(r => r.ok ? r.json() : null)
+            .then((d: CycleSummary | null) => ({ id, data: d }))
+            .catch(() => ({ id, data: null }))
+        );
+
+        return Promise.all([Promise.all(openPromises), Promise.all(archivePromises)])
+          .then(([opens, archs]) => {
+            const openMap: Record<string, Prediction[]> = {};
+            opens.forEach(o => { openMap[o.id] = o.preds; });
+            setOpenCycles(openMap);
+
+            const archMap: Record<string, CycleSummary> = {};
+            archs.forEach(a => { if (a.data) archMap[a.id] = a.data; });
+            setArchives(archMap);
+          });
+      })
+      .catch(e => setErr(e?.message || "Failed to load cycles"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <Empty icon={<Target size={36} color={T.divider} />} title="Loading cycles…" />;
+  }
+  if (err) {
+    return <Empty icon={<Target size={36} color={T.divider} />} title="Failed to load cycles" sub={err} />;
+  }
+  if (!state || !state.collecting_cycle_id) {
+    return (
+      <Empty icon={<Target size={36} color={T.divider} />}
+        title="No cycles yet"
+        sub="Cycles begin tracking once the first scan with hit_prob > 0 stocks completes."/>
+    );
+  }
+
+  const collectingPreds = openCycles[state.collecting_cycle_id] || [];
+  const resolvingTotal  = state.resolving_cycle_ids.reduce(
+    (a, id) => a + ((openCycles[id] || []).length), 0);
+
+  // Derive live decile distribution and aggregate stats for the collecting cycle
+  const liveDecileDist: Record<number, number> = {};
+  let liveHitsSoFar = 0;
+  for (const p of collectingPreds) {
+    liveDecileDist[p.decile] = (liveDecileDist[p.decile] || 0) + 1;
+    if (p.outcome === "HIT") liveHitsSoFar++;
+  }
+  const daysIntoCycle = state.collecting_start
+    ? Math.max(0, Math.floor((Date.now() - new Date(state.collecting_start + "T00:00:00").getTime()) / 86400000))
+    : 0;
+  const cycleEndsIn = state.collecting_ends
+    ? Math.max(0, Math.floor((new Date(state.collecting_ends + "T00:00:00").getTime() - Date.now()) / 86400000))
+    : 0;
+
+  // Pick a sorted archive list (newest first) for display
+  const archiveList = state.archived_cycle_ids
+    .slice()
+    .reverse()
+    .map(id => archives[id])
+    .filter((a): a is CycleSummary => !!a);
+
+  return (
+    <>
+      {/* ─── Kill switch banner ─── shown only when active. Demands attention. */}
+      {health?.kill_switch_active && (
+        <div style={{
+          padding: "12px 16px", marginBottom: 16, borderRadius: 6,
+          background: "#fef2f2", border: `2px solid ${T.red}`,
+          display: "flex", alignItems: "center", gap: 12,
+        }}>
+          <div style={{ fontSize: 22 }}>⚠</div>
+          <div>
+            <div style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.red, letterSpacing: "0.05em" }}>
+              KILL SWITCH ACTIVE — MODEL DEGRADATION DETECTED
+            </div>
+            <div style={{ fontFamily: T.mono, fontSize: 11, color: T.text, marginTop: 3, lineHeight: 1.5 }}>
+              Rolling 90-day D10 hit rate is {(health.d10_hit_rate * 100).toFixed(1)}%, below the {(health.kill_switch_threshold * 100).toFixed(0)}% floor.
+              Baseline calibration is {(health.baseline_d10 * 100).toFixed(1)}%. The model needs retraining.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── KPI strip: collecting cycle + cumulative ─── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
+        <KPI label="COLLECTING" value={`Cycle ${state.collecting_cycle_id}`}
+          sub={`Day ${daysIntoCycle}/30 · closes in ${cycleEndsIn}d`}/>
+        <KPI label="LIVE PREDICTIONS"
+          value={String(collectingPreds.length)}
+          sub={`${liveHitsSoFar} already hit · ${collectingPreds.length - liveHitsSoFar} still tracking`}/>
+        <KPI label="RESOLVING" value={String(resolvingTotal)}
+          sub={`${state.resolving_cycle_ids.length} cycle(s) past collection`}/>
+        <KPI label="ARCHIVED" value={String(state.archived_cycle_ids.length)}
+          sub="Total cycles fully resolved"/>
+      </div>
+
+      {/* ─── Rolling 90d D10 health card ─── */}
+      {health && (
+        <Card style={{ marginBottom: 20 }}>
+          <SH title="90-Day Rolling Calibration"
+            icon={<Award size={12}/>}
+            sub={`D10 vs baseline · ${health.status} · ${health.computed_date || "—"}`}/>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, padding: "8px 0" }}>
+            <CalibrationStat
+              label="D10 OBSERVED"
+              value={`${(health.d10_hit_rate * 100).toFixed(1)}%`}
+              sub={`n=${health.d10_n} · baseline ${(health.baseline_d10 * 100).toFixed(1)}%`}
+              color={health.kill_switch_active ? T.red : health.d10_n >= 10 ? T.green : T.muted}/>
+            <CalibrationStat
+              label="D1 OBSERVED"
+              value={`${(health.d1_hit_rate * 100).toFixed(1)}%`}
+              sub={`n=${health.d1_n} · baseline ${(health.baseline_d1 * 100).toFixed(1)}%`}
+              color={T.muted}/>
+            <CalibrationStat
+              label="ODDS RATIO"
+              value={health.d1_hit_rate > 0 ? `${(health.d10_hit_rate / health.d1_hit_rate).toFixed(1)}x` : "—"}
+              sub={`baseline ${(health.baseline_d10 / health.baseline_d1).toFixed(1)}x`}
+              color={T.text}/>
+            <CalibrationStat
+              label="STATUS"
+              value={health.status.replace("_", " ")}
+              sub={`kill switch < ${(health.kill_switch_threshold * 100).toFixed(0)}% D10`}
+              color={health.kill_switch_active ? T.red : health.status === "HEALTHY" ? T.green : T.amber}/>
+          </div>
+          <div style={{ marginTop: 10, fontSize: 9, color: T.light, fontFamily: T.mono, lineHeight: 1.5 }}>
+            Computed across all predictions in collecting + resolving + last 6 archived cycles whose entry date falls within
+            the trailing {health.window_days} days. OPEN predictions still in their 28-day fate window are excluded to avoid
+            artificially deflating the rate.
+          </div>
+        </Card>
+      )}
+
+      {/* ─── Collecting cycle: decile distribution + live status ─── */}
+      <Card style={{ marginBottom: 20 }}>
+        <SH title={`Collecting Cycle ${state.collecting_cycle_id}`}
+          icon={<Radio size={12}/>}
+          sub={`Day ${daysIntoCycle}/30 · ${collectingPreds.length} predictions captured so far`}/>
+        {collectingPreds.length === 0 ? (
+          <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
+            No predictions in this cycle yet. New predictions enter as the model emits hit_prob &gt; 0 stocks.
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6 }}>
+              PREDICTIONS BY DECILE
+            </div>
+            <DecileBarChart distribution={liveDecileDist}/>
+            <div style={{ marginTop: 14, overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract"].map((h, i) => (
+                      <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {collectingPreds
+                    .slice()
+                    .sort((a, b) => b.p20 - a.p20)
+                    .slice(0, 30)
+                    .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
+                </tbody>
+              </table>
+              {collectingPreds.length > 30 && (
+                <div style={{ padding: "8px 12px", fontSize: 10, fontFamily: T.mono, color: T.muted, textAlign: "center" }}>
+                  Showing top 30 by P20 · {collectingPreds.length - 30} more in cycle
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </Card>
+
+      {/* ─── Archived cycles ─── */}
+      <Card>
+        <SH title={`Archived Cycles (${archiveList.length})`}
+          icon={<Clock size={12}/>}
+          sub="Click a card for the per-prediction breakdown"/>
+        {archiveList.length === 0 ? (
+          <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
+            No archived cycles yet. The first cycle archives ~58 days after open (30d collect + 28d fate window).
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+            {archiveList.map(a => (
+              <ArchiveCard key={a.cycle_id} summary={a}
+                expanded={selectedArchive === a.cycle_id}
+                onToggle={() => setSelectedArchive(selectedArchive === a.cycle_id ? null : a.cycle_id)}/>
+            ))}
+          </div>
+        )}
+        {selectedArchive && archives[selectedArchive] && (
+          <div style={{ marginTop: 18, paddingTop: 16, borderTop: `2px solid ${T.divider}` }}>
+            <ArchiveDrillDown summary={archives[selectedArchive]}/>
+          </div>
+        )}
+      </Card>
+    </>
+  );
+}
+
+
+// ─── Small components used inside CyclesTab ──────────────────────────────────
+
+function CalibrationStat({ label, value, sub, color }: {
+  label: string; value: string; sub: string; color: string;
+}) {
+  return (
+    <div style={{ padding: "10px 12px", background: T.greenLight, borderRadius: 6, border: `1px solid ${T.greenBorder}` }}>
+      <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.08em" }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 700, color, fontFamily: T.mono, marginTop: 4 }}>{value}</div>
+      <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono, marginTop: 2 }}>{sub}</div>
+    </div>
+  );
+}
+
+function DecileBarChart({ distribution }: { distribution: Record<number, number> }) {
+  // Horizontal bars for D1..D10 showing prediction count per decile.
+  const maxN = Math.max(1, ...Object.values(distribution));
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(d => {
+        const n = distribution[d] || 0;
+        const w = (n / maxN) * 100;
+        // D10 highlighted green, D1 red, gradient in between for visual weight
+        const c = d >= 8 ? T.green : d >= 5 ? T.amber : T.light;
+        return (
+          <div key={d} style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: T.mono, fontSize: 10 }}>
+            <div style={{ width: 28, color: T.muted, fontWeight: 600, textAlign: "right" }}>D{d}</div>
+            <div style={{ flex: 1, height: 14, background: T.divider, borderRadius: 3, position: "relative", overflow: "hidden" }}>
+              <div style={{ width: `${w}%`, height: "100%", background: c, transition: "width 0.4s" }}/>
+              {n > 0 && (
+                <span style={{ position: "absolute", left: 6, top: 0, lineHeight: "14px", fontSize: 9, color: w > 25 ? "#fff" : T.text, fontWeight: 700 }}>
+                  {n}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function PredictionRow({ p }: { p: Prediction }) {
+  const statusColor = p.outcome === "HIT" ? T.greenPos : p.outcome === "EXPIRED" ? T.red : T.muted;
+  const evValue = p.ev_dollars;
+  const evColor = evValue == null ? T.light : evValue > 0 ? T.greenPos : T.red;
+  return (
+    <tr>
+      <td style={{ ...td, textAlign: "left", fontWeight: 600 }}>{p.symbol}</td>
+      <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+      <td style={{ ...td, textAlign: "right" }}>{(p.p20 * 100).toFixed(1)}%</td>
+      <td style={{ ...td, textAlign: "right" }}>D{p.decile}</td>
+      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>{p.signal_strength}</td>
+      <td style={{ ...td, textAlign: "right" }}>{p.days_observed}/28</td>
+      <td style={{ ...td, textAlign: "right" }}>${p.current_price.toFixed(2)}</td>
+      <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
+        {p.max_high_observed_pct >= 0 ? "+" : ""}{p.max_high_observed_pct.toFixed(1)}%
+      </td>
+      <td style={{ ...td, textAlign: "right", color: p.max_drawdown_observed_pct < 0 ? T.red : T.muted, fontWeight: 600 }}>
+        {p.max_drawdown_observed_pct.toFixed(1)}%
+      </td>
+      <td style={{ ...td, textAlign: "right", color: statusColor, fontWeight: 600 }}>{p.outcome}</td>
+      <td style={{ ...td, textAlign: "right", color: evColor, fontSize: 10 }}>
+        {evValue == null ? "—" : `${evValue >= 0 ? "+" : ""}$${evValue.toFixed(0)}`}
+      </td>
+    </tr>
+  );
+}
+
+function ArchiveCard({ summary, expanded, onToggle }: {
+  summary: CycleSummary; expanded: boolean; onToggle: () => void;
+}) {
+  const cc = summary.calibration_check;
+  const healthy = cc.healthy;
+  return (
+    <div onClick={onToggle}
+      style={{
+        padding: "12px 14px", borderRadius: 6,
+        background: expanded ? T.greenLight : "white",
+        border: `1px solid ${expanded ? T.green : T.border}`,
+        cursor: "pointer", transition: "all 0.15s",
+      }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+        <div style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 700, color: T.text }}>
+          {summary.cycle_id}
+        </div>
+        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
+          {summary.archived_date}
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+        <div>
+          <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600 }}>HIT RATE</div>
+          <div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.mono, color: T.text }}>
+            {(summary.hit_rate * 100).toFixed(1)}%
+          </div>
+          <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono }}>
+            {summary.hit_count}/{summary.total_predictions} preds
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600 }}>D10 vs D1</div>
+          <div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.mono, color: healthy ? T.green : T.red }}>
+            {(cc.d10_hit_rate * 100).toFixed(0)}% / {(cc.d1_hit_rate * 100).toFixed(0)}%
+          </div>
+          <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono }}>
+            {cc.observed_odds_ratio != null ? `${cc.observed_odds_ratio.toFixed(1)}x odds` : "—"}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 10, fontSize: 9, fontFamily: T.mono, color: T.muted }}>
+        <span>↑ {summary.best_runup_pct >= 0 ? "+" : ""}{summary.best_runup_pct.toFixed(0)}%</span>
+        <span>↓ {summary.worst_drawdown_pct.toFixed(0)}%</span>
+        <span>EV ${summary.aggregate_ev_dollars.toFixed(0)} → {summary.aggregate_realized_pnl_dollars >= 0 ? "+" : ""}${summary.aggregate_realized_pnl_dollars.toFixed(0)}</span>
+      </div>
+    </div>
+  );
+}
+
+function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
+  // Decile bars sourced from the archived summary (hit_rate_by_decile).
+  const decileDist: Record<number, number> = {};
+  Object.entries(summary.hit_rate_by_decile).forEach(([k, v]) => {
+    decileDist[Number(k)] = v.n;
+  });
+  return (
+    <>
+      <div style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 10, letterSpacing: "0.05em" }}>
+        Cycle {summary.cycle_id} · Per-prediction outcomes
+      </div>
+
+      {/* Per-decile hit rate grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 6, marginBottom: 14 }}>
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(d => {
+          const cell = summary.hit_rate_by_decile[String(d)] || { n: 0, hits: 0, hit_rate: 0 };
+          const c = cell.n === 0 ? T.light : cell.hit_rate >= 0.15 ? T.green : cell.hit_rate >= 0.05 ? T.amber : T.red;
+          return (
+            <div key={d} style={{ textAlign: "center", padding: "8px 4px", background: T.greenLight, borderRadius: 4, border: `1px solid ${T.greenBorder}` }}>
+              <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600 }}>D{d}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: T.mono }}>
+                {cell.n > 0 ? `${(cell.hit_rate * 100).toFixed(0)}%` : "—"}
+              </div>
+              <div style={{ fontSize: 8, color: T.light, fontFamily: T.mono }}>{cell.hits}/{cell.n}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* All predictions in the cycle, sorted by P20 desc */}
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized"].map((h, i) => (
+                <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {summary.predictions
+              .slice()
+              .sort((a, b) => b.p20 - a.p20)
+              .map(p => {
+                const statusColor = p.outcome === "HIT" ? T.greenPos : T.red;
+                const realized = p.realized_contract_pnl;
+                const realizedColor = realized == null ? T.light : realized >= 0 ? T.greenPos : T.red;
+                return (
+                  <tr key={`${p.symbol}-${p.entry_date}`}>
+                    <td style={{ ...td, textAlign: "left", fontWeight: 600 }}>{p.symbol}</td>
+                    <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right" }}>{(p.p20 * 100).toFixed(1)}%</td>
+                    <td style={{ ...td, textAlign: "right" }}>D{p.decile}</td>
+                    <td style={{ ...td, textAlign: "right" }}>{p.days_observed}</td>
+                    <td style={{ ...td, textAlign: "right" }}>${p.current_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
+                      +{p.max_high_observed_pct.toFixed(1)}%
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.red, fontWeight: 600 }}>
+                      {p.max_drawdown_observed_pct.toFixed(1)}%
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: statusColor, fontWeight: 600 }}>{p.outcome}</td>
+                    <td style={{ ...td, textAlign: "right" }}>
+                      {p.ev_dollars == null ? "—" : `${p.ev_dollars >= 0 ? "+" : ""}$${p.ev_dollars.toFixed(0)}`}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: realizedColor, fontWeight: 600 }}>
+                      {realized == null ? "—" : `${realized >= 0 ? "+" : ""}$${realized.toFixed(0)}`}
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+
 // ══════════════════════════════════════════════════════════════════════════════
 // Shell
 // ══════════════════════════════════════════════════════════════════════════════
 export default function Performance() {
   const router = useRouter();
-  const [tab, setTab] = useState<"signal" | "hitrate" | "strategies">("strategies");
+  const [tab, setTab] = useState<"strategies" | "cycles" | "signal" | "hitrate">("strategies");
 
   return (
     <div style={{ padding: "16px 20px", maxWidth: 1400, margin: "0 auto" }}>
@@ -1392,16 +1912,18 @@ export default function Performance() {
         </div>
         <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>
           Forward-only paper-tracking. 4 strategies: BORING (26w hold) · COMPOSITE (rotation) · MOMENTUM (rotation) · FALLEN ANGEL (rotation, gate). Daily price refresh.
+          P20 prediction cycles run in parallel: every enriched stock tracked over 28 days, decile-bucketed for calibration validation.
         </p>
       </div>
 
       <div style={{ display: "flex", gap: 6, marginBottom: 16, borderBottom: `1px solid ${T.divider}`, paddingBottom: 2 }}>
         {[
-          { key: "strategies", label: "Strategies",          icon: <BarChart3 size={12} /> },
-          { key: "signal",     label: "Signal Performance",  icon: <TrendingUp size={12} /> },
-          { key: "hitrate",    label: "P(+10%) Hit Rate",    icon: <Target size={12} /> },
+          { key: "strategies", label: "Strategies",         icon: <BarChart3 size={12} /> },
+          { key: "cycles",     label: "P20 Cycles",         icon: <Target size={12} /> },
+          { key: "signal",     label: "Signal Performance", icon: <TrendingUp size={12} /> },
+          { key: "hitrate",    label: "Legacy Hit Rate",    icon: <Award size={12} /> },
         ].map(({ key, label, icon }) => (
-          <button key={key} onClick={() => setTab(key as "signal" | "hitrate" | "strategies")}
+          <button key={key} onClick={() => setTab(key as typeof tab)}
             style={{
               display: "flex", alignItems: "center", gap: 5, padding: "7px 16px", fontSize: 12,
               fontFamily: T.mono, fontWeight: 600, border: "none", borderRadius: 6,
@@ -1416,6 +1938,7 @@ export default function Performance() {
       </div>
 
       {tab === "strategies" && <StrategiesTab />}
+      {tab === "cycles"     && <CyclesTab />}
       {tab === "signal"     && <SignalPerfTab router={router} />}
       {tab === "hitrate"    && <HitRateTab router={router} />}
     </div>
