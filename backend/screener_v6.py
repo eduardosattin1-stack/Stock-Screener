@@ -201,10 +201,10 @@ try:
                  f"target={model_data.get('target','?')}, OOS AUC={model_data.get('oos_auc','?')}")
     else:
         log.info("time_model_v2.pkl not found — hit_prob will be 0")
-except ImportError:
-    log.info("joblib/numpy not installed — ML model disabled")
+except ImportError as _ie:
+    log.warning(f"ML model disabled — ImportError loading: {_ie}")
 except Exception as e:
-    log.warning(f"ML model load failed: {e}")
+    log.warning(f"ML model load failed: {type(e).__name__}: {e}")
 
 
 def predict_hit_prob(stock) -> float:
@@ -4694,4 +4694,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# cache bust 1778542618
+# cache bust 1778544443
