@@ -131,9 +131,9 @@ reversal_score?:number;
 interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;value:number|null;smart_money:number|null;}
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
-interface IncomeRow{date:string;calendarYear:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
-interface BalanceSheetRow{date:string;calendarYear:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;}
-interface CashFlowRow{date:string;calendarYear:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
+interface IncomeRow{date:string;calendarYear:string;period?:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
+interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;}
+interface CashFlowRow{date:string;calendarYear:string;period?:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
 interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
 
@@ -1823,16 +1823,38 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
 // ── Financial Charts Panel ──────────────────────────────────────────────────
-function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{incomes:IncomeRow[], balanceSheets:BalanceSheetRow[], cashFlows:CashFlowRow[], loading:boolean}){
-  if(loading)return<Card><SH title="Financial Charts"/><div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
-  if(!incomes.length || !balanceSheets.length || !cashFlows.length) return null;
+function FinancialChartsPanel({
+  incomes, balanceSheets, cashFlows,
+  incomesQ, balanceSheetsQ, cashFlowsQ,
+  loading
+}: {
+  incomes:IncomeRow[], balanceSheets:BalanceSheetRow[], cashFlows:CashFlowRow[],
+  incomesQ:IncomeRow[], balanceSheetsQ:BalanceSheetRow[], cashFlowsQ:CashFlowRow[],
+  loading:boolean
+}) {
+  const [isQuarterly, setIsQuarterly] = useState(false);
+  const [showGrowth, setShowGrowth] = useState(false);
 
-  // We want to show the last 10 years, ascending chronological order
-  const incs = [...incomes].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
-  const bals = [...balanceSheets].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
-  const cfs  = [...cashFlows].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
+  if (loading) return <Card><SH title="Financial Charts"/><div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
   
-  const Chart = ({title, data, keys, colors, labels}: {title:string, data:any[], keys:string[], colors:string[], labels:string[]}) => {
+  const srcIncs = isQuarterly ? incomesQ : incomes;
+  const srcBals = isQuarterly ? balanceSheetsQ : balanceSheets;
+  const srcCfs = isQuarterly ? cashFlowsQ : cashFlows;
+  
+  if (!srcIncs.length || !srcBals.length || !srcCfs.length) return null;
+
+  // For YoY/QoQ growth we need N+1 data points, so we slice -21 for quarters, -11 for annual, then we render only 20 / 10.
+  const limit = isQuarterly ? 21 : 11;
+  const incsRaw = [...srcIncs].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
+  const balsRaw = [...srcBals].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
+  const cfsRaw  = [...srcCfs].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
+
+  // The actual render data is the last `limit - 1` items.
+  const incs = incsRaw.slice(- (limit - 1));
+  const bals = balsRaw.slice(- (limit - 1));
+  const cfs  = cfsRaw.slice(- (limit - 1));
+  
+  const Chart = ({title, data, rawData, keys, colors, labels}: {title:string, data:any[], rawData:any[], keys:string[], colors:string[], labels:string[]}) => {
     const W=300, H=160, PT=25, PB=20, PL=10, PR=10;
     const maxVal = Math.max(...data.flatMap(d => keys.map(k => Math.max(0, d[k]||0)))) * 1.1 || 1;
     const minVal = Math.min(0, ...data.flatMap(d => keys.map(k => Math.min(0, d[k]||0)))) * 1.1 || 0;
@@ -1860,10 +1882,29 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
             const clusterW = barW;
             const subBarW = clusterW / keys.length;
             
+            // To compute growth, we need the previous period's data. 
+            // Since data is slice(1) of rawData, index i in data is index i+1 in rawData.
+            // So prev is rawData[i].
+            const prevD = rawData[i];
+            
             return (
               <g key={i}>
                 {keys.map((k, j) => {
                   const val = d[k] || 0;
+                  const prevVal = prevD ? (prevD[k] || 0) : 0;
+                  
+                  let displayStr = "";
+                  if (showGrowth) {
+                     if (prevVal !== 0 && prevVal > 0) {
+                        const pct = ((val - prevVal) / prevVal) * 100;
+                        displayStr = (pct > 0 ? "+" : "") + pct.toFixed(0) + "%";
+                     } else {
+                        displayStr = "—";
+                     }
+                  } else {
+                     displayStr = fmtN(val);
+                  }
+
                   const bx = xCenter - clusterW/2 + j*subBarW;
                   const by = val >= 0 ? yPx(val) : zeroY;
                   const bh = Math.abs(yPx(val) - zeroY);
@@ -1871,7 +1912,7 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
                   return (
                     <g key={j}>
                       <rect x={bx} y={by} width={subBarW*0.9} height={bh} fill={colors[j]} rx={1}>
-                        <title>{labels[j]} ({d.calendarYear}): {fmtN(val)}</title>
+                        <title>{labels[j]} ({d.calendarYear}{d.period ? ` ${d.period}` : ''}): {fmtN(val)} {showGrowth ? `(${displayStr})` : ''}</title>
                       </rect>
                       {/* Discreet number label, rotated */}
                       <text 
@@ -1885,22 +1926,21 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
                         opacity={isLatest ? 1 : 0.6}
                         style={{pointerEvents:"none"}}
                       >
-                        {fmtN(val)}
+                        {displayStr}
                       </text>
                     </g>
                   );
                 })}
-                {/* X axis labels (years) - show every other year to avoid clutter */}
-                {i % 2 === 1 && (
+                {/* X axis labels (years or quarters) */}
+                {(isQuarterly ? i % 4 === 3 : i % 2 === 1) && (
                   <text x={xCenter} y={H-5} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={T.textLight}>
-                    {d.calendarYear?.slice(-2) || "—"}
+                    {isQuarterly ? `${d.calendarYear?.slice(-2)}${d.period}` : (d.calendarYear?.slice(-2) || "—")}
                   </text>
                 )}
               </g>
             );
           })}
         </svg>
-        {/* Legend */}
         <div style={{display:"flex", gap:12, marginTop:6, justifyContent:"center"}}>
           {labels.map((l, i) => (
             <div key={i} style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textLight}}>
@@ -1915,11 +1955,23 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
 
   return (
     <Card>
-      <SH title="Financials Overview" icon={<BarChart2 size={12}/>} sub="10-Year Annual Trends" />
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:12}}>
+        <SH title="Financials Overview" icon={<BarChart2 size={12}/>} sub={isQuarterly ? "Quarterly Trends" : "Annual Trends"} />
+        <div style={{display:"flex", gap:12}}>
+          <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
+            <button onClick={()=>setIsQuarterly(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!isQuarterly?"#fff":"transparent", color:!isQuarterly?T.text:T.textMuted, boxShadow:!isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Annual</button>
+            <button onClick={()=>setIsQuarterly(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:isQuarterly?"#fff":"transparent", color:isQuarterly?T.text:T.textMuted, boxShadow:isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Quarterly</button>
+          </div>
+          <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
+            <button onClick={()=>setShowGrowth(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!showGrowth?"#fff":"transparent", color:!showGrowth?T.text:T.textMuted, boxShadow:!showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Values</button>
+            <button onClick={()=>setShowGrowth(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:showGrowth?"#fff":"transparent", color:showGrowth?T.text:T.textMuted, boxShadow:showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Growth %</button>
+          </div>
+        </div>
+      </div>
       <div style={{display:"flex", flexWrap:"wrap", gap:20}}>
-        <Chart title="INCOME STATEMENT" data={incs} keys={["revenue", "operatingIncome", "netIncome"]} colors={["#e5e7eb", T.amber, T.green]} labels={["Rev", "OpInc", "NetInc"]} />
-        <Chart title="BALANCE SHEET" data={bals} keys={["totalAssets", "totalLiabilities", "totalEquity"]} colors={["#e5e7eb", T.red, T.green]} labels={["Assets", "Liabs", "Equity"]} />
-        <Chart title="CASH FLOW" data={cfs} keys={["operatingCashFlow", "freeCashFlow"]} colors={["#d1d5db", T.blue]} labels={["OpCash", "FCF"]} />
+        <Chart title="INCOME STATEMENT" data={incs} rawData={incsRaw} keys={["revenue", "operatingIncome", "netIncome"]} colors={["#e5e7eb", T.amber, T.green]} labels={["Rev", "OpInc", "NetInc"]} />
+        <Chart title="BALANCE SHEET" data={bals} rawData={balsRaw} keys={["totalAssets", "totalLiabilities", "totalEquity"]} colors={["#e5e7eb", T.red, T.green]} labels={["Assets", "Liabs", "Equity"]} />
+        <Chart title="CASH FLOW" data={cfs} rawData={cfsRaw} keys={["operatingCashFlow", "freeCashFlow"]} colors={["#d1d5db", T.blue]} labels={["OpCash", "FCF"]} />
       </div>
     </Card>
   );
@@ -2079,23 +2131,47 @@ async function loadStockFromScans(symbol:string):Promise<StockData|null>{
 // and same EV/EBITDA join logic that the main page's useEffect performs.
 // Used by the comparison tab to populate the right-hand stock's
 // GrowthPanel, ProfitPanel, and ValPanel.
-async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]}>{
+async function loadFmpForStock(symbol:string):Promise<{
+  incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[];
+  incomesQ:IncomeRow[]; balanceSheetsQ:BalanceSheetRow[]; cashFlowsQ:CashFlowRow[];
+}>{
   const sym=symbol.toUpperCase();
-  const [inc,rat,km,bs,cf]=await Promise.all([
-    fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),
+  const [inc,rat,km,bs,cf, incQ, bsQ, cfQ]=await Promise.all([
+    fmpFetch("income-statement",{symbol:sym,period:"annual",limit:12}),
     fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),
     fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),
-    fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:11}),
-    fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:11})
+    fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:12}),
+    fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:12}),
+    fmpFetch("income-statement",{symbol:sym,period:"quarter",limit:21}),
+    fmpFetch("balance-sheet-statement",{symbol:sym,period:"quarter",limit:21}),
+    fmpFetch("cash-flow-statement",{symbol:sym,period:"quarter",limit:21})
   ]);
-  const incomes:IncomeRow[]=inc?.length
-    ? inc.map((r:any)=>({
-        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
-        revenue:r.revenue, grossProfit:r.grossProfit,
-        operatingIncome:r.operatingIncome, netIncome:r.netIncome,
-        epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda,
-      }))
-    : [];
+  
+  const mapInc = (r:any) => ({
+    date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period,
+    revenue:r.revenue, grossProfit:r.grossProfit,
+    operatingIncome:r.operatingIncome, netIncome:r.netIncome,
+    epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda,
+  });
+  const mapBs = (r:any) => ({
+    date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period,
+    totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities,
+    totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt,
+    cashAndCashEquivalents:r.cashAndCashEquivalents,
+  });
+  const mapCf = (r:any) => ({
+    date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period,
+    operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure,
+    freeCashFlow:r.freeCashFlow,
+  });
+
+  const incomes:IncomeRow[]=inc?.length ? inc.map(mapInc) : [];
+  const incomesQ:IncomeRow[]=incQ?.length ? incQ.map(mapInc) : [];
+  const balanceSheets:BalanceSheetRow[]=bs?.length ? bs.map(mapBs) : [];
+  const balanceSheetsQ:BalanceSheetRow[]=bsQ?.length ? bsQ.map(mapBs) : [];
+  const cashFlows:CashFlowRow[]=cf?.length ? cf.map(mapCf) : [];
+  const cashFlowsQ:CashFlowRow[]=cfQ?.length ? cfQ.map(mapCf) : [];
+
   let ratios:RatioYear[]=[];
   if(rat?.length){
     const evByYear=new Map<string,number>();
@@ -2104,22 +2180,8 @@ async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; rati
     });
     ratios=rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[];
   }
-  const balanceSheets:BalanceSheetRow[]=bs?.length
-    ? bs.map((r:any)=>({
-        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
-        totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities,
-        totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt,
-        cashAndCashEquivalents:r.cashAndCashEquivalents,
-      }))
-    : [];
-  const cashFlows:CashFlowRow[]=cf?.length
-    ? cf.map((r:any)=>({
-        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
-        operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure,
-        freeCashFlow:r.freeCashFlow,
-      }))
-    : [];
-  return {incomes,ratios,balanceSheets,cashFlows};
+  
+  return {incomes,ratios,balanceSheets,cashFlows,incomesQ,balanceSheetsQ,cashFlowsQ};
 }
  
 // ── QualityValueCard ─────────────────────────────────────────────────────────
@@ -2163,11 +2225,17 @@ function QualityValueCard({s}:{s:StockData}){
 // outside it show an error and the user is prompted to pick another.
 function ComparisonTab({stockA,fmpA}:{
   stockA:StockData;
-  fmpA:{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]};
+  fmpA:{
+    incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[];
+    incomesQ:IncomeRow[]; balanceSheetsQ:BalanceSheetRow[]; cashFlowsQ:CashFlowRow[];
+  };
 }){
   const [input,setInput]=useState("");
   const [stockB,setStockB]=useState<StockData|null>(null);
-  const [fmpB,setFmpB]=useState<{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]}|null>(null);
+  const [fmpB,setFmpB]=useState<{
+    incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[];
+    incomesQ:IncomeRow[]; balanceSheetsQ:BalanceSheetRow[]; cashFlowsQ:CashFlowRow[];
+  }|null>(null);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState("");
  
@@ -2473,53 +2541,160 @@ function TrackRecordTable({s}:{s:StockData}){
 
 // ── Stock Story Card (Narrative Engine) ──────────────────────────────────────
 function StockStoryCard({s}:{s:StockData}){
-  let bottomLine = "";
-  const comp = s.composite || 0;
-  if(comp > 0.7) bottomLine = `${s.symbol} is showing exceptional multi-factor strength, driven by robust fundamentals and positive momentum. `;
-  else if(comp > 0.5) bottomLine = `${s.symbol} presents a mixed but constructive profile, with solid underlying metrics balancing some near-term headwinds. `;
-  else bottomLine = `${s.symbol} is currently screening poorly across our multi-factor model, suggesting significant fundamental or technical weakness. `;
+  const [story, setStory] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const roe = s.roe_avg ?? 0;
-  if(roe > 0.2) bottomLine += "It boasts a highly efficient business model with strong return on equity. ";
-  else if(roe < 0) bottomLine += "The company is currently unprofitable, burning through equity. ";
-
-  if(s.has_catalyst) bottomLine += "Keep an eye on recent catalyst events that could drive near-term volatility.";
-
-  let balanceSheet = "";
-  const fcf = s.fcf_margin ?? 0;
-  if(fcf > 0.15) balanceSheet = "The company is a cash-generating machine, converting a substantial portion of its revenue directly into free cash flow. This fortress-like balance sheet provides significant downside protection and flexibility for dividends or buybacks.";
-  else if(fcf > 0) balanceSheet = "The company maintains positive free cash flow, indicating a stable financial position that can cover its current obligations.";
-  else balanceSheet = "The balance sheet is currently under pressure, as the company is burning cash. This increases reliance on external financing and dilutes the margin of safety.";
-
-  let optionsNarrative = "";
-  if(s.hit_prob && s.hit_prob > 0.10) optionsNarrative = "Our ML model detects a highly elevated probability of a significant upside move in the near term. ";
-  else if (s.hit_prob && s.hit_prob < 0.05) optionsNarrative = "Our ML model sees limited near-term upside volatility, suggesting a range-bound environment. ";
-  
-  if(s.tradier_iv_rank != null) {
-    if(s.tradier_iv_rank < 30) optionsNarrative += "Furthermore, implied volatility is historically cheap, making this an attractive environment for long premium strategies like debit spreads.";
-    else if(s.tradier_iv_rank > 60) optionsNarrative += "Furthermore, implied volatility is elevated, making options relatively expensive. This favors premium-selling strategies like covered calls or credit spreads.";
+  async function generateStory() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbol: s.symbol, stockData: s })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate story");
+      setStory(data.story);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  if(!optionsNarrative) optionsNarrative = "No actionable options or volatility edge detected at this time.";
+  function renderFormattedText(text: string) {
+    let html = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    html = html.replace(/\n\n/g, "</p><p style='margin-top:12px'>");
+    return `<p>${html}</p>`;
+  }
+
+  if (!story && !loading) {
+    return (
+      <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto",textAlign:"center",padding:"40px 20px"}}>
+        <Card>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:16}}>
+            <Brain size={32} color={T.green} />
+          </div>
+          <SH title="AI Narrative Engine" sub="Powered by Gemini 1.5 Pro" />
+          <p style={{fontSize:13,color:T.textMuted,fontFamily:T.sans,lineHeight:1.6,marginBottom:24,maxWidth:500,margin:"0 auto 24px"}}>
+            Generate a dynamic, natural-sounding report based on the backend composite data. 
+            The AI analyzes the 5-factor scores, profitability, momentum, and options data to provide a comprehensive narrative mapped to real-world industry trends.
+          </p>
+          <button 
+            onClick={generateStory}
+            style={{background:T.green,color:"#fff",border:"none",padding:"10px 24px",borderRadius:6,fontSize:13,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
+          >
+            Generate Stock Story
+          </button>
+          {error && <div style={{color:T.red,fontSize:12,fontFamily:T.mono,marginTop:16}}>{error}</div>}
+        </Card>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto",textAlign:"center",padding:"40px 20px"}}>
+        <Card>
+          <div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:12,fontFamily:T.mono,display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
+            <Loader2 size={24} style={{animation:"spin 1s linear infinite",color:T.green}}/>
+            Analyzing quantitative models and synthesizing real-world narrative...
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Parse the sections returned by Gemini (split by ###)
+  const sections = story.split("### ").filter(sec => sec.trim().length > 0);
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
-      <Card>
-        <SH title="The Bottom Line" icon={<Brain size={12}/>}/>
-        <div style={{fontSize:14,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{bottomLine}</div>
-      </Card>
-      <Card>
-        <SH title="Balance Sheet Assessment" icon={<Shield size={12}/>}/>
-        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{balanceSheet}</div>
-      </Card>
-      <Card>
-        <SH title="Options & Volatility Landscape" icon={<Zap size={12}/>}/>
-        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{optionsNarrative}</div>
-      </Card>
-      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,textAlign:"center"}}>
-        These narratives are dynamically generated from the active quantitative models. Not financial advice.
+      {sections.map((sec, idx) => {
+        const lines = sec.trim().split("\n");
+        const title = lines[0].trim();
+        const content = lines.slice(1).join("\n").trim();
+        let icon = <Brain size={12}/>;
+        if (title.toLowerCase().includes("fundamental") || title.toLowerCase().includes("balance sheet")) icon = <Shield size={12}/>;
+        if (title.toLowerCase().includes("options") || title.toLowerCase().includes("volatility")) icon = <Zap size={12}/>;
+        if (title.toLowerCase().includes("narrative") || title.toLowerCase().includes("industry")) icon = <Activity size={12}/>;
+        
+        return (
+          <Card key={idx}>
+            <SH title={title} icon={icon}/>
+            <div 
+              style={{fontSize:14,lineHeight:1.6,color:T.text,fontFamily:T.sans}} 
+              dangerouslySetInnerHTML={{__html: renderFormattedText(content)}}
+            />
+          </Card>
+        );
+      })}
+      
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
+        <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono}}>
+          Dynamically generated by Gemini Pro. Not financial advice.
+        </div>
+        <button 
+          onClick={generateStory}
+          style={{background:"none",color:T.green,border:`1px solid ${T.greenBorder}`,padding:"4px 12px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}
+        >
+          Regenerate
+        </button>
       </div>
     </div>
+  );
+}
+
+function CustomAlertPanel({ symbol }: { symbol: string }) {
+  const [metric, setMetric] = useState("Price");
+  const [condition, setCondition] = useState(">");
+  const [value, setValue] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSave = async () => {
+    if (!value || !email) return setStatus("Please fill all fields.");
+    setStatus("Saving...");
+    try {
+      const r = await fetch("/api/alerts/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbol, metric, condition, value: parseFloat(value), email })
+      });
+      if (r.ok) setStatus("Alert saved successfully!");
+      else setStatus("Failed to save alert.");
+    } catch(e) {
+      setStatus("Error saving alert.");
+    }
+    setTimeout(() => setStatus(""), 3000);
+  };
+
+  return (
+    <Card style={{marginTop: 16}}>
+      <SH title="Custom Alert" icon={<Zap size={12}/>} sub="Sends email when triggered" />
+      <div style={{display:"flex", gap: 10, alignItems:"center", flexWrap: "wrap", fontSize:12, fontFamily:T.mono}}>
+        <span style={{color: T.textMuted}}>Alert me when</span>
+        <select value={metric} onChange={e=>setMetric(e.target.value)} style={{padding: "4px 8px", borderRadius:4, border: `1px solid ${T.cardBorder}`, color: T.text, outline: "none"}}>
+          <option>Price</option>
+          <option>RSI (14)</option>
+          <option>MACD</option>
+          <option>VWMA</option>
+          <option>OBV</option>
+        </select>
+        <select value={condition} onChange={e=>setCondition(e.target.value)} style={{padding: "4px 8px", borderRadius:4, border: `1px solid ${T.cardBorder}`, color: T.text, outline: "none"}}>
+          <option value=">">goes above</option>
+          <option value="<">goes below</option>
+        </select>
+        <input type="number" placeholder="Value" value={value} onChange={e=>setValue(e.target.value)} style={{padding: "4px 8px", borderRadius:4, border: `1px solid ${T.cardBorder}`, width: 80, color: T.text, outline: "none"}} />
+        <span style={{color: T.textMuted}}>Send to:</span>
+        <input type="email" placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)} style={{padding: "4px 8px", borderRadius:4, border: `1px solid ${T.cardBorder}`, width: 180, color: T.text, outline: "none"}} />
+        <button onClick={handleSave} style={{padding: "5px 12px", background: T.greenLight, color: T.green, border: `1px solid ${T.greenBorder}`, borderRadius: 4, fontWeight: 600, cursor: "pointer"}}>Save Alert</button>
+      </div>
+      {status && <div style={{marginTop: 8, fontSize: 10, color: status.includes("success") ? T.green : T.red, fontFamily: T.mono}}>{status}</div>}
+    </Card>
   );
 }
 
@@ -2550,15 +2725,18 @@ function AdvancedChartTab({ s }: { s: StockData }) {
       "save_image": false,
       "allow_symbol_change": true,
       "studies": [
-        "MASimple@tv-basicstudies",
+        "VWMA@tv-basicstudies",
+        "MAExp@tv-basicstudies",
+        "MAExp@tv-basicstudies",
+        "MAExp@tv-basicstudies",
         "MASimple@tv-basicstudies",
         "RSI@tv-basicstudies",
         "MACD@tv-basicstudies",
+        "RelativeVolume@tv-basicstudies",
+        "RSI@tv-basicstudies",
         "ADX@tv-basicstudies",
-        "BB@tv-basicstudies",
-        "StochasticRSI@tv-basicstudies",
-        "OBV@tv-basicstudies",
-        "TechnicalRatings@tv-basicstudies"
+        "BB%B@tv-basicstudies",
+        "OBV@tv-basicstudies"
       ]
     });
     
@@ -2566,9 +2744,12 @@ function AdvancedChartTab({ s }: { s: StockData }) {
   }, [s.symbol]);
 
   return (
-    <Card style={{ height: "700px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
-      <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
-    </Card>
+    <div>
+      <Card style={{ height: "700px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+        <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
+      </Card>
+      <CustomAlertPanel symbol={s.symbol} />
+    </div>
   );
 }
 
@@ -2577,6 +2758,8 @@ export default function StockDetail(){
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);
   const[balanceSheets,setBalanceSheets]=useState<BalanceSheetRow[]>([]);const[cashFlows,setCashFlows]=useState<CashFlowRow[]>([]);
+  const[incomesQ,setIncomesQ]=useState<IncomeRow[]>([]);
+  const[balanceSheetsQ,setBalanceSheetsQ]=useState<BalanceSheetRow[]>([]);const[cashFlowsQ,setCashFlowsQ]=useState<CashFlowRow[]>([]);
   const[fmpLoading,setFmpLoading]=useState(true);
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
@@ -2606,7 +2789,41 @@ export default function StockDetail(){
       }
     }).catch(()=>{setStock(null); setLoading(false);});
   },[symbol]);
-  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:11})]).then(([inc,rat,km,bs,cf])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length){const evByYear=new Map<string,number>();(km||[]).forEach((k:any)=>{if(k?.fiscalYear!=null&&k.evToEBITDA!=null)evByYear.set(String(k.fiscalYear),k.evToEBITDA);});setRatios(rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[]);}if(bs?.length)setBalanceSheets(bs.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),totalAssets:r.totalAssets,totalLiabilities:r.totalLiabilities,totalEquity:r.totalStockholdersEquity,totalDebt:r.totalDebt,cashAndCashEquivalents:r.cashAndCashEquivalents})));if(cf?.length)setCashFlows(cf.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),operatingCashFlow:r.operatingCashFlow,capitalExpenditure:r.capitalExpenditure,freeCashFlow:r.freeCashFlow})));setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
+  useEffect(()=>{
+    if(!symbol)return;
+    setFmpLoading(true);
+    const sym=symbol.toUpperCase();
+    Promise.all([
+      fmpFetch("income-statement",{symbol:sym,period:"annual",limit:12}),
+      fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),
+      fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),
+      fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:12}),
+      fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:12}),
+      fmpFetch("income-statement",{symbol:sym,period:"quarter",limit:21}),
+      fmpFetch("balance-sheet-statement",{symbol:sym,period:"quarter",limit:21}),
+      fmpFetch("cash-flow-statement",{symbol:sym,period:"quarter",limit:21})
+    ]).then(([inc,rat,km,bs,cf,incQ,bsQ,cfQ])=>{
+      const mapInc = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, revenue:r.revenue, grossProfit:r.grossProfit, operatingIncome:r.operatingIncome, netIncome:r.netIncome, epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda});
+      const mapBs = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities, totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt, cashAndCashEquivalents:r.cashAndCashEquivalents});
+      const mapCf = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure, freeCashFlow:r.freeCashFlow});
+
+      if(inc?.length) setIncomes(inc.map(mapInc));
+      if(incQ?.length) setIncomesQ(incQ.map(mapInc));
+      
+      if(rat?.length){
+        const evByYear=new Map<string,number>();
+        (km||[]).forEach((k:any)=>{if(k?.fiscalYear!=null&&k.evToEBITDA!=null)evByYear.set(String(k.fiscalYear),k.evToEBITDA);});
+        setRatios(rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[]);
+      }
+      
+      if(bs?.length) setBalanceSheets(bs.map(mapBs));
+      if(bsQ?.length) setBalanceSheetsQ(bsQ.map(mapBs));
+      if(cf?.length) setCashFlows(cf.map(mapCf));
+      if(cfQ?.length) setCashFlowsQ(cfQ.map(mapCf));
+      
+      setFmpLoading(false);
+    }).catch(()=>setFmpLoading(false));
+  },[symbol]);
 
   useEffect(()=>{
     if (!stock) return;
@@ -2717,7 +2934,7 @@ export default function StockDetail(){
       {activeTab==="track" ? (
         <TrackRecordTable s={s}/>
       ) : activeTab==="compare" ? (
-        <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows}}/>
+        <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows,incomesQ,balanceSheetsQ,cashFlowsQ}}/>
       ) : activeTab==="story" ? (
         <StockStoryCard s={s}/>
       ) : activeTab==="chart" ? (
@@ -2806,7 +3023,11 @@ export default function StockDetail(){
 
       {/* Financial Charts */}
       <div style={{marginBottom:16}}>
-        <FinancialChartsPanel incomes={incomes} balanceSheets={balanceSheets} cashFlows={cashFlows} loading={fmpLoading} />
+        <FinancialChartsPanel 
+          incomes={incomes} balanceSheets={balanceSheets} cashFlows={cashFlows} 
+          incomesQ={incomesQ} balanceSheetsQ={balanceSheetsQ} cashFlowsQ={cashFlowsQ}
+          loading={fmpLoading} 
+        />
       </div>
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
