@@ -58,15 +58,19 @@ GCS_BUCKET = "screener-signals-carbonbridge"
 IV_HISTORY_PREFIX = "options/iv_history"
 SUGGESTIONS_PATH = "options/latest_suggestions.json"
 
-# Phase 2 entry gates — tune carefully with live data
-COMPOSITE_THRESHOLD = 0.60  # Lowered 2026-04-21 from 0.85 — wider overlay universe,
-                            # relies on hit_prob + IV rank as primary filters.
-                            # Reassess in July 2026 with live data.
-HIT_PROB_THRESHOLD = 0.65
-IV_RANK_MAX = 40        # only enter when IV is in bottom 40% of 60-day range
-DTE_TARGET = 90         # days to expiration — matches backtest horizon + buffer
-DTE_TOLERANCE = 25      # accept expirations within target ± 25 days
-TARGET_UPSIDE_PCT = 0.10  # short leg at spot × (1 + this)
+# May 2026: gates REMOVED. Spreads are always constructed when chain data
+# exists. The frontend (Options Intelligence card v3) calculates EV from
+# the calibrated P20 model and lets the user assess — green EV = edge,
+# red EV = no edge. No binary gate in the backend anymore.
+#
+# Old constants kept as comments for reference:
+#   COMPOSITE_THRESHOLD = 0.60   (removed — runners sort by composite)
+#   HIT_PROB_THRESHOLD = 0.65    (removed — P20 is now P(+20% in 4w), not P(+10% in 60d))
+#   IV_RANK_MAX = 40             (removed — frontend shows IVR as checklist item)
+
+DTE_TARGET = 35         # 4-week model horizon + 1 week buffer (was 90 — mismatched)
+DTE_TOLERANCE = 14      # accept expirations within target ± 14 days (21-49 DTE)
+TARGET_UPSIDE_PCT = 0.10  # short leg at spot × (1 + this) ≈ +10% OTM
 
 # IV history
 IV_HISTORY_KEEP_DAYS = 90
@@ -419,7 +423,7 @@ def _pick_expiration(expirations: list, target_days: int = DTE_TARGET) -> Option
         except Exception:
             continue
         dte = (d - today).days
-        if dte < 30:  # reject too-short — weeklies and such
+        if dte < 14:  # reject very short — weeklies with 1-2 weeks left
             continue
         diff = abs(dte - target_days)
         if diff < best_diff:
@@ -483,11 +487,9 @@ def _spread_economics(long_call: dict, short_call: dict, spot: float) -> dict:
 
 
 def build_spread_suggestion(symbol: str, composite: float, hit_prob: float) -> Optional[dict]:
-    """Fetch chain, build bull call spread, return suggestion dict or None."""
-    # Gate 1: composite + hit_prob
-    if composite < COMPOSITE_THRESHOLD or hit_prob < HIT_PROB_THRESHOLD:
-        return {"symbol": symbol, "skipped": True,
-                "reason": f"gates not met (composite={composite:.2f}, p10={hit_prob:.2f})"}
+    """Fetch chain, build bull call spread, return suggestion dict or None.
+    May 2026: gates removed — always constructs when chain data exists.
+    Frontend v3 calculates EV from P20 calibration and handles assessment."""
 
     # Current spot
     quote = get_quote(symbol)
@@ -517,13 +519,8 @@ def build_spread_suggestion(symbol: str, composite: float, hit_prob: float) -> O
     iv_data = compute_iv_rank(symbol)
     iv_rank = iv_data["iv_rank"] if iv_data else None
 
-    # Gate 2: IV rank (only if we have enough history)
-    if iv_data and iv_rank is not None and iv_rank > IV_RANK_MAX:
-        return {
-            "symbol": symbol, "skipped": True,
-            "reason": f"IV rank too high ({iv_rank:.0f} > {IV_RANK_MAX})",
-            "iv_data": iv_data,
-        }
+    # May 2026: IV rank gate removed. Frontend assesses EV at any IVR level.
+    # IVR is still computed and returned for display / checklist.
 
     # Build spread
     strikes = _pick_strikes(chain, spot)
@@ -738,19 +735,13 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
             except Exception as e:
                 log.debug(f"Tradier earnings-move chain failed for {symbol}: {e}")
 
-    # Step 8: Spread suggestion — only if gates pass and we have the ~90-DTE expiration
-    if (chosen_exp is None
-            or composite < COMPOSITE_THRESHOLD
-            or hit_prob < HIT_PROB_THRESHOLD):
+    # Step 8: Spread suggestion — always construct when expiration exists.
+    # May 2026: composite/hit_prob/IVR gates removed. Frontend v3 calculates
+    # EV from calibrated P20 probabilities and handles the assessment.
+    if chosen_exp is None:
         return result
 
-    # IV-rank gate only applies if we have enough samples
-    if (result["iv_rank"] is not None
-            and result["iv_samples"] >= MIN_IV_SAMPLES_FOR_RANK
-            and result["iv_rank"] > IV_RANK_MAX):
-        return result
-
-    # If iv_exp != chosen_exp, we need the ~90-DTE chain for the spread
+    # If iv_exp != chosen_exp, we need the ~35-DTE chain for the spread
     if chosen_exp != iv_exp:
         try:
             chain = get_chain(symbol, chosen_exp)
@@ -837,9 +828,7 @@ def suggest_spreads_for_portfolio(rebalance_report: dict) -> dict:
         "gated": gated,
         "total_candidates": len(candidates),
         "entry_gates": {
-            "composite_min": COMPOSITE_THRESHOLD,
-            "hit_prob_min": HIT_PROB_THRESHOLD,
-            "iv_rank_max": IV_RANK_MAX,
+            "note": "Gates removed May 2026 — spreads always constructed, frontend calculates EV",
             "dte_target": DTE_TARGET,
         },
     }
