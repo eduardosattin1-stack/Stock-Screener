@@ -180,7 +180,14 @@ interface CompositePosition {
   symbol: string;
   entry_price: number;
   entry_date: string;
-  composite_at_entry: number;
+  // Mode-appropriate entry score. Mom/FA baskets write composite_at_entry
+  // (the v8 5-factor composite); Compounder baskets write
+  // compounder_score_at_entry (the equal-weight rank percentile from ROE/PB/
+  // OpMΔ). Whichever is present is the one to display; the helper at the
+  // render site resolves to a single number.
+  composite_at_entry?: number;
+  compounder_score_at_entry?: number;
+  compounder_rank_at_entry?: number | null;
   piotroski_at_entry: number | null;
   last_price: number;
   last_marked: string;
@@ -198,12 +205,14 @@ interface CompositeRotation {
     exit_date: string;
     return_pct: number;
     days_held: number;
-    composite_at_entry: number | null;
+    composite_at_entry?: number | null;
+    compounder_score_at_entry?: number | null;
   }[];
   added: {
     symbol: string;
     entry_price: number;
-    composite_at_entry: number;
+    composite_at_entry?: number;
+    compounder_score_at_entry?: number;
   }[];
 }
 interface CompositeWeeklyMark {
@@ -1042,7 +1051,7 @@ function BasketDetails({
                   color: (p.return_pct ?? 0) >= 0 ? T.green : T.red, fontWeight: 600,
                 }}>{fmtPct(p.return_pct)}</td>
                 <td style={{ ...td, textAlign: "right", color: T.muted }}>{daysHeld}d</td>
-                <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? 0).toFixed(3)}</td>
+                <td style={{ ...td, textAlign: "right" }}>{(p.composite_at_entry ?? p.compounder_score_at_entry ?? 0).toFixed(3)}</td>
               </tr>
             );
           })}
