@@ -1155,10 +1155,10 @@ function TradierOptionsCard({s}:{s:StockData}){
 }
 
 // Keep old name as alias
-const TradierSpreadCard=TradierOptionsCard;
+// const TradierSpreadCard=TradierOptionsCard;
 
 // Keep old name as alias so the existing render block doesn't break
-const TradierSpreadCard=TradierOptionsCard;
+// const TradierSpreadCard=TradierOptionsCard;
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol}:{symbol:string}){
