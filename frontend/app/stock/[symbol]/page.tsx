@@ -2578,10 +2578,9 @@ function StockStoryCard({s}:{s:StockData}){
           <div style={{display:"flex",justifyContent:"center",marginBottom:16}}>
             <Brain size={32} color={T.green} />
           </div>
-          <SH title="AI Narrative Engine" sub="Powered by Gemini 1.5 Pro" />
+          <SH title="AI Institutional Narrative" sub="Powered by Gemini 3.1 Pro" />
           <p style={{fontSize:13,color:T.textMuted,fontFamily:T.sans,lineHeight:1.6,marginBottom:24,maxWidth:500,margin:"0 auto 24px"}}>
-            Generate a dynamic, natural-sounding report based on the backend composite data. 
-            The AI analyzes the 5-factor scores, profitability, momentum, and options data to provide a comprehensive narrative mapped to real-world industry trends.
+            Synthesize our multi-factor quantitative models, fundamental metrics, and options flow data into a comprehensive institutional-grade narrative.
           </p>
           <button 
             onClick={generateStory}
