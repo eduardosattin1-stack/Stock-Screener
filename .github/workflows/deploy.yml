@@ -64,7 +64,7 @@ jobs:
           IMAGE=$(gcloud run services describe stock-screener \
             --region=europe-west1 \
             --format='value(spec.template.spec.containers[0].image)')
-          # BORING strategy runner (top-10 SP500 Pio≥7 by ps_ratio, 26w hold)
+          # COMPOUNDER US strategy runner (top-20 SP500 by compounder_score, monthly rebalance)
           gcloud run jobs deploy boring-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
@@ -72,9 +72,9 @@ jobs:
             --task-timeout=900s \
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
-            --args="paper_strategy_runner.py"
+            --args="paper_strategy_runner_compounder_us.py"
 
-          # COMPOSITE strategy runner (top-10 SP500 by composite, weekly rotation)
+          # COMPOUNDER GLOBAL strategy runner (top-20 global by compounder_score, monthly rebalance)
           gcloud run jobs deploy composite-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
@@ -82,7 +82,7 @@ jobs:
             --task-timeout=600s \
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
-            --args="paper_strategy_runner_composite.py"
+            --args="paper_strategy_runner_compounder_global.py"
 
           # MOMENTUM strategy runner (top-10 SP500 by composite_momentum, weekly rotation)
           gcloud run jobs deploy momentum-runner \
@@ -114,15 +114,15 @@ jobs:
             --command="python3" \
             --args="monitor_prices.py"
 
-          # ALL paper runners orchestrator (BORING + COMPOSITE + MOMENTUM + FA)
-          gcloud run jobs deploy paper-all-runner \
+          # ALL paper runners orchestrator (Compounder US/Global + Momentum + FA)
+          gcloud run jobs deploy strategy-runner-3-strategies \
             --image="$IMAGE" \
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=1800s \
             --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
             --command="python3" \
-            --args="paper_runners_all.py"
+            --args="run_all_strategies.py"
 
           # Combined weekly email (BORING + COMPOSITE + MOMENTUM + FA)
           gcloud run jobs deploy paper-email \
