@@ -590,60 +590,47 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
 // ══════════════════════════════════════════════════════════════════════════════
 function StrategiesTab() {
   // ── ALL HOOKS FIRST — Rules of Hooks: no early returns before all hooks called ─
-  const [boring, setBoring] = useState<BoringHistory | null>(null);
-  const [composite, setComposite] = useState<CompositeHistory | null>(null);
+  // v1.2 (May 2026): BORING and COMPOSITE retired; replaced by COMPOUNDER US
+  // and COMPOUNDER GLOBAL. Old runners' history JSONs preserved in GCS but
+  // no longer fetched here. The 4-card grid below maps to the 4 active
+  // strategies: Compounder US / Compounder Global / Momentum / Fallen Angel.
+  const [compounderUs, setCompounderUs] = useState<CompositeHistory | null>(null);
+  const [compounderGlobal, setCompounderGlobal] = useState<CompositeHistory | null>(null);
   const [momentum, setMomentum] = useState<CompositeHistory | null>(null);
   const [fa, setFa] = useState<CompositeHistory | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.allSettled([
-      fetch(`${GCS_PERFORMANCE}/strategy_history_boring.json?t=${Date.now()}`)
+      fetch(`${GCS_PERFORMANCE}/strategy_history_compounder_us.json?t=${Date.now()}`)
         .then(r => r.ok ? r.json() : null),
-      fetch(`${GCS_PERFORMANCE}/strategy_history_composite.json?t=${Date.now()}`)
+      fetch(`${GCS_PERFORMANCE}/strategy_history_compounder_global.json?t=${Date.now()}`)
         .then(r => r.ok ? r.json() : null),
       fetch(`${GCS_PERFORMANCE}/strategy_history_momentum.json?t=${Date.now()}`)
         .then(r => r.ok ? r.json() : null),
       fetch(`${GCS_PERFORMANCE}/strategy_history_fa.json?t=${Date.now()}`)
         .then(r => r.ok ? r.json() : null),
-    ]).then(([b, c, m, f]) => {
-      if (b.status === "fulfilled") setBoring(b.value);
-      if (c.status === "fulfilled") setComposite(c.value);
+    ]).then(([cu, cg, m, f]) => {
+      if (cu.status === "fulfilled") setCompounderUs(cu.value);
+      if (cg.status === "fulfilled") setCompounderGlobal(cg.value);
       if (m.status === "fulfilled") setMomentum(m.value);
       if (f.status === "fulfilled") setFa(f.value);
       setLoading(false);
     });
   }, []);
 
-  // BORING: prefer today_interim_mark for the KPI card if newer than last weekly_mark
-  // CRITICAL: useMemo MUST be called on every render (Rules of Hooks). Hence no
-  // early-return guards above. Empty array fallback is safe when boring is null.
-  const boringMarksForCard = useMemo(() => {
-    if (!boring?.open_basket) return undefined;
-    const wm = boring.open_basket.weekly_marks || [];
-    const im = boring.open_basket.today_interim_mark;
-    if (!im) return wm;
-    const lastWeekly = wm[wm.length - 1];
-    if (!lastWeekly || im.date > lastWeekly.date) {
-      return [...wm, {
-        date: im.date,
-        basket_return_pct: im.basket_return_pct,
-        spy_return_pct: im.spy_return_pct,
-        alpha_pp: im.alpha_pp,
-        spy_price: im.spy_price ?? 0,
-        days_held: im.days_held,
-        n_priced: im.n_priced,
-      }];
-    }
-    return wm;
-  }, [boring]);
+  // v1.2 (May 2026): BORING-specific today_interim_mark merge logic removed.
+  // BORING strategy retired. The remaining 4 strategies (Compounder US/Global,
+  // Momentum, Fallen Angel) all use the standard CompositeHistory shape with
+  // weekly_marks — no interim daily marks. If interim marks become needed
+  // for any compounder strategy later, restore that pattern here.
 
   // ── Early returns AFTER all hooks ──────────────────────────────────────
   if (loading) {
     return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading…" />;
   }
 
-  if (!boring && !composite && !momentum && !fa) {
+  if (!compounderUs && !compounderGlobal && !momentum && !fa) {
     return (
       <Empty
         icon={<BarChart3 size={36} color={T.divider} />}
@@ -658,7 +645,8 @@ function StrategiesTab() {
   const fmtPp = (v: number | null | undefined, dp = 2) =>
     v === null || v === undefined ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}pp`;
 
-  const chartPoints = buildCombinedChart(boring, composite, momentum, fa);
+  // v1.2: 4 active strategies — Compounder US, Compounder Global, Momentum, FA
+  const chartPoints = buildCombinedChart(compounderUs, compounderGlobal, momentum, fa);
 
   return (
     <>
@@ -666,44 +654,57 @@ function StrategiesTab() {
       <Card style={{ marginBottom: 16, background: T.greenLight, borderColor: T.greenBorder }}>
         <div style={{ fontSize: 11, fontFamily: T.mono, color: T.text, lineHeight: 1.6 }}>
           Four paper-tracked strategies, all global universe, equal-weighted top-10:
-          {" "}<strong>BORING</strong> (Pio≥7 by ps_ratio asc, 26w hold) ·
-          {" "}<strong>COMPOSITE</strong> (top by v8 5-factor, weekly rotation) ·
+          {" "}<strong>COMPOUNDER US</strong> (US-listed exchange-based, 3y-ROE × P/B × OpM-delta, weekly rotation) ·
+          {" "}<strong>COMPOUNDER GLOBAL</strong> (global ex Fin/Ins/HC, same scoring, weekly rotation) ·
           {" "}<strong>MOMENTUM</strong> (top by composite_momentum, weekly rotation) ·
-          {" "}<strong>FALLEN ANGEL</strong> (FA gate qualifiers, weekly rotation, can be empty).
+          {" "}<strong>FALLEN ANGEL</strong> (FA-flag qualifiers: rev&gt;15% + RSI&lt;40 + composite&lt;0.50, weekly rotation, can be empty).
           Compared against SPY. Prices refreshed daily Mon–Fri after US close.
         </div>
       </Card>
 
-      {/* 4 KPI cards */}
+      {/* 4 KPI cards — v1.2: BORING + COMPOSITE retired, replaced by CMP-US + CMP-Global */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
         <StrategyKPICard
-          title="BORING"
-          subtitle="26w hold · ps_ratio rank"
-          inception={boring?.inception_date}
-          summary={buildBoringSummary(boring)}
-          marks={boringMarksForCard}
-          openCount={boring?.open_basket?.basket?.length ?? 0}
-        />
-        <StrategyKPICard
-          title="COMPOSITE"
-          subtitle="weekly rotation · v8 5-factor"
-          inception={composite?.inception_date}
-          summary={composite?.summary ? {
-            cycles: composite.summary.n_rotations,
-            cum_alpha: composite.summary.cum_alpha_pp,
-            ann_return: composite.summary.cum_basket_return_pct,
-            win_rate: composite.summary.realized_win_rate * 100,
+          title="COMPOUNDER US"
+          subtitle="weekly rotation · 3y-ROE rank"
+          inception={compounderUs?.inception_date}
+          summary={compounderUs?.summary ? {
+            cycles: compounderUs.summary.n_rotations,
+            cum_alpha: compounderUs.summary.cum_alpha_pp,
+            ann_return: compounderUs.summary.cum_basket_return_pct,
+            win_rate: compounderUs.summary.realized_win_rate * 100,
             cyclesLabel: "rotations",
             winRateLabel: "of closed positions",
             annReturnLabel: "BASKET RTN",
           } : null}
-          marks={composite?.weekly_marks?.map(m => ({
+          marks={compounderUs?.weekly_marks?.map(m => ({
             date: m.date,
             basket_return_pct: m.basket_avg_return_pct,
             spy_return_pct: m.spy_return_pct,
             alpha_pp: m.alpha_pp,
           }))}
-          openCount={composite?.current_basket?.length ?? 0}
+          openCount={compounderUs?.current_basket?.length ?? 0}
+        />
+        <StrategyKPICard
+          title="COMPOUNDER GLOBAL"
+          subtitle="weekly rotation · 3y-ROE rank"
+          inception={compounderGlobal?.inception_date}
+          summary={compounderGlobal?.summary ? {
+            cycles: compounderGlobal.summary.n_rotations,
+            cum_alpha: compounderGlobal.summary.cum_alpha_pp,
+            ann_return: compounderGlobal.summary.cum_basket_return_pct,
+            win_rate: compounderGlobal.summary.realized_win_rate * 100,
+            cyclesLabel: "rotations",
+            winRateLabel: "of closed positions",
+            annReturnLabel: "BASKET RTN",
+          } : null}
+          marks={compounderGlobal?.weekly_marks?.map(m => ({
+            date: m.date,
+            basket_return_pct: m.basket_avg_return_pct,
+            spy_return_pct: m.spy_return_pct,
+            alpha_pp: m.alpha_pp,
+          }))}
+          openCount={compounderGlobal?.current_basket?.length ?? 0}
         />
         <StrategyKPICard
           title="MOMENTUM"
@@ -728,7 +729,7 @@ function StrategiesTab() {
         />
         <StrategyKPICard
           title="FALLEN ANGEL"
-          subtitle="weekly rotation · FA gate"
+          subtitle="weekly rotation · FA flag"
           inception={fa?.inception_date}
           summary={fa?.summary ? {
             cycles: fa.summary.n_rotations,
@@ -757,71 +758,47 @@ function StrategiesTab() {
         </Card>
       )}
 
-      {/* BORING details — now with daily marks */}
-      {boring && boring.open_basket && (
-        <Card style={{ marginBottom: 16 }}>
-          <SH
-            title="BORING · OPEN BASKET"
-            icon={<Target size={11} />}
-            sub={`${boring.open_basket.inception_date} → ${boring.open_basket.scheduled_exit_date}`}
-          />
-          <BoringBasketTable
-            basket={boring.open_basket.basket}
-            dailyMarks={boring.open_basket.daily_last_marks}
-            interimMark={boring.open_basket.today_interim_mark}
-            spyEntryPrice={boring.open_basket.spy_entry_price}
-          />
-        </Card>
-      )}
-
-      {boring && boring.weeks && boring.weeks.length > 0 && (
-        <Card style={{ marginBottom: 16 }}>
-          <SH title={`BORING · CLOSED CYCLES (${boring.weeks.length})`} icon={<Clock size={11} />} />
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={{ ...th, textAlign: "left" }}>Entry</th>
-                <th style={{ ...th, textAlign: "left" }}>Exit</th>
-                <th style={{ ...th, textAlign: "right" }}>Basket</th>
-                <th style={{ ...th, textAlign: "right" }}>SPY</th>
-                <th style={{ ...th, textAlign: "right" }}>Alpha</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...boring.weeks].reverse().map((w, i) => (
-                <tr key={i}>
-                  <td style={td}>{w.entry_date}</td>
-                  <td style={td}>{w.exit_date}</td>
-                  <td style={{ ...td, textAlign: "right" }}>{fmtPct(w.basket_return_pct)}</td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{fmtPct(w.spy_return_pct)}</td>
-                  <td style={{
-                    ...td, textAlign: "right",
-                    color: w.alpha_pp >= 0 ? T.green : T.red, fontWeight: 600,
-                  }}>{fmtPp(w.alpha_pp)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-      )}
-
-      {/* COMPOSITE details */}
-      {composite && composite.current_basket && composite.current_basket.length > 0 && (
+      {/* Compounder US details — current basket + closed cycles */}
+      {compounderUs && compounderUs.current_basket && compounderUs.current_basket.length > 0 && (
         <BasketDetails
-          title="COMPOSITE · CURRENT BASKET"
-          inception={composite.inception_date}
-          rotations={composite.summary?.n_rotations ?? 0}
-          basket={composite.current_basket}
+          title="COMPOUNDER US · CURRENT BASKET"
+          inception={compounderUs.inception_date}
+          rotations={compounderUs.summary?.n_rotations ?? 0}
+          basket={compounderUs.current_basket}
           fmtPct={fmtPct}
         />
       )}
-      {composite && composite.rotations && composite.rotations.length > 0 && (
+      {compounderUs?.rotations && compounderUs.rotations.length > 0 && (
         <RotationsTable
-          title={`COMPOSITE · ROTATIONS (${composite.rotations.length})`}
-          rotations={composite.rotations}
+          title={`COMPOUNDER US · ROTATIONS (${compounderUs.rotations.length})`}
+          rotations={compounderUs.rotations}
           fmtPct={fmtPct}
         />
       )}
+
+      {/* Compounder Global details */}
+      {compounderGlobal && compounderGlobal.current_basket && compounderGlobal.current_basket.length > 0 && (
+        <BasketDetails
+          title="COMPOUNDER GLOBAL · CURRENT BASKET"
+          inception={compounderGlobal.inception_date}
+          rotations={compounderGlobal.summary?.n_rotations ?? 0}
+          basket={compounderGlobal.current_basket}
+          fmtPct={fmtPct}
+        />
+      )}
+      {compounderGlobal?.rotations && compounderGlobal.rotations.length > 0 && (
+        <RotationsTable
+          title={`COMPOUNDER GLOBAL · ROTATIONS (${compounderGlobal.rotations.length})`}
+          rotations={compounderGlobal.rotations}
+          fmtPct={fmtPct}
+        />
+      )}
+
+      {/* ── BORING + COMPOSITE retired v1.2 (May 2026) ──────────────────────
+          JSON history files preserved in GCS (strategy_history_boring.json,
+          strategy_history_composite.json) but no longer fetched here. To
+          revive: re-add the useState/useEffect calls at the top of this
+          function and the corresponding detail panels below. ──────── */}
 
       {/* MOMENTUM details */}
       {momentum && momentum.current_basket && momentum.current_basket.length > 0 && (
@@ -875,7 +852,9 @@ function StrategiesTab() {
   );
 }
 
-// ── BORING basket table — separate component because it has a different schema ─
+// ── BORING basket table ─ DEPRECATED v1.2 (May 2026) ────────────────────
+// BORING strategy retired. Component kept for revival reference but not
+// referenced anywhere. Safe to delete in a follow-up cleanup.
 function BoringBasketTable({
   basket, dailyMarks, interimMark, spyEntryPrice,
 }: {
@@ -1071,48 +1050,25 @@ function RotationsTable({
 
 interface ChartPoint {
   date: string;
-  boring_pct: number | null;
-  composite_pct: number | null;
+  // v1.2 (May 2026): field names match the 4 active strategies.
+  // BORING + COMPOSITE retired; replaced by CMP-US + CMP-Global.
+  compounder_us_pct: number | null;
+  compounder_global_pct: number | null;
   momentum_pct: number | null;
   fa_pct: number | null;
   spy_pct: number | null;
 }
 
 function buildCombinedChart(
-  boring: BoringHistory | null,
-  composite: CompositeHistory | null,
+  compounderUs: CompositeHistory | null,
+  compounderGlobal: CompositeHistory | null,
   momentum: CompositeHistory | null,
   fa: CompositeHistory | null,
 ): ChartPoint[] {
   const dateSet = new Set<string>();
 
-  let boringPoints: { date: string; strat: number; spy: number }[] = [];
-  if (boring) {
-    let cumStrat = 0, cumSpy = 0;
-    for (const w of boring.weeks || []) {
-      cumStrat = (1 + cumStrat / 100) * (1 + w.basket_return_pct / 100) * 100 - 100;
-      cumSpy = (1 + cumSpy / 100) * (1 + w.spy_return_pct / 100) * 100 - 100;
-      boringPoints.push({ date: w.exit_date, strat: cumStrat, spy: cumSpy });
-      dateSet.add(w.exit_date);
-    }
-    for (const m of boring.open_basket?.weekly_marks || []) {
-      const stratNow = (1 + cumStrat / 100) * (1 + m.basket_return_pct / 100) * 100 - 100;
-      const spyNow = (1 + cumSpy / 100) * (1 + m.spy_return_pct / 100) * 100 - 100;
-      boringPoints.push({ date: m.date, strat: stratNow, spy: spyNow });
-      dateSet.add(m.date);
-    }
-    const im = boring.open_basket?.today_interim_mark;
-    if (im) {
-      const lastDate = boringPoints.length > 0 ? boringPoints[boringPoints.length - 1].date : null;
-      if (!lastDate || im.date > lastDate) {
-        const stratNow = (1 + cumStrat / 100) * (1 + im.basket_return_pct / 100) * 100 - 100;
-        const spyNow = (1 + cumSpy / 100) * (1 + im.spy_return_pct / 100) * 100 - 100;
-        boringPoints.push({ date: im.date, strat: stratNow, spy: spyNow });
-        dateSet.add(im.date);
-      }
-    }
-  }
-
+  // v1.2: all 4 strategies use the standard CompositeHistory.weekly_marks
+  // shape — no more BORING-specific exit_date / today_interim_mark path.
   const collectMarks = (h: CompositeHistory | null) => {
     const out: { date: string; strat: number; spy: number }[] = [];
     if (!h || !h.weekly_marks) return out;
@@ -1134,22 +1090,23 @@ function buildCombinedChart(
     return out;
   };
 
-  const compositePoints = collectMarks(composite);
+  const cuPoints = collectMarks(compounderUs);
+  const cgPoints = collectMarks(compounderGlobal);
   const momentumPoints = collectMarks(momentum);
   const faPoints = collectMarks(fa);
 
   const dates = Array.from(dateSet).sort();
   const out: ChartPoint[] = [];
   for (const d of dates) {
-    const b = boringPoints.find(p => p.date === d);
-    const c = compositePoints.find(p => p.date === d);
+    const cu = cuPoints.find(p => p.date === d);
+    const cg = cgPoints.find(p => p.date === d);
     const m = momentumPoints.find(p => p.date === d);
     const f = faPoints.find(p => p.date === d);
-    const spy = b?.spy ?? c?.spy ?? m?.spy ?? f?.spy ?? null;
+    const spy = cu?.spy ?? cg?.spy ?? m?.spy ?? f?.spy ?? null;
     out.push({
       date: d,
-      boring_pct: b?.strat ?? null,
-      composite_pct: c?.strat ?? null,
+      compounder_us_pct: cu?.strat ?? null,
+      compounder_global_pct: cg?.strat ?? null,
       momentum_pct: m?.strat ?? null,
       fa_pct: f?.strat ?? null,
       spy_pct: spy,
@@ -1172,9 +1129,8 @@ interface KPISummary {
   annReturnLabel?: string;
   annReturnValueOverride?: string;    // e.g. "+3.3%" raw return (not annualized)
 }
-// Build BORING KPI summary. If a 26-week cycle has closed (boring.summary
-// populated and weeks_closed > 0), use the runner's realized stats. Otherwise
-// synthesize from the open basket so the card isn't four em-dashes for 6 months.
+// ── buildBoringSummary ─ DEPRECATED v1.2 (May 2026) ──────────────────────
+// BORING strategy retired; helper preserved for revival but unused.
 function buildBoringSummary(boring: BoringHistory | null): KPISummary | null {
   if (!boring) return null;
 
@@ -1309,8 +1265,8 @@ function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
   const W = 800, H = 240, P = 30;
   const allValues: number[] = [];
   for (const p of points) {
-    if (p.boring_pct !== null) allValues.push(p.boring_pct);
-    if (p.composite_pct !== null) allValues.push(p.composite_pct);
+    if (p.compounder_us_pct !== null) allValues.push(p.compounder_us_pct);
+    if (p.compounder_global_pct !== null) allValues.push(p.compounder_global_pct);
     if (p.momentum_pct !== null) allValues.push(p.momentum_pct);
     if (p.fa_pct !== null) allValues.push(p.fa_pct);
     if (p.spy_pct !== null) allValues.push(p.spy_pct);
@@ -1333,8 +1289,8 @@ function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
     return path;
   };
 
-  const boringPath = buildPath("boring_pct");
-  const compositePath = buildPath("composite_pct");
+  const cuPath = buildPath("compounder_us_pct");
+  const cgPath = buildPath("compounder_global_pct");
   const momentumPath = buildPath("momentum_pct");
   const faPath = buildPath("fa_pct");
   const spyPath = buildPath("spy_pct");
@@ -1346,14 +1302,14 @@ function CombinedCumulativeChart({ points }: { points: ChartPoint[] }) {
       <path d={spyPath} fill="none" stroke={T.muted} strokeWidth="1.5" />
       <path d={faPath} fill="none" stroke={T.amber} strokeWidth="2" />
       <path d={momentumPath} fill="none" stroke={T.blue} strokeWidth="2" />
-      <path d={compositePath} fill="none" stroke={T.purple} strokeWidth="2" />
-      <path d={boringPath} fill="none" stroke={T.green} strokeWidth="2" />
+      <path d={cgPath} fill="none" stroke={T.purple} strokeWidth="2" />
+      <path d={cuPath} fill="none" stroke={T.green} strokeWidth="2" />
       <text x={P} y={P - 8} fontSize="9" fill={T.muted}>cumulative %</text>
-      <text x={P + 100} y={P - 8} fontSize="9" fill={T.green}>● BORING</text>
-      <text x={P + 180} y={P - 8} fontSize="9" fill={T.purple}>● COMPOSITE</text>
-      <text x={P + 280} y={P - 8} fontSize="9" fill={T.blue}>● MOMENTUM</text>
-      <text x={P + 380} y={P - 8} fontSize="9" fill={T.amber}>● FA</text>
-      <text x={P + 425} y={P - 8} fontSize="9" fill={T.muted}>● SPY</text>
+      <text x={P + 100} y={P - 8} fontSize="9" fill={T.green}>● CMP-US</text>
+      <text x={P + 175} y={P - 8} fontSize="9" fill={T.purple}>● CMP-GL</text>
+      <text x={P + 250} y={P - 8} fontSize="9" fill={T.blue}>● MOMENTUM</text>
+      <text x={P + 350} y={P - 8} fontSize="9" fill={T.amber}>● FA</text>
+      <text x={P + 400} y={P - 8} fontSize="9" fill={T.muted}>● SPY</text>
       <text x={P} y={zeroY - 4} fontSize="9" fill={T.muted}>0%</text>
       <text x={W - P} y={H - 5} fontSize="9" fill={T.muted} textAnchor="end">{points[points.length - 1].date}</text>
     </svg>
