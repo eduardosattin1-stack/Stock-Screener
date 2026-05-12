@@ -271,7 +271,9 @@ function readFactorsV8(s:StockData,mode:string):FactorsV8{
   // before the v8 deploy and still cached in some flow.
   return{momentum:null,quality:null,growth:null,value:null,smart_money:null};
 }
-function getProb(c:number){if(c>=0.90)return{p5:79,p10:72,p20:42,gain:25.7,dd:-9.1,speed:18};if(c>=0.85)return{p5:68,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.80)return{p5:65,p10:53,p20:28,gain:17.9,dd:-9.8,speed:22};if(c>=0.75)return{p5:60,p10:44,p20:20,gain:12.8,dd:-10.8,speed:24};if(c>=0.70)return{p5:58,p10:44,p20:18,gain:12.8,dd:-10.8,speed:24};if(c>=0.65)return{p5:55,p10:43,p20:16,gain:12.1,dd:-10.3,speed:26};return{p5:48,p10:37,p20:12,gain:10.7,dd:-10.7,speed:22};}
+// getProb() removed v1.2 (May 2026) — was a static composite→prob lookup table
+// used by the old ProbabilityCard. Replaced by P20Card which reads the actual
+// ML output (s.hit_prob) instead of a hardcoded approximation.
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
 // ── Shared Components ──────────────────────────────────────────────────────────
@@ -406,33 +408,11 @@ function factorDetail(k:string,s:StockData,mode:string):string{
 }
 
 // ── Probability Card ───────────────────────────────────────────────────────────
-function ProbabilityCard({s}:{s:StockData}){
-  const isLive=s.hit_prob!=null&&s.hit_prob>0;
-  const pFallback=getProb(s.composite);
-  const p10=isLive?Math.round(s.hit_prob!*100):pFallback.p10;
-  const p5=isLive?Math.min(100,Math.round(p10*1.3)):pFallback.p5;
-  const p20=isLive?Math.max(0,Math.round(p10*0.45)):pFallback.p20;
-  const bars:[string,number][]=[["P(+5% in 30d)",p5],["P(+10% in 60d)",p10],["P(+20% in 60d)",p20]];
-  return(
-    <Card>
-      <SH title={isLive?"Live ML Probability":"Historical Probability"} icon={<BarChart2 size={12}/>} sub={isLive?"Gradient Boosting":`Composite ${s.composite.toFixed(2)}`}/>
-      {bars.map(([label,val])=>(
-        <div key={label} style={{marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-            <span style={{fontSize:11,fontFamily:T.mono,color:T.textMuted}}>{label}</span>
-            <span style={{fontSize:12,fontFamily:T.mono,fontWeight:700,color:val>60?"#10b981":val>40?T.amber:T.red}}>{val}%</span>
-          </div>
-          <div style={{height:6,borderRadius:3,background:T.divider,overflow:"hidden"}}><div style={{height:"100%",width:`${val}%`,borderRadius:3,background:val>60?"#10b981":val>40?T.amber:T.red,transition:"width 0.4s"}}/></div>
-        </div>
-      ))}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:12,paddingTop:12,borderTop:`1px solid ${T.divider}`}}>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:"#10b981",fontFamily:T.mono}}>+{pFallback.gain}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max gain</div></div>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.red,fontFamily:T.mono}}>{pFallback.dd}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Exp. max DD</div></div>
-        <div style={{textAlign:"center"}}><div style={{fontSize:16,fontWeight:700,color:T.text,fontFamily:T.mono}}>{pFallback.speed}d</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono}}>Avg to +10%</div></div>
-      </div>
-    </Card>
-  );
-}
+// ── ProbabilityCard removed v1.2 (May 2026) ──────────────────────────────
+// Replaced by P20Card (see below). The old card showed a 3-bar lookup table
+// (P+5/P+10/P+20) derived from composite via getProb(); P20Card reads the
+// actual ML model output (s.hit_prob = P(+20% daily high in 4w) from
+// time_model_v2 ensemble) and shows calibrated decile + spread edge.
 
 // ── Catalyst Timeline ──────────────────────────────────────────────────────────
 function CatalystTimeline({s}:{s:StockData}){
@@ -1291,11 +1271,21 @@ function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps
   );
 }
 
-// ── ModeToggle: switches the dashboard between Momentum and Fallen Angel views.
-// Stock data is computed for both modes at scan time (Option B); this just
-// re-points the radar/factor/signal/composite bindings.
-function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>void;available:{momentum:boolean;fallen_angel:boolean}}){
-  const opts=[{k:"momentum",l:"Momentum"},{k:"fallen_angel",l:"Fallen Angel"}];
+// ── ModeToggle: switches the dashboard between scoring views.
+// v1.2 (May 2026): expanded from 2 modes (Momentum, Fallen Angel) to 4
+// (+ Compounder US, Compounder Global). Stock data is computed for all
+// modes at scan time; this re-points the radar/factor/signal/composite
+// bindings. Compounder modes share the same v8 5-factor radar — the
+// difference is gate membership (US exchange vs global, sector ex Fin/Ins/HC,
+// 3-yr ROE + P/B + OpMargin delta scoring).
+type ModeAvail = {momentum:boolean; fallen_angel:boolean; compounder_us:boolean; compounder_global:boolean};
+function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>void;available:ModeAvail}){
+  const opts=[
+    {k:"momentum",         l:"Momentum"},
+    {k:"fallen_angel",     l:"Fallen Angel"},
+    {k:"compounder_us",    l:"CMP-US"},
+    {k:"compounder_global",l:"CMP-Global"},
+  ];
   return(
     <div style={{display:"inline-flex",border:`1px solid ${T.cardBorder}`,borderRadius:6,overflow:"hidden",background:"#fff"}}>
       {opts.map(o=>{
@@ -1303,9 +1293,10 @@ function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>
         const ok=(available as any)[o.k];
         return(
           <button key={o.k} onClick={()=>ok&&onChange(o.k)} disabled={!ok}
-            style={{padding:"5px 12px",border:"none",cursor:ok?"pointer":"not-allowed",
+            style={{padding:"5px 10px",border:"none",cursor:ok?"pointer":"not-allowed",
               background:active?T.green:"transparent",color:active?"#fff":(ok?T.text:T.textLight),
-              fontSize:10,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.04em"}}>
+              fontSize:10,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.04em",
+              borderRight:o.k!=="compounder_global"?`1px solid ${T.cardBorder}`:"none"}}>
             {o.l}{!ok&&" —"}
           </button>
         );
@@ -1458,10 +1449,14 @@ function SmartMoneyCard({s}:{s:StockData}){
   const trendPct = s.sma200 > 0 ? ((s.sma50 - s.sma200) / s.sma200) * 100 : 0;
 
   // Factor catalog: [key, weight%, display label, fallback msg when missing, tooltip key]
+  // v1.2 (May 2026): added pt_velocity (10%). Weights rebalanced:
+  //   instflow 30→25, trend 28→23, inst 20→20, quality 10→10,
+  //   sectormom 7→7, congress 5→5, pt_velocity 0→10. Total still 100%.
   const FACTORS:[string,number,string,string,string][] = [
-    ["institutional_flow", 30, "Inst flow",      "US-only · pass-2 only",    "Inst Flow"],
-    ["trend_strength",     28, "Trend",          "missing SMA data",         "Trend"],
+    ["institutional_flow", 25, "Inst flow",      "US-only · pass-2 only",    "Inst Flow"],
+    ["trend_strength",     23, "Trend",          "missing SMA data",         "Trend"],
     ["institutional",      20, "Inst accum",     "US-only · pass-2 only",    "Inst Accum"],
+    ["pt_velocity",        10, "PT velocity",    "60d bootstrap pending",    "PT Velocity"],
     ["quality",            10, "Quality",        "Piotroski/Altman missing", "Quality SM"],
     ["sector_momentum",     7, "Sector mom",     "non-NASDAQ stock",         "Sector Mom"],
     ["congressional",       5, "Congress",       "no recent trades",         "Congress"],
@@ -1470,9 +1465,28 @@ function SmartMoneyCard({s}:{s:StockData}){
   type Tone = "good"|"bad"|"neutral"|"none";
   const toneColor = (t:Tone) => t==="good"?T.green : t==="bad"?T.red : t==="neutral"?T.textMuted : T.textLight;
 
+  // PT velocity reads from the top-level row, not from smart_money_components
+  // (the backend exposes pt_velocity_60d / pt_velocity_score separately on
+  // the stock row for direct frontend access). Bootstrap fallback: when
+  // pt_velocity_60d is null the rolling cache hasn't matured yet (60d window).
+  const ptVelRaw = s.pt_velocity_60d;
+  const ptVelScore = s.pt_velocity_score;
+
   const rows = FACTORS.map(([key, weight, label, missingMsg, tipKey])=>{
-    const c = (comps as any)[key] as number|undefined;
     const tip = TOOLTIPS[tipKey] || "";
+
+    // pt_velocity has its own data path on the stock row
+    if(key === "pt_velocity"){
+      if(ptVelScore == null || ptVelRaw == null){
+        return { key, weight, label, score:null, detail:missingMsg, tone:"none" as Tone, tip };
+      }
+      const tone:Tone = ptVelScore > 0.6 ? "good" : ptVelScore < 0.4 ? "bad" : "neutral";
+      const sign = ptVelRaw >= 0 ? "+" : "";
+      const detail = `${sign}${(ptVelRaw*100).toFixed(1)}% (60d) · ${(ptVelScore*100).toFixed(0)}/100`;
+      return { key, weight, label, score:ptVelScore, detail, tone, tip };
+    }
+
+    const c = (comps as any)[key] as number|undefined;
     if(c == null){
       return { key, weight, label, score:null, detail:missingMsg, tone:"none" as Tone, tip };
     }
@@ -1550,7 +1564,7 @@ function SmartMoneyCard({s}:{s:StockData}){
         </div>
       )}
       <div style={{marginTop:8,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.4}}>
-        LTR-derived 6-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. No weight redistribution: missing factors lower the ceiling.
+        LTR-derived 7-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. PT velocity (10%) added v1.2 (May 2026) — bootstrap ~60 days. No weight redistribution: missing factors lower the ceiling.
       </div>
     </Card>
   );
@@ -2241,13 +2255,22 @@ export default function StockDetail(){
   // by default. If neither qualifies (rare — both gates fail), stay where
   // we are and the page will render the gate-failure summary block.
   // v1.2 (May 2026): FA mode availability now driven by fallen_angel_flag.
-  // signal_fallen_angel field removed. signal (BUY/HOLD/SELL) field removed.
+  // Compounder modes from signal_compounder_us/_global.
   useEffect(()=>{
     if (!stock) return;
     const momOK = (stock.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
     const faOK  = stock.fallen_angel_flag === true;
-    if (mode === "momentum" && !momOK && faOK) setMode("fallen_angel");
-    else if (mode === "fallen_angel" && !faOK && momOK) setMode("momentum");
+    const cuOK  = (stock.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
+    const cgOK  = (stock.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
+    const currentOK = mode==="momentum"?momOK : mode==="fallen_angel"?faOK
+                    : mode==="compounder_us"?cuOK : mode==="compounder_global"?cgOK : true;
+    if (!currentOK) {
+      // Fall back to the first available mode in priority order
+      if (momOK) setMode("momentum");
+      else if (cuOK) setMode("compounder_us");
+      else if (cgOK) setMode("compounder_global");
+      else if (faOK) setMode("fallen_angel");
+    }
   },[stock, mode]);
 
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
@@ -2262,10 +2285,18 @@ export default function StockDetail(){
   // sigMode is derived from per-mode signals only.
   const haveMom = (s.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
   const haveFA  = s.fallen_angel_flag === true;
-  const compMode=mode==="fallen_angel"?(s.composite_fallen_angel??s.composite):(s.composite_momentum??s.composite);
-  const sigMode=mode==="fallen_angel"
-    ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
-    : (s.signal_momentum ?? "QUALIFIED");
+  const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
+  const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
+  // compMode: pick the composite that matches the active mode. Compounder
+  // modes don't have a separate composite_compounder_*; they reuse momentum
+  // composite (they share the v8 5-factor radar — gate differs, not score).
+  const compMode = mode==="fallen_angel"
+    ? (s.composite_fallen_angel ?? s.composite)
+    : (s.composite_momentum ?? s.composite);
+  const sigMode = mode==="fallen_angel"      ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
+                : mode==="compounder_us"     ? (s.signal_compounder_us ?? "DISQUALIFIED")
+                : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
+                :                              (s.signal_momentum ?? "QUALIFIED");
   const factorsMode=readFactorsV8(s,mode);
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
   const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
@@ -2273,6 +2304,17 @@ export default function StockDetail(){
   // Hint when Fallen Angel materially outscores Momentum
   const faAdvantage=(s.composite_fallen_angel??0)-(s.composite_momentum??0);
   const showFAHint=haveFA&&faAdvantage>=0.10&&mode==="momentum";
+
+  // ── 4-cohort eligibility badges (v1.2 May 2026) ───────────────────────
+  // Replaces the single BUY/HOLD/SELL signal badge that was on the detail
+  // header. Each badge shows whether the stock qualifies for one of the
+  // four active baskets. Green = qualifies, gray = no.
+  const cohortBadges:[string,string,boolean][] = [
+    ["MOM",      "Momentum",         haveMom],
+    ["FA",       "Fallen Angel",     haveFA],
+    ["CMP-US",   "Compounder US",    haveCmpUS],
+    ["CMP-GL",   "Compounder Global",haveCmpGL],
+  ];
 
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
@@ -2284,9 +2326,21 @@ export default function StockDetail(){
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
-            <span style={{fontSize:11,padding:"4px 12px",borderRadius:4,fontWeight:700,fontFamily:T.mono,letterSpacing:"0.07em",color:sigStyle.fg,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{sigMode}</span>
+            {/* 4-cohort eligibility row (replaces v1.1 BUY/HOLD/SELL badge) */}
+            <div style={{display:"inline-flex",gap:4}}>
+              {cohortBadges.map(([short,full,ok])=>(
+                <span key={short} title={`${full}: ${ok?"qualified":"not qualified"}`}
+                  style={{fontSize:9,padding:"3px 7px",borderRadius:3,fontWeight:700,
+                    fontFamily:T.mono,letterSpacing:"0.06em",
+                    color:ok?T.green:T.textLight,
+                    background:ok?T.greenLight:"transparent",
+                    border:`1px solid ${ok?T.greenBorder:T.cardBorder}`}}>
+                  {ok?"✓":"·"} {short}
+                </span>
+              ))}
+            </div>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
-            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom,fallen_angel:haveFA}}/>
+            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom,fallen_angel:haveFA,compounder_us:haveCmpUS,compounder_global:haveCmpGL}}/>
             {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid #fde68a",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
@@ -2294,7 +2348,7 @@ export default function StockDetail(){
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
           <div style={{textAlign:"right"}}>
-            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite ({mode==="fallen_angel"?"FA":"Mom"})</div>
+            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite ({mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Mom"})</div>
             <div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:compMode>0.6?T.green:compMode>0.4?T.text:T.red}}>{compMode.toFixed(2)}</div>
             {haveFA&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:2}}>
               {mode==="momentum"?`FA: ${(s.composite_fallen_angel??0).toFixed(2)}`:`Mom: ${(s.composite_momentum??0).toFixed(2)}`}
