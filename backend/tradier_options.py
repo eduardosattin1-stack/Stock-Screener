@@ -69,7 +69,7 @@ SUGGESTIONS_PATH = "options/latest_suggestions.json"
 #   IV_RANK_MAX = 40             (removed — frontend shows IVR as checklist item)
 
 DTE_TARGET = 35         # 4-week model horizon + 1 week buffer (was 90 — mismatched)
-DTE_TOLERANCE = 14      # accept expirations within target ± 14 days (21-49 DTE)
+DTE_TOLERANCE = 21      # accept expirations within target ± 21 days (14-56 DTE)
 TARGET_UPSIDE_PCT = 0.10  # short leg at spot × (1 + this) ≈ +10% OTM
 
 # IV history
@@ -738,30 +738,57 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     # Step 8: Spread suggestion — always construct when expiration exists.
     # May 2026: composite/hit_prob/IVR gates removed. Frontend v3 calculates
     # EV from calibrated P20 probabilities and handles the assessment.
-    if chosen_exp is None:
-        return result
+    #
+    # If chosen_exp (DTE-targeted) is None but we have iv_exp with a valid
+    # chain, fall back to building the spread from the IV chain. Better to
+    # offer a spread at a slightly off-target DTE than no spread at all.
+    spread_exp = chosen_exp
+    spread_chain = chain  # chain was fetched for iv_exp
 
-    # If iv_exp != chosen_exp, we need the ~35-DTE chain for the spread
-    if chosen_exp != iv_exp:
+    if spread_exp is None:
+        if iv_exp is not None and chain:
+            log.info(f"  {symbol}: chosen_exp=None, falling back to iv_exp={iv_exp} "
+                     f"for spread (DTE window {DTE_TARGET}±{DTE_TOLERANCE}d had no match, "
+                     f"exps: {expirations[:5]}{'...' if len(expirations) > 5 else ''})")
+            spread_exp = iv_exp
+            # chain is already fetched for iv_exp
+        else:
+            log.info(f"  {symbol}: spread skipped — no usable expiration "
+                     f"(chosen_exp=None, iv_exp={iv_exp})")
+            return result
+
+    # If we need a different chain than what we already have
+    if spread_exp != iv_exp:
+        log.info(f"  {symbol}: spread needs different chain — "
+                 f"spread_exp={spread_exp} vs iv_exp={iv_exp}")
         try:
-            chain = get_chain(symbol, chosen_exp)
-        except Exception:
+            spread_chain = get_chain(symbol, spread_exp)
+        except Exception as e:
+            log.info(f"  {symbol}: spread chain fetch FAILED: {e}")
             return result
-        if not chain:
+        if not spread_chain:
+            log.info(f"  {symbol}: spread chain EMPTY for {spread_exp}")
             return result
 
-    strikes = _pick_strikes(chain, spot)
+    strikes = _pick_strikes(spread_chain, spot)
     if not strikes:
+        calls = [o for o in spread_chain if o.get("option_type") == "call"
+                 and o.get("strike")]
+        log.info(f"  {symbol}: spread skipped — _pick_strikes failed "
+                 f"(spot={spot:.2f}, calls={len(calls)}, "
+                 f"exp={spread_exp})")
         return result
+    log.info(f"  {symbol}: spread BUILT — {strikes['long']['strike']}/"
+             f"{strikes['short']['strike']}C @ {spread_exp}")
 
     econ = _spread_economics(strikes["long"], strikes["short"], spot)
     today = datetime.now().date()
-    dte = (datetime.strptime(chosen_exp, "%Y-%m-%d").date() - today).days
+    dte = (datetime.strptime(spread_exp, "%Y-%m-%d").date() - today).days
 
     result["spread"] = {
         "strategy": "Bull call spread",
         "spot": round(spot, 2),
-        "expiration": chosen_exp,
+        "expiration": spread_exp,
         "dte": dte,
         "long_strike": econ["long_strike"],
         "short_strike": econ["short_strike"],
@@ -775,7 +802,7 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
         "risk_reward": econ["risk_reward"],
         "description": (
             f"Long {strikes['long']['strike']}C / Short {strikes['short']['strike']}C @ "
-            f"{chosen_exp} — debit ${econ['net_debit']:.2f}, max gain "
+            f"{spread_exp} — debit ${econ['net_debit']:.2f}, max gain "
             f"${econ['max_gain_per_contract']:.0f}/contract ({econ['risk_reward']:.1f}:1 R/R), "
             f"break-even +{econ['break_even_move_pct']:.1f}%"
         ),

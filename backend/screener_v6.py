@@ -4126,6 +4126,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     )
 
     enriched_results = []
+    _tradier_spread_ok = 0
+    _tradier_spread_fail = 0
+    _tradier_iv_ok = 0
     for s in enrich_pool:
         sym = s.symbol
         raw = s._raw
@@ -4240,6 +4243,12 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                     s.tradier_iv_rank = tradier_data.get("iv_rank")
                     s.tradier_iv_samples = tradier_data.get("iv_samples", 0)
                     s.tradier_spread = tradier_data.get("spread")
+                    if s.tradier_spread:
+                        _tradier_spread_ok += 1
+                    else:
+                        _tradier_spread_fail += 1
+                    if s.tradier_iv_current is not None:
+                        _tradier_iv_ok += 1
                     s.tradier_pc_ratio = tradier_data.get("pc_ratio")
                     s.tradier_iv_30d = tradier_data.get("iv_30d")
                     s.tradier_iv_60d = tradier_data.get("iv_60d")
@@ -4254,6 +4263,11 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             delattr(s, "_raw")
 
         enriched_results.append(s)
+
+    if _tradier_iv_ok > 0 or _tradier_spread_ok > 0 or _tradier_spread_fail > 0:
+        log.info(f"Tradier summary: IV={_tradier_iv_ok}, "
+                 f"spreads={_tradier_spread_ok}/{_tradier_spread_ok + _tradier_spread_fail} "
+                 f"({_tradier_spread_fail} failed)")
 
     # Pass 1 stocks NOT enriched still get a v7-only composite (cheap data only,
     # composite-band signal). They appear in the bottom of the JSON table for
