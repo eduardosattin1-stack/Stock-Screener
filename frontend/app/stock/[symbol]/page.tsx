@@ -1833,17 +1833,21 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
   const cfs  = [...cashFlows].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
   
   const Chart = ({title, data, keys, colors, labels}: {title:string, data:any[], keys:string[], colors:string[], labels:string[]}) => {
-    const W=300, H=160, PT=10, PB=20, PL=10, PR=10;
+    const W=300, H=160, PT=25, PB=20, PL=10, PR=10;
     const maxVal = Math.max(...data.flatMap(d => keys.map(k => Math.max(0, d[k]||0)))) * 1.1 || 1;
     const minVal = Math.min(0, ...data.flatMap(d => keys.map(k => Math.min(0, d[k]||0)))) * 1.1 || 0;
     const range = maxVal - minVal;
     
-    // Y pixel = H - PB - ((val - minVal) / range) * (H - PT - PB)
     const yPx = (val:number) => H - PB - ((val - minVal) / range) * (H - PT - PB);
     const zeroY = yPx(0);
     const n = data.length;
     const barW = (W - PL - PR) / (n * 1.5);
-    const gap = barW * 0.5;
+    
+    const fmtN = (v: number) => {
+      if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(1) + "B";
+      if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(0) + "M";
+      return v.toFixed(0);
+    };
 
     return (
       <div style={{flex:1, minWidth:260}}>
@@ -1853,7 +1857,6 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
           <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
           {data.map((d, i) => {
             const xCenter = PL + (i + 0.5) * ((W - PL - PR) / n);
-            // Render clustered bars
             const clusterW = barW;
             const subBarW = clusterW / keys.length;
             
@@ -1864,7 +1867,28 @@ function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{inco
                   const bx = xCenter - clusterW/2 + j*subBarW;
                   const by = val >= 0 ? yPx(val) : zeroY;
                   const bh = Math.abs(yPx(val) - zeroY);
-                  return <rect key={j} x={bx} y={by} width={subBarW*0.9} height={bh} fill={colors[j]} rx={1} />;
+                  const isLatest = i === n - 1;
+                  return (
+                    <g key={j}>
+                      <rect x={bx} y={by} width={subBarW*0.9} height={bh} fill={colors[j]} rx={1}>
+                        <title>{labels[j]} ({d.calendarYear}): {fmtN(val)}</title>
+                      </rect>
+                      {/* Discreet number label, rotated */}
+                      <text 
+                        x={bx + subBarW*0.45} 
+                        y={val >= 0 ? by - 3 : by + bh + 3} 
+                        textAnchor={val >= 0 ? "start" : "end"}
+                        transform={`rotate(-90 ${bx + subBarW*0.45} ${val >= 0 ? by - 3 : by + bh + 3})`}
+                        fontSize={isLatest ? 7 : 5.5} 
+                        fontFamily={T.mono} 
+                        fill={isLatest ? colors[j] === "#e5e7eb" ? T.textMuted : colors[j] : T.textLight}
+                        opacity={isLatest ? 1 : 0.6}
+                        style={{pointerEvents:"none"}}
+                      >
+                        {fmtN(val)}
+                      </text>
+                    </g>
+                  );
                 })}
                 {/* X axis labels (years) - show every other year to avoid clutter */}
                 {i % 2 === 1 && (
@@ -2529,7 +2553,12 @@ function AdvancedChartTab({ s }: { s: StockData }) {
         "MASimple@tv-basicstudies",
         "MASimple@tv-basicstudies",
         "RSI@tv-basicstudies",
-        "MACD@tv-basicstudies"
+        "MACD@tv-basicstudies",
+        "ADX@tv-basicstudies",
+        "BB@tv-basicstudies",
+        "StochasticRSI@tv-basicstudies",
+        "OBV@tv-basicstudies",
+        "TechnicalRatings@tv-basicstudies"
       ]
     });
     
@@ -2665,7 +2694,9 @@ export default function StockDetail(){
       </div>
 
 {/* TradingView */}
-      <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+      {activeTab !== "chart" && (
+        <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+      )}
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
