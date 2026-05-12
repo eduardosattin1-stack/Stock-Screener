@@ -132,6 +132,8 @@ interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
 interface IncomeRow{date:string;calendarYear:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
+interface BalanceSheetRow{date:string;calendarYear:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;}
+interface CashFlowRow{date:string;calendarYear:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
 interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
 
@@ -1820,6 +1822,85 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
+// ── Financial Charts Panel ──────────────────────────────────────────────────
+function FinancialChartsPanel({incomes, balanceSheets, cashFlows, loading}:{incomes:IncomeRow[], balanceSheets:BalanceSheetRow[], cashFlows:CashFlowRow[], loading:boolean}){
+  if(loading)return<Card><SH title="Financial Charts"/><div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
+  if(!incomes.length || !balanceSheets.length || !cashFlows.length) return null;
+
+  // We want to show the last 10 years, ascending chronological order
+  const incs = [...incomes].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
+  const bals = [...balanceSheets].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
+  const cfs  = [...cashFlows].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
+  
+  const Chart = ({title, data, keys, colors, labels}: {title:string, data:any[], keys:string[], colors:string[], labels:string[]}) => {
+    const W=300, H=160, PT=10, PB=20, PL=10, PR=10;
+    const maxVal = Math.max(...data.flatMap(d => keys.map(k => Math.max(0, d[k]||0)))) * 1.1 || 1;
+    const minVal = Math.min(0, ...data.flatMap(d => keys.map(k => Math.min(0, d[k]||0)))) * 1.1 || 0;
+    const range = maxVal - minVal;
+    
+    // Y pixel = H - PB - ((val - minVal) / range) * (H - PT - PB)
+    const yPx = (val:number) => H - PB - ((val - minVal) / range) * (H - PT - PB);
+    const zeroY = yPx(0);
+    const n = data.length;
+    const barW = (W - PL - PR) / (n * 1.5);
+    const gap = barW * 0.5;
+
+    return (
+      <div style={{flex:1, minWidth:260}}>
+        <div style={{fontSize:11, color:T.textMuted, fontFamily:T.mono, fontWeight:600, letterSpacing:"0.08em", marginBottom:8}}>{title}</div>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:"#fafbfc", borderRadius:4, border:`1px solid ${T.divider}`}}>
+          {/* Zero line */}
+          <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
+          {data.map((d, i) => {
+            const xCenter = PL + (i + 0.5) * ((W - PL - PR) / n);
+            // Render clustered bars
+            const clusterW = barW;
+            const subBarW = clusterW / keys.length;
+            
+            return (
+              <g key={i}>
+                {keys.map((k, j) => {
+                  const val = d[k] || 0;
+                  const bx = xCenter - clusterW/2 + j*subBarW;
+                  const by = val >= 0 ? yPx(val) : zeroY;
+                  const bh = Math.abs(yPx(val) - zeroY);
+                  return <rect key={j} x={bx} y={by} width={subBarW*0.9} height={bh} fill={colors[j]} rx={1} />;
+                })}
+                {/* X axis labels (years) - show every other year to avoid clutter */}
+                {i % 2 === 1 && (
+                  <text x={xCenter} y={H-5} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={T.textLight}>
+                    {d.calendarYear?.slice(-2) || "—"}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+        {/* Legend */}
+        <div style={{display:"flex", gap:12, marginTop:6, justifyContent:"center"}}>
+          {labels.map((l, i) => (
+            <div key={i} style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textLight}}>
+              <div style={{width:8, height:8, borderRadius:2, background:colors[i]}} />
+              {l}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Card>
+      <SH title="Financials Overview" icon={<BarChart2 size={12}/>} sub="10-Year Annual Trends" />
+      <div style={{display:"flex", flexWrap:"wrap", gap:20}}>
+        <Chart title="INCOME STATEMENT" data={incs} keys={["revenue", "operatingIncome", "netIncome"]} colors={["#e5e7eb", T.amber, T.green]} labels={["Rev", "OpInc", "NetInc"]} />
+        <Chart title="BALANCE SHEET" data={bals} keys={["totalAssets", "totalLiabilities", "totalEquity"]} colors={["#e5e7eb", T.red, T.green]} labels={["Assets", "Liabs", "Equity"]} />
+        <Chart title="CASH FLOW" data={cfs} keys={["operatingCashFlow", "freeCashFlow"]} colors={["#d1d5db", T.blue]} labels={["OpCash", "FCF"]} />
+      </div>
+    </Card>
+  );
+}
+
 // ── Peer Comparison ────────────────────────────────────────────────────────────
 // Compares TTM multiples (P/E, P/S, P/B, P/FCF, EV/EBITDA) of the target
 // stock vs FMP's peer set, sorted by market cap. Median row at the bottom.
@@ -1974,12 +2055,14 @@ async function loadStockFromScans(symbol:string):Promise<StockData|null>{
 // and same EV/EBITDA join logic that the main page's useEffect performs.
 // Used by the comparison tab to populate the right-hand stock's
 // GrowthPanel, ProfitPanel, and ValPanel.
-async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; ratios:RatioYear[]}>{
+async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]}>{
   const sym=symbol.toUpperCase();
-  const [inc,rat,km]=await Promise.all([
+  const [inc,rat,km,bs,cf]=await Promise.all([
     fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),
     fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),
     fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),
+    fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:11}),
+    fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:11})
   ]);
   const incomes:IncomeRow[]=inc?.length
     ? inc.map((r:any)=>({
@@ -1997,7 +2080,22 @@ async function loadFmpForStock(symbol:string):Promise<{incomes:IncomeRow[]; rati
     });
     ratios=rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[];
   }
-  return {incomes,ratios};
+  const balanceSheets:BalanceSheetRow[]=bs?.length
+    ? bs.map((r:any)=>({
+        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
+        totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities,
+        totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt,
+        cashAndCashEquivalents:r.cashAndCashEquivalents,
+      }))
+    : [];
+  const cashFlows:CashFlowRow[]=cf?.length
+    ? cf.map((r:any)=>({
+        date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4),
+        operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure,
+        freeCashFlow:r.freeCashFlow,
+      }))
+    : [];
+  return {incomes,ratios,balanceSheets,cashFlows};
 }
  
 // ── QualityValueCard ─────────────────────────────────────────────────────────
@@ -2041,11 +2139,11 @@ function QualityValueCard({s}:{s:StockData}){
 // outside it show an error and the user is prompted to pick another.
 function ComparisonTab({stockA,fmpA}:{
   stockA:StockData;
-  fmpA:{incomes:IncomeRow[]; ratios:RatioYear[]};
+  fmpA:{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]};
 }){
   const [input,setInput]=useState("");
   const [stockB,setStockB]=useState<StockData|null>(null);
-  const [fmpB,setFmpB]=useState<{incomes:IncomeRow[]; ratios:RatioYear[]}|null>(null);
+  const [fmpB,setFmpB]=useState<{incomes:IncomeRow[]; ratios:RatioYear[]; balanceSheets:BalanceSheetRow[]; cashFlows:CashFlowRow[]}|null>(null);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState("");
  
@@ -2349,28 +2447,113 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
+// ── Stock Story Card (Narrative Engine) ──────────────────────────────────────
+function StockStoryCard({s}:{s:StockData}){
+  let bottomLine = "";
+  const comp = s.composite || 0;
+  if(comp > 0.7) bottomLine = `${s.symbol} is showing exceptional multi-factor strength, driven by robust fundamentals and positive momentum. `;
+  else if(comp > 0.5) bottomLine = `${s.symbol} presents a mixed but constructive profile, with solid underlying metrics balancing some near-term headwinds. `;
+  else bottomLine = `${s.symbol} is currently screening poorly across our multi-factor model, suggesting significant fundamental or technical weakness. `;
+
+  const roe = s.roe_avg ?? 0;
+  if(roe > 0.2) bottomLine += "It boasts a highly efficient business model with strong return on equity. ";
+  else if(roe < 0) bottomLine += "The company is currently unprofitable, burning through equity. ";
+
+  if(s.has_catalyst) bottomLine += "Keep an eye on recent catalyst events that could drive near-term volatility.";
+
+  let balanceSheet = "";
+  const fcf = s.fcf_margin ?? 0;
+  if(fcf > 0.15) balanceSheet = "The company is a cash-generating machine, converting a substantial portion of its revenue directly into free cash flow. This fortress-like balance sheet provides significant downside protection and flexibility for dividends or buybacks.";
+  else if(fcf > 0) balanceSheet = "The company maintains positive free cash flow, indicating a stable financial position that can cover its current obligations.";
+  else balanceSheet = "The balance sheet is currently under pressure, as the company is burning cash. This increases reliance on external financing and dilutes the margin of safety.";
+
+  let optionsNarrative = "";
+  if(s.hit_prob && s.hit_prob > 0.10) optionsNarrative = "Our ML model detects a highly elevated probability of a significant upside move in the near term. ";
+  else if (s.hit_prob && s.hit_prob < 0.05) optionsNarrative = "Our ML model sees limited near-term upside volatility, suggesting a range-bound environment. ";
+  
+  if(s.tradier_iv_rank != null) {
+    if(s.tradier_iv_rank < 30) optionsNarrative += "Furthermore, implied volatility is historically cheap, making this an attractive environment for long premium strategies like debit spreads.";
+    else if(s.tradier_iv_rank > 60) optionsNarrative += "Furthermore, implied volatility is elevated, making options relatively expensive. This favors premium-selling strategies like covered calls or credit spreads.";
+  }
+
+  if(!optionsNarrative) optionsNarrative = "No actionable options or volatility edge detected at this time.";
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
+      <Card>
+        <SH title="The Bottom Line" icon={<Brain size={12}/>}/>
+        <div style={{fontSize:14,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{bottomLine}</div>
+      </Card>
+      <Card>
+        <SH title="Balance Sheet Assessment" icon={<Shield size={12}/>}/>
+        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{balanceSheet}</div>
+      </Card>
+      <Card>
+        <SH title="Options & Volatility Landscape" icon={<Zap size={12}/>}/>
+        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>{optionsNarrative}</div>
+      </Card>
+      <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,textAlign:"center"}}>
+        These narratives are dynamically generated from the active quantitative models. Not financial advice.
+      </div>
+    </div>
+  );
+}
+
+function AdvancedChartTab({ s }: { s: StockData }) {
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!container.current) return;
+    container.current.innerHTML = "";
+    
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      "autosize": true,
+      "symbol": toTradingViewSymbol(s.symbol),
+      "interval": "D",
+      "timezone": "exchange",
+      "theme": "light",
+      "style": "1",
+      "locale": "en",
+      "enable_publishing": false,
+      "backgroundColor": "rgba(255, 255, 255, 1)",
+      "gridColor": "rgba(240, 243, 250, 0)",
+      "hide_top_toolbar": false,
+      "hide_legend": false,
+      "save_image": false,
+      "allow_symbol_change": true,
+      "studies": [
+        "MASimple@tv-basicstudies",
+        "MASimple@tv-basicstudies",
+        "RSI@tv-basicstudies",
+        "MACD@tv-basicstudies"
+      ]
+    });
+    
+    container.current.appendChild(script);
+  }, [s.symbol]);
+
+  return (
+    <Card style={{ height: "700px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+      <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
+    </Card>
+  );
+}
 
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
-  const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);const[fmpLoading,setFmpLoading]=useState(true);
-  // v8 mode toggle. MUST be declared at top of component (before any early
-  // returns) to satisfy Rules of Hooks — earlier version had this declared
-  // after the `if(loading)return` guard, which produced a different hook
-  // count on first vs subsequent renders and crashed the page.
+  const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);
+  const[balanceSheets,setBalanceSheets]=useState<BalanceSheetRow[]>([]);const[cashFlows,setCashFlows]=useState<CashFlowRow[]>([]);
+  const[fmpLoading,setFmpLoading]=useState(true);
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"track"|"compare">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"track"|"compare"|"chart">("overview");
 
-  // v7.2: Search the 3 region files in order (sp500 → europe → global), not
-  // `latest.json`. `latest.json` is overwritten by whichever scan ran most
-  // recently, so a stock page could display data from a different region's
-  // scan than the screener table the user clicked from — causing the
-  // P(+10%) and other fields to appear to "disagree" between the two pages
-  // even when both come from the same model. Searching regional files
-  // directly and picking the freshest record with this symbol eliminates
-  // that mismatch.
   useEffect(()=>{
     if(!symbol)return;
     const sym=symbol.toUpperCase();
@@ -2378,15 +2561,12 @@ export default function StockDetail(){
     Promise.all(regions.map(r=>
       fetch(`${GCS_SCANS}/latest_${r}.json`).then(res=>res.ok?res.json():null).catch(()=>null)
     )).then(results=>{
-      // Find the freshest payload that contains this symbol
       let best:StockData|null=null, bestDate="";
       results.forEach(d=>{
         if(!d?.stocks)return;
         const f=d.stocks.find((x:StockData)=>x.symbol===sym);
         if(f&&(d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
       });
-      // Fallback to latest.json if nothing matched (first-deploy edge case
-      // when a region file is missing). Better to show something than nothing.
       if(!best){
         fetch(`${GCS_SCANS}/latest_global.json`).then(r=>r.json()).then(d=>{
           const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
@@ -2397,14 +2577,8 @@ export default function StockDetail(){
       }
     }).catch(()=>{setStock(null); setLoading(false);});
   },[symbol]);
-  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10})]).then(([inc,rat,km])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length){const evByYear=new Map<string,number>();(km||[]).forEach((k:any)=>{if(k?.fiscalYear!=null&&k.evToEBITDA!=null)evByYear.set(String(k.fiscalYear),k.evToEBITDA);});setRatios(rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[]);}setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
+  useEffect(()=>{if(!symbol)return;setFmpLoading(true);const sym=symbol.toUpperCase();Promise.all([fmpFetch("income-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("ratios",{symbol:sym,period:"annual",limit:10}),fmpFetch("key-metrics",{symbol:sym,period:"annual",limit:10}),fmpFetch("balance-sheet-statement",{symbol:sym,period:"annual",limit:11}),fmpFetch("cash-flow-statement",{symbol:sym,period:"annual",limit:11})]).then(([inc,rat,km,bs,cf])=>{if(inc?.length)setIncomes(inc.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),revenue:r.revenue,grossProfit:r.grossProfit,operatingIncome:r.operatingIncome,netIncome:r.netIncome,epsdiluted:r.epsdiluted||r.epsDiluted,ebitda:r.ebitda})));if(rat?.length){const evByYear=new Map<string,number>();(km||[]).forEach((k:any)=>{if(k?.fiscalYear!=null&&k.evToEBITDA!=null)evByYear.set(String(k.fiscalYear),k.evToEBITDA);});setRatios(rat.map((r:any)=>({...r,evToEBITDA:evByYear.get(String(r.fiscalYear))})) as RatioYear[]);}if(bs?.length)setBalanceSheets(bs.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),totalAssets:r.totalAssets,totalLiabilities:r.totalLiabilities,totalEquity:r.totalStockholdersEquity,totalDebt:r.totalDebt,cashAndCashEquivalents:r.cashAndCashEquivalents})));if(cf?.length)setCashFlows(cf.map((r:any)=>({date:r.date,calendarYear:r.calendarYear||r.date?.slice(0,4),operatingCashFlow:r.operatingCashFlow,capitalExpenditure:r.capitalExpenditure,freeCashFlow:r.freeCashFlow})));setFmpLoading(false);}).catch(()=>setFmpLoading(false));},[symbol]);
 
-  // v8: if the stock loaded into a mode that disqualifies it, auto-switch
-  // to the other mode if that one qualifies. Lands the user on a useful view
-  // by default. If neither qualifies (rare — both gates fail), stay where
-  // we are and the page will render the gate-failure summary block.
-  // v1.2 (May 2026): FA mode availability now driven by fallen_angel_flag.
-  // Compounder modes from signal_compounder_us/_global.
   useEffect(()=>{
     if (!stock) return;
     const momOK = (stock.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
@@ -2414,7 +2588,6 @@ export default function StockDetail(){
     const currentOK = mode==="momentum"?momOK : mode==="fallen_angel"?faOK
                     : mode==="compounder_us"?cuOK : mode==="compounder_global"?cgOK : true;
     if (!currentOK) {
-      // Fall back to the first available mode in priority order
       if (momOK) setMode("momentum");
       else if (cuOK) setMode("compounder_us");
       else if (cgOK) setMode("compounder_global");
@@ -2427,18 +2600,10 @@ export default function StockDetail(){
 
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
 
-  // ── Mode-aware bindings ──
-  // v1.2 (May 2026): Momentum availability uses signal_momentum.
-  // Fallen Angel availability uses fallen_angel_flag (boolean, replaces
-  // the old signal_fallen_angel gate). The single `signal` field is gone;
-  // sigMode is derived from per-mode signals only.
   const haveMom = (s.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
   const haveFA  = s.fallen_angel_flag === true;
   const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
   const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
-  // compMode: pick the composite that matches the active mode. Compounder
-  // modes don't have a separate composite_compounder_*; they reuse momentum
-  // composite (they share the v8 5-factor radar — gate differs, not score).
   const compMode = mode==="fallen_angel"
     ? (s.composite_fallen_angel ?? s.composite)
     : (s.composite_momentum ?? s.composite);
@@ -2450,14 +2615,9 @@ export default function StockDetail(){
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
   const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
 
-  // Hint when Fallen Angel materially outscores Momentum
   const faAdvantage=(s.composite_fallen_angel??0)-(s.composite_momentum??0);
   const showFAHint=haveFA&&faAdvantage>=0.10&&mode==="momentum";
 
-  // ── 4-cohort eligibility badges (v1.2 May 2026) ───────────────────────
-  // Replaces the single BUY/HOLD/SELL signal badge that was on the detail
-  // header. Each badge shows whether the stock qualifies for one of the
-  // four active baskets. Green = qualifies, gray = no.
   const cohortBadges:[string,string,boolean][] = [
     ["MOM",      "Momentum",         haveMom],
     ["FA",       "Fallen Angel",     haveFA],
@@ -2469,13 +2629,11 @@ export default function StockDetail(){
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
       <button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:5,fontFamily:T.mono,fontSize:11,marginBottom:16,padding:0}}><ArrowLeft size={13}/> SCREENER</button>
 
-      {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,paddingBottom:16,borderBottom:`1px solid ${T.divider}`}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
-            {/* 4-cohort eligibility row (replaces v1.1 BUY/HOLD/SELL badge) */}
             <div style={{display:"inline-flex",gap:4}}>
               {cohortBadges.map(([short,full,ok])=>(
                 <span key={short} title={`${full}: ${ok?"qualified":"not qualified"}`}
@@ -2511,7 +2669,7 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","track","compare"] as const).map(tab=>(
+        {(["overview","story","track","compare","chart"] as const).map(tab=>(
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -2520,7 +2678,7 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":tab==="track"?"Track Record":"Compare"}
+            {tab==="overview"?"Overview":tab==="story"?"Stock Story":tab==="track"?"Track Record":tab==="compare"?"Compare":"Chart"}
           </button>
         ))}
       </div>
@@ -2528,7 +2686,11 @@ export default function StockDetail(){
       {activeTab==="track" ? (
         <TrackRecordTable s={s}/>
       ) : activeTab==="compare" ? (
-        <ComparisonTab stockA={s} fmpA={{incomes,ratios}}/>
+        <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows}}/>
+      ) : activeTab==="story" ? (
+        <StockStoryCard s={s}/>
+      ) : activeTab==="chart" ? (
+        <AdvancedChartTab s={s}/>
       ) : (
         <>
           
@@ -2609,6 +2771,11 @@ export default function StockDetail(){
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
         <MomentumPanel s={s}/>
         <TranscriptInsights symbol={s.symbol}/>
+      </div>
+
+      {/* Financial Charts */}
+      <div style={{marginBottom:16}}>
+        <FinancialChartsPanel incomes={incomes} balanceSheets={balanceSheets} cashFlows={cashFlows} loading={fmpLoading} />
       </div>
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
