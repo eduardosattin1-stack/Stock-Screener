@@ -419,12 +419,11 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
 }
 
 function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number}){
-  // v8 mode-aware bindings. The user's mode toggle drives which composite,
-  // signal, and factor radar appear in the row. The "other" composite is
-  // shown in a small permanent column so divergences between modes pop
-  // visually without forcing a toggle flip.
+  // v8 mode-aware bindings. The user's mode toggle drives which composite
+  // and factor radar appear in the expanded row. The "other" composite is
+  // shown in a small column so divergences between modes pop visually
+  // without forcing a toggle flip.
   const scoresActive = readFactorsV8(s, mode);
-  const scoresOther = readFactorsV8(s, mode === "fallen_angel" ? "momentum" : "fallen_angel");
   const compActive = readComposite(s, mode);
   const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
   const compOther = readComposite(s, otherMode);
@@ -435,34 +434,41 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
   // angel candidate). Magnitude threshold ≥0.10 unchanged.
   const otherQualifies = isQualified(s, otherMode);
   const otherIsHigher = otherQualifies && (compOther - compActive >= 0.10);
-  // May 2026: P20 column restored after time_model_v2 reached AUC 0.78
-  // (daily highs, +20%/4w target, TOP3 ensemble). hit_prob now represents
-  // P(+20% daily high in 4 weeks) instead of the old P(+10% in 60d).
-  // High P20 + Low IVR = bull spread signal (underpriced options on a
-  // stock the model predicts will move). probFallback below remains in
-  // use by the GAIN/DD column which reads from a static backtest-
-  // calibration table keyed on composite.
-  const probFallback = getProb(compActive);
+  // v1.2 (May 2026): scoresOther and probFallback removed — they fed the
+  // now-dropped VAL/GRW/QUAL/GAIN/DD columns. P20 column uses s.hit_prob
+  // directly; sub-factor scores are shown in the expanded row's LargeRadar.
 
   return(
     <>
       <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s",borderLeft:"3px solid transparent"}}
         onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg-hover,#f0f4f1)";}}
         onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
-        {/* SYMBOL + sector + mini radar (5-axis active mode) */}
+        {/* SYMBOL column.
+            v1.2 (May 2026): dropped MiniRadar mini-icon and sector subtitle.
+            MiniRadar at 44px was visually decorative — the 5 factors are
+            unreadable at that size; the expanded LargeRadar serves the
+            "see the breakdown" job better. Sector moved to its own
+            filterable column (next td). */}
         <td style={{padding:"10px 12px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
-            <MiniRadar scores={scoresActive}/>
             <div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
                 {otherIsHigher&&<span style={{fontSize:8,padding:"1px 5px",borderRadius:3,background:"#fffbeb",color:"#d97706",fontFamily:"var(--font-mono)",fontWeight:700,border:"1px solid #fde68a"}} title={`${otherLabel} composite is ${(compOther-compActive).toFixed(2)} higher — switch mode to compare`}>↻ {otherLabel}+{(compOther-compActive).toFixed(2)}</span>}
               </div>
-              {s.sector&&<div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1}}>{s.sector}{s.industry?` / ${s.industry}`:""}</div>}
+              {s.company_name && <div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={s.company_name}>{s.company_name}</div>}
             </div>
           </div>
+        </td>
+        {/* SECTOR — v1.2 column (was row subtitle) */}
+        <td style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted,#6b7280)",padding:"10px 12px",whiteSpace:"nowrap",maxWidth:140,overflow:"hidden",textOverflow:"ellipsis"}} title={s.industry?`${s.sector||"—"} / ${s.industry}`:(s.sector||"—")}>
+          {s.sector || <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>}
+        </td>
+        {/* CTRY — ISO country code from FMP company-screener */}
+        <td style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted,#6b7280)",padding:"10px 8px",textAlign:"center"}}>
+          {s.country || <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>}
         </td>
         {/* PRICE */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12}}>{fmtPrice(s.price, s.currency)}</td>
@@ -486,27 +492,9 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
           title={otherQualifies?`${otherLabel} composite — ${otherIsHigher?"leads active mode by ≥0.10":"trails active mode"}`:`${otherLabel} mode disqualifies this stock (failed setup gate)`}>
           {otherQualifies ? compOther.toFixed(2) : "—"}
         </td>
-        {/* VALUE — sub-factor score from v8 Value (replaces DCF MoS) */}
-        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
-          {(()=>{const v = scoresActive.value;
-            if (v == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
-            const c = v>0.7?"#10b981":v>0.5?"var(--text-muted)":v>0.3?"#d97706":"#ef4444";
-            return <span style={{color:c,fontWeight:700}}>{(v*100).toFixed(0)}</span>;})()}
-        </td>
-        {/* GROWTH — v8 Growth factor score */}
-        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
-          {(()=>{const g = scoresActive.growth;
-            if (g == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
-            const c = g>0.7?"#10b981":g>0.5?"var(--text-muted)":g>0.3?"#d97706":"#ef4444";
-            return <span style={{color:c,fontWeight:700}}>{(g*100).toFixed(0)}</span>;})()}
-        </td>
-        {/* QUALITY — v8 Quality factor score */}
-        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
-          {(()=>{const q = scoresActive.quality;
-            if (q == null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
-            const c = q>0.7?"#10b981":q>0.5?"var(--text-muted)":q>0.3?"#d97706":"#ef4444";
-            return <span style={{color:c,fontWeight:700}}>{(q*100).toFixed(0)}</span>;})()}
-        </td>
+        {/* v1.2 (May 2026): VAL/GRW/QUAL columns removed. Sub-factor scores
+            visible in the expanded row (LargeRadar + FactorBar). They were
+            redundant alongside COMP which is their weighted aggregate. */}
         {/* UPSIDE — analyst consensus (v8 Value sub-component, kept for reference) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
         {/* SMART$ — LTR-derived weighted score; pass-2 only, US-only.
@@ -556,15 +544,12 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
             </div>;
           })()}
         </td>
-        {/* GAIN/DD */}
-        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:11}}>
-          <span style={{color:"#10b981",fontWeight:600}}>+{probFallback.gain}%</span>
-          <span style={{color:"var(--text-light,#9ca3af)",margin:"0 2px"}}>/</span>
-          <span style={{color:"#ef4444",fontWeight:600}}>{probFallback.dd}%</span>
-        </td>
+        {/* v1.2 (May 2026): GAIN/DD column dropped. Static lookup-table band
+            (same for every stock in a composite bucket) — provided no
+            decision-useful information. Composite alone carries the message. */}
       </tr>
       {expanded&&(
-        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={12} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -658,10 +643,12 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 // quality_score) are computed at sort time from the active mode — letting
 // the user rank stocks by either composite or by any individual factor.
 type SortKey =
-  | "symbol" | "price" | "piotroski" | "p_s"
+  | "symbol" | "sector" | "country" | "price" | "piotroski" | "p_s"
   | "active_comp" | "other_comp"
-  | "value_score" | "growth_score" | "quality_score"
   | "upside" | "smart_money" | "hit_prob";
+// v1.2 (May 2026): removed orphan SortKeys (value_score/growth_score/quality_score) —
+// those columns were dropped from the table. Added sector/country for the new
+// SECTOR + CTRY columns. String-based sort handled in the sorted useMemo below.
 
 export default function Dashboard(){
   const [data,setData]=useState<ScanData|null>(null);
@@ -698,22 +685,22 @@ export default function Dashboard(){
   // Sort key extractor. Mode-aware so that toggling the mode re-ranks
   // the table without changing the sort key. "active_comp" follows the
   // selected mode; "other_comp" follows whichever isn't selected.
+  // v1.2: sector/country are string sorts (handled in sorted useMemo).
+  // Removed v8 sub-factor keys (value_score/growth_score/quality_score)
+  // since their columns are gone.
   const extract = (s:StockData, key:SortKey):number => {
-    const fA = readFactorsV8(s, mode);
     const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
     switch(key){
       case "active_comp":   return readComposite(s, mode);
       case "other_comp":    return readComposite(s, otherMode);
-      case "value_score":   return fA.value ?? -1;
-      case "growth_score":  return fA.growth ?? -1;
-      case "quality_score": return fA.quality ?? -1;
       case "piotroski":     return s.piotroski ?? 0;
       case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
       case "upside":        return s.upside ?? 0;
       case "smart_money":   return s.smart_money_score ?? -1;
       case "hit_prob":      return s.hit_prob ?? -1;
       case "price":         return s.price ?? 0;
-      case "symbol":        return s.symbol.charCodeAt(0); // alphabetic via numeric proxy
+      case "symbol":        return s.symbol.charCodeAt(0);
+      // sector/country handled by string-sort branch below
       default:              return 0;
     }
   };
@@ -736,6 +723,17 @@ export default function Dashboard(){
     if (sortKey === "symbol") {
       list.sort((a,b)=>{
         const cmp = a.symbol.localeCompare(b.symbol);
+        return sortDir === "desc" ? -cmp : cmp;
+      });
+    } else if (sortKey === "sector" || sortKey === "country") {
+      // v1.2: string sort for SECTOR + CTRY columns. Empty/null strings
+      // sort to the end regardless of direction.
+      list.sort((a,b)=>{
+        const av = (a[sortKey] || "").toString();
+        const bv = (b[sortKey] || "").toString();
+        if (!av && bv) return 1;
+        if (av && !bv) return -1;
+        const cmp = av.localeCompare(bv);
         return sortDir === "desc" ? -cmp : cmp;
       });
     } else {
@@ -815,12 +813,12 @@ export default function Dashboard(){
       <div style={{display:"flex",gap:10,marginBottom:12,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol..."
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol or company..."
             style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
                     border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
         <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-          Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace("_"," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
+          Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
         </div>
       </div>
 
@@ -830,19 +828,22 @@ export default function Dashboard(){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <thead><tr>
               <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
+              <th style={hs("sector","left")} onClick={()=>toggleSort("sector")} title="Click to sort by sector (alphabetical).">SECTOR</th>
+              <th style={hs("country","center")} onClick={()=>toggleSort("country")} title="ISO country code from FMP company-screener. Click to sort.">CTRY</th>
               <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
               <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
               <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
               <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
               <th style={hs("other_comp")} onClick={()=>toggleSort("other_comp")} title={`Composite for the inactive mode. Sortable — click to rank by ${otherCompLabel === "FA" ? "Fallen Angel" : "Momentum"} composite without switching the view.`}>{otherCompLabel}</th>
-              <th style={hs("value_score","center")} onClick={()=>toggleSort("value_score")} title="v8 Value factor score: intrinsic upside (40%) + P/FCF (30%) + earnings yield (30%)">VAL</th>
-              <th style={hs("growth_score","center")} onClick={()=>toggleSort("growth_score")} title="v8 Growth factor score: revenue + EPS + FCF, each 60% TTM YoY + 40% 3y CAGR">GRW</th>
-              <th style={hs("quality_score","center")} onClick={()=>toggleSort("quality_score")} title="v8 Quality factor score: net margin (35%) + FCF margin (35%) + ROIC (30%)">QUAL</th>
               <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
-              <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (30%), trend strength (28%), institutional accumulation (20%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
+              <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
               <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
               <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
-              <th style={{...hs("static","right"),cursor:"default"}}>GAIN/DD</th>
+              {/* v1.2 (May 2026): dropped 4 columns — VAL, GRW, QUAL (v8 sub-factor
+                  scores; shown alongside COMP they fed = redundant), and GAIN/DD
+                  (static lookup-table band; same for every stock in a composite
+                  bucket = useless). Composite now stands on its own; users open
+                  the stock detail page for sub-factor breakdowns. */}
             </tr></thead>
             <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
           </table>
