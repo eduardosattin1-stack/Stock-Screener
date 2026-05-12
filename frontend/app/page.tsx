@@ -32,7 +32,8 @@ interface StockData {
   gross_margin_trend:string; piotroski:number; altman_z:number;
   dcf_value:number; owner_earnings_yield:number; intrinsic_buffett:number;
   intrinsic_avg:number; margin_of_safety:number; value_score:number;
-  composite:number; signal:string; classification:string; reasons:string[];
+  composite:number; classification:string; reasons:string[];
+  // signal?:string;  // REMOVED v1.2 (May 2026) — BUY/HOLD/SELL semantics gone
   factor_scores?:FactorScores;
   // v7 fields kept on the wire (diagnostic only, no longer drive composite)
   quality_score?:number; catalyst_score?:number; catalyst_flags?:string[];
@@ -77,11 +78,24 @@ interface StockData {
   composite_momentum?:number;
   composite_fallen_angel?:number;
   signal_momentum?:string;
-  signal_fallen_angel?:string;
+  // signal_fallen_angel?:string; // REMOVED v1.2 (May 2026) — replaced by fallen_angel_flag
   factors_v8?:FactorsV8;
   factors_v8_momentum?:FactorsV8;
   factors_v8_fallen_angel?:FactorsV8;
   composite_v7?:number;
+  // ── v1.2 (May 2026): Compounder + Fallen Angel flag + PT velocity ──
+  fallen_angel_flag?:boolean;        // FA basket gate (replaces signal_fallen_angel)
+  compounder_score_us?:number|null;  // US cohort: exchange in NYSE/NASDAQ/AMEX, mcap≥$2B, ex Fin/Ins/HC
+  compounder_score_global?:number|null; // Global cohort: ex Fin/Ins/HC
+  compounder_rank_us?:number|null;
+  compounder_rank_global?:number|null;
+  signal_compounder_us?:string;      // QUALIFIED | DISQUALIFIED
+  signal_compounder_global?:string;
+  roe_compounder?:number|null;       // 3-yr strict average (v1.1+)
+  pb_compounder?:number|null;
+  opmargin_delta_compounder?:number|null;
+  pt_velocity_60d?:number|null;      // 60d % delta in analyst PT consensus
+  pt_velocity_score?:number|null;    // banded 0..1 for Smart Money composite
   // v8 derived fields available on the row (used in expanded panel)
   net_margin?:number;
   fcf_margin?:number;
@@ -178,20 +192,20 @@ function readComposite(s:StockData, mode:string):number {
   return s.composite_momentum ?? s.composite ?? 0;
 }
 function readSignal(s:StockData, mode:string):string {
-  if (mode === "fallen_angel") return s.signal_fallen_angel ?? s.signal ?? "HOLD";
-  return s.signal_momentum ?? s.signal ?? "HOLD";
+  // v1.2 (May 2026): signal_fallen_angel removed → derive from fallen_angel_flag.
+  // signal (BUY/HOLD/SELL) removed → no fallback chain. signal_momentum still
+  // exists (QUALIFIED/DISQUALIFIED).
+  if (mode === "fallen_angel") return s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED";
+  return s.signal_momentum ?? "DISQUALIFIED";
 }
 
-// v8 universe gate: a stock passes the gate for a mode iff its signal for
-// that mode is not "DISQUALIFIED". The backend writes "DISQUALIFIED" for
-// stocks failing the structural setup test (Momentum: trend intact + not
-// extended; Fallen Angel: deep drawdown + below SMA200 + Pio≥7 + Z>2.5 +
-// ROE>12% + cap>$2B). For older scan JSON without per-mode signals the
-// fallback is to assume qualified — better to over-show than under-show
-// during the migration window.
+// v8 universe gate: a stock passes the gate for a mode iff:
+//   - Momentum: signal_momentum != "DISQUALIFIED" (v8 momentum gate)
+//   - Fallen Angel: fallen_angel_flag == true (v1.2: replaced signal_fallen_angel)
 function isQualified(s:StockData, mode:string):boolean {
-  const sig = mode === "fallen_angel" ? s.signal_fallen_angel : s.signal_momentum;
-  // Fallback: if per-mode signal is absent (legacy scan), let the row through
+  if (mode === "fallen_angel") return s.fallen_angel_flag === true;
+  const sig = s.signal_momentum;
+  // Fallback: if signal_momentum absent (legacy scan), let row through
   if (sig == null) return true;
   return sig !== "DISQUALIFIED";
 }
