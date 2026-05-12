@@ -927,7 +927,7 @@ def _fetch_monthly_series(
     This guards against look-ahead — the backtest on date D only "sees"
     values that WOULD have been publicly released by D.
     """
-    raw = fmp_func("economics-indicators", {
+    raw = fmp_func("economic-indicators", {
         "name": name, "from": from_date, "to": to_date,
     })
     if not raw or not isinstance(raw, list):

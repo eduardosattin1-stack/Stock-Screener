@@ -2679,6 +2679,70 @@ function StockStoryCard({s}:{s:StockData}){
   );
 }
 
+function FmpBasicChartTab({ s }: { s: StockData }) {
+  const [data, setData] = useState<{date:string, close:number}[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    // Use window.fetch to hit the backend directly or via FMP proxy
+    fetch(`/api/fmp?e=historical-price-full&symbol=${s.symbol.toUpperCase()}&timeseries=252`)
+      .then(r => r.ok ? r.json() : null)
+      .then(res => {
+        const d = Array.isArray(res) ? res : res ? [res] : null;
+        if (d && d[0] && d[0].historical) {
+          setData(d[0].historical.slice().reverse()); // Oldest first
+        } else {
+          setData([]);
+        }
+        setLoading(false);
+      })
+      .catch(() => { setData([]); setLoading(false); });
+  }, [s.symbol]);
+
+  if (loading) return <Card style={{height: 700, display: "flex", alignItems: "center", justifyContent: "center", color: T.textMuted}}><Loader2 size={24} style={{animation:"spin 1s linear infinite"}}/></Card>;
+  if (!data || data.length === 0) return <Card style={{height: 700, display: "flex", alignItems: "center", justifyContent: "center", color: T.textMuted}}>No historical data available.</Card>;
+
+  const minP = Math.min(...data.map(d=>d.close)) * 0.95;
+  const maxP = Math.max(...data.map(d=>d.close)) * 1.05;
+  const range = maxP - minP || 1;
+  const W = 800, H = 500;
+  
+  const pts = data.map((d, i) => {
+    const x = (i / (data.length - 1)) * W;
+    const y = H - ((d.close - minP) / range) * H;
+    return `${x},${y}`;
+  }).join(" ");
+
+  return (
+    <div>
+      <Card style={{padding: 24, height: 700}}>
+        <div style={{display:"flex", justifyContent:"space-between", marginBottom: 32}}>
+          <SH title="Basic Price Chart" icon={<Activity size={12}/>} sub="Euronext restricted symbol fallback (FMP Data)" />
+          <a href={`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}`} target="_blank" rel="noreferrer" style={{fontSize: 10, color: T.blue, textDecoration:"underline", fontFamily: T.mono}}>Open in TradingView</a>
+        </div>
+        <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{overflow:"visible"}}>
+          {/* Grid */}
+          <line x1="0" y1="0" x2={W} y2="0" stroke={T.divider} strokeWidth="1" />
+          <line x1="0" y1={H/2} x2={W} y2={H/2} stroke={T.divider} strokeWidth="1" />
+          <line x1="0" y1={H} x2={W} y2={H} stroke={T.divider} strokeWidth="1" />
+          
+          {/* Line */}
+          <polyline points={pts} fill="none" stroke={T.green} strokeWidth="2" strokeLinejoin="round" />
+          
+          {/* Current price dot */}
+          <circle cx={W} cy={H - ((data[data.length-1].close - minP) / range) * H} r="4" fill={T.green} />
+        </svg>
+        <div style={{display:"flex", justifyContent:"space-between", marginTop: 16, fontSize:10, color:T.textMuted, fontFamily: T.mono}}>
+          <span>{data[0].date}</span>
+          <span>{data[data.length-1].date}</span>
+        </div>
+      </Card>
+      <CustomAlertPanel symbol={s.symbol} />
+    </div>
+  );
+}
+
 function CustomAlertPanel({ symbol }: { symbol: string }) {
   const [metric, setMetric] = useState("Price");
   const [condition, setCondition] = useState(">");
@@ -2942,8 +3006,14 @@ export default function StockDetail(){
       </div>
 
 {/* TradingView */}
-      {activeTab !== "chart" && (
+      {activeTab !== "chart" && !toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") && (
         <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+      )}
+      {activeTab !== "chart" && toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") && (
+         <Card style={{marginBottom:16,padding:24,textAlign:"center",color:T.textMuted,fontFamily:T.mono,fontSize:11}}>
+           <Activity size={16} style={{margin:"0 auto 8px",color:T.textLight}}/>
+           Euronext widget data is restricted by TradingView. Open the Chart tab for an FMP historical fallback.
+         </Card>
       )}
 
       {/* Tab bar */}
@@ -2969,7 +3039,9 @@ export default function StockDetail(){
       ) : activeTab==="story" ? (
         <StockStoryCard s={s}/>
       ) : activeTab==="chart" ? (
-        <AdvancedChartTab s={s}/>
+        toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") 
+          ? <FmpBasicChartTab s={s}/> 
+          : <AdvancedChartTab s={s}/>
       ) : (
         <>
           
