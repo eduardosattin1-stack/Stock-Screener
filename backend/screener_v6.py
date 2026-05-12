@@ -581,6 +581,18 @@ class Stock:
     compounder_rank_global: Optional[int] = None
     signal_compounder_global: str = "DISQUALIFIED"
 
+    # v1.2 (May 2026): per-factor percentile breakdown for the stock detail page
+    # Compounder card. Each value is this stock's rank-percentile within its
+    # cohort (1.0 = best in cohort on that factor, 0.0 = worst). The composite
+    # score is the equal-weight mean of the three. Populated by
+    # _rank_compounder_cohort for stocks that qualify; None otherwise.
+    cmp_us_roe_pct: Optional[float] = None
+    cmp_us_pb_pct: Optional[float] = None
+    cmp_us_opd_pct: Optional[float] = None
+    cmp_global_roe_pct: Optional[float] = None
+    cmp_global_pb_pct: Optional[float] = None
+    cmp_global_opd_pct: Optional[float] = None
+
 # ---------------------------------------------------------------------------
 # 1. Stock Discovery (unchanged from v5)
 # ---------------------------------------------------------------------------
@@ -3764,6 +3776,15 @@ def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
     pb_idx = {s.symbol: i for i, s in enumerate(sorted_pb)}
     opd_idx = {s.symbol: i for i, s in enumerate(sorted_opd)}
 
+    # v1.2 (May 2026): expose per-factor percentile breakdown alongside the
+    # composite score so the frontend stock page can render a Compounder
+    # breakdown card showing each factor's contribution. Field names use the
+    # score_attr prefix so US and Global don't collide:
+    #   compounder_score_us       → cmp_us_roe_pct, cmp_us_pb_pct, cmp_us_opd_pct
+    #   compounder_score_global   → cmp_global_roe_pct, cmp_global_pb_pct, cmp_global_opd_pct
+    # Note: percentiles, not raw values — they encode this stock's RANK in the
+    # cohort (1.0 = best in cohort, 0.0 = worst). Score = mean of the three.
+    factor_prefix = score_attr.replace("compounder_score_", "cmp_")
     scored = []
     for s in cohort:
         roe_p = 1.0 - (roe_idx[s.symbol] / denom)
@@ -3771,6 +3792,9 @@ def _rank_compounder_cohort(cohort: list, score_attr: str, rank_attr: str,
         opd_p = 1.0 - (opd_idx[s.symbol] / denom)
         score = (roe_p + pb_p + opd_p) / 3.0
         setattr(s, score_attr, round(score, 4))
+        setattr(s, f"{factor_prefix}_roe_pct", round(roe_p, 4))
+        setattr(s, f"{factor_prefix}_pb_pct", round(pb_p, 4))
+        setattr(s, f"{factor_prefix}_opd_pct", round(opd_p, 4))
         setattr(s, signal_attr, "QUALIFIED")
         scored.append(s)
 
@@ -4694,4 +4718,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# cache bust 1778567843
+# cache bust 1778544443
