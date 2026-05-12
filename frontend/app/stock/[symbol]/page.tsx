@@ -2613,8 +2613,8 @@ function StockStoryCard({s}:{s:StockData}){
     <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
       <Card>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <SH title="The Bottom Line" icon={<Brain size={12}/>} style={{marginBottom:0}}/>
-          <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.cardBg, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
+          <SH title="The Bottom Line" icon={<Brain size={12}/>} />
+          <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.card, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
             Confidence: {story?.confidenceScore}%
           </div>
         </div>

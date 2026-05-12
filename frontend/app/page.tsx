@@ -333,31 +333,88 @@ function CatalystBadges({s}:{s:StockData}){
 }
 
 // ── Macro Banner ────────────────────────────────────────────────────────────
+const REGIME_STYLE: Record<string,{color:string;bg:string;border:string;label:string}> = {
+  RISK_ON:  { color:"#10b981", bg:"#e8f5ee", border:"#b8dcc8", label:"RISK ON" },
+  NEUTRAL:  { color:"#6b7280", bg:"#f8fafc", border:"#e2e8f0", label:"NEUTRAL" },
+  CAUTIOUS: { color:"#d97706", bg:"#fffbeb", border:"#fde68a", label:"CAUTIOUS" },
+  RISK_OFF: { color:"#ef4444", bg:"#fef2f2", border:"#fecaca", label:"RISK OFF" },
+};
+const MACRO_SIGNALS:[string,string][] = [
+  ["yield_curve","Yield 10y-2y"],
+  ["yield_curve_3m","Yield 10y-3m"],
+  ["yield_level","Rate Level"],
+  ["vix","VIX"],
+  ["cpi_trend","CPI Trend"],
+  ["gdp_momentum","GDP"],
+  ["unemployment","Unemployment"],
+  ["consumer_sentiment","Sentiment"],
+  ["recession_prob","Recession"],
+];
 function MacroRibbon({macro}:{macro?:MacroData}){
+  const [xpand,setXpand]=useState(false);
   if(!macro) return null;
   const subs=macro.sub_scores||{};
-  const items:[string,number|undefined][]=[
-    ["Yield curve", subs.yield_curve],
-    ["VIX", subs.vix],
-    ["CPI", subs.cpi_trend],
-    ["GDP", subs.gdp_momentum],
-  ];
-  const items_present = items.filter(([_,v])=>v!=null);
-  if(items_present.length === 0) return null;
+  const present = MACRO_SIGNALS.filter(([k])=>(subs as any)[k]!=null);
+  if(present.length===0) return null;
+  const rs = REGIME_STYLE[macro.regime] || REGIME_STYLE.NEUTRAL;
+  const feat = macro.features || {};
   return(
-    <div style={{display:"flex",alignItems:"center",gap:18,padding:"6px 14px",marginBottom:14,background:"transparent",borderTop:"1px solid var(--border-subtle,#eef1ef)",borderBottom:"1px solid var(--border-subtle,#eef1ef)"}}>
-      <span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",fontWeight:600,letterSpacing:"0.1em"}}>MACRO</span>
-      {items_present.map(([label,val])=>{
-        const v = val ?? 0;
-        const c = v>0.6 ? "#10b981" : v>0.4 ? "#d97706" : "#ef4444";
-        return(
-          <div key={label} style={{display:"flex",alignItems:"center",gap:6}}>
-            <div style={{width:5,height:5,borderRadius:"50%",background:c,opacity:0.85}}/>
-            <span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)"}}>{label}</span>
+    <div style={{marginBottom:14}}>
+      <div onClick={()=>setXpand(!xpand)} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 14px",cursor:"pointer",background:"transparent",borderTop:"1px solid var(--border-subtle,#eef1ef)",borderBottom:xpand?"none":"1px solid var(--border-subtle,#eef1ef)",transition:"all 0.15s"}}>
+        <span style={{fontSize:9,fontFamily:"var(--font-mono)",fontWeight:700,padding:"2px 8px",borderRadius:4,color:rs.color,background:rs.bg,border:`1px solid ${rs.border}`,letterSpacing:"0.08em",whiteSpace:"nowrap"}}>{rs.label}</span>
+        <div style={{display:"flex",alignItems:"center",gap:4}} title={`Macro composite: ${(macro.score*100).toFixed(0)}/100`}>
+          <div style={{width:48,height:4,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${macro.score*100}%`,borderRadius:2,background:rs.color,transition:"width 0.3s"}}/>
           </div>
-        );
-      })}
-      <span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginLeft:"auto",fontStyle:"italic"}}>situational only — strategy is regime-agnostic</span>
+          <span style={{fontSize:10,fontFamily:"var(--font-mono)",fontWeight:700,color:rs.color}}>{(macro.score*100).toFixed(0)}</span>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
+          {present.map(([key,label])=>{
+            const v = (subs as any)[key] ?? 0;
+            const c = v>0.6 ? "#10b981" : v>0.4 ? "#d97706" : "#ef4444";
+            return(
+              <div key={key} style={{display:"flex",alignItems:"center",gap:4}} title={`${label}: ${(v*100).toFixed(0)}/100`}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:c,opacity:0.9}}/>
+                <span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)",whiteSpace:"nowrap"}}>{label}</span>
+              </div>
+            );
+          })}
+        </div>
+        <span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",fontStyle:"italic",whiteSpace:"nowrap"}}>{macro.version||"v7"}</span>
+        {xpand?<ChevronDown size={12} color="var(--text-light)"/>:<ChevronRight size={12} color="var(--text-light)"/>}
+      </div>
+      {xpand&&(
+        <div style={{padding:"10px 14px 14px",borderBottom:"1px solid var(--border-subtle,#eef1ef)",background:"var(--bg-surface,#f8faf9)",animation:"fadeIn 0.2s ease"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:8}}>
+            {present.map(([key,label])=>{
+              const v = (subs as any)[key] ?? 0;
+              const c = v>0.6 ? "#10b981" : v>0.4 ? "#d97706" : "#ef4444";
+              return(
+                <div key={key} style={{padding:"6px 8px",borderRadius:6,background:"#fff",border:"1px solid var(--border-subtle,#eef1ef)"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                    <span style={{fontSize:9,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text-muted,#6b7280)"}}>{label}</span>
+                    <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:700,color:c}}>{(v*100).toFixed(0)}</span>
+                  </div>
+                  <div style={{height:3,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}>
+                    <div style={{height:"100%",width:`${v*100}%`,borderRadius:2,background:c,transition:"width 0.3s"}}/>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {Object.keys(feat).length>0&&(
+            <div style={{marginTop:8,display:"flex",gap:12,flexWrap:"wrap"}}>
+              {feat.macro_vix!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>VIX {feat.macro_vix}</span>}
+              {feat.macro_yield_spread_2y!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>10y-2y {feat.macro_yield_spread_2y}bp</span>}
+              {feat.macro_yield_spread_3m!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>10y-3m {feat.macro_yield_spread_3m}bp</span>}
+              {feat.macro_yield_level!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>FFR {feat.macro_yield_level}%</span>}
+              {feat.macro_unemployment!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>Unemp {feat.macro_unemployment}%</span>}
+              {feat.macro_consumer_sentiment!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>UMich {feat.macro_consumer_sentiment}</span>}
+              {feat.macro_recession_prob!=null&&<span style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>Rec.P {((feat.macro_recession_prob??0)*100).toFixed(1)}%</span>}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -816,6 +873,17 @@ export default function Dashboard(){
       .then(d=>{ setData(d); setLoading(false); })
       .catch(()=>{ setLoading(false); });
   },[]);
+
+  // Fallback: if scan JSON lacks macro data (older scans), fetch live
+  useEffect(()=>{
+    if(!data || data.macro) return;
+    fetch("/api/macro")
+      .then(r=>r.ok?r.json():null)
+      .then(m=>{
+        if(m && m.regime) setData(prev=>prev?{...prev,macro:m}:prev);
+      })
+      .catch(()=>{});
+  },[data]);
 
   const stocks: StockData[] = data?.stocks || [];
 
