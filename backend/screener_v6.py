@@ -1413,8 +1413,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     if price <= 0:
         return v
 
-    # Income statements (5 years)
-    inc = fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5})
+    # Income statements (5 years) — v1.3.1: cached, 5-day TTL
+    inc = cached_fmp(
+        "income-statement", sym,
+        lambda: fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5}),
+    )
 
     # Apr 2026: 5-year history hard filter. Drop stocks where FMP returns fewer
     # than MIN_YEARS_HISTORY annual statements. This filters recent IPOs and
@@ -1570,9 +1573,19 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     # and CAGRs, stores a track record array for the stock-page tab, and
     # runs the two-method projection.
     # ──────────────────────────────────────────────────────────────────
-    bs = fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 11})
-    ratios = fmp("ratios", {"symbol": sym, "period": "annual", "limit": 11})
-    cf = fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 11})
+    # v1.3.1: cached — quarterly data, 5-day TTL
+    bs = cached_fmp(
+        "balance-sheet-statement", sym,
+        lambda: fmp("balance-sheet-statement", {"symbol": sym, "period": "annual", "limit": 11}),
+    )
+    ratios = cached_fmp(
+        "ratios", sym,
+        lambda: fmp("ratios", {"symbol": sym, "period": "annual", "limit": 11}),
+    )
+    cf = cached_fmp(
+        "cash-flow-statement", sym,
+        lambda: fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 11}),
+    )
 
     history_rows = []  # built oldest→newest, capped at 11
     if bs and inc and len(bs) >= 5 and len(inc) >= 5:
@@ -1751,8 +1764,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         if eps_prev > 0 and eps_curr > 0:
             v["eps_yoy"] = (eps_curr - eps_prev) / eps_prev
 
-    # FCF — fetch cashflow statement (one new API call per stock)
-    cf = fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 5})
+    # FCF — v1.3.1: cached (same cache key as the limit=11 call above; superset is fine)
+    cf = cached_fmp(
+        "cash-flow-statement", sym,
+        lambda: fmp("cash-flow-statement", {"symbol": sym, "period": "annual", "limit": 5}),
+    )
     if cf and len(cf) >= 1:
         cf.sort(key=lambda x: x.get("date", ""))  # oldest → newest
         fcf_series = [float(x.get("freeCashFlow") or 0) for x in cf]
@@ -2722,7 +2738,13 @@ def get_transcript_sentiment(sym: str) -> dict:
     transcript_quarter = None
     for q in [4, 3, 2, 1]:
         for y in [year, year - 1]:
-            data = fmp("earning-call-transcript", {"symbol": sym, "year": y, "quarter": q})
+            # v1.3.1: cached per-quarter, 90-day TTL. Default-arg trick
+            # prevents closure from capturing mutated loop variables.
+            data = cached_fmp(
+                "earning-call-transcript", sym,
+                lambda y=y, q=q: fmp("earning-call-transcript", {"symbol": sym, "year": y, "quarter": q}),
+                cache_key_suffix=f"{y}Q{q}",
+            )
             if data and data[0].get("content"):
                 transcript = data[0]
                 transcript_year = y
