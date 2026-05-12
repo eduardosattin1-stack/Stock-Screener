@@ -819,6 +819,24 @@ export default function Dashboard(){
 
   const stocks: StockData[] = data?.stocks || [];
 
+  // v1.2 (May 2026): filter dropdown options derived from loaded universe.
+  // Memoized on `stocks` so they don't reshuffle on every keystroke.
+  // CRITICAL: these are hooks — must be called unconditionally, BEFORE the
+  // early `if (loading) return ...`. Placing them after the early return
+  // violated Rules of Hooks (loading=true skipped the hook, loading=false
+  // suddenly added 2 hooks → React error #310). The whole screener page
+  // crashed on initial load until this was fixed.
+  const sectorOptions = useMemo(()=>{
+    const set = new Set<string>();
+    for (const s of stocks) if (s.sector) set.add(s.sector);
+    return Array.from(set).sort();
+  },[stocks]);
+  const countryOptions = useMemo(()=>{
+    const set = new Set<string>();
+    for (const s of stocks) if (s.country) set.add(s.country);
+    return Array.from(set).sort();
+  },[stocks]);
+
   // Sort key extractor. Mode-aware so that toggling the mode re-ranks
   // the table without changing the sort key. "active_comp" follows the
   // selected mode (4 modes in v1.2).
@@ -935,20 +953,6 @@ export default function Dashboard(){
   // "Other comp" column has been retired in v1.2: with 4 modes the "other"
   // concept becomes ambiguous (3 candidates, not 1). Users switch modes to
   // compare; or open the stock detail page which shows all 4 modes' scores.
-
-  // v1.2 (May 2026): derive filter dropdown options from the loaded universe.
-  // Pre-sorted so dropdowns show stable order. Memoized on `stocks` so we
-  // don't reshuffle on every keystroke.
-  const sectorOptions = useMemo(()=>{
-    const set = new Set<string>();
-    for (const s of stocks) if (s.sector) set.add(s.sector);
-    return Array.from(set).sort();
-  },[stocks]);
-  const countryOptions = useMemo(()=>{
-    const set = new Set<string>();
-    for (const s of stocks) if (s.country) set.add(s.country);
-    return Array.from(set).sort();
-  },[stocks]);
 
   // Cohort pills: scope tabs above the table. "qualified" follows the active
   // mode; the others narrow to a specific basket flag regardless of mode.
