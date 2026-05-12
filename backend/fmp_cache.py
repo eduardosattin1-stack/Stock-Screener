@@ -23,6 +23,8 @@ GCS_BUCKET = "screener-signals-carbonbridge"
 CACHE_PREFIX = "fmp_cache"
 
 # Per-endpoint TTL in days. Endpoints not listed here default to 5 days.
+# NOTE: endpoint strings must match the first arg to fmp() in screener_v6.py
+# exactly — including sub-paths like "institutional-ownership/symbol-positions-summary".
 CACHE_TTL_DAYS = {
     # Quarterly fundamentals — refresh weekly (5d covers Mon-Fri from Saturday refresh)
     "financial-scores":         5,
@@ -31,18 +33,20 @@ CACHE_TTL_DAYS = {
     "income-statement":         5,
     "balance-sheet-statement":  5,
     "cash-flow-statement":      5,
-    "institutional-ownership":  5,
+
+    # 13F institutional ownership (quarterly filings, ~45d lag)
+    "institutional-ownership/symbol-positions-summary": 5,
 
     # Per-quarter immutable — long TTL, busted by suffix when new quarter drops
     "earning-call-transcript":  90,
 
     # Weekly-cadence data — refresh every 3 days so Mon scan picks up weekend updates
     "grades":                   3,
-    "price-target-summary":     3,
+    "price-target-consensus":   3,
 
-    # Event-driven but low-frequency
-    "senate-trading":           5,
-    "house-trading":            5,
+    # Event-driven but low-frequency (actual FMP endpoints are senate-trades/house-trades)
+    "senate-trades":            5,
+    "house-trades":             5,
 }
 
 

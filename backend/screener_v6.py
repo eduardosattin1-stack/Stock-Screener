@@ -1303,13 +1303,19 @@ def get_analyst(sym: str) -> dict:
               "estimates_analysts_fy1": 0,
               }  # track individual surprise magnitudes
 
-    # Price target consensus
-    pt = fmp("price-target-consensus", {"symbol": sym})
+    # Price target consensus (v1.3.2: cached, 3-day TTL)
+    pt = cached_fmp(
+        "price-target-consensus", sym,
+        lambda: fmp("price-target-consensus", {"symbol": sym}),
+    )
     if pt and pt[0].get("targetConsensus"):
         result["target"] = float(pt[0]["targetConsensus"])
 
-    # Grades (recent 90 days)
-    grades = fmp("grades", {"symbol": sym, "limit": 30})
+    # Grades (recent 90 days) — v1.3.2: cached, 3-day TTL
+    grades = cached_fmp(
+        "grades", sym,
+        lambda: fmp("grades", {"symbol": sym, "limit": 30}),
+    )
     if grades:
         cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
         recent = [g for g in grades if g.get("date", "") >= cutoff]
@@ -2472,7 +2478,11 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 
 
     # ─── B) Recent Analyst Moves (last 7 days) ─────────────────
-    grades = fmp("grades", {"symbol": sym, "limit": 10})
+    # v1.3.2: cached, 3-day TTL (same cache as get_analyst grades call; limit=30 superset is fine)
+    grades = cached_fmp(
+        "grades", sym,
+        lambda: fmp("grades", {"symbol": sym, "limit": 10}),
+    )
     if grades:
         cutoff = (today - timedelta(days=7)).strftime("%Y-%m-%d")
         recent = [g for g in grades if g.get("date", "") >= cutoff]
@@ -2855,14 +2865,23 @@ def _fetch_institutional_positions_summary(sym: str) -> Optional[dict]:
     q = cur_q - 1 if cur_q > 1 else 4
     y = now.year if cur_q > 1 else now.year - 1
 
-    data = fmp("institutional-ownership/symbol-positions-summary",
-               {"symbol": sym, "year": y, "quarter": q})
+    # v1.3.2: cached, 5-day TTL with per-quarter suffix
+    data = cached_fmp(
+        "institutional-ownership/symbol-positions-summary", sym,
+        lambda y=y, q=q: fmp("institutional-ownership/symbol-positions-summary",
+                             {"symbol": sym, "year": y, "quarter": q}),
+        cache_key_suffix=f"{y}Q{q}",
+    )
     if not data:
         # One more quarter back as a fallback
         q = q - 1 if q > 1 else 4
         y = y if q != 4 else y - 1
-        data = fmp("institutional-ownership/symbol-positions-summary",
-                   {"symbol": sym, "year": y, "quarter": q})
+        data = cached_fmp(
+            "institutional-ownership/symbol-positions-summary", sym,
+            lambda y=y, q=q: fmp("institutional-ownership/symbol-positions-summary",
+                                 {"symbol": sym, "year": y, "quarter": q}),
+            cache_key_suffix=f"{y}Q{q}",
+        )
 
     if not data or not isinstance(data, list) or not data:
         _INST_POSITIONS_SUMMARY_CACHE[sym] = None
@@ -3132,11 +3151,17 @@ def compute_congressional(sym: str) -> dict:
     result = {"score": 0.5, "_evaluated": False,
               "net_buys": 0, "net_sells": 0, "days_since_last": -1}
 
-    # Fetch both chambers; combine
     # FMP stable REST endpoints are `senate-trades` and `house-trades` (per FMP docs)
     # — NOT `senate-trading`/`house-trading` which return 404.
-    senate = fmp("senate-trades", {"symbol": sym}) or []
-    house = fmp("house-trades", {"symbol": sym}) or []
+    # v1.3.2: cached, 5-day TTL. Empty arrays for non-US tickers are cached too.
+    senate = cached_fmp(
+        "senate-trades", sym,
+        lambda: fmp("senate-trades", {"symbol": sym}),
+    ) or []
+    house = cached_fmp(
+        "house-trades", sym,
+        lambda: fmp("house-trades", {"symbol": sym}),
+    ) or []
     if not isinstance(senate, list): senate = []
     if not isinstance(house, list): house = []
     all_trades = senate + house
