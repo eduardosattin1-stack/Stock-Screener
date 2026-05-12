@@ -176,34 +176,46 @@ const fmtPrice = (n:number|null|undefined, c?:string) => {
 // reads from this same backtest-calibration table keyed on composite.
 function getProb(c:number){if(c>=0.90)return{p10:85,gain:25.7,dd:-9.1,speed:18};if(c>=0.80)return{p10:75,gain:20.0,dd:-9.8,speed:22};if(c>=0.65)return{p10:62,gain:15.0,dd:-10.5,speed:26};if(c>=0.50)return{p10:50,gain:12.0,dd:-11.0,speed:30};return{p10:35,gain:9.0,dd:-11.0,speed:32};}
 
-// v8 mode-aware factor reader. Falls back to s.factors_v8 (no per-mode
-// breakdown) for stocks scanned before the dual-mode deploy. Last-resort
-// fallback returns an all-null FactorsV8 so the radar still renders five
-// dashed/empty axes rather than crashing.
+// v8 mode-aware factor reader. Compounder modes share the Momentum factors
+// since they use the same v8 5-factor radar — the difference is the cohort
+// gate (US exchange / sector-excluded global) and the ranking score
+// (compounder_score_us/_global). FA mode has its own factors_v8_fallen_angel.
+// Last-resort fallback returns an all-null FactorsV8 so the radar renders
+// five dashed/empty axes rather than crashing.
 function readFactorsV8(s:StockData, mode:string):FactorsV8 {
-  const f = mode === "fallen_angel" ? (s.factors_v8_fallen_angel ?? s.factors_v8) : (s.factors_v8_momentum ?? s.factors_v8);
+  const f = mode === "fallen_angel"
+    ? (s.factors_v8_fallen_angel ?? s.factors_v8)
+    : (s.factors_v8_momentum ?? s.factors_v8);   // compounder modes use momentum factors
   if (f) return f;
   return { momentum:null, quality:null, growth:null, value:null, smart_money:null };
 }
-// Pull the active-mode composite, falling back to s.composite when the
-// dual-mode fields are absent (older scan JSON).
+// v1.2 (May 2026): readComposite handles 4 modes. Compounder modes use their
+// dedicated rank score (compounder_score_us/_global) instead of the v8
+// composite — that's how the compounder runners pick their baskets.
 function readComposite(s:StockData, mode:string):number {
-  if (mode === "fallen_angel") return s.composite_fallen_angel ?? s.composite ?? 0;
+  if (mode === "fallen_angel")      return s.composite_fallen_angel ?? s.composite ?? 0;
+  if (mode === "compounder_us")     return s.compounder_score_us ?? 0;
+  if (mode === "compounder_global") return s.compounder_score_global ?? 0;
   return s.composite_momentum ?? s.composite ?? 0;
 }
 function readSignal(s:StockData, mode:string):string {
   // v1.2 (May 2026): signal_fallen_angel removed → derive from fallen_angel_flag.
-  // signal (BUY/HOLD/SELL) removed → no fallback chain. signal_momentum still
-  // exists (QUALIFIED/DISQUALIFIED).
-  if (mode === "fallen_angel") return s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED";
+  // signal (BUY/HOLD/SELL) removed → no fallback chain. signal_momentum and
+  // signal_compounder_us/_global still exist (QUALIFIED/DISQUALIFIED).
+  if (mode === "fallen_angel")      return s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED";
+  if (mode === "compounder_us")     return s.signal_compounder_us ?? "DISQUALIFIED";
+  if (mode === "compounder_global") return s.signal_compounder_global ?? "DISQUALIFIED";
   return s.signal_momentum ?? "DISQUALIFIED";
 }
 
-// v8 universe gate: a stock passes the gate for a mode iff:
-//   - Momentum: signal_momentum != "DISQUALIFIED" (v8 momentum gate)
-//   - Fallen Angel: fallen_angel_flag == true (v1.2: replaced signal_fallen_angel)
+// v1.2: 4-mode universe gate. A stock passes the gate for a mode iff:
+//   - Momentum: signal_momentum != "DISQUALIFIED"
+//   - Fallen Angel: fallen_angel_flag == true
+//   - Compounder US/Global: signal_compounder_us/_global == "QUALIFIED"
 function isQualified(s:StockData, mode:string):boolean {
-  if (mode === "fallen_angel") return s.fallen_angel_flag === true;
+  if (mode === "fallen_angel")      return s.fallen_angel_flag === true;
+  if (mode === "compounder_us")     return s.signal_compounder_us === "QUALIFIED";
+  if (mode === "compounder_global") return s.signal_compounder_global === "QUALIFIED";
   const sig = s.signal_momentum;
   // Fallback: if signal_momentum absent (legacy scan), let row through
   if (sig == null) return true;
@@ -216,14 +228,27 @@ function isQualified(s:StockData, mode:string):boolean {
 // view state — no re-fetch. Default mode is Momentum (matches screener-table
 // historical convention; sort by FA composite by clicking the header).
 function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
-  const opts = [{k:"momentum",l:"Momentum"},{k:"fallen_angel",l:"Fallen Angel"}];
+  // v1.2 (May 2026): 2 modes → 4 modes. Momentum + FA + the two Compounder
+  // baskets. Compounder modes share the v8 5-factor radar with Momentum
+  // (same factors_v8_momentum data); the difference is the cohort gate
+  // (US exchange vs global ex Fin/Ins/HC) and the ranking score
+  // (compounder_score_us/_global = 3y-ROE × P/B × OpMargin-delta).
+  const opts = [
+    {k:"momentum",         l:"Momentum"},
+    {k:"fallen_angel",     l:"Fallen Angel"},
+    {k:"compounder_us",    l:"CMP-US"},
+    {k:"compounder_global",l:"CMP-Global"},
+  ];
   return(
     <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
-      {opts.map(o=>{
+      {opts.map((o,i)=>{
         const active = o.k === mode;
         return(
           <button key={o.k} onClick={()=>onChange(o.k)} style={{
-            padding:"6px 14px",border:"none",cursor:"pointer",
+            padding:"6px 12px",
+            border:"none",
+            borderRight: i < opts.length-1 ? "1px solid var(--border,#e5e7eb)" : "none",
+            cursor:"pointer",
             background: active ? "var(--green,#2d7a4f)" : "transparent",
             color: active ? "#fff" : "var(--text)",
             fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",
@@ -337,6 +362,103 @@ function MacroRibbon({macro}:{macro?:MacroData}){
   );
 }
 
+// ── MultiSelectDropdown (v1.2 May 2026) ───────────────────────────────────
+// Lightweight self-contained multi-select for sector/country filters.
+// Uses outline checkboxes (no dependency on a UI lib). The parent
+// component owns open/close state so only one dropdown is open at a time
+// (clicking one auto-closes the others). Click-outside is handled via
+// a transparent backdrop layer; clicking it closes the dropdown.
+function MultiSelectDropdown({label, options, selected, onChange, isOpen, onToggle, disabled}:{
+  label:string;
+  options:string[];
+  selected:string[];
+  onChange:(next:string[])=>void;
+  isOpen:boolean;
+  onToggle:()=>void;
+  disabled?:boolean;
+}){
+  const toggle = (opt:string) => {
+    if (selected.includes(opt)) onChange(selected.filter(o => o !== opt));
+    else onChange([...selected, opt]);
+  };
+  const summary = selected.length === 0
+    ? `${label}: all`
+    : selected.length === 1
+      ? `${label}: ${selected[0]}`
+      : `${label}: ${selected.length} selected`;
+
+  return(
+    <div style={{position:"relative"}}>
+      <button onClick={()=>!disabled && onToggle()} disabled={disabled}
+        title={disabled ? "Filters bypassed while searching" : `${selected.length === 0 ? "Choose " + label.toLowerCase() : `${selected.length} filter${selected.length===1?"":"s"} active`}`}
+        style={{
+          padding:"5px 10px",
+          border:`1px solid ${selected.length>0 ? "var(--green,#2d7a4f)" : "var(--border,#e5e7eb)"}`,
+          borderRadius:6,
+          cursor: disabled ? "not-allowed" : "pointer",
+          background: selected.length > 0 ? "var(--green-light,#e8f5ee)" : "#fff",
+          color: disabled ? "var(--text-light)" : (selected.length > 0 ? "var(--green,#2d7a4f)" : "var(--text)"),
+          fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
+          display:"inline-flex",alignItems:"center",gap:6,
+          opacity: disabled ? 0.5 : 1,
+        }}>
+        {summary}
+        <ChevronDown size={10} style={{transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s"}}/>
+      </button>
+      {isOpen && (
+        <>
+          {/* Click-outside backdrop */}
+          <div onClick={onToggle}
+            style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:50}}/>
+          {/* Dropdown panel */}
+          <div style={{
+            position:"absolute", top:"calc(100% + 4px)", left:0, zIndex:51,
+            minWidth:200, maxHeight:300, overflowY:"auto",
+            background:"#fff", border:"1px solid var(--border,#e5e7eb)",
+            borderRadius:6, boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+            padding:"4px 0",
+          }}>
+            {options.length === 0 ? (
+              <div style={{padding:"8px 12px",fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-light)"}}>
+                No options available
+              </div>
+            ) : (
+              <>
+                {selected.length > 0 && (
+                  <button onClick={()=>onChange([])}
+                    style={{display:"block",width:"100%",padding:"6px 12px",border:"none",
+                            background:"transparent",cursor:"pointer",textAlign:"left",
+                            fontSize:10,fontFamily:"var(--font-mono)",
+                            color:"var(--text-muted)",borderBottom:"1px solid var(--border-subtle,#eef1ef)"}}>
+                    Clear all
+                  </button>
+                )}
+                {options.map(opt=>{
+                  const checked = selected.includes(opt);
+                  return(
+                    <label key={opt} style={{
+                      display:"flex",alignItems:"center",gap:8,padding:"5px 12px",
+                      cursor:"pointer",fontSize:11,fontFamily:"var(--font-mono)",
+                      color: checked ? "var(--green,#2d7a4f)" : "var(--text)",
+                      background: checked ? "var(--green-light,#e8f5ee)" : "transparent",
+                    }}
+                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light,#e8f5ee)" : "var(--bg-hover,#f0f4f1)";}}
+                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light,#e8f5ee)" : "transparent";}}>
+                      <input type="checkbox" checked={checked} onChange={()=>toggle(opt)}
+                        style={{margin:0,cursor:"pointer",accentColor:"var(--green,#2d7a4f)"}}/>
+                      {opt}
+                    </label>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ── MoS Bar ─────────────────────────────────────────────────────────────────
 function MoSBar({value}:{value:number}){const p=Math.max(-1,Math.min(1,value)),w=Math.abs(p)*100,c=p>0.15?"#10b981":p>0?"#86efac":p>-0.2?"#d97706":"#ef4444";return<div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:70,height:5,background:"var(--bg-elevated,#edf0ee)",borderRadius:3,position:"relative",overflow:"hidden"}}><div style={{position:"absolute",height:"100%",borderRadius:3,background:c,...(p>=0?{left:"50%",width:`${w/2}%`}:{right:"50%",width:`${w/2}%`})}}/><div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"var(--border)"}}/></div><span style={{fontFamily:"var(--font-mono)",fontSize:11,color:c,fontWeight:600}}>{fmtPct(value)}</span></div>;}
 
@@ -420,23 +542,27 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
 
 function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number}){
   // v8 mode-aware bindings. The user's mode toggle drives which composite
-  // and factor radar appear in the expanded row. The "other" composite is
-  // shown in a small column so divergences between modes pop visually
-  // without forcing a toggle flip.
+  // and factor radar appear in the expanded row.
   const scoresActive = readFactorsV8(s, mode);
   const compActive = readComposite(s, mode);
-  const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
-  const compOther = readComposite(s, otherMode);
-  const otherLabel = mode === "fallen_angel" ? "Mom" : "FA";
-  // Only flag a divergence chip when the OTHER mode also qualifies the stock
-  // (otherwise the chip would point at a 0.0 disqualified composite, which
-  // is meaningless and was misleading users into thinking NVDA was a fallen
-  // angel candidate). Magnitude threshold ≥0.10 unchanged.
-  const otherQualifies = isQualified(s, otherMode);
-  const otherIsHigher = otherQualifies && (compOther - compActive >= 0.10);
-  // v1.2 (May 2026): scoresOther and probFallback removed — they fed the
-  // now-dropped VAL/GRW/QUAL/GAIN/DD columns. P20 column uses s.hit_prob
-  // directly; sub-factor scores are shown in the expanded row's LargeRadar.
+
+  // v1.2 (May 2026): 4-mode divergence chip. Scan all 3 other modes and
+  // surface the highest-scoring one IF it qualifies AND beats active by
+  // ≥0.10. Tells the user "this stock is actually better viewed as CMP-US"
+  // (or whichever) without forcing them to flip through all 4 modes.
+  const otherModes = ["momentum","fallen_angel","compounder_us","compounder_global"].filter(m=>m!==mode);
+  const otherLabels: Record<string,string> = {
+    momentum:"Mom", fallen_angel:"FA",
+    compounder_us:"CMP-US", compounder_global:"CMP-GL",
+  };
+  let bestOther = { mode:"", score:0, label:"" };
+  for (const m of otherModes) {
+    if (!isQualified(s, m)) continue;
+    const c = readComposite(s, m);
+    if (c > bestOther.score) bestOther = { mode:m, score:c, label:otherLabels[m] };
+  }
+  const otherIsHigher = bestOther.mode !== "" && (bestOther.score - compActive >= 0.10);
+  // v1.2: scoresOther / probFallback / dual-comp column removed — see F2a + F2b notes.
 
   return(
     <>
@@ -456,7 +582,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
-                {otherIsHigher&&<span style={{fontSize:8,padding:"1px 5px",borderRadius:3,background:"#fffbeb",color:"#d97706",fontFamily:"var(--font-mono)",fontWeight:700,border:"1px solid #fde68a"}} title={`${otherLabel} composite is ${(compOther-compActive).toFixed(2)} higher — switch mode to compare`}>↻ {otherLabel}+{(compOther-compActive).toFixed(2)}</span>}
+                {otherIsHigher&&<span style={{fontSize:8,padding:"1px 5px",borderRadius:3,background:"#fffbeb",color:"#d97706",fontFamily:"var(--font-mono)",fontWeight:700,border:"1px solid #fde68a"}} title={`${bestOther.label} composite is ${(bestOther.score-compActive).toFixed(2)} higher — switch mode to compare`}>↻ {bestOther.label}+{(bestOther.score-compActive).toFixed(2)}</span>}
               </div>
               {s.company_name && <div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={s.company_name}>{s.company_name}</div>}
             </div>
@@ -486,15 +612,12 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:13,color:compActive>0.7?"#10b981":compActive>0.5?"var(--text)":compActive>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
           {compActive.toFixed(2)}
         </td>
-        {/* COMP (other mode) — secondary, smaller, amber if it's leading.
-            Shows "—" when the other mode disqualifies this stock. */}
-        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:otherIsHigher?"#d97706":"var(--text-light,#9ca3af)",fontWeight:otherIsHigher?700:500}}
-          title={otherQualifies?`${otherLabel} composite — ${otherIsHigher?"leads active mode by ≥0.10":"trails active mode"}`:`${otherLabel} mode disqualifies this stock (failed setup gate)`}>
-          {otherQualifies ? compOther.toFixed(2) : "—"}
-        </td>
-        {/* v1.2 (May 2026): VAL/GRW/QUAL columns removed. Sub-factor scores
-            visible in the expanded row (LargeRadar + FactorBar). They were
-            redundant alongside COMP which is their weighted aggregate. */}
+        {/* v1.2 (May 2026): "COMP other" column dropped. With 4 modes the
+            "other" concept becomes ambiguous (3 candidates). The divergence
+            chip (↻ FA+0.12 next to the symbol) still highlights when a
+            stock would score materially better in another mode. */}
+        {/* VAL/GRW/QUAL columns removed in F2a. Sub-factor scores visible
+            in the expanded row (LargeRadar + FactorBar). */}
         {/* UPSIDE — analyst consensus (v8 Value sub-component, kept for reference) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
         {/* SMART$ — LTR-derived weighted score; pass-2 only, US-only.
@@ -549,7 +672,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
             decision-useful information. Composite alone carries the message. */}
       </tr>
       {expanded&&(
-        <tr><td colSpan={12} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={11} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -567,10 +690,10 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
                   {FACTOR_ORDER.map(k=>{const w=FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={w} score={(scoresActive as any)[k]}/>;})}
                 </div>
                 {/* Mode comparison strip */}
-                {compOther>0&&(
+                {bestOther.score>0&&(
                   <div style={{marginTop:10,padding:"8px 12px",borderRadius:5,background:otherIsHigher?"#fffbeb":"#f8faf9",border:`1px solid ${otherIsHigher?"#fde68a":"var(--border-subtle,#eef1ef)"}`,fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)",lineHeight:1.5}}>
-                    <span style={{fontWeight:700,color:otherIsHigher?"#d97706":"var(--text)"}}>{otherLabel} composite: {compOther.toFixed(2)}</span>
-                    {otherIsHigher && <span style={{marginLeft:6,color:"#d97706"}}>— leads active mode by {(compOther-compActive).toFixed(2)}, worth checking the {otherLabel==="FA"?"Fallen Angel":"Momentum"} view</span>}
+                    <span style={{fontWeight:700,color:otherIsHigher?"#d97706":"var(--text)"}}>Best alternative — {bestOther.label}: {bestOther.score.toFixed(2)}</span>
+                    {otherIsHigher && <span style={{marginLeft:6,color:"#d97706"}}>— leads active mode by {(bestOther.score-compActive).toFixed(2)}, worth checking that view</span>}
                   </div>
                 )}
               </div>
@@ -644,24 +767,27 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 // the user rank stocks by either composite or by any individual factor.
 type SortKey =
   | "symbol" | "sector" | "country" | "price" | "piotroski" | "p_s"
-  | "active_comp" | "other_comp"
+  | "active_comp"
   | "upside" | "smart_money" | "hit_prob";
 // v1.2 (May 2026): removed orphan SortKeys (value_score/growth_score/quality_score) —
 // those columns were dropped from the table. Added sector/country for the new
 // SECTOR + CTRY columns. String-based sort handled in the sorted useMemo below.
+// "other_comp" dropped — 4-mode world makes "other" ambiguous.
 
 export default function Dashboard(){
   const [data,setData]=useState<ScanData|null>(null);
   const [loading,setLoading]=useState(true);
 
-  // v8: mode toggle drives entire table view (sort target, displayed
-  // composite, radar, factor breakdown). Persisted to localStorage so the
-  // user's preference survives reloads.
+  // v1.2 (May 2026): mode toggle drives entire table view (sort target,
+  // displayed composite, radar). Persisted to localStorage so the user's
+  // preference survives reloads. 4 modes: momentum / fallen_angel /
+  // compounder_us / compounder_global.
   const [mode,setMode]=useState<string>("momentum");
   useEffect(()=>{
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("cb_screener_mode");
-    if (saved === "fallen_angel" || saved === "momentum") setMode(saved);
+    if (saved === "fallen_angel" || saved === "momentum" ||
+        saved === "compounder_us" || saved === "compounder_global") setMode(saved);
   },[]);
   useEffect(()=>{
     if (typeof window !== "undefined") window.localStorage.setItem("cb_screener_mode", mode);
@@ -671,6 +797,17 @@ export default function Dashboard(){
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const [search,setSearch]=useState("");
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
+
+  // v1.2 (May 2026): filter state.
+  // - cohortFilter: scope tab (matches the active mode's gate by default,
+  //   but user can broaden to "all" or pivot to another cohort flag).
+  // - sectorFilter: multi-select. Empty array = no filter.
+  // - countryFilter: multi-select. Empty array = no filter.
+  // - filterMenuOpen: tracks which dropdown is open (only one at a time).
+  const [cohortFilter,setCohortFilter]=useState<string>("qualified");
+  const [sectorFilter,setSectorFilter]=useState<string[]>([]);
+  const [countryFilter,setCountryFilter]=useState<string[]>([]);
+  const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
 
   useEffect(()=>{
     setLoading(true);
@@ -684,15 +821,11 @@ export default function Dashboard(){
 
   // Sort key extractor. Mode-aware so that toggling the mode re-ranks
   // the table without changing the sort key. "active_comp" follows the
-  // selected mode; "other_comp" follows whichever isn't selected.
-  // v1.2: sector/country are string sorts (handled in sorted useMemo).
-  // Removed v8 sub-factor keys (value_score/growth_score/quality_score)
-  // since their columns are gone.
+  // selected mode (4 modes in v1.2).
+  // sector/country are string sorts (handled in sorted useMemo).
   const extract = (s:StockData, key:SortKey):number => {
-    const otherMode = mode === "fallen_angel" ? "momentum" : "fallen_angel";
     switch(key){
       case "active_comp":   return readComposite(s, mode);
-      case "other_comp":    return readComposite(s, otherMode);
       case "piotroski":     return s.piotroski ?? 0;
       case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
       case "upside":        return s.upside ?? 0;
@@ -711,15 +844,27 @@ export default function Dashboard(){
       const q = search.toUpperCase();
       list = list.filter(s => s.symbol.includes(q) || (s.company_name||"").toUpperCase().includes(q));
     }
-    // v8 universe gate filter: hide stocks the active mode disqualifies
-    // (signal === "DISQUALIFIED"). Sort key "other_comp" is excluded from
-    // gating because it ranks by the inactive mode — the user explicitly
-    // wants to see the FA list while the active mode is Momentum, etc.
-    // Search overrides the gate too — if the user searched for a specific
-    // symbol they want to find it whether it qualifies or not.
-    if (!search && sortKey !== "other_comp") {
-      list = list.filter(s => isQualified(s, mode));
+    // v1.2 (May 2026): cohort filter — narrows to a specific basket gate.
+    //   "all"          → no cohort gate (sees disqualified rows too)
+    //   "qualified"    → passes the ACTIVE mode's gate (default; was the
+    //                    only behavior pre-v1.2)
+    //   "fa_flagged"   → fallen_angel_flag == true (regardless of active mode)
+    //   "cmp_us"       → signal_compounder_us == QUALIFIED
+    //   "cmp_global"   → signal_compounder_global == QUALIFIED
+    // Search overrides cohort filter — if the user typed a symbol they want
+    // to find it regardless of which baskets it qualifies for.
+    if (!search) {
+      if (cohortFilter === "qualified")     list = list.filter(s => isQualified(s, mode));
+      else if (cohortFilter === "fa_flagged")  list = list.filter(s => s.fallen_angel_flag === true);
+      else if (cohortFilter === "cmp_us")      list = list.filter(s => s.signal_compounder_us === "QUALIFIED");
+      else if (cohortFilter === "cmp_global")  list = list.filter(s => s.signal_compounder_global === "QUALIFIED");
+      // "all" → no gate
     }
+
+    // v1.2: sector + country multi-select filters. Empty array = no filter.
+    if (!search && sectorFilter.length > 0)  list = list.filter(s => s.sector && sectorFilter.includes(s.sector));
+    if (!search && countryFilter.length > 0) list = list.filter(s => s.country && countryFilter.includes(s.country));
+
     if (sortKey === "symbol") {
       list.sort((a,b)=>{
         const cmp = a.symbol.localeCompare(b.symbol);
@@ -746,15 +891,14 @@ export default function Dashboard(){
     return list;
   // extract closes over `mode`; include it in deps so toggling mode re-sorts
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[stocks, sortKey, sortDir, search, mode]);
+  },[stocks, sortKey, sortDir, search, mode, cohortFilter, sectorFilter, countryFilter]);
 
-  // Hidden count for footer transparency. We compute this only when the
-  // gate filter is active (no search, normal sort), otherwise it would
-  // confusingly report "0 hidden" while showing disqualified stocks.
+  // Hidden count for footer transparency. Reports stocks excluded by active
+  // mode's gate (only meaningful when cohortFilter is the default "qualified").
   const hiddenCount = useMemo(()=>{
-    if (search || sortKey === "other_comp") return 0;
+    if (search || cohortFilter !== "qualified") return 0;
     return stocks.filter(s => !isQualified(s, mode)).length;
-  },[stocks, search, sortKey, mode]);
+  },[stocks, search, cohortFilter, mode]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -782,9 +926,39 @@ export default function Dashboard(){
     borderBottom:"2px solid var(--border,#e5e7eb)", background:"var(--bg,#fff)",
   });
 
-  // Mode-driven column labels
-  const activeCompLabel = mode === "fallen_angel" ? "COMP (FA)" : "COMP (MOM)";
-  const otherCompLabel  = mode === "fallen_angel" ? "MOM" : "FA";
+  // Mode-driven COMP column label. v1.2 (May 2026): 4 modes.
+  const activeCompLabel =
+    mode === "fallen_angel"      ? "COMP (FA)" :
+    mode === "compounder_us"     ? "CMP-US"    :
+    mode === "compounder_global" ? "CMP-GL"    :
+                                   "COMP (MOM)";
+  // "Other comp" column has been retired in v1.2: with 4 modes the "other"
+  // concept becomes ambiguous (3 candidates, not 1). Users switch modes to
+  // compare; or open the stock detail page which shows all 4 modes' scores.
+
+  // v1.2 (May 2026): derive filter dropdown options from the loaded universe.
+  // Pre-sorted so dropdowns show stable order. Memoized on `stocks` so we
+  // don't reshuffle on every keystroke.
+  const sectorOptions = useMemo(()=>{
+    const set = new Set<string>();
+    for (const s of stocks) if (s.sector) set.add(s.sector);
+    return Array.from(set).sort();
+  },[stocks]);
+  const countryOptions = useMemo(()=>{
+    const set = new Set<string>();
+    for (const s of stocks) if (s.country) set.add(s.country);
+    return Array.from(set).sort();
+  },[stocks]);
+
+  // Cohort pills: scope tabs above the table. "qualified" follows the active
+  // mode; the others narrow to a specific basket flag regardless of mode.
+  const cohortPills:[string,string][] = [
+    ["qualified", `${mode === "fallen_angel" ? "FA-qualified" : mode === "compounder_us" ? "CMP-US qualified" : mode === "compounder_global" ? "CMP-GL qualified" : "Mom-qualified"}`],
+    ["all",       "All scanned"],
+    ["fa_flagged","FA flagged"],
+    ["cmp_us",    "Compounder US"],
+    ["cmp_global","Compounder GL"],
+  ];
 
   return(
     <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
@@ -809,8 +983,10 @@ export default function Dashboard(){
       {/* Macro ribbon — situational only */}
       <MacroRibbon macro={data?.macro}/>
 
-      {/* Filters — search only */}
-      <div style={{display:"flex",gap:10,marginBottom:12,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
+      {/* v1.2 (May 2026): two-row filter strip.
+          Row 1: search + sort status (unchanged from F2a)
+          Row 2: cohort pills + sector multi-select + country multi-select */}
+      <div style={{display:"flex",gap:10,marginBottom:8,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
           <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol or company..."
@@ -820,6 +996,64 @@ export default function Dashboard(){
         <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
           Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
         </div>
+      </div>
+
+      {/* Filter row 2: cohort pills + multi-select dropdowns */}
+      <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+        {/* Cohort pills */}
+        <div style={{display:"inline-flex",gap:0,border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+          {cohortPills.map(([k,l],i)=>{
+            const active = cohortFilter === k;
+            return(
+              <button key={k} onClick={()=>setCohortFilter(k)} disabled={!!search}
+                title={search ? "Filters bypassed while searching" : `Scope: ${l}`}
+                style={{
+                  padding:"5px 10px",
+                  border:"none",
+                  borderRight: i < cohortPills.length-1 ? "1px solid var(--border,#e5e7eb)" : "none",
+                  cursor: search ? "not-allowed" : "pointer",
+                  background: active && !search ? "var(--green,#2d7a4f)" : "transparent",
+                  color: active && !search ? "#fff" : (search ? "var(--text-light)" : "var(--text)"),
+                  fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.03em",
+                  opacity: search ? 0.5 : 1,
+                }}>
+                {l}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sector multi-select */}
+        <MultiSelectDropdown
+          label="Sector"
+          options={sectorOptions}
+          selected={sectorFilter}
+          onChange={setSectorFilter}
+          isOpen={filterMenuOpen === "sector"}
+          onToggle={()=>setFilterMenuOpen(filterMenuOpen === "sector" ? null : "sector")}
+          disabled={!!search}
+        />
+
+        {/* Country multi-select */}
+        <MultiSelectDropdown
+          label="Country"
+          options={countryOptions}
+          selected={countryFilter}
+          onChange={setCountryFilter}
+          isOpen={filterMenuOpen === "country"}
+          onToggle={()=>setFilterMenuOpen(filterMenuOpen === "country" ? null : "country")}
+          disabled={!!search}
+        />
+
+        {/* Clear-all button (only when a filter is active) */}
+        {(sectorFilter.length > 0 || countryFilter.length > 0 || cohortFilter !== "qualified") && !search && (
+          <button onClick={()=>{setSectorFilter([]); setCountryFilter([]); setCohortFilter("qualified");}}
+            style={{padding:"5px 10px",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,
+                    cursor:"pointer",background:"transparent",color:"var(--text-muted)",
+                    fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600}}>
+            Clear filters
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -833,8 +1067,10 @@ export default function Dashboard(){
               <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
               <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
               <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
-              <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
-              <th style={hs("other_comp")} onClick={()=>toggleSort("other_comp")} title={`Composite for the inactive mode. Sortable — click to rank by ${otherCompLabel === "FA" ? "Fallen Angel" : "Momentum"} composite without switching the view.`}>{otherCompLabel}</th>
+              <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : mode === "compounder_us" ? "Compounder US" : mode === "compounder_global" ? "Compounder Global" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
+              {/* v1.2 (May 2026): "COMP other" column dropped. 4-mode world
+                  makes "other" ambiguous — users switch modes to compare or
+                  open stock detail page (shows all 4 modes' scores). */}
               <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
               <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
               <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
@@ -851,7 +1087,7 @@ export default function Dashboard(){
         {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
       </div>
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-        {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} hidden by ${mode==="fallen_angel"?"FA":"Momentum"} setup gate`:""} · click row to expand · click any column header to sort
+        {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} excluded by ${mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} gate`:""}{cohortFilter !== "qualified" && cohortFilter !== "all" ? ` · cohort: ${cohortFilter.replace(/_/g," ")}` : ""}{sectorFilter.length > 0 ? ` · sectors: ${sectorFilter.length}` : ""}{countryFilter.length > 0 ? ` · countries: ${countryFilter.length}` : ""} · click row to expand · click any column header to sort
       </div>
       <SectorConcentration data={data?.sector_concentration}/>
     </div>
