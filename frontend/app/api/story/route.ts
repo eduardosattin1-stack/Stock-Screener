@@ -40,10 +40,14 @@ export async function POST(req: NextRequest) {
     - Fundamentals: ROE: ${roe}, FCF Margin: ${fcfMargin}, Price to FCF: ${pFcf}
     - Options: Hit Prob: ${hitProb}, IV Rank: ${ivRank}
 
-    You must output a JSON object with exactly these three keys:
-    1. "bottomLine": A dynamic, 3-sentence executive summary. Read the composite score and generate a clear verdict. Relate the numbers to real-world industry narratives (e.g. AI boom, energy markets). Include macro regime hints, balance sheet fortress vs weakness, and options volatility pricing.
-    2. "balanceSheet": A "Health Grade" (A, B, C, D, or F) followed by a dash and a plain-English explanation translating the fundamental yields and margins into a clear assessment of their cash generation and debt capacity.
-    3. "macroContext": A 2-sentence assessment of whether the stock's sector is fighting or riding the current macro regime, and how its momentum relates to smart money flows.
+    You must output a JSON object with exactly these keys:
+    1. "bottomLine": A dynamic, 3-sentence executive summary. Read the composite score and generate a clear verdict. Relate the numbers to real-world industry narratives.
+    2. "balanceSheet": A "Health Grade" (A, B, C, D, or F) followed by a dash and a plain-English explanation of cash generation and debt capacity.
+    3. "macroContext": A 2-sentence assessment of whether the stock's sector is fighting or riding the current macro regime.
+    4. "optionsTrade": A suggested options trade narrative (e.g. credit spread, debit spread, covered call) based on the Hit Prob and IV Rank.
+    5. "catalysts": Approaching catalysts or major macro overhangs that could impact the stock near-term.
+    6. "bullBear": A short "Bull says: X. Bear says: Y." debate summarizing the core arguments for both sides.
+    7. "confidenceScore": A number from 0 to 100 representing how confident you are in this narrative based on the clarity and alignment of the fundamental and technical data.
 
     Output pure JSON, no markdown formatting blocks.`;
 

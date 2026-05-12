@@ -2539,9 +2539,16 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
-// ── Stock Story Card (Narrative Engine) ──────────────────────────────────────
 function StockStoryCard({s}:{s:StockData}){
-  const [story, setStory] = useState<{bottomLine:string, balanceSheet:string, macroContext:string} | null>(null);
+  const [story, setStory] = useState<{
+    bottomLine:string, 
+    balanceSheet:string, 
+    macroContext:string,
+    optionsTrade:string,
+    catalysts:string,
+    bullBear:string,
+    confidenceScore:number
+  } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -2603,12 +2610,37 @@ function StockStoryCard({s}:{s:StockData}){
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
       <Card>
-        <SH title="The Bottom Line" icon={<Brain size={12}/>}/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <SH title="The Bottom Line" icon={<Brain size={12}/>} style={{marginBottom:0}}/>
+          <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.cardBg, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
+            Confidence: {story?.confidenceScore}%
+          </div>
+        </div>
         <div style={{fontSize:14,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
           {story?.bottomLine}
         </div>
       </Card>
       
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+        <Card>
+          <SH title="Bull vs. Bear Debate" icon={<Activity size={12}/>}/>
+          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
+            {story?.bullBear.split("Bear says:").map((part, i) => (
+              <div key={i} style={{marginBottom: i === 0 ? 8 : 0}}>
+                {i === 0 ? <strong style={{color:T.green}}>Bull says: </strong> : <strong style={{color:T.red}}>Bear says: </strong>}
+                {part.replace("Bull says:", "").trim()}
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card>
+          <SH title="Catalysts & Overhangs" icon={<Activity size={12}/>}/>
+          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
+            {story?.catalysts}
+          </div>
+        </Card>
+      </div>
+
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
         <Card>
           <SH title="Balance Sheet Assessment" icon={<Shield size={12}/>}/>
@@ -2624,6 +2656,13 @@ function StockStoryCard({s}:{s:StockData}){
           </div>
         </Card>
       </div>
+
+      <Card>
+        <SH title="Actionable Options Play" icon={<Zap size={12}/>}/>
+        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
+          {story?.optionsTrade}
+        </div>
+      </Card>
       
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
         <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono}}>
