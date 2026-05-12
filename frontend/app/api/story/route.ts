@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 120; // 2 minutes for multi-step debate
+export const maxDuration = 300; // 5 minutes for deep 6-step multi-agent debate
 
 async function callGemini(prompt: string, apiKey: string, isJson: boolean = false) {
   const config: any = { temperature: 0.5, maxOutputTokens: 2048 };
@@ -26,6 +26,30 @@ async function callGemini(prompt: string, apiKey: string, isJson: boolean = fals
   return text;
 }
 
+async function callClaude(prompt: string, apiKey: string) {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01"
+    },
+    body: JSON.stringify({
+      model: "claude-3-opus-20240229",
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Claude API error: ${response.status} - ${errText}`);
+  }
+
+  const data = await response.json();
+  return data.content[0].text;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
@@ -35,9 +59,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "symbol and stockData are required" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: "GEMINI_API_KEY is not set in environment variables." }, { status: 500 });
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+    
+    if (!geminiApiKey || !anthropicApiKey) {
+      return NextResponse.json({ error: "GEMINI_API_KEY or ANTHROPIC_API_KEY is not set in environment variables." }, { status: 500 });
     }
 
     const s = stockData;
@@ -62,24 +88,27 @@ export async function POST(req: NextRequest) {
     - Options: Hit Prob: ${hitProb}, IV Rank: ${ivRank}
     `;
 
-    // Step 1: Bull Case Generation
-    const bullPrompt = `You are a highly aggressive, optimistic portfolio manager. Build the absolute best BULL case for ${symbol} based on this data:
-    ${baseData}
-    Argue why the stock will go much higher. Provide a specific short-term PRICE TARGET based on these indicators. Limit to 3-4 sentences.`;
-    const bullCase = await callGemini(bullPrompt, apiKey);
+    // Step 1: Claude (Bull 1)
+    const claudeBull1 = await callClaude(`You are a highly aggressive Bull Analyst. Make the initial Bull Case for ${symbol}. Data: ${baseData}\nKeep it to 2-3 sentences.`, anthropicApiKey);
 
-    // Step 2: Bear Case Generation
-    const bearPrompt = `You are a highly skeptical, aggressive short-seller. Build the absolute best BEAR case for ${symbol} based on this data:
-    ${baseData}
-    Tear apart the bull thesis, highlight fundamental weaknesses or macro headwinds. Provide a specific short-term PRICE TARGET for the downside based on these indicators. Limit to 3-4 sentences.`;
-    const bearCase = await callGemini(bearPrompt, apiKey);
+    // Step 2: Gemini (Bear 1)
+    const geminiBear1 = await callGemini(`You are a highly skeptical Bear Analyst. Rebut this Bull Case:\n\n${claudeBull1}\n\nData: ${baseData}\nKeep it to 2-3 sentences.`, geminiApiKey);
 
-    // Step 3: Synthesis
-    const synthPrompt = `You are an elite, objective Chief Investment Officer. Synthesize the raw data, the Bull Case, and the Bear Case into a final JSON report.
+    // Step 3: Claude (Bull 2)
+    const claudeBull2 = await callClaude(`You are the Bull Analyst. The Bear just said this:\n\n${geminiBear1}\n\nDefend your thesis and refine it. Data: ${baseData}\nKeep it to 2-3 sentences.`, anthropicApiKey);
+
+    // Step 4: Gemini (Bear 2)
+    const geminiBear2 = await callGemini(`You are the Bear Analyst. The Bull replied:\n\n${claudeBull2}\n\nMake your final bearish conclusion with a specific short-term downside PRICE TARGET based on the indicators. Limit to 3 sentences.`, geminiApiKey);
+
+    // Step 5: Claude (Bull 3)
+    const claudeBull3 = await callClaude(`You are the Bull Analyst. Make your final bullish conclusion with a specific short-term upside PRICE TARGET. Bear's final point was:\n\n${geminiBear2}\n\nData: ${baseData}\nLimit to 3 sentences.`, anthropicApiKey);
+
+    // Step 6: Gemini CIO (Synthesis)
+    const synthPrompt = `You are an elite, objective Chief Investment Officer. Synthesize the raw data, the Bull's final case, and the Bear's final case into a structured JSON report.
     
     Raw Data: ${baseData}
-    Bull Analyst: ${bullCase}
-    Bear Analyst: ${bearCase}
+    Bull's Final Stand: ${claudeBull3}
+    Bear's Final Stand: ${geminiBear2}
 
     You must output a JSON object with exactly these keys:
     1. "bottomLine": A dynamic, 3-sentence executive summary declaring the actual verdict based on the data.
@@ -92,7 +121,7 @@ export async function POST(req: NextRequest) {
 
     Output pure JSON, no markdown formatting blocks.`;
 
-    const finalJsonText = await callGemini(synthPrompt, apiKey, true);
+    const finalJsonText = await callGemini(synthPrompt, geminiApiKey, true);
 
     return NextResponse.json({ story: JSON.parse(finalJsonText) });
 
