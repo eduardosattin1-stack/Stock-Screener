@@ -1,6 +1,6 @@
 #!/usr/bin/env python3 
 """
-monitor_prices.py — Daily price refresh + portfolio alpha tracking
+monitor_prices.py — Daily price refresh + portfolio alpha + composite tracking
 ====================================================================
 Runs Mon-Fri 22:00 CET (after US close). Refreshes display fields on:
   - portfolio/state.json
@@ -15,6 +15,14 @@ Per-position fields written to portfolio/state.json:
   - drawdown_from_peak_pct              (always ≤ 0)
   - spy_price_at_entry                  (ONE-TIME backfill via FMP historical)
   - alpha_vs_spy_pct                    (pnl_pct − SPY_return_since_entry)
+  - last_composite                      (from latest scan snapshot)
+  - entry_composite                     (backfilled from scan if was 0)
+  - composite_momentum                  (v8 momentum composite)
+  - composite_fallen_angel              (v8 fallen angel composite)
+  - compounder_score_us                 (compounder US cohort)
+  - compounder_score_global             (compounder global cohort)
+  - signal_momentum / signal_compounder_us / signal_compounder_global
+  - smart_money_score                   (LTR-derived score)
 
 Strategy histories — composite/momentum/fa: refreshes current_basket prices
 and recomputes summary aggregates. BORING uses side-channel daily_last_marks
@@ -183,6 +191,51 @@ def fmp_historical_close(symbol: str, date_str: str) -> Optional[float]:
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# Scan-snapshot composite lookup
+# ─────────────────────────────────────────────────────────────────────────
+def _load_scan_composites() -> dict[str, dict]:
+    """Read latest_{region}.json from GCS and build {SYMBOL: scores_dict}.
+
+    Returns composite, composite_momentum, composite_fallen_angel,
+    compounder_score_us, compounder_score_global, signal_momentum,
+    signal_compounder_us, signal_compounder_global, factors_v8 for each symbol.
+    Later regions overwrite earlier on collision (rare).
+    """
+    out: dict[str, dict] = {}
+    for region in ("global", "nasdaq", "sp500"):
+        data = gcs_read(f"scans/latest_{region}.json")
+        if not data:
+            log.info(f"[composites] scans/latest_{region}.json not found")
+            continue
+        stocks = data.get("stocks") if isinstance(data, dict) else data
+        if not isinstance(stocks, list):
+            continue
+        n = 0
+        for s in stocks:
+            if not isinstance(s, dict):
+                continue
+            sym = s.get("symbol")
+            if not sym:
+                continue
+            out[str(sym).upper()] = {
+                "composite": s.get("composite"),
+                "composite_momentum": s.get("composite_momentum"),
+                "composite_fallen_angel": s.get("composite_fallen_angel"),
+                "compounder_score_us": s.get("compounder_score_us"),
+                "compounder_score_global": s.get("compounder_score_global"),
+                "signal_momentum": s.get("signal_momentum"),
+                "signal_compounder_us": s.get("signal_compounder_us"),
+                "signal_compounder_global": s.get("signal_compounder_global"),
+                "factors_v8": s.get("factors_v8"),
+                "smart_money_score": s.get("smart_money_score"),
+                "_region": region,
+            }
+            n += 1
+        log.info(f"[composites] loaded {n} composites from scans/latest_{region}.json")
+    return out
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # Per-file refreshers
 # ─────────────────────────────────────────────────────────────────────────
 def collect_symbols_from_portfolio(state: Optional[dict]) -> set[str]:
@@ -201,12 +254,14 @@ def collect_symbols_from_strategy(history: Optional[dict], kind: str) -> set[str
     return {(p.get("symbol") or "").upper() for p in basket if p.get("symbol")}
 
 
-def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: str) -> Optional[dict]:
+def refresh_portfolio(state: Optional[dict], quotes: dict[str, float],
+                      today: str, scan_lookup: dict[str, dict] | None = None) -> Optional[dict]:
     """Per-position fields:
        - last_price, last_updated, pnl_pct       (always)
        - peak_price, drawdown_from_peak_pct      (always; peak grows over time)
        - spy_price_at_entry                      (lazy backfill, one-time)
        - alpha_vs_spy_pct                        (recomputed daily)
+       - last_composite, composite_momentum, etc (from scan snapshots)
     """
     if not state:
         return None
@@ -216,10 +271,12 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: st
         state["last_monitor_run"] = today
         return state
 
+    scan_lookup = scan_lookup or {}
     spy_now = quotes.get("SPY")
     n_updated = 0
     n_alpha_computed = 0
     n_spy_backfilled = 0
+    n_composite_stamped = 0
 
     for p in positions:
         sym = (p.get("symbol") or "").upper()
@@ -241,11 +298,7 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: st
         p["last_updated"] = today
         p["pnl_pct"] = round((cur - entry_f) / entry_f * 100, 4)
 
-        # ── 2. NEW: peak & drawdown ──────────────────────────────────────
-        # peak_price is sampled daily (when monitor runs). It's a warning
-        # indicator, not a stop-loss exec — intraday spikes between 22:00 CET
-        # samples are not captured. For our purpose (visible drawdown gauge)
-        # this is fine.
+        # ── 2. Peak & drawdown ───────────────────────────────────────────
         prev_peak = p.get("peak_price")
         if not isinstance(prev_peak, (int, float)) or prev_peak <= 0:
             prev_peak = max(entry_f, cur)
@@ -256,8 +309,7 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: st
         else:
             p["drawdown_from_peak_pct"] = 0.0
 
-        # ── 3. NEW: spy_price_at_entry — ONE-TIME backfill ──────────────
-        # Skip if already cached (any positive number). Skip if no entry_date.
+        # ── 3. spy_price_at_entry — ONE-TIME backfill ────────────────────
         spy_at_entry = p.get("spy_price_at_entry")
         if not isinstance(spy_at_entry, (int, float)) or spy_at_entry <= 0:
             entry_date = (p.get("entry_date") or "")[:10]
@@ -268,20 +320,43 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float], today: st
                     spy_at_entry = fetched
                     n_spy_backfilled += 1
                     log.info(f"[portfolio] backfilled spy_price_at_entry for {sym}: ${fetched:.2f} on {entry_date}")
-                # else: leave field absent; alpha will be undefined this run
 
-        # ── 4. NEW: alpha_vs_spy_pct ─────────────────────────────────────
+        # ── 4. alpha_vs_spy_pct ──────────────────────────────────────────
         if (isinstance(spy_at_entry, (int, float)) and spy_at_entry > 0
                 and spy_now and spy_now > 0):
             spy_return_pct = (spy_now - float(spy_at_entry)) / float(spy_at_entry) * 100.0
             p["alpha_vs_spy_pct"] = round(p["pnl_pct"] - spy_return_pct, 4)
             n_alpha_computed += 1
-        # If we can't compute, leave field absent (frontend handles em-dash).
+
+        # ── 5. Composite scores from scan snapshots ──────────────────────
+        # Stamp all strategy composites so the portfolio page can display
+        # the correct score regardless of active mode. Also backfill
+        # entry_composite if it was 0 (positions added after v8 cleanup).
+        snap = scan_lookup.get(sym)
+        if snap:
+            comp = snap.get("composite")
+            if isinstance(comp, (int, float)) and comp > 0:
+                p["last_composite"] = round(float(comp), 4)
+            # Backfill entry_composite if missing or 0
+            if not p.get("entry_composite"):
+                if isinstance(comp, (int, float)) and comp > 0:
+                    p["entry_composite"] = round(float(comp), 4)
+                    log.info(f"[portfolio] backfilled entry_composite for {sym}: {comp:.3f}")
+            # Strategy-specific composites
+            for field in ("composite_momentum", "composite_fallen_angel",
+                          "compounder_score_us", "compounder_score_global",
+                          "signal_momentum", "signal_compounder_us",
+                          "signal_compounder_global", "smart_money_score"):
+                val = snap.get(field)
+                if val is not None:
+                    p[field] = val
+            n_composite_stamped += 1
 
         n_updated += 1
 
     log.info(f"[portfolio] refreshed {n_updated}/{len(positions)} positions "
-             f"(alpha computed for {n_alpha_computed}, spy backfilled {n_spy_backfilled})")
+             f"(alpha {n_alpha_computed}, spy backfill {n_spy_backfilled}, "
+             f"composites {n_composite_stamped})")
     state["last_monitor_run"] = today
     return state
 
@@ -436,8 +511,11 @@ def run(dry_run: bool = False):
     if "SPY" not in quotes:
         log.warning("SPY price fetch failed — alpha & strategy aggregates may be stale")
 
+    scan_lookup = _load_scan_composites()
+    log.info(f"Scan composite lookup: {len(scan_lookup)} symbols indexed")
+
     if portfolio is not None:
-        portfolio = refresh_portfolio(portfolio, quotes, today)
+        portfolio = refresh_portfolio(portfolio, quotes, today, scan_lookup=scan_lookup)
         if portfolio is not None:
             gcs_write(PORTFOLIO_PATH, portfolio, dry_run=dry_run)
 

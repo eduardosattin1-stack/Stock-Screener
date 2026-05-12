@@ -29,6 +29,14 @@ export async function POST(req: Request) {
         shares,
         notes: (notes || "").slice(0, 200),
         bucket: validBucket,
+        asset_type: body.asset_type,
+        strategy: body.strategy,
+        expiration: body.expiration,
+        strikes: body.strikes,
+        ev: body.ev,
+        risk: body.risk,
+        iv: body.iv,
+        contracts: body.contracts,
       }),
     });
     const text = await res.text();

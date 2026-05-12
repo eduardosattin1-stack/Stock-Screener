@@ -22,6 +22,9 @@ export async function POST(req: Request) {
         symbol: symbol.toUpperCase().trim(),
         exit_price,
         reason: (reason || "User close").slice(0, 200),
+        asset_type: body.asset_type,
+        dd_touch: body.dd_touch,
+        gain_touch: body.gain_touch,
       }),
     });
     const text = await res.text();

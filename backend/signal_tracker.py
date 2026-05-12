@@ -978,8 +978,13 @@ def _update_stock_history(stocks: list, today_str: str):
         sym = s["symbol"]
         price = s.get("price", 0) or 0
         composite = s.get("composite", 0) or 0
-        coverage = s.get("factor_coverage", 0) or 0
-        if price <= 0 or composite <= 0 or coverage < 6:
+        comp_fa = s.get("composite_fallen_angel", 0) or 0
+        comp_cus = s.get("compounder_score_us") or 0
+        comp_cgl = s.get("compounder_score_global") or 0
+        sm_score = s.get("smart_money_score") or 0
+        
+        # Require at least a valid momentum composite or valid compounder score
+        if price <= 0 or (composite <= 0 and comp_cus <= 0 and comp_cgl <= 0):
             continue
 
         path = f"{STOCK_HISTORY_PREFIX}/{sym}.json"
@@ -989,7 +994,15 @@ def _update_stock_history(stocks: list, today_str: str):
 
         today_idx = next((i for i, row in enumerate(history)
                           if isinstance(row, list) and len(row) >= 1 and row[0] == today_str), -1)
-        new_row = [today_str, round(price, 4), round(composite, 4)]
+        new_row = [
+            today_str, 
+            round(price, 4), 
+            round(composite, 4),
+            round(comp_fa, 4),
+            round(comp_cus, 4),
+            round(comp_cgl, 4),
+            round(sm_score, 4)
+        ]
         if today_idx >= 0:
             history[today_idx] = new_row
         else:

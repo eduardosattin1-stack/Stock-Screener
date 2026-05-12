@@ -19,9 +19,20 @@ interface Position {
   drawdown_from_peak_pct?:number;
   spy_price_at_entry?:number;
   alpha_vs_spy_pct?:number;
+  // Options
+  asset_type?: "stock" | "option";
+  strategy?: string;
+  expiration?: string;
+  strikes?: string;
+  ev?: number;
+  risk?: number;
+  iv?: number;
+  dd_touch?: number;
+  gain_touch?: number;
+  contracts?: number;
 }
 interface MonitorAction { symbol:string; action:string; urgency:string; current_price:number; entry_price:number; pnl_pct:number; entry_composite:number; current_composite:number; comp_change_pct:number; entry_signal:string; current_signal:string; days_held:number; catalyst_score:number; catalyst_flags:string[]; quality_score:number; bull_score:number; reasons:string[]; }
-interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; }
+interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; asset_type?: "stock" | "option"; dd_touch?:number; gain_touch?:number; }
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
 
 const SIG: Record<string,{color:string;bg:string;border:string}> = {
@@ -55,7 +66,7 @@ async function apiAdd(p:{symbol:string;entry_price:number;shares:number;notes:st
   if(!r.ok) throw new Error(await readErrorBody(r));
   return r.json();
 }
-async function apiClose(p:{symbol:string;exit_price:number;reason?:string}){
+async function apiClose(p:{symbol:string;exit_price:number;reason?:string; asset_type?:string; dd_touch?:number; gain_touch?:number;}){
   const r=await fetch("/api/portfolio/close",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
   if(!r.ok) throw new Error(await readErrorBody(r));
   return r.json();
@@ -74,7 +85,7 @@ export default function Portfolio(){
   const[liveData,setLiveData]=useState<Record<string,StockData>>({});
   const[loading,setLoading]=useState(true);
   const[scanDate,setScanDate]=useState("—");
-  const[tab,setTab]=useState<"positions"|"history">("positions");
+  const[tab,setTab]=useState<"positions"|"options"|"history">("positions");
   const[expandedRow,setExpandedRow]=useState<string|null>(null);
   const[closingRow,setClosingRow]=useState<string|null>(null);
   const[showAddModal,setShowAddModal]=useState(false);
@@ -130,10 +141,10 @@ export default function Portfolio(){
 
   // User-initiated position close — prompts for exit price, writes to GCS.
   // Does NOT use signal state; signal is informational only.
-  async function closePosition(sym:string,exitPrice:number,reason:string){
+  async function closePosition(sym:string,exitPrice:number,reason:string,asset_type?:string,dd_touch?:number,gain_touch?:number){
     try {
       setErrorMsg(null);
-      await apiClose({symbol:sym,exit_price:exitPrice,reason:reason||"User close"});
+      await apiClose({symbol:sym,exit_price:exitPrice,reason:reason||"User close",asset_type,dd_touch,gain_touch});
       setClosingRow(null);
       await refresh();
     } catch(e:any) {
@@ -141,9 +152,12 @@ export default function Portfolio(){
     }
   }
 
+  const stocks = portfolio.filter(p => p.asset_type !== "option");
+  const options = portfolio.filter(p => p.asset_type === "option");
+
   const stats=useMemo(()=>{
     let totalCost=0,totalValue=0,winners=0,losers=0;
-    portfolio.forEach(p=>{const live=liveData[p.symbol];const cur=live?.price||p.entry_price;totalCost+=p.entry_price*p.shares;totalValue+=cur*p.shares;if(cur>p.entry_price)winners++;else if(cur<p.entry_price)losers++;});
+    stocks.forEach(p=>{const live=liveData[p.symbol];const cur=live?.price||p.entry_price;totalCost+=p.entry_price*p.shares;totalValue+=cur*p.shares;if(cur>p.entry_price)winners++;else if(cur<p.entry_price)losers++;});
     const pnl=totalValue-totalCost;
     return{totalCost,totalValue,pnl,pnlPct:totalCost>0?pnl/totalCost:0,winners,losers,positions:portfolio.length};
   },[portfolio,liveData]);
@@ -195,15 +209,14 @@ export default function Portfolio(){
         <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"#2d7a4f",fontFamily:"var(--font-mono)"}}>{stats.winners}</span><span style={{fontSize:12,color:"#9ca3af"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"#ef4444",fontFamily:"var(--font-mono)"}}>{stats.losers}</span></div></div>
       </div>
 
-      {/* Tabs */}
       <div style={{display:"flex",gap:4,marginBottom:16}}>
-        {(["positions","history"] as const).map(t=>(
+        {(["positions","options","history"] as const).map(t=>(
           <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 14px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:"none",borderRadius:5,cursor:"pointer",background:tab===t?"#e8f5ee":"transparent",color:tab===t?"#2d7a4f":"#6b7280",transition:"all 0.15s",textTransform:"capitalize"}}>{t}{t==="history"&&history.length>0&&` (${history.length})`}</button>
         ))}
       </div>
 
       {tab==="positions"&&(
-        portfolio.length===0?(
+        stocks.length===0?(
           <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><BarChart3 size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No positions yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>setShowAddModal(true)} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer"}}>+ Add First Position</button><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#6b7280",background:"transparent",border:"1px solid #e5e7eb",cursor:"pointer"}}>Open Screener</button></div></div>
         ):(
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
@@ -214,7 +227,7 @@ export default function Portfolio(){
                 ))}
               </tr></thead>
               <tbody>
-                {portfolio.map(p=>{
+                {stocks.map(p=>{
                   const live=liveData[p.symbol];const mon=monitors[p.symbol];
                   const cur=p.last_price||mon?.current_price||live?.price||p.entry_price;
                   const pnl=(cur-p.entry_price)*p.shares;const pnlPct=(cur-p.entry_price)/p.entry_price;
@@ -350,7 +363,7 @@ export default function Portfolio(){
                           <ClosePositionForm
                             position={p}
                             currentPrice={cur}
-                            onConfirm={(exitPrice,reason)=>closePosition(p.symbol,exitPrice,reason)}
+                            onConfirm={(exitPrice,reason,dd,gain)=>closePosition(p.symbol,exitPrice,reason,"stock")}
                             onCancel={()=>setClosingRow(null)}
                           />
                         </td></tr>
@@ -390,6 +403,63 @@ export default function Portfolio(){
         )
       )}
 
+      {tab==="options"&&(
+        options.length===0?(
+          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><Zap size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No options tracked yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#6b7280",background:"transparent",border:"1px solid #e5e7eb",cursor:"pointer"}}>Open Screener</button></div></div>
+        ):(
+          <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr>
+                {["Symbol","Strategy","Exp","Strikes","Entry Debit","Current","P&L","Contracts","EV/Risk","IV",""].map((h,i)=>(
+                  <th key={h||i} style={{...thStyle,textAlign:i===0||i===1?"left":i===10?"center":"right"}}>{h}</th>
+                ))}
+              </tr></thead>
+              <tbody>
+                {options.map(p=>{
+                  const live=liveData[p.symbol];
+                  const cur=live?.price||0; // We don't live-price spreads for now
+                  const pnl=(cur-p.entry_price)*100*(p.contracts||1); // Not accurate unless we live-price the spread
+                  
+                  return(
+                    <><tr key={`opt-${p.symbol}-${p.strikes}`} style={{borderBottom:"1px solid #f3f4f6",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="#f8faf9";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
+                      <td style={{padding:"10px 12px", fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)",fontSize:12}}>{p.symbol}</td>
+                      <td style={{padding:"10px 12px", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.strategy}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.expiration}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.strikes}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a",fontWeight:600}}>${p.entry_price.toFixed(2)}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a"}}>{p.contracts}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>EV {p.ev?Math.round(p.ev):"—"} / Risk {p.risk?Math.round(p.risk):"—"}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{p.iv?(p.iv*100).toFixed(0)+"%":"—"}</td>
+                      <td style={{padding:"10px 6px",textAlign:"center"}}>
+                        <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===`${p.symbol}-${p.strikes}`?null:`${p.symbol}-${p.strikes}`);}} style={{
+                          fontSize:9,padding:"3px 10px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,
+                          border:closingRow===`${p.symbol}-${p.strikes}`?"1px solid #ef4444":"1px solid #e5e7eb",
+                          background:closingRow===`${p.symbol}-${p.strikes}`?"#fef2f2":"#fff",
+                          color:closingRow===`${p.symbol}-${p.strikes}`?"#ef4444":"#6b7280",
+                          cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
+                        }}>{closingRow===`${p.symbol}-${p.strikes}`?"Cancel":"Close"}</button>
+                      </td>
+                    </tr>
+                    {closingRow===`${p.symbol}-${p.strikes}`&&(
+                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"#fef2f2",borderTop:"1px solid #fecaca"}}>
+                        <ClosePositionForm
+                          position={p}
+                          currentPrice={0}
+                          onConfirm={(exitPrice,reason,dd,gain)=>closePosition(p.symbol,exitPrice,reason,"option",dd,gain)}
+                          onCancel={()=>setClosingRow(null)}
+                        />
+                      </td></tr>
+                    )}</>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
+
       {/* History Tab */}
       {tab==="history"&&(
         history.length===0?(
@@ -405,17 +475,24 @@ export default function Portfolio(){
             )}
             <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                <thead><tr>{["Symbol","Action","Date","Entry","Exit","P&L %","Days","Reason"].map((h,i)=><th key={h} style={{...thStyle,textAlign:i===0?"left":"right"}}>{h}</th>)}</tr></thead>
+                <thead><tr>{["Symbol","Action","Date","Entry","Exit","P&L %","Days","DD/Gain","Reason"].map((h,i)=><th key={h} style={{...thStyle,textAlign:i===0?"left":"right"}}>{h}</th>)}</tr></thead>
                 <tbody>
-                  {history.slice(0,20).map((h,i)=>{const c=h.pnl_pct>=0?"#2d7a4f":"#ef4444";return(
+                  {history.slice(0,40).map((h,i)=>{const c=h.pnl_pct>=0?"#2d7a4f":"#ef4444";return(
                     <tr key={i} style={{borderBottom:"1px solid #f3f4f6"}}>
-                      <td style={{padding:"10px 12px",fontFamily:"var(--font-mono)",fontWeight:600,color:"#1a1a1a",fontSize:12}}>{h.symbol}</td>
+                      <td style={{padding:"10px 12px",fontFamily:"var(--font-mono)",fontWeight:600,color:"#1a1a1a",fontSize:12}}>{h.symbol} {h.asset_type==="option"?"(OPT)":""}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{h.action}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>{h.date}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>${h.entry_price.toFixed(2)}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a",fontWeight:600}}>${h.exit_price.toFixed(2)}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:700,color:c}}>{h.pnl_pct>=0?"+":""}{(h.pnl_pct*100).toFixed(1)}%</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>{h.days_held}d</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>
+                        {h.asset_type==="option" && (h.dd_touch!==undefined || h.gain_touch!==undefined) ? (
+                          <>
+                            {h.dd_touch!==undefined ? <span style={{color:"#ef4444"}}>{h.dd_touch}%</span> : "—"} / {h.gain_touch!==undefined ? <span style={{color:"#10b981"}}>{h.gain_touch}%</span> : "—"}
+                          </>
+                        ) : "—"}
+                      </td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280",maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.reason}</td>
                     </tr>
                   );})}
@@ -441,31 +518,45 @@ export default function Portfolio(){
 // Prompts for exit price (defaults to current scan price) and optional reason.
 // User-initiated only — never triggered by signal state.
 function ClosePositionForm({position,currentPrice,onConfirm,onCancel}:{
-  position:Position; currentPrice:number; onConfirm:(exitPrice:number,reason:string)=>void; onCancel:()=>void;
+  position:Position; currentPrice:number; onConfirm:(exitPrice:number,reason:string,dd?:number,gain?:number)=>void; onCancel:()=>void;
 }){
-  const [exitPrice,setExitPrice]=useState(currentPrice.toFixed(2));
+  const [exitPrice,setExitPrice]=useState(currentPrice>0?currentPrice.toFixed(2):"");
   const [reason,setReason]=useState("");
+  const [ddTouch,setDdTouch]=useState("");
+  const [gainTouch,setGainTouch]=useState("");
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
   const pnl=parseFloat(exitPrice) > 0 ? (parseFloat(exitPrice)-position.entry_price)/position.entry_price*100 : 0;
   async function handle(){
     const p=parseFloat(exitPrice);
-    if(!p||p<=0){setErr("Exit price required");return;}
+    if(isNaN(p)){setErr("Exit price required");return;}
     setSaving(true);setErr("");
-    try { await onConfirm(p,reason); }
+    try { await onConfirm(p,reason, parseFloat(ddTouch)||undefined, parseFloat(gainTouch)||undefined); }
     catch(e:any){ setErr(e.message||"Failed"); setSaving(false); }
   }
   return(
     <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
-      <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"#ef4444"}}>Close {position.symbol}:</span>
+      <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"#ef4444"}}>Close {position.symbol} {position.asset_type==="option"?"Option":"Stock"}:</span>
       <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
-        Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid #fecaca",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
+        Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} placeholder="0.00" style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid #fecaca",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
       </label>
-      <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:pnl>=0?"#10b981":"#ef4444",fontWeight:600}}>
-        P&L: {pnl>=0?"+":""}{pnl.toFixed(1)}%
-      </span>
+      {position.asset_type!=="option" && currentPrice>0 && (
+        <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:pnl>=0?"#10b981":"#ef4444",fontWeight:600}}>
+          P&L: {pnl>=0?"+":""}{pnl.toFixed(1)}%
+        </span>
+      )}
+      {position.asset_type==="option" && (
+        <>
+          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+            DD Touch % <input type="number" step="0.1" value={ddTouch} onChange={e=>setDdTouch(e.target.value)} placeholder="e.g. -50" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+          </label>
+          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+            Gain Touch % <input type="number" step="0.1" value={gainTouch} onChange={e=>setGainTouch(e.target.value)} placeholder="e.g. 120" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+          </label>
+        </>
+      )}
       <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1,minWidth:160}}>
-        Reason <input type="text" value={reason} onChange={e=>setReason(e.target.value)} placeholder="optional — why you're selling" maxLength={80} style={{width:"100%",marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+        Reason <input type="text" value={reason} onChange={e=>setReason(e.target.value)} placeholder="optional — why you're closing" maxLength={80} style={{width:"100%",marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
       </label>
       <button onClick={handle} disabled={saving} style={{padding:"5px 14px",border:"none",borderRadius:3,cursor:saving?"wait":"pointer",background:"#ef4444",color:"#fff",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>
         {saving?"Closing…":"Confirm Close"}

@@ -344,6 +344,68 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
   );
 }
 
+function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev:number, iv:number}){
+  const [open,setOpen]=useState(false);
+  const [contracts,setContracts]=useState("1");
+  const [debit,setDebit]=useState(sp?.net_debit?.toFixed(2)||"");
+  const [notes,setNotes]=useState("");
+  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const [err,setErr]=useState("");
+  
+  async function handleSave(){
+    const c=parseInt(contracts),d=parseFloat(debit);
+    if(!c||c<=0){setErr("Contracts required");return;}
+    if(!d||d<=0){setErr("Debit required");return;}
+    setStatus("saving");setErr("");
+    try{
+      const payload = {
+        asset_type: "option",
+        symbol: s.symbol,
+        entry_price: d, // net debit
+        shares: c * 100, // equivalent shares exposure
+        notes,
+        strategy: sp.strategy,
+        expiration: sp.expiration,
+        strikes: `${sp.long_strike}/${sp.short_strike}`,
+        ev,
+        risk: sp.max_loss_per_contract,
+        iv,
+        contracts: c
+      };
+      const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      if(!r.ok){
+        const text=await r.text().catch(()=>"");
+        throw new Error(`HTTP ${r.status}`);
+      }
+      setStatus("saved");setTimeout(()=>{setOpen(false);setStatus("idle");setContracts("1");setNotes("");},1500);
+    } catch(e:any){setStatus("error");setErr((e?.message||"Failed").slice(0,160));}
+  }
+  if(!open){
+    return(
+      <button onClick={()=>setOpen(true)} style={{fontSize:10,fontFamily:T.mono,fontWeight:600,padding:"4px 10px",borderRadius:4,border:`1px solid ${T.purple}60`,background:`${T.purple}10`,color:T.purple,cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}>+ Track Option</button>
+    );
+  }
+  return(
+    <div style={{marginTop: 10, padding:"10px 12px",borderRadius:6,background:"#fff",border:`1px solid ${T.purple}`,display:"flex",flexDirection:"column",gap:6}}>
+      <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
+        <span style={{color:T.textMuted,fontWeight:600}}>{sp.strategy.replace(" (estimated)", "")}</span>
+        <input type="number" placeholder="contracts" value={contracts} onChange={e=>{setContracts(e.target.value);setErr("");}} autoFocus
+          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+        <span style={{color:T.textLight}}>@ $</span>
+        <input type="number" step="0.01" placeholder="debit" value={debit} onChange={e=>{setDebit(e.target.value);setErr("");}}
+          style={{width:70,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+      </div>
+      <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
+        style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+      <div style={{display:"flex",alignItems:"center",gap:6}}>
+        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"#10b981":status==="error"?T.red:T.purple,color:"#fff",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Tracked":status==="error"?"! Retry":"Track"}</button>
+        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"#fff",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
+      </div>
+      {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
+    </div>
+  );
+}
+
 function FactorRadar({scores,size=260}:{scores:FactorsV8;size?:number}){
   const cx=size/2,cy=size/2,r=size/2-44;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
@@ -1175,6 +1237,10 @@ function TradierOptionsCard({s}:{s:StockData}){
           <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING</div>
           Speculative overlay: <b>1-2% of portfolio per spread, max 5% total</b>. Probabilities are model estimates (AUC 0.78). Spreads can lose 100% of debit. {!evPositive && <><b style={{color:T.red}}>EV is negative — no statistical edge at current premiums.</b></>}
         </div>
+
+        <div style={{marginTop: 10, display:"flex", justifyContent:"flex-end"}}>
+          <AddOptionToPortfolio stock={s} sp={sp} ev={ev} iv={iv||0} />
+        </div>
       </>)}
 
       {/* No spread possible (no P20 or can't construct) */}
@@ -1199,8 +1265,8 @@ function TradierOptionsCard({s}:{s:StockData}){
 const TradierSpreadCard=TradierOptionsCard;
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
-function PriceCompositeChart({symbol}:{symbol:string}){
-  const[rows,setRows]=useState<[string,number,number][]>([]);
+function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
+  const[rows,setRows]=useState<any[][]>([]);
   const[loading,setLoading]=useState(true);
   const[err,setErr]=useState<string|null>(null);
   useEffect(()=>{
@@ -1214,8 +1280,17 @@ function PriceCompositeChart({symbol}:{symbol:string}){
   if(rows.length<2) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
 
   const W=720,H=220,PL=46,PR=44,PT=14,PB=24;
+  
+  const getScore = (r: any[]) => {
+    if (r.length <= 3) return r[2] || 0;
+    if (mode === "fallen_angel") return r[3] || r[2] || 0;
+    if (mode === "compounder_us") return r[4] || r[2] || 0;
+    if (mode === "compounder_global") return r[5] || r[2] || 0;
+    return r[2] || 0;
+  };
+
   const prices=rows.map(r=>r[1]);
-  const comps=rows.map(r=>r[2]);
+  const comps=rows.map(getScore);
   const pMn=Math.min(...prices),pMx=Math.max(...prices);
   const cMn=Math.min(...comps,0.3),cMx=Math.max(...comps,0.9);
   const pad=0.02,pRng=(pMx-pMn)||1,cRng=(cMx-cMn)||1;
@@ -1223,18 +1298,21 @@ function PriceCompositeChart({symbol}:{symbol:string}){
   const yPrice=(v:number)=>PT+(1-((v-pMn)/pRng))*(H-PT-PB-4)+pad;
   const yComp =(v:number)=>PT+(1-((v-cMn)/cRng))*(H-PT-PB-4)+pad;
   const pricePath=rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yPrice(r[1]).toFixed(1)}`).join(" ");
-  const compPath =rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yComp (r[2]).toFixed(1)}`).join(" ");
+  const compPath =rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yComp (getScore(r)).toFixed(1)}`).join(" ");
   const last=rows[rows.length-1],first=rows[0];
   const pChg=first[1]>0?((last[1]-first[1])/first[1])*100:0;
-  const cChg=(last[2]-first[2])*100;
+  const cChg=(getScore(last)-getScore(first))*100;
   const fmtDate=(d:string)=>d.slice(5); // MM-DD
   // X-axis labels: show ~5 evenly spaced dates
   const tickIdxs=rows.length<=5?rows.map((_,i)=>i):[0,Math.floor(rows.length*0.25),Math.floor(rows.length*0.5),Math.floor(rows.length*0.75),rows.length-1];
 
+  const compLabel = mode === "compounder_us" || mode === "compounder_global" ? "Compounder" : 
+                    mode === "fallen_angel" ? "Fallen Angel" : "Composite";
+
   return(
     <Card>
-      <SH title="Price vs Composite" icon={<TrendingUp size={12}/>}
-        sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}% · Composite ${cChg>=0?"+":""}${cChg.toFixed(1)}pts`}/>
+      <SH title={`Price vs ${compLabel}`} icon={<TrendingUp size={12}/>}
+        sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}% · ${compLabel} ${cChg>=0?"+":""}${cChg.toFixed(1)}pts`}/>
       <div style={{overflow:"hidden"}}>
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto",display:"block"}} preserveAspectRatio="none">
           {/* Horizontal gridlines at 25/50/75% of chart area */}
@@ -1248,7 +1326,7 @@ function PriceCompositeChart({symbol}:{symbol:string}){
           <path d={compPath} fill="none" stroke={T.purple} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="4 2"/>
           {/* End dots */}
           <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={3} fill={T.green}/>
-          <circle cx={xAt(rows.length-1)} cy={yComp(last[2])} r={3} fill={T.purple}/>
+          <circle cx={xAt(rows.length-1)} cy={yComp(getScore(last))} r={3} fill={T.purple}/>
           {/* Y-axis labels, left: price */}
           <text x={PL-6} y={yPrice(pMx)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMx.toFixed(2)}</text>
           <text x={PL-6} y={yPrice(pMn)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMn.toFixed(2)}</text>
@@ -1268,7 +1346,7 @@ function PriceCompositeChart({symbol}:{symbol:string}){
           <span style={{display:"inline-block",width:18,height:2,background:T.green}}/> Price (left)
         </span>
         <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
-          <span style={{display:"inline-block",width:18,height:2,background:T.purple,backgroundImage:`repeating-linear-gradient(90deg,${T.purple} 0 4px,transparent 4px 6px)`}}/> Composite (right)
+          <span style={{display:"inline-block",width:18,height:2,background:T.purple,backgroundImage:`repeating-linear-gradient(90deg,${T.purple} 0 4px,transparent 4px 6px)`}}/> {compLabel} (right)
         </span>
       </div>
     </Card>
@@ -2518,7 +2596,7 @@ export default function StockDetail(){
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
-        <PriceCompositeChart symbol={s.symbol}/>
+        <PriceCompositeChart symbol={s.symbol} mode={s.mode}/>
       </div>
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}

@@ -485,7 +485,20 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_header("Content-Type", "application/json"); self.end_headers()
                     self.wfile.write(json.dumps({"error": "symbol and entry_price > 0 required"}).encode())
                     return
-                _, result = add_position_atomic(symbol, entry_price, shares=shares, notes=notes)
+                asset_type = body.get("asset_type", "stock")
+                option_data = {}
+                if asset_type == "option":
+                    option_data = {
+                        "asset_type": "option",
+                        "strategy": body.get("strategy"),
+                        "expiration": body.get("expiration"),
+                        "strikes": body.get("strikes"),
+                        "ev": body.get("ev"),
+                        "risk": body.get("risk"),
+                        "iv": body.get("iv"),
+                        "contracts": body.get("contracts"),
+                    }
+                _, result = add_position_atomic(symbol, entry_price, shares=shares, notes=notes, **option_data)
                 # Stamp bucket onto the freshly-added position. Best-effort —
                 # silently no-op if the helper layout is unexpected so the
                 # successful add isn't surfaced as a failure to the caller.
@@ -540,7 +553,15 @@ class Handler(BaseHTTPRequestHandler):
                 except Exception as be:
                     logging.warning(f"[portfolio/close] couldn't read bucket pre-close for {symbol}: {be}")
 
-                _, result = remove_position_atomic(symbol, exit_price=exit_price, reason=reason)
+                asset_type = body.get("asset_type", "stock")
+                option_data = {}
+                if asset_type == "option":
+                    option_data = {
+                        "asset_type": "option",
+                        "dd_touch": body.get("dd_touch"),
+                        "gain_touch": body.get("gain_touch"),
+                    }
+                _, result = remove_position_atomic(symbol, exit_price=exit_price, reason=reason, **option_data)
                 if not result.get("removed"):
                     self.send_response(404); self._cors()
                     self.send_header("Content-Type", "application/json"); self.end_headers()
