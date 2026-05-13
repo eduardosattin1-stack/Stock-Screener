@@ -132,7 +132,7 @@ interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
 interface IncomeRow{date:string;calendarYear:string;period?:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
-interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;}
+interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;shortTermDebt?:number;longTermDebt?:number;cashAndShortTermInvestments?:number;}
 interface CashFlowRow{date:string;calendarYear:string;period?:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
 interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
@@ -1915,6 +1915,119 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
+// ── Liquidity & Debt Profile Card ─────────────────────────────────────────────
+function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: BalanceSheetRow[], ratios: RatioYear[], loading: boolean}) {
+  if (loading || !balanceSheets.length) return null;
+  const bsSorted = [...balanceSheets].sort((a,b)=>a.date.localeCompare(b.date));
+  const latestBs = bsSorted[bsSorted.length-1];
+  const ttmRatio = ratios && ratios.length > 0 ? ratios[0] : null;
+
+  const cash = latestBs.cashAndShortTermInvestments ?? latestBs.cashAndCashEquivalents ?? 0;
+  const shortDebt = latestBs.shortTermDebt ?? 0;
+  const longDebt = latestBs.longTermDebt ?? 0;
+  const totalDebt = latestBs.totalDebt ?? (shortDebt + longDebt);
+  const netDebt = totalDebt - cash;
+
+  const bn = (n: number) => n >= 1e9 ? `$${(n/1e9).toFixed(1)}B` : n >= 1e6 ? `$${(n/1e6).toFixed(0)}M` : `$${n}`;
+  const bnNum = (n: number) => n >= 1e9 ? (n/1e9).toFixed(1) : n >= 1e6 ? (n/1e6).toFixed(0) : String(n);
+  const bnSuffix = cash >= 1e9 ? "bn" : cash >= 1e6 ? "m" : "";
+
+  const hist = bsSorted.slice(-5);
+  const maxVal = Math.max(...hist.map(b => Math.max(b.totalDebt||0, b.cashAndShortTermInvestments||b.cashAndCashEquivalents||0))) || 1;
+  const h = 120; 
+
+  const stackMax = Math.max(cash, totalDebt) || 1;
+
+  return (
+    <Card>
+      <SH title="Liquidity & Debt Profile" icon={<Activity size={12}/>} sub={`FY ${latestBs.calendarYear}`} />
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1.5fr 1fr", gap:20, marginTop:10}}>
+        
+        <div style={{display:"flex", gap:16, height:180, alignItems:"flex-end", paddingBottom:20}}>
+          <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
+            <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Cash ({bnSuffix})</div>
+            <div style={{flex:1, width:40, position:"relative", display:"flex", alignItems:"flex-end"}}>
+              <div style={{width:"100%", background:"#9ca3af", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
+              </div>
+            </div>
+            <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>CASH</div>
+          </div>
+          <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
+            <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Debt ({bnSuffix})</div>
+            <div style={{flex:1, width:40, position:"relative", display:"flex", flexDirection:"column", justifyContent:"flex-end"}}>
+              <div style={{width:"100%", background:"#ef4444", height:`${Math.max(2, (shortDebt/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", borderBottom:"1px solid #fff", display:"flex", alignItems:"center", justifyContent:"center"}} title="Short-Term Debt">
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
+              </div>
+              <div style={{width:"100%", background:"#b91c1c", height:`${Math.max(2, (longDebt/stackMax)*100)}%`, display:"flex", alignItems:"center", justifyContent:"center"}} title="Long-Term Debt">
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
+              </div>
+            </div>
+            <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>DEBT</div>
+          </div>
+        </div>
+
+        <div style={{borderLeft:`1px solid ${T.divider}`, borderRight:`1px solid ${T.divider}`, padding:"0 16px", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
+          <div>
+            <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:16, textAlign:"center"}}>DEBT VS CASH TREND</div>
+            <div style={{display:"flex", alignItems:"flex-end", justifyContent:"space-between", height:h, padding:"0 10px"}}>
+              {hist.map((b, i) => {
+                const c = b.cashAndShortTermInvestments ?? b.cashAndCashEquivalents ?? 0;
+                const d = b.totalDebt ?? 0;
+                const cHeight = Math.max(2, (c/maxVal)*h);
+                const dHeight = Math.max(2, (d/maxVal)*h);
+                return (
+                  <div key={i} style={{display:"flex", flexDirection:"column", alignItems:"center", gap:4}}>
+                    <div style={{display:"flex", gap:4, alignItems:"flex-end", height:h}}>
+                      <div style={{width:14, background:"#9ca3af", height:cHeight, borderRadius:"2px 2px 0 0"}} title={`Cash: ${bn(c)}`} />
+                      <div style={{width:14, background:"#b91c1c", height:dHeight, borderRadius:"2px 2px 0 0"}} title={`Debt: ${bn(d)}`} />
+                    </div>
+                    <div style={{fontSize:9, fontFamily:T.mono, color:T.textLight}}>{b.calendarYear}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div style={{display:"flex", justifyContent:"center", gap:16, marginTop:12}}>
+            <div style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textMuted}}>
+              <div style={{width:8, height:8, background:"#9ca3af", borderRadius:2}} /> Cash & Equiv
+            </div>
+            <div style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textMuted}}>
+              <div style={{width:8, height:8, background:"#b91c1c", borderRadius:2}} /> Total Debt
+            </div>
+          </div>
+        </div>
+
+        <div style={{display:"flex", flexDirection:"column", gap:12}}>
+          <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:4}}>POSITION INSIGHTS</div>
+          
+          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
+            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>NET DEBT / (CASH)</div>
+            <div style={{fontSize:13, fontFamily:T.mono, color:netDebt > 0 ? T.red : T.green, fontWeight:700}}>
+              {netDebt > 0 ? bn(netDebt) : `(${bn(Math.abs(netDebt))})`}
+            </div>
+          </div>
+          
+          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
+            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>D/E RATIO</div>
+            <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>
+              {ttmRatio?.debtToEquityRatio != null ? ttmRatio.debtToEquityRatio.toFixed(2) : "—"}
+            </div>
+          </div>
+          
+          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
+            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>INTEREST COVERAGE</div>
+            <div style={{fontSize:13, fontFamily:T.mono, color:ttmRatio?.interestCoverageRatio && ttmRatio.interestCoverageRatio > 3 ? T.green : T.red, fontWeight:700}}>
+              {ttmRatio?.interestCoverageRatio != null ? `${ttmRatio.interestCoverageRatio.toFixed(1)}x` : "—"}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </Card>
+  );
+}
+
 // ── Financial Charts Panel ──────────────────────────────────────────────────
 function FinancialChartsPanel({
   incomes, balanceSheets, cashFlows,
@@ -3137,7 +3250,7 @@ export default function StockDetail(){
       fmpFetch("analyst-estimates",{symbol:sym,limit:2})
     ]).then(([inc,rat,km,bs,cf,incQ,bsQ,cfQ,est])=>{
       const mapInc = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, revenue:r.revenue, grossProfit:r.grossProfit, operatingIncome:r.operatingIncome, netIncome:r.netIncome, epsdiluted:r.epsdiluted||r.epsDiluted, ebitda:r.ebitda});
-      const mapBs = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities, totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt, cashAndCashEquivalents:r.cashAndCashEquivalents});
+      const mapBs = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, totalAssets:r.totalAssets, totalLiabilities:r.totalLiabilities, totalEquity:r.totalStockholdersEquity, totalDebt:r.totalDebt, cashAndCashEquivalents:r.cashAndCashEquivalents, shortTermDebt:r.shortTermDebt, longTermDebt:r.longTermDebt, cashAndShortTermInvestments:r.cashAndShortTermInvestments});
       const mapCf = (r:any) => ({date:r.date, calendarYear:r.calendarYear||r.date?.slice(0,4), period:r.period, operatingCashFlow:r.operatingCashFlow, capitalExpenditure:r.capitalExpenditure, freeCashFlow:r.freeCashFlow});
 
       let finalIncomes = inc?.length ? inc.map(mapInc) : [];
@@ -3414,6 +3527,10 @@ export default function StockDetail(){
           incomesQ={incomesQ} balanceSheetsQ={balanceSheetsQ} cashFlowsQ={cashFlowsQ}
           loading={fmpLoading} 
         />
+      </div>
+
+      <div style={{marginBottom:16}}>
+        <LiquidityProfileCard balanceSheets={balanceSheets} ratios={ratios} loading={fmpLoading} />
       </div>
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
