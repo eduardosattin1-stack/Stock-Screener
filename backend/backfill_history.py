@@ -192,7 +192,7 @@ def backfill_symbol(symbol: str, weeks: int = 156):
     history_out.reverse()
     
     # 4. Save to GCS where the UI chart reads from
-    out_path = f"signals/{symbol}_history.json"
+    out_path = f"stock_history/{symbol}.json"
     log.info(f"[{symbol}] Uploading {len(history_out)} weeks of data to gs://{BUCKET_NAME}/{out_path}")
     
     out_blob = bucket.blob(out_path)
