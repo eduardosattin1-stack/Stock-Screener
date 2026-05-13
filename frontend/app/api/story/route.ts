@@ -38,7 +38,6 @@ async function callClaude(prompt: string, apiKey: string) {
     body: JSON.stringify({
       model: "claude-opus-4-7",
       max_tokens: 1500,
-      temperature: 0.7,
       messages: [{ role: "user", content: prompt }]
     })
   });

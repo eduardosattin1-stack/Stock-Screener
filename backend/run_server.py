@@ -137,7 +137,7 @@ Transcripts (chronological order):
             "content-type": "application/json",
         },
         json={
-            "model": "claude-opus-4-7",
+            "model": "claude-sonnet-4-20250514",
             "max_tokens": 4000,
             "messages": [{"role": "user", "content": prompt}],
         },
@@ -166,7 +166,7 @@ def _analyze_single(symbol: str, transcript: dict) -> str:
             "content-type": "application/json",
         },
         json={
-            "model": "claude-opus-4-7",
+            "model": "claude-sonnet-4-20250514",
             "max_tokens": 2500,
             "messages": [{"role": "user", "content": f"""Analyze this {label} earnings call transcript for {symbol}. Be concise and structured.
 
