@@ -46,7 +46,12 @@ export default function ChartComponent({ data: initialData, width, height, ratio
   const bbCalc = bollingerBand().options({ windowSize: 20, multiplier: 2, sourcePath: "close", movingAverageType: "sma" }).merge((d:any, c:any) => { d.bb = c }).accessor((d:any) => d.bb);
 
   const calculatedData = useMemo(() => {
-    return rsiCalc(macdCalc(sma200(ema50(ema20(bbCalc(initialData))))));
+    const rawCalc = rsiCalc(macdCalc(sma200(ema50(ema20(bbCalc(initialData))))));
+    return rawCalc.map((d: any) => ({
+      ...d,
+      macd: d.macd || { macd: undefined, signal: undefined, divergence: undefined },
+      bb: d.bb || { top: undefined, bottom: undefined, middle: undefined },
+    }));
   }, [initialData]);
 
   const { data, xScale, xAccessor, displayXAccessor } = useMemo(() => {
@@ -99,18 +104,18 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           wickStroke={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"}
         />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={(d:any) => d?.ema20} strokeStyle="#8b5cf6" />
+        <LineSeries yAccessor={ema20.accessor()} strokeStyle="#8b5cf6" />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={(d:any) => d?.ema50} strokeStyle="#3b82f6" />
+        <LineSeries yAccessor={ema50.accessor()} strokeStyle="#3b82f6" />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={(d:any) => d?.sma200} strokeStyle="#f59e0b" />
+        <LineSeries yAccessor={sma200.accessor()} strokeStyle="#f59e0b" />
         {/* @ts-ignore */}
-        <BollingerSeries yAccessor={(d:any) => d?.bb} />
+        <BollingerSeries yAccessor={bbCalc.accessor()} />
         
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
-        <EdgeIndicator itemType="last" orient="right" edgeAt="right" yAccessor={(d:any) => d?.close} fill={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"} />
+        <EdgeIndicator itemType="last" orient="right" edgeAt="right" yAccessor={(d:any) => d.close} fill={(d:any) => d.close > d.open ? "#10b981" : "#ef4444"} />
         
         {/* @ts-ignore */}
         <OHLCTooltip origin={[8, 16]} textFill="#374151" />
@@ -119,23 +124,23 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           origin={[8, 36]}
           textFill="#374151"
           options={[
-            { yAccessor: (d:any) => d?.ema20, type: "EMA", stroke: "#8b5cf6", windowSize: ema20.options().windowSize },
-            { yAccessor: (d:any) => d?.ema50, type: "EMA", stroke: "#3b82f6", windowSize: ema50.options().windowSize },
-            { yAccessor: (d:any) => d?.sma200, type: "SMA", stroke: "#f59e0b", windowSize: sma200.options().windowSize },
+            { yAccessor: ema20.accessor(), type: "EMA", stroke: "#8b5cf6", windowSize: ema20.options().windowSize },
+            { yAccessor: ema50.accessor(), type: "EMA", stroke: "#3b82f6", windowSize: ema50.options().windowSize },
+            { yAccessor: sma200.accessor(), type: "SMA", stroke: "#f59e0b", windowSize: sma200.options().windowSize },
           ]}
         />
         {/* @ts-ignore */}
-        <BollingerBandTooltip origin={[8, 56]} yAccessor={(d:any) => d?.bb} options={bbCalc.options()} textFill="#374151" />
+        <BollingerBandTooltip origin={[8, 56]} yAccessor={bbCalc.accessor()} options={bbCalc.options()} textFill="#374151" />
       </Chart>
 
       {/* 2. Volume (Overlaid on price chart bottom) */}
-      <Chart id={2} yExtents={(d:any) => d?.volume} height={volH} origin={(w, h) => [0, priceH - volH]}>
+      <Chart id={2} yExtents={(d:any) => d.volume} height={volH} origin={(w, h) => [0, priceH - volH]}>
         {/* @ts-ignore */}
-        <BarSeries yAccessor={(d:any) => d?.volume} fillStyle={(d:any) => d?.close > d?.open ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"} />
+        <BarSeries yAccessor={(d:any) => d.volume} fillStyle={(d:any) => d.close > d.open ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"} />
       </Chart>
 
       {/* 3. MACD Pane */}
-      <Chart id={3} yExtents={(d:any) => d?.macd ? [d.macd.macd, d.macd.signal, d.macd.divergence] : undefined} height={macdH} origin={(w, h) => [0, priceH]} padding={{ top: 10, bottom: 10 }}>
+      <Chart id={3} yExtents={macdCalc.accessor()} height={macdH} origin={(w, h) => [0, priceH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
         <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
         {/* @ts-ignore */}
@@ -144,9 +149,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
-        <MACDSeries yAccessor={(d:any) => d?.macd} />
+        <MACDSeries yAccessor={macdCalc.accessor()} />
         {/* @ts-ignore */}
-        <MACDTooltip origin={[8, 16]} yAccessor={(d:any) => d?.macd} options={macdCalc.options()} appearance={{ stroke: { macd: "#3b82f6", signal: "#f59e0b" }, fill: { divergence: "#8b5cf6" } }} textFill="#374151" />
+        <MACDTooltip origin={[8, 16]} yAccessor={macdCalc.accessor()} options={macdCalc.options()} appearance={{ stroke: { macd: "#3b82f6", signal: "#f59e0b" }, fill: { divergence: "#8b5cf6" } }} textFill="#374151" />
       </Chart>
 
       {/* 4. RSI Pane */}
@@ -162,9 +167,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
-        <RSISeries yAccessor={(d:any) => d?.rsi} />
+        <RSISeries yAccessor={rsiCalc.accessor()} />
         {/* @ts-ignore */}
-        <RSITooltip origin={[8, 16]} yAccessor={(d:any) => d?.rsi} options={rsiCalc.options()} textFill="#374151" />
+        <RSITooltip origin={[8, 16]} yAccessor={rsiCalc.accessor()} options={rsiCalc.options()} textFill="#374151" />
       </Chart>
 
       {/* @ts-ignore */}
