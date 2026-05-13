@@ -7,7 +7,9 @@ export interface StockCardProps {
   strategy: string; // e.g., "BORING", "Momentum"
   thesis: string; // 2 sentence AI thesis
   action: "BUY" | "HOLD" | "TRIM" | "SELL" | "WATCH" | "STRONG BUY";
-  probability?: number; // e.g., 72
+  p20?: number;
+  upside?: number;
+  smartMoney?: number;
   score: number;
   price: number;
   currency?: string;
@@ -41,7 +43,9 @@ export function StockCard({
   strategy,
   thesis,
   action,
-  probability,
+  p20,
+  upside,
+  smartMoney,
   score,
   price,
   currency,
@@ -131,10 +135,22 @@ export function StockCard({
             <div style={{ fontSize: 14, fontWeight: 800, fontFamily: "var(--font-mono)", color: scoreColor }}>{score.toFixed(2)}</div>
           </div>
           
-          {probability != null && (
+          {p20 != null && (
             <div>
-              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>P(+10% in 60d)</div>
-              <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)", color: probability > 60 ? "#10b981" : "var(--text-muted)" }}>{probability}%</div>
+              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>P(20)</div>
+              <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)", color: p20 > 60 ? "var(--green)" : "var(--text-muted)" }}>{p20}%</div>
+            </div>
+          )}
+          {upside != null && (
+            <div>
+              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>UPSIDE</div>
+              <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)", color: upside > 20 ? "var(--green)" : upside > 0 ? "var(--text)" : "var(--red)" }}>{upside > 0 ? "+" : ""}{upside.toFixed(0)}%</div>
+            </div>
+          )}
+          {smartMoney != null && (
+            <div>
+              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>SMART</div>
+              <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)", color: smartMoney > 0.6 ? "var(--green)" : "var(--text)" }}>{(smartMoney * 100).toFixed(0)}</div>
             </div>
           )}
         </div>

@@ -195,23 +195,24 @@ def backfill_symbol(symbol: str, weeks: int = 52, force: bool = False):
         composite = min(max(composite, 0.0), 1.0)
         
         # --- FALLEN ANGEL ---
-        # Instead of a hard 0.0, FA is a full 5-factor composite that swaps trend for reversal
+        # FA focuses on deep value and oversold technicals (reversal)
         fa_tech_score = 0.5
         if curr_rsi < 35: fa_tech_score += 0.3
         elif curr_rsi < 45: fa_tech_score += 0.1
+        elif curr_rsi > 60: fa_tech_score -= 0.1
         elif curr_rsi > 70: fa_tech_score -= 0.3
         
+        if current_price < sma_50: fa_tech_score += 0.1
         if current_price < sma_200: fa_tech_score += 0.2
         else: fa_tech_score -= 0.1
         
-        fa_score = (val_score * 0.33 + growth_score * 0.17 + qual_score * 0.17 + fa_tech_score * 0.17) * 1.19
+        fa_score = (val_score * 0.40 + qual_score * 0.30 + fa_tech_score * 0.30)
         fa_score = min(max(fa_score, 0.0), 1.0)
             
         # --- COMPOUNDER US / GLOBAL ---
-        # Compounder uses the momentum composite but requires strict fundamental gates
-        cmp_score = 0.0
-        if roe > 0.15 and rev_cagr > 0.10 and eps_cagr > 0.10:
-            cmp_score = composite
+        # Compounder focuses heavily on quality and growth, less on value/tech
+        cmp_score = (qual_score * 0.45 + growth_score * 0.40 + tech_score * 0.15)
+        cmp_score = min(max(cmp_score, 0.0), 1.0)
             
         history_out.append([
             valid_prices[0]["date"],

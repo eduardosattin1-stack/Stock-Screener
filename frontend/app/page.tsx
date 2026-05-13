@@ -1187,7 +1187,9 @@ export default function Dashboard(){
                 strategy={mode.replace(/_/g, " ").toUpperCase()}
                 thesis={s.transcript_summary || s.reasons?.join(". ") || ""}
                 action={action}
-                probability={prob}
+                p20={prob}
+                upside={s.intrinsic_upside ?? undefined}
+                smartMoney={s.factors_v8_momentum?.smart_money ?? s.factors_v8?.smart_money ?? undefined}
                 score={comp}
                 price={s.price}
                 currency={s.currency}
