@@ -3282,6 +3282,30 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
           </div>
         </Card>
       )}
+
+      {(story?.bullCatalysts?.length > 0 || story?.bearCatalysts?.length > 0) && (
+        <Card>
+          <SH title="Thesis Catalysts" icon={<Zap size={12}/>} sub="Key events to monitor in upcoming earnings or news" />
+          <div style={{display:"flex", gap:20, marginTop:16}}>
+            {story.bullCatalysts?.length > 0 && (
+              <div style={{flex:1, background:T.greenLight, padding:16, borderRadius:8, border:`1px solid ${T.greenBorder}`}}>
+                <h4 style={{fontSize:12, fontFamily:T.mono, color:T.green, fontWeight:700, margin:"0 0 12px 0", textTransform:"uppercase"}}>Bull Confirmation</h4>
+                <ul style={{margin:0, paddingLeft:16, fontSize:13, lineHeight:1.6, color:T.text, fontFamily:T.sans}}>
+                  {story.bullCatalysts.map((c: string, i: number) => <li key={i} style={{marginBottom:8}}>{c}</li>)}
+                </ul>
+              </div>
+            )}
+            {story.bearCatalysts?.length > 0 && (
+              <div style={{flex:1, background:"#fef2f2", padding:16, borderRadius:8, border:"1px solid #fecaca"}}>
+                <h4 style={{fontSize:12, fontFamily:T.mono, color:T.red, fontWeight:700, margin:"0 0 12px 0", textTransform:"uppercase"}}>Bear Confirmation</h4>
+                <ul style={{margin:0, paddingLeft:16, fontSize:13, lineHeight:1.6, color:T.text, fontFamily:T.sans}}>
+                  {story.bearCatalysts.map((c: string, i: number) => <li key={i} style={{marginBottom:8}}>{c}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
       
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
         <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono}}>

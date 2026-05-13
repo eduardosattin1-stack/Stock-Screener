@@ -4,7 +4,7 @@ export const maxDuration = 300;
 export const dynamic = 'force-dynamic'; // 5 minutes for long-form generation
 
 async function callGemini(prompt: string, apiKey: string, isJson: boolean = false) {
-  const config: any = { temperature: 0.7, maxOutputTokens: 4096 };
+  const config: any = { temperature: 0.7, maxOutputTokens: 8192 };
   if (isJson) config.responseMimeType = "application/json";
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
@@ -372,16 +372,31 @@ ${bearCase}
 
 # FINAL INSTRUCTION
 Synthesize the raw data AND the Bull/Bear debate into your final verdict. You are the ultimate judge settling this debate based on your persona's framework.
-Generate the narrative now. Remember: 950-1,050 words, 5 paragraphs, no markdown, no headers.
+Return ONLY a valid JSON object matching this exact schema:
+{
+  "narrative": "Your comprehensive 1,000+ word assessment, written strictly in your persona's voice.",
+  "bull_catalysts": ["3-5 bullet points on what future news/earnings would confirm the bull thesis"],
+  "bear_catalysts": ["3-5 bullet points on what future news/earnings would confirm the bear thesis"]
+}
 `;
 
-    const narrative = await callGemini(finalPrompt, geminiApiKey);
+    const rawSynthesis = await callGemini(finalPrompt, geminiApiKey, true);
+    
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(rawSynthesis);
+    } catch (e) {
+      // Fallback in case JSON parsing fails
+      parsed = { narrative: rawSynthesis, bull_catalysts: [], bear_catalysts: [] };
+    }
 
-    // We still return a JSON response but with the full narrative text and the debate
+    // We return a JSON response with the full narrative text, catalysts, and the debate
     return NextResponse.json({ 
       story: {
-        narrative,
+        narrative: parsed.narrative || "No narrative generated.",
         bullBear: `Bull says: ${bullCase}\n\nBear says: ${bearCase}`,
+        bullCatalysts: parsed.bull_catalysts || [],
+        bearCatalysts: parsed.bear_catalysts || [],
         confidenceScore: s.composite_v8?.quality || 75 // simple fallback
       }
     });
