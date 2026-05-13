@@ -3054,6 +3054,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
   const [viewIndex, setViewIndex] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [selectedPersona, setSelectedPersona] = useState<string>("Objective CIO");
+  const [showPersonasGuide, setShowPersonasGuide] = useState<boolean>(false);
   const PERSONAS = ["Objective CIO", "Warren Buffett", "Cathie Wood", "Ray Dalio", "Stanley Druckenmiller"];
 
   useEffect(() => {
@@ -3133,13 +3134,6 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
                 </button>
               ))}
             </div>
-            <div style={{marginTop: 16, fontSize: 12, color: T.textMuted, fontFamily: T.sans, lineHeight: 1.6, maxWidth: 600, textAlign: "left", background: T.bg, padding: "12px 16px", borderRadius: 6, border: `1px solid ${T.cardBorder}`}}>
-              {selectedPersona === "Objective CIO" && <span><strong>Objective CIO:</strong> Provides a balanced, data-driven, risk-adjusted overview without emotional bias. Focuses on hard numbers, probability, and capital preservation.</span>}
-              {selectedPersona === "Warren Buffett" && <span><strong>Warren Buffett:</strong> Focuses on deep value, competitive moats, consistent return on equity, and margin of safety. Prefers predictable cash flows over speculative growth.</span>}
-              {selectedPersona === "Cathie Wood" && <span><strong>Cathie Wood:</strong> Seeks disruptive innovation, exponential growth trajectories, and paradigm-shifting technologies. Willing to accept higher valuation multiples for future market dominance.</span>}
-              {selectedPersona === "Ray Dalio" && <span><strong>Ray Dalio:</strong> Analyzes the macroeconomic environment, debt cycles, and secular shifts. Views the stock as a piece of a larger economic machine.</span>}
-              {selectedPersona === "Stanley Druckenmiller" && <span><strong>Stanley Druckenmiller:</strong> Emphasizes momentum, liquidity flows, and tactical catalysts. Looks for explosive setups combining strong fundamentals with powerful technical breakouts.</span>}
-            </div>
           </div>
 
           <button 
@@ -3217,6 +3211,28 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
         </Card>
       )}
 
+      <Card style={{padding: showPersonasGuide ? "16px 20px" : "12px 20px"}}>
+        <div 
+          onClick={() => setShowPersonasGuide(!showPersonasGuide)}
+          style={{display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer", userSelect:"none"}}
+        >
+          <div style={{display:"flex", alignItems:"center", gap:8}}>
+            <Brain size={14} color={T.green} />
+            <span style={{fontSize:11, fontFamily:T.mono, fontWeight:600, color:T.text, letterSpacing:"0.05em", textTransform:"uppercase"}}>Investor Personas Guide</span>
+          </div>
+          {showPersonasGuide ? <ChevronUp size={16} color={T.textMuted} /> : <ChevronDown size={16} color={T.textMuted} />}
+        </div>
+        {showPersonasGuide && (
+          <div style={{marginTop: 16, paddingTop: 16, borderTop: `1px solid ${T.divider}`, fontSize: 12, color: T.textMuted, fontFamily: T.sans, lineHeight: 1.6}}>
+             <div style={{marginBottom:8}}><strong>Objective CIO:</strong> Provides a balanced, data-driven, risk-adjusted overview without emotional bias. Focuses on hard numbers, probability, and capital preservation.</div>
+             <div style={{marginBottom:8}}><strong>Warren Buffett:</strong> Focuses on deep value, competitive moats, consistent return on equity, and margin of safety. Prefers predictable cash flows over speculative growth.</div>
+             <div style={{marginBottom:8}}><strong>Cathie Wood:</strong> Seeks disruptive innovation, exponential growth trajectories, and paradigm-shifting technologies. Willing to accept higher valuation multiples for future market dominance.</div>
+             <div style={{marginBottom:8}}><strong>Ray Dalio:</strong> Analyzes the macroeconomic environment, debt cycles, and secular shifts. Views the stock as a piece of a larger economic machine.</div>
+             <div><strong>Stanley Druckenmiller:</strong> Emphasizes momentum, liquidity flows, and tactical catalysts. Looks for explosive setups combining strong fundamentals with powerful technical breakouts.</div>
+          </div>
+        )}
+      </Card>
+
       <Card>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20, borderBottom:`1px solid ${T.divider}`, paddingBottom:12}}>
           <SH 
@@ -3235,7 +3251,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
 
       {story?.bullBear && (
         <Card>
-          <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude Opus" />
+          <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude 3.7 Sonnet" />
           <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
             {story.bullBear.split("Bear says:").map((part, i) => (
               <div key={i} style={{marginBottom: i === 0 ? 12 : 0, paddingBottom: i === 0 ? 12 : 0, borderBottom: i === 0 ? `1px dashed ${T.divider}` : "none"}}>
