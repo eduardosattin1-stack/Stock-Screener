@@ -2836,6 +2836,52 @@ function TrackRecordTable({s}:{s:StockData}){
     "Book Yield (per Share)": "EPS / prior-year BVPS. High yield implies efficient capital use.",
     "Book Yield (ROE)": "Net Income / Equity. >15% consistently is the quality threshold.",
     "Payout Ratio": "Dividends / EPS. Too high (>80%) leaves no room for reinvestment.",
+    "Retention Ratio": "1 - Payout Ratio. Reinvested capital driving future growth.",
+  };
+
+  const cellStyle:React.CSSProperties = {padding:"6px 8px", textAlign:"right", fontSize:10, fontFamily:T.mono, borderBottom:`1px solid ${T.divider}`, whiteSpace:"nowrap"};
+  const headStyle:React.CSSProperties = {...cellStyle, color:T.textMuted, fontWeight:600, fontSize:9};
+  const labelStyle:React.CSSProperties = {...cellStyle, textAlign:"left", color:T.text, fontWeight:600, position:"sticky", left:0, background:T.card, zIndex:1};
+
+  return (
+    <Card>
+      <SH title="Track Record" icon={<BarChart2 size={12}/>} sub={`${rows.length} years · ${rows[0].year}–${rows[rows.length-1].year}`}/>
+
+      {/* Projection summary at top */}
+      {s.buffett_evaluated && (
+        <div style={{padding:"10px 12px",borderRadius:6,background:T.greenLight,border:`1px solid ${T.greenBorder}`,marginBottom:14,fontSize:11,fontFamily:T.mono,lineHeight:1.6}}>
+          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VALUE 5Y PROJECTION</div>
+          Method: <b>Min Growth (EPS, BVPS, Yield)</b> · 
+          g = {((s.buffett_g_assumed||0)*100).toFixed(1)}% · 
+          P/E = {(s.buffett_pe_median||0).toFixed(1)}x<br/>
+          EPS₅ = {c}{(s.buffett_eps_5y||0).toFixed(2)} → 
+          Future Price = <b>{c}{(s.buffett_future_price||0).toFixed(2)}</b> → 
+          Fair Value today = <b>{c}{(s.buffett_fair_value||0).toFixed(2)}</b> 
+          ({(s.intrinsic_upside||0)>=0?"+":""}{(s.intrinsic_upside||0).toFixed(1)}% MoS)
+        </div>
+      )}
+
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead>
+            <tr>
+              <th style={{...headStyle, textAlign:"left", position:"sticky", left:0, background:T.card, zIndex:2}}>Metric</th>
+              {rows.map(r=><th key={r.year} style={headStyle}>{r.year}</th>)}
+              <th style={{...headStyle, color:T.green, fontWeight:700}}>CAGR</th>
+              <th style={{...headStyle, color:T.green, fontWeight:700}}>Cum. Growth</th>
+              <th style={{...headStyle, color:T.purple, fontWeight:700}}>Median</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sections.map(sec=>(
+              <React.Fragment key={sec.title}>
+                <tr>
+                  <td colSpan={rows.length+4} style={{...cellStyle, textAlign:"left", color:T.textMuted, fontWeight:600, fontSize:9, paddingTop:14, paddingBottom:6, letterSpacing:"0.08em"}}>{sec.title}</td>
+                </tr>
+                {sec.rows.map((rd,i)=>{
+                  const series = derived.map(d=>rd.fn(d));
+                  const cagrVal = rd.showCagr && rd.cagrKey ? cagr(rd.cagrKey) : null;
+                  const cumVal = rd.showCum && rd.cagrKey ? cumGrowth(rd.cagrKey) : null;
                   const medVal = rd.showMedian ? median(series) : null;
                   return (
                     <tr key={i}>
@@ -2864,34 +2910,71 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
-function ScoreEducationCard() {
+function ScoringMethodologyCard() {
   return (
     <Card style={{ marginBottom: 16 }}>
       <SH title="Scoring Analysis & Methodology" icon={<Activity size={12} />} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, marginTop: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 30, marginTop: 16 }}>
         <div>
-          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>MOMENTUM COMPOSITE</h4>
-          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
-            Our default engine. Balanced 5-factor model: Technical Momentum (25%), Quality (20%), Growth (20%), Value (20%), and Smart Money Flow (15%). Optimized for finding established leaders in strong uptrends.
+          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>MOMENTUM COMPOSITE</h4>
+          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
+            Our default engine. A balanced 5-factor model designed to identify established market leaders currently exhibiting strong uptrends. It blends technical price action with fundamental quality and smart money footprints to capture sustainable momentum while mitigating downside risk.
           </p>
+          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
+              <li><strong>Technical Momentum (25%):</strong> RSI between 55-70 (strong but not overbought), MACD bullish crossover, strong ADX (&gt;25).</li>
+              <li><strong>Quality (20%):</strong> High Piotroski F-Score (7-9), safe Altman Z-Score (&gt;3.0), strong and expanding Gross Margins.</li>
+              <li><strong>Growth (20%):</strong> Revenue and EPS CAGR &gt; 15% over 3 years, accelerating YoY free cash flow.</li>
+              <li><strong>Value (20%):</strong> High Owner Earnings Yield (&gt;4.5%), trading below historical P/FCF medians.</li>
+              <li><strong>Smart Money (15%):</strong> Rising institutional concentration, net positive insider transactions, and bullish management transcripts.</li>
+            </ul>
+          </div>
         </div>
         <div>
-          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>COMPOUNDER (US/GLOBAL)</h4>
-          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
-            A precision quality-first engine. It filters for high ROE (&gt;15%), strong pricing power (Expanding Gross Margins), and robust Balance Sheets. Rejects high-leverage and commodity businesses.
+          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>COMPOUNDER (US/GLOBAL)</h4>
+          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
+            A precision quality-first engine focused on long-term capital appreciation. It filters for businesses with dominant market positions, robust pricing power, and impenetrable balance sheets. This model systematically rejects high-leverage and commodity-driven businesses to focus on sustainable compounders.
           </p>
+          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
+              <li><strong>Return on Equity (ROE):</strong> Consistent 3-year average ROE &gt; 15%, indicating efficient compounding of shareholder capital.</li>
+              <li><strong>Pricing Power:</strong> Expanding Gross Margins and Operating Margins (OpMargin Δ &gt; 0) over a 3-year period.</li>
+              <li><strong>Capital Efficiency:</strong> Low Price-to-Book (P/B) relative to ROE, indicating the market has not fully priced in the compounding potential.</li>
+              <li><strong>Balance Sheet:</strong> Low debt-to-equity and strong interest coverage, ensuring survival through macroeconomic cycles.</li>
+            </ul>
+          </div>
         </div>
         <div>
-          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>FALLEN ANGEL</h4>
-          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
-            Contrarian Mean-Reversion engine. Identifies fundamentally strong businesses (Piotroski &gt; 6) that have suffered severe short-term price dislocation. Optimized for sharp reversals.
+          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>FALLEN ANGEL</h4>
+          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
+            A contrarian mean-reversion engine designed to identify fundamentally sound businesses that have suffered severe short-term price dislocations. It seeks out "babies thrown out with the bathwater"—companies whose operational health remains intact despite negative market sentiment.
           </p>
+          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
+              <li><strong>Price Dislocation:</strong> Trading near 52-week lows (0-20% of range) with deeply oversold RSI (&lt;30).</li>
+              <li><strong>Fundamental Floor:</strong> Piotroski F-Score &gt; 6, ensuring the business is not structurally failing.</li>
+              <li><strong>Valuation Compression:</strong> Price-to-Sales (P/S) and P/E ratios trading significantly below their 5-year historical medians.</li>
+              <li><strong>Reversal Catalysts:</strong> Bullish divergence in MACD or stabilization in On-Balance Volume (OBV) amidst price weakness.</li>
+            </ul>
+          </div>
         </div>
         <div>
-          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>V8 SMART MONEY</h4>
-          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
-            Focuses on institutional footprints. Weighs 13F accumulation velocity, congressional trading activity, and management transcript sentiment. Follows the capital, not the noise.
+          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>V8 SMART MONEY</h4>
+          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
+            A sophisticated alternative-data engine that tracks institutional footprints. It ignores retail noise and focuses entirely on where the most informed capital is flowing, analyzing regulatory filings, congressional trades, and management sentiment.
           </p>
+          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
+              <li><strong>13F Accumulation:</strong> High velocity of new institutional positions and increasing ownership percentage Quarter-over-Quarter.</li>
+              <li><strong>Congressional Trading:</strong> Net buying activity by House and Senate members (recency-weighted).</li>
+              <li><strong>Management Tone:</strong> High positive sentiment scores extracted from earnings call transcripts via NLP.</li>
+              <li><strong>Insider Conviction:</strong> Cluster buying by multiple C-level executives or directors on the open market.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </Card>
