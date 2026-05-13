@@ -2,6 +2,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
 import { Watchlist } from "./components/Watchlist";
+import { StockCard } from "./components/StockCard";
+import { useRouter } from "next/navigation";
 
 const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
@@ -833,6 +835,7 @@ type SortKey =
 // "other_comp" dropped — 4-mode world makes "other" ambiguous.
 
 export default function Dashboard(){
+  const router = useRouter();
   const [data,setData]=useState<ScanData|null>(null);
   const [loading,setLoading]=useState(true);
 
@@ -866,6 +869,7 @@ export default function Dashboard(){
   const [sectorFilter,setSectorFilter]=useState<string[]>([]);
   const [countryFilter,setCountryFilter]=useState<string[]>([]);
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
+  const [viewMode, setViewMode]=useState<"table"|"feed">("table");
 
   useEffect(()=>{
     setLoading(true);
@@ -1047,7 +1051,13 @@ export default function Dashboard(){
           </p>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
-          <ModeToggle mode={mode} onChange={setMode}/>
+          <div style={{display:"flex", gap: 10}}>
+            <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+              <button onClick={()=>setViewMode("table")} style={{padding:"6px 12px", border:"none", borderRight:"1px solid var(--border,#e5e7eb)", cursor:"pointer", background:viewMode==="table"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="table"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Table</button>
+              <button onClick={()=>setViewMode("feed")} style={{padding:"6px 12px", border:"none", cursor:"pointer", background:viewMode==="feed"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="feed"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Feed</button>
+            </div>
+            <ModeToggle mode={mode} onChange={setMode}/>
+          </div>
           <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
             {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
           </div>
@@ -1130,36 +1140,61 @@ export default function Dashboard(){
         )}
       </div>
 
-      {/* Table */}
-      <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-            <thead><tr>
-              <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
-              <th style={hs("sector","left")} onClick={()=>toggleSort("sector")} title="Click to sort by sector (alphabetical).">SECTOR</th>
-              <th style={hs("country","center")} onClick={()=>toggleSort("country")} title="ISO country code from FMP company-screener. Click to sort.">CTRY</th>
-              <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
-              <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
-              <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
-              <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : mode === "compounder_us" ? "Compounder US" : mode === "compounder_global" ? "Compounder Global" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
-              {/* v1.2 (May 2026): "COMP other" column dropped. 4-mode world
-                  makes "other" ambiguous — users switch modes to compare or
-                  open stock detail page (shows all 4 modes' scores). */}
-              <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
-              <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
-              <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
-              <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
-              {/* v1.2 (May 2026): dropped 4 columns — VAL, GRW, QUAL (v8 sub-factor
-                  scores; shown alongside COMP they fed = redundant), and GAIN/DD
-                  (static lookup-table band; same for every stock in a composite
-                  bucket = useless). Composite now stands on its own; users open
-                  the stock detail page for sub-factor breakdowns. */}
-            </tr></thead>
-            <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
-          </table>
+      {/* View Rendering */}
+      {viewMode === "table" ? (
+        <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+              <thead><tr>
+                <th style={hs("symbol","left")} onClick={()=>toggleSort("symbol")}>SYMBOL</th>
+                <th style={hs("sector","left")} onClick={()=>toggleSort("sector")} title="Click to sort by sector (alphabetical).">SECTOR</th>
+                <th style={hs("country","center")} onClick={()=>toggleSort("country")} title="ISO country code from FMP company-screener. Click to sort.">CTRY</th>
+                <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
+                <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
+                <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
+                <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : mode === "compounder_us" ? "Compounder US" : mode === "compounder_global" ? "Compounder Global" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
+                <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
+                <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
+                <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
+                <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
+              </tr></thead>
+              <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
+            </table>
+          </div>
+          {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
         </div>
-        {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
-      </div>
+      ) : (
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(320px, 1fr))",gap:16}}>
+          {sorted.map(s => {
+            const comp = readComposite(s, mode);
+            const prob = s.hit_prob ? Math.round(s.hit_prob * 100) : undefined;
+            // determine action
+            let action: "BUY" | "HOLD" | "TRIM" | "SELL" | "WATCH" | "STRONG BUY" = "HOLD";
+            if (comp > 0.8) action = "STRONG BUY";
+            else if (comp > 0.65) action = "BUY";
+            else if (comp > 0.5) action = "HOLD";
+            else if (comp > 0.3) action = "TRIM";
+            else action = "SELL";
+
+            return (
+              <StockCard 
+                key={s.symbol}
+                symbol={s.symbol}
+                companyName={s.company_name}
+                strategy={mode.replace(/_/g, " ").toUpperCase()}
+                thesis={s.transcript_summary || s.reasons?.join(". ") || ""}
+                action={action}
+                probability={prob}
+                score={comp}
+                price={s.price}
+                currency={s.currency}
+                onClick={() => router.push(`/stock/${s.symbol}`)}
+              />
+            );
+          })}
+          {sorted.length===0&&<div style={{gridColumn:"1/-1",textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
+        </div>
+      )}
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
         {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} excluded by ${mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} gate`:""}{cohortFilter !== "qualified" && cohortFilter !== "all" ? ` · cohort: ${cohortFilter.replace(/_/g," ")}` : ""}{sectorFilter.length > 0 ? ` · sectors: ${sectorFilter.length}` : ""}{countryFilter.length > 0 ? ` · countries: ${countryFilter.length}` : ""} · click row to expand · click any column header to sort
       </div>

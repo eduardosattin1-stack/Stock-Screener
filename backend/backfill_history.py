@@ -74,7 +74,7 @@ def rsi_calc(closes, period=14):
     rs = (sum(gains)/period) / avg_loss
     return 100 - (100 / (1 + rs))
 
-def backfill_symbol(symbol: str, weeks: int = 156):
+def backfill_symbol(symbol: str, weeks: int = 156, force: bool = False):
     try:
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
@@ -178,10 +178,10 @@ def backfill_symbol(symbol: str, weeks: int = 156):
         history_out.append([
             valid_prices[0]["date"],
             round(current_price, 2),
-            round(composite, 3),
-            round(fa_score, 3) if fa_score > 0 else 0.0,
-            round(cmp_score, 3) if cmp_score > 0 else 0.0,
-            round(cmp_score, 3) if cmp_score > 0 else 0.0
+            0.0, # Zero out backfilled scores so they don't draw a misleading perfectly-correlated line
+            0.0,
+            0.0,
+            0.0
         ])
         
     if not history_out:
@@ -191,17 +191,37 @@ def backfill_symbol(symbol: str, weeks: int = 156):
     # Keep oldest first (standard format for charts)
     history_out.reverse()
     
-    # 4. Save to GCS where the UI chart reads from
+    # Fetch existing live-scan history to preserve the TRUE scores
     out_path = f"stock_history/{symbol}.json"
-    log.info(f"[{symbol}] Uploading {len(history_out)} weeks of data to gs://{BUCKET_NAME}/{out_path}")
-    
     out_blob = bucket.blob(out_path)
-    out_blob.upload_from_string(json.dumps(history_out))
+    
+    existing_history = []
+    if not force and out_blob.exists():
+        try:
+            existing_history = json.loads(out_blob.download_as_string())
+        except Exception as e:
+            log.warning(f"[{symbol}] Failed to read existing history: {e}")
+            
+    # Merge: keep backfilled dates only if they are BEFORE the earliest real scan
+    merged_history = []
+    earliest_real_date = existing_history[0][0] if existing_history else "9999-99-99"
+    
+    for row in history_out:
+        if row[0] < earliest_real_date:
+            merged_history.append(row)
+            
+    merged_history.extend(existing_history)
+    
+    log.info(f"[{symbol}] Uploading {len(merged_history)} weeks of data to gs://{BUCKET_NAME}/{out_path} ({len(existing_history)} real scans preserved)")
+    out_blob.upload_from_string(json.dumps(merged_history))
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        symbols = sys.argv[1].split(',')
+    force_mode = "--force" in sys.argv
+    args = [a for a in sys.argv[1:] if a != "--force"]
+    
+    if len(args) > 0:
+        symbols = args[0].split(',')
         for sym in symbols:
-            backfill_symbol(sym.strip().upper())
+            backfill_symbol(sym.strip().upper(), force=force_mode)
     else:
-        print("Usage: python3 backfill_history.py AAPL,NVDA,TSLA")
+        print("Usage: python3 backfill_history.py AAPL,NVDA,TSLA [--force]")
