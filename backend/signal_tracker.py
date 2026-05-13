@@ -285,6 +285,10 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
             "break_even_move_pct": float(live_sp["break_even_move_pct"]),
             "expiration": live_sp.get("expiration"),
             "dte": int(live_sp.get("dte", SYNTH_DTE_DAYS)),
+            "long_greeks": live_sp.get("long_greeks"),
+            "short_greeks": live_sp.get("short_greeks"),
+            "long_iv": live_sp.get("long_iv"),
+            "short_iv": live_sp.get("short_iv"),
         }
         is_live = True
     else:
@@ -318,6 +322,10 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
             "break_even_move_pct": be_pct,
             "expiration": exp.strftime("%Y-%m-%d"),
             "dte": SYNTH_DTE_DAYS,
+            "long_greeks": None,
+            "short_greeks": None,
+            "long_iv": None,
+            "short_iv": None,
         }
         is_live = False
 
@@ -361,6 +369,10 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
         "ev_dollars": round(ev, 2),
         "ev_per_dollar": round(ev_per_dollar, 4),
         "assessment": assessment,
+        "long_greeks": sp.get("long_greeks"),
+        "short_greeks": sp.get("short_greeks"),
+        "long_iv": sp.get("long_iv"),
+        "short_iv": sp.get("short_iv"),
     }
 
 

@@ -382,6 +382,10 @@ def _spread_economics(long_call: dict, short_call: dict, spot: float) -> dict:
         "break_even_price": round(break_even, 2),
         "break_even_move_pct": round((break_even - spot) / spot * 100, 2) if spot > 0 else 0,
         "risk_reward": round(rr, 2),
+        "long_greeks": long_call.get("greeks"),
+        "short_greeks": short_call.get("greeks"),
+        "long_iv": long_call.get("implied_volatility"),
+        "short_iv": short_call.get("implied_volatility"),
     }
 
 
@@ -594,6 +598,10 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
                 "break_even_price": econ["break_even_price"],
                 "break_even_move_pct": econ["break_even_move_pct"],
                 "risk_reward": econ["risk_reward"],
+                "long_greeks": econ.get("long_greeks"),
+                "short_greeks": econ.get("short_greeks"),
+                "long_iv": econ.get("long_iv"),
+                "short_iv": econ.get("short_iv"),
                 "description": (
                     f"Long {econ['long_strike']}C / Short {econ['short_strike']}C @ "
                     f"{spread_exp} — debit ${econ['net_debit']:.2f}, max gain "

@@ -1682,15 +1682,9 @@ function CyclesTab() {
                   {collectingPreds
                     .slice()
                     .sort((a, b) => b.p20 - a.p20)
-                    .slice(0, 30)
                     .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
                 </tbody>
               </table>
-              {collectingPreds.length > 30 && (
-                <div style={{ padding: "8px 12px", fontSize: 10, fontFamily: T.mono, color: T.muted, textAlign: "center" }}>
-                  Showing top 30 by P20 · {collectingPreds.length - 30} more in cycle
-                </div>
-              )}
             </div>
           </>
         )}
@@ -1773,13 +1767,13 @@ function PredictionRow({ p }: { p: Prediction }) {
   const evColor = evValue == null ? T.light : evValue > 0 ? T.greenPos : T.red;
   return (
     <tr>
-      <td style={{ ...td, textAlign: "left", fontWeight: 600 }}>{p.symbol}</td>
-      <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
-      <td style={{ ...td, textAlign: "right" }}>{(p.p20 * 100).toFixed(1)}%</td>
-      <td style={{ ...td, textAlign: "right" }}>D{p.decile}</td>
+      <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{p.symbol}</td>
+      <td style={{ ...td, textAlign: "right", color: T.muted }}>${p.entry_price.toFixed(2)}</td>
+      <td style={{ ...td, textAlign: "right", color: T.purple, fontWeight: 600 }}>{(p.p20 * 100).toFixed(1)}%</td>
+      <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
       <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>{p.signal_strength}</td>
-      <td style={{ ...td, textAlign: "right" }}>{p.days_observed}/28</td>
-      <td style={{ ...td, textAlign: "right" }}>${p.current_price.toFixed(2)}</td>
+      <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}/28</td>
+      <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
       <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
         {p.max_high_observed_pct >= 0 ? "+" : ""}{p.max_high_observed_pct.toFixed(1)}%
       </td>
@@ -1893,12 +1887,12 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                 const realizedColor = realized == null ? T.light : realized >= 0 ? T.greenPos : T.red;
                 return (
                   <tr key={`${p.symbol}-${p.entry_date}`}>
-                    <td style={{ ...td, textAlign: "left", fontWeight: 600 }}>{p.symbol}</td>
-                    <td style={{ ...td, textAlign: "right" }}>${p.entry_price.toFixed(2)}</td>
-                    <td style={{ ...td, textAlign: "right" }}>{(p.p20 * 100).toFixed(1)}%</td>
-                    <td style={{ ...td, textAlign: "right" }}>D{p.decile}</td>
-                    <td style={{ ...td, textAlign: "right" }}>{p.days_observed}</td>
-                    <td style={{ ...td, textAlign: "right" }}>${p.current_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{p.symbol}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>${p.entry_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.purple, fontWeight: 600 }}>{(p.p20 * 100).toFixed(1)}%</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
                     <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
                       +{p.max_high_observed_pct.toFixed(1)}%
                     </td>
@@ -1906,7 +1900,7 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                       {p.max_drawdown_observed_pct.toFixed(1)}%
                     </td>
                     <td style={{ ...td, textAlign: "right", color: statusColor, fontWeight: 600 }}>{p.outcome}</td>
-                    <td style={{ ...td, textAlign: "right" }}>
+                    <td style={{ ...td, textAlign: "right", color: p.ev_dollars == null ? T.light : p.ev_dollars > 0 ? T.greenPos : T.red }}>
                       {p.ev_dollars == null ? "—" : `${p.ev_dollars >= 0 ? "+" : ""}$${p.ev_dollars.toFixed(0)}`}
                     </td>
                     <td style={{ ...td, textAlign: "right", color: realizedColor, fontWeight: 600 }}>
