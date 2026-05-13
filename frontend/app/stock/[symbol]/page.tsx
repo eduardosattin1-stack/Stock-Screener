@@ -1362,7 +1362,12 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
   const last=rows[rows.length-1],first=rows[0];
   const pChg=first[1]>0?((last[1]-first[1])/first[1])*100:0;
   
-  const fmtDate=(d:string)=>d.slice(5);
+  const fmtDate = (d: string) => {
+    const parts = d.split('-');
+    if(parts.length !== 3) return d.slice(5);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[parseInt(parts[1], 10)-1]} '${parts[0].slice(-2)}`;
+  };
   const tickIdxs=rows.length<=6?rows.map((_,i)=>i):[0,Math.floor(rows.length*0.2),Math.floor(rows.length*0.4),Math.floor(rows.length*0.6),Math.floor(rows.length*0.8),rows.length-1];
 
   return(
