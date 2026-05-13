@@ -3787,7 +3787,7 @@ def compute_composite_v8(
 
     if not passes:
         gate_msg = "GATE: " + ", ".join(gate_fails[:3])
-        return (0.0, "DISQUALIFIED", f, [gate_msg] + reasons, coverage)
+        return (composite, "DISQUALIFIED", f, [gate_msg] + reasons, coverage)
 
     # v1.2 (May 2026): bearish safety override + BUY/HOLD/SELL signal
     # classification removed (Bruno #6 + #A.1). Stock score now stands as
@@ -4437,9 +4437,10 @@ def format_report(stocks: list[Stock], top_n: int = TOP_N, region: str = "", mac
     lines.append(f"Run: {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}")
     lines.append("=" * 100)
 
-    # Top picks
-    top = stocks[:top_n]
-    lines.append(f"\nTOP {len(top)} BY COMPOSITE:\n")
+    # Top picks (only show qualified momentum stocks in the email report)
+    qualified_stocks = [s for s in stocks if getattr(s, "signal_momentum", "") == "QUALIFIED"]
+    top = qualified_stocks[:top_n]
+    lines.append(f"\nTOP {len(top)} BY COMPOSITE (QUALIFIED):\n")
     lines.append(f"{'#':>3} {'SYM':<10} {'PRICE':>10} {'COMP':>6} {'CLASS':<14} {'BULL':>5} {'UPS%':>6} {'QUAL':>5} {'COV':>4}")
     lines.append("-" * 90)
     for i, s in enumerate(top, 1):
@@ -4491,7 +4492,7 @@ def log_signals(stocks: list[Stock], path: str = SIGNAL_LOG):
                 "factor_coverage": s.factor_coverage,
                 "factor_coverage_pct": round(s.factor_coverage_pct, 4),
             }
-            for s in stocks if s.composite >= 0.60
+            for s in stocks if s.composite >= 0.60 and getattr(s, "signal_momentum", "") == "QUALIFIED"
         ],
     }
     history = []

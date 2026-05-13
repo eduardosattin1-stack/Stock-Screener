@@ -623,10 +623,20 @@ def _compute_regime(rates: dict, vix_price: float, vix_sma200: float,
     log.info(f"    Spread={yield_spread:.0f}bp | VIX={vix_price:.1f} | "
              f"FFR≈{rates.get('month3', '?')}%")
 
+    # Map quantitative sub-scores (0.0 to 1.0) to explicit English labels 
+    # to feed directly into the AI Persona JSON input:
+    regime_detail = {
+        "growth": "accelerating" if s_gdp > 0.6 else ("decelerating" if s_gdp < 0.4 else "stable"),
+        "inflation": "decelerating" if s_cpi > 0.6 else ("accelerating" if s_cpi < 0.4 else "sticky"),
+        "rates": "accommodative" if s_level > 0.6 else ("restrictive" if s_level < 0.4 else "neutral"),
+        "credit": "complacent" if s_vix > 0.6 else ("fearful" if s_vix < 0.4 else "stable")
+    }
+
     return {
         "regime":     regime,
         "score":      round(macro_score, 4),
         "sub_scores": sub_scores,
+        "regime_detail": regime_detail,
         "features":   features,
         "tilts":      REGIME_TILTS[regime],
         "rates":      rates,

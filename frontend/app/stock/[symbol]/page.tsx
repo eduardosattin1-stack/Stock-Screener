@@ -1813,7 +1813,78 @@ function MomentumPanel({s}:{s:StockData}){
 }
 
 // ── TranscriptInsights ─────────────────────────────────────────────────────────
-function TranscriptInsights({symbol}:{symbol:string}){const[analysis,setAnalysis]=useState<string|null>(null);const[loading,setLoading]=useState(false);const[error,setError]=useState<string|null>(null);const[qFound,setQFound]=useState(0);const f=useCallback(async()=>{setLoading(true);setError(null);try{const r=await fetch(`/api/transcript?symbol=${symbol}&quarters=8`);const d=await r.json();if(d.error)setError(d.error);else{setAnalysis(d.analysis||"No analysis.");setQFound(d.quarters_found||0);}}catch(e:any){setError(e.message);}finally{setLoading(false);}},[symbol]);return<Card><SH title="Transcript Insights" icon={<Brain size={12}/>} sub={qFound>0?`${qFound} quarters analyzed`:""}/>{analysis?<div><div style={{fontSize:11,lineHeight:1.7,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap"}}>{analysis}</div><button onClick={f} style={{marginTop:12,background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:10,fontFamily:T.mono,color:T.textMuted,display:"flex",alignItems:"center",gap:4}}><RefreshCw size={10}/> Refresh</button></div>:<div style={{textAlign:"center",padding:"20px 0"}}><button onClick={f} disabled={loading} style={{background:loading?T.divider:T.green,border:"none",borderRadius:6,padding:"10px 20px",color:loading?T.textMuted:"#fff",fontFamily:T.mono,fontSize:11,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"inline-flex",alignItems:"center",gap:6}}>{loading?<><RefreshCw size={12} style={{animation:"spin 1s linear infinite"}}/> Analyzing 8 quarters...</>:<><Brain size={12}/> Analyze 2 Years of Earnings</>}</button>{error&&<div style={{marginTop:8,fontSize:10,color:T.red,fontFamily:T.mono,maxWidth:400,margin:"8px auto 0",lineHeight:1.5}}>{error}</div>}<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8}}>Claude analyzes narrative arc, tone shifts, guidance credibility across 8 quarters</div></div>}</Card>;}
+function TranscriptInsights({symbol}:{symbol:string}) {
+  const [analysis, setAnalysis] = useState<string|null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string|null>(null);
+  const [qFound, setQFound] = useState(0);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(`transcript_insight_${symbol}`);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.analysis) {
+          setAnalysis(parsed.analysis);
+          setQFound(parsed.quarters_found || 0);
+        }
+      } catch (e) {}
+    }
+  }, [symbol]);
+
+  const f = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch(`/api/transcript?symbol=${symbol}&quarters=8`);
+      const d = await r.json();
+      if (d.error) setError(d.error);
+      else {
+        const txt = d.analysis || "No analysis.";
+        setAnalysis(txt);
+        setQFound(d.quarters_found || 0);
+        localStorage.setItem(`transcript_insight_${symbol}`, JSON.stringify({
+          analysis: txt,
+          quarters_found: d.quarters_found || 0
+        }));
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [symbol]);
+
+  return (
+    <Card>
+      <SH title="Transcript Insights" icon={<Brain size={12} />} sub={qFound > 0 ? `${qFound} quarters analyzed` : ""} />
+      {analysis ? (
+        <div>
+          <div style={{ fontSize: 11, lineHeight: 1.7, color: T.text, fontFamily: T.sans, whiteSpace: "pre-wrap" }}>
+            {analysis}
+          </div>
+          <button onClick={f} style={{ marginTop: 12, background: "none", border: `1px solid ${T.cardBorder}`, borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontSize: 10, fontFamily: T.mono, color: T.textMuted, display: "flex", alignItems: "center", gap: 4 }}>
+            <RefreshCw size={10} /> Refresh
+          </button>
+        </div>
+      ) : (
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <button onClick={f} disabled={loading} style={{ background: loading ? T.divider : T.green, border: "none", borderRadius: 6, padding: "10px 20px", color: loading ? T.textMuted : "#fff", fontFamily: T.mono, fontSize: 11, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {loading ? (
+              <><RefreshCw size={12} style={{ animation: "spin 1s linear infinite" }} /> Analyzing 8 quarters...</>
+            ) : (
+              <><Brain size={12} /> Analyze 2 Years of Earnings</>
+            )}
+          </button>
+          {error && <div style={{ marginTop: 8, fontSize: 10, color: T.red, fontFamily: T.mono, maxWidth: 400, margin: "8px auto 0", lineHeight: 1.5 }}>{error}</div>}
+          <div style={{ fontSize: 9, color: T.textLight, fontFamily: T.mono, marginTop: 8 }}>
+            Claude analyzes narrative arc, tone shifts, guidance credibility across 8 quarters
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
 
 // ── News Feed ──────────────────────────────────────────────────────────────────
 function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(Array.isArray(d)){const u=symbol.toUpperCase();const filtered=(d as (NewsItem&{symbol?:string})[]).filter(n=>!n.symbol||n.symbol.toUpperCase()===u);setNews(filtered);}setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.slice(0,8).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
@@ -2597,6 +2668,7 @@ function ScoreEducationCard() {
 function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[], ratios?:RatioYear[]}){
   type StoryData = {
     narrative:string,
+    bullBear?:string,
     confidenceScore:number,
     timestamp?:number,
     persona?:string
@@ -2780,6 +2852,20 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
           {story?.narrative}
         </div>
       </Card>
+
+      {story?.bullBear && (
+        <Card>
+          <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude Opus" />
+          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
+            {story.bullBear.split("Bear says:").map((part, i) => (
+              <div key={i} style={{marginBottom: i === 0 ? 12 : 0, paddingBottom: i === 0 ? 12 : 0, borderBottom: i === 0 ? `1px dashed ${T.divider}` : "none"}}>
+                {i === 0 ? <strong style={{color:T.green}}>Gemini (Bull): </strong> : <strong style={{color:T.red}}>Claude (Bear): </strong>}
+                {part.replace("Bull says:", "").trim()}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
       
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
         <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono}}>
@@ -3027,7 +3113,7 @@ export default function StockDetail(){
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"story"|"track"|"compare"|"chart">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart">("overview");
 
   useEffect(()=>{
     if(!symbol)return;
@@ -3215,7 +3301,7 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","story","track","compare","chart"] as const).map(tab=>(
+        {(["overview","story","transcript","track","compare","chart"] as const).map(tab=>(
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -3224,7 +3310,7 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":tab==="story"?"Stock Story":tab==="track"?"Track Record":tab==="compare"?"Compare":"Chart"}
+            {tab==="overview"?"Overview":tab==="story"?"Stock Story":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":"Chart"}
           </button>
         ))}
       </div>
@@ -3238,6 +3324,8 @@ export default function StockDetail(){
           <ScoreEducationCard />
           <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
         </div>
+      ) : activeTab==="transcript" ? (
+        <TranscriptInsights symbol={s.symbol} />
       ) : activeTab==="chart" ? (
         toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") 
           ? <FmpBasicChartTab s={s}/> 
@@ -3314,14 +3402,13 @@ export default function StockDetail(){
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
-        <QualityValueCard s={s}/>
-        <SmartMoneyCard s={s}/>
-      </div>
-
-      {/* Momentum panel + Transcript (kept side-by-side) */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
-        <MomentumPanel s={s}/>
-        <TranscriptInsights symbol={s.symbol}/>
+        <div>
+          <QualityValueCard s={s}/>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <SmartMoneyCard s={s}/>
+          <MomentumPanel s={s}/>
+        </div>
       </div>
 
       {/* Financial Charts */}

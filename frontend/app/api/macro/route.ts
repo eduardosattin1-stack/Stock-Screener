@@ -110,6 +110,12 @@ export async function GET() {
       regime: classifyRegime(score),
       score: Math.round(score * 10000) / 10000,
       sub_scores: subScores,
+      regime_detail: {
+        growth: "Unknown (Backend scan required)",
+        inflation: "Unknown (Backend scan required)",
+        rates: sLevel > 0.6 ? "accommodative" : (sLevel < 0.4 ? "restrictive" : "neutral"),
+        credit: sVix > 0.6 ? "complacent" : (sVix < 0.4 ? "fearful" : "stable")
+      },
       features: {
         macro_regime_score: Math.round(score * 10000) / 10000,
         macro_vix: Math.round(vixPrice * 100) / 100,
