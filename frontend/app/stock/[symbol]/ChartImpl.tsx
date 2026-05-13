@@ -22,7 +22,8 @@ import {
   MovingAverageTooltip,
   MACDTooltip,
   RSITooltip,
-  BollingerBandTooltip
+  BollingerBandTooltip,
+  SingleValueTooltip
 } from "react-financial-charts";
 import {
   ema,
@@ -57,7 +58,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
       macd: d.macd || { macd: undefined, signal: undefined, divergence: undefined },
       bb: d.bb || { top: undefined, bottom: undefined, middle: undefined },
     }));
-  }, [initialData]);
+  }, [initialData, rsiCalc, macdCalc, sma200, ema50, ema20, bbCalc]);
 
   const { data, xScale, xAccessor, displayXAccessor } = useMemo(() => {
     const scaleProvider = discontinuousTimeScaleProviderBuilder().inputDateAccessor((d:any) => d.date);
@@ -152,7 +153,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           ]}
         />
         {/* @ts-ignore */}
-        <BollingerBandTooltip origin={[8, 56]} yAccessor={bbCalc.accessor()} options={bbCalc.options()} textFill="#374151" />
+        <BollingerBandTooltip origin={[8, 72]} yAccessor={bbCalc.accessor()} options={bbCalc.options()} textFill="#374151" />
       </Chart>
 
       {/* 2. Volume (Overlaid on price chart bottom) */}
@@ -202,6 +203,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
         <BarSeries yAccessor={(d:any) => d?.relVol} fillStyle={(d:any) => d?.relVol > 1.5 ? "rgba(139, 92, 246, 0.6)" : "rgba(156, 163, 175, 0.3)"} />
+        {/* @ts-ignore */}
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.relVol} yLabel="RelVol" yDisplayFormat={format(".2f")} valueFill="#8b5cf6" labelFill="#374151" />
       </Chart>
 
       {/* 6. ADX Pane */}
@@ -218,6 +221,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <LineSeries yAccessor={(d:any) => d?.plusDI} strokeStyle="#10b981" />
         {/* @ts-ignore */}
         <LineSeries yAccessor={(d:any) => d?.minusDI} strokeStyle="#ef4444" />
+        {/* @ts-ignore */}
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.adx} yLabel="ADX" yDisplayFormat={format(".2f")} valueFill="#f43f5e" labelFill="#374151" />
       </Chart>
 
       {/* 7. OBV Pane */}
@@ -232,6 +237,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
         <LineSeries yAccessor={(d:any) => d?.obv} strokeStyle="#3b82f6" />
+        {/* @ts-ignore */}
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.obv} yLabel="OBV" yDisplayFormat={format(".0f")} valueFill="#3b82f6" labelFill="#374151" />
       </Chart>
 
       {/* @ts-ignore */}

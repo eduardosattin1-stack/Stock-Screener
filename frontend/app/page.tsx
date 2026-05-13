@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
 import { Watchlist } from "./components/Watchlist";
 import { StockCard } from "./components/StockCard";
+import { DailyBriefing } from "./components/DailyBriefing";
 import { useRouter } from "next/navigation";
 
 const GCS_BASE = "/api/gcs/scans";
@@ -1041,6 +1042,7 @@ export default function Dashboard(){
   return(
     <div style={{display: "flex"}}>
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
+      <DailyBriefing />
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
