@@ -1299,79 +1299,123 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
       .then(d=>{setRows(Array.isArray(d?.rows)?d.rows:[]);setLoading(false);})
       .catch(e=>{setErr(e.message||"Failed");setLoading(false);});
   },[symbol]);
-  if(loading) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading history...</div></Card>;
-  if(err) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>{err}</div></Card>;
-  if(rows.length<2) return<Card><SH title="Price vs Composite" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
+  if(loading) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading history...</div></Card>;
+  if(err) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>{err}</div></Card>;
+  if(rows.length<2) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
 
-  const W=720,H=220,PL=46,PR=44,PT=14,PB=24;
+  const W=720,H=240,PL=46,PR=46,PT=20,PB=30;
   
-  const getScore = (r: any[]) => {
-    if (r.length <= 3) return r[2] || 0;
-    if (mode === "fallen_angel") return r[3] || r[2] || 0;
-    if (mode === "compounder_us") return r[4] || r[2] || 0;
-    if (mode === "compounder_global") return r[5] || r[2] || 0;
-    return r[2] || 0;
+  const prices=rows.map(r=>r[1]||0);
+  const mom=rows.map(r=>r[2]||0);
+  const fa=rows.map(r=>r[3]||0);
+  const cus=rows.map(r=>r[4]||0);
+  const cgl=rows.map(r=>r[5]||0);
+
+  const pMn=Math.min(...prices)*0.95,pMx=Math.max(...prices)*1.05;
+  const pRng=(pMx-pMn)||1;
+
+  const allComps = [...mom, ...fa, ...cus, ...cgl].filter(v=>v>0);
+  const cMn = allComps.length > 0 ? Math.max(0, Math.min(...allComps) - 0.1) : 0;
+  const cMx = allComps.length > 0 ? Math.min(1.0, Math.max(...allComps) + 0.1) : 1;
+  const cRng=(cMx-cMn)||1;
+
+  const xAt=(i:number)=>PL+((i)/(rows.length-1||1))*(W-PL-PR);
+  const yPrice=(v:number)=>PT+(1-((v-pMn)/pRng))*(H-PT-PB);
+  const yComp =(v:number)=>PT+(1-((v-cMn)/cRng))*(H-PT-PB);
+
+  const buildPath = (data:number[], yFn:(v:number)=>number) => {
+    const points = data.map((v,i)=>({v,i})).filter(p=>p.v>0);
+    if(points.length===0) return "";
+    return points.map((p,idx)=>`${idx===0?"M":"L"}${xAt(p.i).toFixed(1)} ${yFn(p.v).toFixed(1)}`).join(" ");
   };
 
-  const prices=rows.map(r=>r[1]);
-  const comps=rows.map(getScore);
-  const pMn=Math.min(...prices),pMx=Math.max(...prices);
-  const cMn=Math.min(...comps,0.3),cMx=Math.max(...comps,0.9);
-  const pad=0.02,pRng=(pMx-pMn)||1,cRng=(cMx-cMn)||1;
-  const xAt=(i:number)=>PL+((i)/(rows.length-1||1))*(W-PL-PR);
-  const yPrice=(v:number)=>PT+(1-((v-pMn)/pRng))*(H-PT-PB-4)+pad;
-  const yComp =(v:number)=>PT+(1-((v-cMn)/cRng))*(H-PT-PB-4)+pad;
-  const pricePath=rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yPrice(r[1]).toFixed(1)}`).join(" ");
-  const compPath =rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yComp (getScore(r)).toFixed(1)}`).join(" ");
+  const pricePath=rows.map((r,i)=>`${i===0?"M":"L"}${xAt(i).toFixed(1)} ${yPrice(prices[i]).toFixed(1)}`).join(" ");
+  const areaPath = `${pricePath} L${xAt(rows.length-1)} ${H-PB} L${xAt(0)} ${H-PB} Z`;
+
+  const momPath = buildPath(mom, yComp);
+  const faPath = buildPath(fa, yComp);
+  const cusPath = buildPath(cus, yComp);
+  const cglPath = buildPath(cgl, yComp);
+
+  const lastValidIndex = (data:number[]) => {
+    for(let i=data.length-1; i>=0; i--) if(data[i]>0) return i;
+    return -1;
+  };
+  const iMom = lastValidIndex(mom);
+  const iFa = lastValidIndex(fa);
+  const iCus = lastValidIndex(cus);
+  const iCgl = lastValidIndex(cgl);
+
   const last=rows[rows.length-1],first=rows[0];
   const pChg=first[1]>0?((last[1]-first[1])/first[1])*100:0;
-  const cChg=(getScore(last)-getScore(first))*100;
-  const fmtDate=(d:string)=>d.slice(5); // MM-DD
-  // X-axis labels: show ~5 evenly spaced dates
-  const tickIdxs=rows.length<=5?rows.map((_,i)=>i):[0,Math.floor(rows.length*0.25),Math.floor(rows.length*0.5),Math.floor(rows.length*0.75),rows.length-1];
-
-  const compLabel = mode === "compounder_us" || mode === "compounder_global" ? "Compounder" : 
-                    mode === "fallen_angel" ? "Fallen Angel" : "Composite";
+  
+  const fmtDate=(d:string)=>d.slice(5);
+  const tickIdxs=rows.length<=6?rows.map((_,i)=>i):[0,Math.floor(rows.length*0.2),Math.floor(rows.length*0.4),Math.floor(rows.length*0.6),Math.floor(rows.length*0.8),rows.length-1];
 
   return(
     <Card>
-      <SH title={`Price vs ${compLabel}`} icon={<TrendingUp size={12}/>}
-        sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}% · ${compLabel} ${cChg>=0?"+":""}${cChg.toFixed(1)}pts`}/>
-      <div style={{overflow:"hidden"}}>
+      <SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}
+        sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}%`}/>
+      <div style={{overflow:"hidden", marginTop: 10, background:"#fafbfc", borderRadius: 8, border:`1px solid ${T.divider}`, padding: "10px 0"}}>
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto",display:"block"}} preserveAspectRatio="none">
-          {/* Horizontal gridlines at 25/50/75% of chart area */}
-          {[0.25,0.5,0.75].map(t=>(
+          <defs>
+            <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={T.green} stopOpacity={0.2} />
+              <stop offset="100%" stopColor={T.green} stopOpacity={0.0} />
+            </linearGradient>
+          </defs>
+          
+          {[0,0.25,0.5,0.75,1].map(t=>(
             <line key={t} x1={PL} x2={W-PR} y1={PT+t*(H-PT-PB)} y2={PT+t*(H-PT-PB)}
-              stroke={T.divider} strokeWidth={1} strokeDasharray="2 4"/>
+              stroke={T.divider} strokeWidth={1} strokeDasharray={t===0||t===1?"none":"4 4"}/>
           ))}
-          {/* Price line (left axis, green) */}
-          <path d={pricePath} fill="none" stroke={T.green} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
-          {/* Composite line (right axis, purple) */}
-          <path d={compPath} fill="none" stroke={T.purple} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="4 2"/>
-          {/* End dots */}
-          <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={3} fill={T.green}/>
-          <circle cx={xAt(rows.length-1)} cy={yComp(getScore(last))} r={3} fill={T.purple}/>
-          {/* Y-axis labels, left: price */}
-          <text x={PL-6} y={yPrice(pMx)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMx.toFixed(2)}</text>
-          <text x={PL-6} y={yPrice(pMn)+3} textAnchor="end" fontSize={9} fontFamily={T.mono} fill={T.green}>${pMn.toFixed(2)}</text>
-          {/* Y-axis labels, right: composite */}
-          <text x={W-PR+6} y={yComp(cMx)+3} textAnchor="start" fontSize={9} fontFamily={T.mono} fill={T.purple}>{cMx.toFixed(2)}</text>
-          <text x={W-PR+6} y={yComp(cMn)+3} textAnchor="start" fontSize={9} fontFamily={T.mono} fill={T.purple}>{cMn.toFixed(2)}</text>
-          {/* X-axis date labels */}
+
+          <path d={areaPath} fill="url(#priceGrad)" />
+          <path d={pricePath} fill="none" stroke={T.green} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
+          
+          {iMom >= 0 && <path d={momPath} fill="none" stroke="#8b5cf6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="momentum"||!mode?1:0.3} />}
+          {iFa >= 0 && <path d={faPath} fill="none" stroke="#f59e0b" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="fallen_angel"?1:0.3} />}
+          {iCus >= 0 && <path d={cusPath} fill="none" stroke="#3b82f6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="compounder_us"?1:0.3} />}
+          {iCgl >= 0 && <path d={cglPath} fill="none" stroke="#06b6d4" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="compounder_global"?1:0.3} />}
+
+          <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={4} fill={T.green} stroke="#fff" strokeWidth={1.5} />
+          {iMom >= 0 && <circle cx={xAt(iMom)} cy={yComp(mom[iMom])} r={3} fill="#8b5cf6" opacity={mode==="momentum"||!mode?1:0.3} />}
+          {iFa >= 0 && <circle cx={xAt(iFa)} cy={yComp(fa[iFa])} r={3} fill="#f59e0b" opacity={mode==="fallen_angel"?1:0.3} />}
+          {iCus >= 0 && <circle cx={xAt(iCus)} cy={yComp(cus[iCus])} r={3} fill="#3b82f6" opacity={mode==="compounder_us"?1:0.3} />}
+          {iCgl >= 0 && <circle cx={xAt(iCgl)} cy={yComp(cgl[iCgl])} r={3} fill="#06b6d4" opacity={mode==="compounder_global"?1:0.3} />}
+
+          <text x={PL-8} y={yPrice(pMx)+3} textAnchor="end" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.green}>${pMx.toFixed(2)}</text>
+          <text x={PL-8} y={yPrice(pMn)+3} textAnchor="end" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.green}>${pMn.toFixed(2)}</text>
+          
+          {allComps.length > 0 && <>
+            <text x={W-PR+8} y={yComp(cMx)+3} textAnchor="start" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.textMuted}>{cMx.toFixed(2)}</text>
+            <text x={W-PR+8} y={yComp(cMn)+3} textAnchor="start" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.textMuted}>{cMn.toFixed(2)}</text>
+          </>}
+          
           {tickIdxs.map(i=>(
-            <text key={i} x={xAt(i)} y={H-6} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={T.textLight}>
+            <text key={i} x={xAt(i)} y={H-8} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>
               {fmtDate(rows[i][0])}
             </text>
           ))}
         </svg>
       </div>
-      <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:6,fontSize:9,fontFamily:T.mono,color:T.textMuted}}>
-        <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
-          <span style={{display:"inline-block",width:18,height:2,background:T.green}}/> Price (left)
-        </span>
-        <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
-          <span style={{display:"inline-block",width:18,height:2,background:T.purple,backgroundImage:`repeating-linear-gradient(90deg,${T.purple} 0 4px,transparent 4px 6px)`}}/> {compLabel} (right)
-        </span>
+
+      <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",gap:"12px 24px",marginTop:14,fontSize:10,fontFamily:T.mono,color:T.text}}>
+        <div style={{display:"inline-flex",alignItems:"center",gap:6,fontWeight:600}}>
+          <span style={{width:12,height:12,borderRadius:3,background:T.green}}/> Price (Left)
+        </div>
+        {iMom >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="momentum"||!mode?1:0.5}}>
+          <span style={{width:16,height:2,background:"#8b5cf6",backgroundImage:`repeating-linear-gradient(90deg,#8b5cf6 0 4px,transparent 4px 6px)`}}/> Momentum (Right)
+        </div>}
+        {iFa >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="fallen_angel"?1:0.5}}>
+          <span style={{width:16,height:2,background:"#f59e0b",backgroundImage:`repeating-linear-gradient(90deg,#f59e0b 0 4px,transparent 4px 6px)`}}/> Fallen Angel (Right)
+        </div>}
+        {iCus >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="compounder_us"?1:0.5}}>
+          <span style={{width:16,height:2,background:"#3b82f6",backgroundImage:`repeating-linear-gradient(90deg,#3b82f6 0 4px,transparent 4px 6px)`}}/> CMP-US (Right)
+        </div>}
+        {iCgl >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="compounder_global"?1:0.5}}>
+          <span style={{width:16,height:2,background:"#06b6d4",backgroundImage:`repeating-linear-gradient(90deg,#06b6d4 0 4px,transparent 4px 6px)`}}/> CMP-Global (Right)
+        </div>}
       </div>
     </Card>
   );
