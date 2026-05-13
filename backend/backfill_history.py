@@ -35,11 +35,11 @@ def get_historical_prices(bucket, symbol):
         return []
 
     log.info(f"[{symbol}] Fetching daily price history from FMP API...")
-    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{symbol}?apikey={FMP_KEY}"
+    url = f"https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={symbol}&apikey={FMP_KEY}"
     r = requests.get(url)
     if r.status_code == 200:
-        data = r.json().get("historical", [])
-        if data:
+        data = r.json()
+        if isinstance(data, list) and data:
             blob.upload_from_string(json.dumps(data))
             return data
     return []
