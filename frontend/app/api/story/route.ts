@@ -6,7 +6,7 @@ async function callGemini(prompt: string, apiKey: string, isJson: boolean = fals
   const config: any = { temperature: 0.5, maxOutputTokens: 8192 };
   if (isJson) config.responseMimeType = "application/json";
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
