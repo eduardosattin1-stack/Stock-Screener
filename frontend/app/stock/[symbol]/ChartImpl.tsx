@@ -85,7 +85,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
       xExtents={xExtents}
     >
       {/* 1. Price + Volume */}
-      <Chart id={1} yExtents={(d:any) => [d.high * 1.05, d.low * 0.95, d.bb?.top, d.bb?.bottom]} height={priceH} padding={{ top: 20, bottom: 20 }}>
+      <Chart id={1} yExtents={(d:any) => [d?.high ? d.high * 1.05 : undefined, d?.low ? d.low * 0.95 : undefined, d?.bb?.top, d?.bb?.bottom]} height={priceH} padding={{ top: 20, bottom: 20 }}>
         {/* @ts-ignore */}
         <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
         {/* @ts-ignore */}
@@ -93,8 +93,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         
         {/* @ts-ignore */}
         <CandlestickSeries 
-          fill={(d:any) => d.close > d.open ? "#10b981" : "#ef4444"}
-          wickStroke={(d:any) => d.close > d.open ? "#10b981" : "#ef4444"}
+          fill={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"}
+          wickStroke={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"}
         />
         {/* @ts-ignore */}
         <LineSeries yAccessor={ema20.accessor()} strokeStyle="#8b5cf6" />
@@ -108,7 +108,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
-        <EdgeIndicator itemType="last" orient="right" edgeAt="right" yAccessor={(d:any) => d.close} fill={(d:any) => d.close > d.open ? "#10b981" : "#ef4444"} />
+        <EdgeIndicator itemType="last" orient="right" edgeAt="right" yAccessor={(d:any) => d?.close} fill={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"} />
         
         {/* @ts-ignore */}
         <OHLCTooltip origin={[8, 16]} textFill="#374151" />
@@ -123,13 +123,13 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           ]}
         />
         {/* @ts-ignore */}
-        <BollingerBandTooltip origin={[8, 56]} yAccessor={(d:any) => d.bb} options={bbCalc.options()} textFill="#374151" />
+        <BollingerBandTooltip origin={[8, 56]} yAccessor={(d:any) => d?.bb} options={bbCalc.options()} textFill="#374151" />
       </Chart>
 
       {/* 2. Volume (Overlaid on price chart bottom) */}
-      <Chart id={2} yExtents={(d:any) => d.volume} height={volH} origin={(w, h) => [0, priceH - volH]}>
+      <Chart id={2} yExtents={(d:any) => d?.volume} height={volH} origin={(w, h) => [0, priceH - volH]}>
         {/* @ts-ignore */}
-        <BarSeries yAccessor={(d:any) => d.volume} fillStyle={(d:any) => d.close > d.open ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"} />
+        <BarSeries yAccessor={(d:any) => d?.volume} fillStyle={(d:any) => d?.close > d?.open ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"} />
       </Chart>
 
       {/* 3. MACD Pane */}
@@ -142,9 +142,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
-        <MACDSeries yAccessor={(d:any) => d.macd} />
+        <MACDSeries yAccessor={(d:any) => d?.macd} />
         {/* @ts-ignore */}
-        <MACDTooltip origin={[8, 16]} yAccessor={(d:any) => d.macd} options={macdCalc.options()} appearance={{ stroke: { macd: "#3b82f6", signal: "#f59e0b" }, fill: { divergence: "#8b5cf6" } }} textFill="#374151" />
+        <MACDTooltip origin={[8, 16]} yAccessor={(d:any) => d?.macd} options={macdCalc.options()} appearance={{ stroke: { macd: "#3b82f6", signal: "#f59e0b" }, fill: { divergence: "#8b5cf6" } }} textFill="#374151" />
       </Chart>
 
       {/* 4. RSI Pane */}
@@ -160,9 +160,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
-        <RSISeries yAccessor={(d:any) => d.rsi} />
+        <RSISeries yAccessor={(d:any) => d?.rsi} />
         {/* @ts-ignore */}
-        <RSITooltip origin={[8, 16]} yAccessor={(d:any) => d.rsi} options={rsiCalc.options()} textFill="#374151" />
+        <RSITooltip origin={[8, 16]} yAccessor={(d:any) => d?.rsi} options={rsiCalc.options()} textFill="#374151" />
       </Chart>
 
       {/* @ts-ignore */}
