@@ -54,6 +54,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
     return scaleProvider(calculatedData);
   }, [calculatedData]);
 
+  if (!data || data.length === 0) return null;
+
   // Viewport extents (show last 180 days by default)
   const max = xAccessor(data[data.length - 1]);
   const min = xAccessor(data[Math.max(0, data.length - 180)]);
@@ -97,13 +99,13 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           wickStroke={(d:any) => d?.close > d?.open ? "#10b981" : "#ef4444"}
         />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={ema20.accessor()} strokeStyle="#8b5cf6" />
+        <LineSeries yAccessor={(d:any) => d?.ema20} strokeStyle="#8b5cf6" />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={ema50.accessor()} strokeStyle="#3b82f6" />
+        <LineSeries yAccessor={(d:any) => d?.ema50} strokeStyle="#3b82f6" />
         {/* @ts-ignore */}
-        <LineSeries yAccessor={sma200.accessor()} strokeStyle="#f59e0b" />
+        <LineSeries yAccessor={(d:any) => d?.sma200} strokeStyle="#f59e0b" />
         {/* @ts-ignore */}
-        <BollingerSeries yAccessor={bbCalc.accessor()} />
+        <BollingerSeries yAccessor={(d:any) => d?.bb} />
         
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
@@ -117,9 +119,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           origin={[8, 36]}
           textFill="#374151"
           options={[
-            { yAccessor: ema20.accessor(), type: "EMA", stroke: "#8b5cf6", windowSize: ema20.options().windowSize },
-            { yAccessor: ema50.accessor(), type: "EMA", stroke: "#3b82f6", windowSize: ema50.options().windowSize },
-            { yAccessor: sma200.accessor(), type: "SMA", stroke: "#f59e0b", windowSize: sma200.options().windowSize },
+            { yAccessor: (d:any) => d?.ema20, type: "EMA", stroke: "#8b5cf6", windowSize: ema20.options().windowSize },
+            { yAccessor: (d:any) => d?.ema50, type: "EMA", stroke: "#3b82f6", windowSize: ema50.options().windowSize },
+            { yAccessor: (d:any) => d?.sma200, type: "SMA", stroke: "#f59e0b", windowSize: sma200.options().windowSize },
           ]}
         />
         {/* @ts-ignore */}
@@ -133,7 +135,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
       </Chart>
 
       {/* 3. MACD Pane */}
-      <Chart id={3} yExtents={macdCalc.accessor()} height={macdH} origin={(w, h) => [0, priceH]} padding={{ top: 10, bottom: 10 }}>
+      <Chart id={3} yExtents={(d:any) => d?.macd ? [d.macd.macd, d.macd.signal, d.macd.divergence] : undefined} height={macdH} origin={(w, h) => [0, priceH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
         <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
         {/* @ts-ignore */}
