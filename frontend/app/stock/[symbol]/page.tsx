@@ -1312,6 +1312,24 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
       .then(d=>{setRows(Array.isArray(d?.rows)?d.rows:[]);setLoading(false);})
       .catch(e=>{setErr(e.message||"Failed");setLoading(false);});
   },[symbol]);
+
+  // Local state to toggle lines on/off
+  const [active, setActive] = useState({
+    mom: mode === "momentum" || !mode,
+    fa: mode === "fallen_angel",
+    cus: mode === "compounder_us",
+    cgl: mode === "compounder_global"
+  });
+
+  // Sync toggles when the active tab (mode) changes
+  useEffect(() => {
+    setActive({
+      mom: mode === "momentum" || !mode,
+      fa: mode === "fallen_angel",
+      cus: mode === "compounder_us",
+      cgl: mode === "compounder_global"
+    });
+  }, [mode]);
   if(loading) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Loading history...</div></Card>;
   if(err) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>{err}</div></Card>;
   if(rows.length<2) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
@@ -1374,7 +1392,7 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
     <Card>
       <SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}
         sub={`${rows.length} scans · Price ${pChg>=0?"+":""}${pChg.toFixed(1)}%`}/>
-      <div style={{overflow:"hidden", marginTop: 10, background:"#fafbfc", borderRadius: 8, border:`1px solid ${T.divider}`, padding: "10px 0"}}>
+      <div style={{overflow:"hidden", marginTop: 10, background:"transparent", padding: "10px 0"}}>
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto",display:"block"}} preserveAspectRatio="none">
           <defs>
             <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1391,16 +1409,16 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
           <path d={areaPath} fill="url(#priceGrad)" />
           <path d={pricePath} fill="none" stroke={T.green} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
           
-          {iMom >= 0 && <path d={momPath} fill="none" stroke="#8b5cf6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="momentum"||!mode?1:0.3} />}
-          {iFa >= 0 && <path d={faPath} fill="none" stroke="#f59e0b" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="fallen_angel"?1:0.3} />}
-          {iCus >= 0 && <path d={cusPath} fill="none" stroke="#3b82f6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="compounder_us"?1:0.3} />}
-          {iCgl >= 0 && <path d={cglPath} fill="none" stroke="#06b6d4" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={mode==="compounder_global"?1:0.3} />}
+          {iMom >= 0 && <path d={momPath} fill="none" stroke="#8b5cf6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.mom?1:0.1} />}
+          {iFa >= 0 && <path d={faPath} fill="none" stroke="#f59e0b" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.fa?1:0.1} />}
+          {iCus >= 0 && <path d={cusPath} fill="none" stroke="#3b82f6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.cus?1:0.1} />}
+          {iCgl >= 0 && <path d={cglPath} fill="none" stroke="#06b6d4" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.cgl?1:0.1} />}
 
           <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={4} fill={T.green} stroke="#fff" strokeWidth={1.5} />
-          {iMom >= 0 && <circle cx={xAt(iMom)} cy={yComp(mom[iMom])} r={3} fill="#8b5cf6" opacity={mode==="momentum"||!mode?1:0.3} />}
-          {iFa >= 0 && <circle cx={xAt(iFa)} cy={yComp(fa[iFa])} r={3} fill="#f59e0b" opacity={mode==="fallen_angel"?1:0.3} />}
-          {iCus >= 0 && <circle cx={xAt(iCus)} cy={yComp(cus[iCus])} r={3} fill="#3b82f6" opacity={mode==="compounder_us"?1:0.3} />}
-          {iCgl >= 0 && <circle cx={xAt(iCgl)} cy={yComp(cgl[iCgl])} r={3} fill="#06b6d4" opacity={mode==="compounder_global"?1:0.3} />}
+          {iMom >= 0 && <circle cx={xAt(iMom)} cy={yComp(mom[iMom])} r={3} fill="#8b5cf6" opacity={active.mom?1:0.1} />}
+          {iFa >= 0 && <circle cx={xAt(iFa)} cy={yComp(fa[iFa])} r={3} fill="#f59e0b" opacity={active.fa?1:0.1} />}
+          {iCus >= 0 && <circle cx={xAt(iCus)} cy={yComp(cus[iCus])} r={3} fill="#3b82f6" opacity={active.cus?1:0.1} />}
+          {iCgl >= 0 && <circle cx={xAt(iCgl)} cy={yComp(cgl[iCgl])} r={3} fill="#06b6d4" opacity={active.cgl?1:0.1} />}
 
           <text x={PL-8} y={yPrice(pMx)+3} textAnchor="end" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.green}>${pMx.toFixed(2)}</text>
           <text x={PL-8} y={yPrice(pMn)+3} textAnchor="end" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.green}>${pMn.toFixed(2)}</text>
@@ -1418,20 +1436,20 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
         </svg>
       </div>
 
-      <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",gap:"12px 24px",marginTop:14,fontSize:10,fontFamily:T.mono,color:T.text}}>
+      <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",gap:"12px 24px",marginTop:14,fontSize:10,fontFamily:T.mono,color:T.text,userSelect:"none"}}>
         <div style={{display:"inline-flex",alignItems:"center",gap:6,fontWeight:600}}>
           <span style={{width:12,height:12,borderRadius:3,background:T.green}}/> Price (Left)
         </div>
-        {iMom >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="momentum"||!mode?1:0.5}}>
+        {iMom >= 0 && <div onClick={()=>setActive(p=>({...p, mom:!p.mom}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.mom?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
           <span style={{width:16,height:2,background:"#8b5cf6",backgroundImage:`repeating-linear-gradient(90deg,#8b5cf6 0 4px,transparent 4px 6px)`}}/> Momentum (Right)
         </div>}
-        {iFa >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="fallen_angel"?1:0.5}}>
+        {iFa >= 0 && <div onClick={()=>setActive(p=>({...p, fa:!p.fa}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.fa?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
           <span style={{width:16,height:2,background:"#f59e0b",backgroundImage:`repeating-linear-gradient(90deg,#f59e0b 0 4px,transparent 4px 6px)`}}/> Fallen Angel (Right)
         </div>}
-        {iCus >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="compounder_us"?1:0.5}}>
+        {iCus >= 0 && <div onClick={()=>setActive(p=>({...p, cus:!p.cus}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.cus?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
           <span style={{width:16,height:2,background:"#3b82f6",backgroundImage:`repeating-linear-gradient(90deg,#3b82f6 0 4px,transparent 4px 6px)`}}/> CMP-US (Right)
         </div>}
-        {iCgl >= 0 && <div style={{display:"inline-flex",alignItems:"center",gap:6,opacity:mode==="compounder_global"?1:0.5}}>
+        {iCgl >= 0 && <div onClick={()=>setActive(p=>({...p, cgl:!p.cgl}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.cgl?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
           <span style={{width:16,height:2,background:"#06b6d4",backgroundImage:`repeating-linear-gradient(90deg,#06b6d4 0 4px,transparent 4px 6px)`}}/> CMP-Global (Right)
         </div>}
       </div>

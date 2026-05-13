@@ -386,14 +386,28 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     if rates_raw and isinstance(rates_raw, list) and len(rates_raw) > 0:
         rates = rates_raw[0]  # most recent day
 
-    # 2. VIX quote (PATCHED)
-    vix_data = fmp_func("quote", {"symbol": "^VIX"})
-    sleep()
+    # 2. VIX quote (PATCHED to use Massive API Technical Indicators when available)
     vix_price = 20.0
     vix_sma200 = None
-    if vix_data and isinstance(vix_data, list) and len(vix_data) > 0:
-        vix_price = float(vix_data[0].get("price", 20))
-        vix_sma200 = float(vix_data[0].get("priceAvg200", 0)) or None
+    
+    try:
+        from massive_indicators import get_index_price, get_index_sma
+        massive_vix = get_index_price("I:VIX")
+        massive_sma = get_index_sma("I:VIX", 200, "day")
+        if massive_vix and massive_sma:
+            vix_price = massive_vix
+            vix_sma200 = massive_sma
+            log.info("  VIX: Fetched from Massive API (Indices Technical Indicators)")
+    except Exception as e:
+        log.debug(f"  VIX: Massive API fallback to FMP: {e}")
+
+    # Fallback to FMP if Massive is not configured or fails
+    if not vix_sma200:
+        vix_data = fmp_func("quote", {"symbol": "^VIX"})
+        sleep()
+        if vix_data and isinstance(vix_data, list) and len(vix_data) > 0:
+            vix_price = float(vix_data[0].get("price", 20))
+            vix_sma200 = float(vix_data[0].get("priceAvg200", 0)) or None
 
     # 3. CPI (need ~6 months of history)
     today = datetime.now()

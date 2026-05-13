@@ -409,6 +409,27 @@ class Handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
                 traceback.print_exc()
             return
+            
+        # ── Daily Briefing ──────────────────
+        if parsed.path == "/briefing":
+            try:
+                from api_briefing import get_daily_briefing
+                data = get_daily_briefing()
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "public, max-age=60")
+                self.end_headers()
+                self.wfile.write(json.dumps(data).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
 
         # v7.2: Signal performance tracker (System 1 — BUY/STRONG BUY → SELL cycles)
         if parsed.path == "/performance/signal-tracks":
