@@ -35,7 +35,7 @@ async function callClaude(prompt: string, apiKey: string) {
       "anthropic-version": "2023-06-01"
     },
     body: JSON.stringify({
-      model: "claude-3-opus-20240229",
+      model: "claude-3-7-sonnet-20250219",
       max_tokens: 1500,
       temperature: 0.7,
       messages: [{ role: "user", content: prompt }]
@@ -344,7 +344,7 @@ Argue why the stock will go much higher. Provide a detailed analysis of the fund
     
     const bullCase = await callGemini(bullPrompt, geminiApiKey);
 
-    // Step 2: Claude Opus (Bear Case)
+    // Step 2: Claude 3.7 Sonnet (Bear Case)
     const bearPrompt = `You are a highly skeptical, aggressive short-seller. Build the absolute best, highly detailed BEAR case for ${symbol} based on this data:
 ${dataContext}
 Tear apart the bull thesis, highlight fundamental weaknesses, valuation risks, or macro headwinds. Limit to 5-7 sentences.`;
@@ -364,7 +364,7 @@ ${dataContext}
 **Bull Analyst (Gemini 3.1 Pro):**
 ${bullCase}
 
-**Bear Analyst (Claude 3 Opus):**
+**Bear Analyst (Claude 3.7 Sonnet):**
 ${bearCase}
 
 # FINAL INSTRUCTION

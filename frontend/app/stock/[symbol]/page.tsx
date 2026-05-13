@@ -132,7 +132,7 @@ interface FactorsV8{momentum:number|null;quality:number|null;growth:number|null;
 interface SignalPoint{date:string;composite:number;signal:string;price:number;bull:number;mos:number;}
 interface NewsItem{title:string;url:string;publishedDate:string;site:string;}
 interface IncomeRow{date:string;calendarYear:string;period?:string;revenue:number;grossProfit:number;operatingIncome:number;netIncome:number;epsdiluted:number;ebitda:number;}
-interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;shortTermDebt?:number;longTermDebt?:number;cashAndShortTermInvestments?:number;}
+interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAssets:number;totalLiabilities:number;totalEquity:number;totalDebt:number;cashAndCashEquivalents:number;shortTermDebt?:number;longTermDebt?:number;cashAndShortTermInvestments?:number;totalCurrentAssets?:number;totalCurrentLiabilities?:number;goodwill?:number;intangibleAssets?:number;goodwillAndIntangibleAssets?:number;netDebt?:number;}
 interface CashFlowRow{date:string;calendarYear:string;period?:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
 interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
@@ -1303,7 +1303,7 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
   if(err) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>{err}</div></Card>;
   if(rows.length<2) return<Card><SH title="Track Record (All Models)" icon={<TrendingUp size={12}/>}/><div style={{padding:30,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>Only {rows.length} scan{rows.length===1?"":"s"} recorded so far. Chart appears once 2+ scans have tracked this stock.</div></Card>;
 
-  const W=720,H=240,PL=46,PR=46,PT=20,PB=30;
+  const W=720,H=240,PL=65,PR=65,PT=20,PB=30;
   
   const prices=rows.map(r=>r[1]||0);
   const mom=rows.map(r=>r[2]||0);
@@ -1960,10 +1960,16 @@ function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(l
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
 // ── Liquidity & Debt Profile Card ─────────────────────────────────────────────
-function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: BalanceSheetRow[], ratios: RatioYear[], loading: boolean}) {
+function LiquidityProfileCard({
+  balanceSheets, balanceSheetsQ, ratios, cashFlows, cashFlowsQ, incomes, incomesQ, s, loading
+}: {
+  balanceSheets: BalanceSheetRow[], balanceSheetsQ: BalanceSheetRow[], ratios: RatioYear[], 
+  cashFlows: CashFlowRow[], cashFlowsQ: CashFlowRow[], incomes: IncomeRow[], incomesQ: IncomeRow[], s: StockData, loading: boolean
+}) {
   if (loading || !balanceSheets.length) return null;
   const bsSorted = [...balanceSheets].sort((a,b)=>a.date.localeCompare(b.date));
-  const latestBs = bsSorted[bsSorted.length-1];
+  const bsQSorted = balanceSheetsQ && balanceSheetsQ.length > 0 ? [...balanceSheetsQ].sort((a,b)=>a.date.localeCompare(b.date)) : bsSorted;
+  const latestBs = bsQSorted[bsQSorted.length-1] || bsSorted[bsSorted.length-1];
   const ttmRatio = ratios && ratios.length > 0 ? ratios[0] : null;
 
   const cash = latestBs.cashAndShortTermInvestments ?? latestBs.cashAndCashEquivalents ?? 0;
@@ -1972,8 +1978,56 @@ function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: 
   const totalDebt = latestBs.totalDebt ?? (shortDebt + longDebt);
   const netDebt = totalDebt - cash;
 
-  const bn = (n: number) => n >= 1e9 ? `$${(n/1e9).toFixed(1)}B` : n >= 1e6 ? `$${(n/1e6).toFixed(0)}M` : `$${n}`;
-  const bnNum = (n: number) => n >= 1e9 ? (n/1e9).toFixed(1) : n >= 1e6 ? (n/1e6).toFixed(0) : String(n);
+  const currentAssets = latestBs.totalCurrentAssets ?? 0;
+  const currentLiabilities = latestBs.totalCurrentLiabilities ?? 0;
+  const workingCapital = currentAssets - currentLiabilities;
+  const currentRatio = currentLiabilities > 0 ? currentAssets / currentLiabilities : null;
+  const cashRatio = currentLiabilities > 0 ? cash / currentLiabilities : null;
+
+  const totalAssets = latestBs.totalAssets ?? 0;
+  const totalEquity = latestBs.totalEquity ?? 0;
+  const goodwillIntangibles = latestBs.goodwillAndIntangibleAssets ?? ((latestBs.goodwill ?? 0) + (latestBs.intangibleAssets ?? 0));
+  const financialLeverage = totalEquity > 0 ? totalAssets / totalEquity : null;
+
+  let ttmOcf = 0;
+  let ttmFcf = 0;
+  if (cashFlowsQ && cashFlowsQ.length >= 4) {
+    const cfQSorted = [...cashFlowsQ].sort((a,b)=>a.date.localeCompare(b.date));
+    const last4 = cfQSorted.slice(-4);
+    ttmOcf = last4.reduce((sum, row) => sum + (row.operatingCashFlow || 0), 0);
+    ttmFcf = last4.reduce((sum, row) => sum + (row.freeCashFlow || 0), 0);
+  } else if (cashFlows && cashFlows.length > 0) {
+    const cfSorted = [...cashFlows].sort((a,b)=>a.date.localeCompare(b.date));
+    ttmOcf = cfSorted[cfSorted.length-1].operatingCashFlow || 0;
+    ttmFcf = cfSorted[cfSorted.length-1].freeCashFlow || 0;
+  }
+
+  let ttmEbitda = 0;
+  if (incomesQ && incomesQ.length >= 4) {
+    const incQSorted = [...incomesQ].sort((a,b)=>a.date.localeCompare(b.date));
+    ttmEbitda = incQSorted.slice(-4).reduce((sum, row) => sum + (row.ebitda || 0), 0);
+  } else if (incomes && incomes.length > 0) {
+    const incSorted = [...incomes].sort((a,b)=>a.date.localeCompare(b.date));
+    ttmEbitda = incSorted[incSorted.length-1].ebitda || 0;
+  }
+
+  const ev = (s?.market_cap || 0) + netDebt;
+  const evToEbitda = ttmEbitda > 0 ? ev / ttmEbitda : null;
+  const netDebtToEbitda = ttmEbitda > 0 ? netDebt / ttmEbitda : null;
+
+  const bn = (n: number) => {
+    const abs = Math.abs(n);
+    const sign = n < 0 ? "-" : "";
+    if (abs >= 1e9) return `${sign}$${(abs/1e9).toFixed(1)}B`;
+    if (abs >= 1e6) return `${sign}$${(abs/1e6).toFixed(0)}M`;
+    return `${sign}$${abs.toFixed(0)}`;
+  };
+  const bnNum = (n: number) => {
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return (abs/1e9).toFixed(1);
+    if (abs >= 1e6) return (abs/1e6).toFixed(0);
+    return String(abs.toFixed(0));
+  };
   const bnSuffix = cash >= 1e9 ? "bn" : cash >= 1e6 ? "m" : "";
 
   const hist = bsSorted.slice(-5);
@@ -1982,9 +2036,16 @@ function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: 
 
   const stackMax = Math.max(cash, totalDebt) || 1;
 
+  const Chip = ({label, val}: {label:string, val:string|React.ReactNode}) => (
+    <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px", display:"flex", flexDirection:"column", justifyContent:"center"}}>
+      <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>{label}</div>
+      <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>{val}</div>
+    </div>
+  );
+
   return (
     <Card>
-      <SH title="Liquidity & Debt Profile" icon={<Activity size={12}/>} sub={`FY ${latestBs.calendarYear}`} />
+      <SH title="Liquidity & Debt Profile" icon={<Activity size={12}/>} sub={latestBs.period ? `${latestBs.calendarYear} ${latestBs.period}` : `FY ${latestBs.calendarYear}`} />
       <div style={{display:"grid", gridTemplateColumns:"1fr 1.5fr 1fr", gap:20, marginTop:10}}>
         
         <div style={{display:"flex", gap:16, height:180, alignItems:"flex-end", paddingBottom:20}}>
@@ -2013,7 +2074,7 @@ function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: 
 
         <div style={{borderLeft:`1px solid ${T.divider}`, borderRight:`1px solid ${T.divider}`, padding:"0 16px", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
           <div>
-            <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:16, textAlign:"center"}}>DEBT VS CASH TREND</div>
+            <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:16, textAlign:"center"}}>DEBT VS CASH TREND (ANNUAL)</div>
             <div style={{display:"flex", alignItems:"flex-end", justifyContent:"space-between", height:h, padding:"0 10px"}}>
               {hist.map((b, i) => {
                 const c = b.cashAndShortTermInvestments ?? b.cashAndCashEquivalents ?? 0;
@@ -2043,31 +2104,27 @@ function LiquidityProfileCard({balanceSheets, ratios, loading}: {balanceSheets: 
         </div>
 
         <div style={{display:"flex", flexDirection:"column", gap:12}}>
-          <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:4}}>POSITION INSIGHTS</div>
+          <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:4}}>LEVERAGE</div>
           
-          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
-            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>NET DEBT / (CASH)</div>
-            <div style={{fontSize:13, fontFamily:T.mono, color:netDebt > 0 ? T.red : T.green, fontWeight:700}}>
-              {netDebt > 0 ? bn(netDebt) : `(${bn(Math.abs(netDebt))})`}
-            </div>
-          </div>
-          
-          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
-            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>D/E RATIO</div>
-            <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>
-              {ttmRatio?.debtToEquityRatio != null ? ttmRatio.debtToEquityRatio.toFixed(2) : "—"}
-            </div>
-          </div>
-          
-          <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px"}}>
-            <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>INTEREST COVERAGE</div>
-            <div style={{fontSize:13, fontFamily:T.mono, color:ttmRatio?.interestCoverageRatio && ttmRatio.interestCoverageRatio > 3 ? T.green : T.red, fontWeight:700}}>
-              {ttmRatio?.interestCoverageRatio != null ? `${ttmRatio.interestCoverageRatio.toFixed(1)}x` : "—"}
-            </div>
-          </div>
+          <Chip label="NET DEBT / (CASH)" val={<span style={{color:netDebt > 0 ? T.red : T.green}}>{netDebt > 0 ? bn(netDebt) : `(${bn(Math.abs(netDebt))})`}</span>} />
+          <Chip label="D/E RATIO" val={ttmRatio?.debtToEquityRatio != null ? ttmRatio.debtToEquityRatio.toFixed(2) : "—"} />
+          <Chip label="INTEREST COVERAGE" val={<span style={{color:ttmRatio?.interestCoverageRatio && ttmRatio.interestCoverageRatio > 3 ? T.green : T.red}}>{ttmRatio?.interestCoverageRatio != null ? `${ttmRatio.interestCoverageRatio.toFixed(1)}x` : "—"}</span>} />
         </div>
 
       </div>
+
+      <div style={{display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:10, marginTop:20, paddingTop:16, borderTop:`1px solid ${T.divider}`}}>
+        <Chip label="CURRENT RATIO" val={currentRatio ? `${currentRatio.toFixed(2)}x` : "—"} />
+        <Chip label="CASH RATIO" val={cashRatio ? `${cashRatio.toFixed(2)}x` : "—"} />
+        <Chip label="WORKING CAPITAL" val={bn(workingCapital)} />
+        <Chip label="TTM OCF / FCF" val={`${bn(ttmOcf)} / ${bn(ttmFcf)}`} />
+        
+        <Chip label="NET DEBT / EBITDA" val={netDebtToEbitda != null ? `${netDebtToEbitda.toFixed(2)}x` : "—"} />
+        <Chip label="EV / EBITDA" val={evToEbitda != null ? `${evToEbitda.toFixed(1)}x` : "—"} />
+        <Chip label="FINANCIAL LEVERAGE" val={financialLeverage ? `${financialLeverage.toFixed(2)}x` : "—"} />
+        <Chip label="GW + INTANGIBLES" val={`${bn(goodwillIntangibles)} (${totalAssets>0?((goodwillIntangibles/totalAssets)*100).toFixed(0):"0"}%)`} />
+      </div>
+
     </Card>
   );
 }
@@ -3727,7 +3784,17 @@ export default function StockDetail(){
       </div>
 
       <div style={{marginBottom:16}}>
-        <LiquidityProfileCard balanceSheets={balanceSheets} ratios={ratios} loading={fmpLoading} />
+        <LiquidityProfileCard 
+          balanceSheets={balanceSheets} 
+          balanceSheetsQ={balanceSheetsQ} 
+          ratios={ratios} 
+          cashFlows={cashFlows}
+          cashFlowsQ={cashFlowsQ}
+          incomes={incomes}
+          incomesQ={incomesQ}
+          s={s} 
+          loading={fmpLoading} 
+        />
       </div>
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
