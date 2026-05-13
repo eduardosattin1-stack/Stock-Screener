@@ -1145,3 +1145,206 @@ def read_stock_history(symbol: str) -> list:
     """Return [[date, price, composite], ...] for /stock/{SYMBOL}/history."""
     data = _gcs_read(f"{STOCK_HISTORY_PREFIX}/{symbol.upper()}.json", [])
     return data if isinstance(data, list) else []
+
+
+# ---------------------------------------------------------------------------
+# Legacy reader helpers — map P20 cycle data to the shapes expected by
+# the Signal Performance and Legacy Hit Rate frontend tabs.
+# These were removed during the v1.2 rewrite but run_server.py still
+# imports them. Rather than maintaining separate GCS files, we derive
+# the old data shapes from the unified P20 prediction system.
+# ---------------------------------------------------------------------------
+
+_SIGNAL_MAP = {
+    "STRONG": "STRONG BUY",
+    "MODERATE": "BUY",
+    "MILD": "WATCH",
+    "WEAK": "HOLD",
+}
+
+
+def _pred_to_signal_open(p: dict) -> dict:
+    """Convert a P20 prediction to SignalTrackOpen shape."""
+    ep = p.get("entry_price", 0) or 0
+    cp = p.get("current_price", ep) or ep
+    sig = _SIGNAL_MAP.get(p.get("signal_strength", ""), "HOLD")
+    max_high_pct = p.get("max_high_observed_pct", 0) or 0
+    max_dd_pct = p.get("max_drawdown_observed_pct", 0) or 0
+    return {
+        "symbol": p.get("symbol", ""),
+        "region": p.get("region", "global"),
+        "entry_date": p.get("entry_date", ""),
+        "entry_price": ep,
+        "entry_composite": p.get("composite", 0) or 0,
+        "entry_signal": sig,
+        "sector": p.get("sector"),
+        "industry": None,
+        "classification": None,
+        "last_price": cp,
+        "last_composite": p.get("composite", 0) or 0,
+        "last_signal": sig,
+        "last_updated": p.get("last_updated", ""),
+        "max_price": round(ep * (1 + max_high_pct / 100), 4) if ep > 0 else 0,
+        "min_price": round(ep * (1 + max_dd_pct / 100), 4) if ep > 0 else 0,
+        "days_held": p.get("days_observed", 0),
+    }
+
+
+def _pred_to_signal_closed(p: dict) -> dict:
+    """Convert a resolved P20 prediction to SignalTrackClosed shape."""
+    base = _pred_to_signal_open(p)
+    cp = p.get("current_price", base["entry_price"])
+    pnl = p.get("realized_return_pct", 0) or 0
+    max_high = p.get("max_high_observed_pct", 0) or 0
+    max_dd = p.get("max_drawdown_observed_pct", 0) or 0
+    base.update({
+        "exit_date": p.get("resolution_date", p.get("last_updated", "")),
+        "exit_price": cp,
+        "exit_composite": p.get("composite", 0) or 0,
+        "exit_signal": "SELL",
+        "realized_pnl_pct": round(pnl, 2),
+        "max_gain_pct": round(max_high, 2),
+        "max_dd_pct": round(max_dd, 2),
+    })
+    return base
+
+
+def _pred_to_hitrate_open(p: dict) -> dict:
+    """Convert a P20 prediction to HitRateOpen shape."""
+    ep = p.get("entry_price", 0) or 0
+    cp = p.get("current_price", ep) or ep
+    p20 = p.get("p20", 0) or 0
+    p10_val = min(p20 * P10_MULT, 0.65)
+    max_high_pct = p.get("max_high_observed_pct", 0) or 0
+    sig = _SIGNAL_MAP.get(p.get("signal_strength", ""), "HOLD")
+    # Determine hit_date: if max run-up touched +10%, the hit was observed
+    hit_date = None
+    if max_high_pct >= 10.0 and p.get("resolution_date"):
+        hit_date = p["resolution_date"]
+    return {
+        "symbol": p.get("symbol", ""),
+        "region": p.get("region", "global"),
+        "entry_date": p.get("entry_date", ""),
+        "entry_price": ep,
+        "entry_composite": p.get("composite", 0) or 0,
+        "entry_signal": sig,
+        "entry_p10": round(p10_val, 4),
+        "sector": p.get("sector"),
+        "classification": None,
+        "last_price": cp,
+        "last_updated": p.get("last_updated", ""),
+        "max_price": round(ep * (1 + max_high_pct / 100), 4) if ep > 0 else 0,
+        "days_elapsed": p.get("days_observed", 0),
+        "hit_date": hit_date,
+    }
+
+
+def _pred_to_hitrate_closed(p: dict) -> dict:
+    """Convert a resolved P20 prediction to HitRateClosed shape."""
+    base = _pred_to_hitrate_open(p)
+    max_high = p.get("max_high_observed_pct", 0) or 0
+    hit = max_high >= 10.0
+    base.update({
+        "exit_date": p.get("resolution_date", p.get("last_updated", "")),
+        "exit_reason": "hit_10pct" if hit else "window_closed",
+        "hit": hit,
+        "max_gain_pct": round(max_high, 2),
+    })
+    return base
+
+
+def _gather_predictions_from_cycles(state: dict, include_archived: int = 6):
+    """Gather open and closed predictions from all known cycles.
+
+    Returns (open_list, closed_list) where open_list contains OPEN predictions
+    from collecting + resolving cycles, and closed_list contains HIT/EXPIRED
+    predictions from resolving + archived cycles.
+    """
+    open_list = []
+    closed_list = []
+    seen_closed = set()  # (symbol, entry_date) dedup for closed
+
+    # Active cycles: collecting + resolving → open predictions
+    active_ids = []
+    if state.get("collecting_cycle_id"):
+        active_ids.append(state["collecting_cycle_id"])
+    active_ids.extend(state.get("resolving_cycle_ids", []))
+
+    for cid in active_ids:
+        open_data = _gcs_read(f"{CYCLES_PREFIX}/{cid}/open.json",
+                              {"predictions": []})
+        for p in (open_data or {}).get("predictions", []):
+            open_list.append(p)
+
+    # Closed predictions from resolving cycles (via JSONL — deduplicated to
+    # latest state per symbol+entry_date)
+    for cid in active_ids:
+        raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cid}/predictions.jsonl", "")
+        latest = {}
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except Exception:
+                continue
+            key = (row.get("symbol"), row.get("entry_date"))
+            existing = latest.get(key)
+            if existing is None:
+                latest[key] = row
+            elif existing.get("outcome") == "OPEN" and row.get("outcome") != "OPEN":
+                latest[key] = row
+        for key, row in latest.items():
+            if row.get("outcome") in ("HIT", "EXPIRED") and key not in seen_closed:
+                seen_closed.add(key)
+                closed_list.append(row)
+
+    # Archived cycles — fully resolved, use archived.json's predictions list
+    for cid in state.get("archived_cycle_ids", [])[-include_archived:]:
+        arch = _gcs_read(f"{CYCLES_PREFIX}/{cid}/archived.json", None)
+        if not arch or not isinstance(arch, dict):
+            continue
+        for p in arch.get("predictions", []):
+            key = (p.get("symbol"), p.get("entry_date"))
+            if key not in seen_closed:
+                seen_closed.add(key)
+                closed_list.append(p)
+
+    return open_list, closed_list
+
+
+def read_signal_tracks() -> dict:
+    """Derive legacy signal-track data from P20 cycle predictions.
+
+    Returns {open: SignalTrackOpen[], closed: SignalTrackClosed[]} matching
+    the shape expected by the Signal Performance frontend tab.
+    """
+    state = _load_cycle_state()
+    if not state or not state.get("collecting_cycle_id"):
+        return {"open": [], "closed": []}
+
+    open_preds, closed_preds = _gather_predictions_from_cycles(state)
+
+    return {
+        "open": [_pred_to_signal_open(p) for p in open_preds],
+        "closed": [_pred_to_signal_closed(p) for p in closed_preds],
+    }
+
+
+def read_hitrate_tracks() -> dict:
+    """Derive legacy hit-rate data from P20 cycle predictions.
+
+    Returns {open: HitRateOpen[], closed: HitRateClosed[]} matching
+    the shape expected by the Legacy Hit Rate frontend tab.
+    """
+    state = _load_cycle_state()
+    if not state or not state.get("collecting_cycle_id"):
+        return {"open": [], "closed": []}
+
+    open_preds, closed_preds = _gather_predictions_from_cycles(state)
+
+    return {
+        "open": [_pred_to_hitrate_open(p) for p in open_preds],
+        "closed": [_pred_to_hitrate_closed(p) for p in closed_preds],
+    }
