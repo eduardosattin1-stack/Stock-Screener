@@ -2553,17 +2553,31 @@ function TrackRecordTable({s}:{s:StockData}){
 }
 
 function StockStoryCard({s}:{s:StockData}){
-  const [story, setStory] = useState<{
+  type StoryData = {
     bottomLine:string, 
     balanceSheet:string, 
     macroContext:string,
     optionsTrade:string,
     catalysts:string,
     bullBear:string,
-    confidenceScore:number
-  } | null>(null);
+    confidenceScore:number,
+    timestamp?:number
+  };
+
+  const [storyList, setStoryList] = useState<StoryData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [showArchive, setShowArchive] = useState<boolean>(false);
+  const [viewIndex, setViewIndex] = useState<number>(0);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`stock_story_${s.symbol}`);
+      if (stored) {
+        setStoryList(JSON.parse(stored));
+      }
+    } catch(e) {}
+  }, [s.symbol]);
 
   async function generateStory() {
     setLoading(true);
@@ -2576,7 +2590,13 @@ function StockStoryCard({s}:{s:StockData}){
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate story");
-      setStory(data.story);
+      
+      const newStory = { ...data.story, timestamp: Date.now() };
+      const updated = [newStory, ...storyList];
+      setStoryList(updated);
+      localStorage.setItem(`stock_story_${s.symbol}`, JSON.stringify(updated));
+      setViewIndex(0);
+      setShowArchive(false);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -2584,7 +2604,7 @@ function StockStoryCard({s}:{s:StockData}){
     }
   }
 
-  if (!story && !loading) {
+  if (!storyList.length && !loading) {
     return (
       <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto",textAlign:"center",padding:"40px 20px"}}>
         <Card>
@@ -2620,11 +2640,58 @@ function StockStoryCard({s}:{s:StockData}){
     );
   }
 
+  const story = storyList[viewIndex];
+
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
+      {storyList.length > 1 && (
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:-8}}>
+          <button 
+            onClick={() => { setShowArchive(!showArchive); if (showArchive) setViewIndex(0); }}
+            style={{background:"none",border:`1px solid ${T.cardBorder}`,borderRadius:4,padding:"4px 10px",fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}
+          >
+            {showArchive ? "Hide Archive" : `View Archive (${storyList.length - 1})`}
+          </button>
+        </div>
+      )}
+      
+      {showArchive && storyList.length > 1 && (
+        <Card style={{marginBottom:8,background:T.bg,border:`1px dashed ${T.cardBorder}`}}>
+          <SH title="Story Archive" icon={<Activity size={12}/>} sub="Previously generated narratives" />
+          <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:12}}>
+            {storyList.map((sItem, idx) => (
+              <button 
+                key={idx}
+                onClick={() => setViewIndex(idx)}
+                style={{
+                  display:"flex",justifyContent:"space-between",alignItems:"center",
+                  padding:"10px 14px",borderRadius:6,border:`1px solid ${viewIndex === idx ? T.greenBorder : T.cardBorder}`,
+                  background:viewIndex === idx ? T.greenLight : "#fff",
+                  cursor:"pointer",textAlign:"left"
+                }}
+              >
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:viewIndex === idx ? T.green : T.text}}>
+                    {idx === 0 ? "Latest Story" : `Archived Story ${storyList.length - idx}`}
+                  </div>
+                  {sItem.timestamp && (
+                    <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>
+                      {new Date(sItem.timestamp).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}
+                    </div>
+                  )}
+                </div>
+                <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600}}>
+                  Confidence: {sItem.confidenceScore}%
+                </div>
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
+
       <Card>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <SH title="The Bottom Line" icon={<Brain size={12}/>} />
+          <SH title="The Bottom Line" icon={<Brain size={12}/>} sub={viewIndex > 0 ? `Archived (${new Date(story.timestamp||0).toLocaleDateString()})` : "Current Assessment"} />
           <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.card, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
             Confidence: {story?.confidenceScore}%
           </div>
@@ -2681,12 +2748,17 @@ function StockStoryCard({s}:{s:StockData}){
         <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono}}>
           Dynamically generated by Gemini 3.1 Pro. Not financial advice.
         </div>
-        <button 
-          onClick={generateStory}
-          style={{background:"none",color:T.green,border:`1px solid ${T.greenBorder}`,padding:"4px 12px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}
-        >
-          Regenerate
-        </button>
+        {viewIndex === 0 && (
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            {error && <span style={{fontSize:10,color:T.red,fontFamily:T.mono}}>{error}</span>}
+            <button 
+              onClick={generateStory}
+              style={{background:"none",color:T.green,border:`1px solid ${T.greenBorder}`,padding:"4px 12px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}
+            >
+              Regenerate
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2986,9 +3058,10 @@ export default function StockDetail(){
   const haveFA  = s.fallen_angel_flag === true;
   const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
   const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
-  const compMode = mode==="fallen_angel"
-    ? (s.composite_fallen_angel ?? s.composite)
-    : (s.composite_momentum ?? s.composite);
+  const compMode = mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
+                 : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
+                 : mode==="compounder_global" ? (s.compounder_score_global ?? 0)
+                 : (s.composite_momentum ?? s.composite);
   const sigMode = mode==="fallen_angel"      ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
                 : mode==="compounder_us"     ? (s.signal_compounder_us ?? "DISQUALIFIED")
                 : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
