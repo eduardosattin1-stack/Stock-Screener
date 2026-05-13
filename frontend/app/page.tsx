@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
+import { Watchlist } from "./components/Watchlist";
 
 const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
@@ -1033,7 +1034,8 @@ export default function Dashboard(){
   ];
 
   return(
-    <div style={{padding:"20px 24px",maxWidth:1440,margin:"0 auto"}}>
+    <div style={{display: "flex"}}>
+      <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
@@ -1162,6 +1164,8 @@ export default function Dashboard(){
         {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} excluded by ${mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} gate`:""}{cohortFilter !== "qualified" && cohortFilter !== "all" ? ` · cohort: ${cohortFilter.replace(/_/g," ")}` : ""}{sectorFilter.length > 0 ? ` · sectors: ${sectorFilter.length}` : ""}{countryFilter.length > 0 ? ` · countries: ${countryFilter.length}` : ""} · click row to expand · click any column header to sort
       </div>
       <SectorConcentration data={data?.sector_concentration}/>
+      </div>
+      <Watchlist />
     </div>
   );
 }

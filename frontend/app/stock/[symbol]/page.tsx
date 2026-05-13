@@ -3096,6 +3096,7 @@ export default function StockDetail(){
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
   const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart">("overview");
+  const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
 
   useEffect(()=>{
     if(!symbol)return;
@@ -3341,21 +3342,34 @@ export default function StockDetail(){
           ? {marginBottom:0, boxShadow:`0 0 0 2px ${T.green}`, borderColor:T.green}
           : {marginBottom:0};
         return (
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
-            <Card style={v8Style}>
-              <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>}
-                sub={`${modeLabel} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
-              <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:8}}>
-                <FactorRadar scores={factorsMode} size={220}/>
+          <div style={{marginBottom:16}}>
+            <div style={{display:"flex",justifyContent:"flex-end",marginBottom:6}}>
+              <div style={{display:"flex", background:T.card, border:`1px solid ${T.cardBorder}`, padding:2, borderRadius:6}}>
+                <button onClick={()=>setScoreView("v8")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="v8"?T.greenLight:"transparent", color:scoreView==="v8"?T.green:T.textMuted}}>5-Factor</button>
+                <button onClick={()=>setScoreView("both")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="both"?T.greenLight:"transparent", color:scoreView==="both"?T.green:T.textMuted}}>Both</button>
+                <button onClick={()=>setScoreView("cmp")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="cmp"?T.greenLight:"transparent", color:scoreView==="cmp"?T.green:T.textMuted}}>Compounder</button>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
-                {FACTOR_ORDER.map(k=>(
-                  <FactorBar key={k} name={FL[k]} weight={FW[k]}
-                    score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
-                ))}
-              </div>
-            </Card>
-            <CompounderBreakdownCard s={s} cohort={cmpCohort} active={cmpActive}/>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:scoreView==="both"?"1fr 1fr":"1fr",gap:14}}>
+              {scoreView!=="cmp" && (
+                <Card style={v8Style}>
+                  <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>}
+                    sub={`${modeLabel} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
+                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:8}}>
+                    <FactorRadar scores={factorsMode} size={220}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
+                    {FACTOR_ORDER.map(k=>(
+                      <FactorBar key={k} name={FL[k]} weight={FW[k]}
+                        score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
+                    ))}
+                  </div>
+                </Card>
+              )}
+              {scoreView!=="v8" && (
+                <CompounderBreakdownCard s={s} cohort={cmpCohort} active={cmpActive}/>
+              )}
+            </div>
           </div>
         );
       })()}

@@ -57,10 +57,10 @@ FMP_BASE = "https://financialmodelingprep.com/stable"
 
 PORTFOLIO_PATH = "portfolio/state.json"
 STRATEGY_PATHS = {
-    "boring":    "performance/strategy_history_boring.json",
-    "composite": "performance/strategy_history_composite.json",
-    "momentum":  "performance/strategy_history_momentum.json",
-    "fa":        "performance/strategy_history_fa.json",
+    "compounder_us":     "performance/strategy_history_compounder_us.json",
+    "compounder_global": "performance/strategy_history_compounder_global.json",
+    "momentum":          "performance/strategy_history_momentum.json",
+    "fa":                "performance/strategy_history_fa.json",
 }
 
 
@@ -431,60 +431,6 @@ def refresh_strategy_rotation(history: Optional[dict], quotes: dict[str, float],
     return history
 
 
-def refresh_strategy_boring(history: Optional[dict], quotes: dict[str, float],
-                            today: str) -> Optional[dict]:
-    if not history:
-        return None
-    ob = history.get("open_basket")
-    if not ob or not ob.get("basket"):
-        log.info("[boring] no open basket")
-        history["last_monitor_run"] = today
-        return history
-
-    basket = ob["basket"]
-    rets: list[float] = []
-    daily_marks: dict[str, dict] = {}
-    for p in basket:
-        sym = (p.get("symbol") or "").upper()
-        cur = quotes.get(sym)
-        entry = p.get("entry_price") or 0
-        if cur is None or entry <= 0:
-            continue
-        ret = (cur - entry) / entry
-        rets.append(ret)
-        daily_marks[sym] = {"price": round(cur, 4), "return_pct": round(ret * 100, 4),
-                            "ts": today}
-    ob["daily_last_marks"] = daily_marks
-    log.info(f"[boring] refreshed {len(daily_marks)}/{len(basket)} positions")
-
-    spy_now = quotes.get("SPY")
-    spy_entry = ob.get("spy_entry_price") or 0
-    spy_pct = (spy_now - spy_entry) / spy_entry * 100.0 if (spy_now and spy_entry > 0) else 0.0
-    basket_pct = (sum(rets) / len(rets) * 100.0) if rets else 0.0
-
-    try:
-        days_held = (dt.date.fromisoformat(today) -
-                     dt.date.fromisoformat(ob["inception_date"])).days
-    except Exception:
-        days_held = 0
-
-    ob["today_interim_mark"] = {
-        "date": today,
-        "basket_return_pct": round(basket_pct, 4),
-        "spy_return_pct": round(spy_pct, 4),
-        "alpha_pp": round(basket_pct - spy_pct, 4),
-        "spy_price": round(spy_now, 4) if spy_now else None,
-        "days_held": days_held,
-        "n_priced": len(rets),
-        "_note": "Interim daily mark from monitor_prices.py — runner owns weekly_marks",
-    }
-    log.info(f"[boring] interim mark: basket {basket_pct:+.2f}%, "
-             f"SPY {spy_pct:+.2f}%, alpha {basket_pct - spy_pct:+.2f}pp")
-
-    history["last_monitor_run"] = today
-    return history
-
-
 # ─────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────
@@ -523,10 +469,7 @@ def run(dry_run: bool = False):
         if history is None:
             log.info(f"[{kind}] no history file — skipping")
             continue
-        if kind == "boring":
-            updated = refresh_strategy_boring(history, quotes, today)
-        else:
-            updated = refresh_strategy_rotation(history, quotes, today, kind)
+        updated = refresh_strategy_rotation(history, quotes, today, kind)
         if updated is not None:
             gcs_write(STRATEGY_PATHS[kind], updated, dry_run=dry_run)
 

@@ -14,8 +14,8 @@ on:
         options:
           - deploy-only
           - run-sp500
-          - run-boring
-          - run-composite
+          - run-compounder-us
+          - run-compounder-global
           - run-paper-email
           - run-momentum
           - run-fa
@@ -65,7 +65,7 @@ jobs:
             --region=europe-west1 \
             --format='value(spec.template.spec.containers[0].image)')
           # COMPOUNDER US strategy runner (top-20 SP500 by compounder_score, monthly rebalance)
-          gcloud run jobs deploy boring-runner \
+          gcloud run jobs deploy compounder-us-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
             --memory=1Gi \
@@ -75,7 +75,7 @@ jobs:
             --args="paper_strategy_runner_compounder_us.py"
 
           # COMPOUNDER GLOBAL strategy runner (top-20 global by compounder_score, monthly rebalance)
-          gcloud run jobs deploy composite-runner \
+          gcloud run jobs deploy compounder-global-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
             --memory=1Gi \
@@ -115,7 +115,7 @@ jobs:
             --args="monitor_prices.py"
 
           # ALL paper runners orchestrator (Compounder US/Global + Momentum + FA)
-          gcloud run jobs deploy strategy-runner-3-strategies \
+          gcloud run jobs deploy paper-all-runner \
             --image="$IMAGE" \
             --region=europe-west1 \
             --memory=1Gi \
@@ -163,16 +163,16 @@ jobs:
           echo "SP500 scan started. Check logs: gcloud run jobs executions list --job=screener-sp500 --region=europe-west1"
 
       # ═══ MANUAL: EXECUTE PAPER-TRACKING JOBS ═══
-      - name: Run BORING Strategy Runner
-        if: inputs.action == 'run-boring'
+      - name: Run COMPOUNDER US Strategy Runner
+        if: inputs.action == 'run-compounder-us'
         run: |
-          gcloud run jobs execute boring-runner --region=europe-west1
-          echo "BORING runner started."
-      - name: Run COMPOSITE Strategy Runner
-        if: inputs.action == 'run-composite'
+          gcloud run jobs execute compounder-us-runner --region=europe-west1
+          echo "COMPOUNDER US runner started."
+      - name: Run COMPOUNDER GLOBAL Strategy Runner
+        if: inputs.action == 'run-compounder-global'
         run: |
-          gcloud run jobs execute composite-runner --region=europe-west1
-          echo "COMPOSITE runner started."
+          gcloud run jobs execute compounder-global-runner --region=europe-west1
+          echo "COMPOUNDER GLOBAL runner started."
       - name: Run MOMENTUM Strategy Runner
         if: inputs.action == 'run-momentum'
         run: |
