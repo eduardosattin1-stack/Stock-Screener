@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const maxDuration = 300; // 5 minutes for deep 6-step multi-agent debate
 
 async function callGemini(prompt: string, apiKey: string, isJson: boolean = false) {
-  const config: any = { temperature: 0.5, maxOutputTokens: 2048 };
+  const config: any = { temperature: 0.5, maxOutputTokens: 8192 };
   if (isJson) config.responseMimeType = "application/json";
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
@@ -36,7 +36,7 @@ async function callClaude(prompt: string, apiKey: string) {
     },
     body: JSON.stringify({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
+      max_tokens: 4096,
       messages: [{ role: "user", content: prompt }]
     })
   });
@@ -122,8 +122,10 @@ export async function POST(req: NextRequest) {
     Output pure JSON, no markdown formatting blocks.`;
 
     const finalJsonText = await callGemini(synthPrompt, geminiApiKey, true);
+    
+    const cleanJson = finalJsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
 
-    return NextResponse.json({ story: JSON.parse(finalJsonText) });
+    return NextResponse.json({ story: JSON.parse(cleanJson) });
 
   } catch (error: any) {
     console.error("Story Generation Error:", error);
