@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 120;
-export const dynamic = 'force-dynamic'; // 2 minutes for long-form generation
+export const maxDuration = 300;
+export const dynamic = 'force-dynamic'; // 5 minutes for long-form generation
 
 async function callGemini(prompt: string, apiKey: string, isJson: boolean = false) {
   const config: any = { temperature: 0.7, maxOutputTokens: 4096 };
@@ -340,19 +340,19 @@ ${JSON.stringify(promptPayload, null, 2)}
 ${JSON.stringify({ incomes: (incomes || []).slice(0, 5), ratios: (ratios || []).slice(0, 5) }, null, 2)}
 `;
 
-    // Step 1: Gemini 3.1 Pro (Bull Case)
+    // Step 1 & 2: Run Bull (Gemini) and Bear (Claude) cases in parallel to prevent 30s proxy timeouts
     const bullPrompt = `You are a highly aggressive, optimistic portfolio manager. Build the absolute best, highly detailed BULL case for ${symbol} based on this data:
 ${dataContext}
 Argue why the stock will go much higher. Provide a detailed analysis of the fundamentals, growth, and technicals. Limit to 5-7 sentences.`;
-    
-    const bullCase = await callGemini(bullPrompt, geminiApiKey);
 
-    // Step 2: Claude 4.7 Opus (Bear Case)
     const bearPrompt = `You are a highly skeptical, aggressive short-seller. Build the absolute best, highly detailed BEAR case for ${symbol} based on this data:
 ${dataContext}
 Tear apart the bull thesis, highlight fundamental weaknesses, valuation risks, or macro headwinds. Limit to 5-7 sentences.`;
-    
-    const bearCase = await callClaude(bearPrompt, claudeApiKey);
+
+    const [bullCase, bearCase] = await Promise.all([
+      callGemini(bullPrompt, geminiApiKey),
+      callClaude(bearPrompt, claudeApiKey)
+    ]);
 
     // Step 3: Synthesis via Persona
     const personaKey = persona || "Objective CIO";
