@@ -74,7 +74,7 @@ def rsi_calc(closes, period=14):
     rs = (sum(gains)/period) / avg_loss
     return 100 - (100 / (1 + rs))
 
-def backfill_symbol(symbol: str, weeks: int = 156, force: bool = False):
+def backfill_symbol(symbol: str, weeks: int = 52, force: bool = False):
     try:
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
@@ -145,43 +145,72 @@ def backfill_symbol(symbol: str, weeks: int = 156, force: bool = False):
         latest_inc = inc_pit[-1]
         older_inc = inc_pit[-4]
         
+        # Growth
         rev_cagr = (latest_inc.get("revenue", 0) / older_inc.get("revenue", 1)) - 1 if older_inc.get("revenue", 1) > 0 else 0
         eps_cagr = (latest_inc.get("eps", 0) / older_inc.get("eps", 1)) - 1 if older_inc.get("eps", 1) > 0 else 0
         
+        # Quality
         roe = safe_float(km_pit[-1].get("returnOnEquity"))
+        gross_margin = latest_inc.get("grossProfit", 0) / latest_inc.get("revenue", 1) if latest_inc.get("revenue", 1) > 0 else 0
+        net_margin = latest_inc.get("netIncome", 0) / latest_inc.get("revenue", 1) if latest_inc.get("revenue", 1) > 0 else 0
         
-        # --- MOMENTUM COMPOSITE ---
-        tech_score = 0.0
-        if current_price > sma_50: tech_score += 0.3
-        if current_price > sma_200: tech_score += 0.3
-        if sma_50 > sma_200: tech_score += 0.4
+        # Value (inversely correlated with price, breaks the perfect positive correlation)
+        shares = latest_inc.get("weightedAverageShsOutDil") or latest_inc.get("weightedAverageShsOut") or 1
+        eps = latest_inc.get("epsDiluted") or 0
+        rev_ps = latest_inc.get("revenue", 0) / shares
         
-        fund_score = 0.0
-        if rev_cagr > 0.15: fund_score += 0.4
-        if eps_cagr > 0.15: fund_score += 0.4
-        if roe > 0.15: fund_score += 0.2
+        pe = current_price / eps if eps > 0 else 999
+        ps = current_price / rev_ps if rev_ps > 0 else 999
+        earnings_yield = eps / current_price if current_price > 0 else 0
         
-        composite = (tech_score * 0.4) + (fund_score * 0.6)
+        # Momentum
+        tech_score = 0.5
+        if current_price > sma_50: tech_score += 0.1
+        if current_price > sma_200: tech_score += 0.1
+        if sma_50 > sma_200: tech_score += 0.1
+        if curr_rsi < 30: tech_score -= 0.1
+        elif curr_rsi > 70: tech_score += 0.1
+        
+        # v8 sub-scores (0 to 1)
+        val_score = 0.0
+        if pe < 15: val_score += 0.4
+        elif pe < 25: val_score += 0.2
+        if ps < 2: val_score += 0.3
+        elif ps < 5: val_score += 0.1
+        if earnings_yield > 0.05: val_score += 0.3
+        
+        growth_score = 0.0
+        if rev_cagr > 0.1: growth_score += 0.5
+        if eps_cagr > 0.1: growth_score += 0.5
+        
+        qual_score = 0.0
+        if roe > 0.15: qual_score += 0.4
+        if gross_margin > 0.4: qual_score += 0.3
+        if net_margin > 0.1: qual_score += 0.3
+        
+        # We don't have Smart Money historically, so we distribute its weight (17%) 
+        # v8 weights: value=33%, growth=17%, qual=17%, tech=17%, smart_money=17%
+        # Sum of what we have is 84%. Multiply by 1/0.84 = 1.19
+        composite = (val_score * 0.33 + growth_score * 0.17 + qual_score * 0.17 + tech_score * 0.17) * 1.19
+        composite = min(max(composite, 0.0), 1.0)
         
         # --- FALLEN ANGEL ---
-        # Highly oversold, price below 200SMA, but fundamentals are still solid
         fa_score = 0.0
-        if curr_rsi < 35 and current_price < sma_200 and fund_score > 0.6:
-            fa_score = min(1.0, fund_score * 0.8 + ((35 - curr_rsi) / 35) * 0.2)
+        if curr_rsi < 35 and current_price < sma_200 and qual_score > 0.6:
+            fa_score = min(1.0, qual_score * 0.8 + ((35 - curr_rsi) / 35) * 0.2)
             
         # --- COMPOUNDER US / GLOBAL ---
-        # Extreme consistent growth and ROE
         cmp_score = 0.0
-        if roe > 0.15 and rev_cagr > 0.15 and eps_cagr > 0.15:
-            cmp_score = min(1.0, (roe * 1.5 + rev_cagr + eps_cagr) / 3.0)
+        if qual_score > 0.7 and growth_score > 0.7:
+            cmp_score = min(1.0, (qual_score + growth_score) / 2.0)
             
         history_out.append([
             valid_prices[0]["date"],
             round(current_price, 2),
-            0.0, # Zero out backfilled scores so they don't draw a misleading perfectly-correlated line
-            0.0,
-            0.0,
-            0.0
+            round(composite, 3),
+            round(fa_score, 3) if fa_score > 0 else 0.0,
+            round(cmp_score, 3) if cmp_score > 0 else 0.0,
+            round(cmp_score, 3) if cmp_score > 0 else 0.0
         ])
         
     if not history_out:
