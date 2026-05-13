@@ -26,7 +26,10 @@ def get_historical_prices(bucket, symbol):
     blob = bucket.blob(cache_path)
     if blob.exists():
         try:
-            return json.loads(blob.download_as_string())
+            cached_data = json.loads(blob.download_as_string())
+            if isinstance(cached_data, dict) and "historical" in cached_data:
+                return cached_data["historical"]
+            return cached_data
         except:
             pass
             
@@ -35,11 +38,16 @@ def get_historical_prices(bucket, symbol):
         return []
 
     log.info(f"[{symbol}] Fetching daily price history from FMP API...")
-    url = f"https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={symbol}&apikey={FMP_KEY}"
+    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{symbol}?apikey={FMP_KEY}"
     r = requests.get(url)
     if r.status_code == 200:
         data = r.json()
-        if isinstance(data, list) and data:
+        if isinstance(data, dict) and "historical" in data:
+            hist = data["historical"]
+            if hist:
+                blob.upload_from_string(json.dumps(hist))
+                return hist
+        elif isinstance(data, list) and data:
             blob.upload_from_string(json.dumps(data))
             return data
     return []
@@ -80,9 +88,18 @@ def backfill_symbol(symbol: str, weeks: int = 156):
     bal_cached = get_gcs_json(bucket, "fmp_cache/balance-sheet-statement", symbol)
     km_cached = get_gcs_json(bucket, "fmp_cache/key-metrics", symbol)
     
-    inc = inc_cached.get("payload", []) if inc_cached else []
-    bal = bal_cached.get("payload", []) if bal_cached else []
-    km = km_cached.get("payload", []) if km_cached else []
+    if not inc_cached: log.warning(f"[{symbol}] inc_cached is missing or empty")
+    if not bal_cached: log.warning(f"[{symbol}] bal_cached is missing or empty")
+    if not km_cached: log.warning(f"[{symbol}] km_cached is missing or empty")
+
+    inc = inc_cached.get("payload", []) if isinstance(inc_cached, dict) else []
+    bal = bal_cached.get("payload", []) if isinstance(bal_cached, dict) else []
+    km = km_cached.get("payload", []) if isinstance(km_cached, dict) else []
+    
+    for ls in (inc, bal, km):
+        for r in ls:
+            if not r.get("filingDate") and r.get("date"):
+                r["filingDate"] = r["date"]
     
     inc = sorted([r for r in inc if r.get("filingDate")], key=lambda x: x["filingDate"])
     bal = sorted([r for r in bal if r.get("filingDate")], key=lambda x: x["filingDate"])
@@ -106,6 +123,7 @@ def backfill_symbol(symbol: str, weeks: int = 156):
         
         valid_prices = [p for p in prices if p["date"] <= target_str]
         if len(valid_prices) < 200:
+            if w == 0: log.warning(f"[{symbol}] Skipped {target_str}: Only {len(valid_prices)} prices available (need 200)")
             continue
             
         current_price = valid_prices[0]["close"]
@@ -120,6 +138,7 @@ def backfill_symbol(symbol: str, weeks: int = 156):
         km_pit = [r for r in km if r["filingDate"] < target_str]
         
         if len(inc_pit) < 4 or len(km_pit) < 4:
+            if w == 0: log.warning(f"[{symbol}] Skipped {target_str}: Need 4 statements, found {len(inc_pit)} inc, {len(km_pit)} km")
             continue
             
         # Core v8 calculations
