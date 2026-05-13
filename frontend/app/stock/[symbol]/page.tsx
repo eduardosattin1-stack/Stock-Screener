@@ -2552,7 +2552,7 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
-function StockStoryCard({s}:{s:StockData}){
+function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[], ratios?:RatioYear[]}){
   type StoryData = {
     bottomLine:string, 
     balanceSheet:string, 
@@ -2561,7 +2561,8 @@ function StockStoryCard({s}:{s:StockData}){
     catalysts:string,
     bullBear:string,
     confidenceScore:number,
-    timestamp?:number
+    timestamp?:number,
+    persona?:string
   };
 
   const [storyList, setStoryList] = useState<StoryData[]>([]);
@@ -2569,6 +2570,9 @@ function StockStoryCard({s}:{s:StockData}){
   const [error, setError] = useState<string>("");
   const [showArchive, setShowArchive] = useState<boolean>(false);
   const [viewIndex, setViewIndex] = useState<number>(0);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [selectedPersona, setSelectedPersona] = useState<string>("Objective CIO");
+  const PERSONAS = ["Objective CIO", "Warren Buffett", "Cathie Wood", "Ray Dalio", "Stanley Druckenmiller"];
 
   useEffect(() => {
     try {
@@ -2577,21 +2581,31 @@ function StockStoryCard({s}:{s:StockData}){
         setStoryList(JSON.parse(stored));
       }
     } catch(e) {}
+    setIsLoaded(true);
   }, [s.symbol]);
 
   async function generateStory() {
     setLoading(true);
     setError("");
     try {
+      const trimmedIncomes = incomes ? [...incomes].sort((a,b)=>a.date.localeCompare(b.date)).slice(-5) : [];
+      const trimmedRatios = ratios ? [...ratios].sort((a,b)=>a.date.localeCompare(b.date)).slice(-5) : [];
+
       const res = await fetch("/api/story", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ symbol: s.symbol, stockData: s })
+        body: JSON.stringify({ 
+          symbol: s.symbol, 
+          stockData: s, 
+          incomes: trimmedIncomes,
+          ratios: trimmedRatios,
+          persona: selectedPersona === "Objective CIO" ? null : selectedPersona 
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate story");
       
-      const newStory = { ...data.story, timestamp: Date.now() };
+      const newStory = { ...data.story, timestamp: Date.now(), persona: selectedPersona };
       const updated = [newStory, ...storyList];
       setStoryList(updated);
       localStorage.setItem(`stock_story_${s.symbol}`, JSON.stringify(updated));
@@ -2604,6 +2618,8 @@ function StockStoryCard({s}:{s:StockData}){
     }
   }
 
+  if (!isLoaded) return null; // Avoid hydration flash
+
   if (!storyList.length && !loading) {
     return (
       <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto",textAlign:"center",padding:"40px 20px"}}>
@@ -2612,9 +2628,31 @@ function StockStoryCard({s}:{s:StockData}){
             <Brain size={32} color={T.green} />
           </div>
           <SH title="AI Institutional Narrative" sub="Powered by Gemini 3.1 Pro" />
-          <p style={{fontSize:13,color:T.textMuted,fontFamily:T.sans,lineHeight:1.6,marginBottom:24,maxWidth:500,margin:"0 auto 24px"}}>
+          <p style={{fontSize:13,color:T.textMuted,fontFamily:T.sans,lineHeight:1.6,marginBottom:16,maxWidth:500,margin:"0 auto 16px"}}>
             Synthesize our multi-factor quantitative models, fundamental metrics, and options flow data into a comprehensive institutional-grade narrative.
           </p>
+          
+          <div style={{marginBottom: 24, display: "flex", flexDirection: "column", alignItems: "center", gap: 8}}>
+            <div style={{fontSize: 11, fontFamily: T.mono, color: T.textMuted, fontWeight: 600}}>SELECT PERSONA</div>
+            <div style={{display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 600}}>
+              {PERSONAS.map(p => (
+                <button
+                  key={p}
+                  onClick={() => setSelectedPersona(p)}
+                  style={{
+                    background: selectedPersona === p ? T.greenLight : "transparent",
+                    color: selectedPersona === p ? T.green : T.text,
+                    border: `1px solid ${selectedPersona === p ? T.greenBorder : T.cardBorder}`,
+                    padding: "6px 12px", borderRadius: 20, fontSize: 11, fontFamily: T.mono, fontWeight: 600, cursor: "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <button 
             onClick={generateStory}
             style={{background:T.green,color:"#fff",border:"none",padding:"10px 24px",borderRadius:6,fontSize:13,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
@@ -2673,6 +2711,7 @@ function StockStoryCard({s}:{s:StockData}){
                 <div style={{display:"flex",alignItems:"center",gap:12}}>
                   <div style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:viewIndex === idx ? T.green : T.text}}>
                     {idx === 0 ? "Latest Story" : `Archived Story ${storyList.length - idx}`}
+                    <span style={{color: T.textLight, fontWeight: 400, marginLeft: 8}}>— {sItem.persona || "Objective CIO"}</span>
                   </div>
                   {sItem.timestamp && (
                     <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>
@@ -2691,7 +2730,7 @@ function StockStoryCard({s}:{s:StockData}){
 
       <Card>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <SH title="The Bottom Line" icon={<Brain size={12}/>} sub={viewIndex > 0 ? `Archived (${new Date(story.timestamp||0).toLocaleDateString()})` : "Current Assessment"} />
+          <SH title="The Bottom Line" icon={<Brain size={12}/>} sub={viewIndex > 0 ? `Archived (${new Date(story.timestamp||0).toLocaleDateString()}) · ${story.persona || "Objective CIO"}` : `Current Assessment · ${story.persona || "Objective CIO"}`} />
           <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.card, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
             Confidence: {story?.confidenceScore}%
           </div>
@@ -2749,8 +2788,24 @@ function StockStoryCard({s}:{s:StockData}){
           Dynamically generated by Gemini 3.1 Pro. Not financial advice.
         </div>
         {viewIndex === 0 && (
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:8, flexWrap: "wrap", justifyContent: "flex-end"}}>
             {error && <span style={{fontSize:10,color:T.red,fontFamily:T.mono}}>{error}</span>}
+            <div style={{display: "flex", gap: 4, marginRight: 8}}>
+              {PERSONAS.map(p => (
+                <button
+                  key={p}
+                  onClick={() => setSelectedPersona(p)}
+                  style={{
+                    background: selectedPersona === p ? T.greenLight : "transparent",
+                    color: selectedPersona === p ? T.green : T.textMuted,
+                    border: `1px solid ${selectedPersona === p ? T.greenBorder : "transparent"}`,
+                    padding: "3px 8px", borderRadius: 12, fontSize: 9, fontFamily: T.mono, fontWeight: 600, cursor: "pointer",
+                  }}
+                >
+                  {p.split(" ")[0]}
+                </button>
+              ))}
+            </div>
             <button 
               onClick={generateStory}
               style={{background:"none",color:T.green,border:`1px solid ${T.greenBorder}`,padding:"4px 12px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}
@@ -3151,7 +3206,7 @@ export default function StockDetail(){
       ) : activeTab==="compare" ? (
         <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows,incomesQ,balanceSheetsQ,cashFlowsQ}}/>
       ) : activeTab==="story" ? (
-        <StockStoryCard s={s}/>
+        <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
       ) : activeTab==="chart" ? (
         toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") 
           ? <FmpBasicChartTab s={s}/> 
