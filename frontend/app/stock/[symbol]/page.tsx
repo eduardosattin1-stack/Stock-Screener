@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash } from "lucide-react";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
@@ -217,7 +217,19 @@ const TOOLTIPS: Record<string, string> = {
   "P/FCF": "Price to Free Cash Flow. Like P/E but uses actual cash, not accounting earnings.\nMore conservative than P/E — ignores non-cash charges.\n✅ Ideal: < 20\n❌ Avoid: > 40 or negative FCF",
   "EV/EBITDA": "Enterprise Value / EBITDA. Debt-adjusted valuation — the acquirer's P/E.\nBest for comparing companies with different capital structures.\n✅ Ideal: < 12 (value), 12-20 (fair)\n❌ Avoid: > 25",
   "BVPS": "Book Value Per Share. Net assets per share — the liquidation floor.\nRising BVPS = company is getting richer over time.\n✅ Ideal: Steadily rising\n❌ Avoid: Declining (value destruction)",
-  "Div%": "Dividend yield. Annual dividend as percentage of stock price.\nHigh yield + declining price = potential value trap.\n✅ Ideal: 1-4% with growing payout\n❌ Avoid: >8% (likely unsustainable)"
+  "Div%": "Dividend yield. Annual dividend as percentage of stock price.\nHigh yield + declining price = potential value trap.\n✅ Ideal: 1-4% with growing payout\n❌ Avoid: >8% (likely unsustainable)",
+
+  // Liquidity & Debt
+  "NET DEBT / (CASH)": "Total Debt minus Cash & Short-term Investments. Negative means the company has more cash than debt.\n✅ Ideal: Negative (Net Cash)\n❌ Avoid: Highly positive and rising",
+  "D/E RATIO": "Debt to Equity: Total liabilities divided by shareholder equity.\n✅ Ideal: < 1.0\n❌ Avoid: > 2.0 (High leverage)",
+  "INTEREST COVERAGE": "EBIT / Interest Expense: Ability to pay interest on outstanding debt.\n✅ Ideal: > 3.0x\n❌ Avoid: < 1.5x (At risk)",
+  "NET DEBT / EBITDA": "How many years of EBITDA it would take to pay back all net debt.\n✅ Ideal: < 2.0x\n❌ Avoid: > 4.0x",
+  "FINANCIAL LEVERAGE": "Total Assets / Total Equity: Measures how much of the assets are financed by equity.\n✅ Ideal: < 2.0x for non-financials\n❌ Avoid: > 5.0x",
+  "CURRENT RATIO": "Current Assets / Current Liabilities: Ability to pay short-term obligations.\n✅ Ideal: > 1.2x\n❌ Avoid: < 1.0x",
+  "CASH RATIO": "Cash & Equiv / Current Liabilities: Most conservative liquidity measure.\n✅ Ideal: > 0.5x\n❌ Avoid: < 0.1x",
+  "WORKING CAPITAL": "Current Assets minus Current Liabilities.\n✅ Ideal: Positive\n❌ Avoid: Negative (Liquidity squeeze)",
+  "TTM OCF / FCF": "Trailing 12-month Operating Cash Flow and Free Cash Flow.\n✅ Ideal: Strong positive conversion from Net Income",
+  "GW + INTANGIBLES": "Goodwill and other non-physical assets. High % suggests expensive M&A history.\n❌ Avoid: > 50% of total assets",
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -2036,12 +2048,15 @@ function LiquidityProfileCard({
 
   const stackMax = Math.max(cash, totalDebt) || 1;
 
-  const Chip = ({label, val}: {label:string, val:string|React.ReactNode}) => (
-    <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px", display:"flex", flexDirection:"column", justifyContent:"center"}}>
-      <div style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2}}>{label}</div>
-      <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>{val}</div>
-    </div>
-  );
+  const Chip = ({label, val}: {label:string, val:string|React.ReactNode}) => {
+    const tip = TOOLTIPS[label] || "";
+    return (
+      <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px", display:"flex", flexDirection:"column", justifyContent:"center"}}>
+        <div title={tip} style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2, cursor:tip?"help":"default", borderBottom:tip?`1px dotted ${T.textLight}`:"none", width:"fit-content"}}>{label}</div>
+        <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>{val}</div>
+      </div>
+    );
+  };
 
   return (
     <Card>
@@ -2052,7 +2067,7 @@ function LiquidityProfileCard({
           <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Cash ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", alignItems:"flex-end"}}>
-              <div style={{width:"100%", background:"#9ca3af", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
+              <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"#9ca3af", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
                 <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
               </div>
             </div>
@@ -2103,26 +2118,16 @@ function LiquidityProfileCard({
           </div>
         </div>
 
-        <div style={{display:"flex", flexDirection:"column", gap:12}}>
+        <div style={{display:"flex", flexDirection:"column", gap:8}}>
           <div style={{fontSize:10, color:T.textMuted, fontFamily:T.mono, fontWeight:600, marginBottom:4}}>LEVERAGE</div>
           
           <Chip label="NET DEBT / (CASH)" val={<span style={{color:netDebt > 0 ? T.red : T.green}}>{netDebt > 0 ? bn(netDebt) : `(${bn(Math.abs(netDebt))})`}</span>} />
           <Chip label="D/E RATIO" val={ttmRatio?.debtToEquityRatio != null ? ttmRatio.debtToEquityRatio.toFixed(2) : "—"} />
           <Chip label="INTEREST COVERAGE" val={<span style={{color:ttmRatio?.interestCoverageRatio && ttmRatio.interestCoverageRatio > 3 ? T.green : T.red}}>{ttmRatio?.interestCoverageRatio != null ? `${ttmRatio.interestCoverageRatio.toFixed(1)}x` : "—"}</span>} />
+          <Chip label="NET DEBT / EBITDA" val={netDebtToEbitda != null ? `${netDebtToEbitda.toFixed(2)}x` : "—"} />
+          <Chip label="FINANCIAL LEVERAGE" val={financialLeverage ? `${financialLeverage.toFixed(2)}x` : "—"} />
         </div>
 
-      </div>
-
-      <div style={{display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:10, marginTop:20, paddingTop:16, borderTop:`1px solid ${T.divider}`}}>
-        <Chip label="CURRENT RATIO" val={currentRatio ? `${currentRatio.toFixed(2)}x` : "—"} />
-        <Chip label="CASH RATIO" val={cashRatio ? `${cashRatio.toFixed(2)}x` : "—"} />
-        <Chip label="WORKING CAPITAL" val={bn(workingCapital)} />
-        <Chip label="TTM OCF / FCF" val={`${bn(ttmOcf)} / ${bn(ttmFcf)}`} />
-        
-        <Chip label="NET DEBT / EBITDA" val={netDebtToEbitda != null ? `${netDebtToEbitda.toFixed(2)}x` : "—"} />
-        <Chip label="EV / EBITDA" val={evToEbitda != null ? `${evToEbitda.toFixed(1)}x` : "—"} />
-        <Chip label="FINANCIAL LEVERAGE" val={financialLeverage ? `${financialLeverage.toFixed(2)}x` : "—"} />
-        <Chip label="GW + INTANGIBLES" val={`${bn(goodwillIntangibles)} (${totalAssets>0?((goodwillIntangibles/totalAssets)*100).toFixed(0):"0"}%)`} />
       </div>
 
     </Card>
@@ -3164,7 +3169,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
   const story = storyList[viewIndex];
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16,maxWidth:800,margin:"0 auto"}}>
+    <div style={{display:"flex",flexDirection:"column",gap:16,width:"100%",margin:"0 auto"}}>
       {storyList.length > 1 && (
         <div style={{display:"flex",justifyContent:"flex-end",marginBottom:-8}}>
           <button 
@@ -3181,31 +3186,46 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
           <SH title="Story Archive" icon={<Activity size={12}/>} sub="Previously generated narratives" />
           <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:12}}>
             {storyList.map((sItem, idx) => (
-              <button 
-                key={idx}
-                onClick={() => setViewIndex(idx)}
-                style={{
-                  display:"flex",justifyContent:"space-between",alignItems:"center",
-                  padding:"10px 14px",borderRadius:6,border:`1px solid ${viewIndex === idx ? T.greenBorder : T.cardBorder}`,
-                  background:viewIndex === idx ? T.greenLight : "#fff",
-                  cursor:"pointer",textAlign:"left"
-                }}
-              >
-                <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:viewIndex === idx ? T.green : T.text}}>
-                    {idx === 0 ? "Latest Story" : `Archived Story ${storyList.length - idx}`}
-                    <span style={{color: T.textLight, fontWeight: 400, marginLeft: 8}}>— {sItem.persona || "Objective CIO"}</span>
-                  </div>
-                  {sItem.timestamp && (
-                    <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>
-                      {new Date(sItem.timestamp).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}
+              <div key={idx} style={{display:"flex", alignItems:"center", gap:8}}>
+                <button 
+                  onClick={() => setViewIndex(idx)}
+                  style={{
+                    flex:1, display:"flex",justifyContent:"space-between",alignItems:"center",
+                    padding:"10px 14px",borderRadius:6,border:`1px solid ${viewIndex === idx ? T.greenBorder : T.cardBorder}`,
+                    background:viewIndex === idx ? T.greenLight : "#fff",
+                    cursor:"pointer",textAlign:"left"
+                  }}
+                >
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <div style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:viewIndex === idx ? T.green : T.text}}>
+                      {idx === 0 ? "Latest Story" : `Archived Story ${storyList.length - idx}`}
+                      <span style={{color: T.textLight, fontWeight: 400, marginLeft: 8}}>— {sItem.persona || "Objective CIO"}</span>
                     </div>
-                  )}
-                </div>
-                <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600}}>
-                  Confidence: {sItem.confidenceScore}%
-                </div>
-              </button>
+                    {sItem.timestamp && (
+                      <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>
+                        {new Date(sItem.timestamp).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600}}>
+                    Confidence: {sItem.confidenceScore}%
+                  </div>
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const updated = storyList.filter((_, i) => i !== idx);
+                    setStoryList(updated);
+                    localStorage.setItem(`stock_story_${s.symbol}`, JSON.stringify(updated));
+                    if (viewIndex === idx) setViewIndex(0);
+                    else if (viewIndex > idx) setViewIndex(viewIndex - 1);
+                    if (updated.length <= 1) setShowArchive(false);
+                  }}
+                  style={{background:"transparent", border:`1px solid ${T.cardBorder}`, borderRadius: 6, padding: "10px", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center"}}
+                >
+                  <Trash size={14} color={T.red} />
+                </button>
+              </div>
             ))}
           </div>
         </Card>
@@ -3252,7 +3272,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
       {story?.bullBear && (
         <Card>
           <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude 4.7 Opus" />
-          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
+          <div style={{fontSize:16,lineHeight:1.8,color:T.text,fontFamily:T.sans,textAlign:"justify"}}>
             {story.bullBear.split("Bear says:").map((part, i) => (
               <div key={i} style={{marginBottom: i === 0 ? 12 : 0, paddingBottom: i === 0 ? 12 : 0, borderBottom: i === 0 ? `1px dashed ${T.divider}` : "none"}}>
                 {i === 0 ? <strong style={{color:T.green}}>Gemini (Bull): </strong> : <strong style={{color:T.red}}>Claude (Bear): </strong>}
