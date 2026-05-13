@@ -1671,9 +1671,19 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             payout_series.append(min(r["dps"] / r["eps"], 1.5))
     payout_median_5y = sorted(payout_series)[len(payout_series) // 2] if payout_series else 0
 
-    # Median P/E over last 5 years (filter null/negative)
-    pe_series_5y = [r["pe"] for r in recent5 if r["pe"] is not None and r["pe"] > 0]
+    # Median P/E over last 5 years (filter null/negative and outliers > 100x)
+    pe_series_5y = [r["pe"] for r in recent5 if r["pe"] is not None and 0 < r["pe"] < 100]
     pe_median_5y = sorted(pe_series_5y)[len(pe_series_5y) // 2] if len(pe_series_5y) >= 3 else None
+
+    # Median Book Yield (EPS / prior BVPS) over last 5 years
+    book_yield_series = []
+    recent6 = history_rows[-6:] if len(history_rows) >= 6 else history_rows
+    for i in range(1, len(recent6)):
+        prev_bvps = recent6[i-1]["bvps"]
+        eps = recent6[i]["eps"]
+        if prev_bvps > 0:
+            book_yield_series.append(eps / prev_bvps)
+    book_yield_median_5y = sorted(book_yield_series)[len(book_yield_series) // 2] if book_yield_series else None
 
     # Persist to v dict for compute_buffett_valuation + downstream display
     v["bvps_latest"] = round(bvps_latest, 2)
@@ -1683,6 +1693,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     v["roe_median_5y"] = round(roe_median_5y, 4) if roe_median_5y is not None else None
     v["pe_median_5y"] = round(pe_median_5y, 2) if pe_median_5y is not None else None
     v["payout_median_5y"] = round(payout_median_5y, 4)
+    v["book_yield_median_5y"] = round(book_yield_median_5y, 4) if book_yield_median_5y is not None else None
     v["eps_positive_years_5y"] = eps_positive_years_5y
 
     # Run Buffett valuation (gate-aware; falls through with _evaluated=False on failure)
@@ -2082,54 +2093,44 @@ def compute_earnings_momentum(analyst: dict) -> dict:
 # 10. NEW: Upside Potential (enhanced with DCF cross-check)
 # ---------------------------------------------------------------------------
 def project_future_eps_buffett(value_data: dict, sym: str) -> tuple:
-    """5-year EPS projection. Dispatches between BVPS×ROE and direct EPS CAGR.
-
-    Returns (eps_5y, method_name, _evaluated, fallback_reason).
-    method_name is "bvps_roe" or "eps_cagr". On gate failure returns
-    (None, None, False, reason_string).
+    """5-year EPS projection.
+    
+    Returns (eps_5y, method_name, g_capped, _evaluated, fallback_reason).
+    method_name is "eps_cagr". On gate failure returns
+    (None, None, None, False, reason_string).
     """
-    bvps_today = value_data.get("bvps_latest", 0)
     eps_today = value_data.get("eps_latest", 0)
     bvps_cagr_5y = value_data.get("bvps_cagr_5y")
     eps_cagr_5y = value_data.get("eps_cagr_5y")
-    roe_median_5y = value_data.get("roe_median_5y")
+    book_yield_median_5y = value_data.get("book_yield_median_5y")
     eps_positive = value_data.get("eps_positive_years_5y", 0)
 
     # Gate: need solid 5y history
     if eps_positive < 4:
-        return None, None, False, f"only {eps_positive}/5 profitable years"
+        return None, None, None, False, f"only {eps_positive}/5 profitable years"
     if eps_today <= 0:
-        return None, None, False, "current EPS not positive"
-    if bvps_today <= 0:
-        return None, None, False, "negative book value"
-    if roe_median_5y is None or roe_median_5y <= 0:
-        return None, None, False, "median ROE not positive"
+        return None, None, None, False, "current EPS not positive"
 
-    # Cap inputs
-    g_bvps_capped = max(0.02, min(bvps_cagr_5y or 0, 0.15))
-    g_eps_capped  = max(0.02, min(eps_cagr_5y or 0, 0.25))
-    roe_capped    = max(0.05, min(roe_median_5y, 0.30))
+    # g: should be the smallest CAGR between EPS, book yield or BVPS.
+    cagrs = []
+    if bvps_cagr_5y is not None: cagrs.append(bvps_cagr_5y)
+    if eps_cagr_5y is not None: cagrs.append(eps_cagr_5y)
+    if book_yield_median_5y is not None: cagrs.append(book_yield_median_5y)
+    
+    g_best = min(cagrs) if cagrs else 0.05
+    g_capped = max(0.02, min(g_best, 0.25))
 
-    # Method A — Buffett classical
-    bvps_5y = bvps_today * (1 + g_bvps_capped) ** 5
-    eps_5y_a = bvps_5y * roe_capped
+    eps_5y = eps_today * (1 + g_capped) ** 5
 
-    # Method B — direct EPS CAGR
-    eps_5y_b = eps_today * (1 + g_eps_capped) ** 5
-
-    # Dispatch: EPS growing >50% faster than BVPS = capital-light, use B
-    if (eps_cagr_5y is not None and bvps_cagr_5y is not None
-        and eps_cagr_5y > bvps_cagr_5y * 1.5 + 0.05):
-        return eps_5y_b, "eps_cagr", True, None
-    return eps_5y_a, "bvps_roe", True, None
+    return eps_5y, "eps_cagr", g_capped, True, None
 
 
 def compute_buffett_valuation(value_data: dict, sym: str,
                               current_price: float, hurdle: float = 0.10) -> dict:
-    """Full Buffett 5y valuation. Returns dict with all fields needed by
+    """Full Value 5y valuation. Returns dict with all fields needed by
     Stock dataclass. _evaluated=False with fallback_reason on gate failure.
     """
-    eps_5y, method, evaluated, reason = project_future_eps_buffett(value_data, sym)
+    eps_5y, method, g_capped, evaluated, reason = project_future_eps_buffett(value_data, sym)
     if not evaluated:
         return {"_evaluated": False, "fallback_reason": reason,
                 "method": "", "g_assumed": 0.0, "roe_assumed": 0.0,
@@ -2144,10 +2145,6 @@ def compute_buffett_valuation(value_data: dict, sym: str,
                 "fair_value": 0.0, "upside_pct": 0.0}
     pe_capped = max(8.0, min(pe_median, 50.0))
 
-    g_used = (value_data.get("eps_cagr_5y") if method == "eps_cagr"
-              else value_data.get("bvps_cagr_5y")) or 0
-    roe_used = value_data.get("roe_median_5y") if method == "bvps_roe" else 0
-
     future_price = eps_5y * pe_capped
     fair_value = future_price / (1 + hurdle) ** 5
     upside_pct = (fair_value - current_price) / current_price * 100 if current_price > 0 else 0
@@ -2155,8 +2152,8 @@ def compute_buffett_valuation(value_data: dict, sym: str,
     return {
         "_evaluated": True, "fallback_reason": "",
         "method": method,
-        "g_assumed": round(g_used, 4),
-        "roe_assumed": round(roe_used, 4),
+        "g_assumed": round(g_capped, 4),
+        "roe_assumed": 0.0,
         "pe_median": round(pe_capped, 2),
         "eps_5y": round(eps_5y, 2),
         "future_price": round(future_price, 2),

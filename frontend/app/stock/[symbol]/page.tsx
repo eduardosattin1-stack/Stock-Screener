@@ -1518,7 +1518,7 @@ function BuffettBlock({s}:{s:StockData}){
   }
 
   // Full Buffett projection
-  const methodLabel = method === "bvps_roe" ? "Buffett (BVPS × ROE)" : "Direct EPS CAGR";
+  const methodLabel = method === "eps_cagr" ? "Min Growth (EPS, BVPS, Yield)" : "Value Projection";
   const methodColor = method === "bvps_roe" ? T.green : T.blue;
   const fairValue = s.buffett_fair_value || 0;
   const futurePrice = s.buffett_future_price || 0;
@@ -1528,7 +1528,7 @@ function BuffettBlock({s}:{s:StockData}){
   return (
     <div style={{padding:"10px 12px",borderRadius:6,background:"#fafbfc",border:`1px solid ${T.divider}`,marginTop:10}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
-        <span style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>BUFFETT 5Y VALUATION</span>
+        <span style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>VALUE 5Y PROJECTION</span>
         <span style={{fontSize:9,color:methodColor,fontFamily:T.mono,fontWeight:600}}>{methodLabel}</span>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 14px",fontSize:11,fontFamily:T.mono}}>
@@ -2040,8 +2040,16 @@ function FinancialChartsPanel({
 }) {
   const [isQuarterly, setIsQuarterly] = useState(false);
   const [showGrowth, setShowGrowth] = useState(false);
+  const [activeChart, setActiveChart] = useState<"income"|"balance"|"cash">("income");
+  const [activeKeys, setActiveKeys] = useState<Record<string, boolean>>({
+    revenue: true, operatingIncome: true, netIncome: true,
+    totalAssets: true, totalLiabilities: true, totalEquity: true,
+    operatingCashFlow: true, freeCashFlow: true
+  });
 
-  if (loading) return <Card><SH title="Financial Charts"/><div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
+  const toggleKey = (k: string) => setActiveKeys(prev => ({...prev, [k]: !prev[k]}));
+
+  if (loading) return <Card><SH title="Financials Overview"/><div style={{padding:40,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;
   
   const srcIncs = isQuarterly ? incomesQ : incomes;
   const srcBals = isQuarterly ? balanceSheetsQ : balanceSheets;
@@ -2049,19 +2057,26 @@ function FinancialChartsPanel({
   
   if (!srcIncs.length || !srcBals.length || !srcCfs.length) return null;
 
-  // For YoY/QoQ growth we need N+1 data points, so we slice -21 for quarters, -11 for annual, then we render only 20 / 10.
   const limit = isQuarterly ? 21 : 11;
   const incsRaw = [...srcIncs].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
   const balsRaw = [...srcBals].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
   const cfsRaw  = [...srcCfs].sort((a,b)=>a.date.localeCompare(b.date)).slice(-limit);
 
-  // The actual render data is the last `limit - 1` items.
   const incs = incsRaw.slice(- (limit - 1));
   const bals = balsRaw.slice(- (limit - 1));
   const cfs  = cfsRaw.slice(- (limit - 1));
   
-  const Chart = ({title, data, rawData, keys, colors, labels}: {title:string, data:any[], rawData:any[], keys:string[], colors:string[], labels:string[]}) => {
-    const W=300, H=160, PT=25, PB=20, PL=10, PR=10;
+  const Chart = ({data, rawData, allKeys, allColors, allLabels}: {data:any[], rawData:any[], allKeys:string[], allColors:string[], allLabels:string[]}) => {
+    const activeIndices = allKeys.map((k, i) => activeKeys[k] ? i : -1).filter(i => i !== -1);
+    const keys = activeIndices.map(i => allKeys[i]);
+    const colors = activeIndices.map(i => allColors[i]);
+    const labels = activeIndices.map(i => allLabels[i]);
+    
+    if (keys.length === 0) {
+      return <div style={{height:220, display:"flex", alignItems:"center", justifyContent:"center", color:T.textLight, fontSize:11, fontFamily:T.mono}}>Select a metric to view</div>;
+    }
+
+    const W=700, H=240, PT=showGrowth ? 60 : 30, PB=20, PL=10, PR=10;
 
     const fmtN = (v: number) => {
       if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(1) + "B";
@@ -2071,27 +2086,12 @@ function FinancialChartsPanel({
 
     const plotData = data.map((d, i) => {
       const prevD = rawData[i];
-      const items = keys.map(k => {
+      const items = keys.map((k, j) => {
         const val = d[k] || 0;
         const prevVal = prevD ? (prevD[k] || 0) : 0;
-        let plotVal = 0;
-        let displayStr = "";
-        
-        if (showGrowth) {
-          if (prevVal !== 0 && prevVal > 0) {
-            const pct = ((val - prevVal) / prevVal) * 100;
-            // Cap visual growth at 500% to avoid massive outliers flattening the rest of the chart
-            plotVal = Math.max(-100, Math.min(500, pct)); 
-            displayStr = (pct > 0 ? "+" : "") + pct.toFixed(0) + "%";
-          } else {
-            plotVal = 0;
-            displayStr = "—";
-          }
-        } else {
-          plotVal = val;
-          displayStr = fmtN(val);
-        }
-        return { val, plotVal, displayStr };
+        const pct = prevVal !== 0 && prevVal > 0 ? ((val - prevVal) / prevVal) * 100 : 0;
+        const pctStr = (pct > 0 ? "+" : "") + pct.toFixed(0) + "%";
+        return { val, plotVal: val, displayStr: fmtN(val), prevVal, pct, pctStr };
       });
       return { d, items };
     });
@@ -2108,11 +2108,24 @@ function FinancialChartsPanel({
     const barW = (W - PL - PR) / (n * 1.5);
 
     return (
-      <div style={{flex:1, minWidth:260}}>
-        <div style={{fontSize:11, color:T.textMuted, fontFamily:T.mono, fontWeight:600, letterSpacing:"0.08em", marginBottom:8}}>{title}</div>
+      <div style={{flex:1, width:"100%"}}>
+        <div style={{display:"flex", gap:12, marginBottom:16, justifyContent:"center"}}>
+          {allLabels.map((l, i) => {
+            const k = allKeys[i];
+            const isActive = activeKeys[k];
+            return (
+              <div key={k} onClick={()=>toggleKey(k)} style={{display:"flex", alignItems:"center", gap:6, fontSize:10, fontFamily:T.mono, color:isActive ? T.text : T.textLight, cursor:"pointer", background:isActive ? "#fff" : "transparent", padding:"4px 8px", borderRadius:4, border:`1px solid ${isActive ? T.divider : "transparent"}`, boxShadow:isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", transition:"all 0.2s"}}>
+                <div style={{width:10, height:10, borderRadius:2, background:isActive ? allColors[i] : T.divider}} />
+                {l}
+              </div>
+            );
+          })}
+        </div>
+
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:"#fafbfc", borderRadius:4, border:`1px solid ${T.divider}`}}>
           {/* Zero line */}
           <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
+          
           {plotData.map(({ d, items }, i) => {
             const xCenter = PL + (i + 0.5) * ((W - PL - PR) / n);
             const clusterW = barW;
@@ -2121,16 +2134,18 @@ function FinancialChartsPanel({
             return (
               <g key={i}>
                 {items.map((item, j) => {
-                  const { val, plotVal, displayStr } = item;
+                  const { val, plotVal, displayStr, prevVal, pct, pctStr } = item;
                   const bx = xCenter - clusterW/2 + j*subBarW;
                   const by = plotVal >= 0 ? yPx(plotVal) : zeroY;
                   const bh = Math.abs(yPx(plotVal) - zeroY);
                   const isLatest = i === n - 1;
+                  
                   return (
                     <g key={j}>
                       <rect x={bx} y={by} width={subBarW*0.9} height={bh} fill={colors[j]} rx={1}>
-                        <title>{labels[j]} ({d.calendarYear}{d.period ? ` ${d.period}` : ''}): {fmtN(val)} {showGrowth ? `(${displayStr})` : ''}</title>
+                        <title>{labels[j]} ({d.calendarYear}{d.period ? ` ${d.period}` : ''}): {displayStr} {showGrowth ? `(${pctStr})` : ''}</title>
                       </rect>
+                      
                       {/* Discreet number label, rotated */}
                       <text 
                         x={bx + subBarW*0.45} 
@@ -2145,10 +2160,66 @@ function FinancialChartsPanel({
                       >
                         {displayStr}
                       </text>
+                      
+                      {/* Growth Bracket */}
+                      {showGrowth && i > 0 && prevVal > 0 && val > 0 && (
+                        (() => {
+                          const prevXCenter = PL + (i - 1 + 0.5) * ((W - PL - PR) / n);
+                          const prevBx = prevXCenter - clusterW/2 + j*subBarW;
+                          const prevBy = yPx(prevVal);
+                          // Bracket Y is dynamically placed above the taller of the two bars
+                          const bracketY = Math.min(prevBy, by) - 14 - (j * 10);
+                          const midX = (prevBx + bx) / 2 + subBarW/2;
+                          const pillWidth = 28;
+                          
+                          return (
+                            <g>
+                              {/* Connector path */}
+                              <path 
+                                d={`M ${prevBx + subBarW/2} ${prevBy - 2} V ${bracketY} H ${bx + subBarW/2} V ${by - 4}`} 
+                                fill="none" 
+                                stroke={colors[j] === "#e5e7eb" ? "#9ca3af" : colors[j]} 
+                                strokeWidth={0.5} 
+                                strokeDasharray="1,1" 
+                                opacity={0.6} 
+                              />
+                              {/* Arrow head */}
+                              <polygon 
+                                points={`${bx + subBarW/2 - 2},${by - 6} ${bx + subBarW/2 + 2},${by - 6} ${bx + subBarW/2},${by - 2}`} 
+                                fill={colors[j] === "#e5e7eb" ? "#9ca3af" : colors[j]} 
+                                opacity={0.6} 
+                              />
+                              {/* Pill */}
+                              <rect 
+                                x={midX - pillWidth/2} 
+                                y={bracketY - 5.5} 
+                                width={pillWidth} 
+                                height={11} 
+                                rx={5.5} 
+                                fill={"#fff"} 
+                                stroke={colors[j] === "#e5e7eb" ? "#d1d5db" : colors[j]} 
+                                strokeWidth={0.5} 
+                                opacity={0.9}
+                              />
+                              <text 
+                                x={midX} 
+                                y={bracketY + 2.5} 
+                                fontSize={5} 
+                                fontFamily={T.mono} 
+                                fontWeight={700} 
+                                fill={pct > 0 ? "#10b981" : pct < 0 ? T.red : T.textMuted} 
+                                textAnchor="middle"
+                              >
+                                {pctStr}
+                              </text>
+                            </g>
+                          );
+                        })()
+                      )}
                     </g>
                   );
                 })}
-                {/* X axis labels (years or quarters) */}
+                {/* X axis labels */}
                 {((isQuarterly ? i % 4 === 3 : i % 2 === 1) || d.isEstimate) && (
                   <text x={xCenter} y={H-5} textAnchor="middle" fontSize={8} fontFamily={T.mono} fill={d.isEstimate ? T.blue : T.textLight}>
                     {isQuarterly 
@@ -2160,14 +2231,6 @@ function FinancialChartsPanel({
             );
           })}
         </svg>
-        <div style={{display:"flex", gap:12, marginTop:6, justifyContent:"center"}}>
-          {labels.map((l, i) => (
-            <div key={i} style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textLight}}>
-              <div style={{width:8, height:8, borderRadius:2, background:colors[i]}} />
-              {l}
-            </div>
-          ))}
-        </div>
       </div>
     );
   };
@@ -2187,10 +2250,37 @@ function FinancialChartsPanel({
           </div>
         </div>
       </div>
-      <div style={{display:"flex", flexWrap:"wrap", gap:20}}>
-        <Chart title="INCOME STATEMENT" data={incs} rawData={incsRaw} keys={["revenue", "operatingIncome", "netIncome"]} colors={["#e5e7eb", T.amber, T.green]} labels={["Rev", "OpInc", "NetInc"]} />
-        <Chart title="BALANCE SHEET" data={bals} rawData={balsRaw} keys={["totalAssets", "totalLiabilities", "totalEquity"]} colors={["#e5e7eb", T.red, T.green]} labels={["Assets", "Liabs", "Equity"]} />
-        <Chart title="CASH FLOW" data={cfs} rawData={cfsRaw} keys={["operatingCashFlow", "freeCashFlow"]} colors={["#d1d5db", T.blue]} labels={["OpCash", "FCF"]} />
+      
+      {/* Chart Tabs */}
+      <div style={{display:"flex", gap:24, borderBottom:`1px solid ${T.divider}`, marginBottom:20}}>
+        {[
+          {id:"income", label:"Income Statement"},
+          {id:"balance", label:"Balance Sheet"},
+          {id:"cash", label:"Cash Flow"}
+        ].map(t => (
+          <div 
+            key={t.id} 
+            onClick={()=>setActiveChart(t.id as any)} 
+            style={{
+              paddingBottom:8, 
+              cursor:"pointer", 
+              borderBottom:activeChart===t.id ? `2px solid ${T.text}` : "2px solid transparent", 
+              color:activeChart===t.id ? T.text : T.textMuted, 
+              fontSize:11, 
+              fontFamily:T.mono, 
+              fontWeight:600,
+              transition: "all 0.2s"
+            }}
+          >
+            {t.label}
+          </div>
+        ))}
+      </div>
+
+      <div>
+        {activeChart === "income" && <Chart data={incs} rawData={incsRaw} allKeys={["revenue", "operatingIncome", "netIncome"]} allColors={["#e5e7eb", T.amber, T.green]} allLabels={["Rev", "OpInc", "NetInc"]} />}
+        {activeChart === "balance" && <Chart data={bals} rawData={balsRaw} allKeys={["totalAssets", "totalLiabilities", "totalEquity"]} allColors={["#e5e7eb", T.red, T.green]} allLabels={["Assets", "Liabs", "Equity"]} />}
+        {activeChart === "cash" && <Chart data={cfs} rawData={cfsRaw} allKeys={["operatingCashFlow", "freeCashFlow"]} allColors={["#d1d5db", T.blue]} allLabels={["OpCash", "FCF"]} />}
       </div>
     </Card>
   );
@@ -2690,6 +2780,21 @@ function TrackRecordTable({s}:{s:StockData}){
     ]},
   ];
 
+  const TRACK_TOOLTIPS:Record<string,string> = {
+    "Book Value per Share (BV)": "Steadily rising BVPS indicates wealth creation over time.",
+    "Earnings per Share (EPS)": "Consistent, predictable growth in EPS is the hallmark of a compounder.",
+    "Dividends per Share": "A strong dividend growth history signals management confidence.",
+    "Shares Out (Millions)": "shares out reducing over time --> strong buybacks.",
+    "P/E (year-end)": "A stable or low P/E allows EPS growth to drive share price appreciation.",
+    "Revenue": "Top-line growth fuels the entire income statement.",
+    "Net Income": "Bottom-line profitability and its long-term compounding rate.",
+    "Shareholder Equity": "Total net assets; steady compounding is a strong signal.",
+    "Book Yield (per Share)": "EPS / prior-year BVPS. High yield implies efficient capital use.",
+    "Book Yield (ROE)": "Net Income / Equity. >15% consistently is the quality threshold.",
+    "Payout Ratio": "Dividends / EPS. Too high (>80%) leaves no room for reinvestment.",
+    "Retention Ratio": "1 - Payout Ratio. Reinvested capital driving future growth.",
+  };
+
   const cellStyle:React.CSSProperties = {padding:"6px 8px", textAlign:"right", fontSize:10, fontFamily:T.mono, borderBottom:`1px solid ${T.divider}`, whiteSpace:"nowrap"};
   const headStyle:React.CSSProperties = {...cellStyle, color:T.textMuted, fontWeight:600, fontSize:9};
   const labelStyle:React.CSSProperties = {...cellStyle, textAlign:"left", color:T.text, fontWeight:600, position:"sticky", left:0, background:T.card, zIndex:1};
@@ -2701,10 +2806,9 @@ function TrackRecordTable({s}:{s:StockData}){
       {/* Projection summary at top */}
       {s.buffett_evaluated && (
         <div style={{padding:"10px 12px",borderRadius:6,background:T.greenLight,border:`1px solid ${T.greenBorder}`,marginBottom:14,fontSize:11,fontFamily:T.mono,lineHeight:1.6}}>
-          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>BUFFETT 5Y VALUATION</div>
-          Method: <b>{s.buffett_method==="bvps_roe"?"BVPS × ROE":"Direct EPS CAGR"}</b> · 
+          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VALUE 5Y PROJECTION</div>
+          Method: <b>Min Growth (EPS, BVPS, Yield)</b> · 
           g = {((s.buffett_g_assumed||0)*100).toFixed(1)}% · 
-          {s.buffett_method==="bvps_roe" && <>ROE = {((s.buffett_roe_assumed||0)*100).toFixed(1)}% · </>}
           P/E = {(s.buffett_pe_median||0).toFixed(1)}x<br/>
           EPS₅ = {c}{(s.buffett_eps_5y||0).toFixed(2)} → 
           Future Price = <b>{c}{(s.buffett_future_price||0).toFixed(2)}</b> → 
@@ -2737,7 +2841,11 @@ function TrackRecordTable({s}:{s:StockData}){
                   const medVal = rd.showMedian ? median(series) : null;
                   return (
                     <tr key={i}>
-                      <td style={labelStyle}>{rd.label}</td>
+                      <td style={labelStyle}>
+                        <span title={TRACK_TOOLTIPS[rd.label]||""} style={{cursor:TRACK_TOOLTIPS[rd.label]?"help":"default",borderBottom:TRACK_TOOLTIPS[rd.label]?`1px dotted ${T.textLight}`:"none"}}>
+                          {rd.label}
+                        </span>
+                      </td>
                       {series.map((v,j)=><td key={j} style={cellStyle}>{rd.format(v)}</td>)}
                       <td style={{...cellStyle,color:T.green,fontWeight:600}}>{cagrVal!=null?fmtP(cagrVal):"—"}</td>
                       <td style={{...cellStyle,color:T.green,fontWeight:600}}>{cumVal!=null?fmtP(cumVal):"—"}</td>

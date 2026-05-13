@@ -217,8 +217,10 @@ def build_email() -> tuple[str, str]:
 def send_email(subject: str, body: str) -> bool:
     if not SMTP_USER or not SMTP_PASS:
         log.info("No SMTP credentials — printing email body only:\n")
-        print(f"Subject: {subject}\n")
-        print(body)
+        import sys
+        sys.stdout.buffer.write(f"Subject: {subject}\n\n".encode("utf-8"))
+        sys.stdout.buffer.write(body.encode("utf-8"))
+        sys.stdout.buffer.write(b"\n")
         return False
     try:
         msg = MIMEText(body, "plain", "utf-8")
