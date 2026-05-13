@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown } from "lucide-react";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
@@ -288,8 +288,22 @@ function readFactorsV8(s:StockData,mode:string):FactorsV8{
 async function fmpFetch(ep:string,p:Record<string,string|number>){const qs=new URLSearchParams();qs.set("e",ep);Object.entries(p).forEach(([k,v])=>qs.set(k,String(v)));try{const r=await fetch(`${FMP}?${qs}`);if(!r.ok)return null;const d=await r.json();return Array.isArray(d)?d:d?[d]:null;}catch{return null;}}
 
 // ── Shared Components ──────────────────────────────────────────────────────────
-function Card({children,style}:{children:React.ReactNode;style?:React.CSSProperties}){return<div style={{background:T.card,borderRadius:8,border:`1px solid ${T.cardBorder}`,boxShadow:T.cardShadow,padding:"16px 18px",...style}}>{children}</div>;}
-function SH({title,icon,sub}:{title:string;icon?:React.ReactNode;sub?:string}){return<div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:T.green,fontFamily:T.mono,textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:`2px solid ${T.greenLight}`}}>{icon}{title}{sub&&<span style={{marginLeft:"auto",fontSize:9,color:T.textLight,fontWeight:400,textTransform:"none",letterSpacing:0}}>{sub}</span>}</div>;}
+function Card({children,style}:{children:React.ReactNode;style?:React.CSSProperties}){
+  const [minimized, setMinimized] = useState(false);
+  const childrenArray = React.Children.toArray(children);
+  const firstChild = childrenArray[0];
+  let header = firstChild;
+  if (React.isValidElement(firstChild) && ((firstChild.type as any).name === 'SH' || firstChild.type === SH)) {
+    header = React.cloneElement(firstChild as React.ReactElement<any>, {
+      onToggle: () => setMinimized(!minimized),
+      minimized: minimized
+    });
+  }
+  return <div style={{background:T.card,borderRadius:8,border:`1px solid ${T.cardBorder}`,boxShadow:T.cardShadow,padding:minimized?"12px 18px":"16px 18px",...style}}>{header}{!minimized && childrenArray.slice(1)}</div>;
+}
+function SH({title,icon,sub,onToggle,minimized}:{title:string;icon?:React.ReactNode;sub?:string;onToggle?:()=>void;minimized?:boolean}){
+  return <div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:T.green,fontFamily:T.mono,textTransform:"uppercase",marginBottom:minimized?0:12,paddingBottom:minimized?0:8,borderBottom:minimized?"none":`2px solid ${T.greenLight}`}}>{icon}{title}{sub&&<span style={{marginLeft:"auto",fontSize:9,color:T.textLight,fontWeight:400,textTransform:"none",letterSpacing:0}}>{sub}</span>}{onToggle&&<button onClick={(e)=>{e.preventDefault(); e.stopPropagation(); onToggle();}} style={{marginLeft:sub?8:"auto",background:"none",border:"none",cursor:"pointer",color:T.textLight,display:"flex",alignItems:"center",padding:4}}>{minimized?<ChevronDown size={14}/>:<ChevronUp size={14}/>}</button>}</div>;
+}
 function Metric({label,value,color,sub}:{label:string;value:string;color?:string;sub?:string}){const tip=TOOLTIPS[label]||"";return<div style={{padding:"7px 0",borderBottom:`1px solid ${T.divider}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}><span title={tip} style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,fontWeight:500,cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{label}</span><span style={{fontSize:12,color:color||T.text,fontFamily:T.mono,fontWeight:600}}>{value}</span></div>{sub&&<div style={{fontSize:9,color:T.textLight,marginTop:2,fontFamily:T.mono}}>{sub}</div>}</div>;}
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
@@ -3390,10 +3404,11 @@ export default function StockDetail(){
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
       <GrowthPanel incomes={incomes} loading={fmpLoading} ratios={ratios}/>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>       <div style={{margin:"16px 0"}}><PeersPanel symbol={s.symbol} companyName={s.symbol}/></div>
-
-      {/* News */}
-      <div style={{marginBottom:16}}><NewsFeed symbol={s.symbol}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14,margin:"16px 0"}}>
+        <PeersPanel symbol={s.symbol} companyName={s.symbol}/>
+        <NewsFeed symbol={s.symbol}/>
+      </div>
 
 {/* Active signals */}
       {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}

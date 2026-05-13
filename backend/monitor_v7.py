@@ -310,6 +310,10 @@ def remove_position(state, symbol, exit_price=None, reason="Manual removal", **k
 
     # v7.2: gracefully upgrade older state files that don't have 'history' yet
     state.setdefault("history", [])
+    
+    # Extract option specific fields to preserve in history
+    opt_fields = {k: p[k] for k in ["ev", "risk", "strikes", "strategy", "iv", "contracts"] if k in p}
+    
     state["history"].append({
         "symbol": symbol,
         "action": "REMOVED",
@@ -321,6 +325,7 @@ def remove_position(state, symbol, exit_price=None, reason="Manual removal", **k
         "reason": reason,
         "days_held": (datetime.now() - datetime.strptime(p["entry_date"], "%Y-%m-%d")).days
             if p.get("entry_date") else 0,
+        **opt_fields,
         **kwargs
     })
     state["history"] = state["history"][-100:]  # keep last 100

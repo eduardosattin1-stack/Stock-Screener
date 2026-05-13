@@ -32,7 +32,7 @@ interface Position {
   contracts?: number;
 }
 interface MonitorAction { symbol:string; action:string; urgency:string; current_price:number; entry_price:number; pnl_pct:number; entry_composite:number; current_composite:number; comp_change_pct:number; entry_signal:string; current_signal:string; days_held:number; catalyst_score:number; catalyst_flags:string[]; quality_score:number; bull_score:number; reasons:string[]; }
-interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; asset_type?: "stock" | "option"; dd_touch?:number; gain_touch?:number; }
+interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; asset_type?: "stock" | "option"; dd_touch?:number; gain_touch?:number; ev?:number; risk?:number; }
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
 
 const SIG: Record<string,{color:string;bg:string;border:string}> = {
@@ -430,7 +430,7 @@ export default function Portfolio(){
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a"}}>{p.contracts}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>EV {p.ev?Math.round(p.ev):"—"} / Risk {p.risk?Math.round(p.risk):"—"}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{p.ev && p.risk ? <><span style={{color: p.ev > 0 ? "#10b981" : "#ef4444", fontWeight:600}}>{p.ev > 0 ? "+" : ""}{(p.ev / p.risk * 100).toFixed(0)}%</span> <span style={{color:"#9ca3af"}}>(${Math.round(p.ev)}/c)</span></> : "—"}</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{p.iv?(p.iv*100).toFixed(0)+"%":"—"}</td>
                       <td style={{padding:"10px 6px",textAlign:"center"}}>
                         <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===`${p.symbol}-${p.strikes}`?null:`${p.symbol}-${p.strikes}`);}} style={{
@@ -475,7 +475,7 @@ export default function Portfolio(){
             )}
             <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                <thead><tr>{["Symbol","Action","Date","Entry","Exit","P&L %","Days","DD/Gain","Reason"].map((h,i)=><th key={h} style={{...thStyle,textAlign:i===0?"left":"right"}}>{h}</th>)}</tr></thead>
+                <thead><tr>{["Symbol","Action","Date","Entry","Exit","P&L %","Days","EV/Risk","DD/Gain","Reason"].map((h,i)=><th key={h} style={{...thStyle,textAlign:i===0?"left":"right"}}>{h}</th>)}</tr></thead>
                 <tbody>
                   {history.slice(0,40).map((h,i)=>{const c=h.pnl_pct>=0?"#2d7a4f":"#ef4444";return(
                     <tr key={i} style={{borderBottom:"1px solid #f3f4f6"}}>
@@ -486,6 +486,9 @@ export default function Portfolio(){
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a",fontWeight:600}}>${h.exit_price.toFixed(2)}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:700,color:c}}>{h.pnl_pct>=0?"+":""}{(h.pnl_pct*100).toFixed(1)}%</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>{h.days_held}d</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>
+                        {h.asset_type==="option" && h.ev && h.risk ? <><span style={{color: h.ev > 0 ? "#10b981" : "#ef4444", fontWeight:600}}>{h.ev > 0 ? "+" : ""}{(h.ev / h.risk * 100).toFixed(0)}%</span> <span style={{color:"#9ca3af"}}>(${Math.round(h.ev)}/c)</span></> : "—"}
+                      </td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>
                         {h.asset_type==="option" && (h.dd_touch!==undefined || h.gain_touch!==undefined) ? (
                           <>

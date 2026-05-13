@@ -763,6 +763,7 @@ function StrategiesTab() {
             alpha_pp: m.alpha_pp,
           }))}
           openCount={compounderUs?.current_basket?.length ?? 0}
+          lastMonitorRun={compounderUs?.last_monitor_run}
         />
         <StrategyKPICard
           title="COMPOUNDER GLOBAL"
@@ -784,6 +785,7 @@ function StrategiesTab() {
             alpha_pp: m.alpha_pp,
           }))}
           openCount={compounderGlobal?.current_basket?.length ?? 0}
+          lastMonitorRun={compounderGlobal?.last_monitor_run}
         />
         <StrategyKPICard
           title="MOMENTUM"
@@ -805,6 +807,7 @@ function StrategiesTab() {
             alpha_pp: m.alpha_pp,
           }))}
           openCount={momentum?.current_basket?.length ?? 0}
+          lastMonitorRun={momentum?.last_monitor_run}
         />
         <StrategyKPICard
           title="FALLEN ANGEL"
@@ -826,6 +829,7 @@ function StrategiesTab() {
             alpha_pp: m.alpha_pp,
           }))}
           openCount={fa?.current_basket?.length ?? 0}
+          lastMonitorRun={fa?.last_monitor_run}
         />
       </div>
 
@@ -1256,7 +1260,7 @@ function buildBoringSummary(boring: BoringHistory | null): KPISummary | null {
 }
 
 function StrategyKPICard({
-  title, subtitle, inception, summary, marks, openCount,
+  title, subtitle, inception, summary, marks, openCount, lastMonitorRun,
 }: {
   title: string;
   subtitle: string;
@@ -1264,6 +1268,7 @@ function StrategyKPICard({
   summary: KPISummary | null;
   marks?: { date: string; basket_return_pct: number; spy_return_pct: number; alpha_pp: number }[];
   openCount: number;
+  lastMonitorRun?: string;
 }) {
   const lastMark = marks && marks.length > 0 ? marks[marks.length - 1] : null;
   return (
@@ -1297,15 +1302,24 @@ function StrategyKPICard({
         />
       </div>
 
-      {lastMark && (
+      {(lastMark || lastMonitorRun) && (
         <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted,
                       borderTop: `1px solid ${T.divider}`, paddingTop: 8 }}>
-          Last mark {lastMark.date}: basket {lastMark.basket_return_pct >= 0 ? "+" : ""}
-          {lastMark.basket_return_pct.toFixed(2)}% · SPY {lastMark.spy_return_pct >= 0 ? "+" : ""}
-          {lastMark.spy_return_pct.toFixed(2)}% · alpha{" "}
-          <span style={{ color: lastMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
-            {lastMark.alpha_pp >= 0 ? "+" : ""}{lastMark.alpha_pp.toFixed(2)}pp
-          </span>
+          {lastMonitorRun && (
+            <div style={{ marginBottom: 4 }}>
+              Prices refreshed: <span style={{ color: T.text }}>{lastMonitorRun}</span>
+            </div>
+          )}
+          {lastMark && (
+            <div>
+              Weekly mark {lastMark.date}: basket {lastMark.basket_return_pct >= 0 ? "+" : ""}
+              {lastMark.basket_return_pct.toFixed(2)}% · SPY {lastMark.spy_return_pct >= 0 ? "+" : ""}
+              {lastMark.spy_return_pct.toFixed(2)}% · alpha{" "}
+              <span style={{ color: lastMark.alpha_pp >= 0 ? T.green : T.red, fontWeight: 700 }}>
+                {lastMark.alpha_pp >= 0 ? "+" : ""}{lastMark.alpha_pp.toFixed(2)}pp
+              </span>
+            </div>
+          )}
         </div>
       )}
     </Card>
