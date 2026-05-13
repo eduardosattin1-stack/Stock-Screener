@@ -12,17 +12,18 @@ export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/fmp?e=historical-price-full/${symbol}&timeseries=600`)
+    fetch(`/api/fmp?e=historical-price-eod/full&symbol=${symbol}`)
       .then(res => res.json())
       .then(json => {
-        if (!json || !json.historical || json.historical.length === 0) {
+        if (!json || !Array.isArray(json) || json.length === 0) {
           setError("No historical data found.");
           return;
         }
         
         // FMP returns descending order (newest first).
         // react-financial-charts requires ascending order (oldest first).
-        const parsed = json.historical.reverse().map((d: any) => ({
+        // Take the last 600 days to keep performance reasonable.
+        const parsed = json.slice(0, 600).reverse().map((d: any) => ({
           date: new Date(d.date),
           open: d.open,
           high: d.high,

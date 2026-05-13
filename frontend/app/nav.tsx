@@ -6,18 +6,18 @@ export default function Nav() {
   const pathname = usePathname();
   const router = useRouter();
   const links = [
-    { href: "/", label: "Screener", icon: <BarChart3 size={13} /> },
-    { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
-    { href: "/performance", label: "Performance", icon: <TrendingUp size={13} /> },
-    { href: "/signals", label: "Signals", icon: <Radio size={13} /> },
+    { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
+    { href: "/portfolio", label: "Live Track Record", icon: <Briefcase size={13} /> },
+    { href: "/performance", label: "System Performance", icon: <TrendingUp size={13} /> },
+    { href: "/signals", label: "Action Alerts", icon: <Radio size={13} /> },
   ];
   return (
     <nav style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 24px", borderBottom:"1px solid var(--border)", background:"var(--bg)", position:"sticky", top:0, zIndex:50 }}>
       <div style={{ display:"flex", alignItems:"center", gap:20 }}>
         <div style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }} onClick={()=>router.push("/")}>
-          <div style={{ width:22, height:22, borderRadius:5, background:"var(--green)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, color:"#fff", fontFamily:"var(--font-mono)" }}>CB</div>
-          <span style={{ fontSize:12, fontWeight:700, color:"var(--text)", fontFamily:"var(--font-mono)", letterSpacing:"0.04em" }}>SCREENER</span>
-          <span style={{ fontSize:9, fontWeight:600, color:"#8b5cf6", fontFamily:"var(--font-mono)", padding:"1px 5px", borderRadius:3, background:"#f5f3ff", border:"1px solid #ddd6fe" }}>v7</span>
+          <div style={{ width:22, height:22, borderRadius:5, background:"var(--green)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, color:"#fff", fontFamily:"var(--font-mono)" }}>SA</div>
+          <span style={{ fontSize:12, fontWeight:700, color:"var(--text)", fontFamily:"var(--font-mono)", letterSpacing:"0.04em" }}>SPECULAIR</span>
+          <span style={{ fontSize:9, fontWeight:600, color:"#8b5cf6", fontFamily:"var(--font-mono)", padding:"1px 5px", borderRadius:3, background:"#f5f3ff", border:"1px solid #ddd6fe" }}>beta</span>
         </div>
         <div style={{ display:"flex", gap:2 }}>
           {links.map(l=>{const active=l.href==="/"?pathname==="/":pathname.startsWith(l.href);return(
