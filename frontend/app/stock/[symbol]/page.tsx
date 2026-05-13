@@ -2934,17 +2934,20 @@ function CustomAlertPanel({ symbol }: { symbol: string }) {
 }
 
 function AdvancedChartTab({ s }: { s: StockData }) {
-  const container = useRef<HTMLDivElement>(null);
+  const containerLeft = useRef<HTMLDivElement>(null);
+  const containerRight = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!container.current) return;
-    container.current.innerHTML = "";
+    if (!containerLeft.current || !containerRight.current) return;
+    containerLeft.current.innerHTML = "";
+    containerRight.current.innerHTML = "";
     
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
+    // Left Chart: Price action + Moving Averages
+    const scriptLeft = document.createElement("script");
+    scriptLeft.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    scriptLeft.type = "text/javascript";
+    scriptLeft.async = true;
+    scriptLeft.innerHTML = JSON.stringify({
       "autosize": true,
       "symbol": toTradingViewSymbol(s.symbol),
       "interval": "D",
@@ -2963,26 +2966,53 @@ function AdvancedChartTab({ s }: { s: StockData }) {
         "VWMA@tv-basicstudies",
         "MAExp@tv-basicstudies",
         "MAExp@tv-basicstudies",
-        "MAExp@tv-basicstudies",
-        "MASimple@tv-basicstudies",
+        "MASimple@tv-basicstudies"
+      ]
+    });
+    containerLeft.current.appendChild(scriptLeft);
+
+    // Right Chart: Oscillators and complex indicators
+    const scriptRight = document.createElement("script");
+    scriptRight.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    scriptRight.type = "text/javascript";
+    scriptRight.async = true;
+    scriptRight.innerHTML = JSON.stringify({
+      "autosize": true,
+      "symbol": toTradingViewSymbol(s.symbol),
+      "interval": "D",
+      "timezone": "exchange",
+      "theme": "light",
+      "style": "1",
+      "locale": "en",
+      "enable_publishing": false,
+      "backgroundColor": "rgba(255, 255, 255, 1)",
+      "gridColor": "rgba(240, 243, 250, 0)",
+      "hide_top_toolbar": false,
+      "hide_legend": false,
+      "save_image": false,
+      "allow_symbol_change": true,
+      "studies": [
         "RSI@tv-basicstudies",
         "MACD@tv-basicstudies",
         "RelativeVolume@tv-basicstudies",
-        "RSI@tv-basicstudies",
         "ADX@tv-basicstudies",
         "BB%B@tv-basicstudies",
         "OBV@tv-basicstudies"
       ]
     });
-    
-    container.current.appendChild(script);
+    containerRight.current.appendChild(scriptRight);
   }, [s.symbol]);
 
   return (
     <div>
-      <Card style={{ height: "700px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
-        <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
-      </Card>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", height: "700px", marginBottom: "16px" }}>
+        <Card style={{ height: "100%", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+          <div className="tradingview-widget-container" ref={containerLeft} style={{ height: "100%", width: "100%" }} />
+        </Card>
+        <Card style={{ height: "100%", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+          <div className="tradingview-widget-container" ref={containerRight} style={{ height: "100%", width: "100%" }} />
+        </Card>
+      </div>
       <CustomAlertPanel symbol={s.symbol} />
     </div>
   );

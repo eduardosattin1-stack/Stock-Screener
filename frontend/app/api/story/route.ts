@@ -41,7 +41,15 @@ export async function POST(req: NextRequest) {
     }
 
     const s = stockData;
-    const composite = s.composite?.toFixed(2) || "N/A";
+    const mode = s.mode || "momentum";
+
+    let compVal = 0;
+    if (mode === "fallen_angel") compVal = s.composite_fallen_angel ?? s.composite ?? 0;
+    else if (mode === "compounder_us") compVal = s.compounder_score_us ?? 0;
+    else if (mode === "compounder_global") compVal = s.compounder_score_global ?? 0;
+    else compVal = s.composite_momentum ?? s.composite ?? 0;
+    
+    const composite = compVal.toFixed(2);
     const momentum = s.momentum?.toFixed(2) || "N/A";
     const quality = s.quality?.toFixed(2) || "N/A";
     const growth = s.growth?.toFixed(2) || "N/A";
