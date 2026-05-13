@@ -60,18 +60,7 @@ def main():
 
         log.info(f"[{region}] Screener complete; running post-scan hooks…")
 
-        # ─── 2. Reload scan output ───
-        stocks = _load_scan_from_gcs(region)
-        if not stocks:
-            log.warning(f"[{region}] Could not reload scan output — hooks skipped")
-            continue
-        log.info(f"[{region}] Loaded {len(stocks)} stocks from latest_{region}.json")
-
-        # ─── 3. Signal tracker ───
-        try:
-            signal_tracker.update_from_scan(stocks, region)
-        except Exception as e:
-            log.error(f"[{region}] signal_tracker failed: {e}", exc_info=True)
+        log.info(f"[{region}] Screener complete.")
 
        
 

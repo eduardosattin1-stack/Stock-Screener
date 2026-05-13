@@ -4581,6 +4581,14 @@ def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = 
         gcs_upload("scans/latest.json", payload)
     log.info(f"GCS upload complete: scans/latest_{region}.json + dated archive")
 
+    # Post-scan hook: update P20 cycles, rolling health, and history
+    try:
+        import signal_tracker
+        stock_dicts = [vars(s) if hasattr(s, '__dataclass_fields__') else s for s in stocks]
+        signal_tracker.update_from_scan(stock_dicts, region)
+    except Exception as e:
+        log.warning(f"signal_tracker update_from_scan failed: {e}")
+
 
 # ---------------------------------------------------------------------------
 # 18. Portfolio Monitor Mode
