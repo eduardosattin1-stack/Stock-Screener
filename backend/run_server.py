@@ -650,6 +650,17 @@ class Handler(BaseHTTPRequestHandler):
             report = format_report(results, region=region, macro=macro)
             update_signal_history(results)
             save_scan_to_gcs(results, region, macro=macro)
+            # Post-scan: update P20 cycle tracking, rolling health, and stock
+            # history.  signal_tracker expects dicts (uses .get()), but screen()
+            # returns Stock dataclass objects — convert via vars().
+            try:
+                import signal_tracker
+                stock_dicts = [vars(s) if hasattr(s, '__dataclass_fields__') else s
+                               for s in results]
+                signal_tracker.update_from_scan(stock_dicts, region)
+            except Exception as st_err:
+                logging.warning(f"signal_tracker post-scan failed: {st_err}")
+                traceback.print_exc()
             today = datetime.now().strftime("%Y-%m-%d")
             send_email(f"CB Screener v7.2: {region.upper()} — {today}", report)
             self.send_response(200)
