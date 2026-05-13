@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 120; // 2 minutes for long-form generation
+export const maxDuration = 120;
+export const dynamic = 'force-dynamic'; // 2 minutes for long-form generation
 
 async function callGemini(prompt: string, apiKey: string, isJson: boolean = false) {
   const config: any = { temperature: 0.7, maxOutputTokens: 4096 };
@@ -35,7 +36,7 @@ async function callClaude(prompt: string, apiKey: string) {
       "anthropic-version": "2023-06-01"
     },
     body: JSON.stringify({
-      model: "claude-4-7-opus-20250514",
+      model: "claude-3-opus-20240229",
       max_tokens: 1500,
       temperature: 0.7,
       messages: [{ role: "user", content: prompt }]
