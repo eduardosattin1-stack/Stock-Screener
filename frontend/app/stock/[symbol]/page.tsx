@@ -1856,20 +1856,50 @@ function FinancialChartsPanel({
   
   const Chart = ({title, data, rawData, keys, colors, labels}: {title:string, data:any[], rawData:any[], keys:string[], colors:string[], labels:string[]}) => {
     const W=300, H=160, PT=25, PB=20, PL=10, PR=10;
-    const maxVal = Math.max(...data.flatMap(d => keys.map(k => Math.max(0, d[k]||0)))) * 1.1 || 1;
-    const minVal = Math.min(0, ...data.flatMap(d => keys.map(k => Math.min(0, d[k]||0)))) * 1.1 || 0;
+
+    const fmtN = (v: number) => {
+      if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(1) + "B";
+      if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(0) + "M";
+      return v.toFixed(0);
+    };
+
+    const plotData = data.map((d, i) => {
+      const prevD = rawData[i];
+      const items = keys.map(k => {
+        const val = d[k] || 0;
+        const prevVal = prevD ? (prevD[k] || 0) : 0;
+        let plotVal = 0;
+        let displayStr = "";
+        
+        if (showGrowth) {
+          if (prevVal !== 0 && prevVal > 0) {
+            const pct = ((val - prevVal) / prevVal) * 100;
+            // Cap visual growth at 500% to avoid massive outliers flattening the rest of the chart
+            plotVal = Math.max(-100, Math.min(500, pct)); 
+            displayStr = (pct > 0 ? "+" : "") + pct.toFixed(0) + "%";
+          } else {
+            plotVal = 0;
+            displayStr = "—";
+          }
+        } else {
+          plotVal = val;
+          displayStr = fmtN(val);
+        }
+        return { val, plotVal, displayStr };
+      });
+      return { d, items };
+    });
+
+    const allPlotVals = plotData.flatMap(p => p.items.map(it => it.plotVal));
+    let maxVal = Math.max(...allPlotVals, 0) * 1.1;
+    let minVal = Math.min(...allPlotVals, 0) * 1.1;
+    if (maxVal === 0 && minVal === 0) { maxVal = 10; minVal = -10; }
     const range = maxVal - minVal;
     
     const yPx = (val:number) => H - PB - ((val - minVal) / range) * (H - PT - PB);
     const zeroY = yPx(0);
     const n = data.length;
     const barW = (W - PL - PR) / (n * 1.5);
-    
-    const fmtN = (v: number) => {
-      if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(1) + "B";
-      if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(0) + "M";
-      return v.toFixed(0);
-    };
 
     return (
       <div style={{flex:1, minWidth:260}}>
@@ -1877,37 +1907,18 @@ function FinancialChartsPanel({
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:"#fafbfc", borderRadius:4, border:`1px solid ${T.divider}`}}>
           {/* Zero line */}
           <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
-          {data.map((d, i) => {
+          {plotData.map(({ d, items }, i) => {
             const xCenter = PL + (i + 0.5) * ((W - PL - PR) / n);
             const clusterW = barW;
             const subBarW = clusterW / keys.length;
             
-            // To compute growth, we need the previous period's data. 
-            // Since data is slice(1) of rawData, index i in data is index i+1 in rawData.
-            // So prev is rawData[i].
-            const prevD = rawData[i];
-            
             return (
               <g key={i}>
-                {keys.map((k, j) => {
-                  const val = d[k] || 0;
-                  const prevVal = prevD ? (prevD[k] || 0) : 0;
-                  
-                  let displayStr = "";
-                  if (showGrowth) {
-                     if (prevVal !== 0 && prevVal > 0) {
-                        const pct = ((val - prevVal) / prevVal) * 100;
-                        displayStr = (pct > 0 ? "+" : "") + pct.toFixed(0) + "%";
-                     } else {
-                        displayStr = "—";
-                     }
-                  } else {
-                     displayStr = fmtN(val);
-                  }
-
+                {items.map((item, j) => {
+                  const { val, plotVal, displayStr } = item;
                   const bx = xCenter - clusterW/2 + j*subBarW;
-                  const by = val >= 0 ? yPx(val) : zeroY;
-                  const bh = Math.abs(yPx(val) - zeroY);
+                  const by = plotVal >= 0 ? yPx(plotVal) : zeroY;
+                  const bh = Math.abs(yPx(plotVal) - zeroY);
                   const isLatest = i === n - 1;
                   return (
                     <g key={j}>
@@ -1917,9 +1928,9 @@ function FinancialChartsPanel({
                       {/* Discreet number label, rotated */}
                       <text 
                         x={bx + subBarW*0.45} 
-                        y={val >= 0 ? by - 3 : by + bh + 3} 
-                        textAnchor={val >= 0 ? "start" : "end"}
-                        transform={`rotate(-90 ${bx + subBarW*0.45} ${val >= 0 ? by - 3 : by + bh + 3})`}
+                        y={plotVal >= 0 ? by - 3 : by + bh + 3} 
+                        textAnchor={plotVal >= 0 ? "start" : "end"}
+                        transform={`rotate(-90 ${bx + subBarW*0.45} ${plotVal >= 0 ? by - 3 : by + bh + 3})`}
                         fontSize={isLatest ? 7 : 5.5} 
                         fontFamily={T.mono} 
                         fill={isLatest ? colors[j] === "#e5e7eb" ? T.textMuted : colors[j] : T.textLight}
