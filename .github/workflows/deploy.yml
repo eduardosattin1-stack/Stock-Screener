@@ -44,7 +44,7 @@ jobs:
             --memory=1Gi \
             --timeout=3600 \
             --clear-base-image \
-            --update-env-vars=SCREEN_INDEX=nasdaq100
+            --update-env-vars="SCREEN_INDEX=nasdaq100,MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}"
       - name: Update Screener Jobs
         if: github.event_name == 'push' || inputs.action == 'deploy-only'
         run: |
@@ -53,8 +53,10 @@ jobs:
             --format='value(spec.template.spec.containers[0].image)')
           echo "Image: $IMAGE"
           gcloud run jobs update screener-sp500 --region=europe-west1 --image="$IMAGE" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             || echo "screener-sp500 not found, skipping"
           gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             || echo "screener-global not found, skipping"
 
       # ═══ ALWAYS: DEPLOY PAPER-TRACKING JOBS ═══
@@ -70,7 +72,7 @@ jobs:
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=900s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_compounder_us.py"
 
@@ -80,7 +82,7 @@ jobs:
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_compounder_global.py"
 
@@ -90,7 +92,7 @@ jobs:
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_momentum.py"
 
@@ -100,7 +102,7 @@ jobs:
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=600s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="paper_strategy_runner_fa.py"
 
@@ -110,7 +112,7 @@ jobs:
             --region=europe-west1 \
             --memory=512Mi \
             --task-timeout=300s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="monitor_prices.py"
 
@@ -120,7 +122,7 @@ jobs:
             --region=europe-west1 \
             --memory=1Gi \
             --task-timeout=1800s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="run_all_strategies.py"
 
@@ -130,7 +132,7 @@ jobs:
             --region=europe-west1 \
             --memory=512Mi \
             --task-timeout=300s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},EMAIL_TO=${{ secrets.EMAIL_TO }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},EMAIL_TO=${{ secrets.EMAIL_TO }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="paper_weekly_email.py"
 
@@ -143,7 +145,7 @@ jobs:
             --region=europe-west1 \
             --memory=2Gi \
             --task-timeout=86400s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="backtest_full.py,--region,sp500,--from,2022-01-01,--to,2025-12-31"
           gcloud run jobs deploy backtest-v8 \
@@ -151,7 +153,7 @@ jobs:
             --region=europe-west1 \
             --memory=2Gi \
             --task-timeout=86400s \
-            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }}" \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
             --command="python3" \
             --args="backtest_v8.py"
 
