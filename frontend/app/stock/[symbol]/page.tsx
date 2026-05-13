@@ -3251,7 +3251,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
 
       {story?.bullBear && (
         <Card>
-          <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude 3.7 Sonnet" />
+          <SH title="Multi-Agent Debate" icon={<Activity size={12}/>} sub="Gemini 3.1 Pro vs. Claude 4.7 Opus" />
           <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
             {story.bullBear.split("Bear says:").map((part, i) => (
               <div key={i} style={{marginBottom: i === 0 ? 12 : 0, paddingBottom: i === 0 ? 12 : 0, borderBottom: i === 0 ? `1px dashed ${T.divider}` : "none"}}>
