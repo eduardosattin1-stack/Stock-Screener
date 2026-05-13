@@ -3047,6 +3047,8 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
   type StoryData = {
     narrative:string,
     bullBear?:string,
+    bullCatalysts?:string[],
+    bearCatalysts?:string[],
     confidenceScore:number,
     timestamp?:number,
     persona?:string
