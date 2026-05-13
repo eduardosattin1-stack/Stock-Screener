@@ -15,12 +15,12 @@ export interface StockCardProps {
 }
 
 const ACTION_COLORS: Record<string, { bg: string, text: string, border: string }> = {
-  "STRONG BUY": { bg: "#f5f3ff", text: "#8b5cf6", border: "#ddd6fe" },
-  "BUY": { bg: "#e8f5ee", text: "#10b981", border: "#b8dcc8" },
-  "WATCH": { bg: "#fffbeb", text: "#f59e0b", border: "#fde68a" },
-  "HOLD": { bg: "#f8fafc", text: "#6b7280", border: "#e2e8f0" },
-  "TRIM": { bg: "#fffbeb", text: "#d97706", border: "#fde68a" },
-  "SELL": { bg: "#fef2f2", text: "#ef4444", border: "#fecaca" },
+  "STRONG BUY": { bg: "var(--purple-light)", text: "var(--purple)", border: "var(--purple-light)" },
+  "BUY": { bg: "var(--green-light)", text: "var(--green)", border: "var(--green-light)" },
+  "WATCH": { bg: "var(--amber-light)", text: "var(--amber)", border: "var(--amber-light)" },
+  "HOLD": { bg: "var(--bg-elevated)", text: "var(--text-muted)", border: "var(--border)" },
+  "TRIM": { bg: "var(--amber-light)", text: "var(--amber)", border: "var(--amber-light)" },
+  "SELL": { bg: "var(--red-light)", text: "var(--red)", border: "var(--red-light)" },
 };
 
 const CURRENCY_SYMBOL: Record<string, string> = {

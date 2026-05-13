@@ -243,7 +243,7 @@ function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
     {k:"compounder_global",l:"CMP-Global"},
   ];
   return(
-    <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+    <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
       {opts.map((o,i)=>{
         const active = o.k === mode;
         return(
@@ -1052,7 +1052,7 @@ export default function Dashboard(){
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
           <div style={{display:"flex", gap: 10}}>
-            <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+            <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
               <button onClick={()=>setViewMode("table")} style={{padding:"6px 12px", border:"none", borderRight:"1px solid var(--border,#e5e7eb)", cursor:"pointer", background:viewMode==="table"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="table"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Table</button>
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 12px", border:"none", cursor:"pointer", background:viewMode==="feed"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="feed"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Feed</button>
             </div>
@@ -1085,7 +1085,7 @@ export default function Dashboard(){
       {/* Filter row 2: cohort pills + multi-select dropdowns */}
       <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
         {/* Cohort pills */}
-        <div style={{display:"inline-flex",gap:0,border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"#fff"}}>
+        <div style={{display:"inline-flex",gap:0,border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
           {cohortPills.map(([k,l],i)=>{
             const active = cohortFilter === k;
             return(

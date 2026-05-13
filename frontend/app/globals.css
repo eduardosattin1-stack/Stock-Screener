@@ -1,30 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #ffffff;
-  --bg-surface: #f8faf9;
-  --bg-hover: #f0f4f1;
-  --bg-elevated: #edf0ee;
-  --border: #e2e8e4;
-  --border-subtle: #eef1ef;
-  --divider: #f3f5f4;
+  --bg: #041E26;
+  --bg-surface: #0A2B36;
+  --bg-hover: #103B49;
+  --bg-elevated: #0D3340;
+  --border: #1A4E61;
+  --border-subtle: #0D3340;
+  --divider: #0D3340;
 
-  --text: #1a1a1a;
-  --text-secondary: #475569;
-  --text-muted: #6b7280;
-  --text-light: #9ca3af;
+  --text: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
 
-  --green: #2d7a4f;
-  --green-light: #e8f5ee;
-  --green-border: #b8dcc8;
-  --red: #dc2626;
-  --red-light: #fef2f2;
-  --amber: #d97706;
-  --amber-light: #fffbeb;
-  --blue: #2563eb;
-  --blue-light: #eff6ff;
-  --purple: #7c3aed;
-  --purple-light: #f5f3ff;
+  --green: #10B981;
+  --green-light: rgba(16, 185, 129, 0.15);
+  --green-border: rgba(16, 185, 129, 0.3);
+  --red: #EF4444;
+  --red-light: rgba(239, 68, 68, 0.15);
+  --amber: #F59E0B;
+  --amber-light: rgba(245, 158, 11, 0.15);
+  --blue: #3B82F6;
+  --blue-light: rgba(59, 130, 246, 0.15);
+  --purple: #8B5CF6;
+  --purple-light: rgba(139, 92, 246, 0.15);
 
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);

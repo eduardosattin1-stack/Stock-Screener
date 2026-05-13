@@ -106,7 +106,7 @@ export function Watchlist() {
   if (!activeBasket) return null;
 
   return (
-    <div style={{ width: 340, background: "#fff", borderLeft: "1px solid var(--border)", height: "100vh", position: "sticky", top: 0, display: "flex", flexDirection: "column", fontFamily: "var(--font-sans)", zIndex: 40 }}>
+    <div style={{ width: 340, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", height: "100vh", position: "sticky", top: 0, display: "flex", flexDirection: "column", fontFamily: "var(--font-sans)", zIndex: 40 }}>
       {/* Header */}
       <div style={{ padding: "16px", borderBottom: "1px solid var(--border-subtle,#eef1ef)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
         <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: "var(--text)" }}>
@@ -121,7 +121,7 @@ export function Watchlist() {
 
         {/* Basket Dropdown */}
         {menuOpen && (
-          <div style={{ position: "absolute", top: "100%", left: 16, width: 240, background: "#fff", border: "1px solid var(--border)", borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", zIndex: 50, padding: 8 }}>
+          <div style={{ position: "absolute", top: "100%", left: 16, width: 240, background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", zIndex: 50, padding: 8 }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", padding: "4px 8px", marginBottom: 4 }}>MY LISTS</div>
             {baskets.map(b => (
               <div key={b.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: 4, background: b.id === activeBasketId ? "var(--bg-hover,#f0f4f1)" : "transparent" }}>
@@ -134,7 +134,7 @@ export function Watchlist() {
             <div style={{ borderTop: "1px solid var(--border-subtle)", margin: "8px 0" }} />
             {editingBasket ? (
               <form onSubmit={handleCreateBasket} style={{ display: "flex", gap: 4, padding: "0 8px" }}>
-                <input autoFocus value={newBasketName} onChange={e => setNewBasketName(e.target.value)} placeholder="List name..." style={{ flex: 1, padding: "4px 8px", fontSize: 12, border: "1px solid var(--border)", borderRadius: 4 }} />
+                <input autoFocus value={newBasketName} onChange={e => setNewBasketName(e.target.value)} placeholder="List name..." style={{ flex: 1, padding: "4px 8px", fontSize: 12, border: "1px solid var(--border)", borderRadius: 4, background: "var(--bg)", color: "var(--text)" }} />
                 <button type="submit" style={{ padding: "4px 8px", background: "var(--green)", color: "#fff", border: "none", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Add</button>
               </form>
             ) : (
@@ -150,7 +150,7 @@ export function Watchlist() {
       <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)" }}>
         <form onSubmit={handleAddSymbol} style={{ display: "flex", position: "relative" }}>
           <Plus size={14} style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
-          <input value={newSymbol} onChange={e => setNewSymbol(e.target.value)} placeholder="Add symbol" style={{ width: "100%", padding: "6px 10px 6px 28px", fontSize: 12, border: "1px solid var(--border)", borderRadius: 4, outline: "none", fontFamily: "var(--font-mono)" }} />
+          <input value={newSymbol} onChange={e => setNewSymbol(e.target.value)} placeholder="Add symbol" style={{ width: "100%", padding: "6px 10px 6px 28px", fontSize: 12, border: "1px solid var(--border)", borderRadius: 4, outline: "none", fontFamily: "var(--font-mono)", background: "var(--bg)", color: "var(--text)" }} />
         </form>
       </div>
 

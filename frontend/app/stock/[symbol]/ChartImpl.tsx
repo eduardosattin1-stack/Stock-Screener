@@ -59,6 +59,8 @@ export default function ChartComponent({ data: initialData, width, height, ratio
   const min = xAccessor(data[Math.max(0, data.length - 180)]);
   const xExtents = [min, max];
 
+  if (!width || !height || width < 100 || height < 100) return null;
+
   const margin = { left: 0, right: 60, top: 0, bottom: 24 };
   const gridHeight = height - margin.top - margin.bottom;
 

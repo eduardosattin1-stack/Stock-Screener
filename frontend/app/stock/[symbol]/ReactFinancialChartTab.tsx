@@ -7,6 +7,8 @@ import { Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 const ChartImpl = dynamic(() => import("./ChartImpl"), { ssr: false });
 
+import AutoSizer from "react-virtualized-auto-sizer";
+
 export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
   const [data, setData] = useState<any[] | null>(null);
   const [error, setError] = useState("");
@@ -44,7 +46,11 @@ export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
 
   return (
     <div style={{ width: "100%", height: "1200px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, overflow: "hidden" }}>
-      <ChartImpl data={data} symbol={symbol} />
+      <AutoSizer>
+        {({ width, height }) => (
+          <ChartImpl data={data} symbol={symbol} width={width} height={height} ratio={typeof window !== "undefined" ? window.devicePixelRatio : 1} />
+        )}
+      </AutoSizer>
     </div>
   );
 }
