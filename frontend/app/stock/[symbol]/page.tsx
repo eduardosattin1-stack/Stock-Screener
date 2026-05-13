@@ -350,6 +350,8 @@ function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev
   const [open,setOpen]=useState(false);
   const [contracts,setContracts]=useState("1");
   const [debit,setDebit]=useState(sp?.net_debit?.toFixed(2)||"");
+  const [longStrike,setLongStrike]=useState(sp?.long_strike?.toString()||"");
+  const [shortStrike,setShortStrike]=useState(sp?.short_strike?.toString()||"");
   const [notes,setNotes]=useState("");
   const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
   const [err,setErr]=useState("");
@@ -368,7 +370,7 @@ function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev
         notes,
         strategy: sp.strategy,
         expiration: sp.expiration,
-        strikes: `${sp.long_strike}/${sp.short_strike}`,
+        strikes: `${longStrike}/${shortStrike}`,
         ev,
         risk: sp.max_loss_per_contract,
         iv,
@@ -391,11 +393,16 @@ function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev
     <div style={{marginTop: 10, padding:"10px 12px",borderRadius:6,background:"#fff",border:`1px solid ${T.purple}`,display:"flex",flexDirection:"column",gap:6}}>
       <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
         <span style={{color:T.textMuted,fontWeight:600}}>{sp.strategy.replace(" (estimated)", "")}</span>
+        <input type="text" placeholder="Long" value={longStrike} onChange={e=>{setLongStrike(e.target.value);setErr("");}} 
+          style={{width:40,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono,textAlign:"center"}}/>
+        <span style={{color:T.textLight}}>/</span>
+        <input type="text" placeholder="Short" value={shortStrike} onChange={e=>{setShortStrike(e.target.value);setErr("");}} 
+          style={{width:40,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono,textAlign:"center"}}/>
         <input type="number" placeholder="contracts" value={contracts} onChange={e=>{setContracts(e.target.value);setErr("");}} autoFocus
-          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+          style={{width:50,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
         <span style={{color:T.textLight}}>@ $</span>
         <input type="number" step="0.01" placeholder="debit" value={debit} onChange={e=>{setDebit(e.target.value);setErr("");}}
-          style={{width:70,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
+          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
       </div>
       <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
         style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
@@ -1196,6 +1203,7 @@ function TradierOptionsCard({s}:{s:StockData}){
           </div>
           <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.6}}>
             {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = <b style={{color:evPositive?T.green:T.red}}>{ev>=0?"+":""}${ev.toFixed(0)}</b>
+            <span style={{fontSize:9,color:T.textLight,display:"block",marginTop:2}}>Note: EV calculation is an approximation using binary outcomes. The remaining {100 - Math.round(pMaxProfit*100) - Math.round((1-pBreakeven)*100)}% probability represents the area of partial gain or loss between strikes.</span>
           </div>
           <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
             {[
@@ -2128,7 +2136,7 @@ async function loadStockFromScans(symbol:string):Promise<StockData|null>{
   const sym=symbol.toUpperCase();
   const regions=["sp500","europe","global"] as const;
   const results=await Promise.all(regions.map(r=>
-    fetch(`${GCS_SCANS}/latest_${r}.json`).then(res=>res.ok?res.json():null).catch(()=>null)
+    fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' }).then(res=>res.ok?res.json():null).catch(()=>null)
   ));
   let best:StockData|null=null;
   let bestDate="";
@@ -2552,14 +2560,43 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
+function ScoreEducationCard() {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <SH title="Scoring Analysis & Methodology" icon={<Activity size={12} />} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, marginTop: 12 }}>
+        <div>
+          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>MOMENTUM COMPOSITE</h4>
+          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
+            Our default engine. Balanced 5-factor model: Technical Momentum (25%), Quality (20%), Growth (20%), Value (20%), and Smart Money Flow (15%). Optimized for finding established leaders in strong uptrends.
+          </p>
+        </div>
+        <div>
+          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>COMPOUNDER (US/GLOBAL)</h4>
+          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
+            A precision quality-first engine. It filters for high ROE (&gt;15%), strong pricing power (Expanding Gross Margins), and robust Balance Sheets. Rejects high-leverage and commodity businesses.
+          </p>
+        </div>
+        <div>
+          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>FALLEN ANGEL</h4>
+          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
+            Contrarian Mean-Reversion engine. Identifies fundamentally strong businesses (Piotroski &gt; 6) that have suffered severe short-term price dislocation. Optimized for sharp reversals.
+          </p>
+        </div>
+        <div>
+          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>V8 SMART MONEY</h4>
+          <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5 }}>
+            Focuses on institutional footprints. Weighs 13F accumulation velocity, congressional trading activity, and management transcript sentiment. Follows the capital, not the noise.
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[], ratios?:RatioYear[]}){
   type StoryData = {
-    bottomLine:string, 
-    balanceSheet:string, 
-    macroContext:string,
-    optionsTrade:string,
-    catalysts:string,
-    bullBear:string,
+    narrative:string,
     confidenceScore:number,
     timestamp?:number,
     persona?:string
@@ -2729,57 +2766,18 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
       )}
 
       <Card>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <SH title="The Bottom Line" icon={<Brain size={12}/>} sub={viewIndex > 0 ? `Archived (${new Date(story.timestamp||0).toLocaleDateString()}) · ${story.persona || "Objective CIO"}` : `Current Assessment · ${story.persona || "Objective CIO"}`} />
-          <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.card, padding:"4px 8px", borderRadius:4, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20, borderBottom:`1px solid ${T.divider}`, paddingBottom:12}}>
+          <SH 
+            title={story.persona || "Investment Narrative"} 
+            icon={<Brain size={14} color={T.green} />} 
+            sub={viewIndex > 0 ? `Archived Report (${new Date(story.timestamp||0).toLocaleDateString()})` : "Current Strategic Assessment"} 
+          />
+          <div style={{fontSize:11,fontWeight:700,fontFamily:T.mono,color:story?.confidenceScore && story.confidenceScore > 75 ? T.green : T.amber, background:story?.confidenceScore && story.confidenceScore > 75 ? T.greenLight : T.card, padding:"6px 12px", borderRadius:6, border:`1px solid ${story?.confidenceScore && story.confidenceScore > 75 ? T.greenBorder : T.cardBorder}`, boxShadow:"0 1px 2px rgba(0,0,0,0.05)"}}>
             Confidence: {story?.confidenceScore}%
           </div>
         </div>
-        <div style={{fontSize:14,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-          {story?.bottomLine}
-        </div>
-      </Card>
-      
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-        <Card>
-          <SH title="Bull vs. Bear Debate" icon={<Activity size={12}/>}/>
-          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-            {story?.bullBear.split("Bear says:").map((part, i) => (
-              <div key={i} style={{marginBottom: i === 0 ? 8 : 0}}>
-                {i === 0 ? <strong style={{color:T.green}}>Bull says: </strong> : <strong style={{color:T.red}}>Bear says: </strong>}
-                {part.replace("Bull says:", "").trim()}
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <SH title="Catalysts & Overhangs" icon={<Activity size={12}/>}/>
-          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-            {story?.catalysts}
-          </div>
-        </Card>
-      </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-        <Card>
-          <SH title="Balance Sheet Assessment" icon={<Shield size={12}/>}/>
-          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-            {story?.balanceSheet}
-          </div>
-        </Card>
-        
-        <Card>
-          <SH title="Macro Context & Flow" icon={<Activity size={12}/>}/>
-          <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-            {story?.macroContext}
-          </div>
-        </Card>
-      </div>
-
-      <Card>
-        <SH title="Actionable Options Play" icon={<Zap size={12}/>}/>
-        <div style={{fontSize:13,lineHeight:1.6,color:T.text,fontFamily:T.sans}}>
-          {story?.optionsTrade}
+        <div style={{fontSize:16,lineHeight:1.8,color:T.text,fontFamily:T.sans,whiteSpace:"pre-wrap",textAlign:"justify"}}>
+          {story?.narrative}
         </div>
       </Card>
       
@@ -2808,9 +2806,9 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
             </div>
             <button 
               onClick={generateStory}
-              style={{background:"none",color:T.green,border:`1px solid ${T.greenBorder}`,padding:"4px 12px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}
+              style={{background:T.green,color:"#fff",border:"none",padding:"6px 16px",borderRadius:6,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
             >
-              Regenerate
+              Generate New Insight
             </button>
           </div>
         )}
@@ -3005,11 +3003,11 @@ function AdvancedChartTab({ s }: { s: StockData }) {
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", height: "700px", marginBottom: "16px" }}>
-        <Card style={{ height: "100%", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "16px" }}>
+        <Card style={{ height: "600px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
           <div className="tradingview-widget-container" ref={containerLeft} style={{ height: "100%", width: "100%" }} />
         </Card>
-        <Card style={{ height: "100%", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
+        <Card style={{ height: "600px", padding: 0, overflow: "hidden", border: `1px solid ${T.cardBorder}` }}>
           <div className="tradingview-widget-container" ref={containerRight} style={{ height: "100%", width: "100%" }} />
         </Card>
       </div>
@@ -3036,7 +3034,7 @@ export default function StockDetail(){
     const sym=symbol.toUpperCase();
     const regions=["sp500","europe","global"] as const;
     Promise.all(regions.map(r=>
-      fetch(`${GCS_SCANS}/latest_${r}.json`).then(res=>res.ok?res.json():null).catch(()=>null)
+      fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' }).then(res=>res.ok?res.json():null).catch(()=>null)
     )).then(results=>{
       let best:StockData|null=null, bestDate="";
       results.forEach(d=>{
@@ -3045,7 +3043,7 @@ export default function StockDetail(){
         if(f&&(d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
       });
       if(!best){
-        fetch(`${GCS_SCANS}/latest_global.json`).then(r=>r.json()).then(d=>{
+        fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()).then(d=>{
           const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
           setStock(f||null); setLoading(false);
         }).catch(()=>{setStock(null); setLoading(false);});
@@ -3236,7 +3234,10 @@ export default function StockDetail(){
       ) : activeTab==="compare" ? (
         <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows,incomesQ,balanceSheetsQ,cashFlowsQ}}/>
       ) : activeTab==="story" ? (
-        <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <ScoreEducationCard />
+          <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
+        </div>
       ) : activeTab==="chart" ? (
         toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") 
           ? <FmpBasicChartTab s={s}/> 

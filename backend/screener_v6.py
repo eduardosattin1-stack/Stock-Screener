@@ -3720,20 +3720,10 @@ def compute_composite_v8(
         now stands on its own; runners trust their cohort gates.
     Universe gate retained for momentum mode (qualifies_momentum_v8).
     """
-    # ─── Universe gate (momentum only — FA accepts every stock) ───
     if mode == "fallen_angel":
         passes, gate_fails = True, []
     else:
         passes, gate_fails = qualifies_momentum_v8(tech, value, market_cap)
-
-    if not passes:
-        # Stock disqualified for momentum mode. Return null factors + DISQUALIFIED.
-        empty = {"momentum": None, "quality": None, "growth": None,
-                 "value": None, "smart_money": None}
-        coverage = {"count": 0, "total": 5, "pct": 0.0,
-                    "evaluated": [], "missing": list(empty.keys())}
-        gate_msg = "GATE: " + ", ".join(gate_fails[:3])
-        return (0.0, "DISQUALIFIED", empty, [gate_msg], coverage)
 
     f = {}
 
@@ -3794,6 +3784,10 @@ def compute_composite_v8(
         composite = min(composite, COVERAGE_CAP_V8)
         if composite == COVERAGE_CAP_V8:
             reasons.append(f"COVERAGE CAP: only {coverage['count']}/5 factors evaluated")
+
+    if not passes:
+        gate_msg = "GATE: " + ", ".join(gate_fails[:3])
+        return (0.0, "DISQUALIFIED", f, [gate_msg] + reasons, coverage)
 
     # v1.2 (May 2026): bearish safety override + BUY/HOLD/SELL signal
     # classification removed (Bruno #6 + #A.1). Stock score now stands as

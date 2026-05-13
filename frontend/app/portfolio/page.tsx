@@ -104,7 +104,7 @@ export default function Portfolio(){
       const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
         fetchGcsState(),
         fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
-        fetch(`${GCS_SCANS}/latest_global.json`).then(r=>r.json()),
+        fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()),
       ]);
 
       let gcsPositions:Position[]=[];
