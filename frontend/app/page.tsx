@@ -738,12 +738,12 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
                 <LargeRadar scores={scoresActive}/>
                 <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
-                  {(()=>{const vals=Object.values(scoresActive).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg · {mode==="fallen_angel"?"FA":"Momentum"} mode
+                  {(()=>{const vals=Object.values(scoresActive).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg · {mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} mode
                 </div>
               </div>
               <div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
-                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>5-Factor Breakdown · {mode==="fallen_angel"?"Fallen Angel":"Momentum"}</div>
+                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>5-Factor Breakdown · {mode==="fallen_angel"?"Fallen Angel":mode==="compounder_us"?"Compounder US":mode==="compounder_global"?"Compounder Global":"Momentum"}</div>
                   <AddToPortfolioButton stock={s}/>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>

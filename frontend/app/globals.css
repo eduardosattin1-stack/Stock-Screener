@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #041E26;
-  --bg-surface: #0A2B36;
+  --bg: #0A2B36;
+  --bg-surface: #041E26;
   --bg-hover: #103B49;
   --bg-elevated: #0D3340;
   --border: #1A4E61;
