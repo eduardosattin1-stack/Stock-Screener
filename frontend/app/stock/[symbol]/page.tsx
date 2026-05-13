@@ -2836,52 +2836,6 @@ function TrackRecordTable({s}:{s:StockData}){
     "Book Yield (per Share)": "EPS / prior-year BVPS. High yield implies efficient capital use.",
     "Book Yield (ROE)": "Net Income / Equity. >15% consistently is the quality threshold.",
     "Payout Ratio": "Dividends / EPS. Too high (>80%) leaves no room for reinvestment.",
-    "Retention Ratio": "1 - Payout Ratio. Reinvested capital driving future growth.",
-  };
-
-  const cellStyle:React.CSSProperties = {padding:"6px 8px", textAlign:"right", fontSize:10, fontFamily:T.mono, borderBottom:`1px solid ${T.divider}`, whiteSpace:"nowrap"};
-  const headStyle:React.CSSProperties = {...cellStyle, color:T.textMuted, fontWeight:600, fontSize:9};
-  const labelStyle:React.CSSProperties = {...cellStyle, textAlign:"left", color:T.text, fontWeight:600, position:"sticky", left:0, background:T.card, zIndex:1};
-
-  return (
-    <Card>
-      <SH title="Track Record" icon={<BarChart2 size={12}/>} sub={`${rows.length} years · ${rows[0].year}–${rows[rows.length-1].year}`}/>
-
-      {/* Projection summary at top */}
-      {s.buffett_evaluated && (
-        <div style={{padding:"10px 12px",borderRadius:6,background:T.greenLight,border:`1px solid ${T.greenBorder}`,marginBottom:14,fontSize:11,fontFamily:T.mono,lineHeight:1.6}}>
-          <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VALUE 5Y PROJECTION</div>
-          Method: <b>Min Growth (EPS, BVPS, Yield)</b> · 
-          g = {((s.buffett_g_assumed||0)*100).toFixed(1)}% · 
-          P/E = {(s.buffett_pe_median||0).toFixed(1)}x<br/>
-          EPS₅ = {c}{(s.buffett_eps_5y||0).toFixed(2)} → 
-          Future Price = <b>{c}{(s.buffett_future_price||0).toFixed(2)}</b> → 
-          Fair Value today = <b>{c}{(s.buffett_fair_value||0).toFixed(2)}</b> 
-          ({(s.intrinsic_upside||0)>=0?"+":""}{(s.intrinsic_upside||0).toFixed(1)}% MoS)
-        </div>
-      )}
-
-      <div style={{overflowX:"auto"}}>
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead>
-            <tr>
-              <th style={{...headStyle, textAlign:"left", position:"sticky", left:0, background:T.card, zIndex:2}}>Metric</th>
-              {rows.map(r=><th key={r.year} style={headStyle}>{r.year}</th>)}
-              <th style={{...headStyle, color:T.green, fontWeight:700}}>CAGR</th>
-              <th style={{...headStyle, color:T.green, fontWeight:700}}>Cum. Growth</th>
-              <th style={{...headStyle, color:T.purple, fontWeight:700}}>Median</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sections.map(sec=>(
-              <React.Fragment key={sec.title}>
-                <tr>
-                  <td colSpan={rows.length+4} style={{...cellStyle, textAlign:"left", color:T.textMuted, fontWeight:600, fontSize:9, paddingTop:14, paddingBottom:6, letterSpacing:"0.08em"}}>{sec.title}</td>
-                </tr>
-                {sec.rows.map((rd,i)=>{
-                  const series = derived.map(d=>rd.fn(d));
-                  const cagrVal = rd.showCagr && rd.cagrKey ? cagr(rd.cagrKey) : null;
-                  const cumVal = rd.showCum && rd.cagrKey ? cumGrowth(rd.cagrKey) : null;
                   const medVal = rd.showMedian ? median(series) : null;
                   return (
                     <tr key={i}>
@@ -3038,6 +2992,13 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
                   {p}
                 </button>
               ))}
+            </div>
+            <div style={{marginTop: 16, fontSize: 12, color: T.textMuted, fontFamily: T.sans, lineHeight: 1.6, maxWidth: 600, textAlign: "left", background: T.bg, padding: "12px 16px", borderRadius: 6, border: `1px solid ${T.cardBorder}`}}>
+              {selectedPersona === "Objective CIO" && <span><strong>Objective CIO:</strong> Provides a balanced, data-driven, risk-adjusted overview without emotional bias. Focuses on hard numbers, probability, and capital preservation.</span>}
+              {selectedPersona === "Warren Buffett" && <span><strong>Warren Buffett:</strong> Focuses on deep value, competitive moats, consistent return on equity, and margin of safety. Prefers predictable cash flows over speculative growth.</span>}
+              {selectedPersona === "Cathie Wood" && <span><strong>Cathie Wood:</strong> Seeks disruptive innovation, exponential growth trajectories, and paradigm-shifting technologies. Willing to accept higher valuation multiples for future market dominance.</span>}
+              {selectedPersona === "Ray Dalio" && <span><strong>Ray Dalio:</strong> Analyzes the macroeconomic environment, debt cycles, and secular shifts. Views the stock as a piece of a larger economic machine.</span>}
+              {selectedPersona === "Stanley Druckenmiller" && <span><strong>Stanley Druckenmiller:</strong> Emphasizes momentum, liquidity flows, and tactical catalysts. Looks for explosive setups combining strong fundamentals with powerful technical breakouts.</span>}
             </div>
           </div>
 
@@ -3360,7 +3321,7 @@ export default function StockDetail(){
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart"|"methodology">("overview");
   const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
 
   useEffect(()=>{
@@ -3549,7 +3510,7 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","story","transcript","track","compare","chart"] as const).map(tab=>(
+        {(["overview","story","transcript","track","compare","chart","methodology"] as const).map(tab=>(
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -3558,7 +3519,7 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":tab==="story"?"Stock Story":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":"Chart"}
+            {tab==="overview"?"Overview":tab==="story"?"Investor Personas":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":tab==="chart"?"Chart":"Scoring Methodology"}
           </button>
         ))}
       </div>
@@ -3569,9 +3530,10 @@ export default function StockDetail(){
         <ComparisonTab stockA={s} fmpA={{incomes,ratios,balanceSheets,cashFlows,incomesQ,balanceSheetsQ,cashFlowsQ}}/>
       ) : activeTab==="story" ? (
         <div style={{display:"flex",flexDirection:"column",gap:16}}>
-          <ScoreEducationCard />
           <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
         </div>
+      ) : activeTab==="methodology" ? (
+        <ScoringMethodologyCard />
       ) : activeTab==="transcript" ? (
         <TranscriptInsights symbol={s.symbol} />
       ) : activeTab==="chart" ? (
