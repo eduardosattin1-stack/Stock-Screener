@@ -52,11 +52,11 @@ interface StockData {
   factor_coverage?:number;
   factors_evaluated?:string[];
   factors_missing?:string[];
-  // v7.2.1 Tradier options enrichment (top-30 US stocks only)
-  tradier_iv_current?:number|null;
-  tradier_iv_rank?:number|null;
-  tradier_iv_samples?:number;
-  tradier_spread?:{
+  // v7.2.1 Massive options enrichment (top-30 US stocks only)
+  options_iv_current?:number|null;
+  options_iv_rank?:number|null;
+  options_iv_samples?:number;
+  options_spread?:{
     strategy:string;spot:number;expiration:string;dte:number;
     long_strike:number;short_strike:number;long_mid:number;short_mid:number;
     net_debit:number;max_gain_per_contract:number;max_loss_per_contract:number;
@@ -701,16 +701,16 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
             if (p == null || p <= 0) return <span style={{color:"var(--text-light,#9ca3af)"}} title="ML model not loaded or not enriched">—</span>;
             const pct = Math.round(p * 100);
             const c = pct>=15?"#10b981":pct>=8?"#d97706":"var(--text-muted,#6b7280)";
-            const ivr = s.tradier_iv_rank;
+            const ivr = s.options_iv_rank;
             const spread = (pct >= 15 && ivr != null && ivr <= 30) ? " ★" : "";
             return <span style={{color:c,fontWeight:700}} title={`P(+20% daily high in 4w) = ${pct}%${ivr!=null?` · IVR ${ivr.toFixed(0)}`:""}${spread?" · SPREAD CANDIDATE: high P20 + low IVR":""}`}>{pct}%{spread&&<span style={{color:"#8b5cf6",fontSize:9}}>{spread}</span>}</span>;})()}
         </td>
         {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>
           {(()=>{
-            const ivr=s.tradier_iv_rank;
-            const iv=s.tradier_iv_current;
-            const samples=s.tradier_iv_samples||0;
+            const ivr=s.options_iv_rank;
+            const iv=s.options_iv_current;
+            const samples=s.options_iv_samples||0;
             if(ivr==null&&iv==null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Top-30 only; 20+ days of IV history needed for rank">—</span>;
             if(ivr==null&&iv!=null){
               return <div title={`Current IV ${(iv*100).toFixed(0)}% · ${samples}/20 samples for rank`}>

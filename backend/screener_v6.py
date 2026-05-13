@@ -45,18 +45,18 @@ except ImportError:
     def _cache_reset(): pass
     def _cache_log(): pass
 
-# v7.2.1: Tradier options enrichment (optional — graceful fallback if not available)
+# v7.2.1: Massive options enrichment
 try:
-    from tradier_options import enrich_stock as tradier_enrich_stock
-    TRADIER_AVAILABLE = True
-    import logging as _tradier_log
-    _tradier_log.getLogger(__name__).info("Tradier options module imported — enrichment enabled")
-except Exception as _tradier_e:
-    tradier_enrich_stock = None
-    TRADIER_AVAILABLE = False
-    import logging as _tradier_log
-    _tradier_log.getLogger(__name__).warning(
-        f"Tradier options module FAILED to import — enrichment disabled. Error: {_tradier_e}"
+    from massive_options import enrich_stock as options_enrich_stock
+    OPTIONS_AVAILABLE = True
+    import logging as _options_log
+    _options_log.getLogger(__name__).info("Massive options module imported — enrichment enabled")
+except Exception as _options_e:
+    options_enrich_stock = None
+    OPTIONS_AVAILABLE = False
+    import logging as _options_log
+    _options_log.getLogger(__name__).warning(
+        f"Massive options module FAILED to import — enrichment disabled. Error: {_options_e}"
     )
 
 # Macro regime overlay (imported after logging init below)
@@ -529,27 +529,43 @@ class Stock:
     factors_evaluated: list = field(default_factory=list)   # names of factors with real data
     factors_missing: list = field(default_factory=list)     # names of factors with no data
 
-    # v7.2.1 Apr 21: Tradier options enrichment (populated for top-30 in Pass 2).
-    # tradier_iv_current: ATM 30d IV as decimal (e.g. 0.35 = 35% annualized)
-    # tradier_iv_rank:    0-100, where current IV sits in trailing 60d range. None if <20 samples.
-    # tradier_iv_samples: count of IV history days accumulated so far
-    # tradier_spread:     bull call spread suggestion dict, or None if gates fail
-    tradier_iv_current: float = None
-    tradier_iv_rank: float = None
-    tradier_iv_samples: int = 0
-    tradier_spread: dict = None
+    # v7.2.1 Apr 21: Massive options enrichment (populated for top-30 in Pass 2).
+    options_iv_current: float = None
+    options_iv_rank: float = None
+    options_iv_samples: int = 0
+    options_spread: dict = None
+    
+    # v7.2.3 Apr 22: expanded Options signals
+    options_pc_ratio: float = None
+    options_pc_oi_ratio: float = None
+    options_total_open_interest: int = None
+    options_iv_30d: float = None
+    options_iv_60d: float = None
+    options_iv_90d: float = None
+    options_term_structure: str = None
+    options_implied_earnings_move: dict = None
 
-    # v7.2.3 Apr 22: expanded Tradier signals (populated for ALL US stocks mkt cap ≥ $1B)
-    # tradier_pc_ratio:             put/call VOLUME ratio across chain. <0.5 = bullish, >2 = fear
-    # tradier_iv_30d/60d/90d:       ATM IV at each point in term structure
-    # tradier_term_structure:       "backwardation" (near-term event priced) | "contango" (calm) | "flat"
-    # tradier_implied_earnings_move: dict with pct, straddle, call_mid, put_mid — for upcoming earnings
-    tradier_pc_ratio: float = None
-    tradier_iv_30d: float = None
-    tradier_iv_60d: float = None
-    tradier_iv_90d: float = None
-    tradier_term_structure: str = None
-    tradier_implied_earnings_move: dict = None
+    # Maintain legacy tradier aliases for frontend backward compatibility
+    @property
+    def tradier_iv_current(self): return self.options_iv_current
+    @property
+    def tradier_iv_rank(self): return self.options_iv_rank
+    @property
+    def tradier_iv_samples(self): return self.options_iv_samples
+    @property
+    def tradier_spread(self): return self.options_spread
+    @property
+    def tradier_pc_ratio(self): return self.options_pc_ratio
+    @property
+    def tradier_iv_30d(self): return self.options_iv_30d
+    @property
+    def tradier_iv_60d(self): return self.options_iv_60d
+    @property
+    def tradier_iv_90d(self): return self.options_iv_90d
+    @property
+    def tradier_term_structure(self): return self.options_term_structure
+    @property
+    def tradier_implied_earnings_move(self): return self.options_implied_earnings_move
 
     # ─── v8 Compounder mode (May 2026, v1.1 May 11) ────────────────────────
     # Universe-rank-based composite. Raw PIT inputs are computed per-stock
@@ -1231,7 +1247,7 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
     # 10w EMA (~50 trading days)
     if len(closes) >= 50:
         ema10w = sum(closes[:50]) / 50
-        mult = 2 / 51
+        mult = 2 / (51)
         for c in closes[50:]:
             ema10w = (c - ema10w) * mult + ema10w
         # 10w EMA value 4w ago, for reclaim detection
@@ -4181,9 +4197,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     )
 
     enriched_results = []
-    _tradier_spread_ok = 0
-    _tradier_spread_fail = 0
-    _tradier_iv_ok = 0
+    _options_spread_ok = 0
+    _options_spread_fail = 0
+    _options_iv_ok = 0
     for s in enrich_pool:
         sym = s.symbol
         raw = s._raw
@@ -4277,41 +4293,43 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         if HAS_ML_MODEL:
             s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
         s.hit_prob = predict_hit_prob(s)
-        # ─── Tradier options enrichment (US stocks ≥ $1B mkt cap) ───
-        if TRADIER_AVAILABLE and tradier_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
+        # ─── Massive options enrichment (US stocks ≥ $1B mkt cap) ───
+        if OPTIONS_AVAILABLE and options_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
             try:
-                # tradier_options.enrich_stock signature is
-                # (symbol, composite, hit_prob, earnings_date=None, ...).
-                # Convert days_to_earnings (int) → ISO date string for that arg.
-                # -1 means "no upcoming earnings in next 90d" → pass None.
+                # (symbol, composite, hit_prob, earnings_date=None, ...)
                 _earnings_date = None
-                if s.days_to_earnings is not None and s.days_to_earnings >= 0:
+                if hasattr(s, 'days_to_earnings') and s.days_to_earnings is not None and s.days_to_earnings >= 0:
                     _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
-                tradier_data = tradier_enrich_stock(
-                    s.symbol,
-                    s.composite,
-                    s.hit_prob,
+                
+                options_data = options_enrich_stock(
+                    symbol=s.symbol,
+                    composite=s.composite,
+                    hit_prob=s.hit_prob,
                     earnings_date=_earnings_date,
+                    collect_term_structure=True,
+                    collect_earnings_move=True
                 )
-                if tradier_data:
-                    s.tradier_iv_current = tradier_data.get("iv_current")
-                    s.tradier_iv_rank = tradier_data.get("iv_rank")
-                    s.tradier_iv_samples = tradier_data.get("iv_samples", 0)
-                    s.tradier_spread = tradier_data.get("spread")
-                    if s.tradier_spread:
-                        _tradier_spread_ok += 1
+                if options_data:
+                    s.options_iv_current = options_data.get("iv_current")
+                    s.options_iv_rank = options_data.get("iv_rank")
+                    s.options_iv_samples = options_data.get("iv_samples", 0)
+                    s.options_spread = options_data.get("spread")
+                    if s.options_spread:
+                        _options_spread_ok += 1
                     else:
-                        _tradier_spread_fail += 1
-                    if s.tradier_iv_current is not None:
-                        _tradier_iv_ok += 1
-                    s.tradier_pc_ratio = tradier_data.get("pc_ratio")
-                    s.tradier_iv_30d = tradier_data.get("iv_30d")
-                    s.tradier_iv_60d = tradier_data.get("iv_60d")
-                    s.tradier_iv_90d = tradier_data.get("iv_90d")
-                    s.tradier_term_structure = tradier_data.get("term_structure")
-                    s.tradier_implied_earnings_move = tradier_data.get("implied_earnings_move")
+                        _options_spread_fail += 1
+                    if s.options_iv_current is not None:
+                        _options_iv_ok += 1
+                    s.options_pc_ratio = options_data.get("pc_ratio")
+                    s.options_pc_oi_ratio = options_data.get("pc_oi_ratio")
+                    s.options_total_open_interest = options_data.get("total_open_interest")
+                    s.options_iv_30d = options_data.get("iv_30d")
+                    s.options_iv_60d = options_data.get("iv_60d")
+                    s.options_iv_90d = options_data.get("iv_90d")
+                    s.options_term_structure = options_data.get("term_structure")
+                    s.options_implied_earnings_move = options_data.get("implied_earnings_move")
             except Exception as e:
-                log.warning(f"  {sym}: Tradier enrichment failed: {e}")
+                log.warning(f"  {sym}: Massive Options enrichment failed: {e}")
 
         # Drop the _raw stash before output
         if hasattr(s, "_raw"):
@@ -4319,10 +4337,10 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
 
         enriched_results.append(s)
 
-    if _tradier_iv_ok > 0 or _tradier_spread_ok > 0 or _tradier_spread_fail > 0:
-        log.info(f"Tradier summary: IV={_tradier_iv_ok}, "
-                 f"spreads={_tradier_spread_ok}/{_tradier_spread_ok + _tradier_spread_fail} "
-                 f"({_tradier_spread_fail} failed)")
+    if _options_iv_ok > 0 or _options_spread_ok > 0 or _options_spread_fail > 0:
+        log.info(f"Massive Options summary: IV={_options_iv_ok}, "
+                 f"spreads={_options_spread_ok}/{_options_spread_ok + _options_spread_fail} "
+                 f"({_options_spread_fail} failed)")
 
     # Pass 1 stocks NOT enriched still get a v7-only composite (cheap data only,
     # composite-band signal). They appear in the bottom of the JSON table for

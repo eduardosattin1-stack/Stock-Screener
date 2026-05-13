@@ -320,7 +320,7 @@ export async function POST(req: NextRequest) {
         net_debt_to_ebitda: s.net_debt_to_ebitda,
         interest_coverage: s.interest_coverage,
         buybacks_5yr_pct_shares: s.buybacks_5yr_pct_shares,
-        dividend_yield: s.tradier_pc_ratio // using as proxy if div not available
+        dividend_yield: s.options_pc_ratio // using as proxy if div not available
       },
       transcript_summary: s.transcript_summary || "No recent transcript available.",
       transcript_sentiment: s.transcript_sentiment || 0,

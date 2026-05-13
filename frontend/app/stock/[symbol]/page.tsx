@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash } from "lucide-react";
+import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
@@ -36,24 +37,24 @@ interface StockData{
   smart_money_components?:Record<string,number>;
   smart_money_weight?:number;
   factor_coverage?:number;factors_evaluated?:string[];factors_missing?:string[];
-  // v7.2.1 Tradier options enrichment
-  tradier_iv_current?:number|null;
-  tradier_iv_rank?:number|null;
-  tradier_iv_samples?:number;
-  tradier_spread?:{
+  // v7.2.1 Massive options enrichment
+  options_iv_current?:number|null;
+  options_iv_rank?:number|null;
+  options_iv_samples?:number;
+  options_spread?:{
     strategy:string;spot:number;expiration:string;dte:number;
     long_strike:number;short_strike:number;long_mid:number;short_mid:number;
     net_debit:number;max_gain_per_contract:number;max_loss_per_contract:number;
     break_even_price:number;break_even_move_pct:number;risk_reward:number;
     description:string;
   }|null;
-  // v7.2.3 expanded Tradier signals
-  tradier_pc_ratio?:number|null;
-  tradier_iv_30d?:number|null;
-  tradier_iv_60d?:number|null;
-  tradier_iv_90d?:number|null;
-  tradier_term_structure?:string|null;
-  tradier_implied_earnings_move?:{
+  // v7.2.3 expanded Massive signals
+  options_pc_ratio?:number|null;
+  options_iv_30d?:number|null;
+  options_iv_60d?:number|null;
+  options_iv_90d?:number|null;
+  options_term_structure?:string|null;
+  options_implied_earnings_move?:{
     pct:number;call_mid:number;put_mid:number;straddle:number;strike:number;
     expiration:string;earnings_date:string;
   }|null;
@@ -1052,19 +1053,19 @@ function P20Card({s}:{s:StockData}){
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// TradierOptionsCard v3 — Always proposes a spread (live or estimated).
+// MassiveOptionsCard v3 — Always proposes a spread (live or estimated).
 // EV calculation drives the signal: green = edge, red = no edge.
 // ═══════════════════════════════════════════════════════════════════════
 
-function TradierOptionsCard({s}:{s:StockData}){
-  const hasIV=s.tradier_iv_current!=null||s.tradier_iv_rank!=null;
-  const hasPositioning=s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null;
+function MassiveOptionsCard({s}:{s:StockData}){
+  const hasIV=s.options_iv_current!=null||s.options_iv_rank!=null;
+  const hasPositioning=s.options_pc_ratio!=null||s.options_term_structure!=null||s.options_implied_earnings_move!=null;
   const p20=s.hit_prob||0;
   if(!hasIV&&!hasPositioning&&p20<=0) return null;
 
-  const ivr=s.tradier_iv_rank;
-  const iv=s.tradier_iv_current;
-  const samples=s.tradier_iv_samples||0;
+  const ivr=s.options_iv_rank;
+  const iv=s.options_iv_current;
+  const samples=s.options_iv_samples||0;
   const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
   const ivrLabel=ivr==null?"Not enough data":ivr<=25?"Cheap premium":ivr<=40?"Normal":ivr<=60?"Elevated":"Rich — options expensive";
   const p20pct=p20*100;
@@ -1073,16 +1074,16 @@ function TradierOptionsCard({s}:{s:StockData}){
   const p10close = Math.min(p20 * 2.29, 0.65);
   const p15close = Math.min(p20 * 1.49, 0.50);
 
-  const tradierSp = s.tradier_spread;
-  const isLive = tradierSp != null;
+  const optionsSp = s.options_spread;
+  const isLive = optionsSp != null;
 
   const roundStrike = (v:number):number => {
     const inc = s.price>=50?5:s.price>=10?2.5:1;
     return Math.round(v/inc)*inc;
   };
 
-  // Synthesize estimated spread when Tradier doesn't provide one
-  const sp = tradierSp ?? (()=>{
+  // Synthesize estimated spread when Massive doesn't provide one
+  const sp = optionsSp ?? (()=>{
     const spot = s.price;
     if(spot<=0 || p20<=0) return null;
     const long_strike = roundStrike(spot);
@@ -1165,21 +1166,21 @@ function TradierOptionsCard({s}:{s:StockData}){
       </div>
 
       {/* Market positioning */}
-      {(s.tradier_pc_ratio!=null||s.tradier_term_structure!=null||s.tradier_implied_earnings_move!=null)&&(
+      {(s.options_pc_ratio!=null||s.options_term_structure!=null||s.options_implied_earnings_move!=null)&&(
         <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
           <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>MARKET POSITIONING</div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14}}>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>P/C VOL RATIO</div>
-              {s.tradier_pc_ratio!=null?(()=>{const pc=s.tradier_pc_ratio;const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;return(<><div style={{fontSize:16,color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
+              {s.options_pc_ratio!=null?(()=>{const pc=s.options_pc_ratio;const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;return(<><div style={{fontSize:16,color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
             </div>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IV TERM STRUCTURE</div>
-              {(s.tradier_iv_30d!=null||s.tradier_iv_60d!=null||s.tradier_iv_90d!=null)?(()=>{const ts=s.tradier_term_structure;const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;const iv30=s.tradier_iv_30d,iv60=s.tradier_iv_60d,iv90=s.tradier_iv_90d;return(<><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span></div><div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div><div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
+              {(s.options_iv_30d!=null||s.options_iv_60d!=null||s.options_iv_90d!=null)?(()=>{const ts=s.options_term_structure;const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;const iv30=s.options_iv_30d,iv60=s.options_iv_60d,iv90=s.options_iv_90d;return(<><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span></div><div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div><div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
             </div>
             <div>
               <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IMPLIED EARNINGS MOVE</div>
-              {s.tradier_implied_earnings_move?(()=>{const iem=s.tradier_implied_earnings_move;return(<><div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div></>);})():(<><div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div></>)}
+              {s.options_implied_earnings_move?(()=>{const iem=s.options_implied_earnings_move;return(<><div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div></>);})():(<><div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div></>)}
             </div>
           </div>
         </div>
@@ -1290,7 +1291,7 @@ function TradierOptionsCard({s}:{s:StockData}){
 
       <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
         Probabilities from time_model_v2 (OOS AUC 0.7836), calibrated against 21,650 OOS samples.
-        {isLive?" IV/Greeks from Tradier (ORATS-sourced).":" Spread estimated from price + IV; verify with broker."}
+        {isLive?" IV/Greeks from Massive (ORATS-sourced).":" Spread estimated from price + IV; verify with broker."}
         {" "}EV = P(max profit) × gain − P(miss) × loss. Not investment advice.
       </div>
     </Card>
@@ -1298,7 +1299,7 @@ function TradierOptionsCard({s}:{s:StockData}){
 }
 
 // Keep old name as alias so the existing render block doesn't break
-const TradierSpreadCard=TradierOptionsCard;
+const MassiveSpreadCard=MassiveOptionsCard;
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
@@ -3739,9 +3740,7 @@ export default function StockDetail(){
       ) : activeTab==="transcript" ? (
         <TranscriptInsights symbol={s.symbol} />
       ) : activeTab==="chart" ? (
-        toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") 
-          ? <FmpBasicChartTab s={s}/> 
-          : <AdvancedChartTab s={s}/>
+        <ReactFinancialChartTab symbol={s.symbol} />
       ) : (
         <>
           
@@ -3817,8 +3816,8 @@ export default function StockDetail(){
       {/* P20 Move Probability Card — full width, shows probability ladder + spread edge */}
       {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
-      {/* Tradier options card — spread suggestion + IV data */}
-      {((s.hit_prob??0)>0||s.tradier_iv_current!=null||s.tradier_iv_rank!=null||s.tradier_spread||s.tradier_pc_ratio!=null||s.tradier_term_structure||s.tradier_implied_earnings_move)&&<div style={{marginBottom:16}}><TradierOptionsCard s={s}/></div>}
+      {/* Massive options card — spread suggestion + IV data */}
+      {((s.hit_prob??0)>0||s.options_iv_current!=null||s.options_iv_rank!=null||s.options_spread||s.options_pc_ratio!=null||s.options_term_structure||s.options_implied_earnings_move)&&<div style={{marginBottom:16}}><MassiveOptionsCard s={s}/></div>}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
