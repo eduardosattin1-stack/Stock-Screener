@@ -36,7 +36,7 @@ async function callClaude(prompt: string, apiKey: string) {
       "anthropic-version": "2023-06-01"
     },
     body: JSON.stringify({
-      model: "claude-3-5-sonnet-20241022",
+      model: "claude-opus-4-7",
       max_tokens: 1500,
       temperature: 0.7,
       messages: [{ role: "user", content: prompt }]
@@ -49,7 +49,10 @@ async function callClaude(prompt: string, apiKey: string) {
   }
 
   const data = await response.json();
-  const text = data.content?.[0]?.text;
+  const text = (data.content || [])
+    .filter((b: any) => b.type === "text")
+    .map((b: any) => b.text)
+    .join("");
   if (!text) throw new Error("No text returned from Claude API");
   return text;
 }
@@ -365,7 +368,7 @@ ${dataContext}
 **Bull Analyst (Gemini 3.1 Pro):**
 ${bullCase}
 
-**Bear Analyst (Claude 4.7 Opus):**
+**Bear Analyst (Claude Opus 4.7):**
 ${bearCase}
 
 # FINAL INSTRUCTION

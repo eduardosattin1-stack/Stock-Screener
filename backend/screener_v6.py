@@ -2783,7 +2783,7 @@ def get_transcript_sentiment(sym: str) -> dict:
                 "content-type": "application/json",
             },
             json={
-                "model": "claude-3-5-sonnet-20241022",
+                "model": "claude-opus-4-7",
                 "max_tokens": 300,
                 "messages": [{"role": "user", "content": f"""Analyze this earnings call transcript for {sym}. Return ONLY a JSON object with:
 - "sentiment": float from -1.0 (very bearish) to 1.0 (very bullish) based on management tone, guidance, and confidence
