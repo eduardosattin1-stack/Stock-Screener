@@ -2,21 +2,20 @@
 """
 paper_weekly_email.py
 =====================
-Friday 07:30 CET — single weekly email covering BOTH paper-tracked strategies:
-
-  BORING:    top-10 SP500 Pio≥7 by ps_ratio, 26w hold
-  COMPOSITE: top-10 SP500 by composite score, weekly rotation
+Friday 07:30 CET — Weekly system email covering:
+1. Current Portfolio & Trade Execution
+2. Strategy Baskets Performance (Compounder US, Global, Momentum, FA)
+3. P(20) Model Calibration & Hit Rates
+4. Top 3 New Stock Ideas per category
 
 Reads from GCS:
-  performance/strategy_history_boring.json
-  performance/strategy_history_composite.json
+  portfolio/state.json
+  performance/strategy_history_*.json
+  hit_rate_tracking/rolling_health.json
   scans/latest_sp500.json
+  scans/latest_global.json
 
-Schedule: Cloud Scheduler Friday 07:30 CET → after both runners complete
-
-Usage:
-  export SMTP_USER=... SMTP_PASS=... EMAIL_TO=...
-  python3 paper_weekly_email.py
+Schedule: Cloud Scheduler Friday 07:30 CET
 """
 import logging
 import os
@@ -30,9 +29,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("paper_email")
 
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
-BORING_PATH = "performance/strategy_history_boring.json"
-COMPOSITE_PATH = "performance/strategy_history_composite.json"
-LATEST_SCAN_PATH = "scans/latest_sp500.json"
 
 SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
@@ -63,298 +59,158 @@ def fmt_pp(v, dp=2):
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# BORING sections
+# SECTIONS
 # ─────────────────────────────────────────────────────────────────────────
-def boring_status(history: dict) -> tuple[str, str]:
-    if not history:
-        return "NO DATA", "  No BORING history yet.\n"
-    open_basket = history.get("open_basket")
-    weeks = history.get("weeks", [])
 
-    if not open_basket and not weeks:
-        return "FIRST RUN", "  BORING: no basket yet. Awaiting strategy runner.\n"
-
-    if not open_basket and weeks:
-        last = weeks[-1]
-        return "BETWEEN", (
-            f"  BORING: last cycle closed {last['exit_date']} — "
-            f"basket {fmt_pct(last['basket_return_pct'])} vs "
-            f"SPY {fmt_pct(last['spy_return_pct'])} "
-            f"(alpha {fmt_pp(last['alpha_pp'])}). Awaiting next basket open.\n"
-        )
-
-    inception = date.fromisoformat(open_basket["inception_date"])
-    exit_d = date.fromisoformat(open_basket["scheduled_exit_date"])
-    days_held = (date.today() - inception).days
-    weeks_remaining = max(0, (exit_d - date.today()).days // 7)
-    marks = open_basket.get("weekly_marks") or []
-    last_mark = marks[-1] if marks else None
-
-    if (exit_d - date.today()).days <= 0:
-        return "REBALANCE DUE", (
-            f"  ⚠ BORING: 26-week hold reached. Inception {open_basket['inception_date']}.\n"
-            f"  Strategy runner should close & open new basket today.\n"
-        )
-
-    line = (f"  BORING: open since {open_basket['inception_date']} "
-            f"(day {days_held}/182, {weeks_remaining}w remaining)")
-    if last_mark:
-        line += (f" — basket {fmt_pct(last_mark['basket_return_pct'])}, "
-                 f"SPY {fmt_pct(last_mark['spy_return_pct'])}, "
-                 f"alpha {fmt_pp(last_mark['alpha_pp'])}")
-    return "OPEN", line + "\n"
+def section_portfolio(state: dict) -> list[str]:
+    lines = ["┃ 1. CURRENT PORTFOLIO & TRADES", "─" * 78]
+    if not state:
+        return lines + ["  (No portfolio state found)\n"]
+        
+    positions = state.get("positions", [])
+    if positions:
+        lines.append(f"  OPEN POSITIONS ({len(positions)}):")
+        lines.append(f"    {'Symbol':<8} {'Entry':>10} {'Last':>10} {'PnL':>9} {'Comp':>7}")
+        for p in positions:
+            sym = p.get('symbol', '')
+            entry = float(p.get('entry_price', 0))
+            last = float(p.get('last_price', entry))
+            pnl = float(p.get('pnl_pct', 0))
+            comp = float(p.get('last_composite', p.get('entry_composite', 0)))
+            lines.append(f"    {sym:<8} ${entry:>9.2f} ${last:>9.2f} {fmt_pct(pnl,1):>9} {comp:>7.3f}")
+    else:
+        lines.append("  No open positions.")
+    
+    history = state.get("history", [])
+    if history:
+        recent = history[-5:]
+        lines.append("")
+        lines.append(f"  RECENT EXITS (Last {len(recent)}):")
+        for h in recent:
+            lines.append(f"    {h.get('date', '?'):<10} {h.get('symbol',''):<8} {fmt_pct(h.get('pnl_pct',0),1):>9} — {h.get('reason','')}")
+    lines.append("")
+    return lines
 
 
-def boring_basket(history: dict) -> str:
-    if not history:
-        return "  (no data)\n"
-    ob = history.get("open_basket")
-    if not ob:
-        return "  (no open basket)\n"
-    basket = ob.get("basket", [])
-    if not basket:
-        return "  (basket empty)\n"
-    marks = ob.get("weekly_marks") or []
-    last = marks[-1] if marks else None
-    days_held = (date.today() - date.fromisoformat(ob["inception_date"])).days
+def section_strategies() -> list[str]:
+    lines = ["┃ 2. PAPER STRATEGY BASKETS", "─" * 78]
+    strategies = {
+        "COMPOUNDER US": "performance/strategy_history_compounder_us.json",
+        "COMPOUNDER GLOBAL": "performance/strategy_history_compounder_global.json",
+        "MOMENTUM": "performance/strategy_history_momentum.json",
+        "FALLEN ANGEL": "performance/strategy_history_fa.json"
+    }
+    
+    for name, path in strategies.items():
+        data = gcs_read(path)
+        if not data:
+            lines.append(f"  ■ {name}")
+            lines.append("    (No data found)")
+            lines.append("")
+            continue
+            
+        summary = data.get("summary", {})
+        c_ret = summary.get("cum_basket_return_pct")
+        c_alpha = summary.get("cum_alpha_pp")
+        w_rate = summary.get("realized_win_rate", summary.get("win_rate", 0))
+        
+        stat = f"Cum Ret: {fmt_pct(c_ret)} | Alpha: {fmt_pp(c_alpha)} | Win Rate: {w_rate*100:.0f}%"
+        lines.append(f"  ■ {name}")
+        lines.append(f"    {stat}")
+        
+        rots = data.get("rotations", [])
+        if rots:
+            last_rot = rots[-1]
+            lines.append(f"    Last Rotation ({last_rot.get('date')}): +{last_rot.get('n_added',0)} / -{last_rot.get('n_removed',0)} positions")
+        lines.append("")
+    return lines
 
-    lines = [
-        f"  Inception: {ob['inception_date']}  ·  Day {days_held}/182  ·  "
-        f"Equal-weight (10% per name)",
-        "",
-        f"    {'#':<3} {'Symbol':<8} {'Entry':>10} {'Pio':>4} {'P/S':>7}",
-        f"    {'-'*3} {'-'*8} {'-'*10} {'-'*4} {'-'*7}",
+
+def section_health(health: dict) -> list[str]:
+    lines = ["┃ 3. P(20) MODEL HEALTH & CALIBRATION", "─" * 78]
+    if not health:
+        return lines + ["  (No rolling health data found)\n"]
+    
+    status = health.get("status", "UNKNOWN")
+    d10_hr = health.get("d10_hit_rate", 0)
+    d1_hr = health.get("d1_hit_rate", 0)
+    d10_n = health.get("d10_n", 0)
+    
+    lines.append(f"  Status: {status}")
+    lines.append(f"  D10 Hit Rate: {d10_hr*100:.1f}% (Baseline: 22.3%, n={d10_n})")
+    lines.append(f"  D1  Hit Rate: {d1_hr*100:.1f}% (Baseline:  1.1%)")
+    if health.get("kill_switch_active"):
+        lines.append("\n  ⚠ KILL SWITCH ACTIVE: D10 has degraded below threshold.")
+    lines.append("")
+    return lines
+
+
+def section_ideas(sp500, global_data) -> list[str]:
+    lines = ["┃ 4. NEW STOCK IDEAS (TOP 3)", "─" * 78]
+    
+    def get_top(stocks, key, n=3):
+        valid = [s for s in stocks if isinstance(s, dict) and s.get(key) is not None]
+        valid.sort(key=lambda x: float(x[key]), reverse=True)
+        return valid[:n]
+
+    sp_stocks = sp500.get("stocks", []) if isinstance(sp500, dict) else (sp500 if isinstance(sp500, list) else [])
+    gl_stocks = global_data.get("stocks", []) if isinstance(global_data, dict) else (global_data if isinstance(global_data, list) else [])
+    
+    categories = [
+        ("US COMPOUNDERS", sp_stocks, "compounder_score_us"),
+        ("GLOBAL COMPOUNDERS", gl_stocks, "compounder_score_global"),
+        ("MOMENTUM", sp_stocks, "composite_momentum"),
+        ("FALLEN ANGELS", sp_stocks, "composite_fallen_angel"),
     ]
-    for i, p in enumerate(basket, 1):
-        lines.append(
-            f"    {i:<3} {p['symbol']:<8} ${p['entry_price']:>9.2f} "
-            f"{p['piotroski_at_entry']:>4} {p['ps_ratio_at_entry']:>7.2f}"
-        )
-    if last:
-        lines.extend([
-            "",
-            f"  Last mark ({last['date']}): basket {fmt_pct(last['basket_return_pct'])} · "
-            f"SPY {fmt_pct(last['spy_return_pct'])} · alpha {fmt_pp(last['alpha_pp'])}",
-        ])
-    return "\n".join(lines) + "\n"
-
-
-def boring_perf(history: dict) -> str:
-    if not history:
-        return "  (no data)\n"
-    summary = history.get("summary")
-    weeks = history.get("weeks", [])
-    if not summary or not weeks:
-        return "  No closed cycles yet. First closed cycle in ~26 weeks.\n"
-    inception = history.get("inception_date") or "?"
-    lines = [
-        f"  Since inception ({inception}):",
-        f"    Cycles closed:        {summary['weeks_closed']}",
-        f"    Cum strategy return:  {fmt_pct(summary['cum_strategy_return_pct'])}",
-        f"    Cum SPY return:       {fmt_pct(summary['cum_spy_return_pct'])}",
-        f"    Cum alpha:            {fmt_pp(summary['cum_alpha_pp'])}",
-        f"    Annualized return:    {fmt_pct(summary['annualized_return_pct'])}",
-        f"    Annualized alpha:     {fmt_pp(summary['annualized_alpha_pp'])}",
-        f"    Win rate vs SPY:      {summary['win_rate']*100:.0f}% "
-        f"({summary['weeks_positive_alpha']}/{summary['weeks_closed']})",
-    ]
-    return "\n".join(lines) + "\n"
+    
+    for title, pool, score_key in categories:
+        lines.append(f"  [ {title} ]")
+        top_stocks = get_top(pool, score_key, 3)
+        if not top_stocks:
+            lines.append("    (No candidates found)")
+        for s in top_stocks:
+            sym = s.get('symbol', '???')
+            score = float(s.get(score_key, 0))
+            price = float(s.get('price', 0))
+            lines.append(f"    {sym:<6} Score: {score:.3f} | Price: ${price:.2f}")
+        lines.append("")
+        
+    return lines
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# COMPOSITE sections
+# CORE
 # ─────────────────────────────────────────────────────────────────────────
-def composite_status(history: dict) -> tuple[str, str]:
-    if not history:
-        return "NO DATA", "  No COMPOSITE history yet.\n"
-    inception = history.get("inception_date")
-    if not inception:
-        return "FIRST RUN", "  COMPOSITE: no basket yet. Awaiting strategy runner.\n"
 
-    summary = history.get("summary") or {}
-    weekly_marks = history.get("weekly_marks", [])
-    last_mark = weekly_marks[-1] if weekly_marks else None
-    rotations = history.get("rotations", [])
-    days_since = (date.today() - date.fromisoformat(inception)).days
-
-    line = (f"  COMPOSITE: open since {inception} "
-            f"(day {days_since}, {len(rotations)} rotations, "
-            f"{summary.get('n_positions_closed', 0)} closed)")
-    if last_mark:
-        line += (f" — basket avg {fmt_pct(last_mark['basket_avg_return_pct'])}, "
-                 f"SPY {fmt_pct(last_mark['spy_return_pct'])}, "
-                 f"alpha {fmt_pp(last_mark['alpha_pp'])}")
-    return "OPEN", line + "\n"
-
-
-def composite_basket(history: dict) -> str:
-    if not history:
-        return "  (no data)\n"
-    current = history.get("current_basket", [])
-    if not current:
-        return "  (no current basket)\n"
-
-    lines = [
-        f"  Inception: {history.get('inception_date', '?')}  ·  "
-        f"Equal-weight (10% per name)  ·  Weekly rotation",
-        "",
-        f"    {'#':<3} {'Symbol':<8} {'Entry':>10} {'Last':>10} "
-        f"{'Return':>10} {'Days':>5} {'Comp':>6}",
-        f"    {'-'*3} {'-'*8} {'-'*10} {'-'*10} {'-'*10} {'-'*5} {'-'*6}",
-    ]
-    for i, p in enumerate(current, 1):
-        days_held = (date.today() - date.fromisoformat(p["entry_date"])).days
-        ret = p.get("return_pct", 0)
-        lines.append(
-            f"    {i:<3} {p['symbol']:<8} ${p['entry_price']:>9.2f} "
-            f"${p.get('last_price', p['entry_price']):>9.2f} "
-            f"{ret:>+9.2f}% {days_held:>4}d "
-            f"{p.get('composite_at_entry', 0):>6.3f}"
-        )
-    return "\n".join(lines) + "\n"
-
-
-def composite_actions(history: dict) -> str:
-    """Show this week's rotations if any."""
-    if not history:
-        return "  (no data)\n"
-    rotations = history.get("rotations", [])
-    if not rotations:
-        return "  No rotations yet.\n"
-    last = rotations[-1]
-    today = date.today().isoformat()
-    if last["date"] != today:
-        return f"  No rotations this week. Last rotation: {last['date']}\n"
-
-    lines = [f"  ROTATIONS THIS WEEK ({last['date']}):"]
-    if last.get("removed"):
-        lines.append(f"    Removed ({last['n_removed']}):")
-        for r in last["removed"]:
-            lines.append(
-                f"      ✗ {r['symbol']:<6} {fmt_pct(r['return_pct'])} "
-                f"({r['days_held']}d held, ${r['entry_price']:.2f} → ${r['exit_price']:.2f})"
-            )
-    if last.get("added"):
-        lines.append(f"    Added ({last['n_added']}):")
-        for a in last["added"]:
-            lines.append(
-                f"      + {a['symbol']:<6} entry ${a['entry_price']:.2f} "
-                f"(comp {a.get('composite_at_entry', 0):.3f})"
-            )
-    return "\n".join(lines) + "\n"
-
-
-def composite_perf(history: dict) -> str:
-    if not history:
-        return "  (no data)\n"
-    summary = history.get("summary")
-    if not summary or summary.get("weeks_tracked", 0) == 0:
-        return "  No tracking data yet.\n"
-    inception = history.get("inception_date") or "?"
-    lines = [
-        f"  Since inception ({inception}):",
-        f"    Weeks tracked:           {summary['weeks_tracked']}",
-        f"    Rotations executed:      {summary['n_rotations']}",
-        f"    Positions closed:        {summary['n_positions_closed']}",
-        f"    Realized avg return:     {fmt_pct(summary['realized_avg_return_pct'])}  "
-        f"(win rate: {summary['realized_win_rate']*100:.0f}%)",
-        f"    Open positions avg:      {fmt_pct(summary['open_avg_return_pct'])}",
-        f"    Cum basket return:       {fmt_pct(summary['cum_basket_return_pct'])}",
-        f"    Cum SPY return:          {fmt_pct(summary['cum_spy_return_pct'])}",
-        f"    Cum alpha vs SPY:        {fmt_pp(summary['cum_alpha_pp'])}",
-        f"    Annualized return:       {fmt_pct(summary['annualized_return_pct'])}",
-        f"    Annualized alpha:        {fmt_pp(summary['annualized_alpha_pp'])}",
-    ]
-    return "\n".join(lines) + "\n"
-
-
-# ─────────────────────────────────────────────────────────────────────────
-# Build email
-# ─────────────────────────────────────────────────────────────────────────
 def build_email() -> tuple[str, str]:
     today = date.today().isoformat()
-    boring = gcs_read(BORING_PATH)
-    composite = gcs_read(COMPOSITE_PATH)
+    
+    state = gcs_read("portfolio/state.json")
+    health = gcs_read("hit_rate_tracking/rolling_health.json")
+    sp500 = gcs_read("scans/latest_sp500.json")
+    gl_data = gcs_read("scans/latest_global.json")
 
-    boring_lbl, _ = boring_status(boring) if boring else ("NO DATA", "")
-    composite_lbl, _ = composite_status(composite) if composite else ("NO DATA", "")
-
-    if boring_lbl == "REBALANCE DUE":
-        subject_prefix = "🔔 BORING REBALANCE"
-    elif "FIRST RUN" in (boring_lbl, composite_lbl):
-        subject_prefix = "🚀 FIRST RUN"
-    else:
-        subject_prefix = "📊 PAPER TRACK"
-    subject = f"{subject_prefix} — CB Screener — {today}"
-
-    divider = "═" * 78
-    sub_divider = "─" * 78
+    subject = f"📊 CB Screener Weekly — {today}"
 
     body_parts = [
-        divider,
-        f"  CB SCREENER — PAPER TRACKING — {today}",
-        f"  Tracking 2 strategies in parallel (paper, no capital)",
-        divider,
+        "═" * 78,
+        f"  CB SCREENER WEEKLY REPORT — {today}",
+        "═" * 78,
         "",
-        "┃ STATUS",
-        sub_divider,
-        (boring_status(boring)[1] if boring else "  No BORING history\n").rstrip(),
-        (composite_status(composite)[1] if composite else "  No COMPOSITE history\n").rstrip(),
-        "",
-        divider,
-        "  BORING — top-10 SP500 Pio≥7 by ps_ratio, 26w hold, equal-weight",
-        divider,
-        "",
-        "┃ Current basket",
-        sub_divider,
-        boring_basket(boring) if boring else "  (no data)\n",
-        "",
-        "┃ Performance since inception",
-        sub_divider,
-        boring_perf(boring) if boring else "  (no data)\n",
-        "",
-        divider,
-        "  COMPOSITE — top-10 SP500 by composite, weekly rotation, equal-weight",
-        divider,
-        "",
-        "┃ This week's actions",
-        sub_divider,
-        composite_actions(composite) if composite else "  (no data)\n",
-        "",
-        "┃ Current basket",
-        sub_divider,
-        composite_basket(composite) if composite else "  (no data)\n",
-        "",
-        "┃ Performance since inception",
-        sub_divider,
-        composite_perf(composite) if composite else "  (no data)\n",
-        "",
-        divider,
-        "  METHODOLOGY",
-        divider,
-        "  Both strategies are paper-tracked using FMP data; no capital deployed.",
-        "",
-        "  BORING:    Backtest expected ~25-30% CAGR · ~7-15pp alpha · MDD <-10%",
-        "             Walk-forward OOS: Sharpe 1.75, alpha +7.1pp, MDD -0.8%",
-        "             Risk: defensive bias, low MDD, lower upside in bull markets",
-        "",
-        "  COMPOSITE: No backtest reference (composite top-10 untested OOS).",
-        "             Tracked for comparison vs BORING. Higher turnover.",
-        "             Treat results as observational, not validated.",
-        "",
-        "  Kill-switches (review at quarterly check):",
-        "    • Live MDD > -20% → halt and reassess",
-        "    • Two consecutive cycles negative alpha → halt",
-        "    • Single position -50%+ in <30d → investigate (data error?)",
-        "",
-        divider,
+    ]
+    
+    body_parts.extend(section_portfolio(state))
+    body_parts.extend(section_strategies())
+    body_parts.extend(section_health(health))
+    body_parts.extend(section_ideas(sp500, gl_data))
+    
+    body_parts.extend([
+        "═" * 78,
         f"  https://screener.carbonbridge.nl/performance",
         f"  Generated by paper_weekly_email.py",
-        f"  gs://{GCS_BUCKET}/{BORING_PATH}",
-        f"  gs://{GCS_BUCKET}/{COMPOSITE_PATH}",
-        divider,
-    ]
-
+        "═" * 78,
+    ])
+    
     return subject, "\n".join(body_parts)
 
 
@@ -387,4 +243,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()
