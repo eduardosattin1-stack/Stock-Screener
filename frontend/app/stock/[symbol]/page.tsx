@@ -1433,7 +1433,7 @@ function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps
       <div style={{marginTop:24,paddingTop:12,borderTop:`1px dashed ${T.divider}`,fontSize:9,color:T.textMuted,fontFamily:T.mono,lineHeight:1.6}}>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:8,height:8,borderRadius:"50%",background:T.green,border:"2px solid white",boxShadow:"0 0 0 1px "+T.green}}/>
-          <strong>Fair Value:</strong> Buffett 5y future price discounted at 10% hurdle (drives Value score)
+          <strong>Fair Value:</strong> Value 5y future price discounted at 10% hurdle (drives Value score)
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/>
@@ -1505,7 +1505,7 @@ function BuffettBlock({s}:{s:StockData}){
       <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid #fde68a`,marginTop:10}}>
         <div style={{fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>⚠ ANALYST-ONLY FALLBACK</div>
         <div style={{fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.5,marginBottom:6}}>
-          Buffett 5y projection unavailable: <span style={{color:T.amber,fontWeight:600}}>{s.buffett_fallback_reason}</span>
+          Value 5y projection unavailable: <span style={{color:T.amber,fontWeight:600}}>{s.buffett_fallback_reason}</span>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 14px",fontSize:11,fontFamily:T.mono}}>
           <span style={{color:T.textMuted}}>Analyst target</span>
@@ -2860,7 +2860,7 @@ function TrackRecordTable({s}:{s:StockData}){
       </div>
 
       <div style={{marginTop:12,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
-        Methodology adapted from "The Buffett Approach to Valuation". Book Yield (per share) = EPS / prior-year BVPS. Book Yield (ROE) = NetIncome / Equity. Retention = 1 − Payout. P/E shown is fiscal-year-end ratio; the spreadsheet's intra-year high/low not available without per-day price history.
+        Methodology adapted from "The Value Approach to Valuation". Book Yield (per share) = EPS / prior-year BVPS. Book Yield (ROE) = NetIncome / Equity. Retention = 1 − Payout. P/E shown is fiscal-year-end ratio; the spreadsheet's intra-year high/low not available without per-day price history.
       </div>
     </Card>
   );
