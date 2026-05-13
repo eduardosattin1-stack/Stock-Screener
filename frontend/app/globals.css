@@ -1,38 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;0,800&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&display=swap');
 
 :root {
-  --bg: #0A2B36;
-  --bg-surface: #041E26;
-  --bg-hover: #103B49;
-  --bg-elevated: #0D3340;
-  --border: #1A4E61;
-  --border-subtle: #0D3340;
-  --divider: #0D3340;
+  /* Surfaces */
+  --bg: #0a1817;           /* deep-sea */
+  --bg-surface: #101f1d;   /* charcoal */
+  --bg-hover: #16302b;     /* line-soft */
+  --bg-elevated: #18302c;  /* slate */
+  --border: #1f3a35;       /* line */
+  --border-subtle: #16302b;/* line-soft */
+  --divider: #16302b;
 
-  --text: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-  --text-light: #64748B;
+  /* Typography */
+  --text: #f3ede4;         /* bone */
+  --text-secondary: #b4c1be;/* mist */
+  --text-muted: #b4c1be;   /* mist */
+  --text-light: #6b7d7a;   /* ash */
 
-  --green: #10B981;
-  --green-light: rgba(16, 185, 129, 0.15);
-  --green-border: rgba(16, 185, 129, 0.3);
-  --red: #EF4444;
-  --red-light: rgba(239, 68, 68, 0.15);
-  --amber: #F59E0B;
-  --amber-light: rgba(245, 158, 11, 0.15);
-  --blue: #3B82F6;
-  --blue-light: rgba(59, 130, 246, 0.15);
-  --purple: #8B5CF6;
-  --purple-light: rgba(139, 92, 246, 0.15);
+  /* Accents */
+  --green: #14b87a;        /* signal */
+  --green-light: rgba(20, 184, 122, 0.15);
+  --green-border: rgba(20, 184, 122, 0.3);
+  --red: #ef5a5a;          /* coral */
+  --red-light: rgba(239, 90, 90, 0.15);
+  --amber: #f5b942;        /* amber */
+  --amber-light: rgba(245, 185, 66, 0.15);
+  --blue: #c4b5fd;         /* repurposed blue as lavender to not break legacy UI but use brand */
+  --blue-light: rgba(196, 181, 253, 0.15);
+  --purple: #c4b5fd;       /* lavender */
+  --purple-light: rgba(196, 181, 253, 0.15);
+  --lavender: #c4b5fd;
+  --lavender-deep: #8b7ed8;
 
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-lg: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.03);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 24px rgba(0,0,0,0.4);
 
   --radius: 8px;
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
-  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }

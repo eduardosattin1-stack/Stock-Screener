@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SpeculAIr — Visual Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;0,800&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* === Core Palette === */
+    --deep-sea:        #0a1817;   /* primary surface */
+    --charcoal:        #101f1d;   /* elevated surface */
+    --slate:           #18302c;   /* card surface */
+    --line:            #1f3a35;   /* dividers */
+    --line-soft:       #16302b;
+
+    --signal:          #14b87a;   /* PRIMARY — the SpeculAIr green */
+    --signal-bright:   #20d18e;
+    --signal-dim:      #0f8a5b;
+    --signal-glow:     rgba(20,184,122,0.18);
+
+    --lavender:        #c4b5fd;   /* AI accent */
+    --lavender-deep:   #8b7ed8;
+
+    --amber:           #f5b942;   /* momentum / technical */
+    --coral:           #ef5a5a;   /* loss / negative */
+
+    --bone:            #f3ede4;   /* primary text on dark */
+    --mist:            #b4c1be;   /* secondary text */
+    --ash:             #6b7d7a;   /* tertiary text */
+    --shadow:          rgba(0,0,0,0.4);
+
+    /* === Type === */
+    --display: 'JetBrains Mono', ui-monospace, monospace;
+    --body:    'Manrope', system-ui, sans-serif;
+    --serif:   'Fraunces', Georgia, serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--deep-sea);
+    color:var(--bone);
+    font-family:var(--body);
+    font-weight:400;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* Atmospheric backdrop */
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(800px 600px at 15% -10%, rgba(20,184,122,0.08), transparent 60%),
+      radial-gradient(700px 500px at 90% 10%, rgba(196,181,253,0.05), transparent 55%),
+      radial-gradient(900px 700px at 50% 110%, rgba(20,184,122,0.04), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  main{position:relative; z-index:1; max-width:1320px; margin:0 auto; padding:64px 56px 120px}
+
+  /* === Top bar === */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-bottom:48px;
+    border-bottom:1px solid var(--line-soft);
+    font-family:var(--display); font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--ash);
+  }
+  .topbar .right{display:flex; gap:32px}
+  .topbar .right span{color:var(--mist)}
+
+  /* === HERO === */
+  .hero{
+    padding:120px 0 140px;
+    border-bottom:1px solid var(--line-soft);
+    display:grid; grid-template-columns: 1fr auto; gap:80px; align-items:end;
+  }
+  .hero-mark{
+    display:flex; align-items:center; gap:28px;
+    margin-bottom:48px;
+  }
+  .wordmark-hero{
+    font-family:var(--display); font-weight:800; font-size:84px; letter-spacing:-0.04em; line-height:0.95;
+    color:var(--bone);
+    display:flex; align-items:baseline;
+  }
+  .wordmark-hero .ai{ color:var(--lavender); }
+  .hero h1{
+    font-family:var(--serif); font-weight:300; font-style:italic;
+    font-size:54px; line-height:1.05; letter-spacing:-0.025em;
+    margin:0 0 28px; color:var(--bone); max-width:780px;
+  }
+  .hero h1 em{ font-style:italic; color:var(--signal-bright); font-weight:400; }
+  .hero .lede{
+    font-size:18px; line-height:1.6; color:var(--mist); max-width:620px; font-weight:300;
+  }
+  .hero .meta{
+    text-align:right; font-family:var(--display); font-size:11px; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--ash); line-height:2;
+  }
+  .hero .meta strong{color:var(--bone); font-weight:500}
+
+  /* === Section header === */
+  .section{ padding:120px 0; border-bottom:1px solid var(--line-soft); }
+  .section:last-of-type{border-bottom:none}
+  .section-head{
+    display:grid; grid-template-columns:140px 1fr; gap:48px; margin-bottom:64px;
+    align-items:baseline;
+  }
+  .section-num{
+    font-family:var(--display); font-size:11px; letter-spacing:0.2em; color:var(--signal);
+    text-transform:uppercase; font-weight:500;
+  }
+  .section-title{
+    font-family:var(--serif); font-weight:300; font-size:46px; letter-spacing:-0.02em;
+    line-height:1.05; margin:0; color:var(--bone);
+  }
+  .section-title em{ font-style:italic; color:var(--signal-bright); }
+  .section-intro{
+    grid-column:2; max-width:680px; font-size:17px; line-height:1.65; color:var(--mist); font-weight:300;
+    margin-top:24px;
+  }
+
+  /* === BRAND STORY === */
+  .story-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft);
+  }
+  .story-cell{
+    background:var(--deep-sea); padding:40px 36px;
+  }
+  .story-cell h3{
+    font-family:var(--display); font-size:10px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--signal); margin:0 0 20px; font-weight:600;
+  }
+  .story-cell p{
+    margin:0; font-size:16px; line-height:1.6; color:var(--bone); font-weight:300;
+  }
+
+  /* === LOGO SYSTEM === */
+  .logo-stage{
+    background:var(--charcoal);
+    border:1px solid var(--line);
+    border-radius:0;
+    padding:80px;
+    margin-bottom:48px;
+    display:flex; align-items:center; justify-content:center;
+    min-height:280px;
+    position:relative;
+  }
+  .logo-stage::before{
+    content:attr(data-label);
+    position:absolute; top:20px; left:24px;
+    font-family:var(--display); font-size:10px; letter-spacing:0.2em;
+    color:var(--ash); text-transform:uppercase;
+  }
+
+  /* Logomark — the SA square */
+  .logomark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:64px; height:64px; border-radius:14px;
+    background:var(--signal);
+    font-family:var(--display); font-weight:800; font-size:24px;
+    color:var(--deep-sea); letter-spacing:-0.04em;
+    box-shadow: 0 0 40px var(--signal-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .logomark.xl{width:120px; height:120px; border-radius:26px; font-size:46px}
+  .logomark.sm{width:32px; height:32px; border-radius:7px; font-size:12px}
+  .logomark.outline{
+    background:transparent; color:var(--signal);
+    box-shadow:inset 0 0 0 2px var(--signal);
+  }
+  .logomark.mono-light{ background:var(--bone); color:var(--deep-sea); box-shadow:none; }
+  .logomark.mono-dark{ background:var(--deep-sea); color:var(--bone); box-shadow:inset 0 0 0 1px var(--line); }
+
+  /* Wordmark variations */
+  .wordmark{
+    font-family:var(--display); font-weight:800; letter-spacing:-0.04em; line-height:1;
+    color:var(--bone); display:inline-flex; align-items:baseline;
+  }
+  .wordmark .ai{ color:var(--lavender); }
+  .wordmark.lg{ font-size:48px }
+  .wordmark.md{ font-size:28px }
+  .wordmark.sm{ font-size:18px }
+
+  /* Lockup */
+  .lockup{display:inline-flex; align-items:center; gap:14px}
+  .lockup .beta{
+    font-family:var(--display); font-size:11px; letter-spacing:0.1em;
+    background:rgba(196,181,253,0.18); color:var(--lavender);
+    padding:4px 9px; border-radius:6px; text-transform:lowercase; font-weight:500;
+    align-self:center; margin-left:4px;
+  }
+
+  .logo-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:24px;
+  }
+  .logo-grid.three{grid-template-columns:repeat(3,1fr)}
+
+  .construction{
+    background:var(--charcoal); border:1px solid var(--line);
+    padding:48px; display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  }
+  .construction-visual{
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 24px 24px;
+    background-color:var(--deep-sea);
+    aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .construction-visual .logomark{
+    position:relative; z-index:1;
+    box-shadow:0 0 0 1px var(--lavender), 0 0 0 24px rgba(196,181,253,0.08), 0 0 0 25px var(--lavender-deep);
+  }
+  .construction-notes h4{
+    font-family:var(--display); font-size:11px; letter-spacing:0.18em;
+    color:var(--signal); margin:0 0 12px; text-transform:uppercase;
+  }
+  .construction-notes p{font-size:14px; color:var(--mist); line-height:1.65; margin:0 0 16px}
+  .construction-notes ul{margin:0; padding:0; list-style:none}
+  .construction-notes li{
+    display:flex; justify-content:space-between; padding:10px 0;
+    border-bottom:1px solid var(--line-soft);
+    font-family:var(--display); font-size:12px; color:var(--bone);
+  }
+  .construction-notes li span:last-child{color:var(--ash)}
+
+  /* === COLOR === */
+  .swatches-primary{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:48px;
+  }
+  .swatch{
+    border:1px solid var(--line); background:var(--charcoal);
+    overflow:hidden;
+  }
+  .swatch-color{
+    aspect-ratio:16/10; position:relative;
+  }
+  .swatch-color::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.3));
+  }
+  .swatch-body{padding:24px}
+  .swatch-name{
+    font-family:var(--display); font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--ash); margin-bottom:8px;
+  }
+  .swatch-display{
+    font-family:var(--serif); font-weight:300; font-style:italic; font-size:28px;
+    color:var(--bone); margin-bottom:16px; line-height:1.1;
+  }
+  .swatch-codes{
+    display:grid; grid-template-columns:auto 1fr; gap:6px 16px;
+    font-family:var(--display); font-size:11px; color:var(--mist);
+  }
+  .swatch-codes dt{color:var(--ash); letter-spacing:0.12em}
+  .swatch-codes dd{margin:0; color:var(--bone)}
+  .swatch-use{
+    margin-top:18px; padding-top:18px; border-top:1px solid var(--line-soft);
+    font-size:13px; color:var(--mist); line-height:1.55;
+  }
+
+  .swatches-secondary{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft);
+    margin-bottom:48px;
+  }
+  .swatch-mini{
+    background:var(--charcoal); padding:0;
+    display:flex; flex-direction:column;
+  }
+  .swatch-mini-color{height:80px}
+  .swatch-mini-info{
+    padding:18px 20px; font-family:var(--display);
+  }
+  .swatch-mini-name{font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--bone); margin-bottom:4px}
+  .swatch-mini-hex{font-size:11px; color:var(--ash)}
+  .swatch-mini-note{
+    font-family:var(--body); font-size:12px; color:var(--mist);
+    padding:0 20px 18px; line-height:1.5;
+  }
+
+  .neutrals-ramp{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft);
+  }
+  .neutral-step{
+    padding:24px 18px; min-height:120px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    font-family:var(--display); font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+  }
+
+  /* === TYPOGRAPHY === */
+  .type-row{
+    display:grid; grid-template-columns:200px 1fr; gap:48px; padding:40px 0;
+    border-bottom:1px solid var(--line-soft); align-items:start;
+  }
+  .type-row:last-child{border-bottom:none}
+  .type-meta{font-family:var(--display); font-size:11px; letter-spacing:0.18em; color:var(--ash); text-transform:uppercase}
+  .type-meta strong{display:block; color:var(--bone); font-size:13px; margin-bottom:8px; font-weight:600}
+  .type-spec{font-size:11px; color:var(--ash); line-height:1.8; margin-top:12px}
+  .type-spec span{display:block}
+
+  .type-sample-display{font-family:var(--display); color:var(--bone); line-height:1}
+  .type-sample-display.huge{font-size:96px; font-weight:800; letter-spacing:-0.04em}
+  .type-sample-display .ai{color:var(--lavender)}
+  .type-sample-serif{
+    font-family:var(--serif); font-weight:300; font-style:italic;
+    font-size:54px; line-height:1.05; letter-spacing:-0.02em; color:var(--bone);
+  }
+  .type-sample-body{font-family:var(--body); font-size:20px; line-height:1.6; color:var(--bone); max-width:680px; font-weight:300}
+  .type-sample-data{
+    font-family:var(--display); font-size:14px; color:var(--bone);
+    display:grid; grid-template-columns:repeat(4,1fr); gap:24px;
+  }
+  .type-sample-data .label{font-size:10px; letter-spacing:0.18em; color:var(--ash); text-transform:uppercase; margin-bottom:6px}
+  .type-sample-data .value{font-size:22px; font-weight:700; letter-spacing:-0.02em}
+  .type-sample-data .value.pos{color:var(--signal-bright)}
+  .type-sample-data .value.neg{color:var(--coral)}
+
+  /* === VOICE === */
+  .voice-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px;
+  }
+  .voice-col h3{
+    font-family:var(--display); font-size:11px; letter-spacing:0.18em; color:var(--signal); text-transform:uppercase;
+    margin:0 0 24px; font-weight:600;
+  }
+  .voice-col.bad h3{color:var(--coral)}
+  .voice-item{
+    padding:24px 0; border-bottom:1px solid var(--line-soft);
+    font-family:var(--serif); font-size:22px; line-height:1.4; font-style:italic; font-weight:300;
+    color:var(--bone);
+  }
+  .voice-item:last-child{border-bottom:none}
+  .voice-item::before{
+    content:'— '; color:var(--ash); font-style:normal;
+  }
+
+  /* === APPLICATION === */
+  .app-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:48px;
+  }
+  .app-card{
+    background:var(--charcoal); border:1px solid var(--line);
+    padding:48px; min-height:320px;
+    position:relative; overflow:hidden;
+  }
+  .app-card-label{
+    position:absolute; top:20px; left:24px;
+    font-family:var(--display); font-size:10px; letter-spacing:0.2em;
+    color:var(--ash); text-transform:uppercase;
+  }
+
+  /* App nav mock */
+  .nav-mock{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 18px; background:var(--deep-sea); border:1px solid var(--line);
+    border-radius:10px; max-width:560px;
+  }
+  .nav-mock .tab{
+    font-family:var(--display); font-size:11px; letter-spacing:0.06em;
+    color:var(--ash); padding:8px 14px; border-radius:6px;
+  }
+  .nav-mock .tab.active{
+    background:rgba(20,184,122,0.15); color:var(--signal-bright);
+  }
+
+  /* Business card */
+  .card-mock{
+    aspect-ratio:1.75/1; max-width:380px;
+    background:var(--deep-sea); border:1px solid var(--line);
+    padding:32px; display:flex; flex-direction:column; justify-content:space-between;
+    position:relative; overflow:hidden;
+  }
+  .card-mock::after{
+    content:''; position:absolute; right:-80px; bottom:-80px;
+    width:240px; height:240px; border-radius:50%;
+    background:radial-gradient(circle, var(--signal-glow), transparent 70%);
+  }
+  .card-info{font-family:var(--display); font-size:11px; line-height:1.7; color:var(--mist); position:relative; z-index:1}
+  .card-info .name{color:var(--bone); font-weight:700; font-size:13px; letter-spacing:0.02em}
+
+  /* Mobile mock */
+  .mobile-mock{
+    width:200px; aspect-ratio:9/19.5;
+    background:var(--deep-sea); border:1px solid var(--line); border-radius:24px;
+    margin:0 auto; padding:18px 14px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .mobile-mock .lockup{font-size:14px}
+  .mobile-mock .lockup .logomark{width:26px; height:26px; font-size:11px; border-radius:6px}
+  .mobile-mock .wordmark.sm{font-size:13px}
+  .mobile-mock .pick{
+    background:var(--charcoal); border:1px solid var(--line-soft);
+    border-radius:8px; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--display); font-size:10px;
+  }
+  .mobile-mock .pick .sym{color:var(--bone); font-weight:700}
+  .mobile-mock .pick .score{color:var(--signal-bright); font-weight:700}
+  .mobile-mock .pick .score.amber{color:var(--amber)}
+  .mobile-mock .pick .score.red{color:var(--coral)}
+
+  /* Favicon stages */
+  .favicon-row{
+    display:flex; gap:32px; align-items:center; margin-top:32px;
+    padding:24px; background:var(--charcoal); border:1px solid var(--line);
+  }
+  .favicon-row .label{font-family:var(--display); font-size:10px; letter-spacing:0.18em; color:var(--ash); text-transform:uppercase}
+
+  /* === RULES === */
+  .rules-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px;
+  }
+  .rule-col h3{
+    font-family:var(--display); font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    margin:0 0 24px; font-weight:600;
+  }
+  .rule-col.do h3{color:var(--signal)}
+  .rule-col.dont h3{color:var(--coral)}
+  .rule{
+    padding:20px 0; border-bottom:1px solid var(--line-soft);
+    display:grid; grid-template-columns:24px 1fr; gap:16px;
+  }
+  .rule:last-child{border-bottom:none}
+  .rule-mark{
+    font-family:var(--display); font-size:16px; font-weight:700; line-height:1;
+  }
+  .rule.do .rule-mark{color:var(--signal)}
+  .rule.dont .rule-mark{color:var(--coral)}
+  .rule-text{font-size:15px; line-height:1.55; color:var(--bone); font-weight:300}
+
+  /* === FOOTER === */
+  footer{
+    margin-top:120px; padding-top:48px;
+    border-top:1px solid var(--line-soft);
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--display); font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--ash);
+  }
+
+  /* Responsive — tablet */
+  @media (max-width:960px){
+    main{padding:48px 28px 80px}
+    .hero{grid-template-columns:1fr; gap:32px; padding:64px 0 80px}
+    .hero h1{font-size:38px}
+    .wordmark-hero{font-size:54px}
+    .hero .meta{text-align:left}
+    .section-head{grid-template-columns:1fr; gap:16px}
+    .section-intro{grid-column:1; margin-top:8px}
+    .section-title{font-size:34px}
+    .swatches-primary{grid-template-columns:1fr}
+    .swatches-secondary{grid-template-columns:repeat(2,1fr)}
+    .neutrals-ramp{grid-template-columns:repeat(3,1fr)}
+    .voice-grid,.rules-grid,.app-grid{grid-template-columns:1fr}
+    .construction{grid-template-columns:1fr}
+    .story-grid{grid-template-columns:1fr}
+    .type-row{grid-template-columns:1fr; gap:16px}
+    .type-sample-display.huge{font-size:56px}
+    .type-sample-serif{font-size:32px}
+    .type-sample-data{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- ─────────────── TOP BAR ─────────────── -->
+  <div class="topbar">
+    <div>SpeculAIr · Brand Identity v1.0</div>
+    <div class="right">
+      <span>CarbonBridge BV</span>
+      <span>May 2026</span>
+    </div>
+  </div>
+
+  <!-- ─────────────── HERO ─────────────── -->
+  <section class="hero">
+    <div>
+      <div class="hero-mark">
+        <div class="logomark xl">SA</div>
+      </div>
+      <div class="wordmark-hero">specul<span class="ai">AI</span>r</div>
+      <h1 style="margin-top:48px">A stock screener that <em>shows its work.</em></h1>
+      <p class="lede">SpeculAIr is built for the investor who wants a system, not a toolbox. Tested strategies. Honest signals. The algorithm's live track record visible in real time. The "AI" hides in the middle of the name — quietly doing the heavy lifting, the way it should.</p>
+    </div>
+    <div class="meta">
+      <div><strong>01</strong> Brand</div>
+      <div><strong>02</strong> Logo</div>
+      <div><strong>03</strong> Color</div>
+      <div><strong>04</strong> Typography</div>
+      <div><strong>05</strong> Voice</div>
+      <div><strong>06</strong> Application</div>
+      <div><strong>07</strong> Rules</div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 01 BRAND ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">01 — Brand</div>
+      <h2 class="section-title">The <em>posture</em> behind the product.</h2>
+    </div>
+    <p class="section-intro">Most screeners sell tools and hope you find the edge. SpeculAIr sells the edge — a tested investment system with the receipts attached. The brand should feel as honest, precise, and quietly confident as the product itself.</p>
+
+    <div class="story-grid">
+      <div class="story-cell">
+        <h3>The Name</h3>
+        <p>Speculate + AI + Air. To speculate is to look forward; AI is the engine; air is the clarity we offer in a market drowning in noise. Read it "spec-u-LAIR" — the AI lives inside the word, never shouting.</p>
+      </div>
+      <div class="story-cell">
+        <h3>The Promise</h3>
+        <p>Here are today's picks from a strategy with a published track record. Here's the reason each one made the cut, in plain language. Here's how the algorithm is doing live this month. No black box. No theatre.</p>
+      </div>
+      <div class="story-cell">
+        <h3>The Posture</h3>
+        <p>Confident, not loud. Technical, not jargon-filled. Editorial, not corporate. We talk to a private investor the way a senior analyst would — precise, opinionated, willing to flag uncertainty.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 02 LOGO ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">02 — Logo System</div>
+      <h2 class="section-title">A monogram, a wordmark, <em>and the AI in the middle.</em></h2>
+    </div>
+    <p class="section-intro">The logo is a system of three parts: the <strong>SA</strong> monogram for compact contexts, the <strong>SPECULAIR</strong> wordmark for primary brand expression, and a horizontal lockup that combines them. The lavender "AI" inside the wordmark is non-negotiable — it's the signature.</p>
+
+    <!-- Primary lockup -->
+    <div class="logo-stage" data-label="Primary Lockup">
+      <div class="lockup">
+        <div class="logomark">SA</div>
+        <div class="wordmark lg">specul<span class="ai">AI</span>r</div>
+        <span class="beta">beta</span>
+      </div>
+    </div>
+
+    <!-- Mark / Wordmark side by side -->
+    <div class="logo-grid">
+      <div class="logo-stage" data-label="Monogram — full color">
+        <div class="logomark xl">SA</div>
+      </div>
+      <div class="logo-stage" data-label="Wordmark — full color">
+        <div class="wordmark lg">specul<span class="ai">AI</span>r</div>
+      </div>
+    </div>
+
+    <!-- Color variants -->
+    <div class="logo-grid three">
+      <div class="logo-stage" data-label="On dark — default" style="background:var(--deep-sea)">
+        <div class="logomark">SA</div>
+      </div>
+      <div class="logo-stage" data-label="Outline — monochrome" style="background:var(--deep-sea)">
+        <div class="logomark outline">SA</div>
+      </div>
+      <div class="logo-stage" data-label="On light — inverted" style="background:var(--bone)">
+        <div class="logomark mono-dark">SA</div>
+      </div>
+    </div>
+
+    <!-- Construction & clear space -->
+    <div class="construction">
+      <div class="construction-visual">
+        <div class="logomark xl">SA</div>
+      </div>
+      <div class="construction-notes">
+        <h4>Construction & Clear Space</h4>
+        <p>The monogram is built on a 64-unit grid with a 14-unit corner radius. Maintain clear space equal to one full width of the mark on every side. Never crop, recolor outside the approved palette, or apply effects.</p>
+        <ul>
+          <li><span>Corner radius</span><span>22% of width</span></li>
+          <li><span>Minimum digital size</span><span>24px</span></li>
+          <li><span>Minimum print size</span><span>8mm</span></li>
+          <li><span>Clear space</span><span>1× mark width</span></li>
+          <li><span>Type weight (SA)</span><span>JetBrains Mono 800</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 03 COLOR ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">03 — Color</div>
+      <h2 class="section-title">Deep sea, signal green, <em>and a quiet lavender.</em></h2>
+    </div>
+    <p class="section-intro">The palette is dark by default — this is software for late-night research and pre-market scanning, not corporate decks. Signal green carries the brand. Lavender is reserved for AI moments. Amber and coral handle data semantics. Restraint is the rule.</p>
+
+    <!-- Primary 3 -->
+    <div class="swatches-primary">
+      <div class="swatch">
+        <div class="swatch-color" style="background:var(--signal)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Primary</div>
+          <div class="swatch-display">Signal Green</div>
+          <dl class="swatch-codes">
+            <dt>HEX</dt><dd>#14B87A</dd>
+            <dt>RGB</dt><dd>20 · 184 · 122</dd>
+            <dt>HSL</dt><dd>156° 80% 40%</dd>
+          </dl>
+          <div class="swatch-use">The brand color. Logomark, primary buttons, positive signals, active states. Used at full saturation only on dark surfaces.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background:var(--deep-sea); box-shadow:inset 0 0 0 1px var(--line)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Surface</div>
+          <div class="swatch-display">Deep Sea</div>
+          <dl class="swatch-codes">
+            <dt>HEX</dt><dd>#0A1817</dd>
+            <dt>RGB</dt><dd>10 · 24 · 23</dd>
+            <dt>HSL</dt><dd>175° 41% 7%</dd>
+          </dl>
+          <div class="swatch-use">The primary background. Subtle green undertone keeps it warm and grounded — not the dead black of generic dark mode.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background:var(--lavender)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">AI Accent</div>
+          <div class="swatch-display">Lavender</div>
+          <dl class="swatch-codes">
+            <dt>HEX</dt><dd>#C4B5FD</dd>
+            <dt>RGB</dt><dd>196 · 181 · 253</dd>
+            <dt>HSL</dt><dd>251° 95% 85%</dd>
+          </dl>
+          <div class="swatch-use">Reserved for AI surfaces — the "AI" in the wordmark, ML-derived scores, transcript analysis, beta badges. Never used decoratively.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semantic 4 -->
+    <div class="swatches-secondary">
+      <div class="swatch-mini">
+        <div class="swatch-mini-color" style="background:var(--signal-bright)"></div>
+        <div class="swatch-mini-info">
+          <div class="swatch-mini-name">Gain</div>
+          <div class="swatch-mini-hex">#20D18E</div>
+        </div>
+        <div class="swatch-mini-note">Positive movement, BUY signals, alpha</div>
+      </div>
+      <div class="swatch-mini">
+        <div class="swatch-mini-color" style="background:var(--amber)"></div>
+        <div class="swatch-mini-info">
+          <div class="swatch-mini-name">Momentum</div>
+          <div class="swatch-mini-hex">#F5B942</div>
+        </div>
+        <div class="swatch-mini-note">Technical signals, watch states, RSI</div>
+      </div>
+      <div class="swatch-mini">
+        <div class="swatch-mini-color" style="background:var(--coral)"></div>
+        <div class="swatch-mini-info">
+          <div class="swatch-mini-name">Loss</div>
+          <div class="swatch-mini-hex">#EF5A5A</div>
+        </div>
+        <div class="swatch-mini-note">Negative, SELL, drawdown, risk flags</div>
+      </div>
+      <div class="swatch-mini">
+        <div class="swatch-mini-color" style="background:var(--lavender-deep)"></div>
+        <div class="swatch-mini-info">
+          <div class="swatch-mini-name">AI Deep</div>
+          <div class="swatch-mini-hex">#8B7ED8</div>
+        </div>
+        <div class="swatch-mini-note">AI surfaces on light backgrounds</div>
+      </div>
+    </div>
+
+    <!-- Neutrals -->
+    <div style="font-family:var(--display); font-size:11px; letter-spacing:0.18em; color:var(--ash); text-transform:uppercase; margin-bottom:16px">Neutrals — text & surface ramp</div>
+    <div class="neutrals-ramp">
+      <div class="neutral-step" style="background:var(--deep-sea); color:var(--bone)"><span>Deep Sea</span><span style="color:var(--ash)">#0A1817</span></div>
+      <div class="neutral-step" style="background:var(--charcoal); color:var(--bone)"><span>Charcoal</span><span style="color:var(--ash)">#101F1D</span></div>
+      <div class="neutral-step" style="background:var(--slate); color:var(--bone)"><span>Slate</span><span style="color:var(--ash)">#18302C</span></div>
+      <div class="neutral-step" style="background:var(--ash); color:var(--deep-sea)"><span>Ash</span><span style="color:var(--charcoal)">#6B7D7A</span></div>
+      <div class="neutral-step" style="background:var(--mist); color:var(--deep-sea)"><span>Mist</span><span style="color:var(--charcoal)">#B4C1BE</span></div>
+      <div class="neutral-step" style="background:var(--bone); color:var(--deep-sea)"><span>Bone</span><span style="color:var(--charcoal)">#F3EDE4</span></div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 04 TYPOGRAPHY ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">04 — Typography</div>
+      <h2 class="section-title">Mono for the wordmark, <em>serif for the soul.</em></h2>
+    </div>
+    <p class="section-intro">A three-typeface system. The wordmark and all data live in JetBrains Mono — terminal-native, no apology. Editorial moments (taglines, headlines, swatch names) lean on Fraunces italic for warmth. Body and UI text use Manrope, a clean geometric sans that stays out of the way.</p>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>Display / Wordmark</strong>
+        JetBrains Mono
+        <div class="type-spec">
+          <span>Weight 800</span>
+          <span>Tracking −0.04em</span>
+          <span>Used for: logo, large numerics, section labels</span>
+        </div>
+      </div>
+      <div class="type-sample-display huge">specul<span class="ai">AI</span>r</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>Editorial Display</strong>
+        Fraunces Italic
+        <div class="type-spec">
+          <span>Weight 300, italic</span>
+          <span>Tracking −0.02em</span>
+          <span>Used for: taglines, hero copy, swatch names</span>
+        </div>
+      </div>
+      <div class="type-sample-serif">A screener that shows its work, not its features.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>Body / UI</strong>
+        Manrope
+        <div class="type-spec">
+          <span>Weight 300/400/500/700</span>
+          <span>Tracking 0</span>
+          <span>Used for: paragraphs, UI labels, secondary text</span>
+        </div>
+      </div>
+      <div class="type-sample-body">SpeculAIr ranks 2,425 global stocks daily through a 5-factor composite model — momentum, quality, growth, value, and smart money. Each pick comes with the reason it qualified, the strategy backtest behind it, and the live performance of every signal we've published.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>Data</strong>
+        JetBrains Mono
+        <div class="type-spec">
+          <span>Weight 400/700</span>
+          <span>Tabular nums on</span>
+          <span>Used for: all numeric data, tables, dashboards</span>
+        </div>
+      </div>
+      <div class="type-sample-data">
+        <div>
+          <div class="label">Composite</div>
+          <div class="value pos">0.93</div>
+        </div>
+        <div>
+          <div class="label">Upside</div>
+          <div class="value pos">+41%</div>
+        </div>
+        <div>
+          <div class="label">Piotroski</div>
+          <div class="value">6 / 9</div>
+        </div>
+        <div>
+          <div class="label">P / S</div>
+          <div class="value">0.7</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 05 VOICE ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">05 — Voice & Tone</div>
+      <h2 class="section-title">Precise, opinionated, <em>and willing to flag doubt.</em></h2>
+    </div>
+    <p class="section-intro">We don't oversell. We don't hide behind disclaimers. We give the user a clear read and tell them when our own confidence is low. Think senior analyst, not influencer; think Mercury, not Robinhood.</p>
+
+    <div class="voice-grid">
+      <div class="voice-col">
+        <h3>We say things like</h3>
+        <div class="voice-item">DEC scored 0.93 — strong quality and deep value, but momentum is weak. A patient setup, not a chase.</div>
+        <div class="voice-item">The BORING basket has returned +27% over the last 18 months. Here's the full track record, including the drawdowns.</div>
+        <div class="voice-item">Only 6 of 13 factors evaluated for this name. Composite capped at 0.75 until coverage improves.</div>
+        <div class="voice-item">The model says BUY. Here's what the model has been wrong about lately.</div>
+      </div>
+      <div class="voice-col bad">
+        <h3>We don't say things like</h3>
+        <div class="voice-item">Unlock the secret AI signals Wall Street doesn't want you to see.</div>
+        <div class="voice-item">Hot pick of the day. Don't miss it.</div>
+        <div class="voice-item">Powered by next-generation deep learning quantum algorithms.</div>
+        <div class="voice-item">This is not financial advice. We are not liable for anything. Consult a professional. (Buried in 8pt grey footer.)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 06 APPLICATION ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">06 — Application</div>
+      <h2 class="section-title">In product, in print, <em>and on a phone screen.</em></h2>
+    </div>
+    <p class="section-intro">A few representative surfaces showing the system at work. The logomark holds its own at favicon size; the wordmark anchors the navigation; the lockup carries marketing and business communications.</p>
+
+    <div class="app-grid">
+      <!-- App nav -->
+      <div class="app-card">
+        <div class="app-card-label">Product Navigation</div>
+        <div class="nav-mock" style="margin-top:48px">
+          <div class="lockup">
+            <div class="logomark sm">SA</div>
+            <div class="wordmark sm">specul<span class="ai">AI</span>r</div>
+            <span class="beta">beta</span>
+          </div>
+          <div style="flex:1"></div>
+          <div class="tab active">Discover</div>
+          <div class="tab">Track Record</div>
+          <div class="tab">Performance</div>
+          <div class="tab">Alerts</div>
+        </div>
+        <div style="margin-top:32px; font-size:13px; color:var(--mist); max-width:520px; line-height:1.6">
+          The logomark stays small and steady in the nav; the wordmark sits beside it; the lavender beta badge is the only flourish. The active tab uses signal-green at 15% opacity — present without shouting.
+        </div>
+      </div>
+
+      <!-- Business card -->
+      <div class="app-card">
+        <div class="app-card-label">Business Card — front</div>
+        <div class="card-mock" style="margin:32px auto 0">
+          <div style="position:relative; z-index:1">
+            <div class="lockup">
+              <div class="logomark sm">SA</div>
+              <div class="wordmark sm">specul<span class="ai">AI</span>r</div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="name">Bruno Bezerra</div>
+            <div>Founder · CarbonBridge BV</div>
+            <div style="margin-top:10px">bruno.bezerra@carbonbridge.nl</div>
+            <div>screener.carbonbridge.nl</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-grid">
+      <!-- Mobile -->
+      <div class="app-card">
+        <div class="app-card-label">Mobile — Discover</div>
+        <div class="mobile-mock" style="margin-top:40px">
+          <div class="lockup" style="margin-bottom:6px">
+            <div class="logomark sm">SA</div>
+            <div class="wordmark sm">specul<span class="ai">AI</span>r</div>
+          </div>
+          <div style="font-family:var(--display); font-size:9px; letter-spacing:0.16em; color:var(--ash); text-transform:uppercase; padding:6px 2px">Compounder · Global</div>
+          <div class="pick"><span class="sym">DEC</span><span class="score">0.93</span></div>
+          <div class="pick"><span class="sym">FBIN</span><span class="score">0.88</span></div>
+          <div class="pick"><span class="sym">CALM</span><span class="score">0.85</span></div>
+          <div class="pick"><span class="sym">JBT</span><span class="score amber">0.78</span></div>
+          <div class="pick"><span class="sym">UFPI</span><span class="score amber">0.74</span></div>
+          <div class="pick"><span class="sym">MTH</span><span class="score amber">0.71</span></div>
+          <div class="pick"><span class="sym">WAB</span><span class="score red">0.62</span></div>
+        </div>
+      </div>
+
+      <!-- Favicon stages -->
+      <div class="app-card">
+        <div class="app-card-label">Favicon Scaling</div>
+        <div style="margin-top:48px; font-size:14px; color:var(--mist); max-width:480px; line-height:1.6">
+          The monogram is the most reduced expression of the brand. It must hold its own at favicon size while still reading as an intentional mark — not a generic green square.
+        </div>
+        <div class="favicon-row">
+          <div style="text-align:center">
+            <div class="logomark" style="width:64px; height:64px; border-radius:14px; font-size:24px">SA</div>
+            <div class="label" style="margin-top:12px">64px</div>
+          </div>
+          <div style="text-align:center">
+            <div class="logomark" style="width:48px; height:48px; border-radius:11px; font-size:18px">SA</div>
+            <div class="label" style="margin-top:12px">48px</div>
+          </div>
+          <div style="text-align:center">
+            <div class="logomark" style="width:32px; height:32px; border-radius:7px; font-size:12px">SA</div>
+            <div class="label" style="margin-top:12px">32px</div>
+          </div>
+          <div style="text-align:center">
+            <div class="logomark" style="width:24px; height:24px; border-radius:5px; font-size:9px">SA</div>
+            <div class="label" style="margin-top:12px">24px</div>
+          </div>
+          <div style="text-align:center">
+            <div class="logomark" style="width:16px; height:16px; border-radius:4px; font-size:7px; font-weight:800">SA</div>
+            <div class="label" style="margin-top:12px">16px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── 07 RULES ─────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">07 — Rules</div>
+      <h2 class="section-title">A short list. <em>The system is the rule.</em></h2>
+    </div>
+    <p class="section-intro">Brand systems collapse under exception. These rules are non-negotiable. Everything else is interpretation — and interpretation should always defer to restraint.</p>
+
+    <div class="rules-grid">
+      <div class="rule-col do">
+        <h3>Do</h3>
+        <div class="rule do"><span class="rule-mark">+</span><div class="rule-text">Always lowercase the wordmark — "speculAIr," never "SPECULAIR" except in spaced caps for navigation labels.</div></div>
+        <div class="rule do"><span class="rule-mark">+</span><div class="rule-text">Render the "AI" in Lavender every time. It is the signature element of the brand.</div></div>
+        <div class="rule do"><span class="rule-mark">+</span><div class="rule-text">Use Signal Green sparingly — for the logomark, primary actions, and positive signals. Restraint amplifies it.</div></div>
+        <div class="rule do"><span class="rule-mark">+</span><div class="rule-text">Default to Deep Sea backgrounds. Light surfaces are an exception, never the rule.</div></div>
+        <div class="rule do"><span class="rule-mark">+</span><div class="rule-text">Pair JetBrains Mono with Fraunces italic for editorial moments. The contrast is the voice.</div></div>
+      </div>
+      <div class="rule-col dont">
+        <h3>Don't</h3>
+        <div class="rule dont"><span class="rule-mark">×</span><div class="rule-text">Don't gradient the logomark, add drop shadows, or rotate it. The mark is geometric and flat.</div></div>
+        <div class="rule dont"><span class="rule-mark">×</span><div class="rule-text">Don't recolor the "AI." If lavender doesn't work on the surface, recolor the surface.</div></div>
+        <div class="rule dont"><span class="rule-mark">×</span><div class="rule-text">Don't pair the brand with stock photography of traders, charts, or skyscrapers. Use UI screenshots instead.</div></div>
+        <div class="rule dont"><span class="rule-mark">×</span><div class="rule-text">Don't use Signal Green as a large background fill. It belongs in marks, accents, and data — not posters.</div></div>
+        <div class="rule dont"><span class="rule-mark">×</span><div class="rule-text">Don't introduce additional fonts. Three is the system. Adding a fourth dilutes the voice.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── FOOTER ─────────────── -->
+  <footer>
+    <div>SpeculAIr · A CarbonBridge product</div>
+    <div>Brand Identity v1.0 · May 2026</div>
+  </footer>
+
+</main>
+</body>
+</html>

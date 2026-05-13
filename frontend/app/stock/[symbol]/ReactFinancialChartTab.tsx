@@ -14,12 +14,21 @@ export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/fmp?e=historical-price-eod/full&symbol=${symbol}`)
-      .then(res => res.json())
-      .then(json => {
+    Promise.all([
+      fetch(`/api/fmp?e=historical-price-eod/full&symbol=${symbol}`).then(res => res.json()),
+      fetch(`/api/fmp?e=earnings-surprises&symbol=${symbol}`).then(res => res.json()).catch(() => [])
+    ])
+      .then(([json, earningsJson]) => {
         if (!json || !Array.isArray(json) || json.length === 0) {
           setError("No historical data found.");
           return;
+        }
+
+        const earningsMap: Record<string, any> = {};
+        if (Array.isArray(earningsJson)) {
+          earningsJson.forEach((e: any) => {
+            if (e.date) earningsMap[e.date] = e;
+          });
         }
         
         // FMP returns descending order (newest first).
@@ -31,7 +40,8 @@ export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
           high: d.high,
           low: d.low,
           close: d.close,
-          volume: d.volume
+          volume: d.volume,
+          earnings: earningsMap[d.date] || null
         }));
         
         setData(parsed);

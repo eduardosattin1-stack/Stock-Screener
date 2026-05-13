@@ -139,7 +139,7 @@ interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;opera
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
-const T={bg:"#ffffff",card:"#ffffff",cardBorder:"#e5e7eb",cardShadow:"0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04)",text:"#1a1a1a",textMuted:"#6b7280",textLight:"#9ca3af",green:"#2d7a4f",greenLight:"#e8f5ee",greenBorder:"#b8dcc8",red:"#ef4444",redLight:"#fef2f2",amber:"#f59e0b",amberLight:"#fffbeb",blue:"#2563eb",purple:"#8b5cf6",divider:"#f3f4f6",mono:"'JetBrains Mono','SF Mono',monospace",sans:"'DM Sans',-apple-system,sans-serif"};
+const T={bg:"var(--bg)",card:"var(--bg-surface)",cardBorder:"var(--border)",cardShadow:"var(--shadow-md)",text:"var(--text)",textMuted:"var(--text-muted)",textLight:"var(--text-light)",green:"var(--green)",greenLight:"var(--green-light)",greenBorder:"var(--green-border)",red:"var(--red)",redLight:"var(--red-light)",amber:"var(--amber)",amberLight:"var(--amber-light)",blue:"var(--blue)",purple:"var(--purple)",divider:"var(--divider)",mono:"var(--font-mono)",sans:"var(--font-sans)"};
 const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"#f5f3ff",fg:"#8b5cf6",border:"#ddd6fe"},BUY:{bg:T.greenLight,fg:"#10b981",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"#fde68a"},HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"#fecaca"}};
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 

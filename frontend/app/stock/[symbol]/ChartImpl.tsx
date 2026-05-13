@@ -32,6 +32,8 @@ import {
   bollingerBand
 } from "@react-financial-charts/indicators";
 import { discontinuousTimeScaleProviderBuilder } from "@react-financial-charts/scales";
+import { calculateCustomIndicators } from "./customIndicators";
+import { Annotate, LabelAnnotation } from "@react-financial-charts/annotations";
 
 const priceFormat = format(".2f");
 const timeFmt = timeFormat("%Y-%m-%d");
@@ -46,7 +48,10 @@ export default function ChartComponent({ data: initialData, width, height, ratio
   const bbCalc = bollingerBand().options({ windowSize: 20, multiplier: 2, sourcePath: "close", movingAverageType: "sma" }).merge((d:any, c:any) => { d.bb = c }).accessor((d:any) => d.bb);
 
   const calculatedData = useMemo(() => {
-    const rawCalc = rsiCalc(macdCalc(sma200(ema50(ema20(bbCalc(initialData))))));
+    // 1. Run our custom indicators (ADX, OBV, RelVol)
+    const customData = calculateCustomIndicators([...initialData]);
+    // 2. Run RFC indicators
+    const rawCalc = rsiCalc(macdCalc(sma200(ema50(ema20(bbCalc(customData))))));
     return rawCalc.map((d: any) => ({
       ...d,
       macd: d.macd || { macd: undefined, signal: undefined, divergence: undefined },
@@ -72,10 +77,13 @@ export default function ChartComponent({ data: initialData, width, height, ratio
   const gridHeight = height - margin.top - margin.bottom;
 
   // Split height dynamically for multiple panes
-  const priceH = gridHeight * 0.5;
-  const volH = gridHeight * 0.1;
-  const macdH = gridHeight * 0.25;
-  const rsiH = gridHeight * 0.25;
+  const priceH = gridHeight * 0.4;
+  const volH = gridHeight * 0.08;
+  const macdH = gridHeight * 0.15;
+  const rsiH = gridHeight * 0.12;
+  const adxH = gridHeight * 0.10;
+  const obvH = gridHeight * 0.08;
+  const relVolH = gridHeight * 0.07;
 
   return (
     // @ts-ignore
@@ -117,6 +125,20 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <EdgeIndicator itemType="last" orient="right" edgeAt="right" yAccessor={(d:any) => d.close} fill={(d:any) => d.close > d.open ? "#10b981" : "#ef4444"} />
         
+        {/* Earnings Annotation */}
+        {/* @ts-ignore */}
+        <Annotate
+          with={LabelAnnotation}
+          when={(d:any) => d.earnings != null}
+          usingProps={{
+            text: "E",
+            fontSize: 11,
+            fill: "#3b82f6",
+            y: ({ yScale, datum }: any) => yScale(datum.low) + 15,
+            tooltip: (d:any) => `EPS: ${d.earnings?.eps} (Est: ${d.earnings?.epsEstimated})`
+          }}
+        />
+
         {/* @ts-ignore */}
         <OHLCTooltip origin={[8, 16]} textFill="#374151" />
         {/* @ts-ignore */}
@@ -162,14 +184,54 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         <YAxis tickValues={[30, 50, 70]} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
         
         {/* @ts-ignore */}
-        <MouseCoordinateX displayFormat={timeFmt} />
-        {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
         <RSISeries yAccessor={rsiCalc.accessor()} />
         {/* @ts-ignore */}
         <RSITooltip origin={[8, 16]} yAccessor={rsiCalc.accessor()} options={rsiCalc.options()} textFill="#374151" />
+      </Chart>
+
+      {/* 5. RelVol Pane */}
+      <Chart id={5} yExtents={(d:any) => [0, Math.max(d?.relVol || 0, 2)]} height={relVolH} origin={(w, h) => [0, priceH + macdH + rsiH]} padding={{ top: 10, bottom: 10 }}>
+        {/* @ts-ignore */}
+        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <YAxis ticks={3} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <MouseCoordinateY displayFormat={priceFormat} />
+        {/* @ts-ignore */}
+        <BarSeries yAccessor={(d:any) => d?.relVol} fillStyle={(d:any) => d?.relVol > 1.5 ? "rgba(139, 92, 246, 0.6)" : "rgba(156, 163, 175, 0.3)"} />
+      </Chart>
+
+      {/* 6. ADX Pane */}
+      <Chart id={6} yExtents={(d:any) => [0, 100]} height={adxH} origin={(w, h) => [0, priceH + macdH + rsiH + relVolH]} padding={{ top: 10, bottom: 10 }}>
+        {/* @ts-ignore */}
+        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <YAxis tickValues={[20, 25, 40]} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <MouseCoordinateY displayFormat={priceFormat} />
+        {/* @ts-ignore */}
+        <LineSeries yAccessor={(d:any) => d?.adx} strokeStyle="#f43f5e" />
+        {/* @ts-ignore */}
+        <LineSeries yAccessor={(d:any) => d?.plusDI} strokeStyle="#10b981" />
+        {/* @ts-ignore */}
+        <LineSeries yAccessor={(d:any) => d?.minusDI} strokeStyle="#ef4444" />
+      </Chart>
+
+      {/* 7. OBV Pane */}
+      <Chart id={7} yExtents={(d:any) => d?.obv} height={obvH} origin={(w, h) => [0, priceH + macdH + rsiH + relVolH + adxH]} padding={{ top: 10, bottom: 10 }}>
+        {/* @ts-ignore */}
+        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <YAxis ticks={4} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        {/* @ts-ignore */}
+        <MouseCoordinateX displayFormat={timeFmt} />
+        {/* @ts-ignore */}
+        <MouseCoordinateY displayFormat={priceFormat} />
+        {/* @ts-ignore */}
+        <LineSeries yAccessor={(d:any) => d?.obv} strokeStyle="#3b82f6" />
       </Chart>
 
       {/* @ts-ignore */}
