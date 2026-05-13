@@ -340,19 +340,38 @@ ${JSON.stringify(promptPayload, null, 2)}
 ${JSON.stringify({ incomes: (incomes || []).slice(0, 5), ratios: (ratios || []).slice(0, 5) }, null, 2)}
 `;
 
-    // Step 1 & 2: Run Bull (Gemini) and Bear (Claude) cases in parallel to prevent 30s proxy timeouts
+    // Step 1 & 2: Run Bull (Gemini) and Bear (Claude) cases in parallel to drastically reduce execution time
     const bullPrompt = `You are a highly aggressive, optimistic portfolio manager. Build the absolute best, highly detailed BULL case for ${symbol} based on this data:
 ${dataContext}
-Argue why the stock will go much higher. Provide a detailed analysis of the fundamentals, growth, and technicals. Limit to 5-7 sentences.`;
+Return ONLY a valid JSON object matching this schema:
+{
+  "case": "Your detailed 5-7 sentence bull case.",
+  "catalysts": ["3-5 bullet points of upcoming news/earnings that would CONFIRM your bull thesis"]
+}`;
 
     const bearPrompt = `You are a highly skeptical, aggressive short-seller. Build the absolute best, highly detailed BEAR case for ${symbol} based on this data:
 ${dataContext}
-Tear apart the bull thesis, highlight fundamental weaknesses, valuation risks, or macro headwinds. Limit to 5-7 sentences.`;
+Return ONLY a valid JSON object matching this schema:
+{
+  "case": "Your detailed 5-7 sentence bear case.",
+  "catalysts": ["3-5 bullet points of upcoming news/earnings that would CONFIRM your bear thesis"]
+}`;
 
-    const [bullCase, bearCase] = await Promise.all([
-      callGemini(bullPrompt, geminiApiKey),
+    const [bullRaw, bearRaw] = await Promise.all([
+      callGemini(bullPrompt, geminiApiKey, true),
       callClaude(bearPrompt, claudeApiKey)
     ]);
+
+    let bullData = { case: bullRaw, catalysts: [] as string[] };
+    let bearData = { case: bearRaw, catalysts: [] as string[] };
+    
+    try { bullData = JSON.parse(bullRaw); } catch(e) {}
+    try { bearData = JSON.parse(bearRaw); } catch(e) {}
+
+    const bullCase = bullData.case || bullRaw;
+    const bearCase = bearData.case || bearRaw;
+    const bullCatalysts = bullData.catalysts || [];
+    const bearCatalysts = bearData.catalysts || [];
 
     // Step 3: Synthesis via Persona
     const personaKey = persona || "Objective CIO";
@@ -372,31 +391,18 @@ ${bearCase}
 
 # FINAL INSTRUCTION
 Synthesize the raw data AND the Bull/Bear debate into your final verdict. You are the ultimate judge settling this debate based on your persona's framework.
-Return ONLY a valid JSON object matching this exact schema:
-{
-  "narrative": "Your comprehensive 1,000+ word assessment, written strictly in your persona's voice.",
-  "bull_catalysts": ["3-5 bullet points on what future news/earnings would confirm the bull thesis"],
-  "bear_catalysts": ["3-5 bullet points on what future news/earnings would confirm the bear thesis"]
-}
+Generate the narrative now. Remember: 950-1,050 words, 5 paragraphs, no markdown, no headers.
 `;
 
-    const rawSynthesis = await callGemini(finalPrompt, geminiApiKey, true);
-    
-    let parsed: any = {};
-    try {
-      parsed = JSON.parse(rawSynthesis);
-    } catch (e) {
-      // Fallback in case JSON parsing fails
-      parsed = { narrative: rawSynthesis, bull_catalysts: [], bear_catalysts: [] };
-    }
+    const narrative = await callGemini(finalPrompt, geminiApiKey, false);
 
     // We return a JSON response with the full narrative text, catalysts, and the debate
     return NextResponse.json({ 
       story: {
-        narrative: parsed.narrative || "No narrative generated.",
+        narrative: narrative || "No narrative generated.",
         bullBear: `Bull says: ${bullCase}\n\nBear says: ${bearCase}`,
-        bullCatalysts: parsed.bull_catalysts || [],
-        bearCatalysts: parsed.bear_catalysts || [],
+        bullCatalysts: bullCatalysts || [],
+        bearCatalysts: bearCatalysts || [],
         confidenceScore: s.composite_v8?.quality || 75 // simple fallback
       }
     });
