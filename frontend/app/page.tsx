@@ -243,19 +243,20 @@ function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
     {k:"compounder_global",l:"CMP-Global"},
   ];
   return(
-    <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
+    <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
       {opts.map((o,i)=>{
         const active = o.k === mode;
         return(
           <button key={o.k} onClick={()=>onChange(o.k)} style={{
-            padding:"6px 12px",
+            padding:"6px 14px",
             border:"none",
-            borderRight: i < opts.length-1 ? "1px solid var(--border,#e5e7eb)" : "none",
+            borderRadius: 6,
             cursor:"pointer",
-            background: active ? "var(--green,#2d7a4f)" : "transparent",
-            color: active ? "#fff" : "var(--text)",
+            background: active ? "var(--green)" : "transparent",
+            color: active ? "var(--bg)" : "var(--text-muted)",
             fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",
-            transition:"background 0.15s",
+            transition:"all 0.15s",
+            boxShadow: active ? "var(--shadow-sm)" : "none"
           }}>
             {o.l}
           </button>
@@ -453,11 +454,11 @@ function MultiSelectDropdown({label, options, selected, onChange, isOpen, onTogg
         title={disabled ? "Filters bypassed while searching" : `${selected.length === 0 ? "Choose " + label.toLowerCase() : `${selected.length} filter${selected.length===1?"":"s"} active`}`}
         style={{
           padding:"5px 10px",
-          border:`1px solid ${selected.length>0 ? "var(--green,#2d7a4f)" : "var(--border,#e5e7eb)"}`,
+          border:`1px solid ${selected.length>0 ? "var(--green)" : "var(--border)"}`,
           borderRadius:6,
           cursor: disabled ? "not-allowed" : "pointer",
-          background: selected.length > 0 ? "var(--green-light,#e8f5ee)" : "#fff",
-          color: disabled ? "var(--text-light)" : (selected.length > 0 ? "var(--green,#2d7a4f)" : "var(--text)"),
+          background: selected.length > 0 ? "var(--green-light)" : "var(--bg-surface)",
+          color: disabled ? "var(--text-light)" : (selected.length > 0 ? "var(--green)" : "var(--text)"),
           fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
           display:"inline-flex",alignItems:"center",gap:6,
           opacity: disabled ? 0.5 : 1,
@@ -474,7 +475,7 @@ function MultiSelectDropdown({label, options, selected, onChange, isOpen, onTogg
           <div style={{
             position:"absolute", top:"calc(100% + 4px)", left:0, zIndex:51,
             minWidth:200, maxHeight:300, overflowY:"auto",
-            background:"#fff", border:"1px solid var(--border,#e5e7eb)",
+            background:"var(--bg-surface)", border:"1px solid var(--border)",
             borderRadius:6, boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
             padding:"4px 0",
           }}>
@@ -499,11 +500,11 @@ function MultiSelectDropdown({label, options, selected, onChange, isOpen, onTogg
                     <label key={opt} style={{
                       display:"flex",alignItems:"center",gap:8,padding:"5px 12px",
                       cursor:"pointer",fontSize:11,fontFamily:"var(--font-mono)",
-                      color: checked ? "var(--green,#2d7a4f)" : "var(--text)",
-                      background: checked ? "var(--green-light,#e8f5ee)" : "transparent",
+                      color: checked ? "var(--green)" : "var(--text)",
+                      background: checked ? "var(--green-light)" : "transparent",
                     }}
-                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light,#e8f5ee)" : "var(--bg-hover,#f0f4f1)";}}
-                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light,#e8f5ee)" : "transparent";}}>
+                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light)" : "var(--bg-hover)";}}
+                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background = checked ? "var(--green-light)" : "transparent";}}>
                       <input type="checkbox" checked={checked} onChange={()=>toggle(opt)}
                         style={{margin:0,cursor:"pointer",accentColor:"var(--green,#2d7a4f)"}}/>
                       {opt}
@@ -751,9 +752,9 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
                 </div>
                 {/* Mode comparison strip */}
                 {bestOther.score>0&&(
-                  <div style={{marginTop:10,padding:"8px 12px",borderRadius:5,background:otherIsHigher?"#fffbeb":"#f8faf9",border:`1px solid ${otherIsHigher?"#fde68a":"var(--border-subtle,#eef1ef)"}`,fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted,#6b7280)",lineHeight:1.5}}>
-                    <span style={{fontWeight:700,color:otherIsHigher?"#d97706":"var(--text)"}}>Best alternative — {bestOther.label}: {bestOther.score.toFixed(2)}</span>
-                    {otherIsHigher && <span style={{marginLeft:6,color:"#d97706"}}>— leads active mode by {(bestOther.score-compActive).toFixed(2)}, worth checking that view</span>}
+                  <div style={{marginTop:10,padding:"8px 12px",borderRadius:5,background:otherIsHigher?"var(--amber-light)":"var(--bg)",border:`1px solid ${otherIsHigher?"var(--amber)":"var(--border-subtle)"}`,fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)",lineHeight:1.5}}>
+                    <span style={{fontWeight:700,color:otherIsHigher?"var(--amber)":"var(--text)"}}>Best alternative — {bestOther.label}: {bestOther.score.toFixed(2)}</span>
+                    {otherIsHigher && <span style={{marginLeft:6,color:"var(--amber)"}}>— leads active mode by {(bestOther.score-compActive).toFixed(2)}, worth checking that view</span>}
                   </div>
                 )}
               </div>
@@ -780,7 +781,7 @@ function SectorConcentration({data}:{data?:Record<string,{count:number;symbols:s
   const total=entries.reduce((s,e)=>s+e[1].count,0);
   const maxCount=entries[0]?.[1]?.count||1;
   return(
-    <div style={{background:"#fff",borderRadius:8,border:"1px solid var(--border,#e5e7eb)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"16px 18px",marginTop:16}}>
+    <div style={{background:"var(--bg-surface)",borderRadius:8,border:"1px solid var(--border)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"16px 18px",marginTop:16}}>
       <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase",marginBottom:12,paddingBottom:8,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>Sector Concentration — BUY + STRONG BUY</div>
       {entries.map(([sector,{count,symbols}])=>{const pct=total>0?count/total*100:0;const warn=pct>40;return(
         <div key={sector} style={{marginBottom:8}}>
@@ -1051,10 +1052,10 @@ export default function Dashboard(){
           </p>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
-          <div style={{display:"flex", gap: 10}}>
-            <div style={{display:"inline-flex",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
-              <button onClick={()=>setViewMode("table")} style={{padding:"6px 12px", border:"none", borderRight:"1px solid var(--border,#e5e7eb)", cursor:"pointer", background:viewMode==="table"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="table"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Table</button>
-              <button onClick={()=>setViewMode("feed")} style={{padding:"6px 12px", border:"none", cursor:"pointer", background:viewMode==="feed"?"var(--green,#2d7a4f)":"transparent", color:viewMode==="feed"?"#fff":"var(--text)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s"}}>Feed</button>
+          <div style={{display:"flex", gap: 12}}>
+            <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
+              <button onClick={()=>setViewMode("table")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="table"?"var(--bg-elevated)":"transparent", color:viewMode==="table"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="table"?"var(--shadow-sm)":"none"}}>Table</button>
+              <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
             </div>
             <ModeToggle mode={mode} onChange={setMode}/>
           </div>
@@ -1085,21 +1086,23 @@ export default function Dashboard(){
       {/* Filter row 2: cohort pills + multi-select dropdowns */}
       <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
         {/* Cohort pills */}
-        <div style={{display:"inline-flex",gap:0,border:"1px solid var(--border,#e5e7eb)",borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
+        <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
           {cohortPills.map(([k,l],i)=>{
             const active = cohortFilter === k;
             return(
               <button key={k} onClick={()=>setCohortFilter(k)} disabled={!!search}
                 title={search ? "Filters bypassed while searching" : `Scope: ${l}`}
                 style={{
-                  padding:"5px 10px",
+                  padding:"6px 12px",
                   border:"none",
-                  borderRight: i < cohortPills.length-1 ? "1px solid var(--border,#e5e7eb)" : "none",
+                  borderRadius: 6,
                   cursor: search ? "not-allowed" : "pointer",
-                  background: active && !search ? "var(--green,#2d7a4f)" : "transparent",
-                  color: active && !search ? "#fff" : (search ? "var(--text-light)" : "var(--text)"),
+                  background: active && !search ? "var(--bg-elevated)" : "transparent",
+                  color: active && !search ? "var(--text)" : (search ? "var(--text-light)" : "var(--text-muted)"),
                   fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.03em",
                   opacity: search ? 0.5 : 1,
+                  transition:"all 0.15s",
+                  boxShadow: active && !search ? "var(--shadow-sm)" : "none"
                 }}>
                 {l}
               </button>

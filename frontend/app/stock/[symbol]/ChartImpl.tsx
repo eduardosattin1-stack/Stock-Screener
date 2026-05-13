@@ -151,7 +151,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <MACDSeries yAccessor={macdCalc.accessor()} />
         {/* @ts-ignore */}
-        <MACDTooltip origin={[8, 16]} yAccessor={macdCalc.accessor()} options={macdCalc.options()} appearance={{ stroke: { macd: "#3b82f6", signal: "#f59e0b" }, fill: { divergence: "#8b5cf6" } }} textFill="#374151" />
+        <MACDTooltip origin={[8, 16]} yAccessor={macdCalc.accessor()} options={macdCalc.options()} appearance={{ strokeStyle: { macd: "#3b82f6", signal: "#f59e0b" }, fillStyle: { divergence: "#8b5cf6" } }} textFill="#374151" />
       </Chart>
 
       {/* 4. RSI Pane */}
