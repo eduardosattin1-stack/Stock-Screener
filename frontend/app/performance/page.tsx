@@ -78,6 +78,9 @@ interface Prediction {
   p_breakeven?: number; p_max_profit?: number;
   ev_dollars?: number; ev_per_dollar?: number;
   assessment?: string;
+  long_iv?: number; short_iv?: number;
+  long_greeks?: { delta: number; gamma: number; theta: number; vega: number };
+  short_greeks?: { delta: number; gamma: number; theta: number; vega: number };
 }
 interface CycleSummary {
   cycle_id: string; archived_date: string;
@@ -1673,7 +1676,7 @@ function CyclesTab() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract"].map((h, i) => (
+                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract", "IV", "Delta"].map((h, i) => (
                       <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
                     ))}
                   </tr>
@@ -1784,6 +1787,12 @@ function PredictionRow({ p }: { p: Prediction }) {
       <td style={{ ...td, textAlign: "right", color: evColor, fontSize: 10 }}>
         {evValue == null ? "—" : `${evValue >= 0 ? "+" : ""}$${evValue.toFixed(0)}`}
       </td>
+      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+        {p.long_iv != null ? `${(p.long_iv * 100).toFixed(0)}%` : "—"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+        {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
+      </td>
     </tr>
   );
 }
@@ -1872,7 +1881,7 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized"].map((h, i) => (
+              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized", "IV", "Delta"].map((h, i) => (
                 <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
               ))}
             </tr>
@@ -1905,6 +1914,12 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     </td>
                     <td style={{ ...td, textAlign: "right", color: realizedColor, fontWeight: 600 }}>
                       {realized == null ? "—" : `${realized >= 0 ? "+" : ""}$${realized.toFixed(0)}`}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+                      {p.long_iv != null ? `${(p.long_iv * 100).toFixed(0)}%` : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+                      {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
                     </td>
                   </tr>
                 );
