@@ -112,13 +112,47 @@ def get_daily_briefing() -> dict:
         "avg_coverage": "82%"
     }
     
+    # Fetch Market Thermometer (Indices)
+    try:
+        from massive_indicators import get_index_temperature
+        thermometer = get_index_temperature()
+    except Exception as e:
+        log.warning(f"Thermometer fetch failed: {e}")
+        thermometer = {}
+        
+    # Generate dynamic sentiment text from indices to give the user a quick read
+    market_sentiment = "Conditions stable."
+    if thermometer and "SPX" in thermometer and "NDX" in thermometer:
+        spx = thermometer["SPX"].get("change_pct", 0)
+        ndx = thermometer["NDX"].get("change_pct", 0)
+        if spx > 0.75 and ndx > 1.0:
+            market_sentiment = "Aggressive risk-on tape. Tech leading a broad market rally."
+        elif spx < -0.75 and ndx < -1.0:
+            market_sentiment = "Broad selloff underway. High-beta tech taking the hardest hits."
+        elif spx > 0.3 and ndx > 0.3:
+            market_sentiment = "Solid upside momentum across major indices."
+        elif spx < -0.3 and ndx < -0.3:
+            market_sentiment = "Market under pressure. Capital preservation is priority."
+        elif spx >= 0 and ndx < 0:
+            market_sentiment = "Capital rotating out of tech into broader market."
+        elif spx < 0 and ndx >= 0:
+            market_sentiment = "Tech showing relative strength while broader market lags."
+        else:
+            market_sentiment = "Choppy consolidation. No clear directional conviction."
+
+    # Update regime pulse summary with market sentiment
+    regime_pulse["summary"] = f"Macro regime at {regime}. {market_sentiment}"
+    
+    headline = f"Market pulse: {market_sentiment} Compounder added two new names, portfolio steady."
+    
     return {
-        "headline": f"Regime cooled to {regime}, Compounder added two new names, portfolio steady.",
+        "headline": headline,
         "regime_pulse": regime_pulse,
         "portfolio_pulse": portfolio_pulse,
         "active_strategy": active_strategy,
         "surprising_movers": surprising_movers,
         "system_pulse": system_pulse,
+        "thermometer": thermometer,
         "debate": {
             "act": "3 names cleared Momentum + Quality + Smart Money simultaneously today.",
             "wait": "Only 8 names cleared the 0.83 floor across the entire universe, lowest since March."

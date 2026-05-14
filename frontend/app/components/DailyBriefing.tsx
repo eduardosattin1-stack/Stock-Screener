@@ -38,20 +38,52 @@ export function DailyBriefing() {
     active_strategy,
     surprising_movers,
     system_pulse,
+    thermometer,
     debate,
     miss
   } = briefing;
 
+  const renderThermoItem = (label: string, data: any) => {
+    if (!data) return null;
+    const isPos = data.change_pct >= 0;
+    const color = isPos ? "var(--green)" : "var(--red)";
+    return (
+      <div key={label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", fontWeight: 600 }}>{label}</div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text)", fontWeight: 700 }}>
+            {data.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: color, fontWeight: 600 }}>
+            {isPos ? "+" : ""}{data.change_pct.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ marginBottom: 48, background: "var(--bg-surface)", borderBottom: "1px solid var(--border)", padding: "32px 48px", borderRadius: "0 0 16px 16px" }}>
-      {/* ── HEADLINE STRIP ── */}
-      <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 32 }}>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.18em", color: "var(--green)", textTransform: "uppercase", fontWeight: 700 }}>
-          Daily Briefing
+      {/* ── HEADLINE STRIP & THERMOMETER ── */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 16, maxWidth: "65%" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.18em", color: "var(--green)", textTransform: "uppercase", fontWeight: 700, whiteSpace: "nowrap" }}>
+            Daily Briefing
+          </div>
+          <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, fontWeight: 300, fontStyle: "italic", color: "var(--text)", lineHeight: 1.3 }}>
+            {headline}
+          </div>
         </div>
-        <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, fontWeight: 300, fontStyle: "italic", color: "var(--text)" }}>
-          {headline}
-        </div>
+
+        {/* ── INDEX THERMOMETER ── */}
+        {thermometer && Object.keys(thermometer).length > 0 && (
+          <div style={{ display: "flex", gap: 24, background: "var(--bg)", padding: "12px 20px", borderRadius: 8, border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>
+            {renderThermoItem("S&P 500", thermometer["SPX"])}
+            {renderThermoItem("NASDAQ", thermometer["NDX"])}
+            {renderThermoItem("RUSSELL", thermometer["RUT"])}
+            {renderThermoItem("VIX", thermometer["VIX"])}
+          </div>
+        )}
       </div>
 
       {/* ── 4-CARD GRID ── */}

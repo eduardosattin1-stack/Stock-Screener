@@ -248,6 +248,33 @@ def _extract_atm_iv(contracts: list, spot: float) -> Optional[float]:
     return sum(ivs) / len(ivs) if ivs else None
 
 
+def _extract_skew_25d(contracts: list) -> Optional[float]:
+    """Calculate 25-delta put IV minus 25-delta call IV."""
+    if not contracts:
+        return None
+
+    calls = [c for c in contracts if c.get("details", {}).get("contract_type") == "call"]
+    puts = [c for c in contracts if c.get("details", {}).get("contract_type") == "put"]
+
+    def _find_25d_iv(opts, target_delta):
+        with_delta = [
+            o for o in opts 
+            if o.get("greeks", {}).get("delta") is not None 
+            and o.get("implied_volatility") is not None
+        ]
+        if not with_delta:
+            return None
+        best = min(with_delta, key=lambda o: abs(float(o["greeks"]["delta"]) - target_delta))
+        return float(best["implied_volatility"])
+
+    call_iv = _find_25d_iv(calls, 0.25)
+    put_iv = _find_25d_iv(puts, -0.25)
+    
+    if call_iv is not None and put_iv is not None:
+        return round(put_iv - call_iv, 4)
+    return None
+
+
 def _compute_pc_ratios(contracts: list) -> dict:
     """Put/Call ratios based on both volume AND open interest.
     
@@ -410,6 +437,7 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     """
     result = {
         "iv_current": None,
+        "skew_25d": None,
         "iv_rank": None,
         "iv_samples": 0,
         "spread": None,
@@ -487,8 +515,9 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     iv_exp = chosen_exp or expirations[0]
     iv_chain = by_exp.get(iv_exp, [])
 
-    # Step 1: ATM IV + update history + rank
+    # Step 1: ATM IV + skew + update history + rank
     iv_today = _extract_atm_iv(iv_chain, spot)
+    result["skew_25d"] = _extract_skew_25d(iv_chain)
     if iv_today:
         try:
             update_iv_history(symbol, iv_today)
@@ -633,6 +662,8 @@ def build_spread_suggestion(symbol: str, composite: float, hit_prob: float) -> O
         sp["iv_rank"] = data.get("iv_rank")
         sp["iv_samples"] = data.get("iv_samples", 0)
         sp["iv_current"] = data.get("iv_current")
+        sp["pc_oi_ratio"] = data.get("pc_oi_ratio")
+        sp["skew_25d"] = data.get("skew_25d")
         sp["skipped"] = False
         sp["symbol"] = symbol
         return sp

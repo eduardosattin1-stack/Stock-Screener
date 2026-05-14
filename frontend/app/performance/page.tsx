@@ -79,6 +79,7 @@ interface Prediction {
   ev_dollars?: number; ev_per_dollar?: number;
   assessment?: string;
   long_iv?: number; short_iv?: number;
+  skew_25d?: number; pc_oi_ratio?: number;
   long_greeks?: { delta: number; gamma: number; theta: number; vega: number };
   short_greeks?: { delta: number; gamma: number; theta: number; vega: number };
 }
@@ -1676,7 +1677,7 @@ function CyclesTab() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract", "IV", "Delta"].map((h, i) => (
+                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract", "IV", "Delta", "Skew"].map((h, i) => (
                       <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
                     ))}
                   </tr>
@@ -1793,6 +1794,9 @@ function PredictionRow({ p }: { p: Prediction }) {
       <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
         {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
       </td>
+      <td style={{ ...td, textAlign: "right", color: p.skew_25d == null ? T.muted : p.skew_25d > 0 ? T.greenPos : T.red, fontSize: 10 }}>
+        {p.skew_25d != null ? (p.skew_25d > 0 ? `+${p.skew_25d.toFixed(3)}` : p.skew_25d.toFixed(3)) : "—"}
+      </td>
     </tr>
   );
 }
@@ -1881,7 +1885,7 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized", "IV", "Delta"].map((h, i) => (
+              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized", "IV", "Delta", "Skew"].map((h, i) => (
                 <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
               ))}
             </tr>
@@ -1920,6 +1924,9 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     </td>
                     <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
                       {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: p.skew_25d == null ? T.muted : p.skew_25d > 0 ? T.greenPos : T.red, fontSize: 10 }}>
+                      {p.skew_25d != null ? (p.skew_25d > 0 ? `+${p.skew_25d.toFixed(3)}` : p.skew_25d.toFixed(3)) : "—"}
                     </td>
                   </tr>
                 );

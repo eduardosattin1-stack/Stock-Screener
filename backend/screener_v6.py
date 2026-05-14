@@ -538,6 +538,7 @@ class Stock:
     # v7.2.3 Apr 22: expanded Options signals
     options_pc_ratio: float = None
     options_pc_oi_ratio: float = None
+    options_skew_25d: float = None
     options_total_open_interest: int = None
     options_iv_30d: float = None
     options_iv_60d: float = None
@@ -4322,6 +4323,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                         _options_iv_ok += 1
                     s.options_pc_ratio = options_data.get("pc_ratio")
                     s.options_pc_oi_ratio = options_data.get("pc_oi_ratio")
+                    s.options_skew_25d = options_data.get("skew_25d")
                     s.options_total_open_interest = options_data.get("total_open_interest")
                     s.options_iv_30d = options_data.get("iv_30d")
                     s.options_iv_60d = options_data.get("iv_60d")
