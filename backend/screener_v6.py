@@ -2783,10 +2783,17 @@ def _fetch_institutional_positions_summary(sym: str) -> Optional[dict]:
         _INST_POSITIONS_SUMMARY_CACHE[sym] = None
         return None
 
-    # Stash both the summary dict and the (year, quarter) it came from —
-    # callers that want the per-holder extract use this to query the same
-    # quarter consistently.
-    cached = {"summary": data[0], "year": y, "quarter": q}
+    # Fetch YoY data (same quarter, previous year) to smooth out seasonal rebalancing
+    yoy_data = cached_fmp(
+        "institutional-ownership/symbol-positions-summary", sym,
+        lambda y=y-1, q=q: fmp("institutional-ownership/symbol-positions-summary",
+                             {"symbol": sym, "year": y, "quarter": q}),
+        cache_key_suffix=f"{y-1}Q{q}",
+    )
+    yoy_summary = yoy_data[0] if yoy_data and isinstance(yoy_data, list) else None
+
+    # Stash both the summary dict and the YoY summary
+    cached = {"summary": data[0], "year": y, "quarter": q, "yoy_summary": yoy_summary}
     _INST_POSITIONS_SUMMARY_CACHE[sym] = cached
     return cached
 
@@ -2821,16 +2828,27 @@ def get_institutional_flows(sym: str) -> dict:
         return result  # non-US or unlisted
 
     d = cached["summary"]
+    yoy = cached.get("yoy_summary")
     y = cached["year"]
     q = cached["quarter"]
-    # investorsHoldingChange = holder count change QoQ (absolute # of institutions)
-    # ownershipPercentChange = institutional share of float change QoQ (percentage points)
-    last_holders = float(d.get("lastInvestorsHolding") or 0)
-    holders_delta = float(d.get("investorsHoldingChange") or 0)
-    result["holders_change"] = (holders_delta / last_holders) if last_holders > 0 else 0.0
 
-    # ownership % change as fractional accumulation proxy
-    own_pct_delta = float(d.get("ownershipPercentChange") or 0)  # e.g. 2.85 = +2.85pp
+    # v1.3 YoY Comparison: Smooths out routine quarter-to-quarter rebalancing
+    # by comparing the current quarter against the same quarter from the prior year.
+    if yoy:
+        last_holders = float(yoy.get("investorsHolding") or 0)
+        curr_holders = float(d.get("investorsHolding") or 0)
+        holders_delta = curr_holders - last_holders
+
+        last_own_pct = float(yoy.get("ownershipPercent") or 0)
+        curr_own_pct = float(d.get("ownershipPercent") or 0)
+        own_pct_delta = curr_own_pct - last_own_pct
+    else:
+        # Fallback to QoQ if YoY data missing
+        last_holders = float(d.get("lastInvestorsHolding") or 0)
+        holders_delta = float(d.get("investorsHoldingChange") or 0)
+        own_pct_delta = float(d.get("ownershipPercentChange") or 0)
+
+    result["holders_change"] = (holders_delta / last_holders) if last_holders > 0 else 0.0
     result["accumulation"] = own_pct_delta / 100.0
 
     # ─── Smart-money concentration layer ───
@@ -2875,13 +2893,13 @@ def get_institutional_flows(sym: str) -> dict:
     # scored 0.50, at acc=0.0101 scored 0.75 — a 50% jump for a 0.01pp
     # change. Continuous scoring eliminates these artifacts.
     #
-    # Accumulation score: maps ±3pp ownership change to 0-1 linearly.
-    # Holders change score: maps ±10% holder count change to 0-1 linearly.
+    # Accumulation score: maps ±6pp ownership change to 0-1 linearly (widened for YoY).
+    # Holders change score: maps ±15% holder count change to 0-1 linearly (widened for YoY).
     # Blend: 60% accumulation (% of float) + 40% holder count change.
     acc = result["accumulation"]
     hc = result["holders_change"]
-    acc_score = max(0.05, min(1.0, 0.5 + acc * 16.67))   # ±0.03 = full range
-    hc_score  = max(0.05, min(1.0, 0.5 + hc * 5.0))      # ±0.10 = full range
+    acc_score = max(0.05, min(1.0, 0.5 + acc * 8.33))    # ±0.06 = full range (YoY calibrated)
+    hc_score  = max(0.05, min(1.0, 0.5 + hc * 3.33))     # ±0.15 = full range (YoY calibrated)
     base_score = 0.60 * acc_score + 0.40 * hc_score
 
     # ─── Smart-money layer (20% weight) ───
@@ -2925,13 +2943,23 @@ def compute_institutional_flow(sym: str) -> dict:
         return result  # US-only or FMP returned empty
 
     d = cached["summary"]
-    # These fields come pre-computed as QoQ changes by FMP
-    new_pos_change = float(d.get("newPositionsChange") or 0)
-    closed_pos_change = float(d.get("closedPositionsChange") or 0)
-    inc_pos_change = float(d.get("increasedPositionsChange") or 0)
-    red_pos_change = float(d.get("reducedPositionsChange") or 0)
-    own_pct_change = float(d.get("ownershipPercentChange") or 0)
-    pc_ratio_change = float(d.get("putCallRatioChange") or 0)
+    yoy = cached.get("yoy_summary")
+
+    # v1.3 YoY Comparison
+    if yoy:
+        new_pos_change = float(d.get("newPositions") or 0) - float(yoy.get("newPositions") or 0)
+        closed_pos_change = float(d.get("closedPositions") or 0) - float(yoy.get("closedPositions") or 0)
+        inc_pos_change = float(d.get("increasedPositions") or 0) - float(yoy.get("increasedPositions") or 0)
+        red_pos_change = float(d.get("reducedPositions") or 0) - float(yoy.get("reducedPositions") or 0)
+        own_pct_change = float(d.get("ownershipPercent") or 0) - float(yoy.get("ownershipPercent") or 0)
+        pc_ratio_change = float(d.get("putCallRatio") or 0) - float(yoy.get("putCallRatio") or 0)
+    else:
+        new_pos_change = float(d.get("newPositionsChange") or 0)
+        closed_pos_change = float(d.get("closedPositionsChange") or 0)
+        inc_pos_change = float(d.get("increasedPositionsChange") or 0)
+        red_pos_change = float(d.get("reducedPositionsChange") or 0)
+        own_pct_change = float(d.get("ownershipPercentChange") or 0)
+        pc_ratio_change = float(d.get("putCallRatioChange") or 0)
 
     result["new_positions_change"] = new_pos_change
     result["closed_positions_change"] = closed_pos_change
