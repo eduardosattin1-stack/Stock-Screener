@@ -34,6 +34,7 @@ from email.mime.text import MIMEText
 from typing import Optional
 
 import requests
+from themes_map import get_modern_theme
 
 # v1.3.0: FMP fundamentals cache (read-through GCS cache for slow-cadence data)
 try:
@@ -352,6 +353,8 @@ class Stock:
     exchange: str = ""        # e.g. "NYSE", "NASDAQ", "XETRA", "LSE"
     country: str = ""         # ISO-2 e.g. "US", "DE", "GB", "NL"
     sector: str = ""          # e.g. "Healthcare", "Technology"
+    industry: str = ""        # e.g. "Semiconductors"
+    theme: str = ""           # SpeculAIr Modern Theme (e.g. "AI & Semiconductors")
     company_name: str = ""    # human-readable name from FMP company-screener
                               # (used by frontend name search; May 2026 v1.2)
 
@@ -546,27 +549,9 @@ class Stock:
     options_term_structure: str = None
     options_implied_earnings_move: dict = None
 
-    # Maintain legacy tradier aliases for frontend backward compatibility
-    @property
-    def tradier_iv_current(self): return self.options_iv_current
-    @property
-    def tradier_iv_rank(self): return self.options_iv_rank
-    @property
-    def tradier_iv_samples(self): return self.options_iv_samples
-    @property
-    def tradier_spread(self): return self.options_spread
-    @property
-    def tradier_pc_ratio(self): return self.options_pc_ratio
-    @property
-    def tradier_iv_30d(self): return self.options_iv_30d
-    @property
-    def tradier_iv_60d(self): return self.options_iv_60d
-    @property
-    def tradier_iv_90d(self): return self.options_iv_90d
-    @property
-    def tradier_term_structure(self): return self.options_term_structure
-    @property
-    def tradier_implied_earnings_move(self): return self.options_implied_earnings_move
+    # Legacy tradier_* aliases removed May 2026 — all consumers now use
+    # the options_* field names directly (signal_tracker.py, frontend).
+    # Data comes from massive_options.py (Polygon.io), not Tradier.
 
     # ─── v8 Compounder mode (May 2026, v1.1 May 11) ────────────────────────
     # Universe-rank-based composite. Raw PIT inputs are computed per-stock
@@ -676,6 +661,7 @@ REGIONS = {
 
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
+INDUSTRY_MAP: dict[str, str] = {}         # {sym: "Semiconductors"} from company-screener
 SECTOR_PERF_CACHE: dict[str, float] = {}  # {"Technology": 0.0842}  60d cumulative return
 SECTOR_EXCHANGE_MAP: dict[str, str] = {}  # {sym: "NASDAQ"}  needed for sector perf calls
 COUNTRY_MAP: dict[str, str] = {}          # {sym: "US"} ISO-2 country code, for filter/display
@@ -689,137 +675,8 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 # issues (e.g. MRVL was missing from its response). The new gate is more robust
 # and also includes mid-caps (ONTO, PENG) that the SP500 wouldn't have caught.
 
-# PT revision velocity rolling cache (Smart Money v1.1, May 11 2026):
-# {symbol: [{"date": "YYYY-MM-DD", "pt": float}, ...]}
-# Loaded at scan start from gs://.../cache/analyst_pt_history.json. Appended
-# in get_analyst() per stock. Pruned (drop entries >90d old) + persisted at
-# scan end. Bootstrap: first 60 days after deploy, pt_velocity will be None
-# for most stocks since there's no 60d-old datapoint yet. Smart Money
-# composite handles this gracefully via the "evaluated factors only" pattern.
-PT_HISTORY_CACHE: dict[str, list] = {}
-PT_HISTORY_CACHE_PATH = "cache/analyst_pt_history.json"
-PT_VELOCITY_WINDOW_DAYS = 60        # target lookback window
-PT_VELOCITY_WINDOW_TOLERANCE = 14   # accept entries 60±14d old (46–74d) — handles weekend/holiday gaps
-PT_HISTORY_RETENTION_DAYS = 90      # prune entries older than this
-
-
-def preload_pt_history():
-    """Load PT velocity rolling cache from GCS at scan start. One-time read.
-    Failure is non-fatal — empty cache means all pt_velocity will be None
-    until enough scans accumulate (~60 days of daily scans)."""
-    global PT_HISTORY_CACHE
-    try:
-        data = gcs_download(PT_HISTORY_CACHE_PATH)
-        if isinstance(data, dict):
-            PT_HISTORY_CACHE = data
-            n_entries = sum(len(v) for v in PT_HISTORY_CACHE.values()
-                            if isinstance(v, list))
-            log.info(f"  PT history loaded: {len(PT_HISTORY_CACHE)} symbols, "
-                     f"{n_entries} datapoints")
-        else:
-            PT_HISTORY_CACHE = {}
-            log.info("  PT history: starting fresh (no prior cache)")
-    except Exception as e:
-        log.warning(f"  PT history load failed: {e}")
-        PT_HISTORY_CACHE = {}
-
-
-def persist_pt_history():
-    """Prune entries older than PT_HISTORY_RETENTION_DAYS and write back to
-    GCS at scan end. Failure is non-fatal but logged — next scan will work
-    from stale data, which is OK for a rolling-window signal."""
-    if not PT_HISTORY_CACHE:
-        log.info("  PT history: empty, skipping persist")
-        return
-    cutoff = (datetime.now() - timedelta(days=PT_HISTORY_RETENTION_DAYS)).strftime("%Y-%m-%d")
-    pruned: dict[str, list] = {}
-    n_dropped = 0
-    for sym, entries in PT_HISTORY_CACHE.items():
-        if not isinstance(entries, list):
-            continue
-        kept = [e for e in entries
-                if isinstance(e, dict) and e.get("date", "") >= cutoff]
-        n_dropped += len(entries) - len(kept)
-        if kept:
-            pruned[sym] = kept
-    try:
-        ok = gcs_upload(PT_HISTORY_CACHE_PATH, pruned)
-        if ok:
-            n_kept = sum(len(v) for v in pruned.values())
-            log.info(f"  PT history saved: {len(pruned)} symbols, "
-                     f"{n_kept} datapoints (pruned {n_dropped} >90d)")
-        else:
-            log.warning("  PT history persist returned False")
-    except Exception as e:
-        log.warning(f"  PT history persist failed: {e}")
-
-
-def compute_pt_velocity(symbol: str, current_pt: float, today_iso: str) -> tuple[Optional[float], Optional[float]]:
-    """Return (velocity_pct, score) for one stock.
-
-    Mutates PT_HISTORY_CACHE: appends today's (date, pt) datapoint if not
-    already present.
-
-    Velocity: (pt_now − pt_window_ago) / pt_window_ago, where pt_window_ago
-    is the historical PT entry whose date is closest to today − 60d, within
-    a tolerance of ±14 days. If no such entry exists (bootstrap period or
-    sparse history), returns (None, None) — Smart Money composite will skip
-    this factor for the stock.
-
-    Score banding (per design):
-      velocity > +10%  → 1.0   (strong upgrade momentum)
-      velocity > +5%   → 0.75
-      velocity > 0%    → 0.5   (slight upward bias)
-      velocity > −5%   → 0.25
-      velocity ≤ −5%   → 0.0   (downgrade momentum)
-    """
-    if not current_pt or current_pt <= 0:
-        return None, None
-
-    today = datetime.strptime(today_iso, "%Y-%m-%d").date() if isinstance(today_iso, str) else today_iso
-
-    # Append today's datapoint (idempotent on same-day re-runs)
-    sym_history = PT_HISTORY_CACHE.setdefault(symbol, [])
-    today_str = today.strftime("%Y-%m-%d")
-    if not any(e.get("date") == today_str for e in sym_history if isinstance(e, dict)):
-        sym_history.append({"date": today_str, "pt": float(current_pt)})
-
-    # Find 60d-ago entry within ±14d tolerance
-    target_date = today - timedelta(days=PT_VELOCITY_WINDOW_DAYS)
-    min_date = target_date - timedelta(days=PT_VELOCITY_WINDOW_TOLERANCE)
-    max_date = target_date + timedelta(days=PT_VELOCITY_WINDOW_TOLERANCE)
-
-    best_entry = None
-    best_distance = None
-    for e in sym_history:
-        if not isinstance(e, dict):
-            continue
-        date_str = e.get("date")
-        if not date_str:
-            continue
-        try:
-            entry_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
-            continue
-        if entry_date < min_date or entry_date > max_date:
-            continue
-        distance = abs((entry_date - target_date).days)
-        if best_distance is None or distance < best_distance:
-            best_entry = e
-            best_distance = distance
-
-    if not best_entry:
-        return None, None
-
-    pt_past = float(best_entry.get("pt") or 0)
-    if pt_past <= 0:
-        return None, None
-
-    velocity = (current_pt - pt_past) / pt_past
-    score = _ladder(velocity, [-0.05, 0.0, 0.05, 0.10],
-                    [0.0, 0.25, 0.5, 0.75, 1.0])
-    return velocity, score
-
+# PT revision velocity now uses FMP price-target-summary endpoint directly
+# via get_analyst(), dropping the local caching bootstrap.
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -899,6 +756,9 @@ def get_symbols(region: str) -> list[str]:
                 # v7.2: preserve sector + exchange + country for scoring and UI filters
                 if sec:
                     SECTOR_MAP[sym] = sec
+                ind = d.get("industry") or ""
+                if ind:
+                    INDUSTRY_MAP[sym] = ind
                 SECTOR_EXCHANGE_MAP[sym] = d.get("exchangeShortName") or exchange
                 co = d.get("country") or country or ""
                 if co:
@@ -1390,17 +1250,28 @@ def get_analyst(sym: str) -> dict:
     except Exception as e:
         log.debug(f"analyst-estimates failed for {sym}: {e}")
 
-    # PT revision velocity (Smart Money v1.1, May 11 2026): compute from
-    # rolling GCS cache. Returns (None, None) during bootstrap period
-    # (first ~60 days after deploy) and for stocks with no current PT.
+    # PT revision velocity (v1.3 May 2026): compute from FMP's 
+    # stable price-target-summary endpoint. Removes need for 60d bootstrap.
     result["pt_velocity_60d"] = None
     result["pt_velocity_score"] = None
     if result["target"] > 0:
-        today_iso = datetime.now().strftime("%Y-%m-%d")
-        velocity, score = compute_pt_velocity(sym, result["target"], today_iso)
-        if velocity is not None:
-            result["pt_velocity_60d"] = round(velocity, 4)
-            result["pt_velocity_score"] = round(score, 4)
+        try:
+            pt_sum = fmp("price-target-summary", {"symbol": sym})
+            if pt_sum and isinstance(pt_sum, list) and len(pt_sum) > 0:
+                summary = pt_sum[0]
+                last_q = float(summary.get("lastQuarterAvgPriceTarget") or 0)
+                last_y = float(summary.get("lastYearAvgPriceTarget") or 0)
+                if last_q > 0 and last_y > 0:
+                    velocity = (last_q - last_y) / last_y
+                    score = _ladder(
+                        velocity,
+                        [-0.05, 0.0, 0.05, 0.10],
+                        [0.0, 0.25, 0.5, 0.75, 1.0],
+                    )
+                    result["pt_velocity_60d"] = round(velocity, 4)
+                    result["pt_velocity_score"] = round(score, 4)
+        except Exception as e:
+            log.debug(f"pt velocity fetch failed for {sym}: {e}")
 
     return result
 
@@ -2623,12 +2494,12 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
 # ---------------------------------------------------------------------------
 
 SMART_MONEY_WEIGHTS = {
-    "institutional_flow":  0.25,  # 13F flow velocity (US-only, pass-2) — was 0.30 pre-v1.1
-    "trend_strength":      0.23,  # (sma50 - sma200) / sma200 — was 0.28 pre-v1.1
+    "institutional_flow":  0.25,  # 13F flow velocity (US-only, pass-2)
+    "trend_strength":      0.25,  # (sma50 - sma200) / sma200
     "institutional":       0.20,  # 13F static accumulation (US-only, pass-2)
-    "pt_velocity":         0.10,  # NEW v1.1 (May 11 2026): analyst PT 60d % delta
+    "pt_velocity":         0.10,  # analyst PT velocity (via FMP summary API)
     "quality":             0.10,  # Piotroski + Altman + ROE + ROIC + GM
-    "sector_momentum":     0.07,  # stock 60d vs sector 60d (NASDAQ only)
+    "sector_momentum":     0.05,  # stock 60d vs sector 60d (NASDAQ only)
     "congressional":       0.05,  # Senate + House trades (US-only, pass-2)
 }
 SMART_MONEY_CORE = {"institutional_flow", "trend_strength",
@@ -2642,6 +2513,11 @@ def compute_smart_money_score(institutional_flow: dict, institutional: dict,
                               pt_velocity_score: Optional[float] = None) -> dict:
     """Weighted sum across 7 factors. Returns:
         {score, _evaluated, components, weight_evaluated, missing}
+
+    v1.3 (May 14 2026): Dropped transcript from smart money entirely per user
+    request. Kept pt_velocity but replaced the 60d local cache bootstrap
+    with a direct call to FMP's stable/price-target-summary endpoint.
+    Maintained the softened trend confirmation multiplier (floor 0.30).
 
     v1.1 (May 11 2026): added pt_velocity (analyst PT 60d % delta) at 10%
     weight. instflow 30→25, trend 28→23, rest unchanged. PT velocity is
@@ -2688,8 +2564,14 @@ def compute_smart_money_score(institutional_flow: dict, institutional: dict,
             [-0.10, -0.02, 0.02, 0.10],
             [0.0, 0.20, 0.50, 0.75, 1.0],
         )
+        # v1.2 (May 14 2026): softened trend confirmation multiplier.
+        # Old formula: min(1.0, inst_flow * 2) — inst_flow=0.2 → mult=0.4,
+        # which wiped 60% of trend. Normal institutional rebalancing was
+        # being treated as a strong distribution signal. New formula floors
+        # the multiplier at 0.30: only truly extreme distribution (inst_flow
+        # near 0.0) cuts trend significantly.
         if "institutional_flow" in components:
-            trend_mult = min(1.0, components["institutional_flow"] * 2)
+            trend_mult = min(1.0, 0.30 + components["institutional_flow"] * 1.4)
         else:
             trend_mult = 1.0
         components["trend_strength"] = trend_raw * trend_mult
@@ -2987,33 +2869,25 @@ def get_institutional_flows(sym: str) -> dict:
                 for h in top5
             ]
 
-    # ─── Score: original logic (80% weight) ───
+    # ─── Score: continuous function (80% weight) ──────────────────────
+    # v1.2 (May 14 2026): replaced coarse 5-bucket ladder with continuous
+    # linear scoring. The old ladder had cliff effects: a stock at acc=0.0099
+    # scored 0.50, at acc=0.0101 scored 0.75 — a 50% jump for a 0.01pp
+    # change. Continuous scoring eliminates these artifacts.
+    #
+    # Accumulation score: maps ±3pp ownership change to 0-1 linearly.
+    # Holders change score: maps ±10% holder count change to 0-1 linearly.
+    # Blend: 60% accumulation (% of float) + 40% holder count change.
     acc = result["accumulation"]
     hc = result["holders_change"]
-    if acc > 0.02 and hc > 0.05:       # broad + concentrated buying
-        base_score = 1.0
-    elif acc > 0.01 or hc > 0.05:
-        base_score = 0.75
-    elif acc > -0.01 and hc > -0.05:
-        base_score = 0.5
-    elif acc < -0.02 or hc < -0.10:
-        base_score = 0.15
-    else:
-        base_score = 0.3
+    acc_score = max(0.05, min(1.0, 0.5 + acc * 16.67))   # ±0.03 = full range
+    hc_score  = max(0.05, min(1.0, 0.5 + hc * 5.0))      # ±0.10 = full range
+    base_score = 0.60 * acc_score + 0.40 * hc_score
 
     # ─── Smart-money layer (20% weight) ───
-    # Concentration change: +2pp = strong accumulation, -2pp = strong distribution
+    # Concentration change: continuous mapping, ±3pp = full range
     conc_delta = result["top5_concentration_delta"]
-    if conc_delta > 2.0:
-        conc_score = 1.0
-    elif conc_delta > 0.5:
-        conc_score = 0.75
-    elif conc_delta > -0.5:
-        conc_score = 0.5
-    elif conc_delta > -2.0:
-        conc_score = 0.25
-    else:
-        conc_score = 0.1
+    conc_score = max(0.05, min(1.0, 0.5 + conc_delta / 6.0))
 
     # Blend: 80% existing logic, 20% concentration
     result["score"] = round(0.8 * base_score + 0.2 * conc_score, 3)
@@ -4015,27 +3889,31 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # Pass 1: cheap data only
         tech = get_technicals(sym, q)
         if not tech:
-            continue
+            tech = {
+                "rsi": 50.0, "macd_signal": "neutral", "adx": 0.0, "bb_pct": 0.5,
+                "stoch_rsi": 50.0, "obv_trend": "flat", "bull_score": 0, "bull_reasons": [],
+                "reversal_score": 0, "reversal_reasons": []
+            }
 
         analyst = get_analyst(sym)
 
-        # 5-year history filter — drops recent IPOs (CRWD, SNOW, RBLX, ARM, RDDT)
-        # and spin-offs (KVUE, GEHC, SOLV) at universe ingress, before any
-        # downstream scoring runs on incomplete data.
+        # 5-year history filter (legacy) — no longer drops recent IPOs/spin-offs.
+        # They stay in the scan for UI deep-dives and Theme discovery. The
+        # downstream Compounder/Momentum runner models naturally gate them out if
+        # fundamental data is missing.
         value = get_value(sym, q["price"], q.get("currency", "USD"))
         if value.get("_insufficient_history"):
-            continue
+            pass # Keep it!
 
         # Compute pass-1 sub-scores
         proximity = compute_52wk_proximity(q)
         earnings = compute_earnings_momentum(analyst)
         upside = compute_upside_score(analyst, value, q["price"])
 
-        # Quality is the v7 13-factor input. Skip stocks where Piotroski is
-        # missing — that means upstream data fetch failed, and computing
-        # quality with None would raise. Altman_z=None is OK (sector excl).
+        # Quality is the v7 13-factor input. Ensure piotroski is an int.
         if value.get("piotroski") is None:
-            continue
+            value["piotroski"] = 0
+            value["altman_z"] = 0
         quality = compute_quality_score(value)
 
         # Catalyst (cheap-ish) — uses cached earnings calendar
@@ -4067,6 +3945,8 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.exchange = SECTOR_EXCHANGE_MAP.get(sym, "")
         s.country = COUNTRY_MAP.get(sym, "")
         s.sector = SECTOR_MAP.get(sym, "")
+        s.industry = INDUSTRY_MAP.get(sym, "")
+        s.theme = get_modern_theme(s.industry)
         s.company_name = COMPANY_NAME_MAP.get(sym, "")
         s.sma50 = q.get("sma50", 0); s.sma200 = q.get("sma200", 0)
         s.year_high = q.get("year_high", 0); s.year_low = q.get("year_low", 0)
@@ -4243,6 +4123,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
             pt_velocity_score=analyst.get("pt_velocity_score"),
+            transcript=transcript,
         )
         s.smart_money_score = sm["score"]
         s.smart_money_components = sm["components"]
@@ -4294,44 +4175,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         if HAS_ML_MODEL:
             s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
         s.hit_prob = predict_hit_prob(s)
-        # ─── Massive options enrichment (US stocks ≥ $1B mkt cap) ───
-        if OPTIONS_AVAILABLE and options_enrich_stock and s.country == "US" and s.market_cap >= 1e9:
-            try:
-                # (symbol, composite, hit_prob, earnings_date=None, ...)
-                _earnings_date = None
-                if hasattr(s, 'days_to_earnings') and s.days_to_earnings is not None and s.days_to_earnings >= 0:
-                    _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
-                
-                options_data = options_enrich_stock(
-                    symbol=s.symbol,
-                    composite=s.composite,
-                    hit_prob=s.hit_prob,
-                    earnings_date=_earnings_date,
-                    collect_term_structure=True,
-                    collect_earnings_move=True
-                )
-                if options_data:
-                    s.options_iv_current = options_data.get("iv_current")
-                    s.options_iv_rank = options_data.get("iv_rank")
-                    s.options_iv_samples = options_data.get("iv_samples", 0)
-                    s.options_spread = options_data.get("spread")
-                    if s.options_spread:
-                        _options_spread_ok += 1
-                    else:
-                        _options_spread_fail += 1
-                    if s.options_iv_current is not None:
-                        _options_iv_ok += 1
-                    s.options_pc_ratio = options_data.get("pc_ratio")
-                    s.options_pc_oi_ratio = options_data.get("pc_oi_ratio")
-                    s.options_skew_25d = options_data.get("skew_25d")
-                    s.options_total_open_interest = options_data.get("total_open_interest")
-                    s.options_iv_30d = options_data.get("iv_30d")
-                    s.options_iv_60d = options_data.get("iv_60d")
-                    s.options_iv_90d = options_data.get("iv_90d")
-                    s.options_term_structure = options_data.get("term_structure")
-                    s.options_implied_earnings_move = options_data.get("implied_earnings_move")
-            except Exception as e:
-                log.warning(f"  {sym}: Massive Options enrichment failed: {e}")
+
 
         # Drop the _raw stash before output
         if hasattr(s, "_raw"):
@@ -4339,10 +4183,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
 
         enriched_results.append(s)
 
-    if _options_iv_ok > 0 or _options_spread_ok > 0 or _options_spread_fail > 0:
-        log.info(f"Massive Options summary: IV={_options_iv_ok}, "
-                 f"spreads={_options_spread_ok}/{_options_spread_ok + _options_spread_fail} "
-                 f"({_options_spread_fail} failed)")
+
 
     # Pass 1 stocks NOT enriched still get a v7-only composite (cheap data only,
     # composite-band signal). They appear in the bottom of the JSON table for
@@ -4361,9 +4202,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             None, raw["inst"], raw["inst_flow"], raw["sec_mom"], raw["cong"],
         )
         # Smart Money Score now fully populated for non-enriched stocks too.
-        # Transcript isn't one of the 6 LTR factors, so SMART$ is identical
-        # between pass-1 and pass-2 cohorts. The pass-2 cohort only benefits
-        # from transcript-driven v7 composite + Tradier options overlay.
+        # v1.2: transcript IS now an 8% factor in SMART$, so pass-2 stocks
+        # will score slightly higher than pass-1 (which passes transcript=None).
+        # This is intentional — enriched stocks deserve the boost.
         sm = compute_smart_money_score(
             institutional_flow=raw["inst_flow"],
             institutional=raw["inst"],
@@ -4414,6 +4255,52 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
     # Combine enriched + non-enriched, sort by composite
     all_results = enriched_results + non_enriched
     all_results.sort(key=lambda s: s.composite, reverse=True)
+
+    # ─── Massive options enrichment (ALL US stocks) ───
+    if OPTIONS_AVAILABLE and options_enrich_stock:
+        log.info("Massive Options: enriching ALL US stocks with options data...")
+        for s in all_results:
+            if s.country == "US":
+                try:
+                    _earnings_date = None
+                    if hasattr(s, 'days_to_earnings') and s.days_to_earnings is not None and s.days_to_earnings >= 0:
+                        _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
+                    
+                    options_data = options_enrich_stock(
+                        symbol=s.symbol,
+                        composite=s.composite,
+                        hit_prob=s.hit_prob,
+                        earnings_date=_earnings_date,
+                        collect_term_structure=True,
+                        collect_earnings_move=True
+                    )
+                    if options_data:
+                        s.options_iv_current = options_data.get("iv_current")
+                        s.options_iv_rank = options_data.get("iv_rank")
+                        s.options_iv_samples = options_data.get("iv_samples", 0)
+                        s.options_spread = options_data.get("spread")
+                        if s.options_spread:
+                            _options_spread_ok += 1
+                        else:
+                            _options_spread_fail += 1
+                        if s.options_iv_current is not None:
+                            _options_iv_ok += 1
+                        s.options_pc_ratio = options_data.get("pc_ratio")
+                        s.options_pc_oi_ratio = options_data.get("pc_oi_ratio")
+                        s.options_skew_25d = options_data.get("skew_25d")
+                        s.options_total_open_interest = options_data.get("total_open_interest")
+                        s.options_iv_30d = options_data.get("iv_30d")
+                        s.options_iv_60d = options_data.get("iv_60d")
+                        s.options_iv_90d = options_data.get("iv_90d")
+                        s.options_term_structure = options_data.get("term_structure")
+                        s.options_implied_earnings_move = options_data.get("implied_earnings_move")
+                except Exception as e:
+                    log.warning(f"  {s.symbol}: Massive Options enrichment failed: {e}")
+                    
+        if _options_iv_ok > 0 or _options_spread_ok > 0 or _options_spread_fail > 0:
+            log.info(f"Massive Options summary: IV={_options_iv_ok}, "
+                     f"spreads={_options_spread_ok}/{_options_spread_ok + _options_spread_fail} "
+                     f"({_options_spread_fail} failed)")
 
     # v8 Compounder universe scoring (May 2026, v1.1) — runs once after every
     # stock has its raw PIT inputs (roe_compounder / pb_compounder /
@@ -4799,10 +4686,6 @@ def main():
     # v8 Compounder v1.1 (May 11 2026): SP500 preload removed — US cohort now
     # uses country=='US' + mcap>=$2B gate, no external membership list needed.
 
-    # Smart Money v1.1 (May 11 2026): preload PT revision velocity rolling
-    # cache. Used by get_analyst() per stock to compute 60d % delta.
-    preload_pt_history()
-
     # v1.2 (May 2026): clear institutional positions-summary cache so that
     # successive scans in the same Python process (rare, but possible in
     # Cloud Run Jobs that re-invoke main()) don't reuse stale 13F data.
@@ -4817,10 +4700,6 @@ def main():
 
     # v1.3.0: log FMP cache hit/miss summary
     _cache_log()
-
-    # Smart Money v1.1: prune + persist PT cache. Today's PT datapoints
-    # were appended during get_analyst() calls inside screen().
-    persist_pt_history()
 
     # Format + send + persist
     report = format_report(stocks, top_n=args.top, region=args.region, macro=macro)

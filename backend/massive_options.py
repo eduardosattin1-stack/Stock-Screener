@@ -174,59 +174,6 @@ def get_spot_price(symbol: str) -> Optional[float]:
 
 
 # ---------------------------------------------------------------------------
-# IV history + IV rank (identical logic, reuses GCS store)
-# ---------------------------------------------------------------------------
-def update_iv_history(symbol: str, iv: float, today_str: str = None) -> bool:
-    if iv is None or iv <= 0:
-        return False
-    today_str = today_str or datetime.now().strftime("%Y-%m-%d")
-    path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
-    history = _gcs_read(path, [])
-    if not isinstance(history, list):
-        history = []
-
-    today_idx = next((i for i, row in enumerate(history)
-                      if isinstance(row, list) and len(row) >= 1 and row[0] == today_str), -1)
-    new_row = [today_str, round(iv, 4)]
-    if today_idx >= 0:
-        history[today_idx] = new_row
-    else:
-        history.append(new_row)
-
-    cutoff = (datetime.now() - timedelta(days=IV_HISTORY_KEEP_DAYS)).strftime("%Y-%m-%d")
-    history = [row for row in history
-               if isinstance(row, list) and len(row) >= 1 and row[0] >= cutoff]
-
-    return _gcs_write(path, history)
-
-
-def compute_iv_rank(symbol: str) -> Optional[dict]:
-    path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
-    history = _gcs_read(path, [])
-    if not isinstance(history, list) or len(history) < MIN_IV_SAMPLES_FOR_RANK:
-        return None
-
-    ivs = [float(row[1]) for row in history
-           if isinstance(row, list) and len(row) >= 2 and row[1]]
-    if len(ivs) < MIN_IV_SAMPLES_FOR_RANK:
-        return None
-
-    current = ivs[-1]
-    lo, hi = min(ivs), max(ivs)
-    if hi == lo:
-        return {"iv_rank": 50.0, "current_iv": current, "iv_min": lo, "iv_max": hi, "samples": len(ivs)}
-
-    rank = (current - lo) / (hi - lo) * 100.0
-    return {
-        "iv_rank": round(rank, 1),
-        "current_iv": round(current, 4),
-        "iv_min": round(lo, 4),
-        "iv_max": round(hi, 4),
-        "samples": len(ivs),
-    }
-
-
-# ---------------------------------------------------------------------------
 # Derived analytics from snapshot data
 # ---------------------------------------------------------------------------
 def _extract_atm_iv(contracts: list, spot: float) -> Optional[float]:
@@ -515,28 +462,19 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     iv_exp = chosen_exp or expirations[0]
     iv_chain = by_exp.get(iv_exp, [])
 
-    # Step 1: ATM IV + skew + update history + rank
+    # Step 1: ATM IV + skew
     iv_today = _extract_atm_iv(iv_chain, spot)
     result["skew_25d"] = _extract_skew_25d(iv_chain)
+    
     if iv_today:
-        try:
-            update_iv_history(symbol, iv_today)
-        except Exception as e:
-            log.debug(f"IV history write failed for {symbol}: {e}")
-
-    iv_data = compute_iv_rank(symbol)
-    if iv_data:
-        result["iv_current"] = iv_data["current_iv"]
-        result["iv_rank"] = iv_data["iv_rank"]
-        result["iv_samples"] = iv_data["samples"]
-    elif iv_today:
         result["iv_current"] = round(iv_today, 4)
-        try:
-            path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
-            history = _gcs_read(path, [])
-            result["iv_samples"] = len(history) if isinstance(history, list) else 0
-        except Exception:
-            result["iv_samples"] = 1
+        
+    # See if Polygon provides implied_volatility_rank on the underlying asset
+    for c in contracts:
+        ua = c.get("underlying_asset", {})
+        if "implied_volatility_rank" in ua:
+            result["iv_rank"] = round(float(ua["implied_volatility_rank"]), 1)
+            break
 
     # Step 2: P/C ratios (volume + OI) — uses ALL contracts, no extra call
     pc_data = _compute_pc_ratios(contracts)

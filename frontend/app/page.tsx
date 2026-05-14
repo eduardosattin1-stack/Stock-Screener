@@ -3,11 +3,12 @@ import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
 import { Watchlist } from "./components/Watchlist";
 import { StockCard } from "./components/StockCard";
+import { ThemeCard } from "./components/ThemeCard";
 import { DailyBriefing } from "./components/DailyBriefing";
 import { useRouter } from "next/navigation";
 
-const GCS_BASE = "/api/gcs/scans";
-const GCS_FALLBACK = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest.json";
+const GCS_BASE = "";
+const GCS_FALLBACK = "/latest_global.json";
 const REGIONS = [
   { key: "sp500", label: "S&P 500" },
   { key: "midcap", label: "Midcap" },
@@ -69,6 +70,7 @@ interface StockData {
   company_name?:string;
   sector?:string;
   industry?:string;
+  theme?:string;
   position_size_pct?:number;
   peer_context?:{_evaluated?:boolean;peers?:{symbol:string;price:number;"52wk_position":number;vs_200d:number}[];divergence?:string;avg_peer_mom_200d?:number;stock_spread_vs_peers?:number};
   exchange?:string;
@@ -606,24 +608,11 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
   // v8 mode-aware bindings. The user's mode toggle drives which composite
   // and factor radar appear in the expanded row.
   const scoresActive = readFactorsV8(s, mode);
-  const compActive = readComposite(s, mode);
-
-  // v1.2 (May 2026): 4-mode divergence chip. Scan all 3 other modes and
-  // surface the highest-scoring one IF it qualifies AND beats active by
-  // ≥0.10. Tells the user "this stock is actually better viewed as CMP-US"
-  // (or whichever) without forcing them to flip through all 4 modes.
-  const otherModes = ["momentum","fallen_angel","compounder_us","compounder_global"].filter(m=>m!==mode);
-  const otherLabels: Record<string,string> = {
-    momentum:"Mom", fallen_angel:"FA",
-    compounder_us:"CMP-US", compounder_global:"CMP-GL",
-  };
-  let bestOther = { mode:"", score:0, label:"" };
-  for (const m of otherModes) {
-    if (!isQualified(s, m)) continue;
-    const c = readComposite(s, m);
-    if (c > bestOther.score) bestOther = { mode:m, score:c, label:otherLabels[m] };
-  }
-  const otherIsHigher = bestOther.mode !== "" && (bestOther.score - compActive >= 0.10);
+  const compMom = readComposite(s, "momentum");
+  const compFa = readComposite(s, "fallen_angel");
+  const compCmpUs = readComposite(s, "compounder_us");
+  const compCmpGl = readComposite(s, "compounder_global");
+  const otherIsHigher = false;
   // v1.2: scoresOther / probFallback / dual-comp column removed — see F2a + F2b notes.
 
   return(
@@ -644,7 +633,6 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
-                {otherIsHigher&&<span style={{fontSize:8,padding:"1px 5px",borderRadius:3,background:"#fffbeb",color:"#d97706",fontFamily:"var(--font-mono)",fontWeight:700,border:"1px solid #fde68a"}} title={`${bestOther.label} composite is ${(bestOther.score-compActive).toFixed(2)} higher — switch mode to compare`}>↻ {bestOther.label}+{(bestOther.score-compActive).toFixed(2)}</span>}
               </div>
               {s.company_name && <div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={s.company_name}>{s.company_name}</div>}
             </div>
@@ -670,9 +658,17 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 8px",fontSize:11,color:"var(--text-muted,#6b7280)"}} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">
           {s.p_s && s.p_s > 0 ? s.p_s.toFixed(1) : <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>}
         </td>
-        {/* COMP (active mode) — primary, larger, colored by score */}
-        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:13,color:compActive>0.7?"#10b981":compActive>0.5?"var(--text)":compActive>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
-          {compActive.toFixed(2)}
+        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compMom>0.7?"#10b981":compMom>0.5?"var(--text)":compMom>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
+          {compMom.toFixed(2)}
+        </td>
+        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compFa>0.7?"#10b981":compFa>0.5?"var(--text)":compFa>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
+          {compFa.toFixed(2)}
+        </td>
+        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compCmpUs>0.7?"#10b981":compCmpUs>0.5?"var(--text)":compCmpUs>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
+          {compCmpUs.toFixed(2)}
+        </td>
+        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compCmpGl>0.7?"#10b981":compCmpGl>0.5?"var(--text)":compCmpGl>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
+          {compCmpGl.toFixed(2)}
         </td>
         {/* v1.2 (May 2026): "COMP other" column dropped. With 4 modes the
             "other" concept becomes ambiguous (3 candidates). The divergence
@@ -709,13 +705,13 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
             const spread = (pct >= 15 && ivr != null && ivr <= 30) ? " ★" : "";
             return <span style={{color:c,fontWeight:700}} title={`P(+20% daily high in 4w) = ${pct}%${ivr!=null?` · IVR ${ivr.toFixed(0)}`:""}${spread?" · SPREAD CANDIDATE: high P20 + low IVR":""}`}>{pct}%{spread&&<span style={{color:"#8b5cf6",fontSize:9}}>{spread}</span>}</span>;})()}
         </td>
-        {/* IVR — Implied Volatility Rank (top-30 only, needs 20+ days IV history) */}
+        {/* IVR — Implied Volatility Rank (Massive API, all US stocks) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"center",padding:"10px 6px",fontSize:11}}>
           {(()=>{
             const ivr=s.options_iv_rank;
             const iv=s.options_iv_current;
             const samples=s.options_iv_samples||0;
-            if(ivr==null&&iv==null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Top-30 only; 20+ days of IV history needed for rank">—</span>;
+            if(ivr==null&&iv==null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Enriched US stocks only; 20+ days of IV history needed for rank">—</span>;
             if(ivr==null&&iv!=null){
               return <div title={`Current IV ${(iv*100).toFixed(0)}% · ${samples}/20 samples for rank`}>
                 <span style={{color:"var(--text-muted,#6b7280)",fontWeight:600}}>{(iv*100).toFixed(0)}%</span>
@@ -751,13 +747,6 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
                 <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
                   {FACTOR_ORDER.map(k=>{const w=FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={w} score={(scoresActive as any)[k]}/>;})}
                 </div>
-                {/* Mode comparison strip */}
-                {bestOther.score>0&&(
-                  <div style={{marginTop:10,padding:"8px 12px",borderRadius:5,background:otherIsHigher?"var(--amber-light)":"var(--bg)",border:`1px solid ${otherIsHigher?"var(--amber)":"var(--border-subtle)"}`,fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)",lineHeight:1.5}}>
-                    <span style={{fontWeight:700,color:otherIsHigher?"var(--amber)":"var(--text)"}}>Best alternative — {bestOther.label}: {bestOther.score.toFixed(2)}</span>
-                    {otherIsHigher && <span style={{marginLeft:6,color:"var(--amber)"}}>— leads active mode by {(bestOther.score-compActive).toFixed(2)}, worth checking that view</span>}
-                  </div>
-                )}
               </div>
             </div>
             {(s.transcript_summary||(s.catalyst_flags&&s.catalyst_flags.length>0)||(s.reasons&&s.reasons.length>0))&&(
@@ -829,7 +818,7 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 // the user rank stocks by either composite or by any individual factor.
 type SortKey =
   | "symbol" | "sector" | "country" | "price" | "piotroski" | "p_s"
-  | "active_comp"
+  | "comp_mom" | "comp_fa" | "comp_cmp_us" | "comp_cmp_gl"
   | "upside" | "smart_money" | "hit_prob";
 // v1.2 (May 2026): removed orphan SortKeys (value_score/growth_score/quality_score) —
 // those columns were dropped from the table. Added sector/country for the new
@@ -856,7 +845,7 @@ export default function Dashboard(){
     if (typeof window !== "undefined") window.localStorage.setItem("cb_screener_mode", mode);
   },[mode]);
 
-  const [sortKey,setSortKey]=useState<SortKey>("active_comp");
+  const [sortKey, setSortKey] = useState<SortKey>("comp_mom");
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const [search,setSearch]=useState("");
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
@@ -871,7 +860,10 @@ export default function Dashboard(){
   const [sectorFilter,setSectorFilter]=useState<string[]>([]);
   const [countryFilter,setCountryFilter]=useState<string[]>([]);
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
-  const [viewMode, setViewMode]=useState<"table"|"feed">("table");
+  const [viewMode, setViewMode]=useState<"table"|"feed"|"discover">("discover");
+
+  // Track expanded themes in discover mode
+  const [expandedThemes, setExpandedThemes] = useState<Record<string, boolean>>({});
 
   useEffect(()=>{
     setLoading(true);
@@ -896,11 +888,6 @@ export default function Dashboard(){
 
   // v1.2 (May 2026): filter dropdown options derived from loaded universe.
   // Memoized on `stocks` so they don't reshuffle on every keystroke.
-  // CRITICAL: these are hooks — must be called unconditionally, BEFORE the
-  // early `if (loading) return ...`. Placing them after the early return
-  // violated Rules of Hooks (loading=true skipped the hook, loading=false
-  // suddenly added 2 hooks → React error #310). The whole screener page
-  // crashed on initial load until this was fixed.
   const sectorOptions = useMemo(()=>{
     const set = new Set<string>();
     for (const s of stocks) if (s.sector) set.add(s.sector);
@@ -912,13 +899,12 @@ export default function Dashboard(){
     return Array.from(set).sort();
   },[stocks]);
 
-  // Sort key extractor. Mode-aware so that toggling the mode re-ranks
-  // the table without changing the sort key. "active_comp" follows the
-  // selected mode (4 modes in v1.2).
-  // sector/country are string sorts (handled in sorted useMemo).
   const extract = (s:StockData, key:SortKey):number => {
     switch(key){
-      case "active_comp":   return readComposite(s, mode);
+      case "comp_mom":      return readComposite(s, "momentum");
+      case "comp_fa":       return readComposite(s, "fallen_angel");
+      case "comp_cmp_us":   return readComposite(s, "compounder_us");
+      case "comp_cmp_gl":   return readComposite(s, "compounder_global");
       case "piotroski":     return s.piotroski ?? 0;
       case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
       case "upside":        return s.upside ?? 0;
@@ -926,7 +912,6 @@ export default function Dashboard(){
       case "hit_prob":      return s.hit_prob ?? -1;
       case "price":         return s.price ?? 0;
       case "symbol":        return s.symbol.charCodeAt(0);
-      // sector/country handled by string-sort branch below
       default:              return 0;
     }
   };
@@ -937,23 +922,7 @@ export default function Dashboard(){
       const q = search.toUpperCase();
       list = list.filter(s => s.symbol.includes(q) || (s.company_name||"").toUpperCase().includes(q));
     }
-    // v1.2 (May 2026): cohort filter — narrows to a specific basket gate.
-    //   "all"          → no cohort gate (sees disqualified rows too)
-    //   "qualified"    → passes the ACTIVE mode's gate (default; was the
-    //                    only behavior pre-v1.2)
-    //   "fa_flagged"   → fallen_angel_flag == true (regardless of active mode)
-    //   "cmp_us"       → signal_compounder_us == QUALIFIED
-    //   "cmp_global"   → signal_compounder_global == QUALIFIED
-    // Search overrides cohort filter — if the user typed a symbol they want
-    // to find it regardless of which baskets it qualifies for.
-    if (!search) {
-      if (cohortFilter === "qualified")     list = list.filter(s => isQualified(s, mode));
-      else if (cohortFilter === "fa_flagged")  list = list.filter(s => s.fallen_angel_flag === true);
-      else if (cohortFilter === "cmp_us")      list = list.filter(s => s.signal_compounder_us === "QUALIFIED");
-      else if (cohortFilter === "cmp_global")  list = list.filter(s => s.signal_compounder_global === "QUALIFIED");
-      // "all" → no gate
-    }
-
+    
     // v1.2: sector + country multi-select filters. Empty array = no filter.
     if (!search && sectorFilter.length > 0)  list = list.filter(s => s.sector && sectorFilter.includes(s.sector));
     if (!search && countryFilter.length > 0) list = list.filter(s => s.country && countryFilter.includes(s.country));
@@ -964,8 +933,6 @@ export default function Dashboard(){
         return sortDir === "desc" ? -cmp : cmp;
       });
     } else if (sortKey === "sector" || sortKey === "country") {
-      // v1.2: string sort for SECTOR + CTRY columns. Empty/null strings
-      // sort to the end regardless of direction.
       list.sort((a,b)=>{
         const av = (a[sortKey] || "").toString();
         const bv = (b[sortKey] || "").toString();
@@ -982,16 +949,59 @@ export default function Dashboard(){
       });
     }
     return list;
-  // extract closes over `mode`; include it in deps so toggling mode re-sorts
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[stocks, sortKey, sortDir, search, mode, cohortFilter, sectorFilter, countryFilter]);
+  },[stocks, sortKey, sortDir, search, sectorFilter, countryFilter]);
 
-  // Hidden count for footer transparency. Reports stocks excluded by active
-  // mode's gate (only meaningful when cohortFilter is the default "qualified").
-  const hiddenCount = useMemo(()=>{
-    if (search || cohortFilter !== "qualified") return 0;
-    return stocks.filter(s => !isQualified(s, mode)).length;
-  },[stocks, search, cohortFilter, mode]);
+  const themeData = useMemo(() => {
+    if (!sorted || sorted.length === 0) return [];
+    
+    // Group by theme
+    const groups: Record<string, StockData[]> = {};
+    for (const s of sorted) {
+      const theme = s.theme || "Broad Market";
+      if (!groups[theme]) groups[theme] = [];
+      groups[theme].push(s);
+    }
+    
+    // Calculate metrics
+    const result = [];
+    for (const [theme, list] of Object.entries(groups)) {
+      if (theme === "Broad Market") continue;
+      
+      const count = list.length;
+      if (count === 0) continue;
+      
+      // Calculate 1Y Performance Proxy (price / sma200 - 1)
+      let perfSum = 0;
+      let perfCount = 0;
+      let scoreSum = 0;
+      
+      for (const s of list) {
+        if (s.price && s.sma200 && s.sma200 > 0) {
+          perfSum += (s.price / s.sma200) - 1;
+          perfCount++;
+        }
+        scoreSum += readComposite(s, mode);
+      }
+      
+      const avgPerf = perfCount > 0 ? perfSum / perfCount : 0;
+      const avgScore = count > 0 ? scoreSum / count : 0;
+      
+      // Top 3 picks
+      const sortedList = [...list].sort((a, b) => readComposite(b, mode) - readComposite(a, mode));
+      const topPicks = sortedList.slice(0, 3);
+      
+      result.push({
+        themeName: theme,
+        stockCount: count,
+        performance1Y: avgPerf,
+        avgScore: avgScore,
+        topPicks: topPicks
+      });
+    }
+    
+    // Sort by performance descending
+    return result.sort((a, b) => b.performance1Y - a.performance1Y);
+  }, [sorted, mode]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -1019,26 +1029,6 @@ export default function Dashboard(){
     borderBottom:"2px solid var(--border,#e5e7eb)", background:"var(--bg,#fff)",
   });
 
-  // Mode-driven COMP column label. v1.2 (May 2026): 4 modes.
-  const activeCompLabel =
-    mode === "fallen_angel"      ? "COMP (FA)" :
-    mode === "compounder_us"     ? "CMP-US"    :
-    mode === "compounder_global" ? "CMP-GL"    :
-                                   "COMP (MOM)";
-  // "Other comp" column has been retired in v1.2: with 4 modes the "other"
-  // concept becomes ambiguous (3 candidates, not 1). Users switch modes to
-  // compare; or open the stock detail page which shows all 4 modes' scores.
-
-  // Cohort pills: scope tabs above the table. "qualified" follows the active
-  // mode; the others narrow to a specific basket flag regardless of mode.
-  const cohortPills:[string,string][] = [
-    ["qualified", `${mode === "fallen_angel" ? "FA-qualified" : mode === "compounder_us" ? "CMP-US qualified" : mode === "compounder_global" ? "CMP-GL qualified" : "Mom-qualified"}`],
-    ["all",       "All scanned"],
-    ["fa_flagged","FA flagged"],
-    ["cmp_us",    "Compounder US"],
-    ["cmp_global","Compounder GL"],
-  ];
-
   return(
     <div style={{display: "flex"}}>
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
@@ -1046,33 +1036,42 @@ export default function Dashboard(){
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
-          <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
-            CB Screener · {stocks.length} stocks · Global
-          </p>
-          <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
-            {scanDate} · v8 5-factor composite
-          </p>
+          {viewMode === "discover" ? (
+             <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
+               Thematic Discovery
+             </p>
+          ) : (
+            <>
+              <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
+                CB Screener · {stocks.length} stocks · Global
+              </p>
+              <p style={{fontSize:11,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>
+                {scanDate} · v8 5-factor composite
+              </p>
+            </>
+          )}
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
           <div style={{display:"flex", gap: 12}}>
             <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
+              <button onClick={()=>setViewMode("discover")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="discover"?"var(--bg-elevated)":"transparent", color:viewMode==="discover"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="discover"?"var(--shadow-sm)":"none"}}>Discover</button>
               <button onClick={()=>setViewMode("table")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="table"?"var(--bg-elevated)":"transparent", color:viewMode==="table"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="table"?"var(--shadow-sm)":"none"}}>Table</button>
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
             </div>
-            <ModeToggle mode={mode} onChange={setMode}/>
+            {viewMode !== "discover" && <ModeToggle mode={mode} onChange={setMode}/>}
           </div>
-          <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
-            {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
-          </div>
+          {viewMode !== "discover" && (
+            <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
+              {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Macro ribbon — situational only */}
-      <MacroRibbon macro={data?.macro}/>
+      {viewMode !== "discover" && <MacroRibbon macro={data?.macro}/>}
 
-      {/* v1.2 (May 2026): two-row filter strip.
-          Row 1: search + sort status (unchanged from F2a)
-          Row 2: cohort pills + sector multi-select + country multi-select */}
+      {/* Filter strip */}
       <div style={{display:"flex",gap:10,marginBottom:8,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
@@ -1080,38 +1079,16 @@ export default function Dashboard(){
             style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
                     border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
-        <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-          Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
-        </div>
+        {viewMode !== "discover" && (
+          <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+            Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
+          </div>
+        )}
       </div>
 
       {/* Filter row 2: cohort pills + multi-select dropdowns */}
-      <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
-        {/* Cohort pills */}
-        <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
-          {cohortPills.map(([k,l],i)=>{
-            const active = cohortFilter === k;
-            return(
-              <button key={k} onClick={()=>setCohortFilter(k)} disabled={!!search}
-                title={search ? "Filters bypassed while searching" : `Scope: ${l}`}
-                style={{
-                  padding:"6px 12px",
-                  border:"none",
-                  borderRadius: 6,
-                  cursor: search ? "not-allowed" : "pointer",
-                  background: active && !search ? "var(--bg-elevated)" : "transparent",
-                  color: active && !search ? "var(--text)" : (search ? "var(--text-light)" : "var(--text-muted)"),
-                  fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.03em",
-                  opacity: search ? 0.5 : 1,
-                  transition:"all 0.15s",
-                  boxShadow: active && !search ? "var(--shadow-sm)" : "none"
-                }}>
-                {l}
-              </button>
-            );
-          })}
-        </div>
-
+      {viewMode !== "discover" && (
+        <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
         {/* Sector multi-select */}
         <MultiSelectDropdown
           label="Sector"
@@ -1144,9 +1121,26 @@ export default function Dashboard(){
           </button>
         )}
       </div>
+      )}
 
       {/* View Rendering */}
-      {viewMode === "table" ? (
+      {viewMode === "discover" ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {themeData.length === 0 && <div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No themes match this filter</div>}
+          {themeData.map((theme) => (
+            <ThemeCard
+              key={theme.themeName}
+              themeName={theme.themeName}
+              stockCount={theme.stockCount}
+              performance1Y={theme.performance1Y}
+              avgScore={theme.avgScore}
+              topPicks={theme.topPicks}
+              expanded={!!expandedThemes[theme.themeName]}
+              onClick={() => setExpandedThemes(e => ({...e, [theme.themeName]: !e[theme.themeName]}))}
+            />
+          ))}
+        </div>
+      ) : viewMode === "table" ? (
         <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
           <div style={{overflowX:"auto"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
@@ -1157,11 +1151,14 @@ export default function Dashboard(){
                 <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
                 <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
                 <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
-                <th style={hs("active_comp")} onClick={()=>toggleSort("active_comp")} title={`Composite for the active mode (${mode === "fallen_angel" ? "Fallen Angel" : mode === "compounder_us" ? "Compounder US" : mode === "compounder_global" ? "Compounder Global" : "Momentum"}). Sortable.`}>{activeCompLabel}</th>
+                <th style={hs("comp_mom")} onClick={()=>toggleSort("comp_mom")} title="Momentum Score">MOM</th>
+                <th style={hs("comp_fa")} onClick={()=>toggleSort("comp_fa")} title="Fallen Angel Score">FA</th>
+                <th style={hs("comp_cmp_us")} onClick={()=>toggleSort("comp_cmp_us")} title="Compounder US Score">CMP-US</th>
+                <th style={hs("comp_cmp_gl")} onClick={()=>toggleSort("comp_cmp_gl")} title="Compounder Global Score">CMP-GL</th>
                 <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
                 <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
                 <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
-                <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank — where current IV sits in trailing 60d. Top-30 only; 20+ days of IV history needed for rank.">IVR</th>
+                <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank (Massive/Polygon API). Available for all US stocks.">IVR</th>
               </tr></thead>
               <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
             </table>
@@ -1203,7 +1200,7 @@ export default function Dashboard(){
         </div>
       )}
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-        {stocks.length} screened · {sorted.length} shown{hiddenCount>0?` · ${hiddenCount} excluded by ${mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} gate`:""}{cohortFilter !== "qualified" && cohortFilter !== "all" ? ` · cohort: ${cohortFilter.replace(/_/g," ")}` : ""}{sectorFilter.length > 0 ? ` · sectors: ${sectorFilter.length}` : ""}{countryFilter.length > 0 ? ` · countries: ${countryFilter.length}` : ""} · click row to expand · click any column header to sort
+        {stocks.length} screened · {sorted.length} shown{sectorFilter.length > 0 ? ` · sectors: ${sectorFilter.length}` : ""}{countryFilter.length > 0 ? ` · countries: ${countryFilter.length}` : ""} · click row to expand · click any column header to sort
       </div>
       <SectorConcentration data={data?.sector_concentration}/>
       </div>

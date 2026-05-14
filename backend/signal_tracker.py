@@ -40,7 +40,7 @@ CYCLE LIFECYCLE
 EV METHODOLOGY (mirrors frontend TradierOptionsCard v3)
   Computed for every prediction where price + IV permit spread synthesis.
   spot, P20 from scan; spread synthesized: ATM long, +10% short, 30 DTE,
-  net_debit = width × clamp(IV × 0.65, 0.15, 0.50). When tradier_spread is
+  net_debit = width × clamp(IV × 0.65, 0.15, 0.50). When options_spread is
   live, use those strikes/debits instead.
 
   Probability ladder (calibrated on 21,650 OOS samples, May 2026):
@@ -270,7 +270,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
     ladder = [(5.0, p5), (10.0, p10), (15.0, p15), (20.0, p20)]
 
     # Spread structure: live or synthesized
-    live_sp = stock.get("tradier_spread")
+    live_sp = stock.get("options_spread")
     if live_sp and isinstance(live_sp, dict) and live_sp.get("long_strike") is not None:
         sp = {
             "spot": float(live_sp.get("spot", spot)),
@@ -297,7 +297,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
         if short_strike <= long_strike:
             return None
         width = short_strike - long_strike
-        iv = stock.get("tradier_iv_current") or 0.30
+        iv = stock.get("options_iv_current") or 0.30
         iv_factor = min(IV_FACTOR_MAX, max(IV_FACTOR_MIN, iv * IV_FACTOR_SCALE))
         net_debit = round(width * iv_factor * 100) / 100
         if net_debit <= 0 or net_debit >= width:
@@ -846,8 +846,8 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "sector": s.get("sector"),
             "country": s.get("country"),
             "market_cap": s.get("market_cap"),
-            "ivr_at_entry": s.get("tradier_iv_rank"),
-            "iv_at_entry": s.get("tradier_iv_current"),
+            "ivr_at_entry": s.get("options_iv_rank"),
+            "iv_at_entry": s.get("options_iv_current"),
             "skew_25d": s.get("options_skew_25d"),
             "pc_oi_ratio": s.get("options_pc_oi_ratio"),
             "outcome": "OPEN",
