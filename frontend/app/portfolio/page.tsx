@@ -36,19 +36,19 @@ interface HistoryEntry { symbol:string; action:string; date:string; entry_price:
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
 
 const SIG: Record<string,{color:string;bg:string;border:string}> = {
-  "STRONG BUY":{color:"#8b5cf6",bg:"#f5f3ff",border:"#ddd6fe"},
-  BUY:{color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8"},
-  WATCH:{color:"#f59e0b",bg:"#fffbeb",border:"#fde68a"},
-  HOLD:{color:"#6b7280",bg:"#f8fafc",border:"#e2e8f0"},
-  SELL:{color:"#ef4444",bg:"#fef2f2",border:"#fecaca"},
+  "STRONG BUY":{color:"var(--purple)",bg:"var(--purple-light)",border:"var(--purple)"},
+  BUY:{color:"var(--green)",bg:"var(--green-light)",border:"var(--green-border)"},
+  WATCH:{color:"var(--amber)",bg:"var(--bg-surface)beb",border:"var(--amber)"},
+  HOLD:{color:"var(--text-muted)",bg:"var(--bg)",border:"#e2e8f0"},
+  SELL:{color:"var(--red)",bg:"var(--red-light)",border:"var(--red)"},
 };
 // Monitor actions are INFORMATIONAL — they don't trigger any UI state changes.
 // User explicitly closes positions via the Close button.
 const ACT_STYLE: Record<string,{color:string;bg:string;border:string;pulse?:boolean}> = {
-  SELL:{color:"#ef4444",bg:"#fef2f2",border:"#fecaca",pulse:true},
-  TRIM:{color:"#f59e0b",bg:"#fffbeb",border:"#fde68a"},
-  ADD:{color:"#10b981",bg:"#e8f5ee",border:"#b8dcc8"},
-  HOLD:{color:"#6b7280",bg:"transparent",border:"transparent"},
+  SELL:{color:"var(--red)",bg:"var(--red-light)",border:"var(--red)",pulse:true},
+  TRIM:{color:"var(--amber)",bg:"var(--bg-surface)beb",border:"var(--amber)"},
+  ADD:{color:"var(--green)",bg:"var(--green-light)",border:"var(--green-border)"},
+  HOLD:{color:"var(--text-muted)",bg:"transparent",border:"transparent"},
 };
 
 function getLocalPortfolio():Position[]{if(typeof window==="undefined")return[];try{return JSON.parse(localStorage.getItem("screener_portfolio")||"[]");}catch{return[];}}
@@ -171,53 +171,53 @@ export default function Portfolio(){
 
   const fmtMoney=(n:number)=>{if(Math.abs(n)>=1e6)return`$${(n/1e6).toFixed(1)}M`;if(Math.abs(n)>=1e3)return`$${(n/1e3).toFixed(1)}K`;return`$${n.toFixed(0)}`;};
 
-  const cardStyle:React.CSSProperties={background:"#fff",borderRadius:8,border:"1px solid #e5e7eb",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"14px 16px"};
-  const thStyle:React.CSSProperties={padding:"9px 12px",fontSize:9,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:"#6b7280",fontFamily:"var(--font-mono)",borderBottom:"2px solid #e5e7eb",whiteSpace:"nowrap"};
+  const cardStyle:React.CSSProperties={background:"var(--bg-surface)",borderRadius:8,border:"1px solid var(--border)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"14px 16px"};
+  const thStyle:React.CSSProperties={padding:"9px 12px",fontSize:9,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--text-muted)",fontFamily:"var(--font-mono)",borderBottom:"2px solid var(--border)",whiteSpace:"nowrap"};
 
   return(
     <div style={{minHeight:"100vh",padding:"20px 24px",maxWidth:1320,margin:"0 auto"}}>
       {/* Header */}
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,paddingBottom:12,borderBottom:"1px solid #f3f4f6"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,paddingBottom:12,borderBottom:"1px solid var(--divider)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",letterSpacing:"0.02em",fontFamily:"var(--font-mono)"}}>PORTFOLIO<span style={{color:"#9ca3af",fontWeight:400}}>/tracker</span></span>
-          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"#10b981",background:"#e8f5ee",border:"1px solid #b8dcc8"}}>CLOUD</span>
+          <span style={{fontSize:14,fontWeight:600,color:"var(--text)",letterSpacing:"0.02em",fontFamily:"var(--font-mono)"}}>PORTFOLIO<span style={{color:"var(--text-light)",fontWeight:400}}>/tracker</span></span>
+          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)"}}>CLOUD</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <span style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
-          <button onClick={()=>setShowAddModal(true)} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"6px 12px",borderRadius:5,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase"}}><Plus size={12}/> Position</button>
+          <span style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
+          <button onClick={()=>setShowAddModal(true)} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"6px 12px",borderRadius:5,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase"}}><Plus size={12}/> Position</button>
         </div>
       </div>
 
       {errorMsg&&(
-        <div style={{marginBottom:12,padding:"10px 14px",borderRadius:6,background:"#fef2f2",border:"1px solid #fecaca",display:"flex",alignItems:"center",gap:8}}>
-          <AlertTriangle size={14} color="#ef4444"/>
-          <span style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#ef4444",flex:1}}>{errorMsg}</span>
-          <button onClick={()=>setErrorMsg(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#ef4444"}}><X size={12}/></button>
+        <div style={{marginBottom:12,padding:"10px 14px",borderRadius:6,background:"var(--red-light)",border:"1px solid var(--red)",display:"flex",alignItems:"center",gap:8}}>
+          <AlertTriangle size={14} color="var(--red)"/>
+          <span style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--red)",flex:1}}>{errorMsg}</span>
+          <button onClick={()=>setErrorMsg(null)} style={{background:"none",border:"none",cursor:"pointer",color:"var(--red)"}}><X size={12}/></button>
         </div>
       )}
 
       {/* Informational note about signal badges */}
-      <div style={{marginBottom:12,padding:"6px 12px",borderRadius:5,background:"#f8fafc",border:"1px solid #e2e8f0",fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
-        <strong style={{color:"#1a1a1a"}}>Note:</strong> Signal and Action badges show the screener's current view — they are informational. Positions are only closed when you click Close.
+      <div style={{marginBottom:12,padding:"6px 12px",borderRadius:5,background:"var(--bg)",border:"1px solid #e2e8f0",fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
+        <strong style={{color:"var(--text)"}}>Note:</strong> Signal and Action badges show the screener's current view — they are informational. Positions are only closed when you click Close.
       </div>
 
       {/* Summary cards */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:20}}>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>POSITIONS</div><div style={{fontSize:26,fontWeight:700,color:"#1a1a1a",fontFamily:"var(--font-mono)",marginTop:4}}>{stats.positions}</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>TOTAL VALUE</div><div style={{fontSize:26,fontWeight:700,color:"#1a1a1a",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtMoney(stats.totalValue)}</div><div style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>Cost: {fmtMoney(stats.totalCost)}</div></div>
-        <div style={{...cardStyle,border:`1px solid ${stats.pnl>=0?"#b8dcc8":"#fecaca"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>TOTAL P&L</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:stats.pnl>=0?"#2d7a4f":"#ef4444"}}>{stats.pnl>=0?"+":""}{fmtMoney(stats.pnl)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:stats.pnlPct>=0?"#2d7a4f":"#ef4444"}}>{stats.pnlPct>=0?"+":""}{(stats.pnlPct*100).toFixed(1)}%</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"#2d7a4f",fontFamily:"var(--font-mono)"}}>{stats.winners}</span><span style={{fontSize:12,color:"#9ca3af"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"#ef4444",fontFamily:"var(--font-mono)"}}>{stats.losers}</span></div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>POSITIONS</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{stats.positions}</div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL VALUE</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtMoney(stats.totalValue)}</div><div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>Cost: {fmtMoney(stats.totalCost)}</div></div>
+        <div style={{...cardStyle,border:`1px solid ${stats.pnl>=0?"var(--green-border)":"var(--red)"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL P&L</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:stats.pnl>=0?"var(--green)":"var(--red)"}}>{stats.pnl>=0?"+":""}{fmtMoney(stats.pnl)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:stats.pnlPct>=0?"var(--green)":"var(--red)"}}>{stats.pnlPct>=0?"+":""}{(stats.pnlPct*100).toFixed(1)}%</div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"var(--green)",fontFamily:"var(--font-mono)"}}>{stats.winners}</span><span style={{fontSize:12,color:"var(--text-light)"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"var(--red)",fontFamily:"var(--font-mono)"}}>{stats.losers}</span></div></div>
       </div>
 
       <div style={{display:"flex",gap:4,marginBottom:16}}>
         {(["positions","options","history"] as const).map(t=>(
-          <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 14px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:"none",borderRadius:5,cursor:"pointer",background:tab===t?"#e8f5ee":"transparent",color:tab===t?"#2d7a4f":"#6b7280",transition:"all 0.15s",textTransform:"capitalize"}}>{t}{t==="history"&&history.length>0&&` (${history.length})`}</button>
+          <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 14px",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,border:"none",borderRadius:5,cursor:"pointer",background:tab===t?"var(--green-light)":"transparent",color:tab===t?"var(--green)":"var(--text-muted)",transition:"all 0.15s",textTransform:"capitalize"}}>{t}{t==="history"&&history.length>0&&` (${history.length})`}</button>
         ))}
       </div>
 
       {tab==="positions"&&(
         stocks.length===0?(
-          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><BarChart3 size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No positions yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>setShowAddModal(true)} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#2d7a4f",background:"#e8f5ee",border:"1px solid #b8dcc8",cursor:"pointer"}}>+ Add First Position</button><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#6b7280",background:"transparent",border:"1px solid #e5e7eb",cursor:"pointer"}}>Open Screener</button></div></div>
+          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><BarChart3 size={32} color="var(--divider)"/><div style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:12}}>No positions yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>setShowAddModal(true)} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)",cursor:"pointer"}}>+ Add First Position</button><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text-muted)",background:"transparent",border:"1px solid var(--border)",cursor:"pointer"}}>Open Screener</button></div></div>
         ):(
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
@@ -251,38 +251,38 @@ export default function Portfolio(){
                   const composite=nowComp;
                   const compDiverged = monComp>0 && scanComp>0 && Math.abs(monComp-scanComp)>=0.05;
                   const compSource: "monitor" | "scan" | null = monComp>0 ? "monitor" : (scanComp>0 ? "scan" : null);
-                  const pnlColor=pnl>=0?"#2d7a4f":"#ef4444";
+                  const pnlColor=pnl>=0?"var(--green)":"var(--red)";
                   const sigStyle=SIG[signal]||SIG.HOLD;
                   const actStyle=mon?ACT_STYLE[mon.action]||ACT_STYLE.HOLD:null;
                   const isExpanded=expandedRow===p.symbol;
 
                   return(
                     <>{/* eslint-disable-next-line react/jsx-key */}
-                      <tr key={p.symbol} style={{borderBottom:"1px solid #f3f4f6",cursor:"pointer",transition:"background 0.1s"}}
+                      <tr key={p.symbol} style={{borderBottom:"1px solid var(--divider)",cursor:"pointer",transition:"background 0.1s"}}
                         onClick={()=>setExpandedRow(isExpanded?null:p.symbol)}
-                        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="#f8faf9";}}
+                        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}}
                         onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
                         <td style={{padding:"10px 12px"}}>
                           <div style={{display:"flex",alignItems:"center",gap:6}}>
-                            {isExpanded?<ChevronDown size={11} color="#9ca3af"/>:<ChevronRight size={11} color="#9ca3af"/>}
+                            {isExpanded?<ChevronDown size={11} color="var(--text-light)"/>:<ChevronRight size={11} color="var(--text-light)"/>}
                             <div>
-                              <a href={`/stock/${p.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)",fontSize:12,letterSpacing:"0.04em"}}>{p.symbol}</a>
-                             <div style={{fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>                                 {p.entry_date}{(()=>{const d=Math.floor((Date.now()-new Date(p.entry_date).getTime())/86400000);return d>0?` · ${d}d`:"";})()}                               </div>
+                              <a href={`/stock/${p.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)",fontSize:12,letterSpacing:"0.04em"}}>{p.symbol}</a>
+                             <div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>                                 {p.entry_date}{(()=>{const d=Math.floor((Date.now()-new Date(p.entry_date).getTime())/86400000);return d>0?` · ${d}d`:"";})()}                               </div>
                             </div>
                           </div>
                         </td>
                         <td style={{padding:"10px 8px",textAlign:"right"}}>
                           {actStyle&&mon?.action!=="HOLD"?(
                             <span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:actStyle.color,background:actStyle.bg,border:`1px solid ${actStyle.border}`,animation:actStyle.pulse?"pulse 2s infinite":"none"}}>{mon!.action}</span>
-                          ):<span style={{color:"#9ca3af",fontSize:9,fontFamily:"var(--font-mono)"}}>—</span>}
+                          ):<span style={{color:"var(--text-light)",fontSize:9,fontFamily:"var(--font-mono)"}}>—</span>}
                         </td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#6b7280",fontSize:11}}>${p.entry_price.toFixed(2)}</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#1a1a1a",fontSize:12,fontWeight:600}}>${cur.toFixed(2)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text-muted)",fontSize:11}}>${p.entry_price.toFixed(2)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12,fontWeight:600}}>${cur.toFixed(2)}</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:pnlColor,fontSize:12,fontWeight:600}}>{pnl>=0?"+":""}{fmtMoney(pnl)}</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:pnlColor,fontSize:11,fontWeight:600}}>{pnlPct>=0?"+":""}{(pnlPct*100).toFixed(1)}%</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#6b7280",fontSize:11}}>{p.shares}</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"#1a1a1a",fontSize:11}}>{fmtMoney(val)}</td>
-                        <td style={{textAlign:"right",padding:"10px 12px"}}>{signal!=="—"?<span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:sigStyle.color,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{signal}</span>:<span style={{color:"#9ca3af",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text-muted)",fontSize:11}}>{p.shares}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:11}}>{fmtMoney(val)}</td>
+                        <td style={{textAlign:"right",padding:"10px 12px"}}>{signal!=="—"?<span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:sigStyle.color,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{signal}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
                         {/* ── ALPHA / DD column ──────────────────────────────────────────
                             Replaces COMPOSITE column. Composite remains accessible via:
                               (a) hover tooltip on this cell
@@ -297,15 +297,15 @@ export default function Portfolio(){
                               {/* Primary: alpha vs SPY */}
                               {p.alpha_vs_spy_pct!=null?(
                                 <div style={{display:"flex",alignItems:"baseline",gap:5}}>
-                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>ALPHA</span>
-                                  <span style={{fontFamily:"var(--font-mono)",fontSize:12,fontWeight:700,color:p.alpha_vs_spy_pct>=0?"#2d7a4f":"#ef4444"}}>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"var(--text-light)",letterSpacing:"0.06em"}}>ALPHA</span>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:12,fontWeight:700,color:p.alpha_vs_spy_pct>=0?"var(--green)":"var(--red)"}}>
                                     {p.alpha_vs_spy_pct>=0?"+":""}{p.alpha_vs_spy_pct.toFixed(2)}pp
                                   </span>
                                 </div>
                               ):(
                                 <div style={{display:"flex",alignItems:"baseline",gap:5}}>
-                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>ALPHA</span>
-                                  <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"#9ca3af"}}>—</span>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"var(--text-light)",letterSpacing:"0.06em"}}>ALPHA</span>
+                                  <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-light)"}}>—</span>
                                 </div>
                               )}
                               {/* Secondary: drawdown from peak. Colored thresholds:
@@ -316,10 +316,10 @@ export default function Portfolio(){
  
                               {p.drawdown_from_peak_pct!=null?(()=>{
                                 const dd=p.drawdown_from_peak_pct as number;
-                                const ddColor = dd<=-25?"#ef4444":dd<=-10?"#ea580c":dd<=-3?"#d97706":"#9ca3af";
+                                const ddColor = dd<=-25?"var(--red)":dd<=-10?"var(--amber)":dd<=-3?"var(--amber)":"var(--text-light)";
                                 return (
                                   <div style={{display:"flex",alignItems:"baseline",gap:5}}>
-                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>DD</span>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"var(--text-light)",letterSpacing:"0.06em"}}>DD</span>
                                     <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:ddColor,fontWeight:dd<=-10?700:500}}>
                                       {dd.toFixed(1)}%
                                     </span>
@@ -332,10 +332,10 @@ export default function Portfolio(){
                               {p.entry_composite!=null && nowComp>0?(()=>{
                                 const delta = nowComp - p.entry_composite;
                                 const pct = p.entry_composite > 0 ? (delta / p.entry_composite) * 100 : 0;
-                                const compColor = delta >= 0.05 ? "#2d7a4f" : delta <= -0.05 ? "#ef4444" : "#9ca3af";
+                                const compColor = delta >= 0.05 ? "var(--green)" : delta <= -0.05 ? "var(--red)" : "var(--text-light)";
                                 return (
                                   <div style={{display:"flex",alignItems:"baseline",gap:5}}>
-                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"#9ca3af",letterSpacing:"0.06em"}}>COMP</span>
+                                    <span style={{fontFamily:"var(--font-mono)",fontSize:9,color:"var(--text-light)",letterSpacing:"0.06em"}}>COMP</span>
                                     <span style={{fontFamily:"var(--font-mono)",fontSize:10,color:compColor}}>
                                       {p.entry_composite.toFixed(2)}→{nowComp.toFixed(2)} ({pct>=0?"+":""}{pct.toFixed(0)}%)
                                     </span>
@@ -344,22 +344,22 @@ export default function Portfolio(){
                               })():null}
                             </div>
                           ):(
-                            <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"#9ca3af"}}>—</span>
+                            <span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-light)"}}>—</span>
                           )}
                         </td>
                         <td style={{padding:"10px 6px",textAlign:"center"}}>
                           <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===p.symbol?null:p.symbol);}} style={{
                             fontSize:9,padding:"3px 10px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,
-                            border:closingRow===p.symbol?"1px solid #ef4444":"1px solid #e5e7eb",
-                            background:closingRow===p.symbol?"#fef2f2":"#fff",
-                            color:closingRow===p.symbol?"#ef4444":"#6b7280",
+                            border:closingRow===p.symbol?"1px solid var(--red)":"1px solid var(--border)",
+                            background:closingRow===p.symbol?"var(--red-light)":"var(--bg-surface)",
+                            color:closingRow===p.symbol?"var(--red)":"var(--text-muted)",
                             cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
                           }}>{closingRow===p.symbol?"Cancel":"Close"}</button>
                         </td>
                       </tr>
                       {/* Close Position form — user-initiated exit */}
                       {closingRow===p.symbol&&(
-                        <tr key={`${p.symbol}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"#fef2f2",borderTop:"1px solid #fecaca"}}>
+                        <tr key={`${p.symbol}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
                           <ClosePositionForm
                             position={p}
                             currentPrice={cur}
@@ -370,23 +370,23 @@ export default function Portfolio(){
                       )}
                       {/* Expanded monitor details */}
                       {isExpanded&&mon&&mon.reasons?.length>0&&(
-                        <tr key={`${p.symbol}-detail`}><td colSpan={11} style={{padding:"0 12px 12px 40px",background:"#f8faf9"}}>
+                        <tr key={`${p.symbol}-detail`}><td colSpan={11} style={{padding:"0 12px 12px 40px",background:"var(--bg)"}}>
                           <div style={{display:"flex",gap:16,paddingTop:8}}>
                             <div style={{flex:1}}>
-                              <div style={{fontSize:9,fontWeight:600,letterSpacing:"0.08em",color:"#2d7a4f",fontFamily:"var(--font-mono)",marginBottom:6,textTransform:"uppercase"}}>Monitor Reasons</div>
+                              <div style={{fontSize:9,fontWeight:600,letterSpacing:"0.08em",color:"var(--green)",fontFamily:"var(--font-mono)",marginBottom:6,textTransform:"uppercase"}}>Monitor Reasons</div>
                               <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-                                {mon.reasons.map((r,i)=><span key={i} style={{fontSize:9,padding:"2px 7px",borderRadius:3,fontFamily:"var(--font-mono)",background:r.includes("⚠")?"#fef2f2":"#f8fafc",border:`1px solid ${r.includes("⚠")?"#fecaca":"#e2e8f0"}`,color:r.includes("⚠")?"#ef4444":"#6b7280"}}>{r}</span>)}
+                                {mon.reasons.map((r,i)=><span key={i} style={{fontSize:9,padding:"2px 7px",borderRadius:3,fontFamily:"var(--font-mono)",background:r.includes("⚠")?"var(--red-light)":"var(--bg)",border:`1px solid ${r.includes("⚠")?"var(--red)":"#e2e8f0"}`,color:r.includes("⚠")?"var(--red)":"var(--text-muted)"}}>{r}</span>)}
                               </div>
                             </div>
                             {mon.catalyst_flags?.length>0&&(
                               <div>
-                                <div style={{fontSize:9,fontWeight:600,letterSpacing:"0.08em",color:"#8b5cf6",fontFamily:"var(--font-mono)",marginBottom:6,textTransform:"uppercase"}}>Catalysts</div>
+                                <div style={{fontSize:9,fontWeight:600,letterSpacing:"0.08em",color:"var(--purple)",fontFamily:"var(--font-mono)",marginBottom:6,textTransform:"uppercase"}}>Catalysts</div>
                                 <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                                  {mon.catalyst_flags.map((f,i)=><span key={i} style={{fontSize:9,fontFamily:"var(--font-mono)",color:"#8b5cf6",display:"flex",alignItems:"center",gap:3}}><Zap size={9}/>{f}</span>)}
+                                  {mon.catalyst_flags.map((f,i)=><span key={i} style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--purple)",display:"flex",alignItems:"center",gap:3}}><Zap size={9}/>{f}</span>)}
                                 </div>
                               </div>
                             )}
-                            <div style={{textAlign:"right",fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+                            <div style={{textAlign:"right",fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
                               <div>Held: {mon.days_held}d</div>
                               <div>Quality: {(mon.quality_score*100).toFixed(0)}</div>
                               <div>Bull: {mon.bull_score}/10</div>
@@ -405,7 +405,7 @@ export default function Portfolio(){
 
       {tab==="options"&&(
         options.length===0?(
-          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><Zap size={32} color="#f3f4f6"/><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)",marginTop:12}}>No options tracked yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"#6b7280",background:"transparent",border:"1px solid #e5e7eb",cursor:"pointer"}}>Open Screener</button></div></div>
+          <div style={{...cardStyle,padding:"60px 20px",textAlign:"center"}}><Zap size={32} color="var(--divider)"/><div style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)",marginTop:12}}>No options tracked yet</div><div style={{display:"flex",gap:8,justifyContent:"center",marginTop:16}}><button onClick={()=>router.push("/")} style={{fontSize:11,padding:"8px 16px",borderRadius:6,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text-muted)",background:"transparent",border:"1px solid var(--border)",cursor:"pointer"}}>Open Screener</button></div></div>
         ):(
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
@@ -421,29 +421,29 @@ export default function Portfolio(){
                   const pnl=(cur-p.entry_price)*100*(p.contracts||1); // Not accurate unless we live-price the spread
                   
                   return(
-                    <><tr key={`opt-${p.symbol}-${p.strikes}`} style={{borderBottom:"1px solid #f3f4f6",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="#f8faf9";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
-                      <td style={{padding:"10px 12px", fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)",fontSize:12}}>{p.symbol}</td>
-                      <td style={{padding:"10px 12px", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.strategy}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.expiration}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>{p.strikes}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a",fontWeight:600}}>${p.entry_price.toFixed(2)}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>—</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a"}}>{p.contracts}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{p.ev && p.risk ? <><span style={{color: p.ev > 0 ? "#10b981" : "#ef4444", fontWeight:600}}>{p.ev > 0 ? "+" : ""}{(p.ev / p.risk * 100).toFixed(0)}%</span> <span style={{color:"#9ca3af"}}>(${Math.round(p.ev)}/c)</span></> : "—"}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{p.iv?(p.iv*100).toFixed(0)+"%":"—"}</td>
+                    <><tr key={`opt-${p.symbol}-${p.strikes}`} style={{borderBottom:"1px solid var(--divider)",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
+                      <td style={{padding:"10px 12px", fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)",fontSize:12}}>{p.symbol}</td>
+                      <td style={{padding:"10px 12px", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.strategy}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.expiration}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.strikes}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)",fontWeight:600}}>${p.entry_price.toFixed(2)}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)"}}>{p.contracts}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>{p.ev && p.risk ? <><span style={{color: p.ev > 0 ? "var(--green)" : "var(--red)", fontWeight:600}}>{p.ev > 0 ? "+" : ""}{(p.ev / p.risk * 100).toFixed(0)}%</span> <span style={{color:"var(--text-light)"}}>(${Math.round(p.ev)}/c)</span></> : "—"}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>{p.iv?(p.iv*100).toFixed(0)+"%":"—"}</td>
                       <td style={{padding:"10px 6px",textAlign:"center"}}>
                         <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===`${p.symbol}-${p.strikes}`?null:`${p.symbol}-${p.strikes}`);}} style={{
                           fontSize:9,padding:"3px 10px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,
-                          border:closingRow===`${p.symbol}-${p.strikes}`?"1px solid #ef4444":"1px solid #e5e7eb",
-                          background:closingRow===`${p.symbol}-${p.strikes}`?"#fef2f2":"#fff",
-                          color:closingRow===`${p.symbol}-${p.strikes}`?"#ef4444":"#6b7280",
+                          border:closingRow===`${p.symbol}-${p.strikes}`?"1px solid var(--red)":"1px solid var(--border)",
+                          background:closingRow===`${p.symbol}-${p.strikes}`?"var(--red-light)":"var(--bg-surface)",
+                          color:closingRow===`${p.symbol}-${p.strikes}`?"var(--red)":"var(--text-muted)",
                           cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
                         }}>{closingRow===`${p.symbol}-${p.strikes}`?"Cancel":"Close"}</button>
                       </td>
                     </tr>
                     {closingRow===`${p.symbol}-${p.strikes}`&&(
-                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"#fef2f2",borderTop:"1px solid #fecaca"}}>
+                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
                         <ClosePositionForm
                           position={p}
                           currentPrice={0}
@@ -463,40 +463,40 @@ export default function Portfolio(){
       {/* History Tab */}
       {tab==="history"&&(
         history.length===0?(
-          <div style={{...cardStyle,padding:"40px 20px",textAlign:"center"}}><div style={{fontSize:12,color:"#6b7280",fontFamily:"var(--font-mono)"}}>No exit history yet</div><div style={{fontSize:10,color:"#9ca3af",fontFamily:"var(--font-mono)",marginTop:4}}>History populates as the monitor recommends exits</div></div>
+          <div style={{...cardStyle,padding:"40px 20px",textAlign:"center"}}><div style={{fontSize:12,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>No exit history yet</div><div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)",marginTop:4}}>History populates as the monitor recommends exits</div></div>
         ):(
           <>
             {historyStats&&(
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
-                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>TRADES</div><div style={{fontSize:22,fontWeight:700,color:"#1a1a1a",fontFamily:"var(--font-mono)",marginTop:4}}>{historyStats.total}</div></div>
-                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>WIN RATE</div><div style={{fontSize:22,fontWeight:700,color:historyStats.winRate>=0.5?"#2d7a4f":"#ef4444",fontFamily:"var(--font-mono)",marginTop:4}}>{(historyStats.winRate*100).toFixed(0)}%</div></div>
-                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"#6b7280",fontFamily:"var(--font-mono)"}}>AVG P&L</div><div style={{fontSize:22,fontWeight:700,color:historyStats.avgPnl>=0?"#2d7a4f":"#ef4444",fontFamily:"var(--font-mono)",marginTop:4}}>{historyStats.avgPnl>=0?"+":""}{(historyStats.avgPnl*100).toFixed(1)}%</div></div>
+                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TRADES</div><div style={{fontSize:22,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{historyStats.total}</div></div>
+                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN RATE</div><div style={{fontSize:22,fontWeight:700,color:historyStats.winRate>=0.5?"var(--green)":"var(--red)",fontFamily:"var(--font-mono)",marginTop:4}}>{(historyStats.winRate*100).toFixed(0)}%</div></div>
+                <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>AVG P&L</div><div style={{fontSize:22,fontWeight:700,color:historyStats.avgPnl>=0?"var(--green)":"var(--red)",fontFamily:"var(--font-mono)",marginTop:4}}>{historyStats.avgPnl>=0?"+":""}{(historyStats.avgPnl*100).toFixed(1)}%</div></div>
               </div>
             )}
             <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
                 <thead><tr>{["Symbol","Action","Date","Entry","Exit","P&L %","Days","EV/Risk","DD/Gain","Reason"].map((h,i)=><th key={h} style={{...thStyle,textAlign:i===0?"left":"right"}}>{h}</th>)}</tr></thead>
                 <tbody>
-                  {history.slice(0,40).map((h,i)=>{const c=h.pnl_pct>=0?"#2d7a4f":"#ef4444";return(
-                    <tr key={i} style={{borderBottom:"1px solid #f3f4f6"}}>
-                      <td style={{padding:"10px 12px",fontFamily:"var(--font-mono)",fontWeight:600,color:"#1a1a1a",fontSize:12}}>{h.symbol} {h.asset_type==="option"?"(OPT)":""}</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>{h.action}</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>{h.date}</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"#6b7280"}}>${h.entry_price.toFixed(2)}</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"#1a1a1a",fontWeight:600}}>${h.exit_price.toFixed(2)}</td>
+                  {history.slice(0,40).map((h,i)=>{const c=h.pnl_pct>=0?"var(--green)":"var(--red)";return(
+                    <tr key={i} style={{borderBottom:"1px solid var(--divider)"}}>
+                      <td style={{padding:"10px 12px",fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text)",fontSize:12}}>{h.symbol} {h.asset_type==="option"?"(OPT)":""}</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>{h.action}</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-light)"}}>{h.date}</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>${h.entry_price.toFixed(2)}</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)",fontWeight:600}}>${h.exit_price.toFixed(2)}</td>
                       <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:700,color:c}}>{h.pnl_pct>=0?"+":""}{(h.pnl_pct*100).toFixed(1)}%</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>{h.days_held}d</td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280"}}>
-                        {h.asset_type==="option" && h.ev && h.risk ? <><span style={{color: h.ev > 0 ? "#10b981" : "#ef4444", fontWeight:600}}>{h.ev > 0 ? "+" : ""}{(h.ev / h.risk * 100).toFixed(0)}%</span> <span style={{color:"#9ca3af"}}>(${Math.round(h.ev)}/c)</span></> : "—"}
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-light)"}}>{h.days_held}d</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>
+                        {h.asset_type==="option" && h.ev && h.risk ? <><span style={{color: h.ev > 0 ? "var(--green)" : "var(--red)", fontWeight:600}}>{h.ev > 0 ? "+" : ""}{(h.ev / h.risk * 100).toFixed(0)}%</span> <span style={{color:"var(--text-light)"}}>(${Math.round(h.ev)}/c)</span></> : "—"}
                       </td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#9ca3af"}}>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-light)"}}>
                         {h.asset_type==="option" && (h.dd_touch!==undefined || h.gain_touch!==undefined) ? (
                           <>
-                            {h.dd_touch!==undefined ? <span style={{color:"#ef4444"}}>{h.dd_touch}%</span> : "—"} / {h.gain_touch!==undefined ? <span style={{color:"#10b981"}}>{h.gain_touch}%</span> : "—"}
+                            {h.dd_touch!==undefined ? <span style={{color:"var(--red)"}}>{h.dd_touch}%</span> : "—"} / {h.gain_touch!==undefined ? <span style={{color:"var(--green)"}}>{h.gain_touch}%</span> : "—"}
                           </>
                         ) : "—"}
                       </td>
-                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"#6b7280",maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.reason}</td>
+                      <td style={{padding:"10px 12px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)",maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.reason}</td>
                     </tr>
                   );})}
                 </tbody>
@@ -506,8 +506,8 @@ export default function Portfolio(){
         )
       )}
 
-      <div style={{textAlign:"center",marginTop:12,fontSize:9,color:"#9ca3af",fontFamily:"var(--font-mono)"}}>
-        Positions synced to cloud · Monitor updates prices + alpha vs SPY daily · <a href="/" style={{color:"#2d7a4f"}}>Screener</a>
+      <div style={{textAlign:"center",marginTop:12,fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+        Positions synced to cloud · Monitor updates prices + alpha vs SPY daily · <a href="/" style={{color:"var(--green)"}}>Screener</a>
       </div>
 
       {showAddModal&&<AddPositionModal onClose={()=>setShowAddModal(false)} onAdded={async()=>{setShowAddModal(false);await refresh();}}/>}
@@ -539,35 +539,35 @@ function ClosePositionForm({position,currentPrice,onConfirm,onCancel}:{
   }
   return(
     <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
-      <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"#ef4444"}}>Close {position.symbol} {position.asset_type==="option"?"Option":"Stock"}:</span>
-      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
-        Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} placeholder="0.00" style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid #fecaca",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
+      <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--red)"}}>Close {position.symbol} {position.asset_type==="option"?"Option":"Stock"}:</span>
+      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
+        Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} placeholder="0.00" style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid var(--red)",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
       </label>
       {position.asset_type!=="option" && currentPrice>0 && (
-        <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:pnl>=0?"#10b981":"#ef4444",fontWeight:600}}>
+        <span style={{fontSize:10,fontFamily:"var(--font-mono)",color:pnl>=0?"var(--green)":"var(--red)",fontWeight:600}}>
           P&L: {pnl>=0?"+":""}{pnl.toFixed(1)}%
         </span>
       )}
       {position.asset_type==="option" && (
         <>
-          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
-            DD Touch % <input type="number" step="0.1" value={ddTouch} onChange={e=>setDdTouch(e.target.value)} placeholder="e.g. -50" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
+            DD Touch % <input type="number" step="0.1" value={ddTouch} onChange={e=>setDdTouch(e.target.value)} placeholder="e.g. -50" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid var(--border)",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
           </label>
-          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
-            Gain Touch % <input type="number" step="0.1" value={gainTouch} onChange={e=>setGainTouch(e.target.value)} placeholder="e.g. 120" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+          <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
+            Gain Touch % <input type="number" step="0.1" value={gainTouch} onChange={e=>setGainTouch(e.target.value)} placeholder="e.g. 120" style={{width:70,marginLeft:4,padding:"4px 6px",border:"1px solid var(--border)",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
           </label>
         </>
       )}
-      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1,minWidth:160}}>
-        Reason <input type="text" value={reason} onChange={e=>setReason(e.target.value)} placeholder="optional — why you're closing" maxLength={80} style={{width:"100%",marginLeft:4,padding:"4px 6px",border:"1px solid #e5e7eb",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
+      <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)",flex:1,minWidth:160}}>
+        Reason <input type="text" value={reason} onChange={e=>setReason(e.target.value)} placeholder="optional — why you're closing" maxLength={80} style={{width:"100%",marginLeft:4,padding:"4px 6px",border:"1px solid var(--border)",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}}/>
       </label>
-      <button onClick={handle} disabled={saving} style={{padding:"5px 14px",border:"none",borderRadius:3,cursor:saving?"wait":"pointer",background:"#ef4444",color:"#fff",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>
+      <button onClick={handle} disabled={saving} style={{padding:"5px 14px",border:"none",borderRadius:3,cursor:saving?"wait":"pointer",background:"var(--red)",color:"var(--bg-surface)",fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>
         {saving?"Closing…":"Confirm Close"}
       </button>
-      <button onClick={onCancel} disabled={saving} style={{padding:"5px 10px",border:"1px solid #e5e7eb",borderRadius:3,cursor:"pointer",background:"#fff",color:"#6b7280",fontSize:11,fontFamily:"var(--font-mono)"}}>
+      <button onClick={onCancel} disabled={saving} style={{padding:"5px 10px",border:"1px solid var(--border)",borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:"var(--text-muted)",fontSize:11,fontFamily:"var(--font-mono)"}}>
         Cancel
       </button>
-      {err&&<span style={{color:"#ef4444",fontSize:10,fontFamily:"var(--font-mono)"}}>{err}</span>}
+      {err&&<span style={{color:"var(--red)",fontSize:10,fontFamily:"var(--font-mono)"}}>{err}</span>}
     </div>
   );
 }
@@ -597,43 +597,43 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
   }
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:"20px 24px",minWidth:400,maxWidth:500}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"var(--bg-surface)",borderRadius:8,padding:"20px 24px",minWidth:400,maxWidth:500}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",fontFamily:"var(--font-mono)"}}>Add Position</span>
-          <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af"}}><X size={16}/></button>
+          <span style={{fontSize:14,fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)"}}>Add Position</span>
+          <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"var(--text-light)"}}><X size={16}/></button>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:10}}>
-          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
             Symbol
-            <input type="text" value={symbol} onChange={e=>{setSymbol(e.target.value);setErr("");}} placeholder="AAPL" autoFocus style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",textTransform:"uppercase"}}/>
+            <input type="text" value={symbol} onChange={e=>{setSymbol(e.target.value);setErr("");}} placeholder="AAPL" autoFocus style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid var(--border)",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",textTransform:"uppercase"}}/>
           </label>
           <div style={{display:"flex",gap:10}}>
-            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1}}>
+            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-muted)",flex:1}}>
               Entry price ($)
-              <input type="number" step="0.01" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}} placeholder="0.00" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
+              <input type="number" step="0.01" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}} placeholder="0.00" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid var(--border)",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
             </label>
-            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280",flex:1}}>
+            <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-muted)",flex:1}}>
               Shares
-              <input type="number" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} placeholder="0" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
+              <input type="number" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} placeholder="0" style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid var(--border)",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)"}}/>
             </label>
           </div>
-          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
             Strategy bucket (optional)
-            <select value={bucket} onChange={e=>setBucket(e.target.value as "midcap"|"sp500"|"")} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",background:"#fff",cursor:"pointer"}}>
+            <select value={bucket} onChange={e=>setBucket(e.target.value as "midcap"|"sp500"|"")} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid var(--border)",borderRadius:4,fontSize:13,fontFamily:"var(--font-mono)",background:"var(--bg-surface)",cursor:"pointer"}}>
               <option value="">— None (untagged)</option>
               <option value="midcap">Midcap basket</option>
               <option value="sp500">S&amp;P 500 basket</option>
             </select>
-            <span style={{fontSize:10,color:"#9ca3af",marginTop:2,display:"block"}}>tag this trade so the Performance page can compare it to the right model</span>
+            <span style={{fontSize:10,color:"var(--text-light)",marginTop:2,display:"block"}}>tag this trade so the Performance page can compare it to the right model</span>
           </label>
-          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"#6b7280"}}>
+          <label style={{fontSize:11,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
             Notes (optional)
-            <input type="text" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="thesis, stop-loss, etc." maxLength={100} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:4,fontSize:12,fontFamily:"var(--font-mono)"}}/>
+            <input type="text" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="thesis, stop-loss, etc." maxLength={100} style={{display:"block",width:"100%",marginTop:4,padding:"8px 10px",border:"1px solid var(--border)",borderRadius:4,fontSize:12,fontFamily:"var(--font-mono)"}}/>
           </label>
-          {err&&<div style={{color:"#ef4444",fontSize:11,fontFamily:"var(--font-mono)",padding:"4px 0"}}>{err}</div>}
+          {err&&<div style={{color:"var(--red)",fontSize:11,fontFamily:"var(--font-mono)",padding:"4px 0"}}>{err}</div>}
           <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:6}}>
-            <button onClick={onClose} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"1px solid #e5e7eb",background:"#fff",cursor:"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,color:"#6b7280"}}>Cancel</button>
-            <button onClick={handle} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"none",background:saving?"#9ca3af":"#2d7a4f",color:"#fff",cursor:saving?"wait":"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>{saving?"Saving…":"Add Position"}</button>
+            <button onClick={onClose} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"1px solid var(--border)",background:"var(--bg-surface)",cursor:"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,color:"var(--text-muted)"}}>Cancel</button>
+            <button onClick={handle} disabled={saving} style={{padding:"8px 16px",borderRadius:4,border:"none",background:saving?"var(--text-light)":"var(--green)",color:"var(--bg-surface)",cursor:saving?"wait":"pointer",fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,letterSpacing:"0.04em",textTransform:"uppercase"}}>{saving?"Saving…":"Add Position"}</button>
           </div>
         </div>
       </div>

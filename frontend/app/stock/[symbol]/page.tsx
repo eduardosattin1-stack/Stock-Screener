@@ -140,7 +140,7 @@ interface CompositePoint{date:string;composite:number;signal:string;price:number
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
 const T={bg:"var(--bg)",card:"var(--bg-surface)",cardBorder:"var(--border)",cardShadow:"var(--shadow-md)",text:"var(--text)",textMuted:"var(--text-muted)",textLight:"var(--text-light)",green:"var(--green)",greenLight:"var(--green-light)",greenBorder:"var(--green-border)",red:"var(--red)",redLight:"var(--red-light)",amber:"var(--amber)",amberLight:"var(--amber-light)",blue:"var(--blue)",purple:"var(--purple)",divider:"var(--divider)",mono:"var(--font-mono)",sans:"var(--font-sans)"};
-const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"#f5f3ff",fg:"#8b5cf6",border:"#ddd6fe"},BUY:{bg:T.greenLight,fg:"#10b981",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"#fde68a"},HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"#fecaca"}};
+const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"var(--purple-light)",fg:"var(--purple)",border:"var(--purple)"},BUY:{bg:T.greenLight,fg:"var(--green)",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"var(--amber)"},HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"var(--red)"}};
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 
 // v8 (Apr 2026) — 5-factor composite radar
@@ -353,7 +353,7 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
     );
   }
   return(
-    <div style={{padding:"10px 12px",borderRadius:6,background:"#fff",border:`1px solid ${T.greenBorder}`,display:"flex",flexDirection:"column",gap:6,minWidth:280}}>
+    <div style={{padding:"10px 12px",borderRadius:6,background:"var(--bg-surface)",border:`1px solid ${T.greenBorder}`,display:"flex",flexDirection:"column",gap:6,minWidth:280}}>
       <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
         <span style={{color:T.textMuted,fontWeight:600}}>{s.symbol}</span>
         <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} autoFocus
@@ -365,8 +365,8 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
       <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
         style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
       <div style={{display:"flex",alignItems:"center",gap:6}}>
-        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"#10b981":status==="error"?T.red:T.green,color:"#fff",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Added":status==="error"?"! Retry":"Save"}</button>
-        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"#fff",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
+        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"var(--green)":status==="error"?T.red:T.green,color:"var(--bg-surface)",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Added":status==="error"?"! Retry":"Save"}</button>
+        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
       </div>
       {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
     </div>
@@ -417,7 +417,7 @@ function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev
     );
   }
   return(
-    <div style={{marginTop: 10, padding:"10px 12px",borderRadius:6,background:"#fff",border:`1px solid ${T.purple}`,display:"flex",flexDirection:"column",gap:6}}>
+    <div style={{marginTop: 10, padding:"10px 12px",borderRadius:6,background:"var(--bg-surface)",border:`1px solid ${T.purple}`,display:"flex",flexDirection:"column",gap:6}}>
       <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
         <span style={{color:T.textMuted,fontWeight:600}}>{sp.strategy.replace(" (estimated)", "")}</span>
         <input type="text" placeholder="Long" value={longStrike} onChange={e=>{setLongStrike(e.target.value);setErr("");}} 
@@ -434,8 +434,8 @@ function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev
       <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
         style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
       <div style={{display:"flex",alignItems:"center",gap:6}}>
-        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"#10b981":status==="error"?T.red:T.purple,color:"#fff",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Tracked":status==="error"?"! Retry":"Track"}</button>
-        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"#fff",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
+        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"var(--green)":status==="error"?T.red:T.purple,color:"var(--bg-surface)",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Tracked":status==="error"?"! Retry":"Track"}</button>
+        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
       </div>
       {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
     </div>
@@ -451,9 +451,9 @@ function FactorRadar({scores,size=260}:{scores:FactorsV8;size?:number}){
   return(
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((lv,gi)=>{const pts=Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" ");return<polygon key={gi} points={pts} fill="none" stroke="#d1d5db" strokeWidth={gi===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+28),ly=cy+Math.sin(a)*(r+28),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#10b981":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#e5e7eb" strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+9} textAnchor="middle" dominantBaseline="middle" fontSize={12} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
+      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+28),ly=cy+Math.sin(a)*(r+28),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"var(--green)":(v??0)>0.4?T.amber:T.red);return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="var(--border)" strokeWidth={0.6} strokeDasharray={isNull?"4,3":"none"}/><text x={lx} y={ly-5} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily={T.mono} fill={isNull?"#d1d5db":T.textMuted} fontWeight="600">{FL[k]}</text><text x={lx} y={ly+9} textAnchor="middle" dominantBaseline="middle" fontSize={12} fontFamily={T.mono} fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
       <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.12} stroke={fill} strokeWidth={2} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={4} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.5}/>)}
+      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={4} fill={raw[i]==null?"#d1d5db":fill} stroke="var(--bg-surface)" strokeWidth={1.5}/>)}
       <text x={cx} y={size-4} textAnchor="middle" fontSize={9} fontFamily={T.mono} fill={T.textLight}>{covCount}/{FACTOR_ORDER.length} factors</text>
     </svg>
   );
@@ -461,7 +461,7 @@ function FactorRadar({scores,size=260}:{scores:FactorsV8;size?:number}){
 
 function FactorBar({name,weight,score,detail}:{name:string;weight:number;score:number|null;detail:string}){
   if(score==null)return<div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`,opacity:0.45}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}><div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:12,fontFamily:T.mono,fontWeight:600,color:"#d1d5db"}}>{name}</span><span style={{fontSize:9,fontFamily:T.mono,color:"#d1d5db"}}>({weight}%)</span></div><span style={{fontSize:11,fontFamily:T.mono,color:"#d1d5db",fontStyle:"italic"}}>no data</span></div><div style={{height:5,borderRadius:3,background:T.divider}}><div style={{height:"100%",width:0}}/></div><div style={{fontSize:10,fontFamily:T.mono,color:"#d1d5db",lineHeight:1.5}}>Weight redistributed to evaluated factors</div></div>;
-  const c=score>0.7?"#10b981":score>0.4?T.amber:T.red;
+  const c=score>0.7?"var(--green)":score>0.4?T.amber:T.red;
   const tip=TOOLTIPS[name]||"";
   return(
     <div style={{padding:"8px 0",borderBottom:`1px solid ${T.divider}`}}>
@@ -727,7 +727,7 @@ function SentimentCard({s}:{s:StockData}){
   const chip=(label:string,value:string,color:string,detail?:string)=>{
     const tip=TOOLTIPS[label]||"";
     return(
-    <div style={{padding:"8px 10px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:"#fafbfc"}}>
+    <div style={{padding:"8px 10px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:T.card}}>
       <div title={tip} style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{label}</div>
       <div style={{fontSize:12,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
       {detail && <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1,lineHeight:1.3}}>{detail}</div>}
@@ -917,7 +917,7 @@ function CompanyProfileCard({symbol}:{symbol:string}){
       </div>
 
       {floatExceeds100 && (
-        <div style={{fontSize:10,color:T.amber,fontFamily:T.mono,marginBottom:10,padding:"6px 10px",background:T.amberLight,borderRadius:4,border:`1px solid #fde68a`}}>
+        <div style={{fontSize:10,color:T.amber,fontFamily:T.mono,marginBottom:10,padding:"6px 10px",background:T.amberLight,borderRadius:4,border:`1px solid var(--amber)`}}>
           ⚠ Free float exceeds 100% — typical when shares are heavily borrowed for short-selling (double-counted in reporting).
         </div>
       )}
@@ -1004,13 +1004,13 @@ function P20Card({s}:{s:StockData}){
 
   const pBar=(threshold:string, pct:number, isRaw:boolean)=>{
     const w=Math.max(pct,2);
-    const color=pct>=40?T.green:pct>=20?"#10b981":pct>=10?T.amber:T.textMuted;
+    const color=pct>=40?T.green:pct>=20?"var(--green)":pct>=10?T.amber:T.textMuted;
     return(
       <div style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:`1px solid ${T.divider}`}}>
         <div style={{width:50,fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600,textAlign:"right"}}>{threshold}</div>
         <div style={{flex:1,height:16,background:T.divider,borderRadius:3,overflow:"hidden",position:"relative"}}>
           <div style={{width:`${w}%`,height:"100%",background:color,borderRadius:3,transition:"width 0.4s"}}/>
-          <span style={{position:"absolute",left:8,top:0,lineHeight:"16px",fontSize:10,fontFamily:T.mono,fontWeight:700,color:w>30?"#fff":T.text}}>{pct.toFixed(0)}%</span>
+          <span style={{position:"absolute",left:8,top:0,lineHeight:"16px",fontSize:10,fontFamily:T.mono,fontWeight:700,color:w>30?"var(--bg-surface)":T.text}}>{pct.toFixed(0)}%</span>
         </div>
         <div style={{width:36,fontSize:9,fontFamily:T.mono,color:T.textLight,textAlign:"right"}}>{isRaw?"model":"est."}</div>
       </div>
@@ -1139,7 +1139,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
     : evPerDollar > 0 ? "MARGINAL EDGE"
     : evPerDollar > -0.10 ? "SLIGHT NEGATIVE"
     : "NO EDGE";
-  const assessColor = assessment.includes("STRONG") ? "#8b5cf6"
+  const assessColor = assessment.includes("STRONG") ? "var(--purple)"
     : assessment.includes("MODERATE") ? T.green
     : assessment.includes("MARGINAL") ? T.amber
     : T.red;
@@ -1189,7 +1189,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
       {/* ═══ SPREAD PROPOSAL ═══ */}
       {sp&&p20>0&&(<>
         {!isLive&&(
-          <div style={{padding:"6px 10px",borderRadius:4,background:T.amberLight,border:"1px solid #fde68a",fontSize:10,fontFamily:T.mono,color:T.amber,fontWeight:600,marginBottom:10,display:"inline-block"}}>
+          <div style={{padding:"6px 10px",borderRadius:4,background:T.amberLight,border:"1px solid var(--amber)",fontSize:10,fontFamily:T.mono,color:T.amber,fontWeight:600,marginBottom:10,display:"inline-block"}}>
             ⚠ ESTIMATED SPREAD — verify strikes and premiums with your broker before trading
           </div>
         )}
@@ -1213,7 +1213,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
         </div>
 
         {/* EV block */}
-        <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"#f0fdf4":"#fef2f2",border:`1px solid ${evPositive?"#bbf7d0":"#fecaca"}`,marginBottom:14}}>
+        <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"#f0fdf4":"var(--red-light)",border:`1px solid ${evPositive?"#bbf7d0":"var(--red)"}`,marginBottom:14}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
             <div>
               <div style={{fontWeight:600,color:evPositive?T.green:T.red,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!isLive?" (ESTIMATED)":""}</div>
@@ -1261,8 +1261,8 @@ function MassiveOptionsCard({s}:{s:StockData}){
 
         {/* Broker lookup for estimated spreads */}
         {!isLive&&(
-          <div style={{padding:"10px 12px",borderRadius:5,background:"#f5f3ff",border:"1px solid #ddd6fe",fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
-            <div style={{fontWeight:600,color:"#8b5cf6",fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VERIFY WITH BROKER</div>
+          <div style={{padding:"10px 12px",borderRadius:5,background:"var(--purple-light)",border:"1px solid var(--purple)",fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
+            <div style={{fontWeight:600,color:"var(--purple)",fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VERIFY WITH BROKER</div>
             Look up: <b>{s.symbol} {sp.long_strike}/{sp.short_strike} call spread</b>, ~30 DTE.
             Actual premiums will differ — the EV above uses IV-estimated costs.
             If real net debit is lower, EV improves; if higher, EV worsens.
@@ -1270,7 +1270,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
         )}
 
         {/* Sizing */}
-        <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid #fde68a",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
+        <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid var(--amber)",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
           <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING</div>
           Speculative overlay: <b>1-2% of portfolio per spread, max 5% total</b>. Probabilities are model estimates (AUC 0.78). Spreads can lose 100% of debit. {!evPositive && <><b style={{color:T.red}}>EV is negative — no statistical edge at current premiums.</b></>}
         </div>
@@ -1282,7 +1282,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
 
       {/* No spread possible (no P20 or can't construct) */}
       {(!sp || p20<=0)&&hasIV&&(
-        <div style={{padding:"8px 12px",borderRadius:5,background:"#f8faf9",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
+        <div style={{padding:"8px 12px",borderRadius:5,background:"var(--bg)",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
           {p20<=0
             ? "ML model probability not available — spread EV cannot be calculated. IV data shown above for reference."
             : "Spread estimation requires stock price > $0 and P20 > 0%."}
@@ -1409,15 +1409,15 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
           <path d={areaPath} fill="url(#priceGrad)" />
           <path d={pricePath} fill="none" stroke={T.green} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
           
-          {iMom >= 0 && <path d={momPath} fill="none" stroke="#8b5cf6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.mom?1:0.1} />}
-          {iFa >= 0 && <path d={faPath} fill="none" stroke="#f59e0b" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.fa?1:0.1} />}
-          {iCus >= 0 && <path d={cusPath} fill="none" stroke="#3b82f6" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.cus?1:0.1} />}
+          {iMom >= 0 && <path d={momPath} fill="none" stroke="var(--purple)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.mom?1:0.1} />}
+          {iFa >= 0 && <path d={faPath} fill="none" stroke="var(--amber)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.fa?1:0.1} />}
+          {iCus >= 0 && <path d={cusPath} fill="none" stroke="var(--blue)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.cus?1:0.1} />}
           {iCgl >= 0 && <path d={cglPath} fill="none" stroke="#06b6d4" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4" opacity={active.cgl?1:0.1} />}
 
-          <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={4} fill={T.green} stroke="#fff" strokeWidth={1.5} />
-          {iMom >= 0 && <circle cx={xAt(iMom)} cy={yComp(mom[iMom])} r={3} fill="#8b5cf6" opacity={active.mom?1:0.1} />}
-          {iFa >= 0 && <circle cx={xAt(iFa)} cy={yComp(fa[iFa])} r={3} fill="#f59e0b" opacity={active.fa?1:0.1} />}
-          {iCus >= 0 && <circle cx={xAt(iCus)} cy={yComp(cus[iCus])} r={3} fill="#3b82f6" opacity={active.cus?1:0.1} />}
+          <circle cx={xAt(rows.length-1)} cy={yPrice(last[1])} r={4} fill={T.green} stroke="var(--bg-surface)" strokeWidth={1.5} />
+          {iMom >= 0 && <circle cx={xAt(iMom)} cy={yComp(mom[iMom])} r={3} fill="var(--purple)" opacity={active.mom?1:0.1} />}
+          {iFa >= 0 && <circle cx={xAt(iFa)} cy={yComp(fa[iFa])} r={3} fill="var(--amber)" opacity={active.fa?1:0.1} />}
+          {iCus >= 0 && <circle cx={xAt(iCus)} cy={yComp(cus[iCus])} r={3} fill="var(--blue)" opacity={active.cus?1:0.1} />}
           {iCgl >= 0 && <circle cx={xAt(iCgl)} cy={yComp(cgl[iCgl])} r={3} fill="#06b6d4" opacity={active.cgl?1:0.1} />}
 
           <text x={PL-8} y={yPrice(pMx)+3} textAnchor="end" fontSize={10} fontFamily={T.mono} fontWeight={600} fill={T.green}>${pMx.toFixed(2)}</text>
@@ -1441,13 +1441,13 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
           <span style={{width:12,height:12,borderRadius:3,background:T.green}}/> Price (Left)
         </div>
         {iMom >= 0 && <div onClick={()=>setActive(p=>({...p, mom:!p.mom}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.mom?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
-          <span style={{width:16,height:2,background:"#8b5cf6",backgroundImage:`repeating-linear-gradient(90deg,#8b5cf6 0 4px,transparent 4px 6px)`}}/> Momentum (Right)
+          <span style={{width:16,height:2,background:"var(--purple)",backgroundImage:`repeating-linear-gradient(90deg,var(--purple) 0 4px,transparent 4px 6px)`}}/> Momentum (Right)
         </div>}
         {iFa >= 0 && <div onClick={()=>setActive(p=>({...p, fa:!p.fa}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.fa?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
-          <span style={{width:16,height:2,background:"#f59e0b",backgroundImage:`repeating-linear-gradient(90deg,#f59e0b 0 4px,transparent 4px 6px)`}}/> Fallen Angel (Right)
+          <span style={{width:16,height:2,background:"var(--amber)",backgroundImage:`repeating-linear-gradient(90deg,var(--amber) 0 4px,transparent 4px 6px)`}}/> Fallen Angel (Right)
         </div>}
         {iCus >= 0 && <div onClick={()=>setActive(p=>({...p, cus:!p.cus}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.cus?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
-          <span style={{width:16,height:2,background:"#3b82f6",backgroundImage:`repeating-linear-gradient(90deg,#3b82f6 0 4px,transparent 4px 6px)`}}/> CMP-US (Right)
+          <span style={{width:16,height:2,background:"var(--blue)",backgroundImage:`repeating-linear-gradient(90deg,var(--blue) 0 4px,transparent 4px 6px)`}}/> CMP-US (Right)
         </div>}
         {iCgl >= 0 && <div onClick={()=>setActive(p=>({...p, cgl:!p.cgl}))} style={{display:"inline-flex",alignItems:"center",gap:6,opacity:active.cgl?1:0.4,cursor:"pointer",transition:"opacity 0.2s"}}>
           <span style={{width:16,height:2,background:"#06b6d4",backgroundImage:`repeating-linear-gradient(90deg,#06b6d4 0 4px,transparent 4px 6px)`}}/> CMP-Global (Right)
@@ -1489,7 +1489,7 @@ function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps
 
       <div style={{position:"relative",height:36,background:T.divider,borderRadius:6}}>
         {/* Highlight from price to fair value */}
-        {bvps>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(bvps)-pos(price)}%`,background:`#10b98112`,borderRadius:4}}/>}
+        {bvps>price&&<div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:`${pos(bvps)-pos(price)}%`,background:`var(--green)12`,borderRadius:4}}/>}
 
         {/* Current price line */}
         <div style={{position:"absolute",left:`${pos(price)}%`,top:0,bottom:0,width:2,background:T.text,zIndex:2}}>
@@ -1540,14 +1540,14 @@ function ModeToggle({mode,onChange,available}:{mode:string;onChange:(m:string)=>
     {k:"compounder_global",l:"CMP-Global"},
   ];
   return(
-    <div style={{display:"inline-flex",border:`1px solid ${T.cardBorder}`,borderRadius:6,overflow:"hidden",background:"#fff"}}>
+    <div style={{display:"inline-flex",border:`1px solid ${T.cardBorder}`,borderRadius:6,overflow:"hidden",background:"var(--bg-surface)"}}>
       {opts.map(o=>{
         const active=o.k===mode;
         const ok=(available as any)[o.k];
         return(
           <button key={o.k} onClick={()=>ok&&onChange(o.k)} disabled={!ok}
             style={{padding:"5px 10px",border:"none",cursor:ok?"pointer":"not-allowed",
-              background:active?T.green:"transparent",color:active?"#fff":(ok?T.text:T.textLight),
+              background:active?T.green:"transparent",color:active?"var(--bg-surface)":(ok?T.text:T.textLight),
               fontSize:10,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.04em",
               borderRight:o.k!=="compounder_global"?`1px solid ${T.cardBorder}`:"none"}}>
             {o.l}{!ok&&" —"}
@@ -1570,7 +1570,7 @@ function BuffettBlock({s}:{s:StockData}){
   if(!evaluated && !isFallback){
     // Neither Buffett nor analyst worked — render warning placeholder
     return (
-      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid #fde68a`,marginTop:10}}>
+      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid var(--amber)`,marginTop:10}}>
         <div style={{fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:4}}>VALUATION UNAVAILABLE</div>
         <div style={{fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.5}}>
           {s.buffett_fallback_reason || "Insufficient history for projection, no analyst target."}
@@ -1582,7 +1582,7 @@ function BuffettBlock({s}:{s:StockData}){
   if(isFallback){
     // Analyst fallback — yellow flag, simpler block
     return (
-      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid #fde68a`,marginTop:10}}>
+      <div style={{padding:"10px 12px",borderRadius:6,background:T.amberLight,border:`1px solid var(--amber)`,marginTop:10}}>
         <div style={{fontSize:9,color:T.amber,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>⚠ ANALYST-ONLY FALLBACK</div>
         <div style={{fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.5,marginBottom:6}}>
           Value 5y projection unavailable: <span style={{color:T.amber,fontWeight:600}}>{s.buffett_fallback_reason}</span>
@@ -1606,7 +1606,7 @@ function BuffettBlock({s}:{s:StockData}){
   const upsideColor = upside>15?T.green : upside>0?"#5a9e7a" : upside>-15?T.amber : T.red;
 
   return (
-    <div style={{padding:"10px 12px",borderRadius:6,background:"#fafbfc",border:`1px solid ${T.divider}`,marginTop:10}}>
+    <div style={{padding:"10px 12px",borderRadius:6,background:T.card,border:`1px solid ${T.divider}`,marginTop:10}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
         <span style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>VALUE 5Y PROJECTION</span>
         <span style={{fontSize:9,color:methodColor,fontFamily:T.mono,fontWeight:600}}>{methodLabel}</span>
@@ -1827,7 +1827,7 @@ function SmartMoneyCard({s}:{s:StockData}){
 function MomentumPanel({s}:{s:StockData}){
   const gc=s.sma50>s.sma200,p50=s.price>s.sma50,p200=s.price>s.sma200;
   const rz=s.rsi>70?"Overbought":s.rsi>60?"Bullish":s.rsi>40?"Neutral":s.rsi>30?"Bearish":"Oversold";
-  const rc=s.rsi>70?T.red:s.rsi<30?"#10b981":s.rsi>60?"#10b981":s.rsi<40?T.amber:T.textMuted;
+  const rc=s.rsi>70?T.red:s.rsi<30?"var(--green)":s.rsi>60?"var(--green)":s.rsi<40?T.amber:T.textMuted;
   const r52=s.year_high-s.year_low,p52=r52>0?((s.price-s.year_low)/r52)*100:50;
   const crossTip=TOOLTIPS[gc?"Golden Cross":"Death Cross"];
   
@@ -1844,14 +1844,14 @@ function MomentumPanel({s}:{s:StockData}){
       <SH title="Momentum" icon={<Activity size={12}/>}/>
       <div style={{marginBottom:14}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-          <div style={{width:8,height:8,borderRadius:"50%",background:gc?"#10b981":T.red,boxShadow:`0 0 6px ${gc?"#10b981":T.red}40`}}/>
-          <span title={crossTip} style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:gc?"#10b981":T.red,cursor:"help",borderBottom:`1px dotted ${gc?"#10b98180":T.red+"80"}`}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:gc?"var(--green)":T.red,boxShadow:`0 0 6px ${gc?"var(--green)":T.red}40`}}/>
+          <span title={crossTip} style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:gc?"var(--green)":T.red,cursor:"help",borderBottom:`1px dotted ${gc?"var(--green)80":T.red+"80"}`}}>
             {gc?"Golden Cross":"Death Cross"}
           </span>
         </div>
         <div style={{display:"flex",gap:6}}>
           {[{l:`Price ${p50?">":"<"} SMA50`,ok:p50,v:fmtPrice(s.sma50)},{l:`Price ${p200?">":"<"} SMA200`,ok:p200,v:fmtPrice(s.sma200)}].map((m,i)=>(
-            <div key={i} style={{flex:1,padding:"6px 8px",borderRadius:6,fontSize:10,fontFamily:T.mono,background:m.ok?T.greenLight:T.redLight,color:m.ok?"#10b981":T.red,border:`1px solid ${m.ok?T.greenBorder:"#fecaca"}`}}>
+            <div key={i} style={{flex:1,padding:"6px 8px",borderRadius:6,fontSize:10,fontFamily:T.mono,background:m.ok?T.greenLight:T.redLight,color:m.ok?"var(--green)":T.red,border:`1px solid ${m.ok?T.greenBorder:"var(--red)"}`}}>
               <div style={{fontWeight:600}}>{m.l}</div>
               <div style={{fontSize:9,opacity:0.8,marginTop:1}}>{m.v}</div>
             </div>
@@ -1863,8 +1863,8 @@ function MomentumPanel({s}:{s:StockData}){
           <span title={TOOLTIPS["RSI"]} style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>RSI</span>
           <span style={{fontSize:11,fontFamily:T.mono,fontWeight:600,color:rc}}>{s.rsi?.toFixed(1)} — {rz}</span>
         </div>
-        <div style={{position:"relative",height:8,borderRadius:4,overflow:"hidden",background:`linear-gradient(to right, #10b981 0%, #10b981 30%, ${T.divider} 30%, ${T.divider} 70%, ${T.red} 70%, ${T.red} 100%)`}}>
-          <div style={{position:"absolute",left:`${s.rsi}%`,top:-2,width:12,height:12,borderRadius:"50%",background:"#fff",border:`2px solid ${rc}`,transform:"translateX(-6px)",boxShadow:"0 1px 3px rgba(0,0,0,0.15)"}}/>
+        <div style={{position:"relative",height:8,borderRadius:4,overflow:"hidden",background:`linear-gradient(to right, var(--green) 0%, var(--green) 30%, ${T.divider} 30%, ${T.divider} 70%, ${T.red} 70%, ${T.red} 100%)`}}>
+          <div style={{position:"absolute",left:`${s.rsi}%`,top:-2,width:12,height:12,borderRadius:"50%",background:"var(--bg-surface)",border:`2px solid ${rc}`,transform:"translateX(-6px)",boxShadow:"0 1px 3px rgba(0,0,0,0.15)"}}/>
         </div>
       </div>
       <div style={{marginBottom:14}}>
@@ -1873,8 +1873,8 @@ function MomentumPanel({s}:{s:StockData}){
           <span style={{fontSize:10,fontFamily:T.mono,color:T.textMuted}}>{p52.toFixed(0)}%</span>
         </div>
         <div style={{position:"relative",height:6,borderRadius:3,background:T.divider}}>
-          <div style={{position:"absolute",left:0,top:0,bottom:0,width:`${p52}%`,borderRadius:3,background:`linear-gradient(to right, #10b981, ${p52>80?T.amber:"#10b981"})`}}/>
-          <div style={{position:"absolute",left:`${p52}%`,top:-3,width:12,height:12,borderRadius:"50%",background:"#fff",border:"2px solid #10b981",transform:"translateX(-6px)",boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}/>
+          <div style={{position:"absolute",left:0,top:0,bottom:0,width:`${p52}%`,borderRadius:3,background:`linear-gradient(to right, var(--green), ${p52>80?T.amber:"var(--green)"})`}}/>
+          <div style={{position:"absolute",left:`${p52}%`,top:-3,width:12,height:12,borderRadius:"50%",background:"var(--bg-surface)",border:"2px solid var(--green)",transform:"translateX(-6px)",boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}/>
         </div>
         <div style={{display:"flex",justifyContent:"space-between",fontSize:9,fontFamily:T.mono,color:T.textLight,marginTop:3}}>
           <span>{fmtPrice(s.year_low,s.currency)}</span>
@@ -1886,18 +1886,18 @@ function MomentumPanel({s}:{s:StockData}){
         {inds.map((d,i)=>(
           <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"#fafafa",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}>
             <span title={TOOLTIPS[d.l]} style={{color:T.textMuted,fontWeight:500,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>{d.l}</span>
-            <span style={{color:d.b?"#10b981":T.textMuted,fontWeight:600}}>{d.v}</span>
+            <span style={{color:d.b?"var(--green)":T.textMuted,fontWeight:600}}>{d.v}</span>
           </div>
         ))}
       </div>
       <div style={{marginTop:12}}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
           <span title={TOOLTIPS["Bull Score"]} style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>Bull Score</span>
-          <span style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red}}>{s.bull_score}/10</span>
+          <span style={{fontSize:11,fontFamily:T.mono,fontWeight:700,color:s.bull_score>=7?"var(--green)":s.bull_score>=4?T.amber:T.red}}>{s.bull_score}/10</span>
         </div>
         <div style={{display:"flex",gap:3}}>
           {Array.from({length:10},(_,i)=>{
-            const a=i<s.bull_score,c=s.bull_score>=7?"#10b981":s.bull_score>=4?T.amber:T.red;
+            const a=i<s.bull_score,c=s.bull_score>=7?"var(--green)":s.bull_score>=4?T.amber:T.red;
             return <div key={i} style={{flex:1,height:6,borderRadius:3,background:a?c:T.divider}}/>;
           })}
         </div>
@@ -1963,7 +1963,7 @@ function TranscriptInsights({symbol}:{symbol:string}) {
         </div>
       ) : (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
-          <button onClick={f} disabled={loading} style={{ background: loading ? T.divider : T.green, border: "none", borderRadius: 6, padding: "10px 20px", color: loading ? T.textMuted : "#fff", fontFamily: T.mono, fontSize: 11, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <button onClick={f} disabled={loading} style={{ background: loading ? T.divider : T.green, border: "none", borderRadius: 6, padding: "10px 20px", color: loading ? T.textMuted : "var(--bg-surface)", fontFamily: T.mono, fontSize: 11, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
             {loading ? (
               <><RefreshCw size={12} style={{ animation: "spin 1s linear infinite" }} /> Analyzing 8 quarters...</>
             ) : (
@@ -1981,7 +1981,7 @@ function TranscriptInsights({symbol}:{symbol:string}) {
 }
 
 // ── News Feed ──────────────────────────────────────────────────────────────────
-function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(Array.isArray(d)){const u=symbol.toUpperCase();const filtered=(d as (NewsItem&{symbol?:string})[]).filter(n=>!n.symbol||n.symbol.toUpperCase()===u);setNews(filtered);}setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.slice(0,8).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"#f8faf9",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
+function NewsFeed({symbol}:{symbol:string}){const[news,setNews]=useState<NewsItem[]>([]);const[loading,setLoading]=useState(true);useEffect(()=>{fmpFetch("news/stock",{symbols:symbol,limit:15}).then(d=>{if(Array.isArray(d)){const u=symbol.toUpperCase();const filtered=(d as (NewsItem&{symbol?:string})[]).filter(n=>!n.symbol||n.symbol.toUpperCase()===u);setNews(filtered);}setLoading(false);}).catch(()=>setLoading(false));},[symbol]);return<Card><SH title="Recent News" icon={<Newspaper size={12}/>}/>{loading?<div style={{padding:20,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div>:news.length===0?<div style={{padding:16,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}>No recent news</div>:<div style={{display:"flex",flexDirection:"column",gap:8}}>{news.slice(0,8).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={{display:"block",padding:"10px 12px",borderRadius:6,border:`1px solid ${T.divider}`,background:"var(--bg)",textDecoration:"none"}}><div style={{fontSize:12,fontWeight:600,color:T.text,lineHeight:1.4,marginBottom:4}}>{n.title}</div><div style={{display:"flex",gap:8,fontSize:9,fontFamily:T.mono,color:T.textLight}}><span>{n.site}</span><span>·</span><span>{new Date(n.publishedDate).toLocaleDateString()}</span></div></a>)}</div>}</Card>;}
 
 // ── FMP Growth/Profitability/Valuation ──────────────────────────────────────────
 const cs_:React.CSSProperties={padding:"6px 10px",textAlign:"right",fontSize:11,fontFamily:T.mono,borderBottom:`1px solid ${T.divider}`,whiteSpace:"nowrap"};
@@ -1991,7 +1991,7 @@ function GC({v}:{v:number|null}){if(v==null)return<td style={cs_}>—</td>;retur
 
 function GrowthPanel({incomes,loading,ratios}:{incomes:IncomeRow[];loading:boolean;ratios?:RatioYear[]}){if(loading)return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>}/><div style={{padding:24,textAlign:"center",color:T.textLight,fontSize:11,fontFamily:T.mono}}><Loader2 size={14} style={{animation:"spin 1s linear infinite"}}/></div></Card>;if(!incomes.length)return null;const sorted=[...incomes].sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1];const n=sorted.length;function cagr(f:keyof IncomeRow,y:number):number|null{if(n<y+1)return null;return safeCagr(sorted[n-1-y][f]as number,latest[f]as number,y);}function yoy(f:keyof IncomeRow):number|null{if(n<2)return null;const prev=sorted[n-2][f]as number,cur=latest[f]as number;if(!prev||prev<=0)return null;return(cur-prev)/prev;}const ms:[string,keyof IncomeRow][]=[["Revenue","revenue"],["Gross Profit","grossProfit"],["Operating Income","operatingIncome"],["Net Income","netIncome"],["EPS","epsdiluted"],["EBITDA","ebitda"]];const fcfSorted=ratios?[...ratios].sort((a,b)=>a.date.localeCompare(b.date)):[];const fcfN=fcfSorted.length;const fcfLatest=fcfN>0?fcfSorted[fcfN-1]:null;function fcfYoy():number|null{if(fcfN<2)return null;const prev=fcfSorted[fcfN-2].freeCashFlowPerShare,cur=fcfSorted[fcfN-1].freeCashFlowPerShare;if(!prev||prev<=0)return null;return(cur-prev)/prev;}function fcfCagr(y:number):number|null{if(fcfN<y+1)return null;return safeCagr(fcfSorted[fcfN-1-y].freeCashFlowPerShare,fcfSorted[fcfN-1].freeCashFlowPerShare,y);}return<Card><SH title="Growth Rates" icon={<BarChart2 size={12}/>} sub={`FY ${latest.calendarYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>1Y</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f])=><tr key={l}><td style={ls_}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td><GC v={yoy(f)}/><GC v={cagr(f,3)}/><GC v={cagr(f,5)}/><GC v={cagr(f,10)}/></tr>)}{fcfLatest&&<tr><td style={ls_}><span title={TOOLTIPS["FCF/Share"]||""} style={{cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>FCF/Share</span></td><GC v={fcfYoy()}/><GC v={fcfCagr(3)}/><GC v={fcfCagr(5)}/><GC v={fcfCagr(10)}/></tr>}</tbody></table></div></Card>;}
 
-function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const avgN=(f:keyof RatioYear,n:number)=>{const vs=ratios.slice(0,n).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length>=Math.min(n,2)?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number;const cl=(v:number|null)=>v!=null&&th!=null&&v>=th?"#10b981":T.text;return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cl(cv),fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,3),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,5),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,10),isR)}</td></tr>;})}</tbody></table></div></Card>;}
+function ProfitPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const c=ratios[0];const avgN=(f:keyof RatioYear,n:number)=>{const vs=ratios.slice(0,n).map(r=>r[f]as number).filter(v=>v!=null&&isFinite(v));return vs.length>=Math.min(n,2)?vs.reduce((a,b)=>a+b,0)/vs.length:null;};const ms:[string,keyof RatioYear,number?,boolean?][]=[["ROE","returnOnEquity",0.15],["ROA","returnOnAssets",0.08],["Gross Margin","grossProfitMargin",0.40],["Op Margin","operatingProfitMargin",0.15],["Net Margin","netProfitMargin",0.10],["Current Ratio","currentRatio",undefined,true],["D/E","debtToEquityRatio",undefined,true]];const fmt=(v:number|null,isR?:boolean)=>{if(v==null||!isFinite(v))return"—";return isR?v.toFixed(2):(v*100).toFixed(1)+"%";};return<Card><SH title="Profitability" sub={`FY ${c.fiscalYear}`}/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left"}}>Metric</th><th style={hs_}>Current</th><th style={hs_}>3Y</th><th style={hs_}>5Y</th><th style={hs_}>10Y</th></tr></thead><tbody>{ms.map(([l,f,th,isR])=>{const cv=c[f]as number;const cl=(v:number|null)=>v!=null&&th!=null&&v>=th?"var(--green)":T.text;return<tr key={l}><td style={ls_}>{l}</td><td style={{...cs_,color:cl(cv),fontWeight:600}}>{fmt(cv,isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,3),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,5),isR)}</td><td style={{...cs_,color:T.textMuted}}>{fmt(avgN(f,10),isR)}</td></tr>;})}</tbody></table></div></Card>;}
 
 function ValPanel({ratios,loading}:{ratios:RatioYear[];loading:boolean}){if(loading||!ratios.length)return null;const yrs=[...ratios].reverse();const ttm=ratios[0];const ms:[string,keyof RatioYear,number?][]=[["P/E","priceToEarningsRatio"],["P/S","priceToSalesRatio"],["P/B","priceToBookRatio"],["P/FCF","priceToFreeCashFlowRatio"],["EV/EBITDA","evToEBITDA"],["BVPS","bookValuePerShare",2],["Div%","dividendYieldPercentage",2]];return<Card><SH title="Valuation History" sub="Annual"/><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{...hs_,textAlign:"left",position:"sticky",left:0,background:T.card,zIndex:1}}>Metric</th>{yrs.map(y=><th key={y.fiscalYear} style={hs_}>{y.fiscalYear}</th>)}<th style={{...hs_,color:T.green,fontWeight:700}}>TTM</th></tr></thead><tbody>{ms.map(([l,f,d])=><tr key={l}><td style={{...ls_,position:"sticky",left:0,background:T.card,zIndex:1}}><span title={TOOLTIPS[l]||""} style={{cursor:TOOLTIPS[l]?"help":"default",borderBottom:TOOLTIPS[l]?`1px dotted ${T.textLight}`:"none"}}>{l}</span></td>{yrs.map(y=>{const v=y[f]as number;return<td key={y.fiscalYear} style={cs_}>{v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—"}</td>;})}<td style={{...cs_,color:T.green,fontWeight:600}}>{(()=>{const v=ttm[f]as number;return v!=null&&isFinite(v)&&v>0?v.toFixed(d??1):"—";})()}</td></tr>)}</tbody></table></div></Card>;}
 
@@ -2075,7 +2075,7 @@ function LiquidityProfileCard({
   const Chip = ({label, val}: {label:string, val:string|React.ReactNode}) => {
     const tip = TOOLTIPS[label] || "";
     return (
-      <div style={{background:"#f8faf9", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px", display:"flex", flexDirection:"column", justifyContent:"center"}}>
+      <div style={{background:"var(--bg)", border:`1px solid ${T.divider}`, borderRadius:6, padding:"8px 10px", display:"flex", flexDirection:"column", justifyContent:"center"}}>
         <div title={tip} style={{fontSize:9, fontFamily:T.mono, color:T.textMuted, marginBottom:2, cursor:tip?"help":"default", borderBottom:tip?`1px dotted ${T.textLight}`:"none", width:"fit-content"}}>{label}</div>
         <div style={{fontSize:13, fontFamily:T.mono, color:T.text, fontWeight:700}}>{val}</div>
       </div>
@@ -2091,8 +2091,8 @@ function LiquidityProfileCard({
           <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Cash ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", alignItems:"flex-end"}}>
-              <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"#9ca3af", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
+              <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"var(--text-light)", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
               </div>
             </div>
             <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>CASH</div>
@@ -2100,11 +2100,11 @@ function LiquidityProfileCard({
           <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Debt ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", flexDirection:"column", justifyContent:"flex-end"}}>
-              <div style={{width:"100%", background:"#ef4444", height:`${Math.max(2, (shortDebt/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", borderBottom:"1px solid #fff", display:"flex", alignItems:"center", justifyContent:"center"}} title="Short-Term Debt">
-                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
+              <div style={{width:"100%", background:"var(--red)", height:`${Math.max(2, (shortDebt/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", borderBottom:"1px solid var(--bg-surface)", display:"flex", alignItems:"center", justifyContent:"center"}} title="Short-Term Debt">
+                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
               </div>
               <div style={{width:"100%", background:"#b91c1c", height:`${Math.max(2, (longDebt/stackMax)*100)}%`, display:"flex", alignItems:"center", justifyContent:"center"}} title="Long-Term Debt">
-                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
               </div>
             </div>
             <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>DEBT</div>
@@ -2123,7 +2123,7 @@ function LiquidityProfileCard({
                 return (
                   <div key={i} style={{display:"flex", flexDirection:"column", alignItems:"center", gap:4}}>
                     <div style={{display:"flex", gap:4, alignItems:"flex-end", height:h}}>
-                      <div style={{width:14, background:"#9ca3af", height:cHeight, borderRadius:"2px 2px 0 0"}} title={`Cash: ${bn(c)}`} />
+                      <div style={{width:14, background:"var(--text-light)", height:cHeight, borderRadius:"2px 2px 0 0"}} title={`Cash: ${bn(c)}`} />
                       <div style={{width:14, background:"#b91c1c", height:dHeight, borderRadius:"2px 2px 0 0"}} title={`Debt: ${bn(d)}`} />
                     </div>
                     <div style={{fontSize:9, fontFamily:T.mono, color:T.textLight}}>{b.calendarYear}</div>
@@ -2134,7 +2134,7 @@ function LiquidityProfileCard({
           </div>
           <div style={{display:"flex", justifyContent:"center", gap:16, marginTop:12}}>
             <div style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textMuted}}>
-              <div style={{width:8, height:8, background:"#9ca3af", borderRadius:2}} /> Cash & Equiv
+              <div style={{width:8, height:8, background:"var(--text-light)", borderRadius:2}} /> Cash & Equiv
             </div>
             <div style={{display:"flex", alignItems:"center", gap:4, fontSize:9, fontFamily:T.mono, color:T.textMuted}}>
               <div style={{width:8, height:8, background:"#b91c1c", borderRadius:2}} /> Total Debt
@@ -2244,7 +2244,7 @@ function FinancialChartsPanel({
             const k = allKeys[i];
             const isActive = activeKeys[k];
             return (
-              <div key={k} onClick={()=>toggleKey(k)} style={{display:"flex", alignItems:"center", gap:6, fontSize:10, fontFamily:T.mono, color:isActive ? T.text : T.textLight, cursor:"pointer", background:isActive ? "#fff" : "transparent", padding:"4px 8px", borderRadius:4, border:`1px solid ${isActive ? T.divider : "transparent"}`, boxShadow:isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", transition:"all 0.2s"}}>
+              <div key={k} onClick={()=>toggleKey(k)} style={{display:"flex", alignItems:"center", gap:6, fontSize:10, fontFamily:T.mono, color:isActive ? T.text : T.textLight, cursor:"pointer", background:isActive ? "var(--bg-surface)" : "transparent", padding:"4px 8px", borderRadius:4, border:`1px solid ${isActive ? T.divider : "transparent"}`, boxShadow:isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", transition:"all 0.2s"}}>
                 <div style={{width:10, height:10, borderRadius:2, background:isActive ? allColors[i] : T.divider}} />
                 {l}
               </div>
@@ -2252,7 +2252,7 @@ function FinancialChartsPanel({
           })}
         </div>
 
-        <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:"#fafbfc", borderRadius:4, border:`1px solid ${T.divider}`}}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:T.card, borderRadius:4, border:`1px solid ${T.divider}`}}>
           {/* Zero line */}
           <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
           
@@ -2284,7 +2284,7 @@ function FinancialChartsPanel({
                         transform={`rotate(-90 ${bx + subBarW*0.45} ${plotVal >= 0 ? by - 3 : by + bh + 3})`}
                         fontSize={isLatest ? 7 : 5.5} 
                         fontFamily={T.mono} 
-                        fill={isLatest ? colors[j] === "#e5e7eb" ? T.textMuted : colors[j] : T.textLight}
+                        fill={isLatest ? colors[j] === "var(--border)" ? T.textMuted : colors[j] : T.textLight}
                         opacity={isLatest ? 1 : 0.6}
                         style={{pointerEvents:"none"}}
                       >
@@ -2308,7 +2308,7 @@ function FinancialChartsPanel({
                               <path 
                                 d={`M ${prevBx + subBarW/2} ${prevBy - 2} V ${bracketY} H ${bx + subBarW/2} V ${by - 4}`} 
                                 fill="none" 
-                                stroke={colors[j] === "#e5e7eb" ? "#9ca3af" : colors[j]} 
+                                stroke={colors[j] === "var(--border)" ? "var(--text-light)" : colors[j]} 
                                 strokeWidth={0.5} 
                                 strokeDasharray="1,1" 
                                 opacity={0.6} 
@@ -2316,7 +2316,7 @@ function FinancialChartsPanel({
                               {/* Arrow head */}
                               <polygon 
                                 points={`${bx + subBarW/2 - 2},${by - 6} ${bx + subBarW/2 + 2},${by - 6} ${bx + subBarW/2},${by - 2}`} 
-                                fill={colors[j] === "#e5e7eb" ? "#9ca3af" : colors[j]} 
+                                fill={colors[j] === "var(--border)" ? "var(--text-light)" : colors[j]} 
                                 opacity={0.6} 
                               />
                               {/* Pill */}
@@ -2326,8 +2326,8 @@ function FinancialChartsPanel({
                                 width={pillWidth} 
                                 height={11} 
                                 rx={5.5} 
-                                fill={"#fff"} 
-                                stroke={colors[j] === "#e5e7eb" ? "#d1d5db" : colors[j]} 
+                                fill={"var(--bg-surface)"} 
+                                stroke={colors[j] === "var(--border)" ? "#d1d5db" : colors[j]} 
                                 strokeWidth={0.5} 
                                 opacity={0.9}
                               />
@@ -2337,7 +2337,7 @@ function FinancialChartsPanel({
                                 fontSize={5} 
                                 fontFamily={T.mono} 
                                 fontWeight={700} 
-                                fill={pct > 0 ? "#10b981" : pct < 0 ? T.red : T.textMuted} 
+                                fill={pct > 0 ? "var(--green)" : pct < 0 ? T.red : T.textMuted} 
                                 textAnchor="middle"
                               >
                                 {pctStr}
@@ -2371,12 +2371,12 @@ function FinancialChartsPanel({
         <SH title="Financials Overview" icon={<BarChart2 size={12}/>} sub={isQuarterly ? "Quarterly Trends" : "Annual Trends"} />
         <div style={{display:"flex", gap:12}}>
           <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
-            <button onClick={()=>setIsQuarterly(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!isQuarterly?"#fff":"transparent", color:!isQuarterly?T.text:T.textMuted, boxShadow:!isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Annual</button>
-            <button onClick={()=>setIsQuarterly(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:isQuarterly?"#fff":"transparent", color:isQuarterly?T.text:T.textMuted, boxShadow:isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Quarterly</button>
+            <button onClick={()=>setIsQuarterly(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!isQuarterly?"var(--bg-surface)":"transparent", color:!isQuarterly?T.text:T.textMuted, boxShadow:!isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Annual</button>
+            <button onClick={()=>setIsQuarterly(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:isQuarterly?"var(--bg-surface)":"transparent", color:isQuarterly?T.text:T.textMuted, boxShadow:isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Quarterly</button>
           </div>
           <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
-            <button onClick={()=>setShowGrowth(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!showGrowth?"#fff":"transparent", color:!showGrowth?T.text:T.textMuted, boxShadow:!showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Values</button>
-            <button onClick={()=>setShowGrowth(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:showGrowth?"#fff":"transparent", color:showGrowth?T.text:T.textMuted, boxShadow:showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Growth %</button>
+            <button onClick={()=>setShowGrowth(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!showGrowth?"var(--bg-surface)":"transparent", color:!showGrowth?T.text:T.textMuted, boxShadow:!showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Values</button>
+            <button onClick={()=>setShowGrowth(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:showGrowth?"var(--bg-surface)":"transparent", color:showGrowth?T.text:T.textMuted, boxShadow:showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Growth %</button>
           </div>
         </div>
       </div>
@@ -2408,8 +2408,8 @@ function FinancialChartsPanel({
       </div>
 
       <div>
-        {activeChart === "income" && <Chart data={incs} rawData={incsRaw} allKeys={["revenue", "operatingIncome", "netIncome"]} allColors={["#e5e7eb", T.amber, T.green]} allLabels={["Rev", "OpInc", "NetInc"]} />}
-        {activeChart === "balance" && <Chart data={bals} rawData={balsRaw} allKeys={["totalAssets", "totalLiabilities", "totalEquity"]} allColors={["#e5e7eb", T.red, T.green]} allLabels={["Assets", "Liabs", "Equity"]} />}
+        {activeChart === "income" && <Chart data={incs} rawData={incsRaw} allKeys={["revenue", "operatingIncome", "netIncome"]} allColors={["var(--border)", T.amber, T.green]} allLabels={["Rev", "OpInc", "NetInc"]} />}
+        {activeChart === "balance" && <Chart data={bals} rawData={balsRaw} allKeys={["totalAssets", "totalLiabilities", "totalEquity"]} allColors={["var(--border)", T.red, T.green]} allLabels={["Assets", "Liabs", "Equity"]} />}
         {activeChart === "cash" && <Chart data={cfs} rawData={cfsRaw} allKeys={["operatingCashFlow", "freeCashFlow"]} allColors={["#d1d5db", T.blue]} allLabels={["OpCash", "FCF"]} />}
       </div>
     </Card>
@@ -2487,12 +2487,12 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
   const median=(vs:number[])=>{if(!vs.length)return null;const s=[...vs].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
   const medians:Record<NumKey,number|null>={pe:null,ps:null,pb:null,pfcf:null,evEbitda:null};
   cols.forEach(([,k])=>{const vs=peers.map(p=>p[k]).filter((v):v is number=>v!=null);medians[k]=median(vs);});
-  const cellColor=(v:number|null,med:number|null)=>{if(v==null||med==null)return T.text;if(v<med*0.95)return"#10b981";if(v>med*1.05)return"#d97706";return T.text;};
+  const cellColor=(v:number|null,med:number|null)=>{if(v==null||med==null)return T.text;if(v<med*0.95)return"var(--green)";if(v>med*1.05)return"var(--amber)";return T.text;};
   const fmtNum=(v:number|null)=>v==null?"—":v.toFixed(1);
   const targetName=target?.companyName||companyName||symbol;
   const renderRow=(row:PeerRow,opts:{isTarget?:boolean;isMedian?:boolean;isExtra?:boolean;label?:string}={})=>{
     const{isTarget,isMedian,isExtra,label}=opts;
-    const bg=isTarget?T.greenLight:isMedian?"#f8faf9":isExtra?"#fffbeb":"transparent";
+    const bg=isTarget?T.greenLight:isMedian?"var(--bg)":isExtra?"var(--bg-surface)beb":"transparent";
     const labelText=isMedian?"Peer median":label||row.symbol;
     return<tr key={isMedian?"__median__":(isExtra?"x_"+row.symbol:row.symbol)} style={{background:bg}}>
       <td style={{...ls_,position:"sticky",left:0,background:bg,zIndex:1,fontWeight:isTarget||isMedian?700:500,color:isMedian?T.textMuted:T.text}}>
@@ -2516,12 +2516,12 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
         <button onClick={()=>setShowInput(true)} style={{background:"none",border:`1px solid ${T.green}`,color:T.green,padding:"3px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer"}}>+ Add ticker</button>
         :<div style={{display:"flex",alignItems:"center",gap:6}}>
           <input autoFocus value={input} onChange={e=>{setInput(e.target.value);setAddError("");}} onKeyDown={e=>{if(e.key==="Enter")addExtra(input);if(e.key==="Escape"){setShowInput(false);setInput("");setAddError("");}}} placeholder="e.g. NVDA" style={{padding:"4px 8px",border:`1px solid ${T.cardBorder}`,borderRadius:4,fontSize:11,fontFamily:T.mono,width:90,outline:"none"}}/>
-          <button onClick={()=>addExtra(input)} disabled={addLoading} style={{background:T.green,color:"#fff",border:"none",padding:"4px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",opacity:addLoading?0.5:1}}>{addLoading?"...":"Add"}</button>
+          <button onClick={()=>addExtra(input)} disabled={addLoading} style={{background:T.green,color:"var(--bg-surface)",border:"none",padding:"4px 10px",borderRadius:4,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",opacity:addLoading?0.5:1}}>{addLoading?"...":"Add"}</button>
           <button onClick={()=>{setShowInput(false);setInput("");setAddError("");}} title="Cancel" style={{background:"none",border:"none",padding:0,color:T.textLight,cursor:"pointer",fontSize:14,lineHeight:1}}>✕</button>
         </div>
       }
     </div>
-    {addError&&<div style={{fontSize:10,color:"#d97706",fontFamily:T.mono,marginBottom:6}}>{addError}</div>}
+    {addError&&<div style={{fontSize:10,color:"var(--amber)",fontFamily:T.mono,marginBottom:6}}>{addError}</div>}
     <div style={{overflowX:"auto"}}>
       <table style={{width:"100%",borderCollapse:"collapse"}}>
         <thead><tr>
@@ -2538,9 +2538,9 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
       </table>
     </div>
     <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.5}}>
-      <span style={{color:"#10b981",fontWeight:600}}>Green</span> = cheaper than peer median (&gt;5% below)
+      <span style={{color:"var(--green)",fontWeight:600}}>Green</span> = cheaper than peer median (&gt;5% below)
       &nbsp;·&nbsp;
-      <span style={{color:"#d97706",fontWeight:600}}>Amber</span> = richer than peer median (&gt;5% above)
+      <span style={{color:"var(--amber)",fontWeight:600}}>Amber</span> = richer than peer median (&gt;5% above)
       &nbsp;·&nbsp; Peer median uses FMP peers only. Manual additions are scored against it but don't change it. Multiples are unitless so cross-currency comparison is meaningful.
     </div>
   </Card>;
@@ -2634,17 +2634,17 @@ function QualityValueCard({s}:{s:StockData}){
     <Card>
       <SH title="Quality & Value" icon={<Shield size={12}/>}/>
       <div style={{display:"flex",justifyContent:"center",gap:12,margin:"8px 0 12px"}}>
-        <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"#10b981":s.piotroski>=5?T.amber:T.red}/>
-        <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"#10b981":s.altman_z>1.8?T.amber:T.red}/>
+        <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"var(--green)":s.piotroski>=5?T.amber:T.red}/>
+        <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"var(--green)":s.altman_z>1.8?T.amber:T.red}/>
       </div>
       <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only — not in v8 composite</div>
-      <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"#10b981":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
-      <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"#10b981":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
-      <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"#10b981":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
-      <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?"#10b981":T.textMuted}/>
-      <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"#10b981":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
-      <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"#10b981":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
-      <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"#10b981":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
+      <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"var(--green)":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
+      <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"var(--green)":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
+      <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"var(--green)":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
+      <Metric label="ROIC (avg)" value={fmtPct(s.roic_avg)} color={s.roic_avg>0.12?"var(--green)":T.textMuted}/>
+      <Metric label="Gross Margin" value={fmtPct(s.gross_margin)} color={s.gross_margin>0.5?"var(--green)":T.textMuted} sub={s.gross_margin_trend==="expanding"?"↑ Expanding":s.gross_margin_trend==="contracting"?"↓ Contracting":"→ Stable"}/>
+      <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"var(--green)":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
+      <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"var(--green)":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
       <BuffettBlock s={s}/>
       <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency}/>
     </Card>
@@ -2726,7 +2726,7 @@ function ComparisonTab({stockA,fmpA}:{
               placeholder="e.g. MSFT"
               style={{padding:"6px 12px",border:`1px solid ${T.cardBorder}`,borderRadius:5,fontSize:12,fontFamily:T.mono,width:120,outline:"none"}}/>
             <button onClick={handleSubmit} disabled={loading}
-              style={{background:T.green,color:"#fff",border:"none",padding:"6px 16px",borderRadius:5,fontSize:11,fontFamily:T.mono,fontWeight:600,cursor:loading?"wait":"pointer",opacity:loading?0.6:1}}>
+              style={{background:T.green,color:"var(--bg-surface)",border:"none",padding:"6px 16px",borderRadius:5,fontSize:11,fontFamily:T.mono,fontWeight:600,cursor:loading?"wait":"pointer",opacity:loading?0.6:1}}>
               {loading?"Loading…":"Compare"}
             </button>
           </div>
@@ -3169,7 +3169,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
 
           <button 
             onClick={generateStory}
-            style={{background:T.green,color:"#fff",border:"none",padding:"10px 24px",borderRadius:6,fontSize:13,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
+            style={{background:T.green,color:"var(--bg-surface)",border:"none",padding:"10px 24px",borderRadius:6,fontSize:13,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
           >
             Generate Stock Story
           </button>
@@ -3218,7 +3218,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
                   style={{
                     flex:1, display:"flex",justifyContent:"space-between",alignItems:"center",
                     padding:"10px 14px",borderRadius:6,border:`1px solid ${viewIndex === idx ? T.greenBorder : T.cardBorder}`,
-                    background:viewIndex === idx ? T.greenLight : "#fff",
+                    background:viewIndex === idx ? T.greenLight : "var(--bg-surface)",
                     cursor:"pointer",textAlign:"left"
                   }}
                 >
@@ -3322,7 +3322,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
               </div>
             )}
             {(story?.bearCatalysts?.length ?? 0) > 0 && (
-              <div style={{flex:1, background:"#fef2f2", padding:16, borderRadius:8, border:"1px solid #fecaca"}}>
+              <div style={{flex:1, background:"var(--red-light)", padding:16, borderRadius:8, border:"1px solid var(--red)"}}>
                 <h4 style={{fontSize:12, fontFamily:T.mono, color:T.red, fontWeight:700, margin:"0 0 12px 0", textTransform:"uppercase"}}>Bear Confirmation</h4>
                 <ul style={{margin:0, paddingLeft:16, fontSize:13, lineHeight:1.6, color:T.text, fontFamily:T.sans}}>
                   {story.bearCatalysts?.map((c: string, i: number) => <li key={i} style={{marginBottom:8}}>{c}</li>)}
@@ -3358,7 +3358,7 @@ function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[],
             </div>
             <button 
               onClick={generateStory}
-              style={{background:T.green,color:"#fff",border:"none",padding:"6px 16px",borderRadius:6,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
+              style={{background:T.green,color:"var(--bg-surface)",border:"none",padding:"6px 16px",borderRadius:6,fontSize:10,fontFamily:T.mono,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 4px rgba(16,185,129,0.2)"}}
             >
               Generate New Insight
             </button>
@@ -3707,7 +3707,7 @@ export default function StockDetail(){
             </div>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
             <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom,fallen_angel:haveFA,compounder_us:haveCmpUS,compounder_global:haveCmpGL}}/>
-            {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid #fde68a",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
+            {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid var(--amber)",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
@@ -3890,7 +3890,7 @@ export default function StockDetail(){
       </div>
 
 {/* Active signals */}
-      {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"#fecaca":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
+      {s.reasons?.length>0&&<Card style={{marginBottom:16}}><SH title="Active Signals"/><div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>{s.reasons.map((r,i)=><span key={i} style={{fontSize:10,padding:"4px 10px",borderRadius:4,fontFamily:T.mono,background:r.includes("⚠")?T.redLight:T.greenLight,border:`1px solid ${r.includes("⚠")?"var(--red)":T.greenBorder}`,color:r.includes("⚠")?T.red:T.textMuted}}>{r}</span>)}</div></Card>}
         </>
       )}
     </div>

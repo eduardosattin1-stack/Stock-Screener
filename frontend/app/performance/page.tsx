@@ -260,29 +260,41 @@ interface CompositeHistory {
 }
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
-  text: "#1a1a1a", muted: "#6b7280", light: "#9ca3af",
-  green: "#2d7a4f", greenPos: "#10b981", greenLight: "#e8f5ee", greenBorder: "#b8dcc8",
-  red: "#ef4444", redLight: "#fef2f2",
-  amber: "#d97706", amberLight: "#fffbeb",
-  purple: "#8b5cf6",
-  blue: "#3b82f6",
-  border: "#e5e7eb", divider: "#f3f4f6",
+  bg: "var(--bg)",
+  card: "var(--bg-surface)",
+  cardBorder: "var(--border)",
+  cardShadow: "var(--shadow-md)",
+  text: "var(--text)",
+  textMuted: "var(--text-muted)",
+  textLight: "var(--text-light)",
+  green: "var(--green)",
+  greenPos: "var(--green)",
+  greenLight: "var(--green-light)",
+  greenBorder: "var(--green-border)",
+  red: "var(--red)",
+  redLight: "var(--red-light)",
+  amber: "var(--amber)",
+  amberLight: "var(--amber-light)",
+  blue: "var(--blue)",
+  purple: "var(--purple)",
+  border: "var(--border)",
+  divider: "var(--divider)",
   mono: "var(--font-mono, 'JetBrains Mono', monospace)",
-  shadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+  shadow: "var(--shadow-md)",
 };
 
 const SIG: Record<string, { color: string; bg: string; border: string }> = {
-  "STRONG BUY": { color: T.purple, bg: "#f5f3ff", border: "#ddd6fe" },
+  "STRONG BUY": { color: T.purple, bg: "var(--purple-light)", border: T.purple },
   BUY:   { color: T.greenPos, bg: T.greenLight, border: T.greenBorder },
-  WATCH: { color: T.amber, bg: T.amberLight, border: "#fde68a" },
-  HOLD:  { color: T.muted, bg: "#f8fafc", border: "#e2e8f0" },
-  SELL:  { color: T.red, bg: T.redLight, border: "#fecaca" },
+  WATCH: { color: T.amber, bg: T.amberLight, border: T.amber },
+  HOLD:  { color: T.textMuted, bg: T.bg, border: T.cardBorder },
+  SELL:  { color: T.red, bg: T.redLight, border: T.red },
 };
 
 // ── Atoms ───────────────────────────────────────────────────────────────────
 function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ background: "#fff", borderRadius: 8, border: `1px solid ${T.border}`, boxShadow: T.shadow, padding: "16px 18px", ...style }}>
+    <div style={{ background: T.card, borderRadius: 8, border: `1px solid ${T.border}`, boxShadow: T.shadow, padding: "16px 18px", ...style }}>
       {children}
     </div>
   );
@@ -425,7 +437,7 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
                   return (
                     <tr key={`${t.symbol}-${t.entry_date}-${i}`} style={{ cursor: "pointer" }}
                       onClick={() => router.push(`/stock/${t.symbol}`)}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                       <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{t.symbol}</td>
                       <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.entry_date}</td>
@@ -472,7 +484,7 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
                   const pC = t.realized_pnl_pct >= 0 ? T.greenPos : T.red;
                   return (
                     <tr key={`${t.symbol}-${t.exit_date}-${i}`}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                       <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }} onClick={() => router.push(`/stock/${t.symbol}`)}>{t.symbol}</td>
                       <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
@@ -597,7 +609,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
                   return (
                     <tr key={`${t.symbol}-${t.entry_date}-${i}`} style={{ cursor: "pointer" }}
                       onClick={() => router.push(`/stock/${t.symbol}`)}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                       <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{t.symbol}</td>
                       <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.entry_date}</td>
@@ -641,7 +653,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
                   const daysToHit = t.hit_date && t.entry_date ? Math.max(0, Math.round((new Date(t.hit_date).getTime() - new Date(t.entry_date).getTime()) / 86400000)) : null;
                   return (
                     <tr key={`${t.symbol}-${t.exit_date}-${i}`}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f8faf9"; }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                       <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }} onClick={() => router.push(`/stock/${t.symbol}`)}>{t.symbol}</td>
                       <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.entry_date}</td>
@@ -650,7 +662,7 @@ function HitRateTab({ router }: { router: ReturnType<typeof useRouter> }) {
                         {t.max_gain_pct >= 0 ? "+" : ""}{t.max_gain_pct.toFixed(1)}%
                       </td>
                       <td style={{ ...td, textAlign: "right" }}>
-                        <span style={{ display: "inline-block", padding: "2px 7px", borderRadius: 4, fontSize: 9, fontWeight: 700, fontFamily: T.mono, color: t.hit ? T.greenPos : T.red, background: t.hit ? T.greenLight : T.redLight, border: `1px solid ${t.hit ? T.greenBorder : "#fecaca"}` }}>
+                        <span style={{ display: "inline-block", padding: "2px 7px", borderRadius: 4, fontSize: 9, fontWeight: 700, fontFamily: T.mono, color: t.hit ? T.greenPos : T.red, background: t.hit ? T.greenLight : T.redLight, border: `1px solid ${t.hit ? T.greenBorder : "var(--red)"}` }}>
                           {t.hit ? "✓ HIT" : "✗ MISS"}
                         </span>
                       </td>
@@ -1593,7 +1605,7 @@ function CyclesTab() {
       {health?.kill_switch_active && (
         <div style={{
           padding: "12px 16px", marginBottom: 16, borderRadius: 6,
-          background: "#fef2f2", border: `2px solid ${T.red}`,
+          background: "var(--red-light)", border: `2px solid ${T.red}`,
           display: "flex", alignItems: "center", gap: 12,
         }}>
           <div style={{ fontSize: 22 }}>⚠</div>
@@ -1753,7 +1765,7 @@ function DecileBarChart({ distribution }: { distribution: Record<number, number>
             <div style={{ flex: 1, height: 14, background: T.divider, borderRadius: 3, position: "relative", overflow: "hidden" }}>
               <div style={{ width: `${w}%`, height: "100%", background: c, transition: "width 0.4s" }}/>
               {n > 0 && (
-                <span style={{ position: "absolute", left: 6, top: 0, lineHeight: "14px", fontSize: 9, color: w > 25 ? "#fff" : T.text, fontWeight: 700 }}>
+                <span style={{ position: "absolute", left: 6, top: 0, lineHeight: "14px", fontSize: 9, color: w > 25 ? "var(--bg-surface)" : T.text, fontWeight: 700 }}>
                   {n}
                 </span>
               )}
