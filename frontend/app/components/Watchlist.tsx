@@ -108,7 +108,7 @@ export function Watchlist() {
   return (
     <div style={{ width: 340, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", height: "100vh", position: "sticky", top: 0, display: "flex", flexDirection: "column", fontFamily: "var(--font-sans)", zIndex: 40 }}>
       {/* Header */}
-      <div style={{ padding: "16px", borderBottom: "1px solid var(--border-subtle,#eef1ef)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+      <div style={{ padding: "16px", borderBottom: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
         <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: "var(--text)" }}>
           {activeBasket.name} <ChevronDown size={16} />
         </button>
@@ -124,7 +124,7 @@ export function Watchlist() {
           <div style={{ position: "absolute", top: "100%", left: 16, width: 240, background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", zIndex: 50, padding: 8 }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", padding: "4px 8px", marginBottom: 4 }}>MY LISTS</div>
             {baskets.map(b => (
-              <div key={b.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: 4, background: b.id === activeBasketId ? "var(--bg-hover,#f0f4f1)" : "transparent" }}>
+              <div key={b.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: 4, background: b.id === activeBasketId ? "var(--bg-hover)" : "transparent" }}>
                 <button onClick={() => { setActiveBasketId(b.id); setMenuOpen(false); }} style={{ background: "none", border: "none", cursor: "pointer", flex: 1, textAlign: "left", fontSize: 13, fontWeight: 500 }}>{b.name}</button>
                 {baskets.length > 1 && (
                   <button onClick={() => handleDeleteBasket(b.id)} title="Delete List" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 4 }}><Trash2 size={12} /></button>
@@ -175,10 +175,10 @@ export function Watchlist() {
             const p = q?.price;
             const c = q?.change ?? 0;
             const cp = q?.changesPercentage ?? 0;
-            const color = c > 0 ? "#10b981" : c < 0 ? "#ef4444" : "var(--text-muted)";
+            const color = c > 0 ? "var(--green)" : c < 0 ? "var(--red)" : "var(--text-muted)";
             return (
-              <div key={sym} className="group" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) 1fr 1fr 1fr 24px", gap: 8, padding: "10px 16px", borderBottom: "1px solid var(--border-subtle,#eef1ef)", alignItems: "center", fontSize: 12, fontFamily: "var(--font-mono)", cursor: "pointer", transition: "background 0.1s" }}
-                   onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-hover,#f0f4f1)")} onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+              <div key={sym} className="group" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) 1fr 1fr 1fr 24px", gap: 8, padding: "10px 16px", borderBottom: "1px solid var(--border-subtle)", alignItems: "center", fontSize: 12, fontFamily: "var(--font-mono)", cursor: "pointer", transition: "background 0.1s" }}
+                   onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-hover)")} onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 700 }}>
                   <Link href={`/stock/${sym}`} style={{ textDecoration: "none", color: "var(--text)" }}>{sym}</Link>
                 </div>

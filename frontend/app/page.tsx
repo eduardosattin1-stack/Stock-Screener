@@ -130,11 +130,11 @@ interface ScanData {
 
 // ── Signal & Classification colors ──────────────────────────────────────────
 const SIG: Record<string,{color:string;bg:string;border:string}> = {
-  "STRONG BUY": { color:"#8b5cf6", bg:"#f5f3ff", border:"#ddd6fe" },
-  BUY:   { color:"#10b981", bg:"#e8f5ee", border:"#b8dcc8" },
-  WATCH: { color:"#f59e0b", bg:"#fffbeb", border:"#fde68a" },
-  HOLD:  { color:"#6b7280", bg:"#f8fafc", border:"#e2e8f0" },
-  SELL:  { color:"#ef4444", bg:"#fef2f2", border:"#fecaca" },
+  "STRONG BUY": { color:"var(--purple)", bg:"var(--purple-light)", border:"var(--purple-light)" },
+  BUY:   { color:"var(--green)", bg:"var(--green-light)", border:"var(--green-light)" },
+  WATCH: { color:"var(--amber)", bg:"var(--amber-light)", border:"var(--amber-light)" },
+  HOLD:  { color:"var(--text-muted)", bg:"var(--bg-elevated)", border:"var(--border)" },
+  SELL:  { color:"var(--red)", bg:"var(--red-light)", border:"var(--red-light)" },
 };
 const CLS: Record<string,string> = { DEEP_VALUE:"#2563eb", VALUE:"#0891b2", QUALITY_GROWTH:"#7c3aed", GROWTH:"#818cf8", SPECULATIVE:"#ef4444", NEUTRAL:"#64748b" };
 
@@ -341,10 +341,10 @@ function CatalystBadges({s}:{s:StockData}){
 
 // ── Macro Banner ────────────────────────────────────────────────────────────
 const REGIME_STYLE: Record<string,{color:string;bg:string;border:string;label:string}> = {
-  RISK_ON:  { color:"#10b981", bg:"#e8f5ee", border:"#b8dcc8", label:"RISK ON" },
-  NEUTRAL:  { color:"#6b7280", bg:"#f8fafc", border:"#e2e8f0", label:"NEUTRAL" },
-  CAUTIOUS: { color:"#d97706", bg:"#fffbeb", border:"#fde68a", label:"CAUTIOUS" },
-  RISK_OFF: { color:"#ef4444", bg:"#fef2f2", border:"#fecaca", label:"RISK OFF" },
+  RISK_ON:  { color:"var(--green)", bg:"var(--green-light)", border:"var(--green-light)", label:"RISK ON" },
+  NEUTRAL:  { color:"var(--text-muted)", bg:"var(--bg-elevated)", border:"var(--border)", label:"NEUTRAL" },
+  CAUTIOUS: { color:"var(--amber)", bg:"var(--amber-light)", border:"var(--amber-light)", label:"CAUTIOUS" },
+  RISK_OFF: { color:"var(--red)", bg:"var(--red-light)", border:"var(--red-light)", label:"RISK OFF" },
 };
 const MACRO_SIGNALS:[string,string][] = [
   ["yield_curve","Yield 10y-2y"],
@@ -397,7 +397,7 @@ function MacroRibbon({macro}:{macro?:MacroData}){
               const v = (subs as any)[key] ?? 0;
               const c = v>0.6 ? "#10b981" : v>0.4 ? "#d97706" : "#ef4444";
               return(
-                <div key={key} style={{padding:"6px 8px",borderRadius:6,background:"#fff",border:"1px solid var(--border-subtle,#eef1ef)"}}>
+                <div key={key} style={{padding:"6px 8px",borderRadius:6,background:"var(--bg-elevated)",border:"1px solid var(--border-subtle,#eef1ef)"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
                     <span style={{fontSize:9,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text-muted,#6b7280)"}}>{label}</span>
                     <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:700,color:c}}>{(v*100).toFixed(0)}</span>
@@ -579,7 +579,7 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   return(
     <div onClick={e=>e.stopPropagation()} style={{
       display:"flex",alignItems:"center",gap:6,padding:"4px 8px",
-      borderRadius:6,background:"#fff",border:"1px solid var(--green-border,#b8dcc8)",
+      borderRadius:6,background:"var(--bg-surface)",border:"1px solid var(--green-border,#b8dcc8)",
       fontSize:10,fontFamily:"var(--font-mono)",
     }}>
       <span style={{color:"var(--text-muted,#6b7280)",fontWeight:600,marginRight:2}}>{s.symbol}</span>
@@ -597,7 +597,7 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
       }}>{status==="saving"?"...":status==="saved"?"✓":status==="error"?"!":"Save"}</button>
       <button onClick={e=>{e.stopPropagation();setOpen(false);setStatus("idle");setErr("");}} style={{
         padding:"3px 6px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,cursor:"pointer",
-        background:"#fff",color:"var(--text-muted,#6b7280)",fontSize:10,fontFamily:"var(--font-mono)",
+        background:"var(--bg-surface)",color:"var(--text-muted,#6b7280)",fontSize:10,fontFamily:"var(--font-mono)",
       }}>✕</button>
       {err&&<span style={{color:"#ef4444",fontSize:9,marginLeft:4}}>{err}</span>}
     </div>
@@ -793,10 +793,10 @@ function SectorConcentration({data}:{data?:Record<string,{count:number;symbols:s
 function PeerRow({peer}:{peer:StockData["peer_context"]}){
   if(!peer||!peer._evaluated||!peer.peers?.length) return null;
   const divColors:Record<string,{color:string;bg:string;tip:string}>={
-    OUTPERFORMING:{color:"#10b981",bg:"#e8f5ee",tip:"Alpha — beating peers"},
-    SECTOR_TAILWIND:{color:"#3b82f6",bg:"#eff6ff",tip:"Rising tide — whole sector strong"},
-    SECTOR_HEADWIND:{color:"#d97706",bg:"#fffbeb",tip:"Sector weakness — headwind"},
-    LAGGING:{color:"#ef4444",bg:"#fef2f2",tip:"Underperforming peers"},
+    OUTPERFORMING:{color:"var(--green)",bg:"var(--green-light)",tip:"Alpha — beating peers"},
+    SECTOR_TAILWIND:{color:"var(--blue)",bg:"var(--blue-light)",tip:"Rising tide — whole sector strong"},
+    SECTOR_HEADWIND:{color:"var(--amber)",bg:"var(--amber-light)",tip:"Sector weakness — headwind"},
+    LAGGING:{color:"var(--red)",bg:"var(--red-light)",tip:"Underperforming peers"},
   };
   const d=peer.divergence?divColors[peer.divergence]:null;
   return(
@@ -1024,9 +1024,9 @@ export default function Dashboard(){
     padding:"8px 12px", textAlign: align,
     cursor: key === "static" ? "default" : "pointer",
     fontSize:9, fontWeight:700, letterSpacing:"0.1em", fontFamily:"var(--font-mono)",
-    color: sortKey === key ? "var(--green,#2d7a4f)" : "var(--text-light,#9ca3af)",
+    color: sortKey === key ? "var(--green)" : "var(--text-light)",
     userSelect:"none", whiteSpace:"nowrap",
-    borderBottom:"2px solid var(--border,#e5e7eb)", background:"var(--bg,#fff)",
+    borderBottom:"2px solid var(--border)", background:"var(--bg-surface)",
   });
 
   return(

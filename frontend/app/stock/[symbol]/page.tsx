@@ -140,7 +140,7 @@ interface CompositePoint{date:string;composite:number;signal:string;price:number
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
 const T={bg:"var(--bg)",card:"var(--bg-surface)",cardBorder:"var(--border)",cardShadow:"var(--shadow-md)",text:"var(--text)",textMuted:"var(--text-muted)",textLight:"var(--text-light)",green:"var(--green)",greenLight:"var(--green-light)",greenBorder:"var(--green-border)",red:"var(--red)",redLight:"var(--red-light)",amber:"var(--amber)",amberLight:"var(--amber-light)",blue:"var(--blue)",purple:"var(--purple)",divider:"var(--divider)",mono:"var(--font-mono)",sans:"var(--font-sans)"};
-const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"var(--purple-light)",fg:"var(--purple)",border:"var(--purple)"},BUY:{bg:T.greenLight,fg:"var(--green)",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"var(--amber)"},HOLD:{bg:"#f9fafb",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"var(--red)"}};
+const SIG_C:Record<string,{bg:string;fg:string;border:string}>={"STRONG BUY":{bg:"var(--purple-light)",fg:"var(--purple)",border:"var(--purple)"},BUY:{bg:T.greenLight,fg:"var(--green)",border:T.greenBorder},WATCH:{bg:T.amberLight,fg:T.amber,border:"var(--amber)"},HOLD:{bg:"var(--bg-elevated)",fg:T.textMuted,border:T.cardBorder},SELL:{bg:T.redLight,fg:T.red,border:"var(--red)"}};
 const CLS_C:Record<string,string>={DEEP_VALUE:T.blue,VALUE:T.blue,QUALITY_GROWTH:T.purple,GROWTH:"#818cf8",SPECULATIVE:T.red,NEUTRAL:T.textMuted};
 
 // v8 (Apr 2026) — 5-factor composite radar
@@ -1213,7 +1213,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
         </div>
 
         {/* EV block */}
-        <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"#f0fdf4":"var(--red-light)",border:`1px solid ${evPositive?"#bbf7d0":"var(--red)"}`,marginBottom:14}}>
+        <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"var(--green-light)":"var(--red-light)",border:`1px solid ${evPositive?"var(--green-border)":"var(--red)"}`,marginBottom:14}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
             <div>
               <div style={{fontWeight:600,color:evPositive?T.green:T.red,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!isLive?" (ESTIMATED)":""}</div>
@@ -1241,8 +1241,8 @@ function MassiveOptionsCard({s}:{s:StockData}){
             ].map((t,i)=>(
               <div key={i} style={{
                 padding:"3px 8px",borderRadius:4,fontSize:9,fontFamily:T.mono,fontWeight:600,
-                background:t.ok?"#f0fdf4":"#f9fafb",color:t.ok?T.green:T.textLight,
-                border:`1px solid ${t.ok?"#bbf7d0":T.divider}`,
+                background:t.ok?"var(--green-light)":"var(--bg-elevated)",color:t.ok?T.green:T.textLight,
+                border:`1px solid ${t.ok?"var(--green-border)":T.divider}`,
               }}>{t.ok?"✓":"○"} {t.label}</div>
             ))}
           </div>
@@ -1884,7 +1884,7 @@ function MomentumPanel({s}:{s:StockData}){
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4}}>
         {inds.map((d,i)=>(
-          <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"#fafafa",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}>
+          <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",borderRadius:4,fontSize:10,fontFamily:T.mono,background:d.b?T.greenLight:"var(--bg-elevated)",border:`1px solid ${d.b?T.greenBorder:T.divider}`}}>
             <span title={TOOLTIPS[d.l]} style={{color:T.textMuted,fontWeight:500,cursor:"help",borderBottom:`1px dotted ${T.textLight}`}}>{d.l}</span>
             <span style={{color:d.b?"var(--green)":T.textMuted,fontWeight:600}}>{d.v}</span>
           </div>
@@ -2092,7 +2092,7 @@ function LiquidityProfileCard({
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Cash ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", alignItems:"flex-end"}}>
               <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"var(--text-light)", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
               </div>
             </div>
             <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>CASH</div>
@@ -2101,10 +2101,10 @@ function LiquidityProfileCard({
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Debt ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", flexDirection:"column", justifyContent:"flex-end"}}>
               <div style={{width:"100%", background:"var(--red)", height:`${Math.max(2, (shortDebt/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", borderBottom:"1px solid var(--bg-surface)", display:"flex", alignItems:"center", justifyContent:"center"}} title="Short-Term Debt">
-                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
               </div>
               <div style={{width:"100%", background:"#b91c1c", height:`${Math.max(2, (longDebt/stackMax)*100)}%`, display:"flex", alignItems:"center", justifyContent:"center"}} title="Long-Term Debt">
-                <span style={{fontSize:9, fontFamily:T.mono, color:"var(--bg-surface)", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
+                <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
               </div>
             </div>
             <div style={{fontSize:9, fontFamily:T.mono, color:T.text, marginTop:8, fontWeight:600}}>DEBT</div>
@@ -2202,9 +2202,7 @@ function FinancialChartsPanel({
     const colors = activeIndices.map(i => allColors[i]);
     const labels = activeIndices.map(i => allLabels[i]);
     
-    if (keys.length === 0) {
-      return <div style={{height:220, display:"flex", alignItems:"center", justifyContent:"center", color:T.textLight, fontSize:11, fontFamily:T.mono}}>Select a metric to view</div>;
-    }
+    // Removed early return for keys.length === 0 so toggles still render
 
     const W=700, H=240, PT=showGrowth ? 60 : 30, PB=20, PL=10, PR=10;
 
@@ -2252,6 +2250,9 @@ function FinancialChartsPanel({
           })}
         </div>
 
+        {keys.length === 0 ? (
+          <div style={{height:220, display:"flex", alignItems:"center", justifyContent:"center", color:T.textLight, fontSize:11, fontFamily:T.mono}}>Select a metric to view</div>
+        ) : (
         <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%", height:"auto", display:"block", background:T.card, borderRadius:4, border:`1px solid ${T.divider}`}}>
           {/* Zero line */}
           <line x1={PL} x2={W-PR} y1={zeroY} y2={zeroY} stroke={T.divider} strokeWidth={1} />
@@ -2361,6 +2362,7 @@ function FinancialChartsPanel({
             );
           })}
         </svg>
+        )}
       </div>
     );
   };
@@ -2370,11 +2372,11 @@ function FinancialChartsPanel({
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:12}}>
         <SH title="Financials Overview" icon={<BarChart2 size={12}/>} sub={isQuarterly ? "Quarterly Trends" : "Annual Trends"} />
         <div style={{display:"flex", gap:12}}>
-          <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
+          <div style={{display:"flex", background:"var(--bg-elevated)", padding:2, borderRadius:6}}>
             <button onClick={()=>setIsQuarterly(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!isQuarterly?"var(--bg-surface)":"transparent", color:!isQuarterly?T.text:T.textMuted, boxShadow:!isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Annual</button>
             <button onClick={()=>setIsQuarterly(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:isQuarterly?"var(--bg-surface)":"transparent", color:isQuarterly?T.text:T.textMuted, boxShadow:isQuarterly?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Quarterly</button>
           </div>
-          <div style={{display:"flex", background:"#f1f5f9", padding:2, borderRadius:6}}>
+          <div style={{display:"flex", background:"var(--bg-elevated)", padding:2, borderRadius:6}}>
             <button onClick={()=>setShowGrowth(false)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:!showGrowth?"var(--bg-surface)":"transparent", color:!showGrowth?T.text:T.textMuted, boxShadow:!showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Values</button>
             <button onClick={()=>setShowGrowth(true)} style={{padding:"4px 10px", fontSize:10, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:showGrowth?"var(--bg-surface)":"transparent", color:showGrowth?T.text:T.textMuted, boxShadow:showGrowth?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>Growth %</button>
           </div>

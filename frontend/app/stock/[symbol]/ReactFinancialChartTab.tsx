@@ -55,7 +55,7 @@ export function ReactFinancialChartTab({ symbol }: { symbol: string }) {
   if (!data) return <div style={{padding: 40, textAlign: "center"}}><Loader2 className="animate-spin" size={24} style={{margin:"0 auto", color:"#10b981"}}/></div>;
 
   return (
-    <div style={{ width: "100%", height: "1200px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, overflow: "hidden" }}>
+    <div style={{ width: "100%", height: "1200px", background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
       <AutoSizer>
         {({ width, height }) => (
           <ChartImpl data={data} symbol={symbol} width={width} height={height} ratio={typeof window !== "undefined" ? window.devicePixelRatio : 1} />

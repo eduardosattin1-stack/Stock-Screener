@@ -25,7 +25,7 @@ export function ThemeCard({
   const router = useRouter();
   
   const isPositive = performance1Y >= 0;
-  const perfColor = isPositive ? "#10b981" : "#ef4444";
+  const perfColor = isPositive ? "var(--green)" : "var(--red)";
   
   // High score themes get a special highlight
   const isHot = avgScore > 0.65;
@@ -33,7 +33,7 @@ export function ThemeCard({
   return (
     <div 
       style={{
-        background: "var(--bg-surface, #f8faf9)",
+        background: "var(--bg-surface)",
         borderRadius: 12,
         border: `1px solid ${expanded ? "var(--green)" : "var(--border)"}`,
         boxShadow: expanded ? "0 4px 12px rgba(45,122,79,0.15)" : "0 2px 4px rgba(0,0,0,0.04)",

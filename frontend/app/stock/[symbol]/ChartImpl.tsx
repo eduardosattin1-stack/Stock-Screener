@@ -103,9 +103,9 @@ export default function ChartComponent({ data: initialData, width, height, ratio
       {/* 1. Price + Volume */}
       <Chart id={1} yExtents={(d:any) => [d?.high ? d.high * 1.05 : undefined, d?.low ? d.low * 0.95 : undefined, d?.bb?.top, d?.bb?.bottom]} height={priceH} padding={{ top: 20, bottom: 20 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         
         {/* @ts-ignore */}
         <CandlestickSeries 
@@ -141,11 +141,11 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         />
 
         {/* @ts-ignore */}
-        <OHLCTooltip origin={[8, 16]} textFill="#374151" />
+        <OHLCTooltip origin={[8, 16]} textFill="#cbd5e1" />
         {/* @ts-ignore */}
         <MovingAverageTooltip
           origin={[8, 36]}
-          textFill="#374151"
+          textFill="#cbd5e1"
           options={[
             { yAccessor: ema20.accessor(), type: "EMA", stroke: "#8b5cf6", windowSize: ema20.options().windowSize },
             { yAccessor: ema50.accessor(), type: "EMA", stroke: "#3b82f6", windowSize: ema50.options().windowSize },
@@ -153,7 +153,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
           ]}
         />
         {/* @ts-ignore */}
-        <BollingerBandTooltip origin={[8, 72]} yAccessor={bbCalc.accessor()} options={bbCalc.options()} textFill="#374151" />
+        <BollingerBandTooltip origin={[8, 72]} yAccessor={bbCalc.accessor()} options={bbCalc.options()} textFill="#cbd5e1" />
       </Chart>
 
       {/* 2. Volume (Overlaid on price chart bottom) */}
@@ -165,24 +165,24 @@ export default function ChartComponent({ data: initialData, width, height, ratio
       {/* 3. MACD Pane */}
       <Chart id={3} yExtents={macdCalc.accessor()} height={macdH} origin={(w, h) => [0, priceH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis ticks={4} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis ticks={4} showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         
         {/* @ts-ignore */}
         <MACDSeries yAccessor={macdCalc.accessor()} />
         {/* @ts-ignore */}
-        <MACDTooltip origin={[8, 16]} yAccessor={macdCalc.accessor()} options={macdCalc.options()} appearance={{ strokeStyle: { macd: "#3b82f6", signal: "#f59e0b" }, fillStyle: { divergence: "#8b5cf6" } }} textFill="#374151" />
+        <MACDTooltip origin={[8, 16]} yAccessor={macdCalc.accessor()} options={macdCalc.options()} appearance={{ strokeStyle: { macd: "#3b82f6", signal: "#f59e0b" }, fillStyle: { divergence: "#8b5cf6" } }} textFill="#cbd5e1" />
       </Chart>
 
       {/* 4. RSI Pane */}
       <Chart id={4} yExtents={[0, 100]} height={rsiH} origin={(w, h) => [0, priceH + macdH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis tickValues={[30, 50, 70]} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis tickValues={[30, 50, 70]} showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
@@ -190,29 +190,29 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <RSISeries yAccessor={rsiCalc.accessor()} />
         {/* @ts-ignore */}
-        <RSITooltip origin={[8, 16]} yAccessor={rsiCalc.accessor()} options={rsiCalc.options()} textFill="#374151" />
+        <RSITooltip origin={[8, 16]} yAccessor={rsiCalc.accessor()} options={rsiCalc.options()} textFill="#cbd5e1" />
       </Chart>
 
       {/* 5. RelVol Pane */}
       <Chart id={5} yExtents={(d:any) => [0, Math.max(d?.relVol || 0, 2)]} height={relVolH} origin={(w, h) => [0, priceH + macdH + rsiH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis ticks={3} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis ticks={3} showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
         <BarSeries yAccessor={(d:any) => d?.relVol} fillStyle={(d:any) => d?.relVol > 1.5 ? "rgba(139, 92, 246, 0.6)" : "rgba(156, 163, 175, 0.3)"} />
         {/* @ts-ignore */}
-        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.relVol} yLabel="RelVol" yDisplayFormat={format(".2f")} valueFill="#8b5cf6" labelFill="#374151" />
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.relVol} yLabel="RelVol" yDisplayFormat={format(".2f")} valueFill="#8b5cf6" labelFill="#cbd5e1" />
       </Chart>
 
       {/* 6. ADX Pane */}
       <Chart id={6} yExtents={(d:any) => [0, 100]} height={adxH} origin={(w, h) => [0, priceH + macdH + rsiH + relVolH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis tickValues={[20, 25, 40]} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis tickValues={[20, 25, 40]} showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
         <MouseCoordinateY displayFormat={priceFormat} />
         {/* @ts-ignore */}
@@ -222,15 +222,15 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <LineSeries yAccessor={(d:any) => d?.minusDI} strokeStyle="#ef4444" />
         {/* @ts-ignore */}
-        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.adx} yLabel="ADX" yDisplayFormat={format(".2f")} valueFill="#f43f5e" labelFill="#374151" />
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.adx} yLabel="ADX" yDisplayFormat={format(".2f")} valueFill="#f43f5e" labelFill="#cbd5e1" />
       </Chart>
 
       {/* 7. OBV Pane */}
       <Chart id={7} yExtents={(d:any) => d?.obv} height={obvH} origin={(w, h) => [0, priceH + macdH + rsiH + relVolH + adxH]} padding={{ top: 10, bottom: 10 }}>
         {/* @ts-ignore */}
-        <XAxis showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <XAxis showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
-        <YAxis ticks={4} showGridLines={true} strokeStyle="#e5e7eb" opacity={0.5} />
+        <YAxis ticks={4} showGridLines={true} strokeStyle="#1c3330" opacity={0.5} />
         {/* @ts-ignore */}
         <MouseCoordinateX displayFormat={timeFmt} />
         {/* @ts-ignore */}
@@ -238,7 +238,7 @@ export default function ChartComponent({ data: initialData, width, height, ratio
         {/* @ts-ignore */}
         <LineSeries yAccessor={(d:any) => d?.obv} strokeStyle="#3b82f6" />
         {/* @ts-ignore */}
-        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.obv} yLabel="OBV" yDisplayFormat={format(".0f")} valueFill="#3b82f6" labelFill="#374151" />
+        <SingleValueTooltip origin={[8, 16]} yAccessor={(d:any) => d?.obv} yLabel="OBV" yDisplayFormat={format(".0f")} valueFill="#3b82f6" labelFill="#cbd5e1" />
       </Chart>
 
       {/* @ts-ignore */}

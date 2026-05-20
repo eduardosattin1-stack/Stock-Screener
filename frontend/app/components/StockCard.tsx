@@ -58,9 +58,9 @@ export function StockCard({
     <div 
       onClick={onClick}
       style={{
-        background: "var(--bg, #fff)",
+        background: "var(--bg-surface)",
         borderRadius: 12,
-        border: "1px solid var(--border, #e5e7eb)",
+        border: "1px solid var(--border)",
         padding: "16px",
         marginBottom: "12px",
         cursor: onClick ? "pointer" : "default",
@@ -85,7 +85,7 @@ export function StockCard({
       {/* Top Header Row */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: "var(--bg-elevated, #f8fafc)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-subtle, #f1f5f9)" }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-subtle)" }}>
             <span style={{ fontWeight: 700, fontSize: 14, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{symbol.substring(0, 2)}</span>
           </div>
           <div>
@@ -123,12 +123,12 @@ export function StockCard({
       </div>
 
       {/* Thesis Body */}
-      <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-secondary, #334155)", marginBottom: 16, fontFamily: "var(--font-sans)" }}>
+      <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-secondary)", marginBottom: 16, fontFamily: "var(--font-sans)" }}>
         {thesis || "No thesis generated for this position."}
       </div>
 
       {/* Footer Metrics */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-subtle, #f1f5f9)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
         <div style={{ display: "flex", gap: 16 }}>
           <div>
             <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>COMPOSITE</div>
