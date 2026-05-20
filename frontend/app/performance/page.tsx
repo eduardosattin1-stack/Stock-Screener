@@ -281,6 +281,9 @@ const T = {
   divider: "var(--divider)",
   mono: "var(--font-mono, 'JetBrains Mono', monospace)",
   shadow: "var(--shadow-md)",
+  // Aliases — used extensively throughout this file
+  light: "var(--text-light)",
+  muted: "var(--text-muted)",
 };
 
 const SIG: Record<string, { color: string; bg: string; border: string }> = {

@@ -4151,7 +4151,6 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
             pt_velocity_score=analyst.get("pt_velocity_score"),
-            transcript=transcript,
         )
         s.smart_money_score = sm["score"]
         s.smart_money_components = sm["components"]
@@ -4230,9 +4229,8 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             None, raw["inst"], raw["inst_flow"], raw["sec_mom"], raw["cong"],
         )
         # Smart Money Score now fully populated for non-enriched stocks too.
-        # v1.2: transcript IS now an 8% factor in SMART$, so pass-2 stocks
-        # will score slightly higher than pass-1 (which passes transcript=None).
-        # This is intentional — enriched stocks deserve the boost.
+        # v1.3: transcript removed from SMART$ — pass-1 vs pass-2 difference
+        # now comes from pt_velocity_score (available only after get_analyst).
         sm = compute_smart_money_score(
             institutional_flow=raw["inst_flow"],
             institutional=raw["inst"],

@@ -658,7 +658,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         try:
-            from screener_v6 import get_symbols, screen, format_report, send_email, update_signal_history, save_scan_to_gcs
+            from screener_v6 import get_symbols, screen, format_report, send_email, save_scan_to_gcs
             content_len = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(content_len)) if content_len else {}
             region = body.get("region", os.environ.get("SCREEN_INDEX", "nasdaq100"))
@@ -669,7 +669,6 @@ class Handler(BaseHTTPRequestHandler):
                 symbols = get_symbols(region)
             results, macro = screen(symbols)
             report = format_report(results, region=region, macro=macro)
-            update_signal_history(results)
             save_scan_to_gcs(results, region, macro=macro)
             today = datetime.now().strftime("%Y-%m-%d")
             send_email(f"CB Screener v7.2: {region.upper()} — {today}", report)
