@@ -103,7 +103,16 @@ def _gcs_token() -> Optional[str]:
 
 
 def _gcs_read(path: str) -> Optional[dict]:
-    """Read JSON from GCS. Returns parsed dict or None on miss/error."""
+    """Read JSON from GCS or local filesystem."""
+    # Try local filesystem first
+    local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+    if os.path.exists(local_path):
+        try:
+            with open(local_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            log.warning(f"Failed to read local cache file {local_path}: {e}")
+
     try:
         import requests
         tok = _gcs_token()
@@ -124,13 +133,22 @@ def _gcs_read(path: str) -> Optional[dict]:
 
 
 def _gcs_write(path: str, data: dict) -> bool:
-    """Write JSON to GCS. Returns True on success."""
+    """Write JSON to GCS and local filesystem."""
+    # Write to local filesystem
+    local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+    try:
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        with open(local_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, default=str)
+    except Exception as e:
+        log.warning(f"Failed to write local cache file {local_path}: {e}")
+
     try:
         import requests
         tok = _gcs_token()
         if not tok:
             log.debug(f"FMP cache GCS write {path}: no token (local mode)")
-            return False
+            return True  # Return True since we successfully wrote locally
         body = json.dumps(data, default=str).encode("utf-8")
         r = requests.post(
             f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",

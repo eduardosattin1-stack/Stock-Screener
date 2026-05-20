@@ -1276,6 +1276,32 @@ def regime_composite_floor(regime_data: dict, base_floor: float = 0.80) -> float
 
 
 # ---------------------------------------------------------------------------
+# Alpha Compounder PIT convenience wrapper
+# ---------------------------------------------------------------------------
+
+def classify_pit(as_of_date: str, fmp_func=None) -> str:
+    """Return the macro regime label at a historical date.
+
+    Convenience wrapper for the Alpha Compounder pipeline (agent_a).
+    Uses fetch_macro_regime_historical() under the hood.
+
+    Args:
+        as_of_date: "YYYY-MM-DD" string
+        fmp_func: FMP API caller. If None, imports from screener_v6.
+
+    Returns:
+        Regime label: "RISK_ON", "NEUTRAL", "CAUTIOUS", or "RISK_OFF"
+    """
+    if fmp_func is None:
+        try:
+            from screener_v6 import fmp as fmp_func
+        except ImportError:
+            return "NEUTRAL"  # safe fallback
+    result = fetch_macro_regime_historical(fmp_func, as_of_date)
+    return result.get("regime", "NEUTRAL")
+
+
+# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")

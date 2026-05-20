@@ -2091,7 +2091,7 @@ function LiquidityProfileCard({
           <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
             <div style={{fontSize:10, fontFamily:T.mono, color:T.textMuted, marginBottom:8}}>Cash ({bnSuffix})</div>
             <div style={{flex:1, width:40, position:"relative", display:"flex", alignItems:"flex-end"}}>
-              <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"var(--text-light)", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"center"}}>
+              <div title={`Total Cash: ${bn(cash)}`} style={{width:"100%", background:"var(--text-light)", height:`${Math.max(5, (cash/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", justifyContent:"flex-start", paddingTop:4}}>
                 <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{cash>0?bnNum(cash):""}</span>
               </div>
             </div>
@@ -2103,7 +2103,7 @@ function LiquidityProfileCard({
               <div style={{width:"100%", background:"var(--red)", height:`${Math.max(2, (shortDebt/stackMax)*100)}%`, borderRadius:"4px 4px 0 0", borderBottom:"1px solid var(--bg-surface)", display:"flex", alignItems:"center", justifyContent:"center"}} title="Short-Term Debt">
                 <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700}}>{shortDebt>0?bnNum(shortDebt):""}</span>
               </div>
-              <div style={{width:"100%", background:"#b91c1c", height:`${Math.max(2, (longDebt/stackMax)*100)}%`, display:"flex", alignItems:"center", justifyContent:"center"}} title="Long-Term Debt">
+              <div style={{width:"100%", background:"#b91c1c", height:`${Math.max(2, (longDebt/stackMax)*100)}%`, display:"flex", alignItems:"center", justifyContent:"flex-start", paddingTop:4}} title="Long-Term Debt">
                 <span style={{fontSize:9, fontFamily:T.mono, color:"#fff", fontWeight:700, writingMode:"vertical-rl", transform:"rotate(180deg)"}}>{longDebt>0?bnNum(longDebt):""}</span>
               </div>
             </div>
@@ -2410,9 +2410,9 @@ function FinancialChartsPanel({
       </div>
 
       <div>
-        {activeChart === "income" && <Chart data={incs} rawData={incsRaw} allKeys={["revenue", "operatingIncome", "netIncome"]} allColors={["var(--border)", T.amber, T.green]} allLabels={["Rev", "OpInc", "NetInc"]} />}
-        {activeChart === "balance" && <Chart data={bals} rawData={balsRaw} allKeys={["totalAssets", "totalLiabilities", "totalEquity"]} allColors={["var(--border)", T.red, T.green]} allLabels={["Assets", "Liabs", "Equity"]} />}
-        {activeChart === "cash" && <Chart data={cfs} rawData={cfsRaw} allKeys={["operatingCashFlow", "freeCashFlow"]} allColors={["#d1d5db", T.blue]} allLabels={["OpCash", "FCF"]} />}
+        {activeChart === "income" && <Chart data={incs} rawData={incsRaw} allKeys={["revenue", "operatingIncome", "netIncome"]} allColors={[T.blue, T.amber, T.green]} allLabels={["Rev", "OpInc", "NetInc"]} />}
+        {activeChart === "balance" && <Chart data={bals} rawData={balsRaw} allKeys={["totalAssets", "totalLiabilities", "totalEquity"]} allColors={[T.blue, T.red, T.green]} allLabels={["Assets", "Liabs", "Equity"]} />}
+        {activeChart === "cash" && <Chart data={cfs} rawData={cfsRaw} allKeys={["operatingCashFlow", "freeCashFlow"]} allColors={["#64748b", T.blue]} allLabels={["OpCash", "FCF"]} />}
       </div>
     </Card>
   );
@@ -3501,12 +3501,12 @@ function AdvancedChartTab({ s }: { s: StockData }) {
       "symbol": toTradingViewSymbol(s.symbol),
       "interval": "D",
       "timezone": "exchange",
-      "theme": "light",
+      "theme": "dark",
       "style": "1",
       "locale": "en",
       "enable_publishing": false,
-      "backgroundColor": "rgba(255, 255, 255, 1)",
-      "gridColor": "rgba(240, 243, 250, 0)",
+      "backgroundColor": "#0a1817",
+      "gridColor": "#1c3330",
       "hide_top_toolbar": false,
       "hide_legend": false,
       "save_image": false,
@@ -3727,7 +3727,7 @@ export default function StockDetail(){
 
 {/* TradingView */}
       {activeTab !== "chart" && !toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") && (
-        <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=light&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
+        <Card style={{marginBottom:16,padding:0,overflow:"hidden"}}><div style={{height:300}}><iframe src={`https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(toTradingViewSymbol(s.symbol))}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=0a1817&studies=MASimple%409na%40na%40na~50~0~~&studies=MASimple%409na%40na%40na~200~0~~&theme=dark&style=1&timezone=exchange&withdateranges=1&width=100%25&height=100%25`} style={{width:"100%",height:"100%",border:"none"}} allowFullScreen/></div></Card>
       )}
       {activeTab !== "chart" && toTradingViewSymbol(s.symbol).startsWith("EURONEXT:") && (
          <Card style={{marginBottom:16,padding:24,textAlign:"center",color:T.textMuted,fontFamily:T.mono,fontSize:11}}>

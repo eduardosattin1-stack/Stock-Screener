@@ -174,6 +174,8 @@ class StrategyConfig:
     stop_loss: float = -0.12       # -12% from entry
     take_profit: float = 0.20      # +20% from entry
     time_stop_days: int = 60
+    trailing_stop: float = 0.0     # e.g. -0.10 for 10% trailing stop
+    composite_drop_exit: float = 0.0 # e.g. 0.35 to exit if composite drops below 0.35
     # Sizing
     target_positions: int = 5
     weighting: str = "equal"       # equal | composite-linear | composite-squared
@@ -184,6 +186,19 @@ class StrategyConfig:
     # Macro regime overlay (optional; raises floor in RISK-OFF)
     macro_regime_overlay: bool = False
     macro_risk_off_floor_bump: float = 0.05
+    # New Exploration Dimensions
+    hit_prob_floor: float = 0.0
+    piotroski_floor: int = 0
+    golden_cross: bool = False
+    rsi_min: float = 0.0
+    rsi_max: float = 100.0
+    insider_net_buys_min: int = 0
+    inst_accum_min: float = 0.0
+    pt_velocity_min: float = 0.0
+    fallen_angel: bool = False
+    sector_relative_strength_min: float = 0.0
+    ps_ascending: bool = False
+    compounder_mode: bool = False
     # Bookkeeping
     config_id: str = "baseline"
     notes: str = ""
@@ -209,6 +224,7 @@ class Position:
     entry_signal: str
     shares: float
     entry_cost_usd: float           # net of transaction cost
+    high_water_mark: float = 0.0
 
 
 @dataclass
@@ -1235,6 +1251,7 @@ def _execute_entry(portfolio: Portfolio,
         entry_signal=record.get("_entry_signal", record.get("signal_neutral", "")),
         shares=shares,
         entry_cost_usd=shares * effective_price,
+        high_water_mark=execution_price
     )
     portfolio.positions[pos.symbol] = pos
     return pos
@@ -1514,13 +1531,11 @@ def _apply_intraday_exits(portfolio: Portfolio,
             low = row.get("low", row["close"])
             close = row["close"]
 
+            if high > pos.high_water_mark:
+                pos.high_water_mark = high
+
             sl_trigger = pos.entry_price * (1 + config.stop_loss)
             tp_trigger = pos.entry_price * (1 + config.take_profit)
-
-            # Realistic gap fills: if the stock gaps through the trigger
-            # at the open, the fill price is the OPEN, not the trigger.
-            # Otherwise (trigger hit intraday after a normal open), fill
-            # is at the trigger. This removes the optimistic "always fill
             # at trigger price" bias the naive code had.
             if low <= sl_trigger:
                 fill = min(open_, sl_trigger)
