@@ -193,40 +193,58 @@ except ImportError:
     log.info("macro_regime.py not found — running without macro overlay")
 
 HAS_ML_MODEL = False
+ML_MODEL_VERSION = None  # "v3" or "v2"
 ML_MODELS = None
 ML_CALIBRATOR = None
 ML_FEATURES = None
 ML_MEDIANS = None
+# v3 multi-target model dicts (None when running v2)
+ML_MODELS_V3 = None
+ML_CALIBRATORS_V3 = None
 try:
     import joblib
     import numpy as np
-    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_v2.pkl")
-    if os.path.exists(model_path):
-        model_data = joblib.load(model_path)
-        ML_MODELS = model_data["models"]        # list of 3 models
-        ML_CALIBRATOR = model_data["calibrator"] # IsotonicRegression
-        ML_FEATURES = model_data["features"]     # 43 feature names
-        ML_MEDIANS = model_data["medians"]       # median fill values
+    _ml_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path_v3 = os.path.join(_ml_dir, "time_model_v3.pkl")
+    model_path_v2 = os.path.join(_ml_dir, "time_model_v2.pkl")
+    if os.path.exists(model_path_v3):
+        model_data = joblib.load(model_path_v3)
+        ML_MODELS = model_data["models"]          # backward-compat: 3-model list
+        ML_CALIBRATOR = model_data["calibrator"]   # backward-compat
+        ML_FEATURES = model_data["features"]
+        ML_MEDIANS = model_data["medians"]
+        ML_MODELS_V3 = model_data.get("models_v3", {})
+        ML_CALIBRATORS_V3 = model_data.get("calibrators_v3", {})
+        ML_MODEL_VERSION = "v3"
+        HAS_ML_MODEL = True
+        log.info(f"ML v3 loaded: {len(ML_FEATURES)} features, "
+                 f"{len(ML_MODELS_V3)} sub-models, "
+                 f"OOS AUC={model_data.get('oos_auc','?')}")
+    elif os.path.exists(model_path_v2):
+        model_data = joblib.load(model_path_v2)
+        ML_MODELS = model_data["models"]
+        ML_CALIBRATOR = model_data["calibrator"]
+        ML_FEATURES = model_data["features"]
+        ML_MEDIANS = model_data["medians"]
+        ML_MODEL_VERSION = "v2"
         HAS_ML_MODEL = True
         log.info(f"ML v2 loaded: {len(ML_FEATURES)} features, {len(ML_MODELS)} models, "
                  f"target={model_data.get('target','?')}, OOS AUC={model_data.get('oos_auc','?')}")
     else:
-        log.info("time_model_v2.pkl not found — hit_prob will be 0")
+        log.info("time_model_v3/v2.pkl not found — hit_prob will be 0")
 except ImportError as _ie:
     log.warning(f"ML model disabled — ImportError loading: {_ie}")
 except Exception as e:
     log.warning(f"ML model load failed: {type(e).__name__}: {e}")
 
 
-def predict_hit_prob(stock) -> float:
-    """Predict P(+20% daily high in 4 weeks) using v2 ensemble.
-    Returns 0.0 if model unavailable."""
-    if not HAS_ML_MODEL or ML_MODELS is None:
-        return 0.0
+def _build_ml_feature_vector(stock) -> Optional[np.ndarray]:
+    """Build feature vector from a Stock object for ML prediction.
+    Returns None if model unavailable."""
+    if not HAS_ML_MODEL or ML_FEATURES is None:
+        return None
     try:
         factors = stock.factor_scores if hasattr(stock, 'factor_scores') else {}
-
-        # Build feature vector — must match save_time_model_v2.py feature_cols
         row = {}
 
         # Technical features from factor_scores
@@ -248,12 +266,19 @@ def predict_hit_prob(stock) -> float:
         for feat_name, factor_key in tech_map.items():
             row[feat_name] = factors.get(factor_key)
 
-        # Fundamental features — computed from stock attributes
-        # These should be precomputed during pass 2 and stored on the stock object
-        # For now, try to get from stock._fund_features if available
+        # Fundamental features
         fund = getattr(stock, '_fund_features', {})
         for k, v in fund.items():
             row[k] = v
+
+        # Options features (from Massive enrichment, live at inference)
+        row["opt_atm_iv"] = getattr(stock, 'options_iv_current', None) or 0.0
+        row["opt_skew_25d"] = getattr(stock, 'options_skew_25d', None) or 0.0
+        row["opt_total_oi"] = getattr(stock, 'options_total_open_interest', None) or 0.0
+        row["opt_volume_to_oi"] = 0.0  # not available live; uses median fill
+        row["opt_net_gamma"] = 0.0     # not available live; uses median fill
+        row["opt_atm_vega"] = 0.0
+        row["opt_atm_theta"] = 0.0
 
         # Engineered features
         rsi = row.get("f_rsi")
@@ -285,20 +310,81 @@ def predict_hit_prob(stock) -> float:
 
         X = np.array([vec], dtype=np.float32)
         X = np.clip(X, -100, 100)
+        return X
+    except Exception as e:
+        log.debug(f"ML feature build failed for {getattr(stock, 'symbol', '?')}: {e}")
+        return None
 
-        # Average predictions from all 3 models
+
+def predict_hit_prob(stock) -> float:
+    """Predict P(+20% daily high in 4 weeks) — backward-compatible single float.
+    Uses v3 clf_20pct_30d if available, else v2 ensemble. Returns 0.0 if unavailable."""
+    if not HAS_ML_MODEL or ML_MODELS is None:
+        return 0.0
+    try:
+        X = _build_ml_feature_vector(stock)
+        if X is None:
+            return 0.0
+
         probs = [m.predict_proba(X)[0, 1] for m in ML_MODELS]
         raw_prob = sum(probs) / len(probs)
 
-        # Apply isotonic calibration
         if ML_CALIBRATOR is not None:
             calibrated = ML_CALIBRATOR.predict([raw_prob])[0]
             return round(float(calibrated), 4)
         return round(float(raw_prob), 4)
-
     except Exception as e:
         log.debug(f"ML predict failed for {getattr(stock, 'symbol', '?')}: {e}")
         return 0.0
+
+
+def predict_time_model_v3(stock) -> dict:
+    """Predict all v3 targets: P(touch +10/20%) at 30/60d + max drawdown.
+    Returns dict with all predictions, or empty dict if v3 model unavailable."""
+    result = {
+        "hit_10pct_30d": 0.0,
+        "hit_10pct_60d": 0.0,
+        "hit_20pct_30d": 0.0,
+        "hit_20pct_60d": 0.0,
+        "expected_dd_30d": 0.0,
+        "expected_dd_60d": 0.0,
+    }
+    if ML_MODEL_VERSION != "v3" or not ML_MODELS_V3:
+        return result
+    try:
+        X = _build_ml_feature_vector(stock)
+        if X is None:
+            return result
+
+        # Classification targets
+        for key in ["clf_10pct_30d", "clf_10pct_60d", "clf_20pct_30d", "clf_20pct_60d"]:
+            models = ML_MODELS_V3.get(key)
+            cal = ML_CALIBRATORS_V3.get(key) if ML_CALIBRATORS_V3 else None
+            if not models:
+                continue
+            if isinstance(models, list):
+                probs = [m.predict_proba(X)[0, 1] for m in models]
+                raw = sum(probs) / len(probs)
+            else:
+                raw = models.predict_proba(X)[0, 1]
+            if cal is not None:
+                raw = float(cal.predict([raw])[0])
+            out_key = key.replace("clf_", "hit_")
+            result[out_key] = round(raw, 4)
+
+        # Regression targets (output is absolute drawdown %)
+        for key in ["reg_dd_30d", "reg_dd_60d"]:
+            model = ML_MODELS_V3.get(key)
+            if model is None:
+                continue
+            dd = float(model.predict(X)[0])
+            out_key = key.replace("reg_", "expected_")
+            result[out_key] = round(-abs(dd), 2)  # negative convention
+
+        return result
+    except Exception as e:
+        log.debug(f"v3 predict failed for {getattr(stock, 'symbol', '?')}: {e}")
+        return result
 
 # Portfolio state path (GCS or local)
 PORTFOLIO_STATE = os.environ.get("PORTFOLIO_STATE", "portfolio_state.json")
@@ -309,6 +395,9 @@ PORTFOLIO_STATE = os.environ.get("PORTFOLIO_STATE", "portfolio_state.json")
 
 def fmp(endpoint: str, params: dict = None) -> Optional[list]:
     """Call FMP stable API. Returns list or None."""
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        log.warning(f"FMP call bypassed (offline mode): {endpoint}")
+        return None
     time.sleep(RATE_LIMIT)
     url = f"{FMP}/{endpoint}"
     p = {"apikey": FMP_KEY}
@@ -515,6 +604,14 @@ class Stock:
     # The Smart Money Score below is the heuristic the dashboard surfaces
     # in its place.
     hit_prob: float = 0.0            # 0-1, from trained model; 0 if model not loaded
+
+    # v3 multi-target time model predictions (May 2026)
+    hit_prob_10pct_30d: float = 0.0  # P(touch +10% in 30 trading days)
+    hit_prob_10pct_60d: float = 0.0  # P(touch +10% in 60 trading days)
+    hit_prob_30d: float = 0.0        # P(touch +20% in 30 trading days)
+    hit_prob_60d: float = 0.0        # P(touch +20% in 60 trading days)
+    expected_dd_30d: float = 0.0     # expected max drawdown in 30d (%)
+    expected_dd_60d: float = 0.0     # expected max drawdown in 60d (%)
 
     # Smart Money Score (Apr 2026) — LTR-derived weighted factor score.
     # Pass-2 only: institutional_flow + congressional are US-only/pass-2-only
@@ -4202,6 +4299,15 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         if HAS_ML_MODEL:
             s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
         s.hit_prob = predict_hit_prob(s)
+        # v3 multi-target predictions (30d/60d probability + drawdown)
+        if ML_MODEL_VERSION == "v3":
+            v3_preds = predict_time_model_v3(s)
+            s.hit_prob_10pct_30d = v3_preds["hit_10pct_30d"]
+            s.hit_prob_10pct_60d = v3_preds["hit_10pct_60d"]
+            s.hit_prob_30d = v3_preds["hit_20pct_30d"]
+            s.hit_prob_60d = v3_preds["hit_20pct_60d"]
+            s.expected_dd_30d = v3_preds["expected_dd_30d"]
+            s.expected_dd_60d = v3_preds["expected_dd_60d"]
 
 
         # Drop the _raw stash before output

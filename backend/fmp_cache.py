@@ -80,6 +80,14 @@ def _force_refresh() -> bool:
 
 def _cache_path(endpoint: str, symbol: str, suffix: str = "") -> str:
     """Build the GCS object path for a cache entry."""
+    # Check for endpoint mappings and suffix stripping
+    if endpoint == "historical-price-eod/full":
+        endpoint = "historical-price-eod"
+        suffix = ""
+    elif endpoint == "institutional-ownership/symbol-positions-summary":
+        endpoint = "institutional-ownership"
+        suffix = ""
+
     safe_sym = symbol.replace("/", "_").replace(" ", "_").upper()
     name = f"{safe_sym}{('_' + suffix) if suffix else ''}.json"
     return f"{CACHE_PREFIX}/{endpoint}/{name}"
@@ -91,6 +99,11 @@ def _cache_path(endpoint: str, symbol: str, suffix: str = "") -> str:
 
 def _gcs_token() -> Optional[str]:
     """GCE/Cloud Run metadata token. None when running locally."""
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        return None
+    # Fast path: skip GCP metadata service check if we are not running on GCP
+    if not os.environ.get("K_SERVICE") and not os.environ.get("GOOGLE_CLOUD_PROJECT"):
+        return None
     try:
         import requests
         r = requests.get(
@@ -112,6 +125,9 @@ def _gcs_read(path: str) -> Optional[dict]:
                 return json.load(f)
         except Exception as e:
             log.warning(f"Failed to read local cache file {local_path}: {e}")
+
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        return None
 
     try:
         import requests
@@ -143,6 +159,9 @@ def _gcs_write(path: str, data: dict) -> bool:
     except Exception as e:
         log.warning(f"Failed to write local cache file {local_path}: {e}")
 
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        return True
+
     try:
         import requests
         tok = _gcs_token()
@@ -168,6 +187,8 @@ def _gcs_write(path: str, data: dict) -> bool:
 
 def _is_fresh(cached_at_iso: str, ttl_days: int) -> bool:
     """Check if a cached entry is still within its TTL window."""
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        return True
     try:
         cached_at = datetime.fromisoformat(cached_at_iso.replace("Z", "+00:00"))
         age = datetime.now(timezone.utc) - cached_at
@@ -216,6 +237,12 @@ def cached_fmp(endpoint: str, symbol: str, fetcher: Callable[[], Any],
             return cached.get("payload")
     else:
         _stats["force_refresh"] += 1
+
+    # If offline, we must never make live calls.
+    if os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        log.warning(f"FMP cache miss offline for {endpoint}/{symbol}. Returning None.")
+        _stats["misses"] += 1
+        return None
 
     # 2. Fetch live
     _stats["misses"] += 1
