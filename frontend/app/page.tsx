@@ -7,7 +7,7 @@ import { ThemeCard } from "./components/ThemeCard";
 import { DailyBriefing } from "./components/DailyBriefing";
 import { useRouter } from "next/navigation";
 
-const GCS_BASE = "";
+const GCS_BASE = "/api/gcs/scans";
 const GCS_FALLBACK = "/latest_global.json";
 const REGIONS = [
   { key: "sp500", label: "S&P 500" },
