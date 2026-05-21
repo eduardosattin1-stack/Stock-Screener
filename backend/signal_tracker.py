@@ -134,16 +134,26 @@ STOCK_HISTORY_PREFIX  = "stock_history"
 # ---------------------------------------------------------------------------
 
 def _gcs_token() -> Optional[str]:
-    """GCE/Cloud Run metadata token. None when running locally."""
+    """GCE/Cloud Run metadata token, with fallback to gcloud auth for local execution."""
     try:
         import requests
         r = requests.get(
             "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
             headers={"Metadata-Flavor": "Google"}, timeout=2,
         )
-        return r.json().get("access_token") if r.status_code == 200 else None
+        if r.status_code == 200:
+            return r.json().get("access_token")
+    except Exception:
+        pass
+        
+    try:
+        import subprocess, platform
+        cmd = "gcloud.cmd" if platform.system() == "Windows" else "gcloud"
+        proc = subprocess.run([cmd, "auth", "print-access-token"], capture_output=True, text=True, check=True)
+        return proc.stdout.strip()
     except Exception:
         return None
+
 
 
 def _gcs_read(path: str, default):
