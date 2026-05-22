@@ -82,6 +82,27 @@ interface Prediction {
   skew_25d?: number; pc_oi_ratio?: number;
   long_greeks?: { delta: number; gamma: number; theta: number; vega: number };
   short_greeks?: { delta: number; gamma: number; theta: number; vega: number };
+  // Paper-trading monetary fields (updated daily by reprice_open_contracts)
+  contract_size?: number;
+  entry_net_debit?: number;
+  entry_cost_basis?: number;
+  current_spread_value?: number;
+  current_contract_value?: number;
+  unrealized_pnl?: number;
+  unrealized_pnl_pct?: number;
+  spread_last_repriced?: string;
+  current_long_iv?: number;
+  current_short_iv?: number;
+  current_long_greeks?: { delta: number; gamma: number; theta: number; vega: number };
+  current_short_greeks?: { delta: number; gamma: number; theta: number; vega: number };
+  net_delta?: number;
+  net_theta?: number;
+  days_to_expiration?: number;
+  options_outcome?: string;
+  options_realized_pnl?: number;
+  hit_window_days?: number;
+  current_ivr?: number;
+  expiration?: string;
 }
 interface CycleSummary {
   cycle_id: string; archived_date: string;
@@ -1677,7 +1698,7 @@ function CyclesTab() {
       <Card style={{ marginBottom: 20 }}>
         <SH title={`Collecting Cycle ${state.collecting_cycle_id}`}
           icon={<Radio size={12}/>}
-          sub={`Day ${daysIntoCycle}/30 · ${collectingPreds.length} predictions captured so far`}/>
+          sub={`Day ${daysIntoCycle}/60 · ${collectingPreds.length} predictions captured so far`}/>
         {collectingPreds.length === 0 ? (
           <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
             No predictions in this cycle yet. New predictions enter as the model emits hit_prob &gt; 0 stocks.
@@ -1688,11 +1709,12 @@ function CyclesTab() {
               PREDICTIONS BY DECILE
             </div>
             <DecileBarChart distribution={liveDecileDist}/>
+            <PortfolioKPI predictions={collectingPreds}/>
             <div style={{ marginTop: 14, overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    {["Symbol", "Entry", "P20", "Dec", "Strength", "Days", "Current", "Max ↑", "Max ↓", "Status", "EV/contract", "IV", "Delta", "Skew"].map((h, i) => (
+                    {["Symbol", "Entry", "P20", "Dec", "Days", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "Entry IV", "Live IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
                       <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
                     ))}
                   </tr>
@@ -1716,7 +1738,7 @@ function CyclesTab() {
           sub="Click a card for the per-prediction breakdown"/>
         {archiveList.length === 0 ? (
           <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
-            No archived cycles yet. The first cycle archives ~58 days after open (30d collect + 28d fate window).
+            No archived cycles yet. The first cycle archives ~120 days after open (60d collect + 60d fate window).
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
@@ -1780,37 +1802,122 @@ function DecileBarChart({ distribution }: { distribution: Record<number, number>
   );
 }
 
+function PortfolioKPI({ predictions }: { predictions: Prediction[] }) {
+  const withSpread = predictions.filter(p => p.entry_cost_basis != null && p.entry_cost_basis > 0);
+  const totalCost = withSpread.reduce((s, p) => s + (p.entry_cost_basis || 0), 0);
+  const totalValue = withSpread.reduce((s, p) => s + (p.current_contract_value || p.entry_cost_basis || 0), 0);
+  const totalPnl = totalValue - totalCost;
+  const totalPnlPct = totalCost > 0 ? (totalPnl / totalCost) * 100 : 0;
+  const totalTheta = withSpread.reduce((s, p) => s + (p.net_theta || 0), 0);
+  const repriced = withSpread.filter(p => p.spread_last_repriced).length;
+  const lastRepriced = withSpread.reduce((latest, p) => {
+    const d = p.spread_last_repriced || "";
+    return d > latest ? d : latest;
+  }, "");
+  if (withSpread.length === 0) return null;
+  const kpiStyle: React.CSSProperties = { padding: "10px 14px", background: T.greenLight, borderRadius: 6, border: `1px solid ${T.greenBorder}`, textAlign: "center" as const };
+  const labelStyle: React.CSSProperties = { fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.08em" };
+  const valueStyle: React.CSSProperties = { fontSize: 18, fontWeight: 700, fontFamily: T.mono, marginTop: 4 };
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 10, marginBottom: 16 }}>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>CONTRACTS</div>
+        <div style={{ ...valueStyle, color: T.text }}>{withSpread.length}</div>
+      </div>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>TOTAL COST</div>
+        <div style={{ ...valueStyle, color: T.text }}>${totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+      </div>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>CURRENT VALUE</div>
+        <div style={{ ...valueStyle, color: T.text }}>${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+      </div>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>UNREALIZED P&L</div>
+        <div style={{ ...valueStyle, color: totalPnl >= 0 ? T.greenPos : T.red }}>
+          {totalPnl >= 0 ? "+" : ""}${totalPnl.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          <span style={{ fontSize: 11, fontWeight: 500, marginLeft: 4 }}>({totalPnlPct >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%)</span>
+        </div>
+      </div>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>DAILY θ DECAY</div>
+        <div style={{ ...valueStyle, color: totalTheta < 0 ? T.red : T.muted }}>
+          {totalTheta < 0 ? "" : "+"}${totalTheta.toFixed(0)}
+        </div>
+      </div>
+      <div style={kpiStyle}>
+        <div style={labelStyle}>REPRICED</div>
+        <div style={{ ...valueStyle, color: T.muted, fontSize: 13 }}>
+          {repriced}/{withSpread.length}
+          {lastRepriced && <div style={{ fontSize: 9, color: T.light, marginTop: 2 }}>{lastRepriced}</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PredictionRow({ p }: { p: Prediction }) {
-  const statusColor = p.outcome === "HIT" ? T.greenPos : p.outcome === "EXPIRED" ? T.red : T.muted;
   const evValue = p.ev_dollars;
   const evColor = evValue == null ? T.light : evValue > 0 ? T.greenPos : T.red;
+  const chgPct = p.entry_price > 0 ? ((p.current_price - p.entry_price) / p.entry_price) * 100 : 0;
+  const chgColor = chgPct > 0 ? T.greenPos : chgPct < 0 ? T.red : T.muted;
+  const pnl = p.unrealized_pnl;
+  const pnlPct = p.unrealized_pnl_pct;
+  const pnlColor = pnl == null ? T.muted : pnl > 0 ? T.greenPos : pnl < 0 ? T.red : T.muted;
+  const entryIv = p.iv_at_entry ?? p.long_iv;
+  const liveIv = p.current_long_iv;
+  const ivr = p.current_ivr ?? (entryIv && liveIv && entryIv > 0 ? Math.round((liveIv / entryIv) * 100) : null);
+  const ivrColor = ivr == null ? T.muted : ivr > 120 ? T.red : ivr < 80 ? T.greenPos : T.muted;
+  const delta = p.net_delta ?? p.current_long_greeks?.delta ?? p.long_greeks?.delta;
+  const theta = p.net_theta ?? p.current_long_greeks?.theta ?? p.long_greeks?.theta;
+  const dte = p.days_to_expiration;
+  const hwDays = p.hit_window_days ?? 60;
   return (
     <tr>
       <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{p.symbol}</td>
       <td style={{ ...td, textAlign: "right", color: T.muted }}>${p.entry_price.toFixed(2)}</td>
       <td style={{ ...td, textAlign: "right", color: T.purple, fontWeight: 600 }}>{(p.p20 * 100).toFixed(1)}%</td>
       <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
-      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>{p.signal_strength}</td>
-      <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}/28</td>
+      <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}/{hwDays}</td>
       <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
+      <td style={{ ...td, textAlign: "right", color: chgColor, fontWeight: 600 }}>
+        {chgPct >= 0 ? "+" : ""}{chgPct.toFixed(1)}%
+      </td>
       <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
         {p.max_high_observed_pct >= 0 ? "+" : ""}{p.max_high_observed_pct.toFixed(1)}%
       </td>
       <td style={{ ...td, textAlign: "right", color: p.max_drawdown_observed_pct < 0 ? T.red : T.muted, fontWeight: 600 }}>
         {p.max_drawdown_observed_pct.toFixed(1)}%
       </td>
-      <td style={{ ...td, textAlign: "right", color: statusColor, fontWeight: 600 }}>{p.outcome}</td>
       <td style={{ ...td, textAlign: "right", color: evColor, fontSize: 10 }}>
-        {evValue == null ? "—" : `${evValue >= 0 ? "+" : ""}$${evValue.toFixed(0)}`}
+        {evValue == null ? "\u2014" : `${evValue >= 0 ? "+" : ""}$${evValue.toFixed(0)}`}
       </td>
       <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-        {p.long_iv != null ? `${(p.long_iv * 100).toFixed(0)}%` : "—"}
+        {p.entry_cost_basis != null ? `$${p.entry_cost_basis.toFixed(0)}` : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: T.text, fontSize: 10 }}>
+        {p.current_contract_value != null ? `$${p.current_contract_value.toFixed(0)}` : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: pnlColor, fontWeight: 600, fontSize: 10 }}>
+        {pnl != null ? <>{`${pnl >= 0 ? "+" : ""}$${pnl.toFixed(0)}`}<span style={{ fontSize: 8, fontWeight: 400, marginLeft: 2, color: pnlColor }}>{pnlPct != null ? `(${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(0)}%)` : ""}</span></> : "\u2014"}
       </td>
       <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-        {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
+        {entryIv != null ? `${(entryIv * 100).toFixed(0)}%` : "\u2014"}
       </td>
-      <td style={{ ...td, textAlign: "right", color: p.skew_25d == null ? T.muted : p.skew_25d > 0 ? T.greenPos : T.red, fontSize: 10 }}>
-        {p.skew_25d != null ? (p.skew_25d > 0 ? `+${p.skew_25d.toFixed(3)}` : p.skew_25d.toFixed(3)) : "—"}
+      <td style={{ ...td, textAlign: "right", color: liveIv != null && entryIv != null && liveIv > entryIv ? T.red : T.greenPos, fontSize: 10 }}>
+        {liveIv != null ? `${(liveIv * 100).toFixed(0)}%` : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: ivrColor, fontSize: 10, fontWeight: ivr != null && (ivr > 120 || ivr < 80) ? 600 : 400 }}>
+        {ivr != null ? `${ivr}%` : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+        {delta != null ? delta.toFixed(2) : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+        {theta != null ? theta.toFixed(2) : "\u2014"}
+      </td>
+      <td style={{ ...td, textAlign: "right", color: dte != null && dte <= 7 ? T.red : T.muted, fontSize: 10, fontWeight: dte != null && dte <= 7 ? 700 : 400 }}>
+        {dte != null ? `${dte}d` : "\u2014"}
       </td>
     </tr>
   );
@@ -1900,7 +2007,7 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Max ↑", "Max ↓", "Outcome", "EV", "Realized", "IV", "Delta", "Skew"].map((h, i) => (
+              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Chg%", "Max ↑", "Max ↓", "Outcome", "EV", "Cost", "P&L", "IV", "Δ", "θ"].map((h, i) => (
                 <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
               ))}
             </tr>
@@ -1911,8 +2018,13 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
               .sort((a, b) => b.p20 - a.p20)
               .map(p => {
                 const statusColor = p.outcome === "HIT" ? T.greenPos : T.red;
-                const realized = p.realized_contract_pnl;
+                const realized = p.options_realized_pnl ?? p.realized_contract_pnl;
                 const realizedColor = realized == null ? T.light : realized >= 0 ? T.greenPos : T.red;
+                const chgPct = p.entry_price > 0 ? ((p.current_price - p.entry_price) / p.entry_price) * 100 : 0;
+                const chgColor = chgPct > 0 ? T.greenPos : chgPct < 0 ? T.red : T.muted;
+                const iv = p.current_long_iv ?? p.long_iv;
+                const delta = p.net_delta ?? p.current_long_greeks?.delta ?? p.long_greeks?.delta;
+                const theta = p.net_theta ?? p.current_long_greeks?.theta ?? p.long_greeks?.theta;
                 return (
                   <tr key={`${p.symbol}-${p.entry_date}`}>
                     <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{p.symbol}</td>
@@ -1921,6 +2033,9 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
                     <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}</td>
                     <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: chgColor, fontWeight: 600 }}>
+                      {chgPct >= 0 ? "+" : ""}{chgPct.toFixed(1)}%
+                    </td>
                     <td style={{ ...td, textAlign: "right", color: T.greenPos, fontWeight: 600 }}>
                       +{p.max_high_observed_pct.toFixed(1)}%
                     </td>
@@ -1931,17 +2046,20 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     <td style={{ ...td, textAlign: "right", color: p.ev_dollars == null ? T.light : p.ev_dollars > 0 ? T.greenPos : T.red }}>
                       {p.ev_dollars == null ? "—" : `${p.ev_dollars >= 0 ? "+" : ""}$${p.ev_dollars.toFixed(0)}`}
                     </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+                      {p.entry_cost_basis != null ? `$${p.entry_cost_basis.toFixed(0)}` : "—"}
+                    </td>
                     <td style={{ ...td, textAlign: "right", color: realizedColor, fontWeight: 600 }}>
                       {realized == null ? "—" : `${realized >= 0 ? "+" : ""}$${realized.toFixed(0)}`}
                     </td>
                     <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-                      {p.long_iv != null ? `${(p.long_iv * 100).toFixed(0)}%` : "—"}
+                      {iv != null ? `${(iv * 100).toFixed(0)}%` : "—"}
                     </td>
                     <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-                      {p.long_greeks?.delta != null ? p.long_greeks.delta.toFixed(2) : "—"}
+                      {delta != null ? delta.toFixed(2) : "—"}
                     </td>
-                    <td style={{ ...td, textAlign: "right", color: p.skew_25d == null ? T.muted : p.skew_25d > 0 ? T.greenPos : T.red, fontSize: 10 }}>
-                      {p.skew_25d != null ? (p.skew_25d > 0 ? `+${p.skew_25d.toFixed(3)}` : p.skew_25d.toFixed(3)) : "—"}
+                    <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+                      {theta != null ? theta.toFixed(2) : "—"}
                     </td>
                   </tr>
                 );

@@ -96,8 +96,8 @@ GCS_BUCKET = "screener-signals-carbonbridge"
 # Tracking parameters (locked May 2026)
 P20_INCLUSION       = 0.0      # Track every stock with hit_prob > this
 HIT_THRESHOLD_PCT   = 20.0     # +20% from entry counts as hit
-HIT_WINDOW_DAYS     = 28       # 4 weeks ≈ 20 trading days (legacy default)
-CYCLE_LENGTH_DAYS   = 30       # New cycle every 30 calendar days
+HIT_WINDOW_DAYS     = 60       # 60 calendar days — tracks through spread expiration
+CYCLE_LENGTH_DAYS   = 60       # New cycle every 60 calendar days
 STOCK_HISTORY_KEEP_DAYS = 365  # Trim chart history beyond this
 
 # Calibration baselines (from 21,650 OOS training samples, May 2026)
@@ -652,6 +652,18 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         by_signal[sig]["hit_rate"] = round(
             by_signal[sig]["hits"] / by_signal[sig]["n"], 4) if by_signal[sig]["n"] else 0
 
+    # Options portfolio P&L aggregates (1 contract per prediction)
+    total_cost_basis = sum(p.get("entry_cost_basis") or 0 for p in preds)
+    total_options_pnl = sum(p.get("options_realized_pnl") or 0 for p in preds
+                           if p.get("options_realized_pnl") is not None)
+    options_winners = sum(1 for p in preds if p.get("options_outcome") == "PROFIT")
+    options_losers = sum(1 for p in preds if p.get("options_outcome") == "LOSS")
+    options_with_outcome = options_winners + options_losers
+    options_win_rate = round(options_winners / options_with_outcome, 4) if options_with_outcome > 0 else None
+    options_return_pct = round(
+        (total_options_pnl / total_cost_basis) * 100, 4
+    ) if total_cost_basis > 0 else None
+
     is_60d_cycle = any(p.get("regime") == "60d" for p in preds)
 
     return {
@@ -669,6 +681,13 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         "aggregate_ev_dollars": round(sum_ev, 2),
         "aggregate_realized_pnl_dollars": round(sum_realized, 2),
         "ev_realization_ratio": round(sum_realized / sum_ev, 4) if sum_ev != 0 else 0,
+        # Paper-trading portfolio P&L
+        "total_cost_basis": round(total_cost_basis, 2),
+        "total_options_pnl": round(total_options_pnl, 2),
+        "options_win_rate": options_win_rate,
+        "options_return_pct": options_return_pct,
+        "options_winners": options_winners,
+        "options_losers": options_losers,
         "hit_rate_by_decile": by_decile,
         "hit_rate_by_signal_strength": by_signal,
         "calibration_check": _calibration_check(by_decile, is_60d=is_60d_cycle),
@@ -990,7 +1009,42 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         # Merge EV/spread block when present
         if ev_block is not None:
             pred.update(ev_block)
-
+            # Paper-trading monetary fields (1 contract per prediction)
+            pred["contract_size"] = 1
+            pred["entry_net_debit"] = ev_block.get("net_debit")
+            debit = ev_block.get("net_debit") or 0
+            pred["entry_cost_basis"] = round(debit * 100, 2) if debit > 0 else None
+            pred["current_spread_value"] = debit  # at entry, value = cost
+            pred["current_contract_value"] = pred["entry_cost_basis"]
+            pred["unrealized_pnl"] = 0.0
+            pred["unrealized_pnl_pct"] = 0.0
+            pred["spread_last_repriced"] = today_str
+            pred["current_long_iv"] = ev_block.get("long_iv")
+            pred["current_short_iv"] = ev_block.get("short_iv")
+            pred["current_long_greeks"] = ev_block.get("long_greeks")
+            pred["current_short_greeks"] = ev_block.get("short_greeks")
+            # Net greeks for the spread
+            lg = ev_block.get("long_greeks") or {}
+            sg = ev_block.get("short_greeks") or {}
+            pred["net_delta"] = round((lg.get("delta") or 0) - (sg.get("delta") or 0), 4) if lg.get("delta") is not None else None
+            pred["net_theta"] = round((lg.get("theta") or 0) - (sg.get("theta") or 0), 4) if lg.get("theta") is not None else None
+            pred["days_to_expiration"] = ev_block.get("dte")
+        else:
+            pred["contract_size"] = 1
+            pred["entry_net_debit"] = None
+            pred["entry_cost_basis"] = None
+            pred["current_spread_value"] = None
+            pred["current_contract_value"] = None
+            pred["unrealized_pnl"] = None
+            pred["unrealized_pnl_pct"] = None
+            pred["spread_last_repriced"] = None
+            pred["current_long_iv"] = None
+            pred["current_short_iv"] = None
+            pred["current_long_greeks"] = None
+            pred["current_short_greeks"] = None
+            pred["net_delta"] = None
+            pred["net_theta"] = None
+            pred["days_to_expiration"] = None
         new_preds.append(pred)
         already_in_cycle.add(sym)
 
@@ -1057,15 +1111,30 @@ def _process_open_predictions(stocks: list, today_str: str,
             p["current_price"] = round(current_price, 4)
             p["last_updated"] = today_str
 
+            # Update DTE countdown if spread has an expiration
+            exp = p.get("expiration")
+            if exp:
+                try:
+                    exp_date = datetime.strptime(exp, "%Y-%m-%d")
+                    p["days_to_expiration"] = max(0, (exp_date - datetime.strptime(today_str, "%Y-%m-%d")).days)
+                except Exception:
+                    pass
+
             # Closure: HIT if max-high ever touched +20%, else EXPIRED after window
             hit = p["max_high_observed_pct"] >= HIT_THRESHOLD_PCT
-            expired = days_in >= p.get("hit_window_days", 28)
+            expired = days_in >= p.get("hit_window_days", HIT_WINDOW_DAYS)
 
             if hit:
                 p["outcome"] = "HIT"
                 p["realized_return_pct"] = round(p["max_high_observed_pct"], 4)
                 p["realized_contract_pnl"] = p.get("max_gain_per_contract", 0)
                 p["resolution_date"] = today_str
+                # Options P&L at resolution
+                cost_basis = p.get("entry_cost_basis") or 0
+                if cost_basis > 0:
+                    p["options_outcome"] = "PROFIT"
+                    p["options_realized_pnl"] = round(
+                        p.get("max_gain_per_contract", 0), 2)
                 newly_closed.append(p)
                 closed_total += 1
                 continue
@@ -1075,8 +1144,14 @@ def _process_open_predictions(stocks: list, today_str: str,
                 # Spread payoff at expiration: full width payout if above short,
                 # linear in (price − long_strike) between strikes, 0 below long.
                 final_payoff = _spread_final_payoff(p, current_price)
+                cost_basis = p.get("entry_cost_basis") or 0
                 p["realized_contract_pnl"] = round(
                     final_payoff - (p.get("max_loss_per_contract", 0) or 0), 2)
+                # Options P&L at resolution
+                if cost_basis > 0:
+                    pnl = round(final_payoff - cost_basis, 2)
+                    p["options_outcome"] = "PROFIT" if pnl > 0 else "LOSS"
+                    p["options_realized_pnl"] = pnl
                 p["resolution_date"] = today_str
                 newly_closed.append(p)
                 closed_total += 1
@@ -1161,8 +1236,285 @@ def _update_stock_history(stocks: list, today_str: str):
 
 
 # ---------------------------------------------------------------------------
+# Contract repricing — daily mark-to-market via ThetaData API
+# ---------------------------------------------------------------------------
+
+def reprice_open_contracts():
+    """Reprice all open spread contracts using ThetaData EOD greeks.
+
+    Called daily by monitor_prices.py after market close. For each open
+    prediction with spread data (long_strike, short_strike, expiration),
+    fetches EOD greeks from ThetaData and updates:
+      - current_spread_value, current_contract_value
+      - unrealized_pnl, unrealized_pnl_pct
+      - current_long_iv, current_short_iv, current_ivr
+      - current_long_greeks, current_short_greeks
+      - net_delta, net_theta
+      - days_to_expiration
+    """
+    try:
+        from thetadata import ThetaClient
+    except ImportError:
+        log.warning("reprice_open_contracts: thetadata SDK not available, skipping")
+        return {"repriced": 0, "skipped": 0, "expired_settled": 0}
+
+    state = _load_cycle_state()
+    if not state:
+        return {"repriced": 0, "skipped": 0, "expired_settled": 0}
+
+    today = datetime.now()
+    today_str = today.strftime("%Y-%m-%d")
+    today_date = today.date()
+
+    cycles_to_process = []
+    if state.get("collecting_cycle_id"):
+        cycles_to_process.append(state["collecting_cycle_id"])
+    cycles_to_process.extend(state.get("resolving_cycle_ids", []))
+
+    # Gather all predictions that need repricing, grouped by symbol
+    # to minimize API calls (one call per symbol, not per contract)
+    symbol_preds: dict[str, list[tuple[str, dict]]] = {}  # {symbol: [(cycle_path, pred), ...]}
+    expired_preds: list[tuple[str, dict]] = []  # [(cycle_path, pred), ...]
+
+    for cycle_id in cycles_to_process:
+        open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+        open_data = _gcs_read(open_path, {"predictions": []})
+        if not isinstance(open_data, dict):
+            continue
+        preds = open_data.get("predictions", [])
+        for p in preds:
+            long_k = p.get("long_strike")
+            short_k = p.get("short_strike")
+            exp = p.get("expiration")
+            if not all([long_k, short_k, exp]):
+                continue
+
+            try:
+                exp_date = datetime.strptime(exp, "%Y-%m-%d")
+                dte = (exp_date - today).days
+            except Exception:
+                dte = -1
+
+            if dte < 0:
+                expired_preds.append((open_path, p))
+            else:
+                sym = p["symbol"]
+                symbol_preds.setdefault(sym, []).append((open_path, p))
+
+    repriced_total = 0
+    skipped_total = 0
+    expired_settled = 0
+
+    # Handle expired contracts first (no API calls needed)
+    paths_modified = set()
+    for open_path, p in expired_preds:
+        current_price = p.get("current_price", 0)
+        final_payoff = _spread_final_payoff(p, current_price)
+        cost_basis = p.get("entry_cost_basis") or 0
+        p["current_spread_value"] = 0.0
+        p["current_contract_value"] = round(final_payoff, 2)
+        p["unrealized_pnl"] = round(final_payoff - cost_basis, 2)
+        p["unrealized_pnl_pct"] = round(
+            ((final_payoff - cost_basis) / cost_basis) * 100, 2
+        ) if cost_basis > 0 else 0.0
+        p["days_to_expiration"] = 0
+        p["spread_last_repriced"] = today_str
+        p["options_outcome"] = "PROFIT" if final_payoff > cost_basis else "LOSS"
+        p["options_realized_pnl"] = p["unrealized_pnl"]
+        expired_settled += 1
+        paths_modified.add(open_path)
+
+    # Reprice live contracts via ThetaData (one API call per symbol)
+    if symbol_preds:
+        try:
+            client = ThetaClient(
+                email="carbonbridge.tech@gmail.com",
+                password="Sccp1985r",
+            )
+        except Exception as e:
+            log.error(f"reprice: ThetaData client init failed: {e}")
+            # Write back any expired changes we already made
+            _flush_modified_cycles(cycles_to_process, paths_modified)
+            return {"repriced": 0, "skipped": len(symbol_preds),
+                    "expired_settled": expired_settled}
+
+        import time as _time
+        for sym, pred_list in symbol_preds.items():
+            try:
+                _time.sleep(0.06)  # Rate limit: ~16 RPS (under 20 RPS limit)
+                greeks_df = client.option_history_greeks_eod(
+                    symbol=sym,
+                    expiration="*",
+                    start_date=today_date,
+                    end_date=today_date,
+                    strike="*",
+                    right="call",  # Bull call spread: both legs are calls
+                    strike_range=10,
+                )
+            except Exception as e:
+                log.debug(f"reprice {sym}: ThetaData fetch failed: {e}")
+                skipped_total += len(pred_list)
+                continue
+
+            if greeks_df is None or (hasattr(greeks_df, 'is_empty') and greeks_df.is_empty()):
+                skipped_total += len(pred_list)
+                continue
+
+            # Convert to pandas for easier manipulation
+            try:
+                df = greeks_df.to_pandas() if hasattr(greeks_df, 'to_pandas') else greeks_df
+            except Exception:
+                skipped_total += len(pred_list)
+                continue
+
+            if df.empty:
+                skipped_total += len(pred_list)
+                continue
+
+            # Filter out garbage IV
+            if 'iv_error' in df.columns:
+                df = df[(df['iv_error'] < 0.1)]
+            if 'implied_vol' in df.columns:
+                df = df[df['implied_vol'] > 0]
+
+            for open_path, p in pred_list:
+                long_k = float(p["long_strike"])
+                short_k = float(p["short_strike"])
+                exp = p["expiration"]
+
+                try:
+                    exp_date = datetime.strptime(exp, "%Y-%m-%d")
+                    dte = (exp_date - today).days
+                except Exception:
+                    dte = 0
+
+                # Find matching contracts by strike and expiration
+                # ThetaData stores strike as integer (cents) or float
+                # and expiration as datetime.date
+                exp_filter = df.copy()
+                if 'expiration' in exp_filter.columns:
+                    import pandas as pd
+                    exp_target = pd.to_datetime(exp).date() if isinstance(exp, str) else exp
+                    exp_filter = exp_filter[
+                        exp_filter['expiration'].apply(
+                            lambda x: x.date() if hasattr(x, 'date') else x
+                        ) == exp_target
+                    ]
+
+                if exp_filter.empty:
+                    skipped_total += 1
+                    continue
+
+                # Find long and short strike rows
+                strike_col = 'strike' if 'strike' in exp_filter.columns else None
+                if not strike_col:
+                    skipped_total += 1
+                    continue
+
+                long_row = exp_filter.iloc[
+                    (exp_filter[strike_col].astype(float) - long_k).abs().argsort()[:1]
+                ]
+                short_row = exp_filter.iloc[
+                    (exp_filter[strike_col].astype(float) - short_k).abs().argsort()[:1]
+                ]
+
+                if long_row.empty or short_row.empty:
+                    skipped_total += 1
+                    continue
+
+                # Verify strikes match closely
+                if abs(float(long_row.iloc[0][strike_col]) - long_k) > 1.0:
+                    skipped_total += 1
+                    continue
+                if abs(float(short_row.iloc[0][strike_col]) - short_k) > 1.0:
+                    skipped_total += 1
+                    continue
+
+                lr = long_row.iloc[0]
+                sr = short_row.iloc[0]
+
+                # Extract close prices for mark-to-market
+                long_close = float(lr.get('close', 0) or 0)
+                short_close = float(sr.get('close', 0) or 0)
+                spread_value = round(long_close - short_close, 4)
+                contract_value = round(spread_value * 100, 2)
+                cost_basis = p.get("entry_cost_basis") or 0
+
+                # Update mark-to-market
+                p["current_spread_value"] = spread_value
+                p["current_contract_value"] = contract_value
+                p["unrealized_pnl"] = round(contract_value - cost_basis, 2)
+                p["unrealized_pnl_pct"] = round(
+                    ((contract_value - cost_basis) / cost_basis) * 100, 2
+                ) if cost_basis > 0 else 0.0
+                p["days_to_expiration"] = dte
+                p["spread_last_repriced"] = today_str
+
+                # Update IV
+                long_iv = lr.get('implied_vol')
+                short_iv = sr.get('implied_vol')
+                if long_iv is not None and float(long_iv) > 0:
+                    p["current_long_iv"] = round(float(long_iv), 4)
+                if short_iv is not None and float(short_iv) > 0:
+                    p["current_short_iv"] = round(float(short_iv), 4)
+
+                # Compute IVR: current IV vs entry IV
+                entry_iv = p.get("iv_at_entry") or p.get("long_iv")
+                current_iv = p.get("current_long_iv")
+                if entry_iv and current_iv and entry_iv > 0:
+                    p["current_ivr"] = round((current_iv / entry_iv) * 100, 1)
+
+                # Update greeks
+                for prefix, row in [("current_long_greeks", lr),
+                                     ("current_short_greeks", sr)]:
+                    greeks = {}
+                    for g in ("delta", "gamma", "theta", "vega"):
+                        val = row.get(g)
+                        if val is not None:
+                            greeks[g] = round(float(val), 4)
+                    if greeks:
+                        p[prefix] = greeks
+
+                # Net greeks
+                lg = p.get("current_long_greeks") or {}
+                sg = p.get("current_short_greeks") or {}
+                if lg.get("delta") is not None and sg.get("delta") is not None:
+                    p["net_delta"] = round(lg["delta"] - sg["delta"], 4)
+                if lg.get("theta") is not None and sg.get("theta") is not None:
+                    p["net_theta"] = round(lg["theta"] - sg["theta"], 4)
+
+                repriced_total += 1
+                paths_modified.add(open_path)
+
+    # Flush all modified cycle files back to GCS
+    _flush_modified_cycles(cycles_to_process, paths_modified)
+
+    log.info(f"reprice_open_contracts: repriced={repriced_total}, "
+             f"skipped={skipped_total}, expired_settled={expired_settled}")
+    return {
+        "repriced": repriced_total,
+        "skipped": skipped_total,
+        "expired_settled": expired_settled,
+    }
+
+
+def _flush_modified_cycles(cycle_ids: list, paths_modified: set) -> None:
+    """Write back any cycle open.json files that were modified in-memory.
+
+    Predictions were modified in-place via dict references. We re-read the
+    same open.json (which returns the same dict objects from the in-memory
+    cache), then write them back to GCS.
+    """
+    for path in paths_modified:
+        data = _gcs_read(path, {"predictions": []})
+        if isinstance(data, dict):
+            _gcs_write(path, data)
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
+
 
 def update_from_scan(stocks: list, region: str, scan_date: str = None):
     """Update all tracking from a completed scan.
