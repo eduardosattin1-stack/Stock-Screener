@@ -864,18 +864,22 @@ def _save_rolling_health(health: dict) -> None:
 # Prediction tracking — entries, opens, closes
 # ---------------------------------------------------------------------------
 
-def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
-    """Append one prediction row to predictions.jsonl for the cycle.
-
-    GCS doesn't support native append, so we read-modify-write. The file is
-    small (≤30 rows per cycle in practice given P20≥25% gate), so cost is
-    negligible.
+def _append_predictions_jsonl_batch(cycle_id: str, rows: list[dict]) -> bool:
+    """Append multiple prediction rows to predictions.jsonl for the cycle in a single write.
+    Avoids sequential network operations to GCS.
     """
+    if not rows:
+        return True
     path = f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl"
     existing = _gcs_read_text(path, "")
-    new_line = json.dumps(row, default=str)
-    body = existing + ("\n" if existing and not existing.endswith("\n") else "") + new_line + "\n"
+    new_lines = "\n".join(json.dumps(row, default=str) for row in rows)
+    body = existing + ("\n" if existing and not existing.endswith("\n") else "") + new_lines + "\n"
     return _gcs_write(path, body, content_type="text/plain")
+
+
+def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
+    """Append one prediction row to predictions.jsonl for the cycle (wrapper around batch helper)."""
+    return _append_predictions_jsonl_batch(cycle_id, [row])
 
 
 def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
@@ -910,6 +914,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
     new_count = 0
     skipped_no_price = 0
     no_ev_count = 0
+    new_preds = []
 
     for s in stocks:
         p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
@@ -986,16 +991,16 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         if ev_block is not None:
             pred.update(ev_block)
 
-        # Append to immutable JSONL (audit trail) and to open.json (active state)
-        if _append_prediction_jsonl(cycle_id, pred):
-            open_preds.append(pred)
-            new_count += 1
-            already_in_cycle.add(sym)
-        else:
-            log.warning(f"  Failed to append prediction for {sym}")
+        new_preds.append(pred)
+        already_in_cycle.add(sym)
 
-    if new_count > 0:
-        _gcs_write(open_path, {"predictions": open_preds})
+    if new_preds:
+        if _append_predictions_jsonl_batch(cycle_id, new_preds):
+            open_preds.extend(new_preds)
+            new_count = len(new_preds)
+            _gcs_write(open_path, {"predictions": open_preds})
+        else:
+            log.warning(f"  Failed to append batch of {len(new_preds)} predictions")
 
     return new_count, no_ev_count
 
@@ -1028,6 +1033,7 @@ def _process_open_predictions(stocks: list, today_str: str,
             continue
 
         updated = []
+        newly_closed = []
         for p in preds:
             sym = p["symbol"]
             entry_price = p["entry_price"]
@@ -1060,8 +1066,7 @@ def _process_open_predictions(stocks: list, today_str: str,
                 p["realized_return_pct"] = round(p["max_high_observed_pct"], 4)
                 p["realized_contract_pnl"] = p.get("max_gain_per_contract", 0)
                 p["resolution_date"] = today_str
-                # Re-append final state to JSONL so the audit trail has the close
-                _append_prediction_jsonl(cycle_id, p)
+                newly_closed.append(p)
                 closed_total += 1
                 continue
             if expired:
@@ -1073,7 +1078,7 @@ def _process_open_predictions(stocks: list, today_str: str,
                 p["realized_contract_pnl"] = round(
                     final_payoff - (p.get("max_loss_per_contract", 0) or 0), 2)
                 p["resolution_date"] = today_str
-                _append_prediction_jsonl(cycle_id, p)
+                newly_closed.append(p)
                 closed_total += 1
                 continue
 
@@ -1081,6 +1086,8 @@ def _process_open_predictions(stocks: list, today_str: str,
             updated.append(p)
             open_total += 1
 
+        if newly_closed:
+            _append_predictions_jsonl_batch(cycle_id, newly_closed)
         _gcs_write(open_path, {"predictions": updated})
 
     return closed_total, open_total
