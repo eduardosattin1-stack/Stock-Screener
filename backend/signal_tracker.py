@@ -96,7 +96,7 @@ GCS_BUCKET = "screener-signals-carbonbridge"
 # Tracking parameters (locked May 2026)
 P20_INCLUSION       = 0.0      # Track every stock with hit_prob > this
 HIT_THRESHOLD_PCT   = 20.0     # +20% from entry counts as hit
-HIT_WINDOW_DAYS     = 28       # 4 weeks ≈ 20 trading days
+HIT_WINDOW_DAYS     = 28       # 4 weeks ≈ 20 trading days (legacy default)
 CYCLE_LENGTH_DAYS   = 30       # New cycle every 30 calendar days
 STOCK_HISTORY_KEEP_DAYS = 365  # Trim chart history beyond this
 
@@ -104,20 +104,44 @@ STOCK_HISTORY_KEEP_DAYS = 365  # Trim chart history beyond this
 # D10 should hit ~22.3%, D1 ~1.1%. We track this every cycle to detect drift.
 D10_CALIBRATION_HIT_RATE = 0.223
 D1_CALIBRATION_HIT_RATE  = 0.011
+KILL_SWITCH_THRESHOLD    = 0.10
+
+# Calibration baselines: 30d/legacy (from 21,650 OOS samples, May 2026)
+D10_CALIBRATION_HIT_RATE_30D = 0.223
+D1_CALIBRATION_HIT_RATE_30D  = 0.011
+KILL_SWITCH_THRESHOLD_30D    = 0.10
+
+# Calibration baselines: 60d (from v3 model calibration, May 2026)
+D10_CALIBRATION_HIT_RATE_60D = 0.832
+D1_CALIBRATION_HIT_RATE_60D  = 0.015
+KILL_SWITCH_THRESHOLD_60D    = 0.40
 
 # Kill-switch parameters: if the rolling 90-day D10 hit rate drops below the
 # threshold, the model has degraded materially and needs retraining.
-KILL_SWITCH_THRESHOLD       = 0.10
 KILL_SWITCH_WINDOW_DAYS     = 90
 
-# Calibrated probability ladder multipliers (21,650 OOS samples)
+# Calibrated probability ladder multipliers (30d / legacy)
 P5_MULT  = 3.41
 P10_MULT = 2.29
 P15_MULT = 1.49
 
-# Synthesized spread structure
+# Calibrated probability ladder multipliers (60d regime)
+P5_MULT_60D  = 2.44
+P10_MULT_60D = 1.85
+P15_MULT_60D = 1.35
+P5_CAP_60D   = 0.98
+P10_CAP_60D  = 0.95
+P15_CAP_60D  = 0.90
+
+# Synthesized spread structure (30d / legacy)
 SYNTH_SHORT_OFFSET = 0.10    # Short call strike at +10% from spot
 SYNTH_DTE_DAYS     = 30
+
+# Synthesized spread structure (60d regime)
+SYNTH_SHORT_OFFSET_60D = 0.20 # Short call strike at +20% from spot
+SYNTH_DTE_DAYS_60D     = 60
+
+# IV estimation bounds
 IV_FACTOR_MIN      = 0.15    # Floor on debit/width ratio
 IV_FACTOR_MAX      = 0.50    # Ceiling on debit/width ratio
 IV_FACTOR_SCALE    = 0.65    # Multiplier on annualized IV
@@ -254,17 +278,19 @@ def _interpolate_p(move_pct: float, ladder: list) -> float:
     return ladder[-1][1]
 
 
-def calculate_spread_ev(stock: dict) -> Optional[dict]:
+def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
     """Compute the deployable options-spread EV for a P20-qualified stock.
 
     Mirrors TradierOptionsCard v3 exactly: uses live tradier_spread when
-    present, else synthesizes a 30-DTE bull call spread (ATM long, +10% short)
+    present, else synthesizes a bull call spread (ATM long, short at offset)
     with debit estimated from current IV.
 
     Returns a dict with all spread components and EV calculation, or None if
     not computable (no price, no P20, can't construct strikes, or spot < $1).
     """
-    p20 = stock.get("hit_prob") or 0
+    p20 = stock.get("hit_prob_60d") if is_60d else stock.get("hit_prob")
+    if p20 is None:
+        p20 = stock.get("hit_prob") or 0
     spot = stock.get("price") or 0
     if p20 <= 0 or spot <= 0:
         return None
@@ -274,13 +300,21 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
         return None
 
     # Calibrated probability ladder
-    p5  = min(p20 * P5_MULT,  0.80)
-    p10 = min(p20 * P10_MULT, 0.65)
-    p15 = min(p20 * P15_MULT, 0.50)
+    if is_60d:
+        p5  = min(p20 * P5_MULT_60D,  P5_CAP_60D)
+        p10 = min(p20 * P10_MULT_60D, P10_CAP_60D)
+        p15 = min(p20 * P15_MULT_60D, P15_CAP_60D)
+    else:
+        p5  = min(p20 * P5_MULT,  0.80)
+        p10 = min(p20 * P10_MULT, 0.65)
+        p15 = min(p20 * P15_MULT, 0.50)
     ladder = [(5.0, p5), (10.0, p10), (15.0, p15), (20.0, p20)]
 
     # Spread structure: live or synthesized
     live_sp = stock.get("options_spread")
+    synth_dte = SYNTH_DTE_DAYS_60D if is_60d else SYNTH_DTE_DAYS
+    synth_short_offset = SYNTH_SHORT_OFFSET_60D if is_60d else SYNTH_SHORT_OFFSET
+
     if live_sp and isinstance(live_sp, dict) and live_sp.get("long_strike") is not None:
         sp = {
             "spot": float(live_sp.get("spot", spot)),
@@ -294,7 +328,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
             "break_even_price": float(live_sp["break_even_price"]),
             "break_even_move_pct": float(live_sp["break_even_move_pct"]),
             "expiration": live_sp.get("expiration"),
-            "dte": int(live_sp.get("dte", SYNTH_DTE_DAYS)),
+            "dte": int(live_sp.get("dte", synth_dte)),
             "long_greeks": live_sp.get("long_greeks"),
             "short_greeks": live_sp.get("short_greeks"),
             "long_iv": live_sp.get("long_iv"),
@@ -303,7 +337,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
         is_live = True
     else:
         long_strike = _round_strike(spot)
-        short_strike = _round_strike(spot * (1.0 + SYNTH_SHORT_OFFSET))
+        short_strike = _round_strike(spot * (1.0 + synth_short_offset))
         if short_strike <= long_strike:
             return None
         width = short_strike - long_strike
@@ -316,7 +350,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
         max_loss = net_debit * 100
         be_price = long_strike + net_debit
         be_pct = ((be_price - spot) / spot) * 100
-        exp = datetime.now() + timedelta(days=SYNTH_DTE_DAYS)
+        exp = datetime.now() + timedelta(days=synth_dte)
         while exp.weekday() != 4:  # Friday
             exp += timedelta(days=1)
         sp = {
@@ -331,7 +365,7 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
             "break_even_price": be_price,
             "break_even_move_pct": be_pct,
             "expiration": exp.strftime("%Y-%m-%d"),
-            "dte": SYNTH_DTE_DAYS,
+            "dte": synth_dte,
             "long_greeks": None,
             "short_greeks": None,
             "long_iv": None,
@@ -390,25 +424,43 @@ def calculate_spread_ev(stock: dict) -> Optional[dict]:
 # Decile / signal-strength bucketing (matches frontend)
 # ---------------------------------------------------------------------------
 
-def _decile(p20: float) -> int:
-    """OOS-calibrated decile thresholds. Matches P20Card v2."""
-    if p20 >= 0.17: return 10
-    if p20 >= 0.07: return 9
-    if p20 >= 0.05: return 8
-    if p20 >= 0.03: return 7
-    if p20 >= 0.02: return 6
-    if p20 >= 0.013: return 5
-    if p20 >= 0.009: return 4
-    if p20 >= 0.006: return 3
-    if p20 >= 0.004: return 2
-    return 1
+def _decile(p20: float, is_60d: bool = False) -> int:
+    """OOS-calibrated decile thresholds."""
+    if is_60d:
+        if p20 >= 0.57808: return 10
+        if p20 >= 0.50809: return 9
+        if p20 >= 0.46325: return 8
+        if p20 >= 0.39994: return 7
+        if p20 >= 0.33742: return 6
+        if p20 >= 0.28662: return 5
+        if p20 >= 0.26955: return 4
+        if p20 >= 0.21729: return 3
+        if p20 >= 0.21060: return 2
+        return 1
+    else:
+        if p20 >= 0.17: return 10
+        if p20 >= 0.07: return 9
+        if p20 >= 0.05: return 8
+        if p20 >= 0.03: return 7
+        if p20 >= 0.02: return 6
+        if p20 >= 0.013: return 5
+        if p20 >= 0.009: return 4
+        if p20 >= 0.006: return 3
+        if p20 >= 0.004: return 2
+        return 1
 
 
-def _signal_strength(p20: float) -> str:
-    if p20 >= 0.15: return "STRONG"
-    if p20 >= 0.08: return "MODERATE"
-    if p20 >= 0.03: return "MILD"
-    return "WEAK"
+def _signal_strength(p20: float, is_60d: bool = False) -> str:
+    if is_60d:
+        if p20 >= 0.55: return "STRONG"
+        if p20 >= 0.40: return "MODERATE"
+        if p20 >= 0.25: return "MILD"
+        return "WEAK"
+    else:
+        if p20 >= 0.15: return "STRONG"
+        if p20 >= 0.08: return "MODERATE"
+        if p20 >= 0.03: return "MILD"
+        return "WEAK"
 
 
 # ---------------------------------------------------------------------------
@@ -505,15 +557,23 @@ def _attempt_archive_resolving_cycles(state: dict, today_str: str) -> dict:
 def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
     """Read the immutable predictions.jsonl for the cycle and roll up stats."""
     raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
-    preds = []
+    latest_by_key = {}
     for line in raw.splitlines():
         line = line.strip()
         if not line:
             continue
         try:
-            preds.append(json.loads(line))
+            row = json.loads(line)
         except Exception:
             continue
+        key = (row.get("symbol"), row.get("entry_date"))
+        existing = latest_by_key.get(key)
+        if existing is None:
+            latest_by_key[key] = row
+        elif existing.get("outcome") == "OPEN" and row.get("outcome") != "OPEN":
+            latest_by_key[key] = row
+
+    preds = list(latest_by_key.values())
 
     if not preds:
         return {
@@ -579,6 +639,8 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         by_signal[sig]["hit_rate"] = round(
             by_signal[sig]["hits"] / by_signal[sig]["n"], 4) if by_signal[sig]["n"] else 0
 
+    is_60d_cycle = any(p.get("regime") == "60d" for p in preds)
+
     return {
         "cycle_id": cycle_id,
         "archived_date": today_str,
@@ -596,38 +658,49 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         "ev_realization_ratio": round(sum_realized / sum_ev, 4) if sum_ev != 0 else 0,
         "hit_rate_by_decile": by_decile,
         "hit_rate_by_signal_strength": by_signal,
-        "calibration_check": _calibration_check(by_decile),
+        "calibration_check": _calibration_check(by_decile, is_60d=is_60d_cycle),
         "predictions": preds,
     }
 
 
-def _calibration_check(by_decile: dict) -> dict:
+def _calibration_check(by_decile: dict, is_60d: bool = False) -> dict:
     """Compare observed D10 and D1 hit rates against the training baseline.
-    Healthy: D10 hit rate well above D1, ideally near baseline 22.3% / 1.1%.
+    Healthy: D10 hit rate well above D1, ideally near baseline.
     Returns metrics suitable for a UI calibration card."""
     d10 = by_decile.get(10, {})
     d1 = by_decile.get(1, {})
     d10_hr = d10.get("hit_rate", 0)
     d1_hr = d1.get("hit_rate", 0)
     odds_ratio = (d10_hr / d1_hr) if d1_hr > 0 else None
-    baseline_odds = D10_CALIBRATION_HIT_RATE / D1_CALIBRATION_HIT_RATE
+
+    if is_60d:
+        base_d10 = D10_CALIBRATION_HIT_RATE_60D
+        base_d1 = D1_CALIBRATION_HIT_RATE_60D
+        kill_threshold = KILL_SWITCH_THRESHOLD_60D
+        note = "D10 must exceed kill-switch threshold (40%) and ideally track the 83.2% baseline. Sample size <5 in D10 -> unstable."
+    else:
+        base_d10 = D10_CALIBRATION_HIT_RATE_30D
+        base_d1 = D1_CALIBRATION_HIT_RATE_30D
+        kill_threshold = KILL_SWITCH_THRESHOLD_30D
+        note = "D10 must exceed kill-switch threshold (10%) and ideally track the 22.3% baseline. Sample size <5 in D10 -> unstable."
+
+    baseline_odds = base_d10 / base_d1 if base_d1 > 0 else 20.0
 
     # Health flag: D10 must remain well above the kill switch threshold AND
     # well above D1. If D10 < kill switch threshold, the model has degraded.
-    healthy = d10.get("n", 0) >= 5 and d10_hr >= KILL_SWITCH_THRESHOLD
+    healthy = d10.get("n", 0) >= 5 and d10_hr >= kill_threshold
     return {
         "d10_hit_rate": round(d10_hr, 4),
         "d10_n": d10.get("n", 0),
         "d1_hit_rate": round(d1_hr, 4),
         "d1_n": d1.get("n", 0),
-        "d10_baseline": D10_CALIBRATION_HIT_RATE,
-        "d1_baseline": D1_CALIBRATION_HIT_RATE,
+        "d10_baseline": base_d10,
+        "d1_baseline": base_d1,
         "observed_odds_ratio": round(odds_ratio, 2) if odds_ratio else None,
         "baseline_odds_ratio": round(baseline_odds, 2),
-        "kill_switch_threshold": KILL_SWITCH_THRESHOLD,
+        "kill_switch_threshold": kill_threshold,
         "healthy": healthy,
-        "note": "D10 must exceed kill-switch threshold (10%) and ideally "
-                "track the 22.3% baseline. Sample size <5 in D10 → unstable.",
+        "note": note,
     }
 
 
@@ -642,12 +715,11 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     Reads predictions.jsonl across all known cycles (collecting + resolving +
     most-recent archived). Only counts predictions whose ENTRY date is within
     the 90-day window. For OPEN predictions, only count those whose fate window
-    has closed (entry_date <= today - 28d) so we don't artificially deflate
-    the rate with still-unresolved D10 setups.
+    has closed (entry_date <= today - hit_window_days) so we don't artificially
+    deflate the rate with still-unresolved setups.
     """
     today_dt = datetime.strptime(today_str, "%Y-%m-%d")
     window_start = today_dt - timedelta(days=KILL_SWITCH_WINDOW_DAYS)
-    resolution_cutoff = today_dt - timedelta(days=HIT_WINDOW_DAYS)
 
     cycle_ids = []
     if state.get("collecting_cycle_id"):
@@ -681,6 +753,9 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     d10_hits = 0
     d1_n = 0
     d1_hits = 0
+    total_in_window = 0
+    count_60d = 0
+
     for row in latest_by_key.values():
         entry_date_str = row.get("entry_date")
         if not entry_date_str:
@@ -691,9 +766,16 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
             continue
         if entry_dt < window_start:
             continue
-        # Skip not-yet-resolved predictions (entry_date > today - 28d AND outcome == OPEN)
+
+        total_in_window += 1
+        if row.get("regime") == "60d":
+            count_60d += 1
+
+        # Skip not-yet-resolved predictions
         outcome = row.get("outcome")
-        if outcome == "OPEN" and entry_dt > resolution_cutoff:
+        row_window_days = row.get("hit_window_days", 28)
+        row_res_cutoff = today_dt - timedelta(days=row_window_days)
+        if outcome == "OPEN" and entry_dt > row_res_cutoff:
             continue
 
         decile = row.get("decile")
@@ -710,9 +792,21 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     d10_hr = d10_hits / d10_n if d10_n > 0 else 0
     d1_hr = d1_hits / d1_n if d1_n > 0 else 0
 
+    # Determine dominant regime in the trailing window
+    is_60d_dominated = (count_60d > total_in_window / 2) if total_in_window > 0 else False
+
+    if is_60d_dominated:
+        baseline_d10 = D10_CALIBRATION_HIT_RATE_60D
+        baseline_d1 = D1_CALIBRATION_HIT_RATE_60D
+        kill_threshold = KILL_SWITCH_THRESHOLD_60D
+    else:
+        baseline_d10 = D10_CALIBRATION_HIT_RATE_30D
+        baseline_d1 = D1_CALIBRATION_HIT_RATE_30D
+        kill_threshold = KILL_SWITCH_THRESHOLD_30D
+
     # Kill-switch fires when D10 sample is ≥10 (statistical floor) AND hit
     # rate is below threshold. Below 10 D10 samples we don't have signal yet.
-    kill_switch_active = d10_n >= 10 and d10_hr < KILL_SWITCH_THRESHOLD
+    kill_switch_active = d10_n >= 10 and d10_hr < kill_threshold
 
     return {
         "computed_date": today_str,
@@ -723,9 +817,9 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
         "d1_n": d1_n,
         "d1_hits": d1_hits,
         "d1_hit_rate": round(d1_hr, 4),
-        "baseline_d10": D10_CALIBRATION_HIT_RATE,
-        "baseline_d1": D1_CALIBRATION_HIT_RATE,
-        "kill_switch_threshold": KILL_SWITCH_THRESHOLD,
+        "baseline_d10": baseline_d10,
+        "baseline_d1": baseline_d1,
+        "kill_switch_threshold": kill_threshold,
         "kill_switch_active": kill_switch_active,
         "status": "DEGRADED" if kill_switch_active
                   else "UNDER_SAMPLED" if d10_n < 10
@@ -772,8 +866,8 @@ def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
 
 
 def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
-                            region: str) -> tuple[int, int]:
-    """Process today's scan. For each stock with P20 >= 25% that isn't already
+                            region: str, is_60d_regime: bool = False) -> tuple[int, int]:
+    """Process today's scan. For each stock with P20 > 0 that isn't already
     being tracked in the collecting cycle, compute the EV and store a new
     prediction (both in immutable JSONL and the cycle's open.json).
 
@@ -805,11 +899,10 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
     no_ev_count = 0
 
     for s in stocks:
-        p20 = s.get("hit_prob") or 0
-        # Gate: any enriched stock (hit_prob > 0). This is the full ~30-50
-        # enriched stocks per scan, spanning all deciles D1-D10. Tracking the
-        # whole distribution is what lets us compute decile hit rates and
-        # validate that D10 keeps outperforming D1 by the expected ~20x.
+        p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
+        if p20 is None:
+            p20 = s.get("hit_prob") or 0.0
+        # Gate: any enriched stock (hit_prob > 0).
         if p20 <= P20_INCLUSION:
             continue
         sym = s.get("symbol")
@@ -820,11 +913,8 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             skipped_no_price += 1
             continue
 
-        # EV is OPTIONAL. Predictions still get tracked even when a spread
-        # can't be synthesized (very low price, no IV data). The decile-bucket
-        # hit-rate metric doesn't depend on EV — it only needs entry price
-        # and hit_prob.
-        ev_block = calculate_spread_ev(s)
+        # EV is OPTIONAL.
+        ev_block = calculate_spread_ev(s, is_60d=is_60d_regime)
         if ev_block is None:
             no_ev_count += 1
 
@@ -839,6 +929,14 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         if s.get("signal_compounder_global") == "QUALIFIED":
             modes.append("compounder_global")
 
+        hit_window_days = 60 if is_60d_regime else HIT_WINDOW_DAYS
+        fate_window_ends = (datetime.strptime(today_str, "%Y-%m-%d")
+                             + timedelta(days=hit_window_days)).strftime("%Y-%m-%d")
+
+        expected_dd = s.get("expected_dd_60d") if is_60d_regime else s.get("expected_dd_30d")
+        if expected_dd is not None:
+            expected_dd = round(float(expected_dd), 2)
+
         pred = {
             "symbol": sym,
             "entry_date": today_str,
@@ -846,11 +944,13 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "region": region,
             "entry_price": round(price, 4),
             "target_price": round(price * (1 + HIT_THRESHOLD_PCT / 100), 4),
-            "fate_window_ends": (datetime.strptime(today_str, "%Y-%m-%d")
-                                 + timedelta(days=HIT_WINDOW_DAYS)).strftime("%Y-%m-%d"),
+            "fate_window_ends": fate_window_ends,
+            "hit_window_days": hit_window_days,
+            "regime": "60d" if is_60d_regime else "30d",
+            "expected_dd": expected_dd,
             "p20": round(p20, 4),
-            "decile": _decile(p20),
-            "signal_strength": _signal_strength(p20),
+            "decile": _decile(p20, is_60d=is_60d_regime),
+            "signal_strength": _signal_strength(p20, is_60d=is_60d_regime),
             "mode_qualifications": modes,
             "composite": s.get("composite"),
             "sector": s.get("sector"),
@@ -869,8 +969,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "realized_return_pct": None,
             "realized_contract_pnl": None,
         }
-        # Merge EV/spread block when present; absent on rows that couldn't
-        # synthesize a spread.
+        # Merge EV/spread block when present
         if ev_block is not None:
             pred.update(ev_block)
 
@@ -941,7 +1040,7 @@ def _process_open_predictions(stocks: list, today_str: str,
 
             # Closure: HIT if max-high ever touched +20%, else EXPIRED after window
             hit = p["max_high_observed_pct"] >= HIT_THRESHOLD_PCT
-            expired = days_in >= HIT_WINDOW_DAYS
+            expired = days_in >= p.get("hit_window_days", 28)
 
             if hit:
                 p["outcome"] = "HIT"
@@ -1071,12 +1170,15 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
         log.error(f"signal_tracker cycle advance failed: {e}", exc_info=True)
         return  # don't proceed without a valid cycle state
 
+    # Detect 60-day model regime
+    is_60d_regime = any("hit_prob_60d" in s for s in stocks)
+
     # New predictions enter the current collecting cycle. We track every stock
     # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can
     # compute the full decile distribution and validate calibration.
     try:
         new_count, no_ev_count = _record_new_predictions(
-            stocks, today_str, state["collecting_cycle_id"], region)
+            stocks, today_str, state["collecting_cycle_id"], region, is_60d_regime)
         log.info(f"  Predictions (hit_prob>0): +{new_count} new "
                  f"({no_ev_count} without spread EV — price/IV missing)")
     except Exception as e:
