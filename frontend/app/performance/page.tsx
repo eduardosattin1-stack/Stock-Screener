@@ -307,6 +307,28 @@ const T = {
   muted: "var(--text-muted)",
 };
 
+function formatExpiration(expStr?: string): string {
+  if (!expStr) return "—";
+  const parts = expStr.split("-");
+  if (parts.length !== 3) return expStr;
+  const [year, month, day] = parts;
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const mIdx = parseInt(month, 10) - 1;
+  if (mIdx >= 0 && mIdx < 12) {
+    const dayInt = parseInt(day, 10);
+    return `${monthNames[mIdx]}${dayInt}`;
+  }
+  return expStr;
+}
+
+function formatSpread(longStrike?: number, shortStrike?: number, expiration?: string): string {
+  if (longStrike == null || shortStrike == null) return "—";
+  const ls = Number.isInteger(longStrike) ? longStrike.toString() : longStrike.toFixed(1);
+  const ss = Number.isInteger(shortStrike) ? shortStrike.toString() : shortStrike.toFixed(1);
+  const exp = formatExpiration(expiration);
+  return `${ls}/${ss} ${exp}`;
+}
+
 const SIG: Record<string, { color: string; bg: string; border: string }> = {
   "STRONG BUY": { color: T.purple, bg: "var(--purple-light)", border: T.purple },
   BUY:   { color: T.greenPos, bg: T.greenLight, border: T.greenBorder },
@@ -1714,8 +1736,8 @@ function CyclesTab() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    {["Symbol", "Entry", "P20", "Dec", "Days", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "Entry IV", "Live IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
-                      <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
+                    {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
+                      <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -1879,6 +1901,9 @@ function PredictionRow({ p }: { p: Prediction }) {
       <td style={{ ...td, textAlign: "right", color: T.purple, fontWeight: 600 }}>{(p.p20 * 100).toFixed(1)}%</td>
       <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
       <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}/{hwDays}</td>
+      <td style={{ ...td, textAlign: "left", color: T.muted, fontSize: 10, fontFamily: T.mono }}>
+        {formatSpread(p.long_strike, p.short_strike, p.expiration)}
+      </td>
       <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
       <td style={{ ...td, textAlign: "right", color: chgColor, fontWeight: 600 }}>
         {chgPct >= 0 ? "+" : ""}{chgPct.toFixed(1)}%
@@ -1901,11 +1926,18 @@ function PredictionRow({ p }: { p: Prediction }) {
       <td style={{ ...td, textAlign: "right", color: pnlColor, fontWeight: 600, fontSize: 10 }}>
         {pnl != null ? <>{`${pnl >= 0 ? "+" : ""}$${pnl.toFixed(0)}`}<span style={{ fontSize: 8, fontWeight: 400, marginLeft: 2, color: pnlColor }}>{pnlPct != null ? `(${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(0)}%)` : ""}</span></> : "\u2014"}
       </td>
-      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-        {entryIv != null ? `${(entryIv * 100).toFixed(0)}%` : "\u2014"}
-      </td>
-      <td style={{ ...td, textAlign: "right", color: liveIv != null && entryIv != null && liveIv > entryIv ? T.red : T.greenPos, fontSize: 10 }}>
-        {liveIv != null ? `${(liveIv * 100).toFixed(0)}%` : "\u2014"}
+      <td style={{ ...td, textAlign: "right", fontSize: 10, color: T.muted }}>
+        {entryIv != null || liveIv != null ? (
+          <>
+            {entryIv != null ? `${(entryIv * 100).toFixed(0)}%` : "—"}
+            {" / "}
+            <span style={{ color: liveIv != null && entryIv != null && liveIv > entryIv ? T.red : T.greenPos }}>
+              {liveIv != null ? `${(liveIv * 100).toFixed(0)}%` : "—"}
+            </span>
+          </>
+        ) : (
+          "—"
+        )}
       </td>
       <td style={{ ...td, textAlign: "right", color: ivrColor, fontSize: 10, fontWeight: ivr != null && (ivr > 120 || ivr < 80) ? 600 : 400 }}>
         {ivr != null ? `${ivr}%` : "\u2014"}
@@ -2007,8 +2039,8 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {["Symbol", "Entry", "P20", "Dec", "Days", "Final", "Chg%", "Max ↑", "Max ↓", "Outcome", "EV", "Cost", "P&L", "IV", "Δ", "θ"].map((h, i) => (
-                <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
+              {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Final", "Chg%", "Max ↑", "Max ↓", "Outcome", "EV", "Cost", "P&L", "IV", "Δ", "θ"].map((h, i) => (
+                <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -2022,7 +2054,8 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                 const realizedColor = realized == null ? T.light : realized >= 0 ? T.greenPos : T.red;
                 const chgPct = p.entry_price > 0 ? ((p.current_price - p.entry_price) / p.entry_price) * 100 : 0;
                 const chgColor = chgPct > 0 ? T.greenPos : chgPct < 0 ? T.red : T.muted;
-                const iv = p.current_long_iv ?? p.long_iv;
+                const entryIv = p.iv_at_entry ?? p.long_iv;
+                const liveIv = p.current_long_iv;
                 const delta = p.net_delta ?? p.current_long_greeks?.delta ?? p.long_greeks?.delta;
                 const theta = p.net_theta ?? p.current_long_greeks?.theta ?? p.long_greeks?.theta;
                 return (
@@ -2032,6 +2065,9 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     <td style={{ ...td, textAlign: "right", color: T.purple, fontWeight: 600 }}>{(p.p20 * 100).toFixed(1)}%</td>
                     <td style={{ ...td, textAlign: "right", color: T.muted }}>D{p.decile}</td>
                     <td style={{ ...td, textAlign: "right", color: T.text }}>{p.days_observed}</td>
+                    <td style={{ ...td, textAlign: "left", color: T.muted, fontSize: 10, fontFamily: T.mono }}>
+                      {formatSpread(p.long_strike, p.short_strike, p.expiration)}
+                    </td>
                     <td style={{ ...td, textAlign: "right", color: T.text }}>${p.current_price.toFixed(2)}</td>
                     <td style={{ ...td, textAlign: "right", color: chgColor, fontWeight: 600 }}>
                       {chgPct >= 0 ? "+" : ""}{chgPct.toFixed(1)}%
@@ -2052,8 +2088,18 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
                     <td style={{ ...td, textAlign: "right", color: realizedColor, fontWeight: 600 }}>
                       {realized == null ? "—" : `${realized >= 0 ? "+" : ""}$${realized.toFixed(0)}`}
                     </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
-                      {iv != null ? `${(iv * 100).toFixed(0)}%` : "—"}
+                    <td style={{ ...td, textAlign: "right", fontSize: 10, color: T.muted }}>
+                      {entryIv != null || liveIv != null ? (
+                        <>
+                          {entryIv != null ? `${(entryIv * 100).toFixed(0)}%` : "—"}
+                          {" / "}
+                          <span style={{ color: liveIv != null && entryIv != null && liveIv > entryIv ? T.red : T.greenPos }}>
+                            {liveIv != null ? `${(liveIv * 100).toFixed(0)}%` : "—"}
+                          </span>
+                        </>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
                       {delta != null ? delta.toFixed(2) : "—"}

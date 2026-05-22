@@ -1352,10 +1352,32 @@ def reprice_open_contracts():
             return {"repriced": 0, "skipped": len(symbol_preds),
                     "expired_settled": expired_settled}
 
-        import time as _time
-        for sym, pred_list in symbol_preds.items():
+        from threading import Lock
+        import concurrent.futures
+
+        class ThreadSafeRateLimiter:
+            def __init__(self, rps):
+                self.interval = 1.0 / rps
+                self.last_called = 0.0
+                self.lock = Lock()
+
+            def wait(self):
+                with self.lock:
+                    import time as _time
+                    now = _time.time()
+                    elapsed = now - self.last_called
+                    sleep_time = self.interval - elapsed
+                    if sleep_time > 0:
+                        _time.sleep(sleep_time)
+                        self.last_called = _time.time()
+                    else:
+                        self.last_called = now
+
+        limiter = ThreadSafeRateLimiter(16)
+
+        def fetch_greeks_for_symbol(sym):
+            limiter.wait()
             try:
-                _time.sleep(0.06)  # Rate limit: ~16 RPS (under 20 RPS limit)
                 greeks_df = client.option_history_greeks_eod(
                     symbol=sym,
                     expiration="*",
@@ -1365,15 +1387,26 @@ def reprice_open_contracts():
                     right="call",  # Bull call spread: both legs are calls
                     strike_range=10,
                 )
+                return sym, greeks_df, None
             except Exception as e:
-                err_str = str(e)
-                if "No data" in err_str or "NOT_FOUND" in err_str:
-                    log.debug(f"reprice {sym}: no EOD data for {_eod_date}")
-                else:
-                    log.warning(f"reprice {sym}: ThetaData fetch failed: {e}")
-                skipped_total += len(pred_list)
-                continue
+                return sym, None, e
 
+        log.info(f"reprice: fetching Greeks for {len(symbol_preds)} symbols using ThreadPoolExecutor...")
+        symbol_dfs = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(fetch_greeks_for_symbol, sym) for sym in symbol_preds.keys()]
+            for fut in concurrent.futures.as_completed(futures):
+                sym, greeks_df, err = fut.result()
+                if err is not None:
+                    err_str = str(err)
+                    if "No data" in err_str or "NOT_FOUND" in err_str:
+                        log.debug(f"reprice {sym}: no EOD data for {_eod_date}")
+                    else:
+                        log.warning(f"reprice {sym}: ThetaData fetch failed: {err}")
+                symbol_dfs[sym] = greeks_df
+
+        for sym, pred_list in symbol_preds.items():
+            greeks_df = symbol_dfs.get(sym)
             if greeks_df is None or (hasattr(greeks_df, 'is_empty') and greeks_df.is_empty()):
                 skipped_total += len(pred_list)
                 continue
