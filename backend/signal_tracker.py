@@ -134,10 +134,12 @@ P10_CAP_60D  = 0.95
 P15_CAP_60D  = 0.90
 
 # Synthesized spread structure (30d / legacy)
-SYNTH_SHORT_OFFSET = 0.10    # Short call strike at +10% from spot
+SYNTH_LONG_OFFSET  = 0.05    # Long call strike at +5% from spot
+SYNTH_SHORT_OFFSET = 0.20    # Short call strike at +20% from spot
 SYNTH_DTE_DAYS     = 30
 
 # Synthesized spread structure (60d regime)
+SYNTH_LONG_OFFSET_60D  = 0.05    # Long call strike at +5% from spot
 SYNTH_SHORT_OFFSET_60D = 0.20 # Short call strike at +20% from spot
 SYNTH_DTE_DAYS_60D     = 60
 
@@ -326,6 +328,7 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
     # Spread structure: live or synthesized
     live_sp = stock.get("options_spread")
     synth_dte = SYNTH_DTE_DAYS_60D if is_60d else SYNTH_DTE_DAYS
+    synth_long_offset = SYNTH_LONG_OFFSET_60D if is_60d else SYNTH_LONG_OFFSET
     synth_short_offset = SYNTH_SHORT_OFFSET_60D if is_60d else SYNTH_SHORT_OFFSET
 
     if live_sp and isinstance(live_sp, dict) and live_sp.get("long_strike") is not None:
@@ -349,7 +352,7 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
         }
         is_live = True
     else:
-        long_strike = _round_strike(spot)
+        long_strike = _round_strike(spot * (1.0 + synth_long_offset))
         short_strike = _round_strike(spot * (1.0 + synth_short_offset))
         if short_strike <= long_strike:
             return None
@@ -1289,12 +1292,14 @@ def reprice_open_contracts():
     # to minimize API calls (one call per symbol, not per contract)
     symbol_preds: dict[str, list[tuple[str, dict]]] = {}  # {symbol: [(cycle_path, pred), ...]}
     expired_preds: list[tuple[str, dict]] = []  # [(cycle_path, pred), ...]
+    loaded_cycles: dict[str, dict] = {}  # {path: open_data}
 
     for cycle_id in cycles_to_process:
         open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
         open_data = _gcs_read(open_path, {"predictions": []})
         if not isinstance(open_data, dict):
             continue
+        loaded_cycles[open_path] = open_data
         preds = open_data.get("predictions", [])
         for p in preds:
             long_k = p.get("long_strike")
@@ -1348,7 +1353,7 @@ def reprice_open_contracts():
         except Exception as e:
             log.error(f"reprice: ThetaData client init failed: {e}")
             # Write back any expired changes we already made
-            _flush_modified_cycles(cycles_to_process, paths_modified)
+            _flush_modified_cycles(loaded_cycles, paths_modified)
             return {"repriced": 0, "skipped": len(symbol_preds),
                     "expired_settled": expired_settled}
 
@@ -1385,7 +1390,6 @@ def reprice_open_contracts():
                     end_date=_eod_date,
                     strike="*",
                     right="call",  # Bull call spread: both legs are calls
-                    strike_range=10,
                 )
                 return sym, greeks_df, None
             except Exception as e:
@@ -1443,14 +1447,39 @@ def reprice_open_contracts():
                 # ThetaData stores strike as integer (cents) or float
                 # and expiration as datetime.date
                 exp_filter = df.copy()
-                if 'expiration' in exp_filter.columns:
+                if 'expiration' in exp_filter.columns and not exp_filter.empty:
                     import pandas as pd
-                    exp_target = pd.to_datetime(exp).date() if isinstance(exp, str) else exp
-                    exp_filter = exp_filter[
-                        exp_filter['expiration'].apply(
-                            lambda x: x.date() if hasattr(x, 'date') else x
-                        ) == exp_target
-                    ]
+                    def _to_date(val):
+                        if isinstance(val, str):
+                            return datetime.strptime(val.split()[0], "%Y-%m-%d").date()
+                        elif hasattr(val, 'date'):
+                            return val.date()
+                        elif hasattr(val, 'strftime'):
+                            return datetime.strptime(val.strftime("%Y-%m-%d"), "%Y-%m-%d").date()
+                        else:
+                            try:
+                                return pd.to_datetime(val).date()
+                            except Exception:
+                                return None
+
+                    target_date_obj = datetime.strptime(exp, "%Y-%m-%d").date()
+                    unique_exps = exp_filter['expiration'].dropna().unique()
+                    
+                    best_exp_val = None
+                    min_diff = 10**9
+                    for ue in unique_exps:
+                        ue_date = _to_date(ue)
+                        if ue_date:
+                            diff = abs((ue_date - target_date_obj).days)
+                            if diff < min_diff:
+                                min_diff = diff
+                                best_exp_val = ue
+                    
+                    if best_exp_val is not None:
+                        exp_filter = exp_filter[exp_filter['expiration'] == best_exp_val]
+                        matched_date = _to_date(best_exp_val)
+                        if matched_date:
+                            dte = max(0, (matched_date - today_date).days)
 
                 if exp_filter.empty:
                     skipped_total += 1
@@ -1462,24 +1491,42 @@ def reprice_open_contracts():
                     skipped_total += 1
                     continue
 
-                long_row = exp_filter.iloc[
-                    (exp_filter[strike_col].astype(float) - long_k).abs().argsort()[:1]
+                long_sorted = exp_filter.iloc[
+                    (exp_filter[strike_col].astype(float) - long_k).abs().argsort()
                 ]
-                short_row = exp_filter.iloc[
-                    (exp_filter[strike_col].astype(float) - short_k).abs().argsort()[:1]
+                short_sorted = exp_filter.iloc[
+                    (exp_filter[strike_col].astype(float) - short_k).abs().argsort()
                 ]
 
-                if long_row.empty or short_row.empty:
+                if long_sorted.empty or short_sorted.empty:
                     skipped_total += 1
                     continue
 
-                # Verify strikes match closely
-                if abs(float(long_row.iloc[0][strike_col]) - long_k) > 1.0:
-                    skipped_total += 1
-                    continue
-                if abs(float(short_row.iloc[0][strike_col]) - short_k) > 1.0:
-                    skipped_total += 1
-                    continue
+                matched_long_k = float(long_sorted.iloc[0][strike_col])
+                matched_short_k = float(short_sorted.iloc[0][strike_col])
+
+                if matched_short_k <= matched_long_k:
+                    valid_shorts = short_sorted[short_sorted[strike_col].astype(float) > matched_long_k]
+                    if not valid_shorts.empty:
+                        matched_short_k = float(valid_shorts.iloc[0][strike_col])
+                        short_row = valid_shorts.iloc[:1]
+                        long_row = long_sorted.iloc[:1]
+                    else:
+                        valid_longs = long_sorted[long_sorted[strike_col].astype(float) < matched_short_k]
+                        if not valid_longs.empty:
+                            matched_long_k = float(valid_longs.iloc[0][strike_col])
+                            long_row = valid_longs.iloc[:1]
+                            short_row = short_sorted.iloc[:1]
+                        else:
+                            skipped_total += 1
+                            continue
+                else:
+                    long_row = long_sorted.iloc[:1]
+                    short_row = short_sorted.iloc[:1]
+
+                # Update strikes in prediction dictionary to lock them in
+                p["long_strike"] = matched_long_k
+                p["short_strike"] = matched_short_k
 
                 lr = long_row.iloc[0]
                 sr = short_row.iloc[0]
@@ -1538,7 +1585,7 @@ def reprice_open_contracts():
                 paths_modified.add(open_path)
 
     # Flush all modified cycle files back to GCS
-    _flush_modified_cycles(cycles_to_process, paths_modified)
+    _flush_modified_cycles(loaded_cycles, paths_modified)
 
     log.info(f"reprice_open_contracts: repriced={repriced_total}, "
              f"skipped={skipped_total}, expired_settled={expired_settled}")
@@ -1549,17 +1596,11 @@ def reprice_open_contracts():
     }
 
 
-def _flush_modified_cycles(cycle_ids: list, paths_modified: set) -> None:
-    """Write back any cycle open.json files that were modified in-memory.
-
-    Predictions were modified in-place via dict references. We re-read the
-    same open.json (which returns the same dict objects from the in-memory
-    cache), then write them back to GCS.
-    """
+def _flush_modified_cycles(loaded_cycles: dict[str, dict], paths_modified: set) -> None:
+    """Write back any cycle open.json files that were modified in-memory."""
     for path in paths_modified:
-        data = _gcs_read(path, {"predictions": []})
-        if isinstance(data, dict):
-            _gcs_write(path, data)
+        if path in loaded_cycles:
+            _gcs_write(path, loaded_cycles[path])
 
 
 # ---------------------------------------------------------------------------

@@ -40,8 +40,9 @@ IV_HISTORY_PREFIX = "options/iv_history"
 SUGGESTIONS_PATH = "options/latest_suggestions.json"
 
 DTE_TARGET = 35
-DTE_TOLERANCE = 21
-TARGET_UPSIDE_PCT = 0.10
+DTE_TOLERANCE = 999  # Relaxed to always match closest expiration
+TARGET_LONG_PCT = 0.05
+TARGET_SHORT_PCT = 0.20
 
 IV_HISTORY_KEEP_DAYS = 90
 MIN_IV_SAMPLES_FOR_RANK = 20
@@ -301,15 +302,15 @@ def _compute_implied_earnings_move(contracts: list, spot: float) -> Optional[dic
 # Spread builder
 # ---------------------------------------------------------------------------
 def _pick_strikes_from_snapshot(contracts: list, spot: float) -> Optional[dict]:
-    """Pick ATM long call and ~10% OTM short call."""
+    """Pick ~5% OTM long call and ~20% OTM short call."""
     calls = [c for c in contracts
              if c.get("details", {}).get("contract_type") == "call"
              and c.get("details", {}).get("strike_price")]
     if len(calls) < 2:
         return None
 
-    long_target = spot * 1.0
-    short_target = spot * (1.0 + TARGET_UPSIDE_PCT)
+    long_target = spot * (1.0 + TARGET_LONG_PCT)
+    short_target = spot * (1.0 + TARGET_SHORT_PCT)
 
     long_call = min(calls, key=lambda o: abs(float(o["details"]["strike_price"]) - long_target))
     short_call = min(calls, key=lambda o: abs(float(o["details"]["strike_price"]) - short_target))
@@ -369,7 +370,8 @@ def _spread_economics(long_call: dict, short_call: dict, spot: float) -> dict:
 def enrich_stock(symbol: str, composite: float, hit_prob: float,
                  earnings_date: Optional[str] = None,
                  collect_term_structure: bool = True,
-                 collect_earnings_move: bool = True) -> dict:
+                 collect_earnings_move: bool = True,
+                 target_dte: int = 35) -> dict:
     """
     Called by screener_v6.py for each US stock with market cap > $1B.
     Returns dict with same keys as tradier_options.enrich_stock():
@@ -405,7 +407,8 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     today = datetime.now().date()
     # Fetch contracts expiring 14-100 days out — covers spread DTE + term structure
     exp_gte = (today + timedelta(days=14)).strftime("%Y-%m-%d")
-    exp_lte = (today + timedelta(days=100)).strftime("%Y-%m-%d")
+    # Fetch up to 100 days normally, but if target_dte is larger (e.g. 60), ensure exp_lte is large enough
+    exp_lte = (today + timedelta(days=max(100, target_dte + 40))).strftime("%Y-%m-%d")
 
     # ONE call — replaces Tradier's quote + expirations + chain(s)
     try:
@@ -441,14 +444,14 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if not expirations:
         return result
 
-    # Pick the expiration closest to DTE_TARGET for spread building
+    # Pick the expiration closest to target_dte for spread building
     chosen_exp = None
     chosen_diff = 10**9
     for exp in expirations:
         try:
             d = datetime.strptime(exp, "%Y-%m-%d").date()
             dte = (d - today).days
-            diff = abs(dte - DTE_TARGET)
+            diff = abs(dte - target_dte)
             if diff < chosen_diff:
                 chosen_diff = diff
                 chosen_exp = exp

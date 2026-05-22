@@ -4398,13 +4398,15 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                     if hasattr(s, 'days_to_earnings') and s.days_to_earnings is not None and s.days_to_earnings >= 0:
                         _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
                     
+                    _target_dte = 60 if getattr(s, "hit_prob_60d", 0.0) > 0.0 else 35
                     options_data = options_enrich_stock(
                         symbol=s.symbol,
                         composite=s.composite,
                         hit_prob=s.hit_prob,
                         earnings_date=_earnings_date,
                         collect_term_structure=True,
-                        collect_earnings_move=True
+                        collect_earnings_move=True,
+                        target_dte=_target_dte
                     )
                     if options_data:
                         s.options_iv_current = options_data.get("iv_current")

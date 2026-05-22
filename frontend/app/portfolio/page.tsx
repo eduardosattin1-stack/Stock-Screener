@@ -54,6 +54,26 @@ const ACT_STYLE: Record<string,{color:string;bg:string;border:string;pulse?:bool
 function getLocalPortfolio():Position[]{if(typeof window==="undefined")return[];try{return JSON.parse(localStorage.getItem("screener_portfolio")||"[]");}catch{return[];}}
 function clearLocalPortfolio(){if(typeof window!=="undefined")localStorage.removeItem("screener_portfolio");}
 
+function formatExpiration(expStr?: string): string {
+  if (!expStr) return "—";
+  const parts = expStr.split("-");
+  if (parts.length !== 3) return expStr;
+  const [year, month, day] = parts;
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const mIdx = parseInt(month, 10) - 1;
+  if (mIdx >= 0 && mIdx < 12) {
+    const dayInt = parseInt(day, 10);
+    return `${monthNames[mIdx]}${dayInt}`;
+  }
+  return expStr;
+}
+
+function formatSpreadStrikes(strikes?: string, expiration?: string): string {
+  if (!strikes) return "—";
+  const exp = formatExpiration(expiration);
+  return `${strikes} ${exp}`;
+}
+
 // API helpers — posts to /api/portfolio/* which proxies to Cloud Run
 async function readErrorBody(r:Response):Promise<string>{
   const t=await r.text().catch(()=>"");
@@ -410,8 +430,8 @@ export default function Portfolio(){
           <div style={{...cardStyle,padding:0,overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
               <thead><tr>
-                {["Symbol","Strategy","Exp","Strikes","Entry Debit","Current","P&L","Contracts","EV/Risk","IV",""].map((h,i)=>(
-                  <th key={h||i} style={{...thStyle,textAlign:i===0||i===1?"left":i===10?"center":"right"}}>{h}</th>
+                {["Symbol","Strategy","Spread","Entry Debit","Current","P&L","Contracts","EV/Risk","IV",""].map((h,i)=>(
+                  <th key={h||i} style={{...thStyle,textAlign:i===0||i===1||h==="Spread"?"left":i===9?"center":"right"}}>{h}</th>
                 ))}
               </tr></thead>
               <tbody>
@@ -424,8 +444,9 @@ export default function Portfolio(){
                     <><tr key={`opt-${p.symbol}-${p.strikes}`} style={{borderBottom:"1px solid var(--divider)",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
                       <td style={{padding:"10px 12px", fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)",fontSize:12}}>{p.symbol}</td>
                       <td style={{padding:"10px 12px", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.strategy}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.expiration}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.strikes}</td>
+                      <td style={{padding:"10px 12px", textAlign:"left", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+                        {formatSpreadStrikes(p.strikes, p.expiration)}
+                      </td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)",fontWeight:600}}>${p.entry_price.toFixed(2)}</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
@@ -443,7 +464,7 @@ export default function Portfolio(){
                       </td>
                     </tr>
                     {closingRow===`${p.symbol}-${p.strikes}`&&(
-                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={11} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
+                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={10} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
                         <ClosePositionForm
                           position={p}
                           currentPrice={0}
