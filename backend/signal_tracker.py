@@ -189,7 +189,7 @@ def _gcs_read(path: str, default):
             return default
         encoded_path = path.replace("/", "%2F")
         r = requests.get(
-            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
+            f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
             headers={"Authorization": f"Bearer {tok}"}, timeout=10,
         )
         if r.status_code == 200:
@@ -211,7 +211,7 @@ def _gcs_read_text(path: str, default: str = "") -> str:
             return default
         encoded_path = path.replace("/", "%2F")
         r = requests.get(
-            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
+            f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
             headers={"Authorization": f"Bearer {tok}"}, timeout=10,
         )
         if r.status_code == 200:
@@ -237,12 +237,23 @@ def _gcs_write(path: str, data, content_type: str = "application/json") -> bool:
         else:
             body = json.dumps(data, default=str).encode("utf-8")
         r = requests.post(
-            f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
+            f"https://www.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o",
             params={"uploadType": "media", "name": path},
             headers={"Authorization": f"Bearer {tok}", "Content-Type": content_type},
             data=body, timeout=15,
         )
         if r.status_code in (200, 201):
+            if not path.startswith(STOCK_HISTORY_PREFIX):
+                try:
+                    patch_url = f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{path.replace('/', '%2F')}"
+                    requests.patch(
+                        patch_url,
+                        headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json"},
+                        json={"cacheControl": "no-cache, no-store, max-age=0, must-revalidate"},
+                        timeout=10
+                    )
+                except Exception as patch_e:
+                    log.warning(f"GCS metadata patch for {path} failed: {patch_e}")
             return True
         log.warning(f"GCS write {path}: {r.status_code} {r.text[:200]}")
     except Exception as e:
