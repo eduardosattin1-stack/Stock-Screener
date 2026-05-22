@@ -32,7 +32,7 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "")
+MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "").strip()
 MASSIVE_BASE = "https://api.polygon.io"
 
 GCS_BUCKET = "screener-signals-carbonbridge"

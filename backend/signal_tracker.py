@@ -1184,7 +1184,7 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
         return  # don't proceed without a valid cycle state
 
     # Detect 60-day model regime
-    is_60d_regime = any("hit_prob_60d" in s for s in stocks)
+    is_60d_regime = any((s.get("hit_prob_60d") or 0.0) > 0.0 for s in stocks)
 
     # New predictions enter the current collecting cycle. We track every stock
     # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can

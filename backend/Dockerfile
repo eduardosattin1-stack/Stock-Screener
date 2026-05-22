@@ -14,5 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # but forgotten in the Dockerfile, silently leaving them out of the image.
 COPY *.py ./
 COPY strategy_allowlists/ ./strategy_allowlists/
-COPY time_model_v2.pkl ./
+COPY time_model_v2.pkl time_model_v3.pkl ./
 CMD ["python", "run_server.py"]

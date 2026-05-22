@@ -4,7 +4,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "")
+MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "").strip()
 MASSIVE_BASE = "https://api.polygon.io"
 
 def get_index_sma(symbol: str, window: int = 200, timespan: str = "day") -> float | None:
