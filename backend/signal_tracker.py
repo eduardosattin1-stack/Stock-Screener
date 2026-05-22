@@ -1266,6 +1266,20 @@ def reprice_open_contracts():
     today_str = today.strftime("%Y-%m-%d")
     today_date = today.date()
 
+    # ThetaData EOD data is only available after market close (~16:30 ET).
+    # Use the last business day that has published EOD data.
+    import datetime as _dt
+    _eod_date = today_date
+    # If it's a weekend, roll back to Friday
+    while _eod_date.weekday() >= 5:  # 5=Sat, 6=Sun
+        _eod_date -= _dt.timedelta(days=1)
+    # If market hasn't closed yet (before 21:00 UTC / 17:00 ET), use previous business day
+    if today.hour < 21:  # Cloud Run runs in UTC
+        _eod_date -= _dt.timedelta(days=1)
+        while _eod_date.weekday() >= 5:
+            _eod_date -= _dt.timedelta(days=1)
+    log.info(f"reprice: using EOD date {_eod_date} for ThetaData")
+
     cycles_to_process = []
     if state.get("collecting_cycle_id"):
         cycles_to_process.append(state["collecting_cycle_id"])
@@ -1345,14 +1359,18 @@ def reprice_open_contracts():
                 greeks_df = client.option_history_greeks_eod(
                     symbol=sym,
                     expiration="*",
-                    start_date=today_date,
-                    end_date=today_date,
+                    start_date=_eod_date,
+                    end_date=_eod_date,
                     strike="*",
                     right="call",  # Bull call spread: both legs are calls
                     strike_range=10,
                 )
             except Exception as e:
-                log.debug(f"reprice {sym}: ThetaData fetch failed: {e}")
+                err_str = str(e)
+                if "No data" in err_str or "NOT_FOUND" in err_str:
+                    log.debug(f"reprice {sym}: no EOD data for {_eod_date}")
+                else:
+                    log.warning(f"reprice {sym}: ThetaData fetch failed: {e}")
                 skipped_total += len(pred_list)
                 continue
 
