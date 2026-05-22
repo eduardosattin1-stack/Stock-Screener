@@ -187,8 +187,9 @@ def _gcs_read(path: str, default):
         tok = _gcs_token()
         if not tok:
             return default
+        encoded_path = path.replace("/", "%2F")
         r = requests.get(
-            f"https://storage.googleapis.com/{GCS_BUCKET}/{path}",
+            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
             headers={"Authorization": f"Bearer {tok}"}, timeout=10,
         )
         if r.status_code == 200:
@@ -208,8 +209,9 @@ def _gcs_read_text(path: str, default: str = "") -> str:
         tok = _gcs_token()
         if not tok:
             return default
+        encoded_path = path.replace("/", "%2F")
         r = requests.get(
-            f"https://storage.googleapis.com/{GCS_BUCKET}/{path}",
+            f"https://storage.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
             headers={"Authorization": f"Bearer {tok}"}, timeout=10,
         )
         if r.status_code == 200:
