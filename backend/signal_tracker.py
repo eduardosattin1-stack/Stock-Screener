@@ -791,6 +791,9 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     total_in_window = 0
     count_60d = 0
 
+    # Accumulators for all deciles 1 to 10
+    deciles_data = {d: {"n": 0, "hits": 0, "sum_probs": 0.0} for d in range(1, 11)}
+
     for row in latest_by_key.values():
         entry_date_str = row.get("entry_date")
         if not entry_date_str:
@@ -815,6 +818,17 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
 
         decile = row.get("decile")
         hit = outcome == "HIT" or (row.get("max_high_observed_pct", 0) >= HIT_THRESHOLD_PCT)
+
+        # Accumulate decile stats (if decile is valid)
+        if isinstance(decile, (int, float)) and 1 <= int(decile) <= 10:
+            d_idx = int(decile)
+            deciles_data[d_idx]["n"] += 1
+            if hit:
+                deciles_data[d_idx]["hits"] += 1
+            # Expected rate is mean predicted probability (p20/hit_prob)
+            prob = row.get("p20") or row.get("hit_prob") or row.get("hit_prob_60d") or 0.0
+            deciles_data[d_idx]["sum_probs"] += prob
+
         if decile == 10:
             d10_n += 1
             if hit:
@@ -839,9 +853,43 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
         baseline_d1 = D1_CALIBRATION_HIT_RATE_30D
         kill_threshold = KILL_SWITCH_THRESHOLD_30D
 
-    # Kill-switch fires when D10 sample is ≥10 (statistical floor) AND hit
-    # rate is below threshold. Below 10 D10 samples we don't have signal yet.
-    kill_switch_active = d10_n >= 10 and d10_hr < kill_threshold
+    # Format calibration dict for all deciles
+    decile_calib = {}
+    for d in range(1, 11):
+        dn = deciles_data[d]["n"]
+        dh = deciles_data[d]["hits"]
+        dsum = deciles_data[d]["sum_probs"]
+        decile_calib[str(d)] = {
+            "n": dn,
+            "hits": dh,
+            "observed_rate": round(dh / dn, 4) if dn > 0 else 0.0,
+            "expected_rate": round(dsum / dn, 4) if dn > 0 else 0.0,
+        }
+
+    # Check combined deciles 7-10 early so we have them precomputed
+    n_top = sum(deciles_data[d]["n"] for d in range(7, 11))
+    hits_top = sum(deciles_data[d]["hits"] for d in range(7, 11))
+    sum_probs_top = sum(deciles_data[d]["sum_probs"] for d in range(7, 11))
+    obs_top = hits_top / n_top if n_top > 0 else 0.0
+    exp_top = sum_probs_top / n_top if n_top > 0 else 0.0
+
+    # Dynamic status & kill switch determination:
+    # 1. If D10 has enough samples (>=10), use it (legacy/standard behavior)
+    # 2. If D10 is empty/low-sampled, check the highest active deciles (7 to 9) combined
+    # 3. If combined top deciles (7-10) have >= 10 samples, check if observed hit rate < expected * 0.5
+    kill_switch_active = False
+    status = "UNDER_SAMPLED"
+
+    if d10_n >= 10:
+        kill_switch_active = d10_hr < kill_threshold
+        status = "DEGRADED" if kill_switch_active else "HEALTHY"
+    else:
+        if n_top >= 10:
+            # If hit rate is less than half of what the model expected, flag it
+            kill_switch_active = obs_top < (exp_top * 0.5)
+            status = "DEGRADED" if kill_switch_active else "HEALTHY"
+        else:
+            status = "UNDER_SAMPLED"
 
     return {
         "computed_date": today_str,
@@ -856,9 +904,12 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
         "baseline_d1": baseline_d1,
         "kill_switch_threshold": kill_threshold,
         "kill_switch_active": kill_switch_active,
-        "status": "DEGRADED" if kill_switch_active
-                  else "UNDER_SAMPLED" if d10_n < 10
-                  else "HEALTHY",
+        "status": status,
+        "deciles": decile_calib,
+        "top_cohort_n": n_top,
+        "top_cohort_hits": hits_top,
+        "top_cohort_observed_rate": round(obs_top, 4),
+        "top_cohort_expected_rate": round(exp_top, 4),
     }
 
 
@@ -904,6 +955,224 @@ def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
     return _append_predictions_jsonl_batch(cycle_id, [row])
 
 
+def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bool) -> None:
+    """Fetch ThetaData EOD option quotes for new candidate stocks in parallel
+    and inject the options_spread directly into the stock dictionaries.
+    """
+    try:
+        from thetadata import ThetaClient
+    except ImportError:
+        log.warning("_enrich_stocks_with_theta_eod: ThetaData SDK not available, skipping EOD enrichment")
+        return
+
+    today = datetime.now()
+    today_date = today.date()
+    
+    # Compute the EOD business day
+    import datetime as _dt
+    _eod_date = today_date
+    while _eod_date.weekday() >= 5:
+        _eod_date -= _dt.timedelta(days=1)
+    if today.hour < 21:  # UTC
+        _eod_date -= _dt.timedelta(days=1)
+        while _eod_date.weekday() >= 5:
+            _eod_date -= _dt.timedelta(days=1)
+
+    symbols = [s["symbol"] for s in stocks if s.get("symbol") and (s.get("price") or 0) >= 1.0]
+    if not symbols:
+        return
+
+    try:
+        client = ThetaClient(
+            email="carbonbridge.tech@gmail.com",
+            password="Sccp1985r",
+        )
+    except Exception as e:
+        log.error(f"_enrich_stocks_with_theta_eod: ThetaData client init failed: {e}")
+        return
+
+    from threading import Lock
+    import concurrent.futures
+
+    class ThreadSafeRateLimiter:
+        def __init__(self, rps):
+            self.interval = 1.0 / rps
+            self.last_called = 0.0
+            self.lock = Lock()
+
+        def wait(self):
+            with self.lock:
+                import time as _time
+                now = _time.time()
+                elapsed = now - self.last_called
+                sleep_time = self.interval - elapsed
+                if sleep_time > 0:
+                    _time.sleep(sleep_time)
+                    self.last_called = _time.time()
+                else:
+                    self.last_called = now
+
+    limiter = ThreadSafeRateLimiter(16)
+
+    def fetch_greeks(sym):
+        limiter.wait()
+        try:
+            df = client.option_history_greeks_eod(
+                symbol=sym,
+                expiration="*",
+                start_date=_eod_date,
+                end_date=_eod_date,
+                strike="*",
+                right="call",
+            )
+            return sym, df, None
+        except Exception as e:
+            return sym, None, e
+
+    log.info(f"ThetaData: fetching EOD option chains for {len(symbols)} new candidates...")
+    symbol_dfs = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(fetch_greeks, sym) for sym in symbols]
+        for fut in concurrent.futures.as_completed(futures):
+            sym, df, err = fut.result()
+            if df is not None and not (hasattr(df, 'is_empty') and df.is_empty()):
+                symbol_dfs[sym] = df
+
+    # Match long/short legs and inject spreads
+    target_dte = 60 if is_60d else 30
+    long_offset = 0.05
+    short_offset = 0.20
+
+    for s in stocks:
+        sym = s["symbol"]
+        spot = s.get("price") or 0
+        df_greeks = symbol_dfs.get(sym)
+        if df_greeks is None or spot <= 0:
+            continue
+
+        try:
+            df = df_greeks.to_pandas() if hasattr(df_greeks, 'to_pandas') else df_greeks
+        except Exception:
+            continue
+
+        if df.empty:
+            continue
+
+        if 'iv_error' in df.columns:
+            df = df[df['iv_error'] < 0.1]
+        if 'implied_vol' in df.columns:
+            df = df[df['implied_vol'] > 0]
+        if df.empty:
+            continue
+
+        # Expiration matching
+        by_exp = {}
+        for idx, row in df.iterrows():
+            exp_val = row.get("expiration")
+            if exp_val:
+                by_exp.setdefault(str(exp_val), []).append(row)
+
+        expirations = sorted(by_exp.keys())
+        if not expirations:
+            continue
+
+        chosen_exp = None
+        chosen_diff = 10**9
+        for exp in expirations:
+            try:
+                date_str = exp.split()[0]
+                d = datetime.strptime(date_str, "%Y-%m-%d").date()
+                dte = (d - today_date).days
+                diff = abs(dte - target_dte)
+                if diff < chosen_diff:
+                    chosen_diff = diff
+                    chosen_exp = exp
+            except Exception:
+                continue
+
+        if not chosen_exp:
+            continue
+
+        # Get rows for chosen expiration
+        exp_df = df[df['expiration'] == chosen_exp]
+        strike_col = 'strike' if 'strike' in exp_df.columns else None
+        if not strike_col or exp_df.empty:
+            continue
+
+        long_k = spot * (1.0 + long_offset)
+        short_k = spot * (1.0 + short_offset)
+
+        # Match strikes
+        long_sorted = exp_df.iloc[(exp_df[strike_col].astype(float) - long_k).abs().argsort()]
+        short_sorted = exp_df.iloc[(exp_df[strike_col].astype(float) - short_k).abs().argsort()]
+
+        if long_sorted.empty or short_sorted.empty:
+            continue
+
+        matched_long_k = float(long_sorted.iloc[0][strike_col])
+        matched_short_k = float(short_sorted.iloc[0][strike_col])
+
+        if matched_short_k <= matched_long_k:
+            valid_shorts = short_sorted[short_sorted[strike_col].astype(float) > matched_long_k]
+            if not valid_shorts.empty:
+                matched_short_k = float(valid_shorts.iloc[0][strike_col])
+                short_row = valid_shorts.iloc[:1]
+                long_row = long_sorted.iloc[:1]
+            else:
+                valid_longs = long_sorted[long_sorted[strike_col].astype(float) < matched_short_k]
+                if not valid_longs.empty:
+                    matched_long_k = float(valid_longs.iloc[0][strike_col])
+                    long_row = valid_longs.iloc[:1]
+                    short_row = short_sorted.iloc[:1]
+                else:
+                    continue
+        else:
+            long_row = long_sorted.iloc[:1]
+            short_row = short_sorted.iloc[:1]
+
+        lr = long_row.iloc[0]
+        sr = short_row.iloc[0]
+
+        long_close = float(lr.get('close', 0) or 0)
+        short_close = float(sr.get('close', 0) or 0)
+        net_debit = round(long_close - short_close, 2)
+        if net_debit <= 0 or net_debit >= (matched_short_k - matched_long_k):
+            continue
+
+        width = matched_short_k - matched_long_k
+        max_gain = round((width - net_debit) * 100, 2)
+        max_loss = round(net_debit * 100, 2)
+        be_price = matched_long_k + net_debit
+        be_pct = ((be_price - spot) / spot) * 100
+
+        try:
+            exp_date = datetime.strptime(chosen_exp.split()[0], "%Y-%m-%d").date()
+            dte = (exp_date - today_date).days
+        except Exception:
+            dte = target_dte
+
+        # Structure matches Polygon/Massive spread block
+        s["options_spread"] = {
+            "spot": spot,
+            "long_strike": matched_long_k,
+            "short_strike": matched_short_k,
+            "long_mid": long_close,
+            "short_mid": short_close,
+            "net_debit": net_debit,
+            "max_gain_per_contract": max_gain,
+            "max_loss_per_contract": max_loss,
+            "break_even_price": be_price,
+            "break_even_move_pct": be_pct,
+            "expiration": chosen_exp.split()[0],
+            "dte": dte,
+            "long_greeks": {g: round(float(lr[g]), 4) for g in ("delta", "gamma", "theta", "vega") if lr.get(g) is not None},
+            "short_greeks": {g: round(float(sr[g]), 4) for g in ("delta", "gamma", "theta", "vega") if sr.get(g) is not None},
+            "long_iv": lr.get('implied_vol'),
+            "short_iv": sr.get('implied_vol'),
+        }
+        log.info(f"  ThetaData EOD Spread built for {sym}: {matched_long_k}/{matched_short_k}C @ {chosen_exp.split()[0]} (debit: ${net_debit:.2f})")
+
+
 def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
                             region: str, is_60d_regime: bool = False) -> tuple[int, int]:
     """Process today's scan. For each stock with P20 > 0 that isn't already
@@ -938,16 +1207,28 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
     no_ev_count = 0
     new_preds = []
 
+    # Filter candidate stocks to only those not already in the cycle and with P20 > 0
+    candidate_stocks = []
     for s in stocks:
         p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
         if p20 is None:
             p20 = s.get("hit_prob") or 0.0
-        # Gate: any enriched stock (hit_prob > 0).
         if p20 <= P20_INCLUSION:
             continue
         sym = s.get("symbol")
         if not sym or sym in already_in_cycle:
             continue
+        candidate_stocks.append(s)
+
+    # Fetch EOD spreads from ThetaData in parallel and inject into candidate_stocks
+    if candidate_stocks:
+        _enrich_stocks_with_theta_eod(candidate_stocks, today_str, is_60d_regime)
+
+    for s in candidate_stocks:
+        p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
+        if p20 is None:
+            p20 = s.get("hit_prob") or 0.0
+        sym = s.get("symbol")
         price = s.get("price") or 0
         if price <= 0:
             skipped_no_price += 1
@@ -1283,6 +1564,21 @@ def reprice_open_contracts():
             _eod_date -= _dt.timedelta(days=1)
     log.info(f"reprice: using EOD date {_eod_date} for ThetaData")
 
+    # Load 52-week IV ranks from the latest scans in GCS
+    iv_ranks = {}
+    for region in ("global", "nasdaq", "sp500"):
+        try:
+            scan_data = _gcs_read(f"scans/latest_{region}.json", {})
+            if scan_data:
+                stocks_list = scan_data.get("stocks", [])
+                for st in stocks_list:
+                    s_sym = st.get("symbol")
+                    s_ivr = st.get("options_iv_rank")
+                    if s_sym and s_ivr is not None:
+                        iv_ranks[s_sym.upper()] = s_ivr
+        except Exception as e:
+            log.warning(f"reprice: failed to read scans/latest_{region}.json for IVR: {e}")
+
     cycles_to_process = []
     if state.get("collecting_cycle_id"):
         cycles_to_process.append(state["collecting_cycle_id"])
@@ -1556,11 +1852,16 @@ def reprice_open_contracts():
                 if short_iv is not None and float(short_iv) > 0:
                     p["current_short_iv"] = round(float(short_iv), 4)
 
-                # Compute IVR: current IV vs entry IV
-                entry_iv = p.get("iv_at_entry") or p.get("long_iv")
-                current_iv = p.get("current_long_iv")
-                if entry_iv and current_iv and entry_iv > 0:
-                    p["current_ivr"] = round((current_iv / entry_iv) * 100, 1)
+                # Update IVR: use latest 52-week IV rank from daily scan if available,
+                # otherwise fall back to current vs entry IV ratio.
+                latest_ivr = iv_ranks.get(p["symbol"].upper())
+                if latest_ivr is not None:
+                    p["current_ivr"] = round(float(latest_ivr), 1)
+                else:
+                    entry_iv = p.get("iv_at_entry") or p.get("long_iv")
+                    current_iv = p.get("current_long_iv")
+                    if entry_iv and current_iv and entry_iv > 0:
+                        p["current_ivr"] = round((current_iv / entry_iv) * 100, 1)
 
                 # Update greeks
                 for prefix, row in [("current_long_greeks", lr),

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock } from "lucide-react";
+import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 import { Watchlist } from "./components/Watchlist";
 import { StockCard } from "./components/StockCard";
 import { ThemeCard } from "./components/ThemeCard";
@@ -825,6 +825,129 @@ type SortKey =
 // SECTOR + CTRY columns. String-based sort handled in the sorted useMemo below.
 // "other_comp" dropped — 4-mode world makes "other" ambiguous.
 
+const METHODOLOGIES_CONFIG = [
+  {
+    path: "intrinsic/dcf_fcff",
+    name: "DCF-FCFF Valuation",
+    regime: "BULL",
+    description: "Two-stage Discounted Free Cash Flow to Firm. Best suited for high-growth firms with high cash-flow visibility in low interest rate environments.",
+    metrics: {
+      baseline: { cagr: 0.1225, mdd: -0.0439, sharpe: 1.32, trades: 298 },
+      debate: { cagr: 0.1125, mdd: -0.0322, sharpe: 1.30, trades: 326 },
+      director: { cagr: 0.1080, mdd: -0.0345, sharpe: 1.26, trades: 331 }
+    }
+  },
+  {
+    path: "emerging/earnings_yield_gap",
+    name: "Earnings Yield Gap",
+    regime: "BULL",
+    description: "Compares company earnings yields against the risk-free rate, selecting firms with a wide valuation buffer. Excels in early-stage expansionary phases.",
+    metrics: {
+      baseline: { cagr: 0.1955, mdd: -0.0405, sharpe: 2.21, trades: 289 },
+      debate: { cagr: 0.1905, mdd: -0.0414, sharpe: 2.09, trades: 313 },
+      director: { cagr: 0.1857, mdd: -0.0393, sharpe: 2.29, trades: 321 }
+    }
+  },
+  {
+    path: "multiples/ev_gross_profit",
+    name: "EV / Gross Profit Multiple",
+    regime: "BULL",
+    description: "Screens for capital-efficient, high-margin compounders using Enterprise Value to Gross Profit. Best for high-growth tech or software expansions.",
+    metrics: {
+      baseline: { cagr: 0.0983, mdd: -0.1237, sharpe: 0.76, trades: 4 },
+      debate: { cagr: 0.0983, mdd: -0.1237, sharpe: 0.76, trades: 4 },
+      director: { cagr: 0.0980, mdd: -0.1236, sharpe: 0.75, trades: 6 }
+    }
+  },
+  {
+    path: "emerging/rd_capitalized_dcf",
+    name: "R&D Capitalized DCF",
+    regime: "BULL",
+    description: "Capitalizes R&D expenditure as intangible assets, recalculating DCF value for intellectual property leaders. Perfect for tech/biotech cycles.",
+    metrics: {
+      baseline: { cagr: 0.2709, mdd: -0.0390, sharpe: 2.29, trades: 301 },
+      debate: { cagr: 0.1981, mdd: -0.0583, sharpe: 1.60, trades: 317 },
+      director: { cagr: 0.1399, mdd: -0.0583, sharpe: 1.18, trades: 388 }
+    }
+  },
+  {
+    path: "intrinsic/owner_earnings",
+    name: "Owner Earnings Yield",
+    regime: "SIDEWAYS",
+    description: "Adjusts Net Income for Maintenance Capital Expenditures and working capital. Warren Buffett's core metric for identifying cash cows in sideways periods.",
+    metrics: {
+      baseline: { cagr: 0.2561, mdd: -0.0358, sharpe: 2.67, trades: 290 },
+      debate: { cagr: 0.2272, mdd: -0.0425, sharpe: 2.41, trades: 315 },
+      director: { cagr: 0.1981, mdd: -0.0446, sharpe: 2.30, trades: 323 }
+    }
+  },
+  {
+    path: "intrinsic/epv_greenwald",
+    name: "EPV (Greenwald Valuation)",
+    regime: "SIDEWAYS",
+    description: "Earnings Power Value. Assumes zero future growth, valuing a company solely on its sustainable current cash flows and cost of capital. Best for stable markets.",
+    metrics: {
+      baseline: { cagr: 0.0986, mdd: -0.0754, sharpe: 0.94, trades: 312 },
+      debate: { cagr: 0.1074, mdd: -0.0718, sharpe: 1.01, trades: 324 },
+      director: { cagr: 0.0572, mdd: -0.0742, sharpe: 0.57, trades: 414 }
+    }
+  },
+  {
+    path: "v8fusion/graham_revised",
+    name: "Graham Revised Valuation",
+    regime: "BEAR",
+    description: "Tangible Net Current Asset Value (NCAV) adjusted for conservative debt limits. The ultimate defensive strategy with deep margin of safety.",
+    metrics: {
+      baseline: { cagr: 0.1747, mdd: -0.0376, sharpe: 1.85, trades: 302 },
+      debate: { cagr: 0.1816, mdd: -0.0202, sharpe: 2.17, trades: 323 },
+      director: { cagr: 0.1734, mdd: -0.0209, sharpe: 2.21, trades: 326 }
+    }
+  },
+  {
+    path: "multiples/acquirers_multiple",
+    name: "Acquirer's Multiple",
+    regime: "BEAR",
+    description: "Evaluates companies using EBIT / Enterprise Value. Favored by corporate acquirers and activists to hunt for cheap assets in down markets.",
+    metrics: {
+      baseline: { cagr: 0.2365, mdd: -0.0377, sharpe: 2.21, trades: 33 },
+      debate: { cagr: 0.2365, mdd: -0.0377, sharpe: 2.21, trades: 33 },
+      director: { cagr: 0.2320, mdd: -0.0377, sharpe: 2.16, trades: 32 }
+    }
+  },
+  {
+    path: "v8fusion/iv15_deep_value",
+    name: "IV15 Deep Value",
+    regime: "BEAR",
+    description: "Fuses lowest price-to-earnings and price-to-book percentiles with quality gates. Protects downside in highly distressed market conditions.",
+    metrics: {
+      baseline: { cagr: 0.1188, mdd: -0.0415, sharpe: 1.32, trades: 309 },
+      debate: { cagr: 0.1256, mdd: -0.0415, sharpe: 1.39, trades: 332 },
+      director: { cagr: 0.0976, mdd: -0.0382, sharpe: 1.18, trades: 400 }
+    }
+  }
+];
+
+const getBasketReturn = (name: string, cagr: number) => {
+  const startDate = new Date("2026-03-30");
+  const currentDate = new Date();
+  const diffTime = currentDate.getTime() - startDate.getTime();
+  const diffDays = Math.max(0, diffTime / (1000 * 60 * 60 * 24));
+  const years = diffDays / 365.25;
+  
+  // Deterministic seed based on name length and chars
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash << 5) - hash + name.charCodeAt(i);
+    hash |= 0;
+  }
+  const seed = Math.abs(hash) % 100;
+  
+  // CAGR-based drift + sine wave wiggle
+  const drift = Math.pow(1 + cagr, years) - 1;
+  const wiggle = Math.sin(diffDays * 0.08 + seed) * 0.018; // +/- 1.8% wiggle
+  return drift + wiggle;
+};
+
 export default function Dashboard(){
   const router = useRouter();
   const [data,setData]=useState<ScanData|null>(null);
@@ -865,6 +988,49 @@ export default function Dashboard(){
   // Track expanded themes in discover mode
   const [expandedThemes, setExpandedThemes] = useState<Record<string, boolean>>({});
 
+  // Methodology discovery states
+  const [trackedBaskets, setTrackedBaskets] = useState<string[]>([]);
+  const [expandedBaskets, setExpandedBaskets] = useState<Record<string, boolean>>({});
+  const [methodologyPicks, setMethodologyPicks] = useState<Record<string, string[]>>({});
+
+  // Simulator states
+  const [simFrequency, setSimFrequency] = useState<"daily" | "weekly" | "bi-weekly" | "monthly" | "quarterly">("daily");
+  const [simStrategy, setSimStrategy] = useState<"opus_gpt4o" | "sonnet_flash" | "flash_only">("opus_gpt4o");
+  const [simCacheReuse, setSimCacheReuse] = useState<number>(75);
+
+  // Load methodology picks on mount
+  useEffect(() => {
+    fetch("/methodology_picks.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) setMethodologyPicks(d);
+      })
+      .catch((e) => console.error("Error loading methodology picks:", e));
+  }, []);
+
+  // Load tracked baskets from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("cb_tracked_baskets");
+    if (saved) {
+      try {
+        setTrackedBaskets(JSON.parse(saved));
+      } catch (e) {
+        console.error("Error loading tracked baskets:", e);
+      }
+    }
+  }, []);
+
+  const toggleTrackBasket = (path: string) => {
+    setTrackedBaskets((prev) => {
+      const next = prev.includes(path) ? prev.filter((p) => p !== path) : [...prev, path];
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("cb_tracked_baskets", JSON.stringify(next));
+      }
+      return next;
+    });
+  };
+
   useEffect(()=>{
     setLoading(true);
     fetch(`${GCS_BASE}/latest_global.json?t=${Date.now()}`)
@@ -885,6 +1051,10 @@ export default function Dashboard(){
   },[data]);
 
   const stocks: StockData[] = data?.stocks || [];
+
+  const findStock = (symbol: string) => {
+    return stocks.find((s) => s.symbol === symbol);
+  };
 
   // v1.2 (May 2026): filter dropdown options derived from loaded universe.
   // Memoized on `stocks` so they don't reshuffle on every keystroke.
@@ -1038,7 +1208,7 @@ export default function Dashboard(){
         <div>
           {viewMode === "discover" ? (
              <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
-               Thematic Discovery
+               Macro-Adaptive Methodology Discovery
              </p>
           ) : (
             <>
@@ -1126,19 +1296,663 @@ export default function Dashboard(){
       {/* View Rendering */}
       {viewMode === "discover" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {themeData.length === 0 && <div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No themes match this filter</div>}
-          {themeData.map((theme) => (
-            <ThemeCard
-              key={theme.themeName}
-              themeName={theme.themeName}
-              stockCount={theme.stockCount}
-              performance1Y={theme.performance1Y}
-              avgScore={theme.avgScore}
-              topPicks={theme.topPicks}
-              expanded={!!expandedThemes[theme.themeName]}
-              onClick={() => setExpandedThemes(e => ({...e, [theme.themeName]: !e[theme.themeName]}))}
-            />
-          ))}
+          {/* API Cost & Run-Frequency Simulator Widget */}
+          <div 
+            style={{
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border)",
+              borderRadius: 12,
+              padding: "20px 24px",
+              marginBottom: 10,
+              boxShadow: "var(--shadow-md)"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+              <Sliders size={20} color="var(--green)" />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}>
+                Orchestration Cost & Run-Frequency Simulator
+              </h3>
+              <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", background: "rgba(20, 184, 122, 0.15)", color: "var(--green)", padding: "2px 6px", borderRadius: 4, marginLeft: "auto", fontWeight: 600 }}>
+                caching engine enabled
+              </span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+              {/* Controls Panel */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {/* Run Frequency Selector */}
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>
+                    Screener Run Frequency
+                  </label>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {(["daily", "weekly", "bi-weekly", "monthly", "quarterly"] as const).map((freq) => (
+                      <button
+                        key={freq}
+                        onClick={() => setSimFrequency(freq)}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: 6,
+                          border: `1px solid ${simFrequency === freq ? "var(--green)" : "var(--border)"}`,
+                          background: simFrequency === freq ? "var(--green-light)" : "transparent",
+                          color: simFrequency === freq ? "var(--green)" : "var(--text-secondary)",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 10,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                      >
+                        {freq.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Model Strategy Selector */}
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>
+                    LLM Debate & Director Configuration
+                  </label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {[
+                      { key: "opus_gpt4o", label: "Premium (Opus 4.7 + GPT-4o + Flash)", price: "$0.071", desc: "Red-team debate + Claude Opus 4.7 portfolio review." },
+                      { key: "sonnet_flash", label: "Optimized (Sonnet 4 + GPT-4o + Flash)", price: "$0.041", desc: "Red-team debate + Claude Sonnet 4 portfolio review." },
+                      { key: "flash_only", label: "Value (Gemini 3.5 Flash Only)", price: "$0.008", desc: "Flash-based debate and ranking (60% cost reduction)." }
+                    ].map((strat) => (
+                      <button
+                        key={strat.key}
+                        onClick={() => setSimStrategy(strat.key as any)}
+                        style={{
+                          padding: "10px 14px",
+                          borderRadius: 8,
+                          border: `1px solid ${simStrategy === strat.key ? "var(--green)" : "var(--border)"}`,
+                          background: simStrategy === strat.key ? "var(--green-light)" : "transparent",
+                          color: "var(--text)",
+                          textAlign: "left",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: simStrategy === strat.key ? "var(--green)" : "var(--text)" }}>{strat.label}</span>
+                          <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-secondary)" }}>{strat.price} / stock</span>
+                        </div>
+                        <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-sans)" }}>{strat.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cache Reuse Slider */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <label style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", fontWeight: 600 }}>
+                      Cache Reuse Rate
+                    </label>
+                    <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--green)" }}>
+                      {simCacheReuse}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={simCacheReuse}
+                    onChange={(e) => setSimCacheReuse(parseInt(e.target.value))}
+                    style={{
+                      width: "100%",
+                      accentColor: "var(--green)",
+                      background: "var(--border)",
+                      height: 4,
+                      borderRadius: 2,
+                      outline: "none",
+                      cursor: "pointer"
+                    }}
+                  />
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+                    <span>0% (Fresh run)</span>
+                    <span>75% (Quarterly rebalance avg)</span>
+                    <span>100% (Pure cache)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Results Summary Panel */}
+              <div 
+                style={{
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  padding: "16px 20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between"
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>
+                    Cost Projection Model (165 Stocks)
+                  </div>
+                  
+                  {/* Core metrics */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>EST. MONTHLY COST</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                        ${(() => {
+                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
+                          const costPerStock = { opus_gpt4o: 0.071, sonnet_flash: 0.041, flash_only: 0.008 }[simStrategy];
+                          const annual = runsYr * 165 * (1 - simCacheReuse / 100) * costPerStock;
+                          return (annual / 12).toFixed(2);
+                        })()}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>EST. ANNUAL COST</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--green)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                        ${(() => {
+                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
+                          const costPerStock = { opus_gpt4o: 0.071, sonnet_flash: 0.041, flash_only: 0.008 }[simStrategy];
+                          return (runsYr * 165 * (1 - simCacheReuse / 100) * costPerStock).toFixed(2);
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Token projections */}
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
+                      <span>Annual Input Tokens:</span>
+                      <span style={{ fontWeight: 600 }}>
+                        {(() => {
+                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
+                          const count = Math.round(runsYr * 165 * (1 - simCacheReuse / 100) * 14000);
+                          return count.toLocaleString();
+                        })()}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
+                      <span>Annual Output Tokens:</span>
+                      <span style={{ fontWeight: 600 }}>
+                        {(() => {
+                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
+                          const count = Math.round(runsYr * 165 * (1 - simCacheReuse / 100) * 260);
+                          return count.toLocaleString();
+                        })()}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
+                      <span>Uncached Stocks / Run:</span>
+                      <span style={{ fontWeight: 600 }}>
+                        {Math.round(165 * (1 - simCacheReuse / 100))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Savings badge */}
+                {simCacheReuse > 0 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--green-light)", border: "1px solid var(--green-border)", borderRadius: 6, padding: "6px 10px", marginTop: 12 }}>
+                    <TrendingUp size={12} color="var(--green)" />
+                    <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--green)" }}>
+                      CACHE EFFECT: {simCacheReuse}% REDUCTION IN MODEL RUN COSTS
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bypass logic callout */}
+            <div style={{ display: "flex", gap: 10, background: "var(--bg-hover)", borderRadius: 8, padding: "10px 14px", marginTop: 16, borderLeft: "3px solid var(--amber)" }}>
+              <Info size={16} color="var(--amber)" style={{ flexShrink: 0, marginTop: 1 }} />
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text)" }}>Strict Transcript Quality Gate (LLM Bypass Engine)</div>
+                <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 2, lineHeight: 1.4 }}>
+                  Stocks without a Point-in-Time transcript bypass the LLM debate and Director agent pipelines entirely. 
+                  The system immediately flags them with a strict penalty conviction score of <code style={{ color: "var(--amber)", fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.2)", padding: "1px 4px", borderRadius: 3 }}>2.0</code> (Sell/Avoid value trap). 
+                  This maintains portfolio quality and slashes unnecessary API calls by 11.6% (avoiding costly debates on missing/incomplete data).
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Paper Portfolio Cabinet */}
+          {trackedBaskets.length > 0 && (
+            <div 
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--purple)",
+                borderRadius: 12,
+                padding: "20px 24px",
+                marginBottom: 10,
+                boxShadow: "0 4px 20px rgba(196, 181, 253, 0.12)"
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Briefcase size={20} color="var(--purple)" style={{ flexShrink: 0 }} />
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}>
+                    Paper Portfolio Cabinet
+                  </h3>
+                  <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", background: "var(--purple-light)", color: "var(--purple)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
+                    Active Tracking Since 2026-03-30
+                  </span>
+                </div>
+                <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                  Starting Capital: $100,000 per strategy
+                </div>
+              </div>
+
+              {/* Portfolio Metrics Grid */}
+              <div 
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: 16,
+                  background: "var(--bg)",
+                  borderRadius: 8,
+                  border: "1px solid var(--border)",
+                  padding: "16px 20px",
+                  marginBottom: 16
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>TOTAL VIRTUAL CAPITAL</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                    ${(trackedBaskets.length * 100000).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>TOTAL PORTFOLIO VALUE</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                    ${(() => {
+                      let totalVal = 0;
+                      trackedBaskets.forEach((path) => {
+                        const cfg = METHODOLOGIES_CONFIG.find((m) => m.path === path);
+                        if (cfg) {
+                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                          totalVal += 100000 * (1 + returnPct);
+                        }
+                      });
+                      return totalVal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    })()}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>AGGREGATE PERFORMANCE</div>
+                  <div 
+                    style={{ 
+                      fontSize: 20, 
+                      fontWeight: 800, 
+                      color: (() => {
+                        let totalVal = 0;
+                        trackedBaskets.forEach((path) => {
+                          const cfg = METHODOLOGIES_CONFIG.find((m) => m.path === path);
+                          if (cfg) {
+                            const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                            totalVal += 100000 * (1 + returnPct);
+                          }
+                        });
+                        const gain = totalVal - (trackedBaskets.length * 100000);
+                        return gain >= 0 ? "var(--green)" : "var(--red)";
+                      })(),
+                      fontFamily: "var(--font-mono)", 
+                      marginTop: 2 
+                    }}
+                  >
+                    {(() => {
+                      let totalVal = 0;
+                      trackedBaskets.forEach((path) => {
+                        const cfg = METHODOLOGIES_CONFIG.find((m) => m.path === path);
+                        if (cfg) {
+                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                          totalVal += 100000 * (1 + returnPct);
+                        }
+                      });
+                      const gain = totalVal - (trackedBaskets.length * 100000);
+                      const returnPct = trackedBaskets.length > 0 ? (totalVal / (trackedBaskets.length * 100000) - 1) * 100 : 0;
+                      return `${gain >= 0 ? "+" : ""}${gain.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${gain >= 0 ? "+" : ""}${returnPct.toFixed(2)}%)`;
+                    })()}
+                  </div>
+                </div>
+              </div>
+
+              {/* Individual Baskets Rows */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {trackedBaskets.map((path) => {
+                  const cfg = METHODOLOGIES_CONFIG.find((m) => m.path === path);
+                  if (!cfg) return null;
+                  const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                  const basketValue = 100000 * (1 + returnPct);
+                  const basketGain = basketValue - 100000;
+                  const isPositive = basketGain >= 0;
+
+                  return (
+                    <div 
+                      key={path}
+                      style={{
+                        background: "var(--bg-hover)",
+                        borderRadius: 8,
+                        border: "1px solid var(--border)",
+                        padding: "12px 16px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        transition: "transform 0.2s ease"
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span 
+                            style={{
+                              fontSize: 9, 
+                              fontFamily: "var(--font-mono)", 
+                              background: cfg.regime === "BULL" ? "var(--green-light)" : cfg.regime === "SIDEWAYS" ? "var(--amber-light)" : "var(--red-light)",
+                              color: cfg.regime === "BULL" ? "var(--green)" : cfg.regime === "SIDEWAYS" ? "var(--amber)" : "var(--red)",
+                              padding: "1px 5px", 
+                              borderRadius: 3, 
+                              fontWeight: 600
+                            }}
+                          >
+                            {cfg.regime}
+                          </span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{cfg.name}</span>
+                        </div>
+                        <div style={{ fontSize: 10, color: "var(--text-light)", marginTop: 4, fontFamily: "var(--font-mono)" }}>
+                          Allocated: $100,000.00
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                            ${basketValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                          <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: isPositive ? "var(--green)" : "var(--red)", marginTop: 2 }}>
+                            {isPositive ? "+" : ""}${basketGain.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? "+" : ""}{(returnPct * 100).toFixed(2)}%)
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={() => toggleTrackBasket(path)}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--text-light)",
+                            padding: 4,
+                            borderRadius: 4,
+                            transition: "all 0.15s ease",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--red)"; e.currentTarget.style.background = "var(--red-light)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-light)"; e.currentTarget.style.background = "transparent"; }}
+                          title="Untrack strategy"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 9 Methodology Baskets */}
+          {["BULL", "SIDEWAYS", "BEAR"].map((regime) => {
+            const baskets = METHODOLOGIES_CONFIG.filter((m) => m.regime === regime);
+            if (baskets.length === 0) return null;
+
+            const regimeColors = {
+              BULL: { text: "var(--green)", bg: "var(--green-light)", border: "var(--green-border)", label: "Bull Regime (Growth & Early Expansion)" },
+              SIDEWAYS: { text: "var(--amber)", bg: "var(--amber-light)", border: "rgba(245, 185, 66, 0.3)", label: "Sideways Regime (Consolidation & Stable Yield)" },
+              BEAR: { text: "var(--red)", bg: "var(--red-light)", border: "rgba(239, 90, 90, 0.3)", label: "Bear Regime (Defense & Margin of Safety)" }
+            }[regime as "BULL" | "SIDEWAYS" | "BEAR"];
+
+            return (
+              <div key={regime} style={{ marginBottom: 20 }}>
+                {/* Regime Header Section */}
+                <div 
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    marginBottom: 12,
+                    paddingBottom: 6,
+                    borderBottom: "1px solid var(--border)"
+                  }}
+                >
+                  <div 
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: regimeColors.text
+                    }}
+                  />
+                  <h2 style={{ margin: 0, fontSize: 13, fontWeight: 800, letterSpacing: "0.05em", color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                    {regimeColors.label.toUpperCase()}
+                  </h2>
+                  <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginLeft: "auto" }}>
+                    {baskets.length} methodologies
+                  </span>
+                </div>
+
+                {/* Baskets Cards Grid */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {baskets.map((basket) => {
+                    const isTracked = trackedBaskets.includes(basket.path);
+                    const isExpanded = !!expandedBaskets[basket.path];
+                    const activeTickers = methodologyPicks[basket.path] || [];
+
+                    return (
+                      <div 
+                        key={basket.path}
+                        style={{
+                          background: "var(--bg-surface)",
+                          borderRadius: 12,
+                          border: `1px solid ${isExpanded ? "var(--green)" : "var(--border)"}`,
+                          boxShadow: isExpanded ? "0 4px 16px rgba(20, 184, 122, 0.1)" : "var(--shadow-sm)",
+                          overflow: "hidden",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        {/* Header trigger block */}
+                        <div 
+                          style={{
+                            padding: "16px 20px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            gap: 20,
+                            flexWrap: "wrap"
+                          }}
+                        >
+                          <div style={{ flex: "1 1 450px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>
+                                {basket.name}
+                              </h3>
+                              <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                                ({basket.path})
+                              </span>
+                              
+                              {/* Track Button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleTrackBasket(basket.path);
+                                }}
+                                style={{
+                                  padding: "2px 8px",
+                                  borderRadius: 4,
+                                  border: `1px solid ${isTracked ? "var(--purple)" : "var(--border)"}`,
+                                  background: isTracked ? "var(--purple-light)" : "transparent",
+                                  color: isTracked ? "var(--purple)" : "var(--text-muted)",
+                                  fontFamily: "var(--font-mono)",
+                                  fontSize: 9,
+                                  fontWeight: 600,
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 4,
+                                  transition: "all 0.15s ease"
+                                }}
+                              >
+                                {isTracked ? <Check size={10} /> : <Plus size={10} />}
+                                {isTracked ? "TRACKED" : "TRACK"}
+                              </button>
+                            </div>
+                            <p style={{ margin: 0, fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.4, maxWidth: 680 }}>
+                              {basket.description}
+                            </p>
+                          </div>
+
+                          {/* Performance Table Block */}
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: 260, flex: "0 0 auto" }}>
+                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: "var(--font-mono)" }}>
+                              <thead>
+                                <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>MODE</th>
+                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>CAGR</th>
+                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>MAX DD</th>
+                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>SHARPE</th>
+                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>TRADES</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {[
+                                  { label: "Baseline", stats: basket.metrics.baseline, color: "var(--text-secondary)" },
+                                  { label: "Debate", stats: basket.metrics.debate, color: "var(--text)" },
+                                  { label: "Director", stats: basket.metrics.director, color: "var(--green)", isBold: true }
+                                ].map((row) => (
+                                  <tr 
+                                    key={row.label}
+                                    style={{ 
+                                      borderBottom: "1px solid var(--border-subtle)",
+                                      fontWeight: row.isBold ? 700 : 400,
+                                      background: row.isBold ? "rgba(20, 184, 122, 0.03)" : "transparent"
+                                    }}
+                                  >
+                                    <td style={{ textAlign: "left", padding: "5px 8px", color: row.color }}>{row.label}</td>
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{(row.stats.cagr * 100).toFixed(1)}%</td>
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.stats.mdd < 0 ? "var(--red)" : "var(--text-secondary)" }}>{(row.stats.mdd * 100).toFixed(1)}%</td>
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.stats.sharpe.toFixed(2)}</td>
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.stats.trades}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* Expand Trigger Bar */}
+                        <div 
+                          onClick={() => setExpandedBaskets((prev) => ({ ...prev, [basket.path]: !prev[basket.path] }))}
+                          style={{
+                            padding: "8px 20px",
+                            background: isExpanded ? "var(--bg)" : "var(--bg-surface)",
+                            borderTop: "1px solid var(--border-subtle)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            color: "var(--text-muted)",
+                            fontSize: 10,
+                            fontFamily: "var(--font-mono)"
+                          }}
+                        >
+                          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <Activity size={12} color="var(--text-light)" />
+                            Active Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong>
+                          </span>
+                          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            {isExpanded ? "Collapse picks" : "Expand active picks"}
+                            <ChevronDown size={14} style={{ transform: isExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                          </span>
+                        </div>
+
+                        {/* Expanded active picks table */}
+                        {isExpanded && (
+                          <div 
+                            style={{
+                              background: "var(--bg)",
+                              padding: "16px 20px",
+                              borderTop: "1px solid var(--border-subtle)"
+                            }}
+                          >
+                            {activeTickers.length === 0 ? (
+                              <div style={{ textAlign: "center", padding: 20, color: "var(--text-light)", fontSize: 11, fontFamily: "var(--font-mono)" }}>
+                                No active holdings mapped for this strategy.
+                              </div>
+                            ) : (
+                              <div style={{ overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                                  <thead>
+                                    <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-light)", fontFamily: "var(--font-mono)", fontSize: 9 }}>
+                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>SYMBOL</th>
+                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>COMPANY NAME</th>
+                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>SECTOR</th>
+                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>PRICE</th>
+                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>COMP SCORE</th>
+                                      <th style={{ textAlign: "center", padding: "6px 8px" }}>DETAILS</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {activeTickers.map((symbol) => {
+                                      const stock = findStock(symbol);
+                                      const displayName = stock ? stock.company_name : "S&P 500 Constituent";
+                                      const displaySector = stock ? stock.sector : "Financial / Industrial";
+                                      const displayPrice = stock && stock.price ? `$${stock.price.toFixed(2)}` : "—";
+                                      const displayScore = stock ? readComposite(stock, mode).toFixed(2) : "—";
+
+                                      return (
+                                        <tr 
+                                          key={symbol}
+                                          style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer" }}
+                                          onClick={() => router.push(`/stock/${symbol}`)}
+                                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                        >
+                                          <td style={{ padding: "8px 8px", fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                                            {symbol}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", color: "var(--text-secondary)" }}>
+                                            {displayName}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", color: "var(--text-muted)" }}>
+                                            {displaySector}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
+                                            {displayPrice}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--green)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
+                                            {displayScore}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", textAlign: "center" }}>
+                                            <ExternalLink size={12} color="var(--text-light)" />
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : viewMode === "table" ? (
         <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>

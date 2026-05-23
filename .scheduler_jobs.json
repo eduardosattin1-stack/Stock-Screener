@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "attemptDeadline": "180s",
     "httpTarget": {
@@ -78,7 +78,7 @@
       "maxRetryDuration": "0s",
       "minBackoffDuration": "5s"
     },
-    "schedule": "0 22 * * 1-5",
+    "schedule": "0 18 * * 1-5",
     "scheduleTime": "2026-05-13T20:00:02.297137Z",
     "state": "ENABLED",
     "status": {

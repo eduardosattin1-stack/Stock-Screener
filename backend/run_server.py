@@ -369,6 +369,50 @@ class Handler(BaseHTTPRequestHandler):
                 traceback.print_exc()
             return
 
+        if parsed.path == "/catalysts/candidates":
+            try:
+                from opportunistic_catalysts import get_catalyst_candidates
+                candidates = get_catalyst_candidates()
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps(candidates).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
+        if parsed.path == "/catalysts/scan":
+            symbol = qs.get("symbol", [""])[0].upper()
+            if not symbol:
+                self.send_response(400)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Missing ?symbol= parameter"}).encode())
+                return
+            try:
+                from opportunistic_catalysts import run_catalyst_scan
+                result = run_catalyst_scan(symbol)
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps(result).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
         if parsed.path == "/health":
             self.send_response(200)
             self._cors()

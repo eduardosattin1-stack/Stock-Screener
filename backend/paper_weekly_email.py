@@ -137,10 +137,17 @@ def section_health(health: dict) -> list[str]:
     d10_n = health.get("d10_n", 0)
     
     lines.append(f"  Status: {status}")
-    lines.append(f"  D10 Hit Rate: {d10_hr*100:.1f}% (Baseline: 22.3%, n={d10_n})")
-    lines.append(f"  D1  Hit Rate: {d1_hr*100:.1f}% (Baseline:  1.1%)")
+    if "top_cohort_n" in health:
+        top_n = health["top_cohort_n"]
+        top_obs = health["top_cohort_observed_rate"]
+        top_exp = health["top_cohort_expected_rate"]
+        lines.append(f"  Top Deciles (D7-D10) Hit Rate: {top_obs*100:.1f}% (Expected: {top_exp*100:.1f}%, n={top_n})")
+    else:
+        lines.append(f"  D10 Hit Rate: {d10_hr*100:.1f}% (Baseline: 22.3%, n={d10_n})")
+        lines.append(f"  D1  Hit Rate: {d1_hr*100:.1f}% (Baseline:  1.1%)")
+        
     if health.get("kill_switch_active"):
-        lines.append("\n  ⚠ KILL SWITCH ACTIVE: D10 has degraded below threshold.")
+        lines.append("\n  ⚠ KILL SWITCH ACTIVE: Model degradation detected.")
     lines.append("")
     return lines
 

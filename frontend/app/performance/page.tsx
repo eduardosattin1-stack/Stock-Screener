@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award, ChevronDown, ChevronRight } from "lucide-react";
 
 
 // ── Data sources ────────────────────────────────────────────────────────────
@@ -44,6 +44,12 @@ interface CycleState {
   resolving_cycle_ids: string[];
   archived_cycle_ids: string[];
 }
+interface DecileCalibData {
+  n: number;
+  hits: number;
+  observed_rate: number;
+  expected_rate: number;
+}
 interface RollingHealth {
   computed_date: string | null;
   window_days: number;
@@ -53,6 +59,7 @@ interface RollingHealth {
   kill_switch_threshold: number;
   kill_switch_active: boolean;
   status: "HEALTHY" | "DEGRADED" | "UNDER_SAMPLED" | "NOT_YET_COMPUTED";
+  deciles?: Record<string, DecileCalibData>;
 }
 interface Prediction {
   symbol: string; entry_date: string; cycle_id: string; region: string;
@@ -1554,6 +1561,7 @@ function CyclesTab() {
   // Keyed by cycle_id so we can render multiple cycles in parallel.
   const [openCycles, setOpenCycles] = useState<Record<string, Prediction[]>>({});
   const [selectedArchive, setSelectedArchive] = useState<string | null>(null);
+  const [expandedResolving, setExpandedResolving] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
@@ -1680,37 +1688,151 @@ function CyclesTab() {
           sub="Total cycles fully resolved"/>
       </div>
 
-      {/* ─── Rolling 90d D10 health card ─── */}
+      {/* ─── Rolling 90d Calibration Health Card ─── */}
       {health && (
         <Card style={{ marginBottom: 20 }}>
           <SH title="90-Day Rolling Calibration"
             icon={<Award size={12}/>}
-            sub={`D10 vs baseline · ${health.status} · ${health.computed_date || "—"}`}/>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, padding: "8px 0" }}>
-            <CalibrationStat
-              label="D10 OBSERVED"
-              value={`${(health.d10_hit_rate * 100).toFixed(1)}%`}
-              sub={`n=${health.d10_n} · baseline ${(health.baseline_d10 * 100).toFixed(1)}%`}
-              color={health.kill_switch_active ? T.red : health.d10_n >= 10 ? T.green : T.muted}/>
-            <CalibrationStat
-              label="D1 OBSERVED"
-              value={`${(health.d1_hit_rate * 100).toFixed(1)}%`}
-              sub={`n=${health.d1_n} · baseline ${(health.baseline_d1 * 100).toFixed(1)}%`}
-              color={T.muted}/>
-            <CalibrationStat
-              label="ODDS RATIO"
-              value={health.d1_hit_rate > 0 ? `${(health.d10_hit_rate / health.d1_hit_rate).toFixed(1)}x` : "—"}
-              sub={`baseline ${(health.baseline_d10 / health.baseline_d1).toFixed(1)}x`}
-              color={T.text}/>
-            <CalibrationStat
-              label="STATUS"
-              value={health.status.replace("_", " ")}
-              sub={`kill switch < ${(health.kill_switch_threshold * 100).toFixed(0)}% D10`}
-              color={health.kill_switch_active ? T.red : health.status === "HEALTHY" ? T.green : T.amber}/>
+            sub={`${health.deciles ? "Multi-decile calibration report" : "D10 vs baseline"} · ${health.status.replace("_", " ")} · ${health.computed_date || "—"}`}/>
+          
+          <div style={{ padding: "8px 0" }}>
+            {(() => {
+              // Calculate top cohort (D7-D10) stats
+              let topN = 0;
+              let topHits = 0;
+              let topSumProbs = 0;
+              
+              if (health.deciles) {
+                for (let d = 7; d <= 10; d++) {
+                  const dData = health.deciles[String(d)];
+                  if (dData) {
+                    topN += dData.n;
+                    topHits += dData.hits;
+                    topSumProbs += (dData.expected_rate || 0) * dData.n;
+                  }
+                }
+              } else {
+                // Fallback to legacy D10 stats if deciles is not in payload
+                topN = health.d10_n || 0;
+                topHits = health.d10_hits || 0;
+                topSumProbs = (health.baseline_d10 || 0) * topN;
+              }
+              
+              const topObservedRate = topN > 0 ? topHits / topN : 0;
+              const topExpectedRate = topN > 0 ? topSumProbs / topN : 0;
+              
+              const is60d = (health.baseline_d10 || 0) > 0.5;
+              const topBaseline = is60d ? "55%" : "10%";
+              
+              const totalInWindow = health.deciles
+                ? Object.values(health.deciles).reduce((acc: number, val: any) => acc + (val.n || 0), 0)
+                : (health.d10_n || 0) + (health.d1_n || 0);
+
+              const topColor = topN >= 10
+                ? (health.kill_switch_active ? T.red : T.green)
+                : T.amber; // Amber if under-sampled/n<10
+
+              const regimeExpectedRates: Record<string, Record<string, number>> = {
+                "60d": {
+                  "10": 0.832, "9": 0.540, "8": 0.480, "7": 0.430, "6": 0.370,
+                  "5": 0.310, "4": 0.278, "3": 0.240, "2": 0.213, "1": 0.015
+                },
+                "30d": {
+                  "10": 0.223, "9": 0.085, "8": 0.060, "7": 0.040, "6": 0.025,
+                  "5": 0.016, "4": 0.011, "3": 0.008, "2": 0.005, "1": 0.011
+                }
+              };
+              const regimeKey = is60d ? "60d" : "30d";
+              const expectedRates = regimeExpectedRates[regimeKey];
+
+              return (
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 14 }}>
+                    <CalibrationStat
+                      label="STATUS"
+                      value={health.status.replace("_", " ")}
+                      sub={health.status === "UNDER_SAMPLED" ? "Need >=10 resolved top setups" : health.status === "DEGRADED" ? "Model degradation flagged" : "Calibration within expected bounds"}
+                      color={health.kill_switch_active ? T.red : health.status === "HEALTHY" ? T.green : T.amber}/>
+                    <CalibrationStat
+                      label="DOMINANT REGIME"
+                      value={is60d ? "60-Day option targets" : "30-Day option targets"}
+                      sub="Determines touch probability thresholds"
+                      color={T.text}/>
+                    <CalibrationStat
+                      label="TOTAL IN WINDOW"
+                      value={String(totalInWindow)}
+                      sub={`Trailing ${health.window_days || 90} days resolved`}
+                      color={T.text}/>
+                    <CalibrationStat
+                      label="TOP COHORT (D7-D10)"
+                      value={`${(topObservedRate * 100).toFixed(1)}%`}
+                      sub={topN > 0 ? `n=${topN} · expected ${(topExpectedRate * 100).toFixed(1)}%` : `n=0 · baseline ~${topBaseline}`}
+                      color={topColor}/>
+                  </div>
+
+                  {/* Deciles Calibration Table/Grid */}
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 8 }}>
+                      DECILE CALIBRATION BREAKDOWN (OBSERVED VS EXPECTED TOUCH PROBABILITY)
+                    </div>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
+                      {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(d => {
+                        const dKey = String(d);
+                        const dData = health.deciles?.[dKey];
+                        const n = dData?.n || 0;
+                        
+                        const observedVal = (n > 0 && dData) ? dData.observed_rate : null;
+                        const expectedVal = (n > 0 && dData) ? dData.expected_rate : expectedRates[dKey];
+                        
+                        const diff = observedVal !== null ? observedVal - expectedVal : 0;
+                        const isUnderperforming = observedVal !== null && diff < -0.1 && n >= 10;
+                        
+                        const isEmpty = n === 0;
+
+                        return (
+                          <div key={d} style={{
+                            padding: "10px 12px",
+                            borderRadius: 6,
+                            background: isEmpty ? "rgba(255,255,255,0.005)" : "rgba(255,255,255,0.02)",
+                            border: isEmpty ? `1px dashed ${T.divider}` : `1px solid ${isUnderperforming ? T.red : T.border}`,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                            opacity: isEmpty ? 0.6 : 1,
+                            transition: "opacity 0.2s"
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <span style={{ fontFamily: T.mono, fontWeight: 700, color: isEmpty ? T.muted : T.text, fontSize: 11 }}>Decile {d}</span>
+                              <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>n = {n}</span>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 10, fontFamily: T.mono, marginTop: 4 }}>
+                              <div>
+                                <span style={{ color: T.muted }}>Observed:</span>
+                                <div style={{ color: isEmpty ? T.muted : (isUnderperforming ? T.red : T.green), fontWeight: 600 }}>
+                                  {observedVal !== null ? `${(observedVal * 100).toFixed(1)}%` : "—"}
+                                </div>
+                              </div>
+                              <div>
+                                <span style={{ color: T.muted }}>Expected:</span>
+                                <div style={{ color: isEmpty ? T.muted : T.text, fontWeight: 600 }}>
+                                  {(expectedVal * 100).toFixed(1)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
+
           <div style={{ marginTop: 10, fontSize: 9, color: T.light, fontFamily: T.mono, lineHeight: 1.5 }}>
             Computed across all predictions in collecting + resolving + last 6 archived cycles whose entry date falls within
-            the trailing {health.window_days} days. OPEN predictions still in their 28-day fate window are excluded to avoid
+            the trailing {health.window_days} days. OPEN predictions still in their target window are excluded to avoid
             artificially deflating the rate.
           </div>
         </Card>
@@ -1753,6 +1875,74 @@ function CyclesTab() {
         )}
       </Card>
 
+      {/* ─── Resolving cycles: predictions past collection, still tracking toward fate ─── */}
+      {state.resolving_cycle_ids.length > 0 && (
+        <Card style={{ marginBottom: 20 }}>
+          <SH title={`Resolving Cycles (${state.resolving_cycle_ids.length})`}
+            icon={<Clock size={12}/>}
+            sub={`${resolvingTotal} predictions past collection window, tracking toward 60-day resolution`}/>
+          {state.resolving_cycle_ids.map(cycleId => {
+            const preds = openCycles[cycleId] || [];
+            const isExpanded = expandedResolving[cycleId] ?? false;
+            // Compute decile distribution for this resolving cycle
+            const resDecileDist: Record<number, number> = {};
+            let resHits = 0;
+            for (const p of preds) {
+              resDecileDist[p.decile] = (resDecileDist[p.decile] || 0) + 1;
+              if (p.outcome === "HIT") resHits++;
+            }
+            return (
+              <div key={cycleId} style={{ marginBottom: 14 }}>
+                <div
+                  onClick={() => setExpandedResolving(prev => ({ ...prev, [cycleId]: !prev[cycleId] }))}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
+                    background: isExpanded ? T.greenLight : T.bg, borderRadius: 6,
+                    border: `1px solid ${isExpanded ? T.greenBorder : T.border}`,
+                    cursor: "pointer", transition: "all 0.15s",
+                  }}>
+                  {isExpanded ? <ChevronDown size={14} color={T.green}/> : <ChevronRight size={14} color={T.muted}/>}
+                  <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.text }}>
+                    Cycle {cycleId}
+                  </span>
+                  <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted, marginLeft: 4 }}>
+                    {preds.length} predictions · {resHits} hit · {preds.filter(p => p.outcome === "OPEN").length} open
+                  </span>
+                </div>
+                {isExpanded && preds.length > 0 && (
+                  <div style={{ marginTop: 10, paddingLeft: 8 }}>
+                    <DecileBarChart distribution={resDecileDist}/>
+                    <PortfolioKPI predictions={preds}/>
+                    <div style={{ marginTop: 14, overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                          <tr>
+                            {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
+                              <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {preds
+                            .slice()
+                            .sort((a, b) => b.p20 - a.p20)
+                            .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                {isExpanded && preds.length === 0 && (
+                  <div style={{ padding: "16px 12px", fontFamily: T.mono, fontSize: 11, color: T.muted, textAlign: "center" }}>
+                    No predictions loaded for this cycle.
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </Card>
+      )}
+
       {/* ─── Archived cycles ─── */}
       <Card>
         <SH title={`Archived Cycles (${archiveList.length})`}
@@ -1787,8 +1977,22 @@ function CyclesTab() {
 function CalibrationStat({ label, value, sub, color }: {
   label: string; value: string; sub: string; color: string;
 }) {
+  let bg = "rgba(255,255,255,0.02)";
+  let border = `1px solid ${T.border}`;
+  
+  if (color === T.green) {
+    bg = T.greenLight;
+    border = `1px solid ${T.greenBorder || "var(--green-border)"}`;
+  } else if (color === T.red) {
+    bg = T.redLight;
+    border = `1px solid ${T.red}`;
+  } else if (color === T.amber) {
+    bg = T.amberLight || "rgba(245,158,11,0.05)";
+    border = `1px solid ${T.amber}`;
+  }
+
   return (
-    <div style={{ padding: "10px 12px", background: T.greenLight, borderRadius: 6, border: `1px solid ${T.greenBorder}` }}>
+    <div style={{ padding: "10px 12px", background: bg, borderRadius: 6, border }}>
       <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.08em" }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 700, color, fontFamily: T.mono, marginTop: 4 }}>{value}</div>
       <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono, marginTop: 2 }}>{sub}</div>
@@ -1889,7 +2093,10 @@ function PredictionRow({ p }: { p: Prediction }) {
   const entryIv = p.iv_at_entry ?? p.long_iv;
   const liveIv = p.current_long_iv;
   const ivr = p.current_ivr ?? (entryIv && liveIv && entryIv > 0 ? Math.round((liveIv / entryIv) * 100) : null);
-  const ivrColor = ivr == null ? T.muted : ivr > 120 ? T.red : ivr < 80 ? T.greenPos : T.muted;
+  const isRatio = ivr != null && (ivr > 100 || (p.current_ivr === undefined && entryIv && liveIv));
+  const ivrColor = ivr == null ? T.muted :
+    isRatio ? (ivr > 120 ? T.red : ivr < 80 ? T.greenPos : T.muted) :
+              (ivr >= 70 ? T.red : ivr <= 30 ? T.greenPos : T.muted);
   const delta = p.net_delta ?? p.current_long_greeks?.delta ?? p.long_greeks?.delta;
   const theta = p.net_theta ?? p.current_long_greeks?.theta ?? p.long_greeks?.theta;
   const dte = p.days_to_expiration;
