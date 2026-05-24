@@ -5,6 +5,7 @@ This walkthrough documents the full progression of the Stock Screener project, i
 2. **FMP Offline Cache Integration** (Offline mode migration and performance optimization)
 3. **Scenario C: 1-Year PIT LLM Debate & Portfolio Director Backtest Results** (Ranks 1-3 and 7-9 deep-dives, outlier diagnostics, and bullet-proofing)
 4. **Scenario C Upgraded: 4-Agent Barbell Debate & Apex PM Basket Allocator** (Barbell architecture, Expectations Arbitrage CRO, and single-run PM Allocator)
+5. **UI Fixes, Column Sorting, Ticker Search, and Weekend EOD Greeks Repricing**
 
 ---
 
@@ -198,3 +199,26 @@ The refactored architecture achieved **dramatic cost reductions** by introducing
 > [!TIP]
 > * **Single-Run Director Consolidation**: Consolidating the Portfolio Director from 50 separate stock-by-stock LLM calls to a single cross-sectional batch call reduced the Director cost from **$23.11** to **$0.0288** per date (a **99.9% cost reduction**).
 > * **Transcript Truncation**: Truncating raw transcript inputs to 8,000 characters (focusing on prepared executive remarks containing primary R&D moats and catalysts) reduced token footprints by **75%**, speeding up Radar queries to **4.5 seconds** and saving significant input token costs.
+
+---
+
+## 5. UI Fixes, Column Sorting, Ticker Search, and Weekend EOD Greeks Repricing (2026-05-24)
+
+We successfully resolved compilation/syntax errors in the frontend app, finalized the search and sorting features in the prediction tables, fixed the weekend EOD date resolution in the price monitor backend, and pushed the updated Friday EOD prices/Greeks to GCS.
+
+### Key Accomplishments
+* **Next.js Compile & Build Fixes:**
+  * Fixed an unbalanced JSX tag check around the main content container in [page.tsx](file:///c:/Users/Bruno/Stock-Screener/frontend/app/page.tsx#L1384), properly wrapping the sectors dashboard with `{viewMode === "sectors" ? (...) : ...}`.
+  * Corrected the broken `{collectingPreds.length === 0 ? (...) : (...) }` ternary wrapper in [performance/page.tsx](file:///c:/Users/Bruno/Stock-Screener/frontend/app/performance/page.tsx#L2013) that caused Turbopack build crashes.
+  * Reordered the `stocks` declaration in [page.tsx](file:///c:/Users/Bruno/Stock-Screener/frontend/app/page.tsx#L986) to prevent block-scoped reference errors during type checking.
+  * Resolved Next.js compile errors due to property mismatches (e.g. `basket.title` to `basket.name`).
+  * Verified that local `npm run build` runs and compiles 100% successfully.
+* **GCS Write Auth Fallback:**
+  * Refactored `gcs_write` in [monitor_prices.py](file:///c:/Users/Bruno/Stock-Screener/backend/monitor_prices.py#L84) to include the local `gcloud auth print-access-token` fallback (similar to the fallback in the signal tracker). This allows developers executing the monitor script locally to successfully update GCS files on weekends without authentication blocks.
+* **Repriced All Open Cycles:**
+  * Successfully executed [monitor_prices.py](file:///c:/Users/Bruno/Stock-Screener/backend/monitor_prices.py) locally on Windows.
+  * Correctly fetched EOD option greeks and prices for Friday, May 22, 2026.
+  * Repriced all 1,112 open options contracts (532 in `60d` P(20) regime, 580 in `30d` P(10) regime) and wrote the updated states to GCS.
+* **Search & Sorting Deployment:**
+  * Deployed the frontend fixes to `main` branch to trigger remote build and Vercel hosting.
+  * The prediction list tables now display a dynamic search input that filters by symbol and company name, along with header-click sorting for probability (`P20` / `P10`), `MAX%`, `MIN%`, `DTE`, and `IV`.
