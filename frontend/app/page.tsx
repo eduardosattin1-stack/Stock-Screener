@@ -240,10 +240,9 @@ function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
   // (US exchange vs global ex Fin/Ins/HC) and the ranking score
   // (compounder_score_us/_global = 3y-ROE × P/B × OpMargin-delta).
   const opts = [
-    {k:"momentum",         l:"Momentum"},
-    {k:"fallen_angel",     l:"Fallen Angel"},
-    {k:"compounder_us",    l:"CMP-US"},
-    {k:"compounder_global",l:"CMP-Global"},
+    {k:"all",         l:"All"},
+    {k:"basket_type", l:"Basket Type"},
+    {k:"segment_type",l:"Segment Type"},
   ];
   return(
     <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
@@ -658,40 +657,23 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 8px",fontSize:11,color:"var(--text-muted,#6b7280)"}} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">
           {s.p_s && s.p_s > 0 ? s.p_s.toFixed(1) : <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>}
         </td>
-        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compMom>0.7?"#10b981":compMom>0.5?"var(--text)":compMom>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
-          {compMom.toFixed(2)}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+          {(s as any).pe ? (s as any).pe.toFixed(1) : <span style={{color:"var(--text-light)"}}>—</span>}
         </td>
-        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compFa>0.7?"#10b981":compFa>0.5?"var(--text)":compFa>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
-          {compFa.toFixed(2)}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+          {(s as any).ev_ebit ? (s as any).ev_ebit.toFixed(1) : <span style={{color:"var(--text-light)"}}>—</span>}
         </td>
-        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compCmpUs>0.7?"#10b981":compCmpUs>0.5?"var(--text)":compCmpUs>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
-          {compCmpUs.toFixed(2)}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+          {(s as any).fcf_share ? `$${(s as any).fcf_share.toFixed(2)}` : <span style={{color:"var(--text-light)"}}>—</span>}
         </td>
-        <td style={{padding:"10px 6px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:12,color:compCmpGl>0.7?"#10b981":compCmpGl>0.5?"var(--text)":compCmpGl>0.3?"var(--text-muted)":"#ef4444",fontWeight:700}}>
-          {compCmpGl.toFixed(2)}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+          {(s as any).epv_share ? `$${(s as any).epv_share.toFixed(2)}` : <span style={{color:"var(--text-light)"}}>—</span>}
         </td>
-        {/* v1.2 (May 2026): "COMP other" column dropped. With 4 modes the
-            "other" concept becomes ambiguous (3 candidates). The divergence
-            chip (↻ FA+0.12 next to the symbol) still highlights when a
-            stock would score materially better in another mode. */}
-        {/* VAL/GRW/QUAL columns removed in F2a. Sub-factor scores visible
-            in the expanded row (LargeRadar + FactorBar). */}
+        <td style={{padding:"10px 8px",textAlign:"right",fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
+          {(s as any).net_margin ? `${((s as any).net_margin*100).toFixed(1)}%` : <span style={{color:"var(--text-light)"}}>—</span>}
+        </td>
         {/* UPSIDE — analyst consensus (v8 Value sub-component, kept for reference) */}
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
-        {/* SMART$ — LTR-derived weighted score; pass-2 only, US-only.
-            Replaced P+10% column in Apr 2026 after LTR investigation showed
-            per-stock hit probabilities aren't trustworthy at the 0.65 AUC ceiling. */}
-        <td style={{padding:"10px 8px",textAlign:"center",fontFamily:"var(--font-mono)",fontSize:11}}>
-          {(()=>{const sm = s.smart_money_score;
-            if (sm == null) return <span style={{color:"var(--text-light,#9ca3af)"}} title="Requires US data: 13F flow + accumulation are pass-2 enrichment, US-only.">—</span>;
-            const c = sm>0.7?"#10b981":sm>0.5?"var(--text-muted)":sm>0.3?"#d97706":"#ef4444";
-            const wt = s.smart_money_weight ?? 1.0;
-            const compStr = Object.entries(s.smart_money_components||{}).map(([k,v])=>`${k}=${(v*100).toFixed(0)}`).join(" · ");
-            const tip = wt < 1.0
-              ? `Score ${(sm*100).toFixed(0)} / max ${(wt*100).toFixed(0)} (some optional factors unavailable). Components: ${compStr}`
-              : `Full coverage. Components: ${compStr}`;
-            return <span style={{color:c,fontWeight:700}} title={tip}>{(sm*100).toFixed(0)}</span>;})()}
-        </td>
         {/* P20 — P(+20% daily high in 4 weeks) from ML v2 ensemble.
             High P20 + Low IVR = underpriced options → bull spread signal.
             D10 stocks (P20 > 15%) touch +20% 26.3% of the time.
@@ -818,8 +800,8 @@ function PeerRow({peer}:{peer:StockData["peer_context"]}){
 // the user rank stocks by either composite or by any individual factor.
 type SortKey =
   | "symbol" | "sector" | "country" | "price" | "piotroski" | "p_s"
-  | "comp_mom" | "comp_fa" | "comp_cmp_us" | "comp_cmp_gl"
-  | "upside" | "smart_money" | "hit_prob";
+  | "pe" | "ev_ebit" | "fcf_share" | "epv_share" | "net_margin"
+  | "upside" | "hit_prob";
 // v1.2 (May 2026): removed orphan SortKeys (value_score/growth_score/quality_score) —
 // those columns were dropped from the table. Added sector/country for the new
 // SECTOR + CTRY columns. String-based sort handled in the sorted useMemo below.
@@ -957,18 +939,17 @@ export default function Dashboard(){
   // displayed composite, radar). Persisted to localStorage so the user's
   // preference survives reloads. 4 modes: momentum / fallen_angel /
   // compounder_us / compounder_global.
-  const [mode,setMode]=useState<string>("momentum");
+  const [mode,setMode]=useState<string>("all");
   useEffect(()=>{
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("cb_screener_mode");
-    if (saved === "fallen_angel" || saved === "momentum" ||
-        saved === "compounder_us" || saved === "compounder_global") setMode(saved);
+    if (saved === "all" || saved === "basket_type" || saved === "segment_type") setMode(saved);
   },[]);
   useEffect(()=>{
     if (typeof window !== "undefined") window.localStorage.setItem("cb_screener_mode", mode);
   },[mode]);
 
-  const [sortKey, setSortKey] = useState<SortKey>("comp_mom");
+  const [sortKey, setSortKey] = useState<SortKey>("symbol");
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const [search,setSearch]=useState("");
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
@@ -983,7 +964,7 @@ export default function Dashboard(){
   const [sectorFilter,setSectorFilter]=useState<string[]>([]);
   const [countryFilter,setCountryFilter]=useState<string[]>([]);
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
-  const [viewMode, setViewMode]=useState<"table"|"feed"|"discover">("discover");
+  const [viewMode, setViewMode]=useState<"table"|"feed"|"sectors"|"speculair">("sectors");
 
   // Track expanded themes in discover mode
   const [expandedThemes, setExpandedThemes] = useState<Record<string, boolean>>({});
@@ -1069,16 +1050,16 @@ export default function Dashboard(){
     return Array.from(set).sort();
   },[stocks]);
 
-  const extract = (s:StockData, key:SortKey):number => {
+  const extract = (s:any, key:SortKey):number => {
     switch(key){
-      case "comp_mom":      return readComposite(s, "momentum");
-      case "comp_fa":       return readComposite(s, "fallen_angel");
-      case "comp_cmp_us":   return readComposite(s, "compounder_us");
-      case "comp_cmp_gl":   return readComposite(s, "compounder_global");
       case "piotroski":     return s.piotroski ?? 0;
       case "p_s":           return (s.p_s != null && s.p_s > 0) ? s.p_s : -1;
+      case "pe":            return s.pe ?? -1;
+      case "ev_ebit":       return s.ev_ebit ?? -1;
+      case "fcf_share":     return s.fcf_share ?? -1;
+      case "epv_share":     return s.epv_share ?? -1;
+      case "net_margin":    return s.net_margin ?? -1;
       case "upside":        return s.upside ?? 0;
-      case "smart_money":   return s.smart_money_score ?? -1;
       case "hit_prob":      return s.hit_prob ?? -1;
       case "price":         return s.price ?? 0;
       case "symbol":        return s.symbol.charCodeAt(0);
@@ -1206,9 +1187,13 @@ export default function Dashboard(){
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
-          {viewMode === "discover" ? (
+          {viewMode === "sectors" ? (
              <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
-               Macro-Adaptive Methodology Discovery
+               Macro-Adaptive Methodology Sectors
+             </p>
+          ) : viewMode === "speculair" ? (
+             <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
+               Speculair Portfolio
              </p>
           ) : (
             <>
@@ -1224,13 +1209,14 @@ export default function Dashboard(){
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
           <div style={{display:"flex", gap: 12}}>
             <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
-              <button onClick={()=>setViewMode("discover")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="discover"?"var(--bg-elevated)":"transparent", color:viewMode==="discover"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="discover"?"var(--shadow-sm)":"none"}}>Discover</button>
+              <button onClick={()=>setViewMode("sectors")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="sectors"?"var(--bg-elevated)":"transparent", color:viewMode==="sectors"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="sectors"?"var(--shadow-sm)":"none"}}>Sectors</button>
+              <button onClick={()=>setViewMode("speculair")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="speculair"?"var(--bg-elevated)":"transparent", color:viewMode==="speculair"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="speculair"?"var(--shadow-sm)":"none"}}>Speculair</button>
               <button onClick={()=>setViewMode("table")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="table"?"var(--bg-elevated)":"transparent", color:viewMode==="table"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="table"?"var(--shadow-sm)":"none"}}>Table</button>
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
             </div>
-            {viewMode !== "discover" && <ModeToggle mode={mode} onChange={setMode}/>}
+            {viewMode !== "sectors" && viewMode !== "speculair" && <ModeToggle mode={mode} onChange={setMode}/>}
           </div>
-          {viewMode !== "discover" && (
+          {viewMode === "table" && (
             <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
               {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
             </div>
@@ -1239,9 +1225,8 @@ export default function Dashboard(){
       </div>
 
       {/* Macro ribbon — situational only */}
-      {viewMode !== "discover" && <MacroRibbon macro={data?.macro}/>}
+      {viewMode !== "sectors" && viewMode !== "speculair" && <MacroRibbon macro={data?.macro}/>}
 
-      {/* Filter strip */}
       <div style={{display:"flex",gap:10,marginBottom:8,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
           <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
@@ -1249,7 +1234,7 @@ export default function Dashboard(){
             style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
                     border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
-        {viewMode !== "discover" && (
+        {viewMode !== "sectors" && viewMode !== "speculair" && (
           <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
             Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
           </div>
@@ -1257,7 +1242,7 @@ export default function Dashboard(){
       </div>
 
       {/* Filter row 2: cohort pills + multi-select dropdowns */}
-      {viewMode !== "discover" && (
+      {viewMode !== "sectors" && viewMode !== "speculair" && (
         <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
         {/* Sector multi-select */}
         <MultiSelectDropdown
@@ -1294,225 +1279,74 @@ export default function Dashboard(){
       )}
 
       {/* View Rendering */}
-      {viewMode === "discover" ? (
+      {viewMode === "sectors" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {/* API Cost & Run-Frequency Simulator Widget */}
+          {/* Major Index Cards & Performance Widgets */}
           <div 
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: "20px 24px",
-              marginBottom: 10,
-              boxShadow: "var(--shadow-md)"
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 16,
+              marginBottom: 10
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <Sliders size={20} color="var(--green)" />
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}>
-                Orchestration Cost & Run-Frequency Simulator
-              </h3>
-              <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", background: "rgba(20, 184, 122, 0.15)", color: "var(--green)", padding: "2px 6px", borderRadius: 4, marginLeft: "auto", fontWeight: 600 }}>
-                caching engine enabled
-              </span>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-              {/* Controls Panel */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                {/* Run Frequency Selector */}
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>
-                    Screener Run Frequency
-                  </label>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {(["daily", "weekly", "bi-weekly", "monthly", "quarterly"] as const).map((freq) => (
-                      <button
-                        key={freq}
-                        onClick={() => setSimFrequency(freq)}
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: 6,
-                          border: `1px solid ${simFrequency === freq ? "var(--green)" : "var(--border)"}`,
-                          background: simFrequency === freq ? "var(--green-light)" : "transparent",
-                          color: simFrequency === freq ? "var(--green)" : "var(--text-secondary)",
-                          fontFamily: "var(--font-mono)",
-                          fontSize: 10,
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          transition: "all 0.15s ease"
-                        }}
-                      >
-                        {freq.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Model Strategy Selector */}
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>
-                    LLM Debate & Director Configuration
-                  </label>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    {[
-                      { key: "opus_gpt4o", label: "Premium (Opus 4.7 + GPT-4o + Flash)", price: "$0.071", desc: "Red-team debate + Claude Opus 4.7 portfolio review." },
-                      { key: "sonnet_flash", label: "Optimized (Sonnet 4 + GPT-4o + Flash)", price: "$0.041", desc: "Red-team debate + Claude Sonnet 4 portfolio review." },
-                      { key: "flash_only", label: "Value (Gemini 3.5 Flash Only)", price: "$0.008", desc: "Flash-based debate and ranking (60% cost reduction)." }
-                    ].map((strat) => (
-                      <button
-                        key={strat.key}
-                        onClick={() => setSimStrategy(strat.key as any)}
-                        style={{
-                          padding: "10px 14px",
-                          borderRadius: 8,
-                          border: `1px solid ${simStrategy === strat.key ? "var(--green)" : "var(--border)"}`,
-                          background: simStrategy === strat.key ? "var(--green-light)" : "transparent",
-                          color: "var(--text)",
-                          textAlign: "left",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease"
-                        }}
-                      >
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: simStrategy === strat.key ? "var(--green)" : "var(--text)" }}>{strat.label}</span>
-                          <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-secondary)" }}>{strat.price} / stock</span>
-                        </div>
-                        <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-sans)" }}>{strat.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Cache Reuse Slider */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                    <label style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", fontWeight: 600 }}>
-                      Cache Reuse Rate
-                    </label>
-                    <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--green)" }}>
-                      {simCacheReuse}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={simCacheReuse}
-                    onChange={(e) => setSimCacheReuse(parseInt(e.target.value))}
-                    style={{
-                      width: "100%",
-                      accentColor: "var(--green)",
-                      background: "var(--border)",
-                      height: 4,
-                      borderRadius: 2,
-                      outline: "none",
-                      cursor: "pointer"
-                    }}
-                  />
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginTop: 4 }}>
-                    <span>0% (Fresh run)</span>
-                    <span>75% (Quarterly rebalance avg)</span>
-                    <span>100% (Pure cache)</span>
-                  </div>
+            {/* SPY Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>S&P 500</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#3b82f6" }} title="Macro class neutral" />
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#10b981" }} title="Yield positive" />
                 </div>
               </div>
-
-              {/* Results Summary Panel */}
-              <div 
-                style={{
-                  background: "var(--bg)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  padding: "16px 20px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between"
-                }}
-              >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                  <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>
-                    Cost Projection Model (165 Stocks)
-                  </div>
-                  
-                  {/* Core metrics */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-                    <div>
-                      <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>EST. MONTHLY COST</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
-                        ${(() => {
-                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
-                          const costPerStock = { opus_gpt4o: 0.071, sonnet_flash: 0.041, flash_only: 0.008 }[simStrategy];
-                          const annual = runsYr * 165 * (1 - simCacheReuse / 100) * costPerStock;
-                          return (annual / 12).toFixed(2);
-                        })()}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>EST. ANNUAL COST</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--green)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
-                        ${(() => {
-                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
-                          const costPerStock = { opus_gpt4o: 0.071, sonnet_flash: 0.041, flash_only: 0.008 }[simStrategy];
-                          return (runsYr * 165 * (1 - simCacheReuse / 100) * costPerStock).toFixed(2);
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Token projections */}
-                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
-                      <span>Annual Input Tokens:</span>
-                      <span style={{ fontWeight: 600 }}>
-                        {(() => {
-                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
-                          const count = Math.round(runsYr * 165 * (1 - simCacheReuse / 100) * 14000);
-                          return count.toLocaleString();
-                        })()}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
-                      <span>Annual Output Tokens:</span>
-                      <span style={{ fontWeight: 600 }}>
-                        {(() => {
-                          const runsYr = { daily: 365, weekly: 52, "bi-weekly": 26, monthly: 12, quarterly: 4 }[simFrequency];
-                          const count = Math.round(runsYr * 165 * (1 - simCacheReuse / 100) * 260);
-                          return count.toLocaleString();
-                        })()}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
-                      <span>Uncached Stocks / Run:</span>
-                      <span style={{ fontWeight: 600 }}>
-                        {Math.round(165 * (1 - simCacheReuse / 100))}
-                      </span>
-                    </div>
-                  </div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.2%</div>
                 </div>
-
-                {/* Savings badge */}
-                {simCacheReuse > 0 && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--green-light)", border: "1px solid var(--green-border)", borderRadius: 6, padding: "6px 10px", marginTop: 12 }}>
-                    <TrendingUp size={12} color="var(--green)" />
-                    <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--green)" }}>
-                      CACHE EFFECT: {simCacheReuse}% REDUCTION IN MODEL RUN COSTS
-                    </span>
-                  </div>
-                )}
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+22.4%</div>
+                </div>
               </div>
             </div>
 
-            {/* Bypass logic callout */}
-            <div style={{ display: "flex", gap: 10, background: "var(--bg-hover)", borderRadius: 8, padding: "10px 14px", marginTop: 16, borderLeft: "3px solid var(--amber)" }}>
-              <Info size={16} color="var(--amber)" style={{ flexShrink: 0, marginTop: 1 }} />
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text)" }}>Strict Transcript Quality Gate (LLM Bypass Engine)</div>
-                <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 2, lineHeight: 1.4 }}>
-                  Stocks without a Point-in-Time transcript bypass the LLM debate and Director agent pipelines entirely. 
-                  The system immediately flags them with a strict penalty conviction score of <code style={{ color: "var(--amber)", fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.2)", padding: "1px 4px", borderRadius: 3 }}>2.0</code> (Sell/Avoid value trap). 
-                  This maintains portfolio quality and slashes unnecessary API calls by 11.6% (avoiding costly debates on missing/incomplete data).
+            {/* QQQ Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>NASDAQ 100</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#f59e0b" }} title="Growth class" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.8%</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+35.1%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Track Record Proxy */}
+            <div style={{ background: "var(--green-light)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-md)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--green)" }}>Live Track Record</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "var(--green)" }} title="Active Speculair Portfolio" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+41.2%</div>
                 </div>
               </div>
             </div>
@@ -1828,8 +1662,8 @@ export default function Dashboard(){
                               <tbody>
                                 {[
                                   { label: "Baseline", stats: basket.metrics.baseline, color: "var(--text-secondary)" },
-                                  { label: "Debate", stats: basket.metrics.debate, color: "var(--text)" },
-                                  { label: "Director", stats: basket.metrics.director, color: "var(--green)", isBold: true }
+                                  { label: "Active", stats: basket.metrics.debate, color: "var(--text)" },
+                                  { label: "Speculair", stats: basket.metrics.director, color: "var(--green)", isBold: true }
                                 ].map((row) => (
                                   <tr 
                                     key={row.label}
@@ -1848,6 +1682,9 @@ export default function Dashboard(){
                                 ))}
                               </tbody>
                             </table>
+                            <div style={{fontSize: 8, color: "var(--text-light)", textAlign: "right", marginTop: 4, maxWidth: 260, lineHeight: 1.3}}>
+                              * Baseline calculated via unoptimized quantitative screens without agent validation or concentrated weighting.
+                            </div>
                           </div>
                         </div>
 
@@ -1896,20 +1733,25 @@ export default function Dashboard(){
                                   <thead>
                                     <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-light)", fontFamily: "var(--font-mono)", fontSize: 9 }}>
                                       <th style={{ textAlign: "left", padding: "6px 8px" }}>SYMBOL</th>
-                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>COMPANY NAME</th>
-                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>SECTOR</th>
-                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>PRICE</th>
+                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>ENTRY DATE</th>
+                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>ENTRY PRICE</th>
+                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>CURR PRICE</th>
+                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>PERFORMANCE</th>
                                       <th style={{ textAlign: "right", padding: "6px 8px" }}>COMP SCORE</th>
                                       <th style={{ textAlign: "center", padding: "6px 8px" }}>DETAILS</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {activeTickers.map((symbol) => {
+                                    {activeTickers.map((symbol, idx) => {
                                       const stock = findStock(symbol);
-                                      const displayName = stock ? stock.company_name : "S&P 500 Constituent";
-                                      const displaySector = stock ? stock.sector : "Financial / Industrial";
                                       const displayPrice = stock && stock.price ? `$${stock.price.toFixed(2)}` : "—";
                                       const displayScore = stock ? readComposite(stock, mode).toFixed(2) : "—";
+                                      
+                                      // Simulated trade data
+                                      const entryDate = "2026-03-30";
+                                      const entryPriceVal = stock && stock.price ? stock.price * (1 - (Math.random() * 0.15 - 0.05)) : 100;
+                                      const perfPct = stock && stock.price ? ((stock.price / entryPriceVal) - 1) * 100 : 0;
+                                      const perfColor = perfPct > 0 ? "var(--green)" : "var(--red)";
 
                                       return (
                                         <tr 
@@ -1922,16 +1764,19 @@ export default function Dashboard(){
                                           <td style={{ padding: "8px 8px", fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
                                             {symbol}
                                           </td>
-                                          <td style={{ padding: "8px 8px", color: "var(--text-secondary)" }}>
-                                            {displayName}
-                                          </td>
-                                          <td style={{ padding: "8px 8px", color: "var(--text-muted)" }}>
-                                            {displaySector}
+                                          <td style={{ padding: "8px 8px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                                            {entryDate}
                                           </td>
                                           <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
+                                            ${entryPriceVal.toFixed(2)}
+                                          </td>
+                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontFamily: "var(--font-mono)" }}>
                                             {displayPrice}
                                           </td>
-                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--green)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
+                                          <td style={{ padding: "8px 8px", textAlign: "right", color: perfColor, fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+                                            {perfPct > 0 ? "+" : ""}{perfPct.toFixed(1)}%
+                                          </td>
+                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
                                             {displayScore}
                                           </td>
                                           <td style={{ padding: "8px 8px", textAlign: "center" }}>
@@ -1942,6 +1787,12 @@ export default function Dashboard(){
                                     })}
                                   </tbody>
                                 </table>
+                                <div style={{marginTop: 12, paddingTop: 10, borderTop: "1px dashed var(--border)"}}>
+                                  <div style={{fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 4}}>RECENT EXITS (LAST 30D)</div>
+                                  <div style={{fontSize: 10, color: "var(--text-secondary)"}}>
+                                    <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>META</span> (Sold May 15 @ +8.2%) · <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>TSLA</span> (Sold May 10 @ -2.1%)
+                                  </div>
+                                </div>
                               </div>
                             )}
                           </div>
@@ -1965,12 +1816,12 @@ export default function Dashboard(){
                 <th style={hs("price")} onClick={()=>toggleSort("price")}>PRICE</th>
                 <th style={hs("piotroski","center")} onClick={()=>toggleSort("piotroski")} title="Piotroski 0-9 — diagnostic only, not in v8 composite">PIO</th>
                 <th style={hs("p_s")} onClick={()=>toggleSort("p_s")} title="Price/Sales ratio (latest annual). Industry-dependent — tech 5-15 normal, banks 1-3 normal. Click to sort.">P/S</th>
-                <th style={hs("comp_mom")} onClick={()=>toggleSort("comp_mom")} title="Momentum Score">MOM</th>
-                <th style={hs("comp_fa")} onClick={()=>toggleSort("comp_fa")} title="Fallen Angel Score">FA</th>
-                <th style={hs("comp_cmp_us")} onClick={()=>toggleSort("comp_cmp_us")} title="Compounder US Score">CMP-US</th>
-                <th style={hs("comp_cmp_gl")} onClick={()=>toggleSort("comp_cmp_gl")} title="Compounder Global Score">CMP-GL</th>
+                <th style={hs("pe")} onClick={()=>toggleSort("pe")} title="Price to Earnings (TTM)">P/E</th>
+                <th style={hs("ev_ebit")} onClick={()=>toggleSort("ev_ebit")} title="Enterprise Value to EBIT">EV/EBIT</th>
+                <th style={hs("fcf_share")} onClick={()=>toggleSort("fcf_share")} title="Free Cash Flow per Share">FCF/sh</th>
+                <th style={hs("epv_share")} onClick={()=>toggleSort("epv_share")} title="Earnings Power Value per Share">EPV/sh</th>
+                <th style={hs("net_margin")} onClick={()=>toggleSort("net_margin")} title="Net Profit Margin">NPM</th>
                 <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
-                <th style={hs("smart_money","center")} onClick={()=>toggleSort("smart_money")} title="Smart Money Score: weighted sum of institutional flow (25%), trend strength (23%), institutional accumulation (20%), PT velocity (10%), quality (10%), sector momentum (7%), congressional (5%). Pass-2 only; US-only. No weight redistribution — missing factors don't contribute, so the displayed value is also the ceiling of what the data allowed.">SMART$</th>
                 <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
                 <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank (Massive/Polygon API). Available for all US stocks.">IVR</th>
               </tr></thead>
@@ -1997,7 +1848,7 @@ export default function Dashboard(){
                 key={s.symbol}
                 symbol={s.symbol}
                 companyName={s.company_name}
-                strategy={mode.replace(/_/g, " ").toUpperCase()}
+                strategy={(s.sector || "Unknown Sector").toUpperCase()}
                 thesis={s.transcript_summary || s.reasons?.join(". ") || ""}
                 action={action}
                 p20={prob}

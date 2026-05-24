@@ -70,6 +70,19 @@ def run_tests():
     signal_tracker.CYCLE_LENGTH_DAYS = 30
     signal_tracker.HIT_WINDOW_DAYS = 28
 
+    # Also override Regime parameters to match the test scenario
+    signal_tracker.REGIME_60D.cycle_length_days = 30
+    signal_tracker.REGIME_60D.synth_dte_days = 60
+    signal_tracker.REGIME_60D.hit_window_days = 60
+    signal_tracker.REGIME_60D.synth_long_offset = 0.05
+    signal_tracker.REGIME_60D.synth_short_offset = 0.20
+
+    signal_tracker.REGIME_30D_P10.cycle_length_days = 30
+    signal_tracker.REGIME_30D_P10.synth_dte_days = 30
+    signal_tracker.REGIME_30D_P10.hit_window_days = 28
+    signal_tracker.REGIME_30D_P10.synth_long_offset = 0.025
+    signal_tracker.REGIME_30D_P10.synth_short_offset = 0.10
+
     # =======================================================================
     # Test Phase 1: Offline GCS Helper Robustness
     # =======================================================================
@@ -126,13 +139,13 @@ def run_tests():
     signal_tracker.update_from_scan(stocks_day1, region="sp500", scan_date="2026-05-01")
 
     # Verify cycle state
-    state = gcs_mock_bucket.get(signal_tracker.CYCLE_POINTER_PATH)
+    state = gcs_mock_bucket.get(signal_tracker.REGIME_30D_P10.pointer_path)
     assert state is not None, "Cycle pointer state file not written!"
     assert state["collecting_cycle_id"] == "2026-05-01", f"Expected cycle 2026-05-01, got {state['collecting_cycle_id']}"
     assert state["collecting_ends"] == "2026-05-31", f"Expected cycle end 2026-05-31, got {state['collecting_ends']}"
 
     # Verify open.json contains AAPL with correct 30-day fields
-    open_json_path = f"hit_rate_tracking/cycles/2026-05-01/open.json"
+    open_json_path = f"hit_rate_tracking/cycles_30d/2026-05-01/open.json"
     open_data = gcs_mock_bucket.get(open_path := open_json_path)
     assert open_data is not None, "open.json not written!"
     assert len(open_data["predictions"]) == 1, "Expected 1 active prediction"
@@ -148,14 +161,14 @@ def run_tests():
     assert pred["outcome"] == "OPEN"
 
     # Verify predictions.jsonl
-    predictions_jsonl_path = f"hit_rate_tracking/cycles/2026-05-01/predictions.jsonl"
+    predictions_jsonl_path = f"hit_rate_tracking/cycles_30d/2026-05-01/predictions.jsonl"
     jsonl_content = gcs_mock_bucket.get(predictions_jsonl_path, "")
     assert "AAPL" in jsonl_content
     lines = [json.loads(line) for line in jsonl_content.splitlines() if line.strip()]
     assert len(lines) == 1
     assert lines[0]["outcome"] == "OPEN"
 
-    # 2. Second scan on Day 15 (2026-05-15): AAPL hits +20% target (target price is 120.0, spot becomes 122.0)
+    # 2. Second scan on Day 15 (2026-05-15): AAPL hits +20% target (target price is 110.0, spot becomes 122.0)
     stocks_day15 = [
         {
             "symbol": "AAPL",
@@ -236,7 +249,7 @@ def run_tests():
     assert pred_msft["hit_window_days"] == 60
     assert pred_msft["expected_dd"] == 8.5
     assert pred_msft["dte"] == 60
-    assert pred_msft["short_strike"] == 360.0  # Spot 300 * 1.20 = 360 (SYNTH_SHORT_OFFSET_60D = 0.20)
+    assert pred_msft["short_strike"] == 375.0  # Spot 300 * 1.25 = 375 (optimizing EV via grid search)
     assert pred_msft["outcome"] == "OPEN"
 
     # 2. Update scan on Day 95 (2026-08-05): MSFT is now flat at 310.0 (expired after 64 days > 60 days window)

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award, ChevronDown, ChevronRight } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award, ChevronDown, ChevronRight, Search } from "lucide-react";
 
 
 // ── Data sources ────────────────────────────────────────────────────────────
@@ -66,8 +66,10 @@ interface Prediction {
   entry_price: number; target_price: number; fate_window_ends: string;
   p20: number; decile: number; signal_strength: string;
   mode_qualifications: string[];
+  regime?: string;
   composite?: number; sector?: string; country?: string; market_cap?: number;
   ivr_at_entry?: number; iv_at_entry?: number;
+  name?: string; companyName?: string;
   outcome: "OPEN" | "HIT" | "EXPIRED";
   max_high_observed_pct: number;
   max_drawdown_observed_pct: number;
@@ -1554,6 +1556,7 @@ const PAGE_SIZE = 25;
 // ══════════════════════════════════════════════════════════════════════════════
 
 function CyclesTab() {
+  const [regime, setRegime] = useState<"60d" | "30d">("60d");
   const [state, setState]   = useState<CycleState | null>(null);
   const [health, setHealth] = useState<RollingHealth | null>(null);
   const [archives, setArchives] = useState<Record<string, CycleSummary>>({});
@@ -1564,13 +1567,33 @@ function CyclesTab() {
   const [expandedResolving, setExpandedResolving] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"prob" | "max_high" | "max_drawdown" | "dte" | "iv">("prob");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Initial load — state + health, then fan out to cycle files.
   useEffect(() => {
+    setLoading(true);
+    setErr(null);
+    setState(null);
+    setHealth(null);
+    setArchives({});
+    setOpenCycles({});
+    setSelectedArchive(null);
+    setExpandedResolving({});
+    setSearch("");
+    setSortBy("prob");
+    setSortOrder("desc");
+
     const t = Date.now();
+    const stateFile = regime === "60d" ? "current_cycle.json" : "current_cycle_30d.json";
+    const healthFile = regime === "60d" ? "rolling_health.json" : "rolling_health_30d.json";
+    const cycleSubdir = regime === "60d" ? "cycles" : "cycles_30d";
+
     Promise.all([
-      fetch(`${GCS_CYCLES_ROOT}/current_cycle.json?t=${t}`).then(r => r.ok ? r.json() : null),
-      fetch(`${GCS_CYCLES_ROOT}/rolling_health.json?t=${t}`).then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_CYCLES_ROOT}/${stateFile}?t=${t}`).then(r => r.ok ? r.json() : null),
+      fetch(`${GCS_CYCLES_ROOT}/${healthFile}?t=${t}`).then(r => r.ok ? r.json() : null),
     ])
       .then(([s, h]: [CycleState | null, RollingHealth | null]) => {
         setState(s);
@@ -1584,7 +1607,7 @@ function CyclesTab() {
           ...s.resolving_cycle_ids,
         ];
         const openPromises = liveIds.map(id =>
-          fetch(`${GCS_CYCLES_ROOT}/cycles/${id}/open.json?t=${t}`)
+          fetch(`${GCS_CYCLES_ROOT}/${cycleSubdir}/${id}/open.json?t=${t}`)
             .then(r => r.ok ? r.json() : null)
             .then((d: { predictions?: Prediction[] } | null) => ({ id, preds: d?.predictions || [] }))
             .catch(() => ({ id, preds: [] }))
@@ -1593,7 +1616,7 @@ function CyclesTab() {
         // Fetch the most recent N archived cycles (show last 12 by default).
         const archivedToFetch = s.archived_cycle_ids.slice(-12);
         const archivePromises = archivedToFetch.map(id =>
-          fetch(`${GCS_CYCLES_ROOT}/cycles/${id}/archived.json?t=${t}`)
+          fetch(`${GCS_CYCLES_ROOT}/${cycleSubdir}/${id}/archived.json?t=${t}`)
             .then(r => r.ok ? r.json() : null)
             .then((d: CycleSummary | null) => ({ id, data: d }))
             .catch(() => ({ id, data: null }))
@@ -1612,25 +1635,11 @@ function CyclesTab() {
       })
       .catch(e => setErr(e?.message || "Failed to load cycles"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [regime]);
 
-  if (loading) {
-    return <Empty icon={<Target size={36} color={T.divider} />} title="Loading cycles…" />;
-  }
-  if (err) {
-    return <Empty icon={<Target size={36} color={T.divider} />} title="Failed to load cycles" sub={err} />;
-  }
-  if (!state || !state.collecting_cycle_id) {
-    return (
-      <Empty icon={<Target size={36} color={T.divider} />}
-        title="No cycles yet"
-        sub="Cycles begin tracking once the first scan with hit_prob > 0 stocks completes."/>
-    );
-  }
-
-  const collectingPreds = openCycles[state.collecting_cycle_id] || [];
-  const resolvingTotal  = state.resolving_cycle_ids.reduce(
-    (a, id) => a + ((openCycles[id] || []).length), 0);
+  const collectingPreds = state && state.collecting_cycle_id ? openCycles[state.collecting_cycle_id] || [] : [];
+  const resolvingTotal  = state ? state.resolving_cycle_ids.reduce(
+    (a, id) => a + ((openCycles[id] || []).length), 0) : 0;
 
   // Derive live decile distribution and aggregate stats for the collecting cycle
   const liveDecileDist: Record<number, number> = {};
@@ -1639,334 +1648,529 @@ function CyclesTab() {
     liveDecileDist[p.decile] = (liveDecileDist[p.decile] || 0) + 1;
     if (p.outcome === "HIT") liveHitsSoFar++;
   }
-  const daysIntoCycle = state.collecting_start
+  const daysIntoCycle = state && state.collecting_start
     ? Math.max(0, Math.floor((Date.now() - new Date(state.collecting_start + "T00:00:00").getTime()) / 86400000))
     : 0;
-  const cycleEndsIn = state.collecting_ends
+  const cycleEndsIn = state && state.collecting_ends
     ? Math.max(0, Math.floor((new Date(state.collecting_ends + "T00:00:00").getTime() - Date.now()) / 86400000))
     : 0;
 
   // Pick a sorted archive list (newest first) for display
-  const archiveList = state.archived_cycle_ids
-    .slice()
-    .reverse()
-    .map(id => archives[id])
-    .filter((a): a is CycleSummary => !!a);
+  const archiveList = state
+    ? state.archived_cycle_ids
+        .slice()
+        .reverse()
+        .map(id => archives[id])
+        .filter((a): a is CycleSummary => !!a)
+    : [];
+
+  const probHeader = regime === "60d" ? "P20" : "P10";
+
+  const handleSort = (field: typeof sortBy) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("desc");
+    }
+  };
+
+  const processPredictions = (preds: Prediction[]) => {
+    const filtered = preds.filter(p => 
+      p.symbol.toLowerCase().includes(search.toLowerCase()) ||
+      (p.sector && p.sector.toLowerCase().includes(search.toLowerCase())) ||
+      (p.region && p.region.toLowerCase().includes(search.toLowerCase()))
+    );
+
+    return filtered.sort((a, b) => {
+      let valA = 0;
+      let valB = 0;
+      if (sortBy === "prob") {
+        valA = a.p20;
+        valB = b.p20;
+      } else if (sortBy === "max_high") {
+        valA = a.max_high_observed_pct;
+        valB = b.max_high_observed_pct;
+      } else if (sortBy === "max_drawdown") {
+        valA = a.max_drawdown_observed_pct;
+        valB = b.max_drawdown_observed_pct;
+      } else if (sortBy === "dte") {
+        valA = a.days_to_expiration ?? 9999;
+        valB = b.days_to_expiration ?? 9999;
+      } else if (sortBy === "iv") {
+        valA = a.current_long_iv ?? a.iv_at_entry ?? a.long_iv ?? 0;
+        valB = b.current_long_iv ?? b.iv_at_entry ?? b.long_iv ?? 0;
+      }
+
+      if (valA === valB) return 0;
+      if (sortOrder === "asc") {
+        return valA > valB ? 1 : -1;
+      } else {
+        return valA < valB ? 1 : -1;
+      }
+    });
+  };
+
+  const renderHeaders = (headers: string[]) => {
+    return headers.map((h, i) => {
+      const isSortable = h === probHeader || h === "MAX%" || h === "MIN%" || h === "IV" || h === "DTE";
+      let sortField: typeof sortBy | null = null;
+      if (h === probHeader) sortField = "prob";
+      else if (h === "MAX%") sortField = "max_high";
+      else if (h === "MIN%") sortField = "max_drawdown";
+      else if (h === "IV") sortField = "iv";
+      else if (h === "DTE") sortField = "dte";
+
+      const alignLeft = i === 0 || h === "Spread";
+
+      if (isSortable && sortField) {
+        const isActive = sortBy === sortField;
+        return (
+          <th
+            key={h}
+            onClick={() => handleSort(sortField!)}
+            style={{
+              ...th,
+              textAlign: alignLeft ? "left" : "right",
+              cursor: "pointer",
+              userSelect: "none",
+              color: isActive ? T.green : T.muted,
+              fontWeight: isActive ? 700 : 500,
+              transition: "color 0.15s"
+            }}
+          >
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 3, float: alignLeft ? "left" : "right" }}>
+              <span>{h}</span>
+              <span style={{ fontSize: 8 }}>
+                {isActive ? (sortOrder === "asc" ? "▲" : "▼") : "⇅"}
+              </span>
+            </div>
+          </th>
+        );
+      }
+
+      return (
+        <th key={h} style={{ ...th, textAlign: alignLeft ? "left" : "right" }}>
+          {h}
+        </th>
+      );
+    });
+  };
 
   return (
     <>
-      {/* ─── Kill switch banner ─── shown only when active. Demands attention. */}
-      {health?.kill_switch_active && (
-        <div style={{
-          padding: "12px 16px", marginBottom: 16, borderRadius: 6,
-          background: "var(--red-light)", border: `2px solid ${T.red}`,
-          display: "flex", alignItems: "center", gap: 12,
-        }}>
-          <div style={{ fontSize: 22 }}>⚠</div>
-          <div>
-            <div style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.red, letterSpacing: "0.05em" }}>
-              KILL SWITCH ACTIVE — MODEL DEGRADATION DETECTED
-            </div>
-            <div style={{ fontFamily: T.mono, fontSize: 11, color: T.text, marginTop: 3, lineHeight: 1.5 }}>
-              Rolling 90-day D10 hit rate is {(health.d10_hit_rate * 100).toFixed(1)}%, below the {(health.kill_switch_threshold * 100).toFixed(0)}% floor.
-              Baseline calibration is {(health.baseline_d10 * 100).toFixed(1)}%. The model needs retraining.
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ─── KPI strip: collecting cycle + cumulative ─── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
-        <KPI label="COLLECTING" value={`Cycle ${state.collecting_cycle_id}`}
-          sub={`Day ${daysIntoCycle}/30 · closes in ${cycleEndsIn}d`}/>
-        <KPI label="LIVE PREDICTIONS"
-          value={String(collectingPreds.length)}
-          sub={`${liveHitsSoFar} already hit · ${collectingPreds.length - liveHitsSoFar} still tracking`}/>
-        <KPI label="RESOLVING" value={String(resolvingTotal)}
-          sub={`${state.resolving_cycle_ids.length} cycle(s) past collection`}/>
-        <KPI label="ARCHIVED" value={String(state.archived_cycle_ids.length)}
-          sub="Total cycles fully resolved"/>
+      {/* Premium Segmented Regime Switcher */}
+      <div style={{
+        display: "flex",
+        background: "rgba(255, 255, 255, 0.02)",
+        border: `1px solid ${T.border}`,
+        borderRadius: 8,
+        padding: 3,
+        gap: 2,
+        width: "fit-content",
+        marginBottom: 16
+      }}>
+        <button
+          onClick={() => setRegime("60d")}
+          style={{
+            padding: "6px 14px",
+            fontSize: 11,
+            fontWeight: 600,
+            fontFamily: T.mono,
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            background: regime === "60d" ? T.greenLight : "transparent",
+            color: regime === "60d" ? T.green : T.muted,
+            transition: "all 0.15s"
+          }}
+        >
+          60-DAY REGIME (P20 @ 60dd)
+        </button>
+        <button
+          onClick={() => setRegime("30d")}
+          style={{
+            padding: "6px 14px",
+            fontSize: 11,
+            fontWeight: 600,
+            fontFamily: T.mono,
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            background: regime === "30d" ? T.greenLight : "transparent",
+            color: regime === "30d" ? T.green : T.muted,
+            transition: "all 0.15s"
+          }}
+        >
+          30-DAY REGIME (P10 @ 30dd)
+        </button>
       </div>
 
-      {/* ─── Rolling 90d Calibration Health Card ─── */}
-      {health && (
-        <Card style={{ marginBottom: 20 }}>
-          <SH title="90-Day Rolling Calibration"
-            icon={<Award size={12}/>}
-            sub={`${health.deciles ? "Multi-decile calibration report" : "D10 vs baseline"} · ${health.status.replace("_", " ")} · ${health.computed_date || "—"}`}/>
-          
-          <div style={{ padding: "8px 0" }}>
-            {(() => {
-              // Calculate top cohort (D7-D10) stats
-              let topN = 0;
-              let topHits = 0;
-              let topSumProbs = 0;
-              
-              if (health.deciles) {
-                for (let d = 7; d <= 10; d++) {
-                  const dData = health.deciles[String(d)];
-                  if (dData) {
-                    topN += dData.n;
-                    topHits += dData.hits;
-                    topSumProbs += (dData.expected_rate || 0) * dData.n;
-                  }
-                }
-              } else {
-                // Fallback to legacy D10 stats if deciles is not in payload
-                topN = health.d10_n || 0;
-                topHits = health.d10_hits || 0;
-                topSumProbs = (health.baseline_d10 || 0) * topN;
-              }
-              
-              const topObservedRate = topN > 0 ? topHits / topN : 0;
-              const topExpectedRate = topN > 0 ? topSumProbs / topN : 0;
-              
-              const is60d = (health.baseline_d10 || 0) > 0.5;
-              const topBaseline = is60d ? "55%" : "10%";
-              
-              const totalInWindow = health.deciles
-                ? Object.values(health.deciles).reduce((acc: number, val: any) => acc + (val.n || 0), 0)
-                : (health.d10_n || 0) + (health.d1_n || 0);
-
-              const topColor = topN >= 10
-                ? (health.kill_switch_active ? T.red : T.green)
-                : T.amber; // Amber if under-sampled/n<10
-
-              const regimeExpectedRates: Record<string, Record<string, number>> = {
-                "60d": {
-                  "10": 0.832, "9": 0.540, "8": 0.480, "7": 0.430, "6": 0.370,
-                  "5": 0.310, "4": 0.278, "3": 0.240, "2": 0.213, "1": 0.015
-                },
-                "30d": {
-                  "10": 0.223, "9": 0.085, "8": 0.060, "7": 0.040, "6": 0.025,
-                  "5": 0.016, "4": 0.011, "3": 0.008, "2": 0.005, "1": 0.011
-                }
-              };
-              const regimeKey = is60d ? "60d" : "30d";
-              const expectedRates = regimeExpectedRates[regimeKey];
-
-              return (
-                <>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 14 }}>
-                    <CalibrationStat
-                      label="STATUS"
-                      value={health.status.replace("_", " ")}
-                      sub={health.status === "UNDER_SAMPLED" ? "Need >=10 resolved top setups" : health.status === "DEGRADED" ? "Model degradation flagged" : "Calibration within expected bounds"}
-                      color={health.kill_switch_active ? T.red : health.status === "HEALTHY" ? T.green : T.amber}/>
-                    <CalibrationStat
-                      label="DOMINANT REGIME"
-                      value={is60d ? "60-Day option targets" : "30-Day option targets"}
-                      sub="Determines touch probability thresholds"
-                      color={T.text}/>
-                    <CalibrationStat
-                      label="TOTAL IN WINDOW"
-                      value={String(totalInWindow)}
-                      sub={`Trailing ${health.window_days || 90} days resolved`}
-                      color={T.text}/>
-                    <CalibrationStat
-                      label="TOP COHORT (D7-D10)"
-                      value={`${(topObservedRate * 100).toFixed(1)}%`}
-                      sub={topN > 0 ? `n=${topN} · expected ${(topExpectedRate * 100).toFixed(1)}%` : `n=0 · baseline ~${topBaseline}`}
-                      color={topColor}/>
-                  </div>
-
-                  {/* Deciles Calibration Table/Grid */}
-                  <div style={{ marginTop: 12 }}>
-                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 8 }}>
-                      DECILE CALIBRATION BREAKDOWN (OBSERVED VS EXPECTED TOUCH PROBABILITY)
-                    </div>
-                    
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
-                      {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(d => {
-                        const dKey = String(d);
-                        const dData = health.deciles?.[dKey];
-                        const n = dData?.n || 0;
-                        
-                        const observedVal = (n > 0 && dData) ? dData.observed_rate : null;
-                        const expectedVal = (n > 0 && dData) ? dData.expected_rate : expectedRates[dKey];
-                        
-                        const diff = observedVal !== null ? observedVal - expectedVal : 0;
-                        const isUnderperforming = observedVal !== null && diff < -0.1 && n >= 10;
-                        
-                        const isEmpty = n === 0;
-
-                        return (
-                          <div key={d} style={{
-                            padding: "10px 12px",
-                            borderRadius: 6,
-                            background: isEmpty ? "rgba(255,255,255,0.005)" : "rgba(255,255,255,0.02)",
-                            border: isEmpty ? `1px dashed ${T.divider}` : `1px solid ${isUnderperforming ? T.red : T.border}`,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 4,
-                            opacity: isEmpty ? 0.6 : 1,
-                            transition: "opacity 0.2s"
-                          }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <span style={{ fontFamily: T.mono, fontWeight: 700, color: isEmpty ? T.muted : T.text, fontSize: 11 }}>Decile {d}</span>
-                              <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>n = {n}</span>
-                            </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 10, fontFamily: T.mono, marginTop: 4 }}>
-                              <div>
-                                <span style={{ color: T.muted }}>Observed:</span>
-                                <div style={{ color: isEmpty ? T.muted : (isUnderperforming ? T.red : T.green), fontWeight: 600 }}>
-                                  {observedVal !== null ? `${(observedVal * 100).toFixed(1)}%` : "—"}
-                                </div>
-                              </div>
-                              <div>
-                                <span style={{ color: T.muted }}>Expected:</span>
-                                <div style={{ color: isEmpty ? T.muted : T.text, fontWeight: 600 }}>
-                                  {(expectedVal * 100).toFixed(1)}%
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-
-          <div style={{ marginTop: 10, fontSize: 9, color: T.light, fontFamily: T.mono, lineHeight: 1.5 }}>
-            Computed across all predictions in collecting + resolving + last 6 archived cycles whose entry date falls within
-            the trailing {health.window_days} days. OPEN predictions still in their target window are excluded to avoid
-            artificially deflating the rate.
-          </div>
-        </Card>
+      {loading && (
+        <Empty icon={<Target size={36} color={T.divider} />} title="Loading cycles…" />
+      )}
+      {!loading && err && (
+        <Empty icon={<Target size={36} color={T.divider} />} title="Failed to load cycles" sub={err} />
+      )}
+      {!loading && !err && (!state || !state.collecting_cycle_id) && (
+        <Empty icon={<Target size={36} color={T.divider} />}
+          title="No cycles yet"
+          sub="Cycles begin tracking once the first scan with hit_prob > 0 stocks completes."/>
       )}
 
-      {/* ─── Collecting cycle: decile distribution + live status ─── */}
-      <Card style={{ marginBottom: 20 }}>
-        <SH title={`Collecting Cycle ${state.collecting_cycle_id}`}
-          icon={<Radio size={12}/>}
-          sub={`Day ${daysIntoCycle}/60 · ${collectingPreds.length} predictions captured so far`}/>
-        {collectingPreds.length === 0 ? (
-          <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
-            No predictions in this cycle yet. New predictions enter as the model emits hit_prob &gt; 0 stocks.
-          </div>
-        ) : (
-          <>
-            <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6 }}>
-              PREDICTIONS BY DECILE
-            </div>
-            <DecileBarChart distribution={liveDecileDist}/>
-            <PortfolioKPI predictions={collectingPreds}/>
-            <div style={{ marginTop: 14, overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr>
-                    {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
-                      <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {collectingPreds
-                    .slice()
-                    .sort((a, b) => b.p20 - a.p20)
-                    .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </Card>
-
-      {/* ─── Resolving cycles: predictions past collection, still tracking toward fate ─── */}
-      {state.resolving_cycle_ids.length > 0 && (
-        <Card style={{ marginBottom: 20 }}>
-          <SH title={`Resolving Cycles (${state.resolving_cycle_ids.length})`}
-            icon={<Clock size={12}/>}
-            sub={`${resolvingTotal} predictions past collection window, tracking toward 60-day resolution`}/>
-          {state.resolving_cycle_ids.map(cycleId => {
-            const preds = openCycles[cycleId] || [];
-            const isExpanded = expandedResolving[cycleId] ?? false;
-            // Compute decile distribution for this resolving cycle
-            const resDecileDist: Record<number, number> = {};
-            let resHits = 0;
-            for (const p of preds) {
-              resDecileDist[p.decile] = (resDecileDist[p.decile] || 0) + 1;
-              if (p.outcome === "HIT") resHits++;
-            }
-            return (
-              <div key={cycleId} style={{ marginBottom: 14 }}>
-                <div
-                  onClick={() => setExpandedResolving(prev => ({ ...prev, [cycleId]: !prev[cycleId] }))}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
-                    background: isExpanded ? T.greenLight : T.bg, borderRadius: 6,
-                    border: `1px solid ${isExpanded ? T.greenBorder : T.border}`,
-                    cursor: "pointer", transition: "all 0.15s",
-                  }}>
-                  {isExpanded ? <ChevronDown size={14} color={T.green}/> : <ChevronRight size={14} color={T.muted}/>}
-                  <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.text }}>
-                    Cycle {cycleId}
-                  </span>
-                  <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted, marginLeft: 4 }}>
-                    {preds.length} predictions · {resHits} hit · {preds.filter(p => p.outcome === "OPEN").length} open
-                  </span>
+      {!loading && !err && state && state.collecting_cycle_id && (
+        <>
+          {/* ─── Kill switch banner ─── shown only when active. Demands attention. */}
+          {health?.kill_switch_active && (
+            <div style={{
+              padding: "12px 16px", marginBottom: 16, borderRadius: 6,
+              background: "var(--red-light)", border: `2px solid ${T.red}`,
+              display: "flex", alignItems: "center", gap: 12,
+            }}>
+              <div style={{ fontSize: 22 }}>⚠</div>
+              <div>
+                <div style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.red, letterSpacing: "0.05em" }}>
+                  KILL SWITCH ACTIVE — MODEL DEGRADATION DETECTED
                 </div>
-                {isExpanded && preds.length > 0 && (
-                  <div style={{ marginTop: 10, paddingLeft: 8 }}>
-                    <DecileBarChart distribution={resDecileDist}/>
-                    <PortfolioKPI predictions={preds}/>
-                    <div style={{ marginTop: 14, overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                          <tr>
-                            {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Current", "Chg%", "Max ↑", "Max ↓", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"].map((h, i) => (
-                              <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {preds
-                            .slice()
-                            .sort((a, b) => b.p20 - a.p20)
-                            .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-                {isExpanded && preds.length === 0 && (
-                  <div style={{ padding: "16px 12px", fontFamily: T.mono, fontSize: 11, color: T.muted, textAlign: "center" }}>
-                    No predictions loaded for this cycle.
-                  </div>
-                )}
+                <div style={{ fontFamily: T.mono, fontSize: 11, color: T.text, marginTop: 3, lineHeight: 1.5 }}>
+                  Rolling 90-day D10 hit rate is {(health.d10_hit_rate * 100).toFixed(1)}%, below the {(health.kill_switch_threshold * 100).toFixed(0)}% floor.
+                  Baseline calibration is {(health.baseline_d10 * 100).toFixed(1)}%. The model needs retraining.
+                </div>
               </div>
-            );
-          })}
-        </Card>
-      )}
+            </div>
+          )}
 
-      {/* ─── Archived cycles ─── */}
-      <Card>
-        <SH title={`Archived Cycles (${archiveList.length})`}
-          icon={<Clock size={12}/>}
-          sub="Click a card for the per-prediction breakdown"/>
-        {archiveList.length === 0 ? (
-          <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
-            No archived cycles yet. The first cycle archives ~120 days after open (60d collect + 60d fate window).
+          {/* ─── KPI strip: collecting cycle + cumulative ─── */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
+            <KPI label="COLLECTING" value={`Cycle ${state.collecting_cycle_id}`}
+              sub={`Day ${daysIntoCycle}/30 · closes in ${cycleEndsIn}d`}/>
+            <KPI label="LIVE PREDICTIONS"
+              value={String(collectingPreds.length)}
+              sub={`${liveHitsSoFar} already hit · ${collectingPreds.length - liveHitsSoFar} still tracking`}/>
+            <KPI label="RESOLVING" value={String(resolvingTotal)}
+              sub={`${state.resolving_cycle_ids.length} cycle(s) past collection`}/>
+            <KPI label="ARCHIVED" value={String(state.archived_cycle_ids.length)}
+              sub="Total cycles fully resolved"/>
           </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
-            {archiveList.map(a => (
-              <ArchiveCard key={a.cycle_id} summary={a}
-                expanded={selectedArchive === a.cycle_id}
-                onToggle={() => setSelectedArchive(selectedArchive === a.cycle_id ? null : a.cycle_id)}/>
-            ))}
-          </div>
-        )}
-        {selectedArchive && archives[selectedArchive] && (
-          <div style={{ marginTop: 18, paddingTop: 16, borderTop: `2px solid ${T.divider}` }}>
-            <ArchiveDrillDown summary={archives[selectedArchive]}/>
-          </div>
-        )}
-      </Card>
+
+          {/* ─── Rolling 90d Calibration Health Card ─── */}
+          {health && (
+            <Card style={{ marginBottom: 20 }}>
+              <SH title="90-Day Rolling Calibration"
+                icon={<Award size={12}/>}
+                sub={`${health.deciles ? "Multi-decile calibration report" : "D10 vs baseline"} · ${health.status.replace("_", " ")} · ${health.computed_date || "—"}`}/>
+              
+              <div style={{ padding: "8px 0" }}>
+                {(() => {
+                  // Calculate top cohort (D7-D10) stats
+                  let topN = 0;
+                  let topHits = 0;
+                  let topSumProbs = 0;
+                  
+                  if (health.deciles) {
+                    for (let d = 7; d <= 10; d++) {
+                      const dData = health.deciles[String(d)];
+                      if (dData) {
+                        topN += dData.n;
+                        topHits += dData.hits;
+                        topSumProbs += (dData.expected_rate || 0) * dData.n;
+                      }
+                    }
+                  } else {
+                    // Fallback to legacy D10 stats if deciles is not in payload
+                    topN = health.d10_n || 0;
+                    topHits = health.d10_hits || 0;
+                    topSumProbs = (health.baseline_d10 || 0) * topN;
+                  }
+                  
+                  const topObservedRate = topN > 0 ? topHits / topN : 0;
+                  const topExpectedRate = topN > 0 ? topSumProbs / topN : 0;
+                  
+                  const is60d = regime === "60d";
+                  const topBaseline = is60d ? "55%" : "10%";
+                  
+                  const totalInWindow = health.deciles
+                    ? Object.values(health.deciles).reduce((acc: number, val: any) => acc + (val.n || 0), 0)
+                    : (health.d10_n || 0) + (health.d1_n || 0);
+
+                  const topColor = topN >= 10
+                    ? (health.kill_switch_active ? T.red : T.green)
+                    : T.amber; // Amber if under-sampled/n<10
+
+                  const regimeExpectedRates: Record<string, Record<string, number>> = {
+                    "60d": {
+                      "10": 0.832, "9": 0.540, "8": 0.480, "7": 0.430, "6": 0.370,
+                      "5": 0.310, "4": 0.278, "3": 0.240, "2": 0.213, "1": 0.015
+                    },
+                    "30d": {
+                      "10": 0.223, "9": 0.085, "8": 0.060, "7": 0.040, "6": 0.025,
+                      "5": 0.016, "4": 0.011, "3": 0.008, "2": 0.005, "1": 0.011
+                    }
+                  };
+                  const expectedRates = regimeExpectedRates[regime];
+
+                  return (
+                    <>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 14 }}>
+                        <CalibrationStat
+                          label="STATUS"
+                          value={health.status.replace("_", " ")}
+                          sub={health.status === "UNDER_SAMPLED" ? "Need >=10 resolved top setups" : health.status === "DEGRADED" ? "Model degradation flagged" : "Calibration within expected bounds"}
+                          color={health.kill_switch_active ? T.red : health.status === "HEALTHY" ? T.green : T.amber}/>
+                        <CalibrationStat
+                          label="DOMINANT REGIME"
+                          value={is60d ? "60-Day option targets" : "30-Day option targets"}
+                          sub="Determines touch probability thresholds"
+                          color={T.text}/>
+                        <CalibrationStat
+                          label="TOTAL IN WINDOW"
+                          value={String(totalInWindow)}
+                          sub={`Trailing ${health.window_days || 90} days resolved`}
+                          color={T.text}/>
+                        <CalibrationStat
+                          label="TOP COHORT (D7-D10)"
+                          value={`${(topObservedRate * 100).toFixed(1)}%`}
+                          sub={topN > 0 ? `n=${topN} · expected ${(topExpectedRate * 100).toFixed(1)}%` : `n=0 · baseline ~${topBaseline}`}
+                          color={topColor}/>
+                      </div>
+
+                      {/* Deciles Calibration Table/Grid */}
+                      <div style={{ marginTop: 12 }}>
+                        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 8 }}>
+                          DECILE CALIBRATION BREAKDOWN (OBSERVED VS EXPECTED TOUCH PROBABILITY)
+                        </div>
+                        
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
+                          {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(d => {
+                            const dKey = String(d);
+                            const dData = health.deciles?.[dKey];
+                            const n = dData?.n || 0;
+                            
+                            const observedVal = (n > 0 && dData) ? dData.observed_rate : null;
+                            const expectedVal = (n > 0 && dData) ? dData.expected_rate : expectedRates[dKey];
+                            
+                            const diff = observedVal !== null ? observedVal - expectedVal : 0;
+                            const isUnderperforming = observedVal !== null && diff < -0.1 && n >= 10;
+                            
+                            const isEmpty = n === 0;
+
+                            return (
+                              <div key={d} style={{
+                                padding: "10px 12px",
+                                borderRadius: 6,
+                                background: isEmpty ? "rgba(255,255,255,0.005)" : "rgba(255,255,255,0.02)",
+                                border: isEmpty ? `1px dashed ${T.divider}` : `1px solid ${isUnderperforming ? T.red : T.border}`,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 4,
+                                opacity: isEmpty ? 0.6 : 1,
+                                transition: "opacity 0.2s"
+                              }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <span style={{ fontFamily: T.mono, fontWeight: 700, color: isEmpty ? T.muted : T.text, fontSize: 11 }}>Decile {d}</span>
+                                  <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>n = {n}</span>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 10, fontFamily: T.mono, marginTop: 4 }}>
+                                  <div>
+                                    <span style={{ color: T.muted }}>Observed:</span>
+                                    <div style={{ color: isEmpty ? T.muted : (isUnderperforming ? T.red : T.green), fontWeight: 600 }}>
+                                      {observedVal !== null ? `${(observedVal * 100).toFixed(1)}%` : "—"}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span style={{ color: T.muted }}>Expected:</span>
+                                    <div style={{ color: isEmpty ? T.muted : T.text, fontWeight: 600 }}>
+                                      {(expectedVal * 100).toFixed(1)}%
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+
+              <div style={{ marginTop: 10, fontSize: 9, color: T.light, fontFamily: T.mono, lineHeight: 1.5 }}>
+                Computed across all predictions in collecting + resolving + last 6 archived cycles whose entry date falls within
+                the trailing {health.window_days} days. OPEN predictions still in their target window are excluded to avoid
+                artificially deflating the rate.
+              </div>
+            </Card>
+          )}
+
+          {/* ─── Collecting cycle: decile distribution + live status ─── */}
+          <Card style={{ marginBottom: 20 }}>
+            <SH title={`Collecting Cycle ${state.collecting_cycle_id}`}
+              icon={<Radio size={12}/>}
+              sub={`Day ${daysIntoCycle}/${regime === "60d" ? 60 : 30} · ${collectingPreds.length} predictions captured so far`}/>
+            {collectingPreds.length === 0 ? (
+              <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
+                No predictions in this cycle yet. New predictions enter as the model emits hit_prob &gt; 0 stocks.
+              </div>
+            ) : (
+              <>
+                {/* Search Filter Input */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 16,
+                  background: "rgba(255, 255, 255, 0.02)",
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 6,
+                  padding: "4px 8px",
+                  width: "fit-content"
+                }}>
+                  <Search size={12} color={T.muted}/>
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search ticker, sector, region..."
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: T.text,
+                      fontSize: 11,
+                      fontFamily: T.mono,
+                      width: 220,
+                      outline: "none"
+                    }}
+                  />
+                  {search && (
+                    <button
+                      onClick={() => setSearch("")}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: T.green,
+                        cursor: "pointer",
+                        fontSize: 10,
+                        fontWeight: 700,
+                        fontFamily: T.mono,
+                        padding: 0
+                      }}
+                    >
+                      CLEAR
+                    </button>
+                  )}
+                </div>
+                <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6 }}>
+                  PREDICTIONS BY DECILE
+                </div>
+                <DecileBarChart distribution={liveDecileDist}/>
+                <PortfolioKPI predictions={collectingPreds}/>
+                <div style={{ marginTop: 14, overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr>
+                        {renderHeaders(["Symbol", "Entry", probHeader, "Dec", "Days", "Spread", "Current", "Chg%", "MAX%", "MIN%", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"])}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {processPredictions(collectingPreds)
+                        .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </Card>
+
+          {/* ─── Resolving cycles: predictions past collection, still tracking toward fate ─── */}
+          {state.resolving_cycle_ids.length > 0 && (
+            <Card style={{ marginBottom: 20 }}>
+              <SH title={`Resolving Cycles (${state.resolving_cycle_ids.length})`}
+                icon={<Clock size={12}/>}
+                sub={`${resolvingTotal} predictions past collection window, tracking toward ${regime === "60d" ? 60 : 30}-day resolution`}/>
+              {state.resolving_cycle_ids.map(cycleId => {
+                const preds = openCycles[cycleId] || [];
+                const isExpanded = expandedResolving[cycleId] ?? false;
+                // Compute decile distribution for this resolving cycle
+                const resDecileDist: Record<number, number> = {};
+                let resHits = 0;
+                for (const p of preds) {
+                  resDecileDist[p.decile] = (resDecileDist[p.decile] || 0) + 1;
+                  if (p.outcome === "HIT") resHits++;
+                }
+                return (
+                  <div key={cycleId} style={{ marginBottom: 14 }}>
+                    <div
+                      onClick={() => setExpandedResolving(prev => ({ ...prev, [cycleId]: !prev[cycleId] }))}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
+                        background: isExpanded ? T.greenLight : T.bg, borderRadius: 6,
+                        border: `1px solid ${isExpanded ? T.greenBorder : T.border}`,
+                        cursor: "pointer", transition: "all 0.15s",
+                      }}>
+                      {isExpanded ? <ChevronDown size={14} color={T.green}/> : <ChevronRight size={14} color={T.muted}/>}
+                      <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.text }}>
+                        Cycle {cycleId}
+                      </span>
+                      <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted, marginLeft: 4 }}>
+                        {preds.length} predictions · {resHits} hit · {preds.filter(p => p.outcome === "OPEN").length} open
+                      </span>
+                    </div>
+                    {isExpanded && preds.length > 0 && (
+                      <div style={{ marginTop: 10, paddingLeft: 8 }}>
+                        <DecileBarChart distribution={resDecileDist}/>
+                        <PortfolioKPI predictions={preds}/>
+                        <div style={{ marginTop: 14, overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr>
+                                {renderHeaders(["Symbol", "Entry", probHeader, "Dec", "Days", "Spread", "Current", "Chg%", "MAX%", "MIN%", "EV", "Cost", "Value", "P&L", "IV", "IVR", "Δ", "θ", "DTE"])}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {processPredictions(preds)
+                                .map(p => <PredictionRow key={`${p.symbol}-${p.entry_date}`} p={p}/>)}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                    {isExpanded && preds.length === 0 && (
+                      <div style={{ padding: "16px 12px", fontFamily: T.mono, fontSize: 11, color: T.muted, textAlign: "center" }}>
+                        No predictions loaded for this cycle.
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </Card>
+          )}
+
+          {/* ─── Archived cycles ─── */}
+          <Card>
+            <SH title={`Archived Cycles (${archiveList.length})`}
+              icon={<Clock size={12}/>}
+              sub={`Click a card for the per-prediction breakdown`}/>
+            {archiveList.length === 0 ? (
+              <div style={{ padding: "20px 8px", textAlign: "center", fontFamily: T.mono, fontSize: 11, color: T.muted }}>
+                No archived cycles yet. The first cycle archives ~${regime === "60d" ? 120 : 60} days after open (${regime === "60d" ? 60 : 30}d collect + ${regime === "60d" ? 60 : 30}d fate window).
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                {archiveList.map(a => (
+                  <ArchiveCard key={a.cycle_id} summary={a}
+                    expanded={selectedArchive === a.cycle_id}
+                    onToggle={() => setSelectedArchive(selectedArchive === a.cycle_id ? null : a.cycle_id)}/>
+                ))}
+              </div>
+            )}
+            {selectedArchive && archives[selectedArchive] && (
+              <div style={{ marginTop: 18, paddingTop: 16, borderTop: `2px solid ${T.divider}` }}>
+                <ArchiveDrillDown summary={archives[selectedArchive]}/>
+              </div>
+            )}
+          </Card>
+        </>
+      )}
     </>
   );
 }
@@ -2213,11 +2417,111 @@ function ArchiveCard({ summary, expanded, onToggle }: {
 }
 
 function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"prob" | "max_high" | "max_drawdown" | "iv">("prob");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   // Decile bars sourced from the archived summary (hit_rate_by_decile).
   const decileDist: Record<number, number> = {};
   Object.entries(summary.hit_rate_by_decile).forEach(([k, v]) => {
     decileDist[Number(k)] = v.n;
   });
+
+  const firstPred = summary.predictions?.[0];
+  const is30dArchive = firstPred?.regime === "30d" || firstPred?.hit_window_days === 30;
+  const probHeader = is30dArchive ? "P10" : "P20";
+
+  const handleSort = (field: typeof sortBy) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("desc");
+    }
+  };
+
+  const processPredictions = (preds: Prediction[]) => {
+    const filtered = preds.filter(p => 
+      p.symbol.toLowerCase().includes(search.toLowerCase()) ||
+      (p.sector && p.sector.toLowerCase().includes(search.toLowerCase())) ||
+      (p.region && p.region.toLowerCase().includes(search.toLowerCase())) ||
+      (p.name && p.name.toLowerCase().includes(search.toLowerCase())) ||
+      (p.companyName && p.companyName.toLowerCase().includes(search.toLowerCase()))
+    );
+
+    return filtered.sort((a, b) => {
+      let valA = 0;
+      let valB = 0;
+      if (sortBy === "prob") {
+        valA = a.p20;
+        valB = b.p20;
+      } else if (sortBy === "max_high") {
+        valA = a.max_high_observed_pct;
+        valB = b.max_high_observed_pct;
+      } else if (sortBy === "max_drawdown") {
+        valA = a.max_drawdown_observed_pct;
+        valB = b.max_drawdown_observed_pct;
+      } else if (sortBy === "iv") {
+        valA = a.current_long_iv ?? a.iv_at_entry ?? a.long_iv ?? 0;
+        valB = b.current_long_iv ?? b.iv_at_entry ?? b.long_iv ?? 0;
+      }
+
+      if (valA === valB) {
+        return b.p20 - a.p20; // Secondary sort: probability descending
+      }
+      if (sortOrder === "asc") {
+        return valA > valB ? 1 : -1;
+      } else {
+        return valA < valB ? 1 : -1;
+      }
+    });
+  };
+
+  const renderHeaders = (headers: string[]) => {
+    return headers.map((h, i) => {
+      const isSortable = h === probHeader || h === "MAX%" || h === "MIN%" || h === "IV";
+      let sortField: typeof sortBy | null = null;
+      if (h === probHeader) sortField = "prob";
+      else if (h === "MAX%") sortField = "max_high";
+      else if (h === "MIN%") sortField = "max_drawdown";
+      else if (h === "IV") sortField = "iv";
+
+      const alignLeft = i === 0 || h === "Spread";
+
+      if (isSortable && sortField) {
+        const isActive = sortBy === sortField;
+        return (
+          <th
+            key={h}
+            onClick={() => handleSort(sortField!)}
+            style={{
+              ...th,
+              textAlign: alignLeft ? "left" : "right",
+              cursor: "pointer",
+              userSelect: "none",
+              color: isActive ? T.green : T.muted,
+              fontWeight: isActive ? 700 : 500,
+              transition: "color 0.15s"
+            }}
+          >
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 3, float: alignLeft ? "left" : "right" }}>
+              <span>{h}</span>
+              <span style={{ fontSize: 8 }}>
+                {isActive ? (sortOrder === "asc" ? "▲" : "▼") : "⇅"}
+              </span>
+            </div>
+          </th>
+        );
+      }
+
+      return (
+        <th key={h} style={{ ...th, textAlign: alignLeft ? "left" : "right" }}>
+          {h}
+        </th>
+      );
+    });
+  };
+
   return (
     <>
       <div style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 10, letterSpacing: "0.05em" }}>
@@ -2241,20 +2545,63 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
         })}
       </div>
 
-      {/* All predictions in the cycle, sorted by P20 desc */}
+      {/* Search filter for Archived Predictions */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 12,
+        background: "rgba(255, 255, 255, 0.02)",
+        border: `1px solid ${T.border}`,
+        borderRadius: 6,
+        padding: "4px 8px",
+        width: "fit-content"
+      }}>
+        <Search size={12} color={T.muted}/>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search archived ticker..."
+          style={{
+            background: "transparent",
+            border: "none",
+            color: T.text,
+            fontSize: 11,
+            fontFamily: T.mono,
+            width: 200,
+            outline: "none"
+          }}
+        />
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: T.green,
+              cursor: "pointer",
+              fontSize: 10,
+              fontWeight: 700,
+              fontFamily: T.mono,
+              padding: 0
+            }}
+          >
+            CLEAR
+          </button>
+        )}
+      </div>
+
+      {/* All predictions in the cycle, sorted by probability desc */}
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {["Symbol", "Entry", "P20", "Dec", "Days", "Spread", "Final", "Chg%", "Max ↑", "Max ↓", "Outcome", "EV", "Cost", "P&L", "IV", "Δ", "θ"].map((h, i) => (
-                <th key={h} style={{ ...th, textAlign: (i === 0 || h === "Spread") ? "left" : "right" }}>{h}</th>
-              ))}
+              {renderHeaders(["Symbol", "Entry", probHeader, "Dec", "Days", "Spread", "Final", "Chg%", "MAX%", "MIN%", "Outcome", "EV", "Cost", "P&L", "IV", "Δ", "θ"])}
             </tr>
           </thead>
           <tbody>
-            {summary.predictions
-              .slice()
-              .sort((a, b) => b.p20 - a.p20)
+            {processPredictions(summary.predictions || [])
               .map(p => {
                 const statusColor = p.outcome === "HIT" ? T.greenPos : T.red;
                 const realized = p.options_realized_pnl ?? p.realized_contract_pnl;

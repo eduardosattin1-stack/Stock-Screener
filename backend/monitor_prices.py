@@ -473,36 +473,48 @@ def run(dry_run: bool = False):
         if updated is not None:
             gcs_write(STRATEGY_PATHS[kind], updated, dry_run=dry_run)
 
-    # ── P20 Cycles: update stock prices in open predictions ──────────────
+    # ── P20 & P10 Cycles: update stock prices in open predictions ──────────────
     try:
         from signal_tracker import _load_cycle_state, _process_open_predictions, \
-            _gcs_read, CYCLES_PREFIX, _save_cycle_state, \
-            _attempt_archive_resolving_cycles, _compute_rolling_d10_health, \
-            _save_rolling_health
-        state = _load_cycle_state()
-        if state and state.get("collecting_cycle_id"):
-            # Build a minimal stocks list from quotes for _process_open_predictions
-            # We only need symbol + price for daily price updates
-            stocks_for_tracker = [{"symbol": sym, "price": px}
-                                  for sym, px in quotes.items() if sym != "SPY"]
-            closed, still_open = _process_open_predictions(
-                stocks_for_tracker, today, state)
-            log.info(f"[P20 cycles] price update: {closed} closed, "
-                     f"{still_open} still open")
-            # Try to archive any fully-resolved cycles
-            state = _attempt_archive_resolving_cycles(state, today)
-            _save_cycle_state(state)
-    except Exception as e:
-        log.warning(f"[P20 cycles] price update failed: {e}")
+            _save_cycle_state, _attempt_archive_resolving_cycles, \
+            _compute_rolling_d10_health, _save_rolling_health, \
+            REGIME_60D, REGIME_30D_P10
 
-    # ── P20 Cycles: reprice open spread contracts via ThetaData API ───────
+        stocks_for_tracker = [{"symbol": sym, "price": px}
+                              for sym, px in quotes.items() if sym != "SPY"]
+
+        for regime in (REGIME_60D, REGIME_30D_P10):
+            log.info(f"[{regime.name} cycles] price update starting...")
+            try:
+                state = _load_cycle_state(regime)
+                if state and state.get("collecting_cycle_id"):
+                    closed, still_open = _process_open_predictions(
+                        stocks_for_tracker, today, state, regime=regime)
+                    log.info(f"[{regime.name} cycles] price update: {closed} closed, "
+                             f"{still_open} still open")
+                    # Try to archive any fully-resolved cycles
+                    state = _attempt_archive_resolving_cycles(state, today, regime=regime)
+                    _save_cycle_state(state, regime)
+                    
+                    # Update health for this regime
+                    try:
+                        health = _compute_rolling_d10_health(state, today, regime=regime)
+                        _save_rolling_health(health, regime=regime)
+                    except Exception as health_err:
+                        log.warning(f"[{regime.name} cycles] health update failed: {health_err}")
+            except Exception as regime_err:
+                log.warning(f"[{regime.name} cycles] update failed: {regime_err}")
+    except Exception as e:
+        log.warning(f"[Cycles] price update imports/prep failed: {e}")
+
+    # ── P20 & P10 Cycles: reprice open spread contracts via ThetaData API ───────
     if not dry_run:
         try:
             from signal_tracker import reprice_open_contracts
             result = reprice_open_contracts()
-            log.info(f"[P20 cycles] reprice: {result}")
+            log.info(f"[Cycles] reprice: {result}")
         except Exception as e:
-            log.warning(f"[P20 cycles] reprice failed: {e}")
+            log.warning(f"[Cycles] reprice failed: {e}")
 
     log.info("Monitor complete")
     return True

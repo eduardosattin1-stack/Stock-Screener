@@ -131,7 +131,7 @@ export function StockCard({
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
         <div style={{ display: "flex", gap: 16 }}>
           <div>
-            <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>COMPOSITE</div>
+            <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>p(10)</div>
             <div style={{ fontSize: 14, fontWeight: 800, fontFamily: "var(--font-mono)", color: scoreColor }}>{score.toFixed(2)}</div>
           </div>
           
@@ -149,7 +149,7 @@ export function StockCard({
           )}
           {smartMoney != null && (
             <div>
-              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>SMART</div>
+              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>BASKET</div>
               <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)", color: smartMoney > 0.6 ? "var(--green)" : "var(--text)" }}>{(smartMoney * 100).toFixed(0)}</div>
             </div>
           )}

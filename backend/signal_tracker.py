@@ -154,6 +154,80 @@ CYCLES_PREFIX         = "hit_rate_tracking/cycles"
 ROLLING_HEALTH_PATH   = "hit_rate_tracking/rolling_health.json"
 STOCK_HISTORY_PREFIX  = "stock_history"
 
+class Regime:
+    def __init__(self, name, pointer_path, cycles_prefix, health_path, prob_key,
+                 hit_threshold_pct, hit_window_days, synth_dte_days,
+                 synth_long_offset, synth_short_offset,
+                 p5_mult, p10_mult, p15_mult, p5_cap, p10_cap, p15_cap,
+                 d10_calib, d1_calib, kill_threshold, is_60d):
+        self.name = name
+        self.pointer_path = pointer_path
+        self.cycles_prefix = cycles_prefix
+        self.health_path = health_path
+        self.prob_key = prob_key
+        self.hit_threshold_pct = hit_threshold_pct
+        self.hit_window_days = hit_window_days
+        self.synth_dte_days = synth_dte_days
+        self.synth_long_offset = synth_long_offset
+        self.synth_short_offset = synth_short_offset
+        self.p5_mult = p5_mult
+        self.p10_mult = p10_mult
+        self.p15_mult = p15_mult
+        self.p5_cap = p5_cap
+        self.p10_cap = p10_cap
+        self.p15_cap = p15_cap
+        self.d10_calib = d10_calib
+        self.d1_calib = d1_calib
+        self.kill_threshold = kill_threshold
+        self.is_60d = is_60d
+        self.cycle_length_days = synth_dte_days
+
+REGIME_60D = Regime(
+    name="60d",
+    pointer_path="hit_rate_tracking/current_cycle.json",
+    cycles_prefix="hit_rate_tracking/cycles",
+    health_path="hit_rate_tracking/rolling_health.json",
+    prob_key="hit_prob_60d",
+    hit_threshold_pct=20.0,
+    hit_window_days=60,
+    synth_dte_days=60,
+    synth_long_offset=0.05,
+    synth_short_offset=0.20,
+    p5_mult=2.44,
+    p10_mult=1.85,
+    p15_mult=1.35,
+    p5_cap=0.98,
+    p10_cap=0.95,
+    p15_cap=0.90,
+    d10_calib=0.832,
+    d1_calib=0.015,
+    kill_threshold=0.40,
+    is_60d=True
+)
+
+REGIME_30D_P10 = Regime(
+    name="30d_p10",
+    pointer_path="hit_rate_tracking/current_cycle_30d.json",
+    cycles_prefix="hit_rate_tracking/cycles_30d",
+    health_path="hit_rate_tracking/rolling_health_30d.json",
+    prob_key="hit_prob_10pct_30d",
+    hit_threshold_pct=10.0,
+    hit_window_days=30,
+    synth_dte_days=30,
+    synth_long_offset=0.025,
+    synth_short_offset=0.10,  # "short leg be within 10%"
+    p5_mult=3.41,
+    p10_mult=2.29,
+    p15_mult=1.49,
+    p5_cap=0.80,
+    p10_cap=0.65,
+    p15_cap=0.50,
+    d10_calib=0.223,
+    d1_calib=0.011,
+    kill_threshold=0.10,
+    is_60d=False
+)
+
 
 # ---------------------------------------------------------------------------
 # GCS I/O (unchanged from prior version)
@@ -293,7 +367,7 @@ def _interpolate_p(move_pct: float, ladder: list) -> float:
     return ladder[-1][1]
 
 
-def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
+def calculate_spread_ev(stock: dict, is_60d: bool = False, regime: Regime = None) -> Optional[dict]:
     """Compute the deployable options-spread EV for a P20-qualified stock.
 
     Mirrors TradierOptionsCard v3 exactly: uses live tradier_spread when
@@ -303,9 +377,15 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
     Returns a dict with all spread components and EV calculation, or None if
     not computable (no price, no P20, can't construct strikes, or spot < $1).
     """
-    p20 = stock.get("hit_prob_60d") if is_60d else stock.get("hit_prob")
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
+    
+    p20 = stock.get(regime.prob_key)
     if p20 is None:
-        p20 = stock.get("hit_prob") or 0
+        p20 = stock.get("hit_prob_60d") if regime.is_60d else stock.get("hit_prob")
+    if p20 is None:
+        p20 = stock.get("hit_prob") or 0.0
+
     spot = stock.get("price") or 0
     if p20 <= 0 or spot <= 0:
         return None
@@ -315,21 +395,16 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
         return None
 
     # Calibrated probability ladder
-    if is_60d:
-        p5  = min(p20 * P5_MULT_60D,  P5_CAP_60D)
-        p10 = min(p20 * P10_MULT_60D, P10_CAP_60D)
-        p15 = min(p20 * P15_MULT_60D, P15_CAP_60D)
-    else:
-        p5  = min(p20 * P5_MULT,  0.80)
-        p10 = min(p20 * P10_MULT, 0.65)
-        p15 = min(p20 * P15_MULT, 0.50)
+    p5  = min(p20 * regime.p5_mult,  regime.p5_cap)
+    p10 = min(p20 * regime.p10_mult, regime.p10_cap)
+    p15 = min(p20 * regime.p15_mult, regime.p15_cap)
     ladder = [(5.0, p5), (10.0, p10), (15.0, p15), (20.0, p20)]
 
     # Spread structure: live or synthesized
     live_sp = stock.get("options_spread")
-    synth_dte = SYNTH_DTE_DAYS_60D if is_60d else SYNTH_DTE_DAYS
-    synth_long_offset = SYNTH_LONG_OFFSET_60D if is_60d else SYNTH_LONG_OFFSET
-    synth_short_offset = SYNTH_SHORT_OFFSET_60D if is_60d else SYNTH_SHORT_OFFSET
+    synth_dte = regime.synth_dte_days
+    synth_long_offset = regime.synth_long_offset
+    synth_short_offset = regime.synth_short_offset
 
     if live_sp and isinstance(live_sp, dict) and live_sp.get("long_strike") is not None:
         sp = {
@@ -352,41 +427,68 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
         }
         is_live = True
     else:
-        long_strike = _round_strike(spot * (1.0 + synth_long_offset))
-        short_strike = _round_strike(spot * (1.0 + synth_short_offset))
-        if short_strike <= long_strike:
+        # Search the best EV combination of long and short strikes
+        best_ev = -999999.0
+        best_sp = None
+
+        # Test candidate offsets
+        for lo in [0.005 * i for i in range(16)]:  # Long offsets: 0% to 7.5% from spot
+            long_strike = _round_strike(spot * (1.0 + lo))
+            for so in [0.01 * i for i in range(3, 26)]:  # Short offsets: 3% to 25% from spot
+                short_strike = _round_strike(spot * (1.0 + so))
+                if short_strike <= long_strike:
+                    continue
+
+                width = short_strike - long_strike
+                iv = stock.get("options_iv_current") or 0.30
+                iv_factor = min(IV_FACTOR_MAX, max(IV_FACTOR_MIN, iv * IV_FACTOR_SCALE))
+                net_debit = round(width * iv_factor * 100) / 100
+                if net_debit <= 0 or net_debit >= width:
+                    continue
+
+                max_gain = (width - net_debit) * 100
+                max_loss = net_debit * 100
+                be_price = long_strike + net_debit
+                be_pct = ((be_price - spot) / spot) * 100
+
+                # Expiration calculation
+                exp = datetime.now() + timedelta(days=synth_dte)
+                while exp.weekday() != 4:  # Friday
+                    exp += timedelta(days=1)
+
+                sp_candidate = {
+                    "spot": spot,
+                    "long_strike": long_strike,
+                    "short_strike": short_strike,
+                    "long_mid": round(net_debit * 0.65, 2),
+                    "short_mid": round(net_debit * 0.35, 2),
+                    "net_debit": net_debit,
+                    "max_gain_per_contract": max_gain,
+                    "max_loss_per_contract": max_loss,
+                    "break_even_price": be_price,
+                    "break_even_move_pct": be_pct,
+                    "expiration": exp.strftime("%Y-%m-%d"),
+                    "dte": synth_dte,
+                    "long_greeks": None,
+                    "short_greeks": None,
+                    "long_iv": None,
+                    "short_iv": None,
+                }
+
+                # Calculate EV for this candidate
+                short_pct = ((sp_candidate["short_strike"] - sp_candidate["spot"]) / sp_candidate["spot"]) * 100
+                p_be = _interpolate_p(sp_candidate["break_even_move_pct"], ladder)
+                p_max = _interpolate_p(short_pct, ladder)
+                cand_ev = p_max * sp_candidate["max_gain_per_contract"] - (1 - p_be) * sp_candidate["max_loss_per_contract"]
+
+                if cand_ev > best_ev:
+                    best_ev = cand_ev
+                    best_sp = sp_candidate
+
+        if best_sp is None:
             return None
-        width = short_strike - long_strike
-        iv = stock.get("options_iv_current") or 0.30
-        iv_factor = min(IV_FACTOR_MAX, max(IV_FACTOR_MIN, iv * IV_FACTOR_SCALE))
-        net_debit = round(width * iv_factor * 100) / 100
-        if net_debit <= 0 or net_debit >= width:
-            return None
-        max_gain = (width - net_debit) * 100
-        max_loss = net_debit * 100
-        be_price = long_strike + net_debit
-        be_pct = ((be_price - spot) / spot) * 100
-        exp = datetime.now() + timedelta(days=synth_dte)
-        while exp.weekday() != 4:  # Friday
-            exp += timedelta(days=1)
-        sp = {
-            "spot": spot,
-            "long_strike": long_strike,
-            "short_strike": short_strike,
-            "long_mid": round(net_debit * 0.65, 2),
-            "short_mid": round(net_debit * 0.35, 2),
-            "net_debit": net_debit,
-            "max_gain_per_contract": max_gain,
-            "max_loss_per_contract": max_loss,
-            "break_even_price": be_price,
-            "break_even_move_pct": be_pct,
-            "expiration": exp.strftime("%Y-%m-%d"),
-            "dte": synth_dte,
-            "long_greeks": None,
-            "short_greeks": None,
-            "long_iv": None,
-            "short_iv": None,
-        }
+
+        sp = best_sp
         is_live = False
 
     # Interpolated probabilities and EV
@@ -440,9 +542,11 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False) -> Optional[dict]:
 # Decile / signal-strength bucketing (matches frontend)
 # ---------------------------------------------------------------------------
 
-def _decile(p20: float, is_60d: bool = False) -> int:
+def _decile(p20: float, is_60d: bool = False, regime: Regime = None) -> int:
     """OOS-calibrated decile thresholds."""
-    if is_60d:
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
+    if regime.is_60d:
         if p20 >= 0.57808: return 10
         if p20 >= 0.50809: return 9
         if p20 >= 0.46325: return 8
@@ -466,8 +570,10 @@ def _decile(p20: float, is_60d: bool = False) -> int:
         return 1
 
 
-def _signal_strength(p20: float, is_60d: bool = False) -> str:
-    if is_60d:
+def _signal_strength(p20: float, is_60d: bool = False, regime: Regime = None) -> str:
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
+    if regime.is_60d:
         if p20 >= 0.55: return "STRONG"
         if p20 >= 0.40: return "MODERATE"
         if p20 >= 0.25: return "MILD"
@@ -483,8 +589,8 @@ def _signal_strength(p20: float, is_60d: bool = False) -> str:
 # Cycle management
 # ---------------------------------------------------------------------------
 
-def _load_cycle_state() -> dict:
-    """Read current_cycle.json. Returns a freshly-initialized state if not yet
+def _load_cycle_state(regime: Regime = REGIME_60D) -> dict:
+    """Read pointer_path. Returns a freshly-initialized state if not yet
     written (first-run bootstrap)."""
     default = {
         "collecting_cycle_id": None,
@@ -493,7 +599,7 @@ def _load_cycle_state() -> dict:
         "resolving_cycle_ids": [],
         "archived_cycle_ids": [],
     }
-    state = _gcs_read(CYCLE_POINTER_PATH, default)
+    state = _gcs_read(regime.pointer_path, default)
     if not isinstance(state, dict):
         return default
     # Defensive: backfill any missing fields from default
@@ -502,25 +608,25 @@ def _load_cycle_state() -> dict:
     return state
 
 
-def _save_cycle_state(state: dict) -> None:
-    _gcs_write(CYCLE_POINTER_PATH, state)
+def _save_cycle_state(state: dict, regime: Regime = REGIME_60D) -> None:
+    _gcs_write(regime.pointer_path, state)
 
 
-def _open_new_cycle(state: dict, today_str: str) -> dict:
+def _open_new_cycle(state: dict, today_str: str, regime: Regime = REGIME_60D) -> dict:
     """Open a new collecting cycle starting today. Mutates and returns state."""
     new_id = today_str
     ends = (datetime.strptime(today_str, "%Y-%m-%d")
-            + timedelta(days=CYCLE_LENGTH_DAYS)).strftime("%Y-%m-%d")
+            + timedelta(days=regime.cycle_length_days)).strftime("%Y-%m-%d")
     state["collecting_cycle_id"] = new_id
     state["collecting_start"] = today_str
     state["collecting_ends"] = ends
     # Initialize empty open.json so downstream code doesn't 404
-    _gcs_write(f"{CYCLES_PREFIX}/{new_id}/open.json", {"predictions": []})
-    log.info(f"  Cycle {new_id} opened (collects until {ends})")
+    _gcs_write(f"{regime.cycles_prefix}/{new_id}/open.json", {"predictions": []})
+    log.info(f"  Cycle {new_id} ({regime.name}) opened (collects until {ends})")
     return state
 
 
-def _advance_cycles_if_needed(state: dict, today_str: str) -> dict:
+def _advance_cycles_if_needed(state: dict, today_str: str, regime: Regime = REGIME_60D) -> dict:
     """Roll cycles forward when the collecting window expires.
 
     If today is on/after collecting_ends, the current cycle moves to RESOLVING
@@ -528,19 +634,19 @@ def _advance_cycles_if_needed(state: dict, today_str: str) -> dict:
     """
     # Bootstrap: no cycle has ever been opened.
     if state["collecting_cycle_id"] is None:
-        return _open_new_cycle(state, today_str)
+        return _open_new_cycle(state, today_str, regime)
 
     if today_str >= state["collecting_ends"]:
         old_id = state["collecting_cycle_id"]
         if old_id not in state["resolving_cycle_ids"]:
             state["resolving_cycle_ids"].append(old_id)
-            log.info(f"  Cycle {old_id} → RESOLVING (collected for "
-                     f"{CYCLE_LENGTH_DAYS}d, predictions still tracking)")
-        _open_new_cycle(state, today_str)
+            log.info(f"  Cycle {old_id} ({regime.name}) → RESOLVING (collected for "
+                     f"{regime.synth_dte_days}d, predictions still tracking)")
+        _open_new_cycle(state, today_str, regime)
     return state
 
 
-def _attempt_archive_resolving_cycles(state: dict, today_str: str) -> dict:
+def _attempt_archive_resolving_cycles(state: dict, today_str: str, regime: Regime = REGIME_60D) -> dict:
     """For each cycle in RESOLVING state, if its open.json is empty, write
     archived.json with summary stats and move to archived_cycle_ids.
 
@@ -550,29 +656,28 @@ def _attempt_archive_resolving_cycles(state: dict, today_str: str) -> dict:
     """
     still_resolving = []
     for cycle_id in state["resolving_cycle_ids"]:
-        open_data = _gcs_read(f"{CYCLES_PREFIX}/{cycle_id}/open.json",
+        open_data = _gcs_read(f"{regime.cycles_prefix}/{cycle_id}/open.json",
                               {"predictions": []})
         open_preds = (open_data or {}).get("predictions", [])
         if open_preds:
             still_resolving.append(cycle_id)
             continue
         # All predictions resolved — compute summary and archive
-        summary = _compute_cycle_summary(cycle_id, today_str)
-        if _gcs_write(f"{CYCLES_PREFIX}/{cycle_id}/archived.json", summary):
+        summary = _compute_cycle_summary(cycle_id, today_str, regime)
+        if _gcs_write(f"{regime.cycles_prefix}/{cycle_id}/archived.json", summary):
             state["archived_cycle_ids"].append(cycle_id)
-            log.info(f"  Cycle {cycle_id} → ARCHIVED "
+            log.info(f"  Cycle {cycle_id} ({regime.name}) → ARCHIVED "
                      f"(n={summary['total_predictions']}, "
                      f"hit_rate={summary['hit_rate']:.1%})")
         else:
-            log.warning(f"  Cycle {cycle_id} archive write failed; will retry")
-            still_resolving.append(cycle_id)
+            log.warning(f"  Cycle {cycle_id} ({regime.name}) archive write failed; will retry")
     state["resolving_cycle_ids"] = still_resolving
     return state
 
 
-def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
+def _compute_cycle_summary(cycle_id: str, today_str: str, regime: Regime = REGIME_60D) -> dict:
     """Read the immutable predictions.jsonl for the cycle and roll up stats."""
-    raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+    raw = _gcs_read_text(f"{regime.cycles_prefix}/{cycle_id}/predictions.jsonl", "")
     latest_by_key = {}
     for line in raw.splitlines():
         line = line.strip()
@@ -648,6 +753,7 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         by_signal[sig]["n"] += 1
         if p.get("outcome") == "HIT":
             by_signal[sig]["hits"] += 1
+
     for d in by_decile:
         by_decile[d]["hit_rate"] = round(
             by_decile[d]["hits"] / by_decile[d]["n"], 4) if by_decile[d]["n"] else 0
@@ -666,8 +772,6 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
     options_return_pct = round(
         (total_options_pnl / total_cost_basis) * 100, 4
     ) if total_cost_basis > 0 else None
-
-    is_60d_cycle = any(p.get("regime") == "60d" for p in preds)
 
     return {
         "cycle_id": cycle_id,
@@ -693,12 +797,12 @@ def _compute_cycle_summary(cycle_id: str, today_str: str) -> dict:
         "options_losers": options_losers,
         "hit_rate_by_decile": by_decile,
         "hit_rate_by_signal_strength": by_signal,
-        "calibration_check": _calibration_check(by_decile, is_60d=is_60d_cycle),
+        "calibration_check": _calibration_check(by_decile, regime=regime),
         "predictions": preds,
     }
 
 
-def _calibration_check(by_decile: dict, is_60d: bool = False) -> dict:
+def _calibration_check(by_decile: dict, is_60d: bool = False, regime: Regime = None) -> dict:
     """Compare observed D10 and D1 hit rates against the training baseline.
     Healthy: D10 hit rate well above D1, ideally near baseline.
     Returns metrics suitable for a UI calibration card."""
@@ -708,16 +812,13 @@ def _calibration_check(by_decile: dict, is_60d: bool = False) -> dict:
     d1_hr = d1.get("hit_rate", 0)
     odds_ratio = (d10_hr / d1_hr) if d1_hr > 0 else None
 
-    if is_60d:
-        base_d10 = D10_CALIBRATION_HIT_RATE_60D
-        base_d1 = D1_CALIBRATION_HIT_RATE_60D
-        kill_threshold = KILL_SWITCH_THRESHOLD_60D
-        note = "D10 must exceed kill-switch threshold (40%) and ideally track the 83.2% baseline. Sample size <5 in D10 -> unstable."
-    else:
-        base_d10 = D10_CALIBRATION_HIT_RATE_30D
-        base_d1 = D1_CALIBRATION_HIT_RATE_30D
-        kill_threshold = KILL_SWITCH_THRESHOLD_30D
-        note = "D10 must exceed kill-switch threshold (10%) and ideally track the 22.3% baseline. Sample size <5 in D10 -> unstable."
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
+
+    base_d10 = regime.d10_calib
+    base_d1 = regime.d1_calib
+    kill_threshold = regime.kill_threshold
+    note = f"D10 must exceed kill-switch threshold ({int(kill_threshold * 100)}%) and ideally track the {base_d10:.1%} baseline. Sample size <5 in D10 -> unstable."
 
     baseline_odds = base_d10 / base_d1 if base_d1 > 0 else 20.0
 
@@ -743,7 +844,7 @@ def _calibration_check(by_decile: dict, is_60d: bool = False) -> dict:
 # Rolling 90-day D10 health monitor (kill switch)
 # ---------------------------------------------------------------------------
 
-def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
+def _compute_rolling_d10_health(state: dict, today_str: str, regime: Regime = REGIME_60D) -> dict:
     """Compute D10 hit rate over the trailing 90-day window across all
     predictions (open + closed) and trigger kill-switch flag if below threshold.
 
@@ -767,7 +868,7 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     # both entry rows and close rows; the close row supersedes the entry.
     latest_by_key = {}
     for cycle_id in cycle_ids:
-        raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+        raw = _gcs_read_text(f"{regime.cycles_prefix}/{cycle_id}/predictions.jsonl", "")
         for line in raw.splitlines():
             line = line.strip()
             if not line:
@@ -789,7 +890,6 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     d1_n = 0
     d1_hits = 0
     total_in_window = 0
-    count_60d = 0
 
     # Accumulators for all deciles 1 to 10
     deciles_data = {d: {"n": 0, "hits": 0, "sum_probs": 0.0} for d in range(1, 11)}
@@ -806,18 +906,16 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
             continue
 
         total_in_window += 1
-        if row.get("regime") == "60d":
-            count_60d += 1
 
         # Skip not-yet-resolved predictions
         outcome = row.get("outcome")
-        row_window_days = row.get("hit_window_days", 28)
+        row_window_days = row.get("hit_window_days", regime.hit_window_days)
         row_res_cutoff = today_dt - timedelta(days=row_window_days)
         if outcome == "OPEN" and entry_dt > row_res_cutoff:
             continue
 
         decile = row.get("decile")
-        hit = outcome == "HIT" or (row.get("max_high_observed_pct", 0) >= HIT_THRESHOLD_PCT)
+        hit = outcome == "HIT" or (row.get("max_high_observed_pct", 0) >= regime.hit_threshold_pct)
 
         # Accumulate decile stats (if decile is valid)
         if isinstance(decile, (int, float)) and 1 <= int(decile) <= 10:
@@ -841,17 +939,9 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     d10_hr = d10_hits / d10_n if d10_n > 0 else 0
     d1_hr = d1_hits / d1_n if d1_n > 0 else 0
 
-    # Determine dominant regime in the trailing window
-    is_60d_dominated = (count_60d > total_in_window / 2) if total_in_window > 0 else False
-
-    if is_60d_dominated:
-        baseline_d10 = D10_CALIBRATION_HIT_RATE_60D
-        baseline_d1 = D1_CALIBRATION_HIT_RATE_60D
-        kill_threshold = KILL_SWITCH_THRESHOLD_60D
-    else:
-        baseline_d10 = D10_CALIBRATION_HIT_RATE_30D
-        baseline_d1 = D1_CALIBRATION_HIT_RATE_30D
-        kill_threshold = KILL_SWITCH_THRESHOLD_30D
+    baseline_d10 = regime.d10_calib
+    baseline_d1 = regime.d1_calib
+    kill_threshold = regime.kill_threshold
 
     # Format calibration dict for all deciles
     decile_calib = {}
@@ -913,23 +1003,23 @@ def _compute_rolling_d10_health(state: dict, today_str: str) -> dict:
     }
 
 
-def _save_rolling_health(health: dict) -> None:
+def _save_rolling_health(health: dict, regime: Regime = REGIME_60D) -> None:
     """Persist the latest rolling health snapshot so /performance can show it
     without recomputing on every UI fetch."""
-    _gcs_write(ROLLING_HEALTH_PATH, health)
+    _gcs_write(regime.health_path, health)
     if health.get("kill_switch_active"):
         log.warning(
-            f"  ⚠ KILL SWITCH ACTIVE: D10 hit rate {health['d10_hit_rate']:.1%} "
+            f"  ⚠ KILL SWITCH ACTIVE ({regime.name}): D10 hit rate {health['d10_hit_rate']:.1%} "
             f"over {KILL_SWITCH_WINDOW_DAYS}d window (threshold "
-            f"{KILL_SWITCH_THRESHOLD:.0%}, baseline "
-            f"{D10_CALIBRATION_HIT_RATE:.1%}). Model needs retraining."
+            f"{regime.kill_threshold:.0%}, baseline "
+            f"{regime.d10_calib:.1%}). Model needs retraining."
         )
     else:
         log.info(
-            f"  Rolling D10 health: {health['status']} — "
+            f"  Rolling D10 health ({regime.name}): {health['status']} — "
             f"D10 {health['d10_hit_rate']:.1%} (n={health['d10_n']}), "
             f"D1 {health['d1_hit_rate']:.1%} (n={health['d1_n']}), "
-            f"baseline D10={D10_CALIBRATION_HIT_RATE:.1%}"
+            f"baseline D10={regime.d10_calib:.1%}"
         )
 
 
@@ -937,28 +1027,31 @@ def _save_rolling_health(health: dict) -> None:
 # Prediction tracking — entries, opens, closes
 # ---------------------------------------------------------------------------
 
-def _append_predictions_jsonl_batch(cycle_id: str, rows: list[dict]) -> bool:
+def _append_predictions_jsonl_batch(cycle_id: str, rows: list[dict], regime: Regime = REGIME_60D) -> bool:
     """Append multiple prediction rows to predictions.jsonl for the cycle in a single write.
     Avoids sequential network operations to GCS.
     """
     if not rows:
         return True
-    path = f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl"
+    path = f"{regime.cycles_prefix}/{cycle_id}/predictions.jsonl"
     existing = _gcs_read_text(path, "")
     new_lines = "\n".join(json.dumps(row, default=str) for row in rows)
     body = existing + ("\n" if existing and not existing.endswith("\n") else "") + new_lines + "\n"
     return _gcs_write(path, body, content_type="text/plain")
 
 
-def _append_prediction_jsonl(cycle_id: str, row: dict) -> bool:
+def _append_prediction_jsonl(cycle_id: str, row: dict, regime: Regime = REGIME_60D) -> bool:
     """Append one prediction row to predictions.jsonl for the cycle (wrapper around batch helper)."""
-    return _append_predictions_jsonl_batch(cycle_id, [row])
+    return _append_predictions_jsonl_batch(cycle_id, [row], regime=regime)
 
 
-def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bool) -> None:
+def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bool = False, regime: Regime = None) -> None:
     """Fetch ThetaData EOD option quotes for new candidate stocks in parallel
     and inject the options_spread directly into the stock dictionaries.
     """
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
+
     try:
         from thetadata import ThetaClient
     except ImportError:
@@ -1039,9 +1132,9 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
                 symbol_dfs[sym] = df
 
     # Match long/short legs and inject spreads
-    target_dte = 60 if is_60d else 30
-    long_offset = 0.05
-    short_offset = 0.20
+    target_dte = regime.synth_dte_days
+    long_offset = regime.synth_long_offset
+    short_offset = regime.synth_short_offset
 
     for s in stocks:
         sym = s["symbol"]
@@ -1174,14 +1267,17 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
 
 
 def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
-                            region: str, is_60d_regime: bool = False) -> tuple[int, int]:
+                            region: str, is_60d_regime: bool = False, regime: Regime = None) -> tuple[int, int]:
     """Process today's scan. For each stock with P20 > 0 that isn't already
     being tracked in the collecting cycle, compute the EV and store a new
     prediction (both in immutable JSONL and the cycle's open.json).
 
     Returns (new_count, skipped_no_ev_count).
     """
-    open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+    if regime is None:
+        regime = REGIME_60D if is_60d_regime else REGIME_30D_P10
+
+    open_path = f"{regime.cycles_prefix}/{cycle_id}/open.json"
     open_data = _gcs_read(open_path, {"predictions": []})
     if not isinstance(open_data, dict):
         open_data = {"predictions": []}
@@ -1192,7 +1288,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
 
     # Also check predictions.jsonl for symbols already entered this cycle even
     # if they've since closed (so we don't double-enter same stock per cycle)
-    raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cycle_id}/predictions.jsonl", "")
+    raw = _gcs_read_text(f"{regime.cycles_prefix}/{cycle_id}/predictions.jsonl", "")
     for line in raw.splitlines():
         line = line.strip()
         if not line:
@@ -1210,7 +1306,9 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
     # Filter candidate stocks to only those not already in the cycle and with P20 > 0
     candidate_stocks = []
     for s in stocks:
-        p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
+        p20 = s.get(regime.prob_key)
+        if p20 is None:
+            p20 = s.get("hit_prob_60d") if regime.is_60d else s.get("hit_prob")
         if p20 is None:
             p20 = s.get("hit_prob") or 0.0
         if p20 <= P20_INCLUSION:
@@ -1222,10 +1320,12 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
 
     # Fetch EOD spreads from ThetaData in parallel and inject into candidate_stocks
     if candidate_stocks:
-        _enrich_stocks_with_theta_eod(candidate_stocks, today_str, is_60d_regime)
+        _enrich_stocks_with_theta_eod(candidate_stocks, today_str, regime=regime)
 
     for s in candidate_stocks:
-        p20 = s.get("hit_prob_60d") if is_60d_regime else s.get("hit_prob")
+        p20 = s.get(regime.prob_key)
+        if p20 is None:
+            p20 = s.get("hit_prob_60d") if regime.is_60d else s.get("hit_prob")
         if p20 is None:
             p20 = s.get("hit_prob") or 0.0
         sym = s.get("symbol")
@@ -1235,7 +1335,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             continue
 
         # EV is OPTIONAL.
-        ev_block = calculate_spread_ev(s, is_60d=is_60d_regime)
+        ev_block = calculate_spread_ev(s, regime=regime)
         if ev_block is None:
             no_ev_count += 1
 
@@ -1250,11 +1350,11 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         if s.get("signal_compounder_global") == "QUALIFIED":
             modes.append("compounder_global")
 
-        hit_window_days = 60 if is_60d_regime else HIT_WINDOW_DAYS
+        hit_window_days = regime.hit_window_days
         fate_window_ends = (datetime.strptime(today_str, "%Y-%m-%d")
                              + timedelta(days=hit_window_days)).strftime("%Y-%m-%d")
 
-        expected_dd = s.get("expected_dd_60d") if is_60d_regime else s.get("expected_dd_30d")
+        expected_dd = s.get("expected_dd_60d") if regime.is_60d else s.get("expected_dd_30d")
         if expected_dd is not None:
             expected_dd = round(float(expected_dd), 2)
 
@@ -1264,14 +1364,14 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "cycle_id": cycle_id,
             "region": region,
             "entry_price": round(price, 4),
-            "target_price": round(price * (1 + HIT_THRESHOLD_PCT / 100), 4),
+            "target_price": round(price * (1 + regime.hit_threshold_pct / 100), 4),
             "fate_window_ends": fate_window_ends,
             "hit_window_days": hit_window_days,
-            "regime": "60d" if is_60d_regime else "30d",
+            "regime": "60d" if regime.is_60d else "30d",
             "expected_dd": expected_dd,
             "p20": round(p20, 4),
-            "decile": _decile(p20, is_60d=is_60d_regime),
-            "signal_strength": _signal_strength(p20, is_60d=is_60d_regime),
+            "decile": _decile(p20, regime=regime),
+            "signal_strength": _signal_strength(p20, regime=regime),
             "mode_qualifications": modes,
             "composite": s.get("composite"),
             "sector": s.get("sector"),
@@ -1333,7 +1433,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         already_in_cycle.add(sym)
 
     if new_preds:
-        if _append_predictions_jsonl_batch(cycle_id, new_preds):
+        if _append_predictions_jsonl_batch(cycle_id, new_preds, regime=regime):
             open_preds.extend(new_preds)
             new_count = len(new_preds)
             _gcs_write(open_path, {"predictions": open_preds})
@@ -1344,7 +1444,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
 
 
 def _process_open_predictions(stocks: list, today_str: str,
-                              state: dict) -> tuple[int, int]:
+                              state: dict, regime: Regime = REGIME_60D) -> tuple[int, int]:
     """For every cycle with active predictions (collecting OR resolving), update
     each open prediction with today's price; mark HIT/EXPIRED as appropriate.
 
@@ -1362,7 +1462,7 @@ def _process_open_predictions(stocks: list, today_str: str,
     open_total = 0
 
     for cycle_id in cycles_to_process:
-        open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+        open_path = f"{regime.cycles_prefix}/{cycle_id}/open.json"
         open_data = _gcs_read(open_path, {"predictions": []})
         if not isinstance(open_data, dict):
             continue
@@ -1404,9 +1504,9 @@ def _process_open_predictions(stocks: list, today_str: str,
                 except Exception:
                     pass
 
-            # Closure: HIT if max-high ever touched +20%, else EXPIRED after window
-            hit = p["max_high_observed_pct"] >= HIT_THRESHOLD_PCT
-            expired = days_in >= p.get("hit_window_days", HIT_WINDOW_DAYS)
+            # Closure: HIT if max-high ever touched +threshold%, else EXPIRED after window
+            hit = p["max_high_observed_pct"] >= regime.hit_threshold_pct
+            expired = days_in >= p.get("hit_window_days", regime.hit_window_days)
 
             if hit:
                 p["outcome"] = "HIT"
@@ -1446,7 +1546,7 @@ def _process_open_predictions(stocks: list, today_str: str,
             open_total += 1
 
         if newly_closed:
-            _append_predictions_jsonl_batch(cycle_id, newly_closed)
+            _append_predictions_jsonl_batch(cycle_id, newly_closed, regime=regime)
         _gcs_write(open_path, {"predictions": updated})
 
     return closed_total, open_total
@@ -1524,7 +1624,7 @@ def _update_stock_history(stocks: list, today_str: str):
 # ---------------------------------------------------------------------------
 
 def reprice_open_contracts():
-    """Reprice all open spread contracts using ThetaData EOD greeks.
+    """Reprice all open spread contracts using ThetaData EOD greeks for all regimes.
 
     Called daily by monitor_prices.py after market close. For each open
     prediction with spread data (long_strike, short_strike, expiration),
@@ -1540,10 +1640,6 @@ def reprice_open_contracts():
         from thetadata import ThetaClient
     except ImportError:
         log.warning("reprice_open_contracts: thetadata SDK not available, skipping")
-        return {"repriced": 0, "skipped": 0, "expired_settled": 0}
-
-    state = _load_cycle_state()
-    if not state:
         return {"repriced": 0, "skipped": 0, "expired_settled": 0}
 
     today = datetime.now()
@@ -1579,19 +1675,45 @@ def reprice_open_contracts():
         except Exception as e:
             log.warning(f"reprice: failed to read scans/latest_{region}.json for IVR: {e}")
 
+    try:
+        client = ThetaClient(
+            email="carbonbridge.tech@gmail.com",
+            password="Sccp1985r",
+        )
+    except Exception as e:
+        log.error(f"reprice: ThetaData client init failed: {e}")
+        return {"repriced": 0, "skipped": 0, "expired_settled": 0}
+
+    results = []
+    for regime in (REGIME_60D, REGIME_30D_P10):
+        log.info(f"reprice: running for regime {regime.name}...")
+        res = _reprice_open_contracts_for_regime(regime, client, today, today_str, today_date, _eod_date, iv_ranks)
+        results.append(res)
+        log.info(f"reprice [{regime.name}] result: {res}")
+
+    return {
+        "repriced": sum(r["repriced"] for r in results),
+        "skipped": sum(r["skipped"] for r in results),
+        "expired_settled": sum(r["expired_settled"] for r in results),
+    }
+
+
+def _reprice_open_contracts_for_regime(regime: Regime, client, today, today_str, today_date, _eod_date, iv_ranks) -> dict:
+    state = _load_cycle_state(regime)
+    if not state:
+        return {"repriced": 0, "skipped": 0, "expired_settled": 0}
+
     cycles_to_process = []
     if state.get("collecting_cycle_id"):
         cycles_to_process.append(state["collecting_cycle_id"])
     cycles_to_process.extend(state.get("resolving_cycle_ids", []))
 
-    # Gather all predictions that need repricing, grouped by symbol
-    # to minimize API calls (one call per symbol, not per contract)
-    symbol_preds: dict[str, list[tuple[str, dict]]] = {}  # {symbol: [(cycle_path, pred), ...]}
-    expired_preds: list[tuple[str, dict]] = []  # [(cycle_path, pred), ...]
-    loaded_cycles: dict[str, dict] = {}  # {path: open_data}
+    symbol_preds: dict[str, list[tuple[str, dict]]] = {}
+    expired_preds: list[tuple[str, dict]] = []
+    loaded_cycles: dict[str, dict] = {}
 
     for cycle_id in cycles_to_process:
-        open_path = f"{CYCLES_PREFIX}/{cycle_id}/open.json"
+        open_path = f"{regime.cycles_prefix}/{cycle_id}/open.json"
         open_data = _gcs_read(open_path, {"predictions": []})
         if not isinstance(open_data, dict):
             continue
@@ -1641,18 +1763,6 @@ def reprice_open_contracts():
 
     # Reprice live contracts via ThetaData (one API call per symbol)
     if symbol_preds:
-        try:
-            client = ThetaClient(
-                email="carbonbridge.tech@gmail.com",
-                password="Sccp1985r",
-            )
-        except Exception as e:
-            log.error(f"reprice: ThetaData client init failed: {e}")
-            # Write back any expired changes we already made
-            _flush_modified_cycles(loaded_cycles, paths_modified)
-            return {"repriced": 0, "skipped": len(symbol_preds),
-                    "expired_settled": expired_settled}
-
         from threading import Lock
         import concurrent.futures
 
@@ -1691,18 +1801,12 @@ def reprice_open_contracts():
             except Exception as e:
                 return sym, None, e
 
-        log.info(f"reprice: fetching Greeks for {len(symbol_preds)} symbols using ThreadPoolExecutor...")
+        log.info(f"[{regime.name}] reprice: fetching Greeks for {len(symbol_preds)} symbols...")
         symbol_dfs = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(fetch_greeks_for_symbol, sym) for sym in symbol_preds.keys()]
             for fut in concurrent.futures.as_completed(futures):
                 sym, greeks_df, err = fut.result()
-                if err is not None:
-                    err_str = str(err)
-                    if "No data" in err_str or "NOT_FOUND" in err_str:
-                        log.debug(f"reprice {sym}: no EOD data for {_eod_date}")
-                    else:
-                        log.warning(f"reprice {sym}: ThetaData fetch failed: {err}")
                 symbol_dfs[sym] = greeks_df
 
         for sym, pred_list in symbol_preds.items():
@@ -1740,8 +1844,6 @@ def reprice_open_contracts():
                     dte = 0
 
                 # Find matching contracts by strike and expiration
-                # ThetaData stores strike as integer (cents) or float
-                # and expiration as datetime.date
                 exp_filter = df.copy()
                 if 'expiration' in exp_filter.columns and not exp_filter.empty:
                     import pandas as pd
@@ -1887,9 +1989,6 @@ def reprice_open_contracts():
 
     # Flush all modified cycle files back to GCS
     _flush_modified_cycles(loaded_cycles, paths_modified)
-
-    log.info(f"reprice_open_contracts: repriced={repriced_total}, "
-             f"skipped={skipped_total}, expired_settled={expired_settled}")
     return {
         "repriced": repriced_total,
         "skipped": skipped_total,
@@ -1923,55 +2022,54 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
 
     today_str = scan_date or datetime.now().strftime("%Y-%m-%d")
 
-    # Cycle lifecycle (open new / advance / archive)
-    try:
-        state = _load_cycle_state()
-        state = _advance_cycles_if_needed(state, today_str)
-        _save_cycle_state(state)
-        log.info(f"  Cycle state: collecting={state['collecting_cycle_id']}, "
-                 f"resolving={state['resolving_cycle_ids']}, "
-                 f"archived={len(state['archived_cycle_ids'])}")
-    except Exception as e:
-        log.error(f"signal_tracker cycle advance failed: {e}", exc_info=True)
-        return  # don't proceed without a valid cycle state
+    # Run for both regimes!
+    for regime in (REGIME_60D, REGIME_30D_P10):
+        log.info(f"signal_tracker: running update for regime {regime.name}...")
+        try:
+            state = _load_cycle_state(regime)
+            state = _advance_cycles_if_needed(state, today_str, regime)
+            _save_cycle_state(state, regime)
+            log.info(f"  [{regime.name}] Cycle state: collecting={state['collecting_cycle_id']}, "
+                     f"resolving={state['resolving_cycle_ids']}, "
+                     f"archived={len(state['archived_cycle_ids'])}")
+        except Exception as e:
+            log.error(f"  [{regime.name}] signal_tracker cycle advance failed: {e}", exc_info=True)
+            continue  # don't proceed for this regime without a valid cycle state
 
-    # Detect 60-day model regime
-    is_60d_regime = any((s.get("hit_prob_60d") or 0.0) > 0.0 for s in stocks)
+        # New predictions enter the current collecting cycle. We track every stock
+        # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can
+        # compute the full decile distribution and validate calibration.
+        try:
+            new_count, no_ev_count = _record_new_predictions(
+                stocks, today_str, state["collecting_cycle_id"], region, regime=regime)
+            log.info(f"  [{regime.name}] Predictions: +{new_count} new "
+                     f"({no_ev_count} without spread EV — price/IV missing)")
+        except Exception as e:
+            log.error(f"  [{regime.name}] signal_tracker record predictions failed: {e}", exc_info=True)
 
-    # New predictions enter the current collecting cycle. We track every stock
-    # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can
-    # compute the full decile distribution and validate calibration.
-    try:
-        new_count, no_ev_count = _record_new_predictions(
-            stocks, today_str, state["collecting_cycle_id"], region, is_60d_regime)
-        log.info(f"  Predictions (hit_prob>0): +{new_count} new "
-                 f"({no_ev_count} without spread EV — price/IV missing)")
-    except Exception as e:
-        log.error(f"signal_tracker record predictions failed: {e}", exc_info=True)
+        # Update all open predictions (collecting + resolving cycles)
+        try:
+            closed, open_n = _process_open_predictions(stocks, today_str, state, regime=regime)
+            log.info(f"  [{regime.name}] Predictions update: {closed} closed today, {open_n} still open")
+        except Exception as e:
+            log.error(f"  [{regime.name}] signal_tracker process open failed: {e}", exc_info=True)
 
-    # Update all open predictions (collecting + resolving cycles)
-    try:
-        closed, open_n = _process_open_predictions(stocks, today_str, state)
-        log.info(f"  Predictions update: {closed} closed today, {open_n} still open")
-    except Exception as e:
-        log.error(f"signal_tracker process open failed: {e}", exc_info=True)
+        # Try to archive any RESOLVING cycles whose predictions are all closed
+        try:
+            state = _attempt_archive_resolving_cycles(state, today_str, regime=regime)
+            _save_cycle_state(state, regime)
+        except Exception as e:
+            log.error(f"  [{regime.name}] signal_tracker archive resolving failed: {e}", exc_info=True)
 
-    # Try to archive any RESOLVING cycles whose predictions are all closed
-    try:
-        state = _attempt_archive_resolving_cycles(state, today_str)
-        _save_cycle_state(state)
-    except Exception as e:
-        log.error(f"signal_tracker archive resolving failed: {e}", exc_info=True)
+        # Rolling 90-day D10 health check + kill-switch alerting. Runs every scan
+        # so the dashboard can show live calibration status.
+        try:
+            health = _compute_rolling_d10_health(state, today_str, regime=regime)
+            _save_rolling_health(health, regime=regime)
+        except Exception as e:
+            log.error(f"  [{regime.name}] signal_tracker rolling health failed: {e}", exc_info=True)
 
-    # Rolling 90-day D10 health check + kill-switch alerting. Runs every scan
-    # so the dashboard can show live calibration status.
-    try:
-        health = _compute_rolling_d10_health(state, today_str)
-        _save_rolling_health(health)
-    except Exception as e:
-        log.error(f"signal_tracker rolling health failed: {e}", exc_info=True)
-
-    # Stock history (unchanged)
+    # Stock history (unchanged, regime-independent)
     try:
         _update_stock_history(stocks, today_str)
     except Exception as e:
