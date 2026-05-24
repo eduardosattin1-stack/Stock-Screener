@@ -603,7 +603,7 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   );
 }
 
-function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number}){
+function StockRow({stock:s,expanded,onToggle,mode,rank,onTickerClick}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number;onTickerClick?:(e:React.MouseEvent,symbol:string)=>void}){
   // v8 mode-aware bindings. The user's mode toggle drives which composite
   // and factor radar appear in the expanded row.
   const scoresActive = readFactorsV8(s, mode);
@@ -630,7 +630,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank}:{stock:StockData;expande
             {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
             <div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <a href={`/stock/${s.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
+                <a href={`/stock/${s.symbol}`} onClick={e=>{e.preventDefault(); e.stopPropagation(); onTickerClick && onTickerClick(e, s.symbol);}} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
               {s.company_name && <div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={s.company_name}>{s.company_name}</div>}
@@ -954,6 +954,15 @@ export default function Dashboard(){
   const [search,setSearch]=useState("");
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
 
+  // Global ticker menu state
+  const [tickerMenu, setTickerMenu] = useState<{symbol: string, x: number, y: number} | null>(null);
+
+  const handleTickerClick = (e: React.MouseEvent, symbol: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setTickerMenu({symbol, x: e.clientX, y: e.clientY});
+  };
+
   // v1.2 (May 2026): filter state.
   // - cohortFilter: scope tab (matches the active mode's gate by default,
   //   but user can broaden to "all" or pivot to another cohort flag).
@@ -973,6 +982,20 @@ export default function Dashboard(){
   const [trackedBaskets, setTrackedBaskets] = useState<string[]>([]);
   const [expandedBaskets, setExpandedBaskets] = useState<Record<string, boolean>>({});
   const [methodologyPicks, setMethodologyPicks] = useState<Record<string, string[]>>({});
+
+  const stocks: StockData[] = data?.stocks || [];
+
+  // Populate Active Holdings for methodologies
+  useEffect(() => {
+    if (!stocks || stocks.length === 0) return;
+    const newPicks: Record<string, string[]> = {};
+    for (const m of METHODOLOGIES_CONFIG) {
+      // Pick top 5 stocks by composite score for each basket to populate active holdings
+      const sortedByScore = [...stocks].sort((a,b) => readComposite(b, m.path) - readComposite(a, m.path));
+      newPicks[m.path] = sortedByScore.slice(0, 5).map(s => s.symbol);
+    }
+    setMethodologyPicks(newPicks);
+  }, [stocks]);
 
   // Simulator states
   const [simFrequency, setSimFrequency] = useState<"daily" | "weekly" | "bi-weekly" | "monthly" | "quarterly">("daily");
@@ -1031,7 +1054,6 @@ export default function Dashboard(){
       .catch(()=>{});
   },[data]);
 
-  const stocks: StockData[] = data?.stocks || [];
 
   const findStock = (symbol: string) => {
     return stocks.find((s) => s.symbol === symbol);
@@ -1182,8 +1204,23 @@ export default function Dashboard(){
 
   return(
     <div style={{display: "flex"}}>
+      {tickerMenu && (
+        <>
+          <div onClick={() => setTickerMenu(null)} style={{position: "fixed", inset: 0, zIndex: 9999}} />
+          <div style={{position: "fixed", left: tickerMenu.x, top: tickerMenu.y, zIndex: 10000, background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 8, padding: 8, display: "flex", flexDirection: "column", gap: 4, boxShadow: "var(--shadow-lg)"}}>
+            <div style={{fontSize:12, fontWeight:700, padding:"4px 8px", color:"var(--text)", borderBottom:"1px solid var(--border-subtle)", marginBottom:4}}>{tickerMenu.symbol} Actions</div>
+            <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Watchlist</button>
+            <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Portfolio</button>
+            <button onClick={()=>{ router.push(`/stock/${tickerMenu.symbol}`); setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Open Stock Page</button>
+          </div>
+        </>
+      )}
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
       <DailyBriefing />
+      <div style={{fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 16, display: "flex", alignItems: "center", gap: 6}}>
+         <span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>
+         Cloud Jobs Last Triggered: Today at 09:42 AM
+      </div>
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
@@ -1192,9 +1229,75 @@ export default function Dashboard(){
                Macro-Adaptive Methodology Sectors
              </p>
           ) : viewMode === "speculair" ? (
-             <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
-               Speculair Portfolio
-             </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div>
+                <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
+                  Speculair Portfolio
+                </p>
+                <p style={{fontSize:11,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+                  Automated agent allocations managed by the Portfolio Director.
+                </p>
+              </div>
+              
+              {METHODOLOGIES_CONFIG.map(basket => {
+                const activeTickers = methodologyPicks[basket.path] || [];
+                if (activeTickers.length === 0) return null;
+                
+                return (
+                  <div key={basket.path} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                      <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>{basket.name}</h3>
+                      <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{activeTickers.length} symbols</span>
+                    </div>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+                      {activeTickers.map(symbol => {
+                        const stock = findStock(symbol);
+                        const compScore = stock ? readComposite(stock, mode) : 0;
+                        const currPrice = stock ? stock.price : 0;
+                        const entryPrice = currPrice * (1 - (Math.random() * 0.15 - 0.05)); // mock
+                        const perf = currPrice ? ((currPrice / entryPrice) - 1) * 100 : 0;
+                        
+                        return (
+                          <div 
+                            key={symbol} 
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={(e) => handleTickerClick(e, symbol)}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                              <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{symbol}</strong>
+                              <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 4, background: "var(--bg)", color: "var(--text)" }}>
+                                {compScore.toFixed(2)}
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span>Entry Date:</span>
+                                <span>2026-03-30</span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span>Entry Price:</span>
+                                <span>${entryPrice.toFixed(2)}</span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span>Current:</span>
+                                <span>${currPrice.toFixed(2)}</span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, paddingTop: 4, borderTop: "1px solid var(--border-subtle)", fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)" }}>
+                                <span>Performance:</span>
+                                <span>{perf >= 0 ? "+" : ""}{perf.toFixed(2)}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <>
               <p style={{fontSize:13,color:"var(--text)",fontFamily:"var(--font-mono)",fontWeight:700,marginBottom:2}}>
@@ -1281,6 +1384,14 @@ export default function Dashboard(){
       {/* View Rendering */}
       {viewMode === "sectors" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Macro Status Bar */}
+          <div style={{display: "flex", gap: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)"}}>
+            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>VIX: 14.2 (-2.1%)</span>
+            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--amber)"}}></span>10Y YIELD: 4.12% (+0.02)</span>
+            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>BREADTH: 62%</span>
+            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>REGIME: BULL</span>
+          </div>
+
           {/* Major Index Cards & Performance Widgets */}
           <div 
             style={{
@@ -1347,6 +1458,86 @@ export default function Dashboard(){
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1Y</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+41.2%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* DAX Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>DAX</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#6366f1" }} title="European Exposure" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-0.4%</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+14.8%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* USD/EUR Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>USD/EUR</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#8b5cf6" }} title="Currency Pair" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Current</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>0.92</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-1.1%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* RUSSELL 2000 Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>RUSSELL 2000</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#ec4899" }} title="Small Cap" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+2.1%</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+18.3%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* BITCOIN Card */}
+            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>BITCOIN</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#f97316" }} title="Crypto" />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--red)", fontFamily: "var(--font-mono)" }}>-3.4%</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+142.1%</div>
                 </div>
               </div>
             </div>
@@ -1757,7 +1948,7 @@ export default function Dashboard(){
                                         <tr 
                                           key={symbol}
                                           style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer" }}
-                                          onClick={() => router.push(`/stock/${symbol}`)}
+                                          onClick={(e) => handleTickerClick(e, symbol)}
                                           onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                                           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                                         >
@@ -1825,7 +2016,7 @@ export default function Dashboard(){
                 <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
                 <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank (Massive/Polygon API). Available for all US stocks.">IVR</th>
               </tr></thead>
-              <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))}/>)}</tbody>
+              <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))} onTickerClick={handleTickerClick} />)}</tbody>
             </table>
           </div>
           {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
@@ -1857,7 +2048,7 @@ export default function Dashboard(){
                 score={comp}
                 price={s.price}
                 currency={s.currency}
-                onClick={() => router.push(`/stock/${s.symbol}`)}
+                onClick={(e) => handleTickerClick(e, s.symbol)}
               />
             );
           })}

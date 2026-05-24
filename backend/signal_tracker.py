@@ -1374,6 +1374,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "signal_strength": _signal_strength(p20, regime=regime),
             "mode_qualifications": modes,
             "composite": s.get("composite"),
+            "company_name": s.get("company_name"),
             "sector": s.get("sector"),
             "country": s.get("country"),
             "market_cap": s.get("market_cap"),
@@ -1650,14 +1651,12 @@ def reprice_open_contracts():
     # Use the last business day that has published EOD data.
     import datetime as _dt
     _eod_date = today_date
+    # If market hasn't closed yet on a weekday, use previous business day
+    if today_date.weekday() < 5 and today.hour < 21:  # Cloud Run runs in UTC
+        _eod_date -= _dt.timedelta(days=1)
     # If it's a weekend, roll back to Friday
     while _eod_date.weekday() >= 5:  # 5=Sat, 6=Sun
         _eod_date -= _dt.timedelta(days=1)
-    # If market hasn't closed yet (before 21:00 UTC / 17:00 ET), use previous business day
-    if today.hour < 21:  # Cloud Run runs in UTC
-        _eod_date -= _dt.timedelta(days=1)
-        while _eod_date.weekday() >= 5:
-            _eod_date -= _dt.timedelta(days=1)
     log.info(f"reprice: using EOD date {_eod_date} for ThetaData")
 
     # Load 52-week IV ranks from the latest scans in GCS

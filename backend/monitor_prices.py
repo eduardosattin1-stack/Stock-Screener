@@ -81,18 +81,33 @@ def gcs_read(path: str, default=None):
     return default
 
 
+def _get_token() -> Optional[str]:
+    try:
+        tok_resp = requests.get(
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            headers={"Metadata-Flavor": "Google"}, timeout=2,
+        )
+        if tok_resp.status_code == 200:
+            return tok_resp.json().get("access_token")
+    except Exception:
+        pass
+    try:
+        import subprocess, platform
+        cmd = "gcloud.cmd" if platform.system() == "Windows" else "gcloud"
+        proc = subprocess.run([cmd, "auth", "print-access-token"], capture_output=True, text=True, check=True)
+        return proc.stdout.strip()
+    except Exception:
+        return None
+
+
 def gcs_write(path: str, data: dict, dry_run: bool = False):
     if dry_run:
         log.info(f"[DRY-RUN] Would write {path} ({len(json.dumps(data))} bytes)")
         return True
     try:
-        tok_resp = requests.get(
-            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
-            headers={"Metadata-Flavor": "Google"}, timeout=3,
-        )
-        token = tok_resp.json().get("access_token", "")
+        token = _get_token()
         if not token:
-            log.error(f"GCS write {path}: no access token from metadata server")
+            log.error(f"GCS write {path}: no access token available")
             return False
         url = f"https://storage.googleapis.com/upload/storage/v1/b/{GCS_BUCKET}/o"
         r = requests.post(

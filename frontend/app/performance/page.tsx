@@ -69,7 +69,7 @@ interface Prediction {
   regime?: string;
   composite?: number; sector?: string; country?: string; market_cap?: number;
   ivr_at_entry?: number; iv_at_entry?: number;
-  name?: string; companyName?: string;
+  name?: string; companyName?: string; company_name?: string;
   outcome: "OPEN" | "HIT" | "EXPIRED";
   max_high_observed_pct: number;
   max_drawdown_observed_pct: number;
@@ -1679,7 +1679,10 @@ function CyclesTab() {
     const filtered = preds.filter(p => 
       p.symbol.toLowerCase().includes(search.toLowerCase()) ||
       (p.sector && p.sector.toLowerCase().includes(search.toLowerCase())) ||
-      (p.region && p.region.toLowerCase().includes(search.toLowerCase()))
+      (p.region && p.region.toLowerCase().includes(search.toLowerCase())) ||
+      (p.name && p.name.toLowerCase().includes(search.toLowerCase())) ||
+      (p.companyName && p.companyName.toLowerCase().includes(search.toLowerCase())) ||
+      (p.company_name && p.company_name.toLowerCase().includes(search.toLowerCase()))
     );
 
     return filtered.sort((a, b) => {
@@ -2013,58 +2016,63 @@ function CyclesTab() {
               </div>
             ) : (
               <>
-                {/* Search Filter Input */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 16,
-                  background: "rgba(255, 255, 255, 0.02)",
-                  border: `1px solid ${T.border}`,
-                  borderRadius: 6,
-                  padding: "4px 8px",
-                  width: "fit-content"
-                }}>
-                  <Search size={12} color={T.muted}/>
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search ticker, sector, region..."
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      color: T.text,
-                      fontSize: 11,
-                      fontFamily: T.mono,
-                      width: 220,
-                      outline: "none"
-                    }}
-                  />
-                  {search && (
-                    <button
-                      onClick={() => setSearch("")}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        color: T.green,
-                        cursor: "pointer",
-                        fontSize: 10,
-                        fontWeight: 700,
-                        fontFamily: T.mono,
-                        padding: 0
-                      }}
-                    >
-                      CLEAR
-                    </button>
-                  )}
-                </div>
                 <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6 }}>
                   PREDICTIONS BY DECILE
                 </div>
                 <DecileBarChart distribution={liveDecileDist}/>
                 <PortfolioKPI predictions={collectingPreds}/>
-                <div style={{ marginTop: 14, overflowX: "auto" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 18, marginBottom: 8, gap: 12 }}>
+                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em" }}>
+                    PREDICTIONS LIST
+                  </div>
+                  {/* Search Filter Input */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 6,
+                    padding: "4px 8px",
+                    width: "100%",
+                    maxWidth: 240
+                  }}>
+                    <Search size={12} color={T.muted}/>
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search ticker or name..."
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: T.text,
+                        fontSize: 11,
+                        fontFamily: T.mono,
+                        width: "100%",
+                        outline: "none"
+                      }}
+                    />
+                    {search && (
+                      <button
+                        onClick={() => setSearch("")}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          color: T.green,
+                          cursor: "pointer",
+                          fontSize: 10,
+                          fontWeight: 700,
+                          fontFamily: T.mono,
+                          padding: 0
+                        }}
+                      >
+                        CLEAR
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                       <tr>
@@ -2119,7 +2127,58 @@ function CyclesTab() {
                       <div style={{ marginTop: 10, paddingLeft: 8 }}>
                         <DecileBarChart distribution={resDecileDist}/>
                         <PortfolioKPI predictions={preds}/>
-                        <div style={{ marginTop: 14, overflowX: "auto" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 18, marginBottom: 8, gap: 12 }}>
+                          <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em" }}>
+                            PREDICTIONS LIST
+                          </div>
+                          {/* Search Filter Input */}
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            background: "rgba(255, 255, 255, 0.02)",
+                            border: `1px solid ${T.border}`,
+                            borderRadius: 6,
+                            padding: "4px 8px",
+                            width: "100%",
+                            maxWidth: 240
+                          }}>
+                            <Search size={12} color={T.muted}/>
+                            <input
+                              type="text"
+                              value={search}
+                              onChange={(e) => setSearch(e.target.value)}
+                              placeholder="Search ticker or name..."
+                              style={{
+                                background: "transparent",
+                                border: "none",
+                                color: T.text,
+                                fontSize: 11,
+                                fontFamily: T.mono,
+                                width: "100%",
+                                outline: "none"
+                              }}
+                            />
+                            {search && (
+                              <button
+                                onClick={() => setSearch("")}
+                                style={{
+                                  background: "transparent",
+                                  border: "none",
+                                  color: T.green,
+                                  cursor: "pointer",
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  fontFamily: T.mono,
+                                  padding: 0
+                                }}
+                              >
+                                CLEAR
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <div style={{ overflowX: "auto" }}>
                           <table style={{ width: "100%", borderCollapse: "collapse" }}>
                             <thead>
                               <tr>
@@ -2446,7 +2505,8 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
       (p.sector && p.sector.toLowerCase().includes(search.toLowerCase())) ||
       (p.region && p.region.toLowerCase().includes(search.toLowerCase())) ||
       (p.name && p.name.toLowerCase().includes(search.toLowerCase())) ||
-      (p.companyName && p.companyName.toLowerCase().includes(search.toLowerCase()))
+      (p.companyName && p.companyName.toLowerCase().includes(search.toLowerCase())) ||
+      (p.company_name && p.company_name.toLowerCase().includes(search.toLowerCase()))
     );
 
     return filtered.sort((a, b) => {
@@ -2546,50 +2606,55 @@ function ArchiveDrillDown({ summary }: { summary: CycleSummary }) {
       </div>
 
       {/* Search filter for Archived Predictions */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        marginBottom: 12,
-        background: "rgba(255, 255, 255, 0.02)",
-        border: `1px solid ${T.border}`,
-        borderRadius: 6,
-        padding: "4px 8px",
-        width: "fit-content"
-      }}>
-        <Search size={12} color={T.muted}/>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search archived ticker..."
-          style={{
-            background: "transparent",
-            border: "none",
-            color: T.text,
-            fontSize: 11,
-            fontFamily: T.mono,
-            width: 200,
-            outline: "none"
-          }}
-        />
-        {search && (
-          <button
-            onClick={() => setSearch("")}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 12 }}>
+        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, fontWeight: 600, letterSpacing: "0.08em" }}>
+          PREDICTIONS LIST
+        </div>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          background: "rgba(255, 255, 255, 0.02)",
+          border: `1px solid ${T.border}`,
+          borderRadius: 6,
+          padding: "4px 8px",
+          width: "100%",
+          maxWidth: 240
+        }}>
+          <Search size={12} color={T.muted}/>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search ticker or name..."
             style={{
               background: "transparent",
               border: "none",
-              color: T.green,
-              cursor: "pointer",
-              fontSize: 10,
-              fontWeight: 700,
+              color: T.text,
+              fontSize: 11,
               fontFamily: T.mono,
-              padding: 0
+              width: "100%",
+              outline: "none"
             }}
-          >
-            CLEAR
-          </button>
-        )}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: T.green,
+                cursor: "pointer",
+                fontSize: 10,
+                fontWeight: 700,
+                fontFamily: T.mono,
+                padding: 0
+              }}
+            >
+              CLEAR
+            </button>
+          )}
+        </div>
       </div>
 
       {/* All predictions in the cycle, sorted by probability desc */}

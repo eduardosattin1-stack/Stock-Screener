@@ -13,7 +13,7 @@ export interface StockCardProps {
   score: number;
   price: number;
   currency?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const ACTION_COLORS: Record<string, { bg: string, text: string, border: string }> = {
