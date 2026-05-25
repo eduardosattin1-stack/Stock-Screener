@@ -4,7 +4,7 @@ const CLOUD_RUN = "https://stock-screener-606056076947.europe-west1.run.app";
 
 export async function GET() {
   try {
-    const res = await fetch(`${CLOUD_RUN}/briefing`, {
+    const res = await fetch(`${CLOUD_RUN}/catalysts/candidates`, {
       cache: "no-store",
     });
     
@@ -19,7 +19,7 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err: any) {
     return NextResponse.json(
-      { error: "Failed to fetch daily briefing from backend", details: err.message },
+      { error: "Failed to fetch catalyst candidates from backend", details: err.message },
       { status: 500 }
     );
   }

@@ -44,7 +44,7 @@ jobs:
             --memory=1Gi \
             --timeout=3600 \
             --clear-base-image \
-            --update-env-vars="SCREEN_INDEX=nasdaq100,MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}"
+            --update-env-vars="SCREEN_INDEX=nasdaq100,MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }}"
       - name: Update Screener Jobs
         if: github.event_name == 'push' || inputs.action == 'deploy-only'
         run: |
