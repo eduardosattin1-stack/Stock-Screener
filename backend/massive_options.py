@@ -50,7 +50,6 @@ MIN_IV_SAMPLES_FOR_RANK = 20
 # ---------------------------------------------------------------------------
 import threading
 import time
-import datetime
 import pandas as pd
 from thetadata import ThetaClient
 
@@ -90,8 +89,8 @@ def get_theta_client():
 _latest_eod_date_cache = None
 _date_cache_lock = threading.Lock()
 
-def _get_latest_eod_date() -> datetime.date:
-    """Standard business day logic to resolve the latest EOD date containing options data."""
+def _get_latest_eod_date():
+    """Dynamically resolve the latest EOD business day containing options data by probing AAPL."""
     global _latest_eod_date_cache
     if _latest_eod_date_cache is not None:
         return _latest_eod_date_cache
@@ -100,21 +99,41 @@ def _get_latest_eod_date() -> datetime.date:
             return _latest_eod_date_cache
             
         import datetime as _dt
-        today = datetime.datetime.now()
+        today = datetime.now()
         today_date = today.date()
         
-        # Compute EOD date
-        _eod_date = today_date
-        while _eod_date.weekday() >= 5:
-            _eod_date -= _dt.timedelta(days=1)
-        if today.hour < 21:  # UTC hour cutoff (Cloud Run runs in UTC)
-            _eod_date -= _dt.timedelta(days=1)
-            while _eod_date.weekday() >= 5:
-                _eod_date -= _dt.timedelta(days=1)
+        client = get_theta_client()
+        
+        # Test dates starting from today going back up to 10 days
+        for i in range(10):
+            test_date = today_date - _dt.timedelta(days=i)
+            if test_date.weekday() >= 5:
+                continue
+            # Probe AAPL (highly active, guaranteed options data on trading days)
+            try:
+                rate_limiter.wait()
+                client.option_history_greeks_eod(
+                    symbol="AAPL",
+                    expiration="*",
+                    start_date=test_date,
+                    end_date=test_date,
+                    strike="*",
+                    right="both",
+                    strike_range=1
+                )
+                _latest_eod_date_cache = test_date
+                log.info(f"Resolved ThetaData EOD Date after probe: {test_date}")
+                return test_date
+            except Exception:
+                continue
                 
-        _latest_eod_date_cache = _eod_date
-        log.info(f"Resolved ThetaData EOD Date: {_eod_date}")
-        return _eod_date
+        # Fallback business day logic
+        fallback = today_date - _dt.timedelta(days=1)
+        while fallback.weekday() >= 5:
+            fallback -= _dt.timedelta(days=1)
+        _latest_eod_date_cache = fallback
+        log.warning(f"AAPL probe failed. Using fallback: {fallback}")
+        return fallback
 
 # ---------------------------------------------------------------------------
 # GCS helpers (identical to tradier_options — shared pattern)
