@@ -119,13 +119,6 @@ export function ThemeCard({
           
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
             {topPicks.map(s => {
-              let action: any = "HOLD";
-              if (s.composite > 0.8) action = "STRONG BUY";
-              else if (s.composite > 0.65) action = "BUY";
-              else if (s.composite > 0.5) action = "HOLD";
-              else if (s.composite > 0.3) action = "TRIM";
-              else action = "SELL";
-
               return (
                 <StockCard 
                   key={s.symbol}
@@ -133,11 +126,10 @@ export function ThemeCard({
                   companyName={s.company_name}
                   strategy={s.theme?.toUpperCase() || "THEMATIC"}
                   thesis={s.transcript_summary || s.reasons?.join(". ") || "Data-driven conviction pick based on high composite scoring and sector momentum."}
-                  action={action}
+                  action="HOLD"
                   p20={s.hit_prob ? Math.round(s.hit_prob * 100) : undefined}
                   upside={s.intrinsic_upside ?? undefined}
                   smartMoney={s.smart_money_score ?? undefined}
-                  score={s.composite ?? 0}
                   price={s.price}
                   currency={s.currency}
                   onClick={() => router.push(`/stock/${s.symbol}`)}

@@ -10,7 +10,7 @@ export interface StockCardProps {
   p20?: number;
   upside?: number;
   smartMoney?: number;
-  score: number;
+  score?: number;
   price: number;
   currency?: string;
   onClick?: (e: React.MouseEvent) => void;
@@ -52,7 +52,7 @@ export function StockCard({
   onClick
 }: StockCardProps) {
   const badgeStyle = ACTION_COLORS[action] || ACTION_COLORS["HOLD"];
-  const scoreColor = score > 0.7 ? "#10b981" : score > 0.5 ? "var(--text)" : score > 0.3 ? "var(--text-muted)" : "#ef4444";
+  const scoreColor = score !== undefined ? (score > 0.7 ? "#10b981" : score > 0.5 ? "var(--text)" : score > 0.3 ? "var(--text-muted)" : "#ef4444") : "var(--text-muted)";
 
   return (
     <div 
@@ -130,10 +130,12 @@ export function StockCard({
       {/* Footer Metrics */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
         <div style={{ display: "flex", gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>p(10)</div>
-            <div style={{ fontSize: 14, fontWeight: 800, fontFamily: "var(--font-mono)", color: scoreColor }}>{score.toFixed(2)}</div>
-          </div>
+          {score !== undefined && (
+            <div>
+              <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 2 }}>p(10)</div>
+              <div style={{ fontSize: 14, fontWeight: 800, fontFamily: "var(--font-mono)", color: scoreColor }}>{score.toFixed(2)}</div>
+            </div>
+          )}
           
           {p20 != null && (
             <div>

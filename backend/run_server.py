@@ -397,8 +397,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": "Missing ?symbol= parameter"}).encode())
                 return
             try:
+                refresh_param = qs.get("refresh", [""])[0].lower() in ("true", "1")
                 from opportunistic_catalysts import run_catalyst_scan
-                result = run_catalyst_scan(symbol)
+                result = run_catalyst_scan(symbol, force_refresh=refresh_param)
                 self.send_response(200)
                 self._cors()
                 self.send_header("Content-Type", "application/json")

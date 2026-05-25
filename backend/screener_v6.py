@@ -536,8 +536,6 @@ class Stock:
     has_catalyst: bool = False
     days_to_earnings: int = -1
 
-    # Composite
-    composite: float = 0.0
     # signal field removed v1.2 (May 2026): BUY/HOLD/SELL semantics unused
     # by runners (which sort by composite). Cohort signals are preserved:
     # signal_momentum, signal_compounder_us, signal_compounder_global.
@@ -583,19 +581,46 @@ class Stock:
     buffett_history: dict = field(default_factory=dict)
     # v8 5-factor composite — populated by compute_composite_v8
     factors_v8: dict = field(default_factory=dict)
-    composite_v7: float = 0.0        # v7 composite kept side-by-side for diagnostics
     mode: str = "momentum"           # "momentum" | "fallen_angel" — drives reversal vs bull score
     # ─── Option B (Apr 2026): dual-mode composites for UI toggle ─────
     # Both modes computed for every stock so frontend can toggle without
     # re-scanning. `composite` defaults to momentum view (matches existing
     # screener table sort). Each mode also retains its own factors dict
     # for the 5-axis radar.
-    composite_momentum: float = 0.0
-    composite_fallen_angel: float = 0.0
-    signal_momentum: str = "DISQUALIFIED"     # QUALIFIED if passes qualifies_momentum_v8 gate
-    # signal_fallen_angel removed v1.2 (May 2026): replaced by fallen_angel_flag (bool).
     factors_v8_momentum: dict = field(default_factory=dict)
     factors_v8_fallen_angel: dict = field(default_factory=dict)
+
+    # ─── 9 Valuation Methodologies fields (May 2026) ──────────────────
+    rd_capitalized_dcf: float = 0.0
+    owner_earnings: float = 0.0
+    epv_value: float = 0.0
+    graham_revised: float = 0.0
+    iv15_deep_value: float = 0.0
+
+    dcf_fcff_mos: float = -1.0
+    earnings_yield_gap_mos: float = -1.0
+    ev_gross_profit_mos: float = -1.0
+    rd_capitalized_dcf_mos: float = -1.0
+    owner_earnings_mos: float = -1.0
+    epv_mos: float = -1.0
+    graham_revised_mos: float = -1.0
+    acquirers_multiple_mos: float = -1.0
+    iv15_deep_value_mos: float = -1.0
+
+    net_debt_local: float = 0.0
+    ebit_local: float = 0.0
+    depreciation_local: float = 0.0
+    net_debt: float = 0.0
+    ebit: float = 0.0
+    depreciation: float = 0.0
+    gross_profit: float = 0.0
+    total_assets: float = 0.0
+    eps_latest: float = 0.0
+    fx_to_report: float = 1.0
+    fx_to_price: float = 1.0
+    gp_ta: float = 0.0
+    ey_gap: float = 0.0
+    acquirers_multiple: float = 999.0
 
     # ML probability prediction (GBM model, P(+10% in 60d))
     # Apr 2026: still computed and written to JSON for diagnostic purposes,
@@ -1400,6 +1425,28 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         "margin_of_safety": 0, "value_score": 0, "p_s": 0,
         "classification": "UNKNOWN",
         "_insufficient_history": False,
+        "rd_capitalized_dcf": 0.0,
+        "owner_earnings": 0.0,
+        "epv_value": 0.0,
+        "graham_revised": 0.0,
+        "iv15_deep_value": 0.0,
+        "dcf_fcff_mos": -1.0,
+        "rd_capitalized_dcf_mos": -1.0,
+        "owner_earnings_mos": -1.0,
+        "epv_mos": -1.0,
+        "graham_revised_mos": -1.0,
+        "iv15_deep_value_mos": -1.0,
+        "net_debt_local": 0.0,
+        "ebit_local": 0.0,
+        "depreciation_local": 0.0,
+        "net_debt": 0.0,
+        "ebit": 0.0,
+        "depreciation": 0.0,
+        "gross_profit": 0.0,
+        "total_assets": 0.0,
+        "eps_latest": 0.0,
+        "fx_to_report": 1.0,
+        "fx_to_price": 1.0,
     }
     if price <= 0:
         return v
@@ -1894,15 +1941,145 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             if bvps > 0:
                 v["pb_compounder"] = local_price / bvps
 
-    if inc and len(inc) >= 2:
-        curr = inc[-1]
-        prev = inc[-2]
-        rev_c = float(curr.get("revenue") or 0)
-        rev_p = float(prev.get("revenue") or 0)
-        op_c = float(curr.get("operatingIncome") or 0)
-        op_p = float(prev.get("operatingIncome") or 0)
-        if rev_c > 0 and rev_p > 0:
-            v["opmargin_delta_compounder"] = (op_c / rev_c) - (op_p / rev_p)
+    # ─── 9 Valuation Methodologies (May 2026) ─────────────────────────
+    if bs and cf and len(bs) >= 1 and len(cf) >= 1:
+        bs_sorted = sorted(bs, key=lambda x: x.get("date", ""))
+        cf_sorted = sorted(cf, key=lambda x: x.get("date", ""))
+        inc_sorted = sorted(inc, key=lambda x: x.get("date", ""))
+        
+        latest_bs = bs_sorted[-1]
+        latest_cf = cf_sorted[-1]
+        latest_inc = inc_sorted[-1]
+        
+        # 1. Gather fields in reported (local) currency
+        net_income = float(latest_inc.get("netIncome") or 0)
+        ebit = float(latest_inc.get("operatingIncome") or 0)
+        depreciation = float(latest_cf.get("depreciationAndAmortization") or latest_cf.get("depreciation") or 0)
+        capex = abs(float(latest_cf.get("capitalExpenditure") or 0))
+        fcf = float(latest_cf.get("freeCashFlow") or 0)
+        rd_expense = float(latest_inc.get("researchAndDevelopmentExpenses") or 0)
+        total_assets = float(latest_bs.get("totalAssets") or 0)
+        total_equity = float(latest_bs.get("totalStockholdersEquity") or 0)
+        current_assets = float(latest_bs.get("totalCurrentAssets") or 0)
+        current_liabilities = float(latest_bs.get("totalCurrentLiabilities") or 0)
+        long_term_debt = float(latest_bs.get("longTermDebt") or 0)
+        shares = float(latest_inc.get("weightedAverageShsOutDil") or latest_inc.get("weightedAverageShsOut") or 0)
+        
+        # Latest annual EPS
+        eps_latest = float(latest_inc.get("epsDiluted") or latest_inc.get("eps") or 0)
+        v["eps_latest"] = eps_latest
+        
+        # Store raw local inputs for leverage gate
+        net_debt_local = long_term_debt - (current_assets - current_liabilities)
+        v["net_debt_local"] = net_debt_local
+        v["ebit_local"] = ebit
+        v["depreciation_local"] = depreciation
+        
+        # Store converted to price currency
+        v["net_debt"] = net_debt_local * fx_to_price
+        v["ebit"] = ebit * fx_to_price
+        v["depreciation"] = depreciation * fx_to_price
+        v["gross_profit"] = float(latest_inc.get("grossProfit") or 0) * fx_to_price
+        v["total_assets"] = total_assets * fx_to_price
+        v["fx_to_report"] = fx_to_report
+        v["fx_to_price"] = fx_to_price
+        
+        # 1yr Revenue growth
+        rev_growth_1yr = 0.0
+        if len(inc_sorted) >= 2:
+            rev_c = float(inc_sorted[-1].get("revenue") or 0)
+            rev_p = float(inc_sorted[-2].get("revenue") or 0)
+            if rev_p > 0:
+                rev_growth_1yr = (rev_c - rev_p) / rev_p
+                
+        # 3yr EPS growth
+        eps_growth_3y = v.get("eps_cagr_3y", 0.0)
+        
+        # Helper for MoS
+        def calc_mos(fv, pr):
+            return (fv - pr) / fv if fv > 0 else -1.0
+
+        # ROE
+        roe = net_income / total_equity if total_equity > 0 else 0.0
+
+        # 1. DCF-FCFF
+        wacc = 0.10
+        growth_est = min(max(roe * 0.5, 0.03), 0.25)
+        projected_fcff = fcf
+        pv_stage1 = 0.0
+        curr_fcff = projected_fcff
+        for yr in range(1, 6):
+            curr_fcff *= (1 + growth_est * (0.85 ** yr))
+            pv_stage1 += curr_fcff / ((1 + wacc) ** yr)
+        terminal_fcff = curr_fcff * (1 + 0.025)
+        terminal_value = terminal_fcff / (wacc - 0.025)
+        pv_terminal = terminal_value / ((1 + wacc) ** 5)
+        eq_val = pv_stage1 + pv_terminal - net_debt_local
+        fv_dcf_local = eq_val / shares if shares > 0 else 0.0
+        v["dcf_value"] = fv_dcf_local * fx_to_price
+        v["dcf_fcff_mos"] = calc_mos(v["dcf_value"], price)
+
+        # 2. R&D Capitalized DCF
+        adj_net_income = net_income + rd_expense - (rd_expense / 5.0)
+        adj_assets = total_assets + rd_expense * 2.5
+        adj_equity = total_equity + rd_expense * 2.5
+        adj_roe = adj_net_income / adj_equity if adj_equity > 0 else 0.0
+        growth_rd = min(max(adj_roe * 0.4, 0.03), 0.20)
+        pv_stage1_rd = 0.0
+        earn = adj_net_income
+        for yr in range(1, 8):
+            earn *= (1 + growth_rd * (0.9 ** yr))
+            pv_stage1_rd += earn / ((1 + wacc) ** yr)
+        terminal_rd = earn * (1 + 0.025) / (wacc - 0.025)
+        pv_terminal_rd = terminal_rd / ((1 + wacc) ** 7)
+        fv_rd_local = (pv_stage1_rd + pv_terminal_rd) / shares if shares > 0 else 0.0
+        v["rd_capitalized_dcf"] = fv_rd_local * fx_to_price
+        v["rd_capitalized_dcf_mos"] = calc_mos(v["rd_capitalized_dcf"], price)
+
+        # 3. Owner Earnings Yield
+        g_rev = min(max(rev_growth_1yr, 0.0), 1.0)
+        maint_capex = capex - capex * (g_rev / (1 + g_rev)) if capex > 0 else 0.0
+        if maint_capex <= 0:
+            maint_capex = capex * 0.7
+        oe = net_income + depreciation - maint_capex
+        growth_oe = min(max(roe * 0.4, 0.02), 0.15)
+        pv_stage1_oe = 0.0
+        oe_t = oe
+        for yr in range(1, 11):
+            oe_t *= (1 + growth_oe * (0.9 ** yr))
+            pv_stage1_oe += oe_t / ((1 + wacc) ** yr)
+        terminal_oe = oe_t * 1.025 / (wacc - 0.025)
+        pv_terminal_oe = terminal_oe / ((1 + wacc) ** 10)
+        fv_oe_local = (pv_stage1_oe + pv_terminal_oe) / shares if shares > 0 else 0.0
+        v["owner_earnings"] = fv_oe_local * fx_to_price
+        v["owner_earnings_mos"] = calc_mos(v["owner_earnings"], price)
+
+        # 4. EPV (Greenwald)
+        maint_capex_epv = capex - capex * (g_rev / (1 + g_rev)) if capex > 0 else 0.0
+        if maint_capex_epv <= 0:
+            maint_capex_epv = depreciation if depreciation > 0 else capex * 0.7
+        adjusted_earnings = ebit - maint_capex_epv
+        nopat = adjusted_earnings * (1 - 0.21)
+        enterprise_epv = nopat / wacc
+        equity_epv = enterprise_epv - net_debt_local
+        fv_epv_local = equity_epv / shares if shares > 0 else 0.0
+        v["epv_value"] = fv_epv_local * fx_to_price
+        v["epv_mos"] = calc_mos(v["epv_value"], price)
+
+        # 5. Graham Revised
+        g_graham = max(0.0, min(20.0, eps_growth_3y * 100)) if eps_growth_3y > 0 else 5.0
+        fv_graham_local = eps_latest * (8.5 + 2 * g_graham)
+        v["graham_revised"] = fv_graham_local * fx_to_price
+        v["graham_revised_mos"] = 1.0 - (price / v["graham_revised"]) if v["graham_revised"] > 0 else -1.0
+
+        # 6. IV15 Deep Value
+        g_blend = min(0.40, max(0.02, eps_growth_3y))
+        terminal_mult = min(20.0, max(8.0, g_blend * 100 * 2))
+        terminal_fcf = fcf * ((1 + g_blend) ** 15)
+        terminal_mcap = terminal_fcf * terminal_mult
+        fv_iv15_local = terminal_mcap / (shares * 8.137)
+        v["iv15_deep_value"] = fv_iv15_local * fx_to_price
+        v["iv15_deep_value_mos"] = 1.0 - (price / v["iv15_deep_value"]) if v["iv15_deep_value"] > 0 else -1.0
 
     return v
 
@@ -3961,7 +4138,6 @@ def compute_fallen_angel_flags(stocks: list) -> None:
         rev_yoy = s.revenue_yoy or 0.0
         if (rev_yoy > 0.15
                 and s.rsi and s.rsi < 40
-                and s.composite is not None and s.composite < 0.50
                 and s.price > 1
                 and s.volume > 100_000):
             s.fallen_angel_flag = True
@@ -4154,6 +4330,32 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.buffett_evaluated = value.get("buffett_evaluated", False)
         s.buffett_fallback_reason = value.get("buffett_fallback_reason", "")
         s.buffett_history = value.get("buffett_history", {})
+        
+        # Wire 9 valuation methodologies fields
+        s.rd_capitalized_dcf = value.get("rd_capitalized_dcf", 0.0)
+        s.owner_earnings = value.get("owner_earnings", 0.0)
+        s.epv_value = value.get("epv_value", 0.0)
+        s.graham_revised = value.get("graham_revised", 0.0)
+        s.iv15_deep_value = value.get("iv15_deep_value", 0.0)
+        
+        s.dcf_fcff_mos = value.get("dcf_fcff_mos", -1.0)
+        s.rd_capitalized_dcf_mos = value.get("rd_capitalized_dcf_mos", -1.0)
+        s.owner_earnings_mos = value.get("owner_earnings_mos", -1.0)
+        s.epv_mos = value.get("epv_mos", -1.0)
+        s.graham_revised_mos = value.get("graham_revised_mos", -1.0)
+        s.iv15_deep_value_mos = value.get("iv15_deep_value_mos", -1.0)
+        
+        s.net_debt_local = value.get("net_debt_local", 0.0)
+        s.ebit_local = value.get("ebit_local", 0.0)
+        s.depreciation_local = value.get("depreciation_local", 0.0)
+        s.net_debt = value.get("net_debt", 0.0)
+        s.ebit = value.get("ebit", 0.0)
+        s.depreciation = value.get("depreciation", 0.0)
+        s.gross_profit = value.get("gross_profit", 0.0)
+        s.total_assets = value.get("total_assets", 0.0)
+        s.eps_latest = value.get("eps_latest", 0.0)
+        s.fx_to_report = value.get("fx_to_report", 1.0)
+        s.fx_to_price = value.get("fx_to_price", 1.0)
       
         # Override method label when upside used the analyst fallback
         if upside.get("_valuation_method") == "fallback_analyst":
@@ -4275,17 +4477,8 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             raw_quality=raw["value"], market_cap=s.market_cap,
         )
 
-        # Default `composite` field = momentum (matches existing dashboard sort)
-        s.composite = comp_mom
         s.factor_scores = factors_v7        # legacy 13-factor for radar
         s.factors_v8 = factors_mom          # default v8 view = momentum
-        s.composite_v7 = composite_v7
-        s.composite_momentum = comp_mom
-        s.composite_fallen_angel = comp_fa
-        s.signal_momentum = sig_mom         # QUALIFIED/DISQUALIFIED — used by momentum runner
-        # s.signal and s.signal_fallen_angel removed v1.2 (May 2026):
-        #   - signal (BUY/HOLD/SELL) was unused by runners (filter by composite)
-        #   - signal_fallen_angel replaced by fallen_angel_flag (see compute_fallen_angel_flags)
         s.factors_v8_momentum = factors_mom
         s.factors_v8_fallen_angel = factors_fa
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons_mom
@@ -4364,14 +4557,8 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             mode="fallen_angel",
             raw_quality=raw["value"], market_cap=s.market_cap,
         )
-        s.composite = comp_mom
         s.factor_scores = factors_v7
         s.factors_v8 = factors_mom
-        s.composite_v7 = composite_v7
-        s.composite_momentum = comp_mom
-        s.composite_fallen_angel = comp_fa
-        s.signal_momentum = sig_mom         # QUALIFIED/DISQUALIFIED — used by momentum runner
-        # s.signal and s.signal_fallen_angel removed v1.2 (May 2026)
         s.factors_v8_momentum = factors_mom
         s.factors_v8_fallen_angel = factors_fa
         s.reasons = raw["tech"].get("bull_reasons", []) + reasons_v7
@@ -4384,9 +4571,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         if hasattr(s, "_raw"):
             delattr(s, "_raw")
 
-    # Combine enriched + non-enriched, sort by composite
+    # Combine enriched + non-enriched, sort by symbol ascending
     all_results = enriched_results + non_enriched
-    all_results.sort(key=lambda s: s.composite, reverse=True)
+    all_results.sort(key=lambda s: s.symbol)
 
     # ─── Massive options enrichment (ALL US stocks) ───
     if OPTIONS_AVAILABLE and options_enrich_stock:
@@ -4401,7 +4588,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                     _target_dte = 60 if getattr(s, "hit_prob_60d", 0.0) > 0.0 else 35
                     options_data = options_enrich_stock(
                         symbol=s.symbol,
-                        composite=s.composite,
+                        composite=0.0,
                         hit_prob=s.hit_prob,
                         earnings_date=_earnings_date,
                         collect_term_structure=True,
@@ -4475,15 +4662,14 @@ def format_report(stocks: list[Stock], top_n: int = TOP_N, region: str = "", mac
     lines.append(f"Run: {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}")
     lines.append("=" * 100)
 
-    # Top picks (only show qualified momentum stocks in the email report)
-    qualified_stocks = [s for s in stocks if getattr(s, "signal_momentum", "") == "QUALIFIED"]
-    top = qualified_stocks[:top_n]
-    lines.append(f"\nTOP {len(top)} BY COMPOSITE (QUALIFIED):\n")
-    lines.append(f"{'#':>3} {'SYM':<10} {'PRICE':>10} {'COMP':>6} {'CLASS':<14} {'BULL':>5} {'UPS%':>6} {'QUAL':>5} {'COV':>4}")
+    # Top picks (show first top_n stocks in the scan list)
+    top = stocks[:top_n]
+    lines.append(f"\nTOP {len(top)} BY SYMBOL:\n")
+    lines.append(f"{'#':>3} {'SYM':<10} {'PRICE':>10} {'MOS':>6} {'CLASS':<14} {'BULL':>5} {'UPS%':>6} {'QUAL':>5} {'COV':>4}")
     lines.append("-" * 90)
     for i, s in enumerate(top, 1):
         lines.append(
-            f"{i:>3} {s.symbol:<10} {s.price:>10,.2f} {s.composite:>6.2f} "
+            f"{i:>3} {s.symbol:<10} {s.price:>10,.2f} {s.margin_of_safety:>6.2f} "
             f"{s.classification:<14} {s.bull_score:>5} {s.upside:>+6.1f} "
             f"{s.quality_score:>5.2f} {s.factor_coverage:>2}/{len(ALL_FACTORS):<2}"
         )
@@ -4514,23 +4700,20 @@ def send_email(subject: str, body: str):
 
 
 def log_signals(stocks: list[Stock], path: str = SIGNAL_LOG):
-    """Append today's high-composite stocks to history JSON. Used for hit-rate
-    tracking. v1.2 (May 2026): switched from signal-based filtering
-    (STRONG BUY/BUY/WATCH) to composite ≥ 0.60 — same intent, but consistent
-    with the removed BUY/HOLD/SELL signal field."""
+    """Append today's high-MoS stocks to history JSON. Used for hit-rate tracking."""
     today = datetime.now().strftime("%Y-%m-%d")
     record = {
         "date": today,
         "signals": [
             {
                 "symbol": s.symbol,
-                "composite": round(s.composite, 4),
+                "margin_of_safety": round(s.margin_of_safety, 4),
                 "price": s.price,
                 "classification": s.classification,
                 "factor_coverage": s.factor_coverage,
                 "factor_coverage_pct": round(s.factor_coverage_pct, 4),
             }
-            for s in stocks if s.composite >= 0.60 and getattr(s, "signal_momentum", "") == "QUALIFIED"
+            for s in stocks if s.margin_of_safety >= 0.20
         ],
     }
     history = []
@@ -4613,6 +4796,22 @@ def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = 
             "sub_scores": macro.get("sub_scores"),
             "version":    macro.get("version", "v7"),
         }
+    # Write to local file
+    try:
+        local_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public", f"latest_{region}.json")
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        with open(local_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, default=str, indent=2)
+        log.info(f"Saved latest_{region} scan results locally to {local_path}")
+        
+        # Also write legacy latest.json pointer locally for compatibility if applicable
+        if region in ("nasdaq100", "sp500"):
+            legacy_path = os.path.join(os.path.dirname(local_path), "latest.json")
+            with open(legacy_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, default=str, indent=2)
+    except Exception as e:
+        log.error(f"Failed to write local scan JSON files: {e}")
+
     # Latest
     gcs_upload(f"scans/latest_{region}.json", payload)
     # Dated archive
@@ -4784,6 +4983,186 @@ def monitor_portfolio(state_path: str = PORTFOLIO_STATE):
 
     return monitor_results
 
+
+def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
+    """Generate and serialize the portfolio picks for the 9 methodologies to GCS and local public folder."""
+    # 1. Compute cross-sectional ranking logic for EV/GP, EY Gap, and Acquirer's Multiple
+    # EV/GP
+    valid_gp_ta = []
+    for s in all_results:
+        gp_ta = s.gross_profit / s.total_assets if s.total_assets > 0 else 0.0
+        s.gp_ta = gp_ta
+        valid_gp_ta.append(s)
+        
+    valid_gp_ta.sort(key=lambda x: x.gp_ta)
+    N = len(valid_gp_ta)
+    for i, s in enumerate(valid_gp_ta):
+        rank_pct = i / (N - 1) if N > 1 else 0.5
+        s.ev_gross_profit_mos = (rank_pct - 0.5) * 0.3
+        
+    # EY Gap
+    valid_ey_gap = []
+    for s in all_results:
+        ey = (s.eps_latest * s.fx_to_price) / s.price if s.price > 0 else 0.0
+        ey_gap = ey - 0.045
+        s.ey_gap = ey_gap
+        valid_ey_gap.append(s)
+        
+    valid_ey_gap.sort(key=lambda x: x.ey_gap)
+    N = len(valid_ey_gap)
+    for i, s in enumerate(valid_ey_gap):
+        rank_pct = i / (N - 1) if N > 1 else 0.5
+        s.earnings_yield_gap_mos = (rank_pct - 0.5) * 0.25
+        
+    # Acquirer's Multiple
+    qualified_am = []
+    for s in all_results:
+        ev = (s.market_cap or 0.0) + (s.net_debt or 0.0)
+        ebit = s.ebit or 0.0
+        if ev > 0.0 and ebit > 0.0:
+            multiple = ev / ebit
+            if 0.0 < multiple <= 100.0:
+                s.acquirers_multiple = multiple
+                qualified_am.append(s)
+            else:
+                s.acquirers_multiple = 999.0
+                s.acquirers_multiple_mos = -1.0
+        else:
+            s.acquirers_multiple = 999.0
+            s.acquirers_multiple_mos = -1.0
+            
+    qualified_am.sort(key=lambda x: x.acquirers_multiple)
+    M = len(qualified_am)
+    for j, s in enumerate(qualified_am):
+        rank_pct = j / (M - 1) if M > 1 else 0.5
+        s.acquirers_multiple_mos = (0.5 - rank_pct) * 0.4
+
+    # 2. Portfolio selection logic
+    def passes_leverage_gate(s) -> bool:
+        ebitda = (s.ebit_local or 0.0) + (s.depreciation_local or 0.0)
+        net_debt = s.net_debt_local or 0.0
+        if ebitda <= 0.0:
+            return net_debt <= 0.0
+        return (net_debt / ebitda) < 3.0
+
+    def get_best_portfolio_of_size(candidates, target_T):
+        best_subset = None
+        best_sum = -999999.0
+        limit = 1 if target_T == 1 else target_T // 2
+        pool = candidates[:24]
+        
+        def search(index, current_subset, sector_counts):
+            nonlocal best_subset, best_sum
+            if len(current_subset) == target_T:
+                current_sum = sum(s._temp_mos for s in current_subset)
+                if current_sum > best_sum:
+                    best_sum = current_sum
+                    best_subset = list(current_subset)
+                return
+            
+            if index >= len(pool):
+                return
+            
+            if len(current_subset) + (len(pool) - index) < target_T:
+                return
+            
+            s = pool[index]
+            sec = s.sector or "Unknown"
+            if sector_counts.get(sec, 0) < limit:
+                sector_counts[sec] = sector_counts.get(sec, 0) + 1
+                search(index + 1, current_subset + [s], sector_counts)
+                sector_counts[sec] -= 1
+            
+            search(index + 1, current_subset, sector_counts)
+            
+        search(0, [], {})
+        return best_subset
+
+    methodology_fields = {
+        "dcf_fcff": ("dcf_fcff_mos", "dcf_value"),
+        "earnings_yield_gap": ("earnings_yield_gap_mos", None),
+        "ev_gross_profit": ("ev_gross_profit_mos", None),
+        "rd_capitalized_dcf": ("rd_capitalized_dcf_mos", "rd_capitalized_dcf"),
+        "owner_earnings": ("owner_earnings_mos", "owner_earnings"),
+        "epv": ("epv_mos", "epv_value"),
+        "graham_revised": ("graham_revised_mos", "graham_revised"),
+        "acquirers_multiple": ("acquirers_multiple_mos", None),
+        "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value")
+    }
+
+    methodology_picks = {}
+    for key, (mos_field, fv_field) in methodology_fields.items():
+        candidates = []
+        for s in all_results:
+            mos_val = getattr(s, mos_field, -1.0)
+            if mos_val is not None and mos_val > -1.0:
+                if passes_leverage_gate(s):
+                    s._temp_mos = mos_val
+                    candidates.append(s)
+                    
+        candidates.sort(key=lambda x: x._temp_mos, reverse=True)
+        
+        portfolio = None
+        for target_T in range(min(12, len(candidates)), 0, -1):
+            portfolio = get_best_portfolio_of_size(candidates, target_T)
+            if portfolio:
+                break
+                
+        if not portfolio:
+            portfolio = []
+            
+        picks = []
+        count = len(portfolio)
+        weight = 1.0 / count if count > 0 else 0.0
+        total_mos = 0.0
+        for s in portfolio:
+            mos_val = getattr(s, mos_field)
+            if fv_field:
+                fv_val = getattr(s, fv_field)
+            else:
+                fv_val = s.price * (1 + mos_val)
+                
+            picks.append({
+                "symbol": s.symbol,
+                "weight": round(weight, 4),
+                "mos": round(mos_val, 4),
+                "price": round(s.price, 4),
+                "fair_value": round(fv_val, 4),
+                "sector": s.sector or "Unknown"
+            })
+            total_mos += mos_val
+            
+        avg_mos = total_mos / count if count > 0 else 0.0
+        methodology_picks[key] = {
+            "picks": picks,
+            "average_mos": round(avg_mos, 4)
+        }
+
+    now = datetime.now(timezone.utc)
+    payload_picks = {
+        "last_updated": now.isoformat() + "Z",
+        "methodologies": methodology_picks
+    }
+
+    # Write to local file
+    try:
+        local_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public", "methodology_picks.json")
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        with open(local_path, "w", encoding="utf-8") as f:
+            json.dump(payload_picks, f, indent=2)
+        log.info(f"Saved methodology picks locally to {local_path}")
+    except Exception as e:
+        log.error(f"Failed to write local methodology_picks.json: {e}")
+
+    # Write to GCS if not no_gcs
+    if not no_gcs:
+        try:
+            gcs_upload("scans/methodology_picks.json", payload_picks)
+            log.info("Uploaded methodology picks to GCS scans/methodology_picks.json")
+        except Exception as e:
+            log.warning(f"GCS upload of methodology picks failed: {e}")
+
+
 # ---------------------------------------------------------------------------
 # 19. Main Entry Point
 # ---------------------------------------------------------------------------
@@ -4843,6 +5222,8 @@ def main():
         send_email(f"CB Screener v7.2 — {args.region} ({datetime.now():%Y-%m-%d})", report)
 
     log_signals(stocks)
+
+    save_methodology_picks(stocks, args.no_gcs)
 
     if not args.no_gcs:
         save_scan_to_gcs(stocks, region=args.region, macro=macro)

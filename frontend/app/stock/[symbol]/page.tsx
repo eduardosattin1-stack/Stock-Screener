@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
@@ -2555,9 +2555,17 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
 async function loadStockFromScans(symbol:string):Promise<StockData|null>{
   const sym=symbol.toUpperCase();
   const regions=["sp500","europe","global"] as const;
-  const results=await Promise.all(regions.map(r=>
-    fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' }).then(res=>res.ok?res.json():null).catch(()=>null)
-  ));
+  const results=await Promise.all(regions.map(async r=>{
+    try {
+      const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });
+      if (res.ok) return await res.json();
+    } catch(e){}
+    try {
+      const res = await fetch(`/latest_${r}.json`, { cache: 'no-store' });
+      if (res.ok) return await res.json();
+    } catch(e){}
+    return null;
+  }));
   let best:StockData|null=null;
   let bestDate="";
   results.forEach(d=>{
@@ -3538,6 +3546,469 @@ function AdvancedChartTab({ s }: { s: StockData }) {
   );
 }
 
+interface BloomCatalyst {
+  title: string;
+  detected: boolean;
+  description: string;
+  evidence: string;
+}
+
+interface LoebCriterion {
+  rating?: string;
+  ratio?: string;
+  detected?: boolean;
+  analysis: string;
+}
+
+interface OptionsSignals {
+  iv_current: number | null;
+  skew_25d: number | null;
+  term_structure: string;
+  pc_oi_ratio: number | null;
+  total_oi: number | null;
+  implied_earnings_move_pct: number | null;
+  market_sentiment_flag: string;
+  overall_interpretation: string;
+}
+
+interface RecentEvent {
+  date: string;
+  type: "filing" | "news" | "transcript";
+  title: string;
+  link: string;
+}
+
+interface CatalystScanReport {
+  symbol: string;
+  company_name: string;
+  price: number;
+  market_cap: number;
+  catalyst_density_score: number;
+  upside_downside_ratio: number;
+  analysis_summary: string;
+  recommendation: "BUY" | "WATCH" | "HOLD" | "SELL";
+  bloom_catalysts: {
+    catalyst_1: BloomCatalyst;
+    catalyst_2: BloomCatalyst;
+    catalyst_3: BloomCatalyst;
+  };
+  loeb_criteria: {
+    catalyst_density: LoebCriterion;
+    sum_of_parts: LoebCriterion;
+    activism_potential: LoebCriterion;
+    risk_reward: LoebCriterion;
+  };
+  options_signals: OptionsSignals;
+  recent_events: RecentEvent[];
+  cache_timestamp?: string;
+}
+
+function CatalystTabContent({ symbol }: { symbol: string }) {
+  const [report, setReport] = useState<CatalystScanReport | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchReport = useCallback((forceRefresh: boolean = false) => {
+    if (!symbol) return;
+    setLoading(true);
+    setError(null);
+    fetch(`/api/catalysts/scan?symbol=${symbol}${forceRefresh ? "&refresh=true" : ""}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+        return r.json();
+      })
+      .then((data: CatalystScanReport) => {
+        setReport(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load catalyst scan report.");
+        setLoading(false);
+      });
+  }, [symbol]);
+
+  useEffect(() => {
+    fetchReport(false);
+  }, [fetchReport]);
+
+  const handleForceRefresh = () => {
+    fetchReport(true);
+  };
+
+  if (loading) {
+    return (
+      <Card style={{ padding: 40, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+        <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: T.green }} />
+        <div style={{ fontSize: 12, fontFamily: T.mono, color: T.textLight }}>
+          Running multi-strategy cognitive extraction pipeline for {symbol}...
+        </div>
+      </Card>
+    );
+  }
+
+  if (error || !report) {
+    return (
+      <Card style={{ padding: 40, textAlign: "center", color: T.red }}>
+        <AlertCircle size={24} style={{ margin: "0 auto 8px" }} />
+        <div style={{ fontSize: 12, fontFamily: T.mono }}>{error || "No catalyst report found"}</div>
+      </Card>
+    );
+  }
+
+  const getRecommendationStyle = (rec?: string) => {
+    switch (rec) {
+      case "BUY":
+        return { color: T.green, backgroundColor: T.greenLight, borderColor: T.greenBorder };
+      case "WATCH":
+        return { color: T.amber, backgroundColor: T.amberLight, borderColor: T.amber };
+      case "HOLD":
+        return { color: T.textMuted, backgroundColor: T.card, borderColor: T.cardBorder };
+      case "SELL":
+        return { color: T.red, backgroundColor: T.redLight, borderColor: T.red };
+      default:
+        return { color: T.text, backgroundColor: T.card, borderColor: T.cardBorder };
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Detail dashboard layout */}
+      <Card>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.divider}`, paddingBottom: 12, marginBottom: 16, gap: 12 }}>
+          <SH title={`${report.company_name} Catalyst Overview`} icon={<Zap size={14} color={T.green} />} sub={`Loeb & Bloom Cognitive Catalyst Scan`} />
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {report.cache_timestamp && (
+              <span style={{ fontSize: 10, color: T.textLight, fontFamily: T.mono }}>
+                Last Scan: <strong style={{ color: T.text }}>{new Date(report.cache_timestamp).toLocaleString()}</strong>
+              </span>
+            )}
+            <button
+              onClick={() => handleForceRefresh()}
+              disabled={loading}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                background: "transparent",
+                border: `1px solid ${T.cardBorder}`,
+                borderRadius: 6,
+                padding: "3px 8px",
+                fontSize: 10,
+                fontWeight: 700,
+                color: T.green,
+                cursor: "pointer",
+                transition: "all 0.15s",
+                fontFamily: T.mono,
+              }}
+            >
+              <RefreshCw size={11} className={loading ? "animate-spin" : ""} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
+              RE-SCAN
+            </button>
+            {report.recommendation && (
+              <span style={{ 
+                fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6,
+                borderWidth: 1, borderStyle: "solid",
+                ...getRecommendationStyle(report.recommendation)
+              }}>
+                {report.recommendation}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(168,85,247,0.06)", borderRadius: 6, border: `1px solid ${T.purple || "var(--purple)"}` }}>
+            <div>
+              <div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Catalyst Score</div>
+              <div style={{ fontSize: 9, color: T.textLight }}>Refined Catalyst Density</div>
+            </div>
+            <div style={{ marginLeft: "auto", fontSize: 24, fontWeight: 800, color: T.purple || "var(--purple)", fontFamily: T.mono }}>
+              {report.catalyst_density_score?.toFixed(1) || "N/A"}
+            </div>
+          </div>
+          
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(20,184,122,0.06)", borderRadius: 6, border: `1px solid ${T.green}` }}>
+            <div>
+              <div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div>
+              <div style={{ fontSize: 9, color: T.textLight }}>Target Ratio</div>
+            </div>
+            <div style={{ marginLeft: "auto", fontSize: 24, fontWeight: 800, color: T.green, fontFamily: T.mono }}>
+              {report.upside_downside_ratio ? `${report.upside_downside_ratio.toFixed(1)}:1` : "N/A"}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.textMuted, letterSpacing: "0.08em", marginBottom: 6 }}>
+            Opportunistic AI Thesis Summary
+          </div>
+          <p style={{ fontSize: 13, color: T.text, lineHeight: 1.6, margin: 0, fontFamily: T.sans }}>
+            {report.analysis_summary}
+          </p>
+        </div>
+      </Card>
+
+      {/* Bloom timeline stages */}
+      <Card>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
+          <Compass size={12} /> Bloom Catalyst Timeline Stages
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+          {/* Catalyst 1 */}
+          {report.bloom_catalysts?.catalyst_1 && (
+            <div style={{ 
+              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
+              border: `1px solid ${report.bloom_catalysts.catalyst_1.detected ? T.purple || "var(--purple)" : T.cardBorder}`,
+              opacity: report.bloom_catalysts.catalyst_1.detected ? 1 : 0.45
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 1</span>
+                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_1.detected ? "rgba(168,85,247,0.18)" : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_1.detected ? T.purple || "var(--purple)" : T.textMuted }}>
+                  {report.bloom_catalysts.catalyst_1.detected ? "DETECTED" : "INACTIVE"}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_1.detected ? T.text : T.textLight, marginBottom: 6 }}>
+                {report.bloom_catalysts.catalyst_1.title}
+              </div>
+              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
+                {report.bloom_catalysts.catalyst_1.description}
+              </div>
+              {report.bloom_catalysts.catalyst_1.detected && (
+                <div style={{ fontSize: 9, color: T.purple || "var(--purple)", background: "rgba(168,85,247,0.06)", padding: "6px 8px", borderRadius: 4 }}>
+                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_1.evidence}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Catalyst 2 */}
+          {report.bloom_catalysts?.catalyst_2 && (
+            <div style={{ 
+              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
+              border: `1px solid ${report.bloom_catalysts.catalyst_2.detected ? T.green : T.cardBorder}`,
+              opacity: report.bloom_catalysts.catalyst_2.detected ? 1 : 0.45
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 2</span>
+                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_2.detected ? T.greenLight : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_2.detected ? T.green : T.textMuted }}>
+                  {report.bloom_catalysts.catalyst_2.detected ? "ACTIVE" : "INACTIVE"}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_2.detected ? T.text : T.textLight, marginBottom: 6 }}>
+                {report.bloom_catalysts.catalyst_2.title}
+              </div>
+              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
+                {report.bloom_catalysts.catalyst_2.description}
+              </div>
+              {report.bloom_catalysts.catalyst_2.detected && (
+                <div style={{ fontSize: 9, color: T.green, background: "rgba(20,184,122,0.06)", padding: "6px 8px", borderRadius: 4 }}>
+                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_2.evidence}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Catalyst 3 */}
+          {report.bloom_catalysts?.catalyst_3 && (
+            <div style={{ 
+              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
+              border: `1px solid ${report.bloom_catalysts.catalyst_3.detected ? T.blue || "var(--blue)" : T.cardBorder}`,
+              opacity: report.bloom_catalysts.catalyst_3.detected ? 1 : 0.45
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 3</span>
+                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_3.detected ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_3.detected ? T.blue || "var(--blue)" : T.textMuted }}>
+                  {report.bloom_catalysts.catalyst_3.detected ? "TRIGGERED" : "INACTIVE"}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_3.detected ? T.text : T.textLight, marginBottom: 6 }}>
+                {report.bloom_catalysts.catalyst_3.title}
+              </div>
+              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
+                {report.bloom_catalysts.catalyst_3.description}
+              </div>
+              {report.bloom_catalysts.catalyst_3.detected && (
+                <div style={{ fontSize: 9, color: T.blue || "var(--blue)", background: "rgba(59,130,246,0.06)", padding: "6px 8px", borderRadius: 4 }}>
+                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_3.evidence}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Loeb criteria & activism */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <Card>
+          {report.loeb_criteria?.catalyst_density && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Catalyst Density (12-24M)</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.purple || "var(--purple)" }}>
+                  {report.loeb_criteria.catalyst_density.rating} Density
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
+                {report.loeb_criteria.catalyst_density.analysis}
+              </div>
+            </div>
+          )}
+          {report.loeb_criteria?.sum_of_parts && (
+            <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Sum-of-Parts Discount</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: report.loeb_criteria.sum_of_parts.detected ? T.green : T.textMuted }}>
+                  {report.loeb_criteria.sum_of_parts.detected ? "SoP Dislocation Detected" : "No Dislocation"}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
+                {report.loeb_criteria.sum_of_parts.analysis}
+              </div>
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          {report.loeb_criteria?.activism_potential && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Activism Footprint</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.purple || "var(--purple)" }}>
+                  {report.loeb_criteria.activism_potential.rating}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
+                {report.loeb_criteria.activism_potential.analysis}
+              </div>
+            </div>
+          )}
+          {report.loeb_criteria?.risk_reward && (
+            <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Asymmetric Risk/Reward</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.green }}>
+                  Ratio: {report.loeb_criteria.risk_reward.ratio}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
+                {report.loeb_criteria.risk_reward.analysis}
+              </div>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* Options signals */}
+      {report.options_signals && (
+        <Card>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
+            <TrendingUp size={12} /> Options Market Catalyst Signals (ThetaData Pipeline)
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 16 }}>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>ATM IV</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
+                {report.options_signals.iv_current != null ? `${(report.options_signals.iv_current * 100).toFixed(1)}%` : "N/A"}
+              </div>
+            </div>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Skew (25d)</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: report.options_signals.skew_25d && report.options_signals.skew_25d < 0 ? T.green : T.text }}>
+                {report.options_signals.skew_25d != null ? `${report.options_signals.skew_25d.toFixed(2)}` : "N/A"}
+              </div>
+            </div>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Structure</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: report.options_signals.term_structure === "backwardation" ? T.purple || "var(--purple)" : T.text }}>
+                {report.options_signals.term_structure || "N/A"}
+              </div>
+            </div>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>P/C OI Ratio</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
+                {report.options_signals.pc_oi_ratio != null ? report.options_signals.pc_oi_ratio.toFixed(2) : "N/A"}
+              </div>
+            </div>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Total OI</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
+                {report.options_signals.total_oi != null ? report.options_signals.total_oi.toLocaleString() : "N/A"}
+              </div>
+            </div>
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Implied Move</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: T.purple || "var(--purple)" }}>
+                {report.options_signals.implied_earnings_move_pct != null ? `±${report.options_signals.implied_earnings_move_pct.toFixed(1)}%` : "N/A"}
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10, background: "rgba(0, 0, 0, 0.12)", border: `1px solid ${T.cardBorder}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", background: "rgba(20,184,122,0.18)", color: T.green, padding: "2px 6px", borderRadius: 4, height: "fit-content", whiteSpace: "nowrap" }}>
+              {report.options_signals.market_sentiment_flag}
+            </div>
+            <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, fontFamily: T.sans }}>
+              {report.options_signals.overall_interpretation}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Evidence Feed */}
+      {report.recent_events && report.recent_events.length > 0 && (
+        <Card>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
+            <Calendar size={12} /> Catalyst Evidence Feed (Filings & News Context)
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {report.recent_events.map((ev, idx) => (
+              <div 
+                key={idx} 
+                style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: 12, 
+                  padding: "8px 12px", 
+                  background: "rgba(255,255,255,0.02)", 
+                  border: `1px solid ${T.cardBorder}`, 
+                  borderRadius: 6 
+                }}
+              >
+                <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textMuted, width: 80, flexShrink: 0 }}>
+                  {ev.date.split(" ")[0]}
+                </span>
+                <span style={{ 
+                  fontSize: 8, fontWeight: 700, padding: "2px 6px", borderRadius: 4, 
+                  background: ev.type === "filing" ? "rgba(59,130,246,0.12)" : "rgba(168,85,247,0.12)",
+                  color: ev.type === "filing" ? T.blue || "var(--blue)" : T.purple || "var(--purple)",
+                  textTransform: "uppercase",
+                  width: 50,
+                  textAlign: "center"
+                }}>
+                  {ev.type}
+                </span>
+                <span style={{ fontSize: 12, color: T.text, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: T.sans }}>
+                  {ev.title}
+                </span>
+                {ev.link && (
+                  <a 
+                    href={ev.link} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    style={{ color: T.green, display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, fontFamily: T.mono }}
+                  >
+                    link <ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
@@ -3549,16 +4020,24 @@ export default function StockDetail(){
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart"|"methodology">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology">("overview");
   const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
 
   useEffect(()=>{
     if(!symbol)return;
     const sym=symbol.toUpperCase();
     const regions=["sp500","europe","global"] as const;
-    Promise.all(regions.map(r=>
-      fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' }).then(res=>res.ok?res.json():null).catch(()=>null)
-    )).then(results=>{
+    Promise.all(regions.map(async r=>{
+      try {
+        const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch(e){}
+      try {
+        const res = await fetch(`/latest_${r}.json`, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch(e){}
+      return null;
+    })).then(results=>{
       let best:StockData|null=null, bestDate="";
       results.forEach(d=>{
         if(!d?.stocks)return;
@@ -3566,10 +4045,24 @@ export default function StockDetail(){
         if(f&&(d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
       });
       if(!best){
-        fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()).then(d=>{
-          const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
-          setStock(f||null); setLoading(false);
-        }).catch(()=>{setStock(null); setLoading(false);});
+        fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' })
+          .then(r=>{
+            if (r.ok) return r.json();
+            throw new Error("GCS fetch failed");
+          })
+          .then(d=>{
+            const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
+            setStock(f||null); setLoading(false);
+          })
+          .catch(()=>{
+            fetch("/latest_global.json")
+              .then(r=>r.ok?r.json():null)
+              .then(d=>{
+                const f=d?.stocks?.find((s:StockData)=>s.symbol===sym);
+                setStock(f||null); setLoading(false);
+              })
+              .catch(()=>{setStock(null); setLoading(false);});
+          });
       } else {
         setStock(best); setLoading(false);
       }
@@ -3738,7 +4231,7 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","story","transcript","track","compare","chart","methodology"] as const).map(tab=>(
+        {(["overview","story","catalyst","transcript","track","compare","chart","methodology"] as const).map(tab=>(
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -3747,7 +4240,7 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":tab==="story"?"Investor Personas":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":tab==="chart"?"Chart":"Scoring Methodology"}
+            {tab==="overview"?"Overview":tab==="story"?"Investor Personas":tab==="catalyst"?"Catalyst Watch":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":tab==="chart"?"Chart":"Scoring Methodology"}
           </button>
         ))}
       </div>
@@ -3760,6 +4253,8 @@ export default function StockDetail(){
         <div style={{display:"flex",flexDirection:"column",gap:16}}>
           <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
         </div>
+      ) : activeTab==="catalyst" ? (
+        <CatalystTabContent symbol={s.symbol} />
       ) : activeTab==="methodology" ? (
         <ScoringMethodologyCard />
       ) : activeTab==="transcript" ? (

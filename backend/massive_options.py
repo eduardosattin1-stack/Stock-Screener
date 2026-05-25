@@ -160,7 +160,12 @@ def get_options_snapshot(symbol: str,
         except Exception:
             break
 
-    return all_results
+    # Filter for standard options (100 shares per contract) to exclude adjusted/legacy non-standard options
+    standard_contracts = [
+        c for c in all_results
+        if c.get("details", {}).get("shares_per_contract") == 100
+    ]
+    return standard_contracts
 
 
 def get_spot_price(symbol: str) -> Optional[float]:
@@ -186,11 +191,12 @@ def _extract_atm_iv(contracts: list, spot: float) -> Optional[float]:
     puts = [c for c in contracts if c.get("details", {}).get("contract_type") == "put"]
 
     def _atm_iv(opts):
-        if not opts:
+        # Filter for valid options with positive implied volatility
+        valid_opts = [o for o in opts if o.get("implied_volatility") is not None and o.get("implied_volatility") > 0]
+        if not valid_opts:
             return None
-        best = min(opts, key=lambda o: abs(float(o["details"]["strike_price"]) - spot))
-        iv = best.get("implied_volatility")
-        return float(iv) if iv and iv > 0 else None
+        best = min(valid_opts, key=lambda o: abs(float(o["details"]["strike_price"]) - spot))
+        return float(best["implied_volatility"])
 
     ivs = [v for v in (_atm_iv(calls), _atm_iv(puts)) if v is not None and v > 0]
     return sum(ivs) / len(ivs) if ivs else None

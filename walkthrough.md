@@ -11,7 +11,33 @@ This walkthrough documents the full progression of the Stock Screener project, i
 
 ## 1. Multi-Agent Alpha Platform Optimization
 
-We successfully implemented, optimized, and executed the multi-agent macro-adaptive alpha research platform. The system completed a **5-iteration optimization loop** across multiple universes, dynamically tuning parameters to find top-performing methodologies while mitigating risks.
+We successfully implemented,
+- **Duplicate Navigation Fix**: Removed the duplicate `Nav` component import and render block in `frontend/app/catalysts/page.tsx` since Next.js `RootLayout` already renders the navigation bar globally across all routes.
+
+### 4. Unified Scoring Scale & Sidebar Duplication Fixes
+- **Unified Score Range (0.0 to 10.0)**: Scaled candidate catalyst scores returned by the `/catalysts/candidates` backend by `10.0` to match the `1.0` to `10.0` cognitive scan range. This ensures consistency across candidate lists, watchlists, recent scans, and deep scans (e.g., ZS shows up as `10.00` candidate / `7.80` deep scan instead of `1.00` candidate / `7.80` deep scan).
+- **Double Fetch Loop & Duplicates Fixed**: Solved the Next.js `useEffect` dependency loop by storing the scan cache in a React `useRef` rather than state. Because updating state cache triggered re-renders and re-runs of the deep scan `useEffect` before state updates were completed, it caused duplicate entries (e.g., two ZS cards) in the recent scans sidebar due to race conditions.
+- **Exquisite Card UI Updates**: Each candidate sidebar card now clearly displays both key metrics at a glance: the **Loeb Score** (e.g. `Loeb: 10.0`) and the **Asymmetry** (e.g. `R/R: 2.3:1` or `Upside: +67%`).
+- **Concurrent Score Propagation**: Implemented `propagateScoreUpdate` which ensures that once a force-refresh completes, the updated score is concurrently synchronized across the Candidates list, Watchlist (state & `localStorage`), and Recent Scans.
+
+### 6. Heuristic Score Calibration & Rank Correction (Latest Update)
+- **Heuristic Score Discount (Capped at 6.0)**: Capped raw, unscanned heuristic catalyst scores at a maximum of `6.0` (applying a `0.6` discount factor) in `get_catalyst_candidates`. This prevents unscanned "leads" from polluting the top ranks and crowding out genuine scanned candidates (like AVGO `9.1`, GILD `9.2`, or CVS `7.8`).
+- **`is_scanned` State Synchronization**: Added an `is_scanned` boolean flag to both backend responses and the frontend `Candidate` type.
+- **Visual Indicators & Tooltips**:
+  - Unscanned heuristic scores are decorated with an asterisk (`Loeb: 6.0*`) and carry a `"Heuristic Estimate (Unscanned)"` tooltip.
+  - Deep-scanned scores display as clean values (`Loeb: 7.8`) and carry a `"Loeb Score (Deep Scanned)"` tooltip.
+- **Instant Promotion on Scan**: Propagating the scan result updates the Candidate's score to its true Claude-synthesized value and flips `is_scanned` to `true`, instantly moving the stock to its correct sorted rank in the list.
+
+### 4. Pipeline Sidebar Logic
+- The Candidates list filters out any items that are already in the Watchlist or Recent Scans.
+- Recent Scans list filters out any items that are currently in the Watchlist.
+- This ensures a ticker moves cleanly down the pipeline (`Scanning Candidates` -> `Recent Scans` -> `Watchlist`) without duplicating.
+
+### 4. Persistent Scan Caching & Stock Page Integration
+- **Persistent Local Scan Cache**: Implemented a local JSON cache (`backend/deep_scans_cache.json`) on the backend. Deep scans (e.g., Claude analysis) are cached for 24 hours. When candidates are loaded, if any has a cached deep scan, its candidate score is dynamically overridden with its refined deep-scanned score (e.g. Agilent Technologies `A` showing `6.8` instead of `10.0`), resolving the score mismatch between candidate lists and scan results.
+- **Stock Detail Page Integration**: Added a new **"Catalyst Watch"** tab to the dynamic stock detail page (`/stock/[symbol]`). This tab fetches the deep scan report (which loads instantly in ~50ms if cached, or runs on-demand if not) and renders the exact same beautiful event-driven dashboard (Bloom timeline, Loeb criteria, options Term structure, and evidence feed) inline.
+
+iple universes, dynamically tuning parameters to find top-performing methodologies while mitigating risks.
 
 ### Key Accomplishments
 * **Dynamic Universe Configurations**: The data steward ([pita_data_steward.py](file:///C:/Users/Bruno/Stock-Screener/backend/backtest_v9/pita_data_steward.py)) reconstructs multiple universes per rebalance date: `sp500`, `midcap`, `blend`, and `all`.

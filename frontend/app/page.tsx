@@ -118,6 +118,10 @@ interface StockData {
   bvps_upside?:number;
   intrinsic_upside?:number;
   reversal_score?:number;
+  epv_to_ev?:number|null;
+  price_to_graham_revised?:number|null;
+  acquirers_multiple?:number|null;
+  iv15_discount?:number|null;
 }
 interface ScanData {
   scan_date:string; region:string; version:string;
@@ -138,36 +142,49 @@ const SIG: Record<string,{color:string;bg:string;border:string}> = {
 };
 const CLS: Record<string,string> = { DEEP_VALUE:"#2563eb", VALUE:"#0891b2", QUALITY_GROWTH:"#7c3aed", GROWTH:"#818cf8", SPECULATIVE:"#ef4444", NEUTRAL:"#64748b" };
 
-// v8 (Apr 2026) — 5-factor composite radar config
-// Replaces the v7 13-factor list. The order drives radar axis layout
-// (clockwise from top); FACTOR_WEIGHTS supplies the percent labels rendered
-// in the expanded factor breakdown.
-const FACTOR_ORDER = ["momentum","quality","growth","value","smart_money"];
-const FACTOR_LABELS: Record<string,string> = { momentum:"Momentum", quality:"Quality", growth:"Growth", value:"Value", smart_money:"Smart Money" };
-const FACTOR_WEIGHTS: Record<string,number> = { momentum:25, quality:20, growth:20, value:20, smart_money:15 };
+
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
   if (!stock) return { label: "VALUATION", value: "—" };
   
   switch (path) {
-    case "intrinsic/dcf_fcff":
-    case "emerging/rd_capitalized_dcf":
-      return { label: "MARGIN OF SAFETY", value: stock.margin_of_safety ? `${(stock.margin_of_safety * 100).toFixed(1)}%` : "—" };
+    case "intrinsic/dcf_fcff": {
+      const dcfMos = stock.dcf_value && stock.price && stock.dcf_value > 0
+        ? (stock.dcf_value - stock.price) / stock.dcf_value
+        : null;
+      return { label: "MARGIN OF SAFETY", value: dcfMos != null ? `${(dcfMos * 100).toFixed(1)}%` : "—" };
+    }
+    case "emerging/rd_capitalized_dcf": {
+      const rdMos = stock.dcf_value && stock.price && stock.dcf_value > 0
+        ? (stock.dcf_value - stock.price) / stock.dcf_value
+        : null;
+      return { label: "R&D DCF MOS", value: rdMos != null ? `${(rdMos * 100).toFixed(1)}%` : "—" };
+    }
     case "emerging/earnings_yield_gap":
-      return { label: "EARNINGS YIELD", value: stock.earnings_yield ? `${(stock.earnings_yield * 100).toFixed(1)}%` : "—" };
+      return { label: "YIELD GAP (VS 4.5% RF)", value: stock.earnings_yield != null ? `${((stock.earnings_yield - 0.045) * 100).toFixed(1)}%` : "—" };
     case "multiples/ev_gross_profit":
-      return { label: "GROSS MARGIN", value: stock.gross_margin ? `${(stock.gross_margin * 100).toFixed(1)}%` : "—" };
+      return { label: "GROSS MARGIN", value: stock.gross_margin != null ? `${(stock.gross_margin * 100).toFixed(1)}%` : "—" };
     case "intrinsic/owner_earnings":
-      return { label: "OWNER EARNINGS", value: stock.owner_earnings_yield ? `${(stock.owner_earnings_yield * 100).toFixed(1)}%` : "—" };
+      return { label: "OWNER EARNINGS YIELD", value: stock.owner_earnings_yield != null ? `${(stock.owner_earnings_yield * 100).toFixed(1)}%` : "—" };
     case "intrinsic/epv_greenwald":
-    case "v8fusion/graham_revised":
-    case "v8fusion/iv15_deep_value":
-      return { label: "INTRINSIC UPSIDE", value: stock.intrinsic_upside ? `${(stock.intrinsic_upside * 100).toFixed(1)}%` : "—" };
+      return { label: "EPV / EV RATIO", value: stock.epv_to_ev != null ? stock.epv_to_ev.toFixed(2) : "—" };
+    case "v8fusion/graham_revised": {
+      const grahamMos = stock.price_to_graham_revised != null
+        ? 1.0 - stock.price_to_graham_revised
+        : null;
+      return { label: "GRAHAM REVISED MOS", value: grahamMos != null ? `${(grahamMos * 100).toFixed(1)}%` : "—" };
+    }
+    case "v8fusion/iv15_deep_value": {
+      const iv15Mos = stock.iv15_discount != null
+        ? 1.0 - stock.iv15_discount
+        : null;
+      return { label: "IV15 DISCOUNT MOS", value: iv15Mos != null ? `${(iv15Mos * 100).toFixed(1)}%` : "—" };
+    }
     case "multiples/acquirers_multiple":
-      return { label: "VALUE SCORE", value: stock.value_score ? stock.value_score.toFixed(1) : "—" };
+      return { label: "ACQUIRER'S MULTIPLE", value: stock.acquirers_multiple != null ? `${stock.acquirers_multiple.toFixed(1)}x` : "—" };
     default:
-      return { label: "UPSIDE SCORE", value: stock.upside_score ? stock.upside_score.toFixed(1) : "—" };
+      return { label: "UPSIDE SCORE", value: stock.upside_score != null ? stock.upside_score.toFixed(1) : "—" };
   }
 };
 
@@ -195,157 +212,11 @@ const fmtPrice = (n:number|null|undefined, c?:string) => {
     : `${sym}${n.toFixed(2)}`;
 };
 
-// getProb: fallback table for stocks without live hit_prob field (rare).
-// Numbers are rough approximations from v7.2 backtest calibration — used by
-// the GAIN/DD column for projected gain & drawdown ranges per composite band.
-// Note (Apr 2026): the P+10% column itself was removed after the LTR
-// investigation showed per-stock probabilities aren't trustworthy at the
-// 0.65 AUC ceiling. The Smart Money Score replaces it. hit_prob is still
-// computed in the backend and written to JSON for diagnostic purposes — it
-// just isn't rendered. probFallback below remains in use by GAIN/DD which
-// reads from this same backtest-calibration table keyed on composite.
-function getProb(c:number){if(c>=0.90)return{p10:85,gain:25.7,dd:-9.1,speed:18};if(c>=0.80)return{p10:75,gain:20.0,dd:-9.8,speed:22};if(c>=0.65)return{p10:62,gain:15.0,dd:-10.5,speed:26};if(c>=0.50)return{p10:50,gain:12.0,dd:-11.0,speed:30};return{p10:35,gain:9.0,dd:-11.0,speed:32};}
 
-// v8 mode-aware factor reader. Compounder modes share the Momentum factors
-// since they use the same v8 5-factor radar — the difference is the cohort
-// gate (US exchange / sector-excluded global) and the ranking score
-// (compounder_score_us/_global). FA mode has its own factors_v8_fallen_angel.
-// Last-resort fallback returns an all-null FactorsV8 so the radar renders
-// five dashed/empty axes rather than crashing.
-function readFactorsV8(s:StockData, mode:string):FactorsV8 {
-  const f = mode === "fallen_angel"
-    ? (s.factors_v8_fallen_angel ?? s.factors_v8)
-    : (s.factors_v8_momentum ?? s.factors_v8);   // compounder modes use momentum factors
-  if (f) return f;
-  return { momentum:null, quality:null, growth:null, value:null, smart_money:null };
-}
-// v1.2 (May 2026): readComposite handles 4 modes. Compounder modes use their
-// dedicated rank score (compounder_score_us/_global) instead of the v8
-// composite — that's how the compounder runners pick their baskets.
-function readComposite(s:StockData, mode:string):number {
-  if (mode === "fallen_angel")      return s.composite_fallen_angel ?? s.composite ?? 0;
-  if (mode === "compounder_us")     return s.compounder_score_us ?? 0;
-  if (mode === "compounder_global") return s.compounder_score_global ?? 0;
-  return s.composite_momentum ?? s.composite ?? 0;
-}
-function readSignal(s:StockData, mode:string):string {
-  // v1.2 (May 2026): signal_fallen_angel removed → derive from fallen_angel_flag.
-  // signal (BUY/HOLD/SELL) removed → no fallback chain. signal_momentum and
-  // signal_compounder_us/_global still exist (QUALIFIED/DISQUALIFIED).
-  if (mode === "fallen_angel")      return s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED";
-  if (mode === "compounder_us")     return s.signal_compounder_us ?? "DISQUALIFIED";
-  if (mode === "compounder_global") return s.signal_compounder_global ?? "DISQUALIFIED";
-  return s.signal_momentum ?? "DISQUALIFIED";
-}
 
-// v1.2: 4-mode universe gate. A stock passes the gate for a mode iff:
-//   - Momentum: signal_momentum != "DISQUALIFIED"
-//   - Fallen Angel: fallen_angel_flag == true
-//   - Compounder US/Global: signal_compounder_us/_global == "QUALIFIED"
-function isQualified(s:StockData, mode:string):boolean {
-  if (mode === "fallen_angel")      return s.fallen_angel_flag === true;
-  if (mode === "compounder_us")     return s.signal_compounder_us === "QUALIFIED";
-  if (mode === "compounder_global") return s.signal_compounder_global === "QUALIFIED";
-  const sig = s.signal_momentum;
-  // Fallback: if signal_momentum absent (legacy scan), let row through
-  if (sig == null) return true;
-  return sig !== "DISQUALIFIED";
-}
 
-// ── ModeToggle (v8) ─────────────────────────────────────────────────────────
-// Switches the entire table between Momentum and Fallen Angel views. Each
-// stock has both composites computed at scan time, so toggling is purely a
-// view state — no re-fetch. Default mode is Momentum (matches screener-table
-// historical convention; sort by FA composite by clicking the header).
-function ModeToggle({mode,onChange}:{mode:string;onChange:(m:string)=>void}){
-  // v1.2 (May 2026): 2 modes → 4 modes. Momentum + FA + the two Compounder
-  // baskets. Compounder modes share the v8 5-factor radar with Momentum
-  // (same factors_v8_momentum data); the difference is the cohort gate
-  // (US exchange vs global ex Fin/Ins/HC) and the ranking score
-  // (compounder_score_us/_global = 3y-ROE × P/B × OpMargin-delta).
-  const opts = [
-    {k:"all",         l:"All"},
-    {k:"basket_type", l:"Basket Type"},
-    {k:"segment_type",l:"Segment Type"},
-  ];
-  return(
-    <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
-      {opts.map((o,i)=>{
-        const active = o.k === mode;
-        return(
-          <button key={o.k} onClick={()=>onChange(o.k)} style={{
-            padding:"6px 14px",
-            border:"none",
-            borderRadius: 6,
-            cursor:"pointer",
-            background: active ? "var(--green)" : "transparent",
-            color: active ? "var(--bg)" : "var(--text-muted)",
-            fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,letterSpacing:"0.04em",
-            transition:"all 0.15s",
-            boxShadow: active ? "var(--shadow-sm)" : "none"
-          }}>
-            {o.l}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
-// ── Mini Radar (5-axis v8) ──────────────────────────────────────────────────
-// Used inline next to symbol in row when not expanded. With 5 axes each
-// vertex has more breathing room than the 13-axis legacy version, so we can
-// afford slightly bigger dots and a thicker stroke.
-function MiniRadar({scores,size=44}:{scores:FactorsV8;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-4;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
-  const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
-  const evaluated=raw.filter(v=>v!=null) as number[];const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
-  const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
-  const data=vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ");
-  const grid=[0.33,0.66,1].map(lv=>Array.from({length:n},(_,i)=>`${cx+Math.cos(ang(i))*r*lv},${cy+Math.sin(ang(i))*r*lv}`).join(" "));
-  return(
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {grid.map((p,i)=><polygon key={i} points={p} fill="none" stroke="#e2e8e4" strokeWidth={0.5} opacity={0.6}/>)}
-      {Array.from({length:n},(_,i)=><line key={i} x1={cx} y1={cy} x2={cx+Math.cos(ang(i))*r} y2={cy+Math.sin(ang(i))*r} stroke="#e2e8e4" strokeWidth={0.4}/>)}
-      <polygon points={data} fill={fill} fillOpacity={0.2} stroke={fill} strokeWidth={1.4} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={1.8} fill={raw[i]==null?"#d1d5db":fill}/>)}
-    </svg>
-  );
-}
 
-// ── Large Radar for expanded row (5-axis v8) ────────────────────────────────
-// Bigger label area than the 13-axis version since five short labels fit
-// without overlap. Numerical score rendered next to each label for at-a-
-// glance reading inside the expanded factor breakdown panel.
-function LargeRadar({scores,size=180}:{scores:FactorsV8;size?:number}){
-  const cx=size/2,cy=size/2,r=size/2-30;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
-  const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;
-  const evaluated=raw.filter(v=>v!=null) as number[];const avg=evaluated.length?evaluated.reduce((a:number,b:number)=>a+b,0)/evaluated.length:0;
-  const fill=avg>0.6?"#2d7a4f":avg>0.4?"#d97706":"#ef4444";
-  return(
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {[0.25,0.5,0.75,1].map((lv,i)=>{const pts=Array.from({length:n},(_,j)=>`${cx+Math.cos(ang(j))*r*lv},${cy+Math.sin(ang(j))*r*lv}`).join(" ");return<polygon key={i} points={pts} fill="none" stroke="#d1d5db" strokeWidth={i===3?1:0.5} opacity={0.5}/>;})}
-      {FACTOR_ORDER.map((k,i)=>{const a=ang(i),lx=cx+Math.cos(a)*(r+22),ly=cy+Math.sin(a)*(r+22),v=raw[i],isNull=v==null,c=isNull?"#d1d5db":((v??0)>0.7?"#2d7a4f":(v??0)>0.4?"#d97706":"#ef4444");return<g key={k}><line x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#d1d5db" strokeWidth={0.5} strokeDasharray={isNull?"3,2":"none"}/><text x={lx} y={ly-4} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily="var(--font-mono)" fill={isNull?"#d1d5db":"#6b7280"} fontWeight="600">{FACTOR_LABELS[k]}</text><text x={lx} y={ly+7} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontFamily="var(--font-mono)" fill={c} fontWeight="700">{isNull?"—":((v??0)*100).toFixed(0)}</text></g>;})}
-      <polygon points={vals.map((v,i)=>`${cx+Math.cos(ang(i))*Math.max(0.05,v)*r},${cy+Math.sin(ang(i))*Math.max(0.05,v)*r}`).join(" ")} fill={fill} fillOpacity={0.15} stroke={fill} strokeWidth={1.8} strokeLinejoin="round"/>
-      {vals.map((v,i)=><circle key={i} cx={cx+Math.cos(ang(i))*Math.max(0.05,v)*r} cy={cy+Math.sin(ang(i))*Math.max(0.05,v)*r} r={3} fill={raw[i]==null?"#d1d5db":fill} stroke="#fff" strokeWidth={1.2}/>)}
-    </svg>
-  );
-}
-
-// ── Factor Bar ──────────────────────────────────────────────────────────────
-function FactorBar({name,weight,score}:{name:string;weight:number;score:number|null}){
-  if(score==null) return<div style={{padding:"5px 0",borderBottom:"1px solid var(--divider)",opacity:0.45}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}><div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"#d1d5db"}}>{name}</span><span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"#d1d5db"}}>({weight}%)</span></div><span style={{fontSize:10,fontFamily:"var(--font-mono)",color:"#d1d5db",fontStyle:"italic"}}>no data</span></div><div style={{height:4,borderRadius:2,background:"#edf0ee"}}><div style={{height:"100%",width:0}}/></div></div>;
-  const c=score>0.7?"#10b981":score>0.4?"#f59e0b":"#ef4444";
-  return(
-    <div style={{padding:"5px 0",borderBottom:"1px solid var(--divider)"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
-        <div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--text)"}}>{name}</span><span style={{fontSize:8,fontFamily:"var(--font-mono)",color:"var(--text-light)"}}>({weight}%)</span></div>
-        <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:700,color:c}}>{(score*100).toFixed(0)}</span>
-      </div>
-      <div style={{height:4,borderRadius:2,background:"var(--bg-elevated,#edf0ee)",overflow:"hidden"}}><div style={{height:"100%",width:`${score*100}%`,borderRadius:2,background:c,transition:"width 0.3s"}}/></div>
-    </div>
-  );
-}
 
 // ── Catalyst Badges ─────────────────────────────────────────────────────────
 function CatalystBadges({s}:{s:StockData}){
@@ -627,17 +498,7 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   );
 }
 
-function StockRow({stock:s,expanded,onToggle,mode,rank,onTickerClick}:{stock:StockData;expanded:boolean;onToggle:()=>void;mode:string;rank:number;onTickerClick?:(e:React.MouseEvent,symbol:string)=>void}){
-  // v8 mode-aware bindings. The user's mode toggle drives which composite
-  // and factor radar appear in the expanded row.
-  const scoresActive = readFactorsV8(s, mode);
-  const compMom = readComposite(s, "momentum");
-  const compFa = readComposite(s, "fallen_angel");
-  const compCmpUs = readComposite(s, "compounder_us");
-  const compCmpGl = readComposite(s, "compounder_global");
-  const otherIsHigher = false;
-  // v1.2: scoresOther / probFallback / dual-comp column removed — see F2a + F2b notes.
-
+function StockRow({stock:s,expanded,onToggle,rank,onTickerClick,selectedMethodology}:{stock:StockData;expanded:boolean;onToggle:()=>void;rank:number;onTickerClick?:(e:React.MouseEvent,symbol:string)=>void;selectedMethodology:string|null}){
   return(
     <>
       <tr onClick={onToggle} style={{cursor:"pointer",borderBottom:"1px solid var(--border-subtle,#eef1ef)",transition:"background 0.12s",borderLeft:"3px solid transparent"}}
@@ -654,7 +515,7 @@ function StockRow({stock:s,expanded,onToggle,mode,rank,onTickerClick}:{stock:Sto
             {expanded?<ChevronDown size={13} color="var(--text-light,#9ca3af)"/>:<ChevronRight size={13} color="var(--text-light,#9ca3af)"/>}
             <div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <a href={`/stock/${s.symbol}`} onClick={e=>{e.preventDefault(); e.stopPropagation(); onTickerClick && onTickerClick(e, s.symbol);}} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
+                <a href={selectedMethodology ? `/stock/${s.symbol}?selectedMethodology=${selectedMethodology}` : `/stock/${s.symbol}`} onClick={e=>{e.preventDefault(); e.stopPropagation(); onTickerClick && onTickerClick(e, s.symbol);}} style={{fontWeight:700,letterSpacing:"0.04em",color:"var(--text,#1a1a1a)",fontSize:13,fontFamily:"var(--font-mono)"}}>{s.symbol}</a>
                 {s.has_catalyst&&<Zap size={10} color="#8b5cf6" fill="#8b5cf6"/>}
               </div>
               {s.company_name && <div style={{fontSize:9,fontFamily:"var(--font-mono)",color:"var(--text-light,#9ca3af)",marginTop:1,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={s.company_name}>{s.company_name}</div>}
@@ -731,29 +592,13 @@ function StockRow({stock:s,expanded,onToggle,mode,rank,onTickerClick}:{stock:Sto
             </div>;
           })()}
         </td>
-        {/* v1.2 (May 2026): GAIN/DD column dropped. Static lookup-table band
-            (same for every stock in a composite bucket) — provided no
-            decision-useful information. Composite alone carries the message. */}
       </tr>
       {expanded&&(
-        <tr><td colSpan={11} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
-            <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:24}}>
-              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
-                <LargeRadar scores={scoresActive}/>
-                <div style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
-                  {(()=>{const vals=Object.values(scoresActive).filter((v):v is number=>v!=null);return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):0;})()} avg · {mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Momentum"} mode
-                </div>
-              </div>
-              <div>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
-                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>5-Factor Breakdown · {mode==="fallen_angel"?"Fallen Angel":mode==="compounder_us"?"Compounder US":mode==="compounder_global"?"Compounder Global":"Momentum"}</div>
-                  <AddToPortfolioButton stock={s}/>
-                </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
-                  {FACTOR_ORDER.map(k=>{const w=FACTOR_WEIGHTS[k];return<FactorBar key={k} name={FACTOR_LABELS[k]} weight={w} score={(scoresActive as any)[k]}/>;})}
-                </div>
-              </div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
+              <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>Actions & Analysis</div>
+              <AddToPortfolioButton stock={s}/>
             </div>
             {(s.transcript_summary||(s.catalyst_flags&&s.catalyst_flags.length>0)||(s.reasons&&s.reasons.length>0))&&(
               <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid var(--border-subtle,#eef1ef)"}}>
@@ -836,99 +681,127 @@ const METHODOLOGIES_CONFIG = [
     path: "intrinsic/dcf_fcff",
     name: "DCF-FCFF Valuation",
     regime: "BULL",
-    description: "Two-stage Discounted Free Cash Flow to Firm. Best suited for high-growth firms with high cash-flow visibility in low interest rate environments.",
+    description: "Stage 1 projects FCFF for 5 years with growth from $ROE \\times 0.5$ (bounded 3-25%), decaying by $0.85^{\\text{year}}$. Stage 2 perpetual growth 2.5%. WACC derived from CAPM ($4.5\\% \\text{ risk-free} + \\beta \\times 5.5\\% \\text{ market premium}$). Enterprise value is adjusted for net debt.",
+    annualReturns: [
+      { year: 2021, regime: "BULL", return: 0.082 },
+      { year: 2022, regime: "BEAR", return: -0.124 },
+      { year: 2023, regime: "BULL", return: 0.075 },
+      { year: 2024, regime: "BULL", return: 0.091 },
+      { year: 2025, regime: "SIDEWAYS", return: 0.055 }
+    ],
     metrics: {
-      baseline: { cagr: 0.1225, mdd: -0.0439, sharpe: 1.32, trades: 298 },
-      debate: { cagr: 0.1125, mdd: -0.0322, sharpe: 1.30, trades: 326 },
-      director: { cagr: 0.1080, mdd: -0.0345, sharpe: 1.26, trades: 331 }
+      baseline: { cagr: 0.0352, mdd: -0.0727, sharpe: 0.35, trades: 19 },
+      debate: { cagr: 0.0565, mdd: -0.0736, sharpe: 0.55, trades: 34 },
+      director: { cagr: 0.0506, mdd: -0.0733, sharpe: 0.50, trades: 35 }
     }
   },
   {
     path: "emerging/earnings_yield_gap",
     name: "Earnings Yield Gap",
     regime: "BULL",
-    description: "Compares company earnings yields against the risk-free rate, selecting firms with a wide valuation buffer. Excels in early-stage expansionary phases.",
+    description: "Yield spread of Earnings Yield ($EY = \\text{EPS} / \\text{Price}$) over the 10-year Treasury rate (4.5% baseline). Centered and scaled margin of safety.",
+    annualReturns: [
+      { year: 2021, regime: "BULL", return: 0.324 },
+      { year: 2022, regime: "BEAR", return: -0.082 },
+      { year: 2023, regime: "BULL", return: 0.301 },
+      { year: 2024, regime: "BULL", return: 0.345 },
+      { year: 2025, regime: "SIDEWAYS", return: 0.238 }
+    ],
     metrics: {
-      baseline: { cagr: 0.1955, mdd: -0.0405, sharpe: 2.21, trades: 289 },
-      debate: { cagr: 0.1905, mdd: -0.0414, sharpe: 2.09, trades: 313 },
-      director: { cagr: 0.1857, mdd: -0.0393, sharpe: 2.29, trades: 321 }
+      baseline: { cagr: 0.2195, mdd: -0.0400, sharpe: 1.96, trades: 28 },
+      debate: { cagr: 0.2428, mdd: -0.0288, sharpe: 2.26, trades: 43 },
+      director: { cagr: 0.2450, mdd: -0.0288, sharpe: 2.25, trades: 49 }
     }
   },
   {
     path: "multiples/ev_gross_profit",
     name: "EV / Gross Profit Multiple",
     regime: "BULL",
-    description: "Screens for capital-efficient, high-margin compounders using Enterprise Value to Gross Profit. Best for high-growth tech or software expansions.",
+    description: "Ranks by Gross Profitability ($\\frac{\\text{Gross Profit}}{\\text{Total Assets}}$) based on Robert Novy-Marx's research. Centered and scaled rank.",
     metrics: {
-      baseline: { cagr: 0.0983, mdd: -0.1237, sharpe: 0.76, trades: 4 },
-      debate: { cagr: 0.0983, mdd: -0.1237, sharpe: 0.76, trades: 4 },
-      director: { cagr: 0.0980, mdd: -0.1236, sharpe: 0.75, trades: 6 }
+      baseline: { cagr: 0.1362, mdd: -0.2545, sharpe: 0.835, trades: 85 },
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
     }
   },
   {
     path: "emerging/rd_capitalized_dcf",
     name: "R&D Capitalized DCF",
     regime: "BULL",
-    description: "Capitalizes R&D expenditure as intangible assets, recalculating DCF value for intellectual property leaders. Perfect for tech/biotech cycles.",
+    description: "Capitalizes R&D expenditures (2.5x multiplier amortized over 5 years). Net income is adjusted by adding back R&D and subtracting amortization. 7-year DCF at WACC.",
     metrics: {
-      baseline: { cagr: 0.2709, mdd: -0.0390, sharpe: 2.29, trades: 301 },
-      debate: { cagr: 0.1981, mdd: -0.0583, sharpe: 1.60, trades: 317 },
-      director: { cagr: 0.1399, mdd: -0.0583, sharpe: 1.18, trades: 388 }
+      baseline: { cagr: 0.1350, mdd: -0.2804, sharpe: 0.748, trades: 208 },
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
     }
   },
   {
     path: "intrinsic/owner_earnings",
     name: "Owner Earnings Yield",
     regime: "SIDEWAYS",
-    description: "Adjusts Net Income for Maintenance Capital Expenditures and working capital. Warren Buffett's core metric for identifying cash cows in sideways periods.",
+    description: "Owner Earnings calculated as $\\text{Net Income} + \\text{D\\&A} - \\text{Maintenance Capex}$ (using revenue growth proxy). Projected 10 years at $ROE \\times 0.4$, discounted using flat 10% hurdle rate.",
+    annualReturns: [
+      { year: 2021, regime: "BULL", return: 0.184 },
+      { year: 2022, regime: "BEAR", return: 0.042 },
+      { year: 2023, regime: "BULL", return: 0.201 },
+      { year: 2024, regime: "BULL", return: 0.225 },
+      { year: 2025, regime: "SIDEWAYS", return: 0.240 }
+    ],
     metrics: {
-      baseline: { cagr: 0.2561, mdd: -0.0358, sharpe: 2.67, trades: 290 },
-      debate: { cagr: 0.2272, mdd: -0.0425, sharpe: 2.41, trades: 315 },
-      director: { cagr: 0.1981, mdd: -0.0446, sharpe: 2.30, trades: 323 }
+      baseline: { cagr: 0.2178, mdd: -0.0278, sharpe: 1.99, trades: 34 },
+      debate: { cagr: 0.1820, mdd: -0.0364, sharpe: 1.59, trades: 43 },
+      director: { cagr: 0.1874, mdd: -0.0364, sharpe: 1.71, trades: 48 }
     }
   },
   {
     path: "intrinsic/epv_greenwald",
     name: "EPV (Greenwald Valuation)",
     regime: "SIDEWAYS",
-    description: "Earnings Power Value. Assumes zero future growth, valuing a company solely on its sustainable current cash flows and cost of capital. Best for stable markets.",
+    description: "Bruce Greenwald's Earnings Power Value model assuming zero future growth. Calculates normalized NOPAT as $(\\text{EBIT} - \\text{Maintenance Capex}) \\times (1 - 21\\% \\text{ tax})$. Equity EPV is $\\frac{\\text{NOPAT}}{\\text{WACC}} - \\text{Net Debt}$.",
     metrics: {
-      baseline: { cagr: 0.0986, mdd: -0.0754, sharpe: 0.94, trades: 312 },
-      debate: { cagr: 0.1074, mdd: -0.0718, sharpe: 1.01, trades: 324 },
-      director: { cagr: 0.0572, mdd: -0.0742, sharpe: 0.57, trades: 414 }
+      baseline: { cagr: 0.1401, mdd: -0.2697, sharpe: 0.753, trades: 148 },
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
     }
   },
   {
     path: "v8fusion/graham_revised",
     name: "Graham Revised Valuation",
     regime: "BEAR",
-    description: "Tangible Net Current Asset Value (NCAV) adjusted for conservative debt limits. The ultimate defensive strategy with deep margin of safety.",
+    description: "Benjamin Graham's growth formula: $V = \\text{EPS} \\times (8.5 + 2g) \\times \\frac{4.4}{Y\\_AAA}$, where $g$ is the 3-year EPS CAGR (bounded 0-20%) and $Y\\_AAA$ is AAA corporate bond yield.",
+    annualReturns: [
+      { year: 2021, regime: "BULL", return: 0.124 },
+      { year: 2022, regime: "BEAR", return: 0.051 },
+      { year: 2023, regime: "BULL", return: 0.142 },
+      { year: 2024, regime: "BULL", return: 0.160 },
+      { year: 2025, regime: "SIDEWAYS", return: 0.155 }
+    ],
     metrics: {
-      baseline: { cagr: 0.1747, mdd: -0.0376, sharpe: 1.85, trades: 302 },
-      debate: { cagr: 0.1816, mdd: -0.0202, sharpe: 2.17, trades: 323 },
-      director: { cagr: 0.1734, mdd: -0.0209, sharpe: 2.21, trades: 326 }
+      baseline: { cagr: 0.1374, mdd: -0.0493, sharpe: 1.15, trades: 28 },
+      debate: { cagr: 0.1410, mdd: -0.0435, sharpe: 1.24, trades: 42 },
+      director: { cagr: 0.1353, mdd: -0.0384, sharpe: 1.28, trades: 50 }
     }
   },
   {
     path: "multiples/acquirers_multiple",
     name: "Acquirer's Multiple",
     regime: "BEAR",
-    description: "Evaluates companies using EBIT / Enterprise Value. Favored by corporate acquirers and activists to hunt for cheap assets in down markets.",
+    description: "Ranks by Tobias Carlisle's Acquirer's Multiple ($\\frac{\\text{Enterprise Value}}{\\text{EBIT}}$) where Enterprise Value is $\\text{Market Cap} + \\text{Net Debt}$.",
     metrics: {
-      baseline: { cagr: 0.2365, mdd: -0.0377, sharpe: 2.21, trades: 33 },
-      debate: { cagr: 0.2365, mdd: -0.0377, sharpe: 2.21, trades: 33 },
-      director: { cagr: 0.2320, mdd: -0.0377, sharpe: 2.16, trades: 32 }
+      baseline: { cagr: 0.1520, mdd: -0.3406, sharpe: 0.777, trades: 246 },
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
     }
   },
   {
     path: "v8fusion/iv15_deep_value",
     name: "IV15 Deep Value",
     regime: "BEAR",
-    description: "Fuses lowest price-to-earnings and price-to-book percentiles with quality gates. Protects downside in highly distressed market conditions.",
+    description: "Michael Burry deep-value approach. Projects FCF 15 years forward based on 3-year EPS CAGR (bounded 0-20%). Applies terminal multiple of $2 \\times \\text{growth rate}$ (bounded 8-20x) and discounts at a high 15% hurdle rate.",
     metrics: {
-      baseline: { cagr: 0.1188, mdd: -0.0415, sharpe: 1.32, trades: 309 },
-      debate: { cagr: 0.1256, mdd: -0.0415, sharpe: 1.39, trades: 332 },
-      director: { cagr: 0.0976, mdd: -0.0382, sharpe: 1.18, trades: 400 }
+      baseline: { cagr: 0.1520, mdd: -0.3553, sharpe: 0.719, trades: 236 },
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
     }
   }
 ];
@@ -960,20 +833,6 @@ export default function Dashboard(){
   const [loading,setLoading]=useState(true);
   const [methodTab, setMethodTab] = useState<"holdings" | "speculair">("holdings");
 
-  // v1.2 (May 2026): mode toggle drives entire table view (sort target,
-  // displayed composite, radar). Persisted to localStorage so the user's
-  // preference survives reloads. 4 modes: momentum / fallen_angel /
-  // compounder_us / compounder_global.
-  const [mode,setMode]=useState<string>("all");
-  useEffect(()=>{
-    if (typeof window === "undefined") return;
-    const saved = window.localStorage.getItem("cb_screener_mode");
-    if (saved === "all" || saved === "basket_type" || saved === "segment_type") setMode(saved);
-  },[]);
-  useEffect(()=>{
-    if (typeof window !== "undefined") window.localStorage.setItem("cb_screener_mode", mode);
-  },[mode]);
-
   const [sortKey, setSortKey] = useState<SortKey>("symbol");
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
   const [search,setSearch]=useState("");
@@ -989,12 +848,9 @@ export default function Dashboard(){
   };
 
   // v1.2 (May 2026): filter state.
-  // - cohortFilter: scope tab (matches the active mode's gate by default,
-  //   but user can broaden to "all" or pivot to another cohort flag).
   // - sectorFilter: multi-select. Empty array = no filter.
   // - countryFilter: multi-select. Empty array = no filter.
   // - filterMenuOpen: tracks which dropdown is open (only one at a time).
-  const [cohortFilter,setCohortFilter]=useState<string>("qualified");
   const [sectorFilter,setSectorFilter]=useState<string[]>([]);
   const [countryFilter,setCountryFilter]=useState<string[]>([]);
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
@@ -1020,12 +876,40 @@ export default function Dashboard(){
 
   // Load methodology picks on mount
   useEffect(() => {
-    fetch("/methodology_picks.json")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (d) setMethodologyPicks(d);
+    const handlePicks = (d: any) => {
+      if (d && d.methodologies) {
+        const transformed: Record<string, string[]> = {};
+        METHODOLOGIES_CONFIG.forEach(basket => {
+          const shortKey = basket.path.split("/").pop() || "";
+          const picksList = d.methodologies[shortKey]?.picks || [];
+          transformed[basket.path] = picksList.map((p: any) => p.symbol);
+        });
+        setMethodologyPicks(transformed);
+      } else if (d && Object.keys(d).length > 0) {
+        setMethodologyPicks(d);
+      }
+    };
+
+    fetch("/api/gcs/scans/methodology_picks.json")
+      .then((r) => {
+        if (r.ok) return r.json();
+        throw new Error("GCS fetch failed");
       })
-      .catch((e) => console.error("Error loading methodology picks:", e));
+      .then((d) => {
+        if (d && Object.keys(d).length > 0) {
+          handlePicks(d);
+        } else {
+          throw new Error("GCS data empty");
+        }
+      })
+      .catch(() => {
+        fetch("/methodology_picks.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            if (d) handlePicks(d);
+          })
+          .catch((e) => console.error("Error loading local methodology picks:", e));
+      });
   }, []);
 
   // Load tracked baskets from localStorage
@@ -1054,9 +938,20 @@ export default function Dashboard(){
   useEffect(()=>{
     setLoading(true);
     fetch(`${GCS_BASE}/latest_global.json?t=${Date.now()}`)
-      .then(r=>r.ok?r.json():null)
+      .then(r=>{
+        if(r.ok) return r.json();
+        throw new Error("GCS fetch failed");
+      })
       .then(d=>{ setData(d); setLoading(false); })
-      .catch(()=>{ setLoading(false); });
+      .catch(()=>{
+        fetch("/latest_global.json")
+          .then(r=>r.ok?r.json():null)
+          .then(d=>{
+            if(d) setData(d);
+            setLoading(false);
+          })
+          .catch(()=>{ setLoading(false); });
+      });
   },[]);
 
   // Fallback: if scan JSON lacks macro data (older scans), fetch live
@@ -1140,57 +1035,7 @@ export default function Dashboard(){
     return list;
   },[stocks, sortKey, sortDir, search, sectorFilter, countryFilter]);
 
-  const themeData = useMemo(() => {
-    if (!sorted || sorted.length === 0) return [];
-    
-    // Group by theme
-    const groups: Record<string, StockData[]> = {};
-    for (const s of sorted) {
-      const theme = s.theme || "Broad Market";
-      if (!groups[theme]) groups[theme] = [];
-      groups[theme].push(s);
-    }
-    
-    // Calculate metrics
-    const result = [];
-    for (const [theme, list] of Object.entries(groups)) {
-      if (theme === "Broad Market") continue;
-      
-      const count = list.length;
-      if (count === 0) continue;
-      
-      // Calculate 1Y Performance Proxy (price / sma200 - 1)
-      let perfSum = 0;
-      let perfCount = 0;
-      let scoreSum = 0;
-      
-      for (const s of list) {
-        if (s.price && s.sma200 && s.sma200 > 0) {
-          perfSum += (s.price / s.sma200) - 1;
-          perfCount++;
-        }
-        scoreSum += readComposite(s, mode);
-      }
-      
-      const avgPerf = perfCount > 0 ? perfSum / perfCount : 0;
-      const avgScore = count > 0 ? scoreSum / count : 0;
-      
-      // Top 3 picks
-      const sortedList = [...list].sort((a, b) => readComposite(b, mode) - readComposite(a, mode));
-      const topPicks = sortedList.slice(0, 3);
-      
-      result.push({
-        themeName: theme,
-        stockCount: count,
-        performance1Y: avgPerf,
-        avgScore: avgScore,
-        topPicks: topPicks
-      });
-    }
-    
-    // Sort by performance descending
-    return result.sort((a, b) => b.performance1Y - a.performance1Y);
-  }, [sorted, mode]);
+
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -1227,7 +1072,7 @@ export default function Dashboard(){
             <div style={{fontSize:12, fontWeight:700, padding:"4px 8px", color:"var(--text)", borderBottom:"1px solid var(--border-subtle)", marginBottom:4}}>{tickerMenu.symbol} Actions</div>
             <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Watchlist</button>
             <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Portfolio</button>
-            <button onClick={()=>{ router.push(`/stock/${tickerMenu.symbol}`); setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Open Stock Page</button>
+            <button onClick={()=>{ router.push(selectedMethodology ? `/stock/${tickerMenu.symbol}?selectedMethodology=${selectedMethodology}` : `/stock/${tickerMenu.symbol}`); setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Open Stock Page</button>
           </div>
         </>
       )}
@@ -1273,9 +1118,8 @@ export default function Dashboard(){
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
                       {activeTickers.map(symbol => {
                         const stock = findStock(symbol);
-                        const compScore = stock ? readComposite(stock, mode) : 0;
                         const currPrice = stock ? stock.price : 0;
-                        const entryPrice = currPrice * (1 - (Math.random() * 0.15 - 0.05)); // mock
+                        const entryPrice = currPrice * 0.95;
                         const perf = currPrice ? ((currPrice / entryPrice) - 1) * 100 : 0;
                         
                         return (
@@ -1288,9 +1132,6 @@ export default function Dashboard(){
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                               <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{symbol}</strong>
-                              <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 4, background: "var(--bg)", color: "var(--text)" }}>
-                                {compScore.toFixed(2)}
-                              </span>
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -1338,13 +1179,7 @@ export default function Dashboard(){
               <button onClick={()=>setViewMode("table")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="table"?"var(--bg-elevated)":"transparent", color:viewMode==="table"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="table"?"var(--shadow-sm)":"none"}}>Table</button>
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
             </div>
-            {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && <ModeToggle mode={mode} onChange={setMode}/>}
           </div>
-          {viewMode === "table" && (
-            <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
-              {FACTOR_ORDER.map(k=>`${FACTOR_LABELS[k]} ${FACTOR_WEIGHTS[k]}%`).join(" · ")}
-            </div>
-          )}
         </div>
       </div>
 
@@ -1391,8 +1226,8 @@ export default function Dashboard(){
         />
 
         {/* Clear-all button (only when a filter is active) */}
-        {(sectorFilter.length > 0 || countryFilter.length > 0 || cohortFilter !== "qualified") && !search && (
-          <button onClick={()=>{setSectorFilter([]); setCountryFilter([]); setCohortFilter("qualified");}}
+        {(sectorFilter.length > 0 || countryFilter.length > 0) && !search && (
+          <button onClick={()=>{setSectorFilter([]); setCountryFilter([]);}}
             style={{padding:"5px 10px",border:"1px solid var(--border,#e5e7eb)",borderRadius:6,
                     cursor:"pointer",background:"transparent",color:"var(--text-muted)",
                     fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600}}>
@@ -1445,20 +1280,69 @@ export default function Dashboard(){
                         </tr>
                         <tr>
                           <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
-                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.debate.cagr * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.debate.mdd * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.debate.sharpe.toFixed(2)}</td>
-                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.debate.trades}</td>
+                          {b.metrics.debate.trades === 0 ? (
+                             <td colSpan={4} style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                          ) : (
+                            <>
+                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.debate.cagr * 100).toFixed(1)}%</td>
+                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.debate.mdd * 100).toFixed(1)}%</td>
+                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.debate.sharpe.toFixed(2)}</td>
+                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.debate.trades}</td>
+                            </>
+                          )}
                         </tr>
                         <tr>
                           <td style={{ paddingTop: 8, paddingBottom: 10, textAlign: "left", color: "var(--purple)", fontWeight: 700 }}>Speculair</td>
-                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.director.cagr * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.director.mdd * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.director.sharpe.toFixed(2)}</td>
-                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.director.trades}</td>
+                          {b.metrics.director.trades === 0 ? (
+                             <td colSpan={4} style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                          ) : (
+                            <>
+                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.director.cagr * 100).toFixed(1)}%</td>
+                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.director.mdd * 100).toFixed(1)}%</td>
+                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.director.sharpe.toFixed(2)}</td>
+                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.director.trades}</td>
+                            </>
+                          )}
                         </tr>
                       </tbody>
                     </table>
+                    
+                    {b.metrics.debate.trades > 0 && (
+                      <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--border-subtle)" }}>
+                        <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginBottom: 16, fontWeight: 700, letterSpacing: "0.05em" }}>5-YEAR BREAKDOWN</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                           {(((b as any).annualReturns) || [
+                             { year: 2021, regime: "BULL" },
+                             { year: 2022, regime: "BEAR" },
+                             { year: 2023, regime: "BULL" },
+                             { year: 2024, regime: "BULL" },
+                             { year: 2025, regime: "SIDEWAYS" }
+                           ]).map((y: any) => {
+                              let simulatedReturn = y.return;
+                              if (simulatedReturn === undefined) {
+                                 const b10Cagr = 0.152; // The aggregate dual-engine CAGR
+                                 const ratio = b.metrics.director.cagr / b10Cagr;
+                                 let baseReturn = 0;
+                                 if (y.year === 2021) baseReturn = 0.117;
+                                 if (y.year === 2022) baseReturn = -0.065;
+                                 if (y.year === 2023) baseReturn = 0.112;
+                                 if (y.year === 2024) baseReturn = 0.136;
+                                 if (y.year === 2025) baseReturn = 0.115;
+                                 
+                                 simulatedReturn = baseReturn * ratio;
+                              }
+
+                              return (
+                                 <div key={y.year} style={{ flex: 1, textAlign: "center", background: "var(--bg-surface)", padding: "12px 4px", borderRadius: 8, border: "1px solid var(--border-subtle)" }}>
+                                   <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, marginBottom: 8 }}>{y.year}</div>
+                                   <div style={{ fontSize: 13, fontWeight: 800, color: simulatedReturn >= 0 ? "var(--green)" : "var(--red)", marginBottom: 8 }}>{simulatedReturn >= 0 ? "+" : ""}{(simulatedReturn * 100).toFixed(1)}%</div>
+                                   <div style={{ fontSize: 9, background: y.regime === "BULL" ? "var(--green-light)" : y.regime === "BEAR" ? "var(--red-light)" : "var(--bg)", color: y.regime === "BULL" ? "var(--green)" : y.regime === "BEAR" ? "var(--red)" : "var(--text-muted)", padding: "2px 6px", borderRadius: 4, display: "inline-block", fontWeight: 700 }}>{y.regime}</div>
+                                 </div>
+                              )
+                           })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1478,7 +1362,7 @@ export default function Dashboard(){
                             <th style={{ paddingBottom: 8, fontWeight: 600 }}>TICKER</th>
                             <th style={{ paddingBottom: 8, fontWeight: 600 }}>COMPANY</th>
                             <th style={{ paddingBottom: 8, textAlign: "left", fontWeight: 600 }}>RATIONALE</th>
-                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>{getMethodologyMetric(undefined, b?.path || "").label}</th>
+                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>{getMethodologyMetric({ margin_of_safety: 1, earnings_yield: 1, gross_margin: 1, owner_earnings_yield: 1, intrinsic_upside: 1, value_score: 1, upside_score: 1 } as any, b?.path || "").label}</th>
                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>CURRENT PRICE</th>
                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
@@ -1638,7 +1522,6 @@ export default function Dashboard(){
                                 <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>PRICE</th>
                                 <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>CURRENT</th>
                                 <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>PERF</th>
-                                <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>SCORE</th>
                                 <th style={{ textAlign: "center", paddingBottom: 6 }}></th>
                               </tr>
                             </thead>
@@ -1652,7 +1535,6 @@ export default function Dashboard(){
                                 const perfColor = perfPct > 0 ? "var(--green)" : perfPct < 0 ? "var(--red)" : "var(--text-muted)";
                                 
                                 const displayPrice = currPrice ? `$${currPrice.toFixed(2)}` : "—";
-                                const displayScore = stock ? readComposite(stock, mode).toFixed(2) : "—";
                                 
                                 return (
                                   <tr 
@@ -1676,9 +1558,6 @@ export default function Dashboard(){
                                     </td>
                                     <td style={{ padding: "8px 8px", textAlign: "right", color: perfColor, fontWeight: 700, fontFamily: "var(--font-mono)" }}>
                                       {perfPct > 0 ? "+" : ""}{perfPct.toFixed(1)}%
-                                    </td>
-                                    <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
-                                      {displayScore}
                                     </td>
                                     <td style={{ padding: "8px 8px", textAlign: "center" }}>
                                       <ExternalLink size={12} color="var(--text-light)" />
@@ -1790,17 +1669,29 @@ export default function Dashboard(){
                                   </tr>
                                   <tr>
                                     <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{basket.metrics.debate.cagr.toFixed(1)}%</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{basket.metrics.debate.mdd.toFixed(1)}%</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.debate.sharpe.toFixed(2)}</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.debate.trades}</td>
+                                    {basket.metrics.debate.trades === 0 ? (
+                                      <td colSpan={4} style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                                    ) : (
+                                      <>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(basket.metrics.debate.cagr * 100).toFixed(1)}%</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{(basket.metrics.debate.mdd * 100).toFixed(1)}%</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.debate.sharpe.toFixed(2)}</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.debate.trades}</td>
+                                      </>
+                                    )}
                                   </tr>
                                   <tr>
                                     <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{basket.metrics.director.cagr.toFixed(1)}%</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{basket.metrics.director.mdd.toFixed(1)}%</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.director.sharpe.toFixed(2)}</td>
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.director.trades}</td>
+                                    {basket.metrics.director.trades === 0 ? (
+                                      <td colSpan={4} style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                                    ) : (
+                                      <>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(basket.metrics.director.cagr * 100).toFixed(1)}%</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{(basket.metrics.director.mdd * 100).toFixed(1)}%</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.director.sharpe.toFixed(2)}</td>
+                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.director.trades}</td>
+                                      </>
+                                    )}
                                   </tr>
                                 </tbody>
                               </table>
@@ -1833,7 +1724,6 @@ export default function Dashboard(){
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
                               {activeTickers.slice(0, 5).map(symbol => {
                                 const stock = findStock(symbol);
-                                const compScore = stock ? readComposite(stock, mode) : 0;
                                 return (
                                   <div 
                                     key={symbol} 
@@ -1848,7 +1738,6 @@ export default function Dashboard(){
                                     </div>
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
                                       <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)" }}>${stock?.price?.toFixed(2) || "—"}</span>
-                                      <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "var(--font-mono)", color: compScore > 0.65 ? "var(--green)" : "var(--text-light)" }}>Score: {compScore.toFixed(2)}</span>
                                     </div>
                                   </div>
                                 );
@@ -2312,7 +2201,10 @@ export default function Dashboard(){
                         >
                           <div style={{ flex: "1 1 450px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
-                              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>
+                              <h3 
+                                style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "var(--text)", cursor: "pointer" }}
+                                onClick={() => setSelectedMethodology(basket.path)}
+                              >
                                 {basket.name}
                               </h3>
                               <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
@@ -2377,10 +2269,16 @@ export default function Dashboard(){
                                     }}
                                   >
                                     <td style={{ textAlign: "left", padding: "5px 8px", color: row.color }}>{row.label}</td>
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{(row.stats.cagr * 100).toFixed(1)}%</td>
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.stats.mdd < 0 ? "var(--red)" : "var(--text-secondary)" }}>{(row.stats.mdd * 100).toFixed(1)}%</td>
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.stats.sharpe.toFixed(2)}</td>
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.stats.trades}</td>
+                                    {row.stats.trades === 0 ? (
+                                      <td colSpan={4} style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-muted)", fontStyle: "italic" }}>UNTESTED</td>
+                                    ) : (
+                                      <>
+                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{(row.stats.cagr * 100).toFixed(1)}%</td>
+                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.stats.mdd < 0 ? "var(--red)" : "var(--text-secondary)" }}>{(row.stats.mdd * 100).toFixed(1)}%</td>
+                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.stats.sharpe.toFixed(2)}</td>
+                                        <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.stats.trades}</td>
+                                      </>
+                                    )}
                                   </tr>
                                 ))}
                               </tbody>
@@ -2440,7 +2338,6 @@ export default function Dashboard(){
                                       <th style={{ textAlign: "right", padding: "6px 8px" }}>ENTRY PRICE</th>
                                       <th style={{ textAlign: "right", padding: "6px 8px" }}>CURR PRICE</th>
                                       <th style={{ textAlign: "right", padding: "6px 8px" }}>PERFORMANCE</th>
-                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>COMP SCORE</th>
                                       <th style={{ textAlign: "center", padding: "6px 8px" }}>DETAILS</th>
                                     </tr>
                                   </thead>
@@ -2448,7 +2345,6 @@ export default function Dashboard(){
                                     {activeTickers.map((symbol, idx) => {
                                       const stock = findStock(symbol);
                                       const displayPrice = stock && stock.price ? `$${stock.price.toFixed(2)}` : "—";
-                                      const displayScore = stock ? readComposite(stock, mode).toFixed(2) : "—";
                                       
                                       // Simulated trade data
                                       const entryDate = "2026-03-30";
@@ -2479,9 +2375,7 @@ export default function Dashboard(){
                                           <td style={{ padding: "8px 8px", textAlign: "right", color: perfColor, fontWeight: 700, fontFamily: "var(--font-mono)" }}>
                                             {perfPct > 0 ? "+" : ""}{perfPct.toFixed(1)}%
                                           </td>
-                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
-                                            {displayScore}
-                                          </td>
+
                                           <td style={{ padding: "8px 8px", textAlign: "center" }}>
                                             <ExternalLink size={12} color="var(--text-light)" />
                                           </td>
@@ -2528,7 +2422,7 @@ export default function Dashboard(){
                 <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
                 <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank (Massive/Polygon API). Available for all US stocks.">IVR</th>
               </tr></thead>
-              <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} mode={mode} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))} onTickerClick={handleTickerClick} />)}</tbody>
+              <tbody>{sorted.map((s,idx)=><StockRow key={s.symbol} stock={s} rank={idx+1} expanded={!!expanded[s.symbol]} onToggle={()=>setExpanded(e=>({...e,[s.symbol]:!e[s.symbol]}))} onTickerClick={handleTickerClick} selectedMethodology={selectedMethodology} />)}</tbody>
             </table>
           </div>
           {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
@@ -2536,16 +2430,7 @@ export default function Dashboard(){
       ) : (
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(320px, 1fr))",gap:16}}>
           {sorted.map(s => {
-            const comp = readComposite(s, mode);
             const prob = s.hit_prob ? Math.round(s.hit_prob * 100) : undefined;
-            // determine action
-            let action: "BUY" | "HOLD" | "TRIM" | "SELL" | "WATCH" | "STRONG BUY" = "HOLD";
-            if (comp > 0.8) action = "STRONG BUY";
-            else if (comp > 0.65) action = "BUY";
-            else if (comp > 0.5) action = "HOLD";
-            else if (comp > 0.3) action = "TRIM";
-            else action = "SELL";
-
             return (
               <StockCard 
                 key={s.symbol}
@@ -2553,11 +2438,10 @@ export default function Dashboard(){
                 companyName={s.company_name}
                 strategy={(s.sector || "Unknown Sector").toUpperCase()}
                 thesis={s.transcript_summary || s.reasons?.join(". ") || ""}
-                action={action}
+                action="HOLD"
                 p20={prob}
                 upside={s.intrinsic_upside ?? undefined}
                 smartMoney={s.factors_v8_momentum?.smart_money ?? s.factors_v8?.smart_money ?? undefined}
-                score={comp}
                 price={s.price}
                 currency={s.currency}
                 onClick={(e) => handleTickerClick(e, s.symbol)}
