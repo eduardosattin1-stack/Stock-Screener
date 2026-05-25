@@ -32,9 +32,7 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "").strip()
-MASSIVE_BASE = "https://api.polygon.io"
-
+MASSIVE_API_KEY = "thetadata_active"  # Placeholder to pass legacy checks
 GCS_BUCKET = "screener-signals-carbonbridge"
 IV_HISTORY_PREFIX = "options/iv_history"
 SUGGESTIONS_PATH = "options/latest_suggestions.json"
@@ -47,26 +45,76 @@ TARGET_SHORT_PCT = 0.20
 IV_HISTORY_KEEP_DAYS = 90
 MIN_IV_SAMPLES_FOR_RANK = 20
 
-
 # ---------------------------------------------------------------------------
-# HTTP — Massive REST
+# ThetaData Client & Rate Limiter
 # ---------------------------------------------------------------------------
-def _get(path: str, params: dict = None) -> Optional[dict]:
-    if not MASSIVE_API_KEY:
-        log.warning("MASSIVE_API_KEY not set — Massive calls disabled")
-        return None
-    p = dict(params or {})
-    p["apiKey"] = MASSIVE_API_KEY
-    try:
-        r = requests.get(f"{MASSIVE_BASE}{path}", params=p, timeout=30)
-        if r.status_code == 200:
-            return r.json()
-        log.warning(f"Massive {path} returned {r.status_code}: {r.text[:200]}")
-        return None
-    except Exception as e:
-        log.warning(f"Massive {path} failed: {e}")
-        return None
+import threading
+import time
+import datetime
+import pandas as pd
+from thetadata import ThetaClient
 
+class RateLimiter:
+    def __init__(self, max_rps: float):
+        self.delay = 1.0 / max_rps
+        self.last_call = 0.0
+        self.lock = threading.Lock()
+        
+    def wait(self):
+        with self.lock:
+            now = time.time()
+            elapsed = now - self.last_call
+            if elapsed < self.delay:
+                time.sleep(self.delay - elapsed)
+            self.last_call = time.time()
+
+# Global Rate Limiter set to 18 RPS to be safe under the 20 RPS limit.
+rate_limiter = RateLimiter(18)
+
+_client = None
+_client_lock = threading.Lock()
+
+def get_theta_client():
+    global _client
+    if _client is not None:
+        return _client
+    with _client_lock:
+        if _client is None:
+            _client = ThetaClient(
+                email="carbonbridge.tech@gmail.com",
+                password="Sccp1985r",
+                dataframe_type="pandas"
+            )
+        return _client
+
+_latest_eod_date_cache = None
+_date_cache_lock = threading.Lock()
+
+def _get_latest_eod_date() -> datetime.date:
+    """Standard business day logic to resolve the latest EOD date containing options data."""
+    global _latest_eod_date_cache
+    if _latest_eod_date_cache is not None:
+        return _latest_eod_date_cache
+    with _date_cache_lock:
+        if _latest_eod_date_cache is not None:
+            return _latest_eod_date_cache
+            
+        import datetime as _dt
+        today = datetime.datetime.now()
+        today_date = today.date()
+        
+        # Compute EOD date
+        _eod_date = today_date
+        while _eod_date.weekday() >= 5:
+            _eod_date -= _dt.timedelta(days=1)
+        if today.hour < 21:  # UTC hour cutoff (Cloud Run runs in UTC)
+            _eod_date -= _dt.timedelta(days=1)
+            while _eod_date.weekday() >= 5:
+                _eod_date -= _dt.timedelta(days=1)
+                
+        _latest_eod_date_cache = _eod_date
+        log.info(f"Resolved ThetaData EOD Date: {_eod_date}")
+        return _eod_date
 
 # ---------------------------------------------------------------------------
 # GCS helpers (identical to tradier_options — shared pattern)
@@ -111,71 +159,189 @@ def _gcs_write(path: str, data) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Core Massive endpoint: Option Chain Snapshot
+# ThetaData option snapshot fetching
 # ---------------------------------------------------------------------------
 def get_options_snapshot(symbol: str,
                          exp_gte: str = None,
                          exp_lte: str = None,
                          contract_type: str = None,
                          limit: int = 250) -> list:
-    """Fetch option chain snapshot — returns list of contract dicts.
-
-    Each result contains: details (strike, type, expiration), greeks,
-    implied_volatility, open_interest, day (volume/OHLC), last_quote
-    (bid/ask/midpoint), underlying_asset (price).
-    
-    This single endpoint replaces Tradier's get_quote + get_expirations +
-    get_chain (3-6 calls) with ONE call.
-    """
-    params = {"limit": limit, "order": "asc", "sort": "expiration_date"}
-    if exp_gte:
-        params["expiration_date.gte"] = exp_gte
-    if exp_lte:
-        params["expiration_date.lte"] = exp_lte
-    if contract_type:
-        params["contract_type"] = contract_type
-
-    all_results = []
-    path = f"/v3/snapshot/options/{symbol.upper()}"
-    
-    data = _get(path, params)
-    if not data:
+    """Fetch option chain from ThetaData, merge greeks + OI, and return list of adapted contracts."""
+    symbol = symbol.upper().strip()
+    try:
+        client = get_theta_client()
+    except Exception as e:
+        log.error(f"Failed to get ThetaClient: {e}")
         return []
-    
-    all_results.extend(data.get("results", []))
-    
-    # Paginate if needed (Massive uses cursor-based pagination)
-    next_url = data.get("next_url")
-    pages = 0
-    while next_url and pages < 5:  # cap at 5 pages to avoid runaway
-        pages += 1
-        try:
-            sep = "&" if "?" in next_url else "?"
-            r = requests.get(f"{next_url}{sep}apiKey={MASSIVE_API_KEY}", timeout=15)
-            if r.status_code != 200:
-                break
-            page = r.json()
-            all_results.extend(page.get("results", []))
-            next_url = page.get("next_url")
-        except Exception:
-            break
 
-    # Filter for standard options (100 shares per contract) to exclude adjusted/legacy non-standard options
-    standard_contracts = [
-        c for c in all_results
-        if c.get("details", {}).get("shares_per_contract") == 100
-    ]
-    return standard_contracts
+    eod_date = _get_latest_eod_date()
+
+    # 1. Fetch Greeks DataFrame
+    greeks_df = None
+    max_retries = 3
+    for retry in range(max_retries):
+        try:
+            rate_limiter.wait()
+            greeks_df = client.option_history_greeks_eod(
+                symbol=symbol,
+                expiration="*",
+                start_date=eod_date,
+                end_date=eod_date,
+                strike="*",
+                right="both",
+                strike_range=20
+            )
+            break
+        except Exception as e:
+            if "No data" in str(e):
+                log.warning(f"No Greeks data found for {symbol} on {eod_date}")
+                return []
+            if retry == max_retries - 1:
+                log.error(f"Failed to fetch Greeks for {symbol} after {max_retries} attempts: {e}")
+                return []
+            time.sleep(2 ** retry)
+
+    if greeks_df is None or greeks_df.empty:
+        return []
+
+    # 2. Fetch Open Interest DataFrame
+    oi_df = None
+    for retry in range(max_retries):
+        try:
+            rate_limiter.wait()
+            oi_df = client.option_history_open_interest(
+                symbol=symbol,
+                expiration="*",
+                start_date=eod_date,
+                end_date=eod_date,
+                strike="*",
+                right="both",
+                strike_range=20
+            )
+            break
+        except Exception as e:
+            if "No data" in str(e):
+                log.warning(f"No OI data found for {symbol} on {eod_date}")
+                break
+            if retry == max_retries - 1:
+                log.warning(f"Failed to fetch OI for {symbol}: {e}")
+            time.sleep(2 ** retry)
+
+    # Merge Greeks and OI
+    try:
+        if oi_df is not None and not oi_df.empty:
+            merged_df = pd.merge(
+                greeks_df,
+                oi_df[['expiration', 'strike', 'right', 'open_interest']],
+                on=['expiration', 'strike', 'right'],
+                how='left'
+            )
+            merged_df['open_interest'] = merged_df['open_interest'].fillna(0.0)
+        else:
+            merged_df = greeks_df
+            merged_df['open_interest'] = 0.0
+    except Exception as e:
+        log.error(f"Error merging Greeks and OI for {symbol}: {e}")
+        merged_df = greeks_df
+        merged_df['open_interest'] = 0.0
+
+    # Adapt to list of dicts resembling the Polygon snapshot
+    contracts = []
+    for _, row in merged_df.iterrows():
+        try:
+            raw_right = str(row.get('right', '')).upper()
+            if raw_right == 'CALL':
+                contract_type_str = 'call'
+            elif raw_right == 'PUT':
+                contract_type_str = 'put'
+            else:
+                continue
+
+            strike_val = float(row.get('strike', 0))
+            exp_val = str(row.get('expiration', ''))
+            if ' ' in exp_val:
+                exp_val = exp_val.split(' ')[0] # Extract YYYY-MM-DD
+
+            implied_vol = row.get('implied_vol')
+            try:
+                implied_vol = float(implied_vol) if implied_vol is not None and implied_vol > 0 else None
+            except (ValueError, TypeError):
+                implied_vol = None
+
+            open_interest = int(row.get('open_interest', 0))
+            volume = int(row.get('volume', 0))
+            close = float(row.get('close', 0))
+            bid = float(row.get('bid', 0))
+            ask = float(row.get('ask', 0))
+            midpoint = (bid + ask) / 2.0 if bid > 0 and ask > 0 else close
+
+            delta = row.get('delta')
+            delta = float(delta) if delta is not None else None
+            gamma = row.get('gamma')
+            gamma = float(gamma) if gamma is not None else None
+            theta = row.get('theta')
+            theta = float(theta) if theta is not None else None
+            vega = row.get('vega')
+            vega = float(vega) if vega is not None else None
+
+            underlying_price = float(row.get('underlying_price', 0))
+
+            contract = {
+                "details": {
+                    "contract_type": contract_type_str,
+                    "strike_price": strike_val,
+                    "expiration_date": exp_val,
+                    "shares_per_contract": 100
+                },
+                "implied_volatility": implied_vol,
+                "open_interest": open_interest,
+                "day": {
+                    "volume": volume,
+                    "close": close
+                },
+                "last_quote": {
+                    "bid": bid,
+                    "ask": ask,
+                    "midpoint": midpoint
+                },
+                "greeks": {
+                    "delta": delta,
+                    "gamma": gamma,
+                    "theta": theta,
+                    "vega": vega
+                },
+                "underlying_asset": {
+                    "price": underlying_price
+                }
+            }
+            contracts.append(contract)
+        except Exception as e:
+            log.debug(f"Row adaptation skipped for {symbol}: {e}")
+
+    # Apply date filters in Python
+    filtered_contracts = []
+    for c in contracts:
+        exp = c["details"]["expiration_date"]
+        ctype = c["details"]["contract_type"]
+        if exp_gte and exp < exp_gte:
+            continue
+        if exp_lte and exp > exp_lte:
+            continue
+        if contract_type and ctype != contract_type.lower():
+            continue
+        filtered_contracts.append(c)
+
+    return filtered_contracts
 
 
 def get_spot_price(symbol: str) -> Optional[float]:
-    """Get current stock price from Massive stocks snapshot."""
-    data = _get(f"/v2/aggs/ticker/{symbol.upper()}/prev")
-    if not data:
-        return None
-    results = data.get("results", [])
-    if results and len(results) > 0:
-        return results[0].get("c")  # close price
+    """Get current stock price from EOD option underlying price."""
+    try:
+        contracts = get_options_snapshot(symbol, limit=1)
+        if contracts:
+            return contracts[0]["underlying_asset"]["price"]
+    except Exception as e:
+        log.warning(f"get_spot_price failed for {symbol}: {e}")
     return None
 
 
@@ -478,12 +644,8 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if iv_today:
         result["iv_current"] = round(iv_today, 4)
         
-    # See if Polygon provides implied_volatility_rank on the underlying asset
-    for c in contracts:
-        ua = c.get("underlying_asset", {})
-        if "implied_volatility_rank" in ua:
-            result["iv_rank"] = round(float(ua["implied_volatility_rank"]), 1)
-            break
+    result["iv_rank"] = None
+    result["iv_samples"] = 0
 
     # Step 2: P/C ratios (volume + OI) — uses ALL contracts, no extra call
     pc_data = _compute_pc_ratios(contracts)

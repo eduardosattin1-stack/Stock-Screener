@@ -2712,6 +2712,20 @@ def compute_catalyst_score(sym: str, analyst: dict = None) -> dict:
                 continue
             title = (article.get("title", "") + " " + article.get("text", "")[:300]).lower()
 
+            completed_phrases = [
+                "completes acquisition", "completes merger", "closes merger",
+                "closes acquisition", "closed acquisition", "closed merger",
+                "merger closed", "acquisition closed", "acquisition completed",
+                "merger completed", "deal closed", "deal completed",
+                "completes buyout", "buyout completed", "buyout closed"
+            ]
+            
+            is_completed = any(cp in title for cp in completed_phrases)
+            if is_completed:
+                result["score"] -= 0.35
+                result["flags"].append("Post-event M&A/buyout (already closed/completed)")
+                break
+
             if any(ph in title for ph in ma_phrases):
                 result["score"] += 0.25
                 result["flags"].append("M&A/activist activity detected")
