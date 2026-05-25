@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, ChevronDown, ChevronRight, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
+import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 import { Watchlist } from "./components/Watchlist";
 import { StockCard } from "./components/StockCard";
 import { ThemeCard } from "./components/ThemeCard";
@@ -147,6 +147,30 @@ const FACTOR_LABELS: Record<string,string> = { momentum:"Momentum", quality:"Qua
 const FACTOR_WEIGHTS: Record<string,number> = { momentum:25, quality:20, growth:20, value:20, smart_money:15 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
+  if (!stock) return { label: "VALUATION", value: "—" };
+  
+  switch (path) {
+    case "intrinsic/dcf_fcff":
+    case "emerging/rd_capitalized_dcf":
+      return { label: "MARGIN OF SAFETY", value: stock.margin_of_safety ? `${(stock.margin_of_safety * 100).toFixed(1)}%` : "—" };
+    case "emerging/earnings_yield_gap":
+      return { label: "EARNINGS YIELD", value: stock.earnings_yield ? `${(stock.earnings_yield * 100).toFixed(1)}%` : "—" };
+    case "multiples/ev_gross_profit":
+      return { label: "GROSS MARGIN", value: stock.gross_margin ? `${(stock.gross_margin * 100).toFixed(1)}%` : "—" };
+    case "intrinsic/owner_earnings":
+      return { label: "OWNER EARNINGS", value: stock.owner_earnings_yield ? `${(stock.owner_earnings_yield * 100).toFixed(1)}%` : "—" };
+    case "intrinsic/epv_greenwald":
+    case "v8fusion/graham_revised":
+    case "v8fusion/iv15_deep_value":
+      return { label: "INTRINSIC UPSIDE", value: stock.intrinsic_upside ? `${(stock.intrinsic_upside * 100).toFixed(1)}%` : "—" };
+    case "multiples/acquirers_multiple":
+      return { label: "VALUE SCORE", value: stock.value_score ? stock.value_score.toFixed(1) : "—" };
+    default:
+      return { label: "UPSIDE SCORE", value: stock.upside_score ? stock.upside_score.toFixed(1) : "—" };
+  }
+};
+
 const fmtPct = (n:number|null|undefined) => n==null?"—":`${(n*100).toFixed(0)}%`;
 const fmtMcap = (n:number|null|undefined) => { if(n==null) return "—"; if(n>=1e12) return `$${(n/1e12).toFixed(1)}T`; if(n>=1e9) return `$${(n/1e9).toFixed(0)}B`; if(n>=1e6) return `$${(n/1e6).toFixed(0)}M`; return `$${n.toFixed(0)}`; };
 
@@ -934,6 +958,7 @@ export default function Dashboard(){
   const router = useRouter();
   const [data,setData]=useState<ScanData|null>(null);
   const [loading,setLoading]=useState(true);
+  const [methodTab, setMethodTab] = useState<"holdings" | "speculair">("holdings");
 
   // v1.2 (May 2026): mode toggle drives entire table view (sort target,
   // displayed composite, radar). Persisted to localStorage so the user's
@@ -973,7 +998,7 @@ export default function Dashboard(){
   const [sectorFilter,setSectorFilter]=useState<string[]>([]);
   const [countryFilter,setCountryFilter]=useState<string[]>([]);
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
-  const [viewMode, setViewMode]=useState<"table"|"feed"|"sectors"|"speculair">("sectors");
+  const [viewMode, setViewMode]=useState<"methodologies"|"table"|"feed"|"sectors"|"speculair">("methodologies");
 
   // Track expanded themes in discover mode
   const [expandedThemes, setExpandedThemes] = useState<Record<string, boolean>>({});
@@ -982,20 +1007,11 @@ export default function Dashboard(){
   const [trackedBaskets, setTrackedBaskets] = useState<string[]>([]);
   const [expandedBaskets, setExpandedBaskets] = useState<Record<string, boolean>>({});
   const [methodologyPicks, setMethodologyPicks] = useState<Record<string, string[]>>({});
+  const [selectedMethodology, setSelectedMethodology] = useState<string | null>(null);
 
   const stocks: StockData[] = data?.stocks || [];
 
-  // Populate Active Holdings for methodologies
-  useEffect(() => {
-    if (!stocks || stocks.length === 0) return;
-    const newPicks: Record<string, string[]> = {};
-    for (const m of METHODOLOGIES_CONFIG) {
-      // Pick top 5 stocks by composite score for each basket to populate active holdings
-      const sortedByScore = [...stocks].sort((a,b) => readComposite(b, m.path) - readComposite(a, m.path));
-      newPicks[m.path] = sortedByScore.slice(0, 5).map(s => s.symbol);
-    }
-    setMethodologyPicks(newPicks);
-  }, [stocks]);
+
 
   // Simulator states
   const [simFrequency, setSimFrequency] = useState<"daily" | "weekly" | "bi-weekly" | "monthly" | "quarterly">("daily");
@@ -1224,9 +1240,13 @@ export default function Dashboard(){
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
         <div>
-          {viewMode === "sectors" ? (
+          {viewMode === "methodologies" ? (
              <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
-               Macro-Adaptive Methodology Sectors
+               Macro-Adaptive Methodologies
+             </p>
+          ) : viewMode === "sectors" ? (
+             <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
+               Sector Performance
              </p>
           ) : viewMode === "speculair" ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -1312,12 +1332,13 @@ export default function Dashboard(){
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
           <div style={{display:"flex", gap: 12}}>
             <div style={{display:"inline-flex", padding: 2, borderRadius: 8, background:"var(--bg-surface)"}}>
+              <button onClick={()=>{setViewMode("methodologies"); setSelectedMethodology(null);}} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="methodologies"?"var(--bg-elevated)":"transparent", color:viewMode==="methodologies"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="methodologies"?"var(--shadow-sm)":"none"}}>Methodologies</button>
               <button onClick={()=>setViewMode("sectors")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="sectors"?"var(--bg-elevated)":"transparent", color:viewMode==="sectors"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="sectors"?"var(--shadow-sm)":"none"}}>Sectors</button>
               <button onClick={()=>setViewMode("speculair")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="speculair"?"var(--bg-elevated)":"transparent", color:viewMode==="speculair"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="speculair"?"var(--shadow-sm)":"none"}}>Speculair</button>
               <button onClick={()=>setViewMode("table")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="table"?"var(--bg-elevated)":"transparent", color:viewMode==="table"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="table"?"var(--shadow-sm)":"none"}}>Table</button>
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
             </div>
-            {viewMode !== "sectors" && viewMode !== "speculair" && <ModeToggle mode={mode} onChange={setMode}/>}
+            {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && <ModeToggle mode={mode} onChange={setMode}/>}
           </div>
           {viewMode === "table" && (
             <div style={{fontSize:9,color:"var(--text-light)",textAlign:"right",fontFamily:"var(--font-mono)",lineHeight:1.5}}>
@@ -1328,7 +1349,7 @@ export default function Dashboard(){
       </div>
 
       {/* Macro ribbon — situational only */}
-      {viewMode !== "sectors" && viewMode !== "speculair" && <MacroRibbon macro={data?.macro}/>}
+      {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && <MacroRibbon macro={data?.macro}/>}
 
       <div style={{display:"flex",gap:10,marginBottom:8,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,maxWidth:280}}>
@@ -1337,7 +1358,7 @@ export default function Dashboard(){
             style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
                     border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
         </div>
-        {viewMode !== "sectors" && viewMode !== "speculair" && (
+        {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && (
           <div style={{fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
             Sorted by: <span style={{color:"var(--green,#2d7a4f)",fontWeight:700}}>{sortKey.replace(/_/g," ").toUpperCase()}</span> {sortDir === "desc" ? "↓" : "↑"}
           </div>
@@ -1345,7 +1366,7 @@ export default function Dashboard(){
       </div>
 
       {/* Filter row 2: cohort pills + multi-select dropdowns */}
-      {viewMode !== "sectors" && viewMode !== "speculair" && (
+      {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && (
         <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
         {/* Sector multi-select */}
         <MultiSelectDropdown
@@ -1382,7 +1403,470 @@ export default function Dashboard(){
       )}
 
       {/* View Rendering */}
-      {viewMode === "sectors" ? (
+      {viewMode === "methodologies" ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {selectedMethodology ? (() => {
+            const b = METHODOLOGIES_CONFIG.find(m => m.path === selectedMethodology);
+            if (!b) return null;
+            const activeTickers = methodologyPicks[b.path] || [];
+            return (
+              <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, overflow: "hidden", padding: "24px", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" }}>
+                <button onClick={() => setSelectedMethodology(null)} style={{ background: "transparent", border: "none", color: "var(--text-light)", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, marginBottom: 24, fontSize: 12, fontFamily: "var(--font-mono)", padding: 0 }}>
+                   <ChevronLeft size={16} /> Back to Directory
+                </button>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 32 }}>
+                  <div style={{ flex: 1 }}>
+                    <h2 style={{ fontSize: 24, fontWeight: 800, margin: "0 0 12px 0", color: "var(--text)", letterSpacing: "-0.02em" }}>{b.name}</h2>
+                    <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                      <span style={{ fontSize: 11, background: "var(--bg)", padding: "4px 8px", borderRadius: 4, color: "var(--text-muted)", fontFamily: "var(--font-mono)", border: "1px solid var(--border-subtle)" }}>PATH: {b.path}</span>
+                      <span style={{ fontSize: 11, background: "var(--purple-light)", padding: "4px 8px", borderRadius: 4, color: "var(--purple)", fontFamily: "var(--font-mono)", border: "1px solid var(--purple)", fontWeight: 700 }}>REGIME: {b.regime}</span>
+                    </div>
+                    <p style={{ maxWidth: 700, lineHeight: 1.6, color: "var(--text-secondary)", fontSize: 14 }}>{b.description}</p>
+                  </div>
+                  <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", minWidth: 400, boxShadow: "var(--shadow-sm)" }}>
+                    <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginBottom: 16, fontWeight: 700, letterSpacing: "0.05em" }}>PERFORMANCE TRACK RECORD</div>
+                    <table style={{ width: "100%", fontSize: 11, fontFamily: "var(--font-mono)", borderCollapse: "collapse", textAlign: "right" }}>
+                      <thead>
+                        <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)" }}>
+                          <th style={{ paddingBottom: 8, textAlign: "left", fontWeight: 600 }}>MODE</th>
+                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>CAGR</th>
+                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>MAX DD</th>
+                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>SHARPE</th>
+                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>TRADES</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ paddingTop: 10, textAlign: "left", color: "var(--text-light)" }}>Baseline</td>
+                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(b.metrics.baseline.cagr * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.baseline.mdd * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.baseline.sharpe.toFixed(2)}</td>
+                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.baseline.trades}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
+                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.debate.cagr * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.debate.mdd * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.debate.sharpe.toFixed(2)}</td>
+                          <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.debate.trades}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ paddingTop: 8, paddingBottom: 10, textAlign: "left", color: "var(--purple)", fontWeight: 700 }}>Speculair</td>
+                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.director.cagr * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.director.mdd * 100).toFixed(1)}%</td>
+                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.director.sharpe.toFixed(2)}</td>
+                          <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.director.trades}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 32 }}>
+                   <div style={{ flex: 2 }}>
+                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}>
+                       <div style={{ display: "flex", gap: 16 }}>
+                         <button onClick={() => setMethodTab("holdings")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "holdings" ? "var(--text)" : "var(--text-muted)" }}>Active Holdings</button>
+                         <button onClick={() => setMethodTab("speculair")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "speculair" ? "var(--text)" : "var(--text-muted)" }}>Speculair</button>
+                       </div>
+                       <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{activeTickers.length} total picks</span>
+                     </div>
+                     {methodTab === "holdings" ? (
+                     <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", fontFamily: "var(--font-mono)" }}>
+                       <thead>
+                         <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
+                            <th style={{ paddingBottom: 8, fontWeight: 600 }}>TICKER</th>
+                            <th style={{ paddingBottom: 8, fontWeight: 600 }}>COMPANY</th>
+                            <th style={{ paddingBottom: 8, textAlign: "left", fontWeight: 600 }}>RATIONALE</th>
+                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>{getMethodologyMetric(undefined, b?.path || "").label}</th>
+                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>CURRENT PRICE</th>
+                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
+                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
+                            <th style={{ paddingBottom: 8, textAlign: "center", fontWeight: 600 }}></th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         {activeTickers.length > 0 ? activeTickers.map(symbol => {
+                            const stock = findStock(symbol);
+                            const currPrice = stock?.price || 0;
+                            // Deterministic mock logic to prevent React flickering
+                            const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                            const mockDelta = (seed % 20 - 5) / 100; 
+                            const entryPriceVal = currPrice / (1 + mockDelta);
+                            const perfPct = mockDelta * 100;
+                            const rationale = stock?.reasons?.length ? stock.reasons.slice(0, 3).join(", ") : "Qualifies for strategy regime";
+
+                            return (
+                              <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                                <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}</td>
+                                <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
+                                <td style={{ padding: "14px 8px", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", fontSize: 11, maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={stock?.reasons?.join(", ")}>{rationale}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)", fontWeight: 700 }}>{getMethodologyMetric(stock, b?.path || "").value}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)" }}>${currPrice > 0 ? currPrice.toFixed(2) : "—"}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>${currPrice > 0 ? entryPriceVal.toFixed(2) : "—"}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: perfPct >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{perfPct >= 0 ? "+" : ""}{perfPct.toFixed(1)}%</td>
+                                <td style={{ padding: "14px 8px", textAlign: "center" }}><ExternalLink size={14} color="var(--text-light)" /></td>
+                              </tr>
+                            );
+                         }) : (
+                           <tr><td colSpan={5} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
+                         )}
+                       </tbody>
+                     </table>
+                     ) : (
+                       <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", fontFamily: "var(--font-mono)" }}>
+                         <thead>
+                           <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
+                             <th style={{ paddingBottom: 8, fontWeight: 600 }}>TICKER</th>
+                             <th style={{ paddingBottom: 8, fontWeight: 600 }}>COMPANY</th>
+                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>CURRENT PRICE</th>
+                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>ALLOCATION</th>
+                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>TARGET WGT</th>
+                             <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>SHARES</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           {activeTickers.length > 0 ? activeTickers.map(symbol => {
+                             const stock = findStock(symbol);
+                             const currPrice = stock?.price || 0;
+                             const allocation = 100000 / activeTickers.length;
+                             const weightPct = 100 / activeTickers.length;
+                             const shares = currPrice > 0 ? allocation / currPrice : 0;
+                             
+                             return (
+                               <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}</td>
+                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)" }}>${currPrice > 0 ? currPrice.toFixed(2) : "—"}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--green)" }}>${allocation.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)", fontWeight: 700 }}>{weightPct.toFixed(1)}%</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>{shares.toFixed(2)}</td>
+                               </tr>
+                             );
+                           }) : (
+                             <tr><td colSpan={6} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
+                           )}
+                         </tbody>
+                       </table>
+                     )}
+                   </div>
+                   <div style={{ flex: 1 }}>
+                     <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, borderBottom: "1px solid var(--border)", paddingBottom: 12, margin: 0 }}>Recent Exits</h3>
+                     <div style={{ background: "var(--bg)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: 16, marginTop: 16 }}>
+                       <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-subtle)", paddingBottom: 12, marginBottom: 12 }}>
+                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>META</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 15, 2026</div></div>
+                          <div style={{ color: "var(--green)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>+8.2%</div>
+                       </div>
+                       <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-subtle)", paddingBottom: 12, marginBottom: 12 }}>
+                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>TSLA</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 10, 2026</div></div>
+                          <div style={{ color: "var(--red)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>-2.1%</div>
+                       </div>
+                       <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>AMD</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 02, 2026</div></div>
+                          <div style={{ color: "var(--green)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>+14.5%</div>
+                       </div>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            );
+          })() : (
+            <>
+          {/* Paper Portfolio Cabinet moved below inside Methodologies */}
+          {trackedBaskets.length > 0 && (
+            <div 
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--purple)",
+                borderRadius: 12,
+                padding: "20px 24px",
+                marginBottom: 10,
+                boxShadow: "0 4px 20px rgba(196, 181, 253, 0.12)"
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Briefcase size={20} color="var(--purple)" style={{ flexShrink: 0 }} />
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}>
+                    Paper Portfolio Cabinet
+                  </h3>
+                  <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", background: "var(--purple-light)", color: "var(--purple)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
+                    Active Tracking Since 2026-03-30
+                  </span>
+                </div>
+                <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                  Starting Capital: $100,000 per strategy
+                </div>
+              </div>
+
+              {/* Tickers layout */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                {trackedBaskets.map(path => {
+                  const b = METHODOLOGIES_CONFIG.find(x => x.path === path);
+                  if (!b) return null;
+                  const activePicks = methodologyPicks[b.path] || [];
+                  const isExpanded = !!expandedBaskets[b.path];
+                  
+                  return (
+                    <div key={path} style={{ border: "1px solid var(--border)", borderRadius: 8, background: "var(--bg)", overflow: "hidden" }}>
+                      <div 
+                        style={{ padding: "12px 16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                        onClick={() => setExpandedBaskets(prev => ({...prev, [path]: !prev[path]}))}
+                      >
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 13, color: "var(--text)", fontFamily: "var(--font-sans)" }}>{b.name}</div>
+                          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                            {activePicks.length} Active Positions
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Total P&L</div>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
+                          </div>
+                          <ChevronRight size={16} color="var(--text-muted)" style={{ transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
+                        </div>
+                      </div>
+                      
+                      {isExpanded && activePicks.length > 0 && (
+                        <div style={{ padding: "0 16px 16px 16px", borderTop: "1px solid var(--border-subtle)" }}>
+                          <table style={{ width: "100%", fontSize: 11, borderCollapse: "collapse", marginTop: 12 }}>
+                            <thead>
+                              <tr style={{ borderBottom: "1px solid var(--border-subtle)", color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                                <th style={{ textAlign: "left", paddingBottom: 6, fontWeight: 600 }}>TICKER</th>
+                                <th style={{ textAlign: "left", paddingBottom: 6, fontWeight: 600 }}>ENTRY</th>
+                                <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>PRICE</th>
+                                <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>CURRENT</th>
+                                <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>PERF</th>
+                                <th style={{ textAlign: "right", paddingBottom: 6, fontWeight: 600 }}>SCORE</th>
+                                <th style={{ textAlign: "center", paddingBottom: 6 }}></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {activePicks.map(symbol => {
+                                const stock = findStock(symbol);
+                                const entryDate = "2026-03-30";
+                                const currPrice = stock?.price ?? 0;
+                                const entryPriceVal = currPrice * (1 - (Math.random() * 0.15 - 0.05));
+                                const perfPct = currPrice ? ((currPrice / entryPriceVal) - 1) * 100 : 0;
+                                const perfColor = perfPct > 0 ? "var(--green)" : perfPct < 0 ? "var(--red)" : "var(--text-muted)";
+                                
+                                const displayPrice = currPrice ? `$${currPrice.toFixed(2)}` : "—";
+                                const displayScore = stock ? readComposite(stock, mode).toFixed(2) : "—";
+                                
+                                return (
+                                  <tr 
+                                    key={symbol} 
+                                    style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.2s" }}
+                                    onClick={(e) => handleTickerClick(e, symbol)}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                  >
+                                    <td style={{ padding: "8px 8px", fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                                      {symbol}
+                                    </td>
+                                    <td style={{ padding: "8px 8px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                                      {entryDate}
+                                    </td>
+                                    <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
+                                      ${entryPriceVal.toFixed(2)}
+                                    </td>
+                                    <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                                      {displayPrice}
+                                    </td>
+                                    <td style={{ padding: "8px 8px", textAlign: "right", color: perfColor, fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+                                      {perfPct > 0 ? "+" : ""}{perfPct.toFixed(1)}%
+                                    </td>
+                                    <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>
+                                      {displayScore}
+                                    </td>
+                                    <td style={{ padding: "8px 8px", textAlign: "center" }}>
+                                      <ExternalLink size={12} color="var(--text-light)" />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                          <div style={{marginTop: 12, paddingTop: 10, borderTop: "1px dashed var(--border)"}}>
+                            <div style={{fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 4}}>RECENT EXITS (LAST 30D)</div>
+                            <div style={{fontSize: 10, color: "var(--text-secondary)"}}>
+                              <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>META</span> (Sold May 15 @ +8.2%) · <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>TSLA</span> (Sold May 10 @ -2.1%)
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {Array.from(new Set(METHODOLOGIES_CONFIG.map(m => m.regime))).map(regime => {
+            const baskets = METHODOLOGIES_CONFIG.filter(m => m.regime === regime);
+            let regimeColor = "var(--green)";
+            if (regime === "SIDEWAYS REGIME (CONSOLIDATION & STABLE YIELD)") regimeColor = "var(--amber)";
+            if (regime === "BEAR REGIME (CONTRACTION & HIGH VOLATILITY)") regimeColor = "var(--red)";
+
+            return (
+              <div key={regime} style={{ marginBottom: 32 }}>
+                <h2 style={{ fontSize: 13, fontWeight: 800, color: "var(--text)", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 16, borderBottom: "1px solid var(--border)", paddingBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: regimeColor }} />
+                  {regime}
+                  <span style={{ fontSize: 10, color: "var(--text-light)", fontWeight: 500, textTransform: "none", marginLeft: "auto", fontFamily: "var(--font-mono)" }}>
+                    {baskets.length} methodologies
+                  </span>
+                </h2>
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {baskets.map(basket => {
+                    const activeTickers = methodologyPicks[basket.path] || [];
+                    const isExpanded = !!expandedThemes[basket.path];
+                    const isTracked = trackedBaskets.includes(basket.path);
+
+                    return (
+                      <div key={basket.path} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", transition: "all 0.2s", boxShadow: "var(--shadow-sm)" }}>
+                        <div style={{ padding: "20px 24px" }}>
+                          {/* Top Row: Info + Metrics */}
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24 }}>
+                            
+                            {/* Title & Desc */}
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                                <h3 
+                                  onDoubleClick={() => setSelectedMethodology(basket.path)}
+                                  title="Double click to open details"
+                                  style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em", cursor: "pointer" }}
+                                >
+                                  {basket.name}
+                                </h3>
+                                <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>({basket.path})</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setTrackedBaskets(prev => 
+                                      prev.includes(basket.path) 
+                                        ? prev.filter(p => p !== basket.path)
+                                        : [...prev, basket.path]
+                                    );
+                                  }}
+                                  style={{
+                                    display: "flex", alignItems: "center", gap: 4,
+                                    padding: "4px 8px", fontSize: 10, fontWeight: 700, fontFamily: "var(--font-mono)",
+                                    background: isTracked ? "var(--purple-light)" : "transparent",
+                                    color: isTracked ? "var(--purple)" : "var(--text-light)",
+                                    border: `1px solid ${isTracked ? "var(--purple)" : "var(--border)"}`,
+                                    borderRadius: 6, cursor: "pointer", transition: "all 0.15s"
+                                  }}
+                                >
+                                  {isTracked ? <><Briefcase size={12} /> TRACKING</> : <><Plus size={12} /> TRACK</>}
+                                </button>
+                              </div>
+                              <p style={{ margin: 0, fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, maxWidth: 600 }}>
+                                {basket.description}
+                              </p>
+                            </div>
+
+                            {/* Backtest Metrics Table */}
+                            <div style={{ background: "var(--bg)", borderRadius: 8, padding: "12px 16px", border: "1px solid var(--border-subtle)" }}>
+                              <table style={{ fontSize: 10, fontFamily: "var(--font-mono)", borderCollapse: "collapse", textAlign: "right" }}>
+                                <thead>
+                                  <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)" }}>
+                                    <th style={{ paddingBottom: 6, textAlign: "left", fontWeight: 600 }}>MODE</th>
+                                    <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>CAGR</th>
+                                    <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>MAX DD</th>
+                                    <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>SHARPE</th>
+                                    <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>TRADES</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text-light)" }}>Baseline</td>
+                                    <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(basket.metrics.baseline.cagr * 100).toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--red)" }}>{(basket.metrics.baseline.mdd * 100).toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.baseline.sharpe.toFixed(2)}</td>
+                                    <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.baseline.trades}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{basket.metrics.debate.cagr.toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{basket.metrics.debate.mdd.toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.debate.sharpe.toFixed(2)}</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.debate.trades}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{basket.metrics.director.cagr.toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{basket.metrics.director.mdd.toFixed(1)}%</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.director.sharpe.toFixed(2)}</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.director.trades}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <div style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 8, fontStyle: "italic", textAlign: "right" }}>
+                                * Baseline calculated via unoptimized quantitative screens without agent validation or concentrated weighting.
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Expansion Toggle */}
+                          <div 
+                            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--border-subtle)", cursor: "pointer" }}
+                            onClick={() => setExpandedThemes(prev => ({...prev, [basket.path]: !prev[basket.path]}))}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text)", fontWeight: 600 }}>
+                              <Activity size={14} color="var(--text-muted)" />
+                              Active Holdings: {activeTickers.length} symbols
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              Expand active picks
+                              <ChevronRight size={14} style={{ transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Expanded Picks List */}
+                        {isExpanded && activeTickers.length > 0 && (
+                          <div style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", padding: "16px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+                            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>Showing top 5 active picks (Double-click the methodology name to view all)</div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
+                              {activeTickers.slice(0, 5).map(symbol => {
+                                const stock = findStock(symbol);
+                                const compScore = stock ? readComposite(stock, mode) : 0;
+                                return (
+                                  <div 
+                                    key={symbol} 
+                                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", border: "1px solid var(--border-subtle)", borderRadius: 8, background: "var(--bg-surface)", cursor: "pointer", transition: "border-color 0.15s" }}
+                                    onClick={(e) => handleTickerClick(e, symbol)}
+                                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border-subtle)"; }}
+                                  >
+                                    <div style={{ display: "flex", flexDirection: "column" }}>
+                                      <span style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{symbol}</span>
+                                      <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{stock?.company_name?.substring(0, 18)}{(stock?.company_name?.length || 0) > 18 ? "..." : ""}</span>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                                      <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)" }}>${stock?.price?.toFixed(2) || "—"}</span>
+                                      <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "var(--font-mono)", color: compScore > 0.65 ? "var(--green)" : "var(--text-light)" }}>Score: {compScore.toFixed(2)}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+          </>
+          )}
+        </div>
+      ) : viewMode === "sectors" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Macro Status Bar */}
           <div style={{display: "flex", gap: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)"}}>
@@ -1415,6 +1899,10 @@ export default function Dashboard(){
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.2%</div>
                 </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+11.4%</div>
+                </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+22.4%</div>
@@ -1434,6 +1922,10 @@ export default function Dashboard(){
                 <div>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.8%</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+14.2%</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
@@ -1455,6 +1947,10 @@ export default function Dashboard(){
                   <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
                 </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+18.7%</div>
+                </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1Y</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+41.2%</div>
@@ -1474,6 +1970,10 @@ export default function Dashboard(){
                 <div>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-0.4%</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+6.2%</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
@@ -1495,6 +1995,10 @@ export default function Dashboard(){
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Current</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>0.92</div>
                 </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
+                </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-1.1%</div>
@@ -1515,6 +2019,10 @@ export default function Dashboard(){
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+2.1%</div>
                 </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+5.8%</div>
+                </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+18.3%</div>
@@ -1534,6 +2042,10 @@ export default function Dashboard(){
                 <div>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--red)", fontFamily: "var(--font-mono)" }}>-3.4%</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+48.1%</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
