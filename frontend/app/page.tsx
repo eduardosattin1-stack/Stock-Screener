@@ -1346,8 +1346,19 @@ export default function Dashboard(){
               return count > 0 ? totalReturn / count : 0;
             };
 
-            const picks = methodologyDetails[b.path]?.picks || [];
-            const exits = methodologyDetails[b.path]?.exits || [];
+            // Prefer tracked holdings from methodology_tracking.json (has 20 positions + entry dates)
+            const shortKey = b.path.split("/").pop() || "";
+            const trackedMeth = trackingData?.methodologies?.[shortKey];
+            const picks = trackedMeth?.current_holdings?.length
+              ? trackedMeth.current_holdings.map((h: any) => ({
+                  symbol: h.symbol,
+                  entry_price: h.entry_price,
+                  entry_date: h.entry_date,
+                  price: h.entry_price,
+                  weight: h.weight,
+                }))
+              : methodologyDetails[b.path]?.picks || [];
+            const exits = trackedMeth?.all_exits_2026 || methodologyDetails[b.path]?.exits || [];
 
             return (
               <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, overflow: "hidden", padding: "24px", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" }}>
@@ -1515,7 +1526,7 @@ export default function Dashboard(){
                          <tbody>
                            {exits.map((exit: any) => {
                              const stock = findStock(exit.symbol);
-                             const perfPct = (exit.performance || 0) * 100;
+                             const perfPct = ((exit.performance ?? exit.return) || 0) * 100;
                              return (
                                <tr key={`${exit.symbol}-${exit.exit_date}`} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, exit.symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
                                  <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text-secondary)", textDecoration: "line-through" }}>{exit.symbol}</td>
