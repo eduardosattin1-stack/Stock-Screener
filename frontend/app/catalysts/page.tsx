@@ -309,8 +309,7 @@ export default function CatalystWatch() {
   // Filter and sort candidates list based on active filters and sorting selection
   const processedCandidates = useMemo(() => {
     let result = candidates.filter(cand => 
-      !watchlist.some(w => w.symbol === cand.symbol) &&
-      !recentScans.some(r => r.symbol === cand.symbol)
+      !watchlist.some(w => w.symbol === cand.symbol)
     );
     
     if (categoryFilter !== "All") {
