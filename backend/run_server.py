@@ -387,6 +387,35 @@ class Handler(BaseHTTPRequestHandler):
                 traceback.print_exc()
             return
 
+        if parsed.path == "/catalysts/progress":
+            try:
+                progress = None
+                try:
+                    from alpha_compounder.gcs_io import gcs_read_json
+                    progress = gcs_read_json("scans/scan_progress.json")
+                except Exception:
+                    pass
+                if not progress:
+                    local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scan_progress.json")
+                    if os.path.exists(local_path):
+                        with open(local_path, "r", encoding="utf-8") as f:
+                            progress = json.load(f)
+                    else:
+                        progress = {"status": "idle"}
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps(progress).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
         if parsed.path == "/catalysts/scan":
             symbol = qs.get("symbol", [""])[0].upper()
             if not symbol:

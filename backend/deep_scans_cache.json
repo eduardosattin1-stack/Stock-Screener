@@ -11569,82 +11569,93 @@
     }
   },
   "HON": {
-    "timestamp": "2026-05-26T00:29:13.304873",
+    "timestamp": "2026-05-26T11:35:46.582448",
     "data": {
       "symbol": "HON",
       "company_name": "Honeywell International Inc.",
       "price": 227.92,
       "market_cap": 144422218882,
-      "catalyst_density_score": 9.2,
+      "is_merger_arb": false,
+      "merger_arb_data": null,
+      "catalyst_density_score": 8.7,
       "upside_downside_ratio": 2.8,
-      "analysis_summary": "Honeywell presents a compelling event-driven opportunity with the imminent aerospace spinoff scheduled for June 29, 2026, representing the final step in a multi-year portfolio transformation. The company has already successfully spun off Solstice Advanced Materials and is executing asset sales of non-core businesses while maintaining strong operational momentum with 11% Q1 earnings growth. This separation will create two pure-play industrial companies with enhanced strategic focus, while the $20 billion aerospace spin financing and strong credit ratings provide execution certainty for the near-term catalyst.",
+      "re_rate_status": "partial",
+      "catalyst_nature": "pricing_dislocation",
+      "catalyst_nature_rationale": "The aerospace spinoff executes June 29, creating an immediate pricing dislocation window as the market begins to value pure-play entities separately, but the full conglomerate discount elimination is still pending completion.",
+      "analysis_summary": "Honeywell presents a compelling event-driven opportunity with its aerospace spinoff scheduled for June 29, 2026, representing the final step in a multi-year portfolio transformation. The company is trading at a conglomerate discount despite having a record $38B+ backlog, strong margins expanding 90bp to 23%+, and two high-quality pure-play businesses (aerospace and automation) that will trade independently. The spinoff creates immediate sum-of-parts value realization, while the company has proactively removed stranded costs and secured $20B in aerospace financing with investment-grade ratings.",
       "recommendation": "BUY",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "New leadership teams established for both Honeywell and Honeywell Aerospace ahead of June 29 spinoff, including CEO Jim Currier for Aerospace and CFO Josh Jepsen, with Craig Arnold as non-executive chairman.",
-          "evidence": "Q1 2026 earnings call: 'we announced the aerospace leadership team last week, comprised of tenured aerospace veterans, and made key board appointments to bring extensive operating experience to our teams.'"
+          "description": "Comprehensive leadership team appointments for both Honeywell Aerospace and remaining Honeywell, including new aerospace CEO Tim Courier, CFO Josh Jepsen, and non-executive chair Craig Arnold. Also added Indra Nooyi to Honeywell's board.",
+          "evidence": "Q1 2026 earnings call: 'we announced the aerospace leadership team last week, comprised of tenured aerospace veterans... Tim Courier, who will serve as president and CEO of Honeywell Aerospace at the time of separation, will be joined by Josh Jepsen, who will serve as chief financial officer.'"
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Active execution of aerospace spinoff for June 29, 2026, with completed $20 billion financing and signed agreements to sell Productivity Solutions and Warehouse Workflow businesses to Brady Corporation and American Industrial Partners respectively.",
-          "evidence": "CEO stated in Q1 2026 call: 'we expect to complete the Honeywell Aerospace spinoff in the third quarter on June 29, marking the final step in our transformation' and 'we announced the sale of our Productivity Solutions and Services and Warehouse and Workflow Solutions businesses, respectively, which we expect to close in the second half of 2026.'"
+          "description": "Active aerospace spinoff process scheduled for June 29, 2026, plus announced sales of Productivity Solutions and Services to Brady Corporation and Warehouse and Workflow business to American Industrial Partners in all-cash transactions.",
+          "evidence": "May 24, 2026 news: 'Honeywell International is on track to complete its planned separation on June 29, the first day of the third quarter.' Q1 2026 call: 'we signed an agreement to sell Productivity Solutions and Services to Brady Corporation and Warehouse and Workflow business to American Industrial Partners, in two, all cash transactions.'"
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No active hostile bids or proxy contests detected. The transformation is management-led with board support.",
-          "evidence": "Strategic actions appear to be internally driven portfolio optimization rather than external pressure."
+          "description": "No active hostile bids, proxy contests, or buyout proposals detected.",
+          "evidence": "No evidence of premium scenario activation in recent filings or news."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "High",
-          "analysis": "Multiple hard catalysts within 2-3 months including June 29 aerospace spinoff, H2 2026 asset sale closings, and ongoing segment realignment into simplified structure. All catalysts are confirmed with specific dates and financing in place."
+          "analysis": "Multiple hard catalysts within 2 months: June 29 aerospace spinoff, H2 2026 asset sale closings, segment realignment already implemented Q1 2026, and $20B financing completed. Record backlog conversion and margin expansion provide fundamental support."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Classic conglomerate breakup story with aerospace, automation, and materials businesses being separated into pure-play entities. Management explicitly targeting value creation through 'strategic focus, organizational agility, and tailored capital allocation strategies' for each independent company."
+          "analysis": "Clear conglomerate discount with aerospace and automation businesses that will trade as pure-plays. Aerospace secured investment-grade ratings (A3/A-/BBB+) and has defense contracts worth multibillion-dollar revenue opportunity. Automation benefits from $38B+ backlog and 23%+ margins."
         },
         "activism_potential": {
           "rating": "Possible",
-          "analysis": "Management is proactively executing the breakup, reducing activist pressure, but the industrial conglomerate structure and complexity could still attract activist attention to accelerate value realization or influence capital allocation post-separation."
+          "analysis": "Management is proactively executing portfolio simplification ahead of potential activist pressure. The spinoff and asset sales demonstrate responsive capital allocation, reducing activist opportunity but not eliminating it given industrial conglomerate structure."
         },
         "risk_reward": {
           "ratio": "2.8:1",
-          "analysis": "Strong downside support from $38 billion backlog, A-grade credit ratings, and execution track record (successful Solstice spin). Upside driven by sum-of-parts revaluation, aerospace pure-play premium, and operational leverage from stranded cost removal."
+          "analysis": "Strong upside from conglomerate discount elimination, aerospace pure-play premium, and automation growth acceleration. Downside protected by $38B backlog, investment-grade credit profile, and defensive industrial end markets. Spinoff execution risk is low given management's track record."
         }
       },
       "options_signals": {
-        "iv_current": null,
-        "skew_25d": null,
-        "term_structure": null,
-        "pc_oi_ratio": null,
-        "total_oi": null,
+        "iv_current": 0.2918,
+        "skew_25d": 0.0315,
+        "term_structure": "flat",
+        "pc_oi_ratio": 0.565,
+        "total_oi": 74971,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "No options data available",
-        "overall_interpretation": "Options market signals unavailable, but the defined June 29 catalyst date suggests potential for term structure inversion as event approaches."
+        "market_sentiment_flag": "Moderate bullish positioning with put protection",
+        "overall_interpretation": "Positive put skew suggests some hedging activity around the spinoff event, while flat term structure indicates the market is not pricing significant near-term volatility beyond the known June 29 catalyst."
       },
       "recent_events": [
         {
           "date": "2026-05-24",
           "type": "news",
           "title": "Honeywell International Nears June 29 Split With 'All Green Lights,' Reaffirms Outlook",
-          "link": "https://news.source.com"
+          "link": "https://..."
+        },
+        {
+          "date": "2026-05-20",
+          "type": "news",
+          "title": "HONEYWELL AND NATIONAL HOCKEY LEAGUE PARTNER TO DRIVE A NEW ERA OF INTELLIGENT, DIGITALLY ENABLED VENUES",
+          "link": "https://..."
         },
         {
           "date": "2026-05-13",
           "type": "news",
           "title": "Honeywell CEO Vimal Kapur on portfolio transformation post spin-off",
-          "link": "https://news.source.com"
+          "link": "https://..."
         },
         {
           "date": "2026-04-23",
           "type": "transcript",
-          "title": "Q1 2026 Earnings Call - Aerospace spin scheduled for June 29",
-          "link": "https://earnings.call"
+          "title": "Q1 2026 Earnings Call - Aerospace spinoff confirmed for June 29",
+          "link": "https://..."
         }
       ]
     }

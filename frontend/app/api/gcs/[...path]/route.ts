@@ -1,7 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Storage } from "@google-cloud/storage";
 
 export const dynamic = "force-dynamic";
 
+// Initialize Storage with the environment variables added to Vercel
+const storage = new Storage({
+  projectId: process.env.GCP_PROJECT_ID,
+  credentials: {
+    client_email: process.env.GCP_CLIENT_EMAIL,
+    // Format the private key for Vercel
+    private_key: process.env.GCP_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  },
+});
+
+const bucketName = process.env.GCP_BUCKET_NAME || 'screener-signals-carbonbridge';
 
 export async function GET(
   request: NextRequest,
@@ -9,26 +21,29 @@ export async function GET(
 ) {
   const { path } = await params;
   const objectPath = path.join("/");
-  const encodedPath = encodeURIComponent(objectPath);
-  const bucket = "screener-signals-carbonbridge";
-  
-  // Use www.googleapis.com to bypass CDN/edge cache
-  const url = `https://www.googleapis.com/storage/v1/b/${bucket}/o/${encodedPath}?alt=media`;
   
   try {
-    const res = await fetch(url, {
-      method: "GET",
-      cache: "no-store",
-    });
+    const bucket = storage.bucket(bucketName);
+    const file = bucket.file(objectPath);
     
-    if (!res.ok) {
-      return new NextResponse(res.statusText, { status: res.status });
+    // Check if file exists first
+    const [exists] = await file.exists();
+    if (!exists) {
+      return new NextResponse("Not Found", { status: 404 });
     }
     
-    const contentType = res.headers.get("content-type") || "application/json";
-    const body = await res.arrayBuffer();
+    // Download file content
+    const [content] = await file.download();
     
-    return new NextResponse(body, {
+    // Determine content type
+    let contentType = "application/json";
+    if (objectPath.endsWith(".html")) {
+      contentType = "text/html";
+    } else if (objectPath.endsWith(".txt")) {
+      contentType = "text/plain";
+    }
+    
+    return new NextResponse(new Uint8Array(content), {
       status: 200,
       headers: {
         "Content-Type": contentType,
@@ -39,6 +54,7 @@ export async function GET(
       },
     });
   } catch (error: any) {
+    console.error(`GCS Proxy GET Error for ${objectPath}:`, error.message);
     return new NextResponse(error.message || "Internal Server Error", { status: 500 });
   }
 }
@@ -53,3 +69,4 @@ export async function OPTIONS() {
     },
   });
 }
+

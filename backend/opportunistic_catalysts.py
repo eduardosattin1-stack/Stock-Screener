@@ -155,12 +155,14 @@ def get_catalyst_candidates() -> List[Dict]:
         # If we have a cached deep scan, use its refined score and R/R ratio
         rr_ratio = None
         is_scanned = False
+        is_merger_arb = False
         if sym in cache:
             cached_data = cache[sym].get("data", {})
             refined_score = cached_data.get("catalyst_density_score")
             if refined_score is not None:
                 cat_score = refined_score / 10.0
             rr_ratio = cached_data.get("upside_downside_ratio")
+            is_merger_arb = cached_data.get("is_merger_arb", False)
             is_scanned = True
         else:
             # It's not deep-scanned, so discount the heuristic score (max 6.0)
@@ -195,7 +197,8 @@ def get_catalyst_candidates() -> List[Dict]:
             "flags": flags,
             "has_special_flag": has_special_flag,
             "categories": cats,
-            "is_scanned": is_scanned
+            "is_scanned": is_scanned,
+            "is_merger_arb": is_merger_arb
         })
         
     # Sort candidates by Loeb Score (catalyst_score) descending
@@ -318,10 +321,6 @@ def fetch_transcripts(symbol: str, num_quarters: int = 6) -> List[Dict]:
 
 def fetch_options(symbol: str) -> Dict:
     """Fetch option IV and greeks details from massive_options module."""
-    if not MASSIVE_KEY:
-        log.warning("MASSIVE_API_KEY not configured - skipping options enrichment")
-        return {}
-        
     try:
         # Import dynamically to prevent circular import issues
         from massive_options import enrich_stock as options_enrich_stock
@@ -421,6 +420,7 @@ CRITICAL METHODOLOGICAL DIRECTIVES (TIMING AND RATING RIGOR):
    - For confirmed arbs, the catalyst has already "fired" (the premium is paid/announced). The upside is capped at the deal price, and there is substantial downside if the deal breaks (price drops to pre-announce close). The true unhedged R/R asymmetry is NEGATIVE (e.g. risking $5 to make $1.80, so R/R is around -3:1 to -4:1). Reflect this negative asymmetry in `"upside_downside_ratio"`.
    - The `"catalyst_density_score"` must be capped at 5.0 to 6.5 because there is no pending upside catalyst, just a spread closing timeline.
 5. **Put Skew Interpretation in Merger Arb**: Differentiate the options skew meaning. For normal pre-catalyst setups, positive put skew indicates potential upside surprise or fear. For announced merger arbs, positive put skew represents deal-break risk hedging premium, NOT a bullish signal.
+6. **Timing & Pricing Dislocation Distinction**: Distinguish "catalyst executes" (the mechanical completion or execution date of an event, such as a spinoff execution or merger closing) from "catalyst creates pricing dislocation" (the alpha-bearing trade entry window when the market misprices the setup). State whether the price re-rate has already happened (e.g., partially, fully, or is pending).
 
 We also have options market positioning data: term structure inversion indicates catalyst near-term pricing; skew shows relative call vs put cost (negative skew means call premium / bullish positioning); open interest growth indicates position building.
 
@@ -468,6 +468,9 @@ JSON STRUCTURE:
   }},
   "catalyst_density_score": 8.2, // Float 1.0 to 10.0 representing catalyst density (cap at 5.0 to 6.8 if is_merger_arb is true)
   "upside_downside_ratio": 2.5, // Float representing risk/reward (use negative values like -2.5 for negative asymmetry in merger arbs)
+  "re_rate_status": "pending", // "pending" | "partial" | "complete" - has the price re-rate happened already?
+  "catalyst_nature": "pricing_dislocation", // "mechanical_execution" | "pricing_dislocation" - mechanical event or alpha-bearing window?
+  "catalyst_nature_rationale": "Spinoff executes June 29, but the pricing dislocation is active now due to wider conglomerate discount.", // string explanation
   "analysis_summary": "One-paragraph executive summary of the event-driven thesis.",
   "recommendation": "BUY", // "BUY" | "WATCH" | "HOLD" | "SELL"
   "bloom_catalysts": {{
@@ -633,6 +636,62 @@ JSON STRUCTURE:
                 opt_signals["market_sentiment_flag"] = "Put skew reflects deal-break risk"
                 opt_signals["overall_interpretation"] = "Elevated put skew and put positioning in a confirmed merger arb reflect deal-break risk hedging rather than bullish sentiment."
 
+            # Generate options hedging suggestions dynamically
+            target_hedges = []
+            acquirer_hedges = []
+            
+            def round_strike(val, step=2.5):
+                return round(val / step) * step
+                
+            target_spot = target_price
+            target_floor = pre_announce
+            long_put_strike = round_strike(target_spot, 2.5 if target_spot < 50 else 5.0)
+            short_put_strike = round_strike(target_floor, 2.5 if target_floor < 50 else 5.0)
+            if long_put_strike <= short_put_strike:
+                short_put_strike = long_put_strike - (5.0 if target_spot > 50 else 2.5)
+                
+            target_hedges.append({
+                "strategy": "Bear Put Spread (Downside Protection)",
+                "description": f"Buy {long_put_strike} Put / Sell {short_put_strike} Put on {symbol} to hedge drop to pre-announce reference (${pre_announce:.2f}).",
+                "long_strike": long_put_strike,
+                "short_strike": short_put_strike
+            })
+            
+            deal_val_strike = round_strike(implied_value, 2.5 if implied_value < 50 else 5.0)
+            target_hedges.append({
+                "strategy": "Covered Call (Yield Enhancement)",
+                "description": f"Buy {symbol} stock and Sell {deal_val_strike} Call to collect premium and buffer downside, capping upside at deal price.",
+                "long_strike": "Stock",
+                "short_strike": deal_val_strike
+            })
+            
+            if ratio > 0 and acq_sym and acq_sym.upper() not in ("CASH", "NONE", "N/A"):
+                acq_spot = acq_price
+                if acq_spot > 0:
+                    acq_short_strike = round_strike(acq_spot, 5.0 if acq_spot > 50 else 2.5)
+                    acq_long_strike = round_strike(acq_spot * 1.10, 5.0 if acq_spot > 50 else 2.5)
+                    
+                    acquirer_hedges.append({
+                        "strategy": "Bear Call Spread (Short Protection)",
+                        "description": f"Sell {acq_short_strike} Call / Buy {acq_long_strike} Call on {acq_sym} to hedge long target exposure if acquirer shares plummet.",
+                        "long_strike": acq_long_strike,
+                        "short_strike": acq_short_strike
+                    })
+                    
+                    acq_long_put = round_strike(acq_spot, 5.0 if acq_spot > 50 else 2.5)
+                    acq_short_put = round_strike(acq_spot * 0.85, 5.0 if acq_spot > 50 else 2.5)
+                    acquirer_hedges.append({
+                        "strategy": "Bear Put Spread (Synthetic Short)",
+                        "description": f"Buy {acq_long_put} Put / Sell {acq_short_put} Put on {acq_sym} to gain short exposure to the acquirer component without borrow cost.",
+                        "long_strike": acq_long_put,
+                        "short_strike": acq_short_put
+                    })
+            
+            arb_data["hedging_suggestions"] = {
+                "target_hedges": target_hedges,
+                "acquirer_hedges": acquirer_hedges
+            }
+
         _save_deep_scan_to_cache(symbol, parsed_json)
         parsed_json["cache_timestamp"] = datetime.now().isoformat()
         return parsed_json
@@ -699,6 +758,9 @@ def generate_fallback_mock(symbol: str, company_name: str, price: float, mcap: i
         "market_cap": mcap,
         "catalyst_density_score": cat_score,
         "upside_downside_ratio": ratio,
+        "re_rate_status": "pending",
+        "catalyst_nature": "pricing_dislocation",
+        "catalyst_nature_rationale": "Pending event setup creates entry dislocation.",
         "analysis_summary": summary,
         "recommendation": "BUY" if cat_score >= 7.5 else "WATCH",
         "bloom_catalysts": {
