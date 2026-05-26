@@ -63,6 +63,8 @@ def _write_progress(symbol, completed, total, status="scanning"):
 
 def run_universe_scan(limit=None, max_workers=10, force_refresh=False):
     global completed_count, start_time
+    if os.environ.get("FORCE_REFRESH_CATALYSTS", "").lower() in ("1", "true", "yes"):
+        force_refresh = True
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     log.info("Starting batch catalyst scan for the candidate universe...")
     
