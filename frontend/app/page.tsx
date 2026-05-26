@@ -3606,7 +3606,7 @@ export default function Dashboard(){
 
                                   <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)" }}>
 
-                                    <th style={{ paddingBottom: 6, textAlign: "left", fontWeight: 600 }}>BACKTEST</th>
+                                    <th style={{ paddingBottom: 6, textAlign: "left", fontWeight: 600 }}>MODE</th>
 
                                     <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>CAGR</th>
 
@@ -3624,7 +3624,7 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text-light)" }}>Baseline Backtest</td>
+                                    <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text-light)" }}>Baseline</td>
 
                                     <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(basket.metrics.baseline.cagr * 100).toFixed(1)}%</td>
 
@@ -3638,53 +3638,31 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active Backtest</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
 
-                                    {basket.metrics.debate.trades === 0 ? (
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: ytdReturn !== undefined && ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>
+                                      {ytdReturn !== undefined ? `${ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD` : "—"}
+                                    </td>
 
-                                      <td colSpan={4} style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                    ) : (
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                      <>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(basket.metrics.debate.cagr * 100).toFixed(1)}%</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{(basket.metrics.debate.mdd * 100).toFixed(1)}%</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.debate.sharpe.toFixed(2)}</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.debate.trades}</td>
-
-                                      </>
-
-                                    )}
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
                                   </tr>
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair Backtest</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair</td>
 
-                                    {basket.metrics.director.trades === 0 ? (
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                      <td colSpan={4} style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                    ) : (
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                      <>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(basket.metrics.director.cagr * 100).toFixed(1)}%</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--red)" }}>{(basket.metrics.director.mdd * 100).toFixed(1)}%</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text)" }}>{basket.metrics.director.sharpe.toFixed(2)}</td>
-
-                                        <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{basket.metrics.director.trades}</td>
-
-                                      </>
-
-                                    )}
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
                                   </tr>
 
@@ -4832,7 +4810,7 @@ export default function Dashboard(){
 
                                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
 
-                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>BACKTEST</th>
+                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>MODE</th>
 
                                   <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>CAGR</th>
 
@@ -4850,11 +4828,37 @@ export default function Dashboard(){
 
                                 {[
 
-                                  { label: "Baseline Backtest", stats: basket.metrics.baseline, color: "var(--text-secondary)" },
+                                  { 
+                                    label: "Baseline", 
+                                    color: "var(--text-secondary)", 
+                                    cagrVal: `${(basket.metrics.baseline.cagr * 100).toFixed(1)}%`,
+                                    mddVal: `${(basket.metrics.baseline.mdd * 100).toFixed(1)}%`,
+                                    mddColor: basket.metrics.baseline.mdd < 0 ? "var(--red)" : "var(--text-secondary)",
+                                    sharpeVal: basket.metrics.baseline.sharpe.toFixed(2),
+                                    tradesVal: basket.metrics.baseline.trades.toString()
+                                  },
 
-                                  { label: "Active Backtest", stats: basket.metrics.debate, color: "var(--text)" },
+                                  { 
+                                    label: "Active", 
+                                    color: "var(--text)", 
+                                    cagrVal: ytdReturn !== undefined ? `${ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD` : "—",
+                                    cagrColor: ytdReturn !== undefined && ytdReturn >= 0 ? "var(--green)" : "var(--red)",
+                                    mddVal: "—",
+                                    mddColor: "var(--text-secondary)",
+                                    sharpeVal: "—",
+                                    tradesVal: "—"
+                                  },
 
-                                  { label: "Speculair Backtest", stats: basket.metrics.director, color: "var(--green)", isBold: true }
+                                  { 
+                                    label: "Speculair", 
+                                    color: "var(--green)", 
+                                    isBold: true,
+                                    cagrVal: "—",
+                                    mddVal: "—",
+                                    mddColor: "var(--text-secondary)",
+                                    sharpeVal: "—",
+                                    tradesVal: "—"
+                                  }
 
                                 ].map((row) => (
 
@@ -4876,25 +4880,13 @@ export default function Dashboard(){
 
                                     <td style={{ textAlign: "left", padding: "5px 8px", color: row.color }}>{row.label}</td>
 
-                                    {row.stats.trades === 0 ? (
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.cagrColor || row.color }}>{row.cagrVal}</td>
 
-                                      <td colSpan={4} style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-muted)", fontStyle: "italic" }}>UNTESTED</td>
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.mddColor }}>{row.mddVal}</td>
 
-                                    ) : (
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.sharpeVal}</td>
 
-                                      <>
-
-                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{(row.stats.cagr * 100).toFixed(1)}%</td>
-
-                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.stats.mdd < 0 ? "var(--red)" : "var(--text-secondary)" }}>{(row.stats.mdd * 100).toFixed(1)}%</td>
-
-                                        <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.stats.sharpe.toFixed(2)}</td>
-
-                                        <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.stats.trades}</td>
-
-                                      </>
-
-                                    )}
+                                    <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.tradesVal}</td>
 
                                   </tr>
 
