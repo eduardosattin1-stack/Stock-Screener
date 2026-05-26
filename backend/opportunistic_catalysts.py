@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 import os
 import json
+import sys
 import logging
+
+sys_path = os.path.dirname(os.path.abspath(__file__))
+if sys_path not in sys.path:
+    sys.path.insert(0, sys_path)
+
 import requests
 import threading
 from datetime import datetime, timedelta
@@ -24,7 +30,7 @@ if os.path.exists(env_path):
 
 FMP_KEY = os.environ.get("FMP_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-MASSIVE_KEY = os.environ.get("MASSIVE_API_KEY", "")
+MASSIVE_KEY = os.environ.get("MASSIVE_API_KEY", "thetadata_active")
 GCS_BUCKET = "screener-signals-carbonbridge"
 
 # Fallback for local files if GCS token is not available
@@ -198,7 +204,9 @@ def get_catalyst_candidates() -> List[Dict]:
             "has_special_flag": has_special_flag,
             "categories": cats,
             "is_scanned": is_scanned,
-            "is_merger_arb": is_merger_arb
+            "is_merger_arb": is_merger_arb,
+            "re_rate_status": s.get("re_rate_status") or cached_data.get("re_rate_status") if is_scanned else None,
+            "catalyst_nature": s.get("catalyst_nature") or cached_data.get("catalyst_nature") if is_scanned else None
         })
         
     # Sort candidates by Loeb Score (catalyst_score) descending

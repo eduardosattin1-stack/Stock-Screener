@@ -2800,7 +2800,7 @@ export default function Dashboard(){
 
                               <td style={{ padding: "8px 0", color: "var(--text-light)" }}>{year}</td>
 
-                              <td style={{ padding: "8px 0", color: "var(--text-muted)" }}>Baseline Backtest</td>
+                              <td style={{ padding: "8px 0", color: "var(--text-muted)" }}>Baseline</td>
 
                               <td style={{ padding: "8px 0", textAlign: "right", color: annualReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>
 
@@ -2824,7 +2824,7 @@ export default function Dashboard(){
 
                           <td style={{ padding: "10px 0", color: "var(--purple)", fontWeight: 700 }}>2026</td>
 
-                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Tracked (Currently Holding)</td>
+                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Active (Currently Holding)</td>
 
                           <td style={{ padding: "10px 0", textAlign: "right", color: getActiveBasketPerformance() >= 0 ? "var(--green)" : "var(--red)", fontWeight: 800 }}>
 
@@ -3648,7 +3648,7 @@ export default function Dashboard(){
 
                                     <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>{trackedMeth ? (activeTickers.length + (trackedMeth.all_exits_2026?.length || 0)) : "—"}</td>
 
                                   </tr>
 
@@ -4846,7 +4846,7 @@ export default function Dashboard(){
                                     mddVal: "—",
                                     mddColor: "var(--text-secondary)",
                                     sharpeVal: "—",
-                                    tradesVal: "—"
+                                    tradesVal: trackedMeth ? (activeTickers.length + (trackedMeth.all_exits_2026?.length || 0)).toString() : "—"
                                   },
 
                                   { 

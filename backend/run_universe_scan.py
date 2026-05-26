@@ -61,7 +61,7 @@ def _write_progress(symbol, completed, total, status="scanning"):
         except Exception as e:
             log.warning(f"Failed to sync progress to GCS: {e}")
 
-def run_universe_scan(limit=None, max_workers=10):
+def run_universe_scan(limit=None, max_workers=10, force_refresh=False):
     global completed_count, start_time
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     log.info("Starting batch catalyst scan for the candidate universe...")
@@ -102,7 +102,7 @@ def run_universe_scan(limit=None, max_workers=10):
                 already_scanned = True
         
         success = True
-        if not already_scanned:
+        if not already_scanned or force_refresh:
             log.info(f"[{idx+1}/{total_candidates}] Deep scanning {symbol}...")
             try:
                 # force_refresh=True will run a fresh Claude scan and update local cache
@@ -161,6 +161,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="Limit the number of scanned symbols for testing")
     parser.add_argument("--workers", type=int, default=10, help="Number of parallel worker threads")
+    parser.add_argument("--force", action="store_true", help="Force refresh even if already scanned")
     args = parser.parse_args()
     
-    run_universe_scan(limit=args.limit, max_workers=args.workers)
+    run_universe_scan(limit=args.limit, max_workers=args.workers, force_refresh=args.force)
