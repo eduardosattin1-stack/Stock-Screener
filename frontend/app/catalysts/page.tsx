@@ -226,13 +226,15 @@ export default function CatalystWatch() {
     return () => clearInterval(interval);
   }, []);
 
-  const toggleWatchlist = (symbol: string, name: string, score: number, price?: number | null, market_cap?: number | null) => {
+  const toggleWatchlist = (symbol: string, name: string, score: number, price?: number | null, market_cap?: number | null, is_merger_arb?: boolean) => {
     const sym = symbol.toUpperCase().trim();
     const exists = watchlist.some((item) => item.symbol === sym);
     let updated: Candidate[];
     if (exists) {
       updated = watchlist.filter((item) => item.symbol !== sym);
     } else {
+      const cachedCand = candidates.find(c => c.symbol === sym);
+      const isArb = is_merger_arb !== undefined ? is_merger_arb : (cachedCand?.is_merger_arb ?? false);
       updated = [
         ...watchlist,
         {
@@ -242,7 +244,8 @@ export default function CatalystWatch() {
           price: price ?? null,
           market_cap: market_cap ?? null,
           flags: ["Watchlist"],
-          has_special_flag: true
+          has_special_flag: true,
+          is_merger_arb: isArb
         }
       ];
       // Remove from recentScans since it's now watched
@@ -292,6 +295,14 @@ export default function CatalystWatch() {
     }
     return result;
   }, [recentScans, watchlist, showMergerArbs]);
+
+  // Filter watchlist to exclude merger arbs when showMergerArbs is toggled off
+  const filteredWatchlist = useMemo(() => {
+    if (!showMergerArbs) {
+      return watchlist.filter(w => !w.is_merger_arb);
+    }
+    return watchlist;
+  }, [watchlist, showMergerArbs]);
 
   // Filter and sort candidates list based on active filters and sorting selection
   const processedCandidates = useMemo(() => {
@@ -510,7 +521,7 @@ export default function CatalystWatch() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleWatchlist(cand.symbol, cand.name, cand.catalyst_score);
+                  toggleWatchlist(cand.symbol, cand.name, cand.catalyst_score, cand.price, cand.market_cap, cand.is_merger_arb);
                 }}
                 style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 0 0 2px", color: T.muted }}
                 title="Remove from Watchlist"
@@ -538,7 +549,7 @@ export default function CatalystWatch() {
 
   // Dynamic merger arb math calculation based on customAcquirerPrice input
   const mergerArbComputed = useMemo(() => {
-    if (!report || !report.is_merger_arb || !report.merger_arb_data) return null;
+    if (!report || (!report.is_merger_arb && !report.merger_arb_data) || !report.merger_arb_data) return null;
     
     const data = report.merger_arb_data;
     const isPE = !data.acquirer_symbol || data.acquirer_symbol === "CASH" || data.acquirer_symbol === "NONE";
@@ -774,12 +785,12 @@ export default function CatalystWatch() {
             ) : (
               <>
                 {/* 1. WATCHLIST */}
-                {watchlist.length > 0 && (
+                {filteredWatchlist.length > 0 && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: "var(--amber, #f59e0b)", letterSpacing: "0.08em", display: "flex", alignItems: "center", gap: 4, borderBottom: `1px solid rgba(245,158,11,0.2)`, paddingBottom: 4 }}>
-                      <Star size={10} fill="var(--amber, #f59e0b)" color="var(--amber, #f59e0b)" /> Watchlist ({watchlist.length})
+                      <Star size={10} fill="var(--amber, #f59e0b)" color="var(--amber, #f59e0b)" /> Watchlist ({filteredWatchlist.length})
                     </div>
-                    {watchlist.map(cand => renderCandidate(cand, "watchlist"))}
+                    {filteredWatchlist.map(cand => renderCandidate(cand, "watchlist"))}
                   </div>
                 )}
 
@@ -863,7 +874,8 @@ export default function CatalystWatch() {
                           report.company_name, 
                           report.catalyst_density_score,
                           report.price,
-                          report.market_cap
+                          report.market_cap,
+                          report.is_merger_arb
                         )}
                         style={{
                           display: "flex",
@@ -993,7 +1005,7 @@ export default function CatalystWatch() {
               </div>
 
               {/* MERGER ARBITRAGE CARD (DYNAMIC MATH & RISK) */}
-              {report.is_merger_arb && report.merger_arb_data && mergerArbComputed && (
+              {report.merger_arb_data && mergerArbComputed && (
                 <div style={{ 
                   background: "linear-gradient(135deg, rgba(20,184,122,0.04) 0%, rgba(59,130,246,0.04) 100%)", 
                   border: `1px solid ${T.border}`, 

@@ -28774,82 +28774,117 @@
     }
   },
   "CWAN": {
-    "timestamp": "2026-05-26T00:38:56.650189",
+    "timestamp": "2026-05-26T12:30:46.097294",
     "data": {
       "symbol": "CWAN",
       "company_name": "Clearwater Analytics Holdings, Inc.",
       "price": 24.32,
       "market_cap": 7232163648,
-      "catalyst_density_score": 9.5,
-      "upside_downside_ratio": 1.1,
-      "analysis_summary": "CWAN is in an active buyout process by Warburg Pincus at $24.55 per share with shareholder vote scheduled for May 6, 2026. Multiple law firms are investigating potential additional compensation for shareholders, suggesting the buyout price may be inadequate given the company's strong fundamentals including 77% revenue growth, expanding EBITDA margins to 34.5%, and $23B TAM expansion through strategic acquisitions of Enfusion and Beacon. This represents a classic Catalyst 3 premium scenario where legal challenges and shareholder activism could force a higher bid or competing offers.",
-      "recommendation": "BUY",
+      "is_merger_arb": true,
+      "merger_arb_data": {
+        "acquirer_symbol": "CASH",
+        "acquirer_name": "Warburg Pincus LLC",
+        "cash_component": 24.55,
+        "stock_component_ratio": 0.0,
+        "pre_announce_price": 22.85,
+        "expected_close": "Q2 2026",
+        "deal_status": "Pending shareholder approval - vote scheduled May 6, 2026",
+        "implied_deal_value": 24.55,
+        "gross_spread_val": 0.23,
+        "gross_spread_pct": 0.95,
+        "unhedged_downside": 1.47,
+        "unhedged_rr_asymmetry": "-6.4:1",
+        "hedging_suggestions": {
+          "target_hedges": [
+            {
+              "strategy": "Bear Put Spread (Downside Protection)",
+              "description": "Buy 25.0 Put / Sell 22.5 Put on CWAN to hedge drop to pre-announce reference ($22.85).",
+              "long_strike": 25.0,
+              "short_strike": 22.5
+            },
+            {
+              "strategy": "Covered Call (Yield Enhancement)",
+              "description": "Buy CWAN stock and Sell 25.0 Call to collect premium and buffer downside, capping upside at deal price.",
+              "long_strike": "Stock",
+              "short_strike": 25.0
+            }
+          ],
+          "acquirer_hedges": []
+        }
+      },
+      "catalyst_density_score": 6.2,
+      "upside_downside_ratio": -6.4,
+      "re_rate_status": "complete",
+      "catalyst_nature": "mechanical_execution",
+      "catalyst_nature_rationale": "The buyout premium has been announced at $24.55 per share. The stock is trading at $24.32, leaving minimal upside but substantial downside risk if the deal breaks.",
+      "analysis_summary": "CWAN is in an announced private equity buyout by Warburg Pincus at $24.55 per share, with shareholder vote scheduled for May 6, 2026. This is a classic merger arbitrage situation with capped upside of $0.23 per share (0.9%) but substantial downside risk if the deal fails. Multiple law firms are investigating the deal adequacy, suggesting potential shareholder opposition. The negative asymmetry of risking ~$2-4 to make $0.23 creates an unfavorable risk/reward profile for unhedged positions.",
+      "recommendation": "HOLD",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": false,
-          "description": "No CEO or board changes detected.",
-          "evidence": "Current management team remains intact with CEO Sandeep Sahai leading strong execution."
+          "description": "No evidence of CEO changes, board refreshes, or activist pressure detected.",
+          "evidence": "Management appears stable with CEO Sandeep Sahai continuing in role."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Company has completed strategic acquisitions of Enfusion, Beacon, and Bistro, expanding TAM to $23B and creating integrated investment management platform.",
-          "evidence": "Q3 2025 earnings call: 'TAM has grown to roughly $23 billion and is balanced across geographies and markets' and successful integration showing margin expansion."
+          "description": "Company agreed to be acquired by Warburg Pincus LLC in a going-private transaction.",
+          "evidence": "Buyout agreement announced with shareholder meeting scheduled for May 6, 2026 to vote on the transaction at $24.55 per share."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": true,
-          "description": "Active buyout by Warburg Pincus at $24.55 per share with shareholder vote scheduled for May 6, 2026. Multiple law firms investigating adequacy of buyout price.",
-          "evidence": "April 18, 2026 news: 'Kaskela Law Seeks Additional Compensation for Clearwater Analytics Holdings (CWAN) Shareholders Subject to Buyout' and 'Scott+Scott Attorneys at Law LLP Investigates Clearwater Analytics Holdings, Inc.'s Directors for Breach of Fiduciary Duties'"
+          "description": "Private equity buyout proposal by Warburg Pincus at $24.55 per share has been announced and is pending shareholder approval.",
+          "evidence": "Scott+Scott and Kaskela Law firms investigating whether the $24.55 buyout price is adequate, with shareholder vote scheduled for May 6, 2026."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "High",
-          "analysis": "Immediate hard catalyst with buyout vote on May 6, 2026 plus ongoing legal challenges that could force higher bids or competing offers within weeks."
+          "rating": "Medium",
+          "analysis": "Primary catalyst is the pending shareholder vote on May 6, 2026. No additional hard catalysts beyond deal completion timeline."
         },
         "sum_of_parts": {
-          "detected": true,
-          "analysis": "Company trading at significant discount with buyout at $24.55 vs current price $24.32, despite 77% revenue growth, 34.5% EBITDA margins, successful integration of acquisitions, and $23B TAM expansion suggesting intrinsic value well above current levels."
+          "detected": false,
+          "analysis": "Not applicable for single-business SaaS company in announced buyout situation."
         },
         "activism_potential": {
           "rating": "Active",
-          "analysis": "Multiple law firms actively challenging buyout price adequacy with Kaskela Law and Scott+Scott investigating breach of fiduciary duties, creating pressure for higher offers or competing bids."
+          "analysis": "Multiple law firms (Scott+Scott, Kaskela Law) are actively investigating the deal and seeking additional compensation for shareholders, indicating potential opposition to the buyout price."
         },
         "risk_reward": {
-          "ratio": "1.1:1",
-          "analysis": "Limited upside to $24.55 buyout price (0.9% from current $24.32) vs minimal downside given legal floor and strong fundamentals, but potential for competing bids or increased offer."
+          "ratio": "-6.4:1",
+          "analysis": "Severe negative asymmetry with $0.23 upside to deal price vs potential $2-4+ downside if deal breaks and stock reverts toward pre-announcement levels."
         }
       },
       "options_signals": {
-        "iv_current": null,
-        "skew_25d": null,
-        "term_structure": null,
-        "pc_oi_ratio": null,
-        "total_oi": null,
+        "iv_current": 0.2768,
+        "skew_25d": 0.0342,
+        "term_structure": "contango",
+        "pc_oi_ratio": 0.235,
+        "total_oi": 86677,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "No options data available",
-        "overall_interpretation": "Options market data unavailable, likely due to merger arbitrage situation limiting options activity."
+        "market_sentiment_flag": "Put skew reflects deal-break risk",
+        "overall_interpretation": "Elevated put skew and put positioning in a confirmed merger arb reflect deal-break risk hedging rather than bullish sentiment."
       },
       "recent_events": [
         {
           "date": "2026-05-07",
           "type": "news",
           "title": "Clearwater Analytics Announces First Quarter 2026 Financial Results",
-          "link": "earnings_release"
+          "link": "earnings"
         },
         {
           "date": "2026-04-18",
           "type": "news",
           "title": "Kaskela Law Seeks Additional Compensation for Clearwater Analytics Holdings (CWAN) Shareholders Subject to Buyout",
-          "link": "legal_challenge"
+          "link": "legal"
         },
         {
           "date": "2026-04-16",
           "type": "news",
-          "title": "Scott+Scott Attorneys at Law LLP Investigates Clearwater Analytics Holdings, Inc.'s Directors for Breach of Fiduciary Duties",
-          "link": "fiduciary_investigation"
+          "title": "Scott+Scott Investigates Clearwater Analytics Holdings Directors for Breach of Fiduciary Duties",
+          "link": "legal"
         }
       ]
     }
@@ -34864,6 +34899,73 @@
           "link": "https://..."
         }
       ]
+    }
+  },
+  "MAFP": {
+    "timestamp": "2026-05-26T12:32:30.521546",
+    "data": {
+      "symbol": "MAFP",
+      "company_name": "MAFP",
+      "price": 0.0,
+      "market_cap": 0,
+      "is_merger_arb": false,
+      "merger_arb_data": null,
+      "catalyst_density_score": 1.0,
+      "upside_downside_ratio": 0.0,
+      "re_rate_status": "pending",
+      "catalyst_nature": "pricing_dislocation",
+      "catalyst_nature_rationale": "No identifiable catalysts or corporate events detected due to lack of available data.",
+      "analysis_summary": "MAFP presents an uninvestable situation from an event-driven perspective due to complete absence of fundamental data, SEC filings, news flow, and options market activity. The ticker appears to be either delisted, extremely illiquid, or incorrectly referenced, providing no basis for catalyst identification or risk assessment.",
+      "recommendation": "SELL",
+      "bloom_catalysts": {
+        "catalyst_1": {
+          "title": "Governance Reset",
+          "detected": false,
+          "description": "No governance changes or activist activity detected.",
+          "evidence": "No SEC filings or news available to confirm leadership transitions or shareholder activism."
+        },
+        "catalyst_2": {
+          "title": "Strategic Process",
+          "detected": false,
+          "description": "No strategic review or corporate restructuring activity identified.",
+          "evidence": "No SEC filings or announcements regarding asset sales, spinoffs, or strategic committees."
+        },
+        "catalyst_3": {
+          "title": "Premium Scenario Activated",
+          "detected": false,
+          "description": "No takeover activity or hostile situations detected.",
+          "evidence": "No merger announcements, proxy contests, or buyout proposals identified."
+        }
+      },
+      "loeb_criteria": {
+        "catalyst_density": {
+          "rating": "Low",
+          "analysis": "No identifiable hard catalysts within 12-24 months due to complete absence of corporate disclosure and market activity."
+        },
+        "sum_of_parts": {
+          "detected": false,
+          "analysis": "Cannot assess conglomerate discount or subsidiary valuations due to lack of financial data and business segment information."
+        },
+        "activism_potential": {
+          "rating": "None",
+          "analysis": "No activist footprint detected and no clear opportunities for activist engagement given the lack of market presence and disclosure."
+        },
+        "risk_reward": {
+          "ratio": "0.0:1",
+          "analysis": "Cannot evaluate risk-reward profile due to absence of price targets, support levels, and fundamental catalysts."
+        }
+      },
+      "options_signals": {
+        "iv_current": null,
+        "skew_25d": null,
+        "term_structure": null,
+        "pc_oi_ratio": null,
+        "total_oi": null,
+        "implied_earnings_move_pct": null,
+        "market_sentiment_flag": "No positioning detected",
+        "overall_interpretation": "No options market activity suggests either delisting or extreme illiquidity, providing no catalyst timing signals."
+      },
+      "recent_events": []
     }
   }
 }

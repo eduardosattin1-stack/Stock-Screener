@@ -1143,14 +1143,21 @@ export default function Dashboard(){
               </div>
               
               {METHODOLOGIES_CONFIG.map(basket => {
-                const activeTickers = methodologyPicks[basket.path] || [];
+                const shortKey = basket.path.split("/").pop() || "";
+                const trackedMeth = trackingData?.methodologies?.[shortKey];
+                const activeTickers = trackedMeth?.current_holdings?.length 
+                  ? trackedMeth.current_holdings.map((h: any) => h.symbol)
+                  : (methodologyPicks[basket.path] || []);
+                const ytdReturn = trackedMeth?.ytd_return;
                 if (activeTickers.length === 0) return null;
                 
                 return (
                   <div key={basket.path} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>{basket.name}</h3>
-                      <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{activeTickers.length} symbols</span>
+                      <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                        {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD)</span>}
+                      </span>
                     </div>
                     
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>

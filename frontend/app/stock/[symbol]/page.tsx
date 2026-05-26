@@ -3705,7 +3705,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
 
   // Dynamic merger arb math calculation based on customAcquirerPrice input
   const mergerArbComputed = useMemo(() => {
-    if (!report || !report.is_merger_arb || !report.merger_arb_data) return null;
+    if (!report || (!report.is_merger_arb && !report.merger_arb_data) || !report.merger_arb_data) return null;
     
     const data = report.merger_arb_data;
     const isPE = !data.acquirer_symbol || data.acquirer_symbol === "CASH" || data.acquirer_symbol === "NONE";
@@ -3900,7 +3900,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
       </Card>
 
       {/* MERGER ARBITRAGE CARD (DYNAMIC MATH & RISK) */}
-      {report.is_merger_arb && report.merger_arb_data && mergerArbComputed && (
+      {report.merger_arb_data && mergerArbComputed && (
         <Card style={{ 
           background: "linear-gradient(135deg, rgba(20,184,122,0.04) 0%, rgba(59,130,246,0.04) 100%)", 
           border: `1px solid ${T.cardBorder || "var(--border)"}`, 
