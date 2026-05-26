@@ -534,9 +534,10 @@ def build_methodology_tracking(
                 if price_now is None:
                     ph = all_price_cache.get(sym, {})
                     price_now = _get_price_on_date(ph, date_str)
-                if price_now is not None and info["entry_price"] > 0:
+                price_start = info.get("period_start_price", info["entry_price"])
+                if price_now is not None and price_start > 0:
                     stock_returns.append(
-                        (price_now - info["entry_price"]) / info["entry_price"]
+                        (price_now - price_start) / price_start
                     )
             if stock_returns:
                 period_ret = sum(stock_returns) / len(stock_returns)
@@ -547,8 +548,13 @@ def build_methodology_tracking(
         for p in portfolio:
             sym = p["symbol"]
             if sym in prev_holdings:
-                # Continuing: preserve original entry
-                new_holdings[sym] = prev_holdings[sym]
+                # Continuing: preserve original entry, but set period start price
+                new_holdings[sym] = {
+                    "entry_price": prev_holdings[sym]["entry_price"],
+                    "entry_date": prev_holdings[sym]["entry_date"],
+                    "entry_metric": prev_holdings[sym]["entry_metric"],
+                    "period_start_price": p["price"],
+                }
             else:
                 # New entry
                 entry_metric = _lookup_metric_on_date(sym, date_str, methodology_key, parquet_df, gcs_scans)
@@ -556,6 +562,7 @@ def build_methodology_tracking(
                     "entry_price": p["price"],
                     "entry_date": date_str,
                     "entry_metric": round(entry_metric, 4),
+                    "period_start_price": p["price"],
                 }
         prev_holdings = new_holdings
 
@@ -573,10 +580,11 @@ def build_methodology_tracking(
         for sym, info in prev_holdings.items():
             ph = all_price_cache.get(sym, {})
             latest = _latest_price(ph)
-            if latest and info["entry_price"] > 0:
+            price_start = info.get("period_start_price", info["entry_price"])
+            if latest and price_start > 0:
                 _, close = latest
                 stock_returns_final.append(
-                    (close - info["entry_price"]) / info["entry_price"]
+                    (close - price_start) / price_start
                 )
         if stock_returns_final:
             final_period_ret = sum(stock_returns_final) / len(stock_returns_final)

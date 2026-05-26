@@ -1819,7 +1819,7 @@ export default function Dashboard(){
 
         METHODOLOGIES_CONFIG.forEach(basket => {
 
-          const shortKey = basket.path.split("/").pop() || "";
+          const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
 
           const picksList = d.methodologies[shortKey]?.picks || [];
 
@@ -2311,7 +2311,7 @@ export default function Dashboard(){
 
               {METHODOLOGIES_CONFIG.map(basket => {
 
-                const shortKey = basket.path.split("/").pop() || "";
+                const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
 
                 const trackedMeth = trackingData?.methodologies?.[shortKey];
 
@@ -2609,7 +2609,7 @@ export default function Dashboard(){
 
               // Prefer tracked baseline from methodology_tracking.json
 
-              const shortKey = b.path.split("/").pop() || "";
+              const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(b.path);
 
               if (trackingData?.baseline_history?.[String(year)]?.[shortKey] !== undefined) {
 
@@ -2679,7 +2679,7 @@ export default function Dashboard(){
 
               // Prefer backend-tracked YTD return from methodology_tracking.json
 
-              const shortKey = b.path.split("/").pop() || "";
+              const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(b.path);
 
               const methDetails = methodologyDetails[b.path];
 
@@ -2733,7 +2733,7 @@ export default function Dashboard(){
 
             // Prefer tracked holdings from methodology_tracking.json (has 20 positions + entry dates)
 
-            const shortKey = b.path.split("/").pop() || "";
+            const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(b.path);
 
             const trackedMeth = trackingData?.methodologies?.[shortKey];
 
@@ -2904,25 +2904,25 @@ export default function Dashboard(){
 
                          <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
 
-                            <th style={{ paddingBottom: 12, fontWeight: 600 }}>TICKER</th>
+                            <th style={{ padding: "0 8px 12px 8px", fontWeight: 600 }}>TICKER</th>
 
-                            <th style={{ paddingBottom: 12, fontWeight: 600 }}>COMPANY</th>
+                            <th style={{ padding: "0 8px 12px 8px", fontWeight: 600 }}>COMPANY</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "left", fontWeight: 600 }}>ENTRY DATE</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "left", fontWeight: 600 }}>ENTRY DATE</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "left", fontWeight: 600, paddingLeft: 16 }}>EXIT DATE</th>
+                            <th style={{ padding: "0 8px 12px 16px", textAlign: "left", fontWeight: 600,  }}>EXIT DATE</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
 
-                            <th style={{ paddingBottom: 12, textAlign: "center", fontWeight: 600 }}></th>
+                            <th style={{ padding: "0 8px 12px 8px", textAlign: "center", fontWeight: 600 }}></th>
 
                          </tr>
 
@@ -3076,25 +3076,25 @@ export default function Dashboard(){
 
                            <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
 
-                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>TICKER</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "left", fontWeight: 600 }}>TICKER</th>
 
-                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>COMPANY</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "left", fontWeight: 600 }}>COMPANY</th>
 
-                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>ENTRY DATE</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "left", fontWeight: 600 }}>ENTRY DATE</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
 
-                             <th style={{ paddingBottom: 12, fontWeight: 600, paddingLeft: 16 }}>EXIT DATE</th>
+                             <th style={{ padding: "0 8px 12px 16px", textAlign: "left", fontWeight: 600,  }}>EXIT DATE</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
 
-                             <th style={{ paddingBottom: 12, textAlign: "center", fontWeight: 600 }}></th>
+                             <th style={{ padding: "0 8px 12px 8px", textAlign: "center", fontWeight: 600 }}></th>
 
                            </tr>
 
@@ -3228,7 +3228,7 @@ export default function Dashboard(){
 
                   if (!b) return null;
 
-                  const shortKey = b.path.split("/").pop() || "";
+                  const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(b.path);
 
                   const trackedMeth = trackingData?.methodologies?.[shortKey];
 
@@ -3516,7 +3516,7 @@ export default function Dashboard(){
 
                   {baskets.map(basket => {
 
-                    const shortKey = basket.path.split("/").pop() || "";
+                    const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
 
                     const trackedMeth = trackingData?.methodologies?.[shortKey];
 
@@ -4678,7 +4678,7 @@ export default function Dashboard(){
 
                     const isExpanded = !!expandedBaskets[basket.path];
 
-                    const shortKey = basket.path.split("/").pop() || "";
+                    const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
 
                     const trackedMeth = trackingData?.methodologies?.[shortKey];
 
