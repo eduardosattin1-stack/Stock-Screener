@@ -2314,7 +2314,7 @@ export default function Dashboard(){
 
                       <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
 
-                        {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD)</span>}
+                        {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
 
                       </span>
 
@@ -2824,7 +2824,7 @@ export default function Dashboard(){
 
                           <td style={{ padding: "10px 0", color: "var(--purple)", fontWeight: 700 }}>2026</td>
 
-                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Active (Currently Holding)</td>
+                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Tracked (Currently Holding)</td>
 
                           <td style={{ padding: "10px 0", textAlign: "right", color: getActiveBasketPerformance() >= 0 ? "var(--green)" : "var(--red)", fontWeight: 800 }}>
 
@@ -2858,7 +2858,7 @@ export default function Dashboard(){
 
                        <div style={{ display: "flex", gap: 16 }}>
 
-                         <button onClick={() => setMethodTab("holdings")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "holdings" ? "var(--text)" : "var(--text-muted)" }}>Active Holdings</button>
+                         <button onClick={() => setMethodTab("holdings")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "holdings" ? "var(--text)" : "var(--text-muted)" }}>Current Holdings</button>
 
                          <button onClick={() => setMethodTab("speculair")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "speculair" ? "var(--text)" : "var(--text-muted)" }}>Speculair</button>
 
@@ -3244,7 +3244,7 @@ export default function Dashboard(){
 
                           <div style={{ textAlign: "right" }}>
 
-                            <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Total P&L (YTD)</div>
+                            <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Tracked P&L (YTD)</div>
 
                             <div style={{ fontSize: 12, fontWeight: 700, color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
 
@@ -3538,7 +3538,7 @@ export default function Dashboard(){
 
                                   }}>
 
-                                    YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
+                                    Tracked YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
 
                                   </span>
 
@@ -3606,7 +3606,7 @@ export default function Dashboard(){
 
                                   <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)" }}>
 
-                                    <th style={{ paddingBottom: 6, textAlign: "left", fontWeight: 600 }}>MODE</th>
+                                    <th style={{ paddingBottom: 6, textAlign: "left", fontWeight: 600 }}>BACKTEST</th>
 
                                     <th style={{ paddingBottom: 6, paddingLeft: 16, fontWeight: 600 }}>CAGR</th>
 
@@ -3624,7 +3624,7 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text-light)" }}>Baseline</td>
+                                    <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text-light)" }}>Baseline Backtest</td>
 
                                     <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(basket.metrics.baseline.cagr * 100).toFixed(1)}%</td>
 
@@ -3638,7 +3638,7 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active Backtest</td>
 
                                     {basket.metrics.debate.trades === 0 ? (
 
@@ -3664,7 +3664,7 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair Backtest</td>
 
                                     {basket.metrics.director.trades === 0 ? (
 
@@ -3718,13 +3718,13 @@ export default function Dashboard(){
 
                               <Activity size={14} color="var(--text-muted)" />
 
-                              Active Holdings: {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD)</span>}
+                              Current Holdings: {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
 
                             </div>
 
                             <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
 
-                              Expand active picks
+                              Expand current picks
 
                               <ChevronRight size={14} style={{ transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
 
@@ -4752,7 +4752,7 @@ export default function Dashboard(){
 
                                 }}>
 
-                                  YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
+                                  Tracked YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
 
                                 </span>
 
@@ -4832,7 +4832,7 @@ export default function Dashboard(){
 
                                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
 
-                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>MODE</th>
+                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>BACKTEST</th>
 
                                   <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>CAGR</th>
 
@@ -4850,11 +4850,11 @@ export default function Dashboard(){
 
                                 {[
 
-                                  { label: "Baseline", stats: basket.metrics.baseline, color: "var(--text-secondary)" },
+                                  { label: "Baseline Backtest", stats: basket.metrics.baseline, color: "var(--text-secondary)" },
 
-                                  { label: "Active", stats: basket.metrics.debate, color: "var(--text)" },
+                                  { label: "Active Backtest", stats: basket.metrics.debate, color: "var(--text)" },
 
-                                  { label: "Speculair", stats: basket.metrics.director, color: "var(--green)", isBold: true }
+                                  { label: "Speculair Backtest", stats: basket.metrics.director, color: "var(--green)", isBold: true }
 
                                 ].map((row) => (
 
@@ -4952,13 +4952,13 @@ export default function Dashboard(){
 
                             <Activity size={12} color="var(--text-light)" />
 
-                            Active Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong> {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD)</span>}
+                            Current Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong> {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
 
                           </span>
 
                           <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
 
-                            {isExpanded ? "Collapse picks" : "Expand active picks"}
+                            {isExpanded ? "Collapse picks" : "Expand current picks"}
 
                             <ChevronDown size={14} style={{ transform: isExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
 
