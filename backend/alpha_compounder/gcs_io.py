@@ -64,17 +64,30 @@ def gcs_read_json(path: str, bucket: str = GCS_BUCKET) -> Optional[Any]:
     try:
         import requests
         tok = _gcs_token()
-        if not tok:
-            return None
-        r = requests.get(
-            f"https://storage.googleapis.com/{bucket}/{path}",
-            headers={"Authorization": f"Bearer {tok}"}, timeout=15,
-        )
+        url = f"https://storage.googleapis.com/{bucket}/{path}"
+        
+        # 1. Try authenticated read if token is available
+        if tok:
+            try:
+                r = requests.get(
+                    url,
+                    headers={"Authorization": f"Bearer {tok}"}, timeout=15,
+                )
+                if r.status_code == 200:
+                    return r.json()
+                if r.status_code == 404:
+                    return None
+                log.warning(f"GCS auth read {path} failed with status {r.status_code}, attempting public fallback")
+            except Exception as e:
+                log.warning(f"GCS auth read {path} failed: {e}, attempting public fallback")
+                
+        # 2. Fallback to public read (works if bucket objects are publicly accessible)
+        r = requests.get(url, timeout=15)
         if r.status_code == 200:
             return r.json()
         if r.status_code == 404:
             return None
-        log.warning(f"GCS read {path}: {r.status_code}")
+        log.debug(f"GCS public read {path} failed: {r.status_code}")
     except Exception as e:
         log.warning(f"GCS read {path} failed: {e}")
     return None
