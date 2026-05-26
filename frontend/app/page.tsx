@@ -1686,6 +1686,29 @@ const getBasketReturn = (name: string, cagr: number) => {
 
 
 
+const getMetricName = (key: string) => {
+  switch (key) {
+    case "acquirers_multiple": return "EV/EBIT";
+    case "ev_gross_profit": return "GP/TA";
+    case "earnings_yield_gap": return "EY GAP";
+    case "dcf_fcff": return "DCF MOS";
+    case "rd_capitalized_dcf": return "R&D DCF MOS";
+    case "owner_earnings": return "OE MOS";
+    case "epv": return "EPV MOS";
+    case "graham_revised": return "GRAHAM MOS";
+    case "iv15_deep_value": return "IV15 MOS";
+    default: return "METRIC";
+  }
+};
+
+const formatMethodologyMetric = (value: number | null | undefined, key: string) => {
+  if (value == null) return "—";
+  if (key === "acquirers_multiple") {
+    return `${value.toFixed(1)}x`;
+  }
+  return `${(value * 100).toFixed(1)}%`;
+};
+
 export default function Dashboard(){
 
   const router = useRouter();
@@ -2724,13 +2747,18 @@ export default function Dashboard(){
 
                   entry_date: h.entry_date,
 
+                  entry_metric: h.entry_metric,
+
                   price: h.entry_price,
 
                   weight: h.weight,
 
                 }))
 
-              : methodologyDetails[b.path]?.picks || [];
+              : (methodologyDetails[b.path]?.picks || []).map((p: any) => ({
+                  ...p,
+                  entry_metric: p.entry_metric ?? p.mos
+                }));
 
             const exits = trackedMeth?.all_exits_2026 || methodologyDetails[b.path]?.exits || [];
 
@@ -2884,9 +2912,13 @@ export default function Dashboard(){
 
                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
 
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
+
                             <th style={{ paddingBottom: 12, textAlign: "left", fontWeight: 600, paddingLeft: 16 }}>EXIT DATE</th>
 
                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
+
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
 
                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
 
@@ -2912,6 +2944,8 @@ export default function Dashboard(){
 
                             const perfPct = entryPriceVal > 0 ? ((currPrice - entryPriceVal) / entryPriceVal) * 100 : 0;
 
+                            const entryMetricVal = pick.entry_metric;
+
 
 
                             return (
@@ -2926,9 +2960,13 @@ export default function Dashboard(){
 
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{entryPriceVal > 0 ? `$${entryPriceVal.toFixed(2)}` : "—"}</td>
 
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{formatMethodologyMetric(entryMetricVal, shortKey)}</td>
+
                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", paddingLeft: 16 }}>—</td>
 
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)" }}>{currPrice > 0 ? `$${currPrice.toFixed(2)}` : "—"}</td>
+
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>—</td>
 
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: entryPriceVal > 0 ? (perfPct >= 0 ? "var(--green)" : "var(--red)") : "var(--text-muted)", fontWeight: 700 }}>{entryPriceVal > 0 ? `${perfPct >= 0 ? "+" : ""}${perfPct.toFixed(1)}%` : "—"}</td>
 
@@ -3046,9 +3084,13 @@ export default function Dashboard(){
 
                              <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
 
+                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (ENTRY)</th>
+
                              <th style={{ paddingBottom: 12, fontWeight: 600, paddingLeft: 16 }}>EXIT DATE</th>
 
                              <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>CURRENT/EXIT PRICE</th>
+
+                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMetricName(shortKey)} (EXIT)</th>
 
                              <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
 
@@ -3066,6 +3108,10 @@ export default function Dashboard(){
 
                              const perfPct = ((exit.performance ?? exit.return) || 0) * 100;
 
+                             const entryMetricVal = exit.entry_metric;
+
+                             const exitMetricVal = exit.exit_metric;
+
                              return (
 
                                <tr key={`${exit.symbol}-${exit.exit_date}`} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, exit.symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
@@ -3078,9 +3124,13 @@ export default function Dashboard(){
 
                                  <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>${exit.entry_price ? exit.entry_price.toFixed(2) : "—"}</td>
 
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>{formatMethodologyMetric(entryMetricVal, shortKey)}</td>
+
                                  <td style={{ padding: "14px 8px", color: "var(--text-muted)", paddingLeft: 16 }}>{exit.exit_date}</td>
 
                                  <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>${exit.exit_price ? exit.exit_price.toFixed(2) : "—"}</td>
+
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>{formatMethodologyMetric(exitMetricVal, shortKey)}</td>
 
                                  <td style={{ padding: "14px 8px", textAlign: "right", color: perfPct >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{perfPct >= 0 ? "+" : ""}{perfPct.toFixed(1)}%</td>
 

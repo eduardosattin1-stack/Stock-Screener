@@ -76,6 +76,19 @@ MOS_FIELD_MAP: dict[str, str] = {
     "iv15_deep_value":     "iv15_deep_value_mos",
 }
 
+METHODOLOGY_METRIC_MAP: dict[str, str] = {
+    "dcf_fcff":            "dcf_fcff_mos",
+    "earnings_yield_gap":  "ey_gap",
+    "ev_gross_profit":     "gp_ta",
+    "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
+    "owner_earnings":      "owner_earnings_mos",
+    "epv":                 "epv_mos",
+    "graham_revised":      "graham_revised_mos",
+    "acquirers_multiple":  "acquirers_multiple",
+    "iv15_deep_value":     "iv15_deep_value_mos",
+}
+
+
 PARQUET_DATES = ["2026-01-26", "2026-02-23", "2026-03-30"]
 
 GCS_SP500_FILES = [
@@ -194,6 +207,38 @@ def _passes_leverage_gate(net_debt: float | None, ebitda: float | None) -> bool:
     if ebitda <= 0:
         return net_debt <= 0
     return (net_debt / ebitda) < LEVERAGE_LIMIT
+
+
+def _lookup_metric_on_date(
+    symbol: str,
+    date_str: str,
+    methodology_key: str,
+    parquet_df: pd.DataFrame | None,
+    gcs_scans: dict[str, list[dict]],
+) -> float:
+    """
+    Look up a stock's raw ranking metric value on a specific date.
+    """
+    metric_field = METHODOLOGY_METRIC_MAP[methodology_key]
+    
+    # If it is in parquet
+    if date_str in PARQUET_DATES and parquet_df is not None:
+        snap = parquet_df[(parquet_df["as_of_date"] == date_str) & (parquet_df["symbol"] == symbol)]
+        if not snap.empty:
+            val_field = metric_field
+            if val_field not in snap.columns:
+                val_field = "margin_of_safety"
+            return float(snap.iloc[0][val_field])
+            
+    # If it is in GCS scans
+    elif date_str in gcs_scans:
+        stocks = gcs_scans[date_str]
+        for s in stocks:
+            if s["symbol"] == symbol:
+                return float(s.get(metric_field, s.get("margin_of_safety", 0.0)))
+                
+    return 0.0
+
 
 
 # ──────────────────────── Data Loading ──────────────────────── #
@@ -452,12 +497,18 @@ def build_methodology_tracking(
                 else:
                     ret = 0.0
                     exit_price = exit_price or 0.0
+                
+                # Look up specific exit metric at the exit date
+                exit_metric = _lookup_metric_on_date(sym, date_str, methodology_key, parquet_df, gcs_scans)
+                
                 exit_record = {
                     "symbol": sym,
                     "entry_price": info["entry_price"],
                     "entry_date": info["entry_date"],
+                    "entry_metric": round(info.get("entry_metric", 0.0), 4),
                     "exit_price": round(exit_price, 2),
                     "exit_date": date_str,
+                    "exit_metric": round(exit_metric, 4),
                     "return": round(ret, 4),
                 }
                 exits.append(exit_record)
@@ -466,10 +517,12 @@ def build_methodology_tracking(
         # Entries: stocks in current but not in prev_holdings
         for sym in current_symbols:
             if sym not in prev_holdings:
+                entry_metric = _lookup_metric_on_date(sym, date_str, methodology_key, parquet_df, gcs_scans)
                 entries.append({
                     "symbol": sym,
                     "price": current_prices[sym],
                     "date": date_str,
+                    "entry_metric": round(entry_metric, 4),
                 })
 
         # Compute period return for the PREVIOUS period (if there was one)
@@ -498,9 +551,11 @@ def build_methodology_tracking(
                 new_holdings[sym] = prev_holdings[sym]
             else:
                 # New entry
+                entry_metric = _lookup_metric_on_date(sym, date_str, methodology_key, parquet_df, gcs_scans)
                 new_holdings[sym] = {
                     "entry_price": p["price"],
                     "entry_date": date_str,
+                    "entry_metric": round(entry_metric, 4),
                 }
         prev_holdings = new_holdings
 
@@ -510,6 +565,7 @@ def build_methodology_tracking(
             "entries": entries,
             "exits": exits,
         })
+
 
     # Final period: from last rebalance to latest available price
     if prev_holdings:
@@ -539,8 +595,10 @@ def build_methodology_tracking(
             "symbol": sym,
             "entry_price": info["entry_price"],
             "entry_date": info["entry_date"],
+            "entry_metric": round(info.get("entry_metric", 0.0), 4),
             "weight": EQUAL_WEIGHT,
         })
+
 
     tracking_start = rebalance_dates[0] if rebalance_dates else None
 

@@ -5097,28 +5097,33 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebal
                 entries.append({
                     "symbol": p["symbol"],
                     "price": p["price"],
-                    "date": rebalance_date
+                    "date": rebalance_date,
+                    "entry_metric": p.get("entry_metric", p.get("mos", 0.0))
                 })
 
         # Exits: stocks in previous but not in new portfolio
         exits = []
         for sym, h in prev_holdings.items():
             if sym not in new_syms:
-                # Find exit price from the new picks data (use current price)
+                # Find exit price and exit metric from the new picks data
                 exit_price = h.get("entry_price", 0.0)
+                exit_metric = 0.0
                 for p in meth_data.get("picks", []):
                     if p["symbol"] == sym:
                         exit_price = p["price"]
+                        exit_metric = p.get("mos", 0.0)
                         break
-                # If not in picks, try to find from the current scan's stock list
                 entry_p = h.get("entry_price", exit_price)
+                entry_m = h.get("entry_metric", 0.0)
                 perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
                 exit_rec = {
                     "symbol": sym,
                     "entry_price": round(entry_p, 4),
                     "entry_date": h.get("entry_date", ""),
+                    "entry_metric": round(entry_m, 4),
                     "exit_price": round(exit_price, 4),
                     "exit_date": rebalance_date,
+                    "exit_metric": round(exit_metric, 4),
                     "return": round(perf, 4)
                 }
                 exits.append(exit_rec)
@@ -5137,11 +5142,12 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebal
         for p in picks:
             sym = p["symbol"]
             if sym in prev_holdings:
-                # Carry forward entry price and date
+                # Carry forward entry price, date, and metric
                 new_holdings.append({
                     "symbol": sym,
                     "entry_price": prev_holdings[sym]["entry_price"],
                     "entry_date": prev_holdings[sym]["entry_date"],
+                    "entry_metric": prev_holdings[sym].get("entry_metric", p.get("entry_metric", p.get("mos", 0.0))),
                     "weight": round(weight, 4)
                 })
             else:
@@ -5149,6 +5155,7 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebal
                     "symbol": sym,
                     "entry_price": round(p["price"], 4),
                     "entry_date": rebalance_date,
+                    "entry_metric": round(p.get("entry_metric", p.get("mos", 0.0)), 4),
                     "weight": round(weight, 4)
                 })
 
@@ -5161,6 +5168,7 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebal
         })
         meth_track["current_holdings"] = new_holdings
         meth_track["rebalance_count"] = len(meth_track["rebalances"])
+
 
         # Recompute YTD return by chaining period returns
         # Each period: from rebalance[i] to rebalance[i+1]
@@ -5327,8 +5335,8 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                     return portfolio
         return None
 
-    # Load previous picks to maintain entry_price and entry_date
-    prev_picks_map = {} # methodology_path -> ticker -> {entry_price, entry_date}
+    # Load previous picks to maintain entry_price, entry_date, and entry_metric
+    prev_picks_map = {} # methodology_path -> ticker -> {entry_price, entry_date, entry_metric}
     local_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public", "methodology_picks.json")
     try:
         if os.path.exists(local_path):
@@ -5341,8 +5349,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                             if "symbol" in p:
                                 prev_picks_map[meth_path][p["symbol"]] = {
                                     "entry_price": p.get("entry_price"),
-                                    "entry_date": p.get("entry_date")
+                                    "entry_date": p.get("entry_date"),
+                                    "entry_metric": p.get("entry_metric")
                                 }
+
     except Exception as e:
         log.warning(f"Failed to read previous picks: {e}")
 
@@ -5356,6 +5366,18 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "graham_revised": ("graham_revised_mos", "graham_revised"),
         "acquirers_multiple": ("acquirers_multiple_mos", None),
         "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value")
+    }
+
+    methodology_metrics = {
+        "dcf_fcff":            "dcf_fcff_mos",
+        "earnings_yield_gap":  "ey_gap",
+        "ev_gross_profit":     "gp_ta",
+        "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
+        "owner_earnings":      "owner_earnings_mos",
+        "epv":                 "epv_mos",
+        "graham_revised":      "graham_revised_mos",
+        "acquirers_multiple":  "acquirers_multiple",
+        "iv15_deep_value":     "iv15_deep_value_mos",
     }
 
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -5381,6 +5403,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
             portfolio = []
             
         portfolio_symbols = set(s.symbol for s in portfolio)
+        metric_field = methodology_metrics[key]
         
         # Load previous exits to keep history of recent exits
         prev_exits = []
@@ -5396,18 +5419,23 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
             for old_sym, old_val in prev_picks_map[key].items():
                 if old_sym not in portfolio_symbols:
                     exit_price = old_val.get("entry_price") or 0.0
+                    exit_metric = 0.0
                     for s in all_results:
                         if s.symbol == old_sym:
                             exit_price = s.price
+                            exit_metric = getattr(s, metric_field, 0.0)
                             break
                     entry_p = old_val.get("entry_price") or exit_price
+                    entry_m = old_val.get("entry_metric") or 0.0
                     perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
                     new_exits.append({
                         "symbol": old_sym,
                         "entry_price": round(entry_p, 4),
                         "entry_date": old_val.get("entry_date") or today_str,
+                        "entry_metric": round(entry_m, 4),
                         "exit_price": round(exit_price, 4),
                         "exit_date": today_str,
+                        "exit_metric": round(exit_metric, 4),
                         "performance": round(perf, 4)
                     })
                     
@@ -5427,6 +5455,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         total_mos = 0.0
         for s in portfolio:
             mos_val = getattr(s, mos_field)
+            raw_metric = getattr(s, metric_field, 0.0)
             if fv_field:
                 fv_val = getattr(s, fv_field)
             else:
@@ -5434,13 +5463,17 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 
             entry_p = s.price
             entry_d = today_str
+            entry_m = raw_metric
             if key in prev_picks_map and s.symbol in prev_picks_map[key]:
                 old_p = prev_picks_map[key][s.symbol].get("entry_price")
                 old_d = prev_picks_map[key][s.symbol].get("entry_date")
+                old_m = prev_picks_map[key][s.symbol].get("entry_metric")
                 if old_p is not None:
                     entry_p = old_p
                 if old_d is not None:
                     entry_d = old_d
+                if old_m is not None:
+                    entry_m = old_m
                 
             picks.append({
                 "symbol": s.symbol,
@@ -5449,6 +5482,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 "price": round(s.price, 4),
                 "entry_price": round(entry_p, 4),
                 "entry_date": entry_d,
+                "entry_metric": round(entry_m, 4),
                 "fair_value": round(fv_val, 4),
                 "sector": s.sector or "Unknown"
             })
@@ -5460,6 +5494,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
             "exits": final_exits,
             "average_mos": round(avg_mos, 4)
         }
+
 
     # -----------------------------------------------------------------------
     # Paper-trading tracker: append rebalance, compute YTD, enrich picks
