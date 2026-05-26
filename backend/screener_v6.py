@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Stock Screener v7.2 — 13-Factor Honest Scoring + Composite-Band Signals 
+Stock Screener v7.2 — 13-Factor Honest Scoring + Composite-Band Signals (Pipeline Tested)
 Architecture: Two-pass (cheap screen → expensive enrichment)
 
 Changes from v7.1:
