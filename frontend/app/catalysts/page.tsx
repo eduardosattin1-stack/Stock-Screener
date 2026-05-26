@@ -105,12 +105,20 @@ interface CatalystScanReport {
   } | null;
 }
 
+interface ScoreAdjustment {
+  factor: string;
+  adjustment: number;
+  reason: string;
+}
+
 interface Candidate {
   symbol: string;
   name: string;
   price: number | null;
   market_cap: number | null;
   catalyst_score: number;
+  adjusted_loeb_score?: number;
+  score_adjustments?: ScoreAdjustment[];
   flags: string[];
   has_special_flag: boolean;
   categories?: string[];
@@ -158,15 +166,15 @@ export default function CatalystWatch() {
   const propagateScoreUpdate = (symbol: string, newScore: number) => {
     const sym = symbol.toUpperCase().trim();
     setCandidates((prev) => 
-      prev.map((c) => c.symbol === sym ? { ...c, catalyst_score: newScore, is_scanned: true } : c)
+      prev.map((c) => c.symbol === sym ? { ...c, catalyst_score: newScore, adjusted_loeb_score: newScore, is_scanned: true } : c)
     );
     setWatchlist((prev) => {
-      const updated = prev.map((w) => w.symbol === sym ? { ...w, catalyst_score: newScore, is_scanned: true } : w);
+      const updated = prev.map((w) => w.symbol === sym ? { ...w, catalyst_score: newScore, adjusted_loeb_score: newScore, is_scanned: true } : w);
       localStorage.setItem("catalyst_watchlist", JSON.stringify(updated));
       return updated;
     });
     setRecentScans((prev) => 
-      prev.map((r) => r.symbol === sym ? { ...r, catalyst_score: newScore, is_scanned: true } : r)
+      prev.map((r) => r.symbol === sym ? { ...r, catalyst_score: newScore, adjusted_loeb_score: newScore, is_scanned: true } : r)
     );
   };
 
@@ -298,10 +306,10 @@ export default function CatalystWatch() {
     return result;
   }, [recentScans, watchlist, showMergerArbs]);
 
-  // Filter watchlist to isolate or exclude merger arbs based on toggle
+  // Filter watchlist to include or exclude merger arbs based on toggle
   const filteredWatchlist = useMemo(() => {
     if (showMergerArbs) {
-      return watchlist.filter(w => w.is_merger_arb);
+      return watchlist;
     } else {
       return watchlist.filter(w => !w.is_merger_arb);
     }
@@ -319,10 +327,8 @@ export default function CatalystWatch() {
       );
     }
     
-    // Merger Arb Filter: Isolate (if true) or Exclude (if false)
-    if (showMergerArbs) {
-      result = result.filter(cand => cand.is_merger_arb);
-    } else {
+    // Merger Arb Filter: Include all (if true) or Exclude (if false)
+    if (!showMergerArbs) {
       result = result.filter(cand => !cand.is_merger_arb);
     }
     
@@ -334,8 +340,8 @@ export default function CatalystWatch() {
       } else if (sortField === "mcap") {
         return (b.market_cap || 0) - (a.market_cap || 0);
       } else {
-        // Default: score (Loeb Score)
-        return (b.catalyst_score || 0) - (a.catalyst_score || 0);
+        // Default: score (Adjusted Loeb Score, fallback to raw)
+        return (b.adjusted_loeb_score ?? b.catalyst_score ?? 0) - (a.adjusted_loeb_score ?? a.catalyst_score ?? 0);
       }
     });
     
@@ -502,25 +508,42 @@ export default function CatalystWatch() {
               <span style={{ fontSize: 10, fontFamily: T.mono, padding: "1px 5px", borderRadius: 4, background: (cand.rr_ratio || (cand.upside && cand.upside > 0.15)) ? "rgba(20,184,122,0.18)" : "rgba(255,255,255,0.05)", color: (cand.rr_ratio || (cand.upside && cand.upside > 0.15)) ? T.green : T.muted }} title="Asymmetry (R/R or Upside)">
                 {cand.rr_ratio ? `R/R: ${cand.rr_ratio.toFixed(1)}:1` : cand.upside ? `Upside: +${(cand.upside * 100).toFixed(0)}%` : "R/R: —"}
               </span>
-            ) : (
-              <span 
-                style={{ 
-                  fontSize: 10, 
-                  fontFamily: T.mono, 
-                  padding: "1px 5px", 
-                  borderRadius: 4, 
-                  background: cand.is_scanned 
-                    ? (cand.catalyst_score >= 7.5 ? "rgba(168,85,247,0.18)" : "rgba(255,255,255,0.05)")
-                    : "rgba(255,255,255,0.03)", 
-                  color: cand.is_scanned 
-                    ? (cand.catalyst_score >= 7.5 ? T.purple : T.light) 
-                    : T.muted 
-                }} 
-                title={cand.is_scanned ? "Loeb Score (Deep Scanned)" : "Loeb Score (Heuristic Estimate)"}
-              >
-                Loeb: {cand.catalyst_score.toFixed(1)}{cand.is_scanned ? "" : "*"}
-              </span>
-            )}
+            ) : (() => {
+                const displayScore = cand.adjusted_loeb_score ?? cand.catalyst_score;
+                const hasDivergence = cand.adjusted_loeb_score != null && Math.abs(cand.adjusted_loeb_score - cand.catalyst_score) >= 1.0;
+                const adjustmentTooltip = cand.score_adjustments?.map(a => `${a.factor}: ${a.adjustment > 0 ? '+' : ''}${a.adjustment.toFixed(1)} (${a.reason})`).join('\n') || '';
+                return (
+                  <span 
+                    style={{ 
+                      fontSize: 10, 
+                      fontFamily: T.mono, 
+                      padding: "1px 5px", 
+                      borderRadius: 4, 
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 3,
+                      background: cand.is_scanned 
+                        ? (displayScore >= 7.5 ? "rgba(168,85,247,0.18)" : "rgba(255,255,255,0.05)")
+                        : "rgba(255,255,255,0.03)", 
+                      color: cand.is_scanned 
+                        ? (displayScore >= 7.5 ? T.purple : T.light) 
+                        : T.muted 
+                    }} 
+                    title={adjustmentTooltip ? `Score Adjustments:\n${adjustmentTooltip}` : (cand.is_scanned ? "Loeb Score (Deep Scanned)" : "Loeb Score (Heuristic Estimate)")}
+                  >
+                    {hasDivergence ? (
+                      <>
+                        <span style={{ textDecoration: "line-through", opacity: 0.5 }}>{cand.catalyst_score.toFixed(1)}</span>
+                        <span>→</span>
+                        <span style={{ fontWeight: 600 }}>{displayScore.toFixed(1)}</span>
+                        <AlertTriangle size={10} style={{ color: T.amber, flexShrink: 0 }} />
+                      </>
+                    ) : (
+                      <>{displayScore.toFixed(1)}{cand.is_scanned ? "" : "*"}</>
+                    )}
+                  </span>
+                );
+              })()}
             {listType === "watchlist" && (
               <button
                 onClick={(e) => {

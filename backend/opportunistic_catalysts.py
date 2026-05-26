@@ -110,6 +110,137 @@ def _gcs_read(path: str, default=None):
         log.debug(f"GCS read failed for {path}: {e}")
     return default
 
+def compute_confidence_adjusted_score(
+    symbol: str,
+    raw_score: float,
+    stock_data: dict,
+    cached_scan: dict = None,
+) -> dict:
+    """
+    Adjust LLM-derived catalyst score with quantitative signals.
+
+    Args:
+        symbol: ticker symbol
+        raw_score: catalyst_score on 0-10 scale
+        stock_data: the stock dict from latest_global.json
+        cached_scan: deep scan cache data (or empty dict)
+
+    Returns:
+        {"adjusted_loeb_score": float, "score_adjustments": [...]}
+    """
+    if cached_scan is None:
+        cached_scan = {}
+
+    adjustments = []
+
+    # ── Factor 1: 52-Week Position (±0.8 points) ──
+    proximity = stock_data.get("proximity_52wk", 0.5)
+    if proximity is None:
+        proximity = 0.5
+    if proximity < 0.30 and raw_score >= 6.0:
+        adjustments.append({
+            "factor": "52w_position",
+            "adjustment": 0.8,
+            "reason": f"Near 52w low ({proximity:.0%}) with strong catalyst — deep value dislocation",
+        })
+    elif proximity < 0.40 and raw_score >= 5.0:
+        adjustments.append({
+            "factor": "52w_position",
+            "adjustment": 0.4,
+            "reason": f"Below 52w midpoint ({proximity:.0%}) with moderate catalyst",
+        })
+    elif proximity > 0.90:
+        adjustments.append({
+            "factor": "52w_position",
+            "adjustment": -0.4,
+            "reason": f"Near 52w high ({proximity:.0%}) — limited incremental re-rate",
+        })
+
+    # ── Factor 2: Momentum Cross-Check (±0.6 points) ──
+    bull = stock_data.get("bull_score", 5)
+    if bull is None:
+        bull = 5
+    re_rate = cached_scan.get("re_rate_status")
+    if bull >= 8 and re_rate == "pending":
+        adjustments.append({
+            "factor": "momentum_crosscheck",
+            "adjustment": -0.6,
+            "reason": f"Bull score {bull}/10 but re-rate 'pending' — momentum may overstate opportunity",
+        })
+    elif bull <= 2 and re_rate == "pending" and raw_score >= 6.0:
+        adjustments.append({
+            "factor": "momentum_crosscheck",
+            "adjustment": 0.3,
+            "reason": f"Weak momentum (bull={bull}) with pending catalyst — contrarian value",
+        })
+
+    # ── Factor 3: Options Confirmation (±0.6 points) ──
+    term_structure = stock_data.get("options_term_structure") or ""
+    skew = stock_data.get("options_skew_25d") or 0.0
+    if skew is None:
+        skew = 0.0
+    is_merger_arb = cached_scan.get("is_merger_arb", False)
+
+    options_adj = 0.0
+    options_reasons = []
+    if term_structure == "backwardation":
+        options_adj += 0.4
+        options_reasons.append("Term structure backwardation (near-term catalyst priced)")
+    if isinstance(skew, (int, float)) and skew > 0.03:
+        if not is_merger_arb:
+            options_adj += 0.2
+            options_reasons.append(f"Positive put skew ({skew:.3f}) on non-merger setup")
+        else:
+            options_adj -= 0.2
+            options_reasons.append(f"Put skew ({skew:.3f}) on merger arb = deal-break risk")
+    if options_adj != 0.0 or options_reasons:
+        adjustments.append({
+            "factor": "options_confirmation",
+            "adjustment": round(options_adj, 2),
+            "reason": "; ".join(options_reasons) if options_reasons else "No significant options signal",
+        })
+
+    # ── Factor 4: Analyst Consensus (±0.5 points) ──
+    target = stock_data.get("target")
+    price = stock_data.get("price")
+    grade_buy = stock_data.get("grade_buy", 0) or 0
+    grade_total = stock_data.get("grade_total", 0) or 0
+
+    analyst_adj = 0.0
+    analyst_reasons = []
+    if price and target and isinstance(price, (int, float)) and isinstance(target, (int, float)) and price > 0:
+        consensus_upside = (target - price) / price
+        if consensus_upside > 0.30:
+            analyst_adj += 0.3
+            analyst_reasons.append(f"Analyst consensus upside {consensus_upside:.0%} (>30%)")
+        elif consensus_upside > 0.15:
+            analyst_adj += 0.15
+            analyst_reasons.append(f"Analyst consensus upside {consensus_upside:.0%} (>15%)")
+        elif consensus_upside < -0.10:
+            analyst_adj -= 0.3
+            analyst_reasons.append(f"Analyst consensus downside {consensus_upside:.0%} (<-10%)")
+
+    if grade_total > 0 and grade_buy / grade_total > 0.7:
+        analyst_adj += 0.2
+        analyst_reasons.append(f"Strong buy ratio ({grade_buy}/{grade_total} = {grade_buy/grade_total:.0%})")
+
+    if analyst_adj != 0.0 or analyst_reasons:
+        adjustments.append({
+            "factor": "analyst_consensus",
+            "adjustment": round(analyst_adj, 2),
+            "reason": "; ".join(analyst_reasons) if analyst_reasons else "No significant analyst signal",
+        })
+
+    # ── Final: clamp to 0-10 ──
+    total_adj = sum(a["adjustment"] for a in adjustments)
+    adjusted = max(0.0, min(10.0, raw_score + total_adj))
+
+    return {
+        "adjusted_loeb_score": round(adjusted, 2),
+        "score_adjustments": adjustments,
+    }
+
+
 def get_catalyst_candidates() -> List[Dict]:
     """Find candidates from the latest scan file (GCS first, then local fallback)."""
     # 1. Try GCS
@@ -162,6 +293,7 @@ def get_catalyst_candidates() -> List[Dict]:
         rr_ratio = None
         is_scanned = False
         is_merger_arb = False
+        cached_data = {}
         if sym in cache:
             cached_data = cache[sym].get("data", {})
             refined_score = cached_data.get("catalyst_density_score")
@@ -192,12 +324,23 @@ def get_catalyst_candidates() -> List[Dict]:
             cats.append("Options")
         cats = list(set(cats))
 
+        # Compute confidence-adjusted score
+        raw_cat_score = round(cat_score * 10, 2)
+        adj_result = compute_confidence_adjusted_score(
+            symbol=sym,
+            raw_score=raw_cat_score,
+            stock_data=s,
+            cached_scan=cached_data,
+        )
+
         candidates.append({
             "symbol": sym,
             "name": s.get("company_name") or s.get("name") or "",
             "price": s.get("price"),
             "market_cap": s.get("market_cap"),
-            "catalyst_score": round(cat_score * 10, 2),
+            "catalyst_score": raw_cat_score,
+            "adjusted_loeb_score": adj_result["adjusted_loeb_score"],
+            "score_adjustments": adj_result["score_adjustments"],
             "upside": s.get("upside") or 0.0,
             "rr_ratio": rr_ratio,
             "flags": flags,
@@ -209,9 +352,9 @@ def get_catalyst_candidates() -> List[Dict]:
             "catalyst_nature": s.get("catalyst_nature") or cached_data.get("catalyst_nature") if is_scanned else None
         })
         
-    # Sort candidates by Loeb Score (catalyst_score) descending
-    candidates.sort(key=lambda x: x["catalyst_score"], reverse=True)
-    return candidates[:400]
+    # Sort candidates by adjusted Loeb Score descending (fall back to raw if adjusted missing)
+    candidates.sort(key=lambda x: x.get("adjusted_loeb_score", x["catalyst_score"]), reverse=True)
+    return candidates[:1000]
 
 # ---------------------------------------------------------------------------
 # Data Collectors
@@ -332,7 +475,29 @@ def fetch_options(symbol: str) -> Dict:
     try:
         # Import dynamically to prevent circular import issues
         from massive_options import enrich_stock as options_enrich_stock
-        opt_data = options_enrich_stock(symbol.upper(), composite=1.0, hit_prob=1.0)
+
+        # Fetch next earnings date from FMP to enable implied earnings move calculation
+        earnings_date = None
+        if FMP_KEY:
+            try:
+                r = requests.get(
+                    "https://financialmodelingprep.com/stable/earnings",
+                    params={"symbol": symbol.upper(), "limit": 4, "apikey": FMP_KEY},
+                    timeout=10,
+                )
+                if r.status_code == 200:
+                    today_str = datetime.now().strftime("%Y-%m-%d")
+                    for ev in sorted(r.json(), key=lambda e: e.get("date", "")):
+                        if (ev.get("date") or "") >= today_str:
+                            earnings_date = ev["date"]
+                            break
+            except Exception as e:
+                log.debug(f"Earnings date fetch failed for {symbol}: {e}")
+
+        opt_data = options_enrich_stock(
+            symbol.upper(), composite=1.0, hit_prob=1.0,
+            earnings_date=earnings_date
+        )
         return {
             "iv_current": opt_data.get("iv_current"),
             "skew_25d": opt_data.get("skew_25d"),
