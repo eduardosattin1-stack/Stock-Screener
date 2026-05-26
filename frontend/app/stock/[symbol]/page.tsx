@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
@@ -3613,6 +3613,9 @@ interface CatalystScanReport {
   recent_events: RecentEvent[];
   cache_timestamp?: string;
   is_merger_arb?: boolean;
+  catalyst_nature?: "mechanical_execution" | "pricing_dislocation";
+  catalyst_nature_rationale?: string;
+  re_rate_status?: "pending" | "partial" | "complete";
   merger_arb_data?: {
     acquirer_symbol?: string;
     acquirer_name?: string;
@@ -3634,6 +3637,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
   const [report, setReport] = useState<CatalystScanReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customAcquirerPrice, setCustomAcquirerPrice] = useState<number | "">("");
 
   const fetchReport = useCallback((forceRefresh: boolean = false) => {
     if (!symbol) return;
@@ -3646,6 +3650,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
       })
       .then((data: CatalystScanReport) => {
         setReport(data);
+        setCustomAcquirerPrice(data.merger_arb_data?.acquirer_price ?? "");
         setLoading(false);
       })
       .catch((err) => {
@@ -3697,6 +3702,85 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
         return { color: T.text, backgroundColor: T.card, borderColor: T.cardBorder };
     }
   };
+
+  // Dynamic merger arb math calculation based on customAcquirerPrice input
+  const mergerArbComputed = useMemo(() => {
+    if (!report || !report.is_merger_arb || !report.merger_arb_data) return null;
+    
+    const data = report.merger_arb_data;
+    const isPE = !data.acquirer_symbol || data.acquirer_symbol === "CASH" || data.acquirer_symbol === "NONE";
+    
+    const acquirerPriceToUse = customAcquirerPrice !== "" ? customAcquirerPrice : (data.acquirer_price || 0);
+    const cashComponent = data.cash_component || 0;
+    const stockComponentRatio = data.stock_component_ratio || 0;
+    const targetPrice = report.price || 0;
+    const preAnnouncePrice = data.pre_announce_price || (targetPrice * 0.85);
+
+    const impliedDealValue = cashComponent + (stockComponentRatio * acquirerPriceToUse);
+    const grossSpreadVal = impliedDealValue - targetPrice;
+    const grossSpreadPct = targetPrice > 0 ? (grossSpreadVal / targetPrice) * 100 : 0;
+    const unhedgedDownside = targetPrice - preAnnouncePrice;
+    const unhedgedRRVal = grossSpreadVal > 0 ? -(unhedgedDownside / grossSpreadVal) : -99.9;
+    const unhedgedRRString = grossSpreadVal > 0 ? `${unhedgedRRVal.toFixed(1)}:1` : "N/A (Negative Spread)";
+    
+    // Dynamic rounded strikes for options suggestion builder
+    const roundStrike = (val: number, step = 2.5) => Math.round(val / step) * step;
+    
+    const longPutStrike = roundStrike(targetPrice, targetPrice < 50 ? 2.5 : 5.0);
+    let shortPutStrike = roundStrike(preAnnouncePrice, preAnnouncePrice < 50 ? 2.5 : 5.0);
+    if (longPutStrike <= shortPutStrike) {
+      shortPutStrike = longPutStrike - (targetPrice < 50 ? 2.5 : 5.0);
+    }
+    
+    const dealValStrike = roundStrike(impliedDealValue, impliedDealValue < 50 ? 2.5 : 5.0);
+    
+    const targetHedges = [
+      {
+        strategy: "Bear Put Spread (Downside Protection)",
+        description: `Buy ${longPutStrike} Put / Sell ${shortPutStrike} Put on ${report.symbol} to hedge drop to pre-announce reference ($${preAnnouncePrice.toFixed(2)}).`,
+        legs: `Buy $${longPutStrike} P / Sell $${shortPutStrike} P`
+      },
+      {
+        strategy: "Covered Call (Yield Enhancement)",
+        description: `Buy ${report.symbol} stock and Sell ${dealValStrike} Call to collect premium and buffer downside, capping upside at deal price.`,
+        legs: `Buy Stock / Sell $${dealValStrike} C`
+      }
+    ];
+    
+    const acquirerHedges = [];
+    if (stockComponentRatio > 0 && data.acquirer_symbol && data.acquirer_symbol !== "CASH") {
+      const acqSpot = acquirerPriceToUse;
+      if (acqSpot > 0) {
+        const acqShortStrike = roundStrike(acqSpot, acqSpot < 50 ? 2.5 : 5.0);
+        const acqLongStrike = roundStrike(acqSpot * 1.10, acqSpot < 50 ? 2.5 : 5.0);
+        acquirerHedges.push({
+          strategy: "Bear Call Spread (Short Protection)",
+          description: `Sell $${acqShortStrike} Call / Buy $${acqLongStrike} Call on ${data.acquirer_symbol} to hedge long target exposure if acquirer shares plummet.`,
+          legs: `Sell $${acqShortStrike} C / Buy $${acqLongStrike} C`
+        });
+        
+        const acqLongPut = roundStrike(acqSpot, acqSpot < 50 ? 2.5 : 5.0);
+        const acqShortPut = roundStrike(acqSpot * 0.85, acqSpot < 50 ? 2.5 : 5.0);
+        acquirerHedges.push({
+          strategy: "Bear Put Spread (Synthetic Short)",
+          description: `Buy $${acqLongPut} Put / Sell $${acqShortPut} Put on ${data.acquirer_symbol} to gain short exposure to the acquirer component without borrow cost.`,
+          legs: `Buy $${acqLongPut} P / Sell $${acqShortPut} P`
+        });
+      }
+    }
+
+    return {
+      impliedDealValue,
+      grossSpreadVal,
+      grossSpreadPct,
+      unhedgedDownside,
+      unhedgedRRString,
+      acquirerPriceToUse,
+      isPE,
+      targetHedges,
+      acquirerHedges
+    };
+  }, [report, customAcquirerPrice]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -3773,11 +3857,50 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
           <p style={{ fontSize: 13, color: T.text, lineHeight: 1.6, margin: 0, fontFamily: T.sans }}>
             {report.analysis_summary}
           </p>
+          
+          {/* Catalyst Nature Timing & Re-rate Distinction */}
+          {(report.catalyst_nature || report.re_rate_status) && (
+            <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6 }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 6 }}>
+                {report.catalyst_nature && (
+                  <span style={{
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 4,
+                    background: report.catalyst_nature === "pricing_dislocation" ? "rgba(20, 184, 122, 0.12)" : "rgba(59, 130, 246, 0.12)",
+                    color: report.catalyst_nature === "pricing_dislocation" ? T.green || "var(--green)" : T.blue || "var(--blue)",
+                    border: `1px solid ${report.catalyst_nature === "pricing_dislocation" ? T.green || "var(--green)" : T.blue || "var(--blue)"}`
+                  }}>
+                    {report.catalyst_nature === "pricing_dislocation" ? "ALPHA-BEARING DISLOCATION" : "MECHANICAL EXECUTION"}
+                  </span>
+                )}
+                {report.re_rate_status && (
+                  <span style={{
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 4,
+                    background: report.re_rate_status === "complete" ? "rgba(239, 68, 68, 0.12)" : (report.re_rate_status === "partial" ? "rgba(245, 158, 11, 0.12)" : "rgba(20, 184, 122, 0.12)"),
+                    color: report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)"),
+                    border: `1px solid ${report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)")}`
+                  }}>
+                    RE-RATE: {report.re_rate_status.toUpperCase()}
+                  </span>
+                )}
+              </div>
+              {report.catalyst_nature_rationale && (
+                <div style={{ fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.4 }}>
+                  <strong style={{ color: T.text || "var(--text)" }}>Trade Timing Insight:</strong> {report.catalyst_nature_rationale}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Card>
 
       {/* MERGER ARBITRAGE CARD (DYNAMIC MATH & RISK) */}
-      {report.is_merger_arb && report.merger_arb_data && (
+      {report.is_merger_arb && report.merger_arb_data && mergerArbComputed && (
         <Card style={{ 
           background: "linear-gradient(135deg, rgba(20,184,122,0.04) 0%, rgba(59,130,246,0.04) 100%)", 
           border: `1px solid ${T.cardBorder || "var(--border)"}`, 
@@ -3804,6 +3927,50 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 <div style={{ fontSize: 11 }}>
                   Stock Component: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.stock_component_ratio ? `${report.merger_arb_data.stock_component_ratio.toFixed(4)} shares` : "None (All-Cash)"}</strong>
                 </div>
+                
+                {report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" && (
+                  <div style={{ marginTop: 6 }}>
+                    <label style={{ fontSize: 8, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: 2 }}>
+                      Acquirer Price Input
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={customAcquirerPrice}
+                      onChange={(e) => setCustomAcquirerPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                      style={{
+                        background: "rgba(0,0,0,0.2)",
+                        border: `1px solid ${T.cardBorder || "var(--border)"}`,
+                        borderRadius: 4,
+                        padding: "4px 8px",
+                        fontSize: 11,
+                        color: T.text || "var(--text)",
+                        fontFamily: T.mono || "var(--font-mono)",
+                        width: "100%",
+                        outline: "none"
+                      }}
+                    />
+                    {customAcquirerPrice !== "" && (
+                      <button
+                        type="button"
+                        onClick={() => setCustomAcquirerPrice("")}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: T.textMuted || "var(--text-muted)",
+                          fontSize: 8,
+                          textTransform: "uppercase",
+                          cursor: "pointer",
+                          padding: 0,
+                          marginTop: 4,
+                          display: "block"
+                        }}
+                      >
+                        Reset to Live (${report.merger_arb_data.acquirer_price?.toFixed(2)})
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -3814,13 +3981,19 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 <div>
                   <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Implied Deal Value</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: T.text || "var(--text)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    ${report.merger_arb_data.implied_deal_value?.toFixed(2) || "N/A"}
+                    ${mergerArbComputed.impliedDealValue.toFixed(2)}
                   </div>
                 </div>
                 <div>
                   <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Gross Deal Spread</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: T.green || "var(--green)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    +${report.merger_arb_data.gross_spread_val?.toFixed(2) || "0.00"} ({report.merger_arb_data.gross_spread_pct?.toFixed(1) || "0"}%)
+                  <div style={{ 
+                    fontSize: 16, 
+                    fontWeight: 800, 
+                    color: mergerArbComputed.grossSpreadVal >= 0 ? T.green || "var(--green)" : T.red || "var(--red)", 
+                    marginTop: 2, 
+                    fontFamily: T.mono || "var(--font-mono)" 
+                  }}>
+                    {mergerArbComputed.grossSpreadVal >= 0 ? "+" : ""}${mergerArbComputed.grossSpreadVal.toFixed(2)} ({mergerArbComputed.grossSpreadPct.toFixed(1)}%)
                   </div>
                 </div>
               </div>
@@ -3839,13 +4012,13 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 <div>
                   <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Downside if Break</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    -${report.merger_arb_data.unhedged_downside?.toFixed(2) || "0.00"}
+                    -${mergerArbComputed.unhedgedDownside.toFixed(2)}
                   </div>
                 </div>
                 <div>
                   <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Unhedged R/R</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    {report.merger_arb_data.unhedged_rr_asymmetry || "N/A"}
+                    {mergerArbComputed.unhedgedRRString}
                   </div>
                 </div>
               </div>
@@ -3856,10 +4029,56 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
 
           </div>
 
-          <div style={{ display: "flex", gap: 8, background: "rgba(239, 68, 68, 0.05)", border: `1px solid rgba(239, 68, 68, 0.2)`, borderRadius: 6, padding: "10px 12px", fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.5 }}>
+          <div style={{ display: "flex", gap: 8, background: "rgba(239, 68, 68, 0.05)", border: `1px solid rgba(239, 68, 68, 0.2)`, borderRadius: 6, padding: "10px 12px", fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.5, marginBottom: 16 }}>
             <AlertTriangle size={16} color={T.red || "var(--red)"} style={{ flexShrink: 0, marginTop: 1 }} />
             <div>
-              <strong style={{ color: T.red || "var(--red)" }}>Risk Warning:</strong> Entering an unhedged long position in {report.symbol} at current levels has a negative unhedged risk/reward of {report.merger_arb_data.unhedged_rr_asymmetry}. To execute a standard risk-arbitrage trade, investors typically buy the target ({report.symbol}) and short the acquirer ({report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" ? report.merger_arb_data.acquirer_symbol : "PE"}) at the exchange ratio of {report.merger_arb_data.stock_component_ratio || 0} to lock in the spread.
+              <strong style={{ color: T.red || "var(--red)" }}>Risk Warning:</strong> Entering an unhedged long position in {report.symbol} at current levels has a negative unhedged risk/reward of {mergerArbComputed.unhedgedRRString}. To execute a standard risk-arbitrage trade, investors typically buy the target ({report.symbol}) and short the acquirer ({report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" ? report.merger_arb_data.acquirer_symbol : "PE"}) at the exchange ratio of {report.merger_arb_data.stock_component_ratio || 0} to lock in the spread.
+            </div>
+          </div>
+
+          {/* Hedged Option Builder Suggestions */}
+          <div style={{ borderTop: `1px dashed ${T.cardBorder || "var(--border)"}`, paddingTop: 16 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: T.green || "var(--green)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>
+              Hedged Option Builder Suggestions
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div>
+                <div style={{ fontSize: 9, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>Target Hedges ({report.symbol})</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {mergerArbComputed.targetHedges.map((hedge, idx) => (
+                    <div key={idx} style={{ background: "rgba(255,255,255,0.01)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: "8px 10px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: T.text || "var(--text)" }}>{hedge.strategy}</span>
+                        <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.1)", color: T.green || "var(--green)", fontFamily: T.mono || "var(--font-mono)" }}>{hedge.legs}</span>
+                      </div>
+                      <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)", lineHeight: 1.3 }}>{hedge.description}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <div style={{ fontSize: 9, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>
+                  Acquirer Hedges {report.merger_arb_data.acquirer_symbol ? `(${report.merger_arb_data.acquirer_symbol})` : ""}
+                </div>
+                {mergerArbComputed.acquirerHedges.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {mergerArbComputed.acquirerHedges.map((hedge, idx) => (
+                      <div key={idx} style={{ background: "rgba(255,255,255,0.01)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: "8px 10px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: T.text || "var(--text)" }}>{hedge.strategy}</span>
+                          <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(59,130,246,0.15)", color: T.blue || "var(--blue)", fontFamily: T.mono || "var(--font-mono)" }}>{hedge.legs}</span>
+                        </div>
+                        <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)", lineHeight: 1.3 }}>{hedge.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", border: `1px dashed ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: 16, fontSize: 10, color: T.textMuted || "var(--text-muted)", minHeight: 90 }}>
+                    No stock component (All-Cash transaction) - no acquirer hedge required.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </Card>

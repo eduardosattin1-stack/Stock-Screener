@@ -1,0 +1,4935 @@
+{
+  "tracking_year": 2026,
+  "generated_at": "2026-05-26T09:27:05.760431+00:00",
+  "rebalance_dates": [
+    "2026-01-26",
+    "2026-02-23",
+    "2026-03-30"
+  ],
+  "methodologies": {
+    "acquirers_multiple": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "AIG",
+            "ALL",
+            "APA",
+            "CINF",
+            "CMCSA",
+            "DHI",
+            "DVN",
+            "EOG",
+            "FOX",
+            "HAL",
+            "HIG",
+            "HPQ",
+            "IBKR",
+            "LEN",
+            "LULU",
+            "PHM",
+            "TROW",
+            "TRV",
+            "VICI",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "DHI",
+              "price": 150.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ALL",
+              "price": 196.02,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "AIG",
+              "price": 73.79,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOX",
+              "price": 65.34,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CINF",
+              "price": 157.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LEN",
+              "price": 110.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HAL",
+              "price": 34.16,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HIG",
+              "price": 130.74,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TROW",
+              "price": 106.09,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "APA",
+              "price": 25.4,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DVN",
+              "price": 38.63,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "IBKR",
+              "price": 75.35,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "VICI",
+              "price": 28.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 29.43,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRV",
+              "price": 281.71,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LULU",
+              "price": 192.79,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PHM",
+              "price": 125.07,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "WRB",
+              "price": 66.88,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HPQ",
+              "price": 19.46,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ALL",
+            "AMP",
+            "APA",
+            "CINF",
+            "CTSH",
+            "DHI",
+            "DVN",
+            "EOG",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "HPQ",
+            "IBKR",
+            "LEN",
+            "LULU",
+            "PGR",
+            "PHM",
+            "PYPL",
+            "TROW",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "FOXA",
+              "price": 55.34,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "CTSH",
+              "price": 61.13,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PGR",
+              "price": 203.69,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "AMP",
+              "price": 453.78,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "AIG",
+              "entry_price": 73.79,
+              "entry_date": "2026-01-26",
+              "exit_price": 79.98,
+              "exit_date": "2026-02-23",
+              "return": 0.0839
+            },
+            {
+              "symbol": "TRV",
+              "entry_price": 281.71,
+              "entry_date": "2026-01-26",
+              "exit_price": 305.39,
+              "exit_date": "2026-02-23",
+              "return": 0.0841
+            },
+            {
+              "symbol": "HAL",
+              "entry_price": 34.16,
+              "entry_date": "2026-01-26",
+              "exit_price": 35.24,
+              "exit_date": "2026-02-23",
+              "return": 0.0316
+            },
+            {
+              "symbol": "WRB",
+              "entry_price": 66.88,
+              "entry_date": "2026-01-26",
+              "exit_price": 71,
+              "exit_date": "2026-02-23",
+              "return": 0.0616
+            },
+            {
+              "symbol": "CMCSA",
+              "entry_price": 29.43,
+              "entry_date": "2026-01-26",
+              "exit_price": 31.63,
+              "exit_date": "2026-02-23",
+              "return": 0.0748
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "ALL",
+            "AMP",
+            "APA",
+            "CINF",
+            "CTSH",
+            "DHI",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "HPQ",
+            "IBKR",
+            "LEN",
+            "LULU",
+            "MO",
+            "PHM",
+            "PYPL",
+            "SMCI",
+            "TROW",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "MO",
+              "price": 67.02,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 21.06,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 95.62,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 149.89,
+              "exit_date": "2026-03-30",
+              "return": 0.393
+            },
+            {
+              "symbol": "DVN",
+              "entry_price": 38.63,
+              "entry_date": "2026-01-26",
+              "exit_price": 51.52,
+              "exit_date": "2026-03-30",
+              "return": 0.3337
+            },
+            {
+              "symbol": "PGR",
+              "entry_price": 203.69,
+              "entry_date": "2026-02-23",
+              "exit_price": 201.39,
+              "exit_date": "2026-03-30",
+              "return": -0.0113
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 95.62,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ALL",
+          "entry_price": 196.02,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "AMP",
+          "entry_price": 453.78,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "APA",
+          "entry_price": 25.4,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CINF",
+          "entry_price": 157.98,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CTSH",
+          "entry_price": 61.13,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DHI",
+          "entry_price": 150.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 65.34,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOXA",
+          "entry_price": 55.34,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 130.74,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HPQ",
+          "entry_price": 19.46,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IBKR",
+          "entry_price": 75.35,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 110.58,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 192.79,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MO",
+          "entry_price": 67.02,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 125.07,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 21.06,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TROW",
+          "entry_price": 106.09,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "VICI",
+          "entry_price": 28.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "AIG",
+          "entry_price": 73.79,
+          "entry_date": "2026-01-26",
+          "exit_price": 79.98,
+          "exit_date": "2026-02-23",
+          "return": 0.0839
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 281.71,
+          "entry_date": "2026-01-26",
+          "exit_price": 305.39,
+          "exit_date": "2026-02-23",
+          "return": 0.0841
+        },
+        {
+          "symbol": "HAL",
+          "entry_price": 34.16,
+          "entry_date": "2026-01-26",
+          "exit_price": 35.24,
+          "exit_date": "2026-02-23",
+          "return": 0.0316
+        },
+        {
+          "symbol": "WRB",
+          "entry_price": 66.88,
+          "entry_date": "2026-01-26",
+          "exit_price": 71,
+          "exit_date": "2026-02-23",
+          "return": 0.0616
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 29.43,
+          "entry_date": "2026-01-26",
+          "exit_price": 31.63,
+          "exit_date": "2026-02-23",
+          "return": 0.0748
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 149.89,
+          "exit_date": "2026-03-30",
+          "return": 0.393
+        },
+        {
+          "symbol": "DVN",
+          "entry_price": 38.63,
+          "entry_date": "2026-01-26",
+          "exit_price": 51.52,
+          "exit_date": "2026-03-30",
+          "return": 0.3337
+        },
+        {
+          "symbol": "PGR",
+          "entry_price": 203.69,
+          "entry_date": "2026-02-23",
+          "exit_price": 201.39,
+          "exit_date": "2026-03-30",
+          "return": -0.0113
+        }
+      ],
+      "ytd_return": 0.0909,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "dcf_fcff": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "ALL",
+            "AMP",
+            "CF",
+            "DHI",
+            "EOG",
+            "FOX",
+            "HIG",
+            "IBKR",
+            "KMB",
+            "LEN",
+            "NTAP",
+            "PFG",
+            "PGR",
+            "PRU",
+            "SMCI",
+            "SWKS",
+            "SYF",
+            "TRV"
+          ],
+          "entries": [
+            {
+              "symbol": "DHI",
+              "price": 150.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ALL",
+              "price": 196.02,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "KMB",
+              "price": 101.14,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ADBE",
+              "price": 304.72,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NTAP",
+              "price": 98.81,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOX",
+              "price": 65.34,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LEN",
+              "price": 110.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HIG",
+              "price": 130.74,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CF",
+              "price": 91.65,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PRU",
+              "price": 108.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "IBKR",
+              "price": 75.35,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRV",
+              "price": 281.71,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SWKS",
+              "price": 59.76,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PFG",
+              "price": 93.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SYF",
+              "price": 77.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 30.8,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 93.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PGR",
+              "price": 208.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "AMP",
+              "price": 500.53,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "ADM",
+            "ALL",
+            "BMY",
+            "CF",
+            "CMCSA",
+            "COP",
+            "EXPE",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "KKR",
+            "MET",
+            "PFG",
+            "PGR",
+            "PYPL",
+            "SWKS",
+            "SYF"
+          ],
+          "entries": [
+            {
+              "symbol": "MET",
+              "price": 75.24,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "EXPE",
+              "price": 188.51,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "ADM",
+              "price": 67.69,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "COP",
+              "price": 109.88,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "KKR",
+              "price": 92.19,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "FOXA",
+              "price": 55.34,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 31.63,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "BMY",
+              "price": 61.25,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "PRU",
+              "entry_price": 108.98,
+              "entry_date": "2026-01-26",
+              "exit_price": 100.88,
+              "exit_date": "2026-02-23",
+              "return": -0.0743
+            },
+            {
+              "symbol": "AMP",
+              "entry_price": 500.53,
+              "entry_date": "2026-01-26",
+              "exit_price": 453.78,
+              "exit_date": "2026-02-23",
+              "return": -0.0934
+            },
+            {
+              "symbol": "TRV",
+              "entry_price": 281.71,
+              "entry_date": "2026-01-26",
+              "exit_price": 305.39,
+              "exit_date": "2026-02-23",
+              "return": 0.0841
+            },
+            {
+              "symbol": "LEN",
+              "entry_price": 110.58,
+              "entry_date": "2026-01-26",
+              "exit_price": 116.2,
+              "exit_date": "2026-02-23",
+              "return": 0.0508
+            },
+            {
+              "symbol": "DHI",
+              "entry_price": 150.0,
+              "entry_date": "2026-01-26",
+              "exit_price": 164.25,
+              "exit_date": "2026-02-23",
+              "return": 0.095
+            },
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 122.31,
+              "exit_date": "2026-02-23",
+              "return": 0.1367
+            },
+            {
+              "symbol": "KMB",
+              "entry_price": 101.14,
+              "entry_date": "2026-01-26",
+              "exit_price": 110.51,
+              "exit_date": "2026-02-23",
+              "return": 0.0926
+            },
+            {
+              "symbol": "SMCI",
+              "entry_price": 30.8,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.71,
+              "exit_date": "2026-02-23",
+              "return": -0.0029
+            },
+            {
+              "symbol": "NTAP",
+              "entry_price": 98.81,
+              "entry_date": "2026-01-26",
+              "exit_price": 100.53,
+              "exit_date": "2026-02-23",
+              "return": 0.0174
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "ALL",
+            "BMY",
+            "CMCSA",
+            "DHI",
+            "EXPE",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "MET",
+            "PFG",
+            "PGR",
+            "PHM",
+            "PYPL",
+            "SMCI",
+            "SWKS",
+            "SYF",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "DHI",
+              "price": 132.53,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "PHM",
+              "price": 113.72,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "WRB",
+              "price": 66.25,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 21.06,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "KKR",
+              "entry_price": 92.19,
+              "entry_date": "2026-02-23",
+              "exit_price": 90.36,
+              "exit_date": "2026-03-30",
+              "return": -0.0199
+            },
+            {
+              "symbol": "ADM",
+              "entry_price": 67.69,
+              "entry_date": "2026-02-23",
+              "exit_price": 71.75,
+              "exit_date": "2026-03-30",
+              "return": 0.06
+            },
+            {
+              "symbol": "CF",
+              "entry_price": 91.65,
+              "entry_date": "2026-01-26",
+              "exit_price": 137.6,
+              "exit_date": "2026-03-30",
+              "return": 0.5014
+            },
+            {
+              "symbol": "COP",
+              "entry_price": 109.88,
+              "entry_date": "2026-02-23",
+              "exit_price": 132.89,
+              "exit_date": "2026-03-30",
+              "return": 0.2094
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 93.7,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ADBE",
+          "entry_price": 304.72,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ALL",
+          "entry_price": 196.02,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "BMY",
+          "entry_price": 61.25,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 31.63,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DHI",
+          "entry_price": 132.53,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EXPE",
+          "entry_price": 188.51,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 65.34,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOXA",
+          "entry_price": 55.34,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 130.74,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IBKR",
+          "entry_price": 75.35,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MET",
+          "entry_price": 75.24,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PFG",
+          "entry_price": 93.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PGR",
+          "entry_price": 208.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 113.72,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 21.06,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SWKS",
+          "entry_price": 59.76,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SYF",
+          "entry_price": 77.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "WRB",
+          "entry_price": 66.25,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "PRU",
+          "entry_price": 108.98,
+          "entry_date": "2026-01-26",
+          "exit_price": 100.88,
+          "exit_date": "2026-02-23",
+          "return": -0.0743
+        },
+        {
+          "symbol": "AMP",
+          "entry_price": 500.53,
+          "entry_date": "2026-01-26",
+          "exit_price": 453.78,
+          "exit_date": "2026-02-23",
+          "return": -0.0934
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 281.71,
+          "entry_date": "2026-01-26",
+          "exit_price": 305.39,
+          "exit_date": "2026-02-23",
+          "return": 0.0841
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 110.58,
+          "entry_date": "2026-01-26",
+          "exit_price": 116.2,
+          "exit_date": "2026-02-23",
+          "return": 0.0508
+        },
+        {
+          "symbol": "DHI",
+          "entry_price": 150.0,
+          "entry_date": "2026-01-26",
+          "exit_price": 164.25,
+          "exit_date": "2026-02-23",
+          "return": 0.095
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 122.31,
+          "exit_date": "2026-02-23",
+          "return": 0.1367
+        },
+        {
+          "symbol": "KMB",
+          "entry_price": 101.14,
+          "entry_date": "2026-01-26",
+          "exit_price": 110.51,
+          "exit_date": "2026-02-23",
+          "return": 0.0926
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 30.8,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.71,
+          "exit_date": "2026-02-23",
+          "return": -0.0029
+        },
+        {
+          "symbol": "NTAP",
+          "entry_price": 98.81,
+          "entry_date": "2026-01-26",
+          "exit_price": 100.53,
+          "exit_date": "2026-02-23",
+          "return": 0.0174
+        },
+        {
+          "symbol": "KKR",
+          "entry_price": 92.19,
+          "entry_date": "2026-02-23",
+          "exit_price": 90.36,
+          "exit_date": "2026-03-30",
+          "return": -0.0199
+        },
+        {
+          "symbol": "ADM",
+          "entry_price": 67.69,
+          "entry_date": "2026-02-23",
+          "exit_price": 71.75,
+          "exit_date": "2026-03-30",
+          "return": 0.06
+        },
+        {
+          "symbol": "CF",
+          "entry_price": 91.65,
+          "entry_date": "2026-01-26",
+          "exit_price": 137.6,
+          "exit_date": "2026-03-30",
+          "return": 0.5014
+        },
+        {
+          "symbol": "COP",
+          "entry_price": 109.88,
+          "entry_date": "2026-02-23",
+          "exit_price": 132.89,
+          "exit_date": "2026-03-30",
+          "return": 0.2094
+        }
+      ],
+      "ytd_return": 0.0462,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "earnings_yield_gap": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ACGL",
+            "AFL",
+            "ALL",
+            "APA",
+            "BALL",
+            "BRK-B",
+            "CINF",
+            "CMCSA",
+            "DOV",
+            "DVN",
+            "EOG",
+            "FANG",
+            "HPQ",
+            "LEN",
+            "MO",
+            "PHM",
+            "SYF",
+            "TRMB",
+            "TROW",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "AFL",
+              "price": 108.94,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "BALL",
+              "price": 57.21,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ALL",
+              "price": 196.02,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DOV",
+              "price": 207.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CINF",
+              "price": 157.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LEN",
+              "price": 110.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "BRK-B",
+              "price": 483.47,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRMB",
+              "price": 71.38,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TROW",
+              "price": 106.09,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "APA",
+              "price": 25.4,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FANG",
+              "price": 153.52,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DVN",
+              "price": 38.63,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MO",
+              "price": 62.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "VICI",
+              "price": 28.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 29.43,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PHM",
+              "price": 125.07,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SYF",
+              "price": 77.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 93.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HPQ",
+              "price": 19.46,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ACGL",
+            "ALL",
+            "CINF",
+            "CMCSA",
+            "DAL",
+            "DVN",
+            "EIX",
+            "EOG",
+            "FOX",
+            "HIG",
+            "HPQ",
+            "MO",
+            "NWSA",
+            "PRU",
+            "PYPL",
+            "SYF",
+            "T",
+            "TRMB",
+            "TROW",
+            "TRV"
+          ],
+          "entries": [
+            {
+              "symbol": "FOX",
+              "price": 50.85,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "NWSA",
+              "price": 23.0,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "HIG",
+              "price": 140.54,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "DAL",
+              "price": 66.88,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PRU",
+              "price": 100.88,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "EIX",
+              "price": 74.65,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "TRV",
+              "price": 305.39,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "T",
+              "price": 28.52,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "BALL",
+              "entry_price": 57.21,
+              "entry_date": "2026-01-26",
+              "exit_price": 67.14,
+              "exit_date": "2026-02-23",
+              "return": 0.1736
+            },
+            {
+              "symbol": "LEN",
+              "entry_price": 110.58,
+              "entry_date": "2026-01-26",
+              "exit_price": 116.2,
+              "exit_date": "2026-02-23",
+              "return": 0.0508
+            },
+            {
+              "symbol": "PHM",
+              "entry_price": 125.07,
+              "entry_date": "2026-01-26",
+              "exit_price": 140.21,
+              "exit_date": "2026-02-23",
+              "return": 0.1211
+            },
+            {
+              "symbol": "FANG",
+              "entry_price": 153.52,
+              "entry_date": "2026-01-26",
+              "exit_price": 173.82,
+              "exit_date": "2026-02-23",
+              "return": 0.1322
+            },
+            {
+              "symbol": "DOV",
+              "entry_price": 207.7,
+              "entry_date": "2026-01-26",
+              "exit_price": 230.73,
+              "exit_date": "2026-02-23",
+              "return": 0.1109
+            },
+            {
+              "symbol": "APA",
+              "entry_price": 25.4,
+              "entry_date": "2026-01-26",
+              "exit_price": 28.72,
+              "exit_date": "2026-02-23",
+              "return": 0.1307
+            },
+            {
+              "symbol": "VICI",
+              "entry_price": 28.51,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.22,
+              "exit_date": "2026-02-23",
+              "return": 0.06
+            },
+            {
+              "symbol": "AFL",
+              "entry_price": 108.94,
+              "entry_date": "2026-01-26",
+              "exit_price": 112.35,
+              "exit_date": "2026-02-23",
+              "return": 0.0313
+            },
+            {
+              "symbol": "BRK-B",
+              "entry_price": 483.47,
+              "entry_date": "2026-01-26",
+              "exit_price": 494.09,
+              "exit_date": "2026-02-23",
+              "return": 0.022
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "ALL",
+            "APA",
+            "CINF",
+            "CMCSA",
+            "DAL",
+            "DHI",
+            "EIX",
+            "ELV",
+            "FOX",
+            "HIG",
+            "HPQ",
+            "LEN",
+            "PHM",
+            "PRU",
+            "PYPL",
+            "SYF",
+            "T",
+            "TROW",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "DHI",
+              "price": 132.53,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "LEN",
+              "price": 84.88,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "APA",
+              "price": 43.74,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "VICI",
+              "price": 27.11,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "PHM",
+              "price": 113.72,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "ELV",
+              "price": 284.79,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "DVN",
+              "entry_price": 38.63,
+              "entry_date": "2026-01-26",
+              "exit_price": 51.52,
+              "exit_date": "2026-03-30",
+              "return": 0.3337
+            },
+            {
+              "symbol": "MO",
+              "entry_price": 62.98,
+              "entry_date": "2026-01-26",
+              "exit_price": 67.02,
+              "exit_date": "2026-03-30",
+              "return": 0.0641
+            },
+            {
+              "symbol": "TRMB",
+              "entry_price": 71.38,
+              "entry_date": "2026-01-26",
+              "exit_price": 62.54,
+              "exit_date": "2026-03-30",
+              "return": -0.1238
+            },
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 149.89,
+              "exit_date": "2026-03-30",
+              "return": 0.393
+            },
+            {
+              "symbol": "NWSA",
+              "entry_price": 23.0,
+              "entry_date": "2026-02-23",
+              "exit_price": 24.78,
+              "exit_date": "2026-03-30",
+              "return": 0.0774
+            },
+            {
+              "symbol": "TRV",
+              "entry_price": 305.39,
+              "entry_date": "2026-02-23",
+              "exit_price": 291.82,
+              "exit_date": "2026-03-30",
+              "return": -0.0444
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 93.7,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ALL",
+          "entry_price": 196.02,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "APA",
+          "entry_price": 43.74,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CINF",
+          "entry_price": 157.98,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 29.43,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DAL",
+          "entry_price": 66.88,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DHI",
+          "entry_price": 132.53,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EIX",
+          "entry_price": 74.65,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ELV",
+          "entry_price": 284.79,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 50.85,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 140.54,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HPQ",
+          "entry_price": 19.46,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 84.88,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 113.72,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PRU",
+          "entry_price": 100.88,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SYF",
+          "entry_price": 77.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "T",
+          "entry_price": 28.52,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TROW",
+          "entry_price": 106.09,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "VICI",
+          "entry_price": 27.11,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "BALL",
+          "entry_price": 57.21,
+          "entry_date": "2026-01-26",
+          "exit_price": 67.14,
+          "exit_date": "2026-02-23",
+          "return": 0.1736
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 110.58,
+          "entry_date": "2026-01-26",
+          "exit_price": 116.2,
+          "exit_date": "2026-02-23",
+          "return": 0.0508
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 125.07,
+          "entry_date": "2026-01-26",
+          "exit_price": 140.21,
+          "exit_date": "2026-02-23",
+          "return": 0.1211
+        },
+        {
+          "symbol": "FANG",
+          "entry_price": 153.52,
+          "entry_date": "2026-01-26",
+          "exit_price": 173.82,
+          "exit_date": "2026-02-23",
+          "return": 0.1322
+        },
+        {
+          "symbol": "DOV",
+          "entry_price": 207.7,
+          "entry_date": "2026-01-26",
+          "exit_price": 230.73,
+          "exit_date": "2026-02-23",
+          "return": 0.1109
+        },
+        {
+          "symbol": "APA",
+          "entry_price": 25.4,
+          "entry_date": "2026-01-26",
+          "exit_price": 28.72,
+          "exit_date": "2026-02-23",
+          "return": 0.1307
+        },
+        {
+          "symbol": "VICI",
+          "entry_price": 28.51,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.22,
+          "exit_date": "2026-02-23",
+          "return": 0.06
+        },
+        {
+          "symbol": "AFL",
+          "entry_price": 108.94,
+          "entry_date": "2026-01-26",
+          "exit_price": 112.35,
+          "exit_date": "2026-02-23",
+          "return": 0.0313
+        },
+        {
+          "symbol": "BRK-B",
+          "entry_price": 483.47,
+          "entry_date": "2026-01-26",
+          "exit_price": 494.09,
+          "exit_date": "2026-02-23",
+          "return": 0.022
+        },
+        {
+          "symbol": "DVN",
+          "entry_price": 38.63,
+          "entry_date": "2026-01-26",
+          "exit_price": 51.52,
+          "exit_date": "2026-03-30",
+          "return": 0.3337
+        },
+        {
+          "symbol": "MO",
+          "entry_price": 62.98,
+          "entry_date": "2026-01-26",
+          "exit_price": 67.02,
+          "exit_date": "2026-03-30",
+          "return": 0.0641
+        },
+        {
+          "symbol": "TRMB",
+          "entry_price": 71.38,
+          "entry_date": "2026-01-26",
+          "exit_price": 62.54,
+          "exit_date": "2026-03-30",
+          "return": -0.1238
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 149.89,
+          "exit_date": "2026-03-30",
+          "return": 0.393
+        },
+        {
+          "symbol": "NWSA",
+          "entry_price": 23.0,
+          "entry_date": "2026-02-23",
+          "exit_price": 24.78,
+          "exit_date": "2026-03-30",
+          "return": 0.0774
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 305.39,
+          "entry_date": "2026-02-23",
+          "exit_price": 291.82,
+          "exit_date": "2026-03-30",
+          "return": -0.0444
+        }
+      ],
+      "ytd_return": 0.0891,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "epv": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ALL",
+            "AMP",
+            "CINF",
+            "DHI",
+            "FOX",
+            "FOXA",
+            "HAL",
+            "IBKR",
+            "KKR",
+            "LEN",
+            "NWS",
+            "PCAR",
+            "PFG",
+            "PHM",
+            "PRU",
+            "SMCI",
+            "SNA",
+            "TRV",
+            "VICI",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "DHI",
+              "price": 150.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ALL",
+              "price": 196.02,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOX",
+              "price": 65.34,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CINF",
+              "price": 157.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LEN",
+              "price": 110.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HAL",
+              "price": 34.16,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PCAR",
+              "price": 122.11,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PRU",
+              "price": 108.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NWS",
+              "price": 31.01,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "KKR",
+              "price": 118.65,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOXA",
+              "price": 72.72,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "IBKR",
+              "price": 75.35,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "VICI",
+              "price": 28.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SNA",
+              "price": 370.13,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRV",
+              "price": 281.71,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PHM",
+              "price": 125.07,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PFG",
+              "price": 93.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "WRB",
+              "price": 66.88,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 30.8,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "AMP",
+              "price": 500.53,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ALL",
+            "AMP",
+            "CINF",
+            "CTSH",
+            "DHI",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "INCY",
+            "KKR",
+            "LEN",
+            "NWS",
+            "PFG",
+            "PHM",
+            "PYPL",
+            "SMCI",
+            "SNA",
+            "TROW",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "HIG",
+              "price": 140.54,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "TROW",
+              "price": 93.06,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "CTSH",
+              "price": 61.13,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "INCY",
+              "price": 100.85,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "PRU",
+              "entry_price": 108.98,
+              "entry_date": "2026-01-26",
+              "exit_price": 100.88,
+              "exit_date": "2026-02-23",
+              "return": -0.0743
+            },
+            {
+              "symbol": "TRV",
+              "entry_price": 281.71,
+              "entry_date": "2026-01-26",
+              "exit_price": 305.39,
+              "exit_date": "2026-02-23",
+              "return": 0.0841
+            },
+            {
+              "symbol": "WRB",
+              "entry_price": 66.88,
+              "entry_date": "2026-01-26",
+              "exit_price": 71,
+              "exit_date": "2026-02-23",
+              "return": 0.0616
+            },
+            {
+              "symbol": "HAL",
+              "entry_price": 34.16,
+              "entry_date": "2026-01-26",
+              "exit_price": 35.24,
+              "exit_date": "2026-02-23",
+              "return": 0.0316
+            },
+            {
+              "symbol": "PCAR",
+              "entry_price": 122.11,
+              "entry_date": "2026-01-26",
+              "exit_price": 126.06,
+              "exit_date": "2026-02-23",
+              "return": 0.0323
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "AMP",
+            "CINF",
+            "CTSH",
+            "DHI",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "INCY",
+            "LEN",
+            "LULU",
+            "MO",
+            "PFG",
+            "PHM",
+            "POOL",
+            "PYPL",
+            "SMCI",
+            "VICI",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "MO",
+              "price": 67.02,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "LULU",
+              "price": 145.83,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "WRB",
+              "price": 66.25,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "POOL",
+              "price": 200.49,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 95.62,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "KKR",
+              "entry_price": 118.65,
+              "entry_date": "2026-01-26",
+              "exit_price": 90.36,
+              "exit_date": "2026-03-30",
+              "return": -0.2384
+            },
+            {
+              "symbol": "ALL",
+              "entry_price": 196.02,
+              "entry_date": "2026-01-26",
+              "exit_price": 207.27,
+              "exit_date": "2026-03-30",
+              "return": 0.0574
+            },
+            {
+              "symbol": "TROW",
+              "entry_price": 93.06,
+              "entry_date": "2026-02-23",
+              "exit_price": 89.03,
+              "exit_date": "2026-03-30",
+              "return": -0.0433
+            },
+            {
+              "symbol": "NWS",
+              "entry_price": 31.01,
+              "entry_date": "2026-01-26",
+              "exit_price": 28.32,
+              "exit_date": "2026-03-30",
+              "return": -0.0867
+            },
+            {
+              "symbol": "SNA",
+              "entry_price": 370.13,
+              "entry_date": "2026-01-26",
+              "exit_price": 356.6,
+              "exit_date": "2026-03-30",
+              "return": -0.0366
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 95.62,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "AMP",
+          "entry_price": 500.53,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CINF",
+          "entry_price": 157.98,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CTSH",
+          "entry_price": 61.13,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DHI",
+          "entry_price": 150.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 65.34,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOXA",
+          "entry_price": 72.72,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 140.54,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IBKR",
+          "entry_price": 75.35,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "INCY",
+          "entry_price": 100.85,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 110.58,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 145.83,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MO",
+          "entry_price": 67.02,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PFG",
+          "entry_price": 93.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 125.07,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "POOL",
+          "entry_price": 200.49,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 30.8,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "VICI",
+          "entry_price": 28.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "WRB",
+          "entry_price": 66.25,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "PRU",
+          "entry_price": 108.98,
+          "entry_date": "2026-01-26",
+          "exit_price": 100.88,
+          "exit_date": "2026-02-23",
+          "return": -0.0743
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 281.71,
+          "entry_date": "2026-01-26",
+          "exit_price": 305.39,
+          "exit_date": "2026-02-23",
+          "return": 0.0841
+        },
+        {
+          "symbol": "WRB",
+          "entry_price": 66.88,
+          "entry_date": "2026-01-26",
+          "exit_price": 71,
+          "exit_date": "2026-02-23",
+          "return": 0.0616
+        },
+        {
+          "symbol": "HAL",
+          "entry_price": 34.16,
+          "entry_date": "2026-01-26",
+          "exit_price": 35.24,
+          "exit_date": "2026-02-23",
+          "return": 0.0316
+        },
+        {
+          "symbol": "PCAR",
+          "entry_price": 122.11,
+          "entry_date": "2026-01-26",
+          "exit_price": 126.06,
+          "exit_date": "2026-02-23",
+          "return": 0.0323
+        },
+        {
+          "symbol": "KKR",
+          "entry_price": 118.65,
+          "entry_date": "2026-01-26",
+          "exit_price": 90.36,
+          "exit_date": "2026-03-30",
+          "return": -0.2384
+        },
+        {
+          "symbol": "ALL",
+          "entry_price": 196.02,
+          "entry_date": "2026-01-26",
+          "exit_price": 207.27,
+          "exit_date": "2026-03-30",
+          "return": 0.0574
+        },
+        {
+          "symbol": "TROW",
+          "entry_price": 93.06,
+          "entry_date": "2026-02-23",
+          "exit_price": 89.03,
+          "exit_date": "2026-03-30",
+          "return": -0.0433
+        },
+        {
+          "symbol": "NWS",
+          "entry_price": 31.01,
+          "entry_date": "2026-01-26",
+          "exit_price": 28.32,
+          "exit_date": "2026-03-30",
+          "return": -0.0867
+        },
+        {
+          "symbol": "SNA",
+          "entry_price": 370.13,
+          "entry_date": "2026-01-26",
+          "exit_price": 356.6,
+          "exit_date": "2026-03-30",
+          "return": -0.0366
+        }
+      ],
+      "ytd_return": -0.154,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "ev_gross_profit": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ADBE",
+            "BKNG",
+            "CL",
+            "FAST",
+            "GWW",
+            "HD",
+            "IDXX",
+            "INCY",
+            "LULU",
+            "MTCH",
+            "MTD",
+            "NVDA",
+            "ORLY",
+            "RL",
+            "ROL",
+            "TSCO",
+            "ULTA",
+            "VRSN",
+            "WMT",
+            "WSM"
+          ],
+          "entries": [
+            {
+              "symbol": "ADBE",
+              "price": 304.72,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CL",
+              "price": 85.2,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ORLY",
+              "price": 100.24,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HD",
+              "price": 386.53,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "RL",
+              "price": 360.32,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "WSM",
+              "price": 204.67,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TSCO",
+              "price": 55.56,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "BKNG",
+              "price": 204.29,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "IDXX",
+              "price": 697.82,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "WMT",
+              "price": 117.64,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LULU",
+              "price": 192.79,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MTCH",
+              "price": 32.08,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NVDA",
+              "price": 186.47,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ULTA",
+              "price": 661.34,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "VRSN",
+              "price": 251.54,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "INCY",
+              "price": 102.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MTD",
+              "price": 1425.67,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ROL",
+              "price": 63.26,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "GWW",
+              "price": 1049.97,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FAST",
+              "price": 43.73,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ADBE",
+            "APP",
+            "BKNG",
+            "CL",
+            "FAST",
+            "GWW",
+            "IDXX",
+            "INCY",
+            "LULU",
+            "MTD",
+            "NVDA",
+            "ORLY",
+            "PODD",
+            "PPG",
+            "RL",
+            "ROL",
+            "ULTA",
+            "VRSN",
+            "WMT",
+            "WSM"
+          ],
+          "entries": [
+            {
+              "symbol": "PODD",
+              "price": 249.38,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "APP",
+              "price": 380.62,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PPG",
+              "price": 125.35,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "MTCH",
+              "entry_price": 32.08,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.88,
+              "exit_date": "2026-02-23",
+              "return": -0.0374
+            },
+            {
+              "symbol": "HD",
+              "entry_price": 386.53,
+              "entry_date": "2026-01-26",
+              "exit_price": 376.99,
+              "exit_date": "2026-02-23",
+              "return": -0.0247
+            },
+            {
+              "symbol": "TSCO",
+              "entry_price": 55.56,
+              "entry_date": "2026-01-26",
+              "exit_price": 53.89,
+              "exit_date": "2026-02-23",
+              "return": -0.0301
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ADBE",
+            "APP",
+            "BKNG",
+            "CL",
+            "FAST",
+            "GWW",
+            "IDXX",
+            "INCY",
+            "LULU",
+            "MTD",
+            "NVDA",
+            "ORLY",
+            "PODD",
+            "PPG",
+            "RL",
+            "ROL",
+            "ULTA",
+            "VRSN",
+            "WMT",
+            "WSM"
+          ],
+          "entries": [],
+          "exits": []
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ADBE",
+          "entry_price": 304.72,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "APP",
+          "entry_price": 380.62,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "BKNG",
+          "entry_price": 204.29,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CL",
+          "entry_price": 85.2,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FAST",
+          "entry_price": 43.73,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "GWW",
+          "entry_price": 1049.97,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IDXX",
+          "entry_price": 697.82,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "INCY",
+          "entry_price": 102.58,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 192.79,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MTD",
+          "entry_price": 1425.67,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "NVDA",
+          "entry_price": 186.47,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ORLY",
+          "entry_price": 100.24,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PODD",
+          "entry_price": 249.38,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PPG",
+          "entry_price": 125.35,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "RL",
+          "entry_price": 360.32,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ROL",
+          "entry_price": 63.26,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ULTA",
+          "entry_price": 661.34,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "VRSN",
+          "entry_price": 251.54,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "WMT",
+          "entry_price": 117.64,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "WSM",
+          "entry_price": 204.67,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "MTCH",
+          "entry_price": 32.08,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.88,
+          "exit_date": "2026-02-23",
+          "return": -0.0374
+        },
+        {
+          "symbol": "HD",
+          "entry_price": 386.53,
+          "entry_date": "2026-01-26",
+          "exit_price": 376.99,
+          "exit_date": "2026-02-23",
+          "return": -0.0247
+        },
+        {
+          "symbol": "TSCO",
+          "entry_price": 55.56,
+          "entry_date": "2026-01-26",
+          "exit_price": 53.89,
+          "exit_date": "2026-02-23",
+          "return": -0.0301
+        }
+      ],
+      "ytd_return": -0.2056,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "graham_revised": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ACGL",
+            "AFL",
+            "BALL",
+            "CMCSA",
+            "COP",
+            "DAL",
+            "DOV",
+            "EOG",
+            "EW",
+            "FANG",
+            "HAL",
+            "HIG",
+            "LULU",
+            "MO",
+            "NWSA",
+            "PHM",
+            "SYF",
+            "TRMB",
+            "TRV",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "AFL",
+              "price": 108.94,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "BALL",
+              "price": 57.21,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DOV",
+              "price": 207.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HAL",
+              "price": 34.16,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NWSA",
+              "price": 26.9,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HIG",
+              "price": 130.74,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DAL",
+              "price": 67.5,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "COP",
+              "price": 98.45,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRMB",
+              "price": 71.38,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FANG",
+              "price": 153.52,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MO",
+              "price": 62.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "VICI",
+              "price": 28.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 29.43,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EW",
+              "price": 84.27,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRV",
+              "price": 281.71,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LULU",
+              "price": 192.79,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PHM",
+              "price": 125.07,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SYF",
+              "price": 77.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 93.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ACGL",
+            "AFL",
+            "CMCSA",
+            "DAL",
+            "EIX",
+            "EOG",
+            "EW",
+            "FANG",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "MO",
+            "NWSA",
+            "PYPL",
+            "SYF",
+            "TRMB",
+            "TROW",
+            "TRV",
+            "VICI",
+            "XYZ"
+          ],
+          "entries": [
+            {
+              "symbol": "XYZ",
+              "price": 50.75,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "FOX",
+              "price": 50.85,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "TROW",
+              "price": 93.06,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "EIX",
+              "price": 74.65,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "FOXA",
+              "price": 55.34,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "BALL",
+              "entry_price": 57.21,
+              "entry_date": "2026-01-26",
+              "exit_price": 67.14,
+              "exit_date": "2026-02-23",
+              "return": 0.1736
+            },
+            {
+              "symbol": "PHM",
+              "entry_price": 125.07,
+              "entry_date": "2026-01-26",
+              "exit_price": 140.21,
+              "exit_date": "2026-02-23",
+              "return": 0.1211
+            },
+            {
+              "symbol": "DOV",
+              "entry_price": 207.7,
+              "entry_date": "2026-01-26",
+              "exit_price": 230.73,
+              "exit_date": "2026-02-23",
+              "return": 0.1109
+            },
+            {
+              "symbol": "HAL",
+              "entry_price": 34.16,
+              "entry_date": "2026-01-26",
+              "exit_price": 35.24,
+              "exit_date": "2026-02-23",
+              "return": 0.0316
+            },
+            {
+              "symbol": "COP",
+              "entry_price": 98.45,
+              "entry_date": "2026-01-26",
+              "exit_price": 109.88,
+              "exit_date": "2026-02-23",
+              "return": 0.1161
+            },
+            {
+              "symbol": "LULU",
+              "entry_price": 192.79,
+              "entry_date": "2026-01-26",
+              "exit_price": 178.11,
+              "exit_date": "2026-02-23",
+              "return": -0.0761
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "CMCSA",
+            "DAL",
+            "DIS",
+            "EIX",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "INCY",
+            "LDOS",
+            "LULU",
+            "NWSA",
+            "PGR",
+            "PYPL",
+            "SMCI",
+            "SYF",
+            "TROW",
+            "TRV",
+            "VICI"
+          ],
+          "entries": [
+            {
+              "symbol": "ADBE",
+              "price": 241.13,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "LULU",
+              "price": 145.83,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "DIS",
+              "price": 94.32,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "INCY",
+              "price": 90.33,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "LDOS",
+              "price": 154.19,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 21.06,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "PGR",
+              "price": 201.39,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "MO",
+              "entry_price": 62.98,
+              "entry_date": "2026-01-26",
+              "exit_price": 67.02,
+              "exit_date": "2026-03-30",
+              "return": 0.0641
+            },
+            {
+              "symbol": "TRMB",
+              "entry_price": 71.38,
+              "entry_date": "2026-01-26",
+              "exit_price": 62.54,
+              "exit_date": "2026-03-30",
+              "return": -0.1238
+            },
+            {
+              "symbol": "XYZ",
+              "entry_price": 50.75,
+              "entry_date": "2026-02-23",
+              "exit_price": 57.03,
+              "exit_date": "2026-03-30",
+              "return": 0.1237
+            },
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 149.89,
+              "exit_date": "2026-03-30",
+              "return": 0.393
+            },
+            {
+              "symbol": "FANG",
+              "entry_price": 153.52,
+              "entry_date": "2026-01-26",
+              "exit_price": 198.65,
+              "exit_date": "2026-03-30",
+              "return": 0.294
+            },
+            {
+              "symbol": "AFL",
+              "entry_price": 108.94,
+              "entry_date": "2026-01-26",
+              "exit_price": 108.17,
+              "exit_date": "2026-03-30",
+              "return": -0.0071
+            },
+            {
+              "symbol": "EW",
+              "entry_price": 84.27,
+              "entry_date": "2026-01-26",
+              "exit_price": 79.5,
+              "exit_date": "2026-03-30",
+              "return": -0.0566
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 93.7,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ADBE",
+          "entry_price": 241.13,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 29.43,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DAL",
+          "entry_price": 67.5,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DIS",
+          "entry_price": 94.32,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EIX",
+          "entry_price": 74.65,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 50.85,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOXA",
+          "entry_price": 55.34,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 130.74,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "INCY",
+          "entry_price": 90.33,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LDOS",
+          "entry_price": 154.19,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 145.83,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "NWSA",
+          "entry_price": 26.9,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PGR",
+          "entry_price": 201.39,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 21.06,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SYF",
+          "entry_price": 77.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TROW",
+          "entry_price": 93.06,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 281.71,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "VICI",
+          "entry_price": 28.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "BALL",
+          "entry_price": 57.21,
+          "entry_date": "2026-01-26",
+          "exit_price": 67.14,
+          "exit_date": "2026-02-23",
+          "return": 0.1736
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 125.07,
+          "entry_date": "2026-01-26",
+          "exit_price": 140.21,
+          "exit_date": "2026-02-23",
+          "return": 0.1211
+        },
+        {
+          "symbol": "DOV",
+          "entry_price": 207.7,
+          "entry_date": "2026-01-26",
+          "exit_price": 230.73,
+          "exit_date": "2026-02-23",
+          "return": 0.1109
+        },
+        {
+          "symbol": "HAL",
+          "entry_price": 34.16,
+          "entry_date": "2026-01-26",
+          "exit_price": 35.24,
+          "exit_date": "2026-02-23",
+          "return": 0.0316
+        },
+        {
+          "symbol": "COP",
+          "entry_price": 98.45,
+          "entry_date": "2026-01-26",
+          "exit_price": 109.88,
+          "exit_date": "2026-02-23",
+          "return": 0.1161
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 192.79,
+          "entry_date": "2026-01-26",
+          "exit_price": 178.11,
+          "exit_date": "2026-02-23",
+          "return": -0.0761
+        },
+        {
+          "symbol": "MO",
+          "entry_price": 62.98,
+          "entry_date": "2026-01-26",
+          "exit_price": 67.02,
+          "exit_date": "2026-03-30",
+          "return": 0.0641
+        },
+        {
+          "symbol": "TRMB",
+          "entry_price": 71.38,
+          "entry_date": "2026-01-26",
+          "exit_price": 62.54,
+          "exit_date": "2026-03-30",
+          "return": -0.1238
+        },
+        {
+          "symbol": "XYZ",
+          "entry_price": 50.75,
+          "entry_date": "2026-02-23",
+          "exit_price": 57.03,
+          "exit_date": "2026-03-30",
+          "return": 0.1237
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 149.89,
+          "exit_date": "2026-03-30",
+          "return": 0.393
+        },
+        {
+          "symbol": "FANG",
+          "entry_price": 153.52,
+          "entry_date": "2026-01-26",
+          "exit_price": 198.65,
+          "exit_date": "2026-03-30",
+          "return": 0.294
+        },
+        {
+          "symbol": "AFL",
+          "entry_price": 108.94,
+          "entry_date": "2026-01-26",
+          "exit_price": 108.17,
+          "exit_date": "2026-03-30",
+          "return": -0.0071
+        },
+        {
+          "symbol": "EW",
+          "entry_price": 84.27,
+          "entry_date": "2026-01-26",
+          "exit_price": 79.5,
+          "exit_date": "2026-03-30",
+          "return": -0.0566
+        }
+      ],
+      "ytd_return": 0.102,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "iv15_deep_value": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ACGL",
+            "CB",
+            "CF",
+            "CMCSA",
+            "EOG",
+            "FOX",
+            "FOXA",
+            "HAL",
+            "HIG",
+            "IBKR",
+            "MPC",
+            "MTCH",
+            "OXY",
+            "PFG",
+            "PGR",
+            "SMCI",
+            "SYF",
+            "TRV",
+            "VLO",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "VLO",
+              "price": 183.28,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOX",
+              "price": 65.34,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HAL",
+              "price": 34.16,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HIG",
+              "price": 130.74,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CF",
+              "price": 91.65,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "OXY",
+              "price": 43.92,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MPC",
+              "price": 172.54,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CB",
+              "price": 303.49,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "FOXA",
+              "price": 72.72,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "IBKR",
+              "price": 75.35,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 29.43,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRV",
+              "price": 281.71,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MTCH",
+              "price": 32.08,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PFG",
+              "price": 93.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SYF",
+              "price": 77.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "WRB",
+              "price": 66.88,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 30.8,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 93.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PGR",
+              "price": 208.0,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "CF",
+            "CMCSA",
+            "DAL",
+            "EXPE",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "JPM",
+            "MPC",
+            "MS",
+            "MTCH",
+            "PGR",
+            "PYPL",
+            "SYF",
+            "TRV",
+            "VLO",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "EXPE",
+              "price": 188.51,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "ADBE",
+              "price": 246.68,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "MS",
+              "price": 166.8,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "DAL",
+              "price": 66.88,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "JPM",
+              "price": 297.67,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "PFG",
+              "entry_price": 93.0,
+              "entry_date": "2026-01-26",
+              "exit_price": 92.69,
+              "exit_date": "2026-02-23",
+              "return": -0.0033
+            },
+            {
+              "symbol": "OXY",
+              "entry_price": 43.92,
+              "entry_date": "2026-01-26",
+              "exit_price": 52.43,
+              "exit_date": "2026-02-23",
+              "return": 0.1938
+            },
+            {
+              "symbol": "CB",
+              "entry_price": 303.49,
+              "entry_date": "2026-01-26",
+              "exit_price": 333.39,
+              "exit_date": "2026-02-23",
+              "return": 0.0985
+            },
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 122.31,
+              "exit_date": "2026-02-23",
+              "return": 0.1367
+            },
+            {
+              "symbol": "SMCI",
+              "entry_price": 30.8,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.71,
+              "exit_date": "2026-02-23",
+              "return": -0.0029
+            },
+            {
+              "symbol": "HAL",
+              "entry_price": 34.16,
+              "entry_date": "2026-01-26",
+              "exit_price": 35.24,
+              "exit_date": "2026-02-23",
+              "return": 0.0316
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "ADBE",
+            "ARES",
+            "CMCSA",
+            "CRM",
+            "DAL",
+            "EXPE",
+            "FOX",
+            "FOXA",
+            "HIG",
+            "IBKR",
+            "LDOS",
+            "MO",
+            "MS",
+            "PGR",
+            "PYPL",
+            "SMCI",
+            "SYF",
+            "TRV",
+            "WRB"
+          ],
+          "entries": [
+            {
+              "symbol": "CRM",
+              "price": 185.03,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "MO",
+              "price": 67.02,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "ARES",
+              "price": 107.66,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "LDOS",
+              "price": 154.19,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 21.06,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "JPM",
+              "entry_price": 297.67,
+              "entry_date": "2026-02-23",
+              "exit_price": 283.77,
+              "exit_date": "2026-03-30",
+              "return": -0.0467
+            },
+            {
+              "symbol": "MTCH",
+              "entry_price": 32.08,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.15,
+              "exit_date": "2026-03-30",
+              "return": -0.0602
+            },
+            {
+              "symbol": "CF",
+              "entry_price": 91.65,
+              "entry_date": "2026-01-26",
+              "exit_price": 137.6,
+              "exit_date": "2026-03-30",
+              "return": 0.5014
+            },
+            {
+              "symbol": "MPC",
+              "entry_price": 172.54,
+              "entry_date": "2026-01-26",
+              "exit_price": 245.16,
+              "exit_date": "2026-03-30",
+              "return": 0.4209
+            },
+            {
+              "symbol": "VLO",
+              "entry_price": 183.28,
+              "entry_date": "2026-01-26",
+              "exit_price": 250.27,
+              "exit_date": "2026-03-30",
+              "return": 0.3655
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 93.7,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ADBE",
+          "entry_price": 246.68,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ARES",
+          "entry_price": 107.66,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 29.43,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CRM",
+          "entry_price": 185.03,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DAL",
+          "entry_price": 66.88,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EXPE",
+          "entry_price": 188.51,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOX",
+          "entry_price": 65.34,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "FOXA",
+          "entry_price": 72.72,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HIG",
+          "entry_price": 130.74,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IBKR",
+          "entry_price": 75.35,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LDOS",
+          "entry_price": 154.19,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MO",
+          "entry_price": 67.02,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MS",
+          "entry_price": 166.8,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PGR",
+          "entry_price": 208.0,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 21.06,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SYF",
+          "entry_price": 77.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TRV",
+          "entry_price": 281.71,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "WRB",
+          "entry_price": 66.88,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "PFG",
+          "entry_price": 93.0,
+          "entry_date": "2026-01-26",
+          "exit_price": 92.69,
+          "exit_date": "2026-02-23",
+          "return": -0.0033
+        },
+        {
+          "symbol": "OXY",
+          "entry_price": 43.92,
+          "entry_date": "2026-01-26",
+          "exit_price": 52.43,
+          "exit_date": "2026-02-23",
+          "return": 0.1938
+        },
+        {
+          "symbol": "CB",
+          "entry_price": 303.49,
+          "entry_date": "2026-01-26",
+          "exit_price": 333.39,
+          "exit_date": "2026-02-23",
+          "return": 0.0985
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 122.31,
+          "exit_date": "2026-02-23",
+          "return": 0.1367
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 30.8,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.71,
+          "exit_date": "2026-02-23",
+          "return": -0.0029
+        },
+        {
+          "symbol": "HAL",
+          "entry_price": 34.16,
+          "entry_date": "2026-01-26",
+          "exit_price": 35.24,
+          "exit_date": "2026-02-23",
+          "return": 0.0316
+        },
+        {
+          "symbol": "JPM",
+          "entry_price": 297.67,
+          "entry_date": "2026-02-23",
+          "exit_price": 283.77,
+          "exit_date": "2026-03-30",
+          "return": -0.0467
+        },
+        {
+          "symbol": "MTCH",
+          "entry_price": 32.08,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.15,
+          "exit_date": "2026-03-30",
+          "return": -0.0602
+        },
+        {
+          "symbol": "CF",
+          "entry_price": 91.65,
+          "entry_date": "2026-01-26",
+          "exit_price": 137.6,
+          "exit_date": "2026-03-30",
+          "return": 0.5014
+        },
+        {
+          "symbol": "MPC",
+          "entry_price": 172.54,
+          "entry_date": "2026-01-26",
+          "exit_price": 245.16,
+          "exit_date": "2026-03-30",
+          "return": 0.4209
+        },
+        {
+          "symbol": "VLO",
+          "entry_price": 183.28,
+          "entry_date": "2026-01-26",
+          "exit_price": 250.27,
+          "exit_date": "2026-03-30",
+          "return": 0.3655
+        }
+      ],
+      "ytd_return": 0.084,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "owner_earnings": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ACGL",
+            "ALL",
+            "APA",
+            "BALL",
+            "CDW",
+            "CF",
+            "CMCSA",
+            "DOV",
+            "EOG",
+            "EW",
+            "HPQ",
+            "KMB",
+            "LEN",
+            "LULU",
+            "NFLX",
+            "OXY",
+            "PHM",
+            "SYF",
+            "TGT",
+            "TRMB"
+          ],
+          "entries": [
+            {
+              "symbol": "BALL",
+              "price": 57.21,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ALL",
+              "price": 196.02,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TGT",
+              "price": 103.96,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "KMB",
+              "price": 101.14,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DOV",
+              "price": 207.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LEN",
+              "price": 110.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CF",
+              "price": 91.65,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "OXY",
+              "price": 43.92,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRMB",
+              "price": 71.38,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "APA",
+              "price": 25.4,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CMCSA",
+              "price": 29.43,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NFLX",
+              "price": 85.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EW",
+              "price": 84.27,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "LULU",
+              "price": 192.79,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "CDW",
+              "price": 127.4,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PHM",
+              "price": 125.07,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SYF",
+              "price": 77.51,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ACGL",
+              "price": 93.7,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EOG",
+              "price": 107.6,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HPQ",
+              "price": 19.46,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ACGL",
+            "AIG",
+            "ALL",
+            "AMP",
+            "BMY",
+            "CDW",
+            "CF",
+            "CMCSA",
+            "COP",
+            "DVN",
+            "EW",
+            "HPQ",
+            "LULU",
+            "NFLX",
+            "PYPL",
+            "SYF",
+            "T",
+            "TGT",
+            "TRMB",
+            "TROW"
+          ],
+          "entries": [
+            {
+              "symbol": "AIG",
+              "price": 79.98,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "COP",
+              "price": 109.88,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "TROW",
+              "price": 93.06,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "DVN",
+              "price": 43.67,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "T",
+              "price": 28.52,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 44.05,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "BMY",
+              "price": 61.25,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "AMP",
+              "price": 453.78,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "BALL",
+              "entry_price": 57.21,
+              "entry_date": "2026-01-26",
+              "exit_price": 67.14,
+              "exit_date": "2026-02-23",
+              "return": 0.1736
+            },
+            {
+              "symbol": "DOV",
+              "entry_price": 207.7,
+              "entry_date": "2026-01-26",
+              "exit_price": 230.73,
+              "exit_date": "2026-02-23",
+              "return": 0.1109
+            },
+            {
+              "symbol": "PHM",
+              "entry_price": 125.07,
+              "entry_date": "2026-01-26",
+              "exit_price": 140.21,
+              "exit_date": "2026-02-23",
+              "return": 0.1211
+            },
+            {
+              "symbol": "LEN",
+              "entry_price": 110.58,
+              "entry_date": "2026-01-26",
+              "exit_price": 116.2,
+              "exit_date": "2026-02-23",
+              "return": 0.0508
+            },
+            {
+              "symbol": "KMB",
+              "entry_price": 101.14,
+              "entry_date": "2026-01-26",
+              "exit_price": 110.51,
+              "exit_date": "2026-02-23",
+              "return": 0.0926
+            },
+            {
+              "symbol": "APA",
+              "entry_price": 25.4,
+              "entry_date": "2026-01-26",
+              "exit_price": 28.72,
+              "exit_date": "2026-02-23",
+              "return": 0.1307
+            },
+            {
+              "symbol": "OXY",
+              "entry_price": 43.92,
+              "entry_date": "2026-01-26",
+              "exit_price": 52.43,
+              "exit_date": "2026-02-23",
+              "return": 0.1938
+            },
+            {
+              "symbol": "EOG",
+              "entry_price": 107.6,
+              "entry_date": "2026-01-26",
+              "exit_price": 122.31,
+              "exit_date": "2026-02-23",
+              "return": 0.1367
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ACGL",
+            "AIG",
+            "ALL",
+            "AMP",
+            "APA",
+            "BMY",
+            "CDW",
+            "CMCSA",
+            "DAL",
+            "DVN",
+            "GEN",
+            "HPQ",
+            "LULU",
+            "PGR",
+            "PYPL",
+            "SPG",
+            "SYF",
+            "T",
+            "TROW",
+            "UPS"
+          ],
+          "entries": [
+            {
+              "symbol": "SPG",
+              "price": 182.35,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "GEN",
+              "price": 18.32,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "UPS",
+              "price": 94.95,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "DAL",
+              "price": 63.19,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "APA",
+              "price": 43.74,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "PGR",
+              "price": 201.39,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "TRMB",
+              "entry_price": 71.38,
+              "entry_date": "2026-01-26",
+              "exit_price": 62.54,
+              "exit_date": "2026-03-30",
+              "return": -0.1238
+            },
+            {
+              "symbol": "EW",
+              "entry_price": 84.27,
+              "entry_date": "2026-01-26",
+              "exit_price": 79.5,
+              "exit_date": "2026-03-30",
+              "return": -0.0566
+            },
+            {
+              "symbol": "NFLX",
+              "entry_price": 85.7,
+              "entry_date": "2026-01-26",
+              "exit_price": 92.97,
+              "exit_date": "2026-03-30",
+              "return": 0.0848
+            },
+            {
+              "symbol": "CF",
+              "entry_price": 91.65,
+              "entry_date": "2026-01-26",
+              "exit_price": 137.6,
+              "exit_date": "2026-03-30",
+              "return": 0.5014
+            },
+            {
+              "symbol": "COP",
+              "entry_price": 109.88,
+              "entry_date": "2026-02-23",
+              "exit_price": 132.89,
+              "exit_date": "2026-03-30",
+              "return": 0.2094
+            },
+            {
+              "symbol": "TGT",
+              "entry_price": 103.96,
+              "entry_date": "2026-01-26",
+              "exit_price": 118.78,
+              "exit_date": "2026-03-30",
+              "return": 0.1426
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ACGL",
+          "entry_price": 93.7,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "AIG",
+          "entry_price": 79.98,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ALL",
+          "entry_price": 196.02,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "AMP",
+          "entry_price": 453.78,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "APA",
+          "entry_price": 43.74,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "BMY",
+          "entry_price": 61.25,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CDW",
+          "entry_price": 127.4,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "CMCSA",
+          "entry_price": 29.43,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DAL",
+          "entry_price": 63.19,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DVN",
+          "entry_price": 43.67,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "GEN",
+          "entry_price": 18.32,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HPQ",
+          "entry_price": 19.46,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "LULU",
+          "entry_price": 192.79,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PGR",
+          "entry_price": 201.39,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 44.05,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SPG",
+          "entry_price": 182.35,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SYF",
+          "entry_price": 77.51,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "T",
+          "entry_price": 28.52,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "TROW",
+          "entry_price": 93.06,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "UPS",
+          "entry_price": 94.95,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "BALL",
+          "entry_price": 57.21,
+          "entry_date": "2026-01-26",
+          "exit_price": 67.14,
+          "exit_date": "2026-02-23",
+          "return": 0.1736
+        },
+        {
+          "symbol": "DOV",
+          "entry_price": 207.7,
+          "entry_date": "2026-01-26",
+          "exit_price": 230.73,
+          "exit_date": "2026-02-23",
+          "return": 0.1109
+        },
+        {
+          "symbol": "PHM",
+          "entry_price": 125.07,
+          "entry_date": "2026-01-26",
+          "exit_price": 140.21,
+          "exit_date": "2026-02-23",
+          "return": 0.1211
+        },
+        {
+          "symbol": "LEN",
+          "entry_price": 110.58,
+          "entry_date": "2026-01-26",
+          "exit_price": 116.2,
+          "exit_date": "2026-02-23",
+          "return": 0.0508
+        },
+        {
+          "symbol": "KMB",
+          "entry_price": 101.14,
+          "entry_date": "2026-01-26",
+          "exit_price": 110.51,
+          "exit_date": "2026-02-23",
+          "return": 0.0926
+        },
+        {
+          "symbol": "APA",
+          "entry_price": 25.4,
+          "entry_date": "2026-01-26",
+          "exit_price": 28.72,
+          "exit_date": "2026-02-23",
+          "return": 0.1307
+        },
+        {
+          "symbol": "OXY",
+          "entry_price": 43.92,
+          "entry_date": "2026-01-26",
+          "exit_price": 52.43,
+          "exit_date": "2026-02-23",
+          "return": 0.1938
+        },
+        {
+          "symbol": "EOG",
+          "entry_price": 107.6,
+          "entry_date": "2026-01-26",
+          "exit_price": 122.31,
+          "exit_date": "2026-02-23",
+          "return": 0.1367
+        },
+        {
+          "symbol": "TRMB",
+          "entry_price": 71.38,
+          "entry_date": "2026-01-26",
+          "exit_price": 62.54,
+          "exit_date": "2026-03-30",
+          "return": -0.1238
+        },
+        {
+          "symbol": "EW",
+          "entry_price": 84.27,
+          "entry_date": "2026-01-26",
+          "exit_price": 79.5,
+          "exit_date": "2026-03-30",
+          "return": -0.0566
+        },
+        {
+          "symbol": "NFLX",
+          "entry_price": 85.7,
+          "entry_date": "2026-01-26",
+          "exit_price": 92.97,
+          "exit_date": "2026-03-30",
+          "return": 0.0848
+        },
+        {
+          "symbol": "CF",
+          "entry_price": 91.65,
+          "entry_date": "2026-01-26",
+          "exit_price": 137.6,
+          "exit_date": "2026-03-30",
+          "return": 0.5014
+        },
+        {
+          "symbol": "COP",
+          "entry_price": 109.88,
+          "entry_date": "2026-02-23",
+          "exit_price": 132.89,
+          "exit_date": "2026-03-30",
+          "return": 0.2094
+        },
+        {
+          "symbol": "TGT",
+          "entry_price": 103.96,
+          "entry_date": "2026-01-26",
+          "exit_price": 118.78,
+          "exit_date": "2026-03-30",
+          "return": 0.1426
+        }
+      ],
+      "ytd_return": 0.0617,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    },
+    "rd_capitalized_dcf": {
+      "rebalances": [
+        {
+          "date": "2026-01-26",
+          "holdings": [
+            "ABT",
+            "ADBE",
+            "BIIB",
+            "DELL",
+            "EW",
+            "EXPE",
+            "GEHC",
+            "HAL",
+            "HPQ",
+            "INCY",
+            "KMB",
+            "MRK",
+            "MTCH",
+            "NTAP",
+            "PYPL",
+            "REGN",
+            "SWKS",
+            "TRMB",
+            "UBER",
+            "XYZ"
+          ],
+          "entries": [
+            {
+              "symbol": "XYZ",
+              "price": 65.9,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "KMB",
+              "price": 101.14,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EXPE",
+              "price": 269.49,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ADBE",
+              "price": 304.72,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "UBER",
+              "price": 81.98,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "NTAP",
+              "price": 98.81,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HAL",
+              "price": 34.16,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "REGN",
+              "price": 762.65,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "GEHC",
+              "price": 80.27,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "TRMB",
+              "price": 71.38,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "BIIB",
+              "price": 173.12,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "EW",
+              "price": 84.27,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MTCH",
+              "price": 32.08,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "DELL",
+              "price": 115.93,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "PYPL",
+              "price": 56.6,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "SWKS",
+              "price": 59.76,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "INCY",
+              "price": 102.58,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "ABT",
+              "price": 108.77,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "MRK",
+              "price": 107.4,
+              "date": "2026-01-26"
+            },
+            {
+              "symbol": "HPQ",
+              "price": 19.46,
+              "date": "2026-01-26"
+            }
+          ],
+          "exits": []
+        },
+        {
+          "date": "2026-02-23",
+          "holdings": [
+            "ADBE",
+            "AMGN",
+            "BMY",
+            "DELL",
+            "EBAY",
+            "EIX",
+            "EW",
+            "EXPE",
+            "HPQ",
+            "INCY",
+            "MRK",
+            "MTCH",
+            "NTAP",
+            "PYPL",
+            "QCOM",
+            "REGN",
+            "SWKS",
+            "TRMB",
+            "UBER",
+            "XYZ"
+          ],
+          "entries": [
+            {
+              "symbol": "QCOM",
+              "price": 140.41,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "EIX",
+              "price": 74.65,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "AMGN",
+              "price": 379.42,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "EBAY",
+              "price": 84.31,
+              "date": "2026-02-23"
+            },
+            {
+              "symbol": "BMY",
+              "price": 61.25,
+              "date": "2026-02-23"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "BIIB",
+              "entry_price": 173.12,
+              "entry_date": "2026-01-26",
+              "exit_price": 196.34,
+              "exit_date": "2026-02-23",
+              "return": 0.1341
+            },
+            {
+              "symbol": "KMB",
+              "entry_price": 101.14,
+              "entry_date": "2026-01-26",
+              "exit_price": 110.51,
+              "exit_date": "2026-02-23",
+              "return": 0.0926
+            },
+            {
+              "symbol": "HAL",
+              "entry_price": 34.16,
+              "entry_date": "2026-01-26",
+              "exit_price": 35.24,
+              "exit_date": "2026-02-23",
+              "return": 0.0316
+            },
+            {
+              "symbol": "ABT",
+              "entry_price": 108.77,
+              "entry_date": "2026-01-26",
+              "exit_price": 115.29,
+              "exit_date": "2026-02-23",
+              "return": 0.0599
+            },
+            {
+              "symbol": "GEHC",
+              "entry_price": 80.27,
+              "entry_date": "2026-01-26",
+              "exit_price": 83.86,
+              "exit_date": "2026-02-23",
+              "return": 0.0447
+            }
+          ]
+        },
+        {
+          "date": "2026-03-30",
+          "holdings": [
+            "ADBE",
+            "AMGN",
+            "BMY",
+            "DELL",
+            "EBAY",
+            "EIX",
+            "EXPE",
+            "GEHC",
+            "GILD",
+            "HPQ",
+            "INCY",
+            "MRK",
+            "NTAP",
+            "PYPL",
+            "QCOM",
+            "REGN",
+            "SMCI",
+            "SWKS",
+            "UBER",
+            "ZTS"
+          ],
+          "entries": [
+            {
+              "symbol": "GEHC",
+              "price": 68.77,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "GILD",
+              "price": 136.34,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "ZTS",
+              "price": 116.33,
+              "date": "2026-03-30"
+            },
+            {
+              "symbol": "SMCI",
+              "price": 21.06,
+              "date": "2026-03-30"
+            }
+          ],
+          "exits": [
+            {
+              "symbol": "MTCH",
+              "entry_price": 32.08,
+              "entry_date": "2026-01-26",
+              "exit_price": 30.15,
+              "exit_date": "2026-03-30",
+              "return": -0.0602
+            },
+            {
+              "symbol": "XYZ",
+              "entry_price": 65.9,
+              "entry_date": "2026-01-26",
+              "exit_price": 57.03,
+              "exit_date": "2026-03-30",
+              "return": -0.1346
+            },
+            {
+              "symbol": "TRMB",
+              "entry_price": 71.38,
+              "entry_date": "2026-01-26",
+              "exit_price": 62.54,
+              "exit_date": "2026-03-30",
+              "return": -0.1238
+            },
+            {
+              "symbol": "EW",
+              "entry_price": 84.27,
+              "entry_date": "2026-01-26",
+              "exit_price": 79.5,
+              "exit_date": "2026-03-30",
+              "return": -0.0566
+            }
+          ]
+        }
+      ],
+      "current_holdings": [
+        {
+          "symbol": "ADBE",
+          "entry_price": 304.72,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "AMGN",
+          "entry_price": 379.42,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "BMY",
+          "entry_price": 61.25,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "DELL",
+          "entry_price": 115.93,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EBAY",
+          "entry_price": 84.31,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EIX",
+          "entry_price": 74.65,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "EXPE",
+          "entry_price": 269.49,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "GEHC",
+          "entry_price": 68.77,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "GILD",
+          "entry_price": 136.34,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "HPQ",
+          "entry_price": 19.46,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "INCY",
+          "entry_price": 102.58,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "MRK",
+          "entry_price": 107.4,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "NTAP",
+          "entry_price": 98.81,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "PYPL",
+          "entry_price": 56.6,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "QCOM",
+          "entry_price": 140.41,
+          "entry_date": "2026-02-23",
+          "weight": 0.05
+        },
+        {
+          "symbol": "REGN",
+          "entry_price": 762.65,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SMCI",
+          "entry_price": 21.06,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SWKS",
+          "entry_price": 59.76,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "UBER",
+          "entry_price": 81.98,
+          "entry_date": "2026-01-26",
+          "weight": 0.05
+        },
+        {
+          "symbol": "ZTS",
+          "entry_price": 116.33,
+          "entry_date": "2026-03-30",
+          "weight": 0.05
+        }
+      ],
+      "all_exits_2026": [
+        {
+          "symbol": "BIIB",
+          "entry_price": 173.12,
+          "entry_date": "2026-01-26",
+          "exit_price": 196.34,
+          "exit_date": "2026-02-23",
+          "return": 0.1341
+        },
+        {
+          "symbol": "KMB",
+          "entry_price": 101.14,
+          "entry_date": "2026-01-26",
+          "exit_price": 110.51,
+          "exit_date": "2026-02-23",
+          "return": 0.0926
+        },
+        {
+          "symbol": "HAL",
+          "entry_price": 34.16,
+          "entry_date": "2026-01-26",
+          "exit_price": 35.24,
+          "exit_date": "2026-02-23",
+          "return": 0.0316
+        },
+        {
+          "symbol": "ABT",
+          "entry_price": 108.77,
+          "entry_date": "2026-01-26",
+          "exit_price": 115.29,
+          "exit_date": "2026-02-23",
+          "return": 0.0599
+        },
+        {
+          "symbol": "GEHC",
+          "entry_price": 80.27,
+          "entry_date": "2026-01-26",
+          "exit_price": 83.86,
+          "exit_date": "2026-02-23",
+          "return": 0.0447
+        },
+        {
+          "symbol": "MTCH",
+          "entry_price": 32.08,
+          "entry_date": "2026-01-26",
+          "exit_price": 30.15,
+          "exit_date": "2026-03-30",
+          "return": -0.0602
+        },
+        {
+          "symbol": "XYZ",
+          "entry_price": 65.9,
+          "entry_date": "2026-01-26",
+          "exit_price": 57.03,
+          "exit_date": "2026-03-30",
+          "return": -0.1346
+        },
+        {
+          "symbol": "TRMB",
+          "entry_price": 71.38,
+          "entry_date": "2026-01-26",
+          "exit_price": 62.54,
+          "exit_date": "2026-03-30",
+          "return": -0.1238
+        },
+        {
+          "symbol": "EW",
+          "entry_price": 84.27,
+          "entry_date": "2026-01-26",
+          "exit_price": 79.5,
+          "exit_date": "2026-03-30",
+          "return": -0.0566
+        }
+      ],
+      "ytd_return": -0.0216,
+      "tracking_start": "2026-01-26",
+      "rebalance_count": 3
+    }
+  },
+  "baseline_history": {
+    "2021": {
+      "dcf_fcff": 0.082,
+      "earnings_yield_gap": 0.324,
+      "ev_gross_profit": 0.105,
+      "rd_capitalized_dcf": 0.104,
+      "owner_earnings": 0.184,
+      "epv": 0.108,
+      "graham_revised": 0.124,
+      "acquirers_multiple": 0.117,
+      "iv15_deep_value": 0.117
+    },
+    "2022": {
+      "dcf_fcff": -0.124,
+      "earnings_yield_gap": -0.082,
+      "ev_gross_profit": -0.058,
+      "rd_capitalized_dcf": -0.058,
+      "owner_earnings": 0.042,
+      "epv": -0.06,
+      "graham_revised": 0.051,
+      "acquirers_multiple": -0.065,
+      "iv15_deep_value": -0.065
+    },
+    "2023": {
+      "dcf_fcff": 0.075,
+      "earnings_yield_gap": 0.301,
+      "ev_gross_profit": 0.1,
+      "rd_capitalized_dcf": 0.099,
+      "owner_earnings": 0.201,
+      "epv": 0.103,
+      "graham_revised": 0.142,
+      "acquirers_multiple": 0.112,
+      "iv15_deep_value": 0.112
+    },
+    "2024": {
+      "dcf_fcff": 0.091,
+      "earnings_yield_gap": 0.345,
+      "ev_gross_profit": 0.122,
+      "rd_capitalized_dcf": 0.121,
+      "owner_earnings": 0.225,
+      "epv": 0.125,
+      "graham_revised": 0.16,
+      "acquirers_multiple": 0.136,
+      "iv15_deep_value": 0.136
+    },
+    "2025": {
+      "dcf_fcff": 0.055,
+      "earnings_yield_gap": 0.238,
+      "ev_gross_profit": 0.103,
+      "rd_capitalized_dcf": 0.102,
+      "owner_earnings": 0.24,
+      "epv": 0.106,
+      "graham_revised": 0.155,
+      "acquirers_multiple": 0.115,
+      "iv15_deep_value": 0.115
+    }
+  }
+}

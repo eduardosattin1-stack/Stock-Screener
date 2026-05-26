@@ -936,6 +936,20 @@ export default function Dashboard(){
       });
   }, []);
 
+  // Load methodology tracking state (paper-trading YTD + baseline)
+  const [trackingData, setTrackingData] = useState<any>(null);
+  useEffect(() => {
+    fetch("/api/gcs/scans/methodology_tracking.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS tracking fetch failed"); })
+      .then((d) => { if (d && d.tracking_year) setTrackingData(d); else throw new Error("empty"); })
+      .catch(() => {
+        fetch("/methodology_tracking.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d && d.tracking_year) setTrackingData(d); })
+          .catch((e) => console.error("Error loading tracking data:", e));
+      });
+  }, []);
+
   // Load tracked baskets from localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1270,6 +1284,12 @@ export default function Dashboard(){
             const activeTickers = methodologyPicks[b.path] || [];
 
             const getAnnualReturn = (year: number) => {
+              // Prefer tracked baseline from methodology_tracking.json
+              const shortKey = b.path.split("/").pop() || "";
+              if (trackingData?.baseline_history?.[String(year)]?.[shortKey] !== undefined) {
+                return trackingData.baseline_history[String(year)][shortKey];
+              }
+              // Fall back to hardcoded annualReturns in METHODOLOGIES_CONFIG
               if (b.annualReturns) {
                 const found = b.annualReturns.find((y: any) => y.year === year);
                 if (found && found.return !== undefined) return found.return;
@@ -1299,7 +1319,18 @@ export default function Dashboard(){
             };
 
             const getActiveBasketPerformance = () => {
-              const picksList = methodologyDetails[b.path]?.picks || [];
+              // Prefer backend-tracked YTD return from methodology_tracking.json
+              const shortKey = b.path.split("/").pop() || "";
+              const methDetails = methodologyDetails[b.path];
+              if (methDetails?.ytd_return !== undefined && methDetails.ytd_return !== 0) {
+                return methDetails.ytd_return;
+              }
+              // Also check tracking data directly
+              if (trackingData?.methodologies?.[shortKey]?.ytd_return !== undefined) {
+                return trackingData.methodologies[shortKey].ytd_return;
+              }
+              // Fallback: compute from current prices vs entry prices
+              const picksList = methDetails?.picks || [];
               if (picksList.length === 0) return 0;
               let totalReturn = 0;
               let count = 0;
