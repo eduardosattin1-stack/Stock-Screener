@@ -298,12 +298,13 @@ export default function CatalystWatch() {
     return result;
   }, [recentScans, watchlist, showMergerArbs]);
 
-  // Filter watchlist to exclude merger arbs when showMergerArbs is toggled off
+  // Filter watchlist to isolate or exclude merger arbs based on toggle
   const filteredWatchlist = useMemo(() => {
-    if (!showMergerArbs) {
+    if (showMergerArbs) {
+      return watchlist.filter(w => w.is_merger_arb);
+    } else {
       return watchlist.filter(w => !w.is_merger_arb);
     }
-    return watchlist;
   }, [watchlist, showMergerArbs]);
 
   // Filter and sort candidates list based on active filters and sorting selection
@@ -318,8 +319,10 @@ export default function CatalystWatch() {
       );
     }
     
-    // Merger Arb Filter
-    if (!showMergerArbs) {
+    // Merger Arb Filter: Isolate (if true) or Exclude (if false)
+    if (showMergerArbs) {
+      result = result.filter(cand => cand.is_merger_arb);
+    } else {
       result = result.filter(cand => !cand.is_merger_arb);
     }
     
