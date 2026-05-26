@@ -268,7 +268,8 @@ export default function CatalystWatch() {
           price: data.price,
           market_cap: data.market_cap,
           flags: data.recommendation ? [data.recommendation] : ["Scanned"],
-          is_scanned: true
+          is_scanned: true,
+          is_merger_arb: data.is_merger_arb
         } : item);
       }
       return [
@@ -280,7 +281,8 @@ export default function CatalystWatch() {
           market_cap: data.market_cap,
           flags: data.recommendation ? [data.recommendation] : ["Scanned"],
           has_special_flag: false,
-          is_scanned: true
+          is_scanned: true,
+          is_merger_arb: data.is_merger_arb
         },
         ...prev
       ];
