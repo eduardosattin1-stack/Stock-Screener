@@ -19,7 +19,7 @@
 | [run_server.py](file:///c:/Users/Bruno/Stock-Screener/backend/run_server.py) | HTTP server entry point. Exposes all API routes on port 8080, now including the new `/api/catalysts/progress` endpoint. |
 | [screener_v6.py](file:///c:/Users/Bruno/Stock-Screener/backend/screener_v6.py) | **The brain** — 10-factor stock scoring engine with `compute_catalyst_score()`, `compute_composite_v8()`, and `save_scan_to_gcs()`. |
 | [opportunistic_catalysts.py](file:///c:/Users/Bruno/Stock-Screener/backend/opportunistic_catalysts.py) | **Catalyst Watch engine** — Implements candidate fetching, merges deep scan cache, dispatches Claude LLM scans with refined Loeb/Bloom timing logic, and computes hedging suggestions. |
-| [massive_options.py](file:///c:/Users/Bruno/Stock-Screener/backend/massive_options.py) | **Options layer** — Integrates directly with the local ThetaData terminal SDK to extract ATM IV, skew, term structure, and open interest. |
+| [massive_options.py](file:///c:/Users/Bruno/Stock-Screener/backend/massive_options.py) | **Options layer** — Integrates directly with the thetadata Python library (direct gRPC connection using account credentials, no local terminal required) to extract ATM IV, skew, term structure, and open interest. |
 | [run_universe_scan.py](file:///c:/Users/Bruno/Stock-Screener/backend/run_universe_scan.py) | **Batch parallel scanner** — runs `run_catalyst_scan()` for candidates concurrently with ThreadPoolExecutor and updates real-time scan progress. |
 
 ### Data Flow
