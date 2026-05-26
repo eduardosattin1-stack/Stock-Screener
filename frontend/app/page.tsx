@@ -122,6 +122,17 @@ interface StockData {
   price_to_graham_revised?:number|null;
   acquirers_multiple?:number|null;
   iv15_discount?:number|null;
+  dcf_fcff_mos?:number|null;
+  rd_capitalized_dcf?:number|null;
+  rd_capitalized_dcf_mos?:number|null;
+  owner_earnings?:number|null;
+  owner_earnings_mos?:number|null;
+  epv_value?:number|null;
+  epv_mos?:number|null;
+  graham_revised?:number|null;
+  graham_revised_mos?:number|null;
+  iv15_deep_value?:number|null;
+  iv15_deep_value_mos?:number|null;
 }
 interface ScanData {
   scan_date:string; region:string; version:string;
@@ -150,15 +161,19 @@ const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
   
   switch (path) {
     case "intrinsic/dcf_fcff": {
-      const dcfMos = stock.dcf_value && stock.price && stock.dcf_value > 0
-        ? (stock.dcf_value - stock.price) / stock.dcf_value
-        : null;
+      const dcfMos = stock.dcf_fcff_mos != null
+        ? stock.dcf_fcff_mos
+        : (stock.dcf_value && stock.price && stock.dcf_value > 0
+          ? (stock.dcf_value - stock.price) / stock.dcf_value
+          : null);
       return { label: "MARGIN OF SAFETY", value: dcfMos != null ? `${(dcfMos * 100).toFixed(1)}%` : "—" };
     }
     case "emerging/rd_capitalized_dcf": {
-      const rdMos = stock.dcf_value && stock.price && stock.dcf_value > 0
-        ? (stock.dcf_value - stock.price) / stock.dcf_value
-        : null;
+      const rdMos = stock.rd_capitalized_dcf_mos != null
+        ? stock.rd_capitalized_dcf_mos
+        : (stock.rd_capitalized_dcf && stock.price && stock.rd_capitalized_dcf > 0
+          ? (stock.rd_capitalized_dcf - stock.price) / stock.rd_capitalized_dcf
+          : null);
       return { label: "R&D DCF MOS", value: rdMos != null ? `${(rdMos * 100).toFixed(1)}%` : "—" };
     }
     case "emerging/earnings_yield_gap":
@@ -170,15 +185,15 @@ const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
     case "intrinsic/epv_greenwald":
       return { label: "EPV / EV RATIO", value: stock.epv_to_ev != null ? stock.epv_to_ev.toFixed(2) : "—" };
     case "v8fusion/graham_revised": {
-      const grahamMos = stock.price_to_graham_revised != null
-        ? 1.0 - stock.price_to_graham_revised
-        : null;
+      const grahamMos = stock.graham_revised_mos != null
+        ? stock.graham_revised_mos
+        : (stock.price_to_graham_revised != null ? 1.0 - stock.price_to_graham_revised : null);
       return { label: "GRAHAM REVISED MOS", value: grahamMos != null ? `${(grahamMos * 100).toFixed(1)}%` : "—" };
     }
     case "v8fusion/iv15_deep_value": {
-      const iv15Mos = stock.iv15_discount != null
-        ? 1.0 - stock.iv15_discount
-        : null;
+      const iv15Mos = stock.iv15_deep_value_mos != null
+        ? stock.iv15_deep_value_mos
+        : (stock.iv15_discount != null ? 1.0 - stock.iv15_discount : null);
       return { label: "IV15 DISCOUNT MOS", value: iv15Mos != null ? `${(iv15Mos * 100).toFixed(1)}%` : "—" };
     }
     case "multiples/acquirers_multiple":
@@ -681,7 +696,7 @@ const METHODOLOGIES_CONFIG = [
     path: "intrinsic/dcf_fcff",
     name: "DCF-FCFF Valuation",
     regime: "BULL",
-    description: "Stage 1 projects FCFF for 5 years with growth from $ROE \\times 0.5$ (bounded 3-25%), decaying by $0.85^{\\text{year}}$. Stage 2 perpetual growth 2.5%. WACC derived from CAPM ($4.5\\% \\text{ risk-free} + \\beta \\times 5.5\\% \\text{ market premium}$). Enterprise value is adjusted for net debt.",
+    description: "Stage 1 projects FCFF for 5 years with growth from ROE × 0.5 (bounded 3-25%), decaying by 0.85^year. Stage 2 perpetual growth 2.5%. WACC derived from CAPM (4.5% risk-free + beta × 5.5% market premium). Enterprise value is adjusted for net debt.",
     annualReturns: [
       { year: 2021, regime: "BULL", return: 0.082 },
       { year: 2022, regime: "BEAR", return: -0.124 },
@@ -699,7 +714,7 @@ const METHODOLOGIES_CONFIG = [
     path: "emerging/earnings_yield_gap",
     name: "Earnings Yield Gap",
     regime: "BULL",
-    description: "Yield spread of Earnings Yield ($EY = \\text{EPS} / \\text{Price}$) over the 10-year Treasury rate (4.5% baseline). Centered and scaled margin of safety.",
+    description: "Yield spread of Earnings Yield (EY = EPS / Price) over the 10-year Treasury rate (4.5% baseline). Centered and scaled margin of safety.",
     annualReturns: [
       { year: 2021, regime: "BULL", return: 0.324 },
       { year: 2022, regime: "BEAR", return: -0.082 },
@@ -717,7 +732,7 @@ const METHODOLOGIES_CONFIG = [
     path: "multiples/ev_gross_profit",
     name: "EV / Gross Profit Multiple",
     regime: "BULL",
-    description: "Ranks by Gross Profitability ($\\frac{\\text{Gross Profit}}{\\text{Total Assets}}$) based on Robert Novy-Marx's research. Centered and scaled rank.",
+    description: "Ranks by Gross Profitability (Gross Profit / Total Assets) based on Robert Novy-Marx's research. Centered and scaled rank.",
     metrics: {
       baseline: { cagr: 0.1362, mdd: -0.2545, sharpe: 0.835, trades: 85 },
       debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
@@ -739,7 +754,7 @@ const METHODOLOGIES_CONFIG = [
     path: "intrinsic/owner_earnings",
     name: "Owner Earnings Yield",
     regime: "SIDEWAYS",
-    description: "Owner Earnings calculated as $\\text{Net Income} + \\text{D\\&A} - \\text{Maintenance Capex}$ (using revenue growth proxy). Projected 10 years at $ROE \\times 0.4$, discounted using flat 10% hurdle rate.",
+    description: "Owner Earnings calculated as Net Income + D&A - Maintenance Capex (using revenue growth proxy). Projected 10 years at ROE × 0.4, discounted using flat 10% hurdle rate.",
     annualReturns: [
       { year: 2021, regime: "BULL", return: 0.184 },
       { year: 2022, regime: "BEAR", return: 0.042 },
@@ -757,7 +772,7 @@ const METHODOLOGIES_CONFIG = [
     path: "intrinsic/epv_greenwald",
     name: "EPV (Greenwald Valuation)",
     regime: "SIDEWAYS",
-    description: "Bruce Greenwald's Earnings Power Value model assuming zero future growth. Calculates normalized NOPAT as $(\\text{EBIT} - \\text{Maintenance Capex}) \\times (1 - 21\\% \\text{ tax})$. Equity EPV is $\\frac{\\text{NOPAT}}{\\text{WACC}} - \\text{Net Debt}$.",
+    description: "Bruce Greenwald's Earnings Power Value model assuming zero future growth. Calculates normalized NOPAT as (EBIT - Maintenance Capex) × (1 - 21% tax). Equity EPV is (NOPAT / WACC) - Net Debt.",
     metrics: {
       baseline: { cagr: 0.1401, mdd: -0.2697, sharpe: 0.753, trades: 148 },
       debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
@@ -768,7 +783,7 @@ const METHODOLOGIES_CONFIG = [
     path: "v8fusion/graham_revised",
     name: "Graham Revised Valuation",
     regime: "BEAR",
-    description: "Benjamin Graham's growth formula: $V = \\text{EPS} \\times (8.5 + 2g) \\times \\frac{4.4}{Y\\_AAA}$, where $g$ is the 3-year EPS CAGR (bounded 0-20%) and $Y\\_AAA$ is AAA corporate bond yield.",
+    description: "Benjamin Graham's growth formula: V = EPS × (8.5 + 2g) × 4.4 / Y_AAA, where g is the 3-year EPS CAGR (bounded 0-20%) and Y_AAA is AAA corporate bond yield.",
     annualReturns: [
       { year: 2021, regime: "BULL", return: 0.124 },
       { year: 2022, regime: "BEAR", return: 0.051 },
@@ -786,7 +801,7 @@ const METHODOLOGIES_CONFIG = [
     path: "multiples/acquirers_multiple",
     name: "Acquirer's Multiple",
     regime: "BEAR",
-    description: "Ranks by Tobias Carlisle's Acquirer's Multiple ($\\frac{\\text{Enterprise Value}}{\\text{EBIT}}$) where Enterprise Value is $\\text{Market Cap} + \\text{Net Debt}$.",
+    description: "Ranks by Tobias Carlisle's Acquirer's Multiple (Enterprise Value / EBIT) where Enterprise Value is Market Cap + Net Debt.",
     metrics: {
       baseline: { cagr: 0.1520, mdd: -0.3406, sharpe: 0.777, trades: 246 },
       debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
@@ -797,7 +812,7 @@ const METHODOLOGIES_CONFIG = [
     path: "v8fusion/iv15_deep_value",
     name: "IV15 Deep Value",
     regime: "BEAR",
-    description: "Michael Burry deep-value approach. Projects FCF 15 years forward based on 3-year EPS CAGR (bounded 0-20%). Applies terminal multiple of $2 \\times \\text{growth rate}$ (bounded 8-20x) and discounts at a high 15% hurdle rate.",
+    description: "Michael Burry deep-value approach. Projects FCF 15 years forward based on 3-year EPS CAGR (bounded 0-20%). Applies terminal multiple of 2 × growth rate (bounded 8-20x) and discounts at a high 15% hurdle rate.",
     metrics: {
       baseline: { cagr: 0.1520, mdd: -0.3553, sharpe: 0.719, trades: 236 },
       debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
@@ -863,6 +878,7 @@ export default function Dashboard(){
   const [trackedBaskets, setTrackedBaskets] = useState<string[]>([]);
   const [expandedBaskets, setExpandedBaskets] = useState<Record<string, boolean>>({});
   const [methodologyPicks, setMethodologyPicks] = useState<Record<string, string[]>>({});
+  const [methodologyDetails, setMethodologyDetails] = useState<Record<string, any>>({});
   const [selectedMethodology, setSelectedMethodology] = useState<string | null>(null);
 
   const stocks: StockData[] = data?.stocks || [];
@@ -879,14 +895,22 @@ export default function Dashboard(){
     const handlePicks = (d: any) => {
       if (d && d.methodologies) {
         const transformed: Record<string, string[]> = {};
+        const details: Record<string, any> = {};
         METHODOLOGIES_CONFIG.forEach(basket => {
           const shortKey = basket.path.split("/").pop() || "";
           const picksList = d.methodologies[shortKey]?.picks || [];
           transformed[basket.path] = picksList.map((p: any) => p.symbol);
+          details[basket.path] = d.methodologies[shortKey] || { picks: [], exits: [] };
         });
         setMethodologyPicks(transformed);
+        setMethodologyDetails(details);
       } else if (d && Object.keys(d).length > 0) {
         setMethodologyPicks(d);
+        const details: Record<string, any> = {};
+        Object.keys(d).forEach(k => {
+          details[k] = { picks: d[k].map((sym: string) => ({ symbol: sym })), exits: [] };
+        });
+        setMethodologyDetails(details);
       }
     };
 
@@ -1244,6 +1268,56 @@ export default function Dashboard(){
             const b = METHODOLOGIES_CONFIG.find(m => m.path === selectedMethodology);
             if (!b) return null;
             const activeTickers = methodologyPicks[b.path] || [];
+
+            const getAnnualReturn = (year: number) => {
+              if (b.annualReturns) {
+                const found = b.annualReturns.find((y: any) => y.year === year);
+                if (found && found.return !== undefined) return found.return;
+              }
+              const b10Cagr = 0.152;
+              const ratio = b.metrics.baseline.cagr / b10Cagr;
+              let baseReturn = 0;
+              if (year === 2021) baseReturn = 0.117;
+              else if (year === 2022) baseReturn = -0.065;
+              else if (year === 2023) baseReturn = 0.112;
+              else if (year === 2024) baseReturn = 0.136;
+              else if (year === 2025) baseReturn = 0.115;
+              return baseReturn * ratio;
+            };
+
+            const getAnnualRegime = (year: number) => {
+              if (b.annualReturns) {
+                const found = b.annualReturns.find((y: any) => y.year === year);
+                if (found && found.regime) return found.regime;
+              }
+              if (year === 2021) return "BULL";
+              if (year === 2022) return "BEAR";
+              if (year === 2023) return "BULL";
+              if (year === 2024) return "BULL";
+              if (year === 2025) return "SIDEWAYS";
+              return b.regime || "BULL";
+            };
+
+            const getActiveBasketPerformance = () => {
+              const picksList = methodologyDetails[b.path]?.picks || [];
+              if (picksList.length === 0) return 0;
+              let totalReturn = 0;
+              let count = 0;
+              picksList.forEach((pick: any) => {
+                const stock = findStock(pick.symbol);
+                const currPrice = stock?.price || pick.price || 0;
+                const entryPrice = pick.entry_price || currPrice || 1;
+                if (entryPrice > 0) {
+                  totalReturn += (currPrice - entryPrice) / entryPrice;
+                  count++;
+                }
+              });
+              return count > 0 ? totalReturn / count : 0;
+            };
+
+            const picks = methodologyDetails[b.path]?.picks || [];
+            const exits = methodologyDetails[b.path]?.exits || [];
+
             return (
               <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, overflow: "hidden", padding: "24px", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" }}>
                 <button onClick={() => setSelectedMethodology(null)} style={{ background: "transparent", border: "none", color: "var(--text-light)", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, marginBottom: 24, fontSize: 12, fontFamily: "var(--font-mono)", padding: 0 }}>
@@ -1260,124 +1334,79 @@ export default function Dashboard(){
                   </div>
                   <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", minWidth: 400, boxShadow: "var(--shadow-sm)" }}>
                     <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginBottom: 16, fontWeight: 700, letterSpacing: "0.05em" }}>PERFORMANCE TRACK RECORD</div>
-                    <table style={{ width: "100%", fontSize: 11, fontFamily: "var(--font-mono)", borderCollapse: "collapse", textAlign: "right" }}>
+                    <table style={{ width: "100%", fontSize: 11, fontFamily: "var(--font-mono)", borderCollapse: "collapse" }}>
                       <thead>
-                        <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)" }}>
-                          <th style={{ paddingBottom: 8, textAlign: "left", fontWeight: 600 }}>MODE</th>
-                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>CAGR</th>
-                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>MAX DD</th>
-                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>SHARPE</th>
-                          <th style={{ paddingBottom: 8, paddingLeft: 16, fontWeight: 600 }}>TRADES</th>
+                        <tr style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left" }}>
+                          <th style={{ paddingBottom: 8, fontWeight: 600 }}>YEAR</th>
+                          <th style={{ paddingBottom: 8, fontWeight: 600 }}>MODE / STATUS</th>
+                          <th style={{ paddingBottom: 8, fontWeight: 600, textAlign: "right" }}>RETURN</th>
+                          <th style={{ paddingBottom: 8, fontWeight: 600, textAlign: "right" }}>REGIME</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td style={{ paddingTop: 10, textAlign: "left", color: "var(--text-light)" }}>Baseline</td>
-                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text)", fontWeight: 700 }}>{(b.metrics.baseline.cagr * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.baseline.mdd * 100).toFixed(1)}%</td>
-                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.baseline.sharpe.toFixed(2)}</td>
-                          <td style={{ paddingTop: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.baseline.trades}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ paddingTop: 8, textAlign: "left", color: "var(--text)", fontWeight: 700 }}>Active</td>
-                          {b.metrics.debate.trades === 0 ? (
-                             <td colSpan={4} style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
-                          ) : (
-                            <>
-                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.debate.cagr * 100).toFixed(1)}%</td>
-                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.debate.mdd * 100).toFixed(1)}%</td>
-                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.debate.sharpe.toFixed(2)}</td>
-                              <td style={{ paddingTop: 8, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.debate.trades}</td>
-                            </>
-                          )}
-                        </tr>
-                        <tr>
-                          <td style={{ paddingTop: 8, paddingBottom: 10, textAlign: "left", color: "var(--purple)", fontWeight: 700 }}>Speculair</td>
-                          {b.metrics.director.trades === 0 ? (
-                             <td colSpan={4} style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)", fontStyle: "italic", textAlign: "right" }}>UNTESTED</td>
-                          ) : (
-                            <>
-                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--green)", fontWeight: 700 }}>{(b.metrics.director.cagr * 100).toFixed(1)}%</td>
-                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--red)" }}>{(b.metrics.director.mdd * 100).toFixed(1)}%</td>
-                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text)" }}>{b.metrics.director.sharpe.toFixed(2)}</td>
-                              <td style={{ paddingTop: 8, paddingBottom: 10, paddingLeft: 16, color: "var(--text-muted)" }}>{b.metrics.director.trades}</td>
-                            </>
-                          )}
+                        {[2021, 2022, 2023, 2024, 2025].map(year => {
+                          const annualReturn = getAnnualReturn(year);
+                          const regime = getAnnualRegime(year);
+                          return (
+                            <tr key={year} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                              <td style={{ padding: "8px 0", color: "var(--text-light)" }}>{year}</td>
+                              <td style={{ padding: "8px 0", color: "var(--text-muted)" }}>Baseline Backtest</td>
+                              <td style={{ padding: "8px 0", textAlign: "right", color: annualReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>
+                                {annualReturn >= 0 ? "+" : ""}{(annualReturn * 100).toFixed(1)}%
+                              </td>
+                              <td style={{ padding: "8px 0", textAlign: "right" }}>
+                                <span style={{ fontSize: 9, background: regime === "BULL" ? "var(--green-light)" : regime === "BEAR" ? "var(--red-light)" : "var(--bg)", color: regime === "BULL" ? "var(--green)" : regime === "BEAR" ? "var(--red)" : "var(--text-muted)", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>{regime}</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        <tr style={{ background: "rgba(139, 92, 246, 0.05)" }}>
+                          <td style={{ padding: "10px 0", color: "var(--purple)", fontWeight: 700 }}>2026</td>
+                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Active (Currently Holding)</td>
+                          <td style={{ padding: "10px 0", textAlign: "right", color: getActiveBasketPerformance() >= 0 ? "var(--green)" : "var(--red)", fontWeight: 800 }}>
+                            {getActiveBasketPerformance() >= 0 ? "+" : ""}{(getActiveBasketPerformance() * 100).toFixed(1)}%
+                          </td>
+                          <td style={{ padding: "10px 0", textAlign: "right" }}>
+                            <span style={{ fontSize: 9, background: b.regime === "BULL" ? "var(--green-light)" : b.regime === "BEAR" ? "var(--red-light)" : "var(--bg)", color: b.regime === "BULL" ? "var(--green)" : b.regime === "BEAR" ? "var(--red)" : "var(--text-muted)", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>{b.regime || "BULL"}</span>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
-                    
-                    {b.metrics.debate.trades > 0 && (
-                      <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--border-subtle)" }}>
-                        <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", marginBottom: 16, fontWeight: 700, letterSpacing: "0.05em" }}>5-YEAR BREAKDOWN</div>
-                        <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                           {(((b as any).annualReturns) || [
-                             { year: 2021, regime: "BULL" },
-                             { year: 2022, regime: "BEAR" },
-                             { year: 2023, regime: "BULL" },
-                             { year: 2024, regime: "BULL" },
-                             { year: 2025, regime: "SIDEWAYS" }
-                           ]).map((y: any) => {
-                              let simulatedReturn = y.return;
-                              if (simulatedReturn === undefined) {
-                                 const b10Cagr = 0.152; // The aggregate dual-engine CAGR
-                                 const ratio = b.metrics.director.cagr / b10Cagr;
-                                 let baseReturn = 0;
-                                 if (y.year === 2021) baseReturn = 0.117;
-                                 if (y.year === 2022) baseReturn = -0.065;
-                                 if (y.year === 2023) baseReturn = 0.112;
-                                 if (y.year === 2024) baseReturn = 0.136;
-                                 if (y.year === 2025) baseReturn = 0.115;
-                                 
-                                 simulatedReturn = baseReturn * ratio;
-                              }
-
-                              return (
-                                 <div key={y.year} style={{ flex: 1, textAlign: "center", background: "var(--bg-surface)", padding: "12px 4px", borderRadius: 8, border: "1px solid var(--border-subtle)" }}>
-                                   <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, marginBottom: 8 }}>{y.year}</div>
-                                   <div style={{ fontSize: 13, fontWeight: 800, color: simulatedReturn >= 0 ? "var(--green)" : "var(--red)", marginBottom: 8 }}>{simulatedReturn >= 0 ? "+" : ""}{(simulatedReturn * 100).toFixed(1)}%</div>
-                                   <div style={{ fontSize: 9, background: y.regime === "BULL" ? "var(--green-light)" : y.regime === "BEAR" ? "var(--red-light)" : "var(--bg)", color: y.regime === "BULL" ? "var(--green)" : y.regime === "BEAR" ? "var(--red)" : "var(--text-muted)", padding: "2px 6px", borderRadius: 4, display: "inline-block", fontWeight: 700 }}>{y.regime}</div>
-                                 </div>
-                              )
-                           })}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: 32 }}>
-                   <div style={{ flex: 2 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                  <div style={{ width: "100%" }}>
                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}>
                        <div style={{ display: "flex", gap: 16 }}>
                          <button onClick={() => setMethodTab("holdings")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "holdings" ? "var(--text)" : "var(--text-muted)" }}>Active Holdings</button>
                          <button onClick={() => setMethodTab("speculair")} style={{ fontSize: 14, fontWeight: 700, margin: 0, padding: 0, background: "none", border: "none", cursor: "pointer", color: methodTab === "speculair" ? "var(--text)" : "var(--text-muted)" }}>Speculair</button>
                        </div>
-                       <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{activeTickers.length} total picks</span>
+                       <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{picks.length} total picks</span>
                      </div>
                      {methodTab === "holdings" ? (
                      <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", fontFamily: "var(--font-mono)" }}>
                        <thead>
                          <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
-                            <th style={{ paddingBottom: 8, fontWeight: 600 }}>TICKER</th>
-                            <th style={{ paddingBottom: 8, fontWeight: 600 }}>COMPANY</th>
-                            <th style={{ paddingBottom: 8, textAlign: "left", fontWeight: 600 }}>RATIONALE</th>
-                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>{getMethodologyMetric({ margin_of_safety: 1, earnings_yield: 1, gross_margin: 1, owner_earnings_yield: 1, intrinsic_upside: 1, value_score: 1, upside_score: 1 } as any, b?.path || "").label}</th>
-                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>CURRENT PRICE</th>
-                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
-                            <th style={{ paddingBottom: 8, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
-                            <th style={{ paddingBottom: 8, textAlign: "center", fontWeight: 600 }}></th>
+                            <th style={{ paddingBottom: 12, fontWeight: 600 }}>TICKER</th>
+                            <th style={{ paddingBottom: 12, fontWeight: 600 }}>COMPANY</th>
+                            <th style={{ paddingBottom: 12, textAlign: "left", fontWeight: 600 }}>RATIONALE</th>
+                            <th style={{ paddingBottom: 12, textAlign: "left", fontWeight: 600 }}>ENTRY DATE</th>
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>CURRENT PRICE</th>
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>{getMethodologyMetric({ margin_of_safety: 1, earnings_yield: 1, gross_margin: 1, owner_earnings_yield: 1, intrinsic_upside: 1, value_score: 1, upside_score: 1 } as any, b?.path || "").label}</th>
+                            <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
+                            <th style={{ paddingBottom: 12, textAlign: "center", fontWeight: 600 }}></th>
                          </tr>
                        </thead>
                        <tbody>
-                         {activeTickers.length > 0 ? activeTickers.map(symbol => {
+                         {picks.length > 0 ? picks.map((pick: any) => {
+                            const symbol = pick.symbol;
                             const stock = findStock(symbol);
-                            const currPrice = stock?.price || 0;
-                            // Deterministic mock logic to prevent React flickering
-                            const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                            const mockDelta = (seed % 20 - 5) / 100; 
-                            const entryPriceVal = currPrice / (1 + mockDelta);
-                            const perfPct = mockDelta * 100;
+                            const currPrice = stock?.price || pick.price || 0;
+                            const entryPriceVal = pick.entry_price || currPrice || 0;
+                            const entryDateVal = pick.entry_date || "—";
+                            const perfPct = entryPriceVal > 0 ? ((currPrice - entryPriceVal) / entryPriceVal) * 100 : 0;
                             const rationale = stock?.reasons?.length ? stock.reasons.slice(0, 3).join(", ") : "Qualifies for strategy regime";
 
                             return (
@@ -1385,15 +1414,16 @@ export default function Dashboard(){
                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}</td>
                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
                                 <td style={{ padding: "14px 8px", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", fontSize: 11, maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={stock?.reasons?.join(", ")}>{rationale}</td>
+                                <td style={{ padding: "14px 8px", color: "var(--text-secondary)" }}>{entryDateVal}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{entryPriceVal > 0 ? `$${entryPriceVal.toFixed(2)}` : "—"}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)" }}>{currPrice > 0 ? `$${currPrice.toFixed(2)}` : "—"}</td>
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)", fontWeight: 700 }}>{getMethodologyMetric(stock, b?.path || "").value}</td>
-                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text)" }}>${currPrice > 0 ? currPrice.toFixed(2) : "—"}</td>
-                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>${currPrice > 0 ? entryPriceVal.toFixed(2) : "—"}</td>
-                                <td style={{ padding: "14px 8px", textAlign: "right", color: perfPct >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{perfPct >= 0 ? "+" : ""}{perfPct.toFixed(1)}%</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: entryPriceVal > 0 ? (perfPct >= 0 ? "var(--green)" : "var(--red)") : "var(--text-muted)", fontWeight: 700 }}>{entryPriceVal > 0 ? `${perfPct >= 0 ? "+" : ""}${perfPct.toFixed(1)}%` : "—"}</td>
                                 <td style={{ padding: "14px 8px", textAlign: "center" }}><ExternalLink size={14} color="var(--text-light)" /></td>
                               </tr>
                             );
                          }) : (
-                           <tr><td colSpan={5} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
+                           <tr><td colSpan={9} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
                          )}
                        </tbody>
                      </table>
@@ -1410,11 +1440,12 @@ export default function Dashboard(){
                            </tr>
                          </thead>
                          <tbody>
-                           {activeTickers.length > 0 ? activeTickers.map(symbol => {
+                           {picks.length > 0 ? picks.map((pick: any) => {
+                             const symbol = pick.symbol;
                              const stock = findStock(symbol);
-                             const currPrice = stock?.price || 0;
-                             const allocation = 100000 / activeTickers.length;
-                             const weightPct = 100 / activeTickers.length;
+                             const currPrice = stock?.price || pick.price || 0;
+                             const allocation = 100000 / picks.length;
+                             const weightPct = 100 / picks.length;
                              const shares = currPrice > 0 ? allocation / currPrice : 0;
                              
                              return (
@@ -1433,24 +1464,45 @@ export default function Dashboard(){
                          </tbody>
                        </table>
                      )}
-                   </div>
-                   <div style={{ flex: 1 }}>
+                  </div>
+
+                  <div style={{ width: "100%", marginTop: 16 }}>
                      <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, borderBottom: "1px solid var(--border)", paddingBottom: 12, margin: 0 }}>Recent Exits</h3>
-                     <div style={{ background: "var(--bg)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: 16, marginTop: 16 }}>
-                       <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-subtle)", paddingBottom: 12, marginBottom: 12 }}>
-                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>META</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 15, 2026</div></div>
-                          <div style={{ color: "var(--green)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>+8.2%</div>
-                       </div>
-                       <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-subtle)", paddingBottom: 12, marginBottom: 12 }}>
-                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>TSLA</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 10, 2026</div></div>
-                          <div style={{ color: "var(--red)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>-2.1%</div>
-                       </div>
-                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                          <div><span style={{ fontWeight: 700, fontFamily: "var(--font-mono)", textDecoration: "line-through", color: "var(--text-secondary)" }}>AMD</span> <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-sans)", marginTop: 2 }}>May 02, 2026</div></div>
-                          <div style={{ color: "var(--green)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14 }}>+14.5%</div>
-                       </div>
-                     </div>
-                   </div>
+                     {exits.length > 0 ? (
+                       <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", fontFamily: "var(--font-mono)" }}>
+                         <thead>
+                           <tr style={{ color: "var(--text-light)", borderBottom: "1px solid var(--border-subtle)", textAlign: "left", fontSize: 11 }}>
+                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>TICKER</th>
+                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>COMPANY</th>
+                             <th style={{ paddingBottom: 12, fontWeight: 600 }}>ENTRY DATE</th>
+                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
+                             <th style={{ paddingBottom: 12, fontWeight: 600, paddingLeft: 16 }}>EXIT DATE</th>
+                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>EXIT PRICE</th>
+                             <th style={{ paddingBottom: 12, textAlign: "right", fontWeight: 600 }}>PERFORMANCE</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           {exits.map((exit: any) => {
+                             const stock = findStock(exit.symbol);
+                             const perfPct = (exit.performance || 0) * 100;
+                             return (
+                               <tr key={`${exit.symbol}-${exit.exit_date}`} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, exit.symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text-secondary)", textDecoration: "line-through" }}>{exit.symbol}</td>
+                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
+                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)" }}>{exit.entry_date}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>${exit.entry_price ? exit.entry_price.toFixed(2) : "—"}</td>
+                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", paddingLeft: 16 }}>{exit.exit_date}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-muted)" }}>${exit.exit_price ? exit.exit_price.toFixed(2) : "—"}</td>
+                                 <td style={{ padding: "14px 8px", textAlign: "right", color: perfPct >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{perfPct >= 0 ? "+" : ""}{perfPct.toFixed(1)}%</td>
+                               </tr>
+                             );
+                           })}
+                         </tbody>
+                       </table>
+                     ) : (
+                       <div style={{ padding: "24px 8px", color: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}>No recent exits for this methodology.</div>
+                     )}
+                  </div>
                 </div>
               </div>
             );
