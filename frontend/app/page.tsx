@@ -2337,7 +2337,7 @@ export default function Dashboard(){
 
                       <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
 
-                        {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
+                        {activeTickers.length} symbols
 
                       </span>
 
@@ -3568,31 +3568,7 @@ export default function Dashboard(){
 
                                 <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>({basket.path})</span>
 
-                                {ytdReturn !== undefined && (
 
-                                  <span style={{ 
-
-                                    fontSize: 10, 
-
-                                    fontFamily: "var(--font-mono)", 
-
-                                    background: ytdReturn >= 0 ? "var(--green-light)" : "var(--red-light)",
-
-                                    color: ytdReturn >= 0 ? "var(--green)" : "var(--red)",
-
-                                    padding: "2px 6px", 
-
-                                    borderRadius: 4, 
-
-                                    fontWeight: 700 
-
-                                  }}>
-
-                                    Tracked YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
-
-                                  </span>
-
-                                )}
 
                                 <button
 
@@ -3746,7 +3722,7 @@ export default function Dashboard(){
 
                               <Activity size={14} color="var(--text-muted)" />
 
-                              Current Holdings: {activeTickers.length} symbols {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
+                              Current Holdings: {activeTickers.length} symbols
 
                             </div>
 
@@ -4760,31 +4736,7 @@ export default function Dashboard(){
 
                               </span>
 
-                              {ytdReturn !== undefined && (
 
-                                <span style={{ 
-
-                                  fontSize: 9, 
-
-                                  fontFamily: "var(--font-mono)", 
-
-                                  background: ytdReturn >= 0 ? "var(--green-light)" : "var(--red-light)",
-
-                                  color: ytdReturn >= 0 ? "var(--green)" : "var(--red)",
-
-                                  padding: "1px 5px", 
-
-                                  borderRadius: 3, 
-
-                                  fontWeight: 700 
-
-                                }}>
-
-                                  Tracked YTD: {ytdReturn >= 0 ? "+" : ""}{(ytdReturn * 100).toFixed(1)}%
-
-                                </span>
-
-                              )}
 
                               
 
@@ -4994,7 +4946,7 @@ export default function Dashboard(){
 
                             <Activity size={12} color="var(--text-light)" />
 
-                            Current Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong> {ytdReturn !== undefined && <span style={{ color: ytdReturn >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700, marginLeft: 4 }}>({ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% Tracked YTD)</span>}
+                            Current Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong>
 
                           </span>
 
