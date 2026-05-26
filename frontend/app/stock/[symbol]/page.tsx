@@ -21,6 +21,17 @@ interface StockData{
   dcf_value:number;owner_earnings_yield:number;intrinsic_buffett:number;
   intrinsic_avg:number;margin_of_safety:number;value_score:number;
   composite:number;classification:string;reasons:string[];
+  dcf_fcff_mos?:number;
+  rd_capitalized_dcf?:number;
+  rd_capitalized_dcf_mos?:number;
+  owner_earnings?:number;
+  owner_earnings_mos?:number;
+  epv_value?:number;
+  epv_mos?:number;
+  graham_revised?:number;
+  graham_revised_mos?:number;
+  iv15_deep_value?:number;
+  iv15_deep_value_mos?:number;
   // signal?:string;  // REMOVED v1.2 (May 2026) — BUY/HOLD/SELL semantics gone
   factor_scores?:FactorScores;
   quality_score?:number;catalyst_score?:number;catalyst_flags?:string[];
@@ -2750,7 +2761,7 @@ function ComparisonTab({stockA,fmpA}:{
   const ComparisonHeader=({s,isLeft}:{s:StockData; isLeft:boolean})=>{
     // v1.2 (May 2026): single BUY/HOLD/SELL signal badge removed.
     // Composite score (right side of header) is now the only summary signal.
-    const compColor=s.composite>0.6?T.green:s.composite>0.4?T.text:T.red;
+    const compColor=(s.composite??0)>0.6?T.green:(s.composite??0)>0.4?T.text:T.red;
     return(
       <Card>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
@@ -2762,7 +2773,7 @@ function ComparisonTab({stockA,fmpA}:{
           </div>
           <div style={{textAlign:"right"}}>
             <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginBottom:2}}>COMPOSITE</div>
-            <div style={{fontSize:24,fontWeight:700,fontFamily:T.mono,color:compColor}}>{s.composite.toFixed(2)}</div>
+            <div style={{fontSize:24,fontWeight:700,fontFamily:T.mono,color:compColor}}>{(s.composite??0).toFixed(2)}</div>
           </div>
         </div>
         {!isLeft && (
@@ -4009,6 +4020,77 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
   );
 }
 
+function MultiValuationCard({s}:{s:StockData}){
+  const price = s.price;
+  
+  const models = [
+    { name: "DCF-FCFF Valuation", fv: s.dcf_value, mos: s.dcf_fcff_mos, key: "dcf" },
+    { name: "R&D Capitalized DCF", fv: s.rd_capitalized_dcf, mos: s.rd_capitalized_dcf_mos, key: "rd" },
+    { name: "Owner Earnings Yield", fv: s.owner_earnings, mos: s.owner_earnings_mos, key: "oe" },
+    { name: "EPV (Greenwald Valuation)", fv: s.epv_value, mos: s.epv_mos, key: "epv" },
+    { name: "Graham Revised Valuation", fv: s.graham_revised, mos: s.graham_revised_mos, key: "graham" },
+    { name: "IV15 Deep Value", fv: s.iv15_deep_value, mos: s.iv15_deep_value_mos, key: "iv15" },
+  ];
+
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <SH title="Multi-Valuation Comparison" icon={<Activity size={12} />} sub="At-a-glance comparison of all 6 absolute fair value models" />
+      <div style={{ marginTop: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, padding: "8px 12px", background: T.bg, borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+          <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>CURRENT STOCK PRICE</span>
+          <span style={{ fontSize: 16, fontFamily: T.mono, fontWeight: 700, color: T.text }}>{fmtPrice(price, s.currency)} {s.currency}</span>
+        </div>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {models.map(m => {
+            const fvVal = m.fv ?? 0;
+            const hasVal = fvVal > 0;
+            const mosPct = m.mos != null ? m.mos * 100 : 0;
+            const mosColor = mosPct > 15 ? T.green : mosPct > 0 ? "#5a9e7a" : mosPct > -15 ? T.amber : T.red;
+            
+            // Visual progress bar geometry
+            const minVal = Math.min(price, fvVal) * 0.8;
+            const maxVal = Math.max(price, fvVal) * 1.2;
+            const range = maxVal - minVal || 1;
+            const pricePos = ((price - minVal) / range) * 100;
+            const fvPos = hasVal ? ((fvVal - minVal) / range) * 100 : 0;
+            
+            return (
+              <div key={m.key} style={{ display: "grid", gridTemplateColumns: "220px 100px 100px 1fr", alignItems: "center", gap: 14, padding: "10px 0", borderBottom: `1px solid ${T.divider}` }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>{m.name}</span>
+                <span style={{ fontSize: 12, fontFamily: T.mono, fontWeight: 700, color: hasVal ? T.text : T.textLight, textAlign: "right" }}>
+                  {hasVal ? fmtPrice(fvVal, s.currency) : "—"}
+                </span>
+                <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: hasVal ? mosColor : T.textLight, textAlign: "right" }}>
+                  {hasVal ? `${mosPct >= 0 ? "+" : ""}${mosPct.toFixed(1)}%` : "—"}
+                </span>
+                <div style={{ position: "relative", height: 16, background: T.divider, borderRadius: 4, overflow: "hidden", margin: "0 8px" }}>
+                  {hasVal ? (
+                    <>
+                      {/* Highlight area */}
+                      {fvVal > price ? (
+                        <div style={{ position: "absolute", left: `${pricePos}%`, width: `${fvPos - pricePos}%`, height: "100%", background: "var(--green)20" }} />
+                      ) : (
+                        <div style={{ position: "absolute", left: `${fvPos}%`, width: `${pricePos - fvPos}%`, height: "100%", background: "var(--red)10" }} />
+                      )}
+                      {/* Price pointer */}
+                      <div style={{ position: "absolute", left: `${pricePos}%`, width: 3, height: "100%", background: T.text, zIndex: 3 }} title="Current Price" />
+                      {/* FV pointer */}
+                      <div style={{ position: "absolute", left: `${fvPos}%`, width: 8, height: 8, borderRadius: "50%", background: mosColor, top: 4, transform: "translateX(-4px)", border: "1.5px solid white", zIndex: 4 }} title="Fair Value" />
+                    </>
+                  ) : (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 9, fontFamily: T.mono, color: T.textLight }}>valuation unavailable</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
@@ -4157,10 +4239,10 @@ export default function StockDetail(){
   const haveFA  = s.fallen_angel_flag === true;
   const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
   const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
-  const compMode = mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
+  const compMode = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
                  : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
                  : mode==="compounder_global" ? (s.compounder_score_global ?? 0)
-                 : (s.composite_momentum ?? s.composite);
+                 : (s.composite_momentum ?? s.composite)) ?? 0;
   const sigMode = mode==="fallen_angel"      ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
                 : mode==="compounder_us"     ? (s.signal_compounder_us ?? "DISQUALIFIED")
                 : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
@@ -4326,6 +4408,9 @@ export default function StockDetail(){
       <div style={{marginBottom:16}}>
         <CompanyProfileCard symbol={s.symbol}/>
       </div>
+
+      {/* Multi-Valuation Comparison Card */}
+      <MultiValuationCard s={s} />
 
       {/* Catalyst + Sentiment */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>

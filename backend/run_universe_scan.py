@@ -34,8 +34,18 @@ def run_universe_scan(limit=None, max_workers=10):
     
     # 2. Parallel scan each candidate to build/update cache
     success_count = 0
+    cache = _load_deep_scans_cache()
     
     def scan_symbol(idx, symbol):
+        symbol_upper = symbol.upper().strip()
+        if symbol_upper in cache:
+            entry = cache[symbol_upper]
+            summary = entry.get("data", {}).get("analysis_summary", "")
+            is_mock = "being monitored for potential" in summary
+            if not is_mock:
+                log.info(f"[{idx+1}/{total_candidates}] {symbol} already successfully scanned. Skipping LLM call.")
+                return True
+        
         log.info(f"[{idx+1}/{total_candidates}] Deep scanning {symbol}...")
         try:
             # force_refresh=True will run a fresh Claude scan and update local cache
