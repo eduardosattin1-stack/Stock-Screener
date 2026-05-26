@@ -86,6 +86,45 @@ def get_theta_client():
             )
         return _client
 
+
+def _execute_theta_call(func_name, *args, **kwargs):
+    """Execute a ThetaClient gRPC call with auto-recovery for UNAUTHENTICATED session errors."""
+    global _client
+    max_attempts = 2
+    for attempt in range(max_attempts):
+        try:
+            client = get_theta_client()
+            method = getattr(client, func_name)
+            rate_limiter.wait()
+            return method(*args, **kwargs)
+        except Exception as e:
+            e_str = str(e)
+            is_unauth = (
+                "UNAUTHENTICATED" in e_str 
+                or "session ID" in e_str 
+                or "session" in e_str.lower()
+                or "invalid session" in e_str.lower()
+            )
+            if is_unauth and attempt == 0:
+                log.warning(f"ThetaData session invalid: {e}. Resetting client and retrying.")
+                global _client
+                with _client_lock:
+                    _client = None
+                # Force recreation
+                try:
+                    get_theta_client()
+                except Exception as get_err:
+                    log.error(f"Failed to recreate ThetaClient: {get_err}")
+                continue
+            
+            # If it's a "No data" warning, raise it immediately
+            if "No data" in e_str:
+                raise
+                
+            if attempt == max_attempts - 1:
+                raise e
+
+
 _latest_eod_date_cache = None
 _date_cache_lock = threading.Lock()
 
@@ -102,8 +141,6 @@ def _get_latest_eod_date():
         today = datetime.now()
         today_date = today.date()
         
-        client = get_theta_client()
-        
         # Test dates starting from today going back up to 10 days
         for i in range(10):
             test_date = today_date - _dt.timedelta(days=i)
@@ -111,8 +148,8 @@ def _get_latest_eod_date():
                 continue
             # Probe AAPL (highly active, guaranteed options data on trading days)
             try:
-                rate_limiter.wait()
-                client.option_history_greeks_eod(
+                _execute_theta_call(
+                    "option_history_greeks_eod",
                     symbol="AAPL",
                     expiration="*",
                     start_date=test_date,
@@ -187,12 +224,6 @@ def get_options_snapshot(symbol: str,
                          limit: int = 250) -> list:
     """Fetch option chain from ThetaData, merge greeks + OI, and return list of adapted contracts."""
     symbol = symbol.upper().strip()
-    try:
-        client = get_theta_client()
-    except Exception as e:
-        log.error(f"Failed to get ThetaClient: {e}")
-        return []
-
     eod_date = _get_latest_eod_date()
 
     # 1. Fetch Greeks DataFrame
@@ -200,8 +231,8 @@ def get_options_snapshot(symbol: str,
     max_retries = 3
     for retry in range(max_retries):
         try:
-            rate_limiter.wait()
-            greeks_df = client.option_history_greeks_eod(
+            greeks_df = _execute_theta_call(
+                "option_history_greeks_eod",
                 symbol=symbol,
                 expiration="*",
                 start_date=eod_date,
@@ -227,8 +258,8 @@ def get_options_snapshot(symbol: str,
     oi_df = None
     for retry in range(max_retries):
         try:
-            rate_limiter.wait()
-            oi_df = client.option_history_open_interest(
+            oi_df = _execute_theta_call(
+                "option_history_open_interest",
                 symbol=symbol,
                 expiration="*",
                 start_date=eod_date,
@@ -376,8 +407,14 @@ def _extract_atm_iv(contracts: list, spot: float) -> Optional[float]:
     puts = [c for c in contracts if c.get("details", {}).get("contract_type") == "put"]
 
     def _atm_iv(opts):
-        # Filter for valid options with positive implied volatility
-        valid_opts = [o for o in opts if o.get("implied_volatility") is not None and o.get("implied_volatility") > 0]
+        # Filter for valid options with positive implied volatility and active/liquid quotes (bid > 0, ask > 0)
+        valid_opts = [
+            o for o in opts 
+            if o.get("implied_volatility") is not None 
+            and o.get("implied_volatility") > 0
+            and o.get("last_quote", {}).get("bid", 0) > 0
+            and o.get("last_quote", {}).get("ask", 0) > 0
+        ]
         if not valid_opts:
             return None
         best = min(valid_opts, key=lambda o: abs(float(o["details"]["strike_price"]) - spot))
@@ -396,10 +433,13 @@ def _extract_skew_25d(contracts: list) -> Optional[float]:
     puts = [c for c in contracts if c.get("details", {}).get("contract_type") == "put"]
 
     def _find_25d_iv(opts, target_delta):
+        # Filter for valid options with active quotes (bid > 0, ask > 0) to avoid stale skew readings
         with_delta = [
             o for o in opts 
             if o.get("greeks", {}).get("delta") is not None 
             and o.get("implied_volatility") is not None
+            and o.get("last_quote", {}).get("bid", 0) > 0
+            and o.get("last_quote", {}).get("ask", 0) > 0
         ]
         if not with_delta:
             return None
@@ -652,8 +692,44 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if chosen_exp and chosen_diff > DTE_TOLERANCE:
         chosen_exp = None
 
-    # Use best available expiration for IV extraction
-    iv_exp = chosen_exp or expirations[0]
+    # Calculate total open interest for each expiration to use in the liquidity gate
+    exp_oi = {}
+    for exp, chain in by_exp.items():
+        oi_sum = sum(c.get("open_interest", 0) or 0 for c in chain)
+        exp_oi[exp] = oi_sum
+
+    # Filter expirations for IV extraction: prefer DTE >= 30 OR total expiration OI >= 50
+    iv_expirations = []
+    for exp in expirations:
+        try:
+            d = datetime.strptime(exp, "%Y-%m-%d").date()
+            dte = (d - today).days
+            oi = exp_oi.get(exp, 0)
+            if dte >= 30 or oi >= 50:
+                iv_expirations.append(exp)
+        except Exception:
+            continue
+
+    if not iv_expirations:
+        iv_expirations = expirations
+
+    # Use the best available expiration from the filtered list for IV extraction
+    iv_exp = None
+    iv_chosen_diff = 10**9
+    for exp in iv_expirations:
+        try:
+            d = datetime.strptime(exp, "%Y-%m-%d").date()
+            dte = (d - today).days
+            diff = abs(dte - target_dte)
+            if diff < iv_chosen_diff:
+                iv_chosen_diff = diff
+                iv_exp = exp
+        except Exception:
+            continue
+
+    if not iv_exp:
+        iv_exp = chosen_exp or expirations[0]
+
     iv_chain = by_exp.get(iv_exp, [])
 
     # Step 1: ATM IV + skew

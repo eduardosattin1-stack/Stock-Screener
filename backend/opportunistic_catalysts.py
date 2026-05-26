@@ -415,6 +415,12 @@ CRITICAL METHODOLOGICAL DIRECTIVES (TIMING AND RATING RIGOR):
 1. **Fired vs. Pending Catalysts**: Distinguish clearly between *historical / completed events* (e.g., mergers that have already closed, past earnings calls, synergy announcements that have already played out and are fully priced in by the market) and *upcoming / pending future catalysts* (discrete events slated to occur in the next 12-24 months).
 2. **Loeb Score (catalyst_density_score) Calibration**: The Loeb Score represents the density and proximity of *future, pending* catalysts. Do NOT assign a high score (7.5+) to a stock if its major catalysts have already "fired" and are in the past, leaving only incremental or macro tailwinds. If the setup is a "post-event" situation where the main catalyst events have already completed and the stock has already re-rated or declined in response, the catalyst density score MUST be capped or penalized (e.g., 5.0 to 6.8 range).
 3. **Asymmetry Ratio (upside_downside_ratio)**: Calculate this as a real financial risk/reward target (e.g., 3.0 for 3:1) based on actual price margins (comparing price upside to key resistance/targets vs downside support) under realistic option structure timelines. Do not output generic or theoretical planning targets.
+4. **Merger Arbitrage Setup (Capped Upside & Negative Asymmetry)**:
+   - Identify if this is a confirmed, announced merger/acquisition deal where the premium has already been announced and is in progress (e.g. NCR Atleos acquired by Brink's).
+   - If so, mark `"is_merger_arb": true` and populate the `"merger_arb_data"` block below.
+   - For confirmed arbs, the catalyst has already "fired" (the premium is paid/announced). The upside is capped at the deal price, and there is substantial downside if the deal breaks (price drops to pre-announce close). The true unhedged R/R asymmetry is NEGATIVE (e.g. risking $5 to make $1.80, so R/R is around -3:1 to -4:1). Reflect this negative asymmetry in `"upside_downside_ratio"`.
+   - The `"catalyst_density_score"` must be capped at 5.0 to 6.5 because there is no pending upside catalyst, just a spread closing timeline.
+5. **Put Skew Interpretation in Merger Arb**: Differentiate the options skew meaning. For normal pre-catalyst setups, positive put skew indicates potential upside surprise or fear. For announced merger arbs, positive put skew represents deal-break risk hedging premium, NOT a bullish signal.
 
 We also have options market positioning data: term structure inversion indicates catalyst near-term pricing; skew shows relative call vs put cost (negative skew means call premium / bullish positioning); open interest growth indicates position building.
 
@@ -450,8 +456,18 @@ JSON STRUCTURE:
   "company_name": "{company_name}",
   "price": {price},
   "market_cap": {mcap},
-  "catalyst_density_score": 8.2, // Float 1.0 to 10.0 representing catalyst density
-  "upside_downside_ratio": 2.5, // Float representing risk/reward (e.g. 2.5 for 2.5:1)
+  "is_merger_arb": false, // boolean, set to true if a target in an announced, pending buyout/merger
+  "merger_arb_data": {{ // Include if is_merger_arb is true, otherwise null
+    "acquirer_symbol": "BCO", // Ticker of the acquirer, or "CASH" if all cash PE buyout
+    "acquirer_name": "The Brink's Company", // Name of the acquirer, or null
+    "cash_component": 30.00, // Float, cash received per target share, or 0.0
+    "stock_component_ratio": 0.1574, // Float, acquirer shares received per target share, or 0.0
+    "pre_announce_price": 40.64, // Float, price before deal announcement, or null
+    "expected_close": "Q1 2027", // String, estimated closing timeline
+    "deal_status": "Pending regulatory and shareholder approvals" // String
+  }},
+  "catalyst_density_score": 8.2, // Float 1.0 to 10.0 representing catalyst density (cap at 5.0 to 6.8 if is_merger_arb is true)
+  "upside_downside_ratio": 2.5, // Float representing risk/reward (use negative values like -2.5 for negative asymmetry in merger arbs)
   "analysis_summary": "One-paragraph executive summary of the event-driven thesis.",
   "recommendation": "BUY", // "BUY" | "WATCH" | "HOLD" | "SELL"
   "bloom_catalysts": {{
@@ -488,7 +504,7 @@ JSON STRUCTURE:
       "analysis": "Footprint of activists (Starboard, Third Point, Elliott, etc.) or clear opportunities for activist leverage."
     }},
     "risk_reward": {{
-      "ratio": "2.5:1", // String representation
+      "ratio": "2.5:1", // String representation (e.g. -3.0:1 for negative asymmetry)
       "analysis": "Evaluation of upside target vs downside support. How does the catalyst provide downside support?"
     }}
   }},
@@ -554,6 +570,69 @@ JSON STRUCTURE:
         # Clean response text and parse JSON
         cleaned_text = clean_json_string(response_text)
         parsed_json = json.loads(cleaned_text)
+        
+        # Merger Arbitrage post-processing & live math enrichment
+        if parsed_json.get("is_merger_arb") or parsed_json.get("merger_arb_data"):
+            parsed_json["is_merger_arb"] = True
+            arb_data = parsed_json.setdefault("merger_arb_data", {})
+            
+            # Fetch acquirer price dynamically if symbol is provided
+            acq_sym = arb_data.get("acquirer_symbol")
+            if acq_sym and acq_sym.upper() not in ("CASH", "NONE", "N/A"):
+                acq_sym = acq_sym.upper().strip()
+                acq_profile = fetch_profile(acq_sym)
+                acq_price = acq_profile.get("price", 0.0)
+                if acq_price:
+                    arb_data["acquirer_price"] = acq_price
+                    
+            # Compute live deal math in Python
+            cash = float(arb_data.get("cash_component") or 0.0)
+            ratio = float(arb_data.get("stock_component_ratio") or 0.0)
+            acq_price = float(arb_data.get("acquirer_price") or 0.0)
+            target_price = float(parsed_json.get("price") or price or 0.0)
+            
+            implied_value = cash + (ratio * acq_price)
+            # If all-cash and we have no acquirer symbol, implied value is just cash
+            if ratio == 0 or not acq_sym or acq_sym.upper() == "CASH":
+                implied_value = cash
+                
+            gross_spread = implied_value - target_price
+            gross_spread_pct = (gross_spread / target_price * 100) if target_price > 0 else 0.0
+            
+            pre_announce = float(arb_data.get("pre_announce_price") or 0.0)
+            if pre_announce <= 0:
+                pre_announce = target_price * 0.85 # default 15% drop
+                arb_data["pre_announce_price"] = round(pre_announce, 2)
+                
+            downside = target_price - pre_announce
+            
+            # Calculate unhedged risk/reward ratio (e.g. -2.5 for -2.5:1)
+            if gross_spread > 0:
+                asym_ratio = -round(downside / gross_spread, 1)
+            else:
+                asym_ratio = -99.9  # negative spread
+                
+            arb_data["implied_deal_value"] = round(implied_value, 2)
+            arb_data["gross_spread_val"] = round(gross_spread, 2)
+            arb_data["gross_spread_pct"] = round(gross_spread_pct, 2)
+            arb_data["unhedged_downside"] = round(downside, 2)
+            arb_data["unhedged_rr_asymmetry"] = f"{asym_ratio}:1"
+            
+            # Override top-level fields for consistency
+            parsed_json["upside_downside_ratio"] = asym_ratio
+            if parsed_json.setdefault("loeb_criteria", {}).setdefault("risk_reward", {}):
+                parsed_json["loeb_criteria"]["risk_reward"]["ratio"] = f"{asym_ratio}:1"
+                
+            # Force penalization/decay on the top-level catalyst score
+            if parsed_json.get("catalyst_density_score", 0.0) > 6.8:
+                parsed_json["catalyst_density_score"] = 6.0
+                
+            # Differentiate positive skew interpretation in options signals if skew is positive
+            opt_signals = parsed_json.setdefault("options_signals", {})
+            if opt_signals.get("skew_25d", 0.0) and opt_signals.get("skew_25d", 0.0) > 0:
+                opt_signals["market_sentiment_flag"] = "Put skew reflects deal-break risk"
+                opt_signals["overall_interpretation"] = "Elevated put skew and put positioning in a confirmed merger arb reflect deal-break risk hedging rather than bullish sentiment."
+
         _save_deep_scan_to_cache(symbol, parsed_json)
         parsed_json["cache_timestamp"] = datetime.now().isoformat()
         return parsed_json

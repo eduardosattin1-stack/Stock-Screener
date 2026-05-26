@@ -1025,70 +1025,86 @@
     }
   },
   "COMP": {
-    "timestamp": "2026-05-26T00:22:40.653493",
+    "timestamp": "2026-05-26T10:05:11.356751",
     "data": {
       "symbol": "COMP",
       "company_name": "Compass, Inc.",
       "price": 8.4,
       "market_cap": 5108734688,
-      "catalyst_density_score": 6.5,
-      "upside_downside_ratio": 2.2,
-      "analysis_summary": "Compass represents a post-merger integration play following its completion of the Anywhere Real Estate acquisition, creating the largest U.S. real estate brokerage with significant cost synergy upside. While major M&A catalysts have already fired, the company is executing ahead of synergy targets ($500M vs $400M over 3 years) and benefiting from market share gains in a recovering housing market. The thesis centers on operational leverage as housing transaction volumes normalize and synergy realization accelerates, though the primary event-driven catalysts are largely in the rearview mirror.",
+      "is_merger_arb": true,
+      "merger_arb_data": {
+        "acquirer_symbol": "RLGY",
+        "acquirer_name": "Anywhere Real Estate",
+        "cash_component": 0.0,
+        "stock_component_ratio": 1.0,
+        "pre_announce_price": 6.8,
+        "expected_close": "Q2 2026",
+        "deal_status": "Transaction closed January 2026 per earnings call",
+        "acquirer_price": 12.08,
+        "implied_deal_value": 12.08,
+        "gross_spread_val": 3.68,
+        "gross_spread_pct": 43.81,
+        "unhedged_downside": 1.6,
+        "unhedged_rr_asymmetry": "-0.4:1"
+      },
+      "catalyst_density_score": 5.5,
+      "upside_downside_ratio": -0.4,
+      "analysis_summary": "Compass completed its merger with Anywhere Real Estate in January 2026, creating the largest U.S. real estate brokerage with 340,000 professionals. The company is aggressively executing cost synergies, raising targets from $250M to $300M in year 1 and from $400M to $500M over 3 years. With $250M+ in synergies already actioned within 82 days post-close and strong market share gains despite housing market challenges, the integration appears ahead of schedule. However, as a completed merger, upside is now limited to operational execution rather than event-driven premium expansion.",
       "recommendation": "HOLD",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": false,
-          "description": "No evidence of CEO changes, board refreshes, or activist pressure. Robert Reffkin continues as CEO post-merger.",
-          "evidence": "Q1 2026 earnings call shows stable leadership with Reffkin as 'CEO and Chairman of our newly combined company.'"
+          "description": "No governance changes detected. Robert Reffkin remains CEO and Chairman of the combined entity.",
+          "evidence": "Earnings call references Reffkin as 'CEO and Chairman of our newly combined company' with no leadership transitions mentioned."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Major strategic transaction completed with Anywhere Real Estate merger, now in post-integration phase with aggressive cost synergy execution.",
-          "evidence": "Anywhere transaction closed in Q1 2026, with cost synergies increased from $400M to $500M target over 3 years, $250M already actioned by April 1."
+          "description": "Major strategic transaction completed with Anywhere Real Estate merger, now focused on integration execution and synergy realization.",
+          "evidence": "Q1 2026 call: 'we closed the Anywhere transaction' and 'actioned over $250 million in cost synergies as of April 1, which is only 82 days since we closed'"
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No active bids, hostile tenders, or proxy contests detected. Company is focused on post-merger integration.",
-          "evidence": "No evidence in recent filings or transcripts of takeover activity or activist campaigns."
+          "description": "No active premium scenarios. The major transformative transaction has already been completed.",
+          "evidence": "Transaction closed in January 2026 per management commentary."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "Medium",
-          "analysis": "Major M&A catalyst has fired with Anywhere acquisition completed. Remaining catalysts are operational (synergy realization, housing market recovery) rather than discrete corporate events within 12-24 months."
+          "analysis": "Post-merger integration milestones and synergy realization targets provide near-term catalysts, but major event-driven premium has been realized. Synergy execution and market share gains are ongoing drivers."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Combined entity operates multiple premium real estate brands (Sotheby's, Coldwell Banker, Corcoran, CENTURY 21) that may trade at discount to sum of individual franchise values, with significant cost synergy potential creating hidden value."
+          "analysis": "Combined entity operates multiple premium real estate brands (Sotheby's, Coldwell Banker, Corcoran, CENTURY 21) with title/escrow and mortgage JV businesses showing record performance. Scale advantages creating operational leverage."
         },
         "activism_potential": {
           "rating": "None",
-          "analysis": "No current activist footprint detected. Company appears to be executing well on integration with strong operational metrics, reducing likelihood of activist intervention."
+          "analysis": "No activist activity detected. Management appears focused on post-merger integration execution with clear synergy targets and operational improvements."
         },
         "risk_reward": {
-          "ratio": "2.2:1",
-          "analysis": "Upside driven by housing market recovery and synergy realization, with downside protected by market leadership position and improving profitability. Limited downside catalyst risk given post-merger operational focus."
+          "ratio": "-0.4:1",
+          "analysis": "As a completed merger with integration underway, downside risk from execution challenges or housing market deterioration outweighs limited upside from synergy beats. Risk concentrated on operational execution rather than event premium."
         }
       },
       "options_signals": {
         "iv_current": 0.6008,
-        "skew_25d": -1.0953,
+        "skew_25d": -0.0703,
         "term_structure": "contango",
         "pc_oi_ratio": 0.201,
         "total_oi": 40854,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Bullish positioning with call preference",
-        "overall_interpretation": "Negative skew indicates call preference and bullish positioning, suggesting market expects upside from synergy execution and housing recovery. Low put/call OI ratio confirms limited hedging activity."
+        "market_sentiment_flag": "Moderately bullish with call skew",
+        "overall_interpretation": "Negative skew suggests modest bullish positioning, likely betting on synergy execution success, while high IV reflects uncertainty around integration outcomes."
       },
       "recent_events": [
         {
           "date": "2026-05-06",
           "type": "transcript",
-          "title": "Compass, Inc. (COMP) Q1 2026 Earnings Call Transcript",
-          "link": "earnings_transcript"
+          "title": "Q1 2026 Earnings Call - Synergy targets raised to $300M/$500M",
+          "link": "earnings_call"
         },
         {
           "date": "2026-05-22",
@@ -1099,8 +1115,8 @@
         {
           "date": "2026-05-12",
           "type": "news",
-          "title": "CORCORAN ANNOUNCES FIRST AFFILIATE IN SPAIN WITH LAUNCH OF CORCORAN MICASAMO",
-          "link": "expansion_news"
+          "title": "Corcoran announces first affiliate in Spain expansion",
+          "link": "international_expansion"
         }
       ]
     }
@@ -3029,88 +3045,104 @@
     }
   },
   "NATL": {
-    "timestamp": "2026-05-26T00:23:39.503345",
+    "timestamp": "2026-05-26T10:04:22.590247",
     "data": {
       "symbol": "NATL",
       "company_name": "NCR Atleos Corporation",
       "price": 44.69,
       "market_cap": 3297219977,
-      "catalyst_density_score": 9.2,
-      "upside_downside_ratio": 3.8,
-      "analysis_summary": "NCR Atleos presents a compelling event-driven opportunity with a confirmed Brink's buyout deal in progress, creating a premium scenario catalyst with significant upside potential. The company has demonstrated consistent operational improvements post-spin from legacy NCR, with strong Q1 2026 results showing 7% revenue growth despite earnings missing estimates. The absence of earnings calls due to the pending transaction suggests deal completion is imminent, while options positioning shows heavy put activity and high skew indicating potential for significant upside surprise. The combination of an active M&A catalyst, operational momentum in ATM services and network expansion, and asymmetric risk/reward profile creates an attractive event-driven setup.",
-      "recommendation": "BUY",
+      "is_merger_arb": true,
+      "merger_arb_data": {
+        "acquirer_symbol": "BCO",
+        "acquirer_name": "The Brink's Company",
+        "cash_component": 30.0,
+        "stock_component_ratio": 0.1574,
+        "pre_announce_price": 40.64,
+        "expected_close": "Q1 2027",
+        "deal_status": "Pending regulatory and shareholder approvals",
+        "acquirer_price": 104.75,
+        "implied_deal_value": 46.49,
+        "gross_spread_val": 1.8,
+        "gross_spread_pct": 4.02,
+        "unhedged_downside": 4.05,
+        "unhedged_rr_asymmetry": "-2.3:1"
+      },
+      "catalyst_density_score": 6.0,
+      "upside_downside_ratio": -2.3,
+      "analysis_summary": "NCR Atleos represents a pure merger arbitrage play following Brink's announced acquisition with capped upside (~$2-3 per share) to deal price versus significant downside risk if deal breaks. The company has completed its spin-off transition from legacy NCR and delivered consistent operational performance across seven quarters as a standalone entity, but the primary catalyst has already fired with the merger announcement, leaving only spread compression and deal closing timeline as remaining drivers.",
+      "recommendation": "HOLD",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
-          "detected": true,
-          "description": "CFO transition completed with Andy Wamser joining as CFO in late January 2025, replacing Paul Campbell who stepped down after 37 years. Leadership changes reflect post-spin optimization.",
-          "evidence": "From Q1 2025 earnings call: 'Andy joined Atleos as CFO in late January and brings the experience that includes CFO roles at public companies and investment banking. I'd also like to thank Paul Campbell who recently stepped down from the CFO role.'"
+          "detected": false,
+          "description": "No recent governance changes or activist pressure detected. Management team appears stable with CEO Tim Oliver and CFO Andy Wamser in place.",
+          "evidence": "CFO transition completed in January 2025 with Andy Wamser joining and Paul Campbell stepping down after 37 years, but this was a planned succession."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Active M&A transaction in progress with The Brink's Company acquiring NCR Atleos, with deal completion expected imminently based on suspended earnings calls.",
-          "evidence": "From April 28, 2026 announcement: 'Due to the pending transaction with The Brinks Company, NCR Atleos will not be hosting an earnings conference call' and May 20 news: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal'"
+          "description": "Company has completed strategic process that resulted in announced merger with Brink's Company.",
+          "evidence": "Multiple references to 'pending transaction with The Brinks Company' in earnings calls and news of GlobeFlex exiting position after buyout deal announcement."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": true,
-          "description": "Brink's buyout deal is active and proceeding, with institutional investors like GlobeFlex exiting positions post-announcement, indicating deal completion is near-term.",
-          "evidence": "May 20, 2026 news: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal' and company's decision to suspend earnings calls due to pending transaction indicates advanced deal stage."
+          "description": "Brink's acquisition has been announced and is pending regulatory and shareholder approvals.",
+          "evidence": "News headline 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal' and earnings call references to pending Brink's transaction indicate completed premium scenario activation."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "High",
-          "analysis": "Multiple catalysts firing simultaneously: active Brink's buyout, strong operational performance with 7% revenue growth, international expansion into Colombia, and continued ATM network growth. Transaction timing appears imminent given suspended earnings calls."
+          "rating": "Medium",
+          "analysis": "Primary catalyst (merger announcement) has already fired. Remaining catalysts are deal closing milestones including regulatory approvals and shareholder votes within 12-24 month timeline."
         },
         "sum_of_parts": {
-          "detected": true,
-          "analysis": "Clear sum-of-parts opportunity with Self-Service Banking segment, Network operations (80,000 owned ATMs), and T&T segment. Company trades below acquisition multiple despite having world-class infrastructure serving 600,000 ATMs globally with recurring revenue streams."
+          "detected": false,
+          "analysis": "As a pure-play ATM services company post-spin from legacy NCR, there is limited conglomerate discount opportunity. Company operates three clear segments (Self-Service Banking, Network, T&T) but no obvious hidden value beyond current operations."
         },
         "activism_potential": {
-          "rating": "Active",
-          "analysis": "Deal already in motion with Brink's as acquirer, eliminating need for activist intervention. Institutional positioning changes (GlobeFlex exit, Capital International new stake) suggest market recognition of value realization catalyst."
+          "rating": "None",
+          "analysis": "With announced merger pending, activism opportunity is minimal. Deal terms are set and activist intervention would likely focus on price improvement rather than operational changes."
         },
         "risk_reward": {
-          "ratio": "3.8:1",
-          "analysis": "Strong upside from buyout premium with limited downside given operational momentum, recurring revenue base (70%+ of revenue), and essential ATM infrastructure. Q1 results showing 7% growth provide fundamental support floor."
+          "ratio": "-2.3:1",
+          "analysis": "Negative asymmetry typical of merger arbitrage. Limited upside to deal price (~$47-48) versus substantial downside to pre-announcement levels (~$40-41) if deal breaks due to regulatory or financing issues."
         }
       },
       "options_signals": {
-        "iv_current": 0.396,
-        "skew_25d": 0.417,
+        "iv_current": 0.2692,
+        "skew_25d": -0.0971,
         "term_structure": "backwardation",
         "pc_oi_ratio": 5.255,
         "total_oi": 613,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Heavy put positioning with high skew",
-        "overall_interpretation": "High put/call ratios and significant skew suggest market uncertainty around deal timing, but backwardation indicates near-term catalyst expected. Heavy put positioning may create upside surprise opportunity when deal completes."
+        "market_sentiment_flag": "Deal-break protection",
+        "overall_interpretation": "High put/call ratios and negative skew indicate investors are hedging against deal-break risk rather than positioning for upside surprise, typical of merger arbitrage situations."
       },
       "recent_events": [
         {
           "date": "2026-05-21",
           "type": "news",
           "title": "NCR Atleos Expands Cashzone ATM Network Into Colombia, in Collaboration With Bancoomeva",
-          "link": "business_wire"
+          "link": "https://www.businesswire.com"
         },
         {
           "date": "2026-05-20",
           "type": "news",
           "title": "GlobeFlex Exits NCR Atleos After Brink's Buyout Deal",
-          "link": "institutional_filing"
+          "link": "https://www.marketwatch.com"
         },
         {
           "date": "2026-05-06",
           "type": "news",
           "title": "NCR Atleos Corporation Reports Strong First Quarter 2026 Results with 7% Revenue Growth",
-          "link": "business_wire"
+          "link": "https://www.businesswire.com"
         },
         {
           "date": "2026-04-28",
           "type": "news",
           "title": "NCR Atleos Announces Date of First Quarter 2026 Earnings Results",
-          "link": "business_wire"
+          "link": "https://www.businesswire.com"
         }
       ]
     }

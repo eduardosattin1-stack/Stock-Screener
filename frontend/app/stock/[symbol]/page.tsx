@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
@@ -3612,6 +3612,22 @@ interface CatalystScanReport {
   options_signals: OptionsSignals;
   recent_events: RecentEvent[];
   cache_timestamp?: string;
+  is_merger_arb?: boolean;
+  merger_arb_data?: {
+    acquirer_symbol?: string;
+    acquirer_name?: string;
+    acquirer_price?: number;
+    cash_component?: number;
+    stock_component_ratio?: number;
+    implied_deal_value?: number;
+    gross_spread_val?: number;
+    gross_spread_pct?: number;
+    expected_close?: string;
+    unhedged_downside?: number;
+    unhedged_rr_asymmetry?: string;
+    pre_announce_price?: number;
+    deal_status?: string;
+  } | null;
 }
 
 function CatalystTabContent({ symbol }: { symbol: string }) {
@@ -3759,6 +3775,95 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
           </p>
         </div>
       </Card>
+
+      {/* MERGER ARBITRAGE CARD (DYNAMIC MATH & RISK) */}
+      {report.is_merger_arb && report.merger_arb_data && (
+        <Card style={{ 
+          background: "linear-gradient(135deg, rgba(20,184,122,0.04) 0%, rgba(59,130,246,0.04) 100%)", 
+          border: `1px solid ${T.cardBorder || "var(--border)"}`, 
+          borderRadius: 8, 
+          padding: 20,
+          boxShadow: "var(--shadow-md)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.blue || "var(--blue)", textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.blue || "var(--blue)"}` }}>
+            <TrendingUp size={12} /> Active Merger Arbitrage Deal & Spread Analysis
+          </div>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr 1.5fr", gap: 20, marginBottom: 16 }}>
+            
+            {/* Deal Terms column */}
+            <div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 8 }}>Deal Terms</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ fontSize: 11 }}>
+                  Acquirer: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.acquirer_name || "Private Equity"}</strong> {report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" && <span style={{ color: T.textMuted || "var(--text-muted)" }}>({report.merger_arb_data.acquirer_symbol})</span>}
+                </div>
+                <div style={{ fontSize: 11 }}>
+                  Cash Component: <strong style={{ color: T.text || "var(--text)" }}>${report.merger_arb_data.cash_component?.toFixed(2) || "0.00"}</strong>
+                </div>
+                <div style={{ fontSize: 11 }}>
+                  Stock Component: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.stock_component_ratio ? `${report.merger_arb_data.stock_component_ratio.toFixed(4)} shares` : "None (All-Cash)"}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Spread Valuation column */}
+            <div style={{ borderLeft: `1px solid ${T.cardBorder || "var(--border)"}`, paddingLeft: 20 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 8 }}>Live Spread Math</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Implied Deal Value</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: T.text || "var(--text)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
+                    ${report.merger_arb_data.implied_deal_value?.toFixed(2) || "N/A"}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Gross Deal Spread</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: T.green || "var(--green)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
+                    +${report.merger_arb_data.gross_spread_val?.toFixed(2) || "0.00"} ({report.merger_arb_data.gross_spread_pct?.toFixed(1) || "0"}%)
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: 10, color: T.textLight || "var(--text-light)", marginTop: 8 }}>
+                Expected Close: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.expected_close || "N/A"}</strong>
+              </div>
+            </div>
+
+            {/* Risk & Hedging column */}
+            <div style={{ borderLeft: `1px solid ${T.cardBorder || "var(--border)"}`, paddingLeft: 20 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase" }}>Unhedged Risk Profile</span>
+                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: T.redLight || "var(--red-light)", color: T.red || "var(--red)", fontWeight: 700 }}>NEGATIVE ASYMMETRY</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Downside if Break</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
+                    -${report.merger_arb_data.unhedged_downside?.toFixed(2) || "0.00"}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Unhedged R/R</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
+                    {report.merger_arb_data.unhedged_rr_asymmetry || "N/A"}
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: 10, color: T.textLight || "var(--text-light)", marginTop: 8 }}>
+                Pre-Announce Reference: <span style={{ color: T.text || "var(--text)" }}>${report.merger_arb_data.pre_announce_price?.toFixed(2) || "N/A"}</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div style={{ display: "flex", gap: 8, background: "rgba(239, 68, 68, 0.05)", border: `1px solid rgba(239, 68, 68, 0.2)`, borderRadius: 6, padding: "10px 12px", fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.5 }}>
+            <AlertTriangle size={16} color={T.red || "var(--red)"} style={{ flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <strong style={{ color: T.red || "var(--red)" }}>Risk Warning:</strong> Entering an unhedged long position in {report.symbol} at current levels has a negative unhedged risk/reward of {report.merger_arb_data.unhedged_rr_asymmetry}. To execute a standard risk-arbitrage trade, investors typically buy the target ({report.symbol}) and short the acquirer ({report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" ? report.merger_arb_data.acquirer_symbol : "PE"}) at the exchange ratio of {report.merger_arb_data.stock_component_ratio || 0} to lock in the spread.
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Bloom timeline stages */}
       <Card>
