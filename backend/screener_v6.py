@@ -2053,6 +2053,8 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         fv_oe_local = (pv_stage1_oe + pv_terminal_oe) / shares if shares > 0 else 0.0
         v["owner_earnings"] = fv_oe_local * fx_to_price
         v["owner_earnings_mos"] = calc_mos(v["owner_earnings"], price)
+        if shares > 0 and local_price > 0:
+            v["owner_earnings_yield"] = (oe / shares) / local_price
 
         # 4. EPV (Greenwald)
         maint_capex_epv = capex - capex * (g_rev / (1 + g_rev)) if capex > 0 else 0.0
@@ -5060,37 +5062,36 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         return (net_debt / ebitda) < 3.0
 
     def get_best_portfolio_of_size(candidates, target_T):
-        best_subset = None
-        best_sum = -999999.0
         limit = 1 if target_T == 1 else target_T // 2
-        pool = candidates[:24]
-        
-        def search(index, current_subset, sector_counts):
-            nonlocal best_subset, best_sum
-            if len(current_subset) == target_T:
-                current_sum = sum(s._temp_mos for s in current_subset)
-                if current_sum > best_sum:
-                    best_sum = current_sum
-                    best_subset = list(current_subset)
-                return
-            
-            if index >= len(pool):
-                return
-            
-            if len(current_subset) + (len(pool) - index) < target_T:
-                return
-            
-            s = pool[index]
+        portfolio = []
+        sector_counts = {}
+        for s in candidates:
             sec = s.sector or "Unknown"
             if sector_counts.get(sec, 0) < limit:
+                portfolio.append(s)
                 sector_counts[sec] = sector_counts.get(sec, 0) + 1
-                search(index + 1, current_subset + [s], sector_counts)
-                sector_counts[sec] -= 1
-            
-            search(index + 1, current_subset, sector_counts)
-            
-        search(0, [], {})
-        return best_subset
+                if len(portfolio) == target_T:
+                    return portfolio
+        return None
+
+    # Load previous picks to maintain entry_price and entry_date
+    prev_picks_map = {} # methodology_path -> ticker -> {entry_price, entry_date}
+    local_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public", "methodology_picks.json")
+    try:
+        if os.path.exists(local_path):
+            with open(local_path, "r", encoding="utf-8") as f:
+                old_data = json.load(f)
+                if old_data and "methodologies" in old_data:
+                    for meth_path, meth_val in old_data["methodologies"].items():
+                        prev_picks_map[meth_path] = {}
+                        for p in meth_val.get("picks", []):
+                            if "symbol" in p:
+                                prev_picks_map[meth_path][p["symbol"]] = {
+                                    "entry_price": p.get("entry_price"),
+                                    "entry_date": p.get("entry_date")
+                                }
+    except Exception as e:
+        log.warning(f"Failed to read previous picks: {e}")
 
     methodology_fields = {
         "dcf_fcff": ("dcf_fcff_mos", "dcf_value"),
@@ -5104,6 +5105,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value")
     }
 
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     methodology_picks = {}
     for key, (mos_field, fv_field) in methodology_fields.items():
         candidates = []
@@ -5117,7 +5119,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
         
         portfolio = None
-        for target_T in range(min(12, len(candidates)), 0, -1):
+        for target_T in range(min(20, len(candidates)), 0, -1):
             portfolio = get_best_portfolio_of_size(candidates, target_T)
             if portfolio:
                 break
@@ -5125,6 +5127,47 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         if not portfolio:
             portfolio = []
             
+        portfolio_symbols = set(s.symbol for s in portfolio)
+        
+        # Load previous exits to keep history of recent exits
+        prev_exits = []
+        try:
+            if old_data and "methodologies" in old_data and key in old_data["methodologies"]:
+                prev_exits = old_data["methodologies"][key].get("exits", [])
+        except Exception:
+            pass
+
+        # Identify new exits: any stock in previous picks that is not in the new portfolio
+        new_exits = []
+        if key in prev_picks_map:
+            for old_sym, old_val in prev_picks_map[key].items():
+                if old_sym not in portfolio_symbols:
+                    exit_price = old_val.get("entry_price") or 0.0
+                    for s in all_results:
+                        if s.symbol == old_sym:
+                            exit_price = s.price
+                            break
+                    entry_p = old_val.get("entry_price") or exit_price
+                    perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
+                    new_exits.append({
+                        "symbol": old_sym,
+                        "entry_price": round(entry_p, 4),
+                        "entry_date": old_val.get("entry_date") or today_str,
+                        "exit_price": round(exit_price, 4),
+                        "exit_date": today_str,
+                        "performance": round(perf, 4)
+                    })
+                    
+        # Combine new exits and previous exits (preventing duplicates)
+        combined_exits = list(new_exits)
+        existing_keys = set((e["symbol"], e["exit_date"]) for e in new_exits)
+        for pe in prev_exits:
+            pe_key = (pe["symbol"], pe.get("exit_date", ""))
+            if pe_key not in existing_keys:
+                combined_exits.append(pe)
+        # Limit to last 15 exits
+        final_exits = combined_exits[:15]
+
         picks = []
         count = len(portfolio)
         weight = 1.0 / count if count > 0 else 0.0
@@ -5136,11 +5179,23 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
             else:
                 fv_val = s.price * (1 + mos_val)
                 
+            entry_p = s.price
+            entry_d = today_str
+            if key in prev_picks_map and s.symbol in prev_picks_map[key]:
+                old_p = prev_picks_map[key][s.symbol].get("entry_price")
+                old_d = prev_picks_map[key][s.symbol].get("entry_date")
+                if old_p is not None:
+                    entry_p = old_p
+                if old_d is not None:
+                    entry_d = old_d
+                
             picks.append({
                 "symbol": s.symbol,
                 "weight": round(weight, 4),
                 "mos": round(mos_val, 4),
                 "price": round(s.price, 4),
+                "entry_price": round(entry_p, 4),
+                "entry_date": entry_d,
                 "fair_value": round(fv_val, 4),
                 "sector": s.sector or "Unknown"
             })
@@ -5149,6 +5204,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         avg_mos = total_mos / count if count > 0 else 0.0
         methodology_picks[key] = {
             "picks": picks,
+            "exits": final_exits,
             "average_mos": round(avg_mos, 4)
         }
 
