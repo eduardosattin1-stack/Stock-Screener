@@ -796,15 +796,7 @@ export default function CatalystWatch() {
                   </div>
                 )}
 
-                {/* 2. RECENT SCANS */}
-                {filteredRecentScans.length > 0 && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: T.green, letterSpacing: "0.08em", display: "flex", alignItems: "center", gap: 4, borderBottom: `1px solid rgba(20,184,122,0.2)`, paddingBottom: 4 }}>
-                      <PlayCircle size={10} color={T.green} /> Recent Scans ({filteredRecentScans.length})
-                    </div>
-                    {filteredRecentScans.map(cand => renderCandidate(cand, "recent"))}
-                  </div>
-                )}
+
 
                 {/* 3. DEFAULT CANDIDATES */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
