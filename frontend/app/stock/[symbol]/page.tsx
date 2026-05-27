@@ -3589,6 +3589,12 @@ interface RecentEvent {
   link: string;
 }
 
+interface ScoreAdjustment {
+  factor: string;
+  adjustment: number;
+  reason: string;
+}
+
 interface CatalystScanReport {
   symbol: string;
   company_name: string;
@@ -3631,6 +3637,31 @@ interface CatalystScanReport {
     pre_announce_price?: number;
     deal_status?: string;
   } | null;
+  convergence_score?: number;
+  independent_track_count?: number;
+  unfired_independent_track_count?: number;
+  is_dher_pattern?: boolean;
+  tracks?: Array<{
+    track_type: string;
+    evidence: string;
+    counterparty: string | null;
+    dated_event: boolean;
+    event_date: string | null;
+    fired: boolean;
+    independence_score?: number;
+  }>;
+  options_confirmation_score?: number;
+  credit_health?: {
+    grade?: string;
+    net_debt_ebitda?: number;
+    distress_flags?: string[];
+  };
+  adjusted_loeb_score?: number;
+  final_adjusted_loeb?: number;
+  score_adjustments?: ScoreAdjustment[];
+  distressed_setup_flag?: boolean;
+  credit_event_risk_flag?: boolean;
+  credit_health_layer3_adjustment_applied?: boolean;
 }
 
 function CatalystTabContent({ symbol }: { symbol: string }) {

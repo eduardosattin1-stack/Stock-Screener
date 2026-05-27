@@ -122,6 +122,12 @@ interface CatalystScanReport {
     net_debt_ebitda?: number;
     distress_flags?: string[];
   };
+  adjusted_loeb_score?: number;
+  final_adjusted_loeb?: number;
+  score_adjustments?: ScoreAdjustment[];
+  distressed_setup_flag?: boolean;
+  credit_event_risk_flag?: boolean;
+  credit_health_layer3_adjustment_applied?: boolean;
 }
 
 interface ScoreAdjustment {

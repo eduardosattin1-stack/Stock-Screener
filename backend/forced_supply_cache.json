@@ -94,5 +94,11 @@
     "mandate_sources": [],
     "aggregate_forced_pct": 0.0,
     "days_until_deadline": null
+  },
+  "HON_2026-05-27": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
   }
 }

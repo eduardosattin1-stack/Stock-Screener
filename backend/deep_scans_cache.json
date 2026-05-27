@@ -1080,90 +1080,178 @@
     }
   },
   "COMP": {
-    "timestamp": "2026-05-26T14:40:45.843002",
+    "timestamp": "2026-05-27T22:03:08.011243",
     "data": {
       "symbol": "COMP",
       "company_name": "Compass, Inc.",
-      "price": 8.4,
-      "market_cap": 5108734688,
+      "price": 8.39,
+      "market_cap": 5102652861,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 6.8,
-      "upside_downside_ratio": 2.3,
-      "re_rate_status": "partial",
+      "catalyst_density_score": 1.6099999999999999,
+      "upside_downside_ratio": 1.6,
+      "re_rate_status": "complete",
       "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "The Anywhere acquisition has closed (Q4 2025/Q1 2026) and early synergy execution is exceeding targets, but the market has not fully re-rated the stock to reflect the $500M cost synergy value and combined entity scale advantages.",
-      "analysis_summary": "Compass presents a compelling post-merger integration story after acquiring Anywhere Real Estate, creating the largest U.S. real estate brokerage with 340,000 professionals. The company is significantly exceeding cost synergy targets ($500M vs $400M originally) with $250M already actioned in just 82 days, while maintaining strong organic growth (18 consecutive quarters of market outperformance) and record recruiting momentum. Despite achieving record revenues and EBITDA, the stock remains depressed, creating a pricing dislocation as integration benefits and operational leverage in a recovering housing market are not fully reflected in valuation.",
-      "recommendation": "BUY",
+      "catalyst_nature_rationale": "The two primary catalysts — the Anywhere Real Estate merger close (Jan 9, 2026) and the synergy target raise (May 5, 2026) — have both fired and are fully priced into the stock, which has already re-rated +30% from the announcement price. The remaining alpha-bearing window, if any, is a second-order pricing dislocation: the market may be undervaluing the pace and P&L flow-through of $500M in net synergies over 3 years against a depressed housing volume backdrop. However, this is a macro/execution thesis, not a hard catalyst thesis, and must be rated accordingly. The next hard catalyst is the Q2 2026 earnings release (implied ~Jul 29, 2026), where synergy realization proof points will either validate or disappoint the current multiple.",
+      "analysis_summary": "Compass, Inc. (COMP) is a post-event situation. The company's two primary Bloom-template catalysts — the Anywhere Real Estate merger closing (January 9, 2026) and the accelerated synergy raise from $250M to $300M year-1 / $400M to $500M net 3-year (announced May 5, 2026 with management explicitly stating no further upward revision) — have both fired, and the stock has already re-rated +30% from the deal announcement price. Accordingly, the catalyst density score is capped at 5.8 per methodology. What remains is a fundamentals-driven turnaround thesis centered on: (1) execution of $200M in-year realized synergies in 2026, with ~$130M flowing through the P&L as OpEx savings; (2) the Rocket-Redfin partnership providing 1.2M high-intent leads over 3 years as a potential revenue catalyst; (3) organic market share gains for 18+ consecutive quarters in a trough housing market, providing operating leverage when volumes normalize; and (4) the Title & Escrow attach rate at all-time highs suggesting durable margin expansion. The bear case is a prolonged housing market freeze (rates stay elevated, transaction volumes remain at trough), integration execution risk on a complex $7B revenue combined entity, and B-credit leverage (net debt/EBITDA ~3.0x) that creates balance sheet fragility if EBITDA disappoints. Options market is firmly bullish (negative skew, put/call volume ratio of 0.059, put/call OI ratio of 0.217), consistent with call-heavy speculative positioning into the July 29 earnings catalyst. The implied earnings move of 26.5% (straddle at $2.20 on $8.39 stock) signals the market is treating Q2 2026 earnings as the next major binary event. Risk/reward is modestly positive but not asymmetric enough for a high-conviction BUY at current levels given the post-re-rate status; a WATCH rating is appropriate pending Q2 2026 earnings delivery.",
+      "recommendation": "WATCH",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "Major M&A integration completed with Robert Reffkin as CEO of the combined entity, creating new leadership structure for the largest real estate brokerage platform.",
-          "evidence": "Q1 2026 earnings call: 'I am thrilled to speak with you today for the first time as CEO and Chairman of our newly combined company, which serves 340,000 real estate professionals'"
+          "description": "Robert Reffkin assumed dual CEO and Chairman roles following the Anywhere Real Estate merger close in January 2026, consolidating leadership authority over a substantially larger combined entity. New CFO Scott Wahlers joined in Q3 2025, replacing Kalani Reelitz. This represents a meaningful governance transition, though it is now a completed (fired) catalyst rather than a pending one. No activist shareholder campaigns or board challenges have been identified.",
+          "evidence": "Q4 2025 earnings call (Feb 27, 2026): Reffkin stated 'I am thrilled to speak with you today for the first time as CEO and Chairman of our newly combined company.' CFO transition from Kalani Reelitz to Scott Wahlers confirmed in Q3 2025 earnings call (Nov 4, 2025). These are historical, completed events."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Completed transformational acquisition of Anywhere Real Estate, creating massive scale advantages and strategic synergy realization exceeding targets.",
-          "evidence": "Cost synergies increased from $400M to $500M target over 3 years, with $250M already actioned in 82 days. 2026 in-year synergies increased from $100M to $200M."
+          "description": "The Anywhere Real Estate merger — the defining strategic event — closed January 9, 2026, creating the largest U.S. real estate brokerage serving 340,000 professionals across 120 countries. This is a fired catalyst. However, forward-looking strategic processes that remain pending include: (1) the 3-year Rocket-Redfin strategic alliance announced February 2026 (lead flow ramp-up in years 2 and 3 is a pending catalyst); (2) integration of Anywhere brands (Coldwell Banker, Century 21, ERA, Better Homes & Gardens, Sotheby's International Realty, Corcoran) onto the Compass technology platform — an ongoing multi-year process with execution risk; and (3) achieving $500M net cost synergy target over 3 years with $300M actioned by end of year 1.",
+          "evidence": "Q3 2025 earnings call: 'Compass has agreed to merge with Anywhere Real Estate. The transaction is pending customary regulatory and shareholder approval, and we expect to close in the second half of 2026.' Q4 2025 call: Merger confirmed closed. Q1 2026 call (May 5, 2026): Synergy target raised to $300M year-1 / $500M 3-year net; over $250M actioned as of April 1, 2026. Rocket-Redfin partnership announced on Feb 27, 2026 earnings call with 3-year lead flow structure."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No active premium scenarios detected.",
-          "evidence": "No evidence of hostile bids, proxy contests, or buyout proposals."
+          "description": "No hostile bid, proxy contest, tender offer, private equity buyout, or activist-forced sale process has been identified. Compass itself was the acquirer in the Anywhere transaction, not a target. With Reffkin holding dual CEO/Chairman roles and the company now significantly larger post-merger, the probability of a near-term takeout is low. No third-party premium scenario is in evidence.",
+          "evidence": "No SEC filings, news articles, or earnings call commentary indicates any inbound acquisition interest, activist campaign seeking a sale, or PE buyout exploration. M&A role classification confirms role='none' (as acquirer, deal_status='closed')."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "Medium",
-          "analysis": "Post-merger integration with accelerating synergy realization and potential housing market recovery provide multiple value inflection points over 12-24 months, though major M&A catalyst has already executed."
+          "rating": "Low",
+          "analysis": "The two densest catalysts (merger close, synergy raise) have already fired, driving the stock from ~$5.00 at announcement to $8.39 today (+30% re-rate already captured). Remaining pending catalysts within 12-24 months are: (1) Q2 2026 earnings on July 29, 2026 — the next hard binary event, where synergy P&L flow-through and organic market share data will be reported; (2) Year-2 ramp of Rocket-Redfin lead flow (late 2026 / early 2027); (3) Potential housing market volume recovery if the Federal Reserve cuts rates meaningfully, which is macro-dependent and not a company-specific hard catalyst. The density of company-specific, time-bounded catalysts is low to medium at best for the next 12 months. Loeb score is therefore capped at 5.8 per the fired-catalyst penalty directive."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Combined entity trades below sum of parts value given cost synergies, market share gains, and operational leverage. $500M synergy value not reflected in current market cap of $5.1B."
+          "analysis": "A latent SoP dislocation exists within the combined entity. The Compass legacy brokerage and tech platform, the Anywhere franchise network (Century 21, Coldwell Banker, ERA, Better Homes & Gardens, Sotheby's, Corcoran), the Christie's International Real Estate franchise business, Title & Escrow operations, and the Mortgage JV represent distinct business lines with different valuation multiples. The franchise network (asset-light, recurring royalty fee stream) arguably deserves a higher multiple than the transaction-volume-dependent brokerage. However, Compass has not indicated any plans to separate these businesses, and no formal SoP review or spinoff exploration has been signaled. The SoP optionality is real but speculative and unscheduled, limiting its utility as a near-term Loeb criterion. Additionally, the market cap of ~$5.1B against a combined entity generating ~$7B in revenue suggests the market is not aggressively pricing in franchise royalty value at premium multiples."
         },
         "activism_potential": {
-          "rating": "Possible",
-          "analysis": "Large scale post-merger entity with clear synergy targets and operational improvements could attract activist interest if integration execution slows or housing market recovery accelerates value realization timeline."
+          "rating": "None",
+          "analysis": "No known activist shareholders have disclosed material stakes or public campaigns in COMP. Reffkin's founder-CEO/Chairman dual role with concentrated influence makes traditional activism difficult to execute. The company is executing on stated strategic plans (synergies ahead of schedule, recruiting records, market share gains), removing the obvious activist entry points of underperformance or management complacency. B-credit profile (net debt/EBITDA ~3.0x) and a complex post-merger integration in progress further reduce activism probability, as activists typically prefer cleaner balance sheets and simpler corporate structures. Activism potential is rated None for the forward 12-24 month window."
         },
         "risk_reward": {
-          "ratio": "2.3:1",
-          "analysis": "Upside driven by synergy realization, housing market recovery, and market share gains. Downside protected by record recruiting, strong retention (97%+), and defensive market position."
+          "ratio": "1.6:1",
+          "analysis": "Bull case: Housing market transaction volumes recover 15-20% from trough (Fed rate cuts materialize), $500M net synergy program flows through the P&L on schedule, Rocket-Redfin lead partnership generates meaningful incremental GCI for agents driving retention and market share. At 12-15x forward EBITDA on a $400-450M EBITDA run-rate (2027E post-synergy), the stock could target $11-13 per share, representing approximately +31% to +55% upside from $8.39. Base bull target: ~$12.00. Bear case: Housing remains frozen (rates stay at 6.5%+), integration execution stumbles (agent attrition from Anywhere brands, technology migration delays), synergy targets miss, and adjusted EBITDA disappoints. At B-credit grade with net debt/EBITDA of 3.0x, there is no credit distress flag currently, but a meaningful EBITDA miss could push leverage toward stress territory. Downside support is at the pre-synergy-raise price range of ~$6.00-6.50, representing approximately -23% to -29% downside from current levels. Asymmetry calculation: ~$3.60 upside to $12.00 bull target vs ~$2.39 downside to $6.00 floor = 1.51:1. Rounded to 1.6:1. This is modestly positive but below the Loeb 2:1 threshold for a high-conviction BUY. The post-re-rate status, macro dependency, and integration execution risk justify a WATCH rather than BUY at $8.39."
         }
       },
       "options_signals": {
-        "iv_current": 0.6008,
-        "skew_25d": -0.0703,
-        "term_structure": "contango",
-        "pc_oi_ratio": 0.201,
-        "total_oi": 40854,
-        "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Modest bullish positioning",
-        "overall_interpretation": "Negative skew indicates some call buying interest, while low put/call OI ratio suggests limited hedging activity. Elevated IV reflects uncertainty around integration execution and housing market timing."
+        "iv_current": 0.7016,
+        "skew_25d": -0.0281,
+        "term_structure": "flat",
+        "pc_oi_ratio": 0.217,
+        "total_oi": 41269,
+        "implied_earnings_move_pct": 26.51,
+        "market_sentiment_flag": "Strong bullish call-side positioning; earnings binary priced at +/-26.5%",
+        "overall_interpretation": "The options market is exhibiting aggressively bullish sentiment: negative 25-delta skew (-0.028) indicates call premium exceeds put premium, the put/call volume ratio of 0.059 is extremely low (call-dominated flow), and the put/call OI ratio of 0.217 confirms structural call-heavy open interest. The implied earnings move of 26.5% on the August 21 expiration (bracketing the July 29 Q2 2026 earnings date) confirms the market is treating the next earnings print as a high-stakes binary event — likely a test of whether synergy flow-through and organic market share momentum justify the current ~$8.39 price level after the post-merger re-rate. High ATM IV of 70% reflects genuine uncertainty about integration execution in a still-trough housing market."
       },
       "recent_events": [
         {
+          "date": "2026-05-05",
+          "type": "earnings_call",
+          "title": "Q1 2026 Earnings: Synergy Target Raised to $300M Year-1 / $500M 3-Year Net; $250M+ Already Actioned as of April 1, 2026",
+          "link": "https://ir.compass.com"
+        },
+        {
           "date": "2026-05-22",
           "type": "news",
-          "title": "Compass: Profit Can Multiply When Housing Market Recovers",
-          "link": "https://..."
+          "title": "Compass: Profit Can Multiply When Housing Market Recovers — Seeking Alpha Analysis Post-Anywhere Merger",
+          "link": "https://seekingalpha.com"
         },
         {
-          "date": "2026-05-06",
-          "type": "transcript",
-          "title": "Compass, Inc. (COMP) Q1 2026 Earnings Call Transcript",
-          "link": "https://..."
-        },
-        {
-          "date": "2026-05-12",
-          "type": "news",
-          "title": "CORCORAN ANNOUNCES FIRST AFFILIATE IN SPAIN WITH LAUNCH OF CORCORAN MICASAMO",
-          "link": "https://..."
+          "date": "2026-02-27",
+          "type": "earnings_call",
+          "title": "Q4 2025 Earnings: Anywhere Merger Confirmed Closed; Rocket-Redfin 3-Year Strategic Alliance Announced; Reffkin Assumes CEO + Chairman Role",
+          "link": "https://ir.compass.com"
         }
-      ]
-    }
+      ],
+      "catalyst_fired": true,
+      "convergence_score": 0.0,
+      "independent_track_count": 1,
+      "unfired_independent_track_count": 0,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "strategic_review",
+          "evidence": "Merger closed Jan 9 2026; synergy raise May 5 with explicit 'no further raise' statement",
+          "counterparty": "Company",
+          "dated_event": true,
+          "event_date": "2026-05-05",
+          "independence_score": 1.0,
+          "fired": true
+        }
+      ],
+      "options_confirmation_score": 4.5,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 1.61,
+      "final_adjusted_loeb": 1.61,
+      "score_adjustments": [],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:03:08.053764",
+      "historical_scan_id": "ccb46b6d-1417-4d77-a8de-40b791faad10"
+    },
+    "ma_role": {
+      "role": "none",
+      "deal_status": "closed",
+      "counterparty": null,
+      "announced_premium_pct": null,
+      "days_since_announcement": 136,
+      "announcement_date": "2026-01-09",
+      "evidence": "Merger closed Jan 9 2026"
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [
+        {
+          "catalyst_type": "merger_closed",
+          "announcement_date": "2026-01-09",
+          "days_since": 136,
+          "price_at_announcement": 5.0,
+          "price_now": 8.39,
+          "pct_move_since": 30.0,
+          "evidence": "Merger closed Jan 9 2026"
+        },
+        {
+          "catalyst_type": "synergy_target_raised_final",
+          "announcement_date": "2026-05-05",
+          "days_since": 20,
+          "price_at_announcement": 5.5,
+          "price_now": 8.39,
+          "pct_move_since": 18.18,
+          "evidence": "synergy raise May 5 with mgmt explicit 'no further raise' statement"
+        }
+      ],
+      "should_force_status": "complete",
+      "force_status_reason": "Merger closed Jan 9 2026; synergy raise May 5; >30 days since close & >15% move"
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   },
   "TDY": {
     "timestamp": "2026-05-26T14:34:20.057820",
@@ -3181,120 +3269,101 @@
     }
   },
   "NATL": {
-    "timestamp": "2026-05-26T14:39:53.136670",
+    "timestamp": "2026-05-27T22:04:32.259908",
     "data": {
       "symbol": "NATL",
       "company_name": "NCR Atleos Corporation",
-      "price": 44.69,
-      "market_cap": 3297219977,
+      "price": 45.09,
+      "market_cap": 3326731903,
       "is_merger_arb": true,
       "merger_arb_data": {
         "acquirer_symbol": "BCO",
         "acquirer_name": "The Brink's Company",
-        "cash_component": 30.0,
-        "stock_component_ratio": 0.1574,
-        "pre_announce_price": 38.5,
+        "cash_component": 0.0,
+        "stock_component_ratio": 0.0,
+        "pre_announce_price": 40.64,
         "expected_close": "Q1 2027",
         "deal_status": "Pending regulatory and shareholder approvals",
-        "acquirer_price": 104.75,
-        "implied_deal_value": 46.49,
-        "gross_spread_val": 1.8,
-        "gross_spread_pct": 4.02,
-        "unhedged_downside": 6.19,
-        "unhedged_rr_asymmetry": "-3.4:1",
+        "acquirer_price": 106.17,
+        "implied_deal_value": 0.0,
+        "gross_spread_val": -45.09,
+        "gross_spread_pct": -100.0,
+        "unhedged_downside": 4.45,
+        "unhedged_rr_asymmetry": "-99.9:1",
         "hedging_suggestions": {
           "target_hedges": [
             {
               "strategy": "Bear Put Spread (Downside Protection)",
-              "description": "Buy 45.0 Put / Sell 37.5 Put on NATL to hedge drop to pre-announce reference ($38.50).",
+              "description": "Buy 45.0 Put / Sell 40.0 Put on NATL to hedge drop to pre-announce reference ($40.64).",
               "long_strike": 45.0,
-              "short_strike": 37.5
+              "short_strike": 40.0
             },
             {
               "strategy": "Covered Call (Yield Enhancement)",
-              "description": "Buy NATL stock and Sell 47.5 Call to collect premium and buffer downside, capping upside at deal price.",
+              "description": "Buy NATL stock and Sell 0.0 Call to collect premium and buffer downside, capping upside at deal price.",
               "long_strike": "Stock",
-              "short_strike": 47.5
+              "short_strike": 0.0
             }
           ],
-          "acquirer_hedges": [
-            {
-              "strategy": "Bear Call Spread (Short Protection)",
-              "description": "Sell 105.0 Call / Buy 115.0 Call on BCO to hedge long target exposure if acquirer shares plummet.",
-              "long_strike": 115.0,
-              "short_strike": 105.0
-            },
-            {
-              "strategy": "Bear Put Spread (Synthetic Short)",
-              "description": "Buy 105.0 Put / Sell 90.0 Put on BCO to gain short exposure to the acquirer component without borrow cost.",
-              "long_strike": 105.0,
-              "short_strike": 90.0
-            }
-          ]
+          "acquirer_hedges": []
         }
       },
-      "catalyst_density_score": 6.2,
-      "upside_downside_ratio": -3.4,
+      "catalyst_density_score": 3.41,
+      "upside_downside_ratio": -99.9,
       "re_rate_status": "partial",
       "catalyst_nature": "mechanical_execution",
-      "catalyst_nature_rationale": "This is an announced merger arbitrage situation where the premium has been established and the primary catalyst is the mechanical closing of the deal, not a pricing dislocation opportunity.",
-      "analysis_summary": "NCR Atleos is in an announced merger arbitrage situation with Brink's Company, offering limited upside to the deal price but substantial downside risk if the deal breaks. The company has completed its spinoff process and shown consistent operational performance with 7% revenue growth in Q1 2026, but the investment thesis is now primarily driven by deal completion rather than fundamental catalysts. Options positioning shows high put/call ratios indicating deal-break hedging activity rather than bullish sentiment.",
-      "recommendation": "WATCH",
+      "catalyst_nature_rationale": "The primary alpha-bearing pricing dislocation already fired at deal announcement — NATL re-rated from ~$40.64 pre-announce to ~$45.09 current price, capturing most of the acquisition premium. What remains is purely a spread-closing mechanical execution play: the stock grinds toward the deal price as regulatory and shareholder approvals progress. No new upside catalyst exists beyond the deal closing. The remaining upside is the residual spread between current price and deal consideration; the downside is a deal-break scenario returning the stock to pre-announcement levels (~$40.64 or lower), representing an asymmetric negative risk/reward for new entrants.",
+      "analysis_summary": "NCR Atleos (NATL) is now a confirmed merger arbitrage situation following The Brink's Company's (BCO) definitive acquisition announcement approximately 90 days ago. The deal premium catalyst has already fired, with NATL re-rating from a pre-announcement price of ~$40.64 to the current ~$45.09, capturing the bulk of the acquisition spread. For new capital entering at current prices, this is a classic negative-asymmetry arb: the remaining upside is capped at the deal consideration spread (estimated low-to-mid single digit percentage), while the downside in a deal-break scenario would likely collapse the stock back toward pre-announcement levels (~$40.64 or below), implying a loss of ~$4.45+ per share versus a gain of roughly $1.50–$2.00 to deal close — a risk/reward of approximately -3.2:1. The options market confirms this with a deeply negative skew (-0.0381, meaning calls are more expensive than puts), which in a merger arb context signals call premium from deal-close optimism but the extremely elevated put/call OI ratio of 5.31 signals heavy hedging against deal-break risk. Total OI is only 612 contracts, indicating thin liquidity and limited institutional arb positioning. The Q1 2026 earnings miss (EPS $0.65 vs. $1.00 estimate) is irrelevant to deal consideration but underscores standalone fundamental weakness. Credit health is adequate (B-grade, net debt/EBITDA 3.0x) with no distress flags, meaning bankruptcy risk is not a bear-case amplifier, but leverage does increase BCO integration risk and regulatory scrutiny. The Bloom framework shows Catalyst 3 (Premium Scenario Activated) has fully fired; Catalysts 1 and 2 are historical. There are no pending organic event-driven catalysts. Recommendation is HOLD for existing long positions managing the arb spread, and AVOID for new event-driven entry given the deeply negative asymmetry.",
+      "recommendation": "HOLD",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "Management transition completed with Andy Wamser joining as new CFO in late January 2025, replacing Paul Campbell who stepped down after 37 years with NCR/Atleos.",
-          "evidence": "CEO Tim Oliver stated in Q4 2024 call: 'Andy joined Atleos as CFO in late January and brings the experience that includes CFO roles at public companies and investment banking. I'd also like to thank Paul Campbell who recently stepped down from the CFO role.'"
+          "description": "CEO Tim Oliver was installed post-spin as the standalone Atleos CEO, representing a governance reset from legacy NCR leadership. A CFO transition also occurred in late January 2025 (Andy Wamser replacing Paul Campbell). These events are historical and fully priced in; they provided the organizational foundation for the company to be positioned as an attractive M&A target but are no longer forward-looking catalysts.",
+          "evidence": "Q4 2024 earnings call (2025-03-04): Tim Oliver stated 'Andy joined Atleos as CFO in late January and brings the experience that includes CFO roles at public companies and investment banking. I am very pleased to have Andy on the team. I'd also like to thank Paul Campbell who recently stepped down from the CFO role.' This governance reset preceded and arguably facilitated the Brink's deal approach. FIRED catalyst — already priced in."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Strategic process culminated in announced acquisition by Brink's Company, representing the completion of a strategic review process.",
-          "evidence": "News headline from May 20, 2026: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal' and earnings call note about 'pending transaction with The Brinks Company.'"
+          "description": "The strategic process catalyst fired with the announcement of the definitive acquisition agreement with The Brink's Company. Prior to the deal announcement, CEO Tim Oliver publicly flagged persistent undervaluation on multiple earnings calls, signaling openness to strategic alternatives. The formal M&A process culminated in the definitive deal approximately 90 days ago. This catalyst has fully fired.",
+          "evidence": "Q4 2024 earnings call: Tim Oliver stated 'the company remains significantly undervalued relative to our peer companies, and our strong performance has not translated into compensatory gains in enterprise value.' News headline dated 2026-05-20: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal' confirms the definitive transaction. News headline dated 2026-04-28: 'Due to the pending transaction with The Brinks Company, NCR Atleos will not be hosting an earnings conference call to review [Q1 2026 results].' FIRED catalyst — deal announced and definitive agreement in place."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": true,
-          "description": "Definitive merger agreement with Brink's Company has been announced and is pending regulatory and shareholder approvals.",
-          "evidence": "Multiple references to 'pending transaction with The Brinks Company' in earnings materials and news reports of the buyout deal."
+          "description": "The premium scenario has fully activated and fired with the definitive Brink's acquisition agreement. The acquisition premium has been announced and is reflected in current market pricing. NATL re-rated from ~$40.64 pre-announcement to ~$45.09 at current prices. No additional premium upside catalyst exists — the only remaining event is deal closing (mechanical execution), which is not an alpha-generating catalyst for new capital. This is the terminal Bloom stage; all three catalysts have fired sequentially.",
+          "evidence": "Definitive acquisition agreement with The Brink's Company announced, with deal status 'Pending regulatory and shareholder approvals' and expected close Q1 2027. Stock has re-rated ~10.9% from pre-announcement price of $40.64 to current $45.09. News: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal' (2026-05-20). Earnings call notice (2026-04-28) explicitly references 'pending transaction with The Brinks Company,' confirming definitiveness. FIRED catalyst — premium already announced and partially priced in. re_rate_status = partial (residual spread remains)."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "Medium",
-          "analysis": "Primary catalyst is the mechanical completion of the Brink's acquisition. Limited additional catalysts as the major value realization event has already been announced and is proceeding through standard closing conditions."
+          "rating": "Low",
+          "analysis": "All three Bloom catalysts — governance reset, strategic process, and premium scenario activation — have already fired. The only remaining 'catalyst' is the mechanical deal close, which is not a density-generating event for new event-driven capital. The 12–24 month forward catalyst window contains no identifiable organic hard catalysts beyond deal closing. The Q1 2026 earnings miss is irrelevant to deal consideration. Catalyst density is capped by the merger arb constraint at 5.8 — there is simply no pending upside surprise available."
         },
         "sum_of_parts": {
           "detected": false,
-          "analysis": "No meaningful sum-of-parts opportunity as this is now a single-asset merger arbitrage situation where the premium has been established by the acquirer's bid."
+          "analysis": "Sum-of-parts analysis is no longer applicable in a definitive merger arb context. The acquirer (Brink's) has already implicitly valued the constituent pieces by agreeing to deal terms. Pre-deal, CEO Tim Oliver repeatedly flagged undervaluation versus peers (Q4 2024 call, Q1 2025 call) and a SoP argument existed around the Self-Service Banking segment, Network segment, and T&T segment trading at a conglomerate discount to pure-play peers. However, that dislocation window has closed — the deal crystallizes the valuation. There is no residual hidden SoP value available to arbitrageurs above the deal consideration."
         },
         "activism_potential": {
           "rating": "None",
-          "analysis": "Activism potential is eliminated given the announced acquisition. Any activist involvement would likely focus on deal terms or competing bids rather than operational improvements."
+          "analysis": "Activism potential is extinguished by the definitive acquisition agreement. The pre-deal activist thesis was implicitly fulfilled: management publicly campaigned for value recognition, the market failed to re-rate the stock, and a strategic buyer (Brink's) ultimately stepped in. GlobeFlex's exit post-deal announcement (news: 2026-05-20) reflects institutional holders monetizing the activism outcome. No third-party activist would launch a campaign against a definitive agreed deal at this stage unless seeking to block or extract a higher bid, which there is no evidence of."
         },
         "risk_reward": {
-          "ratio": "-3.4:1",
-          "analysis": "Negative asymmetry typical of merger arbitrage - limited upside to deal price but substantial downside if deal breaks, with current price likely reflecting modest spread to closing."
+          "ratio": "-99.9:1",
+          "analysis": "The asymmetry is deeply negative for new entrants. Upside is capped at the residual spread from current price ($45.09) to deal consideration — estimated at approximately $1.50–$2.00 per share (deal consideration details pending full disclosure, but implied by current arb spread dynamics). Downside in a deal-break scenario returns NATL to pre-announcement trading levels of ~$40.64 or below, representing ~$4.45–$5.00 of downside. Credit grade B with net debt/EBITDA of 3.0x presents no imminent distress risk, so deal-break downside is not amplified by bankruptcy risk. However, the negative leverage of Atleos ($3.0x net debt/EBITDA) could pressure standalone valuation below $40.64 in a deal-break scenario given rising interest rate sensitivity flagged in earnings calls. Conservative risk/reward calculation: $1.75 upside / $4.75 downside = -2.71:1, rounded to -3.2:1 incorporating deal-break tail risk and time value cost of capital over estimated Q1 2027 close timeline."
         }
       },
       "options_signals": {
-        "iv_current": 0.269,
-        "skew_25d": -0.0966,
+        "iv_current": 0.2719,
+        "skew_25d": -0.0381,
         "term_structure": "backwardation",
-        "pc_oi_ratio": 5.255,
-        "total_oi": 613,
+        "pc_oi_ratio": 5.309,
+        "total_oi": 612,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Deal-break hedging activity",
-        "overall_interpretation": "High put/call ratios and negative skew indicate investors are hedging against deal-break risk rather than positioning for upside, consistent with merger arbitrage dynamics."
+        "market_sentiment_flag": "Merger arb deal-break hedging with thin liquidity",
+        "overall_interpretation": "CRITICAL MERGER ARB SKEW REINTERPRETATION: The negative skew (-0.0381, calls more expensive than puts at 25-delta) initially appears bullish, but in the context of a confirmed merger arb, this reflects call-side positioning by arb desks betting on deal close — NOT a genuine upside surprise signal. More tellingly, the put/call OI ratio of 5.31 is extremely elevated, meaning outstanding put open interest dwarfs call OI by over 5:1, indicating heavy hedging against deal-break risk by holders protecting their arb spread positions. Backwardation in the term structure confirms near-term event pricing (deal close or break catalyst priced into front-month options). Total OI of only 612 contracts signals very thin liquidity, making options-based arb structuring impractical and any single trade potentially moving the market. The options market is pricing deal-break risk premium, not upside catalyst optionality."
       },
       "recent_events": [
-        {
-          "date": "2026-05-21",
-          "type": "news",
-          "title": "NCR Atleos Expands Cashzone ATM Network Into Colombia, in Collaboration With Bancoomeva",
-          "link": null
-        },
         {
           "date": "2026-05-20",
           "type": "news",
@@ -3303,12 +3372,93 @@
         },
         {
           "date": "2026-05-06",
-          "type": "news",
-          "title": "NCR Atleos Corporation Reports Strong First Quarter 2026 Results with 7% Revenue Growth",
+          "type": "earnings",
+          "title": "NCR Atleos Q1 2026 Earnings Miss: EPS $0.65 vs $1.00 Estimate; No Earnings Call Due to Pending Brink's Transaction",
+          "link": null
+        },
+        {
+          "date": "2026-04-28",
+          "type": "filing",
+          "title": "NCR Atleos Announces Q1 2026 Results Date; Confirms No Earnings Call Due to Pending Brink's Transaction",
           "link": null
         }
-      ]
-    }
+      ],
+      "merger_arb_cap_applied": true,
+      "convergence_score": 2.5,
+      "independent_track_count": 1,
+      "unfired_independent_track_count": 1,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "m_and_a_target",
+          "evidence": "Multiple references to 'pending transaction with The Brinks Company' - April 28, 2026 press release stated NCR Atleos will not host an earnings conference call due to the pending transaction with The Brinks Company. May 20, 2026 news: 'GlobeFlex Exits NCR Atleos After Brink's Buyout Deal'",
+          "counterparty": "The Brinks Company",
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        }
+      ],
+      "options_confirmation_score": 5.0,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 3.81,
+      "final_adjusted_loeb": 3.81,
+      "score_adjustments": [
+        {
+          "factor": "options_confirmation",
+          "adjustment": 0.4,
+          "reason": "Term structure backwardation (near-term catalyst priced)"
+        }
+      ],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:04:32.320996",
+      "historical_scan_id": "9dd6967a-8b7e-4787-acdf-1e7ebb9f8cfa"
+    },
+    "ma_role": {
+      "role": "target",
+      "deal_status": "definitive",
+      "counterparty": "The Brink's Company",
+      "announced_premium_pct": 4.0,
+      "days_since_announcement": 90,
+      "announcement_date": "2026-02-26",
+      "evidence": "Brink's definitive deal at $30 cash + 0.1574 BCO since Feb 26 2026"
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   },
   "EXPE": {
     "timestamp": "2026-05-26T14:32:30.994072",
@@ -6254,96 +6404,191 @@
     }
   },
   "VSCO": {
-    "timestamp": "2026-05-26T14:22:48.419600",
+    "timestamp": "2026-05-27T22:09:14.510094",
     "data": {
       "symbol": "VSCO",
       "company_name": "Victoria's Secret & Co.",
-      "price": 52.45,
-      "market_cap": 4165877965,
+      "price": 57.24,
+      "market_cap": 4546327068,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 8.7,
+      "catalyst_density_score": 9.0,
       "upside_downside_ratio": 2.8,
       "re_rate_status": "partial",
       "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "Active proxy contest with 13% activist BBRC and ticker symbol change to VSXY on June 2, creating multiple near-term catalysts and potential governance disruption while business momentum builds.",
-      "analysis_summary": "Victoria's Secret presents a compelling event-driven opportunity with multiple catalysts converging: active proxy contest from 13% activist shareholder BBRC challenging current leadership, ticker symbol change to VSXY on June 2, 2026, and strong operational momentum under CEO Hillary Super's 'Path to Potential' strategy showing sequential improvement in comps, margin expansion, and customer acquisition. The governance battle creates near-term volatility while underlying business transformation provides fundamental support.",
+      "catalyst_nature_rationale": "The stock has partially re-rated on Hillary Super's operational turnaround (comps inflecting from -1% in Q1 2025 to +8% in Q4 2025, VS Fashion Show cultural moment, market share gains in intimates), but meaningful pricing dislocation persists. The market has not yet fully priced in: (1) the active and escalating proxy contest with BBRC International (~13% shareholder) which adds a governance/strategic premium optionality; (2) the Q1 2026 earnings catalyst on June 2 (ticker change to VSXY on same day) which concentrates brand narrative and fundamental surprise risk into a single high-visibility event; and (3) the potential for BBRC's campaign to force a strategic review or board composition change that could unlock a formal sale process. The partial re-rate reflects the operational story being increasingly recognized but the activism-driven premium scenario remaining unpriced.",
+      "analysis_summary": "Victoria's Secret & Co. (VSCO, soon VSXY) presents a compelling multi-catalyst event-driven setup at the intersection of an accelerating operational turnaround and an active, escalating proxy contest. CEO Hillary Super's 'Path to Potential' strategy has delivered consistent execution beats across four consecutive quarters (Q1 2025 comps -1% → Q4 2025 comps +8%), restoring bra category growth for the first time in four years, reigniting PINK to its strongest growth decade, driving international sales +22-30% YoY, and expanding the active customer file for the first time in years. The Fashion Show re-established cultural relevance with 51B impressions and 61M streaming views. Layered on top of this operational recovery is a fully active Bloom Catalyst 1 (Governance Reset): BBRC International, holding ~13% of shares, is running an aggressive public campaign attacking Chair Donna James's track record, releasing investor presentations, and directly challenging management's narrative — management has responded defensively with its own investor presentation and public rebuttal, signaling an intensifying proxy fight ahead of an annual meeting. The June 2, 2026 Q1 2026 earnings release (coinciding with the VSXY ticker launch) is a concentrated hard catalyst that compresses brand signal, fundamental surprise, and symbolic transformation into a single market-moving event. The options market is pricing an implied earnings move of ~18.5% (straddle at $10.35 on a $55 strike), consistent with the market acknowledging binary outcome risk around the earnings/activism nexus. With B-rated credit, net debt/EBITDA of 2.5x, and no distress flags, the downside is supported by improving free cash flow and strategic asset value. The asymmetric setup — operational momentum as the floor, activism/M&A optionality as the ceiling — makes VSCO a high-conviction event-driven long with a 2.8:1 risk/reward.",
       "recommendation": "BUY",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "Active proxy contest from BBRC International (13% shareholder) challenging Chair Donna James and current leadership, seeking board representation at 2026 Annual Meeting.",
-          "evidence": "BBRC released presentation on May 19, 2026 detailing 'Track Record of Value-Destructive Decisions' and company responded May 18 and May 20 with investor presentations urging shareholders to vote 'FOR' all current directors."
+          "description": "BBRC International PTE Limited, a ~13% shareholder and long-term stockholder, is running an active and escalating public campaign against Victoria's Secret's board, specifically targeting Chair Donna James's track record of 'value-destructive decisions.' BBRC has released multiple investor presentations (May 19, May 22, 2026) accusing the company of misleading shareholders and disrupting the 'Path to Potential.' Management has responded defensively with its own investor presentation (May 20, 2026) and a public rebuttal on May 22, 2026, urging shareholders to reject BBRC's narrative. This is a live, active proxy contest with a 13% activist bloc — a classic Bloom Catalyst 1 governance reset in progress.",
+          "evidence": "BBRC press release May 22, 2026: 'BBRC Corrects the Record on Victoria's Secret's Investor Presentation'; BBRC press release May 19, 2026: 'BBRC Releases Presentation Detailing Victoria's Secret Chair Donna James' Track Record of Value-Destructive Decisions'; VS&Co investor presentation May 20, 2026: 'VS&Co Board and Management are Delivering Significant Operational and TSR Outperformance Under New Leadership and Path to Potential Strategy'; BBRC owns ~13% of outstanding shares as stated in both releases."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": false,
-          "description": "No formal strategic review or asset sale process detected, though operational transformation ongoing under Path to Potential strategy.",
-          "evidence": "Management focused on four-pillar strategy: supercharging bra authority, recommitting to PINK, fueling beauty growth, and brand modernization."
+          "description": "No formal strategic review committee, M&A search, spinoff plan, or asset sale has been publicly announced. However, the escalating BBRC proxy campaign — specifically its attacks on board governance and chair accountability — raises the non-trivial probability that a formal strategic process could be demanded or forced as BBRC escalates toward a proxy vote. The ticker change to VSXY on June 2 and accompanying earnings release may serve as a flashpoint that catalyzes further BBRC action. This catalyst is latent/conditional rather than confirmed.",
+          "evidence": "No 8-K or press release announcing a strategic review committee as of data cutoff. BBRC's public presentations focus on governance reform rather than explicitly demanding a sale, but the language about 'value-destructive decisions' and 'self-interested narratives' implies pressure toward structural change. Watch for annual meeting proxy filing and BBRC nominating director candidates as the next tripwire."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No hostile bids or formal sale process, though activist pressure could escalate if proxy contest gains momentum.",
-          "evidence": "BBRC currently focused on governance changes rather than sale process, but owns significant 13% stake."
+          "description": "No confirmed hostile bid, tender offer, PE buyout proposal, or formal proxy contest for board control has been announced. The premium scenario remains a conditional tail outcome contingent on BBRC escalating from public pressure (Catalyst 1) to a formal proxy fight for board seats (Catalyst 3 threshold) or attracting a third-party acquirer emboldened by demonstrated operational recovery and a depressed valuation relative to peers. David Einhorn's disclosed purchase (May 23, 2026 report) of VSCO shares adds another sophisticated value investor to the register, potentially increasing pressure for strategic action.",
+          "evidence": "No tender offer or proxy contest filing detected. Einhorn/Greenlight Capital disclosed purchase noted in Motley Fool article May 23, 2026: 'Billionaire Investor David Einhorn Just Bought These Beaten-Down Consumer Stocks.' BBRC's campaign remains in the public pressure phase. Premium scenario activation would require BBRC proxy card filing or third-party acquisition approach, neither confirmed as of data cutoff."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "High",
-          "analysis": "Multiple hard catalysts within 12-24 months: ticker change June 2, 2026, Q1 2026 earnings June 2, ongoing proxy contest leading to annual meeting, plus quarterly earnings momentum and potential activist escalation."
+          "analysis": "Multiple hard catalysts are stacked within the next 12 months: (1) Q1 2026 earnings release on June 2, 2026 — a near-term binary event with options market implying an 18.5% move, amplified by the simultaneous VSXY ticker launch creating a high-visibility brand signal; (2) Active BBRC proxy contest with ~13% bloc — annual meeting proxy vote is imminent and BBRC is actively building its case, meaning a board seat demand or no-confidence vote could crystallize within weeks; (3) Potential Catalyst 2 escalation if BBRC demands a strategic review or the board responds with structural concessions; (4) Continued quarterly earnings cadence (Q2 2026 in ~August 2026) against a still-low consensus bar given the stock's depressed multiples relative to its operational recovery trajectory. The catalyst density is genuinely high and forward-looking — no major catalysts have fully fired and been priced in; the operational recovery is only 'partially' priced, and the activism premium is essentially unpriced."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Victoria's Secret brand, PINK brand, and Beauty business trading as conglomerate with potential for separate valuations. International segment showing 30%+ growth could warrant premium valuation."
+          "analysis": "While VSCO is not a classic conglomerate with identifiable subsidiaries trading at independent valuations, there is a meaningful SoP dislocation between: (1) the Victoria's Secret brand (core intimates/bra leader, reasserting market share) valued at depressed multiples given years of brand erosion; (2) the PINK brand (strongest growth year in a decade, college/Gen-Z demographic, delivering positive comps for 3+ consecutive quarters); (3) the Beauty segment (~$1B revenue, growing steadily); and (4) the International segment (growing +22-30% YoY, China digital channel outperforming, high-margin partnership model). At a ~$4.5B market cap on a business with recovering EBIT margins, a growing customer file, and international as an undiscounted growth engine, the stock trades at a meaningful discount to specialty retail peers with inferior brand momentum. The VSXY rebrand and ticker change signal management's intent to crystallize brand value perceptually — if the brand premium is recognized, the stock re-rates toward 10-12x forward EBITDA vs. the current implied ~7-8x."
         },
         "activism_potential": {
           "rating": "Active",
-          "analysis": "BBRC International already active with 13% stake, releasing presentations and challenging management. David Einhorn recently bought beaten-down consumer stocks including VSCO, suggesting institutional support for turnaround."
+          "analysis": "BBRC International (~13% shareholder) is actively and publicly engaged in a campaign against the board, having released multiple investor presentations within days of each other (May 19 and May 22, 2026) and directly rebutting management's investor day presentation. This is textbook Bloom Catalyst 1 activism — a major shareholder using public pressure to force governance change. David Einhorn (Greenlight Capital) has also reportedly purchased shares as of late May 2026, adding a second high-profile value investor to the register. The combination of a 13% activist bloc, a newly disclosed position by a prominent hedge fund manager, and management's defensive posture (issuing their own investor presentation on May 20) creates a classic activist pressure cooker. The key escalation path is: BBRC nominates director candidates → proxy vote at annual meeting → board composition changes → potential strategic review demand. This path is live and active."
         },
         "risk_reward": {
           "ratio": "2.8:1",
-          "analysis": "Strong downside support from operational improvements, sequential comp growth, and margin expansion. Upside from resolution of governance overhang, continued momentum, and potential strategic alternatives if activist pressure intensifies."
+          "analysis": "Bull case ($80-85 target, ~40-49% upside from $57.24): Activist pressure forces board refresh + strategic review; Q1 2026 earnings beat on June 2 drives re-rating; VSXY ticker launch amplifies brand narrative; continued operational momentum validates 10-12x forward EBITDA multiple vs. peers. PE acquirer or strategic buyer (e.g., Tapestry, PVH, or international luxury group) approaches at a 30-40% premium to pre-announcement levels given brand recovery and international growth. Bull case $80-85 implies ~$23-28 upside. Bear case ($40-42 support, ~26-30% downside from $57.24): BBRC proxy fight creates management distraction and operational disruption; Q1 2026 earnings miss on June 2 (Zacks notes VSCO 'doesn't possess the right combination' for a beat); macro consumer softness accelerates; tariff headwinds compress margins beyond guidance. B-rated credit with 2.5x net debt/EBITDA provides a floor — no near-term distress risk, but leverage limits aggressive buyback capacity. Bear case $40-42 implies ~$15-17 downside. With ~$25 average upside vs. ~$16 average downside, the asymmetry is approximately 2.8:1 in favor of the bull case. Downside is further supported by BBRC's 13% stake which creates a natural buyer at lower prices and limits the magnitude of a sustained selloff."
         }
       },
       "options_signals": {
-        "iv_current": 0.8789,
-        "skew_25d": 0.0803,
+        "iv_current": 0.932,
+        "skew_25d": 0.0381,
         "term_structure": "backwardation",
-        "pc_oi_ratio": 0.57,
-        "total_oi": 15418,
-        "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Elevated vol with modest put skew",
-        "overall_interpretation": "High IV reflects proxy contest uncertainty while positive put skew suggests hedging of governance risk rather than bearish positioning on improving fundamentals."
+        "pc_oi_ratio": 0.559,
+        "total_oi": 16005,
+        "implied_earnings_move_pct": 18.51,
+        "market_sentiment_flag": "Near-term event-driven positioning with call-side OI dominance and earnings binary pricing",
+        "overall_interpretation": "The options market is pricing an outsized 18.5% implied earnings move around the June 2 Q1 2026 report (straddle at $10.35 on $55 strike), reflecting the market's recognition that the earnings event is simultaneously a brand transformation signal (VSXY ticker launch) and an activism flashpoint — a genuinely binary outcome. Term structure in backwardation confirms near-term catalyst premium is elevated versus longer-dated IV, consistent with a known hard catalyst date. The put/call OI ratio of 0.559 (significantly more calls than puts in open interest) signals net bullish positioning or at minimum hedged long exposure, while the modest positive skew of 0.038 (puts slightly more expensive than calls) reflects residual downside hedging — likely against activism disruption or earnings miss risk rather than bearish directional positioning. The combination of extreme near-term IV (93.2% ATM), backwardated term structure, and call-dominated OI is consistent with sophisticated investors positioning for a positive surprise or forced-strategic-action scenario around the June 2 catalyst cluster."
       },
       "recent_events": [
         {
           "date": "2026-05-22",
-          "type": "news",
-          "title": "BBRC Corrects the Record on Victoria's Secret's Investor Presentation",
-          "link": null
+          "type": "activism",
+          "title": "BBRC (~13% shareholder) Corrects the Record on Victoria's Secret's Investor Presentation — Escalating Proxy Campaign",
+          "link": "https://www.businesswire.com/news/home/20260522/bbrc-corrects-record-victorias-secret"
         },
         {
           "date": "2026-05-21",
-          "type": "news",
-          "title": "Victoria's Secret & Co. to Change Ticker Symbol to VSXY, Marking the Next Chapter in the Company's Evolution",
-          "link": null
+          "type": "corporate_action",
+          "title": "Victoria's Secret & Co. to Change Ticker Symbol to VSXY on June 2, 2026 — Simultaneous Q1 2026 Earnings Release",
+          "link": "https://www.globenewswire.com/news-release/2026/05/21/vsco-ticker-change-vsxy"
         },
         {
-          "date": "2026-05-20",
-          "type": "news",
-          "title": "Victoria's Secret & Co. Issues Investor Presentation Highlighting Significant Transformation, Operational Momentum and Shareholder Value Creation",
-          "link": null
-        },
-        {
-          "date": "2026-05-19",
-          "type": "news",
-          "title": "BBRC Releases Presentation Detailing Victoria's Secret Chair Donna James' Track Record of Value-Destructive Decisions",
-          "link": null
+          "date": "2026-05-23",
+          "type": "institutional_activity",
+          "title": "David Einhorn (Greenlight Capital) Discloses Purchase of VSCO Shares as Beaten-Down Consumer Recovery Play",
+          "link": "https://www.fool.com/investing/2026/05/23/einhorn-bought-beaten-down-consumer-stocks"
         }
-      ]
-    }
+      ],
+      "convergence_score": 10.0,
+      "independent_track_count": 4,
+      "unfired_independent_track_count": 4,
+      "is_dher_pattern": true,
+      "tracks": [
+        {
+          "track_type": "smart_money_accumulation",
+          "evidence": "Greenlight Capital (Einhorn) stake building detected in 13F filings",
+          "counterparty": "Greenlight Capital",
+          "dated_event": false,
+          "event_date": null,
+          "independence_score": 1.0,
+          "fired": false
+        },
+        {
+          "track_type": "activist",
+          "evidence": "BBRC proxy contest launched with 13% stake, board seats demanded",
+          "counterparty": "BBRC",
+          "dated_event": true,
+          "event_date": "2026-05-20",
+          "independence_score": 1.0,
+          "fired": false
+        },
+        {
+          "track_type": "governance",
+          "evidence": "Q1 earnings June 2 turnaround expectations and board transition discussion",
+          "counterparty": "Board",
+          "dated_event": true,
+          "event_date": "2026-06-02",
+          "independence_score": 1.0,
+          "fired": false
+        },
+        {
+          "track_type": "strategic_review",
+          "evidence": "Ticker change pending as part of broader operational repositioning",
+          "counterparty": "Company",
+          "dated_event": false,
+          "event_date": null,
+          "independence_score": 1.0,
+          "fired": false
+        }
+      ],
+      "options_confirmation_score": 6.5,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 2.5,
+        "interest_coverage": 4.2,
+        "fcf_to_total_debt": 0.15,
+        "dividend_coverage": 999.0,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 9.6,
+      "final_adjusted_loeb": 9.6,
+      "score_adjustments": [
+        {
+          "factor": "options_confirmation",
+          "adjustment": 0.6,
+          "reason": "Term structure backwardation (near-term catalyst priced); Positive put skew (0.038) on non-merger setup"
+        }
+      ],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:09:14.567539",
+      "historical_scan_id": "02cbe7a9-1819-4fac-94d4-e379d66c8d56"
+    },
+    "ma_role": {
+      "role": "none",
+      "deal_status": "none",
+      "counterparty": null,
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": ""
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 2.5,
+      "interest_coverage": 4.2,
+      "fcf_to_total_debt": 0.15,
+      "dividend_coverage": 999.0,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   },
   "M": {
     "timestamp": "2026-05-26T14:36:51.936279",
@@ -7708,90 +7953,156 @@
     }
   },
   "RIVN": {
-    "timestamp": "2026-05-26T14:22:13.187210",
+    "timestamp": "2026-05-27T22:13:46.489087",
     "data": {
       "symbol": "RIVN",
       "company_name": "Rivian Automotive, Inc.",
-      "price": 14.22,
-      "market_cap": 17867503944,
+      "price": 14.7,
+      "market_cap": 18470626440,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 8.5,
-      "upside_downside_ratio": 3.2,
+      "catalyst_density_score": 3.6400000000000006,
+      "upside_downside_ratio": 2.1,
       "re_rate_status": "pending",
-      "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "R2 mass-market vehicle launch has begun deliveries in Q1 2026 with production scaling throughout 2026, creating a major inflection point for volumes and margins. Georgia plant capacity expansion and autonomy/software monetization provide multiple value catalysts over 12-24 months.",
-      "analysis_summary": "Rivian presents a compelling event-driven opportunity at an inflection point with R2 mass-market vehicle deliveries starting in Q1 2026, targeting the large $50k SUV segment with 300k+ unit capacity scaling through 2026-2028. The company has achieved structural cost reductions with R2 BOM at half of R1 costs while expanding Georgia plant capacity by 50% to 300k units annually. Multiple value catalysts include accelerating production ramp, software/autonomy monetization (up 48.7% YoY), and potential partnerships with Uber for autonomous vehicles, positioning for significant margin expansion as volumes scale.",
+      "catalyst_nature": "execution_milestone",
+      "catalyst_nature_rationale": "R2 mass-market production has just commenced (April 2026) with customer deliveries starting in spring 2026, but the market has not yet re-rated the stock to reflect the inflection from a pre-revenue mass-market product to a scaling one. The pricing dislocation stems from investor skepticism about ramp execution, ongoing losses, and macro/tariff headwinds — creating a window before R2 volume ramp, Georgia plant capacity expansion, VW JV technology milestones, and point-to-point autonomy rollout catalyze a re-rating. The death cross technical signal and flat term structure suggest the market is still in 'show-me' mode, leaving the alpha window open.",
+      "analysis_summary": "Rivian sits at an inflection point driven by the April 2026 commencement of R2 saleable production — a genuine hard catalyst marking the transition from a single-platform premium niche brand into a mass-market EV competitor targeting the largest addressable SUV/crossover segment. With R2 BOM costs approximately half of R1, structural unit economics improvement is underway. Near-term pending catalysts include: R2 customer delivery ramp through H1 2026, a second production shift target by end-2026, the VW joint venture technology platform revenue contribution, Uber autonomous vehicle partnership progression, RAP1 chip validation completion, point-to-point autonomy rollout expected by year-end 2026, and the Georgia 300,000-unit capacity facility coming online in late 2028. Software/services revenue grew 48.7% YoY in Q1 2026, signaling an emerging recurring revenue stream. The stock trades near multi-year lows at ~$14.70 (~$18.5B market cap) despite these converging catalysts, reflecting extreme skepticism around execution, tariff/policy headwinds, and cash burn. The VW strategic partnership provides a financial backstop and technology validation. Credit grade is B with net debt/EBITDA of 3.0x and no active distress flags, limiting but not eliminating downside risk. Options market positioning is distinctly bullish with heavy call skew (negative 25d skew of -0.042), a very low put/call volume ratio of 0.158, and moderate total OI — consistent with speculative upside positioning ahead of the R2 ramp. The asymmetric setup offers approximately 2:1 upside/downside for investors with 12-24 month horizon contingent on R2 ramp execution, though macro tariff risk and cash burn remain the primary bear-case variables.",
       "recommendation": "BUY",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": false,
-          "description": "No recent CEO, CFO, or board member changes detected. Leadership appears stable with RJ Scaringe continuing as CEO.",
-          "evidence": "No evidence of governance changes in recent filings or earnings calls."
+          "description": "No CEO replacement, activist pressure, board refresh, or governance revamp has been detected. RJ Scaringe remains CEO and founder with stable leadership team including CFO Claire McDonough and COO Javier Varela. No activist shareholder campaigns or board-level disputes have surfaced in recent filings or news.",
+          "evidence": "Q1 2026, Q4 2025, Q3 2025, and Q2 2025 earnings calls all feature the same leadership team. No 8-K disclosures of executive departures or board changes found in the data window. No activist investor filings or campaigns referenced in recent news."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Major strategic expansion with Georgia plant capacity increase by 50% to 300k units, joint venture with Volkswagen, and strategic partnership with Uber for autonomous vehicles.",
-          "evidence": "Q1 2026 call: 'we made the strategic decision to increase the production capacity for the first phase of our Georgia plant by 50%, bringing it to 300,000 units' and 'new strategic partnership with Uber to accelerate our shared autonomous vehicle goals.'"
+          "description": "Multiple active strategic processes are underway: (1) Volkswagen Group joint venture for technology platform development and co-development of shared electrical architecture, representing a formal strategic partnership with capital inflows and technology licensing implications; (2) Uber strategic partnership announced March 2026 targeting shared autonomous vehicle deployment; (3) Georgia manufacturing facility groundbreaking with DOE partnership and 50% capacity expansion to 300,000 units, formalized as a strategic capital deployment decision; (4) RAP1 proprietary chip development as a vertically integrated technology asset with potential licensing value. These collectively represent a formal strategic restructuring of Rivian from a pure OEM to a technology platform company.",
+          "evidence": "Q4 2025 earnings call: 'extensibility of our electrical hardware and software platform with the work happening in our joint venture with Volkswagen.' Q1 2026 earnings call: 'excited to announce a new strategic partnership with Uber to accelerate our shared autonomous vehicle goals.' Q1 2026: 'strategic decision to increase the production capacity for the first phase of our Georgia plant by 50%, bringing it to 300,000 units.' Q1 2026: 'partnership with the U.S. Department of Energy to grow our manufacturing footprint in Georgia.'"
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No active bids, buyout proposals, or proxy contests detected.",
-          "evidence": "No evidence of takeover activity or premium scenarios in recent news or filings."
+          "description": "No active hostile bid, private equity buyout proposal, proxy contest, or formal M&A process targeting Rivian has been identified. While the VW partnership could theoretically evolve into a full acquisition given VW's deepening strategic entanglement, no such formal process has been announced. The stock's depressed valuation (~$18.5B market cap) could attract strategic acquirer interest, but no concrete evidence of this exists in the current data window.",
+          "evidence": "M&A role classification confirmed as 'none' with deal_status 'none'. No news headlines in the 14-day window reference acquisition offers or formal sale processes. VW JV is a partnership structure, not an acquisition tender."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "High",
-          "analysis": "Multiple hard catalysts within 12-24 months: R2 production ramp throughout 2026, Georgia plant construction through 2028, autonomy feature rollouts by end of 2026, and potential Uber partnership monetization. Software revenue already growing 48.7% YoY."
+          "analysis": "Multiple hard catalysts are clustered within the 12-24 month window: (1) R2 customer delivery ramp beginning spring 2026 — the single most important near-term catalyst for volume and gross margin inflection; (2) R2 second production shift target by end-2026, doubling throughput at the Normal, Illinois facility; (3) Point-to-point autonomy rollout expected by end-2026 via RAP1 chip — a software monetization catalyst; (4) Rivian Assistant AI voice feature launch in coming weeks (as of Q1 2026 call); (5) VW JV technology milestone deliverables and capital tranches; (6) Uber AV partnership progression with potential fleet deployment announcements; (7) Georgia Phase 1 (300k units) construction milestones through 2027-2028 confirming long-term scale thesis. The concentration of these catalysts in H2 2026 creates a high-density pending catalyst environment. None of these have fully fired or been priced in by the market at current levels."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Market appears to undervalue the combination of R2 mass-market potential, autonomy/software platform, and manufacturing scale-up. R2 addresses the underserved $50k SUV market with structural cost advantages while software monetization provides high-margin revenue streams."
+          "analysis": "Rivian contains several partially hidden or underappreciated value layers: (1) R2 platform optionality — at scale (300k+ units/year), the mid-size platform could generate $8-12B in annual revenue with positive gross margins, currently valued near zero by the market given pre-ramp status; (2) VW JV technology licensing — Rivian's zonal electrical architecture and software stack are being licensed to VW, creating a recurring B2B technology revenue stream that the market values primarily as a consumer auto company; (3) Autonomy platform (RAP1, Rivian Large Driving Model) — an owned semiconductor and AI asset with potential standalone value comparable to how markets value Mobileye or Nvidia's auto segment, currently embedded in a consumer auto valuation multiple; (4) Amazon EDV commercial fleet relationship — recurring commercial vehicle revenue with the world's largest logistics operator; (5) Spinoff regime analysis estimates SpinCo market cap of approximately $3.7B, suggesting the technology/software segment alone could command meaningful standalone value if separated. The market is applying a distressed auto manufacturer multiple to what is effectively a technology platform company with automotive manufacturing attached."
         },
         "activism_potential": {
           "rating": "Possible",
-          "analysis": "No current activist activity detected, but the company's significant capacity expansion and clear path to profitability through R2 scaling could attract value-focused activists if execution lags or valuation remains depressed."
+          "analysis": "No active activist campaigns have been detected. However, the conditions for activism are present: (1) stock is down ~90% from IPO highs despite meaningful strategic progress, creating pressure on institutional holders; (2) the VW JV and Uber partnership demonstrate that strategic partners see value the public market does not; (3) Goldman Sachs recently increased its RIVN position (per 13-F filing per May 21 news), a notable institutional signal; (4) the company's technology assets (RAP1, autonomy stack, zonal EV architecture) could attract a strategic activist pushing for a technology/manufacturing separation or accelerated M&A. The B credit grade and 3.0x net debt/EBITDA do not currently trigger a distress-driven activist scenario but constrain the balance sheet enough that capital efficiency activists could emerge if R2 ramp disappoints."
         },
         "risk_reward": {
-          "ratio": "3.2:1",
-          "analysis": "Strong upside potential from R2 volume ramp and margin expansion against downside support from established R1 platform and Amazon partnership. Multiple production milestones and capacity expansions provide catalyst-driven rerating opportunities."
+          "ratio": "2.1:1",
+          "analysis": "Bull case (12-18 months): R2 ramp to 50,000-70,000 units by end-2026 with positive gross margin confirmation triggers a re-rating toward $25-30 per share (70-100% upside from $14.70), supported by VW JV capital, software revenue growth, and autonomy milestones. Bear case: R2 ramp execution fails, cash burn accelerates, tariff headwinds compress margins, and the stock retests $7-8 support (45-55% downside), with B-grade credit limiting but not eliminating a more severe liquidity scenario. No active distress flags currently present. Asymmetry calculation: ~$15 upside to $30 target vs. ~$7 downside to $7.50 floor = approximately 2.1:1. The B credit grade with 3.0x net debt/EBITDA and no distress flags provides moderate downside support — the VW JV and DOE partnership serve as implicit financial backstops that raise the probability-weighted floor relative to a standalone cash-burning startup."
         }
       },
       "options_signals": {
-        "iv_current": 0.5554,
-        "skew_25d": -0.0648,
+        "iv_current": 0.6175,
+        "skew_25d": -0.0422,
         "term_structure": "flat",
-        "pc_oi_ratio": 0.453,
-        "total_oi": 514568,
+        "pc_oi_ratio": 0.462,
+        "total_oi": 520579,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Bullish positioning with negative skew",
-        "overall_interpretation": "Negative skew indicates call premium/bullish positioning as market prices in potential upside from R2 ramp. Elevated IV reflects anticipation of volatility around production scaling catalysts."
+        "market_sentiment_flag": "Bullish call-side positioning with low put demand",
+        "overall_interpretation": "The strongly negative 25-delta skew (-0.042) and extremely low put/call volume ratio (0.158) indicate the options market is pricing in upside surprise potential tied to the R2 ramp catalyst, with participants actively buying calls relative to puts — a notable divergence from the bearish death-cross technical signal in the stock. The flat term structure suggests no imminent binary event is being priced in the near-term, but the elevated ATM IV of 61.75% reflects genuine uncertainty around R2 execution, meaning both the upside call play and the macro risk are actively being repriced."
       },
       "recent_events": [
         {
-          "date": "2026-05-22",
+          "date": "2026-05-27",
           "type": "news",
-          "title": "Rivian to Participate at Upcoming Investor Conferences",
-          "link": ""
+          "title": "Rivian Stock Flashes Death Cross As Tesla Model Y Rival Nears Launch",
+          "link": "https://www.investors.com/news/rivian-stock-death-cross-tesla-model-y-rival/"
         },
         {
-          "date": "2026-04-30",
-          "type": "transcript",
-          "title": "Q1 2026 Earnings Call - R2 Production Start Announced",
-          "link": ""
+          "date": "2026-05-23",
+          "type": "news",
+          "title": "Rivian: High Growth At A Cheap Price - Reiterate Buy (R2 ramp, VW JV, Autonomy+ monetization)",
+          "link": "https://seekingalpha.com/article/rivian-high-growth-cheap-price-reiterate-buy"
         },
         {
           "date": "2026-05-21",
           "type": "news",
-          "title": "Goldman just loaded up on this EV maker after dumping Lucid stock",
-          "link": ""
+          "title": "Goldman Sachs loaded up on Rivian after dumping Lucid stock (13-F filing)",
+          "link": "https://finance.yahoo.com/news/goldman-sachs-loaded-rivian-dumping-lucid-stock/"
         }
-      ]
-    }
+      ],
+      "convergence_score": 2.5,
+      "independent_track_count": 1,
+      "unfired_independent_track_count": 1,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "spin_off",
+          "evidence": "Rivian's spinoff company Mind Robotics has raised another $400 million, just two months after raising $500 million, as it works to develop industrial robotics that can further automate factory operations. The funding for the AI-powered industrial robot project now exceeds $1 billion.",
+          "counterparty": "Spinco",
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        }
+      ],
+      "options_confirmation_score": 4.5,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 3.64,
+      "final_adjusted_loeb": 3.64,
+      "score_adjustments": [],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false
+    },
+    "ma_role": {
+      "role": "none",
+      "deal_status": "none",
+      "counterparty": null,
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": "The article discusses Rivian's stock valuation and delivery growth, with no mention of any M&A activity, acquisition, or merger."
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": true,
+      "spin_ratio": 1.0,
+      "estimated_spinco_mkt_cap": 3694.13,
+      "estimated_remainco_mkt_cap": 14776.5,
+      "regime": "mid_cap_neutral",
+      "expected_spin_date": null,
+      "evidence": "Rivian's spinoff company Mind Robotics has raised another $400 million, just two months after raising $500 million, as it works to develop industrial robotics that can further automate factory operations. The funding for the AI-powered industrial robot project now exceeds $1 billion."
+    },
+    "schema_version": "1.1"
   },
   "9961.HK": {
     "timestamp": "2026-05-26T14:31:25.633167",
@@ -11214,90 +11525,177 @@
     }
   },
   "UBER": {
-    "timestamp": "2026-05-26T14:18:47.253995",
+    "timestamp": "2026-05-27T22:12:15.564155",
     "data": {
       "symbol": "UBER",
       "company_name": "Uber Technologies, Inc.",
-      "price": 71.82,
-      "market_cap": 146196792000,
+      "price": 70.75,
+      "market_cap": 144018700000,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 8.7,
-      "upside_downside_ratio": 3.2,
+      "catalyst_density_score": 2.125,
+      "upside_downside_ratio": 1.6,
       "re_rate_status": "pending",
       "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "The Delivery Hero acquisition presents immediate alpha opportunity as the market has not fully priced in potential transaction benefits, increased scale economics, and strategic positioning gains. The bidding war dynamic with DoorDash creates multiple upside scenarios beyond the initial $11.6B offer.",
-      "analysis_summary": "Uber presents a compelling event-driven opportunity centered on its aggressive $11.6B acquisition pursuit of Delivery Hero, creating a multi-catalyst setup with significant asymmetric upside. The company is simultaneously executing on multiple strategic initiatives including autonomous vehicle scaling (targeting 15 cities by year-end), cross-platform penetration expansion (currently only 20% penetration with 3x revenue potential), and strong fundamental momentum with 21% gross bookings growth and record profitability metrics. The combination of M&A catalyst execution, operational leverage expansion, and defensive positioning against DoorDash competition creates a dense catalyst environment with limited downside risk given Uber's strong standalone fundamentals.",
-      "recommendation": "BUY",
+      "catalyst_nature_rationale": "Uber has announced it is weighing a ~$11.6B acquisition of Delivery Hero (acquirer role, deal_status=announced, days_since_announcement=3). Per hard constraint, the catalyst_density_score is capped at 5.0 because synergy speculation from an announced acquisition is NOT a Bloom catalyst for the acquirer. The stock has already sold off on the news (classic acquirer discount), creating a modest pricing dislocation entry window IF the market is over-penalizing the deal. However, the dominant near-term catalyst is deal execution risk (regulatory, financing, strategic fit), not a value-unlocking event. The alpha-bearing window is contingent on the market re-rating the deal favorably as integration logic clarifies, but this is speculative and not yet a hard catalyst.",
+      "analysis_summary": "Uber enters this analysis as an acquirer in an early-stage, freshly announced deal to acquire Delivery Hero for approximately $11.6B — a bold strategic move to consolidate global food delivery and accelerate its Delivery segment's international scale. The stock sold off on the announcement, consistent with typical acquirer-discount dynamics. Per the hard constraint framework, the catalyst_density_score is capped at 5.0 because synergy speculation is not a Bloom-qualifying catalyst for the acquirer. The underlying business remains exceptionally strong: Q1 2026 gross bookings grew 21% YoY, non-GAAP EPS grew 44%, free cash flow was robust at $9.8B full-year 2025, and Uber One surpassed 50M members. The CFO transition (Prashanth → Balaji Krishnamurthy, effective Feb 2026) is a completed governance-adjacent event. The Delivery Hero deal introduces meaningful execution and financing risk: at a B credit grade with net debt/EBITDA of 3.0x, a large leveraged acquisition could pressure the balance sheet and slow buybacks ($20B authorization announced Q2 2025). The options market reflects modest bullish skew (negative 25d skew of -0.035) with the implied Q2 2026 earnings move at ~15.4%, suggesting the market is pricing in significant post-deal clarity at the next earnings catalyst (August 5, 2026). Risk/reward is compressed near-term: upside is capped by deal uncertainty and integration discount, while downside is cushioned by Uber's durable platform earnings power and $70.75 entry near multi-month support. The asymmetric setup is not compelling at current levels given the acquirer overhang, but a WATCH posture is warranted for a better entry or deal clarity event.",
+      "recommendation": "WATCH",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "CFO transition with Prashanth Mahendra-Rajah stepping down February 16, 2026, replaced by Balaji Krishnamurthy. Andrew McDonald elevated to COO role with expanded responsibilities over Mobility, Delivery, and cross-platform initiatives including advertising and autonomous.",
-          "evidence": "Q4 2025 earnings call: 'Prashanth, who we announced this morning will be stepping down as CFO on February 16' and Q2 2025 call: 'Andrew McDonald has stepped into the role of COO. One of Mac's primary focus areas will be supercharging our platform strategy.'"
+          "description": "CFO transition announced and completed: Prashanth Mahendra-Rajah stepped down effective February 16, 2026, with Balaji Krishnamurthy (former VP of IR and Strategic Finance) elevated to CFO. This is a completed governance-adjacent event, not a pending catalyst. No activist pressure or CEO change detected.",
+          "evidence": "Q4 2025 Earnings Call (February 4, 2026): Dara Khosrowshahi announced Prashanth's departure and Balaji's promotion live on the call. Prashanth cited a new opportunity 'to serve America.' Balaji described the role as 'an honor to step into this role at this moment.' CFO transition completed Feb 16, 2026 — this catalyst has already fired and is priced in."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Active M&A pursuit of Delivery Hero with $11.6B bid ($33/share), facing competition from DoorDash. Board meeting held May 23, 2026 to discuss increasing offer. Strategic initiative to consolidate global food delivery market positioning.",
-          "evidence": "News reports: 'Uber's board reportedly met Saturday (May 23) to discuss increasing its offer for Delivery Hero' and 'Uber has offered to buy Germany's Delivery Hero for around $11.6 billion' with initial bid rejected, creating bidding war scenario."
+          "description": "Uber is actively pursuing a major M&A transaction: a reported ~$11.6B bid for Delivery Hero SE, announced May 26, 2026 (3 days ago). Both Uber and DoorDash are reportedly in early talks with Delivery Hero investors. This represents a formal strategic process — international delivery consolidation — that could reshape Uber's Delivery segment economics. A competing bid dynamic (DoorDash also circling) adds process complexity. The deal is in early/rumored-to-announced stage with no definitive agreement yet.",
+          "evidence": "News headline May 26, 2026: 'Uber Stock Falls After $11.6 Billion Bid For Delivery Hero.' Barron's/Bloomberg reporting Uber and DoorDash exploring deal at possible 19% premium to Delivery Hero's pre-announcement price. Jefferies raised Delivery Hero TP to €42.50 citing competitive acquisition dynamics. Uber confirmed as acquirer, deal_status=announced, days_since_announcement=3."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No hostile bids or proxy contests detected for Uber itself.",
-          "evidence": "No evidence of premium scenarios targeting Uber as acquisition target."
+          "description": "No hostile bid, proxy contest, PE buyout, or activist campaign targeting Uber itself has been detected. Uber is the acquirer, not the target. No third-party premium scenario for UBER shareholders is active.",
+          "evidence": "No activist 13D/13G filings, no Schedule TO, no publicly disclosed hostile approach to Uber. Options skew is modestly call-side (negative 25d skew = -0.035) but not at levels indicating a rumored buyout of Uber itself."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "High",
-          "analysis": "Multiple hard catalysts within 12-month window: Delivery Hero acquisition decision/bidding resolution, autonomous vehicle scaling to 15 cities by end 2026, cross-platform penetration initiatives with measurable 20% to higher targets, and new CFO strategic direction implementation."
+          "rating": "Low",
+          "analysis": "The primary pending catalyst is resolution of the Delivery Hero acquisition — either a definitive deal announcement, a failed bid, or a competing DoorDash transaction. This is a single, binary, near-term catalyst (likely resolving within 1-3 months) that creates noise but not density. The CFO transition has already fired. The $20B buyback program (announced Q2 2025) is a gradual capital return catalyst, not a discrete event. The next hard earnings catalyst is August 5, 2026 (Q2 2026). Per hard constraint, catalyst_density_score is capped at 5.0 as Uber is the acquirer in an announced deal where synergy speculation does not qualify as a Bloom catalyst. Density is thin: one pending M&A resolution event + one earnings date within 12 months."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Clear segmental value creation opportunities with Mobility (20% growth), Delivery (23% growth including $12B grocery/retail run-rate), and Freight (returning to growth). Cross-platform users generate 3x bookings with 35% better retention, suggesting significant untapped value in platform convergence."
+          "analysis": "A nascent SoP argument exists for Uber across three segments: (1) Mobility — the dominant global rideshare platform with record margins and accelerating growth (20% GB growth Q1 2026); (2) Delivery — $12B+ gross bookings run rate in grocery/retail alone, growing faster than restaurant; (3) Freight — returned to growth Q1 2026 after nearly 2 years of decline. Additionally, Uber's AV partnership network (Waymo, WeRide, Baidu, Lucid, Nuro, Wayve — 30+ partners) carries optionality value not fully reflected in current ~12x forward cash flow multiple. However, the Delivery Hero acquisition, if consummated, would add significant leverage (net debt/EBITDA currently 3.0x, credit grade B) and dilute the clean SoP thesis. The hidden value in AV network optionality and the Uber One subscription flywheel (50M+ members) are real but not imminently unlockable via a discrete corporate action."
         },
         "activism_potential": {
-          "rating": "Possible",
-          "analysis": "Strong standalone fundamentals with $9.8B free cash flow and $20B share repurchase authorization reduces activist pressure. However, M&A execution risk and autonomous investment timeline could create activist interest if execution falters."
+          "rating": "None",
+          "analysis": "No activist presence detected. Uber has proactively returned capital ($3B buyback in Q1 2026 alone, $20B authorization), is generating $9.8B annual free cash flow, and has a strong management team with clear strategic direction. The governance structure does not present an obvious activist entry point. The Delivery Hero deal, if executed poorly, could create future activist pressure around capital allocation, but no current activist stake or campaign is visible."
         },
         "risk_reward": {
-          "ratio": "3.2:1",
-          "analysis": "Upside driven by successful Delivery Hero acquisition synergies, autonomous scaling, and cross-platform penetration expansion. Downside protected by strong fundamental growth (21% gross bookings), record profitability metrics, and defensive moat in core mobility/delivery markets."
+          "ratio": "1.6:1",
+          "analysis": "Upside scenario: Deal fails or is restructured at a lower price; market re-rates UBER back toward pre-announcement levels (~$75-78 range) plus ongoing FCF generation and buyback support. Bull case 12-month target: ~$85-90 based on 14-15x forward FCF of ~$11-12B (post-buyback accretion), implying ~20-27% upside from $70.75. Downside scenario: Deal closes at full $11.6B, pressuring balance sheet (net debt/EBITDA could approach 4-4.5x post-deal on B-rated credit); buyback program slows or pauses; integration risk in a complex cross-border European regulatory environment. Bear case support: ~$58-62 (prior 2025 base, ~13-17% downside), cushioned by Uber's durable platform FCF. Net asymmetry: ~$16-19 upside vs. ~$9-13 downside = approximately 1.6:1. Not compelling enough for aggressive entry given the acquirer discount overhang and credit leverage risk. Credit health (B grade, net debt/EBITDA 3.0x, no distress flags) constrains but does not disable the thesis — no credit event risk at current leverage."
         }
       },
       "options_signals": {
-        "iv_current": 0.3211,
-        "skew_25d": -0.0239,
+        "iv_current": 0.3674,
+        "skew_25d": -0.0354,
         "term_structure": "contango",
-        "pc_oi_ratio": 1.12,
-        "total_oi": 401553,
-        "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Bullish positioning with call premium",
-        "overall_interpretation": "Negative skew indicates call premium suggesting bullish positioning ahead of M&A resolution. Contango term structure shows forward catalyst expectations with elevated near-term activity."
+        "pc_oi_ratio": 1.183,
+        "total_oi": 402327,
+        "implied_earnings_move_pct": 15.44,
+        "market_sentiment_flag": "Modestly bullish call skew with elevated IV; deal uncertainty priced into August expiry",
+        "overall_interpretation": "The negative 25-delta skew (-0.035) indicates calls are bid over puts — a modestly bullish positioning signal, possibly reflecting speculative interest in deal resolution or continued platform strength. However, the elevated ATM IV of 36.7% and a 15.4% implied earnings move for the August 5 earnings (August 21 expiry straddle) suggest the market is pricing in significant uncertainty around both the Delivery Hero deal outcome AND Q2 2026 earnings delivery. The contango term structure confirms this is a forward-looking uncertainty premium rather than immediate event fear, and the P/C OI ratio of 1.18 (more open put interest than calls) indicates hedging of the downside acquisition risk is active beneath the surface bullish skew."
       },
       "recent_events": [
         {
           "date": "2026-05-26",
           "type": "news",
-          "title": "Uber Moves for DoorDash Rival With $11.6 Billion Offer",
-          "link": "https://news.uber.com"
+          "title": "Uber Stock Falls After $11.6 Billion Bid For Delivery Hero — Uber and DoorDash Explore Delivery Hero Deal at Possible 19% Premium",
+          "link": "https://www.barrons.com/articles/uber-stock-delivery-hero-deal"
         },
         {
-          "date": "2026-05-25",
+          "date": "2026-05-27",
           "type": "news",
-          "title": "Uber Considers Increasing $13 Billion Offer for Delivery Hero",
-          "link": "https://news.uber.com"
+          "title": "Uber: Scaling For Profitability And Consolidation In Deliveries — Stock trades at ~12x forward cash flow as Delivery Hero deal surfaces",
+          "link": "https://seekingalpha.com/article/uber-scaling-profitability-delivery-consolidation"
         },
         {
-          "date": "2026-05-06",
-          "type": "transcript",
-          "title": "Q1 2026 Earnings Call - AV scaling and cross-platform initiatives",
-          "link": "https://investor.uber.com"
+          "date": "2026-05-26",
+          "type": "news",
+          "title": "Uber, Lyft Drivers in Massachusetts Form First US Ride-Share Union — Regulatory/labor risk emerging in key U.S. market",
+          "link": "https://www.reuters.com/uber-lyft-drivers-massachusetts-union"
         }
-      ]
-    }
+      ],
+      "acquirer_cap_applied": true,
+      "convergence_score": 1.25,
+      "independent_track_count": 3,
+      "unfired_independent_track_count": 1,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "m_and_a_target",
+          "evidence": "News 2026-05-26: 'Uber Stock Falls After $11.6 Billion Bid For Delivery Hero' and 'Uber, DoorDash Explore Delivery Hero Deal at Possible 19% Premium' — Uber is the acquirer pursuing Delivery Hero, a major M&A catalyst (acquirer-side, but material deal event).",
+          "counterparty": "Delivery Hero SE",
+          "dated_event": true,
+          "event_date": "2026-05-26",
+          "fired": false,
+          "independence_score": 0.5
+        },
+        {
+          "track_type": "governance",
+          "evidence": "Q2 2025 transcript: 'I'm super excited that Andrew McDonald has stepped into the role of COO... with our Mobility and Delivery leaders now reporting directly to him as well as the cross-platform efforts like advertising and autonomous.'",
+          "counterparty": "Andrew McDonald",
+          "dated_event": false,
+          "event_date": null,
+          "fired": true,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "regulatory",
+          "evidence": "News 2026-05-26: 'Uber, Lyft drivers in Massachusetts form first US ride-share union' — first officially recognized US ride-share driver union creates labor/regulatory catalyst around gig worker classification and costs.",
+          "counterparty": "Massachusetts state / SEIU",
+          "dated_event": true,
+          "event_date": "2026-05-26",
+          "fired": true,
+          "independence_score": 0.5
+        }
+      ],
+      "options_confirmation_score": 2.5,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 2.12,
+      "final_adjusted_loeb": 2.12,
+      "score_adjustments": [],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:12:15.624463",
+      "historical_scan_id": "f7cf8156-0127-4e94-bbc6-f8fd018ffbe3"
+    },
+    "ma_role": {
+      "role": "acquirer",
+      "deal_status": "announced",
+      "counterparty": "Delivery Hero",
+      "announced_premium_pct": 0.0,
+      "days_since_announcement": 3,
+      "announcement_date": "2026-05-23",
+      "evidence": "$11.6B bid for DHER announced May 23 2026"
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   },
   "SEM": {
     "timestamp": "2026-05-26T14:16:01.864908",
@@ -12239,96 +12637,177 @@
     }
   },
   "HON": {
-    "timestamp": "2026-05-26T14:18:06.300202",
+    "timestamp": "2026-05-27T22:07:42.378692",
     "data": {
       "symbol": "HON",
       "company_name": "Honeywell International Inc.",
-      "price": 227.92,
-      "market_cap": 144422218882,
+      "price": 231.55,
+      "market_cap": 146722379704,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 8.7,
-      "upside_downside_ratio": 2.8,
+      "catalyst_density_score": 7.0,
+      "upside_downside_ratio": 2.1,
       "re_rate_status": "partial",
       "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "Aerospace spinoff executes June 29, 2026, creating immediate alpha opportunity as conglomerate discount compresses into two pure-play entities with distinct valuations and growth profiles.",
-      "analysis_summary": "Honeywell presents a compelling event-driven opportunity with the imminent aerospace spinoff on June 29, 2026, representing the final catalyst in a multi-year portfolio transformation. The company has successfully completed the Solstice Advanced Materials spinoff and is now set to unlock the conglomerate discount by separating into two focused entities: pure-play aerospace and automation companies. With strong Q1 2026 results showing 11% earnings growth, record $38B backlog, and accelerated margin expansion ahead of separation, the stock offers asymmetric upside as the market re-rates both entities based on their standalone fundamentals and targeted capital allocation strategies.",
+      "catalyst_nature_rationale": "The Aerospace spin-off executes mechanically on June 29, 2026 — a known, confirmed date. However, the market has only partially re-rated HON's sum-of-parts value. The RemainCo (Honeywell Automation) trades at a conglomerate discount that will not fully collapse until: (1) the Aerospace spinco begins trading independently and institutional holders reprice both stubs, (2) the Quantinuum IPO or strategic transaction crystallizes a valuation anchor for the quantum computing unit, and (3) the PSS/WWS divestitures close in H2 2026, sharpening the automation pure-play narrative. The alpha window is pre-spin and in the immediate post-spin stub repricing period, not in the mechanical execution itself. Mega-cap regime applies — forced-selling dislocation is NOT available as index funds can hold both pieces.",
+      "analysis_summary": "Honeywell is in the final inning of a multi-year portfolio transformation that has already delivered the Solstice Advanced Materials spin (October 30, 2025) and is now days away from the Honeywell Aerospace Technologies spin on June 29, 2026. The near-term thesis centers on three pending value-realization events: (1) the imminent Aerospace spin creating two separately traded pure-play vehicles, each eligible for sector-specific multiple expansion — Aerospace trades at premium defense/aero multiples while RemainCo automation trades at industrial automation comps; (2) the Quantinuum IPO/separation process, which the May 26, 2026 news confirms is advancing as a pure-play quantum computing listing, representing a significant optionality layer the market is not fully pricing into HON at current levels; and (3) the PSS and WWS divestitures to Brady Corporation and American Industrial Partners respectively, expected to close H2 2026, which will sharpen RemainCo's automation identity and return capital. The conglomerate discount is partially but not fully collapsed — HON's blended multiple still lags the weighted-average peer multiples of its constituent businesses. The options market reflects moderate bullish positioning (negative put skew, very low put/call volume ratio of 0.158) consistent with pre-spin re-rating optimism. Credit is investment-grade with manageable leverage (Net Debt/EBITDA 3.0x, B credit grade per internal model), supported by the $20B Aerospace spin financing completed at investment-grade ratings (A3/A-/BBB+). The primary risks are: macro/tariff headwinds compressing automation end-markets, a botched spin execution disrupting both stubs, and Quantinuum failing to achieve a public valuation that exceeds its implied carry in HON. The mega-cap spin-off regime limits Greenblatt-style forced-selling alpha but does not eliminate the sum-of-parts re-rating opportunity. Catalyst density score is capped at 6.8 per mega-cap no-dislocation regime constraint.",
       "recommendation": "BUY",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "Complete leadership transition with new aerospace management team announced, including Jim Currier as CEO, Josh Jepsen as CFO, and Craig Arnold as non-executive chair. Board strengthened with Indra Nooyi addition.",
-          "evidence": "Q4 2025 earnings call: 'we announced the aerospace leadership team last week, comprised of tenured aerospace veterans, and made key board appointments' and 'We're also excited to welcome Indra Noohi, former chair and CEO of PepsiCo, to Honeywell's board of directors'"
+          "description": "Honeywell completed a significant leadership transition with Vimal Kapur ascending to CEO and driving the entire portfolio deconstruction strategy. The Aerospace spinco has its own newly appointed leadership team (Jim Currier as CEO, Josh Jepsen as CFO, Craig Arnold as Non-Executive Chair). Indra Nooyi was added to HON's board in early 2026. The IR function transitioned from Sean Meakim to Mark Macaluso in Q4 2025. These governance resets are catalytic because they establish accountability structures aligned to the new pure-play mandates of each entity.",
+          "evidence": "Q4 2025 earnings call (2026-01-29): 'We announced the aerospace leadership team last week, comprised of tenured aerospace veterans, and made key board appointments... Craig Arnold, the former chairman and CEO of Eaton Corporation, will serve as nonexecutive chair of Honeywell Aerospace Board of Directors... we welcome Indra Nooyi, former chair and CEO of PepsiCo, to Honeywell's board of directors.' Q1 2026 earnings call confirms Jim Currier and Josh Jepsen in place and executing."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Active execution of aerospace spinoff with June 29, 2026 completion date, $20B financing completed, and strategic divestitures of non-core assets including PSS and WWS businesses announced for H2 2026 closing.",
-          "evidence": "Q1 2026 earnings: 'we expect to complete the Honeywell Aerospace spinoff in the third quarter on June 29' and 'we successfully raised $20 billion of Aerospace spin financing' and 'we announced the sale of our Productivity Solutions and Services and Warehouse and Workflow Solutions businesses'"
+          "description": "Multiple concurrent strategic processes are active and pending completion within the 12-24 month window: (1) Honeywell Aerospace Technologies spin-off confirmed for June 29, 2026 — creating a pure-play aerospace/defense vehicle with $38B+ backlog; (2) Quantinuum IPO/spin-off process advancing — confirmed by May 26, 2026 news that the quantum computing unit is being carved out as a separate public company, described as 'one of the few pure-play quantum stocks on the market'; (3) PSS divestiture to Brady Corporation and WWS divestiture to American Industrial Partners — both all-cash transactions expected to close H2 2026; (4) Johnson Matthey Catalyst Technologies acquisition amended and expected to close end of July 2026, bolstering Process Automation. These represent a simultaneous multi-front strategic process rarely seen outside of a formal breakup.",
+          "evidence": "Q1 2026 earnings (2026-04-23): 'we now expect to complete the Honeywell Aerospace spinoff in the third quarter on June 29.' News 2026-05-24: 'Honeywell International Nears June 29 Split With All Green Lights, Reaffirms Outlook.' News 2026-05-26: 'Honeywell Stock Topped the Market on Tuesday... carving out its quantum computing unit into a separate company... Quantinuum, one of the few pure-play quantum stocks on the market.' Q1 2026 call: 'signed an agreement to sell Productivity Solutions and Services to Brady Corporation and Warehouse and Workflow business to American Industrial Partners, in two, all cash transactions.'"
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": false,
-          "description": "No active hostile bids, proxy contests, or forced sale scenarios detected.",
-          "evidence": "No evidence of premium scenario activation in recent filings or transcripts."
+          "description": "No hostile bid, formal buyout offer, proxy contest, or activist-forced sale process has been identified. The transformation is management-driven and board-sanctioned, not adversarial. At $147B market cap, HON is effectively un-biddable by a single PE sponsor, and strategic acquirers face antitrust complexity. The Quantinuum IPO could attract a strategic premium from a technology or defense player, but no definitive bid has been announced. This catalyst remains latent and is NOT currently activated.",
+          "evidence": "No public filings, news items, or earnings call commentary referencing unsolicited bids, activist demands for a sale, or proxy contest threats. Management commentary is consistently framed as a proactive, internally-driven portfolio simplification rather than a response to external pressure."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "High",
-          "analysis": "Multiple hard catalysts within 12-24 months including aerospace spinoff (June 29, 2026), segment reorganization completion (Q1 2026), strategic asset divestitures (H2 2026), and potential Johnson Matthey acquisition closing (July 2026). High frequency of value-creating events."
+          "analysis": "HON has an unusually dense cluster of hard catalysts within the next 12 months: Aerospace spin June 29, 2026 (confirmed, imminent); Quantinuum IPO/spin process active (announced May 2026, timeline TBD but likely H2 2026/H1 2027); PSS and WWS divestitures closing H2 2026; Johnson Matthey Catalyst Technologies acquisition closing July 2026; Investor Days for both Aerospace and Automation scheduled June 2026. This is 5+ discrete, hard, identifiable catalysts within a compressed 12-month window. However, the mega-cap no-dislocation regime and the partial re-rate already in progress cap the score at 6.8."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Classic conglomerate discount scenario with aerospace and automation trading as bundled entities despite distinct end markets, growth profiles, and capital allocation needs. Aerospace benefits from defense/commercial aviation upcycle while automation leverages industrial digitization trends."
+          "analysis": "The SoP dislocation is real but partially collapsed. Pre-transformation, HON traded at a conglomerate discount of 15-25% to blended peer multiples. Post-Solstice spin and approaching Aerospace spin, the discount has narrowed. However, three layers of residual SoP value remain: (1) Aerospace Technologies at pure-play defense/aero multiples (peers: TransDigm, Heico, RTX trade at 20-30x EBITDA) vs. HON's blended multiple; (2) Quantinuum embedded within RemainCo with zero standalone quantum-computing valuation attributed — recent private funding rounds implied $5B+ valuation; (3) RemainCo Automation deserves industrial automation comps (Emerson, Rockwell: 18-22x EBITDA) rather than the current conglomerate blended rate. The SoP gap is estimated at 10-20% of current market cap, representing $15-30B of potential value unlock."
         },
         "activism_potential": {
-          "rating": "Active",
-          "analysis": "Management proactively executing activist-style value creation playbook with portfolio simplification, margin expansion, and pure-play focus. CEO Vimal Kapur driving comprehensive transformation since taking role, reducing activist intervention risk while capturing upside."
+          "rating": "Possible",
+          "analysis": "No activist is publicly identified in HON, and at $147B market cap, a traditional activist stake (typically 1-5%) would cost $1.5-7.5B, limiting the universe to Elliott, Pershing Square, or ValueAct-scale players. However, the transformation is self-directed and management has preemptively executed the activist playbook (spin, sell, focus, buyback). The risk of activism is low because management has already addressed the core conglomerate discount complaint. Residual activism risk exists if RemainCo Automation disappoints post-spin or if Quantinuum IPO is delayed, creating an entry point for a smaller activist targeting the automation stub."
         },
         "risk_reward": {
-          "ratio": "2.8:1",
-          "analysis": "Strong downside support from record backlog ($38B), investment-grade credit ratings (A3/A-/BBB+), and defensive aerospace/automation end markets. Upside from conglomerate discount compression, standalone entity re-rating, and accelerated growth profiles post-separation."
+          "ratio": "2.1:1",
+          "analysis": "Bull case: Aerospace spin at pure-play multiples adds 10-15% to blended HON value; Quantinuum IPO crystallizes $5-10B value currently embedded at zero; PSS/WWS disposals return capital; RemainCo re-rates to automation peer multiples. Price target: $265-280 range over 12-18 months (~15-21% upside from $231.55). Bear case: Macro softening hits automation orders; tariff headwinds persist; Quantinuum IPO delayed or values below private round; Aerospace spin disrupts operations temporarily; HON removed from Dow Jones (noted in May 16 news). Downside support: $200-210 range (~9-11% downside) representing pre-transformation multiple floor with $38B backlog backstop. Net Debt/EBITDA at 3.0x is manageable; investment-grade credit (A3/A-/BBB+) confirmed for Aerospace entity. Asymmetry: ~$40-50 upside vs. ~$20-25 downside = approximately 2.0-2.1:1 ratio. Not exceptional but above the 2:1 Loeb threshold with multiple catalyst paths to upside."
         }
       },
       "options_signals": {
-        "iv_current": 0.2918,
-        "skew_25d": 0.0317,
+        "iv_current": 0.3176,
+        "skew_25d": -0.0201,
         "term_structure": "flat",
-        "pc_oi_ratio": 0.565,
-        "total_oi": 74971,
-        "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Moderate bullish bias with put protection",
-        "overall_interpretation": "Positive put skew indicates some hedging activity around the spinoff catalyst, while moderate IV suggests the market has not fully priced the volatility potential from the June 29 separation event."
+        "pc_oi_ratio": 0.501,
+        "total_oi": 73893,
+        "implied_earnings_move_pct": 12.56,
+        "market_sentiment_flag": "Bullish call-side positioning with low put demand",
+        "overall_interpretation": "The negative 25-delta skew (-0.0201) signals call premium exceeds put premium, reflecting net bullish market positioning consistent with pre-spin re-rating optimism and Quantinuum IPO optionality. The extremely low put/call volume ratio (0.158) confirms minimal near-term hedging demand, suggesting institutional holders are positioned for upside into the June 29 Aerospace spin rather than protecting against downside. The implied earnings move of 12.56% for the August 21 expiration (covering the July 23 earnings date — the first post-Aerospace-spin earnings) is elevated and reflects genuine uncertainty about how RemainCo Automation will be valued as a standalone entity, representing both risk and opportunity for event-driven positioning."
       },
       "recent_events": [
         {
+          "date": "2026-05-26",
+          "type": "news",
+          "title": "Honeywell Carves Out Quantinuum as Separate Pure-Play Quantum Computing Company",
+          "link": "https://finance.yahoo.com/news/honeywell-stock-topped-market-tuesday"
+        },
+        {
           "date": "2026-05-24",
           "type": "news",
-          "title": "Honeywell International Nears June 29 Split With 'All Green Lights,' Reaffirms Outlook",
-          "link": "https://news.honeywell.com"
-        },
-        {
-          "date": "2026-05-20",
-          "type": "news",
-          "title": "HONEYWELL AND NATIONAL HOCKEY LEAGUE PARTNER TO DRIVE A NEW ERA OF INTELLIGENT, DIGITALLY ENABLED VENUES",
-          "link": "https://news.honeywell.com"
-        },
-        {
-          "date": "2026-05-13",
-          "type": "news",
-          "title": "Honeywell CEO Vimal Kapur on portfolio transformation post spin-off",
-          "link": "https://news.honeywell.com"
+          "title": "Honeywell International Nears June 29 Aerospace Split With 'All Green Lights,' Reaffirms Outlook",
+          "link": "https://finance.yahoo.com/news/honeywell-international-nears-june-29-split"
         },
         {
           "date": "2026-04-23",
-          "type": "transcript",
-          "title": "Q1 2026 Earnings Call",
-          "link": "https://investors.honeywell.com"
+          "type": "earnings",
+          "title": "Q1 2026 Earnings Call: Aerospace Spin Confirmed June 29; PSS and WWS Divestitures Signed; JM Catalyst Technologies Amended",
+          "link": "https://finance.yahoo.com/news/honeywell-q1-2026-earnings"
         }
-      ]
-    }
+      ],
+      "spinoff_regime": "mega_cap_no_dislocation",
+      "convergence_score": 7.5,
+      "independent_track_count": 3,
+      "unfired_independent_track_count": 3,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "spin_off",
+          "evidence": "Aerospace spinco ~$50B > $10B threshold; no Greenblatt dislocation possible at mega-cap scale",
+          "counterparty": "Spinco",
+          "dated_event": true,
+          "event_date": "2026-12-31",
+          "fired": false,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "segment_carveout",
+          "evidence": "May 26, 2026 news: 'The industrial company is carving out its quantum computing unit into a separate company. This will make that business, Quantinuum, one of the few pure-play quantum stocks on the market.' Also referenced as an upcoming IPO.",
+          "counterparty": "Quantinuum",
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "strategic_review",
+          "evidence": "Q2 2025 transcript: 'Throughout the comprehensive portfolio review I initiated shortly after becoming CEO, we have diligently analyzed how to further simplify and optimize Honeywell. Earlier this month, we entered the final stage of this process, announcing our intention to pursue strategic alternative for our productivity solutions and services, and Warehouse and Workflow Solutions businesses.'",
+          "counterparty": null,
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        }
+      ],
+      "options_confirmation_score": 4.5,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 7.0,
+      "final_adjusted_loeb": 7.0,
+      "score_adjustments": [],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:07:42.436093",
+      "historical_scan_id": "ad784b37-87ae-4257-b6db-50dd871306c7"
+    },
+    "ma_role": {
+      "role": "none",
+      "deal_status": "none",
+      "counterparty": null,
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": "The article discusses defense stocks to buy based on projected defense budget growth, with no mention of any M&A activity involving HON."
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": true,
+      "spin_ratio": 1.0,
+      "estimated_spinco_mkt_cap": 50000.0,
+      "estimated_remainco_mkt_cap": 96722.38,
+      "regime": "mega_cap_no_dislocation",
+      "expected_spin_date": "2026-12-31",
+      "evidence": "Aerospace spinco ~$50B > $10B threshold; no Greenblatt dislocation possible at mega-cap scale"
+    },
+    "schema_version": "1.1"
   },
   "JOBY": {
     "timestamp": "2026-05-26T14:17:58.741553",
@@ -14723,90 +15202,222 @@
     }
   },
   "NVRI": {
-    "timestamp": "2026-05-26T14:16:41.728693",
+    "timestamp": "2026-05-27T22:06:09.726860",
     "data": {
       "symbol": "NVRI",
       "company_name": "Enviri Corporation",
-      "price": 19.6,
-      "market_cap": 1621029760,
-      "is_merger_arb": false,
-      "merger_arb_data": null,
-      "catalyst_density_score": 9.2,
-      "upside_downside_ratio": 3.1,
-      "re_rate_status": "pending",
-      "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "Clean Earth sale to Veolia and New Enviri spinoff expected to close June 1, 2026, but the conglomerate discount remains wide despite pending value crystallization and $14.50-$16.50 per share cash distribution.",
-      "analysis_summary": "Enviri presents a compelling event-driven opportunity with imminent value catalysts: Clean Earth sale to Veolia closing June 1, 2026 with $14.50-$16.50 cash distribution to shareholders, simultaneous spinoff of Harsco Environmental and Rail into standalone New Enviri, and significant conglomerate discount despite cleared regulatory hurdles. The setup offers asymmetric upside as the market has not fully priced the sum-of-parts value unlock, with limited downside given transaction certainty and strong asset quality.",
-      "recommendation": "BUY",
+      "price": 20.11,
+      "market_cap": 1663209616,
+      "is_merger_arb": true,
+      "merger_arb_data": {
+        "acquirer_symbol": "VIE",
+        "acquirer_name": "Veolia Environnement S.A.",
+        "cash_component": 15.5,
+        "stock_component_ratio": 0.0,
+        "pre_announce_price": 17.09,
+        "expected_close": "June 1, 2026",
+        "deal_status": "Shareholder-approved; SEC Form 10 effective; closing imminent (~June 1, 2026). Cash payout to NVRI shareholders from Clean Earth sale: $14.50–$16.50/share. Concurrent spin-off of New Enviri (Harsco Environmental + Rail) as standalone public company.",
+        "implied_deal_value": 15.5,
+        "gross_spread_val": -4.61,
+        "gross_spread_pct": -22.92,
+        "unhedged_downside": 3.02,
+        "unhedged_rr_asymmetry": "-99.9:1",
+        "hedging_suggestions": {
+          "target_hedges": [
+            {
+              "strategy": "Bear Put Spread (Downside Protection)",
+              "description": "Buy 20.0 Put / Sell 17.5 Put on NVRI to hedge drop to pre-announce reference ($17.09).",
+              "long_strike": 20.0,
+              "short_strike": 17.5
+            },
+            {
+              "strategy": "Covered Call (Yield Enhancement)",
+              "description": "Buy NVRI stock and Sell 15.0 Call to collect premium and buffer downside, capping upside at deal price.",
+              "long_strike": "Stock",
+              "short_strike": 15.0
+            }
+          ],
+          "acquirer_hedges": []
+        }
+      },
+      "catalyst_density_score": 7.550000000000001,
+      "upside_downside_ratio": -99.9,
+      "re_rate_status": "partial",
+      "catalyst_nature": "mechanical_execution",
+      "catalyst_nature_rationale": "The primary catalysts — Clean Earth sale to Veolia and New Enviri spin-off — are mechanically executing around June 1, 2026. Shareholder approval was received May 4, 2026; SEC Form 10 declared effective; HSR waiting period expired. The pricing dislocation window for the original SoP trade thesis has already partially closed. The current alpha opportunity is narrow: (1) the residual spread on the $14.50–$16.50 cash payout range, and (2) post-spin forced-selling dislocation in New Enviri (Greenblatt-eligible, ~$386M spinco) expected 1–6 weeks post-June 1. The pre-event re-rate is largely complete; the post-spin dislocation is the live alpha window.",
+      "analysis_summary": "Enviri Corporation is days away from completing a dual-transaction restructuring: the sale of its Clean Earth division to Veolia Environnement for an estimated $14.50–$16.50/share cash distribution to NVRI shareholders, simultaneous with the tax-efficient spin-off of New Enviri (Harsco Environmental + Harsco Rail) as a standalone NYSE-listed entity. Shareholder approval was secured May 4, 2026; the SEC declared the Form 10 effective; and closing is targeted for approximately June 1, 2026. The original event-driven SoP thesis — initiated formally at the Q2 2025 earnings call when management announced its strategic review — has substantially executed. The residual merger-arb spread on the cash payout ($14.50–$16.50, midpoint ~$15.00 vs. current NVRI price of $20.11 which embeds stub New Enviri value) offers minimal incremental upside with deal-break tail risk. The more compelling post-event opportunity is the Greenblatt forced-selling dislocation in New Enviri (estimated ~$386M market cap spinco): index reconstitution selling, mandate-driven disposal by NVRI holders unable to hold the spinco, and institutional under-research of a newly independent industrial company should create a mispriced entry window 1–6 weeks post-spin. New Enviri's incoming CEO Russell Hochman has signaled a deep-dive operational review, self-help margin initiatives, Rail ETO derisking, and a lean capital structure post-transaction — all unfired catalysts for the spinco. Net debt/EBITDA of ~3.0x and a B credit grade are manageable post-transaction given reduced complexity. Options market positioning — extreme negative skew (-1.16, heavily call-skewed), low P/C OI ratio (0.12), and backwardated term structure — confirms the market is pricing the imminent binary event with bullish near-term positioning, consistent with the mechanical transaction close, not a forward growth re-rating.",
+      "recommendation": "WATCH",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "Leadership transition with Russell Hochman becoming CEO of New Enviri and incoming CFO Pete Minan, plus outgoing CEO Nick Grasberger completing strategic transformation.",
-          "evidence": "Q1 2026 earnings call: 'Russell Hochman, our President and Chief Operating Officer and incoming CEO of New Enviri' and 'With the Clean Earth sale closing soon, this will be my last earnings call with Enviri' - Nick Grasberger."
+          "description": "CEO Nick Grasberger confirmed his departure upon transaction close (his final earnings call was Q1 2026). Incoming CEO Russell Hochman (President & COO) named as New Enviri CEO. CFO Tom Vadaketh also departing at close; Pete Minan named incoming CFO of New Enviri. Full leadership transition concurrent with spin-off creates a governance reset for the new standalone entity.",
+          "evidence": "Q1 2026 earnings call (2026-05-11): Grasberger stated 'this will be my last earnings call with Enviri' and acknowledged Vadaketh's departure. Hochman introduced as 'incoming CEO of New Enviri.' Pete Minan introduced as 'incoming CFO of New Enviri.' Q4 2025 call (2026-02-24) confirmed Hochman as future CEO with operational mandate."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Formal strategic review culminating in Clean Earth sale to Veolia and simultaneous spinoff of Harsco Environmental and Rail businesses into standalone New Enviri.",
-          "evidence": "May 20, 2026 announcement: 'Enviri Corporation expects to close the sale of Clean Earth to Veolia Environnement S.A. as well as complete the spin-off of Harsco Environmental and Rail into a standalone publicly traded company' with June 1, 2026 target close."
+          "description": "Full strategic separation executed: (1) Sale of Clean Earth to Veolia Environnement S.A. for cash consideration translating to $14.50–$16.50/share distribution to NVRI holders; (2) Concurrent tax-efficient spin-off of New Enviri (Harsco Environmental + Rail) as standalone public company. Formal strategic review was announced Q2 2025; process concluded Q4 2025 with definitive agreements. SEC Form 10 approved; shareholder vote passed May 4, 2026; closing ~June 1, 2026.",
+          "evidence": "Q2 2025 earnings call (2025-08-05): Grasberger announced formal strategic alternatives review. Q3 2025 call (2025-11-10): Confirmed sale of Clean Earth + taxable spin structure, credit agreement amended. Q4 2025 call (2026-02-24): HSR expiry March 9; Form 10 and proxy to be filed March. May 4, 2026 press release: shareholder vote approved. May 20, 2026 press release: merger consideration announced, closing ~June 1."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
-          "detected": false,
-          "description": "No hostile bids or proxy contests detected, though the strategic process has resulted in definitive transaction agreements.",
-          "evidence": "Transaction is proceeding as negotiated sale rather than hostile takeover scenario."
+          "detected": true,
+          "description": "Clean Earth sale to Veolia constitutes a definitive, shareholder-approved strategic sale to a large-cap strategic acquirer (Veolia Environnement S.A.), representing full premium realization for the Clean Earth asset. This is a fired Catalyst 3 for Clean Earth. For New Enviri (the spinco), Catalyst 3 has NOT fired — the new standalone entity will trade independently post-June 1 with no confirmed M&A process. Future premium scenario for New Enviri remains unfired and speculative.",
+          "evidence": "May 4, 2026: Enviri shareholders voted to approve Clean Earth sale to Veolia. May 20, 2026 press release confirmed merger consideration and ~June 1 close. New Enviri spin-off Form 10 declared effective by SEC per Q1 2026 call. No M&A process or activist campaign announced for New Enviri standalone entity."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
-          "rating": "High",
-          "analysis": "Multiple hard catalysts within weeks: Clean Earth sale closing June 1, 2026, New Enviri spinoff, $14.50-$16.50 cash distribution, shareholder approval completed May 4, 2026, SEC Form 10 approved, HSR clearance expected March 9."
+          "rating": "Medium",
+          "analysis": "The primary hard catalysts for NVRI as currently constituted have already fired or are mechanically closing within days (Clean Earth sale + New Enviri spin ~June 1, 2026). For NVRI holders today, the density of remaining pending catalysts is low: (1) cash payout announcement (imminent, 1–2 weeks), (2) spin-off execution itself (~June 1). For New Enviri post-spin, pending unfired catalysts include: management operational review completion, Rail ETO derisking milestones, HE margin recovery as European steel trade protections implement, and potential capital structure optimization. Greenblatt-eligible forced-selling dislocation (spinco ~$386M) adds a time-bounded post-event alpha window of 1–6 weeks post-spin. Catalyst density for NVRI as a whole is moderate-to-low given proximity to close; density for the New Enviri stub is medium with a 12–24 month unfired catalyst pipeline."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Clear conglomerate discount with management stating 'significant and persistent gap between our market valuation and the sum of the parts value of the company.' Clean Earth described as 'especially valuable business' and Harsco Environmental as 'market leader with unmatched service capabilities.'"
+          "analysis": "The SoP dislocation was the original thesis driver identified in Q2 2025. Grasberger explicitly cited 'a significant and persistent gap between our market valuation and the sum of the parts value.' Clean Earth was valued at approximately $14.50–$16.50/share in cash proceeds to shareholders. At $20.11 current price, the market is embedding ~$4.61–$5.61/share of New Enviri stub value. New Enviri (Harsco Environmental + Rail) has an estimated spinco market cap of ~$386M (~$4.67/share on ~82.7M shares). This implies the stub is trading roughly at estimated spinco market cap, suggesting the SoP gap has substantially closed. Residual SoP opportunity exists if New Enviri trades below intrinsic value post-spin due to forced selling, creating a post-event entry opportunity rather than a pre-event thesis."
         },
         "activism_potential": {
-          "rating": "Active",
-          "analysis": "Management proactively initiated strategic review citing valuation gap, with Board 'continuously focused on evaluating options and taking actions that are in the best interest of Enviri and its shareholders.' Transaction structure designed to unlock value before activist pressure."
+          "rating": "Possible",
+          "analysis": "No identified activist stake in NVRI currently. The strategic review and transaction were board/management-initiated rather than activist-driven, though the persistent SoP discount would have been an attractive activist target. Post-spin, New Enviri as a ~$386M standalone industrial company with B-rated credit, Rail ETO losses, and a new management team could attract activists if performance disappoints or the stock trades at a discount to peers. Elliott, Starboard, or industrial-focused activists have precedent targeting small/mid-cap industrials with operational complexity and underperforming segments. No current confirmed activist involvement; rated 'Possible' for New Enviri post-spin."
         },
         "risk_reward": {
-          "ratio": "3.1:1",
-          "analysis": "Upside from cash distribution ($14.50-$16.50 vs $19.60 current price suggests immediate 25-35% value unlock) plus New Enviri standalone value, with downside limited by transaction certainty and asset quality."
+          "ratio": "-99.9:1",
+          "analysis": "For NVRI as a merger-arb setup today: Upside is capped at the deal mechanics — cash payout midpoint ~$15.00 + New Enviri stub ~$4.67 = ~$19.67 total theoretical value vs. current price $20.11, implying ~$0.44 downside on the combined value even at midpoint, or marginal upside of ~$1.50 at the high end of the cash range ($16.50 + $4.67 = $21.17, or ~$1.06 upside). Deal-break risk (estimated 5–10% probability given regulatory clearances are complete and shareholder vote passed) would send NVRI to pre-announcement levels; given the stock has moved significantly on the strategic review, a deal break could result in a $6–$8 downside. Risk/reward is approximately -2.8:1 (risking ~$6 to make ~$1.06 at the high end), consistent with a near-closed merger arb with negative asymmetry. The more favorable post-spin R/R for New Enviri standalone (buying forced-selling dislocation) is estimated at 2.5:1 to 3:1 over 12–18 months if operational catalysts execute, but requires a new position in the spinco, not NVRI itself."
         }
       },
       "options_signals": {
-        "iv_current": 0.9316,
-        "skew_25d": 0.9688,
+        "iv_current": 0.7735,
+        "skew_25d": -1.1564,
         "term_structure": "backwardation",
-        "pc_oi_ratio": 3.167,
-        "total_oi": 6793,
+        "pc_oi_ratio": 0.122,
+        "total_oi": 6868,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "High volatility with put protection",
-        "overall_interpretation": "Elevated IV and put skew suggest market pricing significant near-term event risk around the June 1 transaction close, with term structure backwardation confirming catalyst timing expectations."
+        "market_sentiment_flag": "Binary event call-skewed positioning; put skew represents deal-break hedge, not bullish growth signal",
+        "overall_interpretation": "The deeply negative 25-delta skew (-1.16, meaning calls are dramatically more expensive than puts) and very low P/C OI ratio (0.12, only 12 puts per 100 calls in open interest) reflect market participants buying call protection or upside exposure ahead of the imminent ~June 1 transaction close — positioning for the cash payout and spin receipt. The backwardated term structure confirms the market is pricing a near-term binary event (the transaction close) as the dominant risk. High ATM IV (0.77) reflects the uncertainty around the exact cash payout amount ($14.50–$16.50 range not yet finalized). In the merger-arb context per methodology directives, any residual put premium represents deal-break insurance cost, NOT a bullish growth signal. The low total OI (6,868 contracts) confirms thin liquidity and limited institutional options activity, consistent with a stock in mechanical closing phase."
       },
       "recent_events": [
         {
           "date": "2026-05-20",
-          "type": "news",
+          "type": "press_release",
           "title": "Enviri Announces Merger Consideration for Sale of Clean Earth and Update Regarding Spin-Off of New Enviri",
-          "link": "https://globenewswire.com"
-        },
-        {
-          "date": "2026-05-11",
-          "type": "transcript",
-          "title": "Enviri Corporation (NVRI) Q1 2026 Earnings Call Transcript",
-          "link": "https://seekingalpha.com"
+          "link": "https://www.globenewswire.com/news-release/2026/05/20/enviri-merger-consideration-clean-earth-spinoff-update"
         },
         {
           "date": "2026-05-04",
-          "type": "news",
-          "title": "Enviri Corporation Announces Results of the Special Meeting of Stockholders",
-          "link": "https://globenewswire.com"
+          "type": "press_release",
+          "title": "Enviri Corporation Announces Results of the Special Meeting of Stockholders — Clean Earth Sale to Veolia Approved",
+          "link": "https://www.globenewswire.com/news-release/2026/05/04/enviri-special-meeting-stockholders-results"
+        },
+        {
+          "date": "2026-05-11",
+          "type": "earnings_call",
+          "title": "Enviri Corporation Reports First Quarter 2026 Results — CEO Final Call; Closing Confirmed ~June 1",
+          "link": "https://www.globenewswire.com/news-release/2026/05/11/enviri-q1-2026-results"
         }
-      ]
-    }
+      ],
+      "spinoff_regime": "greenblatt_eligible",
+      "convergence_score": 7.5,
+      "independent_track_count": 4,
+      "unfired_independent_track_count": 3,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "spin_off",
+          "evidence": "Stub mkt cap ~$386M < $2B threshold; pre-spin re-rate ~80% complete but post-spin forced-selling dislocation opportunity remains",
+          "counterparty": "Spinco",
+          "dated_event": true,
+          "event_date": "2026-10-01",
+          "fired": false,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "segment_carveout",
+          "evidence": "Sale of Clean Earth to Veolia Environnement S.A. approved by shareholders on May 4, 2026; expected to close around June 1, 2026. 'Enviri Announces Merger Consideration for Sale of Clean Earth' (May 20, 2026).",
+          "counterparty": "Veolia Environnement S.A.",
+          "dated_event": true,
+          "event_date": "2026-06-01",
+          "fired": false,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "strategic_review",
+          "evidence": "Q2 2025 transcript: 'announcement that we made this morning about our review of strategic alternatives'; Q3 2025: 'strategic review process that we announced a few months ago...aimed at identifying and executing alternatives to unlock the inherent value of our business portfolio.'",
+          "counterparty": null,
+          "dated_event": false,
+          "event_date": null,
+          "fired": true,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "crown_jewel_undervalued",
+          "evidence": "Q2 2025 transcript, CEO Grasberger: 'we continue to believe there is a significant and persistent gap between our market valuation and the sum of the parts value of the company.'",
+          "counterparty": null,
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        }
+      ],
+      "options_confirmation_score": 9.0,
+      "credit_health": {
+        "grade": "B",
+        "net_debt_ebitda": 3.0,
+        "interest_coverage": 999.0,
+        "fcf_to_total_debt": 999.0,
+        "dividend_coverage": Infinity,
+        "tangible_book_trend": "stable",
+        "interest_burden_trend": "stable",
+        "distress_flags": []
+      },
+      "adjusted_loeb_score": 7.95,
+      "final_adjusted_loeb": 7.95,
+      "score_adjustments": [
+        {
+          "factor": "options_confirmation",
+          "adjustment": 0.4,
+          "reason": "Term structure backwardation (near-term catalyst priced)"
+        }
+      ],
+      "distressed_setup_flag": false,
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": false,
+      "cache_timestamp": "2026-05-27T22:06:09.788947",
+      "historical_scan_id": "c36d3918-11ce-4883-b17a-5d22cf217fac"
+    },
+    "ma_role": {
+      "role": "target",
+      "deal_status": "closing",
+      "counterparty": "Veolia Environnement S.A.",
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": "Enviri Corporation (NYSE: NVRI) expects to close the sale of Clean Earth to Veolia Environnement S.A. as well as complete the spin-off of Harsco Environmental and Rail into a standalone publicly trade"
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": true,
+      "spin_ratio": 1.0,
+      "estimated_spinco_mkt_cap": 386.0,
+      "estimated_remainco_mkt_cap": 1277.21,
+      "regime": "greenblatt_eligible",
+      "expected_spin_date": "2026-10-01",
+      "evidence": "Stub mkt cap ~$386M < $2B threshold; pre-spin re-rate ~80% complete but post-spin forced-selling dislocation opportunity remains"
+    },
+    "schema_version": "1.1"
   },
   "FDX": {
     "timestamp": "2026-05-26T14:23:41.241252",
@@ -15466,90 +16077,179 @@
     }
   },
   "PZZA": {
-    "timestamp": "2026-05-26T14:22:00.011472",
+    "timestamp": "2026-05-27T22:10:50.103239",
     "data": {
       "symbol": "PZZA",
       "company_name": "Papa John's International, Inc.",
-      "price": 33.4,
-      "market_cap": 1098927268,
+      "price": 33.24,
+      "market_cap": 1093662945,
       "is_merger_arb": false,
       "merger_arb_data": null,
-      "catalyst_density_score": 8.7,
-      "upside_downside_ratio": 2.8,
-      "re_rate_status": "pending",
+      "catalyst_density_score": 3.72,
+      "upside_downside_ratio": 1.8,
+      "re_rate_status": "partial",
       "catalyst_nature": "pricing_dislocation",
-      "catalyst_nature_rationale": "Private equity buyout proposal from Irth Capital with largest franchisee creates immediate pricing dislocation as market has not fully re-rated to takeout premium, especially given activist potential for forcing sale process.",
-      "analysis_summary": "Papa John's presents a compelling event-driven opportunity with Irth Capital's private equity buyout proposal backed by the company's largest U.S. franchisee (controlling ~10% of domestic restaurants) creating immediate catalyst density. The stock trades at $33.40 with substantial upside to potential takeout multiples in the $45-50 range, while downside is protected by improving operational metrics, strong international performance (6 consecutive quarters of positive comps), and ongoing transformation under CEO Todd Penegor. The involvement of the largest franchisee provides unique insider knowledge and strategic credibility to the bid, while negative options skew suggests bullish positioning ahead of potential premium announcement.",
-      "recommendation": "BUY",
+      "catalyst_nature_rationale": "The stock has already partially re-rated downward from deteriorating North America comps and credit stress, but the buyout bid by Irth Capital (rumored, not definitive) represents an unfired pricing dislocation catalyst. The market has not yet priced a control premium, and the bid remains unconfirmed/non-binding. The alpha window is NOW — before a definitive announcement or deal rejection crystallizes the outcome. The partial re-rate reflects the stock's ~60-70% decline from peak levels on operational deterioration, but the takeover premium has not been awarded.",
+      "analysis_summary": "Papa John's International (PZZA) presents a high-tension event-driven setup at the intersection of a rumored leveraged buyout and a deeply distressed operational turnaround. The May 14, 2026 Reuters report that Irth Capital — working alongside PZZA's largest U.S. franchisee (~10% of domestic restaurants) — is pursuing a take-private bid represents a live, unfired Bloom Catalyst 3 (Premium Scenario Activated). At $33.24, the stock trades at a significant discount to any plausible LBO take-out range ($40-$50+), creating raw upside of 20-50% if the bid crystallizes into a definitive offer. However, the setup carries material asymmetric risk: PZZA is rated D on credit health with net debt/EBITDA of 5.8x, uncovered dividend, and covenant pressure — meaning a failed deal or deal collapse could accelerate a restructuring or distressed credit event, sending the stock toward $18-$22 (50%+ downside). North America comps remain deeply negative (mid-single digit declines in Q1 2026), consumer sentiment is weak, and the operational transformation under CEO Todd Penegor (installed mid-2024) is in its early innings with mixed results. The options market is sending a paradoxical signal: extreme put/call volume ratio (7.78:1) coexists with negative skew (-0.0997), indicating both heavy hedging/speculative put activity AND net call-side bullish positioning in open interest (OI P/C of 0.51), consistent with a bifurcated market between deal-believers and deal-skeptics. The Bloom cascade is partially activated: Catalyst 1 (governance reset via CEO change in 2024) is fired; Catalyst 2 (refranchising acceleration, supply chain restructuring, strategic cost review) is in progress; Catalyst 3 (Irth Capital buyout bid) is newly rumored and unfired. The 1.8:1 upside/downside ratio reflects the D-rated credit risk asymmetry constraining the bull case despite the takeover premium potential. A WATCH rating is appropriate — the risk/reward improves materially if the bid moves to announced/definitive status, but entering unhedged ahead of that confirmation carries substantial binary risk given the credit profile.",
+      "recommendation": "WATCH",
       "bloom_catalysts": {
         "catalyst_1": {
           "title": "Governance Reset",
           "detected": true,
-          "description": "CEO Todd Penegor has been leading comprehensive transformation since joining over a year ago, rebuilding leadership team with industry veterans and implementing 5-pillar strategic plan.",
-          "evidence": "Q1 2026 earnings call shows continued execution of transformation plan with new leadership appointments, cost structure optimization, and refranchising acceleration program."
+          "description": "Papa John's underwent a significant CEO transition when Todd Penegor was appointed President and CEO in mid-2024, replacing prior leadership. This triggered a comprehensive leadership team rebuild with multiple C-suite additions including a new CFO/President North America (Ravi Thanawala). The governance reset also included a board refresh aligned with the new strategic direction and a comprehensive operational and cost transformation mandate. This catalyst has FIRED and is partially priced in.",
+          "evidence": "Q2 2025 earnings call (2025-08-07): Todd Penegor stated 'It's been just over a year since I joined the Papa John's team' and described the leadership team rebuild. Q3 2025 call confirmed ongoing transformation including refranchising acceleration and $25M+ cost review. Q4 2025 call referenced new CFO/President North America role for Ravi Thanawala, indicating continued leadership restructuring. This governance reset catalyst has fired but set the stage for Catalysts 2 and 3."
         },
         "catalyst_2": {
           "title": "Strategic Process",
           "detected": true,
-          "description": "Accelerated refranchising program announced, comprehensive cost structure review identifying $25M+ savings, and supply chain optimization targeting $50M savings by 2028.",
-          "evidence": "Q3 2025 earnings call: 'we are also announcing today that the company will be accelerating our refranchising program over the next 2 years' and identification of at least $25 million of non-customer-facing savings."
+          "description": "Multiple concurrent strategic processes are actively underway: (1) Accelerated refranchising program over 2 years announced in Q3 2025, repositioning PZZA toward a pure-play asset-light franchisor model; (2) Comprehensive expense structure review identifying at least $25M in non-customer-facing corporate cost savings through 2027; (3) Supply chain optimization targeting $60M+ system-wide savings by 2028; (4) The Irth Capital buyout approach — even at the rumor stage — may have formalized or accelerated a strategic alternatives review process by the Board. These are live, in-progress catalysts with concrete deliverables and timelines extending into 2026-2027.",
+          "evidence": "Q3 2025 call: 'We are also announcing today that the company will be accelerating our refranchising program over the next 2 years' and 'we have already identified at least $25 million of savings outside of marketing.' Q4 2025 call confirmed '$60,000,000 of system-wide supply chain cost savings' target. News (2026-05-14): Reuters exclusive reporting Irth Capital and largest franchisee pursuing take-private, which likely triggered or will trigger a formal Board review of strategic alternatives."
         },
         "catalyst_3": {
           "title": "Premium Scenario Activated",
           "detected": true,
-          "description": "Irth Capital private equity firm working with Papa John's largest U.S. franchisee (controlling ~10% of domestic restaurants) on buyout proposal to take company private.",
-          "evidence": "Reuters exclusive 2026-05-14: 'Investment firm Irth Capital is working with Papa John's International's largest U.S. franchisee, who controls around 10% of the pizza chain's domestic restaurants, to take the company private, three sources told Reuters.'"
+          "description": "The Reuters report dated May 14, 2026 confirms that Irth Capital is working with Papa John's largest U.S. franchisee (controlling ~10% of domestic restaurants) on a take-private bid. This is a live, unfired Catalyst 3 — the premium has NOT been formally announced or accepted. The franchisee's operational knowledge of the system and Irth Capital's investment thesis create a credible strategic rationale: the franchise system generates relatively stable royalty cash flows even in a stressed consumer environment, the brand has international growth optionality, and an LBO structure could accelerate the refranchising and cost restructuring already in motion. At $33.24, any bid would likely require a 25-50% premium ($41-$50 range) to garner Board consideration, implying significant gap-up potential if the deal advances.",
+          "evidence": "News (2026-05-14): 'Exclusive: Largest Papa John's franchisee joins Irth in buyout bid for pizza chain, sources say. Investment firm Irth Capital is working with Papa John's International's largest U.S. franchisee, who controls around 10% of the pizza chain's domestic restaurants, to take the company private, three sources told Reuters.' Deal status: rumored, non-definitive. No formal announcement or Board acceptance confirmed as of data cutoff."
         }
       },
       "loeb_criteria": {
         "catalyst_density": {
           "rating": "High",
-          "analysis": "Multiple hard catalysts within 12-24 months including active PE buyout proposal with franchisee backing, ongoing transformation execution, accelerated refranchising, and potential activist involvement given operational improvements and strategic review opportunities."
+          "analysis": "PZZA has an unusually dense cluster of pending catalysts within the next 12 months: (1) Irth Capital take-private bid resolution (rumored, could formalize within weeks to months); (2) Refranchising program milestones with ongoing deal announcements as company-owned restaurants are sold to franchisees; (3) $25M corporate cost savings realization expected through 2027 with 2026 targets providing near-term earnings inflection points; (4) $20M of the $60M supply chain savings targeted for 2026 specifically, providing a concrete earnings catalyst for H2 2026; (5) Q2 2026 earnings (est. August 2026) as a read on whether the transformation is gaining traction. The rumored buyout alone elevates catalyst density to High, but even without it, the convergence of cost catalysts, refranchising milestones, and operational inflection attempts creates multiple binary decision points within 12-24 months."
         },
         "sum_of_parts": {
           "detected": true,
-          "analysis": "Company trading below sum-of-parts with strong international business (6 consecutive positive comp quarters), valuable franchise system, and supply chain assets. Refranchising program and cost optimization suggest hidden value in asset-light model transition."
+          "analysis": "PZZA's SoP analysis reveals potential hidden value in its franchise network that the current market cap (sub-$1.1B) may not fully reflect. The North America Franchising segment generates high-margin royalty and fee income from ~4,500+ franchised domestic restaurants. The International Operations segment has demonstrated 6 consecutive quarters of positive comps and represents a growing, higher-multiple asset. The North America Commissaries (QCC supply chain) represents a distinct infrastructure asset. A pure-play franchise model valuation — comparable to Domino's (DPZ) at ~25-30x EBITDA or Restaurant Brands (QSR) at ~18-22x — suggests the royalty stream alone could justify $40-55/share in a refranchised steady state. However, the D-rated credit profile (5.8x net debt/EBITDA), uncovered dividend, and covenant risk mean the SoP discount is also partially a rational credit risk discount, not purely a market mispricing. The LBO buyer would seek to unlock this franchise value by completing the refranchising, cutting corporate costs, and re-leveraging around a cleaner asset-light cash flow profile."
         },
         "activism_potential": {
           "rating": "Active",
-          "analysis": "Clear activism opportunity given operational transformation progress, cost savings identification, refranchising acceleration, and PE interest. Largest franchisee involvement in buyout bid demonstrates insider confidence in value creation potential."
+          "analysis": "The Irth Capital / largest franchisee consortium represents active M&A-style activism with a take-private intent — the most aggressive form of value extraction. The franchisee's participation is strategically significant: they have operational insight, existing relationships with the franchisor system, and a direct economic interest in improving system economics. This is not a passive activist building a stake — it is a consortium with operational expertise and financial backing seeking board engagement or a negotiated transaction. Additionally, the Board is under pressure from: deteriorating comp sales, a D-rated credit profile, an uncovered dividend that may require cutting, and a stock that has lost significant value from prior highs. If the Irth bid is rejected, it could invite additional activists. Prior to the bid, the Starboard/Elliott-style activist angle was already plausible given the stock's underperformance, asset-light refranchising opportunity, and clear cost reduction runway."
         },
         "risk_reward": {
-          "ratio": "2.8:1",
-          "analysis": "Upside to $45-50 takeout range vs current $33.40 provides 35-50% upside, while downside protected by transformation progress, international strength, loyalty program growth, and operational improvements limiting downside to $28-30 range."
+          "ratio": "1.8:1",
+          "analysis": "UPSIDE: Base case deal scenario at $44-48/share (30-45% premium to $33.24 current price) implies $10.76-$14.76 upside per share, or roughly 32-44% return. Bull case if bidding war or higher multiple applied: $52+ implies ~56% upside. DOWNSIDE: Bear case if deal collapses and operational deterioration continues — stock likely reverts to $18-22 range (pre-bid/distressed valuation at 3-4x depressed EBITDA). Given D-rated credit with 5.8x net debt/EBITDA and covenant pressure, a credit event (covenant breach, dividend cut, distressed debt restructuring) over an 18-24 month horizon carries a 5-15% probability per D-grade methodology, with potential equity impairment to $5-12 in a restructuring scenario. Probability-weighted downside: ~$14-15 per share from current levels (42-45% loss). Probability-weighted upside (deal probability ~35-40% given only rumors, adjusted for deal success): ~$12-14 per share. Net asymmetry: approximately 1.8:1 before credit risk tail adjustment. The credit health grade D is a material constraint on the upside/downside ratio — without it, the setup would be 2.5-3.0:1 on deal optionality alone."
         }
       },
       "options_signals": {
-        "iv_current": 0.5638,
-        "skew_25d": -0.1547,
-        "term_structure": "contango",
-        "pc_oi_ratio": 0.513,
-        "total_oi": 37609,
+        "iv_current": 0.6701,
+        "skew_25d": -0.0997,
+        "term_structure": "flat",
+        "pc_oi_ratio": 0.51,
+        "total_oi": 37972,
         "implied_earnings_move_pct": null,
-        "market_sentiment_flag": "Bullish positioning with call premium",
-        "overall_interpretation": "Negative skew indicates call premium and bullish positioning, likely reflecting anticipation of buyout premium announcement or strategic alternatives, while elevated IV suggests event volatility expectations."
+        "market_sentiment_flag": "Bifurcated: Heavy speculative put volume (deal-break/distress hedging) vs. net call-side open interest buildup (deal believers long calls)",
+        "overall_interpretation": "The extreme put/call VOLUME ratio of 7.78:1 combined with negative skew (-0.0997, meaning calls are relatively more expensive than puts on a vol-adjusted basis) and a low put/call OPEN INTEREST ratio of 0.51 reveals a bifurcated options market: large speculative put buying flows (likely one-time event hedges on deal-break risk and credit distress) are coexisting with a net call-heavy open interest structure where longer-dated call positions have been accumulated by deal believers pricing in a takeover premium. The flat term structure suggests the market is not yet pricing a near-term hard catalyst date, consistent with the deal being in rumor/exploratory stage rather than formally announced. The elevated ATM IV of 67% reflects genuine binary risk around the deal outcome and credit profile — options are pricing meaningful tail scenarios in both directions, making vanilla long equity the preferred vehicle over options given the vol premium already embedded."
       },
       "recent_events": [
         {
           "date": "2026-05-14",
           "type": "news",
-          "title": "Exclusive: Largest Papa John's franchisee joins Irth in buyout bid for pizza chain, sources say",
-          "link": "reuters.com"
+          "title": "Exclusive: Largest Papa John's franchisee joins Irth Capital in buyout bid for pizza chain",
+          "link": "https://www.reuters.com"
         },
         {
           "date": "2026-05-07",
-          "type": "transcript",
-          "title": "Papa John's International, Inc. (PZZA) Q1 2026 Earnings Call Transcript",
-          "link": "earnings_call"
+          "type": "earnings",
+          "title": "Papa John's Q1 2026 Earnings Call: North America comps -mid single digits, International +3.6%, transformation ongoing",
+          "link": "https://ir.papajohns.com"
         },
         {
-          "date": "2026-05-07",
+          "date": "2026-05-27",
           "type": "news",
-          "title": "Papa John's misses quarterly results estimates as living costs soar",
-          "link": "reuters.com"
+          "title": "Papa Johns Launches 'Papa Johns Pizza Planet' Pop-Ups in Global Collaboration with Disney/Pixar Toy Story 5",
+          "link": "https://www.globenewswire.com"
         }
+      ],
+      "convergence_score": 2.5,
+      "independent_track_count": 2,
+      "unfired_independent_track_count": 1,
+      "is_dher_pattern": false,
+      "tracks": [
+        {
+          "track_type": "m_and_a_target",
+          "evidence": "M&A target rumors/negotiation active. Status: rumored",
+          "counterparty": "Irth Capital",
+          "dated_event": false,
+          "event_date": null,
+          "fired": false,
+          "independence_score": 1.0
+        },
+        {
+          "track_type": "governance",
+          "evidence": "Todd Penegor noted on Q2 2025 call: 'It's been just over a year since I joined the Papa John's team' - indicating recent CEO transition. Ravi Thanawala serves as CFO and EVP International.",
+          "counterparty": null,
+          "dated_event": false,
+          "event_date": null,
+          "fired": true,
+          "independence_score": 1.0
+        }
+      ],
+      "options_confirmation_score": 4.5,
+      "credit_health": {
+        "grade": "D",
+        "net_debt_ebitda": 5.8,
+        "interest_coverage": 2.5,
+        "fcf_to_total_debt": 0.05,
+        "dividend_coverage": 0.59,
+        "tangible_book_trend": "deteriorating",
+        "interest_burden_trend": "deteriorating",
+        "distress_flags": [
+          "uncovered_dividend",
+          "covenant_pressure"
+        ]
+      },
+      "distressed_setup_flag": true,
+      "adjusted_loeb_score": 2.72,
+      "final_adjusted_loeb": 2.72,
+      "score_adjustments": [
+        {
+          "factor": "credit_health",
+          "adjustment": -1.0,
+          "reason": "Grade D credit: uncovered_dividend, covenant_pressure"
+        }
+      ],
+      "credit_event_risk_flag": false,
+      "credit_health_layer3_adjustment_applied": true,
+      "cache_timestamp": "2026-05-27T22:10:50.166080",
+      "historical_scan_id": "5485963c-2dd2-4fdb-b122-4be3fd6f24c6"
+    },
+    "ma_role": {
+      "role": "target",
+      "deal_status": "rumored",
+      "counterparty": "Irth Capital",
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": "Investment firm Irth Capital is working with Papa John's International's largest U.S. franchisee, who controls around 10% of the pizza chain's domestic restaurants, to take the company private, three sources told Reuters."
+    },
+    "credit_health": {
+      "grade": "D",
+      "net_debt_ebitda": 5.8,
+      "interest_coverage": 2.5,
+      "fcf_to_total_debt": 0.05,
+      "dividend_coverage": 0.59,
+      "tangible_book_trend": "deteriorating",
+      "interest_burden_trend": "deteriorating",
+      "distress_flags": [
+        "uncovered_dividend",
+        "covenant_pressure"
       ]
-    }
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   },
   "GT": {
     "timestamp": "2026-05-26T14:41:19.348271",

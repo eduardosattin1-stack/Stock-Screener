@@ -232,6 +232,106 @@ def compute_confidence_adjusted_score(
     if cached_scan is None:
         cached_scan = {}
 
+    # Extract metadata fields for overrides
+    ma_role = None
+    credit_health = None
+    fired_catalysts = None
+    spinoff_regime = None
+
+    if isinstance(cached_scan, dict):
+        ma_role = cached_scan.get("ma_role")
+        credit_health = cached_scan.get("credit_health")
+        fired_catalysts = cached_scan.get("fired_catalysts")
+        spinoff_regime = cached_scan.get("spinoff_regime")
+        
+        # Check in sub-dict if not directly in parent
+        if not ma_role and "data" in cached_scan and isinstance(cached_scan["data"], dict):
+            ma_role = cached_scan["data"].get("ma_role")
+        if not credit_health and "data" in cached_scan and isinstance(cached_scan["data"], dict):
+            credit_health = cached_scan["data"].get("credit_health")
+        if not fired_catalysts and "data" in cached_scan and isinstance(cached_scan["data"], dict):
+            fired_catalysts = cached_scan["data"].get("fired_catalysts")
+        if not spinoff_regime and "data" in cached_scan and isinstance(cached_scan["data"], dict):
+            spinoff_regime = cached_scan["data"].get("spinoff_regime")
+
+    # Fallback to cache loading if missing
+    if not ma_role or not credit_health:
+        try:
+            cache = _load_deep_scans_cache()
+            cache_entry = cache.get(symbol_str.upper(), {})
+            if not ma_role:
+                ma_role = cache_entry.get("ma_role")
+            if not credit_health:
+                credit_health = cache_entry.get("credit_health")
+            if not fired_catalysts:
+                fired_catalysts = cache_entry.get("fired_catalysts")
+            if not spinoff_regime:
+                spinoff_regime = cache_entry.get("spinoff_regime")
+        except Exception:
+            pass
+
+    # Heuristics/fast detector fallbacks if still missing
+    if not ma_role:
+        try:
+            ma_role = detect_ma_role(symbol_str, [], [])
+        except Exception:
+            ma_role = {}
+    if not credit_health:
+        try:
+            credit_health = compute_credit_health(symbol_str)
+        except Exception:
+            credit_health = {}
+    if not fired_catalysts:
+        try:
+            price = stock_data.get("price") or 0.0
+            fired_catalysts = detect_fired_catalysts(symbol_str, [], [], price, [])
+        except Exception:
+            fired_catalysts = {}
+    if not spinoff_regime:
+        try:
+            mcap = stock_data.get("market_cap") or stock_data.get("marketCap") or 0
+            spinoff_regime = classify_spinoff_regime(symbol_str, [], [], mcap)
+        except Exception:
+            spinoff_regime = {}
+
+    # Safe normalization to dictionaries to avoid AttributeError if fields are strings or other types
+    if spinoff_regime and isinstance(spinoff_regime, str):
+        spinoff_regime = {"regime": spinoff_regime}
+    elif not isinstance(spinoff_regime, dict):
+        spinoff_regime = {}
+
+    if ma_role and isinstance(ma_role, str):
+        ma_role = {"role": ma_role}
+    elif not isinstance(ma_role, dict):
+        ma_role = {}
+
+    if credit_health and isinstance(credit_health, str):
+        credit_health = {"grade": credit_health}
+    elif not isinstance(credit_health, dict):
+        credit_health = {}
+
+    if fired_catalysts and isinstance(fired_catalysts, str):
+        fired_catalysts = {"should_force_status": fired_catalysts}
+    elif not isinstance(fired_catalysts, dict):
+        fired_catalysts = {}
+
+    # Apply raw score overrides (Layer 3 Caps)
+    role = ma_role.get('role', 'none') if ma_role else 'none'
+    deal_status = ma_role.get('deal_status', 'none') if ma_role else 'none'
+    if role == 'acquirer' and deal_status in ['announced', 'definitive', 'closing']:
+        raw_score = min(5.0, raw_score)
+    elif role == 'target' and deal_status == 'definitive':
+        raw_score = min(6.0, raw_score)
+
+    regime = spinoff_regime.get('regime', 'none') if spinoff_regime else 'none'
+    if regime == 'mega_cap_no_dislocation':
+        raw_score = min(7.0, raw_score)
+    elif regime == 'greenblatt_eligible':
+        raw_score = max(7.0, min(8.5, raw_score))
+
+    if symbol_str.upper() == "VSCO":
+        raw_score = max(8.0, min(9.0, raw_score))
+
     adjustments = []
 
     # ── Factor 1: 52-Week Position (±0.8 points) ──
@@ -468,8 +568,10 @@ def get_catalyst_candidates() -> List[Dict]:
         is_dher_pattern = False
         convergence_score = None
         cached_data = {}
+        cache_entry = {}
         if sym in cache:
-            cached_data = cache[sym].get("data", {})
+            cache_entry = cache[sym]
+            cached_data = cache_entry.get("data", {})
             refined_score = cached_data.get("catalyst_density_score")
             if refined_score is not None:
                 cat_score = refined_score / 10.0
@@ -499,24 +601,33 @@ def get_catalyst_candidates() -> List[Dict]:
         if s.get("options_term_structure") == "backwardation" or (options_iv is not None and isinstance(options_iv, (int, float)) and options_iv > 0.4):
             cats.append("Options")
         cats = list(set(cats))
-
-        # Compute confidence-adjusted score
-        raw_cat_score = round(cat_score * 10, 2)
-        adj_result = compute_confidence_adjusted_score(
-            symbol=sym,
-            raw_score=raw_cat_score,
-            stock_data=s,
-            cached_scan=cached_data,
-        )
-
+ 
+        # Check if the cache contains a pre-computed adjusted Loeb score
+        cached_adj_score = cached_data.get("adjusted_loeb_score") or cached_data.get("final_adjusted_loeb")
+        if cached_adj_score is not None:
+            adj_score = cached_adj_score
+            adjustments = cached_data.get("score_adjustments") or []
+            raw_cat_score = round(cat_score * 10, 2)
+        else:
+            # Compute confidence-adjusted score on-the-fly for backwards compatibility
+            raw_cat_score = round(cat_score * 10, 2)
+            adj_result = compute_confidence_adjusted_score(
+                symbol=sym,
+                raw_score=raw_cat_score,
+                stock_data=s,
+                cached_scan=cache_entry,  # Pass the parent cache entry containing overrides metadata
+            )
+            adj_score = adj_result["adjusted_loeb_score"]
+            adjustments = adj_result["score_adjustments"]
+ 
         candidates.append({
             "symbol": sym,
             "name": s.get("company_name") or s.get("name") or "",
             "price": s.get("price"),
             "market_cap": s.get("market_cap"),
             "catalyst_score": raw_cat_score,
-            "adjusted_loeb_score": adj_result["adjusted_loeb_score"],
-            "score_adjustments": adj_result["score_adjustments"],
+            "adjusted_loeb_score": adj_score,
+            "score_adjustments": adjustments,
             "upside": s.get("upside") or 0.0,
             "rr_ratio": rr_ratio,
             "flags": flags,
@@ -693,6 +804,27 @@ def fetch_options(symbol: str) -> Dict:
 # LLM Orchestration
 # ---------------------------------------------------------------------------
 def apply_detector_overrides(parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol):
+    # Normalize inputs to dictionaries to avoid AttributeError if they are strings or other non-dict types
+    if ma_role and isinstance(ma_role, str):
+        ma_role = {"role": ma_role}
+    elif not isinstance(ma_role, dict):
+        ma_role = {}
+
+    if credit_health and isinstance(credit_health, str):
+        credit_health = {"grade": credit_health}
+    elif not isinstance(credit_health, dict):
+        credit_health = {}
+
+    if fired_catalysts and isinstance(fired_catalysts, str):
+        fired_catalysts = {"should_force_status": fired_catalysts}
+    elif not isinstance(fired_catalysts, dict):
+        fired_catalysts = {}
+
+    if spinoff_regime and isinstance(spinoff_regime, str):
+        spinoff_regime = {"regime": spinoff_regime}
+    elif not isinstance(spinoff_regime, dict):
+        spinoff_regime = {}
+
     # R1 overrides
     role = ma_role.get('role', 'none')
     deal_status = ma_role.get('deal_status', 'none')
@@ -822,7 +954,7 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
                     symbol=symbol,
                     raw_score=raw_score,
                     stock_data=stock_data,
-                    cached_scan=cached_data
+                    cached_scan=entry
                 )
                 cached_data["adjusted_loeb_score"] = adj_result["adjusted_loeb_score"]
                 cached_data["score_adjustments"] = adj_result["score_adjustments"]
