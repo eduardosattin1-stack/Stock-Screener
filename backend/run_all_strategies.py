@@ -47,6 +47,7 @@ ENABLED = [
     "paper_strategy_runner_compounder_global",
     "paper_strategy_runner_momentum",
     "paper_strategy_runner_fa",
+    "paper_strategy_runner_speculair",
 ]
 
 

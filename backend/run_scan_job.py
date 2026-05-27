@@ -58,11 +58,14 @@ def main():
             log.error(f"[{region}] Screener failed: {e}", exc_info=True)
             continue # Skip to the next region if this one crashes
 
-        log.info(f"[{region}] Screener complete; running post-scan hooks…")
-
-        log.info(f"[{region}] Screener complete.")
-
-       
+        # ─── 2. Run Speculair Debate Pipeline ───
+        try:
+            from live_debate_engine import debate_and_allocate
+            log.info(f"[{region}] Running Speculair debate pipeline...")
+            debate_and_allocate(dry_run=False)
+            log.info(f"[{region}] Debate pipeline complete.")
+        except Exception as e:
+            log.error(f"[{region}] Debate pipeline failed: {e}", exc_info=True)
 
         log.info(f"═══ Completed processing region={region} ═══")
 
