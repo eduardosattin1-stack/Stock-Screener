@@ -2021,9 +2021,13 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         # 3yr EPS growth
         eps_growth_3y = v.get("eps_cagr_3y", 0.0)
         
-        # Helper for MoS
+        # Helper for MoS — capped to [-1.0, +0.95] for sanity.
+        # Uncapped, (FV-Price)/FV can go to -∞ when FV→0, producing
+        # meaningless values like -269% that distort exit metrics.
         def calc_mos(fv, pr):
-            return (fv - pr) / fv if fv > 0 else -1.0
+            if fv <= 0:
+                return -1.0
+            return max(-1.0, min(0.95, (fv - pr) / fv))
 
         # ROE — use 5-year median when available (much more stable than 1yr)
         roe_median = v.get("roe_median_5y")
@@ -2103,7 +2107,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         g_graham = max(0.0, min(20.0, eps_growth_3y * 100)) if eps_growth_3y > 0 else 0.0
         fv_graham_local = eps_latest * (8.5 + 2 * g_graham)
         v["graham_revised"] = fv_graham_local * fx_to_price
-        v["graham_revised_mos"] = 1.0 - (price / v["graham_revised"]) if v["graham_revised"] > 0 else -1.0
+        v["graham_revised_mos"] = max(-1.0, min(0.95, 1.0 - (price / v["graham_revised"]))) if v["graham_revised"] > 0 else -1.0
 
         # 6. IV15 Deep Value
         # Tightened cap from 40% → 20%: a 40% CAGR for 15 years is unrealistic
@@ -2112,11 +2116,14 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         terminal_fcf = fcf * ((1 + g_blend) ** 15)
         terminal_mcap = terminal_fcf * terminal_mult
         if shares > 0:
-            fv_iv15_local = terminal_mcap / (shares * 8.137)
+            # 8.137 ≈ (1.15)^15 — discounts the 15-year terminal value at a
+            # 15% annual return hurdle rate.
+            IV15_HURDLE_DIVISOR = 1.15 ** 15  # ≈ 8.137
+            fv_iv15_local = terminal_mcap / (shares * IV15_HURDLE_DIVISOR)
         else:
             fv_iv15_local = 0.0
         v["iv15_deep_value"] = fv_iv15_local * fx_to_price
-        v["iv15_deep_value_mos"] = 1.0 - (price / v["iv15_deep_value"]) if v["iv15_deep_value"] > 0 else -1.0
+        v["iv15_deep_value_mos"] = max(-1.0, min(0.95, 1.0 - (price / v["iv15_deep_value"]))) if v["iv15_deep_value"] > 0 else -1.0
 
     return v
 
@@ -5324,7 +5331,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     valid_ey_gap = []
     for s in all_results:
         ey = (s.eps_latest * s.fx_to_price) / s.price if s.price > 0 else 0.0
-        ey_gap = ey - 0.045
+        ey_gap = ey - RISK_FREE  # Use global constant, not hardcoded 0.045
         s.ey_gap = ey_gap
         valid_ey_gap.append(s)
         
@@ -5366,7 +5373,9 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         return (net_debt / ebitda) < 3.0
 
     def get_best_portfolio_of_size(candidates, target_T):
-        limit = 1 if target_T == 1 else target_T // 2
+        # Sector cap: max 30% of portfolio per sector (was 50%)
+        # Value traps cluster in the same sector — tighter cap ensures diversification
+        limit = max(1, round(target_T * 0.3))
         portfolio = []
         sector_counts = {}
         for s in candidates:
@@ -5443,7 +5452,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         for s in all_results:
             mos_val = getattr(s, mos_field, -1.0)
             if mos_val is not None and mos_val > -1.0:
-                if passes_leverage_gate(s):
+                if passes_leverage_gate(s) and (s.piotroski or 0) >= 3:
                     # Boost incumbent holdings to prevent whipsaw rotation
                     boost = HYSTERESIS_BOOST if s.symbol in incumbent_syms else 0.0
                     s._temp_mos = mos_val + boost

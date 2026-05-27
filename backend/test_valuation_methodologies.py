@@ -107,9 +107,9 @@ class TestValuationMethodologies(unittest.TestCase):
         self.assertAlmostEqual(v["graham_revised_mos"], 1.0 - (50.0 / 42.5))  # -0.1765...
         
         # Check Owner Earnings
-        # OE = 13.437176200189615, MoS = -2.7210198969702013
+        # OE FV = 13.437..., raw MoS would be -2.72 but capped at -1.0
         self.assertAlmostEqual(v["owner_earnings"], 13.437176200189615)
-        self.assertAlmostEqual(v["owner_earnings_mos"], -2.7210198969702013)
+        self.assertAlmostEqual(v["owner_earnings_mos"], -1.0)
         
         # Check R&D Capitalized DCF
         # R&D Capitalized DCF = 29.272032100011394, MoS = -0.7081150987115971
@@ -117,9 +117,9 @@ class TestValuationMethodologies(unittest.TestCase):
         self.assertAlmostEqual(v["rd_capitalized_dcf_mos"], -0.7081150987115971)
 
         # Check EPV
-        # EPV = 5.9, MoS = -7.47457627118644
+        # EPV FV = 5.9, raw MoS would be -7.47 but capped at -1.0
         self.assertAlmostEqual(v["epv_value"], 5.9)
-        self.assertAlmostEqual(v["epv_mos"], -7.47457627118644)
+        self.assertAlmostEqual(v["epv_mos"], -1.0)
         
     def test_save_methodology_picks(self):
         # Create a list of mock Stock objects
@@ -136,6 +136,7 @@ class TestValuationMethodologies(unittest.TestCase):
                 market_cap=1000.0,
                 volume=500000,
                 rsi=50.0,
+                piotroski=5,  # Quality gate requires >= 3
                 net_debt_local=100.0 if i % 2 == 0 else 400.0, # leverage gate candidates
                 ebit_local=100.0,
                 depreciation_local=50.0, # EBITDA = 150. Net debt = 100 -> ratio = 0.67 < 3.0. Net debt = 400 -> ratio = 2.67 < 3.0.
