@@ -213,6 +213,7 @@ def compute_confidence_adjusted_score(
     raw_score = None,
     stock_data = None,
     cached_scan = None,
+    allow_detectors = False,
 ) -> dict:
     """
     Adjust LLM-derived catalyst score with quantitative signals.
@@ -270,29 +271,30 @@ def compute_confidence_adjusted_score(
         except Exception:
             pass
 
-    # Heuristics/fast detector fallbacks if still missing
-    if not ma_role:
-        try:
-            ma_role = detect_ma_role(symbol_str, [], [])
-        except Exception:
-            ma_role = {}
-    if not credit_health:
-        try:
-            credit_health = compute_credit_health(symbol_str)
-        except Exception:
-            credit_health = {}
-    if not fired_catalysts:
-        try:
-            price = stock_data.get("price") or 0.0
-            fired_catalysts = detect_fired_catalysts(symbol_str, [], [], price, [])
-        except Exception:
-            fired_catalysts = {}
-    if not spinoff_regime:
-        try:
-            mcap = stock_data.get("market_cap") or stock_data.get("marketCap") or 0
-            spinoff_regime = classify_spinoff_regime(symbol_str, [], [], mcap)
-        except Exception:
-            spinoff_regime = {}
+    # Heuristics/fast detector fallbacks if still missing and allowed
+    if allow_detectors:
+        if not ma_role:
+            try:
+                ma_role = detect_ma_role(symbol_str, [], [])
+            except Exception:
+                ma_role = {}
+        if not credit_health:
+            try:
+                credit_health = compute_credit_health(symbol_str)
+            except Exception:
+                credit_health = {}
+        if not fired_catalysts:
+            try:
+                price = stock_data.get("price") or 0.0
+                fired_catalysts = detect_fired_catalysts(symbol_str, [], [], price, [])
+            except Exception:
+                fired_catalysts = {}
+        if not spinoff_regime:
+            try:
+                mcap = stock_data.get("market_cap") or stock_data.get("marketCap") or 0
+                spinoff_regime = classify_spinoff_regime(symbol_str, [], [], mcap)
+            except Exception:
+                spinoff_regime = {}
 
     # Safe normalization to dictionaries to avoid AttributeError if fields are strings or other types
     if spinoff_regime and isinstance(spinoff_regime, str):
@@ -907,7 +909,8 @@ def enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, option
         symbol=symbol,
         raw_score=weighted_loeb,
         stock_data=stock_data,
-        cached_scan=parsed_json
+        cached_scan=parsed_json,
+        allow_detectors=True
     )
     
     # 6. Merge the adjustments and flags directly into parsed_json
@@ -954,7 +957,8 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
                     symbol=symbol,
                     raw_score=raw_score,
                     stock_data=stock_data,
-                    cached_scan=entry
+                    cached_scan=entry,
+                    allow_detectors=True
                 )
                 cached_data["adjusted_loeb_score"] = adj_result["adjusted_loeb_score"]
                 cached_data["score_adjustments"] = adj_result["score_adjustments"]
