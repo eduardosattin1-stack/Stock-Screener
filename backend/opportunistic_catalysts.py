@@ -454,6 +454,8 @@ def get_catalyst_candidates() -> List[Dict]:
         rr_ratio = None
         is_scanned = False
         is_merger_arb = False
+        is_dher_pattern = False
+        convergence_score = None
         cached_data = {}
         if sym in cache:
             cached_data = cache[sym].get("data", {})
@@ -463,6 +465,8 @@ def get_catalyst_candidates() -> List[Dict]:
             rr_ratio = cached_data.get("upside_downside_ratio")
             is_merger_arb = cached_data.get("is_merger_arb", False)
             is_scanned = True
+            is_dher_pattern = cached_data.get("is_dher_pattern", False)
+            convergence_score = cached_data.get("convergence_score")
         else:
             # It's not deep-scanned, so discount the heuristic score (max 6.0)
             cat_score = cat_score * 0.6
@@ -509,6 +513,8 @@ def get_catalyst_candidates() -> List[Dict]:
             "categories": cats,
             "is_scanned": is_scanned,
             "is_merger_arb": is_merger_arb,
+            "is_dher_pattern": is_dher_pattern,
+            "convergence_score": convergence_score,
             "re_rate_status": s.get("re_rate_status") or cached_data.get("re_rate_status") if is_scanned else None,
             "catalyst_nature": s.get("catalyst_nature") or cached_data.get("catalyst_nature") if is_scanned else None
         })

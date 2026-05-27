@@ -103,6 +103,25 @@ interface CatalystScanReport {
     pre_announce_price?: number;
     deal_status?: string;
   } | null;
+  convergence_score?: number;
+  independent_track_count?: number;
+  unfired_independent_track_count?: number;
+  is_dher_pattern?: boolean;
+  tracks?: Array<{
+    track_type: string;
+    evidence: string;
+    counterparty: string | null;
+    dated_event: boolean;
+    event_date: string | null;
+    fired: boolean;
+    independence_score?: number;
+  }>;
+  options_confirmation_score?: number;
+  credit_health?: {
+    grade?: string;
+    net_debt_ebitda?: number;
+    distress_flags?: string[];
+  };
 }
 
 interface ScoreAdjustment {
@@ -127,6 +146,8 @@ interface Candidate {
   rr_ratio?: number | null;
   is_scanned?: boolean;
   is_merger_arb?: boolean;
+  is_dher_pattern?: boolean;
+  convergence_score?: number | null;
 }
 
 export default function CatalystWatch() {
@@ -277,7 +298,9 @@ export default function CatalystWatch() {
           market_cap: data.market_cap,
           flags: data.recommendation ? [data.recommendation] : ["Scanned"],
           is_scanned: true,
-          is_merger_arb: data.is_merger_arb
+          is_merger_arb: data.is_merger_arb,
+          is_dher_pattern: data.is_dher_pattern,
+          convergence_score: data.convergence_score
         } : item);
       }
       return [
@@ -290,7 +313,9 @@ export default function CatalystWatch() {
           flags: data.recommendation ? [data.recommendation] : ["Scanned"],
           has_special_flag: false,
           is_scanned: true,
-          is_merger_arb: data.is_merger_arb
+          is_merger_arb: data.is_merger_arb,
+          is_dher_pattern: data.is_dher_pattern,
+          convergence_score: data.convergence_score
         },
         ...prev
       ];
@@ -498,6 +523,7 @@ export default function CatalystWatch() {
             {cand.symbol}
             {isWatched && <Star size={11} fill="var(--amber, #f59e0b)" color="var(--amber, #f59e0b)" />}
             {cand.is_merger_arb && <span style={{ fontSize: 7, padding: "1px 4px", borderRadius: 3, background: "rgba(59,130,246,0.15)", color: T.blue, border: `1px solid rgba(59,130,246,0.3)` }}>M&A ARB</span>}
+            {cand.is_dher_pattern && <span style={{ fontSize: 7, padding: "1px 4px", borderRadius: 3, background: "rgba(168,85,247,0.15)", color: T.purple, border: `1px solid rgba(168,85,247,0.3)` }}>DHER</span>}
           </span>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {sortField === "mcap" ? (
@@ -971,6 +997,18 @@ export default function CatalystWatch() {
                         {report.upside_downside_ratio ? `${report.upside_downside_ratio.toFixed(1)}:1` : "N/A"}
                       </div>
                     </div>
+
+                    {report.convergence_score !== undefined && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(59,130,246,0.06)", borderRadius: 6, border: `1px solid ${T.blue}` }}>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 8, fontWeight: 700, color: T.muted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Convergence</div>
+                          <div style={{ fontSize: 9, color: T.light }}>Catalyst Tracks</div>
+                        </div>
+                        <div style={{ fontSize: 24, fontWeight: 800, color: T.blue, fontFamily: T.mono }}>
+                          {report.convergence_score.toFixed(1)}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1010,6 +1048,19 @@ export default function CatalystWatch() {
                             border: `1px solid ${report.re_rate_status === "complete" ? T.red : (report.re_rate_status === "partial" ? T.amber : T.green)}`
                           }}>
                             RE-RATE: {report.re_rate_status.toUpperCase()}
+                          </span>
+                        )}
+                        {report.is_dher_pattern && (
+                          <span style={{
+                            fontSize: 9,
+                            fontWeight: 700,
+                            padding: "2px 6px",
+                            borderRadius: 4,
+                            background: "rgba(168, 85, 247, 0.12)",
+                            color: T.purple,
+                            border: `1px solid ${T.purple}`
+                          }}>
+                            DHER CONVERGENCE
                           </span>
                         )}
                       </div>
@@ -1373,6 +1424,136 @@ export default function CatalystWatch() {
                 </div>
 
               </div>
+
+              {/* CATALYST CONVERGENCE & EVENT TRACKS */}
+              {report.tracks && report.tracks.length > 0 && (
+                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `2px solid rgba(59,130,246,0.15)`, paddingBottom: 6, marginBottom: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.blue, textTransform: "uppercase" }}>
+                      <Compass size={12} /> Catalyst Convergence & Event Tracks
+                    </div>
+                    {report.is_dher_pattern && (
+                      <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4, background: "rgba(168,85,247,0.12)", color: T.purple, border: `1px solid ${T.purple}` }}>
+                        DHER CONVERGENCE PATTERN
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+                    <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.border}` }}>
+                      <div style={{ fontSize: 8, color: T.muted, textTransform: "uppercase" }}>Convergence Score</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, marginTop: 4, fontFamily: T.mono, color: T.blue }}>
+                        {report.convergence_score != null ? report.convergence_score.toFixed(1) : "N/A"}/10.0
+                      </div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.border}` }}>
+                      <div style={{ fontSize: 8, color: T.muted, textTransform: "uppercase" }}>Independent Tracks</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, marginTop: 4, fontFamily: T.mono, color: T.text }}>
+                        {report.independent_track_count != null ? report.independent_track_count : "0"}
+                      </div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.border}` }}>
+                      <div style={{ fontSize: 8, color: T.muted, textTransform: "uppercase" }}>Unfired (Pending) Tracks</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, marginTop: 4, fontFamily: T.mono, color: T.green }}>
+                        {report.unfired_independent_track_count != null ? report.unfired_independent_track_count : "0"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {report.tracks.map((track, idx) => (
+                      <div key={idx} style={{ padding: 12, background: "rgba(0,0,0,0.1)", borderRadius: 6, border: `1px solid ${T.border}`, display: "flex", flexDirection: "column", gap: 6 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: T.blue, textTransform: "uppercase" }}>
+                            {track.track_type.replace(/_/g, " ")}
+                          </span>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            {track.independence_score !== undefined && (
+                              <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: T.muted }}>
+                                Ind. Wt: {track.independence_score.toFixed(1)}
+                              </span>
+                            )}
+                            <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: track.fired ? "rgba(239, 68, 68, 0.12)" : "rgba(20, 184, 122, 0.12)", color: track.fired ? T.red : T.green }}>
+                              {track.fired ? "FIRED / COMPLETED" : "PENDING / UPCOMING"}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ fontSize: 11, color: T.text, lineHeight: 1.4 }}>
+                          {track.evidence}
+                        </div>
+                        {(track.counterparty || track.event_date) && (
+                          <div style={{ display: "flex", gap: 12, fontSize: 9, color: T.muted }}>
+                            {track.counterparty && (
+                              <span>Counterparty: <strong style={{ color: T.light }}>{track.counterparty}</strong></span>
+                            )}
+                            {track.event_date && (
+                              <span>Target Date: <strong style={{ color: T.light }}>{track.event_date}</strong></span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* CREDIT HEALTH STATUS */}
+              {report.credit_health && (
+                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `2px solid rgba(239, 68, 68, 0.15)`, paddingBottom: 6, marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.red, textTransform: "uppercase" }}>
+                      <AlertCircle size={12} /> Balance Sheet & Credit Health Audit
+                    </div>
+                    {report.credit_health.grade && (
+                      <span style={{
+                        fontSize: 10,
+                        fontWeight: 800,
+                        padding: "2px 8px",
+                        borderRadius: 4,
+                        background: report.credit_health.grade === "A" || report.credit_health.grade === "B"
+                          ? "rgba(20, 184, 122, 0.12)"
+                          : report.credit_health.grade === "C"
+                            ? "rgba(245, 158, 11, 0.12)"
+                            : "rgba(239, 68, 68, 0.12)",
+                        color: report.credit_health.grade === "A" || report.credit_health.grade === "B"
+                          ? T.green
+                          : report.credit_health.grade === "C"
+                            ? T.amber
+                            : T.red,
+                        border: `1px solid ${report.credit_health.grade === "A" || report.credit_health.grade === "B"
+                          ? T.green
+                          : report.credit_health.grade === "C"
+                            ? T.amber
+                            : T.red}`
+                      }}>
+                        GRADE {report.credit_health.grade}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ fontSize: 11, color: T.light }}>
+                      Net Debt / EBITDA Ratio: <strong style={{ color: T.text }}>{report.credit_health.net_debt_ebitda != null ? `${report.credit_health.net_debt_ebitda.toFixed(2)}x` : "N/A"}</strong>
+                    </div>
+                    {report.credit_health.distress_flags && report.credit_health.distress_flags.length > 0 ? (
+                      <div style={{ marginTop: 4 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: T.red, textTransform: "uppercase", marginBottom: 4 }}>Distress Flags Flagged:</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {report.credit_health.distress_flags.map((flag, idx) => (
+                            <span key={idx} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(239, 68, 68, 0.08)", color: T.red, border: `1px solid rgba(239, 68, 68, 0.2)` }}>
+                              {flag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11, color: T.green, display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+                        <CheckCircle2 size={12} /> No solvency or balance sheet distress triggers detected.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* OPTIONS / DERIVATIVES METRICS & ANALYSIS */}
               {report.options_signals && (
