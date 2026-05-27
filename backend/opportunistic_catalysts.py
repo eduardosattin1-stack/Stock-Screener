@@ -46,8 +46,14 @@ LOCAL_GLOBAL_SCAN = r"c:\Users\Bruno\Stock-Screener\frontend\public\latest_globa
 LOCAL_US_SCAN = r"c:\Users\Bruno\Stock-Screener\frontend\public\latest.json"
 DEEP_SCANS_CACHE = r"c:\Users\Bruno\Stock-Screener\backend\deep_scans_cache.json"
 
+_deep_scans_cache_data = None
+
 def _load_deep_scans_cache() -> dict:
+    global _deep_scans_cache_data
     with _cache_lock:
+        if _deep_scans_cache_data is not None:
+            return _deep_scans_cache_data
+
         from alpha_compounder.gcs_io import gcs_read_json, _gcs_token
         # 1. Try reading from GCS first (Cloud Run mode only when token exists)
         if _gcs_token() is not None:
@@ -59,16 +65,21 @@ def _load_deep_scans_cache() -> dict:
                         json.dump(gcs_data, f, indent=2, ensure_ascii=False)
                 except Exception:
                     pass
+                _deep_scans_cache_data = gcs_data
                 return gcs_data
 
         # 2. Fall back to local file if GCS is not available (local mode)
         if os.path.exists(DEEP_SCANS_CACHE):
             try:
                 with open(DEEP_SCANS_CACHE, "r", encoding="utf-8") as f:
-                    return json.load(f)
+                    data = json.load(f)
+                    _deep_scans_cache_data = data
+                    return data
             except Exception as e:
                 log.warning(f"Failed to load deep scans cache: {e}")
-        return {}
+        
+        _deep_scans_cache_data = {}
+        return _deep_scans_cache_data
 
 def _save_deep_scan_to_cache(symbol: str, data: dict, ma_role: dict = None, credit_health: dict = None, fired_catalysts: dict = None, spinoff_regime: dict = None):
     with _cache_lock:
