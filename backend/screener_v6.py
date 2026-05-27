@@ -1952,12 +1952,38 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         latest_inc = inc_sorted[-1]
         
         # 1. Gather fields in reported (local) currency
-        net_income = float(latest_inc.get("netIncome") or 0)
-        ebit = float(latest_inc.get("operatingIncome") or 0)
-        depreciation = float(latest_cf.get("depreciationAndAmortization") or latest_cf.get("depreciation") or 0)
-        capex = abs(float(latest_cf.get("capitalExpenditure") or 0))
-        fcf = float(latest_cf.get("freeCashFlow") or 0)
-        rd_expense = float(latest_inc.get("researchAndDevelopmentExpenses") or 0)
+        # ── STABILIZATION (May 2026): use 3-year averages for volatile inputs ──
+        # Single-year FCF, NI, EBIT can swing 50-100% YoY due to capex cycles,
+        # working capital, or one-off items. Averaging over up to 3 years
+        # dampens noise and prevents MOS from jumping 80+pp between scans.
+        def _avg_field(rows, field, fallback=0.0):
+            """Average a field over the last N rows, skipping zeros/nulls."""
+            vals = [float(r.get(field) or 0) for r in rows]
+            non_zero = [v for v in vals if v != 0]
+            return sum(non_zero) / len(non_zero) if non_zero else fallback
+
+        def _avg_field_abs(rows, field, fallback=0.0):
+            """Average of absolute values (for capex which FMP reports as negative)."""
+            vals = [abs(float(r.get(field) or 0)) for r in rows]
+            non_zero = [v for v in vals if v != 0]
+            return sum(non_zero) / len(non_zero) if non_zero else fallback
+
+        # Use last 3 years of data for smoothing (or fewer if unavailable)
+        recent_inc = inc_sorted[-3:] if len(inc_sorted) >= 3 else inc_sorted
+        recent_cf = cf_sorted[-3:] if len(cf_sorted) >= 3 else cf_sorted
+        recent_bs = bs_sorted[-3:] if len(bs_sorted) >= 3 else bs_sorted
+
+        # Smoothed inputs (3-year averages)
+        net_income = _avg_field(recent_inc, "netIncome")
+        ebit = _avg_field(recent_inc, "operatingIncome")
+        depreciation = _avg_field(recent_cf, "depreciationAndAmortization",
+                                  _avg_field(recent_cf, "depreciation"))
+        capex = _avg_field_abs(recent_cf, "capitalExpenditure")
+        fcf = _avg_field(recent_cf, "freeCashFlow")
+        rd_expense = _avg_field(recent_inc, "researchAndDevelopmentExpenses")
+
+        # Point-in-time balance sheet items (latest year — averaging doesn't
+        # make sense for stock variables like debt and equity)
         total_assets = float(latest_bs.get("totalAssets") or 0)
         total_equity = float(latest_bs.get("totalStockholdersEquity") or 0)
         current_assets = float(latest_bs.get("totalCurrentAssets") or 0)
@@ -1965,15 +1991,15 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         long_term_debt = float(latest_bs.get("longTermDebt") or 0)
         shares = float(latest_inc.get("weightedAverageShsOutDil") or latest_inc.get("weightedAverageShsOut") or 0)
         
-        # Latest annual EPS
+        # Latest annual EPS (point-in-time for Graham formula)
         eps_latest = float(latest_inc.get("epsDiluted") or latest_inc.get("eps") or 0)
         v["eps_latest"] = eps_latest
         
-        # Store raw local inputs for leverage gate
+        # Store raw local inputs for leverage gate (latest year, not averaged)
         net_debt_local = long_term_debt - (current_assets - current_liabilities)
         v["net_debt_local"] = net_debt_local
-        v["ebit_local"] = ebit
-        v["depreciation_local"] = depreciation
+        v["ebit_local"] = float(latest_inc.get("operatingIncome") or 0)
+        v["depreciation_local"] = float(latest_cf.get("depreciationAndAmortization") or latest_cf.get("depreciation") or 0)
         
         # Store converted to price currency
         v["net_debt"] = net_debt_local * fx_to_price
@@ -1999,8 +2025,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         def calc_mos(fv, pr):
             return (fv - pr) / fv if fv > 0 else -1.0
 
-        # ROE
-        roe = net_income / total_equity if total_equity > 0 else 0.0
+        # ROE — use 5-year median when available (much more stable than 1yr)
+        roe_median = v.get("roe_median_5y")
+        roe = roe_median if roe_median is not None else (
+            net_income / total_equity if total_equity > 0 else 0.0
+        )
 
         # 1. DCF-FCFF
         wacc = 0.10
@@ -2069,13 +2098,16 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         v["epv_mos"] = calc_mos(v["epv_value"], price)
 
         # 5. Graham Revised
-        g_graham = max(0.0, min(20.0, eps_growth_3y * 100)) if eps_growth_3y > 0 else 5.0
+        # FIX: negative/zero growth should use g=0 (8.5× P/E), not g=5 (18.5× P/E).
+        # A company with shrinking earnings shouldn't get a premium growth multiple.
+        g_graham = max(0.0, min(20.0, eps_growth_3y * 100)) if eps_growth_3y > 0 else 0.0
         fv_graham_local = eps_latest * (8.5 + 2 * g_graham)
         v["graham_revised"] = fv_graham_local * fx_to_price
         v["graham_revised_mos"] = 1.0 - (price / v["graham_revised"]) if v["graham_revised"] > 0 else -1.0
 
         # 6. IV15 Deep Value
-        g_blend = min(0.40, max(0.02, eps_growth_3y))
+        # Tightened cap from 40% → 20%: a 40% CAGR for 15 years is unrealistic
+        g_blend = min(0.20, max(0.02, eps_growth_3y))
         terminal_mult = min(20.0, max(8.0, g_blend * 100 * 2))
         terminal_fcf = fcf * ((1 + g_blend) ** 15)
         terminal_mcap = terminal_fcf * terminal_mult
@@ -5057,8 +5089,15 @@ def _save_tracking_state(tracking: dict, no_gcs: bool):
             log.warning(f"GCS upload of tracking state failed: {e}")
 
 
-def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebalance_date: str):
+def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
+                                   rebalance_date: str,
+                                   stock_price_map: Optional[dict] = None):
     """Append a rebalance record for each methodology and update YTD return.
+
+    Args:
+        stock_price_map: {symbol: price} map from all scanned stocks (not just picks).
+                         Used for accurate exit price lookup. If None, falls back
+                         to entry_price for exited stocks.
 
     For each methodology:
       1. Record the new portfolio (symbols + prices)
@@ -5108,14 +5147,15 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict, rebal
         exits = []
         for sym, h in prev_holdings.items():
             if sym not in new_syms:
-                # Find exit price and exit metric from the new picks data
+                # FIX (May 2026): Use stock_price_map for exit price lookup.
+                # Previously searched meth_data["picks"] which only contains
+                # the NEW portfolio — exited stocks are by definition not there.
                 exit_price = h.get("entry_price", 0.0)
                 exit_metric = 0.0
-                for p in meth_data.get("picks", []):
-                    if p["symbol"] == sym:
-                        exit_price = p["price"]
-                        exit_metric = p.get("mos", 0.0)
-                        break
+                if stock_price_map and sym in stock_price_map:
+                    exit_price = stock_price_map[sym]
+                # exit_metric is less critical — 0.0 is acceptable for tracking
+                # since the methodology's MOS was already recorded at entry
                 entry_p = h.get("entry_price", exit_price)
                 entry_m = h.get("entry_metric", 0.0)
                 perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
@@ -5385,13 +5425,28 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
 
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     methodology_picks = {}
+
+    # ── Rotation hysteresis (May 2026) ──────────────────────────────────
+    # Without hysteresis, a stock can enter and exit within 2 weeks from
+    # scan-to-scan noise in MOS. Incumbent holdings get a small MOS boost
+    # (HYSTERESIS_BOOST) so a challenger must be meaningfully better to
+    # displace them. This reduces turnover without sacrificing signal.
+    HYSTERESIS_BOOST = 0.05  # 5 percentage points
+
     for key, (mos_field, fv_field) in methodology_fields.items():
+        # Build set of currently-held symbols for this methodology
+        incumbent_syms = set()
+        if key in prev_picks_map:
+            incumbent_syms = set(prev_picks_map[key].keys())
+
         candidates = []
         for s in all_results:
             mos_val = getattr(s, mos_field, -1.0)
             if mos_val is not None and mos_val > -1.0:
                 if passes_leverage_gate(s):
-                    s._temp_mos = mos_val
+                    # Boost incumbent holdings to prevent whipsaw rotation
+                    boost = HYSTERESIS_BOOST if s.symbol in incumbent_syms else 0.0
+                    s._temp_mos = mos_val + boost
                     candidates.append(s)
                     
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
@@ -5511,7 +5566,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         _rollover_tracking_year(tracking, current_year)
 
     if tracking and tracking.get("tracking_year") == current_year:
-        _append_rebalance_to_tracking(tracking, methodology_picks, today_str)
+        # Build stock price map from all_results for accurate exit pricing
+        _stock_price_map = {s.symbol: s.price for s in all_results}
+        _append_rebalance_to_tracking(tracking, methodology_picks, today_str,
+                                      stock_price_map=_stock_price_map)
         # Enrich methodology_picks with tracking metadata
         for key in methodology_picks:
             meth_tracking = tracking.get("methodologies", {}).get(key, {})
