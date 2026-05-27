@@ -131,6 +131,71 @@ def _gcs_read(path: str, default=None):
         log.debug(f"GCS read failed for {path}: {e}")
     return default
 
+def compute_options_confirmation_score(options: dict, ma_role: dict = None) -> float:
+    # default to 5 (flat term structure)
+    term = (options.get("term_structure") or "").lower()
+    skew = options.get("skew_25d")
+    pc_oi = options.get("pc_oi_ratio")
+    
+    is_definitive_merger_target = False
+    if ma_role and isinstance(ma_role, dict):
+        role = (ma_role.get("role") or "").lower()
+        status = (ma_role.get("deal_status") or "").lower()
+        if role == "target" and status == "definitive":
+            is_definitive_merger_target = True
+            
+    score = 5.0
+    
+    if term == "backwardation":
+        is_neg_skew = False
+        if isinstance(skew, (int, float)) and skew < 0.0:
+            is_neg_skew = True
+            
+        is_pc_oi_low = False
+        if isinstance(pc_oi, (int, float)) and pc_oi < 0.5:
+            is_pc_oi_low = True
+            
+        if is_neg_skew and is_pc_oi_low:
+            score = 9.0
+        else:
+            score = 6.5
+            
+    elif term == "flat":
+        score = 4.5
+        
+    elif term == "contango":
+        is_pos_skew = False
+        if isinstance(skew, (int, float)) and skew > 0.03:
+            is_pos_skew = True
+            
+        if is_pos_skew and not is_definitive_merger_target:
+            score = 1.5
+        else:
+            score = 2.5
+            
+    # Cap at 5 for definitive merger targets
+    if is_definitive_merger_target:
+        score = min(score, 5.0)
+        
+    return score
+
+def compute_weighted_loeb(claude_qualitative_score: float,
+                          convergence_score: float,
+                          options_confirmation_score: float) -> float:
+    """
+    Weighted Loeb score:
+      70% convergence (the DHER signal)
+      20% individual catalyst quality (Claude's existing qualitative assessment)
+      10% options market confirmation (backwardation, skew, P/C ratio)
+
+    All inputs normalized to 0-10 scale. Output capped at 10.0.
+    """
+    return min(10.0,
+        0.7 * convergence_score
+        + 0.2 * claude_qualitative_score
+        + 0.1 * options_confirmation_score
+    )
+
 def compute_confidence_adjusted_score(
     symbol: str,
     raw_score: float,
@@ -252,9 +317,63 @@ def compute_confidence_adjusted_score(
             "reason": "; ".join(analyst_reasons) if analyst_reasons else "No significant analyst signal",
         })
 
+    # ── Factor 5: Credit Health (Reconnect Layer 3) ──
+    credit = cached_scan.get("credit_health")
+    if not credit:
+        try:
+            cache = _load_deep_scans_cache()
+            cache_entry = cache.get(symbol.upper(), {})
+            credit = cache_entry.get("credit_health", {})
+        except Exception:
+            credit = {}
+
+    grade = credit.get("grade", "C")
+
+    if grade in ("A", "B"):
+        pass  # no adjustment
+    elif grade == "C":
+        # Disable 52w-low boost — neutralize the +0.8 if it was applied
+        boost_idx = next((i for i, adj in enumerate(adjustments)
+                          if adj['factor'] == '52w_position' and adj['adjustment'] > 0),
+                         None)
+        if boost_idx is not None:
+            adjustments.append({
+                'factor': 'credit_health',
+                'adjustment': -adjustments[boost_idx]['adjustment'],
+                'reason': f"Grade C credit neutralizes 52w-low boost "
+                          f"(net debt/EBITDA {credit.get('net_debt_ebitda', 3.0):.1f}x)"
+            })
+    elif grade == "D":
+        # -1.0 Loeb adjustment
+        adjustments.append({
+            'factor': 'credit_health',
+            'adjustment': -1.0,
+            'reason': f"Grade D credit: {', '.join(credit.get('distress_flags', []))}"
+        })
+        # Also neutralize any 52w-low boost
+        boost_idx = next((i for i, adj in enumerate(adjustments)
+                          if adj['factor'] == '52w_position' and adj['adjustment'] > 0),
+                         None)
+        if boost_idx is not None:
+            adjustments.append({
+                'factor': 'credit_health',
+                'adjustment': -adjustments[boost_idx]['adjustment'],
+                'reason': 'Grade D credit neutralizes 52w-low boost'
+            })
+    elif grade == "F":
+        # Cap final score at 5.0
+        adjustments.append({
+            'factor': 'credit_health',
+            'adjustment': 'cap_at_5.0',
+            'reason': f"Grade F credit-event risk: {', '.join(credit.get('distress_flags', []))}"
+        })
+
     # ── Final: clamp to 0-10 ──
-    total_adj = sum(a["adjustment"] for a in adjustments)
-    adjusted = max(0.0, min(10.0, raw_score + total_adj))
+    total_adj = sum(a["adjustment"] for a in adjustments if isinstance(a["adjustment"], (int, float)))
+    final_score = raw_score + total_adj
+    if any(a["adjustment"] == "cap_at_5.0" for a in adjustments):
+        final_score = min(final_score, 5.0)
+    adjusted = max(0.0, min(10.0, final_score))
 
     return {
         "adjusted_loeb_score": round(adjusted, 2),

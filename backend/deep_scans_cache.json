@@ -36760,5 +36760,125 @@
       },
       "recent_events": []
     }
+  },
+  "AAPL": {
+    "timestamp": "2026-05-27T13:14:24.612847",
+    "data": {
+      "symbol": "AAPL",
+      "company_name": "Apple Inc.",
+      "price": 308.33,
+      "market_cap": 4528552475480,
+      "is_merger_arb": false,
+      "merger_arb_data": null,
+      "catalyst_density_score": 7.4,
+      "upside_downside_ratio": 2.1,
+      "re_rate_status": "partial",
+      "catalyst_nature": "pricing_dislocation",
+      "catalyst_nature_rationale": "The CEO transition announcement (Tim Cook stepping down September 1, 2026; John Ternus ascending) has partially re-rated the stock to all-time highs, but the market has not yet fully priced the strategic optionality that a hardware-first CEO brings: potential reacceleration of product cadence, AI-hardware integration strategy shifts, and the possibility of Ternus pursuing a more aggressive services/hardware unbundling or new product category launch. The pricing dislocation opportunity lies in the gap between the current 'continuity premium' the market is assigning and the optionality value of a genuine strategic reset under a new operator. WWDC 2026 (June) serves as the next discrete alpha-bearing window where Ternus's vision will be articulated publicly for the first time as CEO-designate.",
+      "analysis_summary": "Apple presents a high-conviction event-driven setup anchored by a confirmed Bloom Catalyst 1 (Governance Reset): Tim Cook's announced departure as CEO effective September 1, 2026, with hardware chief John Ternus designated as successor — a transition disclosed on the Q2 FY2026 earnings call (April 30, 2026). The stock has partially re-rated to all-time highs (~$308) on the news, reflecting continuity confidence, but the market has not yet priced the full strategic optionality of a new CEO with a distinct engineering-first philosophy. Pending catalysts within 12–24 months include: (1) WWDC 2026 (June 2026) as Ternus's first major public showcase, (2) the formal CEO handoff on September 1, 2026, and the associated investor day or capital allocation reset, (3) Q3 FY2026 earnings (July 30, 2026) as the first major earnings event with both Cook and Ternus on-call, and (4) iPhone 18 cycle ramp (fall 2026) under Ternus's first full product season as CEO. Services — now generating $30.98B quarterly at 76.7% gross margins — remains a latent SoP dislocation: the market values AAPL as a blended hardware/services multiple, not disaggregating the ~$120B+ annualized high-margin services stream at a SaaS-comparable multiple. The options market is pricing a 9.54% implied move into the July 30 earnings, reflecting genuine uncertainty about Ternus's strategic tone and AI roadmap acceleration. BofA raised its target to $380, implying ~23% upside from current levels. Asymmetry is supported by Apple's $100B buyback authorization and $140.2B trailing operating cash flow providing a durable valuation floor. The primary risks are a Ternus strategic misstep in his inaugural public appearances, tariff/supply chain headwinds in China (Greater China grew 38% YoY in Q1 FY2026), and a broader AI narrative disappointment if Apple Intelligence feature cadence underwhelms at WWDC.",
+      "recommendation": "BUY",
+      "bloom_catalysts": {
+        "catalyst_1": {
+          "title": "Governance Reset",
+          "detected": true,
+          "description": "Tim Cook announced his resignation as CEO effective September 1, 2026, transitioning to Executive Chairman. John Ternus, Apple's SVP of Hardware Engineering for 25 years, is designated as incoming CEO. This is the first CEO succession at Apple since Steve Jobs's death in 2011 and represents the most significant governance event in over a decade. The transition is orderly and pre-planned, with Cook and Ternus co-presenting on the Q2 FY2026 earnings call and a stated multi-month handoff period underway.",
+          "evidence": "Q2 FY2026 Earnings Call (April 30, 2026): Tim Cook stated 'I very much look forward to stepping into the role of Executive Chairman on September 1.' John Ternus confirmed on the same call: 'Stepping into the role of CEO is an incredible honor.' News headline dated May 26, 2026: 'Tim Cook is Out. Will the CEO Change Make or Break Apple's $4.5 Trillion Empire?' confirming the succession is publicly announced and in the market."
+        },
+        "catalyst_2": {
+          "title": "Strategic Process",
+          "detected": true,
+          "description": "While no formal strategic review committee or asset sale has been announced, John Ternus's ascension as a hardware-engineering CEO creates a credible near-term catalyst for a strategic re-prioritization. Analysts and media are already speculating on whether Ternus will accelerate new product categories (AR/VR, Apple Car derivatives, robotics), restructure the services bundle, or pursue a more aggressive AI-hardware integration roadmap. WWDC 2026 in June represents the first structured public forum where Ternus's strategic vision will be articulated. Additionally, Apple's $100B buyback authorization and record cash generation create conditions for an accelerated capital return or M&A announcement. BofA's price target raise to $380 explicitly cites 'agentic AI smartphone' positioning, signaling the Street expects a strategic inflection in the AI roadmap under new leadership.",
+          "evidence": "Q2 FY2026 Earnings Call: Ternus stated 'this is the most exciting time in my 25-year career at Apple to be building products and services. There are so many opportunities before us.' BofA raised price target to $380 (May 26, 2026), citing agentic AI opportunity. Apple approved a $100B stock repurchase authorization (per May 26 news summary). Services hit $30.98B in Q2 FY2026 at 76.7% gross margins, creating strategic optionality for services unbundling or pricing restructuring under Ternus."
+        },
+        "catalyst_3": {
+          "title": "Premium Scenario Activated",
+          "detected": false,
+          "description": "No hostile bid, proxy contest, tender offer, or activist-forced sale scenario is present or credible given Apple's $4.5 trillion market capitalization. Catalyst 3 is not applicable. No activist shareholder has filed a meaningful stake or public campaign targeting board composition or a forced sale.",
+          "evidence": "No evidence of activist filings, 13D/13G disclosures targeting Apple for board seats, or any third-party acquisition interest in the data provided. Apple's scale makes a takeout scenario functionally impossible."
+        }
+      },
+      "loeb_criteria": {
+        "catalyst_density": {
+          "rating": "High",
+          "analysis": "Multiple discrete, time-bounded catalysts are clustered within the next 6–12 months: (1) WWDC 2026 (June 2026) — Ternus's first major public platform; (2) Formal CEO handoff September 1, 2026 — governance milestone triggering potential capital allocation reset communication; (3) Q3 FY2026 earnings July 30, 2026 — first earnings under Cook-Ternus dual presence with an implied 9.54% move priced by options; (4) iPhone 18 fall 2026 launch — first full hardware cycle under Ternus's leadership signaling his product philosophy; (5) Apple Maps search ads launch — incremental services revenue catalyst noted in May 2026 news. The density of named, dateable events within 12 months is high relative to the typical mega-cap event calendar."
+        },
+        "sum_of_parts": {
+          "detected": true,
+          "analysis": "Apple's blended market multiple (~30x trailing earnings) does not disaggregate the Services segment, which generated $120B+ annualized revenue at 76.7% gross margins in Q2 FY2026. If Services were valued as a standalone SaaS/platform business at 10–12x revenue (comparable to Spotify, Adobe, or a platform-subscription hybrid), the Services segment alone would be worth approximately $1.2–$1.44 trillion. The hardware business (iPhone, Mac, iPad, Wearables generating ~$280–300B annualized) at a consumer electronics multiple of 15–18x EBITDA would yield $1.5–$1.8 trillion. Combined SoP suggests $2.7–$3.2 trillion for the hardware stub plus $1.2–$1.44 trillion for services, implying $3.9–$4.64 trillion total — broadly in line with current market cap but with upside if Services re-rates to a pure SaaS multiple of 15x+ (implying $1.8T for Services alone). The SoP dislocation is moderate rather than extreme, but a strategic move by Ternus to separately report or emphasize Services profitability could compress this discount."
+        },
+        "activism_potential": {
+          "rating": "None",
+          "analysis": "Given Apple's $4.5 trillion market cap, world-class corporate governance, and the orderly CEO succession already in progress, there is no credible activist angle. No major activist fund has disclosed a position or campaign. Apple's buyback program ($100B authorization), dividend policy, and shareholder returns are already best-in-class. The company is not capital-misallocating, nor does it have a conglomerate discount exploitable via sum-of-parts activism. Loeb / Third Point would not target Apple as an activism candidate at this scale and governance quality."
+        },
+        "risk_reward": {
+          "ratio": "2.1:1",
+          "analysis": "Upside target: BofA's $380 price target (May 26, 2026) implies ~$71.67 upside from $308.33, or +23.2%. Multiple analysts have raised targets into the $350–$380 range on WWDC and agentic AI momentum. Bull case: $380 within 12 months driven by WWDC AI reveal, Ternus strategic clarity, and iPhone 18 supercycle narrative. Downside support: Apple's $140.2B trailing operating cash flow and $100B buyback create a durable valuation floor. Key technical support near $265–$275 (pre-AI-rally consolidation zone), representing ~$33–$43 downside or 10.7–13.9%. Bear case to $265 = ~$43.33 downside. Ratio: $71.67 upside / $33–$43 downside = approximately 1.7:1 to 2.2:1. Primary risks: Ternus inaugural stumble at WWDC, China tariff escalation (Greater China is ~20% of revenue), Apple Intelligence feature disappointment, or broader tech multiple compression. Credit grade B with net debt/EBITDA of 3.0x is manageable given cash generation; no distress flags. Asymmetry is positive but not extreme given the partial re-rate already in progress."
+        }
+      },
+      "options_signals": {
+        "iv_current": 0.2232,
+        "skew_25d": 0.0206,
+        "term_structure": "contango",
+        "pc_oi_ratio": 0.415,
+        "total_oi": 1527993,
+        "implied_earnings_move_pct": 9.54,
+        "market_sentiment_flag": "Bullish positioning with moderate put skew — call-dominant open interest",
+        "overall_interpretation": "The options market is pricing a 9.54% implied earnings move into the July 30, 2026 earnings event (straddle at $29.40 on a $310 strike), reflecting genuine uncertainty about Ternus's strategic messaging and AI roadmap pace rather than simple beat/miss risk. The put/call OI ratio of 0.415 and put/call volume ratio of 0.484 confirm heavily call-dominant positioning, consistent with the stock's all-time high rally and bullish analyst sentiment; the 25-delta put skew of 0.0206 is modest and represents tail-risk hedging against a Ternus inaugural disappointment or China macro shock rather than directional bearishness, while the contango term structure confirms no near-term volatility spike is imminent beyond the known WWDC and earnings catalysts."
+      },
+      "recent_events": [
+        {
+          "date": "2026-04-30",
+          "type": "earnings_call",
+          "title": "Q2 FY2026 Earnings Call — Tim Cook announces CEO succession; John Ternus named incoming CEO effective September 1, 2026",
+          "link": "https://investor.apple.com/earnings/q2-fy2026"
+        },
+        {
+          "date": "2026-05-26",
+          "type": "analyst_action",
+          "title": "Bank of America raises Apple price target to $380, cites agentic AI smartphone opportunity",
+          "link": "https://www.investing.com/news/analyst-ratings/apple-boa-price-target-380-agentic-ai-20260526"
+        },
+        {
+          "date": "2026-05-26",
+          "type": "news",
+          "title": "Apple stock hits all-time high as analysts see AI-driven breakout ahead of WWDC 2026",
+          "link": "https://finance.yahoo.com/news/apple-stock-hits-all-time-high-ai-breakout-wwdc-20260526"
+        }
+      ]
+    },
+    "ma_role": {
+      "role": "none",
+      "deal_status": "none",
+      "counterparty": null,
+      "announced_premium_pct": null,
+      "days_since_announcement": null,
+      "announcement_date": null,
+      "evidence": "Amazon and Apple are two great stocks to buy now."
+    },
+    "credit_health": {
+      "grade": "B",
+      "net_debt_ebitda": 3.0,
+      "interest_coverage": 999.0,
+      "fcf_to_total_debt": 999.0,
+      "dividend_coverage": Infinity,
+      "tangible_book_trend": "stable",
+      "interest_burden_trend": "stable",
+      "distress_flags": []
+    },
+    "fired_catalysts": {
+      "fired_catalysts": [],
+      "should_force_status": null,
+      "force_status_reason": null
+    },
+    "spinoff_regime": {
+      "is_spinoff_pending": false,
+      "spin_ratio": null,
+      "estimated_spinco_mkt_cap": null,
+      "estimated_remainco_mkt_cap": null,
+      "regime": "none",
+      "expected_spin_date": null,
+      "evidence": ""
+    },
+    "schema_version": "1.1"
   }
 }

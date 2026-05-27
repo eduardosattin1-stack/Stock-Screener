@@ -1901,6 +1901,20 @@ export default function Dashboard(){
 
   const [trackingData, setTrackingData] = useState<any>(null);
 
+  const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/gcs/scans/speculair_baskets.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS fetch failed"); })
+      .then((d) => { if (d) setSpeculairBaskets(d); })
+      .catch(() => {
+        fetch("/speculair_baskets.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d) setSpeculairBaskets(d); })
+          .catch((e) => console.error("Error loading speculair baskets:", e));
+      });
+  }, []);
+
   useEffect(() => {
 
     fetch("/api/gcs/scans/methodology_tracking.json")
@@ -2301,7 +2315,7 @@ export default function Dashboard(){
 
                 <p style={{fontSize:11,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
 
-                  Automated agent allocations managed by the Portfolio Director.
+                  Multi-agent debate pipeline · 4-Agent Barbell Architecture · Apex PM Director
 
                 </p>
 
@@ -2309,127 +2323,199 @@ export default function Dashboard(){
 
               
 
-              {METHODOLOGIES_CONFIG.map(basket => {
+              {!speculairBaskets ? (
+                <div style={{textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)"}}>
+                  Loading Speculair Data...
+                </div>
+              ) : (
+                <>
+                  {/* Debate Stats Funnel */}
+                  {speculairBaskets.debate_stats && (
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                      {[
+                        { label: "Total Picks", value: speculairBaskets.debate_stats.total_picks, color: "var(--text-light)" },
+                        { label: "Unique Symbols", value: speculairBaskets.debate_stats.unique_symbols, color: "var(--text-light)" },
+                        { label: "Cache Hits", value: speculairBaskets.debate_stats.cache_hits, color: "var(--blue)" },
+                        { label: "No Transcript", value: speculairBaskets.debate_stats.no_transcript, color: "var(--amber)" },
+                        { label: "Fully Debated", value: speculairBaskets.debate_stats.fully_debated, color: "var(--blue)" },
+                        { label: "Radar Filtered", value: speculairBaskets.debate_stats.radar_filtered, color: "var(--amber)" },
+                        { label: "Auto-Vetoed", value: speculairBaskets.debate_stats.auto_vetoed, color: "var(--red)" },
+                        { label: "Apex Selected", value: speculairBaskets.debate_stats.apex_selected, color: "var(--green)" },
+                      ].map(s => (
+                        <div key={s.label} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px 16px", minWidth: 100, textAlign: "center" }}>
+                          <div style={{ fontSize: 20, fontWeight: 800, color: s.color, fontFamily: "var(--font-mono)" }}>{s.value ?? "—"}</div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-                const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
-
-                const trackedMeth = trackingData?.methodologies?.[shortKey];
-
-                const activeTickers = trackedMeth?.current_holdings?.length 
-
-                  ? trackedMeth.current_holdings.map((h: any) => h.symbol)
-
-                  : (methodologyPicks[basket.path] || []);
-
-                const ytdReturn = trackedMeth?.ytd_return;
-
-                if (activeTickers.length === 0) return null;
-
-                
-
-                return (
-
-                  <div key={basket.path} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-
+                  {/* Apex Basket */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-
-                      <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>{basket.name}</h3>
-
-                      <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-
-                        {activeTickers.length} symbols
-
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Apex Basket
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--green)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(speculairBaskets.apex_basket || []).length} positions · Conviction 5
                       </span>
-
                     </div>
-
-                    
-
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
-
-                      {activeTickers.map((symbol: string) => {
-
-                        const stock = findStock(symbol);
-
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                      {(speculairBaskets.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
                         const currPrice = stock ? stock.price : 0;
-
-                        const entryPrice = currPrice * 0.95;
-
-                        const perf = currPrice ? ((currPrice / entryPrice) - 1) * 100 : 0;
-
-                        
-
+                        const entryPrice = pick.entry_price || 0;
+                        const perf = entryPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
                         return (
-
-                          <div 
-
-                            key={symbol} 
-
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
-
-                            onClick={(e) => handleTickerClick(e, symbol)}
-
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={(e) => handleTickerClick(e, pick.symbol)}
                             onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-
                             onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-
                           >
-
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-
-                              <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{symbol}</strong>
-
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(234,179,8,0.2)", color: "#eab308", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  ★ {pick.conviction}
+                                </span>
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
+                              </span>
                             </div>
-
-                            <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                                <span>Entry Date:</span>
-
-                                <span>2026-03-30</span>
-
+                                <span>Entry:</span>
+                                <span>${entryPrice.toFixed(2)} ({pick.entry_date})</span>
                               </div>
-
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                                <span>Entry Price:</span>
-
-                                <span>${entryPrice.toFixed(2)}</span>
-
-                              </div>
-
-                              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
                                 <span>Current:</span>
-
                                 <span>${currPrice.toFixed(2)}</span>
-
                               </div>
-
-                              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, paddingTop: 4, borderTop: "1px solid var(--border-subtle)", fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)" }}>
-
-                                <span>Performance:</span>
-
-                                <span>{perf >= 0 ? "+" : ""}{perf.toFixed(2)}%</span>
-
-                              </div>
-
+                              {pick.source_methodologies && pick.source_methodologies.length > 0 && (
+                                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                                  {pick.source_methodologies.map((m: string) => (
+                                    <span key={m} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>
+                                      {m.replace(/_/g, " ")}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-
+                            {pick.consensus_delta && (
+                              <div style={{ marginTop: 6, fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}
+                                   title={`Forcing Function: ${pick.forcing_function || "N/A"}`}>
+                                <span style={{ color: "var(--amber)", fontWeight: 600 }}>Δ </span>
+                                {pick.consensus_delta.slice(0, 120)}{pick.consensus_delta.length > 120 ? "..." : ""}
+                              </div>
+                            )}
                           </div>
-
                         );
-
                       })}
-
+                      {(speculairBaskets.apex_basket || []).length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Apex candidates yet. Run the debate pipeline to populate.</div>
+                      )}
                     </div>
-
                   </div>
 
-                );
+                  {/* Capitulation Watchlist */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Capitulation Watchlist</h3>
+                      <span style={{ fontSize: 10, color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(speculairBaskets.capitulation_watchlist || []).length} setups · Watch & Wait
+                      </span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                      {(speculairBaskets.capitulation_watchlist || []).map((pick: any) => (
+                        <div
+                          key={pick.symbol}
+                          style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
+                          onClick={(e) => handleTickerClick(e, pick.symbol)}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                            <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                            <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                              Conv {pick.conviction}
+                            </span>
+                          </div>
+                          {pick.trigger_event && (
+                            <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}>
+                              <span style={{ color: "var(--orange)", fontWeight: 600 }}>Trigger: </span>
+                              {pick.trigger_event.slice(0, 150)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {(speculairBaskets.capitulation_watchlist || []).length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Capitulation Watchlist candidates.</div>
+                      )}
+                    </div>
+                  </div>
 
-              })}
+                  {/* Director Execution Memo */}
+                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Director Execution Memo</summary>
+                    <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>
+                      {speculairBaskets.director_memo || "No memo available. Run the debate pipeline to generate."}
+                    </pre>
+                  </details>
+
+                  {/* Per-Methodology Baskets */}
+                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Per-Methodology Debate Baskets</summary>
+                    <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 24 }}>
+                      {Object.entries(speculairBaskets.per_methodology_baskets || {}).map(([method, data]: [string, any]) => (
+                        <div key={method}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                            <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                              {method.replace(/_/g, " ").toUpperCase()}
+                            </h4>
+                            <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                              {(data.picks || []).length} picks · {data.total_candidates || 0} scanned · {data.radar_filtered || 0} filtered
+                            </span>
+                          </div>
+                          {data.moderator_memo && (
+                            <p style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8, lineHeight: 1.4 }}>
+                              {data.moderator_memo}
+                            </p>
+                          )}
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
+                            {(data.picks || []).map((pick: any) => (
+                              <div
+                                key={pick.symbol}
+                                style={{ border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer", transition: "background 0.2s" }}
+                                onClick={(e) => handleTickerClick(e, pick.symbol)}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                title={pick.forcing_function || pick.consensus_delta || ""}
+                              >
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                                  <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                                    {pick.verdict} · {pick.conviction}/5
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+
+                  {/* Generated timestamp */}
+                  {speculairBaskets.generated_at && (
+                    <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textAlign: "right" }}>
+                      Generated: {new Date(speculairBaskets.generated_at).toLocaleString()} · Rebalance: {speculairBaskets.rebalance_date || "—"}
+                    </div>
+                  )}
+                </>
+              )}
 
             </div>
 

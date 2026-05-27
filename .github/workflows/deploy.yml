@@ -21,6 +21,7 @@ on:
           - run-fa
           - run-paper-all
           - run-monitor
+          - run-speculair
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -116,6 +117,16 @@ jobs:
             --command="python3" \
             --args="monitor_prices.py"
 
+          # SPECULAIR strategy runner (multi-agent debate pipeline output)
+          gcloud run jobs deploy speculair-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=900s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_speculair.py"
+
           # ALL paper runners orchestrator (Compounder US/Global + Momentum + FA)
           gcloud run jobs deploy paper-all-runner \
             --image="$IMAGE" \
@@ -200,3 +211,8 @@ jobs:
         run: |
           gcloud run jobs execute monitor-prices --region=europe-west1
           echo "Monitor started."
+      - name: Run Speculair Strategy Runner
+        if: inputs.action == 'run-speculair'
+        run: |
+          gcloud run jobs execute speculair-runner --region=europe-west1
+          echo "Speculair runner started."
