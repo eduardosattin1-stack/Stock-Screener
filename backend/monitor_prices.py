@@ -269,6 +269,49 @@ def collect_symbols_from_strategy(history: Optional[dict], kind: str) -> set[str
     return {(p.get("symbol") or "").upper() for p in basket if p.get("symbol")}
 
 
+def collect_symbols_from_cycles() -> set[str]:
+    cycle_symbols = set()
+    try:
+        # 60d regime
+        state_60d = gcs_read("hit_rate_tracking/current_cycle.json")
+        if state_60d:
+            collecting_id = state_60d.get("collecting_cycle_id")
+            resolving_ids = state_60d.get("resolving_cycle_ids", [])
+            all_ids = []
+            if collecting_id:
+                all_ids.append(collecting_id)
+            all_ids.extend(resolving_ids)
+            for cid in all_ids:
+                open_data = gcs_read(f"hit_rate_tracking/cycles/{cid}/open.json")
+                if open_data and isinstance(open_data, dict):
+                    for p in open_data.get("predictions", []):
+                        if p.get("symbol"):
+                            cycle_symbols.add(p["symbol"].upper())
+    except Exception as e:
+        log.warning(f"Error collecting 60d cycle symbols: {e}")
+
+    try:
+        # 30d_p10 regime
+        state_30d = gcs_read("hit_rate_tracking/current_cycle_30d.json")
+        if state_30d:
+            collecting_id = state_30d.get("collecting_cycle_id")
+            resolving_ids = state_30d.get("resolving_cycle_ids", [])
+            all_ids = []
+            if collecting_id:
+                all_ids.append(collecting_id)
+            all_ids.extend(resolving_ids)
+            for cid in all_ids:
+                open_data = gcs_read(f"hit_rate_tracking/cycles_30d/{cid}/open.json")
+                if open_data and isinstance(open_data, dict):
+                    for p in open_data.get("predictions", []):
+                        if p.get("symbol"):
+                            cycle_symbols.add(p["symbol"].upper())
+    except Exception as e:
+        log.warning(f"Error collecting 30d cycle symbols: {e}")
+
+    return cycle_symbols
+
+
 def refresh_portfolio(state: Optional[dict], quotes: dict[str, float],
                       today: str, scan_lookup: dict[str, dict] | None = None) -> Optional[dict]:
     """Per-position fields:
@@ -460,6 +503,7 @@ def run(dry_run: bool = False):
     symbols |= collect_symbols_from_portfolio(portfolio)
     for kind, h in histories.items():
         symbols |= collect_symbols_from_strategy(h, kind)
+    symbols |= collect_symbols_from_cycles()
     symbols.add("SPY")
 
     log.info(f"Unioned symbol universe: {len(symbols)} unique tickers")
