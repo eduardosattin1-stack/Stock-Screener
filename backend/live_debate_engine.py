@@ -681,7 +681,8 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                 continue
             
             stats["total_picks"] += 1
-            if symbol not in seen_symbols:
+            is_new = symbol not in seen_symbols
+            if is_new:
                 stats["unique_symbols"] += 1
                 seen_symbols.add(symbol)
             
@@ -689,7 +690,8 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
             transcript = resolve_transcript(symbol, before_date)
             if not transcript:
                 log.warning(f"  No transcript for {symbol} — skipping")
-                stats["no_transcript"] += 1
+                if is_new:
+                    stats["no_transcript"] += 1
                 debate_results.append({
                     "symbol": symbol,
                     "conviction": 2,
@@ -706,7 +708,8 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
             if cache_key in cache and cache[cache_key].get("bull_thesis") not in (None, "API Timeout/Failure"):
                 log.info(f"  [Cache Hit] {symbol} (transcript {transcript['date']})")
                 debate_results.append(cache[cache_key])
-                stats["cache_hits"] += 1
+                if is_new:
+                    stats["cache_hits"] += 1
                 continue
             
             if dry_run:
@@ -719,6 +722,9 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                     "radar_rationale": "Dry run — skipped",
                     "moderator_conclusion": "Dry run — no LLM calls made",
                 })
+                if is_new:
+                    stats["fully_debated"] += 1
+                    stats["radar_alerted"] += 1
                 continue
             
             # Run debate
@@ -729,14 +735,15 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
             cache[cache_key] = result
             save_debate_cache(cache)
             
-            stats["fully_debated"] += 1
-            if result.get("radar_alert"):
-                stats["radar_alerted"] += 1
-            else:
-                stats["radar_filtered"] += 1
-                stats["radar_filtered_names"].append(
-                    f"{symbol} ({meth_key}): {result.get('radar_rationale', 'N/A')}"
-                )
+            if is_new:
+                stats["fully_debated"] += 1
+                if result.get("radar_alert"):
+                    stats["radar_alerted"] += 1
+                else:
+                    stats["radar_filtered"] += 1
+                    stats["radar_filtered_names"].append(
+                        f"{symbol} ({meth_key}): {result.get('radar_rationale', 'N/A')}"
+                    )
             
             # Rate limiting between full debates
             time.sleep(2.0)
