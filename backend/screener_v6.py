@@ -2079,7 +2079,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         terminal_mult = min(20.0, max(8.0, g_blend * 100 * 2))
         terminal_fcf = fcf * ((1 + g_blend) ** 15)
         terminal_mcap = terminal_fcf * terminal_mult
-        fv_iv15_local = terminal_mcap / (shares * 8.137)
+        if shares > 0:
+            fv_iv15_local = terminal_mcap / (shares * 8.137)
+        else:
+            fv_iv15_local = 0.0
         v["iv15_deep_value"] = fv_iv15_local * fx_to_price
         v["iv15_deep_value_mos"] = 1.0 - (price / v["iv15_deep_value"]) if v["iv15_deep_value"] > 0 else -1.0
 
