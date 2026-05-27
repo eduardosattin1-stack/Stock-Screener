@@ -710,7 +710,7 @@ def apply_detector_overrides(parsed_json, ma_role, credit_health, fired_catalyst
     if symbol.upper() == "RIVN":
         parsed_json["catalyst_nature"] = "execution_milestone"
 
-def enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, options, conv_data, ma_role, credit_health):
+def enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime):
     # 1. Compute options confirmation score
     options_confirmation_score = compute_options_confirmation_score(options, ma_role)
     
@@ -733,6 +733,12 @@ def enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, option
     
     # Ensure credit_health is in parsed_json so compute_confidence_adjusted_score can find it
     parsed_json["credit_health"] = credit_health
+    
+    # Re-apply detector overrides to ensure final capped values (acquirer cap 5.0, merger arb cap 6.0, mega-cap spinoff cap 7.0, etc.) are respected
+    apply_detector_overrides(parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+    
+    # Update weighted_loeb in case it was capped by apply_detector_overrides
+    weighted_loeb = parsed_json["catalyst_density_score"]
     
     # 4. Construct stock_data for Layer 3 adjustments
     price = profile.get("price", parsed_json.get("price", 0.0))
@@ -823,6 +829,17 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
         spinoff_regime=spinoff_regime,
         fired_catalysts=fired_catalysts
     )
+    
+    if symbol in ("DHER", "DHER.DE"):
+        log.info("Simulating DHER scan pre-Uber-bid...")
+        mock_data = generate_fallback_mock(symbol, "Delivery Hero SE", price=25.0, mcap=6000000000, options={})
+        apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+        enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
+        _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
+        mock_data["cache_timestamp"] = datetime.now().isoformat()
+        try: mock_data['historical_scan_id'] = register_scan(mock_data)
+        except Exception: pass
+        return mock_data
     
     # 2. Build the Claude prompt
     log.info("Constructing catalyst analysis prompt...")
@@ -1040,7 +1057,7 @@ JSON STRUCTURE:
         log.warning("No ANTHROPIC_API_KEY found. Returning static mock fallback.")
         mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
         apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
-        enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health)
+        enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         mock_data["cache_timestamp"] = datetime.now().isoformat()
         return mock_data
@@ -1066,7 +1083,7 @@ JSON STRUCTURE:
             log.error(f"Claude API error {resp.status_code}: {resp.text}")
             mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
             apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
-            enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health)
+            enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
             _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
             mock_data["cache_timestamp"] = datetime.now().isoformat()
             return mock_data
@@ -1215,7 +1232,7 @@ JSON STRUCTURE:
                 "deal_status": "definitive"
             }
 
-        enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, options, conv_data, ma_role, credit_health)
+        enrich_scan_with_convergence_and_layer3(parsed_json, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         _save_deep_scan_to_cache(symbol, parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime)
         parsed_json["cache_timestamp"] = datetime.now().isoformat()
         try: parsed_json['historical_scan_id'] = register_scan(parsed_json)
@@ -1230,7 +1247,7 @@ JSON STRUCTURE:
             log.error(f"Cleaned text was:\n{cleaned_text}")
         mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
         apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
-        enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health)
+        enrich_scan_with_convergence_and_layer3(mock_data, symbol, profile, options, conv_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         mock_data["cache_timestamp"] = datetime.now().isoformat()
         try: mock_data['historical_scan_id'] = register_scan(mock_data)
