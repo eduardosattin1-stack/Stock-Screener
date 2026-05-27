@@ -5130,15 +5130,15 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         meth_track = tracking["methodologies"][key]
 
         methodology_metrics = {
-            "dcf_fcff": "dcf_fcff_mos",
-            "earnings_yield_gap": "earnings_yield_gap_mos",
-            "ev_gross_profit": "ev_gross_profit_mos",
-            "rd_capitalized_dcf": "rd_capitalized_dcf_mos",
-            "owner_earnings": "owner_earnings_mos",
-            "epv_greenwald": "epv_mos",
-            "graham_revised": "graham_revised_mos",
-            "acquirers_multiple": "acquirers_multiple_mos",
-            "iv15_deep_value": "iv15_deep_value_mos"
+            "dcf_fcff":            "dcf_fcff_mos",
+            "earnings_yield_gap":  "ey_gap",
+            "ev_gross_profit":     "gp_ta",
+            "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
+            "owner_earnings":      "owner_earnings_mos",
+            "epv":                 "epv_mos",
+            "graham_revised":      "graham_revised_mos",
+            "acquirers_multiple":  "acquirers_multiple",
+            "iv15_deep_value":     "iv15_deep_value_mos"
         }
         metric_field = methodology_metrics.get(key, "mos")
 
