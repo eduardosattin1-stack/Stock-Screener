@@ -222,9 +222,9 @@ REGIME_30D_P10 = Regime(
     p5_cap=0.80,
     p10_cap=0.65,
     p15_cap=0.50,
-    d10_calib=0.223,
-    d1_calib=0.011,
-    kill_threshold=0.10,
+    d10_calib=0.7045,
+    d1_calib=0.2924,
+    kill_threshold=0.35,
     is_60d=False
 )
 
@@ -558,15 +558,15 @@ def _decile(p20: float, is_60d: bool = False, regime: Regime = None) -> int:
         if p20 >= 0.21060: return 2
         return 1
     else:
-        if p20 >= 0.17: return 10
-        if p20 >= 0.07: return 9
-        if p20 >= 0.05: return 8
-        if p20 >= 0.03: return 7
-        if p20 >= 0.02: return 6
-        if p20 >= 0.013: return 5
-        if p20 >= 0.009: return 4
-        if p20 >= 0.006: return 3
-        if p20 >= 0.004: return 2
+        if p20 >= 0.66824: return 10
+        if p20 >= 0.61036: return 9
+        if p20 >= 0.53112: return 8
+        if p20 >= 0.49112: return 7
+        if p20 >= 0.45668: return 6
+        if p20 >= 0.40472: return 5
+        if p20 >= 0.39495: return 4
+        if p20 >= 0.36167: return 3
+        if p20 >= 0.30328: return 2
         return 1
 
 
@@ -579,9 +579,9 @@ def _signal_strength(p20: float, is_60d: bool = False, regime: Regime = None) ->
         if p20 >= 0.25: return "MILD"
         return "WEAK"
     else:
-        if p20 >= 0.15: return "STRONG"
-        if p20 >= 0.08: return "MODERATE"
-        if p20 >= 0.03: return "MILD"
+        if p20 >= 0.61: return "STRONG"
+        if p20 >= 0.49: return "MODERATE"
+        if p20 >= 0.36: return "MILD"
         return "WEAK"
 
 

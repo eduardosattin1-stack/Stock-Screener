@@ -125,7 +125,7 @@ def run_tests():
         {
             "symbol": "AAPL",
             "price": 100.0,
-            "hit_prob": 0.18,  # Decile 10 (>=0.17)
+            "hit_prob": 0.75,  # Decile 10 (>=0.66824 under new 30d thresholds)
             "options_iv_current": 0.30,
             "options_iv_rank": 50,
             "expected_dd_30d": 5.2,
