@@ -984,7 +984,7 @@ export default function CatalystWatch() {
                         <div style={{ fontSize: 9, color: T.light }}>Catalyst Density</div>
                       </div>
                       <div style={{ fontSize: 24, fontWeight: 800, color: T.purple, fontFamily: T.mono }}>
-                        {report.catalyst_density_score?.toFixed(1) || "N/A"}
+                        {(report.adjusted_loeb_score ?? report.catalyst_density_score)?.toFixed(1) || "N/A"}
                       </div>
                     </div>
                     

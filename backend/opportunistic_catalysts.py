@@ -806,13 +806,27 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
     """Perform a deep catalyst scan on a symbol using Loeb & Bloom methodology."""
     symbol = symbol.upper().strip()
     
-    # Check persistent cache first (indefinite cache unless force_refresh is True)
     if not force_refresh:
         cache = _load_deep_scans_cache()
         if symbol in cache:
             entry = cache[symbol]
             log.info(f"Returning cached deep scan for {symbol}")
             cached_data = entry["data"]
+            
+            # Backwards compatibility: ensure older cache entries have adjusted_loeb_score computed
+            if "adjusted_loeb_score" not in cached_data:
+                raw_score = cached_data.get("catalyst_density_score", 0.0)
+                # Apply dynamic adjustments on-the-fly so the detail view matches the candidates list
+                stock_data = {"price": cached_data.get("price", 0.0)}
+                adj_result = compute_confidence_adjusted_score(
+                    symbol=symbol,
+                    raw_score=raw_score,
+                    stock_data=stock_data,
+                    cached_scan=cached_data
+                )
+                cached_data["adjusted_loeb_score"] = adj_result["adjusted_loeb_score"]
+                cached_data["score_adjustments"] = adj_result["score_adjustments"]
+                
             cached_data["cache_timestamp"] = entry.get("timestamp")
             return cached_data
 
