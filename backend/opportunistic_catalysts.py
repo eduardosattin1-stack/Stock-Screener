@@ -8,6 +8,7 @@ from ma_directionality import detect_ma_role
 from credit_health import compute_credit_health
 from catalyst_fired_detector import detect_fired_catalysts
 from spinoff_classifier import classify_spinoff_regime
+from historical_tracker import register_scan
 
 
 sys_path = os.path.dirname(os.path.abspath(__file__))
@@ -992,6 +993,8 @@ JSON STRUCTURE:
 
         _save_deep_scan_to_cache(symbol, parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime)
         parsed_json["cache_timestamp"] = datetime.now().isoformat()
+        try: parsed_json['historical_scan_id'] = register_scan(parsed_json)
+        except Exception: pass
         return parsed_json
         
     except Exception as e:
@@ -1004,6 +1007,8 @@ JSON STRUCTURE:
         apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
         _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         mock_data["cache_timestamp"] = datetime.now().isoformat()
+        try: mock_data['historical_scan_id'] = register_scan(mock_data)
+        except Exception: pass
         return mock_data
 
 def clean_json_string(text: str) -> str:
@@ -1148,6 +1153,8 @@ def generate_fallback_mock(symbol: str, company_name: str, price: float, mcap: i
             }
         ]
     }
+
+run_deep_scan = run_catalyst_scan
 
 if __name__ == "__main__":
     # Test script standalone run
