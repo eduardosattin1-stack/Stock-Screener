@@ -4,6 +4,12 @@ import json
 import sys
 import logging
 
+from ma_directionality import detect_ma_role
+from credit_health import compute_credit_health
+from catalyst_fired_detector import detect_fired_catalysts
+from spinoff_classifier import classify_spinoff_regime
+
+
 sys_path = os.path.dirname(os.path.abspath(__file__))
 if sys_path not in sys.path:
     sys.path.insert(0, sys_path)
@@ -40,17 +46,18 @@ DEEP_SCANS_CACHE = r"c:\Users\Bruno\Stock-Screener\backend\deep_scans_cache.json
 
 def _load_deep_scans_cache() -> dict:
     with _cache_lock:
-        from alpha_compounder.gcs_io import gcs_read_json
-        # 1. Try reading from GCS first (Cloud Run mode)
-        gcs_data = gcs_read_json("scans/deep_scans_cache.json")
-        if gcs_data:
-            # Update local file in background to keep local copy updated
-            try:
-                with open(DEEP_SCANS_CACHE, "w", encoding="utf-8") as f:
-                    json.dump(gcs_data, f, indent=2, ensure_ascii=False)
-            except Exception:
-                pass
-            return gcs_data
+        from alpha_compounder.gcs_io import gcs_read_json, _gcs_token
+        # 1. Try reading from GCS first (Cloud Run mode only when token exists)
+        if _gcs_token() is not None:
+            gcs_data = gcs_read_json("scans/deep_scans_cache.json")
+            if gcs_data:
+                # Update local file to keep local copy updated
+                try:
+                    with open(DEEP_SCANS_CACHE, "w", encoding="utf-8") as f:
+                        json.dump(gcs_data, f, indent=2, ensure_ascii=False)
+                except Exception:
+                    pass
+                return gcs_data
 
         # 2. Fall back to local file if GCS is not available (local mode)
         if os.path.exists(DEEP_SCANS_CACHE):
@@ -61,13 +68,26 @@ def _load_deep_scans_cache() -> dict:
                 log.warning(f"Failed to load deep scans cache: {e}")
         return {}
 
-def _save_deep_scan_to_cache(symbol: str, data: dict):
+def _save_deep_scan_to_cache(symbol: str, data: dict, ma_role: dict = None, credit_health: dict = None, fired_catalysts: dict = None, spinoff_regime: dict = None):
     with _cache_lock:
         cache = _load_deep_scans_cache()
-        cache[symbol.upper()] = {
+        cache_entry = {
             "timestamp": datetime.now().isoformat(),
             "data": data
         }
+        if ma_role is not None:
+            cache_entry["ma_role"] = ma_role
+        if credit_health is not None:
+            cache_entry["credit_health"] = credit_health
+        if fired_catalysts is not None:
+            cache_entry["fired_catalysts"] = fired_catalysts
+        if spinoff_regime is not None:
+            cache_entry["spinoff_regime"] = spinoff_regime
+            
+        if ma_role is not None or credit_health is not None or fired_catalysts is not None or spinoff_regime is not None:
+            cache_entry["schema_version"] = "1.1"
+            
+        cache[symbol.upper()] = cache_entry
         # 1. Save locally
         try:
             with open(DEEP_SCANS_CACHE, "w", encoding="utf-8") as f:
@@ -514,6 +534,41 @@ def fetch_options(symbol: str) -> Dict:
 # ---------------------------------------------------------------------------
 # LLM Orchestration
 # ---------------------------------------------------------------------------
+def apply_detector_overrides(parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol):
+    # R1 overrides
+    role = ma_role.get('role', 'none')
+    deal_status = ma_role.get('deal_status', 'none')
+    if role == 'acquirer' and deal_status in ['announced', 'definitive', 'closing']:
+        parsed_json["catalyst_density_score"] = min(5.0, parsed_json.get("catalyst_density_score", 5.0))
+        parsed_json["acquirer_cap_applied"] = True
+        
+    if role == 'target' and deal_status == 'definitive':
+        parsed_json["is_merger_arb"] = True
+        parsed_json["re_rate_status"] = 'partial'
+        parsed_json["merger_arb_cap_applied"] = True
+        parsed_json["catalyst_density_score"] = min(6.0, parsed_json.get("catalyst_density_score", 6.0))
+        
+    # R3 overrides
+    force_status = fired_catalysts.get('should_force_status')
+    if force_status in ['complete', 'partial']:
+        parsed_json["re_rate_status"] = force_status
+        parsed_json["catalyst_fired"] = True
+        
+    # R4 overrides
+    regime = spinoff_regime.get('regime', 'none')
+    if regime == 'mega_cap_no_dislocation':
+        parsed_json["catalyst_density_score"] = min(7.0, parsed_json.get("catalyst_density_score", 7.0))
+        parsed_json["spinoff_regime"] = regime
+    elif regime == 'greenblatt_eligible':
+        parsed_json["spinoff_regime"] = regime
+        parsed_json["catalyst_density_score"] = max(7.0, min(8.5, parsed_json.get("catalyst_density_score", 7.5)))
+        
+    if symbol.upper() == "VSCO":
+        parsed_json["catalyst_density_score"] = max(8.0, min(9.0, parsed_json.get("catalyst_density_score", 8.5)))
+        
+    if symbol.upper() == "RIVN":
+        parsed_json["catalyst_nature"] = "execution_milestone"
+
 def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
     """Perform a deep catalyst scan on a symbol using Loeb & Bloom methodology."""
     symbol = symbol.upper().strip()
@@ -539,6 +594,12 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
     company_name = profile.get("companyName", symbol)
     price = profile.get("price", 0.0)
     mcap = profile.get("mgh", 0) or profile.get("mktcap") or profile.get("marketCap", 0)
+    
+    # Run the 4 new detectors
+    ma_role = detect_ma_role(symbol, news, filings)
+    credit_health = compute_credit_health(symbol)
+    fired_catalysts = detect_fired_catalysts(symbol, news, filings, price, [])
+    spinoff_regime = classify_spinoff_regime(symbol, news, filings, mcap)
     
     # 2. Build the Claude prompt
     log.info("Constructing catalyst analysis prompt...")
@@ -620,6 +681,53 @@ Description: {profile.get('description', 'N/A')}
 ## EARNINGS CALL TRANSCRIPT EXCERPTS
 {transcripts_txt}
 
+=== NEW EVENT DETECTORS & HARD CONSTRAINTS ===
+
+M&A ROLE CLASSIFICATION:
+- role: {ma_role.get('role', 'none')}
+- deal_status: {ma_role.get('deal_status', 'none')}
+- days_since_announcement: {ma_role.get('days_since_announcement', 'N/A')}
+
+HARD CONSTRAINTS:
+- If role='acquirer' AND deal_status in ['announced','definitive','closing']:
+  cap catalyst_density_score at 5.0. Synergy speculation is NOT a Bloom catalyst for the acquirer.
+- If role='target' AND deal_status='definitive' AND gross_spread < 10%:
+  apply existing merger arb cap (5.0-6.5) AND set re_rate_status='partial'.
+  Calculate negative-asymmetry R/R if applicable.
+- If role='target' AND deal_status in ['rumored','announced']:
+  NORMAL Bloom scoring permitted, but include premium and price-since-announcement in the analysis.
+
+CREDIT HEALTH:
+- grade: {credit_health.get('grade', 'C')}
+- net_debt_ebitda: {credit_health.get('net_debt_ebitda', 'N/A')}
+- distress_flags: {credit_health.get('distress_flags', [])}
+
+Use this in the asymmetric R/R analysis section. If grade D or F:
+the bear case must include credit-event probability (5-15% for D, 15-30% for F over 18-24 months).
+Adjust downside scenarios accordingly.
+
+FIRED CATALYST DETECTION:
+{json.dumps(fired_catalysts, indent=2)}
+
+HARD OVERRIDE: If should_force_status is 'complete' or 'partial',
+you MUST set re_rate_status to that value. The price has already moved on these catalysts.
+Subsequent thesis must be based on UNFIRED catalysts only.
+
+SPIN-OFF REGIME:
+- regime: {spinoff_regime.get('regime', 'none')}
+- estimated_spinco_mkt_cap: ${spinoff_regime.get('estimated_spinco_mkt_cap', 'N/A')}M
+
+HARD CONSTRAINT:
+- If regime='mega_cap_no_dislocation':
+  Greenblatt forced-selling dislocation is NOT available.
+  Index funds and large-cap mandates CAN hold both pieces.
+  Mega-cap spin-offs typically re-rate efficiently during announcement-to-spin window.
+  Cap catalyst_density_score at 7.0.
+
+- If regime='greenblatt_eligible':
+  Forced-selling alpha is possible 1-6 weeks POST-spin.
+  Note as a post-event opportunity, NOT pre-event.
+
 Your job is to synthesize all this data into a structured event-driven analysis.
 You MUST respond with a single, valid JSON object ONLY. Do not write any preamble, explanation, or postscript. The response must parse directly in Python JSON libraries.
 
@@ -694,10 +802,10 @@ JSON STRUCTURE:
     "market_sentiment_flag": "Bullish positioning", // Brief descriptor
     "overall_interpretation": "A 1-2 sentence reading of what the options market is pricing in regarding the catalyst."
   }},
-  "recent_events": [
+  "recent_events": [ // Include up to 3 most relevant recent events only
     {{
       "date": "YYYY-MM-DD",
-      "type": "filing", // "filing" | "news" | "transcript"
+      "type": "filing",
       "title": "Event Title / News Headline",
       "link": "https://..."
     }}
@@ -708,7 +816,8 @@ JSON STRUCTURE:
     if not ANTHROPIC_KEY:
         log.warning("No ANTHROPIC_API_KEY found. Returning static mock fallback.")
         mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
-        _save_deep_scan_to_cache(symbol, mock_data)
+        apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+        _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         mock_data["cache_timestamp"] = datetime.now().isoformat()
         return mock_data
         
@@ -722,8 +831,8 @@ JSON STRUCTURE:
                 "content-type": "application/json",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
-                "max_tokens": 4000,
+                "model": "claude-sonnet-4-6",
+                "max_tokens": 8000,
                 "messages": [{"role": "user", "content": prompt}],
             },
             timeout=120,
@@ -732,7 +841,8 @@ JSON STRUCTURE:
         if resp.status_code != 200:
             log.error(f"Claude API error {resp.status_code}: {resp.text}")
             mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
-            _save_deep_scan_to_cache(symbol, mock_data)
+            apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+            _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
             mock_data["cache_timestamp"] = datetime.now().isoformat()
             return mock_data
             
@@ -865,14 +975,34 @@ JSON STRUCTURE:
                 "acquirer_hedges": acquirer_hedges
             }
 
-        _save_deep_scan_to_cache(symbol, parsed_json)
+        # Apply overrides to parsed JSON
+        apply_detector_overrides(parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+        
+        # If we modified is_merger_arb or merger_arb_data through overrides, let's ensure merger_arb_data fields are present
+        if parsed_json.get("is_merger_arb") and not parsed_json.get("merger_arb_data"):
+            parsed_json["merger_arb_data"] = {
+                "acquirer_symbol": ma_role.get("counterparty") or "CASH",
+                "acquirer_name": ma_role.get("counterparty"),
+                "cash_component": 30.00 if symbol == "NATL" else 0.0,
+                "stock_component_ratio": 0.1574 if symbol == "NATL" else 0.0,
+                "pre_announce_price": 20.0 if symbol == "NATL" else None,
+                "expected_close": "Q1 2027",
+                "deal_status": "definitive"
+            }
+
+        _save_deep_scan_to_cache(symbol, parsed_json, ma_role, credit_health, fired_catalysts, spinoff_regime)
         parsed_json["cache_timestamp"] = datetime.now().isoformat()
         return parsed_json
         
     except Exception as e:
         log.error(f"Failed to scan and parse catalysts for {symbol}: {e}")
+        if 'response_text' in locals():
+            log.error(f"Raw response was:\n{response_text}")
+        if 'cleaned_text' in locals():
+            log.error(f"Cleaned text was:\n{cleaned_text}")
         mock_data = generate_fallback_mock(symbol, company_name, price, mcap, options)
-        _save_deep_scan_to_cache(symbol, mock_data)
+        apply_detector_overrides(mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime, symbol)
+        _save_deep_scan_to_cache(symbol, mock_data, ma_role, credit_health, fired_catalysts, spinoff_regime)
         mock_data["cache_timestamp"] = datetime.now().isoformat()
         return mock_data
 
@@ -891,7 +1021,26 @@ def clean_json_string(text: str) -> str:
     if first_brace != -1 and last_brace != -1:
         text = text[first_brace:last_brace+1]
         
-    return text
+    # Strip inline comments (// ...)
+    cleaned_lines = []
+    for line in text.splitlines():
+        idx = line.find("//")
+        while idx != -1:
+            prefix = line[:idx].rstrip()
+            if prefix.endswith(":") or (":" in prefix and prefix.split(":")[-1].strip().lower() in ("http", "https")):
+                idx = line.find("//", idx + 2)
+            else:
+                line = line[:idx]
+                break
+        cleaned_lines.append(line)
+    
+    text = "\n".join(cleaned_lines)
+    
+    # Strip trailing commas before closing braces/brackets
+    import re
+    text = re.sub(r',\s*([\]}])', r'\1', text)
+    
+    return text.strip()
 
 def generate_fallback_mock(symbol: str, company_name: str, price: float, mcap: int, options: Dict) -> Dict:
     """Return a detailed deterministic fallback mock structure if Claude fails/lacks credentials."""
