@@ -3014,7 +3014,7 @@ def get_transcript_sentiment(sym: str) -> dict:
                 "content-type": "application/json",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 300,
                 "messages": [{"role": "user", "content": f"""Analyze this earnings call transcript for {sym}. Return ONLY a JSON object with:
 - "sentiment": float from -1.0 (very bearish) to 1.0 (very bullish) based on management tone, guidance, and confidence
@@ -5098,13 +5098,13 @@ def _save_tracking_state(tracking: dict, no_gcs: bool):
 
 def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                                    rebalance_date: str,
-                                   stock_price_map: Optional[dict] = None):
+                                   stock_map: Optional[dict] = None):
     """Append a rebalance record for each methodology and update YTD return.
 
     Args:
-        stock_price_map: {symbol: price} map from all scanned stocks (not just picks).
-                         Used for accurate exit price lookup. If None, falls back
-                         to entry_price for exited stocks.
+        stock_map: {symbol: Stock} map from all scanned stocks (not just picks).
+                   Used for accurate exit price and exit metric lookup. If None,
+                   falls back to entry values for exited stocks.
 
     For each methodology:
       1. Record the new portfolio (symbols + prices)
@@ -5128,6 +5128,19 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
             }
 
         meth_track = tracking["methodologies"][key]
+
+        methodology_metrics = {
+            "dcf_fcff": "dcf_fcff_mos",
+            "earnings_yield_gap": "earnings_yield_gap_mos",
+            "ev_gross_profit": "ev_gross_profit_mos",
+            "rd_capitalized_dcf": "rd_capitalized_dcf_mos",
+            "owner_earnings": "owner_earnings_mos",
+            "epv_greenwald": "epv_mos",
+            "graham_revised": "graham_revised_mos",
+            "acquirers_multiple": "acquirers_multiple_mos",
+            "iv15_deep_value": "iv15_deep_value_mos"
+        }
+        metric_field = methodology_metrics.get(key, "mos")
 
         # Skip if this rebalance date was already recorded
         existing_dates = {r["date"] for r in meth_track.get("rebalances", [])}
@@ -5154,15 +5167,12 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         exits = []
         for sym, h in prev_holdings.items():
             if sym not in new_syms:
-                # FIX (May 2026): Use stock_price_map for exit price lookup.
-                # Previously searched meth_data["picks"] which only contains
-                # the NEW portfolio — exited stocks are by definition not there.
+                # FIX (May 2026): Use stock_map for exit price and metric lookup.
                 exit_price = h.get("entry_price", 0.0)
                 exit_metric = 0.0
-                if stock_price_map and sym in stock_price_map:
-                    exit_price = stock_price_map[sym]
-                # exit_metric is less critical — 0.0 is acceptable for tracking
-                # since the methodology's MOS was already recorded at entry
+                if stock_map and sym in stock_map:
+                    exit_price = stock_map[sym].price
+                    exit_metric = getattr(stock_map[sym], metric_field, 0.0)
                 entry_p = h.get("entry_price", exit_price)
                 entry_m = h.get("entry_metric", 0.0)
                 perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
@@ -5575,10 +5585,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         _rollover_tracking_year(tracking, current_year)
 
     if tracking and tracking.get("tracking_year") == current_year:
-        # Build stock price map from all_results for accurate exit pricing
-        _stock_price_map = {s.symbol: s.price for s in all_results}
+        # Build stock map from all_results for accurate exit pricing and metrics
+        _stock_map = {s.symbol: s for s in all_results}
         _append_rebalance_to_tracking(tracking, methodology_picks, today_str,
-                                      stock_price_map=_stock_price_map)
+                                      stock_map=_stock_map)
         # Enrich methodology_picks with tracking metadata
         for key in methodology_picks:
             meth_tracking = tracking.get("methodologies", {}).get(key, {})
