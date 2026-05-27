@@ -245,6 +245,7 @@ We successfully resolved compilation/syntax errors in the frontend app, finalize
   * Successfully executed [monitor_prices.py](file:///c:/Users/Bruno/Stock-Screener/backend/monitor_prices.py) locally on Windows.
   * Correctly fetched EOD option greeks and prices for Friday, May 22, 2026.
   * Repriced all 1,112 open options contracts (532 in `60d` P(20) regime, 580 in `30d` P(10) regime) and wrote the updated states to GCS.
+  * **Fixed Price Monitor Fetch Scope:** Discovered and fixed a bug where `monitor_prices.py` only refreshed quotes for symbols in the portfolios and strategy histories, leaving other active prediction symbols stuck at their entry prices. Implemented `collect_symbols_from_cycles()` to fetch and refresh prices for the entire cycle universe (686+ tickers).
 * **Search & Sorting Deployment:**
   * Deployed the frontend fixes to `main` branch to trigger remote build and Vercel hosting.
   * The prediction list tables now display a dynamic search input that filters by symbol and company name, along with header-click sorting for probability (`P20` / `P10`), `MAX%`, `MIN%`, `DTE`, and `IV`.
