@@ -3618,6 +3618,8 @@ export default function Dashboard(){
 
                     const isTracked = trackedBaskets.includes(basket.path);
 
+                    const specData = speculairBaskets?.per_methodology_baskets?.[shortKey];
+
 
 
                     return (
@@ -3766,17 +3768,28 @@ export default function Dashboard(){
 
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: "var(--text-light)" }}>Speculair</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: specData ? "var(--purple)" : "var(--text-light)", fontWeight: specData ? 700 : 400 }}>Speculair</td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--green)" : "var(--text-muted)", fontWeight: specData ? 700 : 400 }}>
+                                      {specData ? `${(specData.picks || []).length} picks` : "—"}
+                                    </td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData?.radar_filtered ? "var(--amber)" : "var(--text-muted)" }}>
+                                      {specData ? `${specData.radar_filtered || 0} filtered` : "—"}
+                                    </td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--text)" : "var(--text-muted)" }}>
+                                      {specData && (specData.picks || []).length > 0
+                                        ? `${((specData.picks || []).reduce((s: number, p: any) => s + (p.conviction || 0), 0) / (specData.picks || []).length).toFixed(1)} avg`
+                                        : "—"}
+                                    </td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: "var(--text-muted)" }}>—</td>
+                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--text-muted)" : "var(--text-muted)" }}>
+                                      {specData ? (specData.total_candidates || 0) : "—"}
+                                    </td>
 
                                   </tr>
+
 
                                 </tbody>
 
