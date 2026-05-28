@@ -264,16 +264,17 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
     }
+    is_reasoning = (model.startswith("o1-") or model.startswith("o3-") or model.startswith("gpt-5"))
     payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        "max_completion_tokens": 600,
+        "max_completion_tokens": 12000 if is_reasoning else 1500,
         "response_format": {"type": "json_object"}
     }
-    if not (model.startswith("o1-") or model.startswith("o3-") or model.startswith("gpt-5")):
+    if not is_reasoning:
         payload["temperature"] = 0.1
 
     
