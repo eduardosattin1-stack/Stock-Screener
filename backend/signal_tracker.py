@@ -341,6 +341,21 @@ def _gcs_write(path: str, data, content_type: str = "application/json") -> bool:
 # EV calculation — Python mirror of frontend TradierOptionsCard v3
 # ---------------------------------------------------------------------------
 
+def _get_option_price(row) -> float:
+    close = float(row.get('close', 0) or 0)
+    if close > 0:
+        return close
+    bid = float(row.get('bid', 0) or 0)
+    ask = float(row.get('ask', 0) or 0)
+    if bid > 0 and ask > 0:
+        return (bid + ask) / 2.0
+    if bid > 0:
+        return bid
+    if ask > 0:
+        return ask
+    return 0.0
+
+
 def _round_strike(spot: float) -> float:
     """Round to broker-style strike increments: $5 for spot>=$50, $2.5 for
     spot>=$10, else $1. Matches roundStrike() in TradierOptionsCard."""
@@ -367,7 +382,7 @@ def _interpolate_p(move_pct: float, ladder: list) -> float:
     return ladder[-1][1]
 
 
-def calculate_spread_ev(stock: dict, is_60d: bool = False, regime: Regime = None) -> Optional[dict]:
+def calculate_spread_ev(stock: dict, is_60d: bool = False, regime: Regime = None, today_str: Optional[str] = None) -> Optional[dict]:
     """Compute the deployable options-spread EV for a P20-qualified stock.
 
     Mirrors TradierOptionsCard v3 exactly: uses live tradier_spread when
@@ -452,7 +467,11 @@ def calculate_spread_ev(stock: dict, is_60d: bool = False, regime: Regime = None
                 be_pct = ((be_price - spot) / spot) * 100
 
                 # Expiration calculation
-                exp = datetime.now() + timedelta(days=synth_dte)
+                if today_str:
+                    base_dt = datetime.strptime(today_str, "%Y-%m-%d")
+                else:
+                    base_dt = datetime.now()
+                exp = base_dt + timedelta(days=synth_dte)
                 while exp.weekday() != 4:  # Friday
                     exp += timedelta(days=1)
 
@@ -1058,18 +1077,21 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
         log.warning("_enrich_stocks_with_theta_eod: ThetaData SDK not available, skipping EOD enrichment")
         return
 
-    today = datetime.now()
-    today_date = today.date()
+    target_dt = datetime.strptime(today_str, "%Y-%m-%d")
+    _eod_date = target_dt.date()
     
     # Compute the EOD business day
     import datetime as _dt
-    _eod_date = today_date
     while _eod_date.weekday() >= 5:
         _eod_date -= _dt.timedelta(days=1)
-    if today.hour < 21:  # UTC
-        _eod_date -= _dt.timedelta(days=1)
-        while _eod_date.weekday() >= 5:
+        
+    # If today_str is today, check if current time is before EOD release (21:00 UTC)
+    # to roll back to the prior business day.
+    if today_str == datetime.utcnow().strftime("%Y-%m-%d"):
+        if datetime.utcnow().hour < 21:
             _eod_date -= _dt.timedelta(days=1)
+            while _eod_date.weekday() >= 5:
+                _eod_date -= _dt.timedelta(days=1)
 
     symbols = [s["symbol"] for s in stocks if s.get("symbol") and (s.get("price") or 0) >= 1.0]
     if not symbols:
@@ -1175,7 +1197,7 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
             try:
                 date_str = exp.split()[0]
                 d = datetime.strptime(date_str, "%Y-%m-%d").date()
-                dte = (d - today_date).days
+                dte = (d - target_dt.date()).days
                 diff = abs(dte - target_dte)
                 if diff < chosen_diff:
                     chosen_diff = diff
@@ -1226,8 +1248,8 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
         lr = long_row.iloc[0]
         sr = short_row.iloc[0]
 
-        long_close = float(lr.get('close', 0) or 0)
-        short_close = float(sr.get('close', 0) or 0)
+        long_close = _get_option_price(lr)
+        short_close = _get_option_price(sr)
         net_debit = round(long_close - short_close, 2)
         if net_debit <= 0 or net_debit >= (matched_short_k - matched_long_k):
             continue
@@ -1335,7 +1357,7 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             continue
 
         # EV is OPTIONAL.
-        ev_block = calculate_spread_ev(s, regime=regime)
+        ev_block = calculate_spread_ev(s, regime=regime, today_str=today_str)
         if ev_block is None:
             no_ev_count += 1
 
@@ -1929,8 +1951,8 @@ def _reprice_open_contracts_for_regime(regime: Regime, client, today, today_str,
                 sr = short_row.iloc[0]
 
                 # Extract close prices for mark-to-market
-                long_close = float(lr.get('close', 0) or 0)
-                short_close = float(sr.get('close', 0) or 0)
+                long_close = _get_option_price(lr)
+                short_close = _get_option_price(sr)
                 spread_value = round(long_close - short_close, 4)
                 contract_value = round(spread_value * 100, 2)
                 cost_basis = p.get("entry_cost_basis") or 0
