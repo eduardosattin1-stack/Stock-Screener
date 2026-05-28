@@ -284,16 +284,28 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
             rj = r.json()
             if "choices" in rj and rj["choices"]:
                 text = rj["choices"][0]["message"]["content"].strip()
-                if text.startswith("```"):
-                    lines = text.split("\n")
-                    text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
-                return json.loads(text.strip())
+                try:
+                    cleaned_text = text
+                    if cleaned_text.startswith("```"):
+                        lines = cleaned_text.split("\n")
+                        # Remove first line (the ``` or ```json) and last line (```)
+                        first_line = lines[0].strip()
+                        cleaned_text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
+                        # If first line had "json", make sure we don't have stray characters
+                        if first_line.startswith("```json") or cleaned_text.startswith("json"):
+                            if cleaned_text.startswith("json"):
+                                cleaned_text = cleaned_text[4:].strip()
+                    return json.loads(cleaned_text.strip())
+                except Exception as je:
+                    log.error(f"Failed to parse OpenAI JSON response: {je}. Raw response: {text!r}")
+                    time.sleep(3.0)
             else:
                 log.error(f"OpenAI error: {rj}")
                 time.sleep(3.0)
         except Exception as e:
             log.error(f"OpenAI {model} error: {e}")
             time.sleep(3.0 * (attempt + 1))
+
     return None
 
 
