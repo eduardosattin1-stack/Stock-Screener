@@ -3088,6 +3088,136 @@ function ScoringMethodologyCard() {
   );
 }
 
+function SpeculairDebateCard({ debateData }: { debateData: any }) {
+  if (!debateData) return null;
+
+  const type = debateData.type || "methodology_pick";
+  const conviction = debateData.conviction || 3;
+  const sourceMethodologies = debateData.source_methodologies || [];
+
+  // Colors & Header configurations
+  let bannerBg = "rgba(139, 92, 246, 0.05)";
+  let bannerBorder = `2px solid ${T.purple}`;
+  let bannerTitle = "SPECULAIR DEBATE CANDIDATE";
+  let bannerIcon = <Brain size={18} color={T.purple} />;
+  let bannerSub = `Debated Methodology Pick · Conviction Score: ${conviction}/5`;
+
+  if (type === "apex") {
+    bannerBg = "rgba(20, 184, 122, 0.05)";
+    bannerBorder = `2px solid ${T.green}`;
+    bannerTitle = "SPECULAIR APEX ALLOCATION";
+    bannerIcon = <Star size={18} color={T.amber} fill={T.amber} style={{ filter: "drop-shadow(0 0 4px var(--amber))" }} />;
+    bannerSub = `Apex Basket Position · Conviction Score: ${conviction}/5`;
+  } else if (type === "watchlist") {
+    bannerBg = "rgba(249, 115, 22, 0.05)";
+    bannerBorder = `2px solid var(--orange)`;
+    bannerTitle = "CAPITULATION WATCHLIST SETUP";
+    bannerIcon = <AlertTriangle size={18} color="var(--orange)" />;
+    bannerSub = `Watch & Wait Setup · Conviction Score: ${conviction}/5`;
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* ── Status Banner ── */}
+      <Card style={{ background: bannerBg, border: bannerBorder, padding: "20px 24px", borderRadius: 12, boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {bannerIcon}
+          <div>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, letterSpacing: "0.05em", color: T.text, fontFamily: T.mono }}>{bannerTitle}</h3>
+            <p style={{ margin: "4px 0 0", fontSize: 11, color: T.textMuted, fontFamily: T.mono }}>{bannerSub}</p>
+          </div>
+        </div>
+
+        {/* ── Entry price & details if Apex/Watchlist ── */}
+        {(debateData.entry_price > 0 || sourceMethodologies.length > 0) && (
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${T.divider}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+            {debateData.entry_price > 0 && (
+              <div style={{ fontSize: 11, fontFamily: T.mono, color: T.textLight }}>
+                Entry Date: <strong style={{ color: T.text }}>{debateData.entry_date}</strong> · Entry Price: <strong style={{ color: T.green }}>${debateData.entry_price.toFixed(2)}</strong>
+              </div>
+            )}
+            {sourceMethodologies.length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted }}>Methodologies:</span>
+                {sourceMethodologies.map((m: string) => (
+                  <span key={m} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(59, 130, 246, 0.12)", color: T.blue, fontFamily: T.mono, border: `1px solid rgba(59, 130, 246, 0.2)` }}>
+                    {m.replace(/_/g, " ").toUpperCase()}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </Card>
+
+      {/* ── Expectations Arbitrage & Forcing Function ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        {/* Consensus Delta */}
+        <Card style={{ flex: 1, minWidth: 280, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.amber, textTransform: "uppercase", marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
+              <TrendingDown size={12} /> Expectations Arbitrage (Consensus Delta)
+            </div>
+            <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
+              {debateData.consensus_delta || "No consensus delta recorded."}
+            </p>
+          </div>
+        </Card>
+
+        {/* Forcing Function */}
+        <Card style={{ flex: 1, minWidth: 280, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
+              <Zap size={12} /> TURNAROUND FORCING FUNCTION (CATALYST)
+            </div>
+            <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
+              {debateData.forcing_function || "No imminent catalyst recorded."}
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      {/* ── Watchlist Capitulation Trigger / Valley of Death ── */}
+      {(debateData.trigger_event || debateData.valley_of_death) && (
+        <Card style={{ background: "rgba(239, 68, 68, 0.02)", border: `1px solid rgba(239, 68, 68, 0.15)` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.red, textTransform: "uppercase", marginBottom: 8 }}>
+            <AlertTriangle size={12} /> Temporal Risk (Valley of Death / Capitulation Trigger)
+          </div>
+          <p style={{ fontSize: 12, color: T.textLight, lineHeight: 1.6, fontFamily: T.sans, margin: 0 }}>
+            {debateData.trigger_event || debateData.valley_of_death}
+          </p>
+        </Card>
+      )}
+
+      {/* ── Multi-Agent Barbell Debate ── */}
+      <Card style={{ padding: "20px 24px" }}>
+        <SH title="4-Agent Barbell Debate Thesis" icon={<Activity size={12} />} sub="Simulated Bull & Bear Scenario Mapping" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 16 }}>
+          {/* Bull Thesis */}
+          <div style={{ background: "rgba(20, 184, 122, 0.02)", border: `1px solid rgba(20, 184, 122, 0.15)`, padding: 16, borderRadius: 8 }}>
+            <h4 style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, fontFamily: T.mono, color: T.green, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Bull Case Thesis
+            </h4>
+            <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
+              {debateData.bull_thesis || "No bull thesis recorded."}
+            </p>
+          </div>
+
+          {/* Bear Thesis */}
+          <div style={{ background: "rgba(239, 68, 68, 0.02)", border: `1px solid rgba(239, 68, 68, 0.15)`, padding: 16, borderRadius: 8 }}>
+            <h4 style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, fontFamily: T.mono, color: T.red, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Bear Case Thesis
+            </h4>
+            <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
+              {debateData.bear_thesis || "No bear thesis recorded."}
+            </p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 function StockStoryCard({s, incomes, ratios}:{s:StockData, incomes?:IncomeRow[], ratios?:RatioYear[]}){
   type StoryData = {
     narrative:string,
@@ -4457,8 +4587,73 @@ export default function StockDetail(){
   const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
   const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
+  const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(`${GCS_SCANS}/speculair_baskets.json`)
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS fetch failed"); })
+      .then((d) => { if (d) setSpeculairBaskets(d); })
+      .catch(() => {
+        fetch("/speculair_baskets.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d) setSpeculairBaskets(d); })
+          .catch((e) => console.error("Error loading speculair baskets:", e));
+      });
+  }, [symbol]);
+
+  const debateData = useMemo(() => {
+    if (!speculairBaskets || !symbol) return null;
+    const sym = symbol.toUpperCase();
+    
+    // 1. Check apex_basket
+    const apexItem = (speculairBaskets.apex_basket || []).find(
+      (p: any) => p.symbol?.toUpperCase() === sym
+    );
+    if (apexItem) {
+      return { ...apexItem, type: "apex" };
+    }
+
+    // 2. Check capitulation_watchlist
+    const wlItem = (speculairBaskets.capitulation_watchlist || []).find(
+      (p: any) => p.symbol?.toUpperCase() === sym
+    );
+    if (wlItem) {
+      return { ...wlItem, type: "watchlist" };
+    }
+
+    // 3. Check per_methodology_baskets
+    const methBaskets = speculairBaskets.per_methodology_baskets || {};
+    let foundPick: any = null;
+    const selectedMethodologies: string[] = [];
+    
+    Object.entries(methBaskets).forEach(([methKey, methData]: [string, any]) => {
+      const p = (methData.picks || []).find(
+        (x: any) => x.symbol?.toUpperCase() === sym
+      );
+      if (p) {
+        selectedMethodologies.push(methKey);
+        if (!foundPick) {
+          foundPick = { ...p };
+        } else {
+          // Merge
+          foundPick.bull_thesis = foundPick.bull_thesis || p.bull_thesis;
+          foundPick.bear_thesis = foundPick.bear_thesis || p.bear_thesis;
+          foundPick.forcing_function = foundPick.forcing_function || p.forcing_function;
+          foundPick.consensus_delta = foundPick.consensus_delta || p.consensus_delta;
+        }
+      }
+    });
+
+    if (foundPick) {
+      return { ...foundPick, type: "methodology_pick", source_methodologies: selectedMethodologies };
+    }
+
+    return null;
+  }, [speculairBaskets, symbol]);
+
+  const hasDebate = !!debateData;
 
   useEffect(()=>{
     if(!symbol)return;
@@ -4668,7 +4863,10 @@ export default function StockDetail(){
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
-        {(["overview","story","catalyst","transcript","track","compare","chart","methodology"] as const).map(tab=>(
+        {(hasDebate
+          ? (["overview","story","catalyst","transcript","track","compare","chart","debate","methodology"] as const)
+          : (["overview","story","catalyst","transcript","track","compare","chart","methodology"] as const)
+        ).map((tab) => (
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
               padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
@@ -4677,7 +4875,15 @@ export default function StockDetail(){
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
               marginBottom:-1,
             }}>
-            {tab==="overview"?"Overview":tab==="story"?"Investor Personas":tab==="catalyst"?"Catalyst Watch":tab==="transcript"?"Transcript":tab==="track"?"Track Record":tab==="compare"?"Compare":tab==="chart"?"Chart":"Scoring Methodology"}
+            {tab==="overview"?"Overview"
+             :tab==="story"?"Investor Personas"
+             :tab==="catalyst"?"Catalyst Watch"
+             :tab==="transcript"?"Transcript"
+             :tab==="track"?"Track Record"
+             :tab==="compare"?"Compare"
+             :tab==="chart"?"Chart"
+             :tab==="debate"?"Speculair Debate"
+             :"Scoring Methodology"}
           </button>
         ))}
       </div>
@@ -4692,6 +4898,8 @@ export default function StockDetail(){
         </div>
       ) : activeTab==="catalyst" ? (
         <CatalystTabContent symbol={s.symbol} />
+      ) : activeTab==="debate" ? (
+        <SpeculairDebateCard debateData={debateData} />
       ) : activeTab==="methodology" ? (
         <ScoringMethodologyCard />
       ) : activeTab==="transcript" ? (

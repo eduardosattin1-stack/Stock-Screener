@@ -181,22 +181,57 @@ def _fetch_from_fmp(symbol: str, before_date: str = None) -> Optional[dict]:
 
 # ── Debate Cache ─────────────────────────────────────────────────────────
 def load_debate_cache() -> dict:
+    # 1. Try local first (fast path)
     if DEBATE_CACHE_FILE.exists():
         try:
             with open(DEBATE_CACHE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                cache = json.load(f)
+            if cache:
+                log.info(f"Loaded debate cache from local ({len(cache)} entries)")
+                return cache
         except Exception as e:
-            log.error(f"Error reading debate cache: {e}")
+            log.error(f"Error reading local debate cache: {e}")
+    
+    # 2. Fallback to GCS (Cloud Run cold start recovery)
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_download
+        gcs_cache = gcs_download("scans/debate_cache.json")
+        if gcs_cache and isinstance(gcs_cache, dict):
+            log.info(f"Loaded debate cache from GCS ({len(gcs_cache)} entries)")
+            # Write to local for subsequent fast reads
+            try:
+                tmp = DEBATE_CACHE_FILE.with_suffix(".json.tmp")
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(gcs_cache, f, indent=2)
+                tmp.replace(DEBATE_CACHE_FILE)
+            except Exception as le:
+                log.error(f"Error saving cached GCS to local debate cache: {le}")
+            return gcs_cache
+    except Exception as e:
+        log.debug(f"GCS debate cache download failed: {e}")
+    
+    log.info("No debate cache found — starting fresh")
     return {}
 
 def save_debate_cache(cache: dict):
+    # Local write (atomic)
     try:
         tmp = DEBATE_CACHE_FILE.with_suffix(".json.tmp")
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(cache, f, indent=2)
         tmp.replace(DEBATE_CACHE_FILE)
     except Exception as e:
-        log.error(f"Error saving debate cache: {e}")
+        log.error(f"Error saving local debate cache: {e}")
+    
+    # GCS write on every save (user request: every debate is stored in GCS)
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_upload
+        gcs_upload("scans/debate_cache.json", cache)
+        log.info(f"Synced debate cache to GCS ({len(cache)} entries)")
+    except Exception as e:
+        log.debug(f"GCS debate cache upload failed: {e}")
 
 
 # ── LLM Calling Helpers ─────────────────────────────────────────────────
@@ -318,6 +353,39 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
             time.sleep(3.0 * (attempt + 1))
 
     return None
+
+
+def _openai_health_check() -> bool:
+    """Quick connectivity/auth check before the main debate loop.
+    Sends a minimal prompt to gpt-5.5 to verify the API key works.
+    Returns True if healthy, False otherwise.
+    """
+    api_key = get_key("OPENAI_API_KEY")
+    if not api_key:
+        log.error("OPENAI_API_KEY not set — OpenAI agents will fail")
+        return False
+    try:
+        r = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {api_key}"},
+            json={
+                "model": "gpt-5.5",
+                "messages": [{"role": "user", "content": "Reply with the single word: OK"}],
+                "max_completion_tokens": 5,
+            },
+            timeout=15,
+        )
+        rj = r.json()
+        if "choices" in rj:
+            log.info("OpenAI health check: OK")
+            return True
+        err = rj.get("error", {}).get("message", str(rj))
+        log.error(f"OpenAI health check FAILED: {err}")
+        return False
+    except Exception as e:
+        log.error(f"OpenAI health check FAILED: {e}")
+        return False
 
 
 # ── Agent System Prompts ─────────────────────────────────────────────────
@@ -796,6 +864,12 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
     log.info("SPECULAIR DEBATE PIPELINE — STARTING")
     log.info("=" * 70)
     
+    # Pre-flight health checks
+    openai_ok = _openai_health_check()
+    if not openai_ok:
+        log.warning("⚠ OpenAI health check failed — Architect/Moderator agents will fail. "
+                    "Pipeline will continue but debate quality will be degraded.")
+    
     # 1. Load methodology picks from GCS (primary) or local (fallback)
     picks_data = _load_methodology_picks()
     if not picks_data:
@@ -809,6 +883,35 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
     tier1 = run_tier1(picks_data, before_date=before_date, dry_run=dry_run)
     tier1_baskets = tier1["baskets"]
     tier1_stats = tier1["stats"]
+    
+    # Persist debate cache to GCS after all debates complete
+    save_debate_cache(tier1.get("cache", {}))
+    
+    # ── Empty thesis detection ─────────────────────────────────────────
+    all_picks_across_baskets = []
+    for basket in tier1_baskets.values():
+        all_picks_across_baskets.extend(basket.get("picks", []))
+    
+    empty_thesis_count = sum(
+        1 for p in all_picks_across_baskets
+        if not p.get("bull_thesis") and not p.get("bear_thesis")
+    )
+    total_picks = len(all_picks_across_baskets)
+    
+    if total_picks > 0 and empty_thesis_count == total_picks:
+        log.error(
+            f"🚨 ALERT: ALL {total_picks} picks have empty theses! "
+            f"This indicates a systemic LLM failure (likely OpenAI API). "
+            f"Output will be written but quality is severely degraded."
+        )
+        # Tag the output so downstream consumers (frontend/email) can detect this
+        tier1_stats["_empty_thesis_alert"] = True
+        tier1_stats["_empty_thesis_count"] = empty_thesis_count
+    elif empty_thesis_count > 0:
+        pct = empty_thesis_count / total_picks * 100
+        log.warning(
+            f"⚠ {empty_thesis_count}/{total_picks} picks ({pct:.0f}%) have empty theses"
+        )
     
     log.info(f"\n{'='*60}")
     log.info(f"TIER 1 COMPLETE — {len(tier1_baskets)} methodology baskets")
@@ -848,6 +951,8 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
             "radar_filtered_names": tier1_stats["radar_filtered_names"],
             "auto_vetoed": director_result.get("auto_vetoed", 0),
             "apex_selected": len(director_result.get("apex_basket", [])),
+            "empty_thesis_alert": tier1_stats.get("_empty_thesis_alert", False),
+            "empty_thesis_count": tier1_stats.get("_empty_thesis_count", 0),
         }
     }
     

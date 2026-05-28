@@ -228,7 +228,7 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
         "anthropic-version": "2023-06-01",
     }
     payload = {
-        "model": "claude-opus-4-7-20250219",
+        "model": "claude-opus-4-7",
         "max_tokens": 4096,
         "temperature": 0.1,
         "system": DIRECTOR_SYSTEM_PROMPT,
@@ -247,12 +247,13 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
             rj = r.json()
             if rj.get("type") == "error":
                 err_msg = rj.get("error", {}).get("message", str(rj))
+                err_type = rj.get("error", {}).get("type", "unknown")
                 if "rate" in err_msg.lower() or "overloaded" in err_msg.lower():
                     sleep = 5.0 * (2 ** attempt) + random.uniform(0, 2)
                     log.warning(f"Director rate limited (attempt {attempt+1}), sleeping {sleep:.1f}s")
                     time.sleep(sleep)
                     continue
-                log.error(f"Director API error: {err_msg}")
+                log.error(f"Director API error (type={err_type}): {err_msg}")
                 time.sleep(3.0)
                 continue
             
