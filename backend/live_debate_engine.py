@@ -236,7 +236,14 @@ def query_gemini(model_name: str, system_prompt: str, user_prompt: str,
                 if text.startswith("```"):
                     lines = text.split("\n")
                     text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
-                return json.loads(text.strip())
+                    first_line = lines[0].strip()
+                    if first_line.startswith("```json") or text.startswith("json"):
+                        if text.startswith("json"):
+                            text = text[4:].strip()
+                res = json.loads(text.strip())
+                if isinstance(res, list) and res:
+                    res = res[0]
+                return res
             else:
                 log.error(f"Gemini API REST error: {r.status_code} - {r.text}")
                 time.sleep(3.0)
@@ -296,7 +303,10 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
                         if first_line.startswith("```json") or cleaned_text.startswith("json"):
                             if cleaned_text.startswith("json"):
                                 cleaned_text = cleaned_text[4:].strip()
-                    return json.loads(cleaned_text.strip())
+                    res = json.loads(cleaned_text.strip())
+                    if isinstance(res, list) and res:
+                        res = res[0]
+                    return res
                 except Exception as je:
                     log.error(f"Failed to parse OpenAI JSON response: {je}. Raw response: {text!r}")
                     time.sleep(3.0)
