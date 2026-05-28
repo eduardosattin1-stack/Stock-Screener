@@ -137,42 +137,46 @@ def _fetch_from_fmp(symbol: str, before_date: str = None) -> Optional[dict]:
         return None
     
     try:
+        now = datetime.now()
+        year = now.year
         url = f"https://financialmodelingprep.com/stable/earning-call-transcript"
-        r = requests.get(url, params={"symbol": symbol, "limit": 4, "apikey": fmp_key}, timeout=20)
-        if r.status_code != 200:
-            log.warning(f"FMP transcript fetch for {symbol}: HTTP {r.status_code}")
-            return None
         
-        data = r.json()
-        if not isinstance(data, list) or not data:
-            return None
-        
-        # Find latest transcript (optionally before_date)
-        for entry in data:
-            t_date = entry.get("date", "")
-            t_content = entry.get("content", "")
-            if t_date and t_content and len(t_content) > 100:
-                if before_date is None or t_date[:10] <= before_date:
-                    # Cache it
-                    quarter = entry.get("quarter", "")
-                    year = entry.get("year", "")
-                    cache_name = f"{symbol}_{year}Q{quarter}.json"
-                    cache_path = TRANSCRIPT_CACHE_DIR / cache_name
-                    if not cache_path.exists():
-                        TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                        with open(cache_path, "w", encoding="utf-8") as fh:
-                            json.dump({"payload": [entry]}, fh)
-                    
-                    return {
-                        "date": t_date[:10],
-                        "content": t_content,
-                        "filename": cache_name,
-                        "source": "fmp_api"
-                    }
+        # Try current year and previous year quarters
+        for q in [4, 3, 2, 1]:
+            for y in [year, year - 1]:
+                r = requests.get(url, params={"symbol": symbol, "year": y, "quarter": q, "apikey": fmp_key}, timeout=20)
+                if r.status_code != 200:
+                    continue
+                data = r.json()
+                if not isinstance(data, list) or not data:
+                    continue
+                
+                entry = data[0]
+                t_date = entry.get("date", "")
+                t_content = entry.get("content", "")
+                if t_date and t_content and len(t_content) > 100:
+                    if before_date is None or t_date[:10] <= before_date:
+                        # Cache it
+                        quarter = entry.get("quarter", "")
+                        year_val = entry.get("year", "")
+                        cache_name = f"{symbol}_{year_val}Q{quarter}.json"
+                        cache_path = TRANSCRIPT_CACHE_DIR / cache_name
+                        if not cache_path.exists():
+                            TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+                            with open(cache_path, "w", encoding="utf-8") as fh:
+                                json.dump({"payload": [entry]}, fh)
+                        
+                        return {
+                            "date": t_date[:10],
+                            "content": t_content,
+                            "filename": cache_name,
+                            "source": "fmp_api"
+                        }
         return None
     except Exception as e:
         log.warning(f"FMP transcript fetch for {symbol} failed: {e}")
         return None
+
 
 
 # ── Debate Cache ─────────────────────────────────────────────────────────
