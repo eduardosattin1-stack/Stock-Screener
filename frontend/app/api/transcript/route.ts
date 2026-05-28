@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 const CLOUD_RUN = "https://stock-screener-606056076947.europe-west1.run.app";
 
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(`${CLOUD_RUN}/transcript?symbol=${symbol}`, {
-      signal: AbortSignal.timeout(55000),
+      signal: AbortSignal.timeout(295000),
     });
     const text = await res.text();
     try {
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     }
   } catch (e: any) {
     if (e.name === "TimeoutError" || e.name === "AbortError") {
-      return NextResponse.json({ error: "Transcript analysis timed out (55s). Vercel Pro allows 60s, Hobby caps at 10s." }, { status: 504 });
+      return NextResponse.json({ error: "Transcript analysis timed out (295s). Vercel Pro allows 300s, Hobby caps at 10s." }, { status: 504 });
     }
     return NextResponse.json({ error: e.message }, { status: 502 });
   }
