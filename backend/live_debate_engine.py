@@ -198,52 +198,44 @@ def save_debate_cache(cache: dict):
 # ── LLM Calling Helpers ─────────────────────────────────────────────────
 def query_gemini(model_name: str, system_prompt: str, user_prompt: str,
                  response_schema=None, max_attempts: int = 4) -> Optional[dict]:
-    """Call Gemini API with structured JSON output."""
+    """Call Gemini API via REST with structured JSON output."""
     api_key = get_key("GEMINI_API_KEY") or get_key("GOOGLE_API_KEY")
     if not api_key:
         log.error("GEMINI_API_KEY not found")
         return None
     
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-    except ImportError:
-        log.error("google-generativeai not installed")
-        return None
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
     
-    from google.generativeai.types import HarmCategory, HarmBlockThreshold
-    safety = {
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    payload = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": user_prompt}]
+            }
+        ],
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "generationConfig": {
+            "temperature": 0.1,
+            "responseMimeType": "application/json"
+        }
     }
-    
-    gen_config = {"temperature": 0.1, "response_mime_type": "application/json"}
-    if response_schema:
-        gen_config["response_schema"] = response_schema
     
     for attempt in range(max_attempts):
         try:
-            model = genai.GenerativeModel(
-                model_name=f"models/{model_name}",
-                system_instruction=system_prompt,
-                safety_settings=safety
-            )
-            response = model.generate_content(user_prompt, generation_config=gen_config)
-            try:
-                text = response.text.strip()
-            except Exception:
-                if response.candidates and response.candidates[0].content.parts:
-                    text = response.candidates[0].content.parts[0].text.strip()
-                else:
-                    text = "{}"
-            
-            if text.startswith("```"):
-                lines = text.split("\n")
-                text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
-            
-            return json.loads(text.strip())
+            r = requests.post(url, headers=headers, json=payload, timeout=60)
+            if r.status_code == 200:
+                rj = r.json()
+                text = rj["candidates"][0]["content"]["parts"][0]["text"].strip()
+                if text.startswith("```"):
+                    lines = text.split("\n")
+                    text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
+                return json.loads(text.strip())
+            else:
+                log.error(f"Gemini API REST error: {r.status_code} - {r.text}")
+                time.sleep(3.0)
         except Exception as e:
             err = str(e).lower()
             if "429" in err or "rate" in err or "quota" in err or "overloaded" in err:
@@ -251,7 +243,7 @@ def query_gemini(model_name: str, system_prompt: str, user_prompt: str,
                 log.warning(f"Gemini rate limited (attempt {attempt+1}), sleeping {sleep:.1f}s")
                 time.sleep(sleep)
             else:
-                log.error(f"Gemini {model_name} error: {e}")
+                log.error(f"Gemini {model_name} REST error: {e}")
                 time.sleep(3.0)
     return None
 
