@@ -271,9 +271,11 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
             {"role": "user", "content": user_prompt}
         ],
         "max_completion_tokens": 600,
-        "temperature": 0.1,
         "response_format": {"type": "json_object"}
     }
+    if not (model.startswith("o1-") or model.startswith("o3-") or model.startswith("gpt-5")):
+        payload["temperature"] = 0.1
+
     
     for attempt in range(max_attempts):
         try:
