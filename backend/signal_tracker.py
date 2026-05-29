@@ -685,17 +685,207 @@ def _attempt_archive_resolving_cycles(state: dict, today_str: str, regime: Regim
         summary = _compute_cycle_summary(cycle_id, today_str, regime)
         if _gcs_write(f"{regime.cycles_prefix}/{cycle_id}/archived.json", summary):
             state["archived_cycle_ids"].append(cycle_id)
+            stock_n = summary["by_method"]["stock"].get("n", 0)
+            call_n = summary["by_method"]["long_call"].get("n", 0)
+            stock_hr = summary["by_method"]["stock"].get("barrier_hit_rate", 0)
+            call_hr = summary["by_method"]["long_call"].get("barrier_hit_rate", 0)
+            d10_hr = summary["calibration"].get("d10_hit_rate", 0)
             log.info(f"  Cycle {cycle_id} ({regime.name}) → ARCHIVED "
-                     f"(n={summary['total_predictions']}, "
-                     f"hit_rate={summary['hit_rate']:.1%})")
+                     f"(picks={summary['n_picks']}, "
+                     f"stock hit={stock_hr:.1%} n={stock_n}, "
+                     f"call hit={call_hr:.1%} n={call_n}, "
+                     f"D10={d10_hr:.1%})")
         else:
             log.warning(f"  Cycle {cycle_id} ({regime.name}) archive write failed; will retry")
     state["resolving_cycle_ids"] = still_resolving
     return state
 
 
+UNDERPOWERED_N = 20  # n < this in a single method × cycle → flag as underpowered
+
+
+def _empty_method_stats() -> dict:
+    return {
+        "n": 0, "barrier_hit_count": 0, "stopped_count": 0, "terminal_count": 0,
+        "barrier_hit_rate": 0.0, "winning_trade_rate": None,
+        "mean_realized_return_pct": 0.0, "median_realized_return_pct": 0.0,
+        "tail_p5_return_pct": 0.0, "tail_p95_return_pct": 0.0,
+        "mean_max_runup_pct": 0.0, "mean_max_drawdown_pct": 0.0,
+        "worst_drawdown_pct": 0.0, "best_runup_pct": 0.0,
+        "total_cost_basis": 0.0, "total_realized_pnl_dollars": 0.0,
+        "portfolio_return_pct": None,
+        "underpowered": True,
+        "by_decile": {}, "by_signal_strength": {},
+    }
+
+
+def _empty_calibration(regime: Regime) -> dict:
+    base_odds = regime.d10_calib / regime.d1_calib if regime.d1_calib > 0 else 20.0
+    return {
+        "d10_hit_rate": 0.0, "d10_n": 0, "d1_hit_rate": 0.0, "d1_n": 0,
+        "d10_baseline": regime.d10_calib, "d1_baseline": regime.d1_calib,
+        "observed_odds_ratio": None,
+        "baseline_odds_ratio": round(base_odds, 2),
+        "kill_switch_threshold": regime.kill_threshold,
+        "healthy": False,
+        "by_decile": {},
+        "note": "no data",
+    }
+
+
+def _method_stats(preds: list, regime: Regime, method: str) -> dict:
+    """Aggregate trade-quality stats for one method's prediction rows within
+    a single cycle. Returns the per-method block of _compute_cycle_summary.
+    """
+    if not preds:
+        return _empty_method_stats()
+
+    n = len(preds)
+    barrier_hits = sum(1 for p in preds if p.get("outcome_tag") == "SOLD_AT_TOUCH")
+    stopped = sum(1 for p in preds if p.get("outcome_tag") == "STOPPED")
+    terminal = sum(1 for p in preds if p.get("outcome_tag") == "TERMINAL")
+
+    returns = [p.get("realized_return_pct") for p in preds
+               if p.get("realized_return_pct") is not None]
+    winners = sum(1 for r in returns if r > 0)
+    win_rate = round(winners / len(returns), 4) if returns else None
+
+    if returns:
+        mean_ret = sum(returns) / len(returns)
+        sorted_ret = sorted(returns)
+        median_ret = sorted_ret[len(sorted_ret) // 2]
+        p5_idx = max(0, int(0.05 * (len(sorted_ret) - 1)))
+        p95_idx = min(len(sorted_ret) - 1, int(0.95 * (len(sorted_ret) - 1)))
+        tail_p5 = sorted_ret[p5_idx]
+        tail_p95 = sorted_ret[p95_idx]
+    else:
+        mean_ret = median_ret = tail_p5 = tail_p95 = 0.0
+
+    max_highs = [p.get("max_high_observed_pct", 0) for p in preds]
+    max_dds = [p.get("max_drawdown_observed_pct", 0) for p in preds]
+    mean_max_high = sum(max_highs) / len(max_highs) if max_highs else 0
+    mean_max_dd = sum(max_dds) / len(max_dds) if max_dds else 0
+    worst_dd = min(max_dds) if max_dds else 0
+    best_runup = max(max_highs) if max_highs else 0
+
+    # Decile and signal-strength bucketing — barrier-hit-based, so D10 should
+    # touch the baseline rate from training (P-ladder calibration), regardless
+    # of method (both arms see the same spot path).
+    by_decile: dict = {}
+    by_signal: dict = {}
+    for p in preds:
+        d = p.get("decile", 1)
+        sig = p.get("signal_strength", "WEAK")
+        by_decile.setdefault(d, {"n": 0, "hits": 0})
+        by_decile[d]["n"] += 1
+        if p.get("outcome_tag") == "SOLD_AT_TOUCH":
+            by_decile[d]["hits"] += 1
+        by_signal.setdefault(sig, {"n": 0, "hits": 0})
+        by_signal[sig]["n"] += 1
+        if p.get("outcome_tag") == "SOLD_AT_TOUCH":
+            by_signal[sig]["hits"] += 1
+    for d in by_decile:
+        by_decile[d]["hit_rate"] = round(by_decile[d]["hits"] / by_decile[d]["n"], 4) if by_decile[d]["n"] else 0
+    for sig in by_signal:
+        by_signal[sig]["hit_rate"] = round(by_signal[sig]["hits"] / by_signal[sig]["n"], 4) if by_signal[sig]["n"] else 0
+
+    # Portfolio dollar tracking — method-specific cost basis. Stock arm uses
+    # entry_price × 1 share notional. Call arm uses entry_quote_ask × 100.
+    if method == "long_call":
+        total_cost_basis = sum((p.get("entry_quote_ask") or 0) * 100 for p in preds)
+        total_realized = sum((p.get("realized_pnl_at_resolve") or 0) for p in preds
+                              if p.get("realized_pnl_at_resolve") is not None)
+        portfolio_return_pct = round(total_realized / total_cost_basis * 100, 4) if total_cost_basis > 0 else None
+    else:
+        total_cost_basis = sum((p.get("entry_price") or 0) for p in preds)
+        total_realized = sum(((p.get("realized_return_pct") or 0) / 100) * (p.get("entry_price") or 0)
+                              for p in preds if p.get("realized_return_pct") is not None)
+        portfolio_return_pct = round(total_realized / total_cost_basis * 100, 4) if total_cost_basis > 0 else None
+
+    return {
+        "n": n,
+        "barrier_hit_count": barrier_hits,
+        "stopped_count": stopped,
+        "terminal_count": terminal,
+        "barrier_hit_rate": round(barrier_hits / n, 4),
+        "winning_trade_rate": win_rate,
+        "mean_realized_return_pct": round(mean_ret, 4),
+        "median_realized_return_pct": round(median_ret, 4),
+        "tail_p5_return_pct": round(tail_p5, 4),
+        "tail_p95_return_pct": round(tail_p95, 4),
+        "mean_max_runup_pct": round(mean_max_high, 4),
+        "mean_max_drawdown_pct": round(mean_max_dd, 4),
+        "worst_drawdown_pct": round(worst_dd, 4),
+        "best_runup_pct": round(best_runup, 4),
+        "total_cost_basis": round(total_cost_basis, 2),
+        "total_realized_pnl_dollars": round(total_realized, 2),
+        "portfolio_return_pct": portfolio_return_pct,
+        "underpowered": n < UNDERPOWERED_N,
+        "by_decile": by_decile,
+        "by_signal_strength": by_signal,
+    }
+
+
+def _calibration_check_picks(pick_rows: list, regime: Regime) -> dict:
+    """Compare pick-level barrier-touch hit rates against the P-ladder
+    baseline. Pick-level (not row-level) dedup avoids double-counting the
+    same spot event when both the stock arm and long-call arm of a pick
+    touch on the same day — they reference the same physical price path.
+    """
+    if not pick_rows:
+        return _empty_calibration(regime)
+
+    by_decile: dict = {}
+    for p in pick_rows:
+        d = p.get("decile", 1)
+        by_decile.setdefault(d, {"n": 0, "hits": 0})
+        by_decile[d]["n"] += 1
+        if p.get("outcome_tag") == "SOLD_AT_TOUCH":
+            by_decile[d]["hits"] += 1
+    for d in by_decile:
+        by_decile[d]["hit_rate"] = round(by_decile[d]["hits"] / by_decile[d]["n"], 4) if by_decile[d]["n"] else 0
+
+    d10 = by_decile.get(10, {})
+    d1 = by_decile.get(1, {})
+    d10_hr = d10.get("hit_rate", 0)
+    d1_hr = d1.get("hit_rate", 0)
+    odds_ratio = (d10_hr / d1_hr) if d1_hr > 0 else None
+
+    base_d10 = regime.d10_calib
+    base_d1 = regime.d1_calib
+    kill = regime.kill_threshold
+    base_odds = base_d10 / base_d1 if base_d1 > 0 else 20.0
+    healthy = d10.get("n", 0) >= 5 and d10_hr >= kill
+
+    return {
+        "d10_hit_rate": round(d10_hr, 4),
+        "d10_n": d10.get("n", 0),
+        "d1_hit_rate": round(d1_hr, 4),
+        "d1_n": d1.get("n", 0),
+        "d10_baseline": base_d10,
+        "d1_baseline": base_d1,
+        "observed_odds_ratio": round(odds_ratio, 2) if odds_ratio else None,
+        "baseline_odds_ratio": round(base_odds, 2),
+        "kill_switch_threshold": kill,
+        "healthy": healthy,
+        "by_decile": by_decile,
+        "note": (f"D10 must stay above kill-switch ({int(kill*100)}%) and ideally "
+                 f"track the {base_d10:.1%} baseline. Sample size <5 in D10 -> unstable."),
+    }
+
+
 def _compute_cycle_summary(cycle_id: str, today_str: str, regime: Regime = REGIME_60D) -> dict:
-    """Read the immutable predictions.jsonl for the cycle and roll up stats."""
+    """Roll up cycle stats — method-aware. Reads the immutable
+    predictions.jsonl, dedupes to latest row per (symbol, entry_date, method),
+    then splits by method (stock vs long_call) for trade-quality decomposition.
+    Calibration is computed once at the pick level (barrier touch is the same
+    physical event for both arms — pick-level dedup is the honest unit).
+
+    Per-method block includes the risk-surfacing fields the desktop thread
+    added to the backtest (tail p5, max DD, UNDERPOWERED flag) so the same
+    sanity check applies to forward live data: a method with 80% win and
+    +8% mean ROI that hides a -40% tail will not pass the same eye test.
+    """
     raw = _gcs_read_text(f"{regime.cycles_prefix}/{cycle_id}/predictions.jsonl", "")
     latest_by_key = {}
     for line in raw.splitlines():
@@ -706,7 +896,9 @@ def _compute_cycle_summary(cycle_id: str, today_str: str, regime: Regime = REGIM
             row = json.loads(line)
         except Exception:
             continue
-        key = (row.get("symbol"), row.get("entry_date"))
+        # Method is part of the dedup key now — same symbol + entry_date
+        # produces two rows (stock + long_call) per regime.
+        key = (row.get("symbol"), row.get("entry_date"), row.get("method"))
         existing = latest_by_key.get(key)
         if existing is None:
             latest_by_key[key] = row
@@ -719,143 +911,69 @@ def _compute_cycle_summary(cycle_id: str, today_str: str, regime: Regime = REGIM
         return {
             "cycle_id": cycle_id,
             "archived_date": today_str,
+            "regime": regime.name,
             "total_predictions": 0,
-            "hit_count": 0,
-            "hit_rate": 0.0,
+            "n_picks": 0,
+            "by_method": {"stock": _empty_method_stats(), "long_call": _empty_method_stats()},
+            "calibration": _empty_calibration(regime),
             "predictions": [],
         }
 
-    hit_count = sum(1 for p in preds if p.get("outcome") == "HIT")
-    expired_count = sum(1 for p in preds if p.get("outcome") == "EXPIRED")
-    n = len(preds)
+    stock_preds = [p for p in preds if p.get("method") == "stock"]
+    call_preds = [p for p in preds if p.get("method") == "long_call"]
 
-    # Mean realized return (final price at resolution vs entry)
-    realized_returns = [p.get("realized_return_pct", 0) for p in preds
-                        if p.get("realized_return_pct") is not None]
-    mean_realized = sum(realized_returns) / len(realized_returns) if realized_returns else 0
-
-    # Excursion stats — peak run-up and deepest drawdown observed within each
-    # prediction's fate window. These describe the risk shape of the strategy:
-    # high mean_max_high alongside high mean_max_drawdown means choppy paths.
-    max_highs = [p.get("max_high_observed_pct", 0) for p in preds
-                 if p.get("max_high_observed_pct") is not None]
-    max_dds = [p.get("max_drawdown_observed_pct", 0) for p in preds
-               if p.get("max_drawdown_observed_pct") is not None]
-    mean_max_high = sum(max_highs) / len(max_highs) if max_highs else 0
-    mean_max_drawdown = sum(max_dds) / len(max_dds) if max_dds else 0
-    worst_drawdown = min(max_dds) if max_dds else 0
-    best_runup = max(max_highs) if max_highs else 0
-
-    # Aggregate dollar EV vs realized P&L (assuming 1 contract per prediction)
-    sum_ev = sum(p.get("ev_dollars", 0) or 0 for p in preds)
-    # Realized contract P&L: hit → max_gain (price reached short strike);
-    # expired w/ final price ≥ breakeven → fractional; else → -max_loss.
-    sum_realized = 0
+    # Pick-level dedup for calibration. Either arm of the same pick records
+    # the same max_high (spot path) — taking whichever resolved (or whichever
+    # row exists) is fine. We pick the stock arm when present for stability.
+    pick_dedup: dict = {}
     for p in preds:
-        outcome = p.get("outcome")
-        if outcome == "HIT":
-            sum_realized += p.get("max_gain_per_contract", 0) or 0
-        elif outcome == "EXPIRED":
-            sum_realized += (p.get("realized_contract_pnl", 0) or 0)
-
-    # Hit rate by decile and signal strength
-    by_decile = {}
-    by_signal = {}
-    for p in preds:
-        d = p.get("decile", 1)
-        sig = p.get("signal_strength", "WEAK")
-        by_decile.setdefault(d, {"n": 0, "hits": 0})
-        by_decile[d]["n"] += 1
-        if p.get("outcome") == "HIT":
-            by_decile[d]["hits"] += 1
-        by_signal.setdefault(sig, {"n": 0, "hits": 0})
-        by_signal[sig]["n"] += 1
-        if p.get("outcome") == "HIT":
-            by_signal[sig]["hits"] += 1
-
-    for d in by_decile:
-        by_decile[d]["hit_rate"] = round(
-            by_decile[d]["hits"] / by_decile[d]["n"], 4) if by_decile[d]["n"] else 0
-    for sig in by_signal:
-        by_signal[sig]["hit_rate"] = round(
-            by_signal[sig]["hits"] / by_signal[sig]["n"], 4) if by_signal[sig]["n"] else 0
-
-    # Options portfolio P&L aggregates (1 contract per prediction)
-    total_cost_basis = sum(p.get("entry_cost_basis") or 0 for p in preds)
-    total_options_pnl = sum(p.get("options_realized_pnl") or 0 for p in preds
-                           if p.get("options_realized_pnl") is not None)
-    options_winners = sum(1 for p in preds if p.get("options_outcome") == "PROFIT")
-    options_losers = sum(1 for p in preds if p.get("options_outcome") == "LOSS")
-    options_with_outcome = options_winners + options_losers
-    options_win_rate = round(options_winners / options_with_outcome, 4) if options_with_outcome > 0 else None
-    options_return_pct = round(
-        (total_options_pnl / total_cost_basis) * 100, 4
-    ) if total_cost_basis > 0 else None
+        pk = (p.get("symbol"), p.get("entry_date"))
+        if pk not in pick_dedup or p.get("method") == "stock":
+            pick_dedup[pk] = p
+    pick_rows = list(pick_dedup.values())
 
     return {
         "cycle_id": cycle_id,
         "archived_date": today_str,
-        "total_predictions": n,
-        "hit_count": hit_count,
-        "expired_count": expired_count,
-        "hit_rate": round(hit_count / n, 4),
-        "mean_realized_return_pct": round(mean_realized, 4),
-        "mean_max_runup_pct": round(mean_max_high, 4),
-        "mean_max_drawdown_pct": round(mean_max_drawdown, 4),
-        "best_runup_pct": round(best_runup, 4),
-        "worst_drawdown_pct": round(worst_drawdown, 4),
-        "aggregate_ev_dollars": round(sum_ev, 2),
-        "aggregate_realized_pnl_dollars": round(sum_realized, 2),
-        "ev_realization_ratio": round(sum_realized / sum_ev, 4) if sum_ev != 0 else 0,
-        # Paper-trading portfolio P&L
-        "total_cost_basis": round(total_cost_basis, 2),
-        "total_options_pnl": round(total_options_pnl, 2),
-        "options_win_rate": options_win_rate,
-        "options_return_pct": options_return_pct,
-        "options_winners": options_winners,
-        "options_losers": options_losers,
-        "hit_rate_by_decile": by_decile,
-        "hit_rate_by_signal_strength": by_signal,
-        "calibration_check": _calibration_check(by_decile, regime=regime),
+        "regime": regime.name,
+        "total_predictions": len(preds),
+        "n_picks": len(pick_rows),
+        "by_method": {
+            "stock": _method_stats(stock_preds, regime, "stock"),
+            "long_call": _method_stats(call_preds, regime, "long_call"),
+        },
+        "calibration": _calibration_check_picks(pick_rows, regime),
         "predictions": preds,
     }
 
 
 def _calibration_check(by_decile: dict, is_60d: bool = False, regime: Regime = None) -> dict:
-    """Compare observed D10 and D1 hit rates against the training baseline.
-    Healthy: D10 hit rate well above D1, ideally near baseline.
-    Returns metrics suitable for a UI calibration card."""
+    """Legacy decile-dict signature, retained for callers passing a precomputed
+    decile map (e.g. _compute_rolling_d10_health). Prefer _calibration_check_picks
+    for new code — it accepts raw pick rows and dedupes correctly.
+    """
+    if regime is None:
+        regime = REGIME_60D if is_60d else REGIME_30D_P10
     d10 = by_decile.get(10, {})
     d1 = by_decile.get(1, {})
     d10_hr = d10.get("hit_rate", 0)
     d1_hr = d1.get("hit_rate", 0)
     odds_ratio = (d10_hr / d1_hr) if d1_hr > 0 else None
-
-    if regime is None:
-        regime = REGIME_60D if is_60d else REGIME_30D_P10
-
-    base_d10 = regime.d10_calib
-    base_d1 = regime.d1_calib
-    kill_threshold = regime.kill_threshold
-    note = f"D10 must exceed kill-switch threshold ({int(kill_threshold * 100)}%) and ideally track the {base_d10:.1%} baseline. Sample size <5 in D10 -> unstable."
-
-    baseline_odds = base_d10 / base_d1 if base_d1 > 0 else 20.0
-
-    # Health flag: D10 must remain well above the kill switch threshold AND
-    # well above D1. If D10 < kill switch threshold, the model has degraded.
-    healthy = d10.get("n", 0) >= 5 and d10_hr >= kill_threshold
+    base_odds = regime.d10_calib / regime.d1_calib if regime.d1_calib > 0 else 20.0
+    healthy = d10.get("n", 0) >= 5 and d10_hr >= regime.kill_threshold
     return {
         "d10_hit_rate": round(d10_hr, 4),
         "d10_n": d10.get("n", 0),
         "d1_hit_rate": round(d1_hr, 4),
         "d1_n": d1.get("n", 0),
-        "d10_baseline": base_d10,
-        "d1_baseline": base_d1,
+        "d10_baseline": regime.d10_calib,
+        "d1_baseline": regime.d1_calib,
         "observed_odds_ratio": round(odds_ratio, 2) if odds_ratio else None,
-        "baseline_odds_ratio": round(baseline_odds, 2),
-        "kill_switch_threshold": kill_threshold,
+        "baseline_odds_ratio": round(base_odds, 2),
+        "kill_switch_threshold": regime.kill_threshold,
         "healthy": healthy,
-        "note": note,
+        "note": (f"D10 must stay above kill-switch ({int(regime.kill_threshold*100)}%) and "
+                 f"ideally track the {regime.d10_calib:.1%} baseline. n<5 in D10 -> unstable."),
     }
 
 
@@ -1288,13 +1406,303 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
         log.info(f"  ThetaData EOD Spread built for {sym}: {matched_long_k}/{matched_short_k}C @ {chosen_exp.split()[0]} (debit: ${net_debit:.2f})")
 
 
+# ---------------------------------------------------------------------------
+# Long-call arm: leg picking and single-leg refetch (Python ThetaData only)
+# ---------------------------------------------------------------------------
+# Touch-payoff model: the model assumes the underlying touches barrier_price
+# within the window with probability p_barrier (= P20 for the regime). At
+# touch, the leg's payoff is max(0, barrier_price - strike) × 100. The
+# model fair value is p_barrier × that payoff. Edge = fair_value − ask × 100,
+# i.e. positive when the market underprices the touch-based payoff.
+
+def _model_fair_value_long_call(strike: float, barrier_price: float, p_barrier: float) -> float:
+    payoff = max(0.0, barrier_price - strike) * 100.0
+    return p_barrier * payoff
+
+
+def _pick_best_long_leg(exp_df, spot: float, barrier_price: float,
+                         p_barrier: float, strike_col: str = 'strike') -> Optional[dict]:
+    """From an expiration's option rows, pick the single long call that
+    maximizes edge_dollars under the touch-payoff model.
+
+    Strike range: [spot × 0.95, barrier_price]. Above barrier, model fair
+    value is 0 — no leg with strike > barrier can win on edge. Below 0.95×spot
+    is deep ITM with no leverage edge for a touch trade.
+
+    Returns a dict with strike, ask, bid, mid, iv, greeks, model_fair_value,
+    edge_dollars, edge_pct, or None if no leg qualifies.
+    """
+    if exp_df is None or exp_df.empty:
+        return None
+    lo = spot * 0.95
+    hi = barrier_price
+    candidates = exp_df[(exp_df[strike_col].astype(float) >= lo) &
+                         (exp_df[strike_col].astype(float) <= hi)]
+    if candidates.empty:
+        return None
+
+    best = None
+    best_edge = -1e18
+    for _, row in candidates.iterrows():
+        strike = float(row[strike_col])
+        ask = float(row.get('ask', 0) or 0)
+        bid = float(row.get('bid', 0) or 0)
+        # EOD greeks endpoint sometimes returns close-only; fall back gracefully
+        if ask <= 0:
+            close = float(row.get('close', 0) or 0)
+            if close <= 0:
+                continue
+            ask = close
+            if bid <= 0:
+                bid = close * 0.97
+        mid = (ask + bid) / 2.0 if bid > 0 else ask
+        fair_value = _model_fair_value_long_call(strike, barrier_price, p_barrier)
+        edge_dollars = fair_value - ask * 100.0
+        if edge_dollars > best_edge:
+            best_edge = edge_dollars
+            best = {
+                "strike": strike,
+                "ask": round(ask, 2),
+                "bid": round(bid, 2),
+                "mid": round(mid, 2),
+                "iv": round(float(row.get('implied_vol', 0) or 0), 4),
+                "delta": round(float(row.get('delta', 0) or 0), 4),
+                "gamma": round(float(row.get('gamma', 0) or 0), 4),
+                "theta": round(float(row.get('theta', 0) or 0), 4),
+                "vega": round(float(row.get('vega', 0) or 0), 4),
+                "model_fair_value": round(fair_value, 2),
+                "edge_dollars": round(edge_dollars, 2),
+                "edge_pct": round(edge_dollars / (ask * 100.0), 4) if ask > 0 else None,
+            }
+    return best
+
+
+def _enrich_stocks_with_long_call_legs(stocks: list[dict], today_str: str, regime: Regime) -> None:
+    """For each candidate stock, fetch EOD call chain and pick the single long
+    leg that maximizes edge_dollars under the touch-payoff model.
+
+    Injects s["long_call_pick_<regime.name>"] = {strike, ask, bid, mid, iv,
+    delta, gamma, theta, vega, model_fair_value, edge_dollars, edge_pct,
+    expiration, dte_at_entry}, or leaves it absent if no leg qualifies.
+
+    Uses the Python ThetaData SDK — same client/limiter pattern as
+    _enrich_stocks_with_theta_eod, single-leg pick instead of a spread.
+    """
+    try:
+        from thetadata import ThetaClient
+    except ImportError:
+        log.warning("_enrich_stocks_with_long_call_legs: ThetaData SDK not available, skipping")
+        return
+
+    target_dt = datetime.strptime(today_str, "%Y-%m-%d")
+    _eod_date = target_dt.date()
+    import datetime as _dt
+    while _eod_date.weekday() >= 5:
+        _eod_date -= _dt.timedelta(days=1)
+    if today_str == datetime.utcnow().strftime("%Y-%m-%d"):
+        if datetime.utcnow().hour < 21:
+            _eod_date -= _dt.timedelta(days=1)
+            while _eod_date.weekday() >= 5:
+                _eod_date -= _dt.timedelta(days=1)
+
+    symbols = [s["symbol"] for s in stocks if s.get("symbol") and (s.get("price") or 0) >= 1.0]
+    if not symbols:
+        return
+
+    try:
+        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+    except Exception as e:
+        log.error(f"_enrich_stocks_with_long_call_legs: ThetaData client init failed: {e}")
+        return
+
+    from threading import Lock
+    import concurrent.futures
+
+    class ThreadSafeRateLimiter:
+        def __init__(self, rps):
+            self.interval = 1.0 / rps
+            self.last_called = 0.0
+            self.lock = Lock()
+        def wait(self):
+            with self.lock:
+                import time as _time
+                now = _time.time()
+                elapsed = now - self.last_called
+                sleep_time = self.interval - elapsed
+                if sleep_time > 0:
+                    _time.sleep(sleep_time)
+                    self.last_called = _time.time()
+                else:
+                    self.last_called = now
+    limiter = ThreadSafeRateLimiter(16)
+
+    def fetch_chain(sym):
+        limiter.wait()
+        try:
+            df = client.option_history_greeks_eod(
+                symbol=sym, expiration="*", start_date=_eod_date, end_date=_eod_date,
+                strike="*", right="call")
+            return sym, df, None
+        except Exception as e:
+            return sym, None, e
+
+    log.info(f"ThetaData (long-call leg pick, {regime.name}): fetching chains for {len(symbols)} symbols...")
+    chains: dict[str, object] = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(fetch_chain, sym) for sym in symbols]
+        for fut in concurrent.futures.as_completed(futures):
+            sym, df, err = fut.result()
+            if df is not None and not (hasattr(df, 'is_empty') and df.is_empty()):
+                chains[sym] = df
+
+    target_dte = regime.hit_window_days
+    pick_key = f"long_call_pick_{regime.name}"
+    picked_count = 0
+
+    for s in stocks:
+        sym = s["symbol"]
+        spot = s.get("price") or 0
+        if spot <= 0:
+            continue
+        df_raw = chains.get(sym)
+        if df_raw is None:
+            continue
+        try:
+            df = df_raw.to_pandas() if hasattr(df_raw, 'to_pandas') else df_raw
+        except Exception:
+            continue
+        if df.empty:
+            continue
+        if 'iv_error' in df.columns:
+            df = df[df['iv_error'] < 0.1]
+        if 'implied_vol' in df.columns:
+            df = df[df['implied_vol'] > 0]
+        if df.empty:
+            continue
+
+        # Group by expiration; prefer the soonest expiration that is at or past
+        # the window. Below-window expirations would mature before the barrier
+        # window closes — unacceptable for forward truth on this method.
+        by_exp = {}
+        for idx, row in df.iterrows():
+            exp_val = row.get("expiration")
+            if exp_val:
+                by_exp.setdefault(str(exp_val), []).append(row)
+        if not by_exp:
+            continue
+
+        chosen_exp = None
+        chosen_dte = None
+        chosen_diff = 10**9
+        for exp in sorted(by_exp.keys()):
+            try:
+                date_str = exp.split()[0]
+                d = datetime.strptime(date_str, "%Y-%m-%d").date()
+                dte = (d - target_dt.date()).days
+                if dte < target_dte:
+                    continue
+                diff = dte - target_dte
+                if diff < chosen_diff:
+                    chosen_diff = diff
+                    chosen_exp = exp
+                    chosen_dte = dte
+            except Exception:
+                continue
+        if not chosen_exp:
+            continue
+
+        p20 = s.get(regime.prob_key)
+        if p20 is None:
+            p20 = s.get("hit_prob_60d") if regime.is_60d else s.get("hit_prob")
+        if p20 is None:
+            p20 = s.get("hit_prob") or 0.0
+        if p20 <= 0:
+            continue
+
+        barrier_price = spot * (1.0 + regime.hit_threshold_pct / 100.0)
+        exp_df = df[df['expiration'] == chosen_exp]
+        strike_col = 'strike' if 'strike' in exp_df.columns else None
+        if not strike_col or exp_df.empty:
+            continue
+
+        best_leg = _pick_best_long_leg(exp_df, spot, barrier_price, p20, strike_col=strike_col)
+        if best_leg is None:
+            continue
+
+        best_leg["expiration"] = chosen_exp.split()[0] if " " in str(chosen_exp) else str(chosen_exp)
+        best_leg["dte_at_entry"] = chosen_dte
+        s[pick_key] = best_leg
+        picked_count += 1
+        log.info(f"  Long-call leg ({regime.name}) {sym}: "
+                 f"K=${best_leg['strike']:.2f} @ {best_leg['expiration']} "
+                 f"ask=${best_leg['ask']:.2f} edge=${best_leg['edge_dollars']:.0f} "
+                 f"({best_leg['edge_pct']*100:.1f}%)" if best_leg.get('edge_pct') is not None
+                 else f"  Long-call leg ({regime.name}) {sym}: K=${best_leg['strike']:.2f}")
+    log.info(f"  Long-call legs picked: {picked_count}/{len(symbols)} ({regime.name})")
+
+
+def _refetch_long_call_quote(df_chain, strike: float, expiration: str) -> Optional[dict]:
+    """Look up a single long-call leg's row in a pre-fetched chain dataframe.
+
+    Used by the resolver: the existing per-symbol chain fetch is reused across
+    all open call-arm rows for the same symbol — no extra API calls.
+
+    Returns {ask, bid, mid, iv, delta, gamma, theta, vega} or None if the
+    strike/expiration combo isn't in the chain (delisted, illiquid, missing).
+    """
+    if df_chain is None or (hasattr(df_chain, 'empty') and df_chain.empty):
+        return None
+    try:
+        df = df_chain.to_pandas() if hasattr(df_chain, 'to_pandas') else df_chain
+    except Exception:
+        return None
+    if df.empty:
+        return None
+    if 'expiration' not in df.columns or 'strike' not in df.columns:
+        return None
+    exp_norm = expiration.split()[0] if " " in str(expiration) else str(expiration)
+    matched = df[(df['expiration'].astype(str).str.startswith(exp_norm)) &
+                 (df['strike'].astype(float).round(2) == round(float(strike), 2))]
+    if matched.empty:
+        return None
+    row = matched.iloc[0]
+    ask = float(row.get('ask', 0) or 0)
+    bid = float(row.get('bid', 0) or 0)
+    if ask <= 0:
+        close = float(row.get('close', 0) or 0)
+        if close <= 0:
+            return None
+        ask = close
+        if bid <= 0:
+            bid = close * 0.97
+    mid = (ask + bid) / 2.0 if bid > 0 else ask
+    return {
+        "ask": round(ask, 2),
+        "bid": round(bid, 2),
+        "mid": round(mid, 2),
+        "iv": round(float(row.get('implied_vol', 0) or 0), 4),
+        "delta": round(float(row.get('delta', 0) or 0), 4),
+        "gamma": round(float(row.get('gamma', 0) or 0), 4),
+        "theta": round(float(row.get('theta', 0) or 0), 4),
+        "vega": round(float(row.get('vega', 0) or 0), 4),
+    }
+
+
 def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
                             region: str, is_60d_regime: bool = False, regime: Regime = None) -> tuple[int, int]:
-    """Process today's scan. For each stock with P20 > 0 that isn't already
-    being tracked in the collecting cycle, compute the EV and store a new
-    prediction (both in immutable JSONL and the cycle's open.json).
+    """For each P20>0 stock not already in this cycle, emit TWO prediction
+    rows — one stock arm (sell-at-touch with regime stop), one long-call arm
+    (single leg picked via touch-payoff edge). Combined across the two
+    regimes in update_from_scan, each pick produces 4 rows total:
+      stock × 30dd/+10% (20% stop) | stock × 60dd/+20% (no-stop shadow)
+      long_call × 30dd/+10%        | long_call × 60dd/+20%
 
-    Returns (new_count, skipped_no_ev_count).
+    Both arms ship the same common entry context (price, P20, decile, IVR,
+    IV, skew, etc.) so cross-method analysis pivots on consistent fields.
+
+    Returns (new_row_count, no_call_leg_count). new_row_count = 2 × picks.
+    no_call_leg_count = picks where the call arm shipped with null leg
+    (Theta SDK missing, no expiration past window, no positive-edge strike).
     """
     if regime is None:
         regime = REGIME_60D if is_60d_regime else REGIME_30D_P10
@@ -1340,9 +1748,12 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             continue
         candidate_stocks.append(s)
 
-    # Fetch EOD spreads from ThetaData in parallel and inject into candidate_stocks
+    # Theta enrichment: fetch full call chain per candidate, pick best single
+    # long leg (max edge_dollars under touch-payoff model). Skips silently
+    # when ThetaData SDK unavailable — call arms simply ship with null leg
+    # fields and tag no_ev for accounting.
     if candidate_stocks:
-        _enrich_stocks_with_theta_eod(candidate_stocks, today_str, regime=regime)
+        _enrich_stocks_with_long_call_legs(candidate_stocks, today_str, regime)
 
     for s in candidate_stocks:
         p20 = s.get(regime.prob_key)
@@ -1355,11 +1766,6 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         if price <= 0:
             skipped_no_price += 1
             continue
-
-        # EV is OPTIONAL.
-        ev_block = calculate_spread_ev(s, regime=regime, today_str=today_str)
-        if ev_block is None:
-            no_ev_count += 1
 
         # Build mode qualifications (which baskets this stock was in)
         modes = []
@@ -1380,17 +1786,18 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
         if expected_dd is not None:
             expected_dd = round(float(expected_dd), 2)
 
-        pred = {
+        # Common entry context — identical across both method rows for this
+        # symbol/regime so cross-method comparison pivots on consistent
+        # entry-time fields. ATM IV / IVR / skew / pc_oi land on the stock arm
+        # too (even though unused by stock payoff) so downstream filtering can
+        # slice stock outcomes by IV regime same as call outcomes.
+        common = {
             "symbol": sym,
             "entry_date": today_str,
             "cycle_id": cycle_id,
             "region": region,
+            "regime": regime.name,
             "entry_price": round(price, 4),
-            "target_price": round(price * (1 + regime.hit_threshold_pct / 100), 4),
-            "fate_window_ends": fate_window_ends,
-            "hit_window_days": hit_window_days,
-            "regime": "60d" if regime.is_60d else "30d",
-            "expected_dd": expected_dd,
             "p20": round(p20, 4),
             "decile": _decile(p20, regime=regime),
             "signal_strength": _signal_strength(p20, regime=regime),
@@ -1400,59 +1807,83 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
             "sector": s.get("sector"),
             "country": s.get("country"),
             "market_cap": s.get("market_cap"),
+            "expected_dd": expected_dd,
             "ivr_at_entry": s.get("options_iv_rank"),
             "iv_at_entry": s.get("options_iv_current"),
             "skew_25d": s.get("options_skew_25d"),
             "pc_oi_ratio": s.get("options_pc_oi_ratio"),
+            "fate_window_ends": fate_window_ends,
+            "hit_window_days": hit_window_days,
+            "barrier_target_pct": regime.hit_threshold_pct,
+            "barrier_price": round(price * (1.0 + regime.hit_threshold_pct / 100.0), 4),
             "outcome": "OPEN",
-            "max_high_observed_pct": 0.0,
-            "max_drawdown_observed_pct": 0.0,
+            "outcome_tag": "OPEN",
             "current_price": round(price, 4),
             "last_updated": today_str,
             "days_observed": 0,
+            "max_high_observed_pct": 0.0,
+            "max_drawdown_observed_pct": 0.0,
             "realized_return_pct": None,
-            "realized_contract_pnl": None,
+            "resolution_date": None,
         }
-        # Merge EV/spread block when present
-        if ev_block is not None:
-            pred.update(ev_block)
-            # Paper-trading monetary fields (1 contract per prediction)
-            pred["contract_size"] = 1
-            pred["entry_net_debit"] = ev_block.get("net_debit")
-            debit = ev_block.get("net_debit") or 0
-            pred["entry_cost_basis"] = round(debit * 100, 2) if debit > 0 else None
-            pred["current_spread_value"] = debit  # at entry, value = cost
-            pred["current_contract_value"] = pred["entry_cost_basis"]
-            pred["unrealized_pnl"] = 0.0
-            pred["unrealized_pnl_pct"] = 0.0
-            pred["spread_last_repriced"] = today_str
-            pred["current_long_iv"] = ev_block.get("long_iv")
-            pred["current_short_iv"] = ev_block.get("short_iv")
-            pred["current_long_greeks"] = ev_block.get("long_greeks")
-            pred["current_short_greeks"] = ev_block.get("short_greeks")
-            # Net greeks for the spread
-            lg = ev_block.get("long_greeks") or {}
-            sg = ev_block.get("short_greeks") or {}
-            pred["net_delta"] = round((lg.get("delta") or 0) - (sg.get("delta") or 0), 4) if lg.get("delta") is not None else None
-            pred["net_theta"] = round((lg.get("theta") or 0) - (sg.get("theta") or 0), 4) if lg.get("theta") is not None else None
-            pred["days_to_expiration"] = ev_block.get("dte")
+
+        # Stock arm — locked 20% stop for 30dd/+10%, no-stop shadow for
+        # 60dd/+20%. Sweep showed no-stop wins on CAGR but with worst tail;
+        # both run live so the trade-off is visible forward.
+        if regime.is_60d:
+            stop_loss_pct = None
+            stop_price = None
         else:
-            pred["contract_size"] = 1
-            pred["entry_net_debit"] = None
-            pred["entry_cost_basis"] = None
-            pred["current_spread_value"] = None
-            pred["current_contract_value"] = None
-            pred["unrealized_pnl"] = None
-            pred["unrealized_pnl_pct"] = None
-            pred["spread_last_repriced"] = None
-            pred["current_long_iv"] = None
-            pred["current_short_iv"] = None
-            pred["current_long_greeks"] = None
-            pred["current_short_greeks"] = None
-            pred["net_delta"] = None
-            pred["net_theta"] = None
-            pred["days_to_expiration"] = None
-        new_preds.append(pred)
+            stop_loss_pct = 20.0
+            stop_price = round(price * (1.0 - 20.0 / 100.0), 4)
+
+        stock_row = {
+            **common,
+            "method": "stock",
+            "stop_loss_pct": stop_loss_pct,
+            "stop_price": stop_price,
+        }
+        new_preds.append(stock_row)
+
+        # Long-call arm — single leg picked by Theta enrichment above. When
+        # Theta returns no viable leg (SDK missing, no liquid expiration past
+        # window, all strikes have negative edge), the row still ships with
+        # null leg fields so the symbol's method coverage stays consistent.
+        leg = s.get(f"long_call_pick_{regime.name}")
+        if leg is None:
+            no_ev_count += 1
+        call_row = {
+            **common,
+            "method": "long_call",
+            "chosen_leg_strike": leg.get("strike") if leg else None,
+            "chosen_leg_expiration": leg.get("expiration") if leg else None,
+            "chosen_leg_dte_at_entry": leg.get("dte_at_entry") if leg else None,
+            # Crossed entry — pay the ask.
+            "entry_quote_ask": leg.get("ask") if leg else None,
+            "entry_quote_bid": leg.get("bid") if leg else None,
+            "entry_quote_mid": leg.get("mid") if leg else None,
+            "entry_iv_at_strike": leg.get("iv") if leg else None,
+            "entry_delta": leg.get("delta") if leg else None,
+            "entry_gamma": leg.get("gamma") if leg else None,
+            "entry_theta": leg.get("theta") if leg else None,
+            "entry_vega": leg.get("vega") if leg else None,
+            # Touch-payoff model edge.
+            "model_fair_value_at_entry": leg.get("model_fair_value") if leg else None,
+            "edge_dollars_at_entry": leg.get("edge_dollars") if leg else None,
+            "edge_pct_at_entry": leg.get("edge_pct") if leg else None,
+            # Forward marks — initialized to entry quote, refreshed by resolver.
+            "current_quote_ask": leg.get("ask") if leg else None,
+            "current_quote_bid": leg.get("bid") if leg else None,
+            "current_quote_mid": leg.get("mid") if leg else None,
+            "current_iv_at_strike": leg.get("iv") if leg else None,
+            "current_delta": leg.get("delta") if leg else None,
+            "current_theta": leg.get("theta") if leg else None,
+            "unrealized_pnl": 0.0 if leg else None,
+            "unrealized_pnl_pct": 0.0 if leg else None,
+            "realized_pnl_at_resolve": None,
+            "quote_last_repriced": today_str if leg else None,
+        }
+        new_preds.append(call_row)
         already_in_cycle.add(sym)
 
     if new_preds:
@@ -1466,14 +1897,103 @@ def _record_new_predictions(stocks: list, today_str: str, cycle_id: str,
     return new_count, no_ev_count
 
 
+def _refresh_call_chains(symbols: set, today_str: str) -> dict:
+    """Fetch EOD call chains for a set of symbols (used by resolver to
+    refresh long-call arm marks). Returns {symbol: df_chain}. Empty dict on
+    Theta failure — caller falls back to intrinsic-only marks.
+    """
+    if not symbols:
+        return {}
+    try:
+        from thetadata import ThetaClient
+    except ImportError:
+        log.warning("_refresh_call_chains: ThetaData SDK not available, skipping leg refresh")
+        return {}
+
+    target_dt = datetime.strptime(today_str, "%Y-%m-%d")
+    _eod_date = target_dt.date()
+    import datetime as _dt
+    while _eod_date.weekday() >= 5:
+        _eod_date -= _dt.timedelta(days=1)
+    if today_str == datetime.utcnow().strftime("%Y-%m-%d"):
+        if datetime.utcnow().hour < 21:
+            _eod_date -= _dt.timedelta(days=1)
+            while _eod_date.weekday() >= 5:
+                _eod_date -= _dt.timedelta(days=1)
+
+    try:
+        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+    except Exception as e:
+        log.error(f"_refresh_call_chains: client init failed: {e}")
+        return {}
+
+    from threading import Lock
+    import concurrent.futures
+
+    class ThreadSafeRateLimiter:
+        def __init__(self, rps):
+            self.interval = 1.0 / rps
+            self.last_called = 0.0
+            self.lock = Lock()
+        def wait(self):
+            with self.lock:
+                import time as _time
+                now = _time.time()
+                elapsed = now - self.last_called
+                sleep_time = self.interval - elapsed
+                if sleep_time > 0:
+                    _time.sleep(sleep_time)
+                    self.last_called = _time.time()
+                else:
+                    self.last_called = now
+    limiter = ThreadSafeRateLimiter(16)
+
+    def fetch_chain(sym):
+        limiter.wait()
+        try:
+            df = client.option_history_greeks_eod(
+                symbol=sym, expiration="*", start_date=_eod_date, end_date=_eod_date,
+                strike="*", right="call")
+            return sym, df, None
+        except Exception as e:
+            return sym, None, e
+
+    log.info(f"ThetaData (call-arm resolver): fetching chains for {len(symbols)} symbols...")
+    chains: dict[str, object] = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(fetch_chain, sym) for sym in symbols]
+        for fut in concurrent.futures.as_completed(futures):
+            sym, df, err = fut.result()
+            if df is not None and not (hasattr(df, 'is_empty') and df.is_empty()):
+                chains[sym] = df
+    return chains
+
+
 def _process_open_predictions(stocks: list, today_str: str,
                               state: dict, regime: Regime = REGIME_60D) -> tuple[int, int]:
-    """For every cycle with active predictions (collecting OR resolving), update
-    each open prediction with today's price; mark HIT/EXPIRED as appropriate.
+    """For every cycle with active predictions, update each open prediction
+    with today's price and resolve per-method exit conditions.
+
+    Stock arms (method == "stock"):
+      SOLD_AT_TOUCH  max_high_observed_pct >= barrier_target_pct
+      STOPPED        stop_loss_pct set AND current_price <= stop_price
+      TERMINAL       days_observed >= hit_window_days (close at day-N price)
+      Order of checks: barrier first (intraday high wins ties with stop),
+      then stop, then window. realized_return_pct = max_high on SOLD_AT_TOUCH,
+      -stop_loss_pct on STOPPED, day-N gain_pct on TERMINAL.
+
+    Long-call arms (method == "long_call"):
+      Single-leg quote refreshed from a pooled ThetaData chain refetch (one
+      call per symbol covers both regime's arms).
+      SOLD_AT_TOUCH  max_high_observed_pct >= barrier_target_pct
+      TERMINAL       days_observed >= hit_window_days
+      Exit value at resolve = current_quote_mid × 100 (when chain quote
+      available) else intrinsic = max(0, current_price - strike) × 100.
+      realized_pnl = exit_value - entry_quote_ask × 100 (crossed entry).
+      No stop on long calls (entry_ask is the max loss bound).
 
     Returns (closed_count, still_open_count).
     """
-    # Build lookup: symbol → current price for fast access
     price_lookup = {s["symbol"]: s.get("price") or 0 for s in stocks if s.get("symbol")}
 
     cycles_to_process = []
@@ -1481,9 +2001,11 @@ def _process_open_predictions(stocks: list, today_str: str,
         cycles_to_process.append(state["collecting_cycle_id"])
     cycles_to_process.extend(state["resolving_cycle_ids"])
 
-    closed_total = 0
-    open_total = 0
-
+    # Load all open predictions across cycles first so we can pool the
+    # call-arm chain refetch into one Theta sweep (one call per unique symbol
+    # regardless of how many cycles or arms reference it).
+    cycles_data: dict[str, tuple] = {}
+    call_arm_symbols: set = set()
     for cycle_id in cycles_to_process:
         open_path = f"{regime.cycles_prefix}/{cycle_id}/open.json"
         open_data = _gcs_read(open_path, {"predictions": []})
@@ -1492,23 +2014,30 @@ def _process_open_predictions(stocks: list, today_str: str,
         preds = open_data.get("predictions", [])
         if not preds:
             continue
+        cycles_data[cycle_id] = (open_path, preds)
+        for p in preds:
+            if p.get("method") == "long_call" and p.get("chosen_leg_strike") is not None:
+                call_arm_symbols.add(p["symbol"])
 
+    chain_lookup = _refresh_call_chains(call_arm_symbols, today_str)
+
+    closed_total = 0
+    open_total = 0
+
+    for cycle_id, (open_path, preds) in cycles_data.items():
         updated = []
         newly_closed = []
         for p in preds:
             sym = p["symbol"]
             entry_price = p["entry_price"]
             current_price = price_lookup.get(sym, p.get("current_price", entry_price))
-
-            # Daily return from entry
             gain_pct = ((current_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
 
-            # Track peak run-up since entry (max_high)
+            # Spot-path peak / trough (used by both arms — call arm reads
+            # max_high to detect barrier touch, even though its P&L is on the
+            # option leg).
             if gain_pct > p.get("max_high_observed_pct", 0):
                 p["max_high_observed_pct"] = round(gain_pct, 4)
-            # Track deepest underwater since entry (max_drawdown — most-negative
-            # daily return observed). Stored as a negative percent so the field
-            # is interpretable directly: -15.0 means stock touched -15% from entry.
             if gain_pct < p.get("max_drawdown_observed_pct", 0):
                 p["max_drawdown_observed_pct"] = round(gain_pct, 4)
 
@@ -1518,53 +2047,99 @@ def _process_open_predictions(stocks: list, today_str: str,
             p["current_price"] = round(current_price, 4)
             p["last_updated"] = today_str
 
-            # Update DTE countdown if spread has an expiration
-            exp = p.get("expiration")
-            if exp:
-                try:
-                    exp_date = datetime.strptime(exp, "%Y-%m-%d")
-                    p["days_to_expiration"] = max(0, (exp_date - datetime.strptime(today_str, "%Y-%m-%d")).days)
-                except Exception:
-                    pass
+            method = p.get("method", "stock")
+            barrier_pct = p.get("barrier_target_pct", regime.hit_threshold_pct)
+            window_days = p.get("hit_window_days", regime.hit_window_days)
+            barrier_touched = p["max_high_observed_pct"] >= barrier_pct
+            window_terminal = days_in >= window_days
 
-            # Closure: HIT if max-high ever touched +threshold%, else EXPIRED after window
-            hit = p["max_high_observed_pct"] >= regime.hit_threshold_pct
-            expired = days_in >= p.get("hit_window_days", regime.hit_window_days)
+            if method == "stock":
+                stop_price = p.get("stop_price")
+                stopped = stop_price is not None and current_price <= stop_price
 
-            if hit:
-                p["outcome"] = "HIT"
-                p["realized_return_pct"] = round(p["max_high_observed_pct"], 4)
-                p["realized_contract_pnl"] = p.get("max_gain_per_contract", 0)
-                p["resolution_date"] = today_str
-                # Options P&L at resolution
-                cost_basis = p.get("entry_cost_basis") or 0
-                if cost_basis > 0:
-                    p["options_outcome"] = "PROFIT"
-                    p["options_realized_pnl"] = round(
-                        p.get("max_gain_per_contract", 0), 2)
-                newly_closed.append(p)
-                closed_total += 1
-                continue
-            if expired:
-                p["outcome"] = "EXPIRED"
-                p["realized_return_pct"] = round(gain_pct, 4)
-                # Spread payoff at expiration: full width payout if above short,
-                # linear in (price − long_strike) between strikes, 0 below long.
-                final_payoff = _spread_final_payoff(p, current_price)
-                cost_basis = p.get("entry_cost_basis") or 0
-                p["realized_contract_pnl"] = round(
-                    final_payoff - (p.get("max_loss_per_contract", 0) or 0), 2)
-                # Options P&L at resolution
-                if cost_basis > 0:
-                    pnl = round(final_payoff - cost_basis, 2)
-                    p["options_outcome"] = "PROFIT" if pnl > 0 else "LOSS"
-                    p["options_realized_pnl"] = pnl
-                p["resolution_date"] = today_str
-                newly_closed.append(p)
-                closed_total += 1
+                if barrier_touched:
+                    p["outcome"] = "CLOSED"
+                    p["outcome_tag"] = "SOLD_AT_TOUCH"
+                    p["realized_return_pct"] = round(p["max_high_observed_pct"], 4)
+                    p["resolution_date"] = today_str
+                    newly_closed.append(p)
+                    closed_total += 1
+                    continue
+                if stopped:
+                    p["outcome"] = "CLOSED"
+                    p["outcome_tag"] = "STOPPED"
+                    p["realized_return_pct"] = round(-(p.get("stop_loss_pct") or 0), 4)
+                    p["resolution_date"] = today_str
+                    newly_closed.append(p)
+                    closed_total += 1
+                    continue
+                if window_terminal:
+                    p["outcome"] = "CLOSED"
+                    p["outcome_tag"] = "TERMINAL"
+                    p["realized_return_pct"] = round(gain_pct, 4)
+                    p["resolution_date"] = today_str
+                    newly_closed.append(p)
+                    closed_total += 1
+                    continue
+                updated.append(p)
+                open_total += 1
                 continue
 
-            # Still open
+            if method == "long_call":
+                strike = p.get("chosen_leg_strike")
+                expiration = p.get("chosen_leg_expiration")
+                entry_ask = p.get("entry_quote_ask")
+                cost_basis = entry_ask * 100.0 if entry_ask is not None else None
+
+                # Refresh leg quote if chain was fetched
+                df_chain = chain_lookup.get(sym) if (strike is not None and expiration) else None
+                if df_chain is not None:
+                    leg_quote = _refetch_long_call_quote(df_chain, strike, expiration)
+                    if leg_quote is not None:
+                        p["current_quote_ask"] = leg_quote["ask"]
+                        p["current_quote_bid"] = leg_quote["bid"]
+                        p["current_quote_mid"] = leg_quote["mid"]
+                        p["current_iv_at_strike"] = leg_quote["iv"]
+                        p["current_delta"] = leg_quote["delta"]
+                        p["current_theta"] = leg_quote["theta"]
+                        p["quote_last_repriced"] = today_str
+                        if cost_basis is not None and cost_basis > 0:
+                            current_value = leg_quote["mid"] * 100.0
+                            p["unrealized_pnl"] = round(current_value - cost_basis, 2)
+                            p["unrealized_pnl_pct"] = round(
+                                (current_value - cost_basis) / cost_basis * 100, 2)
+
+                if barrier_touched or window_terminal:
+                    p["outcome"] = "CLOSED"
+                    p["outcome_tag"] = "SOLD_AT_TOUCH" if barrier_touched else "TERMINAL"
+                    p["resolution_date"] = today_str
+                    # Exit value: current mid (only if refreshed TODAY) else
+                    # spot intrinsic. The stale entry mid persists in
+                    # current_quote_mid when Theta is unavailable — preferring
+                    # it over intrinsic would silently anchor realized P&L to
+                    # the entry quote forever.
+                    quote_fresh_today = p.get("quote_last_repriced") == today_str
+                    if quote_fresh_today and p.get("current_quote_mid") is not None:
+                        exit_value = p["current_quote_mid"] * 100.0
+                    elif strike is not None:
+                        exit_value = max(0.0, current_price - strike) * 100.0
+                    else:
+                        exit_value = 0.0
+                    if cost_basis is not None and cost_basis > 0:
+                        p["realized_pnl_at_resolve"] = round(exit_value - cost_basis, 2)
+                        p["realized_return_pct"] = round(
+                            (exit_value - cost_basis) / cost_basis * 100, 2)
+                    else:
+                        p["realized_pnl_at_resolve"] = None
+                        p["realized_return_pct"] = None
+                    newly_closed.append(p)
+                    closed_total += 1
+                    continue
+                updated.append(p)
+                open_total += 1
+                continue
+
+            # Unknown method (shouldn't happen post-wipe). Keep open and log once.
             updated.append(p)
             open_total += 1
 
@@ -2061,10 +2636,11 @@ def update_from_scan(stocks: list, region: str, scan_date: str = None):
         # with hit_prob > 0 (the enriched ~30-50 per scan, all deciles) so we can
         # compute the full decile distribution and validate calibration.
         try:
-            new_count, no_ev_count = _record_new_predictions(
+            new_count, no_call_leg = _record_new_predictions(
                 stocks, today_str, state["collecting_cycle_id"], region, regime=regime)
-            log.info(f"  [{regime.name}] Predictions: +{new_count} new "
-                     f"({no_ev_count} without spread EV — price/IV missing)")
+            log.info(f"  [{regime.name}] Predictions: +{new_count} rows "
+                     f"(~{new_count // 2} picks × 2 method arms; "
+                     f"{no_call_leg} call arms with null leg)")
         except Exception as e:
             log.error(f"  [{regime.name}] signal_tracker record predictions failed: {e}", exc_info=True)
 
@@ -2174,7 +2750,8 @@ _SIGNAL_MAP = {
 
 
 def _pred_to_signal_open(p: dict) -> dict:
-    """Convert a P20 prediction to SignalTrackOpen shape."""
+    """Convert a prediction row to SignalTrackOpen shape. Carries
+    method + regime + outcome_tag so the UI can split by arm."""
     ep = p.get("entry_price", 0) or 0
     cp = p.get("current_price", ep) or ep
     sig = _SIGNAL_MAP.get(p.get("signal_strength", ""), "HOLD")
@@ -2197,21 +2774,32 @@ def _pred_to_signal_open(p: dict) -> dict:
         "max_price": round(ep * (1 + max_high_pct / 100), 4) if ep > 0 else 0,
         "min_price": round(ep * (1 + max_dd_pct / 100), 4) if ep > 0 else 0,
         "days_held": p.get("days_observed", 0),
+        # New schema additions — let the UI pivot per method/regime
+        "method": p.get("method"),
+        "regime": p.get("regime"),
+        "outcome_tag": p.get("outcome_tag", "OPEN"),
+        "barrier_target_pct": p.get("barrier_target_pct"),
+        "barrier_price": p.get("barrier_price"),
     }
 
 
 def _pred_to_signal_closed(p: dict) -> dict:
-    """Convert a resolved P20 prediction to SignalTrackClosed shape."""
+    """Convert a resolved prediction row to SignalTrackClosed shape."""
     base = _pred_to_signal_open(p)
     cp = p.get("current_price", base["entry_price"])
     pnl = p.get("realized_return_pct", 0) or 0
     max_high = p.get("max_high_observed_pct", 0) or 0
     max_dd = p.get("max_drawdown_observed_pct", 0) or 0
+    exit_signal_map = {
+        "SOLD_AT_TOUCH": "SELL_TOUCH",
+        "STOPPED": "SELL_STOP",
+        "TERMINAL": "SELL_WINDOW",
+    }
     base.update({
         "exit_date": p.get("resolution_date", p.get("last_updated", "")),
         "exit_price": cp,
         "exit_composite": p.get("composite", 0) or 0,
-        "exit_signal": "SELL",
+        "exit_signal": exit_signal_map.get(p.get("outcome_tag"), "SELL"),
         "realized_pnl_pct": round(pnl, 2),
         "max_gain_pct": round(max_high, 2),
         "max_dd_pct": round(max_dd, 2),
@@ -2220,16 +2808,20 @@ def _pred_to_signal_closed(p: dict) -> dict:
 
 
 def _pred_to_hitrate_open(p: dict) -> dict:
-    """Convert a P20 prediction to HitRateOpen shape."""
+    """Convert a prediction row to HitRateOpen shape. Barrier is read off
+    the row (10% for 30d arm, 20% for 60d arm) — no hardcoded threshold."""
     ep = p.get("entry_price", 0) or 0
     cp = p.get("current_price", ep) or ep
     p20 = p.get("p20", 0) or 0
+    # p10_val approximates the row's P(barrier) for UI display. For the 30d
+    # regime this IS P10; for 60d it's P20 — name kept for frontend compat.
     p10_val = min(p20 * P10_MULT, 0.65)
     max_high_pct = p.get("max_high_observed_pct", 0) or 0
+    barrier_pct = p.get("barrier_target_pct") or 10.0
     sig = _SIGNAL_MAP.get(p.get("signal_strength", ""), "HOLD")
-    # Determine hit_date: if max run-up touched +10%, the hit was observed
+    # hit_date: barrier touched within window AND resolution recorded
     hit_date = None
-    if max_high_pct >= 10.0 and p.get("resolution_date"):
+    if max_high_pct >= barrier_pct and p.get("resolution_date"):
         hit_date = p["resolution_date"]
     return {
         "symbol": p.get("symbol", ""),
@@ -2246,51 +2838,64 @@ def _pred_to_hitrate_open(p: dict) -> dict:
         "max_price": round(ep * (1 + max_high_pct / 100), 4) if ep > 0 else 0,
         "days_elapsed": p.get("days_observed", 0),
         "hit_date": hit_date,
+        "method": p.get("method"),
+        "regime": p.get("regime"),
+        "barrier_target_pct": barrier_pct,
     }
 
 
 def _pred_to_hitrate_closed(p: dict) -> dict:
-    """Convert a resolved P20 prediction to HitRateClosed shape."""
+    """Convert a resolved prediction row to HitRateClosed shape."""
     base = _pred_to_hitrate_open(p)
     max_high = p.get("max_high_observed_pct", 0) or 0
-    hit = max_high >= 10.0
+    barrier_pct = p.get("barrier_target_pct") or 10.0
+    hit = p.get("outcome_tag") == "SOLD_AT_TOUCH" or max_high >= barrier_pct
+    tag = p.get("outcome_tag", "")
+    exit_reason_map = {
+        "SOLD_AT_TOUCH": f"hit_{int(barrier_pct)}pct",
+        "STOPPED": "stopped",
+        "TERMINAL": "window_closed",
+    }
     base.update({
         "exit_date": p.get("resolution_date", p.get("last_updated", "")),
-        "exit_reason": "hit_10pct" if hit else "window_closed",
+        "exit_reason": exit_reason_map.get(tag, "window_closed"),
         "hit": hit,
         "max_gain_pct": round(max_high, 2),
     })
     return base
 
 
-def _gather_predictions_from_cycles(state: dict, include_archived: int = 6):
-    """Gather open and closed predictions from all known cycles.
+def _gather_predictions_from_cycles(state: dict, include_archived: int = 6,
+                                      regime: Regime = None):
+    """Gather open and closed prediction rows from all known cycles in a
+    single regime tree. Caller iterates regimes if cross-regime data is needed.
 
-    Returns (open_list, closed_list) where open_list contains OPEN predictions
-    from collecting + resolving cycles, and closed_list contains HIT/EXPIRED
-    predictions from resolving + archived cycles.
+    New schema: open list = rows still tracking (outcome == "OPEN"), closed
+    list = rows finalized (outcome == "CLOSED"). Dedup key includes method
+    and regime so the 4 rows per pick (stock×30d, call×30d, stock×60d,
+    call×60d) all survive the dedup pass.
     """
-    open_list = []
-    closed_list = []
-    seen_closed = set()  # (symbol, entry_date) dedup for closed
+    if regime is None:
+        regime = REGIME_60D
 
-    # Active cycles: collecting + resolving → open predictions
+    open_list: list = []
+    closed_list: list = []
+    seen_closed: set = set()
+
     active_ids = []
     if state.get("collecting_cycle_id"):
         active_ids.append(state["collecting_cycle_id"])
     active_ids.extend(state.get("resolving_cycle_ids", []))
 
     for cid in active_ids:
-        open_data = _gcs_read(f"{CYCLES_PREFIX}/{cid}/open.json",
+        open_data = _gcs_read(f"{regime.cycles_prefix}/{cid}/open.json",
                               {"predictions": []})
         for p in (open_data or {}).get("predictions", []):
             open_list.append(p)
 
-    # Closed predictions from resolving cycles (via JSONL — deduplicated to
-    # latest state per symbol+entry_date)
     for cid in active_ids:
-        raw = _gcs_read_text(f"{CYCLES_PREFIX}/{cid}/predictions.jsonl", "")
-        latest = {}
+        raw = _gcs_read_text(f"{regime.cycles_prefix}/{cid}/predictions.jsonl", "")
+        latest: dict = {}
         for line in raw.splitlines():
             line = line.strip()
             if not line:
@@ -2299,24 +2904,25 @@ def _gather_predictions_from_cycles(state: dict, include_archived: int = 6):
                 row = json.loads(line)
             except Exception:
                 continue
-            key = (row.get("symbol"), row.get("entry_date"))
+            key = (row.get("symbol"), row.get("entry_date"),
+                   row.get("method"), row.get("regime"))
             existing = latest.get(key)
             if existing is None:
                 latest[key] = row
             elif existing.get("outcome") == "OPEN" and row.get("outcome") != "OPEN":
                 latest[key] = row
         for key, row in latest.items():
-            if row.get("outcome") in ("HIT", "EXPIRED") and key not in seen_closed:
+            if row.get("outcome") == "CLOSED" and key not in seen_closed:
                 seen_closed.add(key)
                 closed_list.append(row)
 
-    # Archived cycles — fully resolved, use archived.json's predictions list
     for cid in state.get("archived_cycle_ids", [])[-include_archived:]:
-        arch = _gcs_read(f"{CYCLES_PREFIX}/{cid}/archived.json", None)
+        arch = _gcs_read(f"{regime.cycles_prefix}/{cid}/archived.json", None)
         if not arch or not isinstance(arch, dict):
             continue
         for p in arch.get("predictions", []):
-            key = (p.get("symbol"), p.get("entry_date"))
+            key = (p.get("symbol"), p.get("entry_date"),
+                   p.get("method"), p.get("regime"))
             if key not in seen_closed:
                 seen_closed.add(key)
                 closed_list.append(p)
@@ -2324,18 +2930,30 @@ def _gather_predictions_from_cycles(state: dict, include_archived: int = 6):
     return open_list, closed_list
 
 
-def read_signal_tracks() -> dict:
-    """Derive legacy signal-track data from P20 cycle predictions.
-
-    Returns {open: SignalTrackOpen[], closed: SignalTrackClosed[]} matching
-    the shape expected by the Signal Performance frontend tab.
+def _gather_predictions_all_regimes(include_archived: int = 6):
+    """Walk both regime trees and return one flat (open, closed) pair.
+    Rows already carry their `method` and `regime` tags so the consumer can
+    pivot however it wants.
     """
-    state = _load_cycle_state()
-    if not state or not state.get("collecting_cycle_id"):
-        return {"open": [], "closed": []}
+    all_open: list = []
+    all_closed: list = []
+    for regime in (REGIME_30D_P10, REGIME_60D):
+        state = _load_cycle_state(regime)
+        if not state or not state.get("collecting_cycle_id"):
+            continue
+        o, c = _gather_predictions_from_cycles(state, include_archived, regime)
+        all_open.extend(o)
+        all_closed.extend(c)
+    return all_open, all_closed
 
-    open_preds, closed_preds = _gather_predictions_from_cycles(state)
 
+def read_signal_tracks() -> dict:
+    """Derive signal-track data from cycle predictions across BOTH regimes.
+
+    Each row carries `method` and `regime` so the UI can pivot or filter
+    per method/regime.
+    """
+    open_preds, closed_preds = _gather_predictions_all_regimes()
     return {
         "open": [_pred_to_signal_open(p) for p in open_preds],
         "closed": [_pred_to_signal_closed(p) for p in closed_preds],
@@ -2343,18 +2961,64 @@ def read_signal_tracks() -> dict:
 
 
 def read_hitrate_tracks() -> dict:
-    """Derive legacy hit-rate data from P20 cycle predictions.
+    """Derive hit-rate data from cycle predictions across BOTH regimes.
 
-    Returns {open: HitRateOpen[], closed: HitRateClosed[]} matching
-    the shape expected by the Legacy Hit Rate frontend tab.
+    Each row carries `method`, `regime`, and `barrier_target_pct` so the UI
+    can compute per-arm hit rates.
     """
-    state = _load_cycle_state()
-    if not state or not state.get("collecting_cycle_id"):
-        return {"open": [], "closed": []}
-
-    open_preds, closed_preds = _gather_predictions_from_cycles(state)
+    open_preds, closed_preds = _gather_predictions_all_regimes()
 
     return {
         "open": [_pred_to_hitrate_open(p) for p in open_preds],
         "closed": [_pred_to_hitrate_closed(p) for p in closed_preds],
     }
+
+
+def read_method_tracks(include_archived: int = 6) -> dict:
+    """Method-aware reader: returns per-regime, per-method aggregate stats
+    plus the recent archived cycle summaries. Designed for the new
+    four-method comparison UI.
+
+    Shape:
+      {
+        "regimes": {
+          "30d_p10": {
+            "regime": "30d_p10",
+            "barrier_target_pct": 10.0,
+            "hit_window_days": 30,
+            "current_cycle": <method-aware summary, in-progress>,
+            "archived_cycles": [<last N archived summaries, newest first>]
+          },
+          "60d": {...}
+        },
+        "as_of": "YYYY-MM-DD"
+      }
+    """
+    out: dict = {"regimes": {}, "as_of": datetime.now().strftime("%Y-%m-%d")}
+    for regime in (REGIME_30D_P10, REGIME_60D):
+        state = _load_cycle_state(regime)
+        if not state:
+            continue
+        block: dict = {
+            "regime": regime.name,
+            "barrier_target_pct": regime.hit_threshold_pct,
+            "hit_window_days": regime.hit_window_days,
+            "current_cycle": None,
+            "archived_cycles": [],
+        }
+        # Current (collecting) cycle: compute live summary so the UI can show
+        # in-progress stock vs call performance before the cycle archives.
+        collecting = state.get("collecting_cycle_id")
+        if collecting:
+            try:
+                block["current_cycle"] = _compute_cycle_summary(
+                    collecting, datetime.now().strftime("%Y-%m-%d"), regime)
+            except Exception as e:
+                log.warning(f"read_method_tracks: current cycle summary failed for {regime.name}: {e}")
+        # Recent archived cycles (newest first)
+        for cid in reversed(state.get("archived_cycle_ids", [])[-include_archived:]):
+            arch = _gcs_read(f"{regime.cycles_prefix}/{cid}/archived.json", None)
+            if arch and isinstance(arch, dict):
+                block["archived_cycles"].append(arch)
+        out["regimes"][regime.name] = block
+    return out

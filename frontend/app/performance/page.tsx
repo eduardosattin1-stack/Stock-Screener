@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink
 // ── Data sources ────────────────────────────────────────────────────────────
 const SIGNAL_TRACKS = "/api/performance/signal-tracks";
 const HIT_RATES     = "/api/performance/hit-rates";
+const METHOD_TRACKS = "/api/performance/method-tracks";
 const GCS_PERFORMANCE = "/api/gcs/performance";
 // v1.2 (May 2026): cycles data is written directly to GCS by signal_tracker.py
 // and read via the standard /api/gcs proxy — no backend bridge needed.
@@ -34,6 +35,116 @@ interface HitRateOpen {
 interface HitRateClosed extends HitRateOpen {
   exit_date: string; exit_reason: "hit_10pct" | "window_closed";
   hit: boolean; max_gain_pct: number;
+}
+
+// ── Four-method tracking types — matches read_method_tracks() output ────────
+interface MethodStats {
+  n: number;
+  barrier_hit_count: number; stopped_count: number; terminal_count: number;
+  barrier_hit_rate: number; winning_trade_rate: number | null;
+  mean_realized_return_pct: number; median_realized_return_pct: number;
+  tail_p5_return_pct: number; tail_p95_return_pct: number;
+  mean_max_runup_pct: number; mean_max_drawdown_pct: number;
+  worst_drawdown_pct: number; best_runup_pct: number;
+  total_cost_basis: number; total_realized_pnl_dollars: number;
+  portfolio_return_pct: number | null;
+  underpowered: boolean;
+  by_decile: Record<string, { n: number; hits: number; hit_rate: number }>;
+}
+interface MethodCalibration {
+  d10_hit_rate: number; d10_n: number;
+  d1_hit_rate: number; d1_n: number;
+  d10_baseline: number; d1_baseline: number;
+  observed_odds_ratio: number | null; baseline_odds_ratio: number;
+  kill_switch_threshold: number; healthy: boolean;
+  by_decile: Record<string, { n: number; hits: number; hit_rate: number }>;
+}
+// Per-pick prediction row — full schema from signal_tracker.py.
+// 4 rows per pick (2 methods × 2 regimes); each carries shared entry
+// context plus method-specific fields (stop_price | chosen_leg_*).
+interface MethodPredRow {
+  symbol: string;
+  entry_date: string;
+  cycle_id: string;
+  region?: string;
+  regime: string;             // "30d_p10" | "60d"
+  method: "stock" | "long_call";
+  company_name?: string | null;
+  sector?: string | null;
+  country?: string | null;
+  market_cap?: number | null;
+  entry_price: number;
+  p20: number;
+  decile: number;
+  signal_strength: string;
+  mode_qualifications?: string[];
+  composite?: number | null;
+  expected_dd?: number | null;
+  ivr_at_entry?: number | null;
+  iv_at_entry?: number | null;
+  skew_25d?: number | null;
+  pc_oi_ratio?: number | null;
+  barrier_target_pct: number;
+  barrier_price: number;
+  hit_window_days: number;
+  fate_window_ends?: string;
+  outcome: string;            // "OPEN" | "CLOSED"
+  outcome_tag: string;        // "OPEN" | "SOLD_AT_TOUCH" | "STOPPED" | "TERMINAL"
+  current_price: number;
+  last_updated: string;
+  days_observed: number;
+  max_high_observed_pct: number;
+  max_drawdown_observed_pct: number;
+  realized_return_pct: number | null;
+  resolution_date: string | null;
+  // Stock arm fields
+  stop_loss_pct?: number | null;
+  stop_price?: number | null;
+  // Long-call arm fields
+  chosen_leg_strike?: number | null;
+  chosen_leg_expiration?: string | null;
+  chosen_leg_dte_at_entry?: number | null;
+  entry_quote_ask?: number | null;
+  entry_quote_bid?: number | null;
+  entry_quote_mid?: number | null;
+  entry_iv_at_strike?: number | null;
+  entry_delta?: number | null;
+  entry_gamma?: number | null;
+  entry_theta?: number | null;
+  entry_vega?: number | null;
+  model_fair_value_at_entry?: number | null;
+  edge_dollars_at_entry?: number | null;
+  edge_pct_at_entry?: number | null;
+  current_quote_ask?: number | null;
+  current_quote_bid?: number | null;
+  current_quote_mid?: number | null;
+  current_iv_at_strike?: number | null;
+  current_delta?: number | null;
+  current_theta?: number | null;
+  unrealized_pnl?: number | null;
+  unrealized_pnl_pct?: number | null;
+  realized_pnl_at_resolve?: number | null;
+  quote_last_repriced?: string | null;
+}
+interface MethodCycleSummary {
+  cycle_id: string;
+  archived_date?: string;
+  regime: string;
+  total_predictions: number; n_picks: number;
+  by_method: { stock: MethodStats; long_call: MethodStats };
+  calibration: MethodCalibration;
+  predictions?: MethodPredRow[];  // present on current and archived summaries
+}
+interface MethodRegimeBlock {
+  regime: string;
+  barrier_target_pct: number;
+  hit_window_days: number;
+  current_cycle: MethodCycleSummary | null;
+  archived_cycles: MethodCycleSummary[];
+}
+interface MethodTracks {
+  regimes: Record<string, MethodRegimeBlock>;
+  as_of: string;
 }
 
 // ── v1.2 cycles types — matches signal_tracker.py output ──────────────────
@@ -395,116 +506,188 @@ const td: React.CSSProperties = { padding: "9px 10px", fontSize: 11, fontFamily:
 // ══════════════════════════════════════════════════════════════════════════════
 // TAB 1: SIGNAL PERFORMANCE
 // ══════════════════════════════════════════════════════════════════════════════
-function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
-  const [open, setOpen] = useState<SignalTrackOpen[]>([]);
-  const [closed, setClosed] = useState<SignalTrackClosed[]>([]);
+// ── Four-method comparison view ─────────────────────────────────────────────
+// Rows: {stock, long_call} × {30d_p10, 60d} = 4 method arms tracked in
+// parallel on the same daily picks. Columns surface the risk-adjusted
+// picture (tail_p5, max DD) alongside the central tendency (mean ROI,
+// portfolio return) so a win-rate doesn't hide the disaster tail.
+
+interface MethodRow {
+  key: string;
+  regime: string;
+  method: "stock" | "long_call";
+  label: string;
+  barrierPct: number;
+  windowDays: number;
+  stats: MethodStats;
+}
+
+function MethodsTab() {
+  const [data, setData] = useState<MethodTracks | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<"exit_date" | "realized_pnl_pct" | "days_held" | "max_gain_pct">("exit_date");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [view, setView] = useState<"current" | "archived">("current");
+  const [archivedIdx, setArchivedIdx] = useState(0);
 
   useEffect(() => {
-    fetch(SIGNAL_TRACKS).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((d: { open: SignalTrackOpen[]; closed: SignalTrackClosed[] }) => {
-        setOpen(d.open || []); setClosed(d.closed || []); setLoading(false);
-      })
+    fetch(METHOD_TRACKS)
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d: MethodTracks) => { setData(d); setLoading(false); })
       .catch(e => { setErr(e.message || "Failed to load"); setLoading(false); });
   }, []);
 
-  const sortedClosed = useMemo(() => {
-    const list = [...closed];
-    list.sort((a, b) => {
-      const av = (a as any)[sortKey]; const bv = (b as any)[sortKey];
-      if (typeof av === "string") return sortDir === "desc" ? bv.localeCompare(av) : av.localeCompare(bv);
-      return sortDir === "desc" ? (bv ?? 0) - (av ?? 0) : (av ?? 0) - (bv ?? 0);
-    });
-    return list.slice(0, 200);
-  }, [closed, sortKey, sortDir]);
+  const rows: MethodRow[] = useMemo(() => {
+    if (!data?.regimes) return [];
+    const out: MethodRow[] = [];
+    for (const rname of ["30d_p10", "60d"]) {
+      const r = data.regimes[rname];
+      if (!r) continue;
+      const summary = view === "current"
+        ? r.current_cycle
+        : (r.archived_cycles[archivedIdx] ?? null);
+      if (!summary) continue;
+      for (const m of ["stock", "long_call"] as const) {
+        const stats = summary.by_method[m];
+        if (!stats) continue;
+        out.push({
+          key: `${rname}-${m}`,
+          regime: rname,
+          method: m,
+          label: `${m === "stock" ? "Stock" : "Long Call"} × ${r.barrier_target_pct}% / ${r.hit_window_days}d`,
+          barrierPct: r.barrier_target_pct,
+          windowDays: r.hit_window_days,
+          stats,
+        });
+      }
+    }
+    return out;
+  }, [data, view, archivedIdx]);
 
-  const sortedOpen = useMemo(() => {
-    const list = [...open];
-    list.sort((a, b) => {
-      const apnl = a.entry_price > 0 ? ((a.last_price - a.entry_price) / a.entry_price) * 100 : 0;
-      const bpnl = b.entry_price > 0 ? ((b.last_price - b.entry_price) / b.entry_price) * 100 : 0;
-      return bpnl - apnl;
-    });
-    return list;
-  }, [open]);
-
-  const toggleSort = (k: typeof sortKey) => {
-    if (sortKey === k) setSortDir(d => d === "desc" ? "asc" : "desc");
-    else { setSortKey(k); setSortDir("desc"); }
+  const summaryForView = (rname: string): MethodCycleSummary | null => {
+    if (!data?.regimes[rname]) return null;
+    return view === "current"
+      ? data.regimes[rname].current_cycle
+      : (data.regimes[rname].archived_cycles[archivedIdx] ?? null);
   };
 
-  const stats = useMemo(() => {
-    if (closed.length === 0) return null;
-    const wins = closed.filter(c => c.realized_pnl_pct > 0).length;
-    const totalPnl = closed.reduce((a, c) => a + c.realized_pnl_pct, 0);
-    const totalDays = closed.reduce((a, c) => a + c.days_held, 0);
-    const avgAnn = closed.reduce((a, c) => a + (c.days_held > 0 ? (c.realized_pnl_pct / c.days_held) * 365 : 0), 0) / closed.length;
-    return {
-      total: closed.length,
-      win_rate: (wins / closed.length) * 100,
-      avg_pnl: totalPnl / closed.length,
-      avg_days: totalDays / closed.length,
-      avg_ann: avgAnn,
-      best: closed.reduce((a, c) => c.realized_pnl_pct > (a?.realized_pnl_pct ?? -Infinity) ? c : a, null as SignalTrackClosed | null),
-      worst: closed.reduce((a, c) => c.realized_pnl_pct < (a?.realized_pnl_pct ?? Infinity) ? c : a, null as SignalTrackClosed | null),
-    };
-  }, [closed]);
+  const archivedOptions = useMemo(() => {
+    if (!data?.regimes) return [];
+    // Union of archived cycle ids across regimes
+    const ids = new Set<string>();
+    for (const r of Object.values(data.regimes)) {
+      for (const a of r.archived_cycles) ids.add(a.cycle_id);
+    }
+    return Array.from(ids).sort().reverse();
+  }, [data]);
 
-  if (loading) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading signal tracks…" />;
+  const totalPicks = useMemo(() => {
+    if (!data?.regimes) return 0;
+    let n = 0;
+    for (const rname of ["30d_p10", "60d"]) {
+      const s = summaryForView(rname);
+      n += s?.n_picks ?? 0;
+    }
+    return n;
+  }, [data, view, archivedIdx]);
+
+  if (loading) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Loading method tracks…" />;
   if (err) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="Failed to load" sub={err} />;
+  if (!data) return <Empty icon={<BarChart3 size={36} color={T.divider} />} title="No method data" />;
+
+  const cal30 = summaryForView("30d_p10")?.calibration;
+  const cal60 = summaryForView("60d")?.calibration;
+  const healthy = (cal30?.healthy ? 1 : 0) + (cal60?.healthy ? 1 : 0);
 
   return (
     <>
-      {stats && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 20 }}>
-          <KPI label="OPEN" value={String(open.length)} sub="Currently tracking" />
-          <KPI label="CLOSED CYCLES" value={String(stats.total)} sub={`Best: ${stats.best?.symbol ?? "—"} ${stats.best ? `${stats.best.realized_pnl_pct >= 0 ? "+" : ""}${stats.best.realized_pnl_pct.toFixed(1)}%` : ""}`} />
-          <KPI label="WIN RATE" value={`${stats.win_rate.toFixed(0)}%`} color={stats.win_rate >= 50 ? T.greenPos : T.red} sub={`Worst: ${stats.worst?.symbol ?? "—"} ${stats.worst ? `${stats.worst.realized_pnl_pct.toFixed(1)}%` : ""}`} />
-          <KPI label="AVG P&L" value={`${stats.avg_pnl >= 0 ? "+" : ""}${stats.avg_pnl.toFixed(1)}%`} color={stats.avg_pnl >= 0 ? T.greenPos : T.red} sub={`Avg hold: ${stats.avg_days.toFixed(0)}d`} />
-          <KPI label="AVG ANNUALIZED" value={`${stats.avg_ann >= 0 ? "+" : ""}${stats.avg_ann.toFixed(0)}%`} color={stats.avg_ann >= 0 ? T.greenPos : T.red} sub={`${stats.total} closed cycles`} />
-        </div>
-      )}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
+        <KPI label="PICKS (THIS VIEW)" value={String(totalPicks)} sub={view === "current" ? "Live collecting cycle" : `Archived ${archivedOptions[archivedIdx] ?? ""}`} />
+        <KPI label="METHODS TRACKED" value="4" sub="{stock, call} × {30d/+10%, 60d/+20%}" />
+        <KPI label="CALIBRATION (30D)" value={cal30 ? `${(cal30.d10_hit_rate * 100).toFixed(0)}%` : "—"} color={cal30?.healthy ? T.greenPos : T.red} sub={`D10 n=${cal30?.d10_n ?? 0} vs ${(cal30?.d10_baseline ?? 0) * 100 | 0}% baseline`} />
+        <KPI label="CALIBRATION (60D)" value={cal60 ? `${(cal60.d10_hit_rate * 100).toFixed(0)}%` : "—"} color={cal60?.healthy ? T.greenPos : T.red} sub={`D10 n=${cal60?.d10_n ?? 0} vs ${(cal60?.d10_baseline ?? 0) * 100 | 0}% baseline`} />
+      </div>
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 12, alignItems: "center" }}>
+        <button onClick={() => setView("current")}
+          style={{
+            padding: "6px 14px", fontSize: 11, fontFamily: T.mono, fontWeight: 600,
+            border: "none", borderRadius: 5, cursor: "pointer",
+            background: view === "current" ? T.greenLight : "transparent",
+            color: view === "current" ? T.green : T.muted,
+          }}>Current cycle</button>
+        <button onClick={() => setView("archived")}
+          disabled={archivedOptions.length === 0}
+          style={{
+            padding: "6px 14px", fontSize: 11, fontFamily: T.mono, fontWeight: 600,
+            border: "none", borderRadius: 5, cursor: archivedOptions.length === 0 ? "not-allowed" : "pointer",
+            background: view === "archived" ? T.greenLight : "transparent",
+            color: view === "archived" ? T.green : T.muted,
+            opacity: archivedOptions.length === 0 ? 0.4 : 1,
+          }}>Archived ({archivedOptions.length})</button>
+        {view === "archived" && archivedOptions.length > 0 && (
+          <select value={archivedIdx} onChange={e => setArchivedIdx(parseInt(e.target.value))}
+            style={{ fontSize: 11, fontFamily: T.mono, padding: "4px 8px", borderRadius: 4, border: `1px solid ${T.divider}`, background: "var(--bg-elevated, #fff)", color: T.text }}>
+            {archivedOptions.map((cid, i) => <option key={cid} value={i}>{cid}</option>)}
+          </select>
+        )}
+      </div>
 
       <Card style={{ marginBottom: 20 }}>
-        <SH title={`Open Tracks (${sortedOpen.length})`} icon={<TrendingUp size={12} />} sub="BUY/STRONG BUY not yet downgraded to SELL" />
-        {sortedOpen.length === 0 ? (
+        <SH title="Method comparison" icon={<TrendingUp size={12} />}
+            sub={`Same picks, four exit/payoff structures tracked in parallel. Read tail_p5 + worst_DD before celebrating any win rate.`} />
+        {rows.length === 0 ? (
           <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-            No open tracks yet. First BUY signal will appear here on the next scan.
+            No data for this view yet. New schema starts collecting from the next scan.
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono }}>
               <thead><tr>
-                {["Symbol", "Entry Date", "Entry Price", "Current", "Unrealized", "Max Gain", "Max DD", "Days", "Entry Sig", "Cur Sig", "Composite"].map((h, i) => (
+                {["Method", "n", "Hit %", "Win %", "Mean ROI", "Median", "Tail p5", "Tail p95", "Worst DD", "Best Runup", "Port Ret", "Flag"].map((h, i) => (
                   <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
                 ))}
               </tr></thead>
               <tbody>
-                {sortedOpen.map((t, i) => {
-                  const ep = t.entry_price || 0;
-                  const pnl = ep > 0 ? ((t.last_price - ep) / ep) * 100 : 0;
-                  const maxG = ep > 0 ? ((t.max_price - ep) / ep) * 100 : 0;
-                  const maxD = ep > 0 ? ((t.min_price - ep) / ep) * 100 : 0;
-                  const pC = pnl >= 0 ? T.greenPos : T.red;
+                {rows.map(r => {
+                  const s = r.stats;
+                  const meanC = s.mean_realized_return_pct >= 0 ? T.greenPos : T.red;
+                  const tailC = s.tail_p5_return_pct >= -10 ? T.greenPos : s.tail_p5_return_pct >= -25 ? T.muted : T.red;
+                  const portC = (s.portfolio_return_pct ?? 0) >= 0 ? T.greenPos : T.red;
+                  const winC = (s.winning_trade_rate ?? 0) >= 0.5 ? T.greenPos : T.red;
                   return (
-                    <tr key={`${t.symbol}-${t.entry_date}-${i}`} style={{ cursor: "pointer" }}
-                      onClick={() => router.push(`/stock/${t.symbol}`)}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                      <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{t.symbol}</td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.entry_date}</td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
-                      <td style={{ ...td, textAlign: "right", fontWeight: 600, color: T.text }}>${t.last_price.toFixed(2)}</td>
-                      <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>{pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{maxG.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.red }}>{maxD.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
-                      <td style={{ ...td, textAlign: "right" }}><SignalBadge signal={t.entry_signal} /></td>
-                      <td style={{ ...td, textAlign: "right" }}><SignalBadge signal={t.last_signal} /></td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.last_composite?.toFixed(2) ?? "—"}</td>
+                    <tr key={r.key}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                      <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{r.label}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{s.n}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.text }}>{(s.barrier_hit_rate * 100).toFixed(0)}%
+                        <span style={{ color: T.light, fontSize: 9, marginLeft: 4 }}>
+                          ({s.barrier_hit_count}/{s.n})
+                        </span>
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: winC, fontWeight: 600 }}>
+                        {s.winning_trade_rate !== null ? `${(s.winning_trade_rate * 100).toFixed(0)}%` : "—"}
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: meanC, fontWeight: 700 }}>
+                        {s.mean_realized_return_pct >= 0 ? "+" : ""}{s.mean_realized_return_pct.toFixed(1)}%
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                        {s.median_realized_return_pct >= 0 ? "+" : ""}{s.median_realized_return_pct.toFixed(1)}%
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: tailC, fontWeight: 700 }}>
+                        {s.tail_p5_return_pct.toFixed(1)}%
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                        +{s.tail_p95_return_pct.toFixed(1)}%
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: T.red }}>{s.worst_drawdown_pct.toFixed(1)}%</td>
+                      <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{s.best_runup_pct.toFixed(1)}%</td>
+                      <td style={{ ...td, textAlign: "right", color: portC, fontWeight: 600 }}>
+                        {s.portfolio_return_pct !== null ? `${s.portfolio_return_pct >= 0 ? "+" : ""}${s.portfolio_return_pct.toFixed(1)}%` : "—"}
+                      </td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 9 }}>
+                        {s.underpowered ? <span style={{ color: T.red, fontWeight: 700 }}>n&lt;20</span> : "OK"}
+                      </td>
                     </tr>
                   );
                 })}
@@ -514,51 +697,227 @@ function SignalPerfTab({ router }: { router: ReturnType<typeof useRouter> }) {
         )}
       </Card>
 
-      <Card>
-        <SH title={`Closed Cycles (${closed.length})`} icon={<Clock size={12} />} sub="BUY → SELL completed — click column to sort" />
-        {closed.length === 0 ? (
-          <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-            No closed cycles yet. A cycle completes when a tracked BUY downgrades to SELL.
-          </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead><tr>
+      <Card style={{ marginBottom: 20 }}>
+        <SH title="Exit breakdown" icon={<Clock size={12} />}
+            sub="How each method closed its rows" />
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono }}>
+            <thead><tr>
+              {["Method", "Sold at touch", "Stopped", "Window end", "Total"].map((h, i) => (
+                <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
+              ))}
+            </tr></thead>
+            <tbody>
+              {rows.map(r => (
+                <tr key={`exit-${r.key}`}>
+                  <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{r.label}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.greenPos }}>{r.stats.barrier_hit_count}</td>
+                  <td style={{ ...td, textAlign: "right", color: r.method === "long_call" ? T.light : T.red }}>
+                    {r.method === "long_call" ? "—" : r.stats.stopped_count}
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.stats.terminal_count}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>{r.stats.n}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <PicksTable
+        rows={(() => {
+          const out: MethodPredRow[] = [];
+          for (const rname of ["30d_p10", "60d"]) {
+            const s = summaryForView(rname);
+            if (s?.predictions) out.push(...s.predictions);
+          }
+          // Stable order: by symbol, then 30d before 60d, then stock before call
+          out.sort((a, b) => {
+            if (a.symbol !== b.symbol) return a.symbol.localeCompare(b.symbol);
+            if (a.regime !== b.regime) return a.regime === "30d_p10" ? -1 : 1;
+            return a.method === "stock" ? -1 : 1;
+          });
+          return out;
+        })()}
+        cycleLabel={view === "current" ? "Current cycle" : (archivedOptions[archivedIdx] ?? "")}
+      />
+    </>
+  );
+}
+
+// ── Per-pick detail table ───────────────────────────────────────────────────
+// One row per prediction row (so 4 rows per qualifying pick). Lets you read
+// each pick's entry context (price, ATM IV, IVR, decile) alongside the
+// method-specific fields (stop_price for stocks; chosen leg / entry ask /
+// edge for calls) and the live mark / outcome / realized return.
+function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: string }) {
+  const [methodFilter, setMethodFilter] = useState<"all" | "stock" | "long_call">("all");
+  const [regimeFilter, setRegimeFilter] = useState<"all" | "30d_p10" | "60d">("all");
+  const [outcomeFilter, setOutcomeFilter] = useState<"all" | "OPEN" | "SOLD_AT_TOUCH" | "STOPPED" | "TERMINAL">("all");
+
+  const filtered = useMemo(() => rows.filter(r =>
+    (methodFilter === "all" || r.method === methodFilter) &&
+    (regimeFilter === "all" || r.regime === regimeFilter) &&
+    (outcomeFilter === "all" || r.outcome_tag === outcomeFilter)
+  ), [rows, methodFilter, regimeFilter, outcomeFilter]);
+
+  const methodLabel = (r: MethodPredRow) => {
+    const barrier = r.regime === "30d_p10" ? "+10%/30d" : "+20%/60d";
+    return `${r.method === "stock" ? "Stock" : "Call"} ${barrier}`;
+  };
+  const outcomeColor = (tag: string) =>
+    tag === "SOLD_AT_TOUCH" ? T.greenPos
+    : tag === "STOPPED" ? T.red
+    : tag === "TERMINAL" ? T.muted
+    : T.text;
+
+  return (
+    <Card>
+      <SH title={`Per-pick detail (${filtered.length} rows)`} icon={<Search size={12} />}
+          sub={`${cycleLabel} — every prediction row across both regimes and both methods. Entry context (price, IV, IVR, decile) shared across the 4 method rows of each pick.`} />
+
+      <div style={{ display: "flex", gap: 14, padding: "10px 14px", borderBottom: `1px solid ${T.divider}`, alignItems: "center", flexWrap: "wrap", fontFamily: T.mono, fontSize: 11 }}>
+        <FilterPills label="METHOD" value={methodFilter} setValue={setMethodFilter as any}
+          options={[["all","All"],["stock","Stock"],["long_call","Call"]]} />
+        <FilterPills label="REGIME" value={regimeFilter} setValue={setRegimeFilter as any}
+          options={[["all","All"],["30d_p10","30d +10%"],["60d","60d +20%"]]} />
+        <FilterPills label="OUTCOME" value={outcomeFilter} setValue={setOutcomeFilter as any}
+          options={[["all","All"],["OPEN","Open"],["SOLD_AT_TOUCH","Touch"],["STOPPED","Stop"],["TERMINAL","Term"]]} />
+      </div>
+
+      {filtered.length === 0 ? (
+        <div style={{ padding: 30, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
+          No rows match the current filters.
+        </div>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 11 }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${T.divider}` }}>
+                <th colSpan={4} style={{ ...th, fontSize: 9, color: T.light, textAlign: "left", paddingLeft: 8, paddingBottom: 2 }}>PICK</th>
+                <th colSpan={4} style={{ ...th, fontSize: 9, color: T.light, textAlign: "left", paddingBottom: 2, borderLeft: `1px dashed ${T.divider}` }}>ENTRY CONTEXT</th>
+                <th colSpan={4} style={{ ...th, fontSize: 9, color: T.light, textAlign: "left", paddingBottom: 2, borderLeft: `1px dashed ${T.divider}` }}>METHOD-SPECIFIC</th>
+                <th colSpan={5} style={{ ...th, fontSize: 9, color: T.light, textAlign: "left", paddingBottom: 2, borderLeft: `1px dashed ${T.divider}` }}>OUTCOME</th>
+              </tr>
+              <tr>
                 <th style={{ ...th, textAlign: "left" }}>Symbol</th>
-                <th style={{ ...th, textAlign: "right" }}>Entry</th>
-                <th style={{ ...th, textAlign: "right" }}>Exit</th>
-                <th style={{ ...th, textAlign: "right", cursor: "pointer", color: sortKey === "realized_pnl_pct" ? T.green : T.muted }} onClick={() => toggleSort("realized_pnl_pct")}>Realized {sortKey === "realized_pnl_pct" ? (sortDir === "desc" ? "↓" : "↑") : ""}</th>
-                <th style={{ ...th, textAlign: "right", cursor: "pointer", color: sortKey === "max_gain_pct" ? T.green : T.muted }} onClick={() => toggleSort("max_gain_pct")}>Max Gain {sortKey === "max_gain_pct" ? (sortDir === "desc" ? "↓" : "↑") : ""}</th>
-                <th style={{ ...th, textAlign: "right" }}>Max DD</th>
-                <th style={{ ...th, textAlign: "right", cursor: "pointer", color: sortKey === "days_held" ? T.green : T.muted }} onClick={() => toggleSort("days_held")}>Days {sortKey === "days_held" ? (sortDir === "desc" ? "↓" : "↑") : ""}</th>
-                <th style={{ ...th, textAlign: "right" }}>Entry Sig</th>
-                <th style={{ ...th, textAlign: "right", cursor: "pointer", color: sortKey === "exit_date" ? T.green : T.muted }} onClick={() => toggleSort("exit_date")}>Exit Date {sortKey === "exit_date" ? (sortDir === "desc" ? "↓" : "↑") : ""}</th>
-              </tr></thead>
-              <tbody>
-                {sortedClosed.map((t, i) => {
-                  const pC = t.realized_pnl_pct >= 0 ? T.greenPos : T.red;
-                  return (
-                    <tr key={`${t.symbol}-${t.exit_date}-${i}`}
+                <th style={{ ...th, textAlign: "left" }}>Sector</th>
+                <th style={{ ...th, textAlign: "left" }}>Method</th>
+                <th style={{ ...th, textAlign: "right" }}>D</th>
+                <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Entry $</th>
+                <th style={{ ...th, textAlign: "right" }}>Barrier</th>
+                <th style={{ ...th, textAlign: "right" }}>ATM IV</th>
+                <th style={{ ...th, textAlign: "right" }}>IVR</th>
+                <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Stop</th>
+                <th style={{ ...th, textAlign: "right" }}>Strike</th>
+                <th style={{ ...th, textAlign: "right" }}>Ask</th>
+                <th style={{ ...th, textAlign: "right" }}>Edge</th>
+                <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Last $</th>
+                <th style={{ ...th, textAlign: "right" }}>Max+</th>
+                <th style={{ ...th, textAlign: "right" }}>Max−</th>
+                <th style={{ ...th, textAlign: "right" }}>Days</th>
+                <th style={{ ...th, textAlign: "right" }}>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r, i) => {
+                const prevSym = i > 0 ? filtered[i - 1].symbol : "";
+                const newSymGroup = r.symbol !== prevSym;
+                const realized = r.realized_return_pct;
+                const realizedC = realized === null || realized === undefined
+                  ? T.muted : realized >= 0 ? T.greenPos : T.red;
+                return (
+                  <tr key={`${r.symbol}-${r.regime}-${r.method}-${i}`}
+                      style={{ borderTop: newSymGroup ? `1px solid ${T.divider}` : "none" }}
                       onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                      <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text, cursor: "pointer" }} onClick={() => router.push(`/stock/${t.symbol}`)}>{t.symbol}</td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>${t.entry_price.toFixed(2)}</td>
-                      <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>${t.exit_price.toFixed(2)}</td>
-                      <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pC }}>{t.realized_pnl_pct >= 0 ? "+" : ""}{t.realized_pnl_pct.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{t.max_gain_pct.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.red }}>{t.max_dd_pct.toFixed(1)}%</td>
-                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{t.days_held}d</td>
-                      <td style={{ ...td, textAlign: "right" }}><SignalBadge signal={t.entry_signal} /></td>
-                      <td style={{ ...td, textAlign: "right", color: T.light, fontSize: 10 }}>{t.exit_date}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-    </>
+                    <td style={{ ...td, textAlign: "left", fontWeight: 700, color: newSymGroup ? T.text : T.light }}>
+                      {newSymGroup ? r.symbol : ""}
+                    </td>
+                    <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>
+                      {newSymGroup ? (r.sector ?? "—") : ""}
+                    </td>
+                    <td style={{ ...td, textAlign: "left", color: T.muted }}>{methodLabel(r)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.decile}</td>
+
+                    <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>
+                      ${r.entry_price.toFixed(2)}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      ${r.barrier_price.toFixed(2)}
+                      <span style={{ color: T.light, fontSize: 9, marginLeft: 3 }}>(+{r.barrier_target_pct}%)</span>
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      {r.iv_at_entry != null ? `${(r.iv_at_entry * 100).toFixed(0)}%` : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      {r.ivr_at_entry != null ? `${r.ivr_at_entry}` : "—"}
+                    </td>
+
+                    <td style={{ ...td, textAlign: "right", color: r.stop_price != null ? T.red : T.light, borderLeft: `1px dashed ${T.divider}` }}>
+                      {r.method === "stock"
+                        ? (r.stop_price != null ? `$${r.stop_price.toFixed(2)}` : "—")
+                        : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      {r.method === "long_call" && r.chosen_leg_strike != null ? `$${r.chosen_leg_strike.toFixed(0)}` : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      {r.method === "long_call" && r.entry_quote_ask != null ? `$${r.entry_quote_ask.toFixed(2)}` : "—"}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: (r.edge_pct_at_entry ?? 0) > 0 ? T.greenPos : T.red, fontWeight: 600 }}>
+                      {r.method === "long_call" && r.edge_pct_at_entry != null
+                        ? `${(r.edge_pct_at_entry * 100).toFixed(0)}%` : "—"}
+                    </td>
+
+                    <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>
+                      ${r.current_price.toFixed(2)}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.greenPos }}>
+                      +{r.max_high_observed_pct.toFixed(1)}%
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.red }}>
+                      {r.max_drawdown_observed_pct.toFixed(1)}%
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                      {r.days_observed}d
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: outcomeColor(r.outcome_tag), fontWeight: 700, fontSize: 10 }}>
+                      <div>{r.outcome_tag.replace(/_/g, " ")}</div>
+                      {realized !== null && realized !== undefined && (
+                        <div style={{ color: realizedC, fontSize: 10, fontWeight: 700 }}>
+                          {realized >= 0 ? "+" : ""}{realized.toFixed(1)}%
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function FilterPills({ label, value, setValue, options }: {
+  label: string; value: string; setValue: (v: string) => void;
+  options: Array<[string, string]>;
+}) {
+  return (
+    <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+      <span style={{ color: T.light, fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>{label}</span>
+      {options.map(([v, lbl]) => (
+        <button key={v} onClick={() => setValue(v)}
+          style={{
+            padding: "3px 9px", fontSize: 10, fontFamily: T.mono, fontWeight: 600,
+            border: "none", borderRadius: 4, cursor: "pointer",
+            background: value === v ? T.greenLight : "transparent",
+            color: value === v ? T.green : T.muted,
+          }}>{lbl}</button>
+      ))}
+    </div>
   );
 }
 
@@ -2761,7 +3120,7 @@ export default function Performance() {
         {[
           { key: "strategies", label: "Strategies",         icon: <BarChart3 size={12} /> },
           { key: "cycles",     label: "P20 Cycles",         icon: <Target size={12} /> },
-          { key: "signal",     label: "Signal Performance", icon: <TrendingUp size={12} /> },
+          { key: "signal",     label: "Methods",            icon: <TrendingUp size={12} /> },
           { key: "hitrate",    label: "Legacy Hit Rate",    icon: <Award size={12} /> },
         ].map(({ key, label, icon }) => (
           <button key={key} onClick={() => setTab(key as typeof tab)}
@@ -2780,7 +3139,7 @@ export default function Performance() {
 
       {tab === "strategies" && <StrategiesTab />}
       {tab === "cycles"     && <CyclesTab />}
-      {tab === "signal"     && <SignalPerfTab router={router} />}
+      {tab === "signal"     && <MethodsTab />}
       {tab === "hitrate"    && <HitRateTab router={router} />}
     </div>
   );

@@ -525,6 +525,26 @@ class Handler(BaseHTTPRequestHandler):
                 traceback.print_exc()
             return
 
+        # Four-method comparison reader (stock × {30d_p10, 60d} + long_call × {30d_p10, 60d})
+        if parsed.path == "/performance/method-tracks":
+            try:
+                from signal_tracker import read_method_tracks
+                data = read_method_tracks()
+                self.send_response(200)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "public, max-age=60")
+                self.end_headers()
+                self.wfile.write(json.dumps(data, default=str).encode())
+            except Exception as e:
+                self.send_response(500)
+                self._cors()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                traceback.print_exc()
+            return
+
         # v7.2: P(+10%) hit-rate tracker (System 2 — 60d windows, p10 > 0.70)
         if parsed.path == "/performance/hit-rates":
             try:
