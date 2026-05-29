@@ -158,16 +158,19 @@ def add_evasiveness_flag(red_flags: dict, debate_result: dict) -> dict:
 DIRECTOR_SYSTEM_PROMPT = """You are the Apex Portfolio Manager & Chief Risk Officer for the Speculair high-performance, alpha-seeking stock selection system.
 Your mandate is pure Relative Capital Allocation, Opportunity Cost, and Temporal Arbitrage. Capital is strictly finite. You must pit the provided equities against one another in a zero-sum competition.
 
-You are provided with a batch of candidate equities that have already survived per-methodology debate pipelines (Radar, Interrogator, Architect, Moderator). Each candidate contains:
+You are given the FULL scored & gated candidate universe: every name that passed the screener's quantitative gates (leverage, sector cap, Piotroski quality) AND survived a per-methodology multi-agent debate pipeline (Radar → Interrogator → Architect → Moderator). You are NOT limited to one pick per methodology, and there is NO fixed basket size. Choose freely across the entire universe — you may concentrate in a name that only one methodology surfaced, or ignore a name that many methodologies surfaced.
+
+Each candidate contains:
 - "symbol": Ticker symbol
-- "conviction": The debate conviction score (1 to 5)
-- "source_methodologies": Which of the 9 valuation methodologies selected this stock
-- "bull_thesis": The structural bull macro probability case
-- "bear_thesis": The structural bear macro probability case
-- "moderator_conclusion": The Expectations Arbitrage CRO synthesis
+- "debate_conviction": The prior debate's 1-to-5 conviction (5 = strong buy ... 1 = strong sell). CONTEXT ONLY — you assign your own independent score.
+- "source_methodologies": Which of the 9 valuation methodologies surfaced this name
+- "mos": Margin-of-safety per methodology that surfaced it (the quantitative cushion)
+- "bull_thesis" / "bear_thesis": The debate's structural bull and bear cases
+- "moderator_conclusion": The Expectations-Arbitrage CRO synthesis
 - "consensus_delta": The gap between street assumptions and reality
 - "forcing_function": The imminent catalyst
-- "red_flags": Active financial warning flags
+- "financial_warnings": Active financial red flags
+- "cycle_flag", "structural_break", "years_history", "forward_eps_growth", "sector_class": risk context
 
 Your execution workflow:
 
@@ -177,36 +180,37 @@ Internally interrogate every stock. Instantly eliminate any stock that triggers 
 - The "Valley of Death" Veto: Kill any trade facing a massive cash-burn hump, debt maturity wall, or forced institutional liquidation before the primary catalyst triggers.
 - The "Dead Money" Veto: Kill any trade where the forcing function is legally or practically more than 6 to 9 months away.
 
-Step 2: Relative Ranking & Basket Optimization
-Take the surviving candidates and rank them strictly on Maximum Immediate Asymmetry. Optimize for the widest gap between management's structural reality and Wall Street's legacy assumptions, paired with the most imminent catalyst. Ensure the final basket is idiosyncratic (do not cluster risks on the same macro catalyst).
+Step 2: Free Conviction Allocation (THE CORE OF YOUR MANDATE)
+From the survivors, build the Speculair Apex Basket. Choose **between 2 and 20 names — your own count, driven purely by conviction**. Concentrate in 2 names if only 2 are genuinely worthy; spread to as many as 20 if that many are genuinely asymmetric. DO NOT pad to a quota, DO NOT pick one-per-methodology, DO NOT force a fixed size. Rank strictly on Maximum Immediate Asymmetry: the widest gap between management's structural reality and Wall Street's legacy assumptions, paired with the most imminent catalyst. Keep the basket idiosyncratic — do not cluster risk on a single macro catalyst, and hold no more than 3 names in any one sector.
 
-Step 3: The Output Format
-You must return a valid JSON object matching the following schema:
+Step 3: Continuous Conviction Scoring
+Score EVERY apex pick with a CONTINUOUS conviction from 0 to 100:
+  90-100 = table-pounding, maximal asymmetry, catalyst imminent
+  70-89  = high-conviction aggressive entry
+  50-69  = solid, included but to be sized smaller
+  below 50 = do NOT place in the apex basket (use the watchlist instead)
+Scores need not be unique, but rank honestly — your conviction drives position sizing downstream.
+
+Step 4: The Output Format
+You must return a valid JSON object matching this schema EXACTLY:
 {
-  "memo": "string (The Final Execution Memo formatted exactly as requested below)",
-  "allocations": {
-    "TICKER": integer (conviction score: 5 for Apex Basket, 3 for Capitulation Watchlist, 2 for Graveyard/Rejected)
-  }
+  "memo": "string — the Final Execution Memo (see format below)",
+  "basket": [
+    {"symbol": "TICKER", "conviction": <integer 0-100>, "rationale": "one sentence: the consensus delta + forcing function, and why this beat the discarded peers"}
+  ],
+  "watchlist": [
+    {"symbol": "TICKER", "conviction": <integer 0-100>, "trigger": "the exact capitulation event or price point that activates the buy order"}
+  ]
 }
+- "basket" MUST contain between 2 and 20 entries. This IS the Speculair Apex Basket.
+- "watchlist" contains 0 to 8 "fundamentally generational but terrible near-term timing" setups.
 
-The "memo" string must be formatted exactly as follows:
-1. THE SPECULAIR APEX BASKET (Select strictly 5 to 7 tickers):
-These are the immediate "Aggressive Entry" allocations. For each selected equity, provide:
-- The Consensus Delta: The exact street assumption that is factually incorrect today.
-- The Forcing Function: The exact imminent event that will force the re-rating.
-- Relative Conviction: One sentence explaining why this stock beat out discarded peers.
-
-2. THE CAPITULATION WATCHLIST (Select Top 3 to 5 "Good but Early" Setups):
-Fundamentally generational setups with terrible near-term timing. Specify the exact capitulation event or price point that will activate our buy order.
-
-3. THE GRAVEYARD (Brief Summary):
-Do not list individual tickers. Provide a rapid-fire, two-sentence post-mortem.
+The "memo" string must be formatted as:
+1. THE SPECULAIR APEX BASKET: one line per apex name — its Consensus Delta (the exact street assumption that is wrong) + its Forcing Function (the exact imminent event) + Relative Conviction (one sentence on why it beat discarded peers).
+2. THE CAPITULATION WATCHLIST: the exact capitulation event/price for each watchlist name.
+3. THE GRAVEYARD: do NOT list tickers — a rapid-fire two-sentence post-mortem on why the discarded majority lost the competition.
 
 Output ONLY the raw JSON object. Do not write any markdown formatting or code blocks outside the JSON.
-
-Note: Some baskets may be flagged as 'under_debated' (< 5 qualified candidates from 20 inputs).
-Treat under-debated baskets with extra scrutiny — their conviction scores are statistically less reliable.
-Prefer candidates from well-populated baskets when conviction scores are tied.
 """
 
 
@@ -229,12 +233,17 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
     }
     payload = {
         "model": "claude-opus-4-7",
-        "max_tokens": 4096,
-        "temperature": 0.1,
+        "max_tokens": 8192,
+        # NOTE: claude-opus-4-7 deprecated the `temperature` parameter — sending it
+        # returns invalid_request_error and was the real cause of the Director always
+        # falling back. Omit it (the model is deterministic enough here).
         "system": DIRECTOR_SYSTEM_PROMPT,
         "messages": [
-            {"role": "user", "content": prompt},
-            {"role": "assistant", "content": "{"},
+            # NOTE: claude-opus-4-7 does not support assistant-message prefill — the
+            # conversation must end with a user message. We instruct raw-JSON output
+            # instead and extract the object defensively below.
+            {"role": "user", "content": prompt + "\n\nRespond with ONLY the JSON object, "
+                                                 "starting with { and ending with }. No prose, no code fences."},
         ],
     }
     
@@ -264,13 +273,16 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
                 if block.get("type") == "text":
                     text += block.get("text", "")
             
-            # Prepend the '{' we used for pre-filling
-            text = "{" + text.strip()
-            
+            # Defensive parse: strip code fences, then extract the outermost {...}
+            text = text.strip()
             if text.startswith("```"):
-                lines = text.split("\n")
-                text = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
-            
+                blocks = text.split("```")
+                text = max(blocks, key=len)               # largest fenced block
+                if text.lstrip().lower().startswith("json"):
+                    text = text.lstrip()[4:]
+            start, end = text.find("{"), text.rfind("}")
+            if start != -1 and end != -1 and end > start:
+                text = text[start:end + 1]
             return json.loads(text.strip())
         except json.JSONDecodeError as e:
             log.error(f"Director JSON parse error: {e}")
@@ -285,6 +297,53 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
                 log.error(f"Director error: {e}")
                 time.sleep(3.0)
     return None
+
+
+# ── Deterministic G1-G4 Contract Rules ────────────────────────────────────
+# Apex inclusion threshold on the 0-100 continuous conviction scale.
+# Director picks scoring below this are demoted to the Capitulation Watchlist.
+APEX_CONVICTION_FLOOR = 50
+
+def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
+    """Apply deterministic G1-G4 contract rules on a 0-100 conviction score.
+
+    G2/G3/G4 are HARD EXCLUSIONS → return None (drop the name from any basket).
+    G1 (Peak Cycle) is a soft cap → conviction capped just below the apex floor
+    so the name is demoted to the Capitulation Watchlist rather than excluded.
+
+    Returns the (possibly capped) 0-100 conviction, or None to exclude entirely.
+    """
+    symbol = cand.get("symbol", "")
+    cycle = cand.get("cycle_flag", "NORMAL")
+    sb = cand.get("structural_break", False)
+    yrs = cand.get("years_history", 99)
+    feg = cand.get("forward_eps_growth", 0.0)
+    iv_agree = cand.get("iv15_nogrowth_agreement", True)
+
+    # G4 check: all source methodologies must be applicable
+    source_meths = cand.get("source_methodologies", [])
+    meth_app_dict = cand.get("methodology_applicable", {})
+    all_inapplicable = len(source_meths) > 0 and all(not meth_app_dict.get(m, True) for m in source_meths)
+
+    # G2, G3, G4 are hard exclusions
+    if sb or yrs < 5:
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G2: structural_break={sb}, years={yrs})")
+        return None
+    if feg <= -0.10 or not iv_agree:
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3: forward_eps_growth={feg}, iv15_nogrowth_agreement={iv_agree})")
+        return None
+    if all_inapplicable:
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G4: all source methodologies inapplicable: {meth_app_dict})")
+        return None
+
+    final_conv = max(0, min(100, int(conviction)))
+
+    # G1: Peak Cycle → demote below the apex floor (lands on Watchlist, not excluded)
+    if cycle == "PEAK_CYCLE" and final_conv >= APEX_CONVICTION_FLOOR:
+        log.info(f"  [Contract Gate] {symbol} capped below apex floor (G1: PEAK_CYCLE)")
+        final_conv = APEX_CONVICTION_FLOOR - 1
+
+    return final_conv
 
 
 # ── Main Director Allocation ─────────────────────────────────────────────
@@ -324,11 +383,25 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
                     "sector": pick.get("sector", ""),
                     "signal_type": pick.get("signal_type", "none"),
                     "mos": {meth_key: pick.get("mos", "N/A")},
+                    # CONTRACT fields from screener:
+                    "cycle_flag": pick.get("cycle_flag", "NORMAL"),
+                    "peak_margin_sigma": pick.get("peak_margin_sigma", 0.0),
+                    "norm_scale": pick.get("norm_scale", 1.0),
+                    "mos_source": pick.get("mos_source", ""),
+                    "years_history": pick.get("years_history", 99),
+                    "structural_break": pick.get("structural_break", False),
+                    "structural_break_reason": pick.get("structural_break_reason", ""),
+                    "forward_eps_growth": pick.get("forward_eps_growth", 0.0),
+                    "iv15_nogrowth_agreement": pick.get("iv15_nogrowth_agreement", True),
+                    "iv15_saturated": pick.get("iv15_saturated", False),
+                    "sector_class": pick.get("sector_class", "operating"),
+                    "methodology_applicable": {meth_key: pick.get("methodology_applicable", True)},
                 }
             else:
                 # Merge methodology attribution, take highest conviction, merge MOS
                 all_candidates[sym]["source_methodologies"].append(meth_key)
                 all_candidates[sym].setdefault("mos", {})[meth_key] = pick.get("mos", "N/A")
+                all_candidates[sym].setdefault("methodology_applicable", {})[meth_key] = pick.get("methodology_applicable", True)
                 if pick.get("conviction", 0) > all_candidates[sym]["conviction"]:
                     all_candidates[sym]["conviction"] = pick["conviction"]
                     all_candidates[sym]["bull_thesis"] = pick.get("bull_thesis", "")
@@ -367,12 +440,12 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
         log.info("[Dry Run / No Candidates] Using conviction-based fallback")
         return _build_fallback_result(director_candidates, auto_vetoed, auto_veto_count)
     
-    # Build Director prompt
+    # Build Director prompt — present the FULL debated universe for free 2-20 choice
     prompt_candidates = []
     for c in director_candidates:
         prompt_candidates.append({
             "symbol": c["symbol"],
-            "conviction": c["conviction"],
+            "debate_conviction": c["conviction"],          # 1-5 prior debate score (context)
             "source_methodologies": c["source_methodologies"],
             "bull_thesis": c.get("bull_thesis", "N/A")[:300],
             "bear_thesis": c.get("bear_thesis", "N/A")[:300],
@@ -382,61 +455,129 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
             "financial_warnings": c.get("financial_warnings", "None"),
             "signal_type": c.get("signal_type", "none"),
             "mos": c.get("mos", {}),
+            # Include G1-G4 contract fields in prompt
+            "cycle_flag": c.get("cycle_flag", "NORMAL"),
+            "structural_break": c.get("structural_break", False),
+            "years_history": c.get("years_history", 99),
+            "forward_eps_growth": c.get("forward_eps_growth", 0.0),
+            "iv15_nogrowth_agreement": c.get("iv15_nogrowth_agreement", True),
+            "sector_class": c.get("sector_class", "operating"),
+            "methodology_applicable": c.get("methodology_applicable", {}),
         })
-    
+
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     director_prompt = (
         f"Date: {today}\n"
-        f"Candidates for cross-sectional triaging ({len(prompt_candidates)} stocks "
-        f"surviving from 9 methodology debate pipelines):\n"
-        f"{json.dumps(prompt_candidates, indent=2)}"
+        f"This is the FULL scored & gated candidate universe ({len(prompt_candidates)} names) "
+        f"that survived the 9 methodology debate pipelines. Build your Speculair Apex Basket "
+        f"FREELY: between 2 and 20 names, your own count, each scored 0-100 by conviction. "
+        f"You are NOT bound to one-per-methodology and there is NO fixed size.\n\n"
+        f"{json.dumps(prompt_candidates, indent=2, default=str)}"
     )
-    
-    log.info(f"Querying Director PM with {len(prompt_candidates)} candidates...")
+
+    log.info(f"Querying Director PM with {len(prompt_candidates)} candidates (free 2-20 selection)...")
     director_response = _query_director(director_prompt)
-    
+
     if not director_response:
         log.warning("Director LLM call failed — using fallback")
         return _build_fallback_result(director_candidates, auto_vetoed, auto_veto_count)
-    
-    # 4. Parse Director response
+
+    # 4. Parse Director response (contract: basket[] + watchlist[], 0-100 conviction)
     memo = director_response.get("memo", "")
-    allocations = director_response.get("allocations", {})
-    
+    basket_picks = director_response.get("basket") or []
+    watchlist_picks = director_response.get("watchlist") or []
+
+    # Backward-compat: adapt the legacy {allocations: {TICKER: 1-5}} shape if emitted
+    if not basket_picks and isinstance(director_response.get("allocations"), dict):
+        log.warning("Director used legacy 'allocations' shape — adapting to basket/watchlist")
+        for sym, c in director_response["allocations"].items():
+            try:
+                c = int(c)
+            except (ValueError, TypeError):
+                continue
+            score = c * 20 if c <= 5 else c            # 5→100, 4→80, 3→60
+            (basket_picks if score >= APEX_CONVICTION_FLOOR else watchlist_picks).append(
+                {"symbol": sym, "conviction": score, "rationale": ""}
+            )
+
     log.info(f"Director memo length: {len(memo)} chars")
-    log.info(f"Director allocations: {allocations}")
-    
-    # 5. Build output baskets
-    apex_basket = []
-    capitulation_watchlist = []
-    
-    for sym, conv in allocations.items():
-        conv = int(conv)
-        cand = all_candidates.get(sym, {})
-        
-        entry = {
+    log.info(f"Director basket: {[(p.get('symbol'), p.get('conviction')) for p in basket_picks]}")
+
+    def _make_entry(sym: str, raw_conv, rationale: str = "") -> Optional[dict]:
+        """Build an output pick dict, applying deterministic G1-G4 gates.
+        Returns None if the name is unknown or hard-excluded by a contract gate."""
+        cand = all_candidates.get(sym)
+        if not cand:
+            log.warning(f"  Director named {sym} which is not in the candidate universe — skipping")
+            return None
+        try:
+            raw_conv = int(raw_conv)
+        except (ValueError, TypeError):
+            raw_conv = 0
+        conv = apply_contract_rules(cand, raw_conv)
+        if conv is None:
+            return None
+        return {
             "symbol": sym,
-            "conviction": conv,
-            "debate_conviction": cand.get("conviction", 0),
+            "conviction": conv,                              # 0-100 (director)
+            "debate_conviction": cand.get("conviction", 0),  # 1-5 (moderator)
             "entry_price": cand.get("price", 0),
             "entry_date": today,
             "source_methodologies": cand.get("source_methodologies", []),
-            "director_rationale": "",
+            "director_rationale": rationale or "Director selected portfolio allocation",
             "consensus_delta": cand.get("consensus_delta", ""),
             "forcing_function": cand.get("forcing_function", ""),
             "bull_thesis": cand.get("bull_thesis", ""),
             "bear_thesis": cand.get("bear_thesis", ""),
             "sector": cand.get("sector", ""),
             "mos": cand.get("mos", {}),
+            # Carry G1-G4 fields!
+            "cycle_flag": cand.get("cycle_flag", "NORMAL"),
+            "peak_margin_sigma": cand.get("peak_margin_sigma", 0.0),
+            "norm_scale": cand.get("norm_scale", 1.0),
+            "mos_source": cand.get("mos_source", ""),
+            "years_history": cand.get("years_history", 99),
+            "structural_break": cand.get("structural_break", False),
+            "structural_break_reason": cand.get("structural_break_reason", ""),
+            "forward_eps_growth": cand.get("forward_eps_growth", 0.0),
+            "iv15_nogrowth_agreement": cand.get("iv15_nogrowth_agreement", True),
+            "iv15_saturated": cand.get("iv15_saturated", False),
+            "sector_class": cand.get("sector_class", "operating"),
+            "methodology_applicable": cand.get("methodology_applicable", {}),
         }
-        
-        if conv >= 5:
+
+    # 5. Build output baskets (free 2-20 apex, variable-size watchlist)
+    apex_basket = []
+    capitulation_watchlist = []
+    seen = set()
+
+    for p in basket_picks[:20]:                 # honor the 20-name ceiling
+        sym = (p.get("symbol") or "").strip()
+        if not sym or sym in seen:
+            continue
+        entry = _make_entry(sym, p.get("conviction", 0), p.get("rationale", ""))
+        if entry is None:
+            continue
+        seen.add(sym)
+        if entry["conviction"] >= APEX_CONVICTION_FLOOR:
             apex_basket.append(entry)
-        elif conv >= 3:
-            entry["trigger_event"] = cand.get("valley_of_death", "Monitor for capitulation event")
+        else:
+            # A risk gate (e.g. peak-cycle) demoted it below the apex floor
+            entry["trigger_event"] = "Demoted below apex conviction floor by a risk gate (e.g. peak-cycle)"
             capitulation_watchlist.append(entry)
-    
-    # Apply sector cap
+
+    for p in watchlist_picks[:8]:
+        sym = (p.get("symbol") or "").strip()
+        if not sym or sym in seen:
+            continue
+        entry = _make_entry(sym, p.get("conviction", 0), "")
+        if entry is None:
+            continue
+        seen.add(sym)
+        entry["trigger_event"] = p.get("trigger") or "Monitor for capitulation event"
+        capitulation_watchlist.append(entry)
+
+    # Apply sector cap (idiosyncratic-basket guardrail)
     apex_basket, capitulation_watchlist, cap_warnings = apply_sector_cap(
         apex_basket, capitulation_watchlist
     )
@@ -445,89 +586,103 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
 
     # Sort apex by conviction desc
     apex_basket.sort(key=lambda x: -x["conviction"])
-    
-    log.info(f"Apex Basket: {[p['symbol'] for p in apex_basket]}")
-    log.info(f"Capitulation WL: {[p['symbol'] for p in capitulation_watchlist]}")
-    
+
+    if len(apex_basket) < 2:
+        log.warning(f"Director returned only {len(apex_basket)} apex names (<2) — below the 2-20 mandate.")
+
+    log.info(f"Apex Basket ({len(apex_basket)}): {[(p['symbol'], p['conviction']) for p in apex_basket]}")
+    log.info(f"Capitulation WL ({len(capitulation_watchlist)}): {[p['symbol'] for p in capitulation_watchlist]}")
+
     # Cache Director decisions
-    _cache_decisions(allocations, memo, today)
-    
+    _cache_decisions({p["symbol"]: p["conviction"] for p in apex_basket}, memo, today)
+
     return {
         "apex_basket": apex_basket,
         "capitulation_watchlist": capitulation_watchlist,
         "director_memo": memo,
         "auto_vetoed": auto_veto_count,
     }
-
-
+ 
+ 
 def apply_sector_cap(apex: list, watchlist: list, max_per_sector: int = 3) -> tuple[list, list, list[str]]:
-    """Enforce sector concentration cap on Apex basket.
-    
-    If a sector has > max_per_sector picks in Apex, demote the lowest
-    debate_conviction pick to Watchlist and promote the highest conviction
-    watchlist pick from a different sector.
-    
+    """Enforce the idiosyncratic-basket guardrail: at most max_per_sector apex
+    picks in any one sector.
+
+    Over-cap picks are demoted (LOWEST director conviction first) to the
+    Capitulation Watchlist. Because basket size is now the director's own free
+    choice (2-20), this guardrail only ever REMOVES from apex — it never pads
+    the basket by promoting watchlist names.
+
     Cross-reference: DIRECTOR_SYSTEM_PROMPT Step 2 (idiosyncratic basket).
-    
     Returns: (apex, watchlist, warnings)
     """
-    warnings = []
     from collections import Counter
-    sector_counts = Counter(p.get("sector", "Unknown") for p in apex)
-    
+    warnings = []
+
+    def sec_of(p):
+        """Known sector or None. Blank/'Unknown' sectors are NOT capped — without
+        sector data we cannot prove concentration, and capping them would collapse
+        the whole basket into one phantom 'Unknown' bucket."""
+        s = (p.get("sector") or "").strip()
+        return s if s and s.lower() != "unknown" else None
+
+    sector_counts = Counter(s for s in (sec_of(p) for p in apex) if s)
+
     # Soft warning at 2+
     for sector, count in sector_counts.items():
         if count >= 2:
             warnings.append(f"Sector concentration: {count} picks in {sector}")
-    
-    # Hard cap: demote/promote if > max_per_sector
+
+    # Hard cap: demote lowest-conviction over-cap picks (known sectors only)
     changed = True
     while changed:
         changed = False
-        sector_counts = Counter(p.get("sector", "Unknown") for p in apex)
+        sector_counts = Counter(s for s in (sec_of(p) for p in apex) if s)
         for sector, count in sector_counts.items():
             if count > max_per_sector:
-                # Find lowest debate_conviction in this sector
-                sector_picks = [p for p in apex if p.get("sector", "Unknown") == sector]
-                sector_picks.sort(key=lambda x: x.get("debate_conviction", 0))
+                sector_picks = [p for p in apex if sec_of(p) == sector]
+                sector_picks.sort(key=lambda x: x.get("conviction", 0))  # lowest 0-100 first
                 demoted = sector_picks[0]
                 apex.remove(demoted)
-                demoted["conviction"] = 3  # Demote to watchlist conviction
+                demoted["trigger_event"] = f"Demoted from Apex by sector cap (>{max_per_sector} in {sector})"
                 watchlist.append(demoted)
                 warnings.append(f"Demoted {demoted['symbol']} from Apex (sector cap: {sector})")
-                
-                # Promote highest conviction watchlist pick from a DIFFERENT sector
-                other_wl = [p for p in watchlist if p.get("sector", "Unknown") != sector]
-                if other_wl:
-                    other_wl.sort(key=lambda x: -x.get("debate_conviction", 0))
-                    promoted = other_wl[0]
-                    watchlist.remove(promoted)
-                    promoted["conviction"] = 5  # Promote to apex conviction
-                    apex.append(promoted)
-                    warnings.append(f"Promoted {promoted['symbol']} to Apex (replacing sector-capped pick)")
-                
                 changed = True
                 break
-    
+
     return apex, watchlist, warnings
-
-
+ 
+ 
 def _build_fallback_result(candidates: list, auto_vetoed: dict, veto_count: int) -> dict:
-    """Conviction-based fallback when Director LLM unavailable."""
-    candidates.sort(key=lambda x: (
-        -x.get("conviction", 0),
-        -len(x.get("source_methodologies", [])),
-        -x.get("interrogator_score", 0)
-    ))
-    
+    """Conviction-based fallback when the Director LLM is unavailable.
+
+    Only reached on a dry-run or a hard LLM failure — a LIVE run aborts upstream
+    when the memo contains 'Fallback' (live_debate_engine stage gate). Maps the
+    1-5 debate conviction onto the 0-100 director scale (5->100, 4->80, 3->60)
+    and applies the G1-G4 gates (which now return None to hard-exclude).
+    """
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    scored = []
+    for c in candidates:
+        gated = apply_contract_rules(c, int(c.get("conviction", 3)) * 20)  # 1-5 → 0-100
+        if gated is None:
+            continue
+        scored.append((gated, c))
+
+    scored.sort(key=lambda t: (
+        -t[0],
+        -len(t[1].get("source_methodologies", [])),
+        -t[1].get("interrogator_score", 0),
+    ))
+
     apex = []
     capitul = []
-    
-    for c in candidates[:7]:
-        apex.append({
+    for gated, c in scored:
+        entry = {
             "symbol": c["symbol"],
-            "conviction": c.get("conviction", 3),
+            "conviction": gated,
+            "debate_conviction": c.get("conviction", 0),
             "entry_price": c.get("price", 0),
             "entry_date": today,
             "source_methodologies": c.get("source_methodologies", []),
@@ -537,17 +692,27 @@ def _build_fallback_result(candidates: list, auto_vetoed: dict, veto_count: int)
             "bull_thesis": c.get("bull_thesis", ""),
             "bear_thesis": c.get("bear_thesis", ""),
             "sector": c.get("sector", ""),
-        })
-    
-    for c in candidates[7:12]:
-        if c.get("conviction", 0) >= 3:
-            capitul.append({
-                "symbol": c["symbol"],
-                "conviction": c.get("conviction", 3),
-                "trigger_event": "Monitor for capitulation event",
-                "source_methodologies": c.get("source_methodologies", []),
-            })
-    
+            # Carry G1-G4 fields!
+            "cycle_flag": c.get("cycle_flag", "NORMAL"),
+            "peak_margin_sigma": c.get("peak_margin_sigma", 0.0),
+            "norm_scale": c.get("norm_scale", 1.0),
+            "mos_source": c.get("mos_source", ""),
+            "years_history": c.get("years_history", 99),
+            "structural_break": c.get("structural_break", False),
+            "structural_break_reason": c.get("structural_break_reason", ""),
+            "forward_eps_growth": c.get("forward_eps_growth", 0.0),
+            "iv15_nogrowth_agreement": c.get("iv15_nogrowth_agreement", True),
+            "iv15_saturated": c.get("iv15_saturated", False),
+            "sector_class": c.get("sector_class", "operating"),
+            "methodology_applicable": c.get("methodology_applicable", {}),
+            "mos": c.get("mos", {}),
+        }
+        if gated >= APEX_CONVICTION_FLOOR and len(apex) < 7:
+            apex.append(entry)
+        elif len(capitul) < 5:
+            entry["trigger_event"] = "Monitor for capitulation event"
+            capitul.append(entry)
+
     return {
         "apex_basket": apex,
         "capitulation_watchlist": capitul,
@@ -555,8 +720,8 @@ def _build_fallback_result(candidates: list, auto_vetoed: dict, veto_count: int)
                          f"{veto_count} candidates auto-vetoed for ≥3 red flags.",
         "auto_vetoed": veto_count,
     }
-
-
+ 
+ 
 def _cache_decisions(allocations: dict, memo: str, date: str):
     """Cache Director decisions to local file."""
     cache = {}

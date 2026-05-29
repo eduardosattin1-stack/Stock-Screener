@@ -98,12 +98,113 @@ def resolve_transcript(symbol: str, before_date: str = None) -> Optional[dict]:
     return _fetch_from_fmp(symbol, before_date)
 
 
-def _resolve_from_cache(symbol: str, before_date: str = None) -> Optional[dict]:
-    """Find latest cached transcript for symbol, optionally before a date."""
+def resolve_transcripts(symbol: str, before_date: str = None,
+                        max_transcripts: int = 8) -> dict:
+    """Resolve up to *max_transcripts* earnings-call transcripts for symbol.
+
+    Returns a dict with contract fields:
+        transcript_count  (int)  : number of transcripts available (0..8)
+        transcript_dates  (list) : e.g. ["2025-Q3", "2025-Q2", ...]
+        all_transcripts   (list) : list of transcript dicts (date, content,
+                                   filename, source), sorted descending by date
+
+    Strategy:
+        1. Read ALL matching files from local cache.
+        2. Determine which (year, quarter) pairs we already have.
+        3. Fetch missing quarters from FMP until we reach *max_transcripts*.
+        4. Sort descending by date, trim to *max_transcripts*.
+    """
+    # ── 1. Gather everything already in the local cache ─────────────────
+    cached = _resolve_all_from_cache(symbol, before_date)
+    cached_keys: set[str] = set()
+    for t in cached:
+        # Derive a "YYYY-QN" key from filename (e.g. AAPL_2025Q3.json)
+        fn = t.get("filename", "")
+        if "Q" in fn:
+            key_part = fn.replace(".json", "").split("_", 1)[-1]  # "2025Q3"
+            cached_keys.add(key_part)
+
+    all_transcripts: list[dict] = list(cached)
+
+    # ── 2. Fetch missing quarters from FMP ──────────────────────────────
+    if len(all_transcripts) < max_transcripts:
+        fmp_key = get_key("FMP_API_KEY")
+        if fmp_key:
+            now = datetime.now()
+            url = "https://financialmodelingprep.com/stable/earning-call-transcript"
+            # Scan current year back to (current-2), all 4 quarters
+            for y in range(now.year, now.year - 3, -1):
+                for q in [4, 3, 2, 1]:
+                    yq_key = f"{y}Q{q}"
+                    if yq_key in cached_keys:
+                        continue  # already have this quarter
+                    if len(all_transcripts) >= max_transcripts:
+                        break
+                    try:
+                        r = requests.get(
+                            url,
+                            params={"symbol": symbol, "year": y,
+                                    "quarter": q, "apikey": fmp_key},
+                            timeout=20,
+                        )
+                        if r.status_code != 200:
+                            continue
+                        data = r.json()
+                        if not isinstance(data, list) or not data:
+                            continue
+                        entry = data[0]
+                        t_date = entry.get("date", "")
+                        t_content = entry.get("content", "")
+                        if not (t_date and t_content and len(t_content) > 100):
+                            continue
+                        if before_date and t_date[:10] > before_date:
+                            continue
+                        # Cache the fetched transcript
+                        cache_name = f"{symbol}_{y}Q{q}.json"
+                        cache_path = TRANSCRIPT_CACHE_DIR / cache_name
+                        if not cache_path.exists():
+                            TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+                            with open(cache_path, "w", encoding="utf-8") as fh:
+                                json.dump({"payload": [entry]}, fh)
+                        all_transcripts.append({
+                            "date": t_date[:10],
+                            "content": t_content,
+                            "filename": cache_name,
+                            "source": "fmp_api",
+                        })
+                    except Exception:
+                        pass  # best-effort; skip failed quarters
+                if len(all_transcripts) >= max_transcripts:
+                    break
+
+    # ── 3. Sort descending by date and trim ─────────────────────────────
+    all_transcripts.sort(key=lambda x: x["date"], reverse=True)
+    all_transcripts = all_transcripts[:max_transcripts]
+
+    # ── 4. Build contract fields ────────────────────────────────────────
+    transcript_dates: list[str] = []
+    for t in all_transcripts:
+        fn = t.get("filename", "")
+        if "Q" in fn:
+            raw = fn.replace(".json", "").split("_", 1)[-1]  # "2025Q3"
+            yr, qr = raw.split("Q", 1)
+            transcript_dates.append(f"{yr}-Q{qr}")
+        else:
+            transcript_dates.append(t["date"][:7])  # fallback YYYY-MM
+
+    return {
+        "transcript_count": len(all_transcripts),
+        "transcript_dates": transcript_dates,
+        "all_transcripts": all_transcripts,
+    }
+
+
+def _resolve_all_from_cache(symbol: str,
+                            before_date: str = None) -> list[dict]:
+    """Return ALL cached transcripts for *symbol* (not just the latest)."""
     if not TRANSCRIPT_CACHE_DIR.exists():
-        return None
-    
-    transcripts = []
+        return []
+    results: list[dict] = []
     for f in TRANSCRIPT_CACHE_DIR.glob(f"{symbol}_*.json"):
         try:
             with open(f, "r", encoding="utf-8") as fh:
@@ -114,18 +215,23 @@ def _resolve_from_cache(symbol: str, before_date: str = None) -> Optional[dict]:
                     t_content = payload[0].get("content", "")
                     if t_date and t_content and len(t_content) > 100:
                         if before_date is None or t_date <= before_date:
-                            transcripts.append({
-                                "date": t_date,
+                            results.append({
+                                "date": t_date[:10],
                                 "content": t_content,
                                 "filename": f.name,
-                                "source": "cache"
+                                "source": "cache",
                             })
         except Exception:
             pass
-    
-    if transcripts:
-        transcripts.sort(key=lambda x: x["date"], reverse=True)
-        return transcripts[0]
+    return results
+
+
+def _resolve_from_cache(symbol: str, before_date: str = None) -> Optional[dict]:
+    """Find latest cached transcript for symbol, optionally before a date."""
+    all_cached = _resolve_all_from_cache(symbol, before_date)
+    if all_cached:
+        all_cached.sort(key=lambda x: x["date"], reverse=True)
+        return all_cached[0]
     return None
 
 
@@ -399,6 +505,9 @@ class RadarOutput(typing.TypedDict):
 class InterrogatorOutput(typing.TypedDict):
     credibility_score: int
     findings: str
+    narrative_arc: str
+    tone_shift: str
+    guidance_credibility: int
 
 class ModeratorOutput(typing.TypedDict):
     verdict: str
@@ -451,7 +560,7 @@ Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
 
 INTERROGATOR_SYSTEM_PROMPT = """You are the Interrogator Agent for a financial investment committee.
-Your job is to critically analyze the company's structural technological/R&D claims and event-driven narratives in the earnings call transcript.
+Your job is to critically analyze the company's structural technological/R&D claims and event-driven narratives across MULTIPLE earnings call transcripts (up to 8 quarters).
 Cross-reference these claims against the financial metrics provided (such as R&D expense, capex, margins, revenue growth).
 
 Perform forensic analysis:
@@ -460,10 +569,20 @@ Perform forensic analysis:
 - Assess whether revenue growth, margin trends, and cash flow patterns corroborate or contradict the earnings call narrative.
 - Flag any signs of earnings evasiveness, non-answers during Q&A, or defensive deflection.
 
+Multi-Quarter Longitudinal Analysis (when multiple transcripts are provided):
+- Track how management's narrative, strategic priorities, and key promises have EVOLVED across quarters.
+- Identify whether guidance given in earlier quarters was met, exceeded, or missed in subsequent quarters.
+- Detect shifts in management tone: Are they becoming more confident, more defensive, or more evasive over time?
+- Note any recurring excuses, moved goalposts, or quietly abandoned initiatives.
+- Assess consistency: Do the same strategic themes persist, or does management pivot narratives each quarter?
+
 You must output a JSON object:
 {
   "credibility_score": integer (1 to 5, where 5 is highly credible and 1 is evasive/unsupported),
-  "findings": "A concise paragraph (max 100 words) summarizing your forensic analysis of transcript claims versus financial reality."
+  "findings": "A concise paragraph (max 100 words) summarizing your forensic analysis of transcript claims versus financial reality.",
+  "narrative_arc": "1-2 sentences describing the multi-quarter trajectory of the company's strategic narrative. How has the story evolved across earnings calls? If only one transcript is available, describe the single-quarter snapshot.",
+  "tone_shift": "improving" | "stable" | "deteriorating" (based on management tone trajectory across available transcripts),
+  "guidance_credibility": integer (0 to 100, measuring how well management has delivered on prior quarter guidance and promises. 100 = consistently hit/exceeded guidance. 0 = serial over-promisers. If only one transcript is available, use 50 as neutral default.)
 }
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
@@ -528,12 +647,22 @@ The Radar Agent has classified this candidate with a signal_type:
 
 
 # ── Single-Candidate Debate ─────────────────────────────────────────────
+MAX_CHARS_PER_TRANSCRIPT = 12_000  # hard cap per individual transcript block
+
 def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
-                     cache: dict = None, methodology_key: str = "") -> dict:
+                     cache: dict = None, methodology_key: str = "",
+                     multi_transcript_info: dict = None) -> dict:
     """Run 4-agent debate on a single candidate.
     
-    Returns a debate result dict with conviction, theses, moderator synthesis.
+    Returns a debate result dict with conviction, theses, moderator synthesis,
+    plus multi-transcript qualitative fields:
+        transcript_count, transcript_dates, narrative_arc, tone_shift,
+        guidance_credibility.
     Uses cache keyed by {symbol}|{transcript_date} to avoid re-debating.
+
+    Args:
+        multi_transcript_info: optional dict from resolve_transcripts() with
+            transcript_count, transcript_dates, all_transcripts.
     """
     t_date = transcript["date"]
     cache_key = f"{symbol}|{t_date}"
@@ -549,6 +678,25 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     if len(transcript["content"]) > 8000:
         t_content += "\n[Transcript truncated for length...]"
     
+    # ── Assemble multi-quarter transcript blocks ─────────────────────────
+    # Each transcript is capped at MAX_CHARS_PER_TRANSCRIPT chars.
+    transcript_blocks: list[str] = []
+    mt_info = multi_transcript_info or {}
+    all_tx = mt_info.get("all_transcripts", [transcript])
+    tx_dates = mt_info.get("transcript_dates", [])
+    tx_count = mt_info.get("transcript_count", 1)
+
+    for idx, tx in enumerate(all_tx):
+        label = tx_dates[idx] if idx < len(tx_dates) else tx.get("date", "unknown")
+        content = tx.get("content", "")[:MAX_CHARS_PER_TRANSCRIPT]
+        if len(tx.get("content", "")) > MAX_CHARS_PER_TRANSCRIPT:
+            content += "\n[Transcript truncated for length...]"
+        transcript_blocks.append(
+            f"--- Earnings Call: {label} (date: {tx.get('date', 'N/A')}) ---\n{content}"
+        )
+
+    multi_transcript_text = "\n\n".join(transcript_blocks)
+    
     # Build financial metrics string
     metrics_str = "No financial metrics available."
     if financials:
@@ -562,12 +710,17 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
         "symbol": symbol,
         "transcript_date": t_date,
         "transcript_filename": transcript.get("filename", ""),
+        "transcript_count": tx_count,
+        "transcript_dates": tx_dates,
         "radar_alert": False,
         "radar_rationale": "",
         "signal_type": "none",
         "methodology_key": methodology_key,
         "interrogator_score": 3,
         "interrogator_findings": "",
+        "narrative_arc": "",
+        "tone_shift": "stable",
+        "guidance_credibility": 50,
         "bull_thesis": "",
         "bear_thesis": "",
         "conviction": 2,
@@ -606,18 +759,35 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
              f"signal_type={result['signal_type']}, rationale={result['radar_rationale']}")
     time.sleep(1.0)  # Rate limiting
     
-    # ── 2. INTERROGATOR (gemini-3.1-pro-preview) ─────────────────────────
-    log.info(f"  [Interrogator] {symbol} ...")
+    # ── 2. INTERROGATOR (gemini-3.1-pro-preview) — multi-quarter ─────────
+    log.info(f"  [Interrogator] {symbol} ({tx_count} transcripts) ...")
+    interr_user_prompt = (
+        f"Financial Metrics:\n{metrics_str}\n\n"
+        f"Number of earnings-call transcripts provided: {tx_count}\n"
+        f"Quarters covered: {', '.join(tx_dates) if tx_dates else t_date}\n\n"
+        f"=== EARNINGS CALL TRANSCRIPTS ===\n{multi_transcript_text}"
+    )
     interr_out = query_gemini(
         "gemini-3.1-pro-preview",
         INTERROGATOR_SYSTEM_PROMPT,
-        f"Financial Metrics:\n{metrics_str}\n\nTranscript content:\n{t_content}",
+        interr_user_prompt,
         response_schema=InterrogatorOutput
     )
     
     if interr_out:
         result["interrogator_score"] = int(interr_out.get("credibility_score", 3))
         result["interrogator_findings"] = interr_out.get("findings", "")
+        result["narrative_arc"] = interr_out.get("narrative_arc", "")
+        raw_tone = str(interr_out.get("tone_shift", "stable")).lower().strip()
+        if raw_tone in ("improving", "stable", "deteriorating"):
+            result["tone_shift"] = raw_tone
+        else:
+            result["tone_shift"] = "stable"
+        try:
+            gc = int(interr_out.get("guidance_credibility", 50))
+            result["guidance_credibility"] = max(0, min(100, gc))
+        except (ValueError, TypeError):
+            result["guidance_credibility"] = 50
     
     time.sleep(1.5)
     
@@ -626,6 +796,9 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     arch_prompt = (
         f"Financial Metrics:\n{metrics_str}\n\n"
         f"Interrogator Findings:\n{result['interrogator_findings']}\n\n"
+        f"Narrative Arc: {result['narrative_arc']}\n"
+        f"Tone Shift: {result['tone_shift']}\n"
+        f"Guidance Credibility: {result['guidance_credibility']}/100\n\n"
         f"Transcript content:\n{t_content}"
     )
     arch_out = query_openai("gpt-5.4", ARCHITECT_SYSTEM_PROMPT, arch_prompt)
@@ -641,11 +814,15 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     mod_prompt = (
         f"Company: {symbol}\n"
         f"Earnings Call Date: {t_date}\n"
-        f"Radar Signal Type: {result['signal_type']}\n\n"
+        f"Radar Signal Type: {result['signal_type']}\n"
+        f"Transcripts Available: {tx_count} ({', '.join(tx_dates) if tx_dates else t_date})\n\n"
         f"=== FINANCIAL METRICS ===\n{metrics_str}\n\n"
         f"=== INTERROGATOR FINDINGS ===\n"
         f"Credibility Score: {result['interrogator_score']}/5\n"
-        f"{result['interrogator_findings']}\n\n"
+        f"{result['interrogator_findings']}\n"
+        f"Narrative Arc: {result['narrative_arc']}\n"
+        f"Tone Shift: {result['tone_shift']}\n"
+        f"Guidance Credibility: {result['guidance_credibility']}/100\n\n"
         f"=== ARCHITECT BULL THESIS ===\n{result['bull_thesis']}\n\n"
         f"=== ARCHITECT BEAR THESIS ===\n{result['bear_thesis']}\n\n"
         f"=== EARNINGS CALL TRANSCRIPT ===\n{t_content}\n\n"
@@ -666,7 +843,8 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
         result["forcing_function"] = mod_out.get("forcing_function", "")
         result["moderator_conclusion"] = mod_out.get("moderator_conclusion", "")
     
-    log.info(f"  [Result] {symbol}: verdict={result['verdict']} conviction={result['conviction']}")
+    log.info(f"  [Result] {symbol}: verdict={result['verdict']} conviction={result['conviction']} "
+             f"tone_shift={result['tone_shift']} guidance_cred={result['guidance_credibility']}")
     return result
 
 
@@ -731,6 +909,7 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
     methodologies = methodology_picks.get("methodologies", {})
     
     tier1_results = {}
+    full_results = {}   # unfiltered debate results per methodology (for the free-universe director)
     stats = {
         # 3-bucket disjoint funnel (sum == unique_symbols)
         "total_picks": 0,            # non-deduped across all methodologies
@@ -775,13 +954,17 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                 stats["unique_symbols"] += 1
                 seen_symbols.add(symbol)
             
-            # Resolve transcript
-            transcript = resolve_transcript(symbol, before_date)
+            # Resolve transcripts (multi-quarter)
+            multi_tx = resolve_transcripts(symbol, before_date)
+            transcript = None
+            if multi_tx["all_transcripts"]:
+                transcript = multi_tx["all_transcripts"][0]  # latest as primary
+            
             if not transcript:
                 log.warning(f"  No transcript for {symbol} — skipping")
                 if is_new:
                     stats["no_transcript"] += 1
-                debate_results.append({
+                result = {
                     "symbol": symbol,
                     "conviction": 2,
                     "verdict": "C",
@@ -789,57 +972,73 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                     "radar_rationale": "No transcript available",
                     "moderator_conclusion": "No transcript available — quality penalty",
                     "methodology_key": meth_key,
-                })
-                continue
-            
-            # Check cache
-            cache_key = f"{symbol}|{transcript['date']}"
-            if cache_key in cache and cache[cache_key].get("bull_thesis") not in (None, "API Timeout/Failure"):
-                log.info(f"  [Cache Hit] {symbol} (transcript {transcript['date']})")
-                debate_results.append(cache[cache_key])
-                if is_new:
-                    stats["cache_hits"] += 1
-                continue
-            
-            if dry_run:
-                log.info(f"  [Dry Run] {symbol} — would debate")
-                debate_results.append({
-                    "symbol": symbol,
-                    "conviction": 3,
-                    "verdict": "B",
-                    "radar_alert": True,
-                    "radar_rationale": "Dry run — skipped",
-                    "moderator_conclusion": "Dry run — no LLM calls made",
-                })
-                if is_new:
-                    stats["fully_debated"] += 1
-                    stats["radar_alerted"] += 1
-                continue
-            
-            # Run debate
-            result = debate_candidate(symbol, transcript, cand, cache, methodology_key=meth_key)
-            debate_results.append(result)
-            
-            # Update cache
-            cache[cache_key] = result
-            save_debate_cache(cache)
-            
-            if is_new:
-                stats["fully_debated"] += 1
-                if result.get("radar_alert"):
-                    stats["radar_alerted"] += 1
+                    "transcript_count": 0,
+                    "transcript_dates": [],
+                    "narrative_arc": "",
+                    "tone_shift": "stable",
+                    "guidance_credibility": 50,
+                }
+            else:
+                # Check cache
+                cache_key = f"{symbol}|{transcript['date']}"
+                if cache_key in cache and cache[cache_key].get("bull_thesis") not in (None, "API Timeout/Failure"):
+                    log.info(f"  [Cache Hit] {symbol} (transcript {transcript['date']})")
+                    result = dict(cache[cache_key])
+                    if is_new:
+                        stats["cache_hits"] += 1
+                elif dry_run:
+                    log.info(f"  [Dry Run] {symbol} — would debate")
+                    result = {
+                        "symbol": symbol,
+                        "conviction": 3,
+                        "verdict": "B",
+                        "radar_alert": True,
+                        "radar_rationale": "Dry run — skipped",
+                        "moderator_conclusion": "Dry run — no LLM calls made",
+                    }
+                    if is_new:
+                        stats["fully_debated"] += 1
+                        stats["radar_alerted"] += 1
                 else:
-                    stats["radar_filtered"] += 1
-                    stats["radar_filtered_names"].append(
-                        f"{symbol} ({meth_key}): {result.get('radar_rationale', 'N/A')}"
-                    )
+                    # Run debate (pass multi-transcript info)
+                    result = debate_candidate(symbol, transcript, cand, cache,
+                                              methodology_key=meth_key,
+                                              multi_transcript_info=multi_tx)
+                    # Update cache
+                    cache[cache_key] = result
+                    save_debate_cache(cache)
+                    
+                    if is_new:
+                        stats["fully_debated"] += 1
+                        if result.get("radar_alert"):
+                            stats["radar_alerted"] += 1
+                        else:
+                            stats["radar_filtered"] += 1
+                            stats["radar_filtered_names"].append(
+                                f"{symbol} ({meth_key}): {result.get('radar_rationale', 'N/A')}"
+                            )
+                    # Rate limiting between full debates
+                    time.sleep(2.0)
             
-            # Rate limiting between full debates
-            time.sleep(2.0)
+            # Carry G1-G4 + price/mos quant fields from methodology_picks.json
+            g_fields = [
+                "cycle_flag", "peak_margin_sigma", "norm_scale", "mos_source",
+                "years_history", "structural_break", "structural_break_reason",
+                "forward_eps_growth", "iv15_nogrowth_agreement", "iv15_saturated",
+                "sector_class", "methodology_applicable", "mos", "fair_value",
+                "price", "entry_price", "entry_date", "entry_metric", "weight"
+            ]
+            for f in g_fields:
+                if f in cand:
+                    result[f] = cand[f]
+            
+            debate_results.append(result)
         
-        # Select methodology basket
+        # Select methodology basket (filtered, for the per-methodology UI view)
         basket = select_methodology_basket(meth_key, debate_results)
         tier1_results[meth_key] = basket
+        # Keep the FULL unfiltered debate set for the free-universe director (§2)
+        full_results[meth_key] = debate_results
         
         log.info(f"\n[{meth_key}] Basket: {len(basket['picks'])} picks selected "
                  f"from {basket['total_candidates']} candidates "
@@ -850,15 +1049,19 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
     if expected != stats["unique_symbols"]:
         log.warning(f"Funnel mismatch: {expected} != {stats['unique_symbols']} unique_symbols")
     
-    return {"baskets": tier1_results, "stats": stats, "cache": cache}
+    return {"baskets": tier1_results, "full": full_results, "stats": stats, "cache": cache}
 
 
 # ── Full Pipeline Orchestrator ───────────────────────────────────────────
-def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
+def debate_and_allocate(before_date: str = None, dry_run: bool = False,
+                        push_gcs: bool = True) -> dict:
     """Full Tier 1 + Tier 2 pipeline.
-    
+
     Loads methodology_picks.json → runs per-methodology debates →
     runs Director allocation → writes speculair_baskets.json.
+
+    push_gcs=False writes the output locally only (frontend/public) and skips the
+    GCS upload — used for local review runs before promoting to production.
     """
     log.info("=" * 70)
     log.info("SPECULAIR DEBATE PIPELINE — STARTING")
@@ -882,12 +1085,13 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
     # 2. Run Tier 1 — per-methodology debates
     tier1 = run_tier1(picks_data, before_date=before_date, dry_run=dry_run)
     tier1_baskets = tier1["baskets"]
+    tier1_full = tier1.get("full", {})
     tier1_stats = tier1["stats"]
     
     # Persist debate cache to GCS after all debates complete
     save_debate_cache(tier1.get("cache", {}))
     
-    # ── Empty thesis detection ─────────────────────────────────────────
+    # ── Empty thesis detection & Live check (Stage Gate 0) ─────────────────
     all_picks_across_baskets = []
     for basket in tier1_baskets.values():
         all_picks_across_baskets.extend(basket.get("picks", []))
@@ -898,6 +1102,12 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
     )
     total_picks = len(all_picks_across_baskets)
     
+    if not dry_run and total_picks > 0 and empty_thesis_count == total_picks:
+        raise RuntimeError(
+            f"FAIL: All {total_picks} picks have empty theses in a LIVE run! "
+            f"This indicates a systemic LLM failure in Tier 1. Aborting."
+        )
+        
     if total_picks > 0 and empty_thesis_count == total_picks:
         log.error(
             f"🚨 ALERT: ALL {total_picks} picks have empty theses! "
@@ -921,11 +1131,47 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
     # 3. Run Tier 2 — Director allocation
     try:
         from live_director_agent import run_director_allocation
-        director_result = run_director_allocation(tier1_baskets, dry_run=dry_run)
+        # §2: the director chooses 2-20 freely from the FULL debated, gate-passing
+        # universe — every name carrying a real debate thesis, not just the
+        # per-methodology basket winners. Drop no-transcript stubs (empty theses).
+        director_pool = {}
+        for meth_key, picks in tier1_full.items():
+            debated = [p for p in picks if (p.get("bull_thesis") or p.get("bear_thesis"))]
+            if debated:
+                director_pool[meth_key] = {"picks": debated}
+        pool_syms = {p.get("symbol") for v in director_pool.values() for p in v["picks"]}
+        log.info(f"Director universe: {len(pool_syms)} unique debated gate-passing names")
+        # Enrich sectors from the screener scan so the director's sector cap is
+        # meaningful — methodology_picks picks carry a blank sector. Best-effort.
+        sector_map = _load_sector_map()
+        if sector_map:
+            n_sec = 0
+            for v in director_pool.values():
+                for p in v["picks"]:
+                    if not (p.get("sector") or "").strip():
+                        sec = sector_map.get(p.get("symbol", ""))
+                        if sec:
+                            p["sector"] = sec
+                            n_sec += 1
+            log.info(f"Enriched {n_sec} candidates with sector from scan ({len(sector_map)} symbols mapped)")
+        if not director_pool:
+            # Cold cache / dry-run with no real theses — fall back to the baskets
+            log.warning("No debated names with theses — director falling back to per-methodology baskets")
+            director_pool = tier1_baskets
+        director_result = run_director_allocation(director_pool, dry_run=dry_run)
+        
+        # If it's a live run and we used the fallback because the Director LLM failed:
+        if not dry_run and "Fallback" in director_result.get("director_memo", ""):
+            raise RuntimeError("FAIL: Director LLM returned zero successful responses in a LIVE run — aborting.")
+            
     except ImportError:
+        if not dry_run:
+            raise RuntimeError("FAIL: live_director_agent.py not found in a LIVE run.")
         log.warning("live_director_agent.py not found — using Tier 1 results only")
         director_result = _fallback_director(tier1_baskets)
     except Exception as e:
+        if not dry_run:
+            raise RuntimeError(f"FAIL: Director allocation failed in a LIVE run: {e}")
         log.error(f"Director allocation failed: {e}")
         director_result = _fallback_director(tier1_baskets)
     
@@ -968,6 +1214,31 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
                     "bear_thesis": p.get("bear_thesis", ""),
                     "forcing_function": p.get("forcing_function", ""),
                     "consensus_delta": p.get("consensus_delta", ""),
+                    "transcript_count": p.get("transcript_count", 0),
+                    "transcript_dates": p.get("transcript_dates", []),
+                    "narrative_arc": p.get("narrative_arc", ""),
+                    "tone_shift": p.get("tone_shift", "stable"),
+                    "guidance_credibility": p.get("guidance_credibility", 50),
+                    # Carry G1-G4 + BUG1 + price/mos details:
+                    "cycle_flag": p.get("cycle_flag", "NORMAL"),
+                    "peak_margin_sigma": p.get("peak_margin_sigma", 0.0),
+                    "norm_scale": p.get("norm_scale", 1.0),
+                    "mos_source": p.get("mos_source", ""),
+                    "years_history": p.get("years_history", 99),
+                    "structural_break": p.get("structural_break", False),
+                    "structural_break_reason": p.get("structural_break_reason", ""),
+                    "forward_eps_growth": p.get("forward_eps_growth", 0.0),
+                    "iv15_nogrowth_agreement": p.get("iv15_nogrowth_agreement", True),
+                    "iv15_saturated": p.get("iv15_saturated", False),
+                    "sector_class": p.get("sector_class", "operating"),
+                    "methodology_applicable": p.get("methodology_applicable", True),
+                    "mos": p.get("mos", 0.0),
+                    "fair_value": p.get("fair_value", 0.0),
+                    "price": p.get("price", 0.0),
+                    "entry_price": p.get("entry_price", 0.0),
+                    "entry_date": p.get("entry_date", ""),
+                    "entry_metric": p.get("entry_metric", 0.0),
+                    "weight": p.get("weight", 0.0),
                 }
                 for p in basket.get("picks", [])
             ],
@@ -977,7 +1248,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False) -> dict:
         }
     
     # 5. Write output
-    _write_output(output, dry_run=dry_run)
+    _write_output(output, dry_run=dry_run, push_gcs=push_gcs)
     
     log.info("=" * 70)
     log.info("SPECULAIR DEBATE PIPELINE — COMPLETE")
@@ -1012,6 +1283,34 @@ def _load_methodology_picks() -> Optional[dict]:
             log.error(f"Local picks load failed: {e}")
     
     return None
+
+
+def _load_sector_map() -> dict:
+    """symbol -> sector from the latest screener scan (best-effort, multi-source).
+
+    Used to enrich Speculair director candidates (methodology_picks picks carry a
+    blank sector) so the sector-concentration cap is meaningful.
+    """
+    import urllib.request
+    # 1. Authenticated GCS (production / Cloud Run)
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_download
+        scan = gcs_download("scans/latest_global.json")
+        if scan and scan.get("stocks"):
+            return {s.get("symbol"): (s.get("sector") or "") for s in scan["stocks"] if s.get("symbol")}
+    except Exception as e:
+        log.debug(f"sector map via gcs_download failed: {e}")
+    # 2. Public bucket URL (local dev without ADC)
+    try:
+        url = f"https://storage.googleapis.com/{GCS_BUCKET}/scans/latest_global.json"
+        with urllib.request.urlopen(url, timeout=90) as r:
+            scan = json.load(r)
+        if scan and scan.get("stocks"):
+            return {s.get("symbol"): (s.get("sector") or "") for s in scan["stocks"] if s.get("symbol")}
+    except Exception as e:
+        log.debug(f"sector map via public URL failed: {e}")
+    return {}
 
 
 def _fallback_director(tier1_baskets: dict) -> dict:
@@ -1055,7 +1354,7 @@ def _fallback_director(tier1_baskets: dict) -> dict:
     }
 
 
-def _write_output(output: dict, dry_run: bool = False):
+def _write_output(output: dict, dry_run: bool = False, push_gcs: bool = True):
     """Write speculair_baskets.json to GCS and local."""
     if dry_run:
         log.info("[Dry Run] Would write speculair_baskets.json")
@@ -1076,6 +1375,9 @@ def _write_output(output: dict, dry_run: bool = False):
         log.error(f"Local write failed: {e}")
     
     # GCS
+    if not push_gcs:
+        log.info("[--no-gcs] Local-only write — skipping GCS upload of speculair_baskets.json")
+        return
     try:
         sys.path.insert(0, str(BASE_DIR))
         from screener_v6 import gcs_upload
@@ -1098,6 +1400,8 @@ if __name__ == "__main__":
                     help="Only use transcripts before this date (for backfill)")
     ap.add_argument("--single", type=str, default=None,
                     help="Debug: debate a single symbol")
+    ap.add_argument("--no-gcs", action="store_true",
+                    help="Write speculair_baskets.json locally only; skip the GCS upload (local review run)")
     args = ap.parse_args()
     
     if args.single:
@@ -1111,6 +1415,7 @@ if __name__ == "__main__":
             print(f"No transcript found for {args.single}")
     elif args.run_full or args.dry_run:
         load_api_keys()
-        debate_and_allocate(before_date=args.before_date, dry_run=args.dry_run)
+        debate_and_allocate(before_date=args.before_date, dry_run=args.dry_run,
+                            push_gcs=not args.no_gcs)
     else:
         ap.print_help()

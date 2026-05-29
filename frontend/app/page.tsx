@@ -2413,6 +2413,10 @@ export default function Dashboard(){
                 </div>
               ) : (
                 <>
+                  {/* Live-forward tracking disclaimer (§5) */}
+                  <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, padding: "8px 12px", fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                    <strong style={{ color: "var(--blue)" }}>Live-forward tracked.</strong> The Apex Basket accrues a real track record from go-live — it is <strong>not</strong> back-filled. The Speculair director is an LLM (not replayed historically), so its return is <strong>not</strong> a comparable-vintage number to the 9 methodology baselines (deterministic 5-yr PIT replay).
+                  </div>
                   {/* Debate Stats Funnel */}
                   {speculairBaskets.debate_stats && (
                     <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -2441,7 +2445,7 @@ export default function Dashboard(){
                         Speculair Apex Basket
                       </h3>
                       <span style={{ fontSize: 10, color: "var(--green)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(speculairBaskets.apex_basket || []).length} positions · Conviction 5
+                        {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
                       </span>
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
@@ -2461,8 +2465,8 @@ export default function Dashboard(){
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                                 <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(234,179,8,0.2)", color: "#eab308", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  ★ {pick.conviction}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.conviction >= 85 ? "rgba(20,184,122,0.2)" : pick.conviction >= 70 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.conviction >= 85 ? "var(--green)" : pick.conviction >= 70 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  ★ {pick.conviction}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>

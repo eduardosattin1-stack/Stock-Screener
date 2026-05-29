@@ -3107,13 +3107,13 @@ function SpeculairDebateCard({ debateData }: { debateData: any }) {
     bannerBorder = `2px solid ${T.green}`;
     bannerTitle = "SPECULAIR APEX ALLOCATION";
     bannerIcon = <Star size={18} color={T.amber} fill={T.amber} style={{ filter: "drop-shadow(0 0 4px var(--amber))" }} />;
-    bannerSub = `Apex Basket Position · Conviction Score: ${conviction}/5`;
+    bannerSub = `Apex Basket Position · Director Conviction: ${conviction}/100`;
   } else if (type === "watchlist") {
     bannerBg = "rgba(249, 115, 22, 0.05)";
     bannerBorder = `2px solid var(--orange)`;
     bannerTitle = "CAPITULATION WATCHLIST SETUP";
     bannerIcon = <AlertTriangle size={18} color="var(--orange)" />;
-    bannerSub = `Watch & Wait Setup · Conviction Score: ${conviction}/5`;
+    bannerSub = `Watch & Wait Setup · Director Conviction: ${conviction}/100`;
   }
 
   return (
