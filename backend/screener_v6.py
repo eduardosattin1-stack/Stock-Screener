@@ -27,7 +27,7 @@ Modes:
   --monitor:          Re-score portfolio positions → HOLD/TRIM/SELL/ADD actions
 """
 
-import os, sys, json, math, time, logging, smtplib, argparse
+import os, sys, json, math, time, logging, smtplib, argparse, re
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta, timezone
 from email.mime.text import MIMEText
@@ -432,6 +432,110 @@ def fmp(endpoint: str, params: dict = None) -> Optional[list]:
 # Data Model
 # ---------------------------------------------------------------------------
 
+# ── G4: Sector-methodology applicability ────────────────────────────────────
+# Financial-sector companies (banks, insurance, REITs) use fundamentally
+# different accounting — earnings-based DCF/EPV/Graham don't apply.
+# classify once, reuse everywhere.
+def _norm_industry(ind: str) -> str:
+    """Lowercase + canonicalize the dash separator. FMP emits e.g. 'Insurance - Brokers'
+    (spaced hyphen) while the curated sets use an em-dash, so the old exact-match path
+    never matched any FMP string. Collapse any dash variant (with surrounding spaces)
+    to a single em-dash so both sides agree."""
+    ind = (ind or "").lower().strip()
+    return re.sub(r"\s*[—–\-]\s*", "—", ind)
+
+_FINANCIAL_INDUSTRIES = {
+    "banks", "banks—diversified", "banks—regional", "credit services",
+    "financial conglomerates", "financial data & stock exchanges",
+    "asset management", "capital markets", "mortgage finance",
+    "financial—credit services", "financial—conglomerates",
+}
+# NOTE: insurance BROKERS are deliberately NOT in this set — see _sector_class.
+# Brokers are fee-based and valued like operating companies.
+_INSURANCE_INDUSTRIES = {
+    "insurance—diversified", "insurance—life", "insurance—property & casualty",
+    "insurance—reinsurance", "insurance—specialty",
+}
+_REIT_INDUSTRIES = {
+    "reit—diversified", "reit—healthcare facilities", "reit—hotel & motel",
+    "reit—industrial", "reit—mortgage", "reit—office", "reit—residential",
+    "reit—retail", "reit—specialty",
+}
+_UTILITY_INDUSTRIES = {
+    "utilities—diversified", "utilities—independent power producers",
+    "utilities—regulated electric", "utilities—regulated gas",
+    "utilities—regulated water", "utilities—renewable",
+}
+
+# Pre-normalize the curated sets so membership tests match FMP's dash convention
+# regardless of which dash the literals above happen to use.
+_FINANCIAL_INDUSTRIES_N = frozenset(_norm_industry(x) for x in _FINANCIAL_INDUSTRIES)
+_INSURANCE_INDUSTRIES_N = frozenset(_norm_industry(x) for x in _INSURANCE_INDUSTRIES)
+_REIT_INDUSTRIES_N      = frozenset(_norm_industry(x) for x in _REIT_INDUSTRIES)
+_UTILITY_INDUSTRIES_N   = frozenset(_norm_industry(x) for x in _UTILITY_INDUSTRIES)
+
+FINANCIAL_SECTORS = {"Financial Services", "Real Estate", "Utilities"}
+INSURANCE_KEYWORDS = ("insurance", "insurer", "reinsur", "assurance")
+
+def _sector_class(s) -> str:
+    """Classify a company's industry/sector into a methodology-gating bucket.
+    Accepts a string (industry name) or a Stock-like object with .sector/.industry.
+    Single code path so the string and object forms cannot diverge.
+    """
+    if isinstance(s, str):
+        sec, ind = "", _norm_industry(s)
+    else:
+        sec = (getattr(s, "sector", "") or "").strip()
+        ind = _norm_industry(getattr(s, "industry", "") or "")
+
+    # Insurance BROKERS are fee-based intermediaries with ordinary operating-company
+    # economics (no float / no reserves) — earnings-based methods apply, so classify
+    # them operating, not insurance. CRVL/CorVel is FMP-tagged 'Insurance - Brokers'
+    # but is a claims-services firm; AON/MMC/WTW are brokers too. This MUST precede
+    # the keyword net below (which would otherwise catch the 'insurance' substring).
+    if "insurance" in ind and "broker" in ind:
+        return "operating"
+
+    if ind in _INSURANCE_INDUSTRIES_N:
+        return "insurance"
+    if ind in _REIT_INDUSTRIES_N:
+        return "reit"
+    if ind in _UTILITY_INDUSTRIES_N:
+        return "utility"
+    if ind in _FINANCIAL_INDUSTRIES_N:
+        return "financial"
+
+    # Keyword safety net for risk-bearing insurers whose exact industry string is not
+    # in the curated set (brokers already handled above).
+    if any(k in ind for k in INSURANCE_KEYWORDS):
+        return "insurance"
+
+    # Sector-level fallback
+    if sec == "Real Estate":
+        return "reit"
+    if sec == "Utilities":
+        return "utility"
+    if sec == "Financial Services":
+        return "financial"
+    return "operating"
+
+METHOD_SECTOR_APPLICABILITY = {
+    # method_key:            {operating, financial, insurance, reit, utility}
+    "dcf_fcff":             {"operating": True, "financial": False, "insurance": False, "reit": False, "utility": True},
+    "rd_capitalized_dcf":   {"operating": True, "financial": False, "insurance": False, "reit": False, "utility": False},
+    "owner_earnings":       {"operating": True, "financial": False, "insurance": False, "reit": True,  "utility": True},
+    "epv":                  {"operating": True, "financial": False, "insurance": False, "reit": False, "utility": True},
+    "iv15_deep_value":      {"operating": True, "financial": False, "insurance": False, "reit": False, "utility": False},
+    "graham_revised":       {"operating": True, "financial": False, "insurance": False, "reit": True,  "utility": True},  # RC3-A: Graham EPS×(8.5+2g) is meaningless on financial/insurer EPS — drop both
+    "earnings_yield_gap":   {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
+    "acquirers_multiple":   {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
+    "ev_gross_profit":      {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
+}
+
+def _methodology_applicable(method_key: str, sector_class: str) -> bool:
+    return METHOD_SECTOR_APPLICABILITY.get(method_key, {}).get(sector_class, True)
+
+
 @dataclass
 class Stock:
     symbol: str = ""
@@ -622,6 +726,26 @@ class Stock:
     ey_gap: float = 0.0
     acquirers_multiple: float = 999.0
 
+    # G1: cyclical-peak normalization
+    cycle_flag: str = "NORMAL"          # NORMAL | PEAK_CYCLE | TROUGH_CYCLE | INSUFFICIENT_HISTORY
+    peak_margin_sigma: float = 0.0      # latest op margin vs own multi-year mean, in std devs
+    norm_scale: float = 1.0             # normalized_ebit / smoothed_ebit (1.0 = no distortion)
+
+    # G2a: structural break / history sufficiency
+    years_history: int = 99             # count of standalone annual statements used (99 = safe default)
+    structural_break: bool = False      # ipoDate within N years OR share-count discontinuity
+    structural_break_reason: str = ""   # e.g. "ipo_2024-02" | "share_count_jump_2025" | ""
+    ipo_date: str = ""                  # from FMP company profile
+
+    # G3: growth / terminal sanity
+    forward_eps_growth: float = 0.0     # consensus forward trajectory; negative = decline
+    iv15_nogrowth_agreement: bool = True   # IV15 deep-value agrees with no-growth check
+    iv15_saturated: bool = False        # IV15 MOS pegged at the 0.95 clamp
+
+    # G4: sector-methodology applicability
+    sector_class: str = "operating"     # "operating" | "financial" | "insurance" | "reit" | "utility"
+    methodology_applicable: bool = True # is THIS methodology valid for THIS sector_class?
+
     # ML probability prediction (GBM model, P(+10% in 60d))
     # Apr 2026: still computed and written to JSON for diagnostic purposes,
     # but no longer rendered on the dashboard. The LTR investigation showed
@@ -803,6 +927,10 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
     v7.2: also populates SECTOR_MAP and SECTOR_EXCHANGE_MAP as a side effect."""
+    # Targeted custom symbols support for verification protocol
+    if "," in region or region.upper() in {"CALM", "BULL", "PLX.PA", "CRVL", "PRG", "JXN", "CS.PA", "ACA.PA", "CMCSA"}:
+        return [s.strip().upper() for s in region.split(",")]
+
     # If "global", iterate through every defined list in REGIONS
     if region == "global":
         syms = []
@@ -1406,7 +1534,7 @@ def safe_cagr(start, end, years):
         return 0.0
     return (end / start) ** (1 / years) - 1
 
-def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
+def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_growth: float = 0.0) -> dict:
     """Full Buffett value analysis with FX-aware intrinsic value calculation.
 
     Apr 2026: hard filter — if FMP returns fewer than MIN_YEARS_HISTORY
@@ -1436,6 +1564,23 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         "epv_mos": -1.0,
         "graham_revised_mos": -1.0,
         "iv15_deep_value_mos": -1.0,
+        "cycle_flag": "NORMAL",          # G1
+        "peak_margin_sigma": 0.0,        # G1
+        "norm_scale": 1.0,               # G1
+        # G2a: structural break / history sufficiency
+        "years_history": 99,             # safe default — guards only bite on affirmative set
+        "structural_break": False,
+        "structural_break_reason": "",
+        "ipo_date": "",
+        # G3: growth / terminal sanity
+        "forward_eps_growth": 0.0,
+        "iv15_nogrowth_agreement": True,  # safe default — no demotion unless affirmatively set
+        "iv15_saturated": False,
+        # G4: sector class (populated per-stock from industry)
+        "sector_class": "operating",
+        "sector": "",
+        "industry": "",
+        "companyName": "",
         "net_debt_local": 0.0,
         "ebit_local": 0.0,
         "depreciation_local": 0.0,
@@ -1451,10 +1596,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
     if price <= 0:
         return v
 
-    # Income statements (5 years) — v1.3.1: cached, 5-day TTL
+    # Income statements (15 years) — v1.3.1: cached, 5-day TTL
     inc = cached_fmp(
         "income-statement", sym,
-        lambda: fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 5}),
+        lambda: fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 15}),  # was 5: matched the bs/cf/ratios depth (11) and stops the live scan clobbering income-statement history (enables PIT replay)
     )
 
     # Apr 2026: 5-year history hard filter. Drop stocks where FMP returns fewer
@@ -1982,6 +2127,131 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         fcf = _avg_field(recent_cf, "freeCashFlow")
         rd_expense = _avg_field(recent_inc, "researchAndDevelopmentExpenses")
 
+        # ── G1: Cyclical-peak normalization context ──────────────────────
+        # The 3yr smoothing above only normalizes if the window spans a trough.
+        # When the abnormal period is >=3 years (CALM avian-flu super-cycle) the
+        # "smoothed" base is still a peak. Compute a long-window normalized
+        # operating margin and flag peaks. Flag-don't-zero: raw FVs unchanged.
+        import statistics as _stats
+
+        def _op_margins(rows, lookback=10):
+            out = []
+            for r in rows[-lookback:]:
+                rev = float(r.get("revenue") or 0)
+                oi = float(r.get("operatingIncome") or 0)
+                if rev > 0:
+                    out.append(oi / rev)
+            return out
+
+        op_margins = _op_margins(inc_sorted, lookback=10)
+        latest_revenue = float(latest_inc.get("revenue") or 0)
+        latest_op_margin = (
+            float(latest_inc.get("operatingIncome") or 0) / latest_revenue
+            if latest_revenue > 0 else 0.0
+        )
+
+        cycle_flag = "NORMAL"
+        peak_margin_sigma = 0.0
+        norm_op_margin = latest_op_margin  # default if insufficient history
+
+        if len(op_margins) >= 5:
+            norm_op_margin = _stats.median(op_margins)
+            m_mean = _stats.mean(op_margins)
+            m_std = _stats.pstdev(op_margins) if len(op_margins) > 1 else 0.0
+            if m_std > 0:
+                peak_margin_sigma = (latest_op_margin - m_mean) / m_std
+
+        # norm_scale: ratio of median-margin (mid-cycle) EBIT to current EBIT.
+        # <1.0 means current earnings sit ABOVE mid-cycle (peak risk → demote).
+        normalized_ebit = norm_op_margin * latest_revenue
+        norm_scale = (normalized_ebit / ebit) if ebit > 0 and normalized_ebit > 0 else 1.0
+        norm_scale = max(0.05, min(2.0, norm_scale))   # guard against extreme ratios
+
+        # G1 (Fork B, May 2026): flag PEAK_CYCLE on EITHER the z-score OR the robust
+        # median-based norm_scale. The σ test alone misses sustained multi-year peaks
+        # (e.g. CALM's avian-flu super-cycle): the elevated years contaminate the 10yr
+        # mean/σ and dilute the z-score (CALM read σ=1.33 < 1.5 → NORMAL), while
+        # norm_scale stays robust (CALM=0.61 → earnings ~64% above mid-cycle). A
+        # PEAK_CYCLE flag then triggers the MOS normalization in the ranking loop.
+        # TROUGH stays σ-only (norm_scale>1.0 is benign, not a risk to demote).
+        NORM_SCALE_PEAK = 0.75   # current EBIT > 1.33× mid-cycle → treat as peak
+        if len(op_margins) >= 5:
+            if peak_margin_sigma > 1.5 or norm_scale < NORM_SCALE_PEAK:
+                cycle_flag = "PEAK_CYCLE"
+            elif peak_margin_sigma < -1.5:
+                cycle_flag = "TROUGH_CYCLE"
+        else:
+            cycle_flag = "INSUFFICIENT_HISTORY"   # G2 will harden the demotion of these
+
+        v["cycle_flag"] = cycle_flag
+        v["peak_margin_sigma"] = round(peak_margin_sigma, 2)
+        v["norm_scale"] = round(norm_scale, 3)
+
+        # ── G2a: Structural break / history sufficiency ──────────────────
+        # Flag companies with structural discontinuities that make historical
+        # data unreliable for projection: recent IPOs, spin-offs, massive
+        # share-count jumps (dilution/reverse-splits).
+        v["years_history"] = len(inc_sorted)
+        structural_break = False
+        structural_break_reason = ""
+
+        # IPO recency check: fetch company profile for ipoDate
+        try:
+            profile = cached_fmp(
+                "profile", sym,
+                lambda: fmp("profile", {"symbol": sym}),
+            )
+            if profile and isinstance(profile, list) and len(profile) > 0:
+                ipo_str = profile[0].get("ipoDate") or ""
+                v["ipo_date"] = ipo_str
+                # Populate sector, industry, companyName, and sector_class
+                industry_str = profile[0].get("industry") or ""
+                sector_str = profile[0].get("sector") or ""
+                company_name_str = profile[0].get("companyName") or ""
+                v["industry"] = industry_str
+                v["sector"] = sector_str
+                v["companyName"] = company_name_str
+                v["sector_class"] = _sector_class(industry_str)
+                if ipo_str:
+                    try:
+                        ipo_dt = datetime.strptime(ipo_str, "%Y-%m-%d")
+                        years_since_ipo = (datetime.now() - ipo_dt).days / 365.25
+                        if years_since_ipo < 5:
+                            structural_break = True
+                            structural_break_reason = f"ipo_{ipo_str[:7]}"
+                            log.info(f"  {sym}: G2a structural break — IPO {ipo_str} ({years_since_ipo:.1f}y ago)")
+                    except ValueError:
+                        pass  # unparseable date — not a break
+        except Exception as e:
+            log.debug(f"  {sym}: G2a profile fetch failed: {e}")
+
+        # Share-count discontinuity: >50% YoY jump in diluted shares
+        if not structural_break and len(inc_sorted) >= 2:
+            for i in range(1, len(inc_sorted)):
+                shares_curr = float(inc_sorted[i].get("weightedAverageShsOutDil") or
+                                    inc_sorted[i].get("weightedAverageShsOut") or 0)
+                shares_prev = float(inc_sorted[i-1].get("weightedAverageShsOutDil") or
+                                    inc_sorted[i-1].get("weightedAverageShsOut") or 0)
+                if shares_prev > 0 and shares_curr > 0:
+                    ratio = shares_curr / shares_prev
+                    if ratio > 1.5 or ratio < 0.5:  # >50% increase or >50% decrease
+                        yr = (inc_sorted[i].get("date") or "")[:4]
+                        structural_break = True
+                        structural_break_reason = f"share_count_jump_{yr}"
+                        log.info(f"  {sym}: G2a structural break — share count {ratio:.2f}x in {yr}")
+                        break
+
+        v["structural_break"] = structural_break
+        v["structural_break_reason"] = structural_break_reason
+
+        # Normalized EPS for Graham (replaces eps_latest peak-year bypass).
+        # Preserve the smoothed net-income / ebit relationship to back out a
+        # normalized net income, then per-share it.
+        _ni_to_ebit = (net_income / ebit) if ebit > 0 else 0.75  # after-tax fallback
+        normalized_net_income = normalized_ebit * _ni_to_ebit
+        eps_normalized = (normalized_net_income / shares) if shares > 0 else eps_latest
+        v["eps_normalized"] = round(eps_normalized, 4)
+
         # Point-in-time balance sheet items (latest year — averaging doesn't
         # make sense for stock variables like debt and equity)
         total_assets = float(latest_bs.get("totalAssets") or 0)
@@ -2105,7 +2375,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
         # FIX: negative/zero growth should use g=0 (8.5× P/E), not g=5 (18.5× P/E).
         # A company with shrinking earnings shouldn't get a premium growth multiple.
         g_graham = max(0.0, min(20.0, eps_growth_3y * 100)) if eps_growth_3y > 0 else 0.0
-        fv_graham_local = eps_latest * (8.5 + 2 * g_graham)
+        # G1: use normalized EPS so a peak-year EPS doesn't inflate Graham FV.
+        # eps_normalized falls back to eps_latest when history is insufficient.
+        graham_eps_base = eps_normalized if eps_normalized > 0 else eps_latest
+        fv_graham_local = graham_eps_base * (8.5 + 2 * g_graham)
         v["graham_revised"] = fv_graham_local * fx_to_price
         v["graham_revised_mos"] = max(-1.0, min(0.95, 1.0 - (price / v["graham_revised"]))) if v["graham_revised"] > 0 else -1.0
 
@@ -2124,6 +2397,12 @@ def get_value(sym: str, price: float, price_currency: str = "USD") -> dict:
             fv_iv15_local = 0.0
         v["iv15_deep_value"] = fv_iv15_local * fx_to_price
         v["iv15_deep_value_mos"] = max(-1.0, min(0.95, 1.0 - (price / v["iv15_deep_value"]))) if v["iv15_deep_value"] > 0 else -1.0
+
+        # ── G3: growth / terminal sanity ────────────────────
+        v["iv15_nogrowth_agreement"] = (v["epv_mos"] > 0) and (v["iv15_deep_value_mos"] > 0)
+        v["iv15_saturated"] = (eps_growth_3y >= 0.20) or (v["iv15_deep_value_mos"] >= 0.95)
+        v["forward_eps_growth"] = round(forward_eps_growth, 4)
+        v["forward_declining"] = (forward_eps_growth <= -0.10)
 
     return v
 
@@ -4260,7 +4539,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # They stay in the scan for UI deep-dives and Theme discovery. The
         # downstream Compounder/Momentum runner models naturally gate them out if
         # fundamental data is missing.
-        value = get_value(sym, q["price"], q.get("currency", "USD"))
+        value = get_value(sym, q["price"], q.get("currency", "USD"), analyst.get("forward_eps_growth", 0.0))
         if value.get("_insufficient_history"):
             pass # Keep it!
 
@@ -4303,10 +4582,10 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s = Stock(symbol=sym, price=q["price"], currency=q.get("currency", "USD"))
         s.exchange = SECTOR_EXCHANGE_MAP.get(sym, "")
         s.country = COUNTRY_MAP.get(sym, "")
-        s.sector = SECTOR_MAP.get(sym, "")
-        s.industry = INDUSTRY_MAP.get(sym, "")
+        s.sector = SECTOR_MAP.get(sym, "") or value.get("sector") or ""
+        s.industry = INDUSTRY_MAP.get(sym, "") or value.get("industry") or ""
         s.theme = get_modern_theme(s.industry)
-        s.company_name = COMPANY_NAME_MAP.get(sym, "")
+        s.company_name = COMPANY_NAME_MAP.get(sym, "") or value.get("companyName") or ""
         s.sma50 = q.get("sma50", 0); s.sma200 = q.get("sma200", 0)
         s.year_high = q.get("year_high", 0); s.year_low = q.get("year_low", 0)
         s.market_cap = q.get("market_cap", 0); s.volume = q.get("volume", 0)
@@ -4402,6 +4681,24 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.epv_mos = value.get("epv_mos", -1.0)
         s.graham_revised_mos = value.get("graham_revised_mos", -1.0)
         s.iv15_deep_value_mos = value.get("iv15_deep_value_mos", -1.0)
+        # G1:
+        s.cycle_flag = value.get("cycle_flag", "NORMAL")
+        s.peak_margin_sigma = value.get("peak_margin_sigma", 0.0)
+        s.norm_scale = value.get("norm_scale", 1.0)
+
+        # G2a: structural break / history sufficiency
+        s.years_history = value.get("years_history", 99)
+        s.structural_break = value.get("structural_break", False)
+        s.structural_break_reason = value.get("structural_break_reason", "")
+        s.ipo_date = value.get("ipo_date", "")
+
+        # G3: growth / terminal sanity
+        s.forward_eps_growth = value.get("forward_eps_growth", 0.0)
+        s.iv15_nogrowth_agreement = value.get("iv15_nogrowth_agreement", True)
+        s.iv15_saturated = value.get("iv15_saturated", False)
+
+        # G4: sector-methodology applicability
+        s.sector_class = value.get("sector_class", "operating")
         
         s.net_debt_local = value.get("net_debt_local", 0.0)
         s.ebit_local = value.get("ebit_local", 0.0)
@@ -4938,7 +5235,7 @@ def monitor_portfolio(state_path: str = PORTFOLIO_STATE):
         analyst = get_analyst(sym)
         # Note: monitor mode bypasses the 5-year hard filter (by definition the
         # position is already held). _insufficient_history flag is ignored here.
-        value = get_value(sym, q["price"], q.get("currency", "USD"))
+        value = get_value(sym, q["price"], q.get("currency", "USD"), analyst.get("forward_eps_growth", 0.0))
         proximity = compute_52wk_proximity(q)
         earnings_block = compute_earnings_momentum(analyst)
         upside = compute_upside_score(analyst, value, q["price"])
@@ -5131,13 +5428,13 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
 
         methodology_metrics = {
             "dcf_fcff":            "dcf_fcff_mos",
-            "earnings_yield_gap":  "ey_gap",
-            "ev_gross_profit":     "gp_ta",
+            "earnings_yield_gap":  "earnings_yield_gap_mos",
+            "ev_gross_profit":     "ev_gross_profit_mos",
             "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
             "owner_earnings":      "owner_earnings_mos",
             "epv":                 "epv_mos",
             "graham_revised":      "graham_revised_mos",
-            "acquirers_multiple":  "acquirers_multiple",
+            "acquirers_multiple":  "acquirers_multiple_mos",
             "iv15_deep_value":     "iv15_deep_value_mos"
         }
         metric_field = methodology_metrics.get(key, "mos")
@@ -5167,12 +5464,14 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         exits = []
         for sym, h in prev_holdings.items():
             if sym not in new_syms:
-                # FIX (May 2026): Use stock_map for exit price and metric lookup.
-                exit_price = h.get("entry_price", 0.0)
-                exit_metric = 0.0
-                if stock_map and sym in stock_map:
-                    exit_price = stock_map[sym].price
-                    exit_metric = getattr(stock_map[sym], metric_field, 0.0)
+                # RC2 (May 2026): A real exit price MUST come from the live scan. In
+                # production every symbol is in the scan; if it isn't, the data is mock
+                # and we must NOT manufacture a 0% exit at the stale entry price — skip.
+                if not (stock_map and sym in stock_map):
+                    log.warning(f"  {key}: {sym} exited but absent from scan (mock data?) — exit not recorded")
+                    continue
+                exit_price = stock_map[sym].price
+                exit_metric = getattr(stock_map[sym], metric_field, 0.0)
                 entry_p = h.get("entry_price", exit_price)
                 entry_m = h.get("entry_metric", 0.0)
                 perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
@@ -5432,13 +5731,13 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
 
     methodology_metrics = {
         "dcf_fcff":            "dcf_fcff_mos",
-        "earnings_yield_gap":  "ey_gap",
-        "ev_gross_profit":     "gp_ta",
+        "earnings_yield_gap":  "earnings_yield_gap_mos",
+        "ev_gross_profit":     "ev_gross_profit_mos",
         "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
         "owner_earnings":      "owner_earnings_mos",
         "epv":                 "epv_mos",
         "graham_revised":      "graham_revised_mos",
-        "acquirers_multiple":  "acquirers_multiple",
+        "acquirers_multiple":  "acquirers_multiple_mos",
         "iv15_deep_value":     "iv15_deep_value_mos",
     }
 
@@ -5450,7 +5749,14 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     # scan-to-scan noise in MOS. Incumbent holdings get a small MOS boost
     # (HYSTERESIS_BOOST) so a challenger must be meaningfully better to
     # displace them. This reduces turnover without sacrificing signal.
-    HYSTERESIS_BOOST = 0.05  # 5 percentage points
+    # Boost = 10% of each method's max MOS amplitude, so incumbency is the SAME
+    # relative strength everywhere. Rank methods are compressed (ev_gp ±0.15,
+    # ey_gap ±0.125, acquirers ±0.20), so the old flat 0.05 was ~3x too strong and
+    # cemented below-median incumbents (ev_gross_profit: 24.5mo avg hold, -42% DD).
+    HYST_FRAC = 0.10
+    _MOS_AMPLITUDE = {"ev_gross_profit": 0.15, "earnings_yield_gap": 0.125, "acquirers_multiple": 0.20}
+    def _hyst_boost(k):
+        return HYST_FRAC * _MOS_AMPLITUDE.get(k, 0.50)  # absolute methods: 0.10*0.50 = 0.05 (unchanged)
 
     for key, (mos_field, fv_field) in methodology_fields.items():
         # Build set of currently-held symbols for this methodology
@@ -5458,14 +5764,59 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         if key in prev_picks_map:
             incumbent_syms = set(prev_picks_map[key].keys())
 
+        # Earnings-based methods whose MOS rides on the (possibly peak) earnings
+        # base. Asset/multiple methods (acquirers_multiple, ev_gross_profit,
+        # earnings_yield_gap) are less sensitive — exclude from normalization.
+        EARNINGS_BASED = {
+            "dcf_fcff", "rd_capitalized_dcf", "owner_earnings",
+            "epv", "graham_revised", "iv15_deep_value",
+        }
+
         candidates = []
         for s in all_results:
             mos_val = getattr(s, mos_field, -1.0)
             if mos_val is not None and mos_val > -1.0:
+                # G4: Sector-methodology applicability
+                sc = _sector_class(s)
+                applicable = _methodology_applicable(key, sc)
+                s._sector_class = sc
+                s._methodology_applicable = applicable
+                if not applicable:
+                    continue
+
+                # G2a: Exclude earnings-based methodologies for broken-history/insufficient-history setups
+                if key in EARNINGS_BASED and (getattr(s, "structural_break", False) or getattr(s, "years_history", 99) < 5):
+                    continue
+
+                # G2b (May 2026): Exclude earnings-based methods when consensus forward
+                # EPS is in steep decline. These methods' MOS rides on an earnings base
+                # that is actively evaporating, so a high trailing-MOS is illusory
+                # (e.g. CALM at a cyclical peak with −50% forward EPS). Asset/multiple
+                # methods (acquirers_multiple, ev_gross_profit, earnings_yield_gap) are
+                # NOT in EARNINGS_BASED and so are exempt by construction.
+                FORWARD_DECLINE_GATE = -0.25   # forward EPS growth ≤ −25% → drop
+                if key in EARNINGS_BASED and getattr(s, "forward_eps_growth", 0.0) <= FORWARD_DECLINE_GATE:
+                    continue
+
+                # G3: zero-growth agreement check and saturated cap (<= 0.50) for IV15
+                if key == "iv15_deep_value":
+                    if not getattr(s, "iv15_nogrowth_agreement", True):
+                        continue
+                    if getattr(s, "iv15_saturated", False):
+                        mos_val = min(0.50, mos_val)
+                        s.iv15_deep_value_mos = min(0.50, s.iv15_deep_value_mos)
+
                 if passes_leverage_gate(s) and (s.piotroski or 0) >= 3:
-                    # Boost incumbent holdings to prevent whipsaw rotation
-                    boost = HYSTERESIS_BOOST if s.symbol in incumbent_syms else 0.0
-                    s._temp_mos = mos_val + boost
+                    # G1: for earnings-based methods, rank PEAK_CYCLE names on
+                    # their NORMALIZED MOS so peak earnings can't buy a top slot.
+                    eff_mos = mos_val
+                    if (key in EARNINGS_BASED
+                            and getattr(s, "cycle_flag", "NORMAL") == "PEAK_CYCLE"):
+                        ns = getattr(s, "norm_scale", 1.0) or 1.0
+                        if ns > 0:
+                            eff_mos = max(-1.0, min(0.95, 1.0 - (1.0 - mos_val) / ns))
+                    boost = _hyst_boost(key) if s.symbol in incumbent_syms else 0.0
+                    s._temp_mos = eff_mos + boost
                     candidates.append(s)
                     
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
@@ -5495,13 +5846,15 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         if key in prev_picks_map:
             for old_sym, old_val in prev_picks_map[key].items():
                 if old_sym not in portfolio_symbols:
-                    exit_price = old_val.get("entry_price") or 0.0
-                    exit_metric = 0.0
-                    for s in all_results:
-                        if s.symbol == old_sym:
-                            exit_price = s.price
-                            exit_metric = getattr(s, metric_field, 0.0)
-                            break
+                    # RC2 (May 2026): exit price must come from the live scan; skip if
+                    # absent (mock data) rather than recording a fake 0% at the stale
+                    # entry price. In production every symbol is present in all_results.
+                    live = next((s for s in all_results if s.symbol == old_sym), None)
+                    if live is None:
+                        log.warning(f"  {key}: {old_sym} exited but absent from scan (mock data?) — exit not recorded")
+                        continue
+                    exit_price = live.price
+                    exit_metric = getattr(live, metric_field, 0.0)
                     entry_p = old_val.get("entry_price") or exit_price
                     entry_m = old_val.get("entry_metric") or 0.0
                     perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
@@ -5552,6 +5905,9 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 if old_m is not None:
                     entry_m = old_m
                 
+            _price = s.price or 0.0
+            _sma200 = getattr(s, "sma200", 0) or 0.0
+            _yr_high = getattr(s, "year_high", 0) or 0.0
             picks.append({
                 "symbol": s.symbol,
                 "weight": round(weight, 4),
@@ -5561,7 +5917,30 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 "entry_date": entry_d,
                 "entry_metric": round(entry_m, 4),
                 "fair_value": round(fv_val, 4),
-                "sector": s.sector or "Unknown"
+                "sector": s.sector or "Unknown",
+                # G1 — travels into methodology_picks.json → debate → Director:
+                "cycle_flag": getattr(s, "cycle_flag", "NORMAL"),
+                "peak_margin_sigma": getattr(s, "peak_margin_sigma", 0.0),
+                "norm_scale": getattr(s, "norm_scale", 1.0),
+                # G2/G3/G4:
+                "mos_source": mos_field,
+                "years_history": getattr(s, "years_history", 99),
+                "structural_break": getattr(s, "structural_break", False),
+                "structural_break_reason": getattr(s, "structural_break_reason", ""),
+                "forward_eps_growth": getattr(s, "forward_eps_growth", 0.0),
+                "iv15_nogrowth_agreement": getattr(s, "iv15_nogrowth_agreement", True),
+                "iv15_saturated": getattr(s, "iv15_saturated", False),
+                "sector_class": getattr(s, "_sector_class", "operating"),
+                "methodology_applicable": getattr(s, "_methodology_applicable", True),
+                # Director entry-timing (PROMPT_CORRECTIONS momentum→Director).
+                # All sourced from confirmed-persisted Stock attributes.
+                "technical_signal": getattr(s, "bull_score", 0),
+                "reversal_score": getattr(s, "reversal_score", 0),
+                "rsi": getattr(s, "rsi", 50.0),
+                # Trend proxy: % above/below 200-day SMA (negative = below trend = falling knife risk)
+                "price_vs_sma200": round((_price - _sma200) / _sma200, 4) if _sma200 > 0 else None,
+                # Drawdown proxy: % off 52-week high (deep negative = washed out)
+                "pct_off_52w_high": round((_price - _yr_high) / _yr_high, 4) if _yr_high > 0 else None,
             })
             total_mos += mos_val
             

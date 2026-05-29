@@ -1688,25 +1688,67 @@ const getBasketReturn = (name: string, cagr: number) => {
 
 const getMetricName = (key: string) => {
   switch (key) {
-    case "acquirers_multiple": return "EV/EBIT";
-    case "ev_gross_profit": return "GP/TA";
-    case "earnings_yield_gap": return "EY GAP";
-    case "dcf_fcff": return "DCF MOS";
+    case "dcf_fcff": return "DCF-FCFF MOS";
+    case "earnings_yield_gap": return "EY Gap MOS";
+    case "ev_gross_profit": return "EV/GP MOS";
     case "rd_capitalized_dcf": return "R&D DCF MOS";
-    case "owner_earnings": return "OE MOS";
+    case "owner_earnings": return "Owner Earnings MOS";
     case "epv": return "EPV MOS";
-    case "graham_revised": return "GRAHAM MOS";
+    case "graham_revised": return "Graham MOS";
+    case "acquirers_multiple": return "Acquirer's MOS";
     case "iv15_deep_value": return "IV15 MOS";
-    default: return "METRIC";
+    default: return "MOS";
   }
 };
 
-const formatMethodologyMetric = (value: number | null | undefined, key: string) => {
+const formatMethodologyMetric = (value: number | null | undefined, _key: string) => {
   if (value == null) return "—";
-  if (key === "acquirers_multiple") {
-    return `${value.toFixed(1)}x`;
-  }
+  // All methodologies now emit formula MOS values (0-1 scale) from the backend
   return `${(value * 100).toFixed(1)}%`;
+};
+
+// ── New indicator helpers ────────────────────────────────────────────────────
+const CYCLE_FLAG_STYLES: Record<string, { color: string; bg: string; label: string }> = {
+  NORMAL:               { color: "#10b981", bg: "rgba(16,185,129,0.12)", label: "Normal" },
+  PEAK_CYCLE:           { color: "#f59e0b", bg: "rgba(245,158,11,0.12)", label: "Peak Cycle" },
+  TROUGH_CYCLE:         { color: "#3b82f6", bg: "rgba(59,130,246,0.12)", label: "Trough" },
+  INSUFFICIENT_HISTORY: { color: "#ef4444", bg: "rgba(239,68,68,0.12)", label: "No History" },
+};
+
+const CycleFlagBadge = ({ flag }: { flag?: string }) => {
+  if (!flag) return null;
+  const s = CYCLE_FLAG_STYLES[flag] || CYCLE_FLAG_STYLES.NORMAL;
+  return (
+    <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 4, fontWeight: 700, fontFamily: "var(--font-mono)", letterSpacing: "0.03em", color: s.color, background: s.bg, whiteSpace: "nowrap" }} title={`Cycle: ${flag}`}>{s.label}</span>
+  );
+};
+
+const PickIndicators = ({ pick }: { pick: any }) => {
+  const hasCycle = pick.cycle_flag && pick.cycle_flag !== "NORMAL";
+  const hasBreak = pick.structural_break === true;
+  const hasSector = !!pick.sector_class;
+  const hasNarrative = !!pick.narrative_arc;
+  const hasTranscript = pick.transcript_count != null;
+  if (!hasCycle && !hasBreak && !hasSector && !hasNarrative && !hasTranscript) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+      {hasCycle && <CycleFlagBadge flag={pick.cycle_flag} />}
+      {hasBreak && (
+        <span title="Structural break detected" style={{ display: "inline-flex", alignItems: "center" }}>
+          <AlertTriangle size={12} color="#f59e0b" />
+        </span>
+      )}
+      {hasSector && (
+        <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 4, fontFamily: "var(--font-mono)", color: "var(--text-muted)", background: "var(--bg-hover)", whiteSpace: "nowrap" }} title={`Sector: ${pick.sector_class}`}>{pick.sector_class}</span>
+      )}
+      {hasTranscript && (
+        <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", whiteSpace: "nowrap" }} title={`${pick.transcript_count} earnings transcripts analyzed`}>📝{pick.transcript_count}</span>
+      )}
+      {hasNarrative && (
+        <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--purple, #8b5cf6)", cursor: "help", whiteSpace: "nowrap" }} title={pick.narrative_arc}>📖 narrative</span>
+      )}
+    </div>
+  );
 };
 
 export default function Dashboard(){
@@ -1903,6 +1945,11 @@ export default function Dashboard(){
 
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
 
+  // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
+  // in place (cheaper than threading enriched copies through 10+ render sites),
+  // so we bump this counter on success to force a re-render off the new values.
+  const [pitLoaded, setPitLoaded] = useState(0);
+
   useEffect(() => {
     fetch("/api/gcs/scans/speculair_baskets.json")
       .then((r) => { if (r.ok) return r.json(); throw new Error("GCS fetch failed"); })
@@ -1935,6 +1982,43 @@ export default function Dashboard(){
 
       });
 
+  }, []);
+
+
+
+  // Load PIT baseline history (screener-parity 5y replay) and override
+  // METHODOLOGIES_CONFIG.metrics.baseline + annualReturns with the real numbers.
+  // The prior literals were stitched approximations (mixed 1y-debate CAGRs with
+  // market-shaped annuals); diverged by multiples, not inches. baseline_history.json
+  // is the post-fix (Fix A hysteresis scaling + G2b PIT proxy) replay generated by
+  // backend/replay_baseline.py, mirrored to /public on each backend update.
+  useEffect(() => {
+    const REGIMES: Record<number, string> = { 2021: "BULL", 2022: "BEAR", 2023: "BULL", 2024: "BULL", 2025: "SIDEWAYS" };
+    const shortKey = (p: string) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; };
+    fetch("/baseline_history.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d || !d.methodologies) return;
+        METHODOLOGIES_CONFIG.forEach((basket: any) => {
+          const m = d.methodologies[shortKey(basket.path)];
+          if (!m || !m.equal) return;
+          const eq = m.equal;
+          const months = eq.months || 60;
+          basket.metrics.baseline = {
+            cagr: eq.cagr,
+            mdd: eq.max_drawdown,
+            sharpe: eq.sharpe,
+            trades: Math.round(20 + (eq.avg_turnover || 0) * 20 * months),
+          };
+          if (eq.by_year) {
+            basket.annualReturns = Object.entries(eq.by_year)
+              .map(([y, r]: [string, any]) => ({ year: parseInt(y, 10), regime: REGIMES[parseInt(y, 10)] || "BULL", return: r }))
+              .sort((a, b) => a.year - b.year);
+          }
+        });
+        setPitLoaded((x) => x + 1);
+      })
+      .catch((e) => console.error("Error loading PIT baseline history:", e));
   }, []);
 
 
@@ -2994,6 +3078,8 @@ export default function Dashboard(){
 
                             <th style={{ padding: "0 8px 12px 8px", fontWeight: 600 }}>COMPANY</th>
 
+                            <th style={{ padding: "0 8px 12px 8px", fontWeight: 600 }}>INDICATORS</th>
+
                             <th style={{ padding: "0 8px 12px 8px", textAlign: "left", fontWeight: 600 }}>ENTRY DATE</th>
 
                             <th style={{ padding: "0 8px 12px 8px", textAlign: "right", fontWeight: 600 }}>ENTRY PRICE</th>
@@ -3042,6 +3128,8 @@ export default function Dashboard(){
 
                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
 
+                                <td style={{ padding: "14px 4px" }}><PickIndicators pick={pick} /></td>
+
                                 <td style={{ padding: "14px 8px", color: "var(--text-secondary)" }}>{entryDateVal}</td>
 
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{entryPriceVal > 0 ? `$${entryPriceVal.toFixed(2)}` : "—"}</td>
@@ -3064,7 +3152,7 @@ export default function Dashboard(){
 
                          }) : (
 
-                           <tr><td colSpan={8} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
+                           <tr><td colSpan={11} style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>No active holdings for this methodology.</td></tr>
 
                          )}
 
@@ -4401,7 +4489,7 @@ export default function Dashboard(){
 
                         if (cfg) {
 
-                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.baseline.cagr);
 
                           totalVal += 100000 * (1 + returnPct);
 
@@ -4439,7 +4527,7 @@ export default function Dashboard(){
 
                           if (cfg) {
 
-                            const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                            const returnPct = getBasketReturn(cfg.name, cfg.metrics.baseline.cagr);
 
                             totalVal += 100000 * (1 + returnPct);
 
@@ -4471,7 +4559,7 @@ export default function Dashboard(){
 
                         if (cfg) {
 
-                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                          const returnPct = getBasketReturn(cfg.name, cfg.metrics.baseline.cagr);
 
                           totalVal += 100000 * (1 + returnPct);
 
@@ -4505,7 +4593,7 @@ export default function Dashboard(){
 
                   if (!cfg) return null;
 
-                  const returnPct = getBasketReturn(cfg.name, cfg.metrics.director.cagr);
+                  const returnPct = getBasketReturn(cfg.name, cfg.metrics.baseline.cagr);
 
                   const basketValue = 100000 * (1 + returnPct);
 

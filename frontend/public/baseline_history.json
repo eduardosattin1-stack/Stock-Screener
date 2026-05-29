@@ -1,0 +1,325 @@
+{
+  "generated_at": "2026-05-29T14:46:33.405663+00:00",
+  "config": {
+    "rebalance": "monthly",
+    "top_n": 20,
+    "weightings": [
+      "equal",
+      "mos"
+    ],
+    "transaction_costs": 0.0,
+    "return_type": "price (split-adj, ex-dividends)",
+    "piotroski_altman": "recomputed PIT from as-of statements",
+    "g2b_forward_decline": "PIT proxy \u2014 PEAK_CYCLE + trailing EPS YoY <= -25%",
+    "period": "2021-01..2025-12",
+    "universe_size": 4254
+  },
+  "methodologies": {
+    "dcf_fcff": {
+      "equal": {
+        "cagr": 0.257,
+        "total_return": 2.0786,
+        "max_drawdown": -0.1425,
+        "sharpe": 1.05,
+        "win_rate": 0.695,
+        "months": 59,
+        "by_year": {
+          "2021": 0.4034,
+          "2022": 0.1004,
+          "2023": 0.4027,
+          "2024": 0.1944,
+          "2025": 0.1899
+        },
+        "avg_turnover": 0.082
+      },
+      "mos": {
+        "cagr": 0.2212,
+        "total_return": 1.6708,
+        "max_drawdown": -0.1208,
+        "sharpe": 0.923,
+        "win_rate": 0.678,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2289,
+          "2022": 0.2068,
+          "2023": 0.4162,
+          "2024": 0.1352,
+          "2025": 0.1202
+        },
+        "avg_turnover": 0.082
+      }
+    },
+    "earnings_yield_gap": {
+      "equal": {
+        "cagr": 0.2711,
+        "total_return": 2.253,
+        "max_drawdown": -0.1638,
+        "sharpe": 0.996,
+        "win_rate": 0.627,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2274,
+          "2022": -0.0497,
+          "2023": 0.3893,
+          "2024": 0.3851,
+          "2025": 0.4493
+        },
+        "avg_turnover": 0.048
+      },
+      "mos": {
+        "cagr": 0.2073,
+        "total_return": 1.5247,
+        "max_drawdown": -0.1679,
+        "sharpe": 0.814,
+        "win_rate": 0.627,
+        "months": 59,
+        "by_year": {
+          "2021": 0.1814,
+          "2022": 0.0202,
+          "2023": 0.3301,
+          "2024": 0.3116,
+          "2025": 0.2008
+        },
+        "avg_turnover": 0.048
+      }
+    },
+    "ev_gross_profit": {
+      "equal": {
+        "cagr": -0.0134,
+        "total_return": -0.0642,
+        "max_drawdown": -0.4388,
+        "sharpe": -0.122,
+        "win_rate": 0.492,
+        "months": 59,
+        "by_year": {
+          "2021": -0.016,
+          "2022": -0.3661,
+          "2023": 0.4981,
+          "2024": -0.017,
+          "2025": 0.0189
+        },
+        "avg_turnover": 0.028
+      },
+      "mos": {
+        "cagr": -0.0049,
+        "total_return": -0.024,
+        "max_drawdown": -0.4852,
+        "sharpe": -0.069,
+        "win_rate": 0.492,
+        "months": 59,
+        "by_year": {
+          "2021": -0.0509,
+          "2022": -0.3764,
+          "2023": 0.541,
+          "2024": 0.0256,
+          "2025": 0.0436
+        },
+        "avg_turnover": 0.028
+      }
+    },
+    "rd_capitalized_dcf": {
+      "equal": {
+        "cagr": 0.1866,
+        "total_return": 1.3194,
+        "max_drawdown": -0.2133,
+        "sharpe": 0.731,
+        "win_rate": 0.61,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3335,
+          "2022": -0.1742,
+          "2023": 0.4358,
+          "2024": 0.2042,
+          "2025": 0.2182
+        },
+        "avg_turnover": 0.069
+      },
+      "mos": {
+        "cagr": 0.2049,
+        "total_return": 1.5002,
+        "max_drawdown": -0.2061,
+        "sharpe": 0.747,
+        "win_rate": 0.593,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3319,
+          "2022": -0.1582,
+          "2023": 0.4608,
+          "2024": 0.2974,
+          "2025": 0.1767
+        },
+        "avg_turnover": 0.069
+      }
+    },
+    "owner_earnings": {
+      "equal": {
+        "cagr": 0.1665,
+        "total_return": 1.1324,
+        "max_drawdown": -0.2191,
+        "sharpe": 0.651,
+        "win_rate": 0.576,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2744,
+          "2022": -0.1419,
+          "2023": 0.4362,
+          "2024": 0.0803,
+          "2025": 0.2568
+        },
+        "avg_turnover": 0.07
+      },
+      "mos": {
+        "cagr": 0.213,
+        "total_return": 1.5842,
+        "max_drawdown": -0.1413,
+        "sharpe": 0.858,
+        "win_rate": 0.627,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3084,
+          "2022": 0.0028,
+          "2023": 0.3822,
+          "2024": 0.1513,
+          "2025": 0.2376
+        },
+        "avg_turnover": 0.07
+      }
+    },
+    "epv": {
+      "equal": {
+        "cagr": 0.1474,
+        "total_return": 0.9663,
+        "max_drawdown": -0.3032,
+        "sharpe": 0.589,
+        "win_rate": 0.593,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2283,
+          "2022": -0.1694,
+          "2023": 0.3576,
+          "2024": 0.1501,
+          "2025": 0.2344
+        },
+        "avg_turnover": 0.094
+      },
+      "mos": {
+        "cagr": 0.1383,
+        "total_return": 0.8903,
+        "max_drawdown": -0.2487,
+        "sharpe": 0.554,
+        "win_rate": 0.61,
+        "months": 59,
+        "by_year": {
+          "2021": 0.257,
+          "2022": -0.1375,
+          "2023": 0.294,
+          "2024": 0.1551,
+          "2025": 0.1665
+        },
+        "avg_turnover": 0.094
+      }
+    },
+    "graham_revised": {
+      "equal": {
+        "cagr": 0.1678,
+        "total_return": 1.1443,
+        "max_drawdown": -0.2515,
+        "sharpe": 0.657,
+        "win_rate": 0.559,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2431,
+          "2022": -0.0953,
+          "2023": 0.4817,
+          "2024": 0.0378,
+          "2025": 0.2399
+        },
+        "avg_turnover": 0.082
+      },
+      "mos": {
+        "cagr": 0.1936,
+        "total_return": 1.3872,
+        "max_drawdown": -0.1769,
+        "sharpe": 0.708,
+        "win_rate": 0.593,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3232,
+          "2022": -0.0116,
+          "2023": 0.4396,
+          "2024": 0.0755,
+          "2025": 0.1789
+        },
+        "avg_turnover": 0.082
+      }
+    },
+    "acquirers_multiple": {
+      "equal": {
+        "cagr": 0.1544,
+        "total_return": 1.0262,
+        "max_drawdown": -0.1462,
+        "sharpe": 0.565,
+        "win_rate": 0.559,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3367,
+          "2022": -0.0584,
+          "2023": 0.4495,
+          "2024": 0.1259,
+          "2025": -0.0136
+        },
+        "avg_turnover": 0.074
+      },
+      "mos": {
+        "cagr": 0.1281,
+        "total_return": 0.809,
+        "max_drawdown": -0.2008,
+        "sharpe": 0.46,
+        "win_rate": 0.508,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3257,
+          "2022": -0.1261,
+          "2023": 0.4325,
+          "2024": 0.0926,
+          "2025": -0.0023
+        },
+        "avg_turnover": 0.074
+      }
+    },
+    "iv15_deep_value": {
+      "equal": {
+        "cagr": 0.1476,
+        "total_return": 0.9675,
+        "max_drawdown": -0.2516,
+        "sharpe": 0.59,
+        "win_rate": 0.593,
+        "months": 59,
+        "by_year": {
+          "2021": 0.2974,
+          "2022": -0.1883,
+          "2023": 0.406,
+          "2024": 0.0872,
+          "2025": 0.2222
+        },
+        "avg_turnover": 0.129
+      },
+      "mos": {
+        "cagr": 0.159,
+        "total_return": 1.0658,
+        "max_drawdown": -0.227,
+        "sharpe": 0.647,
+        "win_rate": 0.593,
+        "months": 59,
+        "by_year": {
+          "2021": 0.3511,
+          "2022": -0.1567,
+          "2023": 0.3975,
+          "2024": 0.0772,
+          "2025": 0.2044
+        },
+        "avg_turnover": 0.129
+      }
+    }
+  }
+}
