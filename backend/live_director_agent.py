@@ -304,6 +304,11 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
 # Director picks scoring below this are demoted to the Capitulation Watchlist.
 APEX_CONVICTION_FLOOR = 50
 
+# Minimum years of fundamental history to enter the director pool / apex. Matches the
+# earnings-methods G2a gate. Unknown history is treated as INSUFFICIENT — a recent-IPO /
+# de-SPAC name (one noisy annual statement) must not default through as long-history.
+MIN_YEARS_HISTORY = 5
+
 def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     """Apply deterministic G1-G4 contract rules on a 0-100 conviction score.
 
@@ -316,7 +321,9 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     symbol = cand.get("symbol", "")
     cycle = cand.get("cycle_flag", "NORMAL")
     sb = cand.get("structural_break", False)
-    yrs = cand.get("years_history", 99)
+    yrs = cand.get("years_history")
+    if yrs is None:
+        yrs = 0  # unknown history → treat as insufficient (never a free pass via a 99 default)
     feg = cand.get("forward_eps_growth", 0.0)
     iv_agree = cand.get("iv15_nogrowth_agreement", True)
 
@@ -325,9 +332,9 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     meth_app_dict = cand.get("methodology_applicable", {})
     all_inapplicable = len(source_meths) > 0 and all(not meth_app_dict.get(m, True) for m in source_meths)
 
-    # G2, G3, G4 are hard exclusions
-    if sb or yrs < 5:
-        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G2: structural_break={sb}, years={yrs})")
+    # G2, G3, G4 are hard exclusions (G2a = minimum fundamental history)
+    if sb or yrs < MIN_YEARS_HISTORY:
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G2: structural_break={sb}, years={yrs} < {MIN_YEARS_HISTORY})")
         return None
     if feg <= -0.10 or not iv_agree:
         log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3: forward_eps_growth={feg}, iv15_nogrowth_agreement={iv_agree})")

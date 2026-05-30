@@ -1140,20 +1140,45 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             if debated:
                 director_pool[meth_key] = {"picks": debated}
         pool_syms = {p.get("symbol") for v in director_pool.values() for p in v["picks"]}
-        log.info(f"Director universe: {len(pool_syms)} unique debated gate-passing names")
-        # Enrich sectors from the screener scan so the director's sector cap is
-        # meaningful — methodology_picks picks carry a blank sector. Best-effort.
-        sector_map = _load_sector_map()
-        if sector_map:
-            n_sec = 0
+        log.info(f"Director universe (pre-floor): {len(pool_syms)} unique debated gate-passing names")
+        # Enrich sector + years_history from the screener scan. methodology_picks picks
+        # carry a blank sector and (older vintages) no history; sector makes the
+        # concentration cap meaningful, years_history (count of annual buffett_history
+        # rows) feeds the minimum-history floor below.
+        from live_director_agent import MIN_YEARS_HISTORY
+        enrich = _load_scan_enrichment()
+        if enrich:
+            n_sec = n_hist = 0
             for v in director_pool.values():
                 for p in v["picks"]:
-                    if not (p.get("sector") or "").strip():
-                        sec = sector_map.get(p.get("symbol", ""))
-                        if sec:
-                            p["sector"] = sec
-                            n_sec += 1
-            log.info(f"Enriched {n_sec} candidates with sector from scan ({len(sector_map)} symbols mapped)")
+                    e = enrich.get(p.get("symbol", ""))
+                    if not e:
+                        continue
+                    if not (p.get("sector") or "").strip() and e.get("sector"):
+                        p["sector"] = e["sector"]; n_sec += 1
+                    if p.get("years_history") is None and e.get("years_history") is not None:
+                        p["years_history"] = e["years_history"]; n_hist += 1
+            log.info(f"Enriched {n_sec} sectors, {n_hist} years_history from scan ({len(enrich)} symbols mapped)")
+        # History floor (G2a, upstream of the director): drop names with < MIN years of
+        # fundamental history — or unknown history — BEFORE the director sees them, so a
+        # recent-IPO / de-SPAC name (one noisy annual statement) can't be picked or ranked.
+        floored, dropped = {}, []
+        for meth_key, v in director_pool.items():
+            keep = []
+            for p in v["picks"]:
+                yh = p.get("years_history")
+                if yh is None or yh < MIN_YEARS_HISTORY:
+                    dropped.append((p.get("symbol"), yh))
+                else:
+                    keep.append(p)
+            if keep:
+                floored[meth_key] = {"picks": keep}
+        if dropped:
+            uniq = sorted(set(dropped))
+            log.info(f"History floor (>= {MIN_YEARS_HISTORY}y) dropped {len(uniq)} thin/unknown-history names: {uniq}")
+        director_pool = floored
+        pool_syms = {p.get("symbol") for v in director_pool.values() for p in v["picks"]}
+        log.info(f"Director universe (post-floor): {len(pool_syms)} names")
         if not director_pool:
             # Cold cache / dry-run with no real theses — fall back to the baskets
             log.warning("No debated names with theses — director falling back to per-methodology baskets")
@@ -1285,31 +1310,47 @@ def _load_methodology_picks() -> Optional[dict]:
     return None
 
 
-def _load_sector_map() -> dict:
-    """symbol -> sector from the latest screener scan (best-effort, multi-source).
+def _load_scan_enrichment() -> dict:
+    """symbol -> {sector, years_history} from the latest screener scan (best-effort).
 
-    Used to enrich Speculair director candidates (methodology_picks picks carry a
-    blank sector) so the sector-concentration cap is meaningful.
+    Enriches Speculair director candidates: methodology_picks picks carry a blank
+    sector and (older vintages) no years_history. Sector makes the concentration cap
+    meaningful; years_history is derived from the count of annual buffett_history rows
+    and feeds the minimum-history floor so thin / recent-IPO names cannot reach the
+    director.
     """
     import urllib.request
+
+    def build(scan: dict) -> dict:
+        out = {}
+        for s in scan.get("stocks", []):
+            sym = s.get("symbol")
+            if not sym:
+                continue
+            bh = s.get("buffett_history") or {}
+            rows = bh.get("rows")
+            yrs = len(rows) if isinstance(rows, list) else None
+            out[sym] = {"sector": s.get("sector") or "", "years_history": yrs}
+        return out
+
     # 1. Authenticated GCS (production / Cloud Run)
     try:
         sys.path.insert(0, str(BASE_DIR))
         from screener_v6 import gcs_download
         scan = gcs_download("scans/latest_global.json")
         if scan and scan.get("stocks"):
-            return {s.get("symbol"): (s.get("sector") or "") for s in scan["stocks"] if s.get("symbol")}
+            return build(scan)
     except Exception as e:
-        log.debug(f"sector map via gcs_download failed: {e}")
+        log.debug(f"scan enrichment via gcs_download failed: {e}")
     # 2. Public bucket URL (local dev without ADC)
     try:
         url = f"https://storage.googleapis.com/{GCS_BUCKET}/scans/latest_global.json"
         with urllib.request.urlopen(url, timeout=90) as r:
             scan = json.load(r)
         if scan and scan.get("stocks"):
-            return {s.get("symbol"): (s.get("sector") or "") for s in scan["stocks"] if s.get("symbol")}
+            return build(scan)
     except Exception as e:
-        log.debug(f"sector map via public URL failed: {e}")
+        log.debug(f"scan enrichment via public URL failed: {e}")
     return {}
 
 
