@@ -159,4 +159,26 @@ After the first scheduled run, the live tracking did **not** populate. §6's cla
 
 **Intermediate diagnoses that were WRONG (retracted):** missing `decile_model_p20.pkl` (`_decile` is threshold-based, no model); `signal_tracker.py` corruption (file is clean, = HEAD); `capture_predictions` unwired (it is wired via `update_from_scan`).
 
-**Open / next step:** the scheduled screener job is aborting in the DebateEngine stage and not completing a real scan (hence stale `latest_sp500.json` + empty tracking). This is upstream of both tracking surfaces and entangled with the parallel debate/P20 work + manual runs in flight. Needs the scan's real stdout to pin down precisely (only stderr was reachable here). **What's confirmed intact: the static PIT baseline (`baseline_history.json` → methodology cards) — that does not depend on the live scan.**
+### CONFIRMED ROOT CAUSE (2026-05-31) — single cause, infra-level
+
+The Cloud Run job **named `screener-sp500` is configured to run the debate consumer, not the screener:**
+```
+command: python
+args:    live_debate_engine.py --run-full
+```
+`live_debate_engine.py --run-full` is the **Speculair debate pipeline** — it *loads* `scans/methodology_picks.json` and runs per-methodology debates (live_debate_engine.py:1060). It is a **pure consumer**; it never runs the screener. The OpenAI health check is non-fatal (warning only, :1073); the 35-s abort is `_load_methodology_picks()` returning nothing (:1077-1079) because no fresh picks exist.
+
+So **`screener_v6.main()` is never invoked by any schedule.** That single fact explains every symptom:
+- `latest_sp500.json` frozen at May 5 — no nightly screen
+- `methodology_picks.json` fresh only on manual runs (today 12:22Z)
+- `methodology_tracking.json` empty + `hit_rate_tracking/` has no new-schema cycles — because `save_methodology_picks` and `update_from_scan` live inside `main()`, which never runs
+
+**Framing correction:** the tracker is NOT gated behind the debate. `main()` (screener_v6.py:6010) has no debate stage; `save_scan_to_gcs` → `update_from_scan` runs right after the scan in its own try/except (:5180-5185). Nothing to decouple in code — the job is simply running the wrong program. The four-method work did NOT cause this; the screen has been broken ~3 weeks, predating that schema.
+
+**Exact fix (infra — owned by the parallel debate/P20 track, per decision 2026-05-31):**
+1. Restore `screener-sp500` to run the screener:
+   `gcloud run jobs update screener-sp500 --region=europe-west1 --command=python --args=screener_v6.py,--region,sp500`
+2. Run the debate (`live_debate_engine.py --run-full`) as its own scheduled job *after* the screener, so it consumes the freshly-written `methodology_picks.json`.
+3. Add `--command`/`--args` to `.github/workflows/deploy.yml`'s `screener-sp500` step so the command can't silently drift again (deploy.yml currently sets only image + env, so a manual command change persists undetected).
+
+**Status: handed to the parallel track (no infra changed by this session).** What's confirmed intact regardless: the static PIT baseline (`baseline_history.json` → methodology cards) — it does not depend on the live scan.
