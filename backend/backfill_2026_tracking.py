@@ -711,12 +711,28 @@ def main():
         for rb in tracking["rebalances"]:
             all_rebalance_dates.add(rb["date"])
 
-    # ── Build baseline history ──
+    # ── Build baseline history — prefer the latest replay results over hardcoded ──
+    # baseline_history.json is written by replay_baseline.py (the real PIT replay).
+    # Use its 'equal'-weighting by_year; fall back to BASELINE_RETURNS only if absent.
+    real_baseline: dict[str, dict[str, float]] = {}
+    for cand in [FRONTEND_PUBLIC / "baseline_history.json", BASE_DIR / "baseline_history.json"]:
+        _bh = _load_json(cand)
+        if _bh and isinstance(_bh.get("methodologies"), dict):
+            for mkey in METHODOLOGY_PARQUET_MAP:
+                by_year = ((_bh["methodologies"].get(mkey) or {}).get("equal") or {}).get("by_year") or {}
+                if by_year:
+                    real_baseline[mkey] = {str(y): float(v) for y, v in by_year.items()}
+            if real_baseline:
+                log.info("  Baseline sourced from %s (latest replay results)", cand.name)
+                break
+    if not real_baseline:
+        log.warning("  baseline_history.json not found/empty — falling back to hardcoded BASELINE_RETURNS")
+
     baseline_history: dict[str, dict[str, float]] = {}
     for year in ["2021", "2022", "2023", "2024", "2025"]:
         baseline_history[year] = {}
         for mkey in METHODOLOGY_PARQUET_MAP:
-            baseline_history[year][mkey] = BASELINE_RETURNS[mkey][year]
+            baseline_history[year][mkey] = real_baseline.get(mkey, {}).get(year, BASELINE_RETURNS[mkey][year])
 
     # ── Assemble final output ──
     output = {

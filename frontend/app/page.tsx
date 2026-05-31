@@ -3026,7 +3026,7 @@ export default function Dashboard(){
 
                           <td style={{ padding: "10px 0", color: "var(--purple)", fontWeight: 700 }}>2026</td>
 
-                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Active (Currently Holding)</td>
+                          <td style={{ padding: "10px 0", color: "var(--text)", fontWeight: 700 }}>Live · since late May 2026 (partial yr)</td>
 
                           <td style={{ padding: "10px 0", textAlign: "right", color: getActiveBasketPerformance() >= 0 ? "var(--green)" : "var(--red)", fontWeight: 800 }}>
 
