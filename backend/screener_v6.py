@@ -1542,6 +1542,11 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
     augmented with `_insufficient_history=True`. The screen loop checks
     that flag and skips the stock (recent IPOs, spin-offs, etc.).
     """
+    # Default share count — assigned from income statements below (~L1801/L1982).
+    # Initialize here so the normalized-EPS path (~L2252) can't raise UnboundLocalError
+    # for symbols whose data path skips both assignment branches (this crash silently
+    # aborted every scan since 05-28 via run_scan_job's except/continue).
+    shares = 0.0
     v = {
         "revenue_cagr_3y": 0, "eps_cagr_3y": 0,
         "roe_avg": 0, "roe_consistent": False, "roic_avg": 0,
