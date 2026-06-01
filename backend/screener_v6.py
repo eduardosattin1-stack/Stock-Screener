@@ -4779,10 +4779,11 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         inst = raw["inst"]
         inst_flow = raw["inst_flow"]
         cong = raw["cong"]
-        transcript = get_transcript_sentiment(sym)
-        # Re-fetch news (cheap, but only for top-30 to save calls)
-        news = get_news_sentiment(sym)
-        catastrophe = compute_catastrophe(raw["tech"], raw["value"], raw["analyst"], insider)
+        # Retired (Jun 2026): transcript-sentiment (Claude API), news re-fetch, and catastrophe
+        # were composite-era enrichment whose outputs are dead (news_*, catastrophe_score,
+        # transcript_score never read) or superseded by the Speculair opus dossier. Removed to
+        # stop the redundant per-stock Claude + FMP calls. (Composite/ML/factors stay until the
+        # frontend is reworked off the composite screener.)
 
         # Populate enriched fields on Stock
         s.insider_buy_ratio = insider["buy_ratio"]
@@ -4791,11 +4792,6 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.inst_holders_change = inst["holders_change"]
         s.inst_accumulation = inst["accumulation"]
         s.inst_score = inst["score"]
-        s.transcript_sentiment = transcript["sentiment"]
-        s.transcript_summary = transcript.get("summary", "")
-        s.transcript_score = transcript["score"]
-        s.news_sentiment = news["sentiment"]; s.news_score = news["score"]
-        s.catastrophe_score = catastrophe["score"]
 
         # Smart Money Score (Apr 2026) — must be computed BEFORE compute_composite_v8
         # since v8 now reads its smart_money sub-factor from this score.
@@ -4820,7 +4816,7 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             raw["tech"], raw["analyst"], raw["value"], s.price,
             insider, raw["proximity"], raw["earnings"],
             raw["upside"], raw["quality"], raw["catalyst"],
-            transcript, inst, inst_flow, sec_mom, cong,
+            None, inst, inst_flow, sec_mom, cong,   # transcript-sentiment retired
         )
 
         # Compute v8 composite — both modes (Option B: dual mode for UI toggle)
@@ -5260,7 +5256,7 @@ def monitor_portfolio(state_path: str = PORTFOLIO_STATE):
         inst = get_institutional_flows(sym)
         inst_flow = compute_institutional_flow(sym)
         cong = compute_congressional(sym)
-        transcript = get_transcript_sentiment(sym)
+        # transcript-sentiment retired (Jun 2026) — composite-era enrichment, now redundant.
 
         # Smart Money Score for monitor (same inputs as scan pass-2)
         sm = compute_smart_money_score(
@@ -5278,7 +5274,7 @@ def monitor_portfolio(state_path: str = PORTFOLIO_STATE):
         composite_v7, signal_v7, factors_v7, reasons_v7, coverage_v7 = compute_composite_v7(
             tech, analyst, value, q["price"],
             insider, proximity, earnings_block, upside,
-            quality, catalyst, transcript, inst, inst_flow, sec_mom, cong,
+            quality, catalyst, None, inst, inst_flow, sec_mom, cong,   # transcript retired
         )
         # v8 momentum composite (default mode for monitor)
         composite, signal, factors_v8, reasons, coverage = compute_composite_v8(
