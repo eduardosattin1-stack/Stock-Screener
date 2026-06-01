@@ -175,6 +175,13 @@ DO NOT re-derive the per-stock forensic work — your team already did it. Your 
 
 4. MACRO & SECTOR FIT. Use the macro brief and sector momentum as a tailwind/headwind overlay; do not cluster the basket on a single macro bet.
 
+5. PORTFOLIO CONTINUITY & ROTATION. You manage a LIVE, tracked basket — its performance is measured from each position's entry date. You are NOT building from scratch each cycle. Your CURRENT LIVE BASKET (existing holdings with entry date/price and P&L) is provided below when it exists. Each cycle:
+   - HOLD by default. A current holding stays unless its thesis is now broken (the latest dossier shows deterioration that invalidates the original case) OR a candidate is clearly superior and you are at your conviction-justified capacity.
+   - ROTATE with discipline. Only drop a holding for a new name when that name is MEANINGFULLY better than your weakest holding — never on marginal differences. Churn destroys the track record and incurs cost. When you rotate, name the holding you dropped and why, and the name you added and why it won the seat.
+   - ADD a genuinely new high-conviction name even without a drop, if the basket has room within your conviction-driven size.
+   - Re-score held names with the latest dossier, but you are deciding HOLD vs SELL — they keep their original entry.
+   Bias toward LOW turnover: a great business you already own beats a marginally-better new one.
+
 Hard vetoes to apply during your internal cull:
 - "Priced In": kill trades the street already models with an expanded multiple.
 - "Valley of Death": kill trades facing a cash-burn hump, maturity wall, or forced liquidation before the catalyst.
@@ -367,16 +374,20 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
 
 # ── Main Director Allocation ─────────────────────────────────────────────
 def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
-                            macro_brief: str = "") -> dict:
+                            macro_brief: str = "", current_basket: dict = None) -> dict:
     """Run Tier 2 Director allocation across all methodology baskets.
 
     Args:
         tier1_baskets: dict of methodology_key → basket from Tier 1
         dry_run: if True, skip LLM call and use conviction-based fallback
         macro_brief: optional once-per-scan macro regime brief prepended to the prompt
+        current_basket: optional {symbol: {entry_date, entry_price, conviction}} of the
+            LIVE held positions — fed to the director for hold/rotate decisions, and used
+            to preserve entry date/price for held names so the track record continues.
 
     Returns dict with apex_basket, capitulation_watchlist, director_memo
     """
+    current_basket = current_basket or {}
     log.info("=" * 60)
     log.info("TIER 2: APEX PM & BASKET ALLOCATOR")
     log.info("=" * 60)
@@ -505,9 +516,24 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     macro_section = f"=== MACRO REGIME BRIEF ===\n{macro_brief}\n\n" if macro_brief else ""
+
+    # Current live basket (held positions) for hold/rotate decisions.
+    basket_section = ""
+    if current_basket:
+        cand_by_sym = {c["symbol"]: c for c in director_candidates}
+        lines = ["=== CURRENT LIVE BASKET — your existing holdings; decide HOLD vs ROTATE (bias to hold) ==="]
+        for sym, h in current_basket.items():
+            ep = h.get("entry_price")
+            cur = (cand_by_sym.get(sym) or {}).get("price")
+            pnl = f", now {cur} ({(cur - ep) / ep * 100:+.1f}%)" if isinstance(ep, (int, float)) and isinstance(cur, (int, float)) and ep else ""
+            tag = " [re-debated this cycle — full dossier above]" if sym in cand_by_sym else " [no fresh debate this cycle — hold unless clearly broken]"
+            lines.append(f"  - {sym}: held since {h.get('entry_date','?')} @ {ep}{pnl}, prior conviction {h.get('conviction','?')}{tag}")
+        basket_section = "\n".join(lines) + "\n\n"
+
     director_prompt = (
         f"Date: {today}\n\n"
         f"{macro_section}"
+        f"{basket_section}"
         f"This is the FULL scored & gated candidate universe ({len(director_candidates)} names) "
         f"that survived the 9 methodology debate pipelines. Each name's complete dossier follows. "
         f"Consume the dossiers (do NOT re-derive them), rank the names cross-sectionally, judge each "
@@ -562,8 +588,10 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
             "symbol": sym,
             "conviction": conv,                              # 0-100 (director)
             "debate_conviction": cand.get("conviction", 0),  # 1-5 (moderator)
-            "entry_price": cand.get("price", 0),
-            "entry_date": today,
+            # Preserve original entry for HELD names (track record continues); new names enter today.
+            "entry_price": (current_basket.get(sym, {}).get("entry_price") or cand.get("price", 0)),
+            "entry_date": (current_basket.get(sym, {}).get("entry_date") or today),
+            "held_since_prior": sym in current_basket,
             "source_methodologies": cand.get("source_methodologies", []),
             "director_rationale": rationale or "Director selected portfolio allocation",
             "consensus_delta": cand.get("consensus_delta", ""),

@@ -372,6 +372,20 @@ def _is_fresh_cache(entry: dict) -> bool:
             and bool(entry.get("interrogator_dossier")))
 
 
+def _load_existing_speculair() -> dict:
+    """Best-effort load of the current speculair_baskets.json — for portfolio continuity
+    (held positions) and the director cost-guard. Returns {} if unavailable."""
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_download
+        d = gcs_download("scans/speculair_baskets.json")
+        if isinstance(d, dict):
+            return d
+    except Exception as e:
+        log.debug(f"existing speculair load failed: {e}")
+    return {}
+
+
 def run_macro_strategist(candidate_sectors: dict, before_date: str = None) -> str:
     """Once-per-scan macro regime brief for the director (opus). Tilts toward the sectors
     where the debated opportunities cluster. Returns markdown, or '' on failure (the
@@ -1416,6 +1430,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
     log.info(f"{'='*60}")
     
     # 3. Run Tier 2 — Director allocation
+    pool_sig = []   # debated-pool signature; persisted for the next run's director cost-guard
     try:
         from live_director_agent import run_director_allocation
         # §2: the director chooses 2-20 freely from the FULL debated, gate-passing
@@ -1470,17 +1485,44 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             # Cold cache / dry-run with no real theses — fall back to the baskets
             log.warning("No debated names with theses — director falling back to per-methodology baskets")
             director_pool = tier1_baskets
-        # Once-per-scan macro regime brief, tilted to where the opportunities cluster.
-        macro_brief = ""
-        if not dry_run:
-            sec_counts = {}
-            for v in director_pool.values():
-                for p in v.get("picks", []):
-                    s = (p.get("sector") or "Unknown")
-                    sec_counts[s] = sec_counts.get(s, 0) + 1
-            macro_brief = run_macro_strategist(sec_counts, before_date)
-            log.info(f"Macro Strategist brief: {len(macro_brief)} chars")
-        director_result = run_director_allocation(director_pool, dry_run=dry_run, macro_brief=macro_brief)
+        # ── Portfolio continuity + director cost-guard ─────────────────────
+        # Load the live basket (held positions) so the director does HOLD/ROTATE, and a
+        # pool signature so we pay for the (expensive ~€20) director ONLY when the debated
+        # universe actually changed since the last run. Unchanged pool → keep the basket.
+        existing_spec = _load_existing_speculair()
+        current_basket = {}
+        for p in (existing_spec.get("apex_basket", []) + existing_spec.get("capitulation_watchlist", [])):
+            sym = p.get("symbol")
+            if sym:
+                current_basket[sym] = {"entry_date": p.get("entry_date"),
+                                       "entry_price": p.get("entry_price"),
+                                       "conviction": p.get("conviction")}
+        pool_sig = sorted(f"{p.get('symbol')}|{p.get('transcript_date','')}"
+                          for v in director_pool.values() for p in v.get("picks", []))
+        prior_sig = existing_spec.get("pool_signature") or []
+        if (not dry_run) and prior_sig and pool_sig == prior_sig and existing_spec.get("apex_basket"):
+            log.info("Director cost-guard: debated pool unchanged since last run — keeping the "
+                     "existing basket, skipping the director (~EUR 20 saved).")
+            director_result = {
+                "apex_basket": existing_spec.get("apex_basket", []),
+                "capitulation_watchlist": existing_spec.get("capitulation_watchlist", []),
+                "director_memo": existing_spec.get("director_memo", "")
+                                 + "\n\n[Pool unchanged since last run — director not re-run; basket held.]",
+                "auto_vetoed": 0,
+            }
+        else:
+            # Once-per-scan macro regime brief, tilted to where the opportunities cluster.
+            macro_brief = ""
+            if not dry_run:
+                sec_counts = {}
+                for v in director_pool.values():
+                    for p in v.get("picks", []):
+                        s = (p.get("sector") or "Unknown")
+                        sec_counts[s] = sec_counts.get(s, 0) + 1
+                macro_brief = run_macro_strategist(sec_counts, before_date)
+                log.info(f"Macro Strategist brief: {len(macro_brief)} chars")
+            director_result = run_director_allocation(director_pool, dry_run=dry_run,
+                                                      macro_brief=macro_brief, current_basket=current_basket)
         
         # If it's a live run and we used the fallback because the Director LLM failed:
         if not dry_run and "Fallback" in director_result.get("director_memo", ""):
@@ -1506,6 +1548,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
         "rebalance_date": rebalance_date,
         "apex_basket": director_result.get("apex_basket", []),
         "capitulation_watchlist": director_result.get("capitulation_watchlist", []),
+        "pool_signature": pool_sig,
         "per_methodology_baskets": {},
         "director_memo": director_result.get("director_memo", ""),
         "debate_stats": {
