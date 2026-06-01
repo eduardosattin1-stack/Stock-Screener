@@ -536,6 +536,7 @@ ARCHITECT_MODEL    = "gpt-5.5"           # probabilistic bull/bear
 MODERATOR_MODEL    = "gpt-5.5"           # risk / timing / expectations
 MACRO_MODEL        = "claude-opus-4-8"   # once-per-scan macro regime brief
 ANTHROPIC_1M_BETA  = "context-1m-2025-08-07"
+DIRECTOR_CADENCE_DAYS = 30   # director re-reviews the basket at most ~monthly (plus on held-name earnings)
 
 
 def query_claude(model: str, system_prompt: str, user_prompt: str,
@@ -1211,6 +1212,7 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
         "cache_hits": 0,              # cache served, no LLM calls
         "no_transcript": 0,           # skipped, no earnings call available
         "fully_debated": 0,           # full 4-agent debate ran
+        "fresh_symbols": [],          # names freshly (re-)debated this cycle — triggers the director
 
         # Orthogonal Radar tag distribution (sum == fully_debated)
         "radar_alerted": 0,
@@ -1307,6 +1309,7 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                     
                     if is_new:
                         stats["fully_debated"] += 1
+                        stats["fresh_symbols"].append(symbol)
                         if result.get("radar_alert"):
                             stats["radar_alerted"] += 1
                         else:
@@ -1430,7 +1433,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
     log.info(f"{'='*60}")
     
     # 3. Run Tier 2 — Director allocation
-    pool_sig = []   # debated-pool signature; persisted for the next run's director cost-guard
+    director_last_run = None   # set in the director block; persisted for the next run's cost-guard
     try:
         from live_director_agent import run_director_allocation
         # §2: the director chooses 2-20 freely from the FULL debated, gate-passing
@@ -1497,20 +1500,34 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
                 current_basket[sym] = {"entry_date": p.get("entry_date"),
                                        "entry_price": p.get("entry_price"),
                                        "conviction": p.get("conviction")}
-        pool_sig = sorted(f"{p.get('symbol')}|{p.get('transcript_date','')}"
-                          for v in director_pool.values() for p in v.get("picks", []))
-        prior_sig = existing_spec.get("pool_signature") or []
-        if (not dry_run) and prior_sig and pool_sig == prior_sig and existing_spec.get("apex_basket"):
-            log.info("Director cost-guard: debated pool unchanged since last run — keeping the "
-                     "existing basket, skipping the director (~EUR 20 saved).")
+        # Director cost-guard: the (~EUR20) director re-runs only when it could change the book —
+        # a HELD name reported new earnings (must reassess), or the periodic review is due. A
+        # marginal MoS-driven entrant does NOT trigger it (it waits for the next review), so daily
+        # methodology-basket churn never incurs the director cost.
+        held_apex = {p.get("symbol") for p in existing_spec.get("apex_basket", [])}
+        held_reported = bool(held_apex & set(tier1_stats.get("fresh_symbols", [])))
+        last_run = existing_spec.get("director_last_run")
+        try:
+            days_since = (datetime.now(timezone.utc).date() - datetime.fromisoformat(last_run).date()).days if last_run else 9999
+        except Exception:
+            days_since = 9999
+        if (not dry_run) and held_apex and (not held_reported) and days_since < DIRECTOR_CADENCE_DAYS:
+            log.info(f"Director cost-guard: no held name reported + review not due ({days_since}d < "
+                     f"{DIRECTOR_CADENCE_DAYS}d) — holding existing basket, skipping the director.")
             director_result = {
                 "apex_basket": existing_spec.get("apex_basket", []),
                 "capitulation_watchlist": existing_spec.get("capitulation_watchlist", []),
                 "director_memo": existing_spec.get("director_memo", "")
-                                 + "\n\n[Pool unchanged since last run — director not re-run; basket held.]",
+                                 + f"\n\n[Basket held — no held-name earnings + {days_since}d since last review "
+                                   f"(< {DIRECTOR_CADENCE_DAYS}d). Director not re-run.]",
                 "auto_vetoed": 0,
             }
+            director_last_run = last_run
         else:
+            why = ("first run / empty basket" if not held_apex
+                   else "held name reported earnings" if held_reported
+                   else f"periodic review due ({days_since}d >= {DIRECTOR_CADENCE_DAYS}d)")
+            log.info(f"Director running — trigger: {why}.")
             # Once-per-scan macro regime brief, tilted to where the opportunities cluster.
             macro_brief = ""
             if not dry_run:
@@ -1523,6 +1540,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
                 log.info(f"Macro Strategist brief: {len(macro_brief)} chars")
             director_result = run_director_allocation(director_pool, dry_run=dry_run,
                                                       macro_brief=macro_brief, current_basket=current_basket)
+            director_last_run = datetime.now(timezone.utc).date().isoformat()
         
         # If it's a live run and we used the fallback because the Director LLM failed:
         if not dry_run and "Fallback" in director_result.get("director_memo", ""):
@@ -1548,7 +1566,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
         "rebalance_date": rebalance_date,
         "apex_basket": director_result.get("apex_basket", []),
         "capitulation_watchlist": director_result.get("capitulation_watchlist", []),
-        "pool_signature": pool_sig,
+        "director_last_run": director_last_run,
         "per_methodology_baskets": {},
         "director_memo": director_result.get("director_memo", ""),
         "debate_stats": {
