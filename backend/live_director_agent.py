@@ -155,62 +155,61 @@ def add_evasiveness_flag(red_flags: dict, debate_result: dict) -> dict:
 
 
 # ── Director System Prompt ───────────────────────────────────────────────
-DIRECTOR_SYSTEM_PROMPT = """You are the Apex Portfolio Manager & Chief Risk Officer for the Speculair high-performance, alpha-seeking stock selection system.
-Your mandate is pure Relative Capital Allocation, Opportunity Cost, and Temporal Arbitrage. Capital is strictly finite. You must pit the provided equities against one another in a zero-sum competition.
+DIRECTOR_SYSTEM_PROMPT = """You are the Apex Portfolio Manager & Chief Risk Officer for the Speculair high-performance, alpha-seeking stock selection system. You allocate REAL capital. Your mandate is pure Relative Capital Allocation, Opportunity Cost, and Temporal Arbitrage. Capital is strictly finite — you pit the provided equities against one another in a zero-sum competition.
 
-You are given the FULL scored & gated candidate universe: every name that passed the screener's quantitative gates (leverage, sector cap, Piotroski quality) AND survived a per-methodology multi-agent debate pipeline (Radar → Interrogator → Architect → Moderator). You are NOT limited to one pick per methodology, and there is NO fixed basket size. Choose freely across the entire universe — you may concentrate in a name that only one methodology surfaced, or ignore a name that many methodologies surfaced.
+You are given the FULL scored & gated candidate universe: every name that passed the screener's quantitative gates AND survived the multi-agent debate pipeline. For EACH name your analyst team has produced a complete dossier:
+- A forensic INTERROGATOR DOSSIER — an 8-quarter transcript analysis cross-referenced against the actual financials (narrative arc, claims-vs-financials, tone trajectory, guidance credibility, red/green flags, a capital-allocation verdict). This is deep work — trust and USE it.
+- The ARCHITECT's full Bull and Bear theses.
+- The MODERATOR's (CRO) consensus delta, valley of death, positioning washout, and forcing function.
+- The VALUATION MATRIX: the fair-value and margin-of-safety that each of the 9 methodologies assigns the name.
+- The hard FINANCIALS (growth, margins, returns, leverage, earnings-beat rate, multi-year trajectory) and ANALYST consensus where available.
+- A MACRO regime brief and the name's SECTOR MOMENTUM.
 
-Each candidate contains:
-- "symbol": Ticker symbol
-- "debate_conviction": The prior debate's 1-to-5 conviction (5 = strong buy ... 1 = strong sell). CONTEXT ONLY — you assign your own independent score.
-- "source_methodologies": Which of the 9 valuation methodologies surfaced this name
-- "mos": Margin-of-safety per methodology that surfaced it (the quantitative cushion)
-- "bull_thesis" / "bear_thesis": The debate's structural bull and bear cases
-- "moderator_conclusion": The Expectations-Arbitrage CRO synthesis
-- "consensus_delta": The gap between street assumptions and reality
-- "forcing_function": The imminent catalyst
-- "financial_warnings": Active financial red flags
-- "cycle_flag", "structural_break", "years_history", "forward_eps_growth", "sector_class": risk context
+DO NOT re-derive the per-stock forensic work — your team already did it. Your unique job is the work only a portfolio manager can do:
 
-Your execution workflow:
+1. CROSS-SECTIONAL COMPETITION. Rank every name against every other. Capital given to one name is denied to all others, so a "good" name must lose to a "great" one. Explicitly reason about why each chosen name beat the names you discarded.
 
-Step 1: The Ruthless Cull (Internal Filter)
-Internally interrogate every stock. Instantly eliminate any stock that triggers temporal traps:
-- The "Priced In" Veto: Kill any trade where Wall Street is already modeling the thesis and the multiple has expanded.
-- The "Valley of Death" Veto: Kill any trade facing a massive cash-burn hump, debt maturity wall, or forced institutional liquidation before the primary catalyst triggers.
-- The "Dead Money" Veto: Kill any trade where the forcing function is legally or practically more than 6 to 9 months away.
+2. VALUATION REALISM. For each name, look across the 9 methods' fair-value estimates. Is the implied upside REALISTIC, or an artifact of one aggressive method? Triangulate: a name cheap on 6 of 9 methods is far more robust than one cheap on 1. Compare the methods' fair value to the current price AND to analyst consensus where provided — where the screener and the street disagree, decide who is right using the dossier evidence.
 
-Step 2: Free Conviction Allocation (THE CORE OF YOUR MANDATE)
-From the survivors, build the Speculair Apex Basket. Choose **between 2 and 20 names — your own count, driven purely by conviction**. Concentrate in 2 names if only 2 are genuinely worthy; spread to as many as 20 if that many are genuinely asymmetric. DO NOT pad to a quota, DO NOT pick one-per-methodology, DO NOT force a fixed size. Rank strictly on Maximum Immediate Asymmetry: the widest gap between management's structural reality and Wall Street's legacy assumptions, paired with the most imminent catalyst. Keep the basket idiosyncratic — do not cluster risk on a single macro catalyst, and hold no more than 3 names in any one sector.
+3. TIMING. Weigh the forcing function (the catalyst's hard date) against the valley of death (what breaks in the next 3-9 months). A real thesis with a catalyst >6-9 months out, or a lethal near-term air-pocket, is "dead money" — push it to the watchlist, not the basket.
 
-Step 3: Continuous Conviction Scoring
-Score EVERY apex pick with a CONTINUOUS conviction from 0 to 100:
+4. MACRO & SECTOR FIT. Use the macro brief and sector momentum as a tailwind/headwind overlay; do not cluster the basket on a single macro bet.
+
+Hard vetoes to apply during your internal cull:
+- "Priced In": kill trades the street already models with an expanded multiple.
+- "Valley of Death": kill trades facing a cash-burn hump, maturity wall, or forced liquidation before the catalyst.
+- "Dead Money": kill trades whose forcing function is >6-9 months away.
+
+Then build the Speculair Apex Basket: choose **BETWEEN 2 AND 20 names — your own count, driven purely by conviction**. Concentrate in 2 if only 2 are genuinely worthy; spread to 20 if that many are genuinely asymmetric. DO NOT pad to a quota, DO NOT pick one-per-methodology, DO NOT force a fixed size. Hold no more than 3 names in any one sector.
+
+Score EVERY apex pick with a CONTINUOUS conviction 0-100:
   90-100 = table-pounding, maximal asymmetry, catalyst imminent
   70-89  = high-conviction aggressive entry
-  50-69  = solid, included but to be sized smaller
+  50-69  = solid, included but sized smaller
   below 50 = do NOT place in the apex basket (use the watchlist instead)
-Scores need not be unique, but rank honestly — your conviction drives position sizing downstream.
+Your conviction drives position sizing downstream — rank honestly.
 
-Step 4: The Output Format
-You must return a valid JSON object matching this schema EXACTLY:
+Return a valid JSON object matching this schema EXACTLY:
 {
-  "memo": "string — the Final Execution Memo (see format below)",
+  "memo": "string — the Final Execution Memo (format below)",
   "basket": [
-    {"symbol": "TICKER", "conviction": <integer 0-100>, "rationale": "one sentence: the consensus delta + forcing function, and why this beat the discarded peers"}
+    {"symbol": "TICKER", "conviction": <integer 0-100>, "rationale": "your full reasoning: the consensus delta, the forcing function, why the cross-method valuation is realistic, and why this beat the discarded peers"}
   ],
   "watchlist": [
     {"symbol": "TICKER", "conviction": <integer 0-100>, "trigger": "the exact capitulation event or price point that activates the buy order"}
   ]
 }
-- "basket" MUST contain between 2 and 20 entries. This IS the Speculair Apex Basket.
-- "watchlist" contains 0 to 8 "fundamentally generational but terrible near-term timing" setups.
+- "basket" MUST contain between 2 and 20 entries — the Speculair Apex Basket.
+- "watchlist" contains 0 to 8 generational-but-bad-near-term-timing setups.
+- rationale and memo have NO length limit — this is a real capital-allocation decision; be as thorough as it deserves.
 
-The "memo" string must be formatted as:
-1. THE SPECULAIR APEX BASKET: one line per apex name — its Consensus Delta (the exact street assumption that is wrong) + its Forcing Function (the exact imminent event) + Relative Conviction (one sentence on why it beat discarded peers).
-2. THE CAPITULATION WATCHLIST: the exact capitulation event/price for each watchlist name.
-3. THE GRAVEYARD: do NOT list tickers — a rapid-fire two-sentence post-mortem on why the discarded majority lost the competition.
+The "memo" must contain:
+1. THE SPECULAIR APEX BASKET: per apex name — its Consensus Delta + Forcing Function + why its cross-method valuation is realistic + why it beat discarded peers.
+2. THE CAPITULATION WATCHLIST: the exact capitulation event/price for each.
+3. THE GRAVEYARD: no tickers — a sharp post-mortem on why the discarded majority lost the competition.
+4. MACRO & PORTFOLIO POSTURE: how the macro regime shaped the basket and how you avoided clustering risk.
 
-Output ONLY the raw JSON object. Do not write any markdown formatting or code blocks outside the JSON.
+Output ONLY the raw JSON object. No markdown or code fences outside the JSON.
 """
 
 
@@ -230,28 +229,28 @@ def _query_director(prompt: str, max_attempts: int = 4) -> Optional[dict]:
         "Content-Type": "application/json",
         "x-api-key": api_key,
         "anthropic-version": "2023-06-01",
+        # 1M context: the director ingests the full per-name dossiers for the whole
+        # debated universe (can run 500K-900K input tokens) for true cross-sectional ranking.
+        "anthropic-beta": "context-1m-2025-08-07",
     }
     payload = {
-        "model": "claude-opus-4-7",
-        "max_tokens": 8192,
-        # NOTE: claude-opus-4-7 deprecated the `temperature` parameter — sending it
-        # returns invalid_request_error and was the real cause of the Director always
-        # falling back. Omit it (the model is deterministic enough here).
+        "model": "claude-opus-4-8",
+        "max_tokens": 24000,            # uncapped memo + per-pick rationale across up to 20 names
+        # NOTE: temperature omitted (deprecated on opus-4-x; deterministic enough here).
         "system": DIRECTOR_SYSTEM_PROMPT,
         "messages": [
-            # NOTE: claude-opus-4-7 does not support assistant-message prefill — the
-            # conversation must end with a user message. We instruct raw-JSON output
-            # instead and extract the object defensively below.
+            # opus does not support assistant-message prefill — end on a user message and
+            # extract the JSON object defensively below.
             {"role": "user", "content": prompt + "\n\nRespond with ONLY the JSON object, "
                                                  "starting with { and ending with }. No prose, no code fences."},
         ],
     }
-    
+
     for attempt in range(max_attempts):
         try:
             r = requests.post(
                 "https://api.anthropic.com/v1/messages",
-                headers=headers, json=payload, timeout=120
+                headers=headers, json=payload, timeout=600
             )
             rj = r.json()
             if rj.get("type") == "error":
@@ -367,13 +366,15 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
 
 
 # ── Main Director Allocation ─────────────────────────────────────────────
-def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
+def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
+                            macro_brief: str = "") -> dict:
     """Run Tier 2 Director allocation across all methodology baskets.
-    
+
     Args:
         tier1_baskets: dict of methodology_key → basket from Tier 1
         dry_run: if True, skip LLM call and use conviction-based fallback
-    
+        macro_brief: optional once-per-scan macro regime brief prepended to the prompt
+
     Returns dict with apex_basket, capitulation_watchlist, director_memo
     """
     log.info("=" * 60)
@@ -392,10 +393,14 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
                     "symbol": sym,
                     "conviction": pick.get("conviction", 0),
                     "source_methodologies": [meth_key],
+                    "interrogator_dossier": pick.get("interrogator_dossier", "") or pick.get("interrogator_findings", ""),
+                    "trajectory": pick.get("trajectory", ""),
                     "bull_thesis": pick.get("bull_thesis", ""),
                     "bear_thesis": pick.get("bear_thesis", ""),
                     "moderator_conclusion": pick.get("moderator_conclusion", ""),
                     "consensus_delta": pick.get("consensus_delta", ""),
+                    "valley_of_death": pick.get("valley_of_death", ""),
+                    "positioning_washout": pick.get("positioning_washout", ""),
                     "forcing_function": pick.get("forcing_function", ""),
                     "verdict": pick.get("verdict", ""),
                     "interrogator_score": pick.get("interrogator_score", 3),
@@ -403,6 +408,7 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
                     "sector": pick.get("sector", ""),
                     "signal_type": pick.get("signal_type", "none"),
                     "mos": {meth_key: pick.get("mos", "N/A")},
+                    "fair_value": {meth_key: pick.get("fair_value", "N/A")},
                     # CONTRACT fields from screener:
                     "cycle_flag": pick.get("cycle_flag", "NORMAL"),
                     "peak_margin_sigma": pick.get("peak_margin_sigma", 0.0),
@@ -418,9 +424,11 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
                     "methodology_applicable": {meth_key: pick.get("methodology_applicable", True)},
                 }
             else:
-                # Merge methodology attribution, take highest conviction, merge MOS
+                # Merge methodology attribution + valuation matrix (dossier/theses are
+                # symbol-constant — same cached debate — so no need to re-copy them).
                 all_candidates[sym]["source_methodologies"].append(meth_key)
                 all_candidates[sym].setdefault("mos", {})[meth_key] = pick.get("mos", "N/A")
+                all_candidates[sym].setdefault("fair_value", {})[meth_key] = pick.get("fair_value", "N/A")
                 all_candidates[sym].setdefault("methodology_applicable", {})[meth_key] = pick.get("methodology_applicable", True)
                 if pick.get("conviction", 0) > all_candidates[sym]["conviction"]:
                     all_candidates[sym]["conviction"] = pick["conviction"]
@@ -460,42 +468,55 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False) -> dict:
         log.info("[Dry Run / No Candidates] Using conviction-based fallback")
         return _build_fallback_result(director_candidates, auto_vetoed, auto_veto_count)
     
-    # Build Director prompt — present the FULL debated universe for free 2-20 choice
-    prompt_candidates = []
-    for c in director_candidates:
-        prompt_candidates.append({
-            "symbol": c["symbol"],
-            "debate_conviction": c["conviction"],          # 1-5 prior debate score (context)
-            "source_methodologies": c["source_methodologies"],
-            "bull_thesis": c.get("bull_thesis", "N/A")[:300],
-            "bear_thesis": c.get("bear_thesis", "N/A")[:300],
-            "moderator_conclusion": c.get("moderator_conclusion", "N/A")[:400],
-            "consensus_delta": c.get("consensus_delta", "N/A")[:200],
-            "forcing_function": c.get("forcing_function", "N/A")[:200],
-            "financial_warnings": c.get("financial_warnings", "None"),
-            "signal_type": c.get("signal_type", "none"),
-            "mos": c.get("mos", {}),
-            # Include G1-G4 contract fields in prompt
-            "cycle_flag": c.get("cycle_flag", "NORMAL"),
-            "structural_break": c.get("structural_break", False),
-            "years_history": c.get("years_history", 99),
-            "forward_eps_growth": c.get("forward_eps_growth", 0.0),
-            "iv15_nogrowth_agreement": c.get("iv15_nogrowth_agreement", True),
-            "sector_class": c.get("sector_class", "operating"),
-            "methodology_applicable": c.get("methodology_applicable", {}),
-        })
+    # Build the Director prompt — full readable dossier per name (NO truncation), so the
+    # PM consumes the team's complete work and ranks cross-sectionally.
+    def _fmt_valuation(c):
+        mos = c.get("mos", {}) or {}
+        fv = c.get("fair_value", {}) or {}
+        rows = [f"    - {m}: MoS {mos.get(m, 'N/A')}, Fair Value {fv.get(m, 'N/A')}"
+                for m in sorted(set(list(mos.keys()) + list(fv.keys())))]
+        return "\n".join(rows) if rows else "    (none)"
+
+    def _format_candidate(c):
+        return (
+            f"═══════════ CANDIDATE: {c['symbol']} ═══════════\n"
+            f"Sector: {c.get('sector','?')} | Signal: {c.get('signal_type','none')} | "
+            f"Prior debate conviction: {c.get('conviction','?')}/5 | "
+            f"Trajectory: {c.get('trajectory') or '?'} | Price: {c.get('price','?')}\n"
+            f"Surfaced by {len(c.get('source_methodologies',[]))} of 9 methodologies — VALUATION MATRIX "
+            f"(judge whether these fair values are realistic vs price & analysts):\n"
+            f"{_fmt_valuation(c)}\n"
+            f"Risk context: cycle_flag={c.get('cycle_flag','NORMAL')}, structural_break={c.get('structural_break',False)}, "
+            f"years_history={c.get('years_history','?')}, forward_eps_growth={c.get('forward_eps_growth','?')}, "
+            f"sector_class={c.get('sector_class','operating')}\n"
+            f"Financial warnings: {c.get('financial_warnings','None')}\n\n"
+            f"--- INTERROGATOR FORENSIC DOSSIER ---\n{c.get('interrogator_dossier') or 'N/A'}\n\n"
+            f"--- ARCHITECT BULL THESIS ---\n{c.get('bull_thesis') or 'N/A'}\n\n"
+            f"--- ARCHITECT BEAR THESIS ---\n{c.get('bear_thesis') or 'N/A'}\n\n"
+            f"--- MODERATOR / CRO ---\n"
+            f"Consensus Delta: {c.get('consensus_delta') or 'N/A'}\n"
+            f"Valley of Death: {c.get('valley_of_death') or 'N/A'}\n"
+            f"Positioning Washout: {c.get('positioning_washout') or 'N/A'}\n"
+            f"Forcing Function: {c.get('forcing_function') or 'N/A'}\n"
+            f"CRO Synthesis: {c.get('moderator_conclusion') or 'N/A'}\n"
+        )
+
+    candidate_blocks = "\n\n".join(_format_candidate(c) for c in director_candidates)
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    macro_section = f"=== MACRO REGIME BRIEF ===\n{macro_brief}\n\n" if macro_brief else ""
     director_prompt = (
-        f"Date: {today}\n"
-        f"This is the FULL scored & gated candidate universe ({len(prompt_candidates)} names) "
-        f"that survived the 9 methodology debate pipelines. Build your Speculair Apex Basket "
-        f"FREELY: between 2 and 20 names, your own count, each scored 0-100 by conviction. "
-        f"You are NOT bound to one-per-methodology and there is NO fixed size.\n\n"
-        f"{json.dumps(prompt_candidates, indent=2, default=str)}"
+        f"Date: {today}\n\n"
+        f"{macro_section}"
+        f"This is the FULL scored & gated candidate universe ({len(director_candidates)} names) "
+        f"that survived the 9 methodology debate pipelines. Each name's complete dossier follows. "
+        f"Consume the dossiers (do NOT re-derive them), rank the names cross-sectionally, judge each "
+        f"name's cross-method valuation realism, weigh timing, then build your Speculair Apex Basket "
+        f"FREELY: between 2 and 20 names, your own count, each scored 0-100 by conviction.\n\n"
+        f"{candidate_blocks}"
     )
 
-    log.info(f"Querying Director PM with {len(prompt_candidates)} candidates (free 2-20 selection)...")
+    log.info(f"Querying Director PM with {len(director_candidates)} candidates (free 2-20 selection)...")
     director_response = _query_director(director_prompt)
 
     if not director_response:

@@ -24,6 +24,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
 import time
 import random
@@ -340,6 +341,59 @@ def save_debate_cache(cache: dict):
         log.debug(f"GCS debate cache upload failed: {e}")
 
 
+def save_dossier(symbol: str, transcript_date: str, result: dict):
+    """Persist a single completed dossier to its OWN object the instant the agents finish —
+    so an expensive run's spend is never lost even if a later step crashes. Writes a LOCAL
+    file always (works without cloud creds) AND uploads to GCS when credentials exist.
+    Best-effort: failures are logged, never raised."""
+    safe = f"{symbol}__{transcript_date}".replace("/", "_")
+    try:
+        ddir = BASE_DIR / "dossiers"
+        ddir.mkdir(exist_ok=True)
+        with open(ddir / f"{safe}.json", "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, default=str)
+    except Exception as e:
+        log.debug(f"Local dossier write failed for {symbol}: {e}")
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_upload
+        gcs_upload(f"dossiers/{safe}.json", result)
+    except Exception as e:
+        log.debug(f"Dossier GCS upload failed for {symbol}: {e}")
+
+
+def _is_fresh_cache(entry: dict) -> bool:
+    """A debate-cache entry is valid only if it carries a real bull thesis AND the new opus
+    interrogator_dossier — so pre-rebuild (gemini-era) entries miss the cache and get
+    re-debated with the upgraded pipeline."""
+    if not isinstance(entry, dict):
+        return False
+    return (entry.get("bull_thesis") not in (None, "", "API Timeout/Failure")
+            and bool(entry.get("interrogator_dossier")))
+
+
+def run_macro_strategist(candidate_sectors: dict, before_date: str = None) -> str:
+    """Once-per-scan macro regime brief for the director (opus). Tilts toward the sectors
+    where the debated opportunities cluster. Returns markdown, or '' on failure (the
+    director still runs without it). NOTE: reflects the model's macro knowledge; wiring a
+    live rates/inflation/breadth data feed is a planned enhancement."""
+    sectors = ", ".join(f"{s} ({n})" for s, n in sorted(candidate_sectors.items(), key=lambda x: -x[1])) or "n/a"
+    day = before_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    system = (
+        "You are the Macro Strategist for a high-conviction equity committee. Write a concise, "
+        "decision-useful MACRO REGIME BRIEF for the portfolio director: the rates / inflation / growth "
+        "backdrop and its trajectory, the dominant risk-on vs risk-off posture, and explicit "
+        "tailwind/headwind calls for the sectors where this cycle's opportunities cluster. Be specific "
+        "about what would flip the regime. No hedging filler."
+    )
+    user = (
+        f"Today is {day}. The debated opportunity set clusters in these sectors (name + count): {sectors}.\n"
+        "Provide: (1) the macro regime in 3-5 sentences; (2) a per-sector tailwind/headwind line for the "
+        "clustered sectors; (3) the single macro risk the director should most avoid clustering the basket around."
+    )
+    return query_claude(MACRO_MODEL, system, user, max_tokens=3000) or ""
+
+
 # ── LLM Calling Helpers ─────────────────────────────────────────────────
 def query_gemini(model_name: str, system_prompt: str, user_prompt: str,
                  response_schema=None, max_attempts: int = 4) -> Optional[dict]:
@@ -429,7 +483,7 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
     for attempt in range(max_attempts):
         try:
             r = requests.post("https://api.openai.com/v1/chat/completions",
-                              headers=headers, json=payload, timeout=60)
+                              headers=headers, json=payload, timeout=300)  # gpt-5.x reasoning runs 100-180s
             rj = r.json()
             if "choices" in rj and rj["choices"]:
                 text = rj["choices"][0]["message"]["content"].strip()
@@ -458,6 +512,75 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
             log.error(f"OpenAI {model} error: {e}")
             time.sleep(3.0 * (attempt + 1))
 
+    return None
+
+
+# ── Model assignment (capital-allocation rebuild) ────────────────────────
+# Each step runs on the model best suited to it; no token caps on the output.
+INTERROGATOR_MODEL = "claude-opus-4-8"   # forensic transcript dossier (also user-facing)
+ARCHITECT_MODEL    = "gpt-5.5"           # probabilistic bull/bear
+MODERATOR_MODEL    = "gpt-5.5"           # risk / timing / expectations
+MACRO_MODEL        = "claude-opus-4-8"   # once-per-scan macro regime brief
+ANTHROPIC_1M_BETA  = "context-1m-2025-08-07"
+
+
+def query_claude(model: str, system_prompt: str, user_prompt: str,
+                 max_tokens: int = 8000, max_attempts: int = 4,
+                 expect_json: bool = False, beta_1m: bool = False):
+    """Call Anthropic Claude. Returns response TEXT (markdown) by default, or a parsed
+    dict when expect_json=True. Used for the Interrogator dossier, the Macro Strategist,
+    and any Claude-backed step. Loads ANTHROPIC_API_KEY via get_key (overrides the empty
+    shadow some runtimes inject). Returns None on persistent failure."""
+    api_key = get_key("ANTHROPIC_API_KEY")
+    if not api_key:
+        log.error("ANTHROPIC_API_KEY not found")
+        return None
+    headers = {
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }
+    if beta_1m:
+        headers["anthropic-beta"] = ANTHROPIC_1M_BETA
+    payload = {
+        "model": model,
+        "max_tokens": max_tokens,
+        "system": system_prompt,
+        "messages": [{"role": "user", "content": user_prompt}],
+    }
+    for attempt in range(max_attempts):
+        try:
+            r = requests.post("https://api.anthropic.com/v1/messages",
+                              headers=headers, json=payload, timeout=600)
+            if r.status_code != 200:
+                log.error(f"Claude {model} HTTP {r.status_code}: {r.text[:300]}")
+                time.sleep(3.0 * (attempt + 1))
+                continue
+            d = r.json()
+            text = "".join(b.get("text", "") for b in d.get("content", [])
+                           if b.get("type") == "text").strip()
+            if not text:
+                log.error(f"Claude {model} empty response: {str(d)[:200]}")
+                time.sleep(3.0)
+                continue
+            if not expect_json:
+                return text
+            t = text
+            if t.startswith("```"):
+                lines = t.split("\n")
+                t = "\n".join(lines[1:-1] if lines[-1].strip().startswith("```") else lines[1:])
+                if t.strip().startswith("json"):
+                    t = t.strip()[4:]
+            try:
+                return json.loads(t.strip())
+            except Exception:
+                m = re.search(r"\{.*\}", t, re.DOTALL)
+                if m:
+                    return json.loads(m.group(0))
+                raise
+        except Exception as e:
+            log.error(f"Claude {model} error: {e}")
+            time.sleep(3.0 * (attempt + 1))
     return None
 
 
@@ -559,43 +682,47 @@ You must output a JSON object:
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
 
-INTERROGATOR_SYSTEM_PROMPT = """You are the Interrogator Agent for a financial investment committee.
-Your job is to critically analyze the company's structural technological/R&D claims and event-driven narratives across MULTIPLE earnings call transcripts (up to 8 quarters).
-Cross-reference these claims against the financial metrics provided (such as R&D expense, capex, margins, revenue growth).
+INTERROGATOR_SYSTEM_PROMPT = """You are the Interrogator — a forensic equity analyst on an investment committee allocating REAL capital. You receive multiple consecutive quarterly earnings-call transcripts for a company (up to 8 quarters) AND its actual financial trajectory from our screener.
 
-Perform forensic analysis:
-- Verify whether management's stated strategic priorities are consistent with the actual capital expenditure and R&D spend trajectory.
-- Check for disconnect between narrative claims (e.g., "AI transformation", "platform pivot") and measurable financial evidence.
-- Assess whether revenue growth, margin trends, and cash flow patterns corroborate or contradict the earnings call narrative.
-- Flag any signs of earnings evasiveness, non-answers during Q&A, or defensive deflection.
+Management's words are the hypothesis; the financials are the evidence. Extract what ONLY the transcripts reveal — the evolution of management's thinking, tone, and credibility over time — and rigorously CROSS-REFERENCE every major narrative claim against the hard numbers provided. This dossier is read by a portfolio director deciding whether to commit capital, AND it is shown to investors on the stock page, so be specific, quote brief phrases with exact quarter references, write clear well-structured prose, and do not hedge. There is no length limit — be as thorough as the evidence warrants.
 
-Multi-Quarter Longitudinal Analysis (when multiple transcripts are provided):
-- Track how management's narrative, strategic priorities, and key promises have EVOLVED across quarters.
-- Identify whether guidance given in earlier quarters was met, exceeded, or missed in subsequent quarters.
-- Detect shifts in management tone: Are they becoming more confident, more defensive, or more evasive over time?
-- Note any recurring excuses, moved goalposts, or quietly abandoned initiatives.
-- Assess consistency: Do the same strategic themes persist, or does management pivot narratives each quarter?
+Produce a markdown dossier with these sections:
 
-You must output a JSON object:
-{
-  "credibility_score": integer (1 to 5, where 5 is highly credible and 1 is evasive/unsupported),
-  "findings": "A concise paragraph (max 100 words) summarizing your forensic analysis of transcript claims versus financial reality.",
-  "narrative_arc": "1-2 sentences describing the multi-quarter trajectory of the company's strategic narrative. How has the story evolved across earnings calls? If only one transcript is available, describe the single-quarter snapshot.",
-  "tone_shift": "improving" | "stable" | "deteriorating" (based on management tone trajectory across available transcripts),
-  "guidance_credibility": integer (0 to 100, measuring how well management has delivered on prior quarter guidance and promises. 100 = consistently hit/exceeded guidance. 0 = serial over-promisers. If only one transcript is available, use 50 as neutral default.)
-}
-Output ONLY the raw JSON object, without any markdown formatting or code blocks.
+## 1. NARRATIVE ARC
+How the core story evolved across the quarters: what was emphasized at the start vs now, thesis shifts / expansion / contraction, growth drivers introduced or quietly dropped.
+
+## 2. CLAIMS vs FINANCIALS (forensic)
+Take management's biggest claims (growth, margins, demand, capital allocation) and test each against the ACTUAL FINANCIALS block. Where does the narrative match the numbers? Where does it diverge? Call out where the story is richer or poorer than the trajectory justifies. Use a table where it helps.
+
+## 3. TONE & CONFIDENCE TRAJECTORY
+Rate the trajectory (Rising / Stable / Declining) with quoted evidence per quarter. More or less specific with guidance over time? Any shift from offensive (growth / investment) to defensive (efficiency / cost / macro) language?
+
+## 4. GUIDANCE CREDIBILITY
+Track guidance given in earlier calls vs results delivered in later calls. Did they deliver, over-deliver, or miss? Reconcile with the earnings-beat rate in the financials. Any sandbagging pattern? Score reliability High / Medium / Low.
+
+## 5. ANALYST PRESSURE POINTS
+Recurring questions management deflects or non-answers; topics analysts pushed on that later turned into bad news; what analysts worry about that management isn't addressing.
+
+## 6. RED FLAGS / GREEN FLAGS
+🔴 concerning shifts and 🟢 positive evolution — each with specific quarter references.
+
+## 7. HIDDEN SIGNALS
+Subtle terminology shifts, changes in how they discuss competition or capital allocation, management changes and what new voices say differently.
+
+## 8. CAPITAL-ALLOCATION VERDICT (for the director)
+Classify the trajectory: STRENGTHENING / STABLE / DETERIORATING / PIVOTING. State the single most important thing the director must weigh before sizing a position.
+
+After the dossier, output one final line in EXACTLY this format for machine parsing (nothing after it):
+CREDIBILITY_SCORE: <integer 1-5> | TRAJECTORY: <STRENGTHENING|STABLE|DETERIORATING|PIVOTING>
+where credibility_score is 1 (evasive / unsupported by financials) to 5 (highly credible, corroborated by financials).
 """
 
-ARCHITECT_SYSTEM_PROMPT = """You are the Architect Agent, a System-2 reasoning engine for a financial investment committee.
-Your job is to take the Interrogator's findings, the financial metrics, and the transcript to construct a rigorous, probabilistically weighted Bull and Bear case.
-Map exactly how the macro environment impacts the company's R&D moat or event-driven catalyst logistically.
-Do NOT include any specific numbers (percentages, dollar figures, or statistics) in the arguments.
+ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case. Map how the macro and competitive environment impacts the company's moat or event-driven catalyst. Ground every argument in the specific evidence provided — cite the real financials (revenue/margin/EPS/FCF trajectory, returns, leverage, valuation) and quote transcript phrases with quarter references. State the key conditions each case depends on. Be thorough; there is no length limit.
 
 You must output a JSON object:
 {
-  "bull_thesis": "A concise paragraph of at most 100 words presenting the bullish argument.",
-  "bear_thesis": "A concise paragraph of at most 100 words presenting the bearish argument."
+  "bull_thesis": "The full bullish argument — the strongest evidence-grounded case for why this works, the catalysts, and the specific conditions that must hold.",
+  "bear_thesis": "The full bearish argument — the strongest evidence-grounded case for why this fails, the specific risks, and what would confirm them."
 }
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
@@ -630,11 +757,11 @@ You must return a valid JSON object:
 {
   "verdict": "A" | "B" | "C",
   "conviction": integer (1 to 5),
-  "consensus_delta": "string (max 100 words)",
-  "valley_of_death": "string (max 100 words)",
-  "positioning_washout": "string (max 100 words)",
-  "forcing_function": "string (max 100 words)",
-  "moderator_conclusion": "string (your detailed synthesis, timing analysis, and narrative summary, max 250 words)"
+  "consensus_delta": "string — the full expectations-arbitrage analysis; quote the exact street assumptions that are wrong and why. No length limit.",
+  "valley_of_death": "string — the full near-term (3-9 month) risk analysis: cash-burn humps, maturities, macro headwinds that hit before the catalyst. No length limit.",
+  "positioning_washout": "string — the full analysis of forced/mechanical selling dynamics in the shareholder base. No length limit.",
+  "forcing_function": "string — the exact hard date(s), proxy window, or corporate event that forces a re-rating, and why. No length limit.",
+  "moderator_conclusion": "string — your full synthesis, timing call, and narrative summary. No length limit."
 }
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 
@@ -647,11 +774,175 @@ The Radar Agent has classified this candidate with a signal_type:
 
 
 # ── Single-Candidate Debate ─────────────────────────────────────────────
-MAX_CHARS_PER_TRANSCRIPT = 12_000  # hard cap per individual transcript block
+MAX_CHARS_PER_TRANSCRIPT = 18_000  # hard cap per individual transcript block
+
+# Scan fields threaded into the debate metrics block (Caveat 1 forensic grounding).
+_SCAN_FIN_FIELDS = [
+    "revenue_yoy", "revenue_cagr_3y", "gross_margin", "gross_margin_trend",
+    "net_margin", "fcf_margin", "eps_latest", "eps_yoy", "eps_cagr_3y",
+    "eps_beats", "eps_total", "fcf_yoy", "fcf_cagr_3y", "p_fcf", "roe_avg",
+    "roic_avg", "net_debt", "forward_eps_growth", "peak_margin_sigma",
+    "insider_buy_ratio", "margin_of_safety", "buffett_fair_value", "sector",
+]
+
+
+def _slice_transcript(content: str, cap: int = MAX_CHARS_PER_TRANSCRIPT) -> str:
+    """Truncate a transcript to *cap* chars while preserving BOTH ends.
+
+    Earnings calls run prepared-remarks-first, analyst-Q&A-last. A naive head slice
+    (content[:cap]) keeps the scripted narrative but drops the Q&A — exactly where
+    management evasiveness, non-answers, and guidance-delivery signal live. So when
+    truncation is needed, keep ~55% head + ~45% tail so both survive (Caveat 2 fix).
+    """
+    if not content:
+        return ""
+    if len(content) <= cap:
+        return content
+    head = int(cap * 0.55)
+    tail = cap - head
+    return (content[:head]
+            + "\n\n[... mid-call omitted for length — prepared remarks above, analyst Q&A below ...]\n\n"
+            + content[-tail:])
+
+
+def _fmt_pct(v, scale: float = 100.0, signed: bool = True):
+    """Format a fraction (0.035) as a percent string ('+3.5%'). None if not numeric."""
+    if not isinstance(v, (int, float)) or isinstance(v, bool):
+        return None
+    return f"{v * scale:+.1f}%" if signed else f"{v * scale:.1f}%"
+
+
+def _fmt_amt(v):
+    """Format an absolute currency amount with B/M suffix. None if not numeric."""
+    if not isinstance(v, (int, float)) or isinstance(v, bool):
+        return None
+    a = abs(v)
+    if a >= 1e9:
+        return f"{v / 1e9:.2f}B"
+    if a >= 1e6:
+        return f"{v / 1e6:.0f}M"
+    return f"{v:.0f}"
+
+
+def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str:
+    """Forensic-grounding metrics block for Interrogator/Architect/Moderator.
+
+    Combines the methodology candidate's valuation fields with the screener scan's
+    already-computed fundamentals (growth, margins, returns, leverage) plus a
+    multi-year revenue/earnings series, so agents can cross-reference transcript
+    claims against real financial trajectory instead of the bare 7-field stub
+    (Caveat 1 fix). Degrades to the compact stub when scan data is absent.
+    """
+    financials = financials or {}
+    scan_fin = scan_fin or {}
+
+    # No scan grounding available — preserve the legacy compact behaviour.
+    if not scan_fin:
+        fields = ["price", "sector", "market_cap", "mos", "fair_value", "entry_metric", "weight"]
+        m = {k: financials.get(k) for k in fields if financials.get(k) is not None}
+        return json.dumps(m, indent=2, default=str) if m else "No financial metrics available."
+
+    g = scan_fin.get
+    lines = []
+    sector = financials.get("sector") or g("sector")
+    if sector:
+        lines.append(f"Sector: {sector}")
+
+    val = []
+    if financials.get("price") is not None:
+        val.append(f"Price {financials['price']}")
+    fv = financials.get("fair_value") if financials.get("fair_value") is not None else g("buffett_fair_value")
+    if fv is not None:
+        val.append(f"Fair Value {fv}")
+    mos = financials.get("mos") if financials.get("mos") is not None else g("margin_of_safety")
+    if isinstance(mos, (int, float)) and not isinstance(mos, bool):
+        val.append(f"Margin of Safety {mos * 100:.0f}%" if abs(mos) < 5 else f"Margin of Safety {mos:.0f}%")
+    if isinstance(g("p_fcf"), (int, float)):
+        val.append(f"P/FCF {g('p_fcf'):.1f}x")
+    if val:
+        lines.append("Valuation: " + " | ".join(val))
+
+    rev = []
+    if _fmt_pct(g("revenue_yoy")):
+        rev.append(f"{_fmt_pct(g('revenue_yoy'))} YoY")
+    if _fmt_pct(g("revenue_cagr_3y")):
+        rev.append(f"3-yr CAGR {_fmt_pct(g('revenue_cagr_3y'))}")
+    if rev:
+        lines.append("Revenue growth: " + " | ".join(rev))
+
+    mg = []
+    gm = _fmt_pct(g("gross_margin"), signed=False)
+    if gm:
+        trend = g("gross_margin_trend")
+        mg.append(f"Gross {gm}" + (f" ({trend})" if trend else ""))
+    if _fmt_pct(g("net_margin"), signed=False):
+        mg.append(f"Net {_fmt_pct(g('net_margin'), signed=False)}")
+    if _fmt_pct(g("fcf_margin"), signed=False):
+        mg.append(f"FCF {_fmt_pct(g('fcf_margin'), signed=False)}")
+    if mg:
+        lines.append("Margins: " + " | ".join(mg))
+
+    eps = []
+    if g("eps_latest") is not None:
+        eps.append(f"{g('eps_latest')} latest")
+    if _fmt_pct(g("eps_yoy")):
+        eps.append(f"{_fmt_pct(g('eps_yoy'))} YoY")
+    if _fmt_pct(g("eps_cagr_3y")):
+        eps.append(f"3-yr CAGR {_fmt_pct(g('eps_cagr_3y'))}")
+    beats, total = g("eps_beats"), g("eps_total")
+    if isinstance(beats, (int, float)) and isinstance(total, (int, float)) and total:
+        eps.append(f"beat {int(beats)}/{int(total)} qtrs ({beats / total * 100:.0f}%)")
+    if eps:
+        lines.append("EPS / guidance delivery: " + " | ".join(eps))
+
+    fcf = []
+    if _fmt_pct(g("fcf_yoy")):
+        fcf.append(f"{_fmt_pct(g('fcf_yoy'))} YoY")
+    if _fmt_pct(g("fcf_cagr_3y")):
+        fcf.append(f"3-yr CAGR {_fmt_pct(g('fcf_cagr_3y'))}")
+    if fcf:
+        lines.append("FCF growth: " + " | ".join(fcf))
+
+    ret = []
+    if _fmt_pct(g("roe_avg"), signed=False):
+        ret.append(f"ROE {_fmt_pct(g('roe_avg'), signed=False)}")
+    if _fmt_pct(g("roic_avg"), signed=False):
+        ret.append(f"ROIC {_fmt_pct(g('roic_avg'), signed=False)}")
+    if _fmt_amt(g("net_debt")) is not None:
+        ret.append(f"Net debt {_fmt_amt(g('net_debt'))}")
+    if ret:
+        lines.append("Returns / leverage: " + " | ".join(ret))
+
+    fwd = []
+    if _fmt_pct(g("forward_eps_growth")):
+        fwd.append(f"Consensus fwd EPS growth {_fmt_pct(g('forward_eps_growth'))}")
+    if isinstance(g("peak_margin_sigma"), (int, float)):
+        fwd.append(f"Margin {g('peak_margin_sigma'):.2f}sigma vs hist. peak")
+    if isinstance(g("insider_buy_ratio"), (int, float)):
+        fwd.append(f"Insider buy ratio {g('insider_buy_ratio'):.2f}")
+    if fwd:
+        lines.append("Forward / signals: " + " | ".join(fwd))
+
+    rows = (scan_fin.get("history_rows") or [])[-5:]
+    if rows:
+        traj = ["Multi-year trajectory (fiscal yr - revenue / net income / EPS):"]
+        for r in rows:
+            rv = _fmt_amt((r.get("revenue_mm") or 0) * 1e6) if r.get("revenue_mm") is not None else "N/A"
+            ni = _fmt_amt((r.get("net_income_mm") or 0) * 1e6) if r.get("net_income_mm") is not None else "N/A"
+            traj.append(f"  {r.get('year')}: rev {rv}, NI {ni}, EPS {r.get('eps')}")
+        cagrs = scan_fin.get("history_cagrs") or {}
+        cg = ", ".join(f"{k} {_fmt_pct(v)}" for k, v in cagrs.items() if isinstance(v, (int, float)))
+        if cg:
+            traj.append(f"  CAGRs: {cg}")
+        lines.append("\n".join(traj))
+
+    return "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\n" + "\n".join(lines)
+
 
 def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
                      cache: dict = None, methodology_key: str = "",
-                     multi_transcript_info: dict = None) -> dict:
+                     multi_transcript_info: dict = None,
+                     scan_financials: dict = None) -> dict:
     """Run 4-agent debate on a single candidate.
     
     Returns a debate result dict with conviction, theses, moderator synthesis,
@@ -670,13 +961,11 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     # Check cache
     if cache and cache_key in cache:
         cached = cache[cache_key]
-        if cached.get("bull_thesis") not in (None, "API Timeout/Failure"):
+        if _is_fresh_cache(cached):
             log.info(f"  [Cache Hit] {symbol} (transcript {t_date})")
             return cached
     
-    t_content = transcript["content"][:8000]
-    if len(transcript["content"]) > 8000:
-        t_content += "\n[Transcript truncated for length...]"
+    t_content = _slice_transcript(transcript.get("content", ""), MAX_CHARS_PER_TRANSCRIPT)
     
     # ── Assemble multi-quarter transcript blocks ─────────────────────────
     # Each transcript is capped at MAX_CHARS_PER_TRANSCRIPT chars.
@@ -688,23 +977,16 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
 
     for idx, tx in enumerate(all_tx):
         label = tx_dates[idx] if idx < len(tx_dates) else tx.get("date", "unknown")
-        content = tx.get("content", "")[:MAX_CHARS_PER_TRANSCRIPT]
-        if len(tx.get("content", "")) > MAX_CHARS_PER_TRANSCRIPT:
-            content += "\n[Transcript truncated for length...]"
+        content = _slice_transcript(tx.get("content", ""), MAX_CHARS_PER_TRANSCRIPT)
         transcript_blocks.append(
             f"--- Earnings Call: {label} (date: {tx.get('date', 'N/A')}) ---\n{content}"
         )
 
     multi_transcript_text = "\n\n".join(transcript_blocks)
     
-    # Build financial metrics string
-    metrics_str = "No financial metrics available."
-    if financials:
-        metrics_fields = ["price", "sector", "market_cap", "mos", "fair_value",
-                          "entry_metric", "weight"]
-        m = {k: financials.get(k, "N/A") for k in metrics_fields if financials.get(k) is not None}
-        if m:
-            metrics_str = json.dumps(m, indent=2, default=str)
+    # Build financial metrics string — rich scan-grounded block when available
+    # (Caveat 1 forensic grounding), else the compact stub.
+    metrics_str = _build_debate_metrics(financials, scan_financials)
     
     result = {
         "symbol": symbol,
@@ -717,7 +999,9 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
         "signal_type": "none",
         "methodology_key": methodology_key,
         "interrogator_score": 3,
-        "interrogator_findings": "",
+        "interrogator_dossier": "",     # full markdown forensic dossier (opus) — director fuel + stock-page UI
+        "trajectory": "",               # STRENGTHENING|STABLE|DETERIORATING|PIVOTING (parsed from dossier)
+        "interrogator_findings": "",    # legacy/back-compat (mirrors dossier)
         "narrative_arc": "",
         "tone_shift": "stable",
         "guidance_credibility": 50,
@@ -759,54 +1043,49 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
              f"signal_type={result['signal_type']}, rationale={result['radar_rationale']}")
     time.sleep(1.0)  # Rate limiting
     
-    # ── 2. INTERROGATOR (gemini-3.1-pro-preview) — multi-quarter ─────────
-    log.info(f"  [Interrogator] {symbol} ({tx_count} transcripts) ...")
+    # ── 2. INTERROGATOR (opus-4-8) — multi-quarter forensic dossier ──────
+    log.info(f"  [Interrogator:{INTERROGATOR_MODEL}] {symbol} ({tx_count} transcripts) ...")
     interr_user_prompt = (
-        f"Financial Metrics:\n{metrics_str}\n\n"
+        f"=== ACTUAL FINANCIALS (screener scan) ===\n{metrics_str}\n\n"
         f"Number of earnings-call transcripts provided: {tx_count}\n"
         f"Quarters covered: {', '.join(tx_dates) if tx_dates else t_date}\n\n"
-        f"=== EARNINGS CALL TRANSCRIPTS ===\n{multi_transcript_text}"
+        f"=== EARNINGS-CALL TRANSCRIPTS ({tx_count} quarters, chronological) ===\n{multi_transcript_text}"
     )
-    interr_out = query_gemini(
-        "gemini-3.1-pro-preview",
+    interr_dossier = query_claude(
+        INTERROGATOR_MODEL,
         INTERROGATOR_SYSTEM_PROMPT,
         interr_user_prompt,
-        response_schema=InterrogatorOutput
+        max_tokens=12000,
     )
+
+    if interr_dossier:
+        result["interrogator_dossier"] = interr_dossier
+        result["interrogator_findings"] = interr_dossier  # back-compat: rich content
+        m = re.search(r"CREDIBILITY_SCORE:\s*(\d+)", interr_dossier)
+        result["interrogator_score"] = max(1, min(5, int(m.group(1)))) if m else 3
+        mt = re.search(r"TRAJECTORY:\s*([A-Z]+)", interr_dossier)
+        result["trajectory"] = mt.group(1) if mt else ""
+        # Map trajectory -> legacy tone_shift for any consumer still reading it
+        result["tone_shift"] = {"STRENGTHENING": "improving", "DETERIORATING": "deteriorating"}.get(
+            result["trajectory"], "stable")
+    else:
+        log.warning(f"  [Interrogator] {symbol}: no dossier returned")
+
+    time.sleep(1.0)
     
-    if interr_out:
-        result["interrogator_score"] = int(interr_out.get("credibility_score", 3))
-        result["interrogator_findings"] = interr_out.get("findings", "")
-        result["narrative_arc"] = interr_out.get("narrative_arc", "")
-        raw_tone = str(interr_out.get("tone_shift", "stable")).lower().strip()
-        if raw_tone in ("improving", "stable", "deteriorating"):
-            result["tone_shift"] = raw_tone
-        else:
-            result["tone_shift"] = "stable"
-        try:
-            gc = int(interr_out.get("guidance_credibility", 50))
-            result["guidance_credibility"] = max(0, min(100, gc))
-        except (ValueError, TypeError):
-            result["guidance_credibility"] = 50
-    
-    time.sleep(1.5)
-    
-    # ── 3. ARCHITECT (gpt-5.4) ────────────────────────────────────────────
-    log.info(f"  [Architect] {symbol} ...")
+    # ── 3. ARCHITECT (gpt-5.5) — bull/bear, grounded in the dossier ──────
+    log.info(f"  [Architect:{ARCHITECT_MODEL}] {symbol} ...")
     arch_prompt = (
-        f"Financial Metrics:\n{metrics_str}\n\n"
-        f"Interrogator Findings:\n{result['interrogator_findings']}\n\n"
-        f"Narrative Arc: {result['narrative_arc']}\n"
-        f"Tone Shift: {result['tone_shift']}\n"
-        f"Guidance Credibility: {result['guidance_credibility']}/100\n\n"
-        f"Transcript content:\n{t_content}"
+        f"=== FINANCIAL METRICS ===\n{metrics_str}\n\n"
+        f"=== INTERROGATOR FORENSIC DOSSIER ===\n{result['interrogator_dossier']}\n\n"
+        f"=== MOST RECENT EARNINGS CALL ===\n{t_content}"
     )
-    arch_out = query_openai("gpt-5.4", ARCHITECT_SYSTEM_PROMPT, arch_prompt)
-    
+    arch_out = query_openai(ARCHITECT_MODEL, ARCHITECT_SYSTEM_PROMPT, arch_prompt)
+
     if arch_out:
         result["bull_thesis"] = arch_out.get("bull_thesis", "")
         result["bear_thesis"] = arch_out.get("bear_thesis", "")
-    
+
     time.sleep(1.0)
     
     # ── 4. MODERATOR (gpt-5.5 via OpenAI) ─────────────────────────────────
@@ -817,19 +1096,16 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
         f"Radar Signal Type: {result['signal_type']}\n"
         f"Transcripts Available: {tx_count} ({', '.join(tx_dates) if tx_dates else t_date})\n\n"
         f"=== FINANCIAL METRICS ===\n{metrics_str}\n\n"
-        f"=== INTERROGATOR FINDINGS ===\n"
-        f"Credibility Score: {result['interrogator_score']}/5\n"
-        f"{result['interrogator_findings']}\n"
-        f"Narrative Arc: {result['narrative_arc']}\n"
-        f"Tone Shift: {result['tone_shift']}\n"
-        f"Guidance Credibility: {result['guidance_credibility']}/100\n\n"
+        f"=== INTERROGATOR FORENSIC DOSSIER ===\n"
+        f"Credibility Score: {result['interrogator_score']}/5 | Trajectory: {result['trajectory']}\n"
+        f"{result['interrogator_dossier']}\n\n"
         f"=== ARCHITECT BULL THESIS ===\n{result['bull_thesis']}\n\n"
         f"=== ARCHITECT BEAR THESIS ===\n{result['bear_thesis']}\n\n"
-        f"=== EARNINGS CALL TRANSCRIPT ===\n{t_content}\n\n"
+        f"=== MOST RECENT EARNINGS CALL ===\n{t_content}\n\n"
         f"Please run your final moderation synthesis and output the JSON result."
     )
     mod_out = query_openai(
-        "gpt-5.5",
+        MODERATOR_MODEL,
         MODERATOR_SYSTEM_PROMPT,
         mod_prompt,
     )
@@ -895,17 +1171,21 @@ def select_methodology_basket(methodology: str, debate_results: list[dict],
 
 # ── Tier 1: Full Per-Methodology Pipeline ────────────────────────────────
 def run_tier1(methodology_picks: dict, before_date: str = None,
-              dry_run: bool = False) -> dict:
+              dry_run: bool = False, scan_enrich: dict = None) -> dict:
     """Run Tier 1 debate pipeline across all 9 methodologies.
-    
+
     Args:
         methodology_picks: dict from methodology_picks.json
         before_date: for backfill — only use transcripts before this date
         dry_run: if True, only use cached results
-    
+        scan_enrich: optional symbol->{sector, years_history, financials} map from
+            the screener scan (Caveat 1 grounding). Loaded here if not supplied.
+
     Returns dict of per-methodology baskets.
     """
     cache = load_debate_cache()
+    if scan_enrich is None:
+        scan_enrich = _load_scan_enrichment()
     methodologies = methodology_picks.get("methodologies", {})
     
     tier1_results = {}
@@ -981,7 +1261,7 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
             else:
                 # Check cache
                 cache_key = f"{symbol}|{transcript['date']}"
-                if cache_key in cache and cache[cache_key].get("bull_thesis") not in (None, "API Timeout/Failure"):
+                if cache_key in cache and _is_fresh_cache(cache[cache_key]):
                     log.info(f"  [Cache Hit] {symbol} (transcript {transcript['date']})")
                     result = dict(cache[cache_key])
                     if is_new:
@@ -1000,12 +1280,15 @@ def run_tier1(methodology_picks: dict, before_date: str = None,
                         stats["fully_debated"] += 1
                         stats["radar_alerted"] += 1
                 else:
-                    # Run debate (pass multi-transcript info)
+                    # Run debate (pass multi-transcript info + scan financials)
+                    sym_fin = (scan_enrich.get(symbol) or {}).get("financials") if scan_enrich else None
                     result = debate_candidate(symbol, transcript, cand, cache,
                                               methodology_key=meth_key,
-                                              multi_transcript_info=multi_tx)
+                                              multi_transcript_info=multi_tx,
+                                              scan_financials=sym_fin)
                     # Update cache
                     cache[cache_key] = result
+                    save_dossier(symbol, transcript["date"], result)  # durable per-dossier GCS write
                     save_debate_cache(cache)
                     
                     if is_new:
@@ -1082,8 +1365,12 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
     last_updated = picks_data.get("last_updated", "")
     log.info(f"Loaded methodology picks (last_updated: {last_updated})")
     
-    # 2. Run Tier 1 — per-methodology debates
-    tier1 = run_tier1(picks_data, before_date=before_date, dry_run=dry_run)
+    # 2. Run Tier 1 — per-methodology debates.
+    # Load the scan enrichment ONCE (sector + years_history + rich financials) and
+    # reuse it for both the debate metrics grounding (Caveat 1) and the director floor.
+    enrich = _load_scan_enrichment()
+    tier1 = run_tier1(picks_data, before_date=before_date, dry_run=dry_run,
+                      scan_enrich=enrich)
     tier1_baskets = tier1["baskets"]
     tier1_full = tier1.get("full", {})
     tier1_stats = tier1["stats"]
@@ -1146,7 +1433,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
         # concentration cap meaningful, years_history (count of annual buffett_history
         # rows) feeds the minimum-history floor below.
         from live_director_agent import MIN_YEARS_HISTORY
-        enrich = _load_scan_enrichment()
+        # enrich already loaded above (reused — avoids re-fetching the full scan).
         if enrich:
             n_sec = n_hist = 0
             for v in director_pool.values():
@@ -1183,7 +1470,17 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             # Cold cache / dry-run with no real theses — fall back to the baskets
             log.warning("No debated names with theses — director falling back to per-methodology baskets")
             director_pool = tier1_baskets
-        director_result = run_director_allocation(director_pool, dry_run=dry_run)
+        # Once-per-scan macro regime brief, tilted to where the opportunities cluster.
+        macro_brief = ""
+        if not dry_run:
+            sec_counts = {}
+            for v in director_pool.values():
+                for p in v.get("picks", []):
+                    s = (p.get("sector") or "Unknown")
+                    sec_counts[s] = sec_counts.get(s, 0) + 1
+            macro_brief = run_macro_strategist(sec_counts, before_date)
+            log.info(f"Macro Strategist brief: {len(macro_brief)} chars")
+        director_result = run_director_allocation(director_pool, dry_run=dry_run, macro_brief=macro_brief)
         
         # If it's a live run and we used the fallback because the Director LLM failed:
         if not dry_run and "Fallback" in director_result.get("director_memo", ""):
@@ -1330,7 +1627,17 @@ def _load_scan_enrichment() -> dict:
             bh = s.get("buffett_history") or {}
             rows = bh.get("rows")
             yrs = len(rows) if isinstance(rows, list) else None
-            out[sym] = {"sector": s.get("sector") or "", "years_history": yrs}
+            # Rich fundamentals for debate metrics grounding (Caveat 1).
+            fin = {k: s.get(k) for k in _SCAN_FIN_FIELDS if s.get(k) is not None}
+            if isinstance(rows, list) and rows:
+                fin["history_rows"] = [
+                    {"year": r.get("year"), "revenue_mm": r.get("revenue_mm"),
+                     "net_income_mm": r.get("net_income_mm"), "eps": r.get("eps")}
+                    for r in rows[-6:]
+                ]
+                if isinstance(bh.get("cagrs"), dict):
+                    fin["history_cagrs"] = bh["cagrs"]
+            out[sym] = {"sector": s.get("sector") or "", "years_history": yrs, "financials": fin}
         return out
 
     # 1. Authenticated GCS (production / Cloud Run)
