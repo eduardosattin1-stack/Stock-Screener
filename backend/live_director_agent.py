@@ -309,6 +309,12 @@ APEX_CONVICTION_FLOOR = 50
 # de-SPAC name (one noisy annual statement) must not default through as long-history.
 MIN_YEARS_HISTORY = 5
 
+# Deep-value / no-growth methodologies. The G3b iv15-no-growth-IV agreement check is only
+# meaningful for names THESE surfaced ("is it cheap assuming no growth?"). For growth-sourced
+# names, iv15_nogrowth_agreement=False is the expected/normal case and must NOT veto them
+# (otherwise every growth/turnaround pick — DXC, WKL.AS, VOW3.DE — is excluded from the apex).
+_NO_GROWTH_METHODS = {"epv", "iv15_deep_value"}
+
 def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     """Apply deterministic G1-G4 contract rules on a 0-100 conviction score.
 
@@ -336,8 +342,15 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     if sb or yrs < MIN_YEARS_HISTORY:
         log.info(f"  [Contract Gate] {symbol} EXCLUDED (G2: structural_break={sb}, years={yrs} < {MIN_YEARS_HISTORY})")
         return None
-    if feg <= -0.10 or not iv_agree:
-        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3: forward_eps_growth={feg}, iv15_nogrowth_agreement={iv_agree})")
+    # G3a: forward-declining earnings is always a hard veto.
+    if feg <= -0.10:
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3a: forward_eps_growth={feg} <= -0.10)")
+        return None
+    # G3b: iv15 no-growth-IV disagreement vetoes ONLY names a deep-value/no-growth
+    # methodology surfaced. For growth-sourced names this flag is expected False, so it
+    # must not gate them out (was nuking the entire apex once the field got populated).
+    if (not iv_agree) and any(m in _NO_GROWTH_METHODS for m in source_meths):
+        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3b: iv15_nogrowth_agreement=False on deep-value source {source_meths})")
         return None
     if all_inapplicable:
         log.info(f"  [Contract Gate] {symbol} EXCLUDED (G4: all source methodologies inapplicable: {meth_app_dict})")
