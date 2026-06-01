@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 
@@ -533,6 +533,93 @@ const MACRO_SIGNALS:[string,string][] = [
   ["recession_prob","Recession"],
 
 ];
+
+interface SectorRow { name: string; symbol: string; accent?: string | null; price: number | null; day: number | null; ytd: number | null; year: number | null; }
+interface SectorPerf { indices: SectorRow[]; sectors: SectorRow[]; thematic: SectorRow[]; macro: { vix: number | null; vixChange: number | null; yield10: number | null }; asOf: string | null; }
+
+// Generic live performance card (indices, GICS sectors, thematic ETFs).
+// Shows live price + today's %, and briefly flashes green/red when the price ticks.
+function PerfCard({ title, price, day, ytd, year, accent, note }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string }) {
+  const prev = useRef<number | null>(null);
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  useEffect(() => {
+    if (price != null && prev.current != null && price !== prev.current) {
+      setFlash(price > prev.current ? "up" : "down");
+      prev.current = price;
+      const t = setTimeout(() => setFlash(null), 700);
+      return () => clearTimeout(t);
+    }
+    if (price != null) prev.current = price;
+  }, [price]);
+  const col = (v: number | null) => (v == null ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)");
+  const pct = (v: number | null) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`);
+  const fmtPrice = (v: number | null) => {
+    if (v == null) return "—";
+    if (v >= 1000) return v.toLocaleString("en-US", { maximumFractionDigits: 0 });
+    if (v < 10) return v.toFixed(4);
+    return v.toFixed(2);
+  };
+  const bg = flash === "up" ? "rgba(16,185,129,0.18)" : flash === "down" ? "rgba(239,68,68,0.18)" : "var(--bg-surface)";
+  return (
+    <div style={{ background: bg, border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-sans)", color: "var(--text)" }}>{title}</div>
+        {accent ? <span style={{ height: 9, width: 9, borderRadius: "50%", background: accent }}></span> : null}
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
+        <span style={{ fontSize: 20, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{fmtPrice(price)}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(day) }}>{pct(day)}</span>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: col(ytd), fontFamily: "var(--font-mono)" }}>{pct(ytd)}</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: col(year), fontFamily: "var(--font-mono)" }}>{pct(year)}</div>
+        </div>
+      </div>
+      {note ? <div style={{ marginTop: 8, fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{note}</div> : null}
+    </div>
+  );
+}
+
+interface TrackPosition { symbol: string; entry_price: number; shares: number; asset_type?: string; }
+
+// Live Track Record card — the /portfolio aggregate (value, total return, P&L, win/loss) in the same card format.
+function TrackRecordCard({ loaded, value, pnl, pnlPct, positions, winners, losers }: { loaded: boolean; value: number; pnl: number; pnlPct: number | null; positions: number; winners: number; losers: number }) {
+  const col = (v: number | null) => (v == null ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)");
+  const money = (v: number) => {
+    const a = Math.abs(v), sign = v < 0 ? "-" : "";
+    if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(2)}M`;
+    if (a >= 1e3) return `${sign}$${(a / 1e3).toFixed(1)}K`;
+    return `${sign}$${a.toFixed(0)}`;
+  };
+  return (
+    <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-sans)", color: "var(--text)" }}>Live Track Record</div>
+        <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", border: "1px solid var(--border)", borderRadius: 4, padding: "1px 5px" }}>PORTFOLIO</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
+        <span style={{ fontSize: 20, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{loaded ? money(value) : "—"}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(pnlPct) }}>{loaded && pnlPct != null ? `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(1)}%` : "—"}</span>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>P&L</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: col(loaded ? pnl : null), fontFamily: "var(--font-mono)" }}>{loaded ? `${pnl >= 0 ? "+" : ""}${money(pnl)}` : "—"}</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>WIN / LOSS</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{loaded ? `${winners} / ${losers}` : "—"}</div>
+        </div>
+      </div>
+      <div style={{ marginTop: 8, fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{loaded ? `${positions} positions · live` : "loading portfolio…"}</div>
+    </div>
+  );
+}
 
 function MacroRibbon({macro}:{macro?:MacroData}){
 
@@ -1806,6 +1893,9 @@ export default function Dashboard(){
   const [filterMenuOpen,setFilterMenuOpen]=useState<"sector"|"country"|null>(null);
 
   const [viewMode, setViewMode]=useState<"methodologies"|"table"|"feed"|"sectors"|"speculair">("methodologies");
+  const [sectorData, setSectorData] = useState<SectorPerf | null>(null);
+  const [sectorUpdatedAt, setSectorUpdatedAt] = useState<string | null>(null);
+  const [portfolioPositions, setPortfolioPositions] = useState<TrackPosition[] | null>(null);
 
 
 
@@ -2130,6 +2220,58 @@ export default function Dashboard(){
 
 
 
+
+  // Sectors tab: poll live index / sector / thematic performance via FMP (/api/sectors).
+  // 60s while the tab is open + browser tab visible; pauses when hidden; backs off to 5 min when US markets are closed.
+  useEffect(() => {
+    if (viewMode !== "sectors") return;
+    let timer: ReturnType<typeof setTimeout>;
+    const usMarketOpen = () => {
+      const et = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      const dow = et.getDay();
+      if (dow === 0 || dow === 6) return false;
+      const mins = et.getHours() * 60 + et.getMinutes();
+      return mins >= 570 && mins < 960; // 9:30–16:00 ET
+    };
+    const load = () => {
+      fetch("/api/sectors")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d && !d.error) { setSectorData(d as SectorPerf); setSectorUpdatedAt(new Date().toLocaleTimeString()); } })
+        .catch(() => {});
+    };
+    const schedule = () => { timer = setTimeout(() => { if (document.visibilityState === "visible") load(); schedule(); }, usMarketOpen() ? 60000 : 300000); };
+    load();
+    schedule();
+    const onVis = () => { if (document.visibilityState === "visible") load(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", onVis); };
+  }, [viewMode]);
+
+  // Sectors tab: load portfolio positions once for the Live Track Record card (priced off the live scan `stocks`).
+  useEffect(() => {
+    if (viewMode !== "sectors" || portfolioPositions !== null) return;
+    fetch("/api/gcs/portfolio/state.json?t=" + Date.now())
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { setPortfolioPositions(Array.isArray(d?.positions) ? d.positions : []); })
+      .catch(() => setPortfolioPositions([]));
+  }, [viewMode, portfolioPositions]);
+
+  // Live Track Record aggregate — mirrors the /portfolio page (positions priced off the latest scan).
+  const trackRecord = useMemo(() => {
+    const pos = portfolioPositions || [];
+    const priceMap: Record<string, number> = {};
+    for (const s of stocks) if (s.price) priceMap[s.symbol] = s.price;
+    let totalCost = 0, totalValue = 0, winners = 0, losers = 0;
+    for (const p of pos) {
+      if (p.asset_type === "option") continue;
+      const cur = priceMap[p.symbol] || p.entry_price;
+      totalCost += p.entry_price * p.shares;
+      totalValue += cur * p.shares;
+      if (cur > p.entry_price) winners++; else if (cur < p.entry_price) losers++;
+    }
+    const pnl = totalValue - totalCost;
+    return { totalValue, pnl, pnlPct: totalCost > 0 ? (pnl / totalCost) * 100 : null, winners, losers, positions: pos.length };
+  }, [portfolioPositions, stocks]);
 
   const findStock = (symbol: string) => {
 
@@ -4013,377 +4155,41 @@ export default function Dashboard(){
 
           {/* Macro Status Bar */}
 
-          <div style={{display: "flex", gap: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)"}}>
-
-            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>VIX: 14.2 (-2.1%)</span>
-
-            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--amber)"}}></span>10Y YIELD: 4.12% (+0.02)</span>
-
-            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>BREADTH: 62%</span>
-
-            <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--green)"}}></span>REGIME: BULL</span>
-
+          <div style={{display: "flex", gap: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", flexWrap: "wrap"}}>
+            {(() => {
+              const mac = sectorData?.macro;
+              const vix = mac?.vix ?? null;
+              const vixC = mac?.vixChange ?? null;
+              const y10 = mac?.yield10 ?? null;
+              const breadth = stocks.length ? Math.round(stocks.filter((st) => (st.composite_momentum ?? 0) >= 0.5).length / stocks.length * 100) : null;
+              const reg = data?.macro?.regime;
+              const rs = reg ? (REGIME_STYLE[reg] || REGIME_STYLE.NEUTRAL) : null;
+              const vixColor = vix == null ? "var(--text-light)" : vix <= 16 ? "var(--green)" : vix <= 22 ? "var(--amber)" : "var(--red)";
+              const brColor = breadth == null ? "var(--text-light)" : breadth >= 50 ? "var(--green)" : "var(--amber)";
+              return (
+                <>
+                  <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: vixColor}}></span>VIX: {vix == null ? "—" : vix.toFixed(1)}{vixC == null ? "" : ` (${vixC >= 0 ? "+" : ""}${vixC.toFixed(1)}%)`}</span>
+                  <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--amber)"}}></span>10Y YIELD: {y10 == null ? "—" : `${y10.toFixed(2)}%`}</span>
+                  <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: brColor}}></span>BREADTH: {breadth == null ? "—" : `${breadth}%`}</span>
+                  <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: rs?.color || "var(--text-light)"}}></span>REGIME: {rs?.label || "—"}</span>
+                  <span style={{display: "flex", alignItems: "center", gap: 4, marginLeft: "auto"}}><span style={{width: 6, height: 6, borderRadius: "50%", background: sectorUpdatedAt ? "var(--green)" : "var(--text-light)"}}></span>{sectorUpdatedAt ? `LIVE · ${sectorUpdatedAt}` : "connecting…"}</span>
+                </>
+              );
+            })()}
           </div>
-
-
 
           {/* Major Index Cards & Performance Widgets */}
 
-          <div 
-
-            style={{
-
-              display: "grid",
-
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-
-              gap: 16,
-
-              marginBottom: 10
-
-            }}
-
-          >
-
-            {/* SPY Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>S&P 500</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#3b82f6" }} title="Macro class neutral" />
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#10b981" }} title="Yield positive" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.2%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+11.4%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+22.4%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* QQQ Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>NASDAQ 100</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#f59e0b" }} title="Growth class" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+1.8%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+14.2%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+35.1%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* Live Track Record Proxy */}
-
-            <div style={{ background: "var(--green-light)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-md)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--green)" }}>Live Track Record</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "var(--green)" }} title="Active Speculair Portfolio" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+18.7%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--green)", opacity: 0.8, fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+41.2%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* DAX Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>DAX</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#6366f1" }} title="European Exposure" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-0.4%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+6.2%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+14.8%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* USD/EUR Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>USD/EUR</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#8b5cf6" }} title="Currency Pair" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Current</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>0.92</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+2.4%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>-1.1%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* RUSSELL 2000 Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>RUSSELL 2000</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#ec4899" }} title="Small Cap" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>+2.1%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+5.8%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+18.3%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            {/* BITCOIN Card */}
-
-            <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-
-                <div style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-sans)", color: "var(--text)" }}>BITCOIN</div>
-
-                <div style={{ display: "flex", gap: 4 }}>
-
-                  <span style={{ height: 10, width: 10, borderRadius: "50%", background: "#f97316" }} title="Crypto" />
-
-                </div>
-
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-                <div>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1W</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--red)", fontFamily: "var(--font-mono)" }}>-3.4%</div>
-
-                </div>
-
-                <div style={{ textAlign: "center" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+48.1%</div>
-
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-
-                  <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--green)", fontFamily: "var(--font-mono)" }}>+142.1%</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 10 }}>
+            <TrackRecordCard loaded={portfolioPositions !== null} value={trackRecord.totalValue} pnl={trackRecord.pnl} pnlPct={trackRecord.pnlPct} positions={trackRecord.positions} winners={trackRecord.winners} losers={trackRecord.losers} />
+            {sectorData ? (
+              sectorData.indices.map((c) => (
+                <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} accent={c.accent ?? undefined} />
+              ))
+            ) : (
+              <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)" }}>Loading market data…</div>
+            )}
           </div>
-
-
 
           {/* Paper Portfolio Cabinet */}
 
@@ -4755,575 +4561,39 @@ export default function Dashboard(){
 
 
 
-          {/* 9 Methodology Baskets */}
-
-          {["BULL", "SIDEWAYS", "BEAR"].map((regime) => {
-
-            const baskets = METHODOLOGIES_CONFIG.filter((m) => m.regime === regime);
-
-            if (baskets.length === 0) return null;
-
-
-
-            const regimeColors = {
-
-              BULL: { text: "var(--green)", bg: "var(--green-light)", border: "var(--green-border)", label: "Bull Regime (Growth & Early Expansion)" },
-
-              SIDEWAYS: { text: "var(--amber)", bg: "var(--amber-light)", border: "rgba(245, 185, 66, 0.3)", label: "Sideways Regime (Consolidation & Stable Yield)" },
-
-              BEAR: { text: "var(--red)", bg: "var(--red-light)", border: "rgba(239, 90, 90, 0.3)", label: "Bear Regime (Defense & Margin of Safety)" }
-
-            }[regime as "BULL" | "SIDEWAYS" | "BEAR"];
-
-
-
-            return (
-
-              <div key={regime} style={{ marginBottom: 20 }}>
-
-                {/* Regime Header Section */}
-
-                <div 
-
-                  style={{
-
-                    display: "flex",
-
-                    alignItems: "center",
-
-                    gap: 10,
-
-                    marginBottom: 12,
-
-                    paddingBottom: 6,
-
-                    borderBottom: "1px solid var(--border)"
-
-                  }}
-
-                >
-
-                  <div 
-
-                    style={{
-
-                      width: 8,
-
-                      height: 8,
-
-                      borderRadius: "50%",
-
-                      background: regimeColors.text
-
-                    }}
-
-                  />
-
-                  <h2 style={{ margin: 0, fontSize: 13, fontWeight: 800, letterSpacing: "0.05em", color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-
-                    {regimeColors.label.toUpperCase()}
-
-                  </h2>
-
-                  <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginLeft: "auto" }}>
-
-                    {baskets.length} methodologies
-
-                  </span>
-
-                </div>
-
-
-
-                {/* Baskets Cards Grid */}
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-
-                  {baskets.map((basket) => {
-
-                    const isTracked = trackedBaskets.includes(basket.path);
-
-                    const isExpanded = !!expandedBaskets[basket.path];
-
-                    const shortKey = ((p) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(basket.path);
-
-                    const trackedMeth = trackingData?.methodologies?.[shortKey];
-
-                    const activeTickers = trackedMeth?.current_holdings?.length 
-
-                      ? trackedMeth.current_holdings.map((h: any) => h.symbol)
-
-                      : (methodologyPicks[basket.path] || []);
-
-                    const ytdReturn = trackedMeth?.ytd_return;
-
-
-
-                    return (
-
-                      <div 
-
-                        key={basket.path}
-
-                        style={{
-
-                          background: "var(--bg-surface)",
-
-                          borderRadius: 12,
-
-                          border: `1px solid ${isExpanded ? "var(--green)" : "var(--border)"}`,
-
-                          boxShadow: isExpanded ? "0 4px 16px rgba(20, 184, 122, 0.1)" : "var(--shadow-sm)",
-
-                          overflow: "hidden",
-
-                          transition: "all 0.2s ease"
-
-                        }}
-
-                      >
-
-                        {/* Header trigger block */}
-
-                        <div 
-
-                          style={{
-
-                            padding: "16px 20px",
-
-                            display: "flex",
-
-                            justifyContent: "space-between",
-
-                            alignItems: "flex-start",
-
-                            gap: 20,
-
-                            flexWrap: "wrap"
-
-                          }}
-
-                        >
-
-                          <div style={{ flex: "1 1 450px" }}>
-
-                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
-
-                              <h3 
-
-                                style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "var(--text)", cursor: "pointer" }}
-
-                                onClick={() => setSelectedMethodology(basket.path)}
-
-                              >
-
-                                {basket.name}
-
-                              </h3>
-
-                              <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-
-                                ({basket.path})
-
-                              </span>
-
-
-
-                              
-
-                              {/* Track Button */}
-
-                              <button
-
-                                onClick={(e) => {
-
-                                  e.stopPropagation();
-
-                                  toggleTrackBasket(basket.path);
-
-                                }}
-
-                                style={{
-
-                                  padding: "2px 8px",
-
-                                  borderRadius: 4,
-
-                                  border: `1px solid ${isTracked ? "var(--purple)" : "var(--border)"}`,
-
-                                  background: isTracked ? "var(--purple-light)" : "transparent",
-
-                                  color: isTracked ? "var(--purple)" : "var(--text-muted)",
-
-                                  fontFamily: "var(--font-mono)",
-
-                                  fontSize: 9,
-
-                                  fontWeight: 600,
-
-                                  cursor: "pointer",
-
-                                  display: "inline-flex",
-
-                                  alignItems: "center",
-
-                                  gap: 4,
-
-                                  transition: "all 0.15s ease"
-
-                                }}
-
-                              >
-
-                                {isTracked ? <Check size={10} /> : <Plus size={10} />}
-
-                                {isTracked ? "TRACKED" : "TRACK"}
-
-                              </button>
-
-                            </div>
-
-                            <p style={{ margin: 0, fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.4, maxWidth: 680 }}>
-
-                              {basket.description}
-
-                            </p>
-
-                          </div>
-
-
-
-                          {/* Performance Table Block */}
-
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: 260, flex: "0 0 auto" }}>
-
-                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: "var(--font-mono)" }}>
-
-                              <thead>
-
-                                <tr style={{ borderBottom: "1px solid var(--border)" }}>
-
-                                  <th style={{ textAlign: "left", padding: "4px 8px", color: "var(--text-light)" }}>MODE</th>
-
-                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>CAGR</th>
-
-                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>MAX DD</th>
-
-                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>SHARPE</th>
-
-                                  <th style={{ textAlign: "right", padding: "4px 8px", color: "var(--text-light)" }}>TRADES</th>
-
-                                </tr>
-
-                              </thead>
-
-                              <tbody>
-
-                                {[
-
-                                  { 
-                                    label: "Baseline", 
-                                    color: "var(--text-secondary)", 
-                                    cagrVal: `${(basket.metrics.baseline.cagr * 100).toFixed(1)}%`,
-                                    mddVal: `${(basket.metrics.baseline.mdd * 100).toFixed(1)}%`,
-                                    mddColor: basket.metrics.baseline.mdd < 0 ? "var(--red)" : "var(--text-secondary)",
-                                    sharpeVal: basket.metrics.baseline.sharpe.toFixed(2),
-                                    tradesVal: basket.metrics.baseline.trades.toString()
-                                  },
-
-                                  { 
-                                    label: "Active", 
-                                    color: "var(--text)", 
-                                    cagrVal: ytdReturn !== undefined ? `${ytdReturn >= 0 ? "+" : ""}${(ytdReturn * 100).toFixed(1)}% YTD` : "—",
-                                    cagrColor: ytdReturn !== undefined && ytdReturn >= 0 ? "var(--green)" : "var(--red)",
-                                    mddVal: "—",
-                                    mddColor: "var(--text-secondary)",
-                                    sharpeVal: "—",
-                                    tradesVal: trackedMeth ? (activeTickers.length + (trackedMeth.all_exits_2026?.length || 0)).toString() : "—"
-                                  },
-
-                                  { 
-                                    label: "Speculair", 
-                                    color: "var(--green)", 
-                                    isBold: true,
-                                    cagrVal: "—",
-                                    mddVal: "—",
-                                    mddColor: "var(--text-secondary)",
-                                    sharpeVal: "—",
-                                    tradesVal: "—"
-                                  }
-
-                                ].map((row) => (
-
-                                  <tr 
-
-                                    key={row.label}
-
-                                    style={{ 
-
-                                      borderBottom: "1px solid var(--border-subtle)",
-
-                                      fontWeight: row.isBold ? 700 : 400,
-
-                                      background: row.isBold ? "rgba(20, 184, 122, 0.03)" : "transparent"
-
-                                    }}
-
-                                  >
-
-                                    <td style={{ textAlign: "left", padding: "5px 8px", color: row.color }}>{row.label}</td>
-
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.cagrColor || row.color }}>{row.cagrVal}</td>
-
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.mddColor }}>{row.mddVal}</td>
-
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: row.color }}>{row.sharpeVal}</td>
-
-                                    <td style={{ textAlign: "right", padding: "5px 8px", color: "var(--text-light)" }}>{row.tradesVal}</td>
-
-                                  </tr>
-
-                                ))}
-
-                              </tbody>
-
-                            </table>
-
-                            <div style={{fontSize: 8, color: "var(--text-light)", textAlign: "right", marginTop: 4, maxWidth: 260, lineHeight: 1.3}}>
-
-                              * Baseline calculated via unoptimized quantitative screens without agent validation or concentrated weighting.
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-
-
-                        {/* Expand Trigger Bar */}
-
-                        <div 
-
-                          onClick={() => setExpandedBaskets((prev) => ({ ...prev, [basket.path]: !prev[basket.path] }))}
-
-                          style={{
-
-                            padding: "8px 20px",
-
-                            background: isExpanded ? "var(--bg)" : "var(--bg-surface)",
-
-                            borderTop: "1px solid var(--border-subtle)",
-
-                            cursor: "pointer",
-
-                            display: "flex",
-
-                            alignItems: "center",
-
-                            justifyContent: "space-between",
-
-                            color: "var(--text-muted)",
-
-                            fontSize: 10,
-
-                            fontFamily: "var(--font-mono)"
-
-                          }}
-
-                        >
-
-                          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-
-                            <Activity size={12} color="var(--text-light)" />
-
-                            Current Holdings: <strong style={{ color: "var(--text)" }}>{activeTickers.length} symbols</strong>
-
-                          </span>
-
-                          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-
-                            {isExpanded ? "Collapse picks" : "Expand current picks"}
-
-                            <ChevronDown size={14} style={{ transform: isExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
-
-                          </span>
-
-                        </div>
-
-
-
-                        {/* Expanded active picks table */}
-
-                        {isExpanded && (
-
-                          <div 
-
-                            style={{
-
-                              background: "var(--bg)",
-
-                              padding: "16px 20px",
-
-                              borderTop: "1px solid var(--border-subtle)"
-
-                            }}
-
-                          >
-
-                            {activeTickers.length === 0 ? (
-
-                              <div style={{ textAlign: "center", padding: 20, color: "var(--text-light)", fontSize: 11, fontFamily: "var(--font-mono)" }}>
-
-                                No active holdings mapped for this strategy.
-
-                              </div>
-
-                            ) : (
-
-                              <div style={{ overflowX: "auto" }}>
-
-                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
-
-                                  <thead>
-
-                                    <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-light)", fontFamily: "var(--font-mono)", fontSize: 9 }}>
-
-                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>SYMBOL</th>
-
-                                      <th style={{ textAlign: "left", padding: "6px 8px" }}>ENTRY DATE</th>
-
-                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>ENTRY PRICE</th>
-
-                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>CURR PRICE</th>
-
-                                      <th style={{ textAlign: "right", padding: "6px 8px" }}>PERFORMANCE</th>
-
-                                      <th style={{ textAlign: "center", padding: "6px 8px" }}>DETAILS</th>
-
-                                    </tr>
-
-                                  </thead>
-
-                                  <tbody>
-
-                                    {activeTickers.map((symbol: string, idx: number) => {
-
-                                      const stock = findStock(symbol);
-
-                                      const displayPrice = stock && stock.price ? `$${stock.price.toFixed(2)}` : "—";
-
-                                      
-
-                                      // Simulated trade data
-
-                                      const entryDate = "2026-03-30";
-
-                                      const entryPriceVal = stock && stock.price ? stock.price * (1 - (Math.random() * 0.15 - 0.05)) : 100;
-
-                                      const perfPct = stock && stock.price ? ((stock.price / entryPriceVal) - 1) * 100 : 0;
-
-                                      const perfColor = perfPct > 0 ? "var(--green)" : "var(--red)";
-
-
-
-                                      return (
-
-                                        <tr 
-
-                                          key={symbol}
-
-                                          style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer" }}
-
-                                          onClick={(e) => handleTickerClick(e, symbol)}
-
-                                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-
-                                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-
-                                        >
-
-                                          <td style={{ padding: "8px 8px", fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
-
-                                            {symbol}
-
-                                          </td>
-
-                                          <td style={{ padding: "8px 8px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-
-                                            {entryDate}
-
-                                          </td>
-
-                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
-
-                                            ${entryPriceVal.toFixed(2)}
-
-                                          </td>
-
-                                          <td style={{ padding: "8px 8px", textAlign: "right", color: "var(--text)", fontFamily: "var(--font-mono)" }}>
-
-                                            {displayPrice}
-
-                                          </td>
-
-                                          <td style={{ padding: "8px 8px", textAlign: "right", color: perfColor, fontWeight: 700, fontFamily: "var(--font-mono)" }}>
-
-                                            {perfPct > 0 ? "+" : ""}{perfPct.toFixed(1)}%
-
-                                          </td>
-
-
-
-                                          <td style={{ padding: "8px 8px", textAlign: "center" }}>
-
-                                            <ExternalLink size={12} color="var(--text-light)" />
-
-                                          </td>
-
-                                        </tr>
-
-                                      );
-
-                                    })}
-
-                                  </tbody>
-
-                                </table>
-
-                                <div style={{marginTop: 12, paddingTop: 10, borderTop: "1px dashed var(--border)"}}>
-
-                                  <div style={{fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600, marginBottom: 4}}>RECENT EXITS (LAST 30D)</div>
-
-                                  <div style={{fontSize: 10, color: "var(--text-secondary)"}}>
-
-                                    <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>META</span> (Sold May 15 @ +8.2%) · <span style={{fontFamily: "var(--font-mono)", textDecoration: "line-through", marginRight: 4}}>TSLA</span> (Sold May 10 @ -2.1%)
-
-                                  </div>
-
-                                </div>
-
-                              </div>
-
-                            )}
-
-                          </div>
-
-                        )}
-
-                      </div>
-
-                    );
-
-                  })}
-
-                </div>
-
+          {/* Sectors tab: live sector + thematic performance (FMP) */}
+
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, paddingBottom: 6, borderBottom: "1px solid var(--border)" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--blue)" }}></div>
+              <h2 style={{ margin: 0, fontSize: 13, fontWeight: 800, letterSpacing: "0.05em", color: "var(--text)", fontFamily: "var(--font-sans)" }}>GICS SECTORS</h2>
+              <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginLeft: "auto" }}>SPDR sector ETFs · sorted by YTD</span>
+            </div>
+            {!sectorData ? (
+              <div style={{ textAlign: "center", padding: 30, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)" }}>Loading sector performance…</div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+                {[...sectorData.sectors].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} />
+                ))}
               </div>
+            )}
+          </div>
 
-            );
-
-          })}
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, paddingBottom: 6, borderBottom: "1px solid var(--border)" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--purple)" }}></div>
+              <h2 style={{ margin: 0, fontSize: 13, fontWeight: 800, letterSpacing: "0.05em", color: "var(--text)", fontFamily: "var(--font-sans)" }}>THEMATIC</h2>
+              <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginLeft: "auto" }}>industry / theme ETFs · sorted by YTD</span>
+            </div>
+            {sectorData && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+                {[...sectorData.thematic].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} />
+                ))}
+              </div>
+            )}
+          </div>
 
         </div>
 
