@@ -1918,13 +1918,21 @@ function MomentumPanel({s}:{s:StockData}){
 }
 
 // ── TranscriptInsights ─────────────────────────────────────────────────────────
-function TranscriptInsights({symbol}:{symbol:string}) {
+function TranscriptInsights({symbol, dossier}:{symbol:string; dossier?:string}) {
   const [analysis, setAnalysis] = useState<string|null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string|null>(null);
   const [qFound, setQFound] = useState(0);
+  const [fromPipeline, setFromPipeline] = useState(false);
 
   useEffect(() => {
+    // Prefer the Speculair pipeline's opus dossier when this name was debated — auto-show,
+    // no API call needed (the Interrogator already read the transcripts during the debate).
+    if (dossier && dossier.trim()) {
+      setAnalysis(dossier);
+      setFromPipeline(true);
+      return;
+    }
     const stored = localStorage.getItem(`transcript_insight_${symbol}`);
     if (stored) {
       try {
@@ -1935,11 +1943,12 @@ function TranscriptInsights({symbol}:{symbol:string}) {
         }
       } catch (e) {}
     }
-  }, [symbol]);
+  }, [symbol, dossier]);
 
   const f = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setFromPipeline(false);
     try {
       const r = await fetch(`/api/transcript?symbol=${symbol}&quarters=8`);
       const d = await r.json();
@@ -1962,14 +1971,14 @@ function TranscriptInsights({symbol}:{symbol:string}) {
 
   return (
     <Card>
-      <SH title="Transcript Insights" icon={<Brain size={12} />} sub={qFound > 0 ? `${qFound} quarters analyzed` : ""} />
+      <SH title="Transcript Insights" icon={<Brain size={12} />} sub={fromPipeline ? "From Speculair debate · opus multi-quarter forensics" : (qFound > 0 ? `${qFound} quarters analyzed` : "")} />
       {analysis ? (
         <div>
           <div style={{ fontSize: 11, lineHeight: 1.7, color: T.text, fontFamily: T.sans, whiteSpace: "pre-wrap" }}>
             {analysis}
           </div>
-          <button onClick={f} style={{ marginTop: 12, background: "none", border: `1px solid ${T.cardBorder}`, borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontSize: 10, fontFamily: T.mono, color: T.textMuted, display: "flex", alignItems: "center", gap: 4 }}>
-            <RefreshCw size={10} /> Refresh
+          <button onClick={f} disabled={loading} style={{ marginTop: 12, background: "none", border: `1px solid ${T.cardBorder}`, borderRadius: 6, padding: "6px 12px", cursor: loading ? "not-allowed" : "pointer", fontSize: 10, fontFamily: T.mono, color: T.textMuted, display: "flex", alignItems: "center", gap: 4 }}>
+            <RefreshCw size={10} style={loading ? { animation: "spin 1s linear infinite" } : undefined} /> {loading ? "Analyzing…" : fromPipeline ? "Re-analyze with Claude (8q)" : "Refresh"}
           </button>
         </div>
       ) : (
@@ -3214,6 +3223,29 @@ function SpeculairDebateCard({ debateData }: { debateData: any }) {
           </div>
         </div>
       </Card>
+
+      {/* ── Forensic Interrogator Dossier (opus, multi-quarter) ── */}
+      {debateData.interrogator_dossier && (
+        <Card style={{ padding: "20px 24px" }}>
+          <SH title="Forensic Interrogator Dossier" icon={<Brain size={12} />}
+              sub={`Opus multi-quarter transcript forensics${debateData.interrogator_score ? ` · Credibility ${debateData.interrogator_score}/5` : ""}${debateData.trajectory ? ` · ${debateData.trajectory}` : ""}`} />
+          <div style={{ marginTop: 12, fontSize: 12, lineHeight: 1.7, color: T.text, fontFamily: T.sans, whiteSpace: "pre-wrap" }}>
+            {debateData.interrogator_dossier}
+          </div>
+        </Card>
+      )}
+
+      {/* ── CRO Final Synthesis ── */}
+      {debateData.moderator_conclusion && (
+        <Card style={{ padding: "16px 20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.purple, textTransform: "uppercase", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
+            <Activity size={12} /> Chief Risk Officer — Final Synthesis
+          </div>
+          <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, whiteSpace: "pre-wrap" }}>
+            {debateData.moderator_conclusion}
+          </p>
+        </Card>
+      )}
     </div>
   );
 }
@@ -4903,7 +4935,7 @@ export default function StockDetail(){
       ) : activeTab==="methodology" ? (
         <ScoringMethodologyCard />
       ) : activeTab==="transcript" ? (
-        <TranscriptInsights symbol={s.symbol} />
+        <TranscriptInsights symbol={s.symbol} dossier={debateData?.interrogator_dossier} />
       ) : activeTab==="chart" ? (
         <ReactFinancialChartTab symbol={s.symbol} />
       ) : (
