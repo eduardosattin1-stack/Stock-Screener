@@ -1,6 +1,8 @@
 "use client"; 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../AuthProvider";
+import { getPortfolio, addPosition as storeAddPosition, closePosition as storeClosePosition } from "../portfolioStore";
 import { Trash2, BarChart3, AlertTriangle, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Zap, Plus, X } from "lucide-react";
 
 const GCS_SCANS = "/api/gcs/scans";
@@ -99,6 +101,7 @@ async function fetchGcsState(){
 
 export default function Portfolio(){
   const router=useRouter();
+  const { user } = useAuth();
   const[portfolio,setPortfolio]=useState<Position[]>([]);
   const[monitors,setMonitors]=useState<Record<string,MonitorAction>>({});
   const[history,setHistory]=useState<HistoryEntry[]>([]);
@@ -122,7 +125,7 @@ export default function Portfolio(){
     clearLocalPortfolio();
     try {
       const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
-        fetchGcsState(),
+        user ? getPortfolio(user.uid) : Promise.resolve({ positions: [], history: [] }),
         fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
         fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()),
       ]);
@@ -130,8 +133,8 @@ export default function Portfolio(){
       let gcsPositions:Position[]=[];
       let gcsHistory:HistoryEntry[]=[];
       if(stateRes.status==="fulfilled"){
-        gcsPositions=stateRes.value?.positions||[];
-        gcsHistory=stateRes.value?.history||[];
+        gcsPositions=(stateRes.value?.positions||[]) as Position[];
+        gcsHistory=(stateRes.value?.history||[]) as HistoryEntry[];
       }
 
       setPortfolio(gcsPositions);
@@ -157,14 +160,15 @@ export default function Portfolio(){
       setLoading(false);
     }
   }
-  useEffect(()=>{refresh();},[]);
+  useEffect(()=>{refresh();},[user]);
 
   // User-initiated position close — prompts for exit price, writes to GCS.
   // Does NOT use signal state; signal is informational only.
   async function closePosition(sym:string,exitPrice:number,reason:string,asset_type?:string,dd_touch?:number,gain_touch?:number){
     try {
       setErrorMsg(null);
-      await apiClose({symbol:sym,exit_price:exitPrice,reason:reason||"User close",asset_type,dd_touch,gain_touch});
+      if(!user){setErrorMsg("Sign in to manage positions");return;}
+      await storeClosePosition(user.uid,sym,exitPrice,reason||"User close",asset_type);
       setClosingRow(null);
       await refresh();
     } catch(e:any) {
@@ -600,6 +604,7 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
   const [shares,setShares]=useState("");
   const [notes,setNotes]=useState("");
   const [bucket,setBucket]=useState<"midcap"|"sp500"|"">("");
+  const { user } = useAuth();
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
   async function handle(){
@@ -610,7 +615,8 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
     if(!sh||sh<=0){setErr("Shares required");return;}
     setSaving(true);setErr("");
     try {
-      await apiAdd({symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
+      if(!user){setErr("Sign in to add positions");setSaving(false);return;}
+      await storeAddPosition(user.uid,{symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
       onAdded();
     } catch(e:any){
       setErr(e.message||"Failed");setSaving(false);

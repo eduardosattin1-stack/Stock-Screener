@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// CB Screener — multi-user data isolation.
+// Shared screener data lives in GCS (not here). Firestore holds per-user
+// portfolio + watchlist. The backend uses the Admin SDK, which BYPASSES these
+// rules, so server collections (portfolio/, metrics/, etc.) need no client allows.
+//
+// Paste into Firebase console → Firestore Database → Rules (or deploy via firebase CLI).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function userEmail() {
+      return request.auth != null && request.auth.token.email != null
+        ? request.auth.token.email.lower() : "";
+    }
+
+    function isAllowed() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/allowlist/$(userEmail()));
+    }
+
+    // A signed-in user may read only their own allowlist doc (to self-check access).
+    // Writes are admin/console-only.
+    match /allowlist/{email} {
+      allow read: if request.auth != null && userEmail() == email;
+      allow write: if false;
+    }
+
+    // Per-user data (portfolio, watchlist, …): owner-only AND allow-listed.
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid
+        && isAllowed();
+    }
+
+    // Everything else: deny to clients (default). Backend Admin SDK is unaffected.
+  }
+}

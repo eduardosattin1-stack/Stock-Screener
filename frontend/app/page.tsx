@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useAuth } from "./AuthProvider";
+import { getPortfolio, addPosition as storeAddPosition } from "./portfolioStore";
 
 import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 
@@ -536,12 +538,28 @@ const MACRO_SIGNALS:[string,string][] = [
 
 interface SectorRow { name: string; symbol: string; accent?: string | null; price: number | null; day: number | null; ytd: number | null; year: number | null; }
 interface SectorPerf { indices: SectorRow[]; sectors: SectorRow[]; thematic: SectorRow[]; macro: { vix: number | null; vixChange: number | null; yield10: number | null }; asOf: string | null; }
+interface EtfHolding { symbol: string; name: string; weight: number | null; day: number | null; ytd: number | null; }
+
+// Add a symbol to the localStorage watchlist (first basket) read by the Watchlist panel.
+function addToWatchlist(sym: string) {
+  try {
+    const raw = localStorage.getItem("cb_watchlist_baskets");
+    const baskets = raw ? JSON.parse(raw) : [];
+    if (!baskets.length) baskets.push({ id: "default", name: "Watchlist", symbols: [] });
+    if (!baskets[0].symbols.includes(sym)) baskets[0].symbols.push(sym);
+    localStorage.setItem("cb_watchlist_baskets", JSON.stringify(baskets));
+  } catch {}
+}
 
 // Generic live performance card (indices, GICS sectors, thematic ETFs).
-// Shows live price + today's %, and briefly flashes green/red when the price ticks.
-function PerfCard({ title, price, day, ytd, year, accent, note }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string }) {
+// Shows live price + today's %, flashes on tick. ETF cards (holdingsSymbol set)
+// toggle open to their top-10 holdings (lazy-fetched) with live day-%.
+function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, compact }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string; holdingsSymbol?: string; compact?: boolean }) {
   const prev = useRef<number | null>(null);
   const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [holdings, setHoldings] = useState<EtfHolding[] | null>(null);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
   useEffect(() => {
     if (price != null && prev.current != null && price !== prev.current) {
       setFlash(price > prev.current ? "up" : "down");
@@ -551,6 +569,13 @@ function PerfCard({ title, price, day, ytd, year, accent, note }: { title: strin
     }
     if (price != null) prev.current = price;
   }, [price]);
+  useEffect(() => {
+    if (!expanded || holdings || !holdingsSymbol) return;
+    fetch(`/api/etf-holdings?symbol=${encodeURIComponent(holdingsSymbol)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setHoldings(d?.holdings ?? []))
+      .catch(() => setHoldings([]));
+  }, [expanded, holdings, holdingsSymbol]);
   const col = (v: number | null) => (v == null ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)");
   const pct = (v: number | null) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`);
   const fmtPrice = (v: number | null) => {
@@ -560,27 +585,74 @@ function PerfCard({ title, price, day, ytd, year, accent, note }: { title: strin
     return v.toFixed(2);
   };
   const bg = flash === "up" ? "rgba(16,185,129,0.18)" : flash === "down" ? "rgba(239,68,68,0.18)" : "var(--bg-surface)";
+  const z = compact
+    ? { pad: "8px 12px", radius: 10, hMb: 3, title: 12, dot: 8, price: 15, day: 11, pMb: 5, lbl: 8, val: 11 }
+    : { pad: "16px 20px", radius: 12, hMb: 8, title: 15, dot: 9, price: 20, day: 13, pMb: 10, lbl: 10, val: 13 };
   return (
-    <div style={{ background: bg, border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-sans)", color: "var(--text)" }}>{title}</div>
-        {accent ? <span style={{ height: 9, width: 9, borderRadius: "50%", background: accent }}></span> : null}
+    <div style={{ background: bg, border: "1px solid var(--border)", borderRadius: z.radius, padding: z.pad, boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: z.hMb }}>
+        <div style={{ fontWeight: 800, fontSize: z.title, fontFamily: "var(--font-sans)", color: "var(--text)" }}>{title}</div>
+        {holdingsSymbol ? (
+          <button onClick={() => setExpanded((e) => !e)} title={expanded ? "Hide holdings" : "Show top holdings"} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 13, lineHeight: 1, fontFamily: "var(--font-mono)" }}>{expanded ? "▾" : "▸"}</button>
+        ) : accent ? (
+          <span style={{ height: z.dot, width: z.dot, borderRadius: "50%", background: accent }}></span>
+        ) : null}
       </div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 20, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{fmtPrice(price)}</span>
-        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(day) }}>{pct(day)}</span>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: z.pMb }}>
+        <span style={{ fontSize: z.price, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{fmtPrice(price)}</span>
+        <span style={{ fontSize: z.day, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(day) }}>{pct(day)}</span>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
-          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: col(ytd), fontFamily: "var(--font-mono)" }}>{pct(ytd)}</div>
+          <div style={{ fontSize: z.lbl, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>YTD</div>
+          <div style={{ fontSize: z.val, fontWeight: 700, color: col(ytd), fontFamily: "var(--font-mono)" }}>{pct(ytd)}</div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: col(year), fontFamily: "var(--font-mono)" }}>{pct(year)}</div>
+          <div style={{ fontSize: z.lbl, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>1Y</div>
+          <div style={{ fontSize: z.val, fontWeight: 700, color: col(year), fontFamily: "var(--font-mono)" }}>{pct(year)}</div>
         </div>
       </div>
       {note ? <div style={{ marginTop: 8, fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{note}</div> : null}
+      {expanded ? (
+        <div style={{ marginTop: 10, borderTop: "1px solid var(--border)", paddingTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+          {holdings == null ? (
+            <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Loading holdings…</div>
+          ) : holdings.length === 0 ? (
+            <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>No holdings data</div>
+          ) : (
+            <>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em", opacity: 0.65, marginBottom: 1 }}>
+                <span>HOLDING</span>
+                <span style={{ display: "flex", gap: 10 }}><span style={{ width: 34, textAlign: "right" }}>WT</span><span style={{ width: 46, textAlign: "right" }}>1D</span><span style={{ width: 52, textAlign: "right" }}>YTD</span></span>
+              </div>
+              {holdings.map((h) => {
+                const open = menuFor === h.symbol;
+                const btn = { textDecoration: "none", color: "var(--text)", background: "var(--bg-hover)", border: "1px solid var(--border)", borderRadius: 4, padding: "2px 7px", fontFamily: "var(--font-mono)", fontSize: 10, cursor: "pointer" } as const;
+                return (
+                  <div key={h.symbol}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "var(--font-mono)" }}>
+                      <span title={h.name || h.symbol} onClick={() => setMenuFor(open ? null : h.symbol)} style={{ color: "var(--text)", fontWeight: 600, cursor: "pointer", textDecoration: open ? "underline" : "none" }}>{h.symbol}</span>
+                      <span style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                        <span style={{ color: "var(--text-light)", fontSize: 10, width: 34, textAlign: "right" }}>{h.weight == null ? "" : `${h.weight.toFixed(1)}%`}</span>
+                        <span style={{ color: col(h.day), width: 46, textAlign: "right", fontWeight: 700 }}>{pct(h.day)}</span>
+                        <span style={{ color: col(h.ytd), width: 52, textAlign: "right", fontWeight: 700 }}>{pct(h.ytd)}</span>
+                      </span>
+                    </div>
+                    {open ? (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", padding: "5px 0 7px" }}>
+                        {h.name ? <span style={{ flexBasis: "100%", fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{h.name}</span> : null}
+                        <a href={`/stock/${h.symbol}`} style={btn}>Open ↗</a>
+                        <button onClick={() => { addToWatchlist(h.symbol); setMenuFor(null); }} style={btn}>+ Watchlist</button>
+                        <a href={`/stock/${h.symbol}`} style={btn}>+ Portfolio ↗</a>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -597,26 +669,26 @@ function TrackRecordCard({ loaded, value, pnl, pnlPct, positions, winners, loser
     return `${sign}$${a.toFixed(0)}`;
   };
   return (
-    <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", boxShadow: "var(--shadow-sm)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-sans)", color: "var(--text)" }}>Live Track Record</div>
-        <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", border: "1px solid var(--border)", borderRadius: 4, padding: "1px 5px" }}>PORTFOLIO</span>
+    <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "8px 12px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+        <div style={{ fontWeight: 800, fontSize: 12, fontFamily: "var(--font-sans)", color: "var(--text)" }}>Live Track Record</div>
+        <span style={{ fontSize: 8, fontFamily: "var(--font-mono)", color: "var(--text-light)", border: "1px solid var(--border)", borderRadius: 4, padding: "1px 4px" }}>PORTFOLIO</span>
       </div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 20, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{loaded ? money(value) : "—"}</span>
-        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(pnlPct) }}>{loaded && pnlPct != null ? `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(1)}%` : "—"}</span>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 5 }}>
+        <span style={{ fontSize: 15, fontWeight: 800, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{loaded ? money(value) : "—"}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "var(--font-mono)", color: col(pnlPct) }}>{loaded && pnlPct != null ? `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(1)}%` : "—"}</span>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
-          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>P&L</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: col(loaded ? pnl : null), fontFamily: "var(--font-mono)" }}>{loaded ? `${pnl >= 0 ? "+" : ""}${money(pnl)}` : "—"}</div>
+          <div style={{ fontSize: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>P&L</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: col(loaded ? pnl : null), fontFamily: "var(--font-mono)" }}>{loaded ? `${pnl >= 0 ? "+" : ""}${money(pnl)}` : "—"}</div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>WIN / LOSS</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{loaded ? `${winners} / ${losers}` : "—"}</div>
+          <div style={{ fontSize: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>WIN / LOSS</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{loaded ? `${winners} / ${losers}` : "—"}</div>
         </div>
       </div>
-      <div style={{ marginTop: 8, fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{loaded ? `${positions} positions · live` : "loading portfolio…"}</div>
+      <div style={{ marginTop: 5, fontSize: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{loaded ? `${positions} positions · live` : "loading portfolio…"}</div>
     </div>
   );
 }
@@ -973,7 +1045,7 @@ function ScorePill({value}:{value:number}){const c=value>0.65?"#10b981":value>0.
 
 // is user-editable (real fill price may differ from scan price). Posts to
 
-// /api/portfolio/add which proxies to Cloud Run.
+// the user's per-user Firestore portfolio (portfolioStore.addPosition).
 
 function AddToPortfolioButton({stock:s}:{stock:StockData}){
 
@@ -986,6 +1058,7 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
   const [notes,setNotes]=useState("");
 
   const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const { user } = useAuth();
 
   const [err,setErr]=useState("");
 
@@ -1005,25 +1078,9 @@ function AddToPortfolioButton({stock:s}:{stock:StockData}){
 
     try {
 
-      const res=await fetch("/api/portfolio/add",{
+      if(!user) throw new Error("Sign in to add positions");
 
-        method:"POST",headers:{"Content-Type":"application/json"},
-
-        body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes}),
-
-      });
-
-      if(!res.ok){
-
-        const t=await res.text().catch(()=>"");
-
-        const isHtml=t.trimStart().toLowerCase().startsWith("<!doctype")||t.trimStart().startsWith("<");
-
-        const body=isHtml?"(server returned HTML page)":t.slice(0,120);
-
-        throw new Error(`HTTP ${res.status}${body?` – ${body}`:""}`);
-
-      }
+      await storeAddPosition(user.uid,{symbol:s.symbol,entry_price:p,shares:sh,notes});
 
       setStatus("saved");
 
@@ -1896,6 +1953,7 @@ export default function Dashboard(){
   const [sectorData, setSectorData] = useState<SectorPerf | null>(null);
   const [sectorUpdatedAt, setSectorUpdatedAt] = useState<string | null>(null);
   const [portfolioPositions, setPortfolioPositions] = useState<TrackPosition[] | null>(null);
+  const { user } = useAuth();
 
 
 
@@ -2247,14 +2305,12 @@ export default function Dashboard(){
     return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", onVis); };
   }, [viewMode]);
 
-  // Sectors tab: load portfolio positions once for the Live Track Record card (priced off the live scan `stocks`).
+  // Sectors tab: load the signed-in user's portfolio for the Live Track Record card (priced off the live scan `stocks`).
   useEffect(() => {
-    if (viewMode !== "sectors" || portfolioPositions !== null) return;
-    fetch("/api/gcs/portfolio/state.json?t=" + Date.now())
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { setPortfolioPositions(Array.isArray(d?.positions) ? d.positions : []); })
-      .catch(() => setPortfolioPositions([]));
-  }, [viewMode, portfolioPositions]);
+    if (viewMode !== "sectors") return;
+    if (!user) { setPortfolioPositions([]); return; }
+    getPortfolio(user.uid).then((s) => setPortfolioPositions(s.positions as TrackPosition[])).catch(() => setPortfolioPositions([]));
+  }, [viewMode, user]);
 
   // Live Track Record aggregate — mirrors the /portfolio page (positions priced off the latest scan).
   const trackRecord = useMemo(() => {
@@ -4180,11 +4236,11 @@ export default function Dashboard(){
 
           {/* Major Index Cards & Performance Widgets */}
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 10 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 14 }}>
             <TrackRecordCard loaded={portfolioPositions !== null} value={trackRecord.totalValue} pnl={trackRecord.pnl} pnlPct={trackRecord.pnlPct} positions={trackRecord.positions} winners={trackRecord.winners} losers={trackRecord.losers} />
             {sectorData ? (
               sectorData.indices.map((c) => (
-                <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} accent={c.accent ?? undefined} />
+                <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} accent={c.accent ?? undefined} compact />
               ))
             ) : (
               <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)" }}>Loading market data…</div>
@@ -4574,7 +4630,7 @@ export default function Dashboard(){
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {[...sectorData.sectors].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
-                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} />
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} />
                 ))}
               </div>
             )}
@@ -4589,7 +4645,7 @@ export default function Dashboard(){
             {sectorData && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {[...sectorData.thematic].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
-                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} />
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} />
                 ))}
               </div>
             )}
