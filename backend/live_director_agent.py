@@ -481,6 +481,17 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
     
     # Build the Director prompt — full readable dossier per name (NO truncation), so the
     # PM consumes the team's complete work and ranks cross-sectionally.
+    def _dirtrim(s, cap, head=0.55):
+        # Trim a field for the director PROMPT, keeping head + tail so a dossier's opening
+        # narrative AND its closing capital-allocation verdict both survive. The full,
+        # untrimmed dossier is still stored in the speculair output for the stock page.
+        if not s:
+            return "N/A"
+        if len(s) <= cap:
+            return s
+        h = int(cap * head)
+        return s[:h] + "\n...[trimmed for director context — full dossier on stock page]...\n" + s[-(cap - h):]
+
     def _fmt_valuation(c):
         mos = c.get("mos", {}) or {}
         fv = c.get("fair_value", {}) or {}
@@ -501,15 +512,15 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
             f"years_history={c.get('years_history','?')}, forward_eps_growth={c.get('forward_eps_growth','?')}, "
             f"sector_class={c.get('sector_class','operating')}\n"
             f"Financial warnings: {c.get('financial_warnings','None')}\n\n"
-            f"--- INTERROGATOR FORENSIC DOSSIER ---\n{c.get('interrogator_dossier') or 'N/A'}\n\n"
-            f"--- ARCHITECT BULL THESIS ---\n{c.get('bull_thesis') or 'N/A'}\n\n"
-            f"--- ARCHITECT BEAR THESIS ---\n{c.get('bear_thesis') or 'N/A'}\n\n"
+            f"--- INTERROGATOR FORENSIC DOSSIER (trimmed for context; full version on the stock page) ---\n{_dirtrim(c.get('interrogator_dossier'), 6000)}\n\n"
+            f"--- ARCHITECT BULL THESIS ---\n{_dirtrim(c.get('bull_thesis'), 2500)}\n\n"
+            f"--- ARCHITECT BEAR THESIS ---\n{_dirtrim(c.get('bear_thesis'), 2500)}\n\n"
             f"--- MODERATOR / CRO ---\n"
-            f"Consensus Delta: {c.get('consensus_delta') or 'N/A'}\n"
-            f"Valley of Death: {c.get('valley_of_death') or 'N/A'}\n"
-            f"Positioning Washout: {c.get('positioning_washout') or 'N/A'}\n"
-            f"Forcing Function: {c.get('forcing_function') or 'N/A'}\n"
-            f"CRO Synthesis: {c.get('moderator_conclusion') or 'N/A'}\n"
+            f"Consensus Delta: {_dirtrim(c.get('consensus_delta'), 1500)}\n"
+            f"Valley of Death: {_dirtrim(c.get('valley_of_death'), 1500)}\n"
+            f"Positioning Washout: {_dirtrim(c.get('positioning_washout'), 1000)}\n"
+            f"Forcing Function: {_dirtrim(c.get('forcing_function'), 1500)}\n"
+            f"CRO Synthesis: {_dirtrim(c.get('moderator_conclusion'), 2500)}\n"
         )
 
     candidate_blocks = "\n\n".join(_format_candidate(c) for c in director_candidates)
