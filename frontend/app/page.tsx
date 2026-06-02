@@ -548,6 +548,8 @@ const RADAR_PRESETS: { s: string; label: string }[] = [
   { s: "BTCUSD", label: "BTC" }, { s: "EURUSD", label: "EUR/USD" }, { s: "^GDAXI", label: "DAX" },
   { s: "^FTSE", label: "FTSE" }, { s: "VGK", label: "Europe" }, { s: "^STOXX50E", label: "Euro Stoxx" },
   { s: "^BVSP", label: "Bovespa" }, { s: "000001.SS", label: "Shanghai" }, { s: "^HSI", label: "Hong Kong" },
+  { s: "TLT", label: "Tsy 20Y+" }, { s: "IEF", label: "Tsy 7-10Y" }, { s: "^TYX", label: "30Y" },
+  { s: "AGG", label: "US Agg" }, { s: "LQD", label: "IG Corp" }, { s: "HYG", label: "High Yield" },
 ];
 
 // Add a symbol to the localStorage watchlist (first basket) read by the Watchlist panel.
