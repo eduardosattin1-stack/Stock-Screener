@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "./AuthProvider";
-import { getPortfolio, addPosition as storeAddPosition } from "./portfolioStore";
+import { getPortfolio, addPosition as storeAddPosition, getRadar, setRadar, DEFAULT_RADAR } from "./portfolioStore";
 
 import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 
@@ -540,6 +540,16 @@ interface SectorRow { name: string; symbol: string; accent?: string | null; pric
 interface SectorPerf { indices: SectorRow[]; sectors: SectorRow[]; thematic: SectorRow[]; macro: { vix: number | null; vixChange: number | null; yield10: number | null }; asOf: string | null; }
 interface EtfHolding { symbol: string; name: string; weight: number | null; day: number | null; ytd: number | null; }
 
+// Quick-pick chips for the customizable radar.
+const RADAR_PRESETS: { s: string; label: string }[] = [
+  { s: "^GSPC", label: "S&P" }, { s: "^NDX", label: "NASDAQ" }, { s: "^DJI", label: "Dow" },
+  { s: "^RUT", label: "Russell" }, { s: "^VIX", label: "VIX" }, { s: "^TNX", label: "10Y" },
+  { s: "DX-Y.NYB", label: "DXY" }, { s: "GLD", label: "Gold" }, { s: "USO", label: "Oil" },
+  { s: "BTCUSD", label: "BTC" }, { s: "EURUSD", label: "EUR/USD" }, { s: "^GDAXI", label: "DAX" },
+  { s: "^FTSE", label: "FTSE" }, { s: "VGK", label: "Europe" }, { s: "^STOXX50E", label: "Euro Stoxx" },
+  { s: "^BVSP", label: "Bovespa" }, { s: "000001.SS", label: "Shanghai" }, { s: "^HSI", label: "Hong Kong" },
+];
+
 // Add a symbol to the localStorage watchlist (first basket) read by the Watchlist panel.
 function addToWatchlist(sym: string) {
   try {
@@ -554,7 +564,7 @@ function addToWatchlist(sym: string) {
 // Generic live performance card (indices, GICS sectors, thematic ETFs).
 // Shows live price + today's %, flashes on tick. ETF cards (holdingsSymbol set)
 // toggle open to their top-10 holdings (lazy-fetched) with live day-%.
-function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, compact }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string; holdingsSymbol?: string; compact?: boolean }) {
+function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, compact, onRemove }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string; holdingsSymbol?: string; compact?: boolean; onRemove?: () => void }) {
   const prev = useRef<number | null>(null);
   const [flash, setFlash] = useState<"up" | "down" | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -592,7 +602,9 @@ function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, 
     <div style={{ background: bg, border: "1px solid var(--border)", borderRadius: z.radius, padding: z.pad, boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: z.hMb }}>
         <div style={{ fontWeight: 800, fontSize: z.title, fontFamily: "var(--font-sans)", color: "var(--text)" }}>{title}</div>
-        {holdingsSymbol ? (
+        {onRemove ? (
+          <button onClick={onRemove} title="Remove from radar" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 14, lineHeight: 1, fontFamily: "var(--font-mono)" }}>×</button>
+        ) : holdingsSymbol ? (
           <button onClick={() => setExpanded((e) => !e)} title={expanded ? "Hide holdings" : "Show top holdings"} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 13, lineHeight: 1, fontFamily: "var(--font-mono)" }}>{expanded ? "▾" : "▸"}</button>
         ) : accent ? (
           <span style={{ height: z.dot, width: z.dot, borderRadius: "50%", background: accent }}></span>
@@ -1953,6 +1965,9 @@ export default function Dashboard(){
   const [sectorData, setSectorData] = useState<SectorPerf | null>(null);
   const [sectorUpdatedAt, setSectorUpdatedAt] = useState<string | null>(null);
   const [portfolioPositions, setPortfolioPositions] = useState<TrackPosition[] | null>(null);
+  const [radarSymbols, setRadarSymbols] = useState<string[] | null>(null);
+  const [radarData, setRadarData] = useState<Record<string, { name: string; price: number | null; day: number | null; ytd: number | null; year: number | null }>>({});
+  const [radarInput, setRadarInput] = useState("");
   const { user } = useAuth();
 
 
@@ -2328,6 +2343,44 @@ export default function Dashboard(){
     const pnl = totalValue - totalCost;
     return { totalValue, pnl, pnlPct: totalCost > 0 ? (pnl / totalCost) * 100 : null, winners, losers, positions: pos.length };
   }, [portfolioPositions, stocks]);
+
+  // Radar: load the user's symbol list (per-user Firestore, else default set).
+  useEffect(() => {
+    if (viewMode !== "sectors" || radarSymbols !== null) return;
+    if (user) getRadar(user.uid).then(setRadarSymbols).catch(() => setRadarSymbols(DEFAULT_RADAR));
+    else setRadarSymbols(DEFAULT_RADAR);
+  }, [viewMode, user, radarSymbols]);
+
+  // Radar: poll live quotes for the chosen symbols (60s, visibility-gated).
+  useEffect(() => {
+    if (viewMode !== "sectors" || !radarSymbols || !radarSymbols.length) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const load = () => {
+      fetch(`/api/quotes?symbols=${encodeURIComponent(radarSymbols.join(","))}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d?.quotes) { const m: Record<string, any> = {}; for (const q of d.quotes) m[q.symbol] = q; setRadarData(m); } })
+        .catch(() => {});
+    };
+    load();
+    const tick = () => { timer = setTimeout(() => { if (document.visibilityState === "visible") load(); tick(); }, 60000); };
+    tick();
+    return () => clearTimeout(timer);
+  }, [viewMode, radarSymbols]);
+
+  const addRadar = (raw: string) => {
+    const sym = raw.trim().toUpperCase();
+    if (!sym || !radarSymbols || radarSymbols.includes(sym) || radarSymbols.length >= 11) return;
+    const next = [...radarSymbols, sym];
+    setRadarSymbols(next);
+    setRadarInput("");
+    if (user) setRadar(user.uid, next).catch(() => {});
+  };
+  const removeRadar = (sym: string) => {
+    if (!radarSymbols) return;
+    const next = radarSymbols.filter((s) => s !== sym);
+    setRadarSymbols(next);
+    if (user) setRadar(user.uid, next).catch(() => {});
+  };
 
   const findStock = (symbol: string) => {
 
@@ -4236,14 +4289,26 @@ export default function Dashboard(){
 
           {/* Major Index Cards & Performance Widgets */}
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 8 }}>
             <TrackRecordCard loaded={portfolioPositions !== null} value={trackRecord.totalValue} pnl={trackRecord.pnl} pnlPct={trackRecord.pnlPct} positions={trackRecord.positions} winners={trackRecord.winners} losers={trackRecord.losers} />
-            {sectorData ? (
-              sectorData.indices.map((c) => (
-                <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} accent={c.accent ?? undefined} compact />
-              ))
+            {(radarSymbols || []).map((sym) => {
+              const q = radarData[sym];
+              return <PerfCard key={sym} title={(q?.name || sym).slice(0, 18)} note={sym} price={q?.price ?? null} day={q?.day ?? null} ytd={q?.ytd ?? null} year={q?.year ?? null} compact onRemove={() => removeRadar(sym)} />;
+            })}
+          </div>
+          {/* Radar customization: free-text add + preset chips (per-user, saved to Firestore) */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", marginBottom: 16 }}>
+            <input value={radarInput} onChange={(e) => setRadarInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addRadar(radarInput); }} placeholder="+ add symbol (AAPL, ^VIX, GLD…)" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 8px", color: "var(--text)", fontFamily: "var(--font-mono)", fontSize: 11, width: 210 }} />
+            <button onClick={() => addRadar(radarInput)} style={{ cursor: "pointer", color: "var(--text)", background: "var(--bg-hover)", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 9px", fontFamily: "var(--font-mono)", fontSize: 10 }}>Add</button>
+            {(radarSymbols || []).length >= 11 ? (
+              <span style={{ color: "var(--text-light)", fontSize: 10, fontFamily: "var(--font-mono)" }}>radar full (11)</span>
             ) : (
-              <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)" }}>Loading market data…</div>
+              <>
+                <span style={{ color: "var(--text-light)", fontSize: 10, fontFamily: "var(--font-mono)", marginLeft: 4 }}>quick:</span>
+                {RADAR_PRESETS.filter((p) => !(radarSymbols || []).includes(p.s)).map((p) => (
+                  <button key={p.s} onClick={() => addRadar(p.s)} style={{ cursor: "pointer", color: "var(--text-muted)", background: "transparent", border: "1px solid var(--border)", borderRadius: 6, padding: "3px 8px", fontFamily: "var(--font-mono)", fontSize: 10 }}>+ {p.label}</button>
+                ))}
+              </>
             )}
           </div>
 

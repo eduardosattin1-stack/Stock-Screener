@@ -109,3 +109,18 @@ export async function closePosition(
   const positions = cur.positions.filter((_, i) => i !== idx);
   await setDoc(ref(uid), { positions, history: [hist, ...cur.history] }, { merge: true });
 }
+
+// ── Customizable header radar — per-user symbol list (users/{uid}/radar/config) ──
+export const DEFAULT_RADAR = ["^GSPC", "^NDX", "^GDAXI", "^RUT", "BTCUSD", "EURUSD"];
+
+export async function getRadar(uid: string): Promise<string[]> {
+  if (!db) return DEFAULT_RADAR;
+  const snap = await getDoc(doc(db, "users", uid, "radar", "config"));
+  const d = snap.data() as { symbols?: string[] } | undefined;
+  return Array.isArray(d?.symbols) && d!.symbols.length ? (d!.symbols as string[]) : DEFAULT_RADAR;
+}
+
+export async function setRadar(uid: string, symbols: string[]): Promise<void> {
+  if (!db) return;
+  await setDoc(doc(db, "users", uid, "radar", "config"), { symbols }, { merge: true });
+}
