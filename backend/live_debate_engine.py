@@ -51,13 +51,14 @@ GCS_BUCKET = "screener-signals-carbonbridge"
 METHODOLOGY_KEYS = [
     "dcf_fcff", "rd_capitalized_dcf", "owner_earnings", "epv",
     "graham_revised", "iv15_deep_value", "ev_gross_profit",
-    "earnings_yield_gap", "acquirers_multiple"
+    "earnings_yield_gap", "acquirers_multiple",
+    "convergence",   # 10th basket: cross-method valuation agreement (built in screener_v6)
 ]
 
 # ── Radar Mode Router ────────────────────────────────────────────────────
 # Value-oriented methodologies get the value_trap_audit prompt;
 # growth/catalyst methodologies get the growth_catalyst prompt.
-VALUE_METHODOLOGIES = {"epv", "iv15_deep_value", "acquirers_multiple"}
+VALUE_METHODOLOGIES = {"epv", "iv15_deep_value", "acquirers_multiple", "convergence"}
 
 def radar_mode_for_methodology(meth_key: str) -> str:
     """Return 'value_trap_audit' or 'growth_catalyst' based on methodology."""

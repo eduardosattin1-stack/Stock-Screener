@@ -5727,7 +5727,11 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "epv": ("epv_mos", "epv_value"),
         "graham_revised": ("graham_revised_mos", "graham_revised"),
         "acquirers_multiple": ("acquirers_multiple_mos", None),
-        "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value")
+        "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value"),
+        # 10th basket (June 2026): cross-method valuation agreement. consensus_mos is
+        # computed below and left at -1.0 unless the name clears the agreement / MoS /
+        # history floors, so the loop's `> -1.0` filter selects exactly the qualifiers.
+        "convergence": ("consensus_mos", "consensus_fv"),
     }
 
     methodology_metrics = {
@@ -5740,7 +5744,72 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "graham_revised":      "graham_revised_mos",
         "acquirers_multiple":  "acquirers_multiple_mos",
         "iv15_deep_value":     "iv15_deep_value_mos",
+        "convergence":         "consensus_mos",
     }
+
+    # ── Convergence basket (10th source, June 2026): cross-method valuation agreement ──
+    # The 9 single-method baskets reward a name with ONE outsized MoS (e.g. KSS ~80% on
+    # DCF alone but only ~12% on the cross-method consensus). The convergence basket
+    # instead rewards names where INDEPENDENT methods CLUSTER on a fair value — a far
+    # more robust signal even at moderate MoS ("20–40% across the board" beats
+    # "80% on one"). For each name we gather up to 11 fair-value estimates:
+    #   • the 6 absolute-method FVs (DCF, R&D-cap DCF, owner-earnings, EPV, Graham, IV15)
+    #   • Buffett intrinsic (buffett_fair_value)
+    #   • analyst consensus price target (target)
+    #   • 3 derived from the multiple-method MoS: price × (1 + MoS)
+    # consensus = median of the estimates; agreement = fraction within ±25% of it.
+    # A name qualifies (consensus_mos set; else -1.0 so the basket loop's `> -1.0`
+    # filter drops it) when ≥6 estimates exist, agreement ≥ 0.60, consensus MoS ≥ 15%,
+    # and years_history ≥ 5 (the consensus leans on earnings-based FVs that need history).
+    def _conv_median(xs):
+        ys = sorted(xs); n = len(ys); m = n // 2
+        return ys[m] if (n % 2) else (ys[m - 1] + ys[m]) / 2.0
+    _CONV_FV_FIELDS = ("dcf_value", "rd_capitalized_dcf", "owner_earnings",
+                       "epv_value", "graham_revised", "iv15_deep_value", "buffett_fair_value")
+    _CONV_DERIVE_MOS = ("acquirers_multiple_mos", "earnings_yield_gap_mos", "ev_gross_profit_mos")
+    CONV_AGREE_FLOOR, CONV_MOS_FLOOR, CONV_BAND, CONV_MIN_VOTES, CONV_SCORE_CAP = 0.60, 0.15, 0.25, 6, 0.50
+    for s in all_results:
+        s.consensus_fv = 0.0
+        s.consensus_mos = -1.0
+        s._conv_score = -1.0
+        s._conv_agree = 0.0
+        s._conv_votes = 0
+        try:
+            p = s.price or 0.0
+            if p <= 0:
+                continue
+            ests = []
+            for f in _CONV_FV_FIELDS:
+                v = getattr(s, f, 0.0) or 0.0
+                if v > 0:
+                    ests.append(float(v))
+            t = getattr(s, "target", 0.0) or 0.0          # analyst consensus price target
+            if t > 0:
+                ests.append(float(t))
+            for mf in _CONV_DERIVE_MOS:
+                mv = getattr(s, mf, -1.0)
+                if mv is not None and mv > -1.0:
+                    ests.append(p * (1.0 + mv))
+            if len(ests) < CONV_MIN_VOTES:
+                continue
+            med = _conv_median(ests)
+            if med <= 0:
+                continue
+            agree = sum(1 for v in ests if abs(v - med) / med <= CONV_BAND) / len(ests)
+            mos = (med - p) / p
+            s.consensus_fv = round(med, 4)
+            s._conv_agree = round(agree, 4)
+            s._conv_votes = len(ests)
+            if (agree >= CONV_AGREE_FLOOR and mos >= CONV_MOS_FLOOR
+                    and getattr(s, "years_history", 99) >= 5):
+                s.consensus_mos = mos
+                # Ranking score (scheme C): reward cross-method agreement (squared)
+                # while capping MoS at CONV_SCORE_CAP so a lone extreme MoS can't buy a
+                # top slot on magnitude alone. The displayed MoS and fair_value stay the
+                # real consensus values — this score only orders the basket.
+                s._conv_score = min(mos, CONV_SCORE_CAP) * agree * agree
+        except Exception:
+            pass
 
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     methodology_picks = {}
@@ -5807,7 +5876,12 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                         mos_val = min(0.50, mos_val)
                         s.iv15_deep_value_mos = min(0.50, s.iv15_deep_value_mos)
 
-                if passes_leverage_gate(s) and (s.piotroski or 0) >= 3:
+                # convergence (10th basket) bakes its own gating into consensus_mos
+                # (-1.0 when it fails); multi-method agreement is a stronger quality
+                # signal than the crude leverage/Piotroski floors, and the net-debt/
+                # EBITDA gate misreads insurers (float ≠ operating debt) — would falsely
+                # drop the exact financials this basket is meant to surface.
+                if key == "convergence" or (passes_leverage_gate(s) and (s.piotroski or 0) >= 3):
                     # G1: for earnings-based methods, rank PEAK_CYCLE names on
                     # their NORMALIZED MOS so peak earnings can't buy a top slot.
                     eff_mos = mos_val
@@ -5818,6 +5892,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                             eff_mos = max(-1.0, min(0.95, 1.0 - (1.0 - mos_val) / ns))
                     boost = _hyst_boost(key) if s.symbol in incumbent_syms else 0.0
                     s._temp_mos = eff_mos + boost
+                    if key == "convergence":
+                        # rank by the composite agreement score (set in the consensus
+                        # block above), not raw MoS; MoS-unit hysteresis doesn't apply.
+                        s._temp_mos = getattr(s, "_conv_score", mos_val)
                     candidates.append(s)
                     
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
@@ -5918,6 +5996,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 "entry_date": entry_d,
                 "entry_metric": round(entry_m, 4),
                 "fair_value": round(fv_val, 4),
+                # cross-method consensus context — the convergence basket's core signal,
+                # and informative for every basket (how many methods agree, how tightly):
+                "consensus_agreement": getattr(s, "_conv_agree", None),
+                "consensus_votes": getattr(s, "_conv_votes", None),
                 "sector": s.sector or "Unknown",
                 # G1 — travels into methodology_picks.json → debate → Director:
                 "cycle_flag": getattr(s, "cycle_flag", "NORMAL"),

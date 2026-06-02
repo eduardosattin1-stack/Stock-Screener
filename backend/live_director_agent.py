@@ -352,12 +352,19 @@ def apply_contract_rules(cand: dict, conviction: int) -> Optional[int]:
     if feg <= -0.10:
         log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3a: forward_eps_growth={feg} <= -0.10)")
         return None
-    # G3b: iv15 no-growth-IV disagreement vetoes ONLY names a deep-value/no-growth
-    # methodology surfaced. For growth-sourced names this flag is expected False, so it
-    # must not gate them out (was nuking the entire apex once the field got populated).
+    # G3b: iv15 no-growth-IV disagreement. Originally vetoed ANY name a no-growth method
+    # surfaced — but that nuked growing, cross-method-supported names (HRMY, DXC) whose
+    # iv15_nogrowth_agreement=False is the expected/normal case. Tightened (June 2026):
+    # veto only when the no-growth disagreement is the WHOLE story — the name is PURELY
+    # no-growth-sourced (no growth/convergence cross-support) OR is actually declining
+    # (forward growth < 0). A growing name with support from a growth or convergence
+    # method is trusted — the same cross-method principle as the convergence basket.
     if (not iv_agree) and any(m in _NO_GROWTH_METHODS for m in source_meths):
-        log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3b: iv15_nogrowth_agreement=False on deep-value source {source_meths})")
-        return None
+        has_growth_support = any(m not in _NO_GROWTH_METHODS for m in source_meths)
+        if (not has_growth_support) or (feg < 0.0):
+            log.info(f"  [Contract Gate] {symbol} EXCLUDED (G3b: no-growth-sourced + iv15 disagreement; growth_support={has_growth_support}, feg={feg})")
+            return None
+        log.info(f"  [Contract Gate] {symbol} G3b softened — kept (growth/cross-method support, feg={feg}); iv15 disagreement not disqualifying")
     if all_inapplicable:
         log.info(f"  [Contract Gate] {symbol} EXCLUDED (G4: all source methodologies inapplicable: {meth_app_dict})")
         return None
@@ -420,6 +427,10 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
                     "signal_type": pick.get("signal_type", "none"),
                     "mos": {meth_key: pick.get("mos", "N/A")},
                     "fair_value": {meth_key: pick.get("fair_value", "N/A")},
+                    # convergence (10th basket) cross-method agreement — symbol-constant,
+                    # so first-seen capture is correct (no per-basket merge needed):
+                    "consensus_agreement": pick.get("consensus_agreement"),
+                    "consensus_votes": pick.get("consensus_votes"),
                     # CONTRACT fields from screener:
                     "cycle_flag": pick.get("cycle_flag", "NORMAL"),
                     "peak_margin_sigma": pick.get("peak_margin_sigma", 0.0),
@@ -505,7 +516,9 @@ def run_director_allocation(tier1_baskets: dict, dry_run: bool = False,
             f"Sector: {c.get('sector','?')} | Signal: {c.get('signal_type','none')} | "
             f"Prior debate conviction: {c.get('conviction','?')}/5 | "
             f"Trajectory: {c.get('trajectory') or '?'} | Price: {c.get('price','?')}\n"
-            f"Surfaced by {len(c.get('source_methodologies',[]))} of 9 methodologies — VALUATION MATRIX "
+            f"Surfaced by {len(c.get('source_methodologies',[]))} of 10 methodologies "
+            f"(cross-method consensus: {(c.get('consensus_agreement') or 0):.0%} of "
+            f"{c.get('consensus_votes') or 0} valuation estimates cluster on fair value) — VALUATION MATRIX "
             f"(judge whether these fair values are realistic vs price & analysts):\n"
             f"{_fmt_valuation(c)}\n"
             f"Risk context: cycle_flag={c.get('cycle_flag','NORMAL')}, structural_break={c.get('structural_break',False)}, "
