@@ -1409,21 +1409,24 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
 # ---------------------------------------------------------------------------
 # Long-call arm: leg picking and single-leg refetch (Python ThetaData only)
 # ---------------------------------------------------------------------------
-# Touch-payoff model: the model assumes the underlying touches barrier_price
-# within the window with probability p_barrier (= P20 for the regime). At
-# touch, the leg's payoff is max(0, barrier_price - strike) × 100. The
-# model fair value is p_barrier × that payoff. Edge = fair_value − ask × 100,
-# i.e. positive when the market underprices the touch-based payoff.
+# Touch-payoff model (v2, Jun 2026): the long-call leg is bought and held until the
+# underlying TOUCHES barrier_price, then sold. Conditional on that touch the leg is
+# worth at least its intrinsic value max(0, barrier_price - strike) * 100 (residual
+# time value ignored - a conservative floor). Net touch P&L = intrinsic - ask * 100.
+# We select the cheapest strike (most leverage) that still clears a non-negative net
+# touch P&L - i.e. the leg profits when the thesis (the touch) plays out.
 
-def _model_fair_value_long_call(strike: float, barrier_price: float, p_barrier: float) -> float:
-    payoff = max(0.0, barrier_price - strike) * 100.0
-    return p_barrier * payoff
+def _model_fair_value_long_call(strike: float, barrier_price: float) -> float:
+    """Gross value of the leg AT the barrier touch = intrinsic * 100 (residual time
+    value ignored - conservative). Net touch P&L = this - ask * 100."""
+    return max(0.0, barrier_price - strike) * 100.0
 
 
 def _pick_best_long_leg(exp_df, spot: float, barrier_price: float,
                          p_barrier: float, strike_col: str = 'strike') -> Optional[dict]:
-    """From an expiration's option rows, pick the single long call that
-    maximizes edge_dollars under the touch-payoff model.
+    """From an expiration's option rows, pick the single long call to track: the
+    CHEAPEST strike (highest strike = lowest premium = most leverage) that is still
+    profitable when sold at the barrier touch (net touch P&L >= 0), else the least-bad.
 
     Strike range: [spot × 0.95, barrier_price]. Above barrier, model fair
     value is 0 — no leg with strike > barrier can win on edge. Below 0.95×spot
@@ -1441,8 +1444,9 @@ def _pick_best_long_leg(exp_df, spot: float, barrier_price: float,
     if candidates.empty:
         return None
 
-    best = None
-    best_edge = -1e18
+    best_profitable = None    # cheapest leg (highest strike) with net touch P&L >= 0
+    best_fallback = None       # least-bad leg (max net touch P&L) if none clear zero
+    best_fallback_edge = -1e18
     for _, row in candidates.iterrows():
         strike = float(row[strike_col])
         ask = float(row.get('ask', 0) or 0)
@@ -1456,25 +1460,30 @@ def _pick_best_long_leg(exp_df, spot: float, barrier_price: float,
             if bid <= 0:
                 bid = close * 0.97
         mid = (ask + bid) / 2.0 if bid > 0 else ask
-        fair_value = _model_fair_value_long_call(strike, barrier_price, p_barrier)
-        edge_dollars = fair_value - ask * 100.0
-        if edge_dollars > best_edge:
-            best_edge = edge_dollars
-            best = {
-                "strike": strike,
-                "ask": round(ask, 2),
-                "bid": round(bid, 2),
-                "mid": round(mid, 2),
-                "iv": round(float(row.get('implied_vol', 0) or 0), 4),
-                "delta": round(float(row.get('delta', 0) or 0), 4),
-                "gamma": round(float(row.get('gamma', 0) or 0), 4),
-                "theta": round(float(row.get('theta', 0) or 0), 4),
-                "vega": round(float(row.get('vega', 0) or 0), 4),
-                "model_fair_value": round(fair_value, 2),
-                "edge_dollars": round(edge_dollars, 2),
-                "edge_pct": round(edge_dollars / (ask * 100.0), 4) if ask > 0 else None,
-            }
-    return best
+        fair_value = _model_fair_value_long_call(strike, barrier_price)   # gross touch value
+        edge_dollars = fair_value - ask * 100.0                           # net touch P&L
+        leg = {
+            "strike": strike,
+            "ask": round(ask, 2),
+            "bid": round(bid, 2),
+            "mid": round(mid, 2),
+            "iv": round(float(row.get('implied_vol', 0) or 0), 4),
+            "delta": round(float(row.get('delta', 0) or 0), 4),
+            "gamma": round(float(row.get('gamma', 0) or 0), 4),
+            "theta": round(float(row.get('theta', 0) or 0), 4),
+            "vega": round(float(row.get('vega', 0) or 0), 4),
+            "model_fair_value": round(fair_value, 2),
+            "edge_dollars": round(edge_dollars, 2),
+            "edge_pct": round(edge_dollars / (ask * 100.0), 4) if ask > 0 else None,
+        }
+        # Objective: cheapest strike that still profits at the touch = the HIGHEST
+        # strike whose net touch P&L is non-negative (lowest premium, most leverage).
+        if edge_dollars >= 0 and (best_profitable is None or strike > best_profitable["strike"]):
+            best_profitable = leg
+        if edge_dollars > best_fallback_edge:
+            best_fallback_edge = edge_dollars
+            best_fallback = leg
+    return best_profitable or best_fallback
 
 
 def _enrich_stocks_with_long_call_legs(stocks: list[dict], today_str: str, regime: Regime) -> None:

@@ -42,7 +42,7 @@ DTE_TOLERANCE = 999  # Relaxed to always match closest expiration
 TARGET_LONG_PCT = 0.05
 TARGET_SHORT_PCT = 0.20
 
-IV_HISTORY_KEEP_DAYS = 90
+IV_HISTORY_KEEP_DAYS = 365  # 52-week IV-rank window
 MIN_IV_SAMPLES_FOR_RANK = 20
 
 # ---------------------------------------------------------------------------
@@ -212,6 +212,57 @@ def _gcs_write(path: str, data) -> bool:
         return r.status_code in (200, 201)
     except Exception:
         return False
+
+
+def update_iv_history(symbol: str, iv: float, today_str: Optional[str] = None) -> bool:
+    """Append today's ATM IV to the symbol's GCS history, trimmed to IV_HISTORY_KEEP_DAYS.
+    Ported from tradier_options so IV rank works under the Massive/ThetaData path. The
+    history (options/iv_history/{SYMBOL}.json) is seeded from the thetadata parquet cache
+    by bootstrap_iv_history.py, then extended one sample per nightly scan."""
+    if iv is None or iv <= 0:
+        return False
+    today_str = today_str or datetime.now().strftime("%Y-%m-%d")
+    path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
+    history = _gcs_read(path, [])
+    if not isinstance(history, list):
+        history = []
+    # Dedup: replace today's entry if it already exists
+    today_idx = next((i for i, row in enumerate(history)
+                      if isinstance(row, list) and len(row) >= 1 and row[0] == today_str), -1)
+    new_row = [today_str, round(iv, 4)]
+    if today_idx >= 0:
+        history[today_idx] = new_row
+    else:
+        history.append(new_row)
+    cutoff = (datetime.now() - timedelta(days=IV_HISTORY_KEEP_DAYS)).strftime("%Y-%m-%d")
+    history = [row for row in history
+               if isinstance(row, list) and len(row) >= 1 and row[0] >= cutoff]
+    return _gcs_write(path, history)
+
+
+def compute_iv_rank(symbol: str) -> Optional[dict]:
+    """IV rank = (current_iv - window_min) / (window_max - window_min) * 100 over the
+    retained history. Returns None until at least MIN_IV_SAMPLES_FOR_RANK samples exist."""
+    path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
+    history = _gcs_read(path, [])
+    if not isinstance(history, list) or len(history) < MIN_IV_SAMPLES_FOR_RANK:
+        return None
+    ivs = [float(row[1]) for row in history
+           if isinstance(row, list) and len(row) >= 2 and row[1]]
+    if len(ivs) < MIN_IV_SAMPLES_FOR_RANK:
+        return None
+    current = ivs[-1]
+    lo, hi = min(ivs), max(ivs)
+    if hi == lo:
+        return {"iv_rank": 50.0, "current_iv": current, "iv_min": lo, "iv_max": hi, "samples": len(ivs)}
+    rank = (current - lo) / (hi - lo) * 100.0
+    return {
+        "iv_rank": round(rank, 1),
+        "current_iv": round(current, 4),
+        "iv_min": round(lo, 4),
+        "iv_max": round(hi, 4),
+        "samples": len(ivs),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -739,8 +790,17 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if iv_today:
         result["iv_current"] = round(iv_today, 4)
         
-    result["iv_rank"] = None
-    result["iv_samples"] = 0
+    # IV rank from the trailing thetadata-seeded history (no extra API call — reuses the
+    # ATM IV just extracted). Append today's sample, then rank current vs the window.
+    if iv_today:
+        update_iv_history(symbol, iv_today)
+    iv_data = compute_iv_rank(symbol)
+    if iv_data:
+        result["iv_rank"] = iv_data["iv_rank"]
+        result["iv_samples"] = iv_data["samples"]
+    else:
+        result["iv_rank"] = None
+        result["iv_samples"] = 0
 
     # Step 2: P/C ratios (volume + OI) — uses ALL contracts, no extra call
     pc_data = _compute_pc_ratios(contracts)
