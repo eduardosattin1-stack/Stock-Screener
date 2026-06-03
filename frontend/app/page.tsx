@@ -2110,6 +2110,8 @@ export default function Dashboard(){
 
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
 
+  const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
+
   // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
   // in place (cheaper than threading enriched copies through 10+ render sites),
   // so we bump this counter on success to force a re-render off the new values.
@@ -2745,13 +2747,25 @@ export default function Dashboard(){
                                 </div>
                               )}
                             </div>
-                            {pick.consensus_delta && (
-                              <div style={{ marginTop: 6, fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}
-                                   title={`Forcing Function: ${pick.forcing_function || "N/A"}`}>
-                                <span style={{ color: "var(--amber)", fontWeight: 600 }}>Δ </span>
-                                {pick.consensus_delta.slice(0, 120)}{pick.consensus_delta.length > 120 ? "..." : ""}
-                              </div>
-                            )}
+                            {(pick.director_rationale || pick.consensus_delta) && (() => {
+                              const _txt = pick.director_rationale || pick.consensus_delta;
+                              const _exp = expandedApex.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 6, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>PM </span>
+                                    {_txt}
+                                  </div>
+                                  {_txt.length > 220 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedApex(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
                           </div>
                         );
                       })}
@@ -4770,7 +4784,7 @@ export default function Dashboard(){
 
         </div>
 
-      ) : (
+      ) : viewMode === "feed" ? (
 
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(320px, 1fr))",gap:16}}>
 
@@ -4816,7 +4830,7 @@ export default function Dashboard(){
 
         </div>
 
-      )}
+      ) : null}
 
       <div style={{textAlign:"center",marginTop:14,fontSize:10,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
 
