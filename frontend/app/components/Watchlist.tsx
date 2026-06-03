@@ -9,7 +9,7 @@ export interface WatchlistBasket {
   symbols: string[];
 }
 
-export function Watchlist() {
+export function Watchlist({ embedded = false }: { embedded?: boolean } = {}) {
   const [baskets, setBaskets] = useState<WatchlistBasket[]>([]);
   const [activeBasketId, setActiveBasketId] = useState<string | null>(null);
   const [quotes, setQuotes] = useState<Record<string, { price: number; change: number; changesPercentage: number }>>({});
@@ -106,7 +106,7 @@ export function Watchlist() {
   if (!activeBasket) return null;
 
   return (
-    <div style={{ width: 340, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", height: "100vh", position: "sticky", top: 0, display: "flex", flexDirection: "column", fontFamily: "var(--font-sans)", zIndex: 40 }}>
+    <div style={{ ...(embedded ? {} : { width: 340, borderLeft: "1px solid var(--border)", height: "100vh", position: "sticky", top: 0, zIndex: 40 }), background: "var(--bg-surface)", display: "flex", flexDirection: "column", fontFamily: "var(--font-sans)" }}>
       {/* Header */}
       <div style={{ padding: "16px", borderBottom: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
         <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: "var(--text)" }}>
@@ -164,7 +164,7 @@ export function Watchlist() {
       </div>
 
       {/* Symbols List */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div style={embedded ? undefined : { flex: 1, overflowY: "auto" }}>
         {activeBasket.symbols.length === 0 ? (
           <div style={{ padding: 32, textAlign: "center", color: "var(--text-muted)", fontSize: 12 }}>
             This list is empty. Add symbols above.
