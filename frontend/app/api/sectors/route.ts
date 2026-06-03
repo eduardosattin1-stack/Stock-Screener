@@ -83,9 +83,10 @@ export async function GET() {
     const universe = [...INDICES, ...SECTORS, ...THEMATIC];
     const symbols = universe.map((u) => u.symbol);
 
-    const [quoteRows, ratesRaw, ...changes] = await Promise.all([
-      fmpGet("batch-quote", { symbols: [...symbols, "^VIX"].join(",") }, 30),
+    const [quoteRows, ratesRaw, gdpRaw, ...changes] = await Promise.all([
+      fmpGet("batch-quote", { symbols: [...symbols, "^VIX", "^W5000"].join(",") }, 30),
       fmpGet("treasury-rates", {}, 300),
+      fmpGet("economic-indicators", { name: "GDP" }, 86400),
       ...universe.map((u) => changeFor(u).catch(() => ({ ytd: null, year: null }))),
     ]);
 
@@ -110,6 +111,10 @@ export async function GET() {
     const vix = vixQ && Number.isFinite(Number(vixQ.price)) ? Number(vixQ.price) : null;
     const vixChange = vixQ && Number.isFinite(Number(vixQ.changePercentage)) ? Number(vixQ.changePercentage) : null;
     const yield10 = Number(ratesRaw?.[0]?.year10);
+    // Buffett indicator (proxy): Wilshire 5000 total-market index / nominal GDP × 100.
+    const wPrice = Number(qmap["^W5000"]?.price);
+    const gdp = Number(gdpRaw?.[0]?.value);
+    const buffett = Number.isFinite(wPrice) && Number.isFinite(gdp) && gdp > 0 ? Math.round((wPrice / gdp) * 100) : null;
 
     return NextResponse.json({
       indices: rows.slice(0, n),
@@ -119,6 +124,7 @@ export async function GET() {
         vix: vix != null ? Math.round(vix * 100) / 100 : null,
         vixChange: vixChange != null ? Math.round(vixChange * 100) / 100 : null,
         yield10: Number.isFinite(yield10) ? yield10 : null,
+        buffett,
       },
       asOf: ratesRaw?.[0]?.date ?? null,
     });

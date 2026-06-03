@@ -9,6 +9,7 @@ import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap
 import { Watchlist } from "./components/Watchlist";
 
 import { SpeculairTracker } from "./components/SpeculairTracker";
+import ChartModal from "./ChartModal";
 
 import { StockCard } from "./components/StockCard";
 
@@ -568,7 +569,7 @@ function addToWatchlist(sym: string) {
 // Generic live performance card (indices, GICS sectors, thematic ETFs).
 // Shows live price + today's %, flashes on tick. ETF cards (holdingsSymbol set)
 // toggle open to their top-10 holdings (lazy-fetched) with live day-%.
-function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, compact, onRemove }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string; holdingsSymbol?: string; compact?: boolean; onRemove?: () => void }) {
+function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, compact, onRemove, onChart }: { title: string; price: number | null; day: number | null; ytd: number | null; year: number | null; accent?: string; note?: string; holdingsSymbol?: string; compact?: boolean; onRemove?: () => void; onChart?: () => void }) {
   const prev = useRef<number | null>(null);
   const [flash, setFlash] = useState<"up" | "down" | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -603,13 +604,13 @@ function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, 
     ? { pad: "8px 12px", radius: 10, hMb: 3, title: 12, dot: 8, price: 15, day: 11, pMb: 5, lbl: 8, val: 11 }
     : { pad: "16px 20px", radius: 12, hMb: 8, title: 15, dot: 9, price: 20, day: 13, pMb: 10, lbl: 10, val: 13 };
   return (
-    <div style={{ background: bg, border: "1px solid var(--border)", borderRadius: z.radius, padding: z.pad, boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease" }}>
+    <div onClick={onChart} title={onChart ? "Open chart" : undefined} style={{ background: bg, border: "1px solid var(--border)", borderRadius: z.radius, padding: z.pad, boxShadow: "var(--shadow-sm)", transition: "background 0.6s ease", cursor: onChart ? "pointer" : "default" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: z.hMb }}>
         <div style={{ fontWeight: 800, fontSize: z.title, fontFamily: "var(--font-sans)", color: "var(--text)" }}>{title}</div>
         {onRemove ? (
-          <button onClick={onRemove} title="Remove from radar" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 14, lineHeight: 1, fontFamily: "var(--font-mono)" }}>×</button>
+          <button onClick={(e) => { e.stopPropagation(); onRemove?.(); }} title="Remove from radar" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 14, lineHeight: 1, fontFamily: "var(--font-mono)" }}>×</button>
         ) : holdingsSymbol ? (
-          <button onClick={() => setExpanded((e) => !e)} title={expanded ? "Hide holdings" : "Show top holdings"} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 13, lineHeight: 1, fontFamily: "var(--font-mono)" }}>{expanded ? "▾" : "▸"}</button>
+          <button onClick={(e) => { e.stopPropagation(); setExpanded((x) => !x); }} title={expanded ? "Hide holdings" : "Show top holdings"} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", padding: 0, fontSize: 13, lineHeight: 1, fontFamily: "var(--font-mono)" }}>{expanded ? "▾" : "▸"}</button>
         ) : accent ? (
           <span style={{ height: z.dot, width: z.dot, borderRadius: "50%", background: accent }}></span>
         ) : null}
@@ -630,7 +631,7 @@ function PerfCard({ title, price, day, ytd, year, accent, note, holdingsSymbol, 
       </div>
       {note ? <div style={{ marginTop: 8, fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>{note}</div> : null}
       {expanded ? (
-        <div style={{ marginTop: 10, borderTop: "1px solid var(--border)", paddingTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 10, borderTop: "1px solid var(--border)", paddingTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
           {holdings == null ? (
             <div style={{ fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>Loading holdings…</div>
           ) : holdings.length === 0 ? (
@@ -1972,6 +1973,7 @@ export default function Dashboard(){
   const [radarSymbols, setRadarSymbols] = useState<string[] | null>(null);
   const [radarData, setRadarData] = useState<Record<string, { name: string; price: number | null; day: number | null; ytd: number | null; year: number | null }>>({});
   const [radarInput, setRadarInput] = useState("");
+  const [chartCard, setChartCard] = useState<{ symbol: string; name: string; price: number | null; day: number | null } | null>(null);
   const { user } = useAuth();
 
 
@@ -3154,11 +3156,14 @@ export default function Dashboard(){
 
               }
 
-              // Also check tracking data directly
+              // Also check tracking data directly (skip a literal 0 so the
+              // price-based fallback below can still surface a live number)
 
-              if (trackingData?.methodologies?.[shortKey]?.ytd_return !== undefined) {
+              const trackedYtd = trackingData?.methodologies?.[shortKey]?.ytd_return;
 
-                return trackingData.methodologies[shortKey].ytd_return;
+              if (trackedYtd !== undefined && trackedYtd !== 0) {
+
+                return trackedYtd;
 
               }
 
@@ -4337,9 +4342,10 @@ export default function Dashboard(){
             <TrackRecordCard loaded={portfolioPositions !== null} value={trackRecord.totalValue} pnl={trackRecord.pnl} pnlPct={trackRecord.pnlPct} positions={trackRecord.positions} winners={trackRecord.winners} losers={trackRecord.losers} />
             {(radarSymbols || []).map((sym) => {
               const q = radarData[sym];
-              return <PerfCard key={sym} title={(q?.name || sym).slice(0, 18)} note={sym} price={q?.price ?? null} day={q?.day ?? null} ytd={q?.ytd ?? null} year={q?.year ?? null} compact onRemove={() => removeRadar(sym)} />;
+              return <PerfCard key={sym} title={(q?.name || sym).slice(0, 18)} note={sym} price={q?.price ?? null} day={q?.day ?? null} ytd={q?.ytd ?? null} year={q?.year ?? null} compact onRemove={() => removeRadar(sym)} onChart={() => setChartCard({ symbol: sym, name: q?.name || sym, price: q?.price ?? null, day: q?.day ?? null })} />;
             })}
           </div>
+          {chartCard && <ChartModal symbol={chartCard.symbol} name={chartCard.name} livePrice={chartCard.price} liveDay={chartCard.day} onClose={() => setChartCard(null)} />}
           {/* Radar customization: free-text add + preset chips (per-user, saved to Firestore) */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", marginBottom: 16 }}>
             <input value={radarInput} onChange={(e) => setRadarInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addRadar(radarInput); }} placeholder="+ add symbol (AAPL, ^VIX, GLD…)" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 8px", color: "var(--text)", fontFamily: "var(--font-mono)", fontSize: 11, width: 210 }} />
@@ -4739,7 +4745,7 @@ export default function Dashboard(){
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {[...sectorData.sectors].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
-                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} />
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} onChart={() => setChartCard({ symbol: c.symbol, name: c.name, price: c.price, day: c.day })} />
                 ))}
               </div>
             )}
@@ -4754,7 +4760,7 @@ export default function Dashboard(){
             {sectorData && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {[...sectorData.thematic].sort((a, b) => (b.ytd ?? -999) - (a.ytd ?? -999)).map((c) => (
-                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} />
+                  <PerfCard key={c.symbol} title={c.name} price={c.price} day={c.day} ytd={c.ytd} year={c.year} note={c.symbol} holdingsSymbol={c.symbol} onChart={() => setChartCard({ symbol: c.symbol, name: c.name, price: c.price, day: c.day })} />
                 ))}
               </div>
             )}
