@@ -1428,17 +1428,19 @@ def _pick_best_long_leg(exp_df, spot: float, barrier_price: float,
     CHEAPEST strike (highest strike = lowest premium = most leverage) that is still
     profitable when sold at the barrier touch (net touch P&L >= 0), else the least-bad.
 
-    Strike range: [spot × 0.95, barrier_price]. Above barrier, model fair
-    value is 0 — no leg with strike > barrier can win on edge. Below 0.95×spot
-    is deep ITM with no leverage edge for a touch trade.
+    Strike range: [spot × 0.70, barrier_price]. Above the barrier, intrinsic at
+    touch is 0 — can't win. The floor is 0.70×spot (was 0.95): for high-IV names
+    the cheapest profitable-at-touch strike sits deep ITM, below 0.95×spot, so the
+    old floor forced a guaranteed-loss near-money leg. The objective still prefers
+    the highest (cheapest / most leverage) profitable strike within the window.
 
     Returns a dict with strike, ask, bid, mid, iv, greeks, model_fair_value,
     edge_dollars, edge_pct, or None if no leg qualifies.
     """
     if exp_df is None or exp_df.empty:
         return None
-    lo = spot * 0.95
-    hi = barrier_price
+    lo = spot * 0.70   # was 0.95: for high-IV names no near-money strike is profitable
+    hi = barrier_price # at touch (all time value), so the profitable leg sits deeper ITM
     candidates = exp_df[(exp_df[strike_col].astype(float) >= lo) &
                          (exp_df[strike_col].astype(float) <= hi)]
     if candidates.empty:
