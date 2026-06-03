@@ -182,8 +182,10 @@ DO NOT re-derive the per-stock forensic work — your team already did it. Your 
    - Re-score held names with the latest dossier, but you are deciding HOLD vs SELL — they keep their original entry.
    Bias toward LOW turnover: a great business you already own beats a marginally-better new one.
 
+6. FUNDAMENTAL-MOMENTUM SLEEVE (distinct lens). Some candidates are surfaced by the FUNDAMENTAL_MOMENTUM basket (check source_methodologies) — physical hard-tech growth leaders (AI/semiconductors, nuclear/SMR, robotics, rare-earth, defence, electrification) screened on growth + acceleration + analyst-revision velocity + quality (ROIC), NOT margin of safety. The intrinsic models CANNOT price their growth, so they will show little or NEGATIVE MoS in the valuation matrix — DO NOT penalise them for that; the value lens does not apply. Judge them instead on: (a) is the growth real, accelerating, and durable; (b) is the priced-in expectation BEATABLE — reverse-DCF: what CAGR does the multiple imply, and is it conservative versus the trajectory; (c) is the analyst-revision trend up. They are a distinct growth sleeve competing on growth-asymmetry, not cheapness. Apply the same TIMING/MACRO discipline.
+
 Hard vetoes to apply during your internal cull:
-- "Priced In": kill trades the street already models with an expanded multiple.
+- "Priced In": kill trades the street already models with an expanded multiple — EXCEPT for FUNDAMENTAL_MOMENTUM names, where an expanded multiple is expected: kill only if growth is NOT accelerating ahead of that multiple.
 - "Valley of Death": kill trades facing a cash-burn hump, maturity wall, or forced liquidation before the catalyst.
 - "Dead Money": kill trades whose forcing function is >6-9 months away.
 

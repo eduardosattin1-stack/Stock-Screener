@@ -5397,22 +5397,46 @@ def _save_tracking_state(tracking: dict, no_gcs: bool):
 def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                                    rebalance_date: str,
                                    stock_map: Optional[dict] = None):
-    """Append a rebalance record for each methodology and update YTD return.
+    """Update paper-tracking state for each methodology.
+
+    Rebalances are booked on a MONTHLY cadence — the first screener run of each
+    calendar month, plus the first run ever for a methodology. On every other
+    day the tracked book is frozen; daily runs only mark the open period to
+    market so the live YTD keeps moving with prices. This matches the ~monthly
+    PIT cadence the 2021-2025 baselines were replayed on, instead of churning
+    the 20-name book on every daily ranking wobble at the #20 boundary.
 
     Args:
         stock_map: {symbol: Stock} map from all scanned stocks (not just picks).
-                   Used for accurate exit price and exit metric lookup. If None,
-                   falls back to entry values for exited stocks.
+                   Provides current prices for YTD marks and accurate exit prices.
 
-    For each methodology:
-      1. Record the new portfolio (symbols + prices)
-      2. Identify entries (new stocks) and exits (removed stocks)
-      3. For exits: compute return vs entry price
-      4. Recompute YTD by chaining equal-weight period returns
+    On a rebalance day, for each methodology:
+      1. Close the prior period — fold its equal-weight return into realized_ytd
+      2. Identify entries (new) and exits (removed, with realized return)
+      3. Rebuild current_holdings, snapshotting period_start_price = today's price
+    Every run (rebalance or not):
+      4. Recompute the live ytd_return = realized periods chained with the open one
     """
     if "methodologies" not in tracking:
         tracking["methodologies"] = {}
 
+    # Current prices for YTD marks + exit pricing
+    price_map = {sym: s.price for sym, s in (stock_map or {}).items()}
+    reb_month = rebalance_date[:7]   # 'YYYY-MM'
+
+    methodology_metrics = {
+        "dcf_fcff":            "dcf_fcff_mos",
+        "earnings_yield_gap":  "earnings_yield_gap_mos",
+        "ev_gross_profit":     "ev_gross_profit_mos",
+        "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
+        "owner_earnings":      "owner_earnings_mos",
+        "epv":                 "epv_mos",
+        "graham_revised":      "graham_revised_mos",
+        "acquirers_multiple":  "acquirers_multiple_mos",
+        "iv15_deep_value":     "iv15_deep_value_mos"
+    }
+
+    rebalanced_keys = 0
     for key, meth_data in methodology_picks.items():
         picks = meth_data.get("picks", [])
         if key not in tracking["methodologies"]:
@@ -5421,167 +5445,154 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                 "current_holdings": [],
                 "all_exits_2026": [],
                 "ytd_return": 0.0,
+                "realized_ytd": 0.0,
                 "tracking_start": rebalance_date,
                 "rebalance_count": 0
             }
 
         meth_track = tracking["methodologies"][key]
-
-        methodology_metrics = {
-            "dcf_fcff":            "dcf_fcff_mos",
-            "earnings_yield_gap":  "earnings_yield_gap_mos",
-            "ev_gross_profit":     "ev_gross_profit_mos",
-            "rd_capitalized_dcf":  "rd_capitalized_dcf_mos",
-            "owner_earnings":      "owner_earnings_mos",
-            "epv":                 "epv_mos",
-            "graham_revised":      "graham_revised_mos",
-            "acquirers_multiple":  "acquirers_multiple_mos",
-            "iv15_deep_value":     "iv15_deep_value_mos"
-        }
+        meth_track.setdefault("realized_ytd", 0.0)
         metric_field = methodology_metrics.get(key, "mos")
 
-        # Skip if this rebalance date was already recorded
-        existing_dates = {r["date"] for r in meth_track.get("rebalances", [])}
+        # ── Monthly cadence gate ──
+        rebs = meth_track.get("rebalances", [])
+        existing_dates = {r["date"] for r in rebs}
+        last_reb_month = rebs[-1]["date"][:7] if rebs else None
+        is_rebalance_day = (not rebs) or (reb_month != last_reb_month)
         if rebalance_date in existing_dates:
-            log.debug(f"  {key}: rebalance {rebalance_date} already recorded, skipping")
-            continue
+            is_rebalance_day = False   # never double-book the same date
 
-        new_syms = {p["symbol"] for p in picks}
-        prev_holdings = {h["symbol"]: h for h in meth_track.get("current_holdings", [])}
-        prev_syms = set(prev_holdings.keys())
+        if is_rebalance_day and picks:
+            prev_holdings = {h["symbol"]: h for h in meth_track.get("current_holdings", [])}
+            prev_syms = set(prev_holdings.keys())
+            new_syms = {p["symbol"] for p in picks}
 
-        # Entries: stocks in new portfolio but not in previous
-        entries = []
-        for p in picks:
-            if p["symbol"] not in prev_syms:
-                entries.append({
-                    "symbol": p["symbol"],
-                    "price": p["price"],
-                    "date": rebalance_date,
-                    "entry_metric": p.get("entry_metric", p.get("mos", 0.0))
-                })
+            # 1. Close the prior period into realized_ytd (equal-weight, marked at
+            #    today's price for every name held during the period that closed).
+            #    Only when an in-year period exists — the first rebalance of a year
+            #    (tracking start or post-rollover) has no prior period to close, so
+            #    last year's return is never folded into the new year.
+            if rebs and prev_holdings:
+                period_rets = []
+                for sym, h in prev_holdings.items():
+                    psp = h.get("period_start_price") or h.get("entry_price")
+                    mark = price_map.get(sym)
+                    if psp and psp > 0 and mark:
+                        period_rets.append((mark - psp) / psp)
+                if period_rets:
+                    period_ret = sum(period_rets) / len(period_rets)
+                    meth_track["realized_ytd"] = round(
+                        (1.0 + meth_track["realized_ytd"]) * (1.0 + period_ret) - 1.0, 4)
 
-        # Exits: stocks in previous but not in new portfolio
-        exits = []
-        for sym, h in prev_holdings.items():
-            if sym not in new_syms:
-                # RC2 (May 2026): A real exit price MUST come from the live scan. In
-                # production every symbol is in the scan; if it isn't, the data is mock
-                # and we must NOT manufacture a 0% exit at the stale entry price — skip.
-                if not (stock_map and sym in stock_map):
-                    log.warning(f"  {key}: {sym} exited but absent from scan (mock data?) — exit not recorded")
-                    continue
-                exit_price = stock_map[sym].price
-                exit_metric = getattr(stock_map[sym], metric_field, 0.0)
-                entry_p = h.get("entry_price", exit_price)
-                entry_m = h.get("entry_metric", 0.0)
-                perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
-                exit_rec = {
-                    "symbol": sym,
-                    "entry_price": round(entry_p, 4),
-                    "entry_date": h.get("entry_date", ""),
-                    "entry_metric": round(entry_m, 4),
-                    "exit_price": round(exit_price, 4),
-                    "exit_date": rebalance_date,
-                    "exit_metric": round(exit_metric, 4),
-                    "return": round(perf, 4)
-                }
-                exits.append(exit_rec)
-                meth_track.setdefault("all_exits_2026", []).append(exit_rec)
+            # 2a. Entries: in new portfolio but not previously held
+            entries = []
+            for p in picks:
+                if p["symbol"] not in prev_syms:
+                    entries.append({
+                        "symbol": p["symbol"],
+                        "price": p["price"],
+                        "date": rebalance_date,
+                        "entry_metric": p.get("entry_metric", p.get("mos", 0.0))
+                    })
 
-        # Only record a rebalance if the portfolio actually changed
-        # (screener runs daily for price updates, but rebalance is organic)
-        if not entries and not exits:
-            log.debug(f"  {key}: portfolio unchanged on {rebalance_date}, no rebalance recorded")
-            continue
+            # 2b. Exits: previously held but not in new portfolio
+            exits = []
+            for sym, h in prev_holdings.items():
+                if sym not in new_syms:
+                    # RC2 (May 2026): a real exit price MUST come from the live scan.
+                    # If the name is absent the data is mock — do NOT fabricate a 0%
+                    # exit at the stale entry price; skip it.
+                    if sym not in price_map:
+                        log.warning(f"  {key}: {sym} exited but absent from scan (mock data?) — exit not recorded")
+                        continue
+                    exit_price = price_map[sym]
+                    exit_metric = getattr(stock_map[sym], metric_field, 0.0)
+                    entry_p = h.get("entry_price", exit_price)
+                    entry_m = h.get("entry_metric", 0.0)
+                    perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
+                    exit_rec = {
+                        "symbol": sym,
+                        "entry_price": round(entry_p, 4),
+                        "entry_date": h.get("entry_date", ""),
+                        "entry_metric": round(entry_m, 4),
+                        "exit_price": round(exit_price, 4),
+                        "exit_date": rebalance_date,
+                        "exit_metric": round(exit_metric, 4),
+                        "return": round(perf, 4)
+                    }
+                    exits.append(exit_rec)
+                    meth_track.setdefault("all_exits_2026", []).append(exit_rec)
 
-        # Build new current_holdings
-        new_holdings = []
-        count = len(picks)
-        weight = 1.0 / count if count > 0 else 0.0
-        for p in picks:
-            sym = p["symbol"]
-            if sym in prev_holdings:
-                # Carry forward entry price, date, and metric
-                new_holdings.append({
-                    "symbol": sym,
-                    "entry_price": prev_holdings[sym]["entry_price"],
-                    "entry_date": prev_holdings[sym]["entry_date"],
-                    "entry_metric": prev_holdings[sym].get("entry_metric", p.get("entry_metric", p.get("mos", 0.0))),
-                    "weight": round(weight, 4)
-                })
-            else:
-                new_holdings.append({
-                    "symbol": sym,
-                    "entry_price": round(p["price"], 4),
-                    "entry_date": rebalance_date,
-                    "entry_metric": round(p.get("entry_metric", p.get("mos", 0.0)), 4),
-                    "weight": round(weight, 4)
-                })
+            # 3. Rebuild holdings; snapshot period_start_price = today's price so
+            #    the next period's open mark and close chain from this rebalance.
+            new_holdings = []
+            count = len(picks)
+            weight = 1.0 / count if count > 0 else 0.0
+            for p in picks:
+                sym = p["symbol"]
+                start_price = round(p["price"], 4)
+                if sym in prev_holdings:
+                    # Carry forward original entry; re-base the period start price
+                    new_holdings.append({
+                        "symbol": sym,
+                        "entry_price": prev_holdings[sym]["entry_price"],
+                        "entry_date": prev_holdings[sym]["entry_date"],
+                        "entry_metric": prev_holdings[sym].get("entry_metric", p.get("entry_metric", p.get("mos", 0.0))),
+                        "period_start_price": start_price,
+                        "weight": round(weight, 4)
+                    })
+                else:
+                    new_holdings.append({
+                        "symbol": sym,
+                        "entry_price": start_price,
+                        "entry_date": rebalance_date,
+                        "entry_metric": round(p.get("entry_metric", p.get("mos", 0.0)), 4),
+                        "period_start_price": start_price,
+                        "weight": round(weight, 4)
+                    })
 
-        # Record rebalance
-        meth_track["rebalances"].append({
-            "date": rebalance_date,
-            "holdings": [p["symbol"] for p in picks],
-            "entries": entries,
-            "exits": exits
-        })
-        meth_track["current_holdings"] = new_holdings
-        meth_track["rebalance_count"] = len(meth_track["rebalances"])
+            meth_track["rebalances"].append({
+                "date": rebalance_date,
+                "holdings": [p["symbol"] for p in picks],
+                "entries": entries,
+                "exits": exits
+            })
+            meth_track["current_holdings"] = new_holdings
+            meth_track["rebalance_count"] = len(meth_track["rebalances"])
+            rebalanced_keys += 1
+
+        # 4. Always refresh the live YTD mark (open period since last rebalance).
+        meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map)
+
+    log.info(f"Tracking: {rebalanced_keys}/{len(methodology_picks)} methodologies "
+             f"rebalanced on {rebalance_date} (monthly cadence); YTD marks refreshed for all")
 
 
-        # Recompute YTD return by chaining period returns
-        # Each period: from rebalance[i] to rebalance[i+1]
-        # Period return = mean of (exit_or_current_price - entry_price) / entry_price
-        # for all holdings in that period
-        meth_track["ytd_return"] = _compute_ytd_return(meth_track)
+def _compute_ytd_return(meth_track: dict, price_map: Optional[dict] = None) -> float:
+    """Live YTD = realized return from closed periods compounded with the open one.
 
-    log.info(f"Tracking: appended rebalance {rebalance_date} for {len(methodology_picks)} methodologies")
+    ``realized_ytd`` chains the equal-weight return of every completed monthly
+    period (folded in at rebalance time by the caller). The open period is the
+    equal-weight mean of (current_price - period_start_price) / period_start_price
+    across the current holdings, using ``price_map`` for live prices. Older
+    holdings that predate the period_start_price field fall back to entry_price,
+    so a freshly-deployed book immediately reports its entry→current return.
+    """
+    realized = meth_track.get("realized_ytd", 0.0)
+    holdings = meth_track.get("current_holdings", [])
+    if not holdings:
+        return round(realized, 4)
 
+    price_map = price_map or {}
+    open_rets = []
+    for h in holdings:
+        psp = h.get("period_start_price") or h.get("entry_price")
+        cur = price_map.get(h["symbol"])
+        if psp and psp > 0 and cur:
+            open_rets.append((cur - psp) / psp)
+    open_ret = sum(open_rets) / len(open_rets) if open_rets else 0.0
 
-def _compute_ytd_return(meth_track: dict) -> float:
-    """Compute YTD return by chaining equal-weight period returns across rebalances."""
-    rebalances = meth_track.get("rebalances", [])
-    if len(rebalances) < 2:
-        return 0.0
-
-    cumulative = 1.0
-    for i in range(len(rebalances) - 1):
-        curr_reb = rebalances[i]
-        next_reb = rebalances[i + 1]
-
-        # Find holdings at rebalance[i] and their prices at rebalance[i+1]
-        curr_syms = set(curr_reb.get("holdings", []))
-        if not curr_syms:
-            continue
-
-        # Build price map from rebalance[i] entries/holdings
-        entry_prices = {}
-        for h in meth_track.get("current_holdings", []):
-            if h["symbol"] in curr_syms:
-                entry_prices[h["symbol"]] = h["entry_price"]
-        # Also check entries in this rebalance
-        for e in curr_reb.get("entries", []):
-            entry_prices[e["symbol"]] = e["price"]
-
-        # Get prices at next rebalance from exits and continuing holdings
-        next_prices = {}
-        for x in next_reb.get("exits", []):
-            next_prices[x["symbol"]] = x.get("exit_price", x.get("price", 0))
-        for e in next_reb.get("entries", []):
-            # Entries at next rebalance — these were already in the portfolio
-            # Their price at next_reb date is in the entries record
-            pass  # handled by holdings
-
-        # For simplicity, use exit records + the fact that continuing stocks
-        # have their next-rebalance price implicit in the rebalance data
-        # This is a rough approximation; the backfill script computes this
-        # more precisely using historical prices.
-
-    # For now, return 0.0 — the backfill script sets the accurate YTD
-    # and subsequent runs preserve it. Full chaining requires price lookups
-    # that the live screener doesn't have easily accessible.
-    return meth_track.get("ytd_return", 0.0)
+    return round((1.0 + realized) * (1.0 + open_ret) - 1.0, 4)
 
 
 def _rollover_tracking_year(tracking: dict, new_year: int):
@@ -5614,9 +5625,11 @@ def _rollover_tracking_year(tracking: dict, new_year: int):
         meth["rebalances"] = []
         meth["all_exits_2026"] = []
         meth["ytd_return"] = 0.0
+        meth["realized_ytd"] = 0.0
         meth["tracking_start"] = ""
         meth["rebalance_count"] = 0
-        # current_holdings carry forward as the starting portfolio
+        # current_holdings carry forward as the starting portfolio; their
+        # period_start_price is re-based on the first rebalance of the new year
 
     log.info(f"Rollover complete. Baseline now covers: {sorted(baseline.keys())}")
 
@@ -5732,6 +5745,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         # computed below and left at -1.0 unless the name clears the agreement / MoS /
         # history floors, so the loop's `> -1.0` filter selects exactly the qualifiers.
         "convergence": ("consensus_mos", "consensus_fv"),
+        # 11th basket (June 2026): fundamental momentum, physical hard-tech only. Screened
+        # on growth + acceleration + analyst-revision + quality (ROIC), NOT margin of safety.
+        # momentum_mos holds the composite score (−1.0 unless it clears the gates); fv = target.
+        "fundamental_momentum": ("momentum_mos", "momentum_fv"),
     }
 
     methodology_metrics = {
@@ -5745,6 +5762,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "acquirers_multiple":  "acquirers_multiple_mos",
         "iv15_deep_value":     "iv15_deep_value_mos",
         "convergence":         "consensus_mos",
+        "fundamental_momentum": "momentum_mos",
     }
 
     # ── Convergence basket (10th source, June 2026): cross-method valuation agreement ──
@@ -5808,6 +5826,58 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 # top slot on magnitude alone. The displayed MoS and fair_value stay the
                 # real consensus values — this score only orders the basket.
                 s._conv_score = min(mos, CONV_SCORE_CAP) * agree * agree
+        except Exception:
+            pass
+
+    # ── Fundamental Momentum basket (11th source, June 2026): physical hard-tech ─────────
+    # Intrinsic models can't price hypergrowth, so AI/datacenter, nuclear/SMR, robotics,
+    # rare-earth, defence and electrification leaders never surface in the value baskets
+    # even when their growth is real and accelerating. This basket screens those PHYSICAL
+    # hard-tech waves on FUNDAMENTAL momentum (Novy-Marx: earnings/revision momentum drives
+    # price momentum) — growth + 3yr-sustained + analyst-revision velocity + margin — gated
+    # by POSITIVE ROIC so it captures durable compounders, not pre-revenue speculation
+    # (which the gates drop, same as ALAB). Scope = curated hard-tech themes OR physical
+    # frontier industries (catches rare-earth/nuclear mis-tagged Commodities, networking
+    # hardware mis-tagged Broad Market); pure SaaS is intentionally excluded. momentum_mos
+    # holds the composite score (−1.0 if it fails the gates → dropped by the `> -1.0`
+    # filter); momentum_fv = analyst target. NOT a margin of safety — a distinct growth lens.
+    _FM_THEMES = {"AI & Semiconductors", "Electrification & Clean Energy",
+                  "Space & Defense", "Infrastructure & Industrials"}
+    _FM_KW = ("semiconductor", "aerospace", "defense", "defence", "uranium", "nuclear",
+              "rare earth", "robot", "computer hardware", "communication equipment",
+              "electrical equipment")
+    FM_GROWTH, FM_CAGR, FM_GM, FM_ROIC = 0.15, 0.10, 0.30, 0.0
+
+    def _fm_in_scope(s):
+        if (getattr(s, "theme", "") or "") in _FM_THEMES:
+            return True
+        ind = (getattr(s, "industry", "") or "").lower()
+        return any(kw in ind for kw in _FM_KW)
+
+    for s in all_results:
+        s.momentum_mos = -1.0
+        s.momentum_fv = 0.0
+        try:
+            p = s.price or 0.0
+            rev = getattr(s, "revenue_yoy", 0.0) or 0.0
+            gm = getattr(s, "gross_margin", 0.0) or 0.0
+            roic = getattr(s, "roic_avg", 0.0) or 0.0
+            cagr = getattr(s, "revenue_cagr_3y", 0.0) or 0.0
+            tgt = getattr(s, "target", 0.0) or 0.0
+            if p <= 0 or not _fm_in_scope(s):
+                continue
+            if not (rev >= FM_GROWTH and cagr >= FM_CAGR and gm >= FM_GM
+                    and roic >= FM_ROIC and tgt > 0):
+                continue
+            growth = min(rev, 0.60) / 0.60
+            sustained = min(cagr, 0.40) / 0.40
+            quality = min(roic, 0.40) / 0.40
+            revision = getattr(s, "pt_velocity_score", 0.0) or 0.0   # 0-1 analyst PT velocity
+            margin = min(gm, 0.70) / 0.70
+            base = 0.28 * growth + 0.16 * sustained + 0.24 * quality + 0.18 * revision + 0.14 * margin
+            asup = max(0.7, min(tgt / p, 1.3))                       # analyst PT support
+            s.momentum_mos = round(base * asup, 4)                   # composite FMS: rank + qualify
+            s.momentum_fv = round(tgt, 4)
         except Exception:
             pass
 
@@ -5881,7 +5951,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 # signal than the crude leverage/Piotroski floors, and the net-debt/
                 # EBITDA gate misreads insurers (float ≠ operating debt) — would falsely
                 # drop the exact financials this basket is meant to surface.
-                if key == "convergence" or (passes_leverage_gate(s) and (s.piotroski or 0) >= 3):
+                if key in ("convergence", "fundamental_momentum") or (passes_leverage_gate(s) and (s.piotroski or 0) >= 3):
                     # G1: for earnings-based methods, rank PEAK_CYCLE names on
                     # their NORMALIZED MOS so peak earnings can't buy a top slot.
                     eff_mos = mos_val

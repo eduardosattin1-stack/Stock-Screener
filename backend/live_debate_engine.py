@@ -52,7 +52,8 @@ METHODOLOGY_KEYS = [
     "dcf_fcff", "rd_capitalized_dcf", "owner_earnings", "epv",
     "graham_revised", "iv15_deep_value", "ev_gross_profit",
     "earnings_yield_gap", "acquirers_multiple",
-    "convergence",   # 10th basket: cross-method valuation agreement (built in screener_v6)
+    "convergence",            # 10th: cross-method valuation agreement (screener_v6)
+    "fundamental_momentum",   # 11th: physical hard-tech momentum, growth lens (screener_v6)
 ]
 
 # ── Radar Mode Router ────────────────────────────────────────────────────
