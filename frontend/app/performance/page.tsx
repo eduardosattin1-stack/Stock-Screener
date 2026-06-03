@@ -766,7 +766,7 @@ function SortTh({ label, k, sortKey, sortDir, onSort, style }: {
 
 interface PickGroup {
   symbol: string; rows: MethodPredRow[];
-  sector?: string | null; decile: number; entry_price: number;
+  sector?: string | null; entry_date?: string; decile: number; entry_price: number;
   iv_at_entry?: number | null; ivr_at_entry?: number | null;
   last: number; maxPlus: number; maxMinus: number; days: number;
   touches: number; stops: number; open: number;
@@ -798,7 +798,7 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
       const base = stockRows[0] ?? rs[0];
       const outcomeRows = stockRows.length ? stockRows : rs;
       return {
-        symbol, rows: rs, sector: base.sector, decile: base.decile, entry_price: base.entry_price,
+        symbol, rows: rs, sector: base.sector, entry_date: base.entry_date, decile: base.decile, entry_price: base.entry_price,
         iv_at_entry: base.iv_at_entry, ivr_at_entry: base.ivr_at_entry, last: base.current_price,
         maxPlus: Math.max(...outcomeRows.map(x => x.max_high_observed_pct)),
         maxMinus: Math.min(...outcomeRows.map(x => x.max_drawdown_observed_pct)),
@@ -841,7 +841,7 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
       for (let i = 0; i < allSymbols.length; i += 40) {
         const chunk = allSymbols.slice(i, i + 40);
         try {
-          const res = await fetch(`/api/fmp?e=quote&symbol=${chunk.join(",")}&t=${Date.now()}`);
+          const res = await fetch(`/api/fmp?e=batch-quote&symbols=${chunk.join(",")}&t=${Date.now()}`);
           if (!res.ok) continue;
           const arr = await res.json();
           if (Array.isArray(arr)) for (const q of arr) {
@@ -934,6 +934,7 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
                           {isOpen ? <ChevronDown size={11} style={{ color: T.muted }} /> : <ChevronRight size={11} style={{ color: T.light }} />}
                           {g.symbol}
                         </span>
+                        {g.entry_date && <div style={{ fontSize: 9, fontWeight: 400, color: T.light, marginLeft: 16 }} title="When this pick's entry price + ML were recorded">entered {g.entry_date}</div>}
                       </td>
                       <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>{g.sector ?? "—"}</td>
                       <td style={{ ...td, textAlign: "left", color: T.light }}>{g.rows.length} method{g.rows.length === 1 ? "" : "s"}</td>
