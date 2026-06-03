@@ -8,6 +8,8 @@ import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap
 
 import { Watchlist } from "./components/Watchlist";
 
+import { SpeculairTracker } from "./components/SpeculairTracker";
+
 import { StockCard } from "./components/StockCard";
 
 import { ThemeCard } from "./components/ThemeCard";
@@ -537,7 +539,7 @@ const MACRO_SIGNALS:[string,string][] = [
 ];
 
 interface SectorRow { name: string; symbol: string; accent?: string | null; price: number | null; day: number | null; ytd: number | null; year: number | null; }
-interface SectorPerf { indices: SectorRow[]; sectors: SectorRow[]; thematic: SectorRow[]; macro: { vix: number | null; vixChange: number | null; yield10: number | null }; asOf: string | null; }
+interface SectorPerf { indices: SectorRow[]; sectors: SectorRow[]; thematic: SectorRow[]; macro: { vix: number | null; vixChange: number | null; yield10: number | null; buffett: number | null }; asOf: string | null; }
 interface EtfHolding { symbol: string; name: string; weight: number | null; day: number | null; ytd: number | null; }
 
 // Quick-pick chips for the customizable radar.
@@ -2703,6 +2705,28 @@ export default function Dashboard(){
                         {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
                       </span>
                     </div>
+                    {speculairBaskets.apex_tracking && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (speculairBaskets.apex_tracking.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(speculairBaskets.apex_tracking.since_inception_pct || 0) >= 0 ? "+" : ""}{speculairBaskets.apex_tracking.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {speculairBaskets.apex_tracking.inception_date}</div>
+                        </div>
+                        {(speculairBaskets.apex_tracking.history || []).length > 1 && (() => {
+                          const _n = speculairBaskets.apex_tracking.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {speculairBaskets.apex_tracking.nav} · {speculairBaskets.apex_tracking.n_open} held · {speculairBaskets.apex_tracking.n_closed} closed{speculairBaskets.apex_tracking.win_rate != null ? ` · ${speculairBaskets.apex_tracking.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>equal-weight NAV · live-forward, not back-filled</div>
+                        </div>
+                      </div>
+                    )}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
                       {(speculairBaskets.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
@@ -4291,12 +4315,16 @@ export default function Dashboard(){
               const rs = reg ? (REGIME_STYLE[reg] || REGIME_STYLE.NEUTRAL) : null;
               const vixColor = vix == null ? "var(--text-light)" : vix <= 16 ? "var(--green)" : vix <= 22 ? "var(--amber)" : "var(--red)";
               const brColor = breadth == null ? "var(--text-light)" : breadth >= 50 ? "var(--green)" : "var(--amber)";
+              const buf = mac?.buffett ?? null;
+              const bufZone = buf == null ? "" : buf < 100 ? "cheap" : buf < 130 ? "fair" : buf < 160 ? "elevated" : "extreme";
+              const bufColor = buf == null ? "var(--text-light)" : buf < 100 ? "var(--green)" : buf < 130 ? "var(--text-muted)" : buf < 160 ? "var(--amber)" : "var(--red)";
               return (
                 <>
                   <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: vixColor}}></span>VIX: {vix == null ? "—" : vix.toFixed(1)}{vixC == null ? "" : ` (${vixC >= 0 ? "+" : ""}${vixC.toFixed(1)}%)`}</span>
                   <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: "var(--amber)"}}></span>10Y YIELD: {y10 == null ? "—" : `${y10.toFixed(2)}%`}</span>
                   <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: brColor}}></span>BREADTH: {breadth == null ? "—" : `${breadth}%`}</span>
                   <span style={{display: "flex", alignItems: "center", gap: 4}}><span style={{width: 6, height: 6, borderRadius: "50%", background: rs?.color || "var(--text-light)"}}></span>REGIME: {rs?.label || "—"}</span>
+                  <span style={{display: "flex", alignItems: "center", gap: 4}} title="Buffett Indicator — Wilshire 5000 / GDP (proxy)"><span style={{width: 6, height: 6, borderRadius: "50%", background: bufColor}}></span>BUFFETT: {buf == null ? "—" : `${buf}%${bufZone ? ` ${bufZone}` : ""}`}</span>
                   <span style={{display: "flex", alignItems: "center", gap: 4, marginLeft: "auto"}}><span style={{width: 6, height: 6, borderRadius: "50%", background: sectorUpdatedAt ? "var(--green)" : "var(--text-light)"}}></span>{sectorUpdatedAt ? `LIVE · ${sectorUpdatedAt}` : "connecting…"}</span>
                 </>
               );
@@ -4842,7 +4870,13 @@ export default function Dashboard(){
 
       </div>
 
-      <Watchlist />
+      <aside style={{ width: 340, height: "100vh", position: "sticky", top: 0, overflowY: "auto", borderLeft: "1px solid var(--border)", background: "var(--bg-surface)", zIndex: 40, display: "flex", flexDirection: "column" }}>
+
+        <Watchlist embedded />
+
+        <SpeculairTracker />
+
+      </aside>
 
     </div>
 

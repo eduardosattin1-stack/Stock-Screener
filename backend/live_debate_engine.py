@@ -1636,6 +1636,14 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             "radar_filtered": basket.get("radar_filtered", 0),
         }
     
+    # 4b. Apex Basket live-forward track record (chained NAV + closed-position log)
+    if not dry_run:
+        try:
+            output["apex_tracking"] = _update_apex_tracking(output["apex_basket"], push_gcs=push_gcs)
+        except Exception as e:
+            log.warning(f"apex tracking update failed: {e}")
+            output["apex_tracking"] = {}
+
     # 5. Write output
     _write_output(output, dry_run=dry_run, push_gcs=push_gcs)
     
@@ -1767,6 +1775,155 @@ def _fallback_director(tier1_baskets: dict) -> dict:
                          "Picks selected by raw conviction score from Tier 1 debates.",
         "auto_vetoed": 0,
     }
+
+
+APEX_TRACKING_PATH = "scans/speculair_apex_tracking.json"
+
+
+def _load_apex_tracking() -> dict:
+    """Load the persistent apex-basket track record (chained NAV + closed-position log)."""
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_download
+        d = gcs_download(APEX_TRACKING_PATH)
+        if isinstance(d, dict) and d.get("nav"):
+            return d
+    except Exception as e:
+        log.debug(f"apex tracking GCS load failed: {e}")
+    try:
+        local = FRONTEND_DIR / "public" / "speculair_apex_tracking.json"
+        if local.exists():
+            return json.loads(local.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    return {}
+
+
+def _current_prices(symbols: set) -> dict:
+    """Current prices for `symbols` from the latest scan. Tries authenticated GCS
+    (Cloud Run), then the public bucket URL, then the local file (dev without ADC)."""
+    scan = None
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from screener_v6 import gcs_download
+        scan = gcs_download("scans/latest_global.json")
+    except Exception:
+        scan = None
+    if not (scan and scan.get("stocks")):
+        try:
+            import urllib.request
+            url = f"https://storage.googleapis.com/{GCS_BUCKET}/scans/latest_global.json"
+            with urllib.request.urlopen(url, timeout=20) as r:
+                scan = json.loads(r.read().decode("utf-8"))
+        except Exception:
+            scan = None
+    if not (scan and scan.get("stocks")):
+        try:
+            local = FRONTEND_DIR / "public" / "latest_global.json"
+            if local.exists():
+                scan = json.loads(local.read_text(encoding="utf-8"))
+        except Exception:
+            scan = None
+    out = {}
+    for s in (scan or {}).get("stocks", []):
+        sym, px = s.get("symbol"), s.get("price")
+        if sym in symbols and isinstance(px, (int, float)) and px > 0:
+            out[sym] = float(px)
+    return out
+
+
+def _update_apex_tracking(apex_basket: list, push_gcs: bool = True) -> dict:
+    """Persistent live-forward track record for the Apex Basket.
+
+    Chains an equal-weight NAV across rebalances (anchored to entry prices at inception,
+    so it measures performance from when the basket was established — not from go-live of
+    the tracking code), logs a realized return whenever a name rotates out, and appends
+    one history point per day. Returns a compact summary embedded in speculair_baskets.json
+    for the frontend. Best-effort — callers wrap in try/except so it never breaks the run.
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    apex = [p for p in (apex_basket or []) if p.get("symbol")]
+    syms = {p["symbol"] for p in apex}
+    if not syms:
+        return {}
+
+    tr = _load_apex_tracking()
+    nav = float(tr.get("nav") or 100.0)
+    last_prices = dict(tr.get("last_prices") or {})
+    positions = dict(tr.get("positions") or {})
+    history = list(tr.get("history") or [])
+    closed = list(tr.get("closed") or [])
+    prices = _current_prices(syms | set(last_prices.keys()))
+    period_ret = 0.0
+
+    if not tr:
+        # INCEPTION — anchor NAV to entry prices so it reflects performance since the
+        # basket was established (entry_date), not since the tracker first ran.
+        rets = [prices[p["symbol"]] / p["entry_price"] - 1 for p in apex
+                if (p.get("entry_price") or 0) > 0 and prices.get(p["symbol"], 0) > 0]
+        period_ret = (sum(rets) / len(rets)) if rets else 0.0
+        nav = 100.0 * (1 + period_ret)
+        inception = min((p.get("entry_date") for p in apex if p.get("entry_date")), default=today)
+        history = [{"date": inception, "nav": 100.0, "ret": 0.0, "n": len(apex)}]
+    else:
+        inception = tr.get("inception_date") or today
+        prior = [s for s in last_prices if s in prices and last_prices[s] > 0]
+        if prior and tr.get("last_date") != today:
+            period_ret = sum(prices[s] / last_prices[s] - 1 for s in prior) / len(prior)
+            nav *= (1 + period_ret)
+        for s in list(last_prices.keys()):          # rotations → realized exits
+            if s not in syms:
+                pos = positions.get(s, {})
+                ep = pos.get("entry_price") or last_prices[s]
+                xp = prices.get(s, last_prices[s])
+                closed.append({"symbol": s, "entry_date": pos.get("entry_date", ""), "exit_date": today,
+                               "entry_price": round(ep, 4), "exit_price": round(xp, 4),
+                               "return_pct": round((xp / ep - 1) * 100, 2) if ep else 0.0,
+                               "conviction": pos.get("conviction", 0)})
+                positions.pop(s, None)
+
+    new_last = {}
+    for p in apex:
+        s = p["symbol"]
+        cp = prices.get(s) or p.get("price") or last_prices.get(s) or 0.0
+        new_last[s] = cp
+        if s not in positions:
+            positions[s] = {"entry_price": p.get("entry_price") or cp,
+                            "entry_date": p.get("entry_date") or today,
+                            "conviction": p.get("conviction", 0)}
+        else:
+            positions[s]["conviction"] = p.get("conviction", positions[s].get("conviction", 0))
+
+    point = {"date": today, "nav": round(nav, 4), "ret": round(period_ret, 6), "n": len(apex)}
+    if history and history[-1].get("date") == today:
+        history[-1] = point
+    else:
+        history.append(point)
+    history = history[-400:]
+
+    state = {"inception_date": inception, "nav": round(nav, 4), "last_date": today,
+             "last_prices": new_last, "positions": positions,
+             "history": history, "closed": closed[-80:]}
+    try:
+        (FRONTEND_DIR / "public" / "speculair_apex_tracking.json").write_text(
+            json.dumps(state, indent=2), encoding="utf-8")
+    except Exception as e:
+        log.debug(f"apex tracking local write failed: {e}")
+    if push_gcs:
+        try:
+            sys.path.insert(0, str(BASE_DIR))
+            from screener_v6 import gcs_upload
+            gcs_upload(APEX_TRACKING_PATH, state)
+        except Exception as e:
+            log.warning(f"apex tracking GCS upload failed: {e}")
+    log.info(f"Apex tracking: NAV {nav:.2f} ({(nav / 100 - 1) * 100:+.1f}% since {inception}) | "
+             f"{len(apex)} open, {len(closed)} closed")
+
+    wins = [c for c in closed if c.get("return_pct", 0) > 0]
+    return {"inception_date": inception, "since_inception_pct": round((nav / 100.0 - 1) * 100, 2),
+            "nav": round(nav, 2), "n_open": len(apex), "n_closed": len(closed),
+            "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
+            "history": history, "closed": closed[-20:]}
 
 
 def _write_output(output: dict, dry_run: bool = False, push_gcs: bool = True):
