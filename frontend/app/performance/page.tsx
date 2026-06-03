@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { TrendingUp, TrendingDown, BarChart3, Target, Clock, Radio, ExternalLink, Award, ChevronDown, ChevronRight, Search } from "lucide-react";
 
@@ -750,10 +750,35 @@ function MethodsTab() {
 // each pick's entry context (price, ATM IV, IVR, decile) alongside the
 // method-specific fields (stop_price for stocks; chosen leg / entry ask /
 // edge for calls) and the live mark / outcome / realized return.
+type PickSortKey = "symbol" | "decile" | "entry" | "iv" | "ivr" | "last" | "maxplus" | "maxminus" | "days";
+
+function SortTh({ label, k, sortKey, sortDir, onSort, style }: {
+  label: string; k: PickSortKey; sortKey: PickSortKey; sortDir: "asc" | "desc";
+  onSort: (k: PickSortKey) => void; style?: React.CSSProperties;
+}) {
+  const active = sortKey === k;
+  return (
+    <th onClick={() => onSort(k)} style={{ ...th, cursor: "pointer", color: active ? T.text : T.muted, ...style }}>
+      {label}{active ? (sortDir === "desc" ? " ↓" : " ↑") : ""}
+    </th>
+  );
+}
+
+interface PickGroup {
+  symbol: string; rows: MethodPredRow[];
+  sector?: string | null; decile: number; entry_price: number;
+  iv_at_entry?: number | null; ivr_at_entry?: number | null;
+  last: number; maxPlus: number; maxMinus: number; days: number;
+  touches: number; stops: number; open: number;
+}
+
 function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: string }) {
   const [methodFilter, setMethodFilter] = useState<"all" | "stock" | "long_call">("all");
   const [regimeFilter, setRegimeFilter] = useState<"all" | "30d_p10" | "60d">("all");
   const [outcomeFilter, setOutcomeFilter] = useState<"all" | "OPEN" | "SOLD_AT_TOUCH" | "STOPPED" | "TERMINAL">("all");
+  const [sortKey, setSortKey] = useState<PickSortKey>("symbol");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [livePrices, setLivePrices] = useState<Record<string, number>>({});
   const [liveAsOf, setLiveAsOf] = useState<string>("");
 
@@ -763,8 +788,50 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
     (outcomeFilter === "all" || r.outcome_tag === outcomeFilter)
   ), [rows, methodFilter, regimeFilter, outcomeFilter]);
 
-  // Live underlying prices — poll FMP quotes every 60s for the picks in view (cache-busted),
-  // updating the stock Last $. Option marks aren't repriced here.
+  // Group prediction rows by symbol → one summary line per pick (entry context is
+  // shared across the 4 method rows; outcomes are rolled up from the underlying).
+  const groups = useMemo<PickGroup[]>(() => {
+    const m = new Map<string, MethodPredRow[]>();
+    for (const r of filtered) { const a = m.get(r.symbol); if (a) a.push(r); else m.set(r.symbol, [r]); }
+    const arr: PickGroup[] = Array.from(m.entries()).map(([symbol, rs]) => {
+      const stockRows = rs.filter(x => x.method === "stock");
+      const base = stockRows[0] ?? rs[0];
+      const outcomeRows = stockRows.length ? stockRows : rs;
+      return {
+        symbol, rows: rs, sector: base.sector, decile: base.decile, entry_price: base.entry_price,
+        iv_at_entry: base.iv_at_entry, ivr_at_entry: base.ivr_at_entry, last: base.current_price,
+        maxPlus: Math.max(...outcomeRows.map(x => x.max_high_observed_pct)),
+        maxMinus: Math.min(...outcomeRows.map(x => x.max_drawdown_observed_pct)),
+        days: Math.max(...rs.map(x => x.days_observed)),
+        touches: rs.filter(x => x.outcome_tag === "SOLD_AT_TOUCH").length,
+        stops: rs.filter(x => x.outcome_tag === "STOPPED").length,
+        open: rs.filter(x => x.outcome_tag === "OPEN").length,
+      };
+    });
+    const val = (g: PickGroup): number | string =>
+      sortKey === "symbol" ? g.symbol : sortKey === "decile" ? g.decile : sortKey === "entry" ? g.entry_price
+      : sortKey === "iv" ? (g.iv_at_entry ?? -1) : sortKey === "ivr" ? (g.ivr_at_entry ?? -1)
+      : sortKey === "last" ? g.last : sortKey === "maxplus" ? g.maxPlus : sortKey === "maxminus" ? g.maxMinus : g.days;
+    arr.sort((a, b) => {
+      const va = val(a), vb = val(b);
+      if (typeof va === "string" || typeof vb === "string") {
+        const c = String(va).localeCompare(String(vb)); return sortDir === "asc" ? c : -c;
+      }
+      return sortDir === "asc" ? va - vb : vb - va;
+    });
+    return arr;
+  }, [filtered, sortKey, sortDir]);
+
+  const onSort = (k: PickSortKey) => {
+    if (k === sortKey) setSortDir(d => d === "asc" ? "desc" : "asc");
+    else { setSortKey(k); setSortDir(k === "symbol" ? "asc" : "desc"); }
+  };
+  const toggleExpand = (sym: string) => setExpanded(prev => {
+    const next = new Set(prev); if (next.has(sym)) next.delete(sym); else next.add(sym); return next;
+  });
+
+  // Live underlying prices — poll FMP quotes every 60s for the picks in view, cache-busted
+  // (&t=) so the route's revalidate window doesn't stale them. Option marks aren't repriced here.
   const allSymbols = useMemo(() => Array.from(new Set(rows.map(r => r.symbol))), [rows]);
   useEffect(() => {
     if (!allSymbols.length) return;
@@ -804,8 +871,8 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
 
   return (
     <Card>
-      <SH title={`Per-pick detail (${filtered.length} rows)`} icon={<Search size={12} />}
-          sub={`${cycleLabel} — every prediction row across both regimes and both methods. Entry context (price, IV, IVR, decile) shared across the 4 method rows of each pick.`} />
+      <SH title={`Per-pick detail (${groups.length} picks · ${filtered.length} rows)`} icon={<Search size={12} />}
+          sub={`${cycleLabel} — one row per pick; click to expand its method lines. Entry context (price, IV, IVR, decile) is shared across the 4 methods. Sortable by any summary column.`} />
 
       <div style={{ display: "flex", gap: 14, padding: "10px 14px", borderBottom: `1px solid ${T.divider}`, alignItems: "center", flexWrap: "wrap", fontFamily: T.mono, fontSize: 11 }}>
         <FilterPills label="METHOD" value={methodFilter} setValue={setMethodFilter as any}
@@ -832,102 +899,110 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
                 <th colSpan={5} style={{ ...th, fontSize: 9, color: T.light, textAlign: "left", paddingBottom: 2, borderLeft: `1px dashed ${T.divider}` }}>OUTCOME</th>
               </tr>
               <tr>
-                <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+                <SortTh label="Symbol" k="symbol" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "left" }} />
                 <th style={{ ...th, textAlign: "left" }}>Sector</th>
                 <th style={{ ...th, textAlign: "left" }}>Method</th>
-                <th style={{ ...th, textAlign: "right" }}>D</th>
-                <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Entry $</th>
+                <SortTh label="D" k="decile" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
+                <SortTh label="Entry $" k="entry" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right", borderLeft: `1px dashed ${T.divider}` }} />
                 <th style={{ ...th, textAlign: "right" }}>Barrier</th>
-                <th style={{ ...th, textAlign: "right" }}>ATM IV</th>
-                <th style={{ ...th, textAlign: "right" }}>IVR</th>
+                <SortTh label="ATM IV" k="iv" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
+                <SortTh label="IVR" k="ivr" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Stop</th>
                 <th style={{ ...th, textAlign: "right" }}>Strike</th>
                 <th style={{ ...th, textAlign: "right" }}>Ask</th>
                 <th style={{ ...th, textAlign: "right" }}>Edge</th>
-                <th style={{ ...th, textAlign: "right" }} title="EV at touch per contract = (barrier - strike - ask) x 100">EV</th>
-                <th style={{ ...th, textAlign: "right", borderLeft: `1px dashed ${T.divider}` }}>Last $</th>
-                <th style={{ ...th, textAlign: "right" }}>Max+</th>
-                <th style={{ ...th, textAlign: "right" }}>Max−</th>
-                <th style={{ ...th, textAlign: "right" }}>Days</th>
+                <th style={{ ...th, textAlign: "right" }} title="Expected value: model fair value per share vs the ask you pay">EV</th>
+                <SortTh label="Last $" k="last" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right", borderLeft: `1px dashed ${T.divider}` }} />
+                <SortTh label="Max+" k="maxplus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
+                <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
+                <SortTh label="Days" k="days" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right" }}>Result</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r, i) => {
-                const prevSym = i > 0 ? filtered[i - 1].symbol : "";
-                const newSymGroup = r.symbol !== prevSym;
-                const realized = r.realized_return_pct;
-                const realizedC = realized === null || realized === undefined
-                  ? T.muted : realized >= 0 ? T.greenPos : T.red;
+              {groups.map((g) => {
+                const isOpen = expanded.has(g.symbol);
                 return (
-                  <tr key={`${r.symbol}-${r.regime}-${r.method}-${i}`}
-                      style={{ borderTop: newSymGroup ? `1px solid ${T.divider}` : "none" }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                    <td style={{ ...td, textAlign: "left", fontWeight: 700, color: newSymGroup ? T.text : T.light }}>
-                      {newSymGroup ? r.symbol : ""}
-                    </td>
-                    <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>
-                      {newSymGroup ? (r.sector ?? "—") : ""}
-                    </td>
-                    <td style={{ ...td, textAlign: "left", color: T.muted }}>{methodLabel(r)}</td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.decile}</td>
+                  <Fragment key={g.symbol}>
+                    {/* Summary row — one per symbol; click to expand the method lines */}
+                    <tr style={{ borderTop: `1px solid ${T.divider}`, cursor: "pointer" }}
+                        onClick={() => toggleExpand(g.symbol)}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                      <td style={{ ...td, textAlign: "left", fontWeight: 700, color: T.text }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                          {isOpen ? <ChevronDown size={11} style={{ color: T.muted }} /> : <ChevronRight size={11} style={{ color: T.light }} />}
+                          {g.symbol}
+                        </span>
+                      </td>
+                      <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>{g.sector ?? "—"}</td>
+                      <td style={{ ...td, textAlign: "left", color: T.light }}>{g.rows.length} method{g.rows.length === 1 ? "" : "s"}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{g.decile}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>${g.entry_price.toFixed(2)}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{g.iv_at_entry != null ? `${(g.iv_at_entry * 100).toFixed(0)}%` : "—"}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{g.ivr_at_entry != null ? `${g.ivr_at_entry}` : "—"}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light, borderLeft: `1px dashed ${T.divider}` }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.light }}>—</td>
+                      <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>${(livePrices[g.symbol] ?? g.last).toFixed(2)}</td>
+                      <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{g.maxPlus.toFixed(1)}%</td>
+                      <td style={{ ...td, textAlign: "right", color: T.red }}>{g.maxMinus.toFixed(1)}%</td>
+                      <td style={{ ...td, textAlign: "right", color: T.muted }}>{g.days}d</td>
+                      <td style={{ ...td, textAlign: "right", fontSize: 10, fontWeight: 700 }}>
+                        <span style={{ display: "inline-flex", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                          {g.touches > 0 && <span style={{ color: T.greenPos }}>TOUCH×{g.touches}</span>}
+                          {g.stops > 0 && <span style={{ color: T.red }}>STOP×{g.stops}</span>}
+                          {g.open > 0 && <span style={{ color: T.muted }}>OPEN×{g.open}</span>}
+                        </span>
+                      </td>
+                    </tr>
 
-                    <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>
-                      ${r.entry_price.toFixed(2)}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      ${r.barrier_price.toFixed(2)}
-                      <span style={{ color: T.light, fontSize: 9, marginLeft: 3 }}>(+{r.barrier_target_pct}%)</span>
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      {r.iv_at_entry != null ? `${(r.iv_at_entry * 100).toFixed(0)}%` : "—"}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      {r.ivr_at_entry != null ? `${r.ivr_at_entry}` : "—"}
-                    </td>
-
-                    <td style={{ ...td, textAlign: "right", color: r.stop_price != null ? T.red : T.light, borderLeft: `1px dashed ${T.divider}` }}>
-                      {r.method === "stock"
-                        ? (r.stop_price != null ? `$${r.stop_price.toFixed(2)}` : "—")
-                        : "—"}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      {r.method === "long_call" && r.chosen_leg_strike != null ? `$${r.chosen_leg_strike.toFixed(0)}` : "—"}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      {r.method === "long_call" && r.entry_quote_ask != null ? `$${r.entry_quote_ask.toFixed(2)}` : "—"}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: (r.edge_pct_at_entry ?? 0) > 0 ? T.greenPos : T.red, fontWeight: 600 }}>
-                      {r.method === "long_call" && r.edge_pct_at_entry != null
-                        ? `${(r.edge_pct_at_entry * 100).toFixed(0)}%` : "—"}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", fontWeight: 600, color: r.method === "long_call" && r.edge_dollars_at_entry != null ? (r.edge_dollars_at_entry >= 0 ? T.greenPos : T.red) : T.light }}
-                        title={r.method === "long_call" ? "EV at touch per contract = (barrier - strike - ask) x 100" : ""}>
-                      {r.method === "long_call" && r.edge_dollars_at_entry != null ? `${r.edge_dollars_at_entry >= 0 ? "+" : ""}$${r.edge_dollars_at_entry.toFixed(0)}` : "—"}
-                    </td>
-
-                    <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>
-                      ${(r.method === "stock" ? (livePrices[r.symbol] ?? r.current_price) : r.current_price).toFixed(2)}
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.greenPos }}>
-                      +{r.max_high_observed_pct.toFixed(1)}%
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.red }}>
-                      {r.max_drawdown_observed_pct.toFixed(1)}%
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                      {r.days_observed}d
-                    </td>
-                    <td style={{ ...td, textAlign: "right", color: outcomeColor(r.outcome_tag), fontWeight: 700, fontSize: 10 }}>
-                      <div>{r.outcome_tag.replace(/_/g, " ")}</div>
-                      {realized !== null && realized !== undefined && (
-                        <div style={{ color: realizedC, fontSize: 10, fontWeight: 700 }}>
-                          {realized >= 0 ? "+" : ""}{realized.toFixed(1)}%
-                        </div>
-                      )}
-                    </td>
-                  </tr>
+                    {/* Expanded: the individual method lines (Stock/Call × 30d/60d) */}
+                    {isOpen && g.rows.map((r, i) => {
+                      const realized = r.realized_return_pct;
+                      const realizedC = realized === null || realized === undefined
+                        ? T.muted : realized >= 0 ? T.greenPos : T.red;
+                      return (
+                        <tr key={`${g.symbol}-${r.regime}-${r.method}-${i}`} style={{ background: "var(--bg-elevated)" }}>
+                          <td style={{ ...td }}></td>
+                          <td style={{ ...td }}></td>
+                          <td style={{ ...td, textAlign: "left", color: T.muted, paddingLeft: 22 }}>{methodLabel(r)}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.decile}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>${r.entry_price.toFixed(2)}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                            ${r.barrier_price.toFixed(2)}<span style={{ color: T.light, fontSize: 9, marginLeft: 3 }}>(+{r.barrier_target_pct}%)</span>
+                          </td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.iv_at_entry != null ? `${(r.iv_at_entry * 100).toFixed(0)}%` : "—"}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.ivr_at_entry != null ? `${r.ivr_at_entry}` : "—"}</td>
+                          <td style={{ ...td, textAlign: "right", color: r.stop_price != null ? T.red : T.light, borderLeft: `1px dashed ${T.divider}` }}>
+                            {r.method === "stock" ? (r.stop_price != null ? `$${r.stop_price.toFixed(2)}` : "—") : "—"}
+                          </td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.method === "long_call" && r.chosen_leg_strike != null ? `$${r.chosen_leg_strike.toFixed(0)}` : "—"}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.method === "long_call" && r.entry_quote_ask != null ? `$${r.entry_quote_ask.toFixed(2)}` : "—"}</td>
+                          <td style={{ ...td, textAlign: "right", color: (r.edge_pct_at_entry ?? 0) > 0 ? T.greenPos : T.red, fontWeight: 600 }}>
+                            {r.method === "long_call" && r.edge_pct_at_entry != null ? `${(r.edge_pct_at_entry * 100).toFixed(0)}%` : "—"}
+                          </td>
+                          <td style={{ ...td, textAlign: "right", fontWeight: 600, color: r.method === "long_call" && r.edge_dollars_at_entry != null ? (r.edge_dollars_at_entry >= 0 ? T.greenPos : T.red) : T.light }}
+                              title={r.method === "long_call" ? "EV at touch per contract = (barrier - strike - ask) x 100" : ""}>
+                            {r.method === "long_call" && r.edge_dollars_at_entry != null ? `${r.edge_dollars_at_entry >= 0 ? "+" : ""}$${r.edge_dollars_at_entry.toFixed(0)}` : "—"}
+                          </td>
+                          <td style={{ ...td, textAlign: "right", color: T.text, borderLeft: `1px dashed ${T.divider}` }}>${(r.method === "stock" ? (livePrices[r.symbol] ?? r.current_price) : r.current_price).toFixed(2)}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{r.max_high_observed_pct.toFixed(1)}%</td>
+                          <td style={{ ...td, textAlign: "right", color: T.red }}>{r.max_drawdown_observed_pct.toFixed(1)}%</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.days_observed}d</td>
+                          <td style={{ ...td, textAlign: "right", color: outcomeColor(r.outcome_tag), fontWeight: 700, fontSize: 10 }}>
+                            <div>{r.outcome_tag.replace(/_/g, " ")}</div>
+                            {realized !== null && realized !== undefined && (
+                              <div style={{ color: realizedC, fontSize: 10, fontWeight: 700 }}>{realized >= 0 ? "+" : ""}{realized.toFixed(1)}%</div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </Fragment>
                 );
               })}
             </tbody>
