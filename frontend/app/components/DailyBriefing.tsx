@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Clock, AlertTriangle, Zap, RefreshCw, BarChart2, Shield, Target } from 'lucide-react';
 
-export function DailyBriefing() {
+export function DailyBriefing({ macroRegime, macroScore }: { macroRegime?: string | null; macroScore?: number | null }) {
   const [briefing, setBriefing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/briefing')
+    // Pass the authoritative scan-macro regime/score through so the briefing's Regime
+    // Pulse matches the Sector-Performance footer (which reads the same scan macro).
+    const qs = macroRegime ? `?regime=${encodeURIComponent(macroRegime)}&score=${macroScore ?? ""}` : "";
+    fetch(`/api/briefing${qs}`)
       .then(res => res.json())
       .then(data => {
         setBriefing(data);
@@ -17,7 +20,7 @@ export function DailyBriefing() {
         console.error("Failed to fetch daily briefing:", err);
         setLoading(false);
       });
-  }, []);
+  }, [macroRegime, macroScore]);
 
   if (loading) {
     return (
@@ -95,8 +98,8 @@ export function DailyBriefing() {
             <Activity size={14} color="var(--amber)" />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Regime Pulse</span>
           </div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: "var(--amber)", marginBottom: 8 }}>
-            {regime_pulse.regime} <span style={{ color: "var(--text-light)", fontWeight: 400 }}>{regime_pulse.prev_score} → {regime_pulse.score}</span>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: regime_pulse.regime === "RISK_ON" ? "var(--green)" : regime_pulse.regime === "RISK_OFF" ? "var(--red)" : "var(--amber)", marginBottom: 8 }}>
+            {regime_pulse.regime} <span style={{ color: "var(--text-light)", fontWeight: 400 }}>{regime_pulse.score}</span>
           </div>
           <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>
             {regime_pulse.summary}
@@ -164,7 +167,8 @@ export function DailyBriefing() {
               {surprising_movers.map((mover: any, idx: number) => (
                 <div key={idx}>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>
-                    {mover.symbol} {mover.delta && <span style={{ color: "var(--green)", marginLeft: 6 }}>{mover.delta}</span>}
+                    {mover.symbol} {mover.delta && <span style={{ color: mover.neg ? "var(--red)" : "var(--green)", marginLeft: 6 }}>{mover.delta}</span>}
+                    {mover.evStr && <span style={{ color: mover.evNeg ? "var(--red)" : "var(--green)", marginLeft: 6, fontWeight: 600 }}>{mover.evStr}</span>}
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4, fontFamily: "var(--font-sans)" }}>{mover.reason}</div>
                 </div>

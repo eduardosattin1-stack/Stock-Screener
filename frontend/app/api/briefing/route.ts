@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
 // Daily Briefing — assembled entirely from LIVE wired data. No dependency on the
-// (stale, composite-era) backend /briefing endpoint. Sources, all server-side:
-//   /api/macro                      regime + score + posture
+// (stale, composite-era) backend /briefing endpoint. Sources:
+//   ?regime / ?score (query)        authoritative scan macro, passed by the page
+//                                   (keeps the briefing in sync with the footer regime)
+//   /api/macro                      fallback regime + rates/credit/VIX posture
 //   /api/sectors                    index thermometer + hottest GICS sector
-//   /api/performance/hit-rates      four-method tracker: top open pick + worst drawdown
-//   /api/performance/method-tracks  live tracking return + win rate
+//   /api/performance/method-tracks  D8+ model-calibrated picks (decile, p20, EV) + worst miss
 //   /speculair_baskets.json         apex basket NAV, debate stats, top picks, watchlist
 
 export const runtime = "nodejs";
@@ -13,6 +14,7 @@ export const runtime = "nodejs";
 const num = (v: any, d = 0) => (Number.isFinite(Number(v)) ? Number(v) : d);
 const r2 = (v: number) => Math.round(v * 100) / 100;
 const sign = (v: number) => (v >= 0 ? "+" : "");
+const usd = (v: number) => `${v >= 0 ? "+$" : "-$"}${Math.abs(Math.round(v))}`;
 
 function marketSentiment(spx: number, ndx: number): string {
   if (spx > 0.75 && ndx > 1.0) return "Aggressive risk-on tape. Tech leading a broad rally.";
@@ -25,7 +27,10 @@ function marketSentiment(spx: number, ndx: number): string {
 }
 
 export async function GET(req: Request) {
-  const origin = new URL(req.url).origin;
+  const url = new URL(req.url);
+  const origin = url.origin;
+  const qRegime = url.searchParams.get("regime");
+  const qScore = url.searchParams.get("score");
   const get = async (path: string, fb: any) => {
     try {
       const res = await fetch(`${origin}${path}`, { cache: "no-store" });
@@ -35,10 +40,9 @@ export async function GET(req: Request) {
     }
   };
 
-  const [macro, sectors, hitRates, methodTracks, spec] = await Promise.all([
+  const [macro, sectors, methodTracks, spec] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
-    get("/api/performance/hit-rates", { open: [], closed: [] }),
     get("/api/performance/method-tracks", { regimes: {} }),
     get("/speculair_baskets.json", {}),
   ]);
@@ -60,9 +64,10 @@ export async function GET(req: Request) {
   if (vix != null) thermometer.VIX = { price: vix, change_pct: num(vixCh) };
   const sentiment = marketSentiment(num(spxR?.day), num(ndxR?.day));
 
-  // ── Regime Pulse (from /api/macro) ──
-  const regime = macro?.regime || "NEUTRAL";
-  const score = num(macro?.score, 0.5);
+  // ── Regime Pulse — prefer the authoritative scan macro (passed by the page) so the
+  //    briefing agrees with the Sector-Performance footer; fall back to lite /api/macro. ──
+  const regime = qRegime || macro?.regime || "NEUTRAL";
+  const score = qScore && qScore !== "undefined" ? num(qScore, 0.5) : num(macro?.score, 0.5);
   const rd = macro?.regime_detail || {};
   const stance =
     regime === "RISK_ON" ? "Risk-on — lean into growth & momentum."
@@ -72,7 +77,6 @@ export async function GET(req: Request) {
   const regime_pulse = {
     regime,
     score: r2(score),
-    prev_score: r2(score),
     summary: `Macro regime ${regime}. ${sentiment}`,
     action: `Rates ${rd.rates || "neutral"}, credit ${rd.credit || "stable"}, VIX ${vix ?? "—"}. ${stance}`,
   };
@@ -110,25 +114,58 @@ export async function GET(req: Request) {
     avg_coverage: `${apex.length} names · ${regime} regime`,
   };
 
-  // ── Four-method tracker: best open pick (gainer) + worst (miss) ──
-  const open: any[] = (hitRates?.open || []).filter(
-    (o: any) => o.method === "stock" && (o.regime || "").startsWith("30d") && !o.hit_date && num(o.entry_price) > 0
-  );
-  const withRet = open.map((o: any) => ({
-    ...o,
-    ret: (num(o.last_price) / num(o.entry_price) - 1) * 100,
-    peak: (num(o.max_price) / num(o.entry_price) - 1) * 100,
-  }));
-  const gainer = withRet.slice().sort((a, b) => b.ret - a.ret)[0];
-  const loser = withRet.slice().sort((a, b) => a.ret - b.ret)[0];
+  // ── Four-method tracker: collect stock prediction rows (decile/p20/EV, live state) ──
+  // decile is model-calibrated (OOS thresholds) — NOT a client-side relative rank.
+  // EV (edge_dollars_at_entry) lives on the long_call row; join by symbol.
+  const stockRows: any[] = [];
+  for (const rg of ["60d", "30d_p10"]) {
+    const preds: any[] = methodTracks?.regimes?.[rg]?.current_cycle?.predictions || [];
+    const calls = new Map<string, any>();
+    for (const p of preds) if (p.method === "long_call") calls.set(p.symbol, p);
+    for (const p of preds) {
+      if (p.method !== "stock") continue;
+      const call = calls.get(p.symbol);
+      const ev = call && call.edge_dollars_at_entry != null ? num(call.edge_dollars_at_entry) : null;
+      const liveRet =
+        num(p.current_price) > 0 && num(p.entry_price) > 0
+          ? (num(p.current_price) / num(p.entry_price) - 1) * 100
+          : num(p.realized_return_pct);
+      stockRows.push({
+        symbol: p.symbol,
+        decile: num(p.decile),
+        prob: num(p.p20),
+        probLabel: rg === "60d" ? "P(+20%/60d)" : "P(+10%/30d)",
+        ev,
+        maxPlus: num(p.max_high_observed_pct),
+        liveRet,
+        outcome: p.outcome_tag || "OPEN",
+        sector: p.sector || "",
+      });
+    }
+  }
 
-  // ── Surprising Movers (model pick currently running + hottest sector) ──
+  // D8+ = the model's current highest-conviction tier (D9/D10 legitimately empty —
+  // the live model's top probability clips below those thresholds; do not back-fill).
+  const d8 = stockRows
+    .filter((r) => r.decile >= 8)
+    .sort(
+      (a, b) =>
+        (a.outcome === "OPEN" ? 0 : 1) - (b.outcome === "OPEN" ? 0 : 1) ||
+        b.prob - a.prob ||
+        b.decile - a.decile
+    );
+
+  // ── Surprising Movers (top D8 model picks + hottest GICS sector) ──
   const surprising_movers: any[] = [];
-  if (gainer && gainer.ret > 0) {
+  for (const p of d8.slice(0, 2)) {
+    const peakTxt = p.maxPlus > 0.5 ? ` · peaked +${r2(p.maxPlus)}%` : "";
+    const tagTxt = p.outcome !== "OPEN" ? ` · ${String(p.outcome).replace(/_/g, " ").toLowerCase()}` : "";
     surprising_movers.push({
-      symbol: gainer.symbol,
-      delta: `${sign(gainer.ret)}${r2(gainer.ret)}%`,
-      reason: `Top open model pick (p10 ${Math.round(num(gainer.entry_p10) * 100)}%) — up ${r2(gainer.ret)}% in ${gainer.days_elapsed}d, peaked ${sign(gainer.peak)}${r2(gainer.peak)}% toward the +10% target.`,
+      symbol: p.symbol,
+      delta: `D${p.decile}`,
+      reason: `${p.probLabel} ${Math.round(p.prob * 100)}%${peakTxt}${tagTxt}.`,
+      evStr: p.ev != null ? `EV ${usd(p.ev)}` : null,
+      evNeg: p.ev != null && p.ev < 0,
     });
   }
   const secs: any[] = (sectors?.sectors || []).filter((s: any) => s.day != null);
@@ -137,11 +174,12 @@ export async function GET(req: Request) {
     surprising_movers.push({
       symbol: hotSec.name,
       delta: `${sign(num(hotSec.day))}${r2(num(hotSec.day))}%`,
+      neg: num(hotSec.day) < 0,
       reason: `Hottest GICS sector on the tape today (${hotSec.symbol}).`,
     });
   }
 
-  // ── System pulse footer (live tracking — from method-tracks) ──
+  // ── System pulse footer (live tracking — from method-tracks 30d stock cycle) ──
   const stock30 = methodTracks?.regimes?.["30d_p10"]?.current_cycle?.by_method?.stock || {};
   const system_pulse = {
     live_mtd: `${sign(num(stock30.portfolio_return_pct))}${r2(num(stock30.portfolio_return_pct))}%`,
@@ -160,12 +198,13 @@ export async function GET(req: Request) {
     wait: `${watch} on the capitulation watchlist${ds.radar_filtered != null ? ` · ${ds.radar_filtered} filtered pre-debate` : ""}${ds.auto_vetoed != null ? ` · ${ds.auto_vetoed} auto-vetoed` : ""}.`,
   };
 
-  // ── System Miss (worst open tracker position — real drawdown) ──
-  const miss = loser
+  // ── System Miss (worst open tracker position — real drawdown, with model context) ──
+  const worst = stockRows.filter((r) => r.outcome === "OPEN").sort((a, b) => a.liveRet - b.liveRet)[0];
+  const miss = worst
     ? {
-        symbol: loser.symbol,
-        loss_pct: r2(loser.ret),
-        reason: `Model flagged it (p10 ${Math.round(num(loser.entry_p10) * 100)}%) but it's ${loser.ret < 0 ? "down" : "flat"} ${r2(Math.abs(loser.ret))}% ${loser.days_elapsed}d in — ${loser.sector || "—"}. Watching whether the 30d window redeems it.`,
+        symbol: worst.symbol,
+        loss_pct: r2(worst.liveRet),
+        reason: `D${worst.decile} model pick (${worst.probLabel} ${Math.round(worst.prob * 100)}%) but ${worst.liveRet < 0 ? "down" : "flat"} ${r2(Math.abs(worst.liveRet))}% — ${worst.sector || "—"}. Watching whether the window redeems it.`,
       }
     : { symbol: "—", loss_pct: 0, reason: "No open tracker positions underwater yet." };
 
