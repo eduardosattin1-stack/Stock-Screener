@@ -40,6 +40,11 @@ if os.path.exists(env_path):
 FMP_KEY = os.environ.get("FMP_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MASSIVE_KEY = os.environ.get("MASSIVE_API_KEY", "thetadata_active")
+# Catalyst-scan model. Default Sonnet-4.6 for the weekly full-universe sidebar scoring
+# (Opus showed no scoring edge in testing); the >8 deep-scan tier overrides to
+# claude-opus-4-8 via CATALYST_SCAN_MODEL.
+SCAN_MODEL = os.environ.get("CATALYST_SCAN_MODEL", "claude-sonnet-4-6")
+LAST_SCAN_USAGE = {}
 GCS_BUCKET = "screener-signals-carbonbridge"
 
 # Fallback for local files if GCS token is not available
@@ -1259,8 +1264,9 @@ JSON STRUCTURE:
                     "content-type": "application/json",
                 },
                 json={
-                    "model": "claude-sonnet-4-6",
+                    "model": SCAN_MODEL,
                     "max_tokens": 8000,
+                    "temperature": 0,  # deterministic scoring — same inputs must give the same score
                     "messages": [{"role": "user", "content": prompt}],
                 },
                 timeout=90,
@@ -1283,6 +1289,7 @@ JSON STRUCTURE:
             return mock_data
             
         data = resp.json()
+        globals()["LAST_SCAN_USAGE"] = data.get("usage", {})
         response_text = "".join(
             block.get("text", "") 
             for block in data.get("content", []) 
