@@ -1973,7 +1973,7 @@ export default function Dashboard(){
   const [radarSymbols, setRadarSymbols] = useState<string[] | null>(null);
   const [radarData, setRadarData] = useState<Record<string, { name: string; price: number | null; day: number | null; ytd: number | null; year: number | null }>>({});
   const [radarInput, setRadarInput] = useState("");
-  const [chartCard, setChartCard] = useState<{ symbol: string; name: string; price: number | null; day: number | null } | null>(null);
+  const [chartCard, setChartCard] = useState<{ symbol: string; name: string; price: number | null; day: number | null; href?: string } | null>(null);
   const { user } = useAuth();
 
 
@@ -2113,6 +2113,24 @@ export default function Dashboard(){
   const [trackingData, setTrackingData] = useState<any>(null);
 
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
+
+  // Symbols carrying a full multi-agent debate dossier (apex + watchlist + per-method
+  // debate baskets). Used to badge ⚖ wherever such a name appears, so debated picks are
+  // distinguishable at a glance from backtest-only holdings.
+  const debatedSymbols = ((): Set<string> => {
+    const out = new Set<string>();
+    const add = (arr: any[]) => (arr || []).forEach((p: any) => { if (p && p.symbol) out.add(String(p.symbol).toUpperCase()); });
+    if (speculairBaskets) {
+      add(speculairBaskets.apex_basket);
+      add(speculairBaskets.capitulation_watchlist);
+      Object.values(speculairBaskets.per_methodology_baskets || {}).forEach((m: any) => add(m && m.picks));
+    }
+    return out;
+  })();
+  const debateBadge = (sym?: string) =>
+    sym && debatedSymbols.has(String(sym).toUpperCase()) ? (
+      <span title="Multi-agent debate available — open this name for the full dossier" style={{ marginLeft: 5, fontSize: 9, color: "var(--green)", verticalAlign: "middle", cursor: "help" }}>⚖</span>
+    ) : null;
 
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
 
@@ -2739,13 +2757,13 @@ export default function Dashboard(){
                           <div
                             key={pick.symbol}
                             style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={(e) => handleTickerClick(e, pick.symbol)}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
                             onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                             onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
                                 <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.conviction >= 85 ? "rgba(20,184,122,0.2)" : pick.conviction >= 70 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.conviction >= 85 ? "var(--green)" : pick.conviction >= 70 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                                   ★ {pick.conviction}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
@@ -2814,12 +2832,12 @@ export default function Dashboard(){
                         <div
                           key={pick.symbol}
                           style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
-                          onClick={(e) => handleTickerClick(e, pick.symbol)}
+                          onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
                           onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                         >
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                            <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                            <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
                             <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
                               Conv {pick.conviction}
                             </span>
@@ -2870,13 +2888,13 @@ export default function Dashboard(){
                               <div
                                 key={pick.symbol}
                                 style={{ border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer", transition: "background 0.2s" }}
-                                onClick={(e) => handleTickerClick(e, pick.symbol)}
+                                onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
                                 onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                                 onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                                 title={pick.forcing_function || pick.consensus_delta || ""}
                               >
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                  <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>
+                                  <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
                                   <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
                                     {pick.verdict} · {pick.conviction}/5
                                   </span>
@@ -3422,9 +3440,9 @@ export default function Dashboard(){
 
                             return (
 
-                              <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                              <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={() => setChartCard({ symbol, name: symbol, price: null, day: null, href: `/stock/${symbol}` })} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
 
-                                <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}</td>
+                                <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}{debateBadge(symbol)}</td>
 
                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
 
@@ -3504,9 +3522,9 @@ export default function Dashboard(){
 
                              return (
 
-                               <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                               <tr key={symbol} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={() => setChartCard({ symbol, name: symbol, price: null, day: null, href: `/stock/${symbol}` })} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
 
-                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}</td>
+                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text)" }}>{symbol}{debateBadge(symbol)}</td>
 
                                  <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
 
@@ -3588,9 +3606,9 @@ export default function Dashboard(){
 
                              return (
 
-                               <tr key={`${exit.symbol}-${exit.exit_date}`} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={(e) => handleTickerClick(e, exit.symbol)} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                               <tr key={`${exit.symbol}-${exit.exit_date}`} style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.15s" }} onClick={() => setChartCard({ symbol: exit.symbol, name: exit.symbol, price: null, day: null, href: `/stock/${exit.symbol}` })} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
 
-                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text-secondary)", textDecoration: "line-through" }}>{exit.symbol}</td>
+                                 <td style={{ padding: "14px 8px", fontWeight: 700, color: "var(--text-secondary)", textDecoration: "line-through" }}>{exit.symbol}{debateBadge(exit.symbol)}</td>
 
                                  <td style={{ padding: "14px 8px", color: "var(--text-muted)", fontFamily: "var(--font-sans)", fontSize: 12 }}>{stock?.company_name || "—"}</td>
 
@@ -3844,7 +3862,7 @@ export default function Dashboard(){
 
                                     style={{ borderBottom: "1px solid var(--border-subtle)", cursor: "pointer", transition: "background 0.2s" }}
 
-                                    onClick={(e) => handleTickerClick(e, symbol)}
+                                    onClick={() => setChartCard({ symbol, name: symbol, price: null, day: null, href: `/stock/${symbol}` })}
 
                                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
 
@@ -4249,7 +4267,7 @@ export default function Dashboard(){
 
                                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", border: "1px solid var(--border-subtle)", borderRadius: 8, background: "var(--bg-surface)", cursor: "pointer", transition: "border-color 0.15s" }}
 
-                                    onClick={(e) => handleTickerClick(e, symbol)}
+                                    onClick={() => setChartCard({ symbol, name: symbol, price: null, day: null, href: `/stock/${symbol}` })}
 
                                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
 
@@ -4259,7 +4277,7 @@ export default function Dashboard(){
 
                                     <div style={{ display: "flex", flexDirection: "column" }}>
 
-                                      <span style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{symbol}</span>
+                                      <span style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{symbol}</span>{debateBadge(symbol)}
 
                                       <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{stock?.company_name?.substring(0, 18)}{(stock?.company_name?.length || 0) > 18 ? "..." : ""}</span>
 
@@ -4345,7 +4363,6 @@ export default function Dashboard(){
               return <PerfCard key={sym} title={(q?.name || sym).slice(0, 18)} note={sym} price={q?.price ?? null} day={q?.day ?? null} ytd={q?.ytd ?? null} year={q?.year ?? null} compact onRemove={() => removeRadar(sym)} onChart={() => setChartCard({ symbol: sym, name: q?.name || sym, price: q?.price ?? null, day: q?.day ?? null })} />;
             })}
           </div>
-          {chartCard && <ChartModal symbol={chartCard.symbol} name={chartCard.name} livePrice={chartCard.price} liveDay={chartCard.day} onClose={() => setChartCard(null)} />}
           {/* Radar customization: free-text add + preset chips (per-user, saved to Firestore) */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", marginBottom: 16 }}>
             <input value={radarInput} onChange={(e) => setRadarInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addRadar(radarInput); }} placeholder="+ add symbol (AAPL, ^VIX, GLD…)" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 8px", color: "var(--text)", fontFamily: "var(--font-mono)", fontSize: 11, width: 210 }} />
@@ -4883,6 +4900,9 @@ export default function Dashboard(){
         <SpeculairTracker />
 
       </aside>
+
+      {/* Chart popup — top-level so it overlays from any tab (sectors / speculair / methodologies) */}
+      {chartCard && <ChartModal symbol={chartCard.symbol} name={chartCard.name} livePrice={chartCard.price} liveDay={chartCard.day} detailHref={chartCard.href} onClose={() => setChartCard(null)} />}
 
     </div>
 

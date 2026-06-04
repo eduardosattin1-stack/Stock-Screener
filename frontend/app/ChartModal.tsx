@@ -29,12 +29,14 @@ export default function ChartModal({
   name,
   livePrice,
   liveDay,
+  detailHref,
   onClose,
 }: {
   symbol: string;
   name?: string | null;
   livePrice?: number | null;
   liveDay?: number | null;
+  detailHref?: string;
   onClose: () => void;
 }) {
   const [range, setRange] = useState<Range>("3M");
@@ -79,6 +81,9 @@ export default function ChartModal({
   const pts = data?.points || [];
   const up = (data?.changePct ?? 0) >= 0;
   const color = up ? UP : DOWN;
+  // Fall back to the series' last close when no live price is passed in
+  // (apex/watchlist/methodology picks don't carry a live quote).
+  const headerPrice = livePrice != null ? livePrice : (data?.last ?? null);
 
   // SVG geometry (fixed viewBox, scales to container width).
   const W = 820, H = 300, padL = 10, padR = 62, padT = 18, padB = 24;
@@ -132,7 +137,7 @@ export default function ChartModal({
           </div>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "var(--font-mono)", color: "var(--text)", lineHeight: 1.1 }}>{fmtPrice(livePrice)}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "var(--font-mono)", color: "var(--text)", lineHeight: 1.1 }}>{fmtPrice(headerPrice)}</div>
               <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: dayColor, marginTop: 2 }}>
                 {liveDay == null ? "" : `${liveDay >= 0 ? "+" : ""}${liveDay.toFixed(2)}% today`}
               </div>
@@ -232,6 +237,15 @@ export default function ChartModal({
             </button>
           ))}
         </div>
+
+        {/* Optional drill-into-dossier link (apex / methodology picks pass detailHref) */}
+        {detailHref && (
+          <div style={{ marginTop: 12, textAlign: "right" }}>
+            <a href={detailHref} style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: UP, textDecoration: "none", fontWeight: 600 }}>
+              View full analysis →
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

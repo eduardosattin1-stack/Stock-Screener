@@ -4635,6 +4635,14 @@ export default function StockDetail(){
       });
   }, [symbol]);
 
+  // Deep-link: ?tab=debate (from a Speculair pick's "View full analysis →") opens the
+  // multi-agent debate directly instead of landing on Overview with the tab buried 8th.
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "debate") {
+      setActiveTab("debate");
+    }
+  }, []);
+
   const debateData = useMemo(() => {
     if (!speculairBaskets || !symbol) return null;
     const sym = symbol.toUpperCase();
