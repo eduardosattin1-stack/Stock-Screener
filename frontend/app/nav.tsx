@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Briefcase, Target, TrendingUp, Compass } from "lucide-react";
+import { BarChart3, Briefcase, TrendingUp, Compass } from "lucide-react";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -9,7 +9,6 @@ export default function Nav() {
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
     { href: "/portfolio", label: "Live Track Record", icon: <Briefcase size={13} /> },
     { href: "/performance", label: "System Performance", icon: <TrendingUp size={13} /> },
-    { href: "/signals", label: "ML Picks", icon: <Target size={13} /> },
     { href: "/catalysts", label: "Catalyst Watch", icon: <Compass size={13} /> },
   ];
   return (
