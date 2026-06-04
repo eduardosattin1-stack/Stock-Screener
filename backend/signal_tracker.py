@@ -905,6 +905,19 @@ def _compute_cycle_summary(cycle_id: str, today_str: str, regime: Regime = REGIM
         elif existing.get("outcome") == "OPEN" and row.get("outcome") != "OPEN":
             latest_by_key[key] = row
 
+    # Open picks get their daily Max+/Max-/days_observed updates written to the
+    # cycle's open.json by _process_open_predictions, but those running updates are
+    # NOT re-appended to the immutable predictions.jsonl (only resolutions are). So
+    # overlay the live open.json snapshot for still-open picks — otherwise the UI
+    # shows them frozen at the day-0 entry row (max_high=0, max_dd=0, days=0) until
+    # they resolve. Closed picks are absent from open.json, so they keep the
+    # resolved row deduped from the jsonl above.
+    open_snapshot = _gcs_read(f"{regime.cycles_prefix}/{cycle_id}/open.json", {"predictions": []})
+    if isinstance(open_snapshot, dict):
+        for row in open_snapshot.get("predictions", []):
+            okey = (row.get("symbol"), row.get("entry_date"), row.get("method"))
+            latest_by_key[okey] = row
+
     preds = list(latest_by_key.values())
 
     if not preds:
