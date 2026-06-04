@@ -1980,6 +1980,79 @@ def _refresh_call_chains(symbols: set, today_str: str) -> dict:
     return chains
 
 
+def _refresh_underlying_eod(symbol_entry: dict, today_str: str) -> dict:
+    """For each symbol, fetch daily OHLC over [entry_date, today] from ThetaData
+    and return {symbol: (max_high_price, min_low_price)} — the intraday extremes
+    over the holding window. Lets the resolver count a +X% intraday spike that
+    reverts by the nightly close as a real touch (and capture the true trough).
+    Empty dict on Theta failure → caller falls back to the close-based extremes.
+    """
+    if not symbol_entry:
+        return {}
+    try:
+        from thetadata import ThetaClient
+        import datetime as _dt
+    except ImportError:
+        log.warning("_refresh_underlying_eod: ThetaData SDK unavailable, using close-based extremes")
+        return {}
+    try:
+        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+    except Exception as e:
+        log.error(f"_refresh_underlying_eod: client init failed: {e}")
+        return {}
+
+    end_date = datetime.strptime(today_str, "%Y-%m-%d").date()
+    while end_date.weekday() >= 5:
+        end_date -= _dt.timedelta(days=1)
+
+    from threading import Lock
+    import concurrent.futures
+
+    class _RL:
+        def __init__(self, rps): self.interval = 1.0 / rps; self.last = 0.0; self.lock = Lock()
+        def wait(self):
+            with self.lock:
+                import time as _t
+                now = _t.time(); s = self.interval - (now - self.last)
+                if s > 0: _t.sleep(s); self.last = _t.time()
+                else: self.last = now
+    limiter = _RL(16)
+
+    def fetch_hl(item):
+        sym, entry = item
+        try:
+            start = datetime.strptime(entry, "%Y-%m-%d").date()
+        except Exception:
+            return sym, None
+        if start > end_date:
+            return sym, None
+        hi = lo = None
+        cur = start
+        while cur <= end_date:  # ThetaData caps multi-day EOD at ~1 month → chunk
+            chunk_end = min(cur + _dt.timedelta(days=28), end_date)
+            limiter.wait()
+            try:
+                df = client.stock_history_eod(sym, cur, chunk_end)
+                if df is not None and hasattr(df, "height") and df.height > 0:
+                    ch = df.get_column("high").max(); cl = df.get_column("low").min()
+                    if ch is not None: hi = ch if hi is None else max(hi, ch)
+                    if cl is not None: lo = cl if lo is None else min(lo, cl)
+            except Exception as e:
+                log.debug(f"_refresh_underlying_eod {sym} [{cur}..{chunk_end}]: {e}")
+            cur = chunk_end + _dt.timedelta(days=1)
+        if hi is None or lo is None:
+            return sym, None
+        return sym, (float(hi), float(lo))
+
+    out: dict[str, tuple] = {}
+    log.info(f"ThetaData (underlying EOD high/low): fetching for {len(symbol_entry)} symbols...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        for sym, hl in executor.map(fetch_hl, list(symbol_entry.items())):
+            if hl is not None:
+                out[sym] = hl
+    return out
+
+
 def _process_open_predictions(stocks: list, today_str: str,
                               state: dict, regime: Regime = REGIME_60D) -> tuple[int, int]:
     """For every cycle with active predictions, update each open prediction
@@ -2032,6 +2105,19 @@ def _process_open_predictions(stocks: list, today_str: str,
 
     chain_lookup = _refresh_call_chains(call_arm_symbols, today_str)
 
+    # Underlying intraday high/low over each pick's window — so a +X% spike that
+    # reverts by the nightly snapshot still counts as a touch, and the drawdown is
+    # the true trough. Falls back to the scan close if Theta is unavailable.
+    underlying_windows: dict[str, str] = {}
+    for _cid, (_op, _preds) in cycles_data.items():
+        for _p in _preds:
+            _e = _p.get("entry_date")
+            if _e:
+                _cur = underlying_windows.get(_p["symbol"])
+                if _cur is None or _e < _cur:
+                    underlying_windows[_p["symbol"]] = _e
+    high_low_lookup = _refresh_underlying_eod(underlying_windows, today_str)
+
     closed_total = 0
     open_total = 0
 
@@ -2047,10 +2133,16 @@ def _process_open_predictions(stocks: list, today_str: str,
             # Spot-path peak / trough (used by both arms — call arm reads
             # max_high to detect barrier touch, even though its P&L is on the
             # option leg).
-            if gain_pct > p.get("max_high_observed_pct", 0):
-                p["max_high_observed_pct"] = round(gain_pct, 4)
-            if gain_pct < p.get("max_drawdown_observed_pct", 0):
-                p["max_drawdown_observed_pct"] = round(gain_pct, 4)
+            hl = high_low_lookup.get(sym)
+            if hl and entry_price > 0:
+                hi_gain = ((hl[0] - entry_price) / entry_price) * 100   # intraday high over window
+                lo_gain = ((hl[1] - entry_price) / entry_price) * 100   # intraday low over window
+            else:
+                hi_gain = lo_gain = gain_pct                            # fallback: nightly close only
+            if hi_gain > p.get("max_high_observed_pct", 0):
+                p["max_high_observed_pct"] = round(hi_gain, 4)
+            if lo_gain < p.get("max_drawdown_observed_pct", 0):
+                p["max_drawdown_observed_pct"] = round(lo_gain, 4)
 
             days_in = (datetime.strptime(today_str, "%Y-%m-%d")
                        - datetime.strptime(p["entry_date"], "%Y-%m-%d")).days
