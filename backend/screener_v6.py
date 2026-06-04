@@ -5969,15 +5969,21 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                     candidates.append(s)
                     
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
-        
-        portfolio = None
-        for target_T in range(min(20, len(candidates)), 0, -1):
-            portfolio = get_best_portfolio_of_size(candidates, target_T)
-            if portfolio:
-                break
-                
-        if not portfolio:
-            portfolio = []
+
+        if key == "fundamental_momentum":
+            # Thematic sleeve: hard-tech is Tech-concentrated by design, so the 30%/sector
+            # diversification cap (built for value baskets) gutted it (20 qualifiers → 6,
+            # dropping the AI/semis core: AVGO/ASML/AMD/ARM/MPWR…). Take the top names by
+            # score, UNCAPPED — concentration in the leading wave is the strategy here.
+            portfolio = candidates[:20]
+        else:
+            portfolio = None
+            for target_T in range(min(20, len(candidates)), 0, -1):
+                portfolio = get_best_portfolio_of_size(candidates, target_T)
+                if portfolio:
+                    break
+            if not portfolio:
+                portfolio = []
             
         portfolio_symbols = set(s.symbol for s in portfolio)
         metric_field = methodology_metrics[key]
