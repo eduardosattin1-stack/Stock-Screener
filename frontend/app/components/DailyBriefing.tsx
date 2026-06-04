@@ -7,19 +7,20 @@ export function DailyBriefing({ macroRegime, macroScore }: { macroRegime?: strin
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Pass the authoritative scan-macro regime/score through so the briefing's Regime
-    // Pulse matches the Sector-Performance footer (which reads the same scan macro).
-    const qs = macroRegime ? `?regime=${encodeURIComponent(macroRegime)}&score=${macroScore ?? ""}` : "";
-    fetch(`/api/briefing${qs}`)
-      .then(res => res.json())
-      .then(data => {
-        setBriefing(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch daily briefing:", err);
-        setLoading(false);
-      });
+    // Prefer the authoritative scan-macro regime/score (so Regime Pulse matches the
+    // Sector-Performance footer). Wait for it briefly to avoid a lite-macro RISK_ON
+    // flash; after a grace period, load the fallback so the card never hangs.
+    let cancelled = false;
+    const load = (rg?: string | null) => {
+      const qs = rg ? `?regime=${encodeURIComponent(rg)}&score=${macroScore ?? ""}` : "";
+      fetch(`/api/briefing${qs}`)
+        .then(res => res.json())
+        .then(data => { if (!cancelled) { setBriefing(data); setLoading(false); } })
+        .catch(err => { console.error("Failed to fetch daily briefing:", err); if (!cancelled) setLoading(false); });
+    };
+    if (macroRegime) { load(macroRegime); }
+    else { const t = setTimeout(() => { if (!cancelled) load(null); }, 1800); return () => { cancelled = true; clearTimeout(t); }; }
+    return () => { cancelled = true; };
   }, [macroRegime, macroScore]);
 
   if (loading) {
