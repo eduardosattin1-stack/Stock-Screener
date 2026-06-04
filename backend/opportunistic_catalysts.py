@@ -2,6 +2,7 @@
 import os
 import json
 import sys
+import time
 import logging
 
 from ma_directionality import detect_ma_role
@@ -610,8 +611,25 @@ def get_catalyst_candidates() -> List[Dict]:
             adj_score = cached_adj_score
             adjustments = cached_data.get("score_adjustments") or []
             raw_cat_score = round(cat_score * 10, 2)
+        elif is_scanned:
+            # Deep-scanned but no stored adjusted score (older cache entry): recompute it the
+            # EXACT way the detail view does (run_catalyst_scan's cache-serve path) — same
+            # raw_score, minimal stock_data, allow_detectors=True — so the sidebar score
+            # matches the opened-detail score. (Previously this branch passed the full scan
+            # row with detectors off, producing the 9.4-vs-8.7 mismatch.)
+            raw_cat_score = round(cat_score * 10, 2)
+            adj_result = compute_confidence_adjusted_score(
+                symbol=sym,
+                raw_score=cached_data.get("catalyst_density_score", raw_cat_score),
+                stock_data={"price": cached_data.get("price", 0.0)},
+                cached_scan=cache_entry,
+                allow_detectors=True,
+            )
+            adj_score = adj_result["adjusted_loeb_score"]
+            adjustments = adj_result["score_adjustments"]
         else:
-            # Compute confidence-adjusted score on-the-fly for backwards compatibility
+            # Un-scanned: provisional heuristic (discounted). The frontend labels these
+            # "provisional" since they're a pre-score until the name is deep-scanned.
             raw_cat_score = round(cat_score * 10, 2)
             adj_result = compute_confidence_adjusted_score(
                 symbol=sym,
@@ -1231,20 +1249,29 @@ JSON STRUCTURE:
         
     try:
         log.info("Dispatching request to Anthropic...")
-        resp = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key": ANTHROPIC_KEY,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
-            json={
-                "model": "claude-sonnet-4-6",
-                "max_tokens": 8000,
-                "messages": [{"role": "user", "content": prompt}],
-            },
-            timeout=120,
-        )
+        resp = None
+        for _attempt in range(3):
+            resp = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": ANTHROPIC_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": "claude-sonnet-4-6",
+                    "max_tokens": 8000,
+                    "messages": [{"role": "user", "content": prompt}],
+                },
+                timeout=90,
+            )
+            # Retry transient overload / rate-limit / 5xx (these fail fast) up to 2x. A true
+            # timeout raises requests.Timeout and is handled by the outer except (no retry —
+            # it's already slow). This is the main re-scan-failure fix.
+            if resp.status_code == 200 or resp.status_code not in (429, 500, 502, 503, 529):
+                break
+            log.warning(f"Claude {resp.status_code} (attempt {_attempt + 1}/3); backing off...")
+            time.sleep(2 * (_attempt + 1))
         
         if resp.status_code != 200:
             log.error(f"Claude API error {resp.status_code}: {resp.text}")

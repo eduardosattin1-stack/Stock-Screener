@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-export const maxDuration = 60;
+export const maxDuration = 180; // a full Loeb scan (Sonnet, up to ~90s) must outlast the route
 
 const CLOUD_RUN = "https://stock-screener-606056076947.europe-west1.run.app";
 

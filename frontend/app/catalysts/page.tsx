@@ -977,7 +977,7 @@ export default function CatalystWatch() {
                       <span>Price: <strong style={{ color: T.text }}>${report.price?.toFixed(2) || "N/A"}</strong></span>
                       <span>Market Cap: <strong style={{ color: T.text }}>{formatMarketCap(report.market_cap)}</strong></span>
                       {report.cache_timestamp && (
-                        <span>Last Scan: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
+                        <span title="Date of the full AI Loeb deep-scan; price is live. Use RE-SCAN to refresh the analysis.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
                       )}
                     </div>
                   </div>
