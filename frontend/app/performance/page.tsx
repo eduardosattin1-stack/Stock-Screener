@@ -720,7 +720,7 @@ function PicksTable({ rows, cycleLabel }: { rows: MethodPredRow[]; cycleLabel: s
                           <td style={{ ...td, textAlign: "right", color: r.stop_price != null ? T.red : T.light, borderLeft: `1px dashed ${T.divider}` }}>
                             {r.method === "stock" ? (r.stop_price != null ? `$${r.stop_price.toFixed(2)}` : "—") : "—"}
                           </td>
-                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.method === "long_call" && r.chosen_leg_strike != null ? `$${r.chosen_leg_strike.toFixed(0)}` : "—"}</td>
+                          <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.method === "long_call" && r.chosen_leg_strike != null ? `$${r.chosen_leg_strike.toFixed(2)}` : "—"}</td>
                           <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.method === "long_call" && r.entry_quote_ask != null ? `$${r.entry_quote_ask.toFixed(2)}` : "—"}</td>
                           <td style={{ ...td, textAlign: "right", color: (r.edge_pct_at_entry ?? 0) > 0 ? T.greenPos : T.red, fontWeight: 600 }}>
                             {r.method === "long_call" && r.edge_pct_at_entry != null ? `${(r.edge_pct_at_entry * 100).toFixed(0)}%` : "—"}
