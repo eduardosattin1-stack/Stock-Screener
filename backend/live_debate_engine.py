@@ -734,7 +734,9 @@ CREDIBILITY_SCORE: <integer 1-5> | TRAJECTORY: <STRENGTHENING|STABLE|DETERIORATI
 where credibility_score is 1 (evasive / unsupported by financials) to 5 (highly credible, corroborated by financials).
 """
 
-ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case. Map how the macro and competitive environment impacts the company's moat or event-driven catalyst. Ground every argument in the specific evidence provided — cite the real financials (revenue/margin/EPS/FCF trajectory, returns, leverage, valuation) and quote transcript phrases with quarter references. State the key conditions each case depends on. Be thorough; there is no length limit.
+ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case.
+
+EVIDENCE DISCIPLINE (mandatory): Reason ONLY from data actually present in your input — the financial metrics block, the transcript, and the dossier IF one is provided. If the Interrogator dossier is empty or absent, do NOT invent, quote, or cite "the dossier", and do NOT fabricate specific figures (beat-rates, buyback prices, credibility scores, transcript quotes) that are not in your input; instead reason from the metrics + transcript and state that no dossier was available. Never present a number you were not given as if it were sourced. Map how the macro and competitive environment impacts the company's moat or event-driven catalyst. Ground every argument in the specific evidence provided — cite the real financials (revenue/margin/EPS/FCF trajectory, returns, leverage, valuation) and quote transcript phrases with quarter references. State the key conditions each case depends on. Be thorough; there is no length limit.
 
 You must output a JSON object:
 {
@@ -746,6 +748,8 @@ Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 
 MODERATOR_SYSTEM_PROMPT = """You are the Chief Risk Officer & Expectations Arbitrageur for a financial investment committee.
 Your task is to review the earnings call transcript, along with the Interrogator's findings, the Architect's Bull/Bear cases, and financial metrics.
+
+EVIDENCE DISCIPLINE (mandatory): Cite ONLY data actually present in your input. Do NOT reference, quote, or invent a "dossier" that was not provided to you, and do NOT manufacture specific figures (beat-rates, insider buy ratios, multiples, prices) that are not in the metrics/inputs you were given. When the metrics block carries a "TTM / LATEST QUARTER" section, treat THOSE figures as the current state and the fiscal-year-annual figures above them as historical context.
 Your sole responsibility is to evaluate TIMING, NARRATIVE SATURATION, and MARGIN OF SAFETY to measure the delta between fundamental reality and market perception.
 
 Analyze the subtext, narrative history, and simulated positioning data to answer these four questions:
@@ -800,6 +804,14 @@ _SCAN_FIN_FIELDS = [
     "eps_beats", "eps_total", "fcf_yoy", "fcf_cagr_3y", "p_fcf", "roe_avg",
     "roic_avg", "net_debt", "forward_eps_growth", "peak_margin_sigma",
     "insider_buy_ratio", "margin_of_safety", "buffett_fair_value", "sector",
+    # Stock-page models & scores (Jun 2026 enrichment): surface the multi-model valuation spread +
+    # current stock-page scores so the debate reasons off model AGREEMENT/divergence. ONLY fields the
+    # stock page actually renders today — hit_prob (ML) and factor_scores (13-factor radar) are RETIRED
+    # and deliberately excluded so they cannot bias the agents.
+    "dcf_value", "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
+    "iv15_deep_value_mos", "bull_score", "catalyst_score", "altman_z", "piotroski",
+    "days_to_earnings", "cycle_flag", "classification", "target", "upside",
+    "smart_money_score", "inst_score", "pt_velocity_60d", "proximity_52wk", "sma200",
 ]
 
 
@@ -841,6 +853,116 @@ def _fmt_amt(v):
     return f"{v:.0f}"
 
 
+def _ttm_block(sym: str) -> str:
+    """FIX (2026-06, AUDIT_PIPELINE_REPORT.md A1): the scan feeds FISCAL-YEAR-ANNUAL FCF/EPS
+    labelled 'latest' — stale in 97% of audited names, and direction-inverting on inflecting
+    names. Append a live TTM / latest-quarter block (FMP quarterly statements) flagged as
+    overriding the annual figures, so the debate reasons off current cash/earnings. '' on failure."""
+    if not sym:
+        return ""
+    key = get_key("FMP_API_KEY")
+    if not key:
+        return ""
+    base = "https://financialmodelingprep.com/stable"
+    try:
+        cf = requests.get(base + "/cash-flow-statement",
+                          params={"symbol": sym, "period": "quarter", "limit": 5, "apikey": key}, timeout=20).json()
+        inc = requests.get(base + "/income-statement",
+                           params={"symbol": sym, "period": "quarter", "limit": 8, "apikey": key}, timeout=20).json()
+    except Exception:
+        return ""
+    if not (isinstance(cf, list) and isinstance(inc, list) and len(cf) >= 4 and len(inc) >= 4):
+        return ""
+
+    def _n(d, *ks):
+        for k in ks:
+            v = d.get(k) if isinstance(d, dict) else None
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                return v
+        return None
+
+    fcfs = [_n(q, "freeCashFlow") for q in cf[:4]]
+    if any(v is None for v in fcfs):
+        fcfs = [(_n(q, "operatingCashFlow") or 0) + (_n(q, "capitalExpenditure") or 0) for q in cf[:4]]
+    ttm_fcf = sum(v for v in fcfs if isinstance(v, (int, float))) if fcfs else None
+    epss = [_n(q, "epsDiluted", "epsdiluted", "eps") for q in inc[:4]]
+    ttm_eps = sum(epss) if all(isinstance(v, (int, float)) for v in epss) else None
+    q0 = _n(inc[0], "epsDiluted", "epsdiluted", "eps")
+    q4 = _n(inc[4], "epsDiluted", "epsdiluted", "eps") if len(inc) >= 5 else None
+    yoy = ((q0 - q4) / abs(q4) * 100) if (isinstance(q0, (int, float)) and isinstance(q4, (int, float)) and q4) else None
+
+    def _a(v):
+        a = abs(v)
+        return f"{v/1e9:.2f}B" if a >= 1e9 else (f"{v/1e6:.0f}M" if a >= 1e6 else f"{v:.0f}")
+
+    parts = []
+    if isinstance(ttm_fcf, (int, float)):
+        parts.append(f"TTM FCF {_a(ttm_fcf)}")
+    if isinstance(ttm_eps, (int, float)):
+        parts.append(f"TTM diluted EPS {ttm_eps:.2f}")
+    if isinstance(yoy, (int, float)):
+        parts.append(f"latest-Q EPS YoY {yoy:+.0f}%")
+    if not parts:
+        return ""
+    asof = (cf[0].get("date") if isinstance(cf[0], dict) else "") or ""
+    return ("\n\n=== TTM / LATEST QUARTER (FMP, as of " + asof + " — USE THESE OVER THE "
+            "FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\n" + " | ".join(parts))
+
+
+def _live_corrections(sym: str) -> str:
+    """FIX/path-A (2026-06): override the two scan fields the audit found most often wrong — net
+    debt (sign-flips) and the insider 'buy ratio' (comp grants counted as buys) — with live
+    recomputed values, so the debate is correct IMMEDIATELY (before the next scan propagates the
+    screener_v6 root fixes). '' on any failure."""
+    if not sym:
+        return ""
+    key = get_key("FMP_API_KEY")
+    if not key:
+        return ""
+    base = "https://financialmodelingprep.com/stable"
+    out = []
+    try:
+        bs = requests.get(base + "/balance-sheet-statement",
+                          params={"symbol": sym, "period": "quarter", "limit": 1, "apikey": key}, timeout=20).json()
+        if isinstance(bs, list) and bs:
+            b = bs[0]
+
+            def _n(*ks):
+                for kk in ks:
+                    v = b.get(kk)
+                    if isinstance(v, (int, float)) and not isinstance(v, bool):
+                        return v
+                return 0
+
+            td = _n("totalDebt") or (_n("longTermDebt") + _n("shortTermDebt"))
+            cash = _n("cashAndShortTermInvestments") or (_n("cashAndCashEquivalents") + _n("shortTermInvestments"))
+            nd = td - cash
+            amt = f"{nd/1e9:.2f}B" if abs(nd) >= 1e9 else f"{nd/1e6:.0f}M"
+            out.append(f"Net debt (recomputed: total debt minus cash, {b.get('date','latest Q')}): {amt}  "
+                       f"[NEGATIVE = net cash] - use this, not the scan's net_debt above")
+    except Exception:
+        pass
+    try:
+        import screener_v6 as _sv
+        if not getattr(_sv, "FMP_KEY", ""):
+            _sv.FMP_KEY = key
+        a = _sv.get_insider_activity(sym)
+        if a.get("_evaluated"):
+            b_, s_ = a.get("open_market_buys", 0), a.get("open_market_sells", 0)
+            if b_ == 0 and s_ == 0:
+                out.append("Insider (open-market, last ~100 filings): ZERO open-market purchases or sales "
+                           "— IGNORE any 'insider buy ratio' above (it counts grants/options/gifts, not real buys)")
+            else:
+                out.append(f"Insider (open-market only): {b_} buys ({a.get('buy_shares',0):,}sh) vs "
+                           f"{s_} sells ({a.get('sell_shares',0):,}sh) — this is the REAL conviction signal, "
+                           f"NOT the grant-inflated buy_ratio above")
+    except Exception:
+        pass
+    if not out:
+        return ""
+    return "\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\n" + "\n".join(out)
+
+
 def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str:
     """Forensic-grounding metrics block for Interrogator/Architect/Moderator.
 
@@ -857,7 +979,9 @@ def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str
     if not scan_fin:
         fields = ["price", "sector", "market_cap", "mos", "fair_value", "entry_metric", "weight"]
         m = {k: financials.get(k) for k in fields if financials.get(k) is not None}
-        return json.dumps(m, indent=2, default=str) if m else "No financial metrics available."
+        _sym0 = (financials or {}).get("symbol")
+        return (json.dumps(m, indent=2, default=str) if m else "No financial metrics available.") \
+            + _ttm_block(_sym0) + _live_corrections(_sym0)
 
     g = scan_fin.get
     lines = []
@@ -940,6 +1064,76 @@ def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str
     if fwd:
         lines.append("Forward / signals: " + " | ".join(fwd))
 
+    # ── Stock-page models & scores (Jun 2026 enrichment) — the multi-model valuation spread the
+    # frontend shows, so the committee reasons off model AGREEMENT/divergence, not a single number.
+    # ONLY current stock-page fields: hit_prob (ML) and the 13-factor radar are RETIRED and excluded.
+    models = []
+    if isinstance(g("dcf_value"), (int, float)) and g("dcf_value") > 0:
+        models.append(f"DCF fair value {g('dcf_value'):.1f}")
+    bfv = g("buffett_fair_value")
+    if isinstance(bfv, (int, float)) and bfv > 0:
+        models.append(f"Buffett fair value {bfv:.1f}")
+    if models:
+        lines.append("Valuation models (stock page): " + " | ".join(models))
+    mos_spread = []
+    for label, fld in [("DCF", "dcf_fcff_mos"), ("EPV", "epv_mos"), ("Graham", "graham_revised_mos"),
+                       ("OwnerErn", "owner_earnings_mos"), ("IV15", "iv15_deep_value_mos")]:
+        v = g(fld)
+        if isinstance(v, (int, float)) and -2.0 < v < 2.0:   # suppress null/defect extremes
+            mos_spread.append(f"{label} {v*100:+.0f}%")
+    if mos_spread:
+        lines.append("Per-method margin-of-safety (where models agree = higher-confidence): " + " | ".join(mos_spread))
+    scores = []
+    if isinstance(g("bull_score"), (int, float)):
+        scores.append(f"Bull score {g('bull_score')}")
+    if isinstance(g("catalyst_score"), (int, float)):
+        scores.append(f"Catalyst score {g('catalyst_score')}")
+    if isinstance(g("piotroski"), (int, float)) and g("piotroski") > 0:
+        scores.append(f"Piotroski {int(g('piotroski'))}/9")
+    if isinstance(g("altman_z"), (int, float)) and g("altman_z") != 0:
+        scores.append(f"Altman-Z (solvency) {g('altman_z'):.1f}")
+    if isinstance(g("days_to_earnings"), (int, float)):
+        scores.append(f"Days to next earnings {int(g('days_to_earnings'))}")
+    if scores:
+        lines.append("Quality / scores: " + " | ".join(scores))
+
+    # Analyst consensus (stock page) — target is the crowd's 1-yr anchor; the debate's job is to
+    # judge whether the thesis BEATS or FADES that anchor, not to defer to it.
+    tgt = g("target")
+    if isinstance(tgt, (int, float)) and tgt > 0:
+        ups = g("upside")
+        ups_s = f" ({ups:+.0f}% upside)" if isinstance(ups, (int, float)) and not isinstance(ups, bool) else ""
+        lines.append(f"Analyst consensus target: {tgt:.2f}{ups_s}")
+
+    # Positioning / smart-money (stock page) — who's already in and which way the PT is revising.
+    # NOT a thesis on its own; context for whether the committee is early or late.
+    pos = []
+    sm = g("smart_money_score")
+    if isinstance(sm, (int, float)) and not isinstance(sm, bool):
+        pos.append(f"Smart-money score {sm * 100:.0f}/100")
+    ins = g("inst_score")
+    if isinstance(ins, (int, float)) and not isinstance(ins, bool):
+        pos.append(f"Institutional flow {ins * 100:.0f}/100")
+    ptv = g("pt_velocity_60d")
+    if isinstance(ptv, (int, float)) and not isinstance(ptv, bool):
+        pos.append(f"Analyst-target velocity {ptv * 100:+.0f}% (vs yr-ago avg PT)")
+    if pos:
+        lines.append("Positioning / smart money: " + " | ".join(pos))
+
+    # Technical posture — TIMING context only, explicitly NOT the thesis (the stock page shows it,
+    # but the committee must not let chart position override fundamental judgement).
+    tech = []
+    price = financials.get("price")
+    sma200 = g("sma200")
+    if (isinstance(price, (int, float)) and price > 0
+            and isinstance(sma200, (int, float)) and sma200 > 0):
+        tech.append(f"price {((price - sma200) / sma200) * 100:+.0f}% vs 200d SMA")
+    prox = g("proximity_52wk")
+    if isinstance(prox, (int, float)) and not isinstance(prox, bool):
+        tech.append(f"{prox * 100:.0f}% up the 52-wk range")
+    if tech:
+        lines.append("Technical posture (timing context, not thesis): " + " | ".join(tech))
+
     rows = (scan_fin.get("history_rows") or [])[-5:]
     if rows:
         traj = ["Multi-year trajectory (fiscal yr - revenue / net income / EPS):"]
@@ -953,7 +1147,9 @@ def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str
             traj.append(f"  CAGRs: {cg}")
         lines.append("\n".join(traj))
 
-    return "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\n" + "\n".join(lines)
+    _sym = (financials or {}).get("symbol")
+    return ("=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\n"
+            + "\n".join(lines)) + _ttm_block(_sym) + _live_corrections(_sym)
 
 
 def debate_candidate(symbol: str, transcript: dict, financials: dict = None,

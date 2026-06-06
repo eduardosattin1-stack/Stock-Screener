@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
@@ -3097,7 +3097,7 @@ function ScoringMethodologyCard() {
   );
 }
 
-function SpeculairDebateCard({ debateData }: { debateData: any }) {
+function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setHistIdx }: { debateData: any; debateHistory?: any[]; histIdx?: number; setHistIdx?: (i: number) => void }) {
   if (!debateData) return null;
 
   const type = debateData.type || "methodology_pick";
@@ -3136,6 +3136,27 @@ function SpeculairDebateCard({ debateData }: { debateData: any }) {
             <p style={{ margin: "4px 0 0", fontSize: 11, color: T.textMuted, fontFamily: T.mono }}>{bannerSub}</p>
           </div>
         </div>
+
+        {/* ── Debate history time-travel: scroll past Opus debates by date ── */}
+        {debateHistory && debateHistory.length > 0 && (
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}`, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <Clock size={13} color={T.textMuted} />
+            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Debate history</span>
+            <select value={histIdx} onChange={(e) => setHistIdx && setHistIdx(Number(e.target.value))}
+              style={{ fontSize: 11, fontFamily: T.mono, background: T.card, color: T.text, border: `1px solid ${T.divider}`, borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}>
+              {debateHistory.map((h: any, i: number) => (
+                <option key={i} value={i}>
+                  {h.date}{i === 0 ? " · latest" : ""} — {h.verdict || "—"} / conv {h.conviction ?? "—"}{h.transcript_source === "web" ? " · web-sourced" : ""}
+                </option>
+              ))}
+            </select>
+            {histIdx > 0 && (
+              <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(217, 119, 6, 0.12)", color: T.amber, fontFamily: T.mono, border: `1px solid rgba(217,119,6,0.25)` }}>
+                VIEWING PAST DEBATE — {debateData._histDate}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* ── Entry price & details if Apex/Watchlist ── */}
         {(debateData.entry_price > 0 || sourceMethodologies.length > 0) && (
@@ -4622,6 +4643,9 @@ export default function StockDetail(){
   const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
   const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
+  // Per-symbol Opus debate HISTORY (dated). Drives the debate-panel time-travel dropdown.
+  const [debateHistory, setDebateHistory] = useState<any[]>([]);
+  const [histIdx, setHistIdx] = useState(0);  // 0 = latest (history is sorted newest-first)
 
   useEffect(() => {
     fetch(`${GCS_SCANS}/speculair_baskets.json`)
@@ -4635,6 +4659,24 @@ export default function StockDetail(){
       });
   }, [symbol]);
 
+  // Load this symbol's dated debate history (GCS first, public fallback). Sorted newest-first so
+  // index 0 is the latest debate; the dropdown lets the user scroll back through prior runs.
+  useEffect(() => {
+    if (!symbol) return;
+    const sym = symbol.toUpperCase();
+    setDebateHistory([]); setHistIdx(0);
+    const sortNew = (d: any[]) => [...d].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    fetch(`${GCS_SCANS}/speculair_debate_history/${sym}.json`)
+      .then((r) => { if (r.ok) return r.json(); throw new Error("no gcs history"); })
+      .then((d) => { if (Array.isArray(d) && d.length) setDebateHistory(sortNew(d)); })
+      .catch(() => {
+        fetch(`/speculair_debate_history/${sym}.json`)
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (Array.isArray(d) && d.length) setDebateHistory(sortNew(d)); })
+          .catch(() => {});
+      });
+  }, [symbol]);
+
   // Deep-link: ?tab=debate (from a Speculair pick's "View full analysis →") opens the
   // multi-agent debate directly instead of landing on Overview with the tab buried 8th.
   useEffect(() => {
@@ -4644,9 +4686,10 @@ export default function StockDetail(){
   }, []);
 
   const debateData = useMemo(() => {
+    const basketPick = (() => {
     if (!speculairBaskets || !symbol) return null;
     const sym = symbol.toUpperCase();
-    
+
     // 1. Check apex_basket
     const apexItem = (speculairBaskets.apex_basket || []).find(
       (p: any) => p.symbol?.toUpperCase() === sym
@@ -4691,7 +4734,27 @@ export default function StockDetail(){
     }
 
     return null;
-  }, [speculairBaskets, symbol]);
+    })();
+    // Overlay the SELECTED dated history entry (default = latest) over the basket metadata so the
+    // debate panels reflect whichever past debate the user picks, while preserving the basket's
+    // type / entry_price / source_methodologies. Falls back to the basket pick when no history.
+    if (debateHistory.length) {
+      const sel = debateHistory[histIdx] || debateHistory[0];
+      // Narrative (bull/bear/dossier/verdict/etc.) time-travels with the selection; banner-level
+      // fields (type, director-vs-moderator conviction scale, entry data, methodologies) stay anchored
+      // to the CURRENT basket so the status banner isn't corrupted by an older entry's moderator scale.
+      return {
+        ...(basketPick || {}), ...sel,
+        type: (basketPick && basketPick.type) || "methodology_pick",
+        conviction: (basketPick && basketPick.conviction != null) ? basketPick.conviction : (sel.conviction ?? 3),
+        entry_price: basketPick ? basketPick.entry_price : undefined,
+        entry_date: basketPick ? basketPick.entry_date : undefined,
+        source_methodologies: (basketPick && basketPick.source_methodologies) || [],
+        _fromHistory: true, _histDate: sel.date, _histIsLatest: histIdx === 0,
+      };
+    }
+    return basketPick;
+  }, [speculairBaskets, symbol, debateHistory, histIdx]);
 
   const hasDebate = !!debateData;
 
@@ -4939,7 +5002,7 @@ export default function StockDetail(){
       ) : activeTab==="catalyst" ? (
         <CatalystTabContent symbol={s.symbol} />
       ) : activeTab==="debate" ? (
-        <SpeculairDebateCard debateData={debateData} />
+        <SpeculairDebateCard debateData={debateData} debateHistory={debateHistory} histIdx={histIdx} setHistIdx={setHistIdx} />
       ) : activeTab==="methodology" ? (
         <ScoringMethodologyCard />
       ) : activeTab==="transcript" ? (
