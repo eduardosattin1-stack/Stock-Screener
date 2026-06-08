@@ -5,14 +5,14 @@
   "last_prices": {
     "CMCSA": 23.82,
     "THC": 162.06,
-    "EEFT": 66.74,
     "ANF": 75.34,
     "SAX.DE": 34.9,
-    "UHS": 145.17,
-    "INGR": 99.98,
+    "EEFT": 66.74,
     "BKNG": 165.84,
     "TNET": 46.64,
-    "SCR.PA": 30.54
+    "SCR.PA": 30.54,
+    "INGR": 99.98,
+    "HRB": 38.09
   },
   "positions": {
     "CMCSA": {
@@ -25,11 +25,6 @@
       "entry_date": "2026-06-08",
       "conviction": 84
     },
-    "EEFT": {
-      "entry_price": 66.74,
-      "entry_date": "2026-06-08",
-      "conviction": 70
-    },
     "ANF": {
       "entry_price": 75.34,
       "entry_date": "2026-06-08",
@@ -40,15 +35,10 @@
       "entry_date": "2026-06-08",
       "conviction": 71
     },
-    "UHS": {
-      "entry_price": 145.17,
+    "EEFT": {
+      "entry_price": 66.74,
       "entry_date": "2026-06-08",
-      "conviction": 66
-    },
-    "INGR": {
-      "entry_price": 99.98,
-      "entry_date": "2026-06-08",
-      "conviction": 60
+      "conviction": 70
     },
     "BKNG": {
       "entry_price": 165.84,
@@ -64,6 +54,16 @@
       "entry_price": 30.54,
       "entry_date": "2026-06-08",
       "conviction": 62
+    },
+    "INGR": {
+      "entry_price": 99.98,
+      "entry_date": "2026-06-08",
+      "conviction": 60
+    },
+    "HRB": {
+      "entry_price": 38.09,
+      "entry_date": "2026-06-08",
+      "conviction": 58
     }
   },
   "history": [

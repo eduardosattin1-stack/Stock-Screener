@@ -2992,6 +2992,11 @@ export default function Dashboard(){
                                 {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
                                 {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
                               </div>
+                              {Array.isArray(pick.exposure_axes) && pick.exposure_axes.length > 0 && (
+                                <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                                  <span style={{ color: "var(--text-muted)" }}>exposure: </span>{pick.exposure_axes.map((a: string) => String(a).split(/[(（]/)[0].trim()).filter(Boolean).join(" · ")}
+                                </div>
+                              )}
                             </div>
                             {pick.thesis && (() => {
                               const _txt = String(pick.thesis);
