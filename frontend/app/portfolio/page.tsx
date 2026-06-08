@@ -125,7 +125,7 @@ export default function Portfolio(){
     clearLocalPortfolio();
     try {
       const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
-        user ? getPortfolio(user.uid) : Promise.resolve({ positions: [], history: [] }),
+        user ? getPortfolio(user.uid) : fetchGcsState().catch(() => ({ positions: [], history: [] })),
         fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
         fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()),
       ]);
@@ -167,8 +167,8 @@ export default function Portfolio(){
   async function closePosition(sym:string,exitPrice:number,reason:string,asset_type?:string,dd_touch?:number,gain_touch?:number){
     try {
       setErrorMsg(null);
-      if(!user){setErrorMsg("Sign in to manage positions");return;}
-      await storeClosePosition(user.uid,sym,exitPrice,reason||"User close",asset_type);
+      if(user) await storeClosePosition(user.uid,sym,exitPrice,reason||"User close",asset_type);
+      else await apiClose({symbol:sym,exit_price:exitPrice,reason:reason||"User close",asset_type,dd_touch,gain_touch});
       setClosingRow(null);
       await refresh();
     } catch(e:any) {
@@ -615,8 +615,8 @@ function AddPositionModal({onClose,onAdded}:{onClose:()=>void; onAdded:()=>void}
     if(!sh||sh<=0){setErr("Shares required");return;}
     setSaving(true);setErr("");
     try {
-      if(!user){setErr("Sign in to add positions");setSaving(false);return;}
-      await storeAddPosition(user.uid,{symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
+      if(user) await storeAddPosition(user.uid,{symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
+      else await apiAdd({symbol:sy,entry_price:p,shares:sh,notes,bucket:bucket||null});
       onAdded();
     } catch(e:any){
       setErr(e.message||"Failed");setSaving(false);
