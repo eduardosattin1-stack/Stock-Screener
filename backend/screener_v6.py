@@ -2271,7 +2271,17 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
         v["eps_latest"] = eps_latest
         
         # Store raw local inputs for leverage gate (latest year, not averaged)
-        net_debt_local = long_term_debt - (current_assets - current_liabilities)
+        # FIX (2026-06, AUDIT_PIPELINE_REPORT.md): net debt = total debt − (cash + ST investments),
+        # the standard definition. The prior formula (LTD − working capital) sign-flipped into a
+        # fake "net cash" for names with large inventory/receivables — ~30 corpus sign-flips.
+        total_debt = float(latest_bs.get("totalDebt") or 0)
+        if total_debt <= 0:
+            total_debt = long_term_debt + float(latest_bs.get("shortTermDebt") or 0)
+        cash_sti = float(latest_bs.get("cashAndShortTermInvestments") or 0)
+        if cash_sti <= 0:
+            cash_sti = (float(latest_bs.get("cashAndCashEquivalents") or 0)
+                        + float(latest_bs.get("shortTermInvestments") or 0))
+        net_debt_local = total_debt - cash_sti
         v["net_debt_local"] = net_debt_local
         v["ebit_local"] = float(latest_inc.get("operatingIncome") or 0)
         v["depreciation_local"] = float(latest_cf.get("depreciationAndAmortization") or latest_cf.get("depreciation") or 0)
@@ -2416,51 +2426,65 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
 # ---------------------------------------------------------------------------
 
 def get_insider_activity(sym: str) -> dict:
-    """Fetch insider trade statistics for recent 2 quarters. Returns insider score 0-1."""
-    result = {"buy_ratio": 0.0, "net_buys": 0, "score": 0.5, "_evaluated": False}
+    """Insider score from OPEN-MARKET transactions only (P-Purchase / S-Sale).
 
-    data = fmp("insider-trading/statistics", {"symbol": sym})
-    if not data:
+    FIX (2026-06, AUDIT_PIPELINE_REPORT.md): the prior version used the insider-trading/statistics
+    endpoint, whose totalAcquired aggregates ALL acquisition codes — A-Award grants, M-Exempt
+    option exercises, F-InKind tax events — so the "buy ratio" was structurally >=1 from routine
+    comp flow even when there were ZERO real purchases (and the `elif total_acquired>0: 5.0` branch
+    manufactured a strong-buy from pure grants). 83/159 audited names had a published "insider
+    buying" tell with 0 real open-market buys. We now count ONLY P-Purchase (acquisition) and
+    S-Sale (disposition) line items.
+    """
+    result = {"buy_ratio": 0.0, "net_buys": 0, "score": 0.5, "_evaluated": False,
+              "open_market_buys": 0, "open_market_sells": 0,
+              "buy_shares": 0, "sell_shares": 0}
+
+    data = fmp("insider-trading/search", {"symbol": sym, "page": 0, "limit": 100})
+    if not isinstance(data, list) or not data:
         return result
-
-    # Use the most recent 2 quarters
-    recent = data[:2] if len(data) >= 2 else data
-
-    total_acquired = sum(d.get("totalAcquired", 0) for d in recent)
-    total_disposed = sum(d.get("totalDisposed", 0) for d in recent)
-    buy_tx = sum(d.get("acquiredTransactions", 0) for d in recent)
-    sell_tx = sum(d.get("disposedTransactions", 0) for d in recent)
-
-    # Acquired/Disposed ratio
-    if total_disposed > 0:
-        result["buy_ratio"] = total_acquired / total_disposed
-    elif total_acquired > 0:
-        result["buy_ratio"] = 5.0  # strong buy signal
-
-    result["net_buys"] = buy_tx - sell_tx
-
-    # Score 0-1: heavy buying = 1.0, heavy selling = 0.0
-    # acquiredDisposedRatio: >1 = net buying, <1 = net selling
-    ratios = [d.get("acquiredDisposedRatio", 0) for d in recent]
-    avg_ratio = sum(ratios) / len(ratios) if ratios else 0
-
-    if avg_ratio >= 2.0:
-        result["score"] = 1.0  # strong insider buying
-    elif avg_ratio >= 1.0:
-        result["score"] = 0.75  # net insider buying
-    elif avg_ratio >= 0.5:
-        result["score"] = 0.5  # mixed
-    elif avg_ratio >= 0.2:
-        result["score"] = 0.3  # net selling
-    else:
-        result["score"] = 0.15  # heavy selling
-
-    # Bonus: if insiders are buying with actual purchases (not just options exercises)
-    total_purchases = sum(d.get("totalPurchases", 0) for d in recent)
-    if total_purchases > 0:
-        result["score"] = min(result["score"] + 0.15, 1.0)
-
     result["_evaluated"] = True
+
+    buys = sells = 0
+    buy_sh = sell_sh = 0.0
+    for t in data:
+        tt = str(t.get("transactionType") or "").strip().upper()
+        ad = str(t.get("acquisitionOrDisposition") or t.get("acquistionOrDisposition") or "").strip().upper()
+        try:
+            sh = float(t.get("securitiesTransacted") or 0)
+        except (TypeError, ValueError):
+            sh = 0.0
+        if tt.startswith("P-PURCHASE") and ad == "A":      # genuine open-market buy
+            buys += 1
+            buy_sh += sh
+        elif tt.startswith("S-SALE") and ad == "D":         # genuine open-market sale
+            sells += 1
+            sell_sh += sh
+
+    result["open_market_buys"] = buys
+    result["open_market_sells"] = sells
+    result["buy_shares"] = int(buy_sh)
+    result["sell_shares"] = int(sell_sh)
+    result["net_buys"] = buys - sells
+
+    # buy_ratio on real open-market SHARES only; 0.0 when there are no genuine purchases
+    if sell_sh > 0:
+        result["buy_ratio"] = buy_sh / sell_sh
+    elif buy_sh > 0:
+        result["buy_ratio"] = 5.0   # genuine buying, no sales — now a REAL signal
+
+    # Score 0-1 from open-market share flow only
+    if buys == 0 and sells == 0:
+        result["score"] = 0.5       # no open-market activity → neutral, not "buying"
+    elif buy_sh > 2 * sell_sh:
+        result["score"] = 1.0
+    elif buy_sh > sell_sh:
+        result["score"] = 0.75
+    elif sell_sh > 2 * buy_sh:
+        result["score"] = 0.15
+    else:
+        result["score"] = 0.4
+
     return result
 
 # ---------------------------------------------------------------------------
@@ -5561,9 +5585,17 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
             meth_track["rebalance_count"] = len(meth_track["rebalances"])
             rebalanced_keys += 1
 
+        # Backfill period_start_price on legacy holdings (pre-fix it was null, which froze the
+        # open-period YTD mark AND the frontend per-pick performance at +0.0%). entry_price is the
+        # best proxy when the field was never snapshotted; the monthly gate won't rebuild these
+        # holdings until the 1st of next month, so do it on every run.
+        for _h in meth_track.get("current_holdings", []):
+            if _h.get("period_start_price") is None and _h.get("entry_price"):
+                _h["period_start_price"] = round(float(_h["entry_price"]), 4)
         # 4. Always refresh the live YTD mark (open period since last rebalance).
         meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map)
 
+    tracking["holdings_status"] = "live"   # clear the stale 'pre_fix_a_fallback' flag once backfilled
     log.info(f"Tracking: {rebalanced_keys}/{len(methodology_picks)} methodologies "
              f"rebalanced on {rebalance_date} (monthly cadence); YTD marks refreshed for all")
 
@@ -6166,6 +6198,37 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
 # 19. Main Entry Point
 # ---------------------------------------------------------------------------
 
+def _mark_speculair_nav():
+    """Nightly mark-to-market of the Speculair Apex + Value books — a deterministic chained NAV + one
+    daily history point per book, so both sparklines draw DAILY. Constituent RE-GRADING (running the
+    Opus value/regime directors) stays in the weekly LOCAL Claude-Code run; this nightly step only
+    MARKS the already-published held names to tonight's prices. Best-effort — never breaks the scan."""
+    try:
+        import live_debate_engine as _E
+    except Exception as e:
+        log.warning(f"Speculair NAV mark skipped (engine import failed): {e}")
+        return
+    pub = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public")
+    for label, src, gpath, lname in [
+        ("apex", "scans/speculair_baskets.json", "scans/speculair_apex_tracking.json", "speculair_apex_tracking.json"),
+        ("value", "scans/speculair_value_apex.json", "scans/speculair_value_tracking.json", "speculair_value_tracking.json"),
+    ]:
+        try:
+            book = gcs_download(src)
+            if not book:
+                lf = os.path.join(pub, os.path.basename(src))
+                book = json.load(open(lf, encoding="utf-8")) if os.path.exists(lf) else {}
+            picks = (book or {}).get("apex_basket") or []
+            if not picks:
+                log.info(f"Speculair {label} NAV mark skipped — no published constituents")
+                continue
+            s = _E._update_apex_tracking(picks, push_gcs=True, gcs_path=gpath, local_name=lname)
+            log.info(f"Speculair {label} NAV marked: nav={s.get('nav')} "
+                     f"since={s.get('since_inception_pct')}% open={s.get('n_open')} closed={s.get('n_closed')}")
+        except Exception as e:
+            log.warning(f"Speculair {label} NAV mark failed: {e}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="CB Screener v7.2 — 13-factor + dual-mode v8")
     parser.add_argument("--region", default="nasdaq100",
@@ -6226,6 +6289,15 @@ def main():
 
     if not args.no_gcs:
         save_scan_to_gcs(stocks, region=args.region, macro=macro)
+
+    # Nightly mark-to-market of the Speculair Apex + Value books — the daily NAV mark so the
+    # sparklines draw every night (constituent re-grading stays weekly + local). Fires on any real
+    # scan (not gated to one region) so it can't silently no-op if the scheduled job isn't
+    # region=global; it prices the held names off scans/latest_global.json (the freshest full
+    # cross-market set, incl. European legs) and is idempotent within a day, so extra region runs
+    # just re-stamp the same day's point. Best-effort — never breaks the scan.
+    if not args.no_gcs:
+        _mark_speculair_nav()
 
 
 if __name__ == "__main__":
