@@ -1995,18 +1995,18 @@ def _fallback_director(tier1_baskets: dict) -> dict:
 APEX_TRACKING_PATH = "scans/speculair_apex_tracking.json"
 
 
-def _load_apex_tracking() -> dict:
-    """Load the persistent apex-basket track record (chained NAV + closed-position log)."""
+def _load_apex_tracking(gcs_path: str = APEX_TRACKING_PATH, local_name: str = "speculair_apex_tracking.json") -> dict:
+    """Load a persistent basket track record (chained NAV + closed-position log)."""
     try:
         sys.path.insert(0, str(BASE_DIR))
         from screener_v6 import gcs_download
-        d = gcs_download(APEX_TRACKING_PATH)
+        d = gcs_download(gcs_path)
         if isinstance(d, dict) and d.get("nav"):
             return d
     except Exception as e:
-        log.debug(f"apex tracking GCS load failed: {e}")
+        log.debug(f"tracking GCS load failed: {e}")
     try:
-        local = FRONTEND_DIR / "public" / "speculair_apex_tracking.json"
+        local = FRONTEND_DIR / "public" / local_name
         if local.exists():
             return json.loads(local.read_text(encoding="utf-8"))
     except Exception:
@@ -2047,8 +2047,11 @@ def _current_prices(symbols: set) -> dict:
     return out
 
 
-def _update_apex_tracking(apex_basket: list, push_gcs: bool = True) -> dict:
-    """Persistent live-forward track record for the Apex Basket.
+def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
+                          gcs_path: str = APEX_TRACKING_PATH,
+                          local_name: str = "speculair_apex_tracking.json") -> dict:
+    """Persistent live-forward track record for a basket (apex by default; pass gcs_path/local_name
+    for a separate book e.g. the Value Lens).
 
     Chains an equal-weight NAV across rebalances (anchored to entry prices at inception,
     so it measures performance from when the basket was established — not from go-live of
@@ -2062,7 +2065,7 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True) -> dict:
     if not syms:
         return {}
 
-    tr = _load_apex_tracking()
+    tr = _load_apex_tracking(gcs_path, local_name)
     nav = float(tr.get("nav") or 100.0)
     last_prices = dict(tr.get("last_prices") or {})
     positions = dict(tr.get("positions") or {})
@@ -2120,15 +2123,15 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True) -> dict:
              "last_prices": new_last, "positions": positions,
              "history": history, "closed": closed[-80:]}
     try:
-        (FRONTEND_DIR / "public" / "speculair_apex_tracking.json").write_text(
+        (FRONTEND_DIR / "public" / local_name).write_text(
             json.dumps(state, indent=2), encoding="utf-8")
     except Exception as e:
-        log.debug(f"apex tracking local write failed: {e}")
+        log.debug(f"tracking local write failed: {e}")
     if push_gcs:
         try:
             sys.path.insert(0, str(BASE_DIR))
             from screener_v6 import gcs_upload
-            gcs_upload(APEX_TRACKING_PATH, state)
+            gcs_upload(gcs_path, state)
         except Exception as e:
             log.warning(f"apex tracking GCS upload failed: {e}")
     log.info(f"Apex tracking: NAV {nav:.2f} ({(nav / 100 - 1) * 100:+.1f}% since {inception}) | "

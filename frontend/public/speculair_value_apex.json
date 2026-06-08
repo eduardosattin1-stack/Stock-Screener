@@ -14,7 +14,9 @@
    "growth_durability": "Flat revenue (3y CAGR +0.6%) and a declining broadband unit base, but a durable, high-quality FCF engine (Piotroski 8/9) with a credible self-help inflection (first YoY broadband improvement since 2020) and Epic Universe as a clean growth leg.",
    "peak_normalized": true,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 23.82,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "THC",
@@ -30,7 +32,9 @@
    "growth_durability": "STRENGTHENING: 7/7 beat-and-raise, FY25 EBITDA +14%, USPI EBITDA +12%; the one real near-term risk is the 2028 ACA EAPTC step-down, not solvency.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 162.06,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "EEFT",
@@ -46,7 +50,9 @@
    "growth_durability": "PIVOTING: organic revenue decelerated to +6% and GAAP FCF is shrinking (the per-share 'double-digit' is partly buyback-/convert-funded), offset by genuinely fast-growing higher-margin digital, Dandelion, CoreCard and acquiring legs.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 66.74,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "ANF",
@@ -62,7 +68,9 @@
    "growth_durability": "STABLE: best-in-cohort 14-straight-quarter top line (3y CAGR +12.5%, beats AEO/CRI/GIII), but FY26 was the first EPS decline of the era and op margin compressed to 8% in Q1 on tariffs/EMEA - a re-rating bet on a stalled-but-fortress compounder, not a grower.",
    "peak_normalized": true,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 75.34,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "SAX.DE",
@@ -78,7 +86,9 @@
    "growth_durability": "STABLE tilting pivoting: OOH is a real franchise (adj EBITDA +12%, 43.7% margin) but DaaS/Statista is shrinking (-13.5% organic) and EPS has gone sideways-to-down; real FCF (EUR341m, 15.2% margin) funds the dividend+buyback even as leverage drifts up - leverage noted, not a veto.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 34.9,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "UHS",
@@ -94,7 +104,9 @@
    "growth_durability": "STABLE operationally but with a dated, management-acknowledged structural headwind: 2024-25 EPS was Medicaid-directed-payment-funded, scheduled to be reduced from 2028 (DCF FV -8%, EPV -100% capture the cliff). The sop_mos of 48% is the CRO already splitting that bull/bear gap.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 145.17,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "INGR",
@@ -110,7 +122,9 @@
    "growth_durability": "STABLE tilting deteriorating near-term: revenue in secular slow-shrink (3y CAGR -3.1%, all price/mix) and FY26 EPS guided flat-to-down, but the Texture & Healthful Solutions franchise (8 straight quarters of volume growth, GLP-1 protein tailwind) is genuinely secular.",
    "peak_normalized": true,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 99.98,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "BKNG",
@@ -126,7 +140,9 @@
    "growth_durability": "STABLE: rev 3y CAGR +16.3%, adj-EPS compounding +20%+; the cracks are GAAP NI down ~8% in 2025 vs adjusted, FX-flattered reported growth, and an unhedged-by-anything-but-rhetoric AI-disintermediation terminal risk. The CRO's 33% MoS is conservative for this quality.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 165.84,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "TNET",
@@ -142,7 +158,9 @@
    "growth_durability": "STRENGTHENING on the controllable half (margin/cost/capital-return delivered) but revenue is still contracting (-5% YoY in Q1-26) with no dated path back to growth - the margin catalyst has largely fired, leaving a cheap-FCF wait on the top-line inflection.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 46.64,
+   "entry_date": "2026-06-08"
   },
   {
    "symbol": "SCR.PA",
@@ -158,7 +176,9 @@
    "growth_durability": "STRENGTHENING: record FY25 net income EUR846m / 19.1% ROE, reserve buffers built two years early (deliberately depressing reported margin), ratchet-protected rising dividend. IFRS insurance revenue is flat (a margin/mix, not volume, story) and P&C margins sit cyclically near peak into a softening 2026 market.",
    "peak_normalized": false,
    "forensic_gate": "",
-   "trap_flag": false
+   "trap_flag": false,
+   "entry_price": 30.54,
+   "entry_date": "2026-06-08"
   }
  ],
  "runner_ups": [
@@ -254,7 +274,24 @@
   }
  ],
  "value_memo": "RUBRIC WEIGHTING. Four pillars ~25 pts each, applied only to names that clear the forensic gate: (1) Margin of Safety anchored on the CRO-reconciled sop_mos_pct (the system of record), cross-checked against the 5-method mos_spread agreement but discounting any model MoS on a peak/stale name; (2) Cyclical-peak vs durable-growth normalization applied BEFORE crediting cheapness; (3) FUNDED-LEVERAGE SOLVENCY (this re-run's whole point); (4) Multiples vs true peers + growth durability/quality. The catalyst-regime overlay is fully removed - a live catalyst is neither a plus nor a requirement. Hard constraint: <=3 names per sector.\n\nTHE SOLVENCY-TEST CHANGE (the reason for this re-run). Pillar #3 now judges solvency on FUNDED, interest-bearing leverage - net_funded_debt_ebitda + interest_coverage, pre-bucketed into funded_solvency - and IGNORES raw Altman-Z, which uses total liabilities and structurally over-penalizes float/reserve/settlement businesses. funded_solvency in {exempt_financial, strong} => solvency is FINE and is NOT penalized. funded_solvency=moderate => acceptable; leverage is noted in the thesis but is not a veto. funded_solvency=weak => near-veto ONLY when JOINTLY weak (net funded debt >~3.5x AND coverage <~3x AND a near-term maturity wall confirmed in the dossier); one weak metric alone is not a veto.\n\nCLEARED 'FOR THE RIGHT REASON' (float-carriers / insurers / lease- and settlement-heavy books whose low Altman-Z was a reserve or float artifact, NOT real funded leverage): SCR.PA (reinsurer, exempt_financial, 0.4x funded, net cash, 220% solvency - the textbook case; the broader set also clears SREN.SW, MUV2.DE, PRI, HNR1.DE the same way) clears as a Tier-1 reinsurer, not a distressed name. EEFT (0.8x / 6.7x) and TNET (1.6x / 5.0x, effectively net cash) clear because their settlement-/payroll-/insurance-float balance sheets depressed Altman-Z while genuine funded leverage is low. CMCSA (1.9x / 4.3x) clears despite a $85B 'net debt > market cap' flag because that is lease-/relative-heavy and the funded coverage is healthy - it is solvent, though we do NOT credit its net debt as net cash. UHS (1.8x / 13.4x) clears on the funded basis even though its Altman-Z is only 1.7 - the binding question on UHS is the 2028 Medicaid-DPP earnings cliff, not the balance sheet. ANF, BKNG and INGR carry genuine NET CASH (0.8x / 0.3x / 0.8x funded), so solvency is a non-issue.\n\nNAMES CARRYING REAL FUNDED LEVERAGE (kept, with the leverage noted, because none is JOINTLY weak with a near-term maturity wall): THC at 2.33x / 4.2x (moderate) is kept because the dossier confirms 'no significant debt maturities until late 2027' - the classic deep-value maturity-wall kill-switch is absent. SAX.DE (Stroeer), the book's MOST-LEVERED apex name at 3.0x / 3.7x coverage (moderate), was the explicit test case: its dossier shows leverage drifting up (net debt/EBITDA ~2.1x->2.3x on management's measure) WHILE returning cash, but NO near-term maturity wall - the value-unlock brake is the founder-controlled KGaA governance, not refinancing risk - so per the rule it is KEPT (5.7x FCF vs JCDecaux ~15x; OOH is a 43.7%-margin franchise). SMPL (2.0x, moderate, runner-up) is likewise kept-eligible with healthy coverage and no wall. By contrast, the weak-AND-walled names stay out: BRBR (4.2x / 3.5x, weak) is moot anyway on the forensic gate, and the deeply-levered tails (CORT 14.6x, ROCK 10.2x, OTF/ACA.PA financial-float distortions) never reached apex MoS.\n\nFORENSIC GATE - EXCLUDED (interrogator credibility <=2; ineligible regardless of cheapness): AFX.DE, BRBR, CORT, HUBG, LIGHT.AS, MOH. CAPPED at ~50 (DETERIORATING but credible): BMW.DE, DMLP, GBX, GRBK, INSP, IT, JUN3.DE, KBH, NEXI.MI, ORI, PAH3.DE, PPC, SAM, TFI.PA, UVV. Among the capped, only IT (43% sop_mos, cheap, strong funded - runner-up) and NEXI.MI (56% sop_mos but DETERIORATING and stale) screen as value-relevant; both sit in the capped pool, never the apex.\n\nCYCLICAL-PEAK / STALE ARTIFACTS DOWN-RATED. BRBR (Bellring) is the headline trap and is EXCLUDED outright (forensic credibility 2, funded_solvency=weak at 4.2x / 3.5x, peak AND stale, DETERIORATING): its raw scan MoS was an enormous +335%, but that sits on peak earnings and a deteriorating forensic read - the CRO normalized fair value collapses it to a sop_mos of just +42%, and the forensic gate makes the point moot. CALM (Cal-Maine) is the cleanest peak artifact in the set: a raw scan MoS of +391% on an egg-windfall peak (freshness-stale, latest quarter rolling over) that the CRO normalized down to a sop_mos of just +8% - a low multiple on peak earnings is NOT value, and CALM is excluded from both lists. Within the apex, the peak/stale normalization was applied and SURVIVED with a still-positive normalized MoS for CMCSA (raw 127% -> CRO 85%, peak+stale but a durable FCF engine), ANF (raw 147% -> 49%, the +17.4 eps_peak_ratio is a low-base FY23 artifact), and INGR (raw 44% -> 40%, Argo-hit quarter); each is marked peak_normalized=true. THC, UHS and BKNG carry peak_flag=true but are durable-growth cases (freshness not stale, positive revenue CAGR, healthy ROIC), so the high ratio was NOT normalized away.\n\nVERDICT-C NAMES & A KEY EXCLUSION. No verdict-C name was seated in the apex (every apex name is verdict-B). INVA (Innoviva) had the most tempting C-name profile (sop_mos +42%, strong funded solvency, net cash) but is EXCLUDED from the apex because its dossier shows the 42% rests on stale/misleading inputs: the 'royalty' is in secular DECLINE, the headline EPS and 63.8% margin are Armata fair-value-mark artifacts, and the net-'cash' cushion is an illiquid controlled biotech - the C here CONFIRMS the cheapness is an artifact, exactly the case the rubric warns against. SREN.SW (verdict-C reinsurer) is retained only as a runner-up on positive normalized MoS with exempt-financial solvency, behind SCR.PA. ARDT (verdict-B but ROIC 4.7% < WACC, EPS -39%, first down-EBITDA-year guide, CEO departed 2026-06-02) is flagged trap_flag=true and held to the runner-ups as 'cheap-for-a-reason.'\n\nRISE / FALL vs the PRIOR value apex [CMCSA, THC, UHS, EEFT, SAX.DE, ANF, BKNG, SCR.PA, TNET]:\n- CMCSA: HELD (apex). The funded test re-confirms solvency (1.9x / 4.3x) despite the net-debt>mkt-cap flag; remains the top pick.\n- THC: HELD (apex). Moderate funded leverage (2.3x / 4.2x) explicitly cleared by the dossier's 'no maturities until late 2027.'\n- UHS: HELD (apex). The funded re-rating is the clarifying move - its low Altman-Z is dropped; solvency (1.8x / 13.4x) is fine and the only real risk is the 2028 Medicaid cliff.\n- EEFT: HELD (apex). Settlement-float balance sheet cleared on the right basis (0.8x funded); a core SoP value name.\n- SAX.DE: HELD (apex). The deliberate stress-test - most-levered apex name (3.0x / 3.7x, moderate) kept because the dossier shows no near-term maturity wall.\n- ANF: HELD (apex). Net cash; solvency never in question; CRO-normalized 49% MoS.\n- BKNG: HELD (apex). Net-cash fortress (0.3x funded); highest-quality compounder in the book.\n- SCR.PA: HELD (apex). The poster child for the solvency change - exempt_financial reinsurer, 'cleared for the right reason.'\n- TNET: HELD (apex). Insurance-float Altman-Z replaced by a clean funded read (1.6x, ~net cash); margin turnaround delivered.\n- NEW ADD - INGR: RISES into the apex. Its fortress net-cash funded solvency (0.8x / 25.5x) and CRO-held 40% MoS make it a clean Consumer-Defensive keep that the funded lens supports; the Argo accident is an interruption, not a solvency or franchise break.\nNet: the upgraded funded-solvency test did not knock any prior apex name out (the prior list was already solvency-sound on the right basis); it CONFIRMED all nine and admitted one additional fortress-balance-sheet name (INGR), for a 10-name pure-value apex spanning 7 sectors, each <=3 per sector, each clearing the forensic gate with a still-positive CRO-normalized margin of safety.",
- "generated_at": "2026-06-08",
+ "value_tracking": {
+  "inception_date": "2026-06-08",
+  "since_inception_pct": 0.0,
+  "nav": 100.0,
+  "n_open": 10,
+  "n_closed": 0,
+  "win_rate": null,
+  "history": [
+   {
+    "date": "2026-06-08",
+    "nav": 100.0,
+    "ret": 0.0,
+    "n": 10
+   }
+  ],
+  "closed": []
+ },
+ "generated_at": "2026-06-09",
  "engine": "opus-4.8-value-funded-leverage",
  "universe": 161
 }

@@ -2924,8 +2924,30 @@ export default function Dashboard(){
                       </span>
                     </div>
                     <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
-                      The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Analytical lens — not the tracked Apex book above.
+                      The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Tracked live-forward on its own NAV chain — independent of the catalyst Apex book above.
                     </div>
+                    {valueApex.value_tracking && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (valueApex.value_tracking.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(valueApex.value_tracking.since_inception_pct || 0) >= 0 ? "+" : ""}{valueApex.value_tracking.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {valueApex.value_tracking.inception_date}</div>
+                        </div>
+                        {(valueApex.value_tracking.history || []).length > 1 && (() => {
+                          const _n = valueApex.value_tracking.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {valueApex.value_tracking.nav} · {valueApex.value_tracking.n_open} held · {valueApex.value_tracking.n_closed} closed{valueApex.value_tracking.win_rate != null ? ` · ${valueApex.value_tracking.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>equal-weight NAV · live-forward, not back-filled</div>
+                        </div>
+                      </div>
+                    )}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
                       {(valueApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);

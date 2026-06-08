@@ -505,6 +505,162 @@ def value_csv():
     return len(rows)
 
 
+def baskets_csv():
+    """One CSV joining BASKET MEMBERSHIP (regime apex/runner, value apex/runner, and the 11
+    per-methodology baskets) with the FULL debate output (every agent) for ALL debated names —
+    'all baskets + all debates' in a single file. Companion to the apex-specific CSVs."""
+    import csv
+    res_dir, doss_dir, pg_dir = ROOT / "results_regime", ROOT / "dossiers", ROOT / "peer_groups"
+
+    def _roles(path):
+        d = {}
+        j = json.load(open(ROOT / path, encoding="utf-8")) if (ROOT / path).exists() else {}
+        for p in j.get("apex_basket", []):
+            if isinstance(p, dict) and p.get("symbol"):
+                d[p["symbol"]] = {**p, "_role": "APEX"}
+        for p in j.get("runner_ups", []):
+            s = p.get("symbol") if isinstance(p, dict) else p
+            if s and s not in d:
+                d[s] = ({**p} if isinstance(p, dict) else {"symbol": s})
+                d[s]["_role"] = "RUNNER_UP"
+        return d
+
+    reg = _roles("apex_basket_opus_regime.json")
+    val = _roles("apex_basket_value.json")
+    gin = {}
+    if (ROOT / "value_grade_input.json").exists():
+        try:
+            gin = {x["symbol"]: x for x in json.load(open(ROOT / "value_grade_input.json", encoding="utf-8"))}
+        except Exception:
+            gin = {}
+    meth_of = {}
+    try:
+        sb = json.load(open("../frontend/public/speculair_baskets.json", encoding="utf-8"))
+        for meth, basket in (sb.get("per_methodology_baskets") or {}).items():
+            picks = basket.get("picks") if isinstance(basket, dict) else basket
+            for pk in (picks or []):
+                s = pk.get("symbol") if isinstance(pk, dict) else pk
+                if s:
+                    meth_of.setdefault(s, []).append(meth)
+    except Exception as e:
+        print(f"WARN: per_methodology basket map failed ({e})")
+    cols = ["symbol", "sector", "signal_type",
+            "regime_role", "regime_director_conviction", "regime_lane", "regime_catalyst_status", "regime_director_thesis",
+            "value_role", "value_score", "value_thesis", "funded_solvency", "net_funded_debt_ebitda", "interest_coverage",
+            "sop_mos_pct", "scan_headline_mos_pct", "forensic_gate", "peak_flag", "freshness_stale", "trap_flag",
+            "n_methodology_baskets", "methodology_baskets",
+            "verdict", "conviction", "catalyst_status", "sop_fair_value", "risk_reward", "trajectory", "interrogator_score",
+            "radar_verdict", "radar_peers", "radar_relative_comps", "radar_rationale",
+            "bull_thesis", "bear_thesis", "sop_bull", "sop_bear", "sop_breakdown",
+            "consensus_delta", "valley_of_death", "positioning_washout", "forcing_function", "moderator_conclusion",
+            "peer_comps_note", "interrogator_dossier"]
+    rows = []
+    for f in sorted(res_dir.glob("*.json")):
+        try:
+            r = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        sym = r.get("symbol") or f.stem
+        rg, vl, gi = reg.get(sym, {}), val.get(sym, {}), gin.get(sym, {})
+        doss = (doss_dir / f"{sym}.md").read_text(encoding="utf-8") if (doss_dir / f"{sym}.md").exists() else ""
+        pg = {}
+        if (pg_dir / f"{sym}.json").exists():
+            try:
+                pg = json.load(open(pg_dir / f"{sym}.json", encoding="utf-8"))
+            except Exception:
+                pg = {}
+        mb = meth_of.get(sym, [])
+        rows.append({
+            "symbol": sym, "sector": r.get("sector", ""), "signal_type": r.get("signal_type", ""),
+            "regime_role": rg.get("_role", ""), "regime_director_conviction": rg.get("director_conviction", ""),
+            "regime_lane": rg.get("lane", ""), "regime_catalyst_status": rg.get("catalyst_status", r.get("catalyst_status", "")),
+            "regime_director_thesis": rg.get("thesis", ""),
+            "value_role": vl.get("_role", ""), "value_score": vl.get("value_score", ""), "value_thesis": vl.get("thesis", ""),
+            "funded_solvency": gi.get("funded_solvency", ""), "net_funded_debt_ebitda": gi.get("net_funded_debt_ebitda", ""),
+            "interest_coverage": gi.get("interest_coverage", ""), "sop_mos_pct": gi.get("sop_mos_pct", ""),
+            "scan_headline_mos_pct": gi.get("scan_headline_mos_pct", ""), "forensic_gate": gi.get("forensic_gate", ""),
+            "peak_flag": gi.get("peak_flag", ""), "freshness_stale": gi.get("freshness_stale", ""),
+            "trap_flag": vl.get("trap_flag", ""),
+            "n_methodology_baskets": len(mb), "methodology_baskets": ";".join(mb),
+            "verdict": r.get("verdict", ""), "conviction": r.get("conviction", ""), "catalyst_status": r.get("catalyst_status", ""),
+            "sop_fair_value": r.get("sop_fair_value", ""), "risk_reward": r.get("risk_reward", ""),
+            "trajectory": r.get("trajectory", ""), "interrogator_score": r.get("interrogator_score", ""),
+            "radar_verdict": pg.get("verdict", ""),
+            "radar_peers": ", ".join(pg.get("peers", [])) if isinstance(pg.get("peers"), list) else "",
+            "radar_relative_comps": pg.get("relative_comps", ""), "radar_rationale": pg.get("rationale", ""),
+            "bull_thesis": r.get("bull_thesis", ""), "bear_thesis": r.get("bear_thesis", ""),
+            "sop_bull": r.get("sop_bull", ""), "sop_bear": r.get("sop_bear", ""), "sop_breakdown": r.get("sop_breakdown", ""),
+            "consensus_delta": r.get("consensus_delta", ""), "valley_of_death": r.get("valley_of_death", ""),
+            "positioning_washout": r.get("positioning_washout", ""), "forcing_function": r.get("forcing_function", ""),
+            "moderator_conclusion": r.get("moderator_conclusion", ""), "peer_comps_note": r.get("peer_comps_note", ""),
+            "interrogator_dossier": doss,
+        })
+    role_rank = {"APEX": 0, "RUNNER_UP": 1, "": 2}
+    rows.sort(key=lambda x: (role_rank.get(x["regime_role"], 2), role_rank.get(x["value_role"], 2),
+                             -x["n_methodology_baskets"], x["symbol"]))
+    out = ROOT / "speculair_baskets_debates.csv"
+    with open(out, "w", encoding="utf-8-sig", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
+        w.writeheader()
+        for row in rows:
+            w.writerow(row)
+    n_reg = sum(1 for x in rows if x["regime_role"])
+    n_val = sum(1 for x in rows if x["value_role"])
+    n_meth = sum(1 for x in rows if x["n_methodology_baskets"])
+    print(f"wrote {len(rows)} rows x {len(cols)} cols -> {out}")
+    print(f"  basket coverage: regime-tagged={n_reg} value-tagged={n_val} in>=1 methodology basket={n_meth}")
+    return len(rows)
+
+
+def value_publish(push_gcs=False):
+    """Stage the public Value Lens payload (frontend/public/speculair_value_apex.json) AND maintain a
+    live-forward NAV track record for the value book — a separate chained-NAV state file
+    (speculair_value_tracking.json) from the apex, via the same _update_apex_tracking engine."""
+    import datetime as _dt
+    PUB = E.FRONTEND_DIR / "public"
+    apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
+    picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
+    track_in = [{**p, "conviction": p.get("value_score", 0)} for p in picks]   # value_score -> conviction log
+    try:
+        vt = E._update_apex_tracking(track_in, push_gcs=False,
+                                     gcs_path="scans/speculair_value_tracking.json",
+                                     local_name="speculair_value_tracking.json")
+    except Exception as e:
+        print(f"WARN: value tracking failed ({e})")
+        vt = {}
+    pos = {}
+    tp = PUB / "speculair_value_tracking.json"
+    if tp.exists():
+        try:
+            pos = json.load(open(tp, encoding="utf-8")).get("positions", {})
+        except Exception:
+            pos = {}
+    for p in picks:                                   # attach entry for per-pick perf in the card
+        pp = pos.get(p["symbol"], {})
+        if pp:
+            p["entry_price"] = pp.get("entry_price")
+            p["entry_date"] = pp.get("entry_date")
+    out = {"apex_basket": picks, "runner_ups": apx.get("runner_ups", []),
+           "value_memo": apx.get("value_memo", ""), "value_tracking": vt,
+           "generated_at": _dt.date.today().isoformat(),
+           "engine": "opus-4.8-value-funded-leverage", "universe": 161}
+    (PUB / "speculair_value_apex.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"value_publish: {len(picks)} apex + {len(out['runner_ups'])} runners | tracking nav={vt.get('nav')} "
+          f"since={vt.get('since_inception_pct')}% open={vt.get('n_open')} closed={vt.get('n_closed')} inception={vt.get('inception_date')}")
+    if push_gcs:
+        import subprocess
+        for localf, key in [(PUB / "speculair_value_apex.json", "scans/speculair_value_apex.json"),
+                            (PUB / "speculair_value_tracking.json", "scans/speculair_value_tracking.json")]:
+            try:
+                # shell=True so Windows resolves gcloud.cmd (and Linux/Cloud Run still works)
+                r = subprocess.run(f'gcloud storage cp "{localf}" "gs://screener-signals-carbonbridge/{key}"',
+                                   shell=True, capture_output=True, text=True, timeout=120)
+                print(f"  GCS push {key}: {'OK' if r.returncode == 0 else 'FAILED ' + (r.stderr or '')[-140:]}")
+            except Exception as e:
+                print(f"  GCS push {key} ERR: {e}")
+    return len(picks)
+
+
 def finish_debate():
     """Emit _finish_debate.js: debate ONLY the not-yet-done names (universe minus results_regime),
     reusing the already-built bundles/peer_groups (Radar skipped), batched to dodge the rate limit,
@@ -833,6 +989,10 @@ if __name__ == "__main__":
         value_input()
     elif mode == "value-csv":
         value_csv()
+    elif mode == "baskets-csv":
+        baskets_csv()
+    elif mode == "value-publish":
+        value_publish(push_gcs=("--gcs" in sys.argv))
     else:
         print(f"unknown mode: {mode}")
         sys.exit(1)
