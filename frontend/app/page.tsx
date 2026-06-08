@@ -251,7 +251,7 @@ interface StockData {
 
   iv15_discount?:number|null;
 
-  dcf_fcff_mos?:number|null;
+  dcf_fcff_mos?:number|null;consensus_mos?:number|null;momentum_mos?:number|null;
 
   rd_capitalized_dcf?:number|null;
 
@@ -402,6 +402,14 @@ const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
     case "multiples/acquirers_multiple":
 
       return { label: "ACQUIRER'S MULTIPLE", value: stock.acquirers_multiple != null ? `${stock.acquirers_multiple.toFixed(1)}x` : "—" };
+
+    case "v8fusion/convergence":
+
+      return { label: "CONSENSUS MOS", value: stock.consensus_mos != null ? `${(stock.consensus_mos * 100).toFixed(1)}%` : "—" };
+
+    case "v8fusion/fundamental_momentum":
+
+      return { label: "MOMENTUM SCORE", value: stock.momentum_mos != null ? stock.momentum_mos.toFixed(2) : "—" };
 
     default:
 
@@ -1799,6 +1807,50 @@ const METHODOLOGIES_CONFIG = [
 
     }
 
+  },
+
+  {
+
+    path: "v8fusion/convergence",
+
+    name: "Convergence (Cross-Method)",
+
+    regime: "BEAR",
+
+    description: "10th basket. Rewards names where INDEPENDENT valuation methods CLUSTER on a fair value (≥6 estimates within ±25% of the median, consensus MoS ≥ 15%, ≥5yr history) — a far more robust signal than one outsized single-method discount.",
+
+    metrics: {
+
+      baseline: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
+
+    }
+
+  },
+
+  {
+
+    path: "v8fusion/fundamental_momentum",
+
+    name: "Fundamental Momentum",
+
+    regime: "BULL",
+
+    description: "11th basket. Physical hard-tech growth (AI/datacenter, nuclear, robotics, rare-earth, defence, electrification): rev YoY ≥ 15%, 3-yr CAGR ≥ 10%, gross margin ≥ 30%, positive ROIC, analyst-covered — ranked by a growth + acceleration + analyst-revision + margin composite, NOT margin of safety.",
+
+    metrics: {
+
+      baseline: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
+
+    }
+
   }
 
 ];
@@ -1858,6 +1910,8 @@ const getMetricName = (key: string) => {
     case "graham_revised": return "Graham MOS";
     case "acquirers_multiple": return "Acquirer's MOS";
     case "iv15_deep_value": return "IV15 MOS";
+    case "convergence": return "Consensus MOS";
+    case "fundamental_momentum": return "Momentum Score";
     default: return "MOS";
   }
 };
@@ -2112,6 +2166,10 @@ export default function Dashboard(){
 
   const [trackingData, setTrackingData] = useState<any>(null);
 
+  // Live current prices for the methodology paper-tracking tables. findStock() misses the global/EU
+  // basket symbols in the page's loaded scan, so without a live quote the tables freeze at entry price.
+  const [methodPrices, setMethodPrices] = useState<Record<string, number>>({});
+
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
 
   // Symbols carrying a full multi-agent debate dossier (apex + watchlist + per-method
@@ -2133,6 +2191,8 @@ export default function Dashboard(){
     ) : null;
 
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
+  const [valueApex, setValueApex] = useState<any>({});
+  const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
 
   // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
   // in place (cheaper than threading enriched copies through 10+ render sites),
@@ -2148,6 +2208,18 @@ export default function Dashboard(){
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => { if (d) setSpeculairBaskets(d); })
           .catch((e) => console.error("Error loading speculair baskets:", e));
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/gcs/scans/speculair_value_apex.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS value fetch failed"); })
+      .then((d) => { if (d) setValueApex(d); })
+      .catch(() => {
+        fetch("/speculair_value_apex.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d) setValueApex(d); })
+          .catch((e) => console.error("Error loading value apex:", e));
       });
   }, []);
 
@@ -2172,6 +2244,28 @@ export default function Dashboard(){
       });
 
   }, []);
+
+  // Live quotes for every methodology holding → real current price + performance in the tables.
+  useEffect(() => {
+    const meths = trackingData?.methodologies;
+    if (!meths) return;
+    const syms = Array.from(new Set(
+      (Object.values(meths) as any[]).flatMap((m: any) => (m?.current_holdings || []).map((h: any) => h && h.symbol)).filter(Boolean)
+    )) as string[];
+    if (!syms.length) return;
+    let cancelled = false;
+    const chunks: string[][] = [];
+    for (let i = 0; i < syms.length; i += 50) chunks.push(syms.slice(i, i + 50));
+    Promise.all(chunks.map((c) =>
+      fetch(`/api/fmp?e=quote&symbol=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
+    )).then((results) => {
+      if (cancelled) return;
+      const m: Record<string, number> = {};
+      (results.flat() as any[]).forEach((q: any) => { if (q && q.symbol && typeof q.price === "number") m[String(q.symbol).toUpperCase()] = q.price; });
+      setMethodPrices(m);
+    });
+    return () => { cancelled = true; };
+  }, [trackingData]);
 
 
 
@@ -2819,6 +2913,97 @@ export default function Dashboard(){
                     </div>
                   </div>
 
+                  {/* Value Lens — pure-value re-grade of the same debate (catalyst overlay stripped) */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Value Lens
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(valueApex.apex_basket || []).length} names · regime-stripped · funded-leverage solvency
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Analytical lens — not the tracked Apex book above.
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                      {(valueApex.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : 0;
+                        const solv = String(pick.funded_solvency || "");
+                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
+                        const mos = pick.sop_mos_pct;
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.value_score >= 80 ? "rgba(20,184,122,0.2)" : pick.value_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.value_score >= 80 ? "var(--green)" : pick.value_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  val {pick.value_score}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                              </div>
+                              {typeof mos === "number" && (
+                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                <span>Solvency:</span>
+                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
+                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : ""}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
+                                </span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span>Current:</span>
+                                <span>${currPrice.toFixed(2)}</span>
+                              </div>
+                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                                {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
+                                {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
+                                {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
+                              </div>
+                            </div>
+                            {pick.thesis && (() => {
+                              const _txt = String(pick.thesis);
+                              const _exp = expandedValue.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--blue)", fontWeight: 600 }}>VALUE </span>{_txt}
+                                  </div>
+                                  {_txt.length > 200 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedValue(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                      {(valueApex.apex_basket || []).length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Value lens not loaded.</div>
+                      )}
+                    </div>
+                    {(valueApex.runner_ups || []).length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
+                        {(valueApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Capitulation Watchlist */}
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -3199,7 +3384,7 @@ export default function Dashboard(){
 
                 const stock = findStock(pick.symbol);
 
-                const currPrice = stock?.price || pick.price || 0;
+                const currPrice = methodPrices[String(pick.symbol).toUpperCase()] ?? stock?.price ?? pick.price ?? 0;
 
                 const entryPrice = pick.entry_price || currPrice || 1;
 
@@ -3426,7 +3611,7 @@ export default function Dashboard(){
 
                             const stock = findStock(symbol);
 
-                            const currPrice = stock?.price || pick.price || 0;
+                            const currPrice = methodPrices[String(pick.symbol).toUpperCase()] ?? stock?.price ?? pick.price ?? 0;
 
                             const entryPriceVal = pick.entry_price || currPrice || 0;
 
@@ -3510,7 +3695,7 @@ export default function Dashboard(){
 
                              const stock = findStock(symbol);
 
-                             const currPrice = stock?.price || pick.price || 0;
+                             const currPrice = methodPrices[String(pick.symbol).toUpperCase()] ?? stock?.price ?? pick.price ?? 0;
 
                              const allocation = 100000 / picks.length;
 

@@ -738,10 +738,14 @@ ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engi
 
 EVIDENCE DISCIPLINE (mandatory): Reason ONLY from data actually present in your input — the financial metrics block, the transcript, and the dossier IF one is provided. If the Interrogator dossier is empty or absent, do NOT invent, quote, or cite "the dossier", and do NOT fabricate specific figures (beat-rates, buyback prices, credibility scores, transcript quotes) that are not in your input; instead reason from the metrics + transcript and state that no dossier was available. Never present a number you were not given as if it were sourced. Map how the macro and competitive environment impacts the company's moat or event-driven catalyst. Ground every argument in the specific evidence provided — cite the real financials (revenue/margin/EPS/FCF trajectory, returns, leverage, valuation) and quote transcript phrases with quarter references. State the key conditions each case depends on. Be thorough; there is no length limit.
 
+SUM-OF-PARTS (mandatory): in BOTH cases value the business by its PARTS — a true segment SoP when a "SEGMENT REVENUE" block is present (value each segment by an appropriate peer multiple, then sum), else a whole-company intrinsic via the methodology metric / peer multiple — then apply special-situation OVERLAYS where relevant (net cash, pending distributions [verify whether already paid], announced asset-sale proceeds, tender/deal terms minus liabilities). Lean on any peer-comps lever you are given for the multiples. The goal is the company's ACTUAL intrinsic value by its parts, catalyst or not (e.g. a conglomerate whose segments sum to more than the whole).
+
 You must output a JSON object:
 {
   "bull_thesis": "The full bullish argument — the strongest evidence-grounded case for why this works, the catalysts, and the specific conditions that must hold.",
-  "bear_thesis": "The full bearish argument — the strongest evidence-grounded case for why this fails, the specific risks, and what would confirm them."
+  "bear_thesis": "The full bearish argument — the strongest evidence-grounded case for why this fails, the specific risks, and what would confirm them.",
+  "sop_bull": "The favorable Sum-of-Parts: the parts breakdown + the per-share value they imply.",
+  "sop_bear": "The adverse Sum-of-Parts: the conservative parts breakdown + the per-share value."
 }
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
@@ -762,6 +766,8 @@ You must also perform Activist & Catalyst Detection by merging:
 - Loeb's Third Point criteria (catalyst density, sum-of-parts discount, activism potential, asymmetric risk/reward).
 - The Bloom template (governance reset, strategic process, premium scenario).
 
+SUM-OF-PARTS RECONCILIATION + LIVE CATALYST CHECK (mandatory): reconcile the Architect's sop_bull and sop_bear into ONE base-case sop_fair_value (with the parts breakdown) and a risk_reward (downside-to-break vs upside-to-fair-value). Independently judge the load-bearing catalyst's CURRENT status — FIRED (already happened, re-rate spent) / ARB (deal terms fixed, capped at the offer) / PENDING_HARD (dated, binding, real asymmetry) / SOFT_EXTENDED (non-binding, serially-extended, third-party, single-binary) / UNVERIFIABLE — and let it MOVE the verdict: a FIRED catalyst is NOT an asymmetric special-sit (treat as arb/defensive), a SOFT_EXTENDED one is mid-conviction at best, and apply this UNIFORMLY (do not exempt a name just because it had a bundled transcript). Sanity-check the implied multiple against any peer comps you are given.
+
 Your final execution verdict MUST be one of:
 - "A": AGGRESSIVE ENTRY (Catalyst imminent, market offside, pain trade is primed).
 - "B": WATCHLIST FOR CAPITULATION (The thesis is real, but wait for a specific flush/headwind to clear the decks—specify the exact event to wait for).
@@ -778,6 +784,10 @@ You must return a valid JSON object:
 {
   "verdict": "A" | "B" | "C",
   "conviction": integer (1 to 5),
+  "sop_fair_value": "string/number — the reconciled base-case Sum-of-Parts per-share fair value (a number or tight range).",
+  "sop_breakdown": "string — the parts and what each contributes to the value.",
+  "risk_reward": "string — downside-to-break vs upside-to-fair-value, as a ratio or a clear statement.",
+  "catalyst_status": "string — FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE, with the dated evidence.",
   "consensus_delta": "string — the full expectations-arbitrage analysis; quote the exact street assumptions that are wrong and why. No length limit.",
   "valley_of_death": "string — the full near-term (3-9 month) risk analysis: cash-burn humps, maturities, macro headwinds that hit before the catalyst. No length limit.",
   "positioning_washout": "string — the full analysis of forced/mechanical selling dynamics in the shareholder base. No length limit.",
@@ -937,9 +947,17 @@ def _live_corrections(sym: str) -> str:
             td = _n("totalDebt") or (_n("longTermDebt") + _n("shortTermDebt"))
             cash = _n("cashAndShortTermInvestments") or (_n("cashAndCashEquivalents") + _n("shortTermInvestments"))
             nd = td - cash
-            amt = f"{nd/1e9:.2f}B" if abs(nd) >= 1e9 else f"{nd/1e6:.0f}M"
-            out.append(f"Net debt (recomputed: total debt minus cash, {b.get('date','latest Q')}): {amt}  "
-                       f"[NEGATIVE = net cash] - use this, not the scan's net_debt above")
+
+            def _amt(x):
+                return f"{x/1e9:.2f}B" if abs(x) >= 1e9 else f"{x/1e6:.0f}M"
+
+            if nd >= 0:
+                lab = (f"NET DEBT {_amt(nd)} (total debt {_amt(td)} minus cash {_amt(cash)}) — this is a LIABILITY; "
+                       f"in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'")
+            else:
+                lab = (f"NET CASH {_amt(-nd)} (cash {_amt(cash)} exceeds total debt {_amt(td)}) — a genuine SoP add-back")
+            out.append(f"Net debt/cash (recomputed from the balance sheet, {b.get('date','latest Q')}): {lab}; "
+                       f"use this, not the scan's net_debt above")
     except Exception:
         pass
     try:
