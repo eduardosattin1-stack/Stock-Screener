@@ -255,11 +255,12 @@ SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran o
   - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact — otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
 
 RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
-1. MARGIN OF SAFETY — primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below.
+1. MARGIN OF SAFETY — primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below. CRO-ONLY LEG: a name with <=2/5 positive model MoS AND a scan MoS below ~+10% (`scan_headline_mos_pct`) means your SoP is the SOLE evidence of cheapness — you may seat it, but you MUST set its `size_units` <= 0.5, tag it by name in the memo, and state in one sentence why your SoP beats five dissenting models.
 2. CYCLICAL-PEAK vs DURABLE-GROWTH — apply BEFORE crediting any cheapness. `peak_flag`=true (eps_peak_ratio>=1.4 OR fcf_cagr_3y>=60%) means the latest earnings sit far above the multi-year base — you MUST distinguish two cases, because the flag fires on BOTH:
    (a) CYCLICAL PEAK / recovery artifact = peak_flag AND (`freshness_stale`=true [FY numerator > live TTM, or latest_q_eps_yoy<=-15%] OR weak/negative `revenue_cagr_3y` OR a commodity/cyclical end-market). Earnings are at a cycle high and ALREADY ROLLING OVER. NORMALIZE to mid-cycle (use `eps_normalized`, not `fy_eps`) and treat the headline multiple as FAKE-cheap. These are the BRBR/CALM artifacts (CALM eps_peak_ratio ~9 on the egg windfall; both rolling over). A low multiple on peak earnings is NOT value.
    (b) DURABLE GROWTH = peak_flag BUT `freshness_stale`=false (still growing, positive latest-Q YoY) AND durable positive `revenue_cagr_3y` AND healthy ROIC. The high ratio reflects a secular re-rate or a real turnaround (a brand compounding), NOT a cycle peak — do NOT normalize it away; credit it, but sanity-check the multiple vs true peers.
    In BOTH cases `sop_mos_pct` (the CRO's already-normalized fair value) is the ANCHOR: if the CRO normalized the name and STILL shows a positive MoS, the cheapness is real; if the CRO's MoS collapsed far below `scan_headline_mos_pct`, it was a peak artifact.
+   (c) STALE ANCHOR: `freshness_stale`=true AND `eps_peak_ratio` >= ~1.8 AND the load-bearing catalyst already FIRED means the CRO fair value itself may be built on PRE-EVENT segments (pre-spin/pre-divestiture share count + EBITDA) — treat `sop_mos_pct` as PROVISIONAL, set `size_units` <= 0.5, and say so in the thesis (e.g. CMCSA post-Versant).
 3. FUNDED-LEVERAGE SOLVENCY (this REPLACES raw Altman-Z, which uses total liabilities and over-penalizes float/reserve businesses). Judge solvency on FUNDED debt only — `net_funded_debt_ebitda` (net interest-bearing debt / EBITDA, so settlement/payroll float and policyholder reserves are structurally excluded) + `interest_coverage`; the `funded_solvency` field pre-buckets it. IGNORE raw `altman_z`.
    - `is_financial`=true (banks/insurers) OR `funded_solvency` in {exempt_financial, strong}: solvency is FINE — do NOT penalize. This clears EEFT/TNET (~0.8-1.6x funded, strong coverage), SCR.PA and the bank/insurer set on the RIGHT basis (their low Altman-Z was a float/reserve artifact), and any net-cash name.
    - REAL-funded-debt names (`funded_solvency` = moderate or weak): drop the Z number and near-VETO ONLY when the metrics are JOINTLY weak — high funded leverage (net_funded_debt_ebitda > ~3.5x) AND thin coverage (interest_coverage < ~3x) AND a near-term MATURITY WALL (check the name's dossier at backend/_opus_debate/dossiers/<SYM>.md for refinancing/maturity risk). ONE weak metric alone is NOT a veto: a 2-3x-levered name with healthy coverage and no wall is acceptable value — just note the leverage in the thesis. (Worked example: SAX.DE ~3.0x / 3.7x coverage = the book's most-levered name → keep only if the dossier shows no near maturity wall.)
@@ -268,9 +269,9 @@ RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
 
 HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap.
 
-HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy). FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome) and CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once.
+HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy). FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome) and CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), forensic_gate, trap_flag}], runner_ups:[...~6], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification). Reply exactly: DONE"""
+OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification). Reply exactly: DONE"""
 
 
 def value_input():
@@ -405,7 +406,21 @@ def value_input():
             "net_debt": net_debt, "market_cap": mktcap, "net_debt_exceeds_mktcap": net_debt_gt_mktcap,
         })
     (ROOT / "value_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    (ROOT / "value_director_prompt.txt").write_text(VALUE_DIRECTOR_PROMPT, encoding="utf-8")
+    prompt_txt = VALUE_DIRECTOR_PROMPT
+    pa = ROOT / "apex_basket_value.json"                # Fix 4 feed-forward: prior MEASURED correlations
+    if pa.exists():
+        try:
+            pc = json.load(open(pa, encoding="utf-8")).get("correlation") or {}
+            if pc.get("avg_pairwise") is not None:
+                fl = pc.get("flagged_pairs") or []
+                lines = [f"  {f['a']}-{f['b']}: {f['corr']}" + (" [BREACH]" if f.get("breach") else "") for f in fl[:12]]
+                prompt_txt += ("\n\nPRIOR-RUN MEASURED CORRELATIONS (2y weekly log returns; argue your hidden-factor "
+                               f"stress AGAINST these real numbers, do not merely assert 'barely co-move'). "
+                               f"avg pairwise={pc.get('avg_pairwise')}, max={pc.get('max_pair')}. Pairs >=0.6:\n"
+                               + ("\n".join(lines) if lines else "  (none >=0.6 last run)"))
+        except Exception:
+            pass
+    (ROOT / "value_director_prompt.txt").write_text(prompt_txt, encoding="utf-8")
     npeak = sum(1 for x in out if x["peak_flag"])
     ngate = sum(1 for x in out if x["forensic_gate"])
     nstale = sum(1 for x in out if x["freshness_stale"])
@@ -440,7 +455,8 @@ def value_csv():
     cols = ["rank", "symbol", "sector", "value_score", "in_regime_apex", "value_thesis", "mos_agreement",
             "altman_z", "net_funded_debt_ebitda", "interest_coverage", "funded_solvency",
             "sop_mos_pct", "scan_headline_mos_pct", "forensic_gate", "peak_normalized",
-            "peak_flag", "eps_peak_ratio", "freshness_stale", "peer_verdict_director", "growth_durability", "exposure_axes", "trap_flag",
+            "peak_flag", "eps_peak_ratio", "freshness_stale", "peer_verdict_director", "growth_durability", "exposure_axes",
+            "size_units_effective", "weight_pct", "mos_agreement_n", "cro_only", "stale_anchor", "corr_flag", "entry_plan", "trap_flag",
             "debate_verdict", "debate_conviction", "catalyst_status", "sop_fair_value", "sop_breakdown",
             "risk_reward", "peer_comps_note", "radar_peers", "radar_relative_comps", "radar_verdict",
             "radar_rationale", "bull_thesis", "bear_thesis", "sop_bull", "sop_bear", "consensus_delta",
@@ -480,6 +496,10 @@ def value_csv():
             "freshness_stale": gin.get(sym, {}).get("freshness_stale", ""),
             "peer_verdict_director": p.get("peer_verdict", ""), "growth_durability": p.get("growth_durability", ""),
             "exposure_axes": "; ".join(p["exposure_axes"]) if isinstance(p.get("exposure_axes"), list) else (p.get("exposure_axes", "") or ""),
+            "size_units_effective": p.get("size_units_effective", ""), "weight_pct": p.get("weight_pct", ""),
+            "mos_agreement_n": p.get("mos_agreement_n", ""), "cro_only": p.get("cro_only", ""),
+            "stale_anchor": p.get("stale_anchor", ""), "corr_flag": p.get("corr_flag", ""),
+            "entry_plan": p.get("entry_plan", ""),
             "trap_flag": p.get("trap_flag", ""),
             "debate_verdict": r.get("verdict", ""), "debate_conviction": r.get("conviction", ""),
             "catalyst_status": r.get("catalyst_status", ""), "sop_fair_value": r.get("sop_fair_value", ""),
@@ -631,6 +651,15 @@ def value_publish(push_gcs=False):
     except Exception as e:
         print(f"WARN: value tracking failed ({e})")
         vt = {}
+    weights = apx.get("weights")                       # fix 5e: parallel WEIGHTED NAV (separate state file)
+    vtw = {}
+    if weights:
+        try:
+            vtw = E._update_apex_tracking(track_in, push_gcs=False, weights=weights,
+                                          gcs_path="scans/speculair_value_tracking_weighted.json",
+                                          local_name="speculair_value_tracking_weighted.json")
+        except Exception as e:
+            print(f"WARN: weighted value tracking failed ({e})")
     pos = {}
     tp = PUB / "speculair_value_tracking.json"
     if tp.exists():
@@ -643,8 +672,26 @@ def value_publish(push_gcs=False):
         if pp:
             p["entry_price"] = pp.get("entry_price")
             p["entry_date"] = pp.get("entry_date")
+    pool_stats = {}                                    # fix 6: honest pool-quality banner
+    gp = ROOT / "value_grade_input.json"
+    if gp.exists():
+        try:
+            from collections import Counter as _C
+            gin = json.load(open(gp, encoding="utf-8"))
+            vc = _C((x.get("debate_verdict") or "?") for x in gin)
+            na = vc.get("A", 0)
+            pool_stats = {"n_pool": len(gin), "verdict_counts": dict(vc), "n_verdict_a": na,
+                          "banner": (f"Best-of-B basket: {na} verdict-A names in a {len(gin)}-name pool — "
+                                     f"every apex pick is a verdict-B value name. Expect SLOW gap-closure: "
+                                     f"margin-of-safety re-rating, no hard catalysts by design.")}
+        except Exception:
+            pool_stats = {}
     out = {"apex_basket": picks, "runner_ups": apx.get("runner_ups", []),
            "value_memo": apx.get("value_memo", ""), "value_tracking": vt,
+           "value_tracking_weighted": vtw, "weights": weights,
+           "stress_test": apx.get("stress_test"), "correlation": apx.get("correlation"),
+           "exits": apx.get("exits"), "combined_caps": apx.get("combined_caps"),
+           "pool_stats": pool_stats,
            "generated_at": _dt.date.today().isoformat(),
            "engine": "opus-4.8-value-funded-leverage", "universe": 161}
     (PUB / "speculair_value_apex.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -653,7 +700,8 @@ def value_publish(push_gcs=False):
     if push_gcs:
         import subprocess
         for localf, key in [(PUB / "speculair_value_apex.json", "scans/speculair_value_apex.json"),
-                            (PUB / "speculair_value_tracking.json", "scans/speculair_value_tracking.json")]:
+                            (PUB / "speculair_value_tracking.json", "scans/speculair_value_tracking.json"),
+                            (PUB / "speculair_value_tracking_weighted.json", "scans/speculair_value_tracking_weighted.json")]:
             try:
                 # shell=True so Windows resolves gcloud.cmd (and Linux/Cloud Run still works)
                 r = subprocess.run(f'gcloud storage cp "{localf}" "gs://screener-signals-carbonbridge/{key}"',
@@ -683,6 +731,34 @@ def finish_debate():
     print(f"FINISH OK: {len(fmp)} FMP + {len(online)} online = {len(missing)} still-missing (of {len(uni)})")
     print(f"FINISH_SCRIPT={out.resolve()}")
     return len(missing)
+
+
+def value_revalidate():
+    """Fix 3 (revalidation half): emit _revalidate_debate.js to re-debate ONLY the stale-anchor
+    value-apex names (stamped by _value_post: freshness_stale + eps_peak_ratio>=1.8 + catalyst FIRED)
+    on POST-EVENT PRO-FORMA segments. Forces them through the ONLINE path so the agent web-fetches the
+    post-spin/post-divestiture financials, and injects a pro-forma instruction into the debate BRIEF.
+    The operator runs the emitted script via the Workflow tool; fresh results then flow into value-input
+    -> Director. Mirrors finish_debate()."""
+    import re
+    apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
+    stale = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("stale_anchor")]
+    if not stale:
+        print("value_revalidate: no stale_anchor names stamped — nothing to revalidate (run value-post first).")
+        return 0
+    js = (ROOT / "_weekly_debate.js").read_text(encoding="utf-8")
+    js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = []", js)                       # force all online
+    js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(stale), js)
+    instr = ("REVALIDATION RUN: this name's load-bearing STRUCTURAL EVENT has already FIRED — WebSearch the "
+             "POST-EVENT PRO-FORMA financials (post-spin/post-divestiture share count + segment EBITDA + net "
+             "debt from the most recent filing AFTER the event date) and rebuild the Sum-of-Parts on THOSE; do "
+             "NOT reuse pre-event segment data. State the event date and the pro-forma basis explicitly. ")
+    js = re.sub(r'(const BRIEF = ")', lambda m: m.group(1) + instr, js, count=1)
+    out = ROOT / "_revalidate_debate.js"
+    out.write_text(js, encoding="utf-8")
+    print(f"value_revalidate: {len(stale)} stale-anchor name(s) {stale} -> online pro-forma re-debate")
+    print(f"REVALIDATE_SCRIPT={out.resolve()}")
+    return len(stale)
 
 
 def export_debate_csv():
@@ -994,6 +1070,11 @@ if __name__ == "__main__":
         value_csv()
     elif mode == "baskets-csv":
         baskets_csv()
+    elif mode in ("value-post", "value_post"):
+        import subprocess
+        subprocess.run([sys.executable, str(ROOT / "_value_post.py")] + (["--offline"] if "--offline" in sys.argv else []), check=True)
+    elif mode in ("value-revalidate", "value_revalidate"):
+        value_revalidate()
     elif mode == "value-publish":
         value_publish(push_gcs=("--gcs" in sys.argv))
     else:

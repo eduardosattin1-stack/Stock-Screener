@@ -2049,7 +2049,8 @@ def _current_prices(symbols: set) -> dict:
 
 def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
                           gcs_path: str = APEX_TRACKING_PATH,
-                          local_name: str = "speculair_apex_tracking.json") -> dict:
+                          local_name: str = "speculair_apex_tracking.json",
+                          weights: dict = None) -> dict:
     """Persistent live-forward track record for a basket (apex by default; pass gcs_path/local_name
     for a separate book e.g. the Value Lens).
 
@@ -2074,12 +2075,23 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
     prices = _current_prices(syms | set(last_prices.keys()))
     period_ret = 0.0
 
+    def _wmean(rets_by_sym):                        # weighted mean over names that have a return; equal-weight fallback
+        if not rets_by_sym:
+            return 0.0
+        if not weights:
+            return sum(rets_by_sym.values()) / len(rets_by_sym)
+        ws = {s: weights.get(s, 0) for s in rets_by_sym}
+        tot = sum(ws.values())
+        if tot <= 0:
+            return sum(rets_by_sym.values()) / len(rets_by_sym)
+        return sum(rets_by_sym[s] * ws[s] / tot for s in rets_by_sym)
+
     if not tr:
         # INCEPTION — anchor NAV to entry prices so it reflects performance since the
         # basket was established (entry_date), not since the tracker first ran.
-        rets = [prices[p["symbol"]] / p["entry_price"] - 1 for p in apex
-                if (p.get("entry_price") or 0) > 0 and prices.get(p["symbol"], 0) > 0]
-        period_ret = (sum(rets) / len(rets)) if rets else 0.0
+        rets = {p["symbol"]: prices[p["symbol"]] / p["entry_price"] - 1 for p in apex
+                if (p.get("entry_price") or 0) > 0 and prices.get(p["symbol"], 0) > 0}
+        period_ret = _wmean(rets)
         nav = 100.0 * (1 + period_ret)
         inception = min((p.get("entry_date") for p in apex if p.get("entry_date")), default=today)
         history = [{"date": inception, "nav": 100.0, "ret": 0.0, "n": len(apex)}]
@@ -2087,7 +2099,7 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
         inception = tr.get("inception_date") or today
         prior = [s for s in last_prices if s in prices and last_prices[s] > 0]
         if prior and tr.get("last_date") != today:
-            period_ret = sum(prices[s] / last_prices[s] - 1 for s in prior) / len(prior)
+            period_ret = _wmean({s: prices[s] / last_prices[s] - 1 for s in prior})
             nav *= (1 + period_ret)
         for s in list(last_prices.keys()):          # rotations → realized exits
             if s not in syms:

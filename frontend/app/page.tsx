@@ -2948,6 +2948,16 @@ export default function Dashboard(){
                         </div>
                       </div>
                     )}
+                    {valueApex.stress_test && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{valueApex.stress_test.published_downside_pct}%</span> recession · {valueApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{valueApex.correlation ? ` · avg pairwise corr ${valueApex.correlation.avg_pairwise} (${valueApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                      </div>
+                    )}
+                    {valueApex.pool_stats && valueApex.pool_stats.banner && (
+                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
+                        {valueApex.pool_stats.banner}
+                      </div>
+                    )}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
                       {(valueApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
@@ -2969,6 +2979,15 @@ export default function Dashboard(){
                                 <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.value_score >= 80 ? "rgba(20,184,122,0.2)" : pick.value_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.value_score >= 80 ? "var(--green)" : pick.value_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                                   val {pick.value_score}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
+                                {pick.weight_pct != null && (
+                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
+                                )}
+                                {(pick.cro_only || pick.stale_anchor) && (
+                                  <span title={pick.cro_only ? "CRO-only leg" : "stale anchor"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
+                                )}
+                                {pick.corr_flag && (
+                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
+                                )}
                               </div>
                               {typeof mos === "number" && (
                                 <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
