@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
+import { Tip, rrDisplay, toneColor } from "../../components/Tip";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
@@ -3256,6 +3257,26 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
         </Card>
       )}
 
+      {/* ── Sum-of-Parts valuation + live catalyst status (CRO) ── */}
+      {(debateData.sop_fair_value || debateData.catalyst_status || debateData.risk_reward) && (
+        <Card style={{ padding: "16px 20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.blue, textTransform: "uppercase", marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
+            <Activity size={12} /> Sum-of-Parts Valuation &amp; Catalyst Status (CRO)
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", marginBottom: debateData.sop_breakdown ? 10 : 0 }}>
+            {debateData.sop_fair_value && <div style={{ fontSize: 12, fontFamily: T.mono, color: T.text }}>SoP fair value: <strong style={{ color: T.green }}>{String(debateData.sop_fair_value)}</strong></div>}
+            {debateData.risk_reward && <div style={{ fontSize: 12, fontFamily: T.mono, color: T.text }}>Risk/reward: <strong>{String(debateData.risk_reward).slice(0, 90)}</strong></div>}
+            {debateData.catalyst_status && (() => {
+              const cs = String(debateData.catalyst_status).split(/[\s|—-]+/)[0].toUpperCase();
+              const bad = /FIRED|SOFT|UNVERIF/.test(cs); const good = /PENDING/.test(cs);
+              const c = good ? T.green : bad ? T.red : T.amber;
+              return <span style={{ fontSize: 10, fontFamily: T.mono, padding: "2px 8px", borderRadius: 4, background: c + "22", color: c, border: `1px solid ${c}55` }}>CATALYST: {cs}</span>;
+            })()}
+          </div>
+          {debateData.sop_breakdown && <p style={{ fontSize: 12, color: T.textLight, lineHeight: 1.6, fontFamily: T.sans, margin: 0, whiteSpace: "pre-wrap" }}>{String(debateData.sop_breakdown)}</p>}
+        </Card>
+      )}
+
       {/* ── CRO Final Synthesis ── */}
       {debateData.moderator_conclusion && (
         <Card style={{ padding: "16px 20px" }}>
@@ -4045,7 +4066,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(168,85,247,0.06)", borderRadius: 6, border: `1px solid ${T.purple || "var(--purple)"}` }}>
             <div>
-              <div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Catalyst Score</div>
+              <Tip k="CATALYST_SCORE"><div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Catalyst Score</div></Tip>
               <div style={{ fontSize: 9, color: T.textLight }}>Refined Catalyst Density</div>
             </div>
             <div style={{ marginLeft: "auto", fontSize: 24, fontWeight: 800, color: T.purple || "var(--purple)", fontFamily: T.mono }}>
@@ -4053,15 +4074,17 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
             </div>
           </div>
           
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(20,184,122,0.06)", borderRadius: 6, border: `1px solid ${T.green}` }}>
+          {(() => { const rr = rrDisplay(report as any); return (
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 6, border: `1px solid ${toneColor(rr.tone)}` }}>
             <div>
-              <div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div>
-              <div style={{ fontSize: 9, color: T.textLight }}>Target Ratio</div>
+              <Tip k="RR" extra={rr.rawForTooltip}><div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div></Tip>
+              <div style={{ fontSize: 9, color: T.textLight }}>vs live price</div>
             </div>
-            <div style={{ marginLeft: "auto", fontSize: 24, fontWeight: 800, color: T.green, fontFamily: T.mono }}>
-              {report.upside_downside_ratio ? `${report.upside_downside_ratio.toFixed(1)}:1` : "N/A"}
+            <div style={{ marginLeft: "auto", fontSize: 17, fontWeight: 800, color: toneColor(rr.tone), fontFamily: T.mono }}>
+              {rr.text}
             </div>
           </div>
+          ); })()}
         </div>
 
         <div>
@@ -4071,7 +4094,104 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
           <p style={{ fontSize: 13, color: T.text, lineHeight: 1.6, margin: 0, fontFamily: T.sans }}>
             {report.analysis_summary}
           </p>
-          
+
+          {/* Skeptic correction — reconciles a thesis whose prose argues a higher score than the skeptic's final */}
+          {(report as any).verify_verdict === "CONFIRMED_WITH_CORRECTIONS" && report.bloom_catalysts?.catalyst_3?.evidence && (
+            <div style={{ marginTop: 10, padding: "9px 12px", background: "rgba(217,151,6,0.06)", border: "1px solid rgba(217,151,6,0.25)", borderRadius: 6 }}>
+              <Tip k="CONFIRMED_WITH_CORRECTIONS"><span style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: "#d97706", letterSpacing: "0.05em" }}>⚠ Skeptic correction</span></Tip>
+              <div style={{ fontSize: 10.5, color: T.textLight, lineHeight: 1.5, marginTop: 4 }}>{report.bloom_catalysts.catalyst_3.evidence}</div>
+            </div>
+          )}
+
+          {/* Post-board enforcement audit (manual §6/§9): driver tag + corrections trail */}
+          {((report as any).resolution_driver || ((report as any).corrections?.length > 0)) && (
+            <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(196,181,253,0.05)", border: `1px solid rgba(196,181,253,0.18)`, borderRadius: 6 }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: (report as any).corrections?.length ? 6 : 0 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.purple || "var(--purple)", letterSpacing: "0.06em" }}>Post-board pass</span>
+                {(report as any).resolution_driver && (
+                  <span style={{ fontSize: 9, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(196,181,253,0.14)", color: T.purple || "var(--purple)", border: "1px solid rgba(196,181,253,0.20)" }}>
+                    ⛓ driver: {String((report as any).resolution_driver).replace(/_/g, " ")}
+                  </span>
+                )}
+                {(report as any).lane_canon && (
+                  <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textLight }}>lane: {String((report as any).lane_canon).replace(/_/g, " ")}</span>
+                )}
+              </div>
+              {(report as any).corrections?.length > 0 && (
+                <div style={{ fontSize: 10, color: T.textLight, lineHeight: 1.5 }}>
+                  <span style={{ color: T.textMuted, fontWeight: 700 }}>Corrections applied: </span>
+                  {(report as any).corrections.join(" · ")}
+                  {(report as any).adjusted_loeb_score_orig != null && (report as any).adjusted_loeb_score_orig !== report.adjusted_loeb_score && (
+                    <span> · score {(report as any).adjusted_loeb_score_orig} → {report.adjusted_loeb_score}</span>
+                  )}
+                  {(report as any).tier_orig && (report as any).tier_orig !== (report as any).tier && (
+                    <span> · tier {(report as any).tier_orig} → {(report as any).tier}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Phase-2 computed edge / valuation build (the EDGE axis, with the work shown) */}
+          {(report as any).valuation_method && (
+            <div style={{ marginTop: 12, padding: "12px 14px", background: "rgba(20,184,122,0.04)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.green, letterSpacing: "0.06em" }}>Edge · computed R:R</span>
+                <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textMuted }}>({(report as any).valuation_method})</span>
+                {(report as any).edge_grade && (report as any).edge_grade !== "?" && (
+                  <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 6px", borderRadius: 3, background: (report as any).edge_grade === "H" ? "rgba(20,184,122,0.18)" : (report as any).edge_grade === "M" ? "rgba(217,151,6,0.18)" : "rgba(239,68,68,0.16)", color: (report as any).edge_grade === "H" ? T.green : (report as any).edge_grade === "M" ? "#d97706" : "#ef4444" }}>EDGE {(report as any).edge_grade}</span>
+                )}
+                {((report as any).edge_flags || []).map((f: string) => (<Tip key={f} k={f.split(":")[0]}><span style={{ fontSize: 8, fontFamily: T.mono, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "1px 4px" }}>{f}</span></Tip>))}
+              </div>
+              {(report as any).valuation_method === "binary_prob" ? (
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
+                  <span>P(win) <b>{(((report as any).win_prob || 0) * 100).toFixed(0)}%</b></span>
+                  <span style={{ color: T.green }}>up-leg <b>+${((report as any).up_leg || 0).toFixed(2)}</b></span>
+                  <span style={{ color: "#ef4444" }}>down-leg <b>−${((report as any).down_leg || 0).toFixed(2)}</b></span>
+                  <span>payoff <b>{((report as any).payoff || 0).toFixed(2)}×</b></span>
+                  <span>EV <b style={{ color: ((report as any).ev_pct || 0) >= 0 ? T.green : "#ef4444" }}>{((report as any).ev_pct || 0) >= 0 ? "+" : ""}{(((report as any).ev_pct || 0) * 100).toFixed(1)}%</b></span>
+                  <span style={{ color: T.textMuted }}>(barbell — not a single R:R)</span>
+                </div>
+              ) : (
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
+                  <Tip k="RR" extra={rrDisplay(report as any).rawForTooltip}><span>R:R <b style={{ color: toneColor(rrDisplay(report as any).tone) }}>{rrDisplay(report as any).text}</b></span></Tip>
+                  <span style={{ color: T.green }}>target <b>${(((report as any).sop_built ?? (report as any).fair_value_target) || 0).toFixed(2)}</b>{(report as any).sop_built != null ? <span style={{ color: T.textMuted, fontWeight: 400 }}> (build)</span> : null}</span>
+                  <span>live <b>${((report as any).live_price || report.price || 0).toFixed(2)}</b></span>
+                  <span style={{ color: "#ef4444" }}>floor <b>${((report as any).downside_floor || 0).toFixed(2)}</b></span>
+                  {(report as any).drift != null && (<span style={{ color: T.textMuted }}>drift {((report as any).drift * 100).toFixed(1)}%</span>)}
+                </div>
+              )}
+              {((report as any).edge_flags || []).includes("SOP_TARGET_MISMATCH") && (
+                <div style={{ fontSize: 9, color: "#d97706", marginTop: 4 }}>⚠ asserted target ${((report as any).fair_value_target || 0).toFixed(2)} ≠ reconciled build ${((report as any).sop_built || 0).toFixed(2)} — R:R uses the build (premium/advocacy stripped)</div>
+              )}
+              {(report as any).valuation?.advocacy_target != null && (
+                <div style={{ fontSize: 9, color: T.textMuted, marginTop: 2 }}>advocacy ceiling ${Number((report as any).valuation.advocacy_target).toFixed(2)} — activist target, displayed only (never in the R:R)</div>
+              )}
+              {(report as any).valuation?.valuation_basis && (
+                <div style={{ fontSize: 10, color: T.textLight, marginTop: 6, lineHeight: 1.5 }}><span style={{ color: T.textMuted, fontWeight: 700 }}>Basis: </span>{(report as any).valuation.valuation_basis}</div>
+              )}
+              {(report as any).valuation?.sop_components?.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: T.textMuted, marginBottom: 4 }}>Sum-of-parts build</div>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: T.mono }}>
+                    <thead><tr style={{ color: T.textMuted }}><th style={{ textAlign: "left", padding: "2px 4px" }}>Segment</th><th style={{ textAlign: "right" }}>Metric</th><th style={{ textAlign: "right" }}>×</th><th style={{ textAlign: "right", padding: "2px 4px" }}>EV</th></tr></thead>
+                    <tbody>
+                      {(report as any).valuation.sop_components.map((s: any, idx: number) => (
+                        <tr key={idx} style={{ borderTop: `1px solid ${T.cardBorder || "var(--border)"}` }}>
+                          <td style={{ padding: "2px 4px", color: T.text }} title={s.basis}>{s.segment}</td>
+                          <td style={{ textAlign: "right", color: T.textLight }}>{s.metric_value != null ? `${s.metric_value} ${s.driver_metric || ""}` : "—"}</td>
+                          <td style={{ textAlign: "right", color: T.textLight }}>{s.multiple != null ? `${s.multiple}×` : "—"}</td>
+                          <td style={{ textAlign: "right", padding: "2px 4px", color: T.text }}>{s.ev_contribution != null ? `$${Number(s.ev_contribution).toLocaleString()}` : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div style={{ fontSize: 9, color: T.textMuted, marginTop: 4 }}>− net debt ${Number((report as any).valuation.net_debt || 0).toLocaleString()} − adj ${Number((report as any).valuation.adjustments || 0).toLocaleString()} ÷ {Number((report as any).valuation.shares_out || 0).toLocaleString()} sh = <b style={{ color: T.green }}>${((report as any).fair_value_target || 0).toFixed(2)}</b></div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Catalyst Nature Timing & Re-rate Distinction */}
           {(report.catalyst_nature || report.re_rate_status) && (
             <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6 }}>
@@ -4318,7 +4438,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 </span>
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_1.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                {report.bloom_catalysts.catalyst_1.title}
+                <Tip k="STAGE_CATALYST">{report.bloom_catalysts.catalyst_1.title}</Tip>
               </div>
               <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
                 {report.bloom_catalysts.catalyst_1.description}
@@ -4345,7 +4465,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 </span>
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_2.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                {report.bloom_catalysts.catalyst_2.title}
+                <Tip k="STAGE_MILESTONE">{report.bloom_catalysts.catalyst_2.title}</Tip>
               </div>
               <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
                 {report.bloom_catalysts.catalyst_2.description}
@@ -4372,7 +4492,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                 </span>
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_3.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                {report.bloom_catalysts.catalyst_3.title}
+                <Tip k="STAGE_VERIFY">{report.bloom_catalysts.catalyst_3.title}</Tip>
               </div>
               <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
                 {report.bloom_catalysts.catalyst_3.description}
@@ -4403,7 +4523,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
               </div>
             </div>
           )}
-          {report.loeb_criteria?.sum_of_parts && (
+          {report.loeb_criteria?.sum_of_parts?.analysis && !["N/A.", "N/A", "-"].includes(report.loeb_criteria.sum_of_parts.analysis) && (
             <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Sum-of-Parts Discount</span>
@@ -4419,7 +4539,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
         </Card>
 
         <Card>
-          {report.loeb_criteria?.activism_potential && (
+          {report.loeb_criteria?.activism_potential?.analysis && !["-", "N/A.", "N/A"].includes(report.loeb_criteria.activism_potential.analysis) && (
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Activism Footprint</span>
@@ -4432,13 +4552,10 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
               </div>
             </div>
           )}
-          {report.loeb_criteria?.risk_reward && (
+          {report.loeb_criteria?.risk_reward?.analysis && (
             <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Asymmetric Risk/Reward</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.green }}>
-                  Ratio: {report.loeb_criteria.risk_reward.ratio}
-                </span>
               </div>
               <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
                 {report.loeb_criteria.risk_reward.analysis}
@@ -4474,7 +4591,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
               </div>
             </div>
             <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>P/C OI Ratio</div>
+              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>P/C Ratio</div>
               <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
                 {report.options_signals.pc_oi_ratio != null ? report.options_signals.pc_oi_ratio.toFixed(2) : "N/A"}
               </div>
@@ -4629,6 +4746,36 @@ function MultiValuationCard({s}:{s:StockData}){
   );
 }
 
+// Radar peer-comps card — the intelligent business-model peer group (clusters by economics/end-market,
+// not just GICS) with relative valuation/trend/momentum. Sourced from scans/peer_groups.json.
+function RadarPeersCard({ pg }: { pg: any }) {
+  if (!pg) return null;
+  const peers: string[] = Array.isArray(pg.peers) ? pg.peers : [];
+  const verdict: string = pg.verdict || "";
+  const vColor = /cheap/i.test(verdict) ? T.green : /rich/i.test(verdict) ? T.red : T.amber;
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <SH title="Comparable Peers — Radar" sub="Business-model peers (not just sector) · relative valuation / trend / momentum" />
+      {peers.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+          {peers.map((p) => (
+            <a key={p} href={`/stock/${p}`} style={{ textDecoration: "none" }}>
+              <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 4, background: "rgba(59,130,246,0.10)", color: T.blue, fontFamily: T.mono, border: `1px solid rgba(59,130,246,0.2)`, cursor: "pointer" }}>{p}</span>
+            </a>
+          ))}
+        </div>
+      )}
+      {verdict && (
+        <div style={{ marginTop: 10 }}>
+          <span style={{ fontSize: 10, fontFamily: T.mono, padding: "2px 8px", borderRadius: 4, background: vColor + "22", color: vColor, border: `1px solid ${vColor}55`, textTransform: "uppercase", letterSpacing: "0.05em" }}>{verdict.replace(/_/g, " ")}</span>
+        </div>
+      )}
+      {pg.relative_comps && <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: "10px 0 0", textAlign: "justify" }}>{pg.relative_comps}</p>}
+      {pg.rationale && <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.5, fontFamily: T.sans, margin: "8px 0 0", fontStyle: "italic" }}>Why these peers: {pg.rationale}</p>}
+    </Card>
+  );
+}
+
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
@@ -4674,6 +4821,21 @@ export default function StockDetail(){
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => { if (Array.isArray(d) && d.length) setDebateHistory(sortNew(d)); })
           .catch(() => {});
+      });
+  }, [symbol]);
+
+  // Radar peer-comps: intelligent business-model peer grouping (better than the GICS "similar stocks").
+  const [peerGroup, setPeerGroup] = useState<any>(null);
+  useEffect(() => {
+    if (!symbol) return;
+    const sym = symbol.toUpperCase();
+    setPeerGroup(null);
+    const pick = (d: any) => { if (d && typeof d === "object") setPeerGroup(d[sym] || d[symbol] || null); };
+    fetch(`${GCS_SCANS}/peer_groups.json`)
+      .then((r) => { if (r.ok) return r.json(); throw new Error("no gcs peers"); })
+      .then(pick)
+      .catch(() => {
+        fetch(`/peer_groups.json`).then((r) => (r.ok ? r.json() : null)).then(pick).catch(() => {});
       });
   }, [symbol]);
 
@@ -5132,6 +5294,7 @@ export default function StockDetail(){
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
       <GrowthPanel incomes={incomes} loading={fmpLoading} ratios={ratios}/>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
+      {peerGroup && <RadarPeersCard pg={peerGroup} />}
       <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14,margin:"16px 0"}}>
         <PeersPanel symbol={s.symbol} companyName={s.symbol}/>
         <NewsFeed symbol={s.symbol}/>

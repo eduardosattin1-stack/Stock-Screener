@@ -1,0 +1,309 @@
+{
+  "summary": "Opus 3-tier catalyst sweep (chunk 9 (GVA-IMTX)): scan -> deep -> skeptic",
+  "agentCount": 27,
+  "logs": [
+    "Scanning 150 names in 6 batches of 25 (Opus)",
+    "Scan done: 149 scored (A 9/W 14/N 126) -> 13 survivors",
+    "[stall] agent \"skeptic:IDYA\" stalled (no progress) after 231s — retrying (1/5)",
+    "Deep+Skeptic done: 13 dossiers; 8 verified ACTIVE"
+  ],
+  "result": {
+    "chunk": "9 (GVA-IMTX)",
+    "scanned": 149,
+    "scan_distribution": {
+      "active": 9,
+      "watch": 14,
+      "none": 126
+    },
+    "survivors_flagged": [
+      {
+        "symbol": "HALO",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "dated binary (PDUFA + patent litigation)",
+        "one_line": "Live Merck Keytruda-SC fight: ~Sept 23 PDUFA + ongoing injunction/PTAB rulings drive royalty stream; two-sided asymmetry (Merck won first patent invalidation May 12)."
+      },
+      {
+        "symbol": "HBM",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "project sanctioning / dated milestone",
+        "one_line": "Copper World definitive feasibility study due mid-2026 with project-sanctioning decision expected 2026; final permit + Mitsubishi JV already cleared so partly de-risked."
+      },
+      {
+        "symbol": "HLX",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "one_line": "Definitive all-stock combination with Hornbeck (announced Apr 23 2026; Hornbeck holders ~55% / Helix ~45%), closes 2H 2026 pending Helix shareholder vote + regulatory approvals — real complicated-merge / arb setup with S-4 filed."
+      },
+      {
+        "symbol": "HON",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "spin-off",
+        "one_line": "Automation/Aerospace separation on track for 2H 2026 (Solstice spin already completed Oct 2025); genuine dated forward spin-off but mega-cap and well-telegraphed so asymmetry is limited."
+      },
+      {
+        "symbol": "HSIC",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "activist",
+        "one_line": "KKR 16.4% strategic stake (standstill, can reach 19.9%) + Ananym activist + BOLD+1 $125M run-rate by end-2026 + new CEO/board cut = structural hardening setup."
+      },
+      {
+        "symbol": "HTT",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "capital_return",
+        "one_line": "Live modified Dutch-auction tender for up to 39M ADSs at $2.80-3.20, expires Jun-24-2026; ex-Qudian shell trading near cash/investment value = real dated capital-return event."
+      },
+      {
+        "symbol": "IBRX",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary-catalyst",
+        "one_line": "FDA accepted sBLA for Anktiva+BCG in BCG-unresponsive papillary NMIBC; hard PDUFA date Jan 6 2027 - a real dated binary with label-expansion optionality."
+      },
+      {
+        "symbol": "IDYA",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "Darovasertib pivotal OptimUM-02 hit (Apr-2026, de-risked); forward RTOR/NDA filing H2-2026 on accelerated-approval path plus IDE849/IDE034 H2-2026 reads — dated regulatory asymmetry still ahead."
+      },
+      {
+        "symbol": "IHS",
+        "score": 8,
+        "tier": "ACTIVE",
+        "lane": "merger_arb",
+        "one_line": "Definitive MTN take-private at $8.50/sh cash announced 17-Feb-2026, close targeted by YE2026 with LatAm-Macquarie and I-Systems-TIM carve-outs as conditions — live complicated merger-arb."
+      },
+      {
+        "symbol": "IMCR",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "TEBE-AM Phase 3 registrational topline expected as early as 2H-2026 (enrollment done 1H-2026); brenetafusp PRISM-MEL Phase 3 ongoing — dated pivotal binary."
+      },
+      {
+        "symbol": "IMMX",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "NEXICART-2 BLA-enabling trial fully enrolled; topline ~late-Sept 2026 then BLA, with BTD/RMAT/ODD and 95% CR — high-asymmetry dated readout in a microcap first-in-class AL-amyloidosis CAR-T."
+      },
+      {
+        "symbol": "IMNM",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "Varegacestat Phase 3 RINGSIDE hit (Dec-2025); NDA submitted Apr-2026 so FDA decision/approval pending plus EU MAA by YE2026 — dated regulatory binary, first-in-class desmoid."
+      },
+      {
+        "symbol": "IMTX",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "SUPRAME Phase 3 (anzu-cel/IMA203) pre-specified interim + final analyses due 2026, BLA early-2027; well-funded ($521M) — dated pivotal melanoma readout."
+      }
+    ],
+    "verified": [
+      {
+        "symbol": "HALO",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "dated binary (patent litigation) — DEGRADED to legal-slog",
+        "catalyst": "Halozyme's MDASE patent-infringement fight vs Merck over subcutaneous Keytruda (Qlex) could create a new litigation-contingent royalty stream, but the drug is already FDA-approved/launched and recent rulings have gone against HALO.",
+        "dated_milestone": "No clean forward binary; rolling PTAB final written decisions on 13 instituted PGRs (~one year from each institution, into late-2026/2027) and German Federal Patent Court nullity (filed Aug 2025); nearest named events already FIRED — May 12, 2026 PTAB invalidation (Merck win) and May 15, 2026 14th-petition denial.",
+        "instrument": "none (no tradeable clean forward catalyst; equity only, litigation drip)",
+        "bloom_gates": "G1 only (named counterparty = Merck); G2 FAILS (no contractual commitment — royalties are purely litigation-contingent, currently $0, Enhanze explicitly unaffected since Merck uses Alteogen ALT-B4); G3 FAILS (no specific dated currently-unpriced royalty figure; outcome is a multi-year rolling legal process)",
+        "edge": "L — triage thesis is factually broken: the \"~Sept 23 PDUFA\" is misdated/fired (Keytruda Qlex already approved Sept 2025 across 38 indications), and the Enhanze royalty stream is explicitly NOT at stake (Merck uses Alteogen's hyaluronidase). Recent rulings re-rated against HALO; remaining catalysts are a rolling PTAB/court slog with no single clean forward date.",
+        "primary_source": "Pearce IP 2026-05-12 + Halozyme PRNewswire 2025-12-04",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The catalyst as flagged does not survive strict gating: the Sept 2026 PDUFA framing is incorrect — subcutaneous Keytruda (Qlex) already received FDA approval in September 2025 across 38 indications, so that binary is fired, and the Enhanze royalty stream is explicitly unaffected because Merck licenses Alteogen's ALT-B4, not Halozyme tech. The only real variable is MDASE patent litigation, which is two-sided but degraded to a multi-year rolling legal process: Merck just won a May 12, 2026 PTAB invalidation and a May 15 institution denial (both already fired against HALO), versus Halozyme's Dec 4, 2025 German PI; there is no single clean dated forward catalyst with a quantified currently-unpriced royalty, only rolling PGR final-written-decision deadlines into late-2026/2027. Passes G1 (named counterparty Merck) but fails G2 and G3, so NONE / score 3."
+      },
+      {
+        "symbol": "HBM",
+        "score": 5.5,
+        "tier": "WATCH",
+        "lane": "project sanctioning / dated milestone",
+        "catalyst": "Hudbay's Copper World (Arizona) definitive feasibility study is due mid-2026 with a project-sanctioning (build) decision expected by year-end 2026, now funded and de-risked by Mitsubishi's $600M 30% JV (closed Jan 2026) and full permitting.",
+        "dated_milestone": "DFS completion mid-2026 (next, imminent); sanctioning decision expected H2/year-end 2026",
+        "instrument": "equity (HBM, NYSE); consider longer-dated calls if playing the year-end sanction decision given copper-beta noise",
+        "bloom_gates": "G1 (named counterparty: Mitsubishi, 30% JV closed Jan 2026, $420M cash + $180M committed within 18mo) and G2 (concrete commitment: funded DFS -> sanctioning decision in 2026)",
+        "edge": "M — catalyst is real, named, and dated, but the JV+permit de-risking is already partly priced (HBM ~3x off the $8.93 52wk low, above 50/200d MAs even after today's -14.8% drop); DFS is a soft internal milestone not a hard binary surprise, and the thesis is confounded by copper-price beta.",
+        "primary_source": "Hudbay press release \"Closing of $600M Mitsubishi JV\" (Jan 2026) + SEC 6-K FY2026 (exhibit99-1) confirming DFS mid-2026 / sanction decision 2026; corroborated by mining.com fully-permitted coverage (2025)",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Genuinely verified: Mitsubishi's $600M JV for 30% of Copper World closed January 2026 ($420M in, $180M within 18 months), the project is fully permitted, the DFS targets mid-2026 completion, and a sanctioning decision is expected later in 2026 — so the catalyst is real, specific, dated, and forward (not yet fired). It clears the strict gate via G1 (named counterparty) and G2 (concrete funded commitment) and is not a pure macro bet, but stays WATCH because the de-risking is partly reflected in a stock that has already tripled, the DFS is a gradual study rather than a binary re-rate, and copper-price beta (today's -14.8% move) is a meaningful confound. Hard binary upside is concentrated in the H2-2026 sanction decision and any DFS economics surprise (IRR/scale), not the imminent study filing itself."
+      },
+      {
+        "symbol": "HLX",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "catalyst": "Definitive all-stock merger with Hornbeck Offshore (announced Apr 22, 2026; fixed 10.27167 HLX/HBK ratio, $75M+ synergies, Hornbeck holders ~55% / Helix ~45% fully diluted) creating \"HOS,\" pending Helix shareholder vote + regulatory clearance, targeting an H2 2026 close.",
+        "dated_milestone": "S-4 filed Jun 4, 2026 (preliminary) + HSR filed May 20, 2026; next: S-4 effectiveness then Helix shareholder special meeting (date TBD, proxy mailing imminent, ~Q3 2026), close H2 2026.",
+        "instrument": "equity (merger-arb / event-driven); the binding gate is the Helix shareholder vote, so HLX moves on deal-completion odds, not standalone fundamentals",
+        "bloom_gates": "G1 (Hornbeck named counterparty, definitive agreement) + G3 (specific currently-unsettled figures: 10.27167 exchange ratio, $75M+ synergies, 55/45 ownership)",
+        "edge": "M — deal terms are public and HLX has partially re-rated (off $10.75 52wk high to $9.24), but the Helix-shareholder-vote and HSR/regulatory clearance gates remain unresolved with no firm meeting date yet, leaving a datable arb/completion spread still open into H2 2026.",
+        "primary_source": "SEC Form S-4, Helix Energy Solutions (CIK 0000866829), filed Jun 4, 2026 (sec.gov/Archives/edgar/data/0000866829/000114036126024014); corroborated by Helix press release Apr 22, 2026 and StockTitan filings (HSR filed May 20, 2026).",
+        "verdict": "CONFIRMED",
+        "kill_fact": "Primary S-4 (filed 2026-06-04, SEC CIK 0000866829) confirms every load-bearing term verbatim: fixed exchange ratio of 10.27167 Converted Helix shares per Hornbeck share; \"$75 million or more\" in annual revenue/cost synergies within 3 yrs; Hornbeck holders ~55% / Helix ~45% fully diluted; Goldman fairness opinion dated April 22, 2026 (= announcement date); combined company renamed Hornbeck Offshore Services, Inc., NYSE ticker \"HOS\"; expected close \"second half of 2026\" subject to Helix shareholder approval + regulatory clearance; HSR filed May 20, 2026 (plus Brazil/Poland/UK). Structure is a two-step \"integrated mergers\" preceded by Helix converting from a Minnesota to a Delaware corporation (DGCL §265) — i.e. a genuine DE reincorporation step (filing says \"Conversion,\" not \"reincorporation\"). NOT FIRED: the S-4 is preliminary with blank special-meeting-date placeholders (\"TO BE HELD ON ____, 2026\"), HSR waiting period still running, and the binding Helix shareholder vote pending — so the proximate triggers (424B/effectiveness + special-meeting date) have not occurred; the secondary-source \"June 4 effective\" claim is wrong, as the line itself flags. Live quote: HLX $9.24, below 52-wk high $10.75 (yearLow $5.52), consistent with an unconsummated friendly all-stock deal. Minor label nuance only: line's \"creating 'HOS'\" conflates the ticker with the company name (company = Hornbeck Offshore Services, Inc.); not a term error.",
+        "analysis": "This is a real, specific, forward merger-arb setup: a definitive April 22, 2026 all-stock combination with named counterparty Hornbeck, a fixed 10.27167 exchange ratio, $75M+ synergies, and a two-step Delaware-reincorporation structure, with the S-4 filed June 4, 2026 and HSR filed May 20, 2026. The catalyst is NOT yet fired — Helix shareholder approval (the binding vote) and regulatory clearance are still pending, and HLX trades at $9.24 below its 52-week high, consistent with an unconsummated deal. Gap: the S-4 is still preliminary with blank special-meeting date placeholders, so the exact vote date isn't public yet (one secondary source's \"June 4 effective\" claim conflicts with the primary filing's preliminary status); monitor for the 424B/effectiveness and special-meeting date as the proximate triggers."
+      },
+      {
+        "symbol": "HON",
+        "score": 3.5,
+        "tier": "WATCH",
+        "lane": "spin-off",
+        "catalyst": "Honeywell's tax-free spin of its ~$17B-revenue Aerospace Technologies business as a standalone public company, the final step of the three-way breakup after Solstice (SOLS) completed Oct 30, 2025.",
+        "dated_milestone": "Aerospace spin distribution expected ~June 29, 2026 (Q3 2026); PSS/WWS held-for-sale closings expected 2H 2026; backstop date March 15, 2027.",
+        "instrument": "stock",
+        "bloom_gates": "G2 (concrete, board-approved spin commitment with filed Form 10-12B/A and named CEO/CFO); G1/G3 absent (no external counterparty, no specific currently-unpriced SOTP figure disclosed).",
+        "edge": "L — mega-cap, multi-year-telegraphed breakup; spin mechanics, leadership (Jim Currier CEO), and ~$17B Aero revenue are fully public via SEC filings, so SOTP re-rating is largely priced and asymmetry is thin.",
+        "primary_source": "Honeywell Form 8-K, 2026-06-05 (sec.gov, exhibit991-pressrelease652); Honeywell Aerospace Form 10-12B/A FY2026 (sec.gov); Solstice 8-K completion 2025-10-30.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The catalyst is real, dated, and forward — board-approved Aerospace spin with a Form 10-12B/A on file and an expected ~June 29, 2026 distribution (Q3 2026), confirming the triage read. But it clears only Bloom G2; there is no named counterparty (G1) and no specific currently-unpriced figure (G3), and as a heavily-covered mega-cap breakup the stub/SOTP thesis is well-discounted, limiting asymmetric upside. WATCH-only: meaningful re-rating would require a fresh, unpriced disclosure (e.g., New Aero leverage/guidance or PSS/WWS sale price) rather than the spin event itself."
+      },
+      {
+        "symbol": "HSIC",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "activist",
+        "catalyst": "KKR 16.4% strategic stake (19.9% cap) + Ananym activism drove a board cut (15→10) and new CEO, but the governance hardening already fired at the May 21, 2026 annual meeting and is not a forward setup.",
+        "dated_milestone": "BOLD+1 >$125M run-rate operating-income improvement by end-2026 (no discrete event date); prior governance milestones already fired — board reduction effective May 21, 2026 annual meeting; CEO Lowery started Mar 2, 2026.",
+        "instrument": "stock",
+        "bloom_gates": "G1 met (KKR/Ananym named counterparties) and G2 partially met ($125M run-rate commitment), but G3 fails — no specific currently-unpriced figure tied to an unfired date; the $125M target is already in analyst models (consensus ~$85 PT).",
+        "edge": "L — every leg is public and dated in the April 8, 2026 DEF 14A; KKR entered ~$76 in May 2025, stock now $77.45 (mid-band, on 200-DMA) after a full year of activism with no re-rating, so the setup is fired and priced.",
+        "primary_source": "Henry Schein DEF 14A (definitive proxy), SEC EDGAR, filed April 8, 2026 (annual meeting May 21, 2026); corroborated by HSIC FY2026 8-K exhibit 99.1 on BOLD+1 $125M run-rate.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "All four claims verify cleanly (KKR 16.43% stake / 19.9% standstill cap amended Nov 4 2025, two board seats; Ananym campaign; BOLD+1 >$125M run-rate by end-2026; CEO Lowery from Mar 2 2026; board cut 15→10), but the structural hardening is retrospective, not forward — the board reduction fired at the May 21, 2026 annual meeting (already past) and the KKR architecture has been in place since 2025. The only genuinely forward item, the $125M end-2026 savings run-rate, is a soft commitment with no discrete catalyst event and is already embedded in consensus (Moderate Buy, ~$85 PT vs $77 price on the 200-DMA). Fails the FORWARD/unfired gate and lacks a specific currently-unpriced figure with a live date, so NONE."
+      },
+      {
+        "symbol": "HTT",
+        "score": 5,
+        "tier": "ACTIVE",
+        "lane": "capital_return",
+        "catalyst": "High Templar Tech (ex-Qudian shell) is running a live modified Dutch-auction tender to repurchase up to 39M ADSs at $2.80-3.20 (max ~$124.8M, not financing-conditioned), with the stock trading at ~0.4x net cash.",
+        "dated_milestone": "Tender expires Jun-24-2026 5:00pm ET (commenced May-26-2026); final results expected shortly after.",
+        "instrument": "stock",
+        "bloom_gates": "G2 (concrete board-authorized repurchase commitment, up to 39M ADSs/~$124.8M, not financing-conditioned) + G3 (specific unpriced figure: ~CNY 8.2B / ~$1.1B net cash vs ~$474M market cap, ~0.4x cash, ~0.3x book)",
+        "edge": "M — deep net-cash discount (mkt cap ~$474M vs ~$1.1B net cash, ~$1.6B equity) + hard-dated tender provides a price floor/return mechanism inside 18 days; capped because stock already sits inside the $2.80-3.20 band ($2.93), pro-ration/odd-lot mechanics and controlled-shell governance/repatriation risk limit asymmetry, and partial market pricing of the event.",
+        "primary_source": "PR Newswire, \"High Templar Tech Commences a Tender Offer to Repurchase up to 39 Million of its ADSs,\" 2026-05-26; corroborated by FMP balance sheet Q4 2025 filed 2026-03-11 and FMP quote $2.93 (2026-06-06).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "Tender + balance sheet confirmed against PRIMARY sources: PR Newswire (2026-05-26) + SEC SC TO-I (CIK 0001692705) = modified Dutch auction, up to 39M ADSs at $2.80-3.20 (~$124.8M max), expiring Jun-24-2026, explicitly \"not conditioned upon the receipt of financing\"; live/forward, not fired. Q4'25 balance sheet (SEC, filed 2026-03-11): cash CNY 7.06B + ST inv CNY 2.77B = CNY 9.83B, total debt CNY 1.58B, netDebt CNY -5.48B, vs ~$474M mcap. CORRECTIONS: (1) USD net-cash overstated — CNY -5.48B ≈ -$790M net (not \"~$1.1B\"); $1.1B only holds for GROSS cash+ST (~$1.42B). (2) \"~0.4x net cash\" mislabeled: ~0.4x on GROSS cash but ~0.6x on NET cash. WEAKNESS: spot $2.93 trades INSIDE the band, so not a clean arb — modified Dutch auction can clear as low as $2.80 (below spot) and ceiling upside is only ~9%; classic onshore-China ex-Qudian cash-shell discount with no realization path for minorities, and the tender returns only ~9% of the cash pile, leaving the discount largely intact. Price-floor/value-realization play, moderate.",
+        "analysis": "Verified live: HTT (NYSE) commenced a modified Dutch-auction tender May-26-2026 for up to 39M ADSs at $2.80-3.20, expiring Jun-24-2026, not conditioned on financing (PR Newswire 2026-05-26). Balance sheet (Q4'25, filed 2026-03-11) shows CNY 9.83B cash+ST investments vs CNY 1.58B debt (~$1.1B net cash, net debt CNY -5.48B) against a ~$474M market cap, so the ex-Qudian shell trades well below cash/investment value and the ~$124.8M max buyback is trivially funded. Real, dated, forward, idiosyncratic capital-return event — not fired/not macro — but the stock already trades inside the offer band, so it's a price-floor/value-realization play rather than a clean arb, warranting ACTIVE at moderate score."
+      },
+      {
+        "symbol": "IBRX",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary-catalyst",
+        "catalyst": "FDA accepted the sBLA for ANKTIVA + BCG in BCG-unresponsive papillary-only NMIBC, setting a hard PDUFA action date that would, if approved, open a label-expansion indication beyond the existing CIS approval.",
+        "dated_milestone": "PDUFA target action date Jan 6, 2027 (approve vs. CRL); sBLA acceptance already announced May 19, 2026.",
+        "instrument": "long_call (Jan 2027 / Feb 2027 expiry to straddle the PDUFA binary; or stock for label-expansion optionality)",
+        "bloom_gates": "G2 (FDA formally accepted sBLA + assigned binding PDUFA target action date); partial G3 (dated approve/CRL binary backed by quantified QUILT-3.032 Cohort B efficacy: 12-mo DFS 58.2%, 36-mo cystectomy-free survival 83.1%).",
+        "edge": "M — real dated FDA binary ~7 months out with genuine label-expansion optionality, but the acceptance event already fired May 19 (stock now below its 50-day MA at $6.92, faded the pop), the QUILT-3.032 data is public/known, and there is a securities class-action overhang (Jan 19-Mar 24 2026 class period) that muddies the name.",
+        "primary_source": "ImmunityBio IR / StockTitan press release \"FDA Acceptance of sBLA for ANKTIVA Plus BCG... PDUFA Date Set for January 6, 2027\" dated May 19, 2026; FMP quote IBRX $6.92 (2026-06-06).",
+        "verdict": "CONFIRMED",
+        "kill_fact": "PRIMARY SOURCE CONFIRMS: BusinessWire/PRNewswire/ImmunityBio.com press release dated 2026-05-19 — FDA accepted the sBLA for ANKTIVA+BCG in BCG-unresponsive NMIBC with papillary disease (without CIS), PDUFA action date Jan 6, 2027. This is a genuine UNFIRED FORWARD binary ~7 months out (not yet a decision), correctly distinct from the existing BCG-unresponsive CIS approval, expanding to ~85% of 64,000 annual NMIBC patients. FDA explicitly stated the review focus is whether CIS/papillary overlap adequately justifies extrapolation — i.e., the CRL risk the line names is real and accurate. Caveat (not disqualifying): this is a RESUBMISSION (resubmitted Mar 9, 2026 after FDA requested more efficacy/long-term data, no new trials) which modestly elevates CRL risk. Stock fade verified: $6.92, below 50-day avg $7.59 (-5.1% today), though still well above 200-day $4.87. Idiosyncratic, non-macro, dated, tradeable (13.5M vol, $7.2B cap, optionable); Jan/Feb 2027 LEAPS correctly straddle the binary. Self-assessment honestly flags fired-leg/public-data → moderate (not high) edge. Score 6 / ACTIVE well-calibrated.",
+        "analysis": "The sBLA acceptance is verified and confirms a hard, idiosyncratic, non-macro binary: FDA must rule by Jan 6, 2027 on extrapolating the ANKTIVA+BCG indication to BCG-unresponsive papillary NMIBC, a genuine unfired forward decision with first-in-class label-expansion upside. However, the acceptance announcement itself (May 19, 2026) is the fired leg, the supporting efficacy data is already public, and the stock has since faded below its 50-day average, so the unpriced edge is moderate rather than high. The clean dated forward binary justifies ACTIVE at score 6; the main risks are FDA's stated focus on whether papillary/CIS overlap adequately justifies extrapolation (CRL risk) and an unrelated litigation overhang."
+      },
+      {
+        "symbol": "IDYA",
+        "score": 6.5,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "Darovasertib+crizotinib NDA filing for 1L HLA-A2-neg metastatic uveal melanoma under FDA OCE Real-Time Oncology Review (accelerated-approval path), plus dated IDE849 (DLL3 ADC) and IDE034 clinical reads and IDE849 registrational-study start.",
+        "dated_milestone": "NDA filing completion H2-2026 (FDA RTOR review agreed Apr 30, 2026; first pre-submission done May 2026); IDE849/IDE034 data updates H2-2026 and IDE849 monotherapy registrational study initiation by YE-2026.",
+        "instrument": "equity (binary single-name; long-dated calls into H2-2026 NDA/data window viable)",
+        "bloom_gates": "G2",
+        "edge": "M - dated regulatory cascade (RTOR filing -> potential accelerated approval) + unpriced IDE849/IDE034 reads; but the OptimUM-02 efficacy leg already fired with only a mild reaction, this is an NDA *filing* not yet a PDUFA-dated decision, and tape is weak (-3.2% today, ~28% below 52wk high, below 50/200d MAs).",
+        "primary_source": "IDEAYA PR/IR + Q1-2026 8-K: \"FDA agreed to review darovasertib NDA under RTOR... first pre-submission completed May 2026, NDA filing planned H2-2026\" (Apr 30, 2026 PR; Q1 8-K) and ASCO complete OptimUM-02 data (Jun 1, 2026).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "Primary sources confirm the forward leg: IDEAYA IR (Apr-30-2026) states FDA agreed to review the darovasertib+crizotinib NDA under OCE RTOR, first pre-submission targeted May, NDA filing completion expected H2-2026 — intact, dated, company-committed. Pivotal OptimUM-02 (PFS 6.9 vs 3.1 mo, HR 0.42; complete data ASCO Jun-1-2026) has FIRED and is correctly labeled as such. Price $28.29 exact (-28% vs 52wk high $39.28; below 50DMA $30.18 & 200DMA $30.95). CORRECTIONS: (1) Most recent guidance (Q1-2026 update) times IDE849 DLL3-ADC SCLC/NEC data and IDE034 update 'by the END of 2026' (YE-2026), not 'H2-2026' as the line states — mildly stale but still forward. (2) The Apr-30 RTOR release describes an efficiency-review pathway and does NOT use the verbatim phrase 'accelerated approval'; AA is the broader strategy, not stated in the RTOR PR itself. IDE849 monotherapy registrational-trial initiation by YE-2026 and '3 PRs in 4 IMDELLTRA-pretreated SCLC pts' both confirmed. ~$973M cash, runway into 2030 = no dilution overhang; liquid NASDAQ, $2.49B cap = long-dated calls tradeable. Net: forward asymmetry real and not priced as a positive.",
+        "analysis": "The OptimUM-02 pivotal efficacy has fired (PFS 6.9 vs 3.1 mo, HR 0.42; complete data at ASCO Jun-1-2026), but the regulatory conversion is intact, dated, and forward: FDA agreed Apr-30-2026 to review the darovasertib+crizotinib NDA under OCE RTOR for accelerated approval, with first pre-submission done in May and full filing planned H2-2026 (company commitment = Bloom G2). Stacked on top are genuinely unpriced, dated pipeline reads (IDE849 DLL3 ADC data H2-2026 after 3 PRs in 4 pretreated SCLC pts, IDE034 update by YE-2026, IDE849 registrational-study start by YE-2026). Pricing supports forward optionality: shares at $28.29, down 28% from the 52wk high and below both MAs, with the de-risked pivotal drawing only a mild reaction, so the regulatory/pipeline asymmetry is not priced as a positive."
+      },
+      {
+        "symbol": "IHS",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "merger_arb",
+        "catalyst": "IHS Holding has a definitive all-cash take-private by MTN Group at $8.50/sh ($6.2B EV), board-approved and heading to a 2/3 shareholder vote, with closing targeted by YE2026 contingent on the Macquarie LatAm-tower and TIM/I-Systems carve-outs completing.",
+        "dated_milestone": "EGM shareholder vote in London (date unset, \"later this year\"); close targeted by year-end 2026 — next hard event is the EGM record-date/proxy.",
+        "instrument": "Long common (IHS); merger-arb spread to $8.50 cash.",
+        "bloom_gates": "G1 (named counterparties: MTN acquirer, Macquarie LatAm carve-out, TIM I-Systems) + G2 (concrete commitment: signed definitive merger at fixed $8.50/sh cash + MTN/Wendel support agreements)",
+        "edge": "L — spread is only ~2.4% gross ($8.30 vs $8.50) for ~6mo to a YE2026 close, and the vote is already de-risked since MTN's own 85.2M shares plus Wendel/Oranje-Nassau ~63M (19.6%) are locked via support agreements, so most of the re-rate has happened; residual upside hinges on carve-out execution, not a mispricing.",
+        "primary_source": "IHS Towers/Businesswire definitive-deal release 17-Feb-2026 ($8.50/sh, $6.2B EV); board-approval & EGM news via techcabal/telecompaper 25-May-2026; current $8.30 quote via FMP 06-Jun-2026.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Triage symbol \"MTN\" is mislabeled: the target is IHS Holding (NYSE: IHS); MTN Group is the buyer. The deal is genuine, dated and forward — definitive 17-Feb-2026 agreement at $8.50/sh all-cash, board-endorsed 25-May-2026, with an EGM and YE2026 close still pending and the LatAm/Macquarie ($952M towers) and TIM/I-Systems (51%) carve-outs as live conditions — so it clears the gate, but it is largely fired/re-rated with the stock at $8.30 (200d avg $7.56) leaving a thin ~2.4% arb spread and the controlling-bloc vote already committed; the only real residual risk/reward is carve-out and regulatory completion, which is why this is WATCH not ACTIVE."
+      },
+      {
+        "symbol": "IMCR",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "Immunocore's registrational Phase 3 TEBE-AM (tebentafusp, OS-primary, 2L+ cutaneous melanoma) reads out topline as early as 2H-2026 after 1H-2026 enrollment completion, a clean clinical binary in an indication where no therapy has shown OS benefit post-checkpoint-inhibitor.",
+        "dated_milestone": "TEBE-AM Phase 3 topline \"as early as 2H-2026\" (enrollment completion 1H-2026); next hard datapoint = brenetafusp/IMC-P115C Phase 1/2 data in 2H-2026. PRISM-MEL-301 Ph3 ongoing but topline undated.",
+        "instrument": "equity (long; small-cap biotech ~$1.44B mkt cap — long-dated calls/2H-2026 expiry viable for binary exposure)",
+        "bloom_gates": "G2 (company-guided concrete commitment: registrational, OS-powered Phase 3 topline on a stated 2H-2026 timeline)",
+        "edge": "M — dated, forward, company-specific binary that is NOT re-rated: stock at $28.29 sits at/near 52-wk low ($27.56), below 50d ($29.78) and 200d ($32.98), so a TEBE-AM OS win is not priced; capped at M (not H) because it's a single-arm-derived registrational bet with real trial risk and 2H-2026 is a wide window.",
+        "primary_source": "Immunocore Q1 2026 results / business update, May 6, 2026 (TEBE-AM enrollment 1H-2026, topline \"as early as 2H-2026\"); corroborated by brenetafusp Phase 1 update GlobeNewswire May 31, 2026 (160 mcg dose selection for PRISM-MEL-301).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "Primary source (Immunocore Q1 release, May 6 2026, GlobeNewswire) reaffirms verbatim: TEBE-AM Ph3 'expects to complete enrollment in the first half of 2026 with topline data expected as early as the second half of 2026'; OS is primary endpoint in 2L+ cutaneous melanoma post-checkpoint-inhibitor. Forward, not fired. IMCR $28.29, mkt cap $1.439B (claim's $1.44B exact), trading near 52-wk low $27.56 and below 200-day $32.98 -> unpriced binary confirmed. Corrections: cash is $844.9M as of Mar-31 (claim's '$864M' was the stale Jan-JPM figure); PRISM-MEL-301 leg confirmed undated/supportive (160mcg+nivo, 1L, actively enrolling) but exact '680 pts' not independently re-verified. None of the corrections touch the load-bearing dated OS readout that carries the thesis.",
+        "analysis": "Catalyst verified as real, specific, dated and forward: Immunocore's Q1-2026 release (May 6, 2026) reaffirms TEBE-AM Phase 3 enrollment completion in 1H-2026 with registrational OS topline \"as early as 2H-2026,\" and the brenetafusp PRISM-MEL-301 Phase 3 (680 pts, 1L melanoma + nivolumab, 160 mcg dose locked) is actively enrolling though without a disclosed readout date. Nothing has fired and the binary is unpriced — IMCR trades near 52-week lows, well under its 200-day average — so this is a clean forward clinical catalyst, not a macro bet or a re-rated event. Score 6/ACTIVE holds: the dated OS readout (TEBE-AM) carries the thesis; the undated PRISM-MEL leg is supportive optionality, not the anchor."
+      },
+      {
+        "symbol": "IMMX",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "NEXICART-2 (40-pt BLA-enabling Ph2 of NXC-201 CAR-T in r/r AL amyloidosis), now fully enrolled, delivers its next/topline data update in late September 2026, gating a BLA submission and first-in-class commercial path.",
+        "dated_milestone": "Next NEXICART-2 update/topline expected late September 2026; then BLA submission (1-yr follow-up data ~end-March 2027 per CFO) and planned Phase 3 in newly-diagnosed AL.",
+        "instrument": "equity (long stock); microcap CAR-T binary — small position / long-dated calls if available, but liquidity is thin",
+        "bloom_gates": "G2 (concrete dated commitment: fully-enrolled BLA-enabling trial with company-guided late-Sept-2026 topline readout); partial G3 (95% CR / 19-of-20 interim is a specific efficacy figure not yet fully de-risked into a registrational topline).",
+        "edge": "M — dated, company-specific, high-asymmetry first-in-class CAR-T readout with BTD/RMAT/ODD and a striking 95% interim CR; but the May 21 95% CR PR + May 22 $8.94 raise already partially re-rated the name, and a 40-pt single-arm topline is binary with real CR-depth/durability and BLA-acceptance risk.",
+        "primary_source": "Immix Biopharma GlobeNewswire PR \"95% Complete Response Rate... NEXICART-2,\" May 21 2026 (late-Sept-2026 next update) + enrollment-completion PR/8-K, Mar 30 2026; May 22 2026 424B5 offering (16,778,524 sh @ $8.94, runway into mid-2027).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "PRIMARY-CONFIRMED forward catalyst: May 21 2026 GlobeNewswire/8-K PR states verbatim \"The next NEXICART-2 update is expected late September 2026,\" with 95% CR (19/20) interim; enrollment completion confirmed (Mar 30 2026 PR, \"Full enrollment of BLA-enabling trial complete; Topline Q3 2026 -> BLA submission\"); BTD/RMAT/ODD confirmed. Dated, forward, company-specific binary — not fired, not macro. CORRECTIONS: study is 45 patients, NOT 40 (\"NEXICART-2 is a 45-patient study\"); the May 21-22 raise was $150M gross / $140.65M net via 16,778,524 shares at $8.94 (line's \"$8.94 offering\" is the per-share price, not the raise size — understates dilution); cash-runway \"mid-2027 + CIRM grants\" NOT found in the May 21 PR, but the $140.65M net close (May 22) makes funded-through-event highly likely. Tradeable but thin/diluted microcap: price $7.93 (below $8.94 offering, vs $11.61 52w high), ~$432M cap, ADV ~1.27M sh. Priced-in risk real (95% CR already public, single-arm topline + BLA-acceptance downside) — score capped at 7.",
+        "analysis": "Claim verified: enrollment completion confirmed (GlobeNewswire/8-K, Mar 30 2026), and the May 21 2026 interim PR states verbatim \"The next NEXICART-2 update is expected late September 2026,\" with 95% CR (19/20) interim and BTD/RMAT/ODD all confirmed — so this is a real, dated, forward, company-specific binary, not a macro bet. The September topline is distinct from and larger than the already-disclosed interim, and cash plus CIRM grants funds operations into mid-2027, covering the event. Score capped at 7 (not higher) because the recent 95% CR headline and the May 22 16.78M-share/$8.94 offering have partially priced in optimism, and single-arm topline + BLA-acceptance outcomes carry material downside in a thinly-traded microcap."
+      },
+      {
+        "symbol": "IMNM",
+        "score": 5,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "Immunome's varegacestat NDA for adult desmoid tumors (Phase 3 RINGSIDE hit, HR 0.16 / 84% progression-risk reduction, ORR 56%) is under FDA review, a regulatory approval binary with EU MAA to follow.",
+        "dated_milestone": "NDA submitted 2026-04-29; FDA acceptance/Priority-Review decision expected ~late-June 2026 (~60-day filing review), PDUFA target action date not yet disclosed; EU MAA planned by YE2026.",
+        "instrument": "equity (or long-dated calls into PDUFA once date set); ~$1.78B cap, $18.58, well off $27.65 52w high",
+        "bloom_gates": "G2 — concrete commitment: NDA formally submitted to FDA 2026-04-29 with a defined review clock; EU MAA by YE2026 is a second dated forward commitment.",
+        "edge": "M — the approval/PDUFA leg is genuinely forward and not fully priced (stock 33% off highs), but the marquee efficacy data already fired/re-rated and the precise PDUFA date is not yet public, capping near-term tradability.",
+        "primary_source": "BusinessWire press releases: NDA submission 2026-04-29; ASCO detailed RINGSIDE data 2026-05-30; topline RINGSIDE 2025-12-15. FMP quote 2026-06-06 ($18.58).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "All load-bearing facts independently confirm vs primary sources (FMP PRs + StockTitan/ASCO): NDA submitted Apr-29-2026; RINGSIDE HR 0.16 (95% CI 0.071-0.375, p<0.0001) = 84% progression-risk reduction; ORR 56% vs 9%; cap $1.776B, px $18.58, 52w hi $27.65 (exact match to live quote); EU MAA to EMA planned by end-2026. The live binary is correctly reframed as regulatory approval, NOT the data readout — topline fired Dec-15-2025 and detailed ASCO data May-30-2026 have already re-rated the stock. KILL/correction: the binary is UNDATED — as of Jun-5-2026 the latest IMNM PR is a routine Jun-4 inducement grant; NO FDA acceptance, NO PDUFA date, and crucially NO Priority Review/Fast Track/Breakthrough disclosed in any submission PR. Absent priority review, a standard ~10-month clock (acceptance ~late-June -> PDUFA ~Q1-2027) means there is no near-dated tradeable catalyst, and the line itself concedes calls only work 'once date set.' Asymmetry is further tempered because varegacestat is first-in-class GSI but NOT first-in-disease (SpringWorks' Ogsiveo/nirogacestat already approved for desmoid). Honest line, but score 6 is generous for an undated, partially-spent, second-in-disease event; trim to 5.",
+        "analysis": "RINGSIDE Phase 3 hit (topline Dec-2025, detailed at ASCO May-30-2026) and the NDA was submitted Apr-29-2026, so the live binary is regulatory approval, not the data readout, which has already fired and re-rated. As of Jun-4-2026 no FDA acceptance or PDUFA date has been announced across recent filings (latest PR is a routine inducement-grant), so the hard date is still pending — acceptance is expected ~late-June. Note varegacestat is first-in-class oral GSI but NOT first-in-disease (SpringWorks' nirogacestat/Ogsiveo is already approved for desmoid), tempering the binary's asymmetry; scored 6 vs triage 7 for the un-dated PDUFA and partially-spent catalyst."
+      },
+      {
+        "symbol": "IMTX",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "Pivotal Phase 3 SUPRAME (anzu-cel/IMA203, PRAME TCR-T vs investigator's choice in 2L+ PD-1-relapsed metastatic cutaneous melanoma) pre-specified interim + final PFS analyses, the registrational readout gating a 1H-2027 BLA.",
+        "dated_milestone": "Interim + final PFS analyses event-driven, expected to be triggered in 2026; BLA submission 1H 2027; commercial launch 2H 2027 (per May 12, 2026 Q1 update).",
+        "instrument": "equity (long-dated calls viable given binary PFS readout; well-funded so dilution-overhang on the event is low)",
+        "bloom_gates": "G3 — a specific currently-unpriced registrational PFS outcome benchmarked against disclosed Phase 1b efficacy (56% cORR, 14.6mo mDOR, 16.2mo mOS); the pivotal Phase 3 result itself is not yet known/priced.",
+        "edge": "M — genuine binary clinical inflection, dated to 2026 with a funded balance sheet ($521.5M, runway into 2028), but the trigger is event-driven (no firm quarter) and management stated it does NOT intend to publish the interim while enrollment is ongoing, blunting the catalyst's discreteness/tradability.",
+        "primary_source": "Immatics Q1 2026 Financial Results & Business Update, GlobeNewswire/SEC 6-K, May 12, 2026 (\"pre-specified interim and final data analyses expected to be triggered in 2026... BLA submission in the first half of 2027... cash $521.5M\"); ASCO Phase 1b data via GlobeNewswire June 1, 2026.",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "All load-bearing facts independently confirmed vs primary sources (Immatics PRs / ASCO 6/1/26 / Q1'26 financials): SUPRAME = Ph3 anzu-cel (IMA203 PRAME TCR-T) vs investigator's choice in 2L+ PD-1-relapsed metastatic cutaneous melanoma, BICR-PFS primary; pre-specified interim+final PFS analyses 'expected to be triggered in 2026' (interim ~200 pts), gating BLA 1H-2027 / launch 2H-2027 — genuinely FORWARD, not fired (June ASCO was supportive Ph1b, not the pivotal readout). Cash $521.5M (3/31/26), runway into 2028 — no financing overhang (confirmed). Both stated caveats verified verbatim: event-driven no firm quarter, and 'data from the interim analysis is not intended to be published as long as enrollment remains ongoing' (so clean binary may slip to final). CORRECTION: line cites only the flattering Ph1b endpoints (56% cORR, 16.2mo mOS) but omits 6.1mo mPFS — and PFS is the exact Ph3 primary endpoint, so a 6.1mo Ph1b mPFS is the relevant, materially weaker de-risking signal the bull case glosses. Tradeable: liquid (~1M sh/day, $9.79, $1.3B cap, NASDAQ), long-dated calls viable. Score 6 stands.",
+        "analysis": "SUPRAME is a real, dated, forward registrational catalyst: pre-specified interim/final PFS analyses are expected to be triggered in 2026, feeding a 1H-2027 BLA, and the June 1 2026 ASCO Phase 1b data (56% cORR, 16.2mo mOS) materially de-risks the Phase 3 without itself being the pivotal readout. It clears the gate — specific, dated, forward, not macro, and well-funded ($521.5M, runway into 2028) so there is no financing overhang into the event. The two caveats keeping this at a 6 rather than higher: the readout is event-driven with no firm quarter, and the company explicitly stated the interim data will not be published while enrollment continues, so the clean binary may slip to the final analysis and the exact disclosure date is uncertain."
+      }
+    ]
+  }
+}

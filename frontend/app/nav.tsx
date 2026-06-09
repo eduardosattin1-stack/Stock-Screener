@@ -7,7 +7,7 @@ export default function Nav() {
   const router = useRouter();
   const links = [
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
-    { href: "/portfolio", label: "Live Track Record", icon: <Briefcase size={13} /> },
+    { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
     { href: "/performance", label: "System Performance", icon: <TrendingUp size={13} /> },
     { href: "/catalysts", label: "Catalyst Watch", icon: <Compass size={13} /> },
   ];

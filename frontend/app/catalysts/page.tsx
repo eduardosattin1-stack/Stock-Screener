@@ -6,6 +6,7 @@ import {
   HelpCircle, ChevronRight, CheckCircle2, AlertTriangle, PlayCircle,
   Star, Trash2
 } from "lucide-react";
+import { Tip, rrDisplay, toneColor } from "../components/Tip";
 
 
 // ── Theme definitions matching speculair system ─────────────────────────────
@@ -154,12 +155,22 @@ interface Candidate {
   is_merger_arb?: boolean;
   is_dher_pattern?: boolean;
   convergence_score?: number | null;
+  resolution_driver?: string;   // §3 conviction tag (post-board pass)
+  board_priority?: number;      // §3 lane-tilt sort key (score - tilt*(lane_priority-1))
+  edge_grade?: string;          // phase-2 computed edge (H/M/L) vs live price
+  computed_rr?: number | null;  // phase-2 lane-aware R:R (ratio lanes)
+  ev_pct?: number | null;       // phase-2 binary EV%
+  win_prob?: number | null;
+  payoff?: number | null;
+  valuation_method?: string;
+  edge_flags?: string[];
+  lane_canon?: string;
 }
 
 export default function CatalystWatch() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loadingCandidates, setLoadingCandidates] = useState(true);
-  const [selectedSymbol, setSelectedSymbol] = useState<string>("CVS");
+  const [selectedSymbol, setSelectedSymbol] = useState<string>("MBGL");
   const [report, setReport] = useState<CatalystScanReport | null>(null);
   const [loadingScan, setLoadingScan] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
@@ -169,6 +180,7 @@ export default function CatalystWatch() {
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
   const [sortField, setSortField] = useState<"score" | "asymmetry" | "mcap">("score");
   const [showMergerArbs, setShowMergerArbs] = useState<boolean>(true);
+  const [showActionable, setShowActionable] = useState<boolean>(false);  // phase-2 edge filter
   const [customAcquirerPrice, setCustomAcquirerPrice] = useState<number | "">("");
   const [scanProgress, setScanProgress] = useState<{ status: string, total_symbols: number, completed_count: number, current_symbol: string, speed_stats: string, estimated_remaining_seconds: number } | null>(null);
   
@@ -362,7 +374,15 @@ export default function CatalystWatch() {
     if (!showMergerArbs) {
       result = result.filter(cand => !cand.is_merger_arb);
     }
-    
+
+    // Phase-2 "Actionable" edge filter: hide names whose COMPUTED edge is Low
+    // (poor ratio or non-positive binary EV). Un-valued names always show — edge is an
+    // overlay (Option A), never the primary sort, so board_priority order is untouched.
+    if (showActionable) {
+      result = result.filter(cand =>
+        !((cand.computed_rr != null && cand.computed_rr < 1.5) || (cand.ev_pct != null && cand.ev_pct <= 0)));
+    }
+
     result.sort((a, b) => {
       if (sortField === "asymmetry") {
         const asymA = a.rr_ratio ?? (a.upside ? a.upside * 10 : 0);
@@ -371,13 +391,32 @@ export default function CatalystWatch() {
       } else if (sortField === "mcap") {
         return (b.market_cap || 0) - (a.market_cap || 0);
       } else {
-        // Default: score (Adjusted Loeb Score, fallback to raw)
-        return (b.adjusted_loeb_score ?? b.catalyst_score ?? 0) - (a.adjusted_loeb_score ?? a.catalyst_score ?? 0);
+        // Default: board_priority within tier (manual §5 ACTIVE-first + §3 lane tilt).
+        const tr: Record<string, number> = { ACTIVE: 0, CONTINGENT: 1, WATCH: 2, NONE: 9 };
+        const ta = tr[a.flags?.[0]] ?? 3, tb = tr[b.flags?.[0]] ?? 3;
+        if (ta !== tb) return ta - tb;
+        return (b.board_priority ?? b.adjusted_loeb_score ?? b.catalyst_score ?? 0)
+             - (a.board_priority ?? a.adjusted_loeb_score ?? a.catalyst_score ?? 0);
       }
     });
     
     return result;
-  }, [candidates, watchlist, recentScans, categoryFilter, sortField, showMergerArbs]);
+  }, [candidates, watchlist, recentScans, categoryFilter, sortField, showMergerArbs, showActionable]);
+
+  // §3 #5 "hidden common factor" view: resolution-driver concentration across ACTIVE names.
+  const driverConcentration = useMemo(() => {
+    const SUPER: Record<string, string> = {
+      FDA_approval_decision: "FDA/biotech", FDA_clinical_readout: "FDA/biotech",
+      US_antitrust: "Deal-completion", US_sector_regulator: "Deal-completion",
+      CFIUS_FDI: "Deal-completion", Foreign_regulator: "Deal-completion",
+      Deal_close_generic: "Deal-completion", Shareholder_vote: "Deal-completion",
+    };
+    const act = candidates.filter(c => c.flags?.[0] === "ACTIVE" && c.resolution_driver);
+    if (!act.length) return [] as { label: string; pct: number }[];
+    const cnt: Record<string, number> = {};
+    act.forEach(c => { const s = SUPER[c.resolution_driver as string] || "Idiosyncratic"; cnt[s] = (cnt[s] || 0) + 1; });
+    return Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([label, v]) => ({ label, pct: Math.round((100 * v) / act.length) }));
+  }, [candidates]);
 
   // 1. Fetch Candidates List
   useEffect(() => {
@@ -536,11 +575,12 @@ export default function CatalystWatch() {
               <span style={{ fontSize: 10, fontFamily: T.mono, padding: "1px 5px", borderRadius: 4, background: "rgba(59,130,246,0.18)", color: T.blue }} title="Market Cap">
                 {formatMarketCap(cand.market_cap || undefined)}
               </span>
-            ) : sortField === "asymmetry" ? (
-              <span style={{ fontSize: 10, fontFamily: T.mono, padding: "1px 5px", borderRadius: 4, background: (cand.rr_ratio || (cand.upside && cand.upside > 0.15)) ? "rgba(20,184,122,0.18)" : "rgba(255,255,255,0.05)", color: (cand.rr_ratio || (cand.upside && cand.upside > 0.15)) ? T.green : T.muted }} title="Asymmetry (R/R or Upside)">
-                {cand.rr_ratio ? `R/R: ${cand.rr_ratio.toFixed(1)}:1` : cand.upside ? `Upside: +${(cand.upside * 100).toFixed(0)}%` : "R/R: —"}
-              </span>
-            ) : (() => {
+            ) : sortField === "asymmetry" ? (() => {
+              const rr = rrDisplay(cand);
+              return (
+              <Tip k="RR" extra={rr.rawForTooltip}><span style={{ fontSize: 10, fontFamily: T.mono, padding: "1px 5px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: toneColor(rr.tone) }}>{rr.text}</span></Tip>
+              );
+            })() : (() => {
                 const displayScore = cand.adjusted_loeb_score ?? cand.catalyst_score;
                 const hasDivergence = cand.adjusted_loeb_score != null && Math.abs(cand.adjusted_loeb_score - cand.catalyst_score) >= 1.0;
                 const adjustmentTooltip = cand.score_adjustments?.map(a => `${a.factor}: ${a.adjustment > 0 ? '+' : ''}${a.adjustment.toFixed(1)} (${a.reason})`).join('\n') || '';
@@ -596,10 +636,31 @@ export default function CatalystWatch() {
         {cand.flags && cand.flags.length > 0 && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
             {cand.flags.slice(0, 2).map((fl, idx) => (
-              <span key={idx} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(255,255,255,0.06)", color: T.muted, border: `1px solid rgba(255,255,255,0.03)` }}>
+              <Tip key={idx} k={idx === 0 ? fl : cand.lane_canon}><span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(255,255,255,0.06)", color: T.muted, border: `1px solid rgba(255,255,255,0.03)` }}>
                 {fl}
-              </span>
+              </span></Tip>
             ))}
+          </div>
+        )}
+        {cand.valuation_method && cand.edge_grade && cand.edge_grade !== "?" && (() => {
+          const rr = rrDisplay(cand);
+          const PRIMARY = new Set(["QUARANTINED", "TRADING_THROUGH_TERMS", "NO_UPSIDE", "FLOOR_GE_LIVE", "NO_BREAK_DOWNSIDE", "THIN_FLOOR", "TINY_FLOOR"]);
+          const chips = (cand.edge_flags || []).map((f: string) => f.split(":")[0]).filter((f: string) => !PRIMARY.has(f));
+          return (
+          <div style={{ marginTop: 4, display: "flex", gap: 4, alignItems: "center", flexWrap: "wrap" }}>
+            <Tip k={cand.edge_grade}><span style={{ fontSize: 8, fontWeight: 800, padding: "1px 5px", borderRadius: 3, background: cand.edge_grade === "H" ? "rgba(20,184,122,0.18)" : cand.edge_grade === "M" ? "rgba(217,151,6,0.18)" : "rgba(239,68,68,0.16)", color: cand.edge_grade === "H" ? T.green : cand.edge_grade === "M" ? "#d97706" : "#ef4444" }}>EDGE {cand.edge_grade}</span></Tip>
+            <Tip k="RR" extra={rr.rawForTooltip}><span style={{ fontSize: 8, fontFamily: T.mono, color: toneColor(rr.tone) }}>{rr.text}</span></Tip>
+            {chips.slice(0, 3).map((f: string) => (
+              <Tip key={f} k={f}><span style={{ fontSize: 7.5, fontFamily: T.mono, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 3px" }}>{f === "RE_DOSSIER" ? "⟳" : f.replace(/_/g, " ").toLowerCase()}</span></Tip>
+            ))}
+          </div>
+          );
+        })()}
+        {cand.resolution_driver && (
+          <div style={{ marginTop: 4 }}>
+            <Tip k="RESOLUTION_DRIVER"><span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(196,181,253,0.14)", color: T.purple, border: "1px solid rgba(196,181,253,0.20)" }}>
+              ⛓ {String(cand.resolution_driver).replace(/_/g, " ")}
+            </span></Tip>
           </div>
         )}
       </div>
@@ -834,6 +895,12 @@ export default function CatalystWatch() {
                 />
               </button>
             </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}`, borderRadius: 6, padding: "6px 10px", marginTop: 8 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, color: T.text }} title="Edge overlay (phase-2): hide names whose computed R:R / binary EV is Low. Does NOT change the board_priority sort.">Actionable only <span style={{ color: T.muted, fontWeight: 400 }}>· edge ≥ M</span></span>
+              <button type="button" onClick={() => setShowActionable(!showActionable)} style={{ background: showActionable ? T.green : "rgba(255,255,255,0.1)", border: "none", borderRadius: 12, width: 34, height: 20, position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
+                <div style={{ background: "#fff", borderRadius: "50%", width: 14, height: 14, position: "absolute", top: 3, left: showActionable ? 17 : 3, transition: "left 0.2s" }} />
+              </button>
+            </div>
           </div>
 
           <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14, maxHeight: "calc(100vh - 280px)", paddingRight: 4 }}>
@@ -860,6 +927,16 @@ export default function CatalystWatch() {
                   <div style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: T.muted, letterSpacing: "0.08em", borderBottom: `1px solid ${T.border}`, paddingBottom: 4 }}>
                     Scanning Candidates ({processedCandidates.length})
                   </div>
+                  {driverConcentration.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", fontSize: 9, fontFamily: T.mono, color: T.light, padding: "1px 0 2px" }} title="ACTIVE resolution-driver concentration — what the live catalysts actually resolve on (manual §3 #5)">
+                      <Tip k="RESOLUTION_DRIVER"><span style={{ color: T.muted, fontWeight: 700 }}>ACTIVE drivers:</span></Tip>
+                      {driverConcentration.map((d, i) => (
+                        <span key={d.label}>
+                          <span style={{ color: T.green, fontWeight: 700 }}>{d.pct}%</span> {d.label}{i < driverConcentration.length - 1 ? " ·" : ""}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   {processedCandidates.length === 0 ? (
                     <div style={{ fontSize: 10, color: T.light, padding: "8px 0" }}>No matching candidates</div>
                   ) : (
@@ -918,7 +995,16 @@ export default function CatalystWatch() {
                           {report.recommendation}
                         </span>
                       )}
-                      
+                      {(report as any).tier && (() => {
+                        const tu = String((report as any).tier).toUpperCase();
+                        const c = tu === "ACTIVE" ? "#14b87a" : tu === "CONTINGENT" ? "#a855f7" : "#d97706";
+                        return (
+                          <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6, border: `1px solid ${c}`, color: c, letterSpacing: "0.04em" }} title="Catalyst tier (gate hardness): ACTIVE = sized · WATCH = tracking to harden · CONTINGENT = gated on a pending event">
+                            {tu}
+                          </span>
+                        );
+                      })()}
+
                       <button
                         onClick={() => toggleWatchlist(
                           report.symbol, 
@@ -974,7 +1060,7 @@ export default function CatalystWatch() {
                       </button>
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 11, color: T.light, marginTop: 4 }}>
-                      <span>Price: <strong style={{ color: T.text }}>${report.price?.toFixed(2) || "N/A"}</strong></span>
+                      <span>Price: <strong style={{ color: T.text }}>${(((report as any).live_price ?? report.price))?.toFixed(2) || "N/A"}</strong>{(report as any).live_price != null ? <span style={{ color: T.muted, fontSize: 9 }}> live</span> : null}</span>
                       <span>Market Cap: <strong style={{ color: T.text }}>{formatMarketCap(report.market_cap)}</strong></span>
                       {report.cache_timestamp && (
                         <span title="Date of the full AI Loeb deep-scan; price is live. Use RE-SCAN to refresh the analysis.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
@@ -986,7 +1072,7 @@ export default function CatalystWatch() {
                   <div style={{ display: "flex", gap: 16 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(168,85,247,0.06)", borderRadius: 6, border: `1px solid ${T.purple}` }}>
                       <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 8, fontWeight: 700, color: T.muted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Score</div>
+                        <Tip k="CATALYST_SCORE"><div style={{ fontSize: 8, fontWeight: 700, color: T.muted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Score</div></Tip>
                         <div style={{ fontSize: 9, color: T.light }}>Catalyst Density</div>
                       </div>
                       <div style={{ fontSize: 24, fontWeight: 800, color: T.purple, fontFamily: T.mono }}>
@@ -994,15 +1080,17 @@ export default function CatalystWatch() {
                       </div>
                     </div>
                     
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(20,184,122,0.06)", borderRadius: 6, border: `1px solid ${T.green}` }}>
+                    {(() => { const rr = rrDisplay(report as any); return (
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 6, border: `1px solid ${toneColor(rr.tone)}` }}>
                       <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 8, fontWeight: 700, color: T.muted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div>
-                        <div style={{ fontSize: 9, color: T.light }}>Target Ratio</div>
+                        <Tip k="RR" extra={rr.rawForTooltip}><div style={{ fontSize: 8, fontWeight: 700, color: T.muted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div></Tip>
+                        <div style={{ fontSize: 9, color: T.light }}>vs live price</div>
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: T.green, fontFamily: T.mono }}>
-                        {report.upside_downside_ratio ? `${report.upside_downside_ratio.toFixed(1)}:1` : "N/A"}
+                      <div style={{ fontSize: 16, fontWeight: 800, color: toneColor(rr.tone), fontFamily: T.mono }}>
+                        {rr.text}
                       </div>
                     </div>
+                    ); })()}
 
                     {report.convergence_score !== undefined && (
                       <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 16px", background: "rgba(59,130,246,0.06)", borderRadius: 6, border: `1px solid ${T.blue}` }}>
@@ -1025,7 +1113,104 @@ export default function CatalystWatch() {
                   <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, margin: 0 }}>
                     {report.analysis_summary}
                   </p>
-                  
+
+                  {/* Skeptic correction — reconciles a thesis whose prose argues a higher score than the skeptic's final */}
+                  {(report as any).verify_verdict === "CONFIRMED_WITH_CORRECTIONS" && report.bloom_catalysts?.catalyst_3?.evidence && (
+                    <div style={{ marginTop: 10, padding: "9px 12px", background: "rgba(217,151,6,0.06)", border: "1px solid rgba(217,151,6,0.25)", borderRadius: 6 }}>
+                      <Tip k="CONFIRMED_WITH_CORRECTIONS"><span style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: "#d97706", letterSpacing: "0.05em" }}>⚠ Skeptic correction</span></Tip>
+                      <div style={{ fontSize: 10.5, color: T.light, lineHeight: 1.5, marginTop: 4 }}>{report.bloom_catalysts.catalyst_3.evidence}</div>
+                    </div>
+                  )}
+
+                  {/* Post-board enforcement audit (manual §6/§9): driver tag + corrections trail */}
+                  {((report as any).resolution_driver || ((report as any).corrections?.length > 0)) && (
+                    <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(196,181,253,0.05)", border: `1px solid rgba(196,181,253,0.18)`, borderRadius: 6 }}>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: (report as any).corrections?.length ? 6 : 0 }}>
+                        <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.purple, letterSpacing: "0.06em" }}>Post-board pass</span>
+                        {(report as any).resolution_driver && (
+                          <span style={{ fontSize: 9, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(196,181,253,0.14)", color: T.purple, border: "1px solid rgba(196,181,253,0.20)" }}>
+                            ⛓ driver: {String((report as any).resolution_driver).replace(/_/g, " ")}
+                          </span>
+                        )}
+                        {(report as any).lane_canon && (
+                          <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>lane: {String((report as any).lane_canon).replace(/_/g, " ")}</span>
+                        )}
+                      </div>
+                      {(report as any).corrections?.length > 0 && (
+                        <div style={{ fontSize: 10, color: T.light, lineHeight: 1.5 }}>
+                          <span style={{ color: T.muted, fontWeight: 700 }}>Corrections applied: </span>
+                          {(report as any).corrections.join(" · ")}
+                          {(report as any).adjusted_loeb_score_orig != null && (report as any).adjusted_loeb_score_orig !== report.adjusted_loeb_score && (
+                            <span> · score {(report as any).adjusted_loeb_score_orig} → {report.adjusted_loeb_score}</span>
+                          )}
+                          {(report as any).tier_orig && (report as any).tier_orig !== (report as any).tier && (
+                            <span> · tier {(report as any).tier_orig} → {(report as any).tier}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Phase-2 computed edge / valuation build (the EDGE axis, with the work shown) */}
+                  {(report as any).valuation_method && (
+                    <div style={{ marginTop: 12, padding: "12px 14px", background: "rgba(20,184,122,0.04)", border: `1px solid ${T.border}`, borderRadius: 6 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+                        <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.green, letterSpacing: "0.06em" }}>Edge · computed R:R</span>
+                        <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted }}>({(report as any).valuation_method})</span>
+                        {(report as any).edge_grade && (report as any).edge_grade !== "?" && (
+                          <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 6px", borderRadius: 3, background: (report as any).edge_grade === "H" ? "rgba(20,184,122,0.18)" : (report as any).edge_grade === "M" ? "rgba(217,151,6,0.18)" : "rgba(239,68,68,0.16)", color: (report as any).edge_grade === "H" ? T.green : (report as any).edge_grade === "M" ? "#d97706" : "#ef4444" }}>EDGE {(report as any).edge_grade}</span>
+                        )}
+                        {((report as any).edge_flags || []).map((f: string) => (<Tip key={f} k={f.split(":")[0]}><span style={{ fontSize: 8, fontFamily: T.mono, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "1px 4px" }}>{f}</span></Tip>))}
+                      </div>
+                      {(report as any).valuation_method === "binary_prob" ? (
+                        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
+                          <span>P(win) <b>{(((report as any).win_prob || 0) * 100).toFixed(0)}%</b></span>
+                          <span style={{ color: T.green }}>up-leg <b>+${((report as any).up_leg || 0).toFixed(2)}</b></span>
+                          <span style={{ color: "#ef4444" }}>down-leg <b>−${((report as any).down_leg || 0).toFixed(2)}</b></span>
+                          <span>payoff <b>{((report as any).payoff || 0).toFixed(2)}×</b></span>
+                          <span>EV <b style={{ color: ((report as any).ev_pct || 0) >= 0 ? T.green : "#ef4444" }}>{((report as any).ev_pct || 0) >= 0 ? "+" : ""}{(((report as any).ev_pct || 0) * 100).toFixed(1)}%</b></span>
+                          <span style={{ color: T.muted }}>(barbell — not a single R:R)</span>
+                        </div>
+                      ) : (
+                        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
+                          <Tip k="RR" extra={rrDisplay(report as any).rawForTooltip}><span>R:R <b style={{ color: toneColor(rrDisplay(report as any).tone) }}>{rrDisplay(report as any).text}</b></span></Tip>
+                          <span style={{ color: T.green }}>target <b>${(((report as any).sop_built ?? (report as any).fair_value_target) || 0).toFixed(2)}</b>{(report as any).sop_built != null ? <span style={{ color: T.muted, fontWeight: 400 }}> (build)</span> : null}</span>
+                          <span>live <b>${((report as any).live_price || report.price || 0).toFixed(2)}</b></span>
+                          <span style={{ color: "#ef4444" }}>floor <b>${((report as any).downside_floor || 0).toFixed(2)}</b></span>
+                          {(report as any).drift != null && (<span style={{ color: T.muted }}>drift {((report as any).drift * 100).toFixed(1)}%</span>)}
+                        </div>
+                      )}
+                      {((report as any).edge_flags || []).includes("SOP_TARGET_MISMATCH") && (
+                        <div style={{ fontSize: 9, color: "#d97706", marginTop: 4 }}>⚠ asserted target ${((report as any).fair_value_target || 0).toFixed(2)} ≠ reconciled build ${((report as any).sop_built || 0).toFixed(2)} — R:R uses the build (premium/advocacy stripped)</div>
+                      )}
+                      {(report as any).valuation?.advocacy_target != null && (
+                        <div style={{ fontSize: 9, color: T.muted, marginTop: 2 }}>advocacy ceiling ${Number((report as any).valuation.advocacy_target).toFixed(2)} — activist target, displayed only (never in the R:R)</div>
+                      )}
+                      {(report as any).valuation?.valuation_basis && (
+                        <div style={{ fontSize: 10, color: T.light, marginTop: 6, lineHeight: 1.5 }}><span style={{ color: T.muted, fontWeight: 700 }}>Basis: </span>{(report as any).valuation.valuation_basis}</div>
+                      )}
+                      {(report as any).valuation?.sop_components?.length > 0 && (
+                        <div style={{ marginTop: 8 }}>
+                          <div style={{ fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: T.muted, marginBottom: 4 }}>Sum-of-parts build</div>
+                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: T.mono }}>
+                            <thead><tr style={{ color: T.muted }}><th style={{ textAlign: "left", padding: "2px 4px" }}>Segment</th><th style={{ textAlign: "right" }}>Metric</th><th style={{ textAlign: "right" }}>×</th><th style={{ textAlign: "right", padding: "2px 4px" }}>EV</th></tr></thead>
+                            <tbody>
+                              {(report as any).valuation.sop_components.map((s: any, idx: number) => (
+                                <tr key={idx} style={{ borderTop: `1px solid ${T.border}` }}>
+                                  <td style={{ padding: "2px 4px", color: T.text }} title={s.basis}>{s.segment}</td>
+                                  <td style={{ textAlign: "right", color: T.light }}>{s.metric_value != null ? `${s.metric_value} ${s.driver_metric || ""}` : "—"}</td>
+                                  <td style={{ textAlign: "right", color: T.light }}>{s.multiple != null ? `${s.multiple}×` : "—"}</td>
+                                  <td style={{ textAlign: "right", padding: "2px 4px", color: T.text }}>{s.ev_contribution != null ? `$${Number(s.ev_contribution).toLocaleString()}` : "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <div style={{ fontSize: 9, color: T.muted, marginTop: 4 }}>− net debt ${Number((report as any).valuation.net_debt || 0).toLocaleString()} − adj ${Number((report as any).valuation.adjustments || 0).toLocaleString()} ÷ {Number((report as any).valuation.shares_out || 0).toLocaleString()} sh = <b style={{ color: T.green }}>${((report as any).fair_value_target || 0).toFixed(2)}</b></div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Catalyst Nature Timing & Re-rate Distinction */}
                   {(report.catalyst_nature || report.re_rate_status) && (
                     <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}`, borderRadius: 6 }}>
@@ -1287,7 +1472,7 @@ export default function CatalystWatch() {
                         </span>
                       </div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_1.detected ? T.text : T.light, marginBottom: 6 }}>
-                        {report.bloom_catalysts.catalyst_1.title}
+                        <Tip k="STAGE_CATALYST">{report.bloom_catalysts.catalyst_1.title}</Tip>
                       </div>
                       <div style={{ fontSize: 11, color: T.light, lineHeight: 1.5, marginBottom: 8 }}>
                         {report.bloom_catalysts.catalyst_1.description}
@@ -1314,7 +1499,7 @@ export default function CatalystWatch() {
                         </span>
                       </div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_2.detected ? T.text : T.light, marginBottom: 6 }}>
-                        {report.bloom_catalysts.catalyst_2.title}
+                        <Tip k="STAGE_MILESTONE">{report.bloom_catalysts.catalyst_2.title}</Tip>
                       </div>
                       <div style={{ fontSize: 11, color: T.light, lineHeight: 1.5, marginBottom: 8 }}>
                         {report.bloom_catalysts.catalyst_2.description}
@@ -1341,7 +1526,7 @@ export default function CatalystWatch() {
                         </span>
                       </div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_3.detected ? T.text : T.light, marginBottom: 6 }}>
-                        {report.bloom_catalysts.catalyst_3.title}
+                        <Tip k="STAGE_VERIFY">{report.bloom_catalysts.catalyst_3.title}</Tip>
                       </div>
                       <div style={{ fontSize: 11, color: T.light, lineHeight: 1.5, marginBottom: 8 }}>
                         {report.bloom_catalysts.catalyst_3.description}
@@ -1377,7 +1562,7 @@ export default function CatalystWatch() {
                     </div>
                   )}
 
-                  {report.loeb_criteria?.sum_of_parts && (
+                  {report.loeb_criteria?.sum_of_parts?.analysis && !["N/A.", "N/A", "-"].includes(report.loeb_criteria.sum_of_parts.analysis) && (
                     <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                         <span style={{ fontSize: 9, fontWeight: 700, color: T.muted, textTransform: "uppercase" }}>Sum-of-Parts Discount</span>
@@ -1399,7 +1584,7 @@ export default function CatalystWatch() {
                 {/* Activism potential and Risk/Reward details */}
                 <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
                   
-                  {report.loeb_criteria?.activism_potential && (
+                  {report.loeb_criteria?.activism_potential?.analysis && !["-", "N/A.", "N/A"].includes(report.loeb_criteria.activism_potential.analysis) && (
                     <div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                         <span style={{ fontSize: 9, fontWeight: 700, color: T.muted, textTransform: "uppercase" }}>Activism footprint / Leverage</span>
@@ -1413,13 +1598,10 @@ export default function CatalystWatch() {
                     </div>
                   )}
 
-                  {report.loeb_criteria?.risk_reward && (
+                  {report.loeb_criteria?.risk_reward?.analysis && (
                     <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                         <span style={{ fontSize: 9, fontWeight: 700, color: T.muted, textTransform: "uppercase" }}>Asymmetric Risk/Reward Analysis</span>
-                        <span style={{ fontSize: 9, fontWeight: 700, color: T.green }}>
-                          Ratio: {report.loeb_criteria.risk_reward.ratio}
-                        </span>
                       </div>
                       <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5 }}>
                         {report.loeb_criteria.risk_reward.analysis}
@@ -1588,7 +1770,7 @@ export default function CatalystWatch() {
                       </div>
                     </div>
                     <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.border}` }}>
-                      <div style={{ fontSize: 8, color: T.muted, textTransform: "uppercase" }}>P/C OI Ratio</div>
+                      <div style={{ fontSize: 8, color: T.muted, textTransform: "uppercase" }}>P/C Ratio</div>
                       <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
                         {report.options_signals.pc_oi_ratio != null ? report.options_signals.pc_oi_ratio.toFixed(2) : "N/A"}
                       </div>
