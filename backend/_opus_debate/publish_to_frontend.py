@@ -122,6 +122,26 @@ def mos_fv(sc):
             {key: True}, meths)
 
 
+def target_px(sop_fv):
+    """Parse the CRO/Director fair-value prose ('~$44', '$78-88 (base ~$82)') to ONE number so the
+    UI can draw expected-vs-realized per seat (the basket-13 convention). Base-case > range-midpoint."""
+    if sop_fv is None:
+        return None
+    txt = str(sop_fv)
+    m = re.search(r'base[^$0-9]{0,14}\$?\s*([0-9]+(?:\.[0-9]+)?)', txt, re.I)
+    if m:
+        return float(m.group(1))
+    m = re.search(r'([0-9]+(?:\.[0-9]+)?)\s*(?:/sh\w*)?\s*\((?:range|vs)', txt, re.I)
+    if m:                                          # '~$120 (range $105-135)' -> the leading base, not the range midpoint
+        return float(m.group(1))
+    vals = [float(x) for x in re.findall(r'([0-9]+(?:\.[0-9]+)?)', txt)]
+    if not vals:
+        return None
+    if len(vals) >= 2 and vals[1] <= vals[0] * 3:
+        return round((vals[0] + vals[1]) / 2, 2)
+    return vals[0]
+
+
 entries = []
 for p in picks:
     sym = p.get("symbol")
@@ -159,6 +179,7 @@ for p in picks:
         "interrogator_score": interro,
         "trajectory": traj,
         "sop_fair_value": rec.get("sop_fair_value", "") or p.get("sop_fair_value", ""),
+        "target_px": target_px(rec.get("sop_fair_value", "") or p.get("sop_fair_value", "")),
         "forensic_cap": bool(p.get("forensic_cap")),
         "sop_breakdown": rec.get("sop_breakdown", ""),
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),

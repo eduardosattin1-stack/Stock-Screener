@@ -2909,6 +2909,25 @@ export default function Dashboard(){
                                 <span>Current:</span>
                                 <span>${currPrice.toFixed(2)}</span>
                               </div>
+                              {typeof pick.target_px === "number" && pick.target_px > 0 && (entryPrice > 0 || currPrice > 0) && (() => {
+                                const basis = entryPrice > 0 ? entryPrice : currPrice;
+                                const exp = (pick.target_px / basis - 1) * 100;
+                                const maxAbs = Math.max(Math.abs(exp), Math.abs(perf), 1);
+                                const w = (v: number) => Math.max(2, Math.min(100, (Math.abs(v) / maxAbs) * 100));
+                                return (
+                                  <div style={{ marginTop: 4 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                      <span>Director target:</span>
+                                      <span>${pick.target_px.toFixed(2)} <span style={{ color: exp >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>({exp >= 0 ? "+" : ""}{exp.toFixed(0)}% exp)</span></span>
+                                    </div>
+                                    {/* expected (outline) vs realized (solid) — the basket-13 convention */}
+                                    <div style={{ marginTop: 3 }} title={`Director expectation ${exp.toFixed(0)}% (outline) vs realized ${perf.toFixed(1)}% (solid)`}>
+                                      <div style={{ height: 4, borderRadius: 2, border: "1px solid var(--blue)", width: `${w(exp)}%`, opacity: 0.75 }} />
+                                      <div style={{ height: 4, borderRadius: 2, marginTop: 2, background: perf >= 0 ? "var(--green)" : "var(--red)", width: `${w(perf)}%` }} />
+                                    </div>
+                                  </div>
+                                );
+                              })()}
                               {pick.source_methodologies && pick.source_methodologies.length > 0 && (
                                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
                                   {pick.source_methodologies.map((m: string) => (
@@ -3022,6 +3041,15 @@ export default function Dashboard(){
                                 {pick.corr_flag && (
                                   <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
                                 )}
+                                {pick.skeptic_verdict && (
+                                  <span title={`Skeptic (independent kill-tier): ${pick.skeptic_verdict}${pick.skeptic_corrections ? " — " + String(Array.isArray(pick.skeptic_corrections) ? pick.skeptic_corrections.join(" | ") : pick.skeptic_corrections).slice(0, 500) : ""}${pick.skeptic_kill_fact ? " — " + String(pick.skeptic_kill_fact).slice(0, 300) : ""}`}
+                                        style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3,
+                                                 background: pick.skeptic_verdict === "CONFIRMED" ? "rgba(20,184,122,0.15)" : pick.skeptic_verdict === "REFUTED" ? "rgba(239,68,68,0.15)" : "rgba(234,179,8,0.15)",
+                                                 color: pick.skeptic_verdict === "CONFIRMED" ? "var(--green)" : pick.skeptic_verdict === "REFUTED" ? "var(--red)" : "var(--amber)",
+                                                 fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                    {pick.skeptic_verdict === "CONFIRMED" ? "✓ skeptic" : pick.skeptic_verdict === "REFUTED" ? "✗ refuted" : "✓ corrected"}
+                                  </span>
+                                )}
                               </div>
                               {typeof mos === "number" && (
                                 <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
@@ -3040,6 +3068,30 @@ export default function Dashboard(){
                                 <span>Current:</span>
                                 <span>${currPrice.toFixed(2)}</span>
                               </div>
+                              {(typeof mos === "number" || typeof pick.thesis_break_px === "number") && (() => {
+                                const entryP = pick.entry_price || 0;
+                                const realized = entryP > 0 && currPrice > 0 ? ((currPrice / entryP) - 1) * 100 : 0;
+                                const exp = typeof mos === "number" ? mos : 0;
+                                const maxAbs = Math.max(Math.abs(exp), Math.abs(realized), 1);
+                                const w = (v: number) => Math.max(2, Math.min(100, (Math.abs(v) / maxAbs) * 100));
+                                return (
+                                  <div style={{ marginTop: 2 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                      <span>FV upside / exit below:</span>
+                                      <span>
+                                        {typeof mos === "number" && <span style={{ color: mos >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{mos >= 0 ? "+" : ""}{mos.toFixed(0)}%</span>}
+                                        {typeof pick.thesis_break_px === "number" && <span style={{ color: "var(--red)" }}> · ${pick.thesis_break_px}</span>}
+                                      </span>
+                                    </div>
+                                    {typeof mos === "number" && (
+                                      <div style={{ marginTop: 3 }} title={`CRO fair-value upside ${exp.toFixed(0)}% (outline) vs realized ${realized.toFixed(1)}% (solid)${typeof pick.bear_fv_px === "number" ? ` · agent bear FV $${pick.bear_fv_px}` : ""}`}>
+                                        <div style={{ height: 4, borderRadius: 2, border: "1px solid var(--blue)", width: `${w(exp)}%`, opacity: 0.75 }} />
+                                        <div style={{ height: 4, borderRadius: 2, marginTop: 2, background: realized >= 0 ? "var(--green)" : "var(--red)", width: `${w(realized)}%` }} />
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })()}
                               <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
                                 {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
                                 {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
@@ -3060,6 +3112,17 @@ export default function Dashboard(){
                                                 ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
                                     <span style={{ color: "var(--blue)", fontWeight: 600 }}>VALUE </span>{_txt}
                                   </div>
+                                  {(() => {
+                                    const vm: any = valueApex.value_memo;
+                                    const bear = vm && typeof vm === "object" && vm.bear_rebuttal ? vm.bear_rebuttal[pick.symbol] : null;
+                                    return bear ? (
+                                      <div style={{ fontSize: 9, color: "var(--red)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.85,
+                                                    ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
+                                           title="Director's bear rebuttal — the strongest reason this pick is wrong, written before sizing">
+                                        <span style={{ fontWeight: 700 }}>BEAR </span>{String(bear)}
+                                      </div>
+                                    ) : null;
+                                  })()}
                                   {_txt.length > 200 && (
                                     <span onClick={(e) => { e.stopPropagation(); setExpandedValue(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
                                           style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>

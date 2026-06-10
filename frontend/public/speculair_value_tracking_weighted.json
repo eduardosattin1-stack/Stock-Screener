@@ -3,67 +3,55 @@
   "nav": 101.5184,
   "last_date": "2026-06-10",
   "last_prices": {
-    "CMCSA": 23.85,
     "THC": 166.36,
-    "ANF": 83.65,
-    "SAX.DE": 34.76,
     "EEFT": 65.68,
     "BKNG": 163.99,
-    "TNET": 47.82,
+    "ANF": 83.65,
+    "UHS": 146.59,
+    "HRB": 38.26,
     "SCR.PA": 30.16,
-    "INGR": 101.64,
-    "HRB": 38.26
+    "CMCSA": 23.85
   },
   "positions": {
     "CMCSA": {
       "entry_price": 23.76,
       "entry_date": "2026-06-09",
-      "conviction": 88
+      "conviction": 68
     },
     "THC": {
       "entry_price": 163.01,
       "entry_date": "2026-06-09",
-      "conviction": 84
+      "conviction": 88
     },
     "ANF": {
       "entry_price": 79.51,
       "entry_date": "2026-06-09",
-      "conviction": 73
-    },
-    "SAX.DE": {
-      "entry_price": 0.0,
-      "entry_date": "2026-06-09",
-      "conviction": 71
+      "conviction": 82
     },
     "EEFT": {
       "entry_price": 66.09,
       "entry_date": "2026-06-09",
-      "conviction": 70
+      "conviction": 84
     },
     "BKNG": {
       "entry_price": 162.3,
       "entry_date": "2026-06-09",
-      "conviction": 64
-    },
-    "TNET": {
-      "entry_price": 46.75,
-      "entry_date": "2026-06-09",
-      "conviction": 63
+      "conviction": 83
     },
     "SCR.PA": {
       "entry_price": 30.16,
       "entry_date": "2026-06-09",
-      "conviction": 62
-    },
-    "INGR": {
-      "entry_price": 99.66,
-      "entry_date": "2026-06-09",
-      "conviction": 60
+      "conviction": 72
     },
     "HRB": {
       "entry_price": 37.53,
       "entry_date": "2026-06-09",
-      "conviction": 58
+      "conviction": 74
+    },
+    "UHS": {
+      "entry_price": 146.59,
+      "entry_date": "2026-06-10",
+      "conviction": 79
     }
   },
   "history": [
@@ -76,9 +64,37 @@
     {
       "date": "2026-06-10",
       "nav": 101.5184,
-      "ret": 0.015184,
-      "n": 10
+      "ret": 0.0,
+      "n": 8
     }
   ],
-  "closed": []
+  "closed": [
+    {
+      "symbol": "SAX.DE",
+      "entry_date": "2026-06-09",
+      "exit_date": "2026-06-10",
+      "entry_price": 34.76,
+      "exit_price": 34.76,
+      "return_pct": 0.0,
+      "conviction": 71
+    },
+    {
+      "symbol": "TNET",
+      "entry_date": "2026-06-09",
+      "exit_date": "2026-06-10",
+      "entry_price": 46.75,
+      "exit_price": 47.82,
+      "return_pct": 2.29,
+      "conviction": 63
+    },
+    {
+      "symbol": "INGR",
+      "entry_date": "2026-06-09",
+      "exit_date": "2026-06-10",
+      "entry_price": 99.66,
+      "exit_price": 101.64,
+      "return_pct": 1.99,
+      "conviction": 60
+    }
+  ]
 }
