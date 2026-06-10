@@ -95,7 +95,7 @@ def main():
         rep["valuation"] = val.get(str(rep["symbol"]).upper())   # full build incl sop_components
 
     # write corrected deliverables (JSON nested + CSV flat)
-    json.dump({"count": len(nested), "generated": "2026-06-08", "tilt": args.tilt,
+    json.dump({"count": len(nested), "generated": __import__("datetime").date.today().isoformat(), "tilt": args.tilt,
                "candidates": nested},
               open(DELIV_JSON, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     df.to_csv(DELIV_CSV, index=False, encoding="utf-8-sig")

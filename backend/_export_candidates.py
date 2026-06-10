@@ -97,7 +97,7 @@ for i, sym in enumerate(syms):
     if (i + 1) % 50 == 0:
         print(f"  {i+1}/{len(syms)}")
 
-json.dump({"count": len(reports), "generated": "2026-06-08", "candidates": reports},
+json.dump({"count": len(reports), "generated": __import__("datetime").date.today().isoformat(), "candidates": reports},
           open(JSON_OUT, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 with open(CSV_OUT, "w", encoding="utf-8-sig", newline="") as f:
     w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
