@@ -35,6 +35,14 @@ def main():
         d = dict(e)
         d["cro_conditions"] = cro_cond.get(e["symbol"], [])
         d["cro_live_edge_check"] = cro_check.get(e["symbol"], "")
+        # expected return % on the UNDERLYING (comparable with the live/realized marks):
+        # binaries -> the CRO's recomputed EV; ratio names -> move to the fair-value target.
+        if isinstance(d.get("expected_ev"), (int, float)):
+            d["expected_return_pct"] = round(d["expected_ev"] * 100, 1)
+        elif d.get("fair_value_target") and d.get("entry_price"):
+            d["expected_return_pct"] = round((d["fair_value_target"] / d["entry_price"] - 1) * 100, 1)
+        else:
+            d["expected_return_pct"] = None
         entries.append(d)
 
     opene = [e for e in entries if not e.get("resolution")]
@@ -55,6 +63,7 @@ def main():
         "entries": entries,
         "non_selections": t.get("non_selections", []),
         "runs": t.get("runs", []),
+        "marks": t.get("marks", []),    # daily NAV series (_basket13_mark.py) — the track record
         "memo": (t.get("runs") or [{}])[-1].get("memo", ""),
     }
     hdr = ("// Basket 13 — Catalyst sleeve (paper, event-resolution tracker view).\n"

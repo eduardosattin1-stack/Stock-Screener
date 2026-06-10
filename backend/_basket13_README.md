@@ -38,6 +38,8 @@ _basket13_tracker.json   (append-only)
 | `_basket13_gen.py` | Two-phase debate generator (clone of `_valuation_gen.py`). Phase 1 **Catalyst-CRO** (per name, batched 5) attacks the TRADE on four surfaces only; Phase 2 **Director** selects + sizes under hard caps. Both phases `model:'fable'` (set `MODEL='opus'` to fall back). |
 | `_basket13_inject.py` | Append-only sidecar tracker + deterministic **cap validator** + `resolve` + `report`. The LLM proposes, this asserts every cap before stamping. |
 | `_basket13_selftest.py` | Synthetic entry→resolve→report round-trip + cap-rejection proof (temp tracker; never touches the real one). |
+| `_basket13_mark.py` | Daily NAV mark → `marks[]` in the tracker (idempotent per date; underlying prices; resolved seats freeze at exit). Feeds the /catalysts TRACK RECORD chart. Scheduled task `basket13-daily-mark` runs it weekday evenings (mark + export, local-only — publishes to prod on the next §10 push). |
+| `_basket13_export.py` | Tracker → `frontend/app/data/basket13.ts` (joins CRO conditions, computes `expected_return_pct`, carries `marks[]`). Re-run after every inject / resolve / mark. |
 | `_basket13_tracker.json` | The append-only ledger (created on first inject). |
 
 ## Design invariants

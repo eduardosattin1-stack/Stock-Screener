@@ -435,5 +435,54 @@
    "cap_violations": 0,
    "memo": "Basket 13 holds 10 names, 55.5% of NAV invested, balance cash by construction. Cluster mix on invested weight: Deal-completion 22.0 (39.6%), Idiosyncratic 20.0 (36.0%), FDA/biotech 13.5 (24.3%) — all under the 40% cap. Driver spread: 7 distinct drivers, none above 2 names. Shape: a floor-bounded ratio-carry core (GDOT 14, FIP 10, UNF 8, FIG 5, BLCO 5 — each sized to <=1.5% NAV risk-to-floor) funds a strip of dated defined-risk binaries (CELC/EYPT/VRDN debit spreads, 5.5 points of premium, each clearing its milestone by +1 monthly and sized off EV not payoff) plus two staging-equity binaries (AQST 4.5, WVE 3.5) held under the half-weight rule with floor-risk <=1.5% so their NAV-at-risk matches the binary premium cap. Why not ~100: the pool spans only 7 drivers, so the <=2-per-driver cap allows at most ~10 seats, and the binary 2% / staging half-weight / risk-to-floor caps bound those seats — the structural maximum is ~67 invested even stretching into weaker names (BBIO/VIR equity bulk over VRDN/EYPT); I took 55.5 with the stronger seats rather than bulk weight into thinner edge. Adjudications of record: MGNI/BLCO dupe resolved by passing MGNI (edge >90% compressed on an unexplained pop); WVE re-tagged FDA_pathway_feedback per explicit CRO condition, keeping the approval driver at two (VRDN, AQST); BBIO and VIR are the named first alternates if an approval or readout seat opens. Dated ratio names (GDOT/UNF/FIP, all <=6 months) are recorded as equity per CRO instruments — the defined-risk-option rule is enforced on the binaries, where the floor does not bound the loss; for the spreads/recovery names the deal floor is the risk definition and the 1.5% floor-risk cap is the binding control. CRO entry limits recorded where conditioned (UNF <=$267, FIP <=$4.80, EYPT OI/spread check at order time).\""
   }
+ ],
+ "marks": [
+  {
+   "date": "2026-06-10",
+   "nav": 100.652,
+   "basket_ret_pct": 0.652,
+   "seats": {
+    "GDOT": {
+     "price": 12.75,
+     "ret_pct": 0.0
+    },
+    "UNF": {
+     "price": 270.48,
+     "ret_pct": 2.43
+    },
+    "FIP": {
+     "price": 4.56,
+     "ret_pct": 0.88
+    },
+    "FIG": {
+     "price": 20.49,
+     "ret_pct": -2.89
+    },
+    "BLCO": {
+     "price": 15.65,
+     "ret_pct": 3.1
+    },
+    "CELC": {
+     "price": 92.59,
+     "ret_pct": 5.9
+    },
+    "EYPT": {
+     "price": 11.77,
+     "ret_pct": 2.79
+    },
+    "VRDN": {
+     "price": 16.31,
+     "ret_pct": 3.69
+    },
+    "AQST": {
+     "price": 3.99,
+     "ret_pct": 2.05
+    },
+    "WVE": {
+     "price": 5.78,
+     "ret_pct": 1.4
+    }
+   }
+  }
  ]
 }
