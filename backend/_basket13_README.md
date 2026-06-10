@@ -71,35 +71,22 @@ edge band):
 
 ---
 
-## PENDING / follow-ups (deliberately not yet wired — they touch the parallel session's files)
+## PENDING / follow-ups
 
-### Apex addendum (Task 5) — ready to apply, target = the REGIME apex
-The apex director lives in `backend/weekly_opus_refresh.py` (the parallel session's actively-developed
-file). The conceptually correct target is the **regime** apex (`_WORKFLOW_TEMPLATE`, the `phase('Director')`
-STEP-3 block, ~L1705 — it's the catalyst/regime-aware book, already on Fable, carrying lane/catalyst_status).
-The **value** apex (`VALUE_DIRECTOR_PROMPT` ~L265) is the pure-value book with the catalyst overlay
-removed → a conceptual mismatch; do not target it.
+### Apex addendum (Task 5) — ✅ WIRED (regime apex)
+Applied as **STEP 3b** in the regime apex director prompt (`backend/weekly_opus_refresh.py`,
+`_WORKFLOW_TEMPLATE`, between STEP 3 and STEP 4): the Director reads
+`backend/_basket13_candidates.json` if present (skips silently if absent — the weekly run never
+breaks when the sleeve has not run), gets the 4-line reading guide (score ≠ edge; ev_pct ≠ MoS;
+check `dated_milestone` vs holding window; edge_grade is live-price-perishable), and the HARD
+constraint: never select a sleeve name with `valuation_method == binary_prob`, `edge_grade == L`,
+or a blocking edge_flag. One-line insertion; nothing else in the apex prompt restructured. The
+**value** apex (`VALUE_DIRECTOR_PROMPT`) was deliberately NOT touched — it is the pure-value book
+with the catalyst overlay removed; sleeve names are a conceptual mismatch there.
 
-**Two parts:** (a) the prompt block below, and (b) wiring basket-13 names into the regime universe feed
-(it arrives as stdout from `compact_table.py results_regime` — the basket-13 picks/candidates must be
-surfaced there with their native fields, or via an added rows file the Director is pointed at).
-
-Drop-in prompt block (append to the STEP-3 eligibility instruction):
-
-```
-BASKET-13 CATALYST SLEEVE — some universe names carry native catalyst fields (score, board_priority,
-edge_grade, ev_pct, valuation_method, dated_milestone, lane_canon, resolution_driver). Reading guide:
-(1) score / board_priority measure catalyst DENSITY, not cheapness — score is NOT edge;
-(2) ev_pct is an expected-value barbell, NOT a margin of safety;
-(3) check dated_milestone against YOUR holding window before selecting;
-(4) edge_grade (H/M/L) is computed vs the LIVE price and is perishable.
-HARD CONSTRAINT: you may NOT select any catalyst-sleeve name whose valuation_method == 'binary_prob',
-whose edge_grade == 'L', or that carries a blocking edge_flag (QUARANTINED / NO_UPSIDE /
-TRADING_THROUGH_TERMS / FLOOR_GE_LIVE / NO_BREAK_DOWNSIDE).
-```
-
-Constraint test (Task 7): after wiring, assert no apex pick has `valuation_method=='binary_prob'` or
-`edge_grade=='L'` or a blocking flag.
+Constraint test: `python _basket13_apex_check.py [apex_basket.json]` — asserts no apex pick is a
+sleeve name violating the constraint (exit 1 + named violations). Run it after every regime-apex
+run. Negative-tested (a synthetic apex holding MGNI/binary_prob is correctly rejected).
 
 ### Frontend (Task 6) — deferred (spec's escape hatch)
 The catalyst-sleeve fields (structured R:R, option expression/strikes, driver-cap utilization, resolution
@@ -118,4 +105,5 @@ modeled on the Apex block) is a follow-up once the structured fields flow.
   risk-to-floor ≤1.5%, binaries defined-risk ≤2%, staging equity-only half-weight, 8–12 names.
 - ✅ entry→resolve→report round-trips on a synthetic position.
 - ⏳ Live CRO dry-run on Fable (one batch) — pending go (spends tokens + hits FMP/IBKR read-only).
-- ⏳ Apex constraint test — pending the apex wiring above.
+- ✅ Apex constraint test — `_basket13_apex_check.py` wired + negative-tested (synthetic MGNI apex
+  rejected exit 1); current live apex: 10 picks, 0 sleeve names, clean.
