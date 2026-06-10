@@ -7,6 +7,20 @@ import {
   Star, Trash2
 } from "lucide-react";
 import { Tip, rrDisplay, toneColor } from "../components/Tip";
+import { BASKET13 } from "../data/basket13";
+
+// ── Basket 13 (catalyst sleeve, paper) — open seats keyed by symbol for chips ──
+const B13: any = BASKET13 || {};
+const B13_SEATS: Record<string, any> = {};
+(B13.entries || []).forEach((e: any) => { if (!e.resolution) B13_SEATS[e.symbol] = e; });
+const fmtB13Expr = (e: any) => {
+  const x = e?.expression || {};
+  const t = String(x.type || "equity").replace(/_/g, " ");
+  return x.expiry ? `${t} ${String(x.expiry).slice(2)}` : t;
+};
+const fmtB13RR = (e: any) =>
+  e?.expected_rr != null ? `${Number(e.expected_rr).toFixed(2)}:1`
+  : e?.expected_ev != null ? `EV ${(Number(e.expected_ev) * 100).toFixed(0)}%` : "—";
 
 
 // ── Theme definitions matching speculair system ─────────────────────────────
@@ -181,6 +195,7 @@ export default function CatalystWatch() {
   const [sortField, setSortField] = useState<"score" | "asymmetry" | "mcap">("score");
   const [showMergerArbs, setShowMergerArbs] = useState<boolean>(true);
   const [showActionable, setShowActionable] = useState<boolean>(false);  // phase-2 edge filter
+  const [b13Open, setB13Open] = useState<boolean>(true);                 // Basket 13 sleeve panel
   const [customAcquirerPrice, setCustomAcquirerPrice] = useState<number | "">("");
   const [scanProgress, setScanProgress] = useState<{ status: string, total_symbols: number, completed_count: number, current_symbol: string, speed_stats: string, estimated_remaining_seconds: number } | null>(null);
   
@@ -663,6 +678,14 @@ export default function CatalystWatch() {
             </span></Tip>
           </div>
         )}
+        {B13_SEATS[cand.symbol] && (
+          <div style={{ marginTop: 4 }}>
+            <span title={`Basket 13 seat — ${B13_SEATS[cand.symbol].weight_pct}% · ${fmtB13Expr(B13_SEATS[cand.symbol])}${B13_SEATS[cand.symbol].staging ? " · staging (half-weight, equity-only)" : ""} · review: ${B13_SEATS[cand.symbol].review_trigger || "—"}`}
+              style={{ fontSize: 8, fontWeight: 800, fontFamily: T.mono, padding: "1px 5px", borderRadius: 3, background: "rgba(59,130,246,0.14)", color: T.blue, border: "1px solid rgba(59,130,246,0.25)" }}>
+              ⬡ B13 {B13_SEATS[cand.symbol].weight_pct}% {fmtB13Expr(B13_SEATS[cand.symbol])}{B13_SEATS[cand.symbol].staging ? " *" : ""}
+            </span>
+          </div>
+        )}
       </div>
     );
   };
@@ -950,7 +973,119 @@ export default function CatalystWatch() {
 
         {/* MAIN PANEL: AI Event-Driven Scan Result */}
         <div style={{ padding: 24, overflowY: "auto", maxHeight: "calc(100vh - 120px)" }}>
-          
+
+          {/* BASKET 13 — catalyst sleeve (paper, event-resolution tracker) */}
+          {(B13.entries || []).length > 0 && (() => {
+            const open = (B13.entries || []).filter((e: any) => !e.resolution);
+            const resolved = (B13.entries || []).filter((e: any) => e.resolution);
+            const atDrvCap = (n: number) => n >= (B13.caps?.max_per_driver ?? 2);
+            return (
+              <div style={{ background: T.card, border: "1px solid rgba(59,130,246,0.30)", borderRadius: 8, padding: "13px 18px", marginBottom: 24, boxShadow: "var(--shadow-md)" }}>
+                <div onClick={() => setB13Open(!b13Open)} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", cursor: "pointer", userSelect: "none" }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: T.blue }}>⬡ BASKET 13 — CATALYST SLEEVE</span>
+                  <span style={{ fontSize: 8, fontWeight: 700, padding: "1px 6px", borderRadius: 3, background: "rgba(217,151,6,0.14)", color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", textTransform: "uppercase" }}>paper · calibration</span>
+                  <span style={{ fontSize: 10, fontFamily: T.mono, color: T.light }}>
+                    {open.length} seats · {B13.invested_pct}% invested · {B13.cash_pct}% cash · {resolved.length} resolved
+                  </span>
+                  <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, marginLeft: "auto" }}>run {B13.generated} {b13Open ? "▾" : "▸"}</span>
+                </div>
+                {b13Open && (
+                  <>
+                    <div style={{ overflowX: "auto", marginTop: 10 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
+                        <thead>
+                          <tr style={{ color: T.muted, fontSize: 8.5, textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "left" }}>
+                            <th style={{ padding: "3px 8px 3px 0" }}>Seat</th>
+                            <th style={{ padding: "3px 8px" }}>Wt</th>
+                            <th style={{ padding: "3px 8px" }}>Expression</th>
+                            <th style={{ padding: "3px 8px" }}>Lane</th>
+                            <th style={{ padding: "3px 8px" }}>Driver</th>
+                            <th style={{ padding: "3px 8px" }}>Exp R:R / EV</th>
+                            <th style={{ padding: "3px 8px" }}>Entry</th>
+                            <th style={{ padding: "3px 8px" }}>Review trigger</th>
+                            <th style={{ padding: "3px 0" }}>CRO</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {open.map((e: any) => (
+                            <tr key={e.symbol} style={{ borderTop: `1px solid ${T.border}` }}>
+                              <td style={{ padding: "5px 8px 5px 0" }}>
+                                <span onClick={(ev) => { ev.stopPropagation(); setSelectedSymbol(e.symbol); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{e.symbol}</span>
+                                {e.staging && <span title="Staging pick — soft-dated catalyst: equity-only, half-weight cap" style={{ marginLeft: 5, fontSize: 7.5, fontWeight: 700, padding: "0 4px", borderRadius: 3, background: "rgba(217,151,6,0.14)", color: "#d97706" }}>STG</span>}
+                              </td>
+                              <td style={{ padding: "5px 8px", color: T.text, fontWeight: 700 }}>{e.weight_pct}%</td>
+                              <td style={{ padding: "5px 8px", color: T.light }}>{fmtB13Expr(e)}</td>
+                              <td style={{ padding: "5px 8px", color: T.light }}>{String(e.lane_canon || "").replace(/_/g, " ")}</td>
+                              <td style={{ padding: "5px 8px", color: T.purple }}>{String(e.resolution_driver || "").replace(/_/g, " ")}</td>
+                              <td style={{ padding: "5px 8px", color: T.green }}>{fmtB13RR(e)}</td>
+                              <td style={{ padding: "5px 8px", color: T.light }} title={`edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"}`}>{e.entry_date} @ {e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}</td>
+                              <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.review_trigger || ""}>{e.review_trigger || "—"}</td>
+                              <td style={{ padding: "5px 0" }}>
+                                {(e.cro_conditions || []).length > 0
+                                  ? <span title={e.cro_conditions.join("\n• ").replace(/^/, "• ")} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⚠ {e.cro_conditions.length} cond</span>
+                                  : <span style={{ fontSize: 8.5, color: T.muted }}>clean</span>}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginTop: 10, paddingTop: 8, borderTop: `1px solid ${T.border}` }}>
+                      <span style={{ fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em" }}>Caps</span>
+                      {Object.entries(B13.driver_utilization || {}).map(([d, n]: any) => (
+                        <span key={d} title={`max ${B13.caps?.max_per_driver ?? 2} names per resolution driver`} style={{ fontSize: 8.5, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, border: `1px solid ${atDrvCap(n) ? "rgba(217,151,6,0.4)" : T.border}`, color: atDrvCap(n) ? "#d97706" : T.light }}>
+                          {String(d).replace(/_/g, " ")} {n}/{B13.caps?.max_per_driver ?? 2}
+                        </span>
+                      ))}
+                      <span style={{ width: 6 }} />
+                      {Object.entries(B13.cluster_utilization || {}).map(([c, w]: any) => (
+                        <span key={c} title={`max ${B13.caps?.max_super_pct ?? 40} weight-points per super-cluster`} style={{ fontSize: 8.5, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(196,181,253,0.08)", border: "1px solid rgba(196,181,253,0.2)", color: T.purple }}>
+                          {c} {w}/{B13.caps?.max_super_pct ?? 40}
+                        </span>
+                      ))}
+                    </div>
+                    {resolved.length > 0 && (
+                      <div style={{ marginTop: 10 }}>
+                        <div style={{ fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em", marginBottom: 4 }}>Resolution history</div>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: T.mono }}>
+                          <tbody>
+                            {resolved.map((e: any, i: number) => (
+                              <tr key={`${e.symbol}-${i}`} style={{ borderTop: `1px solid ${T.border}` }}>
+                                <td style={{ padding: "4px 8px 4px 0", color: T.text, fontWeight: 700 }}>{e.symbol}</td>
+                                <td style={{ padding: "4px 8px", color: e.resolution.resolution_type === "FIRED_WIN" ? T.green : e.resolution.resolution_type === "FIRED_LOSS" ? T.red : "#d97706" }}>{e.resolution.resolution_type}</td>
+                                <td style={{ padding: "4px 8px", color: T.light }}>{e.entry_date} → {e.resolution.resolution_date} ({e.resolution.days_held}d)</td>
+                                <td style={{ padding: "4px 8px", color: T.light }}>{e.entry_price != null ? Number(e.entry_price).toFixed(2) : "?"} → {e.resolution.exit_price != null ? Number(e.resolution.exit_price).toFixed(2) : "?"}</td>
+                                <td style={{ padding: "4px 8px", color: (e.resolution.realized_return_pct ?? 0) >= 0 ? T.green : T.red }}>{e.resolution.realized_return_pct != null ? `${(e.resolution.realized_return_pct * 100).toFixed(1)}%` : "—"}</td>
+                                <td style={{ padding: "4px 8px", color: T.light }}>rr {e.resolution.realized_rr ?? "—"} (exp {fmtB13RR(e)})</td>
+                                <td style={{ padding: "4px 0", color: T.muted, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.resolution.notes || ""}>{e.resolution.notes || ""}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {B13.memo && (
+                      <details style={{ marginTop: 8 }}>
+                        <summary style={{ fontSize: 9, color: T.muted, cursor: "pointer" }}>Director memo · {(B13.non_selections || []).length} non-selections recorded (counterfactuals)</summary>
+                        <p style={{ fontSize: 10.5, color: T.light, lineHeight: 1.55, margin: "6px 0 0" }}>{B13.memo}</p>
+                        {(B13.non_selections || []).length > 0 && (
+                          <div style={{ marginTop: 6, fontSize: 9.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.6 }}>
+                            {(B13.non_selections || []).map((p: any, i: number) => (
+                              <div key={`${p.symbol}-${i}`}><span style={{ color: T.light, fontWeight: 700 }}>{p.symbol}</span> — {p.passed_because}</div>
+                            ))}
+                          </div>
+                        )}
+                      </details>
+                    )}
+                    <div style={{ marginTop: 8, fontSize: 8.5, color: T.muted }}>
+                      Paper basket — nothing is executed; entries resolve (FIRED_WIN/LOSS · SLIPPED · THESIS_BROKEN · EDGE_GONE · EXPIRED), they do not rebalance. Realized outcomes re-fit the edge thresholds, lane tilt and caps quarterly.
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+
           {loadingScan ? (
             <div style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
               <RefreshCw size={36} color={T.green} className="animate-spin" />
@@ -1134,6 +1269,12 @@ export default function CatalystWatch() {
                         )}
                         {(report as any).lane_canon && (
                           <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>lane: {String((report as any).lane_canon).replace(/_/g, " ")}</span>
+                        )}
+                        {B13_SEATS[report.symbol] && (
+                          <span title={`Basket 13 (paper catalyst sleeve) — entered ${B13_SEATS[report.symbol].entry_date} @ ${B13_SEATS[report.symbol].entry_price ?? "n/a"}${(B13_SEATS[report.symbol].cro_conditions || []).length ? `\nCRO conditions:\n- ${B13_SEATS[report.symbol].cro_conditions.join("\n- ")}` : ""}`}
+                            style={{ fontSize: 9, fontWeight: 800, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(59,130,246,0.14)", color: T.blue, border: "1px solid rgba(59,130,246,0.25)" }}>
+                            ⬡ B13 seat: {B13_SEATS[report.symbol].weight_pct}% {fmtB13Expr(B13_SEATS[report.symbol])}{B13_SEATS[report.symbol].staging ? " · staging" : ""}
+                          </span>
                         )}
                       </div>
                       {(report as any).corrections?.length > 0 && (
