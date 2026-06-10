@@ -158,6 +158,13 @@ for p in picks:
         "interrogator_dossier": doss,
         "interrogator_score": interro,
         "trajectory": traj,
+        "sop_fair_value": rec.get("sop_fair_value", "") or p.get("sop_fair_value", ""),
+        "forensic_cap": bool(p.get("forensic_cap")),
+        "sop_breakdown": rec.get("sop_breakdown", ""),
+        "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
+        "risk_reward": rec.get("risk_reward", ""),
+        "catalyst_status": rec.get("catalyst_status", "") or p.get("catalyst_status", ""),
+        "peer_comps_note": rec.get("peer_comps_note", ""),
         "sector": p.get("sector") or rec.get("sector") or sc.get("sector", ""),
         "mos": mos_d, "fair_value": fv_d,
         "cycle_flag": sc.get("cycle_flag", "NORMAL"),
@@ -211,6 +218,10 @@ def _opus_overlay(sym):
         "forcing_function": rec.get("forcing_function", ""), "conviction": int(rec.get("conviction", 0) or 0),
         "verdict": rec.get("verdict", ""), "interrogator_dossier": d, "interrogator_score": sc_i,
         "trajectory": (tj.group(1) if tj else rec.get("trajectory", "")), "engine": "opus-4.8-regime",
+        "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
+        "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
+        "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
+        "peer_comps_note": rec.get("peer_comps_note", ""),
     }
 
 overlaid, pm_missing = 0, []
@@ -229,6 +240,12 @@ for _meth, _b in (baskets.get("per_methodology_baskets") or {}).items():
 print(f"  per-methodology picks overlaid with Opus debate: {overlaid} (no Opus debate yet: {pm_missing})")
 
 BASKETS_LOCAL.write_text(json.dumps(baskets, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+# Radar peer-groups → public fallback (+ GCS below) so the stock page renders real comparable peers.
+PEER_SRC = BK / "peer_groups.json"
+PEER_LOCAL = PUB / "peer_groups.json"
+if PEER_SRC.exists():
+    PEER_LOCAL.write_text(PEER_SRC.read_text(encoding="utf-8"), encoding="utf-8")
+    print(f"  copied peer_groups.json -> {PEER_LOCAL}")
 held = [e["symbol"] for e in entries if e["held_since_prior"]]
 rotated_out = [s for s in prior_apex if s not in {e["symbol"] for e in entries}]
 print(f"\nwrote {len(entries)} apex names -> {BASKETS_LOCAL}")
@@ -261,6 +278,9 @@ def _hist_entry(rec, dossier, date_str, ts):
         "consensus_delta": rec.get("consensus_delta", ""), "forcing_function": rec.get("forcing_function", ""),
         "valley_of_death": rec.get("valley_of_death", ""), "positioning_washout": rec.get("positioning_washout", ""),
         "moderator_conclusion": rec.get("moderator_conclusion", ""),
+        "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
+        "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
+        "peer_comps_note": rec.get("peer_comps_note", ""),
         "interrogator_dossier": dossier, "engine": "opus-4.8-regime",
     }
 
@@ -303,13 +323,21 @@ if args.gcs:
         print(f"  GCS push scans/speculair_debate_history/: {'OK' if r.returncode == 0 else 'FAILED ' + (r.stderr or '')[-200:]}")
     except Exception as e:
         print(f"  GCS push history dir: ERROR {e}")
+    # Push the Radar peer-groups so the stock page can render true comparable peers + relative comps.
+    try:
+        if PEER_LOCAL.exists():
+            cmd = f'gcloud storage cp "{PEER_LOCAL}" "gs://{gcs_io.GCS_BUCKET}/scans/peer_groups.json"'
+            r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=120)
+            print(f"  GCS push scans/peer_groups.json: {'OK' if r.returncode == 0 else 'FAILED ' + (r.stderr or '')[-200:]}")
+    except Exception as e:
+        print(f"  GCS push peer_groups: ERROR {e}")
     # Round-trip verify so the hands-off run self-confirms what is actually LIVE, without a separate
     # (non-allowlisted) gcloud-cat|python-c step. STEP 4 of the SKILL just reads this line.
     # Use `gcloud storage cat` (NOT gcs_io.gcs_read_json) — the public-URL read can hit a stale GCS/CDN
     # cache right after a write and report the OLD apex; the gcloud client reads through fresh.
     try:
         rb = subprocess.run(f'gcloud storage cat "gs://{gcs_io.GCS_BUCKET}/scans/speculair_baskets.json"',
-                            shell=True, capture_output=True, text=True, timeout=60)
+                            shell=True, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
         live = json.loads(rb.stdout) if (rb.returncode == 0 and rb.stdout) else {}
         print(f"  LIVE readback (fresh): apex={[p.get('symbol') for p in live.get('apex_basket', [])]} "
               f"engine={live.get('engine')} per_methodology_baskets={len(live.get('per_methodology_baskets', {}))}")

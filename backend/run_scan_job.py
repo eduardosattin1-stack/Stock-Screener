@@ -58,14 +58,23 @@ def main():
             log.error(f"[{region}] Screener failed: {e}", exc_info=True)
             continue # Skip to the next region if this one crashes
 
-        # ─── 2. Run Speculair Debate Pipeline ───
-        try:
-            from live_debate_engine import debate_and_allocate
-            log.info(f"[{region}] Running Speculair debate pipeline...")
-            debate_and_allocate(dry_run=False)
-            log.info(f"[{region}] Debate pipeline complete.")
-        except Exception as e:
-            log.error(f"[{region}] Debate pipeline failed: {e}", exc_info=True)
+        # ─── 2. Speculair Debate Pipeline — DISABLED on Cloud Run (2026-06-10) ───
+        # The debate runs LOCALLY on Claude Code (weekly speculair-opus-weekly skill), which
+        # publishes the authoritative speculair_baskets.json. Running the keyless cross-model
+        # engine here every night REWROTE that file (wiped engine=opus-4.8-claude-code-subagents,
+        # shrank per_methodology_baskets 203 -> 71 picks). Nightly NAV marking is handled by
+        # _mark_speculair_nav() inside screener_v6.main() — no debate needed.
+        if os.environ.get("SPECULAIR_DEBATE_CLOUDRUN", "").lower() in ("1", "true", "yes"):
+            try:
+                from live_debate_engine import debate_and_allocate
+                log.info(f"[{region}] Running Speculair debate pipeline...")
+                debate_and_allocate(dry_run=False)
+                log.info(f"[{region}] Debate pipeline complete.")
+            except Exception as e:
+                log.error(f"[{region}] Debate pipeline failed: {e}", exc_info=True)
+        else:
+            log.info(f"[{region}] Speculair debate skipped — runs locally via the weekly Claude Code "
+                     f"skill (set SPECULAIR_DEBATE_CLOUDRUN=1 to re-enable here).")
 
         log.info(f"═══ Completed processing region={region} ═══")
 

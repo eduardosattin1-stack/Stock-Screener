@@ -6209,12 +6209,15 @@ def _mark_speculair_nav():
         log.warning(f"Speculair NAV mark skipped (engine import failed): {e}")
         return
     pub = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public")
-    for label, src, gpath, lname in [
-        ("apex", "scans/speculair_baskets.json", "scans/speculair_apex_tracking.json", "speculair_apex_tracking.json"),
-        ("value", "scans/speculair_value_apex.json", "scans/speculair_value_tracking.json", "speculair_value_tracking.json"),
+    for label, src, gpath, lname, embed_key in [
+        ("apex", "scans/speculair_baskets.json", "scans/speculair_apex_tracking.json",
+         "speculair_apex_tracking.json", "apex_tracking"),
+        ("value", "scans/speculair_value_apex.json", "scans/speculair_value_tracking.json",
+         "speculair_value_tracking.json", "value_tracking"),
     ]:
         try:
             book = gcs_download(src)
+            src_is_gcs = bool(book)
             if not book:
                 lf = os.path.join(pub, os.path.basename(src))
                 book = json.load(open(lf, encoding="utf-8")) if os.path.exists(lf) else {}
@@ -6225,6 +6228,24 @@ def _mark_speculair_nav():
             s = _E._update_apex_tracking(picks, push_gcs=True, gcs_path=gpath, local_name=lname)
             log.info(f"Speculair {label} NAV marked: nav={s.get('nav')} "
                      f"since={s.get('since_inception_pct')}% open={s.get('n_open')} closed={s.get('n_closed')}")
+            # Refresh the EMBEDDED tracking summary the frontend cards read, so the displayed NAV
+            # stays nightly-fresh between weekly publishes (the now-disabled Cloud Run debate used
+            # to do this as a side effect of rewriting the whole file). Surgical: only the tracking
+            # key(s) change, every other published field is preserved; only when the book came from
+            # GCS (never re-upload a stale local fallback over production).
+            if src_is_gcs and isinstance(book, dict) and s:
+                book[embed_key] = s
+                if label == "value" and isinstance(book.get("weights"), dict) and book["weights"]:
+                    try:
+                        sw = _E._update_apex_tracking(picks, push_gcs=True, weights=book["weights"],
+                                                      gcs_path="scans/speculair_value_tracking_weighted.json",
+                                                      local_name="speculair_value_tracking_weighted.json")
+                        if sw:
+                            book["value_tracking_weighted"] = sw
+                    except Exception as e:
+                        log.warning(f"Speculair weighted value NAV mark failed: {e}")
+                gcs_upload(src, book)
+                log.info(f"Speculair {label} embedded tracking refreshed in {src}")
         except Exception as e:
             log.warning(f"Speculair {label} NAV mark failed: {e}")
 
