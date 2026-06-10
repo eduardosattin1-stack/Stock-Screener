@@ -56,12 +56,12 @@ jobs:
           gcloud run jobs update screener-sp500 --region=europe-west1 --image="$IMAGE" \
             --memory=2Gi \
             --task-timeout=86400s \
-            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},THETA_EMAIL=${{ secrets.THETA_EMAIL }},THETA_PASSWORD=${{ secrets.THETA_PASSWORD }}" \
             || echo "screener-sp500 not found, skipping"
           gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
             --memory=2Gi \
             --task-timeout=86400s \
-            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},THETA_EMAIL=${{ secrets.THETA_EMAIL }},THETA_PASSWORD=${{ secrets.THETA_PASSWORD }}" \
             || echo "screener-global not found, skipping"
 
       # ═══ ALWAYS: DEPLOY PAPER-TRACKING JOBS ═══

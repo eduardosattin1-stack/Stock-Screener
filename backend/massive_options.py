@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 from datetime import datetime, timedelta
 from typing import Optional
@@ -44,6 +45,20 @@ TARGET_SHORT_PCT = 0.20
 
 IV_HISTORY_KEEP_DAYS = 365  # 52-week IV-rank window
 MIN_IV_SAMPLES_FOR_RANK = 20
+
+# v4 ML (June 2026): shared time-model feature builder. The IV history series
+# must be stored under the BUILDER's ATM-IV definition (delta-nearest-0.50
+# call on the normalized 5-strikes-per-expiration chain) so f_opt_iv_rank /
+# f_opt_iv_momentum stay homogeneous with training semantics. Guarded import:
+# when unavailable we fall back to the legacy ATM-IV definition.
+try:
+    from time_model_features import normalize_chain as _tmf_normalize_chain
+    from time_model_features import compute_chain_features as _tmf_chain_features
+    _HAS_TMF = True
+except Exception as _tmf_err:
+    _HAS_TMF = False
+    log.warning(f"time_model_features unavailable in massive_options — "
+                f"IV history falls back to legacy ATM-IV definition: {_tmf_err}")
 
 # ---------------------------------------------------------------------------
 # ThetaData Client & Rate Limiter
@@ -74,14 +89,22 @@ _client = None
 _client_lock = threading.Lock()
 
 def get_theta_client():
+    """Single shared ThetaClient factory (calibration_tracker imports this too).
+    Env-first creds: THETA_EMAIL/THETA_PASSWORD; legacy literals as fallback."""
     global _client
     if _client is not None:
         return _client
     with _client_lock:
         if _client is None:
+            email = os.environ.get("THETA_EMAIL")
+            password = os.environ.get("THETA_PASSWORD")
+            if not (email and password):
+                log.warning("ThetaData creds from legacy literals — set THETA_EMAIL/THETA_PASSWORD")
+                email = "carbonbridge.tech@gmail.com"
+                password = "Sccp1985r"
             _client = ThetaClient(
-                email="carbonbridge.tech@gmail.com",
-                password="Sccp1985r",
+                email=email,
+                password=password,
                 dataframe_type="pandas"
             )
         return _client
@@ -214,16 +237,25 @@ def _gcs_write(path: str, data) -> bool:
         return False
 
 
-def update_iv_history(symbol: str, iv: float, today_str: Optional[str] = None) -> bool:
+def update_iv_history(symbol: str, iv: float, today_str: Optional[str] = None,
+                      history: Optional[list] = None) -> bool:
     """Append today's ATM IV to the symbol's GCS history, trimmed to IV_HISTORY_KEEP_DAYS.
     Ported from tradier_options so IV rank works under the Massive/ThetaData path. The
     history (options/iv_history/{SYMBOL}.json) is seeded from the thetadata parquet cache
-    by bootstrap_iv_history.py, then extended one sample per nightly scan."""
+    by bootstrap_iv_history.py, then extended one sample per nightly scan.
+
+    v4 ML (June 2026): the stored IV MUST be the shared builder's ATM-IV
+    definition (delta-nearest-0.50 call on the normalized chain — see
+    compute_builder_atm_iv) so the series stays homogeneous with the
+    f_opt_iv_rank / f_opt_iv_momentum training semantics. File shape is
+    unchanged: [[YYYY-MM-DD, iv], ...]. Pass `history` (a pre-read copy of the
+    GCS list) to skip the redundant read when the caller already has it."""
     if iv is None or iv <= 0:
         return False
     today_str = today_str or datetime.now().strftime("%Y-%m-%d")
     path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
-    history = _gcs_read(path, [])
+    if history is None:
+        history = _gcs_read(path, [])
     if not isinstance(history, list):
         history = []
     # Dedup: replace today's entry if it already exists
@@ -369,6 +401,19 @@ def get_options_snapshot(symbol: str,
             except (ValueError, TypeError):
                 implied_vol = None
 
+            # v4 ML: propagate ThetaData's IV fit error when present — the
+            # shared builder's quality filter (iv_error < 0.1) matches the
+            # training captures only if the field survives adaptation.
+            # NaN normalizes to None (a NaN column would fail the < 0.1
+            # filter and silently drop every contract from the chain).
+            iv_error = row.get('iv_error')
+            try:
+                iv_error = (float(iv_error)
+                            if iv_error is not None and not math.isnan(float(iv_error))
+                            else None)
+            except (ValueError, TypeError):
+                iv_error = None
+
             open_interest = int(row.get('open_interest', 0))
             volume = int(row.get('volume', 0))
             close = float(row.get('close', 0))
@@ -395,6 +440,7 @@ def get_options_snapshot(symbol: str,
                     "shares_per_contract": 100
                 },
                 "implied_volatility": implied_vol,
+                "iv_error": iv_error,
                 "open_interest": open_interest,
                 "day": {
                     "volume": volume,
@@ -433,6 +479,73 @@ def get_options_snapshot(symbol: str,
         filtered_contracts.append(c)
 
     return filtered_contracts
+
+
+def contracts_to_builder_chain(contracts: list) -> list:
+    """Adapt the Polygon-shaped snapshot contracts to the flat per-contract
+    dict contract of time_model_features (right/expiration/strike/greeks/
+    implied_vol/iv_error/open_interest/volume).
+
+    iv_error is included only when the source row carried one: the builder
+    applies its `< 0.1` quality filter ONLY when the field is present, and a
+    blanket None column would filter out the whole chain."""
+    rows = []
+    for c in contracts or []:
+        det = c.get("details") or {}
+        greeks = c.get("greeks") or {}
+        right = str(det.get("contract_type") or "").upper()
+        if right not in ("CALL", "PUT"):
+            continue
+        row = {
+            "right": right,
+            "expiration": det.get("expiration_date"),
+            "strike": det.get("strike_price"),
+            "delta": greeks.get("delta"),
+            "gamma": greeks.get("gamma"),
+            "theta": greeks.get("theta"),
+            "vega": greeks.get("vega"),
+            "implied_vol": c.get("implied_volatility"),
+            "open_interest": c.get("open_interest"),
+            "volume": (c.get("day") or {}).get("volume"),
+        }
+        if c.get("iv_error") is not None:
+            row["iv_error"] = c["iv_error"]
+        rows.append(row)
+    return rows
+
+
+# Diagnostic: chains that normalized to EMPTY under the builder definition
+# (e.g. every contract failed the iv_error < 0.1 quality filter). One
+# screener process == one scan, so the module counter IS the per-scan count;
+# screener_v6 logs it in its Massive Options summary.
+_empty_builder_chains = 0
+
+
+def get_empty_builder_chain_count() -> int:
+    return _empty_builder_chains
+
+
+def compute_builder_atm_iv(contracts: list, spot: float) -> Optional[float]:
+    """ATM IV under the shared builder's TRAINING definition: implied_vol of
+    the CALL with delta nearest 0.50, taken from the chain normalized to the
+    5 strikes nearest the underlying per (expiration, right) — i.e. exactly
+    what time_model_features computes for opt_atm_iv. This is what gets
+    appended to options/iv_history so the live series stays homogeneous with
+    f_opt_iv_rank / f_opt_iv_momentum training semantics."""
+    global _empty_builder_chains
+    if not _HAS_TMF or not contracts or not spot or spot <= 0:
+        return None
+    try:
+        chain = contracts_to_builder_chain(contracts)
+        norm = _tmf_normalize_chain(chain, float(spot))
+        if not norm:
+            _empty_builder_chains += 1
+            return None
+        iv = _tmf_chain_features(norm).get("opt_atm_iv")
+        return float(iv) if iv and iv > 0 else None
+    except Exception as e:
+        log.debug(f"builder ATM-IV computation failed: {e}")
+        return None
 
 
 def get_spot_price(symbol: str) -> Optional[float]:
@@ -653,7 +766,8 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
                  earnings_date: Optional[str] = None,
                  collect_term_structure: bool = True,
                  collect_earnings_move: bool = True,
-                 target_dte: int = 35) -> dict:
+                 target_dte: int = 35,
+                 ml_features: bool = False) -> dict:
     """
     Called by screener_v6.py for each US stock with market cap > $1B.
     Returns dict with same keys as tradier_options.enrich_stock():
@@ -663,6 +777,11 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
 
     Plus new fields only available from Massive:
         pc_oi_ratio, total_open_interest
+
+    ml_features (v4 ML, June 2026): when True, fetch the FULL chain (all
+    expirations), stash ml_chain/ml_atm_iv_history for the shared feature
+    builder, and append the builder-definition ATM IV to the GCS history.
+    When False (default) the pre-v4 windowed behavior runs unchanged.
 
     Uses 1-2 Massive API calls total (vs 3-6 from Tradier).
     """
@@ -685,26 +804,40 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if not MASSIVE_API_KEY:
         return result
 
-    # Compute date windows for the snapshot query
+    # Compute date windows for the spread/term-structure logic
     today = datetime.now().date()
-    # Fetch contracts expiring 14-100 days out — covers spread DTE + term structure
+    # Spread + term structure use contracts expiring 14-100 days out
     exp_gte = (today + timedelta(days=14)).strftime("%Y-%m-%d")
-    # Fetch up to 100 days normally, but if target_dte is larger (e.g. 60), ensure exp_lte is large enough
+    # Up to 100 days normally, but if target_dte is larger (e.g. 60), ensure exp_lte is large enough
     exp_lte = (today + timedelta(days=max(100, target_dte + 40))).strftime("%Y-%m-%d")
 
-    # ONE call — replaces Tradier's quote + expirations + chain(s)
+    # ONE call — replaces Tradier's quote + expirations + chain(s).
+    # v4 ML (June 2026, ml_features=True only): fetch the FULL chain (no DTE
+    # window — the ThetaData call was already expiration='*'; the window was
+    # only a client-side filter) so the shared feature builder sees the same
+    # all-expirations chain contract as the training captures. The 14-100 DTE
+    # window is then applied locally for the existing spread/term-structure
+    # logic. ml_features=False keeps the pre-v4 windowed fetch verbatim.
     try:
-        contracts = get_options_snapshot(symbol, exp_gte=exp_gte, exp_lte=exp_lte)
+        if ml_features:
+            contracts_all = get_options_snapshot(symbol)
+        else:
+            contracts_all = get_options_snapshot(symbol, exp_gte=exp_gte, exp_lte=exp_lte)
     except Exception as e:
         log.debug(f"Massive snapshot failed for {symbol}: {e}")
         return result
 
-    if not contracts:
+    if not contracts_all:
         return result
+
+    contracts = [
+        c for c in contracts_all
+        if exp_gte <= (c.get("details", {}).get("expiration_date") or "") <= exp_lte
+    ] if ml_features else contracts_all
 
     # Extract spot price from the snapshot's underlying_asset field
     spot = None
-    for c in contracts:
+    for c in contracts_all:
         ua = c.get("underlying_asset") or {}
         p = ua.get("price")
         if p and p > 0:
@@ -714,6 +847,31 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
         spot = get_spot_price(symbol)
     if not spot or spot <= 0:
         return result
+
+    _hist_written = False
+    if ml_features:
+        # ── v4 ML stash + IV-history append (BEFORE any early return so the
+        # series and the feature inputs survive thin spread chains) ──
+        # One GCS read, reused for the legacy update_iv_history write below.
+        _iv_path = f"{IV_HISTORY_PREFIX}/{symbol.upper()}.json"
+        _iv_history = _gcs_read(_iv_path, [])
+        if not isinstance(_iv_history, list):
+            _iv_history = []
+        _iv_history = [r for r in _iv_history if isinstance(r, list) and len(r) >= 2]
+
+        result["ml_chain"] = contracts_to_builder_chain(contracts_all)
+        result["ml_atm_iv_history"] = [(r[0], r[1]) for r in _iv_history]
+
+        # Builder-definition ATM IV (delta-nearest-0.50 call, normalized chain) —
+        # THIS is what the history stores from now on (training-homogeneous).
+        _builder_iv = compute_builder_atm_iv(contracts_all, spot)
+        if _builder_iv:
+            _hist_written = update_iv_history(symbol, _builder_iv, history=list(_iv_history))
+
+        if not contracts:
+            # Full chain exists but nothing inside the 14-100 DTE spread window —
+            # legacy behavior returned early here; ml_* keys are already set.
+            return result
 
     # Group contracts by expiration for term structure analysis
     by_exp: dict[str, list] = {}
@@ -790,10 +948,16 @@ def enrich_stock(symbol: str, composite: float, hit_prob: float,
     if iv_today:
         result["iv_current"] = round(iv_today, 4)
         
-    # IV rank from the trailing thetadata-seeded history (no extra API call — reuses the
-    # ATM IV just extracted). Append today's sample, then rank current vs the window.
-    if iv_today:
-        update_iv_history(symbol, iv_today)
+    # IV rank from the trailing thetadata-seeded history (no extra API call).
+    # v4 ML (ml_features=True): the history sample was already appended above
+    # under the BUILDER ATM-IV definition; the legacy iv_today append only
+    # fires as a fallback when the shared builder is unavailable (keeps the
+    # series alive). ml_features=False = pre-v4 behavior: plain append.
+    if not _hist_written and iv_today:
+        if ml_features:
+            update_iv_history(symbol, iv_today, history=list(_iv_history))
+        else:
+            update_iv_history(symbol, iv_today)
     iv_data = compute_iv_rank(symbol)
     if iv_data:
         result["iv_rank"] = iv_data["iv_rank"]

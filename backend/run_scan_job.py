@@ -12,7 +12,7 @@ Invoked by:
 *NOTE: Single-region runner. Set REGIONS_TO_SCAN below to change. Currently: ["global"].*
 """
 import os, sys, json, logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Make sibling modules importable
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -22,20 +22,45 @@ logging.basicConfig(level=logging.INFO,
 log = logging.getLogger("run_scan_job")
 
 
-def _load_scan_from_gcs(region: str) -> list:
-    import requests
-    url = f"https://storage.googleapis.com/screener-signals-carbonbridge/latest_{region}.json"
+def _scan_date_eastern(ts) -> str | None:
+    """YYYY-MM-DD trading date from the payload's scan_date. The screener stamps
+    a full tz-aware UTC ISO timestamp (screener_v6.save_scan_to_gcs), so a naive
+    [:10] slice rolls to TOMORROW on post-00:00-UTC manual re-runs — which the
+    calibration tracker's weekday gate would then mishandle. Convert to
+    US/Eastern first. Date-only strings pass through unchanged."""
+    s = str(ts or "").strip()
+    if not s:
+        return None
+    if len(s) == 10:  # already a bare YYYY-MM-DD date — no clock to convert
+        return s
+    from zoneinfo import ZoneInfo
     try:
-        r = requests.get(url, timeout=15)
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        return s[:10] or None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(ZoneInfo("America/New_York")).date().isoformat()
+
+
+def _load_scan_from_gcs(region: str) -> tuple:
+    """Reload tonight's scan payload. The screener writes scans/latest_{region}.json
+    (screener_v6.save_scan_to_gcs) — NOT the bucket root. Returns (stocks, scan_date)
+    where scan_date is the payload's US/Eastern YYYY-MM-DD date (None if unavailable)."""
+    import requests
+    url = f"https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest_{region}.json"
+    try:
+        r = requests.get(url, timeout=30)
         if r.status_code == 200:
             data = r.json()
             if isinstance(data, dict):
-                return data.get("stocks", [])
+                scan_date = _scan_date_eastern(data.get("scan_date"))
+                return data.get("stocks", []), scan_date
             if isinstance(data, list):
-                return data
+                return data, None
     except Exception as e:
         log.warning(f"Could not reload scan from GCS: {e}")
-    return []
+    return [], None
 
 
 def main():
@@ -57,6 +82,25 @@ def main():
         except Exception as e:
             log.error(f"[{region}] Screener failed: {e}", exc_info=True)
             continue # Skip to the next region if this one crashes
+
+        # ─── 1b. v2 calibration tracker (calibration_tracking/v2/) ───
+        # First-class job step with its own log section. Runs in PARALLEL with the
+        # legacy signal_tracker call buried inside screener_v6.save_scan_to_gcs —
+        # the namespaces are disjoint (hit_rate_tracking/ vs calibration_tracking/v2/).
+        # No-ops (logged ERROR) until scratch/build_v2_config.py publishes config.json.
+        log.info(f"═══ [{region}] Calibration tracker v2 ═══")
+        try:
+            import calibration_tracker
+            stocks, scan_date = _load_scan_from_gcs(region)
+            if stocks:
+                counters = calibration_tracker.update_from_scan(stocks, scan_date=scan_date)
+                log.info(f"[{region}] Calibration tracker v2 complete: "
+                         f"{json.dumps(counters, default=str)}")
+            else:
+                log.warning(f"[{region}] Calibration tracker v2 skipped: "
+                            f"could not reload scans/latest_{region}.json from GCS")
+        except Exception as e:
+            log.error(f"[{region}] Calibration tracker v2 failed: {e}", exc_info=True)
 
         # ─── 2. Speculair Debate Pipeline — DISABLED on Cloud Run (2026-06-10) ───
         # The debate runs LOCALLY on Claude Code (weekly speculair-opus-weekly skill), which

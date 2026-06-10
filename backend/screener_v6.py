@@ -262,9 +262,64 @@ except ImportError as _ie:
 except Exception as e:
     log.warning(f"ML model load failed: {type(e).__name__}: {e}")
 
+# ---------------------------------------------------------------------------
+# v4 time model (June 2026) — shared-feature-module serving path.
+# Auto-detect: if backend/time_model_v4.pkl exists it is PREFERRED over v3 and
+# the artifact's feature list MUST equal time_model_features.FEATURES_V4
+# (hard assert — raise, never median-fallback). If the v4 pkl is absent the
+# v3 path above runs UNCHANGED (prod safety until v4 ships).
+# ---------------------------------------------------------------------------
+HAS_TIME_MODEL_FEATURES = False
+tmf = None
+try:
+    import time_model_features as tmf
+    HAS_TIME_MODEL_FEATURES = True
+except Exception as _tmf_e:
+    log.warning(f"time_model_features import failed — v4 serving unavailable: {_tmf_e}")
+
+ML_MODELS_V4 = None        # {clf_*: [LGBMClassifier], reg_*: LGBMRegressor}
+ML_CALIBRATORS_V4 = None   # {clf_*: IsotonicRegression}
+ML_MEDIANS_V4 = None
+
+_model_path_v4 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_v4.pkl")
+if os.path.exists(_model_path_v4):
+    # Deliberately OUTSIDE a try/except: a present-but-unserveable v4 artifact
+    # must crash the scan loudly rather than silently degrade (contract C3).
+    if not HAS_TIME_MODEL_FEATURES:
+        raise RuntimeError(
+            "time_model_v4.pkl is present but time_model_features could not be "
+            "imported — refusing to serve v4 with an unverifiable feature spec"
+        )
+    import joblib as _joblib_v4
+    _v4_data = _joblib_v4.load(_model_path_v4)
+    if list(_v4_data.get("features") or []) != list(tmf.FEATURES_V4):
+        raise RuntimeError(
+            f"time_model_v4.pkl features != FEATURES_V4 "
+            f"(spec {tmf.FEATURE_SPEC_VERSION}): pkl has "
+            f"{len(_v4_data.get('features') or [])} features, spec has "
+            f"{len(tmf.FEATURES_V4)} — refusing to serve (no median fallback)"
+        )
+    # Same dict structure as v3 (trainer keeps the models_v3/calibrators_v3 keys)
+    ML_MODELS_V4 = _v4_data["models_v3"]
+    ML_CALIBRATORS_V4 = _v4_data.get("calibrators_v3", {})
+    ML_MEDIANS_V4 = _v4_data["medians"]
+    ML_MODEL_VERSION = "v4"
+    HAS_ML_MODEL = True
+    log.info(f"ML v4 loaded: {len(tmf.FEATURES_V4)} features "
+             f"(spec {tmf.FEATURE_SPEC_VERSION}), "
+             f"{len(ML_MODELS_V4)} sub-models, "
+             f"trained_at={_v4_data.get('trained_at', '?')}")
+
 
 def _build_ml_feature_vector(stock) -> Optional[np.ndarray]:
     """Build feature vector from a Stock object for ML prediction.
+
+    v3-LEGACY ONLY (kept verbatim for the fallback path while v4 ships).
+    The v4 path never calls this — it builds features via
+    time_model_features.compute_symbol_features/compute_cross_sectional_features,
+    which fixes the wrong wirings here (e.g. f_sector_momentum fed a 0-1
+    score instead of raw sector-median 3m returns, f_op_margin fed
+    net_margin, opt_* pinned 0.0 by the predict-before-enrichment ordering).
     Returns None if model unavailable."""
     if not HAS_ML_MODEL or ML_FEATURES is None:
         return None
@@ -410,6 +465,185 @@ def predict_time_model_v3(stock) -> dict:
     except Exception as e:
         log.debug(f"v3 predict failed for {getattr(stock, 'symbol', '?')}: {e}")
         return result
+
+
+def predict_time_model_v4(features: dict) -> tuple[dict, int]:
+    """Predict all v4 targets from a shared-builder feature dict.
+
+    Same output shape as predict_time_model_v3 (hit_10pct_30d, hit_10pct_60d,
+    hit_20pct_30d, hit_20pct_60d, expected_dd_30d, expected_dd_60d) plus the
+    count of median-imputed features (build_vector's missing list) so the
+    calibration tracker can persist per-signal imputation (ml_imputed_n).
+    """
+    result = {
+        "hit_10pct_30d": 0.0,
+        "hit_10pct_60d": 0.0,
+        "hit_20pct_30d": 0.0,
+        "hit_20pct_60d": 0.0,
+        "expected_dd_30d": 0.0,
+        "expected_dd_60d": 0.0,
+    }
+    if ML_MODEL_VERSION != "v4" or not ML_MODELS_V4:
+        return result, 0
+
+    X, missing = tmf.build_vector(features, ML_MEDIANS_V4)
+
+    # Classification targets — models_v3-style deploy models + isotonic cals
+    for key in ["clf_10pct_30d", "clf_10pct_60d", "clf_20pct_30d", "clf_20pct_60d"]:
+        models = ML_MODELS_V4.get(key)
+        cal = ML_CALIBRATORS_V4.get(key) if ML_CALIBRATORS_V4 else None
+        if not models:
+            continue
+        if isinstance(models, list):
+            probs = [m.predict_proba(X)[0, 1] for m in models]
+            raw = sum(probs) / len(probs)
+        else:
+            raw = models.predict_proba(X)[0, 1]
+        if cal is not None:
+            raw = float(cal.predict([raw])[0])
+        result[key.replace("clf_", "hit_")] = round(float(raw), 4)
+
+    # Regression targets (output is absolute drawdown %)
+    for key in ["reg_dd_30d", "reg_dd_60d"]:
+        model = ML_MODELS_V4.get(key)
+        if model is None:
+            continue
+        dd = float(model.predict(X)[0])
+        result[key.replace("reg_", "expected_")] = round(-abs(dd), 2)
+
+    return result, len(missing)
+
+
+def _build_symbol_raw_inputs_v4(s):
+    """Assemble a time_model_features.SymbolRawInputs for one Stock from the
+    raw inputs stashed during the scan (chart bars + raw FMP statements from
+    pass 1, option chain + ATM-IV history from the Massive/ThetaData
+    enrichment). Returns None when there is no usable bar history."""
+    ml_in = getattr(s, "_ml_inputs", None) or {}
+    bars = ml_in.get("daily_bars") or []
+    if not bars:
+        return None
+    asof = str(bars[-1].get("date") or "")[:10]
+    if not asof:
+        return None
+    stmts = ml_in.get("statements") or {}
+    return tmf.SymbolRawInputs(
+        symbol=s.symbol,
+        asof_date=asof,
+        price=float(s.price or 0.0),
+        daily_bars=bars,
+        income_annual=stmts.get("income") or [],
+        balance_annual=stmts.get("balance") or [],
+        cashflow_annual=stmts.get("cashflow") or [],
+        key_metrics_annual=stmts.get("key_metrics") or [],
+        option_chain=getattr(s, "_ml_opt_chain", None),
+        atm_iv_history=getattr(s, "_ml_iv_history", None),
+    )
+
+
+_V4_RANK_FEATURES = ("f_rsi_rank", "f_pb_rank", "f_rev_growth_rank",
+                     "f_roe_rank", "f_upside_rank")
+
+
+def run_v4_ml_predictions(stocks: list) -> None:
+    """v4 serving pass — runs AFTER the Massive/ThetaData options enrichment
+    (pipeline order fix: opt_atm_* / f_opt_iv_* now come from the real chain
+    instead of the pre-enrichment 0.0 defaults).
+
+    (a) per-symbol features via the shared builder, (b) one cross-sectional
+    rank pass over the US-listed scan universe, (c) predict the pass-2
+    ENRICHED cohort only and set the same Stock keys as the v3 path."""
+    if ML_MODEL_VERSION != "v4" or not HAS_ML_MODEL:
+        return
+
+    try:
+        # (a) per-symbol features
+        per_symbol: dict = {}
+        for s in stocks:
+            try:
+                raw = _build_symbol_raw_inputs_v4(s)
+                if raw is None:
+                    continue
+                per_symbol[s.symbol] = tmf.compute_symbol_features(raw)
+            except Exception as e:
+                log.debug(f"v4 feature build failed for {s.symbol}: {e}")
+
+        # (b) cross-sectional ranks — US-listed symbols only (no '.' in symbol),
+        # matching the v4 training grid universe restriction.
+        us = {sym: f for sym, f in per_symbol.items() if "." not in sym}
+        sector_by_symbol = {s.symbol: (s.sector or "Unknown")
+                            for s in stocks if s.symbol in us}
+        n_us = len(us)
+        if n_us >= tmf.MIN_CROSS_SECTION:
+            per_symbol.update(tmf.compute_cross_sectional_features(us, sector_by_symbol))
+        elif n_us >= 100:
+            log.warning(f"v4 cross-section: only {n_us} US symbols "
+                        f"(< {tmf.MIN_CROSS_SECTION}) — computing ranks over the "
+                        f"partial universe; rank features may be noisier than training")
+            per_symbol.update(tmf.compute_cross_sectional_features(
+                us, sector_by_symbol, min_n=n_us))  # relax guard via param, no monkeypatch
+        else:
+            log.warning(f"v4 cross-section DEGENERATE: {n_us} US symbols (< 100) — "
+                        f"median-filling rank features at 0.5; f_sector_momentum "
+                        f"left to training-median imputation. Decile assignments "
+                        f"for this scan are LOW CONFIDENCE.")
+            for feats in per_symbol.values():
+                for rf in _V4_RANK_FEATURES:
+                    feats[rf] = 0.5
+
+        # (c) predict — pass-2 ENRICHED cohort ONLY. The legacy signal_tracker
+        # stages every stock with prob>0 (sized for the ~30-575 enriched
+        # cohort); predicting the whole universe would stage ~2,300/night.
+        # Un-enriched stocks keep prob 0.0 / dd defaults exactly like the v3
+        # path. The rank pass above still ran over the full US cross-section.
+        n_pred = 0
+        total_imputed = 0
+        p_sum = {"hit_10pct_30d": 0.0, "hit_10pct_60d": 0.0,
+                 "hit_20pct_30d": 0.0, "hit_20pct_60d": 0.0}
+        p_max = dict(p_sum)
+        for s in stocks:
+            if not getattr(s, "_enriched", False):
+                continue
+            feats = per_symbol.get(s.symbol)
+            if feats is None:
+                continue
+            try:
+                preds, n_imputed = predict_time_model_v4(feats)
+            except Exception as e:
+                log.debug(f"v4 predict failed for {s.symbol}: {e}")
+                continue
+            s.hit_prob_10pct_30d = preds["hit_10pct_30d"]
+            s.hit_prob_10pct_60d = preds["hit_10pct_60d"]
+            s.hit_prob_30d = preds["hit_20pct_30d"]
+            s.hit_prob_60d = preds["hit_20pct_60d"]
+            s.expected_dd_30d = preds["expected_dd_30d"]
+            s.expected_dd_60d = preds["expected_dd_60d"]
+            s.hit_prob = preds["hit_20pct_30d"]  # legacy alias = clf_20pct_30d
+            s.ml_imputed_n = n_imputed
+            total_imputed += n_imputed
+            n_pred += 1
+            for k in p_sum:
+                p_sum[k] += preds[k]
+                p_max[k] = max(p_max[k], preds[k])
+
+        if n_pred:
+            log.info("v4 ML summary: n_predicted=%d | %s | imputed features total=%d (avg %.1f/stock)"
+                     % (n_pred,
+                        ", ".join(f"{k}: mean={p_sum[k] / n_pred:.3f} max={p_max[k]:.3f}"
+                                  for k in p_sum),
+                        total_imputed, total_imputed / n_pred))
+        else:
+            log.warning("v4 ML summary: 0 stocks predicted (no usable feature inputs)")
+    finally:
+        # Drop the per-stock ML stashes before output — ALWAYS, even when the
+        # pass dies mid-flight (vars(s) feeds signal_tracker, so leaked
+        # stashes would balloon its payload).
+        for s in stocks:
+            for attr in ("_ml_inputs", "_ml_opt_chain", "_ml_iv_history",
+                         "_raw_statements", "_enriched"):
+                if hasattr(s, attr):
+                    delattr(s, attr)
+
 
 # Portfolio state path (GCS or local)
 PORTFOLIO_STATE = os.environ.get("PORTFOLIO_STATE", "portfolio_state.json")
@@ -794,6 +1028,10 @@ class Stock:
     hit_prob_60d: float = 0.0        # P(touch +20% in 60 trading days)
     expected_dd_30d: float = 0.0     # expected max drawdown in 30d (%)
     expected_dd_60d: float = 0.0     # expected max drawdown in 60d (%)
+    # v4 (June 2026): number of median-imputed features behind this stock's
+    # prediction (build_vector missing-list length). None = not v4-predicted.
+    # Persisted so the calibration tracker can flag rows predicted off medians.
+    ml_imputed_n: Optional[int] = None
 
     # Smart Money Score (Apr 2026) — LTR-derived weighted factor score.
     # Pass-2 only: institutional_flow + congressional are US-only/pass-2-only
@@ -1166,6 +1404,11 @@ def get_quotes_batch(symbols: list[str]) -> dict[str, dict]:
 # ---------------------------------------------------------------------------
 
 def get_chart(sym: str, days: int = 200) -> Optional[list]:
+    # v4 ML (June 2026): the v4 serving path passes days=420 explicitly at the
+    # call site (the shared feature builder needs ≥ 253 trading bars for
+    # f_momentum_12m + warm-up margin for the 252-bar 52wk rolling stats).
+    # Default stays 200 so the v3 prod path keeps its original window. Same
+    # single FMP historical-price-eod/full call — only the from-date moves.
     start = (datetime.now() - timedelta(days=days + 30)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     data = fmp("historical-price-eod/full", {"symbol": sym, "from": start, "to": end})
@@ -1307,13 +1550,24 @@ def compute_obv_trend(closes, volumes, lookback=20):
     return "flat"
 
 def get_technicals(sym: str, quote: dict) -> Optional[dict]:
-    chart = get_chart(sym)
+    # v4 ML (June 2026): fetch 420 calendar days ONLY when the v4 artifact is
+    # live; the v3 prod path keeps its original 200-day fetch + memory profile.
+    chart = get_chart(sym, days=420 if ML_MODEL_VERSION == "v4" else 200)
     if not chart:
         return None
-    closes = [float(d.get("close", 0)) for d in chart if d.get("close")]
-    highs = [float(d.get("high", 0)) for d in chart if d.get("high")]
-    lows = [float(d.get("low", 0)) for d in chart if d.get("low")]
-    volumes = [int(d.get("volume", 0)) for d in chart if d.get("volume")]
+    # Pass-1 indicator math must stay bit-identical to v3 prod scoring: under
+    # v4, slice the wider fetch back to the exact v3 calendar window (200d +
+    # get_chart's 30d from-date buffer) BEFORE computing indicators —
+    # RSI/MACD smoothing, OBV-trend and StochRSI are history-length
+    # dependent. The full 420-day list rides ONLY in the _ml stash (_chart).
+    bars = chart
+    if ML_MODEL_VERSION == "v4":
+        _v3_start = (datetime.now() - timedelta(days=200 + 30)).strftime("%Y-%m-%d")
+        bars = [d for d in chart if str(d.get("date", "")) >= _v3_start]
+    closes = [float(d.get("close", 0)) for d in bars if d.get("close")]
+    highs = [float(d.get("high", 0)) for d in bars if d.get("high")]
+    lows = [float(d.get("low", 0)) for d in bars if d.get("low")]
+    volumes = [int(d.get("volume", 0)) for d in bars if d.get("volume")]
     if len(closes) < 30:
         return None
 
@@ -1435,7 +1689,7 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
     if 0 < sma200 and price < sma200 and price > sma50 > 0:
         rev_score += 1; rev_reasons.append("Below 200d, above 50d")
 
-    return {
+    out = {
         "rsi": rsi, "macd_signal": macd["signal"], "adx": adx,
         "bb_pct": bb_pct, "stoch_rsi": stoch, "obv_trend": obv,
         "bull_score": score, "bull_reasons": reasons,
@@ -1446,6 +1700,13 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
         "year_high": quote.get("year_high", 0),
         "year_low": quote.get("year_low", 0),
     }
+    # v4 ML (June 2026): raw OHLCV bars (full 420-day fetch) ride along so the
+    # shared feature builder gets daily_bars without a second FMP fetch.
+    # v4-ONLY so the v3 prod path keeps its memory profile. Internal key —
+    # stripped with s._raw before output (never serialized).
+    if ML_MODEL_VERSION == "v4":
+        out["_chart"] = chart
+    return out
 
 # ---------------------------------------------------------------------------
 # 4. Analyst (targets + grades + earnings)
@@ -1567,6 +1828,16 @@ def safe_cagr(start, end, years):
         return 0.0
     return (end / start) ** (1 / years) - 1
 
+def _stmts_newest_first(rows) -> list:
+    """Newest-first COPY of an FMP annual-statement list for the shared
+    time-model feature builder (time_model_features expects newest-first;
+    get_value sorts the cached lists ascending in place, so snapshot here)."""
+    if not rows:
+        return []
+    return sorted([r for r in rows if isinstance(r, dict)],
+                  key=lambda x: x.get("date") or "", reverse=True)
+
+
 def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_growth: float = 0.0) -> dict:
     """Full Buffett value analysis with FX-aware intrinsic value calculation.
 
@@ -1645,6 +1916,14 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
     # spin-offs that don't have a full 5-year fundamental history.
     if not inc or len(inc) < MIN_YEARS_HISTORY:
         v["_insufficient_history"] = True
+        # v4 ML: expose what raw statements we DO have before bailing —
+        # the stock stays in the scan ("Keep it!" below) and the shared
+        # feature builder degrades gracefully on partial inputs.
+        v["_raw_statements"] = {
+            "income": _stmts_newest_first(inc),
+            "balance": [], "cashflow": [], "key_metrics": [],
+            "financial_scores": None,
+        }
         log.info(f"  {sym}: insufficient history ({len(inc) if inc else 0} years "
                  f"< {MIN_YEARS_HISTORY} required) — skipping")
         return v
@@ -2022,6 +2301,22 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
                 fcf_per_share = fcf_series[-1] / shares
                 if fcf_per_share > 0:
                     v["p_fcf"] = local_price / fcf_per_share
+
+    # v4 ML serving (June 2026): expose the four RAW FMP statement payloads
+    # (+ financial-scores) for the shared time-model feature builder
+    # (time_model_features). The builder needs the actual statement rows
+    # newest-first, NOT the derived value_data lookalikes — this is what fixes
+    # the computed-wrong live features (f_op_margin fed net_margin, f_fcf_yield
+    # fed FCF/revenue, f_roe fed 3y-avg, piotroski/altman fed FMP's real scores
+    # instead of the training proxies, etc.). Internal key — rides on the
+    # value dict into s._raw / s._ml_inputs, never serialized.
+    v["_raw_statements"] = {
+        "income": _stmts_newest_first(inc),
+        "balance": _stmts_newest_first(bs),
+        "cashflow": _stmts_newest_first(cf),
+        "key_metrics": _stmts_newest_first(km),
+        "financial_scores": (scores[0] if scores and scores[0] else None),
+    }
 
     # Convert intrinsic values to price currency for display.
     # Note: buffett_future_price + buffett_fair_value were already converted
@@ -4801,6 +5096,25 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             "inst_flow": inst_flow, "inst": inst,
             "cong": cong, "insider": insider,
         }
+
+        # v4 ML (June 2026): raw inputs for the shared feature builder.
+        # Stashed on a SEPARATE attr because s._raw is dropped at the end of
+        # pass 2, while the v4 feature build runs after the options
+        # enrichment (pipeline order fix). Bars are slimmed to the 6 fields
+        # the builder uses to keep the whole-universe stash small. Gated on
+        # the v4 artifact so the v3 prod path keeps its memory profile.
+        if ML_MODEL_VERSION == "v4":
+            s._raw_statements = value.get("_raw_statements") or {}
+            _chart = tech.get("_chart") or []
+            s._ml_inputs = {
+                "daily_bars": [
+                    {"date": b.get("date"), "open": b.get("open"),
+                     "high": b.get("high"), "low": b.get("low"),
+                     "close": b.get("close"), "volume": b.get("volume")}
+                    for b in _chart if b.get("close")
+                ],
+                "statements": s._raw_statements,
+            }
         pass1.append(s)
 
     log.info(f"Pass 1 complete: {len(pass1)} stocks scored cheaply")
@@ -4913,19 +5227,30 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.factors_missing = coverage_v7["missing"]
         s.mode = "momentum"  # default; frontend can flip via toggle
 
-        # ML probability + fundamental features for ML model
-        if HAS_ML_MODEL:
-            s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
-        s.hit_prob = predict_hit_prob(s)
-        # v3 multi-target predictions (30d/60d probability + drawdown)
-        if ML_MODEL_VERSION == "v3":
-            v3_preds = predict_time_model_v3(s)
-            s.hit_prob_10pct_30d = v3_preds["hit_10pct_30d"]
-            s.hit_prob_10pct_60d = v3_preds["hit_10pct_60d"]
-            s.hit_prob_30d = v3_preds["hit_20pct_30d"]
-            s.hit_prob_60d = v3_preds["hit_20pct_60d"]
-            s.expected_dd_30d = v3_preds["expected_dd_30d"]
-            s.expected_dd_60d = v3_preds["expected_dd_60d"]
+        # ML probability + fundamental features for ML model.
+        # v4 (June 2026): when the v4 artifact is live, prediction is DEFERRED
+        # until after the Massive/ThetaData options enrichment (pipeline order
+        # fix — see run_v4_ml_predictions). The legacy v3/v2 path below runs
+        # UNCHANGED when the v4 pkl is absent.
+        if ML_MODEL_VERSION == "v4":
+            # Mark the pass-2 enriched cohort: run_v4_ml_predictions predicts
+            # ONLY these stocks (the legacy signal_tracker stages every stock
+            # with prob>0 — universe-wide predictions would flood it). Marker
+            # is dropped in run_v4_ml_predictions' cleanup.
+            s._enriched = True
+        else:
+            if HAS_ML_MODEL:
+                s._fund_features = _compute_fund_features_for_ml(s.symbol, s.price, raw["value"])
+            s.hit_prob = predict_hit_prob(s)
+            # v3 multi-target predictions (30d/60d probability + drawdown)
+            if ML_MODEL_VERSION == "v3":
+                v3_preds = predict_time_model_v3(s)
+                s.hit_prob_10pct_30d = v3_preds["hit_10pct_30d"]
+                s.hit_prob_10pct_60d = v3_preds["hit_10pct_60d"]
+                s.hit_prob_30d = v3_preds["hit_20pct_30d"]
+                s.hit_prob_60d = v3_preds["hit_20pct_60d"]
+                s.expected_dd_30d = v3_preds["expected_dd_30d"]
+                s.expected_dd_60d = v3_preds["expected_dd_60d"]
 
 
         # Drop the _raw stash before output
@@ -5010,7 +5335,13 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                     if hasattr(s, 'days_to_earnings') and s.days_to_earnings is not None and s.days_to_earnings >= 0:
                         _earnings_date = (datetime.now() + timedelta(days=s.days_to_earnings)).strftime("%Y-%m-%d")
                     
-                    _target_dte = 60 if getattr(s, "hit_prob_60d", 0.0) > 0.0 else 35
+                    # v4: prediction runs AFTER this enrichment, so hit_prob_60d
+                    # is still 0.0 here — match the v3 de-facto behavior instead
+                    # (every enriched stock had hit_prob_60d>0 → 60 DTE; rest 35).
+                    if ML_MODEL_VERSION == "v4":
+                        _target_dte = 60 if getattr(s, "_enriched", False) else 35
+                    else:
+                        _target_dte = 60 if getattr(s, "hit_prob_60d", 0.0) > 0.0 else 35
                     options_data = options_enrich_stock(
                         symbol=s.symbol,
                         composite=0.0,
@@ -5018,7 +5349,10 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                         earnings_date=_earnings_date,
                         collect_term_structure=True,
                         collect_earnings_move=True,
-                        target_dte=_target_dte
+                        target_dte=_target_dte,
+                        # v4-only: full-chain fetch + ml_chain/iv-history stash.
+                        # False (default) = pre-v4 windowed prod behavior.
+                        ml_features=(ML_MODEL_VERSION == "v4"),
                     )
                     if options_data:
                         s.options_iv_current = options_data.get("iv_current")
@@ -5040,6 +5374,13 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
                         s.options_iv_90d = options_data.get("iv_90d")
                         s.options_term_structure = options_data.get("term_structure")
                         s.options_implied_earnings_move = options_data.get("implied_earnings_move")
+                        # v4 ML (June 2026): reuse this single ThetaData fetch
+                        # for the shared feature builder — full chain in the
+                        # builder's flat contract + the GCS ATM-IV history
+                        # already read by the enrichment. No refetch.
+                        if ML_MODEL_VERSION == "v4":
+                            s._ml_opt_chain = options_data.get("ml_chain") or None
+                            s._ml_iv_history = options_data.get("ml_atm_iv_history") or None
                 except Exception as e:
                     log.warning(f"  {s.symbol}: Massive Options enrichment failed: {e}")
                     
@@ -5047,6 +5388,28 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             log.info(f"Massive Options summary: IV={_options_iv_ok}, "
                      f"spreads={_options_spread_ok}/{_options_spread_ok + _options_spread_fail} "
                      f"({_options_spread_fail} failed)")
+        # v4 ML diagnostic: per-scan count of chains that normalized to EMPTY
+        # under the builder ATM-IV definition (e.g. NaN/large iv_error rows
+        # filtered out, thin strikes) — these stocks get no builder IV sample.
+        try:
+            from massive_options import get_empty_builder_chain_count
+            _n_empty_chains = get_empty_builder_chain_count()
+            if _n_empty_chains:
+                log.info(f"Massive Options: {_n_empty_chains} chains normalized "
+                         f"to EMPTY under the builder ATM-IV definition this scan")
+        except ImportError:
+            pass
+
+    # ─── v4 time-model predictions (June 2026) ───
+    # PIPELINE ORDER FIX: ML prediction now runs AFTER the options enrichment
+    # so opt_atm_iv/vega/theta + f_opt_iv_rank/momentum come from the real
+    # chain instead of the pre-enrichment 0.0/None defaults, and the
+    # cross-sectional rank features are computed over the full scan universe.
+    if ML_MODEL_VERSION == "v4":
+        try:
+            run_v4_ml_predictions(all_results)
+        except Exception:
+            log.exception("v4 ML prediction pass failed — predictions left at 0.0")
 
     # v8 Compounder universe scoring (May 2026, v1.1) — runs once after every
     # stock has its raw PIT inputs (roe_compounder / pb_compounder /
