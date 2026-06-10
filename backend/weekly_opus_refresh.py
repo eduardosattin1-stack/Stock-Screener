@@ -761,6 +761,294 @@ def value_revalidate():
     return len(stale)
 
 
+DISRUPTOR_DIR = ROOT / "disruptor"
+
+
+def disruptor_universe():
+    """DISRUPTOR LENS Stage A+B (spec §1.2-1.3, monthly): deterministic FMP screen per theme ->
+    liquidity gate -> financial gates (TTM-FCF-positive-or-inflecting, revenue CAGR>=15%-or-
+    accelerating, funded-leverage solvency != weak) -> writes gated candidates + chunked Sonnet
+    theme-map workflow (_dt_map.js, spec §1.4). The merge + Stage-D cut runs as disruptor-map-merge
+    AFTER the workflow. Anti-shrink: re-screens FMP from scratch every run; never reads a prior
+    universe.json. Gates cached by symbol+month (re-runs inside a month are free)."""
+    import concurrent.futures
+    from datetime import datetime as _dt
+    tax = json.load(open(ROOT / "disruptor_themes.json", encoding="utf-8"))
+    key = E.get_key("FMP_API_KEY")
+    if not key:
+        print("GUARD: no FMP_API_KEY — STOP")
+        raise SystemExit(1)
+    DISRUPTOR_DIR.mkdir(exist_ok=True)
+    (DISRUPTOR_DIR / "theme_map").mkdir(exist_ok=True)
+    base = "https://financialmodelingprep.com/stable"
+    floors = tax.get("floors") or {}
+    mcap_floor = floors.get("market_cap_usd", 2_000_000_000)
+    adv_floor = floors.get("adv_usd", 10_000_000)
+
+    # ── Stage A — FMP company-screener per theme x industry x exchange (no LLM) ──
+    seen = {}                                   # sym -> candidate row
+    hints = {}                                  # sym -> [theme ids whose screen caught it]
+    raw_total = 0
+    for th in tax["themes"]:
+        th_syms = set()
+        for ind in th.get("fmp_industries") or []:
+            for exch in tax.get("exchanges") or ["NYSE", "NASDAQ"]:
+                try:
+                    rows = requests.get(base + "/company-screener", params={
+                        "industry": ind, "exchange": exch,
+                        "marketCapMoreThan": mcap_floor,
+                        "volumeMoreThan": 200_000, "priceMoreThan": floors.get("price_min", 5),
+                        "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
+                        "limit": 1000, "apikey": key}, timeout=25).json()
+                except Exception:
+                    rows = []
+                if not isinstance(rows, list):
+                    rows = []
+                raw_total += len(rows)
+                for r in rows:
+                    sym = r.get("symbol")
+                    if not sym or "." in sym and not sym.replace(".", "").isalnum():
+                        continue
+                    seen.setdefault(sym, {"symbol": sym, "name": r.get("companyName", ""),
+                                          "sector": r.get("sector", ""), "industry": r.get("industry", ""),
+                                          "mcap": r.get("marketCap"), "price": r.get("price"),
+                                          "volume": r.get("volume")})
+                    th_syms.add(sym)
+                    hints.setdefault(sym, [])
+                    if th["id"] not in hints[sym]:
+                        hints[sym].append(th["id"])
+        print(f"  Stage A [{th['id']}]: {len(th_syms)} unique candidates")
+    print(f"Stage A: {len(seen)} unique candidates from {raw_total} raw rows")
+    if raw_total < 100:
+        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) — STOP, not a silent small universe")
+        raise SystemExit(1)
+
+    # ── liquidity gate (free — from the screener rows) ──
+    liquid = {s: c for s, c in seen.items()
+              if isinstance(c.get("price"), (int, float)) and isinstance(c.get("volume"), (int, float))
+              and c["price"] * c["volume"] >= adv_floor}
+    print(f"liquidity gate (ADV >= ${adv_floor/1e6:.0f}M): {len(liquid)} pass")
+
+    # ── Stage B — financial gates, cached by symbol+month ──
+    cache_p = DISRUPTOR_DIR / "_gates_cache.json"
+    cache = {}
+    if cache_p.exists():
+        try:
+            cache = json.load(open(cache_p, encoding="utf-8"))
+        except Exception:
+            cache = {}
+    month = _dt.now().strftime("%Y-%m")
+
+    def gates_for(sym):
+        ck = f"{sym}|{month}"
+        if ck in cache:
+            return sym, cache[ck]
+        g = {"ttm_fcf": None, "fcf_inflecting": False, "rev_cagr_3y": None, "rev_yoy": None,
+             "ttm_revenue": None, "fcf_margin": None, "pass_fcf": False, "pass_growth": False}
+        try:
+            cf = requests.get(base + "/cash-flow-statement",
+                              params={"symbol": sym, "period": "quarter", "limit": 5, "apikey": key}, timeout=20).json()
+            if isinstance(cf, list) and len(cf) >= 4:
+                fcfs = []
+                for q in cf[:4]:
+                    v = q.get("freeCashFlow")
+                    if not isinstance(v, (int, float)):
+                        v = (q.get("operatingCashFlow") or 0) + (q.get("capitalExpenditure") or 0)
+                    fcfs.append(v if isinstance(v, (int, float)) else 0)
+                g["ttm_fcf"] = sum(fcfs)
+                g["fcf_inflecting"] = bool(g["ttm_fcf"] <= 0 and len(fcfs) >= 2 and fcfs[0] > 0 and fcfs[1] > 0)
+        except Exception:
+            pass
+        try:
+            ann = requests.get(base + "/income-statement",
+                               params={"symbol": sym, "period": "annual", "limit": 4, "apikey": key}, timeout=20).json()
+            if isinstance(ann, list) and len(ann) >= 4:
+                r0, r3 = ann[0].get("revenue"), ann[3].get("revenue")
+                if isinstance(r0, (int, float)) and isinstance(r3, (int, float)) and r3 > 0 and r0 > 0:
+                    g["rev_cagr_3y"] = round((r0 / r3) ** (1 / 3) - 1, 4)
+        except Exception:
+            pass
+        try:
+            qs = requests.get(base + "/income-statement",
+                              params={"symbol": sym, "period": "quarter", "limit": 8, "apikey": key}, timeout=20).json()
+            if isinstance(qs, list) and len(qs) >= 8:
+                now4 = sum(q.get("revenue") or 0 for q in qs[:4])
+                pri4 = sum(q.get("revenue") or 0 for q in qs[4:8])
+                g["ttm_revenue"] = now4
+                if pri4 > 0:
+                    g["rev_yoy"] = round(now4 / pri4 - 1, 4)
+        except Exception:
+            pass
+        if isinstance(g["ttm_fcf"], (int, float)) and isinstance(g["ttm_revenue"], (int, float)) and g["ttm_revenue"] > 0:
+            g["fcf_margin"] = round(g["ttm_fcf"] / g["ttm_revenue"], 4)
+        g["pass_fcf"] = bool((isinstance(g["ttm_fcf"], (int, float)) and g["ttm_fcf"] > 0) or g["fcf_inflecting"])
+        c3, yy = g["rev_cagr_3y"], g["rev_yoy"]
+        g["pass_growth"] = bool(
+            (isinstance(c3, (int, float)) and c3 >= 0.15)
+            or (isinstance(yy, (int, float)) and isinstance(c3, (int, float)) and yy > c3 and yy >= 0.10)
+            or (c3 is None and isinstance(yy, (int, float)) and yy >= 0.15))
+        cache[ck] = g
+        return sym, g
+
+    syms = sorted(liquid)
+    print(f"Stage B: financial gates over {len(syms)} names (cached: {sum(1 for s in syms if f'{s}|{month}' in cache)})...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
+        done = 0
+        for sym, g in ex.map(gates_for, syms):
+            liquid[sym]["gates"] = g
+            done += 1
+            if done % 50 == 0:
+                print(f"  ...{done}/{len(syms)}")
+    cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    fg = [s for s, c in liquid.items() if c["gates"]["pass_fcf"] and c["gates"]["pass_growth"]]
+    print(f"FCF+growth gates: {len(fg)} pass")
+
+    fl = _funded_leverage(fg)                                   # batch, shared cache
+    gated = []
+    for s in fg:
+        c = liquid[s]
+        flv = fl.get(s, {})
+        solv = _funded_solvency(c.get("sector", ""), flv.get("net_funded_debt_ebitda"), flv.get("interest_coverage"))
+        c["gates"]["funded_solvency"] = solv
+        c["gates"]["net_funded_debt_ebitda"] = flv.get("net_funded_debt_ebitda")
+        c["gates"]["adv_usd"] = round(c["price"] * c["volume"], 0)
+        c["themes_hint"] = hints.get(s, [])
+        if solv != "weak":
+            gated.append(c)
+    print(f"funded-solvency gate (!= weak): {len(gated)} pass")
+
+    funnel = {"screened": len(seen), "liquid": len(liquid), "gated": len(gated)}
+    (DISRUPTOR_DIR / "_candidates.json").write_text(
+        json.dumps({"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
+                    "funnel_partial": funnel, "candidates": gated}, ensure_ascii=False, indent=1),
+        encoding="utf-8")
+
+    # ── emit the chunked Sonnet theme-map workflow (spec §1.4) ──
+    CH = 20
+    chunks = [gated[i:i + CH] for i in range(0, len(gated), CH)]
+    for i, ch in enumerate(chunks):
+        (DISRUPTOR_DIR / f"_map_chunk_{i}.json").write_text(json.dumps(ch, ensure_ascii=False, indent=1), encoding="utf-8")
+    n = len(chunks)
+    js = """export const meta = {
+  name: 'disruptor-theme-map',
+  description: 'Sonnet theme-mapping over the gated disruptor candidates (Radar-style, chunked)',
+  phases: [{ title: 'ThemeMap', model: 'sonnet' }],
+}
+const N = __N__
+phase('ThemeMap')
+await parallel(Array.from({ length: N }, (_, i) => () => agent(
+  'You are the DISRUPTOR THEME RADAR (theme-mapping + true-competitor pass). Read backend/_opus_debate/disruptor_themes.json (the versioned theme taxonomy: ids, theses, value-chain layers, notes) and backend/_opus_debate/disruptor/_map_chunk_' + i + '.json (your candidate chunk: symbol/name/sector/industry/mcap + gates incl. revenue growth and FCF). For EACH symbol decide, skeptically:\\n' +
+  '- themes: array of taxonomy ids this company GENUINELY rides (max 2; [] if none — an industry filter catches many non-disruptors).\\n' +
+  '- value_chain_position: one line — which layer it occupies and what it sells.\\n' +
+  '- load_bearing_score: int 1-5 — how hard is this company to route around in the theme value chain (5 = chokepoint/toll-taker, 1 = commodity participant).\\n' +
+  '- s_curve_stage: early_adoption | steep_ramp | broadening | maturing.\\n' +
+  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT — e.g. include private-adjacent public proxies, foreign listings).\\n' +
+  '- relative_comps: 2-4 sentences on relative position vs those competitors (growth, margin, multiple posture).\\n' +
+  '- theme_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really a disruption toll-taker — e.g. a legacy prime, a balance-sheet lender, a therapy biotech).\\n' +
+  'Write (Write tool) VALID JSON to backend/_opus_debate/disruptor/_dt_' + i + '.json as {"<SYM>": {themes, value_chain_position, load_bearing_score, s_curve_stage, true_competitors, relative_comps, theme_fit_confidence}, ...} covering EVERY symbol in your chunk. Reply exactly: DONE',
+  { label: 'dtmap:' + i, phase: 'ThemeMap', model: 'sonnet' })))
+return 'DONE'
+"""
+    js = js.replace("__N__", str(n))
+    (DISRUPTOR_DIR / "_dt_map.js").write_text(js, encoding="utf-8")
+    print(f"UNIVERSE STAGE A+B OK: screened={len(seen)} liquid={len(liquid)} gated={len(gated)} -> {n} Sonnet map chunks")
+    print(f"MAP_WORKFLOW={DISRUPTOR_DIR.resolve() / '_dt_map.js'}")
+    print("Next: run the Workflow, then: python backend/weekly_opus_refresh.py disruptor-map-merge")
+    return len(gated)
+
+
+def disruptor_map_merge():
+    """DISRUPTOR LENS Stage C-merge + Stage D (spec §1.4-1.6): merge the Sonnet shards, DROP
+    theme_fit_confidence=low (printed, never silent), explode per-symbol theme_map/<SYM>.json,
+    pre-rank cut to <=8/theme & <=40 global (the pre-rank only decides who gets DEBATED, never
+    who gets PICKED), union in current disruptor apex holders, enforce the anti-shrink guards,
+    and write disruptor/universe.json with the full funnel."""
+    import glob as _g
+    from datetime import datetime as _dt
+    tax = json.load(open(ROOT / "disruptor_themes.json", encoding="utf-8"))
+    cand_f = DISRUPTOR_DIR / "_candidates.json"
+    if not cand_f.exists():
+        print("GUARD: no _candidates.json — run disruptor-universe first. STOP")
+        raise SystemExit(1)
+    cd = json.load(open(cand_f, encoding="utf-8"))
+    cands = {c["symbol"]: c for c in cd.get("candidates", [])}
+    shards = sorted(_g.glob(str(DISRUPTOR_DIR / "_dt_*.json")))
+    mapped = {}
+    for f in shards:
+        try:
+            mapped.update(json.load(open(f, encoding="utf-8")))
+        except Exception as e:
+            print(f"WARN: shard {os.path.basename(f)} unreadable ({e})")
+    if not mapped:
+        print("GUARD: no theme-map shards — run the _dt_map.js workflow first. STOP")
+        raise SystemExit(1)
+    low = [s for s, m in mapped.items() if (m.get("theme_fit_confidence") or "").lower() == "low"
+           or not (m.get("themes") or [])]
+    keep = {s: m for s, m in mapped.items() if s not in set(low) and s in cands}
+    print(f"map-merge: {len(mapped)} mapped from {len(shards)} shards | DROPPED low-confidence/themeless ({len(low)}): {sorted(low)}")
+    for s, m in keep.items():
+        (DISRUPTOR_DIR / "theme_map" / f"{s}.json").write_text(
+            json.dumps({"symbol": s, **m}, ensure_ascii=False, indent=1), encoding="utf-8")
+
+    # ── Stage D — transparent pre-rank cut: <=8/theme, <=40 global ──
+    def prerank(s):
+        m, g = keep[s], cands[s].get("gates", {})
+        return (-(m.get("load_bearing_score") or 0), -(g.get("rev_cagr_3y") or 0), -(g.get("fcf_margin") or 0))
+
+    by_theme = {}
+    for s, m in keep.items():
+        for t in m.get("themes") or []:
+            by_theme.setdefault(t, []).append(s)
+    selected = set()
+    for t, ss in by_theme.items():
+        for s in sorted(ss, key=prerank)[:8]:
+            selected.add(s)
+    if len(selected) > 40:
+        selected = set(sorted(selected, key=prerank)[:40])
+    # union current disruptor apex holders — a held name is never dropped by the screen
+    held = []
+    apx_f = E.FRONTEND_DIR / "public" / "speculair_disruptor_apex.json"
+    if apx_f.exists():
+        try:
+            held = [p.get("symbol") for p in json.load(open(apx_f, encoding="utf-8")).get("apex_basket", []) if p.get("symbol")]
+        except Exception:
+            held = []
+    for s in held:
+        if s in keep:
+            selected.add(s)
+    members = []
+    for s in sorted(selected):
+        m, c = keep[s], cands[s]
+        members.append({"symbol": s, "name": c.get("name", ""), "sector": c.get("sector", ""),
+                        "industry": c.get("industry", ""), "mcap": c.get("mcap"),
+                        "themes": m.get("themes") or [], "value_chain_position": m.get("value_chain_position", ""),
+                        "load_bearing_score": m.get("load_bearing_score"), "s_curve_stage": m.get("s_curve_stage", ""),
+                        "held": s in held, "gates": c.get("gates", {})})
+    theme_counts = {}
+    for mm in members:
+        for t in mm["themes"]:
+            theme_counts[t] = theme_counts.get(t, 0) + 1
+    for th in tax["themes"]:
+        theme_counts.setdefault(th["id"], 0)
+    funnel = {**(cd.get("funnel_partial") or {}), "mapped_high_med": len(keep), "debated": len(members)}
+    print(f"FUNNEL: screened={funnel.get('screened')} liquid={funnel.get('liquid')} gated={funnel.get('gated')} "
+          f"mapped_high_med={len(keep)} debated={len(members)}")
+    print(f"by_theme: {theme_counts}")
+    if len(members) < 25:
+        print("GUARD: debated < 25 — DEGRADED universe, STOP (universe.json NOT written; "
+              "do not proceed, do not reuse a prior month)")
+        raise SystemExit(1)
+    uni = {"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
+           "funnel": funnel, "by_theme": theme_counts, "members": members}
+    (DISRUPTOR_DIR / "universe.json").write_text(json.dumps(uni, ensure_ascii=False, indent=1), encoding="utf-8")
+    zero = [t for t, n in theme_counts.items() if n == 0]
+    if zero:
+        print(f"NOTE: zero-member themes {zero} — acceptable if honestly empty (e.g. space pre-FCF), "
+              f"but STOP if a historically >=3-member theme zeroed out.")
+    print(f"UNIVERSE OK: {len(members)} names -> {DISRUPTOR_DIR / 'universe.json'}")
+    return len(members)
+
+
 def export_debate_csv():
     """Write a CSV of every debated name in results_regime/ with the FULL output of every agent in the
     chain — Radar (peer_groups), Interrogator (dossier+score+trajectory), Architect (bull/bear+SoP),
@@ -1075,6 +1363,10 @@ if __name__ == "__main__":
         subprocess.run([sys.executable, str(ROOT / "_value_post.py")] + (["--offline"] if "--offline" in sys.argv else []), check=True)
     elif mode in ("value-revalidate", "value_revalidate"):
         value_revalidate()
+    elif mode in ("disruptor-universe", "disruptor_universe"):
+        disruptor_universe()
+    elif mode in ("disruptor-map-merge", "disruptor_map_merge"):
+        disruptor_map_merge()
     elif mode == "value-publish":
         value_publish(push_gcs=("--gcs" in sys.argv))
     else:
