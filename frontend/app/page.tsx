@@ -231,6 +231,8 @@ interface StockData {
 
   earnings_yield?:number;
 
+  ey_gap?:number|null;               // Phase 10c: EY minus LOCAL 10y sovereign yield (by listing country)
+
   intrinsic_bvps?:number;
 
   bvps_recent_cagr?:number;
@@ -248,6 +250,8 @@ interface StockData {
   price_to_graham_revised?:number|null;
 
   acquirers_multiple?:number|null;
+
+  ev_gp?:number|null;                // Phase 10a-2: true EV / Gross Profit multiple (12th basket)
 
   iv15_discount?:number|null;
 
@@ -361,7 +365,10 @@ const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
 
     case "emerging/earnings_yield_gap":
 
-      return { label: "YIELD GAP (VS 4.5% RF)", value: stock.earnings_yield != null ? `${((stock.earnings_yield - 0.045) * 100).toFixed(1)}%` : "—" };
+      // Phase 10c (2026-06): backend now subtracts the LOCAL 10y yield by listing
+      // country (ey_gap field); the flat 4.5% subtraction remains only as fallback.
+
+      return { label: "YIELD GAP (VS LOCAL 10Y)", value: stock.ey_gap != null ? `${(stock.ey_gap * 100).toFixed(1)}%` : (stock.earnings_yield != null ? `${((stock.earnings_yield - 0.045) * 100).toFixed(1)}%` : "—") };
 
     case "multiples/ev_gross_profit":
 
@@ -402,6 +409,10 @@ const getMethodologyMetric = (stock: StockData | undefined, path: string) => {
     case "multiples/acquirers_multiple":
 
       return { label: "ACQUIRER'S MULTIPLE", value: stock.acquirers_multiple != null ? `${stock.acquirers_multiple.toFixed(1)}x` : "—" };
+
+    case "multiples/ev_gp":
+
+      return { label: "EV / GROSS PROFIT", value: stock.ev_gp != null ? `${stock.ev_gp.toFixed(1)}x` : "—" };
 
     case "v8fusion/convergence":
 
@@ -1599,7 +1610,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "Yield spread of Earnings Yield (EY = EPS / Price) over the 10-year Treasury rate (4.5% baseline). Centered and scaled margin of safety.",
+    description: "Yield spread of Earnings Yield (EY = EPS / Price) over the LOCAL 10-year sovereign yield by listing country (quarterly-static table, 2026-06; was a flat 4.5% US baseline). Centered and scaled margin of safety.",
 
     annualReturns: [
 
@@ -1631,11 +1642,11 @@ const METHODOLOGIES_CONFIG = [
 
     path: "multiples/ev_gross_profit",
 
-    name: "EV / Gross Profit Multiple",
+    name: "Gross Profitability (GP/Assets)",
 
     regime: "BULL",
 
-    description: "Ranks by Gross Profitability (Gross Profit / Total Assets) based on Robert Novy-Marx's research. Centered and scaled rank.",
+    description: "Ranks by Gross Profitability (Gross Profit / Total Assets) based on Robert Novy-Marx's research — a QUALITY factor, not an EV multiple. Centered and scaled rank. (Relabeled 2026-06; legacy key ev_gross_profit kept for tracking continuity. The true multiple is the separate EV / Gross Profit basket.)",
 
     metrics: {
 
@@ -1851,6 +1862,28 @@ const METHODOLOGIES_CONFIG = [
 
     }
 
+  },
+
+  {
+
+    path: "multiples/ev_gp",
+
+    name: "EV / Gross Profit",
+
+    regime: "BEAR",
+
+    description: "12th basket. The TRUE EV / Gross Profit multiple: (Market Cap + Net Debt) / Gross Profit, ranked cheapest-first. Requires positive gross profit and market cap and a KNOWN net debt (null is ineligible, never treated as 0). Financials/insurers excluded — EV is ill-defined where float ≠ debt.",
+
+    metrics: {
+
+      baseline: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      debate: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 },
+
+      director: { cagr: 0, mdd: 0, sharpe: 0, trades: 0 }
+
+    }
+
   }
 
 ];
@@ -1903,12 +1936,13 @@ const getMetricName = (key: string) => {
   switch (key) {
     case "dcf_fcff": return "DCF-FCFF MOS";
     case "earnings_yield_gap": return "EY Gap MOS";
-    case "ev_gross_profit": return "EV/GP MOS";
+    case "ev_gross_profit": return "GP/Assets MOS";
     case "rd_capitalized_dcf": return "R&D DCF MOS";
     case "owner_earnings": return "Owner Earnings MOS";
     case "epv": return "EPV MOS";
     case "graham_revised": return "Graham MOS";
     case "acquirers_multiple": return "Acquirer's MOS";
+    case "ev_gp": return "EV/GP MOS";
     case "iv15_deep_value": return "IV15 MOS";
     case "convergence": return "Consensus MOS";
     case "fundamental_momentum": return "Momentum Score";

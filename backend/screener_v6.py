@@ -79,6 +79,31 @@ EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
 
 RATE_LIMIT = 0.04  # seconds between API calls (3000/min on Ultimate)
 RISK_FREE = 0.045  # 10yr treasury ~4.5%
+
+# Phase 10b (2026-06): methodology spec version, stamped into methodology_picks
+# and each tracking rebalance so marks booked under different specs stay
+# distinguishable in the audit trail.
+METHODOLOGY_VERSION = "2026-06-epv2"
+METHODOLOGY_VERSION_NOTE = ("EPV spec fix 2026-06 (maint capex charged instead of "
+                            "D&A, not on top)")
+
+# Phase 10c (2026-06): local 10-year sovereign yields by LISTING COUNTRY, in
+# decimal (4.2% -> 0.042). Quarterly-static snapshot, asof 2026-Q2 — refresh
+# roughly once a quarter. Subtracting one global RISK_FREE from every name was
+# a cross-sectional no-op (a rank-invariant constant), so the "EY gap" was
+# really just an E/P rank; the gap only means something measured against each
+# stock's own local 10y. Keyed by the Stock's ISO-2 `country`; defaults to US.
+LOCAL_10Y_YIELD = {
+    "US": 0.042, "DE": 0.025, "FR": 0.031, "IT": 0.036, "ES": 0.032,
+    "NL": 0.027, "GB": 0.044, "CH": 0.009, "SE": 0.024, "DK": 0.026,
+    "NO": 0.037, "FI": 0.029, "JP": 0.011, "HK": 0.038, "BR": 0.139,
+    "CA": 0.034, "AU": 0.043,
+}
+
+def _local_risk_free(country: str) -> float:
+    """Local 10y sovereign yield for a listing country (decimal); US fallback."""
+    return LOCAL_10Y_YIELD.get((country or "").strip().upper(), LOCAL_10Y_YIELD["US"])
+
 TOP_N = 15
 ENRICH_TOP_N = 30  # how many stocks get expensive enrichment (transcripts)
 SIGNAL_LOG = os.environ.get("SIGNAL_LOG", "signal_history.json")
@@ -528,7 +553,13 @@ METHOD_SECTOR_APPLICABILITY = {
     "iv15_deep_value":      {"operating": True, "financial": False, "insurance": False, "reit": False, "utility": False},
     "graham_revised":       {"operating": True, "financial": False, "insurance": False, "reit": True,  "utility": True},  # RC3-A: Graham EPS×(8.5+2g) is meaningless on financial/insurer EPS — drop both
     "earnings_yield_gap":   {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
-    "acquirers_multiple":   {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
+    # Phase 10f/10a-2 (2026-06): EV = mcap + net debt is ill-defined for banks and
+    # risk-bearing insurers (deposits/float are operating inputs, not acquisition
+    # debt), so EV-based multiples are excluded there. REIT/utility stay eligible.
+    "acquirers_multiple":   {"operating": True, "financial": False, "insurance": False, "reit": True,  "utility": True},
+    "ev_gp":                {"operating": True, "financial": False, "insurance": False, "reit": True,  "utility": True},
+    # `ev_gross_profit` is (despite the legacy key) the Novy-Marx GP/Assets QUALITY
+    # rank, not an EV multiple — applicable everywhere (Phase 10a-1 relabel).
     "ev_gross_profit":      {"operating": True, "financial": True,  "insurance": True,  "reit": True,  "utility": True},
 }
 
@@ -710,6 +741,7 @@ class Stock:
     graham_revised_mos: float = -1.0
     acquirers_multiple_mos: float = -1.0
     iv15_deep_value_mos: float = -1.0
+    ev_gp_mos: float = -1.0     # Phase 10a-2: TRUE EV/Gross Profit (12th basket)
 
     net_debt_local: float = 0.0
     ebit_local: float = 0.0
@@ -725,6 +757,7 @@ class Stock:
     gp_ta: float = 0.0
     ey_gap: float = 0.0
     acquirers_multiple: float = 999.0
+    ev_gp: float = 999.0        # Phase 10a-2: (market_cap + net_debt) / gross_profit
 
     # G1: cyclical-peak normalization
     cycle_flag: str = "NORMAL"          # NORMAL | PEAK_CYCLE | TROUGH_CYCLE | INSUFFICIENT_HISTORY
@@ -2092,6 +2125,10 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
                 v["pb_compounder"] = local_price / bvps
 
     # ─── 9 Valuation Methodologies (May 2026) ─────────────────────────
+    # Phase 10g note: these are the LEGACY 9 single-method value lenses. The
+    # full basket set is now 12 — convergence (10th), fundamental_momentum
+    # (11th) and ev_gp (12th, true EV/Gross Profit) are derived later in
+    # save_methodology_picks, not here.
     if bs and cf and len(bs) >= 1 and len(cf) >= 1:
         bs_sorted = sorted(bs, key=lambda x: x.get("date", ""))
         cf_sorted = sorted(cf, key=lambda x: x.get("date", ""))
@@ -2375,10 +2412,18 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
             v["owner_earnings_yield"] = (oe / shares) / local_price
 
         # 4. EPV (Greenwald)
+        # Phase 10b (2026-06, methodology_version 2026-06-epv2): Greenwald charges
+        # MAINTENANCE capex INSTEAD of accounting D&A, not on top of it:
+        #   adjusted = EBIT + D&A − maint capex
+        # The old form (EBIT − maint capex) left D&A inside EBIT AND subtracted
+        # maint capex again — double-charging capital intensity and structurally
+        # punishing D&A-heavy names. Note the fallback below (maint_capex_epv =
+        # depreciation when the growth-proxy estimate is unusable) then yields
+        # adjusted = EBIT exactly, which is the intended Greenwald default.
         maint_capex_epv = capex - capex * (g_rev / (1 + g_rev)) if capex > 0 else 0.0
         if maint_capex_epv <= 0:
             maint_capex_epv = depreciation if depreciation > 0 else capex * 0.7
-        adjusted_earnings = ebit - maint_capex_epv
+        adjusted_earnings = ebit + depreciation - maint_capex_epv
         nopat = adjusted_earnings * (1 - 0.21)
         enterprise_epv = nopat / wacc
         equity_epv = enterprise_epv - net_debt_local
@@ -5457,7 +5502,12 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         "epv":                 "epv_mos",
         "graham_revised":      "graham_revised_mos",
         "acquirers_multiple":  "acquirers_multiple_mos",
-        "iv15_deep_value":     "iv15_deep_value_mos"
+        "iv15_deep_value":     "iv15_deep_value_mos",
+        # Phase 10g: explicit entries for baskets 10-12 — these previously fell
+        # through to the undocumented `.get(key, "mos")` fallback.
+        "convergence":         "consensus_mos",
+        "fundamental_momentum": "momentum_mos",
+        "ev_gp":               "ev_gp_mos",
     }
 
     rebalanced_keys = 0
@@ -5501,6 +5551,12 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                 for sym, h in prev_holdings.items():
                     psp = h.get("period_start_price") or h.get("entry_price")
                     mark = price_map.get(sym)
+                    if mark is None:
+                        # Phase 10e (survivorship): a held name absent from the
+                        # scan (delisted/acquired) must not silently shrink the
+                        # equal-weight denominator — carry it at its last known
+                        # price (a 0% contribution) so the close still counts it.
+                        mark = psp
                     if psp and psp > 0 and mark:
                         period_rets.append((mark - psp) / psp)
                 if period_rets:
@@ -5523,14 +5579,21 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
             exits = []
             for sym, h in prev_holdings.items():
                 if sym not in new_syms:
-                    # RC2 (May 2026): a real exit price MUST come from the live scan.
-                    # If the name is absent the data is mock — do NOT fabricate a 0%
-                    # exit at the stale entry price; skip it.
-                    if sym not in price_map:
-                        log.warning(f"  {key}: {sym} exited but absent from scan (mock data?) — exit not recorded")
-                        continue
-                    exit_price = price_map[sym]
-                    exit_metric = getattr(stock_map[sym], metric_field, 0.0)
+                    # Phase 10e (survivorship): RC2 used to SKIP the exit entirely
+                    # when the symbol was absent from the scan — so takeover gains
+                    # and delisting losses never booked, biasing the record toward
+                    # survivors. Book the exit at the last known price instead
+                    # (period_start_price, else entry_price) and flag it
+                    # "unpriced_exit" so the audit trail shows no live mark existed.
+                    unpriced = sym not in price_map
+                    if unpriced:
+                        log.warning(f"  {key}: {sym} exited but absent from scan "
+                                    f"(delisted/acquired?) — booking exit at last known price")
+                        exit_price = h.get("period_start_price") or h.get("entry_price") or 0.0
+                        exit_metric = 0.0
+                    else:
+                        exit_price = price_map[sym]
+                        exit_metric = getattr(stock_map[sym], metric_field, 0.0)
                     entry_p = h.get("entry_price", exit_price)
                     entry_m = h.get("entry_metric", 0.0)
                     perf = (exit_price - entry_p) / entry_p if entry_p > 0 else 0.0
@@ -5544,6 +5607,8 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                         "exit_metric": round(exit_metric, 4),
                         "return": round(perf, 4)
                     }
+                    if unpriced:
+                        exit_rec["unpriced_exit"] = True
                     exits.append(exit_rec)
                     meth_track.setdefault("all_exits_2026", []).append(exit_rec)
 
@@ -5579,7 +5644,10 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                 "date": rebalance_date,
                 "holdings": [p["symbol"] for p in picks],
                 "entries": entries,
-                "exits": exits
+                "exits": exits,
+                # Phase 10b: stamp the spec version so marks booked before/after
+                # the EPV fix stay distinguishable (note in tracking.version_notes).
+                "methodology_version": METHODOLOGY_VERSION
             })
             meth_track["current_holdings"] = new_holdings
             meth_track["rebalance_count"] = len(meth_track["rebalances"])
@@ -5596,6 +5664,10 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map)
 
     tracking["holdings_status"] = "live"   # clear the stale 'pre_fix_a_fallback' flag once backfilled
+    # Phase 10b: tracking-level spec version + human-readable rebalance note, so
+    # the audit trail records WHEN the EPV spec changed and what it means.
+    tracking["methodology_version"] = METHODOLOGY_VERSION
+    tracking.setdefault("version_notes", {})[METHODOLOGY_VERSION] = METHODOLOGY_VERSION_NOTE
     log.info(f"Tracking: {rebalanced_keys}/{len(methodology_picks)} methodologies "
              f"rebalanced on {rebalance_date} (monthly cadence); YTD marks refreshed for all")
 
@@ -5666,36 +5738,110 @@ def _rollover_tracking_year(tracking: dict, new_year: int):
     log.info(f"Rollover complete. Baseline now covers: {sorted(baseline.keys())}")
 
 
-def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
-    """Generate and serialize the portfolio picks for the 9 methodologies to GCS and local public folder."""
-    # 1. Compute cross-sectional ranking logic for EV/GP, EY Gap, and Acquirer's Multiple
-    # EV/GP
-    valid_gp_ta = []
-    for s in all_results:
-        gp_ta = s.gross_profit / s.total_assets if s.total_assets > 0 else 0.0
-        s.gp_ta = gp_ta
-        valid_gp_ta.append(s)
-        
-    valid_gp_ta.sort(key=lambda x: x.gp_ta)
-    N = len(valid_gp_ta)
-    for i, s in enumerate(valid_gp_ta):
-        rank_pct = i / (N - 1) if N > 1 else 0.5
-        s.ev_gross_profit_mos = (rank_pct - 0.5) * 0.3
-        
-    # EY Gap
+def _rank_ey_gap(all_results: list):
+    """Phase 10c: EY gap vs the LOCAL 10y sovereign yield (LOCAL_10Y_YIELD,
+    asof 2026-Q2), keyed by listing country. The old global RISK_FREE constant
+    shifted every name equally — a cross-sectional no-op that reduced the
+    "gap" to a pure E/P rank. Local yields restore cross-border comparability
+    (a 5% EY means something different vs Bunds at 2.5% than vs Treasuries at
+    4.2%). Sets s.ey_gap and the centered-rank earnings_yield_gap_mos (±0.125).
+    """
     valid_ey_gap = []
     for s in all_results:
         ey = (s.eps_latest * s.fx_to_price) / s.price if s.price > 0 else 0.0
-        ey_gap = ey - RISK_FREE  # Use global constant, not hardcoded 0.045
-        s.ey_gap = ey_gap
+        s.ey_gap = ey - _local_risk_free(getattr(s, "country", ""))
         valid_ey_gap.append(s)
-        
+
     valid_ey_gap.sort(key=lambda x: x.ey_gap)
     N = len(valid_ey_gap)
     for i, s in enumerate(valid_ey_gap):
         rank_pct = i / (N - 1) if N > 1 else 0.5
         s.earnings_yield_gap_mos = (rank_pct - 0.5) * 0.25
-        
+    return valid_ey_gap
+
+
+def _rank_ev_gp(all_results: list):
+    """Phase 10a-2 (12th basket): TRUE EV / Gross Profit multiple, mirroring the
+    Acquirer's Multiple convention. ev_gp = (market_cap + net_debt) / gross_profit
+    (price currency), ranked ASCENDING — cheapest first. Eligibility: gross_profit
+    > 0, market_cap > 0, and net_debt NOT None (a missing balance sheet makes the
+    name ineligible — null net debt must never be treated as zero debt). Negative
+    EV (net cash > mcap) sorts first by construction: the cheapest possible.
+    Ineligible names park at ev_gp=999 / mos=-1.0 like acquirers_multiple, so the
+    basket loop's `> -1.0` filter drops them. Centered-rank mos spans ±0.20.
+    """
+    qualified_evgp = []
+    for s in all_results:
+        nd = getattr(s, "net_debt", None)
+        gp = getattr(s, "gross_profit", 0.0)
+        mc = getattr(s, "market_cap", 0.0)
+        if (gp or 0.0) > 0.0 and (mc or 0.0) > 0.0 and nd is not None:
+            s.ev_gp = (mc + nd) / gp
+            qualified_evgp.append(s)
+        else:
+            s.ev_gp = 999.0
+            s.ev_gp_mos = -1.0
+
+    qualified_evgp.sort(key=lambda x: x.ev_gp)   # ascending — cheapest first
+    M = len(qualified_evgp)
+    for j, s in enumerate(qualified_evgp):
+        rank_pct = j / (M - 1) if M > 1 else 0.5
+        s.ev_gp_mos = (0.5 - rank_pct) * 0.4
+    return qualified_evgp
+
+
+def _apply_mos_floor(key: str, candidates: list) -> list:
+    """Phase 10d: MoS > 0 floor — never fill a basket below zero effective
+    margin of safety just to reach 20 names. For the centered-rank methods this
+    keeps only the above-median half, which is the point: the "cheapest
+    available" name that is still expensive is not a pick. _temp_mos includes
+    the incumbency hysteresis boost, so a marginal incumbent lifted just above
+    0 by the boost staying in the book is accepted churn-damping.
+
+    fundamental_momentum is exempt: momentum_mos is a 0..~1.3 composite growth
+    score, NOT a margin of safety — a >0 floor is meaningless there (every
+    qualifier is already > 0 by construction) and the sleeve is intentionally
+    uncapped/thematic. convergence needs no exemption: its _conv_score ranking
+    is strictly positive for qualifiers (MoS ≥ 15% and agreement ≥ 0.60).
+    """
+    if key == "fundamental_momentum":
+        return candidates
+    return [s for s in candidates if s._temp_mos > 0]
+
+
+def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
+    """Generate and serialize the portfolio picks for the 12 methodologies to GCS and local public folder."""
+    # 1. Compute cross-sectional ranking logic for the rank-based methods:
+    #    GP/Assets quality rank, EY Gap, Acquirer's Multiple, true EV/GP.
+    # Gross Profitability (GP/Assets) — Phase 10a-1: the JSON key stays
+    # `ev_gross_profit` for tracking continuity, but the metric ranked here has
+    # ALWAYS been gross_profit / total_assets (Novy-Marx gross profitability, a
+    # QUALITY factor), never an EV multiple — only the display name was wrong.
+    # The true EV/GP multiple is the separate `ev_gp` basket (12th).
+    valid_gp_ta = []
+    for s in all_results:
+        # Phase 10a-1 eligibility: zero/missing-asset names used to park at
+        # gp_ta=0 mid-pack; exclude them from the ranked pool instead
+        # (mos stays -1.0 so the basket loop never sees them as candidates).
+        if s.total_assets and s.total_assets > 0 and s.gross_profit is not None:
+            s.gp_ta = s.gross_profit / s.total_assets
+            valid_gp_ta.append(s)
+        else:
+            s.gp_ta = 0.0
+            s.ev_gross_profit_mos = -1.0
+
+    valid_gp_ta.sort(key=lambda x: x.gp_ta)
+    N = len(valid_gp_ta)
+    for i, s in enumerate(valid_gp_ta):
+        rank_pct = i / (N - 1) if N > 1 else 0.5
+        s.ev_gross_profit_mos = (rank_pct - 0.5) * 0.3
+
+    # EY Gap — Phase 10c: ranked vs LOCAL 10y yields (see _rank_ey_gap)
+    _rank_ey_gap(all_results)
+
+    # True EV / Gross Profit (Phase 10a-2, 12th basket — see _rank_ev_gp)
+    _rank_ev_gp(all_results)
+
     # Acquirer's Multiple
     qualified_am = []
     for s in all_results:
@@ -5772,6 +5918,11 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "epv": ("epv_mos", "epv_value"),
         "graham_revised": ("graham_revised_mos", "graham_revised"),
         "acquirers_multiple": ("acquirers_multiple_mos", None),
+        # 12th basket (June 2026, Phase 10a-2): TRUE EV / Gross Profit —
+        # (market_cap + net_debt) / gross_profit ranked cheapest-first. Distinct
+        # from `ev_gross_profit`, which (despite the legacy key) ranks the
+        # Novy-Marx GP/Assets QUALITY factor.
+        "ev_gp": ("ev_gp_mos", None),
         "iv15_deep_value": ("iv15_deep_value_mos", "iv15_deep_value"),
         # 10th basket (June 2026): cross-method valuation agreement. consensus_mos is
         # computed below and left at -1.0 unless the name clears the agreement / MoS /
@@ -5792,6 +5943,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         "epv":                 "epv_mos",
         "graham_revised":      "graham_revised_mos",
         "acquirers_multiple":  "acquirers_multiple_mos",
+        "ev_gp":               "ev_gp_mos",
         "iv15_deep_value":     "iv15_deep_value_mos",
         "convergence":         "consensus_mos",
         "fundamental_momentum": "momentum_mos",
@@ -5922,11 +6074,13 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     # (HYSTERESIS_BOOST) so a challenger must be meaningfully better to
     # displace them. This reduces turnover without sacrificing signal.
     # Boost = 10% of each method's max MOS amplitude, so incumbency is the SAME
-    # relative strength everywhere. Rank methods are compressed (ev_gp ±0.15,
-    # ey_gap ±0.125, acquirers ±0.20), so the old flat 0.05 was ~3x too strong and
-    # cemented below-median incumbents (ev_gross_profit: 24.5mo avg hold, -42% DD).
+    # relative strength everywhere. Rank methods are compressed (ev_gross_profit
+    # ±0.15, ey_gap ±0.125, acquirers + the new ev_gp ±0.20), so the old flat 0.05
+    # was ~3x too strong and cemented below-median incumbents (ev_gross_profit:
+    # 24.5mo avg hold, -42% DD).
     HYST_FRAC = 0.10
-    _MOS_AMPLITUDE = {"ev_gross_profit": 0.15, "earnings_yield_gap": 0.125, "acquirers_multiple": 0.20}
+    _MOS_AMPLITUDE = {"ev_gross_profit": 0.15, "earnings_yield_gap": 0.125,
+                      "acquirers_multiple": 0.20, "ev_gp": 0.20}
     def _hyst_boost(k):
         return HYST_FRAC * _MOS_AMPLITUDE.get(k, 0.50)  # absolute methods: 0.10*0.50 = 0.05 (unchanged)
 
@@ -5938,7 +6092,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
 
         # Earnings-based methods whose MOS rides on the (possibly peak) earnings
         # base. Asset/multiple methods (acquirers_multiple, ev_gross_profit,
-        # earnings_yield_gap) are less sensitive — exclude from normalization.
+        # earnings_yield_gap, ev_gp) are less sensitive — exclude from normalization.
         EARNINGS_BASED = {
             "dcf_fcff", "rd_capitalized_dcf", "owner_earnings",
             "epv", "graham_revised", "iv15_deep_value",
@@ -5964,8 +6118,8 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 # EPS is in steep decline. These methods' MOS rides on an earnings base
                 # that is actively evaporating, so a high trailing-MOS is illusory
                 # (e.g. CALM at a cyclical peak with −50% forward EPS). Asset/multiple
-                # methods (acquirers_multiple, ev_gross_profit, earnings_yield_gap) are
-                # NOT in EARNINGS_BASED and so are exempt by construction.
+                # methods (acquirers_multiple, ev_gross_profit, earnings_yield_gap,
+                # ev_gp) are NOT in EARNINGS_BASED and so are exempt by construction.
                 FORWARD_DECLINE_GATE = -0.25   # forward EPS growth ≤ −25% → drop
                 if key in EARNINGS_BASED and getattr(s, "forward_eps_growth", 0.0) <= FORWARD_DECLINE_GATE:
                     continue
@@ -6001,6 +6155,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                     candidates.append(s)
                     
         candidates.sort(key=lambda x: x._temp_mos, reverse=True)
+
+        # Phase 10d: MoS > 0 floor before taking top-N (see _apply_mos_floor —
+        # fundamental_momentum exempt: its score is not a margin of safety).
+        candidates = _apply_mos_floor(key, candidates)
 
         if key == "fundamental_momentum":
             # Thematic sleeve: hard-tech is Tech-concentrated by design, so the 30%/sector
@@ -6172,6 +6330,9 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
 
     payload_picks = {
         "last_updated": now.isoformat() + "Z",
+        # Phase 10b: spec version of the generator (EPV maint-capex fix etc. —
+        # see METHODOLOGY_VERSION_NOTE / tracking.version_notes for the change log).
+        "methodology_version": METHODOLOGY_VERSION,
         "methodologies": methodology_picks
     }
 
