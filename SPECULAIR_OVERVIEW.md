@@ -4,7 +4,7 @@
 
 ## What this is
 
-An automated investing research desk. A **nightly screening machine** scans thousands of global stocks for cheapness and quality; a **weekly AI "investment committee"** argues — in writing — about the survivors; and the result is **three tracked model portfolios ("books")** published to the website with honest, live track records. No human picks stocks; humans pick the *rules*, and the rules are written down.
+An automated investing research desk with **two product lines**. The first: a **nightly screening machine** scans thousands of global stocks for cheapness and quality, and a **weekly AI "investment committee"** argues — in writing — about the survivors, producing **three tracked model portfolios ("books")**. The second: **Catalyst Watch**, an event-driven board that hunts *dated corporate events* (deals, spinoffs, forced sellers, regulatory rulings) across ~3,000 names, plus its own paper-traded sleeve (**Basket 13**) that bridges the two worlds. Everything publishes to the website with honest, live track records. No human picks stocks; humans pick the *rules*, and the rules are written down.
 
 ## The heartbeat (when things happen)
 
@@ -12,7 +12,9 @@ An automated investing research desk. A **nightly screening machine** scans thou
 |---|---|---|
 | **Nightly** (~00:00 Amsterdam) | Google Cloud (the screener job) | Re-screens ~2,500+ global stocks through **12 valuation methodologies**, refreshes the candidate baskets, and **re-prices every book** so the track-record charts move daily. The nightly job never changes an opinion — it only re-measures prices. |
 | **Weekly** (Sunday 01:00) | **Locally, on Claude Code** | The full **re-debate**: every candidate gets a fresh multi-agent argument, the Directors re-pick the books, and everything republishes. Opinions change only here. |
+| **Bi-weekly** (Mondays, 14-day floor) | Locally | **Catalyst Watch full refresh**: re-investigate the market **regime** (rates, the M&A window, the credit cycle — written to a living doc every debate reads), then re-sweep ~3,000 names through the 3-tier event hunt → a fresh ~231-name board → enriched and pushed to the site after a human go-ahead. |
 | **Monthly** | Locally | The disruptor **theme universe rebuilds from scratch**; a **control sample** (8 random stocks that made *no* basket) gets debated to estimate what the funnel misses; expired exclusions earn a fresh full hearing (8 weeks or a new earnings report, whichever first). |
+| **Quarterly** | Locally | Basket-13's **calibration loop**: entry gates, lane tilts, and sizing dials get re-fit against *realized* event outcomes from its append-only tracker. |
 
 ## How ~2,500 stocks become ~10 (the funnel)
 
@@ -38,9 +40,18 @@ The **Disruptor** variant has its own funnel: 459 screened across 7 secular them
 - 🟢 **Apex** — the catalyst/event-driven book: special situations with a reason to re-rate, tilted by the current market regime.
 - 🔵 **Value Lens** — the *same debate* re-graded with catalysts ignored: pure cheapness with a deterministic safety layer on top — shaky legs (only one model says cheap, or the fair value predates a big corporate event) are **auto-half-sized**; pair correlations are **measured from two years of prices**, not asserted; a **worst-case drawdown number** is published on the card; and an honest banner says what the pool really is ("best-of-B: zero A-grades in 161 names — expect slow grinding, not fireworks").
 - 🟣 **Disruptor Lens** — built, debates begin on a weekend run: the profitable picks-and-shovels of secular themes (AI infrastructure, energy transition, robotics, bio tools, defense tech, fintech rails, space).
-- **The shelf**: the 12 methodology baskets feed the debates and are tracked themselves. **Basket-13** (the Catalyst Watch sleeve, built in a parallel session) feeds the Director as *context with hard exclusion rules* — its names are information, not automatic candidates.
+- **The shelf**: the 12 methodology baskets feed the debates and are tracked themselves.
 
 Each book has its **own** live-forward NAV. They are never blended, and never back-filled — the chart starts the day the book went live, wins and losses included.
+
+## Catalyst Watch + Basket 13 (the event-driven product line)
+
+A different hunt with a different clock. While the books ask *"what is this worth?"*, Catalyst Watch asks *"what dated event will force the market to re-price this — and is the trade mispriced?"* Its one commandment: **score ≠ edge** — how *dense* the catalysts are is not the same as whether the price is wrong.
+
+- **The board**: a 3-tier AI sweep over ~3,000 names — a wide scan, a deep read of the survivors, then a **skeptic tier that kills 40–50% of the "active" flags** — produces a ~231-name board. A deterministic layer then computes each name's risk/reward by lane (sum-of-parts, recovery, capital-return, merger-spread, binary), sanity-reconciles the valuations, caps thin-edge names, and prices everything live. An **options layer** confirms which trades have a sane defined-risk expression. The board lives on the site's Signals page with priorities, tooltips, and edge grades.
+- **The regime layer**: a living document (refreshed bi-weekly) records whether the fat lanes are actually *open right now* — is anyone spinning off, are regulators forcing sales, is the M&A window alive — with tripwires that would change the tilt. **Every weekly debate reads it**, so the books and the board share one view of the world.
+- **Basket 13 — the catalyst sleeve** (paper-traded): the bridge from board to portfolio. The board's best names (active, real edge, dated milestone within ~6 months, no blocking flags — about 9 entries + 20 staging from 231) get a **two-phase Fable debate** that judges *only the trade* — the Catalyst-CRO is explicitly **forbidden** from attacking value or quality, because a catalyst name is *supposed* to look bad on those. A Director then sizes under hard, code-enforced caps (8–12 names, ≤2 per resolution driver, ≤40% per super-cluster, ≤1.5% NAV at risk to the floor per name, binaries defined-risk only). Every entry lands in an **append-only tracker with event-resolution semantics** — positions resolve when the *event* resolves, not just on price — and **non-selections are recorded too**, so the quarterly calibration loop can learn from the road not taken. Paper only; any broker access is read-only.
+- **The bridge to the books**: the Apex Director sees the sleeve's names as *context with hard exclusion rules* (never a binary-probability name, never a low-edge grade, never a blocked flag) — information, not automatic candidates — and a constraint test runs after every apex re-pick to prove it.
 
 ## From a laptop to the website
 
@@ -55,3 +66,4 @@ The trick: **the website never talks to the laptop.** Claude Code runs the weekl
 - Use the scan's headline cheapness as a *ranking* — we measure this weekly, and it isn't one (it's a membership filter; the debate's normalized fair value is the system of record).
 - Blend the books' track records, or back-fill them.
 - Let code add or remove picks. Membership belongs to the Directors; deterministic code only **sizes, stamps, and caps** — with exactly two sanctioned exceptions: the global forensic ban, and the Skeptic's demotion.
+- (Basket 13) Place a live order — paper only, broker access read-only; mutate the board's scores; skip a resolution (every entry must eventually resolve, and non-selections are stamped); or let the debate judge the *event's reality* — the skeptic tier upstream already settled that, so the sleeve debate may only judge the *trade*.
