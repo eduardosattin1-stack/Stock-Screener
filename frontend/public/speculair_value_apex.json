@@ -421,8 +421,8 @@
  "value_memo": "RUBRIC WEIGHTING. Four pillars ~25 pts each, applied only to names that clear the forensic gate: (1) Margin of Safety anchored on the CRO-reconciled sop_mos_pct (system of record), cross-checked against the 5-method mos_spread agreement but discounting any model MoS on a peak/stale name; (2) Cyclical-peak vs durable-growth normalization applied BEFORE crediting cheapness; (3) FUNDED-LEVERAGE SOLVENCY (net_funded_debt_ebitda + interest_coverage; raw Altman-Z ignored); (4) Multiples vs true peers + growth durability/quality. The catalyst-regime overlay is fully removed. Hard constraint: <=3 names per sector. NEW THIS RUN: a mandatory HIDDEN-FACTOR CORRELATION STRESS over the final 10 before sizing (the <=3/sector cap is NOT a correlation control).\n\nFORENSIC GATE - EXCLUDED (interrogator credibility <=2; ineligible regardless of cheapness): AFX.DE, BRBR, CORT, HUBG, LIGHT.AS, MOH. CAPPED at ~50 (DETERIORATING but credible): BMW.DE, DMLP, GBX, GRBK, INSP, IT, JUN3.DE, KBH, NEXI.MI, ORI, PAH3.DE, PPC, SAM, TFI.PA, UVV. Among the capped, only IT (43% sop_mos, cheap, strong funded - top runner-up) and NEXI.MI (56% sop_mos but DETERIORATING and stale) screen as value-relevant; both sit in the capped pool, never the apex.\n\nCYCLICAL-PEAK / STALE ARTIFACTS DOWN-RATED - BRBR and CALM EXPLICITLY. BRBR (BellRing) is the headline trap and is EXCLUDED outright (forensic credibility 2, funded_solvency=weak 4.2x / 3.5x, peak AND stale, DETERIORATING): its raw scan MoS was +335% on peak earnings, but the CRO's normalized fair value collapses it to a sop_mos of just +42% - and the forensic gate makes the point moot. CALM (Cal-Maine) is the cleanest peak artifact in the set: a raw scan MoS of +391% on an egg-windfall peak (freshness-stale, latest quarter rolling over) that the CRO normalized down to a sop_mos of just +8% - a low multiple on peak earnings is NOT value; CALM is excluded from both lists. Within the apex, the peak/stale normalization was applied and SURVIVED with a still-positive normalized MoS for CMCSA (raw 127% -> CRO 85%), ANF (raw 147% -> 49%), INGR (raw 44% -> 40%) and HRB (peak_flag normalized, CRO 23%); each is marked peak_normalized=true. THC, EEFT, BKNG, SCR.PA carry peak_flag=true but are durable-growth cases (not stale, positive revenue CAGR, healthy ROIC), so the high ratio was NOT normalized away.\n\nVERDICT-C NAMES. No verdict-C name is seated in the apex (every apex name is verdict-B). SREN.SW (verdict-C reinsurer) is retained only as a runner-up on positive normalized MoS with exempt-financial solvency, behind SCR.PA - and is additionally disqualified from an apex slot because it RE-CLUSTERS with SCR.PA on the reinsurance cycle. ARDT (verdict-B but ROIC 4.7% < WACC, EPS -39%, first down-EBITDA-year guide, CEO departed 2026-06-02) is flagged trap_flag=true, held to the runner-ups, and additionally re-clusters with the hospital-reimbursement factor.\n\n==================== HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing) ====================\ncorrelation_stress: The <=3/sector cap is explicitly NOT treated as a correlation control. I decomposed the 10 on the hidden factors GICS misses: (a) end-market demand cycle, (b) regulatory/reimbursement regime, (c) advertising cycle, (d) rate/credit sensitivity, (e) single shared macro (one commodity / one FX / one policy). Every factor carrying >=2 names is named and resolved below.\n\nCLUSTER 1 - US HOSPITAL-REIMBURSEMENT REGIME (regulatory): THC + UHS  ==> RESOLVED BY DIVERSIFICATION (swap UHS -> HRB). This is the tightest and most dangerous cluster: a SINGLE binary outcome (the 2028 Medicaid Directed-Payment-Program phase-down / US hospital-reimbursement ruling, plus the 2026 ACA EAPTC step-down and 2027 work-requirements) would hit BOTH legs at once - exactly the 'one ruling, two full-size legs' the rule forbids. THC is materially the higher-value, higher-conviction leg (sop_mos 82.0 vs 48.1; value 84 vs 66; credibility 5/STRENGTHENING vs 4/STABLE; and UHS's 2028 cliff is its OWN binding risk). I therefore KEEP THC as the sole hospital-reimbursement leg and SWAP OUT the lower-value leg UHS. Replacement = the best ORTHOGONAL eligible runner-up that does NOT re-cluster: HRB (H&R Block). ARDT was rejected because it RE-CLUSTERS with hospitals; the chosen name HRB carries counter-cyclical tax-prep demand + a US-tax regulatory TAILWIND (Direct File cancellation, OBBBA complexity) + an AI-substitution debate - none of which touch hospital reimbursement, advertising, travel or reinsurance. HRB is fully eligible (clears the gate, credibility 4, STRENGTHENING, cheap_vs_peers, strong funded 1.1x / 12.7x, no peak issue). UHS drops to the top of the runner-ups, flagged 'diversified out for correlation, NOT for value.' Sector check after the swap: Consumer Cyclical now ANF+BKNG+HRB = 3 (at the cap, still legal); Healthcare drops to THC alone.\n\nCLUSTER 2 - ADVERTISING CYCLE: CMCSA + SAX.DE  ==> RESOLVED BY KEEP-WITH-COMBINED-SIZE-CAP. CMCSA carries US cable/NBCU ad sales + theme-park (Epic Universe) discretionary spend; SAX.DE is a ~pure European out-of-home / DOOH advertiser. A broad ad-recession is a shared factor and is real. I keep BOTH rather than swap, because the exposure is ASYMMETRIC and geographically split: CMCSA's advertising/parks exposure is a MINORITY slice of a broadband-FCF machine (parks ~7% of revenue; NBCU linear ad is being de-emphasized/Versant-spun), whereas SAX.DE is ad-pure; and the geographies barely co-move (US cable + US theme-park spend vs German/European OOH budgets). The control is an EXPLICIT COMBINED-SIZE CAP: CMCSA + SAX.DE together are sized to carry no more than a single full-size advertising bet, implemented by holding SAX.DE at a REDUCED (~half) weight since CMCSA already supplies the larger, US-side ad/parks leg. Justification: a single ad-downturn cannot hit two equal full-size legs - one leg (SAX.DE) is deliberately half-sized, and the two legs are split across asymmetric intensity and across the US vs European ad markets. No hidden factor quietly carries two full-size legs.\n\nCLUSTER 3 - DISCRETIONARY-CONSUMER DEMAND: ANF + BKNG  ==> RESOLVED BY KEEP-WITH-COMBINED-SIZE-CAP (+ a counter-cyclical offset). ANF (US teen apparel/goods) and BKNG (global travel/leisure services) both ride discretionary consumer demand. I keep both with a combined discretionary-demand size cap rather than swapping, because they sit in DIFFERENT sub-cycles (apparel GOODS, US/tariff/EMEA-exposed vs travel SERVICES, global, Middle-East-shock-exposed) and DIFFERENT geographies, so they do not co-move tightly, and both are net-cash fortresses (solvency orthogonal). Crucially, the THIRD Consumer-Cyclical seat - the HRB diversification add - is COUNTER-cyclical (tax-code complexity rises in downturns; OBBBA tailwind), so it OFFSETS rather than compounds the discretionary beta of the sleeve. Combined-size cap on ANF+BKNG = one-and-a-half discretionary units (each held modestly under full size); justified by the sub-cycle + geographic split and the counter-cyclical HRB offset.\n\nOTHER >=2 CHECKS RUN (and cleared):\n - EEFT + TNET 'transaction-volume' (flagged candidate): DECOMPOSES TO A FALSE CLUSTER. EEFT's volume is CROSS-BORDER consumer remittance/travel money driven by migration & remittance-tax policy; TNET's 'volume' is DOMESTIC US SMB worksite-employee COUNT driven by small-business HIRING. Different real drivers (cross-border migration flows vs US SMB labor demand), low co-movement - so they are NOT a true >=2 cluster and both stay, un-capped on this axis.\n - ANF + BKNG (+ EEFT travel-money) consumer-discretionary: handled as Cluster 3; EEFT's cross-border/remittance demand is a distinct (migration-policy) driver, not the same discretionary-goods/travel-services beta, so it is noted but not folded into the cap.\n - RATE / CREDIT: SCR.PA (reinsurer, rate-sensitive) is the only true rate/credit name; CMCSA/THC carry heavy ABSOLUTE leverage but on the funded test are solvent and their credit exposure is idiosyncratic, not a shared macro - no >=2 rate cluster.\n - FX / single macro: EUR appears in SAX.DE and SCR.PA, but SAX.DE is capped on the ad axis and SCR.PA is a global reinsurer whose driver is the underwriting cycle, not EUR spot - EUR is a second-order shared factor, not a primary >=2 cluster, and is left noted.\nNET OF THE STRESS: one DIVERSIFICATION (UHS -> HRB, removing the single-ruling hospital double-leg) and two KEEP-WITH-COMBINED-SIZE-CAPS (advertising CMCSA+SAX.DE with SAX.DE half-weighted; discretionary ANF+BKNG with a combined cap and an HRB counter-cyclical offset). After the stress, no single hidden factor (hospital ruling, ad-recession, discretionary-consumer slump, FX, rate, or commodity) carries two full-size apex legs.\n\n==================== END CORRELATION STRESS ====================\n\nFUNDED-LEVERAGE SOLVENCY (pillar 3). Cleared 'for the right reason' (low Altman-Z = reserve/float/lease artifact, not real funded debt): SCR.PA (exempt_financial, 0.4x, net cash, 220% solvency - textbook); EEFT (0.8x / 6.7x) and TNET (1.6x / 5.0x, ~net cash) clear on their settlement-/payroll-float books; CMCSA (1.9x / 4.3x) clears despite the $85B net-debt>mkt-cap flag (lease/relative, healthy coverage; net debt NOT credited as net cash); ANF, BKNG, INGR, HRB carry genuine net cash or ~1x funded. Real funded leverage kept with leverage noted (none jointly weak with a maturity wall): THC 2.33x / 4.2x (moderate; dossier-confirmed no maturities until late 2027) and SAX.DE 3.0x / 3.7x (moderate; the book's most-levered apex name, no near-term wall, founder-KGaA the real brake). UHS (1.8x / 13.4x, strong) was solvency-fine - it left the apex for correlation, not solvency.\n\nRISE / FALL vs the PRIOR value apex [CMCSA, THC, ANF, SAX.DE, EEFT, UHS, BKNG, TNET, SCR.PA, INGR]:\n- CMCSA: HELD (apex). Now carries an explicit advertising-cycle combined cap with SAX.DE; still the top pick on the 4x-FCF value.\n- THC: HELD (apex). Becomes the SOLE hospital-reimbursement leg after UHS is diversified out; the higher-value, higher-conviction half of that pair.\n- ANF: HELD (apex). Now sized under the discretionary-consumer combined cap with BKNG.\n- SAX.DE: HELD (apex) but at a REDUCED (~half) weight under the advertising-cycle cap (CMCSA carries the larger ad leg).\n- EEFT: HELD (apex). Cross-border/remittance volume confirmed distinct from TNET (no transaction-volume cluster).\n- UHS: FALLS to runner-up - DIVERSIFIED OUT for correlation, NOT value. It is apex-grade on standalone value (48% MoS, strong funded), but shares THC's single 2028 hospital-reimbursement ruling, so the stress benches it and keeps THC alone on that factor.\n- BKNG: HELD (apex). Sized under the discretionary-consumer combined cap with ANF.\n- TNET: HELD (apex). SMB-employment factor confirmed orthogonal to EEFT.\n- SCR.PA: HELD (apex). Sole reinsurance leg; SREN.SW kept OFF the apex precisely because it would re-cluster on the reinsurance cycle.\n- INGR: HELD (apex). Defensive staple / ag-input axis; orthogonal to every other leg, no cap needed.\n- NEW ADD - HRB: RISES into the apex as the DIVERSIFICATION SWAP for UHS - chosen as the best orthogonal, non-re-clustering runner-up (counter-cyclical tax-prep + a regulatory tailwind), which also de-betas the Consumer-Cyclical sleeve.\nNet: the correlation stress made exactly ONE membership change (UHS -> HRB) to break the single-ruling hospital double-leg, and applied two combined-size caps (advertising CMCSA+SAX.DE; discretionary ANF+BKNG) so no hidden factor carries two full-size legs - a 10-name pure-value apex spanning 7 sectors, each <=3 per sector, each clearing the forensic gate with a still-positive CRO-normalized margin of safety.",
  "value_tracking": {
   "inception_date": "2026-06-08",
-  "since_inception_pct": -0.0,
-  "nav": 100.0,
+  "since_inception_pct": 1.38,
+  "nav": 101.38,
   "n_open": 10,
   "n_closed": 0,
   "win_rate": null,
@@ -438,14 +438,20 @@
     "nav": 99.9958,
     "ret": -4.2e-05,
     "n": 10
+   },
+   {
+    "date": "2026-06-10",
+    "nav": 101.3839,
+    "ret": 0.0,
+    "n": 10
    }
   ],
   "closed": []
  },
  "value_tracking_weighted": {
   "inception_date": "2026-06-09",
-  "since_inception_pct": 0.0,
-  "nav": 100.0,
+  "since_inception_pct": 1.52,
+  "nav": 101.52,
   "n_open": 10,
   "n_closed": 0,
   "win_rate": null,
@@ -454,6 +460,12 @@
     "date": "2026-06-09",
     "nav": 100.0,
     "ret": 0.0,
+    "n": 10
+   },
+   {
+    "date": "2026-06-10",
+    "nav": 101.5184,
+    "ret": 0.015184,
     "n": 10
    }
   ],
@@ -472,7 +484,7 @@
   "HRB": 0.125
  },
  "stress_test": {
-  "asof": "2026-06-09",
+  "asof": "2026-06-10",
   "basket_to_52w_lows_pct": -13.6,
   "recession_stress_pct": -26.6,
   "cro_bear_weighted_pct": null,
@@ -505,10 +517,10 @@
    },
    {
     "symbol": "SAX.DE",
-    "price": 34.76,
+    "price": 34.74,
     "yr_low": 28.85,
     "to_52w_low_pct": -17.0,
-    "recession_pct": -29.5,
+    "recession_pct": -29.4,
     "cro_bear_pct": null
    },
    {
@@ -537,10 +549,10 @@
    },
    {
     "symbol": "SCR.PA",
-    "price": 30.16,
+    "price": 30.22,
     "yr_low": 25.3,
-    "to_52w_low_pct": -16.1,
-    "recession_pct": -28.7,
+    "to_52w_low_pct": -16.3,
+    "recession_pct": -28.8,
     "cro_bear_pct": null
    },
    {
@@ -647,9 +659,29 @@
    "B": 65
   },
   "n_verdict_a": 0,
-  "banner": "Best-of-B basket: 0 verdict-A names in a 162-name pool — every apex pick is a verdict-B value name. Expect SLOW gap-closure: margin-of-safety re-rating, no hard catalysts by design."
+  "apex_all_verdict_b": true,
+  "banner": "Best-of-B basket: 0 verdict-A names in a 162-name pool — every apex pick is a verdict-B value name. Expect SLOW gap-closure: margin-of-safety re-rating, no hard catalysts by design.",
+  "funnel": {
+   "n_both": 156,
+   "spearman_scan_vs_cro": 0.393,
+   "spearman_top_quintile": 0.075,
+   "collapse_rate_50": 0.667,
+   "artifact_rate": 0.15,
+   "cross_lens_rescues": {
+    "n": 6,
+    "symbols": [
+     "ACI",
+     "INVA",
+     "NEXI.MI",
+     "NORCO.OL",
+     "SAX.DE",
+     "SCR.PA"
+    ]
+   },
+   "note": "scan MoS = membership/divergence signal only; never a rank or weight"
+  }
  },
- "generated_at": "2026-06-09",
+ "generated_at": "2026-06-10",
  "engine": "opus-4.8-value-funded-leverage",
  "universe": 161
 }
