@@ -196,6 +196,29 @@ export default function CatalystWatch() {
   const [showMergerArbs, setShowMergerArbs] = useState<boolean>(true);
   const [showActionable, setShowActionable] = useState<boolean>(false);  // phase-2 edge filter
   const [b13Open, setB13Open] = useState<boolean>(true);                 // Basket 13 sleeve panel
+  const [view, setView] = useState<"basket" | "detail">("basket");       // basket = the default landing view
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);        // scanning-candidates rail (off by default — let the basket breathe)
+  const [liveQuotes, setLiveQuotes] = useState<Record<string, any>>({}); // live ticker for the basket seats
+
+  // Live ticker for the Basket 13 seats (reuses /api/quotes — FMP batch-quote proxy; 60s refresh)
+  useEffect(() => {
+    const syms = Object.keys(B13_SEATS);
+    if (!syms.length) return;
+    let stop = false;
+    const pull = () =>
+      fetch(`/api/quotes?symbols=${encodeURIComponent(syms.join(","))}`)
+        .then(r => r.json())
+        .then(d => {
+          if (stop || !Array.isArray(d?.quotes)) return;
+          const m: Record<string, any> = {};
+          d.quotes.forEach((q: any) => { m[q.symbol] = q; });
+          setLiveQuotes(m);
+        })
+        .catch(() => {});
+    pull();
+    const iv = setInterval(pull, 60000);
+    return () => { stop = true; clearInterval(iv); };
+  }, []);
   const [customAcquirerPrice, setCustomAcquirerPrice] = useState<number | "">("");
   const [scanProgress, setScanProgress] = useState<{ status: string, total_symbols: number, completed_count: number, current_symbol: string, speed_stats: string, estimated_remaining_seconds: number } | null>(null);
   
@@ -566,7 +589,7 @@ export default function CatalystWatch() {
     return (
       <div 
         key={`${listType}-${cand.symbol}`} 
-        onClick={() => setSelectedSymbol(cand.symbol)}
+        onClick={() => { setSelectedSymbol(cand.symbol); setView("detail"); }}
         style={{ 
           background: active ? "var(--green-light)" : T.card, 
           border: `1px solid ${active ? T.green : T.border}`,
@@ -828,10 +851,28 @@ export default function CatalystWatch() {
       
       {/* Sub-header detailing strategy details */}
       <div style={{ padding: "16px 24px", borderBottom: `1px solid ${T.border}`, background: "rgba(10, 10, 10, 0.4)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           <Zap size={16} color={T.green} />
           <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.05em", color: T.green, textTransform: "uppercase" }}>
             Opportunistic AI Layer: Loeb / Third Point + Bloom Framework
+          </span>
+          <span style={{ width: 10 }} />
+          <span onClick={() => setView("basket")}
+            style={{ fontSize: 10, fontWeight: 800, fontFamily: T.mono, padding: "3px 10px", borderRadius: 4, cursor: "pointer", userSelect: "none",
+              color: view === "basket" ? T.blue : T.muted, border: `1px solid ${view === "basket" ? "rgba(59,130,246,0.45)" : T.border}`,
+              background: view === "basket" ? "rgba(59,130,246,0.10)" : "transparent" }}>
+            ⬡ BASKET 13
+          </span>
+          <span onClick={() => setView("detail")}
+            style={{ fontSize: 10, fontWeight: 800, fontFamily: T.mono, padding: "3px 10px", borderRadius: 4, cursor: "pointer", userSelect: "none",
+              color: view === "detail" ? T.green : T.muted, border: `1px solid ${view === "detail" ? "rgba(20,184,122,0.45)" : T.border}`,
+              background: view === "detail" ? "rgba(20,184,122,0.08)" : "transparent" }}>
+            ⌕ DEPTH: {selectedSymbol}
+          </span>
+          <span onClick={() => setSidebarOpen(!sidebarOpen)}
+            style={{ fontSize: 10, fontWeight: 700, fontFamily: T.mono, padding: "3px 10px", borderRadius: 4, cursor: "pointer", userSelect: "none",
+              color: sidebarOpen ? T.text : T.muted, border: `1px solid ${T.border}`, background: sidebarOpen ? "rgba(255,255,255,0.04)" : "transparent" }}>
+            ◧ CANDIDATES {sidebarOpen ? "ON" : "OFF"}
           </span>
         </div>
         <div style={{ fontSize: 11, color: T.light, maxWidth: 650, textAlign: "right" }}>
@@ -839,9 +880,10 @@ export default function CatalystWatch() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", minHeight: "calc(100vh - 120px)", background: T.bg }}>
-        
-        {/* LEFT SIDEBAR: Candidate List */}
+      <div style={{ display: "grid", gridTemplateColumns: sidebarOpen ? "320px 1fr" : "1fr", minHeight: "calc(100vh - 120px)", background: T.bg }}>
+
+        {/* LEFT SIDEBAR: Candidate List (toggleable — off by default so Basket 13 breathes) */}
+        {sidebarOpen && (
         <div style={{ borderRight: `1px solid ${T.border}`, padding: "20px 16px", display: "flex", flexDirection: "column", gap: 16, background: "rgba(5, 5, 5, 0.2)" }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.1em", marginBottom: 12 }}>
@@ -970,12 +1012,13 @@ export default function CatalystWatch() {
             )}
           </div>
         </div>
+        )}
 
         {/* MAIN PANEL: AI Event-Driven Scan Result */}
         <div style={{ padding: 24, overflowY: "auto", maxHeight: "calc(100vh - 120px)" }}>
 
-          {/* BASKET 13 — catalyst sleeve (paper, event-resolution tracker) */}
-          {(B13.entries || []).length > 0 && (() => {
+          {/* BASKET 13 — catalyst sleeve (paper, event-resolution tracker) — the DEFAULT view; depth analysis is a separate view */}
+          {view === "basket" ? (B13.entries || []).length > 0 ? (() => {
             const open = (B13.entries || []).filter((e: any) => !e.resolution);
             const resolved = (B13.entries || []).filter((e: any) => e.resolution);
             const atDrvCap = (n: number) => n >= (B13.caps?.max_per_driver ?? 2);
@@ -1003,14 +1046,15 @@ export default function CatalystWatch() {
                             <th style={{ padding: "3px 8px" }}>Exp R:R / EV</th>
                             <th style={{ padding: "3px 8px" }}>Entry</th>
                             <th style={{ padding: "3px 8px" }}>Review trigger</th>
-                            <th style={{ padding: "3px 0" }}>CRO</th>
+                            <th style={{ padding: "3px 8px" }}>CRO</th>
+                            <th style={{ padding: "3px 0" }}>Live</th>
                           </tr>
                         </thead>
                         <tbody>
                           {open.map((e: any) => (
                             <tr key={e.symbol} style={{ borderTop: `1px solid ${T.border}` }}>
                               <td style={{ padding: "5px 8px 5px 0" }}>
-                                <span onClick={(ev) => { ev.stopPropagation(); setSelectedSymbol(e.symbol); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{e.symbol}</span>
+                                <span onClick={(ev) => { ev.stopPropagation(); setSelectedSymbol(e.symbol); setView("detail"); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{e.symbol}</span>
                                 {e.staging && <span title="Staging pick — soft-dated catalyst: equity-only, half-weight cap" style={{ marginLeft: 5, fontSize: 7.5, fontWeight: 700, padding: "0 4px", borderRadius: 3, background: "rgba(217,151,6,0.14)", color: "#d97706" }}>STG</span>}
                               </td>
                               <td style={{ padding: "5px 8px", color: T.text, fontWeight: 700 }}>{e.weight_pct}%</td>
@@ -1020,10 +1064,27 @@ export default function CatalystWatch() {
                               <td style={{ padding: "5px 8px", color: T.green }}>{fmtB13RR(e)}</td>
                               <td style={{ padding: "5px 8px", color: T.light }} title={`edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"}`}>{e.entry_date} @ {e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}</td>
                               <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.review_trigger || ""}>{e.review_trigger || "—"}</td>
-                              <td style={{ padding: "5px 0" }}>
+                              <td style={{ padding: "5px 8px" }}>
                                 {(e.cro_conditions || []).length > 0
                                   ? <span title={e.cro_conditions.join("\n• ").replace(/^/, "• ")} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⚠ {e.cro_conditions.length} cond</span>
                                   : <span style={{ fontSize: 8.5, color: T.muted }}>clean</span>}
+                              </td>
+                              <td style={{ padding: "5px 0" }}>
+                                {(() => {
+                                  const q = liveQuotes[e.symbol];
+                                  if (!q || q.price == null) return <span style={{ fontSize: 9, color: T.muted }}>—</span>;
+                                  const pnl = e.entry_price ? (q.price / e.entry_price - 1) * 100 : null;
+                                  return (
+                                    <span title={`live ${q.price.toFixed(2)} · day ${q.day != null ? `${q.day >= 0 ? "+" : ""}${q.day.toFixed(2)}%` : "—"} · vs entry ${pnl != null ? `${pnl >= 0 ? "+" : ""}${pnl.toFixed(1)}%` : "—"}`}
+                                      style={{ display: "inline-flex", flexDirection: "column", lineHeight: 1.3 }}>
+                                      <span style={{ color: T.text, fontWeight: 700 }}>
+                                        {q.price.toFixed(2)}
+                                        {q.day != null && <span style={{ marginLeft: 5, fontSize: 8.5, color: q.day >= 0 ? T.green : T.red }}>{q.day >= 0 ? "+" : ""}{q.day.toFixed(1)}%</span>}
+                                      </span>
+                                      {pnl != null && <span style={{ fontSize: 8.5, color: pnl >= 0 ? T.green : T.red }}>pos {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%</span>}
+                                    </span>
+                                  );
+                                })()}
                               </td>
                             </tr>
                           ))}
@@ -1084,9 +1145,11 @@ export default function CatalystWatch() {
                 )}
               </div>
             );
-          })()}
-
-          {loadingScan ? (
+          })() : (
+            <div style={{ minHeight: "40vh", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: T.muted, textAlign: "center" }}>
+              No Basket 13 entries yet — run the catalyst debate (backend/_basket13_README.md), then _basket13_export.py.
+            </div>
+          ) : loadingScan ? (
             <div style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
               <RefreshCw size={36} color={T.green} className="animate-spin" />
               <div style={{ fontSize: 13, color: T.muted, textAlign: "center" }}>
@@ -1109,7 +1172,11 @@ export default function CatalystWatch() {
             </div>
           ) : report ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-              
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span onClick={() => setView("basket")} style={{ fontSize: 10, fontWeight: 800, fontFamily: T.mono, color: T.blue, border: "1px solid rgba(59,130,246,0.3)", borderRadius: 4, padding: "3px 10px", cursor: "pointer", userSelect: "none" }}>← BASKET 13</span>
+                <span style={{ fontSize: 9, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em" }}>Stock depth analysis</span>
+              </div>
+
               {/* TOP HEADER SUMMARY CARD */}
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: "var(--shadow-md)" }}>
                 <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start", gap: 16, marginBottom: 16 }}>
