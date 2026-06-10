@@ -766,7 +766,7 @@ You must also perform Activist & Catalyst Detection by merging:
 - Loeb's Third Point criteria (catalyst density, sum-of-parts discount, activism potential, asymmetric risk/reward).
 - The Bloom template (governance reset, strategic process, premium scenario).
 
-SUM-OF-PARTS RECONCILIATION + LIVE CATALYST CHECK (mandatory): reconcile the Architect's sop_bull and sop_bear into ONE base-case sop_fair_value (with the parts breakdown) and a risk_reward (downside-to-break vs upside-to-fair-value). Independently judge the load-bearing catalyst's CURRENT status — FIRED (already happened, re-rate spent) / ARB (deal terms fixed, capped at the offer) / PENDING_HARD (dated, binding, real asymmetry) / SOFT_EXTENDED (non-binding, serially-extended, third-party, single-binary) / UNVERIFIABLE — and let it MOVE the verdict: a FIRED catalyst is NOT an asymmetric special-sit (treat as arb/defensive), a SOFT_EXTENDED one is mid-conviction at best, and apply this UNIFORMLY (do not exempt a name just because it had a bundled transcript). Sanity-check the implied multiple against any peer comps you are given.
+SUM-OF-PARTS RECONCILIATION + CATALYST STATUS (mandatory): reconcile the Architect's sop_bull and sop_bear into ONE base-case sop_fair_value (with the parts breakdown) and a risk_reward (downside-to-break vs upside-to-fair-value). Judge the load-bearing catalyst's status FROM THE PROVIDED MATERIALS ONLY — FIRED (already happened, re-rate spent) / ARB (deal terms fixed, capped at the offer) / PENDING_HARD (dated, binding, real asymmetry) / SOFT_EXTENDED (non-binding, serially-extended, third-party, single-binary) / UNVERIFIABLE. If the materials cannot establish the CURRENT status (e.g. they predate the catalyst window), output catalyst_status=UNVERIFIABLE — NEVER assert a live status you cannot source from the inputs. Let the status MOVE the verdict: a FIRED catalyst is NOT an asymmetric special-sit (treat as arb/defensive), a SOFT_EXTENDED one is mid-conviction at best, and apply this UNIFORMLY (do not exempt a name just because it had a bundled transcript). Sanity-check the implied multiple against any peer comps you are given.
 
 Your final execution verdict MUST be one of:
 - "A": AGGRESSIVE ENTRY (Catalyst imminent, market offside, pain trade is primed).
@@ -784,6 +784,7 @@ You must return a valid JSON object:
 {
   "verdict": "A" | "B" | "C",
   "conviction": integer (1 to 5),
+  "value_conviction": integer (1 to 5) — rate the VALUE case as if NO catalyst overlay existed: valuation vs your reconciled SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and any regime tilt. This score MUST be allowed to diverge from `conviction` (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst story at full price can be value_conviction 1) — do not default them to the same number.,
   "sop_fair_value": "string/number — the reconciled base-case Sum-of-Parts per-share fair value (a number or tight range).",
   "sop_breakdown": "string — the parts and what each contributes to the value.",
   "risk_reward": "string — downside-to-break vs upside-to-fair-value, as a ratio or a clear statement.",
@@ -1293,7 +1294,21 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
         result["interrogator_dossier"] = interr_dossier
         result["interrogator_findings"] = interr_dossier  # back-compat: rich content
         m = re.search(r"CREDIBILITY_SCORE:\s*(\d+)", interr_dossier)
-        result["interrogator_score"] = max(1, min(5, int(m.group(1)))) if m else 3
+        if not m:
+            # 8f: never fail OPEN to a neutral 3 (a malformed dossier would silently land
+            # above the EXCLUDE gate). Retry once with a re-output nudge; else None, which
+            # value_input() gates as CAP (fail toward caution).
+            nudge = query_claude(
+                INTERROGATOR_MODEL, INTERROGATOR_SYSTEM_PROMPT,
+                interr_user_prompt + "\n\nYour previous dossier omitted the mandatory final line. "
+                "Re-output ONLY the final line in the exact format: CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>",
+                max_tokens=200)
+            m = re.search(r"CREDIBILITY_SCORE:\s*(\d+)", nudge or "")
+            if m:
+                interr_dossier += "\n" + (nudge or "").strip()
+        result["interrogator_score"] = max(1, min(5, int(m.group(1)))) if m else None
+        if m is None:
+            log.warning(f"  [Interrogator] {symbol}: CREDIBILITY_SCORE unparseable after retry -> None (fail-closed)")
         mt = re.search(r"TRAJECTORY:\s*([A-Z]+)", interr_dossier)
         result["trajectory"] = mt.group(1) if mt else ""
         # Map trajectory -> legacy tone_shift for any consumer still reading it
@@ -1301,6 +1316,7 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
             result["trajectory"], "stable")
     else:
         log.warning(f"  [Interrogator] {symbol}: no dossier returned")
+        result["interrogator_score"] = None   # 8f: fail-closed, not a neutral 3
 
     time.sleep(1.0)
     
@@ -1316,6 +1332,9 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     if arch_out:
         result["bull_thesis"] = arch_out.get("bull_thesis", "")
         result["bear_thesis"] = arch_out.get("bear_thesis", "")
+        # 8d: the prompts demand a Sum-of-Parts — stop generating-and-dropping it
+        result["sop_bull"] = arch_out.get("sop_bull", "")
+        result["sop_bear"] = arch_out.get("sop_bear", "")
 
     time.sleep(1.0)
     
@@ -1344,6 +1363,16 @@ def debate_candidate(symbol: str, transcript: dict, financials: dict = None,
     if mod_out:
         result["conviction"] = max(1, min(5, int(mod_out.get("conviction", 3))))
         result["verdict"] = mod_out.get("verdict", "B")
+        # 8a: catalyst-blind value score (decoupled from the regime-tilted conviction)
+        try:
+            result["value_conviction"] = max(1, min(5, int(mod_out.get("value_conviction"))))
+        except (TypeError, ValueError):
+            result["value_conviction"] = None
+        # 8d: reconciled SoP + catalyst status were demanded by the prompt and then dropped
+        result["sop_fair_value"] = mod_out.get("sop_fair_value", "")
+        result["sop_breakdown"] = mod_out.get("sop_breakdown", "")
+        result["risk_reward"] = mod_out.get("risk_reward", "")
+        result["catalyst_status"] = mod_out.get("catalyst_status", "")
         result["consensus_delta"] = mod_out.get("consensus_delta", "")
         result["valley_of_death"] = mod_out.get("valley_of_death", "")
         result["positioning_washout"] = mod_out.get("positioning_washout", "")

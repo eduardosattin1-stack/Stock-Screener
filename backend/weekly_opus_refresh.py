@@ -7,9 +7,19 @@
           the candidate list baked in (sidesteps the Workflow `args` delivery bug). Prints the
           scriptPath + candidate count for the scheduled run to hand to the Workflow tool.
 
-The scheduled SKILL.md runs:  python weekly_opus_refresh.py prep
-  -> Workflow({scriptPath: <printed>})
-  -> python _opus_debate/publish_to_frontend.py --gcs
+The scheduled SKILL.md runs:
+  python weekly_opus_refresh.py prep            (raw-screen universe + bundles + ledger re-check routing)
+  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [fable])
+  -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book)
+  -> python weekly_opus_refresh.py value-input                        (value signals + funnel stats + ledger)
+  -> [value Director agent, fable]
+  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, fable)
+  -> python weekly_opus_refresh.py value-post                         (deterministic safety layer; consumes skeptic)
+  -> python weekly_opus_refresh.py value-csv / baskets-csv
+  -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
+Periodic verbs: shadow-debate / shadow-diff (Fable A/B with a pre-committed migration trigger),
+control-sample (monthly funnel miss-rate), value-revalidate (stale-anchor pro-forma re-debate),
+disruptor-universe / disruptor-map-merge (monthly Disruptor Lens universe build).
 
 Robust by construction: each name is a SINGLE-agent full Opus regime debate (Interrogator+
 Architect+Moderator in one pass, schema-less, inline regime brief) — the pattern that proved
@@ -35,8 +45,13 @@ INP, TXT, RES = ROOT / "inputs", ROOT / "transcripts", ROOT / "results_regime"
 for d in (INP, TXT, RES, ROOT / "dossiers"):
     d.mkdir(parents=True, exist_ok=True)
 
+# LEGACY-9 method set — used ONLY for signal typing (deep_value vs catalyst), never for selection.
 DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
             "earnings_yield_gap", "owner_earnings", "dcf_fcff", "rd_capitalized_dcf", "ev_gross_profit"}
+# 8e: convergence (multi-model agreement — the purest value signal in the system) and the true
+# EV/GP basket are VALUE signals too; without this they were branded "catalyst" and routed down
+# the Moderator's catalyst lens.
+VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp"}
 
 REGIME_FILE = "CATALYST_WATCH_REGIME.md"  # repo root; read live each run for the current regime
 
@@ -253,6 +268,7 @@ SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran o
   - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT — trust sop_mos_pct.
   - `forensic_gate`: "EXCLUDE" => INELIGIBLE for the apex (interrogator credibility<=2 — a forensic red flag the factors miss). "CAP" => value_score capped at ~50 (DETERIORATING trajectory: credible but worsening). These are regime-INDEPENDENT forensics; a factor-cheap name NEVER overrides them.
   - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact — otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
+  - `value_conviction` (1-5, when present): the CRO's CATALYST-BLIND value score — judged on valuation + forensics with the regime overlay explicitly ignored. PREFER it over `debate_conviction` everywhere in this rubric (debate_conviction is regime-tilted and collapses to a constant in catalyst-light pools). Where value_conviction is null (older results), fall back to debate_conviction but say so.
 
 RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
 1. MARGIN OF SAFETY — primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below. CRO-ONLY LEG: a name with <=2/5 positive model MoS AND a scan MoS below ~+10% (`scan_headline_mos_pct`) means your SoP is the SOLE evidence of cheapness — you may seat it, but you MUST set its `size_units` <= 0.5, tag it by name in the memo, and state in one sentence why your SoP beats five dissenting models.
@@ -271,7 +287,7 @@ HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_
 
 HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy). FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome) and CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification). Reply exactly: DONE"""
+OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position. Reply exactly: DONE"""
 
 
 def value_input():
@@ -365,6 +381,11 @@ def value_input():
         # for the system-of-record reconciliation but is not a blanket cap.
         if isinstance(iscore, (int, float)) and iscore <= 2:
             gate = "EXCLUDE"            # credibility veto — a forensic red flag the factors miss
+        elif iscore is None:
+            # 8f: a malformed/missing CREDIBILITY_SCORE must NOT fail open as neutral —
+            # cap it (fail toward caution) and say so, without nuking the name on a transient.
+            gate = "CAP"
+            print(f"WARN: {sym} interrogator_score missing/unparseable -> gate=CAP (fail-closed)")
         elif "DETERIORAT" in traj:
             gate = "CAP"               # deteriorating but credible -> mid-tier cap, not a veto
         else:
@@ -390,6 +411,9 @@ def value_input():
             "price": price, "scan_headline_mos_pct": scan_mos_head,
             "risk_reward": (r.get("risk_reward", "") or "")[:220],
             "debate_verdict": verdict, "debate_conviction": r.get("conviction"),
+            # 8a: value_conviction = the CRO's catalyst-blind value score (decoupled from the
+            # regime-tilted `conviction`); older results lack it -> None, Director falls back.
+            "value_conviction": r.get("value_conviction"),
             "interrogator_score": iscore, "trajectory": r.get("trajectory", ""),
             "forensic_gate": gate,
             # cyclical-peak / extrapolation normalization (ahead of trusting MoS)
@@ -428,6 +452,87 @@ def value_input():
     fs = _C(x["funded_solvency"] for x in out)
     print(f"value_grade_input.json: {len(out)} names | peak_flag={npeak} forensic_gate={ngate} freshness_stale={nstale}")
     print(f"  funded_solvency: {dict(fs)}")
+
+    # ── 11a — weekly FUNNEL-QUALITY stats: is the scan's headline MoS a ranking signal or only a
+    # membership filter? (Measured 2026-06-10: Spearman 0.41 overall but 0.15 in the scan top
+    # quintile; 61% of scan-positive names cut >50% by the CRO — magnitude carries no in-funnel
+    # ranking signal. These make that measurable EVERY week.) Pure-python Spearman, no scipy.
+    def _spearman(pairs):
+        if len(pairs) < 10:
+            return None
+        import statistics as _st
+
+        def _ranks(vals):
+            order = sorted(range(len(vals)), key=lambda i: vals[i])
+            rk = [0.0] * len(vals)
+            i = 0
+            while i < len(order):
+                j = i
+                while j + 1 < len(order) and vals[order[j + 1]] == vals[order[i]]:
+                    j += 1
+                avg = (i + j) / 2 + 1
+                for k in range(i, j + 1):
+                    rk[order[k]] = avg
+                i = j + 1
+            return rk
+        xs, ys = [p[0] for p in pairs], [p[1] for p in pairs]
+        try:
+            return round(_st.correlation(_ranks(xs), _ranks(ys)), 3)
+        except Exception:
+            return None
+
+    both = [(x["scan_headline_mos_pct"], x["sop_mos_pct"]) for x in out
+            if isinstance(x.get("scan_headline_mos_pct"), (int, float)) and isinstance(x.get("sop_mos_pct"), (int, float))]
+    sp_all = _spearman(both)
+    topq = sorted(both, key=lambda p: -p[0])[:max(5, len(both) // 5)]
+    sp_topq = _spearman(topq)
+    pos = [p for p in both if p[0] > 0]
+    collapse = sum(1 for p in pos if p[1] < p[0] * 0.5)
+    artifact = sum(1 for p in pos if p[1] <= 0)
+    rescues = [x["symbol"] for x in out
+               if isinstance(x.get("scan_headline_mos_pct"), (int, float)) and isinstance(x.get("sop_mos_pct"), (int, float))
+               and x["scan_headline_mos_pct"] <= 10 and x["sop_mos_pct"] >= 30]
+    funnel_stats = {"n_both": len(both), "spearman_scan_vs_cro": sp_all, "spearman_top_quintile": sp_topq,
+                    "collapse_rate_50": round(collapse / len(pos), 3) if pos else None,
+                    "artifact_rate": round(artifact / len(pos), 3) if pos else None,
+                    "cross_lens_rescues": {"n": len(rescues), "symbols": sorted(rescues)},
+                    "note": "scan MoS = membership/divergence signal only; never a rank or weight"}
+    (ROOT / "_funnel_stats.json").write_text(json.dumps(funnel_stats, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"  funnel: spearman={sp_all} (top-quintile {sp_topq}) collapse>50%={funnel_stats['collapse_rate_50']} "
+          f"artifact={funnel_stats['artifact_rate']} rescues={len(rescues)} {sorted(rescues)}")
+
+    # ── 11c — FORENSIC LEDGER: persist EXCLUDE gates so prep() can route unexpired ones to a short
+    # re-check instead of a full debate. A ledger_recheck re-affirmation does NOT extend the clock —
+    # only a FULL debate that again scores <=2 restarts the 8-week TTL.
+    from datetime import datetime as _dtt, timedelta as _td
+    led_p = ROOT / "forensic_ledger.json"
+    led = {}
+    if led_p.exists():
+        try:
+            led = json.load(open(led_p, encoding="utf-8"))
+        except Exception:
+            led = {}
+    today_s = _dtt.now().strftime("%Y-%m-%d")
+    for x in out:
+        if x["forensic_gate"] != "EXCLUDE":
+            continue
+        sym = x["symbol"]
+        src = ""
+        rf = ROOT / "results_regime" / f"{sym}.json"
+        if rf.exists():
+            try:
+                src = json.load(open(rf, encoding="utf-8")).get("source", "")
+            except Exception:
+                src = ""
+        if sym in led and src == "ledger_recheck":
+            continue                                       # re-affirmation: keep the original clock
+        led[sym] = {"gate": "EXCLUDE", "date": today_s,
+                    "reason": f"interrogator credibility {x.get('interrogator_score')} | {x.get('trajectory', '')}",
+                    "expires": (_dtt.now() + _td(days=56)).strftime("%Y-%m-%d"),
+                    "days_to_earnings": (sc_by.get(sym) or {}).get("days_to_earnings")}
+    led = {s: e for s, e in led.items() if (e.get("expires") or "") >= today_s}   # prune expired
+    led_p.write_text(json.dumps(led, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"  forensic ledger: {len(led)} unexpired EXCLUDE entr{'y' if len(led) == 1 else 'ies'} -> {led_p.name}")
     print(f"value_director_prompt.txt written ({len(VALUE_DIRECTOR_PROMPT)} chars)")
     return len(out)
 
@@ -568,7 +673,7 @@ def baskets_csv():
     except Exception as e:
         print(f"WARN: per_methodology basket map failed ({e})")
     cols = ["symbol", "sector", "signal_type",
-            "regime_role", "regime_director_conviction", "regime_lane", "regime_catalyst_status", "regime_director_thesis",
+            "regime_role", "regime_director_conviction", "regime_lane", "regime_catalyst_status", "regime_forensic_cap", "regime_director_thesis",
             "value_role", "value_score", "value_thesis", "funded_solvency", "net_funded_debt_ebitda", "interest_coverage",
             "sop_mos_pct", "scan_headline_mos_pct", "forensic_gate", "peak_flag", "freshness_stale", "trap_flag",
             "n_methodology_baskets", "methodology_baskets",
@@ -597,6 +702,7 @@ def baskets_csv():
             "symbol": sym, "sector": r.get("sector", ""), "signal_type": r.get("signal_type", ""),
             "regime_role": rg.get("_role", ""), "regime_director_conviction": rg.get("director_conviction", ""),
             "regime_lane": rg.get("lane", ""), "regime_catalyst_status": rg.get("catalyst_status", r.get("catalyst_status", "")),
+            "regime_forensic_cap": rg.get("forensic_cap", ""),
             "regime_director_thesis": rg.get("thesis", ""),
             "value_role": vl.get("_role", ""), "value_score": vl.get("value_score", ""), "value_thesis": vl.get("thesis", ""),
             "funded_solvency": gi.get("funded_solvency", ""), "net_funded_debt_ebitda": gi.get("net_funded_debt_ebitda", ""),
@@ -680,10 +786,19 @@ def value_publish(push_gcs=False):
             gin = json.load(open(gp, encoding="utf-8"))
             vc = _C((x.get("debate_verdict") or "?") for x in gin)
             na = vc.get("A", 0)
+            gin_by = {x.get("symbol"): x for x in gin}
+            apex_verdicts = {(gin_by.get(p["symbol"]) or {}).get("debate_verdict") for p in picks}
             pool_stats = {"n_pool": len(gin), "verdict_counts": dict(vc), "n_verdict_a": na,
+                          "apex_all_verdict_b": apex_verdicts == {"B"},
                           "banner": (f"Best-of-B basket: {na} verdict-A names in a {len(gin)}-name pool — "
                                      f"every apex pick is a verdict-B value name. Expect SLOW gap-closure: "
                                      f"margin-of-safety re-rating, no hard catalysts by design.")}
+            fst = ROOT / "_funnel_stats.json"
+            if fst.exists():
+                try:
+                    pool_stats["funnel"] = json.load(open(fst, encoding="utf-8"))   # 11a weekly stats
+                except Exception:
+                    pass
         except Exception:
             pool_stats = {}
     out = {"apex_basket": picks, "runner_ups": apx.get("runner_ups", []),
@@ -759,6 +874,219 @@ def value_revalidate():
     print(f"value_revalidate: {len(stale)} stale-anchor name(s) {stale} -> online pro-forma re-debate")
     print(f"REVALIDATE_SCRIPT={out.resolve()}")
     return len(stale)
+
+
+def value_skeptic():
+    """8b — SKEPTIC TIER over the value-apex finalists (apex + runner_ups, ~16 names). The weekly
+    debate runs Interrogator->Architect->CRO in ONE context, so the 'adversarial' CRO shares the
+    bull's activations; this emits an INDEPENDENT kill-tier (the Catalyst Watch Skeptic pattern,
+    which kills 40-50% of ACTIVE flags): default REFUTED unless the load-bearing facts verify
+    against a primary source; inputs are the BEAR side + live web only — never the bull case.
+    Runs on Fable (9b: adversarial kill-quality is what the capability premium buys).
+    Pipeline order: Director -> value-skeptic (Workflow) -> value-post -> csv -> publish."""
+    apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
+    finalists = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
+    for r in apx.get("runner_ups", []):
+        s = r.get("symbol") if isinstance(r, dict) else r
+        if s and s not in finalists:
+            finalists.append(s)
+    (ROOT / "_skeptic").mkdir(exist_ok=True)
+    js = """export const meta = {
+  name: 'value-skeptic',
+  description: 'Independent skeptic kill-tier over the value-apex finalists (default REFUTED)',
+  phases: [{ title: 'Skeptic', model: 'fable' }],
+}
+const DIR = 'backend/_opus_debate'
+const SYMS = __FINALISTS__
+phase('Skeptic')
+const BATCH = 8
+for (let b = 0; b < SYMS.length; b += BATCH) {
+  await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(
+    'SKEPTIC tier for ' + sym + ' (value-apex finalist). Your job is to KILL this value thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side — do NOT read or reconstruct the bull case.\\n' +
+    '1. Read ' + DIR + '/results_regime/' + sym + '.json but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status. Read the forensic dossier ' + DIR + '/dossiers/' + sym + '.md.\\n' +
+    '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS — is the claimed cheapness real edge, or priced/structural (melting business, governance brake, terminal multiple)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, regulatory action the debate missed.\\n' +
+    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the value case). Also value_conviction_cap (int 1-5): the MAX value conviction this name deserves given what you verified.\\n' +
+    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, value_conviction_cap, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
+    { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: 'fable' })))
+}
+return 'DONE'
+"""
+    js = js.replace("__FINALISTS__", json.dumps(finalists))
+    out = ROOT / "_skeptic_workflow.js"
+    out.write_text(js, encoding="utf-8")
+    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent Fable kill-tier")
+    print(f"SKEPTIC_WORKFLOW={out.resolve()}")
+    return len(finalists)
+
+
+def shadow_debate():
+    """9c — SHADOW A/B: emit _shadow_debate.js — identical debate prompts on model 'fable' over a
+    stratified 40-name subsample (sector x verdict), results to results_shadow/ (results_regime
+    untouched, Director phase stripped so nothing can overwrite the live apex). Migration trigger is
+    PRE-COMMITTED in shadow_diff — never decided after seeing results."""
+    import re
+    import random
+    import glob as _g
+    rows = []
+    for f in _g.glob(str(ROOT / "results_regime" / "*.json")):
+        try:
+            r = json.load(open(f, encoding="utf-8"))
+            if r.get("source") != "ledger_recheck":
+                rows.append((r.get("symbol") or os.path.basename(f)[:-5], r.get("sector", "?"), r.get("verdict", "?")))
+        except Exception:
+            continue
+    strata = {}
+    for sym, sec, ver in rows:
+        strata.setdefault((sec, ver), []).append(sym)
+    rng = random.Random(20260610)                      # deterministic sample
+    target, sample = 40, []
+    keys = sorted(strata)
+    while len(sample) < target and any(strata[k] for k in keys):
+        for k in keys:
+            if strata[k] and len(sample) < target:
+                sample.append(strata[k].pop(rng.randrange(len(strata[k]))))
+    has_tx = [s for s in sample if (ROOT / "transcripts" / f"{s}.txt").exists()]
+    online = [s for s in sample if s not in has_tx]
+    js = (ROOT / "_weekly_debate.js").read_text(encoding="utf-8")
+    js = re.sub(r"const RES = DIR \+ '/results_regime'", "const RES = DIR + '/results_shadow'", js)
+    js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = " + json.dumps(has_tx), js)
+    js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(online), js)
+    js = re.sub(r"const RECHECK_SYMS = \[[^\]]*\]", "const RECHECK_SYMS = []", js)
+    js = js.replace("model: 'opus' }", "model: 'fable' }")          # debate agents -> fable
+    js = js.split("phase('Director')")[0] + "log('Shadow debate complete (no Director).')\nreturn 'DONE'\n"
+    js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-shadow-fable'")
+    (ROOT / "results_shadow").mkdir(exist_ok=True)
+    out = ROOT / "_shadow_debate.js"
+    out.write_text(js, encoding="utf-8")
+    print(f"shadow_debate: {len(sample)} stratified names ({len(has_tx)} FMP + {len(online)} online) on fable -> results_shadow/")
+    print(f"SHADOW_WORKFLOW={out.resolve()}")
+    return len(sample)
+
+
+def shadow_diff():
+    """9c — compare results_shadow/ (fable) vs results_regime/ (opus) on the common symbols and
+    write _shadow_report.md with the PRE-COMMITTED migration trigger in the header."""
+    import glob as _g
+    import statistics as _st
+    sh = {}
+    for f in _g.glob(str(ROOT / "results_shadow" / "*.json")):
+        try:
+            r = json.load(open(f, encoding="utf-8"))
+            sh[r.get("symbol") or os.path.basename(f)[:-5]] = r
+        except Exception:
+            continue
+    if not sh:
+        print("shadow_diff: no results_shadow/ — run shadow-debate first. STOP")
+        raise SystemExit(1)
+    base = {}
+    for s in sh:
+        f = ROOT / "results_regime" / f"{s}.json"
+        if f.exists():
+            try:
+                base[s] = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                pass
+    common = sorted(set(sh) & set(base))
+    uni = {x["symbol"]: x for x in json.load(open(ROOT / "_radar_universe.json", encoding="utf-8"))}
+
+    def _mos(r, s):
+        fv = _val_money(r.get("sop_fair_value"))
+        px = (uni.get(s) or {}).get("price")
+        return (fv - px) / px * 100 if (fv and isinstance(px, (int, float)) and px > 0) else None
+
+    def _hist(vals):
+        from collections import Counter as _C2
+        return dict(sorted(_C2(v for v in vals if v is not None).items()))
+
+    iv_b = [base[s].get("interrogator_score") for s in common]
+    iv_s = [sh[s].get("interrogator_score") for s in common]
+    med_shift = abs(_st.median([v for v in iv_s if isinstance(v, (int, float))]) -
+                    _st.median([v for v in iv_b if isinstance(v, (int, float))]))
+    exc_b = sum(1 for v in iv_b if isinstance(v, (int, float)) and v <= 2) / len(common) * 100
+    exc_s = sum(1 for v in iv_s if isinstance(v, (int, float)) and v <= 2) / len(common) * 100
+    dmos = [abs(a - b) for s in common
+            for a, b in [(_mos(sh[s], s), _mos(base[s], s))] if a is not None and b is not None]
+    mean_dmos = round(sum(dmos) / len(dmos), 1) if dmos else None
+    ok = (med_shift < 1) and (abs(exc_s - exc_b) < 5) and (mean_dmos is not None and mean_dmos < 15)
+    rep = [
+        "# Shadow A/B — Opus 4.8 (results_regime) vs Fable 5 (results_shadow)",
+        "",
+        "## PRE-COMMITTED MIGRATION TRIGGER (decided before results were seen)",
+        "Migrate the per-name debate to Fable ONLY IF: interrogator median shift < 1 point AND",
+        "EXCLUDE-rate delta < 5pp AND mean |dMoS| < 15pts. Otherwise re-tune gate thresholds first.",
+        "",
+        f"## VERDICT: {'MIGRATE — trigger CLEARED' if ok else 'DO NOT MIGRATE — trigger FAILED (re-tune gates first)'}",
+        "",
+        f"- common symbols compared: {len(common)}",
+        f"- interrogator median shift: {med_shift} (need < 1)",
+        f"- EXCLUDE rate: opus {exc_b:.1f}% -> fable {exc_s:.1f}% (delta {abs(exc_s - exc_b):.1f}pp, need < 5)",
+        f"- mean |d sop_mos_pct|: {mean_dmos} (need < 15)",
+        f"- verdict counts opus: {_hist([base[s].get('verdict') for s in common])}",
+        f"- verdict counts fable: {_hist([sh[s].get('verdict') for s in common])}",
+        f"- conviction hist opus: {_hist([base[s].get('conviction') for s in common])} | fable: {_hist([sh[s].get('conviction') for s in common])}",
+        f"- value_conviction hist opus: {_hist([base[s].get('value_conviction') for s in common])} | fable: {_hist([sh[s].get('value_conviction') for s in common])}",
+        f"- interrogator hist opus: {_hist(iv_b)} | fable: {_hist(iv_s)}",
+        "",
+        "9d on migration: stamp engine_change events into both tracking histories.",
+    ]
+    (ROOT / "_shadow_report.md").write_text("\n".join(rep), encoding="utf-8")
+    print("\n".join(rep[:14]))
+    print(f"shadow_diff -> {ROOT / '_shadow_report.md'}")
+    return ok
+
+
+def control_sample():
+    """11b — monthly FALSE-NEGATIVE estimate: debate N=8 random names from the scan that sit in NO
+    methodology basket; report how many clear the forensic gate with CRO MoS >= 30% — the funnel's
+    miss-rate on its own success metric. Tagged control=true; results land in results_control/ and
+    NEVER feed baskets."""
+    import random
+    from datetime import datetime as _dtt
+    scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
+        open("../frontend/public/latest_global.json", encoding="utf-8"))
+    mp = gcs_io.gcs_read_json("scans/methodology_picks.json") or {}
+    in_basket = set()
+    for meth in (mp.get("methodologies") or {}).values():
+        picks_l = meth.get("picks") if isinstance(meth, dict) else meth     # dict-with-picks or bare list
+        for p in (picks_l or []):
+            s = p.get("symbol") if isinstance(p, dict) else p
+            if s:
+                in_basket.add(s)
+    pool = [s for s in scan.get("stocks", [])
+            if s.get("symbol") and s["symbol"] not in in_basket
+            and isinstance(s.get("market_cap"), (int, float)) and s["market_cap"] >= 2e9]
+    rng = random.Random(int(_dtt.now().strftime("%Y%m")))          # deterministic within the month
+    picks = rng.sample(pool, min(8, len(pool)))
+    (ROOT / "results_control").mkdir(exist_ok=True)
+    syms = []
+    for s in picks:
+        sym = s["symbol"]
+        syms.append(sym)
+        ms = "\n".join(f"{k}: {s.get(k)}" for k in
+                       ("price", "market_cap", "sector", "company_name", "revenue_yoy", "revenue_cagr_3y",
+                        "eps_yoy", "gross_margin", "net_margin", "roic_avg", "altman_z", "p_fcf",
+                        "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
+                        "iv15_deep_value_mos", "net_debt", "days_to_earnings") if s.get(k) is not None)
+        (ROOT / "inputs" / f"{sym}.json").write_text(json.dumps(
+            {"symbol": sym, "company": s.get("company_name", ""), "sector": s.get("sector", ""),
+             "signal_type": "control", "control": True,
+             "metrics_str": "=== CONTROL SAMPLE (random non-basket name; scan fields) ===\n" + ms},
+            ensure_ascii=False, indent=1), encoding="utf-8")
+    js = (ROOT / "_weekly_debate.js").read_text(encoding="utf-8")
+    import re
+    js = re.sub(r"const RES = DIR \+ '/results_regime'", "const RES = DIR + '/results_control'", js)
+    js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = []", js)
+    js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(syms), js)
+    js = re.sub(r"const RECHECK_SYMS = \[[^\]]*\]", "const RECHECK_SYMS = []", js)
+    js = js.split("phase('Director')")[0] + "log('Control sample complete (no Director).')\nreturn 'DONE'\n"
+    js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-control-sample'")
+    out = ROOT / "_control_debate.js"
+    out.write_text(js, encoding="utf-8")
+    print(f"control_sample: {len(syms)} random non-basket names {syms} -> results_control/")
+    print(f"CONTROL_WORKFLOW={out.resolve()}")
+    print("After the workflow: count results_control names with interrogator_score>=3 AND CRO MoS>=30% "
+          "= the funnel's false-negative (miss) rate this month.")
+    return len(syms)
 
 
 DISRUPTOR_DIR = ROOT / "disruptor"
@@ -1211,7 +1539,7 @@ def prep():
                                "industry": sc.get("industry", ""), "sector_class": sc.get("sector_class", ""),
                                "methodologies": meths,
                                **{k: sc.get(k) for k in _RADAR_FIELDS if sc.get(k) is not None}})
-        signal = "deep_value" if all(m in DEEP_VAL for m in meths if m != "apex") and any(m in DEEP_VAL for m in meths) else "catalyst"
+        signal = "deep_value" if all(m in VALUE_SIGNAL_METHS for m in meths if m != "apex") and any(m in VALUE_SIGNAL_METHS for m in meths) else "catalyst"
         (INP / f"{sym}.json").write_text(json.dumps({
             "symbol": sym, "sector": sc.get("sector", ""), "signal_type": signal,
             "company": sc.get("name") or sc.get("companyName") or "",
@@ -1262,21 +1590,52 @@ def prep():
     # to fetch transcripts online so we don't skip any pick"), pass them as ONLINE_SYMS so the debate
     # agent WebSearch/WebFetches the latest transcript/results. Their input bundles (with metrics +
     # company name) were already written above, so they debate with full fundamentals grounding.
+    # 11c — FORENSIC LEDGER: unexpired EXCLUDE names get a SHORT re-check, not a full
+    # I->A->CRO debate (the weekly self-clean wipes all memory, so known frauds/red-flags were
+    # burning a full debate every week to rediscover known facts). Entries expire after 8 weeks
+    # or on an earnings rollover (days_to_earnings jumped up vs when the entry was written).
+    recheck, recheck_info = [], {}
+    led_p = ROOT / "forensic_ledger.json"
+    if led_p.exists():
+        try:
+            from datetime import datetime as _dtt
+            led = json.load(open(led_p, encoding="utf-8"))
+            today_s = _dtt.now().strftime("%Y-%m-%d")
+            uni_syms = set(syms) | set(no_tx)
+            for s, ent in led.items():
+                if ent.get("gate") != "EXCLUDE" or s not in uni_syms:
+                    continue
+                if (ent.get("expires") or "") < today_s:
+                    continue                                   # TTL expired -> full debate again
+                dte_now = next((x.get("days_to_earnings") for x in radar_universe if x.get("symbol") == s), None)
+                dte_then = ent.get("days_to_earnings")
+                if isinstance(dte_now, (int, float)) and isinstance(dte_then, (int, float)) and dte_now > dte_then + 14:
+                    continue                                   # earnings happened since -> full debate again
+                recheck.append(s)
+                recheck_info[s] = {"date": ent.get("date", ""), "reason": ent.get("reason", "")}
+        except Exception as _e:
+            print(f"WARN: forensic ledger unreadable ({_e}) — all names get full debates")
+    syms = [s for s in syms if s not in recheck]
+    no_tx = [s for s in no_tx if s not in recheck]
+
     js = (_WORKFLOW_TEMPLATE
           .replace("__SYMS__", json.dumps(syms))
           .replace("__ONLINE_SYMS__", json.dumps(no_tx))
+          .replace("__RECHECK_SYMS__", json.dumps(recheck))
+          .replace("__RECHECK_INFO__", json.dumps(recheck_info))
           .replace("__N_RADAR__", str(len(radar_groups))))
     out = ROOT / "_weekly_debate.js"
     out.write_text(js, encoding="utf-8")
     print(f"PREP OK: {len(syms)} with FMP transcripts + {len(no_tx)} via online fetch "
-          f"= {len(syms) + len(no_tx)} total candidates (online: {no_tx})")
+          f"+ {len(recheck)} ledger re-checks = {len(syms) + len(no_tx) + len(recheck)} total candidates "
+          f"(online: {no_tx}{'; recheck: ' + str(recheck) if recheck else ''})")
     print(f"WORKFLOW_SCRIPT={out.resolve()}")
 
 
 _WORKFLOW_TEMPLATE = r"""export const meta = {
   name: 'speculair-opus-weekly',
   description: 'Weekly all-Opus regime debate (Radar peer-comps + Sum-of-Parts) over the per-methodology universe, then Director picks the apex basket',
-  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Debate' }, { title: 'Director' }],
+  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Debate', model: 'opus' }, { title: 'Director', model: 'fable' }],
 }
 const DIR = 'backend/_opus_debate'
 const RES = DIR + '/results_regime'
@@ -1311,32 +1670,43 @@ function debatePrompt(sym, online) {
     '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent).\n' +
     '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
     '5. CATALYST VERIFICATION (web, MANDATORY for every name): identify the load-bearing catalyst(s) and WebSearch their CURRENT status as of today. catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
-    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion.\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number.\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
-const ALL = SYMS.map(s => ({ sym: s, online: false })).concat(ONLINE_SYMS.map(s => ({ sym: s, online: true })))
-log(`Radar done. Weekly Opus debate over ${ALL.length} names (${SYMS.length} FMP + ${ONLINE_SYMS.length} online-fetch), then Director.`)
+// ── LEDGER RE-CHECKS: unexpired forensic-EXCLUDE names get a SHORT re-affirm pass, not a full debate ──
+const RECHECK_SYMS = __RECHECK_SYMS__
+const RECHECK_INFO = __RECHECK_INFO__
+function recheckPrompt(sym) {
+  const info = RECHECK_INFO[sym] || {}
+  return 'LEDGER RE-CHECK for ' + sym + ' (Claude Opus 4.8). This name was forensically EXCLUDED on ' + (info.date || 'a prior run') + ' (interrogator credibility <= 2: ' + (info.reason || 'see ledger') + '). Do NOT run a full debate. Read ' + DIR + '/inputs/' + sym + '.json, then WebSearch ONLY for material changes since ' + (info.date || 'the exclusion') + ' (new filings, restatements, management change, resolved investigations, a transformed balance sheet). If NOTHING material changed, re-affirm the exclusion in one paragraph. If something material DID change, say so and recommend a full re-debate next run.\n' +
+    'Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, verdict(="C" unless materially changed), conviction(int, keep 1-2 unless changed), value_conviction(int), catalyst_status(="UNVERIFIABLE" unless verified), interrogator_score(int, keep <=2 unless the forensic picture genuinely changed), trajectory, moderator_conclusion(the one-paragraph re-affirmation or the change note), bull_thesis(""), bear_thesis(""), sop_bull(""), sop_bear(""), sop_fair_value(""), sop_breakdown(""), risk_reward(""), peer_comps_note(""), consensus_delta(""), valley_of_death(""), positioning_washout(""), forcing_function(""), source(="ledger_recheck"), transcript_source(="web"). Reply exactly: DONE'
+}
+
+const ALL = SYMS.map(s => ({ sym: s, online: false, recheck: false }))
+  .concat(ONLINE_SYMS.map(s => ({ sym: s, online: true, recheck: false })))
+  .concat(RECHECK_SYMS.map(s => ({ sym: s, online: true, recheck: true })))
+log(`Radar done. Weekly Opus debate over ${ALL.length} names (${SYMS.length} FMP + ${ONLINE_SYMS.length} online-fetch + ${RECHECK_SYMS.length} ledger re-checks), then Director.`)
 phase('Debate')
 const BATCH = 8   // rate-limit safety: run 8 web-heavy agents at a time, not the full universe burst (429s).
 for (let b = 0; b < ALL.length; b += BATCH) {
   log(`Debate batch ${Math.floor(b / BATCH) + 1}/${Math.ceil(ALL.length / BATCH)} (names ${b + 1}-${Math.min(b + BATCH, ALL.length)} of ${ALL.length})`)
   await parallel(ALL.slice(b, b + BATCH).map(it => () => agent(
-    debatePrompt(it.sym, it.online),
-    { label: 'debate:' + it.sym + (it.online ? '(web)' : ''), phase: 'Debate', agentType: 'general-purpose' })))
+    it.recheck ? recheckPrompt(it.sym) : debatePrompt(it.sym, it.online),
+    { label: (it.recheck ? 'recheck:' : 'debate:') + it.sym + (it.online && !it.recheck ? '(web)' : ''), phase: 'Debate', agentType: 'general-purpose', model: 'opus' })))
 }
 
 phase('Director')
 await agent(
-  'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
+  'You are the SPECULAIR APEX DIRECTOR (Claude Fable 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off), (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet). No hidden factor may carry >3 names; stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries). Plus ~6 runner_ups and a director_memo stating the correlation-stress result.\n' +
+  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...]}. Reply exactly: DONE',
-  { label: 'director', phase: 'Director' })
+  { label: 'director', phase: 'Director', model: 'fable' })
 log('Radar + debate + director complete.')
 return 'DONE'
 """
@@ -1367,6 +1737,14 @@ if __name__ == "__main__":
         disruptor_universe()
     elif mode in ("disruptor-map-merge", "disruptor_map_merge"):
         disruptor_map_merge()
+    elif mode in ("value-skeptic", "value_skeptic"):
+        value_skeptic()
+    elif mode in ("shadow-debate", "shadow_debate"):
+        shadow_debate()
+    elif mode in ("shadow-diff", "shadow_diff"):
+        shadow_diff()
+    elif mode in ("control-sample", "control_sample"):
+        control_sample()
     elif mode == "value-publish":
         value_publish(push_gcs=("--gcs" in sys.argv))
     else:

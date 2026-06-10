@@ -93,6 +93,67 @@ def get_market(quote_syms, corr_syms, offline):
     return quotes, wr, asof
 
 
+# ───────────────────────── 8b — skeptic kill-tier consumption (fork b: REFUTED demotes) ─────────────────────────
+def consume_skeptic(apx):
+    """Merge _skeptic/<SYM>.json shards -> _skeptic_results.json and apply the verdicts.
+    Fork (b), Bruno's call: a REFUTED apex member is DEMOTED to the front of runner_ups — the second
+    sanctioned exception to P1 (mirroring Catalyst Watch, where REFUTED kills the line; a skeptic that
+    cannot demote is decoration). CONFIRMED_WITH_CORRECTIONS stamps the correction + conviction cap.
+    STALENESS GUARD: shards older than apex_basket_value.json are ignored (a stale verdict must never
+    demote a fresh basket). Idempotent: re-running re-applies the same verdicts to the same members."""
+    skep_dir = ROOT / "_skeptic"
+    if not skep_dir.is_dir():
+        return apx
+    apex_mtime = APEX_F.stat().st_mtime if APEX_F.exists() else 0
+    merged, stale = {}, []
+    for f in sorted(skep_dir.glob("*.json")):
+        try:
+            if f.stat().st_mtime < apex_mtime - 1:
+                stale.append(f.stem)
+                continue
+            d = json.load(open(f, encoding="utf-8"))
+            if d.get("symbol"):
+                merged[d["symbol"]] = d
+        except Exception as e:
+            print(f"WARN skeptic: shard {f.name} unreadable ({e})")
+    if stale:
+        print(f"skeptic: ignored {len(stale)} stale shard(s) older than the apex: {sorted(stale)}")
+    if not merged:
+        return apx
+    (ROOT / "_skeptic_results.json").write_text(json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
+    keep, demoted = [], []
+    for p in apx.get("apex_basket", []):
+        v = merged.get(p.get("symbol"))
+        if not v:
+            keep.append(p)
+            continue
+        p["skeptic_verdict"] = v.get("verdict", "")
+        if v.get("kill_fact"):
+            p["skeptic_kill_fact"] = v["kill_fact"]
+        if v.get("corrections"):
+            p["skeptic_corrections"] = v["corrections"]
+        if isinstance(v.get("value_conviction_cap"), (int, float)):
+            p["value_conviction_cap"] = v["value_conviction_cap"]
+        if (v.get("verdict") or "").upper() == "REFUTED":
+            p["skeptic_refuted"] = True
+            demoted.append(p)
+            print(f"WARN skeptic: {p['symbol']} REFUTED -> DEMOTED to runner_ups | kill_fact: {str(v.get('kill_fact', ''))[:160]}")
+        else:
+            keep.append(p)
+    if demoted:
+        dsyms = {d.get("symbol") for d in demoted}
+        apx["apex_basket"] = keep
+        apx["runner_ups"] = demoted + [r for r in (apx.get("runner_ups") or [])
+                                       if (r.get("symbol") if isinstance(r, dict) else r) not in dsyms]
+    # stamp runner-up verdicts too (informational)
+    for r in apx.get("runner_ups", []):
+        if isinstance(r, dict) and r.get("symbol") in merged and "skeptic_verdict" not in r:
+            r["skeptic_verdict"] = merged[r["symbol"]].get("verdict", "")
+    n_conf = sum(1 for v in merged.values() if (v.get("verdict") or "").upper().startswith("CONFIRMED"))
+    print(f"skeptic: {len(merged)} verdicts | confirmed={n_conf} refuted={len(demoted)} (demoted: {[d['symbol'] for d in demoted]})")
+    return apx
+
+
 # ───────────────────────── Fix 2 — CRO-only legs ─────────────────────────
 def stamp_cro_only(picks, gin):
     for p in picks:
@@ -291,6 +352,7 @@ def gate_sync(gin):
 def main():
     offline = "--offline" in sys.argv
     apx, gin = load()
+    apx = consume_skeptic(apx)                              # 8b fork (b): REFUTED demotes BEFORE weights
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     syms = [p["symbol"] for p in picks]
     quotes, weekly_rets, asof = get_market(syms, syms + ["XLY"], offline)
