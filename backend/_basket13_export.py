@@ -37,25 +37,31 @@ def main():
         d["cro_live_edge_check"] = cro_check.get(e["symbol"], "")
         # expected return % on the UNDERLYING (comparable with the live/realized marks):
         # binaries -> the CRO's recomputed EV; ratio names -> move to the fair-value target.
+        # Pending (resting-limit) seats price the expectation off the LIMIT (the only fill price).
+        basis = d.get("entry_price") or d.get("limit_price")
         if isinstance(d.get("expected_ev"), (int, float)):
             d["expected_return_pct"] = round(d["expected_ev"] * 100, 1)
-        elif d.get("fair_value_target") and d.get("entry_price"):
-            d["expected_return_pct"] = round((d["fair_value_target"] / d["entry_price"] - 1) * 100, 1)
+        elif d.get("fair_value_target") and basis:
+            d["expected_return_pct"] = round((d["fair_value_target"] / basis - 1) * 100, 1)
         else:
             d["expected_return_pct"] = None
         entries.append(d)
 
-    opene = [e for e in entries if not e.get("resolution")]
+    unresolved = [e for e in entries if not e.get("resolution")]
+    opene = [e for e in unresolved if e.get("status") != "PENDING_LIMIT"]
+    pend = [e for e in unresolved if e.get("status") == "PENDING_LIMIT"]
     drv, clus = {}, {}
-    for e in opene:
+    for e in unresolved:                # caps count pending as-if-filled
         drv[e["resolution_driver"]] = drv.get(e["resolution_driver"], 0) + 1
         clus[e["super_cluster"]] = round(clus.get(e["super_cluster"], 0.0) + (e["weight_pct"] or 0), 2)
     invested = round(sum(e["weight_pct"] or 0 for e in opene), 2)
+    pending_w = round(sum(e["weight_pct"] or 0 for e in pend), 2)
 
     payload = {
         "generated": datetime.date.today().isoformat(),
         "invested_pct": invested,
-        "cash_pct": round(100 - invested, 2),
+        "pending_pct": pending_w,
+        "cash_pct": round(100 - invested - pending_w, 2),
         "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT,
                  "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
         "driver_utilization": dict(sorted(drv.items(), key=lambda kv: -kv[1])),

@@ -11,8 +11,8 @@ import { BASKET13 } from "../data/basket13";
 
 // ── Basket 13 (catalyst sleeve, paper) — open seats keyed by symbol for chips ──
 const B13: any = BASKET13 || {};
-const B13_SEATS: Record<string, any> = {};
-(B13.entries || []).forEach((e: any) => { if (!e.resolution) B13_SEATS[e.symbol] = e; });
+const B13_SEATS: Record<string, any> = {};   // held seats only — resting limits are not positions
+(B13.entries || []).forEach((e: any) => { if (!e.resolution && e.status !== "PENDING_LIMIT") B13_SEATS[e.symbol] = e; });
 const fmtB13Expr = (e: any) => {
   const x = e?.expression || {};
   const t = String(x.type || "equity").replace(/_/g, " ");
@@ -1029,7 +1029,7 @@ export default function CatalystWatch() {
                   <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: T.blue }}>⬡ BASKET 13 — CATALYST SLEEVE</span>
                   <span style={{ fontSize: 8, fontWeight: 700, padding: "1px 6px", borderRadius: 3, background: "rgba(217,151,6,0.14)", color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", textTransform: "uppercase" }}>paper · calibration</span>
                   <span style={{ fontSize: 10, fontFamily: T.mono, color: T.light }}>
-                    {open.length} seats · {B13.invested_pct}% invested · {B13.cash_pct}% cash · {resolved.length} resolved
+                    {open.filter((e: any) => e.status !== "PENDING_LIMIT").length} seats · {B13.invested_pct}% invested{B13.pending_pct ? ` · ${B13.pending_pct}% resting-limit` : ""} · {B13.cash_pct}% cash · {resolved.length} resolved
                   </span>
                   <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, marginLeft: "auto" }}>run {B13.generated} {b13Open ? "▾" : "▸"}</span>
                 </div>
@@ -1063,7 +1063,7 @@ export default function CatalystWatch() {
                               <td style={{ padding: "5px 8px", color: T.light }}>{String(e.lane_canon || "").replace(/_/g, " ")}</td>
                               <td style={{ padding: "5px 8px", color: T.purple }}>{String(e.resolution_driver || "").replace(/_/g, " ")}</td>
                               <td style={{ padding: "5px 8px", color: T.green }}>{fmtB13RR(e)}</td>
-                              <td style={{ padding: "5px 8px", color: T.light }} title={`edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"}`}>{e.entry_date} @ {e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}</td>
+                              <td style={{ padding: "5px 8px", color: e.status === "PENDING_LIMIT" ? "#d97706" : T.light }} title={e.status === "PENDING_LIMIT" ? `Resting limit since ${e.order_date} — live price at stamp exceeded the CRO entry limit; fills when the close trades ≤ ${e.limit_price}. Not held; no NAV impact.` : `edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"} · risk-to-floor ${e.risk_to_floor_pct ?? "—"}%${e.hedge ? ` · hedge ${e.hedge.ratio} ${e.hedge.symbol}` : ""}`}>{e.status === "PENDING_LIMIT" ? `⏳ RESTING ≤ ${e.limit_price}` : `${e.entry_date} @ ${e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}`}{e.hedge ? <span style={{ marginLeft: 4, fontSize: 8, color: T.muted }}>hedged</span> : null}</td>
                               <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.review_trigger || ""}>{e.review_trigger || "—"}</td>
                               <td style={{ padding: "5px 8px" }}>
                                 {(e.cro_conditions || []).length > 0
@@ -1148,7 +1148,7 @@ export default function CatalystWatch() {
 
               {/* TRACK RECORD — the proof ledger: NAV curve + expected vs actual per seat */}
               {(() => {
-                const all = [...open, ...resolved];
+                const all = [...open.filter((e: any) => e.status !== "PENDING_LIMIT"), ...resolved];
                 // per-seat actual % on the underlying: resolved = frozen realized; open = live quote vs entry
                 const actualOf = (e: any): number | null => {
                   if (e.resolution) return e.resolution.realized_return_pct != null ? e.resolution.realized_return_pct * 100 : null;

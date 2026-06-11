@@ -1,11 +1,16 @@
 {
- "header": "Basket 13 catalyst sleeve — append-only event-resolution tracker. Positions RESOLVE, they do not rebalance. Every entry must eventually carry exactly one resolution; non-selections are recorded for selection calibration. The • dials (entry edge thresholds 2.5/1.5, lane tilt 0.12, lane priors, and the cap dials in _basket13_inject.py) are STARTING VALUES, re-fit QUARTERLY from the realized hit-rate / realized-vs-expected R:R / slippage analytics emitted by `report` — not constants.",
+ "header": "Basket 13 catalyst sleeve — append-only event-resolution tracker. Positions RESOLVE, they do not rebalance. Every entry must eventually carry exactly one resolution; non-selections are recorded for selection calibration. Entry prices are the CRO-verified LIVE prices (entry_price_source on each stamp); CRO entry limits are enforced at stamp time (PENDING_LIMIT, no fiction fills). The • dials (entry edge thresholds 2.5/1.5, lane tilt 0.12, lane priors, and the cap dials in _basket13_inject.py) are STARTING VALUES, re-fit QUARTERLY from the realized analytics emitted by `report` — not constants.",
  "entries": [
   {
    "symbol": "GDOT",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
    "entry_price": 12.75,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 14,
+   "risk_to_floor_pct": 1.043,
    "score": 7.0,
    "board_priority": 6.4,
    "edge_grade": "M",
@@ -22,6 +27,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": 1.56,
    "expected_ev": null,
    "invalidation": "Deal termination or a material regulatory objection; price through the $11.80 floor signals the market pricing a break.",
@@ -31,9 +37,14 @@
   },
   {
    "symbol": "UNF",
-   "entry_date": "2026-06-10",
-   "entry_price": 264.07,
+   "status": "PENDING_LIMIT",
+   "order_date": "2026-06-10",
+   "entry_date": null,
+   "entry_price": null,
+   "entry_price_source": "cro_live_check",
+   "limit_price": 267.0,
    "weight_pct": 8,
+   "risk_to_floor_pct": 0.272,
    "score": 7.0,
    "board_priority": 6.4,
    "edge_grade": "M",
@@ -50,6 +61,12 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": {
+    "symbol": "CTAS",
+    "ratio": -0.772,
+    "price_at_entry": 179.87,
+    "basis": "Hedge the share-ratio leg: short 0.7720 CTAS per UNF to isolate the ~$23/sh cash+spread"
+   },
    "expected_rr": 1.86,
    "expected_ev": null,
    "invalidation": "HSR second request that materially derails the timeline, or deal repriced/terminated — a break trades well below the symmetric floor (200d avg $209).",
@@ -59,9 +76,14 @@
   },
   {
    "symbol": "FIP",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 4.52,
+   "entry_price": 4.56,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 10,
+   "risk_to_floor_pct": 1.447,
    "score": 8.0,
    "board_priority": 7.76,
    "edge_grade": "M",
@@ -78,6 +100,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": 6.73,
    "expected_ev": null,
    "invalidation": "Refi/de-levering fails to materialize in Q3, or price loses the $3.90 floor — the one market-tested level in the thesis; the $0.66 denominator makes the edge hypersensitive above ~$4.80.",
@@ -87,9 +110,14 @@
   },
   {
    "symbol": "FIG",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 21.1,
+   "entry_price": 20.49,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 5,
+   "risk_to_floor_pct": 0.73,
    "score": 4.0,
    "board_priority": 4.0,
    "edge_grade": "H",
@@ -106,6 +134,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": 3.85,
    "expected_ev": null,
    "invalidation": "Final-unlock date slips materially or remaining locked supply is larger than modeled; close below the $17.50 floor kills the mean-reversion setup.",
@@ -115,9 +144,14 @@
   },
   {
    "symbol": "BLCO",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 15.18,
+   "entry_price": 15.65,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 5,
+   "risk_to_floor_pct": 1.23,
    "score": 5.0,
    "board_priority": 5.0,
    "edge_grade": "H",
@@ -134,6 +168,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": 2.94,
    "expected_ev": null,
    "invalidation": "BHC restructures around the stake with no disposition path (overhang becomes permanent), or the $11.80 floor breaks.",
@@ -143,9 +178,14 @@
   },
   {
    "symbol": "CELC",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 87.43,
+   "entry_price": 92.59,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 1.5,
+   "risk_to_floor_pct": null,
    "score": 8.0,
    "board_priority": 7.04,
    "edge_grade": "H",
@@ -164,6 +204,7 @@
     "expiry": "2026-09-18",
     "strikes": "buy $95C / sell $155C"
    },
+   "hedge": null,
    "expected_rr": null,
    "expected_ev": 0.501,
    "invalidation": "Primary-endpoint miss on the 7/17 readout — spread premium is the full and only loss.",
@@ -172,40 +213,15 @@
    "resolution": null
   },
   {
-   "symbol": "EYPT",
-   "entry_date": "2026-06-10",
-   "entry_price": 11.45,
-   "weight_pct": 2,
-   "score": 6.5,
-   "board_priority": 5.54,
-   "edge_grade": "H",
-   "computed_rr": null,
-   "ev_pct": 1.1572,
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "downside_floor": 5.5,
-   "fair_value_target": 37.5,
-   "dated_milestone": "2026-07-31",
-   "staging": false,
-   "expression": {
-    "type": "debit_spread",
-    "expiry": "2026-10-16",
-    "strikes": "buy $12.5C / sell $35C"
-   },
-   "expected_rr": null,
-   "expected_ev": 1.157,
-   "invalidation": "Trial failure, or readout slipping past the Oct expiry without a re-dated guide (LUCIA timing pushes the window) — premium is the full loss.",
-   "review_trigger": "Topline guided from August 2026 (board tag 2026-07-31); re-check guidance at the August start.",
-   "cro_verdict": "TRADE_WITH_CONDITIONS",
-   "resolution": null
-  },
-  {
    "symbol": "VRDN",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 15.73,
+   "entry_price": 16.31,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 2,
+   "risk_to_floor_pct": null,
    "score": 6.0,
    "board_priority": 5.04,
    "edge_grade": "H",
@@ -224,6 +240,7 @@
     "expiry": "2026-08-21",
     "strikes": "buy $17.5C / sell $35C"
    },
+   "hedge": null,
    "expected_rr": null,
    "expected_ev": 1.05,
    "invalidation": "CRL or negative FDA decision on 6/30 — premium is the full loss.",
@@ -233,9 +250,14 @@
   },
   {
    "symbol": "AQST",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 3.91,
+   "entry_price": 3.99,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 4.5,
+   "risk_to_floor_pct": 1.398,
    "score": 6.5,
    "board_priority": 5.54,
    "edge_grade": "H",
@@ -252,6 +274,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": null,
    "expected_ev": 0.698,
    "invalidation": "Resubmission slips past Q3-2026 or a new CRL-grade deficiency is disclosed; price through the $2.75 floor.",
@@ -261,9 +284,14 @@
   },
   {
    "symbol": "WVE",
+   "status": "OPEN",
+   "order_date": "2026-06-10",
    "entry_date": "2026-06-10",
-   "entry_price": 5.7,
+   "entry_price": 5.78,
+   "entry_price_source": "cro_live_check",
+   "limit_price": null,
    "weight_pct": 3.5,
+   "risk_to_floor_pct": 1.381,
    "score": 6.0,
    "board_priority": 5.04,
    "edge_grade": "H",
@@ -280,6 +308,7 @@
    "expression": {
     "type": "equity"
    },
+   "hedge": null,
    "expected_rr": null,
    "expected_ev": 0.206,
    "invalidation": "FDA declines the accelerated pathway or the AATD program is deprioritized; floor break at $3.50.",
@@ -423,66 +452,89 @@
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_clinical_readout"
+  },
+  {
+   "symbol": "EYPT",
+   "date": "2026-06-10",
+   "passed_because": "EXCLUDED AT STAMP: blocking CRO condition failed/unverifiable at stamp time (= order time): required chosen-strike OI > 500 on the Oct-16 12.5/35 calls; the read-only feed has no per-strike chain endpoint and the whole EYPT chain averages 42 calls/day (148 traded 6/10, IBKR) — an OI>500 strike cannot be evidenced. PVLA standard applied (same class of unverifiable condition, same treatment); the equity fallback is barred by the binaries-defined-risk hard cap (non-staging binary_prob).",
+   "score": 6.5,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_clinical_readout"
   }
  ],
  "runs": [
   {
    "run_date": "2026-06-10",
-   "n_picks": 10,
-   "n_passed": 15,
-   "n_added": 10,
+   "stamped_at": "2026-06-11",
+   "restamp": true,
+   "n_picks": 9,
+   "n_passed": 16,
+   "n_added": 8,
+   "n_pending": 1,
+   "n_excluded_at_stamp": 1,
    "n_skipped_open": 0,
    "cap_violations": 0,
+   "retags": [
+    {
+     "symbol": "WVE",
+     "from": "FDA_approval_decision",
+     "to": "FDA_pathway_feedback",
+     "authority": "Director (CRO-conditioned)"
+    }
+   ],
    "memo": "Basket 13 holds 10 names, 55.5% of NAV invested, balance cash by construction. Cluster mix on invested weight: Deal-completion 22.0 (39.6%), Idiosyncratic 20.0 (36.0%), FDA/biotech 13.5 (24.3%) — all under the 40% cap. Driver spread: 7 distinct drivers, none above 2 names. Shape: a floor-bounded ratio-carry core (GDOT 14, FIP 10, UNF 8, FIG 5, BLCO 5 — each sized to <=1.5% NAV risk-to-floor) funds a strip of dated defined-risk binaries (CELC/EYPT/VRDN debit spreads, 5.5 points of premium, each clearing its milestone by +1 monthly and sized off EV not payoff) plus two staging-equity binaries (AQST 4.5, WVE 3.5) held under the half-weight rule with floor-risk <=1.5% so their NAV-at-risk matches the binary premium cap. Why not ~100: the pool spans only 7 drivers, so the <=2-per-driver cap allows at most ~10 seats, and the binary 2% / staging half-weight / risk-to-floor caps bound those seats — the structural maximum is ~67 invested even stretching into weaker names (BBIO/VIR equity bulk over VRDN/EYPT); I took 55.5 with the stronger seats rather than bulk weight into thinner edge. Adjudications of record: MGNI/BLCO dupe resolved by passing MGNI (edge >90% compressed on an unexplained pop); WVE re-tagged FDA_pathway_feedback per explicit CRO condition, keeping the approval driver at two (VRDN, AQST); BBIO and VIR are the named first alternates if an approval or readout seat opens. Dated ratio names (GDOT/UNF/FIP, all <=6 months) are recorded as equity per CRO instruments — the defined-risk-option rule is enforced on the binaries, where the floor does not bound the loss; for the spreads/recovery names the deal floor is the risk definition and the 1.5% floor-risk cap is the binding control. CRO entry limits recorded where conditioned (UNF <=$267, FIP <=$4.80, EYPT OI/spread check at order time).\""
   }
  ],
  "marks": [
   {
    "date": "2026-06-10",
-   "nav": 100.652,
-   "basket_ret_pct": 0.652,
+   "nav": 100.0,
+   "basket_ret_pct": 0.0,
+   "seats": {},
+   "note": "inception — entries stamped at CRO-verified live prices"
+  },
+  {
+   "date": "2026-06-11",
+   "nav": 99.013,
+   "basket_ret_pct": -0.987,
    "seats": {
     "GDOT": {
-     "price": 12.75,
-     "ret_pct": 0.0
-    },
-    "UNF": {
-     "price": 270.48,
-     "ret_pct": 2.43
+     "price": 12.87,
+     "ret_pct": 0.94
     },
     "FIP": {
-     "price": 4.56,
-     "ret_pct": 0.88
+     "price": 4.28,
+     "ret_pct": -6.14
     },
     "FIG": {
-     "price": 20.49,
-     "ret_pct": -2.89
+     "price": 19.79,
+     "ret_pct": -3.42
     },
     "BLCO": {
-     "price": 15.65,
-     "ret_pct": 3.1
+     "price": 15.26,
+     "ret_pct": -2.49
     },
     "CELC": {
-     "price": 92.59,
-     "ret_pct": 5.9
-    },
-    "EYPT": {
-     "price": 11.77,
-     "ret_pct": 2.79
+     "price": 88.24,
+     "ret_pct": -4.7
     },
     "VRDN": {
-     "price": 16.31,
-     "ret_pct": 3.69
+     "price": 15.77,
+     "ret_pct": -3.31
     },
     "AQST": {
      "price": 3.99,
-     "ret_pct": 2.05
+     "ret_pct": 0.0
     },
     "WVE": {
-     "price": 5.78,
-     "ret_pct": 1.4
+     "price": 5.66,
+     "ret_pct": -2.08
     }
-   }
+   },
+   "pending": [
+    "UNF"
+   ]
   }
  ]
 }
