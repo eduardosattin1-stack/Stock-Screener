@@ -99,9 +99,7 @@ def get_theta_client():
             email = os.environ.get("THETA_EMAIL")
             password = os.environ.get("THETA_PASSWORD")
             if not (email and password):
-                log.warning("ThetaData creds from legacy literals — set THETA_EMAIL/THETA_PASSWORD")
-                email = "carbonbridge.tech@gmail.com"
-                password = "Sccp1985r"
+                raise RuntimeError("THETA_EMAIL / THETA_PASSWORD env vars not set")
             _client = ThetaClient(
                 email=email,
                 password=password,

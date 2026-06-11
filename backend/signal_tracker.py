@@ -1230,8 +1230,8 @@ def _enrich_stocks_with_theta_eod(stocks: list[dict], today_str: str, is_60d: bo
 
     try:
         client = ThetaClient(
-            email="carbonbridge.tech@gmail.com",
-            password="Sccp1985r",
+            email=os.environ["THETA_EMAIL"],
+            password=os.environ["THETA_PASSWORD"],
         )
     except Exception as e:
         log.error(f"_enrich_stocks_with_theta_eod: ThetaData client init failed: {e}")
@@ -1534,7 +1534,7 @@ def _enrich_stocks_with_long_call_legs(stocks: list[dict], today_str: str, regim
         return
 
     try:
-        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+        client = ThetaClient(email=os.environ["THETA_EMAIL"], password=os.environ["THETA_PASSWORD"])
     except Exception as e:
         log.error(f"_enrich_stocks_with_long_call_legs: ThetaData client init failed: {e}")
         return
@@ -1946,7 +1946,7 @@ def _refresh_call_chains(symbols: set, today_str: str) -> dict:
                 _eod_date -= _dt.timedelta(days=1)
 
     try:
-        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+        client = ThetaClient(email=os.environ["THETA_EMAIL"], password=os.environ["THETA_PASSWORD"])
     except Exception as e:
         log.error(f"_refresh_call_chains: client init failed: {e}")
         return {}
@@ -2009,7 +2009,7 @@ def _refresh_underlying_eod(symbol_entry: dict, today_str: str) -> dict:
         log.warning("_refresh_underlying_eod: ThetaData SDK unavailable, using close-based extremes")
         return {}
     try:
-        client = ThetaClient(email="carbonbridge.tech@gmail.com", password="Sccp1985r")
+        client = ThetaClient(email=os.environ["THETA_EMAIL"], password=os.environ["THETA_PASSWORD"])
     except Exception as e:
         log.error(f"_refresh_underlying_eod: client init failed: {e}")
         return {}
@@ -2389,8 +2389,8 @@ def reprice_open_contracts():
 
     try:
         client = ThetaClient(
-            email="carbonbridge.tech@gmail.com",
-            password="Sccp1985r",
+            email=os.environ["THETA_EMAIL"],
+            password=os.environ["THETA_PASSWORD"],
         )
     except Exception as e:
         log.error(f"reprice: ThetaData client init failed: {e}")
