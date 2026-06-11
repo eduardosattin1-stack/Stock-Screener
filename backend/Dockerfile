@@ -15,5 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY *.py ./
 COPY strategy_allowlists/ ./strategy_allowlists/
 COPY alpha_compounder/ ./alpha_compounder/
-COPY time_model_v2.pkl time_model_v3.pkl ./
+COPY time_model_v*.pkl time_model_v4_meta.json ./
 CMD ["python", "run_server.py"]
