@@ -560,6 +560,8 @@ def _stage_pending_entries(stocks: list, scan_date: str, cfg: RegimeCfg,
             continue
         if (cfg.name, sym) in pending_keys or sym in open_symbols:
             continue
+        iv_raw = s.get("iv_current")
+        ivr_raw = s.get("iv_rank")
         pending.append({
             "record_id": f"{cfg.name}:{sym}:{scan_date}",
             "regime": cfg.name,
@@ -568,6 +570,8 @@ def _stage_pending_entries(stocks: list, scan_date: str, cfg: RegimeCfg,
             "p": round(p, 4),
             "decile": _decile_from_edges(p, edges),
             "sector": s.get("sector"),
+            "iv_entry": round(float(iv_raw), 4) if iv_raw is not None else None,
+            "ivr_entry": round(float(ivr_raw), 1) if ivr_raw is not None else None,
             "attempts": 0,
             "staged_at": now_iso,
         })
@@ -613,6 +617,8 @@ def _activate_pending_entries(cfg: RegimeCfg, as_of: str, pending: list,
                 "barrier_price": round(entry_price * (1.0 + cfg.barrier_pct / 100.0), 6),
                 "window_bars": cfg.window_bars,
                 "model_version": config.get("model_version"),
+                "iv_entry": pend.get("iv_entry"),
+                "ivr_entry": pend.get("ivr_entry"),
                 "status": "OPEN",
                 "bars_elapsed": 0,
                 "last_bar_date": scan_date,
@@ -919,6 +925,8 @@ def _build_calib_records(records_by_regime: dict, as_of: str) -> list:
             "decile_60d": r60.get("decile") if r60 else None,
             "bars_elapsed_30d": r30.get("bars_elapsed") if r30 else None,
             "bars_elapsed_60d": r60.get("bars_elapsed") if r60 else None,
+            "iv_entry": base.get("iv_entry"),
+            "ivr_entry": base.get("ivr_entry"),
             "max_high_pct": round(max(float(r.get("max_high_pct") or 0.0)
                                       for r in (r30, r60) if r), 4),
             "max_dd_pct": round(min(float(r.get("max_drawdown_pct") or 0.0)

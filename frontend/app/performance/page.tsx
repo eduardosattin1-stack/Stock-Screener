@@ -22,6 +22,8 @@ interface CalibRecord {
   decile_60d: number | null;
   bars_elapsed_30d: number | null;
   bars_elapsed_60d: number | null;
+  iv_entry: number | null;
+  ivr_entry: number | null;
   max_high_pct: number;
   max_dd_pct: number;
   state_30d: RecState | null;
@@ -417,7 +419,7 @@ function TouchCurve({ horizons }: { horizons: CalibrationV2["horizons"] }) {
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — Per-record table (HARD RULE: one row per pick)
 // ══════════════════════════════════════════════════════════════════════════════
-type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "d30" | "d60" | "bars" | "maxplus" | "maxminus";
+type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "d30" | "d60" | "bars" | "iv" | "ivr" | "maxplus" | "maxminus";
 
 function SortTh({ label, k, sortKey, sortDir, onSort, style, title }: {
   label: string; k: RecSortKey; sortKey: RecSortKey; sortDir: "asc" | "desc";
@@ -473,6 +475,8 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
       : sortKey === "d30" ? (r.decile_30d ?? -1)
       : sortKey === "d60" ? (r.decile_60d ?? -1)
       : sortKey === "bars" ? (barsOf(r) ?? -1)
+      : sortKey === "iv" ? (r.iv_entry ?? -1)
+      : sortKey === "ivr" ? (r.ivr_entry ?? -1)
       : sortKey === "maxplus" ? r.max_high_pct
       : r.max_dd_pct;
     const arr = [...filtered];
@@ -557,6 +561,8 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                 <SortTh label="D30" k="d30" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Decile under the 30d/+10% regime (v4 OOS thresholds)" style={{ textAlign: "right" }} />
                 <SortTh label="D60" k="d60" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Decile under the 60d/+20% regime (v4 OOS thresholds)" style={{ textAlign: "right" }} />
                 <SortTh label="Bars" k="bars" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Trading bars elapsed since entry (entry bar excluded)" style={{ textAlign: "right" }} />
+                <SortTh label="IV" k="iv" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="ATM implied volatility at entry" style={{ textAlign: "right" }} />
+                <SortTh label="IVR" k="ivr" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="IV Rank at entry (0–100)" style={{ textAlign: "right" }} />
                 <SortTh label="Max+" k="maxplus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right" }}>State 30d</th>
@@ -582,6 +588,12 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                   <td style={{ ...td, textAlign: "right", color: (r.decile_30d ?? 0) >= 8 ? T.text : T.muted, fontWeight: (r.decile_30d ?? 0) >= 8 ? 700 : 400 }}>{r.decile_30d ?? "—"}</td>
                   <td style={{ ...td, textAlign: "right", color: (r.decile_60d ?? 0) >= 8 ? T.text : T.muted, fontWeight: (r.decile_60d ?? 0) >= 8 ? 700 : 400 }}>{r.decile_60d ?? "—"}</td>
                   <td style={{ ...td, textAlign: "right", color: T.muted }}>{barsOf(r) != null ? `${barsOf(r)} bars` : "—"}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>
+                    {r.iv_entry != null ? `${(r.iv_entry * 100).toFixed(0)}%` : "—"}
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: r.ivr_entry != null && r.ivr_entry >= 50 ? T.amber : T.muted }}>
+                    {r.ivr_entry != null ? `${r.ivr_entry.toFixed(0)}` : "—"}
+                  </td>
                   <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{r.max_high_pct.toFixed(1)}%</td>
                   <td style={{ ...td, textAlign: "right", color: T.red }}>{r.max_dd_pct.toFixed(1)}%</td>
                   <td style={{ ...td, textAlign: "right" }}><StateChip state={r.state_30d} bars={r.bars_elapsed_30d} K={30} /></td>
