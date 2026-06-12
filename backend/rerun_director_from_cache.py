@@ -29,6 +29,12 @@ if hasattr(sys.stdout, "reconfigure"):
 def main() -> int:
     load_api_keys()
 
+    # Force the Director past its cost-guard for this manual review re-run. The guard
+    # (live_debate_engine L~1515) otherwise holds the basket because director_last_run is
+    # recent; cadence 0 makes `days_since < cadence` always False → the Director runs.
+    # One-off ~EUR20 opus call, intentional (applies the tightened G3b to the live basket).
+    E.DIRECTOR_CADENCE_DAYS = 0
+
     # Latest cached transcript date per symbol (only entries with a real thesis).
     cache = load_debate_cache()
     by_sym: dict[str, str] = {}

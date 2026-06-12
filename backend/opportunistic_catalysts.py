@@ -1298,7 +1298,7 @@ JSON STRUCTURE:
         
         # Clean response text and parse JSON
         cleaned_text = clean_json_string(response_text)
-        parsed_json = json.loads(cleaned_text)
+        parsed_json = json.loads(cleaned_text, strict=False)  # strict=False tolerates control chars in string values
         
         # Merger Arbitrage post-processing & live math enrichment
         if parsed_json.get("is_merger_arb") or parsed_json.get("merger_arb_data"):

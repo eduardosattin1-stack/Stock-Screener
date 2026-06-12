@@ -211,7 +211,7 @@ export default function MLPicks() {
 
   return (
     <div style={{ minHeight: "100vh", background: T.bg, padding: "24px 24px 80px" }}>
-      <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 4 }}>
           <Target size={20} style={{ color: T.green, marginTop: 2 }} />
@@ -279,24 +279,24 @@ export default function MLPicks() {
 
             {/* Compact table */}
             <div style={{ overflowX: "auto", border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 720 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 720, tableLayout: "fixed" }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                    <th style={{ ...hdr, textAlign: "center", width: 36 }}>#</th>
-                    <th style={{ ...hdr, textAlign: "left" }}>Symbol</th>
-                    <th style={hdr}>Price</th>
+                    <th style={{ ...hdr, textAlign: "center", width: 40 }}>#</th>
+                    <th style={{ ...hdr, textAlign: "left", width: 340 }}>Symbol</th>
+                    <th style={{ ...hdr, width: 100 }}>Price</th>
                     <th
                       onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
                       title="Click to flip sort direction"
-                      style={{ ...hdr, color: T.text, cursor: "pointer", background: "var(--green-light)" }}
+                      style={{ ...hdr, width: 120, color: T.text, cursor: "pointer", background: "var(--green-light)" }}
                     >
                       {focusLabel}{sortDir === "desc" ? " ↓" : " ↑"}
                     </th>
-                    <th style={{ ...hdr, textAlign: "center" }} title="Decile of the focused probability among quality-passed names (10 = top 10%)">Decile</th>
-                    <th style={hdr} title={`Expected max drawdown over ${horizon} days`}>Exp.DD</th>
-                    <th style={hdr} title="ATM implied volatility — a model input (options_iv_current)">IV</th>
-                    <th style={hdr} title="IV Rank — current IV vs its 52-week range (0 = cheap, 100 = rich). Populates once the thetadata IV-history pipeline is live.">IVR</th>
-                    <th style={{ ...hdr, width: 28 }} />
+                    <th style={{ ...hdr, textAlign: "center", width: 90 }} title="Decile of the focused probability among quality-passed names (10 = top 10%)">Decile</th>
+                    <th style={{ ...hdr, width: 100 }} title={`Expected max drawdown over ${horizon} days`}>Exp.DD</th>
+                    <th style={{ ...hdr, width: 88 }} title="ATM implied volatility — a model input (options_iv_current)">IV</th>
+                    <th style={{ ...hdr, width: 82 }} title="IV Rank — current IV vs its 52-week range (0 = cheap, 100 = rich). Populates once the thetadata IV-history pipeline is live.">IVR</th>
+                    <th style={{ ...hdr, width: 40 }} />
                   </tr>
                 </thead>
                 <tbody>

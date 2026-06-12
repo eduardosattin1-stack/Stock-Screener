@@ -249,3 +249,84 @@ We successfully resolved compilation/syntax errors in the frontend app, finalize
 * **Search & Sorting Deployment:**
   * Deployed the frontend fixes to `main` branch to trigger remote build and Vercel hosting.
   * The prediction list tables now display a dynamic search input that filters by symbol and company name, along with header-click sorting for probability (`P20` / `P10`), `MAX%`, `MIN%`, `DTE`, and `IV`.
+
+---
+
+## 6. FMP Offline Company Profiles Caching & Quantitative Backtest Sweep (2026-05-29)
+
+We successfully added the `"profile"` endpoint to the FMP Expanded Universe Scraper, populated the local offline cache with 2,855 company profile files, and verified the entire baseline suite by running the vectorized BEX monthly backtest engine across all 19 quantitative methodologies.
+
+### Key Accomplishments
+* **`profile` Endpoint Caching Integration:**
+  * Inserted the `"profile"` endpoint as the first entry in the `endpoints` list inside [download_fmp_expanded.py](file:///c:/Users/Bruno/Stock-Screener/backend/download_fmp_expanded.py#L240-L245) to cache company profiles (needed for offline sector/industry/ipoDate classification and G4 gate compliance).
+  * Optimized [download_fmp_expanded.py](file:///c:/Users/Bruno/Stock-Screener/backend/download_fmp_expanded.py#L430) to skip force-refreshing of annual statements if they are already cached at 15 years, ensuring subsequent scans only fetch missing endpoints.
+* **Universe Scraper Run:**
+  * Re-ran the optimized expanded scraper over the **3,204** symbols universe.
+  * The scraper finished in exactly **1.9 minutes**, downloading **2,855** company profile JSON files under `backend/fmp_cache/profile/{SYM}.json` with **0 errors** (all other statement endpoints were skipped successfully with **83,653** cache hits).
+* **BEX Backtest Baseline Validation:**
+  * Successfully executed [bex_backtest_engine.py](file:///c:/Users/Bruno/Stock-Screener/backend/backtest_v9/bex_backtest_engine.py) to run vectorized monthly backtests across all **19** discovered quantitative methodologies in the expanded universe.
+  * Verified that BEX loads the newly cached company profiles to construct a sector map for sector capping.
+  * Outputted a complete performance matrix of CAGR, Sharpe ratios, and drawdowns, showing that the system is fully operational offline.
+
+### Vectorized Backtest Sweep Performance Matrix
+The BEX backtest engine completed a comprehensive sweep of all 19 strategies:
+
+| Methodology | CAGR | Sharpe | Max Drawdown | Total Trades | Win Rate | Final Value ($) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **emerging/option_implied_valuation** | **16.92%** | **0.993** | -21.99% | 1916 | 60.4% | $413,708.70 |
+| **emerging/rd_capitalized_dcf** | **16.84%** | **0.968** | -23.61% | 1461 | 66.2% | $462,092.50 |
+| **v8fusion/garp_composite** | **15.36%** | **0.945** | -22.77% | 1043 | 69.7% | $268,668.22 |
+| **intrinsic/residual_income** | 15.29% | 0.868 | -27.79% | 1365 | 64.1% | $410,150.99 |
+| **multiples/acquirers_multiple** | 15.14% | 0.796 | -36.41% | 1507 | 66.6% | $390,627.59 |
+| **intrinsic/owner_earnings** | 14.73% | 0.841 | -24.51% | 1377 | 68.5% | $377,497.59 |
+| **v8fusion/iv15_deep_value** | 14.39% | 0.820 | -27.30% | 1553 | 67.7% | $379,222.12 |
+| **emerging/ml_growth_compounder_options** | 14.38% | 0.783 | -26.01% | 1571 | 64.3% | $338,802.31 |
+| **intrinsic/epv_greenwald** | 14.36% | 0.817 | -25.23% | 1364 | 70.0% | $365,805.82 |
+| **intrinsic/graham_number** | 14.05% | 0.842 | -26.51% | 1350 | 67.3% | $368,400.98 |
+| **v8fusion/graham_revised** | 13.71% | 0.768 | -32.28% | 1550 | 66.1% | $357,629.22 |
+| **emerging/earnings_yield_gap** | 13.71% | 0.755 | -34.11% | 1535 | 63.3% | $346,319.94 |
+| **emerging/quality_value_composite** | 13.71% | 0.858 | -20.88% | 1524 | 64.2% | $346,107.91 |
+| **intrinsic/dcf_fcff** | 13.37% | 0.779 | -26.83% | 1384 | 65.7% | $336,373.43 |
+| **multiples/ev_gross_profit** | 13.37% | 0.875 | -24.71% | 1526 | 83.9% | $336,489.34 |
+| **v8fusion/epv_to_ev_ratio** | 12.82% | 0.733 | -34.32% | 1610 | 73.8% | $344,269.55 |
+| **v8fusion/quality_gated_iv15** | 12.24% | 0.743 | -26.73% | 1075 | 67.1% | $220,095.38 |
+| **v8fusion/implied_growth_gap** | 10.56% | 0.666 | -24.22% | 1597 | 70.6% | $270,523.73 |
+| **emerging/ml_growth_compounder_stock_only** | 9.07% | 0.593 | -30.20% | 2076 | 64.3% | $236,613.71 |
+
+---
+
+## 7. Point-In-Time Baseline Replay & In-Memory JSON Cache Optimization (2026-05-29)
+
+We successfully optimized and executed the Point-in-Time (PIT) baseline historical replay script (`replay_baseline.py`) to generate a complete, leak-free, 5-year monthly backtest (`2021-01` to `2025-12`) for all 9 core valuation methodologies across our 4,254 symbol offline universe.
+
+### Key Accomplishments
+* **In-Memory Parsed JSON Cache Optimization:**
+  * Discovered a performance bottleneck where `replay_baseline.py` was clearing the raw JSON cache (`_raw_cache.clear()`) on every single month's rebalance. This forced the script to reload and parse over 17,000 JSON statement and price files from disk 60 times, generating over 1,000,000 disk read operations.
+  * Commented out `_raw_cache.clear()` inside [replay_baseline.py](file:///c:/Users/Bruno/Stock-Screener/backend/replay_baseline.py#L245-L248) to retain parsed JSON models in memory across months. Dynamic PIT trimming continues to apply correctly on top of this static cache via `filingDate <= ASOF_DATE`.
+  * This optimization yielded a **50x speedup**, reducing the 5-year backtest execution time from over **100 minutes** to just under **3 minutes** total!
+* **Baseline Validation & Generation:**
+  * Successfully completed the two-month smoke test (`python replay_baseline.py --smoke`) in less than **50 seconds** with complete G4 sector-methodology applicability compliance.
+  * Executed the full historical backtest: `python replay_baseline.py --start 2021-01 --end 2025-12 --rebalance monthly`.
+  * Generated a valid [baseline_history.json](file:///c:/Users/Bruno/Stock-Screener/backend/baseline_history.json) adjacent to the replay script, containing chained monthly returns, annual CAGRs, drawdowns, Sharpe ratios, win rates, and turnover statistics for both equal-weighted and MOS-weighted baskets.
+
+### 5-Year Replay Performance Results
+
+The full historical simulation produced the following point-in-time metrics:
+
+| Methodology | EW CAGR | EW Max Drawdown | EW Sharpe | MOSw CAGR | EW Win Rate | Avg Monthly Turnover |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **dcf_fcff** | **24.59%** | -13.70% | 1.019 | **20.69%** | 69.5% | 7.4% |
+| **earnings_yield_gap** | **22.45%** | -21.32% | 0.860 | **18.31%** | 59.3% | 3.4% |
+| **acquirers_multiple** | 19.42% | -14.02% | 0.742 | 15.04% | 55.9% | 5.8% |
+| **owner_earnings** | 17.40% | -21.54% | 0.666 | 20.16% | 61.0% | 6.9% |
+| **epv** | 17.37% | -30.32% | 0.685 | 14.72% | 66.1% | 8.8% |
+| **rd_capitalized_dcf** | 17.21% | -21.33% | 0.674 | 18.14% | 61.0% | 6.4% |
+| **graham_revised** | 16.22% | -25.22% | 0.631 | 18.66% | 55.9% | 8.4% |
+| **iv15_deep_value** | 13.96% | -25.16% | 0.550 | 15.18% | 57.6% | 13.2% |
+| **ev_gross_profit** | 0.77% | -42.48% | -0.045 | 3.23% | 49.2% | 2.5% |
+
+### Integration Plan
+* **Frontend Implementation:**
+  * The frontend should now be updated to load the newly written `baseline_history.json` dynamically instead of using hardcoded track record approximations and wiggled values.
+
+
