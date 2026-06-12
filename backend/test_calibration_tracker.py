@@ -507,6 +507,7 @@ class TestSummaryShape(TrackerTestCase):
             self.assertEqual(set(rec.keys()),
                              {"symbol", "entry_date", "entry_price", "sector", "p10", "p20",
                               "decile_30d", "decile_60d", "bars_elapsed_30d", "bars_elapsed_60d",
+                              "iv_entry", "ivr_entry",
                               "max_high_pct", "max_dd_pct", "state_30d", "state_60d",
                               "touch_bar_30d", "touch_bar_60d"})
 

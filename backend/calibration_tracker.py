@@ -369,8 +369,13 @@ def _fetch_eod_bars(theta, symbol: str, start: str, end: str, limiter=None) -> l
             if df is not None and hasattr(df, "height") and df.height > 0:
                 for row in df.iter_rows(named=True):
                     try:
+                        # ThetaData EOD has no "date" column; the trading day is the
+                        # NY-tz "created" timestamp (~17:15 ET) — str()[:10] = ISO date.
+                        raw_date = row.get("date") or row.get("created") or row.get("last_trade")
+                        if raw_date is None:
+                            continue
                         bars.append({
-                            "date": str(row.get("date"))[:10],
+                            "date": str(raw_date)[:10],
                             "open": float(row.get("open") or 0.0),
                             "high": float(row["high"]),
                             "low": float(row["low"]),
