@@ -307,6 +307,18 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                       "n_pending": len(pending), "n_excluded_at_stamp": len(excluded),
                       "n_skipped_open": len(skipped), "cap_violations": len(viol),
                       "retags": retags, "memo": memo})
+    # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields
+    t["watchlist"] = []
+    for w in (director.get("watchlist") or []):
+        c = bysym.get(w["symbol"], {})
+        t["watchlist"].append({
+            "symbol": w["symbol"], "blocked_by": w.get("blocked_by", ""),
+            "would_enter_if": w.get("would_enter_if", ""), "intended_weight_pct": w.get("intended_weight_pct"),
+            "note": w.get("note", ""), "score": c.get("score"), "edge_grade": c.get("edge_grade"),
+            "lane_canon": c.get("lane_canon"), "resolution_driver": c.get("resolution_driver"),
+            "super_cluster": c.get("super_cluster"), "valuation_method": c.get("valuation_method"),
+            "ev_pct": c.get("ev_pct"), "computed_rr": c.get("computed_rr"), "dated_milestone": c.get("dated_milestone"),
+        })
     save_tracker(t)
     print(f"INJECTED {len(added)} held {added}"
           + (f" + {len(pending)} PENDING_LIMIT {pending}" if pending else "")

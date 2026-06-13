@@ -1247,6 +1247,44 @@ export default function CatalystWatch() {
                   </div>
                 );
               })()}
+
+              {/* WATCHLIST — on-deck: CRO survivors the Director cleared but couldn't seat (a combined cap is full) */}
+              {(B13.watchlist || []).length > 0 && (
+                <div style={{ background: T.card, border: "1px dashed rgba(59,130,246,0.35)", borderRadius: 8, padding: "13px 18px", marginBottom: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: T.blue }}>⬡ WATCHLIST — ON-DECK</span>
+                    <span style={{ fontSize: 9, color: T.muted }}>{B13.watchlist.length} names the Director cleared but couldn't seat — blocked only by a full driver/cluster cap; first to enter when a held seat resolves and frees its cap.</span>
+                  </div>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
+                      <thead>
+                        <tr style={{ color: T.muted, fontSize: 8.5, textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "left" }}>
+                          <th style={{ padding: "3px 8px 3px 0" }}>Name</th>
+                          <th style={{ padding: "3px 8px" }}>Edge</th>
+                          <th style={{ padding: "3px 8px" }}>Exp EV/RR</th>
+                          <th style={{ padding: "3px 8px" }}>Lane</th>
+                          <th style={{ padding: "3px 8px" }}>Driver</th>
+                          <th style={{ padding: "3px 0" }}>Enters when</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {B13.watchlist.map((w: any) => (
+                          <tr key={w.symbol} style={{ borderTop: `1px solid ${T.border}` }}>
+                            <td style={{ padding: "5px 8px 5px 0" }}>
+                              <span onClick={() => { setSelectedSymbol(w.symbol); setView("detail"); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{w.symbol}</span>
+                            </td>
+                            <td style={{ padding: "5px 8px", color: w.edge_grade === "H" ? T.green : w.edge_grade === "M" ? "#d97706" : T.light }}>{w.edge_grade || "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.green }}>{w.ev_pct != null ? `EV ${(w.ev_pct * 100).toFixed(0)}%` : w.computed_rr != null ? `${Number(w.computed_rr).toFixed(2)}:1` : "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.light }}>{String(w.lane_canon || "").replace(/_/g, " ")}</td>
+                            <td style={{ padding: "5px 8px", color: T.purple }}>{String(w.resolution_driver || "").replace(/_/g, " ")}</td>
+                            <td style={{ padding: "5px 0", color: T.light, maxWidth: 320, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={`blocked by: ${w.blocked_by}${w.note ? "\n" + w.note : ""}`}>{w.would_enter_if || w.blocked_by}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
               </>
             );
           })() : (

@@ -68,6 +68,7 @@ def main():
         "driver_utilization": dict(sorted(drv.items(), key=lambda kv: -kv[1])),
         "cluster_utilization": dict(sorted(clus.items(), key=lambda kv: -kv[1])),
         "entries": entries,
+        "watchlist": t.get("watchlist", []),    # on-deck: cap-blocked-but-wanted (renders below the basket)
         "non_selections": t.get("non_selections", []),
         "runs": t.get("runs", []),
         "marks": t.get("marks", []),    # daily NAV series (_basket13_mark.py) — the track record
