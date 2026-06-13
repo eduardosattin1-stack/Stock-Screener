@@ -12,7 +12,6 @@ Reads from GCS:
   portfolio/state.json
   performance/strategy_history_*.json
   hit_rate_tracking/rolling_health.json
-  scans/latest_sp500.json
   scans/latest_global.json
 
 Schedule: Cloud Scheduler Friday 07:30 CET
@@ -194,8 +193,10 @@ def build_email() -> tuple[str, str]:
     
     state = gcs_read("portfolio/state.json")
     health = gcs_read("hit_rate_tracking/rolling_health.json")
-    sp500 = gcs_read("scans/latest_sp500.json")
     gl_data = gcs_read("scans/latest_global.json")
+    # latest_sp500.json was retired (dead pointer frozen 2026-05-05); the global
+    # scan is a superset, so the US idea categories draw from it too.
+    sp500 = gl_data
 
     subject = f"📊 CB Screener Weekly — {today}"
 

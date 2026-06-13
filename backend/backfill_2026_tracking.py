@@ -9,7 +9,7 @@ Data sources (all local / GCS cached – NO live FMP API calls):
   1. Parquet rankings (Jan-Mar 2026, monthly)
   2. GCS SP500 scan archives  (Apr-May 2026, ~daily)
   3. FMP local cache for leverage gate on parquet dates
-  4. Sector data from latest_sp500.json
+  4. Sector data from latest_global.json
   5. FMP cached historical prices for inter-rebalance returns
 
 Usage:
@@ -43,7 +43,7 @@ FMP_CACHE = BASE_DIR / "fmp_cache"
 BALANCE_CACHE = FMP_CACHE / "balance-sheet-statement"
 INCOME_CACHE = FMP_CACHE / "income-statement"
 PRICE_CACHE = FMP_CACHE / "historical-price-eod"
-SECTOR_FILE = FRONTEND_PUBLIC / "latest_sp500.json"
+SECTOR_FILE = FRONTEND_PUBLIC / "latest_global.json"
 TEMP_SCANS_DIR = BASE_DIR / "temp_scans"
 
 TARGET_POSITIONS = 20
@@ -142,7 +142,7 @@ def _load_json(path: Path) -> Any:
 
 
 def _load_sector_map() -> dict[str, str]:
-    """symbol -> sector from latest_sp500.json."""
+    """symbol -> sector from latest_global.json."""
     data = _load_json(SECTOR_FILE)
     if not data:
         log.warning("No sector file found at %s", SECTOR_FILE)

@@ -12,7 +12,7 @@ composite/signal_v8.
 
 Lifecycle:
   1. Read existing strategy_history_momentum.json from GCS
-  2. Read latest_sp500.json from GCS
+  2. Read latest_global.json from GCS
   3. Filter scan: signal_momentum != "DISQUALIFIED" (passed momentum gate)
   4. Sort by composite_momentum DESC, take top-10 -> target_basket
 
