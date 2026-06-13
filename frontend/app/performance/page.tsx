@@ -24,6 +24,8 @@ interface CalibRecord {
   bars_elapsed_60d: number | null;
   iv_entry: number | null;
   ivr_entry: number | null;
+  dd_pred_30d: number | null;
+  dd_pred_60d: number | null;
   max_high_pct: number;
   max_dd_pct: number;
   state_30d: RecState | null;
@@ -419,7 +421,7 @@ function TouchCurve({ horizons }: { horizons: CalibrationV2["horizons"] }) {
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — Per-record table (HARD RULE: one row per pick)
 // ══════════════════════════════════════════════════════════════════════════════
-type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "d30" | "d60" | "bars" | "iv" | "ivr" | "maxplus" | "maxminus";
+type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "d30" | "d60" | "bars" | "iv" | "ivr" | "ddpred" | "maxplus" | "maxminus";
 
 function SortTh({ label, k, sortKey, sortDir, onSort, style, title }: {
   label: string; k: RecSortKey; sortKey: RecSortKey; sortDir: "asc" | "desc";
@@ -477,6 +479,7 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
       : sortKey === "bars" ? (barsOf(r) ?? -1)
       : sortKey === "iv" ? (r.iv_entry ?? -1)
       : sortKey === "ivr" ? (r.ivr_entry ?? -1)
+      : sortKey === "ddpred" ? (r.dd_pred_60d ?? 1)
       : sortKey === "maxplus" ? r.max_high_pct
       : r.max_dd_pct;
     const arr = [...filtered];
@@ -564,7 +567,8 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                 <SortTh label="IV" k="iv" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="ATM implied volatility at entry" style={{ textAlign: "right" }} />
                 <SortTh label="IVR" k="ivr" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="IV Rank at entry (0–100)" style={{ textAlign: "right" }} />
                 <SortTh label="Max+" k="maxplus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
-                <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
+                <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Observed worst drawdown so far (matures over the window)" style={{ textAlign: "right" }} />
+                <SortTh label="Pred DD" k="ddpred" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model-predicted max drawdown over 60 trading bars (expected_dd_60d) — validate vs Max− at maturity" style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right" }}>State 30d</th>
                 <th style={{ ...th, textAlign: "right" }}>State 60d</th>
               </tr>
@@ -596,6 +600,9 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                   </td>
                   <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{r.max_high_pct.toFixed(1)}%</td>
                   <td style={{ ...td, textAlign: "right", color: T.red }}>{r.max_dd_pct.toFixed(1)}%</td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }} title="Predicted max drawdown over 60 bars">
+                    {r.dd_pred_60d != null ? `${r.dd_pred_60d.toFixed(1)}%` : "—"}
+                  </td>
                   <td style={{ ...td, textAlign: "right" }}><StateChip state={r.state_30d} bars={r.bars_elapsed_30d} K={30} /></td>
                   <td style={{ ...td, textAlign: "right" }}><StateChip state={r.state_60d} bars={r.bars_elapsed_60d} K={60} /></td>
                 </tr>

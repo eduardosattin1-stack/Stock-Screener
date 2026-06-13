@@ -96,7 +96,7 @@ def bar(d, h, l, c, o=None):
             "low": float(l), "close": float(c)}
 
 
-def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None):
+def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None, dd30=None, dd60=None):
     s = {"symbol": sym, "hit_prob_10pct_30d": p10, "hit_prob_60d": p20,
          "sector": sector, "price": 100.0}
     # screener_v6 emits IV under the options_ prefix; mirror that here.
@@ -104,6 +104,10 @@ def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None):
         s["options_iv_current"] = iv
     if ivr is not None:
         s["options_iv_rank"] = ivr
+    if dd30 is not None:
+        s["expected_dd_30d"] = dd30
+    if dd60 is not None:
+        s["expected_dd_60d"] = dd60
     return s
 
 
@@ -216,6 +220,23 @@ class TestStaging(TrackerTestCase):
         r = self.open_records("p10_30")[0]
         self.assertEqual(r["iv_entry"], 1.2071)
         self.assertEqual(r["ivr_entry"], 34.7)
+
+    def test_staging_maps_predicted_drawdown(self):
+        # Each regime captures its horizon's predicted max drawdown:
+        # p10_30 <- expected_dd_30d, p20_60 <- expected_dd_60d.
+        ct.update_from_scan([stock("AAA", p10=0.35, p20=0.45, dd30=-12.5, dd60=-20.0)],
+                            scan_date=FRI)
+        pend = {p["record_id"]: p for p in self.pending()}
+        self.assertEqual(pend[f"p10_30:AAA:{FRI}"]["dd_pred"], -12.5)
+        self.assertEqual(pend[f"p20_60:AAA:{FRI}"]["dd_pred"], -20.0)
+        # survives activation and lands on the joined summary record
+        self.feed.add("AAA", bar(FRI, 103, 98, 100))
+        ct.update_from_scan([], scan_date=MON)
+        self.assertEqual(self.open_records("p10_30")[0]["dd_pred"], -12.5)
+        self.assertEqual(self.open_records("p20_60")[0]["dd_pred"], -20.0)
+        rec = next(r for r in self.summary()["records"] if r["symbol"] == "AAA")
+        self.assertEqual(rec["dd_pred_30d"], -12.5)
+        self.assertEqual(rec["dd_pred_60d"], -20.0)
 
     def test_open_symbol_not_restaged(self):
         self.feed.add("AAA", bar(FRI, 103, 98, 100))
@@ -529,7 +550,7 @@ class TestSummaryShape(TrackerTestCase):
             self.assertEqual(set(rec.keys()),
                              {"symbol", "entry_date", "entry_price", "sector", "p10", "p20",
                               "decile_30d", "decile_60d", "bars_elapsed_30d", "bars_elapsed_60d",
-                              "iv_entry", "ivr_entry",
+                              "iv_entry", "ivr_entry", "dd_pred_30d", "dd_pred_60d",
                               "max_high_pct", "max_dd_pct", "state_30d", "state_60d",
                               "touch_bar_30d", "touch_bar_60d"})
 
