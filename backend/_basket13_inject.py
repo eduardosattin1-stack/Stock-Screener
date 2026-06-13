@@ -221,7 +221,22 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
               if p.get("resolution_driver") and bysym.get(p["symbol"], {}).get("resolution_driver")
               and p["resolution_driver"] != bysym[p["symbol"]]["resolution_driver"]]
 
-    viol = validate(picks, bysym, live_px=live_map)
+    # COMBINED-BOOK caps: existing UNRESOLVED entries are LOCKED (run to resolution) and consume
+    # headroom. Validate held + new together; never re-pick a locked name. (restamp = fresh book.)
+    held = [] if restamp else [e for e in load_tracker().get("entries", []) if not e.get("resolution")]
+    held_syms = {e["symbol"] for e in held}
+    picks = [p for p in picks if p["symbol"] not in held_syms]
+    held_pseudo = [{"symbol": e["symbol"], "weight_pct": e.get("weight_pct"),
+                    "resolution_driver": e.get("resolution_driver"), "super_cluster": e.get("super_cluster"),
+                    "expression": e.get("expression") or {}} for e in held]
+    bysym_v, live_v = dict(bysym), dict(live_map)
+    for e in held:                          # held names may be absent from candidates (--exclude-held)
+        bysym_v[e["symbol"]] = {"valuation_method": e.get("valuation_method"), "staging": e.get("staging"),
+                                "downside_floor": e.get("downside_floor"), "super_cluster": e.get("super_cluster"),
+                                "live_price": e.get("entry_price")}
+        live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
+
+    viol = validate(held_pseudo + picks, bysym_v, live_px=live_v)
     if viol:
         print("CAP VALIDATION FAILED — basket NOT stamped:")
         for x in viol:
@@ -267,8 +282,13 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
             "expression": p.get("expression") or {},
             "hedge": hedge_map.get(sym),
             "expected_rr": p.get("expected_rr"), "expected_ev": p.get("expected_ev"),
+            "entry_rationale": p.get("entry_rationale", ""),
             "invalidation": p.get("invalidation", ""), "review_trigger": p.get("review_trigger", ""),
             "cro_verdict": (cro_by.get(sym) or {}).get("verdict", ""),
+            # full CRO four-surface detail stored on the entry -> the review doc is self-contained
+            # across runs (each re-debate overwrites _basket13_out.json; the held seats keep theirs).
+            "cro_detail": {k: (cro_by.get(sym) or {}).get(k) for k in
+                           ("live_edge_check", "tradeability_note", "window_note", "driver_confirmed", "conditions")},
             "resolution": None,
         }
         t["entries"].append(entry)

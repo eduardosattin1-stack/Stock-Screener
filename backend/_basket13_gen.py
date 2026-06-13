@@ -27,11 +27,12 @@ import json, os, argparse, datetime
 BASE = os.path.dirname(os.path.abspath(__file__))
 CAND = os.path.join(BASE, "_basket13_candidates.json")
 OUT  = os.path.join(BASE, "_basket13_workflow.js")
-MODEL = "fable"   # • both phases; fall back to 'opus' if the runner rejects the alias
-
 ap = argparse.ArgumentParser()
 ap.add_argument("--only", default="")
+ap.add_argument("--model", default="fable",
+                help="agent model alias for both phases; 'opus' is the documented fallback if 'fable' is unavailable")
 args = ap.parse_args()
+MODEL = args.model   # • both phases; default fable (the Fable-5 migration leg), opus fallback
 
 only = {s.strip().upper() for s in args.only.split(",") if s.strip()}
 cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
@@ -45,6 +46,24 @@ FIELDS = ["symbol", "company_name", "tier", "staging", "lane_canon", "resolution
           "days_to_milestone", "instrument", "valuation_asof", "score"]
 names = [{k: c.get(k) for k in FIELDS} for c in cands]
 
+# locked held book (any UNRESOLVED tracker entry): a re-debate ADDS new seats within the
+# REMAINING combined-cap headroom; held names run to resolution and consume caps. The Director
+# is told the headroom; _basket13_inject.py re-asserts the combined book deterministically.
+TRK = os.path.join(BASE, "_basket13_tracker.json")
+held = []
+if os.path.exists(TRK):
+    held = [e for e in json.load(open(TRK, encoding="utf-8")).get("entries", []) if not e.get("resolution")]
+by_drv, by_clus = {}, {}
+for e in held:
+    by_drv[e.get("resolution_driver")] = by_drv.get(e.get("resolution_driver"), 0) + 1
+    by_clus[e.get("super_cluster")] = round(by_clus.get(e.get("super_cluster"), 0.0) + (e.get("weight_pct") or 0), 2)
+held_summary = {
+    "names": [{"symbol": e["symbol"], "weight_pct": e.get("weight_pct"), "driver": e.get("resolution_driver"),
+               "super_cluster": e.get("super_cluster"), "status": e.get("status", "OPEN")} for e in held],
+    "n_seats": len(held), "by_driver": by_drv, "by_cluster": by_clus,
+    "invested_pct": round(sum(e.get("weight_pct") or 0 for e in held), 1),
+}
+
 JS = r'''export const meta = {
   name: 'basket13-catalyst-debate',
   description: 'Basket 13 catalyst sleeve — Catalyst-CRO trade attack (4 surfaces) then Director selection+sizing under hard caps',
@@ -52,6 +71,7 @@ JS = r'''export const meta = {
 }
 const NAMES = __NAMES__
 const MODEL = '__MODEL__'
+const HELD = __HELD__
 
 const CRO_SCHEMA = { type:'object', properties:{ verdicts:{ type:'array', items:{ type:'object', properties:{
   symbol:{type:'string'},
@@ -94,12 +114,14 @@ Verdict per name: TRADE (clean on all four), TRADE_WITH_CONDITIONS (works only i
 NAMES (${batch.length}): ${JSON.stringify(batch)}` }
 
 function directorPrompt(survivors){ return `Today is __TODAY__. You are the CATALYST DIRECTOR for "Basket 13", a tracked PAPER basket (a calibration sleeve — NO live orders; expression + size are RECORDED, not executed). You receive the Catalyst-CRO survivors (TRADE / TRADE_WITH_CONDITIONS), each with its native board fields + the CRO's live checks. Build the basket under HARD rules — constraints, not preferences:
-
+${HELD.n_seats ? `
+LOCKED HELD BOOK (${HELD.n_seats} seats, ${HELD.invested_pct}% invested — these run to resolution; do NOT re-select them, and they CONSUME cap headroom): ${JSON.stringify(HELD.names)}. ALREADY USED toward the COMBINED caps: per-driver ${JSON.stringify(HELD.by_driver)} (cap 2 each), per-cluster weight-points ${JSON.stringify(HELD.by_cluster)} (cap 40 each), seats ${HELD.n_seats}/12. You are ADDING NEW seats from the survivors below into the REMAINING headroom ONLY. If nothing fits at acceptable edge, return picks:[] — NEVER force a seat or breach a combined cap.
+` : ``}
 SELECTION: free choice among survivors; when two names are comparable, PREFER DRIVER DIVERSITY over raw score.
-CAPS (hard — a basket that breaks one is rejected by the downstream validator):
-  - <= 2 names per resolution_driver.
-  - <= 40% of total basket weight per super_cluster (Deal-completion / FDA/biotech / Idiosyncratic).
-  - 8-12 names total.
+CAPS (hard, COMBINED with the locked held book above — a basket that breaks one is rejected by the downstream validator):
+  - <= 2 names per resolution_driver (held + new).
+  - <= 40 NAV weight-points per super_cluster (held + new; e.g. held 22 -> only 18 left).
+  - 8-12 names total (held + new).
 SIZING (Kelly-lite on the bounded floor; weight_pct are % of basket NAV, target sum ~100):
   - weight proportional to edge x independence (independence = resolves on its OWN driver, not the tape).
   - RISK-TO-FLOOR per ratio name <= 1.5% NAV: weight_pct * (live_price - downside_floor)/live_price <= 1.5. (A name with a 20% floor-distance caps near 7.5% weight.)
@@ -142,9 +164,11 @@ return { generated_for: NAMES.length, cro, survivors: survivors.map(s=>s.symbol)
 '''
 
 js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
+        .replace("__HELD__", json.dumps(held_summary, ensure_ascii=False))
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
 open(OUT, "w", encoding="utf-8").write(js)
-print(f"WROTE {OUT}  ({len(names)} candidates, {(len(names)+4)//5} CRO batches, model={MODEL})"
+print(f"WROTE {OUT}  ({len(names)} candidates, {(len(names)+4)//5} CRO batches, model={MODEL}"
+      + (f", {held_summary['n_seats']} held locked" if held_summary['n_seats'] else "") + ")"
       + (f" [filtered to {sorted(only)}]" if only else ""))
 print(OUT)

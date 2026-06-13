@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Basket 13 — generate the human-review document (agent comments verbatim).
+"""Basket 13 — human-review document (agent comments verbatim), SELF-CONTAINED from the tracker.
 
-Reads _basket13_out.json (full debate provenance: CRO verdicts + Director output)
-+ _basket13_candidates.json (native board fields) + _basket13_tracker.json (stamps),
-writes BASKET13_REVIEW.md at the repo root. Re-run after every debate run.
-
+§1 the full CURRENT held book (each seat's stored Director rationale + CRO four-surface detail,
+which persist on the entry across re-debates), §1b resolved seats, §2 the latest run's CRO kills,
+§3 the recorded non-selections (counterfactuals), §4 the latest Director memo. Writes
+BASKET13_REVIEW.md at the repo root. Re-run after every inject.
 Usage: python _basket13_review.py
 """
 import json, os, datetime
@@ -13,150 +13,139 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
 OUT = os.path.join(ROOT, "BASKET13_REVIEW.md")
 
-out = json.load(open(os.path.join(BASE, "_basket13_out.json"), encoding="utf-8"))
-cands = {c["symbol"]: c for c in json.load(open(os.path.join(BASE, "_basket13_candidates.json"), encoding="utf-8"))["candidates"]}
 trk = json.load(open(os.path.join(BASE, "_basket13_tracker.json"), encoding="utf-8"))
-cro = {v["symbol"]: v for v in out.get("cro", []) if v.get("symbol")}
-director = out.get("director") or {}
-entries = {e["symbol"]: e for e in trk.get("entries", [])}
-# only stamped seats render in §1 — Director picks excluded at stamp time fall to the counterfactual table
-picks = {p["symbol"]: p for p in director.get("picks", []) if p["symbol"] in entries}
+op = os.path.join(BASE, "_basket13_out.json")
+out = json.load(open(op, encoding="utf-8")) if os.path.exists(op) else {}
+cur_cro = {v["symbol"]: v for v in out.get("cro", []) if v.get("symbol")}     # latest run only
 run = (trk.get("runs") or [{}])[-1]
+names = {}
+bp = os.path.join(ROOT, "catalyst_candidates_231.json")
+if os.path.exists(bp):
+    names = {c["symbol"]: c.get("company_name", "") for c in json.load(open(bp, encoding="utf-8"))["candidates"]}
+
 held = [e for e in trk.get("entries", []) if not e.get("resolution") and e.get("status") != "PENDING_LIMIT"]
 pend = [e for e in trk.get("entries", []) if not e.get("resolution") and e.get("status") == "PENDING_LIMIT"]
+resolved = [e for e in trk.get("entries", []) if e.get("resolution")]
 
 
-def fmt_expr(p):
-    x = p.get("expression") or {}
+def fmt_expr(e):
+    x = e.get("expression") or {}
     s = str(x.get("type", "equity")).replace("_", " ")
-    if x.get("expiry"):
-        s += f" exp {x['expiry']}"
-    if x.get("strikes"):
-        s += f" strikes {x['strikes']}"
+    if x.get("expiry"): s += f" exp {x['expiry']}"
     return s
 
 
-def cro_block(v, indent=""):
+def exp_ev(e):
+    if e.get("expected_rr") is not None: return f"R:R {e['expected_rr']}:1"
+    if e.get("expected_ev") is not None: return f"EV {round(e['expected_ev'] * 100, 1)}%"
+    return "—"
+
+
+def cro_detail_of(e):
+    d = e.get("cro_detail") or {}
+    if not any((d or {}).values()):                      # fallback to current run (a just-added seat)
+        v = cur_cro.get(e["symbol"]) or {}
+        d = {k: v.get(k) for k in ("live_edge_check", "tradeability_note", "window_note", "driver_confirmed", "conditions")}
+    return d
+
+
+def cro_block(d, verdict=None):
     L = []
-    L.append(f"{indent}**CRO verdict: {v.get('verdict')}**")
-    if v.get("live_edge_check"):
-        L.append(f"{indent}- **1 · Edge at entry (live re-check):** {v['live_edge_check']}")
-    if v.get("tradeability_note"):
-        L.append(f"{indent}- **2 · Tradeability:** {v['tradeability_note']}")
-    if v.get("window_note"):
-        L.append(f"{indent}- **3 · Window ↔ expression:** {v['window_note']}")
-    if v.get("driver_confirmed"):
-        L.append(f"{indent}- **4 · Driver tag:** {v['driver_confirmed']}")
-    for c in v.get("conditions") or []:
-        L.append(f"{indent}- ⚠ **Condition:** {c}")
-    return "\n".join(L)
+    if verdict: L.append(f"**CRO verdict: {verdict}**")
+    if d.get("live_edge_check"): L.append(f"- **1 · Edge at entry (live re-check):** {d['live_edge_check']}")
+    if d.get("tradeability_note"): L.append(f"- **2 · Tradeability:** {d['tradeability_note']}")
+    if d.get("window_note"): L.append(f"- **3 · Window ↔ expression:** {d['window_note']}")
+    if d.get("driver_confirmed"): L.append(f"- **4 · Driver tag:** {d['driver_confirmed']}")
+    for c in d.get("conditions") or []: L.append(f"- ⚠ **Condition:** {c}")
+    return "\n".join(L) if L else "*(no CRO detail stored)*"
 
 
-lines = []
-lines.append("# Basket 13 — Inaugural Run, Agent Comments for Review")
-lines.append("")
-lines.append(f"*Run {run.get('run_date', '?')} · generated {datetime.date.today().isoformat()} · "
-             f"{out.get('generated_for', '?')} candidates debated → {len(out.get('cro', []))} CRO verdicts → "
-             f"{len(out.get('survivors', []))} survivors → {len(picks)} seats · paper basket (nothing executed)*")
-lines.append("")
-lines.append("Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade: "
-             "live edge, tradeability, window↔expression, driver tag — catalyst reality settled upstream by "
-             "the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing "
-             "under hard caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor "
-             "≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight) → deterministic cap "
-             "validator → tracker stamps.")
-lines.append("")
-lines.append("**Stamp policy (2026-06-11 review):** entries stamped at the **CRO-verified live price** "
-             "(source recorded per stamp), never the dossier reference; CRO entry limits enforced at stamp "
-             "time — a live price above the limit stamps as a **resting limit, not held** (no fiction fills); "
-             "hedge legs recorded on the entry; risk-to-floor **computed**, not quoted; driver re-tags logged. "
-             "Cluster-cap basis pinned: ≤40 weight-points of NAV (the invested-share basis is unstable to "
-             "exclusions; the memo's stricter invested-share read is reported alongside).")
-if run.get("retags"):
-    lines.append("")
-    lines.append("**Driver re-tags this run (logged, cap-relevant):** " +
-                 "; ".join(f"{r['symbol']}: {r['from']} → {r['to']} ({r['authority']})" for r in run["retags"]))
-lines.append("")
-
-# ── the basket ──
+L = []
 inv = round(sum(e.get("weight_pct") or 0 for e in held), 1)
 pw = round(sum(e.get("weight_pct") or 0 for e in pend), 1)
-lines.append("---")
-lines.append(f"## 1 · The basket ({len(held)} held seats, {inv}% invested"
-             + (f"; +{len(pend)} resting limit, {pw}% reserved" if pend else "") + ")")
-for sym, p in picks.items():
-    c, v, e = cands.get(sym, {}), cro.get(sym, {}), entries.get(sym, {})
-    pending = e.get("status") == "PENDING_LIMIT"
-    entry_txt = (f"RESTING LIMIT ≤ ${e.get('limit_price')} since {e.get('order_date')} — NOT HELD"
-                 if pending else f"entry {e.get('entry_date')} @ {e.get('entry_price')} ({e.get('entry_price_source')})")
-    lines.append("")
-    lines.append(f"### {sym} — {c.get('company_name', '')}" + ("  ⏳ PENDING" if pending else ""))
-    lines.append(f"`{p.get('weight_pct')}% · {fmt_expr(p)} · {c.get('lane_canon')} · {p.get('resolution_driver')} "
-                 f"({p.get('super_cluster') or c.get('super_cluster')}) · score {c.get('score')} · edge {c.get('edge_grade')}"
-                 + (" · STAGING (half-weight, equity-only)" if c.get("staging") else "")
-                 + f" · {entry_txt}`")
+L.append("# Basket 13 — Catalyst Sleeve · Agent Comments for Review")
+L.append("")
+L.append(f"*Generated {datetime.date.today().isoformat()} · {len(held)} held seats ({inv}% invested)"
+         + (f" + {len(pend)} resting-limit ({pw}%)" if pend else "")
+         + (f" + {len(resolved)} resolved" if resolved else "")
+         + f" · last run {run.get('run_date', '?')} · paper basket, nothing executed*")
+L.append("")
+L.append("Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — "
+         "live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the "
+         "scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD "
+         "caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries "
+         "defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap "
+         "headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.")
+L.append("")
+if run.get("retags"):
+    L.append("**Driver re-tags (logged, cap-relevant):** "
+             + "; ".join(f"{r['symbol']}: {r['from']} → {r['to']}" for r in run["retags"]))
+    L.append("")
+
+L.append("---")
+L.append(f"## 1 · The basket ({len(held)} held" + (f", {len(pend)} resting-limit" if pend else "") + ")")
+for e in held + pend:
+    sym = e["symbol"]; pending = e.get("status") == "PENDING_LIMIT"
+    entry_txt = (f"RESTING LIMIT ≤ ${e.get('limit_price')} since {e.get('order_date')} — NOT HELD" if pending
+                 else f"entry {e.get('entry_date')} @ {e.get('entry_price')} ({e.get('entry_price_source')})")
+    L.append("")
+    L.append(f"### {sym} — {names.get(sym, '')}" + ("  ⏳ PENDING" if pending else ""))
+    L.append(f"`{e.get('weight_pct')}% · {fmt_expr(e)} · {e.get('lane_canon')} · {e.get('resolution_driver')} "
+             f"({e.get('super_cluster')}) · score {e.get('score')} · edge {e.get('edge_grade')}"
+             + (" · STAGING" if e.get("staging") else "") + f" · {entry_txt}`")
+    L.append(f"- **Expected:** {exp_ev(e)} · milestone {e.get('dated_milestone') or 'soft/undated'} · review: {e.get('review_trigger', '—')}")
     if pending:
-        lines.append(f"- **Why not held:** live price at stamp exceeded the CRO entry limit — a real book does not "
-                     f"fill this order. Fills automatically via the daily mark when the close trades ≤ ${e.get('limit_price')}.")
+        L.append(f"- **Why not held:** live at stamp exceeded the CRO entry limit; fills via the daily mark when the close trades ≤ ${e.get('limit_price')}.")
     if e.get("hedge"):
-        h = e["hedge"]
-        lines.append(f"- **Hedge leg (recorded):** {h['ratio']} {h['symbol']} per share, reference ${h.get('price_at_entry')} — {h.get('basis')}")
+        h = e["hedge"]; L.append(f"- **Hedge leg:** {h['ratio']} {h['symbol']} per share, ref ${h.get('price_at_entry')}")
     if e.get("risk_to_floor_pct") is not None:
-        lines.append(f"- **Risk-to-floor (computed):** {e['risk_to_floor_pct']}% of NAV (cap 1.5%)")
-    exp = p.get("expected_rr")
-    ev = p.get("expected_ev")
-    lines.append(f"- **Expected:** " + (f"R:R {exp}:1" if exp is not None else f"EV {round(ev * 100, 1)}%" if ev is not None else "—")
-                 + f" · milestone {c.get('dated_milestone') or 'soft/undated'}"
-                 + (f" ({c.get('days_to_milestone')}d)" if c.get("days_to_milestone") is not None else ""))
-    if p.get("entry_rationale"):
-        lines.append(f"- **Director — why this seat:** {p['entry_rationale']}")
-    if p.get("invalidation"):
-        lines.append(f"- **Director — what kills it:** {p['invalidation']}")
-    if p.get("review_trigger"):
-        lines.append(f"- **Review trigger:** {p['review_trigger']}")
-    lines.append("")
-    lines.append(cro_block(v))
+        L.append(f"- **Risk-to-floor (computed):** {e['risk_to_floor_pct']}% of NAV (cap 1.5)")
+    if e.get("entry_rationale"):
+        L.append(f"- **Director — why this seat:** {e['entry_rationale']}")
+    if e.get("invalidation"):
+        L.append(f"- **Director — what kills it:** {e['invalidation']}")
+    L.append("")
+    L.append(cro_block(cro_detail_of(e), e.get("cro_verdict")))
 
-# ── CRO kills ──
-kills = [v for s, v in cro.items() if v.get("verdict") == "NO_TRADE"]
-lines.append("")
-lines.append("---")
-lines.append(f"## 2 · CRO kills — NO_TRADE ({len(kills)})")
-lines.append("")
-lines.append("*Killed on trade grounds only (edge gone / untradeable / window fails) — the catalyst itself was already verified upstream.*")
+if resolved:
+    L.append(""); L.append("---"); L.append(f"## 1b · Resolved ({len(resolved)})")
+    for e in resolved:
+        r = e["resolution"]
+        ret = ("%+.1f%%" % (r["realized_return_pct"] * 100)) if r.get("realized_return_pct") is not None else "—"
+        L.append(f"- **{e['symbol']}** {r['resolution_type']} · {e.get('entry_date')}→{r['resolution_date']} "
+                 f"({r.get('days_held')}d) · {e.get('entry_price')}→{r.get('exit_price')} · realized {ret} "
+                 f"(exp {exp_ev(e)}) · {r.get('notes', '')}")
+
+kills = [v for v in cur_cro.values() if v.get("verdict") == "NO_TRADE"]
+L.append(""); L.append("---")
+L.append(f"## 2 · CRO kills this run — NO_TRADE ({len(kills)})")
+L.append("")
+L.append("*Killed on trade grounds only (edge gone / untradeable / window fails) — catalyst reality was settled upstream.*")
 for v in kills:
-    c = cands.get(v["symbol"], {})
-    lines.append("")
-    lines.append(f"### {v['symbol']} — {c.get('company_name', '')}  `{c.get('tier')} · {c.get('lane_canon')} · edge {c.get('edge_grade')}`")
-    lines.append(cro_block(v))
+    L.append(""); L.append(f"### {v['symbol']} — {names.get(v['symbol'], '')}")
+    L.append(cro_block(v, v.get("verdict")))
 
-# ── non-selections (the TRACKER's record: Director passes + stamp-time exclusions) ──
-passed = trk.get("non_selections", [])
-lines.append("")
-lines.append("---")
-lines.append(f"## 3 · Non-selections ({len(passed)}) — recorded counterfactuals")
-lines.append("")
-lines.append("*CRO survivors the Director passed on, plus stamp-time exclusions; the tracker records these "
-             "for selection-calibration (did the passes outperform the picks?).*")
-lines.append("")
-lines.append("| Symbol | Lane | Driver | Edge | CRO verdict | Passed because |")
-lines.append("|---|---|---|---|---|---|")
-for p in passed:
-    sym = p["symbol"]
-    c, v = cands.get(sym, {}), cro.get(sym, {})
-    lines.append(f"| **{sym}** | {c.get('lane_canon', '')} | {c.get('resolution_driver', '')} | {c.get('edge_grade', '')} "
-                 f"| {v.get('verdict', '')} | {p.get('passed_because', '')} |")
+ns = trk.get("non_selections", [])
+L.append(""); L.append("---")
+L.append(f"## 3 · Non-selections ({len(ns)}) — recorded counterfactuals")
+L.append("")
+L.append("*CRO survivors the Director passed on, plus stamp-time exclusions; recorded for selection-calibration.*")
+L.append("")
+L.append("| Symbol | Lane | Driver | Edge | Passed because |")
+L.append("|---|---|---|---|---|")
+for p in ns:
+    L.append(f"| **{p['symbol']}** | {p.get('lane_canon', '')} | {p.get('resolution_driver', '')} | {p.get('edge_grade', '')} | {p.get('passed_because', '')} |")
 
-# ── director memo ──
-lines.append("")
-lines.append("---")
-lines.append("## 4 · Director memo (verbatim)")
-lines.append("")
-lines.append(director.get("memo", "(none)"))
-lines.append("")
-lines.append("---")
-lines.append(f"*Caps at stamp time: {run.get('cap_violations', 0)} violations · {run.get('n_added')} entries stamped · "
-             f"{run.get('n_passed')} non-selections recorded. Review doc auto-generated by backend/_basket13_review.py.*")
+L.append(""); L.append("---")
+L.append("## 4 · Latest Director memo (verbatim)")
+L.append("")
+L.append(run.get("memo") or (out.get("director") or {}).get("memo", "(none)"))
+L.append("")
+L.append("---")
+L.append(f"*Caps at last stamp: {run.get('cap_violations', 0)} violations · {run.get('n_added', '?')} added · "
+         f"{run.get('n_pending', 0)} pending · {run.get('n_excluded_at_stamp', 0)} excluded-at-stamp. "
+         f"Auto-generated by backend/_basket13_review.py.*")
 
-open(OUT, "w", encoding="utf-8").write("\n".join(lines) + "\n")
-print(f"WROTE {OUT}  ({len(lines)} lines: {len(picks)} seats, {len(kills)} kills, {len(passed)} passes)")
+open(OUT, "w", encoding="utf-8").write("\n".join(L) + "\n")
+print(f"WROTE {OUT}  ({len(L)} lines: {len(held)} held + {len(pend)} pending + {len(resolved)} resolved, "
+      f"{len(kills)} kills, {len(ns)} non-selections)")

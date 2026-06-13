@@ -23,12 +23,13 @@ All `•` values are STARTING DIALS, re-fit from _basket13_tracker.json realized
 
 Usage: python _basket13_candidates.py
 """
-import json, os, datetime
+import json, os, datetime, argparse
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
 SRC  = os.path.join(ROOT, "catalyst_candidates_231.json")
 OUT  = os.path.join(BASE, "_basket13_candidates.json")
+TRK  = os.path.join(BASE, "_basket13_tracker.json")
 
 # ---- dials (•) — re-fit from realized outcomes, not constants ----
 MILESTONE_WINDOW_MONTHS = 6        # • ACTIVE entries need a dated milestone within this
@@ -76,12 +77,21 @@ def live_price_of(r):
     return None
 
 
-def main():
+def main(exclude_held=False):
     board = json.load(open(SRC, encoding="utf-8"))["candidates"]
     window_days = round(MILESTONE_WINDOW_MONTHS * 30.4)
     entries, staging, excluded = [], [], []
 
+    # "holds run to resolution": drop names already in the book (any UNRESOLVED entry) so a
+    # re-debate only considers names NOT currently held/pending.
+    held = set()
+    if exclude_held and os.path.exists(TRK):
+        held = {str(e["symbol"]).upper() for e in json.load(open(TRK, encoding="utf-8")).get("entries", [])
+                if not e.get("resolution")}
+
     for r in board:
+        if str(r.get("symbol", "")).upper() in held:
+            continue
         tier = r.get("tier")
         edge = r.get("edge_grade")
         flags = set(r.get("edge_flags") or [])
@@ -143,4 +153,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--exclude-held", action="store_true",
+                    help="drop names with an open/pending tracker entry (new-candidates-only re-debate)")
+    a = ap.parse_args()
+    main(exclude_held=a.exclude_held)
