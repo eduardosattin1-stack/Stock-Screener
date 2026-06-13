@@ -33,8 +33,9 @@ def main():
     entries = []
     for e in t["entries"]:
         d = dict(e)
-        d["cro_conditions"] = cro_cond.get(e["symbol"], [])
-        d["cro_live_edge_check"] = cro_check.get(e["symbol"], "")
+        det = e.get("cro_detail") or {}                       # self-contained: prefer the entry's stored CRO detail
+        d["cro_conditions"] = det.get("conditions") or cro_cond.get(e["symbol"], [])
+        d["cro_live_edge_check"] = det.get("live_edge_check") or cro_check.get(e["symbol"], "")
         # expected return % on the UNDERLYING (comparable with the live/realized marks):
         # binaries -> the CRO's recomputed EV; ratio names -> move to the fair-value target.
         # Pending (resting-limit) seats price the expectation off the LIMIT (the only fill price).
