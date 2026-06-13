@@ -17,7 +17,8 @@ OUTJ = os.path.join(BASE, "_basket13_out.json")
 TS = os.path.join(ROOT, "frontend", "app", "data", "basket13.ts")
 
 # mirror of the inject cap dials, displayed as "n / cap" in the UI
-MAX_PER_DRIVER, MAX_SUPER_PCT = 2, 40.0
+MAX_PER_DRIVER, MAX_SUPER_PCT, MAX_NAMES = 2, 40.0, 20
+MAX_PER_LANE = {"bio_convergence": 5}
 
 
 def main():
@@ -51,10 +52,11 @@ def main():
     unresolved = [e for e in entries if not e.get("resolution")]
     opene = [e for e in unresolved if e.get("status") != "PENDING_LIMIT"]
     pend = [e for e in unresolved if e.get("status") == "PENDING_LIMIT"]
-    drv, clus = {}, {}
+    drv, clus, lanes = {}, {}, {}
     for e in unresolved:                # caps count pending as-if-filled
         drv[e["resolution_driver"]] = drv.get(e["resolution_driver"], 0) + 1
         clus[e["super_cluster"]] = round(clus.get(e["super_cluster"], 0.0) + (e["weight_pct"] or 0), 2)
+        lanes[e.get("lane_canon")] = lanes.get(e.get("lane_canon"), 0) + 1
     invested = round(sum(e["weight_pct"] or 0 for e in opene), 2)
     pending_w = round(sum(e["weight_pct"] or 0 for e in pend), 2)
 
@@ -63,10 +65,11 @@ def main():
         "invested_pct": invested,
         "pending_pct": pending_w,
         "cash_pct": round(100 - invested - pending_w, 2),
-        "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT,
-                 "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
+        "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT, "max_names": MAX_NAMES,
+                 "max_per_lane": MAX_PER_LANE, "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
         "driver_utilization": dict(sorted(drv.items(), key=lambda kv: -kv[1])),
         "cluster_utilization": dict(sorted(clus.items(), key=lambda kv: -kv[1])),
+        "lane_utilization": dict(sorted(lanes.items(), key=lambda kv: -kv[1])),
         "entries": entries,
         "watchlist": t.get("watchlist", []),    # on-deck: cap-blocked-but-wanted (renders below the basket)
         "non_selections": t.get("non_selections", []),

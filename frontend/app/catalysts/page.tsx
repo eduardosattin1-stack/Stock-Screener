@@ -1105,6 +1105,13 @@ export default function CatalystWatch() {
                           {c} {w}/{B13.caps?.max_super_pct ?? 40}
                         </span>
                       ))}
+                      {(() => {
+                        const cap = (B13.caps?.max_per_lane || {}).bio_convergence;
+                        const n = (B13.lane_utilization || {}).bio_convergence;
+                        if (cap == null || n == null) return null;
+                        const atCap = n >= cap;
+                        return <span title="max names in the bio_convergence lane (held + new)" style={{ fontSize: 8.5, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, border: `1px solid ${atCap ? "rgba(217,151,6,0.4)" : T.border}`, color: atCap ? "#d97706" : T.light }}>bio {n}/{cap}</span>;
+                      })()}
                     </div>
                     {resolved.length > 0 && (
                       <div style={{ marginTop: 10 }}>

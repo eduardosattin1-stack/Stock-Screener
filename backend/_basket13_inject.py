@@ -45,7 +45,9 @@ RES_TYPES = ["FIRED_WIN", "FIRED_LOSS", "SLIPPED", "THESIS_BROKEN", "EDGE_GONE",
 # ---- cap dials (•) — re-fit from realized outcomes (see `report`); NOT constants ----
 MAX_PER_DRIVER     = 2
 MAX_SUPER_PTS      = 40.0    # weight-POINTS of NAV per super-cluster (pinned basis — see header)
-MIN_NAMES, MAX_NAMES = 8, 12
+MIN_NAMES, MAX_NAMES = 8, 20   # • basket head-count cap
+MAX_PER_LANE       = {"bio_convergence": 5}   # • hard per-lane NAME cap (bio binaries are abundant; cap the lane)
+MAX_WATCHLIST      = 10        # • on-deck watchlist length (shown below the basket)
 RISK_TO_FLOOR_PCT  = 1.5     # weight_pct * (live-floor)/live <= this, per ratio name
 BINARY_PREMIUM_PCT = 2.0     # weight_pct <= this for a binary defined-risk structure
 TOL = 1e-3                   # float tolerance on cap checks
@@ -146,6 +148,13 @@ def validate(picks, bysym, live_px=None):
     for sc, w in bysc.items():
         if w > MAX_SUPER_PTS + TOL:
             v.append(f"SUPER_CLUSTER {sc}: {w:.1f} NAV weight-points > {MAX_SUPER_PTS}")
+    bylane = {}
+    for p in picks:
+        ln = (bysym.get(p["symbol"]) or {}).get("lane_canon")
+        bylane[ln] = bylane.get(ln, 0) + 1
+    for ln, cap in MAX_PER_LANE.items():
+        if bylane.get(ln, 0) > cap:
+            v.append(f"LANE {ln}: {bylane[ln]} names > {cap}")
     for p in picks:
         c = bysym.get(p["symbol"], {})
         w = p.get("weight_pct") or 0
@@ -233,7 +242,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     for e in held:                          # held names may be absent from candidates (--exclude-held)
         bysym_v[e["symbol"]] = {"valuation_method": e.get("valuation_method"), "staging": e.get("staging"),
                                 "downside_floor": e.get("downside_floor"), "super_cluster": e.get("super_cluster"),
-                                "live_price": e.get("entry_price")}
+                                "lane_canon": e.get("lane_canon"), "live_price": e.get("entry_price")}
         live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
 
     viol = validate(held_pseudo + picks, bysym_v, live_px=live_v)
@@ -309,7 +318,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                       "retags": retags, "memo": memo})
     # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields
     t["watchlist"] = []
-    for w in (director.get("watchlist") or []):
+    for w in (director.get("watchlist") or [])[:MAX_WATCHLIST]:
         c = bysym.get(w["symbol"], {})
         t["watchlist"].append({
             "symbol": w["symbol"], "blocked_by": w.get("blocked_by", ""),
