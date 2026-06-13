@@ -9,15 +9,15 @@
 
 The scheduled SKILL.md runs:
   python weekly_opus_refresh.py prep            (raw-screen universe + bundles + ledger re-check routing)
-  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [fable])
+  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [opus/1M])
   -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book)
   -> python weekly_opus_refresh.py value-input                        (value signals + funnel stats + ledger)
-  -> [value Director agent, fable]
-  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, fable)
+  -> [value Director agent, opus/1M]
+  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, opus/1M)
   -> python weekly_opus_refresh.py value-post                         (deterministic safety layer; consumes skeptic)
   -> python weekly_opus_refresh.py value-csv / baskets-csv
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
-Periodic verbs: shadow-debate / shadow-diff (Fable A/B with a pre-committed migration trigger),
+Periodic verbs: shadow-debate / shadow-diff (challenger A/B via SHADOW_MODEL env; Fable retired 2026-06-13),
 control-sample (monthly funnel miss-rate), value-revalidate (stale-anchor pro-forma re-debate),
 disruptor-universe / disruptor-map-merge (monthly Disruptor Lens universe build).
 
@@ -44,6 +44,17 @@ ROOT = Path("_opus_debate")
 INP, TXT, RES = ROOT / "inputs", ROOT / "transcripts", ROOT / "results_regime"
 for d in (INP, TXT, RES, ROOT / "dossiers"):
     d.mkdir(parents=True, exist_ok=True)
+
+# ── Model seats (single source of truth; every workflow/agent pin reads these) ──
+# Fable 5 was RETIRED (2026-06-13). The Director + Skeptic seats — capability-bound,
+# calibration-free — fall back to Opus 4.8 (1M context). Radar stays Sonnet (cheap
+# sorting); the per-name Debate stays Opus. The harness 'opus' alias resolves to the
+# session's configured Opus 4.8 / 1M. To restore Fable when it returns, set these back
+# to "fable" — nothing else needs to change (templates substitute these at render time).
+RADAR_MODEL = "sonnet"
+DEBATE_MODEL = "opus"
+DIRECTOR_MODEL = "opus"   # Fable→Opus-4.8/1M fallback
+SKEPTIC_MODEL = "opus"    # Fable→Opus-4.8/1M fallback
 
 # LEGACY-9 method set — used ONLY for signal typing (deep_value vs catalyst), never for selection.
 DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
@@ -882,7 +893,8 @@ def value_skeptic():
     bull's activations; this emits an INDEPENDENT kill-tier (the Catalyst Watch Skeptic pattern,
     which kills 40-50% of ACTIVE flags): default REFUTED unless the load-bearing facts verify
     against a primary source; inputs are the BEAR side + live web only — never the bull case.
-    Runs on Fable (9b: adversarial kill-quality is what the capability premium buys).
+    Runs on SKEPTIC_MODEL (Fable retired 2026-06-13 -> Opus 4.8/1M; adversarial kill-quality
+    is what the capability premium buys).
     Pipeline order: Director -> value-skeptic (Workflow) -> value-post -> csv -> publish."""
     apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
     finalists = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
@@ -894,7 +906,7 @@ def value_skeptic():
     js = """export const meta = {
   name: 'value-skeptic',
   description: 'Independent skeptic kill-tier over the value-apex finalists (default REFUTED)',
-  phases: [{ title: 'Skeptic', model: 'fable' }],
+  phases: [{ title: 'Skeptic', model: '__SKEPTIC_MODEL__' }],
 }
 const DIR = 'backend/_opus_debate'
 const SYMS = __FINALISTS__
@@ -907,23 +919,31 @@ for (let b = 0; b < SYMS.length; b += BATCH) {
     '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS — is the claimed cheapness real edge, or priced/structural (melting business, governance brake, terminal multiple)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, regulatory action the debate missed.\\n' +
     '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the value case). Also value_conviction_cap (int 1-5): the MAX value conviction this name deserves given what you verified.\\n' +
     '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, value_conviction_cap, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
-    { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: 'fable' })))
+    { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
 }
 return 'DONE'
 """
-    js = js.replace("__FINALISTS__", json.dumps(finalists))
+    js = js.replace("__FINALISTS__", json.dumps(finalists)).replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL)
     out = ROOT / "_skeptic_workflow.js"
     out.write_text(js, encoding="utf-8")
-    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent Fable kill-tier")
+    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier")
     print(f"SKEPTIC_WORKFLOW={out.resolve()}")
     return len(finalists)
 
 
+SHADOW_MODEL = os.environ.get("SHADOW_MODEL", "")   # the model to A/B the per-name debate against
+
+
 def shadow_debate():
-    """9c — SHADOW A/B: emit _shadow_debate.js — identical debate prompts on model 'fable' over a
-    stratified 40-name subsample (sector x verdict), results to results_shadow/ (results_regime
+    """9c — SHADOW A/B: emit _shadow_debate.js — identical debate prompts on the CHALLENGER model
+    over a stratified 40-name subsample (sector x verdict), results to results_shadow/ (results_regime
     untouched, Director phase stripped so nothing can overwrite the live apex). Migration trigger is
-    PRE-COMMITTED in shadow_diff — never decided after seeing results."""
+    PRE-COMMITTED in shadow_diff — never decided after seeing results.
+    NOTE: this existed to A/B Fable vs Opus; Fable was retired 2026-06-13, so unless a NEW challenger
+    is named via the SHADOW_MODEL env var, there is nothing to shadow and this STOPs."""
+    if not SHADOW_MODEL:
+        print("shadow_debate: no SHADOW_MODEL challenger set (Fable retired) — nothing to A/B. STOP")
+        raise SystemExit(0)
     import re
     import random
     import glob as _g
@@ -952,9 +972,9 @@ def shadow_debate():
     js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = " + json.dumps(has_tx), js)
     js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(online), js)
     js = re.sub(r"const RECHECK_SYMS = \[[^\]]*\]", "const RECHECK_SYMS = []", js)
-    js = js.replace("model: 'opus' }", "model: 'fable' }")          # debate agents -> fable
+    js = js.replace("model: 'opus' }", "model: '" + SHADOW_MODEL + "' }")   # debate agents -> challenger
     js = js.split("phase('Director')")[0] + "log('Shadow debate complete (no Director).')\nreturn 'DONE'\n"
-    js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-shadow-fable'")
+    js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-shadow-" + SHADOW_MODEL + "'")
     (ROOT / "results_shadow").mkdir(exist_ok=True)
     out = ROOT / "_shadow_debate.js"
     out.write_text(js, encoding="utf-8")
@@ -1623,6 +1643,7 @@ def prep():
           .replace("__ONLINE_SYMS__", json.dumps(no_tx))
           .replace("__RECHECK_SYMS__", json.dumps(recheck))
           .replace("__RECHECK_INFO__", json.dumps(recheck_info))
+          .replace("__DIRECTOR_MODEL__", DIRECTOR_MODEL)
           .replace("__N_RADAR__", str(len(radar_groups))))
     out = ROOT / "_weekly_debate.js"
     out.write_text(js, encoding="utf-8")
@@ -1635,7 +1656,7 @@ def prep():
 _WORKFLOW_TEMPLATE = r"""export const meta = {
   name: 'speculair-opus-weekly',
   description: 'Weekly all-Opus regime debate (Radar peer-comps + Sum-of-Parts) over the per-methodology universe, then Director picks the apex basket',
-  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Debate', model: 'opus' }, { title: 'Director', model: 'fable' }],
+  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Debate', model: 'opus' }, { title: 'Director', model: '__DIRECTOR_MODEL__' }],
 }
 const DIR = 'backend/_opus_debate'
 const RES = DIR + '/results_regime'
@@ -1699,7 +1720,7 @@ for (let b = 0; b < ALL.length; b += BATCH) {
 
 phase('Director')
 await agent(
-  'You are the SPECULAIR APEX DIRECTOR (Claude Fable 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
+  'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8, 1M context). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
@@ -1707,7 +1728,7 @@ await agent(
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off), (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet). No hidden factor may carry >3 names; stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
   'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...]}. Reply exactly: DONE',
-  { label: 'director', phase: 'Director', model: 'fable' })
+  { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
 log('Radar + debate + director complete.')
 return 'DONE'
 """
