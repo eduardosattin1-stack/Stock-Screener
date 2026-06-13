@@ -1,6 +1,17 @@
 // Plain-English glossary for the Catalyst Watch UI. Keyed by the exact token used in the data
 // (edge_flags strings, lane_canon values, tier, edge_grade) plus UI labels. Used by <Tip>.
 export const GLOSSARY: Record<string, { title: string; body: string }> = {
+  // ---- Social Arb (consumer-behavior signals) ----
+  SA_DEMAND: { title: "Demand index", body: "Blended z-score of consumer demand against the entity's own 30-day baseline — weighted mention volume plus purchase-intent share. High = chatter accelerating, not just loud." },
+  SA_AWARENESS: { title: "Awareness index", body: "How much the financial world has caught on: finance-media article count + StockTwits trader volume, capped. The other half of the gap trade." },
+  SA_GAP: { title: "Gap score", body: "Demand − Awareness. The edge: consumers moving while the market hasn't noticed. The gap closes (and the trade ends) when finance media and traders pile in." },
+  SA_VELOCITY: { title: "Velocity z", body: "Today's weighted mentions vs the trailing 30-day mean/σ. Only recorded when z ≥ 2.5 — the step-change detector, not the absolute level." },
+  SA_CORROBORATION: { title: "Corroboration", body: "How many platforms spiked in the same 48h window. ≥2 filters out platform-native memes; single-platform spikes are usually noise. A hard multiplier on the score." },
+  SA_MATERIALITY: { title: "Materiality", body: "How much a viral product actually moves the mapped ticker. Mono-brand / small-cap → near 1.0; buried inside a megacap → near 0. Revenue-share when known, else from market cap." },
+  SA_INTENT: { title: "Purchase-intent share", body: "Fraction of mentions expressing buying behavior — 'just bought', 'switching to', 'sold out everywhere'. Volume with intent beats volume alone." },
+  SA_SCORE: { title: "Signal score", body: "Composite rank: gap × materiality × corroboration, intent-weighted. A relative ranking across live signals — not a probability or a return estimate." },
+  SA_DIRECTION: { title: "Direction", body: "Long when the demand/awareness gap is positive (rising behavior, low awareness). Watch when it's borderline or awareness is already catching up." },
+
   // ---- tiers ----
   ACTIVE:     { title: "Active", body: "Real, dated, forward catalyst that passed the skeptic check. The actionable tier — but still check the edge before sizing." },
   WATCH:      { title: "Watch", body: "Real catalyst, but soft-dated, partly priced, or waiting on a trigger to harden. Monitor; it escalates to Active as the date or figure firms up." },
