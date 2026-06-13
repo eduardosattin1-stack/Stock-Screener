@@ -565,8 +565,14 @@ def _stage_pending_entries(stocks: list, scan_date: str, cfg: RegimeCfg,
             continue
         if (cfg.name, sym) in pending_keys or sym in open_symbols:
             continue
-        iv_raw = s.get("iv_current")
-        ivr_raw = s.get("iv_rank")
+        # Scan payload emits these under the options_ prefix (screener_v6
+        # output schema); fall back to the bare names for any in-memory caller.
+        iv_raw = s.get("options_iv_current")
+        if iv_raw is None:
+            iv_raw = s.get("iv_current")
+        ivr_raw = s.get("options_iv_rank")
+        if ivr_raw is None:
+            ivr_raw = s.get("iv_rank")
         pending.append({
             "record_id": f"{cfg.name}:{sym}:{scan_date}",
             "regime": cfg.name,

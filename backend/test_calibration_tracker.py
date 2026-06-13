@@ -96,9 +96,15 @@ def bar(d, h, l, c, o=None):
             "low": float(l), "close": float(c)}
 
 
-def stock(sym, p10=0.0, p20=0.0, sector="Tech"):
-    return {"symbol": sym, "hit_prob_10pct_30d": p10, "hit_prob_60d": p20,
-            "sector": sector, "price": 100.0}
+def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None):
+    s = {"symbol": sym, "hit_prob_10pct_30d": p10, "hit_prob_60d": p20,
+         "sector": sector, "price": 100.0}
+    # screener_v6 emits IV under the options_ prefix; mirror that here.
+    if iv is not None:
+        s["options_iv_current"] = iv
+    if ivr is not None:
+        s["options_iv_rank"] = ivr
+    return s
 
 
 def weekdays(start_iso, n):
@@ -194,6 +200,22 @@ class TestStaging(TrackerTestCase):
         self.assertEqual(out2["p10_30"]["staged"], 0)
         self.assertEqual(out2["p20_60"]["staged"], 0)
         self.assertEqual(len(self.pending()), 3)
+
+    def test_staging_maps_options_iv_fields(self):
+        # Regression: the scan payload carries IV as options_iv_current /
+        # options_iv_rank (screener_v6 schema). Staging must read those, not the
+        # bare iv_current/iv_rank, or iv_entry/ivr_entry stay null forever.
+        ct.update_from_scan([stock("AAA", p10=0.35, p20=0.45, iv=1.2071, ivr=34.7)],
+                            scan_date=FRI)
+        pend = {p["record_id"]: p for p in self.pending()}
+        self.assertEqual(pend[f"p10_30:AAA:{FRI}"]["iv_entry"], 1.2071)
+        self.assertEqual(pend[f"p10_30:AAA:{FRI}"]["ivr_entry"], 34.7)
+        # and it survives activation into the open record
+        self.feed.add("AAA", bar(FRI, 103, 98, 100))
+        ct.update_from_scan([], scan_date=MON)
+        r = self.open_records("p10_30")[0]
+        self.assertEqual(r["iv_entry"], 1.2071)
+        self.assertEqual(r["ivr_entry"], 34.7)
 
     def test_open_symbol_not_restaged(self):
         self.feed.add("AAA", bar(FRI, 103, 98, 100))

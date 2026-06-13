@@ -82,6 +82,7 @@ Invoked once per scan by run_scan_job.py after save_scan_to_gcs() completes.
 
 import json
 import logging
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 
