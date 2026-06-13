@@ -96,7 +96,8 @@ def bar(d, h, l, c, o=None):
             "low": float(l), "close": float(c)}
 
 
-def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None, dd30=None, dd60=None):
+def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None, dd30=None, dd60=None,
+          edge30=None, edge60=None):
     s = {"symbol": sym, "hit_prob_10pct_30d": p10, "hit_prob_60d": p20,
          "sector": sector, "price": 100.0}
     # screener_v6 emits IV under the options_ prefix; mirror that here.
@@ -108,6 +109,10 @@ def stock(sym, p10=0.0, p20=0.0, sector="Tech", iv=None, ivr=None, dd30=None, dd
         s["expected_dd_30d"] = dd30
     if dd60 is not None:
         s["expected_dd_60d"] = dd60
+    if edge30 is not None:
+        s["vol_adj_edge_30d"] = edge30
+    if edge60 is not None:
+        s["vol_adj_edge_60d"] = edge60
     return s
 
 
@@ -237,6 +242,22 @@ class TestStaging(TrackerTestCase):
         rec = next(r for r in self.summary()["records"] if r["symbol"] == "AAA")
         self.assertEqual(rec["dd_pred_30d"], -12.5)
         self.assertEqual(rec["dd_pred_60d"], -20.0)
+
+    def test_staging_maps_vol_adj_edge(self):
+        # Each regime captures its horizon's vol-adjusted edge:
+        # p10_30 <- vol_adj_edge_30d, p20_60 <- vol_adj_edge_60d.
+        ct.update_from_scan([stock("AAA", p10=0.35, p20=0.45, edge30=0.12, edge60=-0.03)],
+                            scan_date=FRI)
+        pend = {p["record_id"]: p for p in self.pending()}
+        self.assertEqual(pend[f"p10_30:AAA:{FRI}"]["edge"], 0.12)
+        self.assertEqual(pend[f"p20_60:AAA:{FRI}"]["edge"], -0.03)
+        self.feed.add("AAA", bar(FRI, 103, 98, 100))
+        ct.update_from_scan([], scan_date=MON)
+        self.assertEqual(self.open_records("p10_30")[0]["edge"], 0.12)
+        self.assertEqual(self.open_records("p20_60")[0]["edge"], -0.03)
+        rec = next(r for r in self.summary()["records"] if r["symbol"] == "AAA")
+        self.assertEqual(rec["edge_30d"], 0.12)
+        self.assertEqual(rec["edge_60d"], -0.03)
 
     def test_open_symbol_not_restaged(self):
         self.feed.add("AAA", bar(FRI, 103, 98, 100))
@@ -551,6 +572,7 @@ class TestSummaryShape(TrackerTestCase):
                              {"symbol", "entry_date", "entry_price", "sector", "p10", "p20",
                               "decile_30d", "decile_60d", "bars_elapsed_30d", "bars_elapsed_60d",
                               "iv_entry", "ivr_entry", "dd_pred_30d", "dd_pred_60d",
+                              "edge_30d", "edge_60d",
                               "max_high_pct", "max_dd_pct", "state_30d", "state_60d",
                               "touch_bar_30d", "touch_bar_60d"})
 

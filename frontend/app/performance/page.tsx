@@ -26,6 +26,8 @@ interface CalibRecord {
   ivr_entry: number | null;
   dd_pred_30d: number | null;
   dd_pred_60d: number | null;
+  edge_30d: number | null;
+  edge_60d: number | null;
   max_high_pct: number;
   max_dd_pct: number;
   state_30d: RecState | null;
@@ -579,7 +581,24 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                   <td style={{ ...td, textAlign: "left", fontWeight: 700, color: T.text }}>
-                    {r.symbol}
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      {r.symbol}
+                      {(() => {
+                        const e30 = r.edge_30d != null && r.edge_30d >= 0.10 && (r.decile_30d ?? 0) >= 8;
+                        const e60 = r.edge_60d != null && r.edge_60d >= 0.10 && (r.decile_60d ?? 0) >= 8;
+                        if (!e30 && !e60) return null;
+                        const parts = [
+                          e30 ? `30d +${((r.edge_30d ?? 0) * 100).toFixed(0)}pp` : null,
+                          e60 ? `60d +${((r.edge_60d ?? 0) * 100).toFixed(0)}pp` : null,
+                        ].filter(Boolean).join(" · ");
+                        return (
+                          <span
+                            title={`Beats vol: model P(touch) exceeds the vol-only baseline by ${parts} at decile ≥8 — driven by non-vol setup quality, not just volatility`}
+                            style={{ fontSize: 8, fontWeight: 700, letterSpacing: 0.3, color: T.green, border: `1px solid ${T.green}`, borderRadius: 3, padding: "1px 4px", whiteSpace: "nowrap" }}
+                          >BEATS VOL</span>
+                        );
+                      })()}
+                    </span>
                     <div style={{ fontSize: 9, fontWeight: 400, color: T.light }} title="Scan date this record was staged">entered {r.entry_date}</div>
                   </td>
                   <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>{r.sector ?? "—"}</td>

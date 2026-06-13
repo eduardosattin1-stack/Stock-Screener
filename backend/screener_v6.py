@@ -280,6 +280,7 @@ except Exception as _tmf_e:
 ML_MODELS_V4 = None        # {clf_*: [LGBMClassifier], reg_*: LGBMRegressor}
 ML_CALIBRATORS_V4 = None   # {clf_*: IsotonicRegression}
 ML_MEDIANS_V4 = None
+VOL_BASELINE_V4 = None      # {regime: {edges:[...], rate:[...]}} touch rate vs f_vol_60d (holdout)
 
 _model_path_v4 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_v4.pkl")
 if os.path.exists(_model_path_v4):
@@ -303,6 +304,15 @@ if os.path.exists(_model_path_v4):
     ML_MODELS_V4 = _v4_data["models_v3"]
     ML_CALIBRATORS_V4 = _v4_data.get("calibrators_v3", {})
     ML_MEDIANS_V4 = _v4_data["medians"]
+    # Vol-adjusted-edge baseline: touch rate vs realized vol from the v4 holdout
+    # (shipped in time_model_v4_meta.json). Absent -> edges serve as None.
+    try:
+        _meta_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "time_model_v4_meta.json")
+        with open(_meta_path) as _mf:
+            VOL_BASELINE_V4 = json.load(_mf).get("vol_baseline")
+    except Exception as _e:
+        log.warning(f"vol_baseline load failed (edges will be null): {_e}")
+        VOL_BASELINE_V4 = None
     ML_MODEL_VERSION = "v4"
     HAS_ML_MODEL = True
     log.info(f"ML v4 loaded: {len(tmf.FEATURES_V4)} features "
@@ -467,6 +477,22 @@ def predict_time_model_v3(stock) -> dict:
         return result
 
 
+def _vol_adj_edge(regime: str, p, vol):
+    """Model touch-prob minus the vol-only baseline touch rate at this realized
+    vol (f_vol_60d, from the v4 holdout). Positive = the model ranks the stock
+    ABOVE its vol peers -> non-vol setup quality is doing the work. None when the
+    baseline or vol is unavailable."""
+    vb = (VOL_BASELINE_V4 or {}).get(regime)
+    if not vb or vol is None or p is None:
+        return None
+    try:
+        import bisect
+        i = bisect.bisect_right(vb["edges"], float(vol))
+        return round(float(p) - vb["rate"][i], 4)
+    except Exception:
+        return None
+
+
 def predict_time_model_v4(features: dict) -> tuple[dict, int]:
     """Predict all v4 targets from a shared-builder feature dict.
 
@@ -618,6 +644,10 @@ def run_v4_ml_predictions(stocks: list) -> None:
             s.hit_prob_60d = preds["hit_20pct_60d"]
             s.expected_dd_30d = preds["expected_dd_30d"]
             s.expected_dd_60d = preds["expected_dd_60d"]
+            # vol-adjusted edge: model prob minus the vol-only touch baseline
+            _fv = feats.get("f_vol_60d")
+            s.vol_adj_edge_30d = _vol_adj_edge("p10_30", preds["hit_10pct_30d"], _fv)
+            s.vol_adj_edge_60d = _vol_adj_edge("p20_60", preds["hit_20pct_60d"], _fv)
             s.hit_prob = preds["hit_20pct_30d"]  # legacy alias = clf_20pct_30d
             s.ml_imputed_n = n_imputed
             total_imputed += n_imputed
@@ -1028,6 +1058,8 @@ class Stock:
     hit_prob_60d: float = 0.0        # P(touch +20% in 60 trading days)
     expected_dd_30d: float = 0.0     # expected max drawdown in 30d (%)
     expected_dd_60d: float = 0.0     # expected max drawdown in 60d (%)
+    vol_adj_edge_30d: Optional[float] = None  # p10 minus the vol-only touch baseline (>0 = beats vol)
+    vol_adj_edge_60d: Optional[float] = None  # p20 minus the vol-only touch baseline (>0 = beats vol)
     # v4 (June 2026): number of median-imputed features behind this stock's
     # prediction (build_vector missing-list length). None = not v4-predicted.
     # Persisted so the calibration tracker can flag rows predicted off medians.
