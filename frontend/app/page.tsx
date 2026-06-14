@@ -2979,28 +2979,34 @@ export default function Dashboard(){
                     <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
                       The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Tracked live-forward on its own NAV chain — independent of the catalyst Apex book above.
                     </div>
-                    {valueApex.value_tracking && (
+                    {(valueApex.value_tracking_weighted || valueApex.value_tracking) && (() => {
+                      // Director-weighted NAV is primary: the size_units the Director justified in the memo
+                      // (risk-weighting the basket) ARE the book's sizing. Equal-weight kept as fallback only.
+                      const vt = valueApex.value_tracking_weighted || valueApex.value_tracking;
+                      const weighted = !!valueApex.value_tracking_weighted;
+                      return (
                       <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
                         <div>
                           <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (valueApex.value_tracking.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(valueApex.value_tracking.since_inception_pct || 0) >= 0 ? "+" : ""}{valueApex.value_tracking.since_inception_pct}%
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (vt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(vt.since_inception_pct || 0) >= 0 ? "+" : ""}{vt.since_inception_pct}%
                           </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {valueApex.value_tracking.inception_date}</div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {vt.inception_date}</div>
                         </div>
-                        {(valueApex.value_tracking.history || []).length > 1 && (() => {
-                          const _n = valueApex.value_tracking.history.map((p: any) => p.nav);
+                        {(vt.history || []).length > 1 && (() => {
+                          const _n = vt.history.map((p: any) => p.nav);
                           const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
                           const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
                           const _up = _n[_n.length - 1] >= _n[0];
                           return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
                         })()}
                         <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {valueApex.value_tracking.nav} · {valueApex.value_tracking.n_open} held · {valueApex.value_tracking.n_closed} closed{valueApex.value_tracking.win_rate != null ? ` · ${valueApex.value_tracking.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>equal-weight NAV · live-forward, not back-filled</div>
+                          NAV {vt.nav} · {vt.n_open} held · {vt.n_closed} closed{vt.win_rate != null ? ` · ${vt.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
                         </div>
                       </div>
-                    )}
+                      );
+                    })()}
                     {valueApex.stress_test && (
                       <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
                         Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{valueApex.stress_test.published_downside_pct}%</span> recession · {valueApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{valueApex.correlation ? ` · avg pairwise corr ${valueApex.correlation.avg_pairwise} (${valueApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
@@ -3146,6 +3152,39 @@ export default function Dashboard(){
                       </div>
                     )}
                   </div>
+
+                  {/* Value Director Memo — the pure-value Director's reasoning (rubric weighting, gates, correlation stress, sizing, per-seat bear rebuttal) */}
+                  {valueApex.value_memo && (
+                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
+                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Value Director Memo</summary>
+                      {typeof valueApex.value_memo === "string" ? (
+                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{valueApex.value_memo}</pre>
+                      ) : (
+                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                          {Object.entries(valueApex.value_memo).map(([k, v]: [string, any]) => (
+                            <div key={k}>
+                              <div style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
+                              {typeof v === "string" ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
+                              ) : Array.isArray(v) ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
+                              ) : v && typeof v === "object" ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
+                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </details>
+                  )}
 
                   {/* Capitulation Watchlist */}
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
