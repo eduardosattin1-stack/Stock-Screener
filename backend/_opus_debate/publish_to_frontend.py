@@ -201,6 +201,7 @@ for p in picks:
         "sector_class": sc.get("sector_class", "operating"),
         "methodology_applicable": meth_app,
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
+        "size_units": p.get("size_units"),
         "engine": "opus-4.8-regime",
     })
 
@@ -211,6 +212,34 @@ except Exception as e:
     print(f"WARN: _update_apex_tracking failed ({e}); preserving prior tracking summary.")
     track_summary = baskets.get("apex_tracking", {})
 
+# ── Director-weighted NAV (parallel to equal-weight) ────────────────────────
+# The regime Director risk-sizes the book in his memo (defensive anchors larger, cyclical tails
+# "held smallest on purpose"). Weight basis = the Director's structured size_units when present,
+# else his director_conviction (0-100) — his own per-seat scoring. Card shows this as primary;
+# the equal-weight chain stays as the continuity series.
+def _apex_weights(es):
+    units = {}
+    for e in es:
+        su = e.get("size_units")
+        if isinstance(su, (int, float)) and 0.1 <= su <= 1.5:
+            units[e["symbol"]] = float(su)
+        else:
+            units[e["symbol"]] = max(0.1, (e.get("conviction") or 0) / 100.0)
+    tot = sum(units.values()) or 1.0
+    return {s: round(u / tot, 4) for s, u in units.items()}
+
+apex_weights = _apex_weights(entries)
+_wbasis = "size_units" if any(isinstance(e.get("size_units"), (int, float)) for e in entries) else "director_conviction"
+for e in entries:
+    e["weight_pct"] = round(apex_weights.get(e["symbol"], 0) * 100, 2)
+try:
+    track_summary_w = E._update_apex_tracking(entries, push_gcs=False, weights=apex_weights,
+                                              gcs_path="scans/speculair_apex_tracking_weighted.json",
+                                              local_name="speculair_apex_tracking_weighted.json")
+except Exception as e:
+    print(f"WARN: weighted apex tracking failed ({e})")
+    track_summary_w = {}
+
 # ── Assemble: swap apex_basket + memo, preserve everything else ──────────
 baskets["apex_basket"] = entries
 baskets["director_memo"] = director.get("director_memo", baskets.get("director_memo", ""))
@@ -219,6 +248,10 @@ baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
 baskets["engine"] = "opus-4.8-claude-code-subagents"
 if track_summary:
     baskets["apex_tracking"] = track_summary
+baskets["weights"] = apex_weights
+baskets["weights_basis"] = _wbasis
+if track_summary_w:
+    baskets["apex_tracking_weighted"] = track_summary_w
 baskets["generated_at"] = datetime.now(timezone.utc).isoformat()
 baskets["director_last_run"] = baskets["generated_at"]
 baskets["rebalance_date"] = TODAY
@@ -329,7 +362,8 @@ if args.gcs:
     import subprocess
     print("  pushing to production GCS...")
     for local, remote in [(BASKETS_LOCAL, "scans/speculair_baskets.json"),
-                          (TRACK_LOCAL, "scans/speculair_apex_tracking.json")]:
+                          (TRACK_LOCAL, "scans/speculair_apex_tracking.json"),
+                          (PUB / "speculair_apex_tracking_weighted.json", "scans/speculair_apex_tracking_weighted.json")]:
         try:
             # shell=True so Windows resolves gcloud.cmd (a batch shim) via cmd.exe
             cmd = f'gcloud storage cp "{local}" "gs://{gcs_io.GCS_BUCKET}/{remote}"'
