@@ -1,0 +1,66 @@
+{
+  "inception_date": "2026-06-14",
+  "nav": 100.0,
+  "last_date": "2026-06-14",
+  "last_prices": {
+    "INTU": 276.73,
+    "IDXX": 560.88,
+    "V": 0.0,
+    "CCJ": 0.0,
+    "GMED": 80.39,
+    "NVDA": 205.19,
+    "TSM": 0.0,
+    "VRT": 302.87
+  },
+  "positions": {
+    "INTU": {
+      "entry_price": 276.73,
+      "entry_date": "2026-06-14",
+      "conviction": 88
+    },
+    "IDXX": {
+      "entry_price": 560.88,
+      "entry_date": "2026-06-14",
+      "conviction": 84
+    },
+    "V": {
+      "entry_price": 0.0,
+      "entry_date": "2026-06-14",
+      "conviction": 82
+    },
+    "CCJ": {
+      "entry_price": 0.0,
+      "entry_date": "2026-06-14",
+      "conviction": 76
+    },
+    "GMED": {
+      "entry_price": 80.39,
+      "entry_date": "2026-06-14",
+      "conviction": 74
+    },
+    "NVDA": {
+      "entry_price": 205.19,
+      "entry_date": "2026-06-14",
+      "conviction": 80
+    },
+    "TSM": {
+      "entry_price": 0.0,
+      "entry_date": "2026-06-14",
+      "conviction": 79
+    },
+    "VRT": {
+      "entry_price": 302.87,
+      "entry_date": "2026-06-14",
+      "conviction": 77
+    }
+  },
+  "history": [
+    {
+      "date": "2026-06-14",
+      "nav": 100.0,
+      "ret": 0.0,
+      "n": 8
+    }
+  ],
+  "closed": []
+}
