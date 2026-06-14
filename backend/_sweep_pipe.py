@@ -47,18 +47,18 @@ const DEEP_SCHEMA = { type:'object', properties:{ symbol:{type:'string'}, score:
   // Phase-2 valuation (OPTIONAL on the fast sweep tier; the full SoP build is the dedicated valuation dossier).
   valuation_method:{type:'string', enum:['sop','spread','binary_prob','recovery','capital_return']}, fair_value_target:{type:'number'}, downside_floor:{type:'number'}, reference_price:{type:'number'}, reference_rr:{type:'number'}, valuation_basis:{type:'string'}, advocacy_target:{type:'number'} }, required:['symbol','score','tier','catalyst','fired','analysis'] }
 const VERDICT_SCHEMA = { type:'object', properties:{ symbol:{type:'string'}, verdict:{type:'string', enum:['CONFIRMED','CONFIRMED_WITH_CORRECTIONS','REFUTED']}, final_score:{type:'number'}, kill_fact:{type:'string'}, confidence:{type:'string'} }, required:['symbol','verdict','final_score'] }
-function scanPrompt(b){ return `Today is 2026-06-06. SCAN (triage) tier of a catalyst sweep for an event-driven / special-situations book. Verify live (WebSearch + FMP MCP via ToolSearch). For EACH name do a FAST triage (a couple of quick checks; do NOT deep-dive): does it have a REAL, DATED, FORWARD special-situation catalyst? Types: M&A / complicated merger-arb; spin-off; forced-seller OVERHANG clearing (own the suppressed underlying); distressed/restructuring/LME with a dated milestone; activist+structural (hardening trigger); capital-return (tender/special-div/dated deleveraging); supply-shortage+timing-moat; or a dated binary (PDUFA/ruling) WITH mispriced asymmetry.
+function scanPrompt(b){ return `Today is __TODAY__. SCAN (triage) tier of a catalyst sweep for an event-driven / special-situations book. Verify live (WebSearch + FMP MCP via ToolSearch). For EACH name do a FAST triage (a couple of quick checks; do NOT deep-dive): does it have a REAL, DATED, FORWARD special-situation catalyst? Types: M&A / complicated merger-arb; spin-off; forced-seller OVERHANG clearing (own the suppressed underlying); distressed/restructuring/LME with a dated milestone; activist+structural (hardening trigger); capital-return (tender/special-div/dated deleveraging); supply-shortage+timing-moat; or a dated binary (PDUFA/ruling) WITH mispriced asymmetry.
 GATE HARD: most names have NO near-term catalyst -> score 0-3, tier NONE. FORWARD-not-fired (already happened/re-rated => fired=true). NOT a macro bet. Rubric DEFAULT LOW: 0-2 none; 3-4 vague/priced/fired; 5-6 one real dated catalyst; 7-8 strong dated >=2 Bloom gates; 9-10 multiple imminent hard.
 Return for EACH {symbol, score, tier, lane, dated_catalyst, fired, one_line}. Ruthless and fast; most should be NONE.
 NAMES (${b.length}): ${JSON.stringify(b)}` }
-function deepPrompt(n){ return `Today is 2026-06-06. DEEP tier. Verify ${n.symbol} (${n.company_name||''}). Triage flagged: "${n.one_line}" (tier ${n.tier}, score ${n.score}, lane ${n.lane||'?'}). Do FOCUSED verification — AT MOST ~6 lookups (WebSearch/WebFetch + FMP via ToolSearch), cite source+date. Gate STRICTLY: real+specific (Bloom G1 named counterparty / G2 concrete commitment / G3 specific currently-unpriced figure) + DATED + FORWARD (not fired/not re-rated) + NOT a macro bet.
+function deepPrompt(n){ return `Today is __TODAY__. DEEP tier. Verify ${n.symbol} (${n.company_name||''}). Triage flagged: "${n.one_line}" (tier ${n.tier}, score ${n.score}, lane ${n.lane||'?'}). Do FOCUSED verification — AT MOST ~6 lookups (WebSearch/WebFetch + FMP via ToolSearch), cite source+date. Gate STRICTLY: real+specific (Bloom G1 named counterparty / G2 concrete commitment / G3 specific currently-unpriced figure) + DATED + FORWARD (not fired/not re-rated) + NOT a macro bet.
 CRITICAL: your ONLY deliverable is a SINGLE StructuredOutput call (no prose report). After ~6 lookups, STOP and call StructuredOutput; if not fully verifiable, still call it with your best assessment + note the gap in analysis. Fields {symbol, score (0-10), tier (ACTIVE/WATCH/NONE), lane, catalyst (1 sentence), dated_milestone (+next date), fired, instrument, bloom_gates (which of G1/G2/G3), edge (H/M/L+why), analysis (2-3 sentences), primary_source (+date)}. No real dated forward catalyst => tier NONE, score <=3.` }
-function skepticPrompt(d){ return `Today is 2026-06-06. SKEPTIC tier. KILL this line; default REFUTED if you cannot independently confirm the load-bearing facts against a PRIMARY source. Verify live. Attack: (1) FIRED-not-forward; (2) date accuracy; (3) terms/magnitude truth; (4) thesis weakness (real edge vs priced/wrong/story); (5) tradeability + hidden disqualifier.
+function skepticPrompt(d){ return `Today is __TODAY__. SKEPTIC tier. KILL this line; default REFUTED if you cannot independently confirm the load-bearing facts against a PRIMARY source. Verify live. Attack: (1) FIRED-not-forward; (2) date accuracy; (3) terms/magnitude truth; (4) thesis weakness (real edge vs priced/wrong/story); (5) tradeability + hidden disqualifier.
 CRITICAL: your ONLY deliverable is a SINGLE StructuredOutput call (no prose). After ~6 lookups, call it.
 LINE: ${d.symbol} — ${d.catalyst} | tier ${d.tier}, score ${d.score}, instrument: ${d.instrument||'?'} | ${d.analysis||''}
 Fields {symbol, verdict (CONFIRMED/CONFIRMED_WITH_CORRECTIONS/REFUTED), final_score (0-10), kill_fact, confidence (H/M/L)}.` }
 // retry transient errors (529 Overloaded / rate limits); only retries on THROW, passes nulls through, rethrows after n tries (parallel catches -> null, recoverable by resume)
-async function aR(p,o,n){ n=n||3; let e; for(let t=0;t<n;t++){ try{ return await agent(p,o) }catch(err){ e=err } } throw e }
+async function aR(p,o,n){ n=n||6; let e; for(let t=0;t<n;t++){ try{ return await agent(p,o) }catch(err){ e=err } } throw e }
 phase('Scan')
 const batches=[]; for(let i=0;i<UNIVERSE.length;i+=BATCH) batches.push(UNIVERSE.slice(i,i+BATCH))
 log(`Scanning ${UNIVERSE.length} names in ${batches.length} batches of ${BATCH} (Opus)`)
@@ -67,7 +67,7 @@ const survivors=scanned.filter(n=>n&&n.tier!=='NONE'&&n.score>=DEEP_T&&n.dated_c
 const dist={active:scanned.filter(n=>n.tier==='ACTIVE').length,watch:scanned.filter(n=>n.tier==='WATCH').length,none:scanned.filter(n=>n.tier==='NONE').length}
 log(`Scan done: ${scanned.length} scored (A ${dist.active}/W ${dist.watch}/N ${dist.none}) -> ${survivors.length} survivors`)
 phase('Deep')
-const DEEP_CONC=8
+const DEEP_CONC=4
 const results=[]
 for(let di=0;di<survivors.length;di+=DEEP_CONC){
   const sub=survivors.slice(di,di+DEEP_CONC)
@@ -120,13 +120,30 @@ def gen(n):
         print(f"NO_MORE_CHUNKS (n={n}, universe={len(uni)})"); return
     names = [{'symbol': x['symbol'], 'company_name': x['company_name']} for x in chunk]
     label = f"{n} ({chunk[0]['symbol']}-{chunk[-1]['symbol']})"
-    js = JS_TEMPLATE.replace('__N__', str(n)).replace('__NAMES__', json.dumps(names, ensure_ascii=False)).replace('__LABEL__', label)
+    js = (JS_TEMPLATE.replace('__N__', str(n)).replace('__NAMES__', json.dumps(names, ensure_ascii=False))
+          .replace('__LABEL__', label).replace('__TODAY__', __import__('datetime').date.today().isoformat()))
     out = f'{BASE}/backend/_sweep_results/chunk{n}_workflow.js'
     open(out, 'w', encoding='utf-8').write(js)
     print(f"WROTE {out} ({len(names)} names, label '{label}')")
+    print(out)
+
+def genlist(tag, syms):
+    # gap-fill: build a workflow for an arbitrary ticker list (rate-limit losses, remaps, ad-hoc).
+    uni = {x['symbol']: x for x in json.load(open(UNIVERSE_F, encoding='utf-8'))}
+    miss = [s for s in syms if s not in uni]
+    if miss: print(f"WARN not in universe (skipped): {miss}")
+    syms = [s for s in syms if s in uni]
+    names = [{'symbol': s, 'company_name': uni[s]['company_name']} for s in syms]
+    label = f"gapfill-{tag} ({len(names)} names)"
+    js = (JS_TEMPLATE.replace('__N__', tag).replace('__NAMES__', json.dumps(names, ensure_ascii=False))
+          .replace('__LABEL__', label).replace('__TODAY__', __import__('datetime').date.today().isoformat()))
+    out = f'{BASE}/backend/_sweep_results/gapfill_{tag}_workflow.js'
+    open(out, 'w', encoding='utf-8').write(js)
+    print(f"WROTE {out} ({len(names)} names: {[n['symbol'] for n in names]}, label '{label}')")
     print(out)
 
 if __name__ == '__main__':
     mode = sys.argv[1]
     if mode == 'inject': inject(sys.argv[2])
     elif mode == 'gen': gen(int(sys.argv[2]))
+    elif mode == 'genlist': genlist(sys.argv[2], [s.strip().upper() for s in sys.argv[3].split(',') if s.strip()])
