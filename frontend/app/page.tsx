@@ -4725,26 +4725,27 @@ export default function Dashboard(){
 
                                   </tr>
 
+                                  {/* Speculair = Opus-debate COVERAGE of this basket, not a return row — rendered as one
+                                      labeled line spanning the perf columns so its counts can't read as CAGR/DD/Sharpe. */}
                                   <tr>
 
-                                    <td style={{ paddingTop: 6, textAlign: "left", color: specData ? "var(--purple)" : "var(--text-light)", fontWeight: specData ? 700 : 400 }}>Speculair</td>
+                                    <td style={{ paddingTop: 6, textAlign: "left", color: specData ? "var(--purple)" : "var(--text-light)", fontWeight: specData ? 700 : 400 }}>Speculair&nbsp;†</td>
 
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--green)" : "var(--text-muted)", fontWeight: specData ? 700 : 400 }}>
-                                      {specData ? `${(specData.picks || []).length} picks` : "—"}
-                                    </td>
-
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData?.radar_filtered ? "var(--amber)" : "var(--text-muted)" }}>
-                                      {specData ? `${specData.radar_filtered || 0} filtered` : "—"}
-                                    </td>
-
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--text)" : "var(--text-muted)" }}>
-                                      {specData && (specData.picks || []).length > 0
-                                        ? `${((specData.picks || []).reduce((s: number, p: any) => s + (p.conviction || 0), 0) / (specData.picks || []).length).toFixed(1)} avg`
-                                        : "—"}
-                                    </td>
-
-                                    <td style={{ paddingTop: 6, paddingLeft: 16, color: specData ? "var(--text-muted)" : "var(--text-muted)" }}>
-                                      {specData ? (specData.total_candidates || 0) : "—"}
+                                    <td colSpan={4} style={{ paddingTop: 6, paddingLeft: 16, textAlign: "left", color: "var(--text-muted)", fontWeight: 400, whiteSpace: "nowrap" }}>
+                                      {specData ? (
+                                        <>
+                                          <span style={{ color: "var(--text-muted)" }}>Opus overlay (coverage, not P&amp;L): </span>
+                                          <span style={{ color: "var(--green)", fontWeight: 700 }}>{(specData.picks || []).length} picks</span>
+                                          <span> · </span>
+                                          <span style={{ color: specData.radar_filtered ? "var(--amber)" : "var(--text-muted)" }}>{specData.radar_filtered || 0} Radar-filtered</span>
+                                          {(specData.picks || []).length > 0 && (
+                                            <>
+                                              <span> · </span>
+                                              <span style={{ color: "var(--text)" }}>{((specData.picks || []).reduce((s: number, p: any) => s + (p.conviction || 0), 0) / (specData.picks || []).length).toFixed(1)} avg conviction</span>
+                                            </>
+                                          )}
+                                        </>
+                                      ) : <span style={{ color: "var(--text-muted)" }}>no Opus overlay yet</span>}
                                     </td>
 
                                   </tr>
@@ -4754,9 +4755,10 @@ export default function Dashboard(){
 
                               </table>
 
-                              <div style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 8, fontStyle: "italic", textAlign: "right" }}>
+                              <div style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 8, fontStyle: "italic", textAlign: "right", lineHeight: 1.5 }}>
 
-                                * Baseline calculated via unoptimized quantitative screens without agent validation or concentrated weighting.
+                                * Baseline = deterministic 5-yr point-in-time backtest (unoptimized screen, no agent validation / concentrated weighting). Active = the live-forward paper record, marked nightly.<br />
+                                † Speculair is NOT a return — it is how many of this basket&apos;s names the weekly Opus debate currently vouches for (coverage), shown for context only.
 
                               </div>
 
