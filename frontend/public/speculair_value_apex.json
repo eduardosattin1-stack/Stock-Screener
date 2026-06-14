@@ -1,629 +1,408 @@
 {
  "apex_basket": [
   {
-   "symbol": "THC",
-   "sector": "Healthcare",
-   "value_score": 88,
-   "thesis": "Second-largest US hospital operator at 5.8x FCF with the USPI surgical crown jewel compounding; CRO parts value $295 vs $166 spot with even the adverse parts math ($235-250) sitting ABOVE the price, and the dossier confirms no significant debt maturities until late 2027.",
-   "mos_agreement": "5/5",
-   "sop_mos_pct": 77.3,
-   "net_funded_debt_ebitda": 2.33,
-   "interest_coverage": 4.2,
-   "funded_solvency": "moderate",
+   "symbol": "ADBE",
+   "sector": "Technology",
+   "value_score": 94,
+   "thesis": "Net-cash, 27% ROIC franchise the CRO marks at ~$420 base fair value vs $204 price (sop_mos +101%); the high eps_peak_ratio is a durable AI/Firefly re-rate, not a cycle peak (rev 3y CAGR +10.5%, no freshness-stale flag), so the cheapness survives normalization.",
+   "mos_agreement": "4/5",
+   "sop_mos_pct": 101.0,
+   "net_funded_debt_ebitda": 0.03,
+   "interest_coverage": 64.9,
+   "funded_solvency": "strong",
    "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - rev +3.6% 3y, USPI acuity mix shifting up, ROIC 11%, latest-Q EPS +88%",
+   "growth_durability": "durable — rev 3y CAGR +10.5%, ROIC 27%, owner-earnings still compounding",
    "peak_normalized": false,
    "exposure_axes": [
-    "hospital-reimbursement"
+    "enterprise-software-spend",
+    "AI-monetization"
    ],
-   "size_units": 1.0,
-   "thesis_break_px": 138.0,
-   "bear_fv_px": 240.0,
+   "size_units": 1.5,
+   "thesis_break_px": 165.0,
+   "bear_fv_px": 300.0,
    "forensic_gate": "",
    "trap_flag": false,
    "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "NCI OMISSION (load-bearing): every SoP in the debate bridges EV to equity by deducting net debt only, crediting 100% of consolidated segment EBITDA to THC shareholders. Tenet's own FY2026 outlook (Q4-25 release, Feb-11-2026) discloses Ambulatory Adjusted EBITDA $2,130-2,230M LESS NCI $865-895M = $1,265-1,335M attributable -- minority partners (physicians/health systems) own ~40% of the crown-jewel USPI EBITDA. FY25 net income to NCI was $960M (vs $1,407M to common); balance sheet carries $2,956M redeemable NCI + $1,797M equity NCI at 12/31/25. Corrected adverse SoP: USPI attributable ~$1.30B x 12x = $15.6B + Hospital ~$2.25B (net of small hospital NCI) x 5x = $11.2B -> EV $26.8B - net debt $10.16B = $16.7B / 86.1M sh = ~$194/sh, NOT $278. On the bear's own 'true trough' multiples (11x USPI / 4.5x hospital) the corrected value is ~$165/sh -- essentially AT the $162 spot, not 45-55% above it. The crux claim 'even the bear SoP sits comfortably above spot' collapses; risk_reward compresses from the claimed 5:1-8:1 to roughly 2:1 against a corrected base of ~$230-250.",
-    "FCF MULTIPLE: the '5.8x P/FCF' deep-value anchor uses consolidated FCF ($2.53B FY25) which does NOT deduct distributions paid to NCI ($809M in FY25; $900-970M guided FY26, per the company's own outlook table). Attributable FCF is ~$1.7B -> ~8.1x P/FCF on the $13.97B cap. Cheap, not screaming.",
-    "SHARE COUNT: 92M is stale. Q1-26 10-Q shows 86.1M shares outstanding at 3/31/26 (87.3M weighted basic, ~88M diluted guided). Direction favors the long, but all per-share SoP math in the debate uses the wrong denominator.",
-    "ONE-TIME INFLATION IN 2026 OPTICS: FY26 outlook net income to common ($2,605-2,840M) and FCF guide ($2,940-3,290M) embed the one-time Conifer/CommonSpirit contract-termination ($1,650M revenue recognition; $540M cash). Clean comparisons require the adjusted lines ($16.38-18.68 adj EPS; $2,500-2,800M adj FCF). The catalyst itself (8-K dated Feb-2-2026) is confirmed CLOSED/fired, as the bear file states.",
-    "MISSED MEDIUM-TERM HEADWIND: beyond the verified $250M 2026 EAPTC hit, the 2025 reconciliation law phases down Medicaid state-directed payments above Medicare-rate caps starting 2028; THC books ~$1.1-1.2B/yr of SDPs (4-10% of hospital operator revenue per Healthcare Dive). This supports trough (4.5-5x) hospital terminal multiples as appropriate, not paranoid."
+   "skeptic_kill_fact": "No kill_fact: the cash engine is intact and verified ($10.28B TTM FCF, 10-Q period 2026-05-29), so the value case does not break on solvency. But the bear's core claim survives independent attack and is corroborated by management's OWN disclosure: ~half of the FY26 organic-ARR cut comes from DEFERRING Creative Cloud price-line optimizations, and the headline FY26 ARR-growth target of 10.2% leans on the ~$480M SEMRush book — i.e., Adobe is voluntarily withdrawing its pricing lever and propping the ARR metric with an acquisition. That is the pricing-power-erosion tell, not pure mispricing. Post-print Street action is materially WORSE than the debate recorded: Stifel cut Buy->Hold PT $350->$200 (BELOW the $204 price), Evercore Outperform->In Line $325->$225, Piper $280->$240, DA Davidson $300->$250 — so the bull's 'shallow downside, bear SoP +52% above price' claim is in direct tension with sell-side now anchoring at/below spot.",
+   "skeptic_corrections": "NET DEBT IS WRONG. The SoP/dossier subtract net debt of $1.44B; the actual Q2-FY26 10-Q (period 2026-05-29, filed 2026-06-11) shows total debt $7.065B minus cash & short-term investments $5.626B = net debt $2.146B (FMP balance sheet confirms netDebt=2,146,000,000). The ~$0.7B understatement is immaterial to fair-value direction (~$1-2/share on a ~$180B EV) but is a load-bearing figure that was stated incorrectly. Two further staleness notes (not errors that help the bull): (a) the debate anchors revenue to '$23.77B FY25'; current TTM through Q2-FY26 is ~$25.2B (Q3'25 5.988 + Q4'25 6.194 + Q1'26 6.398 + Q2'26 6.618), and Q2 revenue actually ACCELERATED to +13% YoY ($6.62B) with FY26 guidance RAISED to $26.5-26.6B / non-GAAP EPS $24.35-24.45 — so the bear's 'decelerating' framing is contradicted by reported revenue/EPS even as the ORGANIC ARR signal weakens; (b) diluted share count is now 402M and falling via buyback (430->417->411->402), vs the ~408M used — TTM diluted EPS $17.48 verifies exactly.",
+   "value_conviction_cap": 3,
+   "mos_agreement_n": 4,
+   "cro_only": false,
+   "stale_anchor": false,
+   "size_units_effective": 1.5,
+   "weight_pct": 27.52,
+   "corr_flag": false,
+   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
+   "entry_price": 204.02,
+   "entry_date": "2026-06-14"
+  },
+  {
+   "symbol": "MMS",
+   "sector": "Industrials",
+   "value_score": 84,
+   "thesis": "Government-services operator the CRO marks at ~$100 vs $62.28 (sop_mos +60.6%) with STRENGTHENING trajectory and strong solvency (1.93x funded / 6.5x coverage); scan headline (+20%) is conservative, so the SoP is corroborated rather than a lone leg.",
+   "mos_agreement": "3/5",
+   "sop_mos_pct": 60.6,
+   "net_funded_debt_ebitda": 1.93,
+   "interest_coverage": 6.5,
+   "funded_solvency": "strong",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "durable — rev 3y CAGR +5.5%, ROIC ~9%, strengthening earnings",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "us-federal-budget"
    ],
+   "size_units": 1.0,
+   "thesis_break_px": 51.0,
+   "bear_fv_px": 78.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "CONFIRMED",
+   "skeptic_kill_fact": "No kill fact found — the bear value-trap thesis SURVIVES attack. Every load-bearing figure verifies against the primary FY2026 Q2 release (period ended 2026-03-31), and the most aggressive bear claims understate the strain: H1 FY26 free cash flow is NEGATIVE -$71.6M (op cash flow -$54.9M), so the reiterated $450-500M FY26 FCF guide requires an unproven back-half hockey stick on top of DSO still stuck at 78 days; the receivables purchase facility was indeed expanded $250M->$350M; signed awards YTD were only $913M (book-to-bill well below 1.0); revenue fell -4.2% YoY; and the bull's own leading indicator — the sales pipeline — DECLINED from $59.1B (Q1) to $56.8B (Q2), inverting the 'growing pipeline' claim. The OBBBA re-rating catalyst is genuinely deferred to FY27/28 by management's own guidance ('virtually no contribution from new work' in FY26), while the disappointment events (FCF guide, US-Services growth test, VBA recompete) are all front-loaded. This is a fairly-valued government BPO with a back-loaded, third-party-dependent option, not a deep-value entry.",
+   "skeptic_corrections": "(1) NET DEBT: sop_bear subtracts ~$1.38B net debt, which VERIFIES as correct (FY26 Q2 primary: total debt $1.550B, cash $157M, net debt ~$1.393B, net leverage 1.8x). The erroneous figure is the moderator_conclusion's '$794M net debt' elsewhere in the debate — that number is wrong by ~$600M and must NOT be used; the bear's $1.38B is the accurate anchor. (2) SHARE COUNT: sop_bear uses 57.9M shares; current diluted weighted-average is ~54.6M (buybacks lowering count), so the bear's per-share SoP is marginally CONSERVATIVE (understates per-share value), not inflated — no adjustment needed against the bear. (3) VBA CLIFF NUANCE: the recompete overhang (current contracts run through Dec 31, 2026, VA has released no formal rebid timeline) is real and primary-confirmed, but the bear's 'crown-jewel wholly at risk' framing should be tempered — the VES Medical Disability Exam piece (domestic Regions 1-4) was already RE-AWARDED effective Jan 1, 2025, securing a material chunk of VA work beyond the cliff. (4) INSIDER SIGNAL: dossier flag confirmed — insiders are net sellers on shares (more shares disposed than acquired), so any 'insiders buying' bull tell is unsupported; corporate buyback is the only real bid.",
+   "value_conviction_cap": 2,
+   "mos_agreement_n": 4,
+   "cro_only": false,
+   "stale_anchor": false,
+   "size_units_effective": 1.0,
+   "weight_pct": 18.35,
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "entry_price": 62.28,
+   "entry_date": "2026-06-14"
+  },
+  {
+   "symbol": "GLOB",
+   "sector": "Technology",
+   "value_score": 80,
+   "thesis": "IT-services name beaten down to $37.49 against a CRO fair value of $55-60 (sop_mos +53.4%), strong solvency (0.79x funded), cheap vs peers; epr 1.6 with positive rev 3y CAGR (+11%) reads as a de-rating overshoot, not a cycle peak.",
+   "mos_agreement": "3/5",
+   "sop_mos_pct": 53.4,
+   "net_funded_debt_ebitda": 0.79,
+   "interest_coverage": 6.2,
+   "funded_solvency": "strong",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "moderate — rev 3y CAGR +11% but ROIC ~7% and growth pivoting; watch deceleration",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "it-services-discretionary-spend"
+   ],
+   "size_units": 0.8,
+   "thesis_break_px": 31.0,
+   "bear_fv_px": 44.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No single kill_fact breaks the value case: the cheap-FCF anchor verifies against the FY2025 10-K (FCF $261.2M, P/FCF ~6.5x, net income $102.9M, diluted EPS $2.29) and the Q1'26 6-K, and the SoP correctly SUBTRACTS net debt $262.1M (cash $200.5M vs total debt $462.7M incl. $100.9M leases as of 2026-03-31). The bear's strongest leg — 21.4M insider shares 'sold vs 146k bought' as a current conviction signal — is itself STALE: that block is historical/founder secondary dispositions over the class period, while recent (May-Jun 2026) open-market Form 4 activity is net BUYING near the lows (director Aguzin +25,000 sh open-market at $38.87 on 2026-05-27). The value thesis survives, but two load-bearing claims required correction.",
+   "skeptic_corrections": "(1) The bull/dossier 'Q1'26 BEAT' framing masks that Q1'26 revenue $607.1M DECLINED -0.7% YoY (it beat GUIDANCE, not a YoY growth bar) — the bear's flat-to-negative core-revenue thesis is intact and the IT-services top line is still contracting. (2) The bear's headline insider-selling signal ('heavily net-sold by insiders') is OVERSTATED as present-tense conviction; corrected for recency, open-market insider activity in 2026 is net buying — this weakens a bear leg, it does not strengthen it. (3) FCF figure precision: FY2025 annual FCF is $261.2M (10-K), not $303M; the $303M is the TTM-thru-Q1'26 figure, and Q1'26 FCF was only $36.1M (first positive Q1 since 2019), confirming the H1 cash-seasonality weakness. (4) Share count ~43.4-45.0M (Q1'26 book value implies ~43.4M; 10-K diluted 45.0M) vs the SoP's 44.7M — immaterial.",
+   "value_conviction_cap": 3,
+   "mos_agreement_n": 3,
+   "cro_only": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.8,
+   "weight_pct": 14.68,
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "entry_price": 37.49,
+   "entry_date": "2026-06-14"
+  },
+  {
+   "symbol": "EEFT",
+   "sector": "Technology",
+   "value_score": 85,
+   "thesis": "Payments/transfer operator the CRO marks at ~$100 vs $66.66 (sop_mos +42.5%) with scan MoS in agreement (+43%) and 5/5 models positive — strong solvency (0.83x funded), the highest-confidence cheap name in the slate.",
+   "mos_agreement": "5/5",
+   "sop_mos_pct": 42.5,
+   "net_funded_debt_ebitda": 0.83,
+   "interest_coverage": 6.7,
+   "funded_solvency": "strong",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "durable — rev 3y CAGR +8%, ROIC ~8%, EPS flat-to-up (pivoting)",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "cross-border-payments",
+    "travel-fx-volume"
+   ],
+   "size_units": 1.1,
+   "thesis_break_px": 56.0,
+   "bear_fv_px": 84.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No clean kill_fact. The value-trap bear survives on facts-in-hand (FY25 GAAP EPS +6.0% to $6.84, Money Transfer Q1-26 operating income -7% to $41.9M on +2% revenue, a structural US-Mexico remittance regime change -4.6% in 2025 plus the 1% cash-remittance excise tax live Jan 1 2026, levered buybacks against a $1B 0.625% convert), but none of these BREAKS the value case to zero — the business is genuinely cheap and de-rated, not insolvent or melting to nothing. Closest disqualifier the bear leaned on (negative Q1-26 free cash flow proving 'spend-more-to-stand-still') is REFUTED as structural: the 10-Q attributes the -$122.0M operating outflow explicitly to settlement-asset/obligation working-capital swings, a volatile reversing item intrinsic to a money-transfer/processor settlement cycle, not cash burn.",
+   "skeptic_corrections": "(1) 'Double-digit EPS is a fiction / real growth is +6%' is MISLEADING: FY2025 GAAP diluted EPS did grow only +6.0% ($6.45->$6.84), but ADJUSTED EPS grew +12% ($8.61->$9.61) and Q1-2026 adjusted EPS rose +40% reported ($1.13->$1.58); the divergence is GAAP-vs-adjusted (amortization/one-offs), not pure buyback-fiction. (2) Net debt is NOT $622M — that figure only holds if ATM cash is netted as available liquidity; per the Q1-2026 10-Q total debt is $2,579.8M vs cash $1,229.5M (ex-ATM-cash net debt ~$1.35B). The bear UNDERSTATED leverage, strengthening the caution. (3) P/FCF 7.4x rests on FY-annual FCF; the input itself flags TTM FCF $282M and instructs using TTM — the headline 'cheapness' denominator is fragile, so size to the FCF question, not the multiple. (4) The 1% remittance excise tax exempts bank-account- and card-funded transfers (cash/money-order only), narrowing the drag versus the bear's framing.",
    "value_conviction_cap": 3,
    "mos_agreement_n": 5,
    "cro_only": false,
    "stale_anchor": false,
-   "size_units_effective": 1.0,
-   "weight_pct": 14.81,
-   "corr_flag": true,
+   "size_units_effective": 1.1,
+   "weight_pct": 20.18,
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "entry_price": 66.74,
+   "entry_date": "2026-06-08"
+  },
+  {
+   "symbol": "THC",
+   "sector": "Healthcare",
+   "value_score": 72,
+   "thesis": "Hospital/ASC operator the CRO marks ~23% under fair value ($215 vs $174.66) after a strong run; moderate funded leverage (2.33x / 4.2x cov) is acceptable value with healthy coverage, strengthening trajectory, cheap vs peers — but the thinner SoP and shared reimbursement risk with UHS cap its size.",
+   "mos_agreement": "5/5",
+   "sop_mos_pct": 23.1,
+   "net_funded_debt_ebitda": 2.33,
+   "interest_coverage": 4.2,
+   "funded_solvency": "moderate",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "durable — rev 3y CAGR +3.6%, ROIC +11%, ASC mix improving",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "hospital-reimbursement",
+    "us-medicaid-dpp-2028"
+   ],
+   "size_units": 0.55,
+   "thesis_break_px": 142.0,
+   "bear_fv_px": 165.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill_fact found. The load-bearing figures verify against the Q1 2026 primary filing and the SoP segment EBITDA inputs sit inside management's own 2026 guidance ranges, so the value case survives. But it survives only as a leverage-aware, soft-catalyst re-rating bet, NOT a special situation: net debt is $10.24B (total debt $13.209B less cash $2.967B per the 3/31/2026 8-K), ~68% of the $15.0B equity cap, and the sole catalyst (EAPTC restoration) is a binary, undated, third-party policy variable that has already broken ADVERSE -- the enhanced premium tax credits actually EXPIRED Jan 1 2026; the Senate has not passed the House's Jan-8 3-year extension and the bipartisan CARE Act remains unresolved as of June 2026. The celebrated hospital margin was partly an exchange/redetermination payer-mix gift that is now reversing (management's own $250M EBITDA hit, 20% enrollment-drop assumption; exchanges were ~7.5% of admissions / ~6.5% of revenue in Q4'25; Q1'26 hospital margin already at the low end at 16.7%).",
+   "skeptic_corrections": "(1) SHARE COUNT: the bull/base SoP uses 86.1M shares; the Q1 2026 8-K shows ~87.6M weighted-avg diluted and 2026 guidance assumes ~87M. Using the higher real count lowers every per-share SoP output ~1.7% (base ~$215 -> ~$211). (2) LEVERAGE: bear quotes 2.85x net-debt-less-NCI (FY2025); the latest (3/31/2026) is 2.83x less-NCI and 2.24x headline -- directionally exact, slightly stale. (3) NCI is confirmed material and the bear's capitalize-as-liability treatment is correct: distributions to noncontrolling interests ran $197M in Q1 2026 alone (~$0.8B annualized), so a large slice of USPI's 36-40% margin cash does not accrue to Tenet. (4) The redeemable-NCI ~$885M reduction transaction in Q1'26 is a structural positive, not a hidden landmine.",
+   "value_conviction_cap": 3,
+   "mos_agreement_n": 5,
+   "cro_only": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.55,
+   "weight_pct": 10.09,
+   "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
    "entry_price": 162.06,
    "entry_date": "2026-06-08"
   },
   {
-   "symbol": "EEFT",
-   "sector": "Technology",
-   "value_score": 84,
-   "thesis": "Euronet at 7.4x FCF with a 6x stressed-SoP floor ($88-95) sitting above the $66 price; 52.3% CRO MoS on a still-growing (+8.1% 3y) payments/ATM/remittance network with only 0.8x funded leverage.",
-   "mos_agreement": "4/5",
-   "sop_mos_pct": 52.3,
-   "net_funded_debt_ebitda": 0.83,
-   "interest_coverage": 6.7,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - rev +8.1% 3y; latest-Q EPS -2% is the watch item, not yet a rollover",
-   "peak_normalized": false,
-   "exposure_axes": [
-    "travel-spend",
-    "immigration-remittance-policy"
-   ],
-   "size_units": 1.0,
-   "thesis_break_px": 58.0,
-   "bear_fv_px": 88.0,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "NET DEBT IS STALE/UNDERSTATED: the SoP uses 'net debt ~$0.9B', which is the YE-2025 figure ($2,047.3M debt - $1,040.3M cash = ~$1.0B). The latest primary filing (10-Q for Q1-2026, filed 2026-05-07) shows total debt obligations $2,579.8M (revolver drawn $24.6M -> $570.7M in the quarter) against unrestricted cash of $1,229.5M = net debt ~$1,350M (ATM cash $871.2M is a separate, operationally-required line and cannot be netted without impairing EFT EBITDA). On the verified 38.07M shares, the stressed-SoP floor of '$88-95' should be ~$77-83 ($4.3-4.5B EV - $1.35B = $2.95-3.15B / 38.07M). The bear's headline claim 'even the stressed SoP lands above the current price' STILL HOLDS ($77-83 vs $65.61 close 2026-06-09), but the cushion is ~18-26%, not 32-42%.",
-    "2025 BUYBACK FIGURE WRONG IN BEAR'S FAVOR: the debate cites '$388M of stock repurchased in 2025'; the FY2025 10-K cash-flow statement shows $667.7M of share repurchases (7,243,649 shares per the equity statement, $669.6M incl. taxes). Since FY2025 FCF was only ~$434M (OCF $559.8M - capex $125.5M), buybacks EXCEEDED free cash flow by ~$234M -- the 'leverage/convert-funded buyback' charge is verified and stronger than stated.",
-    "FCF EROSION VERIFIED AND ACCELERATING: FY2025 OCF $559.8M vs $732.8M FY2024 (FCF $434M vs $616M, -29.5%); Q1-2026 operating cash flow was NEGATIVE $122.0M (vs +$1.7M Q1-2025) while $102.4M of buybacks continued, funded by a net ~$546M revolver draw. TTM-through-Q1-26 FCF computes to ~$300M from filings vs the debate's $282M -- same order, direction confirmed.",
-    "'2026 NOTES WITHDRAWN' IS IMPRECISE: the EUR600M 1.375% Senior Notes ($693.1M) were STILL OUTSTANDING at 3/31/2026 and matured ~2026-05-22 (Form 25-NSE filed 2026-05-21, rule 12d2-2(a)(2) retirement); they were effectively refinanced via the floating-rate revolver -- swapping 1.375% fixed for ~SOFR+ floating adds roughly $20-25M/yr of interest drag the debate did not price. No maturity wall remains (next is the 2030 convert), but funding quality deteriorated.",
-    "ACTIVIST STAYING-POWER RISK IS REAL: Voss Capital itself disclosed an -11.4% Q1-2026 fund loss while continuing to press EEFT only on transparency/IR; no 13D, no proxy nominees in 2026 (AGM 8-K Item 5.07: Baack and Fentanes elected with >99% of votes cast, no contest). Insider tape confirms net open-market selling (Form 4s: Godderz sale 345 sh @ $72.03 on 2026-05-11; 2026-06-01 filing is a $0 grant + tax withholding, not a buy)."
-   ],
-   "value_conviction_cap": 2,
-   "mos_agreement_n": 4,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 1.0,
-   "weight_pct": 14.81,
-   "corr_flag": false,
-   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
-   "entry_price": 66.74,
-   "entry_date": "2026-06-08"
-  },
-  {
-   "symbol": "BKNG",
-   "sector": "Consumer Cyclical",
-   "value_score": 83,
-   "thesis": "Near-monopoly OTA compounding revenue 16%/yr at 33% ROIC for ~15x FCF; the 34.2% CRO MoS survives the haircut of the raw 126% scan artifact, and the seat is trimmed to 0.75 as the shared leg of the travel and consumer-discretionary clusters.",
-   "mos_agreement": "3/5",
-   "sop_mos_pct": 34.2,
-   "net_funded_debt_ebitda": 0.31,
-   "interest_coverage": 7.8,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - rev +16.3% 3y, ROIC 33%, best business quality in the book",
-   "peak_normalized": true,
-   "exposure_axes": [
-    "travel-spend",
-    "consumer-discretionary-demand"
-   ],
-   "size_units": 0.75,
-   "thesis_break_px": 125.0,
-   "bear_fv_px": 135.0,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "NET-CASH FLOOR IS WRONG SIGN: the SoP floor adds '+$2.92B net cash' to value, but the latest primary balance sheet (10-Q data in the Q1-26 8-K, 3/31/2026) shows cash $16,024M vs total debt $18,413M ($3,015M short-term + $15,398M long-term) = ~$2.39B NET DEBT (~$1.92B including $473M long-term investments); at 12/31/25 it was ~$0.95B net debt. The ~$5.3B swing is ~$6.80/share on 780M shares (1,618M issued - 838M treasury), lowering the bear floor ~4% to roughly $118-138. Cash is also flattered by $8.19B deferred merchant bookings (customer float, +$2.9B QoQ) and the GAAP equity position is a -$8.7B stockholders' DEFICIT, so the 'fortress net-cash floor' framing must be retired even though leverage (~0.2x net debt/adj-EBITDA vs $9.9B FY25 adj EBITDA) is immaterial to solvency.",
-    "Split factor: dossier says '~10:1'; actual split was 25-for-1, effected April 2, 2026 (record date March 6), retroactively applied in filings. Scale-invariant for growth rates, but the post-split per-share scale (price ~164, FY25 GAAP EPS $6.62 = $165.57/25) verifies correctly.",
-    "Litigation stack missing from the debate: a UK opt-out collective claim of over GBP 2B against Booking.com over price-parity clauses was announced June 9, 2026 (ex-CMA lawyer Chris Warner, funded by Balance Legal Capital, to be filed at the Competition Appeal Tribunal) — after the debate ran; it sits atop the existing EU rate-parity damages wave (post-CJEU Sept-2024 ruling), the Spanish CNMC EUR 413M fine, and EU DMA gatekeeper obligations. None is a kill at $127B market cap / $9B FCF, but catalyst_status's 'no litigation/governance reset detected' is stale as of this week.",
-    "Insider claim verified directionally, not exactly: SEC Form 4 aggregates show ZERO open-market purchases across 2025-Q2 2026 with heavy disposals (Q3-25: 123 sales, Q4-25: 153, Q1-26: 139); the specific '66 sells / 81,702 sh' figure is a different window/dedup but the signal (no insider buying into the 'cheap' stock) stands."
-   ],
-   "value_conviction_cap": 3,
-   "mos_agreement_n": 3,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 0.75,
-   "weight_pct": 11.11,
-   "corr_flag": false,
-   "entry_plan": "2 tranches / 2 wks",
-   "entry_price": 165.84,
-   "entry_date": "2026-06-08"
-  },
-  {
-   "symbol": "ANF",
-   "sector": "Consumer Cyclical",
-   "value_score": 82,
-   "thesis": "Brand turnaround compounding +12.5% 3y revenue at 9.7x FCF with net cash, a ~10%/yr buyback and the only 5/5 model-MoS sweep in the apex alongside THC; the CRO already haircut the 147% scan headline to a still-fat 34.5%, so the eps_peak_ratio of 17.4 is a turnaround base effect, not an egg-cycle windfall.",
-   "mos_agreement": "5/5",
-   "sop_mos_pct": 34.5,
-   "net_funded_debt_ebitda": 0.81,
-   "interest_coverage": 315.9,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - rev +12.5% 3y, ROIC 14%; latest-Q EPS -8% watched against the $78-82 net-cash floor",
-   "peak_normalized": true,
-   "exposure_axes": [
-    "consumer-discretionary-demand"
-   ],
-   "size_units": 1.0,
-   "thesis_break_px": 76.0,
-   "bear_fv_px": 80.0,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "EARNINGS ANCHOR FLATTERED: FY2025 (ended 2026-01-31) GAAP EPS $10.46 / NI $506.9M includes a ONE-TIME $39M net benefit from an interchange-fee litigation settlement (ANF was plaintiff; 10-K Note 3). Company's own non-GAAP: NI $478.0M, EPS $9.86, op margin 12.5%, adj EBITDA $815.6M. Underlying decline is therefore EPS -7.8% and NI -15.6% YoY (vs the bear's GAAP-based '-2% EPS / -10% NI' which UNDERSTATES it). Any value anchor using $10.46 trough EPS is ~6% too high; $9.86 is the clean base.",
-    "SPOT STALE / R:R MATH BROKEN: stock closed $83.67 on 2026-06-09 (FMP/NYSE), not ~$75 (that was the 2026-06-05 close, $75.34). Spot now sits ABOVE the bear's own $82 SoP. The claimed 'hard floor $78-82' was empirically violated within the trailing 52 weeks (low $65.45), so the 1:8 asymmetry computed at $75 no longer holds — at $83.67 it is roughly -22% to the actual 52w-low floor vs +43% to the $120 base.",
-    "CONSENSUS PT WRONG: street has NOT reset to ~$95. June 2026 aggregators show average PT ~$113-119 (stockanalysis.com $115.25 avg/12 analysts Strong Buy; TipRanks $118.92; MarketBeat $116; range $76-149). The Barclays $115->$95 cut exists but is not the consensus.",
-    "FCF LEVEL: FY2025 FCF was $378.3M (OpCF $619.1M minus capex $240.8M, 10-K cash-flow statement), below the $416M TTM figure carried in the debate; the -28.3% YoY deterioration verifies (FY2024 FCF $527.5M). Capex is RISING ($157.8M -> $182.9M -> $240.8M over three years), so the FCF bleed is partly reinvestment, partly margin.",
-    "GUIDE IS BACK-HALF-LOADED: FY2026 guide $10.20-11.00 (maintained 2026-05-27) requires H2 EPS of ~$6.83-7.63 vs $6.04 LY (+13% to +26%) after H1 runs ~-25% GAAP (Q1 actual $1.47 vs $1.59; Q2 guide $1.80-2.00 vs $2.91 LY, which itself likely carried the $39M settlement benefit). The 'roughly $10 stable EPS' framing hides a steep required H2 inflection (tariff lapping + ~9% share-count reduction).",
-    "TARIFF PERMANENCE OVERSTATED (anti-bear): 10-K Note 20 — U.S. Supreme Court struck down IEEPA tariffs 2026-02-20; replaced by 10% Section 122 global tariff. Q1 release cut FY2026 net tariff drag guide from ~70bps to ~20bps, and ANF has applied for ~$100M of IEEPA refunds (~$2.2/sh pre-tax, pending, excluded from guidance) — an unmodeled one-time upside.",
-    "APAC MISCAST AS A CRACK: APAC grew +24% (comps +15%) in Q1 FY2026; the 'review of strategic alternatives for the APAC region' (10-K Note 20 subsequent events) is a go-to-market/capital-light review of a GROWING $46M-a-quarter segment, not a melting one. EMEA -10% (comps -11%) is the real regional problem and is war-linked."
-   ],
-   "value_conviction_cap": 3,
-   "mos_agreement_n": 5,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 1.0,
-   "weight_pct": 14.81,
-   "corr_flag": false,
-   "entry_plan": "2 tranches / 2 wks",
-   "entry_price": 75.34,
-   "entry_date": "2026-06-08"
-  },
-  {
-   "symbol": "UHS",
-   "sector": "Healthcare",
-   "value_score": 79,
-   "thesis": "Behavioral-health-anchored hospital operator at 11x FCF whose CRO parts value of $215 leaves a 46.7% MoS even after the CRO halved the raw 85% scan headline; enters at half-size strictly under the shared Medicaid-DPP combined cap with THC.",
-   "mos_agreement": "3/5",
-   "sop_mos_pct": 46.7,
-   "net_funded_debt_ebitda": 1.79,
-   "interest_coverage": 13.4,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - rev +9.0% 3y, behavioral segment is the defensible high-margin anchor",
-   "peak_normalized": true,
-   "exposure_axes": [
-    "hospital-reimbursement"
-   ],
-   "size_units": 0.5,
-   "thesis_break_px": 132.0,
-   "bear_fv_px": 135.0,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_kill_fact": "No single fact breaks the value case outright, but the near-kill is primary-sourced and worse than the bear framed it: UHS's FY2025 aggregate net benefit from state Medicaid supplemental programs was ~$1.361B (10-Q update; $1.339B in the 10-K) against consolidated FY2025 income before income taxes of $1.972B - i.e. ~69% of pre-tax income is supplemental-program funding subject to annual state/CMS reapproval, and UHS itself states (10-K and Q1-26 10-Q, verbatim) that 'commencing with the 2028 state fiscal years, our aggregate annual NET BENEFIT will be reduced... by approximately $432 million to $480 million by 2032.' Critically, that is a reduction in NET BENEFIT (flows ~dollar-for-dollar to pre-tax income), not 'revenue' as the bear's SoP framed it - so the bear's adverse case (~$240-280M EBITDA at risk) UNDERSTATES the legislated hit by roughly half. The dependence is still growing into the cliff: Q1-2026 supplemental net benefit was $369M vs $236M in Q1-2025 (+56% YoY), plus a newly approved Florida DPP program adding ~$100M/yr to be booked starting Q2-2026. The single-digit P/E is on a funding stream, not on durable operating earnings.",
-   "skeptic_corrections": [
-    "MAGNITUDE (strengthens bear): the $432-480M/yr-by-2032 figure is a reduction in NET BENEFIT (pre-tax income), not revenue - 10-K wording is 'aggregate annual net benefit will be reduced.' sop_bear's translation to ~$240-280M EBITDA at risk understates the legislated hit ~2x; the full $432-480M hits pre-tax income.",
-    "NET DEBT (weakens bear ~9%): at 3/31/2026 total debt was $4.7B (10-Q) less cash of $119M = net debt ~$4.58B, not $5.01B. Pro forma for the all-debt-funded Talkspace close (Q3-26, ~$835M via $400M delayed-draw term loan A + revolver) net debt rises toward ~$5.4B, so $5.01B is a mid-point, but it is wrong against the latest filing.",
-    "SHARE COUNT (weakens bear ~5%): actual shares outstanding at Jan 31, 2026 were ~61.09M (10-K cover: 6,574,600 A + 53,837,855 B + 661,688 C + 12,497 D), not ~64.5M. Every per-share SoP value in the debate is ~5% too low; FMP-implied count at 6/10/26 is ~62.6M ($9.18B mcap / $146.59).",
-    "FCF TRAJECTORY (stale claim): FY2025 FCF decline is exact (OCF $1.864B - capex $1.015B = $849M vs FY24 $1.123B = -24.4%; $145M Medicaid receivable-timing drag verbatim in 10-K), but 'FCF erosion CONTINUES' is contradicted by the latest primary filing: Q1-2026 OCF $401.6M vs $360.0M and capex $217.2M vs $239.0M -> Q1 FCF ~$184M vs ~$121M, +52% YoY.",
-    "LITIGATION (mixed): Cumberland punitive damages were reduced by the court from $120M to a $1.05M combined max ($350k/plaintiff cap under Virginia law) - the headline verdict risk for the first 3 plaintiffs is now ~$240M (compensatory + trebled VCPA) under post-trial challenge, and Pinnacle's $500M punitive is expected reduced to ~$14M max under Nevada law with an $18M reserve already booked Q3-25 (so not 'unreserved'). BUT the tail is larger than the bear stated: ~40 additional Cumberland plaintiffs are pending, the Company and UHS Delaware REMAIN defendants for those (dismissed only for the first three), the next trial is tentatively set for AUGUST 2026 (a hard-dated downside catalyst inside the window that catalyst_status missed), excess insurance renewed March 2025 now EXCLUDES sexual molestation/abuse incidents, and the 10-K carries explicit 'material adverse effect on the financial condition of the Company' language re: bond/appeal outcomes. Reserve top-ups were $45M in 2025 and $79M in 2024 - the dossier's '$30-35M quarterly' overstates the 2025 run-rate.",
-    "INSIDERS (confirmed, loosely worded): zero open-market purchases confirmed - all Mar-May 2026 Form 4s are A-Award grants, F-InKind tax withholding, M-Exempt exercises, or J-Other estate/trust transfers at $0 (Alan B. Miller). The '5 sells' are mostly non-discretionary withholding/estate items, not open-market sales, but the load-bearing claim (no insider buying this 'cheap' stock near its 52-wk low) stands."
-   ],
-   "value_conviction_cap": 2,
-   "mos_agreement_n": 3,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 0.5,
-   "weight_pct": 7.41,
-   "corr_flag": true,
-   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
-   "entry_price": 146.59,
-   "entry_date": "2026-06-10"
-  },
-  {
-   "symbol": "HRB",
-   "sector": "Consumer Cyclical",
-   "value_score": 74,
-   "thesis": "25% ROIC tax-prep franchise at 8.7x FCF returning essentially all FCF via buyback and dividend; 4/5 models positive and a 22.8% CRO MoS that requires no growth assumption at all.",
-   "mos_agreement": "4/5",
-   "sop_mos_pct": 22.8,
-   "net_funded_debt_ebitda": 1.08,
-   "interest_coverage": 12.7,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "slow-but-stable - rev +2.8% 3y, ROIC 25%, latest-Q EPS +23%",
-   "peak_normalized": false,
-   "exposure_axes": [
-    "us-employment-smb-cycle",
-    "tax-policy"
-   ],
-   "size_units": 1.0,
-   "thesis_break_px": 32.0,
-   "bear_fv_px": 35.5,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "SHARE COUNT: bear SOP divides by 135M shares; actual Q3 FY26 diluted weighted average is 127.8M (10-Q filed 2026-05-06) and market cap $4.78B at ~$37.6 implies ~127M. Correcting adds ~6% to every per-share value, including the bear's own floor.",
-    "NET DEBT: bear's '~$1.14B net debt' is NOT net debt — it matches the 6/30/25 LONG-TERM PORTION of debt ($1,143.3M) with no cash netted. Per the Q3 FY26 10-Q: total LT debt $1,490.9M vs cash $867.0M at 3/31/26 (net ~$0.62B); implied cash at 6/30/25 ~$1.0B (net ~$0.5B at the seasonal trough). Correcting the bear's own SOP (EV $5.8-6.5B less ~$0.5-0.6B net debt over ~127M sh) lifts the BEAR value to ~$41-47/sh — above the $37.5 spot. The market currently prices HRB below the bear's own punitive melting-franchise scenario (~5.1-5.4x EV/EBITDA on the raised $1.025-1.035B FY26 guide vs the bear's 'correct' 8-8.5x FCF).",
-    "FCF TREND IS STALE: the '-8.9% YoY, -7.1% 3-yr CAGR negative FCF trend' is FY25-vintage and verified for FY23-FY25 (XBRL OCF 821.8 -> 720.9 -> 680.9M), but FY26 has inflected: 9M FY26 OCF $586.7M vs $429.3M prior year (+36.7%), capex $67.1M vs $71.8M. TTM FCF ~ $740-750M. 'Sustainable FCF $720-761M' is no longer a haircut; it is roughly the run-rate.",
-    "BUYBACK PRICE MISLABEL (strengthens the bear point): $50.90 is the NINE-MONTH FY26 average, not Q1-only; prior-year 9M average was $61.10. Verified capital-timing destruction is worse than stated, but $700M authorization (plus an incremental $100M approved at Q3) now buys at ~$37."
-   ],
-   "value_conviction_cap": 4,
-   "mos_agreement_n": 4,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 1.0,
-   "weight_pct": 14.81,
-   "corr_flag": false,
-   "entry_plan": "2 tranches / 2 wks",
-   "entry_price": 38.09,
-   "entry_date": "2026-06-08"
-  },
-  {
-   "symbol": "SCR.PA",
-   "sector": "Financial Services",
-   "value_score": 72,
-   "thesis": "Top-6 global reinsurer at ~5x FCF trading below a conservative book-anchored EUR40 fair value; the hard-market peak earnings (eps_peak_ratio 2.12 off loss-year lows) were deliberately discounted by anchoring valuation to book, and exempt-financial solvency is clean at ~220% Solvency II.",
-   "mos_agreement": "3/5",
-   "sop_mos_pct": 32.6,
-   "net_funded_debt_ebitda": 0.4,
-   "interest_coverage": 128.8,
-   "funded_solvency": "exempt_financial",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "flat - rev -0.5% 3y; the value is book-value compounding post the 2022-23 loss years, not growth",
-   "peak_normalized": true,
-   "exposure_axes": [
-    "reinsurance-pricing-cycle",
-    "rate-credit"
-   ],
-   "size_units": 1.0,
-   "thesis_break_px": 28.0,
-   "bear_fv_px": 29.5,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "NET-CASH CLAIM IS FALSE: the risk_reward downside cushion cites a 'net-cash balance sheet (-EUR 18bn net debt)' — that is an FMP artifact of netting an insurer's investment float. Primary source: FY-2025 financial leverage is 25.3%, UP from 24.5% (SCOR Q4-2025 results PR, 4-Mar-2026), and SCOR placed EUR 500m NEW subordinated notes maturing 2056 settling 5-Jun-2026 (partly to tender older subs). The real cushion is the 220% solvency ratio and reserve buffers, not net cash.",
-    "BOOK-VALUE FLOOR IS WRONG: the bear sop anchors a 'through-cycle book ~EUR 40-42' x 0.75-0.80 = EUR 30-33 floor. Actual IFRS-17 shareholders' equity at 31-Dec-2025 is EUR 4,427m = BVPS EUR 24.72 (Q4-2025 PR). At the bear's own multiple the accounting-book floor is ~EUR 18.5-19.8, not EUR 29-30. At EUR 30.30 the stock trades at 1.23x stated book — the cheapness lives entirely in the management-defined Economic Value (CSM) construct and a ~6.2x P/E, NOT in hard book. Downside protection is thinner than the debate's geometry implies.",
-    "CATALYST STATUS STALE (in the bull's favor): the debate's 'Moody's A2 outlook positive (15-Jan-2026), an outlook not yet a notch' is out of date. SCOR's official ratings page (content dated 5-Jun-2026) shows Moody's IFSR A1 / sub A3 (hyb) outlook stable, and the new June-2026 subordinated notes are rated A3 by Moody's — consistent with the notch having been delivered in H1-2026. Fitch moved to positive outlook 14-Oct-2025. The 'serially-promised, never-delivered' rating framing no longer holds.",
-    "BEAR TRAILING NUMBERS ARE STALE-ANCHORED: 'ROE 2.3%, ROIC -0.1%, net margin 5.2%' are screener trailing cuts spanning the 2024 L&H crater. Verified actuals: FY-2025 net income EUR 851m, ROE 19.2% (4-Mar-2026 PR); Q1-2026 net income EUR 225m, annualized ROE 21.7%, EV/share EUR 51, solvency 220% (6-May-2026 PR). The value case rests on POST-event financials — no pre-event stale anchor found in the bull direction.",
-    "SOFTENING IS CONFIRMED BY PRIMARY SOURCE (bear's strongest surviving point): SCOR's own 1.1.2026 renewals release (4-Feb-2026) shows overall gross price change -1.9%, non-proportional -7.8%, and an EXPECTED +2.0pt increase in the underwriting ratio on the renewed book. FY-2025's 82.3% combined ratio is cyclically flattered and will drift toward the 87% guide as soft vintages earn through.",
-    "MISSED 2026 BINARY (skews positive, not a disqualifier): the live 2022 SCOR-vs-Covea arbitration seeking execution of the June-2021 retrocession treaties has a final decision expected during 2026; the tribunal rejected Covea's stay request (SCOR PR, 13-Aug-2025). SCOR is the CLAIMANT — unmodeled upside optionality the debate never mentions.",
-    "PRICE/FLOOR GEOMETRY MOVED: live price EUR 30.30 (FMP, 10-Jun-2026) vs the debate's ~EUR 32 anchor; the stock now sits INSIDE the bear's claimed EUR 29-30 'break' floor with 52-week range 25.30-33.48. EV discount is now ~41% (30.30 vs EUR 51 EV/share), wider than the debated 37%. Consensus targets: ~EUR 30.7 (MarketScreener, 15 analysts) to ~EUR 34 (TipRanks, 7 analysts) — 'trades at consensus' roughly holds."
-   ],
-   "value_conviction_cap": 3,
-   "mos_agreement_n": 3,
-   "cro_only": false,
-   "stale_anchor": false,
-   "size_units_effective": 1.0,
-   "weight_pct": 14.81,
-   "corr_flag": false,
-   "entry_plan": "2 tranches / 2 wks",
-   "entry_price": 30.54,
-   "entry_date": "2026-06-08"
-  },
-  {
    "symbol": "CMCSA",
    "sector": "Communication Services",
-   "value_score": 68,
-   "thesis": "The book's largest CRO MoS (84.5%, FV $44 vs $23.85) at ~4x FCF, but a rule-2c STALE ANCHOR - freshness_stale with eps_peak_ratio 2.01 and the Versant spin already fired, so the fair value may be built on pre-spin segments (latest-Q EPS -33%, net debt above market cap) - held at 0.5 provisional units pending a post-spin re-anchor.",
-   "mos_agreement": "4/5",
-   "sop_mos_pct": 84.5,
+   "value_score": 66,
+   "thesis": "CRO marks ~$36 vs $24.50 (sop_mos +38.8%) but this is a STALE ANCHOR — post-Versant spin the fair value rests on pre-event segment EBITDA + share count (epr 2.01, freshness-stale, latest-Q EPS YoY -33%), so the SoP is provisional and sized down accordingly.",
+   "mos_agreement": "5/5",
+   "sop_mos_pct": 38.8,
    "net_funded_debt_ebitda": 1.91,
    "interest_coverage": 4.3,
    "funded_solvency": "strong",
    "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "eroding-to-flat - rev +0.6% 3y, ROIC 7%; broadband sub losses offset by parks/wireless",
+   "growth_durability": "stable-to-eroding — broadband ARPU steady but video/ads declining; pivoting",
    "peak_normalized": true,
    "exposure_axes": [
     "advertising-cycle",
-    "cord-cutting-secular"
+    "broadband-competition"
    ],
    "size_units": 0.5,
-   "thesis_break_px": 21.0,
-   "bear_fv_px": 37.0,
+   "thesis_break_px": 20.0,
+   "bear_fv_px": 28.0,
    "forensic_gate": "",
    "trap_flag": false,
    "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "skeptic_corrections": [
-    "ONE-TIME-GAIN ATTRIBUTION WRONG: the bear says FY25 net income of $20B 'almost certainly carries Versant-separation / one-time gains.' Versant items were COSTS ($329M net transaction-related + $96M transaction costs, per FY25 release footnotes 6-7). The actual flattering item is the HULU stake sale: $9.4B pre-tax / $7.1B net-of-tax gain = $1.90 of the $5.39 GAAP EPS (FY25 release footnote 3, Jan-29-2026). Company-adjusted FY25 EPS was $4.31, DOWN 0.6% YoY, and Q1'26 adjusted EPS $0.79 was -27.5% YoY -- so the bear's run-rate point is directionally CONFIRMED and actually stronger than stated, but the attribution needed fixing.",
-    "STALE-ANCHOR IN BEAR SoP (Media line): the adverse SoP credits Media with $3B EBITDA -> $14B EV at 4.5x. That is pre-spin economics. Versant took $834M of Q1'25 EBITDA (~$3.3B annualized) with it on Jan-2-2026 (Q1'26 release Table 8). Recast ex-Versant Media EBITDA: Q1'25 +$107M; Q4'25 was already -$122M EVEN INCLUDING Versant (NBA rights started Q4'25); Q1'26 ex-Versant was -$426M (Olympics + Super Bowl + NBA costs). Post-spin Media run-rate EBITDA is ~$0 to negative, so the Media sleeve is worth ~$0-5B, not $14B.",
-    "OFFSETTING UNDERSTATEMENT (Residential line): the same SoP uses Residential C&P EBITDA of $23B; actual FY2025 was ~$26B (Q1'25 $6,842M, Q4'25 $6,099M, Q1'26 $6,434M annualizing to $25.7B even while declining -6% YoY). At the bear's own 5.5x that adds back ~$15-17B of EV. Net of both corrections the bear SoP still lands at ~$36-38/share vs $23.85 price (3.62B diluted shares per Q1'26: $2,174M NI / $0.60 EPS), so the 'parts > whole even adversely' crux SURVIVES.",
-    "FLOOR LOGIC WEAKER THAN CLAIMED: risk_reward asserts a ~$20-21 floor 'where the buyback aggressively defends.' The buyback is decelerating, exactly as the bear thesis itself predicted: FY25 repurchases $6.8B; Q1'26 only $1.3B (42M sh), and cash-flow-statement repurchases incl. employee plans fell to $1,502M from $2,240M YoY (-33%). Also the headline 4x P/FCF is flattered: FY25 FCF $19.2B included a $2.0B one-time cash tax benefit, and Q1'26 FCF was $3.9B, -28% YoY; underlying P/FCF is closer to 5-5.5x.",
-    "ARPU DAMAGE IS ALREADY HERE, NOT H2'26: Q1'26 domestic broadband revenue fell -5.1% YoY 'due to lower average rates and a decline in customers' (Q1'26 release). The bear's 'ARPU bill comes due in H2 2026' is too generous to the bulls -- the rate decline is in the current print, alongside Residential C&P EBITDA -6.0% and margin -160bps."
-   ],
-   "value_conviction_cap": 3,
-   "mos_agreement_n": 4,
+   "skeptic_kill_fact": "None found. I attacked all four vectors and no kill_fact breaks the value case. The deep discount is real and multi-method (FY2025 FCF ~$19.9B; Q1-26 FCF $3.9B; price ~$24.9 at a fresh 52-wk low; avg analyst PT $39.94). The bear's structural concerns verify (core C&P adj. EBITDA -4.7% YoY to $7.9B in Q1-26, -3.7% in Q3-25; VERSANT spun Jan-2-2026 and the VSNT stub re-rated DOWN ~14%; competition now includes Starlink), but these cap conviction rather than kill the thesis — the cash engine and ~50% SoP gap at sub-Charter multiples survive the attack.",
+   "skeptic_corrections": "(1) STALE BALANCE-SHEET ANCHORS, conservative direction: the debate's $85.14B net debt and 3.95B share count are Q1-2025 vintage. Per the Q1-2026 8-K, net debt is $82.0B (down from $87.4B YoY) at 2.3x net leverage, and diluted weighted shares are ~3.617B (5% reduction in 2025 via $6.8B buybacks). Both corrections RAISE per-share SoP value — the stale anchors understated the case. (2) HIDDEN ITEM THE DEBATE MISSED — DIVIDEND FROZEN: the risk_reward framing ('paid 5.4% to wait', growing capital return) is overstated. On Jan-29-2026 Comcast MAINTAINED the dividend flat at $1.32/yr ($0.33/qtr), breaking a ~19-year consecutive-raise streak — the first non-increase. The dividend is well-covered (~$4.8B vs ~$19.9B FCF) so this is not a cut, but the freeze is a soft negative confidence signal in 'the largest broadband investment year,' and the thesis should treat the yield as maintained, not growing. (3) Q1-26 adj. EPS -27.5% YoY to $0.79 confirms the earnings-momentum rollover the bear flagged.",
+   "value_conviction_cap": 4,
+   "mos_agreement_n": 5,
    "cro_only": false,
-   "stale_anchor": true,
+   "stale_anchor": false,
    "size_units_effective": 0.5,
-   "weight_pct": 7.41,
+   "weight_pct": 9.17,
    "corr_flag": false,
-   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
+   "entry_plan": "2 tranches / 2 wks",
    "entry_price": 23.82,
    "entry_date": "2026-06-08"
   }
  ],
  "runner_ups": [
   {
-   "symbol": "INVA",
-   "sector": "Healthcare",
-   "value_score": 76,
-   "thesis": "GSK respiratory-royalty annuity at 9.7x FCF with net cash (-0.6x funded), ROIC 15% and a 42% CRO MoS on contracted cash flows - a verdict-C kept on pure-value grounds because the C was a catalyst-regime penalty on a catalyst-less royalty stream, not a valuation or forensic objection; sized 0.75 on the conviction-2 fallback.",
+   "symbol": "PLX.PA",
+   "sector": "Industrials",
+   "value_score": 90,
+   "thesis": "Net-cash (-1.67x funded) services compounder the CRO values at ~EUR25 vs EUR11.15 (sop_mos +124%), cheap on true peers with stable trajectory; peak_flag is a real-turnaround re-rate (rev 3y CAGR +15%, not freshness-stale), so the normalized MoS stays large.",
    "mos_agreement": "4/5",
-   "sop_mos_pct": 42.0,
-   "net_funded_debt_ebitda": -0.61,
-   "interest_coverage": 9.6,
+   "sop_mos_pct": 124.2,
+   "net_funded_debt_ebitda": -1.67,
+   "interest_coverage": 6.7,
    "funded_solvency": "strong",
    "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "durable - royalty revenue +8.7% 3y, latest-Q EPS +400%, peak_flag is growth not cycle (freshness_stale=false)",
+   "growth_durability": "durable — rev 3y CAGR +15%, positive owner earnings, net cash",
    "peak_normalized": false,
    "exposure_axes": [
-    "pharma-royalty-gsk-concentration"
+    "europe-industrial-services"
    ],
-   "size_units": 0.75,
-   "thesis_break_px": 20.5,
-   "bear_fv_px": 22.5,
+   "size_units": 1.2,
+   "thesis_break_px": 9.2,
+   "bear_fv_px": 18.0,
    "forensic_gate": "",
    "trap_flag": false,
    "skeptic_verdict": "REFUTED",
-   "skeptic_kill_fact": "The 'cheap royalty annuity at 9.7x P/FCF, 63.8% net margin, +18.5% royalty growth' value case is built on numbers that do not verify against primary filings. (1) The GSK royalty is in DECLINE, not growing: full-year 2025 gross royalty $250.3M vs $255.6M in 2024 (~-2%), and Q1-2026 $58.6M vs $61.3M in Q1-2025 (~-4%) — the screen's '+18.5%' was total revenue pulled up by IST product sales, not the crown-jewel royalty. (2) The 63.8% net margin / mega-EPS-growth is a fair-value-mark artifact: Q1-2026 net income of $186.6M was driven by $191.2M of favorable fair-value changes on the Armata/strategic stakes, against only $38.2M of income from operations on $98.0M revenue (FY2024 the same marks reversed and EPS collapsed). There is no durable royalty-economics earnings power being bought at 9.7x. (3) No margin of safety: spot ~$22.5 (Jun-10-2026) sits at/above the bear sum-of-parts (~$22-23) and just under the $25.15 52-wk high — the 'discount' is a stale-metrics artifact, while the load-bearing asset (a declining single-payer GSK stream into a late-decade LOE/step-down cliff) is structurally, not cyclically, cheap. The screened value edge does not exist.",
-   "skeptic_corrections": "BEAR DOSSIER FACTUAL ERROR (does NOT rescue the value case): Armata is NOT consolidated. Innoviva's FY2025 10-K treats Armata as a VIE for which Innoviva/ISO is NOT the primary beneficiary; the stake is carried under the equity method using the fair-value option (Armata $603.4M of the $773.3M strategic-investment book). So Armata's cash burn is NOT inside INVA's $38.2M operating income — the burn shows up only through the equity-method/fair-value marks in net income. This makes the EPS 'random walk' point even cleaner but corrects the dossier's claim that 'the 10-K/A confirms Armata is consolidated / its burn is in INVA's numbers.' Separately, the May-2026 Armata loan is $25.0M at 14.0% maturing Jan-11-2029 (not the dossier's 'maturity Jun-2027'); the prior 2023-2025 facilities + convertible (Armata convertible balance ~$254.9M at Mar-31-2026) are the ones extended to Jun-1-2027. Net-cash claim verifies: $603.1M cash vs $258.1M 2028 convertible notes; diluted share count 84.849M.",
+   "skeptic_kill_fact": "The load-bearing claim is a screener Fair Value of EUR 56.20 (~5x the ~EUR 11.40 price), which the debate's CRO 'confirmed' with a live FMP DCF at EUR 58.78. Both are model artifacts that extrapolate the now-dead FY25 ~10.6% organic growth. Primary/market evidence kills it: sell-side consensus 12-month targets cluster ~EUR 16.6-24.6 (full range EUR 10-34), the most-followed published DCF narrative is ~EUR 17.61, and there are 0 sell ratings but the most BULLISH professional target on the tape is EUR 34 — i.e. EUR 56-59 sits ~1.6-3.5x above ANY analyst and is not a defensible intrinsic value, it is the bull's whole edge and it does not exist. Compounding this, the debate missed that management FORMALLY CUT FY2026 guidance on 17-Nov-2025 (NOT merely 'walked it down without a number' as the bear thesis states): high-single-digit organic revenue growth -> 'stable total revenues' (flat), and +100bps EBITDA margin -> 'slight' expansion, driven by Brazil PAT reform (merchant-commission caps, shortened reimbursement, issuer interoperability) hitting the #1 growth market from mid-FY26 through H1-FY27. The cheapness is real vs a ~EUR 17.6 fair value (a ~50% upside name), but the apex 'one-fifth of intrinsic value / ~79% discount' thesis is built on a fabricated anchor.",
+   "skeptic_corrections": "1) FAIR VALUE: EUR 56.20 / EUR 58.78 are not credible; defensible fair value per market+published DCF is ~EUR 17-24, so this is a moderate-discount value name, not a ~5x mispricing. 2) FLOAT-AS-CASH (bear point 1b is WRONG and must be retracted): Pluxee's headline 'Net financial cash position of EUR 1,270m (28-Feb-2026)' is defined in the H1 FY26 report as 'excluding Restricted cash'; float is reported SEPARATELY (EUR 2,855m total float, EUR 753m restricted). The headline net cash is genuine corporate cash net of EUR 1,271m gross debt, NOT inflated by client float. The bear's 'EUR 240m of net cash is float double-counted as enterprise value' claim does not hold at the headline figure. 3) FY2025 anchors verify against primary: Revenue EUR 1,287m (+10.6% org), recurring EBITDA EUR 471m / 36.6% margin (+230bps) [the CRO's EUR 464m/36.0% was slightly low], recurring FCF EUR 417m / 89% conversion, net financial cash EUR 1,163m. H1 FY26 verifies: revenue EUR 655m (+5.6% org), recurring EBITDA EUR 242m / 37.0% (+229bps), recurring FCF EUR 210m / 86%. 4) MISSED DISQUALIFIER: French meal-voucher reform/benefit-taxation overhang on Pluxee's core France market (repeatedly postponed, 'weighs heavily on the share price') is a second structural regulatory risk the debate never mentioned.",
    "value_conviction_cap": 2,
    "skeptic_refuted": true
   },
   {
-   "symbol": "TNET",
-   "sector": "Industrials",
-   "value_score": 70,
-   "thesis": "PEO at 7.3x FCF and 21% ROIC with the insurance-cost repricing cycle already pivoting (latest-Q EPS +11%); a CRO-ONLY leg (2/5 models positive, scan MoS -15%) and therefore hard-capped at 0.5 units per the rubric.",
-   "mos_agreement": "2/5",
-   "sop_mos_pct": 29.7,
-   "net_funded_debt_ebitda": 1.57,
-   "interest_coverage": 5.0,
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "growth_durability": "flat - rev +0.8% 3y, ROIC 21%; STRENGTHENING trajectory as insurance margins normalize",
-   "peak_normalized": false,
-   "exposure_axes": [
-    "us-employment-smb-cycle",
-    "healthcare-cost-inflation"
-   ],
-   "size_units": 0.5,
-   "thesis_break_px": 42.0,
-   "bear_fv_px": 44.0,
-   "forensic_gate": "",
-   "trap_flag": false,
-   "skeptic_verdict": "REFUTED",
-   "skeptic_kill_fact": "The value case's downside-floor and asymmetry math is built on a sign-flipped balance sheet: the debate's 'net cash (-$606M net debt)' is actually ~$560-606M of corporate NET DEBT (Q1-26 10-Q: $340M unrestricted cash and cash equivalents vs $900M senior notes — $500M 3.50% due 2029 + $400M 7.125% due 2031; the other ~$1.2B of cash is RESTRICTED client payroll prefunds and insurance-carrier collateral, not corporate cash). Every SoP figure in the debate divides EV directly by the ~46-47M share count with zero net debt, so the bear floor of '$42-46 (~0-10% below price)' is wrong — net-debt-corrected, the same 8x stressed-FCF math gives ~$33-38/sh equity (~25-30% downside), inverting the claimed 1.3:1 risk/reward. Compounding it, the 'Atairos ~10%, multi-year seller' supply story is false: per the DEF 14A filed 2026-04-15, Atairos beneficially owns 18,120,508 shares = 39.3%, a quasi-control block with a Stockholder Agreement board seat (Angelakis re-elected 2026-05-27 to a 2029 term) — and executing the remaining $347M buyback (~7M shares at ~$48) mechanically ratchets Atairos toward ~46-47% without it buying a share, a creeping-control governance brake the debate never priced. Finally the 'delivered' margin catalyst is overstated: management said on the 2026-04-30 call that roughly HALF of the >4-point ICR improvement to 84% was one-time favorable prior-period development, and FY26 ICR guidance remains 89.25%-90.75% (guidance reaffirmed, not raised) — the run-rate margin fix is about half what the debate credits, while Average WSEs fell 12% YoY (volume melt worse than the -5% revenue headline).",
-   "skeptic_corrections": [
-    "Net debt: NOT net cash. Corporate net debt ~$560M ($340M unrestricted cash + ~$22M corporate restricted vs $900M gross senior notes; FMP netDebt +$606M incl. leases). The 12/31/25 'net cash' artifact came from counting $1.9B of cash that included client payroll funds; the Q1-26 balance sheet reclassifies them as restricted ($879M payroll funds collected + carrier collateral).",
-    "Atairos stake: 39.3% (18,120,508 shares, DEF 14A 2026-04-15), UP as a percentage from ~28% in 2016 because buybacks shrank the float — not 'down from 28% to ~10%'. Effective free float is only ~$1.3B of the $2.2B cap.",
-    "ICR 84% in Q1-26 is not run-rate: ~half the YoY improvement was one-time prior-period development (mgmt, Q1-26 call) and FY26 ICR is guided 89.25%-90.75%; Q1 is also the seasonal low. Adjusted EPS +25% (GAAP +11%, adj net income +17%) was rate-driven on a -12% WSE base.",
-    "TTM FCF $330M verifies (10-Q corporate operating CF $149M in Q1-26 vs $95M Q1-25; FY25 FCF ~$271M) and the $347M remaining buyback verifies — the 'cheap, cash-gushing' half of the thesis is real, but at ~8.3x EV/FCF after the net-debt fix, not the headline 7.3x-with-net-cash.",
-    "Sell-side/no-disqualifier checks verify: covenants in compliance at 3/31/26, litigation ordinary-course and immaterial, no activist/13D beyond Atairos, no sale process. The 2026-04-27 S-3ASR is a universal shelf explicitly covering 'selling securityholders' — the standing exit vehicle for the 39.3% block."
-   ],
-   "value_conviction_cap": 2,
-   "skeptic_refuted": true
-  },
-  {
-   "symbol": "SAX.DE",
-   "sector": "Communication Services",
-   "value_score": 66,
-   "sop_mos_pct": 49.6,
-   "mos_agreement": "2/5",
-   "funded_solvency": "moderate",
-   "peer_verdict": "cheap_vs_peers",
-   "why_not": "Dropped from the apex: CRO-ONLY leg (2/5 models, scan MoS +1%) AND the book's most-levered name (3.0x funded / 3.7x coverage, with the dossier showing leverage drifting UP 2.14x->2.31x on negative operating leverage while paying out ~EUR95m); the exit also dissolves the CMCSA advertising-cycle cluster. No near maturity wall found, so it stays first-promote.",
-   "skeptic_verdict": "REFUTED"
-  },
-  {
-   "symbol": "INGR",
-   "sector": "Consumer Defensive",
-   "value_score": 65,
-   "sop_mos_pct": 37.7,
-   "mos_agreement": "4/5",
-   "funded_solvency": "strong",
-   "peer_verdict": "in_line",
-   "why_not": "Dropped from the apex on hard constraint (c): peer_verdict is in_line (not demonstrably cheap vs ADM/Tate true peers), 3y revenue CAGR -3.1%, and peak+stale flags (latest-Q EPS -26%) - pristine solvency (0.79x/25.5x) but the pure-value case now rests on the SoP alone against flat-to-eroding peers-relative cheapness.",
-   "skeptic_verdict": "REFUTED"
-  },
-  {
-   "symbol": "MMS",
-   "sector": "Industrials",
-   "value_score": 64,
-   "sop_mos_pct": 17.5,
-   "mos_agreement": "4/5",
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "why_not": "Clean gate, 4/5 agreement and solid solvency, but the 17.5% CRO MoS is roughly half the apex floor AND it partially re-clusters with THC/UHS on the US government-health-program policy axis (Medicaid program administration), so promoting it would re-concentrate the basket's biggest hidden factor.",
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
-  },
-  {
-   "symbol": "WKL.AS",
-   "sector": "Industrials",
-   "value_score": 63,
-   "sop_mos_pct": 16.6,
-   "mos_agreement": "4/5",
-   "funded_solvency": "moderate",
-   "peer_verdict": "cheap_vs_peers",
-   "why_not": "Quality recurring-revenue compounder at ~10x FCF, but the CRO MoS is only 16.6% after normalizing the 122% scan artifact (eps_peak_ratio 2.19), and the 13x-FCF bear floor sits at the current price - insufficient margin for a seat.",
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
-  },
-  {
-   "symbol": "CTSH",
-   "sector": "Technology",
-   "value_score": 62,
-   "sop_mos_pct": 19.0,
-   "mos_agreement": "3/5",
-   "funded_solvency": "strong",
-   "peer_verdict": "cheap_vs_peers",
-   "why_not": "Cheapest large-cap IT-services name with net cash, but the bear SoP (~$54.5) sits AT the $52.94 price and the MoS is 19% with only 3/5 agreement - fairly priced insurance, not an apex margin of safety.",
-   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
-  },
-  {
-   "symbol": "PUIG.MC",
+   "symbol": "HRB",
    "sector": "Consumer Cyclical",
-   "value_score": 61,
-   "sop_mos_pct": 21.6,
-   "mos_agreement": "4/5",
+   "value_score": 86,
+   "thesis": "25% ROIC tax-prep cash machine the CRO values 50% above price ($55 vs $36.52); 5/5 models positive, strong solvency (1.08x funded / 12.7x cov), strengthening — a rare case where the raw scan MoS (-16%) is the artifact and the SoP is right.",
+   "mos_agreement": "5/5",
+   "sop_mos_pct": 50.6,
+   "net_funded_debt_ebitda": 1.08,
+   "interest_coverage": 12.7,
    "funded_solvency": "strong",
    "peer_verdict": "cheap_vs_peers",
-   "why_not": "Verdict-C kept ELIGIBLE on pure-value grounds (21.6% real MoS after the 332% scan-artifact haircut, 4/5 agreement, clean gate, no peak/stale flags) but conviction-2 (debate_conviction fallback) and a MoS below the apex floor leave it a runner-up; the Consumer Cyclical sector is also already at its 3-name cap.",
+   "growth_durability": "durable — low-growth but ROIC 25%, steady FCF, buyback-driven EPS",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "us-consumer-tax-season"
+   ],
+   "size_units": 1.1,
+   "thesis_break_px": 30.0,
+   "bear_fv_px": 45.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "REFUTED",
+   "skeptic_kill_fact": "There is no value discount to harvest: HRB trades ~$39.35 (Jun 2026) ABOVE the screener's $30.70 fair value (margin of safety -21%, i.e. a ~27% premium), so the 'cheap cash machine the market is mispricing toward terminal decline' premise is false on its own model. Independently corroborated by the live street: analyst median target ~$41 (≈ price) and Goldman Sachs maintains a $32 SELL — the consensus is NOT offside to the downside, which is the load-bearing condition the value/CRO lens requires and which is absent. Compounding the kill, the Q3-FY26 'beat-and-raise inflection' that the re-rate rests on is materially flattered by an $84.1M ONE-TIME NON-CASH IRS-examination tax benefit (+$0.65 EPS, primary 8-K confirmed), and stockholders' equity is now a DEFICIT of $(24.4)M as of 2026-03-31 — EPS growth is buyback share-count engineering (135.3M->127.8M sh, $412.7M repurchased YTD) on flat net income and declining FCF, not cash compounding. A name above fair value, with a spent/tax-inflated catalyst and negative book equity, is not a value buy.",
+   "skeptic_corrections": "BEAR NUMBER OVERSTATED (in the bull's favor, but immaterial to the kill): the bear thesis repeatedly cites net debt of $1.60B and warns it 'rises toward 2.0B.' Per the latest 10-Q (2026-03-31): long-term debt $1,490.9M, current portion $0, cash $867.0M => net debt ~$0.62B ex-leases, ~$0.94B including ~$0.32B finance-lease obligations. Actual net debt is roughly half the bear's $1.60B figure (the regime file's $1.14B and the FY25 10-K ~$1.0B are both closer). Lower leverage does NOT rescue the thesis — it removes a near-term solvency scare but creates no discount where none exists. Separately, the bull-side '69% margin of safety' figure is internally contradicted/garbled (impossible against a fair value below price); the grounded screener line is fair value $30.7, MOS -21%.",
+   "value_conviction_cap": 2,
+   "skeptic_refuted": true
+  },
+  {
+   "symbol": "UHS",
+   "sector": "Healthcare",
+   "value_score": 83,
+   "thesis": "Hospital operator the CRO values at ~$225 vs $146.42 (sop_mos +48.5%), strong solvency on a funded basis (1.79x / 13.4x cov — its low Altman-Z was a working-capital artifact), cheap vs peers; epr 2.53 is a real volume recovery (rev 3y CAGR +9%), not a one-off peak.",
+   "mos_agreement": "3/5",
+   "sop_mos_pct": 48.5,
+   "net_funded_debt_ebitda": 1.79,
+   "interest_coverage": 13.4,
+   "funded_solvency": "strong",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "durable — rev 3y CAGR +9%, ROIC ~9%, stable volumes",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "hospital-reimbursement",
+    "us-medicaid-dpp-2028"
+   ],
+   "size_units": 0.85,
+   "thesis_break_px": 120.0,
+   "bear_fv_px": 175.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "REFUTED",
+   "skeptic_kill_fact": "The $267.91 'fair value' (and the 70-83% margin of safety) is a STALE-ANCHOR on a policy-rented earnings peak. The 2025 EPS of $23.10 / net income $1.489B that the Graham/IV15 +70-85% MoS capitalizes is materially inflated by ~$1.2B/yr of DPP supplemental Medicaid reimbursement that is LEGISLATIVELY scheduled to decline. Independently verified: the One Big Beautiful Bill Act (signed July 4, 2025) reduces grandfathered state-directed payments 10% per year beginning Jan 1, 2028 until the Medicare limit is reached, and caps SDPs at 100%/110% of Medicare rate; UHS's own quantification of -$360-400M net benefit by 2032 is corroborated by multiple sources. The methods themselves expose the trap: EPV margin-of-safety is -69% and DCF fair value is $114.8 (BELOW the ~146-158 price), both of which strip the policy rent and land far under the $267.91 Buffett/Graham anchor. So the 'cheapness' is not edge — it is the market and the cash-flow methods correctly discounting an earnings base with a statutory expiry. The value case dies because the fair-value anchor is built on the very DPP-subsidized peak that is set to erode from 2028.",
+   "skeptic_corrections": [
+    "NET DEBT is misstated in the bear thesis as 4.09B. Primary 8-K (FY2025): total debt 4.753B minus cash 137.8M = net debt ~4.62B at YE2025; ~5.0-5.1B post-Talkspace funding (revolver draw). Leverage is still conservative at debt/EBITDA 1.74x (improved from 2.00x in 2024), but the value case must use ~4.6-5.1B, not 4.09B.",
+    "The 'OCF FELL while NI rose +37%' cash-quality TELL is overstated. Verified: OCF 2025 1.864B vs 2024 2.067B = -9.8% (a decline, not a collapse), and it still covers 1.015B capex + 899M buyback. FCF -24.4% YoY (849M vs 1.123B) is accurate. Cash conversion softened modestly on de-novo capex + DPP-receivable timing (~145M AR build) — a correction worth watching, NOT a broken business.",
+    "Talkspace was NOT 'closed March 2026.' The 835M deal ($5.25/sh) was ANNOUNCED Mar 9-10, 2026, financed via existing revolving credit, and is expected to CLOSE Q3 2026 pending regulatory approval. The bear's 'first 1-2 quarters of ownership cash drag' timing is therefore premature. Talkspace is publicly traded with ~229M FY2025 revenue, so the 'no disclosed standalone economics' claim is partly false."
+   ],
+   "value_conviction_cap": 2,
+   "skeptic_refuted": true
+  },
+  {
+   "symbol": "SCR.PA",
+   "sector": "Financial Services",
+   "value_score": 78,
+   "thesis": "Reinsurer the CRO values at ~EUR42 vs EUR31.04 (sop_mos +28.9%); exempt_financial solvency (its low Altman-Z is a policyholder-reserve artifact, funded basis 0.4x / 128.8x cov), cheap vs peers, strengthening underwriting.",
+   "mos_agreement": "3/5",
+   "sop_mos_pct": 28.9,
+   "net_funded_debt_ebitda": 0.4,
+   "interest_coverage": 128.8,
+   "funded_solvency": "exempt_financial",
+   "peer_verdict": "cheap_vs_peers",
+   "growth_durability": "stable — flat top-line but improving combined ratio, reserve-driven book value",
+   "peak_normalized": false,
+   "exposure_axes": [
+    "reinsurance-pricing-cycle",
+    "rate-credit"
+   ],
+   "size_units": 1.0,
+   "thesis_break_px": 26.0,
+   "bear_fv_px": 36.0,
+   "forensic_gate": "",
+   "trap_flag": false,
+   "skeptic_verdict": "REFUTED",
+   "skeptic_kill_fact": "The value-apex thesis requires a quantified margin of safety, and the ONLY one this file ever had — fair value EUR 199.56 vs price ~EUR 31 (~6x upside) — is a verified data artifact, not a mispricing. On clean primary data SCOR's market cap (~EUR 5.5bn) on FY2025 diluted EPS ~4.76 / NI EUR 851m is a NORMAL mid-single-digit-P/E reinsurer (~6-7x), i.e. priced in line with peers, not a deep discount. So there is no demonstrated value edge to underwrite. The residual discount is a legitimate cost-of-equity / trust discount that is actively normalizing (Fitch outlook to Positive Oct-2025; AM Best affirmed A / a+ stable and lifted 'under review' Feb-2026) — meaning the cheapness is being arbitraged away by third parties, not waiting to be harvested. Layered on top are two genuine binary tails the bull cannot size: the Covéa retrocession arbitration (final ruling expected 2026, undisclosed quantum, management 'no comment') and a structurally volatile earnings base that detonated twice in five years (2022 net loss; FY2024 NI ~EUR 4m / 0.1% ROE). A high-quality reinsurer at a fair (not cheap) price with an unsizable legal binary is not a value-apex idea.",
+   "skeptic_corrections": "(1) The bear/moderator pillar that 'dividend coverage, FCF, leverage are UNVERIFIABLE because metrics_str is empty' is itself FALSE on primary data: FY2025 NI EUR 851m and ~EUR 1.09bn TTM FCF cover the EUR 1.90 dividend ~2.6x — cash generation and dividend affordability are in fact verifiable and comfortable. This does NOT save the value case (a covered dividend on a fairly-valued stock is not an edge), but the specific 'we cannot verify the cash' objection is wrong and should not be load-bearing. (2) The bear's 'top line flat / 19.1% ROE is a cycle PEAK' read is only half-true: Q1-2026 printed NI EUR 225m, ROE 21.7%, solvency 220% with a further EUR 300m P&C buffer added — momentum extended, ROE did not roll over in the window. The cycle is softening (Jan renewals more competitive; 4-6% revenue target demoted to 'outcome') so the structural-volatility concern stands, but 'peak rolling over now' is not yet evidenced. (3) FY2025 NI is EUR 851m reported (EUR 846m on the adjusted/headline basis the bull cites) — both figures are real and verify.",
+   "value_conviction_cap": 2,
+   "skeptic_refuted": true
+  },
+  {
+   "symbol": "UPWK",
+   "sector": "Industrials",
+   "sop_mos_pct": 59.0,
+   "note": "vc4, sop +59%, net-cash strong solvency, ROIC ~0% (pivoting to profitability) — held out only on the Industrials 3-name cap behind PLX.PA/MMS; first swap-in.",
    "skeptic_verdict": "REFUTED"
+  },
+  {
+   "symbol": "IT",
+   "sector": "Industrials",
+   "sop_mos_pct": 45.1,
+   "note": "vc4, sop +45%, ROIC 21%, strong solvency, scan agrees +49% — strong but capped out of Industrials.",
+   "skeptic_verdict": "REFUTED"
+  },
+  {
+   "symbol": "PRDO",
+   "sector": "Consumer Defensive",
+   "sop_mos_pct": 17.5,
+   "note": "vc4, net-cash, ROIC 13%, strengthening; orthogonal (for-profit education) — best diversifier if a cluster leg is dropped.",
+   "skeptic_verdict": "REFUTED"
+  },
+  {
+   "symbol": "SREN.SW",
+   "sector": "Financial Services",
+   "sop_mos_pct": 25.5,
+   "note": "vc4, exempt_financial; NOTE re-clusters with SCR.PA on the reinsurance axis, so NOT a clean diversifier for SCR.PA.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "BZU.MI",
+   "sector": "Basic Materials",
+   "sop_mos_pct": 34.2,
+   "note": "vc4, net-cash, sop +34% with scan agreement +26%, cheap vs peers — orthogonal materials name.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "DEC.PA",
+   "sector": "Communication Services",
+   "sop_mos_pct": 29.6,
+   "note": "vc4, sop +29.6%, scan agrees +33%, not peak/stale, moderate solvency 2.74x/5.3x — cleaner than CMCSA but lower MoS; orthogonal to CMCSA's stale-anchor risk.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
   }
  ],
  "value_memo": {
-  "rubric_weighting": "Four pillars at ~25 points each, applied only to names that clear the forensic gate: (1) margin of safety anchored on the CRO-reconciled sop_mos_pct with the 5-model mos_spread as an agreement cross-check (raw scan MoS treated as an artifact wherever the CRO number collapsed far below it); (2) cyclical-peak vs durable-growth normalization BEFORE crediting cheapness, using eps_normalized/freshness flags and the CRO anchor; (3) funded-leverage solvency on net_funded_debt_ebitda + interest_coverage (raw Altman-Z ignored - float/reserve businesses judged exempt_financial); (4) multiples vs true peers plus growth durability/quality. Hard constraints enforced: <=3 names per sector (Healthcare and Consumer Cyclical both sit exactly at 3), forensic gate cleared, still-positive normalized MoS, cheap on true peers, no value traps.",
-  "conviction_fallback_note": "value_conviction is NULL on all 162 rows of this older result set, so debate_conviction was used as the fallback throughout, exactly as the prompt prescribes. Because debate_conviction is regime-tilted, it was used only as a sizing tiebreaker (INVA and PUIG.MC carry explicit conviction-2 haircuts), never as a gate.",
-  "forensic_gate": {
-   "excluded_ineligible": [
-    "AFX.DE",
-    "LIGHT.AS",
-    "HUBG",
-    "MOH",
-    "CORT",
-    "BRBR"
-   ],
-   "capped_at_50": [
-    "NEXI.MI",
-    "IT",
-    "JUN3.DE",
-    "BMW.DE",
-    "PAH3.DE",
-    "GRBK",
-    "GBX",
-    "ORI",
-    "PPC",
-    "TFI.PA",
-    "KBH",
-    "UVV",
-    "SAM",
-    "INSP",
-    "DMLP"
-   ],
-   "note": "NEXI.MI (sop 57.2%) and IT/Gartner (sop 49.3%) would otherwise have been apex contenders; the DETERIORATING-trajectory CAP at ~50 keeps both out of the top 10 - the gate is regime-independent forensics and a factor-cheap name never overrides it."
-  },
-  "peak_stale_artifacts": {
-   "BRBR": "Raw scan MoS +335% vs CRO-normalized fair value ~$12-13 against an $8.77 reference price - the headline cheapness was built on pre-rollover earnings (latest-Q EPS -36%, freshness_stale, 4.2x weak funded leverage). Doubly out: forensic EXCLUDE (interrogator credibility <=2).",
-   "CALM": "The canonical egg-windfall artifact: raw scan MoS +391% on eps_peak_ratio 9.17 with latest-Q EPS -90%; the CRO-normalized fair value is $78-88 (base ~$82) vs a $77.69 price, i.e. the REAL margin of safety is just +5.5%. A 3.5x P/FCF on avian-influenza peak earnings is not value.",
-   "others_downrated": [
-    "GEF (scan 168% -> CRO 27.6%; rev CAGR -12.2%)",
-    "FISV (scan 112% -> CRO 37%; peak+stale, latest-Q -29%)",
-    "BYD (scan 379% -> CRO 13.9%)",
-    "PUIG.MC (scan 332% -> CRO 21.6%)",
-    "NVDA (scan 126% -> CRO 9.5%)",
-    "MAU.PA (scan 203% -> CRO -6%)",
-    "YELP (scan 134% -> CRO 1.1%)",
-    "SMPL (scan 125% -> CRO 32.6%)",
-    "WKL.AS (scan 122% -> CRO 16.6%)",
-    "HRMY (scan 138% -> CRO 23.2%)",
-    "SSRM (gold-cycle peak, CRO-only 1/5)"
-   ]
-  },
-  "verdict_c_names_kept": {
-   "INVA": "Apex seat at 0.75 units. The C verdict was set under the now-removed catalyst regime, which penalized a catalyst-less royalty stream; on pure value pillars INVA clears everything - sop_mos_pct +42% genuinely positive, forensic gate clean (interrogator 3, PIVOTING), peak_flag is durable growth not artifact (freshness_stale=false, rev +8.7% 3y, ROIC 15%), net cash, 4/5 model agreement. Conviction-2 fallback is the only soft spot, hence 0.75 not 1.0.",
-   "PUIG.MC": "Runner-up only - eligible on the same test (positive 21.6% CRO MoS, clean gate, no peak/stale flags) but below the apex MoS floor and the Consumer Cyclical sector cap."
-  },
-  "cro_only_legs": {
-   "TNET": "2/5 models positive AND scan MoS -15% => the CRO SoP is the sole evidence of cheapness; size hard-capped at 0.5. Why the SoP beats the dissenting models: EPV/Graham/iv15 capitalize the current insurance-cost spike as permanent, while the CRO normalizes insurance margins to the contractual annual repricing cycle that is already turning (latest-Q EPS +11%), and the two going-concern models (DCF +68%, owner-earnings +64%) agree with the CRO, not with the static three.",
-   "SAX.DE": "Also a CRO-only leg (2/5, scan +1%) - resolved by demotion to runner-up rather than sizing, because it is simultaneously the book's most-levered name."
-  },
-  "stale_anchor": {
-   "CMCSA": "Rule-2c worked example applied to itself: freshness_stale=true, eps_peak_ratio 2.01 (>=1.8), and the load-bearing Versant spin has FIRED - so the CRO fair value of $44 may rest on pre-spin share count and segment EBITDA. sop_mos_pct 84.5% treated as PROVISIONAL; size_units capped at 0.5; the thesis says so explicitly."
-  },
-  "rise_fall_vs_prior_apex": {
-   "prior_apex": [
-    "CMCSA",
-    "THC",
-    "ANF",
-    "SAX.DE",
-    "EEFT",
-    "BKNG",
-    "TNET",
-    "SCR.PA",
-    "INGR",
-    "HRB"
-   ],
-   "THC": "HOLD - rises to the top seat (88). STRENGTHENING trajectory, interrogator 5/5, 5/5 model sweep, and the dossier removes the maturity-wall objection to its moderate solvency bucket (no significant maturities until late 2027).",
-   "EEFT": "HOLD at full unit (84) - now formally capped with BKNG on the travel-spend axis (the measured 0.46 max pair).",
-   "BKNG": "HOLD but trimmed to 0.75 (83) - it is the shared leg of BOTH the travel and consumer-discretionary clusters; the trim does double duty.",
-   "ANF": "HOLD at full unit (82) - the CRO peak haircut (147% -> 34.5%) was accepted and the net-cash floor holds.",
-   "UHS": "NEW IN at 0.5 (79) - 46.7% CRO MoS, strong solvency (1.79x/13.4x), durable +9% 3y revenue; enters strictly under the hospital-reimbursement combined cap with THC.",
-   "INVA": "NEW IN at 0.75 (76) - verdict-C kept on pure-value grounds (see verdict_c_names_kept); the highest-MoS net-cash name in Healthcare behind the two hospitals.",
-   "HRB": "HOLD at full unit (74).",
-   "SCR.PA": "HOLD at full unit (72) - peak hard-market earnings discounted by anchoring to book; sole reinsurance leg (SREN.SW deliberately NOT promoted because it re-clusters).",
-   "TNET": "HOLD at 0.5 (70) - CRO-only cap unchanged.",
-   "CMCSA": "DEMOTED but kept - from full member to a 0.5-unit stale-anchor seat (rule 2c: stale + pkr 2.01 + Versant fired => provisional 84.5% MoS).",
-   "SAX.DE": "OUT -> runner-up #1 - CRO-only leg (2/5, scan +1%) AND the book's most-levered name (3.0x/3.7x with leverage drifting up per the dossier); its exit also dissolves the CMCSA+SAX.DE advertising-cycle cluster.",
-   "INGR": "OUT -> runner-up - fails hard constraint (c): in_line vs true peers, 3y revenue CAGR -3.1%, peak+stale flags (latest-Q -26%); solvency was never the problem."
-  },
-  "correlation_stress": {
-   "measured_baseline": "Prior-run 2y weekly log-return correlations: average pairwise 0.18, max pair EEFT-BKNG at 0.46, NO pair >= 0.6. The stress below is argued against these measured numbers, not asserted: the only data-confirmed co-movement cluster is EEFT-BKNG; the THC-UHS cluster is an EVENT risk (a single 2028 ruling) that weekly-return correlation structurally understates, so it is capped despite a benign measured number.",
-   "clusters": [
-    {
-     "axis": "hospital-reimbursement",
-     "names": [
-      "THC",
-      "UHS"
-     ],
-     "resolution": "KEPT WITH COMBINED CAP 1.5 units (THC 1.0 + UHS 0.5)",
-     "justification": "These are the two highest-scoring Healthcare seats and both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome. Diversifying was inferior: ARDT re-clusters with hospitals by spec (and scores far lower at 22.2% MoS with a thin-equity flag), and MMS partially re-clusters on government-health-program policy. The cap means one adverse ruling can hit at most 1.5 units, never two full legs. Measured correlation last run was below the flag bar, but this is single-event regulatory risk, not factor beta - capped anyway."
-    },
-    {
-     "axis": "travel-spend",
-     "names": [
-      "EEFT",
-      "BKNG"
-     ],
-     "resolution": "KEPT WITH COMBINED CAP 1.75 units (EEFT 1.0 + BKNG 0.75)",
-     "justification": "The measured max pair (0.46) - Euronet's ATM/FX volumes and Booking's room-nights both ride European travel volumes. 0.46 sits below the 0.6 alarm bar, so full diversification (dropping an 84/83-scoring pair) would sacrifice score for a correlation the data calls moderate; but it IS the highest measured number in the book, so the pair may not carry 2.0 full legs. EEFT keeps the full unit because its 52.3% MoS is the deeper cheapness; BKNG takes the trim."
-    },
-    {
-     "axis": "consumer-discretionary-demand",
-     "names": [
-      "ANF",
-      "BKNG"
-     ],
-     "resolution": "KEPT WITH COMBINED CAP 1.75 units (ANF 1.0 + BKNG 0.75)",
-     "justification": "Apparel and discretionary travel share the household-wallet cycle. The measured baseline (avg 0.18, no pair >= 0.6) says this axis is loose in practice, and BKNG's travel-cluster trim already does double duty here - the cap formalizes that a consumer-spending shock cannot hit two full-size legs."
-    },
-    {
-     "axis": "us-employment-smb-cycle",
-     "names": [
-      "HRB",
-      "TNET"
-     ],
-     "resolution": "KEPT WITH COMBINED CAP 1.5 units (HRB 1.0 + TNET 0.5)",
-     "justification": "A US small-business/employment downturn hits both assisted-tax-prep volumes and PEO worksite-employee counts. TNET's CRO-only 0.5 haircut is formalized as the cluster cap, so the axis carries 1.5 units maximum. HRB's tax-prep demand is partially countercyclical (filings persist in recessions), which is why this cluster is capped rather than diversified."
-    },
-    {
-     "axis": "advertising-cycle",
-     "names": [
-      "CMCSA",
-      "SAX.DE"
-     ],
-     "resolution": "DIVERSIFIED - SAX.DE swapped out to runner-up",
-     "justification": "The prompt's named cable-ads/theme-park + out-of-home pair. Resolved by exiting the lower-value leg: SAX.DE was a CRO-only leg AND the book's most-levered name, so its demotion was overdetermined; CMCSA remains the SOLE advertising leg at an already-capped 0.5 stale-anchor units. The cluster no longer exists in the final 10 - an ad-recession now touches 0.5 provisional units at most."
-    },
-    {
-     "axis": "reinsurance-pricing-cycle",
-     "names": [
-      "SCR.PA"
-     ],
-     "resolution": "SINGLE LEG - no cluster",
-     "justification": "SREN.SW (26.5% MoS, runner-up grade) was deliberately NOT promoted into the basket because it would re-create exactly the two-leg reinsurance cluster the spec warns about."
-    }
-   ]
-  },
+  "rubric_weighting": "Four pillars ~25 pts each, applied only to names clearing the forensic gate: (1) Margin of Safety anchored on CRO sop_mos_pct as system-of-record (raw 5-method mos_spread used only as confirmation, discounted on any peak/stale name); (2) Cyclical-peak vs durable-growth normalization applied BEFORE crediting cheapness; (3) Funded-leverage solvency (net_funded_debt_ebitda + interest_coverage; raw Altman-Z ignored); (4) Multiples vs true peers + growth/quality durability. value_conviction (catalyst-blind) preferred over debate_conviction throughout; all apex names carry vc4-5.",
+  "forensic_gate": "EXCLUDED as ineligible (interrogator credibility <=2): AFX.DE, BRBR, CORT, HUBG, LIGHT.AS. CAPPED at ~50 (DETERIORATING, credible-but-worsening): DFH, GBX, GIII, JUN3.DE, PAH3.DE, PFSI, PPC — none eligible for apex despite some optically high sop_mos (PAH3.DE +50.8%, JUN3.DE +37.4%) because the cap reflects a worsening trajectory the factors miss.",
+  "peak_stale_artifacts": "BRBR: CRO returned NO usable fair value (sop_mos=null) and the gate EXCLUDES it (interrogator 2, weak 4.21x funded / 3.5x cov, latest-Q EPS YoY -36%, FY EPS 1.68 vs live TTM 1.29) — the raw scan +333% MoS is a pure stale/peak fiction. CALM: classic cyclical-peak artifact — raw scan MoS +375% on the egg-price windfall (epr 9.17, latest-Q EPS YoY -90%, freshness-stale), but the CRO's normalized fair value collapses the MoS to just +8.8%; on mid-cycle eps_normalized 2.72 the low headline multiple is fake-cheap, so CALM is DOWN-RATED out of the apex. ANF also down-rated: epr 17.43 but CRO-normalized sop_mos only +10.4% vs raw scan +105% (latest-Q EPS YoY -8%) — the cheapness was a peak artifact, removed from apex.",
+  "verdict_c_names_kept": "None. No verdict-C name is seated in the apex. The high-MoS C names either fail the gate (BRBR=C, EXCLUDE) or fail pure-value cross-checks (BKNG=C: sop_mos only +9.1% and peer_verdict in_line, not cheap on true peers). All ten apex names carry debate_verdict B.",
+  "cro_only_legs": "None at <=0.5 forced size. Every apex leg has CRO support corroborated by either scan-MoS agreement or >=3/5 positive model MoS: HRB and CMCSA carry 5/5, EEFT 5/5, THC 5/5; ADBE/PLX.PA/UHS/GLOB/MMS/SCR.PA each 3-4/5. No name relies on the SoP as sole evidence against >=3 dissenting models, so no leg required the CRO-only <=0.5 cap on that basis (CMCSA and THC are sized down for stale-anchor and cluster reasons, not CRO-only reasons).",
+  "stale_anchor": "CMCSA is the one stale-anchor leg: freshness_stale=true, epr 2.01, latest-Q EPS YoY -33%, post-Versant spin means the CRO's $36 fair value likely rests on pre-spin segment EBITDA and share count. Treated as PROVISIONAL and sized to 0.5 units. (CALM and BRBR were stale-anchor candidates too but failed earlier gates and are out entirely.)",
+  "rise_fall_vs_prior_apex": "Prior value apex = [THC, EEFT, BKNG, ANF, UHS, HRB, SCR.PA, CMCSA] (8 names). KEPT (6): EEFT (rise — now 5/5 model agreement, conviction reaffirmed), HRB (rise — 5/5, strong solvency confirmed), UHS (steady — sop +48.5%, top healthcare leg), SCR.PA (steady — exempt-financial, sop +28.9%), THC (FALL in size — sized down to 0.55 under the UHS reimbursement combined cap), CMCSA (FALL in size — re-confirmed but sized to 0.5 as a stale anchor post-Versant). DROPPED (2): BKNG (sop_mos collapsed to +9.1%, peer in_line — not cheap on true peers, verdict C), ANF (CRO-normalized sop only +10.4% vs raw +105%, epr 17.43 peak artifact). ADDED (4): ADBE (new apex anchor, sop +101%, vc5), PLX.PA (sop +124%, net cash), MMS (sop +60.6%, strengthening), GLOB (sop +53.4%, strong solvency). Net 8 -> 10 names.",
+  "correlation_stress": "Run over the final 10 against the prior-run measured 2y weekly correlations (avg pairwise 0.19). (1) HOSPITAL-REIMBURSEMENT cluster THC+UHS — the ONLY measured pair >=0.6 (corr 0.65, the book's highest); both ride the 2028 US Medicaid Directed-Payment-Program / hospital-reimbursement outcome, a single ruling that would hit both legs. RESOLVED by keeping both with an explicit combined-size cap of 1.4 units (UHS 0.85 + THC 0.55 = 1.40) rather than two full legs — UHS is the higher-value leg (sop +48.5% vs +23.1%, strong vs moderate solvency) so it carries the larger share; the orthogonal alternative SREN.SW re-clusters with SCR.PA on reinsurance and ARDT re-clusters on hospitals, so no clean swap exists and the sized-cap path is correct. (2) ADVERTISING-CYCLE cluster CMCSA+SAX.DE — SAX.DE (out-of-home advertising) is NOT seated in the apex (sop_mos null, no usable CRO fair value), so the advertising cycle carries only ONE apex leg (CMCSA), already half-sized for stale-anchor reasons; no >=2 cluster exists and no action needed. (3) Residual checks: ADBE/GLOB share an it-/enterprise-software discretionary-spend tilt but ADBE is platform-monetization-driven while GLOB is project-services-driven, and GLOB is already the smallest tech leg (0.8) — below the threshold for a combined cap. EEFT (cross-border payments/travel-FX) and the travel end-market: no second travel leg in the slate. No other hidden factor carries >=2 apex legs.",
   "bear_rebuttal": {
-   "note": "Written BEFORE final sizing, one sentence per seat - the strongest reason each pick is wrong.",
-   "THC": "The 2026 ACA-EAPTC expiration ($250M headwind management itself calls genuinely uncertain) plus an adverse 2028 Medicaid-DPP ruling could compress hospital-segment EBITDA enough that 5.8x FCF is the RIGHT multiple on falling earnings, not a cheap one on durable earnings.",
-   "EEFT": "The ATM/remittance cash cow may be in structural decline (cashless adoption plus immigration crackdowns shrinking remittance corridors), making the 6x 'stressed floor' an anchor on earnings that erode every year - a melting-ice-cube multiple, not a floor.",
-   "BKNG": "Google/AI-agent disintermediation of hotel discovery compresses take rates just as post-COVID travel normalizes, and the 34% MoS disappears into a permanently lower steady-state EBITDA.",
-   "ANF": "An eps_peak_ratio of 17.4 says current earnings are the best print of a fashion-cycle winner, and one merchandising miss (the 2017 playbook) re-rates it from 9.7x to a single-digit multiple on halved earnings - latest-Q EPS is already -8%.",
-   "UHS": "The DCF leg is already NEGATIVE (-8%), so if the Graham/iv15 asset anchors overstate behavioral-segment durability the 46.7% parts MoS is arithmetic, not value, and the stock is simply fairly priced.",
-   "INVA": "This is a melting royalty annuity - Trelegy LOE erosion inside the holding window plus a hedge-fund-controlled board reallocating royalty cash into speculative biotech means the bear SoP (~$22.5, AT the current price) is the honest central case.",
-   "HRB": "IRS Direct File expansion and AI-assisted free filing finally bite assisted-prep volumes, and the buyback has been masking a secularly shrinking client base - the -19% raw scan MoS is the honest read and the CRO is the outlier.",
-   "SCR.PA": "Reinsurance pricing is at a hard-market peak (eps_peak_ratio 2.12 off loss-year lows) - one major cat year plus softening renewals puts the EUR40 book anchor out of reach and SCOR's reserve-history credibility problem resurfaces.",
-   "TNET": "Insurance-cost trend outruns pricing for one more year and the 2/5 model agreement is telling you the CRO's normalization - not the market - is the outlier; at 0.5 units this is priced as the coin-flip it is.",
-   "CMCSA": "Post-Versant, the remaining company is a melting linear-video bundle plus competitively-pressured broadband whose $44 fair value was computed on PRE-SPIN segments - EPV reads -100%, net debt exceeds market cap, and a 4x multiple on a declining FCF base is the textbook value trap."
+   "ADBE": "Generative-AI disruption (free/cheaper design tools) structurally caps Creative Cloud pricing power, so the $420 SoP over-extrapolates a moat that is actively eroding.",
+   "PLX.PA": "A thin-float European microcap with a +124% SoP that no liquid market is pricing — the gap may persist indefinitely (or reflect a governance/liquidity discount the SoP ignores) rather than close.",
+   "MMS": "Government-services revenue is hostage to US federal budget cuts and efficiency reviews, so the +60% SoP rests on contract renewals that a fiscal-austerity cycle could slash.",
+   "GLOB": "IT-services demand is discretionary and decelerating (trajectory PIVOTING, ROIC only ~7%), so a 2026 enterprise-spend slowdown turns the de-rating into a justified value trap, not an overshoot.",
+   "HRB": "Free and AI-driven DIY tax filing (and IRS Direct File expansion) is a secular volume drain that no buyback can outrun, so the 25% ROIC is melting and the SoP capitalizes a declining base.",
+   "EEFT": "Cross-border money-transfer and ATM economics face structural disruption from stablecoins/digital wallets and Wise-style fintechs, so even 5/5 model agreement may be anchored on a business model in slow decline.",
+   "UHS": "The entire +48.5% MoS hinges on a favorable 2028 Medicaid Directed-Payment-Program outcome; an adverse reimbursement ruling resets fair value below price, and behavioral-health volume softness compounds it.",
+   "THC": "Moderate funded leverage (2.33x, 4.2x coverage) plus the SAME 2028 reimbursement risk as UHS means a single adverse ruling hits both legs while the thinner +23% MoS leaves little cushion to absorb it.",
+   "SCR.PA": "A reinsurer's book value is only as good as its reserve adequacy; a single large-cat year or adverse reserve development would expose the SoP as built on optimistic loss picks the catalyst-blind model can't audit.",
+   "CMCSA": "Broadband subscriber losses to fixed-wireless and fiber overbuilders are accelerating, and the post-Versant SoP rests on pre-spin segment economics, so the 'cheap' multiple is on a cash-flow base that is structurally shrinking."
   },
-  "sizing_summary": "Total 8.0 units across 10 seats: THC 1.0, EEFT 1.0, ANF 1.0, HRB 1.0, SCR.PA 1.0, BKNG 0.75 (dual-cluster shared leg), INVA 0.75 (verdict-C / conviction-2 fallback), UHS 0.5 (hospital-reimbursement cap), TNET 0.5 (CRO-only leg), CMCSA 0.5 (rule-2c stale anchor). Every reduced size is mirrored in combined_caps or the memo tag that mandates it; all four combined caps hold exactly at their stated max_units."
+  "sizing_summary": "Total ~9.6 units across 10 names. Conviction tiers by CRO-normalized MoS and confirmation breadth: ADBE 1.5 (apex anchor, vc5, +101% net-cash) and PLX.PA 1.2 (+124% net-cash) are the deep-value top; HRB 1.1 / EEFT 1.1 (both 5/5 model agreement) and MMS 1.0 / SCR.PA 1.0 form the high-confidence core; GLOB 0.8 trimmed for pivoting growth and ~7% ROIC. The two sized-down legs: UHS 0.85 + THC 0.55 sit UNDER the 1.4-unit hospital-reimbursement combined cap (UHS larger as the higher-value, stronger-solvency leg), and CMCSA 0.5 is half-sized as a provisional stale anchor (post-Versant). No CRO-only <=0.5 cap was triggered (all legs have model or scan corroboration)."
  },
  "value_tracking": {
   "inception_date": "2026-06-08",
-  "since_inception_pct": 1.38,
-  "nav": 101.38,
-  "n_open": 8,
-  "n_closed": 3,
-  "win_rate": 66.7,
+  "since_inception_pct": 3.45,
+  "nav": 103.45,
+  "n_open": 6,
+  "n_closed": 8,
+  "win_rate": 50.0,
   "history": [
    {
     "date": "2026-06-08",
@@ -642,6 +421,30 @@
     "nav": 101.3839,
     "ret": 0.0,
     "n": 8
+   },
+   {
+    "date": "2026-06-11",
+    "nav": 100.684,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-06-12",
+    "nav": 102.5364,
+    "ret": 0.018398,
+    "n": 8
+   },
+   {
+    "date": "2026-06-13",
+    "nav": 103.4478,
+    "ret": 0.008888,
+    "n": 8
+   },
+   {
+    "date": "2026-06-14",
+    "nav": 103.4478,
+    "ret": 0.0,
+    "n": 6
    }
   ],
   "closed": [
@@ -671,16 +474,61 @@
     "exit_price": 101.64,
     "return_pct": 1.66,
     "conviction": 60
+   },
+   {
+    "symbol": "BKNG",
+    "entry_date": "2026-06-08",
+    "exit_date": "2026-06-14",
+    "entry_price": 165.84,
+    "exit_price": 164.94,
+    "return_pct": -0.54,
+    "conviction": 83
+   },
+   {
+    "symbol": "ANF",
+    "entry_date": "2026-06-08",
+    "exit_date": "2026-06-14",
+    "entry_price": 75.34,
+    "exit_price": 90.57,
+    "return_pct": 20.22,
+    "conviction": 82
+   },
+   {
+    "symbol": "UHS",
+    "entry_date": "2026-06-10",
+    "exit_date": "2026-06-14",
+    "entry_price": 146.59,
+    "exit_price": 146.42,
+    "return_pct": -0.12,
+    "conviction": 79
+   },
+   {
+    "symbol": "HRB",
+    "entry_date": "2026-06-08",
+    "exit_date": "2026-06-14",
+    "entry_price": 38.09,
+    "exit_price": 36.52,
+    "return_pct": -4.12,
+    "conviction": 74
+   },
+   {
+    "symbol": "SCR.PA",
+    "entry_date": "2026-06-08",
+    "exit_date": "2026-06-14",
+    "entry_price": 30.54,
+    "exit_price": 31.04,
+    "return_pct": 1.64,
+    "conviction": 72
    }
   ]
  },
  "value_tracking_weighted": {
   "inception_date": "2026-06-09",
-  "since_inception_pct": 1.52,
-  "nav": 101.52,
-  "n_open": 8,
-  "n_closed": 3,
-  "win_rate": 66.7,
+  "since_inception_pct": 3.75,
+  "nav": 103.75,
+  "n_open": 6,
+  "n_closed": 8,
+  "win_rate": 62.5,
   "history": [
    {
     "date": "2026-06-09",
@@ -693,6 +541,30 @@
     "nav": 101.5184,
     "ret": 0.0,
     "n": 8
+   },
+   {
+    "date": "2026-06-11",
+    "nav": 100.8176,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-06-12",
+    "nav": 102.8837,
+    "ret": 0.020494,
+    "n": 8
+   },
+   {
+    "date": "2026-06-13",
+    "nav": 103.7483,
+    "ret": 0.008403,
+    "n": 8
+   },
+   {
+    "date": "2026-06-14",
+    "nav": 103.7483,
+    "ret": 0.0,
+    "n": 6
    }
   ],
   "closed": [
@@ -722,163 +594,170 @@
     "exit_price": 101.64,
     "return_pct": 1.99,
     "conviction": 60
+   },
+   {
+    "symbol": "BKNG",
+    "entry_date": "2026-06-09",
+    "exit_date": "2026-06-14",
+    "entry_price": 162.3,
+    "exit_price": 164.94,
+    "return_pct": 1.63,
+    "conviction": 83
+   },
+   {
+    "symbol": "ANF",
+    "entry_date": "2026-06-09",
+    "exit_date": "2026-06-14",
+    "entry_price": 79.51,
+    "exit_price": 90.57,
+    "return_pct": 13.91,
+    "conviction": 82
+   },
+   {
+    "symbol": "UHS",
+    "entry_date": "2026-06-10",
+    "exit_date": "2026-06-14",
+    "entry_price": 146.59,
+    "exit_price": 146.42,
+    "return_pct": -0.12,
+    "conviction": 79
+   },
+   {
+    "symbol": "HRB",
+    "entry_date": "2026-06-09",
+    "exit_date": "2026-06-14",
+    "entry_price": 37.53,
+    "exit_price": 36.52,
+    "return_pct": -2.69,
+    "conviction": 74
+   },
+   {
+    "symbol": "SCR.PA",
+    "entry_date": "2026-06-09",
+    "exit_date": "2026-06-14",
+    "entry_price": 30.16,
+    "exit_price": 31.04,
+    "return_pct": 2.92,
+    "conviction": 72
    }
   ]
  },
  "weights": {
-  "THC": 0.1481,
-  "EEFT": 0.1481,
-  "BKNG": 0.1111,
-  "ANF": 0.1481,
-  "UHS": 0.0741,
-  "HRB": 0.1481,
-  "SCR.PA": 0.1481,
-  "CMCSA": 0.0741
+  "ADBE": 0.2752,
+  "MMS": 0.1835,
+  "GLOB": 0.1468,
+  "EEFT": 0.2018,
+  "THC": 0.1009,
+  "CMCSA": 0.0917
  },
  "stress_test": {
-  "asof": "2026-06-10",
-  "basket_to_52w_lows_pct": -13.3,
-  "recession_stress_pct": -26.3,
-  "cro_bear_weighted_pct": 11.0,
+  "asof": "2026-06-14",
+  "basket_to_52w_lows_pct": -7.9,
+  "recession_stress_pct": -21.7,
+  "cro_bear_weighted_pct": 26.1,
   "bear_case_invalid": true,
-  "published_downside_pct": -26.3,
+  "published_downside_pct": -21.7,
   "per_name": [
    {
-    "symbol": "THC",
-    "price": 166.36,
-    "yr_low": 146.6,
-    "to_52w_low_pct": -11.9,
-    "recession_pct": -25.1,
-    "cro_bear_pct": 44.3
+    "symbol": "ADBE",
+    "price": 204.02,
+    "yr_low": 196.9,
+    "to_52w_low_pct": -3.5,
+    "recession_pct": -18.0,
+    "cro_bear_pct": 47.0
+   },
+   {
+    "symbol": "MMS",
+    "price": 62.28,
+    "yr_low": 56.92,
+    "to_52w_low_pct": -8.6,
+    "recession_pct": -22.3,
+    "cro_bear_pct": 25.2
+   },
+   {
+    "symbol": "GLOB",
+    "price": 37.49,
+    "yr_low": 32.5,
+    "to_52w_low_pct": -13.3,
+    "recession_pct": -26.3,
+    "cro_bear_pct": 17.4
    },
    {
     "symbol": "EEFT",
-    "price": 65.68,
-    "yr_low": 63.73,
-    "to_52w_low_pct": -3.0,
-    "recession_pct": -17.5,
-    "cro_bear_pct": 34.0
+    "price": 66.66,
+    "yr_low": 62.5,
+    "to_52w_low_pct": -6.2,
+    "recession_pct": -20.3,
+    "cro_bear_pct": 26.0
    },
    {
-    "symbol": "BKNG",
-    "price": 163.99,
-    "yr_low": 150.14,
-    "to_52w_low_pct": -8.4,
-    "recession_pct": -22.2,
-    "cro_bear_pct": -17.7
-   },
-   {
-    "symbol": "ANF",
-    "price": 83.65,
-    "yr_low": 65.45,
-    "to_52w_low_pct": -21.8,
-    "recession_pct": -33.5,
-    "cro_bear_pct": -4.4
-   },
-   {
-    "symbol": "UHS",
-    "price": 146.59,
-    "yr_low": 140.08,
-    "to_52w_low_pct": -4.4,
-    "recession_pct": -18.8,
-    "cro_bear_pct": -7.9
-   },
-   {
-    "symbol": "HRB",
-    "price": 38.26,
-    "yr_low": 28.16,
-    "to_52w_low_pct": -26.4,
-    "recession_pct": -37.4,
-    "cro_bear_pct": -7.2
-   },
-   {
-    "symbol": "SCR.PA",
-    "price": 30.34,
-    "yr_low": 25.3,
-    "to_52w_low_pct": -16.6,
-    "recession_pct": -29.1,
-    "cro_bear_pct": -2.8
+    "symbol": "THC",
+    "price": 174.66,
+    "yr_low": 146.6,
+    "to_52w_low_pct": -16.1,
+    "recession_pct": -28.7,
+    "cro_bear_pct": -5.5
    },
    {
     "symbol": "CMCSA",
-    "price": 23.85,
+    "price": 24.5,
     "yr_low": 23.13,
-    "to_52w_low_pct": -3.0,
-    "recession_pct": -17.6,
-    "cro_bear_pct": 55.1
+    "to_52w_low_pct": -5.6,
+    "recession_pct": -19.8,
+    "cro_bear_pct": 14.3
    }
   ],
   "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% (recession). cro_bear is the agents' own adverse SoP (bear_fv_px); when missing or implying upside it is flagged invalid and the published downside is the market-based recession stress."
  },
  "correlation": {
   "window": "2y weekly log returns",
-  "avg_pairwise": 0.19,
-  "n_pairs": 28,
+  "avg_pairwise": 0.21,
+  "n_pairs": 15,
   "max_pair": {
-   "a": "THC",
-   "b": "UHS",
-   "corr": 0.65
+   "a": "EEFT",
+   "b": "CMCSA",
+   "corr": 0.39
   },
-  "flagged_pairs": [
-   {
-    "a": "THC",
-    "b": "UHS",
-    "corr": 0.65,
-    "combined_weight_pct": 22.2,
-    "breach": false
-   }
-  ],
+  "flagged_pairs": [],
   "consumer_beta_xly": {
-   "THC": 0.69,
-   "EEFT": 0.76,
-   "BKNG": 0.97,
-   "ANF": 1.11,
-   "UHS": 0.32,
-   "HRB": 0.29,
-   "SCR.PA": 0.52,
-   "CMCSA": 0.29
+   "ADBE": 0.75,
+   "MMS": 0.57,
+   "GLOB": 1.05,
+   "EEFT": 0.78,
+   "THC": 0.67,
+   "CMCSA": 0.31
   },
   "correlation_breach": false,
   "fx_note": "EU names in local ccy; correlations unadjusted for FX."
  },
  "exits": {
-  "THC": {
-   "thesis_break_px": 138.0,
+  "ADBE": {
+   "thesis_break_px": 165.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "MMS": {
+   "thesis_break_px": 51.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "GLOB": {
+   "thesis_break_px": 31.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
   "EEFT": {
-   "thesis_break_px": 58.0,
+   "thesis_break_px": 56.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
-  "BKNG": {
-   "thesis_break_px": 125.0,
-   "valid": true,
-   "review_trigger": "weekly refresh OR close < thesis_break_px"
-  },
-  "ANF": {
-   "thesis_break_px": 76.0,
-   "valid": true,
-   "review_trigger": "weekly refresh OR close < thesis_break_px"
-  },
-  "UHS": {
-   "thesis_break_px": 132.0,
-   "valid": true,
-   "review_trigger": "weekly refresh OR close < thesis_break_px"
-  },
-  "HRB": {
-   "thesis_break_px": 32.0,
-   "valid": true,
-   "review_trigger": "weekly refresh OR close < thesis_break_px"
-  },
-  "SCR.PA": {
-   "thesis_break_px": 28.0,
+  "THC": {
+   "thesis_break_px": 142.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
   "CMCSA": {
-   "thesis_break_px": 21.0,
+   "thesis_break_px": 20.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   }
@@ -889,64 +768,48 @@
     "THC",
     "UHS"
    ],
-   "max_units": 1.5,
-   "axis": "hospital-reimbursement"
-  },
-  {
-   "names": [
-    "EEFT",
-    "BKNG"
-   ],
-   "max_units": 1.75,
-   "axis": "travel-spend"
-  },
-  {
-   "names": [
-    "ANF",
-    "BKNG"
-   ],
-   "max_units": 1.75,
-   "axis": "consumer-discretionary-demand"
-  },
-  {
-   "names": [
-    "HRB",
-    "TNET"
-   ],
-   "max_units": 1.5,
-   "axis": "us-employment-smb-cycle"
+   "max_units": 1.4,
+   "axis": "hospital-reimbursement (US Medicaid Directed-Payment-Program / 2028 ruling; measured 2y weekly corr 0.65 — the single highest real pair in the book)"
   }
  ],
  "pool_stats": {
-  "n_pool": 162,
+  "n_pool": 147,
   "verdict_counts": {
-   "C": 97,
-   "B": 65
+   "C": 90,
+   "B": 57
   },
   "n_verdict_a": 0,
   "apex_all_verdict_b": true,
-  "banner": "Best-of-B basket: 0 verdict-A names in a 162-name pool — every apex pick is a verdict-B value name. Expect SLOW gap-closure: margin-of-safety re-rating, no hard catalysts by design.",
+  "banner": "Best-of-B basket: 0 verdict-A names in a 147-name pool — every apex pick is a verdict-B value name. Expect SLOW gap-closure: margin-of-safety re-rating, no hard catalysts by design.",
   "funnel": {
-   "n_both": 156,
-   "spearman_scan_vs_cro": 0.393,
-   "spearman_top_quintile": 0.075,
-   "collapse_rate_50": 0.667,
-   "artifact_rate": 0.15,
+   "n_both": 140,
+   "spearman_scan_vs_cro": 0.336,
+   "spearman_top_quintile": 0.035,
+   "collapse_rate_50": 0.642,
+   "artifact_rate": 0.245,
    "cross_lens_rescues": {
-    "n": 6,
+    "n": 14,
     "symbols": [
-     "ACI",
-     "INVA",
+     "BCRX",
+     "BLKB",
+     "DEC",
+     "EXO.AS",
+     "FRVIA.PA",
+     "HRB",
+     "JUN3.DE",
+     "LYFT",
+     "NBR",
      "NEXI.MI",
-     "NORCO.OL",
-     "SAX.DE",
-     "SCR.PA"
+     "NTES",
+     "PDD",
+     "SWON.SW",
+     "UPWK"
     ]
    },
    "note": "scan MoS = membership/divergence signal only; never a rank or weight"
   }
  },
- "generated_at": "2026-06-10",
+ "generated_at": "2026-06-14",
  "engine": "opus-4.8-value-funded-leverage",
  "universe": 161
 }
