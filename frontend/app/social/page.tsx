@@ -52,6 +52,7 @@ interface Signal {
   novelty: boolean;
   narrative: string | null;
   status: string;
+  signal_track?: string;
 }
 
 interface Stats {
@@ -231,6 +232,7 @@ export default function SocialArb() {
   const [details, setDetails] = useState<Record<number, Detail | "loading">>({});
   const [histWindow, setHistWindow] = useState<number>(168);            // 7d default; 2160=90d, 17520=2y
   const [histCache, setHistCache] = useState<Record<string, HistPoint[] | "loading">>({});
+  const [corrOnly, setCorrOnly] = useState(false);
 
   // signals re-fetch when the status filter changes
   useEffect(() => {
@@ -299,6 +301,15 @@ export default function SocialArb() {
     : "—";
   const sources = stats?.source_counts ? Object.keys(stats.source_counts).length : null;
 
+  // Data-quality read from the post mix: today the corpus is ~all HackerNews and the awareness side
+  // (finance news / StockTwits) is thin, so "demand" is mostly tech/dev buzz and gap ≈ demand.
+  const srcCounts = stats?.source_counts ?? {};
+  const totalSrc = Object.values(srcCounts).reduce((a, b) => a + b, 0) || 1;
+  const hnShare = (srcCounts["HackerNews"] ?? 0) / totalSrc;
+  const awarenessShare = Object.entries(srcCounts).filter(([k]) => k.startsWith("News:") || k.startsWith("Premium:")).reduce((a, [, v]) => a + v, 0) / totalSrc;
+  const thinData = hnShare > 0.6 || awarenessShare < 0.05;
+  const visibleSignals = corrOnly ? signals.filter((s) => (n(s.corroboration) ?? 1) >= 2) : signals;
+
   const hdr: React.CSSProperties = { padding: "9px 8px", fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase", whiteSpace: "nowrap" };
 
   return (
@@ -333,6 +344,16 @@ export default function SocialArb() {
           </span>
         </div>
 
+        {/* Data-quality banner (auto-clears as the source mix broadens / awareness populates) */}
+        {thinData && (
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", marginBottom: 18, borderRadius: 8, background: "var(--amber-light)", border: `1px solid ${T.border}` }}>
+            <Activity size={14} style={{ color: T.amber, flexShrink: 0, marginTop: 1 }} />
+            <span style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.5 }}>
+              <span style={{ color: T.amber, fontWeight: 700 }}>Early data — read with care.</span> {(hnShare * 100).toFixed(0)}% of posts are HackerNews and the awareness side (finance news / StockTwits) is thin, so &quot;demand&quot; is mostly developer / early-adopter buzz and <span style={{ color: T.text }}>gap ≈ demand</span>. Treat single-platform (×1) rows as early-adopter signal, not confirmed consumer behavior. Source diversification is in progress; this note clears as the mix broadens.
+            </span>
+          </div>
+        )}
+
         {/* KPIs */}
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
           <StatCard label="Open signals" value={String(signals.length)} sub={`status · ${status}`} accent={T.green} />
@@ -347,6 +368,8 @@ export default function SocialArb() {
           {STATUSES.map((s) => (
             <Toggle key={s} active={status === s} onClick={() => { setStatus(s); setExpanded(null); }}>{s}</Toggle>
           ))}
+          <span style={{ width: 1, height: 18, background: T.border, margin: "0 4px" }} />
+          <Toggle active={corrOnly} onClick={() => { setCorrOnly((v) => !v); setExpanded(null); }}>corroborated ≥2</Toggle>
         </div>
 
         {loading ? (
@@ -381,7 +404,7 @@ export default function SocialArb() {
                   </tr>
                 </thead>
                 <tbody>
-                  {signals.map((s, i) => {
+                  {visibleSignals.map((s, i) => {
                     const isOpen = expanded === s.id;
                     const grade = gapGrade(n(s.gap_score));
                     const score = n(s.signal_score) ?? 0;
@@ -410,6 +433,11 @@ export default function SocialArb() {
                                   bg={isPrivate(t) ? "rgba(255,255,255,0.05)" : "rgba(196,181,253,0.14)"}
                                   border={isPrivate(t) ? undefined : "rgba(196,181,253,0.25)"} />
                               ))}
+                              {s.signal_track && s.signal_track !== "mixed" && (
+                                <Chip text={s.signal_track}
+                                  color={s.signal_track === "consumer" ? T.green : T.purple}
+                                  bg={s.signal_track === "consumer" ? "rgba(20,184,122,0.14)" : "rgba(196,181,253,0.14)"} />
+                              )}
                             </div>
                           </td>
                           <td style={{ padding: "8px 8px", textAlign: "center" }}>
@@ -461,7 +489,7 @@ export default function SocialArb() {
 
             <div style={{ marginTop: 12, fontSize: 10, fontFamily: T.mono, color: T.light, display: "flex", alignItems: "center", gap: 6 }}>
               <TrendingUp size={11} />
-              {signals.length} {status} signal{signals.length === 1 ? "" : "s"} · ranked by score (gap × materiality × corroboration × value-tier) · click a row to expand.
+              {visibleSignals.length}{corrOnly ? ` of ${signals.length}` : ""} {corrOnly ? "corroborated " : ""}{status} signal{visibleSignals.length === 1 ? "" : "s"} · ranked by score (gap × materiality × corroboration × value-tier) · click a row to expand.
             </div>
           </>
         )}
@@ -547,6 +575,13 @@ function SignalDetail({ sig, detail, history, histWindow, onWindow }: {
       {d && d.mentions.length > 0 && (
         <div>
           <div style={{ fontSize: 9, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>Evidence · top mentions</div>
+          <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
+            {Object.entries(d.mentions.reduce((acc, m) => { acc[m.source] = (acc[m.source] || 0) + 1; return acc; }, {} as Record<string, number>))
+              .sort((a, b) => b[1] - a[1])
+              .map(([src, c]) => (
+                <Chip key={src} text={`${src} ×${c}`} color={T.muted} bg="rgba(255,255,255,0.06)" />
+              ))}
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {d.mentions.map((m, idx) => (
               <div key={idx} style={{ padding: "8px 10px", border: `1px solid ${T.border}`, borderRadius: 6, background: T.bg }}>
