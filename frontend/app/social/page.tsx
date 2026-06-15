@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, Fragment, useCallback } from "react";
 import {
   Radio, Activity, ChevronRight, ChevronDown, ExternalLink, RefreshCw, TrendingUp,
+  Layers, Cpu,
 } from "lucide-react";
 import { Tip } from "../components/Tip";
 
@@ -91,6 +92,29 @@ interface Mention {
 interface Quote { symbol: string; name?: string; price: number | null; day: number | null; ytd: number | null; year: number | null; }
 interface Detail { intent: IntentRow[]; mentions: Mention[]; quote: Quote | null; }
 
+// Theme baskets (GET /api/social/themes) — seeded consumer themes mapped to revenue-weighted
+// ticker baskets. The gap is the alpha: a basket can light up before any single signal fires.
+interface ThemeConstituent {
+  ticker: string; exchange?: string | null; revenue_share_est: number;
+  mcap_usd?: number | null; allocated_score: number; rationale?: string | null;
+}
+interface Theme {
+  theme_id: number; name: string; demand_index: number; awareness_index: number;
+  gap_score: number; mention_count_7d: number; tradeable: boolean;
+  constituents: ThemeConstituent[];
+}
+// Resolver / entity-graph health (GET /api/social/resolver/health) — surfaces the keystone:
+// unknown names → MiMo proposes → FMP confirms → tradeable ticker. mimo_reachable exposes the
+// config blocker (null = MIMO_BASE_URL unset, false = unreachable, true = online).
+interface ResolverHealth {
+  queue: { pending: number; resolving: number; done: number; failed: number };
+  cache: { auto: number; approved: number; review: number; rejected: number; total: number };
+  entities_total: number; entity_tickers_total: number; revenue_share_populated: number;
+  last_resolved_at: string | null; mimo_reachable: boolean | null;
+  top_pending: { norm_query: string; mention_count: number }[];
+  review_queue_count: number;
+}
+
 const STATUSES = ["new", "investigating", "passed", "positioned", "closed"] as const;
 type Status = (typeof STATUSES)[number];
 
@@ -101,6 +125,7 @@ const f2 = (x: any) => { const v = n(x); return v == null ? "—" : v.toFixed(2)
 const pct = (x: any) => { const v = n(x); return v == null ? "—" : `${(v * 100).toFixed(0)}%`; };
 const fmtRet = (x: any) => { const v = n(x); return v == null ? "—" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%`; };
 const retColor = (x: any) => { const v = n(x); return v == null ? T.muted : v > 0 ? T.green : v < 0 ? T.red : T.muted; };
+const fmtMcap = (x: any) => { const v = n(x); if (v == null || v <= 0) return "—"; if (v >= 1e12) return `$${(v / 1e12).toFixed(1)}T`; if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`; if (v >= 1e6) return `$${(v / 1e6).toFixed(0)}M`; return `$${v.toFixed(0)}`; };
 
 function timeAgo(iso: string): string {
   const t = Date.parse(iso);
@@ -243,6 +268,8 @@ export default function SocialArb() {
   const [histCache, setHistCache] = useState<Record<string, HistPoint[] | "loading">>({});
   const [corrOnly, setCorrOnly] = useState(false);
   const [trackFilter, setTrackFilter] = useState<string>("all");
+  const [themes, setThemes] = useState<Theme[] | null>(null);
+  const [resolver, setResolver] = useState<ResolverHealth | null>(null);
 
   // signals re-fetch when the status filter changes
   useEffect(() => {
@@ -255,10 +282,16 @@ export default function SocialArb() {
     return () => { live = false; };
   }, [status]);
 
-  // stats + backtest once
+  // stats + backtest + theme baskets + resolver health, once.
+  // themes/resolver are hidden until their endpoints are live (404 → stays null), so the page is
+  // unchanged until the backend serves them, then the sections appear.
   useEffect(() => {
     fetch(`${SOCIAL}/stats`).then((r) => (r.ok ? r.json() : null)).then(setStats).catch(() => {});
     fetch(`${SOCIAL}/backtest`).then((r) => (r.ok ? r.json() : null)).then(setBacktest).catch(() => {});
+    fetch(`${SOCIAL}/themes`).then((r) => (r.ok ? r.json() : null))
+      .then((d) => setThemes(Array.isArray(d?.themes) ? d.themes : null)).catch(() => {});
+    fetch(`${SOCIAL}/resolver/health`).then((r) => (r.ok ? r.json() : null))
+      .then((d) => setResolver(d && d.queue ? d : null)).catch(() => {});
   }, []);
 
   const loadHistory = useCallback((entityId: number, hours: number) => {
@@ -516,6 +549,8 @@ export default function SocialArb() {
         )}
 
         <TrackRecord backtest={backtest} />
+        <ThemesBaskets themes={themes} />
+        <ResolverHealth health={resolver} />
       </div>
     </div>
   );
@@ -730,6 +765,199 @@ function TrackRecord({ backtest }: { backtest: Backtest | null }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── theme baskets (GET /api/social/themes) ──
+// Seeded consumer themes → revenue-weighted ticker baskets. Hidden until the endpoint is live.
+// The whole point: a basket is visible (and rankable by gap) before any single signal fires, so
+// you see which names a demand surge would hit. Sorted server-side by gap desc, then mentions desc.
+function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
+  if (!themes || themes.length === 0) return null;
+  return (
+    <div style={{ marginTop: 34 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.04em", color: T.text }}>
+          <Layers size={13} style={{ color: T.green }} /> THEME BASKETS
+        </span>
+        <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light }}>
+          seeded consumer themes → revenue-weighted ticker baskets · the gap is the alpha — a basket ranks before any one signal fires
+        </span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {themes.map((t) => {
+          const grade = gapGrade(n(t.gap_score));
+          const cons = (t.constituents ?? []).filter(Boolean);
+          const maxShare = Math.max(0.01, ...cons.map((c) => n(c.revenue_share_est) ?? 0));
+          return (
+            <div key={t.theme_id} style={{ border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface, padding: "12px 14px" }}>
+              {/* header: theme name + tradeable + gap */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 13, fontFamily: T.mono, fontWeight: 800, color: T.text }}>{t.name}</span>
+                  {t.tradeable
+                    ? <Chip text="TRADEABLE" color={T.green} bg="rgba(20,184,122,0.18)" border="rgba(20,184,122,0.3)" />
+                    : (t.mention_count_7d ?? 0) > 0
+                      ? <Chip text="DEMAND BUILDING" color={T.amber} bg="rgba(245,185,66,0.16)" />
+                      : <Chip text="WATCHING" color={T.light} bg="rgba(255,255,255,0.05)" />}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontSize: 13, fontFamily: T.mono, fontWeight: 800, color: grade.color }}>{f2(t.gap_score)}</span>
+                  <Chip text={grade.label} color={grade.color} bg={grade.bg} />
+                </div>
+              </div>
+              {/* metrics */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+                <MetricBlock label="Demand" value={f2(t.demand_index)} tip="SA_DEMAND" />
+                <MetricBlock label="Awareness" value={f2(t.awareness_index)} tip="SA_AWARENESS" />
+                <MetricBlock label="Gap" value={f2(t.gap_score)} accent={grade.color} tip="SA_GAP" />
+                <MetricBlock label="Mentions 7d" value={String(t.mention_count_7d ?? 0)} />
+                <MetricBlock label="Names" value={String(cons.length)} />
+              </div>
+              {/* constituents — ranked by revenue share */}
+              {cons.length === 0 ? (
+                <div style={{ fontSize: 10, fontFamily: T.mono, color: T.light, marginTop: 10 }}>no mapped constituents yet</div>
+              ) : (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontSize: 8.5, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
+                    Basket · ranked by revenue exposure
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {cons.map((c, i) => (
+                      <div key={`${c.ticker}-${i}`} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                        <span style={{ width: 92, display: "flex", alignItems: "center", gap: 5 }}>
+                          <Chip text={isPrivate(c.ticker) ? "PRIVATE" : c.ticker}
+                            color={isPrivate(c.ticker) ? T.light : T.purple}
+                            bg={isPrivate(c.ticker) ? "rgba(255,255,255,0.05)" : "rgba(196,181,253,0.14)"}
+                            border={isPrivate(c.ticker) ? undefined : "rgba(196,181,253,0.25)"} />
+                        </span>
+                        <span style={{ width: 38, fontSize: 9, fontFamily: T.mono, color: T.light }}>{c.exchange || ""}</span>
+                        {/* revenue-share bar */}
+                        <div style={{ flex: "1 1 120px", minWidth: 100, display: "flex", alignItems: "center", gap: 7 }}>
+                          <div style={{ flex: 1, height: 7, background: "rgba(255,255,255,0.05)", borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{ width: `${((n(c.revenue_share_est) ?? 0) / maxShare) * 100}%`, height: "100%", background: T.purple, opacity: 0.65 }} />
+                          </div>
+                          <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: T.muted, width: 38, textAlign: "right" }}>{pct(c.revenue_share_est)}</span>
+                        </div>
+                        <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, width: 64, textAlign: "right" }}>{fmtMcap(c.mcap_usd)}</span>
+                        <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: (n(c.allocated_score) ?? 0) > 0 ? T.green : T.muted, width: 54, textAlign: "right" }}>
+                          {`${(n(c.allocated_score) ?? 0) >= 0 ? "+" : ""}${(n(c.allocated_score) ?? 0).toFixed(2)}`}
+                        </span>
+                        {c.rationale && (
+                          <span style={{ flex: "1 1 160px", minWidth: 120, fontSize: 9.5, fontFamily: T.mono, color: T.light, lineHeight: 1.45, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.rationale}>{c.rationale}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 10, fontSize: 9.5, fontFamily: T.mono, color: T.light, lineHeight: 1.5 }}>
+        Allocated score = theme gap × revenue exposure. A theme &quot;lights up&quot; when demand surges while awareness stays low —
+        the basket points at which listed names carry the exposure.
+      </div>
+    </div>
+  );
+}
+
+// ── resolver / entity-graph health (GET /api/social/resolver/health) ──
+// Makes the keystone visible: unknown names → MiMo proposes → FMP confirms → tradeable ticker.
+// mimo_reachable surfaces the config blocker at a glance. Hidden until the endpoint is live.
+function ResolverHealth({ health }: { health: ResolverHealth | null }) {
+  if (!health) return null;
+  const h = health;
+  const resolved = (h.cache?.auto ?? 0) + (h.cache?.approved ?? 0);
+  const reachable = h.mimo_reachable;
+  const status = reachable === true
+    ? { color: T.green, text: "MiMo reachable — resolver online", bg: "var(--green-light)" }
+    : reachable === false
+      ? { color: T.red, text: "MiMo unreachable — resolver stalled, queue not draining", bg: "var(--amber-light)" }
+      : { color: T.amber, text: "MiMo not configured (MIMO_BASE_URL unset) — queue not draining", bg: "var(--amber-light)" };
+  const th: React.CSSProperties = { padding: "7px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase" };
+  const pendCt = h.queue?.pending ?? 0;
+  const breakdown = (label: string, parts: [string, number, string][]) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <span style={{ fontSize: 8.5, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", width: 56 }}>{label}</span>
+      {parts.map(([k, v, col]) => (
+        <span key={k} style={{ fontSize: 9.5, fontFamily: T.mono, color: T.muted, border: `1px solid ${T.border}`, borderRadius: 4, padding: "2px 7px" }}>
+          {k} <span style={{ color: col, fontWeight: 800 }}>{v}</span>
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div style={{ marginTop: 34 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.04em", color: T.text }}>
+          <Cpu size={13} style={{ color: T.green }} /> RESOLVER HEALTH
+        </span>
+        <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light }}>
+          unknown names → MiMo proposes → FMP confirms → tradeable ticker · bias to &quot;unknown&quot; over a wrong ticker
+        </span>
+      </div>
+
+      {/* status banner */}
+      <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "9px 13px", marginBottom: 14, borderRadius: 8, background: status.bg, border: `1px solid ${T.border}` }}>
+        <span style={{ width: 9, height: 9, borderRadius: "50%", background: status.color, flexShrink: 0, boxShadow: `0 0 8px ${status.color}` }} />
+        <span style={{ fontSize: 10.5, fontFamily: T.mono, fontWeight: 700, color: status.color }}>{status.text}</span>
+        {h.last_resolved_at && (
+          <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, marginLeft: "auto" }}>last resolved {timeAgo(h.last_resolved_at)} ago</span>
+        )}
+      </div>
+
+      {/* KPIs */}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
+        <StatCard label="Queue pending" value={String(pendCt)} sub={pendCt > 0 ? "awaiting resolution" : "drained"} accent={pendCt > 0 ? T.amber : T.green} />
+        <StatCard label="Resolved" value={String(resolved)} sub={`${h.cache?.auto ?? 0} auto · ${h.cache?.approved ?? 0} approved`} accent={resolved > 0 ? T.green : undefined} />
+        <StatCard label="In review" value={String(h.review_queue_count ?? 0)} sub={(h.review_queue_count ?? 0) > 0 ? "needs a human call" : "clear"} accent={(h.review_queue_count ?? 0) > 0 ? T.amber : undefined} />
+        <StatCard label="Tickers mapped" value={String(h.entity_tickers_total ?? 0)} sub={`of ${h.entities_total ?? 0} entities`} />
+        <StatCard label="Revenue-share" value={String(h.revenue_share_populated ?? 0)} sub="constituents weighted" />
+      </div>
+
+      {/* queue + cache breakdowns */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+        {breakdown("Queue", [
+          ["pending", h.queue?.pending ?? 0, T.amber],
+          ["resolving", h.queue?.resolving ?? 0, T.muted],
+          ["done", h.queue?.done ?? 0, T.green],
+          ["failed", h.queue?.failed ?? 0, T.red],
+        ])}
+        {breakdown("Cache", [
+          ["auto", h.cache?.auto ?? 0, T.green],
+          ["approved", h.cache?.approved ?? 0, T.green],
+          ["review", h.cache?.review ?? 0, T.amber],
+          ["rejected", h.cache?.rejected ?? 0, T.red],
+        ])}
+      </div>
+
+      {/* top pending — the alpha stuck behind the resolver */}
+      {(h.top_pending ?? []).length > 0 && (
+        <div style={{ overflowX: "auto", border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface }}>
+          <div style={{ padding: "8px 12px", fontSize: 8.5, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", borderBottom: `1px solid ${T.border}` }}>
+            Stuck behind the resolver · top unresolved names by mentions
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                <th style={{ ...th, textAlign: "left" }}>Name (normalized)</th>
+                <th style={th}>Mentions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(h.top_pending ?? []).map((p, i) => (
+                <tr key={i} style={{ borderTop: `1px solid ${T.border}` }}>
+                  <td style={{ padding: "6px 10px", color: T.text }}>{p.norm_query}</td>
+                  <td style={{ padding: "6px 10px", textAlign: "right", color: T.muted, fontWeight: 700 }}>{p.mention_count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
