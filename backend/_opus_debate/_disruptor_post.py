@@ -43,6 +43,8 @@ os.chdir(BK)
 if not os.environ.get("FMP_API_KEY"):                  # match _value_post.py / _funded_leverage fallback
     os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
 from screener_v6 import fmp, get_chart                  # noqa: E402  FMP REST + OHLCV
+sys.path.insert(0, _HERE)                              # so the sibling _wheel module resolves
+from _wheel import stamp_wheel                          # noqa: E402  CSP->CC wheel suggestion
 
 ROOT = Path("_opus_debate")
 DROOT = ROOT / "disruptor"
@@ -385,6 +387,7 @@ def main():
         p["corr_flag"] = p["symbol"] in _flagged
     stamp_entry_plans(picks, quotes)
     stamp_entry_posture(picks)                            # entry TIMING (Director-tag fallback)
+    stamp_wheel(picks, "disruptor", quotes)               # CSP->CC wheel (live yield / qualitative)
     # theme_exposure (final weights by theme; a 2-theme name counts toward both)
     theme_exposure = {}
     for p in picks:

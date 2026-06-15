@@ -29,6 +29,8 @@ sys.path.insert(0, str(BACKEND / "alpha_compounder"))
 
 import gcs_io  # noqa: E402
 import live_debate_engine as E  # noqa: E402
+sys.path.insert(0, str(BK))  # so the sibling _wheel module resolves
+from _wheel import stamp_wheel  # noqa: E402  CSP->CC wheel suggestion
 
 RES = BK / "results_regime"
 PUB = ROOT / "frontend" / "public"
@@ -219,6 +221,9 @@ for p in picks:
         "entry_posture": p.get("entry_posture") or derive_entry_posture(p, rec),
         "engine": "opus-4.8-regime",
     })
+
+# ── Wheel suggestions (CSP->CC) on the regime entries — Director-tag fallback + live CSP yield ──
+stamp_wheel(entries, "regime", {e["symbol"]: {"price": scan_by_sym.get(e["symbol"], {}).get("price")} for e in entries})
 
 # ── Update the apex track record for the rotation (reuses production logic) ──
 try:

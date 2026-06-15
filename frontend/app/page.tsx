@@ -2242,6 +2242,28 @@ export default function Dashboard(){
     );
   };
 
+  // Wheel-strategy line (CSP -> CC) — shown only where the Director deemed it suitable. Live yield
+  // from the options chain when available, else qualitative (strikes + tenor, verify-on-broker).
+  const wheelLine = (wheel?: any) => {
+    if (!wheel || !wheel.suits) return null;
+    const live = wheel.source === "live" && wheel.csp_yield_annualized != null;
+    const tip = (wheel.rationale ? wheel.rationale + " " : "")
+      + "Cash-secured put to enter at a discount; covered call at the fair-value target once assigned. "
+      + (live ? `~${wheel.dte}d, IV ${wheel.iv != null ? (wheel.iv * 100).toFixed(0) + "%" : "n/a"}, delta ${wheel.delta != null ? wheel.delta.toFixed(2) : "n/a"}. ` : "")
+      + "Verify the live chain on your broker — paper suggestion, not an order.";
+    return (
+      <div title={tip} style={{ marginTop: 5, marginBottom: 2, fontSize: 9, fontFamily: "var(--font-mono)", lineHeight: 1.4, cursor: "help", display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+        <span style={{ color: "var(--green)", fontWeight: 700 }}>⚙ WHEEL</span>
+        <span style={{ color: "var(--text-light)" }}>
+          sell ${wheel.csp_strike} put {live ? `${wheel.dte}d` : `~${wheel.tenor_days}d`}
+          {live ? <> ≈ <span style={{ color: "var(--green)", fontWeight: 700 }}>{wheel.csp_yield_annualized}% ann</span></> : null}
+          {" → CC $"}{wheel.cc_strike}
+          {!live ? <span style={{ color: "var(--text-muted)" }}> · verify premium on broker</span> : null}
+        </span>
+      </div>
+    );
+  };
+
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
@@ -2963,6 +2985,7 @@ export default function Dashboard(){
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
                               </span>
                             </div>
+                            {wheelLine(pick.wheel)}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
                                 <span>Entry:</span>
@@ -3128,6 +3151,7 @@ export default function Dashboard(){
                                 </span>
                               )}
                             </div>
+                            {wheelLine(pick.wheel)}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
                               <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                                 <span>Solvency:</span>
@@ -3336,6 +3360,7 @@ export default function Dashboard(){
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
                               </span>
                             </div>
+                            {wheelLine(pick.wheel)}
                             <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
                               {pick.theme && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(147,112,219,0.18)", color: "var(--purple)", fontFamily: "var(--font-mono)" }}>{String(pick.theme).replace(/_/g, " ")}</span>}
                               {pick.value_chain_position && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(148,163,184,0.15)", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{String(pick.value_chain_position).replace(/_/g, " ")}</span>}

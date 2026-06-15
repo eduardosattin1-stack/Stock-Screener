@@ -28,6 +28,8 @@ os.chdir(BK)
 if not os.environ.get("FMP_API_KEY"):                  # match fmp_facts.py / _funded_leverage fallback
     os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
 from screener_v6 import fmp, get_chart                  # noqa: E402  FMP REST + OHLCV
+sys.path.insert(0, _HERE)                              # so the sibling _wheel module resolves
+from _wheel import stamp_wheel                          # noqa: E402  CSP->CC wheel suggestion
 
 ROOT = Path("_opus_debate")
 APEX_F = ROOT / "apex_basket_value.json"
@@ -393,6 +395,7 @@ def main():
         p["corr_flag"] = p["symbol"] in _flagged                # fix 4: member of any >=0.6 pair
     stamp_entry_plans(picks, quotes)                             # fix 5c
     stamp_entry_posture(picks, gin)                              # entry TIMING (Director-tag fallback)
+    stamp_wheel(picks, "value", quotes)                          # CSP->CC wheel (live yield / qualitative)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4

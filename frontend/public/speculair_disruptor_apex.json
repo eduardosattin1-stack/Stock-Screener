@@ -38,6 +38,20 @@
    "corr_flag": false,
    "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
    "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 240.0,
+    "cc_strike": 454.94,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
    "entry_price": 276.73,
    "entry_date": "2026-06-14"
   },
@@ -77,6 +91,20 @@
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 430.0,
+    "cc_strike": 614.72,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
    "entry_price": 560.88,
    "entry_date": "2026-06-14"
   },
@@ -119,6 +147,9 @@
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -161,6 +192,9 @@
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -202,6 +236,20 @@
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 68.0,
+    "cc_strike": 90.04,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
    "entry_price": 80.39,
    "entry_date": "2026-06-14"
   },
@@ -246,6 +294,20 @@
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 150.0,
+    "cc_strike": 209.91,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
    "entry_price": 205.19,
    "entry_date": "2026-06-14"
   },
@@ -290,6 +352,9 @@
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -333,6 +398,20 @@
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 200.0,
+    "cc_strike": 279.85,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
    "entry_price": 302.87,
    "entry_date": "2026-06-14"
   }
