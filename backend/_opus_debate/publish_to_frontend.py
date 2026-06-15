@@ -122,6 +122,20 @@ def mos_fv(sc):
             {key: True}, meths)
 
 
+def derive_entry_posture(p, rec=None):
+    """Deterministic fallback for entry TIMING when the Director didn't tag one (Director always wins).
+    enter_now_carry can't be derived (needs the carry signal) -> scale_in (which also means 'enter now')."""
+    cat = str((p.get("catalyst_status") or (rec or {}).get("catalyst_status") or "")).upper()
+    if cat.startswith("PENDING_HARD") or cat.startswith("ARB"):
+        return "on_confirmation"
+    blob = (str(p.get("entry_plan") or "") + " "
+            + " ".join(str(a) for a in (p.get("exposure_axes") or [])) + " "
+            + str(p.get("lane") or "")).lower()
+    if any(k in blob for k in ("knife", "demand-cycle", "cyclical", "de-gross", "degross")):
+        return "wait_for_weakness"
+    return "scale_in"
+
+
 def target_px(sop_fv):
     """Parse the CRO/Director fair-value prose ('~$44', '$78-88 (base ~$82)') to ONE number so the
     UI can draw expected-vs-realized per seat (the basket-13 convention). Base-case > range-midpoint."""
@@ -202,6 +216,7 @@ for p in picks:
         "methodology_applicable": meth_app,
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
         "size_units": p.get("size_units"),
+        "entry_posture": p.get("entry_posture") or derive_entry_posture(p, rec),
         "engine": "opus-4.8-regime",
     })
 

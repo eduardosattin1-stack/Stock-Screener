@@ -37,6 +37,7 @@
    "weight_pct": 15.58,
    "corr_flag": false,
    "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
+   "entry_posture": "wait_for_weakness",
    "entry_price": 276.73,
    "entry_date": "2026-06-14"
   },
@@ -75,6 +76,7 @@
    "weight_pct": 14.94,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 560.88,
    "entry_date": "2026-06-14"
   },
@@ -116,6 +118,7 @@
    "weight_pct": 13.64,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -157,6 +160,7 @@
    "weight_pct": 13.64,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -197,6 +201,7 @@
    "weight_pct": 12.34,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 80.39,
    "entry_date": "2026-06-14"
   },
@@ -240,6 +245,7 @@
    "weight_pct": 11.04,
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 205.19,
    "entry_date": "2026-06-14"
   },
@@ -283,6 +289,7 @@
    "weight_pct": 10.39,
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -325,6 +332,7 @@
    "weight_pct": 8.44,
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
+   "entry_posture": "scale_in",
    "entry_price": 302.87,
    "entry_date": "2026-06-14"
   }
@@ -461,6 +469,12 @@
     "nav": 100.0,
     "ret": 0.0,
     "n": 8
+   },
+   {
+    "date": "2026-06-15",
+    "nav": 100.0,
+    "ret": 0.0,
+    "n": 8
    }
   ],
   "closed": []
@@ -475,6 +489,12 @@
   "history": [
    {
     "date": "2026-06-14",
+    "nav": 100.0,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-06-15",
     "nav": 100.0,
     "ret": 0.0,
     "n": 8
@@ -707,7 +727,7 @@
   "taxonomy_version": "1.0",
   "banner": "Highest-volatility sleeve: 8 profitable secular-theme names from a 40-name thematic screen (taxonomy v1.0). Long-duration growth multiples — expect drawdowns ~2x the value book's; sized as the SMALLEST sleeve by design and never blended into the Apex or Value NAVs."
  },
- "generated_at": "2026-06-14",
+ "generated_at": "2026-06-15",
  "engine": "opus-4.8-disruptor-theme-v1",
  "universe": 40,
  "taxonomy_version": "1.0"

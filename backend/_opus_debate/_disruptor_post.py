@@ -204,6 +204,27 @@ def enforce_theme_caps(apx, picks):
     return extra
 
 
+def derive_entry_posture(p, rec=None):
+    """Deterministic fallback for entry TIMING when the Director didn't tag one (Director always wins).
+    enter_now_carry can't be derived (needs the carry signal) -> scale_in (which also means 'enter now')."""
+    cat = str((p.get("catalyst_status") or (rec or {}).get("catalyst_status") or "")).upper()
+    if cat.startswith("PENDING_HARD") or cat.startswith("ARB"):
+        return "on_confirmation"
+    blob = (str(p.get("entry_plan") or "") + " "
+            + " ".join(str(a) for a in (p.get("exposure_axes") or [])) + " "
+            + str(p.get("lane") or "")).lower()
+    if any(k in blob for k in ("knife", "demand-cycle", "cyclical", "de-gross", "degross")):
+        return "wait_for_weakness"
+    return "scale_in"
+
+
+def stamp_entry_posture(picks):
+    """Stamp entry_posture (WHEN to enter) when the Director didn't — his value always wins."""
+    for p in picks:
+        if not p.get("entry_posture"):
+            p["entry_posture"] = derive_entry_posture(p)
+
+
 def stamp_entry_plans(picks, quotes):
     """Display-only tranching guidance from distance to the 52w low (copied from _value_post)."""
     for p in picks:
@@ -363,6 +384,7 @@ def main():
     for p in picks:
         p["corr_flag"] = p["symbol"] in _flagged
     stamp_entry_plans(picks, quotes)
+    stamp_entry_posture(picks)                            # entry TIMING (Director-tag fallback)
     # theme_exposure (final weights by theme; a 2-theme name counts toward both)
     theme_exposure = {}
     for p in picks:

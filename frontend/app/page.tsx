@@ -2224,6 +2224,24 @@ export default function Dashboard(){
       <span title="Multi-agent debate available — open this name for the full dossier" style={{ marginLeft: 5, fontSize: 9, color: "var(--green)", verticalAlign: "middle", cursor: "help" }}>⚖</span>
     ) : null;
 
+  // Entry-timing chip (WHEN to enter) — Director-tagged entry_posture, deterministic fallback otherwise.
+  const entryPostureChip = (posture?: string) => {
+    if (!posture) return null;
+    const key = String(posture).split(":")[0].trim();
+    const detail = String(posture).includes(":") ? String(posture).split(":").slice(1).join(":").trim() : "";
+    const map: Record<string, { label: string; color: string; bg: string; tip: string }> = {
+      enter_now_carry: { label: "enter now · carry", color: "var(--green)", bg: "rgba(20,184,122,0.15)", tip: "Enter now — no catalyst needed; carry (FCF yield / buyback / dividend) pays you to wait out the slow re-rate." },
+      scale_in: { label: "scale-in", color: "var(--green)", bg: "rgba(20,184,122,0.12)", tip: "Enter now, tranched over ~2 weeks — no flush to wait for." },
+      on_confirmation: { label: "on confirmation", color: "var(--amber)", bg: "var(--amber-light)", tip: "Wait for a specific dated event before entering" + (detail ? `: ${detail}` : ".") },
+      wait_for_weakness: { label: "wait for weakness", color: "var(--red)", bg: "rgba(239,68,68,0.12)", tip: "Add only into a flush / de-gross — cyclical tail or knife-catch near the 52-week low." },
+    };
+    const m = map[key];
+    if (!m) return null;
+    return (
+      <span title={m.tip} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: m.bg, color: m.color, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>{m.label}</span>
+    );
+  };
+
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
@@ -2939,6 +2957,7 @@ export default function Dashboard(){
                                 {pick.weight_pct != null && (
                                   <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
                                 )}
+                                {entryPostureChip(pick.entry_posture)}
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
@@ -3101,6 +3120,7 @@ export default function Dashboard(){
                                     {pick.skeptic_verdict === "CONFIRMED" ? "✓ skeptic" : pick.skeptic_verdict === "REFUTED" ? "✗ refuted" : "✓ corrected"}
                                   </span>
                                 )}
+                                {entryPostureChip(pick.entry_posture)}
                               </div>
                               {typeof mos === "number" && (
                                 <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
@@ -3310,6 +3330,7 @@ export default function Dashboard(){
                                   <span title={pick.hype_flag ? "hype flag — price embeds a more aggressive S-curve than the evidence" : "FCF inflecting — not yet TTM-FCF-positive (half-sized)"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
                                 )}
                                 {pick.corr_flag && <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>}
+                                {entryPostureChip(pick.entry_posture)}
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%

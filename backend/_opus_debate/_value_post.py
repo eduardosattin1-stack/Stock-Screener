@@ -208,6 +208,28 @@ def build_weights(apx, picks, extra_caps=None):
     return weights
 
 
+def derive_entry_posture(p, rec=None):
+    """Deterministic fallback for entry TIMING when the Director didn't tag one (Director always wins).
+    enter_now_carry can't be derived (needs the carry signal) -> scale_in (which also means 'enter now')."""
+    cat = str((p.get("catalyst_status") or (rec or {}).get("catalyst_status") or "")).upper()
+    if cat.startswith("PENDING_HARD") or cat.startswith("ARB"):
+        return "on_confirmation"
+    blob = (str(p.get("entry_plan") or "") + " "
+            + " ".join(str(a) for a in (p.get("exposure_axes") or [])) + " "
+            + str(p.get("lane") or "")).lower()
+    if any(k in blob for k in ("knife", "demand-cycle", "cyclical", "de-gross", "degross")):
+        return "wait_for_weakness"
+    return "scale_in"
+
+
+def stamp_entry_posture(picks, gin=None):
+    """Stamp entry_posture (WHEN to enter) when the Director didn't — his value always wins."""
+    for p in picks:
+        if p.get("entry_posture"):
+            continue
+        p["entry_posture"] = derive_entry_posture(p, (gin or {}).get(p["symbol"], {}))
+
+
 def stamp_entry_plans(picks, quotes):
     """Fix 5c — display-only tranching guidance from distance to the 52w low."""
     for p in picks:
@@ -370,6 +392,7 @@ def main():
     for p in picks:
         p["corr_flag"] = p["symbol"] in _flagged                # fix 4: member of any >=0.6 pair
     stamp_entry_plans(picks, quotes)                             # fix 5c
+    stamp_entry_posture(picks, gin)                              # entry TIMING (Director-tag fallback)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4
