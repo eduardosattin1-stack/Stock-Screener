@@ -9,9 +9,9 @@
    ],
    "value_chain_position": "Financial-management platform layer — QuickBooks is the ~85%-share SMB accounting/payroll OS, TurboTax dominates assisted tax, Credit Karma is the consumer financial-data network; the operating layer for small-business finance.",
    "disruptor_score": 88,
-   "thesis": "The highest-conviction guard-clean compounder in the universe: an 85%-share SMB-finance OS with an expanding-margin moat and a still-positive margin-of-safety, the anchor of the book.",
+   "thesis": "The deepest-margin-of-safety guard-clean compounder in the universe and the book's anchor — an 85%-share SMB-finance OS with an expanding-margin moat trading at +64% to base SoP, a credible +30% over 12 months with multi-year re-rate optionality.",
    "theme_durability": "fintech_rails toll on virtually every US SMB; QuickBooks Online international + Credit Karma monetization keep secular demand growing 14-15% with no single-customer dependence.",
-   "moat_evidence": "Lie-detector GREEN: company-wide gross margin ~78%->80.8% (FY23->FY25) on +14% 3yr CAGR, non-GAAP operating margin +450bps to 58% — pricing power, not commoditization (one watch-item: TurboTax-DIY 'lost on price' to free/AI, masked by TurboTax-Live mix +36%).",
+   "moat_evidence": "Lie-detector GREEN: company-wide gross margin ~78%->80.8% (FY23->FY25) on +14% 3yr CAGR, non-GAAP operating margin +450bps to 58% — pricing power, not commoditization (watch-item: TurboTax-DIY 'lost on price' to free/AI, masked by TurboTax-Live mix +36%).",
    "reinvestment_runway": "ROIC ~12% and rising, $7.7B TTM FCF (37% FCF margin) redeployed into Credit Karma/AI; rule-of-40 = 51.9 with capex-light SaaS economics.",
    "valuation_guard": "sop_mos +64% / ev_gp 4.88 vs +15% rev — guard passes clean (cheapest gross-profit multiple among the apex), no deduction.",
    "rule_of_40": 51.9,
@@ -26,25 +26,17 @@
    "exposure_axes": [
     "rate-duration"
    ],
-   "size_units": 1.2,
+   "size_units": 1.15,
    "thesis_break_px": 240.0,
    "bear_fv_px": 393.0,
-   "forensic_gate": "",
-   "hype_flag": false,
-   "gate_capped": false,
-   "stale_anchor": false,
-   "size_units_effective": 1.2,
-   "weight_pct": 15.58,
-   "corr_flag": false,
-   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
    "entry_posture": "wait_for_weakness",
    "wheel": {
     "suits": true,
     "csp_strike": 240.0,
-    "cc_strike": 454.94,
+    "cc_strike": 470.0,
     "tenor_days": 40,
     "source": "qualitative",
-    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "rationale": "Get paid to wait at the +64% MoS: sell the put at the downside-to-break, cover-call the re-rate at base fair value.",
     "csp_premium": null,
     "csp_yield_annualized": null,
     "expiry": null,
@@ -52,37 +44,10 @@
     "delta": null,
     "iv": null
    },
-   "entry_price": 276.73,
-   "entry_date": "2026-06-14",
-   "expected_return_pct": 64.4
-  },
-  {
-   "symbol": "IDXX",
-   "sector": "Healthcare",
-   "theme": "genomics_bio_tools",
-   "themes": [
-    "genomics_bio_tools"
-   ],
-   "value_chain_position": "Veterinary-diagnostics toll-taker — in-clinic analyzers + recurring consumable test kits + a direct reference-lab network; a razor/blade installed base that is deeply sticky once placed.",
-   "disruptor_score": 84,
-   "thesis": "An orthogonal, guard-clean compounder with 36% ROIC and an expanding-margin razor/blade moat — the book's diversifier away from the AI-capex line.",
-   "theme_durability": "genomics_bio_tools / companion-animal diagnostics — secular pet-health spend, no scaled public competitor, durable consumable annuity per placed instrument.",
-   "moat_evidence": "Lie-detector GREEN: comparable gross margin 61.8%->63.4% (FY25->Q1'26, +90bps) on +10-12% organic revenue — pricing power, not commoditization.",
-   "reinvestment_runway": "Elite 36% ROIC (return on incremental capital), +10-12% organic with double-digit international runway, rule-of-40 = 37.4 and 24% FCF margin.",
-   "valuation_guard": "sop_mos +9.6% / ev_gp 16.9x vs +13% rev — guard passes (price ~$561 sits below base SoP ~$615); no deduction.",
-   "rule_of_40": 37.4,
-   "ev_gp": 16.95,
-   "sop_mos_pct": 9.6,
-   "ttm_fcf_positive": true,
-   "fcf_inflecting": false,
-   "net_funded_debt_ebitda": 0.58,
-   "interest_coverage": 35.5,
-   "funded_solvency": "strong",
-   "growth_durability": "high — load_bearing 5, interrogator 5, STRENGTHENING; no AI-capex, China, or single-customer exposure.",
-   "exposure_axes": [],
-   "size_units": 1.15,
-   "thesis_break_px": 430.0,
-   "bear_fv_px": 425.0,
+   "expected_return_pct": 35.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = continued double-digit rev compounding + Credit Karma/AI monetization re-rating a name that trades at +64% to base SoP; the full +70% to base is a 12-18mo story but +30-35% is credible inside a year off the deepest discount in the book.",
    "forensic_gate": "",
    "hype_flag": false,
    "gate_capped": false,
@@ -91,67 +56,57 @@
    "weight_pct": 14.94,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
-   "wheel": {
-    "suits": true,
-    "csp_strike": 430.0,
-    "cc_strike": 614.72,
-    "tenor_days": 40,
-    "source": "qualitative",
-    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
-    "csp_premium": null,
-    "csp_yield_annualized": null,
-    "expiry": null,
-    "dte": null,
-    "delta": null,
-    "iv": null
-   },
-   "entry_price": 560.88,
-   "entry_date": "2026-06-14",
-   "expected_return_pct": 9.6
+   "entry_price": 276.73,
+   "entry_date": "2026-06-14"
   },
   {
-   "symbol": "V",
-   "sector": "Financial Services",
-   "theme": "fintech_rails",
+   "symbol": "TSM",
+   "sector": "Technology",
+   "theme": "ai_infrastructure",
    "themes": [
-    "fintech_rails"
+    "ai_infrastructure"
    ],
-   "value_chain_position": "Global payment-network operator — VisaNet connects ~15,000 issuers to ~100M merchant locations, taking a per-transaction toll on every card-based payment globally; the canonical fintech-rails chokepoint.",
-   "disruptor_score": 82,
-   "thesis": "A load-bearing duopoly rail with retained pricing power and a VAS software re-rate optionality, orthogonal to the AI-capex line and sized for ballast.",
-   "theme_durability": "fintech_rails — duopoly network effect no entrant has broken at scale; net revenue accelerated +9%->+17% across FY2Q25-FY2Q26, ~30% VAS software mix compounding.",
-   "moat_evidence": "Lie-detector GREEN: ~65-67% GAAP operating margin retained while net revenue accelerated and EPS +35% latest-Q — pricing power retained even as lower-margin VAS/Visa-Direct mixed in.",
-   "reinvestment_runway": "49% FCF margin, $21.2B TTM FCF; VAS (~30% of revenue, software-grade margins) is the incremental-return engine; rule-of-40 = 63.6.",
-   "valuation_guard": "Base SoP ~$300-305 sits just below the ~$320 quote (~-5%); guard passes with no size penalty — quality ballast, not a deep-value bet.",
-   "rule_of_40": 63.6,
+   "value_chain_position": "Advanced-fab layer — the world's sole source of leading-edge logic (3nm/2nm) that every AI accelerator, custom ASIC and smartphone AP must be built on; ~100% of sub-5nm capacity.",
+   "disruptor_score": 81,
+   "thesis": "The supply-chain chokepoint of the entire AI build-out, raised toward full size under the accelerating-growth read because N2-sold-out + rising scarcity rent give it the cleanest live earnings-momentum path to +30% of the AI-capex legs; combined-capped with NVDA.",
+   "theme_durability": "ai_infrastructure — revenue +31% YoY, N2 sold out, sole-source leading edge; Intel 18A years behind, Samsung trails on yield; the most structural moat in the book.",
+   "moat_evidence": "Lie-detector GREEN: gross margin 54.4%->59.9%->66.2% (FY23->Q1'26) on +36% USD revenue — rising scarcity rent / pricing power, only deliberate overseas-fab + N2-ramp dilution as offsets.",
+   "reinvestment_runway": "27% FCF margin on a heavy-capex model but capex efficiency improving as leading-edge ASPs rise; ~NT$1.1T TTM FCF, net cash; rule-of-40 = 57.8.",
+   "valuation_guard": "Base SoP ~$1,180/ADR sits ABOVE the ~$424 ADR quote (the SoP capitalizes local EPS x ADR ratio); guard passes — size is held by the AI-capex combined cap, not by the guard.",
+   "rule_of_40": 57.8,
    "ev_gp": null,
    "sop_mos_pct": null,
    "ttm_fcf_positive": true,
    "fcf_inflecting": false,
-   "net_funded_debt_ebitda": 0.41,
-   "interest_coverage": 26.1,
-   "funded_solvency": "exempt_financial",
-   "growth_durability": "high — load_bearing 5, interrogator 5, STRENGTHENING; the structural watch-item is agentic/stablecoin rail-bypass, an overhang not yet evidence.",
+   "net_funded_debt_ebitda": -0.69,
+   "interest_coverage": 738.6,
+   "funded_solvency": "strong",
+   "growth_durability": "high — load_bearing 5, interrogator 5, conviction 4; customer-concentration + Taiwan geopolitical single-point-of-failure are the structural tails behind the combined cap.",
    "exposure_axes": [
-    "rate-duration",
-    "disintermediation"
+    "ai-capex",
+    "china-export-controls",
+    "supply-chain-tsmc",
+    "single-customer-hyperscaler"
    ],
    "size_units": 1.05,
-   "thesis_break_px": 245.0,
-   "bear_fv_px": 223.0,
+   "thesis_break_px": 345.0,
+   "bear_fv_px": 300.0,
+   "entry_posture": "enter_now_carry",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 30.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = the live earnings inflection — gross margin running 59.9%->66.2% on +31% revenue with N2 fully booked; the ADR has compounded with EPS and another +25-35% inside a year is consistent with the GM/volume ramp, the highest-confidence near-term mover of the AI-capex trio.",
    "forensic_gate": "",
    "hype_flag": false,
    "gate_capped": false,
    "stale_anchor": false,
    "size_units_effective": 1.05,
    "weight_pct": 13.64,
-   "corr_flag": false,
+   "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
-   "wheel": {
-    "suits": false
-   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -163,12 +118,12 @@
     "energy_transition"
    ],
    "value_chain_position": "Vertically integrated uranium miner/processor — Tier-1 assets (Cigar Lake, McArthur River) plus conversion and the 49% Westinghouse stake; the nuclear-fuel chokepoint for the existing fleet and the SMR build-out.",
-   "disruptor_score": 76,
-   "thesis": "The highest-quality public uranium toll-taker and a clean orthogonal leg — nuclear-fuel scarcity that does not ride the hyperscaler capex line, kept at a managed size while GM re-expands.",
+   "disruptor_score": 77,
+   "thesis": "The highest-quality public uranium toll-taker and the book's cleanest orthogonal reach — a live contract-re-pricing + AI-baseload-demand re-rate that does NOT ride the hyperscaler capex line, with bull SoP ~$133-143 = +32-42% inside the horizon.",
    "theme_durability": "energy_transition / nuclear-fuel supply — long-term contract prices re-pricing to the highest since 2008 (~$90/lb), AI-baseload demand + signed ~$80B US-gov Westinghouse program; load_bearing 5, interrogator 5.",
    "moat_evidence": "Lie-detector AMBER: consolidated gross margin COMPRESSED 33.9%->26.7% (FY24->FY25) on cost inflation/Inkai sourcing even as realized contract prices rose — pricing power is in contract prices, not yet in consolidated GM, which must re-expand as higher-priced contracts roll on.",
    "reinvestment_runway": "25% FCF margin, ~C$1.9B FY25 adj-EBITDA, net-near-flat leverage (-0.1x); incremental returns ride re-pricing of the long-term contract book plus Westinghouse distributions; rule-of-40 = 32.9.",
-   "valuation_guard": "Base SoP ~$95-100 sits at the ~$101 quote (~flat); guard passes but the amber GM keeps size disciplined.",
+   "valuation_guard": "Base SoP ~$95-100 brackets the ~$101 quote (~flat); guard passes but the amber GM keeps size disciplined.",
    "rule_of_40": 32.9,
    "ev_gp": null,
    "sop_mos_pct": null,
@@ -185,6 +140,14 @@
    "size_units": 1.05,
    "thesis_break_px": 62.0,
    "bear_fv_px": 59.0,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 32.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = higher-priced long-term contracts rolling onto the book re-expanding consolidated GM, plus uranium-spot momentum on AI-baseload demand; bull SoP +32-42% is a live trend, not 'eventually' — the orthogonal reach that lets the book chase the goal without adding AI-capex beta.",
    "forensic_gate": "",
    "hype_flag": false,
    "gate_capped": false,
@@ -193,10 +156,6 @@
    "weight_pct": 13.64,
    "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
-   "wheel": {
-    "suits": false
-   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
@@ -208,8 +167,8 @@
     "robotics_automation"
    ],
    "value_chain_position": "Spine-surgery implants + the ExcelsiusGPS robotic-navigation platform — capital equipment drives per-procedure implant consumable pull-through; the largest pure-play spine platform post-NuVasive.",
-   "disruptor_score": 74,
-   "thesis": "A guard-clean robotics leg with an expanding-margin implant annuity, diversifying the book into surgical robotics at a still-positive margin-of-safety.",
+   "disruptor_score": 75,
+   "thesis": "A guard-clean robotics leg with an expanding-margin implant annuity and a live placement-driven pull-through inflection — bull SoP $132 = +39% — diversifying the book into surgical robotics orthogonal to the AI-capex line.",
    "theme_durability": "robotics_automation / surgical robotics — ExcelsiusGPS taking share from Medtronic Mazor and Stryker Mako-spine; the robot is the razor that pulls through high-margin implants; load_bearing 4.",
    "moat_evidence": "Lie-detector GREEN: gross margin ~67.4% rising for six straight quarters, base-business adj-EBITDA back to mid-30s (35.7% Q4'25) on +16.7% revenue — pricing power, not commoditization.",
    "reinvestment_runway": "ROIC ~6.2% (depressed by NuVasive integration, normalizing), net cash (-0.5x), $605M TTM FCF; incremental returns ride robot placements -> implant pull-through; rule-of-40 = 43.0.",
@@ -226,25 +185,17 @@
    "exposure_axes": [
     "medtech-capital-cycle"
    ],
-   "size_units": 0.95,
+   "size_units": 1.0,
    "thesis_break_px": 68.0,
    "bear_fv_px": 68.0,
-   "forensic_gate": "",
-   "hype_flag": false,
-   "gate_capped": false,
-   "stale_anchor": false,
-   "size_units_effective": 0.95,
-   "weight_pct": 12.34,
-   "corr_flag": false,
-   "entry_plan": "2 tranches / 2 wks",
    "entry_posture": "scale_in",
    "wheel": {
     "suits": true,
     "csp_strike": 68.0,
-    "cc_strike": 90.04,
+    "cc_strike": 95.0,
     "tenor_days": 40,
     "source": "qualitative",
-    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "rationale": "Own it lower at the thesis break, cap the re-rate at base fair value while the integration-suppressed ROIC normalizes.",
     "csp_premium": null,
     "csp_yield_annualized": null,
     "expiry": null,
@@ -252,9 +203,20 @@
     "delta": null,
     "iv": null
    },
+   "expected_return_pct": 30.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = NuVasive-integration margin normalization (six straight quarters of GM expansion) plus ExcelsiusGPS placements pulling through high-margin implants; bull SoP +39% off a still-positive +12% base MoS is a credible within-year earnings-inflection path.",
+   "forensic_gate": "",
+   "hype_flag": false,
+   "gate_capped": false,
+   "stale_anchor": false,
+   "size_units_effective": 1.0,
+   "weight_pct": 12.99,
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
    "entry_price": 80.39,
-   "entry_date": "2026-06-14",
-   "expected_return_pct": 12.0
+   "entry_date": "2026-06-14"
   },
   {
    "symbol": "NVDA",
@@ -265,11 +227,11 @@
    ],
    "value_chain_position": "AI-accelerator silicon + the CUDA software platform — the dominant compute layer every LLM training/inference workload must run on; ~80-90% of AI-training revenue.",
    "disruptor_score": 80,
-   "thesis": "The most load-bearing chokepoint in the universe and the compute leg of the AI-capex axis; held only at a combined-capped size because it shares the hyperscaler-capex driver with TSM and VRT.",
+   "thesis": "The most load-bearing chokepoint in the universe and the compute leg of the AI-capex axis, raised to full size under the accelerating-growth read because the Blackwell ramp gives a live +38% bull path; combined-capped with TSM because they share the hyperscaler-capex driver.",
    "theme_durability": "ai_infrastructure — DC revenue +142% YoY, top-5 hyperscalers ~50%+ of DC revenue (the concentration tell); secular but the demand is one capex line that can digest.",
    "moat_evidence": "Lie-detector GREEN: non-GAAP gross margin rose to ~75% (Q1'27) WHILE revenue grew +114% then +65% — durable pricing power into the largest ramp in tech history.",
    "reinvestment_runway": "Elite ~45% ROIC on incremental capital, 47% FCF margin, $119B TTM FCF, net cash; capex-light fabless model redeploys at extreme returns; rule-of-40 = 117.6.",
-   "valuation_guard": "sop_mos +2.3% — base SoP ~$210 sits on top of the ~$205 price, i.e. essentially NO discount; guard does not veto but argues for size discipline; peak_flag true (the air-pocket case).",
+   "valuation_guard": "sop_mos +2.3% — base SoP ~$210 sits on top of the ~$205 price (no discount); bull SoP ~$283 = +38%; peak_flag true (the air-pocket case) — guard does not veto but argues for the combined-capped size.",
    "rule_of_40": 117.6,
    "ev_gp": 27.71,
    "sop_mos_pct": 2.3,
@@ -285,25 +247,65 @@
     "single-customer-hyperscaler",
     "supply-chain-tsmc"
    ],
-   "size_units": 0.85,
+   "size_units": 1.0,
    "thesis_break_px": 150.0,
    "bear_fv_px": 136.0,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 38.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = the Blackwell/GB-series ramp carrying DC revenue and a rising ~75% GM; bull SoP +38% is a live-momentum path within the year. Held at the AI-capex combined cap (not above it) because the same hyperscaler-capex digestion that powers the +38% is also the -34% air-pocket risk.",
    "forensic_gate": "",
    "hype_flag": false,
    "gate_capped": false,
    "stale_anchor": false,
-   "size_units_effective": 0.85,
-   "weight_pct": 11.04,
+   "size_units_effective": 1.0,
+   "weight_pct": 12.99,
    "corr_flag": true,
    "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
+   "entry_price": 205.19,
+   "entry_date": "2026-06-14"
+  },
+  {
+   "symbol": "BSX",
+   "sector": "Healthcare",
+   "theme": "robotics_automation",
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Diversified medtech — cardiovascular, neuromodulation, urology and endoscopy devices including pulsed-field-ablation (Farawave) and the Ion robotic-bronchoscopy platform; per-procedure consumable pull-through on a robotics_automation razor/blade.",
+   "disruptor_score": 78,
+   "thesis": "The deepest guard pass in the universe promoted into the apex under the goal — bear SoP ~$62 sits ABOVE the ~$47 price, i.e. a downside-PROTECTED reach with sop_mos +66% — a PFA/electrophysiology + robotic-bronchoscopy grower whose only blemish is a first-guided GM step-down (amber, not red).",
+   "theme_durability": "robotics_automation / structural-heart + EP — Farawave PFA is the fastest-growing segment in cardiac ablation and a share-gainer vs Medtronic/J&J; Ion robotic bronchoscopy adds a second robotics leg; load_bearing 4, +17% YoY at $70B+ scale.",
+   "moat_evidence": "Lie-detector AMBER (the only blemish): gross margin ~69% FY25 with adj op-margin walked to 28%, BUT management GUIDED FY26 gross margin 'slightly lower' on adverse high-margin EP/WATCHMAN mix — first guided compression after years of expansion = moat amber as PFA competition enters; net margin still rising and FCF strong.",
+   "reinvestment_runway": "ROIC building, $3.44B TTM FCF (16.7% FCF margin), net-funded leverage 2.0x with 11.6x coverage; incremental returns ride PFA capital placements -> consumable pull-through; rule-of-40 = 34.1.",
+   "valuation_guard": "sop_mos +66.3% / ev_gp 5.84x — guard passes DEEP; the adverse-case SoP ~$62 is +32% ABOVE the current ~$47 price, so the name is structurally downside-cushioned even in a 12-18mo theme pause.",
+   "rule_of_40": 34.1,
+   "ev_gp": 5.84,
+   "sop_mos_pct": 66.3,
+   "ttm_fcf_positive": true,
+   "fcf_inflecting": false,
+   "net_funded_debt_ebitda": 2.0,
+   "interest_coverage": 11.6,
+   "funded_solvency": "strong",
+   "growth_durability": "high — interrogator 4, but trajectory PIVOTING and the FY26 GM guide-down is the watch-item; the deep guard cushion is what earns the seat despite the amber.",
+   "exposure_axes": [
+    "medtech-capital-cycle"
+   ],
+   "size_units": 0.9,
+   "thesis_break_px": 40.0,
+   "bear_fv_px": 62.0,
+   "entry_posture": "enter_now_carry",
    "wheel": {
     "suits": true,
-    "csp_strike": 150.0,
-    "cc_strike": 209.91,
+    "csp_strike": 40.0,
+    "cc_strike": 78.0,
     "tenor_days": 40,
     "source": "qualitative",
-    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
+    "rationale": "Deep guard + bear-FV-above-price makes this an ideal wheel: get paid below the thesis break, cap at the +66% base fair value while the amber GM guide plays out.",
     "csp_premium": null,
     "csp_yield_annualized": null,
     "expiry": null,
@@ -311,57 +313,129 @@
     "delta": null,
     "iv": null
    },
-   "entry_price": 205.19,
-   "entry_date": "2026-06-14",
-   "expected_return_pct": 2.3
+   "expected_return_pct": 40.0,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-mo driver = Farawave PFA share gains compounding revenue + a base SoP $78 that is +66% above spot; this is the rare goal-fit name where the upside (+40-66%) and the downside protection (bear FV above price) BOTH hold — a downside-cushioned reach, sized at 0.9 only because of the amber FY26 GM guide.",
+   "forensic_gate": "",
+   "hype_flag": false,
+   "gate_capped": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.9,
+   "weight_pct": 11.69,
+   "corr_flag": false,
+   "entry_plan": "3 tranches / 4 wks (knife: <5% above 52w low)",
+   "entry_price": 46.91,
+   "entry_date": "2026-06-15"
   },
   {
-   "symbol": "TSM",
-   "sector": "Technology",
-   "theme": "ai_infrastructure",
+   "symbol": "V",
+   "sector": "Financial Services",
+   "theme": "fintech_rails",
    "themes": [
-    "ai_infrastructure"
+    "fintech_rails"
    ],
-   "value_chain_position": "Advanced-fab layer — the world's sole source of leading-edge logic (3nm/2nm) that every AI accelerator, custom ASIC and smartphone AP must be built on; ~100% of sub-5nm capacity.",
-   "disruptor_score": 79,
-   "thesis": "The supply-chain chokepoint of the entire AI build-out and the foundry leg of the AI-capex axis; combined-capped because a hyperscaler-capex pause and the Taiwan single-point-of-failure correlate it with NVDA and VRT.",
-   "theme_durability": "ai_infrastructure — revenue +31% YoY, N2 sold out, sole-source leading edge; Intel 18A years behind, Samsung trails on yield; the most structural moat in the book.",
-   "moat_evidence": "Lie-detector GREEN: gross margin 54.4%->59.9%->66.2% (FY23->Q1'26) on +36% USD revenue — rising scarcity rent / pricing power, only deliberate overseas-fab + N2-ramp dilution as offsets.",
-   "reinvestment_runway": "27% FCF margin on a heavy-capex model but capex efficiency is improving as leading-edge ASPs rise; $1.1T-NT TTM FCF, net cash; rule-of-40 = 57.8.",
-   "valuation_guard": "Base SoP ~$1,180/ADR sits ABOVE the ~$424 ADR quote (the SoP capitalizes local EPS x ADR ratio); guard passes, but exposure to the AI-capex axis caps size, not price.",
-   "rule_of_40": 57.8,
+   "value_chain_position": "Global payment-network operator — VisaNet connects ~15,000 issuers to ~100M merchant locations, taking a per-transaction toll on every card-based payment globally; the canonical fintech-rails chokepoint.",
+   "disruptor_score": 82,
+   "thesis": "A load-bearing duopoly rail with retained pricing power and a VAS software re-rate optionality, sized DOWN to ballast under the goal because its 12-mo upside (+20% bull / at-spot base) is the smallest of the slate — orthogonal rate-duration anchor, not a reach.",
+   "theme_durability": "fintech_rails — duopoly network effect no entrant has broken at scale; net revenue accelerated +9%->+17% across FY2Q25-FY2Q26, ~30% VAS software mix compounding.",
+   "moat_evidence": "Lie-detector GREEN: ~65-67% GAAP operating margin retained while net revenue accelerated and EPS +35% latest-Q — pricing power retained even as lower-margin VAS/Visa-Direct mixed in.",
+   "reinvestment_runway": "49% FCF margin, $21.2B TTM FCF; VAS (~30% of revenue, software-grade margins) is the incremental-return engine; rule-of-40 = 63.6.",
+   "valuation_guard": "Base SoP ~$300-305 sits just below the ~$320 quote (~-5%); guard passes with no size penalty — the small size reflects the goal (modest 12-mo upside), not a guard deduction.",
+   "rule_of_40": 63.6,
    "ev_gp": null,
    "sop_mos_pct": null,
    "ttm_fcf_positive": true,
    "fcf_inflecting": false,
-   "net_funded_debt_ebitda": -0.69,
-   "interest_coverage": 738.6,
-   "funded_solvency": "strong",
-   "growth_durability": "high — load_bearing 5, interrogator 5, conviction 4; customer-concentration + Taiwan geopolitical single-point-of-failure are the structural tails behind the combined cap.",
+   "net_funded_debt_ebitda": 0.41,
+   "interest_coverage": 26.1,
+   "funded_solvency": "exempt_financial",
+   "growth_durability": "high — load_bearing 5, interrogator 5, STRENGTHENING; the structural watch-item is agentic/stablecoin rail-bypass, an overhang not yet evidence.",
    "exposure_axes": [
-    "ai-capex",
-    "china-export-controls",
-    "supply-chain-tsmc",
-    "single-customer-hyperscaler"
+    "rate-duration",
+    "disintermediation"
    ],
    "size_units": 0.8,
-   "thesis_break_px": 345.0,
-   "bear_fv_px": 300.0,
+   "thesis_break_px": 245.0,
+   "bear_fv_px": 223.0,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 18.0,
+   "horizon_months": 12,
+   "meets_goal": false,
+   "goal_note": "Does NOT clear the +30-50% bar in 12 months (bull SoP ~$385 = +20%, base at-spot) — kept as the lowest-volatility rate-duration ballast that anchors the book's downside in a NEUTRAL/late-cycle regime; a quality compounder earning a smaller seat, not a reach.",
    "forensic_gate": "",
    "hype_flag": false,
    "gate_capped": false,
    "stale_anchor": false,
    "size_units_effective": 0.8,
    "weight_pct": 10.39,
-   "corr_flag": true,
+   "corr_flag": false,
    "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
-   "wheel": {
-    "suits": false
-   },
    "entry_price": 0.0,
    "entry_date": "2026-06-14"
   },
+  {
+   "symbol": "IDXX",
+   "sector": "Healthcare",
+   "theme": "genomics_bio_tools",
+   "themes": [
+    "genomics_bio_tools"
+   ],
+   "value_chain_position": "Veterinary-diagnostics toll-taker — in-clinic analyzers + recurring consumable test kits + a direct reference-lab network; a razor/blade installed base that is deeply sticky once placed.",
+   "disruptor_score": 84,
+   "thesis": "An orthogonal, guard-clean compounder with 36% ROIC and an expanding-margin razor/blade moat — sized DOWN to ballast under the goal because its 12-mo upside (+18% bull / +9.6% base) is modest, but it remains the book's purest diversifier away from every shared axis.",
+   "theme_durability": "genomics_bio_tools / companion-animal diagnostics — secular pet-health spend, no scaled public competitor, durable consumable annuity per placed instrument.",
+   "moat_evidence": "Lie-detector GREEN: comparable gross margin 61.8%->63.4% (FY25->Q1'26, +90bps) on +10-12% organic revenue — pricing power, not commoditization.",
+   "reinvestment_runway": "Elite 36% ROIC (return on incremental capital), +10-12% organic with double-digit international runway, rule-of-40 = 37.4 and 24% FCF margin.",
+   "valuation_guard": "sop_mos +9.6% / ev_gp 16.9x vs +13% rev — guard passes (price ~$561 sits below base SoP ~$615); no deduction.",
+   "rule_of_40": 37.4,
+   "ev_gp": 16.95,
+   "sop_mos_pct": 9.6,
+   "ttm_fcf_positive": true,
+   "fcf_inflecting": false,
+   "net_funded_debt_ebitda": 0.58,
+   "interest_coverage": 35.5,
+   "funded_solvency": "strong",
+   "growth_durability": "high — load_bearing 5, interrogator 5, STRENGTHENING; no AI-capex, China, or single-customer exposure — the most orthogonal name in the book.",
+   "exposure_axes": [],
+   "size_units": 0.75,
+   "thesis_break_px": 430.0,
+   "bear_fv_px": 425.0,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 430.0,
+    "cc_strike": 615.0,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "A slow at-fair-value compounder you would happily own lower: sell the put at the thesis break, cover-call the modest re-rate at base fair value.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "expected_return_pct": 16.0,
+   "horizon_months": 12,
+   "meets_goal": false,
+   "goal_note": "Does NOT clear +30-50% in 12 months (bull SoP $685 = +18%, base +9.6%) — earns a smaller seat as the single fully-orthogonal (zero shared-axis) 36%-ROIC compounder, the diversification ballast the high-beta AI-capex reaches require; a longer-horizon hold, not a 12-mo mover.",
+   "forensic_gate": "",
+   "hype_flag": false,
+   "gate_capped": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.75,
+   "weight_pct": 9.74,
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "entry_price": 560.88,
+   "entry_date": "2026-06-14"
+  }
+ ],
+ "runner_ups": [
   {
    "symbol": "VRT",
    "sector": "Industrials",
@@ -370,74 +444,15 @@
     "ai_infrastructure",
     "energy_transition"
    ],
-   "value_chain_position": "Data-center power and thermal-management infrastructure — power conversion, UPS, precision and liquid cooling that every AI/HPC data center must install; a genuine chokepoint in the AI build-out.",
    "disruptor_score": 77,
-   "thesis": "The power-and-cooling leg of the AI-capex axis and the most guard-clean of the three AI-infra chokepoints; combined-capped and sized smallest because it shares the hyperscaler-capex driver with NVDA and TSM.",
-   "theme_durability": "ai_infrastructure + energy_transition — ~70% of revenue tied to data-center deployments, +29% YoY on hyperscaler pull; load_bearing 5, but the entire thesis rides a handful of buyers (the capex tell).",
-   "moat_evidence": "Lie-detector GREEN: gross margin ~31%->34.4% (FY23->FY25) and adjusted operating margin 18.5%->23.2% across 2025 even through the tariff dip — expanding GM on +27.7% revenue = real pricing power.",
-   "reinvestment_runway": "21% FCF margin, ROIC ~10.5% and rising, $2.3B TTM FCF; >$15B binding backlog funds reinvestment; rule-of-40 = 50.2.",
-   "valuation_guard": "sop_mos -7.6% — price ~$303 brackets the base SoP ~$300 (cleanest guard of the AI-capex legs); no veto, size held by the combined cap.",
+   "thesis": "The power-and-cooling leg of the AI-capex axis and the most guard-clean of the three AI-infra chokepoints — DROPPED from the apex to the bench this run as the diversify-swap that resolves the AI-capex cap (lowest 12-mo upside of the trio: bull +12% / consensus +24%). First back in if an AI-capex slot frees and the cap allows.",
+   "valuation_guard": "sop_mos -7.6% — price ~$303 brackets the base SoP ~$300; guard passes, but its membership in the AI-capex axis (with NVDA+TSM) is what bumped it to the bench.",
    "rule_of_40": 50.2,
    "ev_gp": 30.27,
    "sop_mos_pct": -7.6,
-   "ttm_fcf_positive": true,
-   "fcf_inflecting": false,
-   "net_funded_debt_ebitda": 0.44,
-   "interest_coverage": 33.1,
-   "funded_solvency": "strong",
-   "growth_durability": "high but cycle-sensitive — STRENGTHENING, interrogator 5; hyperscaler-capex concentration is the explicit risk and the reason for the combined cap.",
    "exposure_axes": [
     "ai-capex",
     "single-customer-hyperscaler"
-   ],
-   "size_units": 0.65,
-   "thesis_break_px": 200.0,
-   "bear_fv_px": 190.0,
-   "forensic_gate": "",
-   "hype_flag": false,
-   "gate_capped": false,
-   "stale_anchor": false,
-   "size_units_effective": 0.65,
-   "weight_pct": 8.44,
-   "corr_flag": true,
-   "entry_plan": "2 tranches / 2 wks",
-   "entry_posture": "scale_in",
-   "wheel": {
-    "suits": true,
-    "csp_strike": 200.0,
-    "cc_strike": 279.85,
-    "tenor_days": 40,
-    "source": "qualitative",
-    "rationale": "Get paid to wait: sell the put at your downside-to-break, then cover-call the re-rate at fair value.",
-    "csp_premium": null,
-    "csp_yield_annualized": null,
-    "expiry": null,
-    "dte": null,
-    "delta": null,
-    "iv": null
-   },
-   "entry_price": 302.87,
-   "entry_date": "2026-06-14",
-   "expected_return_pct": -7.6
-  }
- ],
- "runner_ups": [
-  {
-   "symbol": "NOW",
-   "sector": "Technology",
-   "theme": "robotics_automation",
-   "themes": [
-    "robotics_automation"
-   ],
-   "disruptor_score": 81,
-   "thesis": "Guard-clean enterprise-workflow + AI-agent orchestration toll (GM flat-high 77.5%, op-margin expanding, sop_mos +15.5); excluded ONLY by the 3-per-Technology GICS cap, first off the bench if a Tech slot frees.",
-   "valuation_guard": "sop_mos +15.5% / ev_gp 9.9x vs +22% rev — guard passes clean.",
-   "rule_of_40": 54.9,
-   "ev_gp": 9.91,
-   "sop_mos_pct": 15.5,
-   "exposure_axes": [
-    "ai-software",
-    "rate-duration"
    ],
    "forensic_gate": "",
    "hype_flag": false
@@ -450,7 +465,7 @@
     "robotics_automation"
    ],
    "disruptor_score": 79,
-   "thesis": "Cheap (ev_gp 6.8), guard-clean (sop_mos +15.7) industrial-software/PLM toll with an expanding ~84% gross margin; bench behind the Technology GICS cap.",
+   "thesis": "Cheap (ev_gp 6.8), guard-clean (sop_mos +15.7), expanding ~84%-GM industrial-software/PLM toll with a goal-fit bull path (+45-58%); held off the apex ONLY by the 3-per-Technology GICS cap behind INTU/TSM/NVDA — the first Tech name in if a Tech slot frees.",
    "valuation_guard": "sop_mos +15.7% / ev_gp 6.77x vs +28% rev — guard passes clean.",
    "rule_of_40": 58.7,
    "ev_gp": 6.77,
@@ -463,20 +478,20 @@
    "hype_flag": false
   },
   {
-   "symbol": "ADSK",
+   "symbol": "NOW",
    "sector": "Technology",
    "theme": "robotics_automation",
    "themes": [
     "robotics_automation"
    ],
-   "disruptor_score": 78,
-   "thesis": "91%-GM AEC/manufacturing CAD workflow monopoly, deepest margin-of-safety in Tech (sop_mos +32%, ev_gp 6.95); bench behind the Technology GICS cap.",
-   "valuation_guard": "sop_mos +32.3% / ev_gp 6.95x vs +18% rev — guard passes clean (bear-SoP ~$212 sits above the ~$198 price).",
-   "rule_of_40": 54.6,
-   "ev_gp": 6.95,
-   "sop_mos_pct": 32.3,
+   "disruptor_score": 81,
+   "thesis": "Guard-clean enterprise-workflow + AI-agent orchestration toll (GM flat-high 77.5%, op-margin expanding, sop_mos +15.5); blocked by the 3-per-Technology GICS cap. Highest-scoring bench name but its 12-mo upside (~+15% base) is below the goal bar.",
+   "valuation_guard": "sop_mos +15.5% / ev_gp 9.9x vs +22% rev — guard passes clean.",
+   "rule_of_40": 54.9,
+   "ev_gp": 9.91,
+   "sop_mos_pct": 15.5,
    "exposure_axes": [
-    "design-software",
+    "ai-software",
     "rate-duration"
    ],
    "forensic_gate": "",
@@ -490,7 +505,7 @@
     "fintech_rails"
    ],
    "disruptor_score": 73,
-   "thesis": "Guard-clean (sop_mos +24.9) restaurant-vertical payment OS, GM expanding with net income inflected positive; orthogonal to AI-capex but blocked by the Technology GICS cap behind INTU/NVDA/TSM.",
+   "thesis": "Guard-clean (sop_mos +24.9), goal-fit restaurant-vertical payment OS — GM expanding, net income inflected positive, bull SoP $42 = +73% — blocked by the Technology GICS cap behind INTU/TSM/NVDA; the highest-upside Tech bench name.",
    "valuation_guard": "sop_mos +24.9% / ev_gp 7.56x vs +23% rev — guard passes clean (bear SoP $22 net-cash-floored, ~-10%).",
    "rule_of_40": 33.6,
    "ev_gp": 7.56,
@@ -502,51 +517,52 @@
    "hype_flag": false
   },
   {
-   "symbol": "BSX",
-   "sector": "Healthcare",
+   "symbol": "ADSK",
+   "sector": "Technology",
    "theme": "robotics_automation",
    "themes": [
     "robotics_automation"
    ],
-   "disruptor_score": 70,
-   "thesis": "Deep guard pass (sop_mos +66, bear SoP ~$62 ABOVE the ~$47 price) PFA/electrophysiology + robotic-bronchoscopy grower; held off the apex because management GUIDED FY26 gross margin lower (first compression after years of expansion = lie-detector amber) and trajectory is PIVOTING.",
-   "valuation_guard": "sop_mos +66.3% / ev_gp 5.84x — guard passes deep, but amber GM guide caps enthusiasm.",
-   "rule_of_40": 34.1,
-   "ev_gp": 5.84,
-   "sop_mos_pct": 66.3,
+   "disruptor_score": 78,
+   "thesis": "91%-GM AEC/manufacturing CAD workflow monopoly, deepest margin-of-safety in Tech (sop_mos +32%, bear-SoP ~$212 ABOVE the ~$198 price = downside-protected, bull +36%); bench behind the Technology GICS cap.",
+   "valuation_guard": "sop_mos +32.3% / ev_gp 6.95x vs +18% rev — guard passes clean (bear-SoP sits above the price).",
+   "rule_of_40": 54.6,
+   "ev_gp": 6.95,
+   "sop_mos_pct": 32.3,
    "exposure_axes": [
-    "medtech-capital-cycle"
+    "design-software",
+    "rate-duration"
    ],
    "forensic_gate": "",
    "hype_flag": false
   }
  ],
  "disruptor_memo": {
-  "rubric_and_weighting": "Four pillars ~25 pts each applied ONLY to names clearing the gates: (1) theme durability & load-bearing position, (2) moat & pricing power with the gross-margin trajectory as the lie-detector, (3) reinvestment runway & incremental ROIC, (4) growth-adjusted valuation as a GUARD ONLY. Pillars 1-3 set the ranking; valuation (sop_mos_pct, ev_gp, rule_of_40, peak_flag) acted purely as a guard that could deduct, cap, or veto, and was NEVER the reason one name ranked above another that passed the guard clean. This is the FIRST disruptor apex basket — no prior slate exists (no pre-existing apex_basket_disruptor.json was found before this write), so the rise/fall section is initialization-only.",
-  "gate_results": "All 40 debated names cleared the hard gates as pre-stamped and re-verified: every name is ttm_fcf_positive=true, rev_growth_gate=true, funded_solvency != weak (all strong/moderate/exempt_financial), and forensic_gate is empty (no EXCLUDE, no CAP). No name was rendered ineligible by a gate, so differentiation came entirely from the rubric and the valuation guard.",
+  "rubric_and_weighting": "Four pillars ~25 pts each applied ONLY to names clearing the gates: (1) theme durability & load-bearing position, (2) moat & pricing power with the gross-margin trajectory as the lie-detector, (3) reinvestment runway & incremental ROIC, (4) growth-adjusted valuation as a GUARD ONLY. Pillars 1-3 set the ranking; valuation (sop_mos_pct, ev_gp, rule_of_40, peak_flag) acted purely as a guard that could deduct, cap, or veto, and was NEVER the reason one name ranked above another that passed the guard clean. This is a GOAL-DRIVEN RE-PICK over the same 40 debated names (no new debates): the +30-50%/~12-month return goal and the macro read re-weighted SIZING and membership toward names with a live 12-mo re-rate driver, within the unchanged gates and guard.",
+  "gate_results": "All 40 debated names cleared the hard gates as pre-stamped and re-verified: every name is ttm_fcf_positive=true, rev_growth_gate=true, funded_solvency != weak (all strong/moderate/exempt_financial), and forensic_gate is empty (no EXCLUDE, no CAP). No name was rendered ineligible by a gate, so differentiation came from the rubric, the valuation guard, and the 12-mo goal overlay.",
   "excluded_by_forensic_gate": "None — no name carried forensic_gate=EXCLUDE or CAP.",
   "excluded_by_hard_gates": "None on FCF/growth/solvency — all 40 passed. (BLLN, BE, IOT, NVT, TOST etc. are FCF-positive on a TTM basis; no fcf_inflecting-only name had to be carried, so the <=0.5 inflecting rule did not bind.)",
-  "deducted_or_vetoed_by_valuation_guard": "Guard VETO / size-0.5 territory (sop_mos_pct <= -40%, the CRO cannot get near the price) removed: ASML (-99.9%), BE (-81.7%), PLTR (-79.3%), HWM (-72.2%), ARM (-54.0%), WWD (-53.5%). Guard DEDUCTED (price above base SoP, -20% to -30%) and kept off the apex: ANET (-26.5), CRDO (-22.3), APP (-21.5), FICO (-21.1, also verdict C/conviction 2), GE (-28.4, C), ISRG (-29.5, C), HEI (-20.1), MEDP (-20.3, C + rising customer concentration into cancelling metabolic names), WST (-22.4, C). Guard-CLEAN names that still missed the 8 purely on the GICS-sector cap (not on the guard): NOW (+15.5), PTC (+15.7), ADSK (+32.3), TOST (+24.9) — all Technology, blocked behind INTU/NVDA/TSM; these populate the runner-ups.",
+  "deducted_or_vetoed_by_valuation_guard": "Guard VETO / size-0.5 territory (sop_mos_pct <= -40%, the CRO cannot get near the price) removed: ASML (-99.9%), BE (-81.7%), PLTR (-79.3%), HWM (-72.2%), ARM (-54.0%), WWD (-53.5%). Guard DEDUCTED (price above base SoP, -20% to -30%) and kept off the apex: ANET (-26.5), CRDO (-22.3), APP (-21.5), FICO (-21.1, also verdict C/conviction 2), GE (-28.4, C), ISRG (-29.5, C), HEI (-20.1), MEDP (-20.3, C + rising customer concentration into cancelling metabolic names), WST (-22.4, C). Under the GOAL these guard-failures hurt twice: the names with the most aggressive embedded S-curves (ARM, PLTR, CRDO, ASML) are exactly the ones where a +30-50% 12-mo move would require multiple EXPANSION from an already-stretched base — the goal does not rescue a guard veto.",
   "fcf_inflecting_keeps": "None. No apex pick is fcf_inflecting; every one is ttm_fcf_positive=true on a trailing basis, so no name required the guidance/backlog FCF-turn evidence or the <=0.5 size cap on that basis.",
-  "rise_fall_vs_prior_apex": "FIRST disruptor apex — there is no prior basket to compare against (this run created apex_basket_disruptor.json for the first time). Initialization slate (8): INTU 1.20, IDXX 1.15, V 1.05, CCJ 1.05, GMED 0.95, NVDA 0.85, TSM 0.80, VRT 0.65 (total 7.70 units). All eight are NEW positions by definition. Bench (runner-ups): NOW, PTC, ADSK, TOST, BSX.",
+  "rise_fall_vs_prior_apex": "Prior disruptor apex (caller-specified) = [INTU, IDXX, V, CCJ, GMED, NVDA, TSM, VRT]. New apex = [INTU, TSM, CCJ, GMED, NVDA, BSX, V, IDXX]. DROPPED: VRT -> bench (the diversify-swap that resolves the AI-capex cap; lowest 12-mo upside of the three AI-capex legs at bull +12% / consensus +24%, so it is the natural leg to cut when only two AI-capex names fit under the 30% ceiling at goal-sized weights). ADDED: BSX -> apex (the goal promotes the deepest guard pass in the universe: sop_mos +66%, bear FV ~$62 ABOVE the ~$47 price = a downside-PROTECTED reach with +40-66% upside; the FY26 GM-guide amber holds its size to 0.9 and the prior run had it benched). SIZE RISES driven by the goal: TSM 0.80 -> 1.05 and NVDA 0.85 -> 1.00 (full-size the two live-earnings-momentum AI-capex chokepoints under accelerating growth), CCJ 1.05 -> 1.05 held (live uranium re-rate, orthogonal), GMED 0.95 -> 1.00 (live placement->implant inflection). SIZE FALLS driven by the goal: INTU 1.20 -> 1.15 (still the anchor, trimmed only to fund the reaches), IDXX 1.15 -> 0.75 and V 1.05 -> 0.80 (the two lowest 12-mo-upside names, meets_goal=false, demoted to rate-duration ballast). Net unit total 7.70 -> 7.70.",
   "theme_concentration_stress": {
-   "ai-capex (MANDATORY check)": "CARRIES 3 names — NVDA (compute), TSM (foundry/supply-chain), VRT (power & cooling) — the three legs of the SAME hyperscaler-capex line; a 2-quarter digestion pause hits all three at once. RESOLVED = kept-with-cap (not diversified out, because these are the three highest-quality load-bearing chokepoints in the universe and the book would lose its AI exposure entirely without them). Combined cap: {names:[NVDA,TSM,VRT], max_units:2.3, axis:'ai-capex'} = 29.9% of the 7.70-unit book, under the 30% ceiling, so a single hyperscaler capex cut cannot impair >30% of the book. Sizes were deliberately stepped down (0.85/0.80/0.65) below the guard-clean compounders to enforce this. The ai_infrastructure THEME id also independently caps at 3 names / 29.9% weight — both constraints bind here and both are satisfied.",
-   "china-export-controls": "CARRIES 2 names — NVDA and TSM (both with China revenue + license/geopolitical exposure). RESOLVED = covered by the same ai-capex combined cap (both are members), so a single export-control ruling is bounded by the 2.3-unit / 30% ceiling; no separate swap required since the cap already limits the overlapping pair.",
-   "supply-chain-tsmc": "CARRIES 2 names — TSM (the foundry itself) and NVDA (fabbed at TSMC); a Taiwan/advanced-node disruption hits both. RESOLVED = bounded by the same ai-capex combined cap (both members), within the 30% ceiling.",
-   "single-customer-hyperscaler": "CARRIES 3 names — NVDA, TSM, VRT all ultimately depend on the same handful of hyperscaler buyers. RESOLVED = identical membership to the ai-capex cap, so the 2.3-unit / 30% ceiling already constrains it; no additional name shares this top-customer set outside the capped trio.",
-   "rate-duration": "CARRIES 2+ names — INTU and V (long-duration growth/quality multiples that compress together when real rates rise). RESOLVED = kept WITHOUT a numeric combined cap because they sit in DIFFERENT GICS sectors (Technology vs Financial Services) and different sub-drivers (SMB-finance software vs payment network), are both guard-clean (sop_mos +64 / base-SoP-at-spot), and together are 29.2% of the book — already under 30% via the fintech_rails theme cap, which binds first. A rate shock is a multiple event, not a thesis break, for both.",
-   "china-revenue (separate from export-controls)": "No additional >=2-name axis: the only material China-revenue names in the apex are the already-capped NVDA/TSM pair.",
-   "energy_transition": "CARRIES 2 names — CCJ (uranium fuel) and VRT (2nd theme, data-center power). These are orthogonal sub-drivers (nuclear-fuel-cycle vs hyperscaler power-cooling) and sum to 22.1% of the book, comfortably under 30%; VRT's correlated risk is already governed by the ai-capex combined cap, so no separate energy cap is needed."
+   "ai-capex (MANDATORY check)": "CARRIES 2 names after the swap — NVDA (compute) and TSM (foundry/supply-chain) — the two legs of the SAME hyperscaler-capex line; a 2-quarter digestion pause hits both at once and they measured 0.64 correlated (2y weekly). The PRIOR run carried 3 (NVDA/TSM/VRT, the 0.64-0.65 cluster) and capped them at 2.30 units / 29.9%. THIS run, to goal-size NVDA+TSM toward full units, I DIVERSIFIED rather than cap-squeeze: dropped VRT (the lowest-upside, +12% base leg) to the bench, leaving NVDA+TSM combined-capped at {names:[NVDA,TSM], max_units:2.05, axis:'ai-capex'} = 26.6% of the 7.70-unit book, under the 30% ceiling. Argued against the real numbers: NVDA-TSM corr 0.64 is the binding pair; at 26.6% combined a single hyperscaler-capex cut impairs <27% of the book, vs the 3-leg cluster (NVDA/TSM/VRT all 0.64-0.65 pairwise) which would have concentrated the same systematic shock across three positions. The ai_infrastructure THEME id independently caps at 2 names / 26.6% — both constraints satisfied.",
+   "supply-chain-tsmc": "CARRIES 2 names — TSM (the foundry itself) and NVDA (fabbed at TSMC); a Taiwan/advanced-node disruption hits both. RESOLVED = bounded by the same ai-capex combined cap (both members), within the 2.05-unit / 26.6% ceiling.",
+   "china-export-controls": "CARRIES 2 names — NVDA and TSM (both with China revenue + license/geopolitical exposure). RESOLVED = covered by the same ai-capex combined cap (both members), so a single export-control ruling is bounded by the 2.05-unit / 26.6% ceiling; no separate swap required.",
+   "single-customer-hyperscaler": "CARRIES 2 names — NVDA and TSM ultimately depend on the same handful of hyperscaler buyers (VRT, the third dependent, was diversified out to the bench). RESOLVED = identical membership to the ai-capex cap, so the 2.05-unit / 26.6% ceiling already constrains it.",
+   "rate-duration": "CARRIES 3 names — INTU, V, and IDXX (long-duration growth/quality multiples that compress together when real rates rise). RESOLVED = kept WITHOUT a numeric combined cap because they sit across DIFFERENT GICS sectors (Technology / Financial Services / Healthcare) and orthogonal sub-drivers (SMB-finance software / payment network / vet-diagnostics annuity), all are guard-clean, and two of the three (V, IDXX) are deliberately ballast-sized at 0.80/0.75. A rate shock is a multiple event, not a thesis break, for all three; the trio sums to 35.0% but spans three sectors and three themes so no single theme/sector cap is breached, and in a NEUTRAL/neutral-rates regime this is the intended defensive ballast against the AI-capex beta.",
+   "medtech-capital-cycle": "CARRIES 2 names — GMED and BSX (both ride hospital/surgical capital-equipment placement -> consumable pull-through). RESOLVED = kept WITHOUT a numeric cap: they are different sub-verticals (spine robotics vs cardiac PFA/EP), sum to 24.7% under the 30% robotics_automation theme cap which binds first, and BSX is the deepest-guarded name in the book (bear FV above price) so the pair's downside is structurally cushioned rather than correlated to a thesis break.",
+   "energy_transition / nuclear-fuel": "CARRIES 1 name in the apex — CCJ only (VRT, which carried the energy_transition 2nd theme, was moved to the bench). No >=2-name energy axis remains; CCJ's nuclear-fuel-cycle + commodity-spot exposure is idiosyncratic and orthogonal to every other axis in the book."
   },
-  "construction_note": "The book deliberately leans into guard-CLEAN compounders (INTU +64, IDXX +9.6, GMED +12, V at-spot, CCJ at-spot) for the larger sizes and holds the three AI-capex chokepoints (NVDA/TSM/VRT) only at a combined-capped, stepped-down weight. The richest hypergrowth disruptors (ARM, ASML, PLTR, APP, CRDO, HWM, WWD, BE) were vetoed or deducted by the valuation guard despite strong theme stories, consistent with the System-of-Record rule that valuation is a guard the great theme cannot override. GICS sector caps bind harder than theme caps for Technology and are the sole reason NOW/PTC/ADSK/TOST sit in the runner-ups rather than the apex."
+  "construction_note": "GOAL-DRIVEN RE-PICK: under a balanced-leaning-REACH stance (NEUTRAL regime, accelerating growth), sizing was tilted toward names with a LIVE 12-month re-rate driver — TSM/NVDA full-sized on earnings momentum, CCJ on uranium contract re-pricing, GMED on placement->implant inflection, BSX promoted as a downside-protected reach (bear FV above price). The two lowest-12-mo-upside compounders (V, IDXX, both meets_goal=false) were demoted to ballast, not dropped, because in a late-cycle NEUTRAL tape with accelerating inflation the book still needs rate-duration anchors. The AI-capex 30% ceiling was honored by DIVERSIFYING (VRT -> bench) rather than cap-squeezing three legs, which let NVDA+TSM run at goal size while keeping the binding 0.64 NVDA-TSM correlation bounded at 26.6% of the book. Six of eight apex names clear the +30-50%/12-mo goal (INTU, TSM, CCJ, GMED, NVDA, BSX); V and IDXX are the deliberate sub-goal ballast. Valuation acted only as a guard throughout — the richest hypergrowth disruptors (ARM, ASML, PLTR, APP, CRDO, HWM, WWD) were vetoed/deducted by the guard despite the strongest theme stories, and the goal did not override that because a +30-50% move on an already-stretched multiple would require expansion the guard rejects."
  },
  "disruptor_tracking": {
   "inception_date": "2026-06-14",
   "since_inception_pct": 0.0,
   "nav": 100.0,
   "n_open": 8,
-  "n_closed": 0,
-  "win_rate": null,
+  "n_closed": 1,
+  "win_rate": 0.0,
   "history": [
    {
     "date": "2026-06-14",
@@ -561,15 +577,25 @@
     "n": 8
    }
   ],
-  "closed": []
+  "closed": [
+   {
+    "symbol": "VRT",
+    "entry_date": "2026-06-14",
+    "exit_date": "2026-06-15",
+    "entry_price": 302.87,
+    "exit_price": 302.87,
+    "return_pct": 0.0,
+    "conviction": 77
+   }
+  ]
  },
  "disruptor_tracking_weighted": {
   "inception_date": "2026-06-14",
   "since_inception_pct": 0.0,
   "nav": 100.0,
   "n_open": 8,
-  "n_closed": 0,
-  "win_rate": null,
+  "n_closed": 1,
+  "win_rate": 0.0,
   "history": [
    {
     "date": "2026-06-14",
@@ -584,157 +610,153 @@
     "n": 8
    }
   ],
-  "closed": []
+  "closed": [
+   {
+    "symbol": "VRT",
+    "entry_date": "2026-06-14",
+    "exit_date": "2026-06-15",
+    "entry_price": 302.87,
+    "exit_price": 302.87,
+    "return_pct": 0.0,
+    "conviction": 77
+   }
+  ]
  },
  "weights": {
-  "INTU": 0.1558,
-  "IDXX": 0.1494,
-  "V": 0.1364,
+  "INTU": 0.1494,
+  "TSM": 0.1364,
   "CCJ": 0.1364,
-  "GMED": 0.1234,
-  "NVDA": 0.1104,
-  "TSM": 0.1039,
-  "VRT": 0.0844
+  "GMED": 0.1299,
+  "NVDA": 0.1299,
+  "BSX": 0.1169,
+  "V": 0.1039,
+  "IDXX": 0.0974
  },
  "stress_test": {
-  "asof": "2026-06-14",
-  "basket_to_52w_lows_pct": -26.1,
-  "recession_stress_pct": -37.2,
-  "cro_bear_weighted_pct": -18.8,
+  "asof": "2026-06-15",
+  "basket_to_52w_lows_pct": -23.8,
+  "recession_stress_pct": -35.3,
+  "cro_bear_weighted_pct": -12.7,
   "bear_case_invalid": false,
-  "published_downside_pct": -37.2,
+  "published_downside_pct": -35.3,
   "per_name": [
    {
     "symbol": "INTU",
-    "price": 276.73,
+    "price": 281.77,
     "yr_low": 268.01,
-    "to_52w_low_pct": -3.2,
-    "recession_pct": -17.7,
-    "cro_bear_pct": 42.0
-   },
-   {
-    "symbol": "IDXX",
-    "price": 560.88,
-    "yr_low": 506.91,
-    "to_52w_low_pct": -9.6,
-    "recession_pct": -23.2,
-    "cro_bear_pct": -24.2
-   },
-   {
-    "symbol": "V",
-    "price": 322.39,
-    "yr_low": 293.89,
-    "to_52w_low_pct": -8.8,
-    "recession_pct": -22.5,
-    "cro_bear_pct": -30.8
-   },
-   {
-    "symbol": "CCJ",
-    "price": 100.96,
-    "yr_low": 67.6,
-    "to_52w_low_pct": -33.0,
-    "recession_pct": -43.1,
-    "cro_bear_pct": -41.6
-   },
-   {
-    "symbol": "GMED",
-    "price": 80.39,
-    "yr_low": 51.79,
-    "to_52w_low_pct": -35.6,
-    "recession_pct": -45.2,
-    "cro_bear_pct": -15.4
-   },
-   {
-    "symbol": "NVDA",
-    "price": 205.19,
-    "yr_low": 142.03,
-    "to_52w_low_pct": -30.8,
-    "recession_pct": -41.2,
-    "cro_bear_pct": -33.7
+    "to_52w_low_pct": -4.9,
+    "recession_pct": -19.2,
+    "cro_bear_pct": 39.5
    },
    {
     "symbol": "TSM",
-    "price": 423.93,
+    "price": 441.4,
     "yr_low": 206.2,
-    "to_52w_low_pct": -51.4,
-    "recession_pct": -58.7,
-    "cro_bear_pct": -29.2
+    "to_52w_low_pct": -53.3,
+    "recession_pct": -60.3,
+    "cro_bear_pct": -32.0
    },
    {
-    "symbol": "VRT",
-    "price": 302.87,
-    "yr_low": 110.06,
-    "to_52w_low_pct": -63.7,
-    "recession_pct": -69.1,
-    "cro_bear_pct": -37.3
+    "symbol": "CCJ",
+    "price": 107.02,
+    "yr_low": 67.6,
+    "to_52w_low_pct": -36.8,
+    "recession_pct": -46.3,
+    "cro_bear_pct": -44.9
+   },
+   {
+    "symbol": "GMED",
+    "price": 77.32,
+    "yr_low": 51.79,
+    "to_52w_low_pct": -33.0,
+    "recession_pct": -43.1,
+    "cro_bear_pct": -12.1
+   },
+   {
+    "symbol": "NVDA",
+    "price": 212.45,
+    "yr_low": 142.03,
+    "to_52w_low_pct": -33.1,
+    "recession_pct": -43.2,
+    "cro_bear_pct": -36.0
+   },
+   {
+    "symbol": "BSX",
+    "price": 46.76,
+    "yr_low": 45.99,
+    "to_52w_low_pct": -1.6,
+    "recession_pct": -16.4,
+    "cro_bear_pct": 32.6
+   },
+   {
+    "symbol": "V",
+    "price": 323.82,
+    "yr_low": 293.89,
+    "to_52w_low_pct": -9.2,
+    "recession_pct": -22.9,
+    "cro_bear_pct": -31.1
+   },
+   {
+    "symbol": "IDXX",
+    "price": 570,
+    "yr_low": 506.91,
+    "to_52w_low_pct": -11.1,
+    "recession_pct": -24.4,
+    "cro_bear_pct": -25.4
    }
   ],
   "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% (recession). cro_bear is the agents' own adverse SoP (bear_fv_px, theme-pause case); when missing or implying upside it is flagged invalid and the published downside is the market-based recession stress."
  },
  "correlation": {
   "window": "2y weekly log returns",
-  "avg_pairwise": 0.23,
+  "avg_pairwise": 0.21,
   "n_pairs": 28,
   "max_pair": {
    "a": "TSM",
-   "b": "VRT",
-   "corr": 0.65
+   "b": "NVDA",
+   "corr": 0.64
   },
   "flagged_pairs": [
    {
-    "a": "NVDA",
-    "b": "TSM",
-    "corr": 0.64,
-    "combined_weight_pct": 21.4,
-    "breach": false
-   },
-   {
-    "a": "NVDA",
-    "b": "VRT",
-    "corr": 0.64,
-    "combined_weight_pct": 19.5,
-    "breach": false
-   },
-   {
     "a": "TSM",
-    "b": "VRT",
-    "corr": 0.65,
-    "combined_weight_pct": 18.8,
+    "b": "NVDA",
+    "corr": 0.64,
+    "combined_weight_pct": 26.6,
     "breach": false
    }
   ],
   "theme_beta": {
    "INTU": {
     "smh": 0.04,
-    "qqq": 0.52
+    "qqq": 0.53
    },
-   "IDXX": {
-    "smh": 0.27,
-    "qqq": 0.59
-   },
-   "V": {
-    "smh": 0.12,
-    "qqq": 0.44
+   "TSM": {
+    "smh": 0.83,
+    "qqq": 1.25
    },
    "CCJ": {
     "smh": 0.65,
     "qqq": 1.07
    },
    "GMED": {
-    "smh": 0.15,
-    "qqq": 0.37
+    "smh": 0.14,
+    "qqq": 0.35
    },
    "NVDA": {
     "smh": 1.03,
-    "qqq": 1.66
+    "qqq": 1.65
    },
-   "TSM": {
-    "smh": 0.83,
-    "qqq": 1.25
+   "BSX": {
+    "smh": 0.2,
+    "qqq": 0.47
    },
-   "VRT": {
-    "smh": 1.14,
-    "qqq": 1.78
+   "V": {
+    "smh": 0.12,
+    "qqq": 0.44
+   },
+   "IDXX": {
+    "smh": 0.27,
+    "qqq": 0.59
    }
   },
   "correlation_breach": false,
@@ -746,13 +768,8 @@
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
-  "IDXX": {
-   "thesis_break_px": 430.0,
-   "valid": true,
-   "review_trigger": "weekly refresh OR close < thesis_break_px"
-  },
-  "V": {
-   "thesis_break_px": 245.0,
+  "TSM": {
+   "thesis_break_px": 345.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
@@ -771,13 +788,18 @@
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
-  "TSM": {
-   "thesis_break_px": 345.0,
+  "BSX": {
+   "thesis_break_px": 40.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   },
-  "VRT": {
-   "thesis_break_px": 200.0,
+  "V": {
+   "thesis_break_px": 245.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "IDXX": {
+   "thesis_break_px": 430.0,
    "valid": true,
    "review_trigger": "weekly refresh OR close < thesis_break_px"
   }
@@ -786,20 +808,19 @@
   {
    "names": [
     "NVDA",
-    "TSM",
-    "VRT"
+    "TSM"
    ],
-   "max_units": 2.3,
+   "max_units": 2.05,
    "axis": "ai-capex"
   }
  ],
  "theme_caps": [],
  "theme_exposure": {
-  "fintech_rails": 29.22,
-  "genomics_bio_tools": 14.94,
-  "energy_transition": 22.08,
-  "robotics_automation": 12.34,
-  "ai_infrastructure": 29.87
+  "fintech_rails": 25.33,
+  "ai_infrastructure": 26.63,
+  "energy_transition": 13.64,
+  "robotics_automation": 24.68,
+  "genomics_bio_tools": 9.74
  },
  "pool_stats": {
   "n_pool": 40,
@@ -817,7 +838,7 @@
   "horizon_months": 12
  },
  "risk_stance": "balanced",
- "macro_read": "",
+ "macro_read": "macro_regime.json reads NEUTRAL (score 0.567) with growth ACCELERATING but inflation ACCELERATING and credit COMPLACENT (late-cycle) and rates neutral — so against the +30-50%/12-mo goal I take a balanced-leaning-REACH stance: lean into the live earnings-momentum AI-capex chokepoints (NVDA/TSM raised toward full size) and the uranium/medtech re-rates that can deliver the goal within a year, while sizing the high-beta reaches with discipline and keeping V/IDXX as rate-duration ballast because accelerating inflation + complacent credit cap how aggressive a NEUTRAL regime should be.",
  "macro_regime": {
   "regime": "NEUTRAL",
   "score": 0.567,
@@ -828,8 +849,8 @@
    "credit": "complacent"
   }
  },
- "book_expected_return_pct": 20.1,
- "book_horizon_months": null,
+ "book_expected_return_pct": 30.6,
+ "book_horizon_months": 12.0,
  "generated_at": "2026-06-15",
  "engine": "opus-4.8-disruptor-theme-v1",
  "universe": 40,

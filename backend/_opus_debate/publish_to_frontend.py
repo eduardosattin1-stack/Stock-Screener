@@ -219,6 +219,11 @@ for p in picks:
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
         "size_units": p.get("size_units"),
         "entry_posture": p.get("entry_posture") or derive_entry_posture(p, rec),
+        "expected_return_pct": p.get("expected_return_pct"),
+        "horizon_months": p.get("horizon_months"),
+        "meets_goal": p.get("meets_goal"),
+        "goal_note": p.get("goal_note"),
+        "wheel": p.get("wheel"),
         "engine": "opus-4.8-regime",
     })
 
