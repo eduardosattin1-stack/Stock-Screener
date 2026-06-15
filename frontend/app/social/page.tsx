@@ -70,8 +70,17 @@ interface Backtest {
     avg_return_63d?: number;
     winners_21d?: number;
     measured_21d?: number;
+    thesis_hit_rate?: number;
+    labeled?: number;
+    validated?: number;
   };
   top_signals?: { entity_name: string; tickers?: string | null; return_21d?: number; created_at?: string }[];
+  validated_cases?: {
+    entity_name: string; tickers?: string | null; track?: string; signal_date?: string;
+    awareness_closed?: boolean; rev_accel?: boolean; rev_growth_post?: number;
+    rerate_excess_21d?: number; rerate_excess_126d?: number; validated?: boolean;
+  }[];
+  mode?: string;
 }
 interface HistPoint { hour: string; mentions: number; sentiment: number; intent_purchase: number; authors: number; }
 interface IntentRow { intent: string; count: number; avg_score: number; }
@@ -622,6 +631,9 @@ function TrackRecord({ backtest }: { backtest: Backtest | null }) {
   const st = backtest?.stats;
   const measured = st?.measured_21d ?? 0;
   const top = (backtest?.top_signals ?? []).filter(Boolean);
+  const cases = (backtest?.validated_cases ?? []).filter(Boolean);
+  const hit = st?.thesis_hit_rate;
+  const isReplay = backtest?.mode === "replay";
   const th: React.CSSProperties = { padding: "7px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase" };
   return (
     <div style={{ marginTop: 32 }}>
@@ -670,6 +682,54 @@ function TrackRecord({ backtest }: { backtest: Backtest | null }) {
           </table>
         </div>
       )}
+
+      {/* Thesis validation: low-awareness demand spike → awareness-close + revenue accel + re-rate? */}
+      <div style={{ marginTop: 22 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.04em", color: T.text }}>THESIS VALIDATION</span>
+          <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light }}>
+            a signal &quot;worked&quot; if within ~1–6mo: awareness closed + revenue accelerated + the stock re-rated vs SPY/sector
+          </span>
+          {isReplay && <Chip text="replay · dev-tools (HN) only" color={T.amber} bg="rgba(245,185,66,0.16)" />}
+        </div>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: cases.length ? 12 : 0 }}>
+          <StatCard label="Thesis hit-rate" value={hit != null ? pct(hit) : "—"} sub={st?.labeled ? `${st?.validated ?? 0}/${st?.labeled} labeled` : "accruing"} accent={hit != null && hit > 0 ? T.green : undefined} />
+        </div>
+        {cases.length === 0 ? (
+          <div style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.5, padding: "9px 12px", background: "var(--amber-light)", border: `1px solid ${T.border}`, borderRadius: 6 }}>
+            No validated cases yet — each step resolves on its own clock: re-rate at +1–6mo, revenue after the next earnings. Historical replay validates the <span style={{ color: T.text }}>dev-tools (HN)</span> lane only; the consumer thesis validates <span style={{ color: T.text }}>forward</span> as signals resolve.
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto", border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                  <th style={{ ...th, textAlign: "left" }}>Entity</th>
+                  <th style={th}>Ticker</th>
+                  <th style={th}>Signal</th>
+                  <th style={{ ...th, textAlign: "center" }}>Awareness↑</th>
+                  <th style={{ ...th, textAlign: "center" }}>Revenue↑</th>
+                  <th style={th}>Re-rate +126d</th>
+                  <th style={{ ...th, textAlign: "center" }}>Validated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cases.map((c, i) => (
+                  <tr key={i} style={{ borderTop: `1px solid ${T.border}`, background: c.validated ? "rgba(20,184,122,0.06)" : "transparent" }}>
+                    <td style={{ padding: "6px 8px", color: T.text }}>{c.entity_name}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "right", color: T.purple }}>{c.tickers || "—"}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "right", color: T.light }}>{c.signal_date ? new Date(c.signal_date).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "—"}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "center", color: c.awareness_closed ? T.green : T.light }}>{c.awareness_closed ? "✓" : "—"}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "center", color: c.rev_accel ? T.green : T.light }}>{c.rev_accel ? "✓" : "—"}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "right", color: retColor(c.rerate_excess_126d), fontWeight: 700 }}>{fmtRet(c.rerate_excess_126d)}</td>
+                    <td style={{ padding: "6px 8px", textAlign: "center" }}>{c.validated ? <Chip text="YES" color={T.green} bg="rgba(20,184,122,0.18)" /> : <span style={{ color: T.light }}>—</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
