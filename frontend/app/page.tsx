@@ -3052,6 +3052,14 @@ export default function Dashboard(){
                     </div>
                   </div>
 
+                  {/* Apex Director Memo — directly under its basket, parallel to the Value/Disruptor memos */}
+                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Apex Director Memo</summary>
+                    <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>
+                      {speculairBaskets.director_memo || "No memo available. Run the debate pipeline to generate."}
+                    </pre>
+                  </details>
+
                   {/* Value Lens — pure-value re-grade of the same debate (catalyst overlay stripped) */}
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -3454,14 +3462,6 @@ export default function Dashboard(){
                       )}
                     </div>
                   </div>
-
-                  {/* Director Execution Memo */}
-                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Director Execution Memo</summary>
-                    <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>
-                      {speculairBaskets.director_memo || "No memo available. Run the debate pipeline to generate."}
-                    </pre>
-                  </details>
 
                   {/* Per-Methodology Baskets */}
                   <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
