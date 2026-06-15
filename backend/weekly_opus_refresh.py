@@ -56,6 +56,40 @@ DEBATE_MODEL = "opus"
 DIRECTOR_MODEL = "opus"   # Fable→Opus-4.8/1M fallback
 SKEPTIC_MODEL = "opus"    # Fable→Opus-4.8/1M fallback
 
+# ── Return objective (Apex + Disruptor only; the Value Lens stays pure-value/patient) ──
+# The Apex + Disruptor Directors target this and set a macro-driven risk_stance (reach vs defend).
+RETURN_GOAL = {"low_pct": 30, "high_pct": 50, "horizon_months": 12}
+
+
+def _write_macro_regime():
+    """Fetch the live macro classifier (macro_regime.py v8) and write it where the Apex + Disruptor
+    Directors read it, so their risk_stance is anchored to a structured macro read (not just prose).
+    Self-heals via fetch_macro_regime's GCS last-known-good cache; neutral fallback on hard failure."""
+    out = ROOT / "macro_regime.json"
+    from datetime import datetime as _dt
+    try:
+        import macro_regime
+        from screener_v6 import fmp
+        r = macro_regime.fetch_macro_regime(fmp) or {}
+        feat = r.get("features", {}) or {}
+        doc = {
+            "regime": r.get("regime", "NEUTRAL"),
+            "score": r.get("score", 0.5),
+            "regime_detail": r.get("regime_detail", {}),
+            "features": {k: feat.get(k) for k in
+                         ("macro_vix", "macro_yield_spread", "macro_recession_prob",
+                          "macro_cpi", "macro_unemployment") if k in feat},
+            "version": r.get("version", ""),
+            "asof": _dt.now().strftime("%Y-%m-%d"),
+        }
+    except Exception as e:
+        print(f"WARN: macro_regime fetch failed ({e}) — writing NEUTRAL fallback")
+        doc = {"regime": "NEUTRAL", "score": 0.5, "regime_detail": {}, "features": {},
+               "asof": _dt.now().strftime("%Y-%m-%d"), "fallback": True}
+    out.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"macro_regime: {doc['regime']} (score {doc.get('score')}) -> {out.name}")
+    return doc
+
 # LEGACY-9 method set — used ONLY for signal typing (deep_value vs catalyst), never for selection.
 DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
             "earnings_yield_gap", "owner_earnings", "dcf_fcff", "rd_capitalized_dcf", "ev_gross_profit"}
@@ -301,7 +335,7 @@ HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=
 OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position. Reply exactly: DONE"""
 
 
-DISRUPTOR_DIRECTOR_PROMPT = """You are the SPECULAIR DISRUPTOR DIRECTOR (Claude Opus 4.8), allocating REAL capital to PROFITABLE SECULAR DISRUPTORS — picks-and-shovels toll-takers in durable disruption themes — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/disruptor/disruptor_grade_input.json — one row per debated name, every field pre-computed.
+DISRUPTOR_DIRECTOR_PROMPT = """You are the SPECULAIR DISRUPTOR DIRECTOR (Claude Opus 4.8), allocating REAL capital to PROFITABLE SECULAR DISRUPTORS — picks-and-shovels toll-takers in durable disruption themes — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/disruptor/disruptor_grade_input.json — one row per debated name, every field pre-computed. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH (favor names whose secular thesis can deliver +30-50% within ~12 months via a live trend / momentum / earnings-inflection, and take more near-term AI-capex/cyclical beta); RISK_OFF / decelerating / sticky-inflation => DEFEND (prefer guard-clean compounders whose downside is protected even if the +30-50% is a multi-year story, and SIZE DOWN the high-beta reaches). State risk_stance + a one-line macro read in the disruptor_memo.
 
 SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
   - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 — a forensic red flag the factors miss). "CAP" => disruptor_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great theme story NEVER overrides the forensic gate.
@@ -323,8 +357,8 @@ HARD CONSTRAINTS:
 THEME-CONCENTRATION STRESS (run over the final 8 BEFORE sizing — this is the PRIMARY axis; GICS sectors will NOT catch it because half this universe is "Technology"). Decompose the 8 on SHARED THEME/FACTOR exposure: (a) AI-CAPEX (the obvious cluster — semis, networking, power, cooling, EDA ALL ride the same hyperscaler capex line; a 2-quarter digestion pause hits every leg at once) — call this one out EXPLICITLY in every run; (b) CHINA / EXPORT-CONTROL exposure (revenue share + license risk); (c) RATE-DURATION (long-duration growth multiples compressing together when real rates rise); (d) SINGLE-CUSTOMER concentration (>=2 names with the same top customer); (e) SUPPLY-CHAIN chokepoint (e.g. one foundry's advanced nodes). FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY — swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation. A single hyperscaler capex cut or one export-control ruling must not be able to hit more than 30% of this book.
 
 OUTPUT — Write VALID JSON to backend/_opus_debate/disruptor/apex_basket_disruptor.json =
-{apex_basket:[{symbol, sector, theme (primary id), themes (all ids), value_chain_position, disruptor_score(0-100), thesis(one sentence), theme_durability(one line), moat_evidence(one line incl. the GM-trajectory fact), reinvestment_runway(one line with numbers), valuation_guard(one line, e.g. "EV/GP 14x vs +38% rev — guard passes" or "rule-of-40=31 — capped"), rule_of_40(number), ev_gp(number), sop_mos_pct, ttm_fcf_positive(bool), fcf_inflecting(bool), net_funded_debt_ebitda, interest_coverage, funded_solvency, growth_durability, exposure_axes(list of shared axes this name carries, e.g. ["ai-capex","china-export-controls"]), size_units(float 0.1-1.5: 1.0=full unit; every fcf_inflecting name, guard-capped name, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the THESIS is broken — derive it from a thesis-level break like a GM inflection, a lost flagship design, or theme-demand rollover, then express it as a price; below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the theme pauses 12-18 months — used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — a quality compounder to own now = enter_now_carry; a standard tranche-in = scale_in; a name priced for perfection to add only into a multiple reset = wait_for_weakness; gated on a dated event = on_confirmation), wheel (only where a wheel SUITS — usually FALSE for an uncapped compounder whose upside you do NOT want to cap; true only for a slow/at-fair-value name you would happily own lower and cap at fair value: {suits:bool, csp_strike (= thesis_break_px), cc_strike (the fair-value target), tenor_days (~30-45), rationale (one sentence)}), forensic_gate, hype_flag(bool: true if the price embeds a materially more aggressive S-curve than the evidence supports)}],
-runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], theme_exposure:{<theme_id>: weight_pct}, disruptor_memo}.
+{apex_basket:[{symbol, sector, theme (primary id), themes (all ids), value_chain_position, disruptor_score(0-100), thesis(one sentence), theme_durability(one line), moat_evidence(one line incl. the GM-trajectory fact), reinvestment_runway(one line with numbers), valuation_guard(one line, e.g. "EV/GP 14x vs +38% rev — guard passes" or "rule-of-40=31 — capped"), rule_of_40(number), ev_gp(number), sop_mos_pct, ttm_fcf_positive(bool), fcf_inflecting(bool), net_funded_debt_ebitda, interest_coverage, funded_solvency, growth_durability, exposure_axes(list of shared axes this name carries, e.g. ["ai-capex","china-export-controls"]), size_units(float 0.1-1.5: 1.0=full unit; every fcf_inflecting name, guard-capped name, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the THESIS is broken — derive it from a thesis-level break like a GM inflection, a lost flagship design, or theme-demand rollover, then express it as a price; below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the theme pauses 12-18 months — used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — a quality compounder to own now = enter_now_carry; a standard tranche-in = scale_in; a name priced for perfection to add only into a multiple reset = wait_for_weakness; gated on a dated event = on_confirmation), wheel (only where a wheel SUITS — usually FALSE for an uncapped compounder whose upside you do NOT want to cap; true only for a slow/at-fair-value name you would happily own lower and cap at fair value: {suits:bool, csp_strike (= thesis_break_px), cc_strike (the fair-value target), tenor_days (~30-45), rationale (one sentence)}), expected_return_pct (your base-case % upside to fair value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the trend/momentum/earnings-inflection driver, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or why a longer-horizon compounder still earns a seat), forensic_gate, hype_flag(bool: true if the price embeds a materially more aggressive S-curve than the evidence supports)}],
+runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], theme_exposure:{<theme_id>: weight_pct}, risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal), disruptor_memo}.
 The disruptor_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED by the forensic gate, the hard gates (FCF/growth/solvency), and the valuation guard — with the one-line reason each; (c) name every fcf_inflecting keep and its cited evidence; (d) give the name-by-name RISE/FALL vs the prior disruptor apex (the caller specifies the prior basket in the run instruction; if none is given, read the existing backend/_opus_debate/disruptor/apex_basket_disruptor.json for the prior slate BEFORE you overwrite it); (e) a theme_concentration_stress section naming EACH >=2-name axis (ALWAYS including the AI-capex check, even if it carries <=1 name — say so) and EXACTLY how it was resolved (diversified -> which swap and why; or kept-with-cap -> the numbers). Reply exactly: DONE"""
 
 
@@ -1620,6 +1654,7 @@ def disruptor_prep():
     (DISRUPTOR_DIR / "interrogator_system.txt").write_text(E.INTERROGATOR_SYSTEM_PROMPT, encoding="utf-8")
     (DISRUPTOR_DIR / "architect_system.txt").write_text(E.ARCHITECT_SYSTEM_PROMPT, encoding="utf-8")
     (DISRUPTOR_DIR / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
+    _write_macro_regime()                                   # macro read for the Director's risk_stance
 
     # ── §2.7 — render the workflow with __SYMS__/__ONLINE_SYMS__ baked in (the args-delivery workaround) ──
     js = (_DISRUPTOR_WORKFLOW_TEMPLATE
@@ -2021,6 +2056,32 @@ def disruptor_publish(push_gcs=False):
                            f"never blended into the Apex or Value NAVs.")}
         except Exception:
             pool_stats = {}
+    # ── Return goal + macro risk-stance (Disruptor book) — Director-authored, deterministic fallback ──
+    _macro = {}
+    _mf = ROOT / "macro_regime.json"
+    if _mf.exists():
+        try:
+            _macro = json.load(open(_mf, encoding="utf-8"))
+        except Exception:
+            _macro = {}
+    _exp_w = _exp_tot = _hor_w = _hor_tot = 0.0
+    for p in picks:
+        if p.get("expected_return_pct") is None and isinstance(p.get("sop_mos_pct"), (int, float)):
+            p["expected_return_pct"] = round(p["sop_mos_pct"], 1)   # MoS = upside to fair value
+        w = (weights or {}).get(p["symbol"], 0) or 0
+        if isinstance(p.get("expected_return_pct"), (int, float)):
+            _exp_tot += p["expected_return_pct"] * w; _exp_w += w
+        if isinstance(p.get("horizon_months"), (int, float)):
+            _hor_tot += p["horizon_months"] * w; _hor_w += w
+    _stance_map = {"RISK_ON": "aggressive", "NEUTRAL": "balanced", "CAUTIOUS": "balanced", "RISK_OFF": "defensive"}
+    _goal_block = {
+        "return_goal": RETURN_GOAL,
+        "risk_stance": apx.get("risk_stance") or _stance_map.get(_macro.get("regime"), "balanced"),
+        "macro_read": apx.get("macro_read", ""),
+        "macro_regime": {"regime": _macro.get("regime"), "score": _macro.get("score"), "regime_detail": _macro.get("regime_detail", {})},
+        "book_expected_return_pct": round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None,
+        "book_horizon_months": round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None,
+    }
     out = {"apex_basket": picks, "runner_ups": apx.get("runner_ups", []),
            "disruptor_memo": apx.get("disruptor_memo", ""),
            "disruptor_tracking": dt, "disruptor_tracking_weighted": dtw, "weights": weights,
@@ -2028,6 +2089,7 @@ def disruptor_publish(push_gcs=False):
            "exits": apx.get("exits"), "combined_caps": apx.get("combined_caps"),
            "theme_caps": apx.get("theme_caps"),
            "theme_exposure": apx.get("theme_exposure"), "pool_stats": pool_stats,
+           **_goal_block,
            "generated_at": _dt.date.today().isoformat(),
            "engine": "opus-4.8-disruptor-theme-v1", "universe": n_debated,
            "taxonomy_version": taxonomy_version}
@@ -2355,6 +2417,7 @@ def prep():
     (ROOT / "interrogator_system.txt").write_text(E.INTERROGATOR_SYSTEM_PROMPT, encoding="utf-8")
     (ROOT / "architect_system.txt").write_text(E.ARCHITECT_SYSTEM_PROMPT, encoding="utf-8")
     (ROOT / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
+    _write_macro_regime()                                   # macro read for the Director's risk_stance
 
     # no_tx names have NO FMP transcript — instead of skipping (the user's explicit ask: "send agents
     # to fetch transcripts online so we don't skip any pick"), pass them as ONLINE_SYMS so the debate
@@ -2471,13 +2534,13 @@ for (let b = 0; b < ALL.length; b += BATCH) {
 phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8, 1M context). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
-  'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt.\n' +
+  'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 3b — BASKET-13 CATALYST SLEEVE (visibility addendum): Read backend/_basket13_candidates.json if it exists (skip this step silently if absent) — the Catalyst Watch sleeve names, each carrying native fields (score, board_priority, edge_grade, ev_pct, valuation_method, dated_milestone, lane_canon, resolution_driver, edge_flags). Reading guide: (1) score / board_priority measure catalyst DENSITY, not cheapness — score is NOT edge; (2) ev_pct is an expected-value barbell, NOT a margin of safety; (3) check dated_milestone against YOUR holding window before selecting; (4) edge_grade (H/M/L) is computed vs the LIVE price and is perishable. HARD CONSTRAINT: you may NOT select any sleeve name whose valuation_method == "binary_prob", whose edge_grade == "L", or that carries a blocking edge_flag (QUARANTINED / NO_UPSIDE / TRADING_THROUGH_TERMS / FLOOR_GE_LIVE / NO_BREAK_DOWNSIDE); these names are context, not candidates.\n' +
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off), (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet). No hidden factor may carry >3 names; stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
-  'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...]}. Reply exactly: DONE',
+  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
+  'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
 log('Radar + debate + director complete.')
 return 'DONE'

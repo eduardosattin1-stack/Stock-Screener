@@ -272,6 +272,27 @@ baskets["weights"] = apex_weights
 baskets["weights_basis"] = _wbasis
 if track_summary_w:
     baskets["apex_tracking_weighted"] = track_summary_w
+
+# ── Return goal + macro risk-stance (Apex book) — Director-authored, deterministic fallback ──
+_macro = load(BK / "macro_regime.json", {"regime": "NEUTRAL", "score": 0.5}) or {"regime": "NEUTRAL"}
+_goal = {"low_pct": 30, "high_pct": 50, "horizon_months": 12}
+_exp_w = _exp_tot = _hor_w = _hor_tot = 0.0
+for e in entries:
+    px = scan_by_sym.get(e["symbol"], {}).get("price") or e.get("entry_price")
+    if e.get("expected_return_pct") is None and isinstance(e.get("target_px"), (int, float)) and isinstance(px, (int, float)) and px > 0:
+        e["expected_return_pct"] = round((e["target_px"] / px - 1) * 100, 1)
+    w = apex_weights.get(e["symbol"], 0) or 0
+    if isinstance(e.get("expected_return_pct"), (int, float)):
+        _exp_tot += e["expected_return_pct"] * w; _exp_w += w
+    if isinstance(e.get("horizon_months"), (int, float)):
+        _hor_tot += e["horizon_months"] * w; _hor_w += w
+_stance_map = {"RISK_ON": "aggressive", "NEUTRAL": "balanced", "CAUTIOUS": "balanced", "RISK_OFF": "defensive"}
+baskets["return_goal"] = _goal
+baskets["risk_stance"] = director.get("risk_stance") or _stance_map.get(_macro.get("regime"), "balanced")
+baskets["macro_read"] = director.get("macro_read", "")
+baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"), "regime_detail": _macro.get("regime_detail", {})}
+baskets["book_expected_return_pct"] = round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None
+baskets["book_horizon_months"] = round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None
 baskets["generated_at"] = datetime.now(timezone.utc).isoformat()
 baskets["director_last_run"] = baskets["generated_at"]
 baskets["rebalance_date"] = TODAY

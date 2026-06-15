@@ -53,7 +53,8 @@
     "iv": null
    },
    "entry_price": 276.73,
-   "entry_date": "2026-06-14"
+   "entry_date": "2026-06-14",
+   "expected_return_pct": 64.4
   },
   {
    "symbol": "IDXX",
@@ -106,7 +107,8 @@
     "iv": null
    },
    "entry_price": 560.88,
-   "entry_date": "2026-06-14"
+   "entry_date": "2026-06-14",
+   "expected_return_pct": 9.6
   },
   {
    "symbol": "V",
@@ -251,7 +253,8 @@
     "iv": null
    },
    "entry_price": 80.39,
-   "entry_date": "2026-06-14"
+   "entry_date": "2026-06-14",
+   "expected_return_pct": 12.0
   },
   {
    "symbol": "NVDA",
@@ -309,7 +312,8 @@
     "iv": null
    },
    "entry_price": 205.19,
-   "entry_date": "2026-06-14"
+   "entry_date": "2026-06-14",
+   "expected_return_pct": 2.3
   },
   {
    "symbol": "TSM",
@@ -413,7 +417,8 @@
     "iv": null
    },
    "entry_price": 302.87,
-   "entry_date": "2026-06-14"
+   "entry_date": "2026-06-14",
+   "expected_return_pct": -7.6
   }
  ],
  "runner_ups": [
@@ -806,6 +811,25 @@
   "taxonomy_version": "1.0",
   "banner": "Highest-volatility sleeve: 8 profitable secular-theme names from a 40-name thematic screen (taxonomy v1.0). Long-duration growth multiples — expect drawdowns ~2x the value book's; sized as the SMALLEST sleeve by design and never blended into the Apex or Value NAVs."
  },
+ "return_goal": {
+  "low_pct": 30,
+  "high_pct": 50,
+  "horizon_months": 12
+ },
+ "risk_stance": "balanced",
+ "macro_read": "",
+ "macro_regime": {
+  "regime": "NEUTRAL",
+  "score": 0.567,
+  "regime_detail": {
+   "growth": "accelerating",
+   "inflation": "accelerating",
+   "rates": "neutral",
+   "credit": "complacent"
+  }
+ },
+ "book_expected_return_pct": 20.1,
+ "book_horizon_months": null,
  "generated_at": "2026-06-15",
  "engine": "opus-4.8-disruptor-theme-v1",
  "universe": 40,

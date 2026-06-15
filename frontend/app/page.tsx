@@ -2264,6 +2264,39 @@ export default function Dashboard(){
     );
   };
 
+  // Book-level return-goal + macro risk-stance banner (Apex + Disruptor only; Value stays pure-value).
+  const goalBanner = (d?: any) => {
+    if (!d || !d.return_goal) return null;
+    const g = d.return_goal;
+    const stance = String(d.risk_stance || "").toLowerCase();
+    const sc = stance === "aggressive" ? "var(--green)" : stance === "defensive" ? "var(--red)" : "var(--amber)";
+    const mr = d.macro_regime || {};
+    const mrc = mr.regime === "RISK_ON" ? "var(--green)" : mr.regime === "RISK_OFF" ? "var(--red)" : "var(--amber)";
+    const exp = d.book_expected_return_pct;
+    return (
+      <div title={d.macro_read || "Return objective + macro-driven risk stance — how the Director is positioning vs the goal and the macro."}
+           style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 12, padding: "6px 10px", borderRadius: 6, background: "var(--bg)", border: "1px solid var(--border)", cursor: "help" }}>
+        <span style={{ fontWeight: 700, color: "var(--text-light)" }}>🎯 +{g.low_pct}-{g.high_pct}% / {g.horizon_months}mo</span>
+        <span>· stance <span style={{ color: sc, fontWeight: 700, textTransform: "uppercase" }}>{stance || "—"}</span></span>
+        {mr.regime && <span>· macro <span style={{ color: mrc, fontWeight: 700 }}>{mr.regime}{mr.score != null ? ` ${Number(mr.score).toFixed(2)}` : ""}</span></span>}
+        {exp != null && <span>· book exp <span style={{ color: exp >= g.low_pct ? "var(--green)" : "var(--amber)", fontWeight: 700 }}>+{exp}%</span>{d.book_horizon_months != null ? ` (~${d.book_horizon_months}mo)` : ""}</span>}
+      </div>
+    );
+  };
+
+  // Per-pick goal tag: horizon + does-it-meet-the-goal (populates once the Director authors it).
+  const goalTag = (pick?: any) => {
+    if (!pick || (pick.horizon_months == null && pick.meets_goal == null)) return null;
+    const meets = pick.meets_goal;
+    const col = meets === true ? "var(--green)" : meets === false ? "var(--red)" : "var(--text-muted)";
+    const mark = meets === true ? "✓ goal" : meets === false ? "✗ slow" : "";
+    return (
+      <span title={pick.goal_note || "Director's horizon-to-target + whether it meets the +30-50%/12mo goal"} style={{ fontSize: 8, color: col, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+        {pick.horizon_months != null ? `~${pick.horizon_months}mo` : ""}{mark ? " " + mark : ""}
+      </span>
+    );
+  };
+
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
@@ -2926,6 +2959,7 @@ export default function Dashboard(){
                         {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
                       </span>
                     </div>
+                    {goalBanner(speculairBaskets)}
                     {(speculairBaskets.apex_tracking_weighted || speculairBaskets.apex_tracking) && (() => {
                       // Director-weighted NAV primary: the Director risk-sizes the book in his memo
                       // (his size_units, or his director_conviction as the basis). Equal-weight = fallback.
@@ -2980,6 +3014,7 @@ export default function Dashboard(){
                                   <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
                                 )}
                                 {entryPostureChip(pick.entry_posture)}
+                                {goalTag(pick)}
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
@@ -3300,6 +3335,7 @@ export default function Dashboard(){
                         ⚠ {disruptorApex.pool_stats.banner}
                       </div>
                     )}
+                    {goalBanner(disruptorApex)}
                     {(disruptorApex.disruptor_tracking_weighted || disruptorApex.disruptor_tracking) && (() => {
                       const _dtw = disruptorApex.disruptor_tracking_weighted;
                       const weighted = !!(_dtw && (_dtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
@@ -3363,6 +3399,7 @@ export default function Dashboard(){
                                 )}
                                 {pick.corr_flag && <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>}
                                 {entryPostureChip(pick.entry_posture)}
+                                {goalTag(pick)}
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
                                 {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
