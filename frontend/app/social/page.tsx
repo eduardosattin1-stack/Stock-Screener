@@ -233,6 +233,7 @@ export default function SocialArb() {
   const [histWindow, setHistWindow] = useState<number>(168);            // 7d default; 2160=90d, 17520=2y
   const [histCache, setHistCache] = useState<Record<string, HistPoint[] | "loading">>({});
   const [corrOnly, setCorrOnly] = useState(false);
+  const [trackFilter, setTrackFilter] = useState<string>("all");
 
   // signals re-fetch when the status filter changes
   useEffect(() => {
@@ -308,7 +309,10 @@ export default function SocialArb() {
   const hnShare = (srcCounts["HackerNews"] ?? 0) / totalSrc;
   const awarenessShare = Object.entries(srcCounts).filter(([k]) => k.startsWith("News:") || k.startsWith("Premium:")).reduce((a, [, v]) => a + v, 0) / totalSrc;
   const thinData = hnShare > 0.6 || awarenessShare < 0.05;
-  const visibleSignals = corrOnly ? signals.filter((s) => (n(s.corroboration) ?? 1) >= 2) : signals;
+  const visibleSignals = signals.filter((s) =>
+    (trackFilter === "all" || (s.signal_track || "mixed") === trackFilter) &&
+    (!corrOnly || (n(s.corroboration) ?? 1) >= 2)
+  );
 
   const hdr: React.CSSProperties = { padding: "9px 8px", fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase", whiteSpace: "nowrap" };
 
@@ -370,6 +374,14 @@ export default function SocialArb() {
           ))}
           <span style={{ width: 1, height: 18, background: T.border, margin: "0 4px" }} />
           <Toggle active={corrOnly} onClick={() => { setCorrOnly((v) => !v); setExpanded(null); }}>corroborated ≥2</Toggle>
+        </div>
+
+        {/* Track filter (source-class lane: HN→dev-tools, Reddit/YouTube→consumer, StockTwits/News→investor) */}
+        <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
+          <span style={{ fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.06em", color: T.light, textTransform: "uppercase" }}>Track</span>
+          {([["all", "All"], ["consumer", "Consumer"], ["investor", "Investor"], ["dev-tools", "Dev Tools"], ["mixed", "Mixed"]] as [string, string][]).map(([val, lbl]) => (
+            <Toggle key={val} active={trackFilter === val} onClick={() => { setTrackFilter(val); setExpanded(null); }}>{lbl}</Toggle>
+          ))}
         </div>
 
         {loading ? (
@@ -435,8 +447,8 @@ export default function SocialArb() {
                               ))}
                               {s.signal_track && s.signal_track !== "mixed" && (
                                 <Chip text={s.signal_track}
-                                  color={s.signal_track === "consumer" ? T.green : T.purple}
-                                  bg={s.signal_track === "consumer" ? "rgba(20,184,122,0.14)" : "rgba(196,181,253,0.14)"} />
+                                  color={s.signal_track === "consumer" ? T.green : s.signal_track === "dev-tools" ? T.amber : T.purple}
+                                  bg={s.signal_track === "consumer" ? "rgba(20,184,122,0.14)" : s.signal_track === "dev-tools" ? "rgba(245,185,66,0.16)" : "rgba(196,181,253,0.14)"} />
                               )}
                             </div>
                           </td>
