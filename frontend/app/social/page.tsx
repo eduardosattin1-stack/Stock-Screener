@@ -64,10 +64,13 @@ interface Stats {
 interface Backtest {
   stats?: {
     total_signals?: number;
+    avg_return_5d?: number;
     avg_return_21d?: number;
+    avg_return_63d?: number;
     winners_21d?: number;
     measured_21d?: number;
   };
+  top_signals?: { entity_name: string; tickers?: string | null; return_21d?: number; created_at?: string }[];
 }
 interface HistPoint { hour: string; mentions: number; sentiment: number; intent_purchase: number; authors: number; }
 interface IntentRow { intent: string; count: number; avg_score: number; }
@@ -76,7 +79,7 @@ interface Mention {
   content: string; source: string; timestamp: string; url?: string;
 }
 interface Quote { symbol: string; name?: string; price: number | null; day: number | null; ytd: number | null; year: number | null; }
-interface Detail { history: HistPoint[]; intent: IntentRow[]; mentions: Mention[]; quote: Quote | null; }
+interface Detail { intent: IntentRow[]; mentions: Mention[]; quote: Quote | null; }
 
 const STATUSES = ["new", "investigating", "passed", "positioned", "closed"] as const;
 type Status = (typeof STATUSES)[number];
@@ -86,6 +89,8 @@ const n = (x: any): number | null => { const v = Number(x); return Number.isFini
 const f1 = (x: any) => { const v = n(x); return v == null ? "—" : v.toFixed(1); };
 const f2 = (x: any) => { const v = n(x); return v == null ? "—" : v.toFixed(2); };
 const pct = (x: any) => { const v = n(x); return v == null ? "—" : `${(v * 100).toFixed(0)}%`; };
+const fmtRet = (x: any) => { const v = n(x); return v == null ? "—" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%`; };
+const retColor = (x: any) => { const v = n(x); return v == null ? T.muted : v > 0 ? T.green : v < 0 ? T.red : T.muted; };
 
 function timeAgo(iso: string): string {
   const t = Date.parse(iso);
@@ -224,6 +229,8 @@ export default function SocialArb() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [hover, setHover] = useState<number | null>(null);
   const [details, setDetails] = useState<Record<number, Detail | "loading">>({});
+  const [histWindow, setHistWindow] = useState<number>(168);            // 7d default; 2160=90d, 17520=2y
+  const [histCache, setHistCache] = useState<Record<string, HistPoint[] | "loading">>({});
 
   // signals re-fetch when the status filter changes
   useEffect(() => {
@@ -242,6 +249,16 @@ export default function SocialArb() {
     fetch(`${SOCIAL}/backtest`).then((r) => (r.ok ? r.json() : null)).then(setBacktest).catch(() => {});
   }, []);
 
+  const loadHistory = useCallback((entityId: number, hours: number) => {
+    const key = `${entityId}:${hours}`;
+    if (histCache[key]) return;
+    setHistCache((h) => ({ ...h, [key]: "loading" }));
+    fetch(`${SOCIAL}/entities/${entityId}/history?hours=${hours}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows) => setHistCache((h) => ({ ...h, [key]: Array.isArray(rows) ? rows : [] })))
+      .catch(() => setHistCache((h) => ({ ...h, [key]: [] })));
+  }, [histCache]);
+
   const loadDetail = useCallback((sig: Signal) => {
     if (details[sig.id]) return;
     setDetails((d) => ({ ...d, [sig.id]: "loading" }));
@@ -251,21 +268,26 @@ export default function SocialArb() {
       ? Promise.resolve(null)
       : fetch(`/api/quotes?symbols=${encodeURIComponent(primary)}`).then((r) => (r.ok ? r.json() : null)).then((d) => d?.quotes?.[0] ?? null).catch(() => null);
     Promise.all([
-      fetch(`${SOCIAL}/entities/${id}/history?hours=168`).then((r) => (r.ok ? r.json() : [])).catch(() => []),
       fetch(`${SOCIAL}/entities/${id}/intent`).then((r) => (r.ok ? r.json() : [])).catch(() => []),
       fetch(`${SOCIAL}/entities/${id}/mentions?limit=8`).then((r) => (r.ok ? r.json() : [])).catch(() => []),
       quoteP,
-    ]).then(([history, intent, mentions, quote]) => {
-      setDetails((d) => ({ ...d, [sig.id]: { history, intent, mentions, quote } }));
+    ]).then(([intent, mentions, quote]) => {
+      setDetails((d) => ({ ...d, [sig.id]: { intent, mentions, quote } }));
     }).catch(() => {
-      setDetails((d) => ({ ...d, [sig.id]: { history: [], intent: [], mentions: [], quote: null } }));
+      setDetails((d) => ({ ...d, [sig.id]: { intent: [], mentions: [], quote: null } }));
     });
   }, [details]);
 
   const toggleRow = (sig: Signal) => {
     const open = expanded === sig.id;
     setExpanded(open ? null : sig.id);
-    if (!open) loadDetail(sig);
+    if (!open) { loadDetail(sig); loadHistory(sig.entity_id, histWindow); }
+  };
+
+  const changeHistWindow = (hours: number) => {
+    setHistWindow(hours);
+    const openSig = signals.find((s) => s.id === expanded);
+    if (openSig) loadHistory(openSig.entity_id, hours);
   };
 
   const maxScore = useMemo(() => Math.max(1, ...signals.map((s) => n(s.signal_score) ?? 0)), [signals]);
@@ -420,7 +442,13 @@ export default function SocialArb() {
                         {isOpen && (
                           <tr style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
                             <td colSpan={12} style={{ padding: "4px 16px 18px 42px" }}>
-                              <SignalDetail sig={s} detail={details[s.id]} />
+                              <SignalDetail
+                                sig={s}
+                                detail={details[s.id]}
+                                history={histCache[`${s.entity_id}:${histWindow}`]}
+                                histWindow={histWindow}
+                                onWindow={changeHistWindow}
+                              />
                             </td>
                           </tr>
                         )}
@@ -433,21 +461,28 @@ export default function SocialArb() {
 
             <div style={{ marginTop: 12, fontSize: 10, fontFamily: T.mono, color: T.light, display: "flex", alignItems: "center", gap: 6 }}>
               <TrendingUp size={11} />
-              {signals.length} {status} signal{signals.length === 1 ? "" : "s"} · ranked by score (gap × materiality × corroboration, intent-weighted) · click a row to expand.
+              {signals.length} {status} signal{signals.length === 1 ? "" : "s"} · ranked by score (gap × materiality × corroboration × value-tier) · click a row to expand.
             </div>
           </>
         )}
+
+        <TrackRecord backtest={backtest} />
       </div>
     </div>
   );
 }
 
 // ── drill-down (declared at module scope; receives the lazily-loaded detail bundle) ──
-function SignalDetail({ sig, detail }: { sig: Signal; detail: Detail | "loading" | undefined }) {
+function SignalDetail({ sig, detail, history, histWindow, onWindow }: {
+  sig: Signal; detail: Detail | "loading" | undefined;
+  history: HistPoint[] | "loading" | undefined; histWindow: number; onWindow: (h: number) => void;
+}) {
   const tks = tickerList(sig.tickers);
   const primary = tks[0] ?? "PRIVATE";
   const loading = detail === undefined || detail === "loading";
   const d = (detail && detail !== "loading") ? detail : null;
+  const histLoading = history === undefined || history === "loading";
+  const histRows: HistPoint[] = Array.isArray(history) ? history : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -479,8 +514,21 @@ function SignalDetail({ sig, detail }: { sig: Signal; detail: Detail | "loading"
           {/* left: charts */}
           <div style={{ flex: "2 1 360px", minWidth: 300, display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 9, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 4 }}>Mentions · 7d</div>
-              <Spark values={(d?.history ?? []).map((h) => Number(h.mentions))} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase" }}>Mentions</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  {([[168, "7d"], [2160, "90d"], [17520, "2y"]] as [number, string][]).map(([h, lbl]) => (
+                    <button key={lbl} onClick={(e) => { e.stopPropagation(); onWindow(h); }}
+                      style={{ fontSize: 8.5, fontFamily: T.mono, fontWeight: 600, padding: "1px 7px", borderRadius: 4, cursor: "pointer",
+                        border: `1px solid ${histWindow === h ? T.green : T.border}`,
+                        background: histWindow === h ? "var(--green-light)" : "transparent",
+                        color: histWindow === h ? T.green : T.muted }}>{lbl}</button>
+                  ))}
+                </div>
+              </div>
+              {histLoading
+                ? <div style={{ fontSize: 10, fontFamily: T.mono, color: T.light, padding: "16px 0" }}>loading history…</div>
+                : <Spark values={histRows.map((h) => Number(h.mentions))} />}
             </div>
             <div>
               <div style={{ fontSize: 9, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>Intent mix</div>
@@ -516,6 +564,63 @@ function SignalDetail({ sig, detail }: { sig: Signal; detail: Detail | "loading"
               </div>
             ))}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── track record (backtest forward returns; accrues from each signal's emission) ──
+function TrackRecord({ backtest }: { backtest: Backtest | null }) {
+  const st = backtest?.stats;
+  const measured = st?.measured_21d ?? 0;
+  const top = (backtest?.top_signals ?? []).filter(Boolean);
+  const th: React.CSSProperties = { padding: "7px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase" };
+  return (
+    <div style={{ marginTop: 32 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.04em", color: T.text }}>
+          <TrendingUp size={13} style={{ color: T.green }} /> TRACK RECORD
+        </span>
+        <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light }}>
+          forward returns from each signal&apos;s emission · fills in at +5 / +21 / +63d
+        </span>
+      </div>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
+        <StatCard label="Signals tracked" value={String(st?.total_signals ?? 0)} accent={T.green} />
+        <StatCard label="Avg +5d" value={fmtRet(st?.avg_return_5d)} accent={retColor(st?.avg_return_5d)} />
+        <StatCard label="Avg +21d" value={fmtRet(st?.avg_return_21d)} accent={retColor(st?.avg_return_21d)} />
+        <StatCard label="Avg +63d" value={fmtRet(st?.avg_return_63d)} accent={retColor(st?.avg_return_63d)} />
+        <StatCard label="Win (21d)" value={measured ? pct((st?.winners_21d ?? 0) / measured) : "—"} sub={measured ? `${st?.winners_21d ?? 0}/${measured} measured` : "accruing"} />
+      </div>
+      {measured === 0 && (
+        <div style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.5, padding: "9px 12px", background: "var(--amber-light)", border: `1px solid ${T.border}`, borderRadius: 6 }}>
+          No resolved windows yet — returns measure forward from each signal&apos;s emission date, so the track
+          record fills in over the coming weeks. A retroactive 2-year history would need point-in-time replay.
+        </div>
+      )}
+      {top.length > 0 && (
+        <div style={{ overflowX: "auto", border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface, marginTop: 12 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, fontFamily: T.mono }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                <th style={{ ...th, textAlign: "left" }}>Entity</th>
+                <th style={th}>Ticker</th>
+                <th style={th}>+21d</th>
+                <th style={th}>Emitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {top.map((r, i) => (
+                <tr key={i} style={{ borderTop: `1px solid ${T.border}` }}>
+                  <td style={{ padding: "6px 8px", color: T.text }}>{r.entity_name}</td>
+                  <td style={{ padding: "6px 8px", textAlign: "right", color: T.purple }}>{r.tickers || "—"}</td>
+                  <td style={{ padding: "6px 8px", textAlign: "right", color: retColor(r.return_21d), fontWeight: 700 }}>{fmtRet(r.return_21d)}</td>
+                  <td style={{ padding: "6px 8px", textAlign: "right", color: T.light }}>{r.created_at ? new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
