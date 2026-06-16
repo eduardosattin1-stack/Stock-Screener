@@ -880,7 +880,10 @@ const ROLE_CFG: Record<string, { label: string; color: string; bg: string; order
 // The whole point: a basket is visible (and rankable by gap) before any single signal fires, so
 // you see which names a demand surge would hit. Sorted server-side by gap desc, then mentions desc.
 function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
-  if (!themes || themes.length === 0) return null;
+  // Only render baskets that actually have constituents — hides orphaned/empty theme rows (e.g. the old
+  // short-named seeds left behind when the expanded set loaded under longer names).
+  const shown = (themes ?? []).filter((t) => (t.constituents?.length ?? 0) > 0);
+  if (!shown.length) return null;
   return (
     <div style={{ marginTop: 34 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
@@ -892,7 +895,7 @@ function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {themes.map((t) => {
+        {shown.map((t) => {
           const dem = n(t.demand_index) ?? 0;
           const gp = n(t.gap_score) ?? 0;
           // A theme only "lights up" with real demand. With ~0 demand, a negative gap is just
