@@ -270,6 +270,7 @@ export default function SocialArb() {
   const [histCache, setHistCache] = useState<Record<string, HistPoint[] | "loading">>({});
   const [corrOnly, setCorrOnly] = useState(false);
   const [trackFilter, setTrackFilter] = useState<string>("all");
+  const [dirFilter, setDirFilter] = useState<string>("all");   // all | long | short | watch
   const [themes, setThemes] = useState<Theme[] | null>(null);
   const [resolver, setResolver] = useState<ResolverHealth | null>(null);
 
@@ -355,6 +356,7 @@ export default function SocialArb() {
   const thinData = hnShare > 0.6 || awarenessShare < 0.05;
   const visibleSignals = signals.filter((s) =>
     (trackFilter === "all" || (s.signal_track || "mixed") === trackFilter) &&
+    (dirFilter === "all" || (s.direction || "watch").toLowerCase() === dirFilter) &&
     (!corrOnly || (n(s.corroboration) ?? 1) >= 2)
   );
 
@@ -428,6 +430,14 @@ export default function SocialArb() {
           ))}
         </div>
 
+        {/* Direction / side filter (long / short / watch) */}
+        <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
+          <span style={{ fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.06em", color: T.light, textTransform: "uppercase" }}>Side</span>
+          {([["all", "All"], ["long", "Long"], ["short", "Short"], ["watch", "Watch"]] as [string, string][]).map(([val, lbl]) => (
+            <Toggle key={val} active={dirFilter === val} onClick={() => { setDirFilter(val); setExpanded(null); }}>{lbl}</Toggle>
+          ))}
+        </div>
+
         {loading ? (
           <div style={{ textAlign: "center", padding: "80px 0", fontFamily: T.mono, fontSize: 12, color: T.light }}>
             <RefreshCw size={16} className="animate-spin" style={{ display: "inline", verticalAlign: "middle", marginRight: 8 }} />
@@ -497,9 +507,9 @@ export default function SocialArb() {
                             </div>
                           </td>
                           <td style={{ padding: "8px 8px", textAlign: "center" }}>
-                            <Chip text={dir === "long" ? "LONG" : "WATCH"}
-                              color={dir === "long" ? T.green : T.amber}
-                              bg={dir === "long" ? "rgba(20,184,122,0.18)" : "rgba(245,185,66,0.16)"} />
+                            <Chip text={dir === "long" ? "LONG" : dir === "short" ? "SHORT" : "WATCH"}
+                              color={dir === "long" ? T.green : dir === "short" ? T.red : T.amber}
+                              bg={dir === "long" ? "rgba(20,184,122,0.18)" : dir === "short" ? "rgba(239,90,90,0.16)" : "rgba(245,185,66,0.16)"} />
                           </td>
                           <td style={{ ...cell, color: T.text }}>{f2(s.demand_index)}</td>
                           <td style={{ ...cell, color: T.muted }}>{f2(s.awareness_index)}</td>
