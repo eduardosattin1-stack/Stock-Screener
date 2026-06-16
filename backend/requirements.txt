@@ -6,5 +6,6 @@ google-cloud-storage
 xgboost==3.2.0
 lightgbm==4.6.0
 thetadata
+python-dotenv
 pandas
 pyarrow
