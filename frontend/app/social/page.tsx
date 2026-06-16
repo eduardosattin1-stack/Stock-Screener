@@ -59,6 +59,7 @@ interface Signal {
 interface Stats {
   total_posts?: number;
   source_counts?: Record<string, number>;
+  source_counts_7d?: Record<string, number>;   // optional trailing-window mix (backend may expose); falls back to all-time
   avg_sentiment?: number;
   positive_count?: number;
   negative_count?: number;
@@ -789,7 +790,9 @@ function SystemStatus({ stats, resolver, signals, themes, backtest }: {
   stats: Stats | null; resolver: ResolverHealth | null; signals: Signal[];
   themes: Theme[] | null; backtest: Backtest | null;
 }) {
-  const sc = stats?.source_counts ?? {};
+  const windowed = stats?.source_counts_7d && Object.keys(stats.source_counts_7d).length ? stats.source_counts_7d : null;
+  const winLabel = windowed ? "last 7d" : "all-time";
+  const sc = windowed ?? stats?.source_counts ?? {};
   const total = Object.values(sc).reduce((a, b) => a + b, 0);
   if (!total && signals.length === 0) return null;
   const t0 = total || 1;
@@ -809,12 +812,19 @@ function SystemStatus({ stats, resolver, signals, themes, backtest }: {
   const validated = (backtest?.validated_cases ?? []).filter(Boolean).length;
   const themesArr = themes ?? [];
   const tradeable = themesArr.filter((t) => t.tradeable).length;
-  const awarenessThin = signals.length ? awareCov / signals.length < 0.3 : true;
-  const early = hnPct > 0.9 || consPct < 0.1 || awarenessThin;
-  const tier = early
-    ? { label: "EARLY · READ WITH CARE", color: T.amber, bg: "rgba(245,185,66,0.16)" }
-    : { label: "BUILDING", color: T.green, bg: "rgba(20,184,122,0.16)" };
-  const note = `Pipeline is solid end-to-end${total ? ` — but ${(hnPct * 100).toFixed(0)}% of ${total.toLocaleString()} posts are HackerNews` : ""}${awarenessThin ? ", and the awareness side is thin so gap ≈ demand" : ""}. Today's signals reflect ${hnPct > 0.6 ? "developer / tech buzz" : "early data"}; treat them as a pipeline readout — not confirmed consumer alpha — until consumer-platform + awareness volume accrues (forward-only).`;
+  const nSig = signals.length || 1;
+  // Per-signal confidence: trustworthy when corroborated across ≥2 sources AND awareness-backed (the gap
+  // is real, not gap≈demand). This is the right basis — NOT the all-time HN share, a one-time backfill
+  // that anchors the denominator forever and can never go green.
+  const corroborated = signals.filter((s) => (n(s.corroboration) ?? 1) >= 2).length;
+  const solid = signals.filter((s) => (n(s.corroboration) ?? 1) >= 2 && (n(s.awareness_index) ?? 0) > 0).length;
+  const solidShare = signals.length ? solid / nSig : 0;
+  const tier = solidShare >= 0.5
+    ? { label: "HIGH", color: T.green, bg: "rgba(20,184,122,0.18)" }
+    : solidShare >= 0.2
+      ? { label: "BUILDING", color: T.green, bg: "rgba(20,184,122,0.12)" }
+      : { label: "EARLY · READ WITH CARE", color: T.amber, bg: "rgba(245,185,66,0.16)" };
+  const note = `Confidence is per-signal: a signal firms up when it's corroborated across ≥2 sources AND awareness-backed (the gap is real). Now ${solid}/${signals.length} are both · ${corroborated}/${signals.length} multi-source · ${awareCov}/${signals.length} awareness-backed${total ? ` — recent inflow ${(hnPct * 100).toFixed(0)}% HackerNews (${winLabel})` : ""}. ${solidShare < 0.2 ? "Most signals are single-source with no awareness yet (gap ≈ demand) — they go green as sources corroborate and finance attention registers." : "Rank the multi-source, awareness-backed signals first."}`;
   return (
     <div style={{ marginBottom: 18, border: `1px solid ${T.border}`, borderRadius: 10, background: T.bg, padding: "12px 14px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 9, flexWrap: "wrap" }}>
@@ -825,16 +835,19 @@ function SystemStatus({ stats, resolver, signals, themes, backtest }: {
       </div>
       <div style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.55, marginBottom: 12 }}>{note}</div>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: total > 0 ? 12 : 0 }}>
-        {total > 0 && <StatCard label="Corpus" value={total.toLocaleString()} sub={`${(hnPct * 100).toFixed(0)}% HackerNews · ${distinct} sources`} />}
-        {total > 0 && <StatCard label="Consumer mix" value={`${(consPct * 100).toFixed(1)}%`} sub="the demand source" accent={consPct < 0.1 ? T.amber : T.green} />}
-        <StatCard label="Awareness cov." value={`${awareCov}/${signals.length}`} sub="signals w/ awareness" accent={awarenessThin ? T.amber : T.green} />
-        <StatCard label="Signals" value={String(signals.length)} sub={`${dirs["long"] ?? 0}L · ${shorts}S · ${dirs["watch"] ?? 0}W`} accent={T.green} />
+        <StatCard label="High-confidence" value={`${solid}/${signals.length}`} sub="corroborated + awareness" accent={solid > 0 ? T.green : T.amber} />
+        <StatCard label="Corroborated" value={`${corroborated}/${signals.length}`} sub="≥2 sources" accent={corroborated ? T.green : T.amber} />
+        <StatCard label="Awareness-backed" value={`${awareCov}/${signals.length}`} sub="gap is real" accent={awareCov ? T.green : T.amber} />
+        <StatCard label="Signals" value={String(signals.length)} sub={`${dirs["long"] ?? 0}L · ${shorts}S · ${dirs["watch"] ?? 0}W`} />
+        {total > 0 && <StatCard label="Corpus" value={total.toLocaleString()} sub={`${(hnPct * 100).toFixed(0)}% HN · ${distinct} src · ${winLabel}`} />}
+        {total > 0 && <StatCard label="Consumer mix" value={`${(consPct * 100).toFixed(1)}%`} sub={`demand source · ${winLabel}`} accent={consPct < 0.1 ? T.amber : T.green} />}
         {resolver && <StatCard label="Resolver" value={String(resolved)} sub={`${pending.toLocaleString()} queued${mimoLocal ? " · MiMo local" : ""}`} />}
         {themesArr.length > 0 && <StatCard label="Themes" value={String(themesArr.length)} sub={`${tradeable} tradeable`} />}
         <StatCard label="Track record" value={validated ? String(validated) : (measured ? String(measured) : "0")} sub={validated ? "validated" : (measured ? "measured" : "accruing")} accent={validated ? T.green : undefined} />
       </div>
       {total > 0 && (
         <div>
+          <div style={{ fontSize: 8.5, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 5 }}>Source inflow mix · {winLabel}</div>
           <div style={{ display: "flex", height: 8, borderRadius: 3, overflow: "hidden", background: "rgba(255,255,255,0.05)" }}>
             <div style={{ width: `${devOtherPct * 100}%`, height: "100%", background: "rgba(255,255,255,0.18)" }} />
             <div style={{ width: `${consPct * 100}%`, height: "100%", background: T.green }} />
