@@ -871,12 +871,18 @@ function ResolverHealth({ health }: { health: ResolverHealth | null }) {
   if (!health) return null;
   const h = health;
   const resolved = (h.cache?.auto ?? 0) + (h.cache?.approved ?? 0);
+  // mimo_reachable is null BY DESIGN — MiMo resolution runs through Bruno's local token plan, not a
+  // Cloud Run API. So health reads off resolution freshness + queue drain, not reachability.
   const reachable = h.mimo_reachable;
-  const status = reachable === true
-    ? { color: T.green, text: "MiMo reachable — resolver online", bg: "var(--green-light)" }
-    : reachable === false
-      ? { color: T.red, text: "MiMo unreachable — resolver stalled, queue not draining", bg: "var(--amber-light)" }
-      : { color: T.amber, text: "MiMo not configured (MIMO_BASE_URL unset) — queue not draining", bg: "var(--amber-light)" };
+  const lastMs = h.last_resolved_at ? Date.parse(h.last_resolved_at) : NaN;
+  const freshHrs = Number.isFinite(lastMs) ? (Date.now() - lastMs) / 3600000 : Infinity;
+  const status = reachable === false
+    ? { color: T.red, text: "MiMo endpoint configured but unreachable", bg: "var(--amber-light)" }
+    : freshHrs <= 26
+      ? { color: T.green, text: "Resolver active — runs locally (MiMo token plan)", bg: "var(--green-light)" }
+      : Number.isFinite(lastMs)
+        ? { color: T.amber, text: "Resolver idle — runs locally (token plan); run the local drain", bg: "var(--amber-light)" }
+        : { color: T.amber, text: "Resolver not yet run — runs locally (token plan)", bg: "var(--amber-light)" };
   const th: React.CSSProperties = { padding: "7px 8px", fontSize: 9, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase" };
   const pendCt = h.queue?.pending ?? 0;
   const breakdown = (label: string, parts: [string, number, string][]) => (
