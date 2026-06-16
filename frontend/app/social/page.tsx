@@ -394,6 +394,8 @@ export default function SocialArb() {
           </span>
         </div>
 
+        <SystemStatus stats={stats} resolver={resolver} signals={signals} themes={themes} backtest={backtest} />
+
         {/* Data-quality banner (auto-clears as the source mix broadens / awareness populates) */}
         {thinData && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", marginBottom: 18, borderRadius: 8, background: "var(--amber-light)", border: `1px solid ${T.border}` }}>
@@ -777,6 +779,74 @@ function TrackRecord({ backtest }: { backtest: Backtest | null }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── system status & data-confidence readout (what am I looking at + how much to trust it) ──
+// Pure presentational; reads already-fetched state, no new requests. Degrades if a datum is null.
+function SystemStatus({ stats, resolver, signals, themes, backtest }: {
+  stats: Stats | null; resolver: ResolverHealth | null; signals: Signal[];
+  themes: Theme[] | null; backtest: Backtest | null;
+}) {
+  const sc = stats?.source_counts ?? {};
+  const total = Object.values(sc).reduce((a, b) => a + b, 0);
+  if (!total && signals.length === 0) return null;
+  const t0 = total || 1;
+  const hn = sc["HackerNews"] ?? 0;
+  const consumer = Object.entries(sc).filter(([k]) => k.startsWith("Reddit") || ["YouTube", "Mastodon", "Bluesky", "AppStore", "GoogleTrends", "Steam"].includes(k)).reduce((a, [, v]) => a + v, 0);
+  const news = Object.entries(sc).filter(([k]) => k.startsWith("News:") || k.startsWith("Premium:")).reduce((a, [, v]) => a + v, 0);
+  const hnPct = hn / t0, consPct = consumer / t0, newsPct = news / t0;
+  const devOtherPct = Math.max(0, 1 - consPct - newsPct);
+  const distinct = Object.keys(sc).length;
+  const dirs = signals.reduce((acc, s) => { const d = (s.direction || "watch").toLowerCase(); acc[d] = (acc[d] ?? 0) + 1; return acc; }, {} as Record<string, number>);
+  const shorts = dirs["short"] ?? 0;
+  const awareCov = signals.filter((s) => (n(s.awareness_index) ?? 0) > 0).length;
+  const resolved = (resolver?.cache?.auto ?? 0) + (resolver?.cache?.approved ?? 0);
+  const pending = resolver?.queue?.pending ?? 0;
+  const mimoLocal = resolver ? resolver.mimo_reachable == null : false;
+  const measured = backtest?.stats?.measured_21d ?? 0;
+  const validated = (backtest?.validated_cases ?? []).filter(Boolean).length;
+  const themesArr = themes ?? [];
+  const tradeable = themesArr.filter((t) => t.tradeable).length;
+  const awarenessThin = signals.length ? awareCov / signals.length < 0.3 : true;
+  const early = hnPct > 0.9 || consPct < 0.1 || awarenessThin;
+  const tier = early
+    ? { label: "EARLY · READ WITH CARE", color: T.amber, bg: "rgba(245,185,66,0.16)" }
+    : { label: "BUILDING", color: T.green, bg: "rgba(20,184,122,0.16)" };
+  const note = `Pipeline is solid end-to-end${total ? ` — but ${(hnPct * 100).toFixed(0)}% of ${total.toLocaleString()} posts are HackerNews` : ""}${awarenessThin ? ", and the awareness side is thin so gap ≈ demand" : ""}. Today's signals reflect ${hnPct > 0.6 ? "developer / tech buzz" : "early data"}; treat them as a pipeline readout — not confirmed consumer alpha — until consumer-platform + awareness volume accrues (forward-only).`;
+  return (
+    <div style={{ marginBottom: 18, border: `1px solid ${T.border}`, borderRadius: 10, background: T.bg, padding: "12px 14px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 9, flexWrap: "wrap" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 11.5, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.04em", color: T.text }}>
+          <Activity size={13} style={{ color: tier.color }} /> SYSTEM STATUS &amp; DATA CONFIDENCE
+        </span>
+        <Chip text={tier.label} color={tier.color} bg={tier.bg} border={tier.color} />
+      </div>
+      <div style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.55, marginBottom: 12 }}>{note}</div>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: total > 0 ? 12 : 0 }}>
+        {total > 0 && <StatCard label="Corpus" value={total.toLocaleString()} sub={`${(hnPct * 100).toFixed(0)}% HackerNews · ${distinct} sources`} />}
+        {total > 0 && <StatCard label="Consumer mix" value={`${(consPct * 100).toFixed(1)}%`} sub="the demand source" accent={consPct < 0.1 ? T.amber : T.green} />}
+        <StatCard label="Awareness cov." value={`${awareCov}/${signals.length}`} sub="signals w/ awareness" accent={awarenessThin ? T.amber : T.green} />
+        <StatCard label="Signals" value={String(signals.length)} sub={`${dirs["long"] ?? 0}L · ${shorts}S · ${dirs["watch"] ?? 0}W`} accent={T.green} />
+        {resolver && <StatCard label="Resolver" value={String(resolved)} sub={`${pending.toLocaleString()} queued${mimoLocal ? " · MiMo local" : ""}`} />}
+        {themesArr.length > 0 && <StatCard label="Themes" value={String(themesArr.length)} sub={`${tradeable} tradeable`} />}
+        <StatCard label="Track record" value={validated ? String(validated) : (measured ? String(measured) : "0")} sub={validated ? "validated" : (measured ? "measured" : "accruing")} accent={validated ? T.green : undefined} />
+      </div>
+      {total > 0 && (
+        <div>
+          <div style={{ display: "flex", height: 8, borderRadius: 3, overflow: "hidden", background: "rgba(255,255,255,0.05)" }}>
+            <div style={{ width: `${devOtherPct * 100}%`, height: "100%", background: "rgba(255,255,255,0.18)" }} />
+            <div style={{ width: `${consPct * 100}%`, height: "100%", background: T.green }} />
+            <div style={{ width: `${newsPct * 100}%`, height: "100%", background: T.purple }} />
+          </div>
+          <div style={{ display: "flex", gap: 14, marginTop: 6, fontSize: 9, fontFamily: T.mono, color: T.light, flexWrap: "wrap" }}>
+            <span style={{ color: T.muted }}>■ Dev/other {(devOtherPct * 100).toFixed(0)}%</span>
+            <span style={{ color: T.green }}>■ Consumer {(consPct * 100).toFixed(1)}%</span>
+            <span style={{ color: T.purple }}>■ News/awareness {(newsPct * 100).toFixed(1)}%</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
