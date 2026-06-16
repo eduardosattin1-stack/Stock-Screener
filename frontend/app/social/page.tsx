@@ -880,7 +880,16 @@ function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {themes.map((t) => {
-          const grade = gapGrade(n(t.gap_score));
+          const dem = n(t.demand_index) ?? 0;
+          const gp = n(t.gap_score) ?? 0;
+          // A theme only "lights up" with real demand. With ~0 demand, a negative gap is just
+          // "no demand signal yet" (awareness with nothing behind it) — show DORMANT, not a red short.
+          const dormant = dem < 0.5;
+          const grade = dormant
+            ? { label: "DORMANT", color: T.light, bg: "rgba(255,255,255,0.05)" }
+            : gp > 0
+              ? gapGrade(gp)
+              : { label: "CROWDED", color: T.amber, bg: "rgba(245,185,66,0.16)" };
           const cons = (t.constituents ?? []).filter(Boolean);
           const maxShare = Math.max(0.01, ...cons.map((c) => n(c.revenue_share_est) ?? 0));
           const hasRoles = cons.some((c) => c.role && ROLE_CFG[c.role]);
@@ -905,8 +914,8 @@ function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
                 <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: T.muted, width: 38, textAlign: "right" }}>{pct(c.revenue_share_est)}</span>
               </div>
               <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, width: 64, textAlign: "right" }}>{fmtMcap(c.mcap_usd)}</span>
-              <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: (n(c.allocated_score) ?? 0) > 0 ? T.green : T.muted, width: 54, textAlign: "right" }}>
-                {`${(n(c.allocated_score) ?? 0) >= 0 ? "+" : ""}${(n(c.allocated_score) ?? 0).toFixed(2)}`}
+              <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: dormant ? T.light : (n(c.allocated_score) ?? 0) > 0 ? T.green : T.muted, width: 54, textAlign: "right" }}>
+                {dormant ? "—" : `${(n(c.allocated_score) ?? 0) >= 0 ? "+" : ""}${(n(c.allocated_score) ?? 0).toFixed(2)}`}
               </span>
               {c.rationale && (
                 <span style={{ flex: "1 1 160px", minWidth: 120, fontSize: 9.5, fontFamily: T.mono, color: T.light, lineHeight: 1.45, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.rationale}>{c.rationale}</span>
