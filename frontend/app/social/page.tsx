@@ -97,10 +97,12 @@ interface Detail { intent: IntentRow[]; mentions: Mention[]; quote: Quote | null
 interface ThemeConstituent {
   ticker: string; exchange?: string | null; revenue_share_est: number;
   mcap_usd?: number | null; allocated_score: number; rationale?: string | null;
+  role?: string | null;   // pure-play | disruptor | incumbent | legacy | diversified | private
 }
 interface Theme {
   theme_id: number; name: string; demand_index: number; awareness_index: number;
   gap_score: number; mention_count_7d: number; tradeable: boolean;
+  category?: string | null;
   constituents: ThemeConstituent[];
 }
 // Resolver / entity-graph health (GET /api/social/resolver/health) — surfaces the keystone:
@@ -769,6 +771,17 @@ function TrackRecord({ backtest }: { backtest: Backtest | null }) {
   );
 }
 
+// Constituent role taxonomy → color/order. Encodes the long/short structure: disruptor = bullish
+// demand vector (green), incumbent = the disrupted/short vector (red), pure-play = cleanest exposure.
+const ROLE_CFG: Record<string, { label: string; color: string; bg: string; order: number }> = {
+  "pure-play":   { label: "Pure-play",   color: T.purple, bg: "rgba(196,181,253,0.12)", order: 0 },
+  "disruptor":   { label: "Disruptor",   color: T.green,  bg: "rgba(20,184,122,0.12)",  order: 1 },
+  "incumbent":   { label: "Incumbent",   color: T.red,    bg: "rgba(239,90,90,0.10)",   order: 2 },
+  "legacy":      { label: "Legacy",      color: T.amber,  bg: "rgba(245,185,66,0.10)",  order: 3 },
+  "diversified": { label: "Diversified", color: T.muted,  bg: "rgba(255,255,255,0.04)", order: 4 },
+  "private":     { label: "Private",     color: T.light,  bg: "rgba(255,255,255,0.04)", order: 5 },
+};
+
 // ── theme baskets (GET /api/social/themes) ──
 // Seeded consumer themes → revenue-weighted ticker baskets. Hidden until the endpoint is live.
 // The whole point: a basket is visible (and rankable by gap) before any single signal fires, so
@@ -790,12 +803,43 @@ function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
           const grade = gapGrade(n(t.gap_score));
           const cons = (t.constituents ?? []).filter(Boolean);
           const maxShare = Math.max(0.01, ...cons.map((c) => n(c.revenue_share_est) ?? 0));
+          const hasRoles = cons.some((c) => c.role && ROLE_CFG[c.role]);
+          const roleGroups = hasRoles
+            ? Object.keys(ROLE_CFG)
+                .map((r) => ({ role: r, cfg: ROLE_CFG[r], items: cons.filter((c) => (c.role || "") === r) }))
+                .filter((g) => g.items.length)
+            : [];
+          const conRow = (c: ThemeConstituent, i: number) => (
+            <div key={`${c.ticker}-${i}`} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ width: 92, display: "flex", alignItems: "center", gap: 5 }}>
+                <Chip text={isPrivate(c.ticker) ? "PRIVATE" : c.ticker}
+                  color={isPrivate(c.ticker) ? T.light : T.purple}
+                  bg={isPrivate(c.ticker) ? "rgba(255,255,255,0.05)" : "rgba(196,181,253,0.14)"}
+                  border={isPrivate(c.ticker) ? undefined : "rgba(196,181,253,0.25)"} />
+              </span>
+              <span style={{ width: 38, fontSize: 9, fontFamily: T.mono, color: T.light }}>{c.exchange || ""}</span>
+              <div style={{ flex: "1 1 120px", minWidth: 100, display: "flex", alignItems: "center", gap: 7 }}>
+                <div style={{ flex: 1, height: 7, background: "rgba(255,255,255,0.05)", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ width: `${((n(c.revenue_share_est) ?? 0) / maxShare) * 100}%`, height: "100%", background: T.purple, opacity: 0.65 }} />
+                </div>
+                <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: T.muted, width: 38, textAlign: "right" }}>{pct(c.revenue_share_est)}</span>
+              </div>
+              <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, width: 64, textAlign: "right" }}>{fmtMcap(c.mcap_usd)}</span>
+              <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: (n(c.allocated_score) ?? 0) > 0 ? T.green : T.muted, width: 54, textAlign: "right" }}>
+                {`${(n(c.allocated_score) ?? 0) >= 0 ? "+" : ""}${(n(c.allocated_score) ?? 0).toFixed(2)}`}
+              </span>
+              {c.rationale && (
+                <span style={{ flex: "1 1 160px", minWidth: 120, fontSize: 9.5, fontFamily: T.mono, color: T.light, lineHeight: 1.45, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.rationale}>{c.rationale}</span>
+              )}
+            </div>
+          );
           return (
             <div key={t.theme_id} style={{ border: `1px solid ${T.border}`, borderRadius: 8, background: T.surface, padding: "12px 14px" }}>
               {/* header: theme name + tradeable + gap */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 13, fontFamily: T.mono, fontWeight: 800, color: T.text }}>{t.name}</span>
+                  {t.category && <Chip text={t.category} color={T.muted} bg="rgba(255,255,255,0.05)" border={T.border} />}
                   {t.tradeable
                     ? <Chip text="TRADEABLE" color={T.green} bg="rgba(20,184,122,0.18)" border="rgba(20,184,122,0.3)" />
                     : (t.mention_count_7d ?? 0) > 0
@@ -815,41 +859,34 @@ function ThemesBaskets({ themes }: { themes: Theme[] | null }) {
                 <MetricBlock label="Mentions 7d" value={String(t.mention_count_7d ?? 0)} />
                 <MetricBlock label="Names" value={String(cons.length)} />
               </div>
-              {/* constituents — ranked by revenue share */}
+              {/* constituents — grouped by role (long/short structure) when present, else flat */}
               {cons.length === 0 ? (
                 <div style={{ fontSize: 10, fontFamily: T.mono, color: T.light, marginTop: 10 }}>no mapped constituents yet</div>
               ) : (
                 <div style={{ marginTop: 12 }}>
                   <div style={{ fontSize: 8.5, fontFamily: T.mono, color: T.light, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
-                    Basket · ranked by revenue exposure
+                    Basket · {hasRoles ? "grouped by role · ranked by revenue exposure" : "ranked by revenue exposure"}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    {cons.map((c, i) => (
-                      <div key={`${c.ticker}-${i}`} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                        <span style={{ width: 92, display: "flex", alignItems: "center", gap: 5 }}>
-                          <Chip text={isPrivate(c.ticker) ? "PRIVATE" : c.ticker}
-                            color={isPrivate(c.ticker) ? T.light : T.purple}
-                            bg={isPrivate(c.ticker) ? "rgba(255,255,255,0.05)" : "rgba(196,181,253,0.14)"}
-                            border={isPrivate(c.ticker) ? undefined : "rgba(196,181,253,0.25)"} />
-                        </span>
-                        <span style={{ width: 38, fontSize: 9, fontFamily: T.mono, color: T.light }}>{c.exchange || ""}</span>
-                        {/* revenue-share bar */}
-                        <div style={{ flex: "1 1 120px", minWidth: 100, display: "flex", alignItems: "center", gap: 7 }}>
-                          <div style={{ flex: 1, height: 7, background: "rgba(255,255,255,0.05)", borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ width: `${((n(c.revenue_share_est) ?? 0) / maxShare) * 100}%`, height: "100%", background: T.purple, opacity: 0.65 }} />
+                  {hasRoles ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {roleGroups.map((g) => (
+                        <div key={g.role}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
+                            <span style={{ fontSize: 8.5, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.05em", textTransform: "uppercase", color: g.cfg.color, background: g.cfg.bg, padding: "2px 7px", borderRadius: 3 }}>{g.cfg.label}</span>
+                            <span style={{ fontSize: 8.5, fontFamily: T.mono, color: T.light }}>{g.items.length}</span>
+                            <span style={{ flex: 1, height: 1, background: T.border }} />
                           </div>
-                          <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: T.muted, width: 38, textAlign: "right" }}>{pct(c.revenue_share_est)}</span>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            {g.items.map((c, i) => conRow(c, i))}
+                          </div>
                         </div>
-                        <span style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, width: 64, textAlign: "right" }}>{fmtMcap(c.mcap_usd)}</span>
-                        <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, color: (n(c.allocated_score) ?? 0) > 0 ? T.green : T.muted, width: 54, textAlign: "right" }}>
-                          {`${(n(c.allocated_score) ?? 0) >= 0 ? "+" : ""}${(n(c.allocated_score) ?? 0).toFixed(2)}`}
-                        </span>
-                        {c.rationale && (
-                          <span style={{ flex: "1 1 160px", minWidth: 120, fontSize: 9.5, fontFamily: T.mono, color: T.light, lineHeight: 1.45, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.rationale}>{c.rationale}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {cons.map((c, i) => conRow(c, i))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
