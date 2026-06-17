@@ -1956,6 +1956,28 @@ const formatMethodologyMetric = (value: number | null | undefined, _key: string)
   return `${(value * 100).toFixed(1)}%`;
 };
 
+// IV15's margin of safety is CAPPED at 0.50 whenever the model "saturates" — when trailing
+// 3-yr EPS growth >=20%, the 15-year FCF extrapolation is unreliable, so screener_v6.py (G3,
+// ~line 6526) forces mos = min(0.50, raw). Every saturated name's true MoS is above 50%, so they
+// all collapse to an identical "50.0%". That number is the saturation CEILING the model is willing
+// to credit, NOT a measured margin of safety — render it flagged so a capped 50% can't be mistaken
+// for a real one (a genuinely-measured MoS landing on exactly 0.5000 is measure-zero, so the exact
+// 0.50 signature is a reliable cap detector when the explicit iv15_saturated flag isn't carried).
+const renderMethodologyMosCell = (pick: any, key: string, val: number | null | undefined) => {
+  if (val == null) return <span style={{ color: "var(--text-muted)" }}>—</span>;
+  const pct = `${(val * 100).toFixed(1)}%`;
+  const capped = key === "iv15_deep_value" && (pick?.iv15_saturated === true || Math.abs(val - 0.5) < 1e-6);
+  if (!capped) return <>{pct}</>;
+  const peak = pick?.cycle_flag === "PEAK_CYCLE";
+  const tip = "IV15 saturated: trailing 3-yr EPS growth >=20% makes the 15-year FCF extrapolation unreliable, so the model CAPS the margin of safety at 50%. This is the saturation ceiling the model will credit — not a measured value; the uncapped figure is higher but not trusted."
+    + (peak ? " Also flagged PEAK_CYCLE — fair value rides on cyclically-elevated earnings, so even the capped 50% is suspect." : "");
+  return (
+    <span title={tip} style={{ color: "var(--amber)", cursor: "help" }}>
+      {pct}<sup style={{ fontSize: 8, marginLeft: 2, letterSpacing: "0.04em" }}>{peak ? "SAT·PK" : "SAT"}</sup>
+    </span>
+  );
+};
+
 // ── New indicator helpers ────────────────────────────────────────────────────
 const CYCLE_FLAG_STYLES: Record<string, { color: string; bg: string; label: string }> = {
   NORMAL:               { color: "#10b981", bg: "rgba(16,185,129,0.12)", label: "Normal" },
@@ -2294,6 +2316,60 @@ export default function Dashboard(){
       <span title={pick.goal_note || "Director's horizon-to-target + whether it meets the +30-50%/12mo goal"} style={{ fontSize: 8, color: col, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
         {pick.horizon_months != null ? `~${pick.horizon_months}mo` : ""}{mark ? " " + mark : ""}
       </span>
+    );
+  };
+
+  // Independent skeptic kill-tier verdict (now stamped on BOTH the value and apex/regime books).
+  const skepticChip = (pick?: any) => {
+    if (!pick?.skeptic_verdict) return null;
+    const v = String(pick.skeptic_verdict).toUpperCase();
+    const corr = pick.skeptic_corrections ? " — " + String(Array.isArray(pick.skeptic_corrections) ? pick.skeptic_corrections.join(" | ") : pick.skeptic_corrections).slice(0, 500) : "";
+    const kill = pick.skeptic_kill_fact ? " — " + String(pick.skeptic_kill_fact).slice(0, 300) : "";
+    return (
+      <span title={`Skeptic (independent kill-tier): ${v}${corr}${kill}`}
+            style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3,
+                     background: v === "CONFIRMED" ? "rgba(20,184,122,0.15)" : v === "REFUTED" ? "rgba(239,68,68,0.15)" : "rgba(234,179,8,0.15)",
+                     color: v === "CONFIRMED" ? "var(--green)" : v === "REFUTED" ? "var(--red)" : "var(--amber)",
+                     fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+        {v === "CONFIRMED" ? "✓ skeptic" : v === "REFUTED" ? "✗ refuted" : "✓ corrected"}
+      </span>
+    );
+  };
+
+  // Moat durability + terminal-erosion (½-size cap) + secular-decline theme — for both books.
+  const moatChips = (pick?: any) => {
+    if (!pick) return null;
+    const moat = pick.moat ? String(pick.moat).toUpperCase() : "";
+    const erosion = String(pick.moat_erosion || "");
+    const sev = String(pick.erosion_severity || "");
+    const theme = pick.secular_theme ? String(pick.secular_theme) : "";
+    const score = pick.moat_score;
+    if (!moat && erosion !== "CAP" && !theme) return null;
+    const moatCol = moat === "WIDE" ? "var(--green)" : moat === "ERODING" ? "var(--amber)" : moat === "NONE" ? "var(--red)" : "var(--text-muted)";
+    const moatBg = moat === "WIDE" ? "rgba(20,184,122,0.12)" : moat === "ERODING" ? "rgba(234,179,8,0.15)" : moat === "NONE" ? "rgba(239,68,68,0.15)" : "rgba(148,163,184,0.15)";
+    return (
+      <>
+        {moat && (
+          <span title={`Economic moat: ${moat}${pick.moat_trend ? " · trend " + String(pick.moat_trend) : ""}${score != null ? " · score " + score + "/100" : ""}`}
+                style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: moatBg, color: moatCol, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+            moat {moat}{score != null ? " " + score : ""}
+          </span>
+        )}
+        {erosion === "CAP" && (
+          <span title={`Moat terminal-erosion (½-size cap, additive to the cyclical-peak/stale gates)${sev === "value-destroying" ? " — VALUE-DESTROYING: returns below cost of capital AND eroding" : sev === "eroding" ? " — returns/margins eroding" : ""}`}
+                style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3,
+                         background: sev === "value-destroying" ? "rgba(239,68,68,0.15)" : "var(--amber-light)",
+                         color: sev === "value-destroying" ? "var(--red)" : "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+            {sev === "value-destroying" ? "⚠ eroding" : "½ moat"}
+          </span>
+        )}
+        {theme && (
+          <span title={`Secular-decline theme (book concentration-capped): ${theme}`}
+                style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)", fontFamily: "var(--font-mono)", cursor: "help" }}>
+            {theme.replace(/-/g, " ")}
+          </span>
+        )}
+      </>
     );
   };
 
@@ -3021,6 +3097,11 @@ export default function Dashboard(){
                               </span>
                             </div>
                             {wheelLine(pick.wheel)}
+                            {(pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
+                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
+                                {skepticChip(pick)}{moatChips(pick)}
+                              </div>
+                            )}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
                                 <span>Entry:</span>
@@ -3234,6 +3315,7 @@ export default function Dashboard(){
                                 {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
                                 {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
                                 {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
+                                {moatChips(pick)}
                               </div>
                               {Array.isArray(pick.exposure_axes) && pick.exposure_axes.length > 0 && (
                                 <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
@@ -3877,6 +3959,12 @@ export default function Dashboard(){
 
                   weight: h.weight,
 
+                  // tracking records don't carry the saturation/cycle flags — pull them from the
+                  // live GCS pick by symbol so the MoS cell can flag a capped (saturated) 50%:
+                  iv15_saturated: (methodologyDetails[b.path]?.picks || []).find((pp: any) => pp.symbol === h.symbol)?.iv15_saturated,
+
+                  cycle_flag: (methodologyDetails[b.path]?.picks || []).find((pp: any) => pp.symbol === h.symbol)?.cycle_flag,
+
                 }))
 
               : (methodologyDetails[b.path]?.picks || []).map((p: any) => ({
@@ -4088,7 +4176,7 @@ export default function Dashboard(){
 
                                 <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{entryPriceVal > 0 ? `$${entryPriceVal.toFixed(2)}` : "—"}</td>
 
-                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{formatMethodologyMetric(entryMetricVal, shortKey)}</td>
+                                <td style={{ padding: "14px 8px", textAlign: "right", color: "var(--text-secondary)" }}>{renderMethodologyMosCell(pick, shortKey, entryMetricVal)}</td>
 
                                 <td style={{ padding: "14px 8px", color: "var(--text-muted)", paddingLeft: 16 }}>—</td>
 
