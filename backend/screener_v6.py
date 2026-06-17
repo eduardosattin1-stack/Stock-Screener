@@ -6543,6 +6543,20 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                             eff_mos = max(-1.0, min(0.95, 1.0 - (1.0 - mos_val) / ns))
                     boost = _hyst_boost(key) if s.symbol in incumbent_syms else 0.0
                     s._temp_mos = eff_mos + boost
+                    # G3b (Phase 10h): IV15 saturated-cohort tie-break. The 0.50 cap above
+                    # collapses every NORMAL-cycle saturated name to an identical eff_mos, so
+                    # cheapness order is lost and selection falls to arbitrary scan order
+                    # (the 0.95→0.50 wall just moved). Re-introduce a value order using EPV
+                    # MoS — a ZERO-GROWTH co-method (already required > 0 by the
+                    # iv15_nogrowth_agreement gate) that the saturated 15yr FCF extrapolation
+                    # CANNOT corrupt. Confine the nudge to a sub-cap band (width 0.04, < the
+                    # 0.05 incumbency boost) so a capped name can NEVER cross above a
+                    # genuinely-cheaper non-saturated name, and SKIP PEAK_CYCLE names so their
+                    # norm_scale penalty above keeps cyclical-peak earnings ranked LOW.
+                    if (key == "iv15_deep_value" and getattr(s, "iv15_saturated", False)
+                            and getattr(s, "cycle_flag", "NORMAL") != "PEAK_CYCLE"):
+                        epv_q = max(0.0, min(1.0, getattr(s, "epv_mos", 0.0) or 0.0))
+                        s._temp_mos = (eff_mos - 0.04 * (1.0 - epv_q)) + boost
                     if key == "convergence":
                         # rank by the composite agreement score (set in the consensus
                         # block above), not raw MoS; MoS-unit hysteresis doesn't apply.
