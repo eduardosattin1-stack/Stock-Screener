@@ -728,10 +728,11 @@ Subtle terminology shifts, changes in how they discuss competition or capital al
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 Classify the trajectory: STRENGTHENING / STABLE / DETERIORATING / PIVOTING. State the single most important thing the director must weigh before sizing a position.
+Then assess the ECONOMIC MOAT and whether a SECULAR force threatens its TERMINAL value (distinct from a cyclical dip): name the moat type (switching-costs / network / scale-cost / intangible-brand / regulatory-license / none), judge its WIDTH using the returns + margin EVIDENCE in the financials — a high-but-FALLING ROIC or eroding gross margin is an ERODING moat, NOT a wide one; a rising ROIC with expanding margins is widening. Then judge whether a structural threat (AI-displacement, fintech/stablecoin disintermediation, cord-cutting/broadband overbuild, autonomous-vehicle, labor-arbitrage deflation, reimbursement compression, retail channel-shift, energy-transition) could impair the TERMINAL value, and whether the cheapness is therefore a fear-print (mispricing) or a structurally-shrinking base (value trap).
 
 After the dossier, output one final line in EXACTLY this format for machine parsing (nothing after it):
-CREDIBILITY_SCORE: <integer 1-5> | TRAJECTORY: <STRENGTHENING|STABLE|DETERIORATING|PIVOTING>
-where credibility_score is 1 (evasive / unsupported by financials) to 5 (highly credible, corroborated by financials).
+CREDIBILITY_SCORE: <integer 1-5> | TRAJECTORY: <STRENGTHENING|STABLE|DETERIORATING|PIVOTING> | MOAT: <WIDE|NARROW|ERODING|NONE> | MOAT_TREND: <WIDENING|STABLE|ERODING> | SECULAR_THREAT: <terminal|material|manageable|none>
+where credibility_score is 1 (evasive / unsupported by financials) to 5 (highly credible, corroborated by financials); MOAT/MOAT_TREND capture whether the durable earnings base is wide and widening or narrow and being structurally eroded; SECULAR_THREAT is the terminal-value impairment risk from a structural (not cyclical) force.
 """
 
 ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case.
@@ -784,7 +785,11 @@ You must return a valid JSON object:
 {
   "verdict": "A" | "B" | "C",
   "conviction": integer (1 to 5),
-  "value_conviction": integer (1 to 5) — rate the VALUE case as if NO catalyst overlay existed: valuation vs your reconciled SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and any regime tilt. This score MUST be allowed to diverge from `conviction` (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst story at full price can be value_conviction 1) — do not default them to the same number.,
+  "value_conviction": integer (1 to 5) — rate the VALUE case as if NO catalyst overlay existed: valuation vs your reconciled SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and any regime tilt. This score MUST be allowed to diverge from `conviction` (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst story at full price can be value_conviction 1) — do not default them to the same number. MOAT-AWARE CAP: an ERODING moat (high-but-falling returns/margins) or a TERMINAL secular threat CAPS value_conviction at 3 — a low multiple on a structurally-shrinking base is a value trap, not value; do NOT credit optical cheapness over a melting terminal value.,
+  "moat": "string — WIDE | NARROW | ERODING | NONE: the Interrogator's moat read reconciled with the returns/margin evidence (a high-but-FALLING ROIC is ERODING, not WIDE).",
+  "moat_trend": "string — WIDENING | STABLE | ERODING.",
+  "secular_threat": "string — terminal | material | manageable | none, naming the structural force if any.",
+  "secular_theme": "string — the SINGLE dominant secular-decline theme id from backend/_opus_debate/secular_themes.json (ai-displacement | payments-disintermediation | linear-media-decline | autonomous-mobility | labor-arbitrage-deflation | reimbursement-compression | retail-channel-shift | energy-transition-loser), or \"\" if none applies. Used by the Director to avoid concentrating the book in one secular tail.",
   "sop_fair_value": "string/number — the reconciled base-case Sum-of-Parts per-share fair value (a number or tight range).",
   "sop_breakdown": "string — the parts and what each contributes to the value.",
   "risk_reward": "string — downside-to-break vs upside-to-fair-value, as a ratio or a clear statement.",

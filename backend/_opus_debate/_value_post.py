@@ -30,6 +30,7 @@ if not os.environ.get("FMP_API_KEY"):                  # match fmp_facts.py / _f
 from screener_v6 import fmp, get_chart                  # noqa: E402  FMP REST + OHLCV
 sys.path.insert(0, _HERE)                              # so the sibling _wheel module resolves
 from _wheel import stamp_wheel                          # noqa: E402  CSP->CC wheel suggestion
+import _post_common as _pc                              # noqa: E402  shared skeptic + weight builder (also used by _regime_post)
 
 ROOT = Path("_opus_debate")
 APEX_F = ROOT / "apex_basket_value.json"
@@ -182,32 +183,32 @@ def stamp_stale_anchor(picks, gin):
         p["stale_anchor"] = bool(g.get("freshness_stale") and (g.get("eps_peak_ratio") or 0) >= 1.8 and fired)
 
 
+# ───────────────────────── Moat terminal-erosion (ADDITIVE to peak/stale — targets moat decline) ─────────────────────────
+def stamp_moat_erosion(picks, gin):
+    """Carry the screener's deterministic moat signals onto each pick so build_weights can half-cap an
+    eroding moat (moat_erosion=='CAP') and the skeptic targeting can see the value-destroyers. This is
+    a SECOND family of teeth, separate from the cyclical-peak/stale-anchor gates (which stay as-is —
+    they fixed a prior issue). NEVER changes membership (P1)."""
+    for p in picks:
+        g = gin.get(p["symbol"], {})
+        p["moat_erosion"] = g.get("moat_erosion", "")
+        p["erosion_severity"] = g.get("erosion_severity", "none")
+        if g.get("moat_score") is not None:
+            p["moat_score"] = g.get("moat_score")
+        if not p.get("moat"):
+            p["moat"] = g.get("moat", "")
+        if not p.get("secular_theme"):
+            p["secular_theme"] = g.get("secular_theme", "")
+
+
 # ───────────────────────── Fix 5 — weight vector ─────────────────────────
 def build_weights(apx, picks, extra_caps=None):
-    units = {}
-    for p in picks:
-        u = p.get("size_units")
-        if not isinstance(u, (int, float)) or not (0.1 <= u <= 1.5):
-            u = MEMO_UNITS_20260609.get(p["symbol"], 1.0)     # one-off fallback until Director emits sizing
-        if p.get("cro_only"):
-            u = min(u, 0.5)                                    # fix 2
-        if p.get("stale_anchor"):
-            u = min(u, 0.5)                                    # fix 3
-        units[p["symbol"]] = u
-    for cap in list(apx.get("combined_caps") or []) + list(extra_caps or []):   # Director caps + corr breaches
-        names = [s for s in (cap.get("names") or []) if s in units]
-        mx = cap.get("max_units")
-        tot = sum(units[s] for s in names)
-        if names and isinstance(mx, (int, float)) and tot > mx:
-            scale = mx / tot
-            for s in names:
-                units[s] = round(units[s] * scale, 3)
-    W = sum(units.values()) or 1.0
-    weights = {s: round(u / W, 4) for s, u in units.items()}
-    for p in picks:
-        p["size_units_effective"] = units[p["symbol"]]
-        p["weight_pct"] = round(weights[p["symbol"]] * 100, 2)
-    return weights
+    """Normalize size_units -> weight_pct via the shared builder (_post_common). Per-name half-caps now
+    include moat_erosion=='CAP' alongside cro_only (fix 2) / stale_anchor (fix 3); secular-theme
+    concentration caps are appended to extra_caps so one melting tail cannot carry the book."""
+    caps = list(extra_caps or []) + _pc.secular_theme_caps(picks)
+    return _pc.build_weights(apx, picks, extra_caps=caps, memo_units=MEMO_UNITS_20260609,
+                             per_name_cap=_pc.moat_per_name_cap)
 
 
 def derive_entry_posture(p, rec=None):
@@ -382,6 +383,7 @@ def main():
     quotes, weekly_rets, asof = get_market(syms, syms + ["XLY"], offline)
     stamp_cro_only(picks, gin)                              # fix 2
     stamp_stale_anchor(picks, gin)                          # fix 3
+    stamp_moat_erosion(picks, gin)                          # moat terminal-erosion teeth (additive)
     w_prov = build_weights(apx, picks)                      # provisional (no corr caps)
     corr = corr_block(syms, weekly_rets, w_prov)            # fix 4 (provisional, for breach detection)
     breach_caps = [{"names": [f["a"], f["b"]], "max_units": 1.5, "axis": "correlation"}
