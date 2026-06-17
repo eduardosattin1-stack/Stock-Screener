@@ -979,6 +979,53 @@
      "ret_pct": 0.0
     }
    }
+  },
+  {
+   "date": "2026-06-17",
+   "nav": 101.115,
+   "basket_ret_pct": 1.115,
+   "seats": {
+    "GDOT": {
+     "price": 12.805,
+     "ret_pct": 0.43
+    },
+    "UNF": {
+     "price": 262.24,
+     "ret_pct": -0.52
+    },
+    "FIP": {
+     "price": 4.9326,
+     "ret_pct": 8.17
+    },
+    "FIG": {
+     "price": 19.3293,
+     "ret_pct": -5.66
+    },
+    "BLCO": {
+     "price": 15.1,
+     "ret_pct": -3.51
+    },
+    "CELC": {
+     "price": 87.37,
+     "ret_pct": -5.64
+    },
+    "VRDN": {
+     "price": 16.585,
+     "ret_pct": 1.69
+    },
+    "AQST": {
+     "price": 4.4544,
+     "ret_pct": 11.64
+    },
+    "WVE": {
+     "price": 6.045,
+     "ret_pct": 4.58
+    },
+    "AMLX": {
+     "price": 15.35,
+     "ret_pct": 5.21
+    }
+   }
   }
  ],
  "watchlist": [
