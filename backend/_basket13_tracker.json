@@ -1111,22 +1111,6 @@
    "dated_milestone": null
   },
   {
-   "symbol": "GLUE",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
-   "intended_weight_pct": 1.5,
-   "note": "ev_pct 0.33, payoff 2.5, win 0.55; H2-2026 window undated. Option chain unusable -> equity only (~$18.7M/day ample), limit <= $17.25 after +7.3% pop, staging half-size.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.3265,
-   "computed_rr": null,
-   "dated_milestone": null
-  },
-  {
    "symbol": "MGNI",
    "blocked_by": "resolution_driver Forced_divest_flow is 2/2 full (held FIG + BLCO)",
    "would_enter_if": "a Forced_divest_flow seat opens when FIG or BLCO resolves",

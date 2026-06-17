@@ -48,6 +48,8 @@ MAX_SUPER_PTS      = 40.0    # weight-POINTS of NAV per super-cluster (pinned ba
 MIN_NAMES, MAX_NAMES = 8, 20   # • basket head-count cap
 MAX_PER_LANE       = {"bio_convergence": 5}   # • hard per-lane NAME cap (bio binaries are abundant; cap the lane)
 MAX_WATCHLIST      = 10        # • on-deck watchlist length (shown below the basket)
+MAX_WATCHLIST_PER_DRIVER = 5   # • per-driver diversity cap on the on-deck watchlist — one abundant
+                               #   driver (e.g. FDA_clinical_readout) can't crowd out the queue
 RISK_TO_FLOOR_PCT  = 1.5     # weight_pct * (live-floor)/live <= this, per ratio name
 BINARY_PREMIUM_PCT = 2.0     # weight_pct <= this for a binary defined-risk structure
 TOL = 1e-3                   # float tolerance on cap checks
@@ -124,6 +126,24 @@ def rtf_pct(weight, live, floor):
     if isinstance(live, (int, float)) and isinstance(floor, (int, float)) and live > 0 and live > floor:
         return round(weight * (live - floor) / live, 3)
     return None
+
+
+def cap_watchlist(wl, bysym):
+    """Per-driver diversity cap on the on-deck watchlist, preserving the Director's priority order.
+    Keep at most MAX_WATCHLIST_PER_DRIVER names per resolution_driver, then trim to MAX_WATCHLIST,
+    so one abundant driver can't monopolize the queue and other-driver names surface. The Director
+    prompt enforces this too (so it fills freed slots with diverse names when the pool allows); this
+    is the deterministic backstop."""
+    seen, out = {}, []
+    for w in wl:
+        drv = (bysym.get(w["symbol"], {}) or {}).get("resolution_driver") or w.get("resolution_driver") or "?"
+        if seen.get(drv, 0) >= MAX_WATCHLIST_PER_DRIVER:
+            continue
+        seen[drv] = seen.get(drv, 0) + 1
+        out.append(w)
+        if len(out) >= MAX_WATCHLIST:
+            break
+    return out
 
 
 # --------------------------------------------------------------- cap validation
@@ -316,9 +336,10 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                       "n_pending": len(pending), "n_excluded_at_stamp": len(excluded),
                       "n_skipped_open": len(skipped), "cap_violations": len(viol),
                       "retags": retags, "memo": memo})
-    # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields
+    # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields.
+    # Per-driver diversity cap (≤MAX_WATCHLIST_PER_DRIVER) so one abundant driver can't fill the queue.
     t["watchlist"] = []
-    for w in (director.get("watchlist") or [])[:MAX_WATCHLIST]:
+    for w in cap_watchlist(director.get("watchlist") or [], bysym):
         c = bysym.get(w["symbol"], {})
         t["watchlist"].append({
             "symbol": w["symbol"], "blocked_by": w.get("blocked_by", ""),

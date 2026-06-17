@@ -19,6 +19,7 @@ TS = os.path.join(ROOT, "frontend", "app", "data", "basket13.ts")
 # mirror of the inject cap dials, displayed as "n / cap" in the UI
 MAX_PER_DRIVER, MAX_SUPER_PCT, MAX_NAMES = 2, 40.0, 20
 MAX_PER_LANE = {"bio_convergence": 5}
+MAX_WATCHLIST, MAX_WATCHLIST_PER_DRIVER = 10, 5
 
 
 def main():
@@ -66,7 +67,9 @@ def main():
         "pending_pct": pending_w,
         "cash_pct": round(100 - invested - pending_w, 2),
         "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT, "max_names": MAX_NAMES,
-                 "max_per_lane": MAX_PER_LANE, "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
+                 "max_per_lane": MAX_PER_LANE, "max_watchlist": MAX_WATCHLIST,
+                 "max_watchlist_per_driver": MAX_WATCHLIST_PER_DRIVER,
+                 "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
         "driver_utilization": dict(sorted(drv.items(), key=lambda kv: -kv[1])),
         "cluster_utilization": dict(sorted(clus.items(), key=lambda kv: -kv[1])),
         "lane_utilization": dict(sorted(lanes.items(), key=lambda kv: -kv[1])),
