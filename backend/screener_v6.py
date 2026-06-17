@@ -5928,6 +5928,11 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         existing_dates = {r["date"] for r in rebs}
         last_reb_month = rebs[-1]["date"][:7] if rebs else None
         is_rebalance_day = (not rebs) or (reb_month != last_reb_month)
+        # Operator override: FORCE_REBALANCE=1 books an OFF-CADENCE rebalance (e.g. to adopt a
+        # mid-month methodology fix immediately instead of waiting for the calendar-month boundary).
+        # Still subject to the same-date double-book guard below, so re-running it is idempotent.
+        if os.environ.get("FORCE_REBALANCE", "").strip().lower() in ("1", "true", "yes"):
+            is_rebalance_day = True
         if rebalance_date in existing_dates:
             is_rebalance_day = False   # never double-book the same date
 
