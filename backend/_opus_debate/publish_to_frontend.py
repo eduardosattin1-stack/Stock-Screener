@@ -218,6 +218,14 @@ for p in picks:
         "methodology_applicable": meth_app,
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
         "size_units": p.get("size_units"),
+        "size_units_effective": p.get("size_units_effective"),
+        # apex skeptic + moat terminal-erosion (stamped by _regime_post) — surfaced per seat for the UI
+        "skeptic_verdict": p.get("skeptic_verdict", ""),
+        "skeptic_kill_fact": p.get("skeptic_kill_fact", ""),
+        "value_conviction_cap": p.get("value_conviction_cap"),
+        "moat": p.get("moat", ""), "moat_score": p.get("moat_score"),
+        "moat_erosion": p.get("moat_erosion", ""), "erosion_severity": p.get("erosion_severity", "none"),
+        "secular_theme": p.get("secular_theme", ""),
         "entry_posture": p.get("entry_posture") or derive_entry_posture(p, rec),
         "expected_return_pct": p.get("expected_return_pct"),
         "horizon_months": p.get("horizon_months"),
@@ -245,8 +253,11 @@ except Exception as e:
 def _apex_weights(es):
     units = {}
     for e in es:
+        eff = e.get("size_units_effective")   # post moat-erosion + secular-theme caps from _regime_post
         su = e.get("size_units")
-        if isinstance(su, (int, float)) and 0.1 <= su <= 1.5:
+        if isinstance(eff, (int, float)) and eff > 0:
+            units[e["symbol"]] = float(eff)    # prefer the capped effective units when _regime_post ran
+        elif isinstance(su, (int, float)) and 0.1 <= su <= 1.5:
             units[e["symbol"]] = float(su)
         else:
             units[e["symbol"]] = max(0.1, (e.get("conviction") or 0) / 100.0)

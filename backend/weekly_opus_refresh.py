@@ -10,7 +10,9 @@
 The scheduled SKILL.md runs:
   python weekly_opus_refresh.py prep            (raw-screen universe + bundles + ledger re-check routing)
   -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [opus/1M])
-  -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book)
+  -> python weekly_opus_refresh.py regime-skeptic -> Workflow(...)    (APEX kill-tier, opus/1M; moat-aware, default REFUTED)
+  -> python weekly_opus_refresh.py regime-post                        (apex: consume skeptic + moat-erosion + secular-theme caps)
+  -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book; reads post-skeptic, capped apex)
   -> python weekly_opus_refresh.py value-input                        (value signals + funnel stats + ledger)
   -> [value Director agent, opus/1M]
   -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, opus/1M)
@@ -198,6 +200,117 @@ _RADAR_FIELDS = ("p_fcf", "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owne
                  "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum")
 
 
+# ── Peer-identity / live-multiple overrides (Radar mis-map backstop) ──────────
+# The Sonnet Radar invents an identity for tickers it does not recognize (observed:
+# PLX.PA mapped to "Plastic Omnium / TIC services" AND to "IT-services" on different
+# runs — it is actually PLUXEE, the Sodexo employee-benefits/voucher spin-off). The
+# debate agents then correct the identity by hand but supply the peer MULTIPLE from
+# stale training memory (Edenred "20-25x FCF" — its PRE-shock multiple). Nothing in the
+# pipeline injects a LIVE peer multiple, so the anchor silently goes stale and inflates
+# the apparent idiosyncratic discount. This override forces the TRUE identity + peers,
+# stamps a CURRENT peer multiple (live FMP when a key is present; else the curated,
+# sourced figure below), and tags whether the discount is idiosyncratic (name-specific
+# alpha) or sector_regulatory (shared-factor BETA — both names move on the same
+# unresolved driver, so a correlation-stressed apex basket must DISCOUNT it, not credit
+# it as edge). Applied deterministically at the end of merge_radar() every Radar phase.
+PEER_OVERRIDES = {
+    "PLX.PA": {
+        "name": "Pluxee",
+        "true_peers": ["EDEN.PA", "SW.PA"],   # Edenred (direct duopoly peer), Sodexo (former parent)
+        "anchor_peer": "EDEN.PA",
+        "convergence": "sector_regulatory",
+        # Curated, sourced fallback used when the live FMP fetch is unavailable. Edenred
+        # has DE-RATED on the identical Brazil PAT reform + Italy voucher shock: ~10.3x
+        # 2026e P/E (Oddo BHF: ~60% below its 9-yr avg fwd multiple), <7x 2028E EPS vs a
+        # 15-yr avg ~26x, ~4.1x EV/2026e EBITDA. The "20-25x" in older dossiers is the
+        # PRE-shock multiple and must not be used as the anchor.
+        "anchor_multiple": {"pe_fwd": 10.3, "ev_ebitda_fwd": 4.1, "asof": "2026-06",
+                            "source": "Oddo BHF / sell-side 2026e (de-rated post-Brazil PAT + Italy reform)"},
+        "note": ("Pluxee (PLX.PA) and Edenred (EDEN.PA) are the employee-benefits/voucher "
+                 "near-duopoly and BOTH de-rated on the SAME regulatory shock — the Brazil "
+                 "PAT reform + Italy voucher cap (Kepler cut PLX EUR28->EUR18 and EDEN "
+                 "EUR40->EUR28 on the same event). Edenred now trades ~10x fwd P/E / ~4x "
+                 "EV/2026e EBITDA, NOT its pre-shock 20-25x. Pluxee at ~5x P/FCF vs a ~10x "
+                 "Edenred is a MODEST discount, largely justified by Pluxee's heavier Brazil "
+                 "concentration (guided ~50% Brazil revenue drop; Edenred took an 8-12% group "
+                 "EBITDA hit on the same reforms). The convergence is SECTOR-REGULATORY BETA "
+                 "on a shared, unresolved factor — NOT idiosyncratic single-name alpha — which "
+                 "is exactly what a correlation-stressed apex basket is built to discount."),
+    },
+}
+
+
+def _live_peer_multiple(ticker):
+    """Best-effort LIVE current multiple for a peer ticker via FMP stable (returns None if
+    no key / endpoint unavailable). Trailing-TTM, used as a live sanity anchor ALONGSIDE the
+    curated forward figure — both are 'current', which is the whole point: never a remembered
+    pre-shock multiple."""
+    try:
+        import datetime
+        import screener_v6 as S
+        if not getattr(S, "FMP_KEY", ""):
+            return None
+        q = S.fmp("quote", {"symbol": ticker}) or []
+        km = S.fmp("key-metrics-ttm", {"symbol": ticker}) or []
+        rt = S.fmp("ratios-ttm", {"symbol": ticker}) or []
+        q, km, rt = (q[0] if q else {}), (km[0] if km else {}), (rt[0] if rt else {})
+        pe = q.get("pe") or rt.get("priceEarningsRatioTTM")
+        ev_ebitda = km.get("enterpriseValueOverEBITDATTM") or km.get("evToEBITDATTM")
+        if pe is None and ev_ebitda is None:
+            return None
+        return {"pe_ttm_live": round(pe, 1) if isinstance(pe, (int, float)) else None,
+                "ev_ebitda_ttm_live": round(ev_ebitda, 1) if isinstance(ev_ebitda, (int, float)) else None,
+                "live_asof": datetime.date.today().isoformat(), "live_source": "FMP stable TTM"}
+    except Exception as e:
+        print(f"  peer-override: live multiple for {ticker} unavailable ({e})")
+        return None
+
+
+def _apply_peer_overrides(out, pgd):
+    """Force true identity + LIVE/curated peer multiple + convergence tag for Radar-mis-mapped
+    names. Mutates `out` in place AND rewrites the per-symbol files. Idempotent: preserves the
+    raw Radar output under _radar_* keys so re-runs don't compound. Returns the # of names fixed."""
+    fixed = 0
+    for sym, ov in PEER_OVERRIDES.items():
+        if sym not in out:
+            continue   # not in this run's universe
+        e = dict(out[sym]) if isinstance(out.get(sym), dict) else {}
+        # Preserve the raw Radar mapping ONCE (don't overwrite on re-stamp).
+        e.setdefault("_radar_peers_raw", e.get("peers", []))
+        e.setdefault("_radar_relative_comps_raw", e.get("relative_comps", ""))
+        e.setdefault("_radar_verdict_raw", e.get("verdict", ""))
+        anchor = dict(ov["anchor_multiple"])
+        live = _live_peer_multiple(ov.get("anchor_peer", ""))
+        if live:
+            anchor.update(live)
+        e["peers"] = list(ov["true_peers"])
+        e["peer_override"] = True
+        e["identity"] = ov["name"]
+        e["convergence"] = ov["convergence"]
+        e["anchor_peer"] = ov.get("anchor_peer", "")
+        e["anchor_multiple"] = anchor
+        e["convergence_note"] = ov["note"]
+        ap = ov.get("anchor_peer", "peer")
+        mult_txt = f"~{anchor.get('pe_fwd')}x fwd P/E / ~{anchor.get('ev_ebitda_fwd')}x EV/EBITDA"
+        if anchor.get("pe_ttm_live"):
+            mult_txt += f" (live TTM P/E ~{anchor['pe_ttm_live']}x)"
+        e["relative_comps"] = (
+            f"[PEER ANCHOR CORRECTED — Radar mis-mapped {sym} as "
+            f"'{(e.get('_radar_relative_comps_raw') or '')[:48].strip()}…'] {ov['name']} ({sym}): "
+            f"anchor peer {ap} now trades {mult_txt} ({anchor.get('source')}), NOT the pre-shock "
+            f"20-25x cited from memory in older dossiers. {ov['note']}")
+        e["verdict"] = "modest_discount_sector_beta" if ov["convergence"] == "sector_regulatory" else e.get("verdict", "")
+        e["rationale"] = ov["note"]
+        out[sym] = e
+        try:
+            (pgd / f"{sym}.json").write_text(json.dumps(e, ensure_ascii=False, indent=2), encoding="utf-8")
+        except OSError:
+            pass
+        fixed += 1
+        print(f"  peer-override applied: {sym} -> {ov['name']} (anchor {ap} {mult_txt}; convergence={ov['convergence']})")
+    return fixed
+
+
 def merge_radar():
     """Merge the chunked Radar shards (_opus_debate/_pg_*.json) into peer_groups.json,
     deterministically. The Radar runs as N parallel Sonnet agents (one per sector chunk); merging by
@@ -212,18 +325,45 @@ def merge_radar():
                 out.update(d)
         except Exception as e:
             print(f"  WARN: {os.path.basename(f)} skipped ({e})")
-    (ROOT / "peer_groups.json").write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     # Also explode to per-symbol files: the combined 161-entry file is ~29k tokens, over the 25k Read
     # cap, so each debate agent reads ONLY its own small entry from peer_groups/<sym>.json.
     pgd = ROOT / "peer_groups"
     pgd.mkdir(exist_ok=True)
+    # Backstop the Radar's identity mis-maps (PLX.PA etc.) with true peers + a LIVE/curated
+    # multiple BEFORE writing, so the debate never reads an invented peer set or a stale anchor.
+    n_ovr = _apply_peer_overrides(out, pgd)
+    (ROOT / "peer_groups.json").write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     for _sym, _e in out.items():
         try:
             (pgd / f"{_sym}.json").write_text(json.dumps(_e, ensure_ascii=False, indent=2), encoding="utf-8")
         except OSError:
             pass
-    print(f"merged {len(shards)} Radar shards -> peer_groups.json ({len(out)} entries) + per-symbol files")
+    print(f"merged {len(shards)} Radar shards -> peer_groups.json ({len(out)} entries) "
+          f"+ per-symbol files ({n_ovr} peer-override(s) applied)")
     return len(out)
+
+
+def peer_overrides_restamp(push_frontend=False):
+    """Deterministic re-stamp of PEER_OVERRIDES onto the EXISTING peer_groups (no Radar re-run) —
+    so a corrected anchor lands now, ahead of the next weekly debate. Optionally syncs the frontend
+    copy the stock-page peer-comps section reads."""
+    import shutil
+    pgf = ROOT / "peer_groups.json"
+    if not pgf.exists():
+        print("no peer_groups.json — nothing to re-stamp"); return 0
+    out = json.load(open(pgf, encoding="utf-8"))
+    pgd = ROOT / "peer_groups"; pgd.mkdir(exist_ok=True)
+    n = _apply_peer_overrides(out, pgd)
+    pgf.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    if push_frontend:
+        dst = Path(BK).parent / "frontend" / "public" / "peer_groups.json"
+        try:
+            shutil.copyfile(pgf, dst)
+            print(f"  synced -> {dst}")
+        except Exception as e:
+            print(f"  frontend sync FAILED: {e}")
+    print(f"peer-override re-stamp complete: {n} name(s) corrected")
+    return n
 
 
 def _val_money(s):
@@ -307,6 +447,12 @@ def _funded_solvency(sector, ndE, icov):
     return "weak"
 
 
+# Moat durability / terminal-erosion classifier — extracted to backend/_moat.py so the regime
+# post-processor (_opus_debate/_regime_post.py) reuses the SAME implementation without importing this
+# (API-keyed) module. A SECOND family of teeth, ADDITIVE to the cyclical-peak/stale-anchor gates.
+from _moat import moat_features as _moat_features  # noqa: E402
+
+
 VALUE_DIRECTOR_PROMPT = """You are the SPECULAIR VALUE DIRECTOR (Claude Opus 4.8), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
 
 SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
@@ -326,13 +472,13 @@ RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
    - `is_financial`=true (banks/insurers) OR `funded_solvency` in {exempt_financial, strong}: solvency is FINE — do NOT penalize. This clears EEFT/TNET (~0.8-1.6x funded, strong coverage), SCR.PA and the bank/insurer set on the RIGHT basis (their low Altman-Z was a float/reserve artifact), and any net-cash name.
    - REAL-funded-debt names (`funded_solvency` = moderate or weak): drop the Z number and near-VETO ONLY when the metrics are JOINTLY weak — high funded leverage (net_funded_debt_ebitda > ~3.5x) AND thin coverage (interest_coverage < ~3x) AND a near-term MATURITY WALL (check the name's dossier at backend/_opus_debate/dossiers/<SYM>.md for refinancing/maturity risk). ONE weak metric alone is NOT a veto: a 2-3x-levered name with healthy coverage and no wall is acceptable value — just note the leverage in the thesis. (Worked example: SAX.DE ~3.0x / 3.7x coverage = the book's most-levered name → keep only if the dossier shows no near maturity wall.)
    - `net_debt_exceeds_mktcap`=true remains a thin-equity flag — NEVER credit net debt as "net cash."
-4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap).
+4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap). When the peer entry carries `peer_override`/`anchor_multiple`, that is a LIVE, current peer multiple — use it, NEVER a remembered one (peer multiples de-rate). When `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee vs a now-~10x Edenred, both hit by the same Brazil PAT + Italy voucher reform), the discount-to-peer is SHARED-FACTOR SECTOR BETA, not idiosyncratic alpha: count it as a hidden-factor cluster in the correlation stress below, do NOT credit the gap as single-name edge, and prefer it as a sized/watch leg rather than a full-conviction apex seat.
 
-HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap.
+HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap, (e) MATCH the moat terminal-erosion teeth in size: a `moat_erosion`="CAP" name (falling returns OR eroding margins + decelerating revenue) MUST carry `size_units` <= 0.5 (the deterministic post already half-caps it; your number must agree), and an `erosion_severity`="value-destroying" name (sub-cost-of-capital AND eroding — `roic_below_hurdle`=true) is apex-INELIGIBLE unless the skeptic CONFIRMS a durable moat. Use `moat`/`moat_trend`/`moat_score` as the moat read: a low multiple on a structurally-shrinking base (high-but-FALLING ROIC, eroding gross margin) is a value trap, NOT value — this is SEPARATE from the cyclical-peak gate (an earnings cycle high), which still applies.
 
-HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy). FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome) and CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
+HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy), (f) SECULAR-DISRUPTION THEME (each name carries a `secular_theme`: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). NO secular_theme may carry >2 names — the live clusters to check are ai-displacement across ADBE/IT/GLOB and payments-disintermediation across EEFT/PLX.PA; "cheap vs peers" inside a cohort that is melting TOGETHER is sector beta, not alpha. A WIDE & non-eroding moat (e.g. ADBE: rising ROIC, expanding margin) counts at HALF toward the theme budget (a durable anchor that merely carries the narrative is not the tail risk), so a theme may seat one durable anchor + at most one eroding leg. FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome); CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising); and any name whose peer entry is tagged `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee — its cheapness vs Edenred is shared Brazil-PAT/Italy-voucher REGULATORY beta, both names de-rated on the same factor, so it is sector beta NOT name-specific alpha and must be discounted here, not credited as edge). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined cap and the justification); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position. Reply exactly: DONE"""
+OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" — used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position. Reply exactly: DONE"""
 
 
 DISRUPTOR_DIRECTOR_PROMPT = """You are the SPECULAIR DISRUPTOR DIRECTOR (Claude Opus 4.8), allocating REAL capital to PROFITABLE SECULAR DISRUPTORS — picks-and-shovels toll-takers in durable disruption themes — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/disruptor/disruptor_grade_input.json — one row per debated name, every field pre-computed. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH (favor names whose secular thesis can deliver +30-50% within ~12 months via a live trend / momentum / earnings-inflection, and take more near-term AI-capex/cyclical beta); RISK_OFF / decelerating / sticky-inflation => DEFEND (prefer guard-clean compounders whose downside is protected even if the +30-50% is a multi-year story, and SIZE DOWN the high-beta reaches). State risk_stance + a one-line macro read in the disruptor_memo.
@@ -470,6 +616,7 @@ def value_input():
         icov = flv.get("interest_coverage")
         is_fin = "financ" in (r.get("sector", "") or "").lower()
         funded_solv = _funded_solvency(r.get("sector", ""), ndE, icov)
+        mf = _moat_features(u, s, r)
         out.append({
             "symbol": sym, "sector": r.get("sector", ""),
             "mos_spread": mos, "altman_z": u.get("altman_z"), "p_fcf": u.get("p_fcf"),
@@ -500,6 +647,16 @@ def value_input():
             "is_financial": is_fin, "funded_solvency": funded_solv,
             # leverage (BRBR net-debt-not-net-cash)
             "net_debt": net_debt, "market_cap": mktcap, "net_debt_exceeds_mktcap": net_debt_gt_mktcap,
+            # moat durability / terminal-erosion (deterministic, ADDITIVE to peak/stale gates) —
+            # moat_erosion="CAP" => 0.5 size cap in post; erosion_severity drives the skeptic kill-tier
+            "moat_score": mf["moat_score"], "moat_erosion": mf["moat_erosion"],
+            "erosion_severity": mf["erosion_severity"], "roic_below_hurdle": mf["roic_below_hurdle"],
+            "returns_trend": mf["returns_trend"], "net_margin_trend": mf["net_margin_trend"],
+            "gross_margin_trend": mf["gross_margin_trend"], "revenue_trend": mf["revenue_trend"],
+            "revenue_decelerating": mf["revenue_decelerating"],
+            # agent-judged moat read (from the debate dossier/CRO) — cross-checks the deterministic gate
+            "moat": r.get("moat", ""), "moat_trend": r.get("moat_trend", ""),
+            "secular_threat": r.get("secular_threat", ""), "secular_theme": r.get("secular_theme", ""),
         })
     (ROOT / "value_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     prompt_txt = VALUE_DIRECTOR_PROMPT
@@ -948,6 +1105,39 @@ def value_revalidate():
     return len(stale)
 
 
+def _moat_hints(finalists):
+    """Per-symbol moat terminal-erosion hints for the skeptic prompt. A value-destroying / sub-cost-of-
+    capital eroding franchise enters the skeptic as a default-REFUTE candidate (refute_candidate=True).
+    Computed FRESH from the scan + universe + debate result so it does not depend on value-input order."""
+    try:
+        uni = {x["symbol"]: x for x in json.load(open(ROOT / "_radar_universe.json", encoding="utf-8"))}
+    except Exception:
+        uni = {}
+    scan = gcs_io.gcs_read_json("scans/latest_global.json")
+    if not scan:
+        try:
+            scan = json.load(open("../frontend/public/latest_global.json", encoding="utf-8"))
+        except Exception:
+            scan = {}
+    sc_by = {s.get("symbol"): s for s in (scan.get("stocks") or [])}
+    hints = {}
+    for sym in finalists:
+        rf = ROOT / "results_regime" / f"{sym}.json"
+        try:
+            r = json.load(open(rf, encoding="utf-8")) if rf.exists() else {"sector": uni.get(sym, {}).get("sector", "")}
+        except Exception:
+            r = {"sector": uni.get(sym, {}).get("sector", "")}
+        mf = _moat_features(uni.get(sym, {}), sc_by.get(sym, {}), r)
+        hints[sym] = {
+            "erosion": mf["moat_erosion"], "severity": mf["erosion_severity"],
+            "roic_below": mf["roic_below_hurdle"], "returns_trend": mf["returns_trend"],
+            "gross_margin_trend": mf["gross_margin_trend"],
+            "refute_candidate": bool(mf["erosion_severity"] == "value-destroying"
+                                     or (mf["moat_erosion"] == "CAP" and mf["roic_below_hurdle"])),
+        }
+    return hints
+
+
 def value_skeptic():
     """8b — SKEPTIC TIER over the value-apex finalists (apex + runner_ups, ~16 names). The weekly
     debate runs Interrogator->Architect->CRO in ONE context, so the 'adversarial' CRO shares the
@@ -963,6 +1153,7 @@ def value_skeptic():
         s = r.get("symbol") if isinstance(r, dict) else r
         if s and s not in finalists:
             finalists.append(s)
+    hints = _moat_hints(finalists)
     (ROOT / "_skeptic").mkdir(exist_ok=True)
     js = """export const meta = {
   name: 'value-skeptic',
@@ -971,11 +1162,13 @@ def value_skeptic():
 }
 const DIR = 'backend/_opus_debate'
 const SYMS = __FINALISTS__
+const MOAT_HINTS = __MOAT_HINTS__
 phase('Skeptic')
 const BATCH = 8
 for (let b = 0; b < SYMS.length; b += BATCH) {
   await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(
     'SKEPTIC tier for ' + sym + ' (value-apex finalist). Your job is to KILL this value thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side — do NOT read or reconstruct the bull case.\\n' +
+    ((MOAT_HINTS[sym] || {}).refute_candidate ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate — erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +
     '1. Read ' + DIR + '/results_regime/' + sym + '.json but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status. Read the forensic dossier ' + DIR + '/dossiers/' + sym + '.md.\\n' +
     '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS — is the claimed cheapness real edge, or priced/structural (melting business, governance brake, terminal multiple)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, regulatory action the debate missed.\\n' +
     '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the value case). Also value_conviction_cap (int 1-5): the MAX value conviction this name deserves given what you verified.\\n' +
@@ -984,11 +1177,64 @@ for (let b = 0; b < SYMS.length; b += BATCH) {
 }
 return 'DONE'
 """
-    js = js.replace("__FINALISTS__", json.dumps(finalists)).replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL)
+    js = (js.replace("__FINALISTS__", json.dumps(finalists))
+            .replace("__MOAT_HINTS__", json.dumps(hints))
+            .replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL))
     out = ROOT / "_skeptic_workflow.js"
     out.write_text(js, encoding="utf-8")
-    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier")
+    n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
+    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier "
+          f"| moat REFUTE-candidates={n_ref}")
     print(f"SKEPTIC_WORKFLOW={out.resolve()}")
+    return len(finalists)
+
+
+def regime_skeptic():
+    """APEX/REGIME SKEPTIC kill-tier — the catalyst/apex book never had one (PLX.PA, SCR.PA stayed
+    seated in the Apex despite the value skeptic REFUTING them). Mirror of value_skeptic over the
+    apex_basket_opus_regime finalists: default REFUTED, bear-side + live-web only. The moat terminal-
+    erosion hint biases the prior — a value-destroying / sub-cost-of-capital eroding franchise enters
+    as a REFUTE candidate. _regime_post.consume_skeptic then DEMOTES any REFUTED name to runner_ups.
+    Pipeline order: Director -> regime-skeptic (Workflow) -> regime-post -> publish_to_frontend."""
+    apx = json.load(open(ROOT / "apex_basket_opus_regime.json", encoding="utf-8"))
+    finalists = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
+    for r in apx.get("runner_ups", []):
+        s = r.get("symbol") if isinstance(r, dict) else r
+        if s and s not in finalists:
+            finalists.append(s)
+    hints = _moat_hints(finalists)
+    (ROOT / "_skeptic_regime").mkdir(exist_ok=True)
+    js = """export const meta = {
+  name: 'regime-skeptic',
+  description: 'Independent skeptic kill-tier over the apex/regime finalists (default REFUTED, moat-aware)',
+  phases: [{ title: 'Skeptic', model: '__SKEPTIC_MODEL__' }],
+}
+const DIR = 'backend/_opus_debate'
+const SYMS = __FINALISTS__
+const MOAT_HINTS = __MOAT_HINTS__
+phase('Skeptic')
+const BATCH = 8
+for (let b = 0; b < SYMS.length; b += BATCH) {
+  await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(
+    'SKEPTIC tier for ' + sym + ' (apex/regime finalist). Your job is to KILL this thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side — do NOT read or reconstruct the bull case.\\n' +
+    ((MOAT_HINTS[sym] || {}).refute_candidate ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate — erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +
+    '1. Read ' + DIR + '/results_regime/' + sym + '.json but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status. Read the forensic dossier ' + DIR + '/dossiers/' + sym + '.md.\\n' +
+    '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count) verify against the latest primary filing? (c) THESIS WEAKNESS / TERMINAL MOAT — is the claimed cheapness real edge, or priced/structural (melting business, AI/fintech/cord-cutting disruption, terminal multiple, returns BELOW cost of capital)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, a binary/soft catalyst dressed as hard.\\n' +
+    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the thesis). Also value_conviction_cap (int 1-5): the MAX conviction this name deserves given what you verified.\\n' +
+    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, value_conviction_cap, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
+    { label: 'regime-skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
+}
+return 'DONE'
+"""
+    js = (js.replace("__FINALISTS__", json.dumps(finalists))
+            .replace("__MOAT_HINTS__", json.dumps(hints))
+            .replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL))
+    out = ROOT / "_regime_skeptic_workflow.js"
+    out.write_text(js, encoding="utf-8")
+    n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
+    print(f"regime_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier "
+          f"| moat REFUTE-candidates={n_ref}")
+    print(f"REGIME_SKEPTIC_WORKFLOW={out.resolve()}")
     return len(finalists)
 
 
@@ -2484,7 +2730,7 @@ const N_RADAR = __N_RADAR__
 phase('Radar')
 await parallel(Array.from({ length: N_RADAR }, (_, i) => () => agent(
   'You are the RADAR (relative-value analyst). Read ' + DIR + '/_radar_groups.json — a JSON array; take element [' + i + '] = [label, [symbols]]. Those symbols are your ASSIGNMENT. Read ' + DIR + '/_radar_universe.json for their Speculair data (filter to your symbols).\n' +
-  '1. For EACH assigned symbol, identify its TRUE business competitors / closest comparables — by business model, economics, end-market, value chain and capital intensity — REGARDLESS of whether the competitor is in this candidate universe. Name the ACTUAL competitors even if NOT screened here (e.g. a stainless-steel maker -> Outokumpu / Aperam; a broadcast-tower operator -> Cellnex / INWIT / American Tower). 4-8 real tickers each.\n' +
+  '1. For EACH assigned symbol, identify its TRUE business competitors / closest comparables — by business model, economics, end-market, value chain and capital intensity — REGARDLESS of whether the competitor is in this candidate universe. Name the ACTUAL competitors even if NOT screened here (e.g. a stainless-steel maker -> Outokumpu / Aperam; a broadcast-tower operator -> Cellnex / INWIT / American Tower). 4-8 real tickers each. CRITICAL: if you do NOT actually recognize the ticker/company, set verdict="unmapped" and say so in rationale — do NOT invent an identity or guess a peer set from the ticker letters (a wrong identity propagates a stale, wrong multiple all the way to the Director). A non-US suffix (.PA/.MC/.L/.SW/.OL/.DE) is a frequent mis-map trap — verify the actual company name from _radar_universe.json before clustering.\n' +
   '2. For EACH, relative_comps: where it ranks vs that TRUE peer set on VALUATION (p_fcf, the multi-method MoS spread), GROWTH (rev/eps), MARGINS (gross/net, roic) and TREND/MOMENTUM (price vs sma200, 52-wk position, sector_momentum) — cheap / in-line / rich, and whether the gap is JUSTIFIED by quality/growth or is a real mispricing. Use _radar_universe.json data for in-universe peers + your sector knowledge for the rest. 2-4 tight sentences each.\n' +
   '3. Write (Write tool) VALID JSON to ' + DIR + '/_pg_' + i + '.json = a map of SYMBOL to { peers:[...], relative_comps:"...", verdict:"cheap_vs_peers|in_line|rich_vs_peers", rationale:"why these are the real peers" } for ONLY your assigned symbols. Reply exactly: DONE',
   { label: 'radar:' + i, phase: 'Radar', model: 'sonnet' })))
@@ -2501,11 +2747,11 @@ function debatePrompt(sym, online) {
   return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 4.8 — Interrogator, Architect, then CRO/Moderator — allocating REAL capital. Be skeptical and current-facts-driven.\n' +
     step1 +
     '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
-    '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent).\n' +
+    '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples — use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount — e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha — say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
     '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
     '5. CATALYST VERIFICATION (web, MANDATORY for every name): identify the load-bearing catalyst(s) and WebSearch their CURRENT status as of today. catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
-    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number.\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. ALSO emit moat (WIDE|NARROW|ERODING|NONE — a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
@@ -2535,12 +2781,12 @@ phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8, 1M context). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
-  'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture.\n' +
+  'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 3b — BASKET-13 CATALYST SLEEVE (visibility addendum): Read backend/_basket13_candidates.json if it exists (skip this step silently if absent) — the Catalyst Watch sleeve names, each carrying native fields (score, board_priority, edge_grade, ev_pct, valuation_method, dated_milestone, lane_canon, resolution_driver, edge_flags). Reading guide: (1) score / board_priority measure catalyst DENSITY, not cheapness — score is NOT edge; (2) ev_pct is an expected-value barbell, NOT a margin of safety; (3) check dated_milestone against YOUR holding window before selecting; (4) edge_grade (H/M/L) is computed vs the LIVE price and is perishable. HARD CONSTRAINT: you may NOT select any sleeve name whose valuation_method == "binary_prob", whose edge_grade == "L", or that carries a blocking edge_flag (QUARANTINED / NO_UPSIDE / TRADING_THROUGH_TERMS / FLOOR_GE_LIVE / NO_BREAK_DOWNSIDE); these names are context, not candidates.\n' +
-  'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off), (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet). No hidden factor may carry >3 names; stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
-  'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal)}. Reply exactly: DONE',
+  'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) — INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha — discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget — a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
+  'STEP 5 — Each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST include a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
+  'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
 log('Radar + debate + director complete.')
 return 'DONE'
@@ -2553,6 +2799,8 @@ if __name__ == "__main__":
         prep()
     elif mode == "merge":
         merge_radar()
+    elif mode in ("peer-overrides", "peer_overrides"):
+        peer_overrides_restamp(push_frontend=("--frontend" in sys.argv or "--gcs" in sys.argv))
     elif mode == "export-csv":
         export_debate_csv()
     elif mode == "finish":
@@ -2566,6 +2814,9 @@ if __name__ == "__main__":
     elif mode in ("value-post", "value_post"):
         import subprocess
         subprocess.run([sys.executable, str(ROOT / "_value_post.py")] + (["--offline"] if "--offline" in sys.argv else []), check=True)
+    elif mode in ("regime-post", "regime_post"):
+        import subprocess
+        subprocess.run([sys.executable, str(ROOT / "_regime_post.py")], check=True)
     elif mode in ("value-revalidate", "value_revalidate"):
         value_revalidate()
     elif mode in ("disruptor-universe", "disruptor_universe"):
@@ -2587,6 +2838,8 @@ if __name__ == "__main__":
         disruptor_finish()
     elif mode in ("value-skeptic", "value_skeptic"):
         value_skeptic()
+    elif mode in ("regime-skeptic", "regime_skeptic"):
+        regime_skeptic()
     elif mode in ("shadow-debate", "shadow_debate"):
         shadow_debate()
     elif mode in ("shadow-diff", "shadow_diff"):
