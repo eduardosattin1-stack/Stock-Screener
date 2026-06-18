@@ -2350,9 +2350,9 @@ export default function Dashboard(){
     return (
       <>
         {moat && (
-          <span title={`Economic moat: ${moat}${pick.moat_trend ? " · trend " + String(pick.moat_trend) : ""}${score != null ? " · score " + score + "/100" : ""}`}
+          <span title={`Economic moat — the debate's STRUCTURAL width read: ${moat}${pick.moat_trend ? " · trend " + String(pick.moat_trend) : ""}${score != null ? "  ·  financial-durability score " + score + "/100 (a SEPARATE deterministic axis: ROIC-vs-hurdle + margin/revenue momentum — a wide structural moat with soft recent numbers can score lower than a narrow one)" : ""}`}
                 style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: moatBg, color: moatCol, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
-            moat {moat}{score != null ? " " + score : ""}
+            moat {moat}
           </span>
         )}
         {erosion === "CAP" && (
