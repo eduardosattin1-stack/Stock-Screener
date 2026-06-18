@@ -2373,6 +2373,53 @@ export default function Dashboard(){
     );
   };
 
+  // Shared per-pick "vitals" block (Entry · Current · upside/exit-below · exposure) — ONE
+  // renderer across all three Speculair cards so they stay consistent. Each caller keeps its own
+  // outer stats <div> + card-specific rows; this returns only the shared inner rows. The upside
+  // metric is caller-computed (Apex: target/expected return; Value: SoP MoS; Disruptor: none) so
+  // the label stays honest. Entry/Current/stop use fmtPrice → "—" for 0/null + currency-aware.
+  const pickVitals = (pick: any, currPrice: number, opts: { upsidePct?: number | null; upsideLabel: string; currency?: string }) => {
+    const cur = opts.currency;
+    const ep = pick.entry_price;
+    const hasEntry = typeof ep === "number" && ep > 0;
+    const up = opts.upsidePct;
+    const stop = pick.thesis_break_px;
+    const hasUp = typeof up === "number";
+    const hasStop = typeof stop === "number" && stop > 0;
+    const showUpside = hasUp || hasStop;
+    // label adapts to what's present so "exit below" never shows without a stop value
+    const upLabel = hasUp && hasStop ? `${opts.upsideLabel} / exit below` : hasUp ? opts.upsideLabel : "exit below";
+    const axes = Array.isArray(pick.exposure_axes)
+      ? pick.exposure_axes.map((a: string) => String(a).split(/[(（]/)[0].trim()).filter(Boolean)
+      : [];
+    return (
+      <>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <span>Entry:</span>
+          <span>{fmtPrice(ep, cur)}{hasEntry && pick.entry_date ? ` (${pick.entry_date})` : ""}</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <span>Current:</span>
+          <span>{fmtPrice(currPrice, cur)}</span>
+        </div>
+        {showUpside && (
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+            <span>{upLabel}:</span>
+            <span style={{ textAlign: "right" }}>
+              {typeof up === "number" && <span style={{ color: up >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{up >= 0 ? "+" : ""}{up.toFixed(0)}%</span>}
+              {typeof stop === "number" && stop > 0 && <span style={{ color: "var(--red)" }}>{typeof up === "number" ? " · " : ""}exit below {fmtPrice(stop, cur)}</span>}
+            </span>
+          </div>
+        )}
+        {axes.length > 0 && (
+          <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+            <span style={{ color: "var(--text-muted)" }}>exposure: </span>{axes.join(" · ")}
+          </div>
+        )}
+      </>
+    );
+  };
+
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
@@ -3072,6 +3119,9 @@ export default function Dashboard(){
                         const currPrice = stock ? stock.price : 0;
                         const entryPrice = pick.entry_price || 0;
                         const perf = entryPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
+                        const _basis = entryPrice > 0 ? entryPrice : currPrice;
+                        const apexUpside = typeof pick.expected_return_pct === "number" ? pick.expected_return_pct
+                          : (typeof pick.target_px === "number" && pick.target_px > 0 && _basis > 0 ? (pick.target_px / _basis - 1) * 100 : null);
                         return (
                           <div
                             key={pick.symbol}
@@ -3103,33 +3153,7 @@ export default function Dashboard(){
                               </div>
                             )}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Entry:</span>
-                                <span>${entryPrice.toFixed(2)} ({pick.entry_date})</span>
-                              </div>
-                              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Current:</span>
-                                <span>${currPrice.toFixed(2)}</span>
-                              </div>
-                              {typeof pick.target_px === "number" && pick.target_px > 0 && (entryPrice > 0 || currPrice > 0) && (() => {
-                                const basis = entryPrice > 0 ? entryPrice : currPrice;
-                                const exp = (pick.target_px / basis - 1) * 100;
-                                const maxAbs = Math.max(Math.abs(exp), Math.abs(perf), 1);
-                                const w = (v: number) => Math.max(2, Math.min(100, (Math.abs(v) / maxAbs) * 100));
-                                return (
-                                  <div style={{ marginTop: 4 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                      <span>Director target:</span>
-                                      <span>${pick.target_px.toFixed(2)} <span style={{ color: exp >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>({exp >= 0 ? "+" : ""}{exp.toFixed(0)}% exp)</span></span>
-                                    </div>
-                                    {/* expected (outline) vs realized (solid) — the basket-13 convention */}
-                                    <div style={{ marginTop: 3 }} title={`Director expectation ${exp.toFixed(0)}% (outline) vs realized ${perf.toFixed(1)}% (solid)`}>
-                                      <div style={{ height: 4, borderRadius: 2, border: "1px solid var(--blue)", width: `${w(exp)}%`, opacity: 0.75 }} />
-                                      <div style={{ height: 4, borderRadius: 2, marginTop: 2, background: perf >= 0 ? "var(--green)" : "var(--red)", width: `${w(perf)}%` }} />
-                                    </div>
-                                  </div>
-                                );
-                              })()}
+                              {pickVitals(pick, currPrice, { upsidePct: apexUpside, upsideLabel: "target upside", currency: stock?.currency })}
                               {pick.source_methodologies && pick.source_methodologies.length > 0 && (
                                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
                                   {pick.source_methodologies.map((m: string) => (
@@ -3258,15 +3282,7 @@ export default function Dashboard(){
                                 {pick.corr_flag && (
                                   <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
                                 )}
-                                {pick.skeptic_verdict && (
-                                  <span title={`Skeptic (independent kill-tier): ${pick.skeptic_verdict}${pick.skeptic_corrections ? " — " + String(Array.isArray(pick.skeptic_corrections) ? pick.skeptic_corrections.join(" | ") : pick.skeptic_corrections).slice(0, 500) : ""}${pick.skeptic_kill_fact ? " — " + String(pick.skeptic_kill_fact).slice(0, 300) : ""}`}
-                                        style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3,
-                                                 background: pick.skeptic_verdict === "CONFIRMED" ? "rgba(20,184,122,0.15)" : pick.skeptic_verdict === "REFUTED" ? "rgba(239,68,68,0.15)" : "rgba(234,179,8,0.15)",
-                                                 color: pick.skeptic_verdict === "CONFIRMED" ? "var(--green)" : pick.skeptic_verdict === "REFUTED" ? "var(--red)" : "var(--amber)",
-                                                 fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                    {pick.skeptic_verdict === "CONFIRMED" ? "✓ skeptic" : pick.skeptic_verdict === "REFUTED" ? "✗ refuted" : "✓ corrected"}
-                                  </span>
-                                )}
+                                {skepticChip(pick)}
                                 {entryPostureChip(pick.entry_posture)}
                               </div>
                               {typeof mos === "number" && (
@@ -3283,45 +3299,13 @@ export default function Dashboard(){
                                   {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : ""}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
                                 </span>
                               </div>
-                              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Current:</span>
-                                <span>${currPrice.toFixed(2)}</span>
-                              </div>
-                              {(typeof mos === "number" || typeof pick.thesis_break_px === "number") && (() => {
-                                const entryP = pick.entry_price || 0;
-                                const realized = entryP > 0 && currPrice > 0 ? ((currPrice / entryP) - 1) * 100 : 0;
-                                const exp = typeof mos === "number" ? mos : 0;
-                                const maxAbs = Math.max(Math.abs(exp), Math.abs(realized), 1);
-                                const w = (v: number) => Math.max(2, Math.min(100, (Math.abs(v) / maxAbs) * 100));
-                                return (
-                                  <div style={{ marginTop: 2 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                      <span>FV upside / exit below:</span>
-                                      <span>
-                                        {typeof mos === "number" && <span style={{ color: mos >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{mos >= 0 ? "+" : ""}{mos.toFixed(0)}%</span>}
-                                        {typeof pick.thesis_break_px === "number" && <span style={{ color: "var(--red)" }}> · ${pick.thesis_break_px}</span>}
-                                      </span>
-                                    </div>
-                                    {typeof mos === "number" && (
-                                      <div style={{ marginTop: 3 }} title={`CRO fair-value upside ${exp.toFixed(0)}% (outline) vs realized ${realized.toFixed(1)}% (solid)${typeof pick.bear_fv_px === "number" ? ` · agent bear FV $${pick.bear_fv_px}` : ""}`}>
-                                        <div style={{ height: 4, borderRadius: 2, border: "1px solid var(--blue)", width: `${w(exp)}%`, opacity: 0.75 }} />
-                                        <div style={{ height: 4, borderRadius: 2, marginTop: 2, background: realized >= 0 ? "var(--green)" : "var(--red)", width: `${w(realized)}%` }} />
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })()}
+                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
                               <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
                                 {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
                                 {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
                                 {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
                                 {moatChips(pick)}
                               </div>
-                              {Array.isArray(pick.exposure_axes) && pick.exposure_axes.length > 0 && (
-                                <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                                  <span style={{ color: "var(--text-muted)" }}>exposure: </span>{pick.exposure_axes.map((a: string) => String(a).split(/[(（]/)[0].trim()).filter(Boolean).join(" · ")}
-                                </div>
-                              )}
                             </div>
                             {pick.thesis && (() => {
                               const _txt = String(pick.thesis);
@@ -3494,7 +3478,7 @@ export default function Dashboard(){
                               {typeof ro40 === "number" && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: ro40 >= 40 ? "rgba(20,184,122,0.12)" : "var(--amber-light)", color: ro40 >= 40 ? "var(--green)" : "var(--amber)", fontFamily: "var(--font-mono)" }}>rule-of-40 {ro40}</span>}
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between" }}><span>Entry / Current:</span><span>${entryPrice ? entryPrice.toFixed(2) : "—"} → ${currPrice ? currPrice.toFixed(2) : "—"}</span></div>
+                              {pickVitals(pick, currPrice, { upsidePct: null, upsideLabel: "exit below", currency: stock?.currency })}
                               <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span>Solvency:</span><span style={{ textAlign: "right", color: pick.funded_solvency === "weak" ? "var(--red)" : "var(--green)" }}>{pick.funded_solvency || "—"}{pick.ev_gp != null ? ` · EV/GP ${pick.ev_gp}x` : ""}</span></div>
                               {pick.moat_evidence && <div style={{ fontSize: 8.5, color: "var(--text-light)", lineHeight: 1.4 }}><span style={{ color: "var(--text-muted)" }}>moat: </span>{pick.moat_evidence}</div>}
                             </div>
