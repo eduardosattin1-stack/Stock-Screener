@@ -158,6 +158,17 @@ def target_px(sop_fv):
     return vals[0]
 
 
+# Authoritative entry prices live in the apex tracking file's positions (mirrors value_publish).
+# The prior-payload + scan-price fallback both yield 0 for a HELD non-US name absent from the US
+# scan (e.g. PLX.PA), and the stale 0 then carries forward forever — so insert tracking as the
+# middle fallback, BEFORE the scan price.
+apex_pos = {}
+try:
+    if TRACK_LOCAL.exists():
+        apex_pos = (json.load(open(TRACK_LOCAL, encoding="utf-8")) or {}).get("positions", {}) or {}
+except Exception:
+    apex_pos = {}
+
 entries = []
 for p in picks:
     sym = p.get("symbol")
@@ -179,8 +190,8 @@ for p in picks:
         "symbol": sym,
         "conviction": int(p.get("director_conviction", 0)),
         "debate_conviction": int(rec.get("conviction", 0) or 0),
-        "entry_price": prior.get("entry_price") or sc.get("price", 0),
-        "entry_date": prior.get("entry_date") or TODAY,
+        "entry_price": prior.get("entry_price") or apex_pos.get(sym, {}).get("entry_price") or sc.get("price") or 0,
+        "entry_date": prior.get("entry_date") or apex_pos.get(sym, {}).get("entry_date") or TODAY,
         "held_since_prior": sym in prior_apex,
         "source_methodologies": meths,
         "director_rationale": rationale,
