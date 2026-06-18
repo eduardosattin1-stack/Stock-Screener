@@ -71,7 +71,9 @@ def main():
     import screener_v6
     import signal_tracker
     import tradier_options
+    import calibration_tracker
 
+    theta_down = False  # set if any region reports CALIBRATION_THETA_DOWN -> fail the job loudly after the loop
     for region in REGIONS_TO_SCAN:
         log.info(f"═══ Processing region={region} ═══")
 
@@ -99,6 +101,10 @@ def main():
             else:
                 log.warning(f"[{region}] Calibration tracker v2 skipped: "
                             f"could not reload scans/latest_{region}.json from GCS")
+        except calibration_tracker.ThetaUnavailable as e:
+            # LOUD: distinct token + CRITICAL severity so it's greppable/alertable; flag for a non-zero exit.
+            log.critical(f"🚨 [{region}] CALIBRATION_THETA_DOWN — {e}", exc_info=True)
+            theta_down = True
         except Exception as e:
             log.error(f"[{region}] Calibration tracker v2 failed: {e}", exc_info=True)
 
@@ -123,6 +129,13 @@ def main():
         log.info(f"═══ Completed processing region={region} ═══")
 
     log.info(f"═══ Consolidated Scan job complete ═══")
+    if theta_down:
+        # Scan + NAV already saved above; fail the JOB now so the Cloud Run execution shows FAILED
+        # (visible in the executions list + alertable) instead of silently exiting 0 with no fills.
+        log.critical("🚨 CALIBRATION_THETA_DOWN — ThetaData was unavailable; calibration fills DID NOT run "
+                     "(scan + NAV were still saved). Failing the job so this is visible/alertable — fix "
+                     "THETA_EMAIL/THETA_PASSWORD in Secret Manager and re-run.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
