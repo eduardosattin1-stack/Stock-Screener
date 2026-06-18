@@ -30,6 +30,15 @@ import requests
 
 log = logging.getLogger(__name__)
 
+# Local-dev convenience: load backend/.env (THETA_EMAIL/THETA_PASSWORD/...) if present, so local runs
+# (e.g. value-publish's wheel Greeks) don't fail for want of a shell export. No-op in production —
+# Cloud Run injects THETA via Secret Manager (--set-secrets) and there is no .env on the image.
+try:
+    from dotenv import load_dotenv as _load_dotenv
+    _load_dotenv()
+except Exception:
+    pass
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -96,10 +105,10 @@ def get_theta_client():
         return _client
     with _client_lock:
         if _client is None:
-            email = os.environ.get("THETA_EMAIL")
-            password = os.environ.get("THETA_PASSWORD")
-            if not (email and password):
-                raise RuntimeError("THETA_EMAIL / THETA_PASSWORD env vars not set")
+            email = (os.environ.get("THETA_EMAIL") or "").strip()
+            password = (os.environ.get("THETA_PASSWORD") or "").strip()
+            if not (email and password):   # blank/whitespace counts as missing (a blank secret would pass a truthy check)
+                raise RuntimeError("THETA creds missing/blank — set THETA_EMAIL/THETA_PASSWORD (Secret Manager)")
             _client = ThetaClient(
                 email=email,
                 password=password,

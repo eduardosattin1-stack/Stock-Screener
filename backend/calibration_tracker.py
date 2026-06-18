@@ -311,12 +311,17 @@ _fetch_impl = None
 # ThetaData
 # ---------------------------------------------------------------------------
 
+class ThetaUnavailable(RuntimeError):
+    """ThetaData credentials missing/blank or the client cannot authenticate. A DISTINCT type (vs a
+    generic RuntimeError) so run_scan_job can mark the job FAILED + alert instead of swallowing it."""
+
+
 def get_theta_client():
     """ThetaClient credentials: env THETA_EMAIL / THETA_PASSWORD first; if
     unset, the shared massive_options.get_theta_client factory. NO credential
     literals in this module — raises only when both routes fail."""
-    email = os.environ.get("THETA_EMAIL")
-    password = os.environ.get("THETA_PASSWORD")
+    email = (os.environ.get("THETA_EMAIL") or "").strip()
+    password = (os.environ.get("THETA_PASSWORD") or "").strip()
     if email and password:
         from thetadata import ThetaClient
         return ThetaClient(email=email, password=password)
@@ -324,11 +329,32 @@ def get_theta_client():
         from massive_options import get_theta_client as _shared_theta_client
         return _shared_theta_client()
     except Exception as e:
-        raise RuntimeError(
-            "ThetaData credentials unavailable for calibration tracking: set "
-            "THETA_EMAIL/THETA_PASSWORD or provide massive_options.get_theta_client "
-            f"(fallback failed: {e})"
+        raise ThetaUnavailable(
+            "THETA creds missing/blank — set THETA_EMAIL/THETA_PASSWORD (Secret Manager) "
+            f"(shared factory fallback failed: {e})"
         )
+
+
+def assert_theta_ready():
+    """LOUD preflight: prove ThetaData is actually usable (creds non-blank AND the client constructs AND
+    one tiny call authenticates) BEFORE the tracker attempts any fills — so a missing/blank credential
+    fails visibly instead of silently resolving zero touches. Raises ThetaUnavailable with the greppable
+    'CALIBRATION_THETA_DOWN' token. Skipped under the _fetch_impl test injection (no real ThetaData)."""
+    if _fetch_impl is not None:
+        return None
+    try:
+        client = get_theta_client()
+    except Exception as e:
+        raise ThetaUnavailable(f"🚨 CALIBRATION_THETA_DOWN: ThetaData credentials unusable — {e}")
+    try:
+        end = datetime.now().date()
+        start = end - timedelta(days=7)
+        client.stock_history_eod("AAPL", start, end)   # cheap smoke call; raises on auth failure
+    except ThetaUnavailable:
+        raise
+    except Exception as e:
+        raise ThetaUnavailable(f"🚨 CALIBRATION_THETA_DOWN: ThetaData connected but a smoke call failed — {e}")
+    return client
 
 
 class _RateLimiter:
@@ -980,6 +1006,7 @@ def update_from_scan(stocks: list, scan_date: str = None) -> dict:
         log.error(f"{CAL_PREFIX}/config.json missing — calibration tracker is a no-op "
                   f"(run backend/scratch/build_v2_config.py after the v4 model ships)")
         return {}
+    assert_theta_ready()  # LOUD preflight: fail visibly (CALIBRATION_THETA_DOWN) if THETA creds are missing/blank — no silent freeze
     as_of = (scan_date or datetime.now(timezone.utc).strftime("%Y-%m-%d"))[:10]
 
     pending_doc = _gcs_impl["read"](f"{CAL_PREFIX}/pending_entries.json", {"pending": []})
