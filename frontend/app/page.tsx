@@ -15,7 +15,7 @@ import { StockCard } from "./components/StockCard";
 
 import { ThemeCard } from "./components/ThemeCard";
 
-import { DailyBriefing } from "./components/DailyBriefing";
+import { DailyBriefing, RegimePulseCard } from "./components/DailyBriefing";
 
 import { useRouter } from "next/navigation";
 
@@ -1330,6 +1330,31 @@ function StockRow({stock:s,expanded,onToggle,rank,onTickerClick,selectedMethodol
 
         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",fontSize:12,color:s.upside>20?"#10b981":s.upside>0?"var(--text-muted)":"#ef4444",fontWeight:600}}>{s.upside>0?"+":""}{s.upside?.toFixed(0)}%</td>
 
+        {/* MoS — margin of safety across valuation methodologies (consensus, else median of methods) */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 8px",fontSize:11}}>
+          {(()=>{
+            const methods:[string,number|null|undefined][]=[["Consensus",s.consensus_mos],["DCF",s.dcf_fcff_mos],["R&D-DCF",s.rd_capitalized_dcf_mos],["OwnerEarn",s.owner_earnings_mos],["EPV",s.epv_mos],["Graham",s.graham_revised_mos],["IV15",s.iv15_deep_value_mos]];
+            const present=methods.filter(([,v])=>v!=null) as [string,number][];
+            if(!present.length) return <span style={{color:"var(--text-light,#9ca3af)"}} title="No valuation-methodology MoS available">—</span>;
+            const vs=present.map(([,v])=>v).sort((a,b)=>a-b);
+            const mos=s.consensus_mos!=null?s.consensus_mos:(vs.length%2?vs[(vs.length-1)/2]:(vs[vs.length/2-1]+vs[vs.length/2])/2);
+            const c=mos>0.15?"#10b981":mos>0?"#86efac":mos>-0.2?"#d97706":"#ef4444";
+            const tip=`MoS across ${present.length} method${present.length>1?"s":""}: `+present.map(([n,v])=>`${n} ${v>=0?"+":""}${(v*100).toFixed(0)}%`).join(" · ");
+            return <span style={{color:c,fontWeight:700}} title={tip}>{mos>=0?"+":""}{(mos*100).toFixed(0)}%</span>;
+          })()}
+        </td>
+
+        {/* INTR↑ — model intrinsic-value upside (avg of valuation methods) vs price */}
+        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 8px",fontSize:11}}>
+          {(()=>{
+            const iu=s.intrinsic_upside;
+            if(iu==null) return <span style={{color:"var(--text-light,#9ca3af)"}}>—</span>;
+            const pct=Math.abs(iu)<=2?iu*100:iu;
+            const c=pct>20?"#10b981":pct>0?"var(--text-muted)":"#ef4444";
+            return <span style={{color:c,fontWeight:600}} title="Intrinsic-value upside (avg of valuation methods) vs price">{pct>=0?"+":""}{pct.toFixed(0)}%</span>;
+          })()}
+        </td>
+
         {/* P20 — P(+20% daily high in 4 weeks) from ML v2 ensemble.
 
             High P20 + Low IVR = underpriced options → bull spread signal.
@@ -1400,7 +1425,7 @@ function StockRow({stock:s,expanded,onToggle,rank,onTickerClick,selectedMethodol
 
       {expanded&&(
 
-        <tr><td colSpan={14} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
+        <tr><td colSpan={16} style={{padding:0,background:"var(--bg-surface,#f8faf9)"}}>
 
           <div style={{padding:"16px 20px 20px 40px",animation:"fadeIn 0.2s ease"}}>
 
@@ -1552,7 +1577,7 @@ type SortKey =
 
   | "pe" | "ev_ebit" | "fcf_share" | "epv_share" | "net_margin"
 
-  | "upside" | "hit_prob";
+  | "upside" | "hit_prob" | "mos" | "intrinsic_upside";
 
 // v1.2 (May 2026): removed orphan SortKeys (value_score/growth_score/quality_score) —
 
@@ -2821,6 +2846,10 @@ export default function Dashboard(){
 
       case "hit_prob":      return s.hit_prob ?? -1;
 
+      case "mos":           { if(s.consensus_mos!=null) return s.consensus_mos; const vs=[s.dcf_fcff_mos,s.rd_capitalized_dcf_mos,s.owner_earnings_mos,s.epv_mos,s.graham_revised_mos,s.iv15_deep_value_mos].filter((v:any)=>v!=null).sort((a:number,b:number)=>a-b); if(!vs.length) return -999; return vs.length%2?vs[(vs.length-1)/2]:(vs[vs.length/2-1]+vs[vs.length/2])/2; }
+
+      case "intrinsic_upside": return s.intrinsic_upside!=null?(Math.abs(s.intrinsic_upside)<=2?s.intrinsic_upside*100:s.intrinsic_upside):-999;
+
       case "price":         return s.price ?? 0;
 
       case "symbol":        return s.symbol.charCodeAt(0);
@@ -2987,7 +3016,7 @@ export default function Dashboard(){
 
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
 
-      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} />
+      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} macro={data?.macro} />
 
       <div style={{fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 16, display: "flex", alignItems: "center", gap: 6}}>
 
@@ -3039,6 +3068,40 @@ export default function Dashboard(){
 
               </div>
 
+              {/* Baskets explainer — what each book / sleeve is, and where the live baskets live vs the reference benchmarks */}
+              <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 20px" }}>
+                <summary style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                  How the baskets work
+                  <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 400, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>3 live books · catalyst sleeve · 9 reference baselines</span>
+                </summary>
+                <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14, fontSize: 11, lineHeight: 1.55, fontFamily: "var(--font-sans)", color: "var(--text-secondary)" }}>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--green)", marginBottom: 4 }}>APEX — regime / catalyst book</div>
+                    A weekly multi-agent debate (radar screen → analyst seats → skeptic → Director) selects a free 2–20 name book. Deep-value + catalyst blend, gated by moat / terminal-erosion and the apex skeptic. Director-weighted NAV, live-forward.
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--blue)", marginBottom: 4 }}>VALUE LENS — pure value</div>
+                    The same debate re-graded with the catalyst overlay stripped: CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate and a funded-leverage solvency test. Own NAV chain.
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--purple)", marginBottom: 4 }}>DISRUPTOR LENS — secular themes</div>
+                    A separate ~40-name thematic screen (not the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway, theme-capped ≤30%. Own NAV chain.
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--amber)", marginBottom: 4 }}>CATALYST WATCH — event sleeve</div>
+                    A paper sleeve of dated, binary / structured catalyst plays (the “13th basket”), with explicit entry → resolution → mark mechanics. Resolutions re-fit the dials each quarter. See the Catalyst Watch tab.
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>METHODOLOGY BASELINES — benchmarks</div>
+                    The Methodologies tab holds 9 deterministic, point-in-time 5-yr valuation backtests (DCF-FCFF, EPV / Greenwald, Graham-revised, Owner-Earnings, IV15, Convergence …). These are REFERENCE benchmarks, not live operational baskets.
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>PER-STOCK SIGNALS</div>
+                    On each stock page: the v8 5-factor composite (Momentum / Quality / Growth / Value / Smart Money) and the v4 calibration model — P(+20%) with OOS-calibrated deciles (see System Performance). The legacy scoring-methodology prose is deprecated.
+                  </div>
+                </div>
+              </details>
+
               
 
               {!speculairBaskets ? (
@@ -3082,6 +3145,9 @@ export default function Dashboard(){
                         {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
                       </span>
                     </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The headline book: a weekly multi-agent debate (radar → analyst seats → skeptic → Director) blends deep value with catalysts, gated by moat / terminal-erosion and the apex skeptic. Director-weighted, live-forward NAV — never back-filled.
+                    </div>
                     {goalBanner(speculairBaskets)}
                     {(speculairBaskets.apex_tracking_weighted || speculairBaskets.apex_tracking) && (() => {
                       // Director-weighted NAV primary: the Director risk-sizes the book in his memo
@@ -3113,7 +3179,7 @@ export default function Dashboard(){
                       </div>
                       );
                     })()}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(speculairBaskets.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
                         const currPrice = stock ? stock.price : 0;
@@ -3252,7 +3318,7 @@ export default function Dashboard(){
                         {valueApex.pool_stats.banner}
                       </div>
                     )}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(valueApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
                         const currPrice = stock ? stock.price : 0;
@@ -3438,7 +3504,7 @@ export default function Dashboard(){
                         })()}
                       </div>
                     )}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(disruptorApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
                         const currPrice = stock ? stock.price : (disruptorPrices[String(pick.symbol).toUpperCase()] || 0);
@@ -5497,6 +5563,10 @@ export default function Dashboard(){
 
       ) : viewMode === "table" ? (
 
+        <>
+
+        {data?.macro && <div style={{marginBottom:16,display:"flex",justifyContent:"flex-start"}}><RegimePulseCard macro={data.macro}/></div>}
+
         <div style={{background:"var(--bg)",borderRadius:8,border:"1px solid var(--border)",overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
 
           <div style={{overflowX:"auto"}}>
@@ -5529,7 +5599,11 @@ export default function Dashboard(){
 
                 <th style={hs("upside")} onClick={()=>toggleSort("upside")} title="Analyst consensus upside %. Sub-component of v8 Value.">UPSIDE</th>
 
-                <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% daily high in 4 weeks) — ML ensemble model (AUC 0.78). High P20 + Low IVR = underpriced options. D10 stocks hit 26% of the time.">P20</th>
+                <th style={hs("mos")} onClick={()=>toggleSort("mos")} title="Margin of Safety across valuation methodologies — consensus, else median of DCF / EPV / Graham / Owner-Earnings / IV15. Hover a cell for the per-method breakdown.">MoS</th>
+
+                <th style={hs("intrinsic_upside")} onClick={()=>toggleSort("intrinsic_upside")} title="Intrinsic-value upside (average of valuation methods) vs price. Distinct from analyst UPSIDE.">INTR↑</th>
+
+                <th style={hs("hit_prob","center")} onClick={()=>toggleSort("hit_prob")} title="P(+20% in 4 weeks) — time_model_v4 ensemble (OOS AUC 0.776). High P20 + low IVR = underpriced options.">P20</th>
 
                 <th style={{...hs("static","center"),cursor:"default"}} title="Implied Volatility Rank (Massive/Polygon API). Available for all US stocks.">IVR</th>
 
@@ -5544,6 +5618,8 @@ export default function Dashboard(){
           {sorted.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-muted)",fontSize:13,fontFamily:"var(--font-mono)"}}>No stocks match this filter</div>}
 
         </div>
+
+        </>
 
       ) : viewMode === "feed" ? (
 
