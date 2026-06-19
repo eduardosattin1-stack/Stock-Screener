@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, BarChart3, Target, Clock, ChevronDown, ChevronRight, Search, FlaskConical } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Clock, ChevronDown, ChevronRight, Search, FlaskConical, Sparkles } from "lucide-react";
 
 // ── Data sources ─────────────────────────────────────────────────────────────
 const CALIBRATION_V2 = "/api/performance/calibration-v2";
@@ -681,6 +681,125 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// Opus paper book — forward-test of the Opus option strategies (scans/options_paper.json)
+// ══════════════════════════════════════════════════════════════════════════════
+type PaperLeg = { action: string; right: string; strike: number; qty: number; entry_px: number };
+type PaperPos = {
+  id: string; symbol: string; structure: string; decile?: number | null; iv_rank?: number | null;
+  entry_date: string; expiration: string; entry_spot?: number | null; legs: PaperLeg[];
+  entry_cash: number; max_gain?: number | null; max_loss?: number | null; status: string;
+  mark_date?: string | null; pnl?: number | null; pnl_pct?: number | null; stale?: boolean;
+  exit_date?: string | null; realized_pnl?: number | null;
+};
+type PaperStats = {
+  n_total: number; n_open: number; n_closed: number; realized_pnl: number; unrealized_pnl: number;
+  total_pnl: number; win_rate?: number | null; avg_realized?: number | null; best?: number | null;
+  worst?: number | null; capital_at_risk: number; return_on_capital_pct?: number | null;
+};
+type PaperBook = { updated?: string; positions: PaperPos[]; stats?: PaperStats };
+
+function PaperStat({ label, value, color, sub }: { label: string; value: string; color?: string; sub?: string }) {
+  return (
+    <div>
+      <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.08em" }}>{label}</div>
+      <div style={{ fontSize: 18, color: color || T.text, fontFamily: T.mono, fontWeight: 700, marginTop: 2 }}>{value}</div>
+      {sub && <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono, marginTop: 1 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function OpusPaperBook() {
+  const [book, setBook] = useState<PaperBook | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    fetch(`/api/gcs/scans/options_paper.json`, { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.positions) setBook(d); })
+      .catch(() => { /* absent → hidden */ })
+      .finally(() => setLoaded(true));
+  }, []);
+  if (!loaded || !book || !book.positions.length) return null;
+  const s = book.stats;
+  const dollars = (v?: number | null) => v == null ? "—" : `${v >= 0 ? "+" : "−"}$${Math.abs(v).toFixed(0)}`;
+  const pnlColor = (v?: number | null) => v == null ? T.light : v >= 0 ? T.greenPos : T.red;
+  const pos = [...book.positions].sort((a, b) =>
+    a.status === b.status ? ((b.pnl ?? -1e9) - (a.pnl ?? -1e9)) : (a.status === "open" ? -1 : 1));
+
+  return (
+    <Card style={{ marginBottom: 20, borderColor: "var(--purple)" }}>
+      <SH title="Opus paper book — forward-test" icon={<Sparkles size={12} />}
+          sub="Paper trades of the nightly Opus strategies · entry PAYS the ask (realistic fill), marked at mid from live IBKR quotes, settled at intrinsic at expiry · NO real money · validates whether the moves overcome the spread you paid" />
+
+      {s && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14, padding: "14px", borderBottom: `1px solid ${T.divider}` }}>
+          <PaperStat label="REALIZED P&L" value={dollars(s.realized_pnl)} color={pnlColor(s.realized_pnl)} sub={`${s.n_closed} closed`} />
+          <PaperStat label="UNREALIZED" value={dollars(s.unrealized_pnl)} color={pnlColor(s.unrealized_pnl)} sub={`${s.n_open} open`} />
+          <PaperStat label="TOTAL P&L" value={dollars(s.total_pnl)} color={pnlColor(s.total_pnl)} />
+          <PaperStat label="WIN RATE" value={s.win_rate != null ? `${s.win_rate}%` : "—"} color={s.win_rate != null && s.win_rate >= 50 ? T.greenPos : T.muted} sub={s.n_closed ? `${s.n_closed} settled` : "none settled yet"} />
+          <PaperStat label="RETURN / CAPITAL" value={s.return_on_capital_pct != null ? `${s.return_on_capital_pct >= 0 ? "+" : ""}${s.return_on_capital_pct}%` : "—"} color={pnlColor(s.return_on_capital_pct)} sub={`$${(s.capital_at_risk / 1000).toFixed(1)}k at risk`} />
+          <PaperStat label="POSITIONS" value={`${s.n_total}`} sub="1 contract each" />
+        </div>
+      )}
+
+      {s && s.n_closed === 0 && (
+        <div style={{ padding: "8px 14px", fontSize: 10, fontFamily: T.mono, color: T.amber, borderBottom: `1px solid ${T.divider}` }}>
+          ⚠ No positions have reached expiry yet — realized P&L and win rate aren&apos;t meaningful until trades settle. Unrealized marks already subtract the entry spread you paid, so fresh positions start negative; what matters is whether the underlying moves overcome it by expiry.
+        </div>
+      )}
+
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 11 }}>
+          <thead>
+            <tr>
+              <th style={{ ...th, textAlign: "left" }}>Symbol</th>
+              <th style={{ ...th, textAlign: "left" }}>Structure</th>
+              <th style={{ ...th, textAlign: "right" }}>Entered</th>
+              <th style={{ ...th, textAlign: "right" }}>Expires</th>
+              <th style={{ ...th, textAlign: "right" }} title="Net per share at entry (crossed): − = debit paid, + = credit received">Net</th>
+              <th style={{ ...th, textAlign: "right" }}>Max +/−</th>
+              <th style={{ ...th, textAlign: "right" }} title="Per contract (×100): unrealized for open, realized for closed">P&L</th>
+              <th style={{ ...th, textAlign: "right" }} title="P&L as % of max loss (capital at risk)">P&L %</th>
+              <th style={{ ...th, textAlign: "right" }}>State</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pos.map(p => (
+              <tr key={p.id}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                <td style={{ ...td, textAlign: "left", fontWeight: 700, color: T.text }}>
+                  {p.symbol}{p.decile ? <span style={{ fontSize: 9, color: T.muted, fontWeight: 400 }}> D{p.decile}</span> : null}
+                </td>
+                <td style={{ ...td, textAlign: "left", color: T.light, fontSize: 10 }}>{p.structure}</td>
+                <td style={{ ...td, textAlign: "right", color: T.muted }}>{p.entry_date}</td>
+                <td style={{ ...td, textAlign: "right", color: T.muted }}>{p.expiration}</td>
+                <td style={{ ...td, textAlign: "right", color: p.entry_cash >= 0 ? T.greenPos : T.text }}>
+                  {p.entry_cash >= 0 ? "+" : "−"}${Math.abs(p.entry_cash).toFixed(2)}
+                </td>
+                <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 10 }}>
+                  +${((p.max_gain ?? 0) * 100).toFixed(0)} / −${(Math.abs(p.max_loss ?? 0) * 100).toFixed(0)}
+                </td>
+                <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pnlColor(p.pnl) }}>
+                  {p.stale ? <span style={{ color: T.light, fontWeight: 400 }} title="No two-sided market at last mark">stale</span> : dollars(p.pnl)}
+                </td>
+                <td style={{ ...td, textAlign: "right", color: pnlColor(p.pnl_pct) }}>
+                  {p.pnl_pct != null ? `${p.pnl_pct >= 0 ? "+" : ""}${p.pnl_pct}%` : "—"}
+                </td>
+                <td style={{ ...td, textAlign: "right" }}>
+                  {p.status === "open"
+                    ? <span style={chipStyle(T.muted, "var(--bg)", true)}>OPEN</span>
+                    : <span style={chipStyle((p.realized_pnl ?? 0) >= 0 ? T.greenPos : T.red, (p.realized_pnl ?? 0) >= 0 ? T.greenLight : T.amberLight)}>SETTLED</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // SECTION 5 — FROZEN V1 SIMULATION (collapsed; still fed by method-tracks)
 // ══════════════════════════════════════════════════════════════════════════════
 function FrozenSim() {
@@ -947,6 +1066,8 @@ export default function Performance() {
       )}
 
       {!loading && !err && data && <CalibrationView data={data} />}
+
+      {!loading && <OpusPaperBook />}
 
       {!loading && <FrozenSim />}
     </div>
