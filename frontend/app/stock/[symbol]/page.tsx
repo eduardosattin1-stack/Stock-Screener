@@ -5082,15 +5082,23 @@ export default function StockDetail(){
   const haveFA  = s.fallen_angel_flag === true;
   const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
   const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
-  const compMode = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
+  const factorsMode=readFactorsV8(s,mode);
+  const _storedComp = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
                  : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
                  : mode==="compounder_global" ? (s.compounder_score_global ?? 0)
                  : (s.composite_momentum ?? s.composite)) ?? 0;
+  // The global scan ships the 5 factors_v8 (0-1) but omits the rolled-up composite_*
+  // fields, which made the header read a false "0.00". For the factor-based modes,
+  // derive the composite from the weighted 5 factors (FW are %-weights, redistributed
+  // over whichever axes are present) when the stored composite is missing.
+  const _compFromFactors = (()=>{ let sum=0, ws=0; for(const k of FACTOR_ORDER){ const v=(factorsMode as any)[k]; if(v!=null){ sum+=v*(FW[k]||0); ws+=(FW[k]||0); } } return ws>0?sum/ws:null; })();
+  const compMode = (_storedComp>0 || mode==="compounder_us" || mode==="compounder_global")
+                 ? _storedComp
+                 : (_compFromFactors ?? _storedComp);
   const sigMode = mode==="fallen_angel"      ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
                 : mode==="compounder_us"     ? (s.signal_compounder_us ?? "DISQUALIFIED")
                 : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
                 :                              (s.signal_momentum ?? "QUALIFIED");
-  const factorsMode=readFactorsV8(s,mode);
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
   const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
 
