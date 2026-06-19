@@ -1,10 +1,12 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Briefcase, TrendingUp, Compass, MessageCircle } from "lucide-react";
+import { BarChart3, Briefcase, TrendingUp, Compass, MessageCircle, Search } from "lucide-react";
+import { useSearch } from "./search-context";
 
 export default function Nav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { query, setQuery } = useSearch();
   const links = [
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
     { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
@@ -42,6 +44,14 @@ export default function Nav() {
             <button key={l.href} onClick={()=>router.push(l.href)} style={{ display:"flex", alignItems:"center", gap:5, padding:"6px 12px", fontSize:12, fontFamily:"var(--font-mono)", fontWeight:500, border:"none", borderRadius:5, cursor:"pointer", background:active?"var(--green-light)":"transparent", color:active?"var(--green)":"var(--text-muted)", transition:"all 0.15s" }}>{l.icon} {l.label}</button>
           );})}
         </div>
+      </div>
+      <div style={{ position:"relative", width:280, maxWidth:"38vw" }}>
+        <Search size={13} style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", color:"var(--text-light)", pointerEvents:"none" }}/>
+        <input
+          value={query}
+          onChange={e=>{ setQuery(e.target.value); if (pathname !== "/") router.push("/"); }}
+          placeholder="Search symbol or company..."
+          style={{ width:"100%", padding:"7px 10px 7px 32px", fontSize:12, fontFamily:"var(--font-mono)", border:"1px solid var(--border)", borderRadius:6, background:"var(--bg)", color:"var(--text)", outline:"none" }}/>
       </div>
     </nav>
   );
