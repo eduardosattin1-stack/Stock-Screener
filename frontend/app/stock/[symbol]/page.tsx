@@ -4929,7 +4929,6 @@ export default function StockDetail(){
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
   const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
-  const [scoreView, setScoreView] = useState<"both"|"v8"|"cmp">("both");
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
   // Per-symbol Opus debate HISTORY (dated). Drives the debate-panel time-travel dropdown.
   const [debateHistory, setDebateHistory] = useState<any[]>([]);
@@ -5209,7 +5208,6 @@ export default function StockDetail(){
 
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
 
-  const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";  // still used by the scoring section's cohort pick
   const factorsMode=readFactorsV8(s,mode);
   const _storedComp = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
                  : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
@@ -5228,7 +5226,6 @@ export default function StockDetail(){
                 : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
                 :                              (s.signal_momentum ?? "QUALIFIED");
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
-  const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
 
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
@@ -5311,64 +5308,6 @@ export default function StockDetail(){
       ) : (
         <>
           
-      {/* ═══ SCORING — side-by-side cards for every mode ═══ */}
-      {/* v1.2 (May 2026): the v8 5-Factor card always renders (it's the
-          general factor view used by Momentum and Fallen Angel). The
-          Compounder breakdown sits beside it, defaulting to the cohort
-          that matches the active mode. For Mom/FA, the Compounder card
-          shows US first, falling back to Global. The card matching the
-          active mode gets a highlight border.                            */}
-      {(()=>{
-        const modeLabel =
-          mode==="fallen_angel"     ? "Fallen Angel"
-          : mode==="compounder_us"  ? "Compounder US"
-          : mode==="compounder_global" ? "Compounder Global"
-          : "Momentum";
-        // Which Compounder cohort to display alongside (US preferred when
-        // the active mode isn't Compounder-specific; for CMP modes, show
-        // the matching cohort).
-        const cmpCohort: "us"|"global" =
-          mode==="compounder_global" ? "global"
-          : mode==="compounder_us"   ? "us"
-          : (haveCmpUS ? "us" : "global");
-        const v8Active = mode==="momentum" || mode==="fallen_angel";
-        const cmpActive = mode==="compounder_us" || mode==="compounder_global";
-        const v8Style: React.CSSProperties = v8Active
-          ? {marginBottom:0, boxShadow:`0 0 0 2px ${T.green}`, borderColor:T.green}
-          : {marginBottom:0};
-        return (
-          <div style={{marginBottom:16}}>
-            <div style={{display:"flex",justifyContent:"flex-end",marginBottom:6}}>
-              <div style={{display:"flex", background:T.card, border:`1px solid ${T.cardBorder}`, padding:2, borderRadius:6}}>
-                <button onClick={()=>setScoreView("v8")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="v8"?T.greenLight:"transparent", color:scoreView==="v8"?T.green:T.textMuted}}>5-Factor</button>
-                <button onClick={()=>setScoreView("both")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="both"?T.greenLight:"transparent", color:scoreView==="both"?T.green:T.textMuted}}>Both</button>
-                <button onClick={()=>setScoreView("cmp")} style={{padding:"3px 8px", fontSize:9, fontFamily:T.mono, fontWeight:600, border:"none", borderRadius:4, cursor:"pointer", background:scoreView==="cmp"?T.greenLight:"transparent", color:scoreView==="cmp"?T.green:T.textMuted}}>Compounder</button>
-              </div>
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:scoreView==="both"?"1fr 1fr":"1fr",gap:14}}>
-              {scoreView!=="cmp" && (
-                <Card style={v8Style}>
-                  <SH title="5-Factor Analysis" icon={<BarChart2 size={12}/>}
-                    sub={`${modeLabel} mode · Composite ${compMode.toFixed(2)} · ${evaluatedCount}/5 factors`}/>
-                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:8}}>
-                    <FactorRadar scores={factorsMode} size={220}/>
-                  </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr",gap:0}}>
-                    {FACTOR_ORDER.map(k=>(
-                      <FactorBar key={k} name={FL[k]} weight={FW[k]}
-                        score={(factorsMode as any)[k]} detail={factorDetail(k,s,mode)}/>
-                    ))}
-                  </div>
-                </Card>
-              )}
-              {scoreView!=="v8" && (
-                <CompounderBreakdownCard s={s} cohort={cmpCohort} active={cmpActive}/>
-              )}
-            </div>
-          </div>
-        );
-      })()}
-
       {/* Company profile */}
       <div style={{marginBottom:16}}>
         <CompanyProfileCard symbol={s.symbol}/>
