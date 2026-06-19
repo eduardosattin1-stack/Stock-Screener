@@ -42,7 +42,12 @@ interface StockData{
   transcript_sentiment?:number;transcript_summary?:string;transcript_score?:number;
   proximity_52wk?:number;proximity_score?:number;
   earnings_momentum?:number;earnings_score?:number;upside_score?:number;
-  hit_prob?:number;
+  hit_prob?:number;               // legacy alias = P(+20% in 30 trading bars)
+  // v4 calibrated horizons (asdict'd from backend Stock; same model behind /performance)
+  hit_prob_60d?:number;           // P(+20% in 60 trading bars) — the OOS-calibrated horizon
+  hit_prob_30d?:number;           // P(+20% in 30 trading bars)
+  hit_prob_10pct_60d?:number;     // P(+10% in 60 trading bars)
+  hit_prob_10pct_30d?:number;     // P(+10% in 30 trading bars)
   // Smart Money Score (Apr 2026) — LTR-derived weighted factor score.
   // Pass-2 / US-only. null for non-US stocks; partial coverage for pass-1.
   smart_money_score?:number|null;
@@ -1005,13 +1010,21 @@ function P20Card({s}:{s:StockData}){
 
   const p20pct = p20 * 100;
 
-  // Calibrated multipliers from backtest (21,650 OOS samples, May 2026)
+  // Lower thresholds scaled from the v4 OOS distribution (model-pred baseline).
   const p5  = Math.min(p20 * 3.41, 0.80);
   const p10 = Math.min(p20 * 2.29, 0.65);
   const p15 = Math.min(p20 * 1.49, 0.50);
 
-  const decile = p20>=0.17?10:p20>=0.07?9:p20>=0.05?8:p20>=0.03?7:p20>=0.02?6:p20>=0.013?5:p20>=0.009?4:p20>=0.006?3:p20>=0.004?2:1;
-  const signal = p20>=0.15?"STRONG":p20>=0.08?"MODERATE":p20>=0.03?"MILD":"WEAK";
+  // Decile = OOS-calibrated rank from the v4 holdout p20_60 thresholds
+  // (calibration_tracking/v2/config.json → decile_thresholds.p20_60), computed
+  // from the 60-bar +20% probability — the horizon the /performance calibration
+  // tracker validates. NOT a client-side relative rank.
+  const P20_60_DECILE_EDGES = [0.103,0.163,0.229,0.296,0.345,0.393,0.445,0.516,0.577];
+  const p60 = s.hit_prob_60d ?? null;
+  const decile = p60==null ? null : P20_60_DECILE_EDGES.reduce((d,t)=>p60>=t?d+1:d, 1);
+  const signal = decile!=null
+    ? (decile>=9?"STRONG":decile>=7?"MODERATE":decile>=5?"MILD":"WEAK")
+    : (p20>=0.15?"STRONG":p20>=0.08?"MODERATE":p20>=0.03?"MILD":"WEAK");
   const signalColor = signal==="STRONG"?T.green:signal==="MODERATE"?T.amber:T.textMuted;
 
   const pBar=(threshold:string, pct:number, isRaw:boolean)=>{
@@ -1032,18 +1045,18 @@ function P20Card({s}:{s:StockData}){
   return(
     <Card>
       <SH title="Move Probability (ML)" icon={<TrendingUp size={12}/>}
-        sub={`Decile ${decile} · ${signal} signal`}/>
+        sub={decile!=null?`Decile ${decile}/10 · ${signal} signal`:`${signal} signal`}/>
       <div style={{display:"flex",alignItems:"baseline",gap:12,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         <div>
           <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>P(+20% IN 4W)</div>
           <div style={{fontSize:28,color:signalColor,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{p20pct.toFixed(0)}%</div>
-          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>D{decile} · {(p20pct/5.3).toFixed(1)}x base rate</div>
+          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{decile!=null?`D${decile}/10 · `:""}{(p20pct/5.3).toFixed(1)}x base rate</div>
         </div>
         <div style={{flex:1,fontSize:11,fontFamily:T.sans,color:T.textMuted,lineHeight:1.5,paddingLeft:16,borderLeft:`1px solid ${T.divider}`}}>
           {signal==="STRONG"
-            ? "Model sees elevated move probability. Top decile stocks touched +20% in 22% of cases (vs 1% for D1)."
+            ? "Top-decile ML signal — among the strongest move-probability names in the universe."
             : signal==="MODERATE"
-            ? "Moderate move signal. D7-D9 range: ~10-15% touch rate, 54-57% close above +5%."
+            ? "Moderate ML move signal — mid-to-upper decile."
             : "Below the actionable threshold. Model sees limited near-term move probability."}
         </div>
       </div>
@@ -1055,9 +1068,9 @@ function P20Card({s}:{s:StockData}){
       {pBar("+15%", p15*100, false)}
       {pBar("+20%", p20*100, true)}
       <div style={{marginTop:10,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
-        time_model_v2 · TOP3 ensemble (XGB+GBM+LGB) · 43 features · OOS AUC 0.7836.
-        P(+20%) is direct model output; lower thresholds scaled from calibrated backtest distributions.
-        D10 hit rate: 26.3% vs D1: 0.5% (53x odds ratio). Not investment advice.
+        time_model_v4 · TOP-3 ensemble · 48 features · OOS AUC 0.776.
+        P(+20% in 4w) is direct model output; lower thresholds scaled from the OOS distribution.
+        Decile = v4 OOS holdout thresholds (p20_60) — the same calibration shown on /performance. Not investment advice.
       </div>
     </Card>
   );
@@ -1073,11 +1086,19 @@ function MassiveOptionsCard({s}:{s:StockData}){
   const hasIV=s.options_iv_current!=null||s.options_iv_rank!=null;
   const hasPositioning=s.options_pc_ratio!=null||s.options_term_structure!=null||s.options_implied_earnings_move!=null;
   const p20=s.hit_prob||0;
-  if(!hasIV&&!hasPositioning&&p20<=0) return null;
+  // Require REAL options data to render. Non-US names are not options-enriched
+  // (backend gates on country=="US"), so they get NO options card at all — never
+  // a synthesized/mock spread. The ML move-probability lives in its own P20Card.
+  if(!hasIV&&!hasPositioning) return null;
 
   const ivr=s.options_iv_rank;
   const iv=s.options_iv_current;
   const samples=s.options_iv_samples||0;
+  // Theta-backed = real IV present AND enough samples for a reliable IV rank
+  // (backend MIN_IV_SAMPLES_FOR_RANK=20). Only then is an "edge" claim legit.
+  // Non-US names are not options-enriched (backend gates on country=="US"), so
+  // iv is null and any synthesized spread/EV here is illustrative, NOT a tradable edge.
+  const thetaBacked = iv!=null && samples>=20;
   const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
   const ivrLabel=ivr==null?"Not enough data":ivr<=25?"Cheap premium":ivr<=40?"Normal":ivr<=60?"Elevated":"Rich — options expensive";
   const p20pct=p20*100;
@@ -1097,7 +1118,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
   // Synthesize estimated spread when Massive doesn't provide one
   const sp = optionsSp ?? (()=>{
     const spot = s.price;
-    if(spot<=0 || p20<=0) return null;
+    if(spot<=0 || p20<=0 || iv==null) return null;  // never invent a spread without real IV
     const long_strike = roundStrike(spot);
     const short_strike = roundStrike(spot*1.10);
     if(short_strike <= long_strike) return null;
@@ -1144,17 +1165,21 @@ function MassiveOptionsCard({s}:{s:StockData}){
   const evPositive = ev > 0;
   const evPerDollar = sp && sp.max_loss_per_contract > 0 ? ev / sp.max_loss_per_contract : 0;
 
+  const showEdge = thetaBacked;   // only claim an edge when IV is real & rank reliable
   const assessment = !sp ? "NO DATA"
     : p20<=0 ? "NO MODEL"
+    : !showEdge ? "EST. ONLY"
     : evPerDollar > 0.15 ? "★ STRONG EDGE"
     : evPerDollar > 0.05 ? "MODERATE EDGE"
     : evPerDollar > 0 ? "MARGINAL EDGE"
     : evPerDollar > -0.10 ? "SLIGHT NEGATIVE"
     : "NO EDGE";
-  const assessColor = assessment.includes("STRONG") ? "var(--purple)"
+  const assessColor = assessment==="EST. ONLY" ? T.textMuted
+    : assessment.includes("STRONG") ? "var(--purple)"
     : assessment.includes("MODERATE") ? T.green
     : assessment.includes("MARGINAL") ? T.amber
     : T.red;
+  const evColor = showEdge ? (evPositive?T.green:T.red) : T.textMuted;
 
   const metric=(label:string,value:string,sub?:string,color?:string)=>(
     <div>
@@ -1167,14 +1192,14 @@ function MassiveOptionsCard({s}:{s:StockData}){
   return(
     <Card>
       <SH title="Options Intelligence" icon={<Zap size={12}/>}
-        sub={sp ? `${assessment} · EV ${ev>=0?"+":""}$${ev.toFixed(0)}/contract${!isLive?" · estimated":""}` : "IV data only"}/>
+        sub={sp ? (showEdge ? `${assessment} · EV ${ev>=0?"+":""}$${ev.toFixed(0)}/contract${!isLive?" · estimated":""}` : "rough estimate · no live options data") : "IV data only"}/>
 
       {/* IV strip */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         {metric("IV RANK",ivr!=null?ivr.toFixed(0):"—",samples<20?`${samples}/20 samples`:ivrLabel,ivrColor)}
         {metric("CURRENT IV",iv!=null?`${(iv*100).toFixed(0)}%`:"—","ATM 30d annualized")}
         {metric("P20 (MODEL)",p20>0?`${p20pct.toFixed(0)}%`:"—",p20>=0.15?"D9-D10":p20>=0.08?"D7-D8":p20>=0.03?"D5-D6":"low signal",p20>=0.15?T.green:p20>=0.08?T.amber:T.textMuted)}
-        {metric("ASSESSMENT",assessment.replace("★ ",""),sp?`EV/risk: ${evPerDollar>=0?"+":""}${(evPerDollar*100).toFixed(0)}%`:"",assessColor)}
+        {metric("ASSESSMENT",assessment.replace("★ ",""),sp?(showEdge?`EV/risk: ${evPerDollar>=0?"+":""}${(evPerDollar*100).toFixed(0)}%`:"no live IV — est. only"):"",assessColor)}
       </div>
 
       {/* Market positioning */}
@@ -1202,7 +1227,7 @@ function MassiveOptionsCard({s}:{s:StockData}){
       {sp&&p20>0&&(<>
         {!isLive&&(
           <div style={{padding:"6px 10px",borderRadius:4,background:T.amberLight,border:"1px solid var(--amber)",fontSize:10,fontFamily:T.mono,color:T.amber,fontWeight:600,marginBottom:10,display:"inline-block"}}>
-            ⚠ ESTIMATED SPREAD — verify strikes and premiums with your broker before trading
+            ⚠ ESTIMATED SPREAD — {showEdge ? "verify strikes and premiums with your broker before trading" : "IV rank unreliable (<20 samples) — spread estimated from live IV; verify with your broker, not yet a tradable edge"}
           </div>
         )}
         <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>
@@ -1225,23 +1250,23 @@ function MassiveOptionsCard({s}:{s:StockData}){
         </div>
 
         {/* EV block */}
-        <div style={{padding:"12px 14px",borderRadius:6,background:evPositive?"var(--green-light)":"var(--red-light)",border:`1px solid ${evPositive?"var(--green-border)":"var(--red)"}`,marginBottom:14}}>
+        <div style={{padding:"12px 14px",borderRadius:6,background:showEdge?(evPositive?"var(--green-light)":"var(--red-light)"):"var(--bg-elevated)",border:`1px solid ${showEdge?(evPositive?"var(--green-border)":"var(--red)"):T.divider}`,marginBottom:14}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
             <div>
-              <div style={{fontWeight:600,color:evPositive?T.green:T.red,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!isLive?" (ESTIMATED)":""}</div>
-              <div style={{fontSize:22,fontWeight:700,fontFamily:T.mono,color:evPositive?T.green:T.red}}>
+              <div style={{fontWeight:600,color:evColor,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!showEdge?" (ILLUSTRATIVE)":!isLive?" (ESTIMATED)":""}</div>
+              <div style={{fontSize:22,fontWeight:700,fontFamily:T.mono,color:evColor}}>
                 {ev>=0?"+":""}${ev.toFixed(0)} <span style={{fontSize:11,fontWeight:500,color:T.textMuted}}>/ contract</span>
               </div>
             </div>
             <div style={{textAlign:"right"}}>
               <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,marginBottom:2}}>EV / RISK</div>
-              <div style={{fontSize:16,fontWeight:700,fontFamily:T.mono,color:evPositive?T.green:T.red}}>
+              <div style={{fontSize:16,fontWeight:700,fontFamily:T.mono,color:evColor}}>
                 {evPerDollar>=0?"+":""}{(evPerDollar*100).toFixed(0)}%
               </div>
             </div>
           </div>
           <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.6}}>
-            {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = <b style={{color:evPositive?T.green:T.red}}>{ev>=0?"+":""}${ev.toFixed(0)}</b>
+            {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = <b style={{color:evColor}}>{ev>=0?"+":""}${ev.toFixed(0)}</b>
             <span style={{fontSize:9,color:T.textLight,display:"block",marginTop:2}}>Note: EV calculation is an approximation using binary outcomes. The remaining {100 - Math.round(pMaxProfit*100) - Math.round((1-pBreakeven)*100)}% probability represents the area of partial gain or loss between strikes.</span>
           </div>
           <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
@@ -3031,6 +3056,9 @@ function ScoringMethodologyCard() {
   return (
     <Card style={{ marginBottom: 16 }}>
       <SH title="Scoring Analysis & Methodology" icon={<Activity size={12} />} />
+      <div style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.6, marginTop: 12, padding: "10px 14px", borderRadius: 6, background: T.bg, border: `1px solid ${T.cardBorder}`, fontFamily: T.mono }}>
+        Reference — how the per-stock <strong style={{ color: T.text }}>scoring engines</strong> are built. The live, tradeable books (Apex / Value / Disruptor + the Catalyst sleeve) are explained under <strong style={{ color: T.text }}>Discover → Speculair → “How the baskets work”</strong>. Of the factors below, <strong style={{ color: T.text }}>Smart Money</strong> remains a live 15% sub-factor of the v8 composite; the others are historical engine descriptions.
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 30, marginTop: 16 }}>
         <div>
           <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>MOMENTUM COMPOSITE</h4>
@@ -5250,7 +5278,7 @@ export default function StockDetail(){
       {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
       {/* Massive options card — spread suggestion + IV data */}
-      {((s.hit_prob??0)>0||s.options_iv_current!=null||s.options_iv_rank!=null||s.options_spread||s.options_pc_ratio!=null||s.options_term_structure||s.options_implied_earnings_move)&&<div style={{marginBottom:16}}><MassiveOptionsCard s={s}/></div>}
+      {(s.options_iv_current!=null||s.options_iv_rank!=null||s.options_spread||s.options_pc_ratio!=null||s.options_term_structure||s.options_implied_earnings_move)&&<div style={{marginBottom:16}}><MassiveOptionsCard s={s}/></div>}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>

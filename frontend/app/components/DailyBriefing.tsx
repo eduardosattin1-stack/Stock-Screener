@@ -2,7 +2,85 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Clock, AlertTriangle, Zap, RefreshCw, BarChart2, Shield, Target } from 'lucide-react';
 
-export function DailyBriefing({ macroRegime, macroScore }: { macroRegime?: string | null; macroScore?: number | null }) {
+// ── Regime Pulse (shared) ───────────────────────────────────────────────────
+// Rich macro card used both inside the Daily Briefing (default view) and
+// standalone on the Table view, so the regime read is available app-wide and
+// consolidates the sub-signals ("the other values") into one card. Sub-signals
+// come from the scan macro (data.macro.sub_scores/features) when present, else
+// the lite /api/macro fallback.
+const REGIME_PULSE_C: Record<string, string> = {
+  RISK_ON: "var(--green)", NEUTRAL: "var(--amber)", CAUTIOUS: "var(--amber)", RISK_OFF: "var(--red)",
+};
+function regimeSig(label: string, v?: number, detail?: string) {
+  if (v == null) return null;
+  const bc = v >= 0.6 ? "var(--green)" : v >= 0.4 ? "var(--amber)" : "var(--red)";
+  return (
+    <div key={label} style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)" }}>
+        <span>{label}</span>{detail != null && <span style={{ color: "var(--text-light)" }}>{detail}</span>}
+      </div>
+      <div style={{ height: 4, background: "var(--bg-elevated)", borderRadius: 2, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${Math.round(Math.max(0, Math.min(1, v)) * 100)}%`, background: bc, borderRadius: 2 }} />
+      </div>
+    </div>
+  );
+}
+export function RegimePulseDetail({ macro }: { macro?: any }) {
+  if (!macro) return null;
+  const subs = macro.sub_scores || {};
+  const feat = macro.features || {};
+  const rd = macro.regime_detail || {};
+  const bp = (x?: number) => (x == null ? undefined : `${x > 0 ? "+" : ""}${x}bp`);
+  const cells = [
+    regimeSig("Yield curve", subs.yield_curve, bp(feat.macro_yield_spread_2y)),
+    regimeSig("Curve 3m", subs.yield_curve_3m, bp(feat.macro_yield_spread_3m)),
+    regimeSig("Rate level", subs.yield_level, feat.macro_yield_level != null ? `${feat.macro_yield_level}%` : undefined),
+    regimeSig("VIX", subs.vix, feat.macro_vix != null ? `${feat.macro_vix}` : undefined),
+    regimeSig("CPI trend", subs.cpi_trend),
+    regimeSig("Growth", subs.gdp_momentum),
+    regimeSig("Jobs", subs.unemployment),
+    regimeSig("Sentiment", subs.consumer_sentiment),
+  ].filter(Boolean);
+  const showGrowth = rd.growth && String(rd.growth).indexOf("Unknown") < 0;
+  if (!cells.length && !rd.rates && !rd.credit) return null;
+  return (
+    <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12 }}>
+      {cells.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "9px 16px" }}>{cells}</div>
+      )}
+      {(rd.rates || rd.credit) && (
+        <div style={{ marginTop: cells.length ? 12 : 0, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+          Rates <b style={{ color: "var(--text)" }}>{rd.rates || "—"}</b> · Credit <b style={{ color: "var(--text)" }}>{rd.credit || "—"}</b>
+          {showGrowth && <> · Growth <b style={{ color: "var(--text)" }}>{rd.growth}</b></>}
+        </div>
+      )}
+    </div>
+  );
+}
+export function RegimePulseCard({ macro }: { macro?: any }) {
+  if (!macro || !macro.regime) return null;
+  const c = REGIME_PULSE_C[macro.regime] || "var(--amber)";
+  const score = macro.score ?? 0.5;
+  return (
+    <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: 20, maxWidth: 380 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+        <Activity size={14} color="var(--amber)" />
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Regime Pulse</span>
+        <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--text-light)", fontStyle: "italic" }}>{macro.version || "v8"}</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 15, fontWeight: 700, color: c }}>{macro.regime}</span>
+        <div style={{ flex: 1, height: 5, background: "var(--bg-elevated)", borderRadius: 3, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${Math.round(score * 100)}%`, background: c, borderRadius: 3 }} />
+        </div>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: c }}>{Math.round(score * 100)}</span>
+      </div>
+      <RegimePulseDetail macro={macro} />
+    </div>
+  );
+}
+
+export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?: string | null; macroScore?: number | null; macro?: any }) {
   const [briefing, setBriefing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -108,6 +186,7 @@ export function DailyBriefing({ macroRegime, macroScore }: { macroRegime?: strin
           <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", borderTop: "1px dashed var(--border)", paddingTop: 12 }}>
             <strong style={{ color: "var(--text)", fontWeight: 600 }}>Action:</strong> {regime_pulse.action}
           </div>
+          <RegimePulseDetail macro={macro} />
         </div>
 
         {/* Card 2: Portfolio pulse */}
