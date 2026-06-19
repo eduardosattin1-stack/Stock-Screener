@@ -76,6 +76,22 @@ def _close_cash_mark(legs: list, quotes: dict):
     return round(cc, 4)
 
 
+def _close_cash_cross(legs: list, quotes: dict):
+    """Cash to close NOW by CROSSING the spread (sell longs@bid, buy shorts@ask) —
+    the realistic fill if you actually EXIT now (what an Opus close realizes). None
+    if a leg lacks the side needed to close."""
+    cc = 0.0
+    for lg in legs:
+        q = quotes.get((round(float(lg["strike"]), 4), lg["right"]))
+        if not q:
+            return None
+        px = q.get("bid") if lg["action"] == "BUY" else q.get("ask")
+        if px is None:
+            return None
+        cc += (px if lg["action"] == "BUY" else -px) * lg["qty"]
+    return round(cc, 4)
+
+
 def _close_cash_expiry(legs: list, spot: float) -> float:
     cc = 0.0
     for lg in legs:
@@ -86,7 +102,7 @@ def _close_cash_expiry(legs: list, spot: float) -> float:
 
 def _open_new(ledger: dict):
     """Open paper positions for today's new non-skip strategies."""
-    strfor = _gcs_read(STRATS, {}).get("strategies") or {}
+    strfor = (_gcs_read(STRATS, {}, fresh=True) or {}).get("strategies") or {}
     try:
         picks = {p["symbol"]: p for p in (json.load(open(INPUT, encoding="utf-8-sig")).get("picks") or [])}
     except Exception as e:
@@ -100,6 +116,12 @@ def _open_new(ledger: dict):
         pid = f"{sym}|{exp}"
         if pid in have or sym not in picks:
             continue
+        # Don't paper-trade an untradeable structure: if the crossed entry fill meets
+        # or exceeds the spread width, max_gain_fill <= 0 — best case is a loss, you'd
+        # never actually enter it. The executor (Opus) also closes any that slip through.
+        mgf = strat.get("max_gain_fill")
+        if mgf is not None and mgf <= 0:
+            log.info("skip %s — untradeable at fill (max_gain_fill=%s)", sym, mgf); continue
         ent = _entry_from_chain(strat, picks[sym])
         if not ent:
             continue
@@ -112,9 +134,13 @@ def _open_new(ledger: dict):
             "entry_spot": (picks[sym].get("chain") or {}).get("spot") or picks[sym].get("price"),
             "legs": legs, "entry_cash": entry_cash,
             "max_gain": strat.get("max_gain_fill"), "max_loss": strat.get("max_loss_fill"),
-            "status": "open", "mark_date": None, "mark_cash": None,
-            "pnl": None, "pnl_pct": None, "stale": False,
-            "exit_date": None, "realized_pnl": None,
+            "breakeven": strat.get("breakeven_fill") or strat.get("breakeven"),
+            "target_move_pct": strat.get("target_move_pct"), "conviction": strat.get("conviction"),
+            "thesis": strat.get("thesis"), "risk_note": strat.get("risk_note"),
+            "status": "open", "mark_date": None, "mark_cash": None, "exit_cash": None,
+            "mark_spot": None, "pnl": None, "pnl_pct": None, "stale": False,
+            "exit_date": None, "realized_pnl": None, "close_reason": None, "closed_by": None,
+            "days_held": None,
         })
         opened += 1
     log.info("opened %d new paper position(s)", opened)
@@ -150,11 +176,14 @@ def _mark(ledger: dict):
                     settled += 1
                 else:
                     q = quote_legs(ib, p["ib_symbol"], p["exchange"], p["currency"], p["expiration"], p["legs"])
-                    cc = _close_cash_mark(p["legs"], q)
+                    cc = _close_cash_mark(p["legs"], q)       # fair-value mark (mid)
                     if cc is None:
                         p["stale"] = True; continue
+                    ex = _close_cash_cross(p["legs"], q)      # realistic exit (cross) for Opus closes
+                    sp = spot_price(ib, p["ib_symbol"], p["exchange"], p["currency"])
                     pnl = round((p["entry_cash"] + cc) * 100, 2)
-                    p.update(mark_date=_today(), mark_cash=cc, pnl=pnl,
+                    p.update(mark_date=_today(), mark_cash=cc, exit_cash=ex,
+                             mark_spot=round(sp, 2) if sp else None, pnl=pnl,
                              pnl_pct=round(pnl / (abs(p["max_loss"]) * 100) * 100, 1) if p.get("max_loss") else None,
                              stale=False)
                     marked += 1
@@ -169,42 +198,81 @@ def _mark(ledger: dict):
     return marked, settled
 
 
+CLOSED = ("closed_expiry", "closed_opus")
+
+
 def _stats(ledger: dict) -> dict:
     pos = ledger["positions"]
-    closed = [p for p in pos if p["status"] == "closed_expiry" and p.get("realized_pnl") is not None]
+    closed = [p for p in pos if p["status"] in CLOSED and p.get("realized_pnl") is not None]
     opens = [p for p in pos if p["status"] == "open" and p.get("pnl") is not None]
     realized = sum(p["realized_pnl"] for p in closed)
     unreal = sum(p["pnl"] for p in opens)
-    wins = sum(1 for p in closed if p["realized_pnl"] > 0)
+    wins = [p for p in closed if p["realized_pnl"] > 0]
+    gross_win = sum(p["realized_pnl"] for p in wins)
+    gross_loss = -sum(p["realized_pnl"] for p in closed if p["realized_pnl"] <= 0)
     capital = sum(abs(p["max_loss"]) * 100 for p in pos if p.get("max_loss"))
+    holds = [p["days_held"] for p in closed if p.get("days_held") is not None]
     return {
         "n_total": len(pos), "n_open": sum(1 for p in pos if p["status"] == "open"),
         "n_closed": len(closed),
+        "n_closed_opus": sum(1 for p in closed if p["status"] == "closed_opus"),
+        "n_closed_expiry": sum(1 for p in closed if p["status"] == "closed_expiry"),
         "realized_pnl": round(realized, 2), "unrealized_pnl": round(unreal, 2),
         "total_pnl": round(realized + unreal, 2),
-        "win_rate": round(wins / len(closed) * 100, 1) if closed else None,
+        "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
         "avg_realized": round(realized / len(closed), 2) if closed else None,
+        "profit_factor": (round(gross_win / gross_loss, 2) if gross_loss > 0 else (999.0 if gross_win > 0 else None)),
+        "avg_hold_days": round(sum(holds) / len(holds), 1) if holds else None,
         "best": round(max((p["realized_pnl"] for p in closed), default=0), 2) if closed else None,
         "worst": round(min((p["realized_pnl"] for p in closed), default=0), 2) if closed else None,
         "capital_at_risk": round(capital, 2),
         "return_on_capital_pct": round((realized + unreal) / capital * 100, 1) if capital else None,
+        "realized_return_pct": round(realized / capital * 100, 1) if capital else None,
     }
 
 
+def _exec_input(ledger: dict) -> list:
+    """Per open position, the live state Opus needs to decide CLOSE vs HOLD."""
+    today = date.fromisoformat(_today())
+    out = []
+    for p in ledger["positions"]:
+        if p["status"] != "open" or p.get("exit_cash") is None:
+            continue
+        held = (today - date.fromisoformat(p["entry_date"])).days
+        dte = (date.fromisoformat(p["expiration"]) - today).days if p.get("expiration") else None
+        out.append({
+            "id": p["id"], "symbol": p["symbol"], "structure": p["structure"],
+            "decile": p.get("decile"), "days_held": held, "days_to_expiry": dte,
+            "entry_spot": p.get("entry_spot"), "mark_spot": p.get("mark_spot"),
+            "breakeven": p.get("breakeven"), "target_move_pct": p.get("target_move_pct"),
+            "max_gain_per_contract": round((p.get("max_gain") or 0) * 100, 0),
+            "max_loss_per_contract": round(abs(p.get("max_loss") or 0) * 100, 0),
+            "mark_pnl": p.get("pnl"),
+            "exit_now_pnl": round((p["entry_cash"] + p["exit_cash"]) * 100, 2),
+            "thesis": p.get("thesis"), "risk_note": p.get("risk_note"), "conviction": p.get("conviction"),
+        })
+    return out
+
+
+EXEC_INPUT = "execution_input.json"
+
+
 def main():
-    ledger = _gcs_read(LEDGER, None)
+    ledger = _gcs_read(LEDGER, None, fresh=True)   # fresh: avoid the edge-cache stale read
     if not isinstance(ledger, dict) or "positions" not in ledger:
         ledger = {"positions": []}
     _open_new(ledger)
     _mark(ledger)
     ledger["stats"] = _stats(ledger)
     ledger["updated"] = datetime.now(timezone.utc).isoformat()
-    if _gcs_write(LEDGER, ledger):
-        s = ledger["stats"]
-        log.info("paper book: %d pos (%d open / %d closed) · realized $%s · unrealized $%s · win %s%%",
-                 s["n_total"], s["n_open"], s["n_closed"], s["realized_pnl"], s["unrealized_pnl"], s["win_rate"])
-    else:
+    if not _gcs_write(LEDGER, ledger):
         raise SystemExit("ledger upload failed")
+    # Hand the open positions to the executor (Opus close/hold decisions next).
+    with open(EXEC_INPUT, "w") as f:
+        json.dump({"updated": ledger["updated"], "positions": _exec_input(ledger)}, f, indent=2, default=str)
+    s = ledger["stats"]
+    log.info("paper book: %d pos (%d open / %d closed) · realized $%s · unrealized $%s · win %s%% · wrote %s",
+             s["n_total"], s["n_open"], s["n_closed"], s["realized_pnl"], s["unrealized_pnl"], s["win_rate"], EXEC_INPUT)
 
 
 if __name__ == "__main__":

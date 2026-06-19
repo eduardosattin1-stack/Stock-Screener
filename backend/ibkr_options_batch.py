@@ -50,9 +50,15 @@ def _token() -> str:
     return _tok["v"]
 
 
-def _gcs_read(path: str, default=None):
+def _gcs_read(path: str, default=None, fresh: bool = False):
+    """Read a GCS object. fresh=True appends a cache-buster — the public
+    storage.googleapis.com URL is edge-cached ~1h, which would otherwise serve a
+    stale object to same-night pipeline steps (publish -> tracker -> executor)."""
     try:
-        r = requests.get(f"https://storage.googleapis.com/{BUCKET}/{path}", timeout=90)
+        url = f"https://storage.googleapis.com/{BUCKET}/{path}"
+        if fresh:
+            url += f"?cb={int(time.time() * 1000)}"
+        r = requests.get(url, timeout=90)
         return r.json() if r.ok else default
     except Exception:
         return default
