@@ -2803,7 +2803,7 @@ function QualityValueCard({s}:{s:StockData}){
         <ScoreRing value={s.piotroski} label="Piotroski" max={9} color={s.piotroski>=7?"var(--green)":s.piotroski>=5?T.amber:T.red}/>
         <ScoreRing value={Math.round(s.altman_z>20?20:s.altman_z)} label="Altman Z" max={20} color={s.altman_z>3?"var(--green)":s.altman_z>1.8?T.amber:T.red}/>
       </div>
-      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only — not in v8 composite</div>
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,textAlign:"center",marginBottom:6,marginTop:-6}}>Diagnostic only</div>
       <Metric label="Net Margin" value={fmtPct(s.net_margin)} color={(s.net_margin??0)>0.20?"var(--green)":(s.net_margin??0)>0.10?T.amber:T.textMuted}/>
       <Metric label="FCF Margin" value={fmtPct(s.fcf_margin)} color={(s.fcf_margin??0)>0.15?"var(--green)":(s.fcf_margin??0)>0.08?T.amber:T.textMuted}/>
       <Metric label="ROE (avg)" value={fmtPct(s.roe_avg)} color={s.roe_avg>0.15?"var(--green)":T.textMuted} sub={s.roe_consistent?"✓ Consistent >15%":""}/>
@@ -4925,7 +4925,6 @@ export default function StockDetail(){
   const[incomesQ,setIncomesQ]=useState<IncomeRow[]>([]);
   const[balanceSheetsQ,setBalanceSheetsQ]=useState<BalanceSheetRow[]>([]);const[cashFlowsQ,setCashFlowsQ]=useState<CashFlowRow[]>([]);
   const[fmpLoading,setFmpLoading]=useState(true);
-  const [mode,setMode]=useState<string>("momentum");
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
   const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
@@ -5187,45 +5186,10 @@ export default function StockDetail(){
     }).catch(()=>setFmpLoading(false));
   },[symbol]);
 
-  useEffect(()=>{
-    if (!stock) return;
-    const momOK = (stock.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
-    const faOK  = stock.fallen_angel_flag === true;
-    const cuOK  = (stock.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
-    const cgOK  = (stock.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
-    const currentOK = mode==="momentum"?momOK : mode==="fallen_angel"?faOK
-                    : mode==="compounder_us"?cuOK : mode==="compounder_global"?cgOK : true;
-    if (!currentOK) {
-      if (momOK) setMode("momentum");
-      else if (cuOK) setMode("compounder_us");
-      else if (cgOK) setMode("compounder_global");
-      else if (faOK) setMode("fallen_angel");
-    }
-  },[stock, mode]);
-
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
   if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
 
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
-
-  const factorsMode=readFactorsV8(s,mode);
-  const _storedComp = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
-                 : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
-                 : mode==="compounder_global" ? (s.compounder_score_global ?? 0)
-                 : (s.composite_momentum ?? s.composite)) ?? 0;
-  // The global scan ships the 5 factors_v8 (0-1) but omits the rolled-up composite_*
-  // fields, which made the header read a false "0.00". For the factor-based modes,
-  // derive the composite from the weighted 5 factors (FW are %-weights, redistributed
-  // over whichever axes are present) when the stored composite is missing.
-  const _compFromFactors = (()=>{ let sum=0, ws=0; for(const k of FACTOR_ORDER){ const v=(factorsMode as any)[k]; if(v!=null){ sum+=v*(FW[k]||0); ws+=(FW[k]||0); } } return ws>0?sum/ws:null; })();
-  const compMode = (_storedComp>0 || mode==="compounder_us" || mode==="compounder_global")
-                 ? _storedComp
-                 : (_compFromFactors ?? _storedComp);
-  const sigMode = mode==="fallen_angel"      ? (s.fallen_angel_flag ? "QUALIFIED" : "DISQUALIFIED")
-                : mode==="compounder_us"     ? (s.signal_compounder_us ?? "DISQUALIFIED")
-                : mode==="compounder_global" ? (s.signal_compounder_global ?? "DISQUALIFIED")
-                :                              (s.signal_momentum ?? "QUALIFIED");
-  const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
 
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
@@ -5242,10 +5206,6 @@ export default function StockDetail(){
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
-          <div style={{textAlign:"right"}}>
-            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div>
-            <div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:compMode>0.6?T.green:compMode>0.4?T.text:T.red}}>{compMode.toFixed(2)}</div>
-          </div>
         </div>
       </div>
 
