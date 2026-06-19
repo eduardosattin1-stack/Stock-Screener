@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "./AuthProvider";
+import { useSearch } from "./search-context";
 import { getPortfolio, addPosition as storeAddPosition, getRadar, setRadar, DEFAULT_RADAR } from "./portfolioStore";
 
 import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
@@ -2063,7 +2064,7 @@ export default function Dashboard(){
 
   const [sortDir,setSortDir]=useState<"asc"|"desc">("desc");
 
-  const [search,setSearch]=useState("");
+  const { query: search } = useSearch();   // search box now lives in the shared top nav
 
   const [expanded,setExpanded]=useState<Record<string,boolean>>({});
 
@@ -3741,18 +3742,6 @@ export default function Dashboard(){
 
 
       <div style={{display:"flex",gap:10,marginBottom:8,marginTop:16,flexWrap:"wrap",alignItems:"center"}}>
-
-        <div style={{position:"relative",flex:1,maxWidth:280}}>
-
-          <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:"var(--text-light)"}}/>
-
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search symbol or company..."
-
-            style={{width:"100%",padding:"7px 10px 7px 32px",fontSize:12,fontFamily:"var(--font-mono)",
-
-                    border:"1px solid var(--border)",borderRadius:6,background:"var(--bg)",color:"var(--text)",outline:"none"}}/>
-
-        </div>
 
         {viewMode !== "methodologies" && viewMode !== "sectors" && viewMode !== "speculair" && (
 
