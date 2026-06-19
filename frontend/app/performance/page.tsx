@@ -423,7 +423,26 @@ function TouchCurve({ horizons }: { horizons: CalibrationV2["horizons"] }) {
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — Per-record table (HARD RULE: one row per pick)
 // ══════════════════════════════════════════════════════════════════════════════
-type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "d30" | "d60" | "bars" | "iv" | "ivr" | "ddpred" | "maxplus" | "maxminus";
+type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "iv" | "ivr" | "ddpred" | "maxplus" | "maxminus" | "opusev" | "opusdate";
+
+// Opus 4.8 nightly option strategy (scans/options_strategies.json), keyed by symbol.
+type OpusStrat = {
+  structure: string; conviction?: number; max_gain?: number; max_loss?: number;
+  net?: number; net_type?: string; expiration?: string; breakeven?: number;
+  decile?: number; iv_rank?: number | null;
+};
+// EV per contract using Opus conviction as P(win): conv×maxGain − (1−conv)×|maxLoss|, ×100.
+function opusEv(s: OpusStrat | undefined): number | null {
+  if (!s || s.structure === "skip" || s.conviction == null || s.max_gain == null || s.max_loss == null) return null;
+  const p = Math.max(0, Math.min(1, s.conviction / 10));
+  return (p * s.max_gain - (1 - p) * Math.abs(s.max_loss)) * 100;
+}
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function fmtOpusDate(iso: string): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? "—" : `${MON[d.getUTCMonth()]} ${d.getUTCDate()}`;
+}
 
 function SortTh({ label, k, sortKey, sortDir, onSort, style, title }: {
   label: string; k: RecSortKey; sortKey: RecSortKey; sortDir: "asc" | "desc";
@@ -457,11 +476,16 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [livePrices, setLivePrices] = useState<Record<string, number>>({});
   const [liveAsOf, setLiveAsOf] = useState<string>("");
+  const [opus, setOpus] = useState<Record<string, OpusStrat>>({});
+  const [opusUpdated, setOpusUpdated] = useState<string>("");
 
-  const barsOf = (r: CalibRecord): number | null => {
-    if (r.bars_elapsed_30d == null && r.bars_elapsed_60d == null) return null;
-    return Math.max(r.bars_elapsed_30d ?? 0, r.bars_elapsed_60d ?? 0);
-  };
+  // Opus 4.8 nightly option strategies (designed on the gateway PC, pushed to GCS).
+  useEffect(() => {
+    fetch(`/api/gcs/scans/options_strategies.json`, { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.strategies) { setOpus(d.strategies); setOpusUpdated(d.updated || ""); } })
+      .catch(() => { /* absent → no badges/EV, table still renders */ });
+  }, []);
 
   const filtered = useMemo(() => records.filter(r =>
     (stateFilter === "all" || r.state_30d === stateFilter || r.state_60d === stateFilter) &&
@@ -476,13 +500,12 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
       : sortKey === "last" ? (livePrices[r.symbol] ?? -1)
       : sortKey === "p10" ? (r.p10 ?? -1)
       : sortKey === "p20" ? (r.p20 ?? -1)
-      : sortKey === "d30" ? (r.decile_30d ?? -1)
-      : sortKey === "d60" ? (r.decile_60d ?? -1)
-      : sortKey === "bars" ? (barsOf(r) ?? -1)
       : sortKey === "iv" ? (r.iv_entry ?? -1)
       : sortKey === "ivr" ? (r.ivr_entry ?? -1)
       : sortKey === "ddpred" ? (r.dd_pred_60d ?? 1)
       : sortKey === "maxplus" ? r.max_high_pct
+      : sortKey === "opusev" ? (opusEv(opus[r.symbol]) ?? -1e9)
+      : sortKey === "opusdate" ? (opus[r.symbol] && opus[r.symbol].structure !== "skip" && opusUpdated ? Date.parse(opusUpdated) : -1)
       : r.max_dd_pct;
     const arr = [...filtered];
     arr.sort((a, b) => {
@@ -494,7 +517,7 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
       return sortDir === "asc" ? va - vb : vb - va;
     });
     return arr;
-  }, [filtered, sortKey, sortDir, livePrices]);
+  }, [filtered, sortKey, sortDir, livePrices, opus, opusUpdated]);
 
   const onSort = (k: RecSortKey) => {
     if (k === sortKey) setSortDir(d => d === "asc" ? "desc" : "asc");
@@ -563,16 +586,14 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                 <SortTh label="Last $" k="last" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <SortTh label="p10" k="p10" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model P(+10% within 30 trading bars)" style={{ textAlign: "right" }} />
                 <SortTh label="p20" k="p20" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model P(+20% within 60 trading bars)" style={{ textAlign: "right" }} />
-                <SortTh label="D30" k="d30" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Decile under the 30d/+10% regime (v4 OOS thresholds)" style={{ textAlign: "right" }} />
-                <SortTh label="D60" k="d60" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Decile under the 60d/+20% regime (v4 OOS thresholds)" style={{ textAlign: "right" }} />
-                <SortTh label="Bars" k="bars" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Trading bars elapsed since entry (entry bar excluded)" style={{ textAlign: "right" }} />
                 <SortTh label="IV" k="iv" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="ATM implied volatility at entry" style={{ textAlign: "right" }} />
                 <SortTh label="IVR" k="ivr" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="IV Rank at entry (0–100)" style={{ textAlign: "right" }} />
                 <SortTh label="Max+" k="maxplus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Observed worst drawdown so far (matures over the window)" style={{ textAlign: "right" }} />
                 <SortTh label="Pred DD" k="ddpred" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model-predicted max drawdown over 60 trading bars (expected_dd_60d) — validate vs Max− at maturity" style={{ textAlign: "right" }} />
-                <th style={{ ...th, textAlign: "right" }}>State 30d</th>
-                <th style={{ ...th, textAlign: "right" }}>State 60d</th>
+                <SortTh label="Opus EV" k="opusev" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Expected value per contract of the Opus option strategy, using Opus conviction as P(win): conv×maxGain − (1−conv)×|maxLoss|, ×100" style={{ textAlign: "right" }} />
+                <th style={{ ...th, textAlign: "right" }}>State (30d / 60d)</th>
+                <SortTh label="Opus date" k="opusdate" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Date the Opus option strategy was designed (nightly publish)" style={{ textAlign: "right" }} />
               </tr>
             </thead>
             <tbody>
@@ -598,6 +619,12 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                           >BEATS VOL</span>
                         );
                       })()}
+                      {opus[r.symbol] && opus[r.symbol].structure !== "skip" && (
+                        <span
+                          title={`Opus option strategy: ${opus[r.symbol].structure}`}
+                          style={{ fontSize: 8, fontWeight: 700, letterSpacing: 0.3, color: T.purple, border: `1px solid ${T.purple}`, borderRadius: 3, padding: "1px 4px", whiteSpace: "nowrap" }}
+                        >OPUS</span>
+                      )}
                     </span>
                     <div style={{ fontSize: 9, fontWeight: 400, color: T.light }} title="Scan date this record was staged">entered {r.entry_date}</div>
                   </td>
@@ -608,9 +635,6 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                   </td>
                   <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.p10 != null ? `${(r.p10 * 100).toFixed(0)}%` : "—"}</td>
                   <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.p20 != null ? `${(r.p20 * 100).toFixed(0)}%` : "—"}</td>
-                  <td style={{ ...td, textAlign: "right", color: (r.decile_30d ?? 0) >= 8 ? T.text : T.muted, fontWeight: (r.decile_30d ?? 0) >= 8 ? 700 : 400 }}>{r.decile_30d ?? "—"}</td>
-                  <td style={{ ...td, textAlign: "right", color: (r.decile_60d ?? 0) >= 8 ? T.text : T.muted, fontWeight: (r.decile_60d ?? 0) >= 8 ? 700 : 400 }}>{r.decile_60d ?? "—"}</td>
-                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{barsOf(r) != null ? `${barsOf(r)} bars` : "—"}</td>
                   <td style={{ ...td, textAlign: "right", color: T.muted }}>
                     {r.iv_entry != null ? `${(r.iv_entry * 100).toFixed(0)}%` : "—"}
                   </td>
@@ -622,8 +646,22 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                   <td style={{ ...td, textAlign: "right", color: T.muted }} title="Predicted max drawdown over 60 bars">
                     {r.dd_pred_60d != null ? `${r.dd_pred_60d.toFixed(1)}%` : "—"}
                   </td>
-                  <td style={{ ...td, textAlign: "right" }}><StateChip state={r.state_30d} bars={r.bars_elapsed_30d} K={30} /></td>
-                  <td style={{ ...td, textAlign: "right" }}><StateChip state={r.state_60d} bars={r.bars_elapsed_60d} K={60} /></td>
+                  <td style={{ ...td, textAlign: "right" }} title={opus[r.symbol] && opus[r.symbol].structure !== "skip" ? `${opus[r.symbol].structure} · conviction ${opus[r.symbol].conviction}/10` : undefined}>
+                    {(() => {
+                      const ev = opusEv(opus[r.symbol]);
+                      if (ev == null) return <span style={{ color: T.light }}>—</span>;
+                      return <span style={{ color: ev >= 0 ? T.greenPos : T.red, fontWeight: 700 }}>{ev >= 0 ? "+" : "−"}${Math.abs(ev).toFixed(0)}</span>;
+                    })()}
+                  </td>
+                  <td style={{ ...td, textAlign: "right" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-end" }}>
+                      <StateChip state={r.state_30d} bars={r.bars_elapsed_30d} K={30} />
+                      <StateChip state={r.state_60d} bars={r.bars_elapsed_60d} K={60} />
+                    </div>
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: opus[r.symbol] && opus[r.symbol].structure !== "skip" ? T.muted : T.light }}>
+                    {opus[r.symbol] && opus[r.symbol].structure !== "skip" ? fmtOpusDate(opusUpdated) : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
