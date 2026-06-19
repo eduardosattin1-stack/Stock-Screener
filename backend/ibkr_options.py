@@ -90,12 +90,17 @@ def _mid(ib: IB, contract) -> Optional[float]:
     return last if last and last > 0 else None
 
 
-def enrich(symbol: str, exchange: str = "SMART", currency: str = "USD", spot: Optional[float] = None) -> dict:
+def enrich(symbol: str, exchange: str = "SMART", currency: str = "USD",
+           spot: Optional[float] = None, ib: "IB | None" = None) -> dict:
     """On-demand options enrichment for one symbol. Returns the card's contract shape.
     `spot` may be supplied (e.g. from FMP/the scan) so we don't need the underlying's
-    market-data subscription — useful for EU names where only the OPTION feed is subscribed."""
+    market-data subscription — useful for EU names where only the OPTION feed is subscribed.
+    Pass an existing `ib` (already connected) to reuse one socket across many symbols
+    (the batch job does this); otherwise a connection is opened and closed per call."""
     out: dict = {"iv_current": None, "iv_rank": None, "iv_samples": 0, "spread": None}
-    ib = _connect()
+    own = ib is None
+    if own:
+        ib = _connect()
     try:
         stock = Stock(symbol, exchange, currency)
         if not ib.qualifyContracts(stock):
@@ -167,7 +172,8 @@ def enrich(symbol: str, exchange: str = "SMART", currency: str = "USD", spot: Op
             log.warning("%s spread build failed: %s", symbol, e)
         return out
     finally:
-        ib.disconnect()
+        if own:
+            ib.disconnect()
 
 
 if __name__ == "__main__":
