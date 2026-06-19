@@ -4,6 +4,7 @@ import Nav from "./nav";
 import { AuthProvider } from "./AuthProvider";
 import { AuthGate } from "./AuthGate";
 import { SearchProvider } from "./search-context";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "CB Screener v6 — 10-Factor Stock Analysis",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SearchProvider>
           </AuthGate>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );

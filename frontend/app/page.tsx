@@ -3069,41 +3069,6 @@ export default function Dashboard(){
 
               </div>
 
-              {/* Baskets explainer — what each book / sleeve is, and where the live baskets live vs the reference benchmarks */}
-              <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 20px" }}>
-                <summary style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-                  How the baskets work
-                  <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 400, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>3 live books · catalyst sleeve · 9 reference baselines</span>
-                </summary>
-                <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14, fontSize: 11, lineHeight: 1.55, fontFamily: "var(--font-sans)", color: "var(--text-secondary)" }}>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--green)", marginBottom: 4 }}>APEX — regime / catalyst book</div>
-                    A weekly multi-agent debate (radar screen → analyst seats → skeptic → Director) selects a free 2–20 name book. Deep-value + catalyst blend, gated by moat / terminal-erosion and the apex skeptic. Director-weighted NAV, live-forward.
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--blue)", marginBottom: 4 }}>VALUE LENS — pure value</div>
-                    The same debate re-graded with the catalyst overlay stripped: CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate and a funded-leverage solvency test. Own NAV chain.
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--purple)", marginBottom: 4 }}>DISRUPTOR LENS — secular themes</div>
-                    A separate ~40-name thematic screen (not the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway, theme-capped ≤30%. Own NAV chain.
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--amber)", marginBottom: 4 }}>CATALYST WATCH — event sleeve</div>
-                    A paper sleeve of dated, binary / structured catalyst plays (the “13th basket”), with explicit entry → resolution → mark mechanics. Resolutions re-fit the dials each quarter. See the Catalyst Watch tab.
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>METHODOLOGY BASELINES — benchmarks</div>
-                    The Methodologies tab holds 9 deterministic, point-in-time 5-yr valuation backtests (DCF-FCFF, EPV / Greenwald, Graham-revised, Owner-Earnings, IV15, Convergence …). These are REFERENCE benchmarks, not live operational baskets.
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>PER-STOCK SIGNALS</div>
-                    On each stock page: the v8 5-factor composite (Momentum / Quality / Growth / Value / Smart Money) and the v4 calibration model — P(+20%) with OOS-calibrated deciles (see System Performance). The legacy scoring-methodology prose is deprecated.
-                  </div>
-                </div>
-              </details>
-
-              
 
               {!speculairBaskets ? (
                 <div style={{textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)"}}>
@@ -3725,6 +3690,8 @@ export default function Dashboard(){
 
               <button onClick={()=>setViewMode("feed")} style={{padding:"6px 14px", border:"none", borderRadius: 6, cursor:"pointer", background:viewMode==="feed"?"var(--bg-elevated)":"transparent", color:viewMode==="feed"?"var(--text)":"var(--text-muted)", fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,transition:"all 0.15s", boxShadow:viewMode==="feed"?"var(--shadow-sm)":"none"}}>Feed</button>
 
+              <a href="/catalysts" title="Catalyst Watch — the 13th basket (event sleeve)" style={{padding:"6px 14px", borderRadius: 6, cursor:"pointer", background:"transparent", color:"var(--amber)", fontSize:11, fontFamily:"var(--font-mono)", fontWeight:600, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4, transition:"all 0.15s"}}>13th Basket <span style={{fontSize:9}}>↗</span></a>
+
             </div>
 
           </div>
@@ -3836,6 +3803,37 @@ export default function Dashboard(){
       {viewMode === "methodologies" ? (
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+          {!selectedMethodology && (
+            <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 20px" }}>
+              <summary style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                How the baskets work
+                <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 400, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>3 live books · catalyst sleeve · 9 reference baselines</span>
+              </summary>
+              <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14, fontSize: 11, lineHeight: 1.55, fontFamily: "var(--font-sans)", color: "var(--text-secondary)" }}>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--green)", marginBottom: 4 }}>APEX — regime / catalyst book</div>
+                  A weekly multi-agent debate (radar screen → analyst seats → skeptic → Director) selects a free 2–20 name book. Deep-value + catalyst blend, gated by moat / terminal-erosion and the apex skeptic. Director-weighted NAV, live-forward.
+                </div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--blue)", marginBottom: 4 }}>VALUE LENS — pure value</div>
+                  The same debate re-graded with the catalyst overlay stripped: CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate and a funded-leverage solvency test. Own NAV chain.
+                </div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--purple)", marginBottom: 4 }}>DISRUPTOR LENS — secular themes</div>
+                  A separate ~40-name thematic screen (not the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway, theme-capped ≤30%. Own NAV chain.
+                </div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--amber)", marginBottom: 4 }}>CATALYST WATCH — event sleeve</div>
+                  A paper sleeve of dated, binary / structured catalyst plays (the “13th basket”), with explicit entry → resolution → mark mechanics. Resolutions re-fit the dials each quarter. See the Catalyst Watch tab.
+                </div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>METHODOLOGY BASELINES — benchmarks</div>
+                  The cards below are 9 deterministic, point-in-time 5-yr valuation backtests (DCF-FCFF, EPV / Greenwald, Graham-revised, Owner-Earnings, IV15, Convergence …). These are REFERENCE benchmarks, not live operational baskets.
+                </div>
+              </div>
+            </details>
+          )}
 
           {selectedMethodology ? (() => {
 
