@@ -689,12 +689,15 @@ type PaperPos = {
   entry_date: string; expiration: string; entry_spot?: number | null; legs: PaperLeg[];
   entry_cash: number; max_gain?: number | null; max_loss?: number | null; status: string;
   mark_date?: string | null; pnl?: number | null; pnl_pct?: number | null; stale?: boolean;
-  exit_date?: string | null; realized_pnl?: number | null;
+  exit_date?: string | null; realized_pnl?: number | null; close_reason?: string | null;
+  closed_by?: string | null; days_held?: number | null;
 };
 type PaperStats = {
-  n_total: number; n_open: number; n_closed: number; realized_pnl: number; unrealized_pnl: number;
+  n_total: number; n_open: number; n_closed: number; n_closed_opus?: number; n_closed_expiry?: number;
+  realized_pnl: number; unrealized_pnl: number;
   total_pnl: number; win_rate?: number | null; avg_realized?: number | null; best?: number | null;
   worst?: number | null; capital_at_risk: number; return_on_capital_pct?: number | null;
+  realized_return_pct?: number | null; profit_factor?: number | null; avg_hold_days?: number | null;
 };
 type PaperBook = { updated?: string; positions: PaperPos[]; stats?: PaperStats };
 
@@ -785,16 +788,96 @@ function OpusPaperBook() {
                 <td style={{ ...td, textAlign: "right", color: pnlColor(p.pnl_pct) }}>
                   {p.pnl_pct != null ? `${p.pnl_pct >= 0 ? "+" : ""}${p.pnl_pct}%` : "—"}
                 </td>
-                <td style={{ ...td, textAlign: "right" }}>
+                <td style={{ ...td, textAlign: "right" }} title={p.close_reason || undefined}>
                   {p.status === "open"
                     ? <span style={chipStyle(T.muted, "var(--bg)", true)}>OPEN</span>
-                    : <span style={chipStyle((p.realized_pnl ?? 0) >= 0 ? T.greenPos : T.red, (p.realized_pnl ?? 0) >= 0 ? T.greenLight : T.amberLight)}>SETTLED</span>}
+                    : (() => {
+                        const win = (p.realized_pnl ?? 0) >= 0;
+                        const label = p.status === "closed_opus" ? "OPUS CLOSE" : "EXPIRED";
+                        return (
+                          <>
+                            <span style={chipStyle(win ? T.greenPos : T.red, win ? T.greenLight : T.amberLight)}>{label}</span>
+                            {p.exit_date && <div style={{ fontSize: 9, color: T.light, marginTop: 2 }}>{p.exit_date}{p.days_held != null ? ` · ${p.days_held}d` : ""}</div>}
+                          </>
+                        );
+                      })()}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+    </Card>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Opus execution track record — realized performance of CLOSED paper trades
+// ══════════════════════════════════════════════════════════════════════════════
+function OpusTrackRecord() {
+  const [book, setBook] = useState<PaperBook | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    fetch(`/api/gcs/scans/options_paper.json`, { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.positions) setBook(d); })
+      .catch(() => { /* absent → hidden */ })
+      .finally(() => setLoaded(true));
+  }, []);
+  if (!loaded || !book) return null;
+  const s = book.stats;
+  const closed = book.positions
+    .filter(p => (p.status === "closed_opus" || p.status === "closed_expiry") && p.realized_pnl != null)
+    .sort((a, b) => (a.exit_date || "").localeCompare(b.exit_date || ""));
+  const dollars = (v?: number | null) => v == null ? "—" : `${v >= 0 ? "+" : "−"}$${Math.abs(v).toFixed(0)}`;
+  const pnlColor = (v?: number | null) => v == null ? T.light : v >= 0 ? T.greenPos : T.red;
+
+  // cumulative realized equity curve
+  let cum = 0;
+  const pts = closed.map(p => { cum += p.realized_pnl as number; return { date: p.exit_date as string, cum, sym: p.symbol }; });
+  const W = 760, H = 96, PAD = 10;
+  const ys = pts.map(p => p.cum);
+  const lo = Math.min(0, ...ys), hi = Math.max(0, ...ys);
+  const X = (i: number) => pts.length <= 1 ? W / 2 : PAD + (i / (pts.length - 1)) * (W - 2 * PAD);
+  const Y = (v: number) => hi === lo ? H / 2 : (H - PAD) - ((v - lo) / (hi - lo)) * (H - 2 * PAD);
+  const path = pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p.cum).toFixed(1)}`).join(" ");
+  const last = pts[pts.length - 1];
+
+  return (
+    <Card style={{ marginBottom: 20, borderColor: "var(--purple)" }}>
+      <SH title="Opus execution track record" icon={<TrendingUp size={12} />}
+          sub="Realized P&L of CLOSED paper trades — Opus-managed exits + expiries · the bottom line on whether the strategy edge is real (no real money)" />
+
+      {!closed.length ? (
+        <div style={{ padding: 26, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono, lineHeight: 1.6 }}>
+          No trades closed yet — this fills in as Opus manages exits each night or positions reach expiry.<br />
+          {s ? `${s.n_open} open · $${(s.capital_at_risk / 1000).toFixed(1)}k at risk · currently ${dollars(s.unrealized_pnl)} unrealized.` : ""}
+        </div>
+      ) : (
+        <>
+          {s && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14, padding: "14px", borderBottom: `1px solid ${T.divider}` }}>
+              <PaperStat label="REALIZED P&L" value={dollars(s.realized_pnl)} color={pnlColor(s.realized_pnl)} />
+              <PaperStat label="REALIZED RETURN" value={s.realized_return_pct != null ? `${s.realized_return_pct >= 0 ? "+" : ""}${s.realized_return_pct}%` : "—"} color={pnlColor(s.realized_return_pct)} sub="on capital at risk" />
+              <PaperStat label="WIN RATE" value={s.win_rate != null ? `${s.win_rate}%` : "—"} color={s.win_rate != null && s.win_rate >= 50 ? T.greenPos : T.muted} />
+              <PaperStat label="PROFIT FACTOR" value={s.profit_factor != null ? `${s.profit_factor}` : "—"} color={s.profit_factor != null && s.profit_factor >= 1 ? T.greenPos : T.red} sub="gross win / loss" />
+              <PaperStat label="AVG HOLD" value={s.avg_hold_days != null ? `${s.avg_hold_days}d` : "—"} />
+              <PaperStat label="CLOSED" value={`${s.n_closed}`} sub={`${s.n_closed_opus ?? 0} opus · ${s.n_closed_expiry ?? 0} expiry`} />
+            </div>
+          )}
+          <div style={{ padding: "14px" }}>
+            <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6 }}>CUMULATIVE REALIZED P&L</div>
+            <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: 96, display: "block" }}>
+              <line x1={PAD} x2={W - PAD} y1={Y(0)} y2={Y(0)} stroke={T.divider} strokeWidth={1} strokeDasharray="3 3" />
+              {pts.length > 1 && <polyline points={path.replace(/[ML]/g, " ").trim()} fill="none" stroke={(last?.cum ?? 0) >= 0 ? "var(--green)" : "var(--red)"} strokeWidth={2} />}
+              {last && <circle cx={X(pts.length - 1)} cy={Y(last.cum)} r={3.5} fill={(last.cum) >= 0 ? "var(--green)" : "var(--red)"} />}
+            </svg>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: T.light, fontFamily: T.mono, marginTop: 2 }}>
+              <span>{pts[0]?.date}</span><span>{last?.date}</span>
+            </div>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
@@ -1066,6 +1149,8 @@ export default function Performance() {
       )}
 
       {!loading && !err && data && <CalibrationView data={data} />}
+
+      {!loading && <OpusTrackRecord />}
 
       {!loading && <OpusPaperBook />}
 
