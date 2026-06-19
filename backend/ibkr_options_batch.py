@@ -1,37 +1,39 @@
 """
-ibkr_options_batch.py — runs on the IB Gateway host (Bruno's always-on PC).
+ibkr_options_batch.py — nightly FULL-UNIVERSE options enrichment, run on the IB
+Gateway host (Bruno's always-on PC). No tunnel: the PC reaches OUT to GCS.
 
-No tunnel / no inbound exposure: the PC reaches OUT to GCS. Reads the latest scan
-+ portfolio from GCS, fetches options (via the local IB Gateway) for the portfolio
-holdings + the top-N US/EU names, and uploads scans/options_latest.json to GCS.
-The frontend stock page reads that file and renders the Options Intelligence card.
-
-Spot is taken from the scan (FMP price) and passed to enrich(), so only the OPTION
-market-data feed is needed (no EU underlying data sub). One IB connection is reused
-across all symbols, throttled to stay under IBKR's 60-historical-requests/10-min pacing.
+Reads the latest scan from GCS, and for EVERY options-eligible name (US + mapped
+EU) pulls ATM IV + greeks + a bull-call spread from IBKR MARKET DATA (enrich_fast,
+no paced historical calls), appends the ATM IV to that symbol's GCS IV-history
+(options/iv_history/{SYM}.json — the same files the old ThetaData pipeline built,
+so US IV-rank is immediate and EU builds from today), computes the rank, and uploads
+scans/options_latest.json. The frontend stock card reads that file.
 
 Run once:   python backend/ibkr_options_batch.py
-Schedule:   Windows Task Scheduler every few hours, OR a terminal loop:
-            while ($true) { python backend/ibkr_options_batch.py; Start-Sleep 14400 }
+Schedule:   Task Scheduler nightly (after ~02:00 ET, past the gateway's 00:15-01:45
+            restart), or a terminal loop. Reconnects + checkpoints so a long run
+            survives the daily gateway restart.
 
-Env: IB_GATEWAY_PORT (4001) · OPT_TOP_N (60) · OPT_SLEEP_S (11) · GCS auth via the
-machine's logged-in `gcloud` (gcloud auth print-access-token).
+Env: IB_GATEWAY_PORT(4001) · OPT_MAX(0=all) · OPT_SLEEP_S(0.2 between names) ·
+     OPT_CHECKPOINT(200). GCS auth via the machine's logged-in gcloud.
 """
 from __future__ import annotations
-import os, sys, json, logging, subprocess
-from datetime import datetime, timezone
+import os, sys, json, time, logging, subprocess
+from datetime import datetime, timezone, timedelta
 
 import requests
 import ibkr_options
-from ibkr_options import enrich, _connect
+from ibkr_options import enrich_fast
 
 log = logging.getLogger("ibkr_batch")
 BUCKET = "screener-signals-carbonbridge"
-TOP_N = int(os.environ.get("OPT_TOP_N", "60"))
-SLEEP_S = float(os.environ.get("OPT_SLEEP_S", "11"))   # ~5.5 hist-req/min < 60/10min limit
+IV_PREFIX = "options/iv_history"        # matches massive_options (ThetaData-era files)
+KEEP_DAYS = 365
+MIN_SAMPLES = 20
+MAX = int(os.environ.get("OPT_MAX", "0"))            # 0 = whole universe
+SLEEP_S = float(os.environ.get("OPT_SLEEP_S", "0.2"))
+CHECKPOINT = int(os.environ.get("OPT_CHECKPOINT", "200"))
 FW = {"momentum": 25, "quality": 20, "growth": 20, "value": 20, "smart_money": 15}
-
-# FMP symbol suffix -> (IBKR exchange, currency). US has no suffix -> SMART/USD.
 SUFFIX = {
     ".PA": ("SBF", "EUR"), ".AS": ("AEB", "EUR"), ".BR": ("ENEXT.BE", "EUR"),
     ".MI": ("BVME", "EUR"), ".DE": ("IBIS", "EUR"), ".F": ("IBIS", "EUR"),
@@ -40,27 +42,61 @@ SUFFIX = {
     ".ST": ("SFB", "SEK"), ".CO": ("CPH", "DKK"), ".OL": ("OSE", "NOK"),
 }
 
+_tok = {"v": None, "t": 0.0}
+def _token() -> str:
+    if not _tok["v"] or (time.time() - _tok["t"]) > 2400:  # refresh every 40 min
+        _tok["v"] = subprocess.check_output("gcloud auth print-access-token", shell=True, text=True).strip()
+        _tok["t"] = time.time()
+    return _tok["v"]
+
 
 def _gcs_read(path: str, default=None):
     try:
         r = requests.get(f"https://storage.googleapis.com/{BUCKET}/{path}", timeout=90)
         return r.json() if r.ok else default
-    except Exception as e:
-        log.warning("GCS read %s failed: %s", path, e)
+    except Exception:
         return default
 
 
-def _gcs_write(path: str, data: dict) -> bool:
-    token = subprocess.check_output("gcloud auth print-access-token", shell=True, text=True).strip()
-    r = requests.post(
-        f"https://storage.googleapis.com/upload/storage/v1/b/{BUCKET}/o",
-        params={"uploadType": "media", "name": path},
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        data=json.dumps(data), timeout=60,
-    )
-    if not r.ok:
-        log.error("GCS write %s -> %s %s", path, r.status_code, r.text[:200])
-    return r.ok
+def _gcs_write(path: str, data) -> bool:
+    try:
+        r = requests.post(
+            f"https://storage.googleapis.com/upload/storage/v1/b/{BUCKET}/o",
+            params={"uploadType": "media", "name": path},
+            headers={"Authorization": f"Bearer {_token()}", "Content-Type": "application/json"},
+            data=json.dumps(data), timeout=60)
+        if not r.ok:
+            log.error("GCS write %s -> %s %s", path, r.status_code, r.text[:160])
+        return r.ok
+    except Exception as e:
+        log.error("GCS write %s failed: %s", path, e); return False
+
+
+def _iv_rank(symbol: str, iv: float):
+    """Append today's ATM IV to the per-symbol GCS history; return rank dict (or None
+    until MIN_SAMPLES). Mirrors massive_options.update_iv_history/compute_iv_rank."""
+    if not iv or iv <= 0:
+        return None
+    today = datetime.now().strftime("%Y-%m-%d")
+    path = f"{IV_PREFIX}/{symbol.upper()}.json"
+    hist = _gcs_read(path, [])
+    if not isinstance(hist, list):
+        hist = []
+    i = next((j for j, r in enumerate(hist) if isinstance(r, list) and r and r[0] == today), -1)
+    row = [today, round(iv, 4)]
+    if i >= 0:
+        hist[i] = row      # replace today's entry
+    else:
+        hist.append(row)
+    cutoff = (datetime.now() - timedelta(days=KEEP_DAYS)).strftime("%Y-%m-%d")
+    hist = [r for r in hist if isinstance(r, list) and len(r) >= 2 and r[0] >= cutoff]
+    _gcs_write(path, hist)
+    ivs = [float(r[1]) for r in hist if len(r) >= 2 and r[1]]
+    if len(ivs) < MIN_SAMPLES:
+        return {"iv_current": round(iv, 4), "iv_rank": None, "iv_samples": len(ivs)}
+    lo, hi = min(ivs), max(ivs)
+    rank = 50.0 if hi == lo else (iv - lo) / (hi - lo) * 100.0
+    return {"iv_current": round(iv, 4), "iv_rank": round(rank, 1), "iv_samples": len(ivs)}
 
 
 def _composite(s: dict) -> float:
@@ -74,22 +110,20 @@ def _composite(s: dict) -> float:
 
 
 def _map_contract(symbol: str):
-    """FMP symbol -> (ibkr_symbol, exchange, currency) or None if unsupported."""
     for suf, (ex, cur) in SUFFIX.items():
         if symbol.endswith(suf):
             return symbol[: -len(suf)], ex, cur
     if "." not in symbol:
         return symbol, "SMART", "USD"
-    return None  # e.g. .HK / .KS / .T — no US/EU options path
+    return None
 
 
-def build_targets() -> list[tuple]:
+def build_targets():
     scan = _gcs_read("scans/latest_global.json", {})
     stocks = scan.get("stocks") or (scan if isinstance(scan, list) else [])
     by_sym = {s.get("symbol"): s for s in stocks if s.get("symbol")}
     port = _gcs_read("portfolio/state.json", {}) or {}
     port_syms = [p.get("symbol") for p in (port.get("positions") or []) if p.get("symbol")]
-
     targets, seen = [], set()
 
     def add(s):
@@ -99,15 +133,14 @@ def build_targets() -> list[tuple]:
         m = _map_contract(sym)
         if not m:
             return
-        ib_sym, ex, cur = m
         seen.add(sym)
-        targets.append((sym, ib_sym, ex, cur, s.get("price")))
+        targets.append((sym, m[0], m[1], m[2], s.get("price")))
 
-    for sym in port_syms:               # always cover holdings
+    for sym in port_syms:
         if sym in by_sym:
             add(by_sym[sym])
-    for s in sorted(stocks, key=_composite, reverse=True):   # then top-N by composite
-        if len(targets) >= TOP_N + len(port_syms):
+    for s in sorted(stocks, key=_composite, reverse=True):  # composite order -> top names first if interrupted
+        if MAX and len(targets) >= MAX:
             break
         add(s)
     return targets
@@ -115,36 +148,46 @@ def build_targets() -> list[tuple]:
 
 def main():
     targets = build_targets()
-    log.info("targets: %d (top_n=%d, sleep=%.0fs)", len(targets), TOP_N, SLEEP_S)
+    log.info("full-universe options: %d eligible names (max=%s)", len(targets), MAX or "all")
     if not targets:
-        log.error("no targets — scan/portfolio unreadable?"); sys.exit(1)
+        log.error("no targets — scan unreadable?"); sys.exit(1)
 
-    ib = _connect()
-    options: dict = {}
-    ok = 0
+    ib = ibkr_options._connect()
+    options, ok = {}, 0
     try:
         for i, (fmp_sym, ib_sym, ex, cur, spot) in enumerate(targets, 1):
+            if not ib.isConnected():  # survive the gateway's daily restart
+                log.warning("reconnecting to gateway…")
+                try:
+                    ib.connect(ibkr_options.IB_HOST, ibkr_options.IB_PORT,
+                               clientId=ibkr_options.IB_CLIENT_ID, timeout=20, readonly=True)
+                except Exception as e:
+                    log.error("reconnect failed: %s — sleeping 60s", e); time.sleep(60); continue
             try:
-                data = enrich(ib_sym, ex, cur, spot, ib=ib)
+                d = enrich_fast(ib, ib_sym, ex, cur, spot)
             except Exception as e:
-                log.warning("[%d/%d] %s failed: %s", i, len(targets), fmp_sym, e)
-                ib.sleep(SLEEP_S); continue
-            if data.get("iv_current") is not None or data.get("spread"):
-                options[fmp_sym] = data   # key by FMP symbol (what the frontend uses)
+                log.warning("[%d/%d] %s failed: %s", i, len(targets), fmp_sym, e); continue
+            if d.get("iv_current"):
+                rank = _iv_rank(fmp_sym, d["iv_current"]) or {}
+                options[fmp_sym] = {**rank, "spread": d.get("spread")}
                 ok += 1
-                log.info("[%d/%d] %s OK iv=%s rank=%s spread=%s", i, len(targets), fmp_sym,
-                         data.get("iv_current"), data.get("iv_rank"), bool(data.get("spread")))
-            else:
-                log.info("[%d/%d] %s no data", i, len(targets), fmp_sym)
-            ib.sleep(SLEEP_S)   # pacing
+            if i % 50 == 0:
+                log.info("[%d/%d] %d with options", i, len(targets), ok)
+            if CHECKPOINT and i % CHECKPOINT == 0:   # partial upload so results appear during a long run
+                _gcs_write("scans/options_latest.json",
+                           {"updated": datetime.now(timezone.utc).isoformat(), "count": ok,
+                            "partial": True, "options": options})
+            if SLEEP_S:
+                ib.sleep(SLEEP_S)
     finally:
-        ib.disconnect()
+        if ib.isConnected():
+            ib.disconnect()
 
     payload = {"updated": datetime.now(timezone.utc).isoformat(), "count": ok, "options": options}
     if _gcs_write("scans/options_latest.json", payload):
-        log.info("uploaded scans/options_latest.json — %d/%d names with options", ok, len(targets))
+        log.info("DONE — uploaded options_latest.json: %d/%d names with options", ok, len(targets))
     else:
-        log.error("upload failed"); sys.exit(1)
+        log.error("final upload failed"); sys.exit(1)
 
 
 if __name__ == "__main__":

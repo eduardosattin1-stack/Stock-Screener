@@ -176,6 +176,80 @@ def enrich(symbol: str, exchange: str = "SMART", currency: str = "USD",
             ib.disconnect()
 
 
+def _req(ib, contract):
+    return ib.reqMktData(contract, "", True, False)  # snapshot
+
+
+def enrich_fast(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
+                spot: Optional[float] = None) -> dict:
+    """Fast path for the nightly full-universe batch: ATM IV (from the ATM option's
+    modelGreeks — validated to populate frozen/after-hours, US+EU) + the bull-call
+    spread, all from MARKET DATA. No reqHistoricalData → not under the 60-req/10-min
+    historical pacing cap, so it scales to the whole universe. iv_rank is computed by
+    the caller from the GCS IV history. Reuses an existing connection (`ib`)."""
+    out: dict = {"iv_current": None, "spread": None}
+    stock = Stock(symbol, exchange, currency)
+    if not ib.qualifyContracts(stock):
+        return out
+    ib.reqMarketDataType(2)  # frozen
+    if not spot or spot <= 0:
+        spot = _spot(ib, stock)
+    if not spot or spot <= 0:
+        return out
+    try:
+        params = ib.reqSecDefOptParams(stock.symbol, "", stock.secType, stock.conId)
+        chain = next((c for c in params if c.exchange in ("SMART", exchange)), params[0] if params else None)
+        if not chain or not chain.expirations:
+            return out
+        today = datetime.now().date()
+        def _dte(e): return (datetime.strptime(e, "%Y%m%d").date() - today).days
+        exps = sorted([e for e in chain.expirations if _dte(e) >= 7], key=lambda e: abs(_dte(e) - TARGET_DTE))
+        if not exps:
+            return out
+        expiration = exps[0]; ex = chain.exchange or exchange
+        det = ib.reqContractDetails(Option(symbol, expiration, 0, "C", exchange=ex, currency=currency))
+        by_strike = {d.contract.strike: d.contract for d in det}
+        strikes = sorted(by_strike)
+        if not strikes:
+            return out
+        long_strike = _round_to(spot, strikes)
+        short_strike = _round_to(spot * (1 + OTM_PCT), strikes)
+        # request ATM (+OTM) together, read once
+        ta = _req(ib, by_strike[long_strike])
+        tb = _req(ib, by_strike[short_strike]) if short_strike > long_strike else None
+        ib.sleep(3.0)
+        iv = getattr(ta.modelGreeks, "impliedVol", None) if ta.modelGreeks else None
+        out["iv_current"] = round(iv, 4) if iv and iv > 0 else None
+        def _mid_of(t):
+            if t and t.bid and t.ask and t.bid > 0 and t.ask > 0:
+                return (t.bid + t.ask) / 2.0
+            return t.last if t and t.last and t.last > 0 else None
+        long_mid, short_mid = _mid_of(ta), _mid_of(tb)
+        ib.cancelMktData(by_strike[long_strike])
+        if tb: ib.cancelMktData(by_strike[short_strike])
+        if short_strike > long_strike and long_mid and short_mid:
+            net_debit = round(long_mid - short_mid, 2)
+            width = short_strike - long_strike
+            if 0 < net_debit < width:
+                max_gain = round((width - net_debit) * 100)
+                max_loss = round(net_debit * 100)
+                be = long_strike + net_debit
+                out["spread"] = {
+                    "strategy": "Bull Call Spread (IBKR live)", "spot": round(spot, 2),
+                    "expiration": f"{expiration[:4]}-{expiration[4:6]}-{expiration[6:]}", "dte": _dte(expiration),
+                    "long_strike": long_strike, "short_strike": short_strike,
+                    "long_mid": round(long_mid, 2), "short_mid": round(short_mid, 2), "net_debit": net_debit,
+                    "max_gain_per_contract": max_gain, "max_loss_per_contract": max_loss,
+                    "break_even_price": round(be, 2),
+                    "break_even_move_pct": round((be - spot) / spot * 100, 2),
+                    "risk_reward": round(max_gain / max_loss, 2) if max_loss else 0,
+                    "description": "Live IBKR chain. Verify with broker before trading.",
+                }
+    except Exception as e:
+        log.warning("%s enrich_fast failed: %s", symbol, e)
+    return out
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")  # mute ib_async account-sync spam
     log.setLevel(logging.INFO)
