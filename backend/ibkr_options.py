@@ -47,6 +47,11 @@ IV_LOOKBACK = "1 Y"    # ATM-IV history window for the IV-rank
 def _connect() -> IB:
     ib = IB()
     ib.connect(IB_HOST, IB_PORT, clientId=IB_CLIENT_ID, timeout=15, readonly=True)  # readonly: never place orders on the live account
+    # Bound EVERY blocking request (qualifyContracts / reqContractDetails /
+    # reqSecDefOptParams / reqHistoricalData). Without this a single unresolvable
+    # contract (e.g. a bad EU mapping) or a connectivity blip hangs the whole run
+    # indefinitely (raises asyncio.TimeoutError instead, which callers skip).
+    ib.RequestTimeout = 25
     return ib
 
 

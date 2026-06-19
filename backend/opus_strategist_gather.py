@@ -58,27 +58,43 @@ def main():
     try:
         for s in picks:
             sym = s["symbol"]
-            m = _map_contract(sym)
-            if not m:
-                log.info("skip %s (unmapped exchange)", sym); continue
-            ib_sym, ex, cur = m
-            snap = chain_snapshot(ib, ib_sym, ex, cur, s.get("price"))
-            if not snap.get("expirations"):
-                log.info("skip %s (no chain/options)", sym); continue
-            ivr, n = _iv_rank(sym)
-            out.append({
-                "symbol": sym, "decile": _decile(s["hit_prob_60d"]),
-                "hit_prob_60d": round(s["hit_prob_60d"], 3),
-                "hit_prob_30d": round(s.get("hit_prob_30d") or 0, 3),
-                "expected_dd_60d": round(s.get("expected_dd_60d") or 0, 3),
-                "days_to_earnings": s.get("days_to_earnings"),
-                "sector": s.get("sector"), "price": s.get("price"), "currency": cur,
-                "iv_rank": ivr, "iv_samples": n, "chain": snap,
-            })
-            log.info("gathered %s (D%d, ivr=%s, exps=%d)", sym, out[-1]["decile"], ivr, len(snap["expirations"]))
+            try:
+                # Recover from a dropped gateway connection (IB error 1100) so one
+                # blip doesn't doom the rest of the run.
+                if not ib.isConnected():
+                    log.warning("IB disconnected — reconnecting before %s", sym)
+                    try: ib.disconnect()
+                    except Exception: pass
+                    ib = ibkr_options._connect()
+                m = _map_contract(sym)
+                if not m:
+                    log.info("skip %s (unmapped exchange)", sym); continue
+                ib_sym, ex, cur = m
+                snap = chain_snapshot(ib, ib_sym, ex, cur, s.get("price"))
+                if not snap.get("expirations"):
+                    log.info("skip %s (no chain/options)", sym); continue
+                ivr, n = _iv_rank(sym)
+                out.append({
+                    "symbol": sym, "decile": _decile(s["hit_prob_60d"]),
+                    "hit_prob_60d": round(s["hit_prob_60d"], 3),
+                    "hit_prob_30d": round(s.get("hit_prob_30d") or 0, 3),
+                    "expected_dd_60d": round(s.get("expected_dd_60d") or 0, 3),
+                    "days_to_earnings": s.get("days_to_earnings"),
+                    "sector": s.get("sector"), "price": s.get("price"), "currency": cur,
+                    "iv_rank": ivr, "iv_samples": n, "chain": snap,
+                })
+                log.info("gathered %s (D%d, ivr=%s, exps=%d)", sym, out[-1]["decile"], ivr, len(snap["expirations"]))
+            except Exception as e:
+                # RequestTimeout (bad/unresolvable contract), connection error, etc.
+                # Skip this name and keep going — never let one stall the batch.
+                log.warning("skip %s (error: %s)", sym, type(e).__name__ + ": " + str(e))
+                continue
     finally:
-        if ib.isConnected():
-            ib.disconnect()
+        try:
+            if ib.isConnected():
+                ib.disconnect()
+        except Exception:
+            pass
 
     payload = {"updated": datetime.now(timezone.utc).isoformat(), "count": len(out), "picks": out}
     with open(OUT, "w") as f:

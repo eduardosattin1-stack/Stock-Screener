@@ -8,7 +8,7 @@ the frontend stock card to read.
 Run:  python backend/opus_strategist_publish.py [strategy_output.json]
 """
 from __future__ import annotations
-import sys, json, re, logging
+import os, sys, json, re, logging
 from datetime import datetime, timezone
 
 from ibkr_options_batch import _gcs_write   # reuse the gcloud-token GCS write
@@ -17,7 +17,7 @@ log = logging.getLogger("opus_publish")
 
 
 def _parse(text: str):
-    t = text.strip()
+    t = text.lstrip("﻿").strip()   # tolerate a UTF-8 BOM
     if t.startswith("```"):
         t = re.sub(r"^```[a-zA-Z]*\n", "", t)
         t = re.sub(r"\n```$", "", t.strip())
@@ -32,12 +32,30 @@ def _parse(text: str):
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "strategy_output.json"
-    with open(path) as f:
+    with open(path, encoding="utf-8-sig") as f:   # utf-8-sig strips any BOM
         strategies = _parse(f.read())
     if isinstance(strategies, dict) and isinstance(strategies.get("strategies"), dict):
         strategies = strategies["strategies"]   # tolerate {"strategies": {...}}
     if not isinstance(strategies, dict):
         raise SystemExit("expected a JSON object keyed by symbol")
+
+    # Enrich each strategy with decile / iv_rank / price / sector from the gather's
+    # strategy_input.json (so the card chips populate without relying on Opus to echo
+    # them). Best-effort: missing input just leaves the strategy as-is.
+    in_path = os.path.join(os.path.dirname(os.path.abspath(path)), "strategy_input.json")
+    try:
+        with open(in_path, encoding="utf-8-sig") as f:
+            picks = {p["symbol"]: p for p in (json.load(f).get("picks") or [])}
+        for sym, strat in strategies.items():
+            p = picks.get(sym)
+            if isinstance(strat, dict) and p:
+                strat.setdefault("decile", p.get("decile"))
+                strat.setdefault("iv_rank", p.get("iv_rank"))
+                strat.setdefault("price", p.get("price"))
+                strat.setdefault("sector", p.get("sector"))
+    except Exception as e:
+        log.warning("could not enrich from strategy_input.json: %s", e)
+
     payload = {"updated": datetime.now(timezone.utc).isoformat(),
                "count": len(strategies), "strategies": strategies}
     if _gcs_write("scans/options_strategies.json", payload):
