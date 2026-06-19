@@ -258,6 +258,48 @@ def chain_snapshot(ib, symbol: str, exchange: str = "SMART", currency: str = "US
     return out
 
 
+def quote_legs(ib, symbol: str, exchange: str, currency: str, expiration: str,
+               legs: list) -> dict:
+    """Re-quote a SPECIFIC set of option legs (for nightly paper-tracker marking).
+    expiration: 'YYYY-MM-DD'. legs: [{strike, right}, ...]. Returns
+    {(strike,right): {bid, ask}}. Uses frozen data so it works after hours."""
+    exp = expiration.replace("-", "")
+    pairs = []
+    for lg in legs:
+        c = Option(symbol, exp, float(lg["strike"]), lg["right"], exchange=exchange, currency=currency)
+        pairs.append((lg, c))
+    out: dict = {}
+    try:
+        ib.reqMarketDataType(2)  # frozen
+        ib.qualifyContracts(*[c for _, c in pairs])
+        tickers = [(lg, c, ib.reqMktData(c, "", True, False)) for lg, c in pairs if c.conId]
+        ib.sleep(3.0)
+        for lg, c, t in tickers:
+            out[(round(float(lg["strike"]), 4), lg["right"])] = {
+                "bid": round(t.bid, 2) if t.bid and t.bid > 0 else None,
+                "ask": round(t.ask, 2) if t.ask and t.ask > 0 else None,
+            }
+        for _, c in pairs:
+            try:
+                ib.cancelMktData(c)
+            except Exception:
+                pass
+    except Exception as e:
+        log.warning("%s quote_legs failed: %s", symbol, e)
+    return out
+
+
+def spot_price(ib, symbol: str, exchange: str = "SMART", currency: str = "USD") -> Optional[float]:
+    """Underlying last close (for expiry intrinsic settlement)."""
+    try:
+        stock = Stock(symbol, exchange, currency)
+        if not ib.qualifyContracts(stock):
+            return None
+        return _spot(ib, stock)
+    except Exception:
+        return None
+
+
 def enrich_fast(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
                 spot: Optional[float] = None) -> dict:
     """Fast path for the nightly full-universe batch: ATM IV (from the ATM option's
