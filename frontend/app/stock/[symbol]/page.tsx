@@ -4808,6 +4808,8 @@ function RadarPeersCard({ pg }: { pg: any }) {
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
+  // Live options from IBKR (pushed to GCS by ibkr_options_batch on the gateway host).
+  const[liveOptions,setLiveOptions]=useState<any>(null);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);
   const[balanceSheets,setBalanceSheets]=useState<BalanceSheetRow[]>([]);const[cashFlows,setCashFlows]=useState<CashFlowRow[]>([]);
   const[incomesQ,setIncomesQ]=useState<IncomeRow[]>([]);
@@ -4993,6 +4995,15 @@ export default function StockDetail(){
         setStock(best); setLoading(false);
       }
     }).catch(()=>{setStock(null); setLoading(false);});
+  },[symbol]);
+  // Live IBKR options (US + EU) pushed to GCS by the gateway host's batch job.
+  useEffect(()=>{
+    if(!symbol)return;
+    setLiveOptions(null);
+    fetch(`${GCS_SCANS}/options_latest.json`,{cache:'no-store'})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{const o=d?.options?.[symbol.toUpperCase()]; if(o)setLiveOptions(o);})
+      .catch(()=>{});
   },[symbol]);
   useEffect(()=>{
     if(!symbol)return;
@@ -5287,7 +5298,17 @@ export default function StockDetail(){
       {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
       {/* Massive options card — spread suggestion + IV data */}
-      {(s.options_iv_current!=null||s.options_iv_rank!=null||s.options_spread||s.options_pc_ratio!=null||s.options_term_structure||s.options_implied_earnings_move)&&<div style={{marginBottom:16}}><MassiveOptionsCard s={s}/></div>}
+      {(()=>{
+        // Merge live IBKR options (from GCS) into the stock for the card.
+        const so:StockData = liveOptions ? {...s,
+          options_iv_current: liveOptions.iv_current ?? s.options_iv_current,
+          options_iv_rank: liveOptions.iv_rank ?? s.options_iv_rank,
+          options_iv_samples: liveOptions.iv_samples ?? s.options_iv_samples,
+          options_spread: liveOptions.spread ?? s.options_spread,
+        } : s;
+        const show = so.options_iv_current!=null||so.options_iv_rank!=null||so.options_spread||so.options_pc_ratio!=null||so.options_term_structure||so.options_implied_earnings_move;
+        return show ? <div style={{marginBottom:16}}><MassiveOptionsCard s={so}/></div> : null;
+      })()}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>
