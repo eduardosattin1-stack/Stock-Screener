@@ -46,6 +46,7 @@ import json
 import logging
 import math
 import os
+import requests
 from dataclasses import dataclass
 from datetime import datetime, date, timedelta, timezone
 from typing import Optional
@@ -376,46 +377,51 @@ class _RateLimiter:
                 self.last = now
 
 
+FMP_BASE = "https://financialmodelingprep.com/stable"
+FMP_KEY = os.environ.get("FMP_API_KEY") or "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+
+
 def _fetch_eod_bars(theta, symbol: str, start: str, end: str, limiter=None) -> list:
-    """Daily OHLC bars for [start, end] (ISO dates, inclusive) from ThetaData,
-    chunked at 28 days. Returns sorted [{"date","open","high","low","close"}].
-    Routed through _fetch_impl when injected (tests)."""
+    """Daily OHLC bars for [start, end] (ISO dates, inclusive) from FMP
+    (stable historical-price-eod/full). Returns sorted
+    [{"date","open","high","low","close"}].
+
+    Migrated off ThetaData 2026-06-19 (ThetaData dropped — options now come from
+    IBKR on-demand). FMP is Cloud-Run-native (no gateway), already used
+    screener-wide, and covers US + EU. `theta` is unused (kept for the pooled-fetch
+    signature). Routed through _fetch_impl when injected (tests)."""
     if _fetch_impl is not None:
         return _fetch_impl(symbol, start, end) or []
-    if theta is None:
+    if limiter:
+        limiter.wait()
+    try:
+        r = requests.get(f"{FMP_BASE}/historical-price-eod/full",
+                         params={"symbol": symbol, "from": start, "to": end, "apikey": FMP_KEY},
+                         timeout=30)
+        if not r.ok:
+            log.debug(f"_fetch_eod_bars FMP {symbol} HTTP {r.status_code}")
+            return []
+        data = r.json()
+        rows = data.get("historical") if isinstance(data, dict) else data
+        if not isinstance(rows, list):
+            return []
+        bars = []
+        for row in rows:
+            try:
+                bars.append({
+                    "date": str(row.get("date"))[:10],
+                    "open": float(row.get("open") or 0.0),
+                    "high": float(row["high"]),
+                    "low": float(row["low"]),
+                    "close": float(row["close"]),
+                })
+            except (KeyError, TypeError, ValueError):
+                continue
+        bars.sort(key=lambda b: b["date"])
+        return bars
+    except Exception as e:
+        log.debug(f"_fetch_eod_bars FMP {symbol} [{start}..{end}]: {e}")
         return []
-    start_d = datetime.strptime(start, "%Y-%m-%d").date()
-    end_d = datetime.strptime(end, "%Y-%m-%d").date()
-    bars = []
-    cur = start_d
-    while cur <= end_d:
-        chunk_end = min(cur + timedelta(days=THETA_CHUNK_DAYS), end_d)
-        if limiter:
-            limiter.wait()
-        try:
-            df = theta.stock_history_eod(symbol, cur, chunk_end)
-            if df is not None and hasattr(df, "height") and df.height > 0:
-                for row in df.iter_rows(named=True):
-                    try:
-                        # ThetaData EOD has no "date" column; the trading day is the
-                        # NY-tz "created" timestamp (~17:15 ET) — str()[:10] = ISO date.
-                        raw_date = row.get("date") or row.get("created") or row.get("last_trade")
-                        if raw_date is None:
-                            continue
-                        bars.append({
-                            "date": str(raw_date)[:10],
-                            "open": float(row.get("open") or 0.0),
-                            "high": float(row["high"]),
-                            "low": float(row["low"]),
-                            "close": float(row["close"]),
-                        })
-                    except (KeyError, TypeError, ValueError):
-                        continue
-        except Exception as e:
-            log.debug(f"_fetch_eod_bars {symbol} [{cur}..{chunk_end}]: {e}")
-        cur = chunk_end + timedelta(days=1)
-    bars.sort(key=lambda b: b["date"])
-    return bars
 
 
 def _fetch_bars_pooled(theta, requests_list: list) -> dict:
@@ -1006,7 +1012,7 @@ def update_from_scan(stocks: list, scan_date: str = None) -> dict:
         log.error(f"{CAL_PREFIX}/config.json missing — calibration tracker is a no-op "
                   f"(run backend/scratch/build_v2_config.py after the v4 model ships)")
         return {}
-    assert_theta_ready()  # LOUD preflight: fail visibly (CALIBRATION_THETA_DOWN) if THETA creds are missing/blank — no silent freeze
+    # bar source migrated to FMP 2026-06-19 (ThetaData dropped) — no theta preflight
     as_of = (scan_date or datetime.now(timezone.utc).strftime("%Y-%m-%d"))[:10]
 
     pending_doc = _gcs_impl["read"](f"{CAL_PREFIX}/pending_entries.json", {"pending": []})
@@ -1032,10 +1038,8 @@ def update_from_scan(stocks: list, scan_date: str = None) -> dict:
     act_candidates = [p for p in pending
                       if not p.get("_consumed") and p.get("scan_date") != as_of]
 
-    # ── ThetaData client (only when real fetching is needed) ──
+    # ── bars come from FMP (_fetch_eod_bars); `theta` stays None for the pooled signature ──
     theta = None
-    if _fetch_impl is None and (act_candidates or any(st.get("records") for st in open_states.values())):
-        theta = get_theta_client()
 
     act_reqs = sorted({(p["symbol"], p["scan_date"], p["scan_date"])
                        for p in act_candidates})

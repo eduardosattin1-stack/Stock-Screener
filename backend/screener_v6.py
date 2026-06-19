@@ -49,9 +49,9 @@ except ImportError:
 # v7.2.1: Massive options enrichment
 try:
     from massive_options import enrich_stock as options_enrich_stock
-    OPTIONS_AVAILABLE = True
+    OPTIONS_AVAILABLE = False  # 2026-06-19: per-stock options moved to on-demand IBKR (ibkr_options*); ThetaData options dropped — skip the dead nightly enrichment
     import logging as _options_log
-    _options_log.getLogger(__name__).info("Massive options module imported — enrichment enabled")
+    _options_log.getLogger(__name__).info("ThetaData options enrichment DISABLED in scan — options now via IBKR on-demand")
 except Exception as _options_e:
     options_enrich_stock = None
     OPTIONS_AVAILABLE = False
