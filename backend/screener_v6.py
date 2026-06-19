@@ -83,9 +83,11 @@ RISK_FREE = 0.045  # 10yr treasury ~4.5%
 # Phase 10b (2026-06): methodology spec version, stamped into methodology_picks
 # and each tracking rebalance so marks booked under different specs stay
 # distinguishable in the audit trail.
-METHODOLOGY_VERSION = "2026-06-epv2"
-METHODOLOGY_VERSION_NOTE = ("EPV spec fix 2026-06 (maint capex charged instead of "
-                            "D&A, not on top)")
+METHODOLOGY_VERSION = "2026-06-iv15trend"
+METHODOLOGY_VERSION_NOTE = ("EPV spec fix 2026-06 (maint capex charged instead of D&A, "
+                            "not on top); IV15 growth de-peaked to a per-share revenue-trend "
+                            "CAGR (both endpoints at mid-cycle margin, strips peak-latest AND "
+                            "trough-base EPS artifacts); IV15 saturated-cohort EPV tie-break (G3b)")
 
 # Phase 10c (2026-06): local 10-year sovereign yields by LISTING COUNTRY, in
 # decimal (4.2% -> 0.042). Quarterly-static snapshot, asof 2026-Q2 — refresh
@@ -2669,7 +2671,29 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
                 
         # 3yr EPS growth
         eps_growth_3y = v.get("eps_cagr_3y", 0.0)
-        
+
+        # IV15 DE-PEAKED growth (2026-06): project IV15 on the DURABLE per-share growth, with
+        # neither the peak NOR the trough cycle position. Carrying BOTH 3yr CAGR endpoints at
+        # the through-cycle median margin makes the margin (and the ni/ebit + share conversion)
+        # cancel, so the de-peaked normalized-EPS growth reduces to a per-share REVENUE-trend
+        # CAGR. This strips a peak latest EPS (CALM ~+109% raw → trend) AND a margin-depressed
+        # TROUGH base (UPBD/CMCSA's fake ~70-80% measured off a 2022 trough year). It does NOT
+        # extrapolate 15yr of margin expansion (prudent for deep value); a purely price/revenue-
+        # driven cyclical (CALM) still reads elevated — the PEAK_CYCLE demotion handles that
+        # residual. Falls back to raw eps_cagr_3y when history is short. IV15-ONLY — Graham et
+        # al. keep the raw eps_growth_3y. (CAGR is endpoint-based, so a longer WINDOW would not
+        # de-peak; normalizing BOTH endpoints does — see the median/norm_scale cycle layer.)
+        iv15_eps_growth = eps_growth_3y
+        if len(inc_sorted) >= 4:
+            def _rev_ps(_r):
+                _rv = float(_r.get("revenue") or 0)
+                _sh = float(_r.get("weightedAverageShsOutDil") or _r.get("weightedAverageShsOut") or 0)
+                return (_rv / _sh) if (_rv > 0 and _sh > 0) else 0.0
+            _rps_latest, _rps_base = _rev_ps(inc_sorted[-1]), _rev_ps(inc_sorted[-4])
+            if _rps_latest > 0 and _rps_base > 0:
+                iv15_eps_growth = safe_cagr(_rps_base, _rps_latest, 3)
+        v["iv15_eps_growth"] = round(iv15_eps_growth, 4)
+
         # Helper for MoS — capped to [-1.0, +0.95] for sanity.
         # Uncapped, (FV-Price)/FV can go to -∞ when FV→0, producing
         # meaningless values like -269% that distort exit metrics.
@@ -2770,8 +2794,9 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
         v["graham_revised_mos"] = max(-1.0, min(0.95, 1.0 - (price / v["graham_revised"]))) if v["graham_revised"] > 0 else -1.0
 
         # 6. IV15 Deep Value
-        # Tightened cap from 40% → 20%: a 40% CAGR for 15 years is unrealistic
-        g_blend = min(0.20, max(0.02, eps_growth_3y))
+        # Tightened cap from 40% → 20%: a 40% CAGR for 15 years is unrealistic.
+        # Growth = the DE-PEAKED iv15_eps_growth (mid-cycle EPS endpoint), not raw eps_growth_3y.
+        g_blend = min(0.20, max(0.02, iv15_eps_growth))
         terminal_mult = min(20.0, max(8.0, g_blend * 100 * 2))
         terminal_fcf = fcf * ((1 + g_blend) ** 15)
         terminal_mcap = terminal_fcf * terminal_mult
@@ -2787,7 +2812,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
 
         # ── G3: growth / terminal sanity ────────────────────
         v["iv15_nogrowth_agreement"] = (v["epv_mos"] > 0) and (v["iv15_deep_value_mos"] > 0)
-        v["iv15_saturated"] = (eps_growth_3y >= 0.20) or (v["iv15_deep_value_mos"] >= 0.95)
+        v["iv15_saturated"] = (iv15_eps_growth >= 0.20) or (v["iv15_deep_value_mos"] >= 0.95)
         v["forward_eps_growth"] = round(forward_eps_growth, 4)
         v["forward_declining"] = (forward_eps_growth <= -0.10)
 
