@@ -5209,10 +5209,7 @@ export default function StockDetail(){
 
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
 
-  const haveMom = (s.signal_momentum ?? "QUALIFIED") !== "DISQUALIFIED";
-  const haveFA  = s.fallen_angel_flag === true;
-  const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";
-  const haveCmpGL = (s.signal_compounder_global ?? "DISQUALIFIED") === "QUALIFIED";
+  const haveCmpUS = (s.signal_compounder_us ?? "DISQUALIFIED") === "QUALIFIED";  // still used by the scoring section's cohort pick
   const factorsMode=readFactorsV8(s,mode);
   const _storedComp = (mode==="fallen_angel" ? (s.composite_fallen_angel ?? s.composite)
                  : mode==="compounder_us" ? (s.compounder_score_us ?? 0)
@@ -5233,16 +5230,6 @@ export default function StockDetail(){
   const sigStyle=SIG_C[sigMode]||SIG_C.HOLD;
   const evaluatedCount=Object.values(factorsMode).filter(v=>v!=null).length;
 
-  const faAdvantage=(s.composite_fallen_angel??0)-(s.composite_momentum??0);
-  const showFAHint=haveFA&&faAdvantage>=0.10&&mode==="momentum";
-
-  const cohortBadges:[string,string,boolean][] = [
-    ["MOM",      "Momentum",         haveMom],
-    ["FA",       "Fallen Angel",     haveFA],
-    ["CMP-US",   "Compounder US",    haveCmpUS],
-    ["CMP-GL",   "Compounder Global",haveCmpGL],
-  ];
-
   return(
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
       <button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:5,fontFamily:T.mono,fontSize:11,marginBottom:16,padding:0}}><ArrowLeft size={13}/> SCREENER</button>
@@ -5252,32 +5239,15 @@ export default function StockDetail(){
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
-            <div style={{display:"inline-flex",gap:4}}>
-              {cohortBadges.map(([short,full,ok])=>(
-                <span key={short} title={`${full}: ${ok?"qualified":"not qualified"}`}
-                  style={{fontSize:9,padding:"3px 7px",borderRadius:3,fontWeight:700,
-                    fontFamily:T.mono,letterSpacing:"0.06em",
-                    color:ok?T.green:T.textLight,
-                    background:ok?T.greenLight:"transparent",
-                    border:`1px solid ${ok?T.greenBorder:T.cardBorder}`}}>
-                  {ok?"✓":"·"} {short}
-                </span>
-              ))}
-            </div>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
-            <ModeToggle mode={mode} onChange={setMode} available={{momentum:haveMom,fallen_angel:haveFA,compounder_us:haveCmpUS,compounder_global:haveCmpGL}}/>
-            {showFAHint&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,background:T.amberLight,color:T.amber,fontFamily:T.mono,fontWeight:600,border:"1px solid var(--amber)",cursor:"pointer"}} onClick={()=>setMode("fallen_angel")} title="Fallen Angel composite is materially higher — click to switch view">↻ Fallen Angel scores +{(faAdvantage*100).toFixed(0)}</span>}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
           <div style={{textAlign:"right"}}>
-            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite ({mode==="fallen_angel"?"FA":mode==="compounder_us"?"CMP-US":mode==="compounder_global"?"CMP-GL":"Mom"})</div>
+            <div style={{fontSize:11,color:T.textMuted,fontFamily:T.mono,marginBottom:4}}>Composite</div>
             <div style={{fontSize:34,fontWeight:700,fontFamily:T.mono,color:compMode>0.6?T.green:compMode>0.4?T.text:T.red}}>{compMode.toFixed(2)}</div>
-            {haveFA&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:2}}>
-              {mode==="momentum"?`FA: ${(s.composite_fallen_angel??0).toFixed(2)}`:`Mom: ${(s.composite_momentum??0).toFixed(2)}`}
-            </div>}
           </div>
         </div>
       </div>
@@ -5432,11 +5402,6 @@ export default function StockDetail(){
       {/* Opus 4.8 nightly option-strategy (D9/D10 picks only) */}
       {opusStrategy && (opusStrategy.structure||"").toLowerCase()!=="skip" &&
         <div style={{marginBottom:16}}><OpusStrategyCard st={opusStrategy} symbol={s.symbol} price={s.price}/></div>}
-
-      {/* Price + Composite chart */}
-      <div style={{marginBottom:16}}>
-        <PriceCompositeChart symbol={s.symbol} mode={s.mode}/>
-      </div>
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
