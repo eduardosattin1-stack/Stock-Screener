@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock, Sparkles } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 import { Tip, rrDisplay, toneColor } from "../../components/Tip";
 
@@ -154,6 +154,15 @@ interface BalanceSheetRow{date:string;calendarYear:string;period?:string;totalAs
 interface CashFlowRow{date:string;calendarYear:string;period?:string;operatingCashFlow:number;capitalExpenditure:number;freeCashFlow:number;}
 interface RatioYear{date:string;fiscalYear:string;grossProfitMargin:number;operatingProfitMargin:number;netProfitMargin:number;returnOnEquity:number;returnOnAssets:number;returnOnCapitalEmployed:number;currentRatio:number;debtToEquityRatio:number;priceToEarningsRatio:number;priceToSalesRatio:number;priceToBookRatio:number;priceToFreeCashFlowRatio:number;dividendYieldPercentage:number;freeCashFlowOperatingCashFlowRatio:number;interestCoverageRatio:number;dividendPayoutRatio:number;revenuePerShare:number;netIncomePerShare:number;bookValuePerShare:number;freeCashFlowPerShare:number;operatingCashFlowPerShare:number;dividendPerShare:number;priceToOperatingCashFlowRatio:number;priceToEarningsGrowthRatio:number;evToEBITDA?:number;}
 interface CompositePoint{date:string;composite:number;signal:string;price:number;}
+// Opus 4.8 nightly option-strategy routine — one best strategy per D9/D10 ML pick.
+// Pushed to GCS scans/options_strategies.json by backend/opus_strategist.ps1.
+interface OpusLeg{action?:string;right?:string;strike?:number;qty?:number;est_price?:number;}
+interface OpusStrategy{
+  structure:string;thesis?:string;expiration?:string;legs?:OpusLeg[];
+  net?:number;net_type?:string;max_gain?:number;max_loss?:number;breakeven?:number;
+  target_move_pct?:number;conviction?:number;rationale?:string;risk_note?:string;
+  decile?:number;iv_rank?:number|null;
+}
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
 const T={bg:"var(--bg)",card:"var(--bg-surface)",cardBorder:"var(--border)",cardShadow:"var(--shadow-md)",text:"var(--text)",textMuted:"var(--text-muted)",textLight:"var(--text-light)",green:"var(--green)",greenLight:"var(--green-light)",greenBorder:"var(--green-border)",red:"var(--red)",redLight:"var(--red-light)",amber:"var(--amber)",amberLight:"var(--amber-light)",blue:"var(--blue)",purple:"var(--purple)",divider:"var(--divider)",mono:"var(--font-mono)",sans:"var(--font-sans)"};
@@ -1337,6 +1346,92 @@ function MassiveOptionsCard({s}:{s:StockData}){
 
 // Keep old name as alias so the existing render block doesn't break
 const MassiveSpreadCard=MassiveOptionsCard;
+
+// ═══════════════════════════════════════════════════════════════════════
+// OpusStrategyCard — Opus 4.8's chosen option strategy for a D9/D10 ML pick.
+// Designed nightly on the gateway PC from REAL IBKR chains (greeks + IV-rank)
+// against the model view; pushed to GCS scans/options_strategies.json. Only
+// renders for covered symbols with a real structure (never mock / never "skip").
+// ═══════════════════════════════════════════════════════════════════════
+function OpusStrategyCard({st,symbol,price}:{st:OpusStrategy;symbol:string;price:number}){
+  const conv=st.conviction??0;
+  const convColor=conv>=8?T.green:conv>=6?T.amber:T.textMuted;
+  const isCredit=st.net_type==="credit"||((st.net??0)>0);
+  const net=st.net;
+  const legs=Array.isArray(st.legs)?st.legs:[];
+  const m=(label:string,value:string,sub?:string,color?:string)=>(
+    <div>
+      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+      <div style={{fontSize:14,color:color||T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
+      {sub&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{sub}</div>}
+    </div>
+  );
+  const fmt=(v?:number,dp=2)=>v==null?"—":`$${v.toFixed(dp)}`;
+  return(
+    <Card style={{borderColor:"var(--purple)"}}>
+      <SH title="Opus Strategy" icon={<Sparkles size={12}/>}
+        sub={`${st.structure.toUpperCase()}${st.decile?` · D${st.decile} pick`:""}${st.iv_rank!=null?` · IV-rank ${st.iv_rank.toFixed(0)}`:""}`}/>
+      {st.thesis&&(
+        <div style={{fontSize:12,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+          {st.thesis}
+        </div>
+      )}
+
+      {/* headline metrics */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+        {m("NET",net==null?"—":`${isCredit?"+":"-"}$${Math.abs(net).toFixed(2)}`,isCredit?"credit / share":"debit / share",isCredit?T.green:T.text)}
+        {m("MAX GAIN",st.max_gain==null?"—":`+${fmt(st.max_gain)}`,"per share",T.green)}
+        {m("MAX LOSS",st.max_loss==null?"—":`-${fmt(Math.abs(st.max_loss))}`,"per share",T.red)}
+        {m("BREAK-EVEN",fmt(st.breakeven),st.target_move_pct!=null?`target +${st.target_move_pct.toFixed(1)}%`:undefined)}
+        {m("CONVICTION",`${conv}/10`,"structure fit",convColor)}
+      </div>
+
+      {/* legs */}
+      {legs.length>0&&(
+        <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>
+            LEGS{st.expiration?` · ${st.expiration}`:""}
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {legs.map((l,i)=>{
+              const buy=(l.action||"").toUpperCase()==="BUY";
+              return(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:10,fontFamily:T.mono,fontSize:12}}>
+                  <span style={{padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,letterSpacing:"0.05em",
+                    background:buy?T.greenLight:T.redLight,color:buy?T.green:T.red,border:`1px solid ${buy?T.greenBorder:"var(--red)"}`}}>
+                    {buy?"BUY":"SELL"}
+                  </span>
+                  <span style={{fontWeight:700,color:T.text}}>{l.qty??1}×</span>
+                  <span style={{color:T.text}}>{symbol} {l.strike!=null?`$${l.strike}`:""} {l.right==="P"?"PUT":l.right==="C"?"CALL":(l.right||"")}</span>
+                  {l.est_price!=null&&<span style={{color:T.textMuted}}>@ ~${l.est_price.toFixed(2)}</span>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* rationale */}
+      {st.rationale&&(
+        <div style={{padding:"10px 12px",borderRadius:5,background:"var(--purple-light)",border:"1px solid var(--purple)",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
+          <div style={{fontWeight:600,color:"var(--purple)",fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>WHY THIS STRUCTURE</div>
+          {st.rationale}
+        </div>
+      )}
+      {st.risk_note&&(
+        <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid var(--amber)",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
+          <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ RISK</div>
+          {st.risk_note}
+        </div>
+      )}
+
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
+        Designed by Opus 4.8 nightly from real IBKR option chains (greeks + IV-rank) against the v4 ML view.
+        Prices are mid-of-book estimates — verify strikes/premiums with your broker. Not investment advice.
+      </div>
+    </Card>
+  );
+}
 
 // ── PriceCompositeChart — dual-line price + composite over scan history ────────
 function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
@@ -4810,6 +4905,7 @@ export default function StockDetail(){
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
   // Live options from IBKR (pushed to GCS by ibkr_options_batch on the gateway host).
   const[liveOptions,setLiveOptions]=useState<any>(null);
+  const[opusStrategy,setOpusStrategy]=useState<OpusStrategy|null>(null);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);
   const[balanceSheets,setBalanceSheets]=useState<BalanceSheetRow[]>([]);const[cashFlows,setCashFlows]=useState<CashFlowRow[]>([]);
   const[incomesQ,setIncomesQ]=useState<IncomeRow[]>([]);
@@ -5003,6 +5099,15 @@ export default function StockDetail(){
     fetch(`${GCS_SCANS}/options_latest.json`,{cache:'no-store'})
       .then(r=>r.ok?r.json():null)
       .then(d=>{const o=d?.options?.[symbol.toUpperCase()]; if(o)setLiveOptions(o);})
+      .catch(()=>{});
+  },[symbol]);
+  // Opus 4.8 nightly option-strategy (D9/D10 picks) pushed to GCS by opus_strategist.ps1.
+  useEffect(()=>{
+    if(!symbol)return;
+    setOpusStrategy(null);
+    fetch(`${GCS_SCANS}/options_strategies.json`,{cache:'no-store'})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{const o=d?.strategies?.[symbol.toUpperCase()]; if(o)setOpusStrategy(o);})
       .catch(()=>{});
   },[symbol]);
   useEffect(()=>{
@@ -5309,6 +5414,10 @@ export default function StockDetail(){
         const show = so.options_iv_current!=null||so.options_iv_rank!=null||so.options_spread||so.options_pc_ratio!=null||so.options_term_structure||so.options_implied_earnings_move;
         return show ? <div style={{marginBottom:16}}><MassiveOptionsCard s={so}/></div> : null;
       })()}
+
+      {/* Opus 4.8 nightly option-strategy (D9/D10 picks only) */}
+      {opusStrategy && (opusStrategy.structure||"").toLowerCase()!=="skip" &&
+        <div style={{marginBottom:16}}><OpusStrategyCard st={opusStrategy} symbol={s.symbol} price={s.price}/></div>}
 
       {/* Price + Composite chart */}
       <div style={{marginBottom:16}}>

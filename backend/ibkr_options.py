@@ -180,6 +180,79 @@ def _req(ib, contract):
     return ib.reqMktData(contract, "", True, False)  # snapshot
 
 
+def chain_snapshot(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
+                   spot: Optional[float] = None, n_strikes: int = 4) -> dict:
+    """Rich per-name options snapshot for STRATEGY design (Opus): two expirations
+    (~35 DTE and ~70 DTE), a strike band around spot for BOTH calls and puts, each
+    with bid/ask + greeks (iv/delta/theta/vega). Market-data only (no historical
+    pacing). From this Opus can build any structure — debit/credit spread, calendar
+    (across the two expiries), diagonal, cash-secured put, covered call, risk
+    reversal — with real prices + greeks. iv_rank is added by the caller (GCS hist)."""
+    out: dict = {"spot": None, "expirations": []}
+    stock = Stock(symbol, exchange, currency)
+    if not ib.qualifyContracts(stock):
+        return out
+    ib.reqMarketDataType(2)  # frozen
+    spot = spot or _spot(ib, stock)
+    if not spot or spot <= 0:
+        return out
+    out["spot"] = round(spot, 2)
+    try:
+        params = ib.reqSecDefOptParams(stock.symbol, "", stock.secType, stock.conId)
+        chain = next((c for c in params if c.exchange in ("SMART", exchange)), params[0] if params else None)
+        if not chain or not chain.expirations:
+            return out
+        today = datetime.now().date()
+        def _dte(e): return (datetime.strptime(e, "%Y%m%d").date() - today).days
+        valid = sorted([e for e in chain.expirations if _dte(e) >= 7], key=_dte)
+        ex = chain.exchange or exchange
+        targets = []
+        for tgt in (35, 70):
+            if valid:
+                pick = min(valid, key=lambda e: abs(_dte(e) - tgt))
+                if pick not in targets:
+                    targets.append(pick)
+        for expiration in targets:
+            det = ib.reqContractDetails(Option(symbol, expiration, 0, "C", exchange=ex, currency=currency))
+            strikes = sorted({d.contract.strike for d in det})
+            if not strikes:
+                continue
+            atm = _round_to(spot, strikes)
+            ai = strikes.index(atm)
+            band = strikes[max(0, ai - n_strikes): ai + n_strikes + 1]
+            reqd = []
+            for k in band:
+                for right in ("C", "P"):
+                    reqd.append((k, right, Option(symbol, expiration, k, right, exchange=ex, currency=currency)))
+            ib.qualifyContracts(*[c for _, _, c in reqd])
+            tickers = {(k, r): _req(ib, c) for k, r, c in reqd if c.conId}
+            ib.sleep(3.0)
+            legs = []
+            for (k, r), t in tickers.items():
+                mg = t.modelGreeks
+                legs.append({
+                    "strike": k, "right": r,
+                    "bid": round(t.bid, 2) if t.bid and t.bid > 0 else None,
+                    "ask": round(t.ask, 2) if t.ask and t.ask > 0 else None,
+                    "iv": round(mg.impliedVol, 4) if mg and mg.impliedVol else None,
+                    "delta": round(mg.delta, 3) if mg and mg.delta is not None else None,
+                    "theta": round(mg.theta, 4) if mg and mg.theta is not None else None,
+                    "vega": round(mg.vega, 4) if mg and mg.vega is not None else None,
+                })
+            for _, _, c in reqd:
+                try:
+                    ib.cancelMktData(c)
+                except Exception:
+                    pass
+            out["expirations"].append({
+                "expiration": f"{expiration[:4]}-{expiration[4:6]}-{expiration[6:]}",
+                "dte": _dte(expiration), "atm_strike": atm, "legs": legs,
+            })
+    except Exception as e:
+        log.warning("%s chain_snapshot failed: %s", symbol, e)
+    return out
+
+
 def enrich_fast(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
                 spot: Optional[float] = None) -> dict:
     """Fast path for the nightly full-universe batch: ATM IV (from the ATM option's
