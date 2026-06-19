@@ -39,11 +39,12 @@ def main():
     if not isinstance(strategies, dict):
         raise SystemExit("expected a JSON object keyed by symbol")
 
-    # Enrich each strategy with decile / iv_rank / price / sector from the gather's
-    # strategy_input.json (so the card chips populate without relying on Opus to echo
-    # them). Best-effort: missing input just leaves the strategy as-is.
+    # Enrich each strategy from the gather's strategy_input.json: decile/iv_rank/
+    # price/sector for the card chips, AND a fill-aware, probability-grounded EV
+    # (opus_ev) that replaces the conviction*mid heuristic. Best-effort.
     in_path = os.path.join(os.path.dirname(os.path.abspath(path)), "strategy_input.json")
     try:
+        from opus_ev import compute_ev
         with open(in_path, encoding="utf-8-sig") as f:
             picks = {p["symbol"]: p for p in (json.load(f).get("picks") or [])}
         for sym, strat in strategies.items():
@@ -53,6 +54,15 @@ def main():
                 strat.setdefault("iv_rank", p.get("iv_rank"))
                 strat.setdefault("price", p.get("price"))
                 strat.setdefault("sector", p.get("sector"))
+                ev = compute_ev(strat, p)
+                if ev:
+                    strat["ev"] = ev["ev"]                    # per contract, fill-aware
+                    strat["pop"] = ev["pop"]
+                    strat["net_fill"] = ev["net_fill"]
+                    strat["max_gain_fill"] = ev["max_gain_fill"]
+                    strat["max_loss_fill"] = ev["max_loss_fill"]
+                    strat["breakeven_fill"] = ev["breakeven_fill"]
+                    strat["ev_method"] = ev["method"]
     except Exception as e:
         log.warning("could not enrich from strategy_input.json: %s", e)
 

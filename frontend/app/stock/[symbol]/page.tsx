@@ -162,6 +162,8 @@ interface OpusStrategy{
   net?:number;net_type?:string;max_gain?:number;max_loss?:number;breakeven?:number;
   target_move_pct?:number;conviction?:number;rationale?:string;risk_note?:string;
   decile?:number;iv_rank?:number|null;
+  // fill-aware EV (opus_ev.py, crosses the bid/ask) — preferred over the mid-based fields above
+  ev?:number;pop?:number;net_fill?:number;max_gain_fill?:number;max_loss_fill?:number;breakeven_fill?:number;ev_method?:string;
 }
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
@@ -1356,8 +1358,14 @@ const MassiveSpreadCard=MassiveOptionsCard;
 function OpusStrategyCard({st,symbol,price}:{st:OpusStrategy;symbol:string;price:number}){
   const conv=st.conviction??0;
   const convColor=conv>=8?T.green:conv>=6?T.amber:T.textMuted;
-  const isCredit=st.net_type==="credit"||((st.net??0)>0);
-  const net=st.net;
+  // Prefer the fill-aware figures (cross the bid/ask) over Opus's mid-based ones.
+  const net=st.net_fill??st.net;
+  const maxG=st.max_gain_fill??st.max_gain;
+  const maxL=st.max_loss_fill??st.max_loss;
+  const be=st.breakeven_fill??st.breakeven;
+  const isCredit=(net??0)>0||(st.net_fill==null&&(st.net_type==="credit"||((st.net??0)>0)));
+  const ev=st.ev;
+  const evColor=ev==null?T.textMuted:ev>=0?T.green:T.red;
   const legs=Array.isArray(st.legs)?st.legs:[];
   const m=(label:string,value:string,sub?:string,color?:string)=>(
     <div>
@@ -1377,14 +1385,20 @@ function OpusStrategyCard({st,symbol,price}:{st:OpusStrategy;symbol:string;price
         </div>
       )}
 
-      {/* headline metrics */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+      {/* headline metrics — fill-aware (entry crosses the bid/ask) */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+        {m("EV / CONTRACT",ev==null?"—":`${ev>=0?"+":"−"}$${Math.abs(ev).toFixed(0)}`,st.pop!=null?`P(win) ${(st.pop*100).toFixed(0)}%`:"fill-aware",evColor)}
         {m("NET",net==null?"—":`${isCredit?"+":"-"}$${Math.abs(net).toFixed(2)}`,isCredit?"credit / share":"debit / share",isCredit?T.green:T.text)}
-        {m("MAX GAIN",st.max_gain==null?"—":`+${fmt(st.max_gain)}`,"per share",T.green)}
-        {m("MAX LOSS",st.max_loss==null?"—":`-${fmt(Math.abs(st.max_loss))}`,"per share",T.red)}
-        {m("BREAK-EVEN",fmt(st.breakeven),st.target_move_pct!=null?`target +${st.target_move_pct.toFixed(1)}%`:undefined)}
+        {m("MAX GAIN",maxG==null?"—":`+${fmt(maxG)}`,"per share",T.green)}
+        {m("MAX LOSS",maxL==null?"—":`-${fmt(Math.abs(maxL))}`,"per share",T.red)}
+        {m("BREAK-EVEN",fmt(be),st.target_move_pct!=null?`target +${st.target_move_pct.toFixed(1)}%`:undefined)}
         {m("CONVICTION",`${conv}/10`,"structure fit",convColor)}
       </div>
+      {ev!=null&&(
+        <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginBottom:14,marginTop:-6,lineHeight:1.4}}>
+          EV crosses the bid/ask (worst-case fill) · {st.ev_method||""} · ex-ante estimate, not realized
+        </div>
+      )}
 
       {/* legs */}
       {legs.length>0&&(

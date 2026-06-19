@@ -430,12 +430,14 @@ type OpusStrat = {
   structure: string; conviction?: number; max_gain?: number; max_loss?: number;
   net?: number; net_type?: string; expiration?: string; breakeven?: number;
   decile?: number; iv_rank?: number | null;
+  // fill-aware EV computed at publish time (opus_ev.py) — crosses the bid/ask.
+  ev?: number; pop?: number; net_fill?: number; max_gain_fill?: number;
+  max_loss_fill?: number; breakeven_fill?: number; ev_method?: string;
 };
-// EV per contract using Opus conviction as P(win): conv×maxGain − (1−conv)×|maxLoss|, ×100.
+// Fill-aware EV per contract (computed server-side, crosses the bid/ask). null when
+// the structure is a skip or couldn't be priced from a two-sided market.
 function opusEv(s: OpusStrat | undefined): number | null {
-  if (!s || s.structure === "skip" || s.conviction == null || s.max_gain == null || s.max_loss == null) return null;
-  const p = Math.max(0, Math.min(1, s.conviction / 10));
-  return (p * s.max_gain - (1 - p) * Math.abs(s.max_loss)) * 100;
+  return s && typeof s.ev === "number" ? s.ev : null;
 }
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function fmtOpusDate(iso: string): string {
@@ -591,7 +593,7 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                 <SortTh label="Max+" k="maxplus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} style={{ textAlign: "right" }} />
                 <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Observed worst drawdown so far (matures over the window)" style={{ textAlign: "right" }} />
                 <SortTh label="Pred DD" k="ddpred" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model-predicted max drawdown over 60 trading bars (expected_dd_60d) — validate vs Max− at maturity" style={{ textAlign: "right" }} />
-                <SortTh label="Opus EV" k="opusev" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Expected value per contract of the Opus option strategy, using Opus conviction as P(win): conv×maxGain − (1−conv)×|maxLoss|, ×100" style={{ textAlign: "right" }} />
+                <SortTh label="Opus EV" k="opusev" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Fill-aware expected value per contract — prices entry by CROSSING the bid/ask (worst-case, conservative). Debit/long: model P(reach target)×maxGain − P(miss)×maxLoss; credit: delta-implied P(keep). '—' = skip or no two-sided market. Ex-ante estimate; the paper tracker measures realized P&L." style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right" }}>State (30d / 60d)</th>
                 <SortTh label="Opus date" k="opusdate" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Date the Opus option strategy was designed (nightly publish)" style={{ textAlign: "right" }} />
               </tr>
@@ -646,7 +648,13 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                   <td style={{ ...td, textAlign: "right", color: T.muted }} title="Predicted max drawdown over 60 bars">
                     {r.dd_pred_60d != null ? `${r.dd_pred_60d.toFixed(1)}%` : "—"}
                   </td>
-                  <td style={{ ...td, textAlign: "right" }} title={opus[r.symbol] && opus[r.symbol].structure !== "skip" ? `${opus[r.symbol].structure} · conviction ${opus[r.symbol].conviction}/10` : undefined}>
+                  <td style={{ ...td, textAlign: "right" }} title={(() => {
+                    const s = opus[r.symbol];
+                    if (!s || s.structure === "skip") return undefined;
+                    const ev = opusEv(s);
+                    if (ev == null) return `${s.structure} · no two-sided market (unpriceable)`;
+                    return `${s.structure} · P(win) ${s.pop != null ? (s.pop * 100).toFixed(0) + "%" : "—"} · max +$${((s.max_gain_fill ?? 0) * 100).toFixed(0)} / −$${(Math.abs(s.max_loss_fill ?? 0) * 100).toFixed(0)} · ${s.ev_method ?? ""} · conv ${s.conviction}/10`;
+                  })()}>
                     {(() => {
                       const ev = opusEv(opus[r.symbol]);
                       if (ev == null) return <span style={{ color: T.light }}>—</span>;
