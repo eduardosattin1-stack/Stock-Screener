@@ -190,7 +190,11 @@ for p in picks:
         "symbol": sym,
         "conviction": int(p.get("director_conviction", 0)),
         "debate_conviction": int(rec.get("conviction", 0) or 0),
-        "entry_price": prior.get("entry_price") or apex_pos.get(sym, {}).get("entry_price") or sc.get("price") or 0,
+        # NEW names: leave entry_price 0 here so _update_apex_tracking stamps the LIVE quote
+        # (it uses the current price when entry_price is falsy). The scan price is stale for
+        # EU names (FRVIA/SCR.PA/CTSH all showed a spurious day-1 P&L), so it is NOT a fallback.
+        # The backfill after the tracking update reads the live entry back into the displayed book.
+        "entry_price": prior.get("entry_price") or apex_pos.get(sym, {}).get("entry_price") or 0,
         "entry_date": prior.get("entry_date") or apex_pos.get(sym, {}).get("entry_date") or TODAY,
         "held_since_prior": sym in prior_apex,
         "source_methodologies": meths,
@@ -255,6 +259,20 @@ try:
 except Exception as e:
     print(f"WARN: _update_apex_tracking failed ({e}); preserving prior tracking summary.")
     track_summary = baskets.get("apex_tracking", {})
+
+# Backfill the displayed entry_price/date from the tracking the engine just stamped: genuinely-new
+# names (entry_price left 0 above) now carry the LIVE quote, and held names keep their preserved
+# entry. Without this the book shows the stale scan price / 0 and a fake day-1 P&L. Mirrors
+# value_publish; best-effort so it can never break the publish.
+try:
+    _upos = (json.load(open(TRACK_LOCAL, encoding="utf-8")) or {}).get("positions", {}) or {}
+    for e in entries:
+        _pp = _upos.get(e["symbol"], {})
+        if _pp.get("entry_price"):
+            e["entry_price"] = _pp["entry_price"]
+            e["entry_date"] = _pp.get("entry_date") or e.get("entry_date")
+except Exception as _e:
+    print(f"WARN: entry-price backfill from tracking failed ({_e})")
 
 # ── Director-weighted NAV (parallel to equal-weight) ────────────────────────
 # The regime Director risk-sizes the book in his memo (defensive anchors larger, cyclical tails

@@ -58,6 +58,93 @@ DEBATE_MODEL = "opus"
 DIRECTOR_MODEL = "opus"   # Fable→Opus-4.8/1M fallback
 SKEPTIC_MODEL = "opus"    # Fable→Opus-4.8/1M fallback
 
+# ── Director rotation discipline: the prior-decision ledger (continuity + anti-whipsaw) ──
+# Each book persists every Director keep/drop/add for the YEAR in _decision_history.json so the
+# next Director is CONFRONTED BY ITS OWN PRIOR CALLS. write_director_ledger() renders the per-book
+# {year} ledger the Director reads BEFORE deciding; append_decision_history() records this run's
+# decisions AFTER the Director writes the basket. Both best-effort — they NEVER raise, so a ledger
+# bug can never break the debate/publish pipeline (callers also wrap defensively).
+LEDGER_YEAR = "2026"
+DECISION_HISTORY = ROOT / "_decision_history.json"
+
+def _book_apex(d):
+    return (d.get("apex_basket") or d.get("apex") or []) if isinstance(d, dict) else (d if isinstance(d, list) else [])
+
+def _load_decision_history():
+    try:
+        return json.load(open(DECISION_HISTORY, encoding="utf-8")) or {}
+    except Exception:
+        return {}
+
+def write_director_ledger(book, prior_basket_path, tracking_path):
+    """Render _director_ledger_<book>.txt — the prior-decision ledger the Director must reconcile
+    its new basket against. Returns (path, n_held, n_dropped). Best-effort; never raises."""
+    try:
+        out = ROOT / f"_director_ledger_{book}.txt"
+        hist = _load_decision_history().get(book, {})
+        try:
+            pj = json.load(open(prior_basket_path, encoding="utf-8"))
+            prior = {p.get("symbol"): p for p in _book_apex(pj) if isinstance(p, dict) and p.get("symbol")}
+        except Exception:
+            prior = {}
+        try:
+            track = json.load(open(tracking_path, encoding="utf-8")) or {}
+        except Exception:
+            track = {}
+        positions = track.get("positions") or {}
+        closed = [c for c in (track.get("closed") or []) if str(c.get("exit_date", "")).startswith(LEDGER_YEAR)]
+        L = [f"PRIOR-DECISION LEDGER — {book} book, {LEDGER_YEAR}. YOU authored these calls; you must justify",
+             "every KEEP / DROP / ADD / RE-ADD in this run AGAINST them (see ROTATION DISCIPLINE in the rubric).",
+             f"\nHELD NOW ({len(prior)}) — drop one only on a BROKEN thesis or a strictly-better orthogonal name:"]
+        for s, p in prior.items():
+            pos = positions.get(s, {})
+            ed = pos.get("entry_date") or p.get("entry_date") or "?"
+            conv = p.get("director_conviction") or p.get("value_score") or p.get("conviction") or "?"
+            rat = (p.get("director_rationale") or p.get("thesis") or "").strip().replace("\n", " ")
+            L.append(f"  • {s}: HELD since {ed} (conv {conv}) — {rat[:220]}")
+        if closed:
+            L.append(f"\nDROPPED in {LEDGER_YEAR} ({len(closed)}) — a RE-ADD requires a DOCUMENTED THESIS CHANGE since the drop:")
+            for c in sorted(closed, key=lambda c: c.get("exit_date", ""))[-40:]:
+                L.append(f"  • {c.get('symbol')}: DROPPED {c.get('exit_date')} (held from {c.get('entry_date','?')}, realized {c.get('return_pct','?')}%)")
+        if hist:
+            L.append("\nDECISION TIMELINE (date · decision · why):")
+            for s, evs in hist.items():
+                evs = [e for e in evs if str(e.get("date", "")).startswith(LEDGER_YEAR)]
+                if not evs:
+                    continue
+                tl = "; ".join(f"{e.get('date')} {e.get('decision')}: {(e.get('rationale') or '')[:80]}" for e in evs[-6:])
+                L.append(f"  • {s}: {tl}")
+        out.write_text("\n".join(L), encoding="utf-8")
+        print(f"director ledger ({book}): {len(prior)} held + {len(closed)} dropped {LEDGER_YEAR} -> {out.name}")
+        return str(out), len(prior), len(closed)
+    except Exception as e:
+        print(f"WARN: write_director_ledger({book}) failed ({e})")
+        return "", 0, 0
+
+def append_decision_history(book, basket):
+    """Record this run's per-name Director decisions into the persistent year ledger (for next run +
+    the UI rotation trail). Best-effort; never raises."""
+    try:
+        import datetime as _dt
+        today = _dt.date.today().isoformat()
+        hist = _load_decision_history()
+        bh = hist.setdefault(book, {})
+        for p in _book_apex(basket):
+            if not isinstance(p, dict) or not p.get("symbol"):
+                continue
+            s = p["symbol"]
+            ev = {"date": today,
+                  "decision": str(p.get("decision") or "KEEP").upper(),
+                  "conviction": p.get("director_conviction") or p.get("value_score") or p.get("conviction"),
+                  "rationale": (p.get("decision_rationale") or p.get("whats_changed") or p.get("thesis") or "")[:200]}
+            lst = bh.setdefault(s, [])
+            if not (lst and lst[-1].get("date") == today):
+                lst.append(ev)
+            bh[s] = lst[-24:]
+        json.dump(hist, open(DECISION_HISTORY, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"WARN: append_decision_history({book}) failed ({e})")
+
 # ── Return objective (Apex + Disruptor only; the Value Lens stays pure-value/patient) ──
 # The Apex + Disruptor Directors target this and set a macro-driven risk_stance (reach vs defend).
 RETURN_GOAL = {"low_pct": 30, "high_pct": 50, "horizon_months": 12}
@@ -474,11 +561,13 @@ RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
    - `net_debt_exceeds_mktcap`=true remains a thin-equity flag — NEVER credit net debt as "net cash."
 4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap). When the peer entry carries `peer_override`/`anchor_multiple`, that is a LIVE, current peer multiple — use it, NEVER a remembered one (peer multiples de-rate). When `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee vs a now-~10x Edenred, both hit by the same Brazil PAT + Italy voucher reform), the discount-to-peer is SHARED-FACTOR SECTOR BETA, not idiosyncratic alpha: count it as a hidden-factor cluster in the correlation stress below, do NOT credit the gap as single-name edge, and prefer it as a sized/watch leg rather than a full-conviction apex seat.
 
+ROTATION DISCIPLINE (continuity — you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt — it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat — and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) — a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names — compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it.
+
 HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap, (e) MATCH the moat terminal-erosion teeth in size: a `moat_erosion`="CAP" name (falling returns OR eroding margins + decelerating revenue) MUST carry `size_units` <= 0.5 (the deterministic post already half-caps it; your number must agree), and an `erosion_severity`="value-destroying" name (sub-cost-of-capital AND eroding — `roic_below_hurdle`=true) is apex-INELIGIBLE unless the skeptic CONFIRMS a durable moat. Use `moat`/`moat_trend`/`moat_score` as the moat read: a low multiple on a structurally-shrinking base (high-but-FALLING ROIC, eroding gross margin) is a value trap, NOT value — this is SEPARATE from the cyclical-peak gate (an earnings cycle high), which still applies.
 
 HIDDEN-FACTOR CORRELATION STRESS (run over the final 10 BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the 10 on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy), (f) SECULAR-DISRUPTION THEME (each name carries a `secular_theme`: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). NO secular_theme may carry >2 names — the live clusters to check are ai-displacement across ADBE/IT/GLOB and payments-disintermediation across EEFT/PLX.PA; "cheap vs peers" inside a cohort that is melting TOGETHER is sector beta, not alpha. A WIDE & non-eroding moat (e.g. ADBE: rising ROIC, expanding margin) counts at HALF toward the theme budget (a durable anchor that merely carries the narrative is not the tail risk), so a theme may seat one durable anchor + at most one eroding leg. FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome); CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising); and any name whose peer entry is tagged `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee — its cheapness vs Edenred is shared Brazil-PAT/Italy-voucher REGULATORY beta, both names de-rated on the same factor, so it is sector beta NOT name-specific alpha and must be discounted here, not credited as edge). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" — used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position. Reply exactly: DONE"""
+OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" — used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag, decision('KEEP'|'ADD'|'RE-ADD' — vs the ledger), decision_rationale(one sentence reconciling this seat to the ledger), whats_changed(REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else "")}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position; (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_value.txt — one line per KEEP/ADD/RE-ADD, the broken-thesis reason for every held name you DROPPED, and (for any RE-ADD) the documented thesis change; (g) a SECULAR-LOAD line: book_secular_load_pct + clean_anchor_count, with a defense if load>60% or anchors<2. ALSO emit, at top level alongside apex_basket, book_secular_load_pct(number) and clean_anchor_count(int). Reply exactly: DONE"""
 
 
 DISRUPTOR_DIRECTOR_PROMPT = """You are the SPECULAIR DISRUPTOR DIRECTOR (Claude Opus 4.8), allocating REAL capital to PROFITABLE SECULAR DISRUPTORS — picks-and-shovels toll-takers in durable disruption themes — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/disruptor/disruptor_grade_input.json — one row per debated name, every field pre-computed. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH (favor names whose secular thesis can deliver +30-50% within ~12 months via a live trend / momentum / earnings-inflection, and take more near-term AI-capex/cyclical beta); RISK_OFF / decelerating / sticky-inflation => DEFEND (prefer guard-clean compounders whose downside is protected even if the +30-50% is a multi-year story, and SIZE DOWN the high-beta reaches). State risk_stance + a one-line macro read in the disruptor_memo.
@@ -664,6 +753,12 @@ def value_input():
             "secular_threat": r.get("secular_threat", ""), "secular_theme": r.get("secular_theme", ""),
         })
     (ROOT / "value_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    # Director rotation discipline: render the prior-decision ledger (held names + 2026 drops) that
+    # this Director must reconcile its new basket against. Best-effort — never blocks the run.
+    try:
+        write_director_ledger("value", ROOT / "apex_basket_value.json", E.FRONTEND_DIR / "public" / "speculair_value_tracking.json")
+    except Exception as _e:
+        print(f"WARN: value ledger build failed ({_e})")
     prompt_txt = VALUE_DIRECTOR_PROMPT
     pa = ROOT / "apex_basket_value.json"                # Fix 4 feed-forward: prior MEASURED correlations
     if pa.exists():
@@ -983,6 +1078,10 @@ def value_publish(push_gcs=False):
     PUB = E.FRONTEND_DIR / "public"
     apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
+    try:                                              # capture this run's Director decisions into the year ledger
+        append_decision_history("value", apx)
+    except Exception as _e:
+        print(f"WARN: value decision-history capture failed ({_e})")
     track_in = [{**p, "conviction": p.get("value_score", 0)} for p in picks]   # value_score -> conviction log
     try:
         vt = E._update_apex_tracking(track_in, push_gcs=False,
