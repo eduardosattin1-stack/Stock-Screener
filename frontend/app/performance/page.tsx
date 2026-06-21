@@ -423,7 +423,7 @@ function TouchCurve({ horizons }: { horizons: CalibrationV2["horizons"] }) {
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — Per-record table (HARD RULE: one row per pick)
 // ══════════════════════════════════════════════════════════════════════════════
-type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "iv" | "ivr" | "ddpred" | "maxplus" | "maxminus" | "opusev" | "opusdate";
+type RecSortKey = "symbol" | "sector" | "entry" | "last" | "p10" | "p20" | "iv" | "ivr" | "ddpred" | "maxplus" | "maxminus" | "opusev" | "opusconv" | "opusdate";
 
 // Opus 4.8 nightly option strategy (scans/options_strategies.json), keyed by symbol.
 type OpusStrat = {
@@ -507,6 +507,7 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
       : sortKey === "ddpred" ? (r.dd_pred_60d ?? 1)
       : sortKey === "maxplus" ? r.max_high_pct
       : sortKey === "opusev" ? (opusEv(opus[r.symbol]) ?? -1e9)
+      : sortKey === "opusconv" ? (opus[r.symbol] && opus[r.symbol].structure !== "skip" && opus[r.symbol].conviction != null ? (opus[r.symbol].conviction as number) : -1)
       : sortKey === "opusdate" ? (opus[r.symbol] && opus[r.symbol].structure !== "skip" && opusUpdated ? Date.parse(opusUpdated) : -1)
       : r.max_dd_pct;
     const arr = [...filtered];
@@ -594,6 +595,7 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                 <SortTh label="Max−" k="maxminus" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Observed worst drawdown so far (matures over the window)" style={{ textAlign: "right" }} />
                 <SortTh label="Pred DD" k="ddpred" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Model-predicted max drawdown over 60 trading bars (expected_dd_60d) — validate vs Max− at maturity" style={{ textAlign: "right" }} />
                 <SortTh label="Opus EV" k="opusev" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Fill-aware expected value per contract — prices entry by CROSSING the bid/ask (worst-case, conservative). Debit/long: model P(reach target)×maxGain − P(miss)×maxLoss; credit: delta-implied P(keep). '—' = skip or no two-sided market. Ex-ante estimate; the paper tracker measures realized P&L." style={{ textAlign: "right" }} />
+                <SortTh label="Conv" k="opusconv" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Opus conviction in this structure, 1–10 (structure fit given decile, IV regime, liquidity) — distinct from the model's stock-level P(touch)" style={{ textAlign: "right" }} />
                 <th style={{ ...th, textAlign: "right" }}>State (30d / 60d)</th>
                 <SortTh label="Opus date" k="opusdate" sortKey={sortKey} sortDir={sortDir} onSort={onSort} title="Date the Opus option strategy was designed (nightly publish)" style={{ textAlign: "right" }} />
               </tr>
@@ -659,6 +661,15 @@ function RecordsTable({ records, asOf }: { records: CalibRecord[]; asOf: string 
                       const ev = opusEv(opus[r.symbol]);
                       if (ev == null) return <span style={{ color: T.light }}>—</span>;
                       return <span style={{ color: ev >= 0 ? T.greenPos : T.red, fontWeight: 700 }}>{ev >= 0 ? "+" : "−"}${Math.abs(ev).toFixed(0)}</span>;
+                    })()}
+                  </td>
+                  <td style={{ ...td, textAlign: "right" }}>
+                    {(() => {
+                      const o = opus[r.symbol];
+                      const c = o && o.structure !== "skip" ? o.conviction : null;
+                      if (c == null) return <span style={{ color: T.light }}>—</span>;
+                      const col = c >= 8 ? T.greenPos : c >= 6 ? T.amber : T.muted;
+                      return <span style={{ color: col, fontWeight: 700 }}>{c}<span style={{ color: T.light, fontWeight: 400 }}>/10</span></span>;
                     })()}
                   </td>
                   <td style={{ ...td, textAlign: "right" }}>
