@@ -199,6 +199,10 @@ for p in picks:
         "held_since_prior": sym in prior_apex,
         "source_methodologies": meths,
         "director_rationale": rationale,
+        # rotation-discipline (continuity): the Director's per-name call + why, vs the prior-decision ledger
+        "decision": p.get("decision"),
+        "decision_rationale": p.get("decision_rationale"),
+        "whats_changed": p.get("whats_changed"),
         "consensus_delta": rec.get("consensus_delta", ""),
         "forcing_function": rec.get("forcing_function", "") or p.get("forcing_function", ""),
         "valley_of_death": rec.get("valley_of_death", ""),
@@ -307,6 +311,32 @@ except Exception as e:
 
 # ── Assemble: swap apex_basket + memo, preserve everything else ──────────
 baskets["apex_basket"] = entries
+
+# Capture this run's Director decisions into the year ledger (continuity trail for next week's
+# Director + the UI rotation panel). Inline copy of weekly_opus_refresh.append_decision_history,
+# to avoid importing that module (its os.chdir side-effect would move this script's cwd). Best-effort.
+try:
+    import datetime as _dt
+    _dhp = BK / "_decision_history.json"
+    _dh = json.loads(_dhp.read_text(encoding="utf-8")) if _dhp.exists() else {}
+    if not isinstance(_dh, dict):
+        _dh = {}
+    _today = _dt.date.today().isoformat()
+    _rb = _dh.setdefault("regime", {})
+    for _p in entries:
+        _s = _p.get("symbol")
+        if not _s:
+            continue
+        _ev = {"date": _today, "decision": str(_p.get("decision") or "KEEP").upper(),
+               "conviction": _p.get("conviction"),
+               "rationale": (_p.get("decision_rationale") or _p.get("whats_changed") or _p.get("director_rationale") or "")[:200]}
+        _lst = _rb.setdefault(_s, [])
+        if not (_lst and _lst[-1].get("date") == _today):
+            _lst.append(_ev)
+        _rb[_s] = _lst[-24:]
+    _dhp.write_text(json.dumps(_dh, indent=2, ensure_ascii=False), encoding="utf-8")
+except Exception as _e:
+    print(f"WARN: regime decision-history capture failed ({_e})")
 baskets["director_memo"] = director.get("director_memo", baskets.get("director_memo", ""))
 baskets["regime_changes"] = director.get("regime_changes", "")
 baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
