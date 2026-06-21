@@ -1,12 +1,11 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Briefcase, TrendingUp, Compass, MessageCircle, Search } from "lucide-react";
-import { useSearch } from "./search-context";
+import { BarChart3, Briefcase, TrendingUp, Compass, MessageCircle } from "lucide-react";
+import SymbolSearch from "./components/SymbolSearch";
 
 export default function Nav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { query, setQuery } = useSearch();
   const links = [
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
     { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
@@ -45,14 +44,7 @@ export default function Nav() {
           );})}
         </div>
       </div>
-      <div style={{ position:"relative", width:280, maxWidth:"38vw" }}>
-        <Search size={13} style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", color:"var(--text-light)", pointerEvents:"none" }}/>
-        <input
-          value={query}
-          onChange={e=>{ setQuery(e.target.value); if (pathname !== "/") router.push("/"); }}
-          placeholder="Search symbol or company..."
-          style={{ width:"100%", padding:"7px 10px 7px 32px", fontSize:12, fontFamily:"var(--font-mono)", border:"1px solid var(--border)", borderRadius:6, background:"var(--bg)", color:"var(--text)", outline:"none" }}/>
-      </div>
+      <SymbolSearch />
     </nav>
   );
 }
