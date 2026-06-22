@@ -36,9 +36,11 @@ def main():
         print("no entries — nothing to mark")
         return
     unresolved = [e for e in entries if not e.get("resolution")]
+    wl_state = t.get("watchlist_state", {})              # on-deck names tracked as a separate paper book
     syms = [e["symbol"] for e in unresolved]
     syms += [e["hedge"]["symbol"] for e in unresolved if e.get("hedge")]
-    quotes = fetch_live_quotes(syms)
+    syms += [s for s in wl_state]                        # watchlist underlyings (one combined quote fetch)
+    quotes = fetch_live_quotes(list(dict.fromkeys(syms)))
     today = datetime.date.today().isoformat()
 
     # 1. pending-limit fills (close at/through the limit)
@@ -88,12 +90,36 @@ def main():
     marks = [m for m in t.get("marks", []) if m.get("date") != today]   # idempotent per day
     marks.append(mark)
     t["marks"] = sorted(marks, key=lambda m: m["date"])
+
+    # 3. watchlist (on-deck) mark — a SEPARATE equal-weight cohort NAV (the on-deck names carry no
+    # real allocation, so equal-weight measures "did the Director's watchlist move as expected").
+    # Each name is marked from its own watchlist-entry price; departed names simply drop out.
+    wl_seats, wl_ret, wl_n, wl_missing = {}, 0.0, 0, []
+    for sym, st in wl_state.items():
+        ep, px = st.get("entry_price"), quotes.get(sym.upper())
+        if ep and px:
+            r = px / ep - 1
+            wl_seats[sym] = {"price": px, "ret_pct": round(r * 100, 2)}
+            wl_ret += r; wl_n += 1
+        else:
+            wl_missing.append(sym)
+    if wl_n:
+        wl_mark = {"date": today, "nav": round(100 * (1 + wl_ret / wl_n), 3),
+                   "ret_pct": round(wl_ret / wl_n * 100, 3), "n": wl_n, "seats": wl_seats}
+        wlm = [m for m in t.get("watchlist_marks", []) if m.get("date") != today]   # idempotent per day
+        wlm.append(wl_mark)
+        t["watchlist_marks"] = sorted(wlm, key=lambda m: m["date"])
+
     json.dump(t, open(TRK, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     print(f"MARKED {today}: NAV {mark['nav']}  basket {mark['basket_ret_pct']:+.2f}%  ({len(seats)} seats"
           + (f"; FILLED {','.join(filled)}" if filled else "")
           + (f"; pending {','.join(pending)}" if pending else "")
           + (f"; missing quotes: {','.join(missing)}" if missing else "")
           + f")  -> marks[{len(t['marks'])}]")
+    if wl_n or wl_missing:
+        wl_nav = t.get("watchlist_marks", [{}])[-1].get("nav") if wl_n else None
+        print(f"  watchlist: NAV {wl_nav} ({wl_n} on-deck names, equal-weight)"
+              + (f"; missing quotes: {','.join(wl_missing)}" if wl_missing else ""))
 
 
 if __name__ == "__main__":
