@@ -1,0 +1,16 @@
+{
+  "regime": "NEUTRAL — late-cycle, fully-invested melt-up (FMS cash 3.9% sell-signal, ~30% Mag-7), AI-capex the single dominant factor and a named tripwire; accelerating growth + re-accelerating inflation, Fed on hold, credit stable.",
+  "risk_stance": "Selective and patient: reward buying the de-grossing/FCF-print flush, penalize compounders that need time and sentiment rather than a binding dated catalyst; enforce resolution-driver independence on anything AI-capex-tethered.",
+  "assessment": {
+    "symbol": "AMZN",
+    "director_conviction": 52,
+    "would_seat": false,
+    "thesis": "WIDE-and-WIDENING-moat three-engine compounder (AWS +28% at ~38% margin, record 13.1% retail leverage, ads +24% to >$70B) at ~15.6x EV/EBITDA — but only ~5% under SoP fair value ($245 vs ~$232 tape), so the asymmetry isn't there yet at this price.",
+    "binding_reason": "Price vs SoP: base SoP $245 is only ~6% above the ~$232 tape and the closest forcing function (capex-PEAK / FCF-inflection) is a soft, 12-24mo arc with no dated binary — a fair-value compounder, not a +30-50%/12mo apex skew, into a single-AI-capex-factor-dominated tape.",
+    "posture": "wait_for_weakness",
+    "expected_return_pct": 6,
+    "catalyst_status": "SOFT_EXTENDED",
+    "moat": "WIDE"
+  },
+  "memo": "Regime read (one line): NEUTRAL, late-cycle fully-invested melt-up with AI-capex as the dominant, tripwired factor — my apex stance is to demand a dated catalyst and a fat skew, and to buy the flush rather than chase reacceleration. The debate scores credibility 4 / verdict B / conviction 3 / value_conviction 4, moat WIDE & WIDENING, secular threat manageable (AI/retail-channel are TAILWINDS here, so no moat-cap). The skeptic returns CONFIRMED_WITH_CORRECTIONS — no kill, every load-bearing Q1-2026 figure verifies (AWS +28% to $37.6B at 37.7% margin; consolidated 13.1%; EPS $2.78 flattered by a $16.8B non-cash Anthropic mark; TTM FCF $25.9B->$1.2B; $364B backlog ex-Anthropic) — and trims value_conviction 4->3, capping director_conviction at 3x20=60. I set 52: solid quality, but the binding fact is price — base SoP $245 vs ~$232 is ~6% of upside (bull SoP ~$290 = +25%, bear ~$179 = -23%), a ~1.1:1 base skew that only reaches ~1.6:1 if you credit un-priced silicon-SoP/FCF-inflection optionality. That is not the +30-50%/12mo, fat-asymmetry, dated-catalyst setup the apex book requires, and the FCF trough plus Anthropic-mark two-way volatility into a stretched, single-factor tape is exactly the kind of soft, time-dependent thesis this regime penalizes. would_seat = NO. The right action is wait_for_weakness: accumulate on an AI-capex-factor washout (the regime tripwire) or an ugly FCF/Anthropic-mark print around the late-July Q2 report, not at a fair price today. The quality is real and not a trap; the entry just needs to be cheaper."
+}
