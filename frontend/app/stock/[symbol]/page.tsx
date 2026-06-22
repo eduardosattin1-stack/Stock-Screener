@@ -5003,15 +5003,21 @@ export default function StockDetail(){
     const sym = symbol.toUpperCase();
     setDebateHistory([]); setHistIdx(0);
     const sortNew = (d: any[]) => [...d].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-    fetch(`${GCS_SCANS}/speculair_debate_history/${sym}.json`)
-      .then((r) => { if (r.ok) return r.json(); throw new Error("no gcs history"); })
-      .then((d) => { if (Array.isArray(d) && d.length) setDebateHistory(sortNew(d)); })
-      .catch(() => {
-        fetch(`/speculair_debate_history/${sym}.json`)
-          .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (Array.isArray(d) && d.length) setDebateHistory(sortNew(d)); })
-          .catch(() => {});
-      });
+    // GCS first, public fallback, for a given path suffix.
+    const get = (suffix: string): Promise<any> =>
+      fetch(`${GCS_SCANS}${suffix}`).then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
+        .catch(() => fetch(suffix).then((r) => (r.ok ? r.json() : null)).catch(() => null));
+    // Raw debate = the pipeline's source of truth (untouched). Voiced = a house-voice
+    // prose overlay stored separately. Swap in a voiced entry only when its date matches
+    // the raw run, so a future re-debate (newer raw date, already-plain prose) supersedes
+    // a stale overlay automatically.
+    Promise.all([get(`/speculair_debate_history/${sym}.json`), get(`/speculair_debate_voiced/${sym}.json`)])
+      .then(([rawD, vD]) => {
+        if (!Array.isArray(rawD) || !rawD.length) return;
+        const byDate = new Map((Array.isArray(vD) ? vD : []).map((v: any) => [v.date || "", v]));
+        setDebateHistory(sortNew(rawD.map((e: any) => byDate.get(e.date || "") || e)));
+      })
+      .catch(() => {});
   }, [symbol]);
 
   // Radar peer-comps: intelligent business-model peer grouping (better than the GICS "similar stocks").
