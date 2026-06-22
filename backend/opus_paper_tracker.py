@@ -105,8 +105,11 @@ def _open_new(ledger: dict):
     strfor = (_gcs_read(STRATS, {}, fresh=True) or {}).get("strategies") or {}
     try:
         picks = {p["symbol"]: p for p in (json.load(open(INPUT, encoding="utf-8-sig")).get("picks") or [])}
-    except Exception as e:
-        log.warning("no local %s (%s) — can't open new positions tonight", INPUT, e); picks = {}
+    except Exception:
+        # Expected on the intraday mark pass (open-new is nightly-only; the nightly gather writes
+        # this file before the manage step). A genuinely missing file at the nightly run is caught
+        # upstream by opus_strategist.ps1 step 1, so this is INFO, not a WARNING.
+        log.info("no local %s — skipping open-new (expected intraday)", INPUT); picks = {}
     have = {p["id"] for p in ledger["positions"]}
     opened = 0
     for sym, strat in strfor.items():

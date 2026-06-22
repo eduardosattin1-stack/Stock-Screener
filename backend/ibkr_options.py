@@ -111,7 +111,8 @@ def _mid(ib: IB, contract) -> Optional[float]:
     t = ib.reqMktData(contract, "", True, False)
     ib.sleep(2.0)
     bid, ask, last = t.bid, t.ask, t.last
-    ib.cancelMktData(contract)
+    # snapshot=True auto-cancels on delivery — an explicit cancelMktData here only
+    # logs a benign async "Error 300, Can't find EId with tickerId" (nothing to cancel).
     if bid and ask and bid > 0 and ask > 0:
         return (bid + ask) / 2.0
     return last if last and last > 0 else None
@@ -266,11 +267,7 @@ def chain_snapshot(ib, symbol: str, exchange: str = "SMART", currency: str = "US
                     "theta": round(mg.theta, 4) if mg and mg.theta is not None else None,
                     "vega": round(mg.vega, 4) if mg and mg.vega is not None else None,
                 })
-            for _, _, c in reqd:
-                try:
-                    ib.cancelMktData(c)
-                except Exception:
-                    pass
+            # snapshots self-cancel on delivery — no cancelMktData (it only logs benign Error 300)
             out["expirations"].append({
                 "expiration": f"{expiration[:4]}-{expiration[4:6]}-{expiration[6:]}",
                 "dte": _dte(expiration), "atm_strike": atm, "legs": legs,
@@ -301,11 +298,7 @@ def quote_legs(ib, symbol: str, exchange: str, currency: str, expiration: str,
                 "bid": round(t.bid, 2) if t.bid and t.bid > 0 else None,
                 "ask": round(t.ask, 2) if t.ask and t.ask > 0 else None,
             }
-        for _, c in pairs:
-            try:
-                ib.cancelMktData(c)
-            except Exception:
-                pass
+        # snapshots self-cancel on delivery — no cancelMktData (it only logs benign Error 300)
     except Exception as e:
         log.warning("%s quote_legs failed: %s", symbol, e)
     return out
@@ -384,8 +377,7 @@ def enrich_fast(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
                 return (t.bid + t.ask) / 2.0
             return t.last if t and t.last and t.last > 0 else None
         long_mid, short_mid = _mid_of(ta), _mid_of(tb)
-        ib.cancelMktData(by_strike[long_strike])
-        if tb: ib.cancelMktData(by_strike[short_strike])
+        # snapshots self-cancel on delivery — no cancelMktData (it only logs benign Error 300)
         if short_strike > long_strike and long_mid and short_mid:
             net_debit = round(long_mid - short_mid, 2)
             width = short_strike - long_strike
