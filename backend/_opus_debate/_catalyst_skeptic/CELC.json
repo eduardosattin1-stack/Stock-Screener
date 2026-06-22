@@ -1,0 +1,13 @@
+{
+  "symbol": "CELC",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No disqualifier found. The catalyst is genuinely live, dated and statutory: gedatolisib PDUFA goal date July 17, 2026 for the HR+/HER2-/PIK3CA WILD-TYPE NDA (accepted 2026-01-20, Priority Review + RTOR), independently confirmed from Celcuity IR/GlobeNewswire and multiple trade outlets. It has NOT fired and the spread is open (live ~$88.24, target ~$153, floor ~$60). The load-bearing FACTUAL CORRECTION that flips the bear's main premise: the wild-type cohort (the NDA basis) is NOT 'the weaker dataset' — the wild-type triplet/doublet reduced risk of progression/death vs fulvestrant by 76%/67% (LBA at ASCO + JCO publication), STRONGER than the mutant cohort's 50%/49% (HR 0.50 p<0.0001 / HR 0.51 p=0.0013). So the NDA rests on the trial's strongest data, materially lowering CRL probability vs the dossier's framing. The floor is a fundamental bear value (not an arb backstop) and can overshoot below $60 on a CRL, but no going-concern/financing-cliff: the convert was UPSIZED to $575M (~$557M net, paid off ~$137.5M loan), redeemable only from 2029.",
+  "corrections": "(1) The bear/interrogator premise that the WILD-TYPE cohort is 'the weaker, more-contested dataset' is WRONG — wild-type showed 76%/67% risk reduction vs fulvestrant, stronger than mutant 50%/49%; the NDA basis is the trial's strongest arm, which raises (not lowers) approval odds. (2) Financing size: the convertible was upsized to $575M aggregate (~$557M net proceeds), NOT $500M; conversion price ~$124.53; ~$137.5M prior loan repaid — runway/solvency intact, redeemable 2029. (3) live_price is ~$88.24 (Jun 22), de minimis vs the $88.55 used. (4) No FDA advisory committee meeting has been announced (mild positive; not a verified disqualifier).",
+  "conviction_cap": 75,
+  "evidence": [
+    "Celcuity, FDA Acceptance of NDA PR, GlobeNewswire 2026-01-20: NDA accepted, Priority Review + RTOR + prior Breakthrough/Fast Track, PDUFA goal date 'July 17, 2026'.",
+    "Celcuity IR PR 2026-06-02 (ASCO LBA) / JCO wild-type publication: wild-type triplet/doublet reduced risk of progression or death vs fulvestrant by 76%/67%; mutant cohort triplet HR=0.50 (p<0.0001), doublet HR=0.51 (p=0.0013) — wild-type (NDA basis) is the stronger arm.",
+    "Celcuity PR, GlobeNewswire 2026-06-04: priced UPSIZED $575M (corrected from $500M) 0.250% convertible senior notes due 2032, ~$557M net, conversion ~$124.53, redeemable Aug 2029; ~$137.5M prior loan repaid — funded, no going-concern before the event.",
+    "Live quote 2026-06-22 ~$88.24, mkt cap ~$4.32B, 52-wk $11.28-$151.02 — spread open into a 25-day-out statutory PDUFA, catalyst unfired."
+  ]
+}

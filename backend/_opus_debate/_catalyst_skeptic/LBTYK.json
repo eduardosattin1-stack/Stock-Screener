@@ -1,0 +1,13 @@
+{
+  "symbol": "LBTYK",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "Catalyst is independently verified as real and board-approved, but it is NOT an arb spread with a hard floor. The spin is a 2027 LISTING WINDOW (no fixed record/effective date), gated on a regulatory close still pending (H2 2026, subject to approvals, unclosed as of Jun 2026). Critically, the '$9.50 floor' is a holdco-discount/SoP construct (~52-wk low $9.73), NOT a deal-break price or cash-recovery backstop. This is a voluntary self-restructuring, so there is no merger-break floor and no acquirer cash bid underneath the stock. If the European holdco discount simply persists (the chronic base rate for these names) or the regulatory close slips, nothing mechanically backstops the price. Asymmetry survives as a STAGING setup, not a fire-now closed spread.",
+  "corrections": "Reframe the floor: $9.50 is a soft 'discount-persists' level, not a hard contractual/recovery floor (no deal-break price, no acquirer cash bid). The catalyst is soft-dated (2027 window) and condition-precedent on an unclosed H2-2026 regulatory approval, so treat as a watch/stage-in, not an imminent event. Spread has NOT closed (price still near 52-wk low, discount intact) but neither is there a hard date forcing it shut.",
+  "conviction_cap": 55,
+  "evidence": [
+    "Liberty Global IR press release, 18 Feb 2026: acquires Vodafone 50% of VodafoneZiggo for EUR1.0bn cash + 10% Ziggo Group stake; transfers Benelux assets into Ziggo Group; close expected H2 2026 subject to regulatory approvals; Euronext Amsterdam listing 2027 with 90% spun to shareholders (libertyglobal.com/liberty-global-to-acquire-vodafones-stake-in-vodafoneziggo-...).",
+    "Vodafone IR newsroom, 18 Feb 2026: confirms sale of its VodafoneZiggo 50% stake to Liberty Global for EUR1.0bn + 10% of new Ziggo Group; 10-yr brand/services charges ~EUR625m (vodafone.com/news/newsroom/corporate-and-financial/vodafone-sells-stake-in-vodafoneziggo).",
+    "Liberty Global Form 8-K, FY2026 (SEC EDGAR CIK 0001570585, filing 000157058526000026/000157058526000084): material-event disclosure of the VodafoneZiggo acquisition and Ziggo Group 2027 Euronext Amsterdam listing/spin.",
+    "Liberty Global update, 1 Jun 2026 (8-K, stocktitan/businesswire): Stephen van Rooyen named Ziggo Group CEO effective 1 Sep 2026 to prep the 2027 listing — confirms catalyst is still forward/un-fired and progressing, not closed."
+  ]
+}
