@@ -14,6 +14,13 @@
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+# Gateway-up guard (same as opus_strategist.ps1): the intraday task can fire before IB Gateway is up.
+# Wait up to 10 min, then skip this pass gracefully (the next interval retries) rather than hard-fail.
+function Test-GatewayUp { try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close(); $true } catch { $false } }
+$deadline = (Get-Date).AddMinutes(10)
+while (-not (Test-GatewayUp) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 30 }
+if (-not (Test-GatewayUp)) { Write-Host "IB Gateway not up - skipping this manage pass (retries next interval)."; exit 0 }
+
 Write-Host "[paper] marking the paper book from live IBKR quotes..."
 python (Join-Path $here "opus_paper_tracker.py")
 if ($LASTEXITCODE -ne 0) { throw "paper tracker failed (exit $LASTEXITCODE)" }

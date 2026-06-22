@@ -20,6 +20,16 @@ $prompt  = Join-Path $here "opus_strategist_prompt.md"
 $inFile  = Join-Path $here "strategy_input.json"
 $outFile = Join-Path $here "strategy_output.json"
 
+# Gateway-up guard: the scheduled task can fire before IB Gateway is logged in (the 7am-vs-9am race
+# that left the options card stale 06-19..06-22). Wait up to 20 min for port 4001, then skip gracefully
+# instead of hard-failing — the card just keeps its prior data and the next schedule retries.
+function Test-GatewayUp { try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close(); $true } catch { $false } }
+Write-Host "[0/4] waiting for IB Gateway on 127.0.0.1:4001 (up to 20 min)..."
+$deadline = (Get-Date).AddMinutes(20)
+while (-not (Test-GatewayUp) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 30 }
+if (-not (Test-GatewayUp)) { Write-Host "IB Gateway not up after 20 min - skipping this run (card keeps prior data; retries next schedule)."; exit 0 }
+Write-Host "      IB Gateway is up."
+
 Write-Host "[1/4] gather - selecting D9/D10 picks + pulling IBKR chains..."
 python (Join-Path $here "opus_strategist_gather.py")
 if ($LASTEXITCODE -ne 0) { throw "gather failed (exit $LASTEXITCODE)" }
