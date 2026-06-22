@@ -215,8 +215,8 @@ export function SpeculairTracker() {
         </>
       )}
 
-      {/* Capitulation Watchlist */}
-      <SectionHeader open={openCap} onClick={() => setOpenCap(!openCap)} title="Capitulation" count={cap.length} accent="var(--orange)" />
+      {/* Beaten-Down (capitulation) watchlist */}
+      <SectionHeader open={openCap} onClick={() => setOpenCap(!openCap)} title="Beaten-Down" count={cap.length} accent="var(--orange)" />
       {openCap && (cap.length > 0
         ? cap.map((p) => <Row key={p.symbol} p={p} />)
         : <div style={{ padding: "12px 16px", fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Capitulation setups.</div>)}
