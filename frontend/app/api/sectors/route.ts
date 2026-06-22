@@ -64,8 +64,8 @@ async function fmpGet(endpoint: string, params: Record<string, string>, revalida
 // Convert a % / level on the reciprocal pair (EURUSD -> USD/EUR).
 const invertPct = (r: number) => (1 / (1 + r / 100) - 1) * 100;
 
-// ytd / 1Y per symbol (slow layer, long cache).
-async function changeFor(item: Row): Promise<{ ytd: number | null; year: number | null }> {
+// 5D (week) / ytd / 1Y per symbol (slow layer, long cache).
+async function changeFor(item: Row): Promise<{ week: number | null; ytd: number | null; year: number | null }> {
   const rows = await fmpGet("stock-price-change", { symbol: item.symbol }, 300);
   const c = rows?.[0] ?? null;
   const pick = (k: string): number | null => {
@@ -73,7 +73,7 @@ async function changeFor(item: Row): Promise<{ ytd: number | null; year: number 
     if (!Number.isFinite(v as number)) return null;
     return item.invert ? invertPct(v as number) : (v as number);
   };
-  return { ytd: pick("ytd"), year: pick("1Y") };
+  return { week: pick("5D"), ytd: pick("ytd"), year: pick("1Y") };
 }
 
 export async function GET() {
@@ -87,7 +87,7 @@ export async function GET() {
       fmpGet("batch-quote", { symbols: [...symbols, "^VIX", "^W5000"].join(",") }, 30),
       fmpGet("treasury-rates", {}, 300),
       fmpGet("economic-indicators", { name: "GDP" }, 86400),
-      ...universe.map((u) => changeFor(u).catch(() => ({ ytd: null, year: null }))),
+      ...universe.map((u) => changeFor(u).catch(() => ({ week: null, ytd: null, year: null }))),
     ]);
 
     const qmap: Record<string, any> = {};
@@ -101,8 +101,8 @@ export async function GET() {
         if (price) price = 1 / price;
         if (day != null) day = invertPct(day);
       }
-      const ch = changes[i] || { ytd: null, year: null };
-      return { name: item.name, symbol: item.symbol, accent: item.accent ?? null, price, day, ytd: ch.ytd, year: ch.year };
+      const ch = changes[i] || { week: null, ytd: null, year: null };
+      return { name: item.name, symbol: item.symbol, accent: item.accent ?? null, price, day, week: ch.week, ytd: ch.ytd, year: ch.year };
     });
 
     const n = INDICES.length;
