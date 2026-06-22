@@ -3298,6 +3298,25 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
           </div>
         );})()}
 
+        {/* ── Catalyst strip — event-driven special-sit from the Basket-13 funnel, run through the full debate ── */}
+        {debateData.catalyst && (()=>{const c=debateData.catalyst;const dc=Number(c.director_conviction)||0;const tc=(c.cro_verdict==="A"&&dc>=80)?"#2d7a4f":c.cro_verdict==="A"?"#2563eb":dc>=50?"#d97706":"#9ca3af";return(
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 4, border: `1px solid ${tc}66`, color: tc, background: `${tc}14`, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.05em", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Zap size={12} /> CATALYST · {c.driver}{c.cro_verdict ? ` · verdict ${c.cro_verdict}` : ""}{c.cro_conviction != null ? ` (${c.cro_conviction}/5)` : ""}
+              </span>
+              {c.director_conviction != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: tc, fontWeight: 700 }}>Director {c.director_conviction}/100</span>}
+              {c.catalyst_status && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {c.catalyst_status}</span>}
+              {c.dated_milestone && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {c.dated_milestone}</span>}
+              {c.posture && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {String(c.posture).replace(/_/g, " ")}</span>}
+              {c.expected_return_pct != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: c.expected_return_pct >= 0 ? T.green : T.red }}>· {c.expected_return_pct >= 0 ? "+" : ""}{Number(c.expected_return_pct).toFixed(0)}% to target</span>}
+            </div>
+            {(c.live_price != null && c.target_px != null) && <p style={{ margin: "8px 0 0", fontSize: 10.5, color: T.textMuted, fontFamily: T.mono }}>live {c.live_price} → target {c.target_px}{c.downside_floor != null ? ` / floor ${c.downside_floor}` : ""}</p>}
+            {c.binding_reason && <p style={{ margin: "4px 0 0", fontSize: 11, color: T.text, fontFamily: T.mono, lineHeight: 1.5 }}>{c.binding_reason}</p>}
+            {debateData.skeptic_verdict && <p style={{ margin: "6px 0 0", fontSize: 10, fontFamily: T.mono, color: debateData.skeptic_verdict === "REFUTED" ? T.red : debateData.skeptic_verdict === "CONFIRMED" ? T.green : T.amber }}>Skeptic: {debateData.skeptic_verdict}{debateData.skeptic_kill_fact ? ` — ${debateData.skeptic_kill_fact}` : ""}</p>}
+          </div>
+        );})()}
+
         {/* ── Debate history time-travel: scroll past Opus debates by date ── */}
         {debateHistory && debateHistory.length > 0 && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}`, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -5227,6 +5246,12 @@ export default function StockDetail(){
             {debateData?.scale?.tier && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
               <span title={[sc.role,sc.rationale].filter(Boolean).join(" — ")} style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5,cursor:"help"}}>
                 <Layers size={11}/> SCALE · {sc.basket_label||sc.basket} · {sc.tier}{sc.conviction!=null?` ${sc.conviction}`:""}
+              </span>
+            );})()}
+            {/* Catalyst badge — event-driven special-sit (Basket-13 funnel run through the full debate); CRO verdict + Director 0-100 */}
+            {debateData?.catalyst && (()=>{const c=debateData.catalyst;const dc=Number(c.director_conviction)||0;const tc=(c.cro_verdict==="A"&&dc>=80)?"#2d7a4f":c.cro_verdict==="A"?"#2563eb":dc>=50?"#d97706":"#9ca3af";return(
+              <span title={c.binding_reason||""} style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5,cursor:"help"}}>
+                <Zap size={11}/> CATALYST · {c.driver}{c.cro_verdict?` · ${c.cro_verdict}`:""}{c.director_conviction!=null?` ${c.director_conviction}`:""}
               </span>
             );})()}
           </div>
