@@ -2931,14 +2931,32 @@ _B13_BLOCKING = {"QUARANTINED", "NO_UPSIDE", "TRADING_THROUGH_TERMS", "FLOOR_GE_
 _B13_SS_METHODS = {"spread", "recovery", "sop"}  # non-binary equity special-sits (NOT binary_prob)
 
 
+def _b13_universe():
+    """FULL B13 book for catalyst coverage = the candidate funnel UNION the held tracker SEATS.
+    Held seats that entered from an EARLIER funnel snapshot (e.g. FIG/GDOT/WVE) are absent from the
+    current _basket13_candidates.json, so debating only the candidates skipped them — that gap is why
+    a held seat could show no debate on its stock page. (ROOT=backend/_opus_debate; both files in backend/.)"""
+    out, seen = [], set()
+    f = ROOT.parent / "_basket13_candidates.json"
+    if f.exists():
+        d = json.load(open(f, encoding="utf-8"))
+        for c in (d if isinstance(d, list) else (d.get("candidates") or [])):
+            if c.get("symbol"):
+                out.append(c); seen.add(c["symbol"])
+    t = ROOT.parent / "_basket13_tracker.json"
+    if t.exists():
+        trk = json.load(open(t, encoding="utf-8"))
+        for e in (trk.get("entries") or []):
+            s = e.get("symbol")
+            if s and s not in seen and (e.get("status") or "OPEN") != "RESOLVED":
+                e.setdefault("tier", "ACTIVE")
+                out.append(e); seen.add(s)
+    return out
+
+
 def _b13_equity_special_sits():
-    """Non-binary, unblocked, H/M-edge equity special-sits from the live B13 funnel — apex-eligible."""
-    f = ROOT.parent / "_basket13_candidates.json"   # ROOT=backend/_opus_debate; candidates live in backend/
-    if not f.exists():
-        return []
-    d = json.load(open(f, encoding="utf-8"))
-    cands = d if isinstance(d, list) else (d.get("candidates") or [])
-    return [c for c in cands
+    """Non-binary, unblocked, H/M-edge equity special-sits across the B13 universe — apex-lane eligible."""
+    return [c for c in _b13_universe()
             if c.get("valuation_method") in _B13_SS_METHODS
             and c.get("edge_grade") in ("H", "M")
             and not (set(c.get("edge_flags") or []) & _B13_BLOCKING)]
@@ -2956,12 +2974,12 @@ def catalyst_prep():
     """Regenerate _catalyst_weekly.mjs over the non-binary B13 equity special-sits (reuse the prompts
     in _catalyst_debate.mjs, swap only the NAMES table). Prints WORKFLOW_SCRIPT= for the SKILL."""
     import re
-    ss = _b13_equity_special_sits()
-    if not ss:
-        print("catalyst-prep: no non-binary B13 equity special-sits in the funnel — skipping.")
+    uni = _b13_universe()   # FULL book (candidates + held seats) — debate ALL for stock-page coverage
+    if not uni:
+        print("catalyst-prep: no B13 names (funnel + tracker) — skipping.")
         return
     rows = []
-    for c in ss:
+    for c in uni:
         co = (c.get("company_name") or c.get("symbol") or "")[:40]
         rows.append("  { sym:%s, co:%s, cluster:%s, label:%s, ctx:%s }," % (
             json.dumps(c.get("symbol")), json.dumps(co),
@@ -2972,7 +2990,7 @@ def catalyst_prep():
     new = re.sub(r"const NAMES = \[.*?\n\]", names_js, tmpl, count=1, flags=re.DOTALL)
     out = ROOT / "_catalyst_weekly.mjs"
     out.write_text(new, encoding="utf-8")
-    print(f"catalyst-prep: {len(ss)} equity special-sits -> {[c['symbol'] for c in ss]}")
+    print(f"catalyst-prep: {len(uni)} B13 names (full book: candidates + held seats) -> {[c['symbol'] for c in uni]}")
     print("WORKFLOW_SCRIPT=" + str(out))
 
 

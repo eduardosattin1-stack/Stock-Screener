@@ -5228,7 +5228,26 @@ export default function StockDetail(){
   },[symbol]);
 
   if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:T.textMuted,fontFamily:T.mono,fontSize:12}}>Loading {symbol}...</span></div>;
-  if(!stock)return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
+  if(!stock){
+    // Debate-only view: a name NOT in the screened universe (e.g. a Basket-13 special-sit like FIP)
+    // but WITH a Speculair catalyst debate — render the debate instead of bailing to "No data".
+    if(hasDebate){
+      const c=debateData?.catalyst;const dc=Number(c?.director_conviction)||0;
+      const tc=c?(c.cro_verdict==="A"&&dc>=80?"#2d7a4f":c.cro_verdict==="A"?"#2563eb":dc>=50?"#d97706":"#9ca3af"):"#9ca3af";
+      return(
+        <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
+          <button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:5,fontFamily:T.mono,fontSize:11,marginBottom:16,padding:0}}><ArrowLeft size={13}/> SCREENER</button>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
+            <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{symbol?.toUpperCase()}</h1>
+            {c&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5}}><Zap size={11}/> CATALYST · {c.driver}{c.cro_verdict?` · ${c.cro_verdict}`:""}{c.director_conviction!=null?` ${c.director_conviction}`:""}</span>}
+          </div>
+          <p style={{margin:"0 0 16px",fontSize:11,color:T.textMuted,fontFamily:T.mono,lineHeight:1.5}}>Not in the screened universe — <strong>Speculair catalyst debate only</strong> (a Basket-13 special-sit). Trade it from the <span onClick={()=>router.push("/catalysts")} style={{color:T.green,cursor:"pointer",textDecoration:"underline"}}>13th Basket</span> view.</p>
+          <SpeculairDebateCard debateData={debateData} debateHistory={debateHistory} histIdx={histIdx} setHistIdx={setHistIdx}/>
+        </div>
+      );
+    }
+    return<div style={{minHeight:"100vh",padding:40}}><button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:T.mono,fontSize:12,marginBottom:24,padding:0}}><ArrowLeft size={14}/> Back</button><div style={{textAlign:"center",padding:60,color:T.textMuted,fontFamily:T.mono}}>No data for {symbol}.</div></div>;
+  }
 
   const s=stock,clsColor=CLS_C[s.classification]||T.textMuted;
 
