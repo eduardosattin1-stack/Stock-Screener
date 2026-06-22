@@ -1,0 +1,13 @@
+{
+  "symbol": "GEV",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "Dossier mis-attributes the ~$4.75B Q1 2026 net income to a 'discrete deferred-tax/valuation-allowance item.' Primary source (GE Vernova Q1 2026 press release / 8-K) shows it was driven by ~$4.5B pre-tax M&A net gains, PRIMARILY from the Prolec GE step-acquisition (plus a ~$0.3B Proficy sale gain) — NOT a tax item. The $2.9B valuation-allowance tax benefit was a FY2025 event, not Q1 2026. The bear's economic conclusion is unaffected: net income is non-operating either way, so trailing P/E ~32x and trailing EV/EBITDA are a mirage, and the honest gauge is forward (~46-54x fwd EV/EBITDA on raised 2026 guide). Two immaterial number fixes: (1) shares outstanding are ~268.7M as of 3/31/2026, not ~272M (does not move the SoP); (2) FY2026 FCF guide was raised to $6.5-7.5B from a $5.0-5.5B prior (bull thesis cited $5.0-5.5B as the original, consistent). The stale-anchor attack FAILS: sop_fair_value is built on post-Q1, post-raised-guidance financials — current, not stale.",
+  "scale_cap": 35,
+  "evidence": [
+    "GE Vernova Q1 2026 press release (gevernova.com, 2026-04-22): orders $18.3B +71% organic, book-to-bill ~2.0x, RPO backlog $163B incl. Prolec GE; datacenter equipment orders $2.4B (>all FY2025); gas backlog+slot reservations 83->100 GW, 110 GW year-end target; FCF $4.8B; cash $10.2B; net income $4.7B incl. ~$4.5B pre-tax M&A net gains primarily from Prolec GE; 2026 guidance raised.",
+    "SEC Form 8-K, GE Vernova (CIK 0001996810), filed 2026-04-22 (gevpressrelease1q26.htm): backlog $163B vs $116B at spin; raised FY2026 guide revenue $44.5-45.5B, adj. EBITDA margin 12-14%, FCF $6.5-7.5B (up from $5.0-5.5B).",
+    "SEC Form 10-Q, GE Vernova, quarter ended 2026-03-31 (filed 2026-04-22): 268,719,995 shares outstanding; cash $10.2B vs ~$3.8B borrowings => ~$6B net cash, investment grade.",
+    "Live market data verified 2026-06-22: GEV $1,113, market cap ~$298B, all-time high ~$1,181.95 on 2026-04-23 (+132% off 52-wk low ~$479); market price sits ABOVE reconciled SoP fair value ~$930 — negative margin of safety, FIRED catalyst, single-factor AI-capex concentration intact."
+  ]
+}

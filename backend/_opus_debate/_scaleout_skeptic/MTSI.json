@@ -1,0 +1,13 @@
+{
+  "symbol": "MTSI",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact found. The bear thesis is the live case and every load-bearing fact verifies against primary/credible sources: Q2 FY26 (May-7-2026) $289M rev / $1.09 adj EPS / record 1.5:1 book-to-bill (CFO Kober: 'largest quarterly bookings in the company's history') / DC $98.2M +14.5% q/q; CEO Daly verbatim raised DC FY26 base case 'from 35% to 40% to over 60%' — the catalyst HAS fired. Valuation extremes confirmed (~$391-393, +128.5% YTD, +191% 1yr, fwd P/E ~59x, EV/EBITDA ~117x, GF Value $170 = ~130% overvalued). Net cash ~$325M after $161M converts repaid confirmed. Insiders confirmed NET SELLERS into the move (CEO Daly, dir Ribar, Summit/Chung 43,268sh @ $378, SVP Hwang, Ocampo trusts 315,272sh). The bear survives the kill-check — the asymmetry is genuinely inverted and the fired catalyst leaves no upside forcing function.",
+  "corrections": "Two bear valuation figures are slightly stale vs live (Jun-2026) data but directionally identical and do not weaken the thesis: bear cites forward P/E ~63x (live ~59x) and EV/EBITDA ~126x (live ~117x). Both still confirm 'richest-in-cohort / no margin of safety.' Q3 FY26 guide (rev $331-339M, adj EPS $1.31-$1.37, GM 59-60%, FY exit closer to 60%) corroborates the strengthening-business / spent-re-rate framing — the next print is a confirmation test of a fully-priced super-guide, exactly as the bear argues.",
+  "scale_cap": 18,
+  "evidence": [
+    "MACOM Q2 FY26 earnings transcript, May 7 2026 (Motley Fool): CEO Daly 'raise our Data Center FY 26 revenue growth base case from 35% to 40% to over 60%'; CFO Kober book-to-bill 1.5:1 'largest quarterly bookings in the company's history'; $664.9M cash, ~$325M net cash, $161M converts repaid — fool.com/earnings/call-transcripts/2026/05/07/macom-mtsi-q2-2026-earnings-transcript/",
+    "MACOM 10-Q FY2026 (qtr ended Apr 3 2026), SEC EDGAR — sec.gov/Archives/edgar/data/0001493594/000149359426000028/mtsi-20260403.htm (confirms $289M Q2 rev, cash & convert balances)",
+    "Stockanalysis.com / GuruFocus MTSI statistics, Jun-2026: price ~$391-393, fwd P/E ~58.7x, trailing ~156-170x, EV/EBITDA ~117x, +128.5% YTD, +191% 1yr, GF Value $170 (~130% overvalued)",
+    "SEC Form 4 filings 2026 (via StockTitan): CEO Daly 15,828sh (May-29), dir Ribar 1,623sh @ $361.84 (May-11), Summit/Chung-linked 43,268sh @ $378.20 (May-14), SVP Hwang 3,718sh (Apr-30), Ocampo trusts 315,272sh (Feb-24/25) — insiders net sellers into the run"
+  ]
+}

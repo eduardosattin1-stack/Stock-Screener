@@ -1,0 +1,13 @@
+{
+  "symbol": "ALAB",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact found. This is a bear/valuation-skeptic thesis (PASS, conviction 2) and every load-bearing bear fact independently verifies against primary sources: Q1-FY2026 revenue $308.4M (+93% YoY), non-GAAP GM 76.4%, op margin 36.2% (10-Q/8-K); $1.18B cash and no debt (10-Q); Nasdaq-100 inclusion effective 2026-06-22, announced 06-12, drove ~+11.31%/day on 06-19/20/21 (mechanical passive flow, not earnings); customer concentration is REAL and if anything UNDERSTATED by the bear — the 10-Q discloses FIVE customers each >=12% of revenue (the debate cited only D & E at ~12%); valuation verified at ~264-281x trailing / >39x forward sales, the most expensive name in its cohort. The bear's adverse-risk/reward conclusion (price ~2x the $180-230 SoP, catalyst already FIRED, single shared AI-capex driver) stands.",
+  "corrections": "(1) MARKET CAP / MULTIPLE OVERSTATED: debate uses $71.5B cap and ~120-125x forward at $419.90; live primary/quote sources on 06-22 show ~$62B cap at ~$417 and ~264-281x trailing — the forward-P/E framing (~120x) is in the right neighborhood but the $71.5B cap is high by ~$9B. Direction (most-expensive-in-cohort, no margin of safety) is unaffected. (2) CUSTOMER CONCENTRATION is WORSE than stated: 10-Q shows FIVE customers each >=12% (concentrated in Taiwan/Singapore/China), not just two ~12% customers — strengthens the bear. (3) The stock trades ~63% ABOVE the street's own median price target of $257.50 (range $155-$297) — an independent confirmation, not in the debate, that even bullish sell-side does not support today's price. (4) FY2026 consensus revenue ~$1.54B verified (debate's ~$1.54B is correct).",
+  "scale_cap": 18,
+  "evidence": [
+    "Astera Labs Q1-FY2026 8-K/10-Q (qtr ended 2026-03-31, filed/reported 2026-05-05): revenue $308.4M +93% YoY, non-GAAP GM 76.4%, op margin 36.2%, $1.18B cash & marketable securities, total liabilities ~$165.3M (no debt), FIVE customers each >=12% of revenue (sec.gov/stocktitan 10-Q, 2026-05-05)",
+    "Nasdaq press release / index notice: ALAB added to Nasdaq-100 effective pre-open 2026-06-22 (announced 2026-06-12); stock +11.31% on 06-19/06-20/06-21 on passive-flow buying (gurufocus, tradingkey, 2026-06-12 / 2026-06-21)",
+    "Live valuation 2026-06-22: ~$417 price, ~$62B market cap, trailing P/E ~264-281x, >39x forward sales — most expensive in the AI-interconnect cohort vs CRDO ~46x / MRVL ~60-65x (stockanalysis.com / tradingkey, 2026-06-22)",
+    "Sell-side consensus: median price target $257.50 (high $297, low $155); stock trades ~63% above median target; FY2026 revenue consensus ~$1.54B (simplywall.st / marketbeat, Jun 2026)"
+  ]
+}

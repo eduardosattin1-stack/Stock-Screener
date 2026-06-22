@@ -1,0 +1,13 @@
+{
+  "symbol": "ETN",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "NET DEBT IS STALE/UNDERSTATED BY ~2x. The valley_of_death section asserts 'net debt ~$9.9B' — that is the 2025-12-31 (pre-Boyd) figure. Per the Q1-26 10-Q balance sheet (filed 2026-05-05, period 2026-03-31): total debt $21.833B (long-term $18.535B + short-term $2.594B + cap leases $0.704B), cash & ST investments $0.751B, NET DEBT $21.27B — because Eaton funded the $9.5B Boyd Thermal cash acquisition with debt (LT debt $9.40B->$18.54B; goodwill+intangibles $20.8B->$32.7B QoQ). This does NOT break the thesis: $21.3B net debt against ~$3.6B FCF and ~$11-12B EBITDA is ~1.7-1.8x net leverage, comfortably investment-grade and serviceable — the 'no balance-sheet valley' conclusion still holds — but the file's '~$9.9B / trivially serviced' framing must be updated to ~$21.3B and the leverage step-up from the debt-funded Boyd deal should be flagged. The bear case is otherwise fully intact and INDEPENDENTLY CONFIRMED: catalyst is FIRED (DC orders +240%, backlog +44%, B2B 1.2 already printed Q1-26 and re-rated the stock to ~30-32x fwd, near 52wk high $435.43); the marginal thesis is single-shared-factor (AI-capex durability) identical to the rest of Basket B; the one hard bear fact — Electrical Americas +20% sales / +2% op profit + 50bps FY segment-margin guide CUT — verifies; risk/reward at $421.77 vs ~$410 base is symmetric-to-unfavorable. Moderator verdict C / WATCHLIST is sound.",
+  "scale_cap": 35,
+  "evidence": [
+    "Eaton Q1-2026 10-Q balance sheet, period 2026-03-31, filed 2026-05-05 (CIK 0001551182): total debt $21.833B (LT $18.535B + ST $2.594B + cap leases $0.704B), cash & ST investments $0.751B => net debt $21.27B; vs 2025-12-31 net debt $10.55B — confirms debt-funded Boyd step-up, NOT the file's ~$9.9B.",
+    "Eaton Q1-2026 results (reported 2026-05-05): net sales $7.451B (+17% YoY); data-center orders ~+240% YoY; rolling-12mo book-to-bill 1.2; FY26 organic guide raised +200bps to ~10% (9-11%); adj EPS guide midpoint $13.28 (absorbing Boyd dilution); segment-margin guide CUT ~50bps on Electrical Americas ramp/price-cost lag — all load-bearing bull/bear figures verify.",
+    "Eaton press release (eaton.com, 2026-03): completed $9.5B acquisition of Boyd Thermal (liquid cooling, ~22.5x 2026E EBITDA) and unveiled NVIDIA Beam/Vera Rubin DSX 'grid-to-chip' platform — the differentiated power+thermal stack claims confirm against the company IR/primary source.",
+    "FMP live quote 2026-06-18 close: ETN $421.77, 52-wk high $435.43, 50d avg $405, mcap ~$163.8B; GuruFocus forward P/E ~31.8x (2026-06-19) — confirms 'near 52-wk high, ~30x fwd, optionality pre-paid / fully priced' (bear's no-mispricing core)."
+  ]
+}

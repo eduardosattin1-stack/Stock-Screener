@@ -1,0 +1,13 @@
+{
+  "symbol": "MOD",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "No kill_fact: every load-bearing number verifies against primary sources, and the debate's own bear posture (Verdict B / WATCHLIST-FOR-CAPITULATION) survives the kill-check. Two immaterial numeric corrections vs the primary FY26 release (do not change the thesis): (1) FY26 GAAP net income is $123.3M (GAAP diluted EPS $2.26, -34% YoY) per the Modine release, not the $121.5M cited in the dossier; (2) FY26 weighted-avg diluted shares are ~54.0M, not the 52.8M used in the SoP — a slightly larger share count makes the per-share SoP marginally LESS generous, reinforcing (not weakening) the bear's 'base case underwater at spot' conclusion. NOTE on sop_fair_value: it is NOT a stale anchor — it is built on the FY26 results and FY27 guide both reported 2026-05-26 (post-event, post-guidance), and on the contemporaneous $4B/$165M deal. The bear's load-bearing claims (catalysts FIRED, ~38x fwd / ~130x GAAP, single undisclosed hyperscaler underwriting ~$1.3B/yr, FCF -$23.9M while net debt +$83.6M, zero resolution-driver independence vs the AI-capex cohort) all check out. scale_cap reflects that this is a verified-quality but fully-priced beneficiary whose re-rate catalysts have already run — own on a flush, not here.",
+  "scale_cap": 35,
+  "evidence": [
+    "Modine IR / PRNewswire, 2026-05-26: 'Modine Announces Landmark $4 Billion Long-Term Capacity Agreement through 2029 with Strategic Data Center Customer' — guarantees capacity to supply >$4B of Airedale cooling products in CY2027-29; customer paid $165M upfront cash; customer undisclosed; stock +17% to all-time high. (investors.modine.com / prnewswire.com)",
+    "Modine FY2026 Q4 release / SEC 8-K (mod-20260526xex99d1), 2026-05-26: FY26 net sales $3,181.1M (+23%), adj EBITDA $471.0M (+20%), adj EPS $5.02; GAAP net income $123.3M / diluted EPS $2.26 (-34% YoY); net debt $362.8M (+$83.6M YoY); FCF $105.4M (-$23.9M YoY); DC +158% YoY in Q4; FY27 guide net sales +20-35% and adj EBITDA $650-680M.",
+    "SEC Form 8-K / Form 425 (Gentherm CIK 0000903129) + Modine 8-K (mod-20260129x8k), 2026-01-29: Reverse Morris Trust combining Modine Performance Technologies with Gentherm, ~$1.0B deal value; Modine receives ~$210M cash distribution pre-close; Modine holders own ~40% / Gentherm ~60% of the combined entity; intended tax-free; expected close Q4 CY2026 subject to Gentherm shareholder vote, SpinCo financing and regulatory approvals.",
+    "Multiple market sources (Yahoo Finance, Invezz, DataCenterKnowledge), 2026-05-26: $4B deal added ~17% in one session to a new all-time high — corroborates the bear's 'catalyst already FIRED into the tape / re-rate is spent' claim."
+  ]
+}

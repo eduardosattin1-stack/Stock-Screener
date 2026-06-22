@@ -1,0 +1,13 @@
+{
+  "symbol": "POWL",
+  "verdict": "CONFIRMED",
+  "kill_fact": "No kill_fact found that breaks the bear/PASS thesis — every load-bearing claim verifies against the primary 8-K press release. The bear case (catalyst FIRED, demand priced in, EPS not converting) is independently confirmed: Q2 FY26 EPS FELL to $1.25 from $1.27 prior on +6% revenue ($296.6M); the >$400M data center award is POST-QUARTER (announced 5/4/26) and fully public, and the re-rate has already fired (split-adjusted 52-wk high $328.00 on 5/11/26, now ~$293). The PASS verdict survives the kill-check.",
+  "corrections": "Minor: sop_fair_value $255 and the bear EPS/margin claims are built on the latest reported quarter (Q2 FY26, ended 3/31/26, reported 5/4/26) — NOT a stale anchor. Current price in the debate ($299.14) is modestly above the mid-June tape (~$292.70 per multiple quote sources), so the 'stock ~17% above fair value' gap is slightly overstated (closer to ~+15%) and the 'near all-time highs' framing should read 'down ~11% from the split-adjusted 52-wk high $328' — the re-rate is largely spent but the name has come off the high. The $70-100M greenfield capacity figure is from the earnings-call commentary (CFO 'prudently invest in incremental capacity' + Seeking Alpha call coverage), not the press-release body — correctly flagged in the dossier as UNSANCTIONED.",
+  "scale_cap": 25,
+  "evidence": [
+    "Powell Industries Q2 FY2026 press release (GlobeNewswire/IR, 5/4/26): revenue $296.6M +6%, net income $45.9M, diluted EPS $1.25 vs $1.27 prior-year (EPS DOWN on revenue UP), gross margin 29.6%, new orders $490M +97%, book-to-bill 1.7x, backlog $1.8B +33% YoY; cash & ST investments ~$545M, no debt, stockholders' equity $709.1M; 3-for-1 split effective 4/2/26.",
+    "Powell 8-K / press release (5/4/26): 'Subsequent to the end of the second quarter, the Company was awarded an additional mega data center order with a value exceeding $400 million related to a behind-the-meter design of on-site generation assets' — the largest order in company history; POST-QUARTER and public, confirming catalyst FIRED.",
+    "Seeking Alpha (5/4/26): 'Powell outlines $70M-$100M capacity option as it lands $400M+ data center mega order' — confirms the greenfield capacity expansion is an UNSANCTIONED option ('a decision within the next few quarters'), not a committed build; first-phase award has a 2-2.5 year burn.",
+    "Quote sources (mid-June 2026): POWL ~$292.70; split-adjusted 52-wk range $56.70-$328.00, all-time/52-wk high $328.00 reached 5/11/26 — re-rate fired post-award; stock now ~11% below the high, ~5x off the $56.70 low."
+  ]
+}

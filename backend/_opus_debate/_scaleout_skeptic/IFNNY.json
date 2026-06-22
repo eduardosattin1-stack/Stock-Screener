@@ -1,0 +1,13 @@
+{
+  "symbol": "IFNNY",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact. The bear/PASS thesis survives independent attack: every load-bearing figure verifies against the primary 2026-05-06 release (Q2 rev EUR 3,812M, segment margin 17.1%, FY26 raise to ~20% margin + adj-FCF EUR 1.65B, AI-DC EUR 1.5B FY26 -> EUR 2.5B FY27, H1 FCF negative -EUR 199M/-EUR 63M, net debt -EUR 5,721M). The PASS rests on 'already priced in / fired catalyst', which is a valuation/timing judgment that verified facts SUPPORT, not refute. sop_fair_value is NOT stale-anchored — it is built on the latest reported quarter (Q2 FY2026, 2026-05-06).",
+  "corrections": "CAPEX FIGURE WRONG (load-bearing): the debate repeatedly cites FY26 capex of 'EUR 7.2B' (used in the FCF-inflection / capex-overbuild bear leg and the SoP). The primary release states FY26 investments of ~EUR 2.7B (raised by EUR 500M for AI). EUR 7.2B does not verify against any primary source and appears fabricated/confused. Direction of error is benign for the PASS: actual ~EUR 2.7B capex makes the EUR 1.25B reported-FCF / EUR 1.65B adj-FCF H2 inflection MORE achievable, slightly softening (not breaking) the 'negative-FCF-on-huge-capex' valley_of_death point. Also note the press release does not itself disclose the EUR 25B backlog or the -400bp auto-margin delta (sourced to the call, not the release) — these remain reasonable but second-hand; treat as MEDIUM confidence vs the HIGH-confidence P&L/guidance figures.",
+  "scale_cap": 25,
+  "evidence": [
+    "Infineon press release / EQS-News, 2026-05-06: Q2 FY2026 revenue EUR 3,812M, segment result EUR 653M (margin 17.1%); FY26 guidance raised to ~20% segment margin, adj-FCF ~EUR 1.65B, reported FCF ~EUR 1.25B; investments ~EUR 2.7B (NOT 7.2B); net cash position 31-Mar-2026 = -EUR 5,721M; Q1 FCF -EUR 199M, Q2 FCF -EUR 63M.",
+    "Infineon press release / EQS-News, 2026-05-06: AI data-center power-supply revenue ~EUR 1.5B in FY2026 (supply-limited, not demand-capped) rising to ~EUR 2.5B in FY2027 (resolves 2.5B-vs-3B ambiguity: 2.5B confirmed).",
+    "Infineon + NVIDIA 800V HVDC partnership (GTC-2025, productized 2026), corroborated by Digitimes (2025-09-01) and Compound Semiconductor News: Infineon supplies the Si/SiC/GaN grid-to-GPU conversion stack for NVIDIA's 800V HVDC data-center architecture; design-in real but contestable (MPWR/Vicor/STM/Navitas building into the same standard).",
+    "Valuation cross-check (live, June 2026): IFNNY fwd P/E ~33.5x / EV-EBITDA ~24.6x vs profitable power-semi peers STM ~8.3x and ON ~15.3x EV-EBITDA on trough ROIC ~4.3% confirms the AI-power/recovery optionality is fully priced; +4% reaction to the raise confirms consensus, not contrarian."
+  ]
+}

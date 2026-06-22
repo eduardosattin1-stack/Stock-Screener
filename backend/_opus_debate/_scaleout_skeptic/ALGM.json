@@ -1,0 +1,13 @@
+{
+  "symbol": "ALGM",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "(1) The bear's load-bearing 'NVIDIA non-anchor' claim VERIFIES even harder than stated: NVIDIA's own developer blog (the 800-VDC architecture announcement) names its silicon providers as Analog Devices, Infineon, Innoscience, MPS, Navitas, OnSemi, Renesas, ROHM, STMicroelectronics and Texas Instruments — Allegro appears NOWHERE on NVIDIA's published roster. ALGM ships components INTO the architecture but is not a named ecosystem partner; the picks-and-shovels role is real but non-exclusive and contested by larger incumbents on the list. (2) ANCHOR-SOURCE CAVEAT: the '16-17% of Q1 FY2027 sales / 20-25% sequential' DC-mix guide is NOT in the filed 8-K / press release — the 8-K confirms only the Q4 '14% of total sales' DC figure and the $245-255M / $0.19-0.23 Q1'27 guide. The 16-17% DC-mix number is earnings-CALL-sourced, not a filed figure; treat it as management color, not a hard filed guide. (3) DELEVERAGE WORDING: the 8-K shows a $285M term-loan refinance and $345M of term-loan repayments during FY26 (cash $168.8M vs LT debt $285.7M = net debt ~$117M, matching the ~$116M claim) — the '$60M voluntary paydown' framing is a net of those flows, but the net-debt / clean-balance-sheet conclusion holds. None of these break the thesis; they reinforce the bear (non-anchor confirmed) and tighten one over-precise catalyst figure.",
+  "scale_cap": 25,
+  "evidence": [
+    "NVIDIA Developer Blog, 'NVIDIA 800 VDC Architecture Will Power the Next Generation of AI Factories' (2026) — silicon providers named: Analog Devices, Infineon, Innoscience, MPS, Navitas, OnSemi, Renesas, ROHM, STMicroelectronics, Texas Instruments; Allegro NOT named.",
+    "Allegro MicroSystems FY2026 8-K / press release, GlobeNewswire 2026-05-07 (FY ended Mar 27, 2026): FY net sales $890.1M (+23%), Q4 $243.2M (+26%), non-GAAP GM 49.4% FY / 50.0% Q4, non-GAAP EPS $0.54 FY / $0.17 Q4, FCF $124.9M; Data Center 'record 14% of total Q4 sales'.",
+    "Allegro FY2026 8-K (SEC EDGAR, algm-ex99_1, filed 2026-05-07): cash & equivalents $168.8M vs long-term debt $285.7M as of Mar 27, 2026 (net debt ~$117M); Q1 FY2027 guide $245-255M net sales / $0.19-0.23 non-GAAP EPS — the press release contains NO 16-17% DC-mix guidance figure.",
+    "Navitas/NVIDIA MGX 800-VDC partner ceremony, GlobeNewswire 2026-06-03 — names the NVIDIA MGX 800-VDC ecosystem partners; Allegro absent, corroborating non-anchor status."
+  ]
+}

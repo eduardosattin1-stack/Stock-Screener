@@ -1,0 +1,13 @@
+{
+  "symbol": "FIX",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact breaks the bear case — every load-bearing figure verifies against the Q1-2026 8-K (rev $2.87B/+56%, same-store +51%, GM 26.3%, diluted EPS $10.51, backlog $12.45B vs $6.89B PY) and the earnings-call coverage (advanced-technology/data centers = 56% of revenue, industrial 75%, electrical +88% organic, modular 17%/4M sq ft target, labor named as the binding constraint). The bear's core premise survives attack: the stock is a momentum melt-up (price $1,967.41, 50d $1,831, 200d $1,253, 52wk $490–$2,074 ≈ ~4x), so the catalyst has FIRED and the AI-capex re-rate is priced into a ~56.8x trailing P/E (=$1,967/$34.65 TTM EPS) on peak-cycle margins / single-end-market (56% data-center) volume. No hidden disqualifier (net-cash balance sheet, no dilution/lockup, no solvency valley).",
+  "corrections": "(1) Backlog YoY is +80.6% ($12.45B vs $6.89B), not the '+74%' stated in several places in the file (the '+74%' is internally inconsistent with the figures it cites). (2) Net cash is UNDERSTATED in the bear file's favor: the 8-K shows only ~$39M total debt (not ~$339M), so net cash is ~$1.0B (~$29/sh), not ~$711M — the balance sheet is even stronger than the bear states, which slightly hardens the 'quality, not valley' framing but does not aid the bull. Neither correction is load-bearing to the REFUTED-the-long conclusion.",
+  "scale_cap": 25,
+  "evidence": [
+    "SEC Form 8-K (ex-99.1), Comfort Systems USA, filed 2026-04-23: Q1-2026 revenue $2.87B (+56%), diluted EPS $10.51, GM 26.3%, backlog $12.45B vs $6.89B (3/31/2025), cash ~$1.05B vs ~$39M debt, dividend raised to $0.80 (sec.gov/Archives/edgar/data/1035983/000110465926047679/)",
+    "Q1-2026 earnings call coverage, 2026-04-24: advanced technology/data centers = 56% of revenue, industrial 75%, electrical +88% organic / mechanical +47%, modular 17% of rev / 4M sq ft target end-2026; CFO 'it's always and forever for us, it's labor' / 'plenty more work we could take if we could possibly do it' (biggo.com/news/US_FIX_2026-04-24)",
+    "FMP live quote 2026-06-21: FIX $1,967.41, market cap $69.26B, 50d avg $1,830.81, 200d avg $1,253.42, 52wk $489.98–$2,073.99 — confirms ~4x run / momentum-extended melt-up and that the data-center re-rate is fully in the price",
+    "Implied multiple check: $1,967.41 / ~$34.65 TTM diluted EPS ≈ 56.8x trailing P/E — corroborates the bear's 'peak multiple on peak margins, no margin of safety vs ~$1,550 base SoP fair value' premise"
+  ]
+}

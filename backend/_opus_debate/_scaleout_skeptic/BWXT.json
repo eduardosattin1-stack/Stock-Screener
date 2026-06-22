@@ -1,0 +1,13 @@
+{
+  "symbol": "BWXT",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "The debate frames the Tennessee 'HEU/HALEU enrichment' facility as part of the commercial AI-scale-out optionality. Primary sources show it is materially WEAKER and DIFFERENT: the Erwin, TN facility is HEU for the U.S. Navy under a $1.5B NNSA/DOE contract (Sept 2025) — i.e. DEFENSE supply, not commercial HALEU for SMRs/AI-power; BWXT only NOTIFIED the NRC of intent (pre-application) in April 2026, the actual license application is not expected until Q1-2027, and the facility is targeted to be operational only ~2035. So this is not a 3-9 month catalyst and is not AI-scale-out demand at all; it should be removed from the priced-in commercial call-option. This corrects the catalyst toward SOFTER/LATER than 'SOFT_EXTENDED' and slightly reduces the bull's optionality stack. All other load-bearing numbers verify exactly: backlog $8.65B (Gov $6.93B + Commercial $1.72B), bookings $2.25B, Q1-26 rev $860.2M, commercial rev $283.6M (+121%), net debt $1,505.5M ($2,017.9M debt − $512.4M cash), ~91.9M diluted shares, FY26 guide raised (rev >$3.75B, adj EBITDA $650-665M, EPS $4.60-4.75, FCF $315-330M). Spot ~$205-207, ~$19B cap, ~43x fwd P/E, avg target ~$238 (+17%) — confirms a name that has run hard with consensus already bullish.",
+  "scale_cap": 20,
+  "evidence": [
+    "BWXT Q1-2026 8-K/earnings release (05/04/2026): total backlog $8.65B (Gov $6.93B + Commercial $1.72B), bookings $2.25B, rev $860.2M, commercial rev $283.6M (+121%), GAAP EPS $0.99 / non-GAAP $1.12, raised FY26 guide (rev >$3.75B, adj EBITDA $650-665M, EPS $4.60-4.75, FCF $315-330M) — SEC EDGAR CIK 0001486957, accession 000148695726000027",
+    "BWXT Q1-2026 balance sheet (03/31/2026): total long-term debt $2,017.9M, cash $512.4M → net debt $1,505.5M; weighted avg diluted shares 91.9M (Q1-2026 8-K, stocktitan summary of the same filing)",
+    "PowerMag / StockTitan (April 2026): BWXT initiated NRC PRE-APPLICATION for the Erwin, TN HEU enrichment facility; license application expected Q1-2027, operational ~2035; facility produces HEU for the Navy under the $1.5B NNSA contract awarded Sept 2025 — i.e. defense, not commercial AI/SMR HALEU",
+    "stockanalysis.com / consensus (June 2026): spot ~$206.83, ~91.6M shares, ~$19B market cap, forward P/E ~42.8x, avg analyst target ~$238 (+17%) — confirms the AI/nuclear re-rating is largely priced and the street is already bullish"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "symbol": "LITE",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact — every load-bearing number verifies against primary sources (Q3 FY2026 8-K exhibit + May 6, 2026 call): revenue $808.4M +90% YoY, non-GAAP GM 47.9%, OM 32.2%, GAAP EPS $1.50 / non-GAAP $2.37, Q4 guide $960M-$1.01B / EPS $2.85-3.05, $3.17B cash, CEO 'imbalance >30% / undershipping demand'. The bear thesis (catalysts FIRED, AI-optionality already priced at a ~$66B cap / ~52-59x fwd, single-shared-driver AI-capex, scarcity-priced margin contestable 2027-2028) survives the attack — this is a great business at an already-run price, NOT a fresh scale-out entry. The 'C / conviction 2 / VALUE_CONVICTION 3' grade is correct.",
+  "corrections": "(1) MOAT FRAMING OVERSTATED: the bull's 'NVDA underwriting its own DOMESTIC laser supply as a moat vs Coherent/Chinese EML' is undercut — NVIDIA made a SIMULTANEOUS, equal $2.0B equity investment in Coherent (COHR) on the SAME day, March 2, 2026 (Wilson Sonsini / SEC 8-K). NVIDIA dual-sourced; the LITE lock-in is non-exclusive, so the onshoring/lock-in 'intangible not in the multiple' is weaker than claimed and the ~$35/sh CPO+lock-in option kicker should be haircut. (2) DILUTION DISCLOSURE: the $2B NVDA raise is the Series A Convertible Preferred (2,876,415 shares at $695.31, 1-for-1 convert) — dilutive, not 'free' cash: the diluted share base steps from 95.2M (Q3 non-GAAP) to ~102M in the Q4 guide (~7% dilution), which the bull's per-share SoP must reflect. (3) MULTIPLE: live forward P/E is ~52 (GuruFocus, Jun-2026), modestly below the debate's ~59 cite — bear's 'rich vs cohort' (COHR ~44) still holds. Current price ~$890 vs debate's $905.",
+  "scale_cap": 25,
+  "evidence": [
+    "Lumentum Q3 FY2026 8-K earnings exhibit (SEC, period ended Mar 28, 2026): net revenue $808.4M, non-GAAP GM 47.9%, GAAP EPS $1.50 / non-GAAP $2.37, Q4 guide $960M-$1.01B / EPS $2.85-3.05 — https://www.sec.gov/Archives/edgar/data/0001633978/000162828026030530/lite_ex991xq3fy26.htm",
+    "Lumentum 8-K (SEC, Mar 2, 2026): issued 2,876,415 Series A Convertible Preferred to NVIDIA at $695.31/sh = $2.0B private placement, 1-for-1 conversion — https://www.sec.gov/Archives/edgar/data/0001633978/000119312526085412/d41019dex991.htm",
+    "Wilson Sonsini (Mar 2026): NVIDIA made parallel equal $2B equity investments in BOTH Lumentum AND Coherent the same day — dual-sourced, lock-in non-exclusive — https://www.wsgr.com/en/insights/wilson-sonsini-advises-lumentum-on-strategic-partnership-and-related-dollar2-billion-equity-investment-from-nvidia.html",
+    "LITE forward P/E ~52 (GuruFocus, Jun 4 2026) / market cap ~$66B (Jun 18 2026); CEO supply-demand imbalance '>30%' confirmed in May 6 2026 call transcript (Motley Fool)"
+  ]
+}

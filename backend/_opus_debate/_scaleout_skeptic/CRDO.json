@@ -1,0 +1,13 @@
+{
+  "symbol": "CRDO",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill: every load-bearing fact of the bear/PASS thesis verifies against primary sources. Q4 FY26 revenue $437.0M (+157% YoY), FY26 $1.335B (>3x), non-GAAP GM 68.3%, non-GAAP operating margin 47.8%, ~$1.4B cash all confirm in the 2026-06-01 8-K/press release. Customer concentration is real and even starker in the FY26 10-K (top 10 customers ~90% of FY26; largest customer 42% of revenue in Q2 FY26) than the debate's '~34%/~60%' framing. Average analyst PT ~$256 (18 analysts) sits BELOW the ~$272 spot, so the 'catalyst fired, trades above target, re-rate spent' structure holds. The thesis is a price/concentration PASS, not a numbers fabrication — it survives the kill-check.",
+  "corrections": "STALE/INFLATED FIGURE: the bull_thesis and sop_breakdown repeatedly cite '>$600M optical revenue in FY27' (and '>$100M each in DSP/SiPho-PIC/ZeroFlap'). The PRIMARY guidance — both the DustPhotonics acquisition release and the 2026-06-01 Q4 print — is 'more than $500 million in optical revenue in fiscal 2027,' not $600M. The ~$600M figure overstates the optical inflection by ~20% and should be corrected to >$500M; this does not weaken the PASS (it strengthens it: less optical against a richer multiple). SECONDARY: DustPhotonics consideration is $750M cash PLUS ~0.92M shares at close AND up to ~3.21M contingent shares — not a clean '$750M cash' outlay, so the 'net cash ~$650M post-deal' SoP input is modestly optimistic and the diluted share count (192.7M Q4, vs ~187M used in the SoP) is slightly understated.",
+  "scale_cap": 25,
+  "evidence": [
+    "Credo FY26 Q4/FY press release, 2026-06-01 (SEC 8-K ex-99.1, sec.gov/Archives/edgar/data/0001807794/000162828026039474/credoq42026ex-991.htm): Q4 rev $437.0M +157% YoY; FY26 $1,335.1M; non-GAAP GM 68.3%; non-GAAP op margin 47.8%; FY27 guide >80% growth; ~$1.4B cash; Q1 FY27 guide $465-475M.",
+    "Credo / DustPhotonics acquisition release, investors.credosemi.com, 2026 (close Q2 CY2026): consideration $750M cash + ~0.92M shares + up to ~3.21M contingent shares; guides combined optical to 'more than $500 million in optical revenue in fiscal 2027' (NOT >$600M).",
+    "Credo FY2026 10-K, filed ~2026-06 (SEC, sec.gov/Archives/edgar/data/0001807794/000162828026043303/crdo-20260502.htm): top 10 customers ~90% of FY26 revenue; largest customer 42% of revenue in Q2 FY26; two customers each >=10% for full FY26 — confirms acute, ongoing single-account concentration.",
+    "Analyst consensus, 2026-06 (MarketBeat/Investing.com, 18 analysts): average 12-mo PT ~$256.30 (range $184-$300) vs spot ~$272 — price ABOVE average target, confirming the fired/above-PT catalyst structure."
+  ]
+}

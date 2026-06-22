@@ -1,0 +1,13 @@
+{
+  "symbol": "MPWR",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "No kill_fact: every load-bearing number verifies against the SEC 8-K Q1-2026 release and the sop_fair_value is built on CURRENT post-Q1-2026 financials (NOT a stale/pre-guidance anchor). Two corrections to load-bearing framing, both REINFORCING the bear: (1) MOAT OVERSTATED — primary NVIDIA sources show MPS is only ONE OF ~14 co-named silicon providers for the 800V/1MW architecture (Infineon, TI, ADI, Navitas, ST, Renesas, onsemi, Power Integrations, ROHM, Richtek, EPC, Innoscience, AOS all named alongside MPS), and TI launched a 'complete 800VDC with NVIDIA' architecture on Mar 16 2026 — so the vertical-power socket is explicitly contested/commoditizing, not owned. The debate's 'NARROW/STABLE moat' grade is correct and arguably generous. (2) CATALYST IS FIRED, NOT PENDING — Enterprise Data already +97.7% YoY and Q2 already guides +35%, so there is no offside-consensus mispricing to harvest; the 800V production leg is distant (2027) and only partially de-risked for MPWR given it is one of many. Net: the debate's PASS(C)/conviction-2/'watchlist-for-a-flush' conclusion is the correct operative call — the bear case survives the verification intact (fired catalyst + ~88-90x fwd multiple ~25% above base-case intrinsic + single-factor AI-capex concentration shared with the rest of Basket D).",
+  "scale_cap": 20,
+  "evidence": [
+    "MPWR Q1-2026 8-K / earnings release (reported Apr 30 2026): revenue $804.2M (+26.1% YoY), Enterprise Data $262.8M (+97.7% YoY), cash & ST investments $1,367.1M, no debt, 49.2M diluted shares, non-GAAP GM ~55.5%, Q2-2026 guide $890-910M w/ GM 55.3-55.9% — all load-bearing figures verified (stocktitan.net/news/MPWR Apr 30 2026; SEC EDGAR CIK 0001280452 Form 8-K).",
+    "NVIDIA blog 'Gigawatt AI Factories / Vera Rubin' (OCP Global Summit, Oct 2025): names ~14 silicon providers for 800V HVDC incl. MPS, Texas Instruments, Analog Devices, Infineon, Navitas, ST, Renesas, onsemi, Power Integrations — confirms MPWR is one-of-many, socket contested, full production tied to Kyber/Rubin Ultra 2027.",
+    "Texas Instruments newsroom (Mar 16 2026): 'TI unveils complete 800 VDC power architecture for future-generation AI data centers with NVIDIA' (GTC 2026) — direct competitive convergence on MPWR's exact vertical-power/800V socket (ti.com news-releases 2026-03-16).",
+    "MPWR Q1-2026 guidance (Apr 30 2026): non-GAAP gross-margin flat at the low end of the 55-60% model for a 4th straight quarter (Q2 guide 55.3-55.9%) — confirms premium AI mix is NOT producing pricing power, the bear's contested-socket tell."
+  ]
+}

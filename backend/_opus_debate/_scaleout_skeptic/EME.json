@@ -1,0 +1,17 @@
+{
+  "symbol": "EME",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact found. Every load-bearing financial figure verifies against primary sources (SEC 8-K/10-Q dated 2026-03-31, EMCOR IR): revenue $4.63B (+19.7%, organic +16.8%), RPO $15.62B (+32.9%, +$2.37B QoQ), diluted EPS $6.84 (+30%), operating margin 8.7%, effectively net cash (cash $916.4M, only ~$2.4M finance-lease debt, $1.30B undrawn revolver), FY2026 guidance raised to $18.50-19.25B revenue / $28.25-29.75 EPS. The bear thesis is a valuation/timing/saturation call, not a fact dispute — and the facts support it: the name is a fully-valued quality cyclical whose sole resolution driver (hyperscaler AI-capex durability) is the same shared macro factor as the rest of Basket C, with a NARROW project-re-compete moat and an already-FIRED catalyst (stock fell on the record beat-and-raise). Nothing breaks it.",
+  "corrections": [
+    "STALE PRICE ANCHOR: file uses current_price $845.43, but EME has since risen to ~$835-933 (stockanalysis.com $836.59 as of 2026-06-18; intraday quotes to ~$933) with a 52-week HIGH of $951.96. This pushes the stock even FURTHER above the $760-800 base-case fair value and toward its high — STRENGTHENING the priced-in bear case, not weakening it. The sop_fair_value ($760-800) is built on verified post-Q1-raise financials (NOT stale), so the SoP anchor is sound; only the live price needs refreshing.",
+    "OVERSTATED RALLY FIGURE: the dossier repeatedly cites a '~109% twelve-month rally' as the priced-in tell. Independent sources put the actual trailing-12-month return at ~67-88% (stockanalysis.com ~75%; 52-wk low $478.16). Still a very large run that fully supports the 'priced-in' read, but the specific +109% number is wrong and should be corrected to ~75% (~67-88% range).",
+    "MULTIPLE: file cites ~26x trailing / ~25x forward; live data shows trailing ~28x and forward ~26-28x (stockanalysis.com forward 28.21, trailing 28.07). The stock is modestly RICHER than the file states, again reinforcing (not undermining) the saturation/priced-in bear conclusion."
+  ],
+  "scale_cap": 35,
+  "evidence": [
+    "SEC Form 8-K (EME exhibit 99.1, period 2026-03-31): Q1 2026 record revenue $4.63B (+19.7%, organic +16.8%); record RPO $15.62B (+32.9% YoY, +$2.37B QoQ); diluted EPS $6.84 (+30%); operating income $404M / 8.7% margin; FY2026 guidance raised to $18.50-19.25B revenue and $28.25-29.75 EPS (sec.gov/Archives/edgar/data/0000105634, filed Apr 2026).",
+    "SEC Form 10-Q (EME, period ended 2026-03-31): cash & equivalents $916.4M, no funded debt (~$2.4M finance leases only), $1.30B revolver undrawn — effectively net cash ~$914M, total shareholder equity ~$3.7B (sec.gov/Archives/edgar/data/0000105634/000010563426000046/eme-20260331.htm).",
+    "stockanalysis.com/stocks/eme (as of 2026-06-18): price $836.59, 52-week range $478.16-$951.96, ~12-mo return ~75%, forward P/E 28.21, trailing P/E 28.07, market cap $37.18B — confirms the name trades above the $760-800 fair value and near its 52-week high (priced-in).",
+    "Seeking Alpha / StockTitan / Investing.com (Apr 2026 Q1 2026 earnings recaps): corroborate Mechanical Construction margin 10.9% (down ~100bp from 11.9%), Electrical +33.1%, Mechanical +28.9%, data-center-led demand, and the raised FY2026 guide — confirming the bear's margin-mix and concentration concerns are real."
+  ]
+}

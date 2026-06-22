@@ -1,0 +1,13 @@
+{
+  "symbol": "VRT",
+  "verdict": "CONFIRMED",
+  "kill_fact": "",
+  "corrections": "No kill_fact found; the bear thesis is a valuation/timing PASS (verdict C), not a fact-break, and every load-bearing figure verifies against primary sources. Two minor clarifications: (1) Net leverage was ~0.5x at end-Q4-2025 (per the 2026-02-11 release) and tightened to ~0.2x by end-Q1-2026 (per the 2026-04-22 release) — the file's '~0.2x (Q1) / 0.48x net-debt/EBITDA TTM' is internally consistent and correct, but the under-levered/self-funding claim rests on the Q1 0.2x mark, not Q4. (2) The bear's load-bearing CONFIRMING tripwire — an AI-capex digestion / hyperscaler capex guide-down — has the OPPOSITE evidence as of mid-2026: the four largest hyperscalers are RAISING 2026 capex toward ~$725B (+77% YoY), with Microsoft/Amazon/Alphabet/Meta all guiding UP, not cutting. So the bear's air-pocket scenario is unconfirmed and currently contradicted; the only standing bear point that survives is the priced-in / multiple-compression risk (valuation, not fundamentals). The committee's C / conviction-2 'quality real, entry not' framing is supportable; the scale-out conviction cap is set by valuation/independence, not by any broken fact.",
+  "scale_cap": 40,
+  "evidence": [
+    "Vertiv Q4-2025 release (8-K, filed 2026-02-11): organic orders +~252% YoY (+117% sequential), book-to-bill ~2.9x, backlog $15.0B up ~109% YoY (+$7.8B), net sales $2.88B (+23%), net leverage ~0.5x at end-Q4-2025 — investors.vertiv.com / SEC EDGAR exhibit991vrt02112026",
+    "Vertiv Q1-2026 release (8-K, filed 2026-04-22): revenue $2.65B (+30% reported / +23% organic), adj operating margin 20.8% (+430bp), adj FCF $653M (+147%), net leverage ~0.2x, FY26 guide RAISED to ~$13.75B revenue (+34%) / ~$6.35 adj diluted EPS (+51%) — SEC EDGAR q12026exhibit991vrt04222026",
+    "Hyperscaler 2026 capex tracking (multiple sources, mid-2026): MSFT/AMZN/GOOGL/META collective 2026 capex guided to ~$725B, +77% YoY vs ~$410B 2025, all four RAISING not cutting (MSFT ~$190B, AMZN ~$200B, GOOGL $180-190B, META $125-145B) — Tom's Hardware / Yahoo Finance, June 2026 — directly contradicts the bear's AI-capex-digestion kill scenario",
+    "Q1-2026 backlog/orders reiterated public via investor presentation (s205.q4cdn.com Vertiv-First-Quarter-2026-Results) confirming the $15.0B backlog and 2.9x Q4 book-to-bill carried forward, with adj EPS beat of ~$0.19 vs guide"
+  ]
+}

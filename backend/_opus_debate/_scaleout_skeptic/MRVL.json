@@ -1,0 +1,13 @@
+{
+  "symbol": "MRVL",
+  "verdict": "CONFIRMED",
+  "kill_fact": "",
+  "corrections": "No load-bearing fact was broken. Every attack vector confirmed the debate's PASS (verdict C) rather than refuting it. (a) STALE-ANCHOR: sop_fair_value (~$230) is built on the freshest event — the May 27, 2026 Q1 FY27 print and the raised FY27/FY28 ladder — not pre-guidance financials; no staleness. (b) NUMBER TRUTH: record rev $2.418B/+28% YoY, data center $1.833B = 76% of mix, GAAP EPS $0.04 vs non-GAAP $0.80, non-GAAP GM 58.9%, interconnect FY27 guide raised to >70%, DCI to ~$1B run-rate in FY28 (~2x FY26's ~$500M), and the ~$16.5B FY28 target ALL verify against the SEC 8-K (Ex-99.1) and corroborating coverage. (c) THESIS WEAKNESS confirmed AS BEAR ARGUES: the AI-scale-out catalyst has substantially fired (+~300% TTM); spot ~$310-313 trades ~30% ABOVE the ~$238.75 consensus (44-analyst) target — the market is more bullish than the sell-side, the opposite of a mispricing; concentration on an undisclosed flagship XPU customer + Broadcom rivalry is real; moat NARROW on custom ASIC. (d) HIDDEN DISQUALIFIER: none new — the Polariton (>1THz plasmonic, path to 3.2T) and Celestial AI EAM ($3.25B, up to $5.5B, closed Feb 2026) deals verify as stated; balance sheet modest net debt. The thesis (PASS at this price; great franchise, full valuation, inverted risk/reward) survives the kill-check intact.",
+  "scale_cap": 25,
+  "evidence": [
+    "SEC Form 8-K Ex-99.1, Marvell Q1 FY2027 results (qtr ended May 2, 2026, filed/reported May 27, 2026): net revenue $2.418B +28% YoY, data center $1.833B = 76% of mix, GAAP EPS $0.04, non-GAAP EPS $0.80, non-GAAP GM 58.9% — sec.gov/Archives/edgar/data/0001835632/000183563226000014/q127_8kx522026ex-991.htm",
+    "Marvell FY2027/FY2028 raised outlook (May 27, 2026): interconnect FY27 growth raised to >70% YoY, DCI to ~$1B annualized run-rate in FY28 (~2x FY26 ~$500M), FY28 revenue target ~$16.5B — corroborated via TIKR/Futurum coverage of the same 8-K",
+    "Consensus / valuation check (Jun 2026): 44-analyst consensus 'Strong Buy', average price target ~$238.75 vs spot ~$310-313 (stock ~30% above target) — public.com/marketbeat/stockanalysis MRVL forecast pages, Jun 21, 2026",
+    "Marvell IR press release: Polariton Technologies acquisition (Apr 2026, plasmonic modulator >1THz, path to 3.2T+) and Celestial AI acquisition ($3.25B, up to $5.5B on milestones, closed Feb 2026) — investor.marvell.com/news-events/press-releases/detail/1020"
+  ]
+}

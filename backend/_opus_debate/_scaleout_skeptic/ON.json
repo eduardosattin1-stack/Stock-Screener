@@ -1,0 +1,13 @@
+{
+  "symbol": "ON",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "",
+  "corrections": "LOAD-BEARING FALSEHOOD in the bear/dossier framing: the file repeatedly asserts management 'withholds the denominator' / 'refuses to disclose the AI-data-center dollar base' and treats that refusal as a confidence-LOWERING signal (consensus_delta, dossier §2/§5/§6). PRIMARY-SOURCE CHECK REFUTES THIS: onsemi disclosed ~$250M+ of AI-data-center revenue for FY2025 (cited at the Q4/FY2025 results, El-Khoury), with the 2026 'doubling' implying ~$500M+. So the base is SEMI-DISCLOSED, not withheld. Net effect cuts in the bear's favor on substance: real base (~$250M, ~4% of $6B FY25 revenue) is even SMALLER than the file's ~$300-450M backout, so 'the doubling is small in absolute P&L terms' is MORE true, not less. Two figure-hygiene fixes: (1) the '$1.4B FCF / 24% margin' is the FY2025 number, not Q1 — Q1 2026 FCF was $217.2M; the file mixes these but does not misstate either. (2) 'slightly net debt' verifies directionally; net-debt premium correctly excluded. Everything else verifies: Q1 rev $1,513.3M, non-GAAP GM 38.5%, GAAP EPS -$0.08, non-GAAP EPS $0.64, $346M buyback at avg $60.54 (~160% of FCF), price ~$122 / cap $47.66B / fwd P/E ~36. The verdict B (watchlist-for-capitulation), the ~$124 base SoP sitting AT the $122 price, and the 'asymmetry spent after +117%' conclusion all survive.",
+  "scale_cap": 35,
+  "evidence": [
+    "SEC Form 8-K Ex-99.1, onsemi Q1 2026 results (filed 2026-05-04): revenue $1,513.3M, non-GAAP GM 38.5%, GAAP diluted EPS $(0.08), non-GAAP EPS $0.64, Q1 FCF $217.2M, $346M share repurchases; AI data center 'more than doubled YoY' / '>30% sequential' (no per-segment $ in the 8-K). sec.gov/Archives/edgar/data/0001097864/000114036126018868/ef20072220_ex99-1.htm",
+    "onsemi IR / Q4 & FY2025 results + Q1'26 call coverage (2026-02 / 2026-05): management cited ~$250M+ AI-data-center revenue in FY2025, doubling YoY in 2026 (=>~$500M+) — i.e. the dollar base IS disclosed, refuting the 'withheld denominator' premise (StockTitan / mlq.ai / Fool transcript, 2026-05-04).",
+    "stockanalysis.com/stocks/on (read 2026-06-22): price $121.62 (2026-06-18 close), market cap $47.66B, forward P/E ~36, trailing P/E ~86 — confirms the file's $122 / $47.6B and the 're-rated, no-longer-cheap' bear premise.",
+    "onsemi Q1'26 capital return verified across SEC 8-K + IR: $346M repurchased at avg $60.54 vs ~$122 now (~160% of FCF) — the 'bought-the-bottom' value tell holds as stated."
+  ]
+}
