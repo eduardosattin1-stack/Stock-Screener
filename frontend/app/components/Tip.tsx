@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { GLOSSARY } from "../data/catalystGlossary";
+import { termLabel } from "../data/voice";
 
 const TONE: Record<string, string> = { good: "#14b87a", mid: "#d97706", bad: "#ef4444", muted: "var(--text-muted)" };
 export function toneColor(tone: string) { return TONE[tone] || "var(--text)"; }
@@ -67,4 +68,14 @@ export function Tip({ k, children, extra }: { k?: string; children: React.ReactN
       )}
     </span>
   );
+}
+
+// House-voice term. <Term k="FIRED_WIN"/> renders the plain on-screen label for a
+// token (from voice.ts) with the hover definition when one exists. Unknown tokens
+// fall back to a prettified label, so a raw code token never reaches the screen.
+// This is the one helper every surface should use instead of printing a raw enum.
+export function Term({ k, extra }: { k?: string | null; extra?: string }) {
+  const label = termLabel(k);
+  if (!k || !GLOSSARY[k]) return <>{label}</>;
+  return <Tip k={k} extra={extra}>{label}</Tip>;
 }

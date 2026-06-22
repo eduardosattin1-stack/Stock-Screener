@@ -3622,7 +3622,7 @@ export default function Dashboard(){
                   {/* Capitulation Watchlist */}
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Capitulation Watchlist</h3>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Beaten-Down Watchlist <span style={{ fontSize: 11, fontWeight: 500, color: "var(--text-light)" }}>(capitulation)</span></h3>
                       <span style={{ fontSize: 10, color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
                         {(speculairBaskets.capitulation_watchlist || []).length} setups · Watch & Wait
                       </span>
