@@ -2545,7 +2545,9 @@ export default function Dashboard(){
     const chunks: string[][] = [];
     for (let i = 0; i < syms.length; i += 50) chunks.push(syms.slice(i, i + 50));
     Promise.all(chunks.map((c) =>
-      fetch(`/api/fmp?e=quote&symbol=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
+      // batch-quote (not quote) — FMP's quote endpoint is single-symbol; a comma list returns []
+      // so off-scan Speculair members (e.g. Visa "V", TSM, CCJ) showed no Current price.
+      fetch(`/api/fmp?e=batch-quote&symbols=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
     )).then((results) => {
       if (cancelled) return;
       const m: Record<string, number> = {};
@@ -2589,7 +2591,9 @@ export default function Dashboard(){
     const chunks: string[][] = [];
     for (let i = 0; i < syms.length; i += 50) chunks.push(syms.slice(i, i + 50));
     Promise.all(chunks.map((c) =>
-      fetch(`/api/fmp?e=quote&symbol=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
+      // batch-quote (not quote) — FMP's quote endpoint is single-symbol; a comma list returns []
+      // so off-scan Speculair members (e.g. Visa "V", TSM, CCJ) showed no Current price.
+      fetch(`/api/fmp?e=batch-quote&symbols=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
     )).then((results) => {
       if (cancelled) return;
       const m: Record<string, number> = {};
