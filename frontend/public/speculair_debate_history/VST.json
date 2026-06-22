@@ -45,15 +45,15 @@
     ],
     "scale": {
       "tier": "CORE",
-      "conviction": 40,
+      "conviction": 82,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Cheapest way to own the dispatchable+nuclear power every AI dollar pays for; ~41 GW in the two highest-load-growth US markets, ~3,800 MW of 20-yr nuclear PPAs (Meta/AWS).",
-      "rationale": "The single best risk/reward in the whole 45-name complex. Skeptic proved the bull's '+22% YoY' claim was STALE — VST is actually DOWN ~7.5% YoY, ~25% off its high — which cuts FOR the thesis: the re-rate has NOT fired here. Base $165 ~at spot, bull +22-31%, and the highest Skeptic cap in the cohort (62). This is the CORE I would seat at full weight today. Cap 62 honored; conviction 40.",
+      "rationale": "The single best risk/reward in the whole 45-name complex and a CORE franchise (~86): firm dispatchable + nuclear under 20-yr hyperscaler PPAs in the highest-load-growth US markets, plus the Cogentrix optionality excluded from guidance. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, and the correction cuts FOR the thesis — the bull's '+22% YoY / re-rate already fired' premise was FALSE; VST is actually DOWN ~7.5% YoY, ~25% off its high, i.e. the re-rate has NOT fired here — so only a ~4pt haircut. Base ~$165 ~at spot, bull +22-31%; the merchant tail and ~330% D/E are the offsets (in valuation_posture, not the conviction). This is the CORE I would seat at full weight today — enter_now_carry. [Honesty note: at ~$164 VST is FAIR to its own $160-170 SoP (+0.8%), NOT cheap on the absolute number — the 'cheap'/priority read is RELATIVE (cheapest of the power-gen cluster, ~26% off its 52wk high, below the 200-DMA), i.e. a drawdown-staging entry, not an absolute-SoP discount.]",
       "demand_durability": "Very high — firm dispatchable + nuclear power under 20-yr hyperscaler PPAs in load-growth markets; merchant tail and ~330% D/E are the offsets.",
-      "valuation_posture": "cheap",
+      "valuation_posture": "fair vs SoP ($160-170, +0.8%); cheap only relative (-26% off 52wk high, <200-DMA)",
       "would_seat": true,
-      "posture": "enter_now_carry",
+      "posture": "scale_in",
       "expected_return_pct": 0.8
     }
   }

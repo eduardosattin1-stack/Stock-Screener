@@ -44,12 +44,12 @@
       "stockanalysis.com (Jun 18, 2026 close): NVT $177.02, market cap $28.63B, forward P/E 36.67, 161.72M shares; net leverage 1.5x / net cash ~-$1.48B per Q1-2026 10-Q — price, multiple, share count and balance-sheet facts confirmed. https://stockanalysis.com/stocks/nvt/"
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 18,
+      "tier": "TACTICAL",
+      "conviction": 44,
       "basket": "B",
       "basket_label": "GRID",
       "role": "Electrical enclosures / connection & protection for data centers and power.",
-      "rationale": "Real exposure but catalyst FIRED, base $165 is ~7% below spot, ~1.8:1 against. Second-order/duplicative within the grid-component cluster. Wait. Cap 25 honored.",
+      "rationale": "Real DC exposure (infra 55% of sales, named design-ins with Siemens/Google) but commoditized, broad-industrial, and a contested #2/#3 liquid-cooling lane now directly encroached by Eaton's $9.5B Boyd deal — a TACTICAL-to-low-LEVER franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections minor (FCF lags earnings even more than stated — reinforces, not breaks), ~8pt haircut off a ~52 franchise. Catalyst FIRED, base ~$165 ~7% below spot; second-order, wait.",
       "demand_durability": "Medium-high — enclosures/protection bolted to DC build, but commoditized and broad-industrial.",
       "valuation_posture": "rich",
       "would_seat": false,

@@ -44,12 +44,12 @@
       "AAOI price ~$161.85 / market cap ~$13.0B on ~80.24M shares outstanding as of 2026-06-19 (stockanalysis.com / tradingeconomics, Jun 2026)"
     ],
     "scale": {
-      "tier": "PASS",
-      "conviction": 12,
+      "tier": "TACTICAL",
+      "conviction": 35,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "Transceiver/laser supplier mid-ramp; design-win-dependent second-tier optical.",
-      "rationale": "Risk/reward asymmetric to the DOWNSIDE (~2-3x more downside-to-bear than upside-to-bull), base $105 is ~35% below spot, requires a flawless H2 ramp + margin inflection + no design-loss. Skeptic cap 15. Weak fit, over-extended. Cap 15 honored.",
+      "rationale": "Genuine DataCom traction (+154% YoY = 54% of revenue) but design-win-dependent, never GAAP-profitable (sub-30% GM), and >70% concentrated in ~2 hyperscalers without the LTAs the leaders hold — a TACTICAL franchise at best. Skeptic verdict CONFIRMED_WITH_CORRECTIONS; the only correction strengthens the balance sheet (net cash ~$278M not ~$195M), an ~8pt haircut off a ~43 franchise. Over-extended (~26x EV/sales on a loss-making commodity vendor); the -19% drop on a guide-RAISE confirms a saturated multiple.",
       "demand_durability": "Medium — design-win-dependent, second-tier supplier without the LTAs the leaders have.",
       "valuation_posture": "rich",
       "would_seat": false,

@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "TACTICAL",
-      "conviction": 18,
+      "conviction": 35,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Domestic HALEU enrichment (the only US producer); $900M DOE task order + Oklo LOI.",
-      "rationale": "Strategically scarce (sole US HALEU enricher) but the load-bearing catalysts are non-binding (DOE order 'still needs finalizing'; Oklo is an LOI), base $150 ~22% below spot, downside -37 to -50%. Speculative on contract conversion. Wait. Cap 30 honored; conviction 18.",
+      "rationale": "Strategically scarce (sole US HALEU enricher, $3.9B backlog) — a real TACTICAL franchise on national-security scarcity, but revenue hinges on un-finalized contracts, so it stays speculative. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, and the correction cuts mildly FOR the name (Q1 revenue actually GREW ~5%, not flat; FY26 guide raised to $450-500M), so a ~8pt haircut off a ~42 franchise. The load-bearing catalysts are non-binding (DOE order needs a definitive agreement; Oklo is an LOI with 2029 deliveries), base ~$150 ~22% below spot; wait.",
       "demand_durability": "Low-now/high-optional — revenue hinges on un-finalized government/SMR contracts.",
       "valuation_posture": "rich",
       "would_seat": false,

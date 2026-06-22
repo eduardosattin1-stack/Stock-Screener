@@ -44,13 +44,13 @@
       "stockanalysis.com / consensus (June 2026): spot ~$206.83, ~91.6M shares, ~$19B market cap, forward P/E ~42.8x, avg analyst target ~$238 (+17%) — confirms the AI/nuclear re-rating is largely priced and the street is already bullish"
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 20,
+      "tier": "TACTICAL",
+      "conviction": 42,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Naval-nuclear + HALEU/microreactor component manufacturer; the established fuel/component arm behind the SMR wave.",
-      "rationale": "Real, profitable, established (unlike the SMR hopefuls) but catalyst SOFT_EXTENDED (HALEU at NRC-engagement, SMR volumes third-party-dependent), base $192 ~6% below spot, ~0.8:1 against. Quality but no asymmetry. Wait. Cap 20 honored.",
-      "demand_durability": "Medium-high — naval base is durable/defense-funded; the AI-SMR leg is third-party-deployment-dependent.",
+      "rationale": "Real, profitable, established (unlike the SMR hopefuls — $8.65B backlog, commercial rev +121%) — a genuine TACTICAL-to-low-LEVER franchise anchored by a durable defense-funded naval base. Skeptic verdict CONFIRMED_WITH_CORRECTIONS with a material AI-thesis fix: the Tennessee enrichment facility is HEU for the Navy (defense, ~2035 operational, NRC pre-application only), NOT commercial HALEU for AI-power — so it must come OUT of the priced-in AI optionality — a load-bearing ~14pt haircut off a ~55 franchise. The naval base is durable but the AI-SMR leg is third-party-deployment-dependent; base ~$192 ~6% below spot, no asymmetry; wait.",
+      "demand_durability": "Medium-high — naval base is durable/defense-funded; the AI-SMR leg is third-party-deployment-dependent and the TN enrichment is defense, not commercial.",
       "valuation_posture": "fair",
       "would_seat": false,
       "posture": "wait_for_weakness",

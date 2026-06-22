@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 24,
+      "conviction": 52,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "CopperEdge / FiberEdge active-copper + optical-DSP scale-up connectivity; the one PENDING_HARD optical catalyst in the basket.",
-      "rationale": "The ramp is still PENDING_HARD (not fired) and base SoP ~$160 is ~the spot — the only large-optical name priced at fair value with a forward catalyst. Real levered exposure; scale in on dips. Cap 35 honored; conviction 24 on cohort-correlation risk.",
+      "rationale": "Real levered franchise: the ACC/CopperEdge 1.6T ramp is still PENDING_HARD (not fired) and base SoP ~$160 is ~spot — the only large-optical name priced at fair value with a forward catalyst. Single-US-hyperscaler ACC concentration keeps it a LEVER not a CORE. Skeptic verdict CONFIRMED_WITH_CORRECTIONS with a material fix — the 'GAAP-unprofitable' bear pillar was wrong (GAAP turned positive +$26.6M in Q1 FY27) — which is a load-bearing correction, so a larger ~10pt haircut off a ~62 franchise. Scale in on dips.",
       "demand_durability": "High — active-copper + optical connectivity bolted to scale-up rack deployments; ramp still ahead, not behind.",
       "valuation_posture": "fair",
       "would_seat": false,

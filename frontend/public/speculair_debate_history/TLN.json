@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 25,
+      "conviction": 56,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Scarce grid-connected nuclear-IPP (2.2 GW Susquehanna) in supply-starved PJM; AWS PPA anchor.",
-      "rationale": "Real scarce-asset exposure but the AWS PPA catalyst FIRED (the $20s->$435 re-rate is spent), base $415 ~5% below spot, bull needs NEW signed GW. Duplicative of VST/CEG within nuclear-IPP. Wait. Cap 30 honored.",
+      "rationale": "Real scarce-asset franchise (2.2 GW Susquehanna, AWS 1,920 MW FTM through 2042, Cornerstone 2,451 MW pending) — a strong LEVER, duplicative of VST/CEG within nuclear-IPP and with thinner contracting/more leverage. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, the only correction is a cosmetic note-rate detail (the '1+ GW pipeline' is verified still UNSIGNED, reinforcing the bear), so a ~8pt haircut off a ~64 franchise. The AWS re-rate is spent; base ~$415 ~5% below spot; wait.",
       "demand_durability": "High — nuclear baseload in PJM, but more leverage and a thinner contracted book than CEG/VST.",
       "valuation_posture": "fair",
       "would_seat": false,

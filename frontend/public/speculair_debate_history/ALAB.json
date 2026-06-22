@@ -44,13 +44,13 @@
       "Sell-side consensus: median price target $257.50 (high $297, low $155); stock trades ~63% above median target; FY2026 revenue consensus ~$1.54B (simplywall.st / marketbeat, Jun 2026)"
     ],
     "scale": {
-      "tier": "TACTICAL",
-      "conviction": 18,
+      "tier": "LEVER",
+      "conviction": 50,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "Scorpio fabric/PCIe-retimer connectivity (UALink/NVLink-Fusion optionality); largest product line by YE-2026.",
-      "rationale": "Best operational franchise of the small-optical names but the Nasdaq-100-inclusion catalyst is SPENT and the stock trades at 65-80x ABOVE even the bull SoP — base $205 is ~51% below a ~$420 spot. Skeptic cap 18 forces TACTICAL regardless of quality. Cap 18 honored.",
-      "demand_durability": "High operationally but the valuation makes it a speculative expression — revenue is capex-bolted, the price is not.",
+      "rationale": "Best operational franchise of the small-optical names (rev +93% YoY, GM 76.4%) — a real LEVER on scale-up connectivity. Skeptic verdict CONFIRMED_WITH_CORRECTIONS with material concentration/valuation fixes (FIVE customers each >=12%, worse than stated; trades ~63% above the street median target), so a ~12pt haircut off a ~62 franchise. The extreme valuation (~264-281x trailing, ~51% above base SoP) is captured in valuation_posture, NOT the conviction number; the Nasdaq-100-inclusion catalyst is spent. Wait.",
+      "demand_durability": "High operationally but customer-concentrated (five accounts >=12%) — revenue is capex-bolted, the price is not.",
       "valuation_posture": "rich",
       "would_seat": false,
       "posture": "wait_for_weakness",

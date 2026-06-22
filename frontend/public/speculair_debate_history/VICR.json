@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "TACTICAL",
-      "conviction": 18,
+      "conviction": 40,
       "basket": "D",
       "basket_label": "PWR-SEMI",
       "role": "High-density 48V/factorized power-conversion modules for AI racks; differentiated but small and contested.",
-      "rationale": "Real differentiated tech but the run already happened — base $215 is ~34% below a $328 spot, ~6:1 AGAINST on the base case, catalyst FIRED. Speculative/valuation-stretched at this price. Cap 25 honored; conviction 18 on the inverted asymmetry.",
+      "rationale": "Real differentiated tech (factorized power, ITC exclusion order, B:B>2.0, backlog +70% QoQ) but small and losing socket share to MPWR/merchant silicon is the live franchise risk — a TACTICAL expression. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, and the headline correction cuts FOR the name (the bear's '$27.3M tax benefit' earnings-quality kill was a ~100x digit-transposition; Q1 was operationally earned), so a small ~8pt haircut off a ~48 franchise. The run already happened (base ~$215 is ~34% below spot, ~107x P/E) — that lives in valuation_posture; wait.",
       "demand_durability": "Medium — AI-rack power modules, but losing socket share to MPWR/merchant silicon is the live risk.",
       "valuation_posture": "rich",
       "would_seat": false,

@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 24,
+      "conviction": 66,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "Custom-silicon + interconnect (DCI/optical DSP) franchise; data center 76% of mix, the ASIC/interconnect toll alongside the merchant-GPU complex.",
-      "rationale": "Elite franchise but the catalyst FIRED (+300% TTM, ~30% above the $239 street target). Skeptic CONFIRMED the PASS with no fact-break — pure valuation/timing. Strong levered exposure, second-order to optics, size smaller and wait. Cap 25 honored.",
+      "rationale": "Elite franchise — DC 76% of mix, raised interconnect guide >70%, DCI to ~$1B run-rate FY28 — a strong LEVER, second-order to the pure optical node and more competitive on custom ASIC, which keeps it below the CORE band. Skeptic verdict CONFIRMED (no fact broke, the PASS is pure valuation/timing: +300% TTM, ~30% above the ~$239 street target), so NO haircut — the conviction reads at the full ~66 franchise score. The richness is captured in valuation_posture/expected_return, not the conviction number; size smaller and wait for the flush.",
       "demand_durability": "High — data center 76% of revenue, custom AI silicon + interconnect, but more competitive/cyclical than the pure optical node.",
       "valuation_posture": "rich",
       "would_seat": false,

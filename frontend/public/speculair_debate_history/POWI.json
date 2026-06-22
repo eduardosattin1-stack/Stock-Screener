@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "TACTICAL",
-      "conviction": 18,
+      "conviction": 35,
       "basket": "D",
       "basket_label": "PWR-SEMI",
       "role": "GaN aux-power for NVDA Kyber 800VDC reference designs; design-ins not yet booked production.",
-      "rationale": "Real aux-socket design-ins but they are reference designs / aux sockets, base $61 is ~30% below an $87 spot, ~0.4:1 to base. Speculative/stretched relative to booked revenue. Wait. Cap 25 honored; conviction 18.",
+      "rationale": "Real aux-socket design-ins (DER-1110/DER-1114 for Kyber) but they are reference designs / 15-35W aux 'housekeeping' sockets, not the main 800V power, with near-zero DC revenue today and main-power GaN 'a couple years out' — a speculative TACTICAL franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections minor and bear-reinforcing (gross margin even softer; one of several NVIDIA suppliers, not sole-source), ~8pt haircut off a ~43 franchise. Base ~$61 is ~30% below spot; wait.",
       "demand_durability": "Medium — aux-power design-ins are early and not the primary 800V socket; broad-consumer base.",
       "valuation_posture": "rich",
       "would_seat": false,

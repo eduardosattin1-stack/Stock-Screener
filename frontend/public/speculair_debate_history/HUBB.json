@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 22,
+      "conviction": 48,
       "basket": "B",
       "basket_label": "GRID",
       "role": "Utility + electrical solutions (grid components, 765kV HV); DC growth raised 15%->25%+.",
-      "rationale": "High-quality compounder but catalyst SOFT_EXTENDED/fired, base $483 is ~1% below spot — fully priced, ~1:1 risk/reward, no asymmetry. Hold for weakness. Cap 25 honored.",
+      "rationale": "High-quality grid-components compounder with durable utility exposure (Utility Solutions adj. margin 21.8%, +190bps) — a solid LEVER, though the data-center sleeve is margin-dilutive at the segment level. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections modest (the +40% DC and 'torque' story is overstated; the quality sits in the grid book), so a ~10pt haircut off a ~58 franchise. Catalyst SOFT_EXTENDED/fired, base ~$483 ~1% below spot — fully priced, no asymmetry; hold for weakness.",
       "demand_durability": "High — utility/grid capex, broad and durable but not exclusively AI-driven.",
       "valuation_posture": "fair",
       "would_seat": false,

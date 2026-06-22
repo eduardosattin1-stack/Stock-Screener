@@ -44,12 +44,12 @@
       "Navitas/NVIDIA MGX 800-VDC partner ceremony, GlobeNewswire 2026-06-03 — names the NVIDIA MGX 800-VDC ecosystem partners; Allegro absent, corroborating non-anchor status."
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 18,
+      "tier": "TACTICAL",
+      "conviction": 38,
       "basket": "D",
       "basket_label": "PWR-SEMI",
-      "role": "Magnetic sensing + power-conversion; DC guided 16-17% of Q1 FY27 sales (20-25% sequential).",
-      "rationale": "Real DC-converts ramp (PENDING_HARD component) but the AI re-rate partly fired, base $55 ~5% below spot, asymmetry to the downside on an auto air-pocket. Second-order. Wait. Cap 25 honored; conviction 18 on the auto-cyclical drag.",
+      "role": "Magnetic sensing + power-conversion; DC a record 14% of Q4 sales, ramping.",
+      "rationale": "Real DC-converts ramp (record 14% of Q4 sales) but the larger base is cyclical auto-sensing, and ALGM is NOT a named NVIDIA 800V ecosystem partner (it ships components in, non-exclusively) — a second-order TACTICAL franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, and the corrections REINFORCE the bear (non-anchor confirmed; the 16-17% DC-mix guide is call color, not a filed figure), so a ~8pt haircut off a ~44 franchise. The AI re-rate partly fired; second-order, wait.",
       "demand_durability": "Medium — DC ramp is real but auto-sensing is the larger, more cyclical base.",
       "valuation_posture": "fair",
       "would_seat": false,

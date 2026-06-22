@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 28,
+      "conviction": 68,
       "basket": "B",
       "basket_label": "GRID",
       "role": "Closest pure-play on power-distribution + liquid cooling, reference-designed alongside NVDA GB200/GB300 rack-scale.",
-      "rationale": "The single most-levered, most-correlated AI-capex name in the cohort (52-wk $110->$380, cap +197%). Catalyst FIRED, base $260 is ~22% below a $333 spot, ~0.6:1 against. Strong levered toll but already-ran — size smaller, wait. Cap 40 honored; conviction 28 on the steep downside tail.",
+      "rationale": "The single most-levered, most-correlated AI-capex name in the cohort (backlog $15.0B, book-to-bill ~2.9x, FY26 guide raised) — a top-of-band LEVER on franchise centrality, just below the diversified grid CORE because its tightest single-factor correlation cuts both ways (own ONE of VRT/ETN). Skeptic verdict CONFIRMED (no fact broke; the only standing point is valuation/multiple-compression, and the bear's own air-pocket scenario is currently contradicted by rising hyperscaler capex), so NO haircut — conviction reads at the full ~68 franchise. Already-ran; base ~$260 is ~22% below spot, so size smaller and wait.",
       "demand_durability": "Very high — but the tightest single-factor AI-capex correlation of any name here (cuts both ways).",
       "valuation_posture": "rich",
       "would_seat": false,

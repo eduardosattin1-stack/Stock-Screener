@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "PASS",
-      "conviction": 12,
+      "conviction": 30,
       "basket": "B",
       "basket_label": "GRID",
       "role": "T&D + commercial/industrial electrical contractor (grid-connection labor).",
-      "rationale": "Skeptic REFUTED the bear's stale '$304 median target' anchor (consensus is actually ~$455), which CUTS FOR the name — but the residual verified bear points (13.4% GM partly non-durable from change-orders, book-to-bill <1.0x, base $330 ~28% below spot) stand. A REFUTED verdict forces TACTICAL/PASS; given B2B<1.0x and the -28% base gap I take PASS. Cap 45 (not binding here).",
+      "rationale": "Skeptic verdict REFUTED — the bear's load-bearing '$304 median target' anchor is FALSE (current consensus ~$442-455, targets bracket/exceed the price), which cuts FOR the name. But a REFUTED verdict forces TACTICAL/PASS and a sub-35 score regardless of the underlying franchise. The residual VERIFIED bear points stand: 13.4% GM partly non-durable (favorable change-orders/closeouts), book-to-bill <1.0x (decelerating backlog), ~27x EV/EBITDA top-of-cohort, base ~$330 ~28% below spot, full single-factor correlation. With B2B<1.0x and the -28% base gap I take TACTICAL at the low end.",
       "demand_durability": "Medium — grid-connection labor, but backlog momentum is decelerating (B2B <1.0x).",
       "valuation_posture": "rich",
       "would_seat": false,

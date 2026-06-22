@@ -44,12 +44,12 @@
       "Q2 FY26 release reconciliation — orders +30% organic vs FY26 organic revenue guide only ~6%: the orders-to-revenue conversion gap is real and management-acknowledged, confirming the catalyst is a deferred, customer-controlled (hyperscaler-capex-gated) option, not current revenue."
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 22,
+      "tier": "TACTICAL",
+      "conviction": 44,
       "basket": "C",
       "basket_label": "THERMAL",
       "role": "Building/HVAC controls with a DC backlog leg; orders +30%, backlog $20.0B (+26%).",
-      "rationale": "Quality re-rate but catalyst SOFT_EXTENDED/fired into all-time highs, base $145 ~at spot, ~1:1. The DC leg is a minority of a broad buildings business. Wait. Cap 25 honored.",
+      "rationale": "Quality re-rate (orders +30% organic, backlog $20.0B) but the DC leg is a minority of a broad buildings business — a TACTICAL-to-low-LEVER franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS with a material per-region fix (Americas margin expanded +100bp not +310bp; the NVIDIA/thermal collaboration and 70%-conversion claims are transcript color, not in the release), so a ~10pt haircut off a ~54 franchise. Catalyst SOFT_EXTENDED/fired into all-time highs, base ~$145 ~at spot (~1:1); wait.",
       "demand_durability": "Medium — building controls/HVAC, DC a growing but minority slice.",
       "valuation_posture": "fair",
       "would_seat": false,

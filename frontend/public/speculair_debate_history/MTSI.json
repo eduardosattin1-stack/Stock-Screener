@@ -44,12 +44,12 @@
       "SEC Form 4 filings 2026 (via StockTitan): CEO Daly 15,828sh (May-29), dir Ribar 1,623sh @ $361.84 (May-11), Summit/Chung-linked 43,268sh @ $378.20 (May-14), SVP Hwang 3,718sh (Apr-30), Ocampo trusts 315,272sh (Feb-24/25) — insiders net sellers into the run"
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 18,
+      "tier": "TACTICAL",
+      "conviction": 42,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "RF/analog + optical-DSP/laser-driver components into data-center optics.",
-      "rationale": "Real exposure but catalyst FIRED, ~4:1 against on the base case (-45% bear vs +11% bull), base $310 is ~21% below spot. Duplicative of the optical-component cluster. Wait. Cap 18 honored.",
+      "rationale": "Genuine optical-component exposure (DC +14.5% q/q, record 1.5:1 book-to-bill) but a broad RF/defense/industrial mix dilutes the pure-capex bolt and it is duplicative of the optical-component cluster — a TACTICAL franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections trivial (slightly stale multiples, directionally identical), so a small ~8pt haircut off a ~46 franchise. Catalyst FIRED, ~4:1 against on the base case; wait.",
       "demand_durability": "Medium-high — optical-component supplier, but broader RF/defense/industrial mix dilutes the pure-capex bolt.",
       "valuation_posture": "rich",
       "would_seat": false,

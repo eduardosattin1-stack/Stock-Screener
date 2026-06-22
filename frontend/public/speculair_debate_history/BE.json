@@ -44,13 +44,13 @@
       "Live market data (stockanalysis.com / Robinhood, 2026-06-21): price ~$329, market cap ~$93.6B, ~284.4M shares, forward P/E ~116x, EV/EBITDA ~320x — valuation-outlier bear conclusion VERIFIED (multiple is extreme even within the AI-power cohort); bear's ~142x fwd P/E figure overstated vs the ~116x live read."
     ],
     "scale": {
-      "tier": "TACTICAL",
-      "conviction": 15,
+      "tier": "PASS",
+      "conviction": 30,
       "basket": "E",
       "basket_label": "POWER-GEN",
-      "role": "Solid-oxide fuel-cell on-site power for data centers; behind-the-meter generation hopeful.",
-      "rationale": "Real DC fuel-cell traction but DEEPLY unfavorable at spot — base $167 is ~49% below a $329 spot, downside -55% to -78%, upside only in the bull-perfection case. Catalyst FIRED. Speculative/valuation-stretched. Wait. Cap 20 honored; conviction 15.",
-      "demand_durability": "Medium — DC fuel cells are a real niche, but unproven economics and the price embeds perfection.",
+      "role": "Solid-oxide fuel-cell on-site power for data centers; behind-the-meter generation hopeful (Oracle 2.8 GW).",
+      "rationale": "Real DC fuel-cell traction (Oracle up to 2.8 GW, ~$20B backlog, FY26 guide raised) but unproven economics and a price that embeds perfection keep it a TACTICAL franchise. Skeptic verdict CONFIRMED_WITH_CORRECTIONS with a material balance-sheet flip: the bull's '~$461M net cash' is WRONG — the Q1 10-Q shows ~$84M NET DEBT — so the 'self-funds the scale-up without dilution' pillar is weaker and dilution risk higher — a load-bearing ~15pt haircut off a ~42 franchise. Deeply unfavorable at spot (base ~$167 is ~49% below spot, ~320x EV/EBITDA); wait.",
+      "demand_durability": "Medium — DC fuel cells are a real niche, but unproven economics and a net-debt balance sheet that embeds perfection.",
       "valuation_posture": "rich",
       "would_seat": false,
       "posture": "wait_for_weakness",
