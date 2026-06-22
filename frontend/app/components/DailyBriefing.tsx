@@ -1,6 +1,9 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { Activity, Clock, AlertTriangle, Zap, RefreshCw, BarChart2, Shield, Target } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from "next/navigation";
+import { Activity, RefreshCw, BarChart2, Target, Radar, Calendar, TrendingUp, TrendingDown, Award } from 'lucide-react';
+import { useAuth } from "../AuthProvider";
+import { getPortfolio } from "../portfolioStore";
 
 // ── Regime Pulse (shared) ───────────────────────────────────────────────────
 // Rich macro card used both inside the Daily Briefing (default view) and
@@ -80,9 +83,88 @@ export function RegimePulseCard({ macro }: { macro?: any }) {
   );
 }
 
-export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?: string | null; macroScore?: number | null; macro?: any }) {
+// ── On Your Radar — personalized, client-computed ───────────────────────────
+// Earnings within 10 days + >3% intraday moves on the names the user actually
+// holds (per-user Firestore) or watches (localStorage). These are the only two
+// data stores the server route can't reach, so this card is built in the client.
+interface RadarItem { sym: string; kind: "earnings" | "move"; tag: "HELD" | "WATCH"; dte?: number; day?: number; name?: string; }
+
+function useRadarItems(stocks: any[] | undefined, uid: string | undefined, nonce: number) {
+  const [items, setItems] = useState<RadarItem[]>([]);
+  const [counts, setCounts] = useState<{ held: number; watch: number }>({ held: 0, watch: 0 });
+  const [status, setStatus] = useState<"loading" | "empty-none" | "empty-quiet" | "ready">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setStatus("loading");
+      // Watchlist (localStorage) — flatten symbols across all baskets.
+      let watch: string[] = [];
+      try {
+        const raw = typeof window !== "undefined" ? localStorage.getItem("cb_watchlist_baskets") : null;
+        if (raw) watch = (JSON.parse(raw) || []).flatMap((b: any) => b?.symbols || []);
+      } catch { /* ignore */ }
+      // Holdings (per-user Firestore).
+      let held: string[] = [];
+      try { if (uid) held = ((await getPortfolio(uid)).positions || []).map((p) => p.symbol); } catch { /* ignore */ }
+
+      const heldSet = new Set(held.map((s) => String(s).toUpperCase()));
+      const watchSet = new Set(watch.map((s) => String(s).toUpperCase()));
+      const union = Array.from(new Set([...heldSet, ...watchSet]));
+      if (cancelled) return;
+      setCounts({ held: heldSet.size, watch: watchSet.size });
+      if (!union.length) { setStatus("empty-none"); setItems([]); return; }
+
+      // Live day-change in batches of 12 (the /api/quotes cap).
+      const quotes: Record<string, any> = {};
+      for (let i = 0; i < union.length; i += 12) {
+        const batch = union.slice(i, i + 12);
+        try {
+          const r = await fetch(`/api/quotes?symbols=${encodeURIComponent(batch.join(","))}`);
+          const d = await r.json();
+          for (const q of d?.quotes || []) quotes[String(q.symbol).toUpperCase()] = q;
+        } catch { /* ignore */ }
+      }
+      // Earnings / sector / name from the loaded scan universe.
+      const byScan: Record<string, any> = {};
+      for (const s of stocks || []) byScan[String(s.symbol).toUpperCase()] = s;
+
+      const out: RadarItem[] = [];
+      for (const sym of union) {
+        const q = quotes[sym];
+        const sc = byScan[sym];
+        const tag: "HELD" | "WATCH" = heldSet.has(sym) ? "HELD" : "WATCH";
+        const name = q?.name || sc?.company_name;
+        const dte = sc?.days_to_earnings;
+        if (dte != null && dte >= 0 && dte <= 10) out.push({ sym, kind: "earnings", tag, dte, name });
+        const day = q?.day;
+        if (day != null && Math.abs(day) >= 3) out.push({ sym, kind: "move", tag, day, name });
+      }
+      // Earnings first (soonest), then moves (biggest).
+      out.sort((a, b) => {
+        const ak = a.kind === "earnings" ? 0 : 1, bk = b.kind === "earnings" ? 0 : 1;
+        if (ak !== bk) return ak - bk;
+        if (a.kind === "earnings") return (a.dte ?? 0) - (b.dte ?? 0);
+        return Math.abs(b.day ?? 0) - Math.abs(a.day ?? 0);
+      });
+      if (cancelled) return;
+      setItems(out);
+      setStatus(out.length ? "ready" : "empty-quiet");
+    })();
+    return () => { cancelled = true; };
+  }, [stocks, uid, nonce]);
+
+  return { items, counts, status };
+}
+
+export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macroRegime?: string | null; macroScore?: number | null; macro?: any; stocks?: any[] }) {
+  const router = useRouter();
+  const { user } = useAuth();
   const [briefing, setBriefing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [nonce, setNonce] = useState(0);
+
+  const radar = useRadarItems(stocks, user?.uid, nonce);
 
   useEffect(() => {
     // Prefer the authoritative scan-macro regime/score (so Regime Pulse matches the
@@ -99,7 +181,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
     if (macroRegime) { load(macroRegime); }
     else { const t = setTimeout(() => { if (!cancelled) load(null); }, 1800); return () => { cancelled = true; clearTimeout(t); }; }
     return () => { cancelled = true; };
-  }, [macroRegime, macroScore]);
+  }, [macroRegime, macroScore, nonce]);
 
   if (loading) {
     return (
@@ -113,17 +195,13 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
     return null;
   }
 
-  const {
-    headline,
-    regime_pulse,
-    portfolio_pulse,
-    active_strategy,
-    surprising_movers,
-    system_pulse,
-    thermometer,
-    debate,
-    miss
-  } = briefing;
+  const { headline, generated_at, regime_pulse, model_focus, basket_pulse, system_pulse, thermometer, debate } = briefing;
+
+  const asOf = (() => {
+    if (!generated_at) return null;
+    const d = new Date(generated_at);
+    return Number.isNaN(d.getTime()) ? null : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  })();
 
   const renderThermoItem = (label: string, data: any) => {
     if (!data) return null;
@@ -144,13 +222,27 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
     );
   };
 
+  const tagChip = (tag: "HELD" | "WATCH") => (
+    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.08em", color: tag === "HELD" ? "var(--green)" : "var(--lavender)", background: tag === "HELD" ? "var(--green-light)" : "var(--purple-light)", padding: "1px 5px", borderRadius: 3 }}>{tag}</span>
+  );
+
   return (
     <div style={{ marginBottom: 48, background: "var(--bg-surface)", borderBottom: "1px solid var(--border)", padding: "32px 48px", borderRadius: "0 0 16px 16px" }}>
       {/* ── HEADLINE STRIP & THERMOMETER ── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 16, maxWidth: "65%" }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.18em", color: "var(--green)", textTransform: "uppercase", fontWeight: 700, whiteSpace: "nowrap" }}>
-            Daily Briefing
+          <div style={{ display: "flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.18em", color: "var(--green)", textTransform: "uppercase", fontWeight: 700 }}>
+              Daily Briefing
+            </span>
+            {asOf && (
+              <button
+                onClick={() => setNonce((n) => n + 1)}
+                title="Refresh briefing"
+                style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>
+                <RefreshCw size={10} /> as of {asOf}
+              </button>
+            )}
           </div>
           <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, fontWeight: 300, fontStyle: "italic", color: "var(--text)", lineHeight: 1.3 }}>
             {headline}
@@ -168,9 +260,9 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
         )}
       </div>
 
-      {/* ── 4-CARD GRID ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1 }}>
-        
+      {/* ── 3-CARD GRID ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1 }}>
+
         {/* Card 1: Regime pulse */}
         <div style={{ background: "var(--bg)", padding: 24, border: "1px solid var(--border)", borderRadius: "12px 0 0 12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
@@ -189,89 +281,107 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
           <RegimePulseDetail macro={macro} />
         </div>
 
-        {/* Card 2: Portfolio pulse */}
-        <div style={{ background: "var(--bg)", padding: 24, borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Shield size={14} color="var(--text-muted)" />
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Portfolio Pulse</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: portfolio_pulse.pnl_delta_pct >= 0 ? "var(--green)" : "var(--red)" }}>
-              {portfolio_pulse.pnl_delta_pct > 0 ? "+" : ""}{portfolio_pulse.pnl_delta_pct}%
+        {/* Card 2: On Your Radar (personalized) */}
+        <div style={{ background: "var(--bg)", padding: 24, borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Radar size={14} color="var(--green)" />
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>On Your Radar</span>
             </div>
-            <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>vs yesterday</div>
+            {(radar.counts.held > 0 || radar.counts.watch > 0) && (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>{radar.counts.held} held · {radar.counts.watch} watch</span>
+            )}
           </div>
-          <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>
-            <span style={{ color: "var(--red)", fontWeight: 600 }}>{portfolio_pulse.triggers_count} trigger{portfolio_pulse.triggers_count !== 1 ? 's' : ''}:</span> {portfolio_pulse.triggers_text}
-          </div>
-          <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", borderTop: "1px dashed var(--border)", paddingTop: 12 }}>
-            <strong style={{ color: "var(--amber)", fontWeight: 600 }}>{portfolio_pulse.downgrades_count} downgrade{portfolio_pulse.downgrades_count !== 1 ? 's' : ''}:</strong> {portfolio_pulse.downgrades_text}
-          </div>
+
+          {radar.status === "loading" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
+              <RefreshCw size={12} style={{ animation: "spin 2s linear infinite" }} /> Scanning your names…
+            </div>
+          )}
+          {radar.status === "empty-none" && (
+            <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+              Add holdings or build a watchlist and this card will surface earnings dates and big moves on your names.
+            </div>
+          )}
+          {radar.status === "empty-quiet" && (
+            <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+              Nothing pressing — no earnings within 10 days and no moves over 3% across your {radar.counts.held + radar.counts.watch} name{radar.counts.held + radar.counts.watch !== 1 ? "s" : ""} today.
+            </div>
+          )}
+          {radar.status === "ready" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {radar.items.slice(0, 5).map((it, i) => (
+                <div key={`${it.sym}-${it.kind}-${i}`} onClick={() => router.push(`/stock/${encodeURIComponent(it.sym)}`)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                  {it.kind === "earnings" ? <Calendar size={12} color="var(--amber)" style={{ flexShrink: 0 }} /> : <TrendingUp size={12} color={(it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)"} style={{ flexShrink: 0 }} />}
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{it.sym}</span>
+                  {tagChip(it.tag)}
+                  <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: it.kind === "earnings" ? "var(--amber)" : (it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                    {it.kind === "earnings" ? (it.dte === 0 ? "Earnings today" : `Earnings ${it.dte}d`) : `${(it.day ?? 0) >= 0 ? "+" : ""}${(it.day ?? 0).toFixed(2)}%`}
+                  </span>
+                </div>
+              ))}
+              {radar.items.length > 5 && (
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: 2 }}>+{radar.items.length - 5} more on your names</div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Card 3: Active strategy lens */}
-        <div style={{ background: "var(--bg)", padding: 24, borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", borderLeft: "1px solid var(--border)" }}>
+        {/* Card 3: Model Focus — weekly pulse: NEW D9/D10 model signals + weekly hot sector */}
+        <div style={{ background: "var(--bg)", padding: 24, border: "1px solid var(--border)", borderRadius: "0 12px 12px 0" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Target size={14} color="var(--lavender)" />
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Active Strategy</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Model Focus</span>
             </div>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--lavender)", background: "var(--purple-light)", padding: "2px 6px", borderRadius: 4 }}>{active_strategy.name}</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--lavender)", background: "var(--purple-light)", padding: "2px 6px", borderRadius: 4, letterSpacing: "0.1em" }}>WEEKLY</span>
           </div>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {active_strategy.top_picks.map((pick: any) => (
-              <div key={pick.symbol} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)" }}>
-                  {pick.symbol}
-                  {pick.is_new && <span style={{ fontSize: 9, color: "var(--amber)", marginLeft: 6, fontWeight: 500 }}>NEW</span>}
-                </span>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--green)", fontWeight: 700 }}>{pick.score}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12 }}>
-            Avg coverage: {active_strategy.avg_coverage}
-          </div>
-        </div>
 
-        {/* Card 4: Surprising movers */}
-        <div style={{ background: "var(--bg)", padding: 24, border: "1px solid var(--border)", borderRadius: "0 12px 12px 0", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-              <Zap size={14} color="var(--green)" />
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Surprising Movers</span>
-            </div>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {surprising_movers.map((mover: any, idx: number) => (
-                <div key={idx}>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>
-                    {mover.symbol} {mover.delta && <span style={{ color: mover.neg ? "var(--red)" : "var(--green)", marginLeft: 6 }}>{mover.delta}</span>}
-                    {mover.evStr && <span style={{ color: mover.evNeg ? "var(--red)" : "var(--green)", marginLeft: 6, fontWeight: 600 }}>{mover.evStr}</span>}
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 10 }}>New D9/D10 signals</div>
+          {model_focus?.picks?.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+              {model_focus.picks.map((p: any) => (
+                <div key={p.symbol} onClick={() => router.push(`/stock/${encodeURIComponent(p.symbol)}`)} style={{ cursor: "pointer" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{p.symbol}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--lavender)", background: "var(--purple-light)", padding: "1px 5px", borderRadius: 3 }}>D{p.decile}</span>
+                    {p.evStr && <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: p.evNeg ? "var(--red)" : "var(--green)" }}>{p.evStr}</span>}
                   </div>
-                  <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4, fontFamily: "var(--font-sans)" }}>{mover.reason}</div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1 }}>{p.probLabel} {Math.round(p.prob * 100)}%{p.peak > 0.5 ? ` · peaked +${p.peak}%` : ""}</div>
                 </div>
               ))}
             </div>
-          </div>
-          <div style={{ marginTop: 24 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 8 }}>
-              <RefreshCw size={12} /> Live tracking: <strong style={{ color: "var(--green)" }}>{system_pulse.live_mtd} MTD</strong> vs SPY {system_pulse.spy_mtd}
+          ) : (
+            <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+              No new D9/D10 signals entered this week.
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-              <BarChart2 size={12} /> Avg coverage: {system_pulse.avg_coverage}
+          )}
+
+          {model_focus?.hot_sector && (
+            <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+              Hot sector{model_focus.hot_sector.is_week ? " (1wk)" : ""}: <b style={{ color: "var(--text)" }}>{model_focus.hot_sector.name}</b> <span style={{ color: model_focus.hot_sector.neg ? "var(--red)" : "var(--green)" }}>{model_focus.hot_sector.neg ? "" : "+"}{model_focus.hot_sector.week}%</span>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* ── IDEAS TESTING (Reasons to act/wait & Paper trade loss) ── */}
+      {/* ── SYSTEM DEBATE & SYSTEM MISS ── */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, marginTop: 32 }}>
-        
+
         {/* Opposing One-Liners */}
         <div style={{ background: "var(--bg)", padding: 20, borderRadius: 8, border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 4 }}>System Debate</div>
+          {debate.new_tickers?.length > 0 && (
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginBottom: 6 }}>New to the apex — tap to read the debate</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {debate.new_tickers.slice(0, 8).map((t: string) => (
+                  <button key={t} onClick={() => router.push(`/stock/${encodeURIComponent(t)}?tab=debate`)} style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--green)", background: "var(--green-light)", border: "none", borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}>{t}</button>
+                ))}
+                {debate.new_tickers.length > 8 && <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-light)", alignSelf: "center" }}>+{debate.new_tickers.length - 8} more</span>}
+              </div>
+            </div>
+          )}
           <div style={{ display: "flex", gap: 12 }}>
             <div style={{ flex: 1, paddingRight: 16, borderRight: "1px solid var(--border-subtle)" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--green)", marginRight: 8 }}>ACT</span>
@@ -282,20 +392,50 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
               <span style={{ fontSize: 13, color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>{debate.wait}</span>
             </div>
           </div>
+          {/* Live-tracking footer (system pulse) */}
+          <div style={{ display: "flex", gap: 20, borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 4 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
+              <RefreshCw size={12} /> Live tracking: <strong style={{ color: "var(--green)" }}>{system_pulse.live_mtd} MTD</strong> vs SPY {system_pulse.spy_mtd}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
+              <BarChart2 size={12} /> {system_pulse.avg_coverage}
+            </div>
+          </div>
         </div>
 
-        {/* What the model got wrong */}
+        {/* 12-basket pulse — leader / laggard / top single name across the methodology baskets */}
         <div style={{ background: "var(--bg)", padding: 20, borderRadius: 8, border: "1px solid var(--border)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>System Miss</span>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--red)", background: "var(--red-light)", padding: "2px 6px", borderRadius: 4 }}>PAPER LOSS</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Basket Pulse</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>{basket_pulse?.total ?? 12} baskets</span>
           </div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
-            {miss.symbol} <span style={{ color: "var(--red)", marginLeft: 8 }}>{miss.loss_pct > 0 ? "+" : ""}{miss.loss_pct}%</span>
-          </div>
-          <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)" }}>
-            {miss.reason}
-          </div>
+          {basket_pulse && (basket_pulse.leader || basket_pulse.top_name) ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+              {basket_pulse.leader && (
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><TrendingUp size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--green)" }} />Leader: <b style={{ color: "var(--text)" }}>{basket_pulse.leader.label}</b></span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.leader.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.leader.ret >= 0 ? "+" : ""}{basket_pulse.leader.ret}%</span>
+                </div>
+              )}
+              {basket_pulse.laggard && (
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><TrendingDown size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--red)" }} />Laggard: <b style={{ color: "var(--text)" }}>{basket_pulse.laggard.label}</b></span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.laggard.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.laggard.ret >= 0 ? "+" : ""}{basket_pulse.laggard.ret}%</span>
+                </div>
+              )}
+              {basket_pulse.top_name && (
+                <div onClick={() => router.push(`/stock/${encodeURIComponent(basket_pulse.top_name.sym)}`)} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, cursor: "pointer" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><Award size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--amber)" }} />Top name: <b style={{ color: "var(--text)" }}>{basket_pulse.top_name.sym}</b></span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.top_name.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.top_name.ret >= 0 ? "+" : ""}{basket_pulse.top_name.ret}%</span>
+                </div>
+              )}
+              <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 10, marginTop: 2, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+                {basket_pulse.green}/{basket_pulse.total} baskets green{basket_pulse.leader?.since ? ` · since ${basket_pulse.leader.since}` : ""}{basket_pulse.top_name?.since ? ` · top name since ${basket_pulse.top_name.since}` : ""}
+              </div>
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>Basket tracking not available yet.</div>
+          )}
         </div>
 
       </div>

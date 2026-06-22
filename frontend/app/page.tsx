@@ -3064,7 +3064,7 @@ export default function Dashboard(){
 
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
 
-      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} macro={data?.macro} />
+      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} macro={data?.macro} stocks={stocks} />
 
       <div style={{fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 16, display: "flex", alignItems: "center", gap: 6}}>
 

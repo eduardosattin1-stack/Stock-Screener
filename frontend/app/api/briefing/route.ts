@@ -7,7 +7,11 @@ import { NextResponse } from "next/server";
 //   /api/macro                      fallback regime + rates/credit/VIX posture
 //   /api/sectors                    index thermometer + hottest GICS sector
 //   /api/performance/method-tracks  D8+ model-calibrated picks (decile, p20, EV) + worst miss
-//   /speculair_baskets.json         apex basket NAV, debate stats, top picks, watchlist
+//   /speculair_baskets.json         apex basket NAV, debate stats, top picks
+//
+// The personalized "On Your Radar" card (earnings + big moves on the user's held /
+// watched names) is computed CLIENT-SIDE in DailyBriefing.tsx — portfolio lives in
+// per-user Firestore and the watchlist in localStorage, neither reachable here.
 
 export const runtime = "nodejs";
 
@@ -40,11 +44,12 @@ export async function GET(req: Request) {
     }
   };
 
-  const [macro, sectors, methodTracks, spec] = await Promise.all([
+  const [macro, sectors, methodTracks, spec, apexTrk] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/method-tracks", { regimes: {} }),
     get("/speculair_baskets.json", {}),
+    get("/speculair_apex_tracking.json", {}),
   ]);
 
   // ── Index thermometer + market sentiment (from /api/sectors) ──
@@ -81,38 +86,10 @@ export async function GET(req: Request) {
     action: `Rates ${rd.rates || "neutral"}, credit ${rd.credit || "stable"}, VIX ${vix ?? "—"}. ${stance}`,
   };
 
-  // ── Portfolio Pulse (Apex basket NAV — from speculair apex_tracking) ──
+  // ── Apex basket stats (NAV / inception) — used by the headline + Model Focus ──
   const at = spec?.apex_tracking || {};
-  const hist: any[] = at.history || [];
-  const lastRet = hist.length ? num(hist[hist.length - 1].ret) * 100 : num(at.since_inception_pct);
   const sinceInc = num(at.since_inception_pct);
   const nOpen = num(at.n_open, (spec?.apex_basket || []).length);
-  const nClosed = num(at.n_closed);
-  const wr = at.win_rate;
-  const portfolio_pulse = {
-    pnl_delta_pct: r2(lastRet),
-    triggers_count: 0,
-    triggers_text: `${nOpen} names held since ${at.inception_date || "inception"} · ${sign(sinceInc)}${r2(sinceInc)}% since inception (NAV $${r2(num(at.nav, 100))}).`,
-    downgrades_count: nClosed,
-    downgrades_text:
-      nClosed > 0
-        ? `${nClosed} rotated out · win rate ${wr != null ? Math.round(num(wr) * 100) + "%" : "—"}.`
-        : "No rotations yet — director re-runs on its monthly cadence.",
-  };
-
-  // ── Active Strategy (Apex top conviction — from speculair apex_basket) ──
-  const apex: any[] = (spec?.apex_basket || [])
-    .slice()
-    .sort((a: any, b: any) => num(b.conviction) - num(a.conviction));
-  const active_strategy = {
-    name: "APEX",
-    top_picks: apex.slice(0, 3).map((p: any) => ({
-      symbol: p.symbol,
-      score: num(p.conviction),
-      is_new: !p.held_since_prior,
-    })),
-    avg_coverage: `${apex.length} names · ${regime} regime`,
-  };
 
   // ── Four-method tracker: collect stock prediction rows (decile/p20/EV, live state) ──
   // decile is model-calibrated (OOS thresholds) — NOT a client-side relative rank.
@@ -140,44 +117,84 @@ export async function GET(req: Request) {
         liveRet,
         outcome: p.outcome_tag || "OPEN",
         sector: p.sector || "",
+        entryDate: p.entry_date || null,
+        daysOpen: num(p.days_observed),
       });
     }
   }
 
-  // D8+ = the model's current highest-conviction tier (D9/D10 legitimately empty —
-  // the live model's top probability clips below those thresholds; do not back-fill).
-  const d8 = stockRows
-    .filter((r) => r.decile >= 8)
-    .sort(
-      (a, b) =>
-        (a.outcome === "OPEN" ? 0 : 1) - (b.outcome === "OPEN" ? 0 : 1) ||
-        b.prob - a.prob ||
-        b.decile - a.decile
-    );
+  // ── Model Focus — WEEKLY pulse: the model's NEW top-tier (D9/D10) signals from
+  //    this week + the week's hottest sector. D9+ only (the highest-conviction tier)
+  //    and only fresh entries (≤7d) so the card reads as "what newly qualified",
+  //    not a standing list. Apex/debate names move to the System Debate card. ──
+  const NOW = Date.now();
+  const isFresh = (d: string | null) => { const t = Date.parse(d || ""); return Number.isFinite(t) ? NOW - t <= 7 * 86400000 : false; };
+  const d9new = stockRows
+    .filter((r) => r.decile >= 9 && r.outcome === "OPEN" && isFresh(r.entryDate))
+    .sort((a, b) => b.decile - a.decile || (Date.parse(b.entryDate || "") || 0) - (Date.parse(a.entryDate || "") || 0));
+  const seenP = new Set<string>();
+  const picks: any[] = [];
+  for (const p of d9new) { const k = p.symbol.toUpperCase(); if (seenP.has(k)) continue; seenP.add(k); picks.push(p); }
 
-  // ── Surprising Movers (top D8 model picks + hottest GICS sector) ──
-  const surprising_movers: any[] = [];
-  for (const p of d8.slice(0, 2)) {
-    const peakTxt = p.maxPlus > 0.5 ? ` · peaked +${r2(p.maxPlus)}%` : "";
-    const tagTxt = p.outcome !== "OPEN" ? ` · ${String(p.outcome).replace(/_/g, " ").toLowerCase()}` : "";
-    surprising_movers.push({
+  const apex: any[] = (spec?.apex_basket || [])
+    .slice()
+    .sort((a: any, b: any) => num(b.conviction) - num(a.conviction));
+  const secs: any[] = (sectors?.sectors || []).filter((s: any) => s.week != null || s.day != null);
+  const hotSec = secs.slice().sort((a, b) => num(b.week ?? b.day) - num(a.week ?? a.day))[0];
+  const model_focus = {
+    regime,
+    picks: picks.slice(0, 3).map((p: any) => ({
       symbol: p.symbol,
-      delta: `D${p.decile}`,
-      reason: `${p.probLabel} ${Math.round(p.prob * 100)}%${peakTxt}${tagTxt}.`,
+      decile: p.decile,
+      prob: r2(p.prob),
+      probLabel: p.probLabel,
+      ev: p.ev,
       evStr: p.ev != null ? `EV ${usd(p.ev)}` : null,
       evNeg: p.ev != null && p.ev < 0,
-    });
-  }
-  const secs: any[] = (sectors?.sectors || []).filter((s: any) => s.day != null);
-  const hotSec = secs.slice().sort((a, b) => num(b.day) - num(a.day))[0];
-  if (hotSec) {
-    surprising_movers.push({
-      symbol: hotSec.name,
-      delta: `${sign(num(hotSec.day))}${r2(num(hotSec.day))}%`,
-      neg: num(hotSec.day) < 0,
-      reason: `Hottest GICS sector on the tape today (${hotSec.symbol}).`,
-    });
-  }
+      peak: r2(p.maxPlus),
+    })),
+    hot_sector: hotSec
+      ? {
+          name: hotSec.name,
+          symbol: hotSec.symbol,
+          week: r2(num(hotSec.week ?? hotSec.day)),
+          is_week: hotSec.week != null,
+          neg: num(hotSec.week ?? hotSec.day) < 0,
+        }
+      : null,
+  };
+
+  // ── 12-basket pulse ──
+  // Portfolio-level read across the 12 Speculair methodology baskets. Returns are
+  // real and time-referenced: basket-level since each basket's tracking_start;
+  // single-name compounder/loser from the apex book's live entry-vs-last prices.
+  const BLABEL: Record<string, string> = {
+    dcf_fcff: "DCF-FCFF", earnings_yield_gap: "Earnings Yield", ev_gross_profit: "Gross Profit.",
+    rd_capitalized_dcf: "R&D DCF", owner_earnings: "Owner Earn.", epv: "EPV", graham_revised: "Graham",
+    acquirers_multiple: "Acquirer's", ev_gp: "EV/GP", iv15_deep_value: "IV15 Deep",
+    convergence: "Convergence", fundamental_momentum: "Fund. Mom.",
+  };
+  const md = (d: any) => { const x = new Date(d); return Number.isNaN(x.getTime()) ? "" : x.toLocaleDateString("en-US", { month: "short", day: "numeric" }); };
+  const pmb: Record<string, any> = spec?.per_methodology_baskets || {};
+  const basketRets = Object.keys(pmb).map((k) => ({ key: k, label: BLABEL[k] || k, ret: r2(num(pmb[k]?.ytd_return) * 100), start: pmb[k]?.tracking_start }));
+  basketRets.sort((a, b) => b.ret - a.ret);
+  const leaderB = basketRets[0] || null;
+  const laggardB = basketRets[basketRets.length - 1] || null;
+  const greenB = basketRets.filter((b) => b.ret > 0).length;
+  const apos: Record<string, any> = apexTrk?.positions || {};
+  const alp: Record<string, any> = apexTrk?.last_prices || {};
+  const nameRets = Object.keys(apos).map((sym) => {
+    const e = num(apos[sym]?.entry_price); const last = num(alp[sym]);
+    return e > 0 && last > 0 ? { sym, ret: r2((last / e - 1) * 100), since: md(apos[sym]?.entry_date) } : null;
+  }).filter(Boolean).sort((a: any, b: any) => b.ret - a.ret) as any[];
+  const basket_pulse = {
+    total: basketRets.length,
+    green: greenB,
+    leader: leaderB ? { label: leaderB.label, ret: leaderB.ret, since: md(leaderB.start) } : null,
+    laggard: laggardB ? { label: laggardB.label, ret: laggardB.ret, since: md(laggardB.start) } : null,
+    top_name: nameRets[0] || null,
+    worst_name: nameRets.length > 1 ? nameRets[nameRets.length - 1] : null,
+  };
 
   // ── System pulse footer (live tracking — from method-tracks 30d stock cycle) ──
   const stock30 = methodTracks?.regimes?.["30d_p10"]?.current_cycle?.by_method?.stock || {};
@@ -187,10 +204,14 @@ export async function GET(req: Request) {
     avg_coverage: `${Math.round(num(stock30.winning_trade_rate) * 100)}% win · ${num(stock30.n)} tracked (30d)`,
   };
 
-  // ── System Debate ACT / WAIT (from speculair debate_stats + watchlist) ──
+  // ── System Debate — surface the names that NEWLY cleared the debate into the apex
+  //    (held_since_prior === false) as click-through chips so the user can open each
+  //    stock's debate tab. Plus the ACT / WAIT read. ──
   const ds = spec?.debate_stats || {};
   const watch = (spec?.capitulation_watchlist || []).length;
+  const new_tickers = (spec?.apex_basket || []).filter((p: any) => !p.held_since_prior).map((p: any) => p.symbol);
   const debate = {
+    new_tickers,
     act:
       ds.apex_selected != null
         ? `${ds.apex_selected} names cleared the full multi-agent debate into the apex${ds.fully_debated != null ? ` (of ${ds.fully_debated} debated)` : ""}.`
@@ -198,28 +219,17 @@ export async function GET(req: Request) {
     wait: `${watch} on the capitulation watchlist${ds.radar_filtered != null ? ` · ${ds.radar_filtered} filtered pre-debate` : ""}${ds.auto_vetoed != null ? ` · ${ds.auto_vetoed} auto-vetoed` : ""}.`,
   };
 
-  // ── System Miss (worst open tracker position — real drawdown, with model context) ──
-  const worst = stockRows.filter((r) => r.outcome === "OPEN").sort((a, b) => a.liveRet - b.liveRet)[0];
-  const miss = worst
-    ? {
-        symbol: worst.symbol,
-        loss_pct: r2(worst.liveRet),
-        reason: `D${worst.decile} model pick (${worst.probLabel} ${Math.round(worst.prob * 100)}%) but ${worst.liveRet < 0 ? "down" : "flat"} ${r2(Math.abs(worst.liveRet))}% — ${worst.sector || "—"}. Watching whether the window redeems it.`,
-      }
-    : { symbol: "—", loss_pct: 0, reason: "No open tracker positions underwater yet." };
-
   // ── Headline ──
   const headline = `${sentiment} Apex basket ${sign(sinceInc)}${r2(sinceInc)}% since inception, ${nOpen} names live.`;
 
   return NextResponse.json({
     headline,
+    generated_at: new Date().toISOString(),
     regime_pulse,
-    portfolio_pulse,
-    active_strategy,
-    surprising_movers,
+    model_focus,
+    basket_pulse,
     system_pulse,
     thermometer,
     debate,
-    miss,
   });
 }
