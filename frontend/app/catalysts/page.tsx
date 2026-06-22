@@ -6,7 +6,8 @@ import {
   HelpCircle, ChevronRight, CheckCircle2, AlertTriangle, PlayCircle,
   Star, Trash2
 } from "lucide-react";
-import { Tip, rrDisplay, toneColor } from "../components/Tip";
+import { Tip, Term, rrDisplay, toneColor } from "../components/Tip";
+import { termLabel } from "../data/voice";
 import { BASKET13 } from "../data/basket13";
 
 // ── Basket 13 (catalyst sleeve, paper) — open seats keyed by symbol for chips ──
@@ -1060,8 +1061,8 @@ export default function CatalystWatch() {
                               </td>
                               <td style={{ padding: "5px 8px", color: T.text, fontWeight: 700 }}>{e.weight_pct}%</td>
                               <td style={{ padding: "5px 8px", color: T.light }}>{fmtB13Expr(e)}</td>
-                              <td style={{ padding: "5px 8px", color: T.light }}>{String(e.lane_canon || "").replace(/_/g, " ")}</td>
-                              <td style={{ padding: "5px 8px", color: T.purple }}>{String(e.resolution_driver || "").replace(/_/g, " ")}</td>
+                              <td style={{ padding: "5px 8px", color: T.light }}>{termLabel(e.lane_canon)}</td>
+                              <td style={{ padding: "5px 8px", color: T.purple }}>{termLabel(e.resolution_driver)}</td>
                               <td style={{ padding: "5px 8px", color: T.green }}>{fmtB13RR(e)}</td>
                               <td style={{ padding: "5px 8px", color: e.status === "PENDING_LIMIT" ? "#d97706" : T.light }} title={e.status === "PENDING_LIMIT" ? `Resting limit since ${e.order_date} — live price at stamp exceeded the CRO entry limit; fills when the close trades ≤ ${e.limit_price}. Not held; no NAV impact.` : `edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"} · risk-to-floor ${e.risk_to_floor_pct ?? "—"}%${e.hedge ? ` · hedge ${e.hedge.ratio} ${e.hedge.symbol}` : ""}`}>{e.status === "PENDING_LIMIT" ? `⏳ RESTING ≤ ${e.limit_price}` : `${e.entry_date} @ ${e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}`}{e.hedge ? <span style={{ marginLeft: 4, fontSize: 8, color: T.muted }}>hedged</span> : null}</td>
                               <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.review_trigger || ""}>{e.review_trigger || "—"}</td>
@@ -1096,7 +1097,7 @@ export default function CatalystWatch() {
                       <span style={{ fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em" }}>Caps</span>
                       {Object.entries(B13.driver_utilization || {}).map(([d, n]: any) => (
                         <span key={d} title={`max ${B13.caps?.max_per_driver ?? 2} names per resolution driver`} style={{ fontSize: 8.5, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, border: `1px solid ${atDrvCap(n) ? "rgba(217,151,6,0.4)" : T.border}`, color: atDrvCap(n) ? "#d97706" : T.light }}>
-                          {String(d).replace(/_/g, " ")} {n}/{B13.caps?.max_per_driver ?? 2}
+                          {termLabel(d)} {n}/{B13.caps?.max_per_driver ?? 2}
                         </span>
                       ))}
                       <span style={{ width: 6 }} />
@@ -1121,7 +1122,7 @@ export default function CatalystWatch() {
                             {resolved.map((e: any, i: number) => (
                               <tr key={`${e.symbol}-${i}`} style={{ borderTop: `1px solid ${T.border}` }}>
                                 <td style={{ padding: "4px 8px 4px 0", color: T.text, fontWeight: 700 }}>{e.symbol}</td>
-                                <td style={{ padding: "4px 8px", color: e.resolution.resolution_type === "FIRED_WIN" ? T.green : e.resolution.resolution_type === "FIRED_LOSS" ? T.red : "#d97706" }}>{e.resolution.resolution_type}</td>
+                                <td style={{ padding: "4px 8px", color: e.resolution.resolution_type === "FIRED_WIN" ? T.green : e.resolution.resolution_type === "FIRED_LOSS" ? T.red : "#d97706" }}><Term k={e.resolution.resolution_type} /></td>
                                 <td style={{ padding: "4px 8px", color: T.light }}>{e.entry_date} → {e.resolution.resolution_date} ({e.resolution.days_held}d)</td>
                                 <td style={{ padding: "4px 8px", color: T.light }}>{e.entry_price != null ? Number(e.entry_price).toFixed(2) : "?"} → {e.resolution.exit_price != null ? Number(e.resolution.exit_price).toFixed(2) : "?"}</td>
                                 <td style={{ padding: "4px 8px", color: (e.resolution.realized_return_pct ?? 0) >= 0 ? T.green : T.red }}>{e.resolution.realized_return_pct != null ? `${(e.resolution.realized_return_pct * 100).toFixed(1)}%` : "—"}</td>
@@ -1147,7 +1148,7 @@ export default function CatalystWatch() {
                       </details>
                     )}
                     <div style={{ marginTop: 8, fontSize: 8.5, color: T.muted }}>
-                      Paper basket — nothing is executed; entries resolve (FIRED_WIN/LOSS · SLIPPED · THESIS_BROKEN · EDGE_GONE · EXPIRED), they do not rebalance. Realized outcomes re-fit the edge thresholds, lane tilt and caps quarterly.
+                      Paper basket — nothing is actually traded. Each idea ends one way and stays there (no rebalancing): it plays out as a win or a loss, gets delayed, the thesis breaks, the edge gets priced in, or the window closes. Real outcomes re-tune the edge bar, lane mix and caps each quarter.
                     </div>
                   </>
                 )}
@@ -1282,8 +1283,8 @@ export default function CatalystWatch() {
                             </td>
                             <td style={{ padding: "5px 8px", color: w.edge_grade === "H" ? T.green : w.edge_grade === "M" ? "#d97706" : T.light }}>{w.edge_grade || "—"}</td>
                             <td style={{ padding: "5px 8px", color: T.green }}>{w.ev_pct != null ? `EV ${(w.ev_pct * 100).toFixed(0)}%` : w.computed_rr != null ? `${Number(w.computed_rr).toFixed(2)}:1` : "—"}</td>
-                            <td style={{ padding: "5px 8px", color: T.light }}>{String(w.lane_canon || "").replace(/_/g, " ")}</td>
-                            <td style={{ padding: "5px 8px", color: T.purple }}>{String(w.resolution_driver || "").replace(/_/g, " ")}</td>
+                            <td style={{ padding: "5px 8px", color: T.light }}>{termLabel(w.lane_canon)}</td>
+                            <td style={{ padding: "5px 8px", color: T.purple }}>{termLabel(w.resolution_driver)}</td>
                             <td style={{ padding: "5px 0", color: T.light, maxWidth: 320, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={`blocked by: ${w.blocked_by}${w.note ? "\n" + w.note : ""}`}>{w.would_enter_if || w.blocked_by}</td>
                           </tr>
                         ))}
@@ -1350,8 +1351,8 @@ export default function CatalystWatch() {
                         const tu = String((report as any).tier).toUpperCase();
                         const c = tu === "ACTIVE" ? "#14b87a" : tu === "CONTINGENT" ? "#a855f7" : "#d97706";
                         return (
-                          <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6, border: `1px solid ${c}`, color: c, letterSpacing: "0.04em" }} title="Catalyst tier (gate hardness): ACTIVE = sized · WATCH = tracking to harden · CONTINGENT = gated on a pending event">
-                            {tu}
+                          <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6, border: `1px solid ${c}`, color: c, letterSpacing: "0.04em" }} title="Catalyst tier (gate hardness): Active = sized · Watch = tracking to harden · Waiting on a trigger = gated on a pending event">
+                            {termLabel((report as any).tier)}
                           </span>
                         );
                       })()}
@@ -1480,11 +1481,11 @@ export default function CatalystWatch() {
                         <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.purple, letterSpacing: "0.06em" }}>Post-board pass</span>
                         {(report as any).resolution_driver && (
                           <span style={{ fontSize: 9, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(196,181,253,0.14)", color: T.purple, border: "1px solid rgba(196,181,253,0.20)" }}>
-                            ⛓ driver: {String((report as any).resolution_driver).replace(/_/g, " ")}
+                            ⛓ driver: {termLabel((report as any).resolution_driver)}
                           </span>
                         )}
                         {(report as any).lane_canon && (
-                          <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>lane: {String((report as any).lane_canon).replace(/_/g, " ")}</span>
+                          <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>lane: {termLabel((report as any).lane_canon)}</span>
                         )}
                         {B13_SEATS[report.symbol] && (
                           <span title={`Basket 13 (paper catalyst sleeve) — entered ${B13_SEATS[report.symbol].entry_date} @ ${B13_SEATS[report.symbol].entry_price ?? "n/a"}${(B13_SEATS[report.symbol].cro_conditions || []).length ? `\nCRO conditions:\n- ${B13_SEATS[report.symbol].cro_conditions.join("\n- ")}` : ""}`}
@@ -2100,11 +2101,20 @@ export default function CatalystWatch() {
                 </div>
               )}
 
-              {/* OPTIONS / DERIVATIVES METRICS & ANALYSIS */}
+              {/* OPTIONS / DERIVATIVES METRICS & ANALYSIS — render ONLY when real options data exists.
+                  Sweep/enriched dossiers carry a NO_OPTIONS sentinel (all-null + "N/A"); the ThetaData
+                  feed that used to fill these is retired, so a dead all-N/A panel is just noise. */}
               {report.options_signals && (
+                report.options_signals.iv_current != null ||
+                report.options_signals.skew_25d != null ||
+                report.options_signals.pc_oi_ratio != null ||
+                report.options_signals.total_oi != null ||
+                report.options_signals.implied_earnings_move_pct != null ||
+                (!!report.options_signals.term_structure && report.options_signals.term_structure !== "N/A")
+              ) && (
                 <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight}` }}>
-                    <TrendingUp size={12} /> Options market catalyst signals (ThetaData Pipeline)
+                    <TrendingUp size={12} /> Options market catalyst signals
                   </div>
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 16 }}>

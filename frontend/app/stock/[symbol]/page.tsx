@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock, Sparkles, Layers } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
-import { Tip, rrDisplay, toneColor } from "../../components/Tip";
+import { Tip, Term, rrDisplay, toneColor } from "../../components/Tip";
+import { termLabel } from "../../data/voice";
 
 const GCS_SCANS="/api/gcs/scans";const GCS_SIGNALS="/api/gcs/signals";const FMP="/api/fmp";
 
@@ -3351,7 +3352,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
                 <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted }}>Methodologies:</span>
                 {sourceMethodologies.map((m: string) => (
                   <span key={m} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(59, 130, 246, 0.12)", color: T.blue, fontFamily: T.mono, border: `1px solid rgba(59, 130, 246, 0.2)` }}>
-                    {m.replace(/_/g, " ").toUpperCase()}
+                    {termLabel(m)}
                   </span>
                 ))}
               </div>
@@ -4398,7 +4399,7 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
                     color: report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)"),
                     border: `1px solid ${report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)")}`
                   }}>
-                    RE-RATE: {report.re_rate_status.toUpperCase()}
+                    Re-rate: {termLabel(report.re_rate_status)}
                   </span>
                 )}
               </div>
@@ -4744,11 +4745,20 @@ function CatalystTabContent({ symbol }: { symbol: string }) {
         </Card>
       </div>
 
-      {/* Options signals */}
+      {/* Options signals — render ONLY when real options data exists. Sweep/enriched dossiers
+          carry a NO_OPTIONS sentinel (all-null + "N/A"); the ThetaData feed is retired, so a
+          dead all-N/A panel is just noise (the live IBKR options card above is the real source). */}
       {report.options_signals && (
+        report.options_signals.iv_current != null ||
+        report.options_signals.skew_25d != null ||
+        report.options_signals.pc_oi_ratio != null ||
+        report.options_signals.total_oi != null ||
+        report.options_signals.implied_earnings_move_pct != null ||
+        (!!report.options_signals.term_structure && report.options_signals.term_structure !== "N/A")
+      ) && (
         <Card>
           <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
-            <TrendingUp size={12} /> Options Market Catalyst Signals (ThetaData Pipeline)
+            <TrendingUp size={12} /> Options Market Catalyst Signals
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 16 }}>
             <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
@@ -5259,7 +5269,7 @@ export default function StockDetail(){
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
-            <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
+            <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}><Term k={s.classification} /></span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
             {/* Scale-out tier badge — set by the Scale-Director AFTER the multi-agent debate (see speculair_debate_history scale block) */}
             {debateData?.scale?.tier && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
