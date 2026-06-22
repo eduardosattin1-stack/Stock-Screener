@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock, Sparkles } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock, Sparkles, Layers } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 import { Tip, rrDisplay, toneColor } from "../../components/Tip";
 
@@ -3276,6 +3276,28 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
           </div>
         </div>
 
+        {/* ── Scale-out tier — the Scale-Director's verdict on this name's role in the AI build-out, set AFTER the debate ── */}
+        {debateData.scale && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 4, border: `1px solid ${tc}66`, color: tc, background: `${tc}14`, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.05em", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Layers size={12} /> SCALE-OUT · {sc.tier}{sc.conviction != null ? ` ${sc.conviction}/100` : ""}
+              </span>
+              <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted }}>{sc.basket_label || sc.basket} layer</span>
+              {sc.posture && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {String(sc.posture).replace(/_/g, " ")}</span>}
+              {sc.valuation_posture && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {sc.valuation_posture} vs build-out</span>}
+              {sc.expected_return_pct != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: sc.expected_return_pct >= 0 ? T.green : T.red }}>· {sc.expected_return_pct >= 0 ? "+" : ""}{Number(sc.expected_return_pct).toFixed(0)}% to SoP</span>}
+            </div>
+            {sc.role && <p style={{ margin: "8px 0 0", fontSize: 11, color: T.text, fontFamily: T.mono, lineHeight: 1.5 }}>{sc.role}</p>}
+            {sc.rationale && <p style={{ margin: "4px 0 0", fontSize: 10.5, color: T.textMuted, fontFamily: T.mono, lineHeight: 1.5 }}>{sc.rationale}</p>}
+            {debateData.skeptic_verdict && (
+              <p style={{ margin: "6px 0 0", fontSize: 10, fontFamily: T.mono, color: debateData.skeptic_verdict === "REFUTED" ? T.red : debateData.skeptic_verdict === "CONFIRMED" ? T.green : T.amber }}>
+                Skeptic: {debateData.skeptic_verdict}{debateData.skeptic_kill_fact ? ` — ${debateData.skeptic_kill_fact}` : ""}
+              </p>
+            )}
+          </div>
+        );})()}
+
         {/* ── Debate history time-travel: scroll past Opus debates by date ── */}
         {debateHistory && debateHistory.length > 0 && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}`, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -5201,6 +5223,12 @@ export default function StockDetail(){
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}>{s.classification?.replace("_"," ")}</span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
+            {/* Scale-out tier badge — set by the Scale-Director AFTER the multi-agent debate (see speculair_debate_history scale block) */}
+            {debateData?.scale?.tier && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
+              <span title={[sc.role,sc.rationale].filter(Boolean).join(" — ")} style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5,cursor:"help"}}>
+                <Layers size={11}/> SCALE · {sc.basket_label||sc.basket} · {sc.tier}{sc.conviction!=null?` ${sc.conviction}`:""}
+              </span>
+            );})()}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
         </div>
