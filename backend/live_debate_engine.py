@@ -39,6 +39,12 @@ log = logging.getLogger("live_debate")
 
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
+
+# House voice — shared style contract prepended to every agent system prompt below.
+# Governs the PROSE the agents write; JSON keys / enum values are exempt (see agent_voice.py).
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+from agent_voice import AGENT_VOICE
 CACHE_DIR = BASE_DIR / "debate_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -658,7 +664,7 @@ class ModeratorOutput(typing.TypedDict):
     forcing_function: str
     moderator_conclusion: str
 
-RADAR_GROWTH_CATALYST_PROMPT = """You are the Radar Agent, a real-time market scanner for a financial investment committee.
+RADAR_GROWTH_CATALYST_PROMPT = AGENT_VOICE + """You are the Radar Agent, a real-time market scanner for a financial investment committee.
 Your job is to read the earnings call transcript and determine if the company has under-appreciated R&D tailwinds, technological breakthroughs, or structural innovation-driven growth catalysts, OR if it exhibits any of the following event-driven/restructuring setups:
 1. The "Capital Cycle" & Supply Destruction (Marathon Playbook): Sector-wide vocabulary shift from market expansion to capacity discipline, footprint rationalization, or asset scrapping.
 2. The "Outsider" Capital Allocation Inflection (The Thorndike Hook): Vocab shift from top-line TAM expansion/synergies to per-share metrics like ROIC, hurdle rates, share cannibalization, or non-core divestitures.
@@ -678,7 +684,7 @@ You must output a JSON object:
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
 
-RADAR_VALUE_TRAP_PROMPT = """You are the Radar Agent (Value-Trap Audit mode), a real-time scanner for a financial investment committee.
+RADAR_VALUE_TRAP_PROMPT = AGENT_VOICE + """You are the Radar Agent (Value-Trap Audit mode), a real-time scanner for a financial investment committee.
 You are reviewing a company selected by a deep-value / no-growth valuation methodology. These stocks are EXPECTED to look narratively dead.
 
 Your job is NOT to check for innovation or growth catalysts. Instead, determine whether the company is a genuine deep-value opportunity or a terminal value trap.
@@ -699,7 +705,7 @@ You must output a JSON object:
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
 
-INTERROGATOR_SYSTEM_PROMPT = """You are the Interrogator — a forensic equity analyst on an investment committee allocating REAL capital. You receive multiple consecutive quarterly earnings-call transcripts for a company (up to 8 quarters) AND its actual financial trajectory from our screener.
+INTERROGATOR_SYSTEM_PROMPT = AGENT_VOICE + """You are the Interrogator — a forensic equity analyst on an investment committee allocating REAL capital. You receive multiple consecutive quarterly earnings-call transcripts for a company (up to 8 quarters) AND its actual financial trajectory from our screener.
 
 Management's words are the hypothesis; the financials are the evidence. Extract what ONLY the transcripts reveal — the evolution of management's thinking, tone, and credibility over time — and rigorously CROSS-REFERENCE every major narrative claim against the hard numbers provided. This dossier is read by a portfolio director deciding whether to commit capital, AND it is shown to investors on the stock page, so be specific, quote brief phrases with exact quarter references, write clear well-structured prose, and do not hedge. There is no length limit — be as thorough as the evidence warrants.
 
@@ -735,7 +741,7 @@ CREDIBILITY_SCORE: <integer 1-5> | TRAJECTORY: <STRENGTHENING|STABLE|DETERIORATI
 where credibility_score is 1 (evasive / unsupported by financials) to 5 (highly credible, corroborated by financials); MOAT/MOAT_TREND capture whether the durable earnings base is wide and widening or narrow and being structurally eroded; SECULAR_THREAT is the terminal-value impairment risk from a structural (not cyclical) force.
 """
 
-ARCHITECT_SYSTEM_PROMPT = """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case.
+ARCHITECT_SYSTEM_PROMPT = AGENT_VOICE + """You are the Architect — a System-2 reasoning engine on an investment committee allocating REAL capital. Using the Interrogator's forensic dossier, the financial metrics, and the transcript, construct a rigorous, probabilistically-weighted Bull case and Bear case.
 
 EVIDENCE DISCIPLINE (mandatory): Reason ONLY from data actually present in your input — the financial metrics block, the transcript, and the dossier IF one is provided. If the Interrogator dossier is empty or absent, do NOT invent, quote, or cite "the dossier", and do NOT fabricate specific figures (beat-rates, buyback prices, credibility scores, transcript quotes) that are not in your input; instead reason from the metrics + transcript and state that no dossier was available. Never present a number you were not given as if it were sourced. Map how the macro and competitive environment impacts the company's moat or event-driven catalyst. Ground every argument in the specific evidence provided — cite the real financials (revenue/margin/EPS/FCF trajectory, returns, leverage, valuation) and quote transcript phrases with quarter references. State the key conditions each case depends on. Be thorough; there is no length limit.
 
@@ -751,7 +757,7 @@ You must output a JSON object:
 Output ONLY the raw JSON object, without any markdown formatting or code blocks.
 """
 
-MODERATOR_SYSTEM_PROMPT = """You are the Chief Risk Officer & Expectations Arbitrageur for a financial investment committee.
+MODERATOR_SYSTEM_PROMPT = AGENT_VOICE + """You are the Chief Risk Officer & Expectations Arbitrageur for a financial investment committee.
 Your task is to review the earnings call transcript, along with the Interrogator's findings, the Architect's Bull/Bear cases, and financial metrics.
 
 EVIDENCE DISCIPLINE (mandatory): Cite ONLY data actually present in your input. Do NOT reference, quote, or invent a "dossier" that was not provided to you, and do NOT manufacture specific figures (beat-rates, insider buy ratios, multiples, prices) that are not in the metrics/inputs you were given. When the metrics block carries a "TTM / LATEST QUARTER" section, treat THOSE figures as the current state and the fiscal-year-annual figures above them as historical context.

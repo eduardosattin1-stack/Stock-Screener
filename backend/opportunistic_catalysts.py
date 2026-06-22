@@ -11,6 +11,7 @@ from catalyst_fired_detector import detect_fired_catalysts
 from spinoff_classifier import classify_spinoff_regime
 from historical_tracker import register_scan
 from convergence_detector import detect_catalyst_tracks
+from agent_voice import AGENT_VOICE  # house-voice preamble for the catalyst diagnostic (prose only)
 
 
 sys_path = os.path.dirname(os.path.abspath(__file__))
@@ -1060,7 +1061,7 @@ def run_catalyst_scan(symbol: str, force_refresh: bool = False) -> Dict:
     - Implied Earnings Move: {options.get('implied_earnings_move', 'N/A')}
     """
     
-    prompt = f"""You are analyzing {company_name} ({symbol}) using an opportunistic event-driven hedge fund methodology. 
+    prompt = AGENT_VOICE + f"""You are analyzing {company_name} ({symbol}) using an opportunistic event-driven hedge fund methodology.
 This methodology merges the **Loeb / Third Point event-driven multi-strategy with activism overlay** with the **Bloom template**.
 
 Loeb's core screening methodology involves:
