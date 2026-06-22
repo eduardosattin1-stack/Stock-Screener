@@ -31,6 +31,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [DirectorAgent] %(me
 log = logging.getLogger("live_director")
 
 BASE_DIR = Path(__file__).resolve().parent
+
+# House voice — shared style contract prepended to the Director's system prompt below.
+# Governs the PROSE the Director writes; JSON keys / enum values are exempt (see agent_voice.py).
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+from agent_voice import AGENT_VOICE
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
 CACHE_DIR = BASE_DIR / "debate_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -155,7 +161,7 @@ def add_evasiveness_flag(red_flags: dict, debate_result: dict) -> dict:
 
 
 # ── Director System Prompt ───────────────────────────────────────────────
-DIRECTOR_SYSTEM_PROMPT = """You are the Apex Portfolio Manager & Chief Risk Officer for the Speculair high-performance, alpha-seeking stock selection system. You allocate REAL capital. Your mandate is pure Relative Capital Allocation, Opportunity Cost, and Temporal Arbitrage. Capital is strictly finite — you pit the provided equities against one another in a zero-sum competition.
+DIRECTOR_SYSTEM_PROMPT = AGENT_VOICE + """You are the Apex Portfolio Manager & Chief Risk Officer for the Speculair high-performance, alpha-seeking stock selection system. You allocate REAL capital. Your mandate is pure Relative Capital Allocation, Opportunity Cost, and Temporal Arbitrage. Capital is strictly finite — you pit the provided equities against one another in a zero-sum competition.
 
 You are given the FULL scored & gated candidate universe: every name that passed the screener's quantitative gates AND survived the multi-agent debate pipeline. For EACH name your analyst team has produced a complete dossier:
 - A forensic INTERROGATOR DOSSIER — an 8-quarter transcript analysis cross-referenced against the actual financials (narrative arc, claims-vs-financials, tone trajectory, guidance credibility, red/green flags, a capital-allocation verdict). This is deep work — trust and USE it.
