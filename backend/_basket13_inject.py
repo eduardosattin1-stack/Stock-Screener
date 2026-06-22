@@ -338,17 +338,27 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                       "retags": retags, "memo": memo})
     # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields.
     # Per-driver diversity cap (≤MAX_WATCHLIST_PER_DRIVER) so one abundant driver can't fill the queue.
+    # watchlist_state persists a per-name ENTRY ref (price/date/expected) across re-debates so the
+    # on-deck track record can mark each name from when it first joined the watchlist (the basket and
+    # the watchlist are tracked as two separate paper books). Entry = the board snapshot live_price.
+    wl_state = t.get("watchlist_state", {})
     t["watchlist"] = []
     for w in cap_watchlist(director.get("watchlist") or [], bysym):
-        c = bysym.get(w["symbol"], {})
+        sym = w["symbol"]; c = bysym.get(sym, {})
+        if sym not in wl_state:                              # stamp once, at first appearance on the watchlist
+            wl_state[sym] = {"entry_price": c.get("live_price"), "entry_date": stamp_date,
+                             "expected_pct": round((c.get("ev_pct") or 0) * 100, 1) if c.get("ev_pct") is not None else None}
+        st = wl_state[sym]
         t["watchlist"].append({
-            "symbol": w["symbol"], "blocked_by": w.get("blocked_by", ""),
+            "symbol": sym, "blocked_by": w.get("blocked_by", ""),
             "would_enter_if": w.get("would_enter_if", ""), "intended_weight_pct": w.get("intended_weight_pct"),
             "note": w.get("note", ""), "score": c.get("score"), "edge_grade": c.get("edge_grade"),
             "lane_canon": c.get("lane_canon"), "resolution_driver": c.get("resolution_driver"),
             "super_cluster": c.get("super_cluster"), "valuation_method": c.get("valuation_method"),
             "ev_pct": c.get("ev_pct"), "computed_rr": c.get("computed_rr"), "dated_milestone": c.get("dated_milestone"),
+            "entry_price": st.get("entry_price"), "entry_date": st.get("entry_date"), "expected_pct": st.get("expected_pct"),
         })
+    t["watchlist_state"] = {s: v for s, v in wl_state.items() if s in {x["symbol"] for x in t["watchlist"]}}  # prune departed
     save_tracker(t)
     print(f"INJECTED {len(added)} held {added}"
           + (f" + {len(pending)} PENDING_LIMIT {pending}" if pending else "")

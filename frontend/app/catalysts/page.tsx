@@ -201,9 +201,9 @@ export default function CatalystWatch() {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);        // scanning-candidates rail (off by default — let the basket breathe)
   const [liveQuotes, setLiveQuotes] = useState<Record<string, any>>({}); // live ticker for the basket seats
 
-  // Live ticker for the Basket 13 seats (reuses /api/quotes — FMP batch-quote proxy; 60s refresh)
+  // Live ticker for the Basket 13 seats + the on-deck watchlist (reuses /api/quotes — FMP batch-quote proxy; 60s refresh)
   useEffect(() => {
-    const syms = Object.keys(B13_SEATS);
+    const syms = Array.from(new Set([...Object.keys(B13_SEATS), ...((B13.watchlist || []).map((w: any) => w.symbol))]));
     if (!syms.length) return;
     let stop = false;
     const pull = () =>
@@ -1291,6 +1291,103 @@ export default function CatalystWatch() {
                       </tbody>
                     </table>
                   </div>
+                  {/* ON-DECK TRACK RECORD — the watchlist tracked as a SEPARATE equal-weight cohort
+                      (calibration: did the names the Director queued move as he expected?). */}
+                  {(() => {
+                    const wl = B13.watchlist || [];
+                    const lastWlMark: any = (B13.watchlist_marks || [])[(B13.watchlist_marks || []).length - 1];
+                    const wActual = (w: any): number | null => {
+                      const q = liveQuotes[w.symbol];
+                      if (q?.price != null && w.entry_price) return (q.price / w.entry_price - 1) * 100;
+                      const ms = lastWlMark?.seats?.[w.symbol];   // fall back to the latest daily mark
+                      return ms?.ret_pct != null ? ms.ret_pct : null;
+                    };
+                    let liveRet = 0, nLive = 0;
+                    wl.forEach((w: any) => { const a = wActual(w); if (a != null) { liveRet += a; nLive++; } });
+                    const navLive = nLive ? 100 + liveRet / nLive : null;
+                    const actAvg = nLive ? liveRet / nLive : 0;
+                    const exps = wl.map((w: any) => w.expected_pct).filter((v: any) => v != null);
+                    const expAvg = exps.length ? exps.reduce((s: number, v: number) => s + v, 0) / exps.length : 0;
+                    const marks: any[] = [...(B13.watchlist_marks || [])];
+                    if (navLive != null) {
+                      const last = marks[marks.length - 1];
+                      const todayIso = new Date().toISOString().slice(0, 10);
+                      if (last && last.date === todayIso) marks[marks.length - 1] = { ...last, nav: navLive };
+                      else marks.push({ date: todayIso, nav: navLive });
+                    }
+                    const navs = marks.map(m => m.nav);
+                    const yMin = Math.min(100, ...navs) - 0.5, yMax = Math.max(100, ...navs) + 0.5;
+                    const W = 600, H = 90, PX = 6, PY = 8;
+                    const xOf = (i: number) => marks.length > 1 ? PX + (W - 2 * PX) * (i / (marks.length - 1)) : W / 2;
+                    const yOf = (v: number) => PY + (H - 2 * PY) * (1 - (v - yMin) / (yMax - yMin || 1));
+                    const pts = marks.map((m, i) => `${xOf(i).toFixed(1)},${yOf(m.nav).toFixed(1)}`).join(" ");
+                    const lastNav = navs.length ? navs[navs.length - 1] : 100;
+                    const maxAbs = Math.max(5, ...wl.map((w: any) => Math.abs(w.expected_pct || 0)), ...wl.map((w: any) => Math.abs(wActual(w) ?? 0)));
+                    const barW = (v: number) => Math.min(70, Math.abs(v) / maxAbs * 70);
+                    const KPI = ({ label, value, tone }: any) => (
+                      <div style={{ padding: "5px 10px", border: `1px solid ${T.border}`, borderRadius: 6, minWidth: 84 }}>
+                        <div style={{ fontSize: 7.5, textTransform: "uppercase", letterSpacing: "0.06em", color: T.muted }}>{label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, fontFamily: T.mono, color: tone || T.text }}>{value}</div>
+                      </div>
+                    );
+                    return (
+                      <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+                          <span style={{ fontSize: 9.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: T.blue }}>On-deck track record</span>
+                          <span style={{ fontSize: 8.5, color: T.muted }}>equal-weight cohort · NAV 100 at each name&apos;s watchlist entry · separate from the basket — does the queue move as the Director expects?</span>
+                        </div>
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
+                          <KPI label="NAV (live)" value={navLive != null ? navLive.toFixed(2) : lastNav.toFixed(2)} tone={(navLive ?? lastNav) >= 100 ? T.green : T.red} />
+                          <KPI label="Cohort P&L" value={`${actAvg >= 0 ? "+" : ""}${actAvg.toFixed(2)}%`} tone={actAvg >= 0 ? T.green : T.red} />
+                          <KPI label="Expected (avg)" value={`+${expAvg.toFixed(1)}%`} tone={T.blue} />
+                          <KPI label="Capture" value={expAvg ? `${(actAvg / expAvg * 100).toFixed(0)}%` : "—"} />
+                          <KPI label="Names" value={String(nLive || wl.length)} />
+                          <KPI label="Marks" value={String((B13.watchlist_marks || []).length)} />
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1.1fr) minmax(300px, 1fr)", gap: 18, alignItems: "start" }}>
+                          <div>
+                            <div style={{ fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em", marginBottom: 4 }}>NAV history</div>
+                            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }}>
+                              <line x1={PX} x2={W - PX} y1={yOf(100)} y2={yOf(100)} stroke="rgba(255,255,255,0.15)" strokeDasharray="3 3" />
+                              <text x={W - PX} y={yOf(100) - 3} textAnchor="end" fontSize="8" fill="rgba(255,255,255,0.35)" fontFamily="monospace">100</text>
+                              {marks.length > 1 ? <polyline points={pts} fill="none" stroke={lastNav >= 100 ? "var(--green)" : "var(--red)"} strokeWidth="1.6" /> : null}
+                              {marks.map((m, i) => (
+                                <circle key={m.date} cx={xOf(i)} cy={yOf(m.nav)} r="2.6" fill={m.nav >= 100 ? "var(--green)" : "var(--red)"}>
+                                  <title>{m.date} · NAV {Number(m.nav).toFixed(2)}</title>
+                                </circle>
+                              ))}
+                              {marks.length > 0 && (
+                                <text x={xOf(marks.length - 1)} y={yOf(lastNav) - 6} textAnchor="end" fontSize="9" fontWeight="700" fill={lastNav >= 100 ? "var(--green)" : "var(--red)"} fontFamily="monospace">{lastNav.toFixed(2)}</text>
+                              )}
+                            </svg>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, fontFamily: T.mono, color: T.muted }}>
+                              <span>{marks[0]?.date || ""}</span><span>{marks[marks.length - 1]?.date || ""}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em", marginBottom: 4 }}>Expected vs actual (per name, underlying %)</div>
+                            {wl.map((w: any) => {
+                              const exp = w.expected_pct, act = wActual(w);
+                              return (
+                                <div key={w.symbol} style={{ display: "grid", gridTemplateColumns: "52px 76px 1fr", alignItems: "center", gap: 6, padding: "2px 0", fontFamily: T.mono }}>
+                                  <span style={{ fontSize: 9.5, fontWeight: 800, color: T.text }}>{w.symbol}</span>
+                                  <span style={{ fontSize: 9 }}>
+                                    <span style={{ color: act != null ? (act >= 0 ? T.green : T.red) : T.muted }}>{act != null ? `${act >= 0 ? "+" : ""}${act.toFixed(1)}%` : "—"}</span>
+                                    <span style={{ color: T.muted }}> / {exp != null ? `+${exp.toFixed(0)}%` : "—"}</span>
+                                  </span>
+                                  <span style={{ position: "relative", height: 10 }}>
+                                    {exp != null && <span title={`expected +${exp.toFixed(1)}%`} style={{ position: "absolute", left: 0, top: 1, height: 8, width: barW(exp), border: "1px solid rgba(59,130,246,0.55)", borderRadius: 2, background: "rgba(59,130,246,0.10)" }} />}
+                                    {act != null && <span title={`actual ${act >= 0 ? "+" : ""}${act.toFixed(1)}%`} style={{ position: "absolute", left: 0, top: 3, height: 4, width: barW(act), borderRadius: 2, background: act >= 0 ? "var(--green)" : "var(--red)" }} />}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            <div style={{ fontSize: 8, color: T.muted, marginTop: 4 }}>outline = Director expectation · solid = live move since watchlist entry</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
               </>

@@ -75,6 +75,7 @@ def main():
         "lane_utilization": dict(sorted(lanes.items(), key=lambda kv: -kv[1])),
         "entries": entries,
         "watchlist": t.get("watchlist", []),    # on-deck: cap-blocked-but-wanted (renders below the basket)
+        "watchlist_marks": t.get("watchlist_marks", []),   # on-deck equal-weight cohort NAV series (separate track record)
         "non_selections": t.get("non_selections", []),
         "runs": t.get("runs", []),
         "marks": t.get("marks", []),    # daily NAV series (_basket13_mark.py) — the track record
