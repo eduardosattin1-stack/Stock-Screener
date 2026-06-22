@@ -339,6 +339,23 @@ def enrich_fast(ib, symbol: str, exchange: str = "SMART", currency: str = "USD",
         tb = _req(ib, by_strike[short_strike]) if short_strike > long_strike else None
         ib.sleep(3.0)
         iv = getattr(ta.modelGreeks, "impliedVol", None) if ta.modelGreeks else None
+        if not (iv and iv > 0):
+            # No live/frozen options data for this venue (e.g. unsubscribed Euronext/MONEP for EU names —
+            # we have US options + Eurex but not Euronext derivatives). IBKR offers FREE 15-min-DELAYED
+            # data, which is fine for an IV-rank/spread display card. Retry the ATM (+OTM) under delayed.
+            try:
+                ib.cancelMktData(by_strike[long_strike])
+                if tb: ib.cancelMktData(by_strike[short_strike])
+            except Exception:
+                pass
+            ib.reqMarketDataType(3)            # delayed (free)
+            ta = _req(ib, by_strike[long_strike])
+            tb = _req(ib, by_strike[short_strike]) if short_strike > long_strike else None
+            ib.sleep(4.0)                       # delayed ticks arrive a touch slower than frozen
+            ib.reqMarketDataType(2)            # restore frozen for the next name
+            iv = getattr(ta.modelGreeks, "impliedVol", None) if ta.modelGreeks else None
+            if iv and iv > 0:
+                out["delayed"] = True          # so the card/consumer can label it 15-min delayed
         out["iv_current"] = round(iv, 4) if iv and iv > 0 else None
         def _mid_of(t):
             if t and t.bid and t.ask and t.bid > 0 and t.ask > 0:
