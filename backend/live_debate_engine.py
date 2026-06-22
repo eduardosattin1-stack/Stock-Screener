@@ -2078,6 +2078,25 @@ def _current_prices(symbols: set) -> dict:
         sym, px = s.get("symbol"), s.get("price")
         if sym in symbols and isinstance(px, (int, float)) and px > 0:
             out[sym] = float(px)
+    # FMP-quote fallback for OFF-SCAN members — mega-caps not in the screened universe (e.g. Visa "V",
+    # TSM, CCJ in the disruptor book). Without this they stamp entry_price + NAV-mark to 0 (showed as a
+    # blank/stale card). Best-effort; the scan stays the primary source.
+    missing = [s for s in symbols if s not in out]
+    if missing:
+        try:
+            key = get_key("FMP_API_KEY")
+            if key:
+                base = "https://financialmodelingprep.com/stable"
+                for i in range(0, len(missing), 50):
+                    csv = ",".join(missing[i:i + 50])
+                    r = requests.get(base + "/batch-quote", params={"symbols": csv, "apikey": key}, timeout=20)
+                    if r.ok:
+                        for q in (r.json() or []):
+                            sym, px = q.get("symbol"), q.get("price")
+                            if sym in symbols and isinstance(px, (int, float)) and px > 0:
+                                out[sym] = float(px)
+        except Exception:
+            pass
     return out
 
 
