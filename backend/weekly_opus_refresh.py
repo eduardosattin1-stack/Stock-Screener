@@ -1141,6 +1141,8 @@ def value_publish(push_gcs=False):
            "value_tracking_weighted": vtw, "weights": weights,
            "stress_test": apx.get("stress_test"), "correlation": apx.get("correlation"),
            "exits": apx.get("exits"), "combined_caps": apx.get("combined_caps"),
+           # rotation discipline: the Director's book-level secular-decline load + clean-anchor count (UI gauge)
+           "book_secular_load_pct": apx.get("book_secular_load_pct"), "clean_anchor_count": apx.get("clean_anchor_count"),
            "pool_stats": pool_stats,
            "generated_at": _dt.date.today().isoformat(),
            "engine": "opus-4.8-value-funded-leverage", "universe": 161}

@@ -2446,6 +2446,49 @@ export default function Dashboard(){
     );
   };
 
+  // Rotation discipline (continuity): the Director's per-name call this run + why, vs the prior-decision
+  // ledger. Populated by the weekly run; renders nothing until then.
+  const decisionBadge = (pick: any) => {
+    const d = pick && pick.decision ? String(pick.decision).toUpperCase() : "";
+    if (!d || d === "KEEP") return null;   // KEEP is the default/no-change — only flag genuine entries/re-entries
+    const reAdd = d === "RE-ADD";
+    const color = reAdd ? "var(--amber)" : "var(--green)";
+    const bg = reAdd ? "rgba(217,119,6,0.18)" : "rgba(20,184,122,0.18)";
+    const why = pick.whats_changed || pick.decision_rationale || "";
+    return (
+      <span title={why} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: bg, color, fontFamily: "var(--font-mono)", fontWeight: 700, letterSpacing: "0.04em", cursor: why ? "help" : "default" }}>
+        {d}{reAdd && why ? " ⓘ" : ""}
+      </span>
+    );
+  };
+
+  // Per-book rotation log — the exits the Director made (entry→exit dates + realized return), so the
+  // book's decisions are followable over time. Reads the tracking `closed` list; hidden when empty.
+  const rotationLog = (tracking: any) => {
+    const closed = Array.isArray(tracking && tracking.closed) ? tracking.closed : [];
+    if (!closed.length) return null;
+    const rows = [...closed].sort((a, b) => String(b.exit_date || "").localeCompare(String(a.exit_date || ""))).slice(0, 16);
+    return (
+      <details style={{ marginBottom: 14 }}>
+        <summary style={{ cursor: "pointer", fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+          Rotation log <span style={{ color: "var(--text-light)" }}>· {closed.length} exits</span>
+        </summary>
+        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 1, fontSize: 9.5, fontFamily: "var(--font-mono)" }}>
+          {rows.map((c: any, i: number) => {
+            const r = Number(c.return_pct ?? 0);
+            return (
+              <div key={(c.symbol || "") + i} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "2px 0", borderBottom: "1px solid var(--border)" }}>
+                <span style={{ color: "var(--text)", minWidth: 78 }}>{c.symbol}</span>
+                <span style={{ color: "var(--text-light)", flex: 1 }}>{c.entry_date || "?"} → {c.exit_date || "?"}</span>
+                <span style={{ color: r >= 0 ? "var(--green)" : "var(--red)", minWidth: 52, textAlign: "right" }}>{r >= 0 ? "+" : ""}{r.toFixed(1)}%</span>
+              </div>
+            );
+          })}
+        </div>
+      </details>
+    );
+  };
+
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
@@ -3145,6 +3188,7 @@ export default function Dashboard(){
                       </div>
                       );
                     })()}
+                    {rotationLog(speculairBaskets.apex_tracking || speculairBaskets.apex_tracking_weighted)}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(speculairBaskets.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
@@ -3164,7 +3208,7 @@ export default function Dashboard(){
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
                                 <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.conviction >= 85 ? "rgba(20,184,122,0.2)" : pick.conviction >= 70 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.conviction >= 85 ? "var(--green)" : pick.conviction >= 70 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                                   ★ {pick.conviction}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
@@ -3279,11 +3323,17 @@ export default function Dashboard(){
                         Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{valueApex.stress_test.published_downside_pct}%</span> recession · {valueApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{valueApex.correlation ? ` · avg pairwise corr ${valueApex.correlation.avg_pairwise} (${valueApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
                       </div>
                     )}
+                    {typeof valueApex.book_secular_load_pct === "number" && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8 }}>
+                        Secular-decline load: <span style={{ color: valueApex.book_secular_load_pct > 60 ? "var(--amber)" : "var(--text)", fontWeight: 700 }}>{valueApex.book_secular_load_pct}%</span> of book <span style={{ color: "var(--text-light)" }}>(material-threat / eroding moat)</span>{typeof valueApex.clean_anchor_count === "number" ? ` · ${valueApex.clean_anchor_count} clean anchor${valueApex.clean_anchor_count === 1 ? "" : "s"}` : ""}
+                      </div>
+                    )}
                     {valueApex.pool_stats && valueApex.pool_stats.banner && (
                       <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
                         {valueApex.pool_stats.banner}
                       </div>
                     )}
+                    {rotationLog(valueApex.value_tracking || valueApex.value_tracking_weighted)}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(valueApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
@@ -3301,7 +3351,7 @@ export default function Dashboard(){
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
                                 <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.value_score >= 80 ? "rgba(20,184,122,0.2)" : pick.value_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.value_score >= 80 ? "var(--green)" : pick.value_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                                   val {pick.value_score}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
@@ -3470,6 +3520,7 @@ export default function Dashboard(){
                         })()}
                       </div>
                     )}
+                    {rotationLog(disruptorApex.disruptor_tracking || disruptorApex.disruptor_tracking_weighted)}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
                       {(disruptorApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
@@ -3487,7 +3538,7 @@ export default function Dashboard(){
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
                                 <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.disruptor_score >= 80 ? "rgba(147,112,219,0.25)" : pick.disruptor_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.disruptor_score >= 80 ? "var(--purple)" : pick.disruptor_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                                   dis {pick.disruptor_score}<span style={{ opacity: 0.55 }}>/100</span>
                                 </span>
