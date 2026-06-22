@@ -3277,6 +3277,15 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
           </div>
         </div>
 
+        {/* ── Skeptic kill-tier (general debate names) — scale/catalyst names already show it in their strip ── */}
+        {debateData.skeptic_verdict && !debateData.scale && !debateData.catalyst && (
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
+            <p style={{ margin: 0, fontSize: 10, fontFamily: T.mono, color: debateData.skeptic_verdict === "REFUTED" ? T.red : debateData.skeptic_verdict === "CONFIRMED" ? T.green : T.amber }}>
+              Skeptic kill-tier: {debateData.skeptic_verdict}{debateData.skeptic_kill_fact ? ` — ${debateData.skeptic_kill_fact}` : ""}
+            </p>
+          </div>
+        )}
+
         {/* ── Scale-out tier — the Scale-Director's verdict on this name's role in the AI build-out, set AFTER the debate ── */}
         {debateData.scale && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
