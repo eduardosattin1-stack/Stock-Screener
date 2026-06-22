@@ -43,12 +43,12 @@
       "Carrier Q4 2025 earnings call (Gitlin): Q4 North American / CSA data-center orders up ~400-500%, ~$1B 2026 backlog, committed to $1.5B 2026 DC revenue 'targeting to exceed' — finance.yahoo.com / 247wallst.com, 2026-03"
     ],
     "scale": {
-      "tier": "LEVER",
-      "conviction": 22,
+      "tier": "TACTICAL",
+      "conviction": 42,
       "basket": "C",
       "basket_label": "THERMAL",
       "role": "HVAC/thermal-management OEM with a data-center cooling leg.",
-      "rationale": "Real thermal exposure but mostly broad-HVAC, catalyst FIRED, base $64 ~3% below spot, ~0.7:1 (17% up vs 23% down). Second-order. Wait for the high-$50s. Cap 25 honored.",
+      "rationale": "Real thermal exposure but DC cooling is a minority ($1.0->1.5B, ~2.3%) of a broad, flat-to-shrinking HVAC business (FY25 sales -3%, Q1'26 adj EPS -12%) — a TACTICAL franchise, loosely AI-bolted. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections are figure-precision footnotes (net-debt dating, EPS-growth framing), ~8pt haircut off a ~46 franchise. Catalyst FIRED; second-order, wait for the high-$50s.",
       "demand_durability": "Medium — DC cooling is a minority of a broad HVAC business; loosely AI-bolted.",
       "valuation_posture": "rich",
       "would_seat": false,

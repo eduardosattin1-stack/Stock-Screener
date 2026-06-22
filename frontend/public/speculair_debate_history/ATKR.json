@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "PASS",
-      "conviction": 5,
+      "conviction": 18,
       "basket": "B",
       "basket_label": "GRID",
       "role": "Electrical conduit / cable management; commodity-priced, trough-margin recovery story.",
-      "rationale": "Weakest grid fit: catalyst SOFT_EXTENDED, base $78 ~at spot but the thesis needs a trough-confirmed margin recovery (cyclical, not AI-secular). Skeptic cap 5 (the lowest in the basket) — essentially a PASS. Cap 5 honored.",
+      "rationale": "Weakest grid fit: commodity conduit, broad-construction cyclical, only loosely AI-bolted, on a trough-EBITDA recovery story — low franchise centrality (~25). Skeptic verdict CONFIRMED_WITH_CORRECTIONS, and the corrections WORSEN it materially: net debt is $318M (~0.9x trough EBITDA, not '<0.7x'), with ~$186.5M of PVC-antitrust cash outflow consuming ~63% of one year's FCF — a load-bearing ~15pt haircut. Essentially a PASS.",
       "demand_durability": "Low — commodity conduit, broad-construction cyclical, only loosely AI-bolted.",
       "valuation_posture": "fair",
       "would_seat": false,

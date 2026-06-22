@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 18,
+      "conviction": 48,
       "basket": "F",
       "basket_label": "MEMORY",
       "role": "The only US HBM supplier (HBM4 Vera-Rubin certified, smallest of three allocations); the memory toll on every AI accelerator.",
-      "rationale": "Genuine AI-memory franchise transformation, but it remains a CYCLICAL at heart — base $820-900 is ~22-28% below a $1,152 spot, downside -38 to -55% on a cycle-normalize, certified as the SMALLEST of three HBM4 suppliers. Whole-basket leverage plus memory-cycle leverage stacked. The June-24 print is a PENDING_HARD binary; size small and wait. Cap 18 honored.",
+      "rationale": "Genuine AI-memory franchise transformation (only US HBM supplier, HBM4 Vera-Rubin certified) — a real LEVER, but it remains a CYCLICAL at heart (certified as the SMALLEST of three HBM4 suppliers; DRAM/NAND cyclicality is the historic killer), which caps the franchise score below the durable tolls. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, the correction is a date footnote (Q2 reported Mar-18, not Feb; net-cash figure unverified but not load-bearing), so a ~8pt haircut off a ~56 franchise. The June-24 print is a PENDING_HARD binary; base ~$820-900 is ~22-28% below spot (peak-margin risk, in valuation_posture); size small and wait.",
       "demand_durability": "Medium-high now / cyclical structurally — HBM demand is capex-bolted, but DRAM/NAND cyclicality is the historic killer and the price embeds peak margins as durable.",
       "valuation_posture": "rich",
       "would_seat": false,

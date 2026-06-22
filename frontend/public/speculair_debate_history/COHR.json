@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "CORE",
-      "conviction": 34,
+      "conviction": 80,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "Broadest vertically-integrated photonics platform and the InP supply node for 800G/1.6T transceivers + the NVDA CPO partner ($2B equity, supply through end-of-decade); the toll every optical-interconnect dollar pays.",
-      "rationale": "Purest least-redundant optical CORE alongside FN: supply-constrained (orders into CY2028, LTAs to end of decade), the 6-inch InP ramp is both the volume unlock and the GM lever. Catalyst FIRED (+171% TTM) so no near-term asymmetry, but the franchise is the one I would actually seat in the layer. Cap 35 honored.",
+      "rationale": "Purest least-redundant optical CORE alongside FN: supply-constrained (orders into CY2028, LTAs to end of decade), the 6-inch InP ramp is both the volume unlock and the GM lever. This is the indispensable franchise I would actually seat in the layer — an 800-level CORE on importance + demand-durability + competitive position. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, but the only correction is that the name is RICHER than the dossier stated (EV/sales ~11.7x not 9-10x; net-debt framing) — a valuation footnote, not a franchise impairment — so a small ~8pt haircut off an ~88 franchise. Catalyst FIRED (+171% TTM) so no near-term asymmetry; the richness lives in valuation_posture, not the conviction number.",
       "demand_durability": "Very high — DataCom 75% of revenue +40% YoY, bolted directly to hyperscaler optical capex via multi-year LTAs.",
       "valuation_posture": "rich",
       "would_seat": true,

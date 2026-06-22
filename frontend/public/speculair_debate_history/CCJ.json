@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "LEVER",
-      "conviction": 22,
+      "conviction": 52,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Irreplaceable Western uranium fuel + Westinghouse/AP1000 reactor layer; the only liquid pure-play fuel toll.",
-      "rationale": "Genuine fuel-cycle moat, but catalyst FIRED ($80B AP1000 framework re-rate spent, +106% TTM), base $77 is ~28% below a $107 spot, ~1:0.4 against — the value-realization leg is unvested and dilutive. Wait. Cap 25 honored.",
+      "rationale": "Genuine fuel-cycle moat (the only liquid pure-play fuel toll + Westinghouse/AP1000 layer) — a strong LEVER, though commodity-priced and one step removed from the AI bolt. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections are valuation footnotes that make the bear MORE conservative (EV/EBITDA ~76x not ~50x; the $80B AP1000 value-realization is pre-FID and dilutive), so a ~8pt haircut off a ~60 franchise. Catalyst FIRED (+106% TTM), base ~$77 is ~28% below spot; wait.",
       "demand_durability": "High — uranium demand is structural, but commodity-priced and the AI link is one-step-removed.",
       "valuation_posture": "rich",
       "would_seat": false,

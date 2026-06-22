@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "CORE",
-      "conviction": 25,
+      "conviction": 78,
       "basket": "E",
       "basket_label": "POWER-GEN",
       "role": "Single best-positioned firm-power supplier — 32.4 GW NRC-licensed nuclear, Meta/Clinton + Microsoft/Crane PPAs, Calpine closed.",
-      "rationale": "Irreplaceable scarcity (already-built licensed nuclear) and the purest nuclear-IPP toll, but catalyst FIRED (all three load-bearing events printed) and base $260 is ~5% below spot — so seat-on-weakness rather than at-full. The least-redundant nuclear name to seat after VST. Cap 25 honored.",
+      "rationale": "Irreplaceable scarcity (already-built licensed nuclear, the scarcest asset in the layer) and the purest nuclear-IPP toll after VST — a true CORE franchise (~85). Skeptic verdict CONFIRMED_WITH_CORRECTIONS, corrections are footnotes that REINFORCE the wait-stance (mcap higher so FCF yield thinner; de-rating already underway, ~34% off the high, below 50/200-DMA), so a ~8pt haircut. Catalyst FIRED (all three load-bearing events printed), base ~$260 ~5% below spot — seat-on-weakness, the least-redundant nuclear name after VST.",
       "demand_durability": "Very high — licensed nuclear under long PPAs; the scarcest asset in the layer.",
       "valuation_posture": "fair",
       "would_seat": true,

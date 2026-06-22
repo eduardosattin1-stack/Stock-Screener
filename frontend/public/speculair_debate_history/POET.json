@@ -45,11 +45,11 @@
     ],
     "scale": {
       "tier": "PASS",
-      "conviction": 8,
+      "conviction": 15,
       "basket": "A",
       "basket_label": "OPTICAL",
       "role": "Pre-revenue photonic-interposer / optical-engine hopeful; Lumilens $500M framework is explicitly conditional.",
-      "rationale": "Q1 revenue $0.5M, the framework is conditional language, two stacked dilution warrants (one struck below spot), base SoP $5.50 is ~55% below a $12.15 spot. Skeptic cap 8, bear thesis SURVIVES intact. Pre-revenue micro-cap, structurally speculative. Cap 8 honored.",
+      "rationale": "Pre-revenue micro-cap, structurally speculative: Q1 revenue $0.5M, the framework is conditional language, two stacked dilution warrants. Low franchise-centrality (~20) — there is no bolted capex revenue yet. Skeptic verdict CONFIRMED_WITH_CORRECTIONS, bear thesis SURVIVES intact, so a haircut off an already-low base leaves it a PASS. Base SoP ~$5.50 is ~55% below spot.",
       "demand_durability": "Low — pre-revenue, conditional POs, no bolted capex revenue yet.",
       "valuation_posture": "rich",
       "would_seat": false,
