@@ -55,6 +55,28 @@ def _connect() -> IB:
     return ib
 
 
+def probe(timeout: float = 8.0) -> bool:
+    """Gateway API-liveness check for the run-guards. A logged-out / frozen /
+    data-farm-down IB Gateway still ACCEPTS the TCP socket on 4001 but hangs every
+    API request — so a bare port check passes and the caller then grinds through
+    25s-per-request timeouts (the 2026-06-22 15:30 failure). This connects on a SHORT
+    timeout and calls reqCurrentTime(); returns True only if the API actually answers.
+    Distinct clientId so it never collides with the run's connection (default 17)."""
+    ib = IB()
+    cid = int(os.environ.get("IB_PROBE_CLIENT_ID", "98"))
+    try:
+        ib.connect(IB_HOST, IB_PORT, clientId=cid, timeout=timeout, readonly=True)
+        ib.RequestTimeout = timeout
+        return ib.reqCurrentTime() is not None
+    except Exception:
+        return False
+    finally:
+        try:
+            ib.disconnect()
+        except Exception:
+            pass
+
+
 def _round_to(value: float, increments: list[float]) -> float:
     """Nearest available strike from the chain's strike list."""
     return min(increments, key=lambda s: abs(s - value)) if increments else value
@@ -391,9 +413,17 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")  # mute ib_async account-sync spam
     log.setLevel(logging.INFO)
     ap = argparse.ArgumentParser()
-    ap.add_argument("symbol")
+    ap.add_argument("symbol", nargs="?")
     ap.add_argument("--exchange", default="SMART")
     ap.add_argument("--currency", default="USD")
     ap.add_argument("--spot", type=float, default=None, help="override spot (e.g. FMP price) to skip the underlying data sub")
+    ap.add_argument("--probe", action="store_true",
+                    help="gateway API-liveness check (for the run-guards): exit 0 if the API answers reqCurrentTime, 1 if dead (port open but unresponsive)")
     a = ap.parse_args()
+    if a.probe:
+        alive = probe()
+        print("PROBE: gateway API " + ("ALIVE" if alive else "DEAD (port open but not servicing requests)"))
+        sys.exit(0 if alive else 1)
+    if not a.symbol:
+        ap.error("symbol is required (or pass --probe)")
     print(json.dumps(enrich(a.symbol, a.exchange, a.currency, a.spot), indent=2, default=str))

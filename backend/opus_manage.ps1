@@ -16,7 +16,16 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Gateway-up guard (same as opus_strategist.ps1): the intraday task can fire before IB Gateway is up.
 # Wait up to 10 min, then skip this pass gracefully (the next interval retries) rather than hard-fail.
-function Test-GatewayUp { try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close(); $true } catch { $false } }
+function Test-GatewayUp {
+  # Port open AND the API actually answers. A logged-out / frozen / data-farm-down
+  # gateway still accepts the socket on 4001 but hangs every request (the 2026-06-22
+  # 15:30 grind: positions/account/executions + every quote_legs timed out at 25s),
+  # so the TCP check is necessary but NOT sufficient — follow it with the python
+  # reqCurrentTime() liveness probe (exit 0 = API alive).
+  try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close() } catch { return $false }
+  python (Join-Path $PSScriptRoot "ibkr_options.py") --probe *> $null
+  return ($LASTEXITCODE -eq 0)
+}
 $deadline = (Get-Date).AddMinutes(10)
 while (-not (Test-GatewayUp) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 30 }
 if (-not (Test-GatewayUp)) { Write-Host "IB Gateway not up - skipping this manage pass (retries next interval)."; exit 0 }

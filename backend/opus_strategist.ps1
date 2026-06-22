@@ -23,7 +23,14 @@ $outFile = Join-Path $here "strategy_output.json"
 # Gateway-up guard: the scheduled task can fire before IB Gateway is logged in (the 7am-vs-9am race
 # that left the options card stale 06-19..06-22). Wait up to 20 min for port 4001, then skip gracefully
 # instead of hard-failing — the card just keeps its prior data and the next schedule retries.
-function Test-GatewayUp { try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close(); $true } catch { $false } }
+function Test-GatewayUp {
+  # Port open AND the API actually answers — a logged-out/frozen gateway accepts the
+  # socket but hangs every request, so the TCP check alone is not enough (see the
+  # 2026-06-22 15:30 grind). Follow it with the python reqCurrentTime() probe.
+  try { $c = New-Object Net.Sockets.TcpClient; $c.Connect('127.0.0.1', 4001); $c.Close() } catch { return $false }
+  python (Join-Path $PSScriptRoot "ibkr_options.py") --probe *> $null
+  return ($LASTEXITCODE -eq 0)
+}
 Write-Host "[0/4] waiting for IB Gateway on 127.0.0.1:4001 (up to 20 min)..."
 $deadline = (Get-Date).AddMinutes(20)
 while (-not (Test-GatewayUp) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 30 }
