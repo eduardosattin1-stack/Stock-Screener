@@ -20,6 +20,7 @@ from pathlib import Path
 _PUBLIC = Path(__file__).resolve().parent.parent / "frontend" / "public"
 RAW = _PUBLIC / "speculair_debate_history"          # pristine — the pipeline/Director reads this
 VOICED = _PUBLIC / "speculair_debate_voiced"        # house-voice display copy — the UI reads this
+STAGING = Path(__file__).resolve().parent / "_voice_staging"  # per-symbol rewritten-prose dropbox (batch)
 
 # Fields that hold human-readable prose (safe to rewrite). Everything else is the
 # machine contract and must never be touched.
@@ -27,8 +28,11 @@ PROSE_FIELDS = {
     "bull_thesis", "bear_thesis", "sop_bull", "sop_bear", "sop_breakdown", "risk_reward",
     "catalyst_summary", "dated_milestone", "forcing_function", "consensus_delta",
     "valley_of_death", "positioning_washout", "moderator_conclusion", "interrogator_dossier",
-    "skeptic_kill_fact", "catalyst_binding_reason",
+    "skeptic_kill_fact", "skeptic_corrections", "peer_comps_note", "role_in_scaleout",
+    "catalyst_binding_reason",
 }
+# Deliberately NOT rewritten (machine contract / ambiguous): catalyst_status (enum in some
+# files, sentence in others), verdict, conviction, scores, prices, dates, moat/trajectory enums.
 
 
 def apply(sym: str, newprose: dict) -> Path:
@@ -42,19 +46,38 @@ def apply(sym: str, newprose: dict) -> Path:
         raise ValueError(f"{sym}: unexpected shape")
     entry = data[0]
     for k, v in newprose.items():
-        if k not in PROSE_FIELDS:
-            raise ValueError(f"{sym}: refusing to write non-prose field {k}")
+        if k not in PROSE_FIELDS or not isinstance(v, str) or not v.strip():
+            continue  # allowlist only; never touch structured fields, skip junk
         if k == "catalyst_binding_reason":
             cat = entry.get("catalyst")
             if isinstance(cat, dict):
                 cat["binding_reason"] = v
         else:
-            entry[k] = v
+            if k in entry:  # only rewrite fields the raw actually has
+                entry[k] = v
     entry["voiced"] = True  # marker so the UI/agents can tell a display copy from a raw one
     VOICED.mkdir(parents=True, exist_ok=True)
     out = VOICED / f"{sym}.json"
     out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return out
+
+
+def apply_all() -> tuple[list, list]:
+    """Apply every backend/_voice_staging/<SYM>.json (a {prose_field: text} map written by
+    the batch agents) onto the matching raw debate, producing the voiced display copies.
+    Returns (ok, failed)."""
+    ok, failed = [], []
+    for sp in sorted(STAGING.glob("*.json")):
+        sym = sp.stem
+        try:
+            prose = json.loads(sp.read_text(encoding="utf-8"))
+            if not isinstance(prose, dict):
+                raise ValueError("staging not a dict")
+            apply(sym, prose)
+            ok.append(sym)
+        except Exception as e:  # noqa: BLE001
+            failed.append((sym, f"{type(e).__name__}: {e}"))
+    return ok, failed
 
 
 FIG = {
@@ -76,5 +99,12 @@ FIG = {
 }
 
 if __name__ == "__main__":
-    out = apply("FIG", FIG)
-    print("wrote", out)
+    import sys
+    if "--apply-staging" in sys.argv:
+        ok, failed = apply_all()
+        print(f"applied {len(ok)} voiced files; {len(failed)} failed")
+        for s, e in failed[:25]:
+            print("  FAIL", s, e)
+    else:
+        out = apply("FIG", FIG)
+        print("wrote", out)
