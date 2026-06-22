@@ -43,7 +43,7 @@ if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Objec
 $prompt = @"
 You are running the weekly all-Opus Speculair refresh, fully unattended, in the Stock-Screener repo at $repo. You have NO memory of prior conversations.
 Read the runbook at $skill IN FULL, then execute EVERY step end-to-end:
-  STEP 1 PREP  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 3C DISRUPTOR LENS  ->  STEP 4 VERIFY + REPORT.
+  STEP 1 PREP  ->  STEP 1B APEX SPECIAL-SIT LANE (catalyst-prep -> Workflow -> catalyst-seed; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 3C DISRUPTOR LENS  ->  STEP 4 VERIFY + REPORT.
 Honor every GUARD exactly: if a GUARD trips, STOP that book and report rather than publishing degraded data. Do not skip steps. Do not edit screener_v6.py / the Cloud Run scan / the frontend. When finished, print the STEP 4 summary (regime apex 10 + value apex 10 + cross-lens names + any caveats).
 "@
 

@@ -238,6 +238,9 @@ for p in picks:
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
         "size_units": p.get("size_units"),
         "size_units_effective": p.get("size_units_effective"),
+        # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor sizing
+        "downside_floor": rec.get("downside_floor") or p.get("downside_floor"),
+        "live_price": rec.get("live_price") or sc.get("price"),
         # apex skeptic + moat terminal-erosion (stamped by _regime_post) — surfaced per seat for the UI
         "skeptic_verdict": p.get("skeptic_verdict", ""),
         "skeptic_kill_fact": p.get("skeptic_kill_fact", ""),
@@ -283,6 +286,10 @@ except Exception as _e:
 # "held smallest on purpose"). Weight basis = the Director's structured size_units when present,
 # else his director_conviction (0-100) — his own per-seat scoring. Card shows this as primary;
 # the equal-weight chain stays as the continuity series.
+SS_RTF_CAP_PCT = 1.5      # equity special-sit: weight_pct * (live-floor)/live <= 1.5% NAV (mirrors B13)
+SS_LANE_CAP = 0.15        # the equity special-sit lane in aggregate <= 15% of the book
+
+
 def _apex_weights(es):
     units = {}
     for e in es:
@@ -295,7 +302,29 @@ def _apex_weights(es):
         else:
             units[e["symbol"]] = max(0.1, (e.get("conviction") or 0) / 100.0)
     tot = sum(units.values()) or 1.0
-    return {s: round(u / tot, 4) for s, u in units.items()}
+    w = {s: u / tot for s, u in units.items()}
+
+    # FLOOR-SIZING for the equity special-sit lane (catalyst-framed B13 non-binaries): cap each seat
+    # at SS_RTF_CAP_PCT risk-to-floor, and the lane in aggregate at SS_LANE_CAP; redistribute the
+    # freed weight across the rest of the book proportionally to their units.
+    bysym = {e["symbol"]: e for e in es}
+    caps = {}
+    for s, e in bysym.items():
+        if e.get("lane") == "equity_special_sit":
+            live, floor = e.get("live_price") or 0, e.get("downside_floor") or 0
+            if live > 0 and 0 < floor < live:
+                caps[s] = min(w.get(s, 0), (SS_RTF_CAP_PCT / 100.0) * live / (live - floor))
+            else:                                  # no usable floor -> conservative hard cap
+                caps[s] = min(w.get(s, 0), 0.05)
+    if caps:
+        if sum(caps.values()) > SS_LANE_CAP:       # aggregate lane cap
+            sc_ = SS_LANE_CAP / sum(caps.values())
+            caps = {s: v * sc_ for s, v in caps.items()}
+        capped = sum(caps.values())
+        free_u = sum(units[s] for s in w if s not in caps) or 1.0
+        for s in list(w):
+            w[s] = caps[s] if s in caps else (1 - capped) * units[s] / free_u
+    return {s: round(x, 4) for s, x in w.items()}
 
 apex_weights = _apex_weights(entries)
 _wbasis = "size_units" if any(isinstance(e.get("size_units"), (int, float)) for e in entries) else "director_conviction"

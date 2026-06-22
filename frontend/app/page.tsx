@@ -2409,12 +2409,15 @@ export default function Dashboard(){
     const ep = pick.entry_price;
     const hasEntry = typeof ep === "number" && ep > 0;
     const up = opts.upsidePct;
-    const stop = pick.thesis_break_px;
+    // catalyst-framed B13 equity special-sit: the "stop" is its verified downside floor
+    const isSS = pick.lane === "equity_special_sit";
+    const stop = pick.thesis_break_px || (isSS && typeof pick.downside_floor === "number" && pick.downside_floor > 0 ? pick.downside_floor : undefined);
     const hasUp = typeof up === "number";
     const hasStop = typeof stop === "number" && stop > 0;
     const showUpside = hasUp || hasStop;
-    // label adapts to what's present so "exit below" never shows without a stop value
-    const upLabel = hasUp && hasStop ? `${opts.upsideLabel} / exit below` : hasUp ? opts.upsideLabel : "exit below";
+    // label adapts to what's present so "exit below"/"floor" never shows without a stop value
+    const stopLabel = isSS ? "floor" : "exit below";
+    const upLabel = hasUp && hasStop ? `${opts.upsideLabel} / ${stopLabel}` : hasUp ? opts.upsideLabel : stopLabel;
     const axes = Array.isArray(pick.exposure_axes)
       ? pick.exposure_axes.map((a: string) => String(a).split(/[(（]/)[0].trim()).filter(Boolean)
       : [];
@@ -2433,7 +2436,7 @@ export default function Dashboard(){
             <span>{upLabel}:</span>
             <span style={{ textAlign: "right" }}>
               {typeof up === "number" && <span style={{ color: up >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>{up >= 0 ? "+" : ""}{up.toFixed(0)}%</span>}
-              {typeof stop === "number" && stop > 0 && <span style={{ color: "var(--red)" }}>{typeof up === "number" ? " · " : ""}exit below {fmtPrice(stop, cur)}</span>}
+              {typeof stop === "number" && stop > 0 && <span style={{ color: "var(--red)" }}>{typeof up === "number" ? " · " : ""}{stopLabel} {fmtPrice(stop, cur)}</span>}
             </span>
           </div>
         )}

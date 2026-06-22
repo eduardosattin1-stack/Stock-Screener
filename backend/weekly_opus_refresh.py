@@ -2909,7 +2909,7 @@ await agent(
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
-  'STEP 3b — BASKET-13 CATALYST SLEEVE (visibility addendum): Read backend/_basket13_candidates.json if it exists (skip this step silently if absent) — the Catalyst Watch sleeve names, each carrying native fields (score, board_priority, edge_grade, ev_pct, valuation_method, dated_milestone, lane_canon, resolution_driver, edge_flags). Reading guide: (1) score / board_priority measure catalyst DENSITY, not cheapness — score is NOT edge; (2) ev_pct is an expected-value barbell, NOT a margin of safety; (3) check dated_milestone against YOUR holding window before selecting; (4) edge_grade (H/M/L) is computed vs the LIVE price and is perishable. HARD CONSTRAINT: you may NOT select any sleeve name whose valuation_method == "binary_prob", whose edge_grade == "L", or that carries a blocking edge_flag (QUARANTINED / NO_UPSIDE / TRADING_THROUGH_TERMS / FLOOR_GE_LIVE / NO_BREAK_DOWNSIDE); these names are context, not candidates.\n' +
+  'STEP 3b — BASKET-13 CATALYST SLEEVE (visibility addendum): Read backend/_basket13_candidates.json if it exists (skip this step silently if absent) — the Catalyst Watch sleeve names, each carrying native fields (score, board_priority, edge_grade, ev_pct, valuation_method, dated_milestone, lane_canon, resolution_driver, edge_flags). Reading guide: (1) score / board_priority measure catalyst DENSITY, not cheapness — score is NOT edge; (2) ev_pct is an expected-value barbell, NOT a margin of safety; (3) check dated_milestone against YOUR holding window before selecting; (4) edge_grade (H/M/L) is computed vs the LIVE price and is perishable. HARD CONSTRAINT: you may NOT select any sleeve name whose valuation_method == "binary_prob" (binaries stay in the defined-risk B13 sleeve), whose edge_grade == "L", or that carries a blocking edge_flag (QUARANTINED / NO_UPSIDE / TRADING_THROUGH_TERMS / FLOOR_GE_LIVE / NO_BREAK_DOWNSIDE). EQUITY SPECIAL-SIT LANE: the NON-binary sleeve names (valuation_method in spread / recovery / sop — merger-arb spreads, forced-seller recovery, SoP, spins) ARE eligible AS A DISTINCT lane="equity_special_sit". For each such name a CATALYST-FRAMED debate has been seeded into results_regime/<SYM>.json (source="opus_catalyst", carrying lane + downside_floor) — use ITS verdict / conviction + catalyst_status as the PRIMARY levers: a PENDING_HARD dated catalyst with the live price below the event-resolved target AND a verified downside floor is an AGGRESSIVE ENTRY (conviction 4-5). Do NOT re-grade these on the value / quality rubric and do NOT apply the moat-erosion cap to them — the event carries the thesis, not the franchise. Seat AT MOST 3 such names (a sleeve, not the book), tag each lane="equity_special_sit", set entry_posture from the datedness (on_confirmation: <the dated milestone> for a hard date, else scale_in), and size them to the FLOOR (the publish layer caps each at 1.5% risk-to-floor of NAV; these are held-to-resolution and exit at the catalyst or the floor).\n' +
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) — INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha — discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget — a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
   'STEP 5 — FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a FIRED/elapsed catalyst with no fresh driver, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat — do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) — override allowed but you must OWN it in whats_changed. Then for each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST include a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal)}. Reply exactly: DONE',
@@ -2917,6 +2917,95 @@ await agent(
 log('Radar + debate + director complete.')
 return 'DONE'
 """
+
+
+# ── Apex EQUITY SPECIAL-SIT LANE (catalyst-framed B13 non-binaries) ────────────────────────────
+# The apex is a held-equity, value-framed compounder book; it structurally can't score the
+# event-driven asymmetry that lives in the Basket-13 catalyst funnel. This lane lets the apex seat
+# the NON-BINARY equity special-sits (merger-arb spreads / forced-seller recovery / SoP / spins —
+# FIP/BLCO/CLVT/KBR/UNF/AAUC ...) using the CATALYST-framed debate (so they aren't crushed by the
+# value/moat gates) and FLOOR-sized (so they don't carry compounder tail risk). FDA binaries stay
+# in B13 (defined-risk sized). Flow: catalyst-prep -> Workflow(_catalyst_weekly.mjs) -> catalyst-seed
+# (after prep, before the main debate Workflow), then the relaxed STEP-3b gate lets the Director seat them.
+_B13_BLOCKING = {"QUARANTINED", "NO_UPSIDE", "TRADING_THROUGH_TERMS", "FLOOR_GE_LIVE", "NO_BREAK_DOWNSIDE"}
+_B13_SS_METHODS = {"spread", "recovery", "sop"}  # non-binary equity special-sits (NOT binary_prob)
+
+
+def _b13_equity_special_sits():
+    """Non-binary, unblocked, H/M-edge equity special-sits from the live B13 funnel — apex-eligible."""
+    f = ROOT.parent / "_basket13_candidates.json"   # ROOT=backend/_opus_debate; candidates live in backend/
+    if not f.exists():
+        return []
+    d = json.load(open(f, encoding="utf-8"))
+    cands = d if isinstance(d, list) else (d.get("candidates") or [])
+    return [c for c in cands
+            if c.get("valuation_method") in _B13_SS_METHODS
+            and c.get("edge_grade") in ("H", "M")
+            and not (set(c.get("edge_flags") or []) & _B13_BLOCKING)]
+
+
+def _cat_ctx(c):
+    dm, dd = c.get("dated_milestone"), c.get("days_to_milestone")
+    date = f"HARD DATE {dm} ({dd}d)" if dm and dd is not None else "UNDATED"
+    return (f"{c.get('lane_canon','')} / {c.get('resolution_driver','')}; {date}; "
+            f"live {c.get('live_price')} vs target {c.get('fair_value_target')} / floor {c.get('downside_floor')}; "
+            f"{c.get('valuation_method')} R:R {c.get('computed_rr')}; edge {c.get('edge_grade')}, {c.get('tier')}")
+
+
+def catalyst_prep():
+    """Regenerate _catalyst_weekly.mjs over the non-binary B13 equity special-sits (reuse the prompts
+    in _catalyst_debate.mjs, swap only the NAMES table). Prints WORKFLOW_SCRIPT= for the SKILL."""
+    import re
+    ss = _b13_equity_special_sits()
+    if not ss:
+        print("catalyst-prep: no non-binary B13 equity special-sits in the funnel — skipping.")
+        return
+    rows = []
+    for c in ss:
+        co = (c.get("company_name") or c.get("symbol") or "")[:40]
+        rows.append("  { sym:%s, co:%s, cluster:%s, label:%s, ctx:%s }," % (
+            json.dumps(c.get("symbol")), json.dumps(co),
+            json.dumps(c.get("super_cluster", "")), json.dumps(c.get("resolution_driver", "")),
+            json.dumps(_cat_ctx(c))))
+    names_js = "const NAMES = [\n" + "\n".join(rows) + "\n]"
+    tmpl = (ROOT / "_catalyst_debate.mjs").read_text(encoding="utf-8")
+    new = re.sub(r"const NAMES = \[.*?\n\]", names_js, tmpl, count=1, flags=re.DOTALL)
+    out = ROOT / "_catalyst_weekly.mjs"
+    out.write_text(new, encoding="utf-8")
+    print(f"catalyst-prep: {len(ss)} equity special-sits -> {[c['symbol'] for c in ss]}")
+    print("WORKFLOW_SCRIPT=" + str(out))
+
+
+def catalyst_seed():
+    """Seed the catalyst-framed debate results for the non-binary B13 equity special-sits into
+    results_regime/ so the apex Director reads them EVENT-framed (not value-gated). Stamps
+    lane=equity_special_sit + downside_floor/live_price/target_px so publish floor-sizes them.
+    Run AFTER prep, BEFORE the main debate Workflow (it writes other symbols; these survive)."""
+    res = ROOT / "_catalyst_results"
+    if not res.exists():
+        print("catalyst-seed: no _catalyst_results/ — run the catalyst Workflow first. skipping.")
+        return
+    by_sym = {c.get("symbol"): c for c in _b13_equity_special_sits()}
+    (ROOT / "results_regime").mkdir(parents=True, exist_ok=True)
+    seeded = []
+    for sym, c in by_sym.items():
+        cf = res / f"{sym}.json"
+        if not cf.exists():
+            continue
+        r = json.load(open(cf, encoding="utf-8"))
+        r["lane"] = "equity_special_sit"
+        r["source"] = "opus_catalyst"
+        r["is_special_sit"] = True
+        if r.get("downside_floor") is None:
+            r["downside_floor"] = c.get("downside_floor")
+        if r.get("live_price") is None:
+            r["live_price"] = c.get("live_price")
+        if r.get("target_px") is None:
+            r["target_px"] = c.get("fair_value_target")
+        json.dump(r, open(ROOT / "results_regime" / f"{sym}.json", "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=2)
+        seeded.append(sym)
+    print(f"catalyst-seed: seeded {len(seeded)} equity special-sits into results_regime/ -> {seeded}")
 
 
 if __name__ == "__main__":
@@ -2966,6 +3055,10 @@ if __name__ == "__main__":
         value_skeptic()
     elif mode in ("regime-skeptic", "regime_skeptic"):
         regime_skeptic()
+    elif mode in ("catalyst-prep", "catalyst_prep"):
+        catalyst_prep()
+    elif mode in ("catalyst-seed", "catalyst_seed"):
+        catalyst_seed()
     elif mode in ("shadow-debate", "shadow_debate"):
         shadow_debate()
     elif mode in ("shadow-diff", "shadow_diff"):
