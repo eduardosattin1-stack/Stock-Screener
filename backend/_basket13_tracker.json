@@ -1140,7 +1140,12 @@
    "dated_milestone": null,
    "entry_price": 2.21,
    "entry_date": "2026-06-13",
-   "expected_pct": null
+   "expected_pct": null,
+   "cro_conditions": [],
+   "expression": {
+    "type": "equity"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "BBIO",
@@ -1159,7 +1164,12 @@
    "dated_milestone": "2026-11-27",
    "entry_price": 66.8,
    "entry_date": "2026-06-13",
-   "expected_pct": 46.6
+   "expected_pct": 46.6,
+   "cro_conditions": [],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "EYPT",
@@ -1178,7 +1188,16 @@
    "dated_milestone": "2026-07-31",
    "entry_price": 13.03,
    "entry_date": "2026-06-13",
-   "expected_pct": 89.6
+   "expected_pct": 89.6,
+   "cro_conditions": [
+    "Express via equity, OR options expiring Sept-2026 or later (NOT July) to clear the slipped August LUGANO readout",
+    "If options: confirm OI > 500 and effective bid/ask spread < 15% at the chosen strike before entry",
+    "Re-verify the August topline timing has not slipped further before stamping"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "ZYME",
@@ -1197,7 +1216,12 @@
    "dated_milestone": "2026-08-25",
    "entry_price": 22.88,
    "entry_date": "2026-06-13",
-   "expected_pct": 29.2
+   "expected_pct": 29.2,
+   "cro_conditions": [],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "VIR",
@@ -1216,7 +1240,15 @@
    "dated_milestone": null,
    "entry_price": 8.61,
    "entry_date": "2026-06-13",
-   "expected_pct": 61.6
+   "expected_pct": 61.6,
+   "cro_conditions": [
+    "Equity only — do NOT use the long-call leg (options too illiquid)",
+    "Limit entry <= $8.85 to preserve payoff vs $20 FV"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "PVLA",
@@ -1235,7 +1267,16 @@
    "dated_milestone": null,
    "entry_price": 118.84,
    "entry_date": "2026-06-23",
-   "expected_pct": 59.1
+   "expected_pct": 59.1,
+   "cro_conditions": [
+    "Equity only — option chain too thin for a long-dated call",
+    "FDA_clinical_readout cluster name (4th in batch) — Director must apply the driver cap and may displace a weaker cluster name",
+    "Size per binary event vol"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "AVIR",
@@ -1254,7 +1295,16 @@
    "dated_milestone": null,
    "entry_price": 4.39,
    "entry_date": "2026-06-23",
-   "expected_pct": 57.2
+   "expected_pct": 57.2,
+   "cro_conditions": [
+    "Equity only — do not attempt options (no liquidity)",
+    "Size small per binary event vol",
+    "FDA_clinical_readout cluster name — subject to Director driver cap"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "DBVT",
@@ -1273,7 +1323,17 @@
    "dated_milestone": null,
    "entry_price": 15.7,
    "entry_date": "2026-06-23",
-   "expected_pct": 43.6
+   "expected_pct": 43.6,
+   "cro_conditions": [
+    "Equity only — no options exist on the ADR",
+    "Enter on a limit <= $16.50 to restore dossier asymmetry (edge compressed ~half on +8.8% pop)",
+    "Small size; thin float",
+    "FDA cluster name — Director cap applies"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   },
   {
    "symbol": "MGNI",
@@ -1292,7 +1352,16 @@
    "dated_milestone": null,
    "entry_price": 17.45,
    "entry_date": "2026-06-23",
-   "expected_pct": 8.0
+   "expected_pct": 8.0,
+   "cro_conditions": [
+    "Entry only on a limit at or below ~$15.00 to restore the dossier's downside cushion to the $11 floor (live $16.25 has eroded the R:R)",
+    "Express as equity or long-dated Dec-2026 calls (undated catalyst — do NOT use a tight near-dated expiry)",
+    "If options: confirm Dec-2026 call OI and effective spread < 15% before entry"
+   ],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true
   }
  ],
  "watchlist_state": {
