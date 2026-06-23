@@ -20,21 +20,27 @@ const num = (o: any, k: string): number | null => {
 
 export async function GET(req: NextRequest) {
   if (!process.env.FMP_API_KEY) return NextResponse.json({ error: "FMP_API_KEY not set" }, { status: 500 });
-  const symbols = (new URL(req.url).searchParams.get("symbols") || "")
-    .split(",").map((s) => s.trim()).filter(Boolean).slice(0, 12);
+  const url = new URL(req.url);
+  // light=1: price + day% only, from the single batch-quote call — skips the per-symbol
+  // stock-price-change (ytd/1Y) fan-out, so the 12-symbol cap (which exists ONLY to bound
+  // that fan-out) lifts to 60. Used by the Basket 13 + watchlist live ticker, which renders
+  // just price + day% (was silently dropping the tail past 12 symbols).
+  const light = url.searchParams.get("light") === "1";
+  const symbols = (url.searchParams.get("symbols") || "")
+    .split(",").map((s) => s.trim()).filter(Boolean).slice(0, light ? 60 : 12);
   if (!symbols.length) return NextResponse.json({ quotes: [] });
 
   try {
-    const [qrows, ...changes] = await Promise.all([
-      fmpGet("batch-quote", { symbols: symbols.join(",") }, 30),
-      ...symbols.map((s) => fmpGet("stock-price-change", { symbol: s }, 300).then((r) => r?.[0] ?? null).catch(() => null)),
-    ]);
+    const qrows = await fmpGet("batch-quote", { symbols: symbols.join(",") }, 30);
     const qmap: Record<string, any> = {};
     for (const q of qrows || []) qmap[q.symbol] = q;
+    const changes: any[] = light ? [] : await Promise.all(
+      symbols.map((s) => fmpGet("stock-price-change", { symbol: s }, 300).then((r) => r?.[0] ?? null).catch(() => null)),
+    );
 
     const quotes = symbols.map((s, i) => {
       const q = qmap[s];
-      const c = changes[i];
+      const c = light ? null : changes[i];
       return { symbol: s, name: q?.name ?? s, price: num(q, "price"), day: num(q, "changePercentage"), ytd: num(c, "ytd"), year: num(c, "1Y") };
     });
     return NextResponse.json({ quotes });

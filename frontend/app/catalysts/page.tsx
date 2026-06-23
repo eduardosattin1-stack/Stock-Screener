@@ -207,7 +207,7 @@ export default function CatalystWatch() {
     if (!syms.length) return;
     let stop = false;
     const pull = () =>
-      fetch(`/api/quotes?symbols=${encodeURIComponent(syms.join(","))}`)
+      fetch(`/api/quotes?symbols=${encodeURIComponent(syms.join(","))}&light=1`)
         .then(r => r.json())
         .then(d => {
           if (stop || !Array.isArray(d?.quotes)) return;
