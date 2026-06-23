@@ -1,15 +1,15 @@
 {
   "inception_date": "2026-06-14",
   "nav": 98.8967,
-  "last_date": "2026-06-19",
+  "last_date": "2026-06-21",
   "last_prices": {
-    "TSM": 0.0,
+    "TSM": 462.12,
     "NVDA": 210.69,
-    "CCJ": 0.0,
+    "CCJ": 106.49,
     "GMED": 79.23,
     "BSX": 45.29,
     "TOST": 24.66,
-    "V": 0.0,
+    "V": 327.24,
     "IDXX": 562.09
   },
   "positions": {
@@ -19,12 +19,12 @@
       "conviction": 84
     },
     "V": {
-      "entry_price": 0.0,
+      "entry_price": 322.39,
       "entry_date": "2026-06-14",
       "conviction": 80
     },
     "CCJ": {
-      "entry_price": 0.0,
+      "entry_price": 100.96,
       "entry_date": "2026-06-14",
       "conviction": 77
     },
@@ -39,7 +39,7 @@
       "conviction": 83
     },
     "TSM": {
-      "entry_price": 0.0,
+      "entry_price": 423.93,
       "entry_date": "2026-06-14",
       "conviction": 84
     },
@@ -71,6 +71,12 @@
       "date": "2026-06-19",
       "nav": 98.8967,
       "ret": -0.011033,
+      "n": 8
+    },
+    {
+      "date": "2026-06-21",
+      "nav": 98.8967,
+      "ret": 0.0,
       "n": 8
     }
   ],
