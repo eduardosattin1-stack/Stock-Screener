@@ -44,7 +44,9 @@ def apply(sym: str, newprose: dict) -> Path:
     data = json.loads((RAW / f"{sym}.json").read_text(encoding="utf-8"))
     if not isinstance(data, list) or not data:
         raise ValueError(f"{sym}: unexpected shape")
-    entry = data[0]
+    # The UI renders the LATEST debate (max date) by default — rewrite THAT entry,
+    # not data[0] (the oldest). Picking by max date matches the stock page's sortNew.
+    entry = max(data, key=lambda e: e.get("date", ""))
     for k, v in newprose.items():
         if k not in PROSE_FIELDS or not isinstance(v, str) or not v.strip():
             continue  # allowlist only; never touch structured fields, skip junk
