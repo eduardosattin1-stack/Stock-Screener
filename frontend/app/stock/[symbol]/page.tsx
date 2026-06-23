@@ -3376,7 +3376,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
         <Card style={{ flex: 1, minWidth: 280, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.amber, textTransform: "uppercase", marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
-              <TrendingDown size={12} /> Expectations Arbitrage (Consensus Delta)
+              <TrendingDown size={12} /> Where We Disagree With the Market
             </div>
             <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
               {debateData.consensus_delta || "No consensus delta recorded."}
@@ -3388,7 +3388,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
         <Card style={{ flex: 1, minWidth: 280, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
-              <Zap size={12} /> TURNAROUND FORCING FUNCTION (CATALYST)
+              <Zap size={12} /> The Catalyst That Forces a Re-Rating
             </div>
             <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, fontFamily: T.sans, margin: 0, textAlign: "justify" }}>
               {debateData.forcing_function || "No imminent catalyst recorded."}
@@ -3401,7 +3401,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
       {(debateData.trigger_event || debateData.valley_of_death) && (
         <Card style={{ background: "rgba(239, 68, 68, 0.02)", border: `1px solid rgba(239, 68, 68, 0.15)` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.red, textTransform: "uppercase", marginBottom: 8 }}>
-            <AlertTriangle size={12} /> Temporal Risk (Valley of Death / Capitulation Trigger)
+            <AlertTriangle size={12} /> The Risky Window — Where It Could Fall First
           </div>
           <p style={{ fontSize: 12, color: T.textLight, lineHeight: 1.6, fontFamily: T.sans, margin: 0 }}>
             {debateData.trigger_event || debateData.valley_of_death}
@@ -3411,7 +3411,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
 
       {/* ── Multi-Agent Barbell Debate ── */}
       <Card style={{ padding: "20px 24px" }}>
-        <SH title="4-Agent Barbell Debate Thesis" icon={<Activity size={12} />} sub="Simulated Bull & Bear Scenario Mapping" />
+        <SH title="The Bull-and-Bear Debate" icon={<Activity size={12} />} sub="How the upside and downside cases stack up" />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 16 }}>
           {/* Bull Thesis */}
           <div style={{ background: "rgba(20, 184, 122, 0.02)", border: `1px solid rgba(20, 184, 122, 0.15)`, padding: 16, borderRadius: 8 }}>

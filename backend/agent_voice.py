@@ -31,8 +31,10 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
 3. Never write an internal code, enum, or house label in your prose — translate it to
    plain words. These tokens are machine fields for the system, not words for the reader:
    - verdict A / B / C            -> "buy now" / "wait for the wash-out" / "pass for now"
-   - SOFT_EXTENDED                -> "a dated but soft catalyst — no contractual payout"
-   - PENDING_HARD                 -> "a hard, contractual catalyst with a fixed payout"
+   - SOFT_EXTENDED                -> "a soft, non-binding catalyst — no contractual payout" (do
+     NOT assert it is dated or undated unless the source entry says so; carry the source's wording)
+   - PENDING_HARD                 -> "a hard, dated catalyst (a firm, scheduled event)" (do NOT
+     assert a contractual or fixed payout unless the source entry explicitly says so)
    - CONFIRMED / ..._CORRECTIONS / REFUTED -> "verified" / "verified, with corrections" / "did not hold up"
    - Consensus Delta / Expectations Arbitrage -> "where we disagree with the market"
    - Valley of Death / Capitulation Trigger   -> "the risky window (the months just ahead)"
@@ -40,7 +42,12 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
    - Forcing Function             -> "the catalyst — what forces the re-rating"
    - Forensic Interrogator Dossier-> "a deep dive on management and the setup"
    - Barbell / 4-Agent Debate     -> "the bull-versus-bear case"
-   - TRAJECTORY: PIVOTING, MOAT: NARROW, etc. -> "trajectory: turning", "moat: narrow but real"
+   - TRAJECTORY:/MOAT: tags -> translate ONLY the value actually present (TRAJECTORY: PIVOTING
+     -> "trajectory: turning"; MOAT: NARROW -> "a narrow but real moat"; MOAT: WIDE -> "a wide,
+     durable moat"). CRITICAL: if a dimension is ABSENT from the source line (e.g. the line gives
+     a credibility score and trajectory but no MOAT), do NOT mention it. Never invent a moat,
+     moat-trend, or secular-threat assessment the source did not state — translate what is there,
+     add nothing.
    Any other ALL_CAPS_UNDERSCORE or snake_case token you meet: write its plain meaning,
    never the token itself.
 4. No ALL-CAPS for emphasis, no emoji, no hype, no slang. Spell out an acronym on first
