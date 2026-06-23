@@ -373,7 +373,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 4 }}>System Debate</div>
           {debate.new_tickers?.length > 0 && (
             <div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginBottom: 6 }}>New to the apex — tap to read the debate</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginBottom: 6 }}>Latest into the apex — tap to read the debate</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {debate.new_tickers.slice(0, 8).map((t: string) => (
                   <button key={t} onClick={() => router.push(`/stock/${encodeURIComponent(t)}?tab=debate`)} style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--green)", background: "var(--green-light)", border: "none", borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}>{t}</button>
