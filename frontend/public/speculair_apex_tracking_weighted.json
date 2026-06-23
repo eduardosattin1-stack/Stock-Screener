@@ -1,69 +1,69 @@
 {
   "inception_date": "2026-06-08",
-  "nav": 97.6474,
-  "last_date": "2026-06-15",
+  "nav": 97.2338,
+  "last_date": "2026-06-21",
   "last_prices": {
-    "ADBE": 204.02,
-    "IT": 148.17,
-    "CMCSA": 24.5,
-    "EEFT": 66.66,
-    "PLX.PA": 11.15,
-    "NTES": 125.82,
-    "FSLR": 267.31,
-    "SCR.PA": 31.04,
-    "LYFT": 13.54,
-    "MMS": 62.28
+    "FRVIA.PA": 9.502,
+    "THC": 172.57,
+    "SCR.PA": 31.44,
+    "NTES": 121.33,
+    "CTSH": 43.7,
+    "EEFT": 65.84,
+    "AD.AS": 34.61,
+    "PRGS": 29.68,
+    "UHS": 141.17,
+    "NSP": 36.22
   },
   "positions": {
-    "IT": {
-      "entry_price": 160.01,
-      "entry_date": "2026-06-14",
-      "conviction": 74
-    },
-    "CMCSA": {
-      "entry_price": 25.205,
-      "entry_date": "2026-06-08",
-      "conviction": 71
-    },
     "NTES": {
       "entry_price": 116.55,
       "entry_date": "2026-06-14",
+      "conviction": 71
+    },
+    "FRVIA.PA": {
+      "entry_price": 9.502,
+      "entry_date": "2026-06-21",
+      "conviction": 78
+    },
+    "THC": {
+      "entry_price": 172.57,
+      "entry_date": "2026-06-21",
+      "conviction": 72
+    },
+    "SCR.PA": {
+      "entry_price": 31.44,
+      "entry_date": "2026-06-21",
+      "conviction": 70
+    },
+    "CTSH": {
+      "entry_price": 43.7,
+      "entry_date": "2026-06-21",
       "conviction": 66
     },
     "EEFT": {
-      "entry_price": 66.2,
-      "entry_date": "2026-06-10",
-      "conviction": 69
-    },
-    "FSLR": {
-      "entry_price": 257.85,
-      "entry_date": "2026-06-14",
+      "entry_price": 65.84,
+      "entry_date": "2026-06-21",
       "conviction": 64
     },
-    "MMS": {
-      "entry_price": 61.17,
-      "entry_date": "2026-06-14",
-      "conviction": 58
-    },
-    "SCR.PA": {
-      "entry_price": 31.04,
-      "entry_date": "2026-06-10",
+    "AD.AS": {
+      "entry_price": 34.61,
+      "entry_date": "2026-06-21",
       "conviction": 62
     },
-    "ADBE": {
-      "entry_price": 244.76,
-      "entry_date": "2026-06-15",
-      "conviction": 76
+    "PRGS": {
+      "entry_price": 29.68,
+      "entry_date": "2026-06-21",
+      "conviction": 63
     },
-    "PLX.PA": {
-      "entry_price": 11.15,
-      "entry_date": "2026-06-15",
-      "conviction": 68
+    "UHS": {
+      "entry_price": 141.17,
+      "entry_date": "2026-06-21",
+      "conviction": 65
     },
-    "LYFT": {
-      "entry_price": 13.9,
-      "entry_date": "2026-06-15",
-      "conviction": 60
+    "NSP": {
+      "entry_price": 36.22,
+      "entry_date": "2026-06-21",
+      "conviction": 64
     }
   },
   "history": [
@@ -83,6 +83,18 @@
       "date": "2026-06-15",
       "nav": 97.6474,
       "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-06-17",
+      "nav": 97.6185,
+      "ret": -0.000296,
+      "n": 9
+    },
+    {
+      "date": "2026-06-21",
+      "nav": 97.2338,
+      "ret": -0.003941,
       "n": 10
     }
   ],
@@ -113,6 +125,132 @@
       "exit_price": 79.27,
       "return_pct": -6.47,
       "conviction": 58
+    },
+    {
+      "symbol": "ADBE",
+      "entry_date": "2026-06-15",
+      "exit_date": "2026-06-17",
+      "entry_price": 244.76,
+      "exit_price": 207.32,
+      "return_pct": -15.3,
+      "conviction": 76
+    },
+    {
+      "symbol": "IT",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-17",
+      "entry_price": 160.01,
+      "exit_price": 142.24,
+      "return_pct": -11.11,
+      "conviction": 74
+    },
+    {
+      "symbol": "CMCSA",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-17",
+      "entry_price": 25.205,
+      "exit_price": 23.66,
+      "return_pct": -6.13,
+      "conviction": 71
+    },
+    {
+      "symbol": "EEFT",
+      "entry_date": "2026-06-10",
+      "exit_date": "2026-06-17",
+      "entry_price": 66.2,
+      "exit_price": 67.55,
+      "return_pct": 2.04,
+      "conviction": 69
+    },
+    {
+      "symbol": "FSLR",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-17",
+      "entry_price": 257.85,
+      "exit_price": 264.36,
+      "return_pct": 2.52,
+      "conviction": 64
+    },
+    {
+      "symbol": "SCR.PA",
+      "entry_date": "2026-06-10",
+      "exit_date": "2026-06-17",
+      "entry_price": 31.04,
+      "exit_price": 31.58,
+      "return_pct": 1.74,
+      "conviction": 62
+    },
+    {
+      "symbol": "SAN.PA",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 76.58,
+      "exit_price": 74.14,
+      "return_pct": -3.19,
+      "conviction": 78
+    },
+    {
+      "symbol": "WKL.AS",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 61.24,
+      "exit_price": 58.86,
+      "return_pct": -3.89,
+      "conviction": 74
+    },
+    {
+      "symbol": "PLX.PA",
+      "entry_date": "2026-06-15",
+      "exit_date": "2026-06-21",
+      "entry_price": 11.15,
+      "exit_price": 11.43,
+      "return_pct": 2.51,
+      "conviction": 62
+    },
+    {
+      "symbol": "MMS",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-21",
+      "entry_price": 61.17,
+      "exit_price": 55.74,
+      "return_pct": -8.88,
+      "conviction": 66
+    },
+    {
+      "symbol": "UPBD",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 17.84,
+      "exit_price": 18.32,
+      "return_pct": 2.69,
+      "conviction": 64
+    },
+    {
+      "symbol": "PDD",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 94.52,
+      "exit_price": 79.56,
+      "return_pct": -15.83,
+      "conviction": 60
+    },
+    {
+      "symbol": "LYFT",
+      "entry_date": "2026-06-15",
+      "exit_date": "2026-06-21",
+      "entry_price": 13.9,
+      "exit_price": 14.28,
+      "return_pct": 2.73,
+      "conviction": 58
+    },
+    {
+      "symbol": "CAG",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 13.56,
+      "exit_price": 13.2,
+      "return_pct": -2.65,
+      "conviction": 56
     }
   ]
 }

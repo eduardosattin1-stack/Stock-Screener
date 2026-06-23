@@ -1,45 +1,69 @@
 {
   "inception_date": "2026-06-08",
-  "nav": 103.4478,
-  "last_date": "2026-06-15",
+  "nav": 100.4744,
+  "last_date": "2026-06-21",
   "last_prices": {
-    "ADBE": 204.02,
-    "MMS": 62.28,
-    "GLOB": 37.49,
-    "EEFT": 66.66,
-    "THC": 174.66,
-    "CMCSA": 24.5
+    "EEFT": 65.84,
+    "CMCSA": 22.43,
+    "WKL.AS": 58.86,
+    "EPAM": 76.64,
+    "HRB": 34.38,
+    "UHS": 141.17,
+    "THC": 172.57,
+    "NTES": 121.33,
+    "SCR.PA": 31.44,
+    "HRMY": 33.28
   },
   "positions": {
-    "CMCSA": {
-      "entry_price": 23.82,
-      "entry_date": "2026-06-08",
-      "conviction": 66
-    },
     "THC": {
       "entry_price": 162.06,
       "entry_date": "2026-06-08",
-      "conviction": 72
+      "conviction": 76
     },
     "EEFT": {
       "entry_price": 66.74,
       "entry_date": "2026-06-08",
-      "conviction": 85
-    },
-    "ADBE": {
-      "entry_price": 204.02,
-      "entry_date": "2026-06-14",
-      "conviction": 94
-    },
-    "MMS": {
-      "entry_price": 62.28,
-      "entry_date": "2026-06-14",
       "conviction": 84
     },
-    "GLOB": {
-      "entry_price": 37.49,
-      "entry_date": "2026-06-14",
+    "NTES": {
+      "entry_price": 121.81,
+      "entry_date": "2026-06-17",
+      "conviction": 79
+    },
+    "WKL.AS": {
+      "entry_price": 59.94,
+      "entry_date": "2026-06-17",
       "conviction": 80
+    },
+    "UHS": {
+      "entry_price": 146.9,
+      "entry_date": "2026-06-17",
+      "conviction": 80
+    },
+    "CMCSA": {
+      "entry_price": 22.43,
+      "entry_date": "2026-06-21",
+      "conviction": 80
+    },
+    "EPAM": {
+      "entry_price": 76.64,
+      "entry_date": "2026-06-21",
+      "conviction": 74
+    },
+    "HRB": {
+      "entry_price": 34.38,
+      "entry_date": "2026-06-21",
+      "conviction": 74
+    },
+    "SCR.PA": {
+      "entry_price": 31.44,
+      "entry_date": "2026-06-21",
+      "conviction": 73
+    },
+    "HRMY": {
+      "entry_price": 33.28,
+      "entry_date": "2026-06-21",
+      "conviction": 72
     }
   },
   "history": [
@@ -90,6 +114,36 @@
       "nav": 103.4478,
       "ret": 0.0,
       "n": 6
+    },
+    {
+      "date": "2026-06-16",
+      "nav": 103.1843,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-06-17",
+      "nav": 103.5299,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-06-19",
+      "nav": 100.8618,
+      "ret": -0.025771,
+      "n": 9
+    },
+    {
+      "date": "2026-06-20",
+      "nav": 100.4744,
+      "ret": -0.003841,
+      "n": 9
+    },
+    {
+      "date": "2026-06-21",
+      "nav": 100.4744,
+      "ret": 0.0,
+      "n": 10
     }
   ],
   "closed": [
@@ -164,6 +218,60 @@
       "exit_price": 31.04,
       "return_pct": 1.64,
       "conviction": 72
+    },
+    {
+      "symbol": "GLOB",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-17",
+      "entry_price": 37.49,
+      "exit_price": 36.63,
+      "return_pct": -2.29,
+      "conviction": 80
+    },
+    {
+      "symbol": "CMCSA",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-17",
+      "entry_price": 23.82,
+      "exit_price": 23.66,
+      "return_pct": -0.67,
+      "conviction": 66
+    },
+    {
+      "symbol": "ADBE",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-21",
+      "entry_price": 204.02,
+      "exit_price": 195.16,
+      "return_pct": -4.34,
+      "conviction": 86
+    },
+    {
+      "symbol": "PLX.PA",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 11.23,
+      "exit_price": 11.43,
+      "return_pct": 1.78,
+      "conviction": 84
+    },
+    {
+      "symbol": "MMS",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-06-21",
+      "entry_price": 62.28,
+      "exit_price": 55.74,
+      "return_pct": -10.5,
+      "conviction": 74
+    },
+    {
+      "symbol": "PRDO",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-21",
+      "entry_price": 32.16,
+      "exit_price": 32.03,
+      "return_pct": -0.4,
+      "conviction": 74
     }
   ]
 }
