@@ -1267,12 +1267,16 @@ export default function CatalystWatch() {
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
                       <thead>
                         <tr style={{ color: T.muted, fontSize: 8.5, textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "left" }}>
-                          <th style={{ padding: "3px 8px 3px 0" }}>Name</th>
-                          <th style={{ padding: "3px 8px" }}>Edge</th>
-                          <th style={{ padding: "3px 8px" }}>Exp EV/RR</th>
+                          <th style={{ padding: "3px 8px 3px 0" }}>Seat</th>
+                          <th style={{ padding: "3px 8px" }}>Wt</th>
+                          <th style={{ padding: "3px 8px" }}>Expression</th>
                           <th style={{ padding: "3px 8px" }}>Lane</th>
                           <th style={{ padding: "3px 8px" }}>Driver</th>
-                          <th style={{ padding: "3px 0" }}>Enters when</th>
+                          <th style={{ padding: "3px 8px" }}>Exp R:R / EV</th>
+                          <th style={{ padding: "3px 8px" }}>Entry</th>
+                          <th style={{ padding: "3px 8px" }}>Review trigger</th>
+                          <th style={{ padding: "3px 8px" }}>CRO</th>
+                          <th style={{ padding: "3px 0" }}>Live</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1281,19 +1285,47 @@ export default function CatalystWatch() {
                             <td style={{ padding: "5px 8px 5px 0" }}>
                               <span onClick={() => { setSelectedSymbol(w.symbol); setView("detail"); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{w.symbol}</span>
                             </td>
-                            <td style={{ padding: "5px 8px", color: w.edge_grade === "H" ? T.green : w.edge_grade === "M" ? "#d97706" : T.light }}>{w.edge_grade || "—"}</td>
-                            <td style={{ padding: "5px 8px", color: T.green }}>{w.ev_pct != null ? `EV ${(w.ev_pct * 100).toFixed(0)}%` : w.computed_rr != null ? `${Number(w.computed_rr).toFixed(2)}:1` : "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.light }} title="intended weight if seated">{w.intended_weight_pct != null ? `${w.intended_weight_pct}%` : "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.light }} title={w.expression_intended ? "intended instrument if seated (Director's expression rule)" : ""}>{fmtB13Expr(w)}{w.expression_intended ? <span style={{ marginLeft: 4, fontSize: 7.5, color: T.muted }}>int</span> : null}</td>
                             <td style={{ padding: "5px 8px", color: T.light }}>{termLabel(w.lane_canon)}</td>
                             <td style={{ padding: "5px 8px", color: T.purple }}>{termLabel(w.resolution_driver)}</td>
-                            <td style={{ padding: "5px 0", color: T.light, maxWidth: 320, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={`blocked by: ${w.blocked_by}${w.note ? "\n" + w.note : ""}`}>{w.would_enter_if || w.blocked_by}</td>
+                            <td style={{ padding: "5px 8px", color: T.green }}>{w.ev_pct != null ? `EV ${(w.ev_pct * 100).toFixed(0)}%` : w.computed_rr != null ? `${Number(w.computed_rr).toFixed(2)}:1` : "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.light }} title={`edge ${w.edge_grade ?? "—"} · score ${w.score ?? "—"}`}>{w.entry_date ? `${w.entry_date} @ ${w.entry_price != null ? Number(w.entry_price).toFixed(2) : "n/a"}` : "—"}</td>
+                            <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={`enters when: ${w.would_enter_if || w.blocked_by || "—"}${w.note ? "\n" + w.note : ""}`}>{w.dated_milestone || "—"}</td>
+                            <td style={{ padding: "5px 8px" }}>
+                              {(w.cro_conditions || []).length > 0
+                                ? <span title={w.cro_conditions.join("\n• ").replace(/^/, "• ")} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⚠ {w.cro_conditions.length} cond</span>
+                                : <span style={{ fontSize: 8.5, color: T.muted }}>clean</span>}
+                            </td>
+                            <td style={{ padding: "5px 0" }}>
+                              {(() => {
+                                const q = liveQuotes[w.symbol];
+                                if (!q || q.price == null) return <span style={{ fontSize: 9, color: T.muted }}>—</span>;
+                                const pnl = w.entry_price ? (q.price / w.entry_price - 1) * 100 : null;
+                                return (
+                                  <span title={`live ${q.price.toFixed(2)} · day ${q.day != null ? `${q.day >= 0 ? "+" : ""}${q.day.toFixed(2)}%` : "—"} · vs entry ${pnl != null ? `${pnl >= 0 ? "+" : ""}${pnl.toFixed(1)}%` : "—"}`}
+                                    style={{ display: "inline-flex", flexDirection: "column", lineHeight: 1.3 }}>
+                                    <span style={{ color: T.text, fontWeight: 700 }}>
+                                      {q.price.toFixed(2)}
+                                      {q.day != null && <span style={{ marginLeft: 5, fontSize: 8.5, color: q.day >= 0 ? T.green : T.red }}>{q.day >= 0 ? "+" : ""}{q.day.toFixed(1)}%</span>}
+                                    </span>
+                                    {pnl != null && <span style={{ fontSize: 8.5, color: pnl >= 0 ? T.green : T.red }}>pos {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%</span>}
+                                  </span>
+                                );
+                              })()}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                  {/* ON-DECK TRACK RECORD — the watchlist tracked as a SEPARATE equal-weight cohort
-                      (calibration: did the names the Director queued move as he expected?). */}
-                  {(() => {
+                </div>
+              )}
+
+              {/* WATCHLIST TRACK RECORD — its own card (the 4th card), parallel to the basket's.
+                  The watchlist tracked as a SEPARATE equal-weight cohort: did the queue move as the
+                  Director expected? */}
+              {(B13.watchlist || []).length > 0 && (() => {
                     const wl = B13.watchlist || [];
                     const lastWlMark: any = (B13.watchlist_marks || [])[(B13.watchlist_marks || []).length - 1];
                     const wActual = (w: any): number | null => {
@@ -1331,9 +1363,9 @@ export default function CatalystWatch() {
                       </div>
                     );
                     return (
-                      <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+                      <div style={{ background: T.card, border: "1px dashed rgba(59,130,246,0.35)", borderRadius: 8, padding: "13px 18px", marginBottom: 24 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
-                          <span style={{ fontSize: 9.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: T.blue }}>On-deck track record</span>
+                          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: T.blue }}>⬡ WATCHLIST — ON-DECK TRACK RECORD</span>
                           <span style={{ fontSize: 8.5, color: T.muted }}>equal-weight cohort · NAV 100 at each name&apos;s watchlist entry · separate from the basket — does the queue move as the Director expects?</span>
                         </div>
                         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
@@ -1388,8 +1420,6 @@ export default function CatalystWatch() {
                       </div>
                     );
                   })()}
-                </div>
-              )}
               </>
             );
           })() : (

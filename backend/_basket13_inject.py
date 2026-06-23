@@ -128,6 +128,18 @@ def rtf_pct(weight, live, floor):
     return None
 
 
+def intended_expression(c):
+    """The instrument the Director WOULD use if this on-deck name were seated, by his own
+    EXPRESSION rule (see _basket13_gen.py): a binary -> defined-risk debit_spread; a dated
+    catalyst <= ~6 months -> defined_risk_option; else equity. Intended, not placed (no expiry)."""
+    if c.get("valuation_method") == "binary_prob":
+        return {"type": "debit_spread"}
+    dtm = c.get("days_to_milestone")
+    if isinstance(dtm, (int, float)) and dtm <= 183:
+        return {"type": "defined_risk_option"}
+    return {"type": "equity"}
+
+
 def cap_watchlist(wl, bysym):
     """Per-driver diversity cap on the on-deck watchlist, preserving the Director's priority order.
     Keep at most MAX_WATCHLIST_PER_DRIVER names per resolution_driver, then trim to MAX_WATCHLIST,
@@ -357,6 +369,9 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
             "super_cluster": c.get("super_cluster"), "valuation_method": c.get("valuation_method"),
             "ev_pct": c.get("ev_pct"), "computed_rr": c.get("computed_rr"), "dated_milestone": c.get("dated_milestone"),
             "entry_price": st.get("entry_price"), "entry_date": st.get("entry_date"), "expected_pct": st.get("expected_pct"),
+            # full-mirror fields so the on-deck table renders like the held basket table:
+            "cro_conditions": (cro_by.get(sym) or {}).get("conditions") or [],   # they're CRO survivors
+            "expression": intended_expression(c), "expression_intended": True,   # instrument if seated
         })
     t["watchlist_state"] = {s: v for s, v in wl_state.items() if s in {x["symbol"] for x in t["watchlist"]}}  # prune departed
     save_tracker(t)
