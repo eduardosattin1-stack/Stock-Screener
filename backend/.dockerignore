@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+*.ipynb
+.pytest_cache/
+.env
+.env.*
+test_*.py
+*_test.py
+tests/
+*.log
+*.md

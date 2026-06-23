@@ -1,0 +1,352 @@
+{
+  "summary": "Opus 3-tier catalyst sweep (chunk 2 (AMP-AZN)): scan -> deep -> skeptic",
+  "agentCount": 23,
+  "logs": [
+    "Scanning 150 names in 6 batches of 25 (Opus)",
+    "Scan done: 150 scored (A 3/W 20/N 127) -> 15 survivors",
+    "Deep+Skeptic done: 15 dossiers; 2 verified ACTIVE"
+  ],
+  "result": {
+    "chunk": "2 (AMP-AZN)",
+    "scanned": 150,
+    "scan_distribution": {
+      "active": 3,
+      "watch": 20,
+      "none": 127
+    },
+    "survivors_flagged": [
+      {
+        "symbol": "AMRC",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "value-unlock/carve-out",
+        "one_line": "Neogenyx Fuels JV with HASI: $400M strategic investment monetizing part of ~$1.8B biogas EV, closing Q2 2026 — dated sum-of-parts value-crystallization."
+      },
+      {
+        "symbol": "ANAB",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "activist/structural+binary",
+        "one_line": "Stated intent to separate biopharma from royalty assets by YE-2026 (dated structural split) plus H1-2026 rosnilimab RA partnering update; sum-of-parts unlock."
+      },
+      {
+        "symbol": "ANL",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "binary",
+        "one_line": "BURAN Phase 3 OS readout pending for buparlisib (pan-PI3K, first-in-HNSCC), enrollment complete + FDA Fast-Track; micro-cap binary asymmetry, though timing has slipped."
+      },
+      {
+        "symbol": "ANNX",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "binary",
+        "one_line": "Stacked dated clinical binaries: geographic-atrophy Phase 3 topline Q4-2026 (clean dated event), GBS BLA 2026 + EU MAA under review; asymmetric on ~$225M cash."
+      },
+      {
+        "symbol": "AQST",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated_binary",
+        "one_line": "Anaphylm got a SOFT CRL (Jan 30 2026, limited to human-factors + PK); Type A done, NDA resubmission reaffirmed for Q3 2026 → likely Class 2 / 6-mo action — a real forward dated regulatory binary, strongest in this batch."
+      },
+      {
+        "symbol": "ASA",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "activist / closed-end discount",
+        "one_line": "Saba owns 31.9%; revised non-binding proposal 5/27/26 to Special Committee for BDC conversion + cash tender + portfolio-asset tender. Real activist+tender, but sizes/prices unspecified and CEF discounts re-widen."
+      },
+      {
+        "symbol": "ASH",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "activist / breakup",
+        "one_line": "Standard Investments 7.9% + Cruiser Capital ($125 target vs ~$50s); board refresh (Loy added May'26); pending Composites + Marl BDO + Nutraceuticals divestitures. Activist+structural hardening, not yet re-rated."
+      },
+      {
+        "symbol": "ASPI",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "spin-off",
+        "one_line": "Quantum Leap Energy (HALEU nuclear-fuel) spin-off via S-1 expected H1 2026 (imminent) + Renergen integration + Si-28 ramp. Real dated separation/value-unlock, but stock has run hard on HALEU hype so partly priced."
+      },
+      {
+        "symbol": "ATII",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "merger-arb / de-SPAC",
+        "one_line": "SPAC signed merger with Forge Nano (Apr 20, 2026), S-4 filed May 7; trust-floor (~$10+) redemption-arb with dated close pending. Real de-SPAC special sit."
+      },
+      {
+        "symbol": "AUPH",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "activist / structural",
+        "one_line": "Sale-of-company process FAILED (no buyer); Tang Capital's Kevin Tang now CEO and AUPH pivoted to acquirer of Kezar (definitive merger, $6.955+CVR) -> dated close pending, controlled-issuer/capital-return optionality. Thesis weakened but structural."
+      },
+      {
+        "symbol": "AVB",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "one_line": "Equity Residential merger-of-equals announced May 21, 2026 (all-stock, 2.793 EQR/AVB, ~$52B), expected close 2H 2026 subject to dual shareholder votes + antitrust. Live dated large-cap arb spread."
+      },
+      {
+        "symbol": "AVBP",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "dated binary (clinical)",
+        "one_line": "ArriVent: pivotal Phase 3 FURVENT topline for firmonertinib (1L EGFR exon20 NSCLC) due ~mid-2026; FDA Breakthrough designation -> dated binary with asymmetry. Near-term readout."
+      },
+      {
+        "symbol": "AVIR",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "binary",
+        "one_line": "Atea HCV Phase 3 C-BEYOND topline due mid-2026 (98% SVR Ph2); dated binary but micro-cap, single-asset risk, not yet mispriced-confirmed."
+      },
+      {
+        "symbol": "AVNS",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "merger_arb",
+        "one_line": "Definitive all-cash takeout by American Industrial Partners at $25.00/sh ($1.272B EV), signed Apr-14-2026; clean merger-arb pending close, modest spread."
+      },
+      {
+        "symbol": "AXTA",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "merger_arb",
+        "one_line": "All-stock merger-of-equals with AkzoNobel (0.6539x); shareholder vote ~mid-July-2026, close late-26/early-27, ~30 jurisdictions — dated complex arb with AkzoNobel special-div leg."
+      }
+    ],
+    "verified": [
+      {
+        "symbol": "AMRC",
+        "score": 2,
+        "tier": "NONE",
+        "lane": "value-unlock/carve-out",
+        "catalyst": "Neogenyx Fuels JV with HASI ($400M HASI investment; $1.8B post-money EV; 70/30 Ameresco/HASI) crystallized the value of Ameresco's biofuels/RNG segment via carve-out.",
+        "dated_milestone": "CLOSED May 12, 2026 (announced May 4). No remaining forward JV milestone; June 3 termination backstop now moot. Next discrete event is Q2 FY26 earnings (~early Aug 2026), not a value-unlock catalyst.",
+        "instrument": "equity",
+        "bloom_gates": "G1 (named counterparty HASI), G2 ($400M commitment), G3 ($1.8B sum-of-parts EV) all satisfied on substance — but the event is already realized, not forward.",
+        "edge": "L — thesis is spent: deal closed and the carve-out value is fully disclosed and already in consensus; no informational or timing edge remains.",
+        "primary_source": "Ameresco/BusinessWire press release \"Ameresco Announces Closing of Neogenyx Fuels Joint Venture with HASI\" (May 12, 2026); formation announcement May 4, 2026; FMP quote AMRC $28.46, -13.0% (June 6, 2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The catalyst is genuine and was textbook sum-of-parts (G1/G2/G3 all met), but the triage's \"closing Q2 2026\" framing is stale: the JV CLOSED May 12, 2026 and the stock already re-rated hard (+15.4% on May 14, mid-$20s to ~$33). As of today June 6 AMRC is $28.46, down -13% on the day and below its 50d ($29.04) and 200d ($31.11) averages, so the value-crystallization is not only fired but fading. With no remaining dated, currently-unpriced forward milestone tied to the JV, this fails the FORWARD/not-re-rated gate -> NONE."
+      },
+      {
+        "symbol": "ANAB",
+        "score": 2,
+        "tier": "NONE",
+        "lane": "activist/structural+binary",
+        "catalyst": "The flagged sum-of-parts structural split has already fired (spin-off of First Tracks Biotherapeutics / TRAX completed April 20, 2026), and the rosnilimab RA partnering optionality migrated to the spun-out TRAX entity, leaving ANAB as a residual Jemperli/imsidolimab royalty-management shell with no remaining dated forward structural catalyst.",
+        "dated_milestone": "SoP split COMPLETED 2026-04-20 (fired). Only remaining dated item is GSK v. AnaptysBio Jemperli-royalty litigation trial, Delaware Chancery, 2026-07-14 — a contested/binary legal event, not the flagged structural unlock; rosnilimab partnering update now sits with TRAX, not ANAB.",
+        "instrument": "equity (ANAB common) — royalty-management RemainCo; the biopharma/rosnilimab upside is now in TRAX equity, a different ticker",
+        "bloom_gates": "G2 partially (the YE-2026 split was a concrete dated commitment) but it has since been EXECUTED, so it no longer qualifies as forward; no remaining unfired G1/G2/G3 for ANAB itself.",
+        "edge": "L — the SoP separation thesis is public, completed, and re-rated (spin done 2026-04-20); residual ANAB is a low-variance royalty shell (~$140-145M net cash, >95% EBIT margin) whose value is well-understood, and the only optionality (rosnilimab partnering) left with TRAX, so there is no edge in ANAB on this catalyst.",
+        "primary_source": "AnaptysBio IR / GlobeNewswire \"Intent to Separate Biopharma from Royalty Assets by Year-end 2026\" (2025-09-29) and SEC 8-K filings confirming spin-off of First Tracks Biotherapeutics completed 2026-04-20; GSK litigation trial date (Delaware Chancery, 2026-07-14) per AnaptysBio FY2025 update (March 2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "AnaptysBio already completed the value-unlocking structural split on April 20, 2026, spinning off its biopharma operations (and rosnilimab) into First Tracks Biotherapeutics (Nasdaq: TRAX); ANAB is now solely a royalty-management company collecting on Jemperli (GSK) and imsidolimab (Vanda). The triage's two legs are both stale for ANAB: the dated structural split has fired and been re-rated, and the H1-2026 rosnilimab RA partnering catalyst now accrues to TRAX rather than ANAB. The only forward-dated ANAB-specific event is the GSK v. AnaptysBio Jemperli-royalty trial set for July 14, 2026, which is a contested binary legal overhang/downside risk rather than the activist-structural sum-of-parts unlock that was flagged, so the thesis as stated does not hold."
+      },
+      {
+        "symbol": "ANL",
+        "score": 2,
+        "tier": "NONE",
+        "lane": "binary",
+        "catalyst": "The flagged binary — BURAN Phase 3 OS readout for buparlisib (AN2025) in R/M HNSCC — already read out and FAILED, missing its primary OS endpoint, and the program was discontinued.",
+        "dated_milestone": "No forward date for the flagged catalyst — it fired May 2025 (topline) / Oct 2025 ESMO LBA48. Only residual pipeline item is AN4005 PD-L1 POC data guided \"by end-2025,\" now itself likely past/unconfirmed.",
+        "instrument": "none",
+        "bloom_gates": "none (no G1 counterparty, no G2 commitment, no G3 unpriced figure that is forward — the binary is already resolved negative)",
+        "edge": "L — the thesis premise is factually stale by >1yr; readout is public, negative, and fully re-rated, so there is no asymmetry left to capture.",
+        "primary_source": "Adlai Nortye IR press release \"Announces Topline Results of Phase III BURAN Trial\" (May 2025) + Annals of Oncology ESMO 2025 abstract LBA48 (Oct 2025)",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The triage premise (\"readout pending, timing slipped\") is incorrect: Adlai Nortye announced topline BURAN Phase 3 results in May 2025 showing median OS of 9.6 mo (buparlisib+paclitaxel) vs 9.7 mo (paclitaxel alone) — a clear miss of the primary endpoint — and discontinued buparlisib development; full data was presented at ESMO 2025 as LBA48. The flagged binary catalyst is therefore fired and negative, failing the FORWARD gate outright. The company has pivoted to AN4005 (oral PD-L1 inhibitor) with proof-of-concept guided for end-2025, but that is a different, unflagged, and now likely-elapsed milestone with no confirmed forward date."
+      },
+      {
+        "symbol": "ANNX",
+        "score": 6.5,
+        "tier": "WATCH",
+        "lane": "binary",
+        "catalyst": "Stacked dated clinical/regulatory binaries: pivotal Phase 3 ARCHER II geographic-atrophy topline in H2 2026, plus tanruprubart GBS BLA filing in 2026 and an EU MAA already submitted (Jan 8, 2026) and under EMA review, on a ~$632M-cap name funded into late 2027.",
+        "dated_milestone": "ARCHER II (vonaprument/ANX007) Phase 3 GA topline — H2 2026 (next hard event); tanruprubart GBS BLA submission to FDA — 2026 (year-only); EU MAA filed Jan 8, 2026, decision timing undisclosed.",
+        "instrument": "stock or long call (LEAP through H2 2026 to capture the ARCHER II readout; binary IV — size small)",
+        "bloom_gates": "G1 (EMA named counterparty reviewing a filed MAA) + G2 (concrete commitment: MAA submitted Jan 8, 2026; BLA committed for 2026; ARCHER II fully enrolled 630+ pts, topline guided H2 2026)",
+        "edge": "M — genuinely dated, forward, unfired stacked binaries from primary IR/GlobeNewswire sources; price ($5.29) sits near the 200-day ($4.58) and well below the 52wk high ($7.18), so the GA readout is not yet re-rated in. Capped vs ACTIVE because the marquee catalyst (ARCHER II) is only half-dated (H2 2026, not a specific date), ANX007's prior ARCHER program had a mixed Phase 2 GA signal (efficacy on vision but not lesion growth — real binary risk), and the BLA/EU MAA decision dates are not pinned.",
+        "primary_source": "Annexon IR / GlobeNewswire: \"Multiple Registrational Milestones in 2026\" (Jan 12, 2026) confirming ARCHER II H2 2026 topline + 2026 BLA; \"Submits Tanruprubart MAA to EMA for GBS\" (Jan 8, 2026); ARCHER II enrollment-complete release (Jul 24, 2025). Live quote $5.29, mktcap ~$632M, 52wk high $7.18 (FMP, 2026-06-06).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Both legs verify against primary sources: ARCHER II completed enrollment (630+ patients) on Jul 24, 2025 with topline reaffirmed for H2 2026, and Annexon submitted the tanruprubart GBS MAA to the EMA on Jan 8, 2026 with the FDA BLA planned for 2026, all on a balance sheet funded into late 2027 (consistent with the ~$225M cash the triage cited). The setup is a legitimate dated, forward, not-yet-fired clinical/regulatory binary — not a macro bet — with the stock trading near its 200-day average and well off the 52-week high, so the GA readout appears largely unpriced. WATCH rather than ACTIVE because the headline GA catalyst is only soft-dated (H2 2026), the underlying ANX007 GA mechanism carries real Phase-3 binary risk, and the regulatory decision dates are not yet fixed; revisit once Annexon pins a specific ARCHER II readout window or FDA BLA acceptance/PDUFA date."
+      },
+      {
+        "symbol": "AQST",
+        "score": 6.5,
+        "tier": "WATCH",
+        "lane": "dated_binary",
+        "catalyst": "Aquestive plans to resubmit the Anaphylm (epinephrine/dibutepinephrine sublingual film) NDA in Q3 2026 after a narrow Jan 30 2026 CRL limited to human-factors validation + packaging (no CMC deficiencies, clinical/PK comparability unquestioned), with FDA-aligned HF + PK study designs — a forward FDA approval binary.",
+        "dated_milestone": "NDA resubmission targeted Q3 2026 (reaffirmed in Q1-2026 earnings, ~May 2026); FDA action date follows ~2-6 months post-resubmission (likely Class 2 / 6-mo if accelerated review not granted).",
+        "instrument": "equity (AQST ~$4.10, ~$504M mkt cap as of 2026-05-30); long-dated calls viable given a discrete binary, but resubmission is a milestone not an FDA verdict, so optionality should target the post-resubmission action window.",
+        "bloom_gates": "G2 (concrete commitment: reaffirmed Q3-2026 resubmission + FDA-aligned HF/PK study designs from a completed Type A meeting); partial G3 (Anaphylm $300-500M peak-sales opportunity vs a depressed ~$504M cap where the market is heavily discounting approval). G1 weak — no single named external counterparty driving the binary (FDA is the decision-maker, not a deal counterparty).",
+        "edge": "M — deficiencies are administration/labeling-only (no CMC, no efficacy/PK doubt), the cheapest CRL class to cure, and stock at ~$4.10 vs ~$8.60 consensus target signals the market is pricing meaningful re-rejection/delay risk; offset by execution risk (new HF study must pass) and that the Q3 milestone is a resubmission, not the approval itself.",
+        "primary_source": "Aquestive 8-K / GlobeNewswire CRL release (2026-02-02, CRL dated 2026-01-30); Type A meeting 8-K + StockTitan (Q1 2026); Aquestive Q1 2026 earnings release / 10-Q (filed ~May 2026, reaffirming Q3 2026 resubmission, ~$110.7M cash, $150M Oaktree facility).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Triage thesis is well-supported by primary sources: the Jan 30 2026 CRL is confirmed narrow (HF validation pouch-opening/film-placement + labeling; explicitly no CMC issues, auto-injector comparability not questioned), the Q1 Type A meeting aligned both required studies, and Q3 2026 resubmission was reaffirmed in the ~May 2026 Q1 earnings with a planned accelerated-review request. This is a genuine dated, forward, non-fired regulatory binary that is not a macro bet, and the depressed valuation suggests the outcome is not fully priced. Scored WATCH not ACTIVE because the dated near-term milestone is a resubmission (not the FDA verdict), the \"Class 2 / 6-month action\" is the triage's inference rather than an FDA-confirmed date, and approval still hinges on a not-yet-run HF study passing."
+      },
+      {
+        "symbol": "ASA",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "activist / closed-end discount",
+        "catalyst": "Saba Capital (31.9% holder) delivered a revised non-binding proposal on 5/27/26 to ASA's Special Committee to convert the closed-end gold fund into a BDC with a limited cash tender plus a limited proportional portfolio-asset tender.",
+        "dated_milestone": "Revised non-binding proposal delivered 5/27/26 (13D/A Amd. 25 filed 5/28/26); NO dated forward milestone — Special Committee (advised by Cantor Fitzgerald, engaged 3/31/26) response is undisclosed/undated; no tender commencement or shareholder-meeting date set.",
+        "instrument": "common equity (ASA); CEF NAV-discount narrowing play, no clean option chain edge",
+        "bloom_gates": "G1 PASS (named: Saba/Weinstein, 31.91% / 5,903,701 sh, Special Committee + Cantor Fitzgerald). G2 WEAK (proposal explicitly non-binding; no board acceptance/agreement). G3 FAIL (BDC conversion + cash tender + portfolio-asset tender are real mechanisms but \"did not specify the exact size or price for either offer\" — no specific unpriced figure exists yet).",
+        "edge": "L — real activist with a large stake, but the only specific forward event (a priced/sized binding tender) does not yet exist, there is no dated next step, and realized payoff also depends on gold-equity NAV (macro) and CEF discount, which the analyst flags as re-widening.",
+        "primary_source": "SEC Schedule 13D/A Amendment No. 25, ASA Gold and Precious Metals Ltd (filed 5/28/26, event 5/27/26), via StockTitan summary; corroborated by ASA 3/31/26 Cantor Fitzgerald engagement disclosure.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Confirmed: Saba's revised non-binding BDC-conversion proposal (cash tender + proportional portfolio-asset tender) was delivered to ASA's Special Committee on 5/27/26, with Saba at 31.91% (13D/A Amd. 25, filed 5/28/26); tender sizes and prices are explicitly unspecified. It clears G1 on the named counterparty but fails the strict gate because there is no dated forward milestone, no board acceptance, and no concrete priced commitment — the structure is real but the figures and timing are entirely TBD and the Special Committee response is undated. Net: genuine activist optionality worth watching for a future priced tender or negotiated deal, but not yet a dated, specific, forward catalyst, so WATCH rather than ACTIVE."
+      },
+      {
+        "symbol": "ASH",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "activist / breakup",
+        "catalyst": "Standard Investments has built a ~8.94% stake (≈9.88% economic) in Ashland and reserves the right to push board/strategic-alternatives, but as of the latest 13D/A there is no concrete dated commitment, transaction, or value target.",
+        "dated_milestone": "None scheduled — no announced strategic review, investor/analyst day, or cooperation/standstill agreement; next natural checkpoint is Q3 FY2026 earnings (~late Jul/early Aug 2026) or any follow-on 13D/A.",
+        "instrument": "equity (no live catalyst to support a dated options structure)",
+        "bloom_gates": "None — G1 fails (no named counterparty committed to a deal; INEOS/Composites+Marl BDO sale closed 2019), G2 fails (no concrete dated company commitment; Loy board add explicitly \"no arrangements/understandings\" per 8-K, not activist-driven), G3 fails (the \"$125 target\" is Cruiser Capital's stale Nov-2018 figure, not a current live/unpriced number).",
+        "edge": "L — the triage thesis conflates recycled 2018–2019 facts (Cruiser $125, Composites/Marl BDO divestiture) with the current situation; the genuinely live element (Standard's accumulation) is boilerplate 13D positioning with no dated trigger, so there is no asymmetric, time-bound mispricing to capture.",
+        "primary_source": "Standard Investments SC 13D/A (stake to 8.943% / ~9.88% economic, ~$212.9M cost), as reported May 2026 (StockTitan/SEC); corroborated by Ashland 8-K dated May 18, 2026 (Loy appointment, \"no arrangements or understandings\"); Composites/Marl BDO close = Ashland PR Sept 3, 2019; Cruiser $125 = DFAN14A Nov 2018.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The only real/current catalyst input is Standard Investments escalating to ~8.94% (≈9.88% economic, buys at $49.87–$55.99 through May 11, 2026) with standard \"may discuss strategic alternatives/board composition\" 13D language — structural pressure, not a fired or pending dated event. The \"$125 target / Cruiser Capital / Composites + Marl BDO divestiture\" in the thesis are stale 2018–2019 history (Cruiser's $125 was Nov 2018; Composites + Marl BDO sold to INEOS for ~$1.0B in Sept 2019; Nutraceuticals already divested), and the May-15-2026 Loy board addition is expressly non-activist per the 8-K. With no announced strategic review, no cooperation/standstill agreement, no committed transaction, and no scheduled value-revealing date, none of G1/G2/G3 fire — activist-present but not concretely engaged, so NONE."
+      },
+      {
+        "symbol": "ASPI",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "spin-off",
+        "catalyst": "Planned IPO/spin-off of HALEU subsidiary Quantum Leap Energy (QLE) to crystallize a separate nuclear-fuel value stream, targeted H1 2026.",
+        "dated_milestone": "QLE confidential draft Form S-1 submitted Nov 12, 2025; CEO targets spin-off completion within H1 2026 (i.e., next milestone = public S-1 filing / price range, expected by ~June 30, 2026) — no public filing yet as of Jun 6, 2026.",
+        "instrument": "equity (ASPI); QLE IPO/distribution terms undisclosed",
+        "bloom_gates": "None cleanly. G1 partial-but-fired (Necsa Pre-Implementation Contract, Feb 2026, named but R&D not offtake); May-2026 European HALEU MOU is non-binding AND counterparty unnamed -> fails G1. No binding capacity/offtake -> fails G2. No QLE valuation/share-count/price-range disclosed -> fails G3.",
+        "edge": "M - genuine dated separation in motion (confidential S-1 live, Renergen helium already folded in Jan 2026, Si-28 ramp), and stock has de-rated ~54% from $14.49 high to $6.71 (below 200d), so HALEU froth is partly unwound; but spin-off terms/valuation undisclosed and 'H1 2026' window nearly elapsed with no public S-1, so timing risk is high.",
+        "primary_source": "ASP Isotopes IR PR 'QLE Confidential Submission of Draft Registration Statement' (Nov 12, 2025, ir.aspisotopes.com/.../detail/88) + ainvest/Yahoo CEO conference coverage on H1-2026 spin-off (Feb 26-28, 2026); FMP quote ASPI $6.71 (Jun 5, 2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "QLE filed a CONFIDENTIAL draft S-1 on Nov 12, 2025 and management reiterated an H1-2026 spin-off target, but as of Jun 6, 2026 there is no public S-1, no share count, no price range, and no disclosed QLE valuation — so the value-unlock figure is entirely unquantified and the only 'date' is a soft window now about to expire. Supporting items are either already fired (Renergen close Jan 7, 2026) or soft (non-binding, unnamed European HALEU MOU May 11, 2026; Necsa pre-implementation R&D contract). Real spin-off in motion but fails the strict Bloom gates (no binding named offtake, no committed figure, no specific unpriced number), making it a credible WATCH rather than an ACTIVE imminent-dated catalyst."
+      },
+      {
+        "symbol": "ATII",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "merger-arb / de-SPAC",
+        "catalyst": "Archimedes Tech SPAC II (ATII) signed a definitive $1.2B de-SPAC merger with Forge Nano (Apr 20, 2026) + $100M committed PIPE; S-4 filed May 7, with a $10.52 trust-redemption floor backstopping a redemption-arb into a Q3 2026 close (new ticker NANO).",
+        "dated_milestone": "S-4 (filed May 7, 2026) effectiveness -> extraordinary general meeting / shareholder vote; expected close Q3 2026; hard outside date Nov 12, 2026.",
+        "instrument": "common (ATII); redemption right at trust value (~$10.52) for shareholders of record who elect",
+        "bloom_gates": "G1 (Forge Nano named counterparty, definitive agreement) + G2 ($100M PIPE committed, $1.2B valuation, S-4 filed) + G3 ($10.52/sh trust floor accreting, currently-disclosed but the arb spread vs $11.00 is the specific unpriced figure)",
+        "edge": "M — real dated de-SPAC with hard trust floor ($10.52) limiting downside to ~4.4% from $11.00, but stock already trades $0.48 above floor so it is not pure at-floor arb; the premium prices in NANO de-SPAC upside (AI-chip/defense-battery narrative) which is the live risk. No vote date set yet; S-4 not effective.",
+        "primary_source": "ATII 8-K + GlobeNewswire (Apr 21, 2026) for deal terms; S-4 announcement GlobeNewswire (May 7, 2026); ATII Q1 2026 10-Q (period ended Mar 31, 2026) for $10.52 trust/share and Nov 12, 2026 deadline.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Claim fully verified: definitive business combination agreement with Forge Nano dated Apr 20, 2026 ($1.2B Forge Nano valuation, ~$1.6B pro-forma), $100M PIPE at $10.00, S-4 filed May 7, 2026 (not yet effective), expected close Q3 2026, hard liquidation deadline Nov 12, 2026. Trust per the Q1 10-Q is $242M / 23M public shares = $10.52/share redemption floor as of Mar 31, 2026 and accreting, so the downside is bounded ~4.4% below the $11.00 close while a clean de-SPAC re-rates to the NANO growth story. WATCH not ACTIVE because the $0.48 premium over the floor means it is no longer a clean at-the-floor entry, no special-meeting date is set, and S-4 effectiveness is the gating step; best entry would be on any dip toward ~$10.55 ahead of an effective S-4 and a dated vote."
+      },
+      {
+        "symbol": "AUPH",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "activist / structural",
+        "catalyst": "Tang-controlled AUPH's structural pivot (failed self-sale -> acquirer of Kezar) is real but the transformative event already closed and the residual capital-return optionality has no dated, quantified forward trigger.",
+        "dated_milestone": "No discrete forward milestone; Kezar tender closed May 8, 2026 (deal finalized ~May 11). Next scheduled event is Q2 2026 earnings (Aug 2026) — routine, not a structural catalyst.",
+        "instrument": "equity",
+        "bloom_gates": "None pass. G1 fail: the named M&A counterparty (Kezar) deal already CLOSED, not forward. G2 fail: capital-return/buyback is open-ended with no concrete dated commitment. G3 fail: the CVR ($6.955+CVR) accrues to former KEZAR holders (closing net cash >$50M, zetomipzomib milestones, Everest/Enodia proceeds), not an unpriced AUPH-holder figure; Tang controlled-issuer optionality is undated/unquantified.",
+        "edge": "L — the structural rerating (Tang as CEO 3/23, self-sale failure, Kezar close 5/8) is public and priced; what's left ('controlled-issuer capital-return optionality') is a narrative, not a dated unpriced event.",
+        "primary_source": "Newsfile/Globe&Mail: 'Aurinia Completes Successful Tender Offer for Kezar Life Sciences' — tender closed May 8, 2026, 80.24% tendered; deal finalized ~May 11, 2026. AUPH 8-K filed March 30, 2026 (deal terms); CVR detail per SC 14D9/SC TO-T (zetomipzomib milestones + >$50M net cash to former Kezar holders).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Triage facts verified: AUPH's own sale process found no buyer, Kevin Tang (Tang Capital) became CEO March 23, 2026, and AUPH pivoted to acquire Kezar for $6.955/sh + CVR (signed March 30). But that acquisition has already CLOSED — the tender offer was completed May 8, 2026 with 80.24% tendered ($51.4M deal), so the structural catalyst is FIRED and re-rated, not forward. Remaining thesis (Tang-controlled balance-sheet/capital-return optionality, ongoing buybacks of ~$36M/quarter) is structurally interesting but has no named forward counterparty, no dated concrete commitment, and no specific currently-unpriced figure with a date — it gates to NONE."
+      },
+      {
+        "symbol": "AVB",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "catalyst": "AVB and Equity Residential (EQR) signed an all-stock merger-of-equals (announced May 21, 2026) at a fixed 2.793 EQR-per-AVB exchange ratio (~$52B equity / ~$69B EV), creating a live dated large-cap arb spread pending dual shareholder votes.",
+        "dated_milestone": "Joint proxy + special shareholder votes (both AVB and EQR) expected Q3 2026; deal close expected 2H 2026, subject to shareholder approval and customary/antitrust clearances.",
+        "instrument": "Merger-arb pair: long AVB / short 2.793 EQR (capture the EQR/AVB ratio convergence); spread tracks EQR daily.",
+        "bloom_gates": "G1 (named counterparty EQR) + G2 (signed definitive merger agreement / concrete 2.793 ratio commitment) + G3 (specific currently-open spread figure: deal value 2.793 x $68.19 = $190.46 vs AVB $189.72)",
+        "edge": "M — deal is signed, dated (Q3 votes / 2H close) and idiosyncratic, but heavily covered and the gross spread is thin (~$0.74, ~0.39% at AVB $189.72 / EQR $68.19); edge is ratio convergence + low break risk on a friendly all-stock MoE, not a mispricing.",
+        "primary_source": "EQR/AVB Form 8-K and Form 425 business-combination filings, SEC.gov (filed/dated May 21, 2026); live quotes FMP 2026-06-06.",
+        "verdict": "CONFIRMED",
+        "kill_fact": "PRIMARY-CONFIRMED via SEC EDGAR (AVB CIK 915912 8-K + multiple Form 425, accepted 2026-05-21) and BusinessWire/CNBC/HousingWire: AvalonBay + Equity Residential all-stock merger of equals announced May 21, 2026; AVB holders receive 2.793 EQR shares per AVB share (direction exactly as stated); 51.2% AVB / 48.8% EQR; ~$52B pro forma equity / ~$69B EV; $125M run-rate net synergies; Ben Schall CEO; requires BOTH AVB and EQR shareholder votes (expected Q3 2026), close 2H 2026 — live/forward, not fired. Live FMP quotes AVB $189.72 / EQR $68.19 => 2.793*68.19=$190.46 implied, AVB ~0.39% below parity: clean open large-cap merger-arb, long AVB / short 2.793 EQR captures convergence. Spread is thin (~0.4% gross to a multi-month close) and risks (two friendly-MoE votes, modest antitrust) are low, supporting score 7. Only error found was a StockTitan auto-summary that inverted the ratio direction; the LINE itself is correct.",
+        "analysis": "Verified via SEC 8-K/Form 425 filings and multiple outlets: EQR/AVB all-stock merger of equals announced May 21, 2026, fixed 2.793 EQR per AVB, ~$52B pro forma equity (51.2% AVB / 48.8% EQR), $125M run-rate net synergies, Ben Schall CEO, 7+7 board. Live FMP quotes (AVB $189.72, EQR $68.19) imply deal value ~$190.46, so AVB trades ~0.39% below parity — a clean, still-open dated large-cap arb. Real, specific, dated and forward (not fired, not re-rated); risks are the two shareholder votes (Q3 2026) and antitrust, both modest for a friendly REIT MoE."
+      },
+      {
+        "symbol": "AVBP",
+        "score": 6.5,
+        "tier": "WATCH",
+        "lane": "dated binary (clinical)",
+        "catalyst": "Topline data from the pivotal Phase 3 FURVENT trial of firmonertinib in 1L EGFR exon20-insertion NSCLC (PFS vs platinum/pemetrexed chemo, FDA Breakthrough-designated) is a dated, asymmetric binary readout.",
+        "dated_milestone": "FURVENT Phase 3 topline projected mid-2026 (next date: ~Q3 2026; per company Q1-2026 guidance May 11 2026)",
+        "instrument": "Equity (AVBP, ~$1.4B cap small-cap biotech); event-binary — long calls / defined-risk preferred over straight equity given ~88% run off 52wk low into the readout",
+        "bloom_gates": "G1 (named partner Allist + FDA Breakthrough Therapy Designation; comparator = SoC platinum/pemetrexed); G2 partial (concrete pivotal trial: 398 pts enrolled, PFS-by-BICR primary endpoint). G3 not cleanly met — no specific currently-unpriced numeric figure isolated.",
+        "edge": "M — genuine dated asymmetric clinical binary with FDA BTD, but well-telegraphed (broad coverage, stock already run into it ~88% off lows, near 52wk high) and window is a soft mid-2026 range, not a fixed date; no demonstrable mispriced figure.",
+        "primary_source": "ArriVent Q1-2026 financial results, GlobeNewswire/IR, May 11, 2026 (\"...projected to be in mid-2026\"); corroborated by FURVENT guidance PR (GlobeNewswire, Jul 21, 2025)",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "ArriVent's pivotal Phase 3 FURVENT readout for firmonertinib (1L EGFR exon20 NSCLC) is confirmed real, dated, and forward: company Q1-2026 results (May 11, 2026) guide topline to mid-2026, and June 2026 searches show no data released, so the binary remains unfired. It is a textbook asymmetric clinical event — FDA Breakthrough designation, partner Allist, 398-patient PFS-vs-chemo design — but it is heavily telegraphed and the stock has already run ~88% off its 52-week low ($16.10 -> $30.35, -8.3% today) into a soft, non-fixed window, capping the informational edge. Holds at WATCH: high-quality dated binary worth tracking into the readout, but not an ACTIVE-grade dislocation absent a specific mispriced figure or a hardened date."
+      },
+      {
+        "symbol": "AVIR",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "binary",
+        "catalyst": "Atea's pivotal C-BEYOND Phase 3 trial (bemnifosbuvir + ruzasvir fixed-dose combo vs standard-of-care HCV regimen, ~880 patients fully enrolled) reads out topline SVR12 data, a hard go/no-go binary for its lead pan-genotypic HCV program.",
+        "dated_milestone": "C-BEYOND topline results expected mid-2026 (reaffirmed Q1 call May 12, 2026); C-FORWARD ex-NA topline ~year-end 2026.",
+        "instrument": "equity / long-dated calls (binary event vol — size small)",
+        "bloom_gates": "G3 partial — dated binary with a concrete reference figure (Ph2 ~98% SVR12 vs incumbent ~95% SoC), but no independently-confirmed specific unpriced valuation figure; G1 (Merck ruzasvir license) is a pre-existing structural fact, not a forward catalyst.",
+        "edge": "L — real hard-dated binary, but edge is weak: crowded low-growth HCV market with high-bar SoC (~95%+ SVR), single-asset micro-cap, and mispricing not confirmed (trades ~$340M cap on ~$256M cash, but no verified consensus EV/NPV gap). High idiosyncratic Ph3 risk, not asymmetrically mispriced.",
+        "primary_source": "Atea Q1 2026 release/StockTitan 2026 priorities (StockTitan, Jan 8 2026 & Q1 call May 12 2026): C-BEYOND fully enrolled, topline mid-2026; cash $256M as of Mar 31, 2026, runway through 2027.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The catalyst is genuine, specific, dated and forward: C-BEYOND Phase 3 HCV topline is fully enrolled and due mid-2026, reaffirmed on the May 12, 2026 Q1 call, with Ph2 ~98% SVR12 as the reference bar — it has not fired and is not a macro bet, so it clears the dated-binary lane. But it fails the STRICT ACTIVE bar: this is a single-asset micro-cap clinical binary in a saturated, low-margin HCV market where standard-of-care already delivers ~95%+ cure, and the mispricing is unconfirmed (the name trades near cash with no verified unpriced figure). Appropriately a WATCH to revisit as the mid-2026 readout window approaches, not an ACTIVE conviction position."
+      },
+      {
+        "symbol": "AVNS",
+        "score": 3,
+        "tier": "WATCH",
+        "lane": "merger_arb",
+        "catalyst": "Definitive all-cash takeout of Avanos Medical by American Industrial Partners at $25.00/sh (~$1.272B EV), signed/announced Apr-14-2026, expected to close 2H 2026.",
+        "dated_milestone": "Pending shareholder vote (special meeting per PREM14A filed) + HSR/6 foreign regulatory approvals; expected close 2H-2026, outside date Jan-13-2027.",
+        "instrument": "stock (merger-arb)",
+        "bloom_gates": "G1 (named counterparty: American Industrial Partners) + G2 (concrete commitment: signed definitive merger agreement, $25.00/sh all-cash)",
+        "edge": "L — spread fully arbitraged away; AVNS $25.05 trades THROUGH the $25.00 cash offer (~-0.2% gross), so no positive arb edge remains, only deal-break downside vs. faint topping-bid optionality.",
+        "primary_source": "Avanos 8-K & AIP press release, Apr-14-2026 (americanindustrial.com / prnewswire.com); PREM14A merger proxy (SEC, FY2026); live quote $25.05 vs $25.00 offer (FMP, 2026-06-06).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The catalyst is fully real and well-documented (8-K + PREM14A proxy): a signed all-cash merger with a named PE sponsor at $25.00/sh, dated and forward (vote + HSR/foreign approvals pending, close 2H-2026, outside date Jan-13-2027). However, it is FIRED on the spread that matters: the stock already surged ~69-72% on the Apr-14 announcement and now prints $25.05, i.e. $0.05 ABOVE the cash consideration — a negative gross spread. There is no merger-arb edge left to capture on the stock; you would pay a premium for cash-out optionality while bearing full deal-break downside, so this is WATCH/low rather than an actionable ACTIVE setup."
+      },
+      {
+        "symbol": "AXTA",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "merger_arb",
+        "catalyst": "Axalta all-stock merger-of-equals with AkzoNobel (fixed 0.6539 AKZA ordinary shares per AXTA share) heads to dual shareholder EGM votes, then a multi-jurisdiction regulatory gauntlet before close.",
+        "dated_milestone": "Axalta & AkzoNobel extraordinary general meeting shareholder votes targeted mid-to-late July 2026 (next hard date); regulatory close targeted ~end-2026 to early-2027 across ~30 jurisdictions.",
+        "instrument": "AXTA common (long arb leg, hedged short AkzoNobel AKZA ordinary at 0.6539x); note €2.5B special dividend accrues to AkzoNobel holders, not AXTA",
+        "bloom_gates": "G1 (named counterparty AkzoNobel) + G2 (signed Nov-18-2025 definitive merger agreement, F-4 filed, fixed 0.6539 exchange ratio)",
+        "edge": "M — real, dated, forward arb with a signed deal and a ~6-week-out vote, but the announcement is fully re-rated and the residual return is just the regulatory-risk-adjusted spread to close (~30 jurisdictions, works-council consult); crowded, well-telegraphed event with modest, capped upside.",
+        "primary_source": "Axalta/AkzoNobel Form 425 webcast Q&A (SEC, stocktitan.net, filed ~May 27 2026): \"Mid-July is the date we're targeting\" for the shareholder vote, close \"around the end of the year\"; deal terms per AkzoNobel press release Nov 18 2025 and Form 8-K (0.6539 ratio, €2.5B AkzoNobel special dividend).",
+        "verdict": "CONFIRMED",
+        "kill_fact": "PRIMARY-confirmed: AkzoNobel/Axalta signed an all-stock merger-of-equals on Nov 18 2025 at a fixed 0.6539 AKZA-per-AXTA ratio (AKZA holders 55% / AXTA 45%); combined F-4 filed ~May 27 2026; both shareholder EGM votes targeted mid/late-July 2026; close end-2026/early-2027 pending antitrust filings in ~30 countries (filing: 'active dialogue with the regulatory instances in 30 countries') plus customary conditions. The €2.5B special cash dividend (€2.5B minus AkzoNobel's 2026 regular/interim dividends) is paid to AkzoNobel shareholders, NOT Axalta holders — confirming the line's key caveat. Deal is genuinely forward (not yet voted or cleared = not FIRED), event-driven (G1+G2 pass), warranting ACTIVE. Score capped at 6: fixed-ratio stock-for-stock arb with the announcement pop already priced, dividend leg accruing to AKZA not AXTA, and actionable edge limited to a thin, regulatory-gated spread-to-close hedged via Amsterdam AKZA (the OTC AKZOY ADR is too illiquid to mark cleanly) — not asymmetric upside.",
+        "analysis": "Confirmed live, dated complex merger-arb: AkzoNobel/Axalta signed an all-stock MOE on Nov 18 2025 (0.6539 fixed ratio, AKZA holders 55% / AXTA 45%), F-4 filed, with both EGM shareholder votes targeted mid-to-late July 2026 and close ~end-2026/early-2027 pending ~30-jurisdiction antitrust and AkzoNobel works-council consultation. This is genuinely forward (deal NOT yet voted or cleared), passes G1+G2, and is event- not macro-driven, warranting ACTIVE. Score capped at 6 because it is a fixed-ratio stock-for-stock arb where the announcement pop is already priced, the headline €2.5B special dividend leg goes to AkzoNobel rather than AXTA holders, and the OTC AKZOY ADR ($21.85, ~7.5k vol) is too illiquid to mark the spread cleanly versus the real Amsterdam AKZA hedge — so the actionable edge is the thin, regulatory-gated spread-to-close, not asymmetric upside."
+      }
+    ]
+  }
+}

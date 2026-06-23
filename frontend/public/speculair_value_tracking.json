@@ -1,0 +1,169 @@
+{
+  "inception_date": "2026-06-08",
+  "nav": 103.4478,
+  "last_date": "2026-06-15",
+  "last_prices": {
+    "ADBE": 204.02,
+    "MMS": 62.28,
+    "GLOB": 37.49,
+    "EEFT": 66.66,
+    "THC": 174.66,
+    "CMCSA": 24.5
+  },
+  "positions": {
+    "CMCSA": {
+      "entry_price": 23.82,
+      "entry_date": "2026-06-08",
+      "conviction": 66
+    },
+    "THC": {
+      "entry_price": 162.06,
+      "entry_date": "2026-06-08",
+      "conviction": 72
+    },
+    "EEFT": {
+      "entry_price": 66.74,
+      "entry_date": "2026-06-08",
+      "conviction": 85
+    },
+    "ADBE": {
+      "entry_price": 204.02,
+      "entry_date": "2026-06-14",
+      "conviction": 94
+    },
+    "MMS": {
+      "entry_price": 62.28,
+      "entry_date": "2026-06-14",
+      "conviction": 84
+    },
+    "GLOB": {
+      "entry_price": 37.49,
+      "entry_date": "2026-06-14",
+      "conviction": 80
+    }
+  },
+  "history": [
+    {
+      "date": "2026-06-08",
+      "nav": 100.0,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-06-09",
+      "nav": 99.9958,
+      "ret": -4.2e-05,
+      "n": 10
+    },
+    {
+      "date": "2026-06-10",
+      "nav": 101.3839,
+      "ret": 0.0,
+      "n": 8
+    },
+    {
+      "date": "2026-06-11",
+      "nav": 100.684,
+      "ret": 0.0,
+      "n": 8
+    },
+    {
+      "date": "2026-06-12",
+      "nav": 102.5364,
+      "ret": 0.018398,
+      "n": 8
+    },
+    {
+      "date": "2026-06-13",
+      "nav": 103.4478,
+      "ret": 0.008888,
+      "n": 8
+    },
+    {
+      "date": "2026-06-14",
+      "nav": 103.4478,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-06-15",
+      "nav": 103.4478,
+      "ret": 0.0,
+      "n": 6
+    }
+  ],
+  "closed": [
+    {
+      "symbol": "SAX.DE",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-10",
+      "entry_price": 34.9,
+      "exit_price": 34.76,
+      "return_pct": -0.4,
+      "conviction": 71
+    },
+    {
+      "symbol": "TNET",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-10",
+      "entry_price": 46.64,
+      "exit_price": 47.82,
+      "return_pct": 2.53,
+      "conviction": 63
+    },
+    {
+      "symbol": "INGR",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-10",
+      "entry_price": 99.98,
+      "exit_price": 101.64,
+      "return_pct": 1.66,
+      "conviction": 60
+    },
+    {
+      "symbol": "BKNG",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-14",
+      "entry_price": 165.84,
+      "exit_price": 164.94,
+      "return_pct": -0.54,
+      "conviction": 83
+    },
+    {
+      "symbol": "ANF",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-14",
+      "entry_price": 75.34,
+      "exit_price": 90.57,
+      "return_pct": 20.22,
+      "conviction": 82
+    },
+    {
+      "symbol": "UHS",
+      "entry_date": "2026-06-10",
+      "exit_date": "2026-06-14",
+      "entry_price": 146.59,
+      "exit_price": 146.42,
+      "return_pct": -0.12,
+      "conviction": 79
+    },
+    {
+      "symbol": "HRB",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-14",
+      "entry_price": 38.09,
+      "exit_price": 36.52,
+      "return_pct": -4.12,
+      "conviction": 74
+    },
+    {
+      "symbol": "SCR.PA",
+      "entry_date": "2026-06-08",
+      "exit_date": "2026-06-14",
+      "entry_price": 30.54,
+      "exit_price": 31.04,
+      "return_pct": 1.64,
+      "conviction": 72
+    }
+  ]
+}

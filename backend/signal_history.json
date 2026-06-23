@@ -1,0 +1,1877 @@
+[
+  {
+    "date": "2026-05-13",
+    "signals": []
+  },
+  {
+    "date": "2026-05-13",
+    "signals": [
+      {
+        "symbol": "EXEL",
+        "composite": 0.7478,
+        "price": 49.46,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ANIM.MI",
+        "composite": 0.7326,
+        "price": 7.25,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "HESM",
+        "composite": 0.7324,
+        "price": 39.02,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CPRX",
+        "composite": 0.7292,
+        "price": 31.14,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FRT",
+        "composite": 0.7231,
+        "price": 115.55,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AMUN.PA",
+        "composite": 0.7147,
+        "price": 84.45,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "BMED.MI",
+        "composite": 0.7074,
+        "price": 19.36,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "THG",
+        "composite": 0.7064,
+        "price": 189.59,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AZZ",
+        "composite": 0.7008,
+        "price": 148.11,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "TRNO",
+        "composite": 0.6993,
+        "price": 65.91,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "NVDA",
+        "composite": 0.693,
+        "price": 220.78,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "TRS",
+        "composite": 0.6919,
+        "price": 40.9,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ZM",
+        "composite": 0.6917,
+        "price": 102.96,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "BGN.MI",
+        "composite": 0.6916,
+        "price": 56.7,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "UNI.MI",
+        "composite": 0.69,
+        "price": 22.12,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "INCY",
+        "composite": 0.6875,
+        "price": 99.13,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "UMBF",
+        "composite": 0.6873,
+        "price": 128.98,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NOVN.SW",
+        "composite": 0.6843,
+        "price": 115.9,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "FTNT",
+        "composite": 0.6733,
+        "price": 113.87,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "DGII",
+        "composite": 0.6731,
+        "price": 61.53,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "EPR",
+        "composite": 0.6727,
+        "price": 58.3,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "RMBS",
+        "composite": 0.6726,
+        "price": 130.28,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "EME",
+        "composite": 0.6722,
+        "price": 924.9,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "UTHR",
+        "composite": 0.6702,
+        "price": 581.74,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "UFPT",
+        "composite": 0.6698,
+        "price": 220.59,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "IBKR",
+        "composite": 0.6638,
+        "price": 84.59,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ACLN.SW",
+        "composite": 0.6632,
+        "price": 84.45,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "G.MI",
+        "composite": 0.6595,
+        "price": 38.76,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "MCY",
+        "composite": 0.659,
+        "price": 101.72,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "CTRE",
+        "composite": 0.6577,
+        "price": 42.09,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "BLBD",
+        "composite": 0.6542,
+        "price": 69.33,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "MLI",
+        "composite": 0.6539,
+        "price": 138.59,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "TDW",
+        "composite": 0.6529,
+        "price": 81.5,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FTDR",
+        "composite": 0.6522,
+        "price": 63.47,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ABBN.SW",
+        "composite": 0.6514,
+        "price": 81.16,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "TGYM.MI",
+        "composite": 0.6509,
+        "price": 21.18,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "DAL",
+        "composite": 0.6504,
+        "price": 70.71,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "PRDO",
+        "composite": 0.6502,
+        "price": 35.12,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "SM",
+        "composite": 0.6492,
+        "price": 31.35,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NBIX",
+        "composite": 0.6489,
+        "price": 155.8,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "OII",
+        "composite": 0.6431,
+        "price": 38.07,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ASM.AS",
+        "composite": 0.6412,
+        "price": 838.0,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "FHI",
+        "composite": 0.6405,
+        "price": 56.14,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FOX",
+        "composite": 0.6402,
+        "price": 59.47,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FIX",
+        "composite": 0.6401,
+        "price": 2017.42,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "DAVE",
+        "composite": 0.6395,
+        "price": 242.25,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "IG.MI",
+        "composite": 0.6394,
+        "price": 10.3,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "REGN",
+        "composite": 0.6375,
+        "price": 723.41,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "PTCT",
+        "composite": 0.6355,
+        "price": 75.02,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ADEA",
+        "composite": 0.6353,
+        "price": 31.18,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "0966.HK",
+        "composite": 0.6346,
+        "price": 23.82,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "HALO",
+        "composite": 0.6342,
+        "price": 70.93,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ENVA",
+        "composite": 0.6332,
+        "price": 166.88,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "NEM",
+        "composite": 0.6309,
+        "price": 119.69,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "RGLD",
+        "composite": 0.629,
+        "price": 245.35,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "DTM",
+        "composite": 0.6285,
+        "price": 145.08,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "IBOC",
+        "composite": 0.6275,
+        "price": 72.4,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "MNR",
+        "composite": 0.6274,
+        "price": 14.23,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NXT",
+        "composite": 0.6262,
+        "price": 125.37,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CACC",
+        "composite": 0.6243,
+        "price": 526.72,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "MTCH",
+        "composite": 0.6242,
+        "price": 35.36,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "STAG",
+        "composite": 0.6221,
+        "price": 38.65,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "VPK.AS",
+        "composite": 0.6204,
+        "price": 44.98,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "GOOGL",
+        "composite": 0.6201,
+        "price": 387.35,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "MO",
+        "composite": 0.6191,
+        "price": 69.9,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "SAB.MC",
+        "composite": 0.6188,
+        "price": 3.258,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "WHD",
+        "composite": 0.6164,
+        "price": 57.23,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "GOOG",
+        "composite": 0.6161,
+        "price": 383.82,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ASML",
+        "composite": 0.6158,
+        "price": 1520.94,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "YOU",
+        "composite": 0.6145,
+        "price": 57.64,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FFIV",
+        "composite": 0.6144,
+        "price": 354.98,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "3698.HK",
+        "composite": 0.6138,
+        "price": 5.09,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "FANG",
+        "composite": 0.6132,
+        "price": 198.15,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ESE",
+        "composite": 0.6131,
+        "price": 299.82,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FOXA",
+        "composite": 0.612,
+        "price": 66.16,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "2359.HK",
+        "composite": 0.6119,
+        "price": 138.6,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "VCTR",
+        "composite": 0.6115,
+        "price": 87.07,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AROC",
+        "composite": 0.6109,
+        "price": 37.23,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CATY",
+        "composite": 0.6107,
+        "price": 56.49,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AGX",
+        "composite": 0.6107,
+        "price": 681.01,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "AMG",
+        "composite": 0.6103,
+        "price": 301.53,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FFBC",
+        "composite": 0.6084,
+        "price": 29.92,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "VRT",
+        "composite": 0.6083,
+        "price": 367.13,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "PRY.MI",
+        "composite": 0.6075,
+        "price": 148.8,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "AVGO",
+        "composite": 0.6075,
+        "price": 419.3,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FSLR",
+        "composite": 0.6058,
+        "price": 228.06,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "MCRI",
+        "composite": 0.6058,
+        "price": 115.66,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "PNFP",
+        "composite": 0.6055,
+        "price": 96.48,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "SBMO.AS",
+        "composite": 0.6053,
+        "price": 35.72,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "OVV",
+        "composite": 0.6048,
+        "price": 58.09,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "6857.T",
+        "composite": 0.6048,
+        "price": 27725.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "LLY",
+        "composite": 0.6047,
+        "price": 989.87,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "6693.HK",
+        "composite": 0.6045,
+        "price": 41.64,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "HWM",
+        "composite": 0.6039,
+        "price": 269.76,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "SSRM",
+        "composite": 0.6031,
+        "price": 35.74,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "PUIG.MC",
+        "composite": 0.6031,
+        "price": 17.37,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "WST",
+        "composite": 0.6027,
+        "price": 312.07,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "PRG",
+        "composite": 0.6019,
+        "price": 34.78,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CECO",
+        "composite": 0.6018,
+        "price": 80.45,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "DELL",
+        "composite": 0.6014,
+        "price": 238.97,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "OKE",
+        "composite": 0.6013,
+        "price": 88.43,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "ALK-B.CO",
+        "composite": 0.6013,
+        "price": 251.2,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "WTS",
+        "composite": 0.6003,
+        "price": 299.95,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "WAT",
+        "composite": 0.6002,
+        "price": 352.21,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "CVSA",
+        "composite": 0.6,
+        "price": 128.48,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      }
+    ]
+  },
+  {
+    "date": "2026-05-14",
+    "signals": [
+      {
+        "symbol": "INCY",
+        "composite": 0.7801,
+        "price": 97.53,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CPRX",
+        "composite": 0.7412,
+        "price": 31.165,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NVDA",
+        "composite": 0.724,
+        "price": 224.87,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "ANIM.MI",
+        "composite": 0.7164,
+        "price": 7.17,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "LLY",
+        "composite": 0.7102,
+        "price": 1002.33,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "ZM",
+        "composite": 0.707,
+        "price": 103.84,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "IBKR",
+        "composite": 0.705,
+        "price": 84.89,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "BMED.MI",
+        "composite": 0.6984,
+        "price": 19.22,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "NOVN.SW",
+        "composite": 0.6967,
+        "price": 117.04,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "EXEL",
+        "composite": 0.6963,
+        "price": 50.345,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "PTCT",
+        "composite": 0.6848,
+        "price": 73.01,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "HALO",
+        "composite": 0.6837,
+        "price": 69.515,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CTRE",
+        "composite": 0.6769,
+        "price": 41.63,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "HESM",
+        "composite": 0.6767,
+        "price": 38.845,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "MO",
+        "composite": 0.6758,
+        "price": 70.99,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CF",
+        "composite": 0.6745,
+        "price": 126.83,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "SM",
+        "composite": 0.674,
+        "price": 30.8,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "WT",
+        "composite": 0.6606,
+        "price": 18.785,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FOX",
+        "composite": 0.6523,
+        "price": 59.334,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ABBN.SW",
+        "composite": 0.6523,
+        "price": 82.66,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "DAL",
+        "composite": 0.6509,
+        "price": 70.97,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NEM",
+        "composite": 0.6505,
+        "price": 119.34,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "NBIX",
+        "composite": 0.6489,
+        "price": 158.8,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "UNI.MI",
+        "composite": 0.6474,
+        "price": 22.34,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "FTNT",
+        "composite": 0.642,
+        "price": 115.3391,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ASML.AS",
+        "composite": 0.6416,
+        "price": 1307.6,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "042700.KS",
+        "composite": 0.6395,
+        "price": 400500.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "ADEA",
+        "composite": 0.6362,
+        "price": 31.79,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "GOOGL",
+        "composite": 0.6361,
+        "price": 394.945,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "EDEN.PA",
+        "composite": 0.636,
+        "price": 21.11,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "MTCH",
+        "composite": 0.6356,
+        "price": 35.3549,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "0966.HK",
+        "composite": 0.6333,
+        "price": 22.62,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "GOOG",
+        "composite": 0.6321,
+        "price": 391.0101,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "G.MI",
+        "composite": 0.6318,
+        "price": 39.05,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "6857.T",
+        "composite": 0.6309,
+        "price": 28290.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "OII",
+        "composite": 0.6307,
+        "price": 38.34,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ASML",
+        "composite": 0.6286,
+        "price": 1534.595,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "SSRM",
+        "composite": 0.6277,
+        "price": 35.725,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AROC",
+        "composite": 0.624,
+        "price": 36.845,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "IG.MI",
+        "composite": 0.6237,
+        "price": 10.28,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "FOXA",
+        "composite": 0.6234,
+        "price": 66.11,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "AM",
+        "composite": 0.6197,
+        "price": 21.54,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "RMBS",
+        "composite": 0.6183,
+        "price": 131.63,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "LTMC.MI",
+        "composite": 0.6157,
+        "price": 26.28,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "3698.HK",
+        "composite": 0.6136,
+        "price": 5.04,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "2359.HK",
+        "composite": 0.6117,
+        "price": 137.3,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "6693.HK",
+        "composite": 0.6038,
+        "price": 40.9,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "VRTX",
+        "composite": 0.6006,
+        "price": 449.961,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      }
+    ]
+  },
+  {
+    "date": "2026-05-15",
+    "signals": [
+      {
+        "symbol": "INCY",
+        "composite": 0.7802,
+        "price": 98.82,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CPRX",
+        "composite": 0.7412,
+        "price": 31.16,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "NVDA",
+        "composite": 0.7236,
+        "price": 225.83,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "IBKR",
+        "composite": 0.7122,
+        "price": 85.12,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "LLY",
+        "composite": 0.7103,
+        "price": 1015.93,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "ZM",
+        "composite": 0.706,
+        "price": 102.43,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FTDR",
+        "composite": 0.7035,
+        "price": 62.64,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "ACLN.SW",
+        "composite": 0.7025,
+        "price": 86.75,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "AZZ",
+        "composite": 0.7007,
+        "price": 144.31,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "MO",
+        "composite": 0.7006,
+        "price": 71.56,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "TRNO",
+        "composite": 0.6987,
+        "price": 66.28,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "NOVN.SW",
+        "composite": 0.6965,
+        "price": 116.8,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "UFPT",
+        "composite": 0.6945,
+        "price": 219.23,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "TRS",
+        "composite": 0.6915,
+        "price": 39.93,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "EXEL",
+        "composite": 0.6865,
+        "price": 51.29,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "PTCT",
+        "composite": 0.6846,
+        "price": 73.46,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "OII",
+        "composite": 0.6806,
+        "price": 38.87,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "HESM",
+        "composite": 0.6762,
+        "price": 38.82,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CF",
+        "composite": 0.674,
+        "price": 125.5,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "SM",
+        "composite": 0.6738,
+        "price": 31.17,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "BMED.MI",
+        "composite": 0.6735,
+        "price": 19.53,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "MTCH",
+        "composite": 0.6593,
+        "price": 36.07,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "HALO",
+        "composite": 0.6587,
+        "price": 70.03,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "THG",
+        "composite": 0.6542,
+        "price": 189.3,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ABBN.SW",
+        "composite": 0.6525,
+        "price": 82.86,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "DAL",
+        "composite": 0.6517,
+        "price": 71.05,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "FOX",
+        "composite": 0.6505,
+        "price": 59.47,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FFIV",
+        "composite": 0.6504,
+        "price": 357.4,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "NEM",
+        "composite": 0.6502,
+        "price": 118.96,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "NBIX",
+        "composite": 0.6489,
+        "price": 161.32,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "SIGI",
+        "composite": 0.6479,
+        "price": 85.17,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "UNI.MI",
+        "composite": 0.6473,
+        "price": 22.48,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "FRT",
+        "composite": 0.645,
+        "price": 114.13,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ENVA",
+        "composite": 0.6444,
+        "price": 163.24,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FTNT",
+        "composite": 0.642,
+        "price": 117.69,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "IG.MI",
+        "composite": 0.6407,
+        "price": 10.32,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "FIX",
+        "composite": 0.6401,
+        "price": 2034.27,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "DAVE",
+        "composite": 0.6392,
+        "price": 240.07,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "DOCN",
+        "composite": 0.6388,
+        "price": 159.18,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "AROC",
+        "composite": 0.6386,
+        "price": 36.8,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ADEA",
+        "composite": 0.6355,
+        "price": 31.72,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "PRI",
+        "composite": 0.6353,
+        "price": 267.11,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FFBC",
+        "composite": 0.6332,
+        "price": 29.76,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "6857.T",
+        "composite": 0.6307,
+        "price": 28615.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "MLI",
+        "composite": 0.6295,
+        "price": 139.55,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "DTM",
+        "composite": 0.6286,
+        "price": 145.99,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "MFEA.MI",
+        "composite": 0.6269,
+        "price": 3.0,
+        "classification": "",
+        "factor_coverage": 6,
+        "factor_coverage_pct": 0.4615
+      },
+      {
+        "symbol": "SSRM",
+        "composite": 0.6265,
+        "price": 34.75,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "PRDO",
+        "composite": 0.6237,
+        "price": 34.92,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "LOGN.SW",
+        "composite": 0.6237,
+        "price": 81.2,
+        "classification": "",
+        "factor_coverage": 8,
+        "factor_coverage_pct": 0.6154
+      },
+      {
+        "symbol": "CACC",
+        "composite": 0.6226,
+        "price": 525.0,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FOXA",
+        "composite": 0.6217,
+        "price": 66.47,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "MRL.MC",
+        "composite": 0.6215,
+        "price": 14.66,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "BCRX",
+        "composite": 0.6212,
+        "price": 9.6,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "RMBS",
+        "composite": 0.6184,
+        "price": 134.85,
+        "classification": "",
+        "factor_coverage": 10,
+        "factor_coverage_pct": 0.7692
+      },
+      {
+        "symbol": "LAUR",
+        "composite": 0.618,
+        "price": 32.67,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "UTHR",
+        "composite": 0.6178,
+        "price": 579.54,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FAF",
+        "composite": 0.6178,
+        "price": 66.86,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "WHD",
+        "composite": 0.6157,
+        "price": 56.07,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "042700.KS",
+        "composite": 0.6146,
+        "price": 409500.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "BLBD",
+        "composite": 0.6141,
+        "price": 71.0,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "FHI",
+        "composite": 0.6134,
+        "price": 55.85,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "BRUN",
+        "composite": 0.6119,
+        "price": 21.0,
+        "classification": "",
+        "factor_coverage": 5,
+        "factor_coverage_pct": 0.3846
+      },
+      {
+        "symbol": "EME",
+        "composite": 0.6116,
+        "price": 923.01,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "RAPP",
+        "composite": 0.6076,
+        "price": 38.08,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "LRCX",
+        "composite": 0.6075,
+        "price": 295.44,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CATY",
+        "composite": 0.6072,
+        "price": 55.82,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "G.MI",
+        "composite": 0.6066,
+        "price": 39.14,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "FSLR",
+        "composite": 0.6064,
+        "price": 234.6,
+        "classification": "",
+        "factor_coverage": 13,
+        "factor_coverage_pct": 1.0
+      },
+      {
+        "symbol": "NTGY.MC",
+        "composite": 0.6059,
+        "price": 27.38,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "GOOG",
+        "composite": 0.6058,
+        "price": 399.04,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "VRTX",
+        "composite": 0.6053,
+        "price": 453.06,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "MCRI",
+        "composite": 0.6051,
+        "price": 116.14,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "LECO",
+        "composite": 0.6046,
+        "price": 265.26,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "EPR",
+        "composite": 0.6039,
+        "price": 58.17,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "AMG",
+        "composite": 0.6015,
+        "price": 303.48,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "ALK-B.CO",
+        "composite": 0.6011,
+        "price": 252.8,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      },
+      {
+        "symbol": "WTS",
+        "composite": 0.6011,
+        "price": 300.0,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "INVA",
+        "composite": 0.6011,
+        "price": 23.14,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      }
+    ]
+  }
+]

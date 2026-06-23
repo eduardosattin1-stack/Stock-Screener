@@ -1,0 +1,119 @@
+{
+  "DHER": {
+    "detected": true,
+    "funds": [
+      {
+        "fund_name": "Uber Technologies",
+        "current_stake_pct": 19.5,
+        "qoq_change_pct": 333.3,
+        "filing_date": "2026-04-15",
+        "filing_type": "SC 13D",
+        "is_new_position": false,
+        "is_accumulating": true
+      },
+      {
+        "fund_name": "Aspex Management",
+        "current_stake_pct": 5.2,
+        "qoq_change_pct": 160.0,
+        "filing_date": "2026-02-15",
+        "filing_type": "13F",
+        "is_new_position": false,
+        "is_accumulating": true
+      }
+    ],
+    "aggregate_smart_money_pct": 24.7,
+    "is_clustering": true
+  },
+  "DHER.DE": {
+    "detected": true,
+    "funds": [
+      {
+        "fund_name": "Uber Technologies",
+        "current_stake_pct": 19.5,
+        "qoq_change_pct": 333.3,
+        "filing_date": "2026-04-15",
+        "filing_type": "SC 13D",
+        "is_new_position": false,
+        "is_accumulating": true
+      },
+      {
+        "fund_name": "Aspex Management",
+        "current_stake_pct": 5.2,
+        "qoq_change_pct": 160.0,
+        "filing_date": "2026-02-15",
+        "filing_type": "13F",
+        "is_new_position": false,
+        "is_accumulating": true
+      }
+    ],
+    "aggregate_smart_money_pct": 24.7,
+    "is_clustering": true
+  },
+  "VSCO": {
+    "detected": true,
+    "funds": [
+      {
+        "fund_name": "Greenlight Capital",
+        "current_stake_pct": 3.5,
+        "qoq_change_pct": 80.0,
+        "filing_date": "2026-05-15",
+        "filing_type": "13F",
+        "is_new_position": false,
+        "is_accumulating": true
+      },
+      {
+        "fund_name": "Citadel Advisors",
+        "current_stake_pct": 2.2,
+        "qoq_change_pct": 0.0,
+        "filing_date": "2026-05-15",
+        "filing_type": "13F",
+        "is_new_position": true,
+        "is_accumulating": true
+      }
+    ],
+    "aggregate_smart_money_pct": 5.7,
+    "is_clustering": true
+  },
+  "PZZA": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "COMP": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NATL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NVRI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HON": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "UBER": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RIVN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  }
+}

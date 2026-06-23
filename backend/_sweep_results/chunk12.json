@@ -1,0 +1,352 @@
+{
+  "summary": "Opus 3-tier catalyst sweep (chunk 12 (MBVI-NBIX)): scan -> deep -> skeptic",
+  "agentCount": 24,
+  "logs": [
+    "Scanning 150 names in 6 batches of 25 (Opus)",
+    "Scan done: 150 scored (A 10/W 13/N 127) -> 15 survivors",
+    "Deep+Skeptic done: 15 dossiers; 3 verified ACTIVE"
+  ],
+  "result": {
+    "chunk": "12 (MBVI-NBIX)",
+    "scanned": 150,
+    "scan_distribution": {
+      "active": 10,
+      "watch": 13,
+      "none": 127
+    },
+    "survivors_flagged": [
+      {
+        "symbol": "MCK",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "spinoff",
+        "one_line": "Med-Surg (MMS) separation live: Apollo $1.25B/13% stake closed Jun-1-26 at $13B EV, TSAs in place, IPO targeted H2-2027 -> real structured spin but ~18mo out, large-cap."
+      },
+      {
+        "symbol": "MCW",
+        "score": 5,
+        "tier": "ACTIVE",
+        "lane": "ma_merger",
+        "one_line": "Leonard Green take-private $7.00 cash, definitive Feb-26, close H1-26; live merger-arb but controlled-holder (67%) squeeze-out at thin 29% premium -> small spread."
+      },
+      {
+        "symbol": "METC",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "supply_shortage_timing_moat",
+        "one_line": "US rare-earth Brook Mine: pilot separation facility mid-2026 + defense/battery offtake talks late-2026 + DOE/NETL CRADA; real structural angle, softish dates."
+      },
+      {
+        "symbol": "MGM",
+        "score": 8,
+        "tier": "ACTIVE",
+        "lane": "merger_arb/minority_squeeze",
+        "one_line": "Diller's People Inc. (26.1% holder) made $18B/$48.30-cash buyout proposal Jun-2-2026 for minority; live complicated merge-arb + BetMGM consolidation optionality."
+      },
+      {
+        "symbol": "MIDD",
+        "score": 8,
+        "tier": "ACTIVE",
+        "lane": "spinoff",
+        "one_line": "Hard-dated spin-off: Midera Food Processing (MFP) 1-for-1 distribution completing Jul-6-2026, Form 10 filed; clean imminent special situation."
+      },
+      {
+        "symbol": "MIRM",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "one_line": "Zilurgisertib FOP PDUFA Sep-26-2026 (Priority Review, Incyte-licensed) + volixibat VISTAS PSC topline Q2-2026; multiple dated registrational readouts."
+      },
+      {
+        "symbol": "MNRO",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "activist/structural-sale-process",
+        "one_line": "Board launched strategic-alternatives review May 27 explicitly incl. sale of company; real forward catalyst but preliminary, no set deadline."
+      },
+      {
+        "symbol": "MOD",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "spin-off / RMT merger-arb",
+        "one_line": "Reverse-Morris-Trust spin of Performance Technologies + merge with Gentherm (~$1.0B, ~6.8x EBITDA); MOD holders get ~40% of combined co; dated close Q4-cal-2026 subject to Gentherm shareholder vote, IRS tax ruling, SpinCo financing, regulatory - a real complicated spin/merger-arb setup, announced Feb 2026, not yet fired."
+      },
+      {
+        "symbol": "MRNA",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated binary (PDUFA)",
+        "one_line": "Hard dated binary: FDA PDUFA Aug-5-2026 for mRNA-1010 seasonal-flu (full approval 50-64, accelerated 65+); real forward catalyst, though asymmetry on a beaten-down large-cap vaccine name is contested - WATCH not ACTIVE."
+      },
+      {
+        "symbol": "MSGE",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "spin-off",
+        "one_line": "Board advancing spin of traditional live-entertainment from Sphere/Networks/Tao; Dolan-discount unlock, forward not fired."
+      },
+      {
+        "symbol": "MSGS",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "spin-off",
+        "one_line": "Form 10 filed May 18 2026 for tax-free spin of Rangers from Knicks; SOTP/Dolan-discount unlock, forward not fired."
+      },
+      {
+        "symbol": "MUX",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "spin-off / SOTP unlock",
+        "one_line": "McEwen Copper ~$300M IPO/spin-off targeted by YE-2026 plus active $4B Los Azules debt financing (SocGen advisor, $2.4B loan secured); owning parent MUX ahead of copper-asset crystallization is a real forward SOTP catalyst."
+      },
+      {
+        "symbol": "NAMS",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated binary (clustered)",
+        "one_line": "Obicetrapib has real 2026 dated reads — EMA decision H2-2026, RUBENS topline YE-2026, PREVAIL interim Q4-26/Q1-27 — but Ph3 LDL data already positive and these are foreign-approval/outcomes catalysts (no US PDUFA yet); asymmetry partly de-risked."
+      },
+      {
+        "symbol": "NATL",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb (cash+stock)",
+        "one_line": "Signed Brink's takeover (Feb-26-2026): $30 cash + 0.1574 BCO/sh (~$50 implied); stock ~$44 leaves a ~12-14% gross spread to a Q1-2027 close pending shareholder + regulatory approvals — clean live arb."
+      },
+      {
+        "symbol": "NB",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "financing/FID milestone",
+        "one_line": "NioCorp Elk Creek path: EXIM $800M term sheet, Traxys 10-yr offtake term sheet (Apr-2026), potential DOD support and FID clustering through 2026 — real but all non-binding and serially slipping; stock ~$5 and sliding."
+      }
+    ],
+    "verified": [
+      {
+        "symbol": "MCK",
+        "score": 4,
+        "tier": "WATCH",
+        "lane": "spinoff",
+        "catalyst": "McKesson is carving out its Medical-Surgical Solutions (MMS) unit toward an independent IPO, with Apollo having closed a $1.25B convertible-preferred stake for ~13% (valuing MMS at ~$13B EV) on Jun-1-2026 as the validating first step.",
+        "dated_milestone": "Apollo $1.25B/13% stake closed Jun-1-2026 (key milestone, already fired); MMS IPO targeted for H2 calendar-2027 (~18mo out) — next concrete date is the S-1/IPO, no intervening dated separation milestone disclosed.",
+        "instrument": "equity (LEAPS only if structured pre-IPO; no near-dated option catalyst — IPO window is H2-2027)",
+        "bloom_gates": "G1 (named counterparty: Apollo) and G2 (concrete commitment: $1.25B closed + IPO targeted) met, but both attach to the already-FIRED Jun-1 close; G3 partial — $13B EV mark is a real SOTP benchmark and MCK is down ~10% YTD (not re-rated up), but realization is ~18mo away with no intervening dated trigger.",
+        "edge": "L — the catalytic event (Apollo stake) already closed Jun-1-26 and is public; the only forward leg is an H2-2027 IPO (~18mo out) with no near-term dated milestone, on a large-cap covered by 17 analysts where the SOTP angle is well understood.",
+        "primary_source": "McKesson press release \"McKesson Closes Strategic Investment with Apollo Funds for Minority Interest in Medical-Surgical Solutions\" (Jun-2-2026, via Businesswire/Morningstar); IPO H2-2027 timing corroborated by Dallas Innovates and HME News (Jun-2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "This is a genuine, structured corporate separation (not a macro bet): Apollo closed a $1.25B convertible-preferred investment for ~13% of MMS at a ~$13B EV on Jun-1-2026, with McKesson retaining majority/operating control and targeting an MMS IPO in H2 calendar-2027. However, the value-confirming catalyst already FIRED (the close), and the actual separation is ~18 months out with no intervening dated milestone (no S-1 date or step-out schedule disclosed), making it too distant for an actionable event window despite an unfilled SOTP gap (MCK ~$737 vs ~$969 avg PT, down ~10% YTD). Real and worth monitoring for an S-1/IPO-timing update, but not a near-term firing catalyst — WATCH."
+      },
+      {
+        "symbol": "MCW",
+        "score": 1,
+        "tier": "NONE",
+        "lane": "ma_merger",
+        "catalyst": "Leonard Green & Partners $7.00/share all-cash take-private of Mister Car Wash — but the deal already CLOSED on May 19, 2026 (shares delisted), so there is no live merger-arb left.",
+        "dated_milestone": "CLOSED May 19, 2026 (completion announced); HSR early termination granted Mar 24, 2026; outside date was Jun 18, 2026. No forward date remains.",
+        "instrument": "none (equity delisted post-close; no tradable arb spread or option chain remains)",
+        "bloom_gates": "G1 named counterparty (Leonard Green & Partners) and G2 concrete commitment ($7.00 cash definitive merger) were both satisfied at announcement — but the event is fully consummated, so neither is a forward/unpriced edge anymore.",
+        "edge": "L — deal completed May 19, 2026; controlled-holder squeeze-out (~67% via written consent, no vote needed) closed at the $7.00 price with no topping bid; zero remaining spread and the stock no longer trades.",
+        "primary_source": "PR Newswire, \"Mister Car Wash Announces Completion of Take-Private by Leonard Green & Partners,\" May 19, 2026 (deal closed; corroborated by FTC HSR early termination Mar 24, 2026 per DEFM14C).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The triage description (\"definitive Feb-26, close H1-26; live merger-arb\") is stale: PR Newswire confirmed completion of the LGP take-private on May 19, 2026 and MCW was delisted from Nasdaq, with HSR early termination already granted Mar 24, 2026. The FMP quote of $7.10 is post-close residual/stale data, not a live arb spread — there is no forward catalyst and nothing left to trade. Remaining headlines are only plaintiff-firm fiduciary-duty/appraisal investigations, which are not a tradable forward equity catalyst."
+      },
+      {
+        "symbol": "METC",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "supply_shortage_timing_moat",
+        "catalyst": "Ramaco's Brook Mine (WY) — first new US rare-earth mine in 70+ years — is moving from full-scale mining to pilot oxide processing, with stacked named offtake MOUs (REalloys 20%, Mulberry magnets for defense) and a DOE/NETL CRADA backing domestic NdPr/Dy/Tb/scandium supply.",
+        "dated_milestone": "Pilot processing plant first IREO output during 2026; Phase 1 commercial production targeted late-2026/early-2027 (525 tpa NdPr, 25 tpa Dy, 12 tpa Tb) — next catalyst: pilot-plant startup H2-2026.",
+        "instrument": "equity (NASDAQ: METC)",
+        "bloom_gates": "G1 (named counterparties: REalloys 5/28/26 MOU up to 20% of MREC+scandium, Mulberry Industries offtake MOU, DOE/NETL 5-yr CRADA 10/30/25) + G2 (dated Phase 1 production commitment late-2026/early-2027 with specific tpa volumes)",
+        "edge": "L — the rare-earth/Brook-Mine theme has ALREADY been heavily re-rated: METC ran to a $57.80 52-wk high and has since collapsed to $15.65 (-8% today, below the $21.21 200-DMA, ~73% off high), so the structural angle is largely priced/de-rated; all offtakes are explicitly NON-BINDING MOUs (subject to technical validation/due diligence) with no dollar figures, and near-term milestones are pilot-scale with soft dates.",
+        "primary_source": "REalloys (ALOY)–Ramaco MOU, StockTitan, May 28, 2026; Phase 1 volumes/dates per same; pilot-plant groundbreaking PRNewswire + mining.com (Jan 2026); DOE/NETL CRADA StockTitan (Oct 30, 2025); METC quote $15.65 / 52wk-high $57.80 (FMP, 2026-06-06).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Real, specific, dated forward structural catalyst clears Bloom G1 (multiple named counterparties: REalloys, Mulberry, DOE/NETL) and G2 (dated late-2026/early-2027 Phase 1 with concrete tpa volumes), and is not yet fired (pilot oxides + commercial Phase 1 still ahead) nor a pure macro bet. However it is not a clean ACTIVE: the offtakes are non-binding MOUs lacking committed dollars, the next 2026 milestone is pilot-scale with the triage-flagged soft dates, and crucially the market has already lived through and de-rated this exact thesis (stock ~73% off its highs). Holds at WATCH — credible structural optionality but no fresh, hard, unpriced binding catalyst to fire on now; would re-tier on a binding offtake with volumes/price or a confirmed pilot-plant first-oxide date."
+      },
+      {
+        "symbol": "MGM",
+        "score": 7.5,
+        "tier": "ACTIVE",
+        "lane": "merger_arb/minority_squeeze",
+        "catalyst": "People Incorporated (Barry Diller's renamed IAC, 26.1% holder) made a non-binding June-1-2026 proposal to buy MGM minority shares for $48.30/share cash (~$18B incl. debt), to lift IAC to a 50.1% controlling stake.",
+        "dated_milestone": "MGM board reviewing with financial/legal advisors as of Jun-1-2026; next catalyst = board/special-committee response or counter (no fixed date yet; watch for special-committee formation and 13D/A amendments over coming weeks).",
+        "instrument": "Equity (merger-arb long); the ~1.7% gross spread to a lowball non-binding bid (only +10.6% vs last close) is thin, so the real edge is upside optionality on a bump/special-committee pushback rather than the headline spread.",
+        "bloom_gates": "G1 (named counterparty: People Inc/Diller) + G2 (concrete commitment: $48.30 cash, ~$18B, no financing condition, intent to 50.1%) + G3 (specific unpriced figure: stock $47.51 vs $48.30 offer, and an under-priced bump given minority will contest the 24% 30d-VWAP premium framing).",
+        "edge": "M — real, dated, single-name controlled-minority squeeze with cash terms, but it is a NON-BINDING expression of interest from the controlling holder (conflicted), only +10.6% over last close; board has not engaged, special committee not yet announced, gaming/antitrust approvals pending, and current price already sits ~1.7% below the bid, so most of the announcement pop is captured.",
+        "primary_source": "MGM 8-K / IAC (People Inc.) 8-K & SC 13D/A and PRNewswire release \"People Incorporated Proposes To Acquire MGM Resorts International For $48.30 Per Share In Cash,\" dated Jun-1-2026; quote MGM $47.51 via FMP (Jun-5/6-2026).",
+        "verdict": "CONFIRMED",
+        "kill_fact": "All load-bearing facts confirmed against primary/near-primary sources (IAC 8-K, MGM SC 13D/A both filed Jun-1-2026; PRNewswire release; MGM confirmation via StockTitan): People Incorporated (renamed IAC, Barry Diller's vehicle, 26.1%/66,822,350 shares) made a NON-BINDING Jun-1-2026 proposal to buy all MGM shares it doesn't own at $48.30/share cash, expecting to reach a 50.1% controlling stake (IAC's own wording), ~$18B incl. debt (~$12.36B equity). Premium = $48.30/$43.67 last close - 1 = +10.6% EXACTLY as stated. FORWARD/unresolved: MGM board 'will carefully review' with advisors, no acceptance/rejection, no special-committee response public, Diller recusing. Live MGM = $47.51, so gross spread to bid = +1.66% (~1.7% as claimed). Thesis edge is sound and appropriately humble: the asymmetry is bump/special-committee pushback on a lowball conflicted-buyer minority-squeeze, NOT the thin headline spread. Tradeable liquid large-cap. Score trimmed 8->7.5: non-binding + conflicted-buyer + ~1.7% remaining spread legitimately cap conviction.",
+        "analysis": "This is a genuine, well-documented merger-arb/minority-squeeze catalyst: People Inc. (formerly IAC, 26.1% holder via Barry Diller) tabled a non-binding $48.30/share all-cash proposal on Jun-1-2026 (~$18B incl. debt) to take control to 50.1%, confirmed by MGM 8-K, IAC 8-K, and a 13D/A. It is forward and unresolved — the MGM board is reviewing with advisors, no special committee response is public, the deal is non-binding/conditional (binding agreement, due diligence, limited-competition and gaming approvals), and Diller is recusing. With MGM at $47.51 vs the $48.30 bid the gross spread is only ~1.7% on a controlling-holder lowball (just +10.6% over last close), so the asymmetry is in a price bump / minority-pushback re-rate plus BetMGM consolidation optionality rather than the headline spread; merits ACTIVE tracking, but conviction is capped by the non-binding/conflicted-buyer structure and thin remaining spread."
+      },
+      {
+        "symbol": "MIDD",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "spinoff",
+        "catalyst": "Middleby (MIDD) completes the 1-for-1 tax-free spin-off of food-processing unit Midera (to list on Nasdaq as MFP), creating a pure-play industrial-cooking parent and a separately-traded food-processing-equipment spinco.",
+        "dated_milestone": "Spin-off distribution / MFP when-issued-to-regular trading: July 6, 2026 (record date TBD; Form 10 effectiveness is the gating condition just prior).",
+        "instrument": "MIDD equity (parent you hold to receive the MFP distribution; MFP does not trade regular-way until ~Jul-6). Long-dated MIDD calls capture pre-spin re-rating but the spinco-discount alpha is post-distribution in MFP.",
+        "bloom_gates": "G2 only — board-approved distribution with a filed Form 10-12B/A and a fixed Jul-6-2026 completion date (concrete commitment). G1 fails (internal separation, no external named counterparty). G3 fails (no disclosed unpriced figure — no SOTP/segment valuation or debt-distribution number found; May-12 Investor Day financial framework not captured in my 4 lookups).",
+        "edge": "L — the separation was board-announced May-11-2026 and has been telegraphed by Middleby since ~2024; parent re-rating largely fired (MIDD $154.93, near 52wk highs, above 50/200d MAs). The classic forced-selling spin discount accrues to MFP AFTER Jul-6, not to MIDD now, and no specific currently-unpriced figure exists to underwrite.",
+        "primary_source": "SEC Form 10-12B/A, Midera Food Processing Inc. (CIK 0002088281), FY2026; corroborated by Middleby press release \"announces the launch of Midera Food Processing\" dated May 11, 2026 (StockTitan). MIDD quote $154.93 via FMP, 2026-06-05.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Catalyst is genuine, regulator-documented (SEC Form 10-12B/A, CIK 0002088281) and hard-dated to Jul-6-2026, clearing real+dated+forward and not a macro bet. But the triage ticker is wrong: MFP is the spinco with no current quote — the investable, trade-now instrument is parent MIDD, and the actual spin-arb edge (post-distribution selling pressure on the small-cap spinco) lands in MFP after Jul-6. With the announcement already a year old, the parent re-rating substantially priced, and no concrete unpriced figure disclosed (G3 fails), this is a clean but well-known event with low capturable forward edge — WATCH, score 5; revisit once MFP begins when-issued trading and a sum-of-the-parts / spinco float is quantifiable."
+      },
+      {
+        "symbol": "MIRM",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary_pdufa",
+        "catalyst": "Two dated near-term forward binaries on zilurgisertib (FOP): pivotal PROGRESS Phase 2 efficacy data debuts at ENDO 2026 on Jun-14-2026 (numbers not yet disclosed), then an FDA Priority-Review PDUFA decision on Sep-26-2026 for the Incyte-licensed ALK2 inhibitor.",
+        "dated_milestone": "ENDO 2026 PROGRESS Phase 2 data presentation Sun Jun-14-2026 (3:30pm CT); FDA PDUFA decision Sep-26-2026; volixibat PSC pre-NDA meeting summer-2026 / NDA submission 2H-2026 (next: Jun-14-2026)",
+        "instrument": "equity (or short-dated calls into Jun-14 ENDO data / Sep-26 PDUFA); long premium given binary event risk",
+        "bloom_gates": "G1 (named counterparty Incyte, worldwide license w/ milestones+royalties) + G2 (concrete FDA commitment: NDA accepted, Priority Review, dated PDUFA Sep-26-2026)",
+        "edge": "M — both events are real, dated, unfired and idiosyncratic; but the triage's headline \"volixibat VISTAS PSC topline Q2-2026\" already FIRED (primary endpoint met, May-4-2026) so that catalyst is spent and partly re-rated, and FOP is ultra-rare (~300 US/900 WW patients) so zilurgisertib's commercial magnitude is modest vs the $4.7B cap; stock already ran 43.5→93.5 YTD.",
+        "primary_source": "Mirum/Incyte press release, Businesswire 2026-06-04 (ENDO acceptance + PDUFA Sep-26-2026); Mirum PR 2026-05-04 (VISTAS PSC primary endpoint met — already fired); FMP quote 2026-06-06 ($93.48, mkt cap $4.69B)",
+        "verdict": "CONFIRMED",
+        "kill_fact": "Both forward zilurgisertib (FOP) catalysts independently confirmed vs primary sources and UNFIRED: pivotal PROGRESS Phase 2 Cohort 1 efficacy data presents at ENDO 2026 on Sunday Jun-14-2026 3:30-4:15pm CT (Businesswire/StockTitan, dated Jun-4-2026 — only abstract accepted, NUMBERS NOT yet disclosed = genuine unpriced binary), and FDA Priority-Review PDUFA Sep-26-2026 for the Incyte-licensed ALK2 inhibitor (Mirum is licensee, Incyte licensor — Apr-2026 worldwide license). Line's self-flagged disqualifier on the OTHER catalyst is also correct: volixibat VISTAS PSC has ALREADY FIRED (primary endpoint met, announced May-4-2026; full data at EASL May-30-2026; only soft pre-NDA meeting summer-26 + 2H-26 NDA filing remain) — strongest catalyst spent. Score 6 fair: events real+dated but FOP ultra-rare (modest commercial magnitude) and line honestly discloses the bigger event is done.",
+        "analysis": "MIRM has two legitimately dated, forward, unfired single-name catalysts on zilurgisertib for FOP: pivotal PROGRESS efficacy data at ENDO on Jun-14-2026 (results undisclosed = a genuine unpriced binary) and an FDA Priority-Review PDUFA on Sep-26-2026, with Incyte as the named license counterparty. Critically, the triage's flagged volixibat VISTAS PSC \"topline Q2-2026\" has ALREADY read out (primary endpoint met, May-4-2026) — it is fired and only soft process steps (pre-NDA meeting, 2H-26 NDA submission) remain there, so the strongest catalyst is spent. Net: ACTIVE but a measured 6 — the surviving events are real and dated but of modest commercial magnitude (FOP is ultra-rare) and the stock has already re-rated from its lows."
+      },
+      {
+        "symbol": "MNRO",
+        "score": 3,
+        "tier": "WATCH",
+        "lane": "activist/structural-sale-process",
+        "catalyst": "Board launched a strategic-alternatives review on May 27, 2026 explicitly including a potential sale of the company, but it is a preliminary, open-ended process with no deadline, no named counterparty, and explicit \"no assurance\" of any transaction.",
+        "dated_milestone": "Process is open-ended with NO set deadline; only forward dated event is the June 9, 2026 Oppenheimer fireside chat (routine IR, not a deal milestone). Next likely update: FY2026 10-K already filed; watch for advisor-hired/13D/bidder news.",
+        "instrument": "equity (long stock); no defined-date binary so dated-call structure not warranted given open-ended timeline",
+        "bloom_gates": "NONE pass. G1 fails: no named counterparty/bidder. G2 fails: no concrete/binding commitment — only \"evaluate a broad range of alternatives\" with explicit no-assurance language. G3 fails: no specific currently-unpriced figure disclosed (no deal value, target price, or sum-of-parts put forward).",
+        "edge": "L — the event is real, dated, and the takeout optionality looks genuinely unpriced (stock $14.53, down 5.6% on the day, near 52-wk low $12.26 vs high $23.91, below 50/200d avgs), but it is a preliminary self-initiated board review with no counterparty, no deadline, and no specific figure, so there is no specific, time-bound mispricing to underwrite — only diffuse process optionality.",
+        "primary_source": "Business Wire / SEC 8-K, \"Monro Announces Strategic Alternatives Review to Maximize Shareholder Value,\" 2026-05-27 (corroborated by FY2026 8-K filing on SEC EDGAR, CIK 0000876427); quote via FMP 2026-06-06 ($14.53, -5.6%).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Confirmed real and forward: the May 27, 2026 8-K/press release has the Board initiating a strategic review that explicitly names \"sale of the Company\" as an option, so it is dated, not fired, not a re-rate, and not a macro bet. However it clears none of the Bloom gates — no named counterparty (G1), no concrete commitment beyond evaluating options (G2), and no specific unpriced figure (G3) — and the company itself states the process is preliminary with no deadline and no assurance of any outcome; the \"activist\" framing also appears unsupported (no 13D/named activist found). The one supportive fact is that the market is not pricing a takeout (shares near 52-week lows on weak FY26 results), but an open-ended \"we might sell\" with no counterparty or deadline is precisely the speculative process the strict gate screens out, so this is WATCH (real but un-specific) rather than ACTIVE; re-rate to ACTIVE only if a bidder/advisor process date, 13D, or concrete bid figure emerges."
+      },
+      {
+        "symbol": "MOD",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "spin-off / RMT merger-arb",
+        "catalyst": "Modine is spinning off its Performance Technologies segment and merging it into Gentherm (THRM) via a tax-free Reverse Morris Trust (~$1.0B EV, ~6.8x EBITDA), with MOD holders receiving ~40% of the combined company plus $210M cash to Modine.",
+        "dated_milestone": "Target close Q4 calendar 2026; outside date Mar 31, 2027 (+3mo extension). Next dated gates: S-4/Form 10 effectiveness then a Gentherm special shareholder meeting (the May 14, 2026 annual meeting covered only directors/equity plan, NOT the deal vote), plus IRS private-letter ruling and HSR/foreign antitrust clearance.",
+        "instrument": "Equity (MOD long for spin value crystallization + arb on combined-co stub; THRM is the merger counterparty). No liquid pre-distribution SpinCo instrument yet.",
+        "bloom_gates": "G1 (named counterparty: Gentherm/THRM) + G2 (concrete signed definitive agreement: $210M cash, 40/60 split, $45M term fee) + G3 (specific currently-unpriced figure: ~$1.0B / ~6.8x EBITDA carve-out value of the Performance Technologies segment, plus required 50.5% RMT tax-threshold mechanic that can lift the exchange ratio / trigger a THRM special dividend)",
+        "edge": "M — terms are public and arb desks are watching, but the multi-condition path (IRS PLR + Gentherm vote + S-4 effectiveness + 364-day bridge financing + RMT 50.5% tax mechanic with variable exchange ratio/special dividend) keeps the spin-value/combined-co stub mispriced versus a clean close; idiosyncratic, not a market-direction bet.",
+        "primary_source": "Modine/Gentherm 8-K & joint press release, definitive agreement (SEC EDGAR, filed ~Jan 29, 2026; deal terms via StockTitan MOD 8-K summary); Gentherm DEFA14A/annual-meeting results (May 14, 2026); FMP MOD quote ($276.51, -8.2%) as of 2026-06-05.",
+        "verdict": "CONFIRMED",
+        "kill_fact": "All load-bearing facts confirmed vs primary sources (GlobeNewswire PR dated 2026-01-29, MOD/THRM 8-Ks, IR pages): RMT tax-free spin of Modine Performance Technologies into Gentherm, ~$1.0B EV / 6.8x post-synergy EBITDA ($147M LTM Sep-25), $210M cash to MOD, ~40% of combined co to MOD holders (~21M shares / ~$790M), close Q4-CY2026. FORWARD not FIRED: Gentherm shareholder vote, S-4 + SpinCo Form 10 effectiveness, IRS ruling, SpinCo financing and regulatory approvals all still open; no special-meeting or S-4-effective date published yet. 50.5% RMT tax threshold can raise the exchange ratio, cut the cash distribution, and trigger a Gentherm pre-closing special dividend (confirmed). Live quote confirms MOD -8.2% to $276.51 (prev close $301.21) today — tracks the post-Q4-FY26 / $4B data-center LTA valuation pullback (record results reported 2026-05-26, data-center +158%, FY27 guide +20-35%), idiosyncratic and not a merger re-rate; spin value still ahead. Minor: line's own '(triage said Feb)' is correct that the real date is Jan 29, 2026; the claimed Mar 31, 2027 outside date could not be independently verified (SEC direct fetch 403'd) but is non-load-bearing.",
+        "analysis": "Real, specific, dated, forward RMT spin/merger announced Jan 29, 2026 (triage said Feb): MOD carves out Performance Technologies into Gentherm, MOD holders get ~40% of NewCo plus $210M cash, target close Q4-2026, outside date Mar 31, 2027. Not yet fired — Gentherm shareholder vote (still a separate special meeting; the May 14 annual meeting was unrelated), S-4/Form 10 effectiveness, IRS private-letter ruling, HSR/foreign antitrust and SpinCo bridge financing all remain open, and the 50.5% RMT tax threshold can adjust the exchange ratio or trigger a special dividend. Today's 8.2% MOD drop to ~$276 tracks the Q4-FY26 earnings/$4B data-center LTA cycle rather than a merger re-rate, so the spin value crystallization is still ahead; idiosyncratic, not macro. Gap: no S-4-effective date or special-meeting date is published yet — that is the next dated trigger to monitor."
+      },
+      {
+        "symbol": "MRNA",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated binary (FDA regulatory: VRBPAC adcomm -> PDUFA)",
+        "catalyst": "FDA decision on Moderna's mRNA-1010/MFLUSIVA seasonal-flu vaccine (full approval ages 50-64, accelerated 65+), gated by a rare VRBPAC advisory-committee hearing on June 18 then a PDUFA goal date of Aug 5, 2026.",
+        "dated_milestone": "VRBPAC advisory committee June 18, 2026 (~12 days out); FDA PDUFA decision Aug 5, 2026 (~60 days out).",
+        "instrument": "equity / Aug-Sep dated options around the PDUFA (long-dated calls capped by contested upside; adcomm adds two-sided risk)",
+        "bloom_gates": "G3 (specific currently-unpriced figure: dated FDA approval/rejection event with defined age-indication split); event-binary rather than a counterparty/commitment catalyst.",
+        "edge": "L — real dated binary, but asymmetry is poor: flu vaccine is a modest commercial product diluted into a ~$19B large-cap; FDA convened a RARE adcomm after an earlier filing rejection (Prasad-era), so June 18 carries genuine rejection/restriction risk rather than a clean approval setup. Stock already -8% on June 5 on the adcomm overhang.",
+        "primary_source": "FDA.gov, \"VRBPAC June 18, 2026 Meeting Announcement\" (MFLUSIVA / mRNA-1010), notice dated 2026-05-22; corroborated by Moderna press release on the Aug-5-2026 PDUFA goal date and Reuters (2026-05-21).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Hard dated forward binary is confirmed: FDA accepted mRNA-1010 with an Aug-5-2026 PDUFA goal date, and has scheduled a rare VRBPAC hearing on June 18 to publicly weigh safety/effectiveness (sources: FDA.gov adcomm notice + Moderna press release). It clears the gate as real (G3), dated, forward and single-name (not macro), and is NOT fired. But edge is Low/WATCH: a flu vaccine is a marginal value driver for a beaten-down large-cap, and convening an adcomm after an earlier filing rejection signals elevated regulatory risk, making the asymmetry two-sided rather than clean — WATCH not ACTIVE is the right call."
+      },
+      {
+        "symbol": "MSGE",
+        "score": 2,
+        "tier": "NONE",
+        "lane": "spin-off",
+        "catalyst": "The described catalyst — spinning traditional live-entertainment out from Sphere/Networks/Tao to unlock the Dolan discount — already occurred on 2023-04-20 and created the current MSGE entity, so it is fully fired, not forward.",
+        "dated_milestone": "None forward at MSGE; the only live Dolan spin-off is at sibling ticker MSGS (Knicks/Rangers split, board approved exploration 2026-02-18, no completion date set).",
+        "instrument": "none (no forward catalyst to express)",
+        "bloom_gates": "None pass for MSGE. G1: no new named counterparty. G2: no new concrete spin commitment at MSGE. G3: no specific currently-unpriced figure tied to a forward MSGE event. The 2023 separation is priced/historical.",
+        "edge": "L — premise is a misattribution of a 2023 completed corporate action; current MSGE *is* the traditional-live-entertainment RemainCo, so there is nothing left to spin off along the described axis.",
+        "primary_source": "Businesswire, \"Sphere Entertainment Co. Completes Spin-Off of Traditional Live Entertainment Businesses,\" 2023-04-20 (catalyst already fired); cross-checked vs MSGS board spin-off exploration, Businesswire 2026-02-18, and MSGE Q3 FY26 results, Businesswire 2026-05-07.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The triage thesis conflates history with the present: the spin of traditional live entertainment away from Sphere/MSG Networks/Tao closed 2023-04-20, with SPHR retaining Sphere/Networks/Tao and the new MSGE holding the venues, bookings, and Christmas Spectacular — so the Dolan-discount-unlock catalyst as worded is fired, not forward. A genuinely new 2026 Dolan spin exists but it is at Madison Square Garden Sports (MSGS), which on 2026-02-18 had its board approve *exploring* a Knicks/Rangers separation — early-stage, undated, and a different ticker. For MSGE specifically there is no dated, named, committed forward spin catalyst; recent MSGE flow is operating news (Q3 FY26 beat 2026-05-07, Kalshi partnership 2026-05-08), so this should not fire."
+      },
+      {
+        "symbol": "MSGS",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "spin-off",
+        "catalyst": "Tax-free spin of the NY Rangers business from the NY Knicks business via Form 10 filed May 18, 2026, intended to collapse the MSG/Dolan conglomerate (SOTP) discount.",
+        "dated_milestone": "Form 10 filed (confidential) 2026-05-18; NO concrete next date — completion gated on indefinite conditions (Form 10 effectiveness, NBA/NHL approval, tax opinion, board approval); no record/distribution date set.",
+        "instrument": "equity (MSGS); no liquid option chain edge given undefined timeline",
+        "bloom_gates": "None pass cleanly. G1 fails (no named counterparty; MSG spokesperson explicitly denied a team sale). G2 weak (spin only \"expected,\" subject to various conditions, not a binding commitment). G3 fails (the ~29% discount to Sportico's $13.5B SOTP is a widely-published, persistent \"Dolan discount,\" not a currently-unpriced figure).",
+        "edge": "L — the breakup decision is old news (announced Feb 2026, stock +16% on the day, +79% over the year), the Form 10 is a procedural/confidential follow-through with no dated next milestone, and the SOTP gap is famous and structurally sticky, so no informational or timing edge remains.",
+        "primary_source": "MSG Sports press release / Sportico \"Knicks, Rangers Split Advances With SEC Filing by MSG,\" both dated 2026-05-18 (Form 10); valuation/discount from Sportico (Knicks $9.85B + Rangers $3.65B = $13.5B, MSGS ~29% discount).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The Form 10 (2026-05-18) is real and dated but it is not a forward, unpriced catalyst: the split was announced in Feb 2026 and already re-rated the stock (+16% pop, +79% on the year), so the event is effectively fired, and the May filing was confidential with no record/distribution date or league-approval date to trade against. It fails the FORWARD and dated-next-milestone tests, fails G1 (no counterparty; sale denied) and G3 (the 29% discount to the $13.5B Knicks+Rangers SOTP is a long-known, persistent Dolan-conglomerate discount, not unpriced). Net: a generic SOTP/discount-unlock re-rating thesis rather than a Bloom-gated catalyst — gate to NONE."
+      },
+      {
+        "symbol": "MUX",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "spin-off / SOTP unlock",
+        "catalyst": "McEwen Copper (46.3%-owned by MUX) is advancing a ~$300M IPO targeted for Q4 2026 plus a SocGen-advised ~$4B Los Azules project-debt financing, crystallizing the parent's Argentine copper SOTP stub.",
+        "dated_milestone": "~$300M McEwen Copper IPO targeted Oct-Dec 2026; Los Azules board sanction targeted end-2026 (construction early 2027, first production 2030). Next: IPO launch / Q3-2026 financing progress.",
+        "instrument": "equity (MUX common; ~46.3% stake in private McEwen Copper)",
+        "bloom_gates": "G1 (Societe Generale named as sole financial advisor, dated May 14, 2026); G3 partial (implied McEwen Copper stub ~$456M from prior round vs MUX ~$1.09B mkt cap, but Los Azules already substantially analyst-covered/partly re-rated). G2 fails — no committed debt.",
+        "edge": "M — named advisor + dated IPO window are real and forward, but the \"$2.4B secured\" claim is overstated (SocGen only structuring/arranging, no committed lenders; lead arranger still unnamed), and the thesis carries heavy copper-price + Argentina/RIGI country-risk beta, diluting asset-specific edge.",
+        "primary_source": "McEwen Inc./GlobeNewswire press release \"McEwen Copper Appoints Societe Generale as Financial Advisor for Project Debt Financing of Los Azules\" (14-May-2026); IPO timing from MarketScreener/InvestingNews citing McEwen Copper exec (~12-May-2026); MUX mkt cap $1.09B from FMP profile (06-Jun-2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Verified: on 14-May-2026 McEwen Copper appointed Societe Generale as SOLE FINANCIAL ADVISOR (G1) to structure/arrange ~$4B senior debt for Los Azules, with a ~$300M McEwen Copper IPO targeted for Q4-2026 and a board sanction decision aimed at end-2026 — a genuine, dated, forward SOTP/spin-off catalyst that has not yet fired. However the triage's \"$2.4B loan secured\" is inaccurate: $2.4B is merely the targeted 60% debt tranche, no lenders are committed, and the mandated lead arranger was still unnamed as of 12-May — so G2 (concrete commitment) is not met. With the stub partly visible in the ~$1.09B parent (46.3% of a ~$456M-implied private co) and the thesis levered to copper price and Argentine country risk, conviction is WATCH-grade rather than high-edge ACTIVE."
+      },
+      {
+        "symbol": "NAMS",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated binary (clustered)",
+        "catalyst": "Clustered 2H-2026 obicetrapib regulatory/data reads: EMA/UK/Swiss approval decisions (2H26) plus RUBENS topline (YE-2026) and PREVAIL CVOT interim (4Q26, results 1Q27), with US FDA filing still undated.",
+        "dated_milestone": "EMA/MHRA/Swissmedic decisions 2H-2026 (next concrete read); RUBENS topline ~YE-2026; PREVAIL interim 4Q-2026, results 1Q-2027",
+        "instrument": "equity (clinical/regulatory binary; long-dated calls into H2-26/1Q-27 if asymmetry sought)",
+        "bloom_gates": "Partial G2 — concrete dated commitments (MAAs accepted by EMA/UK/Swiss, decisions 2H26; PREVAIL interim scheduled 4Q26). No G1 named-counterparty deal and no G3 specific currently-unpriced figure; the foreign approvals are partner (Menarini) launches, not a US PDUFA.",
+        "edge": "L-M — dated/real and not a macro bet, but Ph3 LDL efficacy already positive and re-rated, the 2026 reads are foreign-approval/confirmatory rather than the unpriced US-approval or CVOT-win leg (both 2027+), and RUBENS only began enrolling Dec-2025 so YE-26 topline is thin.",
+        "primary_source": "NewAmsterdam Pharma Q1-2026 corporate update, GlobeNewswire 2026-05-07 (EMA/UK/Swiss decisions 2H26, Menarini launch 4Q26, RUBENS topline YE26, PREVAIL interim 4Q26/results 1Q27); no US FDA submission date disclosed.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Triage thesis confirmed by NewAmsterdam's May 7, 2026 corporate update: obicetrapib has genuine clustered 2026 dated reads (EMA/UK/Swiss decisions 2H26, RUBENS topline YE26, PREVAIL interim 4Q26/results 1Q27), and none have fired. But the asymmetry is materially de-risked — the core Phase 3 LDL-lowering efficacy is already proven, the H2-26 catalysts are foreign-approval/partner-launch events (no US PDUFA exists or is dated), and the high-value legs (US FDA filing, final CVOT outcomes) sit beyond the window. Real, dated, forward, non-macro, but incremental rather than a sharp unpriced binary, so WATCH not ACTIVE."
+      },
+      {
+        "symbol": "NATL",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "merger-arb (cash+stock)",
+        "catalyst": "NCR Atleos (NATL) is being acquired by The Brink's Company (BCO) under a definitive Feb-26-2026 agreement for $30.00 cash + 0.1574 BCO/share, with dual shareholder votes set for Jun-30-2026 and a targeted Q1-2027 close.",
+        "dated_milestone": "Brink's + NCR Atleos special shareholder meetings on Jun-30-2026; targeted close Q1-2027 (pending HSR + money-transmitter license clearances).",
+        "instrument": "NATL common (long); deal pays $30 cash + 0.1574 BCO/sh — stock leg is unhedged BCO equity exposure",
+        "bloom_gates": "G1 (named acquirer: The Brink's Company / BCO) + G2 (definitive merger agreement, fixed exchange ratio, DEFM14A filed, dated shareholder vote Jun-30-2026); G3 only partially — a live spread exists but is now far smaller than triaged.",
+        "edge": "L — the triaged \"~$50 implied / 12-14% gross spread\" is materially stale: BCO has fallen from $129.58 at signing to $100.99, cutting implied value to ~$45.90 vs NATL $44.15, i.e. only ~3.9% gross over ~9 months to a Q1-2027 close (thin annualized), plus unhedged BCO equity-leg beta and HSR/license risk.",
+        "primary_source": "NCR Atleos Form DEFM14A and Brink's 424B3 (SEC, filed 2026; special meetings Jun-30-2026); deal terms per Brink's press release Feb-26-2026; current quotes BCO $100.99 / NATL $44.15 (FMP, 2026-06-06).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Deal is real, definitive, dated and forward (not fired): Brink's/NCR Atleos, $30 cash + 0.1574 BCO/sh, special meetings Jun-30-2026, Q1-2027 close pending HSR + money-transmitter licenses. But the catalyst's core thesis — a ~12-14% gross spread to ~$50 implied — no longer holds because the BCO stock leg dropped ~22% since signing; current implied value is ~$45.90 vs NATL ~$44.15, a ~4% gross spread that is a poor annualized return and carries unhedged equity-leg risk on the 0.1574 BCO component. Genuine live arb that clears G1/G2, but the edge is far smaller than flagged, so WATCH rather than ACTIVE."
+      },
+      {
+        "symbol": "NB",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "financing/FID milestone",
+        "catalyst": "NioCorp aims to close ~$800M EXIM debt + equity to fund a Board FID and full construction of the Elk Creek critical-minerals project, backstopped by a non-binding Traxys 10-yr offtake term sheet.",
+        "dated_milestone": "Management's self-imposed target to complete full project financing \"before end of Q2 2026\" (~Jun 30, 2026); no binding EXIM term sheet or dated Board FID exists.",
+        "instrument": "equity (NB common; sub-$1B mcap ~$747M, no liquid catalyst-tenor options worth structuring)",
+        "bloom_gates": "G1 (named counterparties EXIM + Traxys) and G3 (concrete $800M EXIM facility / $30M Traxys investment figures) are met; G2 fails — every commitment is explicitly NON-BINDING (Letter of Interest + preliminary indicative term sheets), with no executed binding agreement.",
+        "edge": "L — the $800M EXIM figure and offtake are widely known and have been public/serially-slipping since 2023-2024, so no informational edge; remaining catalyst is a soft, oft-missed self-imposed date amid a falling stock.",
+        "primary_source": "NioCorp press releases via FMP: Traxys non-binding term sheet (Apr-9-2026) and Nebraska ~$200M incentives (Apr-20-2026); EXIM still in independent technical/E&S due diligence (SLR engaged Oct-2025), per niocorp.com/Investing.com; \"before end of Q2 2026\" financing target per Crux Investor (2026). Quote: NB $5.13, -12.90% (FMP, Jun-6-2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "All three legs (EXIM $800M, Traxys 10-yr offtake + $30M investment, DOD support) are real with named counterparties but explicitly non-binding term sheets/LOIs that have slipped for 3+ years; the only \"dated\" forward marker is management's own \"end of Q2 2026\" financing target, which is days away and the same target that has repeatedly slipped. The standalone DOD $10M DPA award already fired (Aug-5-2025) and is small, and the dominant driver is the China/heavy-rare-earth reshoring policy narrative (CEO Fox op-ed Jun-1-2026) — i.e., largely a macro bet rather than a hard binding catalyst. Stock is sliding ($5.13, -12.9% on Jun-6-2026, below 50/200-day MAs and near the $2.17 52-wk low), confirming de-rating rather than re-rating; fails the strict FORWARD-binding + not-macro gate."
+      }
+    ]
+  }
+}

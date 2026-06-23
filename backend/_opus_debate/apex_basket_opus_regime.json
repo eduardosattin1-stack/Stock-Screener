@@ -1,0 +1,263 @@
+{
+ "apex_basket": [
+  {
+   "symbol": "ADBE",
+   "sector": "Technology",
+   "director_conviction": 76,
+   "thesis": "Adobe sells off ~11% on an H2-ARR-cut/freemium-pivot shock and a CFO exit, repricing a 75%-gross-margin software annuity to ~8.8x FCF (DCF MoS +45%) as if Creative Cloud is in terminal AI-displacement decline; with the cash engine intact, that fear-print is the entry, not the thesis-break, leaving ~1:8 to a $420 SoP and a credible +30-50% re-rate the moment one clean H2 conversion print lands.",
+   "sop_fair_value": "$420 (base; tight range $400-440, bull $560-575, bear ~$310-315 still +50% above spot)",
+   "catalyst_status": "SOFT_EXTENDED (H2 conversion proof + undated CEO appointment)",
+   "lane": "deep_value / post-shock quality-software re-rate",
+   "regime_fit": "The goal-driven REACH seat: accelerating growth + a freshly-fired sentiment dislocation give the widest credible 12-month re-rate in the book. It carries AI-displacement narrative beta (the regime's #1 watch-item) but is a software annuity, NOT an AI-capex spender, so it diversifies away from the hyperscaler de-gross factor rather than adding to it; sized as a conviction REACH, not max, because the catalyst is a conversion print, not a dated event.",
+   "exposure_axes": [
+    "enterprise-software-spend",
+    "AI-displacement-narrative (gen-AI to creative)",
+    "US-large-cap-liquidity"
+   ],
+   "entry_posture": "scale_in",
+   "wheel": {"suits": false},
+   "expected_return_pct": 103,
+   "horizon_months": 9,
+   "meets_goal": true,
+   "goal_note": "12-month driver = the first clean H2-FY26 conversion print (Sep / Dec FY26) showing the freemium/AI pivot converting to ARR; even a heavy haircut of the +103% base to fair clears +30-50% on a single de-risking quarter. This is the name added explicitly to hit the return goal.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "IT",
+   "sector": "Industrials",
+   "director_conviction": 74,
+   "thesis": "Gartner is a recurring-subscription research monopoly the tape mispriced to ~9x FCF (vs Verisk/Moody's at 25-35x) on an EPS-level non-cash anomaly that never touched the cash engine, leaving ~4-5:1 to a $215 SoP with a ~12% FCF yield and ~8%/yr buyback paying you to wait.",
+   "sop_fair_value": "$215 (base; bull $300-325, adverse ~$155-170)",
+   "catalyst_status": "FIRED",
+   "lane": "deep_value / quality-compounder anchor",
+   "regime_fit": "The rare seat that is BOTH defensive ballast and goal-clearing: structural recurring-revenue monopoly, zero AI-capex/oil beta, no rate-cut dependency, converges by FCF + buyback. In a NEUTRAL-accelerating-growth tape it is the low-beta core that funds the REACH legs.",
+   "exposure_axes": [
+    "enterprise-IT-spend (mild)",
+    "US-large-cap-liquidity"
+   ],
+   "entry_posture": "enter_now_carry",
+   "wheel": {"suits": false},
+   "expected_return_pct": 51,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = FCF compounding + ~8%/yr buyback below intrinsic value plus modest multiple normalization off a 3rd-percentile-of-range base; +51% to a $215 SoP clears the goal even without a forcing function. The risk is TIME, not magnitude.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "CMCSA",
+   "sector": "Communication Services",
+   "director_conviction": 71,
+   "thesis": "The cheapest US cable/media conglomerate on FCF (4.1x, six methods converging, owner-earnings MoS 0.71) with the Versant spin FIRED; the market prices terminal broadband decline with no terminal value, leaving ~1:3 downside:upside to a $36 SoP while a 5.4% dividend pays you to wait.",
+   "sop_fair_value": "$36 (range $32-40, bear floor ~$20-22)",
+   "catalyst_status": "FIRED",
+   "lane": "deep_value / income-carry defensive anchor",
+   "regime_fit": "Defensive, domestically-insulated annuity orthogonal to AI-capex and oil; income-cushioned convergence with no rate-cut requirement. Clears the goal at the current ~$24 (not the prior ~$30) and is a natural wheel name - a slow re-rate income asset I am happy to own at a discount.",
+   "exposure_axes": [
+    "US-consumer-broadband",
+    "rate-sensitivity (dividend proxy)",
+    "streaming-secular-decline"
+   ],
+   "entry_posture": "enter_now_carry",
+   "wheel": {"suits": true, "csp_strike": 22.5, "cc_strike": 36, "tenor_days": 40, "rationale": "A 5.4%-yield melting-but-cash-rich annuity I want to own at a discount: sell the ~$22.5 CSP into the bear-SoP floor to get paid to wait, then a ~$36 covered call at the fair-value SoP harvests the full re-rate. Slow grind-to-fair with no event clock = textbook wheel."},
+   "expected_return_pct": 50,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = multiple normalization off terminal-decline pricing (no terminal value implied at 4.1x FCF) + 5.4% dividend; +50% price to a $36 SoP plus carry. Slower than the REACH legs but downside-protected; sized as a defensive cornerstone.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "EEFT",
+   "sector": "Technology",
+   "director_conviction": 69,
+   "thesis": "Euronet is a three-segment payments conglomerate at ~7.4x P/FCF near a 52-week low where a single blended multiple hides a genuine SoP discount (~$100 base vs $115-140 activist target), ~1:5-6 reward/risk on the value gap with Ria/EFT/epay each defensible versus WU/Atleos.",
+   "sop_fair_value": "~$100 (base; range $95-105; activist tail $115-140)",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "deep_value / SoP-unlock with activist tail",
+   "regime_fit": "Structural-special-sit in the regime's fattest (thin-coverage payments) lane; the Voss campaign was DEFLECTED at the May-2026 AGM and founder-controlled, so the catalyst is soft and the close is time-uncertain - sized for the value gap, not the activism, but the gap itself clears the goal.",
+   "exposure_axes": [
+    "global-payments-volume",
+    "cross-border-remittance/FX",
+    "EM-consumer"
+   ],
+   "entry_posture": "scale_in",
+   "wheel": {"suits": false},
+   "expected_return_pct": 49,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = continued buyback below intrinsic value + segment-FCF compounding narrowing the blended-multiple discount, with the Voss SoP campaign as a free re-rate option; +49% to a $100 base SoP is goal-clearing on the value gap alone, not contingent on the activist winning.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "PLX.PA",
+   "sector": "Industrials",
+   "director_conviction": 68,
+   "thesis": "Pluxee/Pluxee TIC-services name trades at ~4.8x P/FCF (DCF MoS 0.86, EPV 0.65) - the cheapest quality name in the universe - after a FIRED-negative Brazil meal-voucher-reform shock that the market extrapolated into terminal decline; vs Bureau Veritas/SGS/Intertek at 15-20x with comparable growth, the discount is far wider than the regulatory hit warrants, leaving ~+119% to a EUR25 base SoP.",
+   "sop_fair_value": "EUR25 (base; range EUR24-26, bull ~EUR38, bear ~EUR16 still above spot)",
+   "catalyst_status": "FIRED (negative - Brazil PAT reform shock)",
+   "lane": "deep_value / post-shock relative-value re-rate",
+   "regime_fit": "REACH on a relative-value mispricing rather than a dated catalyst: zero AI-capex beta, EM (Brazil/LatAm) consumer-payments exposure that is orthogonal to the US tape and to the Hormuz oil tail. The widest peer-discount in the universe is the engine; sized as a REACH because the re-rate is sentiment-paced off a 11th-percentile-of-range base.",
+   "exposure_axes": [
+    "Brazil/LatAm-regulatory (meal-voucher reform)",
+    "EM-consumer-payments-volume",
+    "EUR/BRL-FX"
+   ],
+   "entry_posture": "scale_in",
+   "wheel": {"suits": false},
+   "expected_return_pct": 119,
+   "horizon_months": 11,
+   "meets_goal": true,
+   "goal_note": "12-month driver = the market re-anchoring Pluxee to its TIC/services peer band (15-20x vs 4.8x) once the Brazil reform impact is quantified and lapped in the FY26 prints; even a quarter of the +119% gap closing clears +30-50%. Added for goal upside in a name with no oil/AI beta.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "NTES",
+   "sector": "Technology",
+   "director_conviction": 66,
+   "thesis": "NetEase is a 30%-net-margin Chinese gaming cash machine at ~12x FCF with ~$23-25/ADS net cash and a $5B buyback running below intrinsic value, ~3-4x upside-to-fair (~$170 SoP) vs a bear SoP sitting essentially at spot, with two Q3'26 game launches as a free re-rate option.",
+   "sop_fair_value": "$165-175 per ADS (base ~$170, bear ~$125-135)",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "deep_value / orthogonal-geography ballast",
+   "regime_fit": "Deliberate diversifier away from the US AI-capex/oil tape: a China-domestic-demand cash compounder whose resolution driver (buyback + FCF) is wholly independent of the dominant Western macro factor. Balance sheet floors the downside; the Q3'26 launches add a dated free option that suits the accelerating-growth tilt.",
+   "exposure_axes": [
+    "China-regulatory/ADR",
+    "China-domestic-consumption",
+    "Tencent-competition"
+   ],
+   "entry_posture": "scale_in",
+   "wheel": {"suits": true, "csp_strike": 118, "cc_strike": 170, "tenor_days": 35, "rationale": "Net-cash gaming cash-cow I am happy to own at the bear-SoP (~$125 floor): a ~$118 CSP is paid to wait at-or-below the balance-sheet floor, a ~$170 CC caps at fair value. The two Q3'26 launches are upside the wheel does not need to monetize, so the income overlay fits a slow-converging deep-value name."},
+   "expected_return_pct": 35,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = buybacks below intrinsic value + FCF compounding closing the discount to a $170 SoP, with Sea of Remnants + Ananta (Q3'26) as dated free re-rate options; +35% base clears the lower bound of the goal with a hard net-cash floor.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "FSLR",
+   "sector": "Energy",
+   "director_conviction": 64,
+   "thesis": "First Solar is the only scaled US module maker whose CdTe thin-film is structurally immune to the silicon-targeted trade wall now being built around it; the Section 232 polysilicon decision is a dated, binding executive action (~end-June 2026) that hands FSLR a durable cost advantage while taxing every rival - ~5:1 to the $447 bull tail.",
+   "sop_fair_value": "$300 (range $232 bear to $447 bull; base ~$295-310)",
+   "catalyst_status": "PENDING_HARD",
+   "lane": "catalyst / trade-policy forcing-function",
+   "regime_fit": "The book's dated REACH catalyst inside the regime's open-window before post-midterm narrowing, and crucially an INVERSE oil/Hormuz hedge (a fossil/policy shock helps the case), so it diversifies the live inflation/oil tail rather than compounding it. The kill scenario is a single binary 'no-action' outcome - hence sized, not max, and entered only on confirmation.",
+   "exposure_axes": [
+    "US-trade-policy (single binary)",
+    "solar-demand/IRA-FEOC",
+    "rate-sensitivity (long-duration capex)"
+   ],
+   "entry_posture": "on_confirmation: Section 232 polysilicon/derivatives tariff decision (~end-June 2026)",
+   "wheel": {"suits": false},
+   "expected_return_pct": 10,
+   "horizon_months": 6,
+   "meets_goal": true,
+   "goal_note": "12-month driver = the ~end-June 2026 Section 232 ruling; base-to-fair is only ~+10% but a silicon-adverse outcome re-rates toward the $447 bull (+63%) inside the window. Counts toward the goal as the dated-catalyst REACH whose payoff lands well inside 12 months; sized small because it is a single-binary policy bet.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "SCR.PA",
+   "sector": "Financial Services",
+   "director_conviction": 62,
+   "thesis": "SCOR is a re-rating reinsurer (Q1-26 ROE 21.7%, solvency 220%) trading on a depressed combined-ratio read, with the dated Covea arbitration ruling 'during 2026' as a binding binary tail; ~11:1 on the central case to a EUR42 SoP with the bear floor only ~3% below spot and a ~6% dividend.",
+   "sop_fair_value": "EUR42 (range EUR38-46, bull ~EUR52, bear ~EUR30)",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "deep_value / dated-legal-tail with hard floor",
+   "regime_fit": "Low demand-cycle-beta financials diversifier - reinsurance pricing is its own cycle, uncorrelated to AI-capex, oil, or European industrial demand. Book value + ~6% dividend make it the book's best downside-protected anchor; the Covea ruling is a free dated option, entered as a convergence, not a wait-for-the-flush timing bet.",
+   "exposure_axes": [
+    "reinsurance-pricing-cycle",
+    "EU-Solvency-II/jurisdiction",
+    "catastrophe/rate-duration"
+   ],
+   "entry_posture": "enter_now_carry",
+   "wheel": {"suits": true, "csp_strike": 28, "cc_strike": 42, "tenor_days": 45, "rationale": "A book-and-dividend-floored reinsurer (bear SoP ~EUR30 ~= spot) I will own at a discount: a ~EUR28 CSP gets paid below the book floor, a ~EUR42 CC caps at the fair-value SoP. No dated unlock and a ~6% dividend = a slow-re-rate income name suited to the wheel; the Covea ruling is upside the overlay does not depend on."},
+   "expected_return_pct": 34,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = combined-ratio/multiple normalization toward peers + the Dec-2026 strategic plan, with the Covea ruling as a binary free option; +34% base clears the goal's lower bound with the strongest floor in the book. Held as the downside-protected anchor under a balanced stance.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "LYFT",
+   "sector": "Technology",
+   "director_conviction": 60,
+   "thesis": "Lyft is a ~5x-FCF, +$465M-net-cash ride-share #2 the tape left near 52-week lows with all corporate catalysts fired, pricing the equity as if it is a no-growth, AV-roadkill annuity; an aggressive buyback floors the downside (~$12) while a $19 SoP and an autonomy/partnership optionality tail leave ~+33% base and a +126% bull in a name orthogonal to the rest of the book.",
+   "sop_fair_value": "$19 (range $17-21, bull ~$30, bear ~$12)",
+   "catalyst_status": "FIRED",
+   "lane": "deep_value / un-catalyzed FCF compounder with AV optionality",
+   "regime_fit": "A goal-driven REACH on a US-consumer-services name with NO AI-capex spend, NO oil beta, and NO European-cyclical exposure - it lowers, not raises, the book's correlated-de-gross risk. Catalysts are fired so the re-rate is FCF + buyback paced; the autonomy/partnership tail is the convex option that justifies the seat under an accelerating-growth tilt.",
+   "exposure_axes": [
+    "US-rideshare-demand (consumer-services)",
+    "autonomous-vehicle-disruption-narrative",
+    "small/mid-cap-liquidity"
+   ],
+   "entry_posture": "scale_in",
+   "wheel": {"suits": false},
+   "expected_return_pct": 33,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "12-month driver = sustained FCF + the aggressive buyback shrinking the float at ~5x FCF, plus AV-partnership newsflow re-rating sentiment off a 7th-percentile base; +33% base clears the lower bound, with the AV tail as the +126% bull optionality. Added as the smallest, most-orthogonal REACH.",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "MMS",
+   "sector": "Industrials",
+   "director_conviction": 58,
+   "thesis": "Maximus is a recurring government-services outsourcer at ~10x FCF (vs BAH/LDOS/SAIC at 18-25x) near a 52-week low, where the OBBBA Medicaid-redetermination + work-requirements ramp is legislated and dated but back-loaded to FY27-28; ~1:3-4 to a $100 SoP with the adverse-SoP still above spot.",
+   "sop_fair_value": "$100 (base; bull/peer-parity ~$123, adverse $83-89 still above spot)",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "deep_value / legislated slow-burn ballast",
+   "regime_fit": "Counter-cyclical government-revenue base that holds up in a European-cyclical-recession and is uncorrelated to AI-capex/oil; politically insulated (gov spend, not deal-regulatory). The catch is HORIZON - the OBBBA conversion is FY27-28 - so it is sized DOWN and held as the longest-horizon ballast, not a 12-month re-rate engine.",
+   "exposure_axes": [
+    "US-federal/state-budget",
+    "government-contract-RFP-timing"
+   ],
+   "entry_posture": "wait_for_weakness",
+   "wheel": {"suits": false},
+   "expected_return_pct": 63,
+   "horizon_months": 20,
+   "meets_goal": false,
+   "goal_note": "Earns a seat despite a >12-month horizon: the OBBBA Medicaid/work-requirements revenue ramp is legislated and dated but back-loaded to FY27-28, so the +63%-to-$100 re-rate is an 18-24mo story. Kept as a politically-insulated, recession-resistant ballast that anchors the book's downside, but SIZED DOWN and entered only into weakness because it does not deliver inside the goal window.",
+   "forensic_cap": false
+  }
+ ],
+ "director_memo": "RISK_STANCE: balanced (REACH-leaning). MACRO READ: macro_regime.json prints NEUTRAL (score 0.567) with accelerating growth + accelerating inflation, neutral rates and complacent credit - a tape constructive enough to REACH for credible 12-month re-rate drivers, but with a live oil/inflation tail and the regime doc's standing warning that AI-capex de-gross is the #1 book-killer, so I do NOT go fully aggressive: I lean the book toward names with a credible +30-50%/12mo driver while keeping downside-protected anchors and capping AI/cyclical/oil beta hard.\n\nGOAL-DRIVEN RE-PICK vs the prior published apex [IT, CMCSA, NTES, EEFT, FSLR, MMS, FRVIA.PA, SCR.PA, SWKS, ATKR]:\n- DROPPED SWKS: at ~$74 the base-case SoP (~$58) is BELOW spot (-22%) and the only upside is a long-dated, China-SAMR-gated acquirer re-rate (close base-case early CY2027) - wrong-way asymmetry that cannot deliver +30-50% inside 12 months. Removing it also takes out the book's single direct AI/semi-capex de-gross name, which the macro warning rewards.\n- DROPPED ATKR: only ~+6% to its $84 base SoP (the value is already in the price); the convexity is entirely contingent on a strategic-review deal that has NOT fired. A +6% base cannot meet the goal.\n- DROPPED FRVIA.PA: a fixed-terms ARB (capped) that also carried the book's primary European-auto demand-recession beta and EU-antitrust jurisdiction; under a balanced-REACH stance I replaced its capped ARB upside with higher, less-correlated goal upside (ADBE / PLX.PA / LYFT).\n- ADDED ADBE (REACH, +103% base): a freshly-fired H2-ARR/CFO-exit shock repriced a software annuity to ~8.8x FCF; the cleanest credible +30-50%/12mo re-rate in the universe on a single conversion print.\n- ADDED PLX.PA (REACH, +119% base): the cheapest quality name in the universe (~4.8x FCF) vs TIC peers at 15-20x after a FIRED-negative Brazil reform shock; EM-payments exposure orthogonal to US AI/oil.\n- ADDED LYFT (REACH, +33% base): a ~5x-FCF, net-cash, buyback-floored ride-share #2 with AV optionality and zero AI-capex/oil/EU-cyclical beta - the most orthogonal diversifier available.\n- KEPT IT, CMCSA, EEFT, NTES, FSLR, SCR.PA - all clear or contribute to the goal (IT +51%, CMCSA +50%, EEFT +49%, NTES +35%, SCR +34%, FSLR dated end-June catalyst inside the window). CMCSA in particular clears the goal at the current ~$24 (it did not at the prior ~$30).\n- KEPT MMS but SIZED DOWN and re-flagged meets_goal=FALSE: the OBBBA ramp is an 18-24mo (FY27-28) story, so it is the one longer-horizon ballast - earns a seat for recession-resistant downside, not for 12-month upside.\n\nCORRELATION / EXPOSURE STRESS RESULT (STEP 4): the proposed 10 PASS the European-cyclical-recession + correlated-de-gross scenario; no hidden factor carries >3 names. Decomposition: (a) DEMAND-CYCLE beta is now LOWER than the prior book - dropping FRVIA/ATKR/SWKS removed the European-auto and US-construction cyclicals; the residual cyclical-ish names are LYFT (US consumer-services) and PLX/EEFT/NTES (EM/China consumer-payments), none European-industrial, so a European-cyclical-recession barely touches the book (MMS is counter-cyclical, IT/CMCSA/SCR are structural/defensive). (b) AI factor, the regime's #1 book-killer = 0 direct AI-capex spenders; ADBE carries only AI-DISPLACEMENT narrative beta (a software annuity, not a capex name) and is the sole AI-adjacent seat - a deliberate de-risk vs the prior book's SWKS semi exposure. (c) OIL/Hormuz live tail = ~0 net long: FSLR is INVERSELY exposed (fossil/policy shock helps it), so it hedges the inflation tail the macro read flags. (d) JURISDICTION: US-domestic = IT/CMCSA/EEFT/LYFT/MMS/ADBE (high but all idiosyncratic, no shared regulator), EU = SCR/PLX (2, under cap), China = NTES (1), Brazil/LatAm = PLX (1) - no single non-US jurisdiction stacks >2. (e) LIQUIDITY/small-cap de-gross: LYFT and PLX.PA are the only mid/small lines; the rest are large-caps, so a correlated de-gross does not force the book through thin exits. (f) POSTURE / wait-for-flush count = 1 (MMS, wait_for_weakness); FSLR is on_confirmation (a dated event, not a flush), the rest are enter_now_carry or scale_in - so correlated-flush risk is minimal and the dated/contingent legs (FSLR, MMS) are the ones explicitly NOT entered at-market. SEQUENCING under a simultaneous flush: stage the carry/defensive anchors first (IT, CMCSA, SCR enter_now_carry; NTES/EEFT/PLX/ADBE/LYFT scale_in), add FSLR only on the ~end-June 232 confirmation, and add MMS last and only into weakness. Net center of gravity: FCF-defensive compounders + structural-special-sits (the regime's confirmed tilt) with a sized REACH sleeve (ADBE/PLX/LYFT) sitting on top, an inverse-oil hedge (FSLR), and AI/cyclical/oil beta all capped well under 3.\n\nBEAR REBUTTAL (one sentence per apex seat - the strongest reason each pick is wrong):\n- ADBE: the +103% base assumes the cash engine is intact, but if gen-AI genuinely compresses Creative Cloud pricing power the freemium pivot is a structural margin reset, not a one-quarter ARR air-pocket, and 8.8x FCF becomes a value trap with an undated leaderless C-suite.\n- IT: 9x FCF is real but there is no forcing function, so the re-rate needs the market to simply change its mind on AI-disruption-to-research-syndication - it can stay cheap for years and miss the 12-month window.\n- CMCSA: broadband ARPU is a melting ice cube and if subscriber losses accelerate the 4.1x multiple is a value trap not a floor - the dividend funds the decline, it does not reverse it.\n- EEFT: the activist was already deflected and the founder controls the company, so the SoP may never be unlocked - you are paid 7.4x to wait for a catalyst management has explicitly refused to deliver.\n- PLX.PA: the Brazil meal-voucher reform is a permanent take-rate/settlement-terms reset, not a one-off, and if it spreads to other PAT geographies the ~4.8x multiple is correctly pricing structural margin erosion, not a mispricing.\n- NTES: China ADR/regulatory tail risk plus Tencent's Q3'26 head-to-head launches can impair the very cash flows the thesis rests on, and a US-delisting headline reprices the whole stack regardless of fundamentals.\n- FSLR: the entire 12-month upside is gated on a single binary trade-policy event, and a 'no-action' or silicon-friendly Section 232 outcome compresses the stock toward its $232 floor with no consolation prize.\n- SCR.PA: the Covea/Kessler arbitration is a third-party-controlled binary that has already slipped twice and could land adverse, and reinsurance soft-cycle pricing caps the multiple re-rate the bull case needs.\n- LYFT: it is the structural #2 in a duopoly facing an autonomy transition it does not control, and a credible AV rollout by Uber/Waymo could permanently impair Lyft's ride economics faster than the buyback can shrink the float.\n- MMS: the OBBBA ramp is serially deferrable on state RFP and CMS rulemaking timing and revenue is still DECLINING today - if FY27-28 conversion disappoints, MMS re-rates as a no-growth contractor, and even the base case lands outside the 12-month goal.",
+ "runner_ups": [
+  {
+   "symbol": "BCRX",
+   "sector": "Healthcare",
+   "director_conviction": 57,
+   "note": "Post-transformation specialty pharma at ~$9.06 with ~+61% to a $13.50 ORLADEYO SoP and all corporate catalysts FIRED; a clean defensive-growth name that MEETS the goal on base upside, but single-drug concentration and no forcing function keep it first off the bench rather than in the core - it would add a healthcare seat the book currently lacks if a REACH leg needs replacing."
+  },
+  {
+   "symbol": "GLOB",
+   "sector": "Technology",
+   "director_conviction": 55,
+   "note": "Globant at ~$36.87 with ~+30-41% to a $55-60 SoP (2:1 to base, 4:1 to bull), but the IT-services re-rate is a multi-quarter macro/conversion grind with AI-displacement overhang stacked on the ADBE seat - attractive but a fourth tech name and a softer catalyst, held in reserve."
+  },
+  {
+   "symbol": "FRVIA.PA",
+   "sector": "Consumer Cyclical",
+   "director_conviction": 54,
+   "note": "The Apollo Interiors sale (signed 27-Apr-2026, closing H2-2026) is a fixed-terms ARB crystallizing >EUR1bn net-debt reduction with ~2:1 to a EUR14 base SoP; dropped from the core because it is the book's primary European-auto demand-recession beta and EU-antitrust jurisdiction, and its capped ARB upside lost the goal contest to higher, less-correlated REACH names. First choice if a cyclical/ARB anchor is wanted back."
+  },
+  {
+   "symbol": "FIP",
+   "sector": "Industrials/Infrastructure",
+   "director_conviction": 53,
+   "note": "Cleanest distressed/de-levering ARB in the sleeve (Long Ridge/MARA close FERC-gated to mid-Q3-26, >$300M to parent cash) with a ~3:1+ bull tail to ~$16, but the base case is only ~+4%, the bear SoP wipes the equity against a $5.3B stack, and it is a thin-float small-cap at 52-week lows - an ARB-spread sleeve position sized tiny, deliberately kept OUT of the core to avoid small-cap de-gross correlation."
+  },
+  {
+   "symbol": "DEC.PA",
+   "sector": "Communication Services",
+   "director_conviction": 52,
+   "note": "JCDecaux at ~EUR18.5 with ~+30% to a EUR24 SoP (2:1 to base, 4:1 to bull) and a healthy dividend, but no dated catalyst (family-controlled, takeover-proof) and it stacks French/EU advertising-cycle exposure on top of SCR/PLX jurisdiction - a slow multi-year convergence, held back to keep the EU factor under cap and the goal window honest."
+  },
+  {
+   "symbol": "TEP.PA",
+   "sector": "Industrials",
+   "director_conviction": 50,
+   "note": "Teleperformance has already re-rated ~+18% to ~EUR63 post-FY25/AGM, so the base-to-fair (EUR72) is now only ~+14% and below the goal; the strategic-review/AI-disruption-discount bull tail (~EUR110) is real but the easy mispricing closed - watch for a pullback or a review-converts-to-action confirmation before it re-enters contention."
+  }
+ ],
+ "risk_stance": "balanced",
+ "macro_read": "macro_regime.json prints NEUTRAL (0.567) with accelerating growth and accelerating inflation, neutral rates and complacent credit - constructive enough to REACH for credible 12-month re-rate drivers toward the +30-50% goal, but with a live oil/inflation tail and a standing AI-capex de-gross warning that keep the book balanced rather than aggressive: lean into goal-clearing drivers (ADBE/PLX/EEFT/LYFT plus the dated FSLR catalyst) while anchoring on downside-protected, low-beta compounders (IT/CMCSA/SCR/NTES) and capping AI, cyclical and oil exposure hard."
+}

@@ -1,0 +1,242 @@
+{
+  "summary": "Opus 3-tier catalyst sweep (chunk 20 (WF-ZYME)): scan -> deep -> skeptic",
+  "agentCount": 18,
+  "logs": [
+    "Scanning 111 names in 5 batches of 25 (Opus)",
+    "Scan done: 111 scored (A 6/W 7/N 98) -> 10 survivors",
+    "Deep+Skeptic done: 10 dossiers; 3 verified ACTIVE"
+  ],
+  "result": {
+    "chunk": "20 (WF-ZYME)",
+    "scanned": 111,
+    "scan_distribution": {
+      "active": 6,
+      "watch": 7,
+      "none": 98
+    },
+    "survivors_flagged": [
+      {
+        "symbol": "WHR",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "forced-seller-overhang/deleveraging",
+        "one_line": "Dated next India-stake reduction (~31%/$550-600M) targeted by end of H1-26 to cut debt; one real forward deleveraging/overhang-clear catalyst (Advent talks collapsed Dec-25, intent reaffirmed)."
+      },
+      {
+        "symbol": "WSR",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "one_line": "DEFINITIVE all-cash merger w/ Ares at $19.00/sh (announced Apr 9 2026, DEFM14A filed); live merger-arb pending shareholder vote + close, forward not fired."
+      },
+      {
+        "symbol": "WTRG",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "one_line": "DEFINITIVE all-stock merger w/ American Water (Oct 2025); holders approved Feb 2026, KY/OH PUCs cleared, remaining state approvals are hardening triggers, close ~Q1 2027. Live ratio arb."
+      },
+      {
+        "symbol": "WVE",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "binary-catalyst",
+        "one_line": "Clinical-stage RNA-editing biotech: WVE-006 FDA accelerated-approval pathway feedback expected mid-2026 (imminent) + WVE-007 obesity Phase 2a data in 2026; dated binary readouts, forward."
+      },
+      {
+        "symbol": "XENE",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "dated-binary",
+        "one_line": "Phase 3 X-TOLE2 hit (Mar 2026, already re-rated); azetukalner NDA filing slated Q3 2026 is forward but no PDUFA date assigned yet, asymmetry mostly captured."
+      },
+      {
+        "symbol": "XOMA",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "merger-arb",
+        "one_line": "Ligand definitive merger at $39.00 cash + 1 CVR (75% of Janssen-litigation net proceeds), expected Q3 2026 close; stock ~$42 trades ABOVE cash, so the embedded CVR/litigation optionality is the live mispriced asymmetry."
+      },
+      {
+        "symbol": "YUM",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "activist+structural",
+        "one_line": "Pizza Hut strategic review to be completed in 2026 is a real dated structural lever, but soft (no signed transaction, outcome could be operational not a divestiture); asymmetry not clearly mispriced in a mega-cap."
+      },
+      {
+        "symbol": "ZD",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "activist+structural",
+        "one_line": "LIVE definitive sale of Connectivity div to Accenture $1.2B cash pending close (outside date Dec-2-2026), proceeds fund buybacks, PLUS broad ongoing strategic review for further asset sales/spin-offs — multiple structural levers, not yet fired."
+      },
+      {
+        "symbol": "ZIM",
+        "score": 8,
+        "tier": "ACTIVE",
+        "lane": "M&A",
+        "one_line": "LIVE complicated merger-arb: Hapag-Lloyd to acquire ZIM at $35.00 cash (~39% gross spread vs ~$25.24), shareholder vote passed Apr-30, close expected Q4-2026; wide spread prices Israeli Special-State-Share + 40+ jurisdiction antitrust risk = mispriced asymmetry."
+      },
+      {
+        "symbol": "ZYME",
+        "score": 5,
+        "tier": "ACTIVE",
+        "lane": "binary",
+        "one_line": "Hard dated catalyst: zanidatamab 1L HER2+ GEA sBLA on FDA Priority Review, PDUFA Aug 25 2026 (Jazz-commercialized, ZYME gets milestone/royalty); breakthrough-designated, China NMPA also filed. One real forward dated binary."
+      }
+    ],
+    "verified": [
+      {
+        "symbol": "WHR",
+        "score": 4,
+        "tier": "WATCH",
+        "lane": "forced-seller-overhang/deleveraging",
+        "catalyst": "Whirlpool intends to further cut its ~40% Whirlpool India stake (toward ~20%) to fund debt paydown, clearing a known balance-sheet overhang — but post-Advent the sale has no named buyer and no reaffirmed specific figure/date.",
+        "dated_milestone": "Soft \"by end of H1-2026\" (June 2026) sell-down target; nearer hard dates are the >$900M 2026 debt paydown and the ~$2.25B asset-based revolver closing expected in Q2-2026. No specific India-sale date reaffirmed at the May 6, 2026 Q1 print.",
+        "instrument": "equity (WHR)",
+        "bloom_gates": "Partial G2 (intent reaffirmed to reduce by end H1-26, but no concrete signed commitment); G1 FAILS (Advent's ~$1B/31% deal collapsed Dec-25, no replacement counterparty named); G3 weak ($550-600M figure is stale, traces to the dead Advent process, not a live committed deal).",
+        "edge": "L — overhang is well-telegraphed (Whirlpool India fell ~11-14% on the Nov-25 deconsolidation; the further sell-down is widely known and largely priced), no live buyer, and the May-26 Q1 8-K reaffirmed only generic deleveraging (>$900M paydown, Q2 revolver) rather than a specific dated India transaction.",
+        "primary_source": "Whirlpool Corp Q1 2026 8-K (StockTitan, filed May 6, 2026); Reuters via Investing.com \"Advent's $1 billion deal talks for Whirlpool India stake collapse\" (Dec 2025); StockTitan WHR 8-K on Nov-2025 India stake cut to ~40% (Nov 2025).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The Nov-2025 leg (51%→~40%, deconsolidation, ~$166M + $251M gain) has already fired. The headline \"~31% / $550-600M by end-H1-26\" is the Advent-era plan, which collapsed in Dec-2025 on valuation with no successor buyer named; the most recent primary source (May 6, 2026 Q1 8-K) reaffirms only generic 2026 deleveraging (>$900M debt paydown, ~$2.25B asset-based revolver closing Q2-26) and does not restate a specific dated India sell-down. It is a genuine forward overhang-clear thesis but lacks a hard date and a named counterparty, is heavily telegraphed, and fails the strict G1/specific-G3 bar — hence WATCH, not ACTIVE."
+      },
+      {
+        "symbol": "WSR",
+        "score": 3,
+        "tier": "NONE",
+        "lane": "merger-arb",
+        "catalyst": "Whitestone REIT signed a definitive all-cash merger to be taken private by Ares Real Estate funds at $19.00/share (~$1.7B), pending the July 9 2026 shareholder vote and Q3 close.",
+        "dated_milestone": "Special shareholder meeting/vote July 9 2026 (9:00am CT); merger outside date Oct 5 2026; expected close Q3 2026.",
+        "instrument": "stock (common shares WSR)",
+        "bloom_gates": "G1 (named counterparty: Ares Real Estate Management Holdings) + G2 (concrete commitment: signed DEFM14A merger agreement at fixed $19.00 cash) both satisfied; G3 (specific currently-unpriced figure) FAILS — the $19.00 figure is already fully priced.",
+        "edge": "L — spread is gone: WSR last $19.06 vs $19.00 deal price, i.e. ~ -0.3% (trading through the cash terms). No positive arb to capture; only deal-break downside remains.",
+        "primary_source": "WSR DEFM14A via StockTitan (merger proxy, vote July 9 2026; $19.00 cash; Ares; outside date Oct 5 2026) + FMP live quote $19.06 (timestamp 2026-06-06). Deal announced Apr 9 2026.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The merger is real, named, and definitively documented (Ares, $19.00 all-cash, agreement dated Apr 8 / announced Apr 9 2026, DEFM14A filed, vote July 9 2026, outside date Oct 5 2026), so Bloom G1/G2 clear. But the catalyst has already fired/re-rated: WSR closed $19.06 with a $19.03–$19.08 range, ~0.3% ABOVE the $19.00 consideration, meaning the market has fully (over-)priced the deal and there is no remaining merger-arb spread. With no unpriced figure left and only deal-break downside in the stock, the actionable forward edge is absent — tier NONE."
+      },
+      {
+        "symbol": "WTRG",
+        "score": 3.5,
+        "tier": "WATCH",
+        "lane": "merger-arb",
+        "catalyst": "Definitive all-stock merger into American Water (AWK) at a fixed 0.305 AWK/WTRG ratio; remaining state PUC approvals (PA, NJ, NC, TX, IL, VA) are dated hardening triggers toward an expected close by end of Q1 2027.",
+        "dated_milestone": "Next: outstanding state-commission orders (PA/NJ/NC/TX/IL/VA) over 2H-2026; KY approved Apr 21 2026 and PUCO/Ohio approved May 14 2026 already cleared; targeted close end of Q1 2027.",
+        "instrument": "WTRG common / ratio arb long WTRG vs short 0.305 AWK",
+        "bloom_gates": "G1 (named counterparty American Water, definitive 0.305 fixed-ratio agreement, Oct 26 2025). G3 fails — fixed ratio, no specific currently-unpriced figure; residual spread is fully priced.",
+        "edge": "L — deal is overwhelmingly de-risked (94.8% WTRG holder vote Feb 10 2026 + KY + OH already cleared) and the gross spread is only ~1.6% (deal value 0.305*$124.47=$37.96 vs WTRG $37.36) to a ~Q1 2027 close, i.e. ~2% annualized carry with convergence already in the price; remaining state approvals are routine for water utilities, not a re-rating event.",
+        "primary_source": "Business Wire / SEC Form 8-K & DEFM14A: merger announcement Oct 26 2025 (0.305 ratio); shareholder approval Feb 10 2026; Kentucky PSC approval Apr 22 2026; Ohio PUCO approval PRNewswire May 14 2026; close reiterated end-Q1 2027 in WTRG Q1 2026 release May 6 2026.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The merger is real, definitive, and dated exactly as flagged — AWK/WTRG 0.305 fixed all-stock deal (Oct 2025), holders approved ~95% on Feb 10 2026, and Kentucky (Apr 21) and Ohio PUCO (May 14 2026) have cleared, with PA/NJ/NC/TX/IL/VA still pending toward an end-of-Q1-2027 close. But the major catalysts have already fired and the deal is substantially re-rated: the live gross spread is only ~1.6% (~2% annualized) and the exchange ratio is fixed, so there is no specific unpriced figure (G3 not met) and limited forward edge beyond thin merger-arb carry. It clears as a live ratio arb worth watching for any deal-break dislocation, but as a forward catalyst it is largely priced — WATCH, not ACTIVE."
+      },
+      {
+        "symbol": "WVE",
+        "score": 6,
+        "tier": "WATCH",
+        "lane": "binary-catalyst",
+        "catalyst": "FDA feedback on a potential accelerated-approval pathway for WVE-006 (first-in-class GalNAc RNA-editing therapy for alpha-1 antitrypsin deficiency) is expected mid-2026 — a dated, unfired regulatory decision that could de-risk a registrational path.",
+        "dated_milestone": "WVE-006 FDA accelerated-approval pathway feedback expected mid-2026 (next: by ~Q3 2026); also RestorAATion-2 600mg multidose data 2H 2026 and WVE-007 obesity Phase 2a initiation 2Q 2026.",
+        "instrument": "equity (or long call to cap downside given micro-cap binary risk)",
+        "bloom_gates": "G2 (concrete regulatory commitment: company guided FDA accelerated-approval pathway feedback mid-2026 after regaining full WVE-006 rights from GSK) + G1 (named counterparty: FDA)",
+        "edge": "M — real, specific, unfired binary, but \"mid-2026\" is a soft window (not a hard PDUFA), it is a regulatory-pathway opinion rather than an approval, and the name carries heavy overhang (down ~94% from 52wk high to $5.73, below 50/200d MAs, active securities-law investigation), so directional conviction is moderate.",
+        "primary_source": "Wave Life Sciences Q1 2026 results / business update, GlobeNewswire, 2026-04-28 (\"expects to receive regulatory feedback on a potential accelerated approval pathway mid-2026\"); corroborated by 2026-02-02 GSK-rights / regulatory-acceleration release.",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "Wave guided in its April 28, 2026 Q1 update that it expects FDA feedback on a potential accelerated-approval pathway for WVE-006 in mid-2026, after regaining full rights from GSK (Feb 2, 2026) and reporting positive RestorAATion-2 MZ-like phenotype data — a genuinely dated, forward, currently-unpriced binary regulatory event. The companion WVE-007 obesity catalyst is weaker for this window: the headline Phase 1 six-month data already fired (Mar 26, 2026) and the Phase 2a event is only a 2Q 2026 trial initiation (data timing unspecified), so it is not a near-term readout. WATCH rather than ACTIVE because the milestone is a soft \"mid-2026\" window for a pathway opinion (not an approval/PDUFA), on a battered micro-cap with negative sentiment overhang."
+      },
+      {
+        "symbol": "XENE",
+        "score": 4,
+        "tier": "WATCH",
+        "lane": "dated-binary",
+        "catalyst": "Azetukalner NDA submission for focal onset seizures is slated for Q3 2026, but the value-driving Phase 3 X-TOLE2 efficacy readout already fired (Mar 9, 2026) and the next true binary (X-NOVA2 MDD topline) is not until H1 2027.",
+        "dated_milestone": "Q3 2026 NDA submission (FOS); FDA acceptance/PDUFA not yet assigned. Next efficacy binary: X-NOVA2 MDD topline H1 2027.",
+        "instrument": "equity / long-dated calls",
+        "bloom_gates": "none cleanly met — G1 no named counterparty (no partner/M&A), G2 no concrete third-party commitment (Q3 NDA is a self-filing intent, not a deal), G3 no specific currently-unpriced figure tied to a 2026 dated event",
+        "edge": "L — the X-TOLE2 -53.2% median seizure reduction at 25mg already published and re-rated; an NDA filing is an administrative submission with no binary outcome and no PDUFA date, so no unpriced asymmetry in the near-term window",
+        "primary_source": "Xenon Q1 2026 business update, BioSpace/GlobeNewswire (May 7, 2026): NDA Q3 2026, X-NOVA2 H1 2027; X-TOLE2 topline PR (Mar 9, 2026)",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The triage assessment is correct: the X-TOLE2 Phase 3 hit (positive topline Mar 9, 2026, -53.2%/-34.5% vs -10.4% placebo) was the asymmetric catalyst and it is fully captured — XENE spiked to a $63.95 high on the data and has since faded to $51.73, below its 50-DMA. The Q3 2026 NDA submission is forward and dated but is a self-filing milestone with no counterparty, no concrete commitment, and no FDA decision/PDUFA date assigned, so it fails the Bloom gates as an unpriced binary. The next genuine efficacy binary (X-NOVA2 MDD topline) is H1 2027, beyond the actionable near-term window, keeping this a WATCH rather than ACTIVE."
+      },
+      {
+        "symbol": "XOMA",
+        "score": 5,
+        "tier": "WATCH",
+        "lane": "merger-arb (CVR/litigation optionality)",
+        "catalyst": "Ligand's definitive acquisition of XOMA Royalty at $39.00 cash + one non-tradable CVR for net proceeds of the XOMA v. Janssen Biotech TREMFYA/BCE-technology litigation; with the stock at ~$42 (above the cash floor), the entire premium is the market's live, unquantified valuation of that litigation CVR.",
+        "dated_milestone": "Expected merger close Q3 2026 (HSR clearance + majority stockholder vote; ~47% under support agreements as of Apr 27, 2026). CVR payout date undefined — depends on resolution of XOMA (US) LLC v. Janssen Biotech, Case 2:25-CV-04484-JHS.",
+        "instrument": "common stock (long, holding for CVR distribution post-close; no listed CVR or options edge)",
+        "bloom_gates": "G1 (named acquirer Ligand) + G2 (signed definitive merger, $39 cash) clear; G3 only partial — CVR/litigation is real but damages are explicitly UNQUANTIFIED with no ruling, so no specific unpriced figure",
+        "edge": "M-L: cash leg trades ABOVE the $39 floor so there is no merger-arb discount to capture; the only edge is a non-transferable CVR on a single E.D. Pa. case (filed Aug 8, 2025, no damages quantified, \"may have no value\") against J&J's ~$19.7B-cumulative-revenue TREMFYA — genuine asymmetry but a coin-flip, multi-year, illiquid legal tail bought at a ~$3/share premium with negative cash carry.",
+        "primary_source": "XOMA Form 425 (SEC, May 26, 2026) and Ligand/XOMA merger announcement (GlobeNewswire/StockTitan, Apr 27, 2026); quote XOMA $42.09 (FMP, Jun 6 2026 timestamp).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The deal is genuine, dated, and forward: a signed definitive merger (announced Apr 27, 2026) at $39.00 cash + one CVR, ~$739M, expected to close Q3 2026 — so G1/G2 are firmly met and it is not yet fired. The live thesis is sound in direction: at ~$42.09 the stock sits $3+ above the $39 cash floor, so the market is already ascribing positive value to the CVR tied to the XOMA v. Janssen (TREMFYA/BCE) litigation, but that case (filed Aug 2025, E.D. Pa.) has no quantified damages, no ruling, and the CVR is non-transferable and \"may have no value,\" so G3 is only partially satisfied and there is no cash merger-arb spread to harvest — you pay a premium for an illiquid, undated, coin-flip legal option. WATCH rather than ACTIVE because the asymmetry, while real, lacks a specific unpriced figure or near-term dated litigation catalyst and the cash leg offers no arb edge."
+      },
+      {
+        "symbol": "YUM",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "activist+structural",
+        "catalyst": "Yum is in EXCLUSIVE talks to sell Pizza Hut to LongRange Capital for an est. $3.6-4.3B, with a definitive agreement reportedly possible within weeks, deleveraging YUM toward a higher-multiple KFC/Taco Bell SOTP (~$173 analyst target).",
+        "dated_milestone": "Signed definitive Pizza Hut sale agreement expected \"within weeks\" of early June 2026; full strategic review committed to complete in 2026 (next confirmation likely Q2 earnings, early Aug 2026).",
+        "instrument": "equity; or 2-4 month calls to capture the binary signing/close re-rate to the ~$173 SOTP target",
+        "bloom_gates": "G1 (named counterparty LongRange Capital, exclusivity locked, Sycamore/Apollo edged out), G2 (signed exclusivity agreement = concrete commitment), G3 (specific currently-unpriced figures: $3.6-4.3B price; net debt ~$9.3B->~$5.3B; ~1.7x leverage; $173 PT)",
+        "edge": "M — directional thesis partly fired (stock +~3% on the leak, multiple Buy upgrades, $173 PT vs $150.87 spot = ~15% gap), but the binary signed-deal catalyst is still forward and unpriced; offset by genuine PE/LBO break risk (analysts flag low-price or no-deal scenarios) and mega-cap, so not deep mispricing.",
+        "primary_source": "Reuters/Bloomberg via Fox Business & Yahoo Finance: \"Yum in exclusive talks to sell Pizza Hut to LongRange\" (May 29-June 1, 2026); $3.6-4.3B deal value & $173 PT/leverage figures per Seeking Alpha/gurufocus (June 2026); YUM FY2026 10-Q (q/e 3/31/26) confirms review intended to complete in 2026.",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "Independently confirmed via Bloomberg (May 29, 2026), Fox Business (June 1, 2026) and Reuters/Yahoo: YUM is in EXCLUSIVE talks to sell Pizza Hut to named PE buyer LongRange Capital at an est. $3.6-4.3B (Sycamore/Apollo edged out via exclusivity). Fox explicitly states NO definitive agreement is signed yet ('no agreement has been reached... within several weeks'), so the signing/close re-rate and deleveraging (~$9.3B->~$5.3B net debt, ~1.7x EBITDA) remain genuinely FORWARD. Live FMP spot $150.87, below 50-day avg $155.70 and year high $169.39 — the structural catalyst is only partially priced. Corrections: the '~3% pop + Buy upgrades' is the historical May-29 reaction; today's move is +1.88%/+$2.79, not 3%. The ~$173 SOTP figure is an analyst-derived target, not a primary hard fact. Score-7 cap justified by partial pricing + real deal-break risk in an unsigned PE process. Liquid large-cap NYSE name, optionable — no hidden disqualifier.",
+        "analysis": "The triage premise that this was \"soft, no signed transaction, could be operational\" is now stale: by May 29-June 1, 2026, Bloomberg/Reuters report YUM in EXCLUSIVE negotiations with named buyer LongRange Capital at an est. $3.6-4.3B, an advanced, dated, idiosyncratic structural event (not a macro bet) that clears all three Bloom gates. It is only partially fired — the ~3% pop and Buy upgrades have happened, but the signed definitive agreement and the deleveraging-driven re-rate toward the ~$173 SOTP target remain forward, with spot at $150.87 still below the 50-day avg ($155.70) and year high ($169.39). Net: a legitimate ACTIVE, capped at score 7 by partial pricing and real deal-break risk in an unsigned PE process."
+      },
+      {
+        "symbol": "ZD",
+        "score": 4,
+        "tier": "WATCH",
+        "lane": "activist+structural",
+        "catalyst": "Ziff Davis signed a definitive deal to sell its Connectivity division (Ookla/Speedtest/Ekahau/Downdetector/RootMetrics) to Accenture for $1.2B cash, with a broader exploratory strategic review for further asset sales/spin-offs still open.",
+        "dated_milestone": "Connectivity/Accenture deal close pending; outside date Dec-2-2026 (auto-extendable to Mar-2-2027). Next discrete update likely Q2-2026 earnings (~early Aug 2026).",
+        "instrument": "equity (small-cap, ~$1.7B mkt cap; thin liquidity ~0.5M shares/day — options viable but wide)",
+        "bloom_gates": "G1 (named counterparty Accenture) and G3 ($1.2B specific figure) are satisfied — but ONLY for the already-fired signed deal, not for a forward-unpriced leg. The forward strategic-review leg fails all of G1/G2/G3 (no named asset, no concrete commitment, no specific unpriced figure).",
+        "edge": "L — the $1.2B/Accenture leg has been public since Mar 2-3, 2026 (3+ months), is priced and a binary close, not a forward surprise; the further-asset-sales review is purely exploratory (\"working with advisors\") with no named asset/timeline/figure. Overhang from active securities-fraud investigations (Levi & Korsinsky, Gross Law Firm) post Q4-25 miss; stock -4.5% on verify day.",
+        "primary_source": "Ziff Davis 8-K / BusinessWire \"Ziff Davis Announces Definitive Agreement to Sell Connectivity Division to Accenture\" (Mar 2, 2026; SEC EDGAR CIK 0001084048 filed Mar 3, 2026); strategic-review exploratory language confirmed via Simply Wall St / Q1-2026 commentary (May 2026).",
+        "verdict": null,
+        "kill_fact": null,
+        "analysis": "The headline catalyst is REAL, specific and dated but already FIRED: the definitive Connectivity-to-Accenture $1.2B cash sale was announced Mar 2-3, 2026 and the stock has had 3+ months to re-rate around it — what remains is deal-close certainty (outside date Dec-2-2026) and known buyback-funded proceeds, i.e. priced binary completion, not a forward-unpriced event. The genuinely forward leg — a broad strategic review for further asset sales/spin-offs — is purely exploratory with no named counterparty, no concrete commitment and no specific unpriced figure, so it clears none of the Bloom gates. With live securities-fraud investigations as a headwind, this is a WATCH (real structural process running, may spawn a future named deal) but does not meet the strict forward-unpriced ACTIVE bar."
+      },
+      {
+        "symbol": "ZIM",
+        "score": 7,
+        "tier": "ACTIVE",
+        "lane": "M&A",
+        "catalyst": "Hapag-Lloyd is acquiring ZIM for $35.00/share all-cash (~$4.2B); shareholder vote passed Apr-30-2026, and the only remaining gates are multi-jurisdiction antitrust plus Israel's Special State Share, leaving a ~38.7% gross spread vs the current $25.24.",
+        "dated_milestone": "Outside date Feb-17-2027 (extendable to Jun-30-2027) for regulatory/Israeli approvals; close targeted Q4-2026. Next catalysts: pending Israeli Golden Share decision and resolution of the rival Sakal $4.5B bid.",
+        "instrument": "Common equity (merger-arb long); deal-break floor is debated given the higher rival bid, so sizing should respect Golden-Share veto risk.",
+        "bloom_gates": "G1 (named counterparty: Hapag-Lloyd acquirer at $35.00 cash; rival Dany Sakal consortium); G2 (concrete commitment: signed merger agreement + Apr-30-2026 shareholder approval + Feb-17-2027 outside date); G3 (specific currently-unpriced figure: ~$9.76 / ~38.7% gross spread).",
+        "edge": "M — spread is genuinely wide for a post-vote deal, but it is not pure mispricing: Israeli ministries (Economy, Agriculture) actively oppose and the State holds a Golden Share that can block the sale, a real and specific deal-break vector. Offsetting upside is a competing all-cash bid (~$4.5B, ~$37.50/sh equiv) from the Sakal consortium, which the gross spread arguably under-credits.",
+        "primary_source": "ZIM/Hapag-Lloyd press release, PRNewswire/SEC 6-K (announced Feb-16-2026), $35.00 cash / $4.2B; shareholder approval Apr-30-2026 and Feb-17-2027 outside date per ZIM 6-K (May-2026); Israeli ministry opposition + rival Sakal $4.5B bid per Calcalist/Container-News (2026). Live quote $25.24 (FMP, 2026-06-06).",
+        "verdict": "CONFIRMED",
+        "kill_fact": "All load-bearing facts verified against primary/credible sources. Live price $25.24 (FMP). $35.00/share all-cash, ~$4.2B (PR Newswire/ZIM IR/SEC 6-K). Shareholder vote PASSED Apr-30-2026 at 97.36% in favor. Gross spread = ($35.00-$25.24)/$25.24 = 38.7%, matches. Outside date Feb-17-2027 (extendable to Jun-30-2027), confirmed in SEC filing. The named risk is real: completion requires approval under Israel's Special State Share (Golden Share), and Economy/Agriculture/Transport ministries + Shipping & Ports Authority actively oppose on national-security/food-security grounds (Jerusalem Post, Calcalist, Maritime Executive). The 'rival higher all-cash bid' downside-support claim is TRUE and credible: Sakal Group $4.5B all-cash counter-offer, backed by the workers' committee. Forward (not fired), dated, event-driven merger-arb; not yet re-rated. Score 7 fair: wide spread correctly prices a concrete two-sided Golden-Share/regulatory veto risk, offset by rival-bid floor and the long ~14-month tail.",
+        "analysis": "This is a live, dated, forward merger-arb: $35.00 cash, vote already passed (Apr-30-2026), trading at $25.24 for a ~39% gross spread with a long ~14-month tail to the Feb-17-2027 outside date. The asymmetry is real but two-sided — the wide spread prices a concrete, named risk (Israel's Special State Share veto plus active ministry opposition over national-security/food-security grounds), while a rival higher all-cash bid provides downside support and optionality the spread may underweight. Not fired and not yet re-rated; clears G1/G2/G3 and is event-driven rather than a macro bet."
+      },
+      {
+        "symbol": "ZYME",
+        "score": 6,
+        "tier": "ACTIVE",
+        "lane": "binary",
+        "catalyst": "FDA PDUFA decision on the zanidatamab (Ziihera) sBLA for 1L HER2+ gastroesophageal adenocarcinoma, which triggers a contractually-fixed $250M US-approval milestone to ZYME plus 10-20% tiered royalties on Jazz net sales.",
+        "dated_milestone": "PDUFA target action date Aug 25, 2026 (FDA Priority Review under RTOR); China NMPA sBLA also accepted.",
+        "instrument": "stock / long call (binary regulatory event)",
+        "bloom_gates": "G1 (Jazz as named commercializer/payer; BeOne for TEVIMBRA), G2 (FDA-accepted sBLA on Priority Review + Breakthrough Therapy Designation, fixed action date), G3 ($250M US-GEA-approval milestone + 10-20% royalties — specific dollar figure, ~14% of ZYME's $1.77B mkt cap)",
+        "edge": "M — real, specific, contractually-fixed $250M unpriced-on-fail figure on a hard dated binary, but Priority Review + Breakthrough + positive Phase 3 HERIZON-GEA-01 (hit both PFS and OS) make approval the consensus base case, so partially priced; stock mid-range ($24 vs 52wk $11.51-29.75) implies not fully re-rated.",
+        "primary_source": "Zymeworks Q1 2026 earnings release / SEC 8-K (May 7, 2026): \"Jazz announced U.S. FDA acceptance with Priority Review of sBLA for zanidatamab in 1L HER2+ ... GEA; PDUFA target action date of August 25, 2026\"; milestone/royalty terms confirmed via Jazz opt-in disclosure ($250M US-approval milestone, 10-20% royalties).",
+        "verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_fact": "All load-bearing facts confirmed vs primary sources. Jazz PR (prnewswire 302753741): FDA accepted sBLA w/ Priority Review for Ziihera/zanidatamab in 1L HER2+ gastric/GEJ/GEA, PDUFA target Aug 25, 2026, plus Breakthrough Therapy designation. Zymeworks Q1 2026 8-K (SEC, filed ~May 7 2026): 'Zymeworks is entitled to receive a $250.0 million milestone payment from Jazz related to approval of Ziihera in GEA in the United States.' Original Oct-2022 Jazz license PR: 'tiered royalties between 10% and 20% on Jazz net sales.' Event is forward (PDUFA ~11 wks out from 6/6/26 dateline), single-company binary not macro, NOT fired. Live quote confirms ~$1.77B cap (px $24.04, mcap $1.769B). CORRECTION: the 10-20% royalty is now encumbered — in Mar 2026 ZYME sold 30% of worldwide Ziihera royalties to Royalty Pharma via a $250M non-recourse note (ZYME retains only 70% during repayment); line states the gross contractual rate but omits this. $250M GEA milestone retained in full. Edge tempered: BTD+Priority Review+positive HERIZON-GEA-01 pivotal (PFS 12.4 vs 8.1 mo, OS 26.4 mo) imply high approval prob largely priced (stock off yearHigh $29.75 to $24.04).",
+        "analysis": "Claim is accurate and verified against primary sources: Zymeworks' own Q1 2026 release (May 7, 2026) and Jazz's PR confirm FDA acceptance with Priority Review and an Aug 25, 2026 PDUFA date for zanidatamab in 1L HER2+ GEA, with Breakthrough Therapy Designation and China NMPA filing. ZYME is the licensor — Jazz commercializes — and a $250M milestone plus 10-20% royalties hinge on US approval, a material binary for a $1.77B-cap name. Event is dated, forward (~11 weeks out), not fired, and single-company (not macro); edge tempered only by the high approval probability already implied by the regulatory designations and positive pivotal data."
+      }
+    ]
+  }
+}

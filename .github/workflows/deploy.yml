@@ -1,0 +1,224 @@
+name: Deploy to Cloud Run
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'What to do'
+        required: true
+        default: 'deploy-only'
+        type: choice
+        options:
+          - deploy-only
+          - run-sp500
+          - run-compounder-us
+          - run-compounder-global
+          - run-paper-email
+          - run-momentum
+          - run-fa
+          - run-paper-all
+          - run-monitor
+          - run-speculair
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      # ═══ ALWAYS: DEPLOY SERVICE + UPDATE JOBS ═══
+      - name: Deploy Cloud Run Service
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          cd backend
+          gcloud run deploy stock-screener \
+            --source=. \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --timeout=3600 \
+            --clear-base-image \
+            --update-env-vars="SCREEN_INDEX=nasdaq100,MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }}"
+      - name: Update Screener Jobs
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          IMAGE=$(gcloud run services describe stock-screener \
+            --region=europe-west1 \
+            --format='value(spec.template.spec.containers[0].image)')
+          echo "Image: $IMAGE"
+          gcloud run jobs update screener-sp500 --region=europe-west1 --image="$IMAGE" \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-secrets="THETA_PASSWORD=THETA_PASSWORD:latest" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},THETA_EMAIL=${{ secrets.THETA_EMAIL }}" \
+            || echo "screener-sp500 not found, skipping"
+          gcloud run jobs update screener-global --region=europe-west1 --image="$IMAGE" \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-secrets="THETA_PASSWORD=THETA_PASSWORD:latest" \
+            --update-env-vars="MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},FMP_API_KEY=${{ secrets.FMP_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},THETA_EMAIL=${{ secrets.THETA_EMAIL }}" \
+            || echo "screener-global not found, skipping"
+
+      # ═══ ALWAYS: DEPLOY PAPER-TRACKING JOBS ═══
+      - name: Deploy Paper-Tracking Jobs
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          IMAGE=$(gcloud run services describe stock-screener \
+            --region=europe-west1 \
+            --format='value(spec.template.spec.containers[0].image)')
+          # COMPOUNDER US strategy runner (top-20 SP500 by compounder_score, monthly rebalance)
+          gcloud run jobs deploy compounder-us-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=900s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_compounder_us.py"
+
+          # COMPOUNDER GLOBAL strategy runner (top-20 global by compounder_score, monthly rebalance)
+          gcloud run jobs deploy compounder-global-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_compounder_global.py"
+
+          # MOMENTUM strategy runner (top-10 SP500 by composite_momentum, weekly rotation)
+          gcloud run jobs deploy momentum-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_momentum.py"
+
+          # FALLEN ANGEL strategy runner (top-10 SP500 passing FA gate, weekly rotation)
+          gcloud run jobs deploy fa-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=600s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_fa.py"
+
+          # Daily price monitor (refreshes display prices Mon-Fri 22:00 CET)
+          gcloud run jobs deploy monitor-prices \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=512Mi \
+            --task-timeout=300s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="monitor_prices.py"
+
+          # SPECULAIR strategy runner (multi-agent debate pipeline output)
+          gcloud run jobs deploy speculair-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=900s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }},OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" \
+            --command="python3" \
+            --args="paper_strategy_runner_speculair.py"
+
+          # ALL paper runners orchestrator (Compounder US/Global + Momentum + FA)
+          gcloud run jobs deploy paper-all-runner \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=1Gi \
+            --task-timeout=1800s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="run_all_strategies.py"
+
+          # Combined weekly email (BORING + COMPOSITE + MOMENTUM + FA)
+          gcloud run jobs deploy paper-email \
+            --image="$IMAGE" \
+            --region=europe-west1 \
+            --memory=512Mi \
+            --task-timeout=300s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},EMAIL_TO=${{ secrets.EMAIL_TO }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="paper_weekly_email.py"
+
+      - name: Deploy Backtest Jobs
+        if: github.event_name == 'push' || inputs.action == 'deploy-only'
+        run: |
+          cd backend
+          gcloud run jobs deploy backtest-sp500 \
+            --source=. \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="backtest_full.py,--region,sp500,--from,2022-01-01,--to,2025-12-31"
+          gcloud run jobs deploy backtest-v8 \
+            --source=. \
+            --region=europe-west1 \
+            --memory=2Gi \
+            --task-timeout=86400s \
+            --set-env-vars="FMP_API_KEY=${{ secrets.FMP_API_KEY }},MASSIVE_API_KEY=${{ secrets.MASSIVE_API_KEY }}" \
+            --command="python3" \
+            --args="backtest_v8.py"
+
+      # ═══ MANUAL: EXECUTE SCREENER SCANS ═══
+      - name: Run SP500 Scan
+        if: inputs.action == 'run-sp500'
+        run: |
+          gcloud run jobs execute screener-sp500 --region=europe-west1
+          echo "SP500 scan started. Check logs: gcloud run jobs executions list --job=screener-sp500 --region=europe-west1"
+
+      # ═══ MANUAL: EXECUTE PAPER-TRACKING JOBS ═══
+      - name: Run COMPOUNDER US Strategy Runner
+        if: inputs.action == 'run-compounder-us'
+        run: |
+          gcloud run jobs execute compounder-us-runner --region=europe-west1
+          echo "COMPOUNDER US runner started."
+      - name: Run COMPOUNDER GLOBAL Strategy Runner
+        if: inputs.action == 'run-compounder-global'
+        run: |
+          gcloud run jobs execute compounder-global-runner --region=europe-west1
+          echo "COMPOUNDER GLOBAL runner started."
+      - name: Run MOMENTUM Strategy Runner
+        if: inputs.action == 'run-momentum'
+        run: |
+          gcloud run jobs execute momentum-runner --region=europe-west1
+          echo "MOMENTUM runner started."
+      - name: Run FALLEN ANGEL Strategy Runner
+        if: inputs.action == 'run-fa'
+        run: |
+          gcloud run jobs execute fa-runner --region=europe-west1
+          echo "FA runner started."
+      - name: Run All Paper Runners (Orchestrator)
+        if: inputs.action == 'run-paper-all'
+        run: |
+          gcloud run jobs execute paper-all-runner --region=europe-west1 --wait
+          echo "All-runner finished. Check logs: gcloud run jobs executions list --job=paper-all-runner --region=europe-west1"
+      - name: Run Paper-Tracking Email
+        if: inputs.action == 'run-paper-email'
+        run: |
+          gcloud run jobs execute paper-email --region=europe-west1
+          echo "Paper email started."
+      - name: Run Daily Price Monitor
+        if: inputs.action == 'run-monitor'
+        run: |
+          gcloud run jobs execute monitor-prices --region=europe-west1
+          echo "Monitor started."
+      - name: Run Speculair Strategy Runner
+        if: inputs.action == 'run-speculair'
+        run: |
+          gcloud run jobs execute speculair-runner --region=europe-west1
+          echo "Speculair runner started."

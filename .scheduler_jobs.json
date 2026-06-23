@@ -1,0 +1,146 @@
+[
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oidcToken": {
+        "audience": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/paper-all-runner:run",
+        "serviceAccountEmail": "github-deploy@project-7aa6df2a-d56b-47d2-8aa.iam.gserviceaccount.com"
+      },
+      "uri": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/paper-all-runner:run"
+    },
+    "lastAttemptTime": "2026-05-09T04:30:03.044396Z",
+    "name": "projects/project-7aa6df2a-d56b-47d2-8aa/locations/europe-west1/jobs/paper-all-friday",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "30 6 * * 6",
+    "scheduleTime": "2026-05-16T04:30:02.356085Z",
+    "state": "ENABLED",
+    "status": {
+      "code": 2
+    },
+    "timeZone": "Europe/Amsterdam",
+    "userUpdateTime": "2026-05-01T11:27:48.426227Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "github-deploy@project-7aa6df2a-d56b-47d2-8aa.iam.gserviceaccount.com"
+      },
+      "uri": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/weekly-report-job:run"
+    },
+    "name": "projects/project-7aa6df2a-d56b-47d2-8aa/locations/europe-west1/jobs/weekly-report",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 * * 1",
+    "state": "PAUSED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Europe/Amsterdam",
+    "userUpdateTime": "2026-04-28T09:47:27.614286Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oidcToken": {
+        "audience": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/monitor-prices:run",
+        "serviceAccountEmail": "github-deploy@project-7aa6df2a-d56b-47d2-8aa.iam.gserviceaccount.com"
+      },
+      "uri": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/monitor-prices:run"
+    },
+    "lastAttemptTime": "2026-05-12T20:00:03.237317Z",
+    "name": "projects/project-7aa6df2a-d56b-47d2-8aa/locations/europe-west1/jobs/monitor-prices-daily",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 18 * * 1-5",
+    "scheduleTime": "2026-05-13T20:00:02.297137Z",
+    "state": "ENABLED",
+    "status": {
+      "code": 2
+    },
+    "timeZone": "Europe/Amsterdam",
+    "userUpdateTime": "2026-05-01T11:48:28.117832Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "github-deploy@project-7aa6df2a-d56b-47d2-8aa.iam.gserviceaccount.com"
+      },
+      "uri": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/monitor-job:run"
+    },
+    "name": "projects/project-7aa6df2a-d56b-47d2-8aa/locations/europe-west1/jobs/screener-monitor",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 13 * * 1-5",
+    "state": "PAUSED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Europe/Amsterdam",
+    "userUpdateTime": "2026-04-28T09:47:20.931226Z"
+  },
+  {
+    "attemptDeadline": "600s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "github-deploy@project-7aa6df2a-d56b-47d2-8aa.iam.gserviceaccount.com"
+      },
+      "uri": "https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/project-7aa6df2a-d56b-47d2-8aa/jobs/screener-sp500:run"
+    },
+    "lastAttemptTime": "2026-05-08T02:00:02.541265Z",
+    "name": "projects/project-7aa6df2a-d56b-47d2-8aa/locations/europe-west1/jobs/screener-us-daily",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 * * 05",
+    "scheduleTime": "2026-05-15T02:00:02.087459Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Europe/Amsterdam",
+    "userUpdateTime": "2026-04-28T09:48:12.425987Z"
+  }
+]
