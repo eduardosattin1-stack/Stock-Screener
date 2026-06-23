@@ -5266,7 +5266,7 @@ export default function StockDetail(){
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{symbol?.toUpperCase()}</h1>
             {c&&<span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5}}><Zap size={11}/> CATALYST · {c.driver}{c.cro_verdict?` · ${c.cro_verdict}`:""}{c.director_conviction!=null?` ${c.director_conviction}`:""}</span>}
           </div>
-          <p style={{margin:"0 0 16px",fontSize:11,color:T.textMuted,fontFamily:T.mono,lineHeight:1.5}}>Not in the screened universe — <strong>Speculair catalyst debate only</strong> (a Basket-13 special-sit). Trade it from the <span onClick={()=>router.push("/catalysts")} style={{color:T.green,cursor:"pointer",textDecoration:"underline"}}>13th Basket</span> view.</p>
+          <p style={{margin:"0 0 16px",fontSize:11,color:T.textMuted,fontFamily:T.mono,lineHeight:1.5}}>Not in the screened universe — <strong>Speculair debate only</strong>.{c?<> A Basket-13 catalyst special-sit — trade it from the <span onClick={()=>router.push("/catalysts")} style={{color:T.green,cursor:"pointer",textDecoration:"underline"}}>13th Basket</span> view.</>:null}</p>
           <SpeculairDebateCard debateData={debateData} debateHistory={debateHistory} histIdx={histIdx} setHistIdx={setHistIdx}/>
         </div>
       );
