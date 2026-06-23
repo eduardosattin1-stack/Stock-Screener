@@ -204,12 +204,28 @@ export async function GET(req: Request) {
     avg_coverage: `${Math.round(num(stock30.winning_trade_rate) * 100)}% win · ${num(stock30.n)} tracked (30d)`,
   };
 
-  // ── System Debate — surface the names that NEWLY cleared the debate into the apex
-  //    (held_since_prior === false) as click-through chips so the user can open each
-  //    stock's debate tab. Plus the ACT / WAIT read. ──
+  // ── System Debate — surface the LAST names added to the apex as click-through chips
+  //    so the user can open each stock's debate tab. Prefer names flagged fresh this
+  //    run (held_since_prior === false); on a quiet run that flags none, fall back to
+  //    the most-recently-dated entry cohort (then top-conviction) so the row is never
+  //    empty. Plus the ACT / WAIT read. ──
   const ds = spec?.debate_stats || {};
   const watch = (spec?.capitulation_watchlist || []).length;
-  const new_tickers = (spec?.apex_basket || []).filter((p: any) => !p.held_since_prior).map((p: any) => p.symbol);
+  const apexMembers: any[] = spec?.apex_basket || [];
+  let new_tickers = apexMembers.filter((p: any) => !p.held_since_prior).map((p: any) => p.symbol);
+  if (!new_tickers.length && apexMembers.length) {
+    const dated = apexMembers.filter((p: any) => p.entry_date);
+    if (dated.length) {
+      const latest = dated.map((p: any) => String(p.entry_date)).sort().reverse()[0];
+      new_tickers = dated.filter((p: any) => String(p.entry_date) === latest).map((p: any) => p.symbol);
+    } else {
+      new_tickers = apexMembers
+        .slice()
+        .sort((a: any, b: any) => num(b.conviction) - num(a.conviction))
+        .slice(0, 6)
+        .map((p: any) => p.symbol);
+    }
+  }
   const debate = {
     new_tickers,
     act:
