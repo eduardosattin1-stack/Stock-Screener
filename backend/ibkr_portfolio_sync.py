@@ -402,6 +402,15 @@ def reconcile(state: dict, rows: list[dict], summary: dict | None, today: str) -
             })
             counts["closed"] += 1
         state["positions"] = survivors
+        # IBKR owns the book: drop any manual (non-synced) row that shadows a synced
+        # symbol+asset_type — e.g. an old paper "CMCSA" duplicating the real IBKR
+        # CMCSA holding. The synced row is authoritative; the manual one is stale.
+        synced_keys = {(p["symbol"].upper(), p.get("asset_type", "stock"))
+                       for p in state["positions"] if p.get("ib_synced")}
+        deduped = [p for p in state["positions"] if p.get("ib_synced")
+                   or (p.get("symbol", "").upper(), p.get("asset_type", "stock")) not in synced_keys]
+        counts["deduped"] = len(state["positions"]) - len(deduped)
+        state["positions"] = deduped
         state["history"] = state["history"][-HISTORY_KEEP:]
     else:
         log.warning("0 IBKR rows — skipping close pass (fail-safe), positions untouched")
