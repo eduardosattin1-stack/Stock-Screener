@@ -1,5 +1,5 @@
 "use client"; 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../AuthProvider";
 import { getPortfolio, addPosition as storeAddPosition, closePosition as storeClosePosition } from "../portfolioStore";
@@ -32,7 +32,18 @@ interface Position {
   dd_touch?: number;
   gain_touch?: number;
   contracts?: number;
+  // IBKR mirror — written by backend/ibkr_portfolio_sync.py:
+  ib_conid?: number;
+  ib_synced?: boolean;
+  currency?: string;
+  multiplier?: number;
+  right?: string;
+  strike?: number;
+  ib_unrealized_pnl?: number;
+  market_value?: number;
 }
+interface AccountSummary { currency?:string; net_liquidation?:number|null; total_cash?:number|null; gross_position_value?:number|null; unrealized_pnl?:number|null; realized_pnl?:number|null; available_funds?:number|null; }
+interface IbkrSync { last_sync?:string; source?:string; added?:number; updated?:number; closed?:number; unmapped?:number; ib_rows?:number; }
 interface MonitorAction { symbol:string; action:string; urgency:string; current_price:number; entry_price:number; pnl_pct:number; entry_composite:number; current_composite:number; comp_change_pct:number; entry_signal:string; current_signal:string; days_held:number; catalyst_score:number; catalyst_flags:string[]; quality_score:number; bull_score:number; reasons:string[]; }
 interface HistoryEntry { symbol:string; action:string; date:string; entry_price:number; exit_price:number; pnl_pct:number; reason:string; days_held:number; bucket?:"midcap"|"sp500"|null; asset_type?: "stock" | "option"; dd_touch?:number; gain_touch?:number; ev?:number; risk?:number; }
 interface StockData { symbol:string; price:number; currency:string; composite:number; signal:string; classification:string; bull_score:number; }
@@ -113,6 +124,8 @@ export default function Portfolio(){
   const[closingRow,setClosingRow]=useState<string|null>(null);
   const[showAddModal,setShowAddModal]=useState(false);
   const[errorMsg,setErrorMsg]=useState<string|null>(null);
+  const[accountSummary,setAccountSummary]=useState<AccountSummary|null>(null);
+  const[ibkrSync,setIbkrSync]=useState<IbkrSync|null>(null);
 
   // Load state: GCS is single source of truth. v7.2: removed the
   // localStorage migration — it was zombie-reviving closed positions
@@ -124,21 +137,26 @@ export default function Portfolio(){
     // nuke it now so it can't cause ghost positions on any future refresh.
     clearLocalPortfolio();
     try {
-      const [stateRes,monitorRes,scanRes] = await Promise.allSettled([
-        user ? getPortfolio(user.uid) : fetchGcsState().catch(() => ({ positions: [], history: [] })),
+      const [gcsRes,fbRes,monitorRes,scanRes] = await Promise.allSettled([
+        fetchGcsState().catch(() => null),
+        user ? getPortfolio(user.uid).catch(() => null) : Promise.resolve(null),
         fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
         fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()),
       ]);
 
-      let gcsPositions:Position[]=[];
-      let gcsHistory:HistoryEntry[]=[];
-      if(stateRes.status==="fulfilled"){
-        gcsPositions=(stateRes.value?.positions||[]) as Position[];
-        gcsHistory=(stateRes.value?.history||[]) as HistoryEntry[];
-      }
+      const gcsState = gcsRes.status==="fulfilled" ? gcsRes.value : null;
+      const fbState = fbRes.status==="fulfilled" ? fbRes.value : null;
+      // The GCS mirror (written by the IBKR sync) is authoritative whenever it
+      // carries an `ibkr_sync` block — this is Bruno's one real brokerage account,
+      // so it wins regardless of Firebase auth. Otherwise fall back to the old
+      // rule: Firestore when signed in, GCS when not.
+      const mirror = gcsState && gcsState.ibkr_sync ? gcsState : null;
+      const src = mirror || (user ? fbState : gcsState) || { positions: [], history: [] };
 
-      setPortfolio(gcsPositions);
-      setHistory(gcsHistory);
+      setPortfolio((src?.positions||[]) as Position[]);
+      setHistory((src?.history||[]) as HistoryEntry[]);
+      setAccountSummary(mirror?.account_summary || null);
+      setIbkrSync(mirror?.ibkr_sync || null);
 
       if(monitorRes.status==="fulfilled"){
         const m:Record<string,MonitorAction>={};
@@ -194,6 +212,24 @@ export default function Portfolio(){
   },[history]);
 
   const fmtMoney=(n:number)=>{if(Math.abs(n)>=1e6)return`$${(n/1e6).toFixed(1)}M`;if(Math.abs(n)>=1e3)return`$${(n/1e3).toFixed(1)}K`;return`$${n.toFixed(0)}`;};
+  const ccySym=(c?:string)=>c==="EUR"?"€":(c==="USD"||!c)?"$":c==="GBP"?"£":`${c} `;
+  const fmtCcy=(n:number,c?:string)=>{const a=Math.abs(n);const v=a>=1e6?`${(n/1e6).toFixed(2)}M`:a>=1e3?`${(n/1e3).toFixed(1)}K`:n.toFixed(0);return`${ccySym(c)}${v}`;};
+
+  // When the IBKR mirror is live, drive the headline cards off the broker's own
+  // base-currency (EUR) account summary — sidesteps summing mixed-currency rows.
+  const baseCcy=accountSummary?.currency||"USD";
+  const headline=accountSummary?{
+    totalValue:accountSummary.net_liquidation??0,
+    valueSub:accountSummary.total_cash!=null?`Cash: ${fmtCcy(accountSummary.total_cash,baseCcy)}`:"",
+    pnl:accountSummary.unrealized_pnl??0, pnlPct:null as number|null, ccy:baseCcy,
+  }:{
+    totalValue:stats.totalValue, valueSub:`Cost: ${fmtMoney(stats.totalCost)}`,
+    pnl:stats.pnl, pnlPct:stats.pnlPct as number|null, ccy:"USD",
+  };
+  const wl=useMemo(()=>{
+    if(ibkrSync){let w=0,l=0;portfolio.forEach(p=>{const u=p.ib_unrealized_pnl;if(typeof u==="number"){if(u>0)w++;else if(u<0)l++;}});return{w,l};}
+    return{w:stats.winners,l:stats.losers};
+  },[portfolio,ibkrSync,stats]);
 
   const cardStyle:React.CSSProperties={background:"var(--bg-surface)",borderRadius:8,border:"1px solid var(--border)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"14px 16px"};
   const thStyle:React.CSSProperties={padding:"9px 12px",fontSize:9,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--text-muted)",fontFamily:"var(--font-mono)",borderBottom:"2px solid var(--border)",whiteSpace:"nowrap"};
@@ -204,9 +240,14 @@ export default function Portfolio(){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,paddingBottom:12,borderBottom:"1px solid var(--divider)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <span style={{fontSize:14,fontWeight:600,color:"var(--text)",letterSpacing:"0.02em",fontFamily:"var(--font-mono)"}}>PORTFOLIO<span style={{color:"var(--text-light)",fontWeight:400}}>/tracker</span></span>
-          <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)"}}>CLOUD</span>
+          {ibkrSync?(
+            <span title={`Mirrored from Interactive Brokers · ${ibkrSync.ib_rows??0} positions${ibkrSync.unmapped?` · ${ibkrSync.unmapped} unmapped` : ""}`} style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"var(--purple)",background:"var(--purple-light)",border:"1px solid var(--purple)"}}>SYNCED · IBKR</span>
+          ):(
+            <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,fontFamily:"var(--font-mono)",color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)"}}>CLOUD</span>
+          )}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {ibkrSync?.last_sync&&<span style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>Last sync: {new Date(ibkrSync.last_sync).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}</span>}
           <span style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>Last scan: {scanDate}</span>
           <button onClick={()=>setShowAddModal(true)} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"6px 12px",borderRadius:5,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--green)",background:"var(--green-light)",border:"1px solid var(--green-border)",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase"}}><Plus size={12}/> Position</button>
         </div>
@@ -228,9 +269,9 @@ export default function Portfolio(){
       {/* Summary cards */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:20}}>
         <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>POSITIONS</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{stats.positions}</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL VALUE</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtMoney(stats.totalValue)}</div><div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>Cost: {fmtMoney(stats.totalCost)}</div></div>
-        <div style={{...cardStyle,border:`1px solid ${stats.pnl>=0?"var(--green-border)":"var(--red)"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL P&L</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:stats.pnl>=0?"var(--green)":"var(--red)"}}>{stats.pnl>=0?"+":""}{fmtMoney(stats.pnl)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:stats.pnlPct>=0?"var(--green)":"var(--red)"}}>{stats.pnlPct>=0?"+":""}{(stats.pnlPct*100).toFixed(1)}%</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"var(--green)",fontFamily:"var(--font-mono)"}}>{stats.winners}</span><span style={{fontSize:12,color:"var(--text-light)"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"var(--red)",fontFamily:"var(--font-mono)"}}>{stats.losers}</span></div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL VALUE{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · IBKR</span>:null}</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtCcy(headline.totalValue,headline.ccy)}</div><div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{headline.valueSub||" "}</div></div>
+        <div style={{...cardStyle,border:`1px solid ${headline.pnl>=0?"var(--green-border)":"var(--red)"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL P&L{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · unreal.</span>:null}</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:headline.pnl>=0?"var(--green)":"var(--red)"}}>{headline.pnl>=0?"+":""}{fmtCcy(headline.pnl,headline.ccy)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:(headline.pnlPct??0)>=0?"var(--green)":"var(--red)"}}>{headline.pnlPct!=null?`${headline.pnlPct>=0?"+":""}${(headline.pnlPct*100).toFixed(1)}%`:" "}</div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"var(--green)",fontFamily:"var(--font-mono)"}}>{wl.w}</span><span style={{fontSize:12,color:"var(--text-light)"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"var(--red)",fontFamily:"var(--font-mono)"}}>{wl.l}</span></div></div>
       </div>
 
       <div style={{display:"flex",gap:4,marginBottom:16}}>
@@ -281,8 +322,8 @@ export default function Portfolio(){
                   const isExpanded=expandedRow===p.symbol;
 
                   return(
-                    <>{/* eslint-disable-next-line react/jsx-key */}
-                      <tr key={p.symbol} style={{borderBottom:"1px solid var(--divider)",cursor:"pointer",transition:"background 0.1s"}}
+                    <Fragment key={p.symbol}>
+                      <tr style={{borderBottom:"1px solid var(--divider)",cursor:"pointer",transition:"background 0.1s"}}
                         onClick={()=>setExpandedRow(isExpanded?null:p.symbol)}
                         onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}}
                         onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
@@ -291,6 +332,8 @@ export default function Portfolio(){
                             {isExpanded?<ChevronDown size={11} color="var(--text-light)"/>:<ChevronRight size={11} color="var(--text-light)"/>}
                             <div>
                               <a href={`/stock/${p.symbol}`} onClick={e=>e.stopPropagation()} style={{fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)",fontSize:12,letterSpacing:"0.04em"}}>{p.symbol}</a>
+                              {p.currency&&p.currency!=="USD"&&<span style={{fontSize:8,marginLeft:5,padding:"1px 4px",borderRadius:3,background:"var(--bg)",border:"1px solid var(--border)",color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{p.currency}</span>}
+                              {p.ib_synced&&<span title="Mirrored from Interactive Brokers" style={{fontSize:8,marginLeft:4,padding:"1px 4px",borderRadius:3,background:"var(--purple-light)",border:"1px solid var(--purple)",color:"var(--purple)",fontFamily:"var(--font-mono)"}}>IB</span>}
                              <div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>                                 {p.entry_date}{(()=>{const d=Math.floor((Date.now()-new Date(p.entry_date).getTime())/86400000);return d>0?` · ${d}d`:"";})()}                               </div>
                             </div>
                           </div>
@@ -300,12 +343,12 @@ export default function Portfolio(){
                             <span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:actStyle.color,background:actStyle.bg,border:`1px solid ${actStyle.border}`,animation:actStyle.pulse?"pulse 2s infinite":"none"}}>{mon!.action}</span>
                           ):<span style={{color:"var(--text-light)",fontSize:9,fontFamily:"var(--font-mono)"}}>—</span>}
                         </td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text-muted)",fontSize:11}}>${p.entry_price.toFixed(2)}</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12,fontWeight:600}}>${cur.toFixed(2)}</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:pnlColor,fontSize:12,fontWeight:600}}>{pnl>=0?"+":""}{fmtMoney(pnl)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text-muted)",fontSize:11}}>{ccySym(p.currency)}{p.entry_price.toFixed(2)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:12,fontWeight:600}}>{ccySym(p.currency)}{cur.toFixed(2)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:pnlColor,fontSize:12,fontWeight:600}}>{pnl>=0?"+":""}{fmtCcy(pnl,p.currency)}</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:pnlColor,fontSize:11,fontWeight:600}}>{pnlPct>=0?"+":""}{(pnlPct*100).toFixed(1)}%</td>
                         <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text-muted)",fontSize:11}}>{p.shares}</td>
-                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:11}}>{fmtMoney(val)}</td>
+                        <td style={{fontFamily:"var(--font-mono)",textAlign:"right",padding:"10px 12px",color:"var(--text)",fontSize:11}}>{fmtCcy(val,p.currency)}</td>
                         <td style={{textAlign:"right",padding:"10px 12px"}}>{signal!=="—"?<span style={{display:"inline-block",padding:"2px 7px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"var(--font-mono)",letterSpacing:"0.07em",color:sigStyle.color,background:sigStyle.bg,border:`1px solid ${sigStyle.border}`}}>{signal}</span>:<span style={{color:"var(--text-light)",fontSize:10,fontFamily:"var(--font-mono)"}}>—</span>}</td>
                         {/* ── ALPHA / DD column ──────────────────────────────────────────
                             Replaces COMPOSITE column. Composite remains accessible via:
@@ -418,7 +461,7 @@ export default function Portfolio(){
                           </div>
                         </td></tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -441,34 +484,42 @@ export default function Portfolio(){
               <tbody>
                 {options.map(p=>{
                   const live=liveData[p.symbol];
-                  const cur=live?.price||0; // We don't live-price spreads for now
-                  const pnl=(cur-p.entry_price)*100*(p.contracts||1); // Not accurate unless we live-price the spread
-                  
+                  // IBKR mirror supplies the live per-leg mark + unrealized P&L (the
+                  // app can't price spreads itself). Falls back to the old scan-price
+                  // guess for any legacy, non-synced option row.
+                  const cur=p.last_price??live?.price??0;
+                  const pnl=p.ib_unrealized_pnl??((cur-p.entry_price)*100*(p.contracts||1));
+                  const pnlColor=pnl>=0?"var(--green)":"var(--red)";
+                  // Stable per-leg identity. IBKR can hold several legs of the same
+                  // underlying+strike at different expirations (e.g. three PRX.AS 44C),
+                  // so symbol+strikes alone collides — include conid/expiration.
+                  const rowKey=p.ib_conid!=null?`ib-${p.ib_conid}`:`opt-${p.symbol}-${p.strikes||""}-${p.expiration||""}`;
+
                   return(
-                    <><tr key={`opt-${p.symbol}-${p.strikes}`} style={{borderBottom:"1px solid var(--divider)",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
+                    <Fragment key={rowKey}><tr style={{borderBottom:"1px solid var(--divider)",cursor:"default"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="var(--bg)";}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="";}}>
                       <td style={{padding:"10px 12px", fontWeight:600,color:"var(--text)",fontFamily:"var(--font-mono)",fontSize:12}}>{p.symbol}</td>
                       <td style={{padding:"10px 12px", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>{p.strategy}</td>
                       <td style={{padding:"10px 12px", textAlign:"left", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>
                         {formatSpreadStrikes(p.strikes, p.expiration)}
                       </td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)",fontWeight:600}}>${p.entry_price.toFixed(2)}</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text-muted)"}}>—</td>
-                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)"}}>{p.contracts}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)",fontWeight:600}}>{ccySym(p.currency)}{p.entry_price.toFixed(2)}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:"var(--text)"}}>{cur>0?`${ccySym(p.currency)}${cur.toFixed(2)}`:"—"}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,fontWeight:600,color:pnlColor}}>{p.ib_unrealized_pnl!=null?`${pnl>=0?"+":""}${fmtCcy(pnl,p.currency)}`:"—"}</td>
+                      <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:11,color:(p.contracts||0)<0?"var(--red)":"var(--text)"}}>{p.contracts}</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>{p.ev && p.risk ? <><span style={{color: p.ev > 0 ? "var(--green)" : "var(--red)", fontWeight:600}}>{p.ev > 0 ? "+" : ""}{(p.ev / p.risk * 100).toFixed(0)}%</span> <span style={{color:"var(--text-light)"}}>(${Math.round(p.ev)}/c)</span></> : "—"}</td>
                       <td style={{padding:"10px 12px", textAlign:"right", fontFamily:"var(--font-mono)",fontSize:10,color:"var(--text-muted)"}}>{p.iv?(p.iv*100).toFixed(0)+"%":"—"}</td>
                       <td style={{padding:"10px 6px",textAlign:"center"}}>
-                        <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===`${p.symbol}-${p.strikes}`?null:`${p.symbol}-${p.strikes}`);}} style={{
+                        <button onClick={e=>{e.stopPropagation();setClosingRow(closingRow===rowKey?null:rowKey);}} style={{
                           fontSize:9,padding:"3px 10px",borderRadius:3,fontFamily:"var(--font-mono)",fontWeight:600,
-                          border:closingRow===`${p.symbol}-${p.strikes}`?"1px solid var(--red)":"1px solid var(--border)",
-                          background:closingRow===`${p.symbol}-${p.strikes}`?"var(--red-light)":"var(--bg-surface)",
-                          color:closingRow===`${p.symbol}-${p.strikes}`?"var(--red)":"var(--text-muted)",
+                          border:closingRow===rowKey?"1px solid var(--red)":"1px solid var(--border)",
+                          background:closingRow===rowKey?"var(--red-light)":"var(--bg-surface)",
+                          color:closingRow===rowKey?"var(--red)":"var(--text-muted)",
                           cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
-                        }}>{closingRow===`${p.symbol}-${p.strikes}`?"Cancel":"Close"}</button>
+                        }}>{closingRow===rowKey?"Cancel":"Close"}</button>
                       </td>
                     </tr>
-                    {closingRow===`${p.symbol}-${p.strikes}`&&(
-                      <tr key={`opt-${p.symbol}-${p.strikes}-close`}><td colSpan={10} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
+                    {closingRow===rowKey&&(
+                      <tr><td colSpan={10} style={{padding:"12px 16px",background:"var(--red-light)",borderTop:"1px solid var(--red)"}}>
                         <ClosePositionForm
                           position={p}
                           currentPrice={0}
@@ -476,7 +527,7 @@ export default function Portfolio(){
                           onCancel={()=>setClosingRow(null)}
                         />
                       </td></tr>
-                    )}</>
+                    )}</Fragment>
                   );
                 })}
               </tbody>
@@ -564,6 +615,7 @@ function ClosePositionForm({position,currentPrice,onConfirm,onCancel}:{
   }
   return(
     <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+      {position.ib_synced&&<div style={{width:"100%",fontSize:10,fontFamily:"var(--font-mono)",color:"var(--amber)"}}>⚠ Mirrored from IBKR — closing here only updates this app; it reappears on the next sync unless you close it in IBKR.</div>}
       <span style={{fontSize:11,fontFamily:"var(--font-mono)",fontWeight:600,color:"var(--red)"}}>Close {position.symbol} {position.asset_type==="option"?"Option":"Stock"}:</span>
       <label style={{fontSize:10,fontFamily:"var(--font-mono)",color:"var(--text-muted)"}}>
         Exit $ <input type="number" step="0.01" value={exitPrice} onChange={e=>{setExitPrice(e.target.value);setErr("");}} placeholder="0.00" style={{width:80,marginLeft:4,padding:"4px 6px",border:"1px solid var(--red)",borderRadius:3,fontSize:11,fontFamily:"var(--font-mono)"}} autoFocus/>
