@@ -37,13 +37,19 @@ Set-Location $bk
 
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) { "FATAL: python not on PATH" | Tee-Object -FilePath $log -Append; exit 1 }
 
+# Python's logging writes to STDERR. In Windows PowerShell 5.1, "2>&1" wraps each
+# stderr line as an ErrorRecord; with ErrorActionPreference=Stop that aborts the
+# script on the very first INFO line (and can kill python before it writes). Switch
+# to Continue and stringify each line, then rely on $LASTEXITCODE (the real signal).
+$ErrorActionPreference = "Continue"
+
 # Gateway liveness guard (port open != API answering). Exit 0 quietly if dead so the
 # scheduled task isn't flagged failed and state.json is left untouched.
-python ibkr_options.py --probe 2>&1 | Tee-Object -FilePath $log -Append
+python ibkr_options.py --probe 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath $log -Append
 if ($LASTEXITCODE -ne 0) { "Gateway not answering - skipping sync (no write)." | Tee-Object -FilePath $log -Append; exit 0 }
 
 $env:IB_PORTFOLIO_CLIENT_ID = "18"
-python ibkr_portfolio_sync.py --once 2>&1 | Tee-Object -FilePath $log -Append
+python ibkr_portfolio_sync.py --once 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath $log -Append
 $code = $LASTEXITCODE
 
 "=== launcher END $(Get-Date -Format o) exit=$code ===" | Tee-Object -FilePath $log -Append
