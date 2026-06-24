@@ -63,9 +63,9 @@ CURRENCY_TO_SUFFIX = {
 # match the FMP/app ticker. Keyed by IBKR conid (stable across sessions).
 # Bruno: verify these against the screener's ticker before the first live write.
 CONID_OVERRIDE = {
-    425145098: "9999.HK",   # 9999 @SEHK  → NetEase (HK line)
-    # 590822017: "????.PA", # O4J0 @SBF   → TODO Bruno: confirm the FMP ticker
-    # 13013250:  "????.DE", # ADB @FWB    → TODO Bruno: confirm the FMP ticker
+    425145098: "9999.HK",   # 9999 @SEHK → NetEase (HK line)
+    13013250:  "ADBE",      # ADB @FWB   → Adobe Inc (Frankfurt line of the US name; ISIN US00724F1012)
+    590822017: "EWSP.PA",   # O4J0 @SBF  → iShares S&P 500 Equal-Weight UCITS ETF (Euronext Paris; localSymbol EWSP)
 }
 
 # European OPTION underlyings: IBKR underlying symbol -> app underlying ticker.

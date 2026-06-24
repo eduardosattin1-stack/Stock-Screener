@@ -356,6 +356,7 @@ def reconcile(state: dict, rows: list[dict], summary: dict | None, today: str) -
             counts["unmapped"] += 1
         ex = by_conid.get(r["ib_conid"])
         if ex:
+            ex["symbol"] = r["symbol"]            # refresh so a corrected CONID_OVERRIDE propagates
             ex["shares"] = r["position"]
             ex["entry_price"] = round(r["avg_cost"], 4)
             ex["last_price"] = round(r["market_price"], 4)

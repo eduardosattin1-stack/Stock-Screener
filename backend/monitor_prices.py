@@ -340,11 +340,12 @@ def refresh_portfolio(state: Optional[dict], quotes: dict[str, float],
         sym = (p.get("symbol") or "").upper()
         if not sym:
             continue
-        # IBKR-synced option legs carry their own live mark + unrealized P&L from
-        # ibkr_portfolio_sync.py. An FMP quote-short on the underlying EQUITY symbol
-        # (e.g. "BBIO") would overwrite the option leg's price with the STOCK price
-        # → a wildly wrong pnl_pct. IBKR owns option pricing; skip option rows.
-        if p.get("asset_type") == "option":
+        # IBKR-synced rows carry their own live mark + P&L from ibkr_portfolio_sync.py,
+        # in the correct currency (EUR/HKD/USD) per leg/share. An FMP quote-short here
+        # would mismark them: an option leg would get the underlying STOCK price, and a
+        # foreign listing (e.g. Adobe's Frankfurt line in EUR -> ticker ADBE) would get
+        # the US listing's USD price. IBKR is the source of truth for synced prices.
+        if p.get("ib_synced"):
             continue
         cur = quotes.get(sym)
         entry = p.get("entry_price") or p.get("entry") or 0
