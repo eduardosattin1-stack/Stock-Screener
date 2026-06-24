@@ -2705,13 +2705,12 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
   </Card>;
 }
  // ── Helpers for the Side-by-Side Comparison tab ──────────────────────────────
-// Loads a stock's scan data by searching the three region files (sp500,
-// europe, global) and picking the freshest match. Returns null if the
-// symbol isn't present in any current scan — typical for tickers outside
-// the current scanning universe (e.g. ONTO, ALAB at time of writing).
+// Loads a stock's scan data from the global scan (the only scan we run).
+// Returns null if the symbol isn't present in the current scan — typical
+// for tickers outside the scanning universe (e.g. ONTO, ALAB at time of writing).
 async function loadStockFromScans(symbol:string):Promise<StockData|null>{
   const sym=symbol.toUpperCase();
-  const regions=["sp500","europe","global"] as const;
+  const regions=["global"] as const;
   const results=await Promise.all(regions.map(async r=>{
     try {
       const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });
@@ -2857,7 +2856,7 @@ function ComparisonTab({stockA,fmpA}:{
         loadFmpForStock(sym),
       ]);
       if(!scan){
-        setError(`${sym} isn't in the current scan universe. Currently SP500 only — try a large-cap US ticker.`);
+        setError(`${sym} isn't in the current scan universe — try a large-cap US or European ticker.`);
         setLoading(false);
         return;
       }
@@ -5128,7 +5127,7 @@ export default function StockDetail(){
   useEffect(()=>{
     if(!symbol)return;
     const sym=symbol.toUpperCase();
-    const regions=["sp500","europe","global"] as const;
+    const regions=["global"] as const;
     Promise.all(regions.map(async r=>{
       try {
         const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });

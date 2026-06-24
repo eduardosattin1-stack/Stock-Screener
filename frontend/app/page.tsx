@@ -24,19 +24,7 @@ import { useRouter } from "next/navigation";
 
 const GCS_BASE = "/api/gcs/scans";
 
-const GCS_FALLBACK = "/latest_global.json";
-
-const REGIONS = [
-
-  { key: "sp500", label: "S&P 500" },
-
-  { key: "midcap", label: "Midcap" },
-
-];
-
-
-
-function gcsUrl(region: string) { return `${GCS_BASE}/latest_${region}.json`; }
+// Region toggle removed — the screener runs the global scan only (latest_global.json).
 
 const US_EXCHANGES = new Set(["NASDAQ","NYSE","AMEX","NYSEArca","PNK","OTC"]);
 
