@@ -1120,6 +1120,53 @@
      "ret_pct": 11.58
     }
    }
+  },
+  {
+   "date": "2026-06-24",
+   "nav": 101.818,
+   "basket_ret_pct": 1.818,
+   "seats": {
+    "GDOT": {
+     "price": 13.2,
+     "ret_pct": 3.53
+    },
+    "UNF": {
+     "price": 261.64,
+     "ret_pct": 0.16
+    },
+    "FIP": {
+     "price": 4.63,
+     "ret_pct": 1.54
+    },
+    "FIG": {
+     "price": 18.99,
+     "ret_pct": -7.32
+    },
+    "BLCO": {
+     "price": 15.24,
+     "ret_pct": -2.62
+    },
+    "CELC": {
+     "price": 90.21,
+     "ret_pct": -2.57
+    },
+    "VRDN": {
+     "price": 17.28,
+     "ret_pct": 5.95
+    },
+    "AQST": {
+     "price": 5.03,
+     "ret_pct": 26.07
+    },
+    "WVE": {
+     "price": 6.04,
+     "ret_pct": 4.5
+    },
+    "AMLX": {
+     "price": 16.37,
+     "ret_pct": 12.2
+    }
+   }
   }
  ],
  "watchlist": [
@@ -1453,6 +1500,50 @@
     "MGNI": {
      "price": 17.45,
      "ret_pct": 0.0
+    }
+   }
+  },
+  {
+   "date": "2026-06-24",
+   "nav": 103.387,
+   "ret_pct": 3.387,
+   "n": 9,
+   "seats": {
+    "CLVT": {
+     "price": 1.93,
+     "ret_pct": -12.67
+    },
+    "BBIO": {
+     "price": 68.63,
+     "ret_pct": 2.74
+    },
+    "EYPT": {
+     "price": 14.38,
+     "ret_pct": 10.36
+    },
+    "ZYME": {
+     "price": 23.88,
+     "ret_pct": 4.37
+    },
+    "VIR": {
+     "price": 10.16,
+     "ret_pct": 18.0
+    },
+    "PVLA": {
+     "price": 118.68,
+     "ret_pct": -0.13
+    },
+    "AVIR": {
+     "price": 4.48,
+     "ret_pct": 2.05
+    },
+    "DBVT": {
+     "price": 16.11,
+     "ret_pct": 2.61
+    },
+    "MGNI": {
+     "price": 18.0,
+     "ret_pct": 3.15
     }
    }
   }
