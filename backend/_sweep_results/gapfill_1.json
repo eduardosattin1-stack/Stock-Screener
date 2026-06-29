@@ -1,0 +1,57 @@
+{
+ "chunk": "gapfill-1 (6 names)",
+ "scanned": 6,
+ "scan_distribution": {
+  "active": 2,
+  "watch": 1,
+  "none": 3
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "ASH",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "activist_structural",
+   "one_line": "Ancora activist (~$76/sh, ~31% upside) pressing for full sale; Standard Industries + PE interest reported; hard dated trigger = Sept 2026 director-nomination window / proxy-fight threat. Real forward activist+structural setup."
+  },
+  {
+   "symbol": "AVIR",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "binary_event",
+   "one_line": "Atea C-BEYOND Phase 3 HCV topline due mid-2026 (imminent); micro-cap with cash cushion ($256m runway to 2027) vs ~$4.49 px = mispriced dated binary with asymmetry. Second HCV readout (C-FORWARD) ~YE2026."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "ASH",
+   "score": 6.5,
+   "tier": "ACTIVE",
+   "lane": "activist_structural",
+   "catalyst": "Ancora has built a stake and is pressing Ashland for a full sale (~$76/sh SOTP, ~17% remaining upside), threatening a proxy fight if no near-term sale progress is made by the September/October 2026 director-nomination window.",
+   "dated_milestone": "Sept/Oct 2026 director-nomination window opens — Ancora's stated trigger to launch a proxy fight absent sale progress; next hard date is the company's bylaw nomination deadline in that window.",
+   "instrument": "equity",
+   "bloom_gates": "G1 (named counterparty: Ancora activist; Standard Industries/PE interest reported but unconfirmed) + G3 (specific $76/sh SOTP target, ~17% forward gap remaining after initial re-rate). G2 NOT met — board declined to commit to a sale/strategic review (June 10, 2026 response).",
+   "edge": "M — real dated forward activist+SOTP setup with a hard Sept/Oct nomination trigger, but ~15% of the upside already re-rated on the June 9 reveal (stock ran $56->$65, near 52wk high $67.2) and the board is resisting, so the easy money is gone and outcome (sale vs. entrenchment) is genuinely two-sided.",
+   "primary_source": "Reuters/Hedgeweek/Investing.com \"Ancora urges Ashland to explore sale, sees ~31% upside\" (June 9, 2026) + StockTitan \"Ashland responds to Ancora presentation\" (June 10, 2026); FMP quote $64.98 (2026-06-13 close).",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Primary sources confirm the core: Ancora (named activist) released a June 9, 2026 BusinessWire presentation pushing a value-maximizing competitive SALE of Ashland at a ~$76/sh SOTP target, with an explicit threat to launch a proxy fight if no real progress before the September director-nomination window. Ashland's June 10, 2026 GlobeNewswire response was measured and did NOT commit to a review or sale (it 'frequently evaluates strategy on an ongoing basis' and 'welcomes input') — so the binding catalyst (G2) is unmet and still FORWARD, not fired. Live quote ($64.98, 50-day $56.59, 52wk high $67.20) matches exactly; the ~15% re-rate has already occurred, leaving ~17% to a contested target the board has not embraced. CORRECTIONS: (1) nomination window is 'September,' not 'September/October'; (2) Ancora's headline ~31% upside was vs the pre-pop ~$58 base — the line's ~17% remaining upside is correct vs the current $64.98. Disqualifier flag: ASH was placed on Zacks Rank #5 (Strong Sell) June 10 — weak underlying fundamentals raise the risk the SOTP is a story vs a near-term clearing price, and the board's non-committal stance leaves real fight risk.",
+   "analysis": "Ancora (named activist, accumulating since April 2026) publicly pressed Ashland for a full sale on June 9, 2026 with a ~$76/sh SOTP target and an explicit dated threat: a proxy fight via the Sept/Oct 2026 nomination window if no near-term sale progress. This is a genuine, idiosyncratic, dated, forward activist+structural setup — not a macro bet — but the initial reveal already re-rated the stock ~15% (now $64.98 vs $56.59 50-day avg, near the $67.20 52wk high), and Ashland's June 10 board response was measured and stopped short of committing to any review or sale (G2 unmet), leaving the binding catalyst unresolved and the remaining gap to target ~17%."
+  },
+  {
+   "symbol": "AVIR",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "binary_event",
+   "catalyst": "Atea's pivotal C-BEYOND Phase 3 HCV topline (BEM/RZR vs sofosbuvir/velpatasvir, 880+ pts, enrollment completed Dec 2025) is due mid-2026 — an imminent, dated binary readout for a sub-$360m-cap micro with a $256m cash cushion (runway into 2027).",
+   "dated_milestone": "C-BEYOND Phase 3 HCV topline — mid-2026 (next: imminent within ~weeks); secondary C-FORWARD topline ~YE2026; NDA Q1 2027",
+   "instrument": "equity (AVIR common)",
+   "bloom_gates": "G2 (concrete committed event: pivotal Phase 3 with enrollment of 880+ already completed Dec 2025 and topline guided to a specific window) + G3 (specific unpriced figure: $256m cash vs ~$359m mkt cap means the entire pipeline binary is valued at ~$100m EV, an unpriced asymmetry on a pivotal readout)",
+   "edge": "M — genuine dated binary with a hard enrolled trial and visible cash floor creating asymmetry, but it is a single Ph3 efficacy readout (high outcome variance) and the topline window (\"mid-2026\") is soft, not a fixed date; price already off 50-day avg ($5.08) so some de-rating, but the catalyst itself is unfired.",
+   "primary_source": "Atea Q1 2026 press release (2026-05-12)",
+   "verdict": "CONFIRMED",
+   "kill_fact": "All load-bearing facts confirmed against primary/near-primary sources. C-BEYOND enrollment completed Dec 22, 2025 (GlobeNewswire PR: 880+ treatment-naive pts, US/Canada, BEM/RZR FDC 8wk non-cirrhotic vs sofosbuvir/velpatasvir 12wk); topline guided 'mid-year 2026' reaffirmed in May 12, 2026 Q1 release; cash $256m at Mar 31, 2026 with runway into 2027 (Q1 PR/StockTitan); live quote $4.49, mkt cap $359.3m so cash is ~71% of cap. FIRED-check passes: the completed-enrollment milestone fired, but the topline efficacy readout is the still-forward binary. Two real-but-non-fatal gaps: 'mid-2026' is a window not a fixed day (exact date unconfirmed), and a single Phase 3 efficacy event carries irreducible clinical risk. Genuine ACTIVE company-specific binary at moderate edge; not refuted.",
+   "analysis": "Verification confirms the triage: C-BEYOND completed enrollment (880+ pts) in Dec 2025 with topline guided to mid-2026 in the May 12, 2026 Q1 release, and cash was $256.0m at Mar 31, 2026 vs a ~$359m market cap at $4.49 — a real, dated, forward, company-specific binary, not a macro bet. The asymmetry is structurally sound (cash floor ~70% of mkt cap protects downside, a positive non-inferiority/superiority readout could re-rate the regimen as best-in-class 8-week HCV therapy). Two gaps temper conviction: \"mid-2026\" is a window not a fixed date (exact readout day unconfirmed), and a single Phase 3 efficacy event carries irreducible clinical risk, so this is a genuine ACTIVE binary at moderate edge rather than a high-confidence setup."
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 # Catalyst Watch — Market Regime & Operating Environment
 
-**Status:** Living document · regenerated monthly (8th, from 2026-06-08) · companion to [CATALYST_SCORING_REBUILD.md](CATALYST_SCORING_REBUILD.md)
-**Baseline:** 2026-06-05 (4-agent investigation, live-verified) · **Version:** v1
+**Status:** Living document · regenerated bi-weekly · companion to [CATALYST_SCORING_REBUILD.md](CATALYST_SCORING_REBUILD.md)
+**Last run:** 2026-06-29 (4-agent investigation, live-verified) · **Version:** v2
 **Relationship:** [CATALYST_SCORING_REBUILD.md](CATALYST_SCORING_REBUILD.md) decides the *structure* (gate, tilt, window, sizing) on first principles. **This doc supplies the time-varying evidence that the structure is right _now_, and the tripwires that would change it.** The scoring methodology is stable; the regime read is perishable — hence the monthly cadence.
 
 ---
@@ -47,25 +47,66 @@ Run **four parallel research agents** (`general-purpose`), each told: *today's d
 
 ---
 
-## §3 — Regime → action mapping (current, from the 2026-06-05 read)
+## §3 — Regime → action mapping (current, from the 2026-06-29 read)
 
-**Verdict: the regime confirms the scoring doc's tilt — build it, tilt structural, respect book independence — but the window is good, not infinitely open.**
+**Verdict: tilt CONFIRMED structural-special-sits; forced-sellers promoted to #1 (Russell recon effective today); hawkish Fed pivot reinforces two-tier window; DOJ opacity post-Slater is a new idiosyncratic risk layer on tech/semi M&A, not a window closure.**
 
-- **#2 Universe tilt — CONFIRMED, structural-special-sits.** Two independent agents converged on the same lane ranking the scoring doc already encodes; the hard-binary/PDUFA "thinnest edge" prior was independently validated. No change to §1.4. *Catalyst supply is abundant and structural (multi-year), not a flash.*
-- **#3 Window — CONFIRMED two-tier.** Higher-for-longer (Fed on hold to ~Dec, inflation re-accelerating) + the fattest live supply being 6–18mo (spins, restructurings, divestiture clocks) backs the §1.5 tiered window over a 0–90d screen. *Macro raises the stakes on expression: avoid theses that need a Fed cut to work.*
-- **#4 Sizing — CONFIRMED, independence is not academic.** BofA FMS cash 3.9% (sell-signal) + 50% net OW equities + Mag-7 ~30% of the index = little dry powder to absorb a shock; a single dominant factor (AI-capex) under the tape. Enforce §1.7 resolution-driver independence at the book level.
+- **#2 Universe tilt — CONFIRMED, structural-special-sits.** Forced-sellers promoted to #1 (Russell semi-annual recon effective June 29 = today; 9 regulatory divestitures YTD; PE exit pressure record $3.7T dry powder). Spinoffs #2 (8 completed H1 2026, large H2 pipeline). Distressed #3 (leveraged loan default rate 7.5%, loan-to-own reviving). PDUFA confirmed thinnest again — DOGE FDA staffing cuts add tail risk without repricing implied moves. No change to §1.4 direction.
+- **#3 Window — CONFIRMED two-tier, tightening.** Fed dot plot turned more hawkish since June 5 (median YE 2026 dot 3.8%, 9/18 lean toward hike; GS first cut now June 2027). Inflation re-accelerated (PCE 4.1%, core 3.4%). The two-tier window still stands — the fattest supply (spins, restructurings, divestiture clocks) is 6–18mo; rate-cut theses are now deader than before. The midterm calendar (Nov 2026) is the hard window-narrowing date.
+- **#4 Sizing — CONFIRMED independence; AI-capex factor partially rotating.** Mag-7 -4.6% YTD vs equal-weight +9.9% signals AI premium deflating but AI infrastructure capex ($725B 2026) intact. CNN F&G dropped from 54 (Neutral) → 25 (Fear), AAII slight net bearish — positioning has partially unwound, creating a healthier base for re-rating catalysts. Still enforce §1.7 independence; Mag-7 rotation is not yet a safe "factor clear."
 
-**New hooks this read surfaced (candidates for the universe layer / §1.4 lanes):**
-1. **Russell reconstitution goes semi-annual in 2026** (June + December) — a new, twice-a-year mechanical forced-seller/buyer calendar. Hard-code both windows.
-2. **Mega-IPO fast-track index inclusion** (SpaceX/OpenAI/Anthropic pipeline; new 15-trading-day Nasdaq rule) → $15–30B of mechanical index buying per event. A clean forced-flow lane; map the *displaced* names too.
-3. **$1.2T 2026–2029 leveraged maturity wall** is the *supply engine* for the distressed lane — wire refinancing-wall + LME (liability-management) detection as a primary screen for the fattest lane.
-4. **Nov-2026 midterms = a dated "window-narrowing" overlay** on every M&A-dependent thesis — the open-regulator tailwind may be widest in H1-2026 (see §5).
+**New hooks from the 2026-06-29 read:**
+1. **HONA (Honeywell Aerospace) begins trading today** (Jun 29) — live forced-selling window from Dow-tracker/index funds unable to hold it; S&P 100 index funds must buy (unusual counter-flow).
+2. **FDXF (FedEx Freight)** spun off June 1 — 28-day forced-selling window may still be partially active; freight-index fund exits being watched.
+3. **KBR → Mission Technology Solutions** spinoff mid-late 2026 (SpinCo CEO named June 25) — a live B13 held name; dates the catalyst clock.
+4. **Gail Slater DOJ departure** — enforcement now politically-driven, not process-based; idiosyncratic risk layer on Big Tech, semiconductor, and national-security deals. Size merger-arb in those names with a wider-than-normal break assumption.
+5. **November 2026 dual hard-date**: China tariff suspension expiry + SCOTUS IEEPA ruling pending = two regulatory binary events in Q4; any thesis with China supply-chain exposure needs scenario stress-testing.
+6. **Loan-to-own wave beginning** — Pluralsight template (Blue Owl/Ares took 85% equity, wiped Vista equity, injected fresh capital); PE SaaS LBOs stress-list growing (Medallia $6.4B, Proofpoint $12.3B).
 
-**The one tension to hold:** distressed is the *fattest* lane **and** the most macro-exposed — higher-for-longer is what creates the supply *and* what can break the balance sheet. Resolution: play the **catalyst** (restructuring terms, fulcrum security, emergence equity), never a "rates will rescue it" bet. Fattest ≠ easiest; it is fattest *because* it is hardest and least-covered — which is exactly where the breadth edge pays.
+**Tension from June 5 resolved:** distressed moved from #1 to #3 (not less fat, but forced-sellers now demonstrably fatter given two mechanical recon windows per year + record divestiture pace). The distressed lane supply is rising (loan default rate 7.5%) but requires fulcrum/post-reorg expressions — not balance-sheet rescue bets on higher-for-longer-exposed capital structures.
 
 ---
 
 ## §4 — Current read
+
+### 2026-06-29 — bi-weekly run (v2) · *live-verified; all figures confirmed via WebSearch/WebFetch + FMP MCP as of June 29, 2026*
+
+**One-liner:** *Iran war de-escalating but unresolved; Fed dot plot turned hawkish (no 2026 cuts, hike risk real); market rotating from Mag-7 into equal-weight at stretched valuations; M&A window still open but DOJ politically opaque post-Slater; forced-seller window mechanically active today (Russell recon effective).*
+
+**A. Macro regime now (risk-ON but fearful — CNN F&G 25; hawkish pivot is the regime shift)**
+- S&P 500 **7,354 (+7.6% YTD cap-weight, +9.9% equal-weight)**; Mag-7 **-4.58% YTD** — market has ROTATED since the June 5 read (then 7,584 cap-weight). Shiller CAPE ~39.9 (125% above historical avg); P/S 3.70 (near record). *(FMP live, 2026-06-29.)*
+- Inflation **re-accelerated**: PCE headline **4.1% YoY** (+0.4% MoM), core **3.4%** (May 2026) — highest since 2023, driven by energy passthrough from Hormuz disruption. *(BLS/BEA, 2026-06-25.)*
+- Fed **hawkish hold at 3.50–3.75%** (June 17, 12-0 vote). June dot plot median YE-2026 **3.8%** (from 3.4% in March); 9/18 members lean toward at least one hike; Goldman now projects first cut **June 2027**. No cuts priced 2026. *(Fed, 2026-06-17; Goldman Sachs.)*
+- Rates: 10Y **4.38%**, 2Y **4.07%** (+31 bps positive slope — curve steepened out of inversion); 30Y **4.87%**. *(FMP treasury data, 2026-06-26.)*
+- VIX **18.43** (year-high 35.3 on Iran/Hormuz spike Feb-Mar); Iran ceasefire announced ~Jun 14, talks described as "fledgling/stuttering" as of Jun 29 — tail not fully extinguished. *(FMP live; CNBC.)*
+- Credit **historically tight**: HY OAS **~263–278 bps** (5Y avg ~490 bps — near multi-decade tights despite hawkish Fed); IG OAS **~77–80 bps** (bottom decile post-GFC). AI infrastructure bond demand suppressing spread widening. *(ICE BofA FRED/TradingEconomics.)*
+- Positioning: CNN F&G **25 (Fear)** — dropped from 54 (Neutral) on June 5; AAII net bearish (−2.8pp); BofA FMS (May): cash 4.2%, equities 50% net OW. Sentiment has partially unwound — better catalyst re-rating base than June 5.
+
+**B. Forward 2026/2027 (earnings-only bull, no multiple expansion; hawkish path = rate-cut thesis dead)**
+- Consensus YE-2026 targets: **7,100–8,100** (GS/MS/DB 8,000; JPM 7,800; Wells 7,950; Citi 7,700; BofA 7,100) — midpoint ~**7,800** (~6% from here). No strategist is pricing in multiple expansion; the thesis is entirely EPS growth (+24% to ~$340 in 2026). *(Bank outlooks, May–Jun 2026.)*
+- Recession risk dramatically reduced: GS **15%** (from 45% May peak post-ceasefire), JPM **35%**, RSM 30%. Spread between GS/JPM signals wide uncertainty band. *(GS June 22, JPM, RSM June 2026.)*
+- Biggest H2 2026 tail risk: **Fed hike (9 dots) + China tariff suspension expiry November + SCOTUS IEEPA ruling** — triple convergence of policy-binary risk in Q4. EU-US "Turnberry" deal signed (trans-Atlantic tariff resolved); that front is cleared.
+- AI capex continues ($725B 2026, +77% YoY; ~$1T+ 2027 projected). Power & utilities M&A +418% as a direct consequence. AI premium on Mag-7 deflating (-4.6% YTD) while the underlying capex wave intact.
+
+**C. M&A & deal environment (fertility 4/5 — structural open window; new DOJ opacity layer)**
+- 2025 confirmed **$4.8–4.9T global M&A** (+40–41% YoY, 2nd-highest ever). Q1 2026: **$861B** (record Q1; strongest since 2021). US deal value through May 2026: **~$1.2T** (+100% YoY). K-shaped: megadeals ($5B+) = **48% of value** (vs 26% in 2024). *(Bain, S&P Global, EY-Parthenon.)*
+- **Antitrust: lowest deal-block risk in 10 years** — Ferguson FTC accepts behavioral remedies, 9 divestiture packages approved YTD 2026 alone, deal timeline fell to 10.8 months Q1. **KEY CHANGE: Gail Slater ousted from DOJ** (Feb 2026, after opposing HPE/Juniper settlement). DOJ enforcement now politically-driven, not process-based — idiosyncratic opacity risk on Big Tech/semiconductor/national-security deals. Standard horizontal mergers still the fastest in a decade. *(Fox Business, The Hill, Dechert DAMITT Q1 2026.)*
+- Financing available and plentiful: IG spreads ~80 bps, HY ~278 bps near historic tights; CLO issuance $101B Q1 2026; private credit SOFR+450-700bps (certainty premium). LBO volumes +30%+ YoY Q1 2026. *(Northleaf, PineBridge Q1 2026.)*
+- **PE dry powder $3.7T (record); 30,000+ portfolio companies awaiting exit** — LP distribution pressure is structural. IPO: 22 traditional IPOs raised $9.4B Q1 (strongest Q1 in 5 years); SPAC surge (62 SPACs Q1, $11.8B raised). *(Preqin, FTI Consulting Q1 2026.)*
+- Power & Utilities +418% M&A (AI data center power demand); Life Sciences +183%; Media +128% (streaming consolidation).
+
+**D. Special-situations lane ranking (fattest → thinnest edge)**
+
+| Rank | Lane | State | Edge |
+|---|---|---|---|
+| 1 | **Forced-sellers / carve-outs** | Russell recon **effective TODAY** (Jun 29) — first semi-annual cycle; HONA forced-sell window live; FDXF (Jun 1) window still open; 9 FTC/DOJ divestiture packages YTD; CFIUS-ordered EMCORE fab sale; PE $3.7T dry powder exit pressure | **Fattest** — mechanical + motivated + regulatory supply converging; twice-yearly calendar now locked in |
+| 2 | **Spinoffs** | 8 completed H1 2026 (HONA today; FDXF Jun 1; VSNT Jan; FDXF; APD/Aptiv; AnaptysBio; Hexagon; FedEx Freight); H2 pipeline large (KBR Mission Technology mid-late 2026; S&P Global Mobility Jul 1; L3Harris; Resideo ADI Global; Modine/Gentherm) | **Fat** — stub-pricing dislocation window well-documented; Form-10 reading edge; activism-driven separation pipeline building |
+| 3 | **Distressed / restructuring** | HY default rate 3.2–3.75%; **leveraged loans 7.5% default rate (2× historical avg)**; +14% YoY Q1 2026 bankruptcies; Saks Global emerged Jun 26; loan-to-own reviving (Pluralsight template); PE SaaS LBO stress list growing ($1T+ maturity wall 2028) | **Fat but complex** — supply rising; requires fulcrum/post-reorg expression, never a rates-rescue bet |
+| 4 | **Activism** | 62 campaigns Q1 2026 (post-record-2025 pace); Elliott/Honeywell thesis delivered today (HONA); Starboard/BILL; Trian/Solventum; 92% settled without proxy fight; fast settlements (average ~16 days) | **Feeder, not terminal** — upstream source of spinoff/sale theses; play the resulting event, not the campaign |
+| 5 | **Merger-arb** | K-shaped market; clean cash deals 5–8% annualized (spread compression from arb capital inflows); complex/political deals 12–20%+ but DOJ opacity adds unmodellable risk; HFRI +8.2% through Q3 2025 | **Thin on clean deals; moderate-with-opacity on complex** — size with wider break assumptions post-Slater for tech/semi |
+| 6 | **Hard-binary / biotech PDUFA** | 53 H2 2026 decisions; DOGE FDA staffing cuts (3,500+ let go, only 350/2,200 replacements hired); approval pace slowing (11 approvals through Apr, run-rate ~33 vs 46 full-year 2025); Replimune RP1 Aug 2 (3rd BLA resubmission, AdCom late July) is key live binary | **Thinnest** — confirmed again; DOGE adds new tail risk (more CRLs, reversed positions, institutional knowledge loss) WITHOUT repricing implied options moves; the edge gap vs other lanes widened |
+
+---
 
 ### 2026-06-05 — baseline (v1) · *live-verified; analyst training cutoff was ~Jan-2026, so the items below were confirmed against June-2026 sources, not priors*
 
@@ -104,13 +145,13 @@ Run **four parallel research agents** (`general-purpose`), each told: *today's d
 
 Hold the tilt *conditionally*. Each monthly run checks these; a breach is a methodology event, not a footnote.
 
-| Tripwire | Observable | If breached → |
-|---|---|---|
-| **Regulatory window closes** | FTC/DOJ leadership change (Assefi is *acting*); HSR friction revives; **midterms flip the House (Nov-2026)** → antitrust hearings | M&A/forced-seller lane fertility drops; lengthen expected deal timelines, widen merger-arb break assumptions, shift weight toward spins/distressed (less politically exposed) |
-| **Oil/Hormuz re-escalation** | WTI breaks higher, VIX re-spikes toward 26 (the Apr precedent: 0→26 in days) | Forced-seller/dislocation window *opens* — deploy dry powder into catalyst names orthogonal to oil; but de-risk anything mid-event in oil-sensitive sectors |
-| **AI-capex break** | A hyperscaler capex guide-down or monetization scare (it is ~40% of 2026 EPS growth) | Broad de-grossing risk → tighten book independence (§1.7); the dominant shared factor would dominate everything |
-| **Credit cracks** | HY OAS widening off ~285bp; the $1.2T maturity wall starts defaulting hard | Distressed lane gets *fatter* but riskier — raise the bar on balance-sheet quality for non-distressed theses; favor fulcrum/post-reorg expressions |
-| **PDUFA lane dislocates** | Evidence binary events stop being efficiently priced (a vol/dispersion regime shift in biotech) | Re-examine the §1.4 deprioritization of hard-binary — currently the firmest "thin edge" prior |
+| Tripwire | Observable | Status (2026-06-29) | If breached → |
+|---|---|---|---|
+| **Regulatory window closes** | FTC/DOJ leadership change; HSR friction revives; **midterms flip the House (Nov-2026)** | ⚠️ **PARTIAL** — Gail Slater ousted; DOJ enforcement now politically-driven for tech/semi/national-security deals. Standard horizontal M&A still fast. Not a full closure but opacity is new. | Widen merger-arb break assumptions on tech/semi deals; shift incremental weight toward spins/distressed (less politically exposed). Do NOT alter the forced-seller/spinoff tilts — those are regulatory-remedy driven and actually benefit from this administration. |
+| **Oil/Hormuz re-escalation** | WTI breaks higher; VIX re-spikes toward 30 | ✅ **NOT BREACHED** — Iran ceasefire Jun 14; Doha peace talks "fledgling/stuttering" Jun 29; oil ~$75–82; VIX 18.43. Tail alive but not triggered. | Forced-seller/dislocation window *opens* — deploy into catalyst names orthogonal to oil; de-risk oil-sensitive sectors mid-event |
+| **AI-capex break** | Hyperscaler capex guide-down or monetization scare | ✅ **NOT BREACHED** — $725B capex 2026 intact; Mag-7 -4.6% YTD is a *valuation re-rate*, not a capex break. Monitor Q2 earnings (July) for guidance. | Broad de-grossing risk → tighten book independence (§1.7); the dominant shared factor would dominate everything |
+| **Credit cracks** | HY OAS widening materially off ~285bp; leveraged loan defaults accelerate | ⚠️ **BIFURCATED** — HY bonds ~263–278 bps (tight/not breached); leveraged loans **7.5% default rate** (2× historical avg; breach territory for loans). Two-speed credit market. | Distressed lane gets fatter but riskier — raise balance-sheet bar for non-distressed theses; favor fulcrum/post-reorg expressions; leveraged loan defaults are the leading indicator to watch |
+| **PDUFA lane dislocates** | Binary events stop being efficiently priced; vol/dispersion regime shift in biotech | ⚠️ **PARTIAL** — DOGE FDA staffing cuts (3,500+ departed, only 350 replaced) are adding unpriced tail risk to CRL outcomes (Replimune precedent: FDA reversed internally-validated positions). Implied moves have NOT repriced; tail risk elevated without compensation. | The efficiency dislocation is *negative* not positive — more unpredictable CRLs make even priced-to-approve situations riskier. Maintain thinnest-lane classification; if options repricing follows (IV persistently elevated) re-examine. |
 
 ---
 
@@ -120,9 +161,13 @@ Hold the tilt *conditionally*. Each monthly run checks these; a breach is a meth
 
 | Run date | Regime one-liner | Tilt (#2) | Tripwires breached | Notable new catalysts/hooks |
 |---|---|---|---|---|
+| 2026-06-29 | Iran de-escalating but unresolved; Fed turned hawkish (no 2026 cuts, hike risk); Mag-7 rotation; forced-sellers #1 (Russell recon today) | Structural-special-sits (**confirmed**; forced-sellers #1, spinoffs #2, distressed #3) | ⚠️ Slater/DOJ opacity (partial); ⚠️ leveraged loan defaults 7.5% (partial); ⚠️ PDUFA tail elevated (partial) | HONA trading today (forced-sell window live); FDXF window open; KBR SpinCo CEO named; DOJ political opacity on tech/semi; Nov dual hard-date (tariff+IEEPA); loan-to-own wave beginning |
 | 2026-06-05 (baseline) | Complacent melt-up over a live oil/inflation tail; open M&A window, possibly narrowing post-midterms | Structural-special-sits (**confirmed**) | none | Russell semi-annual recon; mega-IPO index inclusion; maturity-wall→distressed engine; midterm overlay |
 
 ---
+
+## Sources (2026-06-29 run)
+Macro/sentiment: FMP live S&P/VIX/Treasuries (2026-06-29); BLS PCE May 2026 (BEA, Jun-25); BLS CPI May 2026; Fed FOMC statement + SEP dot plot (Jun-17); Goldman Sachs rate outlook (Jun-22); Atlanta Fed GDPNow (Jun-25); GuruFocus CAPE/P-E (Jun-29); ICE BofA HY/IG OAS via TradingEconomics/FRED; CNN Fear & Greed; AAII Sentiment Survey; BofA Global Fund Manager Survey (May); MarketWatch Mag-7 (Jun-29). Forward: Goldman Sachs S&P targets (May-27); JPMorgan (Jun); Wells Fargo (Jun-15); Morgan Stanley, Citi, BofA, Deutsche Bank 2026 outlooks; Fed June 2026 SEP; IMF WEO April 2026; Goldman recession probability (Jun-22); Polymarket; EU-US Turnberry deal; USTR Section 301 tariffs (Jun-2). M&A: Bain 2026 M&A Report; S&P Global Market Intelligence Q1 2026; EY M&A Activity Insights May 2026; BCG M&A Outlook 2026; Morgan Stanley/PwC M&A Outlook; Dechert DAMITT Q1 2026; Fox Business / The Hill (Slater ouster); Hogan Lovells / Davis Polk / A&O Shearman (antitrust remedies); Northleaf / PineBridge / Lord Abbett (private credit); FTI Consulting Q1 2026 IPO/SPAC; Preqin / PwC PE Outlook. Special-sits: Barclays Q1 2026 Shareholder Activism Review; Harvard Law 2025 Activism Retrospective; StockAnalysis / InsideArbitrage / StockSpinoffs (spinoffs); Moody's / S&P Global / US Courts / Octus / Deloitte (distressed); LSEG Russell Reconstitution Jun 2026; TrendSpider / StockTitan (S&P index changes); Arnold & Porter / McDermott / Davis Polk (forced divestitures); AllianceBernstein / ArbLens / InsideArbitrage (merger-arb); Assyro / BiopharmaWatch / BioPharma Dive / StockTitan (PDUFA); BioSpace / STAT News / FedScoop (FDA DOGE staffing).
 
 ## Sources (baseline 2026-06-05)
 Macro/sentiment: FMP live indices/VIX/Treasuries (2026-06-05); BLS CPI (May-12) & jobs (Jun-5); CME FedWatch; BofA Global Fund Manager Survey (May); AAII; CNN Fear & Greed. Forward: Goldman/JPM/Morgan Stanley/BofA/Stifel 2026 outlooks (Dec-25→H1-26); CBO/OMB deficit; Holland & Knight / PIIE / CFR (SCOTUS-IEEPA tariffs); Eurasia Group / CFR (geopolitics); Polymarket/270toWin (midterms). M&A: Bain & Co (Dec-2025), LSEG, EY-Parthenon (Jun-2026), S&P Global, PitchBook; Capitol Forum / Hogan Lovells / MWE (antitrust); Bloomberg/MLex (Prosus/Delivery Hero). Special-sits: Barclays/Cleary/Sidley (activism); Skadden / InsideArbitrage (spinoffs); Moody's/S&P/Fitch/US Courts/Epiq/ABI (distressed); NatLawReview/Wilson Sonsini/LSEG (forced sellers); AllianceBernstein/HFRI (merger-arb); BiopharmaWatch/CatalystAlert (biotech).
