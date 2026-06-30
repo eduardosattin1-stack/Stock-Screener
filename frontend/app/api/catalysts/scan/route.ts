@@ -36,7 +36,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: `Backend returned ${res.status}` }, { status: res.status });
     }
 
-    const data = await res.json();
+    // The Python backend can emit non-finite floats (e.g. dividend_coverage = inf for a no-dividend
+    // name like a biotech), which Python serializes as the bare tokens Infinity / -Infinity / NaN —
+    // INVALID JSON that res.json() rejects, blanking the depth view with "Scan Failed". Parse the
+    // text and, only on failure, neutralize those tokens in value position (after : [ or ,) to null.
+    const bodyText = await res.text();
+    let data: any;
+    try {
+      data = JSON.parse(bodyText);
+    } catch {
+      data = JSON.parse(
+        bodyText
+          .replace(/([:[,]\s*)-?Infinity\b/g, "$1null")
+          .replace(/([:[,]\s*)NaN\b/g, "$1null")
+      );
+    }
     return NextResponse.json(data);
   } catch (err: any) {
     return NextResponse.json(
