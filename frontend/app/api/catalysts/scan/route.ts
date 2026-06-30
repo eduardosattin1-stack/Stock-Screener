@@ -20,15 +20,22 @@ export async function GET(req: NextRequest) {
     // audit). NONE-tier names stay reachable here so the detail page can show WHY they dropped.
     // ?raw=1 serves the pre-enrichment 3-source board (used only by the export builder).
     const raw = searchParams.get("raw");
-    const hit = raw
-      ? (CATALYST_BOARD[symbol] || CATALYST_BOARD_WIDEN[symbol] || CATALYST_BOARD_SWEEP[symbol])
-      : (CATALYST_BOARD_ENRICHED[symbol] || CATALYST_BOARD[symbol] || CATALYST_BOARD_WIDEN[symbol] || CATALYST_BOARD_SWEEP[symbol]);
+    const refresh = searchParams.get("refresh") || "";
+    // RE-SCAN (refresh) forces a fresh, FULL live deep-scan from the backend, bypassing the cached
+    // board dossier. Board names are served from the compact 3-tier sweep dossier (Bloom timeline +
+    // density + evidence), which omits the heavy single-name sections (convergence/event tracks,
+    // credit-health audit, activist footprint, SoP). RE-SCAN lets any board name get that rich
+    // Loeb/Bloom scan on demand; the default click stays cached for speed.
+    const hit = refresh
+      ? null
+      : raw
+        ? (CATALYST_BOARD[symbol] || CATALYST_BOARD_WIDEN[symbol] || CATALYST_BOARD_SWEEP[symbol])
+        : (CATALYST_BOARD_ENRICHED[symbol] || CATALYST_BOARD[symbol] || CATALYST_BOARD_WIDEN[symbol] || CATALYST_BOARD_SWEEP[symbol]);
     if (hit) {
       return NextResponse.json(hit);
     }
 
-    // Unknown symbols still proxy the backend.
-    const refresh = searchParams.get("refresh") || "";
+    // Off-board names (and any RE-SCAN) proxy the backend for a live deep-scan.
     const backendUrl = `${CLOUD_RUN}/catalysts/scan?symbol=${encodeURIComponent(symbol)}${refresh ? `&refresh=${encodeURIComponent(refresh)}` : ""}`;
     const res = await fetch(backendUrl, { cache: "no-store" });
 
