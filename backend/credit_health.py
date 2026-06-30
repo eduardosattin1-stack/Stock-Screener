@@ -254,7 +254,10 @@ def compute_credit_health(symbol: str) -> dict:
         'net_debt_ebitda': round(net_debt_ebitda, 2),
         'interest_coverage': round(interest_coverage, 2) if interest_coverage != 999.0 else 999.0,
         'fcf_to_total_debt': round(fcf_to_total_debt, 3) if fcf_to_total_debt != 999.0 else 999.0,
-        'dividend_coverage': round(dividend_coverage, 2) if dividend_coverage != float('inf') else float('inf'),
+        # 999.0 = "no dividend / coverage effectively infinite" — same sentinel as the siblings above.
+        # NEVER emit float('inf'): json.dumps serializes it as the bare token `Infinity`, which is
+        # invalid JSON and makes the frontend's res.json() throw (blanks the catalyst depth view).
+        'dividend_coverage': round(dividend_coverage, 2) if dividend_coverage != float('inf') else 999.0,
         'tangible_book_trend': tangible_book_trend,
         'interest_burden_trend': interest_burden_trend,
         'distress_flags': list(set(distress_flags))
