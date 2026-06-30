@@ -1261,7 +1261,7 @@ export default function CatalystWatch() {
                 <div style={{ background: T.card, border: "1px dashed rgba(59,130,246,0.35)", borderRadius: 8, padding: "13px 18px", marginBottom: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
                     <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: T.blue }}>⬡ WATCHLIST — ON-DECK</span>
-                    <span style={{ fontSize: 9, color: T.muted }}>{B13.watchlist.length} names the Director cleared but couldn't seat — blocked only by a full driver/cluster cap; first to enter when a held seat resolves and frees its cap.</span>
+                    <span style={{ fontSize: 9, color: T.muted }}>{B13.watchlist.length} on-deck names, carried to resolution. Cleared by the CRO but not seated (a driver/cluster cap is full); first to enter when a held seat resolves. A name leaves only when its catalyst resolves or it graduates into the basket — a re-debate never silently drops it; one the Director cools on is flagged <span style={{ color: "#d97706" }}>↓ deprio</span> (with his reason), not erased.</span>
                   </div>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5, fontFamily: T.mono }}>
@@ -1276,12 +1276,13 @@ export default function CatalystWatch() {
                           <th style={{ padding: "3px 8px" }}>Entry</th>
                           <th style={{ padding: "3px 8px" }}>Review trigger</th>
                           <th style={{ padding: "3px 8px" }}>CRO</th>
+                          <th style={{ padding: "3px 8px" }}>Status</th>
                           <th style={{ padding: "3px 0" }}>Live</th>
                         </tr>
                       </thead>
                       <tbody>
                         {B13.watchlist.map((w: any) => (
-                          <tr key={w.symbol} style={{ borderTop: `1px solid ${T.border}` }}>
+                          <tr key={w.symbol} style={{ borderTop: `1px solid ${T.border}`, opacity: w.de_prioritized ? 0.6 : 1 }}>
                             <td style={{ padding: "5px 8px 5px 0" }}>
                               <span onClick={() => { setSelectedSymbol(w.symbol); setView("detail"); }} style={{ color: T.blue, fontWeight: 800, cursor: "pointer" }}>{w.symbol}</span>
                             </td>
@@ -1296,6 +1297,11 @@ export default function CatalystWatch() {
                               {(w.cro_conditions || []).length > 0
                                 ? <span title={w.cro_conditions.join("\n• ").replace(/^/, "• ")} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⚠ {w.cro_conditions.length} cond</span>
                                 : <span style={{ fontSize: 8.5, color: T.muted }}>clean</span>}
+                            </td>
+                            <td style={{ padding: "5px 8px" }}>
+                              {w.de_prioritized
+                                ? <span title={`Director de-prioritized: ${w.deprioritization_rationale || w.stance_change_rationale || "no reason given"}`} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>↓ deprio</span>
+                                : <span style={{ fontSize: 8.5, color: T.green }}>active</span>}
                             </td>
                             <td style={{ padding: "5px 0" }}>
                               {(() => {
