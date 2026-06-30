@@ -64,6 +64,19 @@ held_summary = {
     "invested_pct": round(sum(e.get("weight_pct") or 0 for e in held), 1),
 }
 
+# PRIOR on-deck watchlist — the Director is ACCOUNTABLE to the names he nominated last run. The
+# watchlist is a PERSISTENT book (_basket13_inject.build_watchlist): carried names are tracked to
+# resolution, so the Director must reconcile his new nominations against them and JUSTIFY any stance
+# change (de-prioritize / re-champion) — mirroring the Speculair _decision_history.json discipline.
+# Compact fields only (symbol/stance/date/blocked_by), to bound token cost as the carried set grows.
+prior_wl = []
+if os.path.exists(TRK):
+    for w in json.load(open(TRK, encoding="utf-8")).get("watchlist", []):
+        prior_wl.append({"symbol": w["symbol"], "de_prioritized": bool(w.get("de_prioritized")),
+                         "entry_date": w.get("entry_date"), "expected_pct": w.get("expected_pct"),
+                         "prior_blocked_by": w.get("blocked_by")})
+watchlist_ctx = {"n_on_deck": len(prior_wl), "names": prior_wl}
+
 JS = r'''export const meta = {
   name: 'basket13-catalyst-debate',
   description: 'Basket 13 catalyst sleeve — Catalyst-CRO trade attack (4 surfaces) then Director selection+sizing under hard caps',
@@ -72,6 +85,7 @@ JS = r'''export const meta = {
 const NAMES = __NAMES__
 const MODEL = '__MODEL__'
 const HELD = __HELD__
+const WATCHLIST = __WATCHLIST__
 
 const CRO_SCHEMA = { type:'object', properties:{ verdicts:{ type:'array', items:{ type:'object', properties:{
   symbol:{type:'string'},
@@ -94,10 +108,11 @@ const DIRECTOR_SCHEMA = { type:'object', properties:{
     super_cluster:{type:'string'},
     expected_rr:{type:['number','null']}, expected_ev:{type:['number','null']},
     invalidation:{type:'string'},
-    review_trigger:{type:'string'}
+    review_trigger:{type:'string'},
+    stance_change_rationale:{type:['string','null']}
   }, required:['symbol','weight_pct','expression','resolution_driver'] } },
   passed:{ type:'array', items:{ type:'object', properties:{ symbol:{type:'string'}, passed_because:{type:'string'} }, required:['symbol','passed_because'] } },
-  watchlist:{ type:'array', items:{ type:'object', properties:{ symbol:{type:'string'}, blocked_by:{type:'string'}, would_enter_if:{type:'string'}, intended_weight_pct:{type:['number','null']}, note:{type:'string'} }, required:['symbol','blocked_by'] } },
+  watchlist:{ type:'array', items:{ type:'object', properties:{ symbol:{type:'string'}, blocked_by:{type:'string'}, would_enter_if:{type:'string'}, intended_weight_pct:{type:['number','null']}, note:{type:'string'}, stance_change_rationale:{type:['string','null']} }, required:['symbol','blocked_by'] } },
   memo:{type:'string'}
 }, required:['picks','passed'] }
 
@@ -117,6 +132,8 @@ NAMES (${batch.length}): ${JSON.stringify(batch)}` }
 function directorPrompt(survivors){ return `Today is __TODAY__. You are the CATALYST DIRECTOR for "Basket 13", a tracked PAPER basket (a calibration sleeve — NO live orders; expression + size are RECORDED, not executed). You receive the Catalyst-CRO survivors (TRADE / TRADE_WITH_CONDITIONS), each with its native board fields + the CRO's live checks. Build the basket under HARD rules — constraints, not preferences:
 ${HELD.n_seats ? `
 LOCKED HELD BOOK (${HELD.n_seats} seats, ${HELD.invested_pct}% invested — these run to resolution; do NOT re-select them, and they CONSUME cap headroom): ${JSON.stringify(HELD.names)}. ALREADY USED toward the COMBINED caps: per-driver ${JSON.stringify(HELD.by_driver)} (cap 2 each), per-cluster weight-points ${JSON.stringify(HELD.by_cluster)} (cap 40 each), bio_convergence lane (cap 5 names), seats ${HELD.n_seats}/20. You are ADDING NEW seats from the survivors below into the REMAINING headroom ONLY. If nothing fits at acceptable edge, return picks:[] — NEVER force a seat or breach a combined cap.
+` : ``}${WATCHLIST.n_on_deck ? `
+PRIOR ON-DECK WATCHLIST (${WATCHLIST.n_on_deck} names you nominated in a previous run — CARRIED FORWARD by default and tracked to resolution): ${JSON.stringify(WATCHLIST.names)}. You are ACCOUNTABLE to these prior calls. A carried name leaves the on-deck book ONLY when its catalyst resolves or it graduates into the held book — you may NOT silently drop it. For each carried name you must do exactly ONE of: (a) RE-NOMINATE it in watchlist[] (keeps it active; if it was de_prioritized, set a stance_change_rationale explaining what changed); (b) DE-PRIORITIZE it — still list it in watchlist[] but with a stance_change_rationale stating why you cooled on it (it stays tracked, flagged); or (c) DEMOTE it on merit to passed[] with a concrete passed_because. If you championed a name last run and now want it gone, you owe a one-sentence reason — that asymmetry (added then dismissed) is exactly what the rationale captures.
 ` : ``}
 SELECTION: free choice among survivors; when two names are comparable, PREFER DRIVER DIVERSITY over raw score.
 CAPS (hard, COMBINED with the locked held book above — a basket that breaks one is rejected by the downstream validator):
@@ -133,7 +150,7 @@ EXPRESSION:
   - 6-12 months / structural / staging -> equity (or leaps if liquid).
   - binaries -> debit_spread (or defined_risk_option); never naked.
   - STAGING names (staging=true): equity ONLY, weight <= HALF a normal weight (~ (100/N)/2) — no options on an undated catalyst (theta with no timeline).
-OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver / a super-cluster / the 12-seat count), would_enter_if (what frees a seat, e.g. "an FDA_clinical_readout seat opens when CELC or AMLX resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap the watchlist at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
+OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver / a super-cluster / the 12-seat count), would_enter_if (what frees a seat, e.g. "an FDA_clinical_readout seat opens when CELC or AMLX resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap FRESH watchlist nominations at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. ACCOUNTABILITY: for ANY name whose stance CHANGES vs the PRIOR ON-DECK WATCHLIST above — newly added, de-prioritized, or re-championed after being de-prioritized — emit a one-sentence stance_change_rationale (unchanged names leave it null); to remove a carried name on merit, route it to passed[] with a passed_because (never just omit it — a resolved catalyst or graduation is the only silent exit). Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
 
 SURVIVORS (${survivors.length}): ${JSON.stringify(survivors)}` }
 
@@ -165,8 +182,10 @@ if(survivors.length){
 return { generated_for: NAMES.length, cro, survivors: survivors.map(s=>s.symbol), director }
 '''
 
+assert JS.count("__WATCHLIST__") == 1, "expected exactly one __WATCHLIST__ token in the template"
 js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
         .replace("__HELD__", json.dumps(held_summary, ensure_ascii=False))
+        .replace("__WATCHLIST__", json.dumps(watchlist_ctx, ensure_ascii=False))
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
 open(OUT, "w", encoding="utf-8").write(js)

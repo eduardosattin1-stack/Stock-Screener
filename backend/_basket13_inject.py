@@ -30,7 +30,14 @@ Modes:
   python _basket13_inject.py <workflow_output.json> [--force] [--entry-date YYYY-MM-DD]
                              [--restamp] [--exclude SYM=reason ...]
   python _basket13_inject.py resolve SYMBOL --type FIRED_WIN --price 12.3 [--date YYYY-MM-DD] [--notes "..."]
+  python _basket13_inject.py wl-resolve SYMBOL --type EXPIRED [--date YYYY-MM-DD] [--notes "..."]   # on-deck-only name
   python _basket13_inject.py report
+
+The on-deck WATCHLIST is a PERSISTENT book: a re-debate carries un-resolved names forward, ADDS the
+Director's fresh nominations, and FLAGS (never erases) names he no longer backs as de_prioritized.
+A name leaves the watchlist ONLY on catalyst resolution (its most-recent entry carries a resolution,
+or `wl-resolve` for a never-seated name) or graduation into the held basket. Every stance change is
+logged to watchlist_history with a rationale (the Director's, or a CAP_TRIMMED/no-rationale tag).
 
 PAPER basket only — no orders are ever placed; expression/size are recorded for calibration.
 """
@@ -156,6 +163,160 @@ def cap_watchlist(wl, bysym):
         if len(out) >= MAX_WATCHLIST:
             break
     return out
+
+
+# display fields cached on watchlist_state so a CARRIED name still renders fully even when it
+# falls off the freshly re-swept board (a bysym miss — e.g. CLVT/PVLA dropped in a re-sweep).
+_WL_DISPLAY_KEYS = ("lane_canon", "resolution_driver", "super_cluster", "valuation_method",
+                    "ev_pct", "computed_rr", "dated_milestone")
+
+
+def build_watchlist(t, director, passed, bysym, cro_by, stamp_date):
+    """PERSISTENT on-deck watchlist (the bug fix — see git d71f00a3..fa6648f7 for the regression).
+
+    A re-debate CARRIES every un-resolved on-deck name forward, ADDS the Director's fresh
+    nominations, and FLAGS (never erases) a carried name the Director no longer backs as
+    de_prioritized — it stays tracked. A name leaves the watchlist ONLY when:
+      (a) its catalyst RESOLVES — its MOST-RECENT entry in t['entries'] carries a resolution
+          (read off the most-recent entry, NOT 'any entry ever': a name seated+resolved long ago
+          can re-surface as a fresh on-deck nomination and must NOT be pruned by the stale stamp), or
+      (b) it GRADUATES into the held basket (becomes a live held seat this run or earlier).
+    Every stance change is logged to t['watchlist_history'] (the on-deck continuity ledger,
+    mirroring _decision_history.json) with a rationale: the Director's own when he changes stance,
+    or a deterministic code-authored tag (CAP_TRIMMED / DEPRIORITIZED_NO_RATIONALE) otherwise.
+
+    CAP INTENT (load-bearing): carried/de-prioritized/cap-trimmed names are UNCAPPED until
+    resolution — only FRESH Director nominations pass through cap_watchlist(). (new|carry|trim) is
+    NEVER re-fed through the cap, or carry-forward would silently drop the very names we promised
+    to track. A fresh nomination CAN be CAP_TRIMMED (de-prioritized, logged) while older carried
+    names stay — visible in the ledger, acceptable under 'never silently drop'."""
+    old_state = dict(t.get("watchlist_state", {}))
+    old_syms = set(old_state)
+    was_deprio = {s: bool(old_state[s].get("de_prioritized")) for s in old_state}   # PRIOR-STATE snapshot
+
+    # most-recent entry per symbol -> resolved / held / pending (append order => last wins)
+    last = {}
+    for e in t.get("entries", []):
+        last[e["symbol"]] = e
+    resolved_syms = {s for s, e in last.items() if e.get("resolution")}
+    held_syms     = {s for s, e in last.items() if not e.get("resolution") and e.get("status") != "PENDING_LIMIT"}
+    pending_syms  = {s for s, e in last.items() if not e.get("resolution") and e.get("status") == "PENDING_LIMIT"}
+    live_syms = held_syms | pending_syms          # any live position — never also an on-deck row
+
+    dir_wl = director.get("watchlist") or []
+    raw_director_wl = {w["symbol"] for w in dir_wl} - live_syms        # PRE-cap (excl. live positions)
+    new_syms = {w["symbol"] for w in cap_watchlist(dir_wl, bysym)} - live_syms   # POST-cap fresh noms
+    passed_because = {p["symbol"]: p.get("passed_because") for p in (passed or [])}
+    passed_syms = set(passed_because)
+    wl_rationale = {w["symbol"]: w.get("stance_change_rationale") for w in dir_wl}
+
+    graduated_syms = old_syms & held_syms                              # was on-deck, now a held seat
+    cap_trimmed = (raw_director_wl - new_syms) - resolved_syms - graduated_syms - pending_syms
+    carry_set   = old_syms - new_syms - resolved_syms - graduated_syms - pending_syms - cap_trimmed
+    keep_set = new_syms | carry_set | cap_trimmed                      # rendered + state-kept (UNCAPPED)
+
+    def deprio_reason(sym):
+        """(event, rationale) for a name that is NOT a fresh nomination this run."""
+        if sym in cap_trimmed:
+            return ("CAP_TRIMMED", f"trimmed by watchlist cap (Director still nominated; rank exceeded "
+                                   f"MAX_WATCHLIST={MAX_WATCHLIST}/per-driver={MAX_WATCHLIST_PER_DRIVER})")
+        if sym in passed_syms and passed_because.get(sym):
+            return ("PASSED_OFF_DECK", passed_because[sym])            # Director demoted on merit
+        if wl_rationale.get(sym):
+            return ("DEPRIORITIZED", wl_rationale[sym])                # Director kept on-deck but de-prioritized
+        prior = (old_state.get(sym) or {}).get("deprioritization_rationale")
+        if prior:
+            return ("DEPRIORITIZED", prior)                           # already-de-prioritized, unchanged reason
+        return ("DEPRIORITIZED_NO_RATIONALE",
+                "auto-carried: Director did not re-nominate this run (no explicit reason given)")
+
+    hist = t.setdefault("watchlist_history", [])
+    def log(sym, event, prior, new, rationale=None):
+        hist.append({"date": stamp_date, "symbol": sym, "event": event,
+                     "prior_status": prior, "new_status": new, "rationale": rationale})
+
+    wl_state = dict(old_state)
+    capped = cap_watchlist(dir_wl, bysym)
+    # render order: fresh Director order (capped), then carried, then cap_trimmed, then stragglers
+    order = [w["symbol"] for w in capped if w["symbol"] in new_syms]
+    order += [s for s in old_state if s in carry_set and s not in order]
+    order += [w["symbol"] for w in dir_wl if w["symbol"] in cap_trimmed and w["symbol"] not in order]
+    order += [s for s in keep_set if s not in order]
+
+    rows = []
+    for sym in order:
+        if sym not in keep_set:
+            continue
+        c = bysym.get(sym) or {}
+        first_appearance = sym not in old_state
+        if first_appearance:
+            st = {"entry_price": c.get("live_price"), "entry_date": stamp_date, "first_seen_date": stamp_date,
+                  "expected_pct": round((c.get("ev_pct") or 0) * 100, 1) if c.get("ev_pct") is not None else None,
+                  "de_prioritized": False, "deprioritization_rationale": None}
+        else:
+            st = dict(wl_state[sym])
+            st.setdefault("first_seen_date", st.get("entry_date"))     # legacy backfill into persistent state
+            st.setdefault("de_prioritized", False)
+            st.setdefault("deprioritization_rationale", None)
+        # refresh the display cache when on the board this run; carry the Director's row fields
+        if c:
+            for k in _WL_DISPLAY_KEYS:
+                st[k] = c.get(k)
+            st["cro_conditions"] = (cro_by.get(sym) or {}).get("conditions") or []
+            st["expression"] = intended_expression(c)
+        dw = next((w for w in dir_wl if w["symbol"] == sym), None)
+        if dw:
+            st["blocked_by"] = dw.get("blocked_by", st.get("blocked_by", ""))
+            st["would_enter_if"] = dw.get("would_enter_if", st.get("would_enter_if", ""))
+            st["intended_weight_pct"] = dw.get("intended_weight_pct", st.get("intended_weight_pct"))
+            st["note"] = dw.get("note", st.get("note", ""))
+
+        if sym in new_syms:                                            # fresh / re-championed -> clears de-prio
+            if first_appearance:
+                log(sym, "ADDED", None, "watchlisted", wl_rationale.get(sym))
+            elif was_deprio.get(sym):
+                log(sym, "RE_CHAMPIONED", "deprioritized", "watchlisted", wl_rationale.get(sym))
+            else:
+                log(sym, "CARRIED", "watchlisted", "watchlisted", None)
+            st["de_prioritized"] = False
+            st["deprioritization_rationale"] = None
+        else:                                                          # carried / cap-trimmed -> de-prioritized
+            event, rationale = deprio_reason(sym)
+            if not was_deprio.get(sym):                                # log only on stance CHANGE
+                log(sym, event, "watchlisted", "deprioritized", rationale)
+            st["de_prioritized"] = True
+            st["deprioritization_rationale"] = rationale
+
+        wl_state[sym] = st
+        src = c if c else st                                           # off-board carried -> stored cache
+        rows.append({
+            "symbol": sym, "blocked_by": st.get("blocked_by", ""), "would_enter_if": st.get("would_enter_if", ""),
+            "intended_weight_pct": st.get("intended_weight_pct"), "note": st.get("note", ""),
+            "score": c.get("score"), "edge_grade": c.get("edge_grade"),
+            "lane_canon": src.get("lane_canon"), "resolution_driver": src.get("resolution_driver"),
+            "super_cluster": src.get("super_cluster"), "valuation_method": src.get("valuation_method"),
+            "ev_pct": src.get("ev_pct"), "computed_rr": src.get("computed_rr"), "dated_milestone": src.get("dated_milestone"),
+            "entry_price": st.get("entry_price"), "entry_date": st.get("entry_date"),
+            "first_seen_date": st.get("first_seen_date", st.get("entry_date")), "expected_pct": st.get("expected_pct"),
+            "cro_conditions": st.get("cro_conditions") or ((cro_by.get(sym) or {}).get("conditions") or []),
+            "expression": st.get("expression") or (intended_expression(c) if c else {"type": "equity"}),
+            "expression_intended": True,
+            "de_prioritized": st.get("de_prioritized", False),
+            "deprioritization_rationale": st.get("deprioritization_rationale"),
+            "stance_change_rationale": wl_rationale.get(sym),
+        })
+
+    for sym in sorted(graduated_syms):                                 # left on-deck because it graduated
+        log(sym, "GRADUATED", ("deprioritized" if was_deprio.get(sym) else "watchlisted"), "held", None)
+    for sym in sorted((old_syms & resolved_syms) - new_syms):          # left on-deck because its catalyst fired
+        log(sym, "RESOLVED", ("deprioritized" if was_deprio.get(sym) else "watchlisted"), "resolved", None)
+
+    t["watchlist"] = rows
+    # SELECTIVE prune: keep kept names + pending state (re-surface if a limit cancels); drop only
+    # resolved + graduated. NEVER prune by 'not in current watchlist' (that was the bug).
+    t["watchlist_state"] = {s: v for s, v in wl_state.items() if s in keep_set or s in pending_syms}
+    return {"new": sorted(new_syms), "carried": sorted(carry_set), "cap_trimmed": sorted(cap_trimmed),
+            "graduated": sorted(graduated_syms), "resolved_off_deck": sorted((old_syms & resolved_syms) - new_syms)}
 
 
 # --------------------------------------------------------------- cap validation
@@ -291,6 +452,13 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
         t["entries"], t["non_selections"], t["runs"] = [], [], []
         t["marks"] = [{"date": stamp_date, "nav": 100.0, "basket_ret_pct": 0.0, "seats": {},
                        "note": "inception — entries stamped at CRO-verified live prices"}]
+        # re-founding clears the on-deck book too — but ARCHIVE its audit trail first (never silently
+        # erase the continuity ledger). watchlist_resolutions + archive persist across re-foundings.
+        if t.get("watchlist_history"):
+            t.setdefault("watchlist_history_archive", []).append(
+                {"restamp_date": stamp_date, "n_carried_dropped": len(t.get("watchlist_state", {})),
+                 "events": t["watchlist_history"]})
+        t["watchlist"], t["watchlist_state"], t["watchlist_history"] = [], {}, []
 
     added, skipped, pending = [], [], []
     for p in picks:
@@ -342,38 +510,16 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
             "score": c.get("score"), "edge_grade": c.get("edge_grade"),
             "lane_canon": c.get("lane_canon"), "resolution_driver": c.get("resolution_driver"),
         })
+    # on-deck WATCHLIST — PERSISTENT book (carry-forward; never silently drop an un-resolved name).
+    # See build_watchlist() for the full contract. wl_state persists each name's marking basis +
+    # de-prioritized flag + the display cache across re-debates; watchlist_history is the audit ledger.
+    wl_delta = build_watchlist(t, director, passed, bysym, cro_by, stamp_date)
     t["runs"].append({"run_date": stamp_date, "stamped_at": datetime.date.today().isoformat(),
                       "restamp": bool(restamp),
                       "n_picks": len(picks), "n_passed": len(passed), "n_added": len(added),
                       "n_pending": len(pending), "n_excluded_at_stamp": len(excluded),
                       "n_skipped_open": len(skipped), "cap_violations": len(viol),
-                      "retags": retags, "memo": memo})
-    # on-deck WATCHLIST (cap-blocked-but-wanted) — replaced each run, joined with native fields.
-    # Per-driver diversity cap (≤MAX_WATCHLIST_PER_DRIVER) so one abundant driver can't fill the queue.
-    # watchlist_state persists a per-name ENTRY ref (price/date/expected) across re-debates so the
-    # on-deck track record can mark each name from when it first joined the watchlist (the basket and
-    # the watchlist are tracked as two separate paper books). Entry = the board snapshot live_price.
-    wl_state = t.get("watchlist_state", {})
-    t["watchlist"] = []
-    for w in cap_watchlist(director.get("watchlist") or [], bysym):
-        sym = w["symbol"]; c = bysym.get(sym, {})
-        if sym not in wl_state:                              # stamp once, at first appearance on the watchlist
-            wl_state[sym] = {"entry_price": c.get("live_price"), "entry_date": stamp_date,
-                             "expected_pct": round((c.get("ev_pct") or 0) * 100, 1) if c.get("ev_pct") is not None else None}
-        st = wl_state[sym]
-        t["watchlist"].append({
-            "symbol": sym, "blocked_by": w.get("blocked_by", ""),
-            "would_enter_if": w.get("would_enter_if", ""), "intended_weight_pct": w.get("intended_weight_pct"),
-            "note": w.get("note", ""), "score": c.get("score"), "edge_grade": c.get("edge_grade"),
-            "lane_canon": c.get("lane_canon"), "resolution_driver": c.get("resolution_driver"),
-            "super_cluster": c.get("super_cluster"), "valuation_method": c.get("valuation_method"),
-            "ev_pct": c.get("ev_pct"), "computed_rr": c.get("computed_rr"), "dated_milestone": c.get("dated_milestone"),
-            "entry_price": st.get("entry_price"), "entry_date": st.get("entry_date"), "expected_pct": st.get("expected_pct"),
-            # full-mirror fields so the on-deck table renders like the held basket table:
-            "cro_conditions": (cro_by.get(sym) or {}).get("conditions") or [],   # they're CRO survivors
-            "expression": intended_expression(c), "expression_intended": True,   # instrument if seated
-        })
-    t["watchlist_state"] = {s: v for s, v in wl_state.items() if s in {x["symbol"] for x in t["watchlist"]}}  # prune departed
+                      "retags": retags, "watchlist_delta": wl_delta, "memo": memo})
     save_tracker(t)
     print(f"INJECTED {len(added)} held {added}"
           + (f" + {len(pending)} PENDING_LIMIT {pending}" if pending else "")
@@ -381,6 +527,11 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
           + (f"; skipped (already open): {skipped}" if skipped else ""))
     if retags:
         print(f"  re-tags logged: " + "; ".join(f"{r['symbol']} {r['from']} -> {r['to']}" for r in retags))
+    wl = wl_delta
+    print(f"  watchlist: {len(wl['new'])} fresh {wl['new']}, {len(wl['carried'])} carried-fwd {wl['carried']}"
+          + (f", {len(wl['cap_trimmed'])} cap-trimmed {wl['cap_trimmed']}" if wl['cap_trimmed'] else "")
+          + (f", {len(wl['graduated'])} graduated {wl['graduated']}" if wl['graduated'] else "")
+          + (f", {len(wl['resolved_off_deck'])} resolved-off-deck {wl['resolved_off_deck']}" if wl['resolved_off_deck'] else ""))
     print(f"  + {len(passed)} non-selections recorded; caps {'OK' if not viol else 'FORCED'}  -> {TRK}")
 
 
@@ -419,6 +570,32 @@ def resolve(symbol, rtype, price, date=None, notes=""):
     save_tracker(t)
     tail = f"  (ret={ret:+.1%} rr={rr} days={days})" if ret is not None else ""
     print(f"RESOLVED {symbol}: {rtype} @ {price}{tail}  -> {TRK}")
+
+
+# -------------------------------------------------------- resolve an ON-DECK-ONLY watchlist name
+def wl_resolve(symbol, rtype, date=None, notes=""):
+    """Retire a watchlist name that was NEVER seated (no entry in t['entries']) — its catalyst
+    fired/expired while on-deck. Seated names resolve through resolve() (the entries flow); this
+    is the only logged-close path for an on-deck-only catalyst, so the queue can't accumulate
+    dead names forever. Records t['watchlist_resolutions'][sym] + a WL_RESOLVED ledger event,
+    then drops it from watchlist_state / watchlist."""
+    t = load_tracker()
+    if open_entry(t, symbol) is not None:
+        print(f"{symbol} has a live entry — use `resolve {symbol}` (the entries flow), not wl-resolve.")
+        sys.exit(1)
+    if symbol not in (t.get("watchlist_state") or {}):
+        print(f"{symbol} is not on the watchlist.")
+        sys.exit(1)
+    rdate = date or datetime.date.today().isoformat()
+    t.setdefault("watchlist_resolutions", {})[symbol] = {"resolution_date": rdate,
+                                                          "resolution_type": rtype, "notes": notes}
+    t.setdefault("watchlist_history", []).append({"date": rdate, "symbol": symbol, "event": "WL_RESOLVED",
+                                                  "prior_status": "watchlisted", "new_status": "resolved",
+                                                  "rationale": f"{rtype}: {notes}" if notes else rtype})
+    t["watchlist_state"].pop(symbol, None)
+    t["watchlist"] = [w for w in t.get("watchlist", []) if w.get("symbol") != symbol]
+    save_tracker(t)
+    print(f"WL-RESOLVED {symbol}: {rtype} (on-deck-only)  -> {TRK}")
 
 
 # ----------------------------------------------------------------------- report
@@ -463,7 +640,33 @@ def report():
     if slip:
         print(f"\n  slippage (resolution - milestone date): mean {statistics.mean(slip):+.0f}d, "
               f"median {statistics.median(slip):+.0f}d, n={len(slip)}; SLIPPED resolutions={sl_ct}")
+    _watchlist_continuity(t)
     print("\n  -> re-fit the • edge thresholds (2.5/1.5), tilt (0.12), and lane priors from the above (quarterly).")
+
+
+def _watchlist_continuity(t):
+    """On-deck book audit: carried count, de-prioritized (with rationale), most-recent event per
+    name, and a CROSS-CHECK that every de_prioritized name has a justifying ledger event (so the
+    quarterly re-fit can't mistake an incomplete ledger for a clean carry)."""
+    wl = t.get("watchlist", []); wl_state = t.get("watchlist_state", {}); hist = t.get("watchlist_history", [])
+    if not wl and not wl_state and not hist:
+        return
+    deprio = [w for w in wl if w.get("de_prioritized")]
+    print(f"\n  WATCHLIST CONTINUITY — {len(wl)} on-deck ({len(deprio)} de-prioritized), "
+          f"{len(hist)} ledger events, {len(t.get('watchlist_resolutions', {}))} on-deck resolutions:")
+    last_evt = {}
+    for ev in hist:                                            # most-recent event per symbol
+        last_evt[ev["symbol"]] = ev
+    for w in wl:
+        ev = last_evt.get(w["symbol"], {})
+        tag = "↓deprio" if w.get("de_prioritized") else " active"
+        rat = w.get("deprioritization_rationale") or ev.get("rationale") or ""
+        print(f"    {w['symbol']:8} {tag}  last={ev.get('event','—'):24} {('· ' + rat[:70]) if rat else ''}")
+    _JUSTIFY = {"DEPRIORITIZED", "PASSED_OFF_DECK", "CAP_TRIMMED", "DEPRIORITIZED_NO_RATIONALE"}
+    uncovered = [w["symbol"] for w in deprio
+                 if not any(e["symbol"] == w["symbol"] and e["event"] in _JUSTIFY for e in hist)]
+    if uncovered:
+        print(f"    ! LEDGER GAP — de-prioritized with no justifying event: {uncovered}  (investigate before re-fit)")
 
 
 def main():
@@ -482,6 +685,14 @@ def main():
         ap.add_argument("--notes", default="")
         a = ap.parse_args(sys.argv[2:])
         resolve(a.symbol, a.rtype, a.price, a.date, a.notes)
+    elif mode == "wl-resolve":
+        ap = argparse.ArgumentParser(prog="_basket13_inject.py wl-resolve")
+        ap.add_argument("symbol")
+        ap.add_argument("--type", required=True, choices=RES_TYPES, dest="rtype")
+        ap.add_argument("--date", default=None)
+        ap.add_argument("--notes", default="")
+        a = ap.parse_args(sys.argv[2:])
+        wl_resolve(a.symbol, a.rtype, a.date, a.notes)
     else:
         ap = argparse.ArgumentParser(prog="_basket13_inject.py")
         ap.add_argument("path")

@@ -95,7 +95,10 @@ def main():
     # real allocation, so equal-weight measures "did the Director's watchlist move as expected").
     # Each name is marked from its own watchlist-entry price; departed names simply drop out.
     wl_seats, wl_ret, wl_n, wl_missing = {}, 0.0, 0, []
+    live_entry_syms = {e["symbol"] for e in unresolved}      # OPEN/PENDING held positions — marked in the held book
     for sym, st in wl_state.items():
+        if sym in live_entry_syms:                           # never double-count a name that's also a live seat
+            continue
         ep, px = st.get("entry_price"), quotes.get(sym.upper())
         if ep and px:
             r = px / ep - 1
