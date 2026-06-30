@@ -1,0 +1,19 @@
+{
+ "symbol": "MNDY",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Work OS and AI automation platform layer — sells a no-code/low-code workflow automation platform (monday.com Work OS) used to orchestrate cross-functional business processes, increasingly with AI agents (monday AI) embedded in workflow nodes.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ASANA",
+  "MSFT (Project/Power Automate)",
+  "Smartsheet (SMAR)",
+  "ServiceNow",
+  "NOTION (private)",
+  "Airtable (private)"
+ ],
+ "relative_comps": "monday.com is the fastest-growing scaled work management platform (25% YoY, 24% FCF margin, net cash of $1.5B+) competing against Asana and Smartsheet on the SMB/mid-market and ServiceNow on the enterprise workflow side. The AI agents layer (monday AI) positions it as an agentic workflow orchestration tool, giving it a credible ai_infrastructure claim as enterprises use it to deploy business-process AI agents. The $4.3B cap looks modest relative to its growth and FCF profile vs. comparables.",
+ "theme_fit_confidence": "medium"
+}

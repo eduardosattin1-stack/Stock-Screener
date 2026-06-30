@@ -1,0 +1,512 @@
+[
+ {
+  "symbol": "LIF",
+  "name": "Life360, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3808489477,
+  "price": 47,
+  "volume": 570727,
+  "gates": {
+   "ttm_fcf": 87573000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2895,
+   "rev_yoy": 0.3328,
+   "ttm_revenue": 528980000,
+   "fcf_margin": 0.1656,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.5574754127166964,
+   "adv_usd": 26824169
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "DAVE",
+  "name": "Dave Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3746727237,
+  "price": 278.71,
+  "volume": 491904,
+  "gates": {
+   "ttm_fcf": 326503000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3934,
+   "rev_yoy": 0.5852,
+   "ttm_revenue": 604617000,
+   "fcf_margin": 0.54,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.6171511454992199,
+   "adv_usd": 137098564.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "ADEA",
+  "name": "Adeia Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3367275820,
+  "price": 30.53,
+  "volume": 3767258,
+  "gates": {
+   "ttm_fcf": 155823000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0034,
+   "rev_yoy": 0.2109,
+   "ttm_revenue": 460488000,
+   "fcf_margin": 0.3384,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.0922920070411742,
+   "adv_usd": 115014387.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "PTRN",
+  "name": "Pattern Group Inc. Series A Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3166888464,
+  "price": 20.41,
+  "volume": 1227874,
+  "gates": {
+   "ttm_fcf": 99070000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3618,
+   "rev_yoy": 0.4199,
+   "ttm_revenue": 2734636000,
+   "fcf_margin": 0.0362,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -13.837870083959347,
+   "adv_usd": 25060908.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "BULL",
+  "name": "Webull Corporation Class A Ordinary Shares",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2925002542,
+  "price": 5.5,
+  "volume": 14284332,
+  "gates": {
+   "ttm_fcf": 121141513,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1371,
+   "rev_yoy": 0.4719,
+   "ttm_revenue": 613555987,
+   "fcf_margin": 0.1974,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -117.21466023621582,
+   "adv_usd": 78563826.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "FRSH",
+  "name": "Freshworks Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2592952449,
+  "price": 9.38,
+  "volume": 13019292,
+  "gates": {
+   "ttm_fcf": 254476000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1898,
+   "rev_yoy": 0.1592,
+   "ttm_revenue": 871169000,
+   "fcf_margin": 0.2921,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -8.144404672192916,
+   "adv_usd": 122120959.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "AGYS",
+  "name": "Agilysys, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2538939938,
+  "price": 90.14,
+  "volume": 302429,
+  "gates": {
+   "ttm_fcf": 68149000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1726,
+   "rev_yoy": 0.1585,
+   "ttm_revenue": 319310000,
+   "fcf_margin": 0.2134,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.665220128997124,
+   "adv_usd": 27260950.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "WST",
+  "name": "West Pharmaceutical Services, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 23642925816,
+  "price": 334.66,
+  "volume": 753767,
+  "gates": {
+   "ttm_fcf": 458000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0213,
+   "rev_yoy": 0.1122,
+   "ttm_revenue": 3220400000,
+   "fcf_margin": 0.1422,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.2568210262828536,
+   "adv_usd": 252255664.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "MMSI",
+  "name": "Merit Medical Systems, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 4027299261,
+  "price": 67.51,
+  "volume": 909345,
+  "gates": {
+   "ttm_fcf": 258000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0959,
+   "rev_yoy": 0.1121,
+   "ttm_revenue": 1542794000,
+   "fcf_margin": 0.1672,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.0260989138615058,
+   "adv_usd": 61389881.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "LMAT",
+  "name": "LeMaitre Vascular, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 2207149113,
+  "price": 96.59,
+  "volume": 423076,
+  "gates": {
+   "ttm_fcf": 79122000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1558,
+   "rev_yoy": 0.1327,
+   "ttm_revenue": 256282000,
+   "fcf_margin": 0.3087,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.8011251229567082,
+   "adv_usd": 40864911.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "DGX",
+  "name": "Quest Diagnostics Incorporated",
+  "sector": "Healthcare",
+  "industry": "Medical - Diagnostics & Research",
+  "mcap": 22640652880,
+  "price": 204.53,
+  "volume": 572007,
+  "gates": {
+   "ttm_fcf": 1326000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0374,
+   "rev_yoy": 0.1103,
+   "ttm_revenue": 11278000000,
+   "fcf_margin": 0.1176,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.326767676767677,
+   "adv_usd": 116992592.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "IDXX",
+  "name": "IDEXX Laboratories, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Diagnostics & Research",
+  "mcap": 45664579870,
+  "price": 578.89,
+  "volume": 418242,
+  "gates": {
+   "ttm_fcf": 1079719000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0852,
+   "rev_yoy": 0.1308,
+   "ttm_revenue": 4446095000,
+   "fcf_margin": 0.2428,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.5775624990544648,
+   "adv_usd": 242116111.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "MEDP",
+  "name": "Medpace Holdings, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Diagnostics & Research",
+  "mcap": 13331377228,
+  "price": 466.79,
+  "volume": 284277,
+  "gates": {
+   "ttm_fcf": 737819000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2012,
+   "rev_yoy": 0.2419,
+   "ttm_revenue": 2678268000,
+   "fcf_margin": 0.2755,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.8736277001928031,
+   "adv_usd": 132697661.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "BLLN",
+  "name": "BillionToOne, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Diagnostics & Research",
+  "mcap": 4709477300,
+  "price": 102.39,
+  "volume": 676369,
+  "gates": {
+   "ttm_fcf": 28087000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": null,
+   "rev_yoy": 0.9849,
+   "ttm_revenue": 354536999,
+   "fcf_margin": 0.0792,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -9.53203092808493,
+   "adv_usd": 69253422.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "BSX",
+  "name": "Boston Scientific Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 72771949564,
+  "price": 48.96,
+  "volume": 16229910,
+  "gates": {
+   "ttm_fcf": 3442000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1654,
+   "rev_yoy": 0.1744,
+   "ttm_revenue": 20615000000,
+   "fcf_margin": 0.167,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.9955910140667645,
+   "adv_usd": 794616394.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "EW",
+  "name": "Edwards Lifesciences Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 50405532000,
+  "price": 87.54,
+  "volume": 2727870,
+  "gates": {
+   "ttm_fcf": 1089500000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0408,
+   "rev_yoy": 0.1381,
+   "ttm_revenue": 6303500000,
+   "fcf_margin": 0.1728,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.214544441348565,
+   "adv_usd": 238797740.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "SNN",
+  "name": "Smith & Nephew plc",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 13316977077,
+  "price": 31.32,
+  "volume": 1356422,
+  "gates": {
+   "ttm_fcf": 1459991010,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0581,
+   "rev_yoy": 0.1137,
+   "ttm_revenue": 11988404470,
+   "fcf_margin": 0.1218,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.722123828639117,
+   "adv_usd": 42483137.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "PEN",
+  "name": "Penumbra, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 12627746668,
+  "price": 321.06,
+  "volume": 310244,
+  "gates": {
+   "ttm_fcf": 212731000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1833,
+   "rev_yoy": 0.1727,
+   "ttm_revenue": 1454283000,
+   "fcf_margin": 0.1463,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.11812016141928565,
+   "adv_usd": 99606939.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "GMED",
+  "name": "Globus Medical, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 11128998240,
+  "price": 82.52,
+  "volume": 1482498,
+  "gates": {
+   "ttm_fcf": 605320000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.4216,
+   "rev_yoy": 0.2349,
+   "ttm_revenue": 3100633000,
+   "fcf_margin": 0.1952,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.5028610689296489,
+   "adv_usd": 122335735.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "ISRG",
+  "name": "Intuitive Surgical, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 151089477430,
+  "price": 426.61,
+  "volume": 2169940,
+  "gates": {
+   "ttm_fcf": 2834300000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1739,
+   "rev_yoy": 0.2143,
+   "ttm_revenue": 10582100000,
+   "fcf_margin": 0.2678,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.541940461305169,
+   "adv_usd": 925718103.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ }
+]

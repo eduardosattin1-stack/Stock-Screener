@@ -1,0 +1,18 @@
+{
+ "symbol": "TSEM",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Specialty analog/RF foundry services — contract fab for power management, image sensors, RF-CMOS, and silicon photonics chips that are adjacent to AI data-center and automotive buildouts.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "GFS",
+  "UMC",
+  "IXYS-acquired",
+  "PSEC",
+  "TOWER-peers"
+ ],
+ "relative_comps": "Tower is a niche specialty foundry; it does not compete on leading-edge nodes with TSM/Samsung but carves out analog, RF and photonics process technologies. Revenue growth is modest (10% YoY, negative 3-year CAGR) — it is not a primary AI growth vehicle. Intel's attempted acquisition was blocked by Chinese regulators, leaving Tower as a standalone but well-capitalized specialty play. FCF margin of 20% is reasonable. Theme-fit confidence is medium: it participates in AI-adjacent silicon photonics but is not a chokepoint; its specialty fab position is easy to route around for most applications.",
+ "theme_fit_confidence": "medium"
+}

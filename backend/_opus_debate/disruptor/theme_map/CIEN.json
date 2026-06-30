@@ -1,0 +1,21 @@
+{
+ "symbol": "CIEN",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Optical networking platforms — sells WaveLogic coherent modems, 400G/800G DWDM line-systems and network management software for hyperscaler long-haul and metro AI traffic.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NOK",
+  "INFN",
+  "LITE",
+  "SMTC",
+  "Huawei (unlisted)",
+  "NEC (unlisted)",
+  "ADTRAN (ADTN)",
+  "VIAVI (VIAV)"
+ ],
+ "relative_comps": "CIEN's WaveLogic coherent DSP is widely regarded as the technology leader in long-haul and submarine optical; Microsoft and AWS are anchor hyperscaler customers. 31% YoY growth and 15% FCF margin are strong for a hardware+software stack; margins lag pure-software peers but the coherent modem IP is genuinely difficult to replicate. Nokia and Infinera are the primary public competitors; Huawei is the only other coherent DSP leader but faces Western supply-chain exclusion. Space hint is marginal — CIEN does some submarine/LEO ground-segment adjacency but AI infrastructure is the primary driver.",
+ "theme_fit_confidence": "high"
+}

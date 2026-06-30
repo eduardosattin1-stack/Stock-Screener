@@ -1,0 +1,19 @@
+{
+ "symbol": "PAYO",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "B2B cross-border and marketplace payment rails for SMB/freelancers — sells multi-currency accounts, cross-border payouts, and working capital tools for e-commerce sellers and freelance service providers transacting globally.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "WISE (WISE.L)",
+  "RELY",
+  "Stripe (private)",
+  "Airwallex (private)",
+  "PING (Pingpong, private)",
+  "PayPal (PYPL)"
+ ],
+ "relative_comps": "PAYO sits in a crowded cross-border B2B/marketplace payments segment with 7% YoY growth — a meaningful deceleration from 19% CAGR — suggesting market saturation and competitive pressure. FCF margin of 20% at $1.1B revenue is solid but the valuation at $2.1B (~2x revenue) reflects skepticism about the growth runway. WISE and Airwallex are better-capitalized competitors growing faster in the same corridor payments space. PAYO's moat is marketplace integration depth (Amazon, Alibaba seller payments) which provides some stickiness. The decelerating growth is the key concern for disruption confidence.",
+ "theme_fit_confidence": "medium"
+}

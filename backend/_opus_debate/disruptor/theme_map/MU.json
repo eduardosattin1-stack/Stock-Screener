@@ -1,0 +1,18 @@
+{
+ "symbol": "MU",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "HBM (High-Bandwidth Memory) and DRAM/NAND manufacturing — supplies the memory stack bonded directly onto every AI accelerator package.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "SSNLF",
+  "000660.KS",
+  "WDC",
+  "KIOXIA",
+  "NAND"
+ ],
+ "relative_comps": "MU is one of only three HBM suppliers globally (alongside Samsung and SK Hynix); SK Hynix commands the highest HBM3E market share (~50%) and ships NVDA's priority allocations. MU is catching up on HBM3E yield and is winning allocations from AMD and potentially NVDA for HBM4. Samsung has had persistent yield issues. Memory is more commoditized than logic (no CUDA-equivalent moat), making MU more cyclical than NVDA, but HBM supply remains structurally tight through 2026. MU trades at ~15x forward earnings vs SK Hynix at ~12x ADR-equivalent.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "TEAM",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Developer workflow and collaboration platform layer — sells the OS for software development teams (Jira, Confluence, Bitbucket, Rovo AI) used as the system of record for engineering work across virtually every cloud-native organization.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MSFT (Azure DevOps/GitHub)",
+  "LINEAR (private)",
+  "NOTION (private)",
+  "ASANA",
+  "ServiceNow",
+  "GitLab"
+ ],
+ "relative_comps": "Atlassian is deeply embedded in developer workflows with 25% YoY growth and 19% FCF margin; it competes most directly with Microsoft/GitHub in DevOps and Notion/Linear in the next-gen collaboration market. The Rovo AI agent layer (launched 2025) is the critical bet on becoming the AI-orchestration layer for enterprise dev teams, warranting the ai_infrastructure theme. Net cash position provides M&A flexibility; the $25B cap is compressed relative to growth vs. ServiceNow at a much larger scale.",
+ "theme_fit_confidence": "medium"
+}

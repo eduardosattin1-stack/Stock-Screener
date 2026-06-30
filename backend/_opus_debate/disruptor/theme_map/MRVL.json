@@ -1,0 +1,19 @@
+{
+ "symbol": "MRVL",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Custom AI ASIC design + high-speed networking silicon (PAM4 DSPs, PCIe retimers) — supplies hyperscaler-specific inference chips and the SerDes/DSP layer for 800G/1.6T optical data-center networks.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "AVGO",
+  "INTC",
+  "MTSI",
+  "INPHI-acquired",
+  "ANET",
+  "CIEN"
+ ],
+ "relative_comps": "Marvell's AI revenue reached ~$700M/quarter and is growing faster than AVGO's custom-ASIC segment on a percentage basis; key customers include Amazon (Trainium/Inferentia) and Google. Its cloud-optimized 5nm custom ASICs command high ASPs. The networking DSP business competes directly with AVGO/Inphi (now part of MRVL after acquisition) and MACOM. Trades at ~35x forward earnings, a premium to AVGO reflecting its higher-growth AI mix and smaller base; the risk is customer concentration (Amazon + Google = majority of AI revenue).",
+ "theme_fit_confidence": "high"
+}

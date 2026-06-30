@@ -1,0 +1,19 @@
+{
+ "symbol": "GMED",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Designs and sells spine surgery implants and the ExcelsiusGPS robotic navigation platform; earns per-procedure implant revenue with robotic capital equipment driving consumable pull-through.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "SYK",
+  "MDT",
+  "NuVasive (NUVA, merged)",
+  "Alphatec (ATEC)",
+  "ZimVie (ZIMV)",
+  "J&J Synthes (JNJ)"
+ ],
+ "relative_comps": "Globus Medical is the fastest-growing large-cap spine company, benefiting from the NuVasive merger creating the largest pure-play spine platform. ExcelsiusGPS is a proven robotic-navigation system taking share from Medtronic's Mazor and Stryker's Spine in enabling procedures. Revenue CAGR of 42% is heavily influenced by the NuVasive acquisition, but organic growth is also above peers. FCF margin of 20% on a merged entity is impressive. Against Alphatec and ZimVie, GMED commands scale and robot-enabled pull-through advantages. The robotics_automation tag is legitimate — GMED earns a recurring implant royalty on every robotic-placed procedure.",
+ "theme_fit_confidence": "high"
+}

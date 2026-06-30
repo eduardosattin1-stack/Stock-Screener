@@ -1,0 +1,18 @@
+{
+ "symbol": "PEN",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Develops and sells neurovascular and vascular intervention devices including aspiration catheters, flow diverters, and a robotic endovascular platform (Robotic Assisted Vascular Catheter); earns per-procedure consumable pull-through.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "Stryker (SYK)",
+  "Medtronic (MDT)",
+  "Cerenovus (JNJ)",
+  "MicroVention (Terumo)",
+  "Rapid Medical (private)"
+ ],
+ "relative_comps": "Penumbra's XTRACT-M aspiration system for large-vessel occlusion stroke is a genuine market-share gainer against Stryker and Medtronic. Its robotic endovascular catheter system, while early, is one of the few robotic platforms in neurovascular intervention — a segment ISRG does not address. Revenue CAGR of 18.3% and 17.3% YoY growth with 15% FCF margin at $1.45B revenue support the robotics_automation tag. Load-bearing score of 4 because installed robotic platforms create consumable pull-through with high switching costs; capital equipment placements lock in recurring catheter revenue.",
+ "theme_fit_confidence": "medium"
+}

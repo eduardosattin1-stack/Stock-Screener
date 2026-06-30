@@ -1,0 +1,18 @@
+{
+ "symbol": "MPWR",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "High-density power management ICs for AI servers — specializes in integrated voltage regulators (IVRs) and point-of-load converters that power GPU/accelerator boards in AI data centers.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TXN",
+  "ADI",
+  "INTC",
+  "VRT",
+  "RENN"
+ ],
+ "relative_comps": "MPWR is the highest-growth pure analog company in the AI data-center supply chain; its 48V to point-of-load architecture is uniquely suited to NVDA GB200 NVL racks. Revenue grew 24% YoY and the data-center segment is accelerating. TXN and ADI compete in power management but lack MPWR's focus and design wins in hyperscaler GPU racks. MPWR trades at ~65x forward earnings — a steep premium to analog peers that prices in AI server content-per-unit growth as a multi-year tailwind.",
+ "theme_fit_confidence": "high"
+}

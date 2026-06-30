@@ -1,0 +1,19 @@
+{
+ "symbol": "ALAB",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Connectivity silicon for AI clusters (CXL/PCIe smart cable modules, retimers, AEC ASICs) — the low-latency interconnect fabric linking GPUs within racks and between racks.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MRVL",
+  "AVGO",
+  "MTSI",
+  "CIEN",
+  "INPHI-acquired",
+  "NPAB"
+ ],
+ "relative_comps": "Astera Labs is a rare pure-play on AI cluster connectivity; its ARIES PCIe/CXL retimers and LEO smart-cable modules are designed into NVDA HGX H100/H200 and GB200 reference platforms. Revenue doubled YoY (+104%) and its FCF margin of 34% is exceptional for its growth stage. Marvell and AVGO sell competing DSP/retimer chips but are broader companies where connectivity is one product line among many — Astera is the focused specialist. Trades at a premium (~80-100x forward earnings) reflecting its clean AI-native positioning and hyperscaler design-win momentum.",
+ "theme_fit_confidence": "high"
+}

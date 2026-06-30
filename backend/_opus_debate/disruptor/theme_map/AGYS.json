@@ -1,0 +1,19 @@
+{
+ "symbol": "AGYS",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Hospitality-specific property management system (PMS) and point-of-sale software; sells SaaS + payments to hotels, resorts, casinos, and food-service operators.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "Oracle OPERA (ORCL)",
+  "Shiji Group (private)",
+  "TOST",
+  "Lightspeed (LSPD)",
+  "Mews (private)",
+  "Cloudbeds (private)"
+ ],
+ "relative_comps": "Agilysys occupies a genuine vertical-SaaS-plus-payments niche in hospitality — once a casino or resort is live on rGuest PMS, switching costs are high due to deep workflow integration. Its 17% 3-year CAGR and improving FCF profile support the fintech_rails tag more than pure payment processors, as it bundles software with embedded payments. Load-bearing score of 3 reflects real but bounded moat: Oracle OPERA is deeply entrenched in large-hotel enterprise, while Mews and Cloudbeds compete hard in independent hotel segments. Agilysys earns a higher confidence tag than generic SMB SaaS.",
+ "theme_fit_confidence": "medium"
+}

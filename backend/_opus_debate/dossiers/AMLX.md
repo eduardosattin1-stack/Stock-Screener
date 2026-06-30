@@ -1,44 +1,45 @@
-# AMLX — Amylyx Pharmaceuticals — Interrogator Dossier (Event-Driven Special Situation)
+# Forensic Dossier — Amylyx Pharmaceuticals, Inc. (AMLX)
 
-**Frame:** This is NOT a quality/compounding judgment. AMLX is a clinical-stage biotech with no approved product and negative earnings — cheap-and-bad on every franchise metric BY DESIGN. The thesis is the SPREAD between the live price (~$15.67, Jun 18 close; $15.88 pre-mkt Jun 22) and the event-resolved value of a HARD-DATED, data-driven binary: the pivotal Phase 3 **LUCIDITY** topline readout for **avexitide** in post-bariatric hypoglycemia (PBH), guided to **Q3 2026** (the catalyst-board hard date 2026-09-30, ~105d). The interrogation is of the EVENT, not the moat.
+*Event-driven special situation. The thesis is not business quality or compounding — it is the gap between today's price and what the stock is worth once a single, hard-dated clinical event resolves. This dossier scores the credibility of that EVENT, not a franchise.*
 
-## 1. IS THE CATALYST REAL, DATED, AND BINDING?
+## 1. The setup in one paragraph
 
-**REAL — yes.** LUCIDITY is a registrational, FDA-agreed pivotal Phase 3 (randomized, double-blind, placebo-controlled), 78 participants, 3:2 avexitide 90 mg QD vs placebo, 16-week double-blind period, 21 U.S. sites, in adults with PBH following Roux-en-Y gastric bypass. Primary endpoint: reduction in composite Level 2 + Level 3 hypoglycemic events at Week 16. Avexitide carries FDA **Breakthrough Therapy Designation** — there is NO FDA-approved therapy for PBH, an unmet-need orphan-style indication (~160,000 U.S. patients, 8,000-12,000 new RYGB cases/yr).
+Amylyx is a clinical-stage biotech with no approved product today (its first drug, an ALS treatment, was pulled from the market in 2024 after a confirmatory trial failed). The whole investment case now rests on one drug — avexitide, a first-in-class GLP-1 receptor antagonist — and one trial: the Phase 3 LUCIDITY study in post-bariatric hypoglycemia (PBH), a condition where weight-loss surgery patients suffer dangerous blood-sugar crashes and have no approved treatment. Topline data (the headline win-or-lose result) is due in the third quarter of 2026. The stock trades around $14-17; a clean win plausibly re-rates it toward the high-$20s to $40, while a clear miss drops it toward its cash-backed floor near $4. That is the asymmetry being judged.
 
-**DATED — yes, and tightening.** Topline is repeatedly guided to **Q3 2026** ("on track," reaffirmed Q1 2026 results, May 2026). Enrollment **completed March 2026** — the clock to a 16-week-primary readout is now mechanical, not enrollment-dependent. That is the single most important credibility fact: the readout is a data-lock function of an already-fully-enrolled trial, so the date is binding and slippage risk is low. Hard board date 2026-09-30 sits at the back edge of the guided Q3 window — appropriate.
+## 2. Is the catalyst REAL, DATED, and BINDING?
 
-**BINDING — yes.** This is a clean clinical binary (data event), not a third-party deal contingent on a counterparty, financing, or regulator's discretion. No second-request, no CVR, no financing contingency. The event WILL fire inside the window barring an unusual operational delay.
+- **Real:** Yes. LUCIDITY is a registered, FDA-aligned pivotal Phase 3 trial (16-week, randomized, double-blind, placebo-controlled, 78 participants). The primary endpoint — reduction in the composite of Level 2 and Level 3 hypoglycemic events through Week 16 — was agreed with the FDA in advance, which removes one common source of "we beat the endpoint but the agency disagrees" risk.
+- **Dated:** Yes, but it is a data-readout window, not a fixed legal deadline. Management guides topline data to the third quarter of 2026. This is a trial readout, so the date can drift by weeks; importantly, enrollment is already complete (last patient dosed, March 2026) and the trial is only 16 weeks long, so the data is essentially "in the can" and being analyzed — the risk of a multi-quarter slip is low. The original guide was first-half 2026; it has slipped once to Q3, which is worth noting but is a modest, single slip tied to enrollment completion, not a pattern of serial extension.
+- **Binding:** This is a binary clinical event, not a contract. There is no guaranteed payout — the catalyst forces a re-rating either way, up on a win, down on a miss. That is exactly the special-situation profile this funnel is built for, but the reader should understand the downside is real and not contractually floored the way a merger break price would be.
 
-## 2. SPONSOR / MANAGEMENT CREDIBILITY ON HITTING IT
+## 3. How credible is management on hitting it?
 
-Mixed but improving — and materially de-risked by trial design. The bear's historical anchor: Amylyx's prior franchise drug **AMX0035 (Relyvrio/Albrioza)** for ALS FAILED its confirmatory **PHOENIX** Phase 3 in 2024 and was withdrawn from the market — a real scar on management's "the data will replicate" track record. HOWEVER, the avexitide setup is structurally different and stronger:
-- **Replicated prior signal across FIVE prior PBH trials.** Phase 2b: 64% LS-mean reduction in composite Level 2+3 events at 90 mg QD (the exact dose/endpoint now in LUCIDITY). Phase 2 PREVENT: 50%/75% fewer participants requiring rescue. The Phase 3 is testing the SAME dose, SAME endpoint, SAME population where the drug already worked repeatedly.
-- **Overpowered design.** H.C. Wainwright: LUCIDITY is "quite overpowered" — >95% power to detect effect sizes in the demonstrated 50-65% range. Statistical risk of a false-negative is low.
-- **Independent PoS:** Stifel 75% PoS; H.C. Wainwright ~60% approval probability. Catalyst-board win_prob 0.62 sits squarely in that street range — not a stretch.
-- **Management did the disciplined thing post-Relyvrio:** pivoted, raised cash, acquired a de-risked Phase-3-ready asset (avexitide, BTD) rather than dying on the ALS hill. The pivot is the credibility-rebuild.
+Mixed, and this is the single most important judgment. The bull point: the same management team and the same drug already produced a positive Phase 2 result in this exact indication, and the FDA granted Breakthrough Therapy designation — independent regulatory validation that the early signal is meaningful. The bear point: this is the team whose flagship ALS drug (Relyvrio/AMX0035) failed its confirmatory Phase 3 and was withdrawn in 2024, so the committee should not extend blind faith to "management says it will work." The honest read is that the Phase 2 data and Breakthrough designation are the credible evidence here, not management's track record, which is scarred.
 
-## 3. VERIFIED DOWNSIDE FLOOR (what actually backstops the price if the event fails)
+## 4. The verified downside floor — what actually backstops the price
 
-- **Hard cash floor ~$2.53/share:** $279.8M cash/equivalents/ST-investments (Mar 31, 2026) ÷ ~110.6M wtd-avg shares; runway guided **into 2028**. The company is NOT a going-concern risk into the readout — no maturity wall, no covenant trip, no forced ATM before the event.
-- **Realistic post-failure clearing price ~$4.00 (board floor), vs 52-wk low $4.80.** A PBH miss does not zero AMLX: it retains net cash, residual avexitide optionality (other GLP-1-antagonist indications), and a SECOND live program — **AMX0114 (antisense) in ALS**, Phase 1 **LUMINA**, with early biomarker (neurofilament) Cohort-1 data due at **ENCALS June 2026**. The $4 floor = cash + a haircut pipeline-option stub; consistent with where the stock bottomed ($4.80) before the avexitide re-rate (mkt cap up ~297% off the lows). This is a CREDIBLE, near-cash floor — the loss is bounded.
+This is genuinely strong for a binary biotech, and it is what makes the asymmetry investable rather than reckless:
+- **Cash:** $279.8 million as of March 31, 2026, against roughly 110.6 million shares — about $2.50 per share in net cash, with no meaningful debt.
+- **Runway:** Management states the cash funds operations through avexitide commercialization and into 2028. That means a trial failure does NOT trigger a going-concern / emergency-financing spiral in the near term — the company can fund a pivot.
+- **Residual pipeline:** Even on a LUCIDITY miss, the stock is not a zero — there is an early ALS asset (AMX0114, with biomarker data shown in 2026) and a Wolfram-syndrome program. These are speculative but give the cash-plus-pipeline floor some option value above pure cash.
 
-## 4. RED FLAGS
+A realistic failure floor of roughly $4 sits modestly above pure net cash (~$2.50), crediting that residual pipeline option value. That floor is real and verified from the balance sheet, not a hopeful guess.
 
-🔴 **Single-binary, single-asset event.** The re-rate (52-wk $4.80→$18.61) has ALREADY priced meaningful success probability; live $15.67 is NOT a washed-out entry — much of the easy spread to a $21-$28 target is consumed. Upside-to-target is real but no longer enormous.
-🔴 **Management's PHOENIX/Relyvrio failure** — clinical replication is never guaranteed; small n=78 trial.
-🔴 **Cash-per-share floor ($2.53) is far below the $4 board floor** — the $4 leans on pipeline-option value that the market could refuse to pay on a sentiment-crushing miss; a true panic could overshoot toward $4-5, i.e. the floor is "soft-ish" relative to hard cash.
-🔴 **No ATM/dilution imminent (runway into 2028), but a POST-success raise is likely** to fund the 2027 launch — a known overhang, not a pre-catalyst risk.
+## 5. Red flags / green flags
 
-## 5. GREEN FLAGS
+🟢 Strong, verified cash floor funding into 2028 — no forced-financing risk before the catalyst fires.
+🟢 FDA-agreed primary endpoint and Breakthrough Therapy designation — regulatory de-risking ahead of the readout.
+🟢 Enrollment complete and trial short (16 weeks) — readout timing is low-risk to slip materially.
+🟢 No approved competitor in PBH — a clean win opens a genuine first-mover market.
+🔴 Management's prior flagship drug failed its confirmatory trial and was withdrawn (2024) — credibility is earned by data here, not by the team's history.
+🔴 Single-asset, single-readout binary — there is no diversification; one trial result drives the whole outcome.
+🔴 Readout window (Q3 2026), not a fixed date — modest timing uncertainty, and it has already slipped once from first-half 2026.
+🔴 Small Phase 3 (78 patients) — a smaller trial can produce a noisier or borderline result that the FDA later contests, even if the headline reads positive.
 
-🟢 Enrollment DONE (Mar 2026) → date is mechanical, not at risk.
-🟢 Same dose/endpoint/population that already worked across 5 prior trials; overpowered (>95%) design.
-🟢 BTD + zero-competition orphan indication → fast, premium-priced launch path if approved (HCW $815M 2033 sales; launch 2027).
-🟢 Defined-risk: hard near-cash floor, no going-concern, no financing contingency, clean binary.
-🟢 Street targets ($21 BofA-equiv, $21-22 Mizuho/BofA, $28→$34 H.C. Wainwright) bracket the $28 board target — the target is corroborated, not fabricated.
+## 6. Capital-allocation verdict for the director
 
-## CAPITAL-ALLOCATION VERDICT
-A genuine **PENDING_HARD** defined-risk special situation: a binding, fully-enrolled, overpowered pivotal Phase 3 binary with a Q3 2026 mechanical readout, a corroborated event-win target ($28; street $21-$34), and a credible near-cash downside floor (~$4, vs $2.53 hard cash). The single thing the director must weigh: the re-rate off the $4.80 low has ALREADY occurred, so at $15.67 the asymmetry is GOOD but not pristine — upside to $28 (~+79%) vs downside to $4 (~-74%) is roughly symmetric in magnitude, carried by a ~62-75% PoS that tilts the EV positive (+29% board EV). Moat/secular are N/A — this is event credibility, and the event is real, dated, and binding.
+This is a textbook defined-risk, hard-dated special situation: a real, FDA-aligned, near-fully-baked Phase 3 readout due in Q3 2026, with the live price (~$14-17) sitting well below a credible win target (high-$20s to $40) and a verified, balance-sheet-backed downside floor near $4. The single most important thing to weigh before sizing: this is a true binary — size it as a defined-risk event position (the floor bounds the loss to roughly 70-75% in the bad case), not as a core holding, and accept that the Phase 2 data plus Breakthrough designation — not management's history — are what carry the credibility.
+
+Moat and secular-threat framing are not applicable to a pre-revenue, single-asset binary — there is no durable franchise to assess. The credibility score below scores the EVENT.
 
 CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: none

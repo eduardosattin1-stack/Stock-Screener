@@ -1,0 +1,21 @@
+{
+ "symbol": "KLIC",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Advanced packaging and wire-bonding capital equipment — makes ball-bonders, thermosonic bonders and flip-chip tools used in chip assembly including advanced package formats (TCB, hybrid bonding adjacency).",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "BESI",
+  "ASM",
+  "AMAT",
+  "LRCX",
+  "MKSI",
+  "ONTO",
+  "COHU",
+  "TER"
+ ],
+ "relative_comps": "KLIC is the global #2 in wire bonding (behind ASM Pacific, unlisted) and is expanding into advanced packaging tools (TCB, mini-LED) that ride the AI packaging wave. However, 3-year CAGR is -24% (packaging cycle downturn) and near-zero FCF ($4M) limits reinvestment firepower. Relative to AMAT and LRCX which have dominant scale and deeper AI-packaging exposure, KLIC is a smaller, more cyclical bet. Its net-cash balance sheet is clean, but the growth profile looks more cyclical recovery than structural disruption ramp.",
+ "theme_fit_confidence": "medium"
+}

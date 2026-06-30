@@ -1,0 +1,19 @@
+{
+ "symbol": "NTNX",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Hybrid cloud infrastructure software — sells hyperconverged infrastructure (HCI) software and cloud management platform that virtualizes compute, storage, and networking for on-prem and multi-cloud AI/enterprise workloads.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "VMW (Broadcom)",
+  "DELL",
+  "HPE",
+  "MSFT",
+  "PURE",
+  "NetApp (NTAP)"
+ ],
+ "relative_comps": "NTNX is the leading independent HCI software vendor, competing against Broadcom's VMware (the dominant incumbent post-acquisition) which is driving customers to NTNX as VMware pricing escalates. This VMware displacement tailwind is the primary growth driver (13% YoY, accelerating). FCF margin of 28% on $2.75B revenue is solid. NTNX is not an AI infrastructure frontline name but benefits as AI workloads require hybrid cloud orchestration. The load-bearing score reflects genuine switching costs once deployed but susceptibility to hyperscaler commoditization of on-prem infrastructure over a 5-year horizon.",
+ "theme_fit_confidence": "medium"
+}

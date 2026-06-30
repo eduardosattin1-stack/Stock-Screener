@@ -1,0 +1,20 @@
+{
+ "symbol": "POWL",
+ "themes": [
+  "energy_transition"
+ ],
+ "value_chain_position": "Custom electrical switchgear and motor control centers manufacturer serving oil & gas, petrochemical, data center and utility customers — grid-equipment and electrification-components layer.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ETN",
+  "HUBB",
+  "ABB",
+  "SIEMENS",
+  "SE.PA",
+  "NVT",
+  "AZZ"
+ ],
+ "relative_comps": "POWL's 28% 3-year revenue CAGR is among the strongest in the electrical-equipment cohort, driven by LNG, data-center and grid-hardening demand; FCF margin (17%) is exceptional for a project-based manufacturer. However, POWL is a custom-order industrial supplier without recurring software or consumable revenue, making it cyclical around capex budgets. It is smaller and narrower than ETN or ABB but has lower customer concentration risk than pure data-center players. The recent YoY deceleration to 4.5% warrants monitoring for backlog exhaustion.",
+ "theme_fit_confidence": "medium"
+}

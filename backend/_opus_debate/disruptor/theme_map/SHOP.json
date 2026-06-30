@@ -1,0 +1,20 @@
+{
+ "symbol": "SHOP",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Commerce operating system and payments rail layer — provides the end-to-end merchant infrastructure stack (storefront, payments, lending, logistics) and collects a toll on every transaction processed through Shopify Payments and Shopify Capital.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "BIGC",
+  "WIX",
+  "AMZN",
+  "ADYEN",
+  "SQ",
+  "BILL",
+  "Salesforce Commerce Cloud"
+ ],
+ "relative_comps": "Shopify is the dominant SMB-to-mid-market commerce OS with 32% YoY revenue growth and deepening payments penetration (Merchant Solutions now ~75% of revenue) creating a self-reinforcing take-rate toll. It competes against BigCommerce and Wix on the low end and Salesforce/SAP on enterprise; Amazon is both a competitor and channel. FCF margin of 17% is expanding as payments mix grows. The multiple reflects compounder status but Shopify's network-effect moat in payments data is underappreciated in comps.",
+ "theme_fit_confidence": "high"
+}

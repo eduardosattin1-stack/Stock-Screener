@@ -1,0 +1,502 @@
+[
+ {
+  "symbol": "TSM",
+  "name": "Taiwan Semiconductor Manufacturing Company Limited",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 2219398521600,
+  "price": 427.92,
+  "volume": 21165443,
+  "gates": {
+   "ttm_fcf": 1102162067000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1935,
+   "rev_yoy": 0.3097,
+   "ttm_revenue": 4113789591000,
+   "fcf_margin": 0.2679,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6913594490950803,
+   "adv_usd": 9057116369.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "NVDA",
+  "name": "NVIDIA Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 5042569990000,
+  "price": 208.19,
+  "volume": 179602708,
+  "gates": {
+   "ttm_fcf": 119076000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 1.0005,
+   "rev_yoy": 0.7068,
+   "ttm_revenue": 253491000000,
+   "fcf_margin": 0.4697,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.00219439314394804,
+   "adv_usd": 37391487779.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "AVGO",
+  "name": "Broadcom Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1856747475037,
+  "price": 392.16,
+  "volume": 36272290,
+  "gates": {
+   "ttm_fcf": 32762000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2438,
+   "rev_yoy": 0.3229,
+   "ttm_revenue": 75465000000,
+   "fcf_margin": 0.4341,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.084293206254939,
+   "adv_usd": 14224541246.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "MU",
+  "name": "Micron Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1055431229700,
+  "price": 935.89,
+  "volume": 72514111,
+  "gates": {
+   "ttm_fcf": 10281000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0671,
+   "rev_yoy": 0.8555,
+   "ttm_revenue": 58119000000,
+   "fcf_margin": 0.1769,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.04690234511725586,
+   "adv_usd": 67865231344.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "AMD",
+  "name": "Advanced Micro Devices, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 775358453000,
+  "price": 475.505,
+  "volume": 37157055,
+  "gates": {
+   "ttm_fcf": 8574000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1364,
+   "rev_yoy": 0.3497,
+   "ttm_revenue": 37454000000,
+   "fcf_margin": 0.2289,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.21197130843433093,
+   "adv_usd": 17668365438.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "ASML",
+  "name": "ASML Holding N.V.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 685184541860,
+  "price": 1777.77,
+  "volume": 3137256,
+  "gates": {
+   "ttm_fcf": 8583788345,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1555,
+   "rev_yoy": 0.097,
+   "ttm_revenue": 33692700000,
+   "fcf_margin": 0.2548,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.411264304964262,
+   "adv_usd": 5577319599.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "LRCX",
+  "name": "Lam Research Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 409136481200,
+  "price": 327.16,
+  "volume": 14430285,
+  "gates": {
+   "ttm_fcf": 6450822000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0229,
+   "rev_yoy": 0.2653,
+   "ttm_revenue": 21681845000,
+   "fcf_margin": 0.2975,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.1272298076564417,
+   "adv_usd": 4721012041.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "ARM",
+  "name": "Arm Holdings plc American Depositary Shares",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 345651040000,
+  "price": 324.86,
+  "volume": 13328315,
+  "gates": {
+   "ttm_fcf": 972000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2246,
+   "rev_yoy": 0.2279,
+   "ttm_revenue": 4920000000,
+   "fcf_margin": 0.1976,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.6989010989010989,
+   "adv_usd": 4329836411.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "KLAC",
+  "name": "KLA Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 279461622221,
+  "price": 2139.37,
+  "volume": 1620724,
+  "gates": {
+   "ttm_fcf": 4014575000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0969,
+   "rev_yoy": 0.1341,
+   "ttm_revenue": 13096661000,
+   "fcf_margin": 0.3065,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.7384650783882625,
+   "adv_usd": 3467328304.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "TXN",
+  "name": "Texas Instruments Incorporated",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 262680142590,
+  "price": 288.63,
+  "volume": 8878803,
+  "gates": {
+   "ttm_fcf": 3721000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0407,
+   "rev_yoy": 0.1489,
+   "ttm_revenue": 18438000000,
+   "fcf_margin": 0.2018,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.271461436009202,
+   "adv_usd": 2562688910.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "MRVL",
+  "name": "Marvell Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 233466624000,
+  "price": 266.88,
+  "volume": 92150706,
+  "gates": {
+   "ttm_fcf": 1664300000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1145,
+   "rev_yoy": 0.3407,
+   "ttm_revenue": 8717100000,
+   "fcf_margin": 0.1909,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.3122427199268181,
+   "adv_usd": 24593180417.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "ADI",
+  "name": "Analog Devices, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 197085158125,
+  "price": 404.62,
+  "volume": 5401965,
+  "gates": {
+   "ttm_fcf": 4565150000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0284,
+   "rev_yoy": 0.2975,
+   "ttm_revenue": 12740193000,
+   "fcf_margin": 0.3583,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.0086545359913366,
+   "adv_usd": 2185743078.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "MPWR",
+  "name": "Monolithic Power Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 75266177400,
+  "price": 1531.98,
+  "volume": 979846,
+  "gates": {
+   "ttm_fcf": 627548000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1586,
+   "rev_yoy": 0.239,
+   "ttm_revenue": 2957090000,
+   "fcf_margin": 0.2122,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.2334122397827751,
+   "adv_usd": 1501104475.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "ALAB",
+  "name": "Astera Labs, Inc. Common Stock",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 58570092756,
+  "price": 341.7,
+  "volume": 7233767,
+  "gates": {
+   "ttm_fcf": 342809000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 1.2018,
+   "rev_yoy": 1.0418,
+   "ttm_revenue": 1001444000,
+   "fcf_margin": 0.3423,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.5773618552205333,
+   "adv_usd": 2471778184.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "TER",
+  "name": "Teradyne, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 57796931632,
+  "price": 369.21,
+  "volume": 4259845,
+  "gates": {
+   "ttm_fcf": 553179999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0037,
+   "rev_yoy": 0.3032,
+   "ttm_revenue": 3786838000,
+   "fcf_margin": 0.1461,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.14435299195023021,
+   "adv_usd": 1572777372.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "MTSI",
+  "name": "MACOM Technology Solutions Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 27368820049,
+  "price": 358.72,
+  "volume": 1556554,
+  "gates": {
+   "ttm_fcf": 167681999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1273,
+   "rev_yoy": 0.2705,
+   "ttm_revenue": 1073816000,
+   "fcf_margin": 0.1562,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.0251554557110174,
+   "adv_usd": 558367051.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "TSEM",
+  "name": "Tower Semiconductor Ltd.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 25489449890,
+  "price": 228.08,
+  "volume": 3189295,
+  "gates": {
+   "ttm_fcf": 326117550,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0227,
+   "rev_yoy": 0.1053,
+   "ttm_revenue": 1621565000,
+   "fcf_margin": 0.2011,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.1731904639491415,
+   "adv_usd": 727414404.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "LSCC",
+  "name": "Lattice Semiconductor Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 18846800809,
+  "price": 137.56,
+  "volume": 2370354,
+  "gates": {
+   "ttm_fcf": 151917000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0746,
+   "rev_yoy": 0.1745,
+   "ttm_revenue": 574009000,
+   "fcf_margin": 0.2647,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.298484219269103,
+   "adv_usd": 326065896.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "AMKR",
+  "name": "Amkor Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 17576640251,
+  "price": 70.91,
+  "volume": 7384764,
+  "gates": {
+   "ttm_fcf": 167222000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0184,
+   "rev_yoy": 0.1271,
+   "ttm_revenue": 7071107000,
+   "fcf_margin": 0.0236,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.3817686236941745,
+   "adv_usd": 523653615.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "SITM",
+  "name": "SiTime Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 17409217536,
+  "price": 659.52,
+  "volume": 540908,
+  "gates": {
+   "ttm_fcf": 54139000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0482,
+   "rev_yoy": 0.6519,
+   "ttm_revenue": 379912000,
+   "fcf_margin": 0.1425,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -78.64148547849548,
+   "adv_usd": 356739644.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ }
+]

@@ -1,0 +1,520 @@
+[
+ {
+  "symbol": "BE",
+  "name": "Bloom Energy Corporation",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 73844472571,
+  "price": 259.61,
+  "volume": 16166746,
+  "gates": {
+   "ttm_fcf": 232998000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1906,
+   "rev_yoy": 0.5653,
+   "ttm_revenue": 2449027000,
+   "fcf_margin": 0.0951,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.1698939499696035,
+   "adv_usd": 4197048929.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ },
+ {
+  "symbol": "NVT",
+  "name": "nVent Electric plc",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 26489736000,
+  "price": 163.8,
+  "volume": 1694549,
+  "gates": {
+   "ttm_fcf": 381900000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1926,
+   "rev_yoy": 0.403,
+   "ttm_revenue": 4325800000,
+   "fcf_margin": 0.0883,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.6358111774281063,
+   "adv_usd": 277567126.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ },
+ {
+  "symbol": "AYI",
+  "name": "Acuity Brands, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 9090922176,
+  "price": 299.88,
+  "volume": 330745,
+  "gates": {
+   "ttm_fcf": 558100000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0275,
+   "rev_yoy": 0.1589,
+   "ttm_revenue": 4587100000,
+   "fcf_margin": 0.1217,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.7685796269727403,
+   "adv_usd": 99183811.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ },
+ {
+  "symbol": "AEIS",
+  "name": "Advanced Energy Industries, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 11851887348,
+  "price": 311.64,
+  "volume": 772993,
+  "gates": {
+   "ttm_fcf": 68300000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0085,
+   "rev_yoy": 0.222,
+   "ttm_revenue": 1905200000,
+   "fcf_margin": 0.0358,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.06092124836894966,
+   "adv_usd": 240895539.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ },
+ {
+  "symbol": "POWL",
+  "name": "Powell Industries, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 10328722916,
+  "price": 283.51,
+  "volume": 830858,
+  "gates": {
+   "ttm_fcf": 192521000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2752,
+   "rev_yoy": 0.045,
+   "ttm_revenue": 1132055000,
+   "fcf_margin": 0.1701,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.269108759090081,
+   "adv_usd": 235556552.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ },
+ {
+  "symbol": "FSLR",
+  "name": "First Solar, Inc.",
+  "sector": "Energy",
+  "industry": "Solar",
+  "mcap": 28173102070,
+  "price": 262.19,
+  "volume": 2789064,
+  "gates": {
+   "ttm_fcf": 1667782999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2584,
+   "rev_yoy": 0.273,
+   "ttm_revenue": 5419048000,
+   "fcf_margin": 0.3078,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.8249876499046062,
+   "adv_usd": 731264690.0
+  },
+  "themes_hint": [
+   "energy_transition"
+  ]
+ },
+ {
+  "symbol": "CCJ",
+  "name": "Cameco Corporation",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 44541957660.06,
+  "price": 102.27,
+  "volume": 3979652,
+  "gates": {
+   "ttm_fcf": 899733466,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2304,
+   "rev_yoy": 0.0745,
+   "ttm_revenue": 3536887321,
+   "fcf_margin": 0.2544,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.09596185367307405,
+   "adv_usd": 406999010.0
+  },
+  "themes_hint": [
+   "energy_transition"
+  ]
+ },
+ {
+  "symbol": "CRM",
+  "name": "Salesforce, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 143611650000,
+  "price": 175.35,
+  "volume": 15399007,
+  "gates": {
+   "ttm_fcf": 14661000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0982,
+   "rev_yoy": 0.1098,
+   "ttm_revenue": 42829000000,
+   "fcf_margin": 0.3423,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.6565347093445135,
+   "adv_usd": 2700215877.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "UBER",
+  "name": "Uber Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 143265458535,
+  "price": 70.38,
+  "volume": 19134633,
+  "gates": {
+   "ttm_fcf": 9799000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1773,
+   "rev_yoy": 0.1831,
+   "ttm_revenue": 53687000000,
+   "fcf_margin": 0.1825,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.1221786064769381,
+   "adv_usd": 1346695471.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "NOW",
+  "name": "ServiceNow, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 110319016760,
+  "price": 106.97,
+  "volume": 31592319,
+  "gates": {
+   "ttm_fcf": 4633000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2238,
+   "rev_yoy": 0.2172,
+   "ttm_revenue": 13960000000,
+   "fcf_margin": 0.3319,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.08864900228982663,
+   "adv_usd": 3379430363.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "SNOW",
+  "name": "Snowflake Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 83066156000,
+  "price": 239.66,
+  "volume": 5715388,
+  "gates": {
+   "ttm_fcf": 1169702000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3138,
+   "rev_yoy": 0.3107,
+   "ttm_revenue": 5032823000,
+   "fcf_margin": 0.2324,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.7337563354241479,
+   "adv_usd": 1369749888.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "FICO",
+  "name": "Fair Isaac Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 28412338486,
+  "price": 1225.15,
+  "volume": 327515,
+  "gates": {
+   "ttm_fcf": 892685000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1307,
+   "rev_yoy": 0.2257,
+   "ttm_revenue": 2255802000,
+   "fcf_margin": 0.3957,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.9562649492596003,
+   "adv_usd": 401255002.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "DT",
+  "name": "Dynatrace, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 11882019140,
+  "price": 40.765,
+  "volume": 4823929,
+  "gates": {
+   "ttm_fcf": 527242999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2033,
+   "rev_yoy": 0.1882,
+   "ttm_revenue": 2018387000,
+   "fcf_margin": 0.2612,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.972663108420298,
+   "adv_usd": 196647466.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "GWRE",
+  "name": "Guidewire Software, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 10366254364,
+  "price": 124.51,
+  "volume": 1604926,
+  "gates": {
+   "ttm_fcf": 254977000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1395,
+   "rev_yoy": 0.2492,
+   "ttm_revenue": 1420845000,
+   "fcf_margin": 0.1795,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.413034769596927,
+   "adv_usd": 199829336.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "HUBS",
+  "name": "HubSpot, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 10125227113,
+  "price": 197.69,
+  "volume": 2894997,
+  "gates": {
+   "ttm_fcf": 712466000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2185,
+   "rev_yoy": 0.2105,
+   "ttm_revenue": 3297706000,
+   "fcf_margin": 0.216,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.8001254064656678,
+   "adv_usd": 572311957.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "PCOR",
+  "name": "Procore Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6901708600,
+  "price": 45.74,
+  "volume": 2103966,
+  "gates": {
+   "ttm_fcf": 257054000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2246,
+   "rev_yoy": 0.1494,
+   "ttm_revenue": 1371160000,
+   "fcf_margin": 0.1875,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -7.087574042376017,
+   "adv_usd": 96235405.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "ESTC",
+  "name": "Elastic N.V.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6340471260,
+  "price": 61.26,
+  "volume": 2457676,
+  "gates": {
+   "ttm_fcf": 321802000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1762,
+   "rev_yoy": 0.1726,
+   "ttm_revenue": 1739331000,
+   "fcf_margin": 0.185,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -3.0199490303961114,
+   "adv_usd": 150557232.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "YOU",
+  "name": "Clear Secure, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5351577173,
+  "price": 53.19,
+  "volume": 1485887,
+  "gates": {
+   "ttm_fcf": 437332000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2722,
+   "rev_yoy": 0.1739,
+   "ttm_revenue": 942414000,
+   "fcf_margin": 0.4641,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6634906195818658,
+   "adv_usd": 79034330.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "COMP",
+  "name": "Compass, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 4968852667,
+  "price": 8.17,
+  "volume": 12871202,
+  "gates": {
+   "ttm_fcf": 15800000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0497,
+   "rev_yoy": 0.401,
+   "ttm_revenue": 8309400000,
+   "fcf_margin": 0.0019,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -33.08582449373192,
+   "adv_usd": 105157720.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "ZETA",
+  "name": "Zeta Global Holdings Corp.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 4758304710,
+  "price": 21.09,
+  "volume": 7365662,
+  "gates": {
+   "ttm_fcf": 199746000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3021,
+   "rev_yoy": 0.336,
+   "ttm_revenue": 1436553000,
+   "fcf_margin": 0.139,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9668352232801025,
+   "adv_usd": 155341812.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ }
+]

@@ -1,0 +1,20 @@
+{
+ "symbol": "FSLR",
+ "themes": [
+  "energy_transition"
+ ],
+ "value_chain_position": "Thin-film cadmium-telluride solar module manufacturer — solar-manufacturing layer of the energy-transition value chain, selling domestically produced utility-scale modules in the US and internationally.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ENPH",
+  "SEDG",
+  "CSIQ",
+  "JKS",
+  "RUN",
+  "ARRY",
+  "NEE"
+ ],
+ "relative_comps": "FSLR is the only scaled domestic thin-film solar manufacturer, giving it a tariff moat that Chinese competitors (CSIQ, JKS) cannot easily replicate. FCF margin of 31% and net cash balance sheet are exceptional among solar peers — ENPH and SEDG compete on the inverter/software layer rather than module manufacturing. The 26% 3-year CAGR and 27% YoY growth reflect IRA manufacturing credits augmenting operational scale. Key risk is module commoditization and IRA policy dependency, which limits the load-bearing score to 3 despite the manufacturing moat.",
+ "theme_fit_confidence": "high"
+}

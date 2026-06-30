@@ -1,0 +1,21 @@
+{
+ "symbol": "APP",
+ "themes": [
+  "ai_infrastructure",
+  "fintech_rails"
+ ],
+ "value_chain_position": "AI-native advertising and monetization platform layer — sells an AI-driven programmatic ad engine (AXON) that acts as a performance marketing toll-taker between mobile/connected-TV app publishers and advertisers.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TTD",
+  "GOOGL",
+  "META",
+  "IAS",
+  "DV",
+  "MGNI",
+  "CRTO"
+ ],
+ "relative_comps": "AppLovin is the clearest chokepoint in mobile app performance marketing: AXON's AI targeting creates compounding data moats and 51% YoY revenue growth with 71% FCF margin is best-in-class among scaled ad-tech platforms. It trades at a steep premium to TTD and Criteo on EV/FCF, reflecting the growth divergence; Google and Meta are the ceiling competitors but are constrained by antitrust posture, creating structural runway. The ai_infrastructure tag is warranted because AXON is a deployed-inference product paid per auction.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "MTSI",
+ "themes": [
+  "ai_infrastructure",
+  "defense_tech"
+ ],
+ "value_chain_position": "RF/microwave and photonic semiconductors — supplies compound-semiconductor (GaAs/GaN/InP) devices for data-center optical transceivers, 5G base stations, and defense radar/electronic warfare systems.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MRVL",
+  "ADI",
+  "QRVO",
+  "SWKS",
+  "COHU",
+  "WOLFSPEED"
+ ],
+ "relative_comps": "MACOM has found a niche in InP-based components for 800G/1.6T optical transceivers in AI data centers, a market growing at 40%+ annually. Its defense segment (radar, EW) provides a second AI-adjacent growth vector. Revenue grew 27% YoY, and the company has been taking share from Lumentum and Coherent in the data-center optical component layer. Smaller and less diversified than ADI or QRVO; its compound-semi focus is a genuine moat in high-frequency applications where silicon cannot substitute. Trades at ~40x forward earnings — premium justified by its optical AI tailwind.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "PANW",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Cybersecurity platform layer — sells a unified SASE/CNAPP/SOC platform that secures every AI workload, cloud environment, and enterprise network; the security toll-taker that AI infrastructure cannot bypass.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "CRWD",
+  "FTNT",
+  "ZS",
+  "MSFT",
+  "CHKP",
+  "S",
+  "OKTA"
+ ],
+ "relative_comps": "PANW leads the cybersecurity platform consolidation thesis with $10.6B revenue, 19% YoY growth, and 40% FCF margins — among the strongest unit economics in large-cap security. It competes most directly with CRWD (faster-growing, purer endpoint play) and FTNT (better margins, more SMB). PANW's platformization strategy — offering free modules to force consolidation onto its stack — risks near-term billings deceleration for long-term wallet expansion. At ~17x revenue vs CRWD's ~32x, PANW is the more defensible valuation but lower-growth compounder.",
+ "theme_fit_confidence": "high"
+}

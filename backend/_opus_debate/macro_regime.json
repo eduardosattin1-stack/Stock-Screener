@@ -1,16 +1,16 @@
 {
  "regime": "NEUTRAL",
- "score": 0.567,
+ "score": 0.5475,
  "regime_detail": {
   "growth": "accelerating",
   "inflation": "accelerating",
   "rates": "neutral",
-  "credit": "complacent"
+  "credit": "stable"
  },
  "features": {
-  "macro_vix": 20.0,
-  "macro_yield_spread": 50.0
+  "macro_vix": 18.4,
+  "macro_yield_spread": 31.0
  },
  "version": "",
- "asof": "2026-06-15"
+ "asof": "2026-06-29"
 }

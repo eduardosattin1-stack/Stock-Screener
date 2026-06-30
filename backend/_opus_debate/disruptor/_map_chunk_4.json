@@ -1,0 +1,522 @@
+[
+ {
+  "symbol": "QTWO",
+  "name": "Q2 Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2778831756,
+  "price": 44.39,
+  "volume": 731326,
+  "gates": {
+   "ttm_fcf": 195809000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.12,
+   "rev_yoy": 0.14,
+   "ttm_revenue": 821580000,
+   "fcf_margin": 0.2383,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.012512153524920704,
+   "adv_usd": 32463561.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "CALX",
+  "name": "Calix, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2467737187,
+  "price": 38.69,
+  "volume": 1461859,
+  "gates": {
+   "ttm_fcf": 109132000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0484,
+   "rev_yoy": 0.2838,
+   "ttm_revenue": 1059752000,
+   "fcf_margin": 0.103,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.7093588700977544,
+   "adv_usd": 56559325.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "GRND",
+  "name": "Grindr Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2022521880,
+  "price": 11.38,
+  "volume": 1273322,
+  "gates": {
+   "ttm_fcf": 145281169,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3115,
+   "rev_yoy": 0.3102,
+   "ttm_revenue": 475901000,
+   "fcf_margin": 0.3053,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.025367698463955896,
+   "adv_usd": 14490404.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "APP",
+  "name": "AppLovin Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 174970739076,
+  "price": 520.84,
+  "volume": 4440290,
+  "gates": {
+   "ttm_fcf": 4402457000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2484,
+   "rev_yoy": 0.5116,
+   "ttm_revenue": 6164192000,
+   "fcf_margin": 0.7142,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.15279510392824597,
+   "adv_usd": 2312680644.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "SHOP",
+  "name": "Shopify Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 143287025570,
+  "price": 110.42,
+  "volume": 7807087,
+  "gates": {
+   "ttm_fcf": 2127941352,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2731,
+   "rev_yoy": 0.3185,
+   "ttm_revenue": 12366000000,
+   "fcf_margin": 0.1721,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.0498363749216302,
+   "adv_usd": 862058547.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "ADBE",
+  "name": "Adobe Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 96151096000,
+  "price": 237.88,
+  "volume": 6724737,
+  "gates": {
+   "ttm_fcf": 10317000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1052,
+   "rev_yoy": 0.1096,
+   "ttm_revenue": 24453000000,
+   "fcf_margin": 0.4219,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.03279352226720648,
+   "adv_usd": 1599680438.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "INTU",
+  "name": "Intuit Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 80359699860,
+  "price": 293.78,
+  "volume": 4772260,
+  "gates": {
+   "ttm_fcf": 7715000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1395,
+   "rev_yoy": 0.1507,
+   "ttm_revenue": 20925000000,
+   "fcf_margin": 0.3687,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.32898443291326906,
+   "adv_usd": 1401994543.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "ADSK",
+  "name": "Autodesk, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 47313427844,
+  "price": 224.08,
+  "volume": 1825204,
+  "gates": {
+   "ttm_fcf": 2729000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1292,
+   "rev_yoy": 0.1828,
+   "ttm_revenue": 7507000000,
+   "fcf_margin": 0.3635,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.024069028156221618,
+   "adv_usd": 408991712.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "WDAY",
+  "name": "Workday, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 36732141665,
+  "price": 140.23,
+  "volume": 4856076,
+  "gates": {
+   "ttm_fcf": 2972000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.154,
+   "rev_yoy": 0.1332,
+   "ttm_revenue": 9854000000,
+   "fcf_margin": 0.3016,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.939068100358423,
+   "adv_usd": 680967537.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "TEAM",
+  "name": "Atlassian Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 25114291257,
+  "price": 95.61,
+  "volume": 3377959,
+  "gates": {
+   "ttm_fcf": 1204701000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.23,
+   "rev_yoy": 0.2474,
+   "ttm_revenue": 6190183000,
+   "fcf_margin": 0.1946,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -3.9232100299073234,
+   "adv_usd": 322966660.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "PTC",
+  "name": "PTC Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 15820856820,
+  "price": 136.97,
+  "volume": 1238237,
+  "gates": {
+   "ttm_fcf": 928176000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1232,
+   "rev_yoy": 0.2775,
+   "ttm_revenue": 2997860000,
+   "fcf_margin": 0.3096,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.7116153177942154,
+   "adv_usd": 169601322.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "BSY",
+  "name": "Bentley Systems, Incorporated",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 9677442021,
+  "price": 33.11,
+  "volume": 2115021,
+  "gates": {
+   "ttm_fcf": 491695000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1097,
+   "rev_yoy": 0.1223,
+   "ttm_revenue": 1555418000,
+   "fcf_margin": 0.3161,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.1782036666153135,
+   "adv_usd": 70028345.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "IDCC",
+  "name": "InterDigital, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6645007950,
+  "price": 257.11,
+  "volume": 292470,
+  "gates": {
+   "ttm_fcf": 579035000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2213,
+   "rev_yoy": 0.0165,
+   "ttm_revenue": 828924000,
+   "fcf_margin": 0.6985,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.40933707524271845,
+   "adv_usd": 75196962.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "DSGX",
+  "name": "The Descartes Systems Group Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6427339600,
+  "price": 74.8,
+  "volume": 700421,
+  "gates": {
+   "ttm_fcf": 282710425,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.153,
+   "rev_yoy": 0.1328,
+   "ttm_revenue": 757127127,
+   "fcf_margin": 0.3734,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.135497774642906,
+   "adv_usd": 52391491.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "APPF",
+  "name": "AppFolio, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6071200377,
+  "price": 169.29,
+  "volume": 411360,
+  "gates": {
+   "ttm_fcf": 233846000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2631,
+   "rev_yoy": 0.2072,
+   "ttm_revenue": 995334000,
+   "fcf_margin": 0.2349,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.5631578410574413,
+   "adv_usd": 69639134.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "PCTY",
+  "name": "Paylocity Holding Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6057979474,
+  "price": 113.14,
+  "volume": 471048,
+  "gates": {
+   "ttm_fcf": 470122000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2322,
+   "rev_yoy": 0.1467,
+   "ttm_revenue": 1727329000,
+   "fcf_margin": 0.2722,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.34506978988866627,
+   "adv_usd": 53294371.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "DUOL",
+  "name": "Duolingo, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5491464652,
+  "price": 117.86,
+  "volume": 1806170,
+  "gates": {
+   "ttm_fcf": 416044000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.4108,
+   "rev_yoy": 0.3545,
+   "ttm_revenue": 1098813000,
+   "fcf_margin": 0.3786,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -5.89999154477044,
+   "adv_usd": 212875196.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "CVLT",
+  "name": "Commvault Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5023088850,
+  "price": 121.77,
+  "volume": 886775,
+  "gates": {
+   "ttm_fcf": 237151000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1469,
+   "rev_yoy": 0.1889,
+   "ttm_revenue": 1183690000,
+   "fcf_margin": 0.2003,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.14963475586312958,
+   "adv_usd": 107982592.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "SRAD",
+  "name": "Sportradar Group AG",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 4853606716,
+  "price": 16.4,
+  "volume": 5444438,
+  "gates": {
+   "ttm_fcf": 233877000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1928,
+   "rev_yoy": 0.1524,
+   "ttm_revenue": 1327491162,
+   "fcf_margin": 0.1762,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.7131603644028262,
+   "adv_usd": 89288783.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ },
+ {
+  "symbol": "MNDY",
+  "name": "monday.com Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 4290628682,
+  "price": 83.23,
+  "volume": 1660801,
+  "gates": {
+   "ttm_fcf": 314761170,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3339,
+   "rev_yoy": 0.2542,
+   "ttm_revenue": 1301012000,
+   "fcf_margin": 0.2419,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -15.61754673475999,
+   "adv_usd": 138228467.0
+  },
+  "themes_hint": [
+   "robotics_automation",
+   "defense_tech"
+  ]
+ }
+]

@@ -1,92 +1,82 @@
-# MPWR — Monolithic Power Systems — Forensic Dossier
+# Forensic Dossier — Monolithic Power Systems (MPWR)
 
-*Interrogator: Claude Opus 4.8 · capital-allocation committee · transcripts Q1-2025 → Q1-2026 (5 calls) cross-referenced against screener financials and live data as of 2026-06-21.*
+*A deep dive on management and the setup, built from five consecutive quarterly earnings calls (Q1 2025 through Q1 2026) cross-checked against the screener's hard financials.*
+
+Monolithic Power Systems (MPS) is a fabless maker of power-management chips — the small components that convert and regulate voltage inside electronics. Over the eight-quarter window the story has transformed from a diversified analog-chip vendor with a worrying single-customer concentration in AI servers into a broad-based winner of the AI data-center power build-out. The financials confirm the growth is real and the cash generation is genuine. The open question for a capital allocator is not whether the business is good — it plainly is — but whether the price already pays for everything good that is happening.
 
 ## 1. NARRATIVE ARC
 
-The story across these five calls is a single, accelerating arc: **"diversified analog grower"** → **"the AI/data-center power-delivery winner that is still diversified."**
+The through-line is a deliberate shift from "we sell chips" to "we sell systems." Founder-CEO Michael Hsing repeats a near-mantra — "I'm sick and tired of selling silicon only" (Q2 2025) — describing a decade-long transformation from a pure analog design house into a "full-service silicon-based solution provider" selling modules and full power systems at higher average selling prices.
 
-- **Q1-2025 (May):** Cautious, hedged. Enterprise data framed as "flat plus or minus 20%," visibility "second half weighted," management repeatedly refusing to forecast ("how good is good"). The thesis was *design wins waiting to ramp* — promise, not proof.
-- **Q2-2025 (Jul):** Confidence inflects. "MPS has appeared to be a winner" in enterprise data; ASIC shipments begin; the $4B SAM reaffirmed. Still hedged on Q4 ("flat to down 20%") because of short lead times / thin backlog.
-- **Q3-2025 (Oct):** "Layering of additional customers" begins; first enterprise-data growth guide of **30–40% for 2026**. Michael Hsing's now-famous candor — *"if we didn't deliver 30–40%, the stock I see from $900 to $400, what kind of f***** is that?"* — signals he is watching the multiple and feels the pressure of expectations.
-- **Q4-2025 (Feb):** Floor raised to **50%**; Hsing says "I thought we can do a lot more than that." Bernie Blegen's retirement announced (40th call, clean controller→CFO succession to Rob Dean). Dividend +28% to $2; >72% of 3-yr FCF returned. $4B capacity milestone hit.
-- **Q1-2026 (Apr):** Floor raised again to **~85% YoY** enterprise-data growth; capacity target lifted from **$4B → $6B**; communications +33% sequential; DDR5 interface sampling. The arc is now fully "AI power on top of a diversified base."
+The dominant sub-plot is enterprise data (power for AI servers and data centers). The arc here is striking and worth tracing because it is the entire bull case:
 
-**Drivers introduced and kept:** vertical power / modules, ASIC power, optical/co-packaged optics, 800V data-center, 48V/zonal automotive, robotics/BMS. **Drivers quietly dropped:** eMotion ("kind of a flop," Hsing's own word, Q2-25); data converters ("slow moving… won't move the needle"). Management is honest about its misses — a credibility positive.
+- **Q1 2025:** Cautious. Management framed enterprise data as "flat, plus or minus 20%" for the year, citing a platform change at one large customer (read: Nvidia) that investors feared would cost MPS share. The tone was "our visibility is improving, but it's second-half weighted."
+- **Q2 2025:** Turning. First shipments into "ASIC-based AI products" — i.e. custom-silicon customers beyond Nvidia. Hsing: "MPS has appeared to be a winner."
+- **Q3 2025:** A "layering" of new customers; Q4 guided up sequentially. Hsing's now-famous line on the stock's earlier collapse: "If we didn't deliver 30% to 40%, the stock I see from $900 to $400 — what kind of f---- is that?"
+- **Q4 2025:** The floor for 2026 enterprise-data growth raised to "50%." Hsing pushed back live on his own CFO: "I thought we can do a lot more than that."
+- **Q1 2026:** The floor raised again to "around 85% year-over-year growth," with enterprise data up ~98% in the quarter and capacity plans lifted from $4B to a new $6B target.
+
+Quietly dropped: nothing material. Quietly added: communications (optical-module and switch power, +33% sequentially in Q1 2026), robotics/battery-management as a multi-year "next two-to-three-years" driver, and high-speed DDR5 interface products. The diversification claim is not just talk — non-enterprise-data markets grew "over 40% year-over-year" in 2025.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-| Management claim | Financial evidence | Verdict |
+| Management claim | The hard numbers | Verdict |
 |---|---|---|
-| "Fourteenth consecutive year of growth," +26.4% FY25 rev | Rev 2.21B→2.79B FY24→FY25; 3-yr CAGR +15.9%; Q1-26 $804M (+26% YoY) | **Corroborated, richer than baseline.** Top line is genuinely re-accelerating, not decelerating. |
-| Enterprise data 85% floor 2026; ED +97.7% YoY in Q1-26 to $262.8M (live) | Drives the +25.8% consensus fwd-EPS, latest-Q EPS +41% YoY | **Corroborated by live data.** The catalyst is real and already firing in the numbers. |
-| "We stay within our model… 55–60% gross margin" | Gross 55.2% (stable); live: stalled 55.5% four straight quarters, bottom of model | **Honest but a yellow flag** — GM is pinned at the *low* end and not expanding despite mix shift to modules/AI. |
-| "Net profit had to increase," OpEx slower than revenue | Net margin 22.1%; ROE 28.2%, ROIC 18.3% | **Corroborated.** Returns are high. But ROIC 18.3% on a 113x FCF price is the whole problem. |
-| ">72% of 3-yr FCF returned"; div +28% | Net CASH 1.37B (zero debt), TTM FCF 628M | **Corroborated.** Pristine balance sheet, genuine capital return. |
-| Beat 7/7 quarters (100%) | Q1-26 beat ($5.10 vs $4.90 est; rev $804M vs $782M) | **Corroborated.** Serial, modest beat-raise cadence. |
+| "Fourteenth consecutive year of growth," only one down year in 21 years | Revenue 2021 $1.21B → 2025 $2.79B; 3-yr CAGR +15.9%, 2025 +26.4% YoY; TTM run-rate accelerating (Q1 2026 $804M, +26% YoY) | **Matches — and accelerating.** The cycle inflected up exactly as management said. |
+| Enterprise data "85% floor" for 2026 | Q1 2026 enterprise data +97.7% YoY to $263M (now the single largest end market at ~33% of sales); Q2 guided ~$900M | **Corroborated by web-verified Q1 print.** The floor looks conservative, not promotional. |
+| Gross margin "in the range but on the low side" (55–60% model) | Gross margin 55.2%, called "stable"; ~0.99 standard deviations below the historical peak | **Honest.** Margin is genuinely off its peak and they say so; no spin. |
+| "We return capital" / dividend +28% to $2/quarter; 72% of free cash flow returned over three years | Net cash $1.37B (no debt); FCF margin 23.9%; TTM free cash flow $628M | **Confirmed.** Real cash, real return, fortress balance sheet. |
+| Consistent execution / beats | Earnings beat 7 of 7 quarters (100%); consensus forward EPS growth +25.8% | **Confirmed.** |
 
-**The one divergence that matters:** the FY25 EPS line in the scan reads "12.75, -65.2% YoY" — this is a **base-effect artifact**, not deterioration. FY24 NI of 1.79B / EPS 36.59 was inflated by a one-time item (a large non-operating/tax gain); normalized FY25 NI 616M and TTM diluted EPS 13.87 (+41% latest-Q YoY) are the true run-rate. The business did **not** shrink 65%; the optics are a release artifact. Use TTM EPS 13.87, not the -65% headline. This is the single most important forensic correction in the file.
+Two numbers need careful handling so they are not misread. First, **2025 EPS fell ~65% to $12.75 and net income dropped to $616M from $1.79B in 2024** — but 2024 was distorted by a large one-time tax-related benefit, not a doubling of the operating business. The cleaner read is the trailing-twelve-month diluted EPS of $13.87 with the latest quarter's EPS up 41% year-over-year. The earnings power is rising, not collapsing. Second, **the valuation is where the story is poorer than the trajectory**: price-to-free-cash-flow is ~95x and every internal model (discounted cash flow, earnings power, Graham, owner-earnings) shows a deeply negative margin of safety. The business is excellent; the entry price assumes it stays excellent for a very long time.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Trajectory: RISING (offensive throughout).**
+**Rising — decisively.** This is one of the cleanest confidence ramps in the cohort.
 
-- Q1-25: defensive-hedged — *"we're not forecasting how good is good."*
-- Q2-25: *"MPS has appeared to be a winner… we're going to get there."*
-- Q3-25: combative confidence — the "$900 to $400" expletive; *"good money is good money."*
-- Q4-25: *"50%. I thought we can do a lot more than that, conservatively."*
-- Q1-26: *"raising that floor up to around 85%… I'll let Tony deliver better than our last CFO."*
+- Q1 2025 (defensive/hedged): "let's leave it wide open for right now"; "outside of our control."
+- Q2 2025 (offensive returns): "MPS has appeared to be a winner"; Hsing's "arrogant answer… I don't listen to any other [calls]."
+- Q4 2025 (offensive, founder overriding CFO conservatism): Hsing on the 50% floor — "I thought we can do a lot more than that… more than that."
+- Q1 2026 (peak confidence, but with a deliberate hedge): floor raised to 85%, yet CFO-designate Tony Balow flagged "strong headwinds potentially in the second half" and kept second-half gross-margin guidance cautious.
 
-The language is consistently **offensive (growth/share-gain/capacity-build)**, never defensive (no "cost discipline," "right-sizing," "macro caution" as the lead). The *only* defensive note is gross-margin ("we're at the low end, I noticed that" — Hsing) and a single H2-2026 caution ("strong headwinds potentially in the second half"). Founder-CEO arrogance ("I'll give you an arrogant answer… I don't listen to any other costs") reads as conviction, not denial, because the numbers back it.
+The shift from defensive ("macro, timing, out of our control") to offensive ("we're winning every socket, building to $6B") is unambiguous. The single most useful tonal tell is that the founder is now the bull and the finance team is the brake — the opposite of a promotional setup where finance cheerleads.
 
-## 4. GUIDANCE CREDIBILITY — **HIGH**
+## 4. GUIDANCE CREDIBILITY
 
-A clean, *escalating-beat* pattern on the load-bearing line:
-
-| Call | ED-2026 guide | Subsequent reality |
-|---|---|---|
-| Q3-25 | 30–40% | raised |
-| Q4-25 | ≥50% floor | raised |
-| Q1-26 | ~85% floor | ED already +97.7% YoY in Q1-26 |
-
-This is **sandbagging in the right direction** — each floor set conservatively, then beaten and raised. Combined with the 7/7 beat rate, reliability is **HIGH**. The risk is not credibility; it is that the *market has already extrapolated the beats*. Note the explicit hedge that the floor is "not limited by supply" (Q1-26) — they removed the obvious bear objection pre-emptively.
+**High.** The reliability score is as strong as the evidence allows. The enterprise-data floor was raised three times in three quarters (flat-±20% → 50% → 85%) and each raise was justified after the fact by backlog that actually appeared — Q4 2025 book-to-bill "well in excess of one," backlog "extending into Q2 2026." The 100% earnings-beat rate over seven quarters corroborates a consistent, mild-sandbagging pattern: management sets a conservative floor (Balow: "I like to stay pretty conservatively profiled") and beats it. The only credibility caveat is the gross-margin promise of "10 to 20 basis points of sequential improvement" that has not yet materialized — margin has sat at 55.5–55.8% for several quarters. That is a small, honestly-disclosed shortfall, not a broken promise. Reliability: High.
 
 ## 5. ANALYST PRESSURE POINTS
 
-1. **Customer concentration / single-GPU-platform share loss** (Quinn Bolton, Q1-25; Kelsey Chia, Q2-25). Management deflected on specifics but the 2025 share-shift at the dominant customer *did* happen (Hsing's "$900 to $400" alludes to it). It has since been *replaced* by ASIC/multi-customer layering — the bad news already cleared.
-2. **Gross-margin stuck at the low end** (asked every call). Management's answer never changes: "need a longer backlog horizon… 10–20 bps/qtr eventually." This is the **recurring non-answer** and the live data shows GM has NOT improved for four quarters. Watch H2-2026.
-3. **Lumpy/short-lead-time backlog** ("not building 1.4–1.5 book-to-bill"). Partially resolved Q4-25 ("book-to-bill well in excess of one… backlog extending into Q2-26").
-4. **Margin profile of systems/module transition** — analysts worry the move from chips to modules dilutes GM; management insists it is net-margin accretive.
+- **Customer concentration / Nvidia platform risk.** The recurring worry through 2025 was whether a GPU-platform change would cost MPS its socket. Management never gave a clean answer ("we don't comment on specific customers") but the financials ultimately resolved it favorably — the ASIC-customer "layering" diversified the base, and management now expects no customer above "mid-high single digits."
+- **Gross-margin recovery.** Analysts pushed every quarter on getting back to the "upper 50s." Management consistently deflected to "we need a longer backlog horizon." This is the one place where the story has outrun delivery.
+- **Short lead times / lack of backlog visibility.** Through mid-2025 management repeatedly cautioned that orders were "quick-turn" with no backlog beyond two quarters — a genuine risk flag they raised themselves. By Q4 2025/Q1 2026 this reversed (backlog building), which is a green flag, but it means the visibility is recent and thin.
+- **The unaddressed worry now:** valuation and the durability of the AI-server ramp into a second half that management itself calls cautious. Analysts are modeling continued acceleration; management is hedging the back half.
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🟢 **Live ED +97.7% YoY** validating the 85% floor (Q1-26 live data).
-🟢 **Net cash 1.37B, zero debt**, +28% dividend, 72% FCF returned — fortress balance sheet.
-🟢 **Clean CFO succession** (Blegen→Dean, internal controller, "tradition" of continuity).
-🟢 **Management candor on its own flops** (eMotion, data converters) — rare and credibility-additive.
-🟢 **Capacity raised $4B→$6B** — demand-led, not speculative (won design wins "imminent").
-🔴 **Gross margin stalled at 55.5% — bottom of model — for four straight quarters**, with management warning of *"strong headwinds potentially in the second half"* of 2026. The mix shift to modules has NOT lifted GM.
-🔴 **Insider selling is one-directional:** open-market 0 buys vs 93 sells / 187,828 sh. Live press ("insider sales test valuation"). Founder/insiders are monetizing the AI re-rate.
-🔴 **Valuation: 113x P/FCF, ~114x P/E, NTM EV/EBITDA ~49x vs peer median ~21x.** All five MoS methods read -100%. Price $1,564 vs Buffett FV $1,208 (MoS -23%); DCF FV $238 (an outlier, but directionally screaming).
-🔴 **AI-capex single-factor dependence** — the entire incremental thesis rides on hyperscaler/ASIC power demand, the same factor under the whole tape (regime doc: AI-capex ~40% of 2026 S&P EPS growth).
+🔴 **Insider selling is one-directional.** Open-market activity is 0 buys against 93 sells (≈188,000 shares). With the stock near highs and the founder loudly bullish on calls, the absence of a single open-market purchase is the most honest contrarian signal in the file.
+🔴 **Valuation leaves no margin of safety.** ~95x price-to-free-cash-flow and uniformly negative model-implied safety; the stock already prices the 85% floor and then some (web-verified forward P/E ~52x vs an analog peer average ~30x).
+🔴 **CFO transition.** Bernie Blegen, a 40-quarter, decade-long CFO, is retiring; an interim controller (Rob Dean) steps in. Continuity is well-managed (internal promotion, the third such succession) but it removes a steady, credible voice at the exact moment the story is most stretched.
+🔴 **Management's own second-half caution.** "Strong headwinds potentially in the second half" (Q1 2026) sits awkwardly against an 85% full-year floor.
+
+🟢 **Fortress balance sheet.** $1.37B net cash, no debt, Altman-Z solvency 52.8 — essentially un-levered.
+🟢 **Genuine diversification.** Non-AI markets grew 40%+ in 2025; communications, automotive (ADAS, 48-volt/zonal), and robotics are real, broadening drivers.
+🟢 **Founder skin and consistency.** A 21-year record of growth with one down year, 100% recent beat rate, and a founder who overrides his own finance team's conservatism.
+🟢 **Backlog finally building** after a long quick-turn stretch — book-to-bill above one, backlog extending into Q2 2026.
 
 ## 7. HIDDEN SIGNALS
 
-- **Terminology shift:** "chip-only supplier" → "full-service silicon-based solution provider" is now in *every* prepared remark — a deliberate ASP/mix-up narrative.
-- **"Vertical power" / "module" frequency** rises every quarter — the structural content-per-socket story.
-- **Hsing's $900→$400 reference** is a tell: he is acutely aware the stock is a sentiment vehicle on the ED line, and that a miss is catastrophic to the multiple.
-- **New CFO Tony Balow/Rob Dean** are *more numeric and forthcoming* than Blegen (Tony volunteers the 85% floor unprompted) — a small positive disclosure shift.
-- **"Headwinds in H2-2026"** (Q1-26) is the first forward caution in the file — a quiet hedge planted into an otherwise euphoric call.
+- **The vocabulary moved from "chips" to "modules" to "vertical power" to "systems/solutions."** This is a real ASP-and-content story: vertical power delivery for AI accelerators carries far more dollar content per socket than a discrete chip. Hsing: "one plus one equals three."
+- **"We don't divide it into ASIC versus merchant" (Q1 2026)** — management deliberately refuses to let investors model the Nvidia-vs-custom split, which both protects competitive information and conveniently obscures how much of the ramp still leans on one platform.
+- **The founder's profanity and bluntness** ("good money is good money… we don't want bad money") read as authentic operator candor, not coached IR — a credibility positive, but also a reminder this is a founder-driven, opinion-led company.
+- **Capacity target jumped $4B → $6B in one quarter** — a quiet but loud signal that management sees demand well beyond the current run-rate; capacity commitments are harder to fake than guidance.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Classification: STRENGTHENING (operationally) — but the SECURITY is a valuation/expectations problem, not a business problem.**
+**Trajectory: STRENGTHENING.** The business is firing on every cylinder the screener can measure — accelerating revenue, fortress balance sheet, perfect beat record, a credible founder, and a genuine, multi-driver expansion in content.
 
-The single most important thing the director must weigh: **this is a genuinely excellent, accelerating, net-cash compounder whose ENTIRE forward return is already priced in at 113x FCF / ~49x EV/EBITDA — roughly a 5–6x premium to its analog peers (TXN/ADI ~20x P/FCF, ~21x peer-median EV/EBITDA).** The catalyst (AI/ED ramp) is not a discrete, mispriced event — it is **already firing** (+97.7% YoY) and fully extrapolated by a "Strong Buy" street. There is no asymmetry to harvest; you are buying a great company at a price that requires near-perfect, multi-year execution with insiders selling into it.
+The single most important thing to weigh before sizing: **this is a great business at a price that already pays for greatness, and the catalyst that would justify the price has already fired.** Enterprise data was up ~98% in the most recent quarter and the AI-power re-rating is reflected in a ~95x cash-flow multiple. The asymmetry that an event-driven committee looks for — a cheap base with an unfired catalyst — is absent. The risk is not that the thesis is wrong; it is that it is fully priced and that management's own second-half caution, the one-way insider selling, and a hawkish-rate regime that is deflating AI-momentum multiples could compress that multiple even as earnings grow.
 
-**Moat:** intangible/technology (power-density IP, BCD process, deep customer integration, switching costs at the socket level) + scale-cost. It is a **WIDE** moat by returns evidence — ROIC 18.3%, ROE 28.2%, 55% gross margin sustained — but the **MOAT_TREND is STABLE-to-mildly-pressured**, not widening: gross margin has flat-lined at the *bottom* of the model for four quarters and management flags H2 headwinds. Returns are high and durable but not *expanding*.
+**Moat:** scale-cost plus intangible (deep, hard-won power-density and packaging know-how — "we keep doing the same thing for 20 years and just do it better"). It is a real, narrow-to-moderate moat. The returns evidence — ROIC 18.3%, ROE 28.2%, gross margin 55.2% described as "stable" but sitting near the low end of the model and ~1 standard deviation below its peak — points to a moat that is **wide on absolute returns but not currently widening**: margins are flat-to-soft, not expanding, even amid a demand boom, which is the tell of competition in power semis (TXN, ADI, Infineon, Renesas all chasing the same AI-power sockets). **Secular threat: manageable.** AI is a tailwind here, not a displacement risk; the structural worry is ordinary cyclicality and competitive margin pressure, not terminal-value erosion. No secular-decline theme applies.
 
-**Secular force:** MPWR is a **beneficiary**, not a victim, of the dominant secular force (AI data-center power density). No terminal-erosion theme applies (none of the eight secular-decline themes fit; secular_threat = **none/manageable** — the only structural risk is cyclical AI-capex digestion, not terminal demand loss).
-
----
-CREDIBILITY_SCORE: 5 | TRAJECTORY: STRENGTHENING | MOAT: WIDE | MOAT_TREND: STABLE | SECULAR_THREAT: none
+CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

@@ -1,0 +1,11 @@
+{
+  "symbol": "MA",
+  "sector": "Financial Services",
+  "signal_type": "disruptor",
+  "company": "Mastercard Incorporated",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Financial Services\nRevenue growth: +16.8% YoY | 3-yr CAGR +13.8%\nMargins: FCF 52.2%\nReturns / leverage: Net debt 1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 17.72B | TTM diluted EPS 17.28 | latest-Q EPS YoY +21%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 10.74B (total debt 18.96B minus cash 8.22B) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 23 sells (8,971sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nPayment Network: 19.48B (59%) | Value-Added Services And Solutions: 13.31B (41%)",
+  "dossier": "",
+  "methodologies": [
+    "fintech_rails"
+  ]
+}

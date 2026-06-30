@@ -1,0 +1,21 @@
+{
+ "symbol": "STX",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Mass-capacity HDD storage — sells nearline HDDs used in hyperscaler cold/warm storage tiers; beneficiary of AI training data lake growth and SMR density advances.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "WDC",
+  "TOSH (unlisted)",
+  "PURE",
+  "NTAP",
+  "NVME cloud (AWS/GCP)",
+  "Samsung (unlisted)",
+  "Micron (MU)",
+  "SK Hynix (unlisted)"
+ ],
+ "relative_comps": "STX and WDC are a duopoly in nearline HDD; that structural concentration is the main moat. 29% YoY revenue recovery is real (post-inventory correction) but the -8% 3-year CAGR shows the structural narrative is AI tailwind atop a cyclical trough, not pure disruption. Relative to PURE or NTAP, STX is the lowest-cost storage tier — hard to fully displace for unstructured AI training data at cost per TB. FCF margin of 24% is solid for a capital-intensive HDD manufacturer.",
+ "theme_fit_confidence": "medium"
+}

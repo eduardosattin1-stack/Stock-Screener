@@ -1,0 +1,19 @@
+{
+ "symbol": "RTX",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Diversified defense and aerospace prime across jet engines (Pratt & Whitney), missiles/radar/EW (Raytheon), and avionics (Collins Aerospace); sells systems to DoD, allied governments, and commercial airlines.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "GE",
+  "BA",
+  "LMT",
+  "NOC",
+  "SAFR.PA",
+  "HWM"
+ ],
+ "relative_comps": "RTX is a mature prime — revenue CAGR of 10% and FCF margin of 9% reflect a mix of high-margin Raytheon munitions/missiles (defense_tech alignment) and the drag from Pratt GTF fleet-quality issues that consumed cash. Patriot/NASAMS missile demand is structurally elevated by NATO rearmament. However, the bulk of RTX is a legacy systems integrator with modest growth versus pure-play defense-tech disruptors like KTOS or AVAV. Theme fit is real but the s-curve is maturing — it belongs in the value lens more than the disruption lens.",
+ "theme_fit_confidence": "medium"
+}

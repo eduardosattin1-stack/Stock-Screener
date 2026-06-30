@@ -1,0 +1,20 @@
+{
+ "symbol": "CRWD",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Cloud-native endpoint and identity security platform — sells Falcon platform modules (EDR/XDR, identity, cloud security, threat intel) on a single AI-driven agent; the security layer every cloud and AI deployment requires.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "PANW",
+  "MSFT",
+  "S",
+  "CHKP",
+  "FTNT",
+  "ZS",
+  "Trellix (private)"
+ ],
+ "relative_comps": "CRWD is the highest-growth large-cap security name: 23% YoY on $5.1B TTM revenue with a 29% FCF margin on the path to 35%+. Its Falcon platform has the highest customer NRR in the sector and the 2024 outage, while damaging to brand, did not materially arrest growth. Versus PANW, CRWD is smaller, faster-growing, and trades at a meaningful premium (~32x revenue). Versus S (SentinelOne), CRWD is 4x the revenue with superior margins. The AI adjacency is real — Charlotte AI feeds on the same agent telemetry, making CRWD a compound beneficiary of AI workload proliferation.",
+ "theme_fit_confidence": "high"
+}

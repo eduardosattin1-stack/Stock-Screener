@@ -1,0 +1,19 @@
+{
+ "symbol": "HEI",
+ "themes": [
+  "defense_tech",
+  "space"
+ ],
+ "value_chain_position": "FAA-approved Parts Manufacturer Approval (PMA) replacement parts distributor and niche aerospace electronics manufacturer; operates as a structural cost-reduction toll on airline and defense MRO spend.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TDG",
+  "AIR",
+  "HEICO-INT",
+  "BA-SERVICES",
+  "AVAV"
+ ],
+ "relative_comps": "HEICO is the closest thing to a moat-compounding disruptor in aerospace MRO: its PMA parts are FAA-certified substitutes for OEM parts at 30-40% discounts, structurally eroding the aftermarket toll that GE/RTX/Safran charge. Revenue CAGR of 27% (3y) driven by acquisition cadence and organic pricing. FCF margin 19% and clean balance sheet distinguish it from TransDigm (TDG), its closest comparable, which carries 7-8x EBITDA leverage. Space exposure is modest (niche avionics for satellites) but present. The business model is genuinely disruptive to legacy OEM aftermarket pricing power.",
+ "theme_fit_confidence": "high"
+}

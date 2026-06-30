@@ -1,0 +1,19 @@
+{
+ "symbol": "AVPT",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Microsoft 365 and multi-cloud data management/governance SaaS — sells backup, migration, compliance, and governance tooling for M365, Teams, Salesforce, and Google Workspace environments; the data-resilience layer on top of hyperscaler productivity platforms.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MSFT",
+  "Veeam (private)",
+  "Druva (private)",
+  "Commvault (CVLT)",
+  "Syskit (private)",
+  "BAAR (Backupify)"
+ ],
+ "relative_comps": "AVPT is the leading third-party governance and compliance layer for the Microsoft 365 ecosystem, with 27% YoY growth and 24% FCF margin at $444M revenue. Its specialization in M365 data governance gives it relevance as enterprises confront AI copilot data-sprawl compliance requirements. However, MSFT natively provides competing governance features (Purview) and AVPT depends on MSFT's platform decisions — load-bearing score is constrained by platform dependency. Versus Commvault (CVLT), AVPT is more M365-specialized and growing faster. The $2.2B mcap looks reasonable for the growth/FCF profile but the MSFT concentration risk is non-trivial.",
+ "theme_fit_confidence": "medium"
+}

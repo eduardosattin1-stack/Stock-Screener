@@ -1,0 +1,18 @@
+{
+ "symbol": "WST",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Manufactures drug-delivery components (stoppers, closures, seals, drug-containment systems) that are required for every parenteral drug vial and biologic fill-finish line.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "Gerresheimer (GXI.DE)",
+  "AptarGroup (ATR)",
+  "Datwyler Holding (private)",
+  "Becton Dickinson (BDX)",
+  "Schott Pharma (private)"
+ ],
+ "relative_comps": "West Pharmaceutical is the dominant supplier of drug-container closure systems for injectable drugs — every GLP-1, mRNA vaccine, and biologic batch runs through WST or a small set of qualified alternatives. It is a genuine chokepoint: FDA validation and drug-master-file qualification create extremely high switching costs; pharma companies cannot swap closure vendors without regulatory re-validation. FCF at $458M on $3.2B revenue is strong, and the business is not cyclical in the same way as industrial peers. Against Gerresheimer and Datwyler, WST commands premium pricing due to its Westar and NovaPure coating platforms. The 3-year CAGR of 2.1% reflects a post-COVID inventory normalization trough — underlying demand is secular.",
+ "theme_fit_confidence": "high"
+}

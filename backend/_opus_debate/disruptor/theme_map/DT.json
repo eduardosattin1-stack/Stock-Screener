@@ -1,0 +1,20 @@
+{
+ "symbol": "DT",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Observability and AI-ops platform (Dynatrace) — software-infrastructure layer, providing automated monitoring of cloud-native applications and AI workload performance for enterprises migrating to hyperscaler infrastructure.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "DDOG",
+  "NR",
+  "SPLK",
+  "ESTC",
+  "HONEYCOMB",
+  "CORALOGIX",
+  "AMZN"
+ ],
+ "relative_comps": "DT competes directly with Datadog (DDOG) for cloud observability wallet share; DDOG leads on growth (mid-20s%) and mindshare, while DT holds stronger enterprise accounts in regulated industries. 20% 3-year CAGR and 19% YoY are healthy but below DDOG's pace. FCF margin (26%) is solid and balance sheet is net cash. AI workloads generate observability spend as a side-effect of deployment — DT's Davis AI-engine is a credible differentiator vs. rule-based monitoring alternatives. Defense_tech hint stripped.",
+ "theme_fit_confidence": "medium"
+}

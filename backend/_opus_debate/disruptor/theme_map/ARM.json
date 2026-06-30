@@ -1,0 +1,18 @@
+{
+ "symbol": "ARM",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "CPU/NPU instruction-set architecture licensing — every mobile SoC, server CPU, AI inference chip and embedded controller pays ARM a royalty per unit shipped.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "INTC",
+  "AMD",
+  "RISCV-private",
+  "QCOM",
+  "GOOGL"
+ ],
+ "relative_comps": "ARM's ISA is the de facto standard for mobile (>99% share) and is rapidly gaining in server CPUs (Graviton/NEOVERSE wins at AWS, Google, Microsoft). The shift to Armv9 doubles royalty rates vs Armv8, driving ASP expansion. RISC-V is an open-source alternative with growing momentum but zero production server deployments at scale. ARM trades at ~80x forward earnings — a significant premium justified by near-monopoly architecture leverage but leaving almost no margin for execution risk.",
+ "theme_fit_confidence": "high"
+}

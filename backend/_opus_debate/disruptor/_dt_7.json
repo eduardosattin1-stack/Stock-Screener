@@ -1,0 +1,128 @@
+{
+  "INGM": {
+    "themes": [],
+    "value_chain_position": "IT products and cloud-services distributor; aggregates hardware, software licenses, and cloud SKUs from vendors and resells to resellers/VARs globally.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["SNX", "TD.TO", "ARW", "AVT", "SCSC", "WDC"],
+    "relative_comps": "Ingram is the largest pure-play IT distributor by revenue (~$54B TTM) but 3-yr CAGR of ~1% flags it as a pass-through business, not a compounder. TD Synnex and Arrow/Avnet are direct comparables; all trade at thin EBITDA multiples reflecting commodity economics. Ingram's FCF is near-zero despite $54B revenue (effective FCF margin essentially 0%), confirming the structural margin compression that defines IT distribution. No pricing power, no switching-cost moat.",
+    "theme_fit_confidence": "low"
+  },
+  "EPAM": {
+    "themes": [],
+    "value_chain_position": "Software engineering and IT services outsourcer; sells developer capacity and digital transformation project services, primarily to North American and European enterprises.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["GLOB", "CTSH", "ACN", "WIT", "INFY", "DAVA"],
+    "relative_comps": "EPAM's Eastern European talent base (largely Ukraine/Poland) gave it a premium-quality reputation pre-2022, but ongoing geopolitical disruption has structurally weakened its supply side; 3-yr CAGR of ~4% reflects this headwind vs. faster-growing nearshore peers like Globant. FCF margin of ~10% is respectable but multiples have re-rated down sharply. It is a commoditizing IT services firm, not a disruption toll-taker; the industry filter caught it via Information Technology Services but it has no theme-specific moat.",
+    "theme_fit_confidence": "low"
+  },
+  "PAY": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Bill-pay platform layer; operates the cloud-native payment network connecting billers (utilities, government, healthcare) to consumer payment instruments, replacing legacy lockbox and IVR infrastructure.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ACI", "FISV", "RPAY", "TOST", "FOUR", "IQST"],
+    "relative_comps": "Paymentus is the fastest-growing at-scale bill-pay specialist with 34% 3-yr CAGR and 33% YoY, well ahead of ACI Worldwide and Fiserv biller solutions which are incumbent/legacy. Its 10% FCF margin is thin but expanding, and the ~$2.6B market cap represents a genuine runway vs. the large undigitized biller base. The load-bearing score is capped at 3 because Fiserv and ACI can replicate the value proposition in verticals where they already have biller relationships; Paymentus is a faster grower but not a chokepoint.",
+    "theme_fit_confidence": "high"
+  },
+  "WAY": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Healthcare revenue cycle management and payments platform; sits between payers (insurers), providers (hospitals/clinics), and patients handling claim submission, remittance and patient payment collection.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NXGN", "HSTM", "AMSF", "VCSY", "COUR", "OM"],
+    "relative_comps": "Waystar's 25% FCF margin at $1.2B revenue marks it as an asset-light software rail in a sticky vertical; 16% CAGR and 19% YoY are solid for healthcare IT. Competitors include Netsmart, HealthStream, and legacy clearinghouse operators; Waystar's cloud-native architecture gives it a modernization edge over older clearinghouse incumbents. Net leverage near zero post-IPO is a balance-sheet positive. The main risk is concentration — healthcare payers control reimbursement rules and could vertically integrate parts of the workflow.",
+    "theme_fit_confidence": "high"
+  },
+  "INOD": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "AI data annotation and training-data pipeline services; sells human-in-the-loop labeling, RLHF data production, and quality-evaluation workflows to foundation-model labs and enterprise AI teams.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TASK", "APPEN.AX", "SCOR.PA", "LBIX", "DMRC", "SAMA"],
+    "relative_comps": "Innodata is the highest-growth name in the chunk (47% 3-yr CAGR, 40% YoY) and the only genuine AI infrastructure pick-and-shovel, riding demand from hyperscaler and frontier-lab RLHF budgets. However it is not a chokepoint — Scale AI (private), Appen (ASX), and internal annotation teams are direct substitutes, keeping load-bearing score at 2. FCF margin of ~22% at $283M revenue is unusually high for a services firm, suggesting real leverage; the $3.2B market cap prices in continued hyper-growth. Key risk: synthetic data and auto-labeling (model-generated data) could compress the human-annotation TAM faster than expected.",
+    "theme_fit_confidence": "medium"
+  },
+  "V": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Global payment network operator; owns the rails (VisaNet) connecting ~15,000 issuers to ~100M merchant locations, taking a per-transaction toll on every card-based payment globally.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MA", "AXP", "PYPL", "GPN", "FIS", "SQ"],
+    "relative_comps": "Visa is the canonical fintech rails chokepoint: 49% FCF margin on $43B revenue with a duopoly network effect that no new entrant has broken at scale. It is the largest name in the chunk by market cap ($623B) and by any FCF metric. Growth of 11% CAGR / 14% YoY is strong for a company this size. Visa trades at a material premium to Mastercard (~30x FCF vs. ~25x) reflecting its larger float and global lead; both are in broadening (not steep ramp) as card penetration in developed markets matures while emerging-market and digital-wallet volumes layer on growth.",
+    "theme_fit_confidence": "high"
+  },
+  "MA": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Global payment network operator; owns Mastercard/Maestro/Cirrus rails plus Vocalink A2A infrastructure, taking per-transaction tolls across card and account-to-account flows.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["V", "AXP", "PYPL", "GPN", "FIS", "WEX"],
+    "relative_comps": "Mastercard is the direct duopoly peer to Visa: 52% FCF margin on $33.9B TTM revenue, 14% CAGR / 17% YoY. MA is slightly faster-growing than V recently, aided by cross-border volume recovery and value-added services (cybersecurity, data analytics) layered on the core rail. Trades at a modest discount to Visa on FCF multiple given smaller float. Vocalink gives MA a strategic toe-hold in A2A/real-time payments which Visa lacks at comparable scale — a genuine differentiation in the medium term.",
+    "theme_fit_confidence": "high"
+  },
+  "COF": {
+    "themes": [],
+    "value_chain_position": "Credit card issuer and consumer bank; economics are driven by net interest margin on a $150B+ credit card and auto loan book, not by transaction-fee rails.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["JPM", "BAC", "DFS", "SYF", "ADS", "ALLY"],
+    "relative_comps": "Capital One is a credit book, not a payment rail. Its 38% YoY revenue growth largely reflects the Discover Financial acquisition closing in 2025, inflating reported figures. FCF as reported ($28.9B) represents customer deposit inflows and loan repayments — not operating cash generation in the industrial sense. The themes_hint of fintech_rails is a false positive from FMP's Financial - Credit Services bucket; this is a balance-sheet lender and belongs in a value/bank screen, not a disruption basket.",
+    "theme_fit_confidence": "low"
+  },
+  "IX": {
+    "themes": [],
+    "value_chain_position": "Japanese diversified financial conglomerate; operates leasing (aircraft, rail, equipment), insurance, real estate, private equity, and infrastructure concessions across Japan and globally.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["SMFG", "8591.T", "TYO.T", "MFG", "AIG", "BN.TO"],
+    "relative_comps": "ORIX is a conglomerate financial holding company with revenues reported in JPY (~3.3 trillion yen TTM); its USD market cap of ~$43B reflects long-term discount to book-value typical of Japanese financials. There is no disruption thesis here — the company is a mature, diversified lender/investor. Revenue and FCF figures in the gate data are JPY-denominated and large in absolute terms but represent a mature balance-sheet business. The fintech_rails hint is a false positive from the FMP Credit Services filing classification.",
+    "theme_fit_confidence": "low"
+  },
+  "OBDC": {
+    "themes": [],
+    "value_chain_position": "Business development company (BDC); deploys a leveraged credit balance sheet into first-lien and second-lien loans to private equity-backed mid-market companies.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["ARCC", "BXSL", "GBDC", "FSK", "CGBD", "OCSL"],
+    "relative_comps": "Blue Owl Capital Corporation is a pure balance-sheet lender regulated as a BDC; its 82% FCF margin is an artifact of how BDCs report (distributable NII, not operating cash). It has no payment rail, no network effect, and no disruption thesis. Growth of 27% CAGR / 10% YoY reflects AUM expansion from private credit tailwinds, not a technology or platform advantage. Direct peer Ares Capital (ARCC) trades at a premium given longer track record and larger scale. The fintech_rails hint is a false positive.",
+    "theme_fit_confidence": "low"
+  },
+  "ENVA": {
+    "themes": [],
+    "value_chain_position": "Online consumer and small-business lender; deploys a leveraged loan book to near-prime/subprime borrowers via digital acquisition channels, earning net interest margin.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["OPRT", "UPST", "LDI", "ELVT", "CURO", "WRLD"],
+    "relative_comps": "Enova is a profitable online lender with 22% CAGR / 17% YoY, but the economics are entirely credit-spread on a high-yielding loan book — not a toll on transaction volume. FCF margin of 57% is a presentation artifact of its lending cash flows. It competes with Oportun, Elevate Credit, and LoanMart; no platform network effect. The fintech_rails hint is a false positive from the FMP Financial - Credit Services classification; Enova is a specialty finance company.",
+    "theme_fit_confidence": "low"
+  },
+  "FCFS": {
+    "themes": [],
+    "value_chain_position": "Physical pawnshop and buy-now-pay-later operator; runs ~3,000 pawn stores in the US, Mexico, and Latin America, earning interest on pawn loans and retail margin on forfeited collateral.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["EZC.TO", "EZPW", "CASH", "DFC.L", "BFH", "RM"],
+    "relative_comps": "FirstCash is the largest publicly traded pawnshop operator, and its 10% CAGR / 14% YoY is solid for a physical retail/lending hybrid. However it is entirely a brick-and-mortar financial services business with no disruption angle; the EZCORP and Dollar Financial peers are direct comparables. FCF margin of 13% reflects the capital intensity of running physical stores and managing collateral inventory. This is a value name, not a disruptor; the fintech_rails industry filter is a false positive.",
+    "theme_fit_confidence": "low"
+  },
+  "SEZL": {
+    "themes": [],
+    "value_chain_position": "Buy-now-pay-later consumer credit platform; underwrites short-term installment loans at point-of-sale for online merchants, earning a blend of merchant discount fees and consumer interest.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AFRM", "AFTPF", "OPRT", "PAYC", "SQ", "PYPL"],
+    "relative_comps": "Sezzle has posted the highest revenue growth in the credit-services sub-group (53% CAGR, 46% YoY) and an unusually high 50% FCF margin for a BNPL player, suggesting it has shifted toward higher-yield, fee-heavy merchant agreements rather than balance-sheet-heavy instalment lending. That margin profile differentiates it from Affirm (which takes more credit risk) and positions it closer to a merchant-fee platform. However the underlying economics still have a significant credit component, and at $4B market cap it is subscale vs. Affirm ($15B+). Does not clear the fintech_rails toll-taker bar — the revenue model is too mixed between network fees and credit spread to call it a pure rail.",
+    "theme_fit_confidence": "low"
+  },
+  "LBTYK": {
+    "themes": [],
+    "value_chain_position": "European cable and broadband operator; owns fixed-line, mobile, and broadband networks in Switzerland (Sunrise), Belgium, Slovakia, and holds a stake in VMO2 (UK JV) and Telenet.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["TMUS", "CHTR", "VOD.L", "TEF.MC", "DT.DE", "ORAN.PA"],
+    "relative_comps": "Liberty Global is a mature European telco/cable holding company; the 164% YoY revenue figure is a distortion from Sunrise asset consolidation, not organic growth — 3-yr CAGR of 6.7% reflects the true slow-growth reality. FCF margin of 12% is thin for a capital-intensive infrastructure operator. The space themes_hint is a false positive; Liberty Global has no satellite or launch business. It competes with Vodafone, Telefonica, and Deutsche Telekom in congested European markets with no disruption differentiation.",
+    "theme_fit_confidence": "low"
+  }
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "FIS",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Core banking software, payment processing infrastructure, and capital markets technology platform; sells multi-year software licenses, SaaS contracts, and transaction-processing services to global financial institutions.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "FLT",
+  "GPN",
+  "FISV",
+  "NCR",
+  "SS&C",
+  "JKHY"
+ ],
+ "relative_comps": "FIS was the largest financial technology company by revenue post-Worldpay acquisition, but the Worldpay divestiture (2023) reset the business back to a legacy core-banking software provider growing at 3% CAGR. The 14% YoY re-acceleration is partly base-effect driven and partly early Worldpay restructuring benefit. FCF margin of 24% is healthy but the growth profile is closer to a mature infrastructure vendor than a disruption toll-taker. Fiserv and Jack Henry are more focused peers; FIS is the most diversified and arguably the most strategically diluted. The fintech_rails theme partially applies (banking/treasury software is a defined layer) but the s-curve is maturing.",
+ "theme_fit_confidence": "medium"
+}

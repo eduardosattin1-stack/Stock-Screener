@@ -1,0 +1,21 @@
+{
+ "symbol": "SMTC",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Mixed-signal and optical networking silicon — sells LoRa IoT chips and high-speed SERDES/optical DSPs used in data-center and metro optical interconnects.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "CIEN",
+  "LITE",
+  "CRDO",
+  "MRVL",
+  "IIVI",
+  "COHR",
+  "IPHI",
+  "MACOM"
+ ],
+ "relative_comps": "SMTC straddles two markets: IoT/LoRa (moderate growth, defensible network effect) and optical DSPs for data-center interconnects (high-growth, competitive). On the optical side CRDO and MRVL are formidable; SMTC's 15% FCF margin vs CRDO's 21% signals it is less concentrated in pure AI-interconnect wins. Revenue YoY of 14% is modest versus the 40-100%+ of pure-play AI networking names, and the 2x net debt/EBITDA leverage from the Sierra Wireless acquisition weighs on the balance sheet relative to net-cash peers.",
+ "theme_fit_confidence": "medium"
+}

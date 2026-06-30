@@ -1,0 +1,11 @@
+{
+  "symbol": "V",
+  "sector": "Financial Services",
+  "signal_type": "disruptor",
+  "company": "Visa Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Financial Services\nRevenue growth: +14.4% YoY | 3-yr CAGR +10.9%\nMargins: FCF 49.2%\nReturns / leverage: Net debt 0\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 21.18B | TTM diluted EPS 11.48 | latest-Q EPS YoY +35%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 10.06B (total debt 23.98B minus cash 13.91B) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 8 sells (97,040sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-09-30 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nData Processing Revenues: 19.99B (28%) | Service: 17.54B (25%) | Client Incentives: -15.75B (-22%) | International Transaction Revenues: 14.17B (20%) | Service, Other: 4.05B (6%)",
+  "dossier": "",
+  "methodologies": [
+    "fintech_rails"
+  ]
+}

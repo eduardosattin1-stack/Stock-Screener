@@ -1,0 +1,19 @@
+{
+ "symbol": "DSGX",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Supply chain logistics network platform layer — operates a cloud-based multi-carrier transportation management and customs compliance network connecting shippers, carriers, and customs agencies on a transaction-toll model.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "BLKB",
+  "MercuryGate (private)",
+  "project44 (private)",
+  "E2open (ETWO)",
+  "GTLS",
+  "Flexport (private)"
+ ],
+ "relative_comps": "Descartes is a highly sticky B2B logistics network operator with 13% YoY growth and 37% FCF margin, compounding through M&A of specialized compliance and routing networks. Its competitive moat is the multi-directional network effect (each new carrier/customs node makes the platform more valuable to all participants). It competes with E2open on the TMS side and project44 on visibility; the fintech_rails tag is apt since every shipment triggers a compliance and data toll. Capital-light model with negative net debt.",
+ "theme_fit_confidence": "medium"
+}

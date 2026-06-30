@@ -1,0 +1,1109 @@
+{
+ "built_at": "2026-06-10T12:22:06.412464",
+ "taxonomy_version": "1.0",
+ "funnel": {
+  "screened": 459,
+  "liquid": 451,
+  "gated": 154,
+  "mapped_high_med": 115,
+  "debated": 40
+ },
+ "by_theme": {
+  "robotics_automation": 8,
+  "ai_infrastructure": 10,
+  "fintech_rails": 8,
+  "energy_transition": 8,
+  "genomics_bio_tools": 4,
+  "defense_tech": 8,
+  "space": 1
+ },
+ "members": [
+  {
+   "symbol": "ADSK",
+   "name": "Autodesk, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 47313427844,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Engineering design and simulation platform layer — sells the dominant CAD/CAM/BIM toolchain (AutoCAD, Revit, Fusion 360) used to design physical products, buildings, and factories, increasingly integrating digital twin and generative design for manufacturing and construction.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 2729000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1292,
+    "rev_yoy": 0.1828,
+    "ttm_revenue": 7507000000,
+    "fcf_margin": 0.3635,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.024069028156221618,
+    "adv_usd": 408991712.0
+   }
+  },
+  {
+   "symbol": "ANET",
+   "name": "Arista Networks, Inc.",
+   "sector": "Technology",
+   "industry": "Computer Hardware",
+   "mcap": 191595221686,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "Data-center networking toll-taker — sells EOS-powered Ethernet switches and software for AI cluster fabrics, replacing InfiniBand in many hyperscaler builds.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 5278100000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2715,
+    "rev_yoy": 0.3057,
+    "ttm_revenue": 9709900000,
+    "fcf_margin": 0.5436,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6619758418567123,
+    "adv_usd": 1107199848.0
+   }
+  },
+  {
+   "symbol": "APP",
+   "name": "AppLovin Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 174970739076,
+   "themes": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ],
+   "value_chain_position": "AI-native advertising and monetization platform layer — sells an AI-driven programmatic ad engine (AXON) that acts as a performance marketing toll-taker between mobile/connected-TV app publishers and advertisers.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 4402457000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2484,
+    "rev_yoy": 0.5116,
+    "ttm_revenue": 6164192000,
+    "fcf_margin": 0.7142,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.15279510392824597,
+    "adv_usd": 2312680644.0
+   }
+  },
+  {
+   "symbol": "ARM",
+   "name": "Arm Holdings plc American Depositary Shares",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 345651040000,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "CPU/NPU instruction-set architecture licensing — every mobile SoC, server CPU, AI inference chip and embedded controller pays ARM a royalty per unit shipped.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 972000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2246,
+    "rev_yoy": 0.2279,
+    "ttm_revenue": 4920000000,
+    "fcf_margin": 0.1976,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.6989010989010989,
+    "adv_usd": 4329836411.0
+   }
+  },
+  {
+   "symbol": "ASML",
+   "name": "ASML Holding N.V.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 685184541860,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "EUV and DUV lithography equipment — the singular chokepoint every leading-edge chip fab must use; no fab can manufacture <7nm chips without ASML's tools.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 8583788345,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1555,
+    "rev_yoy": 0.097,
+    "ttm_revenue": 33692700000,
+    "fcf_margin": 0.2548,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.411264304964262,
+    "adv_usd": 5577319599.0
+   }
+  },
+  {
+   "symbol": "BE",
+   "name": "Bloom Energy Corporation",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 73844472571,
+   "themes": [
+    "energy_transition"
+   ],
+   "value_chain_position": "Solid-oxide fuel cell manufacturer selling distributed power generation equipment (Energy Servers) primarily to data centers, utilities and industrial facilities — on-site clean baseload layer of the energy transition value chain.",
+   "load_bearing_score": 3,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 232998000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1906,
+    "rev_yoy": 0.5653,
+    "ttm_revenue": 2449027000,
+    "fcf_margin": 0.0951,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.1698939499696035,
+    "adv_usd": 4197048929.0
+   }
+  },
+  {
+   "symbol": "BLLN",
+   "name": "BillionToOne, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 4709477300,
+   "themes": [
+    "genomics_bio_tools"
+   ],
+   "value_chain_position": "Non-invasive prenatal and carrier screening diagnostics; sells cfDNA-based UNITY test consumables and sequencing kits to OBGYNs and clinical labs for fetal aneuploidy and carrier screening.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 28087000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": null,
+    "rev_yoy": 0.9849,
+    "ttm_revenue": 354536999,
+    "fcf_margin": 0.0792,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -9.53203092808493,
+    "adv_usd": 69253422.0
+   }
+  },
+  {
+   "symbol": "BSX",
+   "name": "Boston Scientific Corporation",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 72771949564,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Large-cap medtech; designs, manufactures, and sells cardiovascular, neuromodulation, urology, and endoscopy devices including electrophysiology mapping systems and robotic bronchoscopy (Ion).",
+   "load_bearing_score": 4,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 3442000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1654,
+    "rev_yoy": 0.1744,
+    "ttm_revenue": 20615000000,
+    "fcf_margin": 0.167,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.9955910140667645,
+    "adv_usd": 794616394.0
+   }
+  },
+  {
+   "symbol": "BWXT",
+   "name": "BWX Technologies, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 17311494816,
+   "themes": [
+    "defense_tech",
+    "energy_transition"
+   ],
+   "value_chain_position": "Sole-source naval nuclear reactor manufacturer for the US Navy; also supplies nuclear fuel, micro-reactors and medical radioisotopes — a regulated government monopoly with emerging commercial nuclear adjacencies.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 328104000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1273,
+    "rev_yoy": 0.214,
+    "ttm_revenue": 3377235000,
+    "fcf_margin": 0.0972,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.768471855265655,
+    "adv_usd": 192646232.0
+   }
+  },
+  {
+   "symbol": "CCJ",
+   "name": "Cameco Corporation",
+   "sector": "Energy",
+   "industry": "Uranium",
+   "mcap": 44541957660.06,
+   "themes": [
+    "energy_transition"
+   ],
+   "value_chain_position": "Vertically integrated uranium miner and processor supplying nuclear fuel to utilities globally — nuclear-fuel-and-services layer of the energy-transition value chain, a direct chokepoint for SMR and existing fleet fuel supply.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 899733466,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2304,
+    "rev_yoy": 0.0745,
+    "ttm_revenue": 3536887321,
+    "fcf_margin": 0.2544,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.09596185367307405,
+    "adv_usd": 406999010.0
+   }
+  },
+  {
+   "symbol": "CLBT",
+   "name": "Cellebrite DI Ltd.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3237728825,
+   "themes": [
+    "defense_tech"
+   ],
+   "value_chain_position": "Digital intelligence and lawful-intercept analytics platform — sells forensic intelligence software to law enforcement, intelligence agencies, and national security bodies globally for extracting and analyzing data from mobile devices and digital sources.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 154039000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2068,
+    "rev_yoy": 0.1843,
+    "ttm_revenue": 496427000,
+    "fcf_margin": 0.3103,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9412343918442877,
+    "adv_usd": 40069000.0
+   }
+  },
+  {
+   "symbol": "CRDO",
+   "name": "Credo Technology Group Holding Ltd",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 40997688163.8,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "High-speed connectivity silicon (AEC/Active Electrical Cables and SerDes PHY) — sells the active copper cable assemblies and retimer chips that link GPU clusters within AI data centers at speeds from 100G to 800G.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 283694000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.9353,
+    "rev_yoy": 2.0568,
+    "ttm_revenue": 1335116000,
+    "fcf_margin": 0.2125,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.467366555408937,
+    "adv_usd": 3653293899.0
+   }
+  },
+  {
+   "symbol": "DLO",
+   "name": "DLocal Limited",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3492632757,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Emerging-market payment processing rails for global merchants — sells a cross-border payment infrastructure layer enabling multinationals and global e-commerce companies to accept local payments, disburse payouts, and navigate FX in LatAm, Africa, and South/Southeast Asia.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 399509530,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3769,
+    "rev_yoy": 0.5581,
+    "ttm_revenue": 1212690000,
+    "fcf_margin": 0.3294,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.095935646788624,
+    "adv_usd": 29716823.0
+   }
+  },
+  {
+   "symbol": "FICO",
+   "name": "Fair Isaac Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 28412338486,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Credit-scoring analytics and decisioning software platform — occupies the market-data-and-analytics layer of fintech rails, providing a near-mandatory toll (the FICO score) on virtually every US consumer credit origination.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 892685000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1307,
+    "rev_yoy": 0.2257,
+    "ttm_revenue": 2255802000,
+    "fcf_margin": 0.3957,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.9562649492596003,
+    "adv_usd": 401255002.0
+   }
+  },
+  {
+   "symbol": "FSLR",
+   "name": "First Solar, Inc.",
+   "sector": "Energy",
+   "industry": "Solar",
+   "mcap": 28173102070,
+   "themes": [
+    "energy_transition"
+   ],
+   "value_chain_position": "Thin-film cadmium-telluride solar module manufacturer — solar-manufacturing layer of the energy-transition value chain, selling domestically produced utility-scale modules in the US and internationally.",
+   "load_bearing_score": 3,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 1667782999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2584,
+    "rev_yoy": 0.273,
+    "ttm_revenue": 5419048000,
+    "fcf_margin": 0.3078,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.8249876499046062,
+    "adv_usd": 731264690.0
+   }
+  },
+  {
+   "symbol": "GE",
+   "name": "GE Aerospace",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 345253498641,
+   "themes": [
+    "defense_tech"
+   ],
+   "value_chain_position": "Jet engine OEM and aftermarket service provider (LEAP, GE9X, F414/F110 military); sells engines as loss leaders and monetizes long-term service agreements — a classic installed-base toll model.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 7468000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1632,
+    "rev_yoy": 0.2185,
+    "ttm_revenue": 48352000000,
+    "fcf_margin": 0.1545,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.844553465976197,
+    "adv_usd": 1582576953.0
+   }
+  },
+  {
+   "symbol": "GMED",
+   "name": "Globus Medical, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 11128998240,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Designs and sells spine surgery implants and the ExcelsiusGPS robotic navigation platform; earns per-procedure implant revenue with robotic capital equipment driving consumable pull-through.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 605320000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4216,
+    "rev_yoy": 0.2349,
+    "ttm_revenue": 3100633000,
+    "fcf_margin": 0.1952,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5028610689296489,
+    "adv_usd": 122335735.0
+   }
+  },
+  {
+   "symbol": "HEI",
+   "name": "HEICO Corporation",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 45476726681,
+   "themes": [
+    "defense_tech",
+    "space"
+   ],
+   "value_chain_position": "FAA-approved Parts Manufacturer Approval (PMA) replacement parts distributor and niche aerospace electronics manufacturer; operates as a structural cost-reduction toll on airline and defense MRO spend.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 925974000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2664,
+    "rev_yoy": 0.188,
+    "ttm_revenue": 4911297000,
+    "fcf_margin": 0.1885,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.738919391476427,
+    "adv_usd": 234112667.0
+   }
+  },
+  {
+   "symbol": "HII",
+   "name": "Huntington Ingalls Industries, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 11723478080,
+   "themes": [
+    "defense_tech"
+   ],
+   "value_chain_position": "Sole US builder of nuclear-powered aircraft carriers and one of two nuclear submarine shipyards; sells large naval combatants under sole-source or duopoly DoD contracts with decades-long backlogs.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "maturing",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 1060000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0535,
+    "rev_yoy": 0.1208,
+    "ttm_revenue": 12849000000,
+    "fcf_margin": 0.0825,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.256857855361596,
+    "adv_usd": 114688902.0
+   }
+  },
+  {
+   "symbol": "HWM",
+   "name": "Howmet Aerospace Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 102891640328,
+   "themes": [
+    "defense_tech"
+   ],
+   "value_chain_position": "Precision aerospace structures manufacturer — engine components (blades, vanes, discs), fasteners, and airframe structures for both commercial OEM and military platforms; sells engineered parts with long-term supply agreements.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 1435000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1337,
+    "rev_yoy": 0.1424,
+    "ttm_revenue": 8623000000,
+    "fcf_margin": 0.1664,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.84655885671305,
+    "adv_usd": 794112652.0
+   }
+  },
+  {
+   "symbol": "IDXX",
+   "name": "IDEXX Laboratories, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 45664579870,
+   "themes": [
+    "genomics_bio_tools"
+   ],
+   "value_chain_position": "Develops, manufactures, and sells veterinary diagnostics instruments and consumable test kits; operates a direct reference laboratory network for veterinary practices worldwide.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 1079719000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0852,
+    "rev_yoy": 0.1308,
+    "ttm_revenue": 4446095000,
+    "fcf_margin": 0.2428,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.5775624990544648,
+    "adv_usd": 242116111.0
+   }
+  },
+  {
+   "symbol": "INTU",
+   "name": "Intuit Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 80359699860,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Financial management platform layer — operates the dominant SMB accounting/payroll OS (QuickBooks), consumer tax filing (TurboTax), and Credit Karma financial data network, collectively the operating layer for small business finance and consumer financial decisions.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 7715000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1395,
+    "rev_yoy": 0.1507,
+    "ttm_revenue": 20925000000,
+    "fcf_margin": 0.3687,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.32898443291326906,
+    "adv_usd": 1401994543.0
+   }
+  },
+  {
+   "symbol": "IOT",
+   "name": "Samsara Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 19400667535,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Physical operations intelligence platform — sells IoT telematics hardware and AI-analytics SaaS to commercial fleets and industrial worksites; the operating system for connected physical operations.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 234929000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3537,
+    "rev_yoy": 0.296,
+    "ttm_revenue": 1730595000,
+    "fcf_margin": 0.1358,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -5.42745467047881,
+    "adv_usd": 187654569.0
+   }
+  },
+  {
+   "symbol": "ISRG",
+   "name": "Intuitive Surgical, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 151089477430,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Designs, manufactures, and sells the da Vinci robotic surgery platform; earns upfront system revenue plus high-margin consumable instruments and service contracts per procedure.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 2834300000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1739,
+    "rev_yoy": 0.2143,
+    "ttm_revenue": 10582100000,
+    "fcf_margin": 0.2678,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.541940461305169,
+    "adv_usd": 925718103.0
+   }
+  },
+  {
+   "symbol": "KSPI",
+   "name": "Joint Stock Company Kaspi.kz",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 14841129475,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Super-app payment and marketplace rails for Central Asia — operates Kazakhstan's dominant fintech ecosystem combining payments, e-commerce marketplace, and digital banking on a single app; the toll-taker on ~80% of Kazakhstan's digital payment volume.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 696142000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4582,
+    "rev_yoy": 0.5095,
+    "ttm_revenue": 4214281599000,
+    "fcf_margin": 0.1652,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.24708399033997985,
+    "adv_usd": 61245551.0
+   }
+  },
+  {
+   "symbol": "MA",
+   "name": "Mastercard Incorporated",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 437586050026,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Global payment network operator; owns Mastercard/Maestro/Cirrus rails plus Vocalink A2A infrastructure, taking per-transaction tolls across card and account-to-account flows.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 17716000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1382,
+    "rev_yoy": 0.1675,
+    "ttm_revenue": 33939000000,
+    "fcf_margin": 0.522,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 0.5206047190693731,
+    "adv_usd": 1636610218.0
+   }
+  },
+  {
+   "symbol": "MEDP",
+   "name": "Medpace Holdings, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 13331377228,
+   "themes": [
+    "genomics_bio_tools"
+   ],
+   "value_chain_position": "Full-service contract research organization (CRO); designs and executes clinical trials for biotech/pharma clients; a pure-service picks-and-shovels layer for drug development.",
+   "load_bearing_score": 3,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 737819000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2012,
+    "rev_yoy": 0.2419,
+    "ttm_revenue": 2678268000,
+    "fcf_margin": 0.2755,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.8736277001928031,
+    "adv_usd": 132697661.0
+   }
+  },
+  {
+   "symbol": "NOW",
+   "name": "ServiceNow, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 110319016760,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Enterprise workflow automation and AI-agent platform — occupies the simulation/workflow-software layer, selling IT service management and cross-enterprise process automation that is increasingly AI-agent orchestrated.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 4633000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2238,
+    "rev_yoy": 0.2172,
+    "ttm_revenue": 13960000000,
+    "fcf_margin": 0.3319,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.08864900228982663,
+    "adv_usd": 3379430363.0
+   }
+  },
+  {
+   "symbol": "NVDA",
+   "name": "NVIDIA Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 5042569990000,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "AI accelerator chip design + CUDA software platform — the dominant compute layer every LLM/inference workload must run on.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 119076000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 1.0005,
+    "rev_yoy": 0.7068,
+    "ttm_revenue": 253491000000,
+    "fcf_margin": 0.4697,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.00219439314394804,
+    "adv_usd": 37391487779.0
+   }
+  },
+  {
+   "symbol": "NVT",
+   "name": "nVent Electric plc",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 26489736000,
+   "themes": [
+    "energy_transition",
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "Electrical enclosures, thermal management and power-distribution equipment supplier — occupies the power-and-cooling and electrification-components layer, selling into data centers, industrial and EV-charging infrastructure.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 381900000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1926,
+    "rev_yoy": 0.403,
+    "ttm_revenue": 4325800000,
+    "fcf_margin": 0.0883,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.6358111774281063,
+    "adv_usd": 277567126.0
+   }
+  },
+  {
+   "symbol": "PEN",
+   "name": "Penumbra, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 12627746668,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Develops and sells neurovascular and vascular intervention devices including aspiration catheters, flow diverters, and a robotic endovascular platform (Robotic Assisted Vascular Catheter); earns per-procedure consumable pull-through.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 212731000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1833,
+    "rev_yoy": 0.1727,
+    "ttm_revenue": 1454283000,
+    "fcf_margin": 0.1463,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.11812016141928565,
+    "adv_usd": 99606939.0
+   }
+  },
+  {
+   "symbol": "PLTR",
+   "name": "Palantir Technologies Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 303241964900,
+   "themes": [
+    "ai_infrastructure",
+    "defense_tech"
+   ],
+   "value_chain_position": "AI/ML operational decision platform — sells AIP (AI Platform), Foundry, and Gotham as the integration and decision layer sitting between raw AI models and operational enterprise/government workflows; a toll on every AI deployment that needs governed, auditable outputs.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 2689275999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3292,
+    "rev_yoy": 0.6771,
+    "ttm_revenue": 5224174000,
+    "fcf_margin": 0.5148,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.0338883453443422,
+    "adv_usd": 5081580129.0
+   }
+  },
+  {
+   "symbol": "POWL",
+   "name": "Powell Industries, Inc.",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 10328722916,
+   "themes": [
+    "energy_transition"
+   ],
+   "value_chain_position": "Custom electrical switchgear and motor control centers manufacturer serving oil & gas, petrochemical, data center and utility customers — grid-equipment and electrification-components layer.",
+   "load_bearing_score": 3,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 192521000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2752,
+    "rev_yoy": 0.045,
+    "ttm_revenue": 1132055000,
+    "fcf_margin": 0.1701,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.269108759090081,
+    "adv_usd": 235556552.0
+   }
+  },
+  {
+   "symbol": "PTC",
+   "name": "PTC Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 15820856820,
+   "themes": [
+    "robotics_automation"
+   ],
+   "value_chain_position": "Industrial software and IoT platform layer — sells PLM, CAD (Creo), and industrial IoT (ThingWorx) software that orchestrates the full product lifecycle and real-time factory floor data, directly enabling connected factory and robotics deployments.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 928176000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1232,
+    "rev_yoy": 0.2775,
+    "ttm_revenue": 2997860000,
+    "fcf_margin": 0.3096,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.7116153177942154,
+    "adv_usd": 169601322.0
+   }
+  },
+  {
+   "symbol": "TOST",
+   "name": "Toast, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 14499999725,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Restaurant-vertical payment OS — operates an integrated POS hardware + payment processing + SaaS platform for restaurants; takes a toll on every card swipe and subscription seat in the food-service stack.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 654000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.311,
+    "rev_yoy": 0.2344,
+    "ttm_revenue": 6446000000,
+    "fcf_margin": 0.1015,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.456818181818182,
+    "adv_usd": 244236850
+   }
+  },
+  {
+   "symbol": "TSM",
+   "name": "Taiwan Semiconductor Manufacturing Company Limited",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 2219398521600,
+   "themes": [
+    "ai_infrastructure"
+   ],
+   "value_chain_position": "Advanced fab layer — the world's sole source of leading-edge logic (3nm/2nm) that every AI accelerator, custom ASIC and smartphone AP must be built on.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 1102162067000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1935,
+    "rev_yoy": 0.3097,
+    "ttm_revenue": 4113789591000,
+    "fcf_margin": 0.2679,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6913594490950803,
+    "adv_usd": 9057116369.0
+   }
+  },
+  {
+   "symbol": "V",
+   "name": "Visa Inc.",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 623064408643,
+   "themes": [
+    "fintech_rails"
+   ],
+   "value_chain_position": "Global payment network operator; owns the rails (VisaNet) connecting ~15,000 issuers to ~100M merchant locations, taking a per-transaction toll on every card-based payment globally.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 21185000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1092,
+    "rev_yoy": 0.1437,
+    "ttm_revenue": 43027000000,
+    "fcf_margin": 0.4924,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 0.4096138189798591,
+    "adv_usd": 1506850538.0
+   }
+  },
+  {
+   "symbol": "VRT",
+   "name": "Vertiv Holdings Co",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 111207184408,
+   "themes": [
+    "ai_infrastructure",
+    "energy_transition"
+   ],
+   "value_chain_position": "Data-center power and thermal management infrastructure — sells power conversion systems, UPS, precision cooling, and liquid cooling solutions that every AI/HPC data center must install; a genuine chokepoint in the AI build-out value chain.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "steep_ramp",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 2309500000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2159,
+    "rev_yoy": 0.2895,
+    "ttm_revenue": 10843400000,
+    "fcf_margin": 0.213,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.44361190344416535,
+    "adv_usd": 3214270727.0
+   }
+  },
+  {
+   "symbol": "WST",
+   "name": "West Pharmaceutical Services, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Instruments & Supplies",
+   "mcap": 23642925816,
+   "themes": [
+    "genomics_bio_tools"
+   ],
+   "value_chain_position": "Manufactures drug-delivery components (stoppers, closures, seals, drug-containment systems) that are required for every parenteral drug vial and biologic fill-finish line.",
+   "load_bearing_score": 5,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 458000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0213,
+    "rev_yoy": 0.1122,
+    "ttm_revenue": 3220400000,
+    "fcf_margin": 0.1422,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.2568210262828536,
+    "adv_usd": 252255664.0
+   }
+  },
+  {
+   "symbol": "WWD",
+   "name": "Woodward, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 22686189175,
+   "themes": [
+    "defense_tech",
+    "energy_transition"
+   ],
+   "value_chain_position": "Precision fuel and combustion control systems for aerospace engines (commercial + military) and industrial gas turbines (power generation); sells engineered sub-systems embedded in turbines as a sole-source or dual-source Tier 1 supplier.",
+   "load_bearing_score": 4,
+   "s_curve_stage": "broadening",
+   "held": false,
+   "gates": {
+    "ttm_fcf": 388559000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.144,
+    "rev_yoy": 0.1903,
+    "ttm_revenue": 3997732000,
+    "fcf_margin": 0.0972,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.8578953931379936,
+    "adv_usd": 512167766.0
+   }
+  }
+ ]
+}

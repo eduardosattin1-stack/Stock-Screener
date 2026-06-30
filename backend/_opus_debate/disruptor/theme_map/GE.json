@@ -1,0 +1,19 @@
+{
+ "symbol": "GE",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Jet engine OEM and aftermarket service provider (LEAP, GE9X, F414/F110 military); sells engines as loss leaders and monetizes long-term service agreements — a classic installed-base toll model.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "RTX",
+  "SAFR.PA",
+  "RR.L",
+  "CFM-JV",
+  "MTU.DE",
+  "HEICO"
+ ],
+ "relative_comps": "GE Aerospace and Safran (via the CFM joint venture) together power ~70% of single-aisle commercial aviation globally — an entrenched duopoly. Military LEAP derivatives and the F414 make GE a critical DoD supplier. Revenue growth (22% YoY) is driven by aftermarket pricing power as the post-COVID fleet ramp fills MRO slots. At $345B market cap, multiples already reflect the toll-taker status; the pure disruption premium vs a mature prime is modest. RTX Pratt & Whitney is the only peer at scale on both commercial and military.",
+ "theme_fit_confidence": "medium"
+}

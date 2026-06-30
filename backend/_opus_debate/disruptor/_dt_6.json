@@ -1,0 +1,182 @@
+{
+  "DXCM": {
+    "themes": [],
+    "value_chain_position": "Wearable continuous glucose monitor (CGM) hardware + cloud analytics platform for diabetes management; sells devices and subscriptions direct to patients and through distributors.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["ABT", "PODD", "MDT", "SENS", "PHG", "NXGN"],
+    "relative_comps": "DXCM is the CGM category leader by installed base ahead of Abbott (FreeStyle Libre) and Medtronic, with superior sensor accuracy and integration breadth. Revenue growth (~17% YoY) is decelerating from the pandemic-era ramp, while Abbott is accelerating CGM share globally. FCF margin (~30%) is best-in-class among pure-play CGM names, but the stock trades at a premium that assumes durable penetration into Type 2 and pre-diabetic populations. PODD (insulin delivery) is more of a complement than a direct rival, but convergence pressure is real.",
+    "theme_fit_confidence": "low"
+  },
+  "PODD": {
+    "themes": [],
+    "value_chain_position": "Tubeless patch-pump insulin delivery system (OmniPod) plus connected diabetes management ecosystem; sells disposable pods and PDMs globally through pharmacy and DME channels.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MDT", "DXCM", "TNDM", "ABT", "PHG"],
+    "relative_comps": "PODD commands the tubeless patch-pump niche with no direct large-cap equivalent; Medtronic and Tandem compete on tubed systems. Revenue grew 32% YoY with a 3-year CAGR of 28%, outpacing peers on OUS expansion (Europe/RoW now the majority). FCF margin of 14% is lower than DXCM but expanding. The convergence of CGM+AID (automated insulin delivery) platforms is the key competitive battleground where PODD partners with DXCM/Libre rather than building its own sensor.",
+    "theme_fit_confidence": "low"
+  },
+  "LIVN": {
+    "themes": [],
+    "value_chain_position": "Specialty med-tech providing neuromodulation devices (vagus nerve stimulation for epilepsy/depression) and heart-lung bypass equipment; sells capital systems and recurring disposables to hospital/surgical suites.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MEDP", "NURO", "MDT", "ABMD", "EW", "SYK"],
+    "relative_comps": "LivaNova occupies a narrow dual-niche (neuromodulation + cardiac surgery perfusion) with limited direct comps at scale. Growth (~12% YoY, 11% 3y CAGR) is solid but unexciting; it lacks the volume leverage of larger med-tech platforms. The neuromodulation segment faces pipeline competition from Abbott and Medtronic in adjacent indications. Net cash position is a positive balance-sheet feature, but the business is not a disruption toll-taker — it is a specialty device incumbent benefiting from steady procedure volume.",
+    "theme_fit_confidence": "low"
+  },
+  "TMDX": {
+    "themes": [],
+    "value_chain_position": "Normothermic machine perfusion (OCS) platform for organ preservation and transplant logistics; sells single-use perfusion consoles and runs a charter-aviation logistics network for organ transport.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["XVIVO.ST", "PFES", "MDT", "SYK", "GILD"],
+    "relative_comps": "TMDX is the only FDA-cleared normothermic heart/lung OCS system in the US, creating a near-monopoly on the highest-acuity organ perfusion segment. Revenue grew 86% 3-year CAGR and 30% YoY as OCS adoption expands from academic centers to community transplant programs. The aviation logistics subsidiary adds a unique vertical integration moat. Swedish peer XVIVO Perfusion is the closest comparable but is NASDAQ Stockholm-listed and focused on lungs/kidneys. Leverage (2.6x EBITDA) is the main financial risk. The product is difficult to route around once a transplant center builds its protocol around it.",
+    "theme_fit_confidence": "low"
+  },
+  "AXGN": {
+    "themes": [],
+    "value_chain_position": "Peripheral nerve repair biologics (processed nerve allografts, conduits, wraps); sells single-use implantable products through specialty distributors to hand surgeons and reconstructive surgeons.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["IART", "NURO", "RTI", "CRTX", "STRYKER-NERVE"],
+    "relative_comps": "AxoGen is the category creator and dominant supplier in processed nerve allografts, but the category is small (~$238M TTM revenue) and faces commoditization risk from synthetic conduit competitors (Integra, Stryker). Revenue growing 22% YoY and FCF margin barely positive at 3.75%, signaling the business is still investing heavily in salesforce expansion and clinical evidence generation. Not a disruption toll-taker in any of the defined themes — it is a niche biologics company in an early-penetration specialty.",
+    "theme_fit_confidence": "low"
+  },
+  "GE": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Jet engine OEM and aftermarket service provider (LEAP, GE9X, F414/F110 military); sells engines as loss leaders and monetizes long-term service agreements — a classic installed-base toll model.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["RTX", "SAFR.PA", "RR.L", "CFM-JV", "MTU.DE", "HEICO"],
+    "relative_comps": "GE Aerospace and Safran (via the CFM joint venture) together power ~70% of single-aisle commercial aviation globally — an entrenched duopoly. Military LEAP derivatives and the F414 make GE a critical DoD supplier. Revenue growth (22% YoY) is driven by aftermarket pricing power as the post-COVID fleet ramp fills MRO slots. At $345B market cap, multiples already reflect the toll-taker status; the pure disruption premium vs a mature prime is modest. RTX Pratt & Whitney is the only peer at scale on both commercial and military.",
+    "theme_fit_confidence": "medium"
+  },
+  "RTX": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Diversified defense and aerospace prime across jet engines (Pratt & Whitney), missiles/radar/EW (Raytheon), and avionics (Collins Aerospace); sells systems to DoD, allied governments, and commercial airlines.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["GE", "BA", "LMT", "NOC", "SAFR.PA", "HWM"],
+    "relative_comps": "RTX is a mature prime — revenue CAGR of 10% and FCF margin of 9% reflect a mix of high-margin Raytheon munitions/missiles (defense_tech alignment) and the drag from Pratt GTF fleet-quality issues that consumed cash. Patriot/NASAMS missile demand is structurally elevated by NATO rearmament. However, the bulk of RTX is a legacy systems integrator with modest growth versus pure-play defense-tech disruptors like KTOS or AVAV. Theme fit is real but the s-curve is maturing — it belongs in the value lens more than the disruption lens.",
+    "theme_fit_confidence": "medium"
+  },
+  "HWM": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Precision aerospace structures manufacturer — engine components (blades, vanes, discs), fasteners, and airframe structures for both commercial OEM and military platforms; sells engineered parts with long-term supply agreements.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TGI", "SPR", "GKN.L", "HEICO", "PCC"],
+    "relative_comps": "Howmet occupies a critical chokepoint in aerospace: its nickel superalloy turbine blades and engine components are specified into programs (GE LEAP, F135) for decades, making switching nearly impossible mid-program. Revenue growing 14% YoY with 17% FCF margin — best FCF conversion in the aerostructures peer group. At $103B market cap it is richly valued vs. Triumph (TGI) and Spirit AeroSystems (SPR), which trade at distress multiples. The defense_tech theme fit is genuine — the F-35 engine component exposure and munitions-structure work tie to rearmament capex — though HWM is more of a critical supplier than a software-defined disruptor.",
+    "theme_fit_confidence": "medium"
+  },
+  "HEI": {
+    "themes": ["defense_tech", "space"],
+    "value_chain_position": "FAA-approved Parts Manufacturer Approval (PMA) replacement parts distributor and niche aerospace electronics manufacturer; operates as a structural cost-reduction toll on airline and defense MRO spend.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TDG", "AIR", "HEICO-INT", "BA-SERVICES", "AVAV"],
+    "relative_comps": "HEICO is the closest thing to a moat-compounding disruptor in aerospace MRO: its PMA parts are FAA-certified substitutes for OEM parts at 30-40% discounts, structurally eroding the aftermarket toll that GE/RTX/Safran charge. Revenue CAGR of 27% (3y) driven by acquisition cadence and organic pricing. FCF margin 19% and clean balance sheet distinguish it from TransDigm (TDG), its closest comparable, which carries 7-8x EBITDA leverage. Space exposure is modest (niche avionics for satellites) but present. The business model is genuinely disruptive to legacy OEM aftermarket pricing power.",
+    "theme_fit_confidence": "high"
+  },
+  "BWXT": {
+    "themes": ["defense_tech", "energy_transition"],
+    "value_chain_position": "Sole-source naval nuclear reactor manufacturer for the US Navy; also supplies nuclear fuel, micro-reactors and medical radioisotopes — a regulated government monopoly with emerging commercial nuclear adjacencies.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NII", "LEU", "UUUU", "CENT.L", "BWX-INTL", "FRAMATOME"],
+    "relative_comps": "BWXT is structurally irreplaceable as the only qualified manufacturer of US naval nuclear propulsion reactors — a government-certified monopoly that cannot be routed around without decades of NRC/DoD qualification. Revenue growing 21% YoY as the Virginia-class submarine ramp and Columbia-class development accelerate. The energy_transition angle is real and growing: BWXT NOVA small modular reactor contracts and medical isotope (Tc-99m) production diversify away from pure defense. FCF margin of 10% is constrained by heavy capex investment. Leverage at 2.8x EBITDA is the key risk vs the pure-FCF comps.",
+    "theme_fit_confidence": "high"
+  },
+  "MOG-A": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Precision motion control systems manufacturer for aerospace, defense, and industrial applications — electromechanical actuators, controls, and fluid management systems embedded in aircraft, missiles, and space vehicles.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["WWD", "HWM", "TDG", "HEICO", "AMETEK", "CW"],
+    "relative_comps": "Moog competes with Woodward and TransDigm in defense/aerospace precision actuation. Revenue CAGR of 8% and FCF margin of ~5% are below peer quality — TransDigm (TDG) extracts far superior economics from similar positioning via aggressive aftermarket pricing. Moog's growth re-accelerated YoY (14%) on defense budget expansion but the 3-year CAGR of 8% makes the defense_tech disruption narrative strained. The business is a qualified Tier 1 supplier, not a software-defined disruptor.",
+    "theme_fit_confidence": "medium"
+  },
+  "HII": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Sole US builder of nuclear-powered aircraft carriers and one of two nuclear submarine shipyards; sells large naval combatants under sole-source or duopoly DoD contracts with decades-long backlogs.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["GD", "LMT", "BAE.L", "NAVAL-GROUP", "TKMS"],
+    "relative_comps": "HII is the only builder of US nuclear carriers — an absolute government monopoly for the nation's most capital-intensive defense asset. However, it is textbook maturing: revenue CAGR of 5.4% (3y) and FCF margin of 8% reflect a cost-plus contract structure that limits upside. The defense_tech theme partially fits via the Mission Technologies (IT/C4ISR) segment (~20% of revenue), which is growing faster and carries higher margins than shipbuilding. But the dominant business — legacy platform shipbuilding — maps to the 'legacy prime' caution in the defense_tech notes. Theme fit is partial.",
+    "theme_fit_confidence": "medium"
+  },
+  "PL": {
+    "themes": ["space", "defense_tech"],
+    "value_chain_position": "Daily earth observation satellite constellation operator; sells geospatial imagery and analytics subscriptions to government intelligence, agriculture, forestry, and commercial customers via cloud APIs.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MAXAR", "SATL", "ICEYE", "BSAT.T", "SPIR", "HEI"],
+    "relative_comps": "Planet Labs owns the largest operational earth-observation constellation by satellite count (~200 Doves + SkySats), giving it the highest-revisit-rate product in commercial EO. Revenue grew 34% YoY and FCF turned barely positive (14% margin), validating the space theme's profitability gate just barely. The closest public comp is Spire (SPIR) in small-sat data, though Planet's government NRO/DoD contracts anchor ~50% of revenue, bridging space and defense_tech. Maxar (acquired by Advent/MAXAR-private) is the main competitive threat for high-resolution optical. The s_curve is steep_ramp as government mandates for allied ISR expand Planet's TAM.",
+    "theme_fit_confidence": "high"
+  },
+  "SARO": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Independent MRO (maintenance, repair, overhaul) service provider for commercial and military jet engines; services CFM56, LEAP, CFM LEAP, PT6, and military turbines under fixed-price and time-and-material contracts.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AIR", "HEICO", "LMT-MRO", "GE-MRO", "RTX-MRO", "HAECO"],
+    "relative_comps": "StandardAero is a scaled independent MRO operator competing directly against OEM-captive shops (GE Aviation MRO, Pratt MRO) and independents like AAR Corp. Revenue growing 15% YoY but FCF margin at just 2% — the business is capital-intensive with thin aftermarket economics versus OEM-certified shops. Unlike HEICO (which owns the PMA IP), SARO is a service business dependent on OEM technical licensing. Debt at 3.1x EBITDA is the main concern. Not a structural chokepoint in the defense disruption chain.",
+    "theme_fit_confidence": "low"
+  },
+  "LOAR": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Aerospace components roll-up — acquires niche sole-source qualified parts manufacturers for defense and commercial aircraft; operates a portfolio of proprietary part numbers with aftermarket pricing power.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TDG", "HEICO", "HWM", "MOG-A", "CW", "AXYS"],
+    "relative_comps": "Loar is a small-cap TransDigm-model compounder: acquire sole-source aerospace parts businesses, raise aftermarket prices, harvest FCF. Revenue CAGR of 28% and FCF margin of 18% are high-quality metrics for the size. The main risk is that this model has become well-known and acquisition multiples for aerospace parts businesses are elevated. TransDigm (TDG) dominates the category at 10x the scale, making multiple-expansion harder for LOAR. Defense_tech fit is genuine but the value proposition is financial engineering + parts-pricing, not technology disruption per se.",
+    "theme_fit_confidence": "medium"
+  },
+  "AIR": {
+    "themes": [],
+    "value_chain_position": "Commercial aviation aftermarket MRO and parts supply services; manages aircraft tear-downs, surplus part sales, and contract MRO work for airlines, lessors, and government fleets.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["SARO", "HEICO", "AVAP.L", "MTU.DE", "LMT-MRO", "RTX-MRO"],
+    "relative_comps": "AAR Corp is a pure commercial-aviation MRO servicer with thin economics (FCF margin 3%, leverage 2.7x EBITDA). Revenue growing 17% YoY but the 3-year CAGR of 15% reflects a cyclical post-COVID aviation recovery more than structural disruption. The business lacks proprietary IP (unlike HEICO's PMA parts) and competes on price and capacity against OEM-captive and large independent MRO shops. The industry filter caught this name via Aerospace & Defense, but AAR is not a disruption toll-taker in any defined theme.",
+    "theme_fit_confidence": "low"
+  },
+  "WWD": {
+    "themes": ["defense_tech", "energy_transition"],
+    "value_chain_position": "Precision fuel and combustion control systems for aerospace engines (commercial + military) and industrial gas turbines (power generation); sells engineered sub-systems embedded in turbines as a sole-source or dual-source Tier 1 supplier.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MOG-A", "AMETEK", "CW", "HWM", "GE-CONTROLS", "SAFR.PA"],
+    "relative_comps": "Woodward supplies fuel management systems for CFM LEAP, GE9X, and multiple military engines — deeply embedded, long-qualification-cycle components that are costly to dual-source. Revenue CAGR of 14% and FCF margin of ~10% are solid but not exceptional. The energy_transition angle is genuine: Woodward's industrial segment supplies fuel control and actuation for gas turbines used in grid peaking and distributed generation, and hydrogen-compatible fuel system R&D is underway. At $22B market cap, Woodward trades at a modest premium to Moog (which has weaker economics) but a meaningful discount to TransDigm and Heico.",
+    "theme_fit_confidence": "medium"
+  },
+  "ATRO": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Aerospace electrical power systems (in-flight entertainment power, LED lighting, aircraft connectivity hardware) and test systems for defense electronics; sells both OEM-embedded systems and MRO-facing repair services.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["HEICO", "MOG-A", "AMETEK", "CW", "ESTERLINE"],
+    "relative_comps": "Astronics is a small-cap niche supplier of cabin power and aircraft connectivity hardware — a high-value but small total addressable market. Revenue CAGR of 17% is partially a post-COVID IFE recovery rather than secular disruption. FCF margin at 3% signals the business is not yet earning its invested capital well. The defense_test segment (semiconductor test and defense electronics) provides some alignment to the defense_tech theme, but the weight of revenue is in commercial cabin systems — not a structural rearmament toll-taker. Leverage at 3.4x EBITDA is the highest in this chunk.",
+    "theme_fit_confidence": "low"
+  },
+  "COIN": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Crypto-native exchange, custodian, and financial infrastructure layer — charges trading fees, earns interest on USDC stablecoin float, and sells API/staking infrastructure to institutional and retail participants.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["HOOD", "BKKT", "CME", "ICE", "KRAKEN", "BINANCE"],
+    "relative_comps": "Coinbase is the dominant US-regulated crypto exchange and the largest publicly listed pure-play crypto infrastructure company. FCF margin of 48% in an up-cycle reflects extreme operating leverage on volume. Revenue is highly volatile: 3-year CAGR of 31% but YoY growth of -17% underscores the crypto-cycle dependency. Robinhood (HOOD) is a growing competitive threat with lower fees; CME and ICE are institutionally dominant in crypto derivatives. The fintech_rails fit is genuine — Coinbase earns exchange/clearing fees structurally similar to a securities exchange, but the underlying asset (crypto) is far more volatile than equities. The Base L2 blockchain and USDC custody move Coinbase toward a true toll-road infrastructure model.",
+    "theme_fit_confidence": "medium"
+  },
+  "FIS": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Core banking software, payment processing infrastructure, and capital markets technology platform; sells multi-year software licenses, SaaS contracts, and transaction-processing services to global financial institutions.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["FLT", "GPN", "FISV", "NCR", "SS&C", "JKHY"],
+    "relative_comps": "FIS was the largest financial technology company by revenue post-Worldpay acquisition, but the Worldpay divestiture (2023) reset the business back to a legacy core-banking software provider growing at 3% CAGR. The 14% YoY re-acceleration is partly base-effect driven and partly early Worldpay restructuring benefit. FCF margin of 24% is healthy but the growth profile is closer to a mature infrastructure vendor than a disruption toll-taker. Fiserv and Jack Henry are more focused peers; FIS is the most diversified and arguably the most strategically diluted. The fintech_rails theme partially applies (banking/treasury software is a defined layer) but the s-curve is maturing.",
+    "theme_fit_confidence": "medium"
+  }
+}

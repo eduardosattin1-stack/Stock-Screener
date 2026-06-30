@@ -1,0 +1,19 @@
+{
+ "symbol": "BSY",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Infrastructure engineering software platform layer — sells the dominant CAD/simulation tools (MicroStation, OpenRoads, OpenBuildings) for civil infrastructure (roads, bridges, utilities, rail) and increasingly digital twin platforms (iTwin) for asset lifecycle management.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "ADSK",
+  "HEXAGON (HEXA-B.ST)",
+  "DASSAULT (DSY.PA)",
+  "ESRI (private)",
+  "Trimble (TRMB)",
+  "SIEMENS (SIE.DE)"
+ ],
+ "relative_comps": "Bentley occupies a focused niche in civil/infrastructure engineering software where ADSK has limited penetration; iTwin digital twin platform is the key growth driver but still early. 12% YoY growth and 32% FCF margin are solid for its scale; leverage at 2.2x EBITDA is notable. The robotics_automation tag is marginal — iTwin more closely supports energy_transition infrastructure builds than autonomous robotics, but the digital twin layer for infrastructure is genuinely disruptive in the construction/ops workflow.",
+ "theme_fit_confidence": "medium"
+}

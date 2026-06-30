@@ -1,0 +1,18 @@
+{
+ "symbol": "KLAC",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Process control equipment (inspection + metrology) — every leading-edge wafer must pass through KLA tools; defect control becomes more critical as geometry shrinks.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AMAT",
+  "LRCX",
+  "ASML",
+  "TOELY",
+  "ONTO"
+ ],
+ "relative_comps": "KLA holds ~50% share of the process-control equipment market with near-monopoly positions in bright-field and e-beam inspection. Process control spend grows as a percentage of total WFE as node complexity increases, structurally advantaging KLA over deposition/etch peers. FCF margin of 31% is best-in-class; 3-year revenue CAGR of ~10% is steady. Trades at ~28x forward earnings vs AMAT at ~22x, a premium reflecting its less cyclical end-market mix (logic >memory).",
+ "theme_fit_confidence": "high"
+}

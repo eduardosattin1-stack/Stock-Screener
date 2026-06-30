@@ -1,0 +1,19 @@
+{
+ "symbol": "COIN",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Crypto-native exchange, custodian, and financial infrastructure layer — charges trading fees, earns interest on USDC stablecoin float, and sells API/staking infrastructure to institutional and retail participants.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "HOOD",
+  "BKKT",
+  "CME",
+  "ICE",
+  "KRAKEN",
+  "BINANCE"
+ ],
+ "relative_comps": "Coinbase is the dominant US-regulated crypto exchange and the largest publicly listed pure-play crypto infrastructure company. FCF margin of 48% in an up-cycle reflects extreme operating leverage on volume. Revenue is highly volatile: 3-year CAGR of 31% but YoY growth of -17% underscores the crypto-cycle dependency. Robinhood (HOOD) is a growing competitive threat with lower fees; CME and ICE are institutionally dominant in crypto derivatives. The fintech_rails fit is genuine — Coinbase earns exchange/clearing fees structurally similar to a securities exchange, but the underlying asset (crypto) is far more volatile than equities. The Base L2 blockchain and USDC custody move Coinbase toward a true toll-road infrastructure model.",
+ "theme_fit_confidence": "medium"
+}

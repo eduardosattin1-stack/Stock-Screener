@@ -1,0 +1,18 @@
+{
+ "symbol": "LSCC",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Low-power programmable logic (FPGAs/PLDs) for edge AI inference, communications, automotive ADAS, and industrial control.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AMD",
+  "INTC",
+  "ATML-acquired",
+  "MCHP",
+  "QLGC-acquired"
+ ],
+ "relative_comps": "Lattice targets the small/mid-range FPGA market below where Intel Altera and AMD Xilinx compete; its power-efficient Nexus/CertusPro platforms win in communications line cards, server management (BMC/OCP) and automotive ADAS. It is not a primary AI training/inference chip — its AI relevance is in edge inference and smart-NIC applications. Revenue shrank over 3 years (-7% CAGR) as its industrial end-market corrected; YoY recovery is underway (+17%). Trades at ~50x forward earnings — priced for a faster recovery than fundamentals currently support.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "TOST",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Restaurant-vertical payment OS — operates an integrated POS hardware + payment processing + SaaS platform for restaurants; takes a toll on every card swipe and subscription seat in the food-service stack.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "SQ (Block)",
+  "ALOHA (NCR/Voyix)",
+  "Lightspeed (LSPD)",
+  "Oracle MICROS",
+  "Shift4 (FOUR)",
+  "Clover/Fiserv (FI)",
+  "Revel (unlisted)",
+  "PAR Technology (PAR)"
+ ],
+ "relative_comps": "Toast is the leading restaurant-vertical POS with 31% 3-year CAGR, 23% YoY, and 10% FCF margin on $6.4B revenue — remarkable for a vertical-SaaS/payments hybrid. Its moat is the restaurant-specific workflow depth (KDS, online ordering, payroll integration) that horizontal POS vendors cannot easily replicate. Block's Square for Restaurants is the closest threat; NCR Voyix (post-split) and Lightspeed are subscale. The AI infrastructure theme hint is a false positive — Toast is a fintech rails toll-taker, not an AI compute infrastructure name.",
+ "theme_fit_confidence": "high"
+}

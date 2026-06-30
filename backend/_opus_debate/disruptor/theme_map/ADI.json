@@ -1,0 +1,19 @@
+{
+ "symbol": "ADI",
+ "themes": [
+  "ai_infrastructure",
+  "energy_transition"
+ ],
+ "value_chain_position": "High-performance analog/mixed-signal semiconductors — sells precision data converters, amplifiers and power-management ICs into data-center power, industrial automation, automotive and communications.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "TXN",
+  "NXPI",
+  "STM",
+  "ON",
+  "MCHP"
+ ],
+ "relative_comps": "ADI and TXN are the two dominant high-performance analog franchises; ADI skews more toward high-precision/high-speed converters (communications, defense, industrial test) where it has fewer substitutes. Revenue declined during the 2023-24 analog downcycle (-28% trough) but has recovered strongly (+30% YoY). FCF margin of 36% is the highest in analog. The energy-transition linkage is real (EV battery management, grid monitoring) but not a primary revenue driver. Trades at ~28x forward earnings, in line with TXN.",
+ "theme_fit_confidence": "medium"
+}

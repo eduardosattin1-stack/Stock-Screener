@@ -1,0 +1,20 @@
+{
+ "symbol": "YOU",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Biometric identity verification platform (CLEAR) — occupies the C4ISR/identity layer of the defense-tech value chain for civilian border/access security, and serves TSA-enrolled travelers and stadium/venue access control.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "IDEX",
+  "AVST",
+  "VERI",
+  "CGNX",
+  "THALES",
+  "SAIC",
+  "BAH"
+ ],
+ "relative_comps": "YOU's 27% 3-year CAGR and 46% FCF margin are exceptional — the recurring membership model creates durable cash generation. The defense_tech fit is partial: CLEAR's biometric rails are used in TSA PreCheck and government facilities, giving it a real identity-infrastructure foothold in secure-access scenarios, but it is not a drone/C4ISR/EW player. Vs. IDEX (fingerprint chips) and Thales (government identity systems), CLEAR operates at the consumer-enrollment interface rather than in core government IT. The identity-verification layer is strategically relevant to border/access security spending.",
+ "theme_fit_confidence": "medium"
+}

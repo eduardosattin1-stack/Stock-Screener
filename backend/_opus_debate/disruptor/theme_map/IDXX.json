@@ -1,0 +1,18 @@
+{
+ "symbol": "IDXX",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Develops, manufactures, and sells veterinary diagnostics instruments and consumable test kits; operates a direct reference laboratory network for veterinary practices worldwide.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "Heska (HSKA)",
+  "Zoetis (ZTS)",
+  "Antech (Mars, private)",
+  "Mindray (002841.SZ)",
+  "Covetrus (private/HSIC)"
+ ],
+ "relative_comps": "IDEXX is the dominant toll-taker in veterinary diagnostics — its in-clinic analyzers generate a recurring consumable stream that is deeply sticky once placed (veterinary practices run hundreds of tests per month on the same installed base). No other public company has comparable scale in companion-animal diagnostics; Zoetis is the closest competitor but primarily sells vaccines/pharmaceuticals. IDXX's 8.5% 3-year CAGR reflects post-COVID pet-visit normalization, not structural deceleration; FCF margin of 24% confirms pricing power. Its reference labs create a network-effect moat — the more samples run, the better the reference ranges. Mindray is a distant price-based competitor in emerging markets.",
+ "theme_fit_confidence": "high"
+}

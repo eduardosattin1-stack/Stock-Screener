@@ -1,0 +1,18 @@
+{
+ "symbol": "APPF",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Property management SaaS platform layer — sells the operating system for residential property managers (leasing, maintenance, accounting, payments) and collects payments/fintech revenue on top of software fees.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "REAL Page (private, acquired by Thoma Bravo)",
+  "Yardi (private)",
+  "Entrata (private)",
+  "REZI (private)",
+  "MRI Software (private)"
+ ],
+ "relative_comps": "AppFolio serves the underserved SMB/mid-market property manager segment (1-5k units) that Yardi and RealPage deprioritize; 21% YoY growth with 23% FCF margin reflects AI-driven leasing automation and ARPU expansion. The competitive set is mostly private (Yardi, Entrata, RealPage) so APPF is the only pure-play public comps. The fintech_rails tag reflects payments and insurance distribution embedded in the workflow as toll-taker revenue. Relatively low load-bearing score as switching is painful but technically feasible at mid-market scale.",
+ "theme_fit_confidence": "medium"
+}

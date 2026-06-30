@@ -1,49 +1,36 @@
-# VRDN — Viridian Therapeutics — Interrogator Dossier (Event-Driven Special Situation)
+# Viridian Therapeutics (VRDN) — Event Dossier
 
-**Frame:** This is NOT a quality/compounding judgment. VRDN is a pre-commercial clinical-stage biotech — no product revenue, structurally loss-making, "cheap-and-bad" on every franchise metric by design. The thesis is the SPREAD between the live price (~$17) and the event-resolved value on a HARD-DATED FDA catalyst. I score the EVENT, the sponsor's credibility on hitting it, and the verified downside floor — not a moat.
+## Bottom line up front
 
-## 1. THE EVENT — Is the catalyst REAL, DATED, and BINDING?
+This was set up as a pre-decision biotech bet: the U.S. Food and Drug Administration (FDA) was scheduled to rule on Viridian's lead drug for thyroid eye disease by June 30, 2026, and our board had it as a live, hard-dated event with the stock near $16.35 against a $35 win-target and an $8 floor. As of today (June 29, 2026), that event has already fired — and it fired the right way. The FDA approved the drug, branded Lumvoa (the generic name is veligrotug-vvze), on June 26, four days early, and Viridian began its commercial launch immediately. The binary, make-or-break risk that this whole setup was built around is now resolved. What remains is no longer a special situation with a defined floor below it; it is an ordinary, newly-commercial biotech whose value now rides on how fast the drug sells.
 
-**YES — verified PENDING_HARD.** The load-bearing catalyst is the FDA decision on the **veligrotug BLA for Thyroid Eye Disease (TED)**, the intravenous (IV) anti-IGF-1R antibody.
+## 1. What the catalyst actually was, and its verified status
 
-- **BLA accepted with Priority Review; PDUFA target action date = June 30, 2026** (confirmed via Viridian's Dec 22, 2025 BLA-acceptance release and reaffirmed in the 2026 "Transformational 2026" and Q1-2026 materials). 8 days out as of 2026-06-22. This is a statutory, dated, binding FDA action — the strongest possible catalyst form (regulatory decision, not a third-party deal contingent on financing).
-- **Breakthrough Therapy + Priority Review designations**, supported by positive Phase 3 THRIVE / THRIVE-2 topline data: consistent, robust improvement and resolution of diplopia in chronic TED, rapid-onset proptosis response. The pivotal clinical risk is already RETIRED — the readout that matters fired positive; June 30 is the regulatory rubber-stamp on a de-risked package.
-- Company is explicitly "approaching full launch-readiness" — field sales, market access, medical affairs, patient services teams in place — consistent with a sponsor that believes approval is highly likely, not a Hail-Mary.
+The load-bearing event was a regulatory decision, not a clinical readout. Viridian's drug had already passed its pivotal trials — the company reported positive late-stage results across its programs earlier (the THRIVE trials for the intravenous drug, and the REVEAL-1 and REVEAL-2 trials for a follow-on under-the-skin version, the last of which read out positively on May 5, 2026). The remaining gate was the FDA's verdict, carried under Priority Review with a target action date (the date by which the agency aims to decide, known as the PDUFA date) of June 30, 2026.
 
-## 2. THE NUANCE — Don't confuse the assets (critical)
+Verified status: the catalyst has FIRED. On June 26, 2026 the FDA approved Lumvoa for thyroid eye disease, with a broad label covering both active and chronic disease — a first for the drug class. Viridian announced the approval and an immediate launch. This is confirmed by the company's own press release (businesswire, June 25-26, 2026), trade press (Optometry Times, Ophthalmology Times Europe, MedCity News), and the corresponding regulatory filing. There is no remaining undated step; the event is in the past and the outcome was favorable.
 
-VRDN has TWO TED programs. **Do not let the March-30-2026 selloff contaminate the IV thesis:**
-- **veligrotug (IV)** — THRIVE/THRIVE-2 positive → the June 30 PDUFA. THIS is the catalyst. De-risked.
-- **VRDN-003 / elegrobart (subcutaneous)** — REVEAL-1 readout March 30, 2026 drove a ~32% one-day drop on a disappointing/mixed subcutaneous result; REVEAL-2 due Q2 2026, BLA ~Q1 2027. The SC platform is a SEPARATE, later, NOT-load-bearing catalyst.
+## 2. The downside floor — is it real, and does it still matter?
 
-The market's pain (52-wk high $34.29 → low $13.18 → now ~$17) was inflicted by the SC disappointment, which mechanically depressed the price ahead of the IV approval that is the actual near-term value event. That dislocation IS the asymmetry: the price carries SC-failure pessimism while the IV approval clock runs to June 30.
+The floor on this kind of bet is what backstops the price if the event fails. Here the backstop was strong on paper: Viridian held roughly $762 million in cash and short-term investments as of March 31, 2026 (down from about $875 million at year-end 2025), against roughly 110 million shares — call it $7 a share in net cash, which is exactly why the board pegged the floor near $8. Critically, that floor was the "deal-breaks" scenario — what you would have been left holding if the FDA had rejected the drug. Because the FDA approved it instead, the floor is now moot. The company is not falling back to cash value; it is a launching commercial business whose worth is well above its cash.
 
-## 3. THE FLOOR — What actually backstops the price if the event fails?
+## 3. Where the price sits now versus the setup
 
-A genuine, verifiable floor exists — this is a defined-risk setup, not an open-ended binary:
-- **Balance sheet:** ~$762M cash + marketable securities (Q1 2026: $176.3M cash + $585.8M securities). On ~110M shares (mkt cap ~$1.9B at $17), that is **~$6–7/share of net cash** with minimal debt. The floor is cash-backstopped, not a going-concern wager.
-- **Pipeline residual:** even on an IV CRL (low-probability given Breakthrough + positive Phase 3 + clean class), the SC franchise (REVEAL-2 pending), the EU MAA (filed Jan 2026), and a 2025 royalty agreement retain option value above pure cash.
-- **Dossier floor = $8.00** is reasonable: ~$6–7 net cash + modest residual pipeline/franchise value, and roughly the level the stock would gap to on a surprise CRL (vs the $13.18 52-wk low set under broader pressure). Downside to floor from $16.35 ≈ −51%; from $17.16 ≈ −53%.
+- Setup price (our board): $16.35.
+- Close June 26, 2026 (approval day): about $17.90.
+- Pre-market June 29, 2026: about $20.20, up roughly 13%, for a market value near $2.0 billion.
 
-## 4. RED FLAGS / FINANCING HYGIENE
+So the stock has already begun to re-rate on the news, but it has not run all the way to the old $35 win-target. The original target reflected a fully-approved, ramping franchise; the gap between roughly $20 today and that $35 figure is no longer a pre-event spread you are paid to wait through a binary for — it is ordinary commercial-execution upside (how quickly Lumvoa takes share from the incumbent, Amgen's Tepezza), which carries ordinary risk, not asymmetric event risk.
 
-- 🟢 **No financing contingency, no dilution emergency:** ~$762M cash, management states current plans are funded **through profitability** if veligrotug + elegrobart approve. No covenant/maturity wall, no going-concern flag. An ATM exists (typical for biotech) but there is no forced raise into the catalyst.
-- 🟢 **Regulatory, not deal, risk:** no second-request, no acquirer-financing, no CVR games. The only real failure mode is an FDA CRL on a de-risked, Breakthrough-designated IV asset — low probability.
-- 🔴 **Single-binary at the asset level:** a CRL (manufacturing/CMC, label, or unexpected safety) would gap the stock toward the floor. Class-effect IGF-1R safety (hearing/hyperglycemia, the Tepezza class watch-item) is the residual clinical overhang, but THRIVE's profile was acceptable to earn Priority Review.
-- 🔴 **Approval ≠ commercial success:** entering a Tepezza (Amgen/Horizon)-dominated market; the IV re-rate to target prices first approval + share-take optionality, which carries execution risk beyond June 30 — but that is a post-catalyst concern, not a floor risk.
+## 4. Red flags and things to weigh
 
-## 5. CREDIBILITY OF THE SPONSOR ON HITTING THE DATE
+- The asymmetry is spent. The single biggest reason to own this name on our funnel — an undecided, hard-dated FDA verdict with a floor underneath it — no longer exists. Buying now is buying a launch story at a higher price, not a de-risking event at a discount.
+- Label carries real safety baggage. The approved label flags hearing impairment (potentially permanent), elevated blood sugar (about 12% of patients), infusion reactions (about 9%), and a bowel-disease flare risk. These can slow uptake and shape how doctors prescribe.
+- Competitive launch, not a clear field. Lumvoa enters against an entrenched blockbuster (Tepezza), so the upside from here depends on commercial share gains, which are harder to underwrite than a binary yes/no decision.
+- On the positive side, financing risk is low: management has said that, with both drugs approved, current plans are funded through profitability, so there is little near-term dilution overhang.
 
-High. PDUFA dates are FDA-controlled and statutory; sponsor credibility here = whether the package is approvable, and Breakthrough + Priority + positive pivotal Phase 3 + active launch build-out all corroborate a sponsor that has executed the regulatory path cleanly. win_prob 0.90 on the board is defensible for a de-risked Priority-Review BLA.
+## 5. Capital-allocation verdict (for the director)
 
-## 6. ASYMMETRY
+The single most important thing to weigh: this is no longer the bet our funnel was screening for. The catalyst that carried the thesis has already resolved favorably, the floor is irrelevant now that approval is in hand, and the stock has started re-rating. What is left is a fairly-to-reasonably-priced commercial launch with real safety and competition questions — a quality/execution call, not a defined-risk special situation. Moat and secular-threat framing do not apply to a binary regulatory event, and now that the event is past, there is no event-asymmetry left to credit. Do not size this as an aggressive pre-catalyst entry; the entry window for that trade closed on June 26.
 
-- Upside to target $35.00 from $16.35 = **+114%** (analyst consensus ~$33.94 corroborates ~$34–35).
-- Downside to floor $8.00 = **−51%**.
-- At win_prob 0.90: EV ≈ 0.90×$35 + 0.10×$8 = **$31.5 + $0.8 = ~$32.3**, roughly DOUBLE the live price. Payoff ~2.1–2.2x. The asymmetry is real and the catalyst is inside the window.
-
-## VERDICT (event credibility)
-
-A dated, binding, de-risked FDA decision (June 30, 2026) with the pivotal clinical risk already retired, a cash-backstopped floor, and a clean balance sheet. This is the canonical PENDING_HARD special-situation the funnel is built to catch. Moat/secular are N/A (pre-commercial pipeline).
-
-CREDIBILITY_SCORE: 5 | TRAJECTORY: STRENGTHENING | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: none
+CREDIBILITY_SCORE: 2 | TRAJECTORY: STABLE | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: none

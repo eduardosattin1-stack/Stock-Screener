@@ -1,54 +1,48 @@
-# GDOT — Green Dot Corp — Interrogator Dossier (Event-Driven / Merger-Arb)
+# Green Dot Corporation (GDOT) — Event Dossier
 
-**Frame:** This is NOT a business-quality or compounding judgment. Green Dot is a structurally-pressured prepaid-card / BaaS issuer with a thin, eroding standalone franchise. The thesis is the SPREAD between the live price (~$12.80, 2026-06-22) and the event-resolved deal value, gated on the merger firing, with a defined cash floor that bounds the loss. The catalyst carries the thesis.
+**Setup type:** Merger arbitrage / deal completion. This is a special situation, not a quality compounder. The thesis is the spread between today's price (about $13.36 as of June 26, 2026) and the agreed deal value (roughly $14.23 per share), gated on one remaining event: bank regulators signing off so the transaction can close.
 
-## 1. THE EVENT — is it real, dated, binding?
+## 1. THE EVENT — is it real, dated, and binding?
 
-**Real and binding.** On 2026-11-23 Green Dot announced definitive agreements (Merger Agreement + Separation Agreement) under which:
-- **CommerceOne Financial Corp.** acquires Green Dot; Green Dot Bank combines with CommerceOne into a **new publicly-traded bank holding company ("NewCo")**.
-- **Smith Ventures LLC** simultaneously acquires Green Dot's fintech / embedded-finance (BaaS) business from NewCo for **$690M cash**.
-- **Per-share consideration: $8.11 in cash + 0.2215 shares of NewCo common stock** for each GDOT share.
-- Former Green Dot holders own ~72% of NewCo; former CommerceOne holders ~28%.
-- Aggregate transaction value **$825M–$1.1B** (incl. ~$470M cash to the deal).
-- Management's stated implied per-share value range: **$14.23 (low TBV multiple) – $19.18 (high)** at closing.
+It is real and largely locked. On November 23, 2025, Green Dot announced a strategic break-up: CommerceOne Financial will acquire Green Dot Bank and roll it into a new, publicly traded bank holding company, while Smith Ventures buys and takes private Green Dot's non-bank financial-technology operations. The two pieces are wired together — the new bank becomes the fintech's exclusive issuing bank.
 
-**Dated and imminent.** Definitive proxy (DEFM14A) filed 2026-05-08. **Special meeting / shareholder vote: 2026-06-23 (TOMORROW relative to 2026-06-22).** Expected close: **second quarter of 2026** (i.e., by 2026-06-30 / shortly after, contingent on the final regulatory sign-off).
+The terms are fixed (this is what makes it arbitrage rather than open-ended speculation): each Green Dot share converts into **$8.11 in cash plus 0.2215 shares of the new CommerceOne holding company**. The cash piece alone is $8.11; the stock piece carries the rest of the value.
 
-**Conditions:** shareholder approval (both GDOT and CommerceOne special meetings 06-23), required **bank regulatory approvals** (Federal Reserve / OCC / state — a bank-holding-company formation, so the regulatory step is the genuine residual risk, not antitrust), and customary closing conditions.
+The deal has cleared the biggest discretionary hurdle. On **June 23, 2026**, both Green Dot and CommerceOne shareholders voted to approve, with 99% of Green Dot shares voted in favor — about 72% of all shares outstanding. A definitive proxy (DEFM14A) and the new entity's registration (Form 424B3, filed by Compass Sub North) are on file with the SEC.
 
-## 2. THE VERIFIED DOWNSIDE FLOOR
+What is left is the regulatory close, expected in the **third quarter of 2026**. The pending approvals are the Federal Reserve Board of Governors, the Alabama State Banking Department, and the Utah Department of Financial Institutions — the standard package for a bank-holding-company change of control. There is no longer a financing contingency or a shareholder-vote risk; the catalyst is a dated, binding regulatory clearance, not a soft promise.
 
-The floor is **NOT** the $8.11 cash alone, because 78% of the consideration is the cash and the rest is NewCo stock with uncertain mark. Construct the floor conservatively:
-- **Cash leg: $8.11/share — contractually fixed, hard.**
-- **Stock leg: 0.2215 × NewCo.** NewCo is an unlisted, newly-formed bank holdco; at a conservative tangible-book valuation the blended deal floors at management's **low-end $14.23**. A skeptic's *break* floor (deal fails, GDOT reverts to standalone) sits near the recent unaffected / 52-wk-low zone (~$11.55–$11.80; 52-wk low $9.31 is the tail).
-- **Working downside floor for the held seat: ~$11.80** — the deal-break / standalone reversion level, comfortably below live $12.80 and well below the $14.23 low-end deal value. This bounds the loss at roughly **-8%** vs an upside-to-low-end-target of **+11%** ($14.23) and an upside-to-high-end of **+50%** ($19.18) if NewCo re-rates to the upper TBV multiple.
+## 2. CREDIBILITY OF THE PARTIES
 
-## 3. RED FLAGS / GREEN FLAGS
+Credibility here is about deal certainty, not management's operating skill (the operating franchise is being dismantled and sold, so its quality no longer carries the thesis). The relevant questions are whether regulators will approve and whether the parties stay committed.
 
-🔴 **Stock-component risk.** ~22% of consideration is 0.2215 shares of an UNLISTED NewCo bank holdco. Post-close liquidity, the realized TBV multiple, and the bank's combined credit/deposit profile are unknown — this is why the spread persists and why the floor cannot be set at the full $14.23. The "target" is the LOW end of management's own range; do not credit the $19.18 high-end as base case.
+Positives: the shareholder vote is done and overwhelming; the structure is conventional (a bank holding company buying a chartered bank, with the fintech carved out to a private buyer); both companies have signed, filed, and publicly reaffirmed the Q3 2026 timeline. Bank deals of this size routinely clear the Fed and state regulators when there are no obvious antitrust or safety-and-soundness red flags, and a roughly $1.1B fintech/community-bank tie-up is not the kind of deal that draws a heavy-handed second look.
 
-🔴 **Bank-regulatory gate.** Unlike a clean cash tender, this requires Fed/OCC/state approval to FORM a new bank holding company. That is the one condition that can slip the timeline past Q2 — a SOFT-extension risk, though no slippage is yet announced.
+Risks: bank-regulatory approval is genuinely discretionary and can slip. The Fed has been slower and more demanding on bank M&A in recent years, and any one of three regulators can extend the timeline. There is also a Scott+Scott "investigation" notice circulating — these are routine plaintiff-firm solicitations on announced deals and almost never derail a transaction shareholders have already approved, but they are worth noting as background noise rather than a real obstacle.
 
-🟡 **Strike-suit overhang (benign).** Three NY disclosure-deficiency suits (Phillips 05-27, Richardson 05-28, Zaccagnino 06-08) plus Schall / Wohl & Fruchter / Kaskela "investigations." Green Dot + CommerceOne already issued **supplemental merger disclosures** in response — the textbook moot-the-claim-with-disclosures pattern. These are deal-tax noise, NOT a credible deal-block; no injunction sought/granted.
+## 3. THE FLOOR — what backstops the price if the event fails?
 
-🟢 **No financing condition of note on the cash leg** — Smith Ventures' $690M and the $470M cash are committed within the structure; the binding gate is regulatory + the vote, both imminent.
+The downside is bounded but not bulletproof. The $8.11 cash component is contractual and large relative to the share price, which anchors a meaningful chunk of value. The verified downside floor used here is about $11.80 — roughly where the stock would settle on a deal break, reflecting Green Dot's standalone value as a still-cash-generative (if structurally challenged) fintech-plus-bank, supported by the cash on the balance sheet and the businesses that were independently bid for. That floor is below today's price, so a break would hurt, but the cash component and the fact that two separate buyers wanted the pieces limit how far it can fall. The 52-week low was $9.31, set before the deal momentum, which marks a realistic worst-case stress level if the deal collapsed and sentiment overshot.
 
-🟢 **Standalone fundamentals are stable, not collapsing.** Q1-2026 revenue +17% YoY to $656.2M, net income +109% YoY to $53.7M, EPS beat by $0.30. This SUPPORTS the break-floor: if the deal failed, GDOT is not a going-concern, capping the downside near recent unaffected levels rather than a distressed mark.
+## 4. THE ASYMMETRY
 
-🟢 **Trading BELOW the low-end deal value, not through terms.** Live $12.80 < $14.23 low-end target — this is a genuine arb DISCOUNT (PENDING_HARD asymmetry), not an ARB name trading at/through the offer.
+- Live price: about $13.36
+- Deal value target: about $14.23 (cash plus the value of the 0.2215 stock piece)
+- Downside floor on a break: about $11.80
 
-## 4. SPREAD ECONOMICS
+That is roughly $0.87 of upside to the target against $1.56 of downside to the floor from current levels — a spread reward-to-risk near 1.6 to 1, with the key sweetener being that the hard work (shareholder approval) is already behind it and only a dated regulatory clearance remains. The asymmetry is modest in absolute terms because the spread has already tightened as the deal de-risked; this is a late-stage arb, not a wide-open mispricing.
 
-- Live: **$12.80** (2026-06-22, intraday $12.76–$12.92).
-- Target (low-end deal value, base): **$14.23** → **+11.2%** gross, captured in ~1 week to a few weeks on close.
-- Floor (deal-break / standalone reversion): **~$11.80** → **-7.8%**.
-- **Asymmetry ≈ 1.4–1.6:1** to the low-end target; materially better (3–6:1) if NewCo re-rates toward the $19.18 high end.
-- Catalyst is **PENDING_HARD**: dated (vote 06-23, close Q2-2026), binding (definitive agreements), real asymmetry (live well below the event-resolved value), with a defined floor.
+## 5. RED / GREEN FLAGS
 
-## 5. CAPITAL-ALLOCATION VERDICT (for the director)
+🟢 Shareholder vote passed overwhelmingly (June 23, 2026) — the single largest deal risk is retired.
+🟢 Fixed terms, definitive filings on record, cash component is large and contractual.
+🟢 Dated close (Q3 2026) with a conventional, approvable structure.
+🔴 Three separate bank regulators must still approve; bank-M&A timelines can slip a quarter or more.
+🔴 The stock-component value floats with the new CommerceOne entity, so the realized payout is not perfectly fixed.
+🔴 Spread is already thin (~6-7%), so most of the easy money is gone; downside to the break floor exceeds upside to the target.
 
-Classify: **EVENT-DRIVEN / DEAL-COMPLETION**, not a franchise judgment. The single most important thing the director must weigh: the **stock-component + bank-regulatory tail** — the $8.11 cash leg is hard, but ~22% of value rides on an unlisted NewCo whose mark sets whether realized value lands at $14.23 or $19.18, and the Fed/OCC formation approval is the one gate that could slip the timeline. The vote (06-23) is a near-certainty given board recommendation and the absence of a competing bid or activist no-vote campaign; the strike suits are mooted noise. This is a clean held-seat arb with the catalyst imminent and live price below the low-end resolved value.
+## 6. VERDICT FOR THE DIRECTOR
 
-**Moat:** NONE meaningful (commoditized prepaid/BaaS, payments-disintermediation-exposed) — but irrelevant; the catalyst, not the moat, carries the thesis. **Secular threat:** payments-disintermediation is real for the standalone base but does not impair the event value. **Trajectory:** STABLE (fundamentals fine; the story is the deal).
+This is a clean, late-stage merger arbitrage with the vote already won and only regulatory clearance outstanding into Q3 2026. The catalyst is real, dated, and binding, and the floor is reasonable thanks to the cash component — but the spread has compressed enough that the reward-to-risk is only mildly favorable. Size it as a defined-risk arb position, not a high-conviction asymmetric swing.
 
 CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

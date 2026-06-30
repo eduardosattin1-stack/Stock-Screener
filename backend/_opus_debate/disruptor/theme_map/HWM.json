@@ -1,0 +1,18 @@
+{
+ "symbol": "HWM",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Precision aerospace structures manufacturer — engine components (blades, vanes, discs), fasteners, and airframe structures for both commercial OEM and military platforms; sells engineered parts with long-term supply agreements.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TGI",
+  "SPR",
+  "GKN.L",
+  "HEICO",
+  "PCC"
+ ],
+ "relative_comps": "Howmet occupies a critical chokepoint in aerospace: its nickel superalloy turbine blades and engine components are specified into programs (GE LEAP, F135) for decades, making switching nearly impossible mid-program. Revenue growing 14% YoY with 17% FCF margin — best FCF conversion in the aerostructures peer group. At $103B market cap it is richly valued vs. Triumph (TGI) and Spirit AeroSystems (SPR), which trade at distress multiples. The defense_tech theme fit is genuine — the F-35 engine component exposure and munitions-structure work tie to rearmament capex — though HWM is more of a critical supplier than a software-defined disruptor.",
+ "theme_fit_confidence": "medium"
+}

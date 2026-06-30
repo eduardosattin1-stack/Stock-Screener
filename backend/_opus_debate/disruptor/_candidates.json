@@ -1,0 +1,3953 @@
+{
+ "built_at": "2026-06-10T12:17:13.555470",
+ "taxonomy_version": "1.0",
+ "funnel_partial": {
+  "screened": 459,
+  "liquid": 451,
+  "gated": 154
+ },
+ "candidates": [
+  {
+   "symbol": "TSM",
+   "name": "Taiwan Semiconductor Manufacturing Company Limited",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 2219398521600,
+   "price": 427.92,
+   "volume": 21165443,
+   "gates": {
+    "ttm_fcf": 1102162067000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1935,
+    "rev_yoy": 0.3097,
+    "ttm_revenue": 4113789591000,
+    "fcf_margin": 0.2679,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6913594490950803,
+    "adv_usd": 9057116369.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "NVDA",
+   "name": "NVIDIA Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 5042569990000,
+   "price": 208.19,
+   "volume": 179602708,
+   "gates": {
+    "ttm_fcf": 119076000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 1.0005,
+    "rev_yoy": 0.7068,
+    "ttm_revenue": 253491000000,
+    "fcf_margin": 0.4697,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.00219439314394804,
+    "adv_usd": 37391487779.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "AVGO",
+   "name": "Broadcom Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 1856747475037,
+   "price": 392.16,
+   "volume": 36272290,
+   "gates": {
+    "ttm_fcf": 32762000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2438,
+    "rev_yoy": 0.3229,
+    "ttm_revenue": 75465000000,
+    "fcf_margin": 0.4341,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.084293206254939,
+    "adv_usd": 14224541246.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "MU",
+   "name": "Micron Technology, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 1055431229700,
+   "price": 935.89,
+   "volume": 72514111,
+   "gates": {
+    "ttm_fcf": 10281000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0671,
+    "rev_yoy": 0.8555,
+    "ttm_revenue": 58119000000,
+    "fcf_margin": 0.1769,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.04690234511725586,
+    "adv_usd": 67865231344.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "AMD",
+   "name": "Advanced Micro Devices, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 775358453000,
+   "price": 475.505,
+   "volume": 37157055,
+   "gates": {
+    "ttm_fcf": 8574000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1364,
+    "rev_yoy": 0.3497,
+    "ttm_revenue": 37454000000,
+    "fcf_margin": 0.2289,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.21197130843433093,
+    "adv_usd": 17668365438.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "ASML",
+   "name": "ASML Holding N.V.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 685184541860,
+   "price": 1777.77,
+   "volume": 3137256,
+   "gates": {
+    "ttm_fcf": 8583788345,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1555,
+    "rev_yoy": 0.097,
+    "ttm_revenue": 33692700000,
+    "fcf_margin": 0.2548,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.411264304964262,
+    "adv_usd": 5577319599.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "LRCX",
+   "name": "Lam Research Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 409136481200,
+   "price": 327.16,
+   "volume": 14430285,
+   "gates": {
+    "ttm_fcf": 6450822000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0229,
+    "rev_yoy": 0.2653,
+    "ttm_revenue": 21681845000,
+    "fcf_margin": 0.2975,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.1272298076564417,
+    "adv_usd": 4721012041.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "ARM",
+   "name": "Arm Holdings plc American Depositary Shares",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 345651040000,
+   "price": 324.86,
+   "volume": 13328315,
+   "gates": {
+    "ttm_fcf": 972000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2246,
+    "rev_yoy": 0.2279,
+    "ttm_revenue": 4920000000,
+    "fcf_margin": 0.1976,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.6989010989010989,
+    "adv_usd": 4329836411.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "KLAC",
+   "name": "KLA Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 279461622221,
+   "price": 2139.37,
+   "volume": 1620724,
+   "gates": {
+    "ttm_fcf": 4014575000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0969,
+    "rev_yoy": 0.1341,
+    "ttm_revenue": 13096661000,
+    "fcf_margin": 0.3065,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.7384650783882625,
+    "adv_usd": 3467328304.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "TXN",
+   "name": "Texas Instruments Incorporated",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 262680142590,
+   "price": 288.63,
+   "volume": 8878803,
+   "gates": {
+    "ttm_fcf": 3721000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0407,
+    "rev_yoy": 0.1489,
+    "ttm_revenue": 18438000000,
+    "fcf_margin": 0.2018,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.271461436009202,
+    "adv_usd": 2562688910.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "MRVL",
+   "name": "Marvell Technology, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 233466624000,
+   "price": 266.88,
+   "volume": 92150706,
+   "gates": {
+    "ttm_fcf": 1664300000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1145,
+    "rev_yoy": 0.3407,
+    "ttm_revenue": 8717100000,
+    "fcf_margin": 0.1909,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.3122427199268181,
+    "adv_usd": 24593180417.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "ADI",
+   "name": "Analog Devices, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 197085158125,
+   "price": 404.62,
+   "volume": 5401965,
+   "gates": {
+    "ttm_fcf": 4565150000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0284,
+    "rev_yoy": 0.2975,
+    "ttm_revenue": 12740193000,
+    "fcf_margin": 0.3583,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.0086545359913366,
+    "adv_usd": 2185743078.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "MPWR",
+   "name": "Monolithic Power Systems, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 75266177400,
+   "price": 1531.98,
+   "volume": 979846,
+   "gates": {
+    "ttm_fcf": 627548000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1586,
+    "rev_yoy": 0.239,
+    "ttm_revenue": 2957090000,
+    "fcf_margin": 0.2122,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.2334122397827751,
+    "adv_usd": 1501104475.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "ALAB",
+   "name": "Astera Labs, Inc. Common Stock",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 58570092756,
+   "price": 341.7,
+   "volume": 7233767,
+   "gates": {
+    "ttm_fcf": 342809000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 1.2018,
+    "rev_yoy": 1.0418,
+    "ttm_revenue": 1001444000,
+    "fcf_margin": 0.3423,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5773618552205333,
+    "adv_usd": 2471778184.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "TER",
+   "name": "Teradyne, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 57796931632,
+   "price": 369.21,
+   "volume": 4259845,
+   "gates": {
+    "ttm_fcf": 553179999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0037,
+    "rev_yoy": 0.3032,
+    "ttm_revenue": 3786838000,
+    "fcf_margin": 0.1461,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.14435299195023021,
+    "adv_usd": 1572777372.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "MTSI",
+   "name": "MACOM Technology Solutions Holdings, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 27368820049,
+   "price": 358.72,
+   "volume": 1556554,
+   "gates": {
+    "ttm_fcf": 167681999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1273,
+    "rev_yoy": 0.2705,
+    "ttm_revenue": 1073816000,
+    "fcf_margin": 0.1562,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.0251554557110174,
+    "adv_usd": 558367051.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "TSEM",
+   "name": "Tower Semiconductor Ltd.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 25489449890,
+   "price": 228.08,
+   "volume": 3189295,
+   "gates": {
+    "ttm_fcf": 326117550,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0227,
+    "rev_yoy": 0.1053,
+    "ttm_revenue": 1621565000,
+    "fcf_margin": 0.2011,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.1731904639491415,
+    "adv_usd": 727414404.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "LSCC",
+   "name": "Lattice Semiconductor Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 18846800809,
+   "price": 137.56,
+   "volume": 2370354,
+   "gates": {
+    "ttm_fcf": 151917000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0746,
+    "rev_yoy": 0.1745,
+    "ttm_revenue": 574009000,
+    "fcf_margin": 0.2647,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.298484219269103,
+    "adv_usd": 326065896.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "AMKR",
+   "name": "Amkor Technology, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 17576640251,
+   "price": 70.91,
+   "volume": 7384764,
+   "gates": {
+    "ttm_fcf": 167222000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0184,
+    "rev_yoy": 0.1271,
+    "ttm_revenue": 7071107000,
+    "fcf_margin": 0.0236,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.3817686236941745,
+    "adv_usd": 523653615.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "SITM",
+   "name": "SiTime Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 17409217536,
+   "price": 659.52,
+   "volume": 540908,
+   "gates": {
+    "ttm_fcf": 54139000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0482,
+    "rev_yoy": 0.6519,
+    "ttm_revenue": 379912000,
+    "fcf_margin": 0.1425,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -78.64148547849548,
+    "adv_usd": 356739644.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "RMBS",
+   "name": "Rambus Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 15878837080,
+   "price": 146.84,
+   "volume": 2683570,
+   "gates": {
+    "ttm_fcf": 335209000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1588,
+    "rev_yoy": 0.1912,
+    "ttm_revenue": 721155000,
+    "fcf_margin": 0.4648,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.3700540468405952,
+    "adv_usd": 394055419.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "SMTC",
+   "name": "Semtech Corporation",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 14673171983,
+   "price": 157.52,
+   "volume": 4049834,
+   "gates": {
+    "ttm_fcf": 162098000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1155,
+    "rev_yoy": 0.1422,
+    "ttm_revenue": 1089960000,
+    "fcf_margin": 0.1487,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.0129337268974976,
+    "adv_usd": 637929852.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "MXL",
+   "name": "MaxLinear, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 6501932083,
+   "price": 72.61,
+   "volume": 5830540,
+   "gates": {
+    "ttm_fcf": 10154000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.2526,
+    "rev_yoy": 0.4089,
+    "ttm_revenue": 508896000,
+    "fcf_margin": 0.02,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.45534219596258,
+    "adv_usd": 423355509.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "KLIC",
+   "name": "Kulicke and Soffa Industries, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 5371446495,
+   "price": 102.64,
+   "volume": 640840,
+   "gates": {
+    "ttm_fcf": 4324000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.2423,
+    "rev_yoy": 0.1116,
+    "ttm_revenue": 768217000,
+    "fcf_margin": 0.0056,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.55180343886658,
+    "adv_usd": 65775818.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "DIOD",
+   "name": "Diodes Incorporated",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 4755739416,
+   "price": 103.51,
+   "volume": 460707,
+   "gates": {
+    "ttm_fcf": 128741000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0952,
+    "rev_yoy": 0.1597,
+    "ttm_revenue": 1555427000,
+    "fcf_margin": 0.0828,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.1680285094072314,
+    "adv_usd": 47687782.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "LASR",
+   "name": "nLIGHT, Inc.",
+   "sector": "Technology",
+   "industry": "Semiconductors",
+   "mcap": 3580824276,
+   "price": 63.48,
+   "volume": 1154751,
+   "gates": {
+    "ttm_fcf": 22169000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0259,
+    "rev_yoy": 0.4091,
+    "ttm_revenue": 289843000,
+    "fcf_margin": 0.0765,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -659.8693467336683,
+    "adv_usd": 73303593.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "DELL",
+   "name": "Dell Technologies Inc.",
+   "sector": "Technology",
+   "industry": "Computer Hardware",
+   "mcap": 253385164717,
+   "price": 381.46,
+   "volume": 10330576,
+   "gates": {
+    "ttm_fcf": 9442000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0353,
+    "rev_yoy": 0.3875,
+    "ttm_revenue": 134002000000,
+    "fcf_margin": 0.0705,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.7921661938317928,
+    "adv_usd": 3940701521.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "ANET",
+   "name": "Arista Networks, Inc.",
+   "sector": "Technology",
+   "industry": "Computer Hardware",
+   "mcap": 191595221686,
+   "price": 152.16,
+   "volume": 7276550,
+   "gates": {
+    "ttm_fcf": 5278100000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2715,
+    "rev_yoy": 0.3057,
+    "ttm_revenue": 9709900000,
+    "fcf_margin": 0.5436,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6619758418567123,
+    "adv_usd": 1107199848.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "STX",
+   "name": "Seagate Technology Holdings plc",
+   "sector": "Technology",
+   "industry": "Computer Hardware",
+   "mcap": 189699976290,
+   "price": 846.01,
+   "volume": 3066215,
+   "gates": {
+    "ttm_fcf": 2633000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0794,
+    "rev_yoy": 0.2892,
+    "ttm_revenue": 11010000000,
+    "fcf_margin": 0.2391,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.9157354273633344,
+    "adv_usd": 2594048552.0
+   },
+   "themes_hint": [
+    "ai_infrastructure"
+   ]
+  },
+  {
+   "symbol": "CIEN",
+   "name": "Ciena Corporation",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 62189862070,
+   "price": 439.34,
+   "volume": 7851965,
+   "gates": {
+    "ttm_fcf": 832659000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.095,
+    "rev_yoy": 0.3059,
+    "ttm_revenue": 5569150000,
+    "fcf_margin": 0.1495,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.799084281368787,
+    "adv_usd": 3449682303.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "space"
+   ]
+  },
+  {
+   "symbol": "KN",
+   "name": "Knowles Corporation",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 3269272819,
+   "price": 38.21,
+   "volume": 809949,
+   "gates": {
+    "ttm_fcf": 73100000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.074,
+    "rev_yoy": 0.1117,
+    "ttm_revenue": 614100000,
+    "fcf_margin": 0.119,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.9003267973856209,
+    "adv_usd": 30948151.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "space"
+   ]
+  },
+  {
+   "symbol": "LITE",
+   "name": "Lumentum Holdings Inc.",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 67192748000,
+   "price": 821.76,
+   "volume": 7935768,
+   "gates": {
+    "ttm_fcf": 273800000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0133,
+    "rev_yoy": 0.6898,
+    "ttm_revenue": 2488400000,
+    "fcf_margin": 0.11,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.293975457965741,
+    "adv_usd": 6521296712.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "space"
+   ]
+  },
+  {
+   "symbol": "CRDO",
+   "name": "Credo Technology Group Holding Ltd",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 40997688163.8,
+   "price": 234.32,
+   "volume": 15591046,
+   "gates": {
+    "ttm_fcf": 283694000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.9353,
+    "rev_yoy": 2.0568,
+    "ttm_revenue": 1335116000,
+    "fcf_margin": 0.2125,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.467366555408937,
+    "adv_usd": 3653293899.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "space"
+   ]
+  },
+  {
+   "symbol": "DGII",
+   "name": "Digi International Inc.",
+   "sector": "Technology",
+   "industry": "Communication Equipment",
+   "mcap": 2535095860.7599998,
+   "price": 66.18,
+   "volume": 325055,
+   "gates": {
+    "ttm_fcf": 126746000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0348,
+    "rev_yoy": 0.1348,
+    "ttm_revenue": 475057000,
+    "fcf_margin": 0.2668,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.3773157283480104,
+    "adv_usd": 21512140.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "space"
+   ]
+  },
+  {
+   "symbol": "CPAY",
+   "name": "Corpay, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 23389109095,
+   "price": 357.84,
+   "volume": 334875,
+   "gates": {
+    "ttm_fcf": 1310355000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0973,
+    "rev_yoy": 0.1826,
+    "ttm_revenue": 4783723000,
+    "fcf_margin": 0.2739,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.6219432189106521,
+    "adv_usd": 119831670.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "IOT",
+   "name": "Samsara Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 19400667535,
+   "price": 33.62,
+   "volume": 5581635,
+   "gates": {
+    "ttm_fcf": 234929000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3537,
+    "rev_yoy": 0.296,
+    "ttm_revenue": 1730595000,
+    "fcf_margin": 0.1358,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -5.42745467047881,
+    "adv_usd": 187654569.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "DOCN",
+   "name": "DigitalOcean Holdings, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 17567592120,
+   "price": 168.33,
+   "volume": 3062533,
+   "gates": {
+    "ttm_fcf": 8367000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1608,
+    "rev_yoy": 0.1761,
+    "ttm_revenue": 948629000,
+    "fcf_margin": 0.0088,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.3781106772637988,
+    "adv_usd": 515516180.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "RBRK",
+   "name": "Rubrik, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 14765996338,
+   "price": 71.74,
+   "volume": 4334433,
+   "gates": {
+    "ttm_fcf": 306457000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2995,
+    "rev_yoy": 0.4573,
+    "ttm_revenue": 1424778000,
+    "fcf_margin": 0.2151,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.713894920676625,
+    "adv_usd": 310952223.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "TOST",
+   "name": "Toast, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 14499999725,
+   "price": 25,
+   "volume": 9769474,
+   "gates": {
+    "ttm_fcf": 654000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.311,
+    "rev_yoy": 0.2344,
+    "ttm_revenue": 6446000000,
+    "fcf_margin": 0.1015,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.456818181818182,
+    "adv_usd": 244236850
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "PATH",
+   "name": "UiPath Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 5718049399,
+   "price": 10.75,
+   "volume": 51792788,
+   "gates": {
+    "ttm_fcf": 375234000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1501,
+    "rev_yoy": 0.1524,
+    "ttm_revenue": 1672330000,
+    "fcf_margin": 0.2244,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -4.460070671378092,
+    "adv_usd": 556772471.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "BLSH",
+   "name": "Bullish",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 4079340507,
+   "price": 26.9,
+   "volume": 1544437,
+   "gates": {
+    "ttm_fcf": 44793000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4979,
+    "rev_yoy": -0.1343,
+    "ttm_revenue": 216526614000,
+    "fcf_margin": 0.0002,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9281208670507274,
+    "adv_usd": 41545355.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "ATEN",
+   "name": "A10 Networks, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2228343516,
+   "price": 30.95,
+   "volume": 1108433,
+   "gates": {
+    "ttm_fcf": 51367000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.012,
+    "rev_yoy": 0.1208,
+    "ttm_revenue": 299420000,
+    "fcf_margin": 0.1716,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.232006422323109,
+    "adv_usd": 34306001.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "MSFT",
+   "name": "Microsoft Corporation",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2996702946300,
+   "price": 403.41,
+   "volume": 34131015,
+   "gates": {
+    "ttm_fcf": 72916000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1242,
+    "rev_yoy": 0.1787,
+    "ttm_revenue": 318273000000,
+    "fcf_margin": 0.2291,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.12370682577043078,
+    "adv_usd": 13768792761.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "PLTR",
+   "name": "Palantir Technologies Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 303241964900,
+   "price": 132.07,
+   "volume": 38476415,
+   "gates": {
+    "ttm_fcf": 2689275999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3292,
+    "rev_yoy": 0.6771,
+    "ttm_revenue": 5224174000,
+    "fcf_margin": 0.5148,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.0338883453443422,
+    "adv_usd": 5081580129.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "PANW",
+   "name": "Palo Alto Networks, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 177547330128,
+   "price": 260.52,
+   "volume": 7555091,
+   "gates": {
+    "ttm_fcf": 4293700000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1879,
+    "rev_yoy": 0.1951,
+    "ttm_revenue": 10606300000,
+    "fcf_margin": 0.4048,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.18089769710440204,
+    "adv_usd": 1968252307.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "CRWD",
+   "name": "CrowdStrike Holdings, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 164176489363,
+   "price": 644.93,
+   "volume": 3733831,
+   "gates": {
+    "ttm_fcf": 1452139000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2901,
+    "rev_yoy": 0.2317,
+    "ttm_revenue": 5094200000,
+    "fcf_margin": 0.2851,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -11.148531239542999,
+    "adv_usd": 2408059627.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "FTNT",
+   "name": "Fortinet, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 101391210830,
+   "price": 138.39,
+   "volume": 7651243,
+   "gates": {
+    "ttm_fcf": 2435500000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1546,
+    "rev_yoy": 0.1575,
+    "ttm_revenue": 7109500000,
+    "fcf_margin": 0.3426,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6625234971419803,
+    "adv_usd": 1058855519.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "OKTA",
+   "name": "Okta, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 19927755200,
+   "price": 119.96,
+   "volume": 4035146,
+   "gates": {
+    "ttm_fcf": 938000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1625,
+    "rev_yoy": 0.1175,
+    "ttm_revenue": 2996000000,
+    "fcf_margin": 0.3131,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.110759493670886,
+    "adv_usd": 484056114.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "GEN",
+   "name": "Gen Digital Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 15042776980,
+   "price": 24.97,
+   "volume": 5803221,
+   "gates": {
+    "ttm_fcf": 1523000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1466,
+    "rev_yoy": 0.2706,
+    "ttm_revenue": 5000000000,
+    "fcf_margin": 0.3046,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.0374951681484346,
+    "adv_usd": 144906428.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "KSPI",
+   "name": "Joint Stock Company Kaspi.kz",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 14841129475,
+   "price": 78.1,
+   "volume": 784194,
+   "gates": {
+    "ttm_fcf": 696142000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4582,
+    "rev_yoy": 0.5095,
+    "ttm_revenue": 4214281599000,
+    "fcf_margin": 0.1652,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.24708399033997985,
+    "adv_usd": 61245551.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "NTNX",
+   "name": "Nutanix, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 13716036800,
+   "price": 50.74,
+   "volume": 3588228,
+   "gates": {
+    "ttm_fcf": 770884000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1709,
+    "rev_yoy": 0.1304,
+    "ttm_revenue": 2749734000,
+    "fcf_margin": 0.2803,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.3669138529504576,
+    "adv_usd": 182066689.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "RELY",
+   "name": "Remitly Global, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3865901429,
+   "price": 18.36,
+   "volume": 4925080,
+   "gates": {
+    "ttm_fcf": 252366000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3576,
+    "rev_yoy": 0.2727,
+    "ttm_revenue": 1726325000,
+    "fcf_margin": 0.1462,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -4.127773791310705,
+    "adv_usd": 90424469.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "VRNS",
+   "name": "Varonis Systems, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3814702303,
+   "price": 32.48,
+   "volume": 989446,
+   "gates": {
+    "ttm_fcf": 119538000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.096,
+    "rev_yoy": 0.1515,
+    "ttm_revenue": 660235000,
+    "fcf_margin": 0.1811,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.6025251931145355,
+    "adv_usd": 32137206.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "DLO",
+   "name": "DLocal Limited",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3492632757,
+   "price": 11.9,
+   "volume": 2497212,
+   "gates": {
+    "ttm_fcf": 399509530,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3769,
+    "rev_yoy": 0.5581,
+    "ttm_revenue": 1212690000,
+    "fcf_margin": 0.3294,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.095935646788624,
+    "adv_usd": 29716823.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "CLBT",
+   "name": "Cellebrite DI Ltd.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 3237728825,
+   "price": 12.98,
+   "volume": 3086980,
+   "gates": {
+    "ttm_fcf": 154039000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2068,
+    "rev_yoy": 0.1843,
+    "ttm_revenue": 496427000,
+    "fcf_margin": 0.3103,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9412343918442877,
+    "adv_usd": 40069000.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "WIX",
+   "name": "Wix.com Ltd.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2654390450,
+   "price": 48.22,
+   "volume": 1712062,
+   "gates": {
+    "ttm_fcf": 539675600,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1283,
+    "rev_yoy": 0.1356,
+    "ttm_revenue": 2060564000,
+    "fcf_margin": 0.2619,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.342741277012683,
+    "adv_usd": 82555630.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "AVPT",
+   "name": "AvePoint, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2243141934,
+   "price": 10.58,
+   "volume": 1454674,
+   "gates": {
+    "ttm_fcf": 104865999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2177,
+    "rev_yoy": 0.2712,
+    "ttm_revenue": 443675000,
+    "fcf_margin": 0.2364,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -7.841875364006989,
+    "adv_usd": 15390451.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "PAYO",
+   "name": "Payoneer Global Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2139237810,
+   "price": 6.39,
+   "volume": 51701920,
+   "gates": {
+    "ttm_fcf": 215375000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1882,
+    "rev_yoy": 0.0719,
+    "ttm_revenue": 1067751999,
+    "fcf_margin": 0.2017,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.2450610912407882,
+    "adv_usd": 330375269.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "SPSC",
+   "name": "SPS Commerce, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Infrastructure",
+   "mcap": 2020299991,
+   "price": 55.03,
+   "volume": 624927,
+   "gates": {
+    "ttm_fcf": 166922000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1857,
+    "rev_yoy": 0.1379,
+    "ttm_revenue": 762077000,
+    "fcf_margin": 0.219,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.823382127422278,
+    "adv_usd": 34389733.0
+   },
+   "themes_hint": [
+    "ai_infrastructure",
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "VRT",
+   "name": "Vertiv Holdings Co",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 111207184408,
+   "price": 289.52,
+   "volume": 11102068,
+   "gates": {
+    "ttm_fcf": 2309500000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2159,
+    "rev_yoy": 0.2895,
+    "ttm_revenue": 10843400000,
+    "fcf_margin": 0.213,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.44361190344416535,
+    "adv_usd": 3214270727.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "BE",
+   "name": "Bloom Energy Corporation",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 73844472571,
+   "price": 259.61,
+   "volume": 16166746,
+   "gates": {
+    "ttm_fcf": 232998000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1906,
+    "rev_yoy": 0.5653,
+    "ttm_revenue": 2449027000,
+    "fcf_margin": 0.0951,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.1698939499696035,
+    "adv_usd": 4197048929.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "NVT",
+   "name": "nVent Electric plc",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 26489736000,
+   "price": 163.8,
+   "volume": 1694549,
+   "gates": {
+    "ttm_fcf": 381900000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1926,
+    "rev_yoy": 0.403,
+    "ttm_revenue": 4325800000,
+    "fcf_margin": 0.0883,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.6358111774281063,
+    "adv_usd": 277567126.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "AYI",
+   "name": "Acuity Brands, Inc.",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 9090922176,
+   "price": 299.88,
+   "volume": 330745,
+   "gates": {
+    "ttm_fcf": 558100000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0275,
+    "rev_yoy": 0.1589,
+    "ttm_revenue": 4587100000,
+    "fcf_margin": 0.1217,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.7685796269727403,
+    "adv_usd": 99183811.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "AEIS",
+   "name": "Advanced Energy Industries, Inc.",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 11851887348,
+   "price": 311.64,
+   "volume": 772993,
+   "gates": {
+    "ttm_fcf": 68300000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": -0.0085,
+    "rev_yoy": 0.222,
+    "ttm_revenue": 1905200000,
+    "fcf_margin": 0.0358,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.06092124836894966,
+    "adv_usd": 240895539.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "POWL",
+   "name": "Powell Industries, Inc.",
+   "sector": "Industrials",
+   "industry": "Electrical Equipment & Parts",
+   "mcap": 10328722916,
+   "price": 283.51,
+   "volume": 830858,
+   "gates": {
+    "ttm_fcf": 192521000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2752,
+    "rev_yoy": 0.045,
+    "ttm_revenue": 1132055000,
+    "fcf_margin": 0.1701,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.269108759090081,
+    "adv_usd": 235556552.0
+   },
+   "themes_hint": [
+    "energy_transition",
+    "robotics_automation"
+   ]
+  },
+  {
+   "symbol": "FSLR",
+   "name": "First Solar, Inc.",
+   "sector": "Energy",
+   "industry": "Solar",
+   "mcap": 28173102070,
+   "price": 262.19,
+   "volume": 2789064,
+   "gates": {
+    "ttm_fcf": 1667782999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2584,
+    "rev_yoy": 0.273,
+    "ttm_revenue": 5419048000,
+    "fcf_margin": 0.3078,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.8249876499046062,
+    "adv_usd": 731264690.0
+   },
+   "themes_hint": [
+    "energy_transition"
+   ]
+  },
+  {
+   "symbol": "CCJ",
+   "name": "Cameco Corporation",
+   "sector": "Energy",
+   "industry": "Uranium",
+   "mcap": 44541957660.06,
+   "price": 102.27,
+   "volume": 3979652,
+   "gates": {
+    "ttm_fcf": 899733466,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2304,
+    "rev_yoy": 0.0745,
+    "ttm_revenue": 3536887321,
+    "fcf_margin": 0.2544,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.09596185367307405,
+    "adv_usd": 406999010.0
+   },
+   "themes_hint": [
+    "energy_transition"
+   ]
+  },
+  {
+   "symbol": "CRM",
+   "name": "Salesforce, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 143611650000,
+   "price": 175.35,
+   "volume": 15399007,
+   "gates": {
+    "ttm_fcf": 14661000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0982,
+    "rev_yoy": 0.1098,
+    "ttm_revenue": 42829000000,
+    "fcf_margin": 0.3423,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.6565347093445135,
+    "adv_usd": 2700215877.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "UBER",
+   "name": "Uber Technologies, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 143265458535,
+   "price": 70.38,
+   "volume": 19134633,
+   "gates": {
+    "ttm_fcf": 9799000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1773,
+    "rev_yoy": 0.1831,
+    "ttm_revenue": 53687000000,
+    "fcf_margin": 0.1825,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.1221786064769381,
+    "adv_usd": 1346695471.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "NOW",
+   "name": "ServiceNow, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 110319016760,
+   "price": 106.97,
+   "volume": 31592319,
+   "gates": {
+    "ttm_fcf": 4633000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2238,
+    "rev_yoy": 0.2172,
+    "ttm_revenue": 13960000000,
+    "fcf_margin": 0.3319,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.08864900228982663,
+    "adv_usd": 3379430363.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "SNOW",
+   "name": "Snowflake Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 83066156000,
+   "price": 239.66,
+   "volume": 5715388,
+   "gates": {
+    "ttm_fcf": 1169702000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3138,
+    "rev_yoy": 0.3107,
+    "ttm_revenue": 5032823000,
+    "fcf_margin": 0.2324,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.7337563354241479,
+    "adv_usd": 1369749888.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "FICO",
+   "name": "Fair Isaac Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 28412338486,
+   "price": 1225.15,
+   "volume": 327515,
+   "gates": {
+    "ttm_fcf": 892685000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1307,
+    "rev_yoy": 0.2257,
+    "ttm_revenue": 2255802000,
+    "fcf_margin": 0.3957,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.9562649492596003,
+    "adv_usd": 401255002.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "DT",
+   "name": "Dynatrace, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 11882019140,
+   "price": 40.765,
+   "volume": 4823929,
+   "gates": {
+    "ttm_fcf": 527242999,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2033,
+    "rev_yoy": 0.1882,
+    "ttm_revenue": 2018387000,
+    "fcf_margin": 0.2612,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.972663108420298,
+    "adv_usd": 196647466.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "GWRE",
+   "name": "Guidewire Software, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 10366254364,
+   "price": 124.51,
+   "volume": 1604926,
+   "gates": {
+    "ttm_fcf": 254977000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1395,
+    "rev_yoy": 0.2492,
+    "ttm_revenue": 1420845000,
+    "fcf_margin": 0.1795,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.413034769596927,
+    "adv_usd": 199829336.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "HUBS",
+   "name": "HubSpot, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 10125227113,
+   "price": 197.69,
+   "volume": 2894997,
+   "gates": {
+    "ttm_fcf": 712466000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2185,
+    "rev_yoy": 0.2105,
+    "ttm_revenue": 3297706000,
+    "fcf_margin": 0.216,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.8001254064656678,
+    "adv_usd": 572311957.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "PCOR",
+   "name": "Procore Technologies, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6901708600,
+   "price": 45.74,
+   "volume": 2103966,
+   "gates": {
+    "ttm_fcf": 257054000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2246,
+    "rev_yoy": 0.1494,
+    "ttm_revenue": 1371160000,
+    "fcf_margin": 0.1875,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -7.087574042376017,
+    "adv_usd": 96235405.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "ESTC",
+   "name": "Elastic N.V.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6340471260,
+   "price": 61.26,
+   "volume": 2457676,
+   "gates": {
+    "ttm_fcf": 321802000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1762,
+    "rev_yoy": 0.1726,
+    "ttm_revenue": 1739331000,
+    "fcf_margin": 0.185,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.0199490303961114,
+    "adv_usd": 150557232.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "YOU",
+   "name": "Clear Secure, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 5351577173,
+   "price": 53.19,
+   "volume": 1485887,
+   "gates": {
+    "ttm_fcf": 437332000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2722,
+    "rev_yoy": 0.1739,
+    "ttm_revenue": 942414000,
+    "fcf_margin": 0.4641,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6634906195818658,
+    "adv_usd": 79034330.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "COMP",
+   "name": "Compass, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 4968852667,
+   "price": 8.17,
+   "volume": 12871202,
+   "gates": {
+    "ttm_fcf": 15800000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0497,
+    "rev_yoy": 0.401,
+    "ttm_revenue": 8309400000,
+    "fcf_margin": 0.0019,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -33.08582449373192,
+    "adv_usd": 105157720.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "ZETA",
+   "name": "Zeta Global Holdings Corp.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 4758304710,
+   "price": 21.09,
+   "volume": 7365662,
+   "gates": {
+    "ttm_fcf": 199746000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3021,
+    "rev_yoy": 0.336,
+    "ttm_revenue": 1436553000,
+    "fcf_margin": 0.139,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9668352232801025,
+    "adv_usd": 155341812.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "QTWO",
+   "name": "Q2 Holdings, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2778831756,
+   "price": 44.39,
+   "volume": 731326,
+   "gates": {
+    "ttm_fcf": 195809000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.12,
+    "rev_yoy": 0.14,
+    "ttm_revenue": 821580000,
+    "fcf_margin": 0.2383,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.012512153524920704,
+    "adv_usd": 32463561.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "CALX",
+   "name": "Calix, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2467737187,
+   "price": 38.69,
+   "volume": 1461859,
+   "gates": {
+    "ttm_fcf": 109132000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0484,
+    "rev_yoy": 0.2838,
+    "ttm_revenue": 1059752000,
+    "fcf_margin": 0.103,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.7093588700977544,
+    "adv_usd": 56559325.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "GRND",
+   "name": "Grindr Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2022521880,
+   "price": 11.38,
+   "volume": 1273322,
+   "gates": {
+    "ttm_fcf": 145281169,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3115,
+    "rev_yoy": 0.3102,
+    "ttm_revenue": 475901000,
+    "fcf_margin": 0.3053,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.025367698463955896,
+    "adv_usd": 14490404.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "APP",
+   "name": "AppLovin Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 174970739076,
+   "price": 520.84,
+   "volume": 4440290,
+   "gates": {
+    "ttm_fcf": 4402457000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2484,
+    "rev_yoy": 0.5116,
+    "ttm_revenue": 6164192000,
+    "fcf_margin": 0.7142,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.15279510392824597,
+    "adv_usd": 2312680644.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "SHOP",
+   "name": "Shopify Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 143287025570,
+   "price": 110.42,
+   "volume": 7807087,
+   "gates": {
+    "ttm_fcf": 2127941352,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2731,
+    "rev_yoy": 0.3185,
+    "ttm_revenue": 12366000000,
+    "fcf_margin": 0.1721,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.0498363749216302,
+    "adv_usd": 862058547.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "ADBE",
+   "name": "Adobe Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 96151096000,
+   "price": 237.88,
+   "volume": 6724737,
+   "gates": {
+    "ttm_fcf": 10317000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1052,
+    "rev_yoy": 0.1096,
+    "ttm_revenue": 24453000000,
+    "fcf_margin": 0.4219,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.03279352226720648,
+    "adv_usd": 1599680438.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "INTU",
+   "name": "Intuit Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 80359699860,
+   "price": 293.78,
+   "volume": 4772260,
+   "gates": {
+    "ttm_fcf": 7715000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1395,
+    "rev_yoy": 0.1507,
+    "ttm_revenue": 20925000000,
+    "fcf_margin": 0.3687,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.32898443291326906,
+    "adv_usd": 1401994543.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "ADSK",
+   "name": "Autodesk, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 47313427844,
+   "price": 224.08,
+   "volume": 1825204,
+   "gates": {
+    "ttm_fcf": 2729000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1292,
+    "rev_yoy": 0.1828,
+    "ttm_revenue": 7507000000,
+    "fcf_margin": 0.3635,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.024069028156221618,
+    "adv_usd": 408991712.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "WDAY",
+   "name": "Workday, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 36732141665,
+   "price": 140.23,
+   "volume": 4856076,
+   "gates": {
+    "ttm_fcf": 2972000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.154,
+    "rev_yoy": 0.1332,
+    "ttm_revenue": 9854000000,
+    "fcf_margin": 0.3016,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.939068100358423,
+    "adv_usd": 680967537.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "TEAM",
+   "name": "Atlassian Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 25114291257,
+   "price": 95.61,
+   "volume": 3377959,
+   "gates": {
+    "ttm_fcf": 1204701000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.23,
+    "rev_yoy": 0.2474,
+    "ttm_revenue": 6190183000,
+    "fcf_margin": 0.1946,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -3.9232100299073234,
+    "adv_usd": 322966660.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "PTC",
+   "name": "PTC Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 15820856820,
+   "price": 136.97,
+   "volume": 1238237,
+   "gates": {
+    "ttm_fcf": 928176000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1232,
+    "rev_yoy": 0.2775,
+    "ttm_revenue": 2997860000,
+    "fcf_margin": 0.3096,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.7116153177942154,
+    "adv_usd": 169601322.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "BSY",
+   "name": "Bentley Systems, Incorporated",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 9677442021,
+   "price": 33.11,
+   "volume": 2115021,
+   "gates": {
+    "ttm_fcf": 491695000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1097,
+    "rev_yoy": 0.1223,
+    "ttm_revenue": 1555418000,
+    "fcf_margin": 0.3161,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.1782036666153135,
+    "adv_usd": 70028345.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "IDCC",
+   "name": "InterDigital, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6645007950,
+   "price": 257.11,
+   "volume": 292470,
+   "gates": {
+    "ttm_fcf": 579035000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2213,
+    "rev_yoy": 0.0165,
+    "ttm_revenue": 828924000,
+    "fcf_margin": 0.6985,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.40933707524271845,
+    "adv_usd": 75196962.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "DSGX",
+   "name": "The Descartes Systems Group Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6427339600,
+   "price": 74.8,
+   "volume": 700421,
+   "gates": {
+    "ttm_fcf": 282710425,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.153,
+    "rev_yoy": 0.1328,
+    "ttm_revenue": 757127127,
+    "fcf_margin": 0.3734,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.135497774642906,
+    "adv_usd": 52391491.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "APPF",
+   "name": "AppFolio, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6071200377,
+   "price": 169.29,
+   "volume": 411360,
+   "gates": {
+    "ttm_fcf": 233846000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2631,
+    "rev_yoy": 0.2072,
+    "ttm_revenue": 995334000,
+    "fcf_margin": 0.2349,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5631578410574413,
+    "adv_usd": 69639134.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "PCTY",
+   "name": "Paylocity Holding Corporation",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 6057979474,
+   "price": 113.14,
+   "volume": 471048,
+   "gates": {
+    "ttm_fcf": 470122000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2322,
+    "rev_yoy": 0.1467,
+    "ttm_revenue": 1727329000,
+    "fcf_margin": 0.2722,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.34506978988866627,
+    "adv_usd": 53294371.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "DUOL",
+   "name": "Duolingo, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 5491464652,
+   "price": 117.86,
+   "volume": 1806170,
+   "gates": {
+    "ttm_fcf": 416044000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4108,
+    "rev_yoy": 0.3545,
+    "ttm_revenue": 1098813000,
+    "fcf_margin": 0.3786,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -5.89999154477044,
+    "adv_usd": 212875196.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "CVLT",
+   "name": "Commvault Systems, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 5023088850,
+   "price": 121.77,
+   "volume": 886775,
+   "gates": {
+    "ttm_fcf": 237151000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1469,
+    "rev_yoy": 0.1889,
+    "ttm_revenue": 1183690000,
+    "fcf_margin": 0.2003,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.14963475586312958,
+    "adv_usd": 107982592.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "SRAD",
+   "name": "Sportradar Group AG",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 4853606716,
+   "price": 16.4,
+   "volume": 5444438,
+   "gates": {
+    "ttm_fcf": 233877000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1928,
+    "rev_yoy": 0.1524,
+    "ttm_revenue": 1327491162,
+    "fcf_margin": 0.1762,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.7131603644028262,
+    "adv_usd": 89288783.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "MNDY",
+   "name": "monday.com Ltd.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 4290628682,
+   "price": 83.23,
+   "volume": 1660801,
+   "gates": {
+    "ttm_fcf": 314761170,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3339,
+    "rev_yoy": 0.2542,
+    "ttm_revenue": 1301012000,
+    "fcf_margin": 0.2419,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -15.61754673475999,
+    "adv_usd": 138228467.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "LIF",
+   "name": "Life360, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 3808489477,
+   "price": 47,
+   "volume": 570727,
+   "gates": {
+    "ttm_fcf": 87573000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2895,
+    "rev_yoy": 0.3328,
+    "ttm_revenue": 528980000,
+    "fcf_margin": 0.1656,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5574754127166964,
+    "adv_usd": 26824169
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "DAVE",
+   "name": "Dave Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 3746727237,
+   "price": 278.71,
+   "volume": 491904,
+   "gates": {
+    "ttm_fcf": 326503000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3934,
+    "rev_yoy": 0.5852,
+    "ttm_revenue": 604617000,
+    "fcf_margin": 0.54,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.6171511454992199,
+    "adv_usd": 137098564.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "ADEA",
+   "name": "Adeia Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 3367275820,
+   "price": 30.53,
+   "volume": 3767258,
+   "gates": {
+    "ttm_fcf": 155823000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0034,
+    "rev_yoy": 0.2109,
+    "ttm_revenue": 460488000,
+    "fcf_margin": 0.3384,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.0922920070411742,
+    "adv_usd": 115014387.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "PTRN",
+   "name": "Pattern Group Inc. Series A Common Stock",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 3166888464,
+   "price": 20.41,
+   "volume": 1227874,
+   "gates": {
+    "ttm_fcf": 99070000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3618,
+    "rev_yoy": 0.4199,
+    "ttm_revenue": 2734636000,
+    "fcf_margin": 0.0362,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -13.837870083959347,
+    "adv_usd": 25060908.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "BULL",
+   "name": "Webull Corporation Class A Ordinary Shares",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2925002542,
+   "price": 5.5,
+   "volume": 14284332,
+   "gates": {
+    "ttm_fcf": 121141513,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1371,
+    "rev_yoy": 0.4719,
+    "ttm_revenue": 613555987,
+    "fcf_margin": 0.1974,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -117.21466023621582,
+    "adv_usd": 78563826.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "FRSH",
+   "name": "Freshworks Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2592952449,
+   "price": 9.38,
+   "volume": 13019292,
+   "gates": {
+    "ttm_fcf": 254476000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1898,
+    "rev_yoy": 0.1592,
+    "ttm_revenue": 871169000,
+    "fcf_margin": 0.2921,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -8.144404672192916,
+    "adv_usd": 122120959.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "AGYS",
+   "name": "Agilysys, Inc.",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "mcap": 2538939938,
+   "price": 90.14,
+   "volume": 302429,
+   "gates": {
+    "ttm_fcf": 68149000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1726,
+    "rev_yoy": 0.1585,
+    "ttm_revenue": 319310000,
+    "fcf_margin": 0.2134,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.665220128997124,
+    "adv_usd": 27260950.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "defense_tech"
+   ]
+  },
+  {
+   "symbol": "WST",
+   "name": "West Pharmaceutical Services, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Instruments & Supplies",
+   "mcap": 23642925816,
+   "price": 334.66,
+   "volume": 753767,
+   "gates": {
+    "ttm_fcf": 458000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0213,
+    "rev_yoy": 0.1122,
+    "ttm_revenue": 3220400000,
+    "fcf_margin": 0.1422,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.2568210262828536,
+    "adv_usd": 252255664.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "MMSI",
+   "name": "Merit Medical Systems, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Instruments & Supplies",
+   "mcap": 4027299261,
+   "price": 67.51,
+   "volume": 909345,
+   "gates": {
+    "ttm_fcf": 258000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0959,
+    "rev_yoy": 0.1121,
+    "ttm_revenue": 1542794000,
+    "fcf_margin": 0.1672,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.0260989138615058,
+    "adv_usd": 61389881.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "LMAT",
+   "name": "LeMaitre Vascular, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Instruments & Supplies",
+   "mcap": 2207149113,
+   "price": 96.59,
+   "volume": 423076,
+   "gates": {
+    "ttm_fcf": 79122000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1558,
+    "rev_yoy": 0.1327,
+    "ttm_revenue": 256282000,
+    "fcf_margin": 0.3087,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.8011251229567082,
+    "adv_usd": 40864911.0
+   },
+   "themes_hint": [
+    "robotics_automation",
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "DGX",
+   "name": "Quest Diagnostics Incorporated",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 22640652880,
+   "price": 204.53,
+   "volume": 572007,
+   "gates": {
+    "ttm_fcf": 1326000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0374,
+    "rev_yoy": 0.1103,
+    "ttm_revenue": 11278000000,
+    "fcf_margin": 0.1176,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.326767676767677,
+    "adv_usd": 116992592.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "IDXX",
+   "name": "IDEXX Laboratories, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 45664579870,
+   "price": 578.89,
+   "volume": 418242,
+   "gates": {
+    "ttm_fcf": 1079719000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0852,
+    "rev_yoy": 0.1308,
+    "ttm_revenue": 4446095000,
+    "fcf_margin": 0.2428,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.5775624990544648,
+    "adv_usd": 242116111.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "MEDP",
+   "name": "Medpace Holdings, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 13331377228,
+   "price": 466.79,
+   "volume": 284277,
+   "gates": {
+    "ttm_fcf": 737819000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2012,
+    "rev_yoy": 0.2419,
+    "ttm_revenue": 2678268000,
+    "fcf_margin": 0.2755,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.8736277001928031,
+    "adv_usd": 132697661.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "BLLN",
+   "name": "BillionToOne, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Diagnostics & Research",
+   "mcap": 4709477300,
+   "price": 102.39,
+   "volume": 676369,
+   "gates": {
+    "ttm_fcf": 28087000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": null,
+    "rev_yoy": 0.9849,
+    "ttm_revenue": 354536999,
+    "fcf_margin": 0.0792,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -9.53203092808493,
+    "adv_usd": 69253422.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "BSX",
+   "name": "Boston Scientific Corporation",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 72771949564,
+   "price": 48.96,
+   "volume": 16229910,
+   "gates": {
+    "ttm_fcf": 3442000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1654,
+    "rev_yoy": 0.1744,
+    "ttm_revenue": 20615000000,
+    "fcf_margin": 0.167,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.9955910140667645,
+    "adv_usd": 794616394.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "EW",
+   "name": "Edwards Lifesciences Corporation",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 50405532000,
+   "price": 87.54,
+   "volume": 2727870,
+   "gates": {
+    "ttm_fcf": 1089500000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0408,
+    "rev_yoy": 0.1381,
+    "ttm_revenue": 6303500000,
+    "fcf_margin": 0.1728,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.214544441348565,
+    "adv_usd": 238797740.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "SNN",
+   "name": "Smith & Nephew plc",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 13316977077,
+   "price": 31.32,
+   "volume": 1356422,
+   "gates": {
+    "ttm_fcf": 1459991010,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0581,
+    "rev_yoy": 0.1137,
+    "ttm_revenue": 11988404470,
+    "fcf_margin": 0.1218,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.722123828639117,
+    "adv_usd": 42483137.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "PEN",
+   "name": "Penumbra, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 12627746668,
+   "price": 321.06,
+   "volume": 310244,
+   "gates": {
+    "ttm_fcf": 212731000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1833,
+    "rev_yoy": 0.1727,
+    "ttm_revenue": 1454283000,
+    "fcf_margin": 0.1463,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.11812016141928565,
+    "adv_usd": 99606939.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "GMED",
+   "name": "Globus Medical, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 11128998240,
+   "price": 82.52,
+   "volume": 1482498,
+   "gates": {
+    "ttm_fcf": 605320000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4216,
+    "rev_yoy": 0.2349,
+    "ttm_revenue": 3100633000,
+    "fcf_margin": 0.1952,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5028610689296489,
+    "adv_usd": 122335735.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "ISRG",
+   "name": "Intuitive Surgical, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 151089477430,
+   "price": 426.61,
+   "volume": 2169940,
+   "gates": {
+    "ttm_fcf": 2834300000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1739,
+    "rev_yoy": 0.2143,
+    "ttm_revenue": 10582100000,
+    "fcf_margin": 0.2678,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.541940461305169,
+    "adv_usd": 925718103.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "DXCM",
+   "name": "DexCom, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 30171408072,
+   "price": 78.19,
+   "volume": 4759939,
+   "gates": {
+    "ttm_fcf": 1429400000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1701,
+    "rev_yoy": 0.1615,
+    "ttm_revenue": 4817900000,
+    "fcf_margin": 0.2967,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.2062988471765835,
+    "adv_usd": 372179630.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "PODD",
+   "name": "Insulet Corporation",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 11055334617,
+   "price": 159.61,
+   "volume": 1818914,
+   "gates": {
+    "ttm_fcf": 412200000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2754,
+    "rev_yoy": 0.3193,
+    "ttm_revenue": 2900900000,
+    "fcf_margin": 0.1421,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.8329474621549421,
+    "adv_usd": 290316864.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "LIVN",
+   "name": "LivaNova PLC",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 4239221127,
+   "price": 77.17,
+   "volume": 658613,
+   "gates": {
+    "ttm_fcf": 161076000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1075,
+    "rev_yoy": 0.1239,
+    "ttm_revenue": 1433437000,
+    "fcf_margin": 0.1124,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.8810156582071417,
+    "adv_usd": 50825165.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "TMDX",
+   "name": "TransMedics Group, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 2567529261,
+   "price": 74.29,
+   "volume": 1218547,
+   "gates": {
+    "ttm_fcf": 151358000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.8642,
+    "rev_yoy": 0.3024,
+    "ttm_revenue": 635890000,
+    "fcf_margin": 0.238,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.598787269974377,
+    "adv_usd": 90525857.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "AXGN",
+   "name": "AxoGen, Inc.",
+   "sector": "Healthcare",
+   "industry": "Medical - Devices",
+   "mcap": 2279733315,
+   "price": 42.87,
+   "volume": 1091543,
+   "gates": {
+    "ttm_fcf": 8933000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1757,
+    "rev_yoy": 0.2241,
+    "ttm_revenue": 238105000,
+    "fcf_margin": 0.0375,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -10.890762205830699,
+    "adv_usd": 46794448.0
+   },
+   "themes_hint": [
+    "genomics_bio_tools"
+   ]
+  },
+  {
+   "symbol": "GE",
+   "name": "GE Aerospace",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 345253498641,
+   "price": 330.44,
+   "volume": 4789302,
+   "gates": {
+    "ttm_fcf": 7468000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1632,
+    "rev_yoy": 0.2185,
+    "ttm_revenue": 48352000000,
+    "fcf_margin": 0.1545,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.844553465976197,
+    "adv_usd": 1582576953.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "RTX",
+   "name": "RTX Corporation",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 244503220800,
+   "price": 181.56,
+   "volume": 4482378,
+   "gates": {
+    "ttm_fcf": 8359000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0972,
+    "rev_yoy": 0.1056,
+    "ttm_revenue": 90373000000,
+    "fcf_margin": 0.0925,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.0813297906810964,
+    "adv_usd": 813820550.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "HWM",
+   "name": "Howmet Aerospace Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 102891640328,
+   "price": 257.16,
+   "volume": 3088010,
+   "gates": {
+    "ttm_fcf": 1435000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1337,
+    "rev_yoy": 0.1424,
+    "ttm_revenue": 8623000000,
+    "fcf_margin": 0.1664,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.84655885671305,
+    "adv_usd": 794112652.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "HEI",
+   "name": "HEICO Corporation",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 45476726681,
+   "price": 326.42,
+   "volume": 717213,
+   "gates": {
+    "ttm_fcf": 925974000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2664,
+    "rev_yoy": 0.188,
+    "ttm_revenue": 4911297000,
+    "fcf_margin": 0.1885,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.738919391476427,
+    "adv_usd": 234112667.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "BWXT",
+   "name": "BWX Technologies, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 17311494816,
+   "price": 188.96,
+   "volume": 1019508,
+   "gates": {
+    "ttm_fcf": 328104000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1273,
+    "rev_yoy": 0.214,
+    "ttm_revenue": 3377235000,
+    "fcf_margin": 0.0972,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.768471855265655,
+    "adv_usd": 192646232.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "MOG-A",
+   "name": "Moog Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 12205070663,
+   "price": 385.23,
+   "volume": 230970,
+   "gates": {
+    "ttm_fcf": 203980000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0833,
+    "rev_yoy": 0.1372,
+    "ttm_revenue": 4172793999,
+    "fcf_margin": 0.0489,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.6440238478987583,
+    "adv_usd": 88976573.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "HII",
+   "name": "Huntington Ingalls Industries, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 11723478080,
+   "price": 297.52,
+   "volume": 385483,
+   "gates": {
+    "ttm_fcf": 1060000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0535,
+    "rev_yoy": 0.1208,
+    "ttm_revenue": 12849000000,
+    "fcf_margin": 0.0825,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.256857855361596,
+    "adv_usd": 114688902.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "PL",
+   "name": "Planet Labs PBC",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 10376474298,
+   "price": 31.17,
+   "volume": 22140004,
+   "gates": {
+    "ttm_fcf": 47158000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1718,
+    "rev_yoy": 0.3415,
+    "ttm_revenue": 335612000,
+    "fcf_margin": 0.1405,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9570009164134472,
+    "adv_usd": 690103925.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "SARO",
+   "name": "StandardAero, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 8504633760,
+   "price": 25.58,
+   "volume": 3898327,
+   "gates": {
+    "ttm_fcf": 133073000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1346,
+    "rev_yoy": 0.1502,
+    "ttm_revenue": 6253782000,
+    "fcf_margin": 0.0213,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.1020795389533022,
+    "adv_usd": 99719205.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "LOAR",
+   "name": "Loar Holdings Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 6132402785,
+   "price": 65.5,
+   "volume": 689779,
+   "gates": {
+    "ttm_fcf": 94751000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.275,
+    "rev_yoy": 0.2633,
+    "ttm_revenue": 537712000,
+    "fcf_margin": 0.1762,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.4555549710986037,
+    "adv_usd": 45180524.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "AIR",
+   "name": "AAR Corp.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 4772905088,
+   "price": 120.03,
+   "volume": 244416,
+   "gates": {
+    "ttm_fcf": 84800000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1517,
+    "rev_yoy": 0.1685,
+    "ttm_revenue": 3134500000,
+    "fcf_margin": 0.0271,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.6686893203883497,
+    "adv_usd": 29337252.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "WWD",
+   "name": "Woodward, Inc.",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 22686189175,
+   "price": 380.75,
+   "volume": 1345155,
+   "gates": {
+    "ttm_fcf": 388559000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.144,
+    "rev_yoy": 0.1903,
+    "ttm_revenue": 3997732000,
+    "fcf_margin": 0.0972,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.8578953931379936,
+    "adv_usd": 512167766.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "ATRO",
+   "name": "Astronics Corporation",
+   "sector": "Industrials",
+   "industry": "Aerospace & Defense",
+   "mcap": 3031735714,
+   "price": 84.59,
+   "volume": 550450,
+   "gates": {
+    "ttm_fcf": 24771000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1725,
+    "rev_yoy": 0.0864,
+    "ttm_revenue": 886811000,
+    "fcf_margin": 0.0279,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.3625384559038967,
+    "adv_usd": 46562566.0
+   },
+   "themes_hint": [
+    "defense_tech",
+    "space"
+   ]
+  },
+  {
+   "symbol": "COIN",
+   "name": "Coinbase Global, Inc.",
+   "sector": "Financial Services",
+   "industry": "Financial - Data & Stock Exchanges",
+   "mcap": 40967951162,
+   "price": 155.5,
+   "volume": 8747439,
+   "gates": {
+    "ttm_fcf": 2791854000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.31,
+    "rev_yoy": -0.1652,
+    "ttm_revenue": 5811068999,
+    "fcf_margin": 0.4804,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": -1.770183386213958,
+    "adv_usd": 1360226764.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "FIS",
+   "name": "Fidelity National Information Services, Inc.",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 20664828457,
+   "price": 39.98,
+   "volume": 4648922,
+   "gates": {
+    "ttm_fcf": 2781000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0318,
+    "rev_yoy": 0.144,
+    "ttm_revenue": 11658000000,
+    "fcf_margin": 0.2385,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.881688018085908,
+    "adv_usd": 185863902.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "INGM",
+   "name": "Ingram Micro Holding Corporation",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 6747863419,
+   "price": 29.13,
+   "volume": 1245587,
+   "gates": {
+    "ttm_fcf": 1360000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0112,
+    "rev_yoy": 0.1085,
+    "ttm_revenue": 54238401000,
+    "fcf_margin": 0.0,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 0.259233624622999,
+    "adv_usd": 36283949.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "EPAM",
+   "name": "EPAM Systems, Inc.",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 4997181738,
+   "price": 95.65,
+   "volume": 1165625,
+   "gates": {
+    "ttm_fcf": 543641000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0419,
+    "rev_yoy": 0.1421,
+    "ttm_revenue": 5555425000,
+    "fcf_margin": 0.0979,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.1038479109866628,
+    "adv_usd": 111492031.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "PAY",
+   "name": "Paymentus Holdings, Inc.",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 2647725360,
+   "price": 21.11,
+   "volume": 1084784,
+   "gates": {
+    "ttm_fcf": 132296000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.3403,
+    "rev_yoy": 0.3301,
+    "ttm_revenue": 1279713000,
+    "fcf_margin": 0.1034,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.545770479861596,
+    "adv_usd": 22899790.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "WAY",
+   "name": "Waystar Holding Corp.",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 3677053120,
+   "price": 19.17,
+   "volume": 1839246,
+   "gates": {
+    "ttm_fcf": 293955000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1597,
+    "rev_yoy": 0.1861,
+    "ttm_revenue": 1156717000,
+    "fcf_margin": 0.2541,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.00859560130763119,
+    "adv_usd": 35258346.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "INOD",
+   "name": "Innodata Inc.",
+   "sector": "Technology",
+   "industry": "Information Technology Services",
+   "mcap": 3225369710,
+   "price": 98.77,
+   "volume": 1902115,
+   "gates": {
+    "ttm_fcf": 61969000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.4714,
+    "rev_yoy": 0.401,
+    "ttm_revenue": 283415000,
+    "fcf_margin": 0.2187,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.0320960189454422,
+    "adv_usd": 187871899.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "V",
+   "name": "Visa Inc.",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 623064408643,
+   "price": 325.05,
+   "volume": 4635750,
+   "gates": {
+    "ttm_fcf": 21185000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1092,
+    "rev_yoy": 0.1437,
+    "ttm_revenue": 43027000000,
+    "fcf_margin": 0.4924,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 0.4096138189798591,
+    "adv_usd": 1506850538.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "MA",
+   "name": "Mastercard Incorporated",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 437586050026,
+   "price": 495.24,
+   "volume": 3304681,
+   "gates": {
+    "ttm_fcf": 17716000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1382,
+    "rev_yoy": 0.1675,
+    "ttm_revenue": 33939000000,
+    "fcf_margin": 0.522,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 0.5206047190693731,
+    "adv_usd": 1636610218.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "COF",
+   "name": "Capital One Financial Corporation",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 114097381763,
+   "price": 183.35,
+   "volume": 4855307,
+   "gates": {
+    "ttm_fcf": 28869000000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2175,
+    "rev_yoy": 0.3848,
+    "ttm_revenue": 75164000000,
+    "fcf_margin": 0.3841,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": -3.3705676061826213,
+    "adv_usd": 890220538.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "IX",
+   "name": "ORIX Corporation",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 43187290290,
+   "price": 38.9,
+   "volume": 299909,
+   "gates": {
+    "ttm_fcf": 1379519884000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0986,
+    "rev_yoy": 0.1631,
+    "ttm_revenue": 3343676698000,
+    "fcf_margin": 0.4126,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 4.036700050608583,
+    "adv_usd": 11666460.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "OBDC",
+   "name": "Blue Owl Capital Corporation",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 5538768532,
+   "price": 11.16,
+   "volume": 2800391,
+   "gates": {
+    "ttm_fcf": 1077157000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2757,
+    "rev_yoy": 0.0994,
+    "ttm_revenue": 1310153000,
+    "fcf_margin": 0.8222,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 12.938524361781292,
+    "adv_usd": 31252364.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "ENVA",
+   "name": "Enova International, Inc.",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 4464599191,
+   "price": 179.41,
+   "volume": 373348,
+   "gates": {
+    "ttm_fcf": 1857501000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.2199,
+    "rev_yoy": 0.1746,
+    "ttm_revenue": 3281254000,
+    "fcf_margin": 0.5661,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 7.401392381484586,
+    "adv_usd": 66982365.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "FCFS",
+   "name": "FirstCash Holdings, Inc",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 10053947145,
+   "price": 229.35,
+   "volume": 242183,
+   "gates": {
+    "ttm_fcf": 502587000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.1029,
+    "rev_yoy": 0.1439,
+    "ttm_revenue": 3876271000,
+    "fcf_margin": 0.1297,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 2.3962684346401186,
+    "adv_usd": 55544671.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "SEZL",
+   "name": "Sezzle Inc.",
+   "sector": "Financial Services",
+   "industry": "Financial - Credit Services",
+   "mcap": 4085682687,
+   "price": 121.5,
+   "volume": 609299,
+   "gates": {
+    "ttm_fcf": 238457000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.5306,
+    "rev_yoy": 0.4614,
+    "ttm_revenue": 480906000,
+    "fcf_margin": 0.4958,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "exempt_financial",
+    "net_funded_debt_ebitda": 0.12699817782747339,
+    "adv_usd": 74029828.0
+   },
+   "themes_hint": [
+    "fintech_rails"
+   ]
+  },
+  {
+   "symbol": "LBTYK",
+   "name": "Liberty Global plc",
+   "sector": "Communication Services",
+   "industry": "Telecommunications Services",
+   "mcap": 3823882239,
+   "price": 11.31,
+   "volume": 1123895,
+   "gates": {
+    "ttm_fcf": 606600000,
+    "fcf_inflecting": false,
+    "rev_cagr_3y": 0.0669,
+    "rev_yoy": 1.6408,
+    "ttm_revenue": 4981900000,
+    "fcf_margin": 0.1218,
+    "pass_fcf": true,
+    "pass_growth": true,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.010811836115326,
+    "adv_usd": 12711252.0
+   },
+   "themes_hint": [
+    "space"
+   ]
+  }
+ ]
+}

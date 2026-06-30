@@ -1,0 +1,21 @@
+{
+ "symbol": "RMBS",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "IP licensing layer — sells memory interface patents and PHY silicon (SerDes, HBM controllers) that every DRAM module and AI accelerator must license or buy.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "SSNC",
+  "SMTC",
+  "MCHP",
+  "AVGO",
+  "SNPS",
+  "CDNS",
+  "CEVA",
+  "MPWR"
+ ],
+ "relative_comps": "RMBS is the near-monopoly licensor on DDR/HBM interface IP — a structural toll position most chip designers cannot route around, giving it 46% FCF margins that dwarf fabless peers like SMTC (15%) or MXL (2%). Revenue CAGR of ~16% trails hyper-growth names like CRDO but is more defensible given the royalty stream. Multiples are premium (mcap ~22x TTM revenue) but IP-licensor comps (Arm-class royalty dynamics) justify a structural discount to FCF-based peers. Main risk is customer concentration in major DRAM makers (Samsung, SK Hynix, Micron).",
+ "theme_fit_confidence": "high"
+}

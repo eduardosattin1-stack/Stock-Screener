@@ -1,0 +1,20 @@
+{
+ "symbol": "FICO",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Credit-scoring analytics and decisioning software platform — occupies the market-data-and-analytics layer of fintech rails, providing a near-mandatory toll (the FICO score) on virtually every US consumer credit origination.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "EQUIFAX",
+  "TRU",
+  "EXPN.L",
+  "VEN",
+  "NRDS",
+  "OPEN",
+  "AFRM"
+ ],
+ "relative_comps": "FICO is among the highest-load-bearing names in the entire screener — the FICO score is embedded in GSE mortgage standards, bank underwriting policies and regulatory frameworks in a way that makes true substitution decade-long. 13% 3-year CAGR and 23% YoY reflect pricing power on score royalties rather than volume growth. FCF margin of 40% is exceptional. Vs. Equifax/TransUnion, FICO sits above them as the scoring standard that consumes their bureau data. The broadening s-curve reflects near-saturated US consumer-credit penetration; international and FICO Platform software are the growth vectors. Defense_tech and robotics hints stripped — pure fintech toll-taker.",
+ "theme_fit_confidence": "high"
+}

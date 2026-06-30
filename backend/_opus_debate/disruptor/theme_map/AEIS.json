@@ -1,0 +1,20 @@
+{
+ "symbol": "AEIS",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Precision power conversion and control equipment supplier to semiconductor fabs and industrial processes — sits in the fab-equipment / power-delivery layer that every advanced node wafer build must traverse.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MKS",
+  "COHU",
+  "ENTG",
+  "ONTO",
+  "BESI",
+  "BE",
+  "NOVT"
+ ],
+ "relative_comps": "AEIS holds a near-duopoly with MKS Instruments in RF/DC power delivery to etch and deposition tools — a genuine fab chokepoint. 3-year CAGR is slightly negative (-0.9%) due to the 2023 semi downcycle, but 22% YoY recovery confirms cycle-driven suppression, not secular decline. FCF margin (3.6%) is thin post-cycle; MKS runs comparable margins. AEIS trades at a discount to ENTG on the assumption that power delivery is more commoditizable than high-purity process materials — fair concern, but switching costs from OEM tool qualifications are real.",
+ "theme_fit_confidence": "high"
+}

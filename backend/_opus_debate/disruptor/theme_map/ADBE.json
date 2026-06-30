@@ -1,0 +1,20 @@
+{
+ "symbol": "ADBE",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Creative and document intelligence platform layer — sells the dominant creative toolchain (Photoshop, Illustrator, Premiere, Firefly generative AI) and document workflow OS (Acrobat/PDF) that underlies all professional content creation and AI-augmented design.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "CRM",
+  "GOOGL",
+  "FIGMA (private)",
+  "CANVA (private)",
+  "MSFT",
+  "Stability AI (private)",
+  "SNAP"
+ ],
+ "relative_comps": "Adobe is the incumbent creative monopoly with exceptional FCF conversion (42% FCF margin) but growth has slowed to ~11% YoY as generative AI competitors (Canva, Figma, Midjourney) erode the consumer/SMB edge. Enterprise and PDF/document intelligence remain sticky, and Firefly is a genuine AI moat in licensed training data. At a $96B cap it trades at a discount to pure-cloud SaaS on revenue multiple, reflecting the maturing growth trajectory; the ai_infrastructure tag reflects Firefly/AXON-equivalent inference monetization embedded in Creative Cloud.",
+ "theme_fit_confidence": "medium"
+}

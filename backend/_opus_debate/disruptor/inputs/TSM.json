@@ -1,0 +1,11 @@
+{
+  "symbol": "TSM",
+  "sector": "Technology",
+  "signal_type": "disruptor",
+  "company": "Taiwan Semiconductor Manufacturing Company Limited",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nRevenue growth: +31.0% YoY | 3-yr CAGR +19.4%\nMargins: FCF 26.8%\nReturns / leverage: Net debt -1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1102.16B | TTM diluted EPS 371.30 | latest-Q EPS YoY +59%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 2288.73B (cash 3382.86B exceeds total debt 1094.13B) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 89 buys (6,692sh) vs 1 sells (200,000sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nWafer [member]: 3272.55B (86%) | Other Products [member]: 536.50B (14%)",
+  "dossier": "",
+  "methodologies": [
+    "ai_infrastructure"
+  ]
+}

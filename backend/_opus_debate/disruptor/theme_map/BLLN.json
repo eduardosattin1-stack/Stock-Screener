@@ -1,0 +1,19 @@
+{
+ "symbol": "BLLN",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Non-invasive prenatal and carrier screening diagnostics; sells cfDNA-based UNITY test consumables and sequencing kits to OBGYNs and clinical labs for fetal aneuploidy and carrier screening.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NTRA",
+  "ILMN (Grail)",
+  "Roche (ROG.SW)",
+  "Invitae (bankrupt/acquired)",
+  "Foundation Medicine (Roche)",
+  "GeneDx (WGS)"
+ ],
+ "relative_comps": "BillionToOne competes in the NIPS/carrier screening market dominated by Natera (NTRA) and Roche. Its differentiated angle is a proprietary molecular counting technology enabling higher sensitivity at lower cost, particularly for fetal RhD and single-gene disorder detection that NTRA's Panorama does not cover as well. The 98.5% YoY revenue growth (albeit off a smaller base) reflects rapid clinical adoption. Against NTRA, BLLN is earlier stage but with a real technology differentiation; NTRA still commands dominant market share. FCF margin of 7.9% is thin but positive — rare for a diagnostics company at this stage. Load-bearing score of 4 because its molecular counting platform is genuinely hard to replicate.",
+ "theme_fit_confidence": "high"
+}

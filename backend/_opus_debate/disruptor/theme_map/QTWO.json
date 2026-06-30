@@ -1,0 +1,20 @@
+{
+ "symbol": "QTWO",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Banking software platform layer — sells cloud-based digital banking and lending infrastructure (online/mobile banking, lending origination, account opening) to community banks and credit unions.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NCNO",
+  "FIS",
+  "FISV",
+  "JKHY",
+  "CSQ.AX",
+  "CBTX",
+  "NYMK"
+ ],
+ "relative_comps": "Q2 is the leading independent digital banking platform for community/regional FIs, competing against legacy core giants FIS and Fiserv and the focused nCino in lending. Its 14% YoY revenue growth and 24% FCF margin are solid but below nCino's growth rate; it commands a meaningful premium over legacy players given cloud-native architecture and switching costs. The ~$2.8B market cap represents modest premium to recurring revenue, leaving room vs. FIS/Fiserv on relative growth but trading tighter than pure-SaaS peers.",
+ "theme_fit_confidence": "high"
+}

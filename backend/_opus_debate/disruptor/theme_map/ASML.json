@@ -1,0 +1,18 @@
+{
+ "symbol": "ASML",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "EUV and DUV lithography equipment — the singular chokepoint every leading-edge chip fab must use; no fab can manufacture <7nm chips without ASML's tools.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AMAT",
+  "LRCX",
+  "KLAC",
+  "TOELY",
+  "NCTY"
+ ],
+ "relative_comps": "ASML holds a literal monopoly on EUV lithography; no competitor has approached production-grade EUV. In DUV it competes with Nikon and Canon but retains majority share. The only near-term risk is export restrictions limiting China revenue (~15% of sales). ASML's high-NA EUV (next generation) cements the moat for the 2nm era. Revenue growth at ~10% YoY is subdued due to order lumpiness; the backlog is >$40B. FCF margin of 25%+ is structurally high for capital equipment. Trades at ~35x forward earnings — premium reflects monopoly status.",
+ "theme_fit_confidence": "high"
+}

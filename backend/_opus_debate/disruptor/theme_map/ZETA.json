@@ -1,0 +1,20 @@
+{
+ "symbol": "ZETA",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "AI-powered marketing data platform — occupies the workflow-software/simulation layer automating audience targeting, identity resolution and omnichannel marketing execution for enterprise marketers.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TTD",
+  "LIVERAMP",
+  "BRAZE",
+  "KLAVIYO",
+  "HUBS",
+  "PUBMATIC",
+  "ADOBE"
+ ],
+ "relative_comps": "ZETA's 30% 3-year CAGR and 34% YoY growth are among the strongest in the chunk; FCF margin (14%) is solid and balance sheet is net cash. The Zeta Data Cloud's identity graph and AI-driven campaign optimization are genuine differentiators vs. point-solution competitors. Vs. The Trade Desk (TTD), ZETA competes on the data-and-identity layer rather than pure programmatic buying; vs. LiveRamp, ZETA offers a more integrated activation stack. Robotics_automation fit is the weakest valid theme mapping — ZETA automates marketing workflows using AI, which is on the periphery of the theme's workflow-software layer.",
+ "theme_fit_confidence": "medium"
+}

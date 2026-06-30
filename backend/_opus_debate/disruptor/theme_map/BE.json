@@ -1,0 +1,20 @@
+{
+ "symbol": "BE",
+ "themes": [
+  "energy_transition"
+ ],
+ "value_chain_position": "Solid-oxide fuel cell manufacturer selling distributed power generation equipment (Energy Servers) primarily to data centers, utilities and industrial facilities — on-site clean baseload layer of the energy transition value chain.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "PLUG",
+  "BLDP",
+  "NEP",
+  "GEV",
+  "COGEN.L",
+  "FLR",
+  "ENPH"
+ ],
+ "relative_comps": "BE holds a niche SOFC technology moat that PLUG (PEM) and BLDP (automotive/transit PEM) do not directly contest, but all three compete for the on-site clean-power wallet at hyperscalers. Revenue growth is accelerating (57% YoY) against a 19% 3-year CAGR, suggesting a demand pull-forward from data-center power constraints rather than purely secular penetration. FCF margin is thin (9.5%) compared with traditional grid-equipment peers like ETN, and leverage at 3.2x EBITDA leaves less buffer than ENPH or GEV. BE is more specialized but less capital-efficient than the broader energy-transition toll-takers.",
+ "theme_fit_confidence": "medium"
+}

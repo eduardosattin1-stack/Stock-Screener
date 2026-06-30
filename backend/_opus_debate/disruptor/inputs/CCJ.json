@@ -1,0 +1,11 @@
+{
+  "symbol": "CCJ",
+  "sector": "Energy",
+  "signal_type": "disruptor",
+  "company": "Cameco Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Energy\nRevenue growth: +7.4% YoY | 3-yr CAGR +23.0%\nMargins: FCF 25.4%\nReturns / leverage: Net debt -0\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 900M | TTM diluted EPS 1.50 | latest-Q EPS YoY +94%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 81M (cash 798M exceeds total debt 716M) — a genuine SoP add-back; use this, not the scan's net_debt above",
+  "dossier": "",
+  "methodologies": [
+    "energy_transition"
+  ]
+}

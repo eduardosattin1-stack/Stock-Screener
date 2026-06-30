@@ -1,0 +1,22 @@
+{
+ "symbol": "PLTR",
+ "themes": [
+  "ai_infrastructure",
+  "defense_tech"
+ ],
+ "value_chain_position": "AI/ML operational decision platform — sells AIP (AI Platform), Foundry, and Gotham as the integration and decision layer sitting between raw AI models and operational enterprise/government workflows; a toll on every AI deployment that needs governed, auditable outputs.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MSFT",
+  "SAIC",
+  "BAH",
+  "LDOS",
+  "C3AI",
+  "SNOW",
+  "DDOG",
+  "Databricks (private)"
+ ],
+ "relative_comps": "PLTR's 68% YoY growth and 51% FCF margin are the best margin profile in the enterprise AI software cohort, driven by AIP bootcamp-driven land-and-expand. It is uniquely positioned at the intersection of defense-grade classified AI (Gotham) and commercial AI deployment (Foundry/AIP) — a combination no pure commercial vendor can replicate. Compared to C3AI, PLTR has vastly superior FCF and more defensible government entrenchment. Vs. SNOW and Databricks, PLTR wins on workflow integration rather than pure analytics. The risk is the 230x revenue multiple pricing in multi-decade perfection.",
+ "theme_fit_confidence": "high"
+}

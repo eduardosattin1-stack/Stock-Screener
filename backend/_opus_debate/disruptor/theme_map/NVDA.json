@@ -1,0 +1,19 @@
+{
+ "symbol": "NVDA",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "AI accelerator chip design + CUDA software platform — the dominant compute layer every LLM/inference workload must run on.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "AMD",
+  "INTC",
+  "GOOGL",
+  "AMZN",
+  "MRVL",
+  "BRCM"
+ ],
+ "relative_comps": "NVDA's H100/H200/Blackwell generation commands 80–90% of AI training revenue; AMD MI300X is the only credible alternative at scale but trails on software ecosystem (CUDA lock-in). Google's TPUs and Amazon Trainium are internal-only and represent lost TAM rather than a share-capture threat. NVDA's data-center revenue grew 142% YoY in the latest reported year; AMD's AI chip revenue is ~$5B annualized vs NVDA's ~$100B+ run-rate. NVDA trades at a significant premium (~40x forward earnings) fully reflecting its chokepoint status.",
+ "theme_fit_confidence": "high"
+}

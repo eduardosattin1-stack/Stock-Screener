@@ -1,0 +1,182 @@
+{
+  "TSM": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Advanced fab layer — the world's sole source of leading-edge logic (3nm/2nm) that every AI accelerator, custom ASIC and smartphone AP must be built on.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["INTC", "SSNLF", "GFS", "IFNNY", "UMC", "PSEC"],
+    "relative_comps": "TSM holds ~60% of the global foundry market and essentially 100% of leading-edge (<5nm) capacity; Samsung Foundry is the only credible rival at the bleeding edge but trails badly on yield and customer trust. Intel Foundry (IFS) is years behind on 18A and has lost nearly every anchor customer. UMC and GlobalFoundries are mature-node players with no path to sub-5nm. TSM's moat is structural: customers (NVDA, AMD, AAPL, AVGO) have no alternative for cutting-edge nodes, giving TSM durable 50%+ gross margin on CoWoS-advanced packages.",
+    "theme_fit_confidence": "high"
+  },
+  "NVDA": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "AI accelerator chip design + CUDA software platform — the dominant compute layer every LLM/inference workload must run on.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AMD", "INTC", "GOOGL", "AMZN", "MRVL", "BRCM"],
+    "relative_comps": "NVDA's H100/H200/Blackwell generation commands 80–90% of AI training revenue; AMD MI300X is the only credible alternative at scale but trails on software ecosystem (CUDA lock-in). Google's TPUs and Amazon Trainium are internal-only and represent lost TAM rather than a share-capture threat. NVDA's data-center revenue grew 142% YoY in the latest reported year; AMD's AI chip revenue is ~$5B annualized vs NVDA's ~$100B+ run-rate. NVDA trades at a significant premium (~40x forward earnings) fully reflecting its chokepoint status.",
+    "theme_fit_confidence": "high"
+  },
+  "AVGO": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Custom ASIC design + networking silicon (Ethernet switching, PCIe/CXL) — builds hyperscaler-specific AI chips (Google TPU, Meta MTIA) and dominates AI-cluster networking fabrics.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MRVL", "INTC", "MTSI", "CIEN", "ANET", "NVDA"],
+    "relative_comps": "AVGO is the largest custom-ASIC design house for hyperscalers; its AI revenue run-rate crossed $4B/quarter. Marvell is the closest peer in custom silicon but is smaller (~$1.6B AI revenue) and relies more on merchant silicon. AVGO's VMware acquisition adds software recurring revenue, creating a hybrid profile its pure-play semis peers lack. Trading around 28x forward earnings vs MRVL at 35x, AVGO looks relatively cheaper given its scale and FCF conversion (43% FCF margin).",
+    "theme_fit_confidence": "high"
+  },
+  "MU": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "HBM (High-Bandwidth Memory) and DRAM/NAND manufacturing — supplies the memory stack bonded directly onto every AI accelerator package.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["SSNLF", "000660.KS", "WDC", "KIOXIA", "NAND"],
+    "relative_comps": "MU is one of only three HBM suppliers globally (alongside Samsung and SK Hynix); SK Hynix commands the highest HBM3E market share (~50%) and ships NVDA's priority allocations. MU is catching up on HBM3E yield and is winning allocations from AMD and potentially NVDA for HBM4. Samsung has had persistent yield issues. Memory is more commoditized than logic (no CUDA-equivalent moat), making MU more cyclical than NVDA, but HBM supply remains structurally tight through 2026. MU trades at ~15x forward earnings vs SK Hynix at ~12x ADR-equivalent.",
+    "theme_fit_confidence": "high"
+  },
+  "AMD": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "AI GPU/accelerator chip design (MI series) + CPU for servers — the primary credible alternative to NVDA in AI compute with growing data-center CPU share.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NVDA", "INTC", "QCOM", "GOOGL", "AMZN", "TSM"],
+    "relative_comps": "AMD is the clearest NVDA challenger but trails decisively on software (ROCM vs CUDA) and installed base; its MI300X has found traction with Microsoft Azure and Meta for inference workloads. Data-center revenue grew 69% YoY most recently but remains ~10% of NVDA's scale. AMD's CPU franchise (EPYC) is a genuine market-share gainer vs Intel in server CPUs. AMD trades at ~40x forward earnings — similar to NVDA despite much smaller AI scale — pricing in a share-gain narrative that is still unproven at hyperscaler training workloads.",
+    "theme_fit_confidence": "high"
+  },
+  "ASML": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "EUV and DUV lithography equipment — the singular chokepoint every leading-edge chip fab must use; no fab can manufacture <7nm chips without ASML's tools.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AMAT", "LRCX", "KLAC", "TOELY", "NCTY"],
+    "relative_comps": "ASML holds a literal monopoly on EUV lithography; no competitor has approached production-grade EUV. In DUV it competes with Nikon and Canon but retains majority share. The only near-term risk is export restrictions limiting China revenue (~15% of sales). ASML's high-NA EUV (next generation) cements the moat for the 2nm era. Revenue growth at ~10% YoY is subdued due to order lumpiness; the backlog is >$40B. FCF margin of 25%+ is structurally high for capital equipment. Trades at ~35x forward earnings — premium reflects monopoly status.",
+    "theme_fit_confidence": "high"
+  },
+  "LRCX": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Etch and deposition equipment — critical process steps for 3D NAND stacking, HBM manufacturing, and advanced logic node formation.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AMAT", "ASML", "KLAC", "TOELY", "ACMR"],
+    "relative_comps": "Lam dominates the etch market (~50% share) and is the leading deposition tool supplier for 3D NAND; its exposure to memory (NAND/DRAM) makes it more cyclical than ASML but it benefits directly from HBM capacity expansion. Applied Materials is the closest peer at similar scale; KLA leads in process control. Lam's 3-year CAGR is 2%, reflecting the memory capex downcycle, but YoY recovery (+27%) signals the cycle turning. FCF margin of 30% is best-in-class for equipment; trades at ~25x forward earnings vs AMAT at ~22x.",
+    "theme_fit_confidence": "high"
+  },
+  "ARM": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "CPU/NPU instruction-set architecture licensing — every mobile SoC, server CPU, AI inference chip and embedded controller pays ARM a royalty per unit shipped.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["INTC", "AMD", "RISCV-private", "QCOM", "GOOGL"],
+    "relative_comps": "ARM's ISA is the de facto standard for mobile (>99% share) and is rapidly gaining in server CPUs (Graviton/NEOVERSE wins at AWS, Google, Microsoft). The shift to Armv9 doubles royalty rates vs Armv8, driving ASP expansion. RISC-V is an open-source alternative with growing momentum but zero production server deployments at scale. ARM trades at ~80x forward earnings — a significant premium justified by near-monopoly architecture leverage but leaving almost no margin for execution risk.",
+    "theme_fit_confidence": "high"
+  },
+  "KLAC": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Process control equipment (inspection + metrology) — every leading-edge wafer must pass through KLA tools; defect control becomes more critical as geometry shrinks.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AMAT", "LRCX", "ASML", "TOELY", "ONTO"],
+    "relative_comps": "KLA holds ~50% share of the process-control equipment market with near-monopoly positions in bright-field and e-beam inspection. Process control spend grows as a percentage of total WFE as node complexity increases, structurally advantaging KLA over deposition/etch peers. FCF margin of 31% is best-in-class; 3-year revenue CAGR of ~10% is steady. Trades at ~28x forward earnings vs AMAT at ~22x, a premium reflecting its less cyclical end-market mix (logic >memory).",
+    "theme_fit_confidence": "high"
+  },
+  "TXN": {
+    "themes": ["ai_infrastructure", "energy_transition"],
+    "value_chain_position": "Analog and embedded processor semiconductors — sells power management, signal conditioning and MCU silicon into automotive, industrial, data-center power and communications end-markets.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["ADI", "NXPI", "STM", "ON", "MCHP"],
+    "relative_comps": "TXN is the largest pure-play analog semiconductor company; its industrial and automotive exposure (~65% of revenue combined) gives it energy-transition linkage via EV/grid applications, but it is not a high-growth AI play — 3-year revenue CAGR is negative (-4%). The company is in a heavy capex investment cycle (300mm fab buildout) that is compressing near-term FCF. Analog Devices is the closest peer; both trade at similar 25-28x forward earnings multiples. TXN's competitive moat is broad product breadth and customer stickiness, not a chokepoint position.",
+    "theme_fit_confidence": "medium"
+  },
+  "MRVL": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Custom AI ASIC design + high-speed networking silicon (PAM4 DSPs, PCIe retimers) — supplies hyperscaler-specific inference chips and the SerDes/DSP layer for 800G/1.6T optical data-center networks.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AVGO", "INTC", "MTSI", "INPHI-acquired", "ANET", "CIEN"],
+    "relative_comps": "Marvell's AI revenue reached ~$700M/quarter and is growing faster than AVGO's custom-ASIC segment on a percentage basis; key customers include Amazon (Trainium/Inferentia) and Google. Its cloud-optimized 5nm custom ASICs command high ASPs. The networking DSP business competes directly with AVGO/Inphi (now part of MRVL after acquisition) and MACOM. Trades at ~35x forward earnings, a premium to AVGO reflecting its higher-growth AI mix and smaller base; the risk is customer concentration (Amazon + Google = majority of AI revenue).",
+    "theme_fit_confidence": "high"
+  },
+  "ADI": {
+    "themes": ["ai_infrastructure", "energy_transition"],
+    "value_chain_position": "High-performance analog/mixed-signal semiconductors — sells precision data converters, amplifiers and power-management ICs into data-center power, industrial automation, automotive and communications.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["TXN", "NXPI", "STM", "ON", "MCHP"],
+    "relative_comps": "ADI and TXN are the two dominant high-performance analog franchises; ADI skews more toward high-precision/high-speed converters (communications, defense, industrial test) where it has fewer substitutes. Revenue declined during the 2023-24 analog downcycle (-28% trough) but has recovered strongly (+30% YoY). FCF margin of 36% is the highest in analog. The energy-transition linkage is real (EV battery management, grid monitoring) but not a primary revenue driver. Trades at ~28x forward earnings, in line with TXN.",
+    "theme_fit_confidence": "medium"
+  },
+  "MPWR": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "High-density power management ICs for AI servers — specializes in integrated voltage regulators (IVRs) and point-of-load converters that power GPU/accelerator boards in AI data centers.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TXN", "ADI", "INTC", "VRT", "RENN"],
+    "relative_comps": "MPWR is the highest-growth pure analog company in the AI data-center supply chain; its 48V to point-of-load architecture is uniquely suited to NVDA GB200 NVL racks. Revenue grew 24% YoY and the data-center segment is accelerating. TXN and ADI compete in power management but lack MPWR's focus and design wins in hyperscaler GPU racks. MPWR trades at ~65x forward earnings — a steep premium to analog peers that prices in AI server content-per-unit growth as a multi-year tailwind.",
+    "theme_fit_confidence": "high"
+  },
+  "ALAB": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Connectivity silicon for AI clusters (CXL/PCIe smart cable modules, retimers, AEC ASICs) — the low-latency interconnect fabric linking GPUs within racks and between racks.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MRVL", "AVGO", "MTSI", "CIEN", "INPHI-acquired", "NPAB"],
+    "relative_comps": "Astera Labs is a rare pure-play on AI cluster connectivity; its ARIES PCIe/CXL retimers and LEO smart-cable modules are designed into NVDA HGX H100/H200 and GB200 reference platforms. Revenue doubled YoY (+104%) and its FCF margin of 34% is exceptional for its growth stage. Marvell and AVGO sell competing DSP/retimer chips but are broader companies where connectivity is one product line among many — Astera is the focused specialist. Trades at a premium (~80-100x forward earnings) reflecting its clean AI-native positioning and hyperscaler design-win momentum.",
+    "theme_fit_confidence": "high"
+  },
+  "TER": {
+    "themes": ["ai_infrastructure", "robotics_automation"],
+    "value_chain_position": "Semiconductor test equipment (Automated Test Equipment, ATE) for logic/memory/5G, plus collaborative robot arms (Universal Robots) for factory and lab automation.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AMAT", "KLAC", "ADNT", "COHU", "FANUC", "ABB"],
+    "relative_comps": "Teradyne leads in logic ATE (SoC test) with ~50% share; its memory test segment benefits from HBM complexity growth. Universal Robots is the leading cobot franchise globally by installed base but faces intensifying competition from FANUC, ABB, and low-cost Chinese entrants (Doosan, Aubo). The AI-driven chip-test thesis is solid (more complex chips need more test time per wafer); the cobot business is earlier-stage and lower-margin. 3-year revenue CAGR near flat (0.4%) reflects the semiconductor test cycle; YoY recovery (+30%) indicates trough-to-ramp. Trades at ~35x forward earnings.",
+    "theme_fit_confidence": "medium"
+  },
+  "MTSI": {
+    "themes": ["ai_infrastructure", "defense_tech"],
+    "value_chain_position": "RF/microwave and photonic semiconductors — supplies compound-semiconductor (GaAs/GaN/InP) devices for data-center optical transceivers, 5G base stations, and defense radar/electronic warfare systems.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MRVL", "ADI", "QRVO", "SWKS", "COHU", "WOLFSPEED"],
+    "relative_comps": "MACOM has found a niche in InP-based components for 800G/1.6T optical transceivers in AI data centers, a market growing at 40%+ annually. Its defense segment (radar, EW) provides a second AI-adjacent growth vector. Revenue grew 27% YoY, and the company has been taking share from Lumentum and Coherent in the data-center optical component layer. Smaller and less diversified than ADI or QRVO; its compound-semi focus is a genuine moat in high-frequency applications where silicon cannot substitute. Trades at ~40x forward earnings — premium justified by its optical AI tailwind.",
+    "theme_fit_confidence": "medium"
+  },
+  "TSEM": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Specialty analog/RF foundry services — contract fab for power management, image sensors, RF-CMOS, and silicon photonics chips that are adjacent to AI data-center and automotive buildouts.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["GFS", "UMC", "IXYS-acquired", "PSEC", "TOWER-peers"],
+    "relative_comps": "Tower is a niche specialty foundry; it does not compete on leading-edge nodes with TSM/Samsung but carves out analog, RF and photonics process technologies. Revenue growth is modest (10% YoY, negative 3-year CAGR) — it is not a primary AI growth vehicle. Intel's attempted acquisition was blocked by Chinese regulators, leaving Tower as a standalone but well-capitalized specialty play. FCF margin of 20% is reasonable. Theme-fit confidence is medium: it participates in AI-adjacent silicon photonics but is not a chokepoint; its specialty fab position is easy to route around for most applications.",
+    "theme_fit_confidence": "medium"
+  },
+  "LSCC": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Low-power programmable logic (FPGAs/PLDs) for edge AI inference, communications, automotive ADAS, and industrial control.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AMD", "INTC", "ATML-acquired", "MCHP", "QLGC-acquired"],
+    "relative_comps": "Lattice targets the small/mid-range FPGA market below where Intel Altera and AMD Xilinx compete; its power-efficient Nexus/CertusPro platforms win in communications line cards, server management (BMC/OCP) and automotive ADAS. It is not a primary AI training/inference chip — its AI relevance is in edge inference and smart-NIC applications. Revenue shrank over 3 years (-7% CAGR) as its industrial end-market corrected; YoY recovery is underway (+17%). Trades at ~50x forward earnings — priced for a faster recovery than fundamentals currently support.",
+    "theme_fit_confidence": "medium"
+  },
+  "AMKR": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Advanced packaging and test services (OSAT) — bonds, packages and tests chips from foundries into final assemblies including flip-chip, fan-out wafer-level, and 2.5D/3D packaging.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["ASX", "SPIL", "JCET", "UTAC", "STATS-ChipPAC"],
+    "relative_comps": "Amkor is the second-largest OSAT globally after ASE (ASX); it is a key packaging partner for Apple (smartphone SiPs), AMD/NVIDIA (HBM assembly) and automotive chips. Advanced packaging (2.5D CoWoS-equivalent) is a genuine AI theme driver as chip complexity demands heterogeneous integration. However, FCF margin of only 2.4% signals a commoditizing business — OSAT is capital-intensive with thin margins; differentiation in advanced packaging is partial. 3-year revenue CAGR is slightly negative. Trades at ~15x forward earnings reflecting its lower-margin profile.",
+    "theme_fit_confidence": "medium"
+  },
+  "SITM": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "MEMS-based precision timing semiconductors — replaces quartz oscillators with silicon timing chips across data-center networking, 5G, automotive and edge IoT applications.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MTSI", "MXCHIP", "IDT-acquired", "RENESAS", "TXN"],
+    "relative_comps": "SiTime is the dominant MEMS timing company globally with ~75% market share in precision oscillators sold into communications and data-center applications; its silicon timing chips are more accurate, programmable and reliable than quartz alternatives. Revenue surged 65% YoY as data-center networking and 5G base-station demand rebounded. The TAM is relatively small (~$2B) but SiTime is the clear category leader. Competes with Microchip (post-Microsemi/IDT acquisition) and legacy quartz suppliers; its MEMS moat is durable but the application is a niche enabler, not a macro chokepoint. Trades at ~70x forward earnings.",
+    "theme_fit_confidence": "medium"
+  }
+}

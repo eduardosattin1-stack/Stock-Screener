@@ -1,0 +1,19 @@
+{
+ "symbol": "WAY",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Healthcare revenue cycle management and payments platform; sits between payers (insurers), providers (hospitals/clinics), and patients handling claim submission, remittance and patient payment collection.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NXGN",
+  "HSTM",
+  "AMSF",
+  "VCSY",
+  "COUR",
+  "OM"
+ ],
+ "relative_comps": "Waystar's 25% FCF margin at $1.2B revenue marks it as an asset-light software rail in a sticky vertical; 16% CAGR and 19% YoY are solid for healthcare IT. Competitors include Netsmart, HealthStream, and legacy clearinghouse operators; Waystar's cloud-native architecture gives it a modernization edge over older clearinghouse incumbents. Net leverage near zero post-IPO is a balance-sheet positive. The main risk is concentration — healthcare payers control reimbursement rules and could vertically integrate parts of the workflow.",
+ "theme_fit_confidence": "high"
+}

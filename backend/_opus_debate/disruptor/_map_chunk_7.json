@@ -1,0 +1,352 @@
+[
+ {
+  "symbol": "INGM",
+  "name": "Ingram Micro Holding Corporation",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 6747863419,
+  "price": 29.13,
+  "volume": 1245587,
+  "gates": {
+   "ttm_fcf": 1360000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0112,
+   "rev_yoy": 0.1085,
+   "ttm_revenue": 54238401000,
+   "fcf_margin": 0.0,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 0.259233624622999,
+   "adv_usd": 36283949.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "EPAM",
+  "name": "EPAM Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 4997181738,
+  "price": 95.65,
+  "volume": 1165625,
+  "gates": {
+   "ttm_fcf": 543641000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0419,
+   "rev_yoy": 0.1421,
+   "ttm_revenue": 5555425000,
+   "fcf_margin": 0.0979,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.1038479109866628,
+   "adv_usd": 111492031.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "PAY",
+  "name": "Paymentus Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 2647725360,
+  "price": 21.11,
+  "volume": 1084784,
+  "gates": {
+   "ttm_fcf": 132296000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3403,
+   "rev_yoy": 0.3301,
+   "ttm_revenue": 1279713000,
+   "fcf_margin": 0.1034,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.545770479861596,
+   "adv_usd": 22899790.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "WAY",
+  "name": "Waystar Holding Corp.",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 3677053120,
+  "price": 19.17,
+  "volume": 1839246,
+  "gates": {
+   "ttm_fcf": 293955000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1597,
+   "rev_yoy": 0.1861,
+   "ttm_revenue": 1156717000,
+   "fcf_margin": 0.2541,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.00859560130763119,
+   "adv_usd": 35258346.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "INOD",
+  "name": "Innodata Inc.",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 3225369710,
+  "price": 98.77,
+  "volume": 1902115,
+  "gates": {
+   "ttm_fcf": 61969000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.4714,
+   "rev_yoy": 0.401,
+   "ttm_revenue": 283415000,
+   "fcf_margin": 0.2187,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.0320960189454422,
+   "adv_usd": 187871899.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "V",
+  "name": "Visa Inc.",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 623064408643,
+  "price": 325.05,
+  "volume": 4635750,
+  "gates": {
+   "ttm_fcf": 21185000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1092,
+   "rev_yoy": 0.1437,
+   "ttm_revenue": 43027000000,
+   "fcf_margin": 0.4924,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 0.4096138189798591,
+   "adv_usd": 1506850538.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "MA",
+  "name": "Mastercard Incorporated",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 437586050026,
+  "price": 495.24,
+  "volume": 3304681,
+  "gates": {
+   "ttm_fcf": 17716000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1382,
+   "rev_yoy": 0.1675,
+   "ttm_revenue": 33939000000,
+   "fcf_margin": 0.522,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 0.5206047190693731,
+   "adv_usd": 1636610218.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "COF",
+  "name": "Capital One Financial Corporation",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 114097381763,
+  "price": 183.35,
+  "volume": 4855307,
+  "gates": {
+   "ttm_fcf": 28869000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2175,
+   "rev_yoy": 0.3848,
+   "ttm_revenue": 75164000000,
+   "fcf_margin": 0.3841,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": -3.3705676061826213,
+   "adv_usd": 890220538.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "IX",
+  "name": "ORIX Corporation",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 43187290290,
+  "price": 38.9,
+  "volume": 299909,
+  "gates": {
+   "ttm_fcf": 1379519884000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0986,
+   "rev_yoy": 0.1631,
+   "ttm_revenue": 3343676698000,
+   "fcf_margin": 0.4126,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 4.036700050608583,
+   "adv_usd": 11666460.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "OBDC",
+  "name": "Blue Owl Capital Corporation",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 5538768532,
+  "price": 11.16,
+  "volume": 2800391,
+  "gates": {
+   "ttm_fcf": 1077157000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2757,
+   "rev_yoy": 0.0994,
+   "ttm_revenue": 1310153000,
+   "fcf_margin": 0.8222,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 12.938524361781292,
+   "adv_usd": 31252364.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "ENVA",
+  "name": "Enova International, Inc.",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 4464599191,
+  "price": 179.41,
+  "volume": 373348,
+  "gates": {
+   "ttm_fcf": 1857501000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2199,
+   "rev_yoy": 0.1746,
+   "ttm_revenue": 3281254000,
+   "fcf_margin": 0.5661,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 7.401392381484586,
+   "adv_usd": 66982365.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "FCFS",
+  "name": "FirstCash Holdings, Inc",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 10053947145,
+  "price": 229.35,
+  "volume": 242183,
+  "gates": {
+   "ttm_fcf": 502587000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1029,
+   "rev_yoy": 0.1439,
+   "ttm_revenue": 3876271000,
+   "fcf_margin": 0.1297,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 2.3962684346401186,
+   "adv_usd": 55544671.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "SEZL",
+  "name": "Sezzle Inc.",
+  "sector": "Financial Services",
+  "industry": "Financial - Credit Services",
+  "mcap": 4085682687,
+  "price": 121.5,
+  "volume": 609299,
+  "gates": {
+   "ttm_fcf": 238457000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.5306,
+   "rev_yoy": 0.4614,
+   "ttm_revenue": 480906000,
+   "fcf_margin": 0.4958,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": 0.12699817782747339,
+   "adv_usd": 74029828.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "LBTYK",
+  "name": "Liberty Global plc",
+  "sector": "Communication Services",
+  "industry": "Telecommunications Services",
+  "mcap": 3823882239,
+  "price": 11.31,
+  "volume": 1123895,
+  "gates": {
+   "ttm_fcf": 606600000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0669,
+   "rev_yoy": 1.6408,
+   "ttm_revenue": 4981900000,
+   "fcf_margin": 0.1218,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.010811836115326,
+   "adv_usd": 12711252.0
+  },
+  "themes_hint": [
+   "space"
+  ]
+ }
+]

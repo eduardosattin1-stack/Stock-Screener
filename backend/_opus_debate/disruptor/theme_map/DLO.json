@@ -1,0 +1,20 @@
+{
+ "symbol": "DLO",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Emerging-market payment processing rails for global merchants — sells a cross-border payment infrastructure layer enabling multinationals and global e-commerce companies to accept local payments, disburse payouts, and navigate FX in LatAm, Africa, and South/Southeast Asia.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ADYEN",
+  "STNE",
+  "PAGS",
+  "Stripe (private)",
+  "Nuvei (private)",
+  "Ebanx (private)",
+  "Unlimint (private)"
+ ],
+ "relative_comps": "DLO is among the most load-bearing EM payment rail operators: its value is the regulatory/compliance/local-bank-connectivity moat that multinationals cannot replicate in-house across 40+ markets. 56% YoY and 38% 3-year CAGR with 33% FCF margin are best-in-class for its category. Direct competitors are largely private (Ebanx, Unlimint) or larger-platform incumbents (Adyen, Stripe) entering EM corridors. STNE/PAGS compete in Brazil specifically. At $3.5B mcap on $1.2B revenue with 33% FCF margin, DLO appears undervalued relative to its infrastructure position — the risk is regulatory/FX volatility in its operating markets.",
+ "theme_fit_confidence": "high"
+}

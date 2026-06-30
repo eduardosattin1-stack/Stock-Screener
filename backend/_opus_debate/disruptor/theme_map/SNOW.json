@@ -1,0 +1,20 @@
+{
+ "symbol": "SNOW",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Cloud data platform providing data warehousing, data sharing and AI/ML workload infrastructure — sits in the software-infrastructure layer that AI training and inference pipelines consume for data access and feature engineering.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "DBRK",
+  "GOOGL",
+  "AMZN",
+  "MSFT",
+  "CRM",
+  "CLDR",
+  "ESTC"
+ ],
+ "relative_comps": "SNOW's 31% 3-year CAGR and 31% YoY growth make it one of the faster-growing names in the chunk; net cash balance sheet and 23% FCF margin are strong for a consumption-model SaaS. The AI-infrastructure fit is real — Snowflake's data cloud is increasingly where enterprises stage data for LLM fine-tuning and inference. Vs. Databricks (private), SNOW competes on SQL/BI workloads while Databricks leads on ML engineering; both are required in a full AI data stack. Microsoft Fabric and AWS Redshift are the chief substitution risks. Defense_tech hint stripped.",
+ "theme_fit_confidence": "high"
+}

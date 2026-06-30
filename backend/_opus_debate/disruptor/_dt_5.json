@@ -1,0 +1,182 @@
+{
+  "LIF": {
+    "themes": [],
+    "value_chain_position": "Consumer mobile app for family location-sharing; monetizes via subscription; no meaningful role in any disruption value chain.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["GOOG", "AAPL", "Tile (private)", "ZEN", "PRIV", "MAPS"],
+    "relative_comps": "Life360 competes against Apple's built-in Find My and Google's location services, both of which are free and deeply integrated into OS ecosystems. It has carved a niche with family-centric UX and richer features, but switching costs are low and the giants can replicate functionality at zero marginal cost. Revenue growth is real (~33% YoY) and FCF margins are respectable, but the business is a consumer subscription app, not a disruption toll-taker. Multiple is already pricing in growth; competitive moat is thin.",
+    "theme_fit_confidence": "low"
+  },
+  "DAVE": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Neobank and cash-advance app targeting underbanked consumers; earns interchange and subscription fees; operates as a lending-adjacent digital banking layer.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AFRM", "SOFI", "UPST", "Chime (private)", "MoneyLion (private)", "CURO", "NU"],
+    "relative_comps": "Dave competes in the earned-wage-advance and neobank space against Chime, SoFi, and MoneyLion. Its 59% YoY revenue growth and 54% FCF margin are exceptional for a fintech this size, suggesting strong unit economics from its ExtraCash product. However, the revenue model is credit-adjacent (cash advances carry implicit credit risk), which pushes it toward the low end of the fintech_rails toll-taker definition. It is not a pure payments rail; it is a consumer credit product with a subscription wrapper. Load-bearing score reflects substitutability — consumers can switch to Chime or SoFi easily.",
+    "theme_fit_confidence": "medium"
+  },
+  "ADEA": {
+    "themes": [],
+    "value_chain_position": "IP licensing company that owns media and semiconductor patents (formerly Rovi/TiVo); earns royalty streams from content discovery and chip licensing deals.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["InterDigital (IDCC)", "VIA Technologies (private)", "Sisvel (private)", "Qualcomm (QCOM)", "Acacia Research (ACTG)"],
+    "relative_comps": "Adeia is a pure IP licensing business — it does not build products that ride any disruption wave. Its 3-year revenue CAGR of 0.34% confirms it is effectively a royalty harvesting entity with one-time license step-ups inflating YoY numbers. FCF margins are high because there is no COGS beyond litigation expense, but there is no growth engine. It competes against InterDigital and other NPEs for licensing leverage. Theme fit is low — the industry filter caught it as Software-Application, but it is a patent licensor, not a disruptor.",
+    "theme_fit_confidence": "low"
+  },
+  "PTRN": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "E-commerce marketplace operator and Amazon third-party seller aggregator; provides software, analytics, and supply-chain services to brands selling on Amazon and other platforms.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AMZN", "SHOP", "Thrasio (private)", "Perch (private)", "Razor Group (private)", "TTEC"],
+    "relative_comps": "Pattern Group operates as a managed marketplace and Amazon channel-optimization software provider, sitting between brands and platform rails. Its 36% 3-year CAGR and 42% YoY growth at $2.7B revenue are impressive for an aggregator, but FCF margin of only 3.6% signals thin economics typical of a managed service, not a software toll-taker. It competes against pure-software alternatives like Jungle Scout and Helium 10 and against private aggregators for brand acquisition. The fintech_rails tag is marginal — Pattern processes payments-adjacent commerce flows but does not own rails.",
+    "theme_fit_confidence": "low"
+  },
+  "BULL": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Retail brokerage and trading platform; earns from payment-for-order-flow, securities lending, and margin interest; targets self-directed retail investors.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["HOOD", "IBKR", "Futu Holdings (FUTU)", "UP Fintech (TIGR)", "Charles Schwab (SCHW)", "TradeStation (private)"],
+    "relative_comps": "Webull competes directly with Robinhood and Interactive Brokers in retail self-directed trading. Its 47% YoY revenue growth reflects cyclical market-activity tailwinds as much as structural share gains. The business is a brokerage platform, not a payments rail — economics are tied to trading volume and market conditions rather than recurring transaction flow. Load-bearing score is low; retail brokerage is highly commoditized on price/features. Against Futu and TIGR it has similar positioning for Chinese diaspora retail traders.",
+    "theme_fit_confidence": "medium"
+  },
+  "FRSH": {
+    "themes": [],
+    "value_chain_position": "Cloud customer-experience and IT service-management (ITSM) SaaS; sells helpdesk, CRM, and ITSM software to SMB and mid-market customers.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["CRM", "NOW", "ZEN", "HUBS", "JIRA (TEAM)", "MNDY"],
+    "relative_comps": "Freshworks targets the SMB/mid-market segment with lower-priced alternatives to Salesforce CRM and ServiceNow ITSM. Its 16% YoY growth has been decelerating and trails faster-growing SaaS peers. FCF margin of 29% is healthy but reflects cost discipline rather than pricing power. Freshworks does not occupy a chokepoint in any disruption theme — it is a competitive SaaS participant without defensible network effects. Against Zendesk, ServiceNow, and HubSpot, Freshworks competes primarily on price/simplicity, and AI-embedded alternatives from larger vendors threaten its differentiation.",
+    "theme_fit_confidence": "low"
+  },
+  "AGYS": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Hospitality-specific property management system (PMS) and point-of-sale software; sells SaaS + payments to hotels, resorts, casinos, and food-service operators.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["Oracle OPERA (ORCL)", "Shiji Group (private)", "TOST", "Lightspeed (LSPD)", "Mews (private)", "Cloudbeds (private)"],
+    "relative_comps": "Agilysys occupies a genuine vertical-SaaS-plus-payments niche in hospitality — once a casino or resort is live on rGuest PMS, switching costs are high due to deep workflow integration. Its 17% 3-year CAGR and improving FCF profile support the fintech_rails tag more than pure payment processors, as it bundles software with embedded payments. Load-bearing score of 3 reflects real but bounded moat: Oracle OPERA is deeply entrenched in large-hotel enterprise, while Mews and Cloudbeds compete hard in independent hotel segments. Agilysys earns a higher confidence tag than generic SMB SaaS.",
+    "theme_fit_confidence": "medium"
+  },
+  "WST": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Manufactures drug-delivery components (stoppers, closures, seals, drug-containment systems) that are required for every parenteral drug vial and biologic fill-finish line.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["Gerresheimer (GXI.DE)", "AptarGroup (ATR)", "Datwyler Holding (private)", "Becton Dickinson (BDX)", "Schott Pharma (private)"],
+    "relative_comps": "West Pharmaceutical is the dominant supplier of drug-container closure systems for injectable drugs — every GLP-1, mRNA vaccine, and biologic batch runs through WST or a small set of qualified alternatives. It is a genuine chokepoint: FDA validation and drug-master-file qualification create extremely high switching costs; pharma companies cannot swap closure vendors without regulatory re-validation. FCF at $458M on $3.2B revenue is strong, and the business is not cyclical in the same way as industrial peers. Against Gerresheimer and Datwyler, WST commands premium pricing due to its Westar and NovaPure coating platforms. The 3-year CAGR of 2.1% reflects a post-COVID inventory normalization trough — underlying demand is secular.",
+    "theme_fit_confidence": "high"
+  },
+  "MMSI": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Manufactures single-use cardiovascular and endoscopy procedural devices (catheters, balloons, access systems); sells consumables per procedure to hospitals and ASCs.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["BSX", "BDX", "Teleflex (TFX)", "Avanos Medical (AVNS)", "Nordson (NDSN)", "AngioDynamics (ANGO)"],
+    "relative_comps": "Merit Medical sits in the mid-tier of cardiovascular single-use devices — growing through geographic expansion and portfolio breadth rather than platform lock-in. Its 10% revenue CAGR and consistent FCF generation are solid but not differentiated against larger peers like BSX which have wider distribution and R&D firepower. Load-bearing score of 3 reflects moderate switching costs (procedural familiarity, physician preference) but no dominant platform position. Versus Teleflex and AngioDynamics, MMSI trades at a slight premium given faster growth.",
+    "theme_fit_confidence": "medium"
+  },
+  "LMAT": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Specialty manufacturer of vascular surgery devices (grafts, patches, catheters, valves) for open and endovascular procedures; sells single-use implants to vascular surgeons.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["Terumo (4543.T)", "Getinge (GETI.B.ST)", "Becton Dickinson (BDX)", "Vascular Solutions (acquired)", "CryoLife (CRY)"],
+    "relative_comps": "LeMaitre occupies a focused niche in open vascular surgery devices with minimal direct public-company competition at its scale — most large-device players have abandoned open surgery for endovascular. This creates a durable niche moat: LeMaitre is often the only qualified supplier for certain grafts. Revenue CAGR of 15.6% and FCF margin of 31% are exceptional for a small-cap device company. Against Terumo and Getinge, LeMaitre competes on specialized product lines rather than scale. The genomics_bio_tools tag is a loose fit — this is surgical consumables, not genomics instrumentation — but qualifies as medical-instruments/supplies picks-and-shovels.",
+    "theme_fit_confidence": "medium"
+  },
+  "DGX": {
+    "themes": [],
+    "value_chain_position": "Large commercial clinical laboratory; processes blood, urine, and tissue samples ordered by physicians; a high-volume, low-margin testing factory.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["LH", "BioReference (private)", "Sonic Healthcare (SHL.AX)", "LabCorp (LH)", "NovaBay (NBY)"],
+    "relative_comps": "Quest Diagnostics is a mature, utility-like clinical lab duopoly (Quest + LabCorp) with 3.7% 3-year CAGR. Its 11% YoY growth reflects easy post-COVID COVID-test comparables normalizing plus some M&A contribution. This is not a genomics/bio-tools picks-and-shovels business — Quest runs tests for doctors on commoditized instruments it buys from Roche and Abbott; it does not develop sequencing platforms or bioprocessing tools. Load-bearing score of 2 reflects scale advantages in logistics but no platform lock-in. Theme confidence is low — the FMP industry filter included it but it is a legacy testing services operator.",
+    "theme_fit_confidence": "low"
+  },
+  "IDXX": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Develops, manufactures, and sells veterinary diagnostics instruments and consumable test kits; operates a direct reference laboratory network for veterinary practices worldwide.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["Heska (HSKA)", "Zoetis (ZTS)", "Antech (Mars, private)", "Mindray (002841.SZ)", "Covetrus (private/HSIC)"],
+    "relative_comps": "IDEXX is the dominant toll-taker in veterinary diagnostics — its in-clinic analyzers generate a recurring consumable stream that is deeply sticky once placed (veterinary practices run hundreds of tests per month on the same installed base). No other public company has comparable scale in companion-animal diagnostics; Zoetis is the closest competitor but primarily sells vaccines/pharmaceuticals. IDXX's 8.5% 3-year CAGR reflects post-COVID pet-visit normalization, not structural deceleration; FCF margin of 24% confirms pricing power. Its reference labs create a network-effect moat — the more samples run, the better the reference ranges. Mindray is a distant price-based competitor in emerging markets.",
+    "theme_fit_confidence": "high"
+  },
+  "MEDP": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Full-service contract research organization (CRO); designs and executes clinical trials for biotech/pharma clients; a pure-service picks-and-shovels layer for drug development.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ICLR", "CRL", "PPD (Thermo, TMO)", "IQVIA (IQV)", "Syneos Health (acquired)", "PSI CRO (private)"],
+    "relative_comps": "Medpace is a specialized mid-size CRO focused heavily on metabolic, cardiovascular, and oncology trials for emerging biotech sponsors — a segment where ICON and IQVIA are less competitive due to size. Its 20% 3-year CAGR and 28% FCF margin are best-in-class among public CROs, reflecting a fully-integrated model and high therapeutic specialization. Against ICLR and IQV, Medpace commands a premium multiple due to faster growth and niche positioning. The risk is biotech funding cyclicality — when VC/IPO funding tightens, small-biotech sponsor backlogs compress.",
+    "theme_fit_confidence": "medium"
+  },
+  "BLLN": {
+    "themes": ["genomics_bio_tools"],
+    "value_chain_position": "Non-invasive prenatal and carrier screening diagnostics; sells cfDNA-based UNITY test consumables and sequencing kits to OBGYNs and clinical labs for fetal aneuploidy and carrier screening.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NTRA", "ILMN (Grail)", "Roche (ROG.SW)", "Invitae (bankrupt/acquired)", "Foundation Medicine (Roche)", "GeneDx (WGS)"],
+    "relative_comps": "BillionToOne competes in the NIPS/carrier screening market dominated by Natera (NTRA) and Roche. Its differentiated angle is a proprietary molecular counting technology enabling higher sensitivity at lower cost, particularly for fetal RhD and single-gene disorder detection that NTRA's Panorama does not cover as well. The 98.5% YoY revenue growth (albeit off a smaller base) reflects rapid clinical adoption. Against NTRA, BLLN is earlier stage but with a real technology differentiation; NTRA still commands dominant market share. FCF margin of 7.9% is thin but positive — rare for a diagnostics company at this stage. Load-bearing score of 4 because its molecular counting platform is genuinely hard to replicate.",
+    "theme_fit_confidence": "high"
+  },
+  "BSX": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Large-cap medtech; designs, manufactures, and sells cardiovascular, neuromodulation, urology, and endoscopy devices including electrophysiology mapping systems and robotic bronchoscopy (Ion).",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MDT", "ABT", "EW", "SNN", "ISRG", "J&J (JNJ)"],
+    "relative_comps": "Boston Scientific is a diversified medtech platform with growing exposure to robotics_automation via its Ion robotic bronchoscopy system and electrophysiology pulsed-field ablation (PFA) technology. PFA is the fastest-growing segment in cardiac ablation — BSX's Farawave catheter is a market-share gainer against Medtronic and J&J. Revenue CAGR of 16.5% and 17.4% YoY growth are exceptional for a $70B-cap company. BSX occupies a chokepoint in ablation hardware due to capital-equipment installed base creating consumable pull-through. The robotics tag is credible but secondary — Ion is early and still a small share of revenue.",
+    "theme_fit_confidence": "medium"
+  },
+  "EW": {
+    "themes": [],
+    "value_chain_position": "Structural heart device specialist; manufactures transcatheter aortic valve replacement (TAVR) systems and heart-monitoring technologies; primarily sells to structural heart interventional programs.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MDT", "Abbott (ABT)", "Meril Life (private)", "NovaBay (NBY)", "JenaValve (private)", "BSX"],
+    "relative_comps": "Edwards Lifesciences is the global TAVR market leader, but TAVR penetration growth has slowed materially as the obvious high-risk surgical candidates have been treated. Medtronic and Abbott are gaining share with second-generation valves offering competitive delivery systems. EW's 3-year CAGR of 4.1% and 13.8% YoY reflects this maturation. The company sold its critical-care monitoring segment and is pivoting to TMVR/TTVR next-generation structural heart, but those markets are years from scale. No strong theme fit — this is a specialized surgical device business at a maturing phase, not a disruption toll-taker.",
+    "theme_fit_confidence": "low"
+  },
+  "SNN": {
+    "themes": [],
+    "value_chain_position": "Diversified medtech selling orthopedic reconstruction, sports medicine, wound management, and ENT devices; a legacy mid-tier competitor in ortho and wound care.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["ZBH", "SYK", "JNJ", "HOLX", "GMED"],
+    "relative_comps": "Smith & Nephew is a perennial underperformer in orthopedics and wound management, losing share to Stryker and Zimmer in knees/hips and struggling with operational execution. Its 5.8% 3-year CAGR trails faster-growing ortho peers. The company has no exposure to robotics or surgical-automation wave (its CORI surgical system lags Stryker's Mako materially). No theme fit — it is a legacy medtech with margin compression issues. Theme confidence is low.",
+    "theme_fit_confidence": "low"
+  },
+  "PEN": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Develops and sells neurovascular and vascular intervention devices including aspiration catheters, flow diverters, and a robotic endovascular platform (Robotic Assisted Vascular Catheter); earns per-procedure consumable pull-through.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["Stryker (SYK)", "Medtronic (MDT)", "Cerenovus (JNJ)", "MicroVention (Terumo)", "Rapid Medical (private)"],
+    "relative_comps": "Penumbra's XTRACT-M aspiration system for large-vessel occlusion stroke is a genuine market-share gainer against Stryker and Medtronic. Its robotic endovascular catheter system, while early, is one of the few robotic platforms in neurovascular intervention — a segment ISRG does not address. Revenue CAGR of 18.3% and 17.3% YoY growth with 15% FCF margin at $1.45B revenue support the robotics_automation tag. Load-bearing score of 4 because installed robotic platforms create consumable pull-through with high switching costs; capital equipment placements lock in recurring catheter revenue.",
+    "theme_fit_confidence": "medium"
+  },
+  "GMED": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Designs and sells spine surgery implants and the ExcelsiusGPS robotic navigation platform; earns per-procedure implant revenue with robotic capital equipment driving consumable pull-through.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["SYK", "MDT", "NuVasive (NUVA, merged)", "Alphatec (ATEC)", "ZimVie (ZIMV)", "J&J Synthes (JNJ)"],
+    "relative_comps": "Globus Medical is the fastest-growing large-cap spine company, benefiting from the NuVasive merger creating the largest pure-play spine platform. ExcelsiusGPS is a proven robotic-navigation system taking share from Medtronic's Mazor and Stryker's Spine in enabling procedures. Revenue CAGR of 42% is heavily influenced by the NuVasive acquisition, but organic growth is also above peers. FCF margin of 20% on a merged entity is impressive. Against Alphatec and ZimVie, GMED commands scale and robot-enabled pull-through advantages. The robotics_automation tag is legitimate — GMED earns a recurring implant royalty on every robotic-placed procedure.",
+    "theme_fit_confidence": "high"
+  },
+  "ISRG": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Designs, manufactures, and sells the da Vinci robotic surgery platform; earns upfront system revenue plus high-margin consumable instruments and service contracts per procedure.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["Medtronic Hugo (MDT)", "CMR Surgical (private)", "Asensus Surgical (ASXC)", "Moon Surgical (private)", "Verb Surgical (GOOG/JNJ)"],
+    "relative_comps": "Intuitive Surgical is the canonical chokepoint in surgical robotics — it owns ~80% of installed robotic surgery globally, and its consumable blade creates a per-procedure toll on every da Vinci case. Revenue CAGR of 17.4% and 21.4% YoY growth at $10.6B scale is exceptional; FCF margin of 27% is best-in-class. Medtronic's Hugo is the only credible near-term competitor, but Hugo is years behind in installed base and procedure training. ISRG is transitioning to da Vinci 5 (with improved force feedback and multi-quadrant capability), widening the technology gap. Load-bearing score of 5 — no route around ISRG for hospitals seeking a proven robotic surgery platform.",
+    "theme_fit_confidence": "high"
+  }
+}

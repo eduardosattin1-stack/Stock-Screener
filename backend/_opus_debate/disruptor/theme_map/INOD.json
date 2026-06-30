@@ -1,0 +1,19 @@
+{
+ "symbol": "INOD",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "AI data annotation and training-data pipeline services; sells human-in-the-loop labeling, RLHF data production, and quality-evaluation workflows to foundation-model labs and enterprise AI teams.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TASK",
+  "APPEN.AX",
+  "SCOR.PA",
+  "LBIX",
+  "DMRC",
+  "SAMA"
+ ],
+ "relative_comps": "Innodata is the highest-growth name in the chunk (47% 3-yr CAGR, 40% YoY) and the only genuine AI infrastructure pick-and-shovel, riding demand from hyperscaler and frontier-lab RLHF budgets. However it is not a chokepoint — Scale AI (private), Appen (ASX), and internal annotation teams are direct substitutes, keeping load-bearing score at 2. FCF margin of ~22% at $283M revenue is unusually high for a services firm, suggesting real leverage; the $3.2B market cap prices in continued hyper-growth. Key risk: synthetic data and auto-labeling (model-generated data) could compress the human-annotation TAM faster than expected.",
+ "theme_fit_confidence": "medium"
+}

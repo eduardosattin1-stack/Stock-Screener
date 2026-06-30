@@ -1,0 +1,19 @@
+{
+ "symbol": "BULL",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Retail brokerage and trading platform; earns from payment-for-order-flow, securities lending, and margin interest; targets self-directed retail investors.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "HOOD",
+  "IBKR",
+  "Futu Holdings (FUTU)",
+  "UP Fintech (TIGR)",
+  "Charles Schwab (SCHW)",
+  "TradeStation (private)"
+ ],
+ "relative_comps": "Webull competes directly with Robinhood and Interactive Brokers in retail self-directed trading. Its 47% YoY revenue growth reflects cyclical market-activity tailwinds as much as structural share gains. The business is a brokerage platform, not a payments rail — economics are tied to trading volume and market conditions rather than recurring transaction flow. Load-bearing score is low; retail brokerage is highly commoditized on price/features. Against Futu and TIGR it has similar positioning for Chinese diaspora retail traders.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,12 @@
+{
+  "symbol": "WWD",
+  "sector": "Industrials",
+  "signal_type": "disruptor",
+  "company": "Woodward, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 386.85 | Fair Value 186.42 | Margin of Safety -52% | P/FCF 69.9x\nRevenue growth: +7.3% YoY | 3-yr CAGR +14.4%\nMargins: Gross 26.8% (expanding) | Net 12.4% | FCF 9.5%\nEPS / guidance delivery: 7.19 latest | +19.6% YoY | 3-yr CAGR +38.4% | beat 7/7 qtrs (100%)\nFCF growth: -0.7% YoY | 3-yr CAGR +34.2%\nReturns / leverage: ROE 12.8% | ROIC 7.8% | Net debt 395M\nForward / signals: Consensus fwd EPS growth +14.4% | Margin 1.65sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 64.5 | Buffett fair value 186.4\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -36% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 7 | Catalyst score 0.5 | Piotroski 7/9 | Altman-Z (solvency) 8.2 | Days to next earnings 44\nAnalyst consensus target: 435.00 (+12% upside)\nPositioning / smart money: Smart-money score 57/100 | Institutional flow 60/100 | Analyst-target velocity +16% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +20% vs 200d SMA | 88% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 2.25B, NI 209M, EPS 3.18\n  2022: rev 2.38B, NI 172M, EPS 2.71\n  2023: rev 2.91B, NI 232M, EPS 3.78\n  2024: rev 3.32B, NI 373M, EPS 6.01\n  2025: rev 3.57B, NI 442M, EPS 7.19\n  CAGRs: bvps_5y +5.4%, eps_5y +22.6%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 389M | TTM diluted EPS 8.35 | latest-Q EPS YoY +23%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 647M (total debt 1.15B minus cash 501M) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 61 sells (45,104sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2024-09-30 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nAerospace: 2.03B (61%) | Industrial: 1.30B (39%)",
+  "dossier": "",
+  "methodologies": [
+    "defense_tech",
+    "energy_transition"
+  ]
+}

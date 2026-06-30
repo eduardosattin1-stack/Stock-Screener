@@ -1,0 +1,21 @@
+{
+ "symbol": "VRT",
+ "themes": [
+  "ai_infrastructure",
+  "energy_transition"
+ ],
+ "value_chain_position": "Data-center power and thermal management infrastructure — sells power conversion systems, UPS, precision cooling, and liquid cooling solutions that every AI/HPC data center must install; a genuine chokepoint in the AI build-out value chain.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ETN",
+  "DELL",
+  "ABB",
+  "Schneider Electric (SU.PA)",
+  "GEV",
+  "Legrand (LR.PA)",
+  "nVent Electric (NVT)"
+ ],
+ "relative_comps": "VRT is the closest thing to a chokepoint in AI data-center power and cooling infrastructure — its 29% YoY and 22% 3-year revenue CAGR on $10.8B TTM, with 21% FCF margin, reflect hyperscaler-capex pulling rather than selling. It competes with Eaton (ETN) and Schneider Electric (SU.PA) but has the highest AI-specific exposure mix (~70% of revenue tied to data-center deployments). Unlike ETN which has broader industrial diversification, VRT is the purest-play. The dual-theme tag (ai_infrastructure + energy_transition) is warranted per taxonomy notes: data-center power sits at the intersection of both. At ~$111B mcap, the valuation is demanding but the backlog visibility is multi-year. Primary risk is customer concentration (hyperscaler capex cycles).",
+ "theme_fit_confidence": "high"
+}

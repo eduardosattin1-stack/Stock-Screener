@@ -1,0 +1,19 @@
+{
+ "symbol": "CLBT",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Digital intelligence and lawful-intercept analytics platform — sells forensic intelligence software to law enforcement, intelligence agencies, and national security bodies globally for extracting and analyzing data from mobile devices and digital sources.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MSAB (Sweden, MSAB-B.ST)",
+  "Oxygen Forensics (private)",
+  "Magnet Forensics (acquired by Grayshift/private)",
+  "Axon (AXON)",
+  "Palantir (PLTR)",
+  "NICE Systems (NICE)"
+ ],
+ "relative_comps": "CLBT is the dominant commercial digital forensics vendor for law enforcement globally — its UFED platform is the industry standard in mobile extraction. 18% YoY growth and 31% FCF margin at $496M revenue reflect a sticky, sole-source position with government agencies. Competitors are mostly private or niche European players (MSAB). AXON and PLTR represent adjacent government analytics but do not directly compete on device forensics. CLBT's load-bearing score reflects the fact that law enforcement cannot easily substitute — qualification, chain-of-custody requirements, and government contract vehicles create genuine stickiness. Risk is geopolitical scrutiny of Israeli technology company and export controls.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "CRDO",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "High-speed connectivity silicon (AEC/Active Electrical Cables and SerDes PHY) — sells the active copper cable assemblies and retimer chips that link GPU clusters within AI data centers at speeds from 100G to 800G.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MRVL",
+  "AVGO",
+  "SMTC",
+  "MPWR",
+  "LITE",
+  "COHR",
+  "InnoLight (unlisted)",
+  "HiSilicon/Huawei (unlisted)"
+ ],
+ "relative_comps": "CRDO is the standout growth name in AI interconnect: 3-year CAGR of 93%, YoY of 206%, FCF margin of 21%. Its AEC product is on a genuine S-curve disruption — replacing passive copper DAC cables in GPU-to-GPU links, a function hyperscalers cannot easily internalise. MRVL and AVGO compete at the SerDes/PHY IP layer but CRDO's AEC form-factor is structurally differentiated. At $41B market cap (~30x TTM revenue) the valuation prices in sustained 50%+ growth; any hyperscaler design-win loss would be disproportionately punishing.",
+ "theme_fit_confidence": "high"
+}

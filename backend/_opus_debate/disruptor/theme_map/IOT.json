@@ -1,0 +1,21 @@
+{
+ "symbol": "IOT",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Physical operations intelligence platform — sells IoT telematics hardware and AI-analytics SaaS to commercial fleets and industrial worksites; the operating system for connected physical operations.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MOBILEYE (MBLY)",
+  "Verizon Connect (unlisted)",
+  "Geotab (unlisted)",
+  "Trimble (TRMB)",
+  "Lytx (unlisted)",
+  "Omnitracs (unlisted)",
+  "DGII",
+  "Platform Science (unlisted)"
+ ],
+ "relative_comps": "Samsara has built a multi-product telematics-to-AI-video platform with 35% 3-year CAGR and 30% YoY growth — rare for a hardware+SaaS hybrid at $1.7B revenue. NRR above 115% indicates the platform stickiness. Primary competition is fragmented: Geotab in Europe/Canada, Verizon Connect, and Mobileye at the vision layer. None matches Samsara's integrated GPS+video+AI+compliance stack at its customer scale. FCF margin of 14% is building; operating leverage is visible. The AI infrastructure theme hint is incorrect — Samsara's value is in robotics/automation (physical operations AI), not compute infrastructure.",
+ "theme_fit_confidence": "high"
+}

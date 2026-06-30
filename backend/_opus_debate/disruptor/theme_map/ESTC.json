@@ -1,0 +1,20 @@
+{
+ "symbol": "ESTC",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Enterprise search, observability and security analytics platform (Elastic) — software-infrastructure layer, providing the search and vector-database index layer that AI applications and security pipelines query at runtime.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "SPLK",
+  "DDOG",
+  "DT",
+  "OPENSEARCH",
+  "ALGOLIA",
+  "MONGO",
+  "SNOW"
+ ],
+ "relative_comps": "ESTC's vector-search and hybrid-search capabilities make it a genuine AI-infrastructure participant — Elasticsearch is embedded as the retrieval layer in many RAG pipelines. 18% 3-year CAGR and 17% YoY growth are respectable but below hyperscaler-infrastructure leaders; 19% FCF margin and net cash are healthy. The open-source model creates a dual risk (AWS OpenSearch substitution) and moat (developer pull-through for enterprise upsell). Vs. Datadog and Dynatrace, ESTC competes on the search/observability overlap but is differentiated on vector and semantic search for AI applications.",
+ "theme_fit_confidence": "medium"
+}

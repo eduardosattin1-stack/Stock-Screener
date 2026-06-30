@@ -1,0 +1,12 @@
+{
+  "symbol": "NVT",
+  "sector": "Industrials",
+  "signal_type": "disruptor",
+  "company": "nVent Electric plc",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nRevenue growth: +40.3% YoY | 3-yr CAGR +19.3%\nMargins: FCF 8.8%\nReturns / leverage: Net debt 2\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 382M | TTM diluted EPS 3.00 | latest-Q EPS YoY -60%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 1.51B (total debt 1.70B minus cash 190M) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 11 sells (95,282sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nEnclosures Segment: 2.59B (67%) | Electrical and Fastening Solutions Segment: 1.30B (33%)",
+  "dossier": "",
+  "methodologies": [
+    "energy_transition",
+    "ai_infrastructure"
+  ]
+}

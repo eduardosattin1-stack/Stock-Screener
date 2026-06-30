@@ -1,0 +1,18 @@
+{
+ "symbol": "AMKR",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Advanced packaging and test services (OSAT) — bonds, packages and tests chips from foundries into final assemblies including flip-chip, fan-out wafer-level, and 2.5D/3D packaging.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "ASX",
+  "SPIL",
+  "JCET",
+  "UTAC",
+  "STATS-ChipPAC"
+ ],
+ "relative_comps": "Amkor is the second-largest OSAT globally after ASE (ASX); it is a key packaging partner for Apple (smartphone SiPs), AMD/NVIDIA (HBM assembly) and automotive chips. Advanced packaging (2.5D CoWoS-equivalent) is a genuine AI theme driver as chip complexity demands heterogeneous integration. However, FCF margin of only 2.4% signals a commoditizing business — OSAT is capital-intensive with thin margins; differentiation in advanced packaging is partial. 3-year revenue CAGR is slightly negative. Trades at ~15x forward earnings reflecting its lower-margin profile.",
+ "theme_fit_confidence": "medium"
+}

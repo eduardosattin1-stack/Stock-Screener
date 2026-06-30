@@ -1,0 +1,19 @@
+{
+ "symbol": "PTC",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Industrial software and IoT platform layer — sells PLM, CAD (Creo), and industrial IoT (ThingWorx) software that orchestrates the full product lifecycle and real-time factory floor data, directly enabling connected factory and robotics deployments.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ADSK",
+  "DASSAULT (DSY.PA)",
+  "SIEMENS (SIE.DE)",
+  "HEXAGON (HEXA-B.ST)",
+  "ABB",
+  "ROCKWELL (ROK)"
+ ],
+ "relative_comps": "PTC is the clearest software toll-taker in industrial automation: ThingWorx/Vuforia power the connected factory layer that every robot deployment needs for monitoring and digital twin management. Its 28% YoY growth reflects the Servicemax/Arena acquisitions and IoT platform ramp; 31% FCF margin is strong for an industrial software mix. It competes with Siemens Digital Industries and Dassault in PLM but has a differentiated edge in AR-assisted maintenance. The robotics_automation theme fit is genuine, not FMP filter noise.",
+ "theme_fit_confidence": "high"
+}

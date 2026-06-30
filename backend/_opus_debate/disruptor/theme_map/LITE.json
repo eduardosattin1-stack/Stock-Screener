@@ -1,0 +1,21 @@
+{
+ "symbol": "LITE",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Photonics and optical components — makes transceivers, ROADM line-cards, coherent modules (indium-phosphide) and 3D sensing lasers for data-center optical interconnects and consumer LiDAR.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "IIVI/COHR",
+  "FNSR (acquired)",
+  "SMTC",
+  "CIEN",
+  "MACOM",
+  "Inphi (MRVL)",
+  "II-VI/Finisar",
+  "InnoLight (unlisted)"
+ ],
+ "relative_comps": "LITE's 69% YoY revenue surge reflects the AI-driven 800G/1.6T transceiver ramp — hyperscalers are buying optical modules at unprecedented rates. The indium-phosphide fab gives LITE vertical integration that fabless optical peers lack. FCF margin of 11% is still rebuilding post-merger integration; peers like CRDO run at 21%. COHR (merged II-VI) is the closest full-stack competitor. At $67B market cap LITE trades at a meaningful premium to revenue but the 1.6T cycle and 3D-sensing pipeline (Apple adjacency) justify the multiple relative to mature optical peers.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,182 @@
+{
+  "RMBS": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "IP licensing layer — sells memory interface patents and PHY silicon (SerDes, HBM controllers) that every DRAM module and AI accelerator must license or buy.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["SSNC", "SMTC", "MCHP", "AVGO", "SNPS", "CDNS", "CEVA", "MPWR"],
+    "relative_comps": "RMBS is the near-monopoly licensor on DDR/HBM interface IP — a structural toll position most chip designers cannot route around, giving it 46% FCF margins that dwarf fabless peers like SMTC (15%) or MXL (2%). Revenue CAGR of ~16% trails hyper-growth names like CRDO but is more defensible given the royalty stream. Multiples are premium (mcap ~22x TTM revenue) but IP-licensor comps (Arm-class royalty dynamics) justify a structural discount to FCF-based peers. Main risk is customer concentration in major DRAM makers (Samsung, SK Hynix, Micron).",
+    "theme_fit_confidence": "high"
+  },
+  "SMTC": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Mixed-signal and optical networking silicon — sells LoRa IoT chips and high-speed SERDES/optical DSPs used in data-center and metro optical interconnects.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["CIEN", "LITE", "CRDO", "MRVL", "IIVI", "COHR", "IPHI", "MACOM"],
+    "relative_comps": "SMTC straddles two markets: IoT/LoRa (moderate growth, defensible network effect) and optical DSPs for data-center interconnects (high-growth, competitive). On the optical side CRDO and MRVL are formidable; SMTC's 15% FCF margin vs CRDO's 21% signals it is less concentrated in pure AI-interconnect wins. Revenue YoY of 14% is modest versus the 40-100%+ of pure-play AI networking names, and the 2x net debt/EBITDA leverage from the Sierra Wireless acquisition weighs on the balance sheet relative to net-cash peers.",
+    "theme_fit_confidence": "medium"
+  },
+  "MXL": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "High-speed interconnect and broadband silicon — sells PAM4/coherent DSPs for data-center optical links and xPON chips for broadband access.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["CRDO", "MRVL", "SMTC", "CIEN", "LITE", "MACOM", "IIVI", "COHR"],
+    "relative_comps": "MXL's 3-year revenue CAGR is deeply negative (-25%) — the broadband trough crushed the base — but the 41% YoY rebound signals recovery, not secular disruption leadership. FCF margin of only 2% is the weakest in the peer set and the near-zero absolute FCF ($10M) means any macro wobble erases it. CRDO and MRVL dominate the high-speed AI-interconnect segment where MXL competes; MXL's scale disadvantage is real. Theme fit is genuine but conviction is tempered by the margin trough and lack of proven AI-workload wins at hyperscaler scale.",
+    "theme_fit_confidence": "medium"
+  },
+  "KLIC": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Advanced packaging and wire-bonding capital equipment — makes ball-bonders, thermosonic bonders and flip-chip tools used in chip assembly including advanced package formats (TCB, hybrid bonding adjacency).",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["BESI", "ASM", "AMAT", "LRCX", "MKSI", "ONTO", "COHU", "TER"],
+    "relative_comps": "KLIC is the global #2 in wire bonding (behind ASM Pacific, unlisted) and is expanding into advanced packaging tools (TCB, mini-LED) that ride the AI packaging wave. However, 3-year CAGR is -24% (packaging cycle downturn) and near-zero FCF ($4M) limits reinvestment firepower. Relative to AMAT and LRCX which have dominant scale and deeper AI-packaging exposure, KLIC is a smaller, more cyclical bet. Its net-cash balance sheet is clean, but the growth profile looks more cyclical recovery than structural disruption ramp.",
+    "theme_fit_confidence": "medium"
+  },
+  "DIOD": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Discrete semiconductors (MOSFETs, schottky diodes, logic gates) — commodity analog/power components consumed across computing, automotive and industrial electronics.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["ON", "NXPI", "STM", "ROHM", "VishaY (VSH)", "IXYS/ABB", "TPIC", "MPS"],
+    "relative_comps": "DIOD is a commodity discrete-semis producer; its products are fungible across ON Semi, NXP, STMicro, and many Asian suppliers. The -10% 3-year CAGR reflects secular content-per-unit pressure and ASP erosion. The 16% YoY rebound is inventory restocking, not AI-structural demand. FCF margin of 8% is below sector-average for mixed-signal players. The AI infrastructure theme catches DIOD only because it is in the Semiconductors industry — but DIOD sells commodity discretes, not AI-infrastructure chokepoints. This is a low-confidence theme fit.",
+    "theme_fit_confidence": "low"
+  },
+  "LASR": {
+    "themes": ["ai_infrastructure", "defense_tech"],
+    "value_chain_position": "High-power fiber and diode lasers — sells pump and direct-diode laser modules for industrial cutting/welding (commercial) and directed-energy weapon systems (defense).",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["IIVI", "COHR", "IPG", "LITE", "JDSU/VIAVI", "AMETEK", "MACOM", "Leonardo DRS"],
+    "relative_comps": "LASR's 41% YoY revenue growth is driven by defense directed-energy contracts (Air Force/Navy laser weapon programs) plus industrial recovery. Its fiber-laser IP competes with IPG Photonics (the global leader) and II-VI/Coherent at the component level. In defense lasers it has fewer direct public-market comps; KTOS and DRS are adjacent. FCF margin of 8% is slim for the defense theme but the directed-energy pipeline creates a meaningful government-contract moat. Dual-use (industrial + defense) makes this a genuine two-theme name.",
+    "theme_fit_confidence": "high"
+  },
+  "DELL": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "AI infrastructure systems integrator and distributor — assembles and sells GPU servers (PowerEdge XE9680), storage arrays and networking for enterprise and hyperscaler customers; margin-thin but high-volume AI server backlog.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["HPE", "SMCI", "LNVGY", "IBM", "INSPUR", "WDC", "NTAP", "PURE"],
+    "relative_comps": "DELL's AI server backlog ($9B+) is real but the business model is assembly-and-distribution, not IP ownership — gross margins on AI servers are ~5-7%, far below ANET or NVDA. 38% YoY revenue growth is impressive at $134B scale but the 3-year CAGR of 3.5% shows the commodity nature of the core ISG segment. SMCI has moved faster in liquid-cooled AI rack platforms but faces supply/accounting issues. DELL's brand, balance sheet and ISG channel give it durability, but the load-bearing score is low: hyperscalers can and do go direct to ODMs (Foxconn, Quanta).",
+    "theme_fit_confidence": "medium"
+  },
+  "ANET": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Data-center networking toll-taker — sells EOS-powered Ethernet switches and software for AI cluster fabrics, replacing InfiniBand in many hyperscaler builds.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["CSCO", "JNPR", "NVDA (Infiniband)", "HPE/Aruba", "Broadcom (AVGO) silicon", "Huawei (unlisted)", "Silicom (SILC)", "Extreme Networks (EXTR)"],
+    "relative_comps": "ANET is the clearest AI-networking chokepoint in the public market: 54% FCF margins, 27% 3-year revenue CAGR, and the EOS software platform creates high switching costs at hyperscaler scale. CSCO is the legacy incumbent losing share; NVDA's InfiniBand competes in GPU clusters but ANET's Ultra Ethernet Consortium push challenges that. AVGO silicon is a supplier, not a competitor. No public peer matches ANET's combination of growth, margin and backlog visibility in cloud networking.",
+    "theme_fit_confidence": "high"
+  },
+  "STX": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Mass-capacity HDD storage — sells nearline HDDs used in hyperscaler cold/warm storage tiers; beneficiary of AI training data lake growth and SMR density advances.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["WDC", "TOSH (unlisted)", "PURE", "NTAP", "NVME cloud (AWS/GCP)", "Samsung (unlisted)", "Micron (MU)", "SK Hynix (unlisted)"],
+    "relative_comps": "STX and WDC are a duopoly in nearline HDD; that structural concentration is the main moat. 29% YoY revenue recovery is real (post-inventory correction) but the -8% 3-year CAGR shows the structural narrative is AI tailwind atop a cyclical trough, not pure disruption. Relative to PURE or NTAP, STX is the lowest-cost storage tier — hard to fully displace for unstructured AI training data at cost per TB. FCF margin of 24% is solid for a capital-intensive HDD manufacturer.",
+    "theme_fit_confidence": "medium"
+  },
+  "CIEN": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Optical networking platforms — sells WaveLogic coherent modems, 400G/800G DWDM line-systems and network management software for hyperscaler long-haul and metro AI traffic.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NOK", "INFN", "LITE", "SMTC", "Huawei (unlisted)", "NEC (unlisted)", "ADTRAN (ADTN)", "VIAVI (VIAV)"],
+    "relative_comps": "CIEN's WaveLogic coherent DSP is widely regarded as the technology leader in long-haul and submarine optical; Microsoft and AWS are anchor hyperscaler customers. 31% YoY growth and 15% FCF margin are strong for a hardware+software stack; margins lag pure-software peers but the coherent modem IP is genuinely difficult to replicate. Nokia and Infinera are the primary public competitors; Huawei is the only other coherent DSP leader but faces Western supply-chain exclusion. Space hint is marginal — CIEN does some submarine/LEO ground-segment adjacency but AI infrastructure is the primary driver.",
+    "theme_fit_confidence": "high"
+  },
+  "KN": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Precision acoustic components and RF filters — sells MEMS microphones, hearing-health audio components and RF filters used in mobile, IoT edge and hearing devices.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["TDK (unlisted)", "BSE (unlisted)", "COHU", "QRVO", "SWKS", "Akustica (Bosch)", "InvenSense (TDK)", "GN Audio (unlisted)"],
+    "relative_comps": "Knowles is the audio-component leader for hearing aids and mobile mics, but the AI infrastructure theme is a stretch — FMP placed it here via Communication Equipment, not because it is an AI-network toll-taker. Revenue growth of 11% and 12% FCF margin are decent but below the dynamism of genuine AI-infrastructure names. The hearing-health segment is growing but that is a medtech story, not AI infrastructure. Load-bearing score is low: multiple Asian suppliers (TDK, Bosch) can and do substitute KN in mobile mics. Theme fit is low confidence.",
+    "theme_fit_confidence": "low"
+  },
+  "LITE": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Photonics and optical components — makes transceivers, ROADM line-cards, coherent modules (indium-phosphide) and 3D sensing lasers for data-center optical interconnects and consumer LiDAR.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["IIVI/COHR", "FNSR (acquired)", "SMTC", "CIEN", "MACOM", "Inphi (MRVL)", "II-VI/Finisar", "InnoLight (unlisted)"],
+    "relative_comps": "LITE's 69% YoY revenue surge reflects the AI-driven 800G/1.6T transceiver ramp — hyperscalers are buying optical modules at unprecedented rates. The indium-phosphide fab gives LITE vertical integration that fabless optical peers lack. FCF margin of 11% is still rebuilding post-merger integration; peers like CRDO run at 21%. COHR (merged II-VI) is the closest full-stack competitor. At $67B market cap LITE trades at a meaningful premium to revenue but the 1.6T cycle and 3D-sensing pipeline (Apple adjacency) justify the multiple relative to mature optical peers.",
+    "theme_fit_confidence": "high"
+  },
+  "CRDO": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "High-speed connectivity silicon (AEC/Active Electrical Cables and SerDes PHY) — sells the active copper cable assemblies and retimer chips that link GPU clusters within AI data centers at speeds from 100G to 800G.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MRVL", "AVGO", "SMTC", "MPWR", "LITE", "COHR", "InnoLight (unlisted)", "HiSilicon/Huawei (unlisted)"],
+    "relative_comps": "CRDO is the standout growth name in AI interconnect: 3-year CAGR of 93%, YoY of 206%, FCF margin of 21%. Its AEC product is on a genuine S-curve disruption — replacing passive copper DAC cables in GPU-to-GPU links, a function hyperscalers cannot easily internalise. MRVL and AVGO compete at the SerDes/PHY IP layer but CRDO's AEC form-factor is structurally differentiated. At $41B market cap (~30x TTM revenue) the valuation prices in sustained 50%+ growth; any hyperscaler design-win loss would be disproportionately punishing.",
+    "theme_fit_confidence": "high"
+  },
+  "DGII": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Industrial IoT connectivity hardware and SaaS — sells cellular routers, gateways and SmartSense monitoring subscriptions for remote asset management in utilities, retail and healthcare.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["SMTC (LoRa)", "SIEVERT/Sierra (SWIR, acquired)", "Cradlepoint (Ericsson)", "Peplink (unlisted)", "CalAmp (CAMP)", "Lantronix (LTRX)", "MultiTech (unlisted)", "Telit (unlisted)"],
+    "relative_comps": "DGII is an IoT edge hardware vendor — its products enable connectivity for remote industrial assets, not AI compute infrastructure. The AI infrastructure theme is an FMP-industry overhang (Communication Equipment), not a genuine fit. 3-year CAGR of 3.5% and YoY of 13% are sub-threshold for disruption claims; the 27% FCF margin is the most interesting financial characteristic. Cradlepoint (Ericsson), Sierra Wireless (acquired by Semtech) and Peplink are the primary rivals in cellular routers. Load-bearing score is low — commoditised hardware market with multiple substitutes.",
+    "theme_fit_confidence": "low"
+  },
+  "CPAY": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "B2B payment networks — operates fleet fuel card, corporate lodging payment and cross-border FX payment rails; a toll-taker on commercial vehicle and corporate spend volume.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["WEX", "FLLT", "V (commercial)", "MA (commercial)", "FOUR", "ADP (payables)", "Billtrust (BTRS)", "Navan (unlisted)"],
+    "relative_comps": "CPAY (formerly FleetCor) owns proprietary closed-loop networks in fleet fuel (North America, Brazil) and lodging that are structurally hard to displace — fuel merchants accept the card because fleets demand it. 27% FCF margin and consistent 10%+ CAGR reflect the toll-taker model. WEX is the closest direct competitor in fleet; FLLT in vehicle tracking adjacency. FMP placed CPAY in Software - Infrastructure but the economics are pure fintech rails; AI infrastructure theme hint is incorrect — this is not an AI compute toll-taker. Fintech rails is the correct single theme.",
+    "theme_fit_confidence": "high"
+  },
+  "IOT": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Physical operations intelligence platform — sells IoT telematics hardware and AI-analytics SaaS to commercial fleets and industrial worksites; the operating system for connected physical operations.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MOBILEYE (MBLY)", "Verizon Connect (unlisted)", "Geotab (unlisted)", "Trimble (TRMB)", "Lytx (unlisted)", "Omnitracs (unlisted)", "DGII", "Platform Science (unlisted)"],
+    "relative_comps": "Samsara has built a multi-product telematics-to-AI-video platform with 35% 3-year CAGR and 30% YoY growth — rare for a hardware+SaaS hybrid at $1.7B revenue. NRR above 115% indicates the platform stickiness. Primary competition is fragmented: Geotab in Europe/Canada, Verizon Connect, and Mobileye at the vision layer. None matches Samsara's integrated GPS+video+AI+compliance stack at its customer scale. FCF margin of 14% is building; operating leverage is visible. The AI infrastructure theme hint is incorrect — Samsara's value is in robotics/automation (physical operations AI), not compute infrastructure.",
+    "theme_fit_confidence": "high"
+  },
+  "DOCN": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "SMB cloud infrastructure — sells VMs, managed databases, Kubernetes and GPU cloud compute to developer-first and startup customers; a lower-tier hyperscaler for the long tail.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["AWS", "GCP", "MSFT Azure", "Linode/Akamai (AKAM)", "Vultr (unlisted)", "Hetzner (unlisted)", "FSLY", "NET"],
+    "relative_comps": "DOCN's developer-friendly positioning carved a real niche against hyperscaler complexity, but at $949M TTM revenue it is sub-scale versus AWS/GCP/Azure by 100-300x. Near-zero FCF margin ($8M on $949M revenue) and 16% revenue CAGR are below what the AI infrastructure disruption thesis demands. The GPU cloud push (H100 droplets) is credible but hyperscalers and specialist GPU clouds (CoreWeave, Lambda Labs) have structural advantages. Load-bearing score is low — DOCN can be routed around by any customer who outgrows it, and frequently is.",
+    "theme_fit_confidence": "medium"
+  },
+  "RBRK": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Cyber resilience and data security platform — sells immutable backup, ransomware recovery and data observability for hybrid-cloud enterprises; the last line of defense in AI-era data protection.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["VEEAM (unlisted)", "COHESITY (unlisted)", "COMMVAULT (CVLT)", "VERITAS (unlisted)", "DDOG", "PSTG", "PANW", "CrowdStrike (CRWD)"],
+    "relative_comps": "Rubrik is the fastest-growing data-security name at meaningful scale: 46% YoY, 30% 3-year CAGR, 22% FCF margin — all built on a subscription transition from a perpetual-license base. The immutable architecture is architecturally superior to legacy Veeam/CommVault for ransomware recovery; this creates genuine switching costs once deployed at enterprise scale. Veeam and Cohesity are private direct rivals; CommVault (CVLT) is the closest public comp. AI infrastructure relevance is real but indirect — Rubrik protects AI-era data estates rather than accelerating compute. Theme fit is medium-high; fintech_rails hint is incorrect.",
+    "theme_fit_confidence": "high"
+  },
+  "TOST": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Restaurant-vertical payment OS — operates an integrated POS hardware + payment processing + SaaS platform for restaurants; takes a toll on every card swipe and subscription seat in the food-service stack.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["SQ (Block)", "ALOHA (NCR/Voyix)", "Lightspeed (LSPD)", "Oracle MICROS", "Shift4 (FOUR)", "Clover/Fiserv (FI)", "Revel (unlisted)", "PAR Technology (PAR)"],
+    "relative_comps": "Toast is the leading restaurant-vertical POS with 31% 3-year CAGR, 23% YoY, and 10% FCF margin on $6.4B revenue — remarkable for a vertical-SaaS/payments hybrid. Its moat is the restaurant-specific workflow depth (KDS, online ordering, payroll integration) that horizontal POS vendors cannot easily replicate. Block's Square for Restaurants is the closest threat; NCR Voyix (post-split) and Lightspeed are subscale. The AI infrastructure theme hint is a false positive — Toast is a fintech rails toll-taker, not an AI compute infrastructure name.",
+    "theme_fit_confidence": "high"
+  },
+  "PATH": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Enterprise automation platform — sells robotic process automation (RPA), AI-powered document understanding and agentic workflow tools to automate repetitive white-collar work across enterprise back-offices.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MSFT Power Automate", "SAP Build (SAP)", "Automation Anywhere (unlisted)", "Blue Prism (acquired SS&C)", "NICE (NICE)", "Pegasystems (PEGA)", "ServiceNow (NOW)", "Appian (APPN)"],
+    "relative_comps": "UiPath pioneered enterprise RPA and retains the largest installed base, but the competitive moat has eroded as Microsoft Power Automate bundled equivalent functionality into M365 and ServiceNow/SAP embedded automation natively. 15% revenue CAGR and 22% FCF margin are respectable but growth is decelerating; the stock at $10.75 trades at significant discount to software peers, reflecting competitive displacement risk. Automation Anywhere (private) is the closest peer in capability. The AI agentic workflow pivot (context grounding, LLM orchestration) is PATH's best option to re-accelerate but Microsoft remains the primary overhang. AI infrastructure theme hint is incorrect — this is automation/robotics, not compute infrastructure.",
+    "theme_fit_confidence": "medium"
+  }
+}

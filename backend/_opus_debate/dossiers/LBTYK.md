@@ -1,38 +1,51 @@
-# LBTYK — Liberty Global Ltd. | Catalyst Dossier (Event-Driven Special Situation)
+# LBTYK — Liberty Global plc — Forensic Event Dossier
 
-**Frame:** This is NOT a quality/compounding judgment. LBTYK is a European cable/telco holding company trading at a deep, structural holdco discount to the sum of its parts. The thesis is the SPREAD between the live price (~$11.6–12.0) and the value unlocked when the Benelux operating businesses are listed and distributed to shareholders. The franchise looks cheap-and-bad (P/B ~0.41, levered, cord-cutting/overbuild exposure) BY DESIGN — the catalyst carries the thesis.
+**Setup type:** Holding-company break-up / spin-off with index-flow tailwind. The thesis is not the quality of the underlying cable and mobile businesses (they are mature, low-growth, and heavily indebted by design). The thesis is the gap between the live share price and what the pieces are worth once they are separated and can be valued on their own — a classic sum-of-the-parts (valuing each business line separately) discount that a hard, scheduled spin-off is set to close.
 
-## 1. THE EVENT — Is it REAL, DATED, and BINDING?
+**Live price (verified):** about $11 per Class C share (LBTYK traded $10.67–$11.11 on June 26, 2026; 52-week range $9.95–$13.12). Market value of the whole company is roughly $3.8–3.9 billion on about 358 million shares.
 
-**VERIFIED.** Liberty Global's board announced (8-K dated **Feb 18, 2026**) the formation of **Ziggo Group** — a new Benelux champion combining VodafoneZiggo (Netherlands) and Telenet (Belgium), ~13m customers, ~€6.6bn ($7.7bn) revenue — to be **listed on Euronext Amsterdam in 2027**, with **90% of the shares spun off to Liberty Global shareholders** (subject to shareholder approval). This is a real, board-approved corporate action with named structure, named venue, and a named year.
+---
 
-**The enabling step (hard regulatory gate):** Concurrently, LBTY signed a definitive agreement to acquire **Vodafone's 50% of the VodafoneZiggo JV** for **€1.0bn cash + a 10% stake in Ziggo Group**. This buy-in **is expected to close H2 2026, subject to regulatory approvals** — it must clear BEFORE the spin can proceed, and is the first hard-dated milestone.
+## 1. What is the catalyst, and is it real, dated, and binding?
 
-**Credibility of the sponsor:** Liberty Global executed the materially identical playbook with the **Sunrise spin-off (completed late 2024)** — separating the Swiss unit and distributing it to shareholders. Management (Fries/Mason) has a multi-decade track record of value-unlock via splits, spins, and buybacks. The Sunrise precedent is the single strongest credibility anchor: they have done exactly this, recently, successfully.
+It is real and dated. Over the last two years Liberty Global has been dismantling itself piece by piece to close a persistent discount to asset value:
 
-## 2. THE FLOOR — What actually backstops the price if the event fails?
+- **Already fired (the proof the plan works):** In November 2024 the company spun off its Swiss unit, Sunrise, distributing shares directly to Liberty Global holders. That transaction is complete — it is the template management is now repeating, and it shows they can execute a clean separation.
+- **The live catalyst (the load-bearing event):** Liberty Global is creating "Ziggo Group," combining its Belgian operator Telenet with its Dutch joint venture VodafoneZiggo into a single Benelux business serving about 13 million customers with roughly €6.6 billion in annual revenue. Two concrete, dated steps:
+  1. Liberty Global is buying Vodafone's 50% of VodafoneZiggo (taking €1.0 billion in cash plus leaving Vodafone a 10% stake in the new Ziggo Group). Management said on the Q1 2026 call (May 1, 2026) this should close in July 2026.
+  2. Liberty Global then plans to list Ziggo Group locally on Euronext Amsterdam and spin off the 90% it will hold to its own shareholders in the second half of 2027.
 
-The downside is bounded by the standalone equity value of the levered operating assets plus the residual holdco (Sunrise stub already separated, Telenet, VMO2 JV stake, ventures/Liberty Growth portfolio, net liquidity). At ~0.41x book and ~$4bn market cap on businesses generating billions in revenue and targeting **~€500m adjusted FCF by 2028** with **leverage falling to ~4.5x by 2028**, the equity is already pricing a punitive holdco discount. The dossier floor of **$9.50** corresponds roughly to the 52-week low ($9.73) and a "deal slips / no re-rate / continued discount" world — i.e. the stock keeps trading as a cheap, ignored, levered European cable holdco. It is a real floor because the underlying cash flows and the aggressive buyback (LBTY retires a large % of float annually, shrinking the denominator) provide ongoing per-share support even absent the spin. The floor is NOT zero — there is no going-concern question; this is leverage + discount, not insolvency.
+So the forcing function (the catalyst that forces the re-rating) is the H2 2027 Ziggo Group spin, with a near-term confirming step — the VodafoneZiggo buy-in — due to close around July 2026. The board has committed to it publicly and repeatedly; the Sunrise spin proves the machinery exists. This is a hard, scheduled corporate event, not a vague "exploring strategic alternatives" line.
 
-## 3. THE ASYMMETRY
+**One honesty note on the date:** the board's stated window is "second half of 2027," not a single fixed calendar day. The catalyst-watch entry pins June 30, 2027 as a placeholder mid-window date. The event is firmly committed and dated to a half-year window; it is not a contractual payout on a specific day, and a spin can slip a quarter on regulatory or listing timing.
 
-- Live: **~$12.01** (board target band; current quote $11.60–11.64)
-- Target (event-resolved, conservative re-rate as the spin de-risks): **$18.00**
-- Floor (deal slips / discount persists): **$9.50**
-- Upside to target: +$5.99 (~50%). Downside to floor: −$2.51 (~21%). **R:R ≈ 2.39.**
-- NOTE the target is itself conservative: street/management SoP base case sits nearer **$27** (P/B 0.41 implies book ~$28+). The $18 target is a haircut-to-the-haircut, leaving headroom if the discount narrows even partway toward NAV. This widens, not narrows, the asymmetry.
+## 2. The index-flow kicker
 
-## 4. RED FLAGS / RISKS
+When a multi-billion-euro telecom lists fresh on Euronext Amsterdam, Dutch and European index funds must buy it to track their benchmarks, and existing Liberty Global holders who cannot hold a euro-listed line often sell the stub — both create mechanical, price-insensitive flows around the spin. That is the "index flow" half of the thesis: forced buying of the newly separated piece on top of the simple act of revealing its standalone value.
 
-- 🔴 **Date is soft on the SPIN itself** — 2027 listing is a year ("especially as we get into the second half of next year"), NOT a fixed record/effective date. The 378-day horizon is far. This keeps it a WATCH/stage, not a fire-now.
-- 🔴 **Regulatory contingency** — the Vodafone buy-in (H2 2026 close) is a real condition precedent; a second request / EU antitrust drag would slip the whole timeline.
-- 🔴 **Leverage** — ~4.5x targeted by 2028 means today is higher; rate/refi risk on the opco debt, though non-recourse-style ringfencing at the holdco mitigates terminal risk.
-- 🔴 **Secular** — European cable faces fiber overbuild / mobile substitution. This compresses the multiple the spun entity earns, capping the re-rate, but does NOT impair the event (a separately-listed Ziggo with index inclusion and a clean story is the value unlock regardless of secular drift).
-- 🟢 **Buyback** — LBTY's aggressive float shrink is a continuous per-share tailwind that supports the floor and compounds the eventual SoP-per-share.
-- 🟢 **Precedent** — Sunrise (2024) proves management closes these.
+## 3. The verified downside floor — what actually backstops the price
 
-## 5. VERDICT
+This is the strongest part of the setup, and it is grounded in liquid, observable assets rather than a hoped-for multiple:
 
-The event is **REAL and BOARD-APPROVED** with a credible serial-spinner sponsor and a verified standalone floor. It is **NOT yet hard-dated** (2027 listing window, far horizon) and gated on an H2-2026 regulatory close — so it is a **PENDING / staging** setup, not an imminent fire-now ARB. Asymmetry is genuine (2.39 R:R on a conservative target, more on the NAV-true target). The right posture is WATCH/stage: the catalyst strengthens as the Vodafone close lands and the 2027 listing gets a hard date.
+- The company's stake portfolio (its "Liberty Growth" ventures book) is carried around $3.1 billion, and net cash is roughly $2.2 billion. Those two alone — about $5.3 billion — already exceed the entire ~$3.8 billion market value of the equity.
+- In plain terms: you are paying less for the whole company than the cash and liquid investments on its balance sheet, and getting Telenet, the 50% of Virgin Media O2 in the UK, and the 50% of VodafoneZiggo for free.
+- A conservative parts total runs $16–18.7 billion of gross asset value before holding-company debt; even haircutting the operating stakes hard and subtracting leverage, the floor sits comfortably above today's price. A reasonable bear/recovery floor is about $9.5 per share — roughly the 52-week low and near the liquid-asset backing — which bounds the loss to low-double-digit percent from here.
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: ERODING | SECULAR_THREAT: manageable
+## 4. Credibility of management on hitting it
+
+Medium-to-high. John Malone-school capital allocators (CEO Mike Fries) have a multi-decade record of using spins, trackers, and buybacks to surface value; the 2024 Sunrise spin landed on time. Against that: the underlying assets are slow-growing and the company has guided Virgin Media O2 to a 3–5% decline in service revenue and core profit, so the operating businesses are shrinking even as the structure is simplified. The buyer of value here is the structure, not the franchise.
+
+## 5. Red flags and things to watch
+
+- **Slip risk on the window.** "Second half of 2027" is a window, not a fixed date; Euronext listing timing and regulatory clearance on the Vodafone buy-in could push it.
+- **Leverage at the operating level.** The cable/mobile JVs carry heavy debt; if rates or refinancing terms worsen, the standalone equity values compress, narrowing the spread.
+- **Shrinking operating base.** Virgin Media O2 and the Benelux assets are mature and slightly declining; this is a structural-value play, so the discount must close faster than the businesses erode.
+- **No going-concern or dilution flag.** There is no ATM (at-the-market equity issuance) overhang, no covenant crisis, and net cash is positive — the balance sheet is the asset, not the risk.
+
+## 6. Asymmetry
+
+Live around $11, with a base-case event-resolved value near $18 and a verified floor near $9.5, the reward-to-risk is roughly 2.4 to 1 (about $7 of upside to target versus about $1.5 of downside to floor) — and the bull tail (a full parts re-rate toward $30+) is real if both the Ziggo spin and a later UK/Virgin Media O2 separation land. The discount is wide by design; the dated spin is the lever that closes it.
+
+---
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

@@ -1,55 +1,51 @@
-# UNF (UniFirst Corp) — Event-Driven Interrogation Dossier
+# UniFirst Corporation (UNF) — Event Dossier
 
-**Frame:** This is NOT a business-quality / compounding thesis. UniFirst is a #2 US uniform-rental operator being acquired by the #1, Cintas (CTAS). The thesis is the **merger-arb spread** between the live UNF price and the deal-resolved value, gated on a HARD regulatory step (HSR / FTC antitrust clearance), with a defined downside FLOOR (deal-break standalone value cushioned by a large reverse-termination fee). The franchise's "cheap-and-bad" optics are irrelevant; the catalyst carries the thesis.
+**Setup:** This is a merger arbitrage situation, not a business-quality bet. UniFirst, the third-largest uniform-rental and workplace-supplies company in North America, has agreed to be bought by Cintas, the industry's clear number one. The whole thesis lives or dies on whether antitrust regulators let the deal close. The franchise underneath is fine but unremarkable; we are buying the gap between today's price and what the deal pays, not the company.
 
-## 1. THE EVENT — is it REAL, DATED, and BINDING?
+## 1. Is the catalyst real, dated, and binding?
 
-**REAL and BINDING — a signed definitive agreement, not a proposal.**
-- **Definitive Agreement and Plan of Merger signed March 10, 2026.** Two-step merger; UNF goes private and delists from NYSE on close. This followed a public courtship: Cintas first proposed $275.00/sh all-cash (Dec 22, 2025), was rebuffed, sweetened to the current cash-and-stock structure.
-- **Consideration (per UNF share):** **$155.00 cash + 0.7720 Cintas (CTAS) shares.** Announced headline value ~$310/sh, EV ~$5.5B. Because the stock leg floats, the live deal value moves with CTAS.
-- **Shareholder vote PASSED — June 12, 2026.** Over 99% of votes cast in favor (~95% of all common + Class B shares). The Class B / founder-family overhang (the historical reason UNF was considered un-acquirable) is RESOLVED — the family voted yes. This is the single most important de-risking event already in the bag.
-- **The remaining gate is ANTITRUST, and it is now the whole game.**
+Yes on all three, with one important caveat about the timeline.
 
-## 2. CATALYST STATUS — the load-bearing output (VERIFIED on the web, as of 2026-06-22)
+- **The agreement is signed and shareholder-approved.** Cintas and UniFirst signed a definitive merger agreement on March 10, 2026. UniFirst shareholders approved it on June 12, 2026, with more than 99% of votes cast in favor. The selling side of this deal is fully committed — there is no shareholder-vote risk left.
+- **The terms are fixed.** Each UniFirst share converts into $155.00 in cash plus 0.7720 of a Cintas share. That mix matters: a little over half the consideration is cash (firm) and a little under half floats with Cintas's stock price (variable). The deal was first framed as roughly $310 per share back in December 2025, but because Cintas stock has fallen since then (from the low-$200s to about $170), the live value of the package has compressed.
+- **The binding gate is a hard date with a clear trigger.** The merger agreement carries an outside date (the contractual deadline after which either side can walk) of January 10, 2027, with automatic extensions of up to eight months if antitrust clearance is the only thing still outstanding. So the true backstop date is potentially as late as roughly September 2027. Our board's working catalyst date of November 30, 2026 is a reasonable mid-point estimate for clearance, but it is an estimate, not a contractual milestone — the only firm dates are the January 2027 outside date and its extensions.
 
-🔴 **FTC SECOND REQUEST ISSUED June 11, 2026.** Each of Cintas and UniFirst received a Request for Additional Information from the FTC. This is the material development the dossier's static "HARD DATE 2026-11-30" does NOT yet reflect.
-- **HSR mechanics:** the Second Request extends the waiting period until **30 days after BOTH parties substantially comply** with the Second Request (unless terminated earlier by the FTC or voluntarily extended). Substantial compliance on a horizontal #1+#2 combination typically runs several months of document production.
-- **Company guidance:** Cintas "continues to expect" close in **second half of calendar 2026**, subject to clearing the FTC review. That is now a soft expectation, not a date.
-- **Outside / End Date:** **January 10, 2027**, with an automatic extension of up to **two 4-month periods** under specified circumstances (i.e., the agreement can survive to ~Sep 2027 if antitrust drags). So there is ample contractual runway — the deal does NOT auto-die at the dossier's Nov-30 date.
+## 2. The single biggest risk: the FTC Second Request
 
-**Verdict on status:** This is a **PENDING_HARD / ARB hybrid**. Terms are FIXED (so the upside is CAPPED at the floating deal value, ~$286-291, not open-ended) — that is the ARB character. But the binding gating step (FTC clearance) is LIVE, dated by a real statutory mechanism, and unresolved — that is the PENDING_HARD character with genuine asymmetry, because the market has WIDENED the spread on Second-Request fear. The dossier's bare "2026-11-30" is now optimistic; realistic clearing window is Q4-2026 to H1-2027.
+This is the load-bearing fact of the entire situation. On June 11, 2026, both companies received a "Second Request" from the U.S. Federal Trade Commission under the Hart-Scott-Rodino Act (the law requiring large mergers to clear an antitrust review). A Second Request is a demand for a large volume of additional documents and data, and it is the regulator's signal that it is taking a hard look. It restarts the clock: the waiting period now runs until 30 days after both companies "substantially comply" with the demand.
 
-## 3. THE SPREAD & ASYMMETRY (live math)
+Why this is serious here and not routine: this deal combines the number-one and number-three players in North American uniform rental and facility services. That is exactly the kind of horizontal combination — fewer large competitors in a concentrated market — that draws the most regulatory resistance. Some segments and local markets could approach near-monopoly concentration. A Second Request on a deal like this is not a rubber stamp; it raises a real possibility of an extended fight, a required divestiture of overlapping routes or plants, or an outright block.
 
-- **Live deal value:** $155.00 cash + 0.7720 × CTAS ($170.51) = $131.63 → **≈ $286.63/share** event-resolved value today. (Higher if CTAS rises toward analyst $225 PTs; the dossier's $291.07 target assumes a modestly higher CTAS.)
-- **Live UNF price:** ~$262–265 (dossier $264.83; recent prints $262.19 on 06-18, $272.60 on 06-10 pre-Second-Request).
-- **Gross spread:** ≈ **$22–24/share, ~8.5%** gross to deal value — a WIDE arb spread, blown out precisely by the June-11 Second Request. For a deal that is signed + shareholder-approved with a 6-7 month runway, ~8.5% is a fat regulatory-risk premium.
+## 3. The verified downside floor — and why our board's number is too generous
 
-## 4. THE FLOOR — what actually backstops the price if antitrust BLOCKS it?
+If the deal breaks, UniFirst stops being worth the deal price and reverts to its standalone value. Here is the honest reckoning:
 
-🟢 **A large, contractual reverse-termination fee.** If antitrust action blocks the deal, **Cintas owes UniFirst a $350M reverse termination fee** (>6.5% of deal value). On ~18.7M UNF shares that is **≈ $18.70/share of hard cash cushion** delivered on a regulatory break.
-- **Standalone value:** UNF pre-deal traded in the ~$180–210 area (52-wk low $147.66; the deal premium took it to the $260s-280s). A regulatory break would re-rate UNF toward standalone — call it **~$210–230** once you add (a) the $18.70/sh break fee, (b) UNF's renewed scarcity/strategic-target status (it would remain the one obvious #2 asset, inviting a re-approach or PE interest), and (c) a still-healthy balance sheet.
-- The dossier's stated floor of **$257.91** is, in my read, TOO HIGH for a true antitrust-block scenario — that floor looks like a "timing-slip / re-cut terms" floor, not a hard-block floor. The realistic hard-block floor is closer to **$215–230**. I will carry **~$222** as the verified break floor (standalone ~$205 + $18.70 break fee, rounded), which is more conservative than the dossier and still leaves the asymmetry intact.
+- Before any deal talk (December 2025), UniFirst traded in roughly the $180–190 area. The stock has since climbed partly on the deal and partly on a genuine margin-improvement story, with a year-to-date gain of about 35%.
+- A clean standalone fair value today, crediting the operational improvement, is roughly $200–225 per share. That is the gravity the stock falls back toward on a break.
+- There is one real cushion: Cintas owes UniFirst a reverse termination fee of $350 million if antitrust action kills the deal — about $18-$19 per share. That partly softens a break.
 
-**Re-derived asymmetry from current ~$263:** upside-to-deal ≈ +$24 (to ~$287); downside-to-hard-block-floor ≈ −$41 (to ~$222). That is roughly **0.6:1** on a HARD-BLOCK outcome — but the relevant figure is probability-weighted: an FTC block of a uniform-rental #1+#2 deal is a real but minority risk (the parties have a $350M reverse fee precisely because they underwrote that risk; they would not have signed without believing in a remedy path — likely divestitures of overlapping route/plant markets). Weighting ~75-80% close / 20-25% block puts the expected value comfortably above the live price.
+Putting those together, a realistic deal-break floor is roughly **$210–225**, not the $257.91 our Catalyst-Watch board carried. The board's floor appears to anchor on a near-current price; that overstates the protection. The downside is real and larger than the dossier number suggests — the loss on a break is on the order of 14–20% from today's ~$262, not the 1-2% the stale floor implies.
 
-## 5. RED FLAGS / GREEN FLAGS (event-specific)
+## 4. The asymmetry, recomputed on live numbers
 
-🔴 **Horizontal #1 + #2 combination** — the textbook hard antitrust case; the FTC Second Request is exactly what you'd expect and is the core risk. Substantial-compliance timeline is open-ended within the statutory frame.
-🔴 **Dossier date stale** — "2026-11-30 / 166d" predates the June-11 Second Request; real close is now H2-2026 → possibly H1-2027.
-🔴 **CTAS-stock leg floats** — the deal value is exposed to CTAS drawdowns (CTAS off its $226 highs to ~$170, near 52-wk low). A further CTAS slide compresses the realized consideration.
-🟢 **Shareholder + founder-family approval already secured (06-12, 99%)** — the historically fatal Class-B overhang is gone.
-🟢 **$350M reverse termination fee** — a real, sized antitrust-break backstop (~$18.70/sh) and strong evidence Cintas is committed to fighting for clearance (likely via divestitures).
-🟢 **Long contractual runway** — Jan-10-2027 outside date + two 4-month extensions; the deal cannot lapse on a near-term clock.
-🟢 **No financing contingency of concern** — $2.85B bridge + cash/credit, targeting only ~1.5x pro-forma leverage; ~$375M synergy case. Cintas is investment-grade and motivated.
-🟢 **No CVR games, no going-concern, no ATM/dilution** at UNF — clean target balance sheet.
+- **Live UniFirst price:** about $259–265.
+- **Live deal value:** $155 cash + (0.7720 × ~$171.90 Cintas) ≈ **$288** today. (Our board's $291 target assumes a slightly higher Cintas price; both are in the same neighborhood.)
+- **Gross spread to the deal:** roughly 9–11% from here if it closes.
+- **Downside to a realistic break floor (~$215):** roughly 17%.
 
-## 6. CREDIBILITY OF THE SPONSOR / ACQUIRER
+So the true risk/reward is closer to **even money (about 0.6:1 upside-to-downside)**, not the 3.79:1 the stale floor implied. The spread is wide precisely because the market is pricing meaningful antitrust risk — that width is information, not a free lunch. An additional wrinkle: because nearly half the consideration is Cintas stock, the "value" you capture also depends on where Cintas trades at close, adding a second source of variability a pure cash deal would not have.
 
-Cintas is a disciplined, deep-pocketed strategic that raised its bid twice and accepted a $350M reverse fee — it is committed and credible on hitting a clearance, most plausibly through a negotiated divestiture remedy of overlapping local markets. The chief uncertainty is not Cintas's will or financing; it is whether the FTC accepts a remedy vs. suing to block. That is the one genuinely binary node.
+## 5. Red flags and green flags
 
-## 7. CAPITAL-ALLOCATION VERDICT (for the director)
+🔴 Second Request from the FTC on a number-one-buys-number-three combination — the central, deal-defining risk.
+🔴 Stock-heavy consideration means the payoff floats with Cintas, and Cintas has fallen ~20% since the deal was struck, eroding the headline price.
+🔴 The realistic break floor sits well below today's price; the downside is genuine, not nominal.
+🟢 Shareholder vote cleared with 99%+ approval — no vote risk remains.
+🟢 A $350 million reverse break fee gives UniFirst (and the arb) a partial cash backstop if antitrust blocks it.
+🟢 The acquirer is a deep-pocketed strategic with obvious financing capacity; there is no financing contingency or going-concern question on either side.
 
-Classification: **PIVOTING** (from public compounder to deal-resolved cash-and-stock claim). The single thing the director must weigh: **this is a signed, shareholder-approved deal whose ONLY open gate is FTC antitrust, now in Second Request — the wide ~8.5% spread is the FTC-block premium, partly backstopped by a $18.70/sh reverse fee and a long runway.** Size it as a defined-risk regulated-arb, not a compounder. Moat / secular analysis is N/A — the franchise is being absorbed; what matters is the clearance probability and the break floor.
+## 6. Credibility verdict for the director
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none
+The catalyst is real, binding, and approved by shareholders — but it is gated on a contested antitrust review that has already drawn a Second Request, and the contractual deadline (January 2027, extendable to ~September 2027) is far enough out that this is a patient, uncertain hold rather than an imminent re-rate. The asymmetry is roughly symmetric once the floor is corrected to a real standalone value, which is a meaningfully worse setup than the board's stale numbers suggested. This is a live, dated merger-arb with genuine regulatory tail risk, not a clean defined-risk layup.
+
+CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none

@@ -1,0 +1,20 @@
+{
+ "symbol": "WWD",
+ "themes": [
+  "defense_tech",
+  "energy_transition"
+ ],
+ "value_chain_position": "Precision fuel and combustion control systems for aerospace engines (commercial + military) and industrial gas turbines (power generation); sells engineered sub-systems embedded in turbines as a sole-source or dual-source Tier 1 supplier.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MOG-A",
+  "AMETEK",
+  "CW",
+  "HWM",
+  "GE-CONTROLS",
+  "SAFR.PA"
+ ],
+ "relative_comps": "Woodward supplies fuel management systems for CFM LEAP, GE9X, and multiple military engines — deeply embedded, long-qualification-cycle components that are costly to dual-source. Revenue CAGR of 14% and FCF margin of ~10% are solid but not exceptional. The energy_transition angle is genuine: Woodward's industrial segment supplies fuel control and actuation for gas turbines used in grid peaking and distributed generation, and hydrogen-compatible fuel system R&D is underway. At $22B market cap, Woodward trades at a modest premium to Moog (which has weaker economics) but a meaningful discount to TransDigm and Heico.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "MSFT",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Hyperscaler cloud and AI platform layer — sells Azure compute/AI services (the largest third-party inference and training cloud), Microsoft 365 Copilot productivity AI, and GitHub Copilot developer tooling; every enterprise AI deployment routes through or alongside Azure.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "AMZN",
+  "GOOGL",
+  "META",
+  "ORCL",
+  "SAP",
+  "CRM",
+  "SNOW"
+ ],
+ "relative_comps": "MSFT is the closest thing to a chokepoint in enterprise AI — Azure OpenAI is the exclusive hyperscaler home for OpenAI models, and Copilot is the dominant AI layer on top of the 400M+ Office seat base. Revenue CAGR of 12% and YoY of 18% are exceptional for a $3T company. FCF margin of 23% and $73B TTM FCF dwarf every pure-play AI infrastructure name. The primary risk is AMZN/GOOGL catching up on model access and bundling; MSFT's moat is distribution and enterprise trust, not chip or model exclusivity.",
+ "theme_fit_confidence": "high"
+}

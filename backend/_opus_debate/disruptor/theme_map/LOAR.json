@@ -1,0 +1,19 @@
+{
+ "symbol": "LOAR",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Aerospace components roll-up — acquires niche sole-source qualified parts manufacturers for defense and commercial aircraft; operates a portfolio of proprietary part numbers with aftermarket pricing power.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "TDG",
+  "HEICO",
+  "HWM",
+  "MOG-A",
+  "CW",
+  "AXYS"
+ ],
+ "relative_comps": "Loar is a small-cap TransDigm-model compounder: acquire sole-source aerospace parts businesses, raise aftermarket prices, harvest FCF. Revenue CAGR of 28% and FCF margin of 18% are high-quality metrics for the size. The main risk is that this model has become well-known and acquisition multiples for aerospace parts businesses are elevated. TransDigm (TDG) dominates the category at 10x the scale, making multiple-expansion harder for LOAR. Defense_tech fit is genuine but the value proposition is financial engineering + parts-pricing, not technology disruption per se.",
+ "theme_fit_confidence": "medium"
+}

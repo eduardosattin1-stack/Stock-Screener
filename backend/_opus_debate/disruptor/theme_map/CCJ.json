@@ -1,0 +1,20 @@
+{
+ "symbol": "CCJ",
+ "themes": [
+  "energy_transition"
+ ],
+ "value_chain_position": "Vertically integrated uranium miner and processor supplying nuclear fuel to utilities globally — nuclear-fuel-and-services layer of the energy-transition value chain, a direct chokepoint for SMR and existing fleet fuel supply.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NXE",
+  "UEC",
+  "DNN",
+  "UUUU",
+  "PDN.AX",
+  "KAP.L",
+  "BWXT"
+ ],
+ "relative_comps": "CCJ is the highest-quality publicly traded uranium toll-taker — tier-1 assets (Cigar Lake, McArthur River), 25% FCF margin and net-near-flat leverage set it apart from junior miners. NXE and UEC are development-stage with no comparable FCF; BWXT competes in nuclear services rather than fuel supply. The 23% 3-year CAGR reflects long-term contract re-pricing at structurally higher uranium spot prices. CCJ is the closest to an anchor example in the taxonomy for this sub-layer.",
+ "theme_fit_confidence": "high"
+}

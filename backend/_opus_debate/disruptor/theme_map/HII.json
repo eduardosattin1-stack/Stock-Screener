@@ -1,0 +1,18 @@
+{
+ "symbol": "HII",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Sole US builder of nuclear-powered aircraft carriers and one of two nuclear submarine shipyards; sells large naval combatants under sole-source or duopoly DoD contracts with decades-long backlogs.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "GD",
+  "LMT",
+  "BAE.L",
+  "NAVAL-GROUP",
+  "TKMS"
+ ],
+ "relative_comps": "HII is the only builder of US nuclear carriers — an absolute government monopoly for the nation's most capital-intensive defense asset. However, it is textbook maturing: revenue CAGR of 5.4% (3y) and FCF margin of 8% reflect a cost-plus contract structure that limits upside. The defense_tech theme partially fits via the Mission Technologies (IT/C4ISR) segment (~20% of revenue), which is growing faster and carries higher margins than shipbuilding. But the dominant business — legacy platform shipbuilding — maps to the 'legacy prime' caution in the defense_tech notes. Theme fit is partial.",
+ "theme_fit_confidence": "medium"
+}

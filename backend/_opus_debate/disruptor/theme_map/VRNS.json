@@ -1,0 +1,19 @@
+{
+ "symbol": "VRNS",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Data security and governance platform — sells data access intelligence, insider threat detection, and data activity monitoring software that maps and protects unstructured data stores in hybrid cloud environments; the data-security layer AI pipelines route through.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MSFT",
+  "PANW",
+  "Securiti (private)",
+  "BigID (private)",
+  "TELOS",
+  "Zimperium (private)"
+ ],
+ "relative_comps": "VRNS is the specialist leader in data security posture management (DSPM), a market growing as AI data pipelines expand. Its 15% YoY growth and 18% FCF margin are modest versus platform peers but reflect a high-quality niche: unstructured data governance has no direct public competitor at scale. Revenue of $660M is small relative to PANW/CRWD. The shift to SaaS from on-prem is the margin expansion story. The risk is MSFT Purview and PANW DSPM modules absorbing the market. Valuation at ~$3.8B is relatively modest for the niche, but low-bearing score reflects substitution risk from platform consolidation.",
+ "theme_fit_confidence": "medium"
+}

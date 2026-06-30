@@ -1,0 +1,21 @@
+{
+ "symbol": "PATH",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Enterprise automation platform — sells robotic process automation (RPA), AI-powered document understanding and agentic workflow tools to automate repetitive white-collar work across enterprise back-offices.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MSFT Power Automate",
+  "SAP Build (SAP)",
+  "Automation Anywhere (unlisted)",
+  "Blue Prism (acquired SS&C)",
+  "NICE (NICE)",
+  "Pegasystems (PEGA)",
+  "ServiceNow (NOW)",
+  "Appian (APPN)"
+ ],
+ "relative_comps": "UiPath pioneered enterprise RPA and retains the largest installed base, but the competitive moat has eroded as Microsoft Power Automate bundled equivalent functionality into M365 and ServiceNow/SAP embedded automation natively. 15% revenue CAGR and 22% FCF margin are respectable but growth is decelerating; the stock at $10.75 trades at significant discount to software peers, reflecting competitive displacement risk. Automation Anywhere (private) is the closest peer in capability. The AI agentic workflow pivot (context grounding, LLM orchestration) is PATH's best option to re-accelerate but Microsoft remains the primary overhang. AI infrastructure theme hint is incorrect — this is automation/robotics, not compute infrastructure.",
+ "theme_fit_confidence": "medium"
+}

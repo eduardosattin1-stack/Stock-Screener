@@ -1,0 +1,21 @@
+{
+ "symbol": "DOCN",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "SMB cloud infrastructure — sells VMs, managed databases, Kubernetes and GPU cloud compute to developer-first and startup customers; a lower-tier hyperscaler for the long tail.",
+ "load_bearing_score": 2,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AWS",
+  "GCP",
+  "MSFT Azure",
+  "Linode/Akamai (AKAM)",
+  "Vultr (unlisted)",
+  "Hetzner (unlisted)",
+  "FSLY",
+  "NET"
+ ],
+ "relative_comps": "DOCN's developer-friendly positioning carved a real niche against hyperscaler complexity, but at $949M TTM revenue it is sub-scale versus AWS/GCP/Azure by 100-300x. Near-zero FCF margin ($8M on $949M revenue) and 16% revenue CAGR are below what the AI infrastructure disruption thesis demands. The GPU cloud push (H100 droplets) is credible but hyperscalers and specialist GPU clouds (CoreWeave, Lambda Labs) have structural advantages. Load-bearing score is low — DOCN can be routed around by any customer who outgrows it, and frequently is.",
+ "theme_fit_confidence": "medium"
+}

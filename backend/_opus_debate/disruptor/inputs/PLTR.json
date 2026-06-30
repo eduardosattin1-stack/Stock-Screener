@@ -1,0 +1,12 @@
+{
+  "symbol": "PLTR",
+  "sector": "Technology",
+  "signal_type": "disruptor",
+  "company": "Palantir Technologies Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 127.99 | Fair Value 0.0 | Margin of Safety 0% | P/FCF 156.3x\nRevenue growth: +56.2% YoY | 3-yr CAGR +32.9%\nMargins: Gross 82.4% (stable) | Net 36.3% | FCF 46.9%\nEPS / guidance delivery: 0.63 latest | +231.6% YoY | 3-yr CAGR +0.0% | beat 7/7 qtrs (100%)\nFCF growth: +84.1% YoY | 3-yr CAGR +125.3%\nReturns / leverage: ROE -0.0% | ROIC 1.0% | Net debt -6.95B\nForward / signals: Consensus fwd EPS growth +42.6% | Margin 1.30sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 9.5\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 1 | Catalyst score 0.5 | Piotroski 7/9 | Altman-Z (solvency) 110.9 | Days to next earnings 51\nAnalyst consensus target: 187.69 (+47% upside)\nPositioning / smart money: Smart-money score 32/100 | Institutional flow 60/100 | Analyst-target velocity -8% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -20% vs 200d SMA | 6% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 1.54B, NI -520M, EPS -0.27\n  2022: rev 1.91B, NI -374M, EPS -0.18\n  2023: rev 2.23B, NI 210M, EPS 0.0913\n  2024: rev 2.87B, NI 462M, EPS 0.19\n  2025: rev 4.48B, NI 1.63B, EPS 0.63\n  CAGRs: bvps_5y +24.7%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 2.69B | TTM diluted EPS 0.90 | latest-Q EPS YoY +306%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 7.81B (cash 8.03B exceeds total debt 212M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 76 sells (3,183,155sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nGovernment Operating Segment: 2.40B (54%) | Commercial: 2.07B (46%)",
+  "dossier": "",
+  "methodologies": [
+    "ai_infrastructure",
+    "defense_tech"
+  ]
+}

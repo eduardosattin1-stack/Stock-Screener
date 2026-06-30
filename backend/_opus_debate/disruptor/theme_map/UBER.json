@@ -1,0 +1,20 @@
+{
+ "symbol": "UBER",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Mobility and delivery marketplace platform — sits at the autonomous-vehicle/robotics consumer-interface layer, acting as the demand aggregator that any robo-taxi fleet (Waymo, Tesla FSD) must eventually route through or displace.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "LYFT",
+  "GRAB",
+  "DIDI",
+  "DASH",
+  "BKNG",
+  "ABNB",
+  "TSLA"
+ ],
+ "relative_comps": "UBER's robotics_automation relevance is as the incumbent two-sided marketplace that AV deployments must either partner with or displace — Waymo already runs on the UBER platform. 18% YoY growth and 18% 3-year CAGR are solid for scale; FCF margin (18%) is improving. Vs LYFT, UBER has far superior geographic diversification and freight. The key disruption risk is that successful robo-taxi fleets could bypass UBER, capping its long-term load-bearing score. Defense_tech hint stripped as non-applicable.",
+ "theme_fit_confidence": "medium"
+}

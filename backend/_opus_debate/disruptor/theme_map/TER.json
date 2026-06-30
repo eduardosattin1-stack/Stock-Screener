@@ -1,0 +1,20 @@
+{
+ "symbol": "TER",
+ "themes": [
+  "ai_infrastructure",
+  "robotics_automation"
+ ],
+ "value_chain_position": "Semiconductor test equipment (Automated Test Equipment, ATE) for logic/memory/5G, plus collaborative robot arms (Universal Robots) for factory and lab automation.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AMAT",
+  "KLAC",
+  "ADNT",
+  "COHU",
+  "FANUC",
+  "ABB"
+ ],
+ "relative_comps": "Teradyne leads in logic ATE (SoC test) with ~50% share; its memory test segment benefits from HBM complexity growth. Universal Robots is the leading cobot franchise globally by installed base but faces intensifying competition from FANUC, ABB, and low-cost Chinese entrants (Doosan, Aubo). The AI-driven chip-test thesis is solid (more complex chips need more test time per wafer); the cobot business is earlier-stage and lower-margin. 3-year revenue CAGR near flat (0.4%) reflects the semiconductor test cycle; YoY recovery (+30%) indicates trough-to-ramp. Trades at ~35x forward earnings.",
+ "theme_fit_confidence": "medium"
+}

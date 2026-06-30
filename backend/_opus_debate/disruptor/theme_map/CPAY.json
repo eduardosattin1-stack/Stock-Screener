@@ -1,0 +1,21 @@
+{
+ "symbol": "CPAY",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "B2B payment networks — operates fleet fuel card, corporate lodging payment and cross-border FX payment rails; a toll-taker on commercial vehicle and corporate spend volume.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "WEX",
+  "FLLT",
+  "V (commercial)",
+  "MA (commercial)",
+  "FOUR",
+  "ADP (payables)",
+  "Billtrust (BTRS)",
+  "Navan (unlisted)"
+ ],
+ "relative_comps": "CPAY (formerly FleetCor) owns proprietary closed-loop networks in fleet fuel (North America, Brazil) and lodging that are structurally hard to displace — fuel merchants accept the card because fleets demand it. 27% FCF margin and consistent 10%+ CAGR reflect the toll-taker model. WEX is the closest direct competitor in fleet; FLLT in vehicle tracking adjacency. FMP placed CPAY in Software - Infrastructure but the economics are pure fintech rails; AI infrastructure theme hint is incorrect — this is not an AI compute toll-taker. Fintech rails is the correct single theme.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,182 @@
+{
+  "BE": {
+    "themes": ["energy_transition"],
+    "value_chain_position": "Solid-oxide fuel cell manufacturer selling distributed power generation equipment (Energy Servers) primarily to data centers, utilities and industrial facilities — on-site clean baseload layer of the energy transition value chain.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["PLUG", "BLDP", "NEP", "GEV", "COGEN.L", "FLR", "ENPH"],
+    "relative_comps": "BE holds a niche SOFC technology moat that PLUG (PEM) and BLDP (automotive/transit PEM) do not directly contest, but all three compete for the on-site clean-power wallet at hyperscalers. Revenue growth is accelerating (57% YoY) against a 19% 3-year CAGR, suggesting a demand pull-forward from data-center power constraints rather than purely secular penetration. FCF margin is thin (9.5%) compared with traditional grid-equipment peers like ETN, and leverage at 3.2x EBITDA leaves less buffer than ENPH or GEV. BE is more specialized but less capital-efficient than the broader energy-transition toll-takers.",
+    "theme_fit_confidence": "medium"
+  },
+  "NVT": {
+    "themes": ["energy_transition", "ai_infrastructure"],
+    "value_chain_position": "Electrical enclosures, thermal management and power-distribution equipment supplier — occupies the power-and-cooling and electrification-components layer, selling into data centers, industrial and EV-charging infrastructure.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ETN", "HUBB", "VRT", "ABB", "AMETEK", "AYI", "GEV"],
+    "relative_comps": "NVT is a genuine toll-taker in data-center power enclosures and thermal management alongside VRT; its 40% revenue YoY growth and 19% 3-year CAGR reflect strong hyperscaler pull-through. FCF margin (8.8%) is lower than VRT but balance sheet is stronger (1.6x leverage vs VRT). Trades at a premium to legacy ETN on growth expectations but is more exposed to project-cycle timing than software-like peers. The dual ai_infrastructure and energy_transition placement is valid per taxonomy notes.",
+    "theme_fit_confidence": "high"
+  },
+  "AYI": {
+    "themes": ["energy_transition"],
+    "value_chain_position": "Intelligent lighting systems and building controls manufacturer — electrification-components layer serving commercial buildings, industrial facilities and data centers with smart lighting and IoT-connected building platforms.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["HUBBELL", "GE", "LEGRAND", "VNET", "ESLT", "RAX", "NVT"],
+    "relative_comps": "AYI's 3-year revenue CAGR of only 2.75% signals a mature business with a recent 16% YoY bump that likely reflects pricing and data-center adjacency rather than sustained disruption. FCF margin (12.2%) and balance sheet (0.77x leverage) are strong, but the company is primarily a building-electrification incumbent rather than a genuine disruption chokepoint. Vs. Hubbell and Legrand, AYI competes on building-intelligence software (Atrius), but that platform remains small relative to the lighting hardware base — growth is broadening/incumbent, not early disruption.",
+    "theme_fit_confidence": "low"
+  },
+  "AEIS": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Precision power conversion and control equipment supplier to semiconductor fabs and industrial processes — sits in the fab-equipment / power-delivery layer that every advanced node wafer build must traverse.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MKS", "COHU", "ENTG", "ONTO", "BESI", "BE", "NOVT"],
+    "relative_comps": "AEIS holds a near-duopoly with MKS Instruments in RF/DC power delivery to etch and deposition tools — a genuine fab chokepoint. 3-year CAGR is slightly negative (-0.9%) due to the 2023 semi downcycle, but 22% YoY recovery confirms cycle-driven suppression, not secular decline. FCF margin (3.6%) is thin post-cycle; MKS runs comparable margins. AEIS trades at a discount to ENTG on the assumption that power delivery is more commoditizable than high-purity process materials — fair concern, but switching costs from OEM tool qualifications are real.",
+    "theme_fit_confidence": "high"
+  },
+  "POWL": {
+    "themes": ["energy_transition"],
+    "value_chain_position": "Custom electrical switchgear and motor control centers manufacturer serving oil & gas, petrochemical, data center and utility customers — grid-equipment and electrification-components layer.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ETN", "HUBB", "ABB", "SIEMENS", "SE.PA", "NVT", "AZZ"],
+    "relative_comps": "POWL's 28% 3-year revenue CAGR is among the strongest in the electrical-equipment cohort, driven by LNG, data-center and grid-hardening demand; FCF margin (17%) is exceptional for a project-based manufacturer. However, POWL is a custom-order industrial supplier without recurring software or consumable revenue, making it cyclical around capex budgets. It is smaller and narrower than ETN or ABB but has lower customer concentration risk than pure data-center players. The recent YoY deceleration to 4.5% warrants monitoring for backlog exhaustion.",
+    "theme_fit_confidence": "medium"
+  },
+  "FSLR": {
+    "themes": ["energy_transition"],
+    "value_chain_position": "Thin-film cadmium-telluride solar module manufacturer — solar-manufacturing layer of the energy-transition value chain, selling domestically produced utility-scale modules in the US and internationally.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ENPH", "SEDG", "CSIQ", "JKS", "RUN", "ARRY", "NEE"],
+    "relative_comps": "FSLR is the only scaled domestic thin-film solar manufacturer, giving it a tariff moat that Chinese competitors (CSIQ, JKS) cannot easily replicate. FCF margin of 31% and net cash balance sheet are exceptional among solar peers — ENPH and SEDG compete on the inverter/software layer rather than module manufacturing. The 26% 3-year CAGR and 27% YoY growth reflect IRA manufacturing credits augmenting operational scale. Key risk is module commoditization and IRA policy dependency, which limits the load-bearing score to 3 despite the manufacturing moat.",
+    "theme_fit_confidence": "high"
+  },
+  "CCJ": {
+    "themes": ["energy_transition"],
+    "value_chain_position": "Vertically integrated uranium miner and processor supplying nuclear fuel to utilities globally — nuclear-fuel-and-services layer of the energy-transition value chain, a direct chokepoint for SMR and existing fleet fuel supply.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["NXE", "UEC", "DNN", "UUUU", "PDN.AX", "KAP.L", "BWXT"],
+    "relative_comps": "CCJ is the highest-quality publicly traded uranium toll-taker — tier-1 assets (Cigar Lake, McArthur River), 25% FCF margin and net-near-flat leverage set it apart from junior miners. NXE and UEC are development-stage with no comparable FCF; BWXT competes in nuclear services rather than fuel supply. The 23% 3-year CAGR reflects long-term contract re-pricing at structurally higher uranium spot prices. CCJ is the closest to an anchor example in the taxonomy for this sub-layer.",
+    "theme_fit_confidence": "high"
+  },
+  "CRM": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Enterprise CRM and AI-agent platform (Agentforce) — occupies the simulation/workflow-software layer of the robotics_automation value chain, selling AI-driven sales, service and marketing automation to enterprises.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MSFT", "SAP", "ORCL", "HubSpot", "HUBS", "ZM", "VEEVA"],
+    "relative_comps": "CRM is a broadening-stage platform whose AI-agent narrative (Agentforce) is genuine but faces Microsoft Dynamics + Copilot as a well-funded incumbent threat. 11% YoY growth and 10% 3-year CAGR are below the pace of faster automation-software peers like NOW or SNOW. FCF margin (34%) and scale are class-leading, but the robotics_automation theme fit is indirect — CRM automates knowledge work, not physical processes. Defense_tech hint is not credible; stripped. Load-bearing score is 3 reflecting switching costs from CRM data gravity but not a true chokepoint.",
+    "theme_fit_confidence": "medium"
+  },
+  "UBER": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Mobility and delivery marketplace platform — sits at the autonomous-vehicle/robotics consumer-interface layer, acting as the demand aggregator that any robo-taxi fleet (Waymo, Tesla FSD) must eventually route through or displace.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["LYFT", "GRAB", "DIDI", "DASH", "BKNG", "ABNB", "TSLA"],
+    "relative_comps": "UBER's robotics_automation relevance is as the incumbent two-sided marketplace that AV deployments must either partner with or displace — Waymo already runs on the UBER platform. 18% YoY growth and 18% 3-year CAGR are solid for scale; FCF margin (18%) is improving. Vs LYFT, UBER has far superior geographic diversification and freight. The key disruption risk is that successful robo-taxi fleets could bypass UBER, capping its long-term load-bearing score. Defense_tech hint stripped as non-applicable.",
+    "theme_fit_confidence": "medium"
+  },
+  "NOW": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "Enterprise workflow automation and AI-agent platform — occupies the simulation/workflow-software layer, selling IT service management and cross-enterprise process automation that is increasingly AI-agent orchestrated.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["CRM", "MSFT", "ORCL", "PEGA", "APPX", "PLAT", "ZEN"],
+    "relative_comps": "NOW is a stronger robotics_automation fit than CRM because its workflow-engine is the literal orchestration layer for enterprise AI agents — every automated process runs through the Now Platform. 22% 3-year CAGR and 22% YoY sustain the steep-ramp stage. FCF margin (33%) and near-zero net debt give it a financial profile comparable to the best SaaS franchises. Vs. Microsoft, NOW's cross-vendor agnosticism is a durable differentiator; vs. CRM, NOW is deeper in IT/ops automation rather than customer-facing workflows. Load-bearing score 4 reflects high switching costs and data gravity.",
+    "theme_fit_confidence": "high"
+  },
+  "SNOW": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Cloud data platform providing data warehousing, data sharing and AI/ML workload infrastructure — sits in the software-infrastructure layer that AI training and inference pipelines consume for data access and feature engineering.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["DBRK", "GOOGL", "AMZN", "MSFT", "CRM", "CLDR", "ESTC"],
+    "relative_comps": "SNOW's 31% 3-year CAGR and 31% YoY growth make it one of the faster-growing names in the chunk; net cash balance sheet and 23% FCF margin are strong for a consumption-model SaaS. The AI-infrastructure fit is real — Snowflake's data cloud is increasingly where enterprises stage data for LLM fine-tuning and inference. Vs. Databricks (private), SNOW competes on SQL/BI workloads while Databricks leads on ML engineering; both are required in a full AI data stack. Microsoft Fabric and AWS Redshift are the chief substitution risks. Defense_tech hint stripped.",
+    "theme_fit_confidence": "high"
+  },
+  "FICO": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Credit-scoring analytics and decisioning software platform — occupies the market-data-and-analytics layer of fintech rails, providing a near-mandatory toll (the FICO score) on virtually every US consumer credit origination.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["EQUIFAX", "TRU", "EXPN.L", "VEN", "NRDS", "OPEN", "AFRM"],
+    "relative_comps": "FICO is among the highest-load-bearing names in the entire screener — the FICO score is embedded in GSE mortgage standards, bank underwriting policies and regulatory frameworks in a way that makes true substitution decade-long. 13% 3-year CAGR and 23% YoY reflect pricing power on score royalties rather than volume growth. FCF margin of 40% is exceptional. Vs. Equifax/TransUnion, FICO sits above them as the scoring standard that consumes their bureau data. The broadening s-curve reflects near-saturated US consumer-credit penetration; international and FICO Platform software are the growth vectors. Defense_tech and robotics hints stripped — pure fintech toll-taker.",
+    "theme_fit_confidence": "high"
+  },
+  "DT": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Observability and AI-ops platform (Dynatrace) — software-infrastructure layer, providing automated monitoring of cloud-native applications and AI workload performance for enterprises migrating to hyperscaler infrastructure.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["DDOG", "NR", "SPLK", "ESTC", "HONEYCOMB", "CORALOGIX", "AMZN"],
+    "relative_comps": "DT competes directly with Datadog (DDOG) for cloud observability wallet share; DDOG leads on growth (mid-20s%) and mindshare, while DT holds stronger enterprise accounts in regulated industries. 20% 3-year CAGR and 19% YoY are healthy but below DDOG's pace. FCF margin (26%) is solid and balance sheet is net cash. AI workloads generate observability spend as a side-effect of deployment — DT's Davis AI-engine is a credible differentiator vs. rule-based monitoring alternatives. Defense_tech hint stripped.",
+    "theme_fit_confidence": "medium"
+  },
+  "GWRE": {
+    "themes": [],
+    "value_chain_position": "Property & casualty insurance core-platform software vendor — sells policy, billing and claims management SaaS exclusively to P&C insurers; not a payment rail, not a disruption toll-taker in any of the seven themes.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["DUC", "MAJESCO", "SAPIENS", "DUCK-CREEK", "GUIDEWIRE", "INSURITY", "MAJESCO"],
+    "relative_comps": "GWRE is a vertical SaaS with a sticky installed base but its revenue and moat are entirely within the insurance vertical — no credible mapping to any of the seven disruption themes. 14% 3-year CAGR and 25% YoY growth reflect a cloud-migration tailwind as legacy on-premise customers convert to Guidewire Cloud. FCF margin (18%) is improving. The FMP industry filter placed it in Software-Application under robotics/defense hints, but neither applies — this is a vertical-market SaaS story, best analyzed in the value book.",
+    "theme_fit_confidence": "low"
+  },
+  "HUBS": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "AI-powered CRM and marketing automation platform for SMBs and mid-market — workflow-software/simulation layer automating customer acquisition, marketing, sales and service functions.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["CRM", "MSFT", "ACTV", "MKTO", "MOBI", "KLAVIYO", "BRAZE"],
+    "relative_comps": "HUBS has a 22% 3-year CAGR and 21% YoY growth with a 22% FCF margin and net cash — solid fundamentals for a marketing-automation SaaS. The robotics_automation fit is the weakest among the software names: HUBS automates sales and marketing workflows but does not sit in physical-process automation, AI-agent orchestration or knowledge-work infrastructure in a chokepoint role. Vs. Salesforce (CRM), HUBS leads on SMB ease-of-use; vs. Klaviyo and Braze it competes on broader platform scope. Load-bearing score is low because switching to Salesforce or an HubSpot clone is relatively accessible for most customers.",
+    "theme_fit_confidence": "low"
+  },
+  "PCOR": {
+    "themes": [],
+    "value_chain_position": "Construction project management SaaS platform — vertical software for general contractors, owners and specialty subcontractors managing construction project data, drawings and financials; no theme overlap.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ORCL", "TRIMBLE", "AUTODESK", "PROLOG", "VIEWPOINT", "ACCRUENT", "EGNYTE"],
+    "relative_comps": "PCOR is a vertical construction SaaS with 22% 3-year CAGR and 15% YoY, 19% FCF margin and net cash. The FMP industry filter placed it in Software-Application but Procore has no credible mapping to any of the seven disruption themes — it is a workflow digitization story within a single industry vertical. Vs. Autodesk (BIM360/Construction Cloud), PCOR competes on project-management depth; Autodesk has broader design integration. The robotics/defense hints in the chunk metadata are artifacts of the broad FMP industry match, not actual theme exposure.",
+    "theme_fit_confidence": "low"
+  },
+  "ESTC": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Enterprise search, observability and security analytics platform (Elastic) — software-infrastructure layer, providing the search and vector-database index layer that AI applications and security pipelines query at runtime.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["SPLK", "DDOG", "DT", "OPENSEARCH", "ALGOLIA", "MONGO", "SNOW"],
+    "relative_comps": "ESTC's vector-search and hybrid-search capabilities make it a genuine AI-infrastructure participant — Elasticsearch is embedded as the retrieval layer in many RAG pipelines. 18% 3-year CAGR and 17% YoY growth are respectable but below hyperscaler-infrastructure leaders; 19% FCF margin and net cash are healthy. The open-source model creates a dual risk (AWS OpenSearch substitution) and moat (developer pull-through for enterprise upsell). Vs. Datadog and Dynatrace, ESTC competes on the search/observability overlap but is differentiated on vector and semantic search for AI applications.",
+    "theme_fit_confidence": "medium"
+  },
+  "YOU": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Biometric identity verification platform (CLEAR) — occupies the C4ISR/identity layer of the defense-tech value chain for civilian border/access security, and serves TSA-enrolled travelers and stadium/venue access control.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["IDEX", "AVST", "VERI", "CGNX", "THALES", "SAIC", "BAH"],
+    "relative_comps": "YOU's 27% 3-year CAGR and 46% FCF margin are exceptional — the recurring membership model creates durable cash generation. The defense_tech fit is partial: CLEAR's biometric rails are used in TSA PreCheck and government facilities, giving it a real identity-infrastructure foothold in secure-access scenarios, but it is not a drone/C4ISR/EW player. Vs. IDEX (fingerprint chips) and Thales (government identity systems), CLEAR operates at the consumer-enrollment interface rather than in core government IT. The identity-verification layer is strategically relevant to border/access security spending.",
+    "theme_fit_confidence": "medium"
+  },
+  "COMP": {
+    "themes": [],
+    "value_chain_position": "Technology-enabled residential real-estate brokerage — operates a software platform and agent network for home buying and selling; no overlap with the seven disruption themes.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["RDFN", "EXPI", "RE/MAX", "KELLER WILLIAMS", "OPENDOOR", "Z"],
+    "relative_comps": "COMP is a real-estate brokerage platform with high revenue ($8.3B TTM) but nearly zero FCF margin (0.19%) and minimal 3-year CAGR (5%). The 40% YoY revenue growth is primarily volume recovery in a rebounding housing market, not secular technology penetration. There is no credible case for any of the seven disruption themes — COMP does not sell automation, AI infrastructure, defense technology, fintech rails or energy equipment. The FMP broad-software industry classification is a false positive; this belongs in the value/cyclical book.",
+    "theme_fit_confidence": "low"
+  },
+  "ZETA": {
+    "themes": ["robotics_automation"],
+    "value_chain_position": "AI-powered marketing data platform — occupies the workflow-software/simulation layer automating audience targeting, identity resolution and omnichannel marketing execution for enterprise marketers.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["TTD", "LIVERAMP", "BRAZE", "KLAVIYO", "HUBS", "PUBMATIC", "ADOBE"],
+    "relative_comps": "ZETA's 30% 3-year CAGR and 34% YoY growth are among the strongest in the chunk; FCF margin (14%) is solid and balance sheet is net cash. The Zeta Data Cloud's identity graph and AI-driven campaign optimization are genuine differentiators vs. point-solution competitors. Vs. The Trade Desk (TTD), ZETA competes on the data-and-identity layer rather than pure programmatic buying; vs. LiveRamp, ZETA offers a more integrated activation stack. Robotics_automation fit is the weakest valid theme mapping — ZETA automates marketing workflows using AI, which is on the periphery of the theme's workflow-software layer.",
+    "theme_fit_confidence": "medium"
+  }
+}

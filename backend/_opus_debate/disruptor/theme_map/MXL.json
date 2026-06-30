@@ -1,0 +1,21 @@
+{
+ "symbol": "MXL",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "High-speed interconnect and broadband silicon — sells PAM4/coherent DSPs for data-center optical links and xPON chips for broadband access.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "CRDO",
+  "MRVL",
+  "SMTC",
+  "CIEN",
+  "LITE",
+  "MACOM",
+  "IIVI",
+  "COHR"
+ ],
+ "relative_comps": "MXL's 3-year revenue CAGR is deeply negative (-25%) — the broadband trough crushed the base — but the 41% YoY rebound signals recovery, not secular disruption leadership. FCF margin of only 2% is the weakest in the peer set and the near-zero absolute FCF ($10M) means any macro wobble erases it. CRDO and MRVL dominate the high-speed AI-interconnect segment where MXL competes; MXL's scale disadvantage is real. Theme fit is genuine but conviction is tempered by the margin trough and lack of proven AI-workload wins at hyperscaler scale.",
+ "theme_fit_confidence": "medium"
+}

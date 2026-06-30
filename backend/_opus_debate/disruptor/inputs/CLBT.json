@@ -1,0 +1,11 @@
+{
+  "symbol": "CLBT",
+  "sector": "Technology",
+  "signal_type": "disruptor",
+  "company": "Cellebrite DI Ltd.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nRevenue growth: +18.4% YoY | 3-yr CAGR +20.7%\nMargins: FCF 31.0%\nReturns / leverage: Net debt -1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 154M | TTM diluted EPS 0.29 | latest-Q EPS YoY -38%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 406M (cash 429M exceeds total debt 23M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 5 sells (18,942sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nSubscription Services: 331M (72%) | Term-Licenses: 96M (21%) | Professional Services: 31M (7%)",
+  "dossier": "",
+  "methodologies": [
+    "defense_tech"
+  ]
+}

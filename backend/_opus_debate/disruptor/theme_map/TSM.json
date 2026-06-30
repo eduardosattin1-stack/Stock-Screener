@@ -1,0 +1,19 @@
+{
+ "symbol": "TSM",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Advanced fab layer — the world's sole source of leading-edge logic (3nm/2nm) that every AI accelerator, custom ASIC and smartphone AP must be built on.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "INTC",
+  "SSNLF",
+  "GFS",
+  "IFNNY",
+  "UMC",
+  "PSEC"
+ ],
+ "relative_comps": "TSM holds ~60% of the global foundry market and essentially 100% of leading-edge (<5nm) capacity; Samsung Foundry is the only credible rival at the bleeding edge but trails badly on yield and customer trust. Intel Foundry (IFS) is years behind on 18A and has lost nearly every anchor customer. UMC and GlobalFoundries are mature-node players with no path to sub-5nm. TSM's moat is structural: customers (NVDA, AMD, AAPL, AVGO) have no alternative for cutting-edge nodes, giving TSM durable 50%+ gross margin on CoWoS-advanced packages.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+ "symbol": "LASR",
+ "themes": [
+  "ai_infrastructure",
+  "defense_tech"
+ ],
+ "value_chain_position": "High-power fiber and diode lasers — sells pump and direct-diode laser modules for industrial cutting/welding (commercial) and directed-energy weapon systems (defense).",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "IIVI",
+  "COHR",
+  "IPG",
+  "LITE",
+  "JDSU/VIAVI",
+  "AMETEK",
+  "MACOM",
+  "Leonardo DRS"
+ ],
+ "relative_comps": "LASR's 41% YoY revenue growth is driven by defense directed-energy contracts (Air Force/Navy laser weapon programs) plus industrial recovery. Its fiber-laser IP competes with IPG Photonics (the global leader) and II-VI/Coherent at the component level. In defense lasers it has fewer direct public-market comps; KTOS and DRS are adjacent. FCF margin of 8% is slim for the defense theme but the directed-energy pipeline creates a meaningful government-contract moat. Dual-use (industrial + defense) makes this a genuine two-theme name.",
+ "theme_fit_confidence": "high"
+}

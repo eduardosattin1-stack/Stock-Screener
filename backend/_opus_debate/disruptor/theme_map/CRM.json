@@ -1,0 +1,20 @@
+{
+ "symbol": "CRM",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Enterprise CRM and AI-agent platform (Agentforce) — occupies the simulation/workflow-software layer of the robotics_automation value chain, selling AI-driven sales, service and marketing automation to enterprises.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MSFT",
+  "SAP",
+  "ORCL",
+  "HubSpot",
+  "HUBS",
+  "ZM",
+  "VEEVA"
+ ],
+ "relative_comps": "CRM is a broadening-stage platform whose AI-agent narrative (Agentforce) is genuine but faces Microsoft Dynamics + Copilot as a well-funded incumbent threat. 11% YoY growth and 10% 3-year CAGR are below the pace of faster automation-software peers like NOW or SNOW. FCF margin (34%) and scale are class-leading, but the robotics_automation theme fit is indirect — CRM automates knowledge work, not physical processes. Defense_tech hint is not credible; stripped. Load-bearing score is 3 reflecting switching costs from CRM data gravity but not a true chokepoint.",
+ "theme_fit_confidence": "medium"
+}

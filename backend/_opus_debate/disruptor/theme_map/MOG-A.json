@@ -1,0 +1,19 @@
+{
+ "symbol": "MOG-A",
+ "themes": [
+  "defense_tech"
+ ],
+ "value_chain_position": "Precision motion control systems manufacturer for aerospace, defense, and industrial applications — electromechanical actuators, controls, and fluid management systems embedded in aircraft, missiles, and space vehicles.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "WWD",
+  "HWM",
+  "TDG",
+  "HEICO",
+  "AMETEK",
+  "CW"
+ ],
+ "relative_comps": "Moog competes with Woodward and TransDigm in defense/aerospace precision actuation. Revenue CAGR of 8% and FCF margin of ~5% are below peer quality — TransDigm (TDG) extracts far superior economics from similar positioning via aggressive aftermarket pricing. Moog's growth re-accelerated YoY (14%) on defense budget expansion but the 3-year CAGR of 8% makes the defense_tech disruption narrative strained. The business is a qualified Tier 1 supplier, not a software-defined disruptor.",
+ "theme_fit_confidence": "medium"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "BWXT",
+ "themes": [
+  "defense_tech",
+  "energy_transition"
+ ],
+ "value_chain_position": "Sole-source naval nuclear reactor manufacturer for the US Navy; also supplies nuclear fuel, micro-reactors and medical radioisotopes — a regulated government monopoly with emerging commercial nuclear adjacencies.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NII",
+  "LEU",
+  "UUUU",
+  "CENT.L",
+  "BWX-INTL",
+  "FRAMATOME"
+ ],
+ "relative_comps": "BWXT is structurally irreplaceable as the only qualified manufacturer of US naval nuclear propulsion reactors — a government-certified monopoly that cannot be routed around without decades of NRC/DoD qualification. Revenue growing 21% YoY as the Virginia-class submarine ramp and Columbia-class development accelerate. The energy_transition angle is real and growing: BWXT NOVA small modular reactor contracts and medical isotope (Tc-99m) production diversify away from pure defense. FCF margin of 10% is constrained by heavy capex investment. Leverage at 2.8x EBITDA is the key risk vs the pure-FCF comps.",
+ "theme_fit_confidence": "high"
+}

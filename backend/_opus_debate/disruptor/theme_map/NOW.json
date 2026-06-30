@@ -1,0 +1,20 @@
+{
+ "symbol": "NOW",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Enterprise workflow automation and AI-agent platform — occupies the simulation/workflow-software layer, selling IT service management and cross-enterprise process automation that is increasingly AI-agent orchestrated.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "CRM",
+  "MSFT",
+  "ORCL",
+  "PEGA",
+  "APPX",
+  "PLAT",
+  "ZEN"
+ ],
+ "relative_comps": "NOW is a stronger robotics_automation fit than CRM because its workflow-engine is the literal orchestration layer for enterprise AI agents — every automated process runs through the Now Platform. 22% 3-year CAGR and 22% YoY sustain the steep-ramp stage. FCF margin (33%) and near-zero net debt give it a financial profile comparable to the best SaaS franchises. Vs. Microsoft, NOW's cross-vendor agnosticism is a durable differentiator; vs. CRM, NOW is deeper in IT/ops automation rather than customer-facing workflows. Load-bearing score 4 reflects high switching costs and data gravity.",
+ "theme_fit_confidence": "high"
+}

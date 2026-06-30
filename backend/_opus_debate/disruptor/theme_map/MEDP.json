@@ -1,0 +1,19 @@
+{
+ "symbol": "MEDP",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Full-service contract research organization (CRO); designs and executes clinical trials for biotech/pharma clients; a pure-service picks-and-shovels layer for drug development.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ICLR",
+  "CRL",
+  "PPD (Thermo, TMO)",
+  "IQVIA (IQV)",
+  "Syneos Health (acquired)",
+  "PSI CRO (private)"
+ ],
+ "relative_comps": "Medpace is a specialized mid-size CRO focused heavily on metabolic, cardiovascular, and oncology trials for emerging biotech sponsors — a segment where ICON and IQVIA are less competitive due to size. Its 20% 3-year CAGR and 28% FCF margin are best-in-class among public CROs, reflecting a fully-integrated model and high therapeutic specialization. Against ICLR and IQV, Medpace commands a premium multiple due to faster growth and niche positioning. The risk is biotech funding cyclicality — when VC/IPO funding tightens, small-biotech sponsor backlogs compress.",
+ "theme_fit_confidence": "medium"
+}

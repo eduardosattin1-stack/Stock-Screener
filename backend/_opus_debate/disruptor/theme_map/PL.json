@@ -1,0 +1,20 @@
+{
+ "symbol": "PL",
+ "themes": [
+  "space",
+  "defense_tech"
+ ],
+ "value_chain_position": "Daily earth observation satellite constellation operator; sells geospatial imagery and analytics subscriptions to government intelligence, agriculture, forestry, and commercial customers via cloud APIs.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MAXAR",
+  "SATL",
+  "ICEYE",
+  "BSAT.T",
+  "SPIR",
+  "HEI"
+ ],
+ "relative_comps": "Planet Labs owns the largest operational earth-observation constellation by satellite count (~200 Doves + SkySats), giving it the highest-revisit-rate product in commercial EO. Revenue grew 34% YoY and FCF turned barely positive (14% margin), validating the space theme's profitability gate just barely. The closest public comp is Spire (SPIR) in small-sat data, though Planet's government NRO/DoD contracts anchor ~50% of revenue, bridging space and defense_tech. Maxar (acquired by Advent/MAXAR-private) is the main competitive threat for high-resolution optical. The s_curve is steep_ramp as government mandates for allied ISR expand Planet's TAM.",
+ "theme_fit_confidence": "high"
+}

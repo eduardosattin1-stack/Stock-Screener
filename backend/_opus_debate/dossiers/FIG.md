@@ -1,40 +1,102 @@
-# FIG — Figma Inc — Interrogator Dossier (Event-Driven Special Situation)
+# FIG (Figma, Inc.) — Forensic Dossier: Forced-Seller Special Situation
 
-**Frame:** This is NOT a quality/compounding judgment. FIG is a forced-seller / post-IPO supply-overhang special situation. The thesis is the SPREAD between the live price (~$19.12, 06-22-2026) and an overhang-cleared re-rate target (~$32), gated on the final insider lock-up clearing, with a downside floor anchored to the post-washout technical base (~$16.60 52-wk low / ~$17.50 floor). The business is excellent (40%+ growth, design-software franchise); the price is wrecked by IPO mechanics, not by a broken franchise. That is the whole point of the trade.
+*Event-driven review. The thesis here is not business quality — it is the gap between today's
+depressed price and where the stock can trade once a mechanical, calendar-driven wave of insider
+selling finishes clearing. Verified live on the web as of June 29, 2026.*
 
-## 1. THE EVENT — is it real, dated, binding?
+## 1. THE SETUP IN ONE PARAGRAPH
 
-**REAL and DATED, but the catalyst polarity is supply-RELEASE, not supply-CLEARING-by-a-fixed-trigger.** Figma IPO'd late July 2025 (~$33 IPO, spiked to ~$142 intraday, then collapsed — a textbook IPO-mechanics retail trap; stock is down ~40% YTD and ~81% off the post-IPO high). On 2025-08-30 the company struck an **Extended Lock-Up Agreement** covering **54.1% of Class A shares** (the VC/insider low-cost-basis block, >$6B notional) with a PHASED release:
-- 17.5% (~38.9M sh) released after Q3 2025 earnings — DONE
-- 20% (~44.4M sh) released after 2025 year-end earnings — DONE
-- 27.5% (~61.1M sh) released after Q1 2026 earnings — DONE (this is the bulk of the spring 2026 overhang already absorbed)
-- **Remaining ~35% (~77.7M sh) releases after Q2 2026 earnings OR 2026-08-31, whichever is FIRST.**
+Figma is the cloud design-software company that went public in late July 2025 at $33 a share, spiked
+toward $140 in the first days of trading, and has since round-tripped all the way back — closing
+around $16.84 on June 25, 2026 and trading near $18.68 intraday on June 29, down roughly 40% this
+year and down close to 80% from the post-listing peak. The collapse is not, in the first instance, a
+business story: revenue is $1.16 billion over the trailing twelve months and still growing about 41%,
+the company holds roughly $1.6 billion of cash and marketable securities with little or no debt, and
+it now generates real free cash flow ($88.6 million in the first quarter of fiscal 2026, a 27%
+margin). What has crushed the stock is plumbing — a staggered "lock-up" schedule (the window during
+which pre-IPO insiders are contractually barred from selling) that releases shares in waves and floods
+the market with supply faster than new buyers arrive. The event we are underwriting is the clearing of
+that overhang: the final and largest release falls on August 31, 2026, when holders of roughly 54.1%
+of the Class A shares — venture funds and employees, about $7 billion of stock at current prices —
+become free to sell. The bet is that once that last forced-seller wave washes through, the structural
+discount it has carved into the price can begin to close.
 
-So the load-bearing forcing function is the **final ~77.7M-share unlock around the Q2'26 print / Aug 31, 2026**. This is a HARD, DATED, binding corporate event (SEC-filed 8-K terms). But critically: the event ADDS supply — it is bearish-on-arrival. The bull thesis is not "catalyst fires → pop"; it is "the LAST overhang tranche clears, the forced-seller is exhausted, and the float reprices to fundamentals once the structural seller is gone." That is a capitulation/washout setup, not a deal-close arb.
+## 2. IS THE CATALYST REAL, DATED, AND BINDING?
 
-## 2. THE VERIFIED DOWNSIDE FLOOR
+Yes on all three, and this is the strongest part of the case. The dates are not analyst guesses; they
+come from the company's own contractual lock-up architecture, disclosed in SEC filings:
 
-The floor is a TECHNICAL/washout floor, not an asset floor. 52-wk low is **$16.60**; the dossier floor is **$17.50**. There is real support here: revenue is $1.16B TTM growing ~41% (Q1'26 reaccelerated to +46% YoY, $333M), EV/S ~7x vs a software peer average cited near 19x. On any reasonable forward sales multiple, even haircut for the unlock, ~$17–18 is a defensible base for a 40%-grower — the float would have to price FIG at a deep-discount-to-peers multiple AND assume the entire insider block dumps at once for the floor to break. The floor is REAL but it is a multiple-on-growth floor, not net-cash; a growth disappointment OR a disorderly insider liquidation could pierce it.
+- A standard 180-day lock-up expired January 27, 2026.
+- On August 30, 2025 Figma signed an *extended* lock-up covering ~54.1% of Class A shares, with
+  staggered quarterly releases tied to earnings dates running through mid-2026 (unlock tranches landed
+  around September 30 and December 31, 2025, and March 31, 2026).
+- The final remainder — the venture-capital block holding over half the shares — releases on
+  **August 31, 2026.**
 
-## 3. RED FLAGS (event-specific)
+So the forcing event is a hard, dated, contractual one. There is no FDA panel, no acquirer, no
+regulator whose discretion could slip the date. That removes the single biggest risk in event
+investing — an undated or serially-extended catalyst. The catalyst is binding because it is a calendar
+mechanic, not a decision.
 
-🔴 **Catalyst polarity is wrong for an "aggressive entry."** The dated event RELEASES >$6B of low-cost-basis stock into the float. Forced selling typically PRECEDES the re-rate, not follows it. The trade only works AFTER the seller is exhausted — which by definition you cannot confirm until post-event.
-🔴 **No deal, no fixed payout, no CVR, no SoP-conglomerate gap.** Unlike a merger-arb or a SoP-break, there is no contractual value the catalyst "resolves to." The $32 target is an analyst-multiple re-rate (street avg target ~$36.88, range $25.25–$63), NOT an event-locked value. So the asymmetry is softer than a true PENDING_HARD arb.
-🔴 **Massive net loss (-$1.40B, EPS -$3.38)** — largely IPO-related SBC/charges, but the GAAP optics keep generalist buyers away and feed the "expensive money-loser" narrative during the exact window supply is hitting.
-🔴 **Dual-class / founder control** — public float holders are price-takers to the insider block's selling cadence.
+## 3. THE CRITICAL NUANCE — THIS IS A SUPPLY DUMP, NOT A RE-RATING TRIGGER
 
-## 4. GREEN FLAGS
+Here is the honest complication, and it is the thing the director must weigh hardest. A normal special
+situation has a catalyst that *lifts* the price on a date (a deal closes, a drug is approved). This
+one is the opposite: August 31 is the date the *largest wave of selling becomes legal*. The event
+itself pushes the price down, or at best sideways under heavy volume, in the days and weeks around it.
+The profit does not come from the unlock firing — it comes from the *absence of forced sellers* in the
+weeks and months *after* the overhang has cleared, once the float has found permanent homes and the
+mechanical seller is finally gone. In other words, the asymmetric entry is on the *far side* of the
+wash-out, not in front of it. Every prior unlock tranche in this schedule (September, December, March)
+"contributed materially to selling pressure and downward price movement." There is no reason to expect
+the biggest tranche to behave differently.
 
-🟢 **The worst of the overhang is mathematically already behind.** Three of four tranches (65% of the locked block) released across Q3'25→Q1'26. The Aug'26 tranche is the LAST one — after it, the structural forced-seller is GONE. "Supply overhang clearing" is a legitimate, dated exhaustion event.
-🟢 **Franchise is intact and reaccelerating** (+46% YoY Q1'26) — this is cheap-and-bad ONLY on IPO-mechanics optics, not on franchise. EV/S 7x vs peers ~19x is a genuine post-washout discount on a top-decile-growth SaaS name.
-🟢 **Defined, near floor.** Live ~$19.12 sits only ~9% above the $17.50 floor and ~13% above the 52-wk low — the downside is tightly bounded and already largely realized.
+## 4. THE VERIFIED DOWNSIDE FLOOR — AND WHY IT IS SOFT
 
-## 5. CATALYST CLASSIFICATION
+The Catalyst-Watch board carries a floor of $17.50. The problem, verified today, is that the stock is
+*already trading at or below that level* (≈$16.84 close, ≈$18.68 intraday). A floor the price has
+already pierced is not a floor — it is a level the market has demonstrated it will trade through under
+supply pressure. The real backstops are:
 
-Dated (Aug 31, 2026 / Q2'26 print) and binding — but it is a supply-RELEASE that must be ABSORBED before the re-rate, with the upside being an analyst-multiple re-rate rather than a contractual payout. This is a **SOFT_EXTENDED / capitulation-watchlist** structure, not a clean PENDING_HARD arb: the forcing function is real but the asymmetry depends on the post-event absorption, which is unconfirmable until it happens. The right posture is WAIT FOR THE FLUSH (the Aug unlock) to clear, then enter on a confirmed exhaustion base — not aggressive entry ahead of $6B of supply.
+- **Cash:** ~$1.6 billion of net cash on ~528 million shares is roughly $3 a share. That is a hard
+  asset floor but a low one — it does not protect $17.
+- **A fundamentals-based floor:** one published discounted-cash-flow model pegs fair value near
+  **$19.70** even on cautious assumptions, and the company is free-cash-flow positive and growing 40%+.
+  That argues the *business* is worth roughly today's price or a little more — which means the downside
+  from here is bounded more by valuation support (~$15–18 on a bad-tape, decel scenario) than by a
+  contractual payout. There is no deal price, cash-tender, or recovery value that hard-caps the loss.
 
-## 6. CAPITAL-ALLOCATION VERDICT (for the director)
+So the floor is real in the sense that a 40%-grower with positive cash flow and net cash will not go to
+zero — but it is *soft*: it sits right where the stock already trades, and a heavy August unlock into a
+weak tape could easily print $13–15 before it stabilizes.
 
-Classify: **PIVOTING** (post-IPO repricing, franchise intact). The single most important thing the director must weigh: this is a forced-seller exhaustion trade whose load-bearing event ADDS supply on a fixed date — you are paid to wait for the Aug'26 unlock to flush, not to front-run it. Floor is real (~$17.50) and downside is bounded (~9%), but the catalyst is bearish-on-arrival, so the asymmetry is a WATCHLIST (B), not an aggressive entry (A). Moat: NARROW-to-WIDE design-collaboration franchise (network/switching costs in collaborative design), but the secular question is real (AI design-tool displacement) — manageable, not terminal, given Figma is itself shipping AI features.
+## 5. RED FLAGS AND GREEN FLAGS
 
-CREDIBILITY_SCORE: 3 | TRAJECTORY: PIVOTING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable
+🔴 The biggest forced-seller wave is still *ahead* (Aug 31), so the supply pressure that has defined the
+stock all year is not yet spent — buying now means standing in front of it.
+🔴 The stated floor has already broken; downside is genuinely open below it on a bad unlock.
+🔴 GAAP net loss of about -$1.40 billion over the trailing year (heavily stock-compensation and
+IPO-driven) makes the headline screen look ugly and can keep generalist buyers away.
+🔴 Sell-side conviction is *falling*, not rising — Wells Fargo cut its target from $42 to $36, RBC from
+$28 to $22 — which weakens the "snap-back to consensus" leg of the bull case.
+
+🟢 The catalyst is genuinely hard-dated and contractual — no slippage risk.
+🟢 The underlying business is high-quality, not cheap-and-bad: ~41% revenue growth, positive free cash
+flow at a 27% margin, ~$1.6 billion net cash, an AI product cycle (Config 2026 launches) that lifted
+guidance.
+🟢 An activist (Findell Capital) is now engaged, pushing cost discipline and focus — a second,
+independent source of potential upside.
+🟢 The math of the overhang is self-extinguishing: after August 31 there is no further contractual
+seller. The single force depressing the price has a known expiry.
+
+## 6. CAPITAL-ALLOCATION VERDICT FOR THE DIRECTOR
+
+The single most important thing to weigh: this is a real, hard-dated, binding catalyst — but it is a
+forced-*selling* event, so the clean asymmetric entry is *after* August 31, 2026, not before it, and
+the published floor has already been breached. The credible play is to wait for the final-unlock
+wash-out to clear the decks, then buy the de-risked, supply-free name into a recovering business. Buying
+in front of the largest unlock, below a floor that has already failed, is taking the supply risk for no
+extra reward. Moat and secular-threat framing are largely beside the point on an event name like this —
+the franchise is fine; the question is purely the supply mechanic and the entry timing.
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

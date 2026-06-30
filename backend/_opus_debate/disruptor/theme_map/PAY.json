@@ -1,0 +1,19 @@
+{
+ "symbol": "PAY",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Bill-pay platform layer; operates the cloud-native payment network connecting billers (utilities, government, healthcare) to consumer payment instruments, replacing legacy lockbox and IVR infrastructure.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ACI",
+  "FISV",
+  "RPAY",
+  "TOST",
+  "FOUR",
+  "IQST"
+ ],
+ "relative_comps": "Paymentus is the fastest-growing at-scale bill-pay specialist with 34% 3-yr CAGR and 33% YoY, well ahead of ACI Worldwide and Fiserv biller solutions which are incumbent/legacy. Its 10% FCF margin is thin but expanding, and the ~$2.6B market cap represents a genuine runway vs. the large undigitized biller base. The load-bearing score is capped at 3 because Fiserv and ACI can replicate the value proposition in verticals where they already have biller relationships; Paymentus is a faster grower but not a chokepoint.",
+ "theme_fit_confidence": "high"
+}

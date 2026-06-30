@@ -1,0 +1,20 @@
+{
+ "symbol": "CALX",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Broadband platform software and systems layer — sells cloud-and-software platform (Calix Cloud) plus access hardware to community broadband providers (telcos, rural ISPs, co-ops), enabling subscriber intelligence and revenue operations.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ADTN",
+  "INFN",
+  "CIEN",
+  "UTSTARcom",
+  "Casa Systems",
+  "VIAV",
+  "ZBRA"
+ ],
+ "relative_comps": "Calix is repositioning from a hardware vendor to a platform-software company serving community broadband operators; 28% YoY growth reflects that mix shift and the rural broadband BEAD tailwind. It competes with Adtran on the hardware side and lacks a direct platform comp, giving it pricing power in a fragmented addressable market. FCF margin at 10% is thin vs. pure-software peers, and the 3Y CAGR of 5% reflects the transitional period; the high YoY acceleration is the key signal.",
+ "theme_fit_confidence": "medium"
+}

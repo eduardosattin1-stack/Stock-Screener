@@ -1,0 +1,19 @@
+{
+ "symbol": "AVGO",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Custom ASIC design + networking silicon (Ethernet switching, PCIe/CXL) — builds hyperscaler-specific AI chips (Google TPU, Meta MTIA) and dominates AI-cluster networking fabrics.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MRVL",
+  "INTC",
+  "MTSI",
+  "CIEN",
+  "ANET",
+  "NVDA"
+ ],
+ "relative_comps": "AVGO is the largest custom-ASIC design house for hyperscalers; its AI revenue run-rate crossed $4B/quarter. Marvell is the closest peer in custom silicon but is smaller (~$1.6B AI revenue) and relies more on merchant silicon. AVGO's VMware acquisition adds software recurring revenue, creating a hybrid profile its pure-play semis peers lack. Trading around 28x forward earnings vs MRVL at 35x, AVGO looks relatively cheaper given its scale and FCF conversion (43% FCF margin).",
+ "theme_fit_confidence": "high"
+}

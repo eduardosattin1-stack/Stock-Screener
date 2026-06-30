@@ -1,62 +1,110 @@
-# AQST — Aquestive Therapeutics — Catalyst Interrogation Dossier
+# AQST — Aquestive Therapeutics, Inc. — Forensic Catalyst Dossier
 
-**Event-driven special situation. Driver: Anaphylm (dibutepinephrine sublingual epinephrine film) FDA approval.**
-Verified live as of 2026-06-22. Live price ~$4.26. Catalyst-board framing: $4.17 → $8.50 target / $2.75 floor, win_prob 0.70, hard date 2026-09-30.
+**Event-driven special situation — FDA approval decision on Anaphylm (sublingual epinephrine film).**
+Verified live as of 2026-06-29.
 
-## 0. HEADLINE — THE BOARD FRAMING IS STALE
+## The headline: the dossier's catalyst is stale
 
-The single most important forensic finding: **the original load-bearing catalyst already FIRED, and it FAILED.** The FDA assigned a PDUFA target action date of **January 31, 2026** for the Anaphylm NDA. On **January 30, 2026, Aquestive received a Complete Response Letter (CRL)** — a rejection — not an approval. The stock fell ~39% on the news (then bounced; the $4.17/$4.26 print is the *post-CRL* re-baselined price, not a pre-decision price).
+The watch-board entry frames this as a hard, dated catalyst — an FDA approval decision on
+2026-09-30 — with the stock at about $4.17 versus a target of $8.50 and a floor of $2.75. That
+framing no longer holds, and the gap matters enormously.
 
-The dossier's "HARD DATE 2026-09-30" is **NOT an FDA decision date.** It is the company's guided **NDA resubmission window (Q3 2026)** — the date Aquestive expects to re-file, not the date the FDA rules. After a Class 2 (major) resubmission, FDA takes a **6-month review clock**, so the *actual* approval decision lands roughly **Q1 2027**, not September 2026. The board's win_prob 0.70 / payoff 3.05x / EV +62% is therefore mis-dated: there is no binary FDA event firing on 2026-09-30. The real binary is ~2 quarters further out and is preceded by a softer, controllable milestone (the resubmission itself).
+What actually happened: the original decision date (the FDA's scheduled action date, in the
+industry called the PDUFA date) was January 31, 2026. The FDA did not approve. On January 30, 2026
+the agency issued a Complete Response Letter — a formal "not yet," sending the application back for
+more work. So the load-bearing event the board is pointing at has, in its original form, already
+fired — and it fired as a rejection, not an approval. There is no FDA decision scheduled for
+September 30, 2026. That date appears to be a placeholder, not a real agency action date.
 
-This reclassifies the catalyst from **PENDING_HARD** (as the board assumed) to **SOFT_EXTENDED** — a real, dated-ish, but serially-rescheduled, single-binary regulatory event whose true decision date is undated and pushed beyond the stated window.
+## What the rejection actually said, and where the path stands now
 
-## 1. IS THE CATALYST REAL, DATED, AND BINDING?
+The good news inside the bad news: the deficiencies were narrow. The FDA did not question the
+science — it asked for additional packaging/human-factors work (how patients open and use the film)
+and one more pharmacokinetic study (how the drug is absorbed). The biology was effectively
+validated; the issues were about delivery and labeling.
 
-- **Real:** Yes. Anaphylm is a genuine NDA with a clear regulatory path. It would be the first needle-free, orally-administered (sublingual film) epinephrine for Type I allergic reactions/anaphylaxis — a differentiated product in a large auto-injector market (EpiPen/neffy). The CRL deficiencies are **narrow and non-fatal**: human factors validation, a single supportive PK study, and packaging/labeling/container-closure. **No CMC issues, no efficacy concerns, no comparability problems** were raised. This is about as benign a CRL as exists — it is fixable, not a dead drug.
-- **Dated:** **Soft.** Resubmission "Q3 2026" is company guidance, not an FDA-bound date. The post-resubmission PDUFA is not yet assigned (estimated ~Q1 2027 on a 6-month Class 2 clock). The 2026-09-30 board date is the resubmission, mislabeled as a decision.
-- **Binding:** The FDA review is binding once a clock is assigned, but the *resubmission* is a company action that has already slipped conceptually (CRL Jan → Type A March → minutes May → resubmit Q3) and could slip again if the HF/PK studies run long.
+The company then ran the standard recovery play:
+- **March 30, 2026 — Type A meeting completed.** The FDA gave preliminary feedback on the
+  pharmacokinetic and human-factors study designs, aligned on labeling to manage chewing rather
+  than demanding new clinical trials, and acknowledged the revised container-opening mechanism.
+  Final meeting minutes were expected by early May 2026.
+- **Q3 2026 — planned NDA resubmission.** Management has repeatedly reaffirmed this. Because the
+  resubmission will include clinical (pharmacokinetic) data, it is a Class 2 resubmission, which
+  triggers a fresh six-month FDA review clock.
+- **~Q1 2027 — the actual re-decision.** Six months after a Q3 filing lands the next binding FDA
+  answer in the first quarter of 2027. Management's own framing: approval expected in Q1 2027,
+  launch into 2027.
 
-## 2. SPONSOR / MANAGEMENT CREDIBILITY ON HITTING IT
+So the next genuinely hard, binding catalyst is roughly two to three quarters out, not 105 days
+out. The only event that lands inside the board's window is the Q3 resubmission filing itself — and
+that is a company-controlled milestone, undated within the quarter, and a step in the process
+rather than the re-rating moment. It would derisk the thesis (the clock starts; the FDA accepts the
+package) but it does not resolve it.
 
-Mixed-to-constructive. Management **missed** the original approval (a CRL is a miss, full stop), but the post-CRL execution has been **orderly and credible**:
-- Completed an **in-person Type A meeting (March 2026)**; FDA aligned on PK and HF study designs and acknowledged the improved container-closure.
-- Reaffirmed Q3 2026 resubmission at Q1 (May 2026) earnings.
-- Crucially **shored up the balance sheet**: closed a **$150M Oaktree debt refinancing (May 12, 2026)** — $55M funded at close (repaid the prior $45M loan), improved rate/interest-only terms, with an additional $20M unlocking *on Anaphylm approval*. This removes the financing-contingency / going-concern overhang that usually mauls a small-cap biotech between a CRL and a resubmission. Combined with **~$110M cash** at Q1 and 2026 revenue guide of **$46–50M**, the company is funded through the studies and the resubmission without a forced equity raise.
+## Sponsor / management credibility on hitting it
 
-So management is **credible on the *process*** (studies, refile, funding), but the **timeline they sell understates the true distance to the binary** — the market-moving event is the post-resubmission approval, which is ~Q1 2027, not Q3 2026.
+Mixed, leaning constructive. The negative: management guided this approval to the original date and
+took a Complete Response Letter — they were wrong on the first attempt, which is exactly the
+credibility hit you weight in a binary-FDA name. The positive: the deficiencies were operational,
+not scientific; the Type A meeting produced concrete alignment (no new efficacy trials, labeling
+agreed) rather than open-ended demands; and the company has held the Q3 resubmission timeline
+steady across multiple public appearances (Oppenheimer conference in February, the Type A release in
+March, the Q1 call in May). For a CRL recovery, "narrow deficiencies + aligned path + reaffirmed
+timeline" is about as good a setup as exists — but it is still a second swing at the same regulator,
+and resubmissions slip.
 
-## 3. VERIFIED DOWNSIDE FLOOR — WHAT ACTUALLY BACKSTOPS THE PRICE
+## The verified downside floor — what actually backstops the price
 
-The board floor is **$2.75**. This is reasonable but should be understood as a *soft* floor, not hard asset value:
-- **Commercial base (real, recurring):** Aquestive is **not a pre-revenue shell**. It has marketed/royalty products — **Sympazan** (clobazam oral film, owned), **Libervant** (diazepam buccal film, tentatively approved, royalties; full US launch gated to Jan-2027 orphan-exclusivity expiry of a competitor), and **PharmFilm** licensing/royalties. Q1-2026 revenue **$14.4M (+66% y/y)**, license+royalty up to $5.4M from $0.8M. FY26 guide $46–50M. This recurring stream is what underpins a floor well above zero even if Anaphylm is delayed.
-- **Balance sheet:** ~$110M cash, $150M Oaktree facility, no near-term forced raise. Going-concern risk is **manageable, not acute.**
-- **The $2.75 floor** ≈ the pre-CRL-bounce / capitulation level — roughly the value of the commercial royalty base + cash minus debt, with Anaphylm written to a low probability. It held on the January CRL flush (stock troughed then bounced to ~$4). It is credible as a 1–1.3x-from-here downside, i.e. ~35% below the live ~$4.26.
+This is the part of the thesis that genuinely improved. The balance sheet, which is usually the
+thing that breaks a small-cap binary before the catalyst, has been materially de-risked:
+- **About $110M cash at the end of Q1 2026**, with management projecting more than $150M of
+  available liquidity at launch when combined funding sources are drawn.
+- **A new $150M debt facility from Oaktree** that refinances costlier obligations, extends the
+  interest-only window, and saves roughly $45M of principal over three years.
+- **An extended RTW strategic funding agreement.**
+- **No going-concern language.** Revenue is growing — Q1 2026 revenue was $14.4M, up 66% year over
+  year, with license-and-royalty revenue up to $5.4M from $0.8M; the adjusted operating-cash loss
+  narrowed to about -$1.7M from -$17.6M a year earlier. 2026 revenue guidance is roughly $46–50M.
 
-**Floor reality check:** the floor is backed by **recurring product/royalty revenue + a funded balance sheet**, not by deal cash or a tender — so it is a *fundamental* floor that can still erode if (a) Anaphylm is rejected a second time, (b) the studies fail or slip badly, or (c) Libervant's 2027 launch disappoints. It is real but breachable, not a contractual backstop.
+So there is a real, cash-generative base business underneath the binary: the existing commercial
+film franchise (Libervant buccal diazepam for seizure emergencies, plus contract manufacturing and
+royalties). The price floor is not "cash minus burn until zero" — it is "a funded company with a
+growing base business and a still-live, narrowly-deficient lead asset." A bear value in the
+$2.75–3.00 area (roughly the 52-week low of $2.93) is defensible as the "resubmission slips or a
+second CRL" outcome; an outright wipe is not on the table at current liquidity.
 
-## 4. RED FLAGS / GREEN FLAGS
+## Red flags
 
-🔴 **Original catalyst FAILED (CRL).** The headline binary the board priced is spent; a CRL is evidence the FDA found the package deficient once already.
-🔴 **The board's hard date is mis-specified.** 2026-09-30 is the *resubmission*, not the decision. True decision ~Q1 2027 → the asymmetry the board models is real but **2 quarters later and undated**, weakening "imminent."
-🔴 **Single-binary, second-attempt regulatory risk.** Resubmissions usually approve when deficiencies are this narrow, but a second CRL would be devastating and is not zero-probability (HF studies are a common re-trip hazard).
-🔴 **Leverage taken on at the CRL trough** — $150M Oaktree facility adds debt service; the equity is now junior to a larger creditor.
-🟢 **CRL deficiencies are narrow and addressable** (HF + 1 PK + packaging; no CMC/efficacy). This is the most favorable CRL category.
-🟢 **FDA alignment achieved** at the Type A meeting on both study designs — the path is de-risked, not contested.
-🟢 **Balance sheet fixed pre-emptively** ($110M cash + Oaktree); no death-spiral dilution forced into the resubmission.
-🟢 **Real recurring revenue base** (Sympazan/Libervant/PharmFilm royalties, +66% y/y) gives a fundamental floor — this is not a binary-or-bust shell.
-🟢 **Differentiated asset** in a large anaphylaxis market; analyst targets $9.33–9.50 reflect approval-case upside roughly double the live price.
+- **The headline catalyst already fired as a rejection.** Anyone underwriting a "September approval"
+  is underwriting a date that does not exist.
+- **Second-swing regulatory risk.** A Class 2 resubmission can itself draw another CRL; the FDA has
+  already said no once.
+- **Timeline is company-controlled and undated within Q3.** Resubmissions slip a quarter routinely;
+  the re-decision then slips with them.
+- **Dilution/financing optics.** The funding is layered (Oaktree debt + RTW + cash) — it removes the
+  going-concern risk but adds leverage and structural complexity, and a launch will need capital.
+- **The in-window "edge" is a filing, not a decision** — limited re-rating power on its own.
 
-## 5. ASYMMETRY
+## Green flags
 
-- Upside-to-target: $4.26 → $8.50 ≈ **+100%** (board's $8.50; street $9.33–9.50 even richer).
-- Downside-to-floor: $4.26 → $2.75 ≈ **−35%**.
-- Raw asymmetry ≈ **2.8:1 up/down** — genuinely attractive IF the catalyst were imminent and binding. The discount is that the up-leg now requires (a) a clean Q3 resubmission AND (b) a clean ~Q1-2027 approval — two gates, the second undated — so the *time-adjusted* asymmetry is weaker than the board's 105-day framing implies.
+- Deficiencies are operational, not scientific — the hard part (does the drug work) is behind it.
+- Concrete FDA alignment from the Type A meeting; no new efficacy trials demanded.
+- Genuinely de-risked balance sheet; no going concern; growing, cash-improving base business.
+- First-and-only oral epinephrine if approved — a real differentiated product, large allergy market.
+- Sell-side still constructive (average target near $8.89), so a clean resubmission + acceptance
+  could re-rate the stock well before the 2027 decision.
 
-## 6. CAPITAL-ALLOCATION VERDICT
+## Capital-allocation verdict (for the director)
 
-The thesis is **alive but mis-timed**. This is a real, differentiated asset with a fixable CRL, FDA-aligned path, a funded balance sheet, and a fundamental (revenue-backed) floor — a legitimate special situation. But the board has it priced as a 105-day PENDING_HARD binary, and the verification shows the binary already fired once (CRL), the next true decision is ~Q1 2027 and undated, and the 2026-09-30 date is merely the resubmission. That moves it from "aggressive-entry, imminent" to "real thesis, wait for the resubmission to land / clock to be assigned." Single most important thing the director must weigh: **the catalyst is two gates and ~2 undated quarters away, not one hard date in 105 days — size for SOFT_EXTENDED, not PENDING_HARD.**
+The single most important thing to weigh: **the binding catalyst is not in the window.** The
+original decision fired as a CRL; the real re-decision is ~Q1 2027, and the only near-term event is
+a company-controlled Q3 resubmission that starts the clock rather than resolving it. Treat this as a
+soft, non-binding, serially-extendable setup for now — the asymmetry to the eventual approval is
+real and the floor is genuinely funded, but the timing edge the funnel is built to harvest does not
+exist at the 105-day horizon. This is a watch-for-the-filing name, not an imminent-decision name.
 
-Moat/secular are largely N/A for an event name; scoring the EVENT credibility: the asset and path are credible, but the catalyst is *post-failure, second-attempt, and undated* — that caps event-credibility at the middle of the range.
+Moat and secular-threat dimensions are largely not applicable — this is an event-driven biotech, not
+a compounding franchise. The "moat" such as it is rests on a proprietary film-delivery platform and
+first-mover oral-epinephrine position, neither of which is the load-bearing variable here.
 
-CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: none
+CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none

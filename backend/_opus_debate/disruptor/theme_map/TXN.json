@@ -1,0 +1,19 @@
+{
+ "symbol": "TXN",
+ "themes": [
+  "ai_infrastructure",
+  "energy_transition"
+ ],
+ "value_chain_position": "Analog and embedded processor semiconductors — sells power management, signal conditioning and MCU silicon into automotive, industrial, data-center power and communications end-markets.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "maturing",
+ "true_competitors": [
+  "ADI",
+  "NXPI",
+  "STM",
+  "ON",
+  "MCHP"
+ ],
+ "relative_comps": "TXN is the largest pure-play analog semiconductor company; its industrial and automotive exposure (~65% of revenue combined) gives it energy-transition linkage via EV/grid applications, but it is not a high-growth AI play — 3-year revenue CAGR is negative (-4%). The company is in a heavy capex investment cycle (300mm fab buildout) that is compressing near-term FCF. Analog Devices is the closest peer; both trade at similar 25-28x forward earnings multiples. TXN's competitive moat is broad product breadth and customer stickiness, not a chokepoint position.",
+ "theme_fit_confidence": "medium"
+}

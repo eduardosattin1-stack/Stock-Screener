@@ -1,0 +1,522 @@
+[
+ {
+  "symbol": "BLSH",
+  "name": "Bullish",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 4079340507,
+  "price": 26.9,
+  "volume": 1544437,
+  "gates": {
+   "ttm_fcf": 44793000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.4979,
+   "rev_yoy": -0.1343,
+   "ttm_revenue": 216526614000,
+   "fcf_margin": 0.0002,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9281208670507274,
+   "adv_usd": 41545355.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "ATEN",
+  "name": "A10 Networks, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2228343516,
+  "price": 30.95,
+  "volume": 1108433,
+  "gates": {
+   "ttm_fcf": 51367000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.012,
+   "rev_yoy": 0.1208,
+   "ttm_revenue": 299420000,
+   "fcf_margin": 0.1716,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.232006422323109,
+   "adv_usd": 34306001.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "MSFT",
+  "name": "Microsoft Corporation",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2996702946300,
+  "price": 403.41,
+  "volume": 34131015,
+  "gates": {
+   "ttm_fcf": 72916000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1242,
+   "rev_yoy": 0.1787,
+   "ttm_revenue": 318273000000,
+   "fcf_margin": 0.2291,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.12370682577043078,
+   "adv_usd": 13768792761.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "PLTR",
+  "name": "Palantir Technologies Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 303241964900,
+  "price": 132.07,
+  "volume": 38476415,
+  "gates": {
+   "ttm_fcf": 2689275999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3292,
+   "rev_yoy": 0.6771,
+   "ttm_revenue": 5224174000,
+   "fcf_margin": 0.5148,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.0338883453443422,
+   "adv_usd": 5081580129.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "PANW",
+  "name": "Palo Alto Networks, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 177547330128,
+  "price": 260.52,
+  "volume": 7555091,
+  "gates": {
+   "ttm_fcf": 4293700000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1879,
+   "rev_yoy": 0.1951,
+   "ttm_revenue": 10606300000,
+   "fcf_margin": 0.4048,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.18089769710440204,
+   "adv_usd": 1968252307.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "CRWD",
+  "name": "CrowdStrike Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 164176489363,
+  "price": 644.93,
+  "volume": 3733831,
+  "gates": {
+   "ttm_fcf": 1452139000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2901,
+   "rev_yoy": 0.2317,
+   "ttm_revenue": 5094200000,
+   "fcf_margin": 0.2851,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -11.148531239542999,
+   "adv_usd": 2408059627.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "FTNT",
+  "name": "Fortinet, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 101391210830,
+  "price": 138.39,
+  "volume": 7651243,
+  "gates": {
+   "ttm_fcf": 2435500000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1546,
+   "rev_yoy": 0.1575,
+   "ttm_revenue": 7109500000,
+   "fcf_margin": 0.3426,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6625234971419803,
+   "adv_usd": 1058855519.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "OKTA",
+  "name": "Okta, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 19927755200,
+  "price": 119.96,
+  "volume": 4035146,
+  "gates": {
+   "ttm_fcf": 938000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1625,
+   "rev_yoy": 0.1175,
+   "ttm_revenue": 2996000000,
+   "fcf_margin": 0.3131,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.110759493670886,
+   "adv_usd": 484056114.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "GEN",
+  "name": "Gen Digital Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 15042776980,
+  "price": 24.97,
+  "volume": 5803221,
+  "gates": {
+   "ttm_fcf": 1523000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1466,
+   "rev_yoy": 0.2706,
+   "ttm_revenue": 5000000000,
+   "fcf_margin": 0.3046,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.0374951681484346,
+   "adv_usd": 144906428.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "KSPI",
+  "name": "Joint Stock Company Kaspi.kz",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 14841129475,
+  "price": 78.1,
+  "volume": 784194,
+  "gates": {
+   "ttm_fcf": 696142000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.4582,
+   "rev_yoy": 0.5095,
+   "ttm_revenue": 4214281599000,
+   "fcf_margin": 0.1652,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.24708399033997985,
+   "adv_usd": 61245551.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "NTNX",
+  "name": "Nutanix, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 13716036800,
+  "price": 50.74,
+  "volume": 3588228,
+  "gates": {
+   "ttm_fcf": 770884000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1709,
+   "rev_yoy": 0.1304,
+   "ttm_revenue": 2749734000,
+   "fcf_margin": 0.2803,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.3669138529504576,
+   "adv_usd": 182066689.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "RELY",
+  "name": "Remitly Global, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 3865901429,
+  "price": 18.36,
+  "volume": 4925080,
+  "gates": {
+   "ttm_fcf": 252366000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3576,
+   "rev_yoy": 0.2727,
+   "ttm_revenue": 1726325000,
+   "fcf_margin": 0.1462,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -4.127773791310705,
+   "adv_usd": 90424469.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "VRNS",
+  "name": "Varonis Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 3814702303,
+  "price": 32.48,
+  "volume": 989446,
+  "gates": {
+   "ttm_fcf": 119538000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.096,
+   "rev_yoy": 0.1515,
+   "ttm_revenue": 660235000,
+   "fcf_margin": 0.1811,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.6025251931145355,
+   "adv_usd": 32137206.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "DLO",
+  "name": "DLocal Limited",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 3492632757,
+  "price": 11.9,
+  "volume": 2497212,
+  "gates": {
+   "ttm_fcf": 399509530,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3769,
+   "rev_yoy": 0.5581,
+   "ttm_revenue": 1212690000,
+   "fcf_margin": 0.3294,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -3.095935646788624,
+   "adv_usd": 29716823.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "CLBT",
+  "name": "Cellebrite DI Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 3237728825,
+  "price": 12.98,
+  "volume": 3086980,
+  "gates": {
+   "ttm_fcf": 154039000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2068,
+   "rev_yoy": 0.1843,
+   "ttm_revenue": 496427000,
+   "fcf_margin": 0.3103,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9412343918442877,
+   "adv_usd": 40069000.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "WIX",
+  "name": "Wix.com Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2654390450,
+  "price": 48.22,
+  "volume": 1712062,
+  "gates": {
+   "ttm_fcf": 539675600,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1283,
+   "rev_yoy": 0.1356,
+   "ttm_revenue": 2060564000,
+   "fcf_margin": 0.2619,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -3.342741277012683,
+   "adv_usd": 82555630.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "AVPT",
+  "name": "AvePoint, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2243141934,
+  "price": 10.58,
+  "volume": 1454674,
+  "gates": {
+   "ttm_fcf": 104865999,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2177,
+   "rev_yoy": 0.2712,
+   "ttm_revenue": 443675000,
+   "fcf_margin": 0.2364,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -7.841875364006989,
+   "adv_usd": 15390451.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "PAYO",
+  "name": "Payoneer Global Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2139237810,
+  "price": 6.39,
+  "volume": 51701920,
+  "gates": {
+   "ttm_fcf": 215375000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1882,
+   "rev_yoy": 0.0719,
+   "ttm_revenue": 1067751999,
+   "fcf_margin": 0.2017,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.2450610912407882,
+   "adv_usd": 330375269.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "SPSC",
+  "name": "SPS Commerce, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2020299991,
+  "price": 55.03,
+  "volume": 624927,
+  "gates": {
+   "ttm_fcf": 166922000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1857,
+   "rev_yoy": 0.1379,
+   "ttm_revenue": 762077000,
+   "fcf_margin": 0.219,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.823382127422278,
+   "adv_usd": 34389733.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "VRT",
+  "name": "Vertiv Holdings Co",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 111207184408,
+  "price": 289.52,
+  "volume": 11102068,
+  "gates": {
+   "ttm_fcf": 2309500000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2159,
+   "rev_yoy": 0.2895,
+   "ttm_revenue": 10843400000,
+   "fcf_margin": 0.213,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.44361190344416535,
+   "adv_usd": 3214270727.0
+  },
+  "themes_hint": [
+   "energy_transition",
+   "robotics_automation"
+  ]
+ }
+]

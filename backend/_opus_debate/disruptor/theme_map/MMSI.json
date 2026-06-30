@@ -1,0 +1,19 @@
+{
+ "symbol": "MMSI",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Manufactures single-use cardiovascular and endoscopy procedural devices (catheters, balloons, access systems); sells consumables per procedure to hospitals and ASCs.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "BSX",
+  "BDX",
+  "Teleflex (TFX)",
+  "Avanos Medical (AVNS)",
+  "Nordson (NDSN)",
+  "AngioDynamics (ANGO)"
+ ],
+ "relative_comps": "Merit Medical sits in the mid-tier of cardiovascular single-use devices — growing through geographic expansion and portfolio breadth rather than platform lock-in. Its 10% revenue CAGR and consistent FCF generation are solid but not differentiated against larger peers like BSX which have wider distribution and R&D firepower. Load-bearing score of 3 reflects moderate switching costs (procedural familiarity, physician preference) but no dominant platform position. Versus Teleflex and AngioDynamics, MMSI trades at a slight premium given faster growth.",
+ "theme_fit_confidence": "medium"
+}

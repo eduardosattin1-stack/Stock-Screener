@@ -1,0 +1,19 @@
+{
+ "symbol": "WDAY",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Enterprise HR and financial management platform layer — sells the cloud-native ERP system of record (HCM, Financial Management, Planning) to large enterprises, embedding AI-driven workforce analytics and financial close automation.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "SAP",
+  "ORCL",
+  "INTU",
+  "CERIDIAN (DAY)",
+  "UKG (private)",
+  "ServiceNow"
+ ],
+ "relative_comps": "Workday is the premier independent cloud HR/Finance platform with 13% YoY growth and 30% FCF margin, competing directly against SAP SuccessFactors and Oracle HCM in the enterprise segment. Its 3Y CAGR of 15% and sticky renewal economics (NRR >100%) support a premium multiple. Leverage (net funded debt/EBITDA ~1.9x) is slightly elevated but manageable; ServiceNow is an expansion threat in workflows. The fintech_rails tag reflects the Financial Management Cloud acting as a toll-taker on enterprise treasury and close workflows.",
+ "theme_fit_confidence": "medium"
+}

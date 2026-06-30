@@ -1,0 +1,18 @@
+{
+ "symbol": "ISRG",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Designs, manufactures, and sells the da Vinci robotic surgery platform; earns upfront system revenue plus high-margin consumable instruments and service contracts per procedure.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "Medtronic Hugo (MDT)",
+  "CMR Surgical (private)",
+  "Asensus Surgical (ASXC)",
+  "Moon Surgical (private)",
+  "Verb Surgical (GOOG/JNJ)"
+ ],
+ "relative_comps": "Intuitive Surgical is the canonical chokepoint in surgical robotics — it owns ~80% of installed robotic surgery globally, and its consumable blade creates a per-procedure toll on every da Vinci case. Revenue CAGR of 17.4% and 21.4% YoY growth at $10.6B scale is exceptional; FCF margin of 27% is best-in-class. Medtronic's Hugo is the only credible near-term competitor, but Hugo is years behind in installed base and procedure training. ISRG is transitioning to da Vinci 5 (with improved force feedback and multi-quadrant capability), widening the technology gap. Load-bearing score of 5 — no route around ISRG for hospitals seeking a proven robotic surgery platform.",
+ "theme_fit_confidence": "high"
+}

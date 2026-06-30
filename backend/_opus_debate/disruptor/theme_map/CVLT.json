@@ -1,0 +1,19 @@
+{
+ "symbol": "CVLT",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Data protection and cyber resilience platform layer — sells enterprise backup, recovery, and data security software (Commvault Cloud, Metallic SaaS) that protects the data layer of every AI and cloud deployment from ransomware and data loss.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "RUBRIK (RBRK)",
+  "COHESITY (private)",
+  "Veeam (private)",
+  "ZERTO (acquired by HPE)",
+  "VERITAS (private)",
+  "DDUP"
+ ],
+ "relative_comps": "Commvault is the incumbent enterprise data protection vendor transitioning to a cloud/SaaS model (Metallic), competing against fast-growing pure-cloud challengers Rubrik and Cohesity. 19% YoY growth and 20% FCF margin are improving but lag Rubrik's growth trajectory; its multicloud/hybrid coverage and air-gap recovery capabilities are the key differentiators in the AI era where data integrity is mission-critical. The ai_infrastructure tag reflects data protection as a required infrastructure layer for every AI deployment.",
+ "theme_fit_confidence": "medium"
+}

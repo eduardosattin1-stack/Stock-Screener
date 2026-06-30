@@ -1,38 +1,40 @@
-# CLVT — Clarivate Plc — Interrogator Dossier (Event-Driven Special Situation)
+# Clarivate Plc (CLVT) — Event-Driven Dossier
 
-**Frame:** This is judged as an EVENT, not a franchise. The Catalyst-Watch board labels the driver "activist process / board-or-sale," undated, live $2.21 vs target $6.17 / floor $1.42 (SoP R:R 5.02, edge H, WATCH/staging). The forensic question is not whether Clarivate is a good business — it is plainly a levered, slow-decay information-services compounder-in-reverse — but whether the load-bearing catalyst is REAL, DATED, BINDING, and backed by a verified downside floor.
+*Prepared by the Interrogator, applied to the EVENT rather than the franchise. Capital is real.*
 
-## 1. WHAT THE CATALYST ACTUALLY IS (correction to the dossier label)
+## What this name actually is
 
-The board tag "activist process" is **inaccurate as verified**. There is **no verified activist campaign** (no Jana / Starboard / Third Point 13D, no proxy contest; the May 14, 2026 AGM re-elected all 10 directors with 9/10 independent and no dissident slate). The real, load-bearing catalyst is a **company-initiated portfolio rationalization** announced **February 24, 2026**: Clarivate is **actively running a sale process for its Life Sciences & Healthcare (LS&H) segment**, with **Morgan Stanley as financial advisor** and **multiple parties in due diligence**. Proceeds are earmarked to **reduce leverage**. So the event is a **management-run divestiture + deleveraging re-rate**, not a third-party-forced activist outcome. That distinction matters for credibility (self-help is more controllable than waiting on an activist) but also for the floor (a melting-base company with 4x+ leverage).
+Clarivate sells scientific and intellectual-property data and software — patent databases, academic citation tools (Web of Science), and drug-pipeline intelligence. On the numbers it screens as cheap-and-bad by design: revenue is shrinking (about $2.46 billion in 2025, down roughly 4% from $2.56 billion in 2024), the company posted a net loss, and it carries a heavy debt load of roughly $4.5 billion against a stock-market value of only about $1.4 billion. The shares have collapsed from the high-$4s a year ago to roughly $2 today (52-week range about $1.66 to $4.77). The thesis here is not quality or compounding. It is whether a self-directed turnaround-and-asset-sale process can close the gap between a near-distressed price and a sum-of-the-parts value that the segments plausibly support.
 
-## 2. CATALYST: REAL, DATED, BINDING?
+## The catalyst — is it real, dated, and binding?
 
-- **REAL:** Yes. Confirmed by the Feb 24, 2026 FY2025 release and reaffirmed on the Q1 2026 call (Apr 29, 2026): "we are actively pursuing the sale of the Life Sciences and Healthcare business as part of a broader portfolio rationalization effort," with "multiple interested parties" in diligence. Morgan Stanley engaged. This is a genuine, advisor-backed process — not vaporware.
-- **DATED:** **No.** Management explicitly gave **no timeline** and stated "there can be no assurances that the sale process will result in a transaction." On Q1 they said only that "if an agreement is reached… a revision to guidance may be necessary later this year." That is an undated, conditional, single-binary outcome.
-- **BINDING:** **No.** No signed SPA, no announced price, no regulatory step initiated. It is a process, not a deal. The June 5–8, 2026 8-K was an **executive departure** (IP-segment president Mourad), **not** a deal-firing event. As of the latest filings the process remains **open and undated**.
+The catalyst dossier labels this an "activist process." That label is loose and I want to correct it up front: I found no public 13D activist campaign (no Elliott, Starboard, Jana, or Sachem Head filing) targeting Clarivate. What is real, and verified, is a management-led strategic review with two moving parts:
 
-**Verdict on status: SOFT_EXTENDED.** A real, company-run, advisor-engaged sale process — but undated, non-binding, single-binary, with management hedging on outcome. It is materially better than vaporware but does NOT meet the PENDING_HARD bar (dated + binding + inside-window).
+1. **A sale of the Life Sciences & Healthcare (LS&H) segment.** On February 24, 2026 Clarivate confirmed it is "exploring" a sale of LS&H — its smallest segment, about $390 million of 2025 revenue (roughly 16% of the company) — and has retained Morgan Stanley as financial advisor, with the company "engaged in active discussions with interested parties." Proceeds would go to cutting the $4.5 billion debt pile. Crucially, the company added the standard hedge: "there can be no assurance" a transaction occurs, and it will not comment further. As of late June 2026 there is **no signed agreement and no date** — it has been in "active discussions" for roughly four months.
 
-## 3. SPONSOR / MANAGEMENT CREDIBILITY ON HITTING IT
+2. **A broader Value Creation Plan** launched in early 2025: shift from one-off transactional revenue to subscriptions, lift the adjusted-EBITDA (a rough cash-earnings proxy) margin by about 200 basis points, and grow free cash flow toward roughly $400 million in 2026 (2026 guidance: revenue $2.30–2.42 billion, adjusted EBITDA $980 million–$1.04 billion, free cash flow $365–435 million).
 
-Mixed. (+) Self-help is within management's control; advisor engaged; LS&H ($389.8M 2025 rev, ~16% of total) is a clean, separable asset with strategic-buyer appeal. (+) FCF is improving — guided to ~$400M at 2026 midpoint, up ~10% — funding deleveraging even without a sale. (–) Track record of value destruction: the stock is ~$2 against a multi-year decline; revenue fell 4.0% to $2,455.2M in 2025; LS&H itself is shrinking (–6.9% YoY). (–) Repeated portfolio churn (prior divestitures already dented revenue). Management is credible on RUNNING a process; the open question is PRICE and TIMING, both of which they have declined to commit to.
+So the honest read on the catalyst: it is a genuine, sponsor-backed process, but it is **undated, non-binding, and single-binary** — exactly the profile of a soft catalyst, not a hard, scheduled event with a contractual payout. There is no PDUFA date, no merger close timeline, no proxy deadline forcing a re-rate on a known day.
 
-## 4. VERIFIED DOWNSIDE FLOOR (what actually backstops the price)
+## The downside floor — what actually backstops the price?
 
-This is the crux. Net debt ~$4.3–4.5B against ~$1.0B adj EBITDA → net leverage ~4.0x on management's Q1 framing (a stressed 7.7x figure was cited earlier on a different basis). Equity is a thin sliver under a large debt stack, so the floor is **leverage-sensitive**, not cash-backed.
-- **No-sale / process-fails floor (~$1.42):** RemainCo still generates ~$1.0B EBITDA and ~$400M FCF; at a depressed ~6.5–7x EV/EBITDA on the whole company less ~$4.4B net debt, equity pencils to roughly **$1.40–1.90/share** — i.e. the $1.42 floor is a credible *bear* value, NOT a hard cash floor. If credit markets tighten or LS&H decay accelerates, the equity sliver compresses fast.
-- The floor is **REAL but SOFT** — it rests on the business continuing to throw off FCF and on debt not re-pricing, not on a contractual backstop or net cash. Defined-ish, but thinner than a deal-break floor in a signed-merger arb.
+This is where the asymmetry lives, and also where the risk lives. The floor is **not** a deal-break price (there is no deal) and **not** net cash (the company is heavily levered, not cash-rich). The floor is the equity stub's residual value after debt — and with $4.5 billion of debt against about $1 billion of EBITDA, the equity is thin and leverage-sensitive. The Catalyst-Watch board's floor of about $1.42 is plausible as a stressed-equity value if revenue keeps eroding and leverage stays near 4.5x, but it is a soft, model-derived floor, not a contractual backstop. If a recession or further organic decline pushes EBITDA down and the LS&H sale slips, the equity can keep falling — there is no hard line in the sand. The verified-floor question therefore gets an uncomfortable answer: the floor is real-ish but soft, and it depends on the very deleveraging the catalyst is supposed to deliver.
 
-## 5. RED FLAGS / GREEN FLAGS
+## Red flags
 
-🔴 High leverage (~4x net, with a 7.7x stressed read) on a **declining-revenue** base — the classic value-trap setup if the catalyst slips. 🔴 Catalyst is undated + non-binding + single-binary ("no assurances"). 🔴 LS&H itself is shrinking (–6.9%), pressuring sale price. 🔴 Secured-note maturity wall (July 2028) — manageable now but a clock. 🔴 The board label "activist" overstates external pressure; there is no activist forcing function.
-🟢 Real, advisor-run process with multiple parties in diligence. 🟢 FCF improving (~$400M 2026E, +10%), self-funding deleveraging even absent a sale. 🟢 Clean, separable asset (LS&H ~16% of rev). 🟢 A successful sale at a fair multiple plus the leverage re-rate is the mechanism that takes a ~$2 equity sliver toward $4–6 — genuine asymmetry if it fires.
+- **Going-concern-adjacent leverage.** ~4.5x net debt to EBITDA on a shrinking top line. Not an imminent maturity wall, but no margin for error.
+- **Serial-slippage risk on the sale.** "Active discussions" with a "no assurance" disclaimer, four months in, no terms. This is the classic profile of a process that can quietly extend.
+- **Organic revenue still declining.** Q4 2025 showed a *widening* organic decline; the subscription pivot is deliberately trading growth away, which can mask continued underlying erosion.
+- **Loss-making at the bottom line** with the re-rate dependent on self-help execution, not a third-party bid that's already on the table.
 
-## 6. CAPITAL-ALLOCATION VERDICT (for the Director)
+## Green flags
 
-The single most important thing to weigh: **the asymmetry is real but the catalyst is UNDATED and the floor is leverage-soft.** This is a SOFT_EXTENDED special-sit, not a PENDING_HARD dated arb. The spread (≈$2 → $6 board target) is wide because the equity is a deleveraging call option on a levered, slowly-melting information franchise — cheap-and-bad by design. Size it as a **staged WATCH** position, not an aggressive full-conviction entry: the thesis needs a *dated, binding* trigger (a signed LS&H SPA with a number) to graduate to PENDING_HARD. Until then the loss is bounded by a soft ~$1.42 bear value, not a hard floor.
+- Real free-cash-flow generation (~$365–435 million guided for 2026) against a ~$1.4 billion market cap — a high free-cash-flow yield if the business merely stabilizes.
+- A credible advisor (Morgan Stanley) and a coherent deleveraging logic — selling the smallest, most transactional segment to fix the balance sheet is the right move, not a value-destroying fire sale of the crown jewels (the IP and Academia data franchises stay).
+- Sum-of-the-parts genuinely exceeds the stub price: the durable IP and Academia & Government data businesses, valued on data-subscription peer multiples, comfortably clear the enterprise value even before any LS&H premium.
 
-Moat / secular are largely N/A for an event funnel, but for completeness: NARROW intangible/switching-cost moat (proprietary scientific/IP data), ERODING (revenue and LS&H both declining); the secular threat is AI-displacement of static data/analytics products — material, not yet terminal. These reinforce that the cheapness is partly a melting-base, which is why the floor must be respected.
+## Verdict for the director
 
-CREDIBILITY_SCORE: 3 | TRAJECTORY: PIVOTING | MOAT: NARROW | MOAT_TREND: ERODING | SECULAR_THREAT: material
+The event is real but soft. The IP and Academia segments are sticky, switching-cost-heavy data franchises — a narrow but real moat — but the consolidated picture is a shrinking, over-levered base, so I will not credit a wide moat. The catalyst carries the thesis, and the catalyst is undated. Size for a soft, asymmetric special situation, not for an imminent hard date.
+
+CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: ERODING | SECULAR_THREAT: manageable

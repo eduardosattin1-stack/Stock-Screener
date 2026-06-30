@@ -1,0 +1,19 @@
+{
+ "symbol": "PCTY",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Mid-market HCM and payroll platform layer — sells cloud-native HR, payroll, and benefits administration to US mid-market employers (20-1000 employees), earning float income plus software and payment-processing fees.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "PAYX",
+  "ADP",
+  "CERIDIAN (DAY)",
+  "INTU (QuickBooks Payroll)",
+  "Gusto (private)",
+  "BAMBE"
+ ],
+ "relative_comps": "Paylocity competes directly with Paychex and ADP in the mid-market HCM segment with a more modern UX and superior NPS; 15% YoY growth and 27% FCF margin reflect stable compounding with payroll float income contributing defensively. Growth is moderating from its post-COVID 23% CAGR peak. The fintech_rails tag is justified by payroll float and benefits payment-rail economics; load-bearing score is 3 because ADP/Paychex and Gusto offer credible alternatives at the margin.",
+ "theme_fit_confidence": "medium"
+}

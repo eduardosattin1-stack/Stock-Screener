@@ -1,0 +1,19 @@
+{
+ "symbol": "AMD",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "AI GPU/accelerator chip design (MI series) + CPU for servers — the primary credible alternative to NVDA in AI compute with growing data-center CPU share.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "NVDA",
+  "INTC",
+  "QCOM",
+  "GOOGL",
+  "AMZN",
+  "TSM"
+ ],
+ "relative_comps": "AMD is the clearest NVDA challenger but trails decisively on software (ROCM vs CUDA) and installed base; its MI300X has found traction with Microsoft Azure and Meta for inference workloads. Data-center revenue grew 69% YoY most recently but remains ~10% of NVDA's scale. AMD's CPU franchise (EPYC) is a genuine market-share gainer vs Intel in server CPUs. AMD trades at ~40x forward earnings — similar to NVDA despite much smaller AI scale — pricing in a share-gain narrative that is still unproven at hyperscaler training workloads.",
+ "theme_fit_confidence": "high"
+}

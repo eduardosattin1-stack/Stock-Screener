@@ -1,50 +1,55 @@
-# KBR Inc (KBR) — Catalyst Interrogation Dossier
+# KBR, Inc. (KBR) — Event-Driven Special Situation Dossier
 
-**Frame:** Event-driven special situation. The thesis is NOT KBR's franchise quality or compounding — it is the SPREAD between the live ~$32.62 price and the event-resolved sum-of-the-parts value unlocked by the **tax-free spin-off of Mission Technology Solutions (MTS)** into a standalone public company. The catalyst, not the moat, carries the thesis.
+**Setup:** Sum-of-the-parts spin-off. KBR is splitting itself in two. The thesis is the gap between today's blended price (~$33) and what the two halves are worth once they trade separately and each gets valued against its own peer group.
 
----
+## 1. THE EVENT — what is being separated
 
-## 1. THE CATALYST — IS IT REAL, DATED, AND BINDING?
+On September 24, 2025, KBR's board unanimously approved a plan to spin off its Mission Technology Solutions business (the government-services arm — national security and space, roughly $5.8 billion in annual revenue and ~20,000 employees) into a separate, independent, publicly traded company. What remains — "New KBR" — keeps the Sustainable Technology Solutions business, a high-margin licensing and process-technology franchise (ammonia, chemicals, refining, clean-energy / circular-economy process tech, with 85-plus licensed processes).
 
-**Real:** YES. On **September 24, 2025**, KBR's Board **unanimously approved** the strategic intent to spin off its Mission Technology Solutions segment into an independent, publicly traded company. This is a confirmed, board-sanctioned corporate action, reiterated in the FY2025 10-K, an 8-K (Exhibit 99, 09/24/2025), and a dedicated spin-off investor presentation. Stuart Bradie continues as Chair/CEO of "New KBR" (Sustainable Technology Solutions); Shad Evans was named CFO effective Jan 5, 2026 — a leadership slate consistent with management committing to execution.
+The logic is a classic conglomerate-discount unlock: a slow-growth-but-stable government services contractor and a high-margin, IP-driven energy-transition technology licensor do not belong in the same wrapper. Each appeals to a different buyer, and the market currently values the bundle at a single blended multiple (~10x EBITDA, ~10-11x earnings) that flatters neither. Split apart, the defense-services half can be valued against CACI, Leidos and Booz Allen, and the technology half against process-tech and clean-energy peers that trade richer.
 
-**Structure:** Tax-free to KBR and shareholders for U.S. federal income-tax purposes (subject to IRS opinion). Creates two pure-plays:
-- **New KBR (STS):** ~85 proprietary process technologies; energy transition / ammonia / chemicals / refining / circular economy. Capital-light, licensing-driven, high-margin, robust FCF.
-- **SpinCo (MTS):** Government services — national security & space; long-duration diversified contracts, predictable cash flow, strong backlog.
+## 2. CATALYST STATUS — is it real, dated, and binding?
 
-**Dated?** **PARTIALLY.** The company guides completion to **"mid-to-late 2026"** — a stated, management-committed window, but **no record date or effective date has been published yet**, and the **Form 10 has not yet been declared effective** (it is the gating regulatory step and is listed as the key 2025–26 catalyst). So the catalyst is hard-intent + an explicit calendar window, but the precise effective date remains undeclared. This places it just short of a fully PINNED hard date — it is a binding, board-approved, in-window separation pending the Form 10 effectiveness, not an undated aspiration.
+This is the strongest part of the case. The catalyst is no longer a vague "strategic intent." As of the most recent disclosures it is a firm, scheduled corporate event with a named completion date and a named management team:
 
-**Binding?** A board-approved tax-free spin is among the most reliable catalysts in the special-sit playbook: no acquirer financing contingency, no antitrust second-request risk, no third-party counterparty. The primary execution risks are timing slippage (Form 10 review, audited carve-out financials, capital structure / debt allocation between the two entities) and a soft market window for the spun-off equity — NOT deal-break risk in the M&A sense.
+- **Completion date: January 4, 2027.** The separation is scheduled to take effect on that date — a hard, dated event roughly six months out.
+- **June 25, 2026:** KBR named the leadership of the spun-off company — Michael LaRouche (from Serco North America, ex-SAIC/Raytheon/Lockheed) as CEO-designate and Nicholas Veasey (ex-MAG Aerospace CFO) as CFO-designate. Naming the standalone executive team is a concrete step that companies take only when a spin is genuinely proceeding, not stalling.
+- **July 1, 2026 / September 24, 2026:** Veasey and LaRouche join, respectively, to stand up the independent company ahead of launch.
+- **Earnings-call confirmation:** management has reaffirmed the separation is proceeding on schedule.
 
-## 2. SPONSOR / MANAGEMENT CREDIBILITY
+The remaining gates are the customary, low-drama ones for a tax-free U.S. spin: a favorable IRS private-letter ruling / tax opinion, the effectiveness of the Form 10 registration statement with the SEC, and final board sign-off. None of these is a regulatory antitrust hurdle or a financing contingency — there is no acquirer, no second request, no deal that can be voted down. The risk here is *slippage*, not *failure*.
 
-KBR is a profitable, cash-generative, investment-grade-adjacent operator (TTM revenue $7.69B, net income ~$400M, EPS $3.13, $0.66 dividend). This is not a going-concern or financing-contingent situation. Management has already named the post-spin leadership and CFO and reaffirmed the timeline through the FY2026 proxy cycle. A director **purchased 3,000 shares in May 2026** — an insider buying into the discount, a modest green flag on management's own conviction in the unlock. Credibility on *executing the spin* is HIGH; the only soft spot is *precision of timing* (mid-to-late 2026 is a quarter-band, not a date).
+One timing nuance worth flagging honestly: the original September 2025 guidance said "mid-to-late 2026," and the date has since moved to early January 2027 — a roughly one-quarter slip. That is mild for a spin of this size, and the appointment of the standalone leadership team in June 2026 reads as the company de-risking the timeline rather than letting it drift indefinitely. It is a real, dated, binding event inside a defined window.
 
-## 3. VERIFIED DOWNSIDE FLOOR — WHAT ACTUALLY BACKSTOPS THE PRICE
+**Verdict on the event: a hard, dated catalyst (a firm, scheduled event).** Not an already-fired re-rate, not a non-binding soft promise.
 
-The floor here is NOT a deal-break cash value (no acquirer); it is the **standalone going-concern value of the combined business if the spin slips or the market refuses to re-rate the parts.** KBR already generates ~$7.7B revenue, ~$1.05B combined segment adjusted EBITDA (MTS $571M @ 10% margin + STS $479M @ 22% margin), positive net income, and pays a dividend. At the live ~$32.62 (market cap ~$4.14B, fwd P/E ~7.95), the stock trades near its **52-week LOW ($29.94)** and ~39% off its 52-week high ($53.50). The downside floor of **~$33.20** is essentially current trading; the harder support is the $29.94 low / ~7-8x forward earnings, a multiple that already prices in the *failure* to unlock SoP value. The asymmetry comes from the fact that you are buying at the trough multiple with the unlock optionality nearly free.
+## 3. THE FLOOR — what actually backstops the price if the event disappoints
 
-## 4. SUM-OF-THE-PARTS (the event-resolved target)
+The downside here is unusually well-defined for a special situation, because there is no deal to break — the two businesses keep operating regardless. The floor is the *standalone-bundle* value, not zero.
 
-Valuing each segment at conservative peer multiples and netting debt:
-- **MTS** ($571M adj. EBITDA): govt-services peers (CACI, Leidos, Booz Allen) ~11–13x EV/EBITDA → ~$6.3–7.4B EV.
-- **STS** ($479M adj. EBITDA, 22% margins, licensing): process-tech/clean-energy peers ~10–12x → ~$4.8–5.8B EV.
-- **Combined EV** ~$11.1–13.2B; less ~$1.6–1.8B net debt → equity ~$9.3–11.4B; ÷ ~127M shares → **gross SoP ~$73–90/share at peer medians.**
+KBR has spent most of 2026 trading in a $30-34 band, near its 52-week low of $29.94 (the high was $52.23). At ~$33, the whole company trades at roughly 10x EBITDA and ~10-11x earnings — i.e., the market is already pricing the conglomerate discount, not a premium. Even if the spin slipped a year, the combined business still generates a little over $1 billion of EBITDA and pays a ~2% dividend, so the price is supported by ongoing cash earnings, not by hope. The verified downside floor is roughly the current trough — call it ~$33 — below which you are buying a profitable, cash-generative defense-plus-tech conglomerate at a single-digit-to-low-double-digit multiple. That is a real backstop, not a CVR or a recovery estimate on a broken deal.
 
-Independent analyst SoP work corroborates: a base case ~$59/share (~80% upside from spot), aggressive $71–88, and a sell-side target band that was cut from $78 to $65 on slower near-term growth/spin overhang. The Catalyst-Watch **target $53.00** is a *deliberately discounted* figure — well below the $59 base and $65–90 peer-median SoP — haircutting for execution dis-synergies, stranded corporate cost, a holdco/spin discount, and timing. That conservatism is appropriate and means the $53 target is achievable even on a partial re-rate.
+## 4. THE SPREAD — upside to the parts
 
-## 5. RED FLAGS / WATCH ITEMS
+The parts are worth more than the whole. Using verified trailing segment EBITDA:
 
-🔴 **Timing band, not a date** — "mid-to-late 2026" + un-effective Form 10 = slippage risk; this is the single reason this is not a clean conviction-5 PINNED catalyst.
-🔴 **Government-spend / project-delay headwind** — near-term MTS revenue softness from govt-related project delays is the cited reason street targets were trimmed; could blunt the post-spin MTS multiple if the budget backdrop sours.
-🔴 **Capital-structure allocation** — how net debt is split between New KBR and SpinCo is undisclosed; an over-levered SpinCo could trade poorly out of the gate.
-🔴 **STS is energy-transition-exposed** — a soft clean-energy/ammonia capex cycle could compress the STS multiple vs. the 11–12x assumed.
-🟢 **Board-approved, tax-free, no counterparty/financing risk** — structurally the most reliable catalyst type.
-🟢 **Insider buy (May 2026, 3,000 sh)** + named post-spin CFO/CEO slate.
-🟢 **Trading at the 52-wk low / ~8x fwd earnings** — the discount is the entry, the unlock is near-free optionality.
+- **New KBR / Sustainable Technology Solutions:** ~$479M EBITDA on ~$2.2B revenue at a ~22% margin — a high-margin IP licensor. Process-tech / clean-energy peers support ~11-14x. At ~12x that is ~$5.7B of enterprise value.
+- **SpinCo / Mission Technology Solutions:** ~$571M EBITDA on ~$5.8B revenue (~10% margin) — government services valued against CACI/Leidos/Booz Allen at ~10-12x. At ~11x that is ~$6.3B of enterprise value.
 
-## 6. CATALYST VERDICT
+Combined enterprise value lands around $12 billion. Subtract roughly $1.7-1.9 billion of net debt and divide by ~127 million shares, and the parts imply something in the high-$70s to mid-$80s per share if both halves re-rate fully to peer medians — clearly above the dossier's published $53 target and Wall Street's ~$46-47 average target. The reason targets sit below the full re-rate is sensible: spins rarely close the entire gap on day one, SpinCo carries debt and a dis-synergy cost-base as a new standalone, and the energy-transition multiple for STS is contested. The honest reading is that the verified target zone is ~$47-53 (Street to dossier), with genuine optionality to the $70s if the re-rate runs.
 
-A board-approved, tax-free, dual-pure-play spin-off, in an explicit mid-to-late-2026 window, with the stock at its 52-week trough multiple and a peer-median SoP ~2x the spot price and a conservative $53 target ~60% above spot — against a downside floor that is essentially today's price on a still-profitable, dividend-paying going concern. This is a genuine asymmetric, defined-risk special situation. The ONLY thing keeping it from a fully-pinned conviction-5 is the absence of a declared record/effective date (Form 10 not yet effective) — it is in-window and board-binding, but the date is a quarter-band. **Status: PENDING_HARD (in-window, board-approved; Form 10 effectiveness pending).**
+## 5. RED FLAGS / GREEN FLAGS
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable
+- Green: dated completion (Jan 4, 2027), standalone team named, board-approved, tax-free, no antitrust or financing gate, profitable on both sides, price already at the trough.
+- Green: the conglomerate discount is demonstrable — blended ~10x vs. parts at 11-14x — so the mispricing is structural, not a story.
+- Amber: timeline has already slipped one quarter (mid-2026 → Jan 2027); a further slip is the main risk and would push out the re-rate, not destroy it.
+- Amber: SpinCo (MTS) is the lower-margin half (~10%) and will carry standalone costs and likely debt; its 11x peer multiple assumes it re-rates cleanly, which a newly-public, lower-margin government contractor may not do immediately.
+- Amber: the full Form 10 financial carve-outs are the swing factor for sentiment into the event; weak standalone disclosures could compress the SpinCo multiple.
+
+## 6. MOAT / SECULAR (largely N/A for an event)
+
+This is a defined-risk special situation, not a compounder bet, so franchise moat is secondary. For completeness: New KBR's technology-licensing IP is a narrow but real moat (switching costs and installed-base licensing), and the government-services half is a scale/relationship/clearance moat that is stable rather than eroding. No terminal secular threat — if anything, both halves (energy-transition process tech, national-security/space services) sit in structurally supported end-markets. The cheapness is a structure-and-bundling artifact, not a melting base.
+
+**Bottom line for the director:** A hard, dated, board-approved tax-free spin (effective January 4, 2027) with standalone leadership already named, a live price (~$33) sitting at its 52-week trough and well below both Street targets (~$46) and a parts value in the high-$70s, with a real floor at the current standalone-bundle price. The defined-risk asymmetry is strong; the only meaningful risk is a further timeline slip, which delays rather than kills the thesis.
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none

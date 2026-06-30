@@ -1,0 +1,19 @@
+{
+ "symbol": "FTNT",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Network and OT security platform — sells FortiGate firewalls plus SASE/SD-WAN modules; the firewall/network-edge toll-taker for hybrid enterprise and OT environments that underpin AI-connected infrastructure.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "PANW",
+  "CRWD",
+  "CHKP",
+  "CSCO",
+  "ZS",
+  "JNPR"
+ ],
+ "relative_comps": "FTNT is the highest FCF-margin name in the cohort (34%) with $7.1B TTM revenue and 16% YoY growth — more utility-like than CRWD/PANW but extremely cash-generative. Its hardware-plus-SaaS model creates durable renewal streams but limits upside growth vs. pure-cloud peers. In OT/industrial security and SMB, FTNT is a near-chokepoint; in enterprise cloud-native security it is losing wallet share to PANW/CRWD. The multiple (~14x revenue) reflects this slower-growth positioning. Attractive for value-oriented disruption exposure but not the highest-conviction growth play.",
+ "theme_fit_confidence": "medium"
+}

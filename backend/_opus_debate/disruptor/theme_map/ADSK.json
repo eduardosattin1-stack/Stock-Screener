@@ -1,0 +1,19 @@
+{
+ "symbol": "ADSK",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Engineering design and simulation platform layer — sells the dominant CAD/CAM/BIM toolchain (AutoCAD, Revit, Fusion 360) used to design physical products, buildings, and factories, increasingly integrating digital twin and generative design for manufacturing and construction.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "PTC",
+  "DASSAULT (DSY.PA)",
+  "HEXAGON (HEXA-B.ST)",
+  "SIEMENS (SIE.DE)",
+  "MSFT",
+  "BSY"
+ ],
+ "relative_comps": "Autodesk is the workflow monopoly in AEC (architecture/engineering/construction) and a dominant position in manufacturing CAD; 18% YoY growth reflects subscription model maturation and Fusion 360 penetration in manufacturing. Competing against Siemens/Dassault Systemes in enterprise PLM and PTC in industrial IoT adjacency. FCF margin of 36% is superior to PTC and BSY; the robotics_automation tag is grounded in Fusion 360's generative design for manufacturing and direct integration with robot simulation workflows.",
+ "theme_fit_confidence": "medium"
+}

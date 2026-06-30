@@ -1,0 +1,18 @@
+{
+ "symbol": "LRCX",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Etch and deposition equipment — critical process steps for 3D NAND stacking, HBM manufacturing, and advanced logic node formation.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "AMAT",
+  "ASML",
+  "KLAC",
+  "TOELY",
+  "ACMR"
+ ],
+ "relative_comps": "Lam dominates the etch market (~50% share) and is the leading deposition tool supplier for 3D NAND; its exposure to memory (NAND/DRAM) makes it more cyclical than ASML but it benefits directly from HBM capacity expansion. Applied Materials is the closest peer at similar scale; KLA leads in process control. Lam's 3-year CAGR is 2%, reflecting the memory capex downcycle, but YoY recovery (+27%) signals the cycle turning. FCF margin of 30% is best-in-class for equipment; trades at ~25x forward earnings vs AMAT at ~22x.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "KSPI",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Super-app payment and marketplace rails for Central Asia — operates Kazakhstan's dominant fintech ecosystem combining payments, e-commerce marketplace, and digital banking on a single app; the toll-taker on ~80% of Kazakhstan's digital payment volume.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MercadoPago (MELI)",
+  "Grab (GRAB)",
+  "Sea Limited (SE)",
+  "Paytm (India, private)",
+  "TBC Bank Georgia (TBCG.L)",
+  "Bank of Georgia (BGEO.L)"
+ ],
+ "relative_comps": "KSPI is arguably the most load-bearing fintech in its geography — it has no meaningful domestic competitor and processes the majority of Kazakhstan's digital payments. Its 51% YoY revenue growth and 46% 3-year CAGR are among the best in the fintech universe. The comparison universe must be EM super-apps (MELI, Grab, Sea) rather than US fintechs — KSPI's TAM is Kazakhstan + Central Asia expansion. The primary risks are FX, sovereign risk, and sanctions exposure given Kazakhstan's Russia proximity. At ~$15B mcap vs $216B TTM revenue (likely in KZT, not USD — the raw number confirms local-currency reporting), the real USD financials make this a $4-5B revenue business at current FX, still remarkable for the cap.",
+ "theme_fit_confidence": "high"
+}

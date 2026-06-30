@@ -1,0 +1,21 @@
+{
+ "symbol": "RBRK",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Cyber resilience and data security platform — sells immutable backup, ransomware recovery and data observability for hybrid-cloud enterprises; the last line of defense in AI-era data protection.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "VEEAM (unlisted)",
+  "COHESITY (unlisted)",
+  "COMMVAULT (CVLT)",
+  "VERITAS (unlisted)",
+  "DDOG",
+  "PSTG",
+  "PANW",
+  "CrowdStrike (CRWD)"
+ ],
+ "relative_comps": "Rubrik is the fastest-growing data-security name at meaningful scale: 46% YoY, 30% 3-year CAGR, 22% FCF margin — all built on a subscription transition from a perpetual-license base. The immutable architecture is architecturally superior to legacy Veeam/CommVault for ransomware recovery; this creates genuine switching costs once deployed at enterprise scale. Veeam and Cohesity are private direct rivals; CommVault (CVLT) is the closest public comp. AI infrastructure relevance is real but indirect — Rubrik protects AI-era data estates rather than accelerating compute. Theme fit is medium-high; fintech_rails hint is incorrect.",
+ "theme_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "MA",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Global payment network operator; owns Mastercard/Maestro/Cirrus rails plus Vocalink A2A infrastructure, taking per-transaction tolls across card and account-to-account flows.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "V",
+  "AXP",
+  "PYPL",
+  "GPN",
+  "FIS",
+  "WEX"
+ ],
+ "relative_comps": "Mastercard is the direct duopoly peer to Visa: 52% FCF margin on $33.9B TTM revenue, 14% CAGR / 17% YoY. MA is slightly faster-growing than V recently, aided by cross-border volume recovery and value-added services (cybersecurity, data analytics) layered on the core rail. Trades at a modest discount to Visa on FCF multiple given smaller float. Vocalink gives MA a strategic toe-hold in A2A/real-time payments which Visa lacks at comparable scale — a genuine differentiation in the medium term.",
+ "theme_fit_confidence": "high"
+}

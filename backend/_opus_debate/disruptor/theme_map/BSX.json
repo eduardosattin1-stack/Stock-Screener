@@ -1,0 +1,19 @@
+{
+ "symbol": "BSX",
+ "themes": [
+  "robotics_automation"
+ ],
+ "value_chain_position": "Large-cap medtech; designs, manufactures, and sells cardiovascular, neuromodulation, urology, and endoscopy devices including electrophysiology mapping systems and robotic bronchoscopy (Ion).",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MDT",
+  "ABT",
+  "EW",
+  "SNN",
+  "ISRG",
+  "J&J (JNJ)"
+ ],
+ "relative_comps": "Boston Scientific is a diversified medtech platform with growing exposure to robotics_automation via its Ion robotic bronchoscopy system and electrophysiology pulsed-field ablation (PFA) technology. PFA is the fastest-growing segment in cardiac ablation — BSX's Farawave catheter is a market-share gainer against Medtronic and J&J. Revenue CAGR of 16.5% and 17.4% YoY growth are exceptional for a $70B-cap company. BSX occupies a chokepoint in ablation hardware due to capital-equipment installed base creating consumable pull-through. The robotics tag is credible but secondary — Ion is early and still a small share of revenue.",
+ "theme_fit_confidence": "medium"
+}

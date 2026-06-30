@@ -1,0 +1,182 @@
+{
+  "BLSH": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Crypto exchange infrastructure layer — operates a regulated digital-asset exchange and clearing platform selling trading rails and custody to institutional and retail crypto participants.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["COIN", "CBOE", "ICE", "CME", "LMAX", "BTSE", "Kraken (private)", "Bitstamp (private)"],
+    "relative_comps": "BLSH operates a regulated crypto exchange with institutional positioning, competing against COIN which dominates US retail and is far larger (~$60B mcap vs ~$4B). BLSH's 50% 3-year revenue CAGR is strong but YoY revenue is actually down 13%, suggesting a lumpy, volume-dependent model. FCF margin is nearly zero (0.02%), making it a thin-margin toll-taker versus CME/ICE which run 40%+ FCF margins. The thesis depends on institutional crypto volume normalizing upward and BLSH capturing wallet share from incumbents.",
+    "theme_fit_confidence": "medium"
+  },
+  "ATEN": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Application delivery and cybersecurity networking layer — sells load balancers, application delivery controllers, and DDoS protection appliances/software that sit in front of data-center and cloud workloads.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["FFIV", "CSCO", "ANET", "RDWR", "Citrix (private)", "HAProxy (open-source proxy)", "KEYS"],
+    "relative_comps": "ATEN is a distant challenger to F5 Networks (FFIV) in the ADC market. Its 3-year CAGR is only 1.2% — barely registering — though YoY it picked up to 12% on a small base. FCF margin of 17% is decent but well below sector leaders. The market is consolidating toward cloud-native load balancing (AWS ALB, Azure Front Door) and ATEN's hardware-centric legacy makes it difficult to route around only in specific government/on-prem verticals. Load-bearing score reflects niche defensibility, not scale.",
+    "theme_fit_confidence": "low"
+  },
+  "MSFT": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Hyperscaler cloud and AI platform layer — sells Azure compute/AI services (the largest third-party inference and training cloud), Microsoft 365 Copilot productivity AI, and GitHub Copilot developer tooling; every enterprise AI deployment routes through or alongside Azure.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["AMZN", "GOOGL", "META", "ORCL", "SAP", "CRM", "SNOW"],
+    "relative_comps": "MSFT is the closest thing to a chokepoint in enterprise AI — Azure OpenAI is the exclusive hyperscaler home for OpenAI models, and Copilot is the dominant AI layer on top of the 400M+ Office seat base. Revenue CAGR of 12% and YoY of 18% are exceptional for a $3T company. FCF margin of 23% and $73B TTM FCF dwarf every pure-play AI infrastructure name. The primary risk is AMZN/GOOGL catching up on model access and bundling; MSFT's moat is distribution and enterprise trust, not chip or model exclusivity.",
+    "theme_fit_confidence": "high"
+  },
+  "PLTR": {
+    "themes": ["ai_infrastructure", "defense_tech"],
+    "value_chain_position": "AI/ML operational decision platform — sells AIP (AI Platform), Foundry, and Gotham as the integration and decision layer sitting between raw AI models and operational enterprise/government workflows; a toll on every AI deployment that needs governed, auditable outputs.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MSFT", "SAIC", "BAH", "LDOS", "C3AI", "SNOW", "DDOG", "Databricks (private)"],
+    "relative_comps": "PLTR's 68% YoY growth and 51% FCF margin are the best margin profile in the enterprise AI software cohort, driven by AIP bootcamp-driven land-and-expand. It is uniquely positioned at the intersection of defense-grade classified AI (Gotham) and commercial AI deployment (Foundry/AIP) — a combination no pure commercial vendor can replicate. Compared to C3AI, PLTR has vastly superior FCF and more defensible government entrenchment. Vs. SNOW and Databricks, PLTR wins on workflow integration rather than pure analytics. The risk is the 230x revenue multiple pricing in multi-decade perfection.",
+    "theme_fit_confidence": "high"
+  },
+  "PANW": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Cybersecurity platform layer — sells a unified SASE/CNAPP/SOC platform that secures every AI workload, cloud environment, and enterprise network; the security toll-taker that AI infrastructure cannot bypass.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["CRWD", "FTNT", "ZS", "MSFT", "CHKP", "S", "OKTA"],
+    "relative_comps": "PANW leads the cybersecurity platform consolidation thesis with $10.6B revenue, 19% YoY growth, and 40% FCF margins — among the strongest unit economics in large-cap security. It competes most directly with CRWD (faster-growing, purer endpoint play) and FTNT (better margins, more SMB). PANW's platformization strategy — offering free modules to force consolidation onto its stack — risks near-term billings deceleration for long-term wallet expansion. At ~17x revenue vs CRWD's ~32x, PANW is the more defensible valuation but lower-growth compounder.",
+    "theme_fit_confidence": "high"
+  },
+  "CRWD": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Cloud-native endpoint and identity security platform — sells Falcon platform modules (EDR/XDR, identity, cloud security, threat intel) on a single AI-driven agent; the security layer every cloud and AI deployment requires.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["PANW", "MSFT", "S", "CHKP", "FTNT", "ZS", "Trellix (private)"],
+    "relative_comps": "CRWD is the highest-growth large-cap security name: 23% YoY on $5.1B TTM revenue with a 29% FCF margin on the path to 35%+. Its Falcon platform has the highest customer NRR in the sector and the 2024 outage, while damaging to brand, did not materially arrest growth. Versus PANW, CRWD is smaller, faster-growing, and trades at a meaningful premium (~32x revenue). Versus S (SentinelOne), CRWD is 4x the revenue with superior margins. The AI adjacency is real — Charlotte AI feeds on the same agent telemetry, making CRWD a compound beneficiary of AI workload proliferation.",
+    "theme_fit_confidence": "high"
+  },
+  "FTNT": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Network and OT security platform — sells FortiGate firewalls plus SASE/SD-WAN modules; the firewall/network-edge toll-taker for hybrid enterprise and OT environments that underpin AI-connected infrastructure.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["PANW", "CRWD", "CHKP", "CSCO", "ZS", "JNPR"],
+    "relative_comps": "FTNT is the highest FCF-margin name in the cohort (34%) with $7.1B TTM revenue and 16% YoY growth — more utility-like than CRWD/PANW but extremely cash-generative. Its hardware-plus-SaaS model creates durable renewal streams but limits upside growth vs. pure-cloud peers. In OT/industrial security and SMB, FTNT is a near-chokepoint; in enterprise cloud-native security it is losing wallet share to PANW/CRWD. The multiple (~14x revenue) reflects this slower-growth positioning. Attractive for value-oriented disruption exposure but not the highest-conviction growth play.",
+    "theme_fit_confidence": "medium"
+  },
+  "OKTA": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Identity and access management platform — sells identity-as-a-service (IAM/CIAM) as the authentication and authorization layer every cloud and AI application requires; the identity toll-taker that cannot be bypassed.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MSFT", "PING", "ForgeRock (acquired by PING)", "SailPoint (private)", "CyberArk (CYBR)", "CRWD"],
+    "relative_comps": "OKTA is the only pure-play publicly traded enterprise IAM vendor of scale at $3B revenue, 31% FCF margin, and 12% YoY growth — decelerating from prior 40%+ rates post-Auth0 integration challenges. MSFT Entra is the biggest competitive threat (bundled into M365), which is slowing OKTA's enterprise expansion. CYBR is the leader in privileged access management (adjacent, not direct). OKTA's identity-first security architecture positions it well for non-human identity (AI agents/service accounts) but execution must improve. Trades at ~7x revenue — a discount to pre-breach levels — reflecting credibility restoration risk.",
+    "theme_fit_confidence": "medium"
+  },
+  "GEN": {
+    "themes": [],
+    "value_chain_position": "Consumer cybersecurity subscription bundle — sells Norton/Avast/LifeLock antivirus, VPN, and identity protection subscriptions to individuals; a consumer software brand, not an enterprise infrastructure toll-taker.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["MCAFEE (private)", "Bitdefender (private)", "Malwarebytes (private)", "CSCO", "NortonLifeLock legacy peers"],
+    "relative_comps": "GEN is a consumer-bundle software company competing in a commoditizing market for AV/VPN/identity products. Its $5B revenue and 30% FCF margins are attractive for a value compounder but there is no credible disruption thesis here — this is inorganic aggregation (Avast acquisition) of mature consumer brands. Revenue growth of 27% YoY is largely acquisition-driven, not organic. No AI infrastructure, fintech rail, or disruptive technology position. The FMP industry tag (Software - Infrastructure) is a misclassification for disruption purposes — this is a consumer security subscriptions business.",
+    "theme_fit_confidence": "low"
+  },
+  "KSPI": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Super-app payment and marketplace rails for Central Asia — operates Kazakhstan's dominant fintech ecosystem combining payments, e-commerce marketplace, and digital banking on a single app; the toll-taker on ~80% of Kazakhstan's digital payment volume.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MercadoPago (MELI)", "Grab (GRAB)", "Sea Limited (SE)", "Paytm (India, private)", "TBC Bank Georgia (TBCG.L)", "Bank of Georgia (BGEO.L)"],
+    "relative_comps": "KSPI is arguably the most load-bearing fintech in its geography — it has no meaningful domestic competitor and processes the majority of Kazakhstan's digital payments. Its 51% YoY revenue growth and 46% 3-year CAGR are among the best in the fintech universe. The comparison universe must be EM super-apps (MELI, Grab, Sea) rather than US fintechs — KSPI's TAM is Kazakhstan + Central Asia expansion. The primary risks are FX, sovereign risk, and sanctions exposure given Kazakhstan's Russia proximity. At ~$15B mcap vs $216B TTM revenue (likely in KZT, not USD — the raw number confirms local-currency reporting), the real USD financials make this a $4-5B revenue business at current FX, still remarkable for the cap.",
+    "theme_fit_confidence": "high"
+  },
+  "NTNX": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Hybrid cloud infrastructure software — sells hyperconverged infrastructure (HCI) software and cloud management platform that virtualizes compute, storage, and networking for on-prem and multi-cloud AI/enterprise workloads.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["VMW (Broadcom)", "DELL", "HPE", "MSFT", "PURE", "NetApp (NTAP)"],
+    "relative_comps": "NTNX is the leading independent HCI software vendor, competing against Broadcom's VMware (the dominant incumbent post-acquisition) which is driving customers to NTNX as VMware pricing escalates. This VMware displacement tailwind is the primary growth driver (13% YoY, accelerating). FCF margin of 28% on $2.75B revenue is solid. NTNX is not an AI infrastructure frontline name but benefits as AI workloads require hybrid cloud orchestration. The load-bearing score reflects genuine switching costs once deployed but susceptibility to hyperscaler commoditization of on-prem infrastructure over a 5-year horizon.",
+    "theme_fit_confidence": "medium"
+  },
+  "RELY": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Cross-border consumer remittance rails — sells a mobile-first digital transfer service for immigrants sending money to family in emerging markets; the payment network layer between US/EU and EM corridors.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["WU", "MGI", "WISE (WISE.L)", "SMAR", "PayPal/Xoom", "Revolut (private)", "Zepz/WorldRemit (private)"],
+    "relative_comps": "RELY is the fastest-growing scaled digital remittance player with 36% 3-year CAGR and 27% YoY on $1.7B revenue, 15% FCF margin. It competes against Western Union (WU) — the incumbent with massive agent network — and WISE.L which serves a different (higher-income) demographic. RELY's differentiation is mobile-first UX targeting immigrant senders, not businesses. Load-bearing score is 2 because remittance rails are inherently competitive (low switching cost, price-sensitive) — RELY's moat is brand, speed, and corridor economics, not exclusive infrastructure. The growth runway is large but margins are thinner than true toll-taker fintechs.",
+    "theme_fit_confidence": "medium"
+  },
+  "VRNS": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Data security and governance platform — sells data access intelligence, insider threat detection, and data activity monitoring software that maps and protects unstructured data stores in hybrid cloud environments; the data-security layer AI pipelines route through.",
+    "load_bearing_score": 3,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MSFT", "PANW", "Securiti (private)", "BigID (private)", "TELOS", "Zimperium (private)"],
+    "relative_comps": "VRNS is the specialist leader in data security posture management (DSPM), a market growing as AI data pipelines expand. Its 15% YoY growth and 18% FCF margin are modest versus platform peers but reflect a high-quality niche: unstructured data governance has no direct public competitor at scale. Revenue of $660M is small relative to PANW/CRWD. The shift to SaaS from on-prem is the margin expansion story. The risk is MSFT Purview and PANW DSPM modules absorbing the market. Valuation at ~$3.8B is relatively modest for the niche, but low-bearing score reflects substitution risk from platform consolidation.",
+    "theme_fit_confidence": "medium"
+  },
+  "DLO": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Emerging-market payment processing rails for global merchants — sells a cross-border payment infrastructure layer enabling multinationals and global e-commerce companies to accept local payments, disburse payouts, and navigate FX in LatAm, Africa, and South/Southeast Asia.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ADYEN", "STNE", "PAGS", "Stripe (private)", "Nuvei (private)", "Ebanx (private)", "Unlimint (private)"],
+    "relative_comps": "DLO is among the most load-bearing EM payment rail operators: its value is the regulatory/compliance/local-bank-connectivity moat that multinationals cannot replicate in-house across 40+ markets. 56% YoY and 38% 3-year CAGR with 33% FCF margin are best-in-class for its category. Direct competitors are largely private (Ebanx, Unlimint) or larger-platform incumbents (Adyen, Stripe) entering EM corridors. STNE/PAGS compete in Brazil specifically. At $3.5B mcap on $1.2B revenue with 33% FCF margin, DLO appears undervalued relative to its infrastructure position — the risk is regulatory/FX volatility in its operating markets.",
+    "theme_fit_confidence": "high"
+  },
+  "CLBT": {
+    "themes": ["defense_tech"],
+    "value_chain_position": "Digital intelligence and lawful-intercept analytics platform — sells forensic intelligence software to law enforcement, intelligence agencies, and national security bodies globally for extracting and analyzing data from mobile devices and digital sources.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["MSAB (Sweden, MSAB-B.ST)", "Oxygen Forensics (private)", "Magnet Forensics (acquired by Grayshift/private)", "Axon (AXON)", "Palantir (PLTR)", "NICE Systems (NICE)"],
+    "relative_comps": "CLBT is the dominant commercial digital forensics vendor for law enforcement globally — its UFED platform is the industry standard in mobile extraction. 18% YoY growth and 31% FCF margin at $496M revenue reflect a sticky, sole-source position with government agencies. Competitors are mostly private or niche European players (MSAB). AXON and PLTR represent adjacent government analytics but do not directly compete on device forensics. CLBT's load-bearing score reflects the fact that law enforcement cannot easily substitute — qualification, chain-of-custody requirements, and government contract vehicles create genuine stickiness. Risk is geopolitical scrutiny of Israeli technology company and export controls.",
+    "theme_fit_confidence": "medium"
+  },
+  "WIX": {
+    "themes": [],
+    "value_chain_position": "SMB website builder and commerce platform — sells drag-and-drop website creation, hosting, and e-commerce tools to small businesses and freelancers; a horizontal SaaS tool for digital presence, not a disruptive technology infrastructure layer.",
+    "load_bearing_score": 1,
+    "s_curve_stage": "maturing",
+    "true_competitors": ["SQSP", "GoDaddy (GDDY)", "Shopify (SHOP)", "Webflow (private)", "Framer (private)"],
+    "relative_comps": "WIX competes directly with Squarespace (SQSP) and GoDaddy (GDDY) in the SMB website/commerce space. Its 14% YoY growth and 26% FCF margin at $2.1B revenue are respectable but the market is saturating and AI website builders (Webflow, Framer, Squarespace AI) are compressing willingness-to-pay. WIX has no credible disruption theme — it is a horizontal SaaS utility that may itself face disruption from AI-generated website tooling. The FMP industry tag (Software - Infrastructure) does not make WIX an infrastructure play. Load-bearing score of 1 reflects high substitutability.",
+    "theme_fit_confidence": "low"
+  },
+  "AVPT": {
+    "themes": ["ai_infrastructure"],
+    "value_chain_position": "Microsoft 365 and multi-cloud data management/governance SaaS — sells backup, migration, compliance, and governance tooling for M365, Teams, Salesforce, and Google Workspace environments; the data-resilience layer on top of hyperscaler productivity platforms.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["MSFT", "Veeam (private)", "Druva (private)", "Commvault (CVLT)", "Syskit (private)", "BAAR (Backupify)"],
+    "relative_comps": "AVPT is the leading third-party governance and compliance layer for the Microsoft 365 ecosystem, with 27% YoY growth and 24% FCF margin at $444M revenue. Its specialization in M365 data governance gives it relevance as enterprises confront AI copilot data-sprawl compliance requirements. However, MSFT natively provides competing governance features (Purview) and AVPT depends on MSFT's platform decisions — load-bearing score is constrained by platform dependency. Versus Commvault (CVLT), AVPT is more M365-specialized and growing faster. The $2.2B mcap looks reasonable for the growth/FCF profile but the MSFT concentration risk is non-trivial.",
+    "theme_fit_confidence": "medium"
+  },
+  "PAYO": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "B2B cross-border and marketplace payment rails for SMB/freelancers — sells multi-currency accounts, cross-border payouts, and working capital tools for e-commerce sellers and freelance service providers transacting globally.",
+    "load_bearing_score": 2,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["WISE (WISE.L)", "RELY", "Stripe (private)", "Airwallex (private)", "PING (Pingpong, private)", "PayPal (PYPL)"],
+    "relative_comps": "PAYO sits in a crowded cross-border B2B/marketplace payments segment with 7% YoY growth — a meaningful deceleration from 19% CAGR — suggesting market saturation and competitive pressure. FCF margin of 20% at $1.1B revenue is solid but the valuation at $2.1B (~2x revenue) reflects skepticism about the growth runway. WISE and Airwallex are better-capitalized competitors growing faster in the same corridor payments space. PAYO's moat is marketplace integration depth (Amazon, Alibaba seller payments) which provides some stickiness. The decelerating growth is the key concern for disruption confidence.",
+    "theme_fit_confidence": "medium"
+  },
+  "SPSC": {
+    "themes": ["fintech_rails"],
+    "value_chain_position": "Retail supply-chain EDI and trading-partner network — sells cloud EDI (electronic data interchange) and supply-chain integration software that connects retailers, grocers, and CPG brands to their supplier networks; the data-pipe toll-taker on retail B2B commerce flows.",
+    "load_bearing_score": 4,
+    "s_curve_stage": "broadening",
+    "true_competitors": ["TrueCommerce (private)", "SPS Commerce has no direct public comp — nearest are MFT/B2B integration peers like IBM Sterling (IBM)", "OpenText (OTEX)", "Boomi (private)", "DiCentral (private)"],
+    "relative_comps": "SPSC is a near-monopoly in cloud EDI for mid-market US retail with 19% YoY growth and 22% FCF margin at $762M revenue — remarkable for what is essentially legacy B2B integration modernized. There is no major public direct competitor: TrueCommerce and DiCentral are private and smaller. IBM Sterling and OpenText compete at the enterprise tier but are not EDI-pure-play. SPSC's network effect is real — every retailer that mandates SPSC EDI pulls its 1,000+ suppliers onto the platform. Load-bearing score of 4 reflects this supplier-mandate dynamic. The disruption angle is modest (EDI is not an emerging theme) but SPSC's recurring revenue quality and network stickiness justify fintech-rails inclusion as a supply-chain commerce infrastructure toll-taker.",
+    "theme_fit_confidence": "medium"
+  },
+  "VRT": {
+    "themes": ["ai_infrastructure", "energy_transition"],
+    "value_chain_position": "Data-center power and thermal management infrastructure — sells power conversion systems, UPS, precision cooling, and liquid cooling solutions that every AI/HPC data center must install; a genuine chokepoint in the AI build-out value chain.",
+    "load_bearing_score": 5,
+    "s_curve_stage": "steep_ramp",
+    "true_competitors": ["ETN", "DELL", "ABB", "Schneider Electric (SU.PA)", "GEV", "Legrand (LR.PA)", "nVent Electric (NVT)"],
+    "relative_comps": "VRT is the closest thing to a chokepoint in AI data-center power and cooling infrastructure — its 29% YoY and 22% 3-year revenue CAGR on $10.8B TTM, with 21% FCF margin, reflect hyperscaler-capex pulling rather than selling. It competes with Eaton (ETN) and Schneider Electric (SU.PA) but has the highest AI-specific exposure mix (~70% of revenue tied to data-center deployments). Unlike ETN which has broader industrial diversification, VRT is the purest-play. The dual-theme tag (ai_infrastructure + energy_transition) is warranted per taxonomy notes: data-center power sits at the intersection of both. At ~$111B mcap, the valuation is demanding but the backlog visibility is multi-year. Primary risk is customer concentration (hyperscaler capex cycles).",
+    "theme_fit_confidence": "high"
+  }
+}

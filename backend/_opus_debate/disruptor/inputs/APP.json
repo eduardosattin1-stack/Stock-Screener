@@ -1,0 +1,12 @@
+{
+  "symbol": "APP",
+  "sector": "Technology",
+  "signal_type": "disruptor",
+  "company": "AppLovin Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 496.77 | Fair Value 334.2 | Margin of Safety -33% | P/FCF 43.1x\nRevenue growth: +70.0% YoY | 3-yr CAGR +24.8%\nMargins: Gross 87.9% (expanding) | Net 60.8% | FCF 71.9%\nEPS / guidance delivery: 9.75 latest | +115.2% YoY | 3-yr CAGR +0.0% | beat 7/7 qtrs (100%)\nFCF growth: +88.3% YoY | 3-yr CAGR +112.3%\nReturns / leverage: ROE 64.2% | ROIC 23.2% | Net debt 1.06B\nForward / signals: Consensus fwd EPS growth +33.2% | Margin 1.59sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 121.5 | Buffett fair value 334.2\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 5 | Catalyst score 0.5 | Piotroski 8/9 | Altman-Z (solvency) 22.5 | Days to next earnings 53\nAnalyst consensus target: 659.88 (+33% upside)\nPositioning / smart money: Smart-money score 37/100 | Institutional flow 60/100 | Analyst-target velocity -0% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -8% vs 200d SMA | 42% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 2.79B, NI 35M, EPS 0.093\n  2022: rev 2.82B, NI -193M, EPS -0.52\n  2023: rev 1.84B, NI 357M, EPS 0.98\n  2024: rev 3.22B, NI 1.58B, EPS 4.53\n  2025: rev 5.48B, NI 3.33B, EPS 9.75\n  CAGRs: bvps_5y +0.0%, eps_5y +220.0%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 4.40B | TTM diluted EPS 11.64 | latest-Q EPS YoY +113%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 755M (total debt 3.51B minus cash 2.76B) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 99 sells (124,566sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above",
+  "dossier": "",
+  "methodologies": [
+    "ai_infrastructure",
+    "fintech_rails"
+  ]
+}

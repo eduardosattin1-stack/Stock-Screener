@@ -1,0 +1,19 @@
+{
+ "symbol": "OKTA",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Identity and access management platform — sells identity-as-a-service (IAM/CIAM) as the authentication and authorization layer every cloud and AI application requires; the identity toll-taker that cannot be bypassed.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MSFT",
+  "PING",
+  "ForgeRock (acquired by PING)",
+  "SailPoint (private)",
+  "CyberArk (CYBR)",
+  "CRWD"
+ ],
+ "relative_comps": "OKTA is the only pure-play publicly traded enterprise IAM vendor of scale at $3B revenue, 31% FCF margin, and 12% YoY growth — decelerating from prior 40%+ rates post-Auth0 integration challenges. MSFT Entra is the biggest competitive threat (bundled into M365), which is slowing OKTA's enterprise expansion. CYBR is the leader in privileged access management (adjacent, not direct). OKTA's identity-first security architecture positions it well for non-human identity (AI agents/service accounts) but execution must improve. Trades at ~7x revenue — a discount to pre-breach levels — reflecting credibility restoration risk.",
+ "theme_fit_confidence": "medium"
+}

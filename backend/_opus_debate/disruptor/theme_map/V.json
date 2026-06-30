@@ -1,0 +1,19 @@
+{
+ "symbol": "V",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Global payment network operator; owns the rails (VisaNet) connecting ~15,000 issuers to ~100M merchant locations, taking a per-transaction toll on every card-based payment globally.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "MA",
+  "AXP",
+  "PYPL",
+  "GPN",
+  "FIS",
+  "SQ"
+ ],
+ "relative_comps": "Visa is the canonical fintech rails chokepoint: 49% FCF margin on $43B revenue with a duopoly network effect that no new entrant has broken at scale. It is the largest name in the chunk by market cap ($623B) and by any FCF metric. Growth of 11% CAGR / 14% YoY is strong for a company this size. Visa trades at a material premium to Mastercard (~30x FCF vs. ~25x) reflecting its larger float and global lead; both are in broadening (not steep ramp) as card penetration in developed markets matures while emerging-market and digital-wallet volumes layer on growth.",
+ "theme_fit_confidence": "high"
+}

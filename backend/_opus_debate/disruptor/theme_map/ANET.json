@@ -1,0 +1,21 @@
+{
+ "symbol": "ANET",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Data-center networking toll-taker — sells EOS-powered Ethernet switches and software for AI cluster fabrics, replacing InfiniBand in many hyperscaler builds.",
+ "load_bearing_score": 5,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "CSCO",
+  "JNPR",
+  "NVDA (Infiniband)",
+  "HPE/Aruba",
+  "Broadcom (AVGO) silicon",
+  "Huawei (unlisted)",
+  "Silicom (SILC)",
+  "Extreme Networks (EXTR)"
+ ],
+ "relative_comps": "ANET is the clearest AI-networking chokepoint in the public market: 54% FCF margins, 27% 3-year revenue CAGR, and the EOS software platform creates high switching costs at hyperscaler scale. CSCO is the legacy incumbent losing share; NVDA's InfiniBand competes in GPU clusters but ANET's Ultra Ethernet Consortium push challenges that. AVGO silicon is a supplier, not a competitor. No public peer matches ANET's combination of growth, margin and backlog visibility in cloud networking.",
+ "theme_fit_confidence": "high"
+}

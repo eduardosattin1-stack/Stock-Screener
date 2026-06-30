@@ -1,0 +1,18 @@
+{
+ "symbol": "SITM",
+ "themes": [
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "MEMS-based precision timing semiconductors — replaces quartz oscillators with silicon timing chips across data-center networking, 5G, automotive and edge IoT applications.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "MTSI",
+  "MXCHIP",
+  "IDT-acquired",
+  "RENESAS",
+  "TXN"
+ ],
+ "relative_comps": "SiTime is the dominant MEMS timing company globally with ~75% market share in precision oscillators sold into communications and data-center applications; its silicon timing chips are more accurate, programmable and reliable than quartz alternatives. Revenue surged 65% YoY as data-center networking and 5G base-station demand rebounded. The TAM is relatively small (~$2B) but SiTime is the clear category leader. Competes with Microchip (post-Microsemi/IDT acquisition) and legacy quartz suppliers; its MEMS moat is durable but the application is a niche enabler, not a macro chokepoint. Trades at ~70x forward earnings.",
+ "theme_fit_confidence": "medium"
+}

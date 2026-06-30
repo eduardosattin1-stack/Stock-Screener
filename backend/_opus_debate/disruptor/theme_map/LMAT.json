@@ -1,0 +1,18 @@
+{
+ "symbol": "LMAT",
+ "themes": [
+  "genomics_bio_tools"
+ ],
+ "value_chain_position": "Specialty manufacturer of vascular surgery devices (grafts, patches, catheters, valves) for open and endovascular procedures; sells single-use implants to vascular surgeons.",
+ "load_bearing_score": 3,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "Terumo (4543.T)",
+  "Getinge (GETI.B.ST)",
+  "Becton Dickinson (BDX)",
+  "Vascular Solutions (acquired)",
+  "CryoLife (CRY)"
+ ],
+ "relative_comps": "LeMaitre occupies a focused niche in open vascular surgery devices with minimal direct public-company competition at its scale — most large-device players have abandoned open surgery for endovascular. This creates a durable niche moat: LeMaitre is often the only qualified supplier for certain grafts. Revenue CAGR of 15.6% and FCF margin of 31% are exceptional for a small-cap device company. Against Terumo and Getinge, LeMaitre competes on specialized product lines rather than scale. The genomics_bio_tools tag is a loose fit — this is surgical consumables, not genomics instrumentation — but qualifies as medical-instruments/supplies picks-and-shovels.",
+ "theme_fit_confidence": "medium"
+}

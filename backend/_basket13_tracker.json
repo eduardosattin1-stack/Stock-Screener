@@ -457,6 +457,94 @@
     ]
    },
    "entry_rationale": "Only FDA_clinical_readout survivor that is hard-dated (Q3-2026 LUCIDITY avexitide topline, 109d) AND non-staging, so the mandated defined-risk option for a dated binary is actually constructible; ev_pct 0.4512 at win 0.62 with edge surviving the +12% run-up (payoff still >half-dossier)."
+  },
+  {
+   "symbol": "AAUC",
+   "status": "OPEN",
+   "order_date": "2026-06-30",
+   "entry_date": "2026-06-30",
+   "entry_price": 23.4,
+   "entry_price_source": "cro_structured",
+   "limit_price": null,
+   "weight_pct": 7,
+   "risk_to_floor_pct": 0.12,
+   "score": 7.0,
+   "board_priority": 6.4,
+   "edge_grade": "M",
+   "computed_rr": 20.35,
+   "ev_pct": null,
+   "lane_canon": "merger_arb",
+   "resolution_driver": "Foreign_regulator",
+   "super_cluster": "Deal-completion",
+   "valuation_method": "spread",
+   "downside_floor": 23.0,
+   "fair_value_target": 31.54,
+   "dated_milestone": "2026-07-29",
+   "staging": false,
+   "expression": {
+    "type": "equity"
+   },
+   "hedge": null,
+   "expected_rr": 20.35,
+   "expected_ev": null,
+   "entry_rationale": "Clean cash-merger arb at ~US$23.40 vs C$44.00 (~US$30.98 at live FX) = +32% gross spread on the only non-bio, non-FDA driver available (Foreign_regulator, brand-new to the basket), resolving on host-country regulatory approval rather than the tape. Sized moderate, not hero, because the downside floor cushion is ~zero (pure deal-break risk) and ADV is thin at ~$3.8M/day.",
+   "invalidation": "Deal breaks (financing/regulatory failure) or a definitive termination — price collapses toward standalone gold-tape value below the ~$23 floor with no cushion.",
+   "review_trigger": "July 29 2026 outside date for deal close / host-country approval (29d); a second mutual extension stretches the timeline rather than breaking the deal.",
+   "cro_verdict": "TRADE_WITH_CONDITIONS",
+   "cro_detail": {
+    "live_edge_check": "Live US$23.40 (FMP batch-quote, 2026-06-29 close, NYSE). Cash payout recomputed at live FX: C$44.00 x 0.70399 (USDCAD 1.42065) = US$30.98 (dossier's $31.54 used a weaker CAD). Spread to cash = +32.4% (~$7.58 up) vs floor ~$23 = -1.7% (~$0.40 down). Spread is WIDE and intact (wider than the dossier's ~$25.26 entry); but the downside floor cushion is now essentially zero - this is pure deal-break risk, not a cushioned arb.",
+    "tradeability_note": "Equity only. Liquidity is the constraint: ADV ~163K sh x $23.4 ~ $3.8M/day on the NYSE line (float 93M sh) - thin. A sizable position would be a large share of ADV; build with limit orders. Listed options not a sensible expression for a 32% cash-deal spread.",
+    "window_note": "Equity, not options - July 29 2026 outside date is 29 days out. Date HAS slipped once already (May 29 -> July 29); a second mutual extension is possible if a host-country approval lags (stretches timeline / compresses annualized return, does not break deal). Hold expectation must tolerate a slip past July 29.",
+    "driver_confirmed": "Foreign_regulator (Zijin Gold C$44 cash arrangement; remaining Mali/Cote d'Ivoire/Ethiopia/Egypt host-country sign-offs) - confirmed. ICA (hardest gate) cleared May 29; both parties reaffirmed July 29 2026 outside date in the June 10 update. No duplicate driver in batch.",
+    "conditions": [
+     "Express in equity via limit orders near/below $23.40 given thin ~$3.8M/day ADV; do not chase",
+     "Accept near-zero downside cushion (floor -1.7%) - this is deal-break/gold-tape risk, size accordingly",
+     "Tolerate a possible second extension past the July 29 2026 outside date (one slip already occurred)"
+    ]
+   },
+   "resolution": null
+  },
+  {
+   "symbol": "FUN",
+   "status": "OPEN",
+   "order_date": "2026-06-30",
+   "entry_date": "2026-06-30",
+   "entry_price": 20.56,
+   "entry_price_source": "cro_structured",
+   "limit_price": null,
+   "weight_pct": 4,
+   "risk_to_floor_pct": 0.79,
+   "score": 5.0,
+   "board_priority": 4.52,
+   "edge_grade": "H",
+   "computed_rr": 2.57,
+   "ev_pct": null,
+   "lane_canon": "activist",
+   "resolution_driver": "Activist_process",
+   "super_cluster": "Idiosyncratic",
+   "valuation_method": "spread",
+   "downside_floor": 16.5,
+   "fair_value_target": 31.0,
+   "dated_milestone": "2027-03-31",
+   "staging": true,
+   "expression": {
+    "type": "equity"
+   },
+   "hedge": null,
+   "expected_rr": 2.57,
+   "expected_ev": null,
+   "entry_rationale": "High-grade activist/sale-process bet (Jana) at $20.56 with +50.8% to FV $31 vs -19.7% to the $16.50 floor (R:R 2.57), a brand-new Activist_process driver in Idiosyncratic that diversifies away from the FDA-heavy held book. Staging=true (undated process) forces equity-only at half a normal weight; entry is if anything cheaper than dossier asof after today's -6.6%.",
+   "invalidation": "Jana stands down / board rejects a sale and reaffirms standalone, or a leveraged-balance-sheet stress event re-rates the equity toward/through the $16.50 floor.",
+   "review_trigger": "2027-03-31 process milestone (274d); interim — any board strategic-review update or formal sale-process announcement.",
+   "cro_verdict": "TRADE",
+   "cro_detail": {
+    "live_edge_check": "Live $20.56 (FMP batch-quote, 2026-06-30) == dossier live_price $20.56; edge fully intact. R:R from $20.56: upside to FV $31 = +$10.44 (+50.8%), downside to floor $16.50 = -$4.06 (-19.7%), R:R = 2.57x, matching dossier computed_rr 2.57. No compression. Note stock -6.6% today and below 50d avg ($20.74), so entry is if anything cheaper than dossier asof.",
+    "tradeability_note": "Equity is the correct expression and is highly tradeable: ADV ~3.3M sh x $20.56 = ~$66M/day, ample for any realistic sleeve position, no borrow leg. Options route is NOT viable: Jan-2027 $25 call shows OI 169 / 2 contracts today / no live two-sided bid-ask; $20 call OI 1,623 but zero volume and empty bid-ask. Thin, no usable quotes near thesis strikes.",
+    "window_note": "Milestone 2027-03-31 (274d). Option expiries run monthly only through Jan-2027 then jump straight to Jan-2028 LEAP — there is NO expiry between Jan-2027 and Jan-2028, so no contract clears 2027-03-31 with the required +1-monthly margin except the illiquid Jan-2028 LEAP. Window does not fit options; staging=true soft activist process confirms equity. No date to slip (undated process), so equity carries no theta-decay risk.",
+    "driver_confirmed": "Activist_process (Jana sale push) confirmed; no new activist/sale headline in feed (recent news all operational), but process is the driver and reality is settled upstream. Idiosyncratic, no same-driver twin in this batch.",
+    "conditions": []
+   },
+   "resolution": null
   }
  ],
  "non_selections": [
@@ -783,6 +871,33 @@
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_clinical_readout"
+  },
+  {
+   "symbol": "ZYME",
+   "date": "2026-06-30",
+   "passed_because": "Skip on merit regardless of headroom: thinnest R:R in the batch (~1.35) and only M grade — shallowest asymmetry — plus an active ZYME.TEN/ZYME.EXC tender/exchange corporate action that muddies the binary. Even if its FDA_approval_decision driver and the bio lane freed, the compressed edge does not earn a seat.",
+   "score": 7.0,
+   "edge_grade": "M",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision"
+  },
+  {
+   "symbol": "IMCR",
+   "date": "2026-06-30",
+   "passed_because": "Undated open-ended binary (PRISM-MEL-301 Phase 3 with no fixed topline date) and a low 0.40 win-prob; no review milestone to anchor a position. Dateless low-conviction binary in a saturated lane — a merit skip, not just a headroom block.",
+   "score": 6.0,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_clinical_readout"
+  },
+  {
+   "symbol": "DBVT",
+   "date": "2026-06-30",
+   "passed_because": "Undated AND just-slipped milestone (VIASKIN Peanut BLA not yet filed, now anticipated Q3 2026+, review clock starts only at filing) on a deteriorating timeline, plus a thin ~$8M/day small-cap ADR. A demonstrably lengthening, dateless catalyst is a merit skip irrespective of cap headroom.",
+   "score": 5.0,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision"
   }
  ],
  "runs": [
@@ -834,6 +949,20 @@
    "cap_violations": 0,
    "retags": [],
    "memo": "picks is EMPTY by hard-cap necessity, not weak survivors. Re-checked every combined cap: the bio_convergence lane is already 5/5 FULL from the held book (CELC, VRDN, AQST, WVE, AMLX), which walls off ALL 15 bio_convergence survivors regardless of their cluster headroom (FDA/biotech still had 26.5 wt-pts free, but the lane name-cap binds first). The only two non-bio survivors, MGNI and CLVT, both carry driver Forced_divest_flow, which is 2/2 FULL (held FIG + BLCO). So every one of the 17 survivors is blocked by a combined cap; seating any would breach the lane or the driver cap and be rejected downstream. Forcing a seat is explicitly disallowed, so the basket adds nothing this cycle and the held 10-seat / 55.5%-invested book stands.\n\nWatchlist (10, on-deck): two forced-seller names lead — CLVT (H-grade, R:R improved to ~4.9:1, would enter first when FIG/BLCO frees the Forced_divest_flow driver) and MGNI behind it. The remaining eight are the strongest bio binaries, ranked by win-prob-adjusted edge: BBIO (cleanest, ev 0.45 / R:R 4.4:1 / dated PDUFA), EYPT (highest convexity, ev 1.16), ZYME (win 0.88, tight floor), then VIR / PVLA / AVIR / DBVT / GLUE. Every bio name is double-capped (lane 5/5 plus its FDA driver 2/2), so each would_enter_if requires a held biotech to resolve and free BOTH the lane seat and the matching driver — the natural unlock is CELC/AMLX (clinical) or VRDN/AQST (approval) resolving.\n\nPassed (7): DFTX (ev 0.0165, sub-1x net payoff — skip on merit), RARE (R:R flipped to symmetric ~0.9:1 on the run-up, chasing), and five clinical/approval names (ANNX, OLMA, RLMD, CERS, NKTR) that are coin-flips (win 0.40-0.45) or undated theta-traps ranking below the watchlist names for any single hypothetical freed seat. Shape rationale: the sleeve is deliberately not stretching the FDA/biotech cluster's remaining weight headroom because the lane name-cap — not the weight cap — is the true governor on bio binaries, and that cap is exhausted. The next live decision point is the first held-book resolution, which mechanically unlocks the on-deck queue in driver order."
+  },
+  {
+   "run_date": "2026-06-30",
+   "stamped_at": "2026-06-30",
+   "restamp": false,
+   "n_picks": 2,
+   "n_passed": 3,
+   "n_added": 2,
+   "n_pending": 0,
+   "n_excluded_at_stamp": 0,
+   "n_skipped_open": 0,
+   "cap_violations": 2,
+   "retags": [],
+   "memo": "Held book is FDA/biotech-saturated: both FDA drivers (approval, clinical-readout) and the entire bio_convergence lane (5/5) are full, so 5 of 7 survivors — all bio binaries (BBIO, EYPT, ZYME, IMCR, DBVT) — are hard-blocked. Only 2 names clear the combined caps, and they happen to be exactly the two cleanest diversifiers: AAUC (Foreign_regulator) and FUN (Activist_process) — both brand-new drivers, both non-bio, deliberately pulling the new seats AWAY from the FDA concentration into Deal-completion (29/40 after add) and Idiosyncratic (24/40). Shape: AAUC at 7% is a moderate cash-arb seat (huge headline R:R but ~zero floor cushion + thin ADV, so not oversized); FUN at 4% respects the staging=true / equity-only / half-weight rule and its 19.7% floor distance (risk-to-floor 0.79% << 1.5%). Watchlist holds the two H-grade, dated, headroom-only-blocked binaries (BBIO, EYPT) — first to seat when a held FDA name resolves and frees both a driver slot and a bio-lane slot. ZYME/IMCR/DBVT are merit passes (shallow / undated / undated-and-slipping). New seats 2; total seats 12/20; no cap breached."
   }
  ],
  "marks": [
@@ -1218,48 +1347,28 @@
  ],
  "watchlist": [
   {
-   "symbol": "CLVT",
-   "blocked_by": "resolution_driver Forced_divest_flow is 2/2 full (held FIG + BLCO)",
-   "would_enter_if": "a Forced_divest_flow seat opens when FIG or BLCO resolves",
-   "intended_weight_pct": 6,
-   "note": "H-grade SOP, computed_rr 3.66; live $2.21 moved in our favor, R:R now ~4.9:1 (upside +179% to FV $6.17 / -36% to floor $1.42). Liquid equity (~$11.5M/day ADV), undated forced-divest flow -> equity wrapper. Strongest on-deck name; would seat immediately on a freed Forced_divest_flow seat. Risk-to-floor: 6 * 0.36 = 2.16% > 1.5 cap, so trim to ~4% equity at entry.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow",
-   "super_cluster": "Idiosyncratic",
-   "valuation_method": "sop",
-   "ev_pct": null,
-   "computed_rr": 3.66,
-   "dated_milestone": null,
-   "entry_price": 2.21,
-   "entry_date": "2026-06-13",
-   "expected_pct": null,
-   "cro_conditions": [],
-   "expression": {
-    "type": "equity"
-   },
-   "expression_intended": true
-  },
-  {
    "symbol": "BBIO",
-   "blocked_by": "bio_convergence lane is 5/5 full (held CELC, VRDN, AQST, WVE, AMLX); also FDA_approval_decision driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_approval_decision seat both open (e.g. when VRDN or AQST resolves, freeing both the lane and the approval driver)",
-   "intended_weight_pct": 4,
-   "note": "Cleanest binary in batch: ev_pct 0.45, win_prob 0.85, R:R ~4.4:1, dated PDUFA 2026-11-27 (167d). Deep liquid options (~$98M/day, tight long-dated calls). Defined-risk debit spread clearing Nov-27 via Jan-2027 monthly; size <=2% premium-at-risk as a binary. Double-capped (lane + approval driver), but top of the on-deck queue if both free.",
-   "score": 6.0,
+   "blocked_by": "FDA_approval_decision driver is full (2/2: VRDN, AQST) AND the bio_convergence lane is full (5/5)",
+   "would_enter_if": "a FDA_approval_decision seat AND a bio_convergence-lane slot both free — i.e. when VRDN or AQST resolves and frees both its driver and its lane slot",
+   "intended_weight_pct": 2,
+   "note": "Strongest dated approval binary on deck: H grade, EV +36%, R:R ~2.35 intact at $72 vs $105 target / $58 floor, PDUFA 2026-11-27 (150d). Would express defined-risk via a Jan 15 2027 (or later) call/call-spread — the Nov 20 monthly expires 7d BEFORE the Nov 27 PDUFA — capped at ~2% premium-at-risk; use equity if option OI (low-hundreds) is too thin for size.",
+   "score": 7.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "ev_pct": 0.4539,
+   "ev_pct": 0.3602,
    "computed_rr": null,
    "dated_milestone": "2026-11-27",
    "entry_price": 66.8,
    "entry_date": "2026-06-13",
    "expected_pct": 46.6,
-   "cro_conditions": [],
+   "cro_conditions": [
+    "Express via Jan 15 2027 (or later) calls/call-spread ONLY - the Nov 20 2026 monthly does not clear the Nov 27 PDUFA",
+    "Cap option size to the low-hundreds OI (e.g. 75C OI 538); for larger size use equity",
+    "Re-check the Jan'27 call bid/ask in live hours and skip if the spread is wider than ~10% of mid"
+   ],
    "expression": {
     "type": "debit_spread"
    },
@@ -1267,190 +1376,26 @@
   },
   {
    "symbol": "EYPT",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
+   "blocked_by": "FDA_clinical_readout driver is full (2/2: CELC, AMLX) AND the bio_convergence lane is full (5/5)",
+   "would_enter_if": "a FDA_clinical_readout seat AND a bio-lane slot both free — i.e. when CELC or AMLX resolves and frees both its driver and its lane slot",
    "intended_weight_pct": 2,
-   "note": "Highest-convexity binary: ev_pct 1.16, payoff 4.38, win 0.60. WINDOW SLIP — LUGANO topline drifted to Aug-2026; defined-risk via Sept-2026+ expiry, NOT July. Size <=2% premium as binary debit spread.",
-   "score": 6.5,
+   "note": "Highest EV in the batch (+75%), H grade, R:R ~2.72, readout ~31d out (imminent). Options untradeable (OI ~0-25, IV ~200%) so it would seat as an equity defined-risk position sized to survive a 60%+ adverse move; near-term timing means it may resolve before a held seat frees.",
+   "score": 7.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_clinical_readout",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "ev_pct": 1.1572,
+   "ev_pct": 0.7505,
    "computed_rr": null,
    "dated_milestone": "2026-07-31",
    "entry_price": 13.03,
    "entry_date": "2026-06-13",
    "expected_pct": 89.6,
    "cro_conditions": [
-    "Express via equity, OR options expiring Sept-2026 or later (NOT July) to clear the slipped August LUGANO readout",
-    "If options: confirm OI > 500 and effective bid/ask spread < 15% at the chosen strike before entry",
-    "Re-verify the August topline timing has not slipped further before stamping"
-   ],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "ZYME",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_approval_decision driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_approval_decision seat open (e.g. when VRDN or AQST resolves)",
-   "intended_weight_pct": 2,
-   "note": "win_prob 0.88 on zanidatamab PDUFA 2026-08-25 (73d), tight downside (floor $19 vs live $22.88), edge improved vs dossier. Defined-risk debit spread clearing Aug-25 via Sept-2026 monthly; size off ev_pct, <=2% premium.",
-   "score": 6.0,
-   "edge_grade": "M",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.2353,
-   "computed_rr": null,
-   "dated_milestone": "2026-08-25",
-   "entry_price": 22.88,
-   "entry_date": "2026-06-13",
-   "expected_pct": 29.2,
-   "cro_conditions": [],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "VIR",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
-   "intended_weight_pct": 2,
-   "note": "ev_pct 0.65, payoff 3.92, win 0.58 (SOLSTICE hep-delta ~Q4-2026, undated/staging). Equity ONLY (options too thin), weight <= half a normal clip per staging rule. Limit <= $8.85.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.6462,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 8.61,
-   "entry_date": "2026-06-13",
-   "expected_pct": 61.6,
-   "cro_conditions": [
-    "Equity only — do NOT use the long-call leg (options too illiquid)",
-    "Limit entry <= $8.85 to preserve payoff vs $20 FV"
-   ],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "PVLA",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
-   "intended_weight_pct": 2,
-   "note": "ev_pct 0.59, win_prob 0.75 (highest in batch), R:R ~2.3:1; H1-2027 approval window (undated/staging). Best equity liquidity (~$27M/day); option chain too thin -> equity only, staging half-size.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.5914,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 118.84,
-   "entry_date": "2026-06-23",
-   "expected_pct": 59.1,
-   "cro_conditions": [
-    "Equity only — option chain too thin for a long-dated call",
-    "FDA_clinical_readout cluster name (4th in batch) — Director must apply the driver cap and may displace a weaker cluster name",
-    "Size per binary event vol"
-   ],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "AVIR",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
-   "intended_weight_pct": 1.5,
-   "note": "ev_pct 0.57, payoff 4.62, win 0.57; undated soft readout. Equity-only (options dead), thin ($1.57M/day) -> small clip, staging half-size.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.572,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 4.39,
-   "entry_date": "2026-06-23",
-   "expected_pct": 57.2,
-   "cro_conditions": [
-    "Equity only — do not attempt options (no liquidity)",
-    "Size small per binary event vol",
-    "FDA_clinical_readout cluster name — subject to Director driver cap"
-   ],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "DBVT",
-   "blocked_by": "bio_convergence lane is 5/5 full; also FDA_clinical_readout driver 2/2 full",
-   "would_enter_if": "a bio_convergence lane seat AND an FDA_clinical_readout seat open (e.g. when CELC or AMLX resolves)",
-   "intended_weight_pct": 1.5,
-   "note": "ev_pct 0.44, payoff 2.77, win 0.55; undated. ADR with NO listed options -> equity only, limit <= $16.50 after +8.8% pop, thin float small clip.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.4359,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 15.7,
-   "entry_date": "2026-06-23",
-   "expected_pct": 43.6,
-   "cro_conditions": [
-    "Equity only — no options exist on the ADR",
-    "Enter on a limit <= $16.50 to restore dossier asymmetry (edge compressed ~half on +8.8% pop)",
-    "Small size; thin float",
-    "FDA cluster name — Director cap applies"
-   ],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true
-  },
-  {
-   "symbol": "MGNI",
-   "blocked_by": "resolution_driver Forced_divest_flow is 2/2 full (held FIG + BLCO)",
-   "would_enter_if": "a Forced_divest_flow seat opens when FIG or BLCO resolves",
-   "intended_weight_pct": 3,
-   "note": "M-grade, ev_pct 0.08, payoff 3.41 but win_prob only 0.30; undated DOJ AdX-remedy flow. Edge partially fired on +11% run; needs limit <= $15.00 to restore the $11 floor cushion. Equity / long-dated Dec-2026 calls, staging half-size. Behind CLVT in the forced-seller queue.",
-   "score": 7.2,
-   "edge_grade": "M",
-   "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow",
-   "super_cluster": "Idiosyncratic",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.08,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 17.45,
-   "entry_date": "2026-06-23",
-   "expected_pct": 8.0,
-   "cro_conditions": [
-    "Entry only on a limit at or below ~$15.00 to restore the dossier's downside cushion to the $11 floor (live $16.25 has eroded the R:R)",
-    "Express as equity or long-dated Dec-2026 calls (undated catalyst — do NOT use a tight near-dated expiry)",
-    "If options: confirm Dec-2026 call OI and effective spread < 15% before entry"
+    "Express in EQUITY, not options (OI ~0-25, IV ~200% = no viable defined-cost option)",
+    "Size as a defined-risk bet you can hold through a 60%+ adverse move (true binary, soft $5.5 cash-plus-pipeline floor can overshoot intraday)",
+    "If an option overlay is still wanted, use Sep18 or Oct16 (not Aug21) to clear a possible date slip - but only if live OI/spread materially improve"
    ],
    "expression": {
     "type": "debit_spread"
@@ -1459,11 +1404,6 @@
   }
  ],
  "watchlist_state": {
-  "CLVT": {
-   "entry_price": 2.21,
-   "entry_date": "2026-06-13",
-   "expected_pct": null
-  },
   "BBIO": {
    "entry_price": 66.8,
    "entry_date": "2026-06-13",
@@ -1473,36 +1413,6 @@
    "entry_price": 13.03,
    "entry_date": "2026-06-13",
    "expected_pct": 89.6
-  },
-  "ZYME": {
-   "entry_price": 22.88,
-   "entry_date": "2026-06-13",
-   "expected_pct": 29.2
-  },
-  "VIR": {
-   "entry_price": 8.61,
-   "entry_date": "2026-06-13",
-   "expected_pct": 61.6
-  },
-  "PVLA": {
-   "entry_price": 118.84,
-   "entry_date": "2026-06-23",
-   "expected_pct": 59.1
-  },
-  "AVIR": {
-   "entry_price": 4.39,
-   "entry_date": "2026-06-23",
-   "expected_pct": 57.2
-  },
-  "DBVT": {
-   "entry_price": 15.7,
-   "entry_date": "2026-06-23",
-   "expected_pct": 43.6
-  },
-  "MGNI": {
-   "entry_price": 17.45,
-   "entry_date": "2026-06-23",
-   "expected_pct": 8.0
   }
  },
  "watchlist_marks": [

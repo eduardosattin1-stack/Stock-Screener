@@ -1,0 +1,513 @@
+[
+ {
+  "symbol": "RMBS",
+  "name": "Rambus Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 15878837080,
+  "price": 146.84,
+  "volume": 2683570,
+  "gates": {
+   "ttm_fcf": 335209000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1588,
+   "rev_yoy": 0.1912,
+   "ttm_revenue": 721155000,
+   "fcf_margin": 0.4648,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.3700540468405952,
+   "adv_usd": 394055419.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "SMTC",
+  "name": "Semtech Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 14673171983,
+  "price": 157.52,
+  "volume": 4049834,
+  "gates": {
+   "ttm_fcf": 162098000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1155,
+   "rev_yoy": 0.1422,
+   "ttm_revenue": 1089960000,
+   "fcf_margin": 0.1487,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.0129337268974976,
+   "adv_usd": 637929852.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "MXL",
+  "name": "MaxLinear, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 6501932083,
+  "price": 72.61,
+  "volume": 5830540,
+  "gates": {
+   "ttm_fcf": 10154000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.2526,
+   "rev_yoy": 0.4089,
+   "ttm_revenue": 508896000,
+   "fcf_margin": 0.02,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.45534219596258,
+   "adv_usd": 423355509.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "KLIC",
+  "name": "Kulicke and Soffa Industries, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 5371446495,
+  "price": 102.64,
+  "volume": 640840,
+  "gates": {
+   "ttm_fcf": 4324000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.2423,
+   "rev_yoy": 0.1116,
+   "ttm_revenue": 768217000,
+   "fcf_margin": 0.0056,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -3.55180343886658,
+   "adv_usd": 65775818.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "DIOD",
+  "name": "Diodes Incorporated",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 4755739416,
+  "price": 103.51,
+  "volume": 460707,
+  "gates": {
+   "ttm_fcf": 128741000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0952,
+   "rev_yoy": 0.1597,
+   "ttm_revenue": 1555427000,
+   "fcf_margin": 0.0828,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.1680285094072314,
+   "adv_usd": 47687782.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "LASR",
+  "name": "nLIGHT, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3580824276,
+  "price": 63.48,
+  "volume": 1154751,
+  "gates": {
+   "ttm_fcf": 22169000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0259,
+   "rev_yoy": 0.4091,
+   "ttm_revenue": 289843000,
+   "fcf_margin": 0.0765,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -659.8693467336683,
+   "adv_usd": 73303593.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "DELL",
+  "name": "Dell Technologies Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 253385164717,
+  "price": 381.46,
+  "volume": 10330576,
+  "gates": {
+   "ttm_fcf": 9442000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0353,
+   "rev_yoy": 0.3875,
+   "ttm_revenue": 134002000000,
+   "fcf_margin": 0.0705,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.7921661938317928,
+   "adv_usd": 3940701521.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "ANET",
+  "name": "Arista Networks, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 191595221686,
+  "price": 152.16,
+  "volume": 7276550,
+  "gates": {
+   "ttm_fcf": 5278100000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2715,
+   "rev_yoy": 0.3057,
+   "ttm_revenue": 9709900000,
+   "fcf_margin": 0.5436,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6619758418567123,
+   "adv_usd": 1107199848.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "STX",
+  "name": "Seagate Technology Holdings plc",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 189699976290,
+  "price": 846.01,
+  "volume": 3066215,
+  "gates": {
+   "ttm_fcf": 2633000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0794,
+   "rev_yoy": 0.2892,
+   "ttm_revenue": 11010000000,
+   "fcf_margin": 0.2391,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.9157354273633344,
+   "adv_usd": 2594048552.0
+  },
+  "themes_hint": [
+   "ai_infrastructure"
+  ]
+ },
+ {
+  "symbol": "CIEN",
+  "name": "Ciena Corporation",
+  "sector": "Technology",
+  "industry": "Communication Equipment",
+  "mcap": 62189862070,
+  "price": 439.34,
+  "volume": 7851965,
+  "gates": {
+   "ttm_fcf": 832659000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.095,
+   "rev_yoy": 0.3059,
+   "ttm_revenue": 5569150000,
+   "fcf_margin": 0.1495,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.799084281368787,
+   "adv_usd": 3449682303.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "space"
+  ]
+ },
+ {
+  "symbol": "KN",
+  "name": "Knowles Corporation",
+  "sector": "Technology",
+  "industry": "Communication Equipment",
+  "mcap": 3269272819,
+  "price": 38.21,
+  "volume": 809949,
+  "gates": {
+   "ttm_fcf": 73100000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.074,
+   "rev_yoy": 0.1117,
+   "ttm_revenue": 614100000,
+   "fcf_margin": 0.119,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.9003267973856209,
+   "adv_usd": 30948151.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "space"
+  ]
+ },
+ {
+  "symbol": "LITE",
+  "name": "Lumentum Holdings Inc.",
+  "sector": "Technology",
+  "industry": "Communication Equipment",
+  "mcap": 67192748000,
+  "price": 821.76,
+  "volume": 7935768,
+  "gates": {
+   "ttm_fcf": 273800000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": -0.0133,
+   "rev_yoy": 0.6898,
+   "ttm_revenue": 2488400000,
+   "fcf_margin": 0.11,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.293975457965741,
+   "adv_usd": 6521296712.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "space"
+  ]
+ },
+ {
+  "symbol": "CRDO",
+  "name": "Credo Technology Group Holding Ltd",
+  "sector": "Technology",
+  "industry": "Communication Equipment",
+  "mcap": 40997688163.8,
+  "price": 234.32,
+  "volume": 15591046,
+  "gates": {
+   "ttm_fcf": 283694000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.9353,
+   "rev_yoy": 2.0568,
+   "ttm_revenue": 1335116000,
+   "fcf_margin": 0.2125,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.467366555408937,
+   "adv_usd": 3653293899.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "space"
+  ]
+ },
+ {
+  "symbol": "DGII",
+  "name": "Digi International Inc.",
+  "sector": "Technology",
+  "industry": "Communication Equipment",
+  "mcap": 2535095860.7599998,
+  "price": 66.18,
+  "volume": 325055,
+  "gates": {
+   "ttm_fcf": 126746000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0348,
+   "rev_yoy": 0.1348,
+   "ttm_revenue": 475057000,
+   "fcf_margin": 0.2668,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.3773157283480104,
+   "adv_usd": 21512140.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "space"
+  ]
+ },
+ {
+  "symbol": "CPAY",
+  "name": "Corpay, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 23389109095,
+  "price": 357.84,
+  "volume": 334875,
+  "gates": {
+   "ttm_fcf": 1310355000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0973,
+   "rev_yoy": 0.1826,
+   "ttm_revenue": 4783723000,
+   "fcf_margin": 0.2739,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.6219432189106521,
+   "adv_usd": 119831670.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "IOT",
+  "name": "Samsara Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 19400667535,
+  "price": 33.62,
+  "volume": 5581635,
+  "gates": {
+   "ttm_fcf": 234929000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.3537,
+   "rev_yoy": 0.296,
+   "ttm_revenue": 1730595000,
+   "fcf_margin": 0.1358,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -5.42745467047881,
+   "adv_usd": 187654569.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "DOCN",
+  "name": "DigitalOcean Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 17567592120,
+  "price": 168.33,
+  "volume": 3062533,
+  "gates": {
+   "ttm_fcf": 8367000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1608,
+   "rev_yoy": 0.1761,
+   "ttm_revenue": 948629000,
+   "fcf_margin": 0.0088,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.3781106772637988,
+   "adv_usd": 515516180.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "RBRK",
+  "name": "Rubrik, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 14765996338,
+  "price": 71.74,
+  "volume": 4334433,
+  "gates": {
+   "ttm_fcf": 306457000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2995,
+   "rev_yoy": 0.4573,
+   "ttm_revenue": 1424778000,
+   "fcf_margin": 0.2151,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.713894920676625,
+   "adv_usd": 310952223.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "TOST",
+  "name": "Toast, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 14499999725,
+  "price": 25,
+  "volume": 9769474,
+  "gates": {
+   "ttm_fcf": 654000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.311,
+   "rev_yoy": 0.2344,
+   "ttm_revenue": 6446000000,
+   "fcf_margin": 0.1015,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.456818181818182,
+   "adv_usd": 244236850
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "PATH",
+  "name": "UiPath Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 5718049399,
+  "price": 10.75,
+  "volume": 51792788,
+  "gates": {
+   "ttm_fcf": 375234000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1501,
+   "rev_yoy": 0.1524,
+   "ttm_revenue": 1672330000,
+   "fcf_margin": 0.2244,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -4.460070671378092,
+   "adv_usd": 556772471.0
+  },
+  "themes_hint": [
+   "ai_infrastructure",
+   "fintech_rails"
+  ]
+ }
+]

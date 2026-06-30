@@ -1,0 +1,21 @@
+{
+ "symbol": "NVT",
+ "themes": [
+  "energy_transition",
+  "ai_infrastructure"
+ ],
+ "value_chain_position": "Electrical enclosures, thermal management and power-distribution equipment supplier — occupies the power-and-cooling and electrification-components layer, selling into data centers, industrial and EV-charging infrastructure.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "steep_ramp",
+ "true_competitors": [
+  "ETN",
+  "HUBB",
+  "VRT",
+  "ABB",
+  "AMETEK",
+  "AYI",
+  "GEV"
+ ],
+ "relative_comps": "NVT is a genuine toll-taker in data-center power enclosures and thermal management alongside VRT; its 40% revenue YoY growth and 19% 3-year CAGR reflect strong hyperscaler pull-through. FCF margin (8.8%) is lower than VRT but balance sheet is stronger (1.6x leverage vs VRT). Trades at a premium to legacy ETN on growth expectations but is more exposed to project-cycle timing than software-like peers. The dual ai_infrastructure and energy_transition placement is valid per taxonomy notes.",
+ "theme_fit_confidence": "high"
+}

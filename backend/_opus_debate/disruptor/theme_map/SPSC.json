@@ -1,0 +1,18 @@
+{
+ "symbol": "SPSC",
+ "themes": [
+  "fintech_rails"
+ ],
+ "value_chain_position": "Retail supply-chain EDI and trading-partner network — sells cloud EDI (electronic data interchange) and supply-chain integration software that connects retailers, grocers, and CPG brands to their supplier networks; the data-pipe toll-taker on retail B2B commerce flows.",
+ "load_bearing_score": 4,
+ "s_curve_stage": "broadening",
+ "true_competitors": [
+  "TrueCommerce (private)",
+  "SPS Commerce has no direct public comp — nearest are MFT/B2B integration peers like IBM Sterling (IBM)",
+  "OpenText (OTEX)",
+  "Boomi (private)",
+  "DiCentral (private)"
+ ],
+ "relative_comps": "SPSC is a near-monopoly in cloud EDI for mid-market US retail with 19% YoY growth and 22% FCF margin at $762M revenue — remarkable for what is essentially legacy B2B integration modernized. There is no major public direct competitor: TrueCommerce and DiCentral are private and smaller. IBM Sterling and OpenText compete at the enterprise tier but are not EDI-pure-play. SPSC's network effect is real — every retailer that mandates SPSC EDI pulls its 1,000+ suppliers onto the platform. Load-bearing score of 4 reflects this supplier-mandate dynamic. The disruption angle is modest (EDI is not an emerging theme) but SPSC's recurring revenue quality and network stickiness justify fintech-rails inclusion as a supply-chain commerce infrastructure toll-taker.",
+ "theme_fit_confidence": "medium"
+}

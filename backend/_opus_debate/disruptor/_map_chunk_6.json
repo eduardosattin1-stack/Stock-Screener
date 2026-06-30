@@ -1,0 +1,515 @@
+[
+ {
+  "symbol": "DXCM",
+  "name": "DexCom, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 30171408072,
+  "price": 78.19,
+  "volume": 4759939,
+  "gates": {
+   "ttm_fcf": 1429400000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1701,
+   "rev_yoy": 0.1615,
+   "ttm_revenue": 4817900000,
+   "fcf_margin": 0.2967,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.2062988471765835,
+   "adv_usd": 372179630.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "PODD",
+  "name": "Insulet Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 11055334617,
+  "price": 159.61,
+  "volume": 1818914,
+  "gates": {
+   "ttm_fcf": 412200000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2754,
+   "rev_yoy": 0.3193,
+   "ttm_revenue": 2900900000,
+   "fcf_margin": 0.1421,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.8329474621549421,
+   "adv_usd": 290316864.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "LIVN",
+  "name": "LivaNova PLC",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 4239221127,
+  "price": 77.17,
+  "volume": 658613,
+  "gates": {
+   "ttm_fcf": 161076000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1075,
+   "rev_yoy": 0.1239,
+   "ttm_revenue": 1433437000,
+   "fcf_margin": 0.1124,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.8810156582071417,
+   "adv_usd": 50825165.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "TMDX",
+  "name": "TransMedics Group, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 2567529261,
+  "price": 74.29,
+  "volume": 1218547,
+  "gates": {
+   "ttm_fcf": 151358000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.8642,
+   "rev_yoy": 0.3024,
+   "ttm_revenue": 635890000,
+   "fcf_margin": 0.238,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.598787269974377,
+   "adv_usd": 90525857.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "AXGN",
+  "name": "AxoGen, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 2279733315,
+  "price": 42.87,
+  "volume": 1091543,
+  "gates": {
+   "ttm_fcf": 8933000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1757,
+   "rev_yoy": 0.2241,
+   "ttm_revenue": 238105000,
+   "fcf_margin": 0.0375,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -10.890762205830699,
+   "adv_usd": 46794448.0
+  },
+  "themes_hint": [
+   "genomics_bio_tools"
+  ]
+ },
+ {
+  "symbol": "GE",
+  "name": "GE Aerospace",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 345253498641,
+  "price": 330.44,
+  "volume": 4789302,
+  "gates": {
+   "ttm_fcf": 7468000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1632,
+   "rev_yoy": 0.2185,
+   "ttm_revenue": 48352000000,
+   "fcf_margin": 0.1545,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.844553465976197,
+   "adv_usd": 1582576953.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "RTX",
+  "name": "RTX Corporation",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 244503220800,
+  "price": 181.56,
+  "volume": 4482378,
+  "gates": {
+   "ttm_fcf": 8359000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0972,
+   "rev_yoy": 0.1056,
+   "ttm_revenue": 90373000000,
+   "fcf_margin": 0.0925,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.0813297906810964,
+   "adv_usd": 813820550.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "HWM",
+  "name": "Howmet Aerospace Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 102891640328,
+  "price": 257.16,
+  "volume": 3088010,
+  "gates": {
+   "ttm_fcf": 1435000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1337,
+   "rev_yoy": 0.1424,
+   "ttm_revenue": 8623000000,
+   "fcf_margin": 0.1664,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.84655885671305,
+   "adv_usd": 794112652.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "HEI",
+  "name": "HEICO Corporation",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 45476726681,
+  "price": 326.42,
+  "volume": 717213,
+  "gates": {
+   "ttm_fcf": 925974000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.2664,
+   "rev_yoy": 0.188,
+   "ttm_revenue": 4911297000,
+   "fcf_margin": 0.1885,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.738919391476427,
+   "adv_usd": 234112667.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "BWXT",
+  "name": "BWX Technologies, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 17311494816,
+  "price": 188.96,
+  "volume": 1019508,
+  "gates": {
+   "ttm_fcf": 328104000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1273,
+   "rev_yoy": 0.214,
+   "ttm_revenue": 3377235000,
+   "fcf_margin": 0.0972,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.768471855265655,
+   "adv_usd": 192646232.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "MOG-A",
+  "name": "Moog Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 12205070663,
+  "price": 385.23,
+  "volume": 230970,
+  "gates": {
+   "ttm_fcf": 203980000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0833,
+   "rev_yoy": 0.1372,
+   "ttm_revenue": 4172793999,
+   "fcf_margin": 0.0489,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.6440238478987583,
+   "adv_usd": 88976573.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "HII",
+  "name": "Huntington Ingalls Industries, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 11723478080,
+  "price": 297.52,
+  "volume": 385483,
+  "gates": {
+   "ttm_fcf": 1060000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0535,
+   "rev_yoy": 0.1208,
+   "ttm_revenue": 12849000000,
+   "fcf_margin": 0.0825,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.256857855361596,
+   "adv_usd": 114688902.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "PL",
+  "name": "Planet Labs PBC",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 10376474298,
+  "price": 31.17,
+  "volume": 22140004,
+  "gates": {
+   "ttm_fcf": 47158000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1718,
+   "rev_yoy": 0.3415,
+   "ttm_revenue": 335612000,
+   "fcf_margin": 0.1405,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9570009164134472,
+   "adv_usd": 690103925.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "SARO",
+  "name": "StandardAero, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 8504633760,
+  "price": 25.58,
+  "volume": 3898327,
+  "gates": {
+   "ttm_fcf": 133073000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1346,
+   "rev_yoy": 0.1502,
+   "ttm_revenue": 6253782000,
+   "fcf_margin": 0.0213,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.1020795389533022,
+   "adv_usd": 99719205.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "LOAR",
+  "name": "Loar Holdings Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 6132402785,
+  "price": 65.5,
+  "volume": 689779,
+  "gates": {
+   "ttm_fcf": 94751000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.275,
+   "rev_yoy": 0.2633,
+   "ttm_revenue": 537712000,
+   "fcf_margin": 0.1762,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.4555549710986037,
+   "adv_usd": 45180524.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "AIR",
+  "name": "AAR Corp.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 4772905088,
+  "price": 120.03,
+  "volume": 244416,
+  "gates": {
+   "ttm_fcf": 84800000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1517,
+   "rev_yoy": 0.1685,
+   "ttm_revenue": 3134500000,
+   "fcf_margin": 0.0271,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.6686893203883497,
+   "adv_usd": 29337252.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "WWD",
+  "name": "Woodward, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 22686189175,
+  "price": 380.75,
+  "volume": 1345155,
+  "gates": {
+   "ttm_fcf": 388559000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.144,
+   "rev_yoy": 0.1903,
+   "ttm_revenue": 3997732000,
+   "fcf_margin": 0.0972,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.8578953931379936,
+   "adv_usd": 512167766.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "ATRO",
+  "name": "Astronics Corporation",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 3031735714,
+  "price": 84.59,
+  "volume": 550450,
+  "gates": {
+   "ttm_fcf": 24771000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.1725,
+   "rev_yoy": 0.0864,
+   "ttm_revenue": 886811000,
+   "fcf_margin": 0.0279,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.3625384559038967,
+   "adv_usd": 46562566.0
+  },
+  "themes_hint": [
+   "defense_tech",
+   "space"
+  ]
+ },
+ {
+  "symbol": "COIN",
+  "name": "Coinbase Global, Inc.",
+  "sector": "Financial Services",
+  "industry": "Financial - Data & Stock Exchanges",
+  "mcap": 40967951162,
+  "price": 155.5,
+  "volume": 8747439,
+  "gates": {
+   "ttm_fcf": 2791854000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.31,
+   "rev_yoy": -0.1652,
+   "ttm_revenue": 5811068999,
+   "fcf_margin": 0.4804,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "exempt_financial",
+   "net_funded_debt_ebitda": -1.770183386213958,
+   "adv_usd": 1360226764.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ },
+ {
+  "symbol": "FIS",
+  "name": "Fidelity National Information Services, Inc.",
+  "sector": "Technology",
+  "industry": "Information Technology Services",
+  "mcap": 20664828457,
+  "price": 39.98,
+  "volume": 4648922,
+  "gates": {
+   "ttm_fcf": 2781000000,
+   "fcf_inflecting": false,
+   "rev_cagr_3y": 0.0318,
+   "rev_yoy": 0.144,
+   "ttm_revenue": 11658000000,
+   "fcf_margin": 0.2385,
+   "pass_fcf": true,
+   "pass_growth": true,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.881688018085908,
+   "adv_usd": 185863902.0
+  },
+  "themes_hint": [
+   "fintech_rails"
+  ]
+ }
+]

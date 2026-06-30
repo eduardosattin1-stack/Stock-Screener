@@ -1,51 +1,39 @@
-# BLCO — Bausch + Lomb Corporation — Interrogator Dossier (Event-Driven Special Situation)
+# Bausch + Lomb (BLCO) — Event-Driven Dossier
 
-**Frame:** This is NOT a quality/compounding thesis. BLCO is a structurally-fine eye-care franchise (Vision Care contact lenses, Surgical, Pharma incl. dry-eye/Xiidra) trapped inside a forced-seller / parent-overhang special situation. The catalyst is the SPREAD between the live ~$15 price and the value BLCO would command once Bausch Health Companies' (BHC) ~88% controlling stake is removed (full separation / spin / sale of the controlled float), clearing the overhang. The franchise is fine; the cap-table is the trade.
+**Setup type:** Forced-seller / divestiture-flow special situation. The thesis is not the eye-care franchise itself; it is the *overhang*. Bausch Health (ticker BHC) still owns about 88% of Bausch + Lomb's shares, a stake it has wanted to sell or spin off since 2020. The bet is that when that block finally clears — through an outright sale of the company or a clean spin-off — the price closes the gap to a strategic-deal value (roughly $25–27 a share) instead of the depressed level (~$16) the market assigns while the parent's debt problems hang over the stock.
 
-## 1. THE EVENT — WHAT IS THE CATALYST, IS IT REAL, DATED, BINDING?
+## 1. Is the catalyst real, dated, and binding?
 
-The load-bearing catalyst is the **clearing of BHC's ~88% ownership overhang** via a full separation of Bausch + Lomb from its debt-laden parent. As of the Feb 11, 2026 10-K filing, BHC still owns ~88% of BLCO common. The premise: a controlled, ~12%-float subsidiary trades at a structural discount (no index inclusion at full weight, parent-distress contagion, fraudulent-transfer/clawback risk attaching to the subsidiary, governance discount). Remove the parent and BLCO re-rates to a clean med-tech / eye-care peer multiple — the $26.97 SoP target.
+This is where the case weakens badly under scrutiny.
 
-**The verified status is the problem.** The catalyst is REAL in intent but UNDATED and serially-slipping, and it is gated on conditions OUTSIDE BLCO's control:
+- **The catalyst is real but has already failed once.** Bausch Health ran a formal sale process for Bausch + Lomb in 2024, advised by Goldman Sachs, and drew a serious bid: private-equity firms TPG and Blackstone teamed up at a valuation reportedly around $13–14 billion, implying up to about $25 a share. That process was **officially terminated in February 2025** — the company's own statement was that the process "is complete and will not result in a transaction at this time." So the headline event the thesis rests on has been tried and did not happen.
+- **What remains is undated and non-binding.** Management still calls full separation "the goal," but there is no signed deal, no record date, no spin effective date, and no scheduled board decision. As of early 2026 there is no public re-launch of a sale. In our terms this is a soft, non-binding catalyst — a stated intention, not a firm, scheduled event with a contractual payout.
+- **It is actively blocked, not merely delayed.** The separation cannot proceed unless Bausch Health passes a solvency test after the split, and major creditors — Apollo Global Management, Elliott Management, GoldenTree — have opposed a separation that would strip the eye-care asset away from the debt. This is the core reason the 2024 sale died, and nothing in the 2026 record shows that obstacle cleared.
 
-- **The sale/privatization path is DEAD.** BHC explored a sale of B+L; that process formally ENDED (announced Feb 6, 2025): "After engagement with potential buyers, that process is complete, and will not result in a transaction at this time." So the cleanest, fastest catalyst (a cash takeout at a premium) has already FIRED and FAILED. What remains is the slower spin/separation path.
-- **The spin is blocked by a BHC SOLVENCY TEST.** BHC carries ~$21B of debt with ~$10B (roughly a third) due by 2027. For BHC to distribute/exchange its B+L stake, BHC itself must pass an independent solvency opinion (a Canadian closing condition) — i.e., BHC must demonstrate it remains solvent AFTER giving away its most valuable, least-levered asset. That is a high bar for a company this levered, and it is the structural reason the separation has slipped for 4+ years (B+L IPO'd in 2022 with the spin "planned" then).
-- **Fraudulent-transfer litigation is an explicit impediment.** Legacy Valeant securities-fraud plaintiffs have brought fraudulent-transfer claims; courts could require BHC to settle before a B+L separation can proceed. The large GMO Trust securities case settled recently — a constructive step that *could* pave a global settlement — but the fraudulent-transfer overhang specific to the spin is not confirmed cleared.
+## 2. Credibility of the sponsor / management on hitting it
 
-**Verdict on the catalyst:** This is a SOFT_EXTENDED catalyst, not a PENDING_HARD one. There is no PDUFA-style hard date, no signed merger with an outside-date, no record date for a spin. It is a "remains the goal" management aspiration whose trigger (BHC solvency + litigation clearance) is a third-party, multi-year, binary-ish gate. Management is credible on *intent* (they have stated repeatedly the full separation "remains the goal") but has NOT been credible on *timing* — this has been imminent-sounding since 2022 and has not happened.
+Mixed-to-poor on the *event*, even though the operating business is fine. Bausch + Lomb itself is executing — 2025 revenue reached about $5.1 billion across Vision Care (~57%), Pharmaceuticals (~25%) and Surgical (~18%), with new launches (dry-eye, Blink Triple Care) in 2026. But the *decision-maker on the catalyst is not Bausch + Lomb management — it is the parent, Bausch Health, and its creditors.* Bausch Health's credibility on delivering this separation is low: it has signaled the spin since 2020, retained the 88% block for four-plus years, and watched one full sale process collapse. The party that controls the trigger has repeatedly failed to pull it.
 
-## 2. THE DOWNSIDE FLOOR — WHAT ACTUALLY BACKSTOPS THE PRICE?
+## 3. The verified downside floor (what actually backstops the price)
 
-Floor cited: **$11.80**, essentially the 52-week low ($11.58) — i.e., where BLCO traded as a standalone-quality eye-care business under the FULL parent overhang, with NO separation credit. This is a REAL, observed, market-set floor: BLCO is a profitable, growing eye-care company ($5.1B 2025 revenue, growing) that the market has been unwilling to mark below ~$11.6 even at peak overhang/pessimism. The floor is a real-business-value floor, not a deal-break floor, which makes it more reliable than a typical merger-arb downside (no financing contingency to evaporate). Downside from $15 to $11.80 is ~21%.
+The floor is genuinely real, which is the redeeming feature of the setup. Bausch + Lomb is a profitable, growing, standalone eye-care company — not a melting ice cube. The downside is bounded by its standalone value as an independent business:
 
-**Caveats on the floor:** (a) A BHC bankruptcy/restructuring is the tail risk — if BHC files, the B+L shares it owns become an asset of the estate, and a forced, disorderly liquidation of that 88% block could push BLCO well below $11.80 temporarily (supply shock), even though BLCO's intrinsic business value is unimpaired. (b) The fraudulent-transfer claims, in a bad outcome, could attach value at the B+L level. So the floor is "real-business-value real" but not bulletproof against the parent's distress contaminating the security.
+- The 52-week low is about $12.06, and the stock has spent 2026 mostly in the $14–17 area on its own operating merits, with the overhang already priced in.
+- Analyst consensus sits around $18.25–18.65 (Buy-to-neutral, 11–18 analysts) — i.e., the street already values the standalone business *above* today's price, before any deal premium.
+- A reasonable bear/standalone floor is therefore around $11.80–12, roughly the recent low and a discount-to-standalone level that would require the overhang to worsen rather than resolve.
 
-## 3. THE TARGET — IS $26.97 REAL?
+So the loss is bounded by a living business, not by a deal-break to cash. That is the strongest part of the thesis.
 
-$26.97 implies ~$9.5–10B equity value, ~1.8–1.9x EV/sales on a $5.1B franchise — a clean eye-care/med-tech multiple (peers like Cooper, Alcon trade richer). It is the "overhang fully cleared + clean float + index weight + standalone-board governance" value. It is a defensible *intrinsic clean-cap-table* number. The tension: the SELL-SIDE consensus target is only ~$17.92 (Hold, 4 buy / 9 hold / 1 sell across 14 analysts). The street is NOT underwriting the $27 clean-separation value because the street does not believe the separation is dated/binding. So the spread is real ONLY if the catalyst fires — which is exactly the SOFT_EXTENDED problem. Absent the catalyst, fair value sits much closer to the ~$17–18 analyst zone.
+## 4. Red flags
 
-## 4. RED FLAGS
+- 🔴 **The headline catalyst already misfired** (Feb-2025 process terminated) and has not been re-armed with a date.
+- 🔴 **The trigger is controlled by hostile third parties** — the parent's creditors, who have an incentive to *prevent* the clean separation the thesis needs.
+- 🔴 **Parent-debt contagion risk:** Bausch Health carries roughly $20 billion of debt with maturities clustering through 2027–2028 and a key drug (Xifaxan) facing generic entry by 2028. A parent restructuring could force a disorderly sale of the BLCO block — which is the bull's catalyst, but could also clear at a discount, not a premium.
+- 🟢 **Mitigant:** Bausch + Lomb refinanced its own term loans in January 2026 ($2.8B), so the subsidiary's balance sheet is not the bottleneck — the parent is.
+- 🟢 **Mitigant:** the Carl Icahn director arrangement was terminated in August 2025, reducing (not adding) activist noise; there is no live activist process forcing the issue today.
 
-🔴 Sale process formally TERMINATED (Feb 2025) — the fast catalyst is spent/failed.
-🔴 Trigger is a PARENT solvency test on a ~$21B-debt, ~$10B-due-by-2027 balance sheet — structurally hard to pass while keeping the best asset.
-🔴 Fraudulent-transfer litigation (Valeant plaintiffs) is an explicit, cited impediment to the spin; not confirmed cleared.
-🔴 UNDATED. 4+ years of "imminent." No record date, no outside date, no binding instrument.
-🔴 Parent-bankruptcy tail could force a disorderly liquidation of the 88% block, temporarily breaking even the $11.80 floor.
+## 5. Verdict on the event
 
-## 5. GREEN FLAGS
+The asymmetry on paper is attractive — about $16 today versus a $25–27 deal value and an ~$12 floor. But the catalyst is the problem: it is undated, non-binding, has already failed once, and is gated on a solvency test that the parent's creditors are blocking. This is a soft, extended catalyst, not a hard, scheduled one. The floor is real (a profitable standalone business near its own fair value), so this is a defensible *patient-value* holding, but it is **not** an imminent, defined-trigger arbitrage. It earns a wait-for-the-catalyst posture, not an aggressive entry, until a sale or spin is actually re-launched with a date.
 
-🟢 The underlying business is genuinely good and GROWING ($5.1B 2025 revenue, eye-care secular tailwind, real franchises) — the floor is a real-business floor, not a shell.
-🟢 GMO Trust securities case settled — a constructive step toward clearing the litigation gate / global settlement.
-🟢 Management consistently reaffirms full separation "remains the goal"; intent is credible.
-🟢 Defined ~21% downside to an observed 52-week-low floor vs a large upside-to-clean-value — the asymmetry is attractive IF the catalyst ever dates.
-🟢 No financing contingency in the floor (unlike a busted-deal arb).
-
-## 6. MOAT / SECULAR (mostly N/A — scoring the EVENT)
-
-Moat is NARROW-to-respectable (eye-care brand + contact-lens scale + surgical razor/razorblade), STABLE, no terminal secular threat — eye-care demand is structurally growing (aging demographics, myopia). But moat is NOT the thesis here; the cap-table dislocation is. Secular threat: none/manageable.
-
-## 7. CAPITAL-ALLOCATION VERDICT (for the director)
-
-The single most important thing the director must weigh: **this is a REAL, well-defined asymmetry (≈21% down to an observed floor vs a large clean-separation upside) sitting on a catalyst that is currently SOFT_EXTENDED — undated, parent-gated, litigation-gated, with the fast sale path already dead.** It is a quintessential WATCH/stage name: the spread is real, the floor is real, but there is no forcing function inside a defined window. You are paid to WAIT for a dating event (a signed separation agreement with an outside date, a passed solvency opinion, a fraudulent-transfer settlement, or a BHC refi that de-risks the 2027 wall) — NOT to underwrite the $27 today as if the catalyst were live. Do not size this like a PENDING_HARD aggressive-entry special-sit; size it as a staged, defined-risk option on an eventual catalyst, with the floor as the margin of safety.
-
-CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none
+CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable
