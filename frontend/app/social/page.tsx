@@ -371,11 +371,11 @@ export default function SocialArb() {
           <Radio size={20} style={{ color: T.green, marginTop: 2 }} />
           <div>
             <h1 style={{ fontSize: 19, fontWeight: 800, fontFamily: T.mono, color: T.text, letterSpacing: "-0.02em" }}>
-              SOCIAL ARB <span style={{ color: T.light, fontWeight: 500 }}>/ consumer-behavior signals</span>
+              RETAIL RADAR <span style={{ color: T.light, fontWeight: 500 }}>/ what your basket is buzzing on Reddit</span>
             </h1>
             <p style={{ fontSize: 11, fontFamily: T.mono, color: T.muted, marginTop: 4, lineHeight: 1.5 }}>
-              Ranked by the demand/awareness gap. One line per signal — click to expand mention history,
-              intent mix, and evidence. Fresh as of <span style={{ color: T.text }}>{freshness}</span>.
+              Reddit mention volume per basket ticker (WSB · r/stocks · r/options · r/investing) — ranked
+              by 30-day mentions. A monitor, not a trade signal. Fresh as of <span style={{ color: T.text }}>{freshness}</span>.
             </p>
           </div>
         </div>
@@ -389,9 +389,8 @@ export default function SocialArb() {
         }}>
           <Activity size={14} style={{ color: T.green, flexShrink: 0 }} />
           <span style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.5 }}>
-            Detects consumer-behavior change in public chatter <span style={{ color: T.text }}>before</span> the financial
-            world catches on — <span style={{ color: T.text }}>the demand−awareness gap is the trade</span>. It closes when
-            finance media and traders pile in.
+            How much <span style={{ color: T.text }}>retail attention</span> each of your basket names is getting on
+            Reddit — a <span style={{ color: T.text }}>monitor for situational awareness, not a trade signal</span>.
           </span>
         </div>
 
@@ -402,17 +401,17 @@ export default function SocialArb() {
           <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", marginBottom: 18, borderRadius: 8, background: "var(--amber-light)", border: `1px solid ${T.border}` }}>
             <Activity size={14} style={{ color: T.amber, flexShrink: 0, marginTop: 1 }} />
             <span style={{ fontSize: 10.5, fontFamily: T.mono, color: T.muted, lineHeight: 1.5 }}>
-              <span style={{ color: T.amber, fontWeight: 700 }}>Early data — read with care.</span> {(hnShare * 100).toFixed(0)}% of posts are HackerNews and the awareness side (finance news / StockTwits) is thin, so &quot;demand&quot; is mostly developer / early-adopter buzz and <span style={{ color: T.text }}>gap ≈ demand</span>. Treat single-platform (×1) rows as early-adopter signal, not confirmed consumer behavior. Source diversification is in progress; this note clears as the mix broadens.
+              <span style={{ color: T.amber, fontWeight: 700 }}>Monitor, not a trade signal.</span> Reddit mention <span style={{ color: T.text }}>attention</span> per ticker — most of your basket names get little chatter, so the board shows the active ones. Validation found attention surges don&apos;t beat the sector; treat this as situational awareness.
             </span>
           </div>
         )}
 
         {/* KPIs */}
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
-          <StatCard label="Open signals" value={String(signals.length)} sub={`status · ${status}`} accent={T.green} />
+          <StatCard label="Tickers buzzing" value={String(signals.length)} sub="of your basket" accent={T.green} />
           <StatCard label="Posts ingested" value={stats?.total_posts != null ? String(stats.total_posts) : "—"} sub={sources != null ? `${sources} sources` : undefined} />
           <StatCard label="Avg sentiment" value={stats?.avg_sentiment != null ? stats.avg_sentiment.toFixed(2) : "—"} sub={stats?.positive_count != null ? `${stats.positive_count}+ / ${stats.negative_count ?? 0}−` : undefined} />
-          <StatCard label="Backtest win (21d)" value={winRate != null ? pct(winRate) : "—"} sub={bt?.measured_21d ? `${bt.winners_21d}/${bt.measured_21d} measured` : "accruing"} />
+          <StatCard label="Updated" value={freshness || "—"} sub="hourly · auto-refresh" />
         </div>
 
         {/* Status filter */}
@@ -461,9 +460,9 @@ export default function SocialArb() {
                     <th style={{ ...hdr, textAlign: "center", width: 40 }}>#</th>
                     <th style={{ ...hdr, textAlign: "left", width: 300 }}>Entity / ticker</th>
                     <th style={{ ...hdr, textAlign: "center", width: 70 }}><Tip k="SA_DIRECTION">Dir</Tip></th>
-                    <th style={{ ...hdr, width: 80 }}><Tip k="SA_DEMAND">Demand</Tip></th>
-                    <th style={{ ...hdr, width: 86 }}><Tip k="SA_AWARENESS">Awareness</Tip></th>
-                    <th style={{ ...hdr, width: 90 }}><Tip k="SA_GAP">Gap</Tip></th>
+                    <th style={{ ...hdr, width: 80 }}><Tip k="SA_DEMAND">Mentions</Tip></th>
+                    <th style={{ ...hdr, width: 86 }}><Tip k="SA_AWARENESS">Sentiment</Tip></th>
+                    <th style={{ ...hdr, width: 90 }}><Tip k="SA_GAP">Trend</Tip></th>
                     <th style={{ ...hdr, width: 60 }}><Tip k="SA_VELOCITY">Vel z</Tip></th>
                     <th style={{ ...hdr, textAlign: "center", width: 60 }}><Tip k="SA_CORROBORATION">Corr</Tip></th>
                     <th style={{ ...hdr, width: 72 }}><Tip k="SA_MATERIALITY">Mat.</Tip></th>
@@ -515,7 +514,7 @@ export default function SocialArb() {
                               bg={dir === "long" ? "rgba(20,184,122,0.18)" : dir === "short" ? "rgba(239,90,90,0.16)" : "rgba(245,185,66,0.16)"} />
                           </td>
                           <td style={{ ...cell, color: T.text }}>{f2(s.demand_index)}</td>
-                          <td style={{ ...cell, color: T.muted }}>{f2(s.awareness_index)}</td>
+                          <td style={{ ...cell, color: T.muted }}>{(s as any).sentiment_30d != null ? f2((s as any).sentiment_30d) : "—"}</td>
                           <td style={{ padding: "8px 8px", textAlign: "right" }}>
                             <span style={{ fontSize: 11.5, fontFamily: T.mono, fontWeight: 800, color: grade.color }}>{f2(s.gap_score)} </span>
                             <Chip text={grade.label} color={grade.color} bg={grade.bg} />
