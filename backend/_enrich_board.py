@@ -76,6 +76,8 @@ def main():
         return v
 
     for rep in nested:
+        rep.pop("recommendation", None)   # dead field: the sweep hardcoded "WATCH" for every name and
+                                          # never computes a real Loeb call; the UI no longer reads it.
         row = by_sym.get(rep["symbol"])
         if row is None:
             continue

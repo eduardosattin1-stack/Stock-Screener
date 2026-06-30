@@ -18,7 +18,7 @@ function sweepDossier(r: any): any {
   return {
     symbol:r.symbol, company_name:r.company_name||r.symbol, price:r.price??null, market_cap:r.market_cap??null,
     catalyst_density_score:r.score, adjusted_loeb_score:r.score, final_adjusted_loeb:r.score,
-    upside_downside_ratio:r.rr??null, recommendation:"WATCH", catalyst_nature:"pricing_dislocation", re_rate_status:"pending",
+    upside_downside_ratio:r.rr??null, catalyst_nature:"pricing_dislocation", re_rate_status:"pending",
     tier:r.tier, lane:r.lane, gate_status:r.gate||"PASS", bloom_gates_passed:r.bloom_gates?[r.bloom_gates]:[],
     edge:r.edge||"", verify_verdict:r.verdict||"(sweep)", instrument:r.instrument||"", resolution_driver:r.resolution_driver||"",
     analysis_summary:"[SWEEP "+(r.chunk||"")+"] "+(r.analysis||r.catalyst||""),
