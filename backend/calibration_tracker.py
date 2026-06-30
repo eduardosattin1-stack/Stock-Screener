@@ -113,18 +113,27 @@ def _gcs_token() -> Optional[str]:
         return None
 
 
-def _gcs_read(path: str, default):
-    """Read JSON from GCS. Returns default on any failure."""
+def _gcs_read(path: str, default, generation: Optional[int] = None):
+    """Read JSON from GCS. Returns default on any failure.
+
+    Pins the download to the current object generation to dodge a read-after-write
+    staleness window on the JSON-API ?alt=media endpoint (observed serving the
+    prior generation for a few seconds after a write). generation=None -> stat and
+    pin to current; generation=0 -> object absent."""
     try:
         import requests
         tok = _gcs_token()
         if not tok:
             return default
+        if generation is None:
+            generation = _gcs_generation(path)
+        if generation == 0:
+            return default
         encoded_path = path.replace("/", "%2F")
-        r = requests.get(
-            f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
-            headers={"Authorization": f"Bearer {tok}"}, timeout=10,
-        )
+        url = f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media"
+        if generation:
+            url += f"&generation={generation}"
+        r = requests.get(url, headers={"Authorization": f"Bearer {tok}"}, timeout=10)
         if r.status_code == 200:
             return r.json()
         if r.status_code == 404:
@@ -135,18 +144,31 @@ def _gcs_read(path: str, default):
     return default
 
 
-def _gcs_read_text(path: str, default: str = "") -> str:
-    """Read raw text (for JSONL files) from GCS. Returns default on failure."""
+def _gcs_read_text(path: str, default: str = "", generation: Optional[int] = None) -> str:
+    """Read raw text (for JSONL files) from GCS. Returns default on failure.
+
+    Pins the download to an object generation to dodge a read-after-write
+    staleness window on the JSON-API ?alt=media endpoint: it was observed serving
+    the PRIOR generation for a few seconds after a write, which silently corrupted
+    append_jsonl's read-modify-write (it read stale content, then wrote
+    stale+payload under a precondition that still matched -> clobbered the rows
+    written in between). generation=None -> stat current generation and pin to it;
+    optimistic read-modify-write callers (append_jsonl) pass the same generation
+    they precondition on so the read and the write see the same snapshot."""
     try:
         import requests
         tok = _gcs_token()
         if not tok:
             return default
+        if generation is None:
+            generation = _gcs_generation(path)
+        if generation == 0:
+            return default
         encoded_path = path.replace("/", "%2F")
-        r = requests.get(
-            f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media",
-            headers={"Authorization": f"Bearer {tok}"}, timeout=10,
-        )
+        url = f"https://www.googleapis.com/storage/v1/b/{GCS_BUCKET}/o/{encoded_path}?alt=media"
+        if generation:
+            url += f"&generation={generation}"
+        r = requests.get(url, headers={"Authorization": f"Bearer {tok}"}, timeout=10)
         if r.status_code == 200:
             return r.text
         if r.status_code == 404:
@@ -250,7 +272,9 @@ def _gcs_append_jsonl(path: str, rows: list) -> bool:
         if gen is None:
             log.warning(f"GCS append {path}: could not stat generation")
             return False
-        existing = _gcs_read_text(path, "") if gen else ""
+        # read the EXACT generation we precondition on (defeats ?alt=media
+        # read-after-write staleness that would otherwise clobber recent appends)
+        existing = _gcs_read_text(path, "", generation=gen) if gen else ""
         if existing and not existing.endswith("\n"):
             existing += "\n"
         status = _gcs_write_precond(path, existing + payload, gen)
@@ -436,8 +460,8 @@ def _fetch_bars_pooled(theta, requests_list: list) -> dict:
             sym, s, e = req
             out[req] = _fetch_impl(sym, s, e) or []
         return out
-    if theta is None:
-        return out
+    # NB: theta is intentionally None post-FMP-migration (no ThetaClient needed);
+    # _fetch_eod_bars ignores it and fetches from FMP, so do NOT bail on theta is None.
     import concurrent.futures
     limiter = _RateLimiter(THETA_RPS)
 
@@ -813,6 +837,8 @@ def _load_resolved_records(cfg: RegimeCfg) -> list:
     by_id = {}
     no_id = []
     for path in sorted(_gcs_impl["list"](f"{CAL_PREFIX}/{cfg.name}/resolved/")):
+        if not path.endswith(".jsonl"):
+            continue  # skip .bak-* sibling backups: stale rows would win the keep-last dedup
         text = _gcs_impl["read_text"](path, "")
         for line in text.splitlines():
             line = line.strip()
@@ -834,6 +860,8 @@ def _load_entry_scan_dates(cfg: RegimeCfg) -> set:
     """Distinct scan_date values across the regime's entries files."""
     dates = set()
     for path in _gcs_impl["list"](f"{CAL_PREFIX}/{cfg.name}/entries/"):
+        if not path.endswith(".jsonl"):
+            continue  # skip .bak-* sibling backups
         text = _gcs_impl["read_text"](path, "")
         for line in text.splitlines():
             line = line.strip()
