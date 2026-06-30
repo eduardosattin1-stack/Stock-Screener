@@ -561,21 +561,6 @@ export default function CatalystWatch() {
     }
   };
 
-  const getRecommendationStyle = (rec?: string) => {
-    switch (rec) {
-      case "BUY":
-        return { color: T.green, backgroundColor: T.greenLight, borderColor: T.greenBorder };
-      case "WATCH":
-        return { color: T.amber, backgroundColor: T.amberLight, borderColor: T.amber };
-      case "HOLD":
-        return { color: T.muted, backgroundColor: T.card, borderColor: T.border };
-      case "SELL":
-        return { color: T.red, backgroundColor: T.redLight, borderColor: T.red };
-      default:
-        return { color: T.text, backgroundColor: T.card, borderColor: T.border };
-    }
-  };
-
   const formatMarketCap = (num?: number) => {
     if (!num) return "N/A";
     if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
@@ -1477,15 +1462,9 @@ export default function CatalystWatch() {
                       <span style={{ fontSize: 14, fontWeight: 700, color: T.muted }}>
                         ({report.symbol})
                       </span>
-                      {report.recommendation && (
-                        <span title="Deep-scan trade CALL (Loeb/Third Point thesis): Buy / Watch / Hold / Sell — distinct from the catalyst TIER badge, which is the event's gate hardness." style={{
-                          fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6,
-                          borderWidth: 1, borderStyle: "solid",
-                          ...getRecommendationStyle(report.recommendation)
-                        }}>
-                          CALL: {report.recommendation.charAt(0) + report.recommendation.slice(1).toLowerCase()}
-                        </span>
-                      )}
+                      {/* CALL badge removed: the sweep/enrich pipeline hardcodes recommendation="WATCH"
+                          for every board name (195/195), so it carried no signal. The real per-name read
+                          is the TIER badge (below) + score/edge + CRO conditions + the debate/CRO verdict. */}
                       {(report as any).tier && (() => {
                         const tu = String((report as any).tier).toUpperCase();
                         const c = tu === "ACTIVE" ? "#14b87a" : tu === "CONTINGENT" ? "#a855f7" : "#d97706";
