@@ -1049,6 +1049,7 @@ export default function CatalystWatch() {
                             <th style={{ padding: "3px 8px" }}>Entry</th>
                             <th style={{ padding: "3px 8px" }}>Review trigger</th>
                             <th style={{ padding: "3px 8px" }}>CRO</th>
+                            <th style={{ padding: "3px 8px" }}>Status</th>
                             <th style={{ padding: "3px 0" }}>Live</th>
                           </tr>
                         </thead>
@@ -1070,6 +1071,11 @@ export default function CatalystWatch() {
                                 {(e.cro_conditions || []).length > 0
                                   ? <span title={e.cro_conditions.join("\n• ").replace(/^/, "• ")} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⚠ {e.cro_conditions.length} cond</span>
                                   : <span style={{ fontSize: 8.5, color: T.muted }}>clean</span>}
+                              </td>
+                              <td style={{ padding: "5px 8px" }}>
+                                {e.status === "PENDING_LIMIT"
+                                  ? <span title={`Resting limit ≤ ${e.limit_price} — not yet filled; no NAV impact until the close trades through.`} style={{ fontSize: 8.5, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "0 4px", cursor: "help" }}>⏳ pending</span>
+                                  : <span title="Held seat — runs to resolution (win/loss/slip/thesis-break/edge-gone/expiry); the paper basket never rebalances." style={{ fontSize: 8.5, color: T.green }}>held</span>}
                               </td>
                               <td style={{ padding: "5px 0" }}>
                                 {(() => {
