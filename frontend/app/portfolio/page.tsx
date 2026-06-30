@@ -126,6 +126,7 @@ export default function Portfolio(){
   const[errorMsg,setErrorMsg]=useState<string|null>(null);
   const[accountSummary,setAccountSummary]=useState<AccountSummary|null>(null);
   const[ibkrSync,setIbkrSync]=useState<IbkrSync|null>(null);
+  const[fxRates,setFxRates]=useState<Record<string,number>>({});
 
   // Load state: GCS is single source of truth. v7.2: removed the
   // localStorage migration — it was zombie-reviving closed positions
@@ -180,6 +181,27 @@ export default function Portfolio(){
   }
   useEffect(()=>{refresh();},[user]);
 
+  // Base reporting currency = the IBKR account's base (EUR) when mirrored, else USD.
+  const baseCcy=accountSummary?.currency||"USD";
+  // Live FX so mixed-currency rows can be summed into one base-currency figure per
+  // sleeve. Pulls base→ccy pairs (e.g. EURUSD, EURHKD) through the existing FMP
+  // quotes proxy — batch-quote prices forex pairs too. Rate = units of `ccy` per 1
+  // base unit, so localToBase divides. A missing rate ⇒ no conversion (safe degrade).
+  useEffect(()=>{
+    const ccys=Array.from(new Set(portfolio.map(p=>(p.currency||baseCcy).toUpperCase()))).filter(c=>c&&c!==baseCcy);
+    if(!ccys.length){setFxRates({});return;}
+    let cancelled=false;
+    fetch(`/api/quotes?light=1&symbols=${ccys.map(c=>`${baseCcy}${c}`).join(",")}`)
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(cancelled||!d?.quotes)return;
+        const m:Record<string,number>={};
+        for(const q of d.quotes){if(q?.symbol&&typeof q.price==="number"&&q.price>0)m[String(q.symbol).slice(baseCcy.length).toUpperCase()]=q.price;}
+        setFxRates(m);
+      }).catch(()=>{});
+    return()=>{cancelled=true;};
+  },[portfolio,baseCcy]);
+
   // User-initiated position close — prompts for exit price, writes to GCS.
   // Does NOT use signal state; signal is informational only.
   async function closePosition(sym:string,exitPrice:number,reason:string,asset_type?:string,dd_touch?:number,gain_touch?:number){
@@ -197,13 +219,6 @@ export default function Portfolio(){
   const stocks = portfolio.filter(p => p.asset_type !== "option");
   const options = portfolio.filter(p => p.asset_type === "option");
 
-  const stats=useMemo(()=>{
-    let totalCost=0,totalValue=0,winners=0,losers=0;
-    stocks.forEach(p=>{const live=liveData[p.symbol];const cur=live?.price||p.entry_price;totalCost+=p.entry_price*p.shares;totalValue+=cur*p.shares;if(cur>p.entry_price)winners++;else if(cur<p.entry_price)losers++;});
-    const pnl=totalValue-totalCost;
-    return{totalCost,totalValue,pnl,pnlPct:totalCost>0?pnl/totalCost:0,winners,losers,positions:portfolio.length};
-  },[portfolio,liveData]);
-
   const historyStats=useMemo(()=>{
     if(!history.length) return null;
     const wins=history.filter(h=>h.pnl_pct>0).length;
@@ -211,25 +226,56 @@ export default function Portfolio(){
     return{total:history.length,wins,winRate:wins/history.length,avgPnl};
   },[history]);
 
-  const fmtMoney=(n:number)=>{if(Math.abs(n)>=1e6)return`$${(n/1e6).toFixed(1)}M`;if(Math.abs(n)>=1e3)return`$${(n/1e3).toFixed(1)}K`;return`$${n.toFixed(0)}`;};
   const ccySym=(c?:string)=>c==="EUR"?"€":(c==="USD"||!c)?"$":c==="GBP"?"£":`${c} `;
   const fmtCcy=(n:number,c?:string)=>{const a=Math.abs(n);const v=a>=1e6?`${(n/1e6).toFixed(2)}M`:a>=1e3?`${(n/1e3).toFixed(1)}K`:n.toFixed(0);return`${ccySym(c)}${v}`;};
 
-  // When the IBKR mirror is live, drive the headline cards off the broker's own
-  // base-currency (EUR) account summary — sidesteps summing mixed-currency rows.
-  const baseCcy=accountSummary?.currency||"USD";
-  const headline=accountSummary?{
-    totalValue:accountSummary.net_liquidation??0,
-    valueSub:accountSummary.total_cash!=null?`Cash: ${fmtCcy(accountSummary.total_cash,baseCcy)}`:"",
-    pnl:accountSummary.unrealized_pnl??0, pnlPct:null as number|null, ccy:baseCcy,
-  }:{
-    totalValue:stats.totalValue, valueSub:`Cost: ${fmtMoney(stats.totalCost)}`,
-    pnl:stats.pnl, pnlPct:stats.pnlPct as number|null, ccy:"USD",
+  // ── Per-sleeve performance ────────────────────────────────────────────────
+  // Stocks and options are tracked INDEPENDENTLY. Each row carries its own
+  // currency; value/P&L are converted to the base currency (toBase) so a whole
+  // sleeve sums to one figure. When the IBKR mirror is live we use the broker's
+  // per-row market_value / ib_unrealized_pnl (authoritative); otherwise we fall
+  // back to scan prices. The headline cards then reflect the ACTIVE tab's sleeve,
+  // and an account strip (below) keeps the whole-account, cash-inclusive glance.
+  const toBase=(amt:number,ccy?:string):number=>{
+    const c=(ccy||baseCcy).toUpperCase();
+    if(c===baseCcy)return amt;
+    const r=fxRates[c];
+    return r&&r>0?amt/r:amt;
   };
-  const wl=useMemo(()=>{
-    if(ibkrSync){let w=0,l=0;portfolio.forEach(p=>{const u=p.ib_unrealized_pnl;if(typeof u==="number"){if(u>0)w++;else if(u<0)l++;}});return{w,l};}
-    return{w:stats.winners,l:stats.losers};
-  },[portfolio,ibkrSync,stats]);
+  const computeSleeve=(rows:Position[])=>{
+    let value=0,pnl=0,cost=0,winners=0,losers=0;
+    rows.forEach(p=>{
+      const live=liveData[p.symbol];
+      const cur=p.last_price??live?.price??p.entry_price;
+      const isOpt=p.asset_type==="option";
+      const qty=isOpt?100*(p.contracts??p.shares??1):(p.shares??0);
+      value+=p.market_value!=null?toBase(p.market_value,p.currency):toBase(cur*qty,p.currency);
+      let pb:number;
+      if(p.ib_unrealized_pnl!=null)pb=toBase(p.ib_unrealized_pnl,p.currency);
+      else if(isOpt)pb=cur>0?toBase((cur-p.entry_price)*qty,p.currency):0;
+      else pb=toBase((cur-p.entry_price)*(p.shares??0),p.currency);
+      pnl+=pb;
+      if(pb>0)winners++;else if(pb<0)losers++;
+      if(!isOpt)cost+=toBase(p.entry_price*(p.shares??0),p.currency);
+    });
+    return{count:rows.length,value,pnl,cost,winners,losers};
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const stockSleeve=useMemo(()=>computeSleeve(stocks),[stocks,liveData,fxRates,baseCcy]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const optionSleeve=useMemo(()=>computeSleeve(options),[options,liveData,fxRates,baseCcy]);
+  const combinedSleeve=useMemo(()=>({
+    count:stockSleeve.count+optionSleeve.count,value:stockSleeve.value+optionSleeve.value,
+    pnl:stockSleeve.pnl+optionSleeve.pnl,cost:stockSleeve.cost+optionSleeve.cost,
+    winners:stockSleeve.winners+optionSleeve.winners,losers:stockSleeve.losers+optionSleeve.losers,
+  }),[stockSleeve,optionSleeve]);
+  // The cards follow the active tab: stocks on Positions, options on Options, the
+  // combined book on History (which has its own per-trade stats below).
+  const activeSleeve=tab==="options"?optionSleeve:tab==="history"?combinedSleeve:stockSleeve;
+  // P&L % only where a clean cost basis exists (the stocks sleeve). Option premium
+  // cost vs short-credit makes a sleeve-level % meaningless, so it's hidden there.
+  const sleevePnlPct=tab==="positions"&&stockSleeve.cost>0?stockSleeve.pnl/stockSleeve.cost:null;
+  const countLabel=tab==="options"?"OPTION LEGS":tab==="history"?"HOLDINGS":"POSITIONS";
 
   const cardStyle:React.CSSProperties={background:"var(--bg-surface)",borderRadius:8,border:"1px solid var(--border)",boxShadow:"0 1px 3px rgba(0,0,0,0.06)",padding:"14px 16px"};
   const thStyle:React.CSSProperties={padding:"9px 12px",fontSize:9,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--text-muted)",fontFamily:"var(--font-mono)",borderBottom:"2px solid var(--border)",whiteSpace:"nowrap"};
@@ -266,12 +312,25 @@ export default function Portfolio(){
         <strong style={{color:"var(--text)"}}>Note:</strong> Signal and Action badges show the screener's current view — they are informational. Positions are only closed when you click Close.
       </div>
 
-      {/* Summary cards */}
+      {/* Account strip — whole-account, cash-inclusive glance (IBKR mirror only).
+          Stays visible across tabs so the per-sleeve cards below can specialize. */}
+      {accountSummary&&(
+        <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap",marginBottom:10,padding:"8px 14px",borderRadius:6,background:"var(--bg)",border:"1px solid var(--border)",fontFamily:"var(--font-mono)"}}>
+          <span style={{fontSize:9,fontWeight:700,letterSpacing:"0.1em",color:"var(--purple)"}}>ACCOUNT</span>
+          <span style={{fontSize:10,color:"var(--text-muted)"}}>NetLiq <strong style={{color:"var(--text)"}}>{fmtCcy(accountSummary.net_liquidation??0,baseCcy)}</strong></span>
+          <span style={{fontSize:10,color:"var(--text-muted)"}}>Cash <strong style={{color:"var(--text)"}}>{fmtCcy(accountSummary.total_cash??0,baseCcy)}</strong></span>
+          <span style={{fontSize:10,color:"var(--text-muted)"}}>Unrealized <strong style={{color:(accountSummary.unrealized_pnl??0)>=0?"var(--green)":"var(--red)"}}>{(accountSummary.unrealized_pnl??0)>=0?"+":""}{fmtCcy(accountSummary.unrealized_pnl??0,baseCcy)}</strong></span>
+          <span style={{fontSize:10,color:"var(--text-muted)"}}>W/L <strong style={{color:"var(--green)"}}>{combinedSleeve.winners}</strong><span style={{color:"var(--text-light)"}}> / </span><strong style={{color:"var(--red)"}}>{combinedSleeve.losers}</strong></span>
+          <span style={{fontSize:9,color:"var(--text-light)",marginLeft:"auto"}}>{tab==="options"?"Options":tab==="history"?"All holdings":"Stocks"} below · summed in {baseCcy}</span>
+        </div>
+      )}
+
+      {/* Summary cards — reflect the ACTIVE tab's sleeve (stocks / options / all) */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:20}}>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>POSITIONS</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{stats.positions}</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL VALUE{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · IBKR</span>:null}</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtCcy(headline.totalValue,headline.ccy)}</div><div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{headline.valueSub||" "}</div></div>
-        <div style={{...cardStyle,border:`1px solid ${headline.pnl>=0?"var(--green-border)":"var(--red)"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL P&L{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · unreal.</span>:null}</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:headline.pnl>=0?"var(--green)":"var(--red)"}}>{headline.pnl>=0?"+":""}{fmtCcy(headline.pnl,headline.ccy)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:(headline.pnlPct??0)>=0?"var(--green)":"var(--red)"}}>{headline.pnlPct!=null?`${headline.pnlPct>=0?"+":""}${(headline.pnlPct*100).toFixed(1)}%`:" "}</div></div>
-        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"var(--green)",fontFamily:"var(--font-mono)"}}>{wl.w}</span><span style={{fontSize:12,color:"var(--text-light)"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"var(--red)",fontFamily:"var(--font-mono)"}}>{wl.l}</span></div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{countLabel}</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{activeSleeve.count}</div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL VALUE{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · IBKR</span>:null}</div><div style={{fontSize:26,fontWeight:700,color:"var(--text)",fontFamily:"var(--font-mono)",marginTop:4}}>{fmtCcy(activeSleeve.value,baseCcy)}</div><div style={{fontSize:9,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>{tab==="positions"&&stockSleeve.cost>0?`Cost: ${fmtCcy(stockSleeve.cost,baseCcy)}`:" "}</div></div>
+        <div style={{...cardStyle,border:`1px solid ${activeSleeve.pnl>=0?"var(--green-border)":"var(--red)"}`}}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>TOTAL P&L{accountSummary?<span style={{fontWeight:400,letterSpacing:0,color:"var(--text-light)"}}> · unreal.</span>:null}</div><div style={{fontSize:26,fontWeight:700,fontFamily:"var(--font-mono)",marginTop:4,color:activeSleeve.pnl>=0?"var(--green)":"var(--red)"}}>{activeSleeve.pnl>=0?"+":""}{fmtCcy(activeSleeve.pnl,baseCcy)}</div><div style={{fontSize:9,fontFamily:"var(--font-mono)",color:(sleevePnlPct??0)>=0?"var(--green)":"var(--red)"}}>{sleevePnlPct!=null?`${sleevePnlPct>=0?"+":""}${(sleevePnlPct*100).toFixed(1)}%`:" "}</div></div>
+        <div style={cardStyle}><div style={{fontSize:9,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>WIN / LOSS</div><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:6}}><span style={{fontSize:22,fontWeight:700,color:"var(--green)",fontFamily:"var(--font-mono)"}}>{activeSleeve.winners}</span><span style={{fontSize:12,color:"var(--text-light)"}}>/</span><span style={{fontSize:22,fontWeight:700,color:"var(--red)",fontFamily:"var(--font-mono)"}}>{activeSleeve.losers}</span></div></div>
       </div>
 
       <div style={{display:"flex",gap:4,marginBottom:16}}>

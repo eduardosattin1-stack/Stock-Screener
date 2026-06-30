@@ -1,39 +1,34 @@
 {
   "inception_date": "2026-06-08",
-  "nav": 97.2338,
-  "last_date": "2026-06-21",
+  "nav": 100.1296,
+  "last_date": "2026-06-30",
   "last_prices": {
-    "FRVIA.PA": 9.502,
-    "THC": 172.57,
-    "SCR.PA": 31.44,
-    "NTES": 121.33,
-    "CTSH": 43.7,
-    "EEFT": 65.84,
-    "AD.AS": 34.61,
-    "PRGS": 29.68,
-    "UHS": 141.17,
-    "NSP": 36.22
+    "FIP": 4.36,
+    "KBR": 33.71,
+    "LBTYK": 11.08,
+    "UHS": 147.02,
+    "CTSH": 38.74,
+    "EEFT": 72.35,
+    "NTES": 129.16,
+    "PRGS": 33.84,
+    "THC": 187.17,
+    "FRVIA.PA": 8.518
   },
   "positions": {
     "NTES": {
       "entry_price": 116.55,
       "entry_date": "2026-06-14",
-      "conviction": 71
+      "conviction": 64
     },
     "FRVIA.PA": {
       "entry_price": 9.502,
       "entry_date": "2026-06-21",
-      "conviction": 78
+      "conviction": 60
     },
     "THC": {
       "entry_price": 172.57,
       "entry_date": "2026-06-21",
-      "conviction": 72
-    },
-    "SCR.PA": {
-      "entry_price": 31.44,
-      "entry_date": "2026-06-21",
-      "conviction": 70
+      "conviction": 58
     },
     "CTSH": {
       "entry_price": 43.7,
@@ -45,25 +40,30 @@
       "entry_date": "2026-06-21",
       "conviction": 64
     },
-    "AD.AS": {
-      "entry_price": 34.61,
-      "entry_date": "2026-06-21",
-      "conviction": 62
-    },
     "PRGS": {
       "entry_price": 29.68,
       "entry_date": "2026-06-21",
-      "conviction": 63
+      "conviction": 62
     },
     "UHS": {
       "entry_price": 141.17,
       "entry_date": "2026-06-21",
-      "conviction": 65
+      "conviction": 67
     },
-    "NSP": {
-      "entry_price": 36.22,
-      "entry_date": "2026-06-21",
-      "conviction": 64
+    "FIP": {
+      "entry_price": 4.36,
+      "entry_date": "2026-06-30",
+      "conviction": 82
+    },
+    "KBR": {
+      "entry_price": 33.71,
+      "entry_date": "2026-06-30",
+      "conviction": 76
+    },
+    "LBTYK": {
+      "entry_price": 11.08,
+      "entry_date": "2026-06-30",
+      "conviction": 70
     }
   },
   "history": [
@@ -95,6 +95,12 @@
       "date": "2026-06-21",
       "nav": 97.2338,
       "ret": -0.003941,
+      "n": 10
+    },
+    {
+      "date": "2026-06-30",
+      "nav": 100.1296,
+      "ret": 0.029781,
       "n": 10
     }
   ],
@@ -251,6 +257,33 @@
       "exit_price": 13.2,
       "return_pct": -2.65,
       "conviction": 56
+    },
+    {
+      "symbol": "SCR.PA",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-06-30",
+      "entry_price": 31.44,
+      "exit_price": 31.56,
+      "return_pct": 0.38,
+      "conviction": 70
+    },
+    {
+      "symbol": "AD.AS",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-06-30",
+      "entry_price": 34.61,
+      "exit_price": 35.33,
+      "return_pct": 2.08,
+      "conviction": 62
+    },
+    {
+      "symbol": "NSP",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-06-30",
+      "entry_price": 36.22,
+      "exit_price": 42.6,
+      "return_pct": 17.61,
+      "conviction": 64
     }
   ]
 }

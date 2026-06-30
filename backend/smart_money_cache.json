@@ -115,5 +115,893 @@
     "funds": [],
     "aggregate_smart_money_pct": 0.0,
     "is_clustering": false
+  },
+  "MLYS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DOCN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "LNG": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RUM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SSRM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "XMTR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GNK": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ZS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HPE": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NTRA": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RDN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "APLD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CEG": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DVN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GDDY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "FRMI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DYN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GPC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "VIR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "REZI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AKTS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "PGNY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ARWR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ITGR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CRML": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "LHX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KTB": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ARGX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CRC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "INGR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "WMB": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MOD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CRM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "EOSE": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "FIG": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "OLLI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "JOBY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AGIO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RELY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ALMS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BMRN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BMY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "IONQ": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KHC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "VTRS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "WEN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "P": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ADSK": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ADUS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BSX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "FLY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DIS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GRND": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HWC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "LMND": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NFLX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RKLB": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ULS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "VNT": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AVGO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CXM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BBIO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CAPR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "COO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DOCU": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "LDOS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KVUE": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NCNO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RLAY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NXST": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "TDS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "TPB": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "TTAN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "UAL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "VG": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "WRBY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ZETA": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CALM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BE": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CPB": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CLH": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "EQT": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "FOUR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GLXY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HAL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MRVL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MXL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "PDD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "TRIP": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "UWMC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ASAN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CTRE": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DKS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GILD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HQY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "IQV": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "S": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SKY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "XEL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ADI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "ALK": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AORT": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AVEX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CAI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "COLL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CTSH": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CYTK": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DFH": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GNRC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HII": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "INOD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KNTK": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "IP": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KRMN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MKC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MSGS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NOC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "PLTR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RCAT": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "RVMD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SEI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "TEM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SLM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "UAMY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "URGN": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "APP": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "MIDD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NP": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "SMTC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AA": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AMSC": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DOX": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "GEO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "STRL": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AEO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "AFRM": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "BBWI": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CME": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "CRDO": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "DY": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "FLYW": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "HOOD": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "KGS": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "LUNR": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "NWSA": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
+  },
+  "PANW": {
+    "detected": false,
+    "funds": [],
+    "aggregate_smart_money_pct": 0.0,
+    "is_clustering": false
   }
 }

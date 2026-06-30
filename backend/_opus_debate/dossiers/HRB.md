@@ -1,76 +1,73 @@
-# H&R Block (HRB) — Forensic Dossier
+# Forensic Dossier — H&R Block (HRB)
 
-*Four consecutive earnings calls, May 2025 (fiscal Q3 2025) through February 2026 (fiscal Q2 2026), cross-referenced against the screener financials and live-verified through the most recent quarter (fiscal Q3 2026, reported May 6, 2026).*
+*Prepared for the investment committee. H&R Block is the largest assisted tax-preparation chain in the United States — roughly 9,000 offices and 60,000-plus tax professionals — with a growing do-it-yourself (DIY) online product that competes against Intuit's TurboTax. The signal here is deep value: the stock trades around $36, well off its highs, on a low single-digit multiple of free cash flow, while the company keeps growing earnings and buying back stock. Eight consecutive earnings calls, fiscal third quarter 2025 (May 2025) through fiscal third quarter 2026 (May 6, 2026), cross-referenced against the screener financials.*
 
 ## 1. NARRATIVE ARC
 
-Across these four calls the core story barely moves, and that steadiness is itself the headline. H&R Block tells the same plain tale every quarter: it is the category leader in assisted (in-person, expert-prepared) tax returns, it operates "a stable industry" with a large addressable market, and it returns enormous amounts of cash to shareholders. The financial algorithm — low-single-digit price increases, modest volume, better client mix, and buy-back-plus-dividend — is repeated almost word for word from May 2025 to February 2026.
+Across the eight quarters in the transcript the story moves from "we are arresting our decline" to "we have inflected." The throughline is a single, very specific scoreboard: assisted-channel market share.
 
-Where the emphasis does shift is in two places. First, the company pivots harder each quarter toward "higher-value, more complex clients" and away from chasing free do-it-yourself (DIY) filers. By February 2026 new CEO Curtis Campbell frames the whole strategy as "expert-led, technology-enabled," explicitly conceding that block has "had some challenges" with "far too many in our mid- to lower funnel" — the most candid admission of share loss in the set. Second, artificial intelligence migrates from a feature ("AI Tax Assist") to the central organizing idea: by the February 2026 call the pitch is that AI makes the company's 60,000 tax pros more productive, not that AI threatens to replace them. That reframing — AI as a tailwind for the assisted moat rather than a wrecking ball for the DIY business — is the single most important narrative bet management is making, and it is the one the market most distrusts.
+- Early on (May 2025, fiscal Q3 2025), management was careful and defensive: "we're not ready to declare victory yet," with assisted volumes actually *down 0.8%* against industry growth of about 1.7%. They could point to improving conversion and retention, but conceded "we still didn't grow share."
+- Through fiscal 2025 year-end (August 2025) the framing stayed the same — better trends, not yet a turn — alongside a CEO succession announcement (Jeff Jones handing to internal successor Curtis Campbell, effective January 1, 2026), explicitly positioned as "strategy is locked."
+- By the most recent call (May 2026, fiscal Q3 2026), the language flips to claimed victory: "A key question... has been when we stabilize assisted channel market share. Well, this season, we did." That is the load-bearing event of the whole arc.
 
-A clean CEO succession runs underneath all of this: Jeff Jones hands an internal baton to Curtis Campbell (CEO-elect from the November 2025 call, in the seat by February 2026). Management stresses "the strategy is locked." There is no thesis pivot — only a generational handoff inside a stable franchise.
+Two narrative drivers were *introduced* over the period and now carry real weight: (1) the One Big Beautiful Bill Act (OBBBA) as a complexity tailwind that pushes filers from DIY toward assisted, and (2) artificial intelligence reframed from threat to tool — the "Sidekick" tax-pro assistant built with OpenAI, and AI used to scale the "Second Look" prior-year-return review. A driver quietly *de-emphasized*: chasing DIY volume/share for its own sake — management now openly says it will cede "free forever" filers to a competitor (clearly Intuit) spending aggressively, and optimize for paying, higher-complexity clients instead.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-| Management claim | The numbers say | Verdict |
+| Management claim | The numbers | Verdict |
 |---|---|---|
-| "Stable industry," ~1% industry volume growth, steady franchise | Revenue grew +4.2% in FY25 to $3.76B; 3-yr revenue CAGR +2.8%; gross margin a steady 44.5%; net margin 16.1% | **Matches.** Slow, real, durable — exactly as described. |
-| "Disciplined capital allocation," "$5 billion returned since 2016" | Q1 FY26 alone: $455M returned (incl. $400M buyback retiring ~6% of shares at ~$50.90); a new $1.5B repurchase authorization; dividend +12% in FY25; book value per share down ~23% over five years — the buyback has shrunk the equity base aggressively | **Matches, with a flag.** The capital return is genuine and large relative to the ~$5B market cap, but the deeply negative book-value CAGR and an eye-watering ROE of ~697% confirm the equity has been bought back below book to the point of near-zero/negative reported equity. ROE here is an artifact of a tiny denominator, not a quality signal — the honest return metric is ROIC at ~25%. |
-| Assisted is winning higher-income clients; "improved our market-share trend" | Through fiscal 2025 they still admitted they "didn't grow share." Live-verified: in the just-completed 2026 tax season (fiscal Q3 2026, reported May 6, 2026) assisted volume rose +2.1% and net average charge +3.9%, and the company finally **held** assisted share | **Matches, and improved.** The multi-year "we're not ready to declare victory" caution paid off in 2026 — assisted is genuinely stabilizing. |
-| AI is a tailwind, not a threat | The DIY evidence cuts the other way: in the 2026 season total U.S. returns fell 2.5% to 18.86M, DIY returns fell **5.8%** to 7.80M, online paid down 4.2%, online free down 11.5% | **Diverges — the bear's strongest card.** The assisted side is healing while the DIY side is structurally bleeding. Management's "AI helps us" framing is true for the pros but does not stop the DIY base from shrinking. |
-| Margins improving on cost discipline | FY25 EBITDA ($976M) came in light on health-care, legal and severance headwinds; FY26 guide builds those costs in and still implies better flow-through (~26.4% midpoint margin) | **Mostly matches.** FY25 was a cost-headwind year management owned candidly; FY26 reaffirmed and later raised (EPS guide lifted to $5.10–$5.20). |
+| "Consistent growth" / stable industry | Revenue 3.46B (FY21) → 3.76B (FY25), ~+4.2% latest year, 3-yr CAGR +2.8% | Matches — genuinely stable, genuinely slow. The narrative is neither richer nor poorer than the tape. |
+| Margins healthy and defended | Gross 44.5% (stable), net 16.1%, FCF margin ~15.9% | Matches. Software-like profitability on a retail-services base. |
+| EPS growing double-digit | EPS 2.94 (FY21) → 4.39 (FY25), 5-yr EPS CAGR +10.5%; TTM diluted EPS 5.60; FY26 guide raised to $5.10–$5.20 adjusted | Matches and then some — the buyback does heavy lifting (see below). |
+| Disciplined capital return | ~$5B returned since 2016; retired ~6% of shares in fiscal 2026 Q1 alone at ~$50.90 | Matches. This is the real engine of per-share growth. |
+| FCF strength | But: FCF growth −8.9% YoY, 3-yr CAGR −7.1%; TTM FCF 761M | DIVERGES. Free cash flow is *shrinking* even as EPS rises. The gap between rising EPS and falling FCF is the buyback. |
+| Net "cash-generative," strong balance sheet | Net DEBT 1.14B (total debt 2.03B less cash 887M); Altman-Z 2.8 (grey zone); 5-yr book-value-per-share CAGR −23.3% | DIVERGES from any "fortress" read. Book value has been hollowed out by buying back stock above book — fine while cash flows hold, fragile if they don't. ROE of 696.8% is a near-zero-equity artifact, not a quality signal. |
+| Assisted share "stabilized this season" | Reported assisted volume +2.1%, net average charge +3.9% in fiscal Q3 2026; revenue +5.3% to $2.40B; beat-and-raise | Matches the claim for this one season — but it is one season after two years of share *loss*, so durability is unproven. |
 
-The screener's own model spread is telling: the cash-flow-based models (discounted cash flow +65% margin of safety, owner-earnings +64%, Graham +72%) scream cheap, while the conservative earnings-power value model sits at only +5%. The cheapness is real on a cash basis; the disagreement is entirely about whether that cash stream is durable.
+The forensic core: this is a real, cash-generative franchise whose **per-share** results are inflated by aggressive buybacks funded partly with debt, while the underlying **free cash flow is flat-to-down**. The story told on the calls is accurate but flattering — it leans on EPS (buyback-aided) and on a single good share-stabilization season.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Stable-to-rising.** Confidence is high and remarkably consistent.
+Trajectory: **Rising** — and earned, modestly.
 
-- **May 2025 (Q3 FY25):** "It was a strong quarter… our transformation continues to gather momentum." Offensive but with an honest caveat — "we still didn't grow share and we remain intently focused on getting there."
-- **August 2025 (Q4 FY25):** Defensive note creeps in — EBITDA "within our outlook range, though we had anticipated stronger year-over-year results" — paired with the 12% dividend hike as a confidence signal.
-- **November 2025 (Q1 FY26):** "Off to a strong start," 9.4% EBITDA improvement, $455M returned, outlook reaffirmed. Incoming CEO Campbell sets a measured, technologist tone.
-- **February 2026 (Q2 FY26):** The most candid call — Campbell openly diagnoses "a significant amount of manual processes" and "challenges" in the funnel, framing the fix as "a multiyear journey." This is lower-key than Jones's salesmanship but reads as more credible, not less confident.
+- Fiscal Q3 2025 (May 2025): hedged. "We're not ready to declare victory yet... we still didn't grow share."
+- Fiscal Q4 2025 (Aug 2025): steady-confident, with a candid admission of cost misses — elevated healthcare, legal, and severance expenses dragged EBITDA below the internal hope ("though we had anticipated stronger year-over-year results").
+- New CEO's first calls (Nov 2025, Feb 2026): aspirational but disciplined; Campbell repeatedly frames the AI transition as a multiyear journey, not an overnight fix ("This is not going to be an overnight transformation").
+- Fiscal Q3 2026 (May 2026): clearly the most confident — "strong results ahead of expectations across all key metrics," "raising our full year outlook," "this season, we did" stabilize share.
 
-The language shifts from Jones's promotional cadence to Campbell's operator-diagnostic cadence. That is a healthy trade for a value investor: less spin, more specificity.
+The shift is from defensive (cost control, share defense) to a blend of offensive (AI-as-advantage, complexity tailwind) and confident execution. Notably, guidance got *more* specific over time, not less — a credibility positive.
 
 ## 4. GUIDANCE CREDIBILITY
 
-**High.** The FY26 outlook given in August 2025 (revenue $3.875–3.895B, EBITDA $1.015–1.035B, adjusted EPS $4.85–$5.00) was reaffirmed in November 2025, reaffirmed again in February 2026, and then **raised** at the fiscal Q3 2026 print (EPS to $5.10–$5.20). The screener corroborates a 71% beat rate (beats in 5 of the last 7 quarters). FY25 EBITDA landing at the low end on disclosed cost headwinds was a modest, well-telegraphed miss, not a credibility break — management named the exact buckets (health care, legal, severance) and annualized them into the next guide. Reliability: **High.**
+Reliability: **Medium-to-High.**
+
+Management reaffirmed its fiscal 2026 outlook on the November 2025 and February 2026 calls (revenue $3.875–3.895B, EBITDA $1.015–1.035B, adjusted EPS $4.85–5.00), then *raised* it on the May 2026 call (revenue $3.910–3.920B, EBITDA $1.025–1.035B, adjusted EPS $5.10–5.20). That is a clean beat-and-raise against a number they had been carrying all year. The screener corroborates a 71% beat rate (5 of 7 quarters). The one blemish is fiscal 2025, where EBITDA landed within range but below their own internal expectation on cost overruns they then annualized into the fiscal 2026 base — honest, but a reminder the cost line can surprise. No evidence of sandbagging; the raises look genuine, not pre-baked.
 
 ## 5. ANALYST PRESSURE POINTS
 
-Analysts circle the same three drains every quarter:
-
-1. **Assisted share loss vs. industry.** Goldman's George Tong repeatedly pins management on assisted volumes lagging IRS industry growth (down 0.8% vs. +1.7% industry in the 2025 season). Management's answer — "we improved the trajectory" — was a partial non-answer until the 2026 season finally backed it up.
-2. **The DIY free-vs-paid war.** Analysts probe the "unprecedented promotional environment" (an unnamed competitor — clearly Intuit's TurboTax — flooding the zone with "100% free for everybody" offers). Management's response is to wave off free filers as low-lifetime-value and "fickle." This is a reasonable strategy but it concedes volume share, and the 2026 DIY declines show the cost of that discipline.
-3. **The AI/automation threat to the whole model.** Asked directly whether easier AI-assisted DIY is "a long-term threat to your Assisted business," Campbell says "we don't think so." That is the central unaddressed worry: the bears think AI shrinks the entire need for paid preparation; management insists it only shifts work to the pros.
+The recurring, unresolved pressure point is **the AI threat to the DIY/assisted model** — analysts return to it every call (Schneeberger's "persistent outside threat," Nasir's "is AI Tax Assist a long-term threat to your Assisted business"). Management has a coherent, repeated answer (the "55% of filers seek assistance through every prior technology wave" framing), but it is a *narrative* defense, not a proven one — and it is precisely the fear the market is pricing. The second pressure point is **assisted share loss**, which analysts pushed on for two years before management could finally claim stabilization in May 2026. A third, softer one: **the free-filer war with Intuit** — management's choice to cede free volume is strategically defensible but means reported DIY *volume* will look weak, which analysts keep probing.
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🔴 **DIY volumes are structurally declining** — DIY returns -5.8% in the 2026 season, the clearest evidence that the lower-end of the business is being eroded, plausibly by free/AI alternatives.
-🔴 **Book value per share down ~23% per year for five years** — the buyback has hollowed the equity base; reported ROE (~697%) is meaningless, and net debt of ~$1.14B sits on a business with declining unit volumes.
-🔴 **Insider conviction is negative** — zero open-market buys against 13 sells (~676k shares). No insider is stepping in at these prices.
-🔴 **Slow top line** — +2.8% three-year revenue CAGR leaves no margin for error if assisted ever rolls over.
-
-🟢 **Assisted share finally stabilized in 2026** — the multi-year fix worked; +2.1% volume, +3.9% pricing.
-🟢 **Guidance raised, not cut** — FY26 EPS lifted to $5.10–$5.20 at the most recent print.
-🟢 **Massive, disciplined cash return** — new $1.5B buyback (~30% of the market cap), 4.5% dividend yield, shares retired at depressed prices.
-🟢 **A regulatory tailwind** — the One Big Beautiful Bill Act raises filing complexity (good for paid prep) and the IRS Direct File free program was suspended for 2026, removing a government-sponsored competitor.
+🔴 Free cash flow is shrinking (−8.9% YoY, −7.1% 3-yr CAGR) even as EPS rises — the per-share growth is buyback-engineered.
+🔴 Book value per share down ~23% a year over five years; net debt 1.14B; Altman-Z 2.8 (grey zone). Buying back stock with leverage works until cash flows wobble.
+🔴 Insiders sold, did not buy — 13 open-market sells (~676k shares) versus zero buys. The grant-inflated "buy ratio" in the raw scan is noise; the real signal is one-directional selling.
+🔴 The entire bull case rests on one stabilization season and a still-unproven thesis that AI is a tailwind, not a slow disintermediator.
+🟢 A genuine, durable assisted-tax brand and footprint (70 years, ~9,000 offices, accuracy guarantee) that DIY software cannot fully replicate — the "confidence and accountability" moat is real for a large slice of filers.
+🟢 Beat-and-raise in fiscal Q3 2026 with assisted volume *and* price both up — the healthiest volume/price/mix balance in years.
+🟢 Disciplined, large, consistent capital return; ~6% of shares retired in a single quarter; dividend raised 12% in 2025 and grown ~110% since 2016.
+🟢 Real AI execution proof points: "Sidekick" with OpenAI, Second Look returns lift retention 600-plus basis points, CNET "best use of AI" award.
 
 ## 7. HIDDEN SIGNALS
 
-The most telling shift is linguistic: management stops talking about "winning volume" and starts talking about "complexity," "lifetime value," and "the right clients." That is the vocabulary of a business managing decline at the bottom while defending profit at the top — harvesting, not expanding. Campbell's repeated "multiyear journey" framing quietly lowers the bar on a near-term share turnaround. The capital-allocation hierarchy is also revealing and consistent: reinvest first, then dividend, then "opportunistic" buyback — and the buyback has been anything but opportunistic in size, signaling that management sees the stock as cheap and the business as a cash cow to be milked, not a growth engine to be fed.
+The most telling shift is *who* is talking and *how*. New CEO Curtis Campbell — a self-described "deep technologist" — reframes the company's whole identity from "tax preparer" to "expert-led, technology-enabled" services, and splits tax prep into a "mechanical" component (which he concedes AI will automate) and a "relational" component (trust, judgment, accountability) where he stakes the moat. That is a sophisticated, candid concession: management is admitting the commoditizable half of its business *will* be automated and betting the franchise on the half it claims AI cannot touch. On capital allocation, the language tightened into a strict priority stack (invest first, grow dividend second, buy back third) and management leaned into buying *more* stock in fiscal Q4 specifically because of "the dislocation in the stock price, driven largely by the AI bogeyman" — an explicit, on-the-record judgment that the market is wrong about AI.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Trajectory: STABLE** (with a clearly bifurcated franchise — a healing assisted core and an eroding DIY tail).
+Trajectory: **STABLE**, with a credible early-stage turn in execution.
 
-The single most important thing to weigh before sizing: **this is a melting-ice-cube debate, and the cube is melting slowly from the bottom.** The assisted business — roughly the profit engine — is genuinely stabilizing, throws off enormous free cash flow ($761M trailing twelve months), and is being defended by a credible, candid management team that is shrinking the share count aggressively at single-digit earnings multiples. Against that, the DIY base is in structural decline and the long-tail risk is that consumer-grade AI eventually compresses willingness to pay for any tax preparation. The question is not whether HRB is cheap — on cash flow it plainly is — but whether the terminal value is intact or slowly draining.
+The single most important thing to weigh before sizing: **this is a melting-question, not a melting-fact.** The business is genuinely cash-generative, cheap, and well-run on capital return, and management just delivered the share-stabilization proof point the bears demanded. But the multiple is low for a *reason the market can name* — generative AI plausibly commoditizes the DIY/"mechanical" tax-prep layer over a multi-year horizon, and free cash flow is already flat-to-down while per-share growth is borrowed from the buyback. The director must decide whether the relational/assisted moat is a durable terminal-value floor (then this is a cheap compounder) or a slowly-eroding rent (then the low multiple is a value trap with a long fuse).
 
-**Moat: NARROW.** The durable edge is an intangible-brand-plus-physical-footprint moat (a 70-year trusted name, ~9,000 offices within five miles of most Americans, 60,000 tenured pros). Switching costs are weak; the moat is real but not wide.
-
-**Moat trend: ERODING.** ROIC is high (~25%) and gross margin stable (44.5%), which argues against fast erosion — but unit volumes are falling (total returns -2.5%, DIY -5.8%) and the company is defending profit by trading volume for price and mix. A franchise holding price while losing units is, by definition, a moat under slow pressure.
-
-**Secular threat: material (not terminal).** The structural force is AI-displacement of "good-enough" DIY tooling — the same wave hitting TurboTax. It is genuinely shaving the addressable market "season by season," but it is not terminal: complex returns, the OBBBA complexity bump, the suspended IRS Direct File program, and a large cohort that wants human help all blunt it. The cheapness is therefore a partial fear-print, not a pure value trap — but the eroding-moat read caps how aggressively one should pay up for the optical discount.
+**Moat:** intangible-brand plus switching-cost-lite (trust, accuracy guarantee, tax-pro relationships, retail convenience). It is real but **NARROW**, and the returns evidence (high but with falling free cash flow, hollowed book value) argues the durable earnings base is **ERODING** at the margin — not collapsing, but not widening. The threat is structural (AI-displacement of the DIY/"good-enough" tax-prep tooling layer), and it is **MATERIAL** — it caps pricing power and terminal multiple — but not yet *terminal*, because the assisted franchise retains genuine demand (the persistent ~55% of filers who seek help through every prior technology wave). The cheapness is therefore a genuine fear-print on the assisted business stapled to a real secular question on the DIY business — partly mispricing, partly justified.
 
 CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: ERODING | SECULAR_THREAT: material
