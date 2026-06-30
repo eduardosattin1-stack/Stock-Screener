@@ -1472,20 +1472,20 @@ export default function CatalystWatch() {
                         ({report.symbol})
                       </span>
                       {report.recommendation && (
-                        <span style={{ 
+                        <span title="Deep-scan trade CALL (Loeb/Third Point thesis): Buy / Watch / Hold / Sell — distinct from the catalyst TIER badge, which is the event's gate hardness." style={{
                           fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6,
                           borderWidth: 1, borderStyle: "solid",
                           ...getRecommendationStyle(report.recommendation)
                         }}>
-                          {report.recommendation}
+                          CALL: {report.recommendation.charAt(0) + report.recommendation.slice(1).toLowerCase()}
                         </span>
                       )}
                       {(report as any).tier && (() => {
                         const tu = String((report as any).tier).toUpperCase();
                         const c = tu === "ACTIVE" ? "#14b87a" : tu === "CONTINGENT" ? "#a855f7" : "#d97706";
                         return (
-                          <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6, border: `1px solid ${c}`, color: c, letterSpacing: "0.04em" }} title="Catalyst tier (gate hardness): Active = sized · Watch = tracking to harden · Waiting on a trigger = gated on a pending event">
-                            {termLabel((report as any).tier)}
+                          <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6, border: `1px solid ${c}`, color: c, letterSpacing: "0.04em" }} title="Catalyst TIER (gate hardness): Active = dated/live event · Watch = tracking to harden · Waiting on a trigger = gated on a pending event. Distinct from the deep-scan CALL badge (the trade verdict).">
+                            TIER: {termLabel((report as any).tier)}
                           </span>
                         );
                       })()}
