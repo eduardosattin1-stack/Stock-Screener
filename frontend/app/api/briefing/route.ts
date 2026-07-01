@@ -43,13 +43,22 @@ export async function GET(req: Request) {
       return fb;
     }
   };
+  // GCS-first, public-file fallback — matches SpeculairTracker.tsx / stock page. The
+  // plain public path resolves to the file frozen at the last frontend deploy, so
+  // fetching it directly (as this route used to) silently serves stale apex NAV /
+  // basket returns between deploys instead of tonight's live GCS state.
+  const getGcsFirst = async (suffix: string, fb: any) => {
+    const gcs = await get(`/api/gcs/scans/${suffix}`, null);
+    if (gcs) return gcs;
+    return get(`/${suffix}`, fb);
+  };
 
   const [macro, sectors, methodTracks, spec, apexTrk] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/method-tracks", { regimes: {} }),
-    get("/speculair_baskets.json", {}),
-    get("/speculair_apex_tracking.json", {}),
+    getGcsFirst("speculair_baskets.json", {}),
+    getGcsFirst("speculair_apex_tracking.json", {}),
   ]);
 
   // ── Index thermometer + market sentiment (from /api/sectors) ──
@@ -152,6 +161,7 @@ export async function GET(req: Request) {
       evStr: p.ev != null ? `EV ${usd(p.ev)}` : null,
       evNeg: p.ev != null && p.ev < 0,
       peak: r2(p.maxPlus),
+      enteredDaysAgo: isFresh(p.entryDate) && p.entryDate ? Math.max(0, Math.floor((NOW - Date.parse(p.entryDate)) / 86400000)) : null,
     })),
     hot_sector: hotSec
       ? {

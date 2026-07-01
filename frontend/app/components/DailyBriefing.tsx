@@ -104,9 +104,22 @@ function useRadarItems(stocks: any[] | undefined, uid: string | undefined, nonce
         const raw = typeof window !== "undefined" ? localStorage.getItem("cb_watchlist_baskets") : null;
         if (raw) watch = (JSON.parse(raw) || []).flatMap((b: any) => b?.symbols || []);
       } catch { /* ignore */ }
-      // Holdings (per-user Firestore).
+      // Holdings — mirrors /portfolio's precedence: the GCS mirror (written by the
+      // IBKR sync) is authoritative whenever it carries an ibkr_sync block, since
+      // that's Bruno's one real brokerage account, regardless of Firebase login.
+      // Otherwise fall back to per-user Firestore when signed in.
       let held: string[] = [];
-      try { if (uid) held = ((await getPortfolio(uid)).positions || []).map((p) => p.symbol); } catch { /* ignore */ }
+      try {
+        const [gcsRes, fbRes] = await Promise.allSettled([
+          fetch(`/api/gcs/portfolio/state.json?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)),
+          uid ? getPortfolio(uid).catch(() => null) : Promise.resolve(null),
+        ]);
+        const gcsState = gcsRes.status === "fulfilled" ? gcsRes.value : null;
+        const fbState = fbRes.status === "fulfilled" ? fbRes.value : null;
+        const mirror = gcsState && gcsState.ibkr_sync ? gcsState : null;
+        const src = mirror || (uid ? fbState : gcsState) || { positions: [] };
+        held = ((src as any).positions || []).map((p: any) => p.symbol);
+      } catch { /* ignore */ }
 
       const heldSet = new Set(held.map((s) => String(s).toUpperCase()));
       const watchSet = new Set(watch.map((s) => String(s).toUpperCase()));
@@ -347,7 +360,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--lavender)", background: "var(--purple-light)", padding: "1px 5px", borderRadius: 3 }}>D{p.decile}</span>
                     {p.evStr && <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: p.evNeg ? "var(--red)" : "var(--green)" }}>{p.evStr}</span>}
                   </div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1 }}>{p.probLabel} {Math.round(p.prob * 100)}%{p.peak > 0.5 ? ` · peaked +${p.peak}%` : ""}</div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1 }}>{p.probLabel} {Math.round(p.prob * 100)}%{p.peak > 0.5 ? ` · peaked +${p.peak}%` : ""}{p.enteredDaysAgo != null ? ` · entered ${p.enteredDaysAgo === 0 ? "today" : `${p.enteredDaysAgo}d ago`}` : ""}</div>
                 </div>
               ))}
             </div>
