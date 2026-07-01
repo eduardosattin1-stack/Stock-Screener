@@ -43,7 +43,9 @@ Run **four parallel research agents** (`general-purpose`), each told: *today's d
 - **Agent C — M&A & deal environment:** M&A volume (2025 actual, current-YTD, forecast); financing conditions (LBO debt, private credit, HY/loan issuance); antitrust posture (FTC/DOJ + EU/UK — permissive vs restrictive, forced-divestiture trend); PE dry powder & exit pressure; IPO/SPAC window; hot sectors. → is the deal/merger-arb/forced-seller lane fertile, and which deal types flow.
 - **Agent D — Special-situations lane ranking:** for each of {activism, spinoffs, distressed, forced-sellers, merger-arb, hard-binary/biotech} assess activity level **and** pricing efficiency; rank fattest→thinnest edge for an LLM-breadth, convergence strategy. → where to tilt, what to de-emphasize.
 
-**Synthesis step:** reconcile A–D, then update §4 (new dated instance), §3 (action mapping), §5 (tripwire check), and the change log. Diff against the prior instance and report what moved.
+**Verification step (added 2026-06-30):** before synthesis, run **five parallel Fable verifier agents** — cross-model on purpose (a different model re-deriving from independent sources catches what same-model review confirms). Four per-brief refuters re-verify every load-bearing figure live from *different* sources than cited, returning CONFIRMED / CORRECTED / UNVERIFIABLE per figure plus anything the brief missed. A fifth **tripwire auditor** gets only the §5 observables (not the researchers' conclusions) and independently calls breached/not-breached per tripwire. Merge rules: CORRECTED wins (cite both sources); UNVERIFIABLE is dropped or tagged *(unverified)*, never presented as sourced fact; a tripwire status is written only where researcher and auditor agree — disagreement is written ⚠️ DISPUTED and reported at headline weight.
+
+**Synthesis step:** reconcile the verified A–D, then update §4 (new dated instance), §3 (action mapping), §5 (tripwire check), and the change log. Diff against the prior instance and report what moved.
 
 ---
 
