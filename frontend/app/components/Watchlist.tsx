@@ -149,7 +149,9 @@ export function Watchlist({ embedded = false }: { embedded?: boolean } = {}) {
       {/* Add Symbol */}
       <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)" }}>
         <form onSubmit={handleAddSymbol} style={{ display: "flex", position: "relative" }}>
-          <Plus size={14} style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
+          <button type="submit" title="Add symbol" disabled={!newSymbol.trim()} style={{ position: "absolute", left: 4, top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, background: "none", border: "none", padding: 0, color: newSymbol.trim() ? "var(--text)" : "var(--text-light)", cursor: newSymbol.trim() ? "pointer" : "default" }}>
+            <Plus size={14} />
+          </button>
           <input value={newSymbol} onChange={e => setNewSymbol(e.target.value)} placeholder="Add symbol" style={{ width: "100%", padding: "6px 10px 6px 28px", fontSize: 12, border: "1px solid var(--border)", borderRadius: 4, outline: "none", fontFamily: "var(--font-mono)", background: "var(--bg)", color: "var(--text)" }} />
         </form>
       </div>

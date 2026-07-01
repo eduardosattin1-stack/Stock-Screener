@@ -10,6 +10,8 @@ import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap
 import { Watchlist } from "./components/Watchlist";
 
 import { SpeculairTracker } from "./components/SpeculairTracker";
+
+import { TrackedBaskets, type TrackedBasketEntry } from "./components/TrackedBaskets";
 import ChartModal from "./ChartModal";
 
 import { StockCard } from "./components/StockCard";
@@ -2677,6 +2679,20 @@ export default function Dashboard(){
 
   };
 
+  // Resolved sidebar view of tracked baskets — same trackedMeth/activePicks logic as
+  // the inline Paper Portfolio Cabinet, so TRACK genuinely surfaces the basket in the
+  // right rail instead of only appearing inline with no visible feedback.
+  const trackedBasketEntries: TrackedBasketEntry[] = useMemo(() => trackedBaskets.map((path) => {
+    const b = METHODOLOGIES_CONFIG.find((x) => x.path === path);
+    if (!b) return null;
+    const shortKey = ((p: string) => { const k = p.split("/").pop() || ""; return k === "epv_greenwald" ? "epv" : k; })(b.path);
+    const trackedMeth = trackingData?.methodologies?.[shortKey];
+    const holdings = trackedMeth?.current_holdings?.length
+      ? trackedMeth.current_holdings.map((h: any) => ({ symbol: h.symbol, entry_price: h.entry_price, entry_date: h.entry_date, weight: h.weight }))
+      : (methodologyPicks[b.path] || []).map((symbol) => ({ symbol, entry_price: undefined, entry_date: undefined, weight: 1 / (methodologyPicks[b.path]?.length || 1) }));
+    return { path, name: b.name, ytdReturn: trackedMeth?.ytd_return, holdings };
+  }).filter(Boolean) as TrackedBasketEntry[], [trackedBaskets, trackingData, methodologyPicks]);
+
 
 
   useEffect(()=>{
@@ -4877,15 +4893,7 @@ export default function Dashboard(){
 
                                     e.stopPropagation();
 
-                                    setTrackedBaskets(prev => 
-
-                                      prev.includes(basket.path) 
-
-                                        ? prev.filter(p => p !== basket.path)
-
-                                        : [...prev, basket.path]
-
-                                    );
+                                    toggleTrackBasket(basket.path);
 
                                   }}
 
@@ -5717,6 +5725,8 @@ export default function Dashboard(){
         <Watchlist embedded />
 
         <SpeculairTracker />
+
+        <TrackedBaskets baskets={trackedBasketEntries} onUntrack={toggleTrackBasket} />
 
       </aside>
 
