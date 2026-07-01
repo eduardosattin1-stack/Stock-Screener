@@ -48,6 +48,8 @@ interface Signal {
   awareness_index: number;
   velocity_z: number;
   corroboration: number | null;
+  held?: boolean;
+  sentiment_30d?: number | null;
   intent_purchase_share: number | null;
   materiality: number;
   novelty: boolean;
@@ -63,6 +65,7 @@ interface Stats {
   avg_sentiment?: number;
   positive_count?: number;
   negative_count?: number;
+  mode?: string;
 }
 interface Backtest {
   stats?: {
@@ -272,6 +275,8 @@ export default function SocialArb() {
   const [corrOnly, setCorrOnly] = useState(false);
   const [trackFilter, setTrackFilter] = useState<string>("all");
   const [dirFilter, setDirFilter] = useState<string>("all");   // all | long | short | watch
+  const [sortMode, setSortMode] = useState<"heat" | "mentions">("heat");   // heating up | most mentioned
+  const [heldOnly, setHeldOnly] = useState(false);
   const [themes, setThemes] = useState<Theme[] | null>(null);
   const [resolver, setResolver] = useState<ResolverHealth | null>(null);
 
@@ -347,6 +352,7 @@ export default function SocialArb() {
     ? new Date(signals[0].created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
     : "—";
   const sources = stats?.source_counts ? Object.keys(stats.source_counts).length : null;
+  const isRetailMonitor = stats?.mode?.includes("retail") ?? false;
 
   // Data-quality read from the post mix: today the corpus is ~all HackerNews and the awareness side
   // (finance news / StockTwits) is thin, so "demand" is mostly tech/dev buzz and gap ≈ demand.
@@ -355,11 +361,15 @@ export default function SocialArb() {
   const hnShare = (srcCounts["HackerNews"] ?? 0) / totalSrc;
   const awarenessShare = Object.entries(srcCounts).filter(([k]) => k.startsWith("News:") || k.startsWith("Premium:")).reduce((a, [, v]) => a + v, 0) / totalSrc;
   const thinData = hnShare > 0.6 || awarenessShare < 0.05;
-  const visibleSignals = signals.filter((s) =>
-    (trackFilter === "all" || (s.signal_track || "mixed") === trackFilter) &&
-    (dirFilter === "all" || (s.direction || "watch").toLowerCase() === dirFilter) &&
-    (!corrOnly || (n(s.corroboration) ?? 1) >= 2)
-  );
+  const visibleSignals = signals
+    .filter((s) =>
+      (trackFilter === "all" || (s.signal_track || "mixed") === trackFilter) &&
+      (dirFilter === "all" || (s.direction || "watch").toLowerCase() === dirFilter) &&
+      (!corrOnly || (n(s.corroboration) ?? 1) >= 2) &&
+      (!heldOnly || s.held)
+    )
+    .slice()
+    .sort((a, b) => sortMode === "heat" ? (n(b.gap_score) ?? 0) - (n(a.gap_score) ?? 0) : (n(b.signal_score) ?? 0) - (n(a.signal_score) ?? 0));
 
   const hdr: React.CSSProperties = { padding: "9px 8px", fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.05em", textAlign: "right", color: T.light, textTransform: "uppercase", whiteSpace: "nowrap" };
 
@@ -422,6 +432,14 @@ export default function SocialArb() {
           ))}
           <span style={{ width: 1, height: 18, background: T.border, margin: "0 4px" }} />
           <Toggle active={corrOnly} onClick={() => { setCorrOnly((v) => !v); setExpanded(null); }}>corroborated ≥2</Toggle>
+          <Toggle active={heldOnly} onClick={() => { setHeldOnly((v) => !v); setExpanded(null); }}>held only</Toggle>
+        </div>
+
+        {/* Sort mode: heating up (accelerating chatter) vs raw mention volume */}
+        <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
+          <span style={{ fontSize: 9.5, fontFamily: T.mono, fontWeight: 700, letterSpacing: "0.06em", color: T.light, textTransform: "uppercase" }}>Sort</span>
+          <Toggle active={sortMode === "heat"} onClick={() => setSortMode("heat")}>heating up</Toggle>
+          <Toggle active={sortMode === "mentions"} onClick={() => setSortMode("mentions")}>most mentioned</Toggle>
         </div>
 
         {/* Track filter (source-class lane: HN→dev-tools, Reddit/YouTube→consumer, StockTwits/News→investor) */}
@@ -447,8 +465,8 @@ export default function SocialArb() {
           </div>
         ) : signals.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0", fontFamily: T.mono, fontSize: 12, color: T.light, lineHeight: 1.6 }}>
-            No <span style={{ color: T.text }}>{status}</span> signals right now.<br />
-            Signals accrue as the pipeline accumulates baseline history per entity.
+            No tickers buzzing right now.<br />
+            Most of your basket gets little Reddit chatter — that&apos;s expected, not a bug.
           </div>
         ) : (
           <>
@@ -492,6 +510,7 @@ export default function SocialArb() {
                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                               {isOpen ? <ChevronDown size={12} style={{ color: T.muted }} /> : <ChevronRight size={12} style={{ color: hover === s.id ? T.muted : T.light }} />}
                               <span style={{ fontSize: 12.5, fontFamily: T.mono, fontWeight: 700, color: T.text }}>{s.entity_name}</span>
+                              {s.held && <Chip text="HELD" color={T.green} bg="rgba(20,184,122,0.18)" border="rgba(20,184,122,0.35)" />}
                             </div>
                             <div style={{ display: "flex", gap: 4, marginTop: 3, marginLeft: 18, flexWrap: "wrap" }}>
                               {tks.length === 0 && <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>no ticker</span>}
@@ -514,7 +533,7 @@ export default function SocialArb() {
                               bg={dir === "long" ? "rgba(20,184,122,0.18)" : dir === "short" ? "rgba(239,90,90,0.16)" : "rgba(245,185,66,0.16)"} />
                           </td>
                           <td style={{ ...cell, color: T.text }}>{f2(s.demand_index)}</td>
-                          <td style={{ ...cell, color: T.muted }}>{(s as any).sentiment_30d != null ? f2((s as any).sentiment_30d) : "—"}</td>
+                          <td style={{ ...cell, color: T.muted }}>{s.sentiment_30d != null ? f2(s.sentiment_30d) : "—"}</td>
                           <td style={{ padding: "8px 8px", textAlign: "right" }}>
                             <span style={{ fontSize: 11.5, fontFamily: T.mono, fontWeight: 800, color: grade.color }}>{f2(s.gap_score)} </span>
                             <Chip text={grade.label} color={grade.color} bg={grade.bg} />
@@ -557,14 +576,14 @@ export default function SocialArb() {
 
             <div style={{ marginTop: 12, fontSize: 10, fontFamily: T.mono, color: T.light, display: "flex", alignItems: "center", gap: 6 }}>
               <TrendingUp size={11} />
-              {visibleSignals.length}{corrOnly ? ` of ${signals.length}` : ""} {corrOnly ? "corroborated " : ""}{status} signal{visibleSignals.length === 1 ? "" : "s"} · ranked by score (gap × materiality × corroboration × value-tier) · click a row to expand.
+              {visibleSignals.length}{corrOnly ? ` of ${signals.length}` : ""} ticker{visibleSignals.length === 1 ? "" : "s"} buzzing · sorted by {sortMode === "heat" ? "acceleration (heating up)" : "raw mention volume"} · click a row to expand.
             </div>
           </>
         )}
 
-        <TrackRecord backtest={backtest} />
-        <ThemesBaskets themes={themes} />
-        <ResolverHealth health={resolver} />
+        {!isRetailMonitor && <TrackRecord backtest={backtest} />}
+        {!isRetailMonitor && <ThemesBaskets themes={themes} />}
+        {!isRetailMonitor && <ResolverHealth health={resolver} />}
       </div>
     </div>
   );
