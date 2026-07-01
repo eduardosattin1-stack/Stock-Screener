@@ -50,6 +50,10 @@ interface Signal {
   corroboration: number | null;
   held?: boolean;
   sentiment_30d?: number | null;
+  unusual?: boolean;
+  new_chatter?: boolean;
+  near_earnings?: boolean;
+  earnings_date?: string | null;
   intent_purchase_share: number | null;
   materiality: number;
   novelty: boolean;
@@ -404,7 +408,7 @@ export default function SocialArb() {
           </span>
         </div>
 
-        <SystemStatus stats={stats} resolver={resolver} signals={signals} themes={themes} backtest={backtest} />
+        {!isRetailMonitor && <SystemStatus stats={stats} resolver={resolver} signals={signals} themes={themes} backtest={backtest} />}
 
         {/* Data-quality banner (auto-clears as the source mix broadens / awareness populates) */}
         {thinData && (
@@ -511,6 +515,10 @@ export default function SocialArb() {
                               {isOpen ? <ChevronDown size={12} style={{ color: T.muted }} /> : <ChevronRight size={12} style={{ color: hover === s.id ? T.muted : T.light }} />}
                               <span style={{ fontSize: 12.5, fontFamily: T.mono, fontWeight: 700, color: T.text }}>{s.entity_name}</span>
                               {s.held && <Chip text="HELD" color={T.green} bg="rgba(20,184,122,0.18)" border="rgba(20,184,122,0.35)" />}
+                              {s.new_chatter
+                                ? <Chip text="NEW CHATTER" color={T.amber} bg="rgba(245,185,66,0.18)" border="rgba(245,185,66,0.35)" />
+                                : s.unusual && <Chip text="UNUSUAL" color={T.purple} bg="rgba(196,181,253,0.16)" border="rgba(196,181,253,0.3)" />}
+                              {s.near_earnings && <Chip text={`ER ${s.earnings_date?.slice(5) ?? ""}`} color={T.light} bg="rgba(255,255,255,0.06)" />}
                             </div>
                             <div style={{ display: "flex", gap: 4, marginTop: 3, marginLeft: 18, flexWrap: "wrap" }}>
                               {tks.length === 0 && <span style={{ fontSize: 9, fontFamily: T.mono, color: T.light }}>no ticker</span>}
