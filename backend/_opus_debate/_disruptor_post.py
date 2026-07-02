@@ -366,6 +366,14 @@ def cross_book_overlap_warn(picks, gin):
 def main():
     offline = "--offline" in sys.argv
     apx, gin = load()
+    # UNIFIED SKEPTIC consumption (2026-07-01, X1): the disruptor book's FIRST kill-tier — REFUTED
+    # demotes to runner_ups; MISSING/stale-REFUTED seats are stamped + half-sized; a material
+    # correction takes the bounded 0.75 haircut (all via the shared _post_common machinery).
+    try:
+        import _post_common as _pc
+        apx = _pc.consume_skeptic(apx, APEX_F, Path(__file__).resolve().parent / "_skeptic_disruptor")
+    except Exception as _e:
+        print(f"WARN: disruptor skeptic consumption failed ({_e}) — proceeding un-vetted (stamps will say MISSING)")
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     syms = [p["symbol"] for p in picks]
     quotes, weekly_rets, asof = get_market(syms, syms + ["SMH", "QQQ"], offline)

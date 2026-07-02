@@ -42,8 +42,8 @@ function skepticPrompt(n) {
   return 'You are the SPECULAIR SKEPTIC (Claude Opus 4.8) running an ADVERSARIAL kill-check on ' + sym + ' (' + n.co + '), a HELD Basket-13 event-driven seat (' + n.label + ', ' + n.cluster + '). Default REFUTED unless you can INDEPENDENTLY confirm the load-bearing facts vs a PRIMARY source. You see ONLY the bear side.\n' +
     '1. Read ' + RES + '/' + sym + '.json.\n' +
     '2. ATTACK VECTORS (web): (a) is the catalyst genuinely LIVE + dated + binding, or fired / slipped / priced? (b) is the target real or fantasy? (c) is the downside floor real (what backstops the price) or does it break (dilution/ATM, going-concern, lockup flood, financing contingency)? (d) hidden disqualifier — single-binary with no floor, trading through terms, a second-request / CRL risk the bull ignores.\n' +
-    '3. Verdict: CONFIRMED | CONFIRMED_WITH_CORRECTIONS | REFUTED. Plus conviction_cap (int 0-100).\n' +
-    '4. Write (Write tool) VALID JSON to ' + SKEP + '/' + sym + '.json = {symbol(="' + sym + '"), verdict, kill_fact, corrections, conviction_cap(int 0-100), evidence:[2-4 dated primary-source cites]}. Reply exactly: DONE'
+    '3. Verdict: CONFIRMED | CONFIRMED_WITH_CORRECTIONS | REFUTED. Plus correction_severity ("minor"|"material") and kill_scope ("thesis"|"numbers"|"catalyst"|"moat") - NO numeric cap.\n' +
+    '4. Write (Write tool) VALID JSON to ' + SKEP + '/' + sym + '.json = {symbol(="' + sym + '"), verdict, kill_fact, corrections, correction_severity, kill_scope, evidence:[2-4 dated primary-source cites]}. Reply exactly: DONE'
 }
 
 phase('Debate')

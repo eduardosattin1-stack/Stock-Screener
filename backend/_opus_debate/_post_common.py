@@ -82,7 +82,16 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             p["skeptic_kill_fact"] = v["kill_fact"]
         if v.get("corrections"):
             p["skeptic_corrections"] = v["corrections"]
-        if isinstance(v.get(conviction_field), (int, float)):
+        # Unified skeptic (X1): CATEGORICAL severity replaces the numeric cap. A "material"
+        # correction (a load-bearing number/date/anchor moved) takes a bounded sizing haircut in
+        # moat_per_name_cap — a haircut, never a hard ceiling (the proven numeric-cap bug class).
+        if v.get("correction_severity"):
+            p["correction_severity"] = v["correction_severity"]
+        if v.get("kill_scope"):
+            p["skeptic_kill_scope"] = v["kill_scope"]
+        if v.get("carried_from_book"):
+            p["skeptic_carried_from"] = v["carried_from_book"]
+        if isinstance(v.get(conviction_field), (int, float)):   # legacy shards only (pre-X1)
             p[conviction_field] = v[conviction_field]
         if (v.get("verdict") or "").upper() == "REFUTED":
             p["skeptic_refuted"] = True
@@ -162,6 +171,10 @@ def moat_per_name_cap(p, u, extra_flags=()):
     # Skeptic-coverage teeth apply to EVERY seat, lanes included — an un-vetted seat is half-sized.
     if p.get("skeptic_missing") or p.get("skeptic_stale_refuted"):
         return min(u, 0.5)
+    # Unified-skeptic MATERIAL correction (a load-bearing number/date/anchor moved): a BOUNDED
+    # 3/4 haircut — consequences without the numeric-cap-as-ceiling bug class (X1/VB-P5).
+    if p.get("correction_severity") == "material":
+        u = min(u, 0.75)
     # LANE CONTRACT: an equity special-sit seat is EVENT-driven — the Director's STEP-3b exempted it
     # from the compounder moat/erosion teeth, and the publish layer already floor-sizes it harder
     # (1.5% risk-to-floor). Applying the moat half-cap here would contradict that contract.

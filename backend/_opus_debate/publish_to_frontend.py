@@ -118,16 +118,13 @@ if not director.get("moat_post_applied"):
     else:
         print(f"{msg} Aborting (override with --force).")
         sys.exit(1)
-_skep_fresh = 0
-_apex_f = BK / "apex_basket_opus_regime.json"
-_apex_mtime = _apex_f.stat().st_mtime if _apex_f.exists() else 0
-for _p in picks:
-    _sh = BK / "_skeptic_regime" / f"{_p.get('symbol')}.json"
-    if _sh.exists() and _sh.stat().st_mtime >= _apex_mtime - 1:
-        _skep_fresh += 1
-if picks and _skep_fresh / len(picks) < 0.7:
-    print(f"WARN skeptic-coverage at publish: only {_skep_fresh}/{len(picks)} apex seats have a fresh "
-          f"skeptic shard (MISSING seats are stamped + half-sized by the post; not blocking).")
+# Coverage from the STAMPED verdicts (consume_skeptic writes them into the picks), NOT shard
+# mtimes — regime-post rewrites the apex file after consuming, so every shard then looks older
+# than the apex and an mtime check reads 0-coverage on a fully-vetted book (observed 2026-07-02).
+_skep_cov = sum(1 for _p in picks if (_p.get("skeptic_verdict") or "") not in ("", "MISSING"))
+if picks and _skep_cov / len(picks) < 0.7:
+    print(f"WARN skeptic-coverage at publish: only {_skep_cov}/{len(picks)} apex seats carry a "
+          f"skeptic verdict (MISSING seats are stamped + half-sized by the post; not blocking).")
 
 scan = load(LG, {}) or {}
 scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
@@ -270,6 +267,10 @@ for p in picks:
         # apex skeptic + moat terminal-erosion (stamped by _regime_post) — surfaced per seat for the UI
         "skeptic_verdict": p.get("skeptic_verdict", ""),
         "skeptic_kill_fact": p.get("skeptic_kill_fact", ""),
+        # unified skeptic (X1): categorical severity + scope replace the numeric cap (legacy field
+        # still passed through for pre-X1 shards; new shards never emit a number)
+        "skeptic_correction_severity": p.get("correction_severity", ""),
+        "skeptic_kill_scope": p.get("skeptic_kill_scope", ""),
         "value_conviction_cap": p.get("value_conviction_cap"),
         "moat": p.get("moat", ""), "moat_score": p.get("moat_score"),
         "moat_erosion": p.get("moat_erosion", ""), "erosion_severity": p.get("erosion_severity", "none"),

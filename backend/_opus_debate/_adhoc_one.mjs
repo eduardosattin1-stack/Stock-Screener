@@ -46,8 +46,8 @@ await agent(
   'You are the SPECULAIR SKEPTIC (Claude Opus 4.8) running an ADVERSARIAL kill-check on ' + SYM + ' (' + CO + '). Default REFUTED unless you can INDEPENDENTLY confirm the load-bearing facts vs a PRIMARY source (the latest 10-Q/K or 20-F/6-K, the IR site, the earnings release). You see ONLY the bear side.\n' +
   '1. Read ' + RES + '/' + SYM + '.json.\n' +
   '2. ATTACK VECTORS (web): (a) STALE-ANCHOR — is sop_fair_value built on pre-print financials? (b) NUMBER TRUTH — do the load-bearing figures (segment growth + margins, the SoP parts, net cash + stakes, share count) verify? (c) THESIS WEAKNESS — is the cheapness a real edge or structurally priced (regulatory/governance/secular terminal-risk, a melting segment, competition); is the multiple already full? (d) HIDDEN DISQUALIFIER — regulatory/VIE/ADR-delisting, dilution, a stake that cannot be monetized, an FX/macro drag.\n' +
-  '3. Verdict: CONFIRMED | CONFIRMED_WITH_CORRECTIONS | REFUTED. Plus value_conviction_cap (int 1-5).\n' +
-  '4. Write (Write tool) VALID JSON to ' + SKEP + '/' + SYM + '.json = {symbol(="' + SYM + '"), verdict, kill_fact, corrections, value_conviction_cap(int 1-5), evidence:[2-4 dated primary-source cites]}. Reply exactly: DONE',
+  '3. Verdict: CONFIRMED | CONFIRMED_WITH_CORRECTIONS | REFUTED. Plus correction_severity ("minor"|"material") and kill_scope ("thesis"|"numbers"|"catalyst"|"moat") - NO numeric cap.\n' +
+  '4. Write (Write tool) VALID JSON to ' + SKEP + '/' + SYM + '.json = {symbol(="' + SYM + '"), verdict, kill_fact, corrections, correction_severity, kill_scope, evidence:[2-4 dated primary-source cites]}. Reply exactly: DONE',
   { label: 'skeptic:' + SYM, phase: 'Skeptic', agentType: 'general-purpose', model: 'opus', effort: 'high' })
 
 phase('Director')
@@ -55,7 +55,7 @@ await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8, 1M context) assessing ' + SYM + ' (' + CO + ') for a high-conviction equity book.\n' +
   '1. Read CATALYST_WATCH_REGIME.md (repo root) + ' + DIR + '/macro_regime.json; one line on the regime + your stance.\n' +
   '2. Read ' + RES + '/' + SYM + '.json (the debate) + ' + SKEP + '/' + SYM + '.json (the skeptic).\n' +
-  '3. Assign director_conviction (0-100, apex bands: 90-100 table-pounding/maximal asymmetry, 70-89 high-conviction, 50-69 solid, <50 watchlist — HARD-CAP at the skeptic value_conviction_cap×20; a REFUTED verdict forces <50), would_seat (bool, vs the +30-50%/12mo apex goal), one-line thesis, binding_reason (the single fact that gets it in or keeps it out — price vs SoP, the moat/secular gate, the catalyst), posture (enter_now_carry | scale_in | wait_for_weakness | wheel-it | pass), expected_return_pct (to sop_fair_value from current), catalyst_status, moat.\n' +
+  '3. Assign director_conviction (0-100, apex bands: 90-100 table-pounding/maximal asymmetry, 70-89 high-conviction, 50-69 solid, <50 watchlist — apply the skeptic by VERDICT, never a numeric ceiling: a material correction warrants a ~10-20pt haircut (REFUTED still forces <50); a REFUTED verdict forces <50), would_seat (bool, vs the +30-50%/12mo apex goal), one-line thesis, binding_reason (the single fact that gets it in or keeps it out — price vs SoP, the moat/secular gate, the catalyst), posture (enter_now_carry | scale_in | wait_for_weakness | wheel-it | pass), expected_return_pct (to sop_fair_value from current), catalyst_status, moat.\n' +
   '4. Write (Write tool) VALID JSON to ' + DD + '/' + SYM + '.json = {regime, risk_stance, assessment:{symbol, director_conviction, would_seat, thesis, binding_reason, posture, expected_return_pct, catalyst_status, moat}, memo}. Reply exactly: DONE',
   { label: 'director:' + SYM, phase: 'Director', model: 'opus', effort: 'xhigh' })
 
