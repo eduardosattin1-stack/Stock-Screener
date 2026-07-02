@@ -320,11 +320,18 @@ def build_watchlist(t, director, passed, bysym, cro_by, stamp_date):
 
 
 # --------------------------------------------------------------- cap validation
-def validate(picks, bysym, live_px=None):
+def validate(picks, bysym, live_px=None, held_syms=None):
     """Deterministic hard-cap assertion on the Director output. Returns a list of violations.
     live_px: {SYM: stamped/limit price} — caps are checked at the price the book actually
-    carries. Pending (resting-limit) picks count toward every cap as-if-filled."""
+    carries. Pending (resting-limit) picks count toward every cap as-if-filled.
+    held_syms: LOCKED held seats — they consume headroom in every AGGREGATE cap (count,
+    driver, super-cluster, lane) but are exempt from the PER-SEAT gates (staging half-weight,
+    expression, risk-to-floor, binary premium, weekly-diagnosis) — a held seat was validated
+    at its own stamp time and runs to resolution; new adds must never re-litigate it (the
+    staging half-normal denominator grows with n, so re-testing held rows would let every
+    add retroactively breach seats that were legal when stamped)."""
     live_px = live_px or {}
+    held_syms = held_syms or set()
     v, n = [], len(picks)
     if not (MIN_NAMES <= n <= MAX_NAMES):
         v.append(f"COUNT {n} outside [{MIN_NAMES},{MAX_NAMES}]")
@@ -349,6 +356,8 @@ def validate(picks, bysym, live_px=None):
         if bylane.get(ln, 0) > cap:
             v.append(f"LANE {ln}: {bylane[ln]} names > {cap}")
     for p in picks:
+        if p["symbol"] in held_syms:           # locked seat — per-seat gates ran at ITS stamp
+            continue
         c = bysym.get(p["symbol"], {})
         w = p.get("weight_pct") or 0
         exp = (p.get("expression") or {}).get("type")
@@ -482,7 +491,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                                 "lane_canon": e.get("lane_canon"), "live_price": e.get("entry_price")}
         live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
 
-    viol = validate(held_pseudo + picks, bysym_v, live_px=live_v)
+    viol = validate(held_pseudo + picks, bysym_v, live_px=live_v, held_syms=held_syms)
     if viol:
         print("CAP VALIDATION FAILED — basket NOT stamped:")
         for x in viol:
