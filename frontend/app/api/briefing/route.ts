@@ -53,12 +53,13 @@ export async function GET(req: Request) {
     return get(`/${suffix}`, fb);
   };
 
-  const [macro, sectors, methodTracks, spec, apexTrk] = await Promise.all([
+  const [macro, sectors, methodTracks, spec, apexTrkEqual, apexTrkWeighted] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/method-tracks", { regimes: {} }),
     getGcsFirst("speculair_baskets.json", {}),
     getGcsFirst("speculair_apex_tracking.json", {}),
+    getGcsFirst("speculair_apex_tracking_weighted.json", {}),
   ]);
 
   // ── Index thermometer + market sentiment (from /api/sectors) ──
@@ -96,9 +97,18 @@ export async function GET(req: Request) {
   };
 
   // ── Apex basket stats (NAV / inception) — used by the headline + Model Focus ──
-  const at = spec?.apex_tracking || {};
+  // Director-weighted NAV (conviction-sized) is primary once it has genuine live-forward
+  // history; equal-weight is the fallback before then. Same promotion rule as the Apex
+  // Basket card on / (page.tsx) — keeps this one "Apex" number consistent everywhere
+  // instead of the headline/sidebar quietly reporting a different chain than the card.
+  const atWeighted = spec?.apex_tracking_weighted;
+  const atIsWeighted = !!(atWeighted && (atWeighted.history || []).length >= 4);
+  const at = atIsWeighted ? atWeighted : (spec?.apex_tracking || {});
   const sinceInc = num(at.since_inception_pct);
   const nOpen = num(at.n_open, (spec?.apex_basket || []).length);
+  // Positions/last_prices for Basket Pulse's top/worst name — same promotion, so it
+  // reflects entries from whichever book (weighted vs equal-weight) is authoritative.
+  const apexTrk = atIsWeighted ? apexTrkWeighted : apexTrkEqual;
 
   // ── Four-method tracker: collect stock prediction rows (decile/p20/EV, live state) ──
   // decile is model-calibrated (OOS thresholds) — NOT a client-side relative rank.

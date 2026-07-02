@@ -22,7 +22,8 @@ export function SpeculairTracker() {
   const [openApex, setOpenApex] = useState(true);
   const [openCap, setOpenCap] = useState(true);
   const [openClosed, setOpenClosed] = useState(false);
-  const [tracking, setTracking] = useState<any>(null);
+  const [trackingEqual, setTrackingEqual] = useState<any>(null);
+  const [trackingWeighted, setTrackingWeighted] = useState<any>(null);
 
   // Load baskets: GCS first, public file fallback (mirrors page.tsx).
   useEffect(() => {
@@ -38,17 +39,33 @@ export function SpeculairTracker() {
   }, []);
 
   // Load Apex track record (chained NAV + closed rotations): GCS first, public fallback.
+  // Two chains: equal-weight (original) and Director-weighted-by-conviction (promoted
+  // once it has genuine live-forward history) — same promotion rule as the Apex Basket
+  // card on / (page.tsx) and the Daily Briefing headline, so this "Apex since ..." figure
+  // always matches those instead of quietly reporting a different chain.
   useEffect(() => {
     fetch("/api/gcs/scans/speculair_apex_tracking.json")
       .then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
-      .then((d) => { if (d && d.nav) setTracking(d); })
+      .then((d) => { if (d && d.nav) setTrackingEqual(d); })
       .catch(() => {
         fetch("/speculair_apex_tracking.json")
           .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d && d.nav) setTracking(d); })
+          .then((d) => { if (d && d.nav) setTrackingEqual(d); })
+          .catch(() => {});
+      });
+    fetch("/api/gcs/scans/speculair_apex_tracking_weighted.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
+      .then((d) => { if (d && d.nav) setTrackingWeighted(d); })
+      .catch(() => {
+        fetch("/speculair_apex_tracking_weighted.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d && d.nav) setTrackingWeighted(d); })
           .catch(() => {});
       });
   }, []);
+
+  const trackingIsWeighted = !!(trackingWeighted && (trackingWeighted.history || []).length >= 4);
+  const tracking = trackingIsWeighted ? trackingWeighted : trackingEqual;
 
   const apex: Pick[] = baskets?.apex_basket || [];
   const cap: Pick[] = baskets?.capitulation_watchlist || [];
