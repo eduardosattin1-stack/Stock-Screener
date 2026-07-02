@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "updated": "2026-07-02",
+  "exchanges": ["NYSE", "NASDAQ", "AMEX"],
+  "floors": {
+    "lane_a": { "market_cap_usd": 500000000, "adv_usd": 5000000, "price_min": 2 },
+    "lane_b": { "market_cap_usd": 150000000, "adv_usd": 2000000, "price_min": 1 }
+  },
+  "chains": [
+    {
+      "id": "uranium_fuel_cycle",
+      "name": "Uranium & nuclear fuel cycle",
+      "thesis": "Reactor restarts, life extensions, new builds and datacenter-driven nuclear PPAs collide with a decade of mine under-investment; the term-contracting cycle reprices the whole fuel chain — miners, converters, enrichers, fuel services — years before spot moves show it.",
+      "value_chain_layers": ["mining & ISR production", "conversion & enrichment", "fuel fabrication & services", "physical trusts & royalties", "developers (restart/greenfield)"],
+      "fmp_sectors": ["Energy", "Basic Materials"],
+      "fmp_industries": ["Uranium"],
+      "keyword_hints": ["enrichment", "SWU", "conversion", "term contract", "restart", "ISR", "NRC license", "HALEU", "utility contracting"],
+      "anchor_examples": ["CCJ", "UEC", "UUUU", "LEU", "NXE", "DNN", "UROY"],
+      "commodity": { "fmp_symbol": null, "proxy_etf": "URA", "spot_source": "web-cited (UxC/Numerco via press) or SRUUF/U.UN trust NAV proxy — uranium spot is NOT an FMP commodity" },
+      "notes": "The one chain where the contracting cycle (term vs spot) is the regime tell. UROY is the royalty pure-play (business_model=royalty_streamer, auto-passes cash gates). Restart/greenfield developers (NXE, DNN-class) are lane_b via dated milestones (permits, FID, first drum)."
+    },
+    {
+      "id": "copper_electrification",
+      "name": "Copper & electrification metals",
+      "thesis": "Grid build-out, datacenters, EVs and reshored manufacturing add structural copper demand into a thin project pipeline — new mines take 10+ years from discovery to first cathode; the cost curve reprices producers long before the deficit closes.",
+      "value_chain_layers": ["majors & mid-tier producers", "developers (permitted/FID-stage)", "smelting & refining", "royalty & streaming"],
+      "fmp_sectors": ["Basic Materials"],
+      "fmp_industries": ["Copper", "Other Industrial Metals & Mining", "Aluminum"],
+      "keyword_hints": ["cathode", "concentrate", "TC/RC", "AISC", "porphyry", "record of decision", "feasibility", "offtake", "brownfield expansion"],
+      "anchor_examples": ["FCX", "SCCO", "ERO", "HBM", "TECK"],
+      "commodity": { "fmp_symbol": "HGUSD", "proxy_etf": "COPX", "spot_source": "FMP commodities (COMEX HG front month)" },
+      "notes": "'Copper' and 'Aluminum' industry strings are (verify) — confirm against /stable/available-industries on the first live run; 'Other Industrial Metals & Mining' is proven in themes_map.py. Diversified miners (TECK-class) need commodity_revenue_share from the chain map, not 1.0."
+    },
+    {
+      "id": "rare_earth_strategic",
+      "name": "Rare earths & strategic metals",
+      "thesis": "Export controls turned rare earths, antimony, gallium and tungsten from commodities into strategic chokepoints; Western governments now act as forced buyers (price floors, DoD/DOE awards, stockpiles), repricing every ex-China ounce on policy datelines rather than spot.",
+      "value_chain_layers": ["mining (ex-China)", "separation & refining", "magnet & alloy production", "recycling", "developers (permit/DFS-stage)"],
+      "fmp_sectors": ["Basic Materials", "Industrials"],
+      "fmp_industries": ["Other Industrial Metals & Mining", "Other Precious Metals & Mining", "Specialty Chemicals"],
+      "keyword_hints": ["rare earth", "NdPr", "separation", "magnet", "antimony", "gallium", "tungsten", "export control", "Section 232", "DPA Title III", "price floor", "stockpile"],
+      "anchor_examples": ["MP", "USAR", "UUUU"],
+      "commodity": { "fmp_symbol": null, "proxy_etf": "REMX", "spot_source": "web-cited (Shanghai Metals Market NdPr via press) — NdPr is NOT an FMP commodity" },
+      "notes": "The policy chain: most catalysts are government datelines, not price. 'Other Precious Metals & Mining' and 'Specialty Chemicals' are (verify) — Specialty Chemicals is included ONLY to catch processors/separators FMP files there; the chain map must drop actual chemical companies (chain_fit_confidence=low). UUUU carries uranium_fuel_cycle AND this chain (counts toward both caps)."
+    },
+    {
+      "id": "power_for_ai",
+      "name": "Power for AI",
+      "thesis": "Datacenter load growth outruns grid interconnection; whoever can deliver firm electrons or the equipment to make them — turbines, transformers, switchgear, nuclear-levered IPPs, grid EPC — sells into a queue measured in years.",
+      "value_chain_layers": ["turbines & generation equipment", "grid equipment (transformers/switchgear)", "nuclear-levered IPPs & PPAs", "grid EPC & interconnection", "SMR developers"],
+      "fmp_sectors": ["Industrials", "Utilities"],
+      "fmp_industries": ["Utilities - Independent Power Producers", "Electrical Equipment & Parts", "Specialty Industrial Machinery", "Engineering & Construction"],
+      "keyword_hints": ["datacenter PPA", "interconnection queue", "gas turbine", "transformer lead time", "switchgear", "behind-the-meter", "SMR", "NRC COL", "capacity auction"],
+      "anchor_examples": ["GEV", "ETN", "CEG", "VST", "TLN", "PWR"],
+      "commodity": { "fmp_symbol": "NGUSD", "proxy_etf": null, "spot_source": "FMP commodities (Henry Hub front month) — the fuel-cost driver for IPP spark spreads, not a revenue driver" },
+      "notes": "Overlaps disruptor energy_transition (GEV/ETN/CEG-class) — ALLOWED: different books, never blended; the cross-book overlap report must flag shared names. SMR developers (OKLO/SMR-class, pre-revenue) are lane_b via NRC/COL datelines, never lane_a. This chain's torque metric is margin-vs-power-prices, not margin-vs-metal."
+    }
+  ]
+}

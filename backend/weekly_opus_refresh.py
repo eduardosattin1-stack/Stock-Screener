@@ -21,7 +21,8 @@ The scheduled SKILL.md runs:
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
 Periodic verbs: shadow-debate / shadow-diff (challenger A/B via SHADOW_MODEL env; Fable retired 2026-06-13),
 control-sample (monthly funnel miss-rate), value-revalidate (stale-anchor pro-forma re-debate),
-disruptor-universe / disruptor-map-merge (monthly Disruptor Lens universe build).
+disruptor-universe / disruptor-map-merge (monthly Disruptor Lens universe build),
+fr-universe (monthly Future Resources two-lane Stage A/B build — FUTURE_RESOURCES_SPEC.md).
 
 Robust by construction: each name is a SINGLE-agent full Opus regime debate (Interrogator+
 Architect+Moderator in one pass, schema-less, inline regime brief) — the pattern that proved
@@ -33,6 +34,8 @@ import sys
 from pathlib import Path
 
 BK = r"C:\Users\Bruno\Stock-Screener\backend"
+if not os.path.isdir(BK):                       # portability fallback: run from this file's own dir
+    BK = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BK); sys.path.insert(0, os.path.join(BK, "alpha_compounder"))
 os.chdir(BK)
 if hasattr(sys.stdout, "reconfigure"):
@@ -1813,6 +1816,218 @@ def disruptor_map_merge():
     return len(members)
 
 
+FR_DIR = ROOT / "future_resources"
+
+
+def fr_universe():
+    """FUTURE RESOURCES Stage A+B (FUTURE_RESOURCES_SPEC.md §1, monthly): deterministic FMP screen
+    per chain -> two-lane gates. Lane A (producers/royalties): TTM FCF>0 OR TTM OCF>0 (tagged
+    growth_capex_fcf_negative when OCF-only), TTM EBITDA>0, funded solvency != weak, mcap>=$500M,
+    ADV>=$5M. Lane B (developers): mcap>=$150M, ADV>=$2M, NO profitability gate — cash-runway fields
+    stamped here; the funded-through-milestone gate is asserted at Lane B candidate extraction.
+    Anti-shrink (disruptor_universe lessons): re-screens FMP from scratch every run; never reads a
+    prior universe/candidates file; STOPs loudly on thin screens. Gates cached by symbol+month."""
+    import concurrent.futures
+    import re
+    from datetime import datetime as _dt
+    tax = json.load(open(ROOT / "future_resources_chains.json", encoding="utf-8"))
+    key = E.get_key("FMP_API_KEY")
+    if not key:
+        print("GUARD: no FMP_API_KEY — STOP")
+        raise SystemExit(1)
+    FR_DIR.mkdir(exist_ok=True)
+    (FR_DIR / "chain_map").mkdir(exist_ok=True)
+    base = "https://financialmodelingprep.com/stable"
+    fa, fb = tax["floors"]["lane_a"], tax["floors"]["lane_b"]
+
+    # ── Stage A — screen once at the WIDER lane-B floors; lane assignment happens after Stage B ──
+    seen, hints, raw_total = {}, {}, 0
+    for ch in tax["chains"]:
+        ch_syms = set()
+        for ind in ch.get("fmp_industries") or []:
+            ind_rows = 0
+            for exch in tax.get("exchanges") or ["NYSE", "NASDAQ", "AMEX"]:
+                try:
+                    rows = requests.get(base + "/company-screener", params={
+                        "industry": ind, "exchange": exch,
+                        "marketCapMoreThan": fb["market_cap_usd"],
+                        "volumeMoreThan": 100_000, "priceMoreThan": fb["price_min"],
+                        "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
+                        "limit": 1000, "apikey": key}, timeout=25).json()
+                except Exception:
+                    rows = []
+                if not isinstance(rows, list):
+                    rows = []
+                raw_total += len(rows)
+                ind_rows += len(rows)
+                for r in rows:
+                    sym = r.get("symbol")
+                    if not sym or "." in sym and not sym.replace(".", "").isalnum():
+                        continue
+                    seen.setdefault(sym, {"symbol": sym, "name": r.get("companyName", ""),
+                                          "sector": r.get("sector", ""), "industry": r.get("industry", ""),
+                                          "mcap": r.get("marketCap"), "price": r.get("price"),
+                                          "volume": r.get("volume")})
+                    ch_syms.add(sym)
+                    hints.setdefault(sym, [])
+                    if ch["id"] not in hints[sym]:
+                        hints[sym].append(ch["id"])
+            if ind_rows == 0:
+                print(f"  WARN [{ch['id']}] industry '{ind}' returned 0 rows — "
+                      f"misspelled/unverified industry string? (see spec §1.1 (verify) list)")
+        print(f"  Stage A [{ch['id']}]: {len(ch_syms)} unique candidates")
+    print(f"Stage A: {len(seen)} unique candidates from {raw_total} raw rows")
+    if raw_total < 100:
+        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) — STOP, not a silent small universe")
+        raise SystemExit(1)
+    n_uranium = sum(1 for s, hs in hints.items() if "uranium_fuel_cycle" in hs)
+    if n_uranium == 0:
+        print("GUARD: uranium_fuel_cycle mapped 0 candidates — the AMEX canary "
+              "(NYSE-American cohort missing?) — STOP")
+        raise SystemExit(1)
+
+    # ── per-lane liquidity floors (free — from the screener rows) ──
+    def _adv(c):
+        p, v = c.get("price"), c.get("volume")
+        return p * v if isinstance(p, (int, float)) and isinstance(v, (int, float)) else 0.0
+    liquid = {s: c for s, c in seen.items() if _adv(c) >= fb["adv_usd"]}
+    print(f"liquidity gate (lane-B ADV >= ${fb['adv_usd']/1e6:.0f}M): {len(liquid)} pass")
+
+    # ── Stage B — financial gates, cached by symbol+month ──
+    cache_p = FR_DIR / "_gates_cache.json"
+    cache = {}
+    if cache_p.exists():
+        try:
+            cache = json.load(open(cache_p, encoding="utf-8"))
+        except Exception:
+            cache = {}
+    month = _dt.now().strftime("%Y-%m")
+
+    def gates_for(sym):
+        ck = f"{sym}|{month}"
+        if ck in cache:
+            return sym, cache[ck]
+        g = {"ttm_fcf": None, "ttm_ocf": None, "ttm_capex": None, "ttm_ebitda": None,
+             "ttm_revenue": None, "rev_yoy": None, "cash_sti": None, "balance_date": None,
+             "balance_sheet_stale": None, "monthly_burn": None, "runway_months": None,
+             "growth_capex_fcf_negative": False, "pass_cash": False, "pass_profit": False}
+        try:
+            cf = requests.get(base + "/cash-flow-statement",
+                              params={"symbol": sym, "period": "quarter", "limit": 5, "apikey": key}, timeout=20).json()
+            if isinstance(cf, list) and len(cf) >= 4:
+                ocfs, capexs, fcfs = [], [], []
+                for q in cf[:4]:
+                    ocf = q.get("operatingCashFlow")
+                    cap = q.get("capitalExpenditure")
+                    v = q.get("freeCashFlow")
+                    if not isinstance(v, (int, float)):
+                        v = (ocf or 0) + (cap or 0)
+                    ocfs.append(ocf if isinstance(ocf, (int, float)) else 0)
+                    capexs.append(cap if isinstance(cap, (int, float)) else 0)
+                    fcfs.append(v if isinstance(v, (int, float)) else 0)
+                g["ttm_ocf"], g["ttm_capex"], g["ttm_fcf"] = sum(ocfs), sum(capexs), sum(fcfs)
+        except Exception:
+            pass
+        try:
+            qs = requests.get(base + "/income-statement",
+                              params={"symbol": sym, "period": "quarter", "limit": 8, "apikey": key}, timeout=20).json()
+            if isinstance(qs, list) and len(qs) >= 4:
+                g["ttm_revenue"] = sum(q.get("revenue") or 0 for q in qs[:4])
+                g["ttm_ebitda"] = sum(q.get("ebitda") or 0 for q in qs[:4])
+                if len(qs) >= 8:
+                    pri4 = sum(q.get("revenue") or 0 for q in qs[4:8])
+                    if pri4 > 0:
+                        g["rev_yoy"] = round(g["ttm_revenue"] / pri4 - 1, 4)
+        except Exception:
+            pass
+        try:
+            bs = requests.get(base + "/balance-sheet-statement",
+                              params={"symbol": sym, "period": "quarter", "limit": 1, "apikey": key}, timeout=20).json()
+            if isinstance(bs, list) and bs:
+                b = bs[0]
+                cash = b.get("cashAndShortTermInvestments")
+                if not isinstance(cash, (int, float)):
+                    cash = (b.get("cashAndCashEquivalents") or 0) + (b.get("shortTermInvestments") or 0)
+                g["cash_sti"] = cash
+                g["balance_date"] = b.get("date")
+                try:
+                    age_days = (_dt.now() - _dt.strptime(b.get("date", ""), "%Y-%m-%d")).days
+                    g["balance_sheet_stale"] = bool(age_days > 185)   # >2 quarters: web-verify raises downstream
+                except Exception:
+                    g["balance_sheet_stale"] = None
+        except Exception:
+            pass
+        # runway (lane B): burn = -(TTM OCF + TTM capex) when negative; FCF-positive names have no burn
+        if isinstance(g["ttm_ocf"], (int, float)) and isinstance(g["ttm_capex"], (int, float)):
+            fcf12 = g["ttm_ocf"] + g["ttm_capex"]
+            burn = max(-fcf12, 0.0) / 12.0
+            g["monthly_burn"] = round(burn, 0)
+            if burn > 0 and isinstance(g["cash_sti"], (int, float)):
+                g["runway_months"] = round(g["cash_sti"] / burn, 1)
+        # lane A gate flags
+        ocf_pos = isinstance(g["ttm_ocf"], (int, float)) and g["ttm_ocf"] > 0
+        fcf_pos = isinstance(g["ttm_fcf"], (int, float)) and g["ttm_fcf"] > 0
+        g["pass_cash"] = bool(fcf_pos or ocf_pos)
+        g["growth_capex_fcf_negative"] = bool(ocf_pos and not fcf_pos)
+        g["pass_profit"] = bool(isinstance(g["ttm_ebitda"], (int, float)) and g["ttm_ebitda"] > 0)
+        cache[ck] = g
+        return sym, g
+
+    syms = sorted(liquid)
+    print(f"Stage B: financial gates over {len(syms)} names (cached: {sum(1 for s in syms if f'{s}|{month}' in cache)})...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
+        done = 0
+        for sym, g in ex.map(gates_for, syms):
+            liquid[sym]["gates"] = g
+            done += 1
+            if done % 50 == 0:
+                print(f"  ...{done}/{len(syms)}")
+    cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+
+    # ── lane assignment ──
+    def _n(v):
+        return v if isinstance(v, (int, float)) else 0
+    lane_a_pre = [s for s, c in liquid.items()
+                  if _n(c.get("mcap")) >= fa["market_cap_usd"] and _n(c.get("price")) >= fa["price_min"]
+                  and _adv(c) >= fa["adv_usd"] and c["gates"]["pass_cash"] and c["gates"]["pass_profit"]]
+    fl = _funded_leverage(lane_a_pre)                           # batch, shared cache — lane A only
+    lane_a, lane_b = [], []
+    for s, c in sorted(liquid.items()):
+        g = c["gates"]
+        g["adv_usd"] = round(_adv(c), 0)
+        g["royalty_hint"] = bool(re.search(r"royalt|streaming", c.get("name", ""), re.I))
+        c["chains_hint"] = hints.get(s, [])
+        if s in lane_a_pre:
+            flv = fl.get(s, {})
+            solv = _funded_solvency(c.get("sector", ""), flv.get("net_funded_debt_ebitda"), flv.get("interest_coverage"))
+            g["funded_solvency"] = solv
+            g["net_funded_debt_ebitda"] = flv.get("net_funded_debt_ebitda")
+            if solv != "weak":
+                c["lane"] = "a"
+                lane_a.append(c)
+                continue
+        if _n(c.get("mcap")) >= fb["market_cap_usd"] and _n(c.get("price")) >= fb["price_min"] \
+                and _adv(c) >= fb["adv_usd"]:
+            c["lane"] = "b"
+            lane_b.append(c)
+    by_chain = {ch["id"]: {"a": 0, "b": 0} for ch in tax["chains"]}
+    for c in lane_a + lane_b:
+        for cid in c["chains_hint"]:
+            by_chain[cid][c["lane"]] += 1
+    funnel = {"screened": len(seen), "liquid": len(liquid), "lane_a": len(lane_a), "lane_b": len(lane_b)}
+    print(f"lane gates: lane_a={len(lane_a)} (cash+EBITDA+solvency+floors) | "
+          f"lane_b={len(lane_b)} (floors+runway-stamped, milestone gate downstream)")
+    print(f"by_chain x lane: {by_chain}")
+    (FR_DIR / "_candidates.json").write_text(
+        json.dumps({"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
+                    "funnel_partial": funnel, "by_chain": by_chain,
+                    "candidates": lane_a + lane_b}, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"FR UNIVERSE STAGE A+B OK: screened={len(seen)} liquid={len(liquid)} "
+          f"lane_a={len(lane_a)} lane_b={len(lane_b)} -> {FR_DIR / '_candidates.json'}")
+    print("Next (Phase 2): fr chain-map workflow + fr-map-merge (business_model, commodity_revenue_share).")
+    return len(lane_a) + len(lane_b)
+
+
 # ════════════════════════ DISRUPTOR LENS — Phases 2-5 (clone of the value book) ════════════════════════
 # Isolated run subtree (spec §2.1). The value pipeline's prep() self-clean touches results_regime/ +
 # dossiers/ + the regime apex ONLY; these dirs live under disruptor/ and are never crossed (Do-NOT §7).
@@ -3055,6 +3270,8 @@ if __name__ == "__main__":
         value_revalidate()
     elif mode in ("disruptor-universe", "disruptor_universe"):
         disruptor_universe()
+    elif mode in ("fr-universe", "fr_universe"):
+        fr_universe()
     elif mode in ("disruptor-map-merge", "disruptor_map_merge"):
         disruptor_map_merge()
     elif mode in ("disruptor-prep", "disruptor_prep"):
