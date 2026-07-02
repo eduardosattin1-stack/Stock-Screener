@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "updated": "2026-07-02",
   "exchanges": ["NYSE", "NASDAQ", "AMEX"],
   "floors": {
@@ -53,7 +53,31 @@
       "keyword_hints": ["datacenter PPA", "interconnection queue", "gas turbine", "transformer lead time", "switchgear", "behind-the-meter", "SMR", "NRC COL", "capacity auction"],
       "anchor_examples": ["GEV", "ETN", "CEG", "VST", "TLN", "PWR"],
       "commodity": { "fmp_symbol": "NGUSD", "proxy_etf": null, "spot_source": "FMP commodities (Henry Hub front month) — the fuel-cost driver for IPP spark spreads, not a revenue driver" },
-      "notes": "Overlaps disruptor energy_transition (GEV/ETN/CEG-class) — ALLOWED: different books, never blended; the cross-book overlap report must flag shared names. SMR developers (OKLO/SMR-class, pre-revenue) are lane_b via NRC/COL datelines, never lane_a. This chain's torque metric is margin-vs-power-prices, not margin-vs-metal."
+      "notes": "Inherited the energy_transition ground from the retired Disruptor Lens (GEV/ETN/CEG-class). SMR developers (OKLO/SMR-class, pre-revenue) are lane_b via NRC/COL datelines, never lane_a. This chain's torque metric is margin-vs-power-prices, not margin-vs-metal."
+    },
+    {
+      "id": "robotics_automation",
+      "name": "Robotics & physical AI",
+      "thesis": "Labor scarcity + reshoring push factories, warehouses and surgery toward robots, and the humanoid ramp adds a new demand curve on top; the motion-control, vision, actuator and surgical-platform toll-takers monetize every deployment wave — and every robot is magnets, motors and copper windings (the demand side of this basket's metal chains).",
+      "value_chain_layers": ["factory automation", "warehouse robotics", "machine vision & sensing", "motion control & actuators", "surgical robotics", "humanoid developers"],
+      "fmp_sectors": ["Industrials", "Technology", "Healthcare"],
+      "fmp_industries": ["Specialty Industrial Machinery", "Electrical Equipment & Parts", "Scientific & Technical Instruments", "Software - Application", "Medical - Instruments & Supplies"],
+      "keyword_hints": ["automation", "robotic", "machine vision", "motion control", "actuator", "AMR", "cobot", "humanoid", "digital twin"],
+      "anchor_examples": ["ISRG", "TER", "ROK", "CGNX", "SYM"],
+      "commodity": { "fmp_symbol": null, "proxy_etf": "BOTZ", "spot_source": "no commodity — the regime read is the industrial-capex cycle + humanoid program datelines; deterministic metrics use the non-commodity set (gm_trajectory/backlog), never torque" },
+      "notes": "MIGRATED from the retired Disruptor Lens taxonomy (industry strings proven in its live runs). Industrial names here are demand-cycle cyclicals — the chain map must separate secular penetration from a capex bounce. Pre-FCF humanoid/robotics developers are lane_b via dated milestones (named production contracts, first customer deployments), never lane_a."
+    },
+    {
+      "id": "quantum",
+      "name": "Quantum computing & sensing",
+      "thesis": "Government programs and early enterprise contracts fund the quantum stack years before commercial breakeven; awards, named contracts and error-correction milestones are dated, idiosyncratic events that reprice names regardless of when quantum advantage actually arrives — and the cryo/photonics/control toll-takers get paid on every lab and testbed build-out either way.",
+      "value_chain_layers": ["qubit hardware platforms", "cryogenics & control electronics", "photonics & lasers", "quantum networking & sensing", "error-correction / software stack"],
+      "fmp_sectors": ["Technology"],
+      "fmp_industries": ["Computer Hardware", "Semiconductors", "Scientific & Technical Instruments", "Software - Infrastructure"],
+      "keyword_hints": ["quantum", "qubit", "error correction", "logical qubit", "cryogenic", "ion trap", "superconducting", "photonic", "QKD", "post-quantum"],
+      "anchor_examples": ["IONQ", "RGTI", "QBTS", "FORM", "COHR"],
+      "commodity": { "fmp_symbol": null, "proxy_etf": "QTUM", "spot_source": "no commodity — the regime read is the government funding cycle (NQI reauthorization, DARPA/DOE programs, sovereign initiatives) + the error-correction milestone track; non-commodity metric set applies" },
+      "notes": "The broadest industry filters in the taxonomy — this chain leans hardest on keyword hints + the chain map's physical-anchor rule; expect a high drop rate (generic hardware/semis names map low-confidence and are dropped WITH printed symbols). Pure-play platforms (IONQ/RGTI/QBTS-class) are pre-FCF -> lane_b via dated milestones (signed government awards, named enterprise/defense contracts, dated error-correction demos); an honestly tiny lane_a (FORM/COHR-class toll-takers) is the expected outcome, not a failure."
     }
   ]
 }
