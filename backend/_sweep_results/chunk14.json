@@ -1,1 +1,321 @@
-{"chunk":"14 (OLPX-PLTR)","scanned":150,"scan_distribution":{"active":1,"watch":11,"none":138},"survivors_flagged":[{"symbol":"OLPX","score":5,"tier":"WATCH","lane":"merger-arb","one_line":"Live Henkel all-cash merger at $2.06/sh (announced Mar 2026, close 2H 2026, regulatory pending) — but stock $2.05 = spread already closed, no asymmetry left; merger-arb only on a deal-break re-cut, otherwise dead money."},{"symbol":"ORIC","score":5,"tier":"WATCH","lane":"binary_clinical","one_line":"Multiple ORIC-944 (mCRPC) and enozertinib (ORIC-114) readouts through mid-2026 ahead of Ph3 starts; early-stage and well-funded ($413M into 2028), modest single-name asymmetry."},{"symbol":"PBI","score":6,"tier":"WATCH","lane":"spinoff_activist","one_line":"Activist CEO (Hestia/Kurt Wolf); definitive Cerberus-sponsored tax-free spin-off of Capital Services pending, with shareholders to receive 80.1% of new public co."},{"symbol":"PCVX","score":6,"tier":"WATCH","lane":"binary_readout","one_line":"Pivotal VAX-31 OPUS-1 Phase 3 adult topline readout dated Q4 2026 (fully enrolled, ~4,000pts, $2.7B cash); a genuine dated binary, though largely a franchise-confirmation event."},{"symbol":"PENN","score":6,"tier":"WATCH","lane":"activist_structural","one_line":"HG Vora activist + board-committed formal strategic review of ESPN Bet interactive segment, resolution targeted by end of FY2026 — real dated structural catalyst (own the suppressed core-casino value)."},{"symbol":"PHVS","score":5,"tier":"WATCH","lane":"binary","one_line":"Oral HAE drug deucrictibant: positive pivotal RAPIDe-3 already out (binary de-risked/partly fired), but 1H26 global NDA filings + CHAPTER-3 prophylaxis readout are forward dated regulatory milestones; asymmetry mostly re-rated."},{"symbol":"PLTK","score":6,"tier":"ACTIVE","lane":"merger-arb","one_line":"Playtika launched a formal strategic-review special committee (independent directors, Morgan Stanley advisor, dated April 6 2026), dividend suspended for balance-sheet flexibility — a real live, un-fired take-private/sale-of-assets process; classic special-sit, though outcome uncertain."}],"verified":[{"symbol":"OLPX","score":2,"tier":"NONE","lane":"merger-arb","catalyst":"Signed all-cash Henkel acquisition at $2.06/sh (announced Mar 26, 2026), shareholder consent already secured via Advent written consent, only US HSR + UK antitrust clearances remain before close.","dated_milestone":"US HSR + UK CMA clearance → close expected 2H 2026; outside date Mar 31, 2027 (extendable to Sep 30, 2027). Germany cleared Jun 16, 2026; Australia cleared Jun 20, 2026.","instrument":"equity","bloom_gates":"None pass strictly. G1 (named counterparty Henkel) and G2 (concrete $2.06 cash commitment) are factually present but already FIRED/re-rated into the price; G3 fails — no specific currently-unpriced figure ($2.06 deal price is fully reflected at $2.05).","edge":"L — residual spread only; catalyst fired","primary_source":"Olaplex DEFM14C (filed May 4, 2026, SEC EDGAR) + MLex: Bundeskartellamt clearance Jun 16, 2026 and Australian ACCC clearance Jun 20, 2026; FMP quote $2.05 (2026-06-29).","verdict":null,"kill_fact":null,"analysis":"OLPX trades at $2.05 against a signed $2.06 all-cash Henkel merger (Mar 26, 2026), so the ~0.5% spread is effectively closed and the catalyst has already fired/re-rated; Advent\u0027s majority written consent removed shareholder-vote risk and Germany (Jun 16) plus Australia (Jun 20) already cleared, leaving only US HSR and UK clearance to deliver the final penny. There is no currently-unpriced forward figure (G3 fails) — the position is dead money on the upside with the sole re-rating event being a deal-break, which is a downside risk, not an asymmetric long catalyst. Merger-arb here would only become live on a re-cut after a break; absent that, tier NONE."},{"symbol":"ORIC","score":5,"tier":"WATCH","lane":"binary_clinical","catalyst":"Cluster of 2H-2026 oncology efficacy readouts (enozertinib/ORIC-114 1L EGFR atypical mono + exon-20 mono and SC-amivantamab combo data; rinzimetostat program update) ahead of Phase 3 starts.","dated_milestone":"Himalayas-1 Phase 3 rinzimetostat (ORIC-944, post-abiraterone mCRPC) initiation 1H 2026; enozertinib 1L EGFR atypical mono + exon-20 mono/SC-amivantamab combo data and rinzimetostat program update all 2H 2026 (per Q1-2026 report, May 4 2026).","instrument":"equity","bloom_gates":"G3 (specific currently-unpriced clinical efficacy figures from named programs with dated 2H-2026 readouts); G2 partial (concrete committed Phase 3 init in 1H 2026).","edge":"M — multiple dated, specific, unpriced single-name binary efficacy reads, but asymmetry is modest: $419.7M cash / runway into 2H 2028 removes the financing-gap squeeze, ~$1.05B market cap already mid-range ($10.16 vs 52wk $7.23-$14.93), and 2H-2026 reads are early signal-finding (mono/combo) ahead of Phase 3, not registrational endpoints.","primary_source":"ORIC Q1 2026 financial results / 8-K, reported May 4 2026 (stocktitan.net summary); supported by Nov-2025 corporate-milestones update — confirmed via FMP quote $10.16, 2026-06-29.","verdict":null,"kill_fact":null,"analysis":"Triage claim verified against the Q1-2026 report (May 4 2026): four-plus dated clinical readouts across rinzimetostat (ORIC-944, mCRPC) and enozertinib (ORIC-114, NSCLC) land 2H 2026, with Himalayas-1 Phase 3 in mCRPC set to initiate 1H 2026 — all forward, none fired (Phase 3 dose-selection is the only fired piece). Cash of $419.7M into 2H 2028 confirms well-funded, which de-risks dilution but caps the near-term asymmetry that drives ACTIVE-tier conviction. Genuine dated forward binary-clinical catalyst, single-name (not macro), so WATCH/score-5 stands: real and trackable but only modest single-name asymmetry."},{"symbol":"PBI","score":2,"tier":"NONE","lane":"spinoff_activist","catalyst":"No live forward catalyst: the flagged \"Cerberus 80.1% tax-free spin-off of Capital Services\" is the defunct 2005-2006 transaction, while the 2026 Hestia/Kurt Wolf activist thesis has already fired (Wolf is CEO, stock re-rated on the turnaround).","dated_milestone":"None pending. Next dated event is routine Q2 2026 earnings (~early Aug 2026); no spin-off/divestiture date exists.","instrument":"equity","bloom_gates":"None pass. G1: counterparty (Cerberus) is real but from a 2005-06 deal, not a current agreement. G2/G3: no concrete dated commitment or specific currently-unpriced figure for any 2026 transaction.","edge":"L — thesis already re-rated; activist (Hestia) installed CEO Kurt Wolf, dividend raised five times in six quarters, guidance raised, 2027 notes redeemed/Term Loan A upsized (Jun 25 2026). The value-creation is in progress and largely priced, not a forward unpriced event.","primary_source":"PBI 2026 news flow via FMP press releases: Q1 2026 results + CEO letter (Business Wire, 2026-05-05); 2027 Notes redemption/Term Loan A upsize (Business Wire, 2026-06-25); Hestia share distribution noting Wolf as CEO (Business Wire, 2026-05-08). Cerberus/80.1% item traced to StreetInsider/PBI IR archive (2005-2006).","verdict":null,"kill_fact":null,"analysis":"The triage flag is a misattribution: the \"Cerberus-sponsored tax-free spin-off with shareholders receiving 80.1%\" describes Pitney Bowes\u0027 2005-2006 Capital Services external-financing transaction, not a 2026 catalyst — the screener\u0027s news search surfaced a 20-year-old item. In 2026 the Hestia/Kurt Wolf activism has already succeeded and fired: Wolf is the sitting CEO, and recent news (May-Jun 2026) is balance-sheet optimization and capital return (dividend to $0.10, fifth hike in six quarters; redeemed $347M 2027 notes; upsized Term Loan A by $150M; raised FY guidance), all reflecting a turnaround already underway and substantially priced. No current definitive or pending spin-off, divestiture, or other dated forward unpriced transaction exists, so it fails the strict gate."},{"symbol":"PCVX","score":6,"tier":"WATCH","lane":"binary_readout","catalyst":"VAX-31 OPUS-1 Phase 3 adult pivotal topline (safety/tolerability/immunogenicity, noninferiority vs Capvaxive PCV21 and Prevnar 20) reads out in Q4 2026.","dated_milestone":"OPUS-1 Phase 3 adult topline — Q4 2026 (next; OPUS-2/OPUS-3 follow 1H 2027)","instrument":"equity (PCVX)","bloom_gates":"G2 (concrete committed trial fully enrolled ~4,000pts with dated readout) + G3 (specific dated immunogenicity readout vs named comparators, outcome not yet priced)","edge":"M","primary_source":"Vaxcyte press release / GlobeNewswire, \"Vaxcyte Completes Enrollment of OPUS-1 and OPUS-2 Phase 3 Trials,\" March 23, 2026 (OPUS-1 topline expected Q4 2026)","verdict":null,"kill_fact":null,"analysis":"PCVX has a genuine, dated, forward binary: OPUS-1 Phase 3 adult topline confirmed for Q4 2026 in the March 23, 2026 enrollment-completion release, with ~4,000 participants in a noninferiority head-to-head vs Capvaxive and Prevnar 20 — not yet fired. The edge is moderated because positive Phase 1/2 adult data (published in Lancet ID) already established best-in-class immunogenicity signal, so OPUS-1 functions largely as franchise confirmation rather than a high-variance first-look efficacy gate, and the $8.3B market cap / $57.7 price (mid-range of the 52wk band) implies meaningful de-risking is already in the tape. Cash position (~$2.7B per triage) not independently re-confirmed this pass (8-K fetch 403\u0027d), but the dated catalyst itself is solid; WATCH at score 6."},{"symbol":"PENN","score":2,"tier":"NONE","lane":"activist_structural","catalyst":"The HG Vora activist campaign and the board-committed strategic review of the ESPN Bet interactive segment that the triage flag relied on have both already resolved — the ESPN Bet deal was terminated Dec 1, 2025 and HG Vora settled into a standstill — so the structural catalyst is fired and re-rated, not forward.","dated_milestone":"No live forward milestone; the FY2026-resolution review already concluded (ESPN Bet terminated 2025-12-01, restructuring confirmed at Q4 earnings Feb 2026). Next routine event = Q2 2026 earnings (~Aug 2026), not a catalyst.","instrument":"equity","bloom_gates":"None pass forward. G1 counterparty (HG Vora) exists but settled into a standstill (activism ceased, stake capped ≤5%); G2 commitment (strategic review of interactive segment) was made but already executed via the ESPN Bet termination; G3 has no specific currently-unpriced figure remaining — the resolution is in the past and re-rated.","edge":"L — the entire thesis (own the suppressed core-casino value via an activist-forced review of the digital drag) is now public, fired, and priced: ESPN Bet exit done, HG Vora neutralized by cooperation agreement, restructuring already disclosed. No dated, unpriced forward edge remains; only a speculative take-private theme (24/7 Wall St) with no named counterparty or committed deal.","primary_source":"Businesswire / PENN IR: \"PENN Entertainment and ESPN Mutually Agree to Early Termination of U.S. Online Sports Betting Agreement\" (2025-11-06, effective 2025-12-01); HG Vora cooperation/standstill settlement (Gambling Insider, June 2025); PENN Q1 2026 8-K and DEF 14A FY2026 (SEC).","verdict":null,"kill_fact":null,"analysis":"The flagged catalyst is stale: HG Vora\u0027s April 2025 13D campaign settled into a cooperation/standstill agreement (activism ceased, stake limited to ≤5%, board expanded to 11), and the board-committed strategic review of the ESPN Bet interactive segment resolved when PENN and ESPN mutually terminated the U.S. OSB agreement effective Dec 1, 2025, followed by a confirmed iCasino-led restructuring disclosed at Q4 2025 earnings in Feb 2026. There is no remaining dated, forward, unpriced structural milestone — the \"resolution targeted by end of FY2026\" already happened and was re-rated through late 2025 / early 2026. The only residual angle is a generic take-private/buyout-candidate theme post-Caesars with no named counterparty, no committed deal, and no specific figure, which is speculative/macro and does not clear the strict gate."},{"symbol":"PHVS","score":5,"tier":"WATCH","lane":"binary","catalyst":"CHAPTER-3 pivotal Phase 3 topline readout for deucrictibant XR in HAE prophylaxis — the larger chronic-dosing market — with the on-demand NDA filing as a secondary near-term milestone.","dated_milestone":"CHAPTER-3 topline data expected 3Q2026 (enrollment completed, announced 2026-04-02); on-demand IR NDA submission on-track 1H2026 (window closes 2026-06-30).","instrument":"PHVS (NASDAQ common; pre-revenue HAE clinical biotech, mkt cap ~$2.4B)","bloom_gates":"G3 — specific currently-unpriced figure/event: CHAPTER-3 prophylaxis Phase 3 readout dated to 3Q2026, distinct from the already-fired RAPIDe-3 on-demand data and addressing the larger chronic-prophylaxis market not yet de-risked in the stock.","edge":"M — CHAPTER-3 is a genuine dated forward binary on the bigger prophylaxis opportunity (unpriced as a derisked outcome), but the equity has already re-rated hard post-RAPIDe-3 ($34.71 vs $26.70 200-day, near 52-wk high $35.33), and the on-demand NDA is just an administrative filing of already-public data, so residual asymmetry is moderate, not high.","primary_source":"Pharvaris press release \"Completion of Enrollment in CHAPTER-3 Study of Deucrictibant XR for HAE Prophylaxis, with Topline Data Expected in 3Q2026\" (2026-04-02), corroborated by RAPIDe-3 positive topline release and 2026 strategic priorities (2026-01-12); FMP quote $34.71 (2026-06-29).","verdict":null,"kill_fact":null,"analysis":"The triage flag is correct that the on-demand thread is largely fired: RAPIDe-3 hit its primary and all 11 secondary endpoints (positive topline already public), and the 1H26 IR NDA is a filing of known data with the window closing 2026-06-30 — mostly re-rated, low incremental asymmetry. The live, dated, forward catalyst is CHAPTER-3 (deucrictibant XR for HAE prophylaxis): enrollment completed per the 2026-04-02 release with topline expected 3Q2026, targeting the larger chronic-dosing market and not yet de-risked in the price. Clears the forward/dated/specific gate as a WATCH, but the stock trading near its 52-week high after a sharp post-RAPIDe-3 re-rate caps the upside, so score 5 / not ACTIVE."},{"symbol":"PLTK","score":4,"tier":"WATCH","lane":"special_situation","catalyst":"Playtika\u0027s board-appointed Special Committee of independent directors, advised by Morgan Stanley, is running a portfolio-wide strategic-alternatives review that could result in a sale, take-private, or asset divestiture.","dated_milestone":"Review launched April 6, 2026; no disclosure until Committee/Board approve a course of action (no scheduled next date — company explicitly declines interim updates); next natural checkpoint Q2 2026 earnings (~early Aug 2026)","instrument":"equity","bloom_gates":"G2 only (concrete commitment: real Special Committee of independent directors + named advisor Morgan Stanley, dated Apr 6 2026). FAILS G1 (no named counterparty/bidder) and G3 (no offer price, deal value, or quantified unpriced figure disclosed).","edge":"L — open-ended review with no named bidder, no price, no deadline; company refuses interim disclosure and warns \"no assurance\" of any transaction. No arb spread to underwrite; pure optionality on a de-rated micro-cap ($3.91 vs 52wk $2.64-$5.05).","primary_source":"Playtika 8-K / GlobeNewswire press release \"Playtika Announces Review of Strategic Alternatives,\" April 6, 2026; corroborated by Q1 2026 results, May 7, 2026.","verdict":null,"kill_fact":null,"analysis":"The strategic-review process is real, dated (Apr 6 2026), and genuinely forward (not fired — no deal announced): a Special Committee of solely independent directors retained Morgan Stanley to evaluate alternatives across the portfolio, a classic special-situation. However, the triage\u0027s \"dividend suspended for balance-sheet flexibility\" claim is REFUTED: Q1 2026 results (May 7) show Playtika paid $37.7M in dividends with no suspension announcement, an embellishment that should be discounted. With no named counterparty (fails G1), no offer price or quantified spread (fails G3), an explicit \"no assurance\" caveat, and a company policy of no interim updates, there is no underwritable edge — this is open-ended optionality, not a merger-arb spread, so it belongs on WATCH (demoted from ACTIVE 6), with the lane corrected from merger-arb to special_situation."}]}
+{
+ "chunk": "14 (OLPX-PLTR)",
+ "scanned": 150,
+ "scan_distribution": {
+  "active": 3,
+  "watch": 14,
+  "none": 133
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "OLPX",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "M&A / merger-arb",
+   "one_line": "Henkel all-cash takeover at $2.06/sh signed Mar-26-2026; pending regulatory close H2-2026 \u2014 clean merger-arb spread."
+  },
+  {
+   "symbol": "ON",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "M&A (acquirer)",
+   "one_line": "Acquirer of Synaptics (all-stock ~$7B, signed Jun-25-2026); acquirer-side dilutive all-stock, softer setup than target-side arb."
+  },
+  {
+   "symbol": "ONC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary/PDUFA",
+   "one_line": "Multiple 2026 dated regulatory catalysts (sonrotoclax PDUFA, BTK-CDAC accel filing H2, TEVIMBRA gastric); large-cap, asymmetry modest but real."
+  },
+  {
+   "symbol": "OPCH",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "M&A / merger-arb (acquirer)",
+   "one_line": "Acquirer of Amedisys (all-stock ~$3.6B); pending dual shareholder votes + HSR/state-insurance approvals \u2014 complicated combination arb."
+  },
+  {
+   "symbol": "ORIC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Dated 2H2026 rinzimetostat (mCRPC) + enozertinib readouts ahead of registrational decisions; runway to 2H2028."
+  },
+  {
+   "symbol": "ORKA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Dated 2H2026 EVERLAST-A 28-week/durability psoriasis readout; Week-16 already positive so partial re-rate, but longer-term data still forward."
+  },
+  {
+   "symbol": "OTEX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "capital_return",
+   "one_line": "Ongoing divest-non-core-and-deleverage program (eDOCS/Vertica sold, $500M NCIB) with forward divestiture/debt-paydown milestones."
+  },
+  {
+   "symbol": "OVID",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "OV329 treatment-resistant-seizure data targeted Q3 2026 (dated binary); micro-cap, well capitalized to 2029."
+  },
+  {
+   "symbol": "OVV",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "restructuring",
+   "one_line": "Mid-portfolio transformation: NuVista bought, Anadarko sold; forward-dated 2026 Mid-Con divestiture set to fund further deleveraging."
+  },
+  {
+   "symbol": "PACS",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "distressed_restructuring",
+   "one_line": "Restatement/return-to-current-reporting with NYSE delisting risk + $250M buyback; dated relisting milestone, binary distressed clean-up."
+  },
+  {
+   "symbol": "PAYO",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Definitive Nuvei acquisition at $7.40/sh cash (~$2.75B), announced Jun 15 2026, deal pending \u2014 live merger-arb spread."
+  },
+  {
+   "symbol": "PHAT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Phase 2 pHalcon-EoE-201 (vonoprazan) topline expected Q4 2026 \u2014 a real dated readout, but name already commercially re-rated so asymmetry is modest."
+  },
+  {
+   "symbol": "PHVS",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "one_line": "Real dated biotech binaries: deucrictibant IR NDA submission 1H2026 (on-demand HAE) + CHAPTER-3 Phase 3 prophylaxis topline 3Q2026; forward, not yet fired."
+  },
+  {
+   "symbol": "PLTK",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "strategic_review",
+   "one_line": "Board launched formal strategic-review incl. potential sale Apr 6 2026 (Morgan Stanley); real live process, majority-owner could push a take-private, outcome still pending."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "OLPX",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "M&A / merger-arb",
+   "catalyst": "Henkel signed a definitive all-cash merger to acquire Olaplex at $2.06/share (~$1.4B equity), pending regulatory close in H2-2026.",
+   "dated_milestone": "Signed Mar-26-2026 (75% written consent secured); expected close H2-2026; outside date Mar-31-2027 (extendable to Sep-30-2027).",
+   "instrument": "OLPX common equity",
+   "bloom_gates": "G1 (named counterparty Henkel) + G2 (signed definitive merger agreement) satisfied; G3 FAILS \u2014 no currently-unpriced figure, spread is fully closed.",
+   "edge": "L",
+   "primary_source": "Olaplex 8-K / merger press release + PREM14C (Mar-26-2026), StockTitan/TradingView; live FMP quote $2.06 (2026-07-02).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The merger is real, named, and dated (Henkel all-cash at $2.06, signed Mar-26-2026, 75% stockholder consent already delivered, expected H2-2026 close), so G1/G2 are met. But OLPX last traded at exactly $2.06 \u2014 the full deal consideration \u2014 meaning the merger-arb spread has entirely collapsed and offers zero remaining upside to close; G3 (currently-unpriced figure) fails and the catalyst is effectively fired/re-rated. With no residual spread and only downside-of-break risk left, this is not a live, forward, unpriced catalyst."
+  },
+  {
+   "symbol": "ON",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "M&A (acquirer)",
+   "catalyst": "onsemi is the acquirer in an all-stock ~$7B purchase of Synaptics (SYNA) at 1.35 ON shares per SYNA, targeting $200M synergies (85-90% SG&A) and accretion within 18 months of a mid-2027 close.",
+   "dated_milestone": "SYNA shareholder vote + regulatory approvals (incl. China) pending; deal close expected mid-2027; accretion within 18 months of close (~2028-2029).",
+   "instrument": "equity",
+   "bloom_gates": "G1 (named counterparty: Synaptics) and G2 (concrete commitment: 1.35 ratio, $200M synergy target) are met; but FORWARD/NOT-FIRED fails \u2014 deal announced Jun-25-2026 and ON already re-rated on it.",
+   "edge": "L \u2014 acquirer-side, all-stock, ~12% dilutive; premium accrues to SYNA holders not ON, no arb spread on the ON side, and the announcement re-rating is already done. Remaining events (China regulatory, mid-2027 close, synergy realization) are target/arb-side or too distant.",
+   "primary_source": "onsemi press release \"onsemi to Acquire Synaptics...\" + SYNA Form 8-K/425 filings, dated Jun-25/26-2026 (onsemi.com; sec.gov EDGAR).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "onsemi (ON) is the ACQUIRER in a signed all-stock ~$7B acquisition of Synaptics announced Jun-25-2026, so the transaction is already public and the acquirer's stock has re-rated \u2014 the catalyst is fired, not forward. Acquirer-side dilutive all-stock deals offer no capturable spread (the ~19% premium and any deal-break/topping-bid optionality sit on the SYNA/target side), and the only genuinely forward items are a distant mid-2027 close, China regulatory clearance, and 2028+ synergy realization \u2014 none of which is a near-term, ON-specific unpriced value unlock. Triage's own read (\"softer setup than target-side arb\") holds; this does not clear the strict gate for an active catalyst."
+  },
+  {
+   "symbol": "ONC",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary/PDUFA",
+   "catalyst": "Forward FDA events remain \u2014 TEVIMBRA first-line HER2+ gastric sBLA decision (~late 2026) and BTK-degrader BGB-16673 accelerated-approval submission in R/R CLL (H2 2026) \u2014 but the headline sonrotoclax MCL PDUFA already fired (accelerated approval 13-May-2026).",
+   "dated_milestone": "BTK-CDAC (BGB-16673) accelerated-approval submission in R/R CLL: H2 2026 (company-guided). TEVIMBRA HER2+ GEA sBLA priority-review decision: ~Q4 2026 (6-mo clock, exact PDUFA undisclosed).",
+   "instrument": "equity (NASDAQ: ONC)",
+   "bloom_gates": "G1 (named FDA regulatory program/indication + agency counterparty) and partial-date; fails G3 (no specific currently-unpriced figure quantified).",
+   "edge": "L",
+   "primary_source": "FDA press release \"FDA grants accelerated approval to sonrotoclax for R/R mantle cell lymphoma\" (13-May-2026); BeOne Q1 2026 earnings call (BTK-CDAC H2-2026 AA submission guidance); BusinessWire \"FDA Grants Priority Review to TEVIMBRA in First-Line HER2+ GEA\" (29-Apr-2026).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The originally-flagged sonrotoclax PDUFA is spent: FDA granted accelerated approval in R/R mantle cell lymphoma on 13-May-2026, so that leg has fired and re-rated. The two genuinely-forward, dated items \u2014 BTK-CDAC BGB-16673 accelerated-approval submission in R/R CLL (H2 2026) and TEVIMBRA HER2+ first-line gastric sBLA decision (priority review granted, ~late 2026) \u2014 are real and named but soft for a large-cap: a filing (not an approval) and an incremental label expansion, with the big confirmatory sonrotoclax CLL data not due until ~2028. Asymmetry is modest and largely priced; keep on WATCH, not ACTIVE."
+  },
+  {
+   "symbol": "OPCH",
+   "score": 1,
+   "tier": "NONE",
+   "lane": "M&A / merger-arb (acquirer)",
+   "catalyst": "The flagged Amedisys merger is stale: OPCH terminated the all-stock deal on 2023-06-26, and Amedisys was subsequently acquired by UnitedHealth (closed Aug 2025) \u2014 no OPCH merger is pending.",
+   "dated_milestone": "None forward. Last relevant OPCH events: Q1 2026 earnings (2026-04-30) and $850M revolver upsize (2026-03-30); next scheduled event is Q2 2026 earnings (~late July 2026, routine, not a catalyst).",
+   "instrument": "equity (no merger-arb spread exists)",
+   "bloom_gates": "None pass. G1 (named counterparty) fails \u2014 the Amedisys counterparty relationship was severed in 2023; Amedisys is now a UnitedHealth subsidiary. G2/G3 no live commitment or unpriced figure.",
+   "edge": "L \u2014 the premise is factually dead; verified via SEC filing history + 2026 IR disclosures. No mispricing to capture because no deal exists.",
+   "primary_source": "Option Care Health \"Confirms Termination of Merger Agreement with Amedisys\" (PRNewswire, 2023-06-26); corroborated by OPCH Q1 2026 earnings/IR disclosures (2026-04-30) showing tuck-in/buyback focus, no pending merger.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage catalyst is based on the terminated May 2023 OPCH-Amedisys agreement, which OPCH walked away from on 2023-06-26; Amedisys instead sold to UnitedHealth (closed ~Aug 2025) and is no longer an independent counterparty. In 2026 OPCH is a straightforward operating company doing tuck-in M&A (Intramed Plus 2025), buybacks (+$500M authorization), and organic growth \u2014 no pending merger, no dual shareholder votes, and no HSR/state-insurance approvals outstanding. There is no forward, dated, unpriced merger-arb catalyst here; the flag is a stale-data artifact."
+  },
+  {
+   "symbol": "ORIC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Multiple 2H2026 clinical readouts \u2014 enozertinib (NSCLC) 1L EGFR exon-20 and atypical/PACC monotherapy plus SC-amivantamab combo data, and a rinzimetostat mCRPC program update \u2014 ahead of registrational decisions, with cash runway into 2H2028.",
+   "dated_milestone": "2H2026: enozertinib 1L EGFR exon-20 + atypical monotherapy data and SC-amivantamab combo data; rinzimetostat mCRPC program update (window only, no hard date); Himalayas-1 Phase 3 initiates 1H2026.",
+   "instrument": "equity",
+   "bloom_gates": "G2 (partial): company-committed specific readouts in a defined 2H2026 window \u2014 but only a half-year window, no hard date; G1 no (data is internal pipeline, not a named-counterparty deal); G3 no (no specific unpriced figure disclosed).",
+   "edge": "M",
+   "primary_source": "ORIC Q1 2026 results press release (StockTitan / GlobeNewswire), dated May 4, 2026; corroborated by ORIC FY2025 operational-highlights release, Jan 12, 2026.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "ORIC has genuine, dated, forward and unfired 2H2026 clinical catalysts: enozertinib NSCLC monotherapy/combo readouts and a rinzimetostat mCRPC program update, per its May 4 2026 Q1 release, backed by $419.7M cash (runway into 2H2028). These are real event-driven binaries and not a macro bet, but they carry only half-year windows (no hard date), no named-counterparty commercial commitment, and no specific currently-unpriced figure, so the Bloom gate clears only softly. Appropriately a WATCH \u2014 a datable science binary with catalyst optionality, not an ACTIVE high-conviction fire."
+  },
+  {
+   "symbol": "ORKA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "EVERLAST-A Phase 2a longer-term readout for ORKA-001 in moderate-to-severe plaque psoriasis \u2014 Week 28 efficacy (all patients) plus 52-week follow-up (subset) \u2014 the durability data underpinning the once-yearly dosing thesis.",
+   "dated_milestone": "Week 28 + 52-week EVERLAST-A durability data, guided to 2H 2026 (next date: no pinned day; H2 2026 window, soft)",
+   "instrument": "equity (Nasdaq: ORKA)",
+   "bloom_gates": "G3 (specific currently-unpriced figure: Week 28/52-week durability rates that validate annual-dosing differentiation)",
+   "edge": "M \u2014 direction favorable (Week 16 already 63.5% PASI 100 positive + strong 1-yr PK supports annual dosing), but the win is partially re-rated and durability leg is genuine forward binary; only a soft H2-2026 window, no pinned date.",
+   "primary_source": "Oruka Therapeutics press release / GlobeNewswire, April 27, 2026 (Week 16 EVERLAST-A data + 2H 2026 longer-term data guidance); corroborated by SEC 8-K same date",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "ORKA is Oruka Therapeutics; the flagged catalyst is confirmed real, dated (2H 2026) and forward: EVERLAST-A Week 28 (all patients) plus 52-week subset durability data for IL-23 inhibitor ORKA-001 in plaque psoriasis. The Week 16 primary readout was positive (63.5% PASI 100) and released April 27, 2026, so that leg is fired and partially priced \u2014 remaining edge is the durability data that validates the once-yearly-dosing differentiation. Gate: passes real+specific (G3) + dated + forward + non-macro, but partial de-risking and only a soft H2 window keep it WATCH, not ACTIVE; score 5."
+  },
+  {
+   "symbol": "OTEX",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "capital_return",
+   "catalyst": "OpenText's ongoing divest-non-core-and-deleverage program plus expanded NCIB, but the two named divestitures are already closed and the buyback is already expanded/priced.",
+   "dated_milestone": "Q4/FY2026 earnings call (~early Aug 2026, date not yet announced) is the next event; no specific dated next-divestiture commitment exists.",
+   "instrument": "equity",
+   "bloom_gates": "None pass. G1 fails (no named next counterparty \u2014 eDOCS/NetDocuments and Vertica/Rocket both already closed). G2 fails (no dated concrete forward commitment; only a soft \"one divestiture per quarter\" cadence). G3 fails (no specific currently-unpriced figure; the $313M eDOCS+Vertica and $500M NCIB are disclosed and priced).",
+   "edge": "L \u2014 the divest/deleverage thesis is public, both sales closed (Jan + May 2026), buyback already raised to $500M, and the stock at $23 (vs $39.90 52wk high) reflects a known, in-progress program with no discrete unpriced trigger.",
+   "primary_source": "OpenText press releases via prnewswire/investors.opentext.com + Q3 FY2026 earnings (reported 2026-05-07); Vertica completion 2026-05-11, eDOCS completion 2026-01-12, NCIB raised to $500M (dates as of Q3 call).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is retrospective: eDOCS ($163M, closed 2026-01-12) and Vertica ($150M, closed 2026-05-11) are both complete with proceeds already applied to debt, and the NCIB was expanded $300M\u2192$500M in Q3 FY2026 \u2014 all fired and re-rated. The only forward element is management's vague \"one divestiture per quarter\" cadence, which lacks a named counterparty, a committed date, or a specific unpriced figure, so it fails all three Bloom gates. No real dated forward catalyst exists; the next hard date is a routine Q4/FY2026 print (~early Aug 2026), not an event."
+  },
+  {
+   "symbol": "OVID",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "binary",
+   "catalyst": "OV329 open-label photoparoxysmal-response (PPR) proof-of-concept study in photosensitive epilepsy \u2014 a possible first patient-level anti-seizure signal \u2014 but the specific Q3 2026 date was dropped in the latest company update and it is a study start, not a randomized data binary.",
+   "dated_milestone": "PPR study: earlier (Jan 2026) guidance said initiate+complete Q3 2026; latest (Q1 2026 update, ~May 2026) removed the specific date. Nearest true binary = Phase 2a focal-onset-seizure topline mid-2027.",
+   "instrument": "equity (OVID, Nasdaq micro-cap)",
+   "bloom_gates": "Weak G3 (a patient-level PPR efficacy signal would be a currently-unpriced figure), but it fails the DATED test \u2014 the Q3 2026 date is no longer company-confirmed and the event is a study initiation, not a data readout.",
+   "edge": "L \u2014 the de-risking Phase 1 topline already fired (Oct 2025); the PPR study is open-label/biomarker-style not a randomized binary, its date has softened, and the balance-sheet strength (cash to 2029) is not a forward catalyst.",
+   "primary_source": "Ovid Q1 2026 business update (finance.yahoo.com, ~May 2026) + Jan 2026 pipeline release (sahmcapital.com, 2026-01-13) + Q4/FY2025 release (globenewswire, 2026-03-18); Phase 1 topline globenewswire 2025-10-03.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged \"dated Q3 2026 binary\" does not hold up: the Phase 1 topline that actually de-risks OV329 fired in Oct 2025, and the most recent company update (Q1 2026, reported ~May 2026) dropped the specific Q3 2026 timing for the open-label PPR study and frames it as a study initiation rather than a data readout. The genuine randomized binary \u2014 Phase 2a focal-onset-seizure topline \u2014 is guided to mid-2027, well outside a near-term dated window. The \"well capitalized to 2029\" claim is verified (~$192.9M cash incl. April 2026 warrant proceeds, runway into 2029), but that is balance-sheet strength, not a forward catalyst, so this fails the STRICT dated-forward gate."
+  },
+  {
+   "symbol": "OVV",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "restructuring",
+   "catalyst": "The portfolio transformation \u2014 NuVista acquisition, Anadarko/Mid-Continent divestiture, and associated debt paydown \u2014 is already complete, leaving only a generic year-end-2026 net-debt target.",
+   "dated_milestone": "No remaining dated forward event; residual $4.0B net-debt target is by YE-2026 (2026-12-31), a glide-path outcome not a discrete catalyst.",
+   "instrument": "equity",
+   "bloom_gates": "none \u2014 G1/G2/G3 all fail (counterparty deals closed, commitments executed, figures already priced)",
+   "edge": "L \u2014 every leg of the flagged thesis has already closed and been publicly disclosed; nothing left unpriced",
+   "primary_source": "Ovintiv 8-K / StockTitan \"Ovintiv closes $3B Anadarko sale, redeems $700M notes and repays term loan\" (Apr 2026); Novi Labs \"Ovintiv Buys NuVista; Targets Mid-Con Sale\" (Nov 2025)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flag's \"forward-dated 2026 Mid-Con divestiture\" is the Anadarko/Oklahoma (Mid-Continent) asset sale, which is the SAME transaction and already CLOSED April 9, 2026 for ~$2.9B; the NuVista acquisition closed Feb 3, 2026 and the debt paydown (C$1.57B term loan repaid Apr 10, $700M 5.650% notes redeemed Apr 20) is executed. The two-basin (Montney + Midland) transformation is therefore complete and re-rated, with no distinct remaining divestiture pending \u2014 the only forward item is a macro/oil-price-dependent $4.0B net-debt target by year-end 2026, which is a deleveraging glide-path, not a discrete dated catalyst with a named counterparty or specific unpriced figure. Fails all three Bloom gates; the catalyst has already fired."
+  },
+  {
+   "symbol": "PACS",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "distressed_restructuring",
+   "catalyst": "The restatement/return-to-current-reporting clean-up and NYSE delisting risk have already resolved \u2014 PACS regained SEC compliance (Nov 2025) and filed FY2025 (Feb 26, 2026) and Q1 2026 (May 11-12, 2026) on time.",
+   "dated_milestone": "No unfired forward milestone; return-to-current already achieved and DOJ/SEC/class-action overhang is a downside risk, not a dated upside catalyst. Next scheduled event: Q2 2026 earnings (~early Aug 2026).",
+   "instrument": "equity (NYSE: PACS)",
+   "bloom_gates": "None cleanly met \u2014 G2 ($250M buyback authorization) exists but is a committed capital-return already public and priced; no G1 named counterparty or G3 specific currently-unpriced figure with forward upside.",
+   "edge": "L \u2014 the distressed-to-clean re-rate is done: stock $44.93 vs 52wk low $7.50, at 52wk high $45.13, 50d $36.65 / 200d $30.35; ~6x off the bottom means the clean-up thesis is fully in the tape.",
+   "primary_source": "PACS IR / Skilled Nursing News \"New Chapter\" (regained SEC compliance, Nov 2025); PACS 8-K FY2026 earnings releases (FY2025 Feb 26, 2026; Q1 2026 May 11-12, 2026); FMP quote $44.93 as of 2026-07-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "PACS already executed the distressed clean-up: it regained SEC filing compliance in Nov 2025 and has filed FY2025 and Q1 2026 results on schedule, removing the NYSE delisting risk that was the crux of the flag. The stock has re-rated roughly 6x off its $7.50 low to $44.93 (near its 52-week high), so the binary upside catalyst is FIRED and priced. The remaining live items \u2014 DOJ subpoena, SEC enforcement, securities class/derivative actions \u2014 are asymmetric downside overhangs, not a dated forward upside catalyst, and the $250M buyback is already authorized/public."
+  },
+  {
+   "symbol": "PAYO",
+   "score": 6.5,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "catalyst": "Payoneer to be acquired by Nuvei for $7.40/share all-cash (~$2.75B) under a definitive merger agreement, deal pending regulatory and shareholder approval.",
+   "dated_milestone": "Announced Jun 15 2026; closing expected mid-2027; next date = PAYO special shareholder vote (proxy DEFA14A filed, meeting date TBD in coming weeks).",
+   "instrument": "PAYO common (merger-arb long into $7.40 cash)",
+   "bloom_gates": "G1 (named counterparty Nuvei), G2 (definitive merger agreement, $7.40 cash commitment), G3 (unpriced ~4.2% gross spread to deal price)",
+   "edge": "M \u2014 real definitive deal but wide spread (~4.2% gross) reflects a long ~1-year close and antitrust risk; annualized ~4-5% net is thin for the regulatory/timeline uncertainty.",
+   "primary_source": "Nuvei/Payoneer PR Newswire + PAYO 8-K/DEFA14A (SEC EDGAR), Jun 15 2026",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Primary sources confirm: Nuvei-Payoneer definitive merger agreement (signed Jun 12, announced Jun 15 2026) at $7.40/share all-cash, ~$2.75B equity value, $165M Nuvei reverse termination fee / $89M Payoneer fee, closing expected mid-2027 pending PAYO shareholder vote + antitrust; ~19% of votes locked via support agreements. PAYO trades $7.10 \u2192 gross spread $0.30 (4.2%), unfired forward merger-arb. Verified vs PR Newswire release, PAYO 8-K/StockTitan, and multiple law-firm alerts.",
+   "analysis": "PAYO is a genuine, dated, forward merger-arb: definitive agreement for Nuvei to buy Payoneer at $7.40/share cash (~$2.75B), announced Jun 15 2026, closing expected mid-2027 pending antitrust and PAYO shareholder approval. At $7.10 the ~4.2% gross spread is unpriced but modest given the ~1-year timeline and regulatory risk; break downside to an unaffected ~$5-5.50 (offset partly by Nuvei's $165M reverse termination fee). Clears all three Bloom gates and is not yet fired, but edge is medium \u2014 annualized return is thin unless the close accelerates or the spread widens on a scare."
+  },
+  {
+   "symbol": "PHAT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Phase 2 pHalcon-EoE-201 topline (VOQUEZNA/vonoprazan vs placebo, 12-wk double-blind) in eosinophilic esophagitis, opening a new label-expansion indication for an already-approved acid blocker.",
+   "dated_milestone": "Topline results expected Q4 2026 (enrollment of 95 pts across 41 US sites completed ahead of schedule, per 2026-06-23 release).",
+   "instrument": "equity (PHAT); binary readout better expressed via options straddle given Phase 2 event risk",
+   "bloom_gates": "G1 (named asset vonoprazan in named trial pHalcon-EoE-201) + G3 (unpriced EoE label-expansion optionality; dupilumab-validated ~$1B+ indication not in the depressed base valuation)",
+   "edge": "M \u2014 dated forward binary with enrollment already done and a hard Q4-2026 window; asymmetry is genuinely NOT priced away (stock $10.91, near 52-wk low $7.61, below 50/200-day MAs, ~$870M cap) contra the triage's \"already re-rated\" claim, but capped because it is Phase 2 (non-registrational) and vonoprazan's EoE efficacy is mechanistically plausible but unproven.",
+   "primary_source": "Phathom Pharmaceuticals press release, GlobeNewswire 2026-06-23: \"Topline results for the double-blind 12-week treatment portion of the study are expected in Q4 of 2026.\"",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Primary source (GlobeNewswire, 2026-06-23) directly refutes the ambiguity in the triage note: topline for the 12-week double-blind portion is explicitly expected in Q4 2026, and enrollment (95 patients, 41 US sites) is already complete ahead of schedule \u2014 a real, dated, forward, un-fired binary. The triage's \"already commercially re-rated, asymmetry modest\" framing is only partly right: the GERD/H.pylori commercial base is priced, but the EoE optionality is not \u2014 the stock sits near 52-week lows and below both moving averages, so a positive Phase 2 could re-rate a new indication that today's ~$870M cap does not reflect. It clears the strict gate (specific asset + trial, dated, forward, not macro) but stays WATCH not ACTIVE because a Phase 2 signal-finding readout carries high binary risk and vonoprazan's EoE efficacy is unvalidated."
+  },
+  {
+   "symbol": "PHVS",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "catalyst": "Two dated deucrictibant HAE binaries: US NDA submission for on-demand IR capsule (1H2026, RAPIDe-3/RAPIDe-2 basis) and CHAPTER-3 Phase 3 XR prophylaxis topline in 3Q2026.",
+   "dated_milestone": "CHAPTER-3 Phase 3 prophylaxis topline \u2014 3Q2026 (enrollment completed); NDA on-demand IR submission \u2014 1H2026 (\u2192 FDA acceptance/PDUFA to follow)",
+   "instrument": "equity (PHVS, Nasdaq)",
+   "bloom_gates": "G1 (FDA named counterparty for NDA review) + G2 (concrete dated committed milestones: 1H2026 filing, 3Q2026 topline); G3 partial \u2014 prophylaxis TAM expansion not quantified as a specific unpriced figure",
+   "edge": "M \u2014 CHAPTER-3 is a genuine unfired Phase 3 binary the tape cannot fully price, but stock has already re-rated on positive RAPIDe-3 topline (near 52wk high $35.90 vs 200d $26.87) and prophylaxis is a competitive market (Orladeyo/Takhzyro), capping asymmetry.",
+   "primary_source": "Pharvaris Q1 2026 results / 2026 Strategic Priorities (ir.pharvaris.com, GlobeNewswire 2026-01-12; CHAPTER-3 enrollment-complete PR, Quiver, dated 2026); confirmed via SEC 6-K FY2026",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Verified via Pharvaris IR / Q1-2026 6-K filings: on-demand deucrictibant IR NDA remains on-track for 1H2026 (RAPIDe-3 primary endpoint met, median symptom relief 1.28h) and CHAPTER-3 XR prophylaxis enrollment completed with topline expected 3Q2026 \u2014 both real, dated, forward, not a macro bet. As of 2026-07-02 the RAPIDe-3 readout has already fired and re-rated the stock (price $33.99, near 52wk high), so the on-demand path is partly priced; the CHAPTER-3 prophylaxis readout is the cleaner unfired binary. WATCH not ACTIVE: catalysts are genuine but the equity has already run hard, prophylaxis faces entrenched competition, and no specific currently-unpriced figure (G3) is publicly framed \u2014 score 6."
+  },
+  {
+   "symbol": "PLTK",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "strategic_review",
+   "catalyst": "Playtika's independent Special Committee is running a formal strategic-alternatives review (Morgan Stanley advisor) that could culminate in an asset sale or a take-private by its controlling holders, with the stock near 52-week lows pricing in essentially no deal premium.",
+   "dated_milestone": "Review launched Apr 6, 2026; no committed decision date \u2014 management will not disclose until Board approves a course of action; next likely signpost is Q2 2026 earnings (~early Aug 2026).",
+   "instrument": "equity (PLTK common)",
+   "bloom_gates": "G1 (named counterparty: Morgan Stanley as advisor; controlling holders Joffre Capital 25.7% + PHUK II able to push a take-private). Partial G3: an unpriced ~30-50% take-private premium exists but no specific bid figure has been disclosed. No G2 binding commitment.",
+   "edge": "M",
+   "primary_source": "Playtika 8-K / press release \"Playtika Announces Review of Strategic Alternatives to Maximize Shareholder Value,\" Apr 6, 2026 (GlobeNewswire; SEC EDGAR CIK 1828016); price via FMP quote 2026-07-02 ($3.885).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Confirmed real and specific: Playtika announced a formal strategic-alternatives review on Apr 6, 2026 with Morgan Stanley engaged and an independent Special Committee, and as a controlled company (Joffre Capital 25.7% + PHUK II controlling stake) a majority-owner take-private is a plausible path. The catalyst is forward and not fired \u2014 no bid, price, or decision date has been disclosed, management is withholding updates until the Board acts, and the stock trades near 52-week lows (~$3.89), so a deal premium is essentially unpriced. Falls short of ACTIVE because there is no concrete offer figure (G3 only partial), no binding commitment (no G2), and no dated milestone; correctly a WATCH pending Q2 earnings (~early Aug 2026) or a disclosed process outcome."
+  }
+ ]
+}

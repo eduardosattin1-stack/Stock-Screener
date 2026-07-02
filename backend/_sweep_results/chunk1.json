@@ -1,1 +1,387 @@
-{"chunk":"1 (A-AMN)","scanned":150,"scan_distribution":{"active":8,"watch":12,"none":130},"survivors_flagged":[{"symbol":"AAUC","score":8,"tier":"ACTIVE","lane":"merger-arb","one_line":"Live Zijin all-cash arb at C$44 (~21% spread, Outside Date Jul 29 2026, China/Africa approvals pending) plus Kurmuk first-gold pour mid-2026 — two dated catalysts, real deal-break asymmetry."},{"symbol":"ACT","score":6,"tier":"WATCH","lane":"forced_seller_overhang","one_line":"Enact: controlling holder Genworth (~81%) is methodically selling down its stake into a dated $500M Enact repurchase agreement — own-the-suppressed-underlying overhang-clearing with capital return, but a slow grind with no single hardening trigger."},{"symbol":"ADCT","score":5,"tier":"WATCH","lane":"distressed_restructuring","one_line":"ADC Therapeutics restructured (June 2026, -17% staff, runway to 2028) around ZYNLONTA with a dated Aug 2026 pre-sBLA FDA meeting and Q4 2026 sBLA submission — real dated milestones but a ~$1 micro-cap regulatory grind, not high-conviction asymmetry."},{"symbol":"ADPT","score":6,"tier":"ACTIVE","lane":"spinoff","one_line":"Announced Jun-15-26 plan to separate MRD vs Immune Medicine; preferred separation path by year-end 2026 — dated forward spin/structural-alts."},{"symbol":"AES","score":7,"tier":"ACTIVE","lane":"merger_arb","one_line":"Signed $15.00 cash take-private by GIP/EQT; holders approved Jun-26-26, pending US+foreign regulatory clearances, close late-26/early-27 — live arb spread."},{"symbol":"AIV","score":8,"tier":"ACTIVE","lane":"liquidation/forced-seller","one_line":"Aimco Plan of Sale \u0026 Liquidation approved by holders 6-Feb-2026; serial liquidating distributions underway, $620M+ assets under contract — dated wind-down, own the underlying as cash returns."},{"symbol":"ALLO","score":7,"tier":"ACTIVE","lane":"binary","one_line":"Pivotal ALPHA3 cema-cel CAR-T: DSMB interim EFS analysis 1H-2026 + primary EFS readout 2H-2026 (BLA 2027) — dated binaries for a clinical-stage name with asymmetric setup."},{"symbol":"ALVO","score":6,"tier":"ACTIVE","lane":"dated-binary","one_line":"Multiple dated 2026 FDA decisions: AVT16 (Entyvio) BLA accepted Jun-8, AVT05/AVT06 resubmitted Jun-4 on 6-month review; stacked biosimilar approval calendar."},{"symbol":"AMLX","score":6,"tier":"ACTIVE","lane":"dated-binary","one_line":"Pivotal Phase 3 LUCIDITY topline for avexitide in post-bariatric hypoglycemia anticipated Q3-2026; clean dated binary, Breakthrough designation, first-in-class PBH."}],"verified":[{"symbol":"AAUC","score":7,"tier":"ACTIVE","lane":"merger-arb","catalyst":"Zijin Gold\u0027s binding C$44.00/share (~US$31.5) all-cash takeover of Allied Gold — shareholder-approved, Canada + African competition cleared, with the SOLE remaining gate being China\u0027s NDRC, plus a second dated catalyst in the Kurmuk (Ethiopia) first-gold pour due mid-2026.","dated_milestone":"July 29, 2026 outside date (extended once from May 29; further extension to ~Sept 29, 2026 explicitly possible) — gated on China NDRC sign-off. Secondary: Kurmuk first-gold pour mid-2026.","instrument":"equity","bloom_gates":"G1+G3","edge":"M — wide ~38% spread to the cash price at a live US$22.77 is real asymmetry, but the binding gate is the harder China NDRC (actively questioning the premium + Mali political risk after gold corrected ~18% from the ~US$5,500 deal-signing peak), and the stock now sits AT the ~US$23 standalone floor, so the market already discounts a meaningful break/slip probability; not a clean H.","primary_source":"GlobeNewswire 2026-05-29 (Allied Gold outside-date extension to Jul 29, 2026); InvestingNews/Mining.com June 2026 (China NDRC delay, questioning premium + Mali risk); Allied Gold IR / Mining Review 2026 (Kurmuk first gold mid-2026); FMP live quote 2026-06-29 US$22.77.","verdict":"CONFIRMED_WITH_CORRECTIONS","kill_fact":"Zijin Gold\u0027s C$44.00/share all-cash takeover of Allied Gold is shareholder-approved (Mar 31 mtg) with Canada (national-security review cleared Apr 9, 2026) and African regulators done; deal is NOT closed/NOT fired — sole remaining gate is China\u0027s NDRC, which has actively raised the ~27% premium and Mali-security risk, pushing the outside date to July 29, 2026 (already extended once; possible ~Sept 29 further extension). Live AAUC US$22.755 (NYSE, 2026-06-29) sits right at the ~US$23 standalone floor (yearLow 11.40, 200d avg 25.12), leaving a ~38% spread to the ~US$31.5 cash price and near-zero downside cushion — the tape prices a genuine break/slip probability. Second dated catalyst confirmed: Kurmuk (Ethiopia) first gold pour on track for mid-2026 (Q2/H1), ~175koz partial-year 2026. CORRECTION: dossier\u0027s emphasis on \u0027advanced-stage African host-country approvals\u0027 as the binding gate is wrong — NDRC is the binding gate; African/Canadian clearances are already done. Score trimmed to 7: dated asymmetry is real but the harder Chinese regulatory gate plus zero downside cushion at the floor warrant lower conviction than the dossier\u0027s 8.","analysis":"VERIFIED LIVE and FORWARD: Zijin\u0027s C$44 cash takeover is shareholder-approved with Canada + ECOWAS/COMESA cleared; deal is NOT closed and NOT fired, outside date July 29, 2026 (already extended once, with a further ~Sept 29 extension flagged as possible). MATERIAL CORRECTION to the dossier: the binding gate is China\u0027s NDRC (not the \"advanced-stage African host-country approvals\" the dossier emphasized) — NDRC is actively questioning the premium and Mali political risk after gold fell ~18% from the ~US$5,500 deal-signing peak, a real and currently-unpriced regulatory risk. At a live US$22.77 the spread to the ~US$31.5 cash price is ~38%, but the stock now sits at/below the ~US$23 standalone floor (vs the dossier\u0027s $25.26 working live), confirming the market discounts a genuine break/slip probability; the Kurmuk mid-2026 first-gold pour adds a second dated forward catalyst. Holding ACTIVE at score 7 (down from dossier\u0027s 8): asymmetry is real and dated, but the harder Chinese gate plus a near-zero downside cushion at today\u0027s price warrant trimming conviction."},{"symbol":"ACT","score":3,"tier":"NONE","lane":"forced_seller_overhang","catalyst":"Enact\u0027s $500M buyback (authorized Feb 2026) under which Genworth sells pro-rata to MAINTAIN — not reduce — its ~81% stake, so no overhang is actually being cleared.","dated_milestone":"2026 capital-return guidance of ~$500M (reaffirmed Q1 2026 call 2026-05-06); next milestone Q2 2026 earnings ~early Aug 2026 — but it is a recurring run-rate, not a dated de-risking event.","instrument":"equity","bloom_gates":"None pass cleanly. G1 (named counterparty Genworth) and G2 (Feb 2, 2026 Share Repurchase Agreement) exist on paper, but both fail the FORWARD/UNPRICED test: the agreement is explicitly designed to KEEP Genworth at ~81%, so it is not a stake-overhang reduction; G3 fails — the ~$500M figure is reaffirmed public guidance, fully re-rated, no specific unpriced figure.","edge":"L — the premise (Genworth \"selling down\" to clear an overhang) is factually inverted: filings show Genworth held ~81% in Q4\u002725 and still ~81% (113.4M shares) after the latest sales; the buyback maintains its percentage. No mispricing edge; story is known and priced.","primary_source":"Enact Q1 2026 earnings call/transcript reaffirming ~$500M 2026 capital return and ~81% Genworth ownership (2026-05-06); Genworth Form 4 sales under Feb 2, 2026 Share Repurchase Agreement (filed 3/31 and 5/29 2026).","verdict":null,"kill_fact":null,"analysis":"The flagged thesis misreads the mechanics: Genworth\u0027s repeated Form 4 sales (820K @ $40.92 on 3/31, 602K @ $42.91 on 5/29) are pro-rata participations in Enact\u0027s own $500M buyback under the Feb 2, 2026 Share Repurchase Agreement, structured to HOLD Genworth\u0027s stake at ~81%, not to grind it down — so there is no overhang being cleared and no single hardening trigger. The capital-return figure (~$500M for 2026, dividend raised to $0.24) was reaffirmed on the 2026-05-06 Q1 call and is a recurring, fully-priced run-rate, not a dated forward de-rerating catalyst. It fails the strict gate on FORWARD/UNPRICED (already fired/re-rated) and on a real specific overhang-clearing commitment; verdict NONE."},{"symbol":"ADCT","score":5,"tier":"WATCH","lane":"distressed_restructuring","catalyst":"August 2026 pre-sBLA FDA meeting to set the regulatory path for ZYNLONTA + rituximab in 2L+ r/r DLBCL, gating a Q4 2026 sBLA submission off the stat-sig LOTIS-5 Phase 3 readout.","dated_milestone":"Pre-sBLA FDA meeting — August 2026 (next date); sBLA submission targeted Q4 2026","instrument":"equity (NYSE: ADCT, ~$1.02, ~$130M micro-cap)","bloom_gates":"G2 — concrete, company-committed dated regulatory action (Aug 2026 pre-sBLA meeting -\u003e Q4 2026 sBLA filing); G1/G3 not cleanly met (no named external counterparty deal, no specific currently-unpriced sales/value figure disclosed)","edge":"L — the gating LOTIS-5 PFS data already fired June 3, 2026 (HR 0.73, p=0.008) and is partly re-rated; the Aug meeting is a non-public, non-decisional path-setting meeting, not a PDUFA/approval; a serious safety signal (Grade 5 AEs 13.2% vs 4.6%, 25.5% discontinuations, deaths concentrated in 75+) clouds the benefit-risk the FDA will probe; micro-cap regulatory grind with loan-covenant liquidity caveat on the into-2028 runway.","primary_source":"ADC Therapeutics PRNewswire reorg release (Jun 24, 2026) + StockTitan LOTIS-5 Phase 3 results (Jun 3, 2026); FMP quote (Jun 29, 2026)","verdict":null,"kill_fact":null,"analysis":"Facts are well-corroborated: a June 24, 2026 ZYNLONTA-focused reorg (17% staff cut, ~$10M annual savings, ~$3M Q2 charge) layered on a June 3, 2026 LOTIS-5 Phase 3 confirmatory win (mPFS 6.1 vs 4.7 mo) sets up a dated Aug 2026 pre-sBLA FDA meeting and a Q4 2026 sBLA filing. This is a genuine dated forward catalyst (G2), but it is a non-decisional procedural meeting, not a binary approval, and the asymmetry is weak: the value-driving data already printed, an elevated Grade 5/discontinuation safety signal threatens the benefit-risk the FDA must accept, and this is a sub-$130M micro-cap leaning on a covenant-constrained runway. Real and dated, but low-conviction — WATCH, not ACTIVE."},{"symbol":"ADPT","score":5,"tier":"WATCH","lane":"spinoff","catalyst":"Adaptive Biotechnologies plans to separate its profitable MRD diagnostics business (RemainCo) from Immune Medicine (sale/spin/partnership), with the preferred path to be identified by year-end 2026 — a sum-of-the-parts unlock.","dated_milestone":"Preferred separation path to be identified by year-end 2026 (next date: Dec 31, 2026)","instrument":"equity (ADPT common)","bloom_gates":"G3 (specific currently-priced-as-conglomerate figures disclosed: MRD 2025 rev $212M, +$15M adj. EBITDA, profitable; Immune Medicine to exit separately) and a structural-action G2 concrete commitment to separate","edge":"M-L: real dated forward structural catalyst, but the stock has already re-rated hard on the Jun-15 news — $20.94 vs $15.3 50dma (+37%), sitting at the 52-wk high $21.31 (yr low $9.96). The easy SoP gap is largely priced; only the path-decision/execution optionality (YE26→2027) remains un-fired.","primary_source":"Adaptive Biotechnologies press release / SEC 8-K, \"Announces Plan to Separate Its MRD and Immune Medicine Businesses,\" Jun-15-2026 (globenewswire.com; sec.gov EDGAR CIK 0001478320)","verdict":null,"kill_fact":null,"analysis":"Confirmed: on Jun-15-2026 ADPT announced intent to separate MRD (which stays as Adaptive, RemainCo) from Immune Medicine, evaluating sale/separation/partnership/licensing, with the preferred path to be identified by year-end 2026 (alongside an upsized $300M convertible offering). It is a genuine dated, forward, company-specific structural catalyst — not a macro bet — and the announced leg has not yet been executed. The gating issue is re-rating: shares are at the 52-week high and ~37% above the 50-day average, so the conglomerate-discount unlock is substantially priced in already; residual edge is the path-decision and execution optionality into 2027, hence WATCH rather than ACTIVE."},{"symbol":"AES","score":5,"tier":"WATCH","lane":"merger_arb","catalyst":"Signed $15.00/sh all-cash take-private by GIP/BlackRock + EQT consortium (with CalPERS \u0026 QIA); stockholders approved Jun-26-26 and HSR cleared, now pending remaining FERC/PUCO/NYPSC/CFIUS and foreign regulatory clearances before close late-26/early-27.","dated_milestone":"Next: remaining regulatory clearances (FERC/PUCO/NYPSC/CFIUS + foreign) gating deal close, expected late-2026/early-2027.","instrument":"equity","bloom_gates":"G1 (named acquirers GIP/EQT/CalPERS/QIA), G2 (concrete $15.00/sh cash commitment), G3 (specific currently-unpriced ~2.4% gross spread to deal price)","edge":"L — only ~2.4% gross spread (14.645 vs 15.00) over a 6-12mo+ horizon to close; deal-spread economics are thin and the remaining gates (CFIUS + foreign regulators) carry real timeline/extension risk, so annualized arb IRR is modest and any deal-break downside (~$10-11 unaffected) dwarfs the upside.","primary_source":"PRNewswire / AES 8-K via StockTitan, \"AES Stockholders Approve Acquisition...\" (Jun-26-26); HSR expiry Jun-22-26 per DEFM14A.","verdict":null,"kill_fact":null,"analysis":"This is a real, dated, forward merger-arb: a signed definitive agreement at $15.00 cash, stockholder approval secured Jun-26-26, HSR period expired Jun-22-26, with the genuinely unfired leg being remaining utility/FERC/CFIUS/foreign approvals gating a close in late-2026/early-2027 — AES trades at $14.645, leaving ~2.4% to the deal price. It passes all three Bloom gates (named counterparties, concrete cash figure, specific unpriced spread) and is forward/not fully re-rated, but the edge is low: the spread is narrow, the timeline long, and the regulatory complexity (CFIUS plus multiple foreign jurisdictions) keeps break/extension risk live against a large deal-break downside. WATCH rather than ACTIVE because the risk-reward of capturing a sub-3% spread over a multi-quarter regulatory slog is unattractive on a standalone basis."},{"symbol":"AIV","score":7,"tier":"ACTIVE","lane":"liquidation/forced-seller","catalyst":"Holder-approved Plan of Sale \u0026 Liquidation is underway with serial liquidating distributions; ~$3.00–$4.35/share of an expected $5.75–$7.10/share aggregate still to be returned vs a $2.97 price as remaining apartment assets are sold for cash.","dated_milestone":"Three additional properties under contract expected to close Q2 2026 (by ~2026-06-30), funding the next liquidating distribution; subsequent distributions event-driven as remaining assets sell.","instrument":"equity (common, AIV)","bloom_gates":"G1 (named counterparties: LaTerra Capital/Respark $455M Chicago close 3/27; four buyers on 12 properties ~$680M w/ $30M non-refundable deposits), G2 (board-approved Plan of Sale, holder vote 2/6/2026; serial declared distributions), G3 (specific currently-unpriced figure: ~$3.00–$4.35/sh remaining of $5.75–$7.10 aggregate vs $2.97)","edge":"M — only $2.75 of $5.75–$7.10/sh paid so the majority of value is still forward, and midpoint remaining (~$3.68) is ~24% above the $2.97 price; capped because distributions are asset-sale-timed (no fixed calendar) and the un-contracted asset tail carries apartment cap-rate/financing risk, with the low end ($3.00) barely above price.","primary_source":"https://www.prnewswire.com/news-releases/aimco-declares-a-1-30-per-share-partial-liquidating-distribution-302759413.html (2026-04-30)","verdict":"CONFIRMED","kill_fact":"All load-bearing facts independently confirmed vs primary sources (Aimco PRNewswire/StockTitan, 6/28/26 quote): holder approval 2/6/2026; $1.45 (paid 3/13) + $1.30 (paid 6/3) = $2.75/sh declared; aggregate $5.75-$7.10/sh net estimate; $455M 7-property Chicago portfolio to LaTerra/Respark closed 3/27/2026; 12 properties ~$680M under contract across four buyers w/ ~$30M non-refundable deposits; ten properties sold YTD 2026; price $2.97. Remaining math holds: $5.75-$7.10 - $2.75 = $3.00-$4.35/sh still forward, largely cash/contracted-backed. FIRED-not-forward attack fails (paid $2.75 correctly excluded). Caveats accurate: event-driven timing (no fixed next date), unsold-asset cap-rate tail, lower-bound $3.00 vs $2.97 = thin cushion. Tradeable common (AIV-A preferred is separate, not the instrument). Real liquidation-arb spread, not priced/story.","analysis":"Aimco\u0027s liquidation is real, holder-approved (2/6/2026), and partially de-risked: ten properties sold in 2026 including a $455M Chicago portfolio (LaTerra/Respark, closed 3/27) and 12 more under contract (~$680M, $30M non-refundable deposits). With $2.75/share already declared ($1.45 Feb + $1.30 Apr, paid 6/3) against a $5.75–$7.10 aggregate target, roughly $3.00–$4.35/share remains to be distributed versus a $2.97 share price — a recovery spread that is still forward, not yet re-rated, and largely backed by contracted/cash proceeds rather than a macro view. Main caveats: distributions are event-driven (no fixed next date) and the unsold-asset tail introduces cap-rate sensitivity, so the lower bound offers little cushion."},{"symbol":"ALLO","score":3,"tier":"WATCH","lane":"binary","catalyst":"Pivotal ALPHA3 cema-cel (allogeneic CAR-T) in 1L-consolidation LBCL: independent DSMB-monitored interim event-free-survival (EFS) analysis is the next dated readout, with primary EFS to follow.","dated_milestone":"Interim EFS analysis ~mid-2027; primary EFS ~mid-2028; ~220-pt enrollment target by YE-2027 (Allogene guidance, Apr 13 2026)","instrument":"equity (ALLO, ~$2.18, mkt cap ~$530M micro-cap)","bloom_gates":"G3 partial — interim EFS is a specific, currently-unpriced clinical figure with a date, but distant (~mid-2027), not the near-dated 2H-2026 binary the flag asserts","edge":"L — flag premise is stale/wrong: the \"1H-2026 DSMB interim EFS\" already occurred as the Apr 13 2026 interim futility analysis (58.3% vs 16.7% MRD clearance, trial continued); no durable re-rating (px near 200d avg $1.78, far below yr-high $4.46), and the real next binary slips to ~mid-2027.","primary_source":"Allogene IR / GlobeNewswire press release \"Interim Futility Analysis from Pivotal ALPHA3 Trial\" (Apr 13, 2026); BioSpace coverage same date","verdict":null,"kill_fact":null,"analysis":"The triage flag\u0027s dated binaries are factually broken: the DSMB interim EFS the flag put in \"1H-2026\" was reported April 13, 2026 as the interim futility analysis (cema-cel 58.3% vs observation 16.7% MRD clearance, clean safety, trial continues), and Allogene\u0027s own guidance pushes the interim EFS to ~mid-2027 and primary EFS to ~mid-2028 — not 2H-2026 primary / BLA-2027. So the near-dated asymmetric setup the flag priced has already fired/mis-dated; what remains is a genuine but ~12+ month-out micro-cap clinical binary. Real and dated, but distant and not the unpriced near-term catalyst claimed — demote to WATCH, score 3."},{"symbol":"ALVO","score":6,"tier":"ACTIVE","lane":"dated-binary","catalyst":"Stacked FDA biosimilar decisions: AVT05 (Simponi/golimumab) and AVT06 (Eylea/aflibercept) BLAs resubmitted on a 6-month review clock after Alvotech resolved its Reykjavik facility Post-Action Letter, plus AVT16 (Entyvio) BLA accepted — each a Teva-commercialized approval gate.","dated_milestone":"AVT05/AVT06 FDA action ~Dec-2026 (six-month review of Jun-4-2026 resubmission); AVT16 (Entyvio) action ~mid-2027 (standard BLA review of Jun-8-2026 acceptance)","instrument":"equity (ALVO common)","bloom_gates":"G1 (named counterparty: FDA decisions + Teva commercial partner) + G2 (concrete commitment: BLAs resubmitted/accepted on defined review clocks)","edge":"M — the AVT05/AVT06 resubmission narrows a known overhang (the prior CRL/Post-Action Letter on the Reykjavik plant) to a hard ~Dec-2026 binary; manufacturing-remediation outcome is genuinely uncertain so not fully priced, but the approval path itself is well-telegraphed and biosimilar approvals are incremental rather than transformational, capping the surprise magnitude.","primary_source":"Alvotech press releases via GlobeNewswire — resubmission Jun-4-2026 (AVT05/AVT06) and AVT16 BLA acceptance Jun-8-2026","verdict":"CONFIRMED_WITH_CORRECTIONS","kill_fact":"All three milestones verified against primary sources (Alvotech press releases / SEC 6-K / Pearce IP): AVT16 (Entyvio/vedolizumab) interchangeable-biosimilar BLA accepted Jun-8-2026 (first accepted vedolizumab biosimilar); AVT05 (Simponi/Simponi Aria = golimumab) and AVT06 (Eylea/aflibercept) BLAs resubmitted Jun-4-2026 on an expected six-month FDA review after Alvotech responded to the Reykjavik facility Post-Action Letter and May-2026 cGMP inspection observations, pointing to ~Dec-2026 action. Teva commercializes all three. Catalysts are forward/un-fired, dated binaries, tradeable in ALVO common. CORRECTION: triage labeled AVT05 as Entyvio/Stelara — it is golimumab (Simponi); AVT16 is the Entyvio program. Score held at 6 — real near-term manufacturing-overhang resolution, but the headline near-term gate is a six-month-review acceptance (no priced surprise yet) and AVT16 is a longer 2027 gate, with the mislabel docking precision.","analysis":"All three milestones verified from primary sources: AVT16 (Entyvio) BLA accepted Jun-8-2026 — the first vedolizumab biosimilar accepted by FDA — and AVT05 (Simponi)/AVT06 (Eylea) BLAs resubmitted Jun-4-2026 on a six-month review after Alvotech addressed the Reykjavik facility Post-Action Letter and cGMP inspection observations, pointing to a ~Dec-2026 action. The near-term, un-fired catalyst is the AVT05/AVT06 six-month review resolving the manufacturing overhang; AVT16 is a longer-dated 2027 gate. Note: triage mislabeled AVT05 as Entyvio/Stelara — it is golimumab (Simponi); the dated-binary thesis otherwise holds."},{"symbol":"AMLX","score":7,"tier":"ACTIVE","lane":"dated-binary","catalyst":"Pivotal Phase 3 LUCIDITY topline for avexitide (first-in-class GLP-1 receptor antagonist, FDA Breakthrough Therapy) in post-bariatric hypoglycemia.","dated_milestone":"Q3 2026 topline readout","instrument":"equity","bloom_gates":"G3","edge":"M","primary_source":"Amylyx Q1 2026 Financial Results press release, May 7, 2026 (investors.amylyx.com / SEC 8-K) — \"topline data readout from Phase 3 LUCIDITY ... on track for Q3 2026\"; corroborated by enrollment-completion release (78 participants, Mar 2026).","verdict":"CONFIRMED","kill_fact":"Amylyx Q1 2026 results (May 7, 2026; mirrors SEC 8-K) confirm verbatim: LUCIDITY enrollment completed March 2026 (78 pts), topline \"on track and anticipated in the third quarter of 2026\" on the \"FDA-agreed upon primary outcome of reduction in the composite of Level 2 and Level 3 hypoglycemic events through Week 16\"; avexitide is first-in-class GLP-1 receptor antagonist with FDA Breakthrough Therapy in PBH; commercial launch 2027 if approved. Forward, not fired as of 2026-06-29; dated, unpriced first-in-class approval-pathway binary in an indication with no approved drug.","analysis":"AMLX confirms a genuine dated, forward, unpriced clinical binary: LUCIDITY enrollment completed March 2026 (78 pts), with topline on a defined FDA-agreed primary endpoint (composite Level 2+3 hypoglycemic-event reduction through Week 16) reaffirmed \"on track for Q3 2026\" in the May 7, 2026 Q1 results. Avexitide is first-in-class with Breakthrough Therapy designation in PBH, an indication with no approved drug, so a positive readout de-risks the full 2027 commercial path — a clean catalyst, not a macro bet, and not yet fired. Edge is Medium rather than High because the Q3-2026 date is well-telegraphed and the binary is at least partly anticipated by the market; G3 satisfied (unpriced first-in-class approval-pathway value), G1/G2 N/A for a trial readout."}]}
+{
+ "chunk": "1 (A-AMN)",
+ "scanned": 150,
+ "scan_distribution": {
+  "active": 8,
+  "watch": 11,
+  "none": 131
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "AAUC",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "one_line": "Live merger-arb: Zijin CAD44 cash bid, all approvals except China NDRC pending; close targeted ~Jul 29 2026, wide spread on last-approval risk."
+  },
+  {
+   "symbol": "ABCL",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Clinical-stage pivot with dated ABCL635 Phase 2 VMS efficacy readout Q3 2026; real dated binary but pipeline/momentum, not mispriced special-sit."
+  },
+  {
+   "symbol": "ABSI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Dated readouts: ABS-201 alopecia interim 2H26 POC and Q4 2026 Ph2 endometriosis; genuine dated binaries but momentum/pipeline, freshly re-rated on Ph1 data."
+  },
+  {
+   "symbol": "ABVX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_regulatory",
+   "one_line": "Phase 3 ABTECT UC data positive (Jun 2026, largely fired/re-rated); forward NDA submission late Q4 2026 is a real dated milestone but the binary readout risk has passed."
+  },
+  {
+   "symbol": "ACAD",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_clinical",
+   "one_line": "Remlifanserin Phase 2 RADIANT Alzheimer's-psychosis topline due Aug-Oct 2026, described as high-risk/high-reward and not priced in; single dated binary but only Phase 2."
+  },
+  {
+   "symbol": "ACHC",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "activist_structural",
+   "one_line": "Dual activists Khrom (5.5%) + Engine Capital publicly demanding strategic review/sale and board reforms with 2026 proxy as hardening trigger; real activist special-sit, outcome uncertain."
+  },
+  {
+   "symbol": "ACLS",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Live stock-for-stock merger with Veeco: shareholders approved Feb 2026, sole remaining condition is China SAMR approval with anticipated close H2 2026; clean merger-arb with a dated gate."
+  },
+  {
+   "symbol": "ACLX",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Definitive Gilead take-private at $115 cash + $5 CVR (Feb 2026), tender/close pending; clean cash merger-arb plus a live CVR on $6B anito-cel sales through 2029."
+  },
+  {
+   "symbol": "ADCT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_regulatory",
+   "one_line": "LOTIS-5 topline positive Jun 2026 (fired); forward pre-sBLA FDA meeting Aug 2026 and sBLA filing Q4 2026 are real dated milestones on a micro-cap, but readout risk largely passed."
+  },
+  {
+   "symbol": "AES",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "one_line": "LIVE arb: $15/sh cash take-private by GIP/BlackRock+EQT+CalPERS/QIA, shareholders approved 6/26, HSR cleared, close late-26/early-27 pending remaining regulatory approvals \u2014 spread still open."
+  },
+  {
+   "symbol": "AIV",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "capital-return/liquidation",
+   "one_line": "Aimco full Plan of Sale & Liquidation approved Feb 2026; dated liquidating distributions ($5.75-7.10/sh est) over rolling 24-month wind-down, asset sales in progress \u2014 live forward special-sit."
+  },
+  {
+   "symbol": "ALLO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Allogene has a real dated CAR-T binary \u2014 YE2026 ALPHA3 primary EFS analysis; but Q2 interim and June ALLO-329 data already read out, and it's a cash-burn/dilution risk, so asymmetry is muddy."
+  },
+  {
+   "symbol": "ALMS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Alumis (post-ACELYRIN merger) has dated Ph3 readouts \u2014 ESK-001 ONWARD psoriasis topline H1 2026 (imminent/just-due) plus LUMUS lupus Ph2b in 2026; real binary but early/small-cap risk."
+  },
+  {
+   "symbol": "ALOY",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "supply-shortage+timing-moat",
+   "one_line": "US Sm/Gd rare-earth magnet build-out with DLA contract + Patriot/Utah LOIs feeding 2027 defense procurement deadlines; real supply-shortage timing moat but micro-cap already re-rated hard on the news."
+  },
+  {
+   "symbol": "ALTI",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "M&A/forced-seller overhang",
+   "one_line": "Live take-private auction: Corient pulled out Feb 2026 over valuation gap, but interim CEO confirms process ongoing with MBO / Allianz-Constellation / mega-RIA bid scenarios open \u2014 unresolved sale overhang on the suppressed underlying."
+  },
+  {
+   "symbol": "ALVO",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated binary (FDA)",
+   "one_line": "Multiple dated 2026 FDA decisions: AVT16 interchangeable-Entyvio BLA accepted Jun 2026, AVT05/Simponi + AVT06/Eylea resubmitted, company guides approvals during 2026 \u2014 stacked regulatory catalysts with Teva commercialization optionality."
+  },
+  {
+   "symbol": "AMLX",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated binary (asymmetric readout)",
+   "one_line": "Avexitide LUCIDITY Phase 3 topline in Q3 2026 (enrollment done Mar 2026) for first-ever PBH therapy \u2192 potential Q4-2026/Q1-2027 NDA; funded into 2028, clean dated binary with mispriced asymmetry."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "AAUC",
+   "score": 7.5,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "catalyst": "Sole open condition is China NDRC approval on the C$44 cash Zijin/Allied Gold deal; outside date July 29, 2026.",
+   "dated_milestone": "Outside/completion date July 29, 2026 (extended from May 29 per GlobeNewswire 2026-05-29); NDRC clearance is the last gate.",
+   "instrument": "AAUC (TSX common; also AAUC on NYSE American)",
+   "bloom_gates": "G1 (Zijin named acquirer) + G2 (binding C$44 cash plan of arrangement) + G3 (unpriced spread: ~C$10.30 / 30.6% gross)",
+   "edge": "H",
+   "primary_source": "GlobeNewswire 2026-05-29 (outside date to Jul 29 2026); FMP AAUC.TO C$33.70 close 2026-07-01",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Core verified vs primary sources: Zijin Gold International's C$44.00/share all-cash plan of arrangement for Allied Gold (AAUC), with ICA, ECOWAS, COMESA, 99.54% shareholder (Mar 31) and court approvals obtained; sole open condition is China NDRC/MOFCOM outbound clearance, outside date July 29, 2026; AAUC ~C$33.70 (Jul 1) = ~C$10.30/30.6% gross spread reflecting genuine NDRC doubt (premium + Mali risk). CORRECTIONS: the July 29 outside date is NOT a hard drop-dead \u2014 the agreement permits further extension by mutual consent and sources cite a possible Sep 29, 2026 date, so the '~27-day close' framing overstates timing certainty (the NDRC decision itself is the unpriced forward catalyst, not a calendar date). The '~C$22 standalone' downside is a directional estimate, not primary-source-confirmed.",
+   "analysis": "Verified real and specific: AAUC = Allied Gold, Zijin Gold International's binding C$44.00/share all-cash plan of arrangement, with Canadian (ICA), ECOWAS, COMESA, shareholder and court approvals all obtained; the ONLY outstanding condition is China's NDRC outbound-investment clearance, with the outside date extended to July 29, 2026. The ~C$10.30 (30.6%) gross spread from C$33.70 is unusually wide for a ~27-day close, reflecting genuine market doubt that NDRC clears \u2014 Beijing has publicly questioned the premium and the Mali political risk (Mali is ~half of Allied's output). Passes the strict gate (dated, forward, named counterparty, unpriced spread, single-name deal-specific), so ACTIVE/score 8 \u2014 but the wide spread is a deal-break warning, not free carry; gap to ~C$22 standalone on a China-policy termination."
+  },
+  {
+   "symbol": "ABCL",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "ABCL635 Phase 2 topline efficacy readout for menopausal vasomotor symptoms (NK3R antibody, ~80 patients, 4-week primary endpoint) expected Q3 2026, which mgmt frames as highly de-risking.",
+   "dated_milestone": "Phase 2 VMS topline efficacy data \u2014 Q3 2026 (Jul\u2013Sep 2026)",
+   "instrument": "equity (NASDAQ: ABCL)",
+   "bloom_gates": "G3 (specific dated binary clinical readout with concrete endpoint/design), weakly \u2014 no named counterparty (G1) or hard commercial commitment (G2)",
+   "edge": "L",
+   "primary_source": "AbCellera investor PR \"First Patients Dosed in Phase 2 Portion of ABCL635 Trial\" (Jan 12, 2026) + Q1 2026 results PR / Seeking Alpha (May 11, 2026), both stating Q3 2026 Phase 2 topline efficacy readout",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is genuine, specific, and dated: AbCellera's ABCL635 Phase 2 VMS efficacy readout is guided to Q3 2026 with a defined ~80-patient RDBPC design and 4-week primary endpoint (confirmed in the Jan 12, 2026 first-patient-dosed PR and reiterated in the May 11, 2026 Q1 release), and it has not yet fired. However this is a clinical-binary pipeline/momentum name, not a mispriced special-situation \u2014 no named counterparty or hard commitment, and the equity has already run ~75% off its 50-day and sits near the 52-week high, so much of the readout optionality appears re-rated into the price. Net: legitimate WATCH-tier dated binary, but the risk/reward edge is low given how much has already been priced."
+  },
+  {
+   "symbol": "ABSI",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "ABS-201 (anti-PRLR antibody) interim proof-of-concept EFFICACY data in androgenetic alopecia expected 2H 2026, plus endometriosis Phase 2 initiation Q4 2026.",
+   "dated_milestone": "Interim POC efficacy data 2H 2026 (next: full POC early 2027; endometriosis Ph2 start Q4 2026, its interim readout 2H 2027)",
+   "instrument": "equity (ABSI common)",
+   "bloom_gates": "none \u2014 no G1 named counterparty, no G2 concrete external commitment, no G3 specific currently-unpriced figure; a pipeline/momentum clinical readout",
+   "edge": "L \u2014 stock already re-rated ~3x (price $11.11 vs 200d avg $3.97, near 52w high $12.06) on the June 24 2026 positive Phase 1 safety/PK news; the forward POC readout is a hoped-for efficacy binary with no unpriced figure and no counterparty, so no Bloom edge remains",
+   "primary_source": "Absci press release, GlobeNewswire, 2026-06-24 (positive interim Phase 1 HEADLINE data; POC efficacy guided 2H 2026, full POC early 2027, endometriosis Ph2 Q4 2026)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The forward milestones (2H 2026 interim POC efficacy, Q4 2026 endometriosis Ph2 start) are genuinely dated and not yet fired \u2014 the June 24 2026 readout was safety/PK only, so efficacy is still ahead. However, the name has already re-rated roughly 3x into these events (price $11.11 vs 50d $6.24 / 200d $3.97, ~$1.9B cap near 52w high), making this a momentum/pipeline setup rather than a specific unpriced binary. It clears none of G1/G2/G3 (no named counterparty, no concrete commitment, no specific unpriced figure), so it stays WATCH with a low score."
+  },
+  {
+   "symbol": "ABVX",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "binary_regulatory",
+   "catalyst": "Phase 3 ABTECT UC induction + maintenance readouts (Jun 2026) hit primary endpoints, de-risking obefazimod ahead of a planned late-Q4-2026 FDA NDA submission.",
+   "dated_milestone": "FDA NDA submission for obefazimod in ulcerative colitis, targeted late Q4 2026 (~Dec 2026)",
+   "instrument": "equity",
+   "bloom_gates": "none cleanly met \u2014 NDA is a company commitment (weak G2) but not an unpriced figure; the value-driving binary (Phase 3 efficacy) already fired and re-rated",
+   "edge": "L \u2014 the binary de-risking event (Phase 3 primary endpoint met) is already public and priced; stock re-rated sharply post-readout, leaving the forward NDA filing as a low-surprise procedural milestone",
+   "primary_source": "Abivax IR press release + Timothy Sykes/StockTitan coverage, Jun 1 / Jun 29-30, 2026",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage read is correct: ABTECT UC Phase 3 induction (positive) and maintenance data (~50-51% remission at Week 44 vs 10.4% placebo, reported Jun 1 and Jun 29, 2026) already fired and drove a large re-rating (shares spiked ~38%+ intraday toward ~$130s per Jun 30 reporting). The remaining forward event \u2014 a late-Q4-2026 FDA NDA submission \u2014 is dated and real but is a routine filing whose approval-relevant efficacy is already public, so it is not a specific currently-unpriced binary; residual malignancy-signal risk at higher doses is a downside, not an upside catalyst. No qualifying unpriced forward binary remains, so tier NONE / score 3."
+  },
+  {
+   "symbol": "ACAD",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_clinical",
+   "catalyst": "Topline results from the Phase 2 RADIANT study of remlifanserin (ACP-204) in Alzheimer's disease psychosis, a single dated binary read-out.",
+   "dated_milestone": "Phase 2 RADIANT topline in Alzheimer's disease psychosis \u2014 next date: Aug\u2013Oct 2026 window (company-reaffirmed May 6, 2026)",
+   "instrument": "equity (ACAD common); event lends itself to a long-dated straddle/call given single binary, but base case is equity watch",
+   "bloom_gates": "G3 (specific currently-unpriced figure): company attributes ~$4B of an ~$11B pipeline peak-sales opportunity to remlifanserin ADP+LBD, hinging on this Phase 2 in a ~$4.3B-cap company \u2014 a concrete, dated, forward-looking figure the tape only partially credits.",
+   "edge": "M",
+   "primary_source": "ACADIA Q1 2026 Financial Results press release, May 6, 2026 (reaffirms Aug\u2013Oct 2026 remlifanserin RADIANT topline); corroborated by JPM Healthcare Conference update, Jan 2026.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "ACADIA reaffirmed (Q1 2026 release, May 6, 2026, and at JPM Jan 2026) that Phase 2 RADIANT topline for remlifanserin (ACP-204) in Alzheimer's disease psychosis is on track for an Aug\u2013Oct 2026 window \u2014 a genuine, dated, unfired forward binary, not a macro bet. It clears WATCH: remlifanserin carries ~$4B of an ~$11B pipeline peak-sales figure yet sits inside a $4.3B commercial company (price $25.20, near the $23.26 200-day avg), so the option is only partially priced. Conviction is capped at 6 because it is a single Phase 2 read with a high CNS/AD-psychosis failure base rate and a negative precedent (pimavanserin's failed 2019 ADP Phase 3), making it high-risk/high-reward rather than high-confidence."
+  },
+  {
+   "symbol": "ACHC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "activist_structural",
+   "catalyst": "Dual activists Khrom Capital (5.5%, Eric Khrom) and Engine Capital (~3%) are publicly demanding a formal strategic review/sale plus board/governance reform, with the 2027 proxy nomination window as the next hardening trigger.",
+   "dated_milestone": "Next 2027 annual-meeting director-nomination window opens Jan 6, 2027 and closes Feb 5, 2027 (the point a proxy contest can be formally launched); interim watch for any board-announced strategic review.",
+   "instrument": "common equity",
+   "bloom_gates": "G1 (named counterparties: Khrom Capital/Eric Khrom + Engine Capital, both with public 13D-style demand letters); partial G3 (specific unpriced thesis = sale of all/part of company, activists assert credible buyers exist, ~71% TSR \"lost decade\" underperformance). G2 fails: no board commitment to a review \u2014 company offered only an operational capex cut, not the demanded strategic process.",
+   "edge": "M \u2014 real dual-activist special-sit with named principals and a concrete sale demand, but the nearest hard catalyst (May 6, 2026 annual meeting) passed UNCONTESTED with the company slate elected by strong margins and no strategic review launched; next dated trigger slips to the Jan\u2013Feb 2027 nomination window (>6 months out), so timing is soft and outcome uncertain.",
+   "primary_source": "Engine Capital letter to Acadia board via BusinessWire (2025-09-24); Khrom Capital letter via StockTitan/Reuters (Oct 2025); Acadia 8-K annual-meeting voting results (2026-05-06, SEC EDGAR) and FY2026 DEF 14A (nomination window Jan 6\u2013Feb 5, 2027).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Khrom (5.5%) and Engine (~3%) sent public letters in Sept\u2013Oct 2025 demanding Acadia run a formal strategic-alternatives/sale review and overhaul a staggered, entrenched board (management owns only ~1.3%); this is a genuine forward, unfired activist situation, not a macro bet. However the 2026 proxy season already resolved: at the May 6, 2026 meeting the company's three Class III nominees were elected uncontested with ~73.5M votes each and no activist slate ran, and the board has offered only a 2026 capex cut of ~$300M rather than the demanded review \u2014 so the \"2026 proxy as hardening trigger\" narrative has effectively lapsed. The live path now runs to the Jan 6\u2013Feb 5, 2027 nomination window (or an unscheduled board capitulation), which keeps this a legitimate WATCH but not ACTIVE given no imminent dated catalyst and no company commitment."
+  },
+  {
+   "symbol": "ACLS",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Axcelis is acquiring Veeco in a fixed 0.3575 ACLS-per-VECO all-stock merger whose sole open condition is China SAMR clearance, with an outside date of 30 Sep 2026.",
+   "dated_milestone": "China SAMR decision expected before H2-2026 close; outside date 30 Sep 2026.",
+   "instrument": "ACLS common (acquirer); VECO is the target leg",
+   "bloom_gates": "G1 (named counterparty Veeco) and G2 (signed merger agreement, dated SAMR gate); FAILS G3 \u2014 no unpriced figure in the arbitrageur's favor.",
+   "edge": "L \u2014 the arb spread is inverted/negative, not an edge.",
+   "primary_source": "Axcelis 10-Q (SEC/StockTitan, 8 May 2026) for 0.3575 ratio + SAMR-only condition; ION Analytics DealReporter (18 Mar 2026) for 30 Sep 2026 outside date and SAMR scrutiny; live FMP quotes ACLS $178.33 / VECO $70.52 (2 Jul 2026).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real, dated, and forward (shareholder-approved Feb 6 2026; only China SAMR remains; outside date 30 Sep 2026), but the merger-arb thesis is broken on the numbers: at the fixed 0.3575 ratio, VECO's implied deal value is 0.3575 x $178.33 = $63.75, yet VECO trades $70.52 \u2014 a NEGATIVE ~-9.6% spread, so the market is pricing VECO ABOVE deal terms (standalone/topping-bid value), not a discount an arb collects on close. On the ACLS (acquirer) leg there is no clean, dated, unpriced payoff to capture; SAMR has also slow-walked this sensitive semiconductor case amid US-China tensions with possible third-party complaints (ION Analytics, 18 Mar 2026), adding genuine completion risk. No unpriced forward figure in our favor -> fails G3, tier NONE."
+  },
+  {
+   "symbol": "ACLX",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Gilead's take-private of Arcellx ($115 cash + $5 non-transferable CVR) has already CLOSED, leaving no investable forward equity catalyst.",
+   "dated_milestone": "Merger completed 2026-04-28 (already fired); residual CVR milestone = $5/sh payable 2030-03-31 only if anito-cel cumulative WW sales exceed $6.0B by 2029-12-31, but the CVR is non-transferable.",
+   "instrument": "equity (delisted \u2014 shares converted to cash + non-transferable CVR at close)",
+   "bloom_gates": "None survive the FORWARD test. G1 (Gilead named counterparty) and G2 ($115 cash + $5 CVR commitment) were real but are now FIRED \u2014 tender expired 2026-04-27 with 77.2% tendered, merger closed 2026-04-28 under DGCL 251(h). G3 (unpriced $6B anito-cel sales figure) exists only inside a non-transferable CVR with no tradeable instrument.",
+   "edge": "L \u2014 the arb is closed; cash leg fully re-rated and ticker delisted, so there is no residual spread or optionality capturable via the equity.",
+   "primary_source": "Gilead press release \"Gilead Sciences Completes Acquisition of Arcellx\" (2026-04-28) + Arcellx SC TO-T/A and 8-K SEC filings, tender expired 2026-04-27",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged catalyst (\"tender/close pending\") is stale: Gilead completed the acquisition of Arcellx on 2026-04-28, converting each share to $115 cash plus one non-transferable CVR. The merger-arb spread is gone and ACLX no longer trades as a going concern. The only live forward element \u2014 the $5/sh CVR tied to $6.0B cumulative anito-cel sales by end-2029 \u2014 is non-transferable, so it cannot be held or traded as a screener instrument; there is no actionable forward equity catalyst."
+  },
+  {
+   "symbol": "ADCT",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary_regulatory",
+   "catalyst": "Pre-sBLA FDA meeting (Aug 2026) and ZYNLONTA+rituximab sBLA filing (Q4 2026) following positive-PFS but higher-toxicity LOTIS-5 confirmatory readout.",
+   "dated_milestone": "Pre-sBLA FDA meeting Aug 2026; sBLA submission Q4 2026 (next date: Aug 2026 FDA meeting)",
+   "instrument": "equity (NYSE:ADCT, micro-cap ~$145M)",
+   "bloom_gates": "G2 partial (concrete regulatory commitment: dated pre-sBLA meeting + Q4 filing) \u2014 but no G3 (no specific currently-unpriced figure; mixed data already digested)",
+   "edge": "L \u2014 the value-defining event (LOTIS-5 topline) already fired Jun 3 and re-rated the stock ~70% lower; forward milestones are procedural (a filing, not an FDA decision), and the real binary (approval/label breadth) is post-filing and undated.",
+   "primary_source": "ADC Therapeutics 8-K / IR PR \"Results From LOTIS-5 Phase 3 Confirmatory Trial\" (Jun 3, 2026); Yahoo Finance \"ADCT down 69.7% after mixed LOTIS-5 data\"; FMP quote $1.14 (Jul 1, 2026)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "LOTIS-5 topline FIRED June 3, 2026 with a statistically positive PFS (HR 0.73, p=0.008) but a damaging safety signal (Grade 5 events 13.2% vs 4.6%), triggering a ~70% collapse and a Strong Buy\u2192Sell downgrade; the stock now trades $1.14 near its 52-week low ($0.78) vs a $3.63 200-day average, so the readout is fully digested and re-rated. The Aug 2026 pre-sBLA FDA meeting and Q4 2026 sBLA filing are real, dated, forward milestones, but they are procedural submission steps rather than a specific unpriced value event \u2014 the true regulatory binary (approval/label breadth) is post-filing and undated. Fails a strict gate: no concrete currently-unpriced figure (G3) and the tradeable catalyst has largely passed; keep as WATCH into the Aug FDA meeting for any label-scope signal."
+  },
+  {
+   "symbol": "AES",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "catalyst": "AES take-private at $15.00/sh cash by the GIP(BlackRock)/EQT/CalPERS/QIA consortium \u2014 shareholders approved (97.9%) 6/26, HSR expired 6/22, close pending remaining state/federal regulatory approvals.",
+   "dated_milestone": "Deal close late-2026/early-2027 pending final regulatory sign-offs (utility/FERC/state PUC + international); next hard date = deal completion, no fixed calendar date yet.",
+   "instrument": "common (long AES vs $15 cash)",
+   "bloom_gates": "G1 (named counterparty: GIP/BlackRock+EQT+CalPERS+QIA), G2 (concrete commitment: definitive merger agreement, all-equity 100% financed), G3 (specific unpriced figure: $15.00/sh cash vs $14.64 mkt = $0.36 / ~2.5% gross spread)",
+   "edge": "M \u2014 real, well-defined arb but thin: ~2.5% gross to a late-26/early-27 close (~6-9mo) = mid-single-digit annualized; upside capped at $15, downside to ~$11 pre-deal if regulators block a still-open EU/state-PUC approval set.",
+   "primary_source": "AES 8-K / PRNewswire \"AES Stockholders Approve Acquisition\" (2026-06-26); HSR waiting period expired 2026-06-22; FMP quote AES $14.64 (2026-07-01)",
+   "verdict": "CONFIRMED",
+   "kill_fact": "All load-bearing facts confirmed vs primary sources: PRNewswire/8-K show 97.92% of votes cast FOR (67.17% of outstanding) on 6/26/2026; HSR waiting period expired 6/22; $15.00/sh cash by GIP(BlackRock)/EQT-led consortium w/ CalPERS+QIA (~$10.7B equity / $33.4B EV). AES last $14.64 (7/1) = ~2.5% gross spread genuinely open; close expected late-2026/early-2027 pending remaining federal/state/foreign regulatory approvals. Legit forward merger-arb, not fired.",
+   "analysis": "Every claim in the flag checks out against SEC 8-K/PRNewswire (6/26 vote 97.9% for, 6/22 HSR expiry) and price is $14.64 (7/1 close) vs $15.00 cash, a ~2.5% gross spread that is genuinely still open. It is a legitimate, dated, forward merger-arb \u2014 not fired, not fully re-rated \u2014 with a named consortium and a hard cash number, so it clears all three Bloom gates. Edge is medium not high because the residual spread is thin for a multi-quarter close and the remaining risk (multi-jurisdiction utility/regulatory approvals, no fixed close date) is what keeps the gap from collapsing."
+  },
+  {
+   "symbol": "AIV",
+   "score": 7.5,
+   "tier": "ACTIVE",
+   "lane": "capital-return / liquidation",
+   "catalyst": "Live liquidation special-sit",
+   "dated_milestone": "Two tranches paid ($1.45 on Mar 13, $1.30 on June 3, 2026 = $2.75/sh); next distribution follows Q2 2026 closings of 3 properties under contract; wind-down target completion by early 2028.",
+   "instrument": "common (AIV)",
+   "bloom_gates": "G1 (named buyers: LaTerra Capital/Respark Residential $455M Chicago portfolio, Casas partnership sale, 1045 on the Park Atlanta) + G2 (Board-declared dated distributions; 3 properties under contract closing Q2 2026) + G3 (residual $3.00-$4.35/sh of estimated plan distributions still to be paid vs. $2.97 stub price)",
+   "edge": "M \u2014 stub at $2.97 sits below the residual plan range midpoint (~$3.67/sh of distributions still owed after $2.75 already paid), so upside is real but bounded by asset-sale execution, cap-rate/timing risk on remaining unsold properties, and wind-down costs; not a re-rating, a return-of-capital grind.",
+   "primary_source": "Aimco 8-K / PR Newswire \"Aimco Declares a $1.30 per Share Partial Liquidating Distribution\" (Apr 30, 2026) and \"Aimco Provides Update on Liquidation Activities\" (Mar 30, 2026); Plan approved Feb 6, 2026.",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Primary sources confirm: stockholders approved the Plan of Sale & Liquidation Feb 6 2026; only $2.75/sh paid ($1.45 Mar 13 + $1.30 June 3) of a company-estimated $5.75-$7.10/sh total, leaving ~$3.00-$4.35/sh residual vs a live $2.97 stub; Chicago portfolio ($455M, 1,495 units) sold to LaTerra/Respark Mar 27 2026 \u2014 a live forward return-of-capital special-sit with the majority of plan value still unpriced.",
+   "analysis": "AIV is a legitimate live forward liquidation special-sit: stockholders approved the full Plan of Sale & Liquidation Feb 6, 2026, and Aimco is selling assets to named counterparties (LaTerra/Respark $455M Chicago, Atlanta and Casas sales) while paying dated rolling distributions. Of the company-estimated $5.75-$7.10/sh total, only $2.75/sh has been paid ($1.45 Mar 13 + $1.30 June 3), leaving ~$3.00-$4.35/sh residual against a $2.97 stub \u2014 so a meaningful portion of plan value remains unpriced and forward. Edge is moderate (not high) because realization depends on selling the remaining portfolio at estimated prices over a ~24-month window, exposing the stub to cap-rate, timing, and wind-down-cost risk; passes all three Bloom gates but is a return-of-capital grind, not a re-rating."
+  },
+  {
+   "symbol": "ALLO",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "ALLO-329 (dual CD19/CD70 allogeneic CAR-T for autoimmune) comprehensive dose-escalation update in Q4 2026 is the next dated forward readout; the company-defining ALPHA3 lymphoma EFS binary is now pushed to 2027-2028.",
+   "dated_milestone": "ALLO-329 comprehensive POC update: Q4 2026 (next); ALPHA3 interim EFS: mid-2027; ALPHA3 primary EFS: mid-2028",
+   "instrument": "equity",
+   "bloom_gates": "G2 (concrete committed dated data readout: Q4 2026 ALLO-329 comprehensive update) \u2014 weak; not a specific unpriced figure (G3) and no named counterparty (G1)",
+   "edge": "L",
+   "primary_source": "Allogene IR \"Positions 2026 as a Program-Defining Year\" + ALPHA3 interim futility PR (globenewswire, 2026-04-13); Q1 2026 update confirming ALLO-329 Q4 2026 comprehensive update, interim EFS mid-2027, primary EFS mid-2028",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Triage premise is stale: the ALPHA3 primary EFS is NOT a YE2026 event \u2014 it was pushed to mid-2028 (interim EFS mid-2027) after enrollment guidance slipped to end-2027, and the April 13 2026 interim futility analysis plus the 1H26 ALLO-329 initial POC have already fired. The one genuinely dated forward event is the ALLO-329 comprehensive Q4 2026 update, but that is an early-stage autoimmune dose-escalation readout, not the specific unpriced binary that makes ALLO compelling. Net: a real but weak dated forward catalyst against a distant primary binary and an ongoing cash-burn/dilution overhang (runway extended into Q1 2029 via a dilutive raise), so asymmetry is muddy \u2014 WATCH, not ACTIVE."
+  },
+  {
+   "symbol": "ALMS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "LUMUS Phase 2b topline for envudeucitinib (ESK-001) in systemic lupus erythematosus \u2014 an unfired, unpriced new-indication binary readout expected Q3 2026.",
+   "dated_milestone": "LUMUS lupus Ph2b topline: Q3 2026 (no specific date given; enrollment of 408 pts completed). Secondary: psoriasis NDA submission H2 2026.",
+   "instrument": "equity",
+   "bloom_gates": "G2 (concrete commitment: enrollment-complete pivotal-intent Ph2b, dated Q3 2026 topline); partial G3 (SLE optionality not in current price, but no specific figure)",
+   "edge": "M \u2014 real dated unfired binary in a new large indication (SLE) not reflected in a valuation now anchored on the derisked psoriasis franchise; but single-asset small-cap, TYK2-in-lupus unproven, wide Q3 window and no firm date.",
+   "primary_source": "Alumis Q1 2026 results / IR (LUMUS topline expected Q3 2026), investors.alumis.com, dated 2026 (accessed 2026-07-02)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage's headline catalyst (ESK-001 ONWARD psoriasis Ph3 topline) already FIRED positive on Jan 6, 2026 \u2014 both trials hit all endpoints (~65% PASI90, >40% PASI100), stock +32% overnight, followed by a $300M raise at $17 and multiple PT hikes, so it is re-rated and no longer forward. The genuine remaining unfired binary is the LUMUS Phase 2b in systemic lupus (408 pts enrolled), with topline dated to Q3 2026 \u2014 a new-indication readout offering optionality not embedded in a valuation now driven by the derisked psoriasis NDA (H2 2026, procedural). This clears WATCH as a dated forward binary but not ACTIVE: it is a single-asset small-cap, TYK2 efficacy in lupus is unproven/high-risk, and Q3 is a wide window with no specific date."
+  },
+  {
+   "symbol": "ALOY",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "supply-shortage+timing-moat",
+   "catalyst": "REalloys' US heavy-rare-earth/magnet-metal build-out (DLA/Terves Sm-Gd award, conditional US Army Tooele Depot lease, Patriot rare-earth LOI) positioned against the Jan 1 2027 US ban on Chinese defense materials.",
+   "dated_milestone": "Next dated anchor is the Jan 1, 2027 US federal procurement ban on Chinese materials (macro); company-specific next step = definitive Enhanced Use Lease agreement for Tooele (undated/conditional), IOC targeted no later than 2028.",
+   "instrument": "equity (NASDAQ: ALOY), micro-cap ~$14.25",
+   "bloom_gates": "G1 (named counterparties: DLA/Terves, US Army/Tooele, Patriot) satisfied; G2 partial (DLA award concrete; Army/Patriot non-binding/conditional); G3 fails (no specific currently-unpriced figure \u2014 deals are strategic optionality with no revenue quantification, and stock already re-rated).",
+   "edge": "L \u2014 the three catalysts (Mar 2 DLA award, Jun 25 Army selection, June Patriot LOI) have all fired and the micro-cap already re-rated +76% YTD / +151% 1yr on this exact news; remaining anchors are macro (2027 ban) or conditional/undated.",
+   "primary_source": "REalloys press release / GlobeNewswire, \"REalloys (NASDAQ: ALOY) Announces Landmark Partnership Agreement with The United States Army... Tooele Army Base\" (Jun 25, 2026); DLA/Terves award press release (Mar 2, 2026)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The rare-earth build-out thesis is real and supply-shortage-timed with named government/mining counterparties, but every discrete catalyst has already been announced and the stock has re-rated hard (+76% YTD, down ~20% the week after the Army news as it round-tripped), so the FORWARD/not-fired test fails. The Army Tooele lease is a conditional selection (non-binding, pending definitive agreements and environmental review) and the Patriot deal is a non-binding LOI, not concrete commitments with dates; the only forward-dated anchor is the Jan 1 2027 procurement ban, which is a macro/regulatory tailwind rather than a company-specific de-risking event. No specific currently-unpriced figure survives (G3 unmet), so this gates to NONE despite passing G1."
+  },
+  {
+   "symbol": "ALTI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "M&A / forced-seller overhang",
+   "catalyst": "Live special-committee strategic review / take-private process remains open with named counterparties (Allianz 24% holder + Constellation + ex-CEO Tiedemann MBO, all via 13D filings) after Corient walked in Feb 2026 over a ~$600M valuation gap.",
+   "dated_milestone": "No hard deadline; next signal = Q2 FY2026 earnings call (~mid-Aug 2026) reaffirming/updating strategic-review status; watch for a new 13D/tender or special-committee announcement.",
+   "instrument": "common equity",
+   "bloom_gates": "G1 (named counterparties: Allianz, Constellation, Tiedemann, all 13D filers) + G3 (specific unpriced figure: ~$600M valuation gap vs ~$410M mkt cap, mgmt demanding premium; SoP 5-20x EBITDA by segment). G2 fails \u2014 no binding/concrete offer, only indications of interest.",
+   "edge": "M \u2014 genuine multi-bidder overhang on a thinly-covered, suppressed micro-cap (64% below IPO) with real 13D optionality, but stalled at an impasse with no committed price and no dated milestone, so timing is indeterminate.",
+   "primary_source": "WealthBriefing \"Huge Valuation Gap Hampers AlTi Global Sale\" (May 12, 2026); AlTi Q1 FY2026 call (May 2026, interim CEO Curtin confirms review ongoing); Citywire \"Corient pulls out\" (Feb 2026); Allianz/Tiedemann Schedule 13D filings.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "ALTI is a legitimate live take-private overhang: Corient walked in Feb 2026 over a ~$600M valuation gap, but the special-committee review is confirmed ongoing (Q1 call, May 2026) with credible alternate paths \u2014 24% holder Allianz and ex-CEO Tiedemann have each filed 13Ds signaling potential acquisition/MBO interest, and Constellation holds preferreds/warrants. The setup clears G1 (named counterparties) and G3 (specific unpriced $600M gap on a suppressed 64%-below-IPO name), but fails G2 \u2014 there is no binding offer, only indications of interest, and critically no dated milestone; it is stalled at a price impasse. Real forward optionality, so WATCH not NONE, but the absence of a committed bid or deadline caps it below the triage's ACTIVE/7 \u2014 timing is indeterminate and the catalyst could sit dormant for quarters."
+  },
+  {
+   "symbol": "ALVO",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated binary (FDA)",
+   "catalyst": "Stacked 2026-2027 FDA decisions on three biosimilar BLAs (AVT05/Simponi, AVT06/Eylea, AVT16/interchangeable-Entyvio) with Teva as named US commercialization partner.",
+   "dated_milestone": "AVT05 (Simponi) + AVT06 (Eylea) resubmitted Jun 2026 under a stated six-month FDA review -> next decision ~Dec 2026; AVT16 interchangeable-Entyvio BLA accepted Jun 8, 2026 -> BsUFA decision ~Q1-Q2 2027.",
+   "instrument": "equity (NASDAQ: ALVO)",
+   "bloom_gates": "G1 (Teva named commercialization counterparty for all three programs) + partial G2 (concrete FDA-accepted/resubmitted BLAs with a company-stated six-month review commitment for AVT05/AVT06)",
+   "edge": "H",
+   "primary_source": "Alvotech GlobeNewswire releases: AVT05/AVT06 resubmission (2026-06-04) and AVT16 BLA acceptance (2026-06-08); FMP quote 2026-07-01 ($3.58, $1.2B cap).",
+   "verdict": "CONFIRMED",
+   "kill_fact": "All three milestones confirmed via primary GlobeNewswire releases: (a) June 4, 2026 \u2014 AVT05/Simponi + AVT06/Eylea BLAs resubmitted post-PAAL, company states expected FDA six-month review (implies ~Dec 2026 decisions); (b) June 8, 2026 \u2014 AVT16 interchangeable-Entyvio BLA accepted for review. Teva explicitly named as commercialization partner for all three ('Alvotech responsible for development/manufacturing, Teva responsible for commercialization'). None have fired \u2014 all forward. Caveat verified accurate: releases disclose NO exact PDUFA/BsUFA goal dates, so AVT16 ~2027 timing is inferred from standard review windows, not company-published \u2014 correctly flagged as WATCH-grade precision. Near-dated AVT05/AVT06 pair justifies clean ACTIVE.",
+   "analysis": "Three distinct, dated, forward FDA milestones are confirmed via GlobeNewswire (Jun 4 and Jun 8, 2026): AVT05/AVT06 resubmitted with a stated six-month review implying ~Dec 2026 decisions, and AVT16 interchangeable-Entyvio BLA accepted Jun 8, 2026 implying a ~2027 BsUFA decision. Teva is the named commercialization counterparty for all three (Bloom G1), and none have fired. Weakness: press releases do not disclose exact PDUFA/BsUFA goal dates, so timing (esp. AVT16) is inferred from standard review windows rather than a company-published date \u2014 hence WATCH-grade precision on AVT16 but a clean ACTIVE overall given the near-dated AVT05/AVT06 pair."
+  },
+  {
+   "symbol": "AMLX",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "dated binary (asymmetric readout)",
+   "catalyst": "Q3 2026 topline readout of the pivotal Phase 3 LUCIDITY trial of avexitide (first-in-class GLP-1 receptor antagonist) in post-bariatric hypoglycemia \u2014 the first-ever potential PBH therapy.",
+   "dated_milestone": "LUCIDITY Phase 3 topline data \u2014 Q3 2026 (company reaffirmed \"on track\" in Q1 2026 results; enrollment completed March 2026, 78 participants)",
+   "instrument": "AMLX common (single-asset pivotal binary)",
+   "bloom_gates": "G2 (company-committed Q3 2026 topline, enrollment complete Mar 2026, FDA-agreed primary endpoint); G3 (specific unpriced figure \u2014 78-pt pivotal for a first-in-class, Breakthrough/Orphan-designated therapy in a market with zero approved PBH drugs, NDA-eligible Q4-26/Q1-27, launch 2027)",
+   "edge": "H \u2014 clean single-asset binary with a hard near-term date, fully funded through readout (cash into 2028, $279.8M as of 3/31/26), so no dilution/financing overhang before the event; first-in-class + orphan exclusivity gives large approval upside vs a de-risked failure floor.",
+   "primary_source": "Amylyx Q1 2026 Financial Results, amylyx.com (reaffirms Q3 2026 LUCIDITY topline, $279.8M cash / runway into 2028, enrollment completed Mar 2026 w/ 78 participants), published ~May 2026; plus enrollment-completion PR (Mar 2026)",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Amylyx Q1 2026 results (press release dated May 7, 2026) explicitly state LUCIDITY topline \"is on track and anticipated in the third quarter of 2026\"; 78-participant Phase 3 enrollment completed March 2026; avexitide is a first-in-class GLP-1 receptor antagonist with FDA Breakthrough Therapy + Orphan designations and an FDA-agreed primary endpoint; company funded into 2028 (no competing financing catalyst). As of 2026-07-02 the binary has NOT fired \u2014 dated, forward, imminent.",
+   "analysis": "Enrollment in the 78-participant Phase 3 LUCIDITY trial completed March 2026 and Amylyx reaffirmed in its Q1 2026 results (filed early May 2026) that topline data remains \"on track\" for Q3 2026 \u2014 a dated, forward binary that has not yet fired as of 2026-07-02, with the readout window now imminent. Avexitide would be the first approved therapy for post-bariatric hypoglycemia (FDA Breakthrough + Orphan designation, FDA-agreed primary endpoint), supporting a mispriced-asymmetry thesis, and the company is funded into 2028 so there is no financing catalyst competing before the event. Risk: it is a single Phase 3 readout (binary downside), and Q3-2026 is the current quarter so the event could land within weeks \u2014 position sizing must respect a real chance of a negative topline; NDA/launch timing (Q4-26/Q1-27 filing, 2027 launch) is contingent on a positive readout."
+  }
+ ]
+}
