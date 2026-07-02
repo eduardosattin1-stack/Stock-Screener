@@ -1,0 +1,352 @@
+"""IBKR execution for the D10 sleeve — three scheduled invocations, not a daemon.
+
+  --stage    22:35 CET (after the nightly scan): gates -> stage pending entries.
+             Pure data work, no orders, market closed.
+  --morning  09:25 ET: place DAY marketable limits for staged entries, wait a
+             fill window (marketable limits fill in seconds or not at all),
+             attach OCA exit pairs off the ACTUAL fill price, cancel the rest.
+  --eod      after the close: reconcile fills/exits vs the ledger, advance bar
+             counts (trading days only), fire terminal MOO sells at bar 60,
+             snapshot equity.
+
+Same IBKR login as the portfolio mirror (one shared gateway); every order is
+pinned to cfg.ib_account with the bot's own client id. cfg.dry_run logs order
+specs instead of placing them — flip via TRADEBOT_LIVE=1 only.
+
+Order specs are plain dicts so all construction logic is unit-testable without
+ib_insync; only _place/_connect touch the API.
+"""
+import logging
+import math
+from datetime import date
+
+from .config import BotConfig
+from . import ledger, risk, signals
+
+log = logging.getLogger("tradebot.execution")
+
+
+# ────────────────────────── pure construction logic ──────────────────────────
+
+def qty_for(slot_usd: float, limit_price: float) -> int:
+    """Shares sized off the LIMIT (worst fill) so cost never exceeds the slot."""
+    if slot_usd <= 0 or limit_price <= 0:
+        return 0
+    return int(math.floor(slot_usd / limit_price))
+
+
+def build_entry(cfg: BotConfig, cand: dict, qty: int) -> dict:
+    limit = round(cand["price"] * (1.0 + cfg.chase_cap), 2)
+    return {"symbol": cand["symbol"], "action": "BUY", "type": "LMT", "qty": qty,
+            "limit": limit, "tif": "DAY", "account": cfg.ib_account}
+
+
+def build_exit_pair(cfg: BotConfig, symbol: str, qty: int, fill_price: float,
+                    tag: str) -> list:
+    """Target limit + disaster stop as an OCA pair (one cancels the other).
+    Terminal (bar 60) exits are separate MOO orders from --eod."""
+    oca = f"x_{symbol}_{tag}"
+    target = {"symbol": symbol, "action": "SELL", "type": "LMT", "qty": qty,
+              "limit": round(fill_price * cfg.barrier_mult, 2), "tif": "GTC",
+              "ocaGroup": oca, "account": cfg.ib_account}
+    stop = {"symbol": symbol, "action": "SELL", "type": "STP", "qty": qty,
+            "stop": round(fill_price * (1.0 - cfg.disaster_stop_frac), 2), "tif": "GTC",
+            "ocaGroup": oca, "account": cfg.ib_account}
+    return [target, stop]
+
+
+def build_terminal_exit(cfg: BotConfig, symbol: str, qty: int) -> dict:
+    """Market-on-open sell for the next session (placed after the close)."""
+    return {"symbol": symbol, "action": "SELL", "type": "MKT", "qty": qty,
+            "tif": "OPG", "account": cfg.ib_account}
+
+
+def due_terminal(pos: dict, cfg: BotConfig) -> bool:
+    return pos.get("status") == "OPEN" and int(pos.get("bar_count") or 0) >= cfg.window_bars
+
+
+def detect_exits(ledger_open: list, ib_positions: dict) -> list:
+    """Ledger-open symbols absent from IBKR positions -> an exit order filled
+    (target/stop/terminal) since the last reconcile. Returns those positions."""
+    return [p for p in ledger_open if p["symbol"] not in ib_positions]
+
+
+def classify_exit(pos: dict, exec_price: float) -> str:
+    """Nearest exit reason from the fill price (executions carry no order tag
+    after restarts): target, disaster stop, else terminal/manual."""
+    if exec_price >= pos["target_price"] * 0.995:
+        return "TARGET"
+    if exec_price <= pos["stop_price"] * 1.05:
+        return "DISASTER_STOP"
+    return "TERMINAL"
+
+
+# ────────────────────────── IB plumbing (thin, untested) ──────────────────────────
+
+def _connect(cfg: BotConfig):
+    from ib_insync import IB
+    ib = IB()
+    ib.connect(cfg.ib_host, cfg.ib_port, clientId=cfg.ib_client_id, timeout=20)
+    accounts = ib.managedAccounts()
+    if cfg.ib_account not in accounts:
+        ib.disconnect()
+        raise RuntimeError(f"bot account {cfg.ib_account} not in managed accounts {accounts}")
+    return ib
+
+
+def _try_connect(cfg: BotConfig):
+    """Connect even in dry-run (read-only: quotes, equity, positions) so the
+    dry-run exercises the full data path — order placement is separately gated
+    by cfg.dry_run in _place. Absent/unreachable gateway degrades gracefully."""
+    try:
+        return _connect(cfg)
+    except Exception as e:
+        log.warning(f"IB gateway unavailable ({e}); continuing without it")
+        return None
+
+
+def _contract(ib, symbol: str):
+    from ib_insync import Stock
+    c = Stock(symbol, "SMART", "USD")
+    ib.qualifyContracts(c)
+    return c
+
+
+def _to_order(spec: dict):
+    from ib_insync import LimitOrder, MarketOrder, StopOrder, Order
+    if spec["type"] == "LMT":
+        o = LimitOrder(spec["action"], spec["qty"], spec["limit"])
+    elif spec["type"] == "STP":
+        o = StopOrder(spec["action"], spec["qty"], spec["stop"])
+    else:
+        o = MarketOrder(spec["action"], spec["qty"])
+    o.tif = spec["tif"]
+    o.account = spec["account"]
+    if spec.get("ocaGroup"):
+        o.ocaGroup, o.ocaType = spec["ocaGroup"], 1
+    return o
+
+
+def _place(ib, cfg: BotConfig, gcs, spec: dict, why: str):
+    ledger.log_event(gcs, cfg, "ORDER_DRY" if cfg.dry_run else "ORDER", why=why, **spec)
+    if cfg.dry_run:
+        log.info(f"DRY-RUN {why}: {spec}")
+        return None
+    return ib.placeOrder(_contract(ib, spec["symbol"]), _to_order(spec))
+
+
+def _equity_and_cash(ib, cfg: BotConfig) -> tuple:
+    vals = {v.tag: float(v.value) for v in ib.accountSummary(cfg.ib_account)
+            if v.tag in ("NetLiquidation", "TotalCashValue")}
+    return vals.get("NetLiquidation", 0.0), vals.get("TotalCashValue", 0.0)
+
+
+def _live_positions(ib, cfg: BotConfig) -> dict:
+    return {p.contract.symbol: p.position for p in ib.positions(cfg.ib_account)
+            if p.position != 0}
+
+
+def _market_was_open_today(ib) -> bool:
+    """One SPY daily bar — guards bar_count against holidays."""
+    from ib_insync import Stock
+    bars = ib.reqHistoricalData(Stock("SPY", "SMART", "USD"), "", "2 D", "1 day",
+                                "TRADES", useRTH=True)
+    return bool(bars) and bars[-1].date.isoformat() == date.today().isoformat()
+
+
+# ────────────────────────── the three entrypoints ──────────────────────────
+
+def run_stage(cfg: BotConfig, gcs) -> dict:
+    """22:35 CET — no orders, no IB. Gates on last-known equity."""
+    state = ledger.read_state(gcs, cfg)
+    scan = gcs["read"](cfg.scan_path, {})
+    summary = gcs["read"](cfg.cal_summary_path, {})
+    edges = ((gcs["read"](cfg.cal_config_path, {}) or {}).get("decile_thresholds") or {}).get(cfg.regime)
+    today = date.today().isoformat()
+    equity = ledger.day_start_equity(state, "9999") or 0.0  # latest snapshot
+    paper = False
+    if cfg.dry_run and equity <= 0:
+        equity, paper = cfg.paper_equity_usd, True  # unfunded rehearsal sizing
+
+    held = {p["symbol"] for p in ledger.open_positions(state)}
+    pending = {p["symbol"] for p in state["pending_entries"]}
+    n_open, n_pend = len(held), len(pending)
+    gates = risk.entry_gates(cfg, gcs, state, summary, equity, 0.0, n_open, n_pend, today)
+    if not risk.all_pass(gates):
+        ledger.log_event(gcs, cfg, "STAGE_BLOCKED",
+                         gates=[f"{n}:{d}" for n, ok, d in gates if not ok])
+        ledger.write_state(gcs, cfg, state)
+        return {"staged": 0, "blocked": True}
+
+    slots_free = risk.max_open_slots(cfg, today) - n_open - n_pend
+    scan_date = (scan.get("scan_date") or today)[:10]
+    picks = signals.select_candidates(scan.get("stocks", []), edges or [], cfg,
+                                      held, pending, ledger.sector_counts(state), slots_free)
+    slot = risk.slot_size_usd(equity, cfg, today)
+    staged = 0
+    for cand in picks:
+        limit = round(cand["price"] * (1.0 + cfg.chase_cap), 2)
+        q = qty_for(slot, limit)
+        if q < 1:
+            ledger.log_event(gcs, cfg, "ENTRY_SKIPPED", symbol=cand["symbol"],
+                             reason="qty<1 at slot size")
+            continue
+        ledger.stage_pending(state, cand, q, limit, scan_date)
+        staged += 1
+    ledger.log_event(gcs, cfg, "STAGED", n=staged, slot_usd=slot, scan_date=scan_date,
+                     paper_equity=paper)
+    ledger.write_state(gcs, cfg, state)
+    return {"staged": staged, "blocked": False}
+
+
+def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900) -> dict:
+    """09:25 ET — entries + fill-window + OCA exits off actual fills."""
+    state = ledger.read_state(gcs, cfg)
+    if not state["pending_entries"]:
+        return {"placed": 0, "filled": 0}
+    ib = _try_connect(cfg)
+    if ib is None and not cfg.dry_run:
+        raise RuntimeError("LIVE mode but IB gateway unreachable — no orders placed")
+    today = date.today().isoformat()
+    try:
+        equity, _cash = _equity_and_cash(ib, cfg) if ib else (0.0, 0.0)
+        if not equity:  # dry-run: latest snapshot, else unfunded-rehearsal paper equity
+            equity = ledger.day_start_equity(state, "9999")
+            if cfg.dry_run and equity <= 0:
+                equity = cfg.paper_equity_usd
+        summary = gcs["read"](cfg.cal_summary_path, {})
+        n_open = len(ledger.open_positions(state))
+        gates = risk.entry_gates(cfg, gcs, state, summary, equity,
+                                 ledger.day_start_equity(state, today),
+                                 n_open, 0, today, check_sizing=False)
+        if not risk.all_pass(gates):
+            ledger.log_event(gcs, cfg, "MORNING_BLOCKED",
+                             gates=[f"{n}:{d}" for n, ok, d in gates if not ok])
+            state["pending_entries"] = []
+            ledger.write_state(gcs, cfg, state)
+            return {"placed": 0, "filled": 0, "blocked": True}
+
+        placed, trades = [], {}
+        for pend in list(state["pending_entries"]):
+            sym = pend["symbol"]
+            if ib:  # corp-action guard needs a live quote
+                tick = ib.reqTickers(_contract(ib, sym))
+                quote = (tick[0].marketPrice() or 0.0) if tick else 0.0
+                if not risk.corp_action_guard(pend["scan_close"], quote, cfg):
+                    ledger.log_event(gcs, cfg, "ENTRY_SKIPPED", symbol=sym,
+                                     reason=f"corp-action guard: scan {pend['scan_close']} vs quote {quote}")
+                    state["pending_entries"] = [p for p in state["pending_entries"]
+                                                if p["symbol"] != sym]
+                    continue
+            spec = {"symbol": sym, "action": "BUY", "type": "LMT", "qty": pend["qty"],
+                    "limit": pend["limit_price"], "tif": "DAY", "account": cfg.ib_account}
+            t = _place(ib, cfg, gcs, spec, "entry")
+            if t is not None:
+                trades[sym] = t
+            placed.append(sym)
+
+        filled = 0
+        if ib and trades:
+            ib.sleep(5)
+            deadline = fill_wait_s
+            while deadline > 0 and any(not t.isDone() for t in trades.values()):
+                ib.sleep(10)
+                deadline -= 10
+            for sym, t in trades.items():
+                if t.orderStatus.status == "Filled":
+                    fp = t.orderStatus.avgFillPrice
+                    pos = ledger.record_fill(state, cfg, sym, fp, int(t.orderStatus.filled), today)
+                    for spec in build_exit_pair(cfg, sym, pos["qty"], fp, today.replace("-", "")):
+                        _place(ib, cfg, gcs, spec, "exit-pair")
+                    ledger.log_event(gcs, cfg, "FILL", symbol=sym, price=fp,
+                                     slippage_pct=pos["entry_slippage_pct"])
+                    filled += 1
+                else:  # unfilled/partial past the window -> cancel, gap-skip
+                    ib.cancelOrder(t.order)
+                    ledger.log_event(gcs, cfg, "ENTRY_SKIPPED", symbol=sym,
+                                     reason=f"unfilled in window (gap>cap), status={t.orderStatus.status}")
+                    state["pending_entries"] = [p for p in state["pending_entries"]
+                                                if p["symbol"] != sym]
+        elif cfg.dry_run:
+            # dry-run: simulate fills at scan close for pipeline testing
+            for pend in list(state["pending_entries"]):
+                pos = ledger.record_fill(state, cfg, pend["symbol"], pend["scan_close"],
+                                         pend["qty"], today)
+                for spec in build_exit_pair(cfg, pend["symbol"], pos["qty"],
+                                            pos["fill_price"], today.replace("-", "")):
+                    _place(ib, cfg, gcs, spec, "exit-pair")
+                filled += 1
+        ledger.write_state(gcs, cfg, state)
+        return {"placed": len(placed), "filled": filled}
+    finally:
+        if ib:
+            ib.disconnect()
+
+
+def run_eod(cfg: BotConfig, gcs) -> dict:
+    """After the close — reconcile (live only), advance bars, terminals, snapshot.
+
+    Dry-run WITH a reachable gateway is the full rehearsal: real equity
+    snapshots (so staging un-blocks once the account is funded), real trading-day
+    detection, simulated positions aging normally — only orders are simulated.
+    Reconciliation against IBKR positions is live-only (simulated positions
+    don't exist at the broker and would all read as false exits)."""
+    state = ledger.read_state(gcs, cfg)
+    ib = _try_connect(cfg)
+    if ib is None and not cfg.dry_run:
+        raise RuntimeError("LIVE mode but IB gateway unreachable — cannot reconcile")
+    today = date.today().isoformat()
+    try:
+        exits = terminals = 0
+        if ib and not cfg.dry_run:
+            live = _live_positions(ib, cfg)
+            fills_today = {f.contract.symbol: f.execution.price for f in ib.fills()
+                           if f.execution.side == "SLD"}
+            tracked = [p for p in state["positions"]
+                       if p.get("status") in ("OPEN", "TERMINAL_PENDING")]
+            for pos in detect_exits(tracked, live):
+                px = fills_today.get(pos["symbol"])
+                reason = ("TERMINAL" if pos["status"] == "TERMINAL_PENDING"
+                          else classify_exit(pos, px)) if px else "UNKNOWN"
+                if px is None:
+                    px = pos["target_price"]  # placeholder; supervisor flags UNKNOWN
+                pos["status"] = "OPEN"  # so close_position finds it
+                ledger.close_position(state, pos["symbol"], px, today, reason)
+                ledger.log_event(gcs, cfg, "EXIT", symbol=pos["symbol"], price=px,
+                                 reason=reason, realized_pct=pos.get("realized_pct"))
+                exits += 1
+        if ib and _market_was_open_today(ib):
+            for pos in ledger.open_positions(state):
+                pos["bar_count"] = int(pos.get("bar_count") or 0) + 1
+        for pos in [p for p in ledger.open_positions(state) if due_terminal(p, cfg)]:
+            if ib and not cfg.dry_run:
+                # cancel the OCA pair first, then MOO sell for the next open
+                for t in ib.openTrades():
+                    if (t.contract.symbol == pos["symbol"]
+                            and t.order.account == cfg.ib_account
+                            and t.order.action == "SELL"):
+                        ib.cancelOrder(t.order)
+                _place(ib, cfg, gcs, build_terminal_exit(cfg, pos["symbol"], pos["qty"]),
+                       "terminal-bar60")
+                pos["status"] = "TERMINAL_PENDING"
+                terminals += 1
+            elif ib:  # dry-run: simulate the terminal close at the market quote
+                tick = ib.reqTickers(_contract(ib, pos["symbol"]))
+                px = (tick[0].marketPrice() or 0.0) if tick else 0.0
+                if px > 0:
+                    ledger.close_position(state, pos["symbol"], px, today, "TERMINAL")
+                    ledger.log_event(gcs, cfg, "EXIT_SIM", symbol=pos["symbol"],
+                                     price=px, reason="TERMINAL")
+                    terminals += 1
+        if ib:
+            equity, cash = _equity_and_cash(ib, cfg)
+            if equity > 0:
+                ledger.equity_snapshot(state, equity, cash, today)
+        ledger.log_event(gcs, cfg, "EOD", open=len(ledger.open_positions(state)),
+                         exits=exits, terminals=terminals, dry_run=cfg.dry_run)
+        ledger.write_state(gcs, cfg, state)
+        return {"exits": exits, "terminals": terminals,
+                "open": len(ledger.open_positions(state))}
+    finally:
+        if ib:
+            ib.disconnect()
