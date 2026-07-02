@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from "next/navigation";
-import { Activity, RefreshCw, BarChart2, Target, Radar, Calendar, TrendingUp, TrendingDown, Award } from 'lucide-react';
+import { Activity, RefreshCw, BarChart2, Target, Radar, Calendar, TrendingUp, TrendingDown, Award, Zap } from 'lucide-react';
 import { useAuth } from "../AuthProvider";
 import { getPortfolio } from "../portfolioStore";
 
@@ -84,10 +84,14 @@ export function RegimePulseCard({ macro }: { macro?: any }) {
 }
 
 // ── On Your Radar — personalized, client-computed ───────────────────────────
-// Earnings within 10 days + >3% intraday moves on the names the user actually
-// holds (per-user Firestore) or watches (localStorage). These are the only two
-// data stores the server route can't reach, so this card is built in the client.
-interface RadarItem { sym: string; kind: "earnings" | "move"; tag: "HELD" | "WATCH"; dte?: number; day?: number; name?: string; }
+// Catalyst events (earnings w/ beat history, analyst upgrades/downgrades,
+// M&A/activist activity, catalyst news) + >3% intraday moves on the names the
+// user actually holds (per-user Firestore) or watches (localStorage). Catalyst
+// text comes from the scan's catalyst_flags (screener_v6.compute_catalyst_score) —
+// the same signal already computed for every stock but previously only used
+// internally for scoring, never surfaced here. Portfolio/watchlist are the only
+// two data stores the server route can't reach, so this card is built client-side.
+interface RadarItem { sym: string; kind: "catalyst" | "earnings" | "move"; tag: "HELD" | "WATCH"; dte?: number; day?: number; name?: string; catalystText?: string; catalystWarn?: boolean; }
 
 function useRadarItems(stocks: any[] | undefined, uid: string | undefined, nonce: number) {
   const [items, setItems] = useState<RadarItem[]>([]);
@@ -148,17 +152,27 @@ function useRadarItems(stocks: any[] | undefined, uid: string | undefined, nonce
         const sc = byScan[sym];
         const tag: "HELD" | "WATCH" = heldSet.has(sym) ? "HELD" : "WATCH";
         const name = q?.name || sc?.company_name;
+        const flags: string[] = Array.isArray(sc?.catalyst_flags) ? sc.catalyst_flags : [];
+        const hasEarningsFlag = flags.some((f) => f.includes("Earnings in"));
+        if (flags.length) {
+          out.push({ sym, kind: "catalyst", tag, name, catalystText: flags.slice(0, 2).join(" · "), catalystWarn: flags.some((f) => f.includes("⚠")) });
+        }
         const dte = sc?.days_to_earnings;
-        if (dte != null && dte >= 0 && dte <= 10) out.push({ sym, kind: "earnings", tag, dte, name });
+        // Plain "Earnings Nd" only when catalyst_flags didn't already cover it with
+        // beat-history context — avoids a duplicate line for the same event.
+        if (!hasEarningsFlag && dte != null && dte >= 0 && dte <= 10) out.push({ sym, kind: "earnings", tag, dte, name });
         const day = q?.day;
         if (day != null && Math.abs(day) >= 3) out.push({ sym, kind: "move", tag, day, name });
       }
-      // Earnings first (soonest), then moves (biggest).
+      // Catalyst events first (what's actually happening), then earnings countdowns
+      // without richer context, then pure price moves last.
+      const rank = (k: RadarItem["kind"]) => (k === "catalyst" ? 0 : k === "earnings" ? 1 : 2);
       out.sort((a, b) => {
-        const ak = a.kind === "earnings" ? 0 : 1, bk = b.kind === "earnings" ? 0 : 1;
+        const ak = rank(a.kind), bk = rank(b.kind);
         if (ak !== bk) return ak - bk;
         if (a.kind === "earnings") return (a.dte ?? 0) - (b.dte ?? 0);
-        return Math.abs(b.day ?? 0) - Math.abs(a.day ?? 0);
+        if (a.kind === "move") return Math.abs(b.day ?? 0) - Math.abs(a.day ?? 0);
+        return 0;
       });
       if (cancelled) return;
       setItems(out);
@@ -318,18 +332,20 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
           )}
           {radar.status === "empty-quiet" && (
             <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
-              Nothing pressing — no earnings within 10 days and no moves over 3% across your {radar.counts.held + radar.counts.watch} name{radar.counts.held + radar.counts.watch !== 1 ? "s" : ""} today.
+              Nothing pressing — no catalyst events, no earnings within 10 days, and no moves over 3% across your {radar.counts.held + radar.counts.watch} name{radar.counts.held + radar.counts.watch !== 1 ? "s" : ""} today.
             </div>
           )}
           {radar.status === "ready" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {radar.items.slice(0, 5).map((it, i) => (
                 <div key={`${it.sym}-${it.kind}-${i}`} onClick={() => router.push(`/stock/${encodeURIComponent(it.sym)}`)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                  {it.kind === "earnings" ? <Calendar size={12} color="var(--amber)" style={{ flexShrink: 0 }} /> : <TrendingUp size={12} color={(it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)"} style={{ flexShrink: 0 }} />}
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{it.sym}</span>
+                  {it.kind === "catalyst"
+                    ? <Zap size={12} color={it.catalystWarn ? "var(--red)" : "var(--green)"} style={{ flexShrink: 0 }} />
+                    : it.kind === "earnings" ? <Calendar size={12} color="var(--amber)" style={{ flexShrink: 0 }} /> : <TrendingUp size={12} color={(it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)"} style={{ flexShrink: 0 }} />}
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)", flexShrink: 0 }}>{it.sym}</span>
                   {tagChip(it.tag)}
-                  <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: it.kind === "earnings" ? "var(--amber)" : (it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                    {it.kind === "earnings" ? (it.dte === 0 ? "Earnings today" : `Earnings ${it.dte}d`) : `${(it.day ?? 0) >= 0 ? "+" : ""}${(it.day ?? 0).toFixed(2)}%`}
+                  <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, textAlign: "right", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: it.kind === "catalyst" ? (it.catalystWarn ? "var(--red)" : "var(--green)") : it.kind === "earnings" ? "var(--amber)" : (it.day ?? 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                    {it.kind === "catalyst" ? it.catalystText : it.kind === "earnings" ? (it.dte === 0 ? "Earnings today" : `Earnings ${it.dte}d`) : `${(it.day ?? 0) >= 0 ? "+" : ""}${(it.day ?? 0).toFixed(2)}%`}
                   </span>
                 </div>
               ))}
