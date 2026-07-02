@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, BarChart3, Target, Clock, ChevronDown, ChevronRight, Search, FlaskConical, Sparkles } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Clock, ChevronDown, ChevronRight, Search, FlaskConical, Sparkles, Bot } from "lucide-react";
 
 // ── Data sources ─────────────────────────────────────────────────────────────
 const CALIBRATION_V2 = "/api/performance/calibration-v2";
@@ -1072,6 +1072,262 @@ function FrozenSim() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// SECTION 6 — TRADEBOT (automated IBKR execution of the D10 60d/+20% sleeve)
+// Reads gs://…/tradebot/state.json + trades.jsonl via the GCS proxy; live
+// prices via FMP batch quotes. Dry-run (paper $25k) until the account is
+// funded and LIVE.flag exists on the gateway PC.
+// ══════════════════════════════════════════════════════════════════════════════
+interface BotPosition {
+  symbol: string; sector: string; p: number; qty: number;
+  fill_price: number; scan_close: number; scan_date: string; entry_date: string;
+  target_price: number; stop_price: number; bar_count: number;
+  entry_slippage_pct: number; status: string;
+  exit_price?: number; exit_date?: string; exit_reason?: string; realized_pct?: number;
+}
+interface BotPending {
+  symbol: string; sector: string; p: number; scan_close: number; scan_date: string;
+  qty: number; limit_price: number; staged_at: string;
+}
+interface BotState {
+  positions: BotPosition[];
+  pending_entries: BotPending[];
+  equity_history: { date: string; equity: number; cash: number }[];
+  created?: string;
+}
+interface BotEvent { ts: string; event: string; [k: string]: unknown }
+
+const PAPER_BASIS = 25_000; // mirrors backend/tradebot config paper_equity_usd
+
+function botStat(label: string, value: string, color?: string, sub?: string) {
+  return (
+    <div style={{ padding: "10px 14px", borderRight: `1px solid ${T.divider}`, minWidth: 110 }}>
+      <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: color || T.text, fontFamily: T.mono, marginTop: 2 }}>{value}</div>
+      {sub && <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono, marginTop: 1 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function TradeBotSection() {
+  const [bot, setBot] = useState<BotState | null>(null);
+  const [events, setEvents] = useState<BotEvent[]>([]);
+  const [halted, setHalted] = useState(false);
+  const [absent, setAbsent] = useState(false);   // 404: bot namespace not created — hide
+  const [loadErr, setLoadErr] = useState(false); // 5xx/transient: keep the section, say so
+  const [tick, setTick] = useState(0);           // ledger refresh cycle (state changes 3×/day)
+  const [prices, setPrices] = useState<Record<string, number>>({});
+  const [priceAsOf, setPriceAsOf] = useState("");
+
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 300_000); // re-pull the ledger every 5 min
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/gcs/tradebot/state.json`, { cache: "no-store" })
+      .then(r => {
+        if (r.status === 404) { setAbsent(true); return null; }
+        if (!r.ok) { setLoadErr(true); return null; }
+        return r.json();
+      })
+      .then((s: BotState | null) => { if (s) { setBot(s); setLoadErr(false); } })
+      .catch(() => setLoadErr(true));
+    fetch(`/api/gcs/tradebot/trades.jsonl`, { cache: "no-store" })
+      .then(r => r.ok ? r.text() : "")
+      .then(t => {
+        const rows = t.trim().split("\n").filter(Boolean).slice(-14)
+          .map(l => { try { return JSON.parse(l) as BotEvent; } catch { return null; } })
+          .filter((x): x is BotEvent => !!x);
+        setEvents(rows.reverse());
+      })
+      .catch(() => { /* log absent → events stay empty */ });
+    fetch(`/api/gcs/tradebot/HALT`, { cache: "no-store" })
+      .then(r => setHalted(r.ok))
+      .catch(() => { /* proxy error ≠ halted */ });
+  }, [tick]);
+
+  const opens = useMemo(() => (bot?.positions ?? []).filter(p => p.status === "OPEN" || p.status === "TERMINAL_PENDING"), [bot]);
+  const closed = useMemo(() => (bot?.positions ?? []).filter(p => p.status === "CLOSED"), [bot]);
+  const pending = bot?.pending_entries ?? [];
+
+  // live prices for the open book (light poll — a handful of symbols)
+  useEffect(() => {
+    const syms = Array.from(new Set(opens.map(p => p.symbol)));
+    if (!syms.length) return;
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/fmp?e=batch-quote&symbols=${syms.join(",")}&t=${Date.now()}`);
+        if (!res.ok) return;
+        const arr = await res.json();
+        const out: Record<string, number> = {};
+        if (Array.isArray(arr)) for (const q of arr) {
+          if (q && typeof q.symbol === "string" && typeof q.price === "number") out[q.symbol] = q.price;
+        }
+        if (!cancelled && Object.keys(out).length) { setPrices(prev => ({ ...prev, ...out })); setPriceAsOf(new Date().toLocaleTimeString()); }
+      } catch { /* keep last prices */ }
+    };
+    poll();
+    const id = setInterval(poll, 60000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [opens]);
+
+  if (absent) return null; // bot namespace not created yet — hide the section entirely
+
+  if (loadErr && !bot) {
+    return (
+      <Card style={{ marginBottom: 20 }}>
+        <SH title="TradeBot — automated execution (D10 · 60-bar / +20% barrier)" icon={<Bot size={12} />} />
+        <div style={{ padding: 18, fontSize: 11, color: T.light, fontFamily: T.mono }}>
+          Bot ledger temporarily unavailable (GCS proxy error) — the bot itself is unaffected; refresh in a minute.
+        </div>
+      </Card>
+    );
+  }
+
+  const eq = bot?.equity_history?.length ? bot.equity_history[bot.equity_history.length - 1] : null;
+  const paper = !eq;
+  const basis = eq ? eq.equity : PAPER_BASIS;
+
+  const unrealUsd = opens.reduce((a, p) => a + (prices[p.symbol] ? (prices[p.symbol] - p.fill_price) * p.qty : 0), 0);
+  const realUsd = closed.reduce((a, p) => a + ((p.exit_price ?? p.fill_price) - p.fill_price) * p.qty, 0);
+  const deployed = opens.reduce((a, p) => a + p.fill_price * p.qty, 0);
+  const totalRet = basis > 0 ? (unrealUsd + realUsd) / basis : 0;
+  const since = (bot?.created || "").slice(0, 10);
+  const fmtUsd = (v: number) => `${v < 0 ? "−" : "+"}$${Math.abs(v).toFixed(0)}`;
+
+  return (
+    <Card style={{ marginBottom: 20 }}>
+      <SH title="TradeBot — automated execution (D10 · 60-bar / +20% barrier)" icon={<Bot size={12} />}
+          sub={`Real IBKR bot on account U26508407 · entries at next open capped +2% · exits: +20% target, −65% disaster stop, bar-60 terminal · NO conventional stop (data: 46% of winners first breach −15%)${since ? ` · since ${since}` : ""}`} />
+
+      <div style={{ display: "flex", flexWrap: "wrap", borderBottom: `1px solid ${T.divider}`, alignItems: "stretch" }}>
+        {botStat("Mode", halted ? "HALTED" : paper ? "DRY-RUN" : "FUNDED", halted ? T.red : paper ? T.amber : T.greenPos,
+                 paper ? `paper $${(PAPER_BASIS / 1000).toFixed(0)}k basis` : "equity live")}
+        {botStat("Equity", `$${basis.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, T.text,
+                 eq ? `as of ${eq.date}` : "awaiting funding")}
+        {botStat("Open", `${opens.length}/20`, T.text, `$${deployed.toLocaleString(undefined, { maximumFractionDigits: 0 })} deployed`)}
+        {botStat("Pending", String(pending.length), T.text, "entries for next open")}
+        {botStat("Realized", fmtUsd(realUsd), realUsd >= 0 ? T.greenPos : T.red, `${closed.length} closed`)}
+        {botStat("Unrealized", fmtUsd(unrealUsd), unrealUsd >= 0 ? T.greenPos : T.red, priceAsOf ? `live ${priceAsOf}` : "awaiting quotes")}
+        {botStat("Total return", `${totalRet >= 0 ? "+" : ""}${(totalRet * 100).toFixed(2)}%`, totalRet >= 0 ? T.greenPos : T.red,
+                 paper ? "on paper basis" : "on equity")}
+      </div>
+
+      {opens.length > 0 && (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 11 }}>
+            <thead><tr>
+              {["Symbol", "Sector", "Qty", "Fill $", "Last $", "P&L %", "Target", "Stop", "Bar", "Slip %", "Entered"].map((h, i) => (
+                <th key={h} style={{ ...th, textAlign: i < 2 ? "left" : "right" }}>{h}</th>
+              ))}
+            </tr></thead>
+            <tbody>
+              {[...opens].sort((a, b) => a.entry_date.localeCompare(b.entry_date) || a.symbol.localeCompare(b.symbol)).map(p => {
+                const last = prices[p.symbol];
+                const pnl = last ? (last / p.fill_price - 1) * 100 : null;
+                return (
+                  <tr key={`${p.symbol}-${p.entry_date}`}>
+                    <td style={{ ...td, textAlign: "left", fontWeight: 700, color: T.text }}>{p.symbol}
+                      {p.status === "TERMINAL_PENDING" && <span style={{ marginLeft: 6, fontSize: 8, color: T.amber }}>EXITING</span>}
+                    </td>
+                    <td style={{ ...td, textAlign: "left", color: T.muted }}>{p.sector}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{p.qty}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.text }}>{p.fill_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.text }}>{last ? last.toFixed(2) : "—"}</td>
+                    <td style={{ ...td, textAlign: "right", fontWeight: 700, color: pnl == null ? T.light : pnl >= 0 ? T.greenPos : T.red }}>
+                      {pnl == null ? "—" : `${pnl >= 0 ? "+" : ""}${pnl.toFixed(1)}%`}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.greenPos }}>{p.target_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.red }}>{p.stop_price.toFixed(2)}</td>
+                    <td style={{ ...td, textAlign: "right", color: T.muted }}>{p.bar_count}/60</td>
+                    <td style={{ ...td, textAlign: "right", color: Math.abs(p.entry_slippage_pct) <= 0.5 ? T.muted : T.amber }}>
+                      {p.entry_slippage_pct >= 0 ? "+" : ""}{p.entry_slippage_pct.toFixed(2)}
+                    </td>
+                    <td style={{ ...td, textAlign: "right", color: T.light }}>{p.entry_date}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {pending.length > 0 && (
+        <div style={{ padding: "10px 14px", borderTop: `1px solid ${T.divider}` }}>
+          <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+            Pending entries — buy limits for the next open (scan close × 1.02 cap)
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {pending.map(p => (
+              <span key={p.symbol} style={{ fontSize: 10, fontFamily: T.mono, padding: "3px 8px", borderRadius: 4, background: T.amberLight, color: T.amber }}>
+                {p.symbol} · {p.qty} @ ≤{p.limit_price.toFixed(2)} <span style={{ opacity: 0.7 }}>({p.sector})</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {closed.length > 0 && (
+        <div style={{ overflowX: "auto", borderTop: `1px solid ${T.divider}` }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 11 }}>
+            <thead><tr>
+              {["Closed", "Exit reason", "Realized %", "Fill → Exit $", "Held"].map((h, i) => (
+                <th key={h} style={{ ...th, textAlign: i < 2 ? "left" : "right" }}>{h}</th>
+              ))}
+            </tr></thead>
+            <tbody>
+              {[...closed].reverse().slice(0, 20).map(p => (
+                <tr key={`${p.symbol}-c-${p.exit_date}`}>
+                  <td style={{ ...td, textAlign: "left", fontWeight: 700, color: T.text }}>{p.symbol}</td>
+                  <td style={{ ...td, textAlign: "left", color: p.exit_reason === "TARGET" ? T.greenPos : p.exit_reason === "DISASTER_STOP" ? T.red : T.muted }}>
+                    {p.exit_reason ?? "—"}
+                  </td>
+                  <td style={{ ...td, textAlign: "right", fontWeight: 700, color: (p.realized_pct ?? 0) >= 0 ? T.greenPos : T.red }}>
+                    {(p.realized_pct ?? 0) >= 0 ? "+" : ""}{(p.realized_pct ?? 0).toFixed(1)}%
+                  </td>
+                  <td style={{ ...td, textAlign: "right", color: T.muted }}>{p.fill_price.toFixed(2)} → {(p.exit_price ?? 0).toFixed(2)}</td>
+                  <td style={{ ...td, textAlign: "right", color: T.light }}>{p.entry_date} → {p.exit_date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {events.length > 0 && (
+        <div style={{ padding: "10px 14px", borderTop: `1px solid ${T.divider}` }}>
+          <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+            Recent bot events
+          </div>
+          {events.map((e, i) => {
+            const extras = Object.entries(e).filter(([k]) => k !== "ts" && k !== "event")
+              .map(([k, v]) => `${k}=${typeof v === "object" ? JSON.stringify(v) : String(v)}`).join(" ");
+            const chipColor = e.event.includes("BLOCKED") || e.event === "EXIT" && String(e.reason) === "DISASTER_STOP" ? T.red
+              : e.event === "FILL" || e.event === "STAGED" ? T.greenPos
+              : e.event.startsWith("ORDER") ? T.amber : T.muted;
+            return (
+              <div key={i} style={{ fontSize: 9.5, fontFamily: T.mono, color: T.light, padding: "2px 0", display: "flex", gap: 8 }}>
+                <span style={{ color: T.light, whiteSpace: "nowrap" }}>{e.ts.slice(0, 16).replace("T", " ")}</span>
+                <span style={{ color: chipColor, fontWeight: 600, whiteSpace: "nowrap" }}>{e.event}</span>
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{extras}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <p style={{ fontSize: 9, color: T.light, fontFamily: T.mono, margin: 0, padding: "8px 14px", borderTop: `1px solid ${T.divider}`, lineHeight: 1.5 }}>
+        {paper
+          ? "DRY-RUN rehearsal: orders are simulated (sizing on the $25k paper basis) and fills assume the scan close. Real equity takes over automatically once the account is funded; live orders additionally require LIVE.flag on the gateway PC."
+          : "Live book. Every entry carries a GTC +20% target and a −65% disaster stop (OCA pair); positions without either exit are closed at market on trading bar 60."}
+        {" "}Gates: calibration-HEALTHY · 20 slots · 4/sector · −3% daily-loss halt · kill-switch.
+      </p>
+    </Card>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // Calibration view (sections 1-4)
 // ══════════════════════════════════════════════════════════════════════════════
 function CalibrationView({ data }: { data: CalibrationV2 }) {
@@ -1160,6 +1416,8 @@ export default function Performance() {
       )}
 
       {!loading && !err && data && <CalibrationView data={data} />}
+
+      {!loading && <TradeBotSection />}
 
       {!loading && <OpusTrackRecord />}
 
