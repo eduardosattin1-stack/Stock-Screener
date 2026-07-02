@@ -5,7 +5,9 @@
 # Registration (elevated, after the EOD phase):
 #   schtasks /create /tn "TradeBot-Supervisor" /tr "powershell -ExecutionPolicy Bypass -NoProfile -File C:\Users\Bruno\Stock-Screener\backend\tradebot\run_supervisor.ps1" /sc weekly /d MON,TUE,WED,THU,FRI /st 23:00 /rl HIGHEST /f
 
-$ErrorActionPreference = "Stop"
+# EAP=Continue, not Stop: PS 5.1 wraps native stderr from `2>&1` in
+# ErrorRecords; Stop kills the run on the first stderr line (seen 2026-07-02).
+$ErrorActionPreference = "Continue"
 $here   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repo   = Split-Path -Parent (Split-Path -Parent $here)
 $logdir = Join-Path $here "_logs"
@@ -14,7 +16,7 @@ $log = Join-Path $logdir ("supervisor_{0}.log" -f (Get-Date -Format "yyyyMMdd_HH
 
 Set-Location $repo
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
-    "FATAL: claude CLI not on PATH" | Tee-Object -FilePath $log; exit 1
+    "FATAL: claude CLI not on PATH" | Out-File -FilePath $log -Encoding utf8; exit 1
 }
 
 $prompt = @"
@@ -26,9 +28,10 @@ the GCS blob tradebot/HALT. Never place orders, never edit state or code.
 Finish by printing the report verbatim.
 "@
 
-"=== tradebot supervisor START $(Get-Date -Format o) ===" | Tee-Object -FilePath $log
+"=== tradebot supervisor START $(Get-Date -Format o) ===" | Out-File -FilePath $log -Encoding utf8
 $prompt | claude -p --model opus --permission-mode bypassPermissions --output-format text 2>&1 |
-    Tee-Object -FilePath $log -Append
+    ForEach-Object { "$_" } | Out-File -FilePath $log -Encoding utf8 -Append
 $code = $LASTEXITCODE
-"=== tradebot supervisor END $(Get-Date -Format o) exit=$code ===" | Tee-Object -FilePath $log -Append
+"=== tradebot supervisor END $(Get-Date -Format o) exit=$code ===" |
+    Out-File -FilePath $log -Encoding utf8 -Append
 exit $code

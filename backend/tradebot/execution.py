@@ -83,7 +83,19 @@ def classify_exit(pos: dict, exec_price: float) -> str:
 
 # ────────────────────────── IB plumbing (thin, untested) ──────────────────────────
 
+def _ensure_event_loop():
+    """ib_insync's dependency eventkit calls get_event_loop() AT IMPORT TIME,
+    which raises on Python >=3.12 (no default loop in the main thread). The
+    loop must therefore exist BEFORE `import ib_insync` (observed 2026-07-02)."""
+    import asyncio
+    try:
+        asyncio.get_event_loop()
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
+
+
 def _connect(cfg: BotConfig):
+    _ensure_event_loop()  # must precede the import — see docstring
     from ib_insync import IB
     ib = IB()
     ib.connect(cfg.ib_host, cfg.ib_port, clientId=cfg.ib_client_id, timeout=20)

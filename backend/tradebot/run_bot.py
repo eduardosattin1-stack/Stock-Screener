@@ -25,7 +25,10 @@ from tradebot.config import BotConfig
 from tradebot import execution
 from tradebot.gcs_io import impl as gcs_impl
 
-logging.basicConfig(level=logging.INFO,
+# stdout, not stderr: under Windows PowerShell 5.1 the scheduler wrapper's
+# `2>&1` turns native stderr lines into ErrorRecords, and with EAP=Stop the
+# first log line would kill the run (observed 2026-07-02).
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                     format="%(asctime)s %(name)s %(levelname)s %(message)s")
 log = logging.getLogger("tradebot")
 

@@ -17,7 +17,11 @@
 
 param([Parameter(Mandatory = $true)][ValidateSet("stage", "morning", "eod")][string]$Phase)
 
-$ErrorActionPreference = "Stop"
+# "Continue", NOT "Stop": in Windows PowerShell 5.1, `2>&1` on a native command
+# wraps every stderr line in an ErrorRecord — under EAP=Stop the FIRST such line
+# becomes a terminating error and kills the run (this happened on 2026-07-02:
+# python's first INFO log line, on stderr, aborted all three phases with exit=1).
+$ErrorActionPreference = "Continue"
 $here   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repo   = Split-Path -Parent (Split-Path -Parent $here)   # ...\Stock-Screener
 $logdir = Join-Path $here "_logs"
@@ -28,13 +32,11 @@ Set-Location (Join-Path $repo "backend")
 if (Test-Path (Join-Path $here "LIVE.flag")) { $env:TRADEBOT_LIVE = "1" }
 
 "=== tradebot --$Phase START $(Get-Date -Format o) live=$($env:TRADEBOT_LIVE -eq '1') ===" |
-    Tee-Object -FilePath $log
-try {
-    python -u -m tradebot.run_bot --$Phase 2>&1 | Tee-Object -FilePath $log -Append
-    $code = $LASTEXITCODE
-} catch {
-    "FATAL: $_" | Tee-Object -FilePath $log -Append
-    $code = 1
-}
-"=== tradebot --$Phase END $(Get-Date -Format o) exit=$code ===" | Tee-Object -FilePath $log -Append
+    Out-File -FilePath $log -Encoding utf8
+# ForEach stringifies any ErrorRecords to plain text; utf8 keeps the log greppable
+python -u -m tradebot.run_bot --$Phase 2>&1 | ForEach-Object { "$_" } |
+    Out-File -FilePath $log -Encoding utf8 -Append
+$code = $LASTEXITCODE
+"=== tradebot --$Phase END $(Get-Date -Format o) exit=$code ===" |
+    Out-File -FilePath $log -Encoding utf8 -Append
 exit $code

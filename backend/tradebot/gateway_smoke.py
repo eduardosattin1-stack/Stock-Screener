@@ -21,6 +21,8 @@ from tradebot.config import BotConfig
 def main() -> int:
     cfg = BotConfig()
     print(f"connecting {cfg.ib_host}:{cfg.ib_port} clientId={cfg.ib_client_id} ...")
+    from tradebot.execution import _ensure_event_loop
+    _ensure_event_loop()  # must precede the ib_insync import (eventkit quirk)
     try:
         from ib_insync import IB, Stock
     except ImportError:
