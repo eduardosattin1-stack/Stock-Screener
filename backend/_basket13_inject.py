@@ -370,7 +370,51 @@ def validate(picks, bysym, live_px=None):
                 v.append(f"{p['symbol']} STAGING must be equity, got '{exp}'")
             if w > half + 0.5:
                 v.append(f"{p['symbol']} STAGING weight {w:.1f}% > half-normal {half:.1f}%")
+        # WEEKLY-DIAGNOSIS ENTRY GATE (2026-07-01): the weekly full-stack catalyst debate + skeptic
+        # runs over this whole book — consuming it here would have BLOCKED ~27 NAV-pts of dead seats
+        # (GDOT Skeptic-REFUTED at 14%, AQST SOFT->FIRED-adjacent at 4.5%, UNF trading-through).
+        # Hard-reject a NEW seat whose FRESH (<=DIAG_FRESH_DAYS) diagnosis says the edge is gone;
+        # an older artifact only warns (ad-hoc mid-week injects keep working).
+        dg = _diag_gate(p["symbol"])
+        if dg:
+            v.append(dg)
     return v
+
+
+DIAG_FRESH_DAYS = 10   # ONE freshness window, shared with _basket13_gen (red-team condition)
+
+
+def _diag_gate(sym):
+    """Return a violation string when the weekly catalyst diagnosis disqualifies a NEW entry:
+    skeptic verdict REFUTED, or catalyst_status FIRED / ARB (trading through terms). Fresh
+    (<=DIAG_FRESH_DAYS) -> hard violation; stale artifact -> warn-print only, no violation."""
+    import time as _t
+    base = os.path.join(BASE, "_opus_debate")
+    checks = []
+    sk = os.path.join(base, "_catalyst_skeptic", f"{sym}.json")
+    if os.path.exists(sk):
+        try:
+            d = json.load(open(sk, encoding="utf-8"))
+            if (d.get("verdict") or "").upper() == "REFUTED":
+                checks.append(("skeptic REFUTED: " + str(d.get("kill_fact", ""))[:120], os.path.getmtime(sk)))
+        except Exception:
+            pass
+    rs = os.path.join(base, "_catalyst_results", f"{sym}.json")
+    if os.path.exists(rs):
+        try:
+            d = json.load(open(rs, encoding="utf-8"))
+            cs = (d.get("catalyst_status") or "").upper()
+            if cs.startswith("FIRED") or cs.startswith("ARB"):
+                checks.append((f"catalyst_status {cs} (re-rate spent / trading through terms)", os.path.getmtime(rs)))
+        except Exception:
+            pass
+    for reason, mtime in checks:
+        age_d = (_t.time() - mtime) / 86400
+        if age_d <= DIAG_FRESH_DAYS:
+            return f"{sym} BLOCKED by weekly diagnosis ({age_d:.0f}d old): {reason}"
+        print(f"WARN {sym}: STALE weekly diagnosis ({age_d:.0f}d > {DIAG_FRESH_DAYS}d) says '{reason}' "
+              f"— not blocking (re-run the catalyst workflow to refresh)")
+    return None
 
 
 # ----------------------------------------------------------------------- inject

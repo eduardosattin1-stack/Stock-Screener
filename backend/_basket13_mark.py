@@ -59,6 +59,59 @@ def main():
                     e["hedge"]["price_at_entry"] = hpx   # hedge leg references fill-day close
             filled.append(f"{e['symbol']}@{e['limit_price']}")
 
+    # 1b. RESOLUTION RADAR (2026-07-01, alert-only — resolutions stay a HUMAN stamp on primary
+    # sources): flag any OPEN seat that looks DEAD so it can't rot past its catalyst unnoticed
+    # (VRDN sat OPEN past its 06-30 readout; GDOT past a Skeptic-REFUTED). Conditions:
+    #   (a) dated_milestone + ~5 trading days grace has passed;
+    #   (b) the close crossed fair_value_target (thesis paid) or downside_floor (floor broken);
+    #   (c) the weekly catalyst diagnosis says FIRED (debate) or REFUTED (skeptic), fresh <=10d
+    #       (same window as _basket13_gen/_basket13_inject — ONE staleness rule).
+    # Stamps resolution_due={date,reason} (refreshed each mark; cleared when no condition holds).
+    DIAG_FRESH_DAYS = 10
+    GRACE_DAYS = 7                                       # ~5 trading days
+    cat_res = os.path.join(BASE, "_opus_debate", "_catalyst_results")
+    cat_skp = os.path.join(BASE, "_opus_debate", "_catalyst_skeptic")
+    due = []
+    for e in unresolved:
+        if e.get("status") == "PENDING_LIMIT":
+            continue
+        sym, reasons = e["symbol"], []
+        dm = e.get("dated_milestone")
+        if dm:
+            try:
+                dmd = datetime.date.fromisoformat(str(dm)[:10])
+                if (datetime.date.today() - dmd).days > GRACE_DAYS:
+                    reasons.append(f"milestone {dm} passed +{(datetime.date.today() - dmd).days}d")
+            except Exception:
+                pass
+        px = quotes.get(sym.upper())
+        tgt, flr = e.get("fair_value_target"), e.get("downside_floor")
+        if isinstance(px, (int, float)):
+            if isinstance(tgt, (int, float)) and px >= tgt:
+                reasons.append(f"close {px} >= target {tgt}")
+            if isinstance(flr, (int, float)) and px <= flr:
+                reasons.append(f"close {px} <= floor {flr}")
+        import time as _t
+        for d, key, tag in ((cat_res, "catalyst_status", "FIRED"), (cat_skp, "verdict", "REFUTED")):
+            f = os.path.join(d, f"{sym}.json")
+            if os.path.exists(f) and (_t.time() - os.path.getmtime(f)) / 86400 <= DIAG_FRESH_DAYS:
+                try:
+                    val = (json.load(open(f, encoding="utf-8")).get(key) or "").upper()
+                    if val.startswith(tag):
+                        reasons.append(f"weekly diagnosis: {key}={val}")
+                except Exception:
+                    pass
+        if reasons:
+            e["resolution_due"] = {"date": today, "reason": "; ".join(reasons)}
+            due.append(f"{sym} ({'; '.join(reasons)})")
+        elif e.get("resolution_due"):
+            del e["resolution_due"]                       # condition cleared (e.g. milestone updated)
+    if due:
+        print("!! RESOLUTION DUE (alert-only — stamp the outcome with `python _basket13_inject.py "
+              "resolve SYM --type ... --price X`):")
+        for d in due:
+            print(f"   {d}")
+
     # 2. the mark
     seats, basket_ret, missing, pending = {}, 0.0, [], []
     for e in entries:

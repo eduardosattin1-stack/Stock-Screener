@@ -3623,16 +3623,18 @@ export default function Dashboard(){
                   </div>
                   )}
 
-                  {/* Capitulation Watchlist */}
+                  {/* Watch & Wait — Director runner_ups (fresh, incl skeptic demotions) when published;
+                      falls back to the legacy capitulation_watchlist (frozen at 2026-06-06) otherwise */}
+                  {(() => { const wl = (speculairBaskets.runner_ups?.length ? speculairBaskets.runner_ups : speculairBaskets.capitulation_watchlist) || []; const live = !!speculairBaskets.runner_ups?.length; return (
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Beaten-Down Watchlist <span style={{ fontSize: 11, fontWeight: 500, color: "var(--text-light)" }}>(capitulation)</span></h3>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Beaten-Down Watchlist <span style={{ fontSize: 11, fontWeight: 500, color: "var(--text-light)" }}>({live ? "Director runner-ups" : "capitulation · legacy list"})</span></h3>
                       <span style={{ fontSize: 10, color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(speculairBaskets.capitulation_watchlist || []).length} setups · Watch & Wait
+                        {wl.length} setups · Watch & Wait{live && speculairBaskets.runner_ups_as_of ? ` · ${speculairBaskets.runner_ups_as_of}` : ""}
                       </span>
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
-                      {(speculairBaskets.capitulation_watchlist || []).map((pick: any) => (
+                      {wl.map((pick: any) => (
                         <div
                           key={pick.symbol}
                           style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
@@ -3642,8 +3644,13 @@ export default function Dashboard(){
                         >
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                             <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
-                            <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                              Conv {pick.conviction}
+                            <span style={{ display: "inline-flex", gap: 4, alignItems: "center" }}>
+                              {pick.skeptic_verdict === "REFUTED" && (
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(239,68,68,0.12)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }} title={pick.skeptic_kill_fact || ""}>SKEPTIC DEMOTED</span>
+                              )}
+                              <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                Conv {pick.conviction}
+                              </span>
                             </span>
                           </div>
                           {pick.trigger_event && (
@@ -3654,11 +3661,12 @@ export default function Dashboard(){
                           )}
                         </div>
                       ))}
-                      {(speculairBaskets.capitulation_watchlist || []).length === 0 && (
-                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Capitulation Watchlist candidates.</div>
+                      {wl.length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Watch & Wait candidates.</div>
                       )}
                     </div>
                   </div>
+                  );})()}
 
                   {/* Per-Methodology Baskets */}
                   <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>

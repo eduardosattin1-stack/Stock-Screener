@@ -1408,11 +1408,13 @@ def select_methodology_basket(methodology: str, debate_results: list[dict],
     Note: Under-debated baskets (< 5 qualified candidates from 20 inputs)
     are flagged with 'under_debated': True for Director-level review.
     """
-    # Filter to debated candidates with conviction >= 3
-    qualified = [r for r in debate_results if r.get("conviction", 0) >= 3]
-    
+    # Filter to debated candidates with conviction >= 3. None-safe: a fail-closed debate leaves
+    # conviction/interrogator_score as EXPLICIT None (the .get default never applies), which made
+    # both the filter comparison and the -x sort key crash on the first malformed dossier.
+    qualified = [r for r in debate_results if (r.get("conviction") or 0) >= 3]
+
     # Sort by conviction DESC
-    qualified.sort(key=lambda x: (-x.get("conviction", 0), -x.get("interrogator_score", 0)))
+    qualified.sort(key=lambda x: (-(x.get("conviction") or 0), -(x.get("interrogator_score") or 0)))
     
     # Take top picks
     picks = qualified[:target_size]
@@ -2036,7 +2038,18 @@ APEX_TRACKING_PATH = "scans/speculair_apex_tracking.json"
 
 
 def _load_apex_tracking(gcs_path: str = APEX_TRACKING_PATH, local_name: str = "speculair_apex_tracking.json") -> dict:
-    """Load a persistent basket track record (chained NAV + closed-position log)."""
+    """Load a persistent basket track record (chained NAV + closed-position log).
+    GENERATION-PINNED first: this is the RMW base of a TWO-WRITER file (nightly Cloud Run NAV mark +
+    weekly publish) — a stale plain read here silently rewinds the NAV chain (the exact bug class
+    that corrupted the calibration tracker). See gcs_io.gcs_read_json_fresh's invariant."""
+    try:
+        sys.path.insert(0, str(BASE_DIR / "alpha_compounder"))
+        import gcs_io as _gio
+        d = _gio.gcs_read_json_fresh(gcs_path)
+        if isinstance(d, dict) and d.get("nav"):
+            return d
+    except Exception as e:
+        log.debug(f"tracking fresh GCS load failed: {e}")
     try:
         sys.path.insert(0, str(BASE_DIR))
         from screener_v6 import gcs_download

@@ -39,10 +39,9 @@ RES_DIR = ROOT / "results_regime"
 REGIME_F = ROOT / "apex_basket_opus_regime.json"
 CACHE_F = ROOT / "_value_post_cache.json"
 
-# One-off migration: until the Director emits structured `size_units`, reproduce the 2026-06-09
-# memo sizing (SAX.DE half on advertising-cycle; ANF/BKNG 3/4 on the discretionary cap).
-# DELETE this map after the first post-fix Director run writes real size_units.
-MEMO_UNITS_20260609 = {"SAX.DE": 0.5, "ANF": 0.75, "BKNG": 0.75}
+# (The 2026-06-09 one-off MEMO_UNITS migration map was deleted 2026-07-01 — the Director emits
+# structured size_units since the 06-09 schema fix, so the map was dead weight that would have
+# silently half-sized SAX.DE forever if it ever re-entered the book.)
 
 
 def load():
@@ -98,63 +97,13 @@ def get_market(quote_syms, corr_syms, offline):
 
 # ───────────────────────── 8b — skeptic kill-tier consumption (fork b: REFUTED demotes) ─────────────────────────
 def consume_skeptic(apx):
-    """Merge _skeptic/<SYM>.json shards -> _skeptic_results.json and apply the verdicts.
-    Fork (b), Bruno's call: a REFUTED apex member is DEMOTED to the front of runner_ups — the second
-    sanctioned exception to P1 (mirroring Catalyst Watch, where REFUTED kills the line; a skeptic that
-    cannot demote is decoration). CONFIRMED_WITH_CORRECTIONS stamps the correction + conviction cap.
-    STALENESS GUARD: shards older than apex_basket_value.json are ignored (a stale verdict must never
-    demote a fresh basket). Idempotent: re-running re-applies the same verdicts to the same members."""
-    skep_dir = ROOT / "_skeptic"
-    if not skep_dir.is_dir():
-        return apx
-    apex_mtime = APEX_F.stat().st_mtime if APEX_F.exists() else 0
-    merged, stale = {}, []
-    for f in sorted(skep_dir.glob("*.json")):
-        try:
-            if f.stat().st_mtime < apex_mtime - 1:
-                stale.append(f.stem)
-                continue
-            d = json.load(open(f, encoding="utf-8"))
-            if d.get("symbol"):
-                merged[d["symbol"]] = d
-        except Exception as e:
-            print(f"WARN skeptic: shard {f.name} unreadable ({e})")
-    if stale:
-        print(f"skeptic: ignored {len(stale)} stale shard(s) older than the apex: {sorted(stale)}")
-    if not merged:
-        return apx
-    (ROOT / "_skeptic_results.json").write_text(json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
-    keep, demoted = [], []
-    for p in apx.get("apex_basket", []):
-        v = merged.get(p.get("symbol"))
-        if not v:
-            keep.append(p)
-            continue
-        p["skeptic_verdict"] = v.get("verdict", "")
-        if v.get("kill_fact"):
-            p["skeptic_kill_fact"] = v["kill_fact"]
-        if v.get("corrections"):
-            p["skeptic_corrections"] = v["corrections"]
-        if isinstance(v.get("value_conviction_cap"), (int, float)):
-            p["value_conviction_cap"] = v["value_conviction_cap"]
-        if (v.get("verdict") or "").upper() == "REFUTED":
-            p["skeptic_refuted"] = True
-            demoted.append(p)
-            print(f"WARN skeptic: {p['symbol']} REFUTED -> DEMOTED to runner_ups | kill_fact: {str(v.get('kill_fact', ''))[:160]}")
-        else:
-            keep.append(p)
-    if demoted:
-        dsyms = {d.get("symbol") for d in demoted}
-        apx["apex_basket"] = keep
-        apx["runner_ups"] = demoted + [r for r in (apx.get("runner_ups") or [])
-                                       if (r.get("symbol") if isinstance(r, dict) else r) not in dsyms]
-    # stamp runner-up verdicts too (informational)
-    for r in apx.get("runner_ups", []):
-        if isinstance(r, dict) and r.get("symbol") in merged and "skeptic_verdict" not in r:
-            r["skeptic_verdict"] = merged[r["symbol"]].get("verdict", "")
-    n_conf = sum(1 for v in merged.values() if (v.get("verdict") or "").upper().startswith("CONFIRMED"))
-    print(f"skeptic: {len(merged)} verdicts | confirmed={n_conf} refuted={len(demoted)} (demoted: {[d['symbol'] for d in demoted]})")
-    return apx
+    """Delegates to the SHARED _post_common.consume_skeptic (one implementation for both books —
+    this used to be a pre-factoring duplicate with the same fail-OPEN hole that shipped the un-vetted
+    06-30 books). The shared version adds the skeptic-COVERAGE stamps: apex members with no fresh
+    shard get skeptic_verdict=MISSING (+ half-size via moat_per_name_cap), and a STALE REFUTED shard
+    on a still-held member (the HRMY case) is stamped skeptic_stale_refuted instead of silently
+    ignored. Fork (b) preserved: a fresh REFUTED member is DEMOTED to the front of runner_ups."""
+    return _pc.consume_skeptic(apx, APEX_F, ROOT / "_skeptic")
 
 
 # ───────────────────────── Fix 2 — CRO-only legs ─────────────────────────
@@ -207,8 +156,7 @@ def build_weights(apx, picks, extra_caps=None):
     include moat_erosion=='CAP' alongside cro_only (fix 2) / stale_anchor (fix 3); secular-theme
     concentration caps are appended to extra_caps so one melting tail cannot carry the book."""
     caps = list(extra_caps or []) + _pc.secular_theme_caps(picks)
-    return _pc.build_weights(apx, picks, extra_caps=caps, memo_units=MEMO_UNITS_20260609,
-                             per_name_cap=_pc.moat_per_name_cap)
+    return _pc.build_weights(apx, picks, extra_caps=caps, per_name_cap=_pc.moat_per_name_cap)
 
 
 def derive_entry_posture(p, rec=None):
@@ -402,6 +350,7 @@ def main():
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4
     apx["exits"] = exits_block(picks, quotes)                         # fix 5d
+    apx["value_post_applied"] = True   # publish gate keys on this (mirror of the regime moat_post_applied)
     json.dump(apx, open(APEX_F, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     gate_sync(gin)                                                   # fix 7 (regime side; separate file)
     st = apx["stress_test"]

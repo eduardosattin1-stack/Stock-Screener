@@ -46,6 +46,43 @@ FIELDS = ["symbol", "company_name", "tier", "staging", "lane_canon", "resolution
           "days_to_milestone", "instrument", "valuation_asof", "score"]
 names = [{k: c.get(k) for k in FIELDS} for c in cands]
 
+# WEEKLY FULL-STACK CATALYST DIAGNOSIS join (2026-07-01): the weekly catalyst workflow already
+# debates the WHOLE B13 book (Interrogator/Architect/CRO + adversarial Skeptic) — and B13 consumed
+# none of it (GDOT sat OPEN at 14% with a Skeptic-REFUTED shard; AQST at 4.5% on a SOFT_EXTENDED
+# catalyst). Attach each candidate's latest diagnosis so the CRO/Director SEE it; the inject layer
+# (_basket13_inject.validate) additionally hard-rejects fresh REFUTED/FIRED at entry.
+import time as _time
+_CATRES = os.path.join(BASE, "_opus_debate", "_catalyst_results")
+_CATSKP = os.path.join(BASE, "_opus_debate", "_catalyst_skeptic")
+DIAG_FRESH_DAYS = 10   # ONE freshness window, shared with _basket13_inject (red-team condition)
+
+
+def _diag_for(sym):
+    out = {}
+    for d, keys, tag in ((_CATRES, ("catalyst_status", "verdict", "conviction", "dated_milestone"), "debate"),
+                         (_CATSKP, ("verdict", "kill_fact", "conviction_cap"), "skeptic")):
+        f = os.path.join(d, f"{sym}.json")
+        if not os.path.exists(f):
+            continue
+        try:
+            j = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        age_d = (_time.time() - os.path.getmtime(f)) / 86400
+        out[tag] = {k: j.get(k) for k in keys if j.get(k) is not None}
+        out[tag]["age_days"] = round(age_d, 1)
+        out[tag]["fresh"] = bool(age_d <= DIAG_FRESH_DAYS)
+    return out or None
+
+
+_n_diag = 0
+for _n in names:
+    _d = _diag_for(_n["symbol"])
+    if _d:
+        _n["weekly_diagnosis"] = _d
+        _n_diag += 1
+print(f"weekly catalyst diagnosis joined: {_n_diag}/{len(names)} candidates carry weekly_diagnosis")
+
 # locked held book (any UNRESOLVED tracker entry): a re-debate ADDS new seats within the
 # REMAINING combined-cap headroom; held names run to resolution and consume caps. The Director
 # is told the headroom; _basket13_inject.py re-asserts the combined book deterministically.
@@ -122,6 +159,7 @@ function croPrompt(batch){ return `Today is __TODAY__. You are the CATALYST-CRO 
 2) TRADEABILITY. Does the expression exist at acceptable cost? Options: quoted bid/ask spread, open interest, strikes near the thesis levels (fair_value_target / downside_floor) — read-only via IBKR/FMP/ToolSearch. Equity: ADV vs a realistic position; borrow if any short leg. A correct thesis in an instrument with a 15%-wide spread or no OI is NOT a trade — say so in tradeability_note.
 3) WINDOW <-> EXPRESSION. Does a tradeable expiry clear the catalyst date ("dated_milestone", ~"days_to_milestone" days away) with margin — at least +1 monthly expiry PAST the milestone? Has this catalyst's date slipped before? A real catalyst too slow for its option is a loss with a correct thesis. Put the read in window_note. (Staging names are undated/soft -> equity; note that.)
 4) DRIVER TAG. Confirm or correct "resolution_driver" in driver_confirmed; if a SECOND name in this batch resolves on the SAME driver, flag it (the Director enforces the cap; you just flag).
+WEEKLY DIAGNOSIS OVERRIDE (the one exception to "reality is settled upstream"): where a name carries "weekly_diagnosis" (the weekly full-stack catalyst debate + adversarial skeptic over this very book), treat it as CURRENT catalyst intelligence — a FRESH skeptic verdict of REFUTED, or catalyst_status FIRED/ARB (trading through terms), means the event edge is GONE: verdict NO_TRADE with the diagnosis as the reason (the inject layer hard-rejects it anyway; do not waste a nomination).
 
 FORBIDDEN — do NOT attack on any of these (irrelevant by construction or already settled): margin of safety, valuation cheapness, quality/durability of the business, "would I own this for 5 years", balance-sheet quality as a thesis, or anything about whether the catalyst is real. A catalyst name is SUPPOSED to look bad on value/quality — "an expensive, mediocre business with a signed take-private at a 30% spread" is the sleeve's whole point.
 
@@ -135,7 +173,7 @@ LOCKED HELD BOOK (${HELD.n_seats} seats, ${HELD.invested_pct}% invested — thes
 ` : ``}${WATCHLIST.n_on_deck ? `
 PRIOR ON-DECK WATCHLIST (${WATCHLIST.n_on_deck} names you nominated in a previous run — CARRIED FORWARD by default and tracked to resolution): ${JSON.stringify(WATCHLIST.names)}. You are ACCOUNTABLE to these prior calls. A carried name leaves the on-deck book ONLY when its catalyst resolves or it graduates into the held book — you may NOT silently drop it. For each carried name you must do exactly ONE of: (a) RE-NOMINATE it in watchlist[] (keeps it active; if it was de_prioritized, set a stance_change_rationale explaining what changed); (b) DE-PRIORITIZE it — still list it in watchlist[] but with a stance_change_rationale stating why you cooled on it (it stays tracked, flagged); or (c) DEMOTE it on merit to passed[] with a concrete passed_because. If you championed a name last run and now want it gone, you owe a one-sentence reason — that asymmetry (added then dismissed) is exactly what the rationale captures.
 ` : ``}
-SELECTION: free choice among survivors; when two names are comparable, PREFER DRIVER DIVERSITY over raw score.
+SELECTION: free choice among survivors; when two names are comparable, PREFER DRIVER DIVERSITY over raw score. Honor each name's "weekly_diagnosis" where present: a fresh skeptic REFUTED / catalyst FIRED is a hard pass (the inject layer rejects it), and a fresh verdict-A/conviction-5 debate is a strong tailwind worth a seat if the CRO's trade surfaces clear.
 CAPS (hard, COMBINED with the locked held book above — a basket that breaks one is rejected by the downstream validator):
   - <= 2 names per resolution_driver (held + new).
   - <= 5 names in the bio_convergence lane (held + new) — bio binaries are abundant; cap the lane.

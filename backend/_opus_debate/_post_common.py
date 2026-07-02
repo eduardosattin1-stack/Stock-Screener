@@ -25,23 +25,52 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     if not skep_dir.is_dir():
         return apx
     apex_mtime = apex_file.stat().st_mtime if apex_file.exists() else 0
-    merged, stale = {}, []
+    merged, stale, stale_verdicts = {}, [], {}
     for f in sorted(skep_dir.glob("*.json")):
         try:
+            d = json.load(open(f, encoding="utf-8"))
             if f.stat().st_mtime < apex_mtime - 1:
                 stale.append(f.stem)
+                if d.get("symbol"):                      # remember stale verdicts — a stale REFUTED
+                    stale_verdicts[d["symbol"]] = d       # on a still-held name must not vanish (HRMY)
                 continue
-            d = json.load(open(f, encoding="utf-8"))
             if d.get("symbol"):
                 merged[d["symbol"]] = d
         except Exception as e:
             print(f"WARN skeptic: shard {f.name} unreadable ({e})")
     if stale:
         print(f"skeptic: ignored {len(stale)} stale shard(s) older than the apex: {sorted(stale)}")
+    if merged:
+        (skep_dir.parent / (skep_dir.name + "_results.json")).write_text(
+            json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
+    # COVERAGE — fail LOUD, not open (the 06-30 apex + EEFT/HRMY value book shipped with zero fresh
+    # shards and this function returned silently). Every apex member without a FRESH shard is stamped
+    # skeptic_verdict=MISSING (+ skeptic_missing=True -> half-sized by moat_per_name_cap); a STALE
+    # REFUTED on a still-held member is stamped skeptic_stale_refuted (half-size + re-run flag), never
+    # silently ignored. Publish stays possible (partial runs are the ops norm) — visible and priced.
+    missing, stale_ref = [], []
+    for p in apx.get("apex_basket", []):
+        sym = p.get("symbol")
+        if not sym or sym in merged:
+            continue
+        sv = stale_verdicts.get(sym)
+        if sv and (sv.get("verdict") or "").upper() == "REFUTED":
+            p["skeptic_verdict"] = "MISSING"
+            p["skeptic_stale_refuted"] = True
+            p["skeptic_kill_fact"] = f"STALE shard: {str(sv.get('kill_fact', ''))[:160]}"
+            stale_ref.append(sym)
+        else:
+            p["skeptic_verdict"] = "MISSING"
+            p["skeptic_missing"] = True
+            missing.append(sym)
+    if missing:
+        print(f"WARN skeptic-coverage: {len(missing)} apex member(s) have NO fresh skeptic shard -> "
+              f"stamped MISSING + half-sized: {missing} (fix: run the skeptic workflow)")
+    if stale_ref:
+        print(f"WARN skeptic-coverage: STALE REFUTED shard(s) on still-held member(s) -> half-sized, "
+              f"re-run the skeptic: {stale_ref}")
     if not merged:
         return apx
-    (skep_dir.parent / (skep_dir.name + "_results.json")).write_text(
-        json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
     keep, demoted = [], []
     for p in apx.get("apex_basket", []):
         v = merged.get(p.get("symbol"))
@@ -111,6 +140,8 @@ def secular_theme_caps(picks, max_units=1.5):
     consumable by build_weights. The Director may ALSO emit its own combined_caps; both are honored."""
     by_theme = {}
     for p in picks:
+        if p.get("lane") == "equity_special_sit":
+            continue   # lane contract: event-driven seats resolve on their own catalyst, not a secular tail
         th = (p.get("secular_theme") or "").strip().lower()
         if not th or th in ("none", "n/a"):
             continue
@@ -126,8 +157,16 @@ def secular_theme_caps(picks, max_units=1.5):
 
 
 def moat_per_name_cap(p, u, extra_flags=()):
-    """Half-size teeth: cro_only / stale_anchor (existing) + moat_erosion=='CAP' (new, additive).
-    extra_flags lets a caller add book-specific boolean keys to the OR."""
+    """Half-size teeth: cro_only / stale_anchor (existing) + moat_erosion=='CAP' + skeptic-coverage
+    (MISSING / stale-REFUTED). extra_flags lets a caller add book-specific boolean keys to the OR."""
+    # Skeptic-coverage teeth apply to EVERY seat, lanes included — an un-vetted seat is half-sized.
+    if p.get("skeptic_missing") or p.get("skeptic_stale_refuted"):
+        return min(u, 0.5)
+    # LANE CONTRACT: an equity special-sit seat is EVENT-driven — the Director's STEP-3b exempted it
+    # from the compounder moat/erosion teeth, and the publish layer already floor-sizes it harder
+    # (1.5% risk-to-floor). Applying the moat half-cap here would contradict that contract.
+    if p.get("lane") == "equity_special_sit":
+        return u
     if p.get("cro_only") or p.get("stale_anchor") or p.get("moat_erosion") == "CAP" \
             or any(p.get(k) for k in extra_flags):
         return min(u, 0.5)
