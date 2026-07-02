@@ -1415,9 +1415,9 @@ export default function Performance() {
                sub="The v2 tracker stages picks at scan time and activates them on the next nightly run; this page lights up once the first summary is published." />
       )}
 
-      {!loading && !err && data && <CalibrationView data={data} />}
-
       {!loading && <TradeBotSection />}
+
+      {!loading && !err && data && <CalibrationView data={data} />}
 
       {!loading && <OpusTrackRecord />}
 
