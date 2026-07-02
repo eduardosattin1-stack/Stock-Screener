@@ -1419,6 +1419,8 @@ export default function Performance() {
 
       {!loading && !err && data && <CalibrationView data={data} />}
 
+      {!loading && <TradeBotSection />}
+
       {!loading && <OpusTrackRecord />}
 
       {!loading && <OpusPaperBook />}
