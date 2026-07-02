@@ -6814,6 +6814,11 @@ def _mark_speculair_nav():
          "speculair_apex_tracking.json", "apex_tracking"),
         ("value", "scans/speculair_value_apex.json", "scans/speculair_value_tracking.json",
          "speculair_value_tracking.json", "value_tracking"),
+        # Future Resources Lane A (FUTURE_RESOURCES_SPEC.md §7): self-no-ops until the first
+        # fr-publish lands the payload in GCS — until then the missing-book skip below fires.
+        ("future_resources", "scans/speculair_future_resources.json",
+         "scans/speculair_future_resources_tracking.json",
+         "speculair_future_resources_tracking.json", "fr_tracking"),
     ]:
         try:
             book = gcs_download(src)

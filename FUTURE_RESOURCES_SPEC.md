@@ -350,15 +350,29 @@ board is **byte-identical** (no current row matches the new regex ahead of its o
   (fixing that means a production-scan edit — worse than a bespoke card).
 - Lane A NAV: `E._update_apex_tracking(track_in, gcs_path="scans/speculair_future_resources_tracking.json",
   local_name="speculair_future_resources_tracking.json")` — the signature already supports nth books.
-  Weekly-stepped NAV until the nightly `_mark_speculair_nav()` fourth tuple + redeploy (deliberately
-  deferred; it is the only production-scan change in the whole build).
+  **The nightly-mark tuple is PRE-STAGED** (added 2026-07-02): `_mark_speculair_nav()` carries a
+  `("future_resources", "scans/speculair_future_resources.json", …, "fr_tracking")` entry that
+  self-no-ops ("skipped — no published constituents") until the first `fr-publish` lands the payload
+  in GCS. It ships with whatever `screener-sp500` redeploy happens next (verify image digest before
+  firing — the standing deploy lesson); until that redeploy the NAV steps weekly at publish.
+  **Contract**: the published payload's Lane A picks array MUST be named `apex_basket` (what the
+  nightly mark reads) and the embedded tracking summary key is `fr_tracking`. Off-scan members
+  (most miners) price via the `_current_prices()` FMP batch-quote fallback — already live
+  (live_debate_engine.py:2087).
 - Lane B publishes the tracker (a track record of resolved events, B13-style), never a NAV.
 - One card, two clearly-labeled sections, one honest banner: *"Commodity-cyclical sleeve. Lane A NAV
   steps weekly until the nightly mark ships. Lane B is an event tracker, not a NAV. US-listed names
   only — much developer alpha lists on TSX/ASX and is out of scope. Never blended with any other book."*
-- Cadence: universe monthly (staleness self-gate, 21d), Lane A grading weekly (**STEP 3D** in the
-  Sunday skill, after 3C, failure-isolated by order), Lane B sweep bi-weekly (rides the Catalyst Watch
-  rhythm), regime refresh bi-weekly (13-day floor), Lane B dials quarterly.
+- **Cadence — what runs where** (the routine map; only ONE genuinely new scheduled artifact):
+
+| Rhythm | Runs | Where | New schedule needed? |
+|---|---|---|---|
+| Nightly | Lane A NAV mark (pre-staged tuple) | deployed `screener-sp500` job | **No** — rides the existing nightly scan; live after the next routine redeploy |
+| Weekly (Sunday) | Lane A debates → Director → post → publish | local, **new STEP 3C in the Sunday skill** (takes the retired disruptor slot; failure-isolated by running last) | No new task — one skill edit |
+| Monthly | `fr-universe` + chain map rebuild | local, self-gates inside the weekly STEP via the 21-day staleness check | **No** — cannot be forgotten, fires when stale |
+| Bi-weekly | Lane B mini-sweep (`_fr_sweep.py`) | local, appended to the existing Catalyst Watch bi-weekly session | No new task — rides the same session |
+| Bi-weekly | Commodity regime refresh → `FUTURE_RESOURCES_REGIME.md` + `regime_state.json` | local scheduled task, clone of `catalyst-watch-regime-refresh`, ≥13-day self-gating floor | **Yes — the one new scheduled task** |
+| Quarterly | Lane B dial re-fit from realized resolutions | local, rides the existing Basket 13 quarterly calibration session | No new task |
 
 ---
 
@@ -435,19 +449,32 @@ structural fix, not a theme tweak.
 
 **What retirement means (honest-rails compliant — nothing is deleted, nothing back-filled):**
 
-1. **Stop the rotation**: remove STEP 3C from the Sunday skill
-   (`~/.claude/scheduled-tasks/speculair-opus-weekly/SKILL.md`, Bruno's machine). The disruptor
-   subtree, prompts, and modes stay in the repo — retired code that ran a live track record is
-   history, not dead weight.
-2. **Freeze the NAV where it stands**: remove the disruptor tuple from
-   `screener_v6.py::_mark_speculair_nav()` at the next planned `screener-sp500` redeploy (verify
-   image digest before firing — the standing deploy lesson). Until that redeploy, nightly marks
-   continue harmlessly; the freeze date on the card is the STEP 3C removal date.
-3. **The card tells the truth**: the purple card becomes a retired card — frozen NAV chart, final
-   holdings, and a banner: *"Retired <date>. Live-forward record <start> → <freeze>, wins and losses
-   included. Robotics and quantum coverage continues in the Future Resources basket; this chart will
-   never move again."* Tracking JSONs stay in GCS untouched. (Alternative — removing the card —
-   violates the spirit of the honest rails: a retired book's record stays visible.)
+1. **Stop the rotation** — TWO edits, not one (the 2026-07-02 audit found the launcher also
+   hardcodes the step):
+   a. ✅ EXECUTED 2026-07-02 (in-repo): `backend/run_speculair_weekly.ps1` — STEP 3C removed from the
+      headless prompt, plus a belt-and-suspenders instruction telling the unattended agent to skip
+      any disruptor step it still finds in the runbook. **Takes effect on Bruno's box after the next
+      `git pull`** (the scheduled task runs the local copy).
+   b. ⏳ OPERATOR (Bruno's machine, file not in this repo):
+      `C:\Users\Bruno\.claude\scheduled-tasks\speculair-opus-weekly\SKILL.md` — delete the whole
+      "STEP 3C — DISRUPTOR LENS" block AND the STEP 4 reporting line about the disruptor apex /
+      three-book overlap. The vacated slot is where the Future Resources STEP lands at Phase 3 (§7).
+   The disruptor subtree, prompts, and modes stay in the repo — retired code that ran a live track
+   record is history, not dead weight.
+2. **The NAV freezes by itself** *(audited 2026-07-02)*: the planned disruptor tuple in
+   `screener_v6.py::_mark_speculair_nav()` **never shipped** — the deployed nightly job marks only
+   the apex and value books, and the disruptor NAV has always stepped weekly at `disruptor-publish`.
+   So stopping STEP 3C IS the freeze; **no redeploy is needed to retire**. The freeze date on the
+   card is the last STEP 3C run. (The next routine redeploy carries the pre-staged
+   `future_resources` tuple — §7 — which is unrelated to the retirement and self-no-ops until the
+   first fr-publish.)
+3. **The card tells the truth**: ✅ EXECUTED 2026-07-02 — the purple card is now a retired card
+   (`frontend/app/page.tsx`): amber RETIRED banner, "Final track record · retired" replaces "Live
+   track record", the footnote reads "live-forward while it ran, frozen at retirement, never
+   back-filled", header chip shows "final holdings · frozen record", and the "How the baskets work"
+   explainer states the retirement + where coverage moved. Ships via the normal Vercel auto-deploy
+   on merge. Tracking JSONs stay in GCS untouched. (Removing the card entirely would violate the
+   honest rails: a retired book's record stays visible.)
 4. **No holdings migration**: Future Resources builds its universe from scratch (anti-shrink rule).
    A disruptor holding that belongs here will re-earn its seat through the screen, the chain map, and
    the debate — the held-name union applies only to Future Resources' own holders, never to another
@@ -457,8 +484,11 @@ structural fix, not a theme tweak.
    `power_for_ai`; defense/genomics names remain reachable by the value books' 12-method screens;
    fintech_rails is deliberately dead (the Visa lesson). If a retired theme deserves resurrection, it
    re-enters as a Future Resources chain **only if it can pass the physical-anchor rule**.
-6. **Ordering**: retire only after Future Resources Phase 3 publishes its first Lane A basket — the
-   site never has a gap where neither book exists. Until then the disruptor keeps rotating normally.
+6. **Ordering**: the original rule was to retire only after Future Resources Phase 3 publishes its
+   first Lane A basket, so the site never lacks a thematic book. **SUPERSEDED by operator decision
+   2026-07-02** — retirement executes now; the accepted consequence is a thematic-book gap (frozen
+   disruptor card, no rotating replacement) until FR Phase 3 lands. This raises the priority of
+   Phases 2–3.
 
 ## 11. First-live-run checklist (Bruno, one-time — needs the FMP key)
 
@@ -486,3 +516,9 @@ structural fix, not a theme tweak.
   drift); robotics migrates in as a chain, quantum added as a chain (Lane B treatment for pure-plays);
   Future Resources is the tracked container going forward. Physical-anchor rule made a hard Do-NOT.
   Retirement runbook in §10; retirement executes only after Phase 3 first publish (no coverage gap).
+- 2026-07-02 (retirement execution audit): the disruptor `_mark_speculair_nav()` tuple NEVER shipped —
+  the nightly job marks apex+value only, so stopping STEP 3C is itself the NAV freeze; no redeploy
+  needed to retire. The `future_resources` tuple was PRE-STAGED in `screener_v6.py` instead
+  (self-no-op until first fr-publish; `apex_basket`/`fr_tracking` payload contract; off-scan pricing
+  confirmed live via the `_current_prices` FMP fallback). STEP 3C removal is an operator edit on
+  Bruno's machine — the skill file is not in this repo.

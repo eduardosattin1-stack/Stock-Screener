@@ -3477,17 +3477,20 @@ export default function Dashboard(){
                     </details>
                   )}
 
-                  {/* Speculair Disruptor Lens — the 3rd book: profitable secular-theme disruptors, separate universe, own NAV chain */}
+                  {/* Speculair Disruptor Lens — RETIRED 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10): frozen record, never deleted, never back-filled */}
                   {(disruptorApex.apex_basket || []).length > 0 && (
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, padding: "20px 24px" }}>
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, padding: "20px 24px", opacity: 0.92 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Speculair Disruptor Lens</h3>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Speculair Disruptor Lens <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)" }}>· retired</span></h3>
                       <span style={{ fontSize: 10, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(disruptorApex.apex_basket || []).length} names · profitable disruptors · theme-capped ≤30%
+                        {(disruptorApex.apex_basket || []).length} names · final holdings · frozen record
                       </span>
                     </div>
                     <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 12 }}>
                       A separate ~40-name thematic screen (NOT the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway — valuation as a guard. Own NAV chain; never blended with the Apex or Value books.
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
+                      ⚠ RETIRED 2026-07-02. This book no longer rotates — the chart below is its final live-forward record, wins and losses included, and will never move again. Its rules drifted into generic quality compounders (the Visa pick); robotics and quantum coverage continues in the Future Resources basket under a physical-anchor rule.
                     </div>
                     {disruptorApex.pool_stats && disruptorApex.pool_stats.banner && (
                       <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
@@ -3502,7 +3505,7 @@ export default function Dashboard(){
                       return (
                       <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
                         <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Final track record · retired</div>
                           <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (dt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
                             {(dt.since_inception_pct || 0) >= 0 ? "+" : ""}{dt.since_inception_pct}%
                           </div>
@@ -3517,7 +3520,7 @@ export default function Dashboard(){
                         })()}
                         <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
                           NAV {dt.nav} · {dt.n_open} held · {dt.n_closed} closed{dt.win_rate != null ? ` · ${dt.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units)" : "equal-weight NAV"} · live-forward, not back-filled · highest-vol sleeve</div>
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units)" : "equal-weight NAV"} · live-forward while it ran, frozen at retirement, never back-filled</div>
                         </div>
                       </div>
                       );
@@ -3890,8 +3893,8 @@ export default function Dashboard(){
                   The same debate re-graded with the catalyst overlay stripped: CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate and a funded-leverage solvency test. Own NAV chain.
                 </div>
                 <div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--purple)", marginBottom: 4 }}>DISRUPTOR LENS — secular themes</div>
-                  A separate ~40-name thematic screen (not the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway, theme-capped ≤30%. Own NAV chain.
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--purple)", marginBottom: 4 }}>DISRUPTOR LENS — retired 2026-07-02</div>
+                  Retired: its theme rules drifted into generic quality compounders. The frozen card keeps its full live-forward record visible. Robotics and quantum coverage moved to the Future Resources basket (physical-anchor rule; see FUTURE_RESOURCES_SPEC.md).
                 </div>
                 <div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--amber)", marginBottom: 4 }}>CATALYST WATCH — event sleeve</div>
