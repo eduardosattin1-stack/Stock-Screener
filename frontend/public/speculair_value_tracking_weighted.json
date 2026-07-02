@@ -1,22 +1,23 @@
 {
   "inception_date": "2026-06-09",
-  "nav": 106.855,
-  "last_date": "2026-06-30",
+  "nav": 108.9703,
+  "last_date": "2026-07-02",
   "last_prices": {
-    "EEFT": 72.35,
-    "WKL.AS": 56.86,
-    "HRB": 38.22,
-    "UHS": 147.02,
-    "THC": 187.17,
-    "NTES": 129.16,
-    "SCR.PA": 31.56,
-    "HRMY": 35.34
+    "EEFT": 75.22,
+    "WKL.AS": 57.2,
+    "CTSH": 41.07,
+    "NTES": 129.7,
+    "HRB": 39.34,
+    "SCR.PA": 31.6,
+    "LNC": 36.23,
+    "THC": 191.2,
+    "HRMY": 36.0
   },
   "positions": {
     "THC": {
       "entry_price": 163.01,
       "entry_date": "2026-06-09",
-      "conviction": 73
+      "conviction": 70
     },
     "EEFT": {
       "entry_price": 66.09,
@@ -26,15 +27,10 @@
     "NTES": {
       "entry_price": 121.81,
       "entry_date": "2026-06-17",
-      "conviction": 79
+      "conviction": 76
     },
     "WKL.AS": {
       "entry_price": 59.94,
-      "entry_date": "2026-06-17",
-      "conviction": 80
-    },
-    "UHS": {
-      "entry_price": 146.9,
       "entry_date": "2026-06-17",
       "conviction": 80
     },
@@ -51,6 +47,16 @@
     "HRMY": {
       "entry_price": 33.28,
       "entry_date": "2026-06-21",
+      "conviction": 70
+    },
+    "CTSH": {
+      "entry_price": 41.07,
+      "entry_date": "2026-07-02",
+      "conviction": 76
+    },
+    "LNC": {
+      "entry_price": 36.23,
+      "entry_date": "2026-07-02",
       "conviction": 72
     }
   },
@@ -180,6 +186,18 @@
       "nav": 106.855,
       "ret": 0.0,
       "n": 8
+    },
+    {
+      "date": "2026-07-01",
+      "nav": 107.3707,
+      "ret": 0.004826,
+      "n": 8
+    },
+    {
+      "date": "2026-07-02",
+      "nav": 108.9703,
+      "ret": 0.0,
+      "n": 9
     }
   ],
   "closed": [
@@ -326,6 +344,15 @@
       "exit_price": 80.03,
       "return_pct": 4.42,
       "conviction": 74
+    },
+    {
+      "symbol": "UHS",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-07-02",
+      "entry_price": 146.9,
+      "exit_price": 150.58,
+      "return_pct": 2.51,
+      "conviction": 80
     }
   ]
 }

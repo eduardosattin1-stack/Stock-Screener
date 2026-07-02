@@ -1,0 +1,13 @@
+{
+  "symbol": "TNET",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": null,
+  "corrections": "Net debt is slightly STALE in the bear case: it cites $606M, which is the FY2025 (Dec-31-2025) figure (total debt $895M less cash $287M = $608M). The LATEST primary filing (Q1-2026 10-Q, period ended Mar-31-2026) shows total debt $896M less cash $340M = ~$556M net debt — i.e. ~$50M LOWER, a modestly FAVORABLE correction to the value case (it does not break the thesis). Second, framing correction on the net-income 'collapse': the bear says NI fell ~59% over two years (375M 2023 -> 155M 2025), which is arithmetically true, but the primary annual results show the bulk of that drop occurred in 2024 (2023 $375M -> 2024 $173M, -54%) BEFORE the 2025 repricing; 2025 ($155M) was only -10% YoY. The decline is real but is mostly already-realized, not an accelerating ongoing impairment. Everything else load-bearing in the bear case VERIFIES against primary filings: FY-2025 ICR 91% (Q1-26 84% does not persist; FY-26 guide 89.25-90.75%), 2026 revenue guided DOWN to $4.75-4.9B vs ~$5.0B, adj-EBITDA-margin guide 7.5-8.7% (vs 10-11% medium-term target), WSE -12% in Q1-26 / -5% FY-2025, and the $400M buyback authorization (Feb-6-2026). The cheapness is therefore partly a justified discount on a no-growth, WSE-shrinking, narrow-and-eroding-moat PEO with an AI/HR-administration secular overhang, not a clean mispricing.",
+  "value_conviction_cap": 3,
+  "evidence": [
+    "TriNet FY2025 8-K press release (PRNewswire, Feb-12-2026): FY2025 GAAP net income $155M vs FY2024 $173M (vs $375M in 2023); full-year 2025 insurance cost ratio 91%; FY2026 guidance revenue $4,750-4,900M, diluted EPS $2.15-3.05, adj-EBITDA margin 7.5-8.7%; total debt $895M, cash $287M at Dec-31-2025; buyback raised to $400M total available as of Feb-6-2026; avg WSEs ~333,886 FY2025 (-5% YoY).",
+    "TriNet Q1-2026 10-Q (period ended Mar-31-2026, filed via SEC/StockTitan May-2026): total debt $896M, cash and cash equivalents $340M (=> net debt ~$556M, not the $606M cited); ICR improved to 84% from 88% YoY; avg WSEs ~300,000 (-12% YoY); revenue -5%; net income $89M (+5%), diluted EPS $1.90.",
+    "TriNet Q4-2025 / FY-2025 earnings call (Feb-12-2026): paid off remaining $90M revolving-credit balance, ended year at 2.1x debt/adj-EBITDA; returned ~$235M to shareholders in 2025; 4-6% revenue CAGR / 10-11% margin medium-term frame deferred, 2026 guided below it.",
+    "TriNet Q1-2026 earnings call (Apr-30-2026): January renewal characterized as 'final major true-up'; management flagged ~half of the Q1 84% ICR as one-time favorable 2025 development; declined to guide WSE growth."
+  ]
+}

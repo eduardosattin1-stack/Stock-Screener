@@ -1,0 +1,13 @@
+{
+  "symbol": "OTF",
+  "verdict": "CONFIRMED",
+  "kill_fact": "",
+  "corrections": "No load-bearing bear number required correction; all verify against the Q1-2026 (March 31, 2026) primary filing. Precision note: non-accruals are 0.1% of fair value / 0.3% of cost (the bear's '10bps' references the fair-value figure and is accurate). Total debt is $6.904B with net debt-to-equity 0.85x (the bear's '$6.90B net debt is funding leverage, subtract in EV' framing is correct; it is NOT distress). First-lien senior secured is 77.7% of the book and total portfolio fair value is $14.07B. The dividend has NOT yet been cut: Q2-2026 was reaffirmed at $0.40 ($0.35 base + $0.05 special) on May 6, 2026 — the cut remains a forward PATH risk, exactly as the bear frames it, not a realized event. The bear's 'sibling Blue Owl funds already cutting' claim is STRONGER than stated and confirmed at primary source: Blue Owl Capital Corp (OBDC) cut its Q2-2026 base dividend from $0.37 to $0.31, an explicit precedent for a platform-wide reset and a direct corroboration of the dividend-overhang thesis.",
+  "value_conviction_cap": 3,
+  "evidence": [
+    "Blue Owl Technology Finance Corp. IR financial results, quarter ended March 31, 2026 (released May 6, 2026): NAV $16.49/sh (down from $17.33 in Q4-2025), GAAP NII $0.37/sh, adjusted NII $0.29/sh vs $0.40 dividend declared ($0.35 base + $0.05 special), non-accruals 0.1% fair value / 0.3% cost, total debt $6,904.3M, net debt/equity 0.85x, $50.2M repurchased with ~$250M remaining of the $300M authorization, total portfolio fair value $14,068.2M, 77.7% first-lien senior secured.",
+    "OTF Form 8-K / Exhibit 99.1 press release, SEC EDGAR CIK 0001747777, accession 000174777726000020 (FY2026) — corroborates the same Q1-2026 NAV, NII, dividend and buyback figures as the IR release.",
+    "Blue Owl Capital Corp (OBDC) Form 8-K, SEC EDGAR CIK 0001655888, accession 000165588826000034 (FY2026): Board declared a Q2-2026 BASE dividend of $0.31/sh, reduced from the prior $0.37/sh, citing declining base rates and spread compression — primary-source confirmation that a sibling Blue Owl BDC has already cut its base dividend, validating the bear's platform dividend-reset overhang.",
+    "Market price ~$11.13 as of June 12, 2026 (multiple market data sources) against NAV $16.49 = ~0.67x NAV / ~33% discount — confirming the discount magnitude is real and wide, but per the regime book-independence mandate it is largely shared software/AI-capex beta plus an earned distribution discount, not idiosyncratic alpha."
+  ]
+}
