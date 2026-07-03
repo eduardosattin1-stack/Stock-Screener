@@ -1,87 +1,79 @@
-# Forensic Dossier — Skyworks Solutions (SWKS)
+# Skyworks Solutions (SWKS) — A Deep Dive on Management and the Setup
 
-*A deep dive on management and the setup, built from eight quarters of earnings calls (May 2025 through May 2026) cross-checked against the screener's hard financials. Skyworks makes radio-frequency (RF) front-end modules — the chips that let phones and devices send and receive wireless signals — and sells most of them into Apple's iPhone.*
+*Forensic dossier prepared for the investment committee. Eight consecutive earnings calls (May 2025 through May 2026) read against the screener's hard financials. Skyworks makes radio-frequency (RF) front-end modules — the chips that let phones and devices send and receive wireless signals — and sells most of them into Apple's iPhone.*
 
 ## 1. NARRATIVE ARC
 
-The story management tells has shifted in a very specific direction over these eight quarters: away from "we are a great mobile-RF franchise" and toward "we are diversifying away from mobile, and a transformational merger will fix the rest."
+The story Skyworks tells has shifted in a meaningful way over the past year, and the shift is the single most important thing in this file.
 
-At the start of the window (the May 2025 call, new chief executive Phil Brace's first), the pitch was upbeat-but-defensive: Skyworks "sits at the center of the wireless revolution," and the diversified "broad markets" business (Wi-Fi, automotive, edge Internet-of-Things, data-center timing) was framed as a recovery story with "five consecutive quarters of sequential revenue growth." Mobile was treated as the stable core.
+A year ago (the May 2025 call, Phil Brace's first as chief executive), the pitch was a classic self-help turnaround: a new chief executive energised by "some of the smartest engineers I've ever worked with," a diversified "broad markets" business recovering quarter after quarter, and record cash returned to shareholders ($600M in the March 2025 quarter alone). The subtext was confidence that the company could grow its way out of a slump in its core mobile business, where Apple is roughly 60-67% of revenue.
 
-By the most recent call (May 2026), the emphasis has flipped. Three things now lead every call: (1) the announced combination with rival Qorvo (announced October 28, 2025) as the centerpiece of the equity story; (2) broad markets, now "nine consecutive quarters of growth," roughly $400 million per quarter, growing double digits; and (3) a single new "over $1 billion through 2030" Android design win unveiled in May 2026. Mobile, the actual majority of revenue, is now discussed almost apologetically — content at the top customer is on a "downward sloping line" that management is "laser-focused" on bending back upward.
+By the November 2025 call the narrative had changed character entirely. On October 28, 2025, Skyworks announced it would combine with Qorvo (ticker QRVO) — its single closest competitor in RF chips — in a roughly $22B deal. From that point forward, every call leads with the merger as the load-bearing event: "a transformative deal that upon closing will add meaningful scale, diversification and a broader highly complementary technology and product portfolio." The promise is explicit and quantified: gross margin of 50-55% "through the cycles" (versus ~45% standalone today), more than $500M of cost synergies, and net leverage of roughly one times earnings at close.
 
-Growth drivers introduced along the way: Wi-Fi 7 (the steady headline tailwind), automotive (now a record ~$250M/year run-rate), data-center precision timing and power isolation (growing ~50% this year but small), and, late in the window, "physical AI," 6G, and satellite comms as future-tense optionality. The driver quietly de-emphasized: the top customer (Apple, ~60-67% of revenue) — management has progressively reframed it from a strength into a risk to be "defended" and eventually "reduced" via the Qorvo deal.
+So the arc is a pivot from "we will fix this organically" to "we will fix this by buying our biggest rival." That is a tacit admission that the organic path was not enough — a point management never says out loud but the timeline makes plain.
+
+Underneath the deal, two organic threads run consistently. The bullish one: "broad markets" (Wi-Fi 7, automotive connectivity, and precision timing/power chips for AI data centers) has now grown for nine straight quarters, is about a $1.6B annual business, carries above-corporate-average margins, and its three growth engines grew ~30% year over year in the March 2026 quarter. The bearish one: content per phone at the largest customer is, in management's own words, "a downward sloping line," and the stated goal every quarter is simply "to change the slope of that line" — an admission they have been losing share at Apple.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-Management's words are the hypothesis; the screener's numbers are the evidence. The tension is stark: the narrative is a recovery-and-transformation story, but the multi-year financials describe a business in secular contraction.
-
-| Management claim | The actual financials | Verdict |
+| Management claim | The hard numbers | Verdict |
 |---|---|---|
-| "Solid/strong execution," beats every quarter | Beat 7/7 quarters (100%); each quarter "exceeded the high end of guidance" | **Matches** — guidance delivery is genuinely excellent |
-| "Broad markets is a durable double-digit growth engine" | Broad markets ~$400M/qtr, +10-11% YoY, 9 straight quarters of growth — real | **Matches** — but it is only ~40% of revenue and can't yet offset mobile |
-| Recovery / growth story overall | Revenue: $5.49B (FY22) → $4.77B → $4.18B → $4.09B (FY25); −2.2% YoY, −9.3% three-year compound annual growth rate (CAGR). Trailing-twelve-month (TTM) revenue still falling | **Diverges** — the company is shrinking, not recovering |
-| Earnings power intact | EPS: $7.81 (FY22) → $6.13 → $3.69 → $3.08 (FY25); −23.4% five-year CAGR. TTM diluted EPS now $2.41; latest-quarter EPS −44% YoY | **Diverges sharply** — earnings have more than halved in three years |
-| "Healthy gross margins," path to 50-55% post-merger | Gross margin 41.2% and *contracting* in the screener; the calls show it sliding 47.1% (Aug 2025) → 46.6% → 45.0% (May 2026) on input-cost pressure | **Diverges** — margin is eroding now; the 50-55% is a post-merger promise, not current reality |
-| "Robust free cash flow" | FCF margin genuinely high (27% FY25, 33% latest qtr), net cash ~$425M. But FCF −33.7% YoY and management itself guided FCF *down* in FY26 ("no longer expect a tailwind from inventory reductions") | **Mixed** — cash conversion is real and a genuine strength, but the absolute level is falling and the recent boost was working-capital, not earnings |
+| "Solid execution," "strong results," beats every quarter | EPS beat 7 of 7 quarters (100%); each call exceeds the high end of guidance | **Matches.** Short-term delivery is real and consistent. |
+| Diversified broad markets is a durable growth engine | Grew 9 straight quarters; ~30% YoY in the three core engines | **Matches** at the segment level — but it is only ~40% of revenue and ~$1.6B; too small to offset mobile. |
+| The business is healthy | Total revenue **-2.2% last year, -9.3% three-year compound rate**; EPS fell from **$8.97 (FY21) to $3.08 (FY25)**, a -23% annual rate; net income $1.50B → $477M | **Diverges sharply.** The company-level trajectory is secular shrinkage, masked by quarterly beats against lowered bars. |
+| Gross margin expanding over time | Gross margin **41-47% and drifting DOWN**: 47.1% (Aug-25) → 46.5% → 46.6% → **45.0% (May-26)**, guided to 44.5-45.5% next quarter on "higher input costs" | **Diverges.** Margin is contracting now; the 50-55% promise is entirely contingent on the Qorvo deal closing, not on the standalone business. |
+| Strong cash generation, disciplined capital return | FCF margin ~27%; TTM free cash flow $697M; net cash ~$425M (cash $1.42B vs debt $997M) | **Matches.** Cash conversion is genuinely strong and the balance sheet is clean — the most reliable part of the story. |
+| Content at the top customer is stabilising | Management: blended content "roughly flat" FY26; "we successfully defended key mobile sockets" but with "mixed dynamics potentially moderating" | **Honest but weak.** Flat-at-best content on a customer that is ~60-67% of sales and actively in-sourcing is not a growth thesis. |
 
-The single most important divergence: the narrative is richer than the trajectory. Free cash flow is real and the balance sheet is clean (net cash), but the core earnings base has been cut in half in three years and is still declining. The "growth" is concentrated in a ~40% segment that cannot yet outrun the ~60% mobile decline.
+The clean read: the quarterly numbers are good and the beats are real, but they are beats against a base that is structurally declining. EPS has more than halved in four years. The stock's optical cheapness (price-to-free-cash-flow ~9.5x) sits on top of a shrinking earnings base — the classic value-trap signature unless the merger changes the math.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Trajectory: Stable-to-Rising on operational confidence, but the confidence has visibly migrated from the core business to the deal.**
+**Trajectory: Stable-to-rising in delivery confidence, but defensive in substance.**
 
-- May 2025 (new CEO): cautious optimism — "I'm energized," but candid that content needs work.
-- Aug 2025: more confident — "strong results," "visibility is strong across the board, book-to-bill higher than 1." The Woburn fab-closure (cost action) is announced — a defensive, efficiency-flavored move.
-- Nov 2025: confidence peaks — "three straight quarters of solid execution," and the Qorvo deal is unveiled as the transformative answer.
-- Feb / May 2026: confident on execution ("exceeded the high end" again), but increasingly leaning on the deal and on future-tense optionality (6G, satellite, "physical AI") rather than on current numbers.
+- May 2025: offensive, growth-flavoured — "energized by the opportunities," "pedal to the metal."
+- Aug 2025: introduces cost defense — the Woburn fab closure "to drive higher fab utilization, lower fixed costs." This is the tell: the language tips from growth to efficiency.
+- Nov 2025 onward: confident *about the deal*, careful about the base business. Brace concedes the content line "has been a downward sloping line" and reframes success as merely changing its slope.
+- May 2026: most upbeat on broad markets ("nine consecutive quarters," a new $1B+ Android multi-generation design win through 2030) and notably more hopeful on deal timing ("increasingly hopeful that we could close in late 2026" versus prior early-2027 guidance).
 
-The telling shift is from offensive to defensive vocabulary in the core: early calls talked about winning content; later calls talk about "defending key sockets," "financial discipline," "economics that make sense for both of us," and being "selective" on Android. That is the language of a company managing decline gracefully, not one accelerating.
+The pattern is a management team that is genuinely good at hitting one-quarter targets and increasingly leaning on the merger and a single new Android win to carry a forward story the core mobile franchise cannot.
 
 ## 4. GUIDANCE CREDIBILITY
 
-**Reliability: High.** This is the strongest part of the bull case and it is fully corroborated. Every quarter in the window beat the high end of the revenue/EPS guide (the screener's 7/7 beat rate matches the transcripts). Examples: Q2-FY25 EPS $1.24 vs $1.20 guide; Q3-FY25 $1.33, $0.09 above; Q1-FY26 $1.54, $0.14 above midpoint; Q2-FY26 $1.15, $0.11 above midpoint. There is a mild sandbagging pattern (consistently beating by a dime), which is a credibility positive for the *guide* but means the "beats" are not informative surprises.
+**Reliability: High (on near-term delivery).** The screener confirms a 7-of-7 quarterly beat rate, and every transcript shows revenue, gross margin, and EPS landing above the guided midpoint, often above the high end ("three quarters in a row of exceeding the high end"). There is a mild sandbagging pattern — guidance is set conservatively and beaten — which is reassuring for the next quarter but means the beats carry little information about the multi-year direction.
 
-Crucially, credibility on near-term delivery does NOT extend to the long-term trajectory: management beats its one-quarter-out guide while the annual numbers keep falling. They guide conservatively and clear the bar — but the bar itself steps down each year (FY26 revenue guide of $875-950M/qtr implies another down year).
+The one place credibility is untested is the big one: the 50-55% combined gross-margin and $500M synergy promise is a 2027+ claim that cannot be checked against anything yet, and this management team has no track record integrating an acquisition of this scale. Believe the quarter; reserve judgement on the merger math.
 
 ## 5. ANALYST PRESSURE POINTS
 
-The recurring, unresolved question is **content at the largest customer** — every call, analysts (Snyder/Charter, Peng/JPMorgan, Doyle/Needham) circle back to whether this is "the low point in content" at Apple. Management consistently deflects ("too early to comment," "downward sloping line we're trying to bend"), which later proved warranted-but-evasive: the May 2026 guide is "blended content roughly flat year-over-year" — i.e., no recovery in content, just stabilization.
+Analysts circle the same wound every call: **how much content is Skyworks losing at Apple, and when does it stop?** Management consistently deflects — "I can't comment on specific things like that," "too early to comment," "we don't guide beyond one quarter." Edward Snyder (Charter) repeatedly probes whether this is the low point in content; Gary Mobley (Loop) directly asked whether management still stands behind the revenue forecast in the merger proxy (the S-4) "given what you know today on your content in the upcoming launch" — and got a non-answer ("difficult for me to comment on specific filings"). That dodge, on the document underpinning the deal's valuation, is the most important non-answer in the file.
 
-A second pressure point analysts pushed (Gary Mobley, Feb 2026): does management still stand behind the revenue forecasts to 2030 filed in the merger S-4, given a post-filing "down selection" at the top customer? Management refused to confirm — a notable non-answer about its own filed numbers.
-
-What analysts worry about that management isn't fully addressing: the merger's regulatory risk. Management asserts the deal is "on track" and is "increasingly hopeful" for a late-2026 close, but does not engage with the U.S. Federal Trade Commission's Second Request (a deeper antitrust probe of "close competitors") on the calls.
+A second pressure point is gross-margin durability against rising input costs and memory pricing; management acknowledges "input costs remain a modest headwind" and is "sharing some of the price increases with our customers" — a polite way of saying it cannot fully pass costs through.
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🔴 EPS more than halved in three years ($7.81 → $3.08) with no inflection — the core is structurally smaller, not cyclically depressed.
-🔴 Gross margin eroding in real time (47.1% → 45.0% over the last three quarters) on input costs, against a *promised* 50-55% that only exists post-merger.
-🔴 Top-customer content on an admitted "downward sloping line"; ~60-67% revenue concentration in one customer that is actively in-sourcing RF.
-🔴 Insider behavior (open-market): zero buys, four sells (~12,277 shares) — no management conviction at these prices.
-🔴 Management churn: three CFOs inside the window (Sennesael → Schriesheim interim → Carter), plus a new head of sales — disruptive even if explained.
-🔴 The equity thesis increasingly *depends* on a binary regulatory event (the Qorvo merger) rather than on the standalone business.
+🔴 Company-level revenue and EPS in multi-year secular decline (-23%/yr EPS) while quarterly beats create an illusion of health.
+🔴 Apple is ~60-67% of revenue and in-sourcing RF content; management's best case is "flat" blended content.
+🔴 Gross margin contracting *now* (45.0% and guided lower); the expansion story is wholly merger-dependent.
+🔴 The forward story leans on a deal not yet closed and one new Android win, not on the core franchise turning.
+🔴 Insiders sold, did not buy: 0 open-market buys versus 4 sells (~12,277 shares) — no insider is putting fresh money in at these prices.
+🔴 Heavy chief-financial-officer turnover: three CFOs in roughly a year (Sennesael → Schriesheim interim → Carter).
 
-🟢 Pristine balance sheet: net cash ~$425M (cash $1.42B vs debt $997M), Altman-Z 4.8 (solvent), Piotroski 7/9.
-🟢 Genuine, high free-cash-flow conversion (27-33% FCF margin) and large, consistent buybacks ($600M record quarter).
-🟢 Broad markets is a real, diversifying growth engine (9 straight quarters, +10% YoY, above-corporate margins).
-🟢 Best-in-class guidance delivery (7/7 beats).
-🟢 A concrete new "$1B-through-2030" Android design win (May 2026) — first evidence the content line might bend.
+🟢 Pristine balance sheet: net cash ~$425M, free-cash-flow margin ~27%, Altman-Z (a bankruptcy-distance score) of 4.8 — zero solvency risk.
+🟢 Broad markets genuinely diversifying: nine straight quarters of growth, ~30% in the core engines, above-average margins, a real AI-data-center timing/power angle.
+🟢 New $1B+ multi-generation Android design win through 2030 — the first concrete sign of winning content *outside* Apple.
+🟢 Consistent, credible one-quarter execution and large, ongoing capital returns.
 
 ## 7. HIDDEN SIGNALS
 
-- Terminology shift: "diversification" went from a side-benefit to the entire strategic rationale — the merger pitch is explicitly to "reduce historical mobile volatility." Management is telling you mobile is the problem.
-- Capital-allocation tell: enormous buybacks ($1B+ over two quarters in 2025) were running while the stock was in the $60s-$80s and insiders were *selling* — buying back stock is the use of cash, not insider conviction.
-- The new CFO (Carter) is candid where prior management was promotional — explicitly flagging that FY25's free-cash-flow strength was a one-off inventory-drawdown benefit that will *not* repeat. That is an honest, slightly bearish admission embedded in an otherwise upbeat call.
-- "We supported Qorvo's $400M buyback under our merger covenants" (May 2026) — an unusual disclosure signaling how locked-in the deal mechanics now are.
+The clearest hidden signal is the **vocabulary migration from growth to mix and cost**: "favorable mix," "fab optimization," "higher utilization," "cost reduction initiatives," "selective price adjustments." This is the language of a company defending margin in a maturing business, not one compounding. Second, management quietly reframes the Apple relationship from a growth driver to a socket-defense exercise ("we defended our key sockets"). Third, the merger rhetoric escalates from "committed to closing" to "I can't wait to get it closed" — emotional emphasis that, read skeptically, signals how much of the equity story now rests on the deal rather than the business.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Classification: PIVOTING.** This is not a steady compounder and not yet a turnaround — it is a shrinking, cash-rich mobile-RF franchise attempting to re-base itself through (a) organic diversification into broad markets and (b) a transformational merger with its closest competitor.
+**Classification: PIVOTING.** Skyworks is a cash-rich, well-run RF franchise whose core mobile business is in structural decline at its dominant customer, attempting to buy its way to scale and margin by absorbing its closest competitor. The standalone trajectory is deteriorating; the merger is a deliberate pivot to arrest it.
 
-The single most important thing to weigh before sizing: **the equity is now a bet on the Qorvo merger clearing antitrust review, not on the standalone business.** The standalone trajectory is declining earnings on an eroding-margin, customer-concentrated base. The merger is the forcing function — but it carries genuine regulatory risk (U.S. FTC Second Request on "close competitors," China State Administration for Market Regulation in Phase II), and Skyworks is the *acquirer*, so its holders do not receive a fixed cash payout; they hold ~63% of a combined company whose value depends on $500M of synergies actually landing.
+**The single thing the director must weigh before sizing:** the load-bearing event is Skyworks *acquiring* Qorvo — Skyworks is the buyer, not the target, so there is no takeout premium for Skyworks holders and the upside is entirely a synergy/scale bet that depends on (a) the deal actually closing through China's antitrust review and (b) management delivering $500M of synergies and 50-55% margins it has never proven it can execute. Much of the optimistic case appears already reflected in a stock that has rallied sharply off its lows. Size as a merger-integration wager on a declining core, not as a cheap stub of a healthy business.
 
-**Economic moat:** NARROW and ERODING. The moat type is intangible/technical (deep RF design IP plus hard-won sockets at a few demanding customers), but the evidence says it is eroding, not durable: return on invested capital has fallen toward ~12.5%, gross margin is contracting from the low-50s historically to 45% now, and the largest customer is in-sourcing the very components Skyworks sells. A high-but-falling returns profile against a customer that is becoming a competitor is the textbook eroding moat.
+**Economic moat:** NARROW and ERODING. The moat is intangible — deep RF engineering know-how and incumbency in tightly integrated, hard-to-qualify smartphone sockets (real switching costs once a chip is designed in). But return on invested capital has fallen from its peak (now ~12.5%, only modestly above the cost of capital) and gross margin has slid to 45% as the largest customer in-sources and commoditisation creeps in. A high-but-falling returns profile is an eroding moat, not a wide one. The structural threat is the most powerful customer (Apple) building the very components Skyworks sells — a customer-captivity/in-sourcing risk that is material to terminal value, though not a clean fit to any single named secular-decline theme. The cheapness is therefore part fear-print, part shrinking base — a value trap unless the Qorvo combination genuinely resets the cost and scale structure.
 
-**Secular threat:** material (not yet terminal). The structural force is the largest customer (Apple) in-sourcing its RF/modem stack — a vertical-integration squeeze on the merchant RF supplier. This is real and ongoing, but it is partly offset by the genuinely growing broad-markets business and by the consolidation logic of the Qorvo deal (fewer merchant suppliers → more pricing power). So the cheapness is part fear-print, part structurally-shrinking base — a value trap risk if the merger fails, a re-rating if it closes and synergies land.
-
-CREDIBILITY_SCORE: 4 | TRAJECTORY: PIVOTING | MOAT: ERODING | MOAT_TREND: ERODING | SECULAR_THREAT: material
+CREDIBILITY_SCORE: 3 | TRAJECTORY: PIVOTING | MOAT: ERODING | MOAT_TREND: ERODING | SECULAR_THREAT: material

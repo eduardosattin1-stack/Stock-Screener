@@ -1,77 +1,80 @@
 # Forensic Dossier — Gartner, Inc. (IT)
 
-*Source material: four consecutive quarterly earnings calls (Q1 2025 through Q4 2025), plus the screener's financial trajectory and live corrections. Note: the company is classified in our system under "Industrials," but it is in substance a subscription research-and-advisory business — the relevant peers are data/subscription franchises like S&P Global and Verisk, not industrial manufacturers.*
+*Four consecutive earnings calls reviewed: Q1 2025 (May 2025), Q2 2025 (Aug 2025), Q3 2025 (Nov 2025), Q4 2025 (Feb 2026). Cross-referenced against the screener's financial trajectory and live-verified facts as of late June 2026.*
+
+Gartner is the world's leading technology research and advisory firm. It sells subscription "insights" (renamed from "Research" mid-2025) to corporate executives, runs large in-person conferences, and runs a project-based consulting arm. Roughly three-quarters of profit comes from the subscription business; the screener's segment file shows the smaller Events (54%) and Consulting (46%) lines, but the dominant Insights subscription engine is the real franchise. Note: the screener files this under "Industrials," but in substance it is a data/subscription business — the right peers are S&P Global and Verisk, not industrial manufacturers.
 
 ## 1. NARRATIVE ARC
 
-The story management tells changed in tone far more than in substance across 2025. The opening Q1 2025 call (May 6) framed a "resilient" business riding through "volatility, uncertainty, complexity and ambiguity," with contract value (the annualized recurring subscription book, the single most important forward metric here) still growing 7% and a confident promise to "reaccelerate CV growth to our target of 12% to 16% when the macroeconomic environment returns to normal." That double-digit target is the spine of the whole equity story.
+The story across these four calls is a single, steadily darkening arc: a high-quality compounder talking its way through a demand air-pocket while insisting the air-pocket is temporary.
 
-By Q2 (Aug 5) the spine had bent. Management volunteered that "measures of CEO confidence fell to recessionary levels, among the fastest drops ever recorded," and pivoted the narrative onto two new pillars: AI as an "opportunity" (the launch of AskGartner, an AI tool that answers client questions from Gartner's own content) and a list of "adaptations" to find "a clear path back to double-digit growth." Tellingly, this is the quarter they renamed the core "Research" segment to "Business and Technology Insights" — a cosmetic relabel that arrived precisely as growth was decelerating.
+- **Q1 2025** opened confident. Contract value (CV — the annualized, recurring book of subscription business, the company's north-star metric) grew 7%, results "ahead of expectations," and management framed disruption (tariffs, the U.S. federal cuts under the Department of Government Efficiency, or DOGE) as a passing macro storm they would "exit better, faster, and stronger." The target was explicit: "reaccelerate CV growth to our target of 12% to 16%, when the macroeconomic environment returns to normal."
+- **Q2 2025** pivoted. The headline became "AI is an important opportunity" plus "a clear path back to double-digit growth" — note the softening from "12-16%" to merely "double-digit." CEO confidence had "fell to recessionary levels," 78% of CEOs were cutting costs, and the company began listing reasons for losses. The "Research" segment was renamed "Business and Technology Insights," and a new AI product, AskGartner, was rolled out.
+- **Q3 2025** showed the damage in the numbers: CV growth decelerated to just 3% (6% excluding U.S. federal). The narrative leaned hard on engagement metrics ("client engagement was up," "pipeline up double digits") and on $1.1 billion of buybacks — capital return doing the talking while organic growth stalled.
+- **Q4 2025 / FY guidance** was the most defensive of all. Management unveiled a four-pillar "transformation" of the Insights business (impact, volume, timeliness, user experience), conceded the 2026 selling environment would be "no better" than 2025, guided EBITDA margin down to a "new baseline" of 23.5%, and announced selling the small Digital Markets business. The promise of double-digit growth was pushed out to "the medium term."
 
-By Q3 (Nov 4) contract value growth had fallen to 3% reported (6% excluding the shrinking U.S. federal book), and the emphasis shifted hard toward capital return — "$1.1 billion of stock" repurchased in the quarter — as the visible proof of value while the operating line stalled. By Q4 (Feb 3, 2026) the language became openly defensive: "executives have responded… by slowing and deferring everything possible… this makes for a much tougher selling environment." Management unveiled a four-dimension "transformation" of the Insights segment (impact, volume, timeliness, user experience) — the vocabulary of a business reworking its product under pressure, not one compounding from strength. The double-digit promise survived, but it migrated from "when macro normalizes" to "over the medium term," a quiet extension of the timeline.
-
-A growth driver that was quietly dropped: the original 2025 plan to grow sales headcount in the mid-single-digits became "roughly flattish" by Q2 and only "a very modest sales force expansion" for 2026 — capacity investment was pulled back as demand softened.
+The growth driver that was quietly dropped: the crisp, near-term "12-16%" CV target. What was introduced to fill the gap: an AI demand narrative, an internal "transformation" program, and aggressive buybacks.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-| Management claim | The numbers | Verdict |
+| Management claim | The actual numbers | Verdict |
 |---|---|---|
-| "Resilient," on a "clear path back to double-digit growth" | Revenue grew just +3.7% year over year (3-yr CAGR +5.9%); contract value growth fell from 7% (Q1) to 3% (Q3) | Poorer than the narrative. The book is decelerating toward stall speed, not pausing before reacceleration |
-| Strong, durable earnings | Net income fell from $1.25B (FY2024) to $729M (FY2025); reported EPS dropped from $16.0 to $9.65, down about 40% year over year | The headline collapse is real, though partly a tough comparison; trailing-twelve-month diluted EPS is back to ~$10.12 and the latest quarter grew EPS +17% |
-| "We generate free cash flow well in excess of net income" | This one holds: free-cash-flow margin is ~18%, trailing free cash flow ~$1.26B vs net income ~$729M | Verified — a genuine strength of the model |
-| Aggressive, value-accretive buybacks | ~$2B repurchased in 2025, share count down ~6% year over year; funded partly by an inaugural investment-grade bond | Verified, but note: they are now levering up (net debt ~$1.59B) to buy stock — a more aggressive posture than the "price-sensitive, opportunistic" framing implies |
-| Pricing power intact ("we don't get a lot of pushback on price increase") | Gross margin 67.7% (stable), ROIC 21% | Supported on margin; but flat-to-1% contract value growth means price increases are barely offsetting volume/seat attrition |
-| AI is an "opportunity," not a threat; LLM substitution is "essentially unmeasurable" | Cannot be tested in the financials, but the deceleration is coincident with the gen-AI wave | The most important unprovable claim in the file — see Section 8 |
+| "Resilient… results ahead of expectations" (every quarter) | Revenue grew just +3.7% YoY (FY2025), down from a +5.9% three-year pace; FX-neutral growth was ~1% by late 2025 | Half-true. They beat their own guidance (7/7 quarters per the screener) but only because guidance was set low — see §4. |
+| "Clear path back to double-digit growth" | CV growth fell 7% -> 3% across 2025; Q1 2026 (live) total CV grew just 1% FX-neutral | Not yet visible. The trajectory is decelerating, not inflecting. |
+| Strong free cash flow "well in excess of net income" | True and important: FY2025 net income fell to $729M (EPS $9.65, down ~40% YoY) yet trailing-twelve-month free cash flow is $1.26B — cash conversion far exceeds reported earnings | Verified, and the single best fact in the file. The EPS "collapse" is a tax/comparison artifact, not a cash-flow collapse. |
+| Margins resilient | Gross margin 67.7% (stable); but EBITDA margin guided DOWN to a 23.5% "new baseline" for 2026 | Mild erosion. Management is spending to defend the franchise. |
+| "We return capital… repurchase aggressively" | $2B of stock bought back in 2025; share count down 6% YoY; they issued investment-grade debt specifically to buy more | Verified and aggressive — this is the real engine of per-share value right now. |
+| Returns are excellent | ROIC 21%, gross margin 67.7% | Verified — genuinely high-quality economics. (Reported ROE of ~204% is a leverage artifact from the buyback-shrunk equity base, not a clean signal.) |
 
-The cleanest divergence: management's words are confident and growth-oriented; the contract-value trajectory (7% → 3%) and the EPS collapse describe a franchise under real pressure. The story is richer than the trajectory justifies.
+The narrative is **poorer** than the headline EPS suggests (EPS down 40%) but **richer** than the top line suggests, because free cash flow held up and the share count is shrinking fast. The honest read: earnings power is roughly flat-to-stable in cash terms, masked by a noisy GAAP comparison and a real-but-cyclical growth slowdown.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Declining.** The arc moves unmistakably from offense to defense.
+**Declining.** The language drifts from offense to defense over the four calls:
 
-- Q1 2025: offensive — "target long-term sustained double-digit growth," "eager to repurchase shares aggressively."
-- Q2 2025: first defensive notes — "headwinds," "CEO confidence fell to recessionary levels," and the reframing onto "adaptations."
-- Q3 2025: capital-return becomes the headline reassurance — "$1.1 billion of stock in the quarter" — while CV growth quietly slid to 3%.
-- Q4 2025: openly defensive — "tougher selling environment," "the value bar is higher," "slowing and deferring everything possible," and a margin guide-down to a new 23.5% baseline (the CFO: "yes, we do believe that 23.5% is the new baseline").
+- Q1 2025 (offensive): "exit… better, faster, and stronger"; specific 12-16% target.
+- Q2 2025 (hedging): "making adaptations that give us a clear path"; renamed the core segment; began enumerating loss reasons.
+- Q3 2025 (engagement-as-proxy): leaned on leading indicators ("client engagement was up," "pipeline up double digits") rather than booked CV, which had slowed to 3%.
+- Q4 2025 (defensive): "the selling environment is going to be no better… than 2025"; "23.5% is the new baseline"; growth promise pushed to "the medium term." CEO Gene Hall: executives "have responded… by slowing and deferring everything possible."
 
-Guidance specificity actually held up — management remained precise with numbers — but the substance of the guidance deteriorated (lower margins, slower CV, a longer runway to the double-digit goal).
+Guidance got *less* specific on timing (a concrete year-target became "medium term") even as it stayed disciplined on the P&L.
 
 ## 4. GUIDANCE CREDIBILITY
 
-**Medium-to-High on delivery, lower on the strategic outlook.** The financials show a beat on 7 of 7 quarters (100%), and through 2025 management repeatedly delivered "ahead of expectations" on revenue, EBITDA, EPS and free cash flow each quarter — the Q1 2026 print continued this with adjusted EPS ~11% above consensus. So on the near-term P&L they are reliable, even sandbagging-prone (the analyst questioning on "conservatism of the OpEx guide" suggests a habit of low-balling cost guidance).
-
-The credibility gap is at the strategic level: the 12-16% CV target has been promised in every call while actual CV growth went the other way (7% → 1%). They keep the target alive by attaching ever-longer and more conditional timelines ("when macro normalizes" → "over the medium term" → "2027, 2028 and beyond"). That is a target that is true only in a future that keeps receding.
+**Medium-to-High on delivery, Low on the growth-reacceleration promise.** The screener shows a 100% beat rate (7 of 7 quarters), and the calls repeatedly land "ahead of expectations." But this is classic sandbagging: CFO Craig Safian, asked directly whether the OpEx guide was conservative, said it was simply "our normal approach" — i.e., deliberately beatable. So the beat streak is real but low-information. The credibility gap is the *strategic* promise: the 12-16% CV target has slipped two years running and is now an undated "medium-term" aspiration. Management has been honest about the present and serially optimistic about the inflection.
 
 ## 5. ANALYST PRESSURE POINTS
 
-The recurring, unresolved analyst worry is **AI substitution**. It surfaced in Q2 (Jason Haas asking what share of cancellations cite using a public large language model instead) and again in Q3 (Ashish Sabadra asking how often LLMs come up as a Gartner alternative). Management's answer both times was a firm dismissal — "essentially unmeasurable," "a very, very, very small number of transactions." The very fact that analysts keep asking, and that management tracks "the reason for every loss," tells you this is the swing question on the stock. A second pressure point is the **declining client-enterprise count**, which management consistently attributes to "small tech vendor churn" — a real but partial explanation that deflects from broader seat-shrinkage in the enterprise base (which Gene Hall did concede in Q4: clients "cut that seat out" during budget pressure).
+- **"Are clients replacing you with ChatGPT / a public LLM?"** Asked repeatedly (Q2, Q3). Management's answer — losses to public LLMs are "essentially unmeasurable" and "very, very, very small" — is plausible but unfalsifiable, and it is the question that matters most to the terminal value. This is the deflection that bears should weigh heaviest.
+- **Declining client (enterprise) count.** Pushed on in Q2 and Q3; management attributes it to small tech-vendor churn (companies losing funding / going under), which is credible, but the count has fallen for years.
+- **U.S. federal exposure.** Roughly half of federal contracts up for renewal didn't renew in 2025; management modeled ~50% retention forward and openly hopes for a 2026-27 recovery it has explicitly *not* baked in.
+- **Margin step-down.** Analysts pressed whether 23.5% is structural; management confirmed it is the "new baseline."
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🔴 Contract value growth collapsed from 7% to ~1% over the year — the core forward indicator is at stall speed.
-🔴 Reported EPS fell ~40% and net income fell from $1.25B to $729M in a single year.
-🔴 A margin guide-down to a "new baseline" of 23.5%, framed as structural, not temporary.
-🔴 Renaming "Research" to "Insights" exactly as growth slowed — narrative management around a softening segment.
-🔴 The double-digit-growth promise keeps getting its deadline pushed out.
-🔴 Levering up (inaugural bond, net debt ~$1.59B) to fund buybacks into a decelerating business.
-🟢 Free cash flow conversion remains genuinely strong (~$1.26B trailing, well above net income).
-🟢 Gross margin (67.7%) and returns (ROIC 21%) are still excellent in absolute terms.
-🟢 Client retention rates actually rose ~100 basis points year over year in Q4 — the existing book is sticky.
-🟢 Trailing-twelve-month EPS has recovered to ~$10.12 and the latest quarter grew EPS +17%; the headline FY collapse overstates the run-rate damage.
-🟢 Aggressive, price-sensitive buybacks (~$2B, -6% share count) into a depressed price are accretive if the franchise holds.
+🔴 CV growth decelerated from 7% to 1% FX-neutral over five quarters — the core subscription engine is stalling, not just wobbling.
+🔴 The "12-16%" growth target has been serially pushed out and is now undated.
+🔴 The existential question — whether generative AI lets clients self-serve the insights they used to pay Gartner for — is answered only with unmeasurable reassurance.
+🔴 Margin guided down to a "new baseline"; enterprise client count falling for years.
+
+🟢 Free cash flow ($1.26B trailing) dwarfs reported net income — the cash engine is intact despite the EPS optics.
+🟢 $2B of buybacks in 2025, share count down 6%, with debt raised expressly to buy more at a depressed price — exactly the right capital-allocation move if the franchise is durable.
+🟢 Subscription model is genuinely sticky: multiyear contracts with "no out clauses," ~70%+ contribution margins, and price increases of 3-4% that clients absorb ("their decision isn't about the $6,000… it's the value").
+🟢 Management is candid about the bad news rather than spinning it.
 
 ## 7. HIDDEN SIGNALS
 
-The most revealing terminology shift is the renaming of "Research" to "Business and Technology Insights" — a tell that management wants to broaden the perceived value proposition beyond "research reports" precisely when a free large language model can produce a passable research report. The repeated, unprompted insistence that AskGartner drives "substantially higher renewal rates" reads as management pre-empting the AI-cannibalization fear. The constant return to buyback dollars as the headline proof point is itself a signal: when a compounder leads with capital return rather than organic growth, the organic growth is the problem. Finally, Gene Hall's Q4 admission that "some say the rate of change will never be this slow again" — invoked to justify the transformation — is an unusually candid acknowledgment that the old subscription cadence may not keep pace with how fast clients now want answers.
+- The rename of "Research" to "Business and Technology Insights" (Q2 2025) is a tell: management is repositioning the product as AI-adjacent "insights" precisely as the market worries AI commoditizes research.
+- AskGartner is framed as a retention tool, not a revenue line — an implicit acknowledgment that the threat is churn, not pricing.
+- "Engagement is a leading indicator of retention" became the dominant framing once booked CV slowed — a shift to softer proxy metrics.
+- Issuing investment-grade debt to fund buybacks is a confident, somewhat aggressive signal: management is levering a cash-rich balance sheet into its own depressed stock.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Classification: PIVOTING** — a high-quality franchise visibly reworking its product and narrative under genuine pressure, not a clean compounder pausing before reacceleration.
+**Trajectory: STABLE, bordering on a cyclical trough — not deteriorating in cash terms.** The business is suffering a real demand air-pocket (federal cuts, tariff-driven cost paralysis, lengthening sales cycles), but its cash economics, pricing power, and contract stickiness are intact, and management is using the drawdown to retire a lot of stock cheaply.
 
-The single most important thing to weigh before sizing: **is the contract-value deceleration from 7% to ~1% primarily cyclical (federal/DOGE cuts, tariff freeze, CEO-confidence shock — all of which can reverse) or primarily secular (gen-AI commoditizing "good-enough" syndicated research, capping pricing power and seat counts)?** Management insists it is the former and that LLM substitution is unmeasurable; the analysts keep probing because they suspect the latter. The answer determines whether ~8x trailing free cash flow is a generational entry into a wide-moat compounder or a value trap on a slowly melting base.
+**The single most important thing to weigh before sizing:** whether the CV slowdown is *cyclical* (deferred enterprise spending that returns when the macro normalizes — the bull case) or the *leading edge of secular AI displacement* (clients increasingly self-serving "insights" via large language models — the bear case). Everything turns on this. The transcripts assert it is cyclical and the LLM threat is "unmeasurable," but that is the one claim that cannot be verified from the filings, and it is precisely the claim a ~67% price collapse is pricing.
 
-**Moat:** Gartner's moat is real and intangible-/switching-cost-based — proprietary data from 500,000+ annual client conversations, an entrenched C-suite habit, and high retention (~100 bps better year over year). But the evidence points to an **ERODING** moat: ROIC and gross margin are high in absolute terms, yet contract-value growth has gone from 7% to 1%, EBITDA margin was guided down to a "new baseline," and net income halved — the durable earnings base stopped widening and began to wobble. A high-but-no-longer-growing return profile against a decelerating book is the signature of erosion, not width.
+**Moat:** intangible-brand plus switching-cost (proprietary data from 500,000+ annual client conversations, multiyear no-out contracts, conference network). It is **NARROW** and the trend is **ERODING at the margin** — ROIC remains a high 21% and gross margin is stable at 67.7%, so this is not a classic melting-margin erosion, but CV growth decelerating to ~1% and a multi-year decline in client count are early evidence the moat's *growth* is under pressure even if its *level* of profitability is not. **Secular threat: material, not terminal.** Generative AI is a genuine structural risk to a "we sell you curated knowledge" business, but the proprietary primary-research data, the executive relationships, and the embedded contracts are not trivially replicated by a public model — and there is no evidence yet (only management's unmeasurable assurance) that displacement is actually happening. The ~67% drawdown looks more like a fear-print on a cyclical slowdown than confirmation of a structurally shrinking base — but the secular tail is real enough that it caps how aggressive one should be.
 
-**Secular threat:** This is the cleanest example in our universe of the generative-AI-displacement tail — Gartner is literally a named anchor for that theme. The threat is **material** (it can compress pricing power and ARPU and slow the book for years) but, on current evidence, not yet **terminal**: retention is still rising, free cash flow is still robust, and the proprietary-data/habit moat has not visibly broken. The cheapness is therefore a genuine fear-print with a real, unresolved secular question attached — not a clear mispricing and not yet a confirmed value trap.
-
-CREDIBILITY_SCORE: 3 | TRAJECTORY: PIVOTING | MOAT: ERODING | MOAT_TREND: ERODING | SECULAR_THREAT: material
+CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: ERODING | SECULAR_THREAT: material

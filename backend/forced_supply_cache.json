@@ -100,5 +100,929 @@
     "mandate_sources": [],
     "aggregate_forced_pct": 0.0,
     "days_until_deadline": null
+  },
+  "MLYS_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DOCN_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LNG_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RUM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SSRM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "XMTR_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GNK_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ZS_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HPE_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NTRA_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RDN_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "APLD_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CEG_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DVN_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GDDY_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "FRMI_2026-05-23": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DYN_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GPC_2026-05-21": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LNG_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "VIR_2026-05-18": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "REZI_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AKTS_2026-05-27": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "PGNY_2026-05-31": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ARWR_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ITGR_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CRML_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LHX_2026-06-01": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KTB_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ARGX_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CRC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "INGR_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "WMB_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "MOD_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CRM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "EOSE_2026-05-28": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "FIG_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "OLLI_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "JOBY_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AGIO_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RELY_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ALMS_2026-05-24": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BMRN_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BMY_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GNK_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "IONQ_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KHC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "VTRS_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "WEN_2026-05-26": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "P_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ADSK_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ADUS_2026-05-23": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BSX_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "FLY_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DIS_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GRND_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HWC_2026-05-27": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LMND_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NFLX_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RKLB_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ULS_2026-05-29": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "VNT_2026-05-28": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AVGO_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CXM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BR_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BBIO_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CAPR_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "COO_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DOCU_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LDOS_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KVUE_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NCNO_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RLAY_2026-05-27": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NXST_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "TDS_2026-05-28": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SM_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "TPB_2026-05-20": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "TTAN_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "UAL_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "VG_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "WRBY_2026-05-28": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ZETA_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CALM_2026-05-30": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BE_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CPB_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CLH_2026-05-29": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "EQT_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "FOUR_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GLXY_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HAL_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "MRVL_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "MXL_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "PDD_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "TRIP_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "UWMC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ASAN_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CTRE_2026-06-01": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DKS_2026-05-29": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GILD_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HQY_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "IQV_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "S_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SKY_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "XEL_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ADI_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "ALK_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AORT_2026-05-18": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AVEX_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CAI_2026-05-28": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "COLL_2026-05-27": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CTSH_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CYTK_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DFH_2026-06-01": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GNRC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HII_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "INOD_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KNTK_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "IP_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KRMN_2026-06-05": {
+    "detected": true,
+    "mandate_sources": [
+      {
+        "source_type": "secondary_offering",
+        "authority": "SEC",
+        "seller_identity": null,
+        "forced_seller_stake_pct": null,
+        "deadline_date": "2026-05-28",
+        "evidence_quote": "Karman Space & Defense Announces Pricing of Upsized Secondary Offering of Common Stock"
+      }
+    ],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": 0
+  },
+  "MKC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "MSGS_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NOC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "PLTR_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RCAT_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "RVMD_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SEI_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "TEM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SLM_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "UAMY_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "URGN_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "APP_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "MIDD_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NP_2026-05-21": {
+    "detected": true,
+    "mandate_sources": [
+      {
+        "source_type": "secondary_offering",
+        "authority": "SEC",
+        "seller_identity": "certain selling securityholders",
+        "forced_seller_stake_pct": null,
+        "deadline_date": null,
+        "evidence_quote": "Neptune Insurance Holdings Inc. (the \"Company\") (NYSE: NP), the parent company of Neptune Flood Incorporated, today announced that, in connection with the secondary offering of 9,841,395 shares of its Class A common stock by certain selling securityhold"
+      }
+    ],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "SMTC_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AA_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AMSC_2026-06-02": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DOX_2026-05-14": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "GEO_2026-05-29": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "STRL_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AEO_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AGYS_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "AFRM_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "BBWI_2026-06-01": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CME_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "CRDO_2026-06-05": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "DY_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "FLYW_2026-06-03": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "HOOD_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "KGS_2026-05-21": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "LUNR_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "NWSA_2026-05-21": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
+  },
+  "PANW_2026-06-04": {
+    "detected": false,
+    "mandate_sources": [],
+    "aggregate_forced_pct": 0.0,
+    "days_until_deadline": null
   }
 }

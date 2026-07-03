@@ -200,6 +200,16 @@ export default function CatalystWatch() {
   const [view, setView] = useState<"basket" | "detail">("basket");       // basket = the default landing view
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);        // scanning-candidates rail (off by default — let the basket breathe)
   const [liveQuotes, setLiveQuotes] = useState<Record<string, any>>({}); // live ticker for the basket seats
+  const [fableDossiers, setFableDossiers] = useState<Record<string, any>>({}); // Phase-0 deep-dossier store (per-symbol, most recent re-underwrite)
+
+  // Fable deep-dossier store — written by the bi-weekly re-debate (backend/_basket13_dossiers.json
+  // → public/basket13_dossiers.json); rendered above the legacy board/backend dossier when present.
+  useEffect(() => {
+    fetch("/basket13_dossiers.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.dossiers) setFableDossiers(j.dossiers); })
+      .catch(() => {});
+  }, []);
 
   // Live ticker for the Basket 13 seats + the on-deck watchlist (reuses /api/quotes — FMP batch-quote proxy; 60s refresh)
   useEffect(() => {
@@ -254,31 +264,6 @@ export default function CatalystWatch() {
     setRecentScans((prev) => 
       prev.map((r) => r.symbol === sym ? { ...r, catalyst_score: newScore, adjusted_loeb_score: newScore, is_scanned: true } : r)
     );
-  };
-
-  // Force a fresh scan on-demand bypassing the cache
-  const handleForceRefresh = (symbol: string) => {
-    if (!symbol) return;
-    setLoadingScan(true);
-    setScanError(null);
-    fetch(`/api/catalysts/scan?symbol=${symbol}&refresh=true`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
-        return r.json();
-      })
-      .then((data: CatalystScanReport) => {
-        setReport(data);
-        setCustomAcquirerPrice(data.merger_arb_data?.acquirer_price ?? "");
-        scanCacheRef.current[symbol] = data;
-        setLoadingScan(false);
-        addRecentScan(data);
-        propagateScoreUpdate(data.symbol, data.catalyst_density_score);
-      })
-      .catch((err) => {
-        console.error(`Failed to refresh scan for ${symbol}`, err);
-        setScanError(`Failed to refresh event-driven scan for ${symbol}. Please try again.`);
-        setLoadingScan(false);
-      });
   };
 
   // Load watchlist on mount
@@ -1505,35 +1490,12 @@ export default function CatalystWatch() {
                         {watchlist.some(w => w.symbol === report.symbol.toUpperCase().trim()) ? "WATCHED" : "ADD TO WATCHLIST"}
                       </button>
 
-                      <button
-                        onClick={() => handleForceRefresh(report.symbol)}
-                        disabled={loadingScan}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
-                          background: "transparent",
-                          border: `1px solid ${T.border}`,
-                          borderRadius: 6,
-                          padding: "3px 8px",
-                          fontSize: 10,
-                          fontWeight: 700,
-                          color: T.green,
-                          cursor: "pointer",
-                          transition: "all 0.15s",
-                          fontFamily: T.mono,
-                          marginLeft: 8
-                        }}
-                      >
-                        <RefreshCw size={11} className={loadingScan ? "animate-spin" : ""} style={{ animation: loadingScan ? "spin 1s linear infinite" : "none" }} />
-                        RE-SCAN
-                      </button>
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 11, color: T.light, marginTop: 4 }}>
                       <span>Price: <strong style={{ color: T.text }}>${(((report as any).live_price ?? report.price))?.toFixed(2) || "N/A"}</strong>{(report as any).live_price != null ? <span style={{ color: T.muted, fontSize: 9 }}> live</span> : null}</span>
                       <span>Market Cap: <strong style={{ color: T.text }}>{formatMarketCap(report.market_cap)}</strong></span>
                       {report.cache_timestamp && (
-                        <span title="Date of the full AI Loeb deep-scan; price is live. Use RE-SCAN to refresh the analysis.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
+                        <span title="Date of the full AI deep-scan; price is live. Dossiers refresh via the bi-weekly re-debate (Fable deep-dossier phase), not on demand.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
                       )}
                     </div>
                   </div>
@@ -1575,6 +1537,49 @@ export default function CatalystWatch() {
                     )}
                   </div>
                 </div>
+
+                {/* FABLE DEEP-DOSSIER — Phase-0 re-underwrite from the bi-weekly re-debate; supersedes the legacy dossier below */}
+                {(() => {
+                  const fd = fableDossiers[report.symbol?.toUpperCase?.().trim()];
+                  if (!fd) return null;
+                  const dead = fd.catalyst_status === "FIRED" || fd.catalyst_status === "BROKEN";
+                  const soft = fd.catalyst_status === "PENDING_SOFT" || fd.catalyst_status === "SLIPPED";
+                  const sc = dead ? "#ef4444" : soft ? "#d97706" : T.green;
+                  return (
+                    <div style={{ marginBottom: 16, padding: "12px 14px", background: dead ? "rgba(239,68,68,0.05)" : "rgba(45,122,79,0.05)", border: `1px solid ${dead ? "rgba(239,68,68,0.35)" : "rgba(45,122,79,0.35)"}`, borderRadius: 8 }}>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: T.green, letterSpacing: "0.08em" }}>⬢ Fable deep-dossier</span>
+                        <span style={{ fontSize: 9, fontWeight: 800, fontFamily: T.mono, padding: "1px 7px", borderRadius: 3, color: sc, border: `1px solid ${sc}`, background: "transparent" }}>{fd.catalyst_status}</span>
+                        <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>re-underwritten {fd.asof} · {fd.model}</span>
+                      </div>
+                      <p style={{ fontSize: 12, color: T.text, lineHeight: 1.6, margin: 0 }}>{fd.thesis_summary}</p>
+                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginTop: 8, fontSize: 10.5, fontFamily: T.mono, color: T.light }}>
+                        {fd.fair_value_target != null && <span>target <strong style={{ color: T.text }}>${fd.fair_value_target}</strong></span>}
+                        {fd.downside_floor != null && <span>floor <strong style={{ color: T.text }}>${fd.downside_floor}</strong></span>}
+                        {fd.win_prob != null && <span>win prob <strong style={{ color: T.text }}>{Math.round(fd.win_prob * 100)}%</strong></span>}
+                        {fd.dated_milestone && <span>milestone <strong style={{ color: T.text }}>{fd.dated_milestone}</strong></span>}
+                        {fd.resolution_driver && !/\s/.test(fd.resolution_driver) && <span>driver <strong style={{ color: T.text }}>{termLabel(fd.resolution_driver)}</strong></span>}
+                      </div>
+                      {fd.kill_risk && (
+                        <div style={{ marginTop: 8, padding: "8px 11px", background: "rgba(217,151,6,0.06)", border: "1px solid rgba(217,151,6,0.25)", borderRadius: 6 }}>
+                          <span style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: "#d97706", letterSpacing: "0.05em" }}>⚠ Kill risk</span>
+                          <div style={{ fontSize: 10.5, color: T.light, lineHeight: 1.5, marginTop: 3 }}>{fd.kill_risk}</div>
+                        </div>
+                      )}
+                      {(fd.discrepancies?.length > 0 || fd.dossier_note) && (
+                        <details style={{ marginTop: 8 }}>
+                          <summary style={{ fontSize: 9.5, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.05em", cursor: "pointer" }}>
+                            Corrections vs board dossier ({fd.discrepancies?.length || 0}) + working notes
+                          </summary>
+                          {(fd.discrepancies || []).map((x: string, i: number) => (
+                            <div key={i} style={{ fontSize: 10.5, color: T.light, lineHeight: 1.5, marginTop: 5, paddingLeft: 10, borderLeft: `2px solid ${T.border}` }}>{x}</div>
+                          ))}
+                          {fd.dossier_note && <div style={{ fontSize: 10.5, color: T.muted, lineHeight: 1.55, marginTop: 8 }}>{fd.dossier_note}</div>}
+                        </details>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.muted, letterSpacing: "0.08em", marginBottom: 6 }}>

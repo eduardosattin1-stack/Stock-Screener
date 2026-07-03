@@ -1,0 +1,17 @@
+{
+  "symbol": "SOP.PA",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "No kill_fact. The moat-erosion default does NOT hold: the deterministic screen's load-bearing flag earns_below_cost_of_capital=true is FALSE against the primary filing. Sopra Steria's company-reported RoCE before tax was 20.4% in 2025 (above its >20% medium-term target), vs a WACC of ~6.4-7.7% — returns run roughly 3x cost of capital, not below it. The screener's ROIC of ~7-8.3% is the mis-scaled FMP TTM artifact the dossier already flagged. With durable returns confirmed from a primary source, the moat is not eroding-by-default and the value case survives the skeptic attack.",
+  "corrections": [
+    "MOAT-SCREEN ERROR (load-bearing): earns_below_cost_of_capital=true is wrong. Primary filing: RoCE before tax 20.4% in 2025 (21.5% in 2024) vs WACC ~6.4-7.7%. Returns are far above cost of capital. The screen also claimed 'returns rising' — they actually slipped 110bps YoY (20.4 vs 21.5), but remain inside the >20% target. So the moat is narrow-but-STABLE with returns well above WACC, not eroding-below-cost-of-capital.",
+    "Operating margin on business activity was 9.5% in 2025 vs 9.8% in 2024 (-30bps) — a real, if modest, compression through a -2.2% organic year; the 10-11% 2028 target requires re-expansion the labor model has not yet demonstrated. This is the legitimate residual bear point: the discount is partly shared cohort beta to the AI/labor-arbitrage-deflation fear (Capgemini fwd P/E ~7.4x as of 2026-06-17), not pure single-name alpha. It caps the multiple; it does not break the value case.",
+    "2028 medium-term targets verified from the primary release: organic growth 2-5%, operating margin 10-11%, FCF 5-7% of revenue. FY2026 guide held at 1-2% organic (incl. ~2pt SFT drag) — not raised off the +7.2% France Q1, a conservative posture."
+  ],
+  "value_conviction_cap": 4,
+  "evidence": [
+    "Sopra Steria FY2025 Results (Euronext regulated-market filing, 2026-02-26): RoCE before tax 20.4% (2024: 21.5%, target >20%); operating margin on business activity 9.5% (2024: 9.8%); net profit attributable EUR296.8m (+18.3%); net financial debt EUR246.7m (-35.4%, 0.45x pro-forma EBITDA); FCF EUR340.9m (6.0% of revenue); 2026-2028 targets organic 2-5% / margin 10-11% / FCF 5-7%.",
+    "Sopra Steria Q1 2026 revenue release (BusinessWire/company, 2026-04-28): revenue EUR1,463.2m, +3.4% total / +3.2% organic (+4.4% ex-SFT); France +7.2% (vs +1.6% Q4'25); UK +4.2%; FY2026 guide confirmed at 1-2% organic, margin >=9.5%, FCF ~5%.",
+    "Capgemini valuation (Yahoo Finance, 2026-06-17): forward P/E ~7.4x — confirms the whole EU IT-services cohort is de-rated on AI/labor-arbitrage fear, so SOP's cheapness is materially shared sector beta, not pure idiosyncratic mispricing.",
+    "The Register (2026-02-27): Sopra Steria is suing the UK DWP over the lost GBP958m Capita 'Synergy' BPS award — a lost-bid grievance/upside-contingency, NOT a liability against Sopra; no covenant, dilution, profit warning, or goodwill impairment found."
+  ]
+}

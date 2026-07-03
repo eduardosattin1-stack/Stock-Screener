@@ -1,24 +1,23 @@
 {
   "inception_date": "2026-06-09",
-  "nav": 101.2244,
-  "last_date": "2026-06-21",
+  "nav": 108.9703,
+  "last_date": "2026-07-02",
   "last_prices": {
-    "EEFT": 65.84,
-    "CMCSA": 22.43,
-    "WKL.AS": 58.86,
-    "EPAM": 76.64,
-    "HRB": 34.38,
-    "UHS": 141.17,
-    "THC": 172.57,
-    "NTES": 121.33,
-    "SCR.PA": 31.44,
-    "HRMY": 33.28
+    "EEFT": 75.22,
+    "WKL.AS": 57.2,
+    "CTSH": 41.07,
+    "NTES": 129.7,
+    "HRB": 39.34,
+    "SCR.PA": 31.6,
+    "LNC": 36.23,
+    "THC": 191.2,
+    "HRMY": 36.0
   },
   "positions": {
     "THC": {
       "entry_price": 163.01,
       "entry_date": "2026-06-09",
-      "conviction": 76
+      "conviction": 70
     },
     "EEFT": {
       "entry_price": 66.09,
@@ -28,27 +27,12 @@
     "NTES": {
       "entry_price": 121.81,
       "entry_date": "2026-06-17",
-      "conviction": 79
+      "conviction": 76
     },
     "WKL.AS": {
       "entry_price": 59.94,
       "entry_date": "2026-06-17",
       "conviction": 80
-    },
-    "UHS": {
-      "entry_price": 146.9,
-      "entry_date": "2026-06-17",
-      "conviction": 80
-    },
-    "CMCSA": {
-      "entry_price": 22.43,
-      "entry_date": "2026-06-21",
-      "conviction": 80
-    },
-    "EPAM": {
-      "entry_price": 76.64,
-      "entry_date": "2026-06-21",
-      "conviction": 74
     },
     "HRB": {
       "entry_price": 34.38,
@@ -63,6 +47,16 @@
     "HRMY": {
       "entry_price": 33.28,
       "entry_date": "2026-06-21",
+      "conviction": 70
+    },
+    "CTSH": {
+      "entry_price": 41.07,
+      "entry_date": "2026-07-02",
+      "conviction": 76
+    },
+    "LNC": {
+      "entry_price": 36.23,
+      "entry_date": "2026-07-02",
       "conviction": 72
     }
   },
@@ -138,6 +132,72 @@
       "nav": 101.2244,
       "ret": 0.0,
       "n": 10
+    },
+    {
+      "date": "2026-06-22",
+      "nav": 101.2244,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-06-23",
+      "nav": 100.5427,
+      "ret": -0.006735,
+      "n": 10
+    },
+    {
+      "date": "2026-06-24",
+      "nav": 101.8297,
+      "ret": 0.012801,
+      "n": 10
+    },
+    {
+      "date": "2026-06-25",
+      "nav": 102.7757,
+      "ret": 0.00929,
+      "n": 10
+    },
+    {
+      "date": "2026-06-26",
+      "nav": 102.1971,
+      "ret": -0.00563,
+      "n": 10
+    },
+    {
+      "date": "2026-06-27",
+      "nav": 105.6085,
+      "ret": 0.03338,
+      "n": 10
+    },
+    {
+      "date": "2026-06-28",
+      "nav": 105.6085,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-06-29",
+      "nav": 105.6085,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-06-30",
+      "nav": 106.855,
+      "ret": 0.0,
+      "n": 8
+    },
+    {
+      "date": "2026-07-01",
+      "nav": 107.3707,
+      "ret": 0.004826,
+      "n": 8
+    },
+    {
+      "date": "2026-07-02",
+      "nav": 108.9703,
+      "ret": 0.0,
+      "n": 9
     }
   ],
   "closed": [
@@ -266,6 +326,33 @@
       "exit_price": 32.03,
       "return_pct": -0.4,
       "conviction": 74
+    },
+    {
+      "symbol": "CMCSA",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-06-30",
+      "entry_price": 22.43,
+      "exit_price": 24.22,
+      "return_pct": 7.98,
+      "conviction": 80
+    },
+    {
+      "symbol": "EPAM",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-06-30",
+      "entry_price": 76.64,
+      "exit_price": 80.03,
+      "return_pct": 4.42,
+      "conviction": 74
+    },
+    {
+      "symbol": "UHS",
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-07-02",
+      "entry_price": 146.9,
+      "exit_price": 150.58,
+      "return_pct": 2.51,
+      "conviction": 80
     }
   ]
 }

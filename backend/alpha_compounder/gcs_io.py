@@ -93,6 +93,40 @@ def gcs_read_json(path: str, bucket: str = GCS_BUCKET) -> Optional[Any]:
     return None
 
 
+def gcs_read_json_fresh(path: str, bucket: str = GCS_BUCKET) -> Optional[Any]:
+    """Generation-pinned read for READ-MODIFY-WRITE bases. The plain read can return the PRIOR
+    generation for seconds after a write (edge cache; no-cache headers don't help) — that staleness
+    silently clobbered the calibration tracker's RMW chain (2026-06 incident) and is fatal on any
+    file with two writers (the NAV tracking chain: nightly Cloud Run mark + weekly publish).
+    Mechanism: fetch object metadata first, then read ?alt=media&generation=N (the proven fix).
+
+    INVARIANT for future writers: any code that reads a GCS object, modifies it, and writes it back
+    MUST use this (or shell `gcloud storage cat`) — never gcs_read_json, whose staleness cannot be
+    detected after the fact. Falls back to the plain read on metadata failure (never worse)."""
+    try:
+        import requests
+        from urllib.parse import quote
+        tok = _gcs_token()
+        headers = {"Authorization": f"Bearer {tok}"} if tok else {}
+        meta_url = f"https://storage.googleapis.com/storage/v1/b/{bucket}/o/{quote(path, safe='')}"
+        m = requests.get(meta_url, headers=headers, timeout=15)
+        if m.status_code == 404:
+            return None
+        if m.status_code != 200:
+            log.warning(f"GCS fresh read {path}: metadata {m.status_code} -> plain-read fallback")
+            return gcs_read_json(path, bucket)
+        gen = m.json().get("generation")
+        r = requests.get(meta_url, params={"alt": "media", "generation": gen},
+                         headers=headers, timeout=15)
+        if r.status_code == 200:
+            return r.json()
+        log.warning(f"GCS fresh read {path}: media {r.status_code} -> plain-read fallback")
+        return gcs_read_json(path, bucket)
+    except Exception as e:
+        log.warning(f"GCS fresh read {path} failed: {e} -> plain-read fallback")
+        return gcs_read_json(path, bucket)
+
+
 # ---------------------------------------------------------------------------
 # Parquet I/O
 # ---------------------------------------------------------------------------

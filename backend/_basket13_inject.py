@@ -320,11 +320,18 @@ def build_watchlist(t, director, passed, bysym, cro_by, stamp_date):
 
 
 # --------------------------------------------------------------- cap validation
-def validate(picks, bysym, live_px=None):
+def validate(picks, bysym, live_px=None, held_syms=None):
     """Deterministic hard-cap assertion on the Director output. Returns a list of violations.
     live_px: {SYM: stamped/limit price} — caps are checked at the price the book actually
-    carries. Pending (resting-limit) picks count toward every cap as-if-filled."""
+    carries. Pending (resting-limit) picks count toward every cap as-if-filled.
+    held_syms: LOCKED held seats — they consume headroom in every AGGREGATE cap (count,
+    driver, super-cluster, lane) but are exempt from the PER-SEAT gates (staging half-weight,
+    expression, risk-to-floor, binary premium, weekly-diagnosis) — a held seat was validated
+    at its own stamp time and runs to resolution; new adds must never re-litigate it (the
+    staging half-normal denominator grows with n, so re-testing held rows would let every
+    add retroactively breach seats that were legal when stamped)."""
     live_px = live_px or {}
+    held_syms = held_syms or set()
     v, n = [], len(picks)
     if not (MIN_NAMES <= n <= MAX_NAMES):
         v.append(f"COUNT {n} outside [{MIN_NAMES},{MAX_NAMES}]")
@@ -349,7 +356,11 @@ def validate(picks, bysym, live_px=None):
         if bylane.get(ln, 0) > cap:
             v.append(f"LANE {ln}: {bylane[ln]} names > {cap}")
     for p in picks:
+        if p["symbol"] in held_syms:           # locked seat — per-seat gates ran at ITS stamp
+            continue
         c = bysym.get(p["symbol"], {})
+        if c.get("_dossier_dead"):             # Phase-0 deep dossier: catalyst FIRED/BROKEN
+            v.append(f"{p['symbol']} BLOCKED by deep dossier: catalyst {c['_dossier_dead']} — edge spent/invalidated")
         w = p.get("weight_pct") or 0
         exp = (p.get("expression") or {}).get("type")
         vm, staging = c.get("valuation_method"), c.get("staging")
@@ -370,7 +381,51 @@ def validate(picks, bysym, live_px=None):
                 v.append(f"{p['symbol']} STAGING must be equity, got '{exp}'")
             if w > half + 0.5:
                 v.append(f"{p['symbol']} STAGING weight {w:.1f}% > half-normal {half:.1f}%")
+        # WEEKLY-DIAGNOSIS ENTRY GATE (2026-07-01): the weekly full-stack catalyst debate + skeptic
+        # runs over this whole book — consuming it here would have BLOCKED ~27 NAV-pts of dead seats
+        # (GDOT Skeptic-REFUTED at 14%, AQST SOFT->FIRED-adjacent at 4.5%, UNF trading-through).
+        # Hard-reject a NEW seat whose FRESH (<=DIAG_FRESH_DAYS) diagnosis says the edge is gone;
+        # an older artifact only warns (ad-hoc mid-week injects keep working).
+        dg = _diag_gate(p["symbol"])
+        if dg:
+            v.append(dg)
     return v
+
+
+DIAG_FRESH_DAYS = 10   # ONE freshness window, shared with _basket13_gen (red-team condition)
+
+
+def _diag_gate(sym):
+    """Return a violation string when the weekly catalyst diagnosis disqualifies a NEW entry:
+    skeptic verdict REFUTED, or catalyst_status FIRED / ARB (trading through terms). Fresh
+    (<=DIAG_FRESH_DAYS) -> hard violation; stale artifact -> warn-print only, no violation."""
+    import time as _t
+    base = os.path.join(BASE, "_opus_debate")
+    checks = []
+    sk = os.path.join(base, "_catalyst_skeptic", f"{sym}.json")
+    if os.path.exists(sk):
+        try:
+            d = json.load(open(sk, encoding="utf-8"))
+            if (d.get("verdict") or "").upper() == "REFUTED":
+                checks.append(("skeptic REFUTED: " + str(d.get("kill_fact", ""))[:120], os.path.getmtime(sk)))
+        except Exception:
+            pass
+    rs = os.path.join(base, "_catalyst_results", f"{sym}.json")
+    if os.path.exists(rs):
+        try:
+            d = json.load(open(rs, encoding="utf-8"))
+            cs = (d.get("catalyst_status") or "").upper()
+            if cs.startswith("FIRED") or cs.startswith("ARB"):
+                checks.append((f"catalyst_status {cs} (re-rate spent / trading through terms)", os.path.getmtime(rs)))
+        except Exception:
+            pass
+    for reason, mtime in checks:
+        age_d = (_t.time() - mtime) / 86400
+        if age_d <= DIAG_FRESH_DAYS:
+            return f"{sym} BLOCKED by weekly diagnosis ({age_d:.0f}d old): {reason}"
+        print(f"WARN {sym}: STALE weekly diagnosis ({age_d:.0f}d > {DIAG_FRESH_DAYS}d) says '{reason}' "
+              f"— not blocking (re-run the catalyst workflow to refresh)")
+    return None
 
 
 # ----------------------------------------------------------------------- inject
@@ -383,9 +438,47 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     passed = list(director.get("passed") or [])
     memo = director.get("memo", "")
     cro_by = {v["symbol"]: v for v in (res.get("cro") or []) if v.get("symbol")}
+    dossier_by = {d["symbol"]: d for d in (res.get("dossiers") or []) if d.get("symbol")}
+
+    # persist Phase-0 dossiers into the per-symbol store (most recent re-underwrite wins);
+    # _basket13_export.py ships it to frontend/public for the /catalysts depth view.
+    if dossier_by:
+        dstore_path = os.path.join(BASE, "_basket13_dossiers.json")
+        try:
+            dstore = json.load(open(dstore_path, encoding="utf-8"))
+        except Exception:
+            dstore = {"header": "Basket 13 Fable deep-dossiers — one entry per symbol, most recent "
+                                "re-underwrite wins. Written by _basket13_inject.py from each re-debate's "
+                                "Phase-0 dossiers[]; _basket13_export.py copies to "
+                                "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
+                      "dossiers": {}}
+        today = datetime.date.today().isoformat()
+        for sym, d in dossier_by.items():
+            dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-fable-5"}
+        json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
+                  indent=1, ensure_ascii=False)
+        print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
     bysym = {c["symbol"]: c for c in cands}
     stamp_date = entry_date or datetime.date.today().isoformat()
+
+    # DEEP-DOSSIER OVERRIDES (2026-07-03): the workflow's Phase 0 re-underwrites each candidate's
+    # load-bearing fields from live sources before the CRO/Director consume them. Validation and
+    # the stamped entries must use the SAME corrected numbers the Director sized on — not the
+    # stale board dossier in _basket13_candidates.json. A FIRED/BROKEN dossier is a hard kill.
+    for d in (res.get("dossiers") or []):
+        c = bysym.get(d.get("symbol"))
+        if not c:
+            continue
+        if d.get("catalyst_live") is False:
+            c["_dossier_dead"] = d.get("catalyst_status")
+        for k in ("fair_value_target", "downside_floor", "dated_milestone",
+                  "valuation_method", "resolution_driver", "staging", "win_prob"):
+            if k == "resolution_driver" and isinstance(d.get(k), str) and " " in d[k]:
+                continue                       # driver is a cap tag, never prose
+            if d.get(k) is not None and d.get(k) != c.get(k):
+                c["board_" + k] = c.get(k)
+                c[k] = d[k]
 
     # explicit stamp-time exclusions (e.g. an unverifiable blocking condition) -> counterfactuals
     picks, excluded = [], []
@@ -438,7 +531,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                                 "lane_canon": e.get("lane_canon"), "live_price": e.get("entry_price")}
         live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
 
-    viol = validate(held_pseudo + picks, bysym_v, live_px=live_v)
+    viol = validate(held_pseudo + picks, bysym_v, live_px=live_v, held_syms=held_syms)
     if viol:
         print("CAP VALIDATION FAILED — basket NOT stamped:")
         for x in viol:
@@ -500,6 +593,12 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                            ("live_edge_check", "tradeability_note", "window_note", "driver_confirmed", "conditions")},
             "resolution": None,
         }
+        # Phase-0 deep-dossier provenance (compact): what the same-day re-underwrite corrected
+        # vs the board dossier, so each seat's numbers are auditable without _basket13_out.json.
+        d = dossier_by.get(sym)
+        if d:
+            entry["dossier_refresh"] = {k: d.get(k) for k in
+                                        ("catalyst_status", "thesis_summary", "discrepancies", "kill_risk")}
         t["entries"].append(entry)
         (pending if is_pend else added).append(sym)
 

@@ -1,0 +1,4 @@
+# runtime artifacts — never commit
+_logs/
+LIVE.flag
+TRADEBOT_HALT

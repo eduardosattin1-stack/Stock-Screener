@@ -1,1 +1,255 @@
-{"chunk":"4 (BTBT-CLPT)","scanned":150,"scan_distribution":{"active":4,"watch":19,"none":127},"survivors_flagged":[{"symbol":"CAAP","score":5,"tier":"WATCH","lane":"activist_structural","one_line":"Corp America Airports signed a Brasilia concession Transition Amendment with ANAC (Jun 26); ongoing renegotiation + surging IV is a dated structural/regulatory milestone worth watching."},{"symbol":"CAPR","score":7,"tier":"ACTIVE","lane":"binary","one_line":"Capricor Deramiocel (DMD): FDA AdCom Jul 29 2026 + PDUFA Aug 22 2026, with positive HOPE-3/5yr OLE data; stock sold off 13% into the AdCom-scheduling news, a real dated binary with asymmetry."},{"symbol":"CBRL","score":6,"tier":"WATCH","lane":"activist+structural","one_line":"Biglari\u0027s 8th proxy fight live (8.7% stake, board nominee filed Jan 2026); dated annual-meeting vote + post-rebrand turnaround = real structural trigger, but a serial-loser activist caps asymmetry."},{"symbol":"CCRN","score":6,"tier":"WATCH","lane":"merger-arb","one_line":"Live definitive merger-arb: Knox Lane all-cash $13.25/sh, close expected Q3 2026; but at $13.21 the spread is ~0.3% — fully priced, thin asymmetry."},{"symbol":"CELC","score":7,"tier":"ACTIVE","lane":"dated-binary (PDUFA)","one_line":"Hard PDUFA July 17, 2026 for gedatolisib (HR+/HER2- wild-type) + Q3 launch; VIKTORIA-1 PFS win already out, but approval binary into a large market with broader VIKTORIA-2 optionality remains forward and asymmetric."},{"symbol":"CEPT","score":6,"tier":"WATCH","lane":"de-SPAC merger","one_line":"Definitive de-SPAC with tokenization firm Securitize (→SECZ); shareholder vote dated ~June 29, 2026 — real dated deal but imminent/about to close, trust-value-floor SPAC, asymmetry largely set."},{"symbol":"CGEM","score":5,"tier":"WATCH","lane":"binary_pdufa","one_line":"Catalyst-rich \u002726 (CLN-978 SLE/RA at EULAR Jun, zipalertinib PDUFA Feb-27); real dated readouts but key approval is far + asymmetry not clearly mispriced."},{"symbol":"CGON","score":6,"tier":"WATCH","lane":"binary_pdufa","one_line":"Cretostimogene NMIBC: rolling BLA completing Q4\u002726 + PIVOT-006 topline H1\u002726; real dated binaries, Fast Track/Breakthrough."},{"symbol":"CHTR","score":5,"tier":"WATCH","lane":"merger_arb","one_line":"Complicated $34.5B Cox merger; DOJ/FCC cleared, only California CPUC left vs hard Sep-15-2026 HSR deadline — dated regulatory binary but CHTR is the acquirer/parent."},{"symbol":"CLBK","score":6,"tier":"ACTIVE","lane":"merger-arb / thrift second-step conversion","one_line":"Definitive $597M Northfield merger + MHC second-step conversion, regulatory approvals received and stock offering commenced, targeted close early Q3 2026 — a real dated structural event (own the underlying through conversion)."},{"symbol":"CLDX","score":6,"tier":"ACTIVE","lane":"dated binary (clinical)","one_line":"Barzolvolimab Phase 3 CSU topline due Q4 2026 (enrollment complete, 1,939 pts) plus PN readout in summer 2026 — dated binaries supporting a 2027 BLA; mispriced asymmetry if you frame it as event-driven."}],"verified":[{"symbol":"CAAP","score":6,"tier":"WATCH","lane":"activist_structural","catalyst":"CAAP\u0027s 51%-owned Inframerica signed a Transition Amendment Agreement with Brazil\u0027s ANAC to renegotiate the Brasilia airport concession (fixed→variable fees, Infraero exit, +10 regional airports), triggering a fast-track public tender for 100% of Inframerica\u0027s shares.","dated_milestone":"Fast-track competitive public tender for 100% of Inframerica shares expected by December 2026; if no bids, amended concession reverts automatically to Inframerica (TAA signed Jun 26, 2026).","instrument":"CAAP (NYSE) common equity","bloom_gates":"G1 (named: ANAC, Ministry of Ports \u0026 Airports, Federal Court of Accounts, Infraero exit) + G2 (concrete: fixed→variable fees, +10 regional airports, mandated Brasilia capex, Dec-2026 tender for 100% of shares). G3 FAILS — no concession-fee, investment, or compensation figures disclosed.","edge":"M — TAA signing is public and stock barely moved (+1.2%, $25.84, mid 52wk range, near 50/200d avgs), so the structural reset is partly digested; but the value-determining event (Dec-2026 tender — CAAP bids to take Inframerica to 100%, or no-bid auto-grant) is unresolved and the economics are undisclosed, leaving asymmetric optionality unpriced. Binary/uncertain outcome and missing figures cap conviction.","primary_source":"Business Wire / CAAP 6-K press release \"Corporación América Airports Announces Developments in the Brasilia Airport Concession Agreement,\" 2026-06-26 (confirmed via FMP press-releases + StockTitan).","verdict":null,"kill_fact":null,"analysis":"Real, specific, dated forward special situation: Inframerica executed the TAA with ANAC on Jun 26, 2026 (court-approved Apr 2026), restructuring the Brasilia concession and forcing a fast-track tender for 100% of Inframerica shares by December 2026, in which CAAP intends to participate. This is a genuine structural/regulatory milestone (clears Bloom G1+G2) but G3 fails — no fee/capex/compensation amounts are disclosed, so the specific unpriced figure is absent and the equity-control outcome is genuinely binary (win/lose/no-bid). WATCH not ACTIVE: forward and unfired, but the qualitative economics plus uncertain tender result limit edge; key date to watch is the December 2026 tender."},{"symbol":"CAPR","score":7,"tier":"ACTIVE","lane":"binary","catalyst":"FDA Cellular/Tissue/Gene Therapies AdCom (Jul 29) then PDUFA decision (Aug 22, 2026) on deramiocel\u0027s resubmitted BLA for Duchenne cardiomyopathy, a two-sided regulatory binary after a 2025 CRL was lifted.","dated_milestone":"FDA CTGTAC advisory committee meeting 2026-07-29 (next dated event); PDUFA action date 2026-08-22","instrument":"equity (CAPR); event-driven, options-friendly given binary IV crush/expansion","bloom_gates":"G1 (named counterparty: FDA CTGTAC) + G2 (concrete commitment: AdCom convened + PDUFA action date set)","edge":"M — dated/forward/unfired with real asymmetry (~$1.1B cap, 52wk $4.30-$40.37, HOPE-3 hit primary PUL v2.0 + LVEF), but it\u0027s a well-telegraphed binary and the AdCom itself is two-sided risk (a CRL-history name getting an AdCom signals lingering FDA reservations), so high-variance event not a clean mispricing.","primary_source":"Capricor press release / GlobeNewswire / SEC 8-K, 2026-06-26 (AdCom Jul 29, PDUFA Aug 22); FMP quote 2026-06-29 ($24.14, mktcap ~$1.10B)","verdict":"CONFIRMED_WITH_CORRECTIONS","kill_fact":"Primary sources confirm the binary: CTGTAC advisory committee Jul 29 2026 + PDUFA action date Aug 22 2026 for deramiocel\u0027s resubmitted BLA (company PR/8-K 2026-06-26; March 10 2026 PR established the Aug 22 date as a Class-2 resubmission after the July 2025 CRL, review resumed/lifted March 2026). HOPE-3 hit primary PUL v2.0 + key secondary LVEF + all Type-I-controlled secondaries, with HOPE-2-OLE support. Both events forward/unfired; live quote $24.41 -7.7% (~$1.12B cap) matches the described selloff. CORRECTION: indication is NOT \u0027Duchenne cardiomyopathy\u0027 narrowly — the resubmission/HOPE-3 package now leads with the skeletal-muscle functional primary (PUL v2.0) and Capricor is pursuing a broader DMD/skeletal-muscle label; cardiomyopathy was the original framing. Genuine high-variance two-sided event, not an under-priced mispricing; edge Medium, conviction caps at 7.","analysis":"Capricor confirmed (PR/8-K, 2026-06-26) an FDA CTGTAC advisory committee on Jul 29 2026 and a PDUFA action date of Aug 22 2026 for deramiocel\u0027s BLA in DMD cardiomyopathy, with HOPE-3 having hit its primary (PUL v2.0), key cardiac secondary (LVEF) and all Type-I-controlled secondaries plus supportive 5-yr HOPE-2-OLE data. This is a genuine dated, forward, unfired binary: the stock sold off ~13% on Jun 26 and another ~9% to $24.14 today (~$1.1B cap), as the market reads the convening of an AdCom for a resubmitted BLA (the original was CRL\u0027d Jul 2025, lifted Mar 2026) as fresh approval risk. Real and specific, but it is a high-variance two-sided event rather than an under-priced mispricing, so edge is Medium and conviction caps at 7."},{"symbol":"CBRL","score":2,"tier":"NONE","lane":"activist+structural","catalyst":"Biglari\u0027s 8th proxy contest (a withhold/vote-against campaign, NOT a slate nomination) was already resolved at the Nov 20, 2025 annual meeting where Biglari lost — no forward-dated trigger remains.","dated_milestone":"Annual meeting already held Nov 20, 2025 (RESOLVED against Biglari); no scheduled 2026 meeting or new nomination on file. Next FY26 annual meeting not yet dated (likely Nov 2026).","instrument":"none","bloom_gates":"none","edge":"L — event already fired and lost; stock already re-rated (~$52.5 vs 200d ~$33, near 52w high $71.9 off $24.9 low), so rebrand-reversal/turnaround optimism is priced, not unpriced.","primary_source":"Cracker Barrel 8-K / PRNewswire \"Cracker Barrel Shareholders Show Strong Support...\" (Nov 20-21, 2025) + DFAN14A filings (Nov 2025)","verdict":null,"kill_fact":null,"analysis":"The triage premise fails verification: the \"8th proxy fight\" concluded at the Nov 20, 2025 annual meeting where shareholders re-elected 9 of 10 company nominees and rejected Biglari (DFAN14A/8-K, Nov 2025), and in this cycle Biglari did not even nominate his own candidates — he ran a vote-against/withhold campaign, so there was no board seat at stake. The \"board nominee filed Jan 2026\" detail is a hallucinated conflation with Biglari\u0027s 2020 Raymond Barbrick nomination; no new post-Nov-2025 nomination or dated 2026 meeting exists in filings. With the catalyst fired/lost and the stock already up ~110% off its 52-week low into the rebrand-reversal turnaround, there is no real dated forward unpriced trigger — tier NONE."},{"symbol":"CCRN","score":3,"tier":"WATCH","lane":"merger-arb","catalyst":"Definitive all-cash acquisition by Knox Lane at $13.25/share ($437M), with the special shareholder vote scheduled and close expected Q3 2026.","dated_milestone":"Special shareholder meeting vote on 2026-07-16; close expected Q3 2026.","instrument":"equity (long common, merger-arb)","bloom_gates":"G1 (named counterparty Knox Lane) + G2 (concrete definitive merger agreement at $13.25/sh); fails G3 (no specific currently-unpriced figure — spread already ~0.26%)","edge":"L — definitive deal is real and dated, but HSR antitrust already cleared (June 23 2026), board recommends, vote is a formality; at $13.215 vs $13.25 the gross spread is ~$0.035 (~0.26%), annualizing to low-single-digit to a Q3 close. Asymmetry is fully priced; only residual is the tail break-risk.","primary_source":"Investing.com SEC-filing update, 2026-06-23 (HSR period expired); Businesswire deal announcement, 2026-05-06","verdict":null,"kill_fact":null,"analysis":"CCRN is a live, definitive merger-arb: Knox Lane acquiring at $13.25/share all-cash, signed May 6 2026, with the major regulatory gate (HSR antitrust) already cleared June 23 2026 and a shareholder vote set for July 16 2026. The catalyst is genuine, dated and forward (deal not yet closed), satisfying G1/G2, but the spread is essentially gone at ~0.26% gross with no unpriced figure (fails G3) — this is a fully re-rated, thin-asymmetry situation. Verdict: real but fully priced; WATCH only for a tail-driven spread widening, score capped low given negligible remaining edge."},{"symbol":"CELC","score":6,"tier":"ACTIVE","lane":"dated-binary (PDUFA)","catalyst":"FDA PDUFA decision on gedatolisib (HR+/HER2-/PIK3CA wild-type advanced breast cancer) — a dated, forward, binary approval event ~18 days out.","dated_milestone":"PDUFA goal date July 17, 2026 (Priority Review; NDA accepted Jan 20, 2026)","instrument":"equity (NASDAQ:CELC)","bloom_gates":"G3","edge":"M — real dated binary approval still forward/unfired, but the supporting VIKTORIA-1 PFS data (WT cohort JCO Mar 2026; mutant cohort Jun 2, 2026) is already public and the stock re-rated from sub-$40 to ~$117 with analyst targets raised to $150-189; approval is high-probability post-clean-Priority-Review, compressing upside while leaving CRL/label-restriction downside.","primary_source":"Celcuity IR / StockTitan: NDA Priority Review, PDUFA July 17, 2026 (confirmed via Q4/FY2025 corporate update, Mar 25, 2026); VIKTORIA-2 expansion PR May 14, 2026; VIKTORIA-1 mutant cohort PR Jun 2, 2026.","verdict":"CONFIRMED_WITH_CORRECTIONS","kill_fact":"PDUFA July 17, 2026 confirmed (FDA accepted NDA Jan 20, 2026, Priority Review) for gedatolisib in HR+/HER2-/PIK3CA wild-type advanced breast cancer; forward/dated/binary, not fired. VIKTORIA-1 PIK3CA WT win is real and primary (triplet HR=0.24, mPFS 9.3 vs 2.0 mo p\u003c0.0001; doublet HR=0.33) — but already public and re-rated (stock ATH $144.98 on 2026-05-04, ~$88-98 in June, ~$4.8B cap), so the de-risking event is largely priced and remaining edge is a high-probability approval with asymmetric tail risk = Medium. CORRECTION: VIKTORIA-2 is ~638 + ~440 (~1,078 across two studies), NOT 1,180; it is enrolling, multi-year readout, real but non-near-term optionality.","analysis":"The July 17, 2026 PDUFA is a genuine dated, forward, binary regulatory catalyst (Priority Review on a statistically significant Phase 3 PFS win), not a macro bet and not yet fired — it clears the gate as G3. However, the clinical de-risking event (VIKTORIA-1 PFS) is already out and largely re-rated, so the remaining event is a high-probability approval with asymmetric tail risk rather than a pre-data setup; the broader, larger first-line market via VIKTORIA-2 (enrolling, ~1,180 patients) is real optionality but a multi-year readout, not near-term. Net: ACTIVE but Medium edge given how much the tape has already moved."},{"symbol":"CEPT","score":3,"tier":"NONE","lane":"de-SPAC merger","catalyst":"CEPT (Cantor Equity Partners II) shareholders vote today on the de-SPAC merger with tokenization firm Securitize, which will relist as Securitize Corp. on NYSE under SECZ.","dated_milestone":"Special shareholder meeting / merger vote scheduled June 29, 2026 (today); closing immediately thereafter, NYSE SECZ relisting to follow.","instrument":"common equity (CEPT, NASDAQ; converts to SECZ on NYSE at close)","bloom_gates":"G1 (named counterparty Securitize) and G2 (concrete commitment: definitive merger agreement, $225M PIPE at $10.00, S-4 declared effective, dated vote) are met; G3 fails — no specific currently-unpriced figure remains, the RWA premium is already in the tape.","edge":"L — the catalyst is firing today and the stock has already re-rated above the trust floor, so the asymmetry is consumed.","primary_source":"SEC Form 425 (Securitize/CEPT) + StockTitan \"S-4 declared effective\" (June 5, 2026); special meeting dated June 29, 2026; FMP quote $11.81 (2026-06-29).","verdict":null,"kill_fact":null,"analysis":"Real, specific, dated de-SPAC (S-4 declared effective June 5, 2026; vote dated June 29, 2026; combined company relists on NYSE as Securitize Corp./SECZ), with Board unanimously recommending FOR and a $225M PIPE at $10.00 — so it clears Bloom G1/G2. But it fails the FORWARD/unpriced test: CEPT trades $11.81 (+8.7% today, ~18% above the $10 trust/PIPE floor), meaning the market has already priced the Securitize RWA-tokenization premium and the catalyst is effectively firing now rather than ahead. Downside is no longer floor-protected at the current price (a deal break reverts to ~$10, an ~18% loss), so the trust-value-floor thesis is gone and the asymmetry is largely set — WATCH-flag is over-generous; this is NONE."},{"symbol":"CGEM","score":4,"tier":"WATCH","lane":"binary_pdufa","catalyst":"Multiple dated 2026 clinical readouts for CD19 T-cell-engager CLN-978 in SLE/RA plus zipalertinib NSCLC PDUFA, but the nearest named readout (EULAR) already fired and the marquee approval is ~8 months out.","dated_milestone":"CLN-978 multi-dose RA data Q3 2026 (no fixed date); velinotamig/CLN-049 updates by Q4 2026; zipalertinib ex20ins NSCLC PDUFA Feb 27, 2027","instrument":"equity","bloom_gates":"none clean — no G1 named counterparty, no G2 concrete commitment, no G3 specific currently-unpriced figure; PDUFA is a real dated binary but too far/diffuse","edge":"L — stock at $18.26 near 52-wk high ($19.43), ~3x off $5.68 low, mkt cap ~$1.12B vs ~$393M cash; the autoimmune TCE optionality is already substantially priced (EULAR print June 6 fell 6.38% despite 82% SLE B-cell depletion + DORIS remissions), so asymmetry is not clearly mispriced","primary_source":"Cullinan EULAR 2026 CLN-978 data release / StockTitan (June 6, 2026); Q1 2026 corporate update GlobeNewswire (May 7, 2026); FMP quote (June 2026)","verdict":null,"kill_fact":null,"analysis":"CGEM\u0027s catalysts are real and dated but the binary asymmetry is not clearly mispriced: the named near-term EULAR CLN-978 SLE/RA readout already fired June 6, 2026 and the stock FELL 6.38% on strong data, signaling the platform is largely in the price after a ~3x run to near 52-week highs. The remaining forward catalysts — CLN-978 multi-dose RA (Q3 2026, undated), velinotamig/CLN-049 (Q4 2026), and the marquee zipalertinib NSCLC PDUFA (Feb 27, 2027) — are genuine but the key approval is ~8 months out and no Bloom gate is cleanly met (no named counterparty, no concrete commitment, no specific unpriced figure). Confirms triage: WATCH with low edge; revisit if a multi-dose RA date is set or the stock derates toward cash (~$6.40/sh)."},{"symbol":"CGON","score":6,"tier":"WATCH","lane":"binary_pdufa","catalyst":"Cretostimogene has two dated regulatory/clinical binaries: PIVOT-006 Phase 3 topline in intermediate-risk NMIBC (guided 1H\u002726) and completion of the rolling BLA in HR BCG-unresponsive NMIBC (CIS +/- Ta/T1) expected 4Q\u002726.","dated_milestone":"PIVOT-006 Phase 3 topline guided 1H\u002726 (deadline edge as of 2026-06-29, not yet reported); BLA completion 4Q\u002726 (CMC is final module, non-clinical/clinical complete).","instrument":"equity","bloom_gates":"G2","edge":"M — real dated binaries (PIVOT-006 topline + 4Q\u002726 BLA), but stock has re-rated hard ($71.73 vs 200-day $52.80, near 52wk high $75.50) so much of the optimism is in the tape; PIVOT-006 also sits at the very edge of its H1\u002726 window so timing/pricing risk is high.","primary_source":"CG Oncology Q1 2026 results, GlobeNewswire 2026-05-08 (BLA 4Q\u002726, PIVOT-006 topline 1H\u002726, $1.1B cash); PIVOT-006 expedited-timeline PR 2026-01-09.","verdict":null,"kill_fact":null,"analysis":"CGON\u0027s catalysts verify as real, specific, and dated: PIVOT-006 Phase 3 IR-NMIBC topline was expedited to 1H\u002726 and per the Q1\u002726 release (5/8/26) had not yet read out, while the rolling BLA in HR BCG-unresponsive NMIBC is guided to complete 4Q\u002726 with only the CMC module remaining — both forward, neither fired. Risk to the thesis is that the stock has already re-rated substantially (price $71.73 vs 200-day SMA $52.80, near the $75.50 52-week high) and PIVOT-006 sits at the deadline edge of H1\u002726, so the cleaner unfired dated milestone is the 4Q\u002726 BLA. Cash is a non-issue ($1.1B at 3/31/26, runway through 2029), removing financing overhang; rates a WATCH/6 — genuine dated forward catalysts but compressed edge given the run."}]}
+{
+ "chunk": "4 (BTBT-CLPT)",
+ "scanned": 150,
+ "scan_distribution": {
+  "active": 6,
+  "watch": 23,
+  "none": 121
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "BTU",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "restructuring/arb",
+   "one_line": "Anglo American arbitration over the terminated $3.8B met-coal deal expected to conclude by 2026 \u2014 a real dated legal milestone with mispriced asymmetry."
+  },
+  {
+   "symbol": "BW",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "distressed/restructuring",
+   "one_line": "Active deleveraging with dated Dec-2026 note maturities ($84.8M 6.5% + remaining 8.125% notes) plus asset-sale proceeds \u2014 restructuring with real dated milestones."
+  },
+  {
+   "symbol": "CAG",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "capital-return/restructuring",
+   "one_line": "New CEO expected to reset dividend + broad portfolio review at 7/15 earnings \u2014 dated binary, but skewed to a cut (negative), asymmetry contested; S&P 500 removal already fired."
+  },
+  {
+   "symbol": "CAPR",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "binary/PDUFA",
+   "one_line": "Deramiocel DMD: CTGTAC AdCom 7/29/26 then PDUFA 8/22/26 post-CRL-lift, HOPE-3 met endpoint + PRV eligibility \u2014 hard dated binary with real asymmetry."
+  },
+  {
+   "symbol": "CC",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "distressed",
+   "one_line": "PFAS bellwether trials scheduled later 2026 (dated binary w/ mispriced litigation tail) + ~$360M Taiwan TiO2 sale closing mid-2026 for deleveraging on a heavily indebted balance sheet."
+  },
+  {
+   "symbol": "CCRN",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "one_line": "Live all-cash merger-arb: Knox Lane $13.25/sh, $437M, HSR cleared, expected Q3-2026 close after Aya deal collapsed."
+  },
+  {
+   "symbol": "CDZI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "forced-seller/project-finance",
+   "one_line": "Mojave water-bank has dated milestones (Northern Pipeline GMP targeted Q2-2026, Reclamation federal review, Lytton $51M tranche) but binary is soft/speculative, not a hard event."
+  },
+  {
+   "symbol": "CELC",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "binary/PDUFA",
+   "one_line": "Hard PDUFA July-17-2026 (15 days out) for gedatolisib, Priority Review/RTOR + Breakthrough; single-asset binary with mispriced asymmetry."
+  },
+  {
+   "symbol": "CGON",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "binary",
+   "one_line": "CG Oncology completing rolling BLA for cretostimogene in NMIBC by Q4 2026 (Fast Track/Breakthrough); dated regulatory path plus $24.8M director buy \u2014 real forward catalyst."
+  },
+  {
+   "symbol": "CLBK",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "thrift conversion / merger-arb",
+   "one_line": "Second-step MHC conversion at $10/share plus Northfield merger \u2014 all regulatory, stockholder (6/25) and depositor (6/29) approvals received, offering live and closing imminent; classic conversion arb with structural value pop."
+  },
+  {
+   "symbol": "CLDX",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated binary (Phase 3 readout)",
+   "one_line": "Barzolvolimab Phase 3 CSU topline due Q4 2026 (plus prurigo nodularis summer 2026) \u2014 dated, unfired, best-in-class Phase 2 sets up mispriced binary asymmetry."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "BTU",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "restructuring/arb",
+   "catalyst": "Anglo American's arbitration against Peabody for wrongful termination of the ~$3.8B Queensland met-coal acquisition, seeking unquantified damages plus a $46M deposit-return dispute.",
+   "dated_milestone": "Confidential ICC-style arbitration expected to conclude \"late/end of 2026\" per analyst/academic estimate \u2014 no scheduled hearing or award date published; next hard date unknown.",
+   "instrument": "BTU common (NYSE); no clean listed way to isolate the arb outcome",
+   "bloom_gates": "G1 only (named counterparty Anglo American; G2 fails \u2014 no concrete committed remedy/figure; G3 fails \u2014 no specific currently-unpriced dollar amount, damages unquantified and two-sided)",
+   "edge": "L \u2014 outcome is confidential, unquantified, and could be a liability (damages against BTU) rather than upside; award timing is a soft \"end-2026\" guess, not a scheduled date.",
+   "primary_source": "mining.com \"Anglo American takes Peabody to arbitration over failed $3.8B deal\" (Oct 3, 2025); WebSearch corroboration citing QUT Prof. Robert Perrons on end-2026 timeline; FMP quote 2026-07-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The arbitration is real and named (Anglo initiated it Oct 2025 after Peabody invoked a material-adverse-change clause post-Moranbah North fire), but it fails the strict gate: no scheduled hearing/award date (only an analyst \"late-2026\" estimate), no disclosed damages figure, and confidential proceedings mean no informational edge. The only concrete number is the immaterial $46M residual deposit dispute vs a ~$2.7B market cap, and the damages exposure is arguably downside; meanwhile BTU trades largely as a coking-coal macro proxy (near $22 vs $30 200-day avg), so the thesis is substantially a commodity bet rather than a clean dated legal catalyst."
+  },
+  {
+   "symbol": "BW",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "distressed/restructuring",
+   "catalyst": "Final paydown of the remaining 6.5% December 2026 senior notes, but the deleveraging is substantially complete and cash-covered, so no unpriced forward catalyst remains.",
+   "dated_milestone": "6.5% notes mature/paid off by December 2026 (management \"expects to fully pay off in 2026,\" no specific date); next hard checkpoint Q2 2026 earnings (~Aug 2026)",
+   "instrument": "equity (NYSE: BW)",
+   "bloom_gates": "none clean \u2014 G2 fails (only a routine open-market paydown, no new concrete commitment); G3 fails (remaining $69.1M note is fully covered by $194.8M cash, i.e. not an unpriced figure)",
+   "edge": "L \u2014 the deleveraging thesis has largely fired: 8.125% Feb-2026 notes fully redeemed Dec 2025, Diamond Power ($177M) and Danish A/S asset sales closed, net debt already cut 87% YoY to $42.4M, and BW re-rated hard (~+4,400% YoY); remaining note is a small, cash-covered non-event",
+   "primary_source": "Babcock & Wilcox Q1 2026 earnings release, babcock.com / SEC 8-K, dated 2026-05-11",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged catalyst is stale and mostly realized: the 8.125% February 2026 notes were fully redeemed in December 2025, and by Q1 2026 (reported 2026-05-11) the 6.5% December 2026 notes were down to $69.1M (not the flagged $84.8M) against $194.8M cash and restricted cash \u2014 a fully-covered, near-certain paydown rather than an unpriced restructuring event. The asset sales cited (Diamond Power $177M, Babcock & Wilcox A/S) already closed, net debt has already collapsed 87% YoY to $42.4M, and the equity has already re-rated dramatically. No named counterparty, no new concrete commitment, and no currently-unpriced figure remain, so the dated Dec-2026 milestone is real but its outcome is effectively priced."
+  },
+  {
+   "symbol": "CAG",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "capital-return/restructuring",
+   "catalyst": "New Conagra CEO John Brase (started 6/1/26) is widely expected to cut the ~10% dividend and announce a broad portfolio review at the 7/15/26 Q4 FY2026 earnings call.",
+   "dated_milestone": "Q4 FY2026 earnings call, July 15, 2026 (confirmed)",
+   "instrument": "CAG (Conagra Brands) common equity, NYSE; ~$13.46 (6/30/26)",
+   "bloom_gates": "G2 (weak) \u2014 TD Securities/Moskow reports the board gave Brase a named mandate to evaluate a dividend cut + broad portfolio change; but no committed action/figure yet. Fails G3 (no specific currently-unpriced figure; magnitude of cut/reinvest undisclosed).",
+   "edge": "L \u2014 the dividend cut is the consensus base case and largely priced (a 10% yield already discounts an unsustainable payout); skew is negative-for-holders, so surprise is muted and asymmetry is unfavorable.",
+   "primary_source": "TD Securities (Robert Moskow) via Yahoo Finance \"Conagra Brands incoming CEO on knife edge\" + Conagra IR earnings date \u2014 2026-06-30",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "CAG is Conagra Brands (not Cracker Barrel); the catalyst is real, dated (7/15/26), and forward \u2014 new CEO Brase has a board mandate to reset the dividend and review the portfolio, per TD Securities' Robert Moskow. But it fails the strict gate: the outcome skews negative for holders, is already the consensus and largely priced into the ~10% yield, carries no specific unpriced figure (G3), and the S&P 500 removal already fired. Legitimate WATCH-tier binary worth monitoring into 7/15, but not an actionable asymmetric long/edge today."
+  },
+  {
+   "symbol": "CAPR",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "binary/PDUFA",
+   "catalyst": "Deramiocel (CAP-1002) DMD BLA faces an FDA CTGTAC advisory-committee vote on 7/29/26 followed by a PDUFA decision on 8/22/26, a two-stage dated approval binary backed by a positive HOPE-3 Phase 3.",
+   "dated_milestone": "CTGTAC AdCom vote 2026-07-29 (next date); PDUFA target action 2026-08-22",
+   "instrument": "CAPR (equity; long-dated Aug/Sep calls or straddle to isolate the binary)",
+   "bloom_gates": "G1 (named counterparty = FDA CTGTAC) + G2 (concrete commitment = scheduled 7/29 adcom + 8/22 PDUFA action) + G3 (specific unpriced figure: ~$23 spot / ~$1.33B cap vs $50 consensus PT \u2014 approval-vs-CRL gap not re-rated)",
+   "edge": "H",
+   "primary_source": "Capricor PR / NeurologyLive / BioSpace \u2014 AdCom set for 2026-07-29 announced ~2026-06 (Capricor release 348); PDUFA 2026-08-22 (Capricor release 338, 2026-03-10)",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Primary sources confirm the core binary: Capricor's 6/26/26 PR sets the FDA CTGTAC advisory committee for 7/29/26 and PDUFA 8/22/26 (Class 2 resubmission post-CRL); HOPE-3 met PUL v2.0 primary (p=0.029) and LVEF secondary (p=0.041); FMP quote CAPR $23.07 today. Corrections: market cap is ~$1.05B not $1.33B; the BLA's efficacy base is HOPE-2/HOPE-2-OLE with HOPE-3 supportive (line implies HOPE-3 is the sole Phase 3 backbone). Unfired, forward, non-macro dated two-stage binary stands. PRV eligibility and adcom vote unknowable (self-flagged).",
+   "analysis": "Confirmed both dates: FDA CTGTAC advisory committee meets 7/29/26 and PDUFA action date is 8/22/26 following a Class 2 resubmission after the FDA lifted/reviewed the prior efficacy CRL. HOPE-3 met its PUL v2.0 primary and LVEF cardiac secondary, and stock at ~$23 (~$1.33B) versus $50 consensus PT plus a rare pediatric PRV upside leaves large two-sided asymmetry \u2014 the surprise adcom (management said no issues were flagged) reintroduced efficacy-standard risk, keeping this an unfired, forward, non-macro dated binary. Gap: could not independently confirm PRV eligibility in the focused lookups, and adcom sentiment/vote-count is inherently unknowable pre-meeting."
+  },
+  {
+   "symbol": "CC",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "distressed",
+   "catalyst": "~$360M Taiwan (Kuan Yin) TiO2 land sale to the Century Wind Power group expected to close mid-2026, with proceeds applied to reduce debt on a heavily leveraged balance sheet.",
+   "dated_milestone": "Taiwan land sale substantial close targeted mid-year 2026 (next date: ~Q3 2026 close, pending Taiwan regulatory/environmental approval); NC Supreme Court oral argument in state AG PFAS case set for September 2026.",
+   "instrument": "equity",
+   "bloom_gates": "G1 (named counterparty: Century Wind Power/Century Iron & Steel/Century Huaxin consortium) + G2 (definitive agreements signed Jan 15 2026, ~$360M gross, proceeds committed to debt reduction). G3 partially \u2014 the ~$360M cash figure is concrete but is largely disclosed/known since January, so not clearly unpriced.",
+   "edge": "L",
+   "primary_source": "Chemours PR / SEC 8-K \"Agrees to Sell Former Titanium Dioxide Site in Taiwan\" (Jan 15, 2026); DOJ press release \"Chemours Agrees to $450M Landmark Settlement\" and NC Health News (Jun 25, 2026).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The original triage thesis (a dated, mispriced PFAS bellwether binary) does not hold on verification: the AFFF water-provider case settled in 2023 ($1.185B), the AFFF personal-injury bellwether has no confirmed 2026 trial date, and the major federal PFAS enforcement settlement ($450M, WV/NC/NJ) was announced ~June 25 2026 \u2014 i.e., recently fired/re-rating, not forward. The genuinely forward, dated catalyst is the ~$360M Taiwan Kuan Yin TiO2 land sale to the Century Wind Power consortium, with definitive agreements (Jan 15 2026) and a mid-2026 substantial-close target that would deleverage a strained balance sheet. Because that deal has been public and telegraphed for six months with modest surprise value, and the remaining litigation items are either fired or procedural (NC Supreme Court oral argument Sept 2026), this sits as a low-edge WATCH rather than an ACTIVE binary."
+  },
+  {
+   "symbol": "CCRN",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "merger-arb",
+   "catalyst": "Knox Lane's $13.25/sh all-cash take-private of Cross Country Healthcare ($437M) has cleared HSR and awaits only the July 16 shareholder vote before an expected Q3-2026 close.",
+   "dated_milestone": "Special shareholder vote July 16, 2026; expected close Q3-2026",
+   "instrument": "CCRN common (long merger-arb)",
+   "bloom_gates": "G1 (Knox Lane named counterparty) + G2 ($13.25 signed all-cash commitment); G3 weak \u2014 spread already tight",
+   "edge": "L \u2014 stock $13.20 vs $13.25 deal = ~0.4% gross spread; almost fully priced, upside capped, only real optionality is a topping bid (none evident)",
+   "primary_source": "CCRN 8-K via StockTitan, HSR expired 2026-06-22; vote 2026-07-16; deal announced 2026-05-06 (Businesswire)",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Primary sources confirm all claims: $13.25/sh all-cash Knox Lane merger ($437M, signed May 6 2026); HSR waiting period expired June 22 2026 (8-K/investing.com), removing the major regulatory gate; special meeting July 16 2026 12pm ET with board recommending FOR; Q3-2026 expected close. Live CCRN $13.20 vs $13.25 deal = ~$0.05 (~0.4%) gross spread \u2014 a genuine dated, forward, unfired catalyst (vote) but thin residual upside against ~$9-10 break downside, justifying score 6.",
+   "analysis": "Every triage claim verified: Knox Lane signed a $13.25/sh, $437M all-cash merger; HSR waiting period expired June 22, 2026, satisfying the major regulatory condition, per CCRN's 8-K. The only remaining gate is the July 16, 2026 shareholder vote (board recommends FOR), with a Q3-2026 close \u2014 a genuine dated, forward, unfired catalyst passing G1/G2. Downgrade to score 6 because at $13.20 the ~0.4% gross spread is nearly closed, so the edge is thin and downside on a break (~$9-10 pre-deal) dwarfs the residual ~$0.05 upside."
+  },
+  {
+   "symbol": "CDZI",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "project-finance",
+   "catalyst": "Mojave Groundwater Bank financing/permitting sequence \u2014 Northern Pipeline GMP, $194M WIFIA loan application, and Bureau of Reclamation federal review \u2014 that could de-risk the ~$1.25\u20131.5B project and re-rate equity.",
+   "dated_milestone": "Northern Pipeline GMP was targeted Q2-2026 (window now closed ~2026-06-30, not reaffirmed as hard event); next concrete step is WIFIA $194M loan application + Reclamation review \u2014 no fixed close date disclosed.",
+   "instrument": "equity",
+   "bloom_gates": "G1 (named counterparties: Lytton Rancheria, US Bureau of Reclamation, EPA WIFIA) partially met; G2/G3 fail \u2014 no concrete dated commitment with a specific currently-unpriced figure tied to a hard forward date.",
+   "edge": "L \u2014 the story (WIFIA invite, Lytton $51M, Reclamation MOU) is already public and partly fired; remaining steps are open-ended process milestones, so limited unpriced dated edge.",
+   "primary_source": "Cadiz PRs via PRNewswire/StockTitan: Reclamation funding agreement (May-2026), Lytton $51M definitive agreement (Sep-2025), WIFIA $194M invitation; Q1-2026 10-Q (filed ~May-2026) does not reaffirm a hard GMP/WIFIA date.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Cadiz has real named counterparties and a genuine financing sequence, but the concrete events are either already fired (Lytton $51M first tranche executed Sep-2025, ~$30M drawn by Mar-2026; Reclamation funding MOU executed May-2026) or soft/open-ended (Q2-2026 Northern Pipeline GMP target now past its window without reaffirmation; $194M WIFIA is only an invitation-to-apply with no disclosed close date; Reclamation review has no dated decision). There is no hard, discrete, currently-unpriced binary with a forward date \u2014 it is a multi-quarter project-finance grind, matching the triage read that the binary is soft/speculative. WATCH is warranted only to catch a firm WIFIA application/GMP-signing date if one is announced."
+  },
+  {
+   "symbol": "CELC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary/PDUFA",
+   "catalyst": "FDA PDUFA decision on gedatolisib NDA for HR+/HER2-/PIK3CA-wild-type advanced breast cancer, a single-asset binary approval event.",
+   "dated_milestone": "PDUFA goal date July 17, 2026 (15 days out)",
+   "instrument": "equity (CELC); event-driven options straddle the natural expression given binary skew",
+   "bloom_gates": "G1 (named FDA/product milestone) + G2 (concrete PDUFA commitment); G3 FAILS \u2014 no specific currently-UNPRICED figure",
+   "edge": "L \u2014 the catalyst is real and dated but the \"mispriced asymmetry\" thesis does not hold: best-ever Phase-3 PFS HR (0.14, released Jul-2025) and the PIK3CA-mutant cohort (HR 0.50, released Jun-2026) already drove a full re-rating to ~$104.63/$5.1B cap; consensus is Strong Buy with $131-$189 targets pricing in approval + launch + label expansion, so upside is already in the street's numbers and the remaining binary skew is to the downside (surprise CRL/delay), which everyone can see.",
+   "primary_source": "Celcuity IR / FDA NDA acceptance (Jan-20-2026, PDUFA Jul-17-2026); VIKTORIA-1 JCO publication (Mar-2026); mutant-cohort PR (Jun-2-2026); price/consensus per stockanalysis.com & public.com (Jun-30/Jul-2026)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "CELC's July-17-2026 PDUFA for gedatolisib is a genuine, dated, forward single-asset binary under Priority Review/RTOR + Breakthrough \u2014 mechanically a clean catalyst. However the triage's \"mispriced asymmetry\" claim is stale: both the pivotal WT PFS data (HR 0.14, the best ever in HR+/HER2- ABC) and the mutant-cohort data have already published and re-rated the stock to a $5.1B cap with analyst targets to $189 explicitly pricing in approval, launch, and multi-indication expansion. With RTOR+Breakthrough making approval highly probable and largely priced, there is no unpriced upside figure (G3 fails); the residual edge is a symmetric-to-downside binary the whole street sees, so this is a WATCH (real dated event) rather than an ACTIVE mispricing."
+  },
+  {
+   "symbol": "CGON",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "binary",
+   "catalyst": "CG Oncology is completing a rolling BLA for cretostimogene monotherapy in high-risk BCG-unresponsive NMIBC (Fast Track/Breakthrough), targeting submission completion by Q4 2026, followed by FDA review toward a potential first commercial approval.",
+   "dated_milestone": "Rolling BLA completion targeted Q4 2026 (next: BLA finalization, then FDA acceptance/PDUFA in 2027); nearer read-through PIVOT-006 Phase 3 topline expected H1 2026.",
+   "instrument": "equity",
+   "bloom_gates": "G2 (concrete commitment: rolling BLA actively initiated with dated Q4 2026 completion, backed by BOND-003 24-mo CR 41.8%); partial G3 (specific $24.8M open-market director buy, 371,085 sh @ $66.87 by Brian Liu, Form 4 filed 2026-06-29 \u2014 a discrete, dated conviction signal).",
+   "edge": "M",
+   "primary_source": "FMP insider Form 4 (Liu, filed 2026-06-29) + BioSpace/StockTitan Q1 2026 results (rolling BLA, Q4 2026 completion), May 2026.",
+   "verdict": "CONFIRMED",
+   "kill_fact": "SEC Form 4 confirms director Brian Liu open-market P-Purchase of 371,085 shares @ $66.87 (~$24.8M) txn 2026-06-25 / filed 2026-06-29; CGON has initiated a rolling BLA for cretostimogene monotherapy in high-risk BCG-unresponsive NMIBC (Fast Track + Breakthrough) targeting Q4 2026 completion. Both forward and non-macro. Priced-risk: stock $70.89 vs 52-wk low $23.65 (~3x) near $77 high \u2014 submission largely priced; true unfired binary is later FDA approval/PDUFA.",
+   "analysis": "Confirmed: CGON initiated a rolling BLA for cretostimogene in high-risk BCG-unresponsive NMIBC with a stated Q4 2026 completion target and Fast Track/Breakthrough designations (Q1 2026 results, BioSpace/StockTitan). The $24.8M director purchase is verified via FMP insider data (Brian Liu, 371,085 shares at $66.87, transaction 2026-06-25, filed 2026-06-29) \u2014 a genuine open-market buy, not an option exercise. Passes the gate as real, dated, forward and non-macro; scored 6 rather than higher because the name is already up ~3x off its 52-wk low and trades near highs, so the submission is largely priced and the true unfired binary is the later FDA approval/PDUFA leg."
+  },
+  {
+   "symbol": "CLBK",
+   "score": 8,
+   "tier": "ACTIVE",
+   "lane": "thrift conversion / merger-arb",
+   "catalyst": "Columbia Financial's second-step MHC conversion at $10.00/share plus simultaneous Northfield Bancorp ($597M) merger is fully approved (all regulatory, stockholder 6/25, depositor 6/29) with the subscription offering closed at ~$1.1B and a firm-commitment underwritten offering set for the week of July 6, 2026 ahead of imminent closing.",
+   "dated_milestone": "Firm-commitment underwritten offering week of July 6, 2026; conversion/merger closing expected early Q3 2026",
+   "instrument": "CLBK common (existing MHC minority shares)",
+   "bloom_gates": "G1 (named counterparty Northfield Bancorp) + G2 (concrete commitment: all approvals received, $10/sh offering live, closing week of 7/6) + G3 (specific figure: $10.00 subscription price, 1.425-1.465x Northfield exchange ratio, ~142.4M-192.6M share range, all currently-unpriced vs. post-conversion pro-forma structure)",
+   "edge": "M \u2014 the setup is well-known and CLBK has already re-rated (price $21.27 vs 200d $17.26, near 52w high $21.59), so much of the second-step book-value uplift is discounted; residual edge is in the exchange-ratio mechanics for existing MHC minority holders and closing-timing certainty, not a mispriced surprise.",
+   "primary_source": "Columbia Financial 8-K / GlobeNewswire press release \"Receipt of Stockholder and Depositor Approvals... and Updated Results of Subscription Offering,\" 2026-07-01",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Primary source (GlobeNewswire PR 2026-07-01 + CLBK 8-K) confirms all load-bearing facts: stockholders approved conversion+Northfield acquisition 6/25/2026, MHC depositors approved 6/29/2026, subscription offering raised ~$1.1B (expired 6/16, resolicitation closed 6/30), firm-commitment underwritten offering (KBW lead-left) at $10.00/share commencing week of July 6, 2026, merger ~$597M simultaneous with conversion, close early Q3 2026. Dated, forward, not-fired catalyst on existing CLBK minority common. Minor caveat: PR stresses shareholder/depositor votes; regulatory approvals are the standard implicit remaining gate but close-early-Q3 timing implies clearance in hand \u2014 does not alter thesis.",
+   "analysis": "This is a bona fide, fully-approved thrift second-step conversion arb with a named merger counterparty (Northfield) and a hard, imminent dated closing catalyst (firm-commitment offering week of 7/6/2026, close early Q3), so it clears Bloom G1/G2/G3, is dated, forward and not macro. The gate weakness is re-rating: CLBK sits near its 52-week high with the stock up sharply off the $13.66 low and above both moving averages, indicating the market has already priced much of the structural pop, capping the remaining edge. Downside is limited by the conversion mechanics (existing minority holders exchange at ~1.075x and second-step deals rarely break post-approval), supporting ACTIVE at score 8 with medium edge."
+  },
+  {
+   "symbol": "CLDX",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated binary (Phase 3 readout)",
+   "catalyst": "Barzolvolimab Phase 3 CSU topline (EMBARQ-CSU1/CSU2) is a dated, unfired binary readout with best-in-class Phase 2 data setting up asymmetric re-rating into a 2027 BLA.",
+   "dated_milestone": "Phase 3 CSU topline Q4 2026 (enrollment completed Feb 2026, 6mo ahead of guidance, 1,939 pts); Phase 2 prurigo nodularis topline expected 2026; BLA filing planned 2027",
+   "instrument": "equity (or long-dated calls to size the Q4 binary)",
+   "bloom_gates": "G3 (specific currently-unpriced figure: dated Q4-2026 Phase 3 topline outcome not yet in tape) + G2 (concrete commitment: enrollment complete, BLA committed 2027)",
+   "edge": "M \u2014 genuine dated unfired binary with strong Phase 2 precedent, but widely followed and trading near 52wk high ($39.16 vs $36.78), so partially anticipated; asymmetry real but not deeply mispriced",
+   "primary_source": "Celldex press release, GlobeNewswire, 2026-02-25 \"Completes Enrollment in Global Phase 3 Studies (EMBARQ-CSU1 and EMBARQ-CSU2)\"; topline anticipated Q4 2026, BLA 2027",
+   "verdict": "CONFIRMED",
+   "kill_fact": "Celldex IR/GlobeNewswire (Feb 25 2026) confirms EMBARQ-CSU1/CSU2 enrollment complete (1,939 pts, 43 countries), topline guided Q4 2026, BLA 2027 \u2014 dated, unfired, forward binary; Phase 2 showed 51%\u219271% complete response (UAS7=0) at 12\u219252wk, best-in-disease. Trades $36.78, ~$2.45B cap, near 52wk high $39.16.",
+   "analysis": "CLDX ($36.78, ~$2.45B cap, near 52wk high) has completed enrollment (1,939 pts, 43 countries) in the twin Phase 3 CSU trials with topline due Q4 2026 and a BLA planned for 2027; the catalyst is dated, unfired, and forward \u2014 a classic binary set up by best-in-class Phase 2 rapid/durable response data. Gate passes cleanly: it is a specific dated readout (G3) backed by a concrete regulatory commitment (G2), not a macro bet. Edge is Medium rather than High because the name is well-covered and elevated, so some of the optionality is already priced, but the binary itself has not resolved."
+  }
+ ]
+}

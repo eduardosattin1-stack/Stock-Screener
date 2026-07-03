@@ -1,82 +1,73 @@
-# Forensic Dossier — BioCryst Pharmaceuticals (BCRX)
+# BioCryst Pharmaceuticals (BCRX) — Forensic Dossier
 
-*A deep dive on management and the setup, built from six consecutive quarterly earnings calls (May 2025 through May 2026) cross-checked against the screener's hard financials.*
+*Prepared for the investment committee. Source material: four consecutive quarterly earnings calls (Q1 2025 through Q4 2025, dated 2025-05-05, 2025-08-04, 2025-11-03, and 2026-02-26), the screener's financial trajectory, and live verification of the company's current state as of June 2026. Note up front: the screener snapshot fed into this review is stale on several fields, and the live corrections below carry the day.*
 
 ## 1. NARRATIVE ARC
 
-The story management tells about BioCryst changed shape decisively over the year, and mostly for the better. In early 2025 (Q1, May 5) the entire company was a single product: ORLADEYO, an oral once-a-day pill that prevents attacks of hereditary angioedema (HAE), a rare swelling disorder. The headline that quarter was a stunning acceleration in the "paid rate" — the share of patients on the drug who are actually paying customers rather than getting free product — which jumped about 10 percentage points in four months, a move management had budgeted three years for. That pulled the company's profitability goal forward by a full year and let them raise full-year ORLADEYO guidance to $580–600 million (33–37% growth).
+BioCryst's story over these four calls is the story of a one-drug company growing up — and then, in the final quarter, deliberately reinventing itself.
 
-Over the next four quarters the narrative widened from "one fast-growing drug" into "a rare-disease platform company." Three deliberate moves drove that:
-- **Selling the European business** to Neopharmed Gentili (announced Q2, closed October 1, 2025), which let them pay off the high-cost Pharmakon term debt and keep the high-margin U.S. core.
-- **A leadership handoff** — long-time CEO Jon Stonehouse stepped aside for commercial chief Charlie Gayer on January 1, 2026, explicitly to run a "BioCryst 2.0" consolidator-of-rare-disease-assets strategy.
-- **Acquiring Astria Therapeutics** (closed Q1 2026) to add navenibart, a long-acting injectable HAE drug dosed just 2–4 times a year, plus advancing two early pipeline programs (BCX17725 for Netherton syndrome, and avoralstat for diabetic macular edema — the latter quietly killed in Q1 2026).
+For the first three quarters the message was almost monotonously good: ORLADEYO, the company's once-daily oral pill for hereditary angioedema (HAE, a rare disease that causes dangerous swelling attacks), kept beating its own launch records. Management started 2025 raising full-year ORLADEYO guidance to "$580 million to $600 million" (Q1) on the back of a faster-than-expected shift of patients from free samples to paid prescriptions — "we expected that level of improvement to take three years. We did it in four months" (Q1). The drumbeat was relentless: "the best quarter since approval" (Q2), then "yet another strong quarter" (Q3), closing the year at $601.8 million, up 38% (Q4).
 
-The constant thread across all six calls is the "$1 billion ORLADEYO at peak in 2029" target, reiterated almost verbatim every quarter. The genuine evolution is the pivot from a single-asset launch story to a portfolio-and-pipeline story, financed by the Europe sale and the debt paydown.
+But underneath the commercial victory lap, the narrative quietly widened in scope three times. First, capital structure: management sold the European ORLADEYO business to Neopharmed Gentili (announced Q2, closed October 1) and used the proceeds to pay off its high-cost Pharmakon term debt (Q3) — a genuine balance-sheet cleanup. Second, succession: the long-time chief executive, Jon Stonehouse, handed the company to commercial chief Charlie Gayer effective January 1, 2026 (announced Q2). Third, and most consequentially, strategy: by Q3 the company had announced it would acquire Astria Therapeutics for its late-stage injectable HAE drug navenibart, and by Q4 the framing had hardened into "BioCryst 2.0 — the consolidator of rare disease assets" (Q2/Q4).
+
+So the arc runs from "a single drug executing beautifully" to "a deliberately re-levered, multi-asset HAE franchise." The growth drivers introduced along the way — pediatric ORLADEYO pellets (FDA-approved December 2025), navenibart (acquired), and two early pipeline shots, Netherton syndrome (BCX17725) and diabetic macular edema (avoralstat) — matter enormously to where the value comes from next.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-| Management claim | What the financials show | Verdict |
-|---|---|---|
-| "Outstanding performance… raising guidance" (Q1'25) | Revenue +94.1% YoY; 3-yr CAGR +47.8%; FY2025 revenue $875M vs $451M FY2024 | **Matches — strongly.** The top-line acceleration is real and large. |
-| "We now expect to be profitable on a full year basis this year" (Q1'25) | FY2025 net income +$264M, EPS $1.21 — first profitable year after $184M/$247M/$227M/$89M losses 2021–2024 | **Delivered.** A genuine inflection from chronic losses to GAAP profit. |
-| "Strong financial position… pay off our term debt" (Q2–Q3'25) | **Live correction: net DEBT $619M** at 2026-03-31 (total debt $858M minus cash $239M). Net debt of $164M in the scan is understated. | **Diverges — materially.** Debt was paid down but the Astria deal re-levered. This is a leveraged balance sheet, not a net-cash one. Altman-Z of −5.8 flags distress-zone solvency optics (distorted by the $698M in-process R&D charge). |
-| "Strong cash flow / profitability" (every call) | TTM FCF +$294M (P/FCF 6.6x); but TTM diluted EPS **−$1.78** | **Mixed.** Operating cash generation is real and strong. The negative TTM EPS is the one-time $698M Astria in-process R&D write-off — a non-cash accounting charge, not an operating loss. The underlying non-GAAP operating profit (~$54M in Q1'26, +25% YoY) corroborates the cash story. |
-| "ROIC strong" (implied) | ROIC just 1.3%; ROE 20.6% | **Poor.** Returns on invested capital are very low because the balance sheet now carries large acquired intangibles (Astria) and debt. The high ROE is leverage-flattered. |
-| "$1 billion peak in 2029" (every call) | Needs ~150 net new patients/yr for 4 years; 2026 ORLADEYO guide $625–645M | **Plausible but unproven.** The required patient cadence is modest and the trajectory supports it, but it is a 3-year forward claim, not banked. |
-| 98% gross margin, 30% net margin | Gross 97.8% (stable), Net 30.2%, FCF margin 37.4% | **Matches.** Best-in-class rare-disease unit economics; the franchise genuinely throws off cash. |
+The headline financials in the screener snapshot are badly out of date, so the honest test here is management's claims against the *live* numbers, with the snapshot treated as historical context.
 
-The forensic bottom line: the *operating* business is exactly as good as management says — high-margin, cash-generative, durably growing. The *balance sheet* is worse than the casual reader would gather from the calls, because the Astria acquisition re-levered the company right after the celebrated debt paydown.
+| Management claim | What the live evidence shows | Verdict |
+|---|---|---|
+| "$1 billion in peak revenue in 2029" (every quarter) | ORLADEYO 2026 guidance reaffirmed at $625–645M; "150 patients net patient growth average per year… for this year and 3 more years to hit $1 billion in 2029" (Q4). Roughly one-third of ~10,000 U.S. patients reached. | Plausible but unproven — it requires four more years of clean execution. The math is internally consistent, not yet delivered. |
+| "Profitable on a full-year basis this year" (Q1, pulled forward a year) | Achieved. Non-GAAP operating profit ~$54M in Q1 2026; the business genuinely throws off cash from ORLADEYO. | Verified. |
+| Balance sheet "cleaned up… very strong financial position" (Q3) | Half-true and now reversed. They did pay off Pharmakon debt. But the January 2026 Astria deal re-levered the company: total debt ~$858M against ~$261M cash ($331M pro-forma after the $70M European navenibart license). Shareholder equity is *negative* (about −$554M), and the deal produced a ~$698M in-process R&D charge and a ~$722M GAAP loss in Q1 2026. | The screener's "net cash" framing is wrong. This is a net-debt company of roughly $530–600M. |
+| Revenue "+94% YoY, 30% net margin" (screener) | Stale. That reflected a one-time 2025 swing to GAAP profitability (a deferred-tax benefit lifted reported net income to $264M). Underlying ORLADEYO growth is now ~11% reported (21% ex-Europe), not 94%, and the latest twelve months show a diluted loss per share of about −$1.78. | The snapshot overstates both growth and quality. The real picture: solid mid-double-digit organic growth on one drug, not hyper-growth. |
+| Insider conviction "buy ratio" positive (screener) | Live correction: zero open-market buys versus eleven sells (~558,000 shares). | The real signal is insider *distribution*, not accumulation. |
+
+The throughline: the commercial claims hold up well, the profitability claim is real, but the "fortress balance sheet" claim does not survive the Astria acquisition, and the screener's valuation and quality fields are misleading.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Trajectory: Rising, then settling into confident-steady.**
-- Q1'25: euphoric — *"I don't know what else to say… immensely proud."* Guidance raised.
-- Q2'25: peak confidence — *"the best quarter since approval… little doubt that we are on a path to $1 billion."* CEO succession announced from a position of strength.
-- Q3'25: confident through first competition — *"strong underlying growth… our market simulation continues to predict $1 billion."* Tone shifts subtly to *durability* and *segmentation* language as injectable rivals launch.
-- Q4'25 / Q1'26: measured, capital-allocation-disciplined — new CEO Gayer repeatedly stresses *"every dollar… clear line of sight to value creation."* This is a deliberate move from offensive launch-hype toward operator-discipline language, appropriate for a now-profitable company.
+**Trajectory: Stable-to-Rising on commercial confidence, with a deliberate widening of ambition.**
 
-The single visible crack is Q1'26's admission of a **manufacturing issue delaying the pediatric pellet launch** — handled candidly (*"we don't know the root cause yet"*) and ring-fenced as not affecting guidance. Honest, but a reminder that execution risk exists.
+- Q1 2025: openly thrilled — "I don't know what else to say… immensely proud." Specific and offensive (growth, investment).
+- Q2 2025: peak swagger — "There is little doubt that we are on a path to $1 billion." Confident enough to announce a CEO transition from a position of strength.
+- Q3 2025: confident through the first real test — "this was the first quarter with new competition, and we continue to see strong underlying growth." Two injectable rivals launched and management reported new prescriptions "continued at the same strong pace."
+- Q4 2025 / new CEO: measured and strategic rather than triumphant — "where we will continue to evolve is how focused and explicit we are about capital allocation and accountability." The tone shifts from a founder's pride to an operator's discipline.
+
+There is no shift from offensive to defensive language; if anything the company stayed on offense (an acquisition, a price increase, a pediatric launch). The notable change is rhetorical maturity under the new CEO, not retrenchment.
 
 ## 4. GUIDANCE CREDIBILITY
 
-**Reliability: High.** This is one of the more credible guidance tracks in small-cap biotech this cycle.
-- Q1'25 raised ORLADEYO to $580–600M; Q2'25 narrowed to "upper half"; Q3'25 raised to $590–600M; FY2025 **delivered $601.8M** — at/above the top of every guide they issued. They serially under-promised and over-delivered on the paid-rate ramp.
-- 2026 ORLADEYO guide $625–645M (total $635–660M) reaffirmed at Q1'26 with revenue "right in line." The earnings-beat rate of 4/7 quarters (57%) understates this because the misses are EPS-line noise from accounting charges, not revenue misses; the revenue and guidance cadence has been clean.
-- Mild **sandbagging pattern** is evident — the paid-rate acceleration was explicitly framed as years-ahead-of-plan, and the peds upside is described as conservatively excluded. That is the good kind of guidance behavior.
+**Reliability: High.** This is the strongest part of the file. Management raised ORLADEYO guidance in Q1 ($580–600M), reaffirmed and guided to the "upper half" in Q2, raised again in Q3 ($590–600M even after selling Europe), and delivered $601.8M for the year — a textbook pattern of setting an achievable bar and clearing it. They also pulled their profitability target forward by a full year and hit it. The pediatric approval landed on schedule (December 2025). The one place to keep them honest: the $1B-by-2029 peak and the navenibart pivotal trial are promises about the future, and the screener's recorded beat rate (roughly 4 of 7 quarters) is more middling than the recent run suggests — so credit the commercial track record without extrapolating perfection.
 
 ## 5. ANALYST PRESSURE POINTS
 
-Analysts circled the same three worries every quarter:
-1. **Competition from new injectables** (Takhzyro and two 2025 launches). Management's consistent answer — *"new injectables primarily compete with existing injectables… impact on ORLADEYO has been very minor"* — is backed by their own market-simulation slides and, so far, by the demand data. This is the load-bearing bear question and management has answered it credibly but self-servingly.
-2. **Q4'25 sequential revenue decline** — flagged by analysts as unprecedented seasonality; management correctly attributed it to the Europe divestiture and pre-empted alarm.
-3. **Netherton syndrome (BCX17725) expectations** — management has actively *lowered* the bar (*"temper expectations… short-term dosing in a few subjects"*), which is prudent given how early and binary that program is.
-
-No question turned into a later bad-news reveal except the **pediatric manufacturing delay** (Q1'26), which was self-disclosed rather than dragged out by analysts.
+Analysts circled three things repeatedly. First, **competition**: with two new monthly injectable prophylactics launching in late 2025, the recurring question was whether ORLADEYO's growth would crack. Management's consistent answer — "new injectable therapies primarily compete with existing injectable therapies" (Q3), and the structural-segmentation framing (Q4) — has held up in the numbers so far, but it is the central bet and analysts are right to keep probing it. Second, **the shape of growth**: Jon Wolleben pushed on the unusual implied quarter-over-quarter revenue drop in Q4 2025; management credibly attributed it to the European divestiture, a one-time effect. Third, **the pipeline bar**: on Netherton syndrome, management repeatedly and honestly *lowered* expectations for the early Part 3/Part 4 data — "I would temper expectations with regard to what we might see from short-term dosing in a few subjects" (Q3). That candor is a green flag, but it also flags how early and uncertain the next-product story really is.
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🔴 **Re-levered balance sheet** — the Astria deal put net debt back to ~$619M right after the proudly-announced debt paydown; ROIC is only 1.3%.
-🔴 **Insider conviction is negative** — open-market activity is 0 buys versus 11 sells (557,876 shares). No insider is buying this "cheap" stock.
-🔴 **Pediatric pellet manufacturing issue** (Q1'26) — root cause unidentified; first real execution stumble.
-🔴 **Single-franchise concentration** — over 90% of revenue is one drug (ORLADEYO) in one disease (HAE) in one country (U.S.) after the Europe sale.
-🟢 **Genuine profitability inflection** — from chronic losses to $264M FY2025 net income and ~$294M TTM free cash flow.
-🟢 **Best-in-class margins** — 98% gross, 37% FCF margin, with commercial spend "hardly going up."
-🟢 **Clean guidance track record** — delivered at/above every ORLADEYO guide.
-🟢 **Pipeline optionality** — navenibart Phase 2 (ALPHA-SOLAR) showed 90–92% attack reduction; the pivotal ALPHA-ORBIT completed enrollment ahead of plan.
+🟢 Genuine commercial execution: four straight quarters of records, profitability pulled forward a year, guidance consistently met or raised.
+🟢 Honest management on pipeline risk — they temper their own early-data expectations rather than hype them.
+🟢 A real, durable revenue base in ORLADEYO with ~98% gross margins and patient stickiness ("nearly 50% of all patients who have tried ORLADEYO… are still on therapy," Q4).
+
+🔴 The balance sheet got *worse*, not better. After cleaning up Pharmakon debt, the company immediately re-levered for Astria; it now carries ~$858M of debt against ~$261M cash and negative equity. The "financial strength" narrative is now aspirational.
+🔴 Insider selling (eleven sells, zero open-market buys) sits awkwardly against the bullish script.
+🔴 Concentration risk: this is still effectively a one-drug company. ORLADEYO is the entire cash engine; everything else (navenibart, pediatric, Netherton) is a future call option.
+🔴 The next value-creating catalysts are far out and binary: navenibart's pivotal ALPHA-ORBIT readout is not expected until Q3 2027, with a BLA filing end-2027 and a launch only around 2028. Netherton data by year-end 2026 is explicitly described by management as preliminary.
 
 ## 7. HIDDEN SIGNALS
 
-- **Vocabulary shift from "growth" to "durability" and "segmentation."** As competition arrived, Gayer reframed HAE from a *"winner-take-all efficacy race"* to a *"structurally segmented market."* This is the tell that they expect to *hold* share against injectables rather than keep taking it — a subtle lowering of the competitive ceiling.
-- **"Super responder" framing introduced in Q4'25** — a new defensive narrative ("~50% stay on 2 years with 91% reduction… unlikely to switch") built specifically to insulate the installed base from churn. Useful, but it is retention-defense language, not expansion language.
-- **Capital-allocation discipline as the new CEO's signature** — Gayer's repeated "line of sight to value creation" and the immediate killing of the DME (avoralstat) program signal a more ROI-driven regime than the prior growth-at-all-costs launch culture.
-- **Three R&D chiefs in a year** (Thackray → Sheridan → Menon by Q1'26) — high turnover in the pipeline-leadership seat is worth watching, though the latest hire (Menon) is positioned as an upgrade.
+The most telling shift is in the *language of capital allocation*. Under the founder it was "growing revenue, profit, great cash flow… it doesn't get any better than that" (Q2). Under the new CEO it is "every dollar we deploy has a clear line of sight to driving long-term value creation" (Q4). That is the voice of a management team that knows it just spent a large sum on Astria and re-levered, and is pre-emptively defending its discipline. Separately, the competitive framing evolved from defensive ("our market simulation predicts growth won't be affected," Q3) to a more sophisticated strategic thesis ("owning the prophy decision framework in HAE," Q4) — management is no longer just defending ORLADEYO, it is trying to own the whole HAE prophylaxis category with three products. Finally, the company quietly began winding down internal discovery and leaning on external innovation (business development) as its pipeline engine — a tacit admission that home-grown R&D has not reliably produced the next ORLADEYO.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Trajectory: STRENGTHENING.** BioCryst has executed a clean transition from a money-losing single-product launch into a profitable, cash-generative rare-disease franchise with a credible second act (navenibart) and pipeline optionality. Guidance has been reliable, margins are exceptional, and management's discipline improved under the new CEO.
+**Classification: PIVOTING.** This is a profitable, well-run single-product commercial story actively transforming itself — through a divestiture, a re-leveraging acquisition, and a CEO change — into a multi-asset HAE franchise. The execution on the existing drug is excellent; the transformation is unproven and was funded with debt.
 
-**The single most important thing to weigh before sizing:** the gap between the *operating* quality (excellent) and the *balance-sheet and valuation reality* (re-levered to ~$619M net debt; the "cheap" 6.6x price-to-free-cash-flow is on a base whose terminal value rests almost entirely on one drug's defensibility against a wave of new injectable competition). The whole investment case is the durability of ORLADEYO's installed base — exactly the thing management has quietly reframed from "still growing share" to "structurally segmented, super-responders won't switch." Insiders are selling, not buying, into the cheapness.
+**The single most important thing to weigh before sizing:** the entire forward thesis rests on ORLADEYO holding its growth against new injectable competition long enough to reach $1B, *while* the debt-funded navenibart bet pays off — and the navenibart proof point (the pivotal readout) is more than a year away, in Q3 2027. You are underwriting flawless commercial execution plus a distant binary clinical event, against a negative-equity balance sheet, at a valuation the screener flags as "cheap" largely on stale, one-time-inflated 2025 numbers.
 
-**Moat:** intangible/regulatory (an approved, differentiated oral drug with patient/physician switching habit and payer contracts) — but **NARROW**, not wide. The 1.3% ROIC and the deliberate pivot to retention-defense language argue the durable earnings base is real but defended, not expanding. **Moat trend: STABLE** (holding share against injectables, not widening). **Secular threat: manageable** — HAE is a structurally segmented, slow-moving rare-disease market; the threat is competitive/product-cycle (new injectables, eventual oral rivals), not a structural terminal-value force like AI displacement or reimbursement compression. The cheapness reads more as a market-ceiling/competition fear-print than a melting-base value trap, but the single-asset concentration caps how far that argument can be pushed.
+**Moat:** narrow but real. ORLADEYO's edge is intangible — the only oral HAE prophylactic, with high gross margins (~98%), genuine patient preference, and meaningful stickiness — but it is not a wide, unassailable franchise. New monthly injectables are already in the market, and the moat is "patient preference for a pill," which is defensible but not impregnable. Returns are not in clean secular decline (ORLADEYO is still growing low-double-digits and gaining patients), so the moat is stable, not eroding.
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable
+**Secular threat: manageable.** HAE prophylaxis is a competitive but structurally growing rare-disease market, not a melting one; there is no dominant AI, disintermediation, or reimbursement-collapse force impairing terminal value. The risk here is ordinary competitive and clinical-execution risk, not a structural tail. The cheapness, to the extent it exists, is a competition-and-leverage discount on a real earnings base, not a value trap on a shrinking base.
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: PIVOTING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

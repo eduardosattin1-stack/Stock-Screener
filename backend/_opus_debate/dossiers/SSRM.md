@@ -1,67 +1,71 @@
-# Forensic Dossier — SSR Mining (SSRM)
+# SSR Mining (SSRM) — Forensic Dossier
 
-*A deep dive on management and the setup, built from five consecutive quarterly calls (Q1 2025 through Q4/full-year 2025, reported February 2026) cross-checked against the hard financials and against live news as of June 29, 2026.*
-
-> **Critical framing up front.** The transcripts in hand run only through the February 2026 full-year call. Since then, two transformative events have completely rewritten this company — both verified live. On June 24, 2026, SSR **closed the sale of its Çöpler mine in Turkey for roughly $1.49 billion in cash**. And on May 18, 2026, SSR **exited the Hod Maden development project**, selling its stake and operator role to its joint-venture partner in exchange for a 4% royalty on the mine's future revenue. The single biggest "catalyst" management spent every call on — getting Çöpler permitted to restart — is therefore moot: they took the cash instead. Read the dossier below with that in mind; management's restart narrative was overtaken by a far cleaner outcome.
+*Source material: four consecutive quarterly calls, Q1 2025 (May 6) through Q4/full-year 2025 (Feb 18, 2026), plus the screener's hard financials. Critically, the most important events in this story happened AFTER the last transcript and were verified by live web search — see Section 8.*
 
 ## 1. NARRATIVE ARC
 
-Across 2025 the story was consistent and, to management's credit, well-executed: SSR spent the year rebuilding itself around its Americas mines after the February 2024 Çöpler disaster (a heap-leach pad collapse in Turkey that killed nine workers and shut the company's largest asset). Three threads ran through every call.
+Across the four calls in the transcript, management told one consistent story: SSR Mining is an Americas-anchored gold and silver producer (Marigold in Nevada, the newly bought Cripple Creek & Victor or "CC&V" mine in Colorado, Seabee in Canada, Puna in Argentina) that is patiently working to bring its damaged Turkish mine, Çöpler (often spelled Copler), back online while advancing a high-quality Turkish development project, Hod Maden, toward a build decision.
 
-First, **the Cripple Creek & Victor (CC&V) acquisition** — a Colorado gold mine bought from Newmont for $100 million upfront, closed end-February 2025. This went from "we think it's a core asset" (Q1) to a genuine win: by Q3 management reported CC&V had thrown off "nearly $115 million in asset-level free cash flow since acquisition," effectively repaying the purchase price in four months. The fourth-quarter technical report confirmed a 12-year mine life with an $824 million net present value (the value today of the mine's future cash flows).
+The emphasis shifted steadily through the year. The first quarter (May 2025) was about integrating CC&V — bought from Newmont for $100 million in cash, which the call notes "paid back our initial upfront purchase in just 4 months." By the fourth quarter (Feb 2026), CC&V had thrown off roughly $115 million of free cash flow since acquisition and was being called "a core operation." That acquisition is the clear win of the year.
 
-Second, **the Çöpler restart** — described every quarter as "our top priority," with management repeatedly declining to give a timeline ("I am unable to provide any more detail of when and if these permits will be received," Q1). This thread, in hindsight, was the dog that didn't bark: they never got the restart and ultimately sold the asset.
+The two Turkish stories ran underneath the whole transcript like a low hum. On Çöpler, management repeated a careful, almost legalistic line every quarter — "we remain confident of a restart" but "I am unable to provide any more detail of when and if these permits will be received" (Q1 2025). That phrasing never improved; by Q4 it had hardened into "discussions are ongoing... there really was nothing to note since the last quarter." On Hod Maden, the arc was more hopeful: a January 2026 technical report pegged the project at a $1.7 billion net present value (the value today of all the project's future cash, discounted back) and a 39% internal rate of return, and management spoke of a construction decision "in the coming months."
 
-Third, **Hod Maden** — a high-grade copper-gold development project in Turkey, advanced toward a construction decision all year, with a January 2026 technical report touting a $1.7 billion net present value and a 39% internal rate of return (the project's annualized return). Again, in hindsight a thread that resolved by exit rather than build-out.
-
-The capital-return story emerged last and loudest: the Q4 call (February 2026) announced a **$300 million share buyback**, with management stating plainly that "our share price does not reflect the full value of our portfolio."
+The single most consequential thing about this dossier is that BOTH Turkish storylines were quietly abandoned within weeks of the last call — not by restart or by build, but by SALE. Management never telegraphed this in the transcript. The story you read in the calls is no longer the story you are buying.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-| Management claim | The hard numbers | Verdict |
+| Management claim (quarter) | The hard numbers | Verdict |
 |---|---|---|
-| "Material free cash flow generation" all year | TTM free cash flow $482M; full-year 2025 free cash flow $252M (>$400M ex-working-capital) | **Matches.** Cash generation is real and large relative to a ~$6B market cap. |
-| CC&V "paid back our initial upfront purchase in just 4 months" | $115M asset-level FCF on a $100M price by Q3 | **Matches** — genuinely an excellent capital-allocation outcome. |
-| Net income recovery | Net income swung from −$261M (2024) to +$403M (2025); Q4 alone $181M ($0.84/sh) | **Matches** the recovery narrative — but note the 2025 surge is gold-price-driven (realized gold above $4,100/oz in Q4), not volume. |
-| "Strong financial position," debt-free | Net cash ~$606M at March 2026 (cash $674M vs $68M debt); convertible notes fully redeemed | **Matches and then some** — a fortress balance sheet, and that was *before* the $1.49B Çöpler cash arrived. |
-| Returns on capital | ROE 3.2%, ROIC 2.2% | **Diverges sharply from the "quality" impression.** Returns on capital are dismal — the legacy of writing off Çöpler and carrying idle Turkish assets. The earnings rebound has not yet translated into respectable capital efficiency. |
-| Revenue "+66.5% YoY" | True, but it is a base effect — 2024 ($996M) was depressed by the Çöpler shutdown; 2021 revenue was already $1.47B | **Technically true, narratively misleading.** This is recovery off a disaster floor, not secular growth. The peer-comps note flags exactly this. |
-| Valuation "does not reflect full value" | Price-to-free-cash-flow ~26x screens rich vs Kinross (~12–15x) and Pan American (~18x) | **The honest read:** rich on the *current impaired* base, cheap only if you credit a return to normalized multi-asset production — which the Çöpler sale now removes from the equation. |
+| "nearly $40 million in free cash flow" Q1; "nearly $100 million" Q2; "$106 million" Q4 | Trailing-twelve-month (TTM) free cash flow of $482M; full-year 2025 free cash flow $252M ($400M+ before working-capital swings) | **Matches — strong and real.** Cash generation is the genuine spine of this business. |
+| "$535 million in cash and more than $1 billion in liquidity" (Q4) | Live balance sheet (Mar 31, 2026): cash $674M, total debt $68M — **net cash of about $606M**, later $634M cash | **Confirmed and improving.** Genuinely net-cash; a real add to value. |
+| CC&V "paid back our initial upfront purchase in just 4 months" | $100M paid; ~$115M asset-level free cash flow generated since acquisition | **Confirmed — the standout capital-allocation win.** |
+| Çöpler "we remain confident of a restart" (every quarter) | Net income swung from -$261M (2024) to +$403M (2025); 2026 guidance still carries $20–25M/quarter of Çöpler care-and-maintenance cost — i.e. Çöpler was a pure cash drain, never restarted | **Did not hold up.** The restart never came; the asset was sold instead (Section 8). |
+| Reported earnings-per-share (EPS) recovery: 2025 EPS $1.85 | But TTM diluted EPS is only $1.06, and the latest quarter's EPS fell 282% year-on-year | **Poorer than the headline.** The $1.85 full-year figure is flattered by one-offs ($44M insurance proceeds, an $181M Q4 net income boosted by metal-price spikes to $4,142/oz gold). Underlying run-rate EPS is roughly half the headline. |
+| ROE 3.2%, ROIC 2.2% | Same | **The tell.** Despite record gold prices and strong cash flow, returns on capital are near-zero — the legacy of the Çöpler write-down and the capital tied up in idle/development assets. This is NOT a high-return compounder at the corporate level. |
 
-The cleanest finding: the cash and the operating recovery are **real**; the returns on capital and the optical revenue growth are **flattering artifacts** of the Çöpler disaster and the gold-price spike.
+The honest read: the operating business generates real cash, the balance sheet is genuinely net-cash, but reported profitability is propped up by a once-in-a-generation gold price ($4,142/oz realized in Q4 2025 versus historical norms nearer $1,800–2,000), and corporate returns on capital remain depressed.
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Rising and steady.** Executive Chairman Rod Antal's tone strengthened through the year as CC&V over-delivered and free cash flow compounded. Q1: "a strong start." Q2: "a really good quarter… nearly $100 million in free cash flow." Q4: "we closed 2025 on a high note." The one zone of permanent caution was Çöpler, where management was disciplined about not over-promising on permits — a credibility positive, not a negative. The shift over the year was *toward* shareholder returns (the buyback), a confident, offensive posture, not a defensive one.
+**Rising on the Americas, evasive on Turkey — a split tone throughout.**
 
-## 4. GUIDANCE CREDIBILITY
+- On the operating assets, confidence climbed: Q2 — "many congrats on the Q2 beat... successful integration" (analyst Ovais Habib, Scotiabank); Q4 — "we closed 2025 on a high note, delivering full year production above the midpoint."
+- On Çöpler, the tone was defensively flat and never moved. Q2's exchange with Don DeMarco (National Bank) is the clearest example: asked merely whether a restart was nearer or further than 1–3 months, Rod Antal deflected — "If you're trying to trick me in a different way... I'm not going to put out their timetables." That is a management team that does not control its own timeline and knows it.
+- A subtle late shift: by Q4, Çöpler activity had "wound down in terms of material movements and site rehabilitation." In hindsight, that is the sound of a company preparing to exit, not restart.
 
-**High.** Full-year production of 447,000 gold-equivalent ounces came in *above* the midpoint of the 410,000–480,000 guidance. They flagged the lower half mid-year (Q3) and still beat the midpoint — mild sandbagging, well within tolerance. Costs (all-in sustaining cost) ran to the top of the range, but management told you why in advance (gold-price-linked royalties and share-based compensation), and the ex-Çöpler figure landed comfortably inside guidance. The screener's "beat 5 of 7 quarters" corroborates a reliable, not promotional, management team. Reliability: **High.**
+## 4. GUIDANCE CREDIBILITY — Medium-High
+
+Operationally, the team delivered: 2025 production of 447,000 gold-equivalent ounces came in "above the midpoint" of the 410,000–480,000 guide, and the screener corroborates a 71% earnings-beat rate (5 of 7 quarters). All-in sustaining cost (AISC — the full cash cost to produce an ounce) ran to the top of the range, but management flagged the cause honestly (gold-price-linked royalties and share-based comp). Where credibility frays is the Çöpler restart narrative: management projected confidence for two straight years on a restart that never happened. They were truthful about what they controlled (the mines) and over-optimistic about what they did not (Turkish regulators). Reliability on operations: **High.** On the binary Turkish event: **Low.**
 
 ## 5. ANALYST PRESSURE POINTS
 
-Analysts pushed hardest on two fronts, and both have now been resolved by corporate action rather than the answers management gave:
-- **Çöpler restart timing** (Don DeMarco, every call): management refused to give a date. The resolution — a sale — vindicates the refusal; there was no credible restart date to give.
-- **Hod Maden capital pacing and the Çöpler linkage** (Cosmos Chiu, Ovais Habib): management insisted the two Turkish assets were "mutually exclusive." The eventual clean exit from both Turkish exposures shows the linkage analysts worried about was real at the portfolio level, even if operationally separate.
+Every quarter, two analysts — Don DeMarco (National Bank) and Ovais Habib (Scotiabank) — circled the same two questions: *When does Çöpler restart?* and *When is the Hod Maden build decision?* Management never gave a date to either. DeMarco's increasingly pointed framing ("do you know what the time frame may not be?") shows the analysts had stopped believing a restart was imminent well before the company admitted it. The non-answers were the signal: the assets analysts kept probing were the very two that got sold.
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🟢 CC&V acquisition is a textbook accretive deal — paid back in four months.
-🟢 Debt-free, large net cash, convertible notes retired, $300M buyback initiated with the stock explicitly called cheap by management.
-🟢 Production beat the guidance midpoint; Puna (silver) beat guidance for a third straight year.
-🟢 Capital discipline: management held to acquisition criteria and didn't chase deals.
-🔴 Returns on capital (ROIC 2.2%) remain near-worthless — the business has not yet earned its cost of capital even in a record gold-price year.
-🔴 Concentration and jurisdiction risk in the legacy footprint (now being shed).
-🔴 The headline revenue growth is a disaster-recovery base effect, not durable expansion.
+🔴 Two years of "confident of a restart" on an asset that never restarted and was ultimately sold — a credibility ding on binary-event guidance.
+🔴 Corporate return on invested capital of just 2.2% at the top of the gold cycle — earnings quality is cycle-dependent, not franchise-driven.
+🔴 Headline 2025 EPS ($1.85) roughly double the TTM run-rate ($1.06); one-offs and peak metal prices flatter the picture.
+
+🟢 Net cash of ~$600M+ and rising; essentially debt-free.
+🟢 CC&V acquisition: a textbook value-accretive bolt-on (4-month payback).
+🟢 A $300M buyback re-established in Feb 2026 at a stated belief "our share price does not reflect the full value of our portfolio" — and, post-transcript, expanded dramatically (Section 8).
+🟢 Puna silver mine extended its life (Chinchillas to 2028, Cortaderas optionality), reversing its "depleting asset" reputation.
 
 ## 7. HIDDEN SIGNALS
 
-The most important signal is what management did *after* the transcripts end. All year they framed the Turkish assets (Çöpler, Hod Maden) as long-term value to be unlocked through restart and construction. In reality they monetized both: Çöpler for $1.49B cash, Hod Maden for a royalty. The Q4 buyback announcement — "our share price does not reflect the full value" — was the tell that management itself saw the gap between the stock and the asset value, and was preparing to act on it with cash rather than with operations. The reinstatement of buybacks (they had bought 20M shares at ~$15.76 in 2021–2024) signaled a return to the capital-return playbook that defines this management team's identity.
+The buyback re-establishment in the Q4 call is the Rosetta Stone. Management explicitly tied it to undervaluation and reminded investors they had bought back 20 million shares at an average $15.76 between 2021–2024 — disciplined, opportunistic, value-driven capital allocation. Read alongside the "wound down" Çöpler language, the Q4 call was, in retrospect, a company pivoting from "fix Turkey" to "exit Turkey and return capital." The transcript never says it, but the behavior foreshadows it.
 
-## 8. CAPITAL-ALLOCATION VERDICT (for the director)
+## 8. CAPITAL-ALLOCATION VERDICT (for the director) — PIVOTING
 
-**Trajectory: STRENGTHENING.** This is now, post-Çöpler-sale, a streamlined Americas-and-Argentina gold/silver producer (Marigold in Nevada, CC&V in Colorado, Seabee in Saskatchewan, Puna in Argentina) sitting on an extraordinary pile of net cash — roughly $600M before the sale plus ~$1.49B in proceeds — against a market value around $6B. The single most important thing the director must weigh: **the investment case has shifted from an operational-restart story to a balance-sheet / capital-return story.** The catalysts management talked about all year (Çöpler permits, Hod Maden construction) are gone; the live levers now are how aggressively that ~$2B of cash gets returned (a $500M buyback and a reinstated dividend were announced June 15, 2026) versus spent on acquisitions.
+**The trajectory is PIVOTING, and the pivot is the entire thesis.** Within weeks of the last transcript, SSR did what two years of calls never promised:
 
-**Moat:** This is a commodity producer with **no durable moat** — gold and silver are price-takers, and the company's returns on capital (ROIC 2.2%) sit far below its cost of capital. The "asset" is reserves plus a fortress balance sheet, not a franchise. **Moat trend: stable** (commodity economics don't erode or widen secularly; they cycle with metal prices). **Secular threat: none/manageable** — gold is, if anything, a beneficiary of the current macro backdrop, not a victim of a structural technology or regulatory force. The cheapness here is a balance-sheet and gold-price story, not a melting-base value trap. The risk is cyclical (metal prices) and execution (cash redeployment), not terminal.
+1. **March 4 / March 24, 2026** — signed a **binding agreement to SELL its 80% Çöpler stake to Cengiz Holding for $1.5 billion in cash** (with a $100M deposit and $50M reciprocal break fee). Expected to close **Q3 2026**, subject to Turkish regulatory approval. This converts the single biggest source of risk, reclamation liability, and care-and-maintenance cash drain into a large cash inflow.
+2. **May 18, 2026** — agreed to **sell its 20% Hod Maden stake to Lidya Mines** in exchange for an uncapped 4.0% net smelter return royalty — exiting the remaining ~$470M build cost while keeping a royalty option on the upside.
+3. **June 15, 2026** — authorized an **additional $500M buyback (now ~$800M total)** and **reinstated a quarterly dividend** of $0.03/share.
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: none
+**The single most important thing the director must weigh:** the stock you are buying today is no longer the "Turkish-restart deep-value" story in the transcript. It is a *catalyst-on-the-clock special situation* — a clean, debt-free, Americas-only mid-tier producer about to receive $1.5 billion in cash (roughly a quarter of its entire $5.9B market value) into an already net-cash balance sheet, with management aggressively shrinking the share count. The risk has moved from "will Turkey restart?" to "will the Çöpler sale close in Q3 2026 as signed, and will Turkish regulators approve it?"
+
+**Economic moat: NARROW.** SSR's only durable edge is low-cost ounces in safe jurisdictions (CC&V and Puna both produce around or below $1,400/oz AISC). It has no switching-cost, network, or brand moat — it is a price-taker on gold and silver. The returns evidence (ROIC 2.2%) says this is not a wide-moat compounder; it is a competent operator of depleting assets. **Moat trend: STABLE** — the Çöpler exit removes a value-destroying asset and raises portfolio quality, but does not create a structural advantage. **Secular threat: none** — gold and silver are cyclical commodities with no terminal-decline force bearing on them; if anything, the macro backdrop (sticky 4% inflation, $4,000+ gold) is a tailwind, not a melting base. The cheapness here is a fear-print and asset-mix discount, not a value trap.
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: PIVOTING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none

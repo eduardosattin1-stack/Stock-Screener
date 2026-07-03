@@ -9,13 +9,13 @@
 
 The scheduled SKILL.md runs:
   python weekly_opus_refresh.py prep            (raw-screen universe + bundles + ledger re-check routing)
-  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [opus/1M])
-  -> python weekly_opus_refresh.py regime-skeptic -> Workflow(...)    (APEX kill-tier, opus/1M; moat-aware, default REFUTED)
+  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [fable])
+  -> python weekly_opus_refresh.py regime-skeptic -> Workflow(...)    (APEX kill-tier, fable; moat-aware, default REFUTED)
   -> python weekly_opus_refresh.py regime-post                        (apex: consume skeptic + moat-erosion + secular-theme caps)
   -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book; reads post-skeptic, capped apex)
   -> python weekly_opus_refresh.py value-input                        (value signals + funnel stats + ledger)
-  -> [value Director agent, opus/1M]
-  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, opus/1M)
+  -> [value Director agent, fable]
+  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, fable)
   -> python weekly_opus_refresh.py value-post                         (deterministic safety layer; consumes skeptic)
   -> python weekly_opus_refresh.py value-csv / baskets-csv
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
@@ -31,6 +31,7 @@ reliable; no fragile inter-stage handoff, no StructuredOutput dependency.
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 BK = r"C:\Users\Bruno\Stock-Screener\backend"
@@ -52,15 +53,17 @@ for d in (INP, TXT, RES, ROOT / "dossiers"):
     d.mkdir(parents=True, exist_ok=True)
 
 # ── Model seats (single source of truth; every workflow/agent pin reads these) ──
-# Fable 5 was RETIRED (2026-06-13). The Director + Skeptic seats — capability-bound,
-# calibration-free — fall back to Opus 4.8 (1M context). Radar stays Sonnet (cheap
-# sorting); the per-name Debate stays Opus. The harness 'opus' alias resolves to the
-# session's configured Opus 4.8 / 1M. To restore Fable when it returns, set these back
-# to "fable" — nothing else needs to change (templates substitute these at render time).
+# Fable 5 REVIVED (2026-07-01, Bruno's call) — back in the model family after the
+# 2026-06-13 retirement. The Director + Skeptic seats — capability-bound, calibration-
+# free — run on Fable again (original pinned architecture); Radar stays Sonnet (cheap
+# sorting); the per-name Debate stays Opus. If Fable retires again, set these back to
+# "opus" — nothing else needs to change (templates substitute these at render time).
+# NOTE: the two Director self-descriptions (VALUE_DIRECTOR_PROMPT + the weekly workflow
+# template) name the seat model in prose — keep them in sync when flipping these.
 RADAR_MODEL = "sonnet"
 DEBATE_MODEL = "opus"
-DIRECTOR_MODEL = "opus"   # Fable→Opus-4.8/1M fallback
-SKEPTIC_MODEL = "opus"    # Fable→Opus-4.8/1M fallback
+DIRECTOR_MODEL = "fable"   # Fable 5 (revived 2026-07-01; was opus fallback 06-13→07-01)
+SKEPTIC_MODEL = "fable"    # Fable 5 (revived 2026-07-01; was opus fallback 06-13→07-01)
 
 # ── Director rotation discipline: the prior-decision ledger (continuity + anti-whipsaw) ──
 # Each book persists every Director keep/drop/add for the YEAR in _decision_history.json so the
@@ -189,7 +192,7 @@ DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
 # 8e: convergence (multi-model agreement — the purest value signal in the system) and the true
 # EV/GP basket are VALUE signals too; without this they were branded "catalyst" and routed down
 # the Moderator's catalyst lens.
-VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp"}
+VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown"}
 
 REGIME_FILE = "CATALYST_WATCH_REGIME.md"  # repo root; read live each run for the current regime
 
@@ -544,7 +547,7 @@ def _funded_solvency(sector, ndE, icov):
 from _moat import moat_features as _moat_features  # noqa: E402
 
 
-VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Opus 4.8), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
+VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Fable 5), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
 
 SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
   - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT — trust sop_mos_pct.
@@ -756,8 +759,16 @@ def value_input():
             "revenue_decelerating": mf["revenue_decelerating"],
             # agent-judged moat read (from the debate dossier/CRO) — cross-checks the deterministic gate
             "moat": r.get("moat", ""), "moat_trend": r.get("moat_trend", ""),
+            # X5 carry-awareness: the value re-grade must SEE a carried (not re-debated) record —
+            # its numbers date from carried_from, restamped only for price/as_of.
+            "carried": bool(r.get("carried")), "carried_from": r.get("carried_from", ""),
             "secular_threat": r.get("secular_threat", ""), "secular_theme": r.get("secular_theme", ""),
         })
+    # Freshness stamp (the proven lesson from the weekly TTM "as of" block, applied to the one path
+    # that lacked it): every row carries as_of so the Director can never lean on an undated figure.
+    _asof = datetime.now().strftime("%Y-%m-%d")
+    for x in out:
+        x["as_of"] = _asof
     (ROOT / "value_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     # Director rotation discipline: render the prior-decision ledger (held names + 2026 drops) that
     # this Director must reconcile its new basket against. Best-effort — never blocks the run.
@@ -765,7 +776,7 @@ def value_input():
         write_director_ledger("value", ROOT / "apex_basket_value.json", E.FRONTEND_DIR / "public" / "speculair_value_tracking.json")
     except Exception as _e:
         print(f"WARN: value ledger build failed ({_e})")
-    prompt_txt = VALUE_DIRECTOR_PROMPT
+    prompt_txt = f"AS OF {_asof} — every metric row in value_grade_input.json carries this date.\n\n" + VALUE_DIRECTOR_PROMPT
     pa = ROOT / "apex_basket_value.json"                # Fix 4 feed-forward: prior MEASURED correlations
     if pa.exists():
         try:
@@ -1083,6 +1094,12 @@ def value_publish(push_gcs=False):
     import datetime as _dt
     PUB = E.FRONTEND_DIR / "public"
     apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
+    # PUBLISH GATE (mirror of publish_to_frontend's): the 06-30 value book shipped with its largest
+    # seat un-vetted + a stale-REFUTED name seated because publish ran without the post layer.
+    if not apx.get("value_post_applied") and "--force" not in sys.argv:
+        print("GUARD value publish gate: apex_basket_value.json has NO value_post_applied stamp — run "
+              "`value-skeptic` (Workflow) then `value-post` first. Aborting (override: --force).")
+        sys.exit(1)
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
     try:                                              # capture this run's Director decisions into the year ledger
         append_decision_history("value", apx)
@@ -1149,7 +1166,8 @@ def value_publish(push_gcs=False):
            "book_secular_load_pct": apx.get("book_secular_load_pct"), "clean_anchor_count": apx.get("clean_anchor_count"),
            "pool_stats": pool_stats,
            "generated_at": _dt.date.today().isoformat(),
-           "engine": "opus-4.8-value-funded-leverage", "universe": 161}
+           "engine": "opus-4.8-value-funded-leverage", "rubric_version": "2026-07-vd1",
+           "universe": (pool_stats or {}).get("n_pool")}
     (PUB / "speculair_value_apex.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"value_publish: {len(picks)} apex + {len(out['runner_ups'])} runners | tracking nav={vt.get('nav')} "
           f"since={vt.get('since_inception_pct')}% open={vt.get('n_open')} closed={vt.get('n_closed')} inception={vt.get('inception_date')}")
@@ -1183,7 +1201,7 @@ def finish_debate():
     js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = " + json.dumps(fmp), js)
     js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(online), js)
     out = ROOT / "_finish_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"FINISH OK: {len(fmp)} FMP + {len(online)} online = {len(missing)} still-missing (of {len(uni)})")
     print(f"FINISH_SCRIPT={out.resolve()}")
     return len(missing)
@@ -1211,7 +1229,7 @@ def value_revalidate():
              "NOT reuse pre-event segment data. State the event date and the pro-forma basis explicitly. ")
     js = re.sub(r'(const BRIEF = ")', lambda m: m.group(1) + instr, js, count=1)
     out = ROOT / "_revalidate_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"value_revalidate: {len(stale)} stale-anchor name(s) {stale} -> online pro-forma re-debate")
     print(f"REVALIDATE_SCRIPT={out.resolve()}")
     return len(stale)
@@ -1250,104 +1268,137 @@ def _moat_hints(finalists):
     return hints
 
 
-def value_skeptic():
-    """8b — SKEPTIC TIER over the value-apex finalists (apex + runner_ups, ~16 names). The weekly
-    debate runs Interrogator->Architect->CRO in ONE context, so the 'adversarial' CRO shares the
-    bull's activations; this emits an INDEPENDENT kill-tier (the Catalyst Watch Skeptic pattern,
-    which kills 40-50% of ACTIVE flags): default REFUTED unless the load-bearing facts verify
-    against a primary source; inputs are the BEAR side + live web only — never the bull case.
-    Runs on SKEPTIC_MODEL (Fable retired 2026-06-13 -> Opus 4.8/1M; adversarial kill-quality
-    is what the capability premium buys).
-    Pipeline order: Director -> value-skeptic (Workflow) -> value-post -> csv -> publish."""
-    apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
+# ── UNIFIED SKEPTIC (2026-07-01, methodology review X1) ──────────────────────────────────────
+# ONE generator for all three books (value / regime / disruptor — the highest-vol book never had a
+# kill-tier at all). Per-LANE attack rubric (a compounder, an event-driven special-sit and a theme
+# growth name fail in different ways); output is VERDICT-BASED ONLY — categorical
+# correction_severity (minor|material) + kill_scope REPLACE the numeric value_conviction_cap
+# (the numeric-cap-as-ceiling pattern is the proven bug class from the scale-out re-grade).
+# Cross-book DEDUPE: the value book skips finalists already kill-checked fresh by the regime pass
+# this run (their shards are carried across), so the net agent count DROPS while coverage grows.
+_SKEPTIC_BOOKS = {
+    "value": {"apex": "apex_basket_value.json", "shards": "_skeptic",
+              "wf": "_skeptic_workflow.js", "env_line": "SKEPTIC_WORKFLOW"},
+    "regime": {"apex": "apex_basket_opus_regime.json", "shards": "_skeptic_regime",
+               "wf": "_regime_skeptic_workflow.js", "env_line": "REGIME_SKEPTIC_WORKFLOW"},
+    "disruptor": {"apex": "disruptor/apex_basket_disruptor.json", "shards": "_skeptic_disruptor",
+                  "wf": "_disruptor_skeptic_workflow.js", "env_line": "DISRUPTOR_SKEPTIC_WORKFLOW"},
+}
+
+_SKEPTIC_ATTACKS = {
+    "value": "(a) STALE-ANCHOR - is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH - do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS / TERMINAL MOAT - is the claimed cheapness real edge, or priced/structural (melting business, AI/fintech/cord-cutting disruption, terminal multiple, returns BELOW cost of capital)? (d) HIDDEN DISQUALIFIER - litigation, covenant, dilution, regulatory action, a binary/soft catalyst dressed as hard.",
+    "event": "(a) IS THE CATALYST GENUINELY LIVE + DATED + BINDING - or already fired / slipped / priced (the spread closed)? Confirm the exact date/terms from a primary source (8-K, merger agreement, FDA/regulator page). (b) IS THE TARGET REAL (deal terms / event-resolved value) or fantasy? (c) IS THE DOWNSIDE FLOOR REAL - what actually backstops the price if the event fails (deal-break, cash, recovery value), or does the floor break (going-concern, ATM/dilution, financing contingency)? (d) HIDDEN DISQUALIFIER - trading through terms, a second-request, single-binary with no floor.",
+    "disruptor": "(a) STALE-ANCHOR - are the growth/backlog/design-win figures from an old quarter? Re-verify against the LATEST filing/release. (b) NUMBER TRUTH - do revenue growth, gross-margin trajectory, backlog/orders and the named customer wins verify against primary sources? (c) THESIS WEAKNESS - is the theme demand actually flowing to THIS name (share shifts, competitive entry, customer concentration, in-sourcing risk), or is the multiple pricing a steeper S-curve than the verified evidence supports? (d) HIDDEN DISQUALIFIER - dilution/SBC waves, channel stuffing, one-customer dependence, insider distribution. DATED-CALL GUIDANCE: attack DATED claims against DATED sources; an undated secular growth story is NOT auto-REFUTED for lacking a date - demand the CURRENT evidence verifies, and kill only on contradiction or unverifiable load-bearing claims.",
+}
+
+
+def skeptic_gen(book):
+    """Emit the unified skeptic Workflow for `book`. Per-finalist lane resolution happens HERE
+    (python, deterministic): a regime finalist whose record carries lane=equity_special_sit /
+    source=opus_catalyst gets the EVENT rubric; disruptor finalists get the disruptor rubric;
+    everything else the value/compounder rubric. Batch 6 (proven rate-limit ceiling)."""
+    cfg = _SKEPTIC_BOOKS[book]
+    apx = json.load(open(ROOT / cfg["apex"], encoding="utf-8"))
     finalists = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
     for r in apx.get("runner_ups", []):
         s = r.get("symbol") if isinstance(r, dict) else r
         if s and s not in finalists:
             finalists.append(s)
+    shards_dir = ROOT / cfg["shards"]
+    shards_dir.mkdir(parents=True, exist_ok=True)
+
+    # cross-book dedupe: the value pass reuses FRESH regime shards (same name, same debate record,
+    # same rubric) - carry the shard across (fresh mtime + provenance) instead of re-running it.
+    carried = []
+    if book == "value":
+        reg_apex = ROOT / _SKEPTIC_BOOKS["regime"]["apex"]
+        reg_mtime = reg_apex.stat().st_mtime if reg_apex.exists() else 0
+        for s in list(finalists):
+            sh = ROOT / _SKEPTIC_BOOKS["regime"]["shards"] / (s + ".json")
+            if sh.exists() and sh.stat().st_mtime >= reg_mtime - 1:
+                try:
+                    d = json.load(open(sh, encoding="utf-8"))
+                    d["carried_from_book"] = "regime"
+                    (shards_dir / (s + ".json")).write_text(
+                        json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+                    finalists.remove(s)
+                    carried.append(s)
+                except Exception:
+                    pass
+        if carried:
+            print(f"skeptic dedupe: carried {len(carried)} fresh regime verdicts across: {carried}")
+
+    # per-finalist lane + input paths
+    lanes = {}
+    for s in finalists:
+        lane, res, doss = "value", f"results_regime/{s}.json", f"dossiers/{s}.md"
+        if book == "disruptor":
+            lane, res, doss = "disruptor", f"disruptor/results/{s}.json", f"disruptor/dossiers/{s}.md"
+        elif book == "regime":
+            try:
+                rec = json.load(open(ROOT / "results_regime" / (s + ".json"), encoding="utf-8"))
+                if rec.get("lane") == "equity_special_sit" or rec.get("source") == "opus_catalyst":
+                    lane = "event"
+            except Exception:
+                pass
+        lanes[s] = {"lane": lane, "res": res, "doss": doss, "attack": _SKEPTIC_ATTACKS[lane]}
     hints = _moat_hints(finalists)
-    (ROOT / "_skeptic").mkdir(exist_ok=True)
-    js = """export const meta = {
-  name: 'value-skeptic',
-  description: 'Independent skeptic kill-tier over the value-apex finalists (default REFUTED)',
-  phases: [{ title: 'Skeptic', model: '__SKEPTIC_MODEL__' }],
-}
-const DIR = 'backend/_opus_debate'
-const SYMS = __FINALISTS__
-const MOAT_HINTS = __MOAT_HINTS__
-phase('Skeptic')
-const BATCH = 8
-for (let b = 0; b < SYMS.length; b += BATCH) {
-  await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(
-    'SKEPTIC tier for ' + sym + ' (value-apex finalist). Your job is to KILL this value thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side — do NOT read or reconstruct the bull case.\\n' +
-    ((MOAT_HINTS[sym] || {}).refute_candidate ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate — erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +
-    '1. Read ' + DIR + '/results_regime/' + sym + '.json but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status. Read the forensic dossier ' + DIR + '/dossiers/' + sym + '.md.\\n' +
-    '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS — is the claimed cheapness real edge, or priced/structural (melting business, governance brake, terminal multiple)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, regulatory action the debate missed.\\n' +
-    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the value case). Also value_conviction_cap (int 1-5): the MAX value conviction this name deserves given what you verified.\\n' +
-    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, value_conviction_cap, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
-    { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
-}
-return 'DONE'
-"""
+
+    js = (
+        "export const meta = {\n"
+        "  name: '__BOOK__-skeptic',\n"
+        "  description: 'Unified skeptic kill-tier over the __BOOK__ finalists (default REFUTED, per-lane rubric, verdict-based only)',\n"
+        "  phases: [{ title: 'Skeptic', model: '__SKEPTIC_MODEL__' }],\n"
+        "}\n"
+        "const DIR = 'backend/_opus_debate'\n"
+        "const SYMS = __FINALISTS__\n"
+        "const LANES = __LANES__\n"
+        "const MOAT_HINTS = __MOAT_HINTS__\n"
+        "phase('Skeptic')\n"
+        "const BATCH = 6\n"
+        "for (let b = 0; b < SYMS.length; b += BATCH) {\n"
+        "  await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(\n"
+        "    'SKEPTIC tier for ' + sym + ' (__BOOK__ finalist; lane ' + LANES[sym].lane + '). Your job is to KILL this thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side - do NOT read or reconstruct the bull case.\\n' +\n"
+        "    ((MOAT_HINTS[sym] || {}).refute_candidate && LANES[sym].lane === 'value' ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate - erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +\n"
+        "    '1. Read ' + DIR + '/' + LANES[sym].res + ' but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status (+ downside_floor/target_px for an event lane). Read the forensic dossier ' + DIR + '/' + LANES[sym].doss + ' if it exists.\\n' +\n"
+        "    '2. WebSearch the CURRENT facts. Attack: ' + LANES[sym].attack + '\\n' +\n"
+        "    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: \"minor\" (footnote-level, thesis arithmetic intact) or \"material\" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - \"thesis\" | \"numbers\" | \"catalyst\" | \"moat\". Do NOT emit any numeric conviction cap - verdicts and severity only.\\n' +\n"
+        "    '4. Write (Write tool) VALID JSON to ' + DIR + '/__SHARDS__/' + sym + '.json = {symbol:\"' + sym + '\", verdict, kill_fact, corrections, correction_severity, kill_scope, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',\n"
+        "    { label: '__BOOK__-skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))\n"
+        "}\n"
+        "return 'DONE'\n"
+    )
     js = (js.replace("__FINALISTS__", json.dumps(finalists))
+            .replace("__LANES__", json.dumps(lanes))
             .replace("__MOAT_HINTS__", json.dumps(hints))
+            .replace("__SHARDS__", cfg["shards"])
+            .replace("__BOOK__", book)
             .replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL))
-    out = ROOT / "_skeptic_workflow.js"
-    out.write_text(js, encoding="utf-8")
+    out = ROOT / cfg["wf"]
+    out.write_text(js, encoding="utf-8", newline="\n")
     n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
-    print(f"value_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier "
-          f"| moat REFUTE-candidates={n_ref}")
-    print(f"SKEPTIC_WORKFLOW={out.resolve()}")
+    n_lanes = {ln: sum(1 for v in lanes.values() if v["lane"] == ln) for ln in ("value", "event", "disruptor")}
+    print(f"{book}_skeptic (unified): {len(finalists)} to run (+{len(carried)} carried) | lanes={n_lanes} "
+          f"| moat REFUTE-candidates={n_ref} | {SKEPTIC_MODEL} kill-tier")
+    print(f"{cfg['env_line']}={out.resolve()}")
     return len(finalists)
+
+
+def value_skeptic():
+    """Unified-skeptic wrapper (X1) - the value book. Run AFTER regime_skeptic in the weekly order
+    so the cross-book dedupe carries fresh regime verdicts instead of re-running them."""
+    return skeptic_gen("value")
 
 
 def regime_skeptic():
-    """APEX/REGIME SKEPTIC kill-tier — the catalyst/apex book never had one (PLX.PA, SCR.PA stayed
-    seated in the Apex despite the value skeptic REFUTING them). Mirror of value_skeptic over the
-    apex_basket_opus_regime finalists: default REFUTED, bear-side + live-web only. The moat terminal-
-    erosion hint biases the prior — a value-destroying / sub-cost-of-capital eroding franchise enters
-    as a REFUTE candidate. _regime_post.consume_skeptic then DEMOTES any REFUTED name to runner_ups.
-    Pipeline order: Director -> regime-skeptic (Workflow) -> regime-post -> publish_to_frontend."""
-    apx = json.load(open(ROOT / "apex_basket_opus_regime.json", encoding="utf-8"))
-    finalists = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
-    for r in apx.get("runner_ups", []):
-        s = r.get("symbol") if isinstance(r, dict) else r
-        if s and s not in finalists:
-            finalists.append(s)
-    hints = _moat_hints(finalists)
-    (ROOT / "_skeptic_regime").mkdir(exist_ok=True)
-    js = """export const meta = {
-  name: 'regime-skeptic',
-  description: 'Independent skeptic kill-tier over the apex/regime finalists (default REFUTED, moat-aware)',
-  phases: [{ title: 'Skeptic', model: '__SKEPTIC_MODEL__' }],
-}
-const DIR = 'backend/_opus_debate'
-const SYMS = __FINALISTS__
-const MOAT_HINTS = __MOAT_HINTS__
-phase('Skeptic')
-const BATCH = 8
-for (let b = 0; b < SYMS.length; b += BATCH) {
-  await parallel(SYMS.slice(b, b + BATCH).map(sym => () => agent(
-    'SKEPTIC tier for ' + sym + ' (apex/regime finalist). Your job is to KILL this thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side — do NOT read or reconstruct the bull case.\\n' +
-    ((MOAT_HINTS[sym] || {}).refute_candidate ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate — erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +
-    '1. Read ' + DIR + '/results_regime/' + sym + '.json but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status. Read the forensic dossier ' + DIR + '/dossiers/' + sym + '.md.\\n' +
-    '2. WebSearch the CURRENT facts. Attack: (a) STALE-ANCHOR — is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH — do the load-bearing figures (segment EBITDA, net debt, share count) verify against the latest primary filing? (c) THESIS WEAKNESS / TERMINAL MOAT — is the claimed cheapness real edge, or priced/structural (melting business, AI/fintech/cord-cutting disruption, terminal multiple, returns BELOW cost of capital)? (d) HIDDEN DISQUALIFIER — litigation, covenant, dilution, a binary/soft catalyst dressed as hard.\\n' +
-    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing — state it) | REFUTED (a kill_fact breaks the thesis). Also value_conviction_cap (int 1-5): the MAX conviction this name deserves given what you verified.\\n' +
-    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, value_conviction_cap, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
-    { label: 'regime-skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
-}
-return 'DONE'
-"""
-    js = (js.replace("__FINALISTS__", json.dumps(finalists))
-            .replace("__MOAT_HINTS__", json.dumps(hints))
-            .replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL))
-    out = ROOT / "_regime_skeptic_workflow.js"
-    out.write_text(js, encoding="utf-8")
-    n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
-    print(f"regime_skeptic: {len(finalists)} finalists (apex + runners) -> independent {SKEPTIC_MODEL} kill-tier "
-          f"| moat REFUTE-candidates={n_ref}")
-    print(f"REGIME_SKEPTIC_WORKFLOW={out.resolve()}")
-    return len(finalists)
+    """Unified-skeptic wrapper (X1) - the regime/apex book (special-sit seats get the EVENT rubric)."""
+    return skeptic_gen("regime")
+
+
+def disruptor_skeptic():
+    """Unified-skeptic wrapper (X1) - the disruptor book FIRST kill-tier (it never had one; the
+    highest-vol sleeve was the only unvetted book). Dated-call guidance per the red-team condition."""
+    return skeptic_gen("disruptor")
 
 
 SHADOW_MODEL = os.environ.get("SHADOW_MODEL", "")   # the model to A/B the per-name debate against
@@ -1396,7 +1447,7 @@ def shadow_debate():
     js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-shadow-" + SHADOW_MODEL + "'")
     (ROOT / "results_shadow").mkdir(exist_ok=True)
     out = ROOT / "_shadow_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"shadow_debate: {len(sample)} stratified names ({len(has_tx)} FMP + {len(online)} online) on fable -> results_shadow/")
     print(f"SHADOW_WORKFLOW={out.resolve()}")
     return len(sample)
@@ -1520,7 +1571,7 @@ def control_sample():
     js = js.split("phase('Director')")[0] + "log('Control sample complete (no Director).')\nreturn 'DONE'\n"
     js = js.replace("name: 'speculair-opus-weekly'", "name: 'speculair-control-sample'")
     out = ROOT / "_control_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"control_sample: {len(syms)} random non-basket names {syms} -> results_control/")
     print(f"CONTROL_WORKFLOW={out.resolve()}")
     print("After the workflow: count results_control names with interrogator_score>=3 AND CRO MoS>=30% "
@@ -1717,7 +1768,7 @@ await parallel(Array.from({ length: N }, (_, i) => () => agent(
 return 'DONE'
 """
     js = js.replace("__N__", str(n))
-    (DISRUPTOR_DIR / "_dt_map.js").write_text(js, encoding="utf-8")
+    (DISRUPTOR_DIR / "_dt_map.js").write_text(js, encoding="utf-8", newline="\n")
     print(f"UNIVERSE STAGE A+B OK: screened={len(seen)} liquid={len(liquid)} gated={len(gated)} -> {n} Sonnet map chunks")
     print(f"MAP_WORKFLOW={DISRUPTOR_DIR.resolve() / '_dt_map.js'}")
     print("Next: run the Workflow, then: python backend/weekly_opus_refresh.py disruptor-map-merge")
@@ -1757,21 +1808,49 @@ def disruptor_map_merge():
         (DISRUPTOR_DIR / "theme_map" / f"{s}.json").write_text(
             json.dumps({"symbol": s, **m}, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    # ── Stage D — transparent pre-rank cut: <=8/theme, <=40 global ──
+    # ── Stage D — transparent pre-rank cut: <=8/theme = 5 CONSENSUS + 3 RESERVED S-CURVE, <=40 global ──
+    # S-CURVE RESERVED SLOTS (2026-07-01, methodology review B14-P1): the empirical record says the
+    # return bottleneck is FUNNEL COMPOSITION — the pure-prerank cut selects consensus mega-caps on
+    # which no informed disagreement is possible (0 verdict-A / modal conviction 3 across the pool),
+    # while the differently-composed catalyst funnel produced 10 A / 6 c5 from 17 names. Reserve 3 of
+    # the 8 per-theme slots for the UN-PRICED part of the S-curve: s_curve_stage in
+    # {early_adoption, steep_ramp} AND mcap < $25B, ranked by the SAME prerank key (no new dials).
+    # Unfilled reserved slots fall back to consensus (never waste a slot). HOLD the 5/3 split for
+    # >=2 graded runs before touching it (red-team condition). The profitability hard gates upstream
+    # already bound the junk risk; reserved names are protected from the 40-global cut.
     def prerank(s):
         m, g = keep[s], cands[s].get("gates", {})
         return (-(m.get("load_bearing_score") or 0), -(g.get("rev_cagr_3y") or 0), -(g.get("fcf_margin") or 0))
+
+    RESERVED_STAGES = {"early_adoption", "steep_ramp"}
+    RESERVED_MCAP_MAX = 25e9
+
+    def _reserved_ok(s):
+        mc = cands[s].get("mcap")
+        return (str(keep[s].get("s_curve_stage", "")).lower() in RESERVED_STAGES
+                and isinstance(mc, (int, float)) and 0 < mc < RESERVED_MCAP_MAX)
 
     by_theme = {}
     for s, m in keep.items():
         for t in m.get("themes") or []:
             by_theme.setdefault(t, []).append(s)
-    selected = set()
+    selected, reserved_all = set(), set()
     for t, ss in by_theme.items():
-        for s in sorted(ss, key=prerank)[:8]:
-            selected.add(s)
-    if len(selected) > 40:
-        selected = set(sorted(selected, key=prerank)[:40])
+        ranked = sorted(ss, key=prerank)
+        cons = ranked[:5]
+        resv = [s for s in ranked if s not in cons and _reserved_ok(s)][:3]
+        if len(resv) < 3:                                 # unfilled reserved -> consensus backfill
+            cons = ranked[:8 - len(resv)]
+        selected.update(cons)
+        selected.update(resv)
+        reserved_all.update(resv)
+    if len(selected) > 40:                                # global cut never evicts a reserved name
+        non_res = sorted([s for s in selected if s not in reserved_all], key=prerank)
+        selected = set(non_res[:max(0, 40 - len(reserved_all))]) | reserved_all
+    if reserved_all:
+        print(f"S-curve reserved slots ({len(reserved_all)}): {sorted(reserved_all)}")
+    else:
+        print("S-curve reserved slots: NONE qualified (early_adoption/steep_ramp + mcap<$25B) — all-consensus cut")
     # union current disruptor apex holders — a held name is never dropped by the screen
     held = []
     apx_f = E.FRONTEND_DIR / "public" / "speculair_disruptor_apex.json"
@@ -1790,6 +1869,7 @@ def disruptor_map_merge():
                         "industry": c.get("industry", ""), "mcap": c.get("mcap"),
                         "themes": m.get("themes") or [], "value_chain_position": m.get("value_chain_position", ""),
                         "load_bearing_score": m.get("load_bearing_score"), "s_curve_stage": m.get("s_curve_stage", ""),
+                        "reserved_slot": s in reserved_all,   # S-curve lane — grade the 5/3 split across runs
                         "held": s in held, "gates": c.get("gates", {})})
     theme_counts = {}
     for mm in members:
@@ -2232,7 +2312,7 @@ def disruptor_prep():
           .replace("__ONLINE_SYMS__", json.dumps(online_syms))
           .replace("__DIRECTOR_MODEL__", DIRECTOR_MODEL))
     out = DISRUPTOR_DIR / "_disruptor_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     total = len(fmp_syms) + len(online_syms)
     print(f"DISRUPTOR PREP OK: {len(fmp_syms)} FMP + {len(online_syms)} online = {total} total "
           f"(re-debating {len(redebate)}, cached {len(cached)})")
@@ -2361,12 +2441,18 @@ def disruptor_input():
         gm = s.get("gross_margin")
         if not isinstance(gm, (int, float)):
             gm = (tm.get("gross_margin") if isinstance(tm.get("gross_margin"), (int, float)) else None)
+        # EV/GP is pillar 4's primary input (the only valuation defense in a theme that screens rich)
+        # — a dead `if False` branch here silently degraded it to EV≈mcap for every off-scan levered
+        # name. Fix: real net debt from the scan when present; when absent, EV = mcap ONLY and the
+        # row says so via ev_gp_basis ("full"|"mcap_only"|None) so the Director sees degraded inputs
+        # as degraded (a levered name with basis=mcap_only reads CHEAPER than it is).
         ev_gp = None
+        ev_gp_basis = None
         if isinstance(mcap, (int, float)) and isinstance(ttm_rev, (int, float)) and ttm_rev > 0 and isinstance(gm, (int, float)) and gm > 0:
-            ebitda = None  # net funded debt from key-metrics (already cached); approximate EV via mcap + net debt
-            ndebt = (s.get("net_debt") if isinstance(s.get("net_debt"), (int, float))
-                     else (ndE * (ttm_rev) if False else None))
+            ndebt = s.get("net_debt") if isinstance(s.get("net_debt"), (int, float)) else None
             ev = mcap + (ndebt if isinstance(ndebt, (int, float)) else 0)
+            ev_gp_basis = "full" if isinstance(ndebt, (int, float)) else (
+                "mcap_only" if isinstance(ndE, (int, float)) and ndE > 0.5 else "full")
             gross_profit = ttm_rev * gm
             if gross_profit > 0:
                 ev_gp = round(ev / gross_profit, 2)
@@ -2419,7 +2505,7 @@ def disruptor_input():
             "latest_q_eps_yoy": lq_eps_yoy, "freshness_stale": freshness_stale, "freshness_note": fresh_note,
             # NEW disruptor hard-gate fields
             "ttm_fcf": ttm_fcf, "ttm_fcf_positive": ttm_fcf_positive, "fcf_inflecting": fcf_inflecting,
-            "rev_growth_gate": rev_growth_gate, "rule_of_40": rule_of_40, "ev_gp": ev_gp,
+            "rev_growth_gate": rev_growth_gate, "rule_of_40": rule_of_40, "ev_gp": ev_gp, "ev_gp_basis": ev_gp_basis,
             "fcf_margin": fcf_margin, "customer_concentration": customer_conc,
             # solvency (funded-leverage; Altman-Z ignored)
             "net_funded_debt_ebitda": round(ndE, 2) if isinstance(ndE, (int, float)) else None,
@@ -2661,6 +2747,30 @@ def disruptor_publish(push_gcs=False):
         "book_expected_return_pct": round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None,
         "book_horizon_months": round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None,
     }
+    # SMH/QQQ BENCHMARK LINE (methodology review B14-P3): the book's entire justification is
+    # "additive vs a beta basket" — measure it or the null hypothesis (closet SMH/QQQ) stands.
+    # Anchors persist in the tracking file (measured from first-stamp date forward — honest label;
+    # no back-fill). active_return_pct = book since-inception MINUS the 50/50 SMH+QQQ blend return.
+    bench = {}
+    try:
+        _tr = json.load(open(tp, encoding="utf-8")) if tp.exists() else {}
+        _bpx = E._current_prices({"SMH", "QQQ"})
+        _anch = _tr.get("benchmark_anchors")
+        if not _anch and _bpx.get("SMH") and _bpx.get("QQQ"):
+            _anch = {"SMH": _bpx["SMH"], "QQQ": _bpx["QQQ"], "date": _dt.date.today().isoformat()}
+            _tr["benchmark_anchors"] = _anch
+            tp.write_text(json.dumps(_tr, indent=2), encoding="utf-8")
+            print(f"benchmark anchors stamped (measured from {_anch['date']} forward): SMH {_anch['SMH']} QQQ {_anch['QQQ']}")
+        if _anch and _bpx.get("SMH") and _bpx.get("QQQ"):
+            _bret = 50 * (_bpx["SMH"] / _anch["SMH"] - 1) + 50 * (_bpx["QQQ"] / _anch["QQQ"] - 1)
+            _book = _tr.get("since_inception_pct")
+            bench = {"blend": "50/50 SMH+QQQ", "measured_from": _anch.get("date"),
+                     "benchmark_return_pct": round(_bret, 2),
+                     "active_return_pct": round(_book - _bret, 2) if isinstance(_book, (int, float)) else None}
+            print(f"benchmark: 50/50 SMH+QQQ {_bret:+.2f}% since {_anch.get('date')} | book "
+                  f"{_book if _book is not None else '?'}% | ACTIVE {bench['active_return_pct']}%")
+    except Exception as _e:
+        print(f"WARN: benchmark line failed ({_e})")
     out = {"apex_basket": picks, "runner_ups": apx.get("runner_ups", []),
            "disruptor_memo": apx.get("disruptor_memo", ""),
            "disruptor_tracking": dt, "disruptor_tracking_weighted": dtw, "weights": weights,
@@ -2668,6 +2778,7 @@ def disruptor_publish(push_gcs=False):
            "exits": apx.get("exits"), "combined_caps": apx.get("combined_caps"),
            "theme_caps": apx.get("theme_caps"),
            "theme_exposure": apx.get("theme_exposure"), "pool_stats": pool_stats,
+           "benchmark": bench,
            **_goal_block,
            "generated_at": _dt.date.today().isoformat(),
            "engine": "opus-4.8-disruptor-theme-v1", "universe": n_debated,
@@ -2730,7 +2841,7 @@ def disruptor_finish():
     js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = " + json.dumps(fmp), js)
     js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(online), js)
     out = DISRUPTOR_DIR / "_disruptor_finish.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"DISRUPTOR FINISH OK: {len(fmp)} FMP + {len(online)} online = {len(missing)} still-missing (of {len(want)})")
     print(f"DISRUPTOR_FINISH_SCRIPT={out.resolve()}")
     return len(missing)
@@ -2870,6 +2981,60 @@ def export_debate_csv():
     return len(rows)
 
 
+# ── CHANGE-DETECTION CARRY-FORWARD (2026-07-01, methodology review OPS-P2) ───────────────────
+# ~149 full Opus debates/week mostly re-derive unchanged conclusions (the run needs 2-3 resume
+# cycles). Re-debate a name ONLY when something debate-relevant changed; otherwise CARRY the prior
+# record forward with a deterministic freshness restamp. The money-bearing layers stay weekly:
+# finalists (apex + runners, both books) ALWAYS re-debate, and both skeptic kill-tiers run fresh.
+CARRY_MAX_AGE_D = 21          # hard staleness ceiling (synthesis tightened the audit's 28d)
+CARRY_PRICE_MOVE = 0.10       # |move| beyond this since the prior debate -> re-debate
+
+
+def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
+    """Return ("debate", reason) or ("carry", prior_record). Deterministic; fail-open to debate."""
+    if os.environ.get("FORCE_FULL_DEBATE"):
+        return "debate", "FORCE_FULL_DEBATE"
+    pf = prior_dir / f"{sym}.json"
+    if not pf.exists():
+        return "debate", "new to universe"
+    try:
+        pr = json.load(open(pf, encoding="utf-8"))
+    except Exception:
+        return "debate", "prior record unreadable"
+    if sym in seat_relevant:
+        return "debate", "seat-relevant (apex/runner in a book)"
+    cs = (pr.get("catalyst_status") or "").upper()
+    if cs.startswith("PENDING_HARD"):
+        return "debate", "prior catalyst PENDING_HARD (dated events move weekly)"
+    # age ceiling: prior debated_at (fallback: file mtime)
+    import time as _t
+    age_d = None
+    da = pr.get("debated_at") or pr.get("date")
+    if da:
+        try:
+            age_d = ( _t.time() - datetime.fromisoformat(str(da)[:19]).timestamp() ) / 86400
+        except Exception:
+            age_d = None
+    if age_d is None:
+        age_d = (_t.time() - pf.stat().st_mtime) / 86400
+    if age_d > CARRY_MAX_AGE_D:
+        return "debate", f"record {age_d:.0f}d old (> {CARRY_MAX_AGE_D}d ceiling)"
+    # new transcript since the prior debate
+    if real_tx:
+        latest = max((t.get("date") or "") for t in real_tx)
+        prior_tx = str(pr.get("transcript_date") or "")
+        if latest and latest > prior_tx:
+            return "debate", f"new transcript {latest} (prior {prior_tx or 'none'})"
+    # price move vs the price the prior debate saw
+    now_px = sc.get("price")
+    old_px = pr.get("price") or pr.get("current_price") or pr.get("live_price") or pr.get("entry_price")
+    if isinstance(now_px, (int, float)) and isinstance(old_px, (int, float)) and old_px > 0:
+        mv = abs(now_px / old_px - 1)
+        if mv > CARRY_PRICE_MOVE:
+            return "debate", f"price moved {mv * 100:.0f}% (> {CARRY_PRICE_MOVE * 100:.0f}%)"
+    return "carry", pr
+
+
 def prep():
     E.load_api_keys()
     # SELF-CLEAN (2026-06-06): archive the PRIOR run's debate outputs so the Director only ever sees
@@ -2878,16 +3043,36 @@ def prep():
     # the previous run in _opus_debate/_archive_prev/ for one cycle (apex-rotation comparison), then
     # overwrites. The workflow-resume retry path does NOT call prep, so a mid-run re-invoke is safe.
     import shutil
-    arch = ROOT / "_archive_prev"
-    if arch.exists():
-        shutil.rmtree(arch, ignore_errors=True)
-    arch.mkdir(parents=True, exist_ok=True)
+    # PARTIAL-RUN GUARD (2026-07-01): a crash-then-re-prep used to overwrite _archive_prev (the last
+    # GOOD week) with the crashed run's partial shards — both observed incidents (06-21, 06-28) would
+    # have destroyed the good context on restart. A run only counts as COMPLETED when its apex JSON
+    # exists alongside results_regime/; a partial tree goes to _archive_partial_<n>/ (capped at 2,
+    # oldest pruned) and _archive_prev is left UNTOUCHED.
+    apx = ROOT / "apex_basket_opus_regime.json"
+    res = ROOT / "results_regime"
+    has_results = res.exists() and any(res.iterdir())
+    completed = has_results and apx.exists()
+    if has_results and not completed:
+        partials = sorted(ROOT.glob("_archive_partial_*"))
+        for old in partials[:-1]:                      # keep at most 1 prior partial + this new one
+            shutil.rmtree(old, ignore_errors=True)
+        n = 1 + max([int(p.name.rsplit("_", 1)[-1]) for p in partials if p.name.rsplit("_", 1)[-1].isdigit()] or [0])
+        arch = ROOT / f"_archive_partial_{n}"
+        arch.mkdir(parents=True, exist_ok=True)
+        print(f"prep self-clean: PARTIAL prior run (results present, apex missing) -> {arch.name}; "
+              f"_archive_prev (last completed run) left untouched.")
+    else:
+        arch = ROOT / "_archive_prev"
+        if arch.exists() and completed:
+            shutil.rmtree(arch, ignore_errors=True)
+        arch.mkdir(parents=True, exist_ok=True)
+        if completed:
+            print("prep self-clean: prior run COMPLETED -> archived to _archive_prev.")
     for sub in ("results_regime", "dossiers"):
         src = ROOT / sub
         if src.exists() and any(src.iterdir()):
             shutil.move(str(src), str(arch / sub))
         (ROOT / sub).mkdir(parents=True, exist_ok=True)
-    apx = ROOT / "apex_basket_opus_regime.json"
     if apx.exists():
         shutil.move(str(apx), str(arch / "apex_basket_opus_regime.json"))
     print(f"archived prior debate outputs -> {arch}")
@@ -2924,7 +3109,61 @@ def prep():
         open("../frontend/public/latest_global.json", encoding="utf-8"))
     scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
 
-    syms, no_tx, radar_universe = [], [], []
+    # ── VALUE DRAWDOWN INTAKE (2026-07-01, methodology review VB-P3 / SB#10) ────────────────────
+    # The value book re-weights a priced-quality pool that (proven) contains no value alpha; the
+    # evidence says the return lives in a DIFFERENTLY-COMPOSED funnel. Union a deterministic
+    # quality-in-drawdown slice: positive FCF margin + (ROIC>=8% or quality>=0.55) + >=5y history,
+    # trading >=25% off the 1y high AND in the bottom 15% of the 52w range (the scan's horizon —
+    # the audit wanted 2y; 1y is what the scan carries, stated honestly). Hard cap 20/week in CODE
+    # (red-team condition). Most weeks 0-3 names; a sector de-rate transforms the book — by design.
+    VD_CAP = 20
+    _vd = []
+    for _s0 in scan.get("stocks", []):
+        _sym0, _px, _yh = _s0.get("symbol"), _s0.get("price"), _s0.get("year_high")
+        if not _sym0 or _sym0 in sym_meths:
+            continue
+        if not (isinstance(_px, (int, float)) and isinstance(_yh, (int, float)) and _yh > 0):
+            continue
+        _dd = _px / _yh - 1
+        if _dd > -0.25:
+            continue
+        _prox = _s0.get("proximity_52wk")
+        if not (isinstance(_prox, (int, float)) and _prox <= 0.15):
+            continue
+        _fm, _q, _roic = _s0.get("fcf_margin"), _s0.get("quality_score"), _s0.get("roic_avg")
+        if not (isinstance(_fm, (int, float)) and _fm > 0):
+            continue
+        if not ((isinstance(_roic, (int, float)) and _roic >= 0.08)
+                or (isinstance(_q, (int, float)) and _q >= 0.55)):
+            continue
+        if (_s0.get("years_history") or 0) < 5:
+            continue
+        _vd.append((_dd, -(_q or 0), _sym0))
+    _vd.sort()                                            # deepest drawdown first, quality tiebreak
+    _vd_syms = [t[2] for t in _vd[:VD_CAP]]
+    for _sym0 in _vd_syms:
+        sym_meths.setdefault(_sym0, []).append("value_drawdown")
+    if _vd_syms:
+        print(f"value-drawdown intake: {len(_vd_syms)} quality-in-drawdown names (cap {VD_CAP}): {_vd_syms}")
+    else:
+        print("value-drawdown intake: 0 qualified (no quality names >=25% down at the range bottom this week)")
+
+    # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate — the money layer stays weekly.
+    seat_relevant = set()
+    for p in list(baskets.get("apex_basket") or []) + list(baskets.get("runner_ups") or []):
+        s = p.get("symbol") if isinstance(p, dict) else p
+        if s:
+            seat_relevant.add(s)
+    _vb = gcs_io.gcs_read_json("scans/speculair_value_apex.json") or {}
+    for p in list(_vb.get("apex") or _vb.get("apex_basket") or []) + list(_vb.get("runner_ups") or []):
+        s = p.get("symbol") if isinstance(p, dict) else p
+        if s:
+            seat_relevant.add(s)
+    prior_res_dir = ROOT / "_archive_prev" / "results_regime"
+    prior_doss_dir = ROOT / "_archive_prev" / "dossiers"
+    _carry_reasons = {}
+
+    syms, no_tx, radar_universe, carried = [], [], [], []
     for sym in sorted(sym_meths):
         sc = scan_by_sym.get(sym, {})
         scan_fin = {k: sc.get(k) for k in E._SCAN_FIN_FIELDS if sc.get(k) is not None}
@@ -2960,6 +3199,26 @@ def prep():
             real = [t for t in tx.get("all_transcripts", []) if len(t.get("content", "")) > 1000]
         except Exception:
             real = []
+        # CHANGE-DETECTION GATE (SB#8): carry the prior record forward unless something
+        # debate-relevant changed. Carried records get a deterministic freshness restamp
+        # (live price + as_of + provenance) — downstream (Director/skeptic/value re-grade/
+        # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
+        _decision, _info = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant)
+        if _decision == "carry":
+            _pr = _info
+            _pr["carried"] = True
+            _pr["carried_from"] = str(_pr.get("debated_at") or "")[:10]
+            _pr["carry_reason"] = "no debate-relevant change"
+            if isinstance(sc.get("price"), (int, float)):
+                _pr["live_price"] = sc.get("price")
+            _pr["as_of"] = datetime.now().strftime("%Y-%m-%d")
+            (RES / f"{sym}.json").write_text(json.dumps(_pr, ensure_ascii=False, indent=1), encoding="utf-8")
+            _pd = prior_doss_dir / f"{sym}.md"
+            if _pd.exists():                              # dossier rides along for skeptic/stock page
+                (ROOT / "dossiers" / f"{sym}.md").write_text(_pd.read_text(encoding="utf-8"), encoding="utf-8")
+            carried.append(sym)
+            continue
+        _carry_reasons[_info] = _carry_reasons.get(_info, 0) + 1
         if real:
             real.sort(key=lambda t: t["date"])
             # Cap to the last 5 quarters: 8 × 18k chars ~= 36k tokens, over the 25k Read cap an agent
@@ -2970,6 +3229,11 @@ def prep():
             syms.append(sym)
         else:
             no_tx.append(sym)
+    if carried or _carry_reasons:
+        print(f"change-detection gate: {len(syms) + len(no_tx)} DEBATE + {len(carried)} CARRIED "
+              f"| debate reasons: {_carry_reasons}")
+        if carried:
+            print(f"  carried ({len(carried)}): {carried}")
 
     (ROOT / "_radar_universe.json").write_text(
         json.dumps(radar_universe, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -3047,9 +3311,10 @@ def prep():
           .replace("__DIRECTOR_MODEL__", DIRECTOR_MODEL)
           .replace("__N_RADAR__", str(len(radar_groups))))
     out = ROOT / "_weekly_debate.js"
-    out.write_text(js, encoding="utf-8")
+    out.write_text(js, encoding="utf-8", newline="\n")
     print(f"PREP OK: {len(syms)} with FMP transcripts + {len(no_tx)} via online fetch "
           f"+ {len(recheck)} ledger re-checks = {len(syms) + len(no_tx) + len(recheck)} total candidates "
+          f"+ {len(carried)} CARRIED forward = {len(syms) + len(no_tx) + len(recheck) + len(carried)} COVERED "
           f"(online: {no_tx}{'; recheck: ' + str(recheck) if recheck else ''})")
     print(f"WORKFLOW_SCRIPT={out.resolve()}")
 
@@ -3121,7 +3386,7 @@ for (let b = 0; b < ALL.length; b += BATCH) {
 
 phase('Director')
 await agent(
-  'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8, 1M context). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
+  'You are the SPECULAIR APEX DIRECTOR (Claude Fable 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
@@ -3291,6 +3556,8 @@ if __name__ == "__main__":
         value_skeptic()
     elif mode in ("regime-skeptic", "regime_skeptic"):
         regime_skeptic()
+    elif mode in ("disruptor-skeptic", "disruptor_skeptic"):
+        disruptor_skeptic()
     elif mode in ("catalyst-prep", "catalyst_prep"):
         catalyst_prep()
     elif mode in ("catalyst-seed", "catalyst_seed"):

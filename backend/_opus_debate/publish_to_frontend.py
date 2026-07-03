@@ -41,6 +41,7 @@ LG = PUB / "latest_global.json"
 ap = argparse.ArgumentParser()
 ap.add_argument("--date", default=None)
 ap.add_argument("--gcs", action="store_true", help="push speculair_baskets.json + tracking to production GCS via gcloud")
+ap.add_argument("--force", action="store_true", help="override the un-post-processed publish gate (prints what was skipped)")
 args = ap.parse_args()
 TODAY = args.date or datetime.now(timezone.utc).date().isoformat()
 E.load_api_keys()
@@ -54,7 +55,7 @@ def load(p, default=None):
 
 
 # ── Authoritative bases from GCS (fall back to local) ────────────────────
-baskets = gcs_io.gcs_read_json("scans/speculair_baskets.json") or load(BASKETS_LOCAL, {}) or {}
+baskets = gcs_io.gcs_read_json_fresh("scans/speculair_baskets.json") or load(BASKETS_LOCAL, {}) or {}  # RMW base — generation-pinned
 print(f"merge base: speculair_baskets.json generated_at={baskets.get('generated_at')} "
       f"apex={[p.get('symbol') for p in baskets.get('apex_basket', [])]}")
 
@@ -92,7 +93,7 @@ try:
 except Exception as _e:
     print(f"WARN: per_methodology rebuild failed ({_e}) — keeping existing per_methodology_baskets")
 # Refresh local tracking state from GCS so _update_apex_tracking chains from the authoritative NAV.
-gcs_track = gcs_io.gcs_read_json("scans/speculair_apex_tracking.json")
+gcs_track = gcs_io.gcs_read_json_fresh("scans/speculair_apex_tracking.json")  # two-writer RMW — generation-pinned
 if gcs_track:
     TRACK_LOCAL.write_text(json.dumps(gcs_track, indent=2), encoding="utf-8")
     print(f"refreshed local tracking from GCS: nav={gcs_track.get('nav')} positions={len(gcs_track.get('positions', {}))}")
@@ -102,6 +103,28 @@ picks = director.get("apex_basket", [])
 if not picks:
     print("ERROR: apex_basket_opus_regime.json has no picks — aborting.")
     sys.exit(1)
+
+# ── PUBLISH GATE (the 06-30 basket shipped live with NO skeptic pass and NO post-processor) ──
+# HARD on the post stamp: _regime_post.py stamps moat_post_applied=True after consuming the skeptic,
+# applying the moat/theme caps and building weights — publishing without it means raw, un-capped,
+# un-vetted Director output reaches production. SOFT on skeptic coverage (partial runs are the ops
+# norm; consume_skeptic already stamps MISSING + half-sizes). --force overrides, printing the skip.
+if not director.get("moat_post_applied"):
+    msg = ("GUARD publish gate: apex_basket_opus_regime.json has NO moat_post_applied stamp — run "
+           "`python backend/weekly_opus_refresh.py regime-skeptic` (Workflow) then `regime-post` "
+           "before publishing.")
+    if args.force:
+        print(f"WARN --force: {msg} — PUBLISHING ANYWAY (un-post-processed, un-capped weights).")
+    else:
+        print(f"{msg} Aborting (override with --force).")
+        sys.exit(1)
+# Coverage from the STAMPED verdicts (consume_skeptic writes them into the picks), NOT shard
+# mtimes — regime-post rewrites the apex file after consuming, so every shard then looks older
+# than the apex and an mtime check reads 0-coverage on a fully-vetted book (observed 2026-07-02).
+_skep_cov = sum(1 for _p in picks if (_p.get("skeptic_verdict") or "") not in ("", "MISSING"))
+if picks and _skep_cov / len(picks) < 0.7:
+    print(f"WARN skeptic-coverage at publish: only {_skep_cov}/{len(picks)} apex seats carry a "
+          f"skeptic verdict (MISSING seats are stamped + half-sized by the post; not blocking).")
 
 scan = load(LG, {}) or {}
 scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
@@ -244,6 +267,10 @@ for p in picks:
         # apex skeptic + moat terminal-erosion (stamped by _regime_post) — surfaced per seat for the UI
         "skeptic_verdict": p.get("skeptic_verdict", ""),
         "skeptic_kill_fact": p.get("skeptic_kill_fact", ""),
+        # unified skeptic (X1): categorical severity + scope replace the numeric cap (legacy field
+        # still passed through for pre-X1 shards; new shards never emit a number)
+        "skeptic_correction_severity": p.get("correction_severity", ""),
+        "skeptic_kill_scope": p.get("skeptic_kill_scope", ""),
         "value_conviction_cap": p.get("value_conviction_cap"),
         "moat": p.get("moat", ""), "moat_score": p.get("moat_score"),
         "moat_erosion": p.get("moat_erosion", ""), "erosion_severity": p.get("erosion_severity", "none"),
@@ -367,9 +394,14 @@ try:
 except Exception as _e:
     print(f"WARN: regime decision-history capture failed ({_e})")
 baskets["director_memo"] = director.get("director_memo", baskets.get("director_memo", ""))
+# Director runner_ups (incl skeptic demotions, verdicts already stamped by consume_skeptic) never
+# reached the frontend — the UI "Watch & Wait" list froze at its 2026-06-06 capitulation_watchlist.
+# Publish them; the UI prefers runner_ups when present (dated), keeping the legacy list as fallback.
+baskets["runner_ups"] = [r for r in (director.get("runner_ups") or []) if isinstance(r, dict)]
+baskets["runner_ups_as_of"] = TODAY
 baskets["regime_changes"] = director.get("regime_changes", "")
 baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
-baskets["engine"] = "opus-4.8-claude-code-subagents"
+baskets["engine"] = "opus-4.8-debate+fable-5-directors"  # Fable 5 revived in the Director/Skeptic seats 2026-07-01; per-name debates stay Opus
 if track_summary:
     baskets["apex_tracking"] = track_summary
 baskets["weights"] = apex_weights
@@ -493,7 +525,7 @@ for _f in sorted(RES.glob("*.json")):
     _local = HIST_DIR / f"{_sym}.json"
     _prior = load(_local)
     if not isinstance(_prior, list):
-        _prior = gcs_io.gcs_read_json(f"scans/speculair_debate_history/{_sym}.json")
+        _prior = gcs_io.gcs_read_json_fresh(f"scans/speculair_debate_history/{_sym}.json")  # append RMW — generation-pinned
         if not isinstance(_prior, list):
             _prior = []
     _prior = [e for e in _prior if isinstance(e, dict) and e.get("date") != TODAY]  # one entry per run-date

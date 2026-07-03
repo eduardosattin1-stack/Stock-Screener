@@ -3084,5 +3084,128 @@
         "factor_coverage_pct": 0.9231
       }
     ]
+  },
+  {
+    "date": "2026-05-28",
+    "signals": []
+  },
+  {
+    "date": "2026-05-28",
+    "signals": []
+  },
+  {
+    "date": "2026-05-28",
+    "signals": []
+  },
+  {
+    "date": "2026-05-28",
+    "signals": [
+      {
+        "symbol": "CALM",
+        "margin_of_safety": 5.7754,
+        "price": 75.43,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CMCSA",
+        "margin_of_safety": 1.1631,
+        "price": 25.015,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CRVL",
+        "margin_of_safety": 1.201,
+        "price": 60.55,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "PLX.PA",
+        "margin_of_safety": 1.2803,
+        "price": 12.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      }
+    ]
+  },
+  {
+    "date": "2026-05-28",
+    "signals": [
+      {
+        "symbol": "CALM",
+        "margin_of_safety": 5.7847,
+        "price": 75.3271,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CMCSA",
+        "margin_of_safety": 1.1617,
+        "price": 25.0314,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CRVL",
+        "margin_of_safety": 1.2,
+        "price": 60.5761,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "PLX.PA",
+        "margin_of_safety": 1.2803,
+        "price": 12.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      }
+    ]
+  },
+  {
+    "date": "2026-05-28",
+    "signals": [
+      {
+        "symbol": "CALM",
+        "margin_of_safety": 5.7768,
+        "price": 75.415,
+        "classification": "",
+        "factor_coverage": 11,
+        "factor_coverage_pct": 0.8462
+      },
+      {
+        "symbol": "CMCSA",
+        "margin_of_safety": 1.1618,
+        "price": 25.0301,
+        "classification": "",
+        "factor_coverage": 12,
+        "factor_coverage_pct": 0.9231
+      },
+      {
+        "symbol": "CRVL",
+        "margin_of_safety": 1.1956,
+        "price": 60.7,
+        "classification": "",
+        "factor_coverage": 9,
+        "factor_coverage_pct": 0.6923
+      },
+      {
+        "symbol": "PLX.PA",
+        "margin_of_safety": 1.2803,
+        "price": 12.0,
+        "classification": "",
+        "factor_coverage": 7,
+        "factor_coverage_pct": 0.5385
+      }
+    ]
   }
 ]
