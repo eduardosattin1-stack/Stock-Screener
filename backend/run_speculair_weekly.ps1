@@ -28,9 +28,13 @@
 # WHAT IT RUNS
 #   The exact SKILL.md runbook (STEP 1 PREP -> STEP 1B SPECIAL-SIT LANE -> STEP 2
 #   DEBATE+DIRECTOR Workflow -> STEP 2B REGIME SKEPTIC + POST -> STEP 3 PUBLISH --gcs ->
-#   STEP 3B VALUE LENS -> STEP 3C DISRUPTOR LENS -> STEP 4 REPORT), every GUARD honored.
-#   It only refreshes GCS data (no Cloud Run, no frontend deploy). Runs key-free on the
-#   Claude subscription (Opus 4.8 subagents).
+#   STEP 3B VALUE LENS -> STEP 4 REPORT), every GUARD honored. It only refreshes GCS
+#   data (no Cloud Run, no frontend deploy). Runs key-free on the Claude subscription
+#   (Opus 4.8 subagents).
+#   (STEP 3C DISRUPTOR LENS retired 2026-07-02 — FUTURE_RESOURCES_SPEC.md sec 10; the
+#    Future Resources STEP takes this slot at its Phase 3. The local SKILL.md no longer
+#    needs a manual edit — this launcher self-patches it below via
+#    backend/_retire_disruptor_skill.py before the agent ever reads it.)
 #
 # SCHEDULE (Windows Task Scheduler), Sunday 01:00 local:
 #   schtasks /create /tn "SpeculairWeekly" `
@@ -57,12 +61,20 @@ Set-Location $repo
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { "FATAL: claude CLI not on PATH" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "claude CLI not on PATH"; exit 1 }
 if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "SKILL.md missing"; exit 1 }
 
+# One-time retirement hygiene (idempotent, best-effort): strip the retired STEP 3C
+# DISRUPTOR block from the local SKILL.md BEFORE the agent reads it (writes a .bak_*
+# beside it; no-op once clean). The prompt's disruptor-skip line below is the safety
+# net if this fails. FUTURE_RESOURCES_SPEC.md sec 10.1.
+try { python (Join-Path $repo "backend\_retire_disruptor_skill.py") $skill 2>&1 | Tee-Object -FilePath $log -Append }
+catch { "WARN: skill patcher failed - relying on the prompt's disruptor-skip instruction" | Tee-Object -FilePath $log -Append }
+
 # The full runbook is in SKILL.md; the prompt just points the headless agent at it.
 # RUN_OUTCOME is the machine sentinel this launcher keys on - keep it in sync with the loop below.
 $basePrompt = @"
 You are running the weekly all-Opus Speculair refresh, fully unattended, in the Stock-Screener repo at $repo. You have NO memory of prior conversations.
 Read the runbook at $skill IN FULL, then execute EVERY step end-to-end:
-  STEP 1 PREP  ->  STEP 1B APEX SPECIAL-SIT LANE (catalyst-prep -> Workflow -> catalyst-seed; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 2B REGIME SKEPTIC + REGIME-POST  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 3C DISRUPTOR LENS  ->  STEP 4 VERIFY + REPORT.
+  STEP 1 PREP  ->  STEP 1B APEX SPECIAL-SIT LANE (catalyst-prep -> Workflow -> catalyst-seed; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 2B REGIME SKEPTIC + REGIME-POST  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 4 VERIFY + REPORT.
+The DISRUPTOR LENS (old STEP 3C) is RETIRED — do NOT run any disruptor-* mode even if the runbook still mentions it; skip it silently and note the skip in the report.
 Honor every GUARD exactly: if a GUARD trips, STOP that book and report rather than publishing degraded data. Do not skip steps. Do not edit screener_v6.py / the Cloud Run scan / the frontend. When finished, print the STEP 4 summary (regime apex 10 + value apex 10 + cross-lens names + any caveats).
 MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' if every step ran (guard-stopped side books are still COMPLETED if the regime apex published), or 'RUN_OUTCOME: GUARD_STOP <one-line reason>' if a GUARD stopped the MAIN regime pipeline before publish.
 "@
@@ -70,6 +82,7 @@ MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' i
 $resumePrompt = @"
 You are RESUMING a partially-complete weekly all-Opus Speculair refresh in $repo (the prior headless attempt died mid-run; its log is at $log). You have NO memory of it.
 Read the runbook at $skill IN FULL. Determine which steps already completed THIS run (fresh mtimes on backend/_opus_debate/results_regime/, apex_basket_opus_regime.json, the publish readback in the log) and CONTINUE from the first unfinished step. Re-invoking the SAME Workflow script is safe and cheap - cached agents return instantly, only gaps re-run. Honor every GUARD.
+The DISRUPTOR LENS (old STEP 3C) is RETIRED — do NOT run any disruptor-* mode even if the runbook still mentions it; skip it silently and note the skip in the report.
 MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' or 'RUN_OUTCOME: GUARD_STOP <one-line reason>'.
 "@
 
