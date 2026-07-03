@@ -153,7 +153,7 @@ function dossierPrompt(n){ return `Today is __TODAY__. You are the DEEP-DOSSIER 
 1) CATALYST REALITY & STATUS. Confirm the resolving event is real, forward-dated, UNFIRED, and idiosyncratic (resolves on its own facts, not the tape). Emit catalyst_status: PENDING_HARD (dated + binding), PENDING_SOFT (real but undated/soft), SLIPPED (timeline pushed — name from->to in dossier_note), FIRED (already resolved — edge spent), BROKEN (deal dead / thesis invalidated). catalyst_live=false for FIRED/BROKEN.
 2) MILESTONE. Verify dated_milestone against the latest company/regulator communication; correct it if it slipped or firmed; null if genuinely undated (then staging=true).
 3) VALUATION AXES. Re-derive fair_value_target and downside_floor under the dossier's valuation_method — spread: live deal terms incl. FX; sop/recovery: name the components; binary_prob: win/lose prices and win_prob. If you cannot reproduce a board number from the live record, CORRECT it and show the arithmetic in dossier_note. Only emit numbers you can defend.
-4) DRIVER + STAGING. Confirm or correct resolution_driver and staging (dated hard event -> staging=false; soft/undated -> true).
+4) DRIVER + STAGING. Confirm or correct resolution_driver and staging (dated hard event -> staging=false; soft/undated -> true). resolution_driver is a CANONICAL TAG consumed by a deterministic <=2-per-driver cap — keep the board's tag or correct it to ANOTHER canonical snake_case tag (e.g. FDA_clinical_readout, FDA_approval_decision, US_antitrust, Deal_close_generic, Refi_restructuring, Forced_divest_flow, Spin_index_flow, Activist_process, Supply_timing, Foreign_regulator); NEVER free prose — nuance goes in dossier_note.
 5) SKEPTIC PASS on yourself. Take the single most load-bearing claim in your thesis_summary — try to refute it from the live record; put the honest residual risk in kill_risk (null only if nothing credible).
 
 DO NOT: value/quality/moat opinions, trade verdicts, position sizing, or option-chain work — the CRO owns tradeability/window and the Director owns sizing. You own FACTS and VALUATION AXES only.
@@ -249,6 +249,7 @@ const REFRESHED=NAMES.map(n=>{
   if(!d) return n
   const out={...n, fresh_dossier:d}
   for(const k of OVERRIDE_KEYS){
+    if(k==='resolution_driver' && typeof d[k]==='string' && /\s/.test(d[k])) continue  // cap tag, never prose
     if(d[k]!==undefined && d[k]!==null && d[k]!==n[k]){ out['board_'+k]=n[k]; out[k]=d[k] }
   }
   return out

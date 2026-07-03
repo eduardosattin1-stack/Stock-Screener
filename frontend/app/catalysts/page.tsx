@@ -256,31 +256,6 @@ export default function CatalystWatch() {
     );
   };
 
-  // Force a fresh scan on-demand bypassing the cache
-  const handleForceRefresh = (symbol: string) => {
-    if (!symbol) return;
-    setLoadingScan(true);
-    setScanError(null);
-    fetch(`/api/catalysts/scan?symbol=${symbol}&refresh=true`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
-        return r.json();
-      })
-      .then((data: CatalystScanReport) => {
-        setReport(data);
-        setCustomAcquirerPrice(data.merger_arb_data?.acquirer_price ?? "");
-        scanCacheRef.current[symbol] = data;
-        setLoadingScan(false);
-        addRecentScan(data);
-        propagateScoreUpdate(data.symbol, data.catalyst_density_score);
-      })
-      .catch((err) => {
-        console.error(`Failed to refresh scan for ${symbol}`, err);
-        setScanError(`Failed to refresh event-driven scan for ${symbol}. Please try again.`);
-        setLoadingScan(false);
-      });
-  };
-
   // Load watchlist on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -1505,35 +1480,12 @@ export default function CatalystWatch() {
                         {watchlist.some(w => w.symbol === report.symbol.toUpperCase().trim()) ? "WATCHED" : "ADD TO WATCHLIST"}
                       </button>
 
-                      <button
-                        onClick={() => handleForceRefresh(report.symbol)}
-                        disabled={loadingScan}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
-                          background: "transparent",
-                          border: `1px solid ${T.border}`,
-                          borderRadius: 6,
-                          padding: "3px 8px",
-                          fontSize: 10,
-                          fontWeight: 700,
-                          color: T.green,
-                          cursor: "pointer",
-                          transition: "all 0.15s",
-                          fontFamily: T.mono,
-                          marginLeft: 8
-                        }}
-                      >
-                        <RefreshCw size={11} className={loadingScan ? "animate-spin" : ""} style={{ animation: loadingScan ? "spin 1s linear infinite" : "none" }} />
-                        RE-SCAN
-                      </button>
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 11, color: T.light, marginTop: 4 }}>
                       <span>Price: <strong style={{ color: T.text }}>${(((report as any).live_price ?? report.price))?.toFixed(2) || "N/A"}</strong>{(report as any).live_price != null ? <span style={{ color: T.muted, fontSize: 9 }}> live</span> : null}</span>
                       <span>Market Cap: <strong style={{ color: T.text }}>{formatMarketCap(report.market_cap)}</strong></span>
                       {report.cache_timestamp && (
-                        <span title="Date of the full AI Loeb deep-scan; price is live. Use RE-SCAN to refresh the analysis.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
+                        <span title="Date of the full AI deep-scan; price is live. Dossiers refresh via the bi-weekly re-debate (Fable deep-dossier phase), not on demand.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
                       )}
                     </div>
                   </div>

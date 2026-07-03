@@ -455,6 +455,8 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
             c["_dossier_dead"] = d.get("catalyst_status")
         for k in ("fair_value_target", "downside_floor", "dated_milestone",
                   "valuation_method", "resolution_driver", "staging", "win_prob"):
+            if k == "resolution_driver" and isinstance(d.get(k), str) and " " in d[k]:
+                continue                       # driver is a cap tag, never prose
             if d.get(k) is not None and d.get(k) != c.get(k):
                 c["board_" + k] = c.get(k)
                 c[k] = d[k]
