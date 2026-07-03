@@ -455,10 +455,16 @@ structural fix, not a theme tweak.
       headless prompt, plus a belt-and-suspenders instruction telling the unattended agent to skip
       any disruptor step it still finds in the runbook. **Takes effect on Bruno's box after the next
       `git pull`** (the scheduled task runs the local copy).
-   b. ⏳ OPERATOR (Bruno's machine, file not in this repo):
-      `C:\Users\Bruno\.claude\scheduled-tasks\speculair-opus-weekly\SKILL.md` — delete the whole
-      "STEP 3C — DISRUPTOR LENS" block AND the STEP 4 reporting line about the disruptor apex /
-      three-book overlap. The vacated slot is where the Future Resources STEP lands at Phase 3 (§7).
+   b. ✅ SELF-APPLYING (added 2026-07-02): `backend/_retire_disruptor_skill.py` — an idempotent
+      patcher the launcher now runs BEFORE the agent reads the runbook. It strips the
+      "STEP 3C — DISRUPTOR LENS" block and any residual disruptor lines (the STEP 4 reporting
+      mention) from the local SKILL.md, writes a timestamped `.bak_*` beside it, prints every
+      removed line into the Sunday log, and no-ops once clean / when the file is absent. So the
+      SKILL.md fixes itself on the first post-pull Sunday run — no manual edit. The only remaining
+      operator action is the routine merge + `git pull` on the Sunday box (nothing remote can
+      replace that; deliberately NOT auto-pulled by the launcher — the box is also the dev machine
+      and an unattended pull could collide with local work). The vacated slot is where the Future
+      Resources STEP lands at Phase 3 (§7).
    The disruptor subtree, prompts, and modes stay in the repo — retired code that ran a live track
    record is history, not dead weight.
 2. **The NAV freezes by itself** *(audited 2026-07-02)*: the planned disruptor tuple in

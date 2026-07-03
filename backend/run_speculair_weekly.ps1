@@ -42,6 +42,13 @@ Set-Location $repo
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { "FATAL: claude CLI not on PATH" | Tee-Object -FilePath $log -Append; exit 1 }
 if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Object -FilePath $log -Append; exit 1 }
 
+# One-time retirement hygiene (idempotent, best-effort): strip the retired STEP 3C
+# DISRUPTOR block from the local SKILL.md BEFORE the agent reads it (writes a .bak_*
+# beside it; no-op once clean). The prompt's disruptor-skip line below is the safety
+# net if this fails. FUTURE_RESOURCES_SPEC.md sec 10.1.
+try { python (Join-Path $repo "backend\_retire_disruptor_skill.py") $skill 2>&1 | Tee-Object -FilePath $log -Append }
+catch { "WARN: skill patcher failed - relying on the prompt's disruptor-skip instruction" | Tee-Object -FilePath $log -Append }
+
 # The full runbook is in SKILL.md; the prompt just points the headless agent at it.
 $prompt = @"
 You are running the weekly all-Opus Speculair refresh, fully unattended, in the Stock-Screener repo at $repo. You have NO memory of prior conversations.
