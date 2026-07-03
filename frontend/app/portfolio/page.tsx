@@ -109,6 +109,15 @@ async function fetchGcsState(){
   if(!r.ok) throw new Error("no state");
   return r.json();
 }
+// The IBKR mirror (backend/ibkr_portfolio_sync.py) writes its OWN dedicated GCS
+// object, not portfolio/state.json — that shared file has another writer
+// (unidentified) that was clobbering every sync within seconds. Decoupled
+// 2026-07-03; see the module docstring in ibkr_portfolio_sync.py.
+async function fetchIbkrState(){
+  const r=await fetch(`${GCS_PORTFOLIO}/ibkr_state.json?t=${Date.now()}`);
+  if(!r.ok) throw new Error("no ibkr state");
+  return r.json();
+}
 
 export default function Portfolio(){
   const router=useRouter();
@@ -138,24 +147,31 @@ export default function Portfolio(){
     // nuke it now so it can't cause ghost positions on any future refresh.
     clearLocalPortfolio();
     try {
-      const [gcsRes,fbRes,monitorRes,scanRes] = await Promise.allSettled([
+      const [gcsRes,ibkrRes,fbRes,monitorRes,scanRes] = await Promise.allSettled([
         fetchGcsState().catch(() => null),
+        fetchIbkrState().catch(() => null),
         user ? getPortfolio(user.uid).catch(() => null) : Promise.resolve(null),
         fetch(`${GCS_PORTFOLIO}/monitor.json?t=${Date.now()}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
         fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' }).then(r=>r.json()),
       ]);
 
       const gcsState = gcsRes.status==="fulfilled" ? gcsRes.value : null;
+      const ibkrState = ibkrRes.status==="fulfilled" ? ibkrRes.value : null;
       const fbState = fbRes.status==="fulfilled" ? fbRes.value : null;
-      // The GCS mirror (written by the IBKR sync) is authoritative whenever it
-      // carries an `ibkr_sync` block — this is Bruno's one real brokerage account,
-      // so it wins regardless of Firebase auth. Otherwise fall back to the old
-      // rule: Firestore when signed in, GCS when not.
-      const mirror = gcsState && gcsState.ibkr_sync ? gcsState : null;
-      const src = mirror || (user ? fbState : gcsState) || { positions: [], history: [] };
+      // The IBKR mirror lives in its OWN GCS object (portfolio/ibkr_state.json,
+      // written by ibkr_portfolio_sync.py) — decoupled from portfolio/state.json,
+      // which has another writer that was clobbering every sync. It's
+      // authoritative whenever present (Bruno's one real brokerage account),
+      // merged with any manual (non-IBKR) rows still in the legacy file.
+      const mirror = ibkrState && ibkrState.ibkr_sync ? ibkrState : null;
+      const legacySrc = (user ? fbState : gcsState) || { positions: [], history: [] };
+      const legacyPositions = (legacySrc.positions || []) as Position[];
+      const manualPositions = legacyPositions.filter(p => !p.ib_synced);
+      const positions = mirror ? [...((mirror.positions||[]) as Position[]), ...manualPositions] : legacyPositions;
+      const historyRows = mirror ? [...((mirror.history||[]) as HistoryEntry[]), ...((legacySrc.history||[]) as HistoryEntry[])] : ((legacySrc.history||[]) as HistoryEntry[]);
 
-      setPortfolio((src?.positions||[]) as Position[]);
-      setHistory((src?.history||[]) as HistoryEntry[]);
+      setPortfolio(positions);
+      setHistory(historyRows);
       setAccountSummary(mirror?.account_summary || null);
       setIbkrSync(mirror?.ibkr_sync || null);
 
