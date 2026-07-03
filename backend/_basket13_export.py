@@ -89,6 +89,16 @@ def main():
     print(f"EXPORTED basket13.ts: {len(opene)} open + {len(res)} resolved entries, "
           f"{len(payload['non_selections'])} non-selections, invested {invested}%  -> {os.path.relpath(TS, ROOT)}")
 
+    # ship the Fable deep-dossier store (per-symbol, most recent wins) to the static
+    # public dir — the /catalysts depth view fetches /basket13_dossiers.json and renders
+    # the Fable panel above the legacy board/backend dossier when a symbol has one.
+    DSTORE = os.path.join(BASE, "_basket13_dossiers.json")
+    if os.path.exists(DSTORE):
+        pub = os.path.join(ROOT, "frontend", "public", "basket13_dossiers.json")
+        data = json.load(open(DSTORE, encoding="utf-8"))
+        json.dump(data, open(pub, "w", encoding="utf-8", newline="\n"), ensure_ascii=False)
+        print(f"EXPORTED {len(data.get('dossiers', {}))} Fable dossiers -> {os.path.relpath(pub, ROOT)}")
+
 
 if __name__ == "__main__":
     main()

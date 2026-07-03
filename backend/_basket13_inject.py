@@ -439,6 +439,25 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     memo = director.get("memo", "")
     cro_by = {v["symbol"]: v for v in (res.get("cro") or []) if v.get("symbol")}
     dossier_by = {d["symbol"]: d for d in (res.get("dossiers") or []) if d.get("symbol")}
+
+    # persist Phase-0 dossiers into the per-symbol store (most recent re-underwrite wins);
+    # _basket13_export.py ships it to frontend/public for the /catalysts depth view.
+    if dossier_by:
+        dstore_path = os.path.join(BASE, "_basket13_dossiers.json")
+        try:
+            dstore = json.load(open(dstore_path, encoding="utf-8"))
+        except Exception:
+            dstore = {"header": "Basket 13 Fable deep-dossiers — one entry per symbol, most recent "
+                                "re-underwrite wins. Written by _basket13_inject.py from each re-debate's "
+                                "Phase-0 dossiers[]; _basket13_export.py copies to "
+                                "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
+                      "dossiers": {}}
+        today = datetime.date.today().isoformat()
+        for sym, d in dossier_by.items():
+            dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-fable-5"}
+        json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
+                  indent=1, ensure_ascii=False)
+        print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
     bysym = {c["symbol"]: c for c in cands}
     stamp_date = entry_date or datetime.date.today().isoformat()
