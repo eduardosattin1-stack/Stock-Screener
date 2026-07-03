@@ -45,6 +45,8 @@ EXCHANGE_TO_SUFFIX = {
     ("CPH", "DKK"): ".CO",        # Copenhagen
     ("OSE", "NOK"): ".OL",        # Oslo
     ("SEHK", "HKD"): ".HK",       # Hong Kong
+    ("TSE", "CAD"): ".TO",        # Toronto Stock Exchange
+    ("VENSE", "CAD"): ".V",       # TSX Venture Exchange
 }
 
 # Currency-only fallback for stocks when the exchange is unknown/SMART but the
@@ -57,6 +59,7 @@ CURRENCY_TO_SUFFIX = {
     "DKK": ".CO",
     "NOK": ".OL",
     "HKD": ".HK",
+    "CAD": ".TO",
 }
 
 # Explicit per-contract overrides for names whose IBKR local symbol doesn't
