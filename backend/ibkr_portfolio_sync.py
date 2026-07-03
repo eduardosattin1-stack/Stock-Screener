@@ -240,22 +240,44 @@ def fetch_account(client_id: int) -> tuple[list[dict], dict]:
                timeout=20, readonly=True)
     ib.RequestTimeout = 30
     try:
-        # ib_async auto-starts the account-update stream on connect; portfolio()
-        # populates within a second or two. Do NOT call reqAccountUpdates() — on a
-        # single managed account it blocks until accountDownloadEnd and times out.
-        items = ib.portfolio()
-        for _ in range(8):               # give streaming a moment to populate
-            if items:
-                break
-            ib.sleep(1.0)
-            items = ib.portfolio()
+        # Multiple managed accounts can be linked to one gateway login (2026-07-03:
+        # the gateway started reporting 3 — 2 empty). Unfiltered ib.portfolio()/
+        # accountValues() are ambiguous/racy across them (sometimes empty, sometimes
+        # picking a $0 sub-account's NetLiquidation). Resolve the account explicitly:
+        # the one whose portfolio() actually holds positions is the real trading
+        # account we mirror. Falls back to the single-account case unchanged.
+        accounts = ib.managedAccounts() or [""]
+        target_account, items = accounts[0], []
+        for acct in accounts:
+            rows_for_acct = ib.portfolio(account=acct)
+            for _ in range(8):
+                if rows_for_acct:
+                    break
+                ib.sleep(1.0)
+                rows_for_acct = ib.portfolio(account=acct)
+            if rows_for_acct:
+                if items:  # a second account also holds positions — needs a real decision, not a silent pick
+                    log.warning("multiple IBKR accounts hold positions (%s and %s) — "
+                                "mirroring %s only; extend fetch_account to combine them",
+                                target_account, acct, target_account)
+                    continue
+                target_account, items = acct, rows_for_acct
         rows = [r for r in (_row_from_ib_item(it) for it in items) if r]
         if not rows:                     # fallback: positions() (no live marks) so a mirror still happens
-            log.warning("portfolio() empty — falling back to ib.positions() (no live marks)")
-            rows = [r for r in (_row_from_position(p) for p in ib.positions()) if r]
-        summary = _account_summary_from_values(ib.accountValues())
-        log.info("IBKR: %d portfolio rows, net_liq=%s %s",
-                 len(rows), summary.get("net_liquidation"), summary.get("currency"))
+            log.warning("portfolio() empty for %s — falling back to ib.positions() (no live marks)", target_account)
+            rows = [r for r in (_row_from_position(p) for p in ib.positions(account=target_account)) if r]
+        # accountValues() streams independently of portfolio() — wait for THIS
+        # account's NetLiquidation specifically (a still-syncing 2nd account can
+        # otherwise leave the dict without it, or a $0 sub-account can shadow it).
+        values = ib.accountValues(account=target_account)
+        for _ in range(8):
+            if any(v.tag == "NetLiquidation" and v.account == target_account for v in values):
+                break
+            ib.sleep(1.0)
+            values = ib.accountValues(account=target_account)
+        summary = _account_summary_from_values(values)
+        log.info("IBKR: account=%s %d portfolio rows, net_liq=%s %s",
+                 target_account, len(rows), summary.get("net_liquidation"), summary.get("currency"))
         return rows, summary
     finally:
         try:
