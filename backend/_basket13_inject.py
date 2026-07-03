@@ -359,6 +359,8 @@ def validate(picks, bysym, live_px=None, held_syms=None):
         if p["symbol"] in held_syms:           # locked seat — per-seat gates ran at ITS stamp
             continue
         c = bysym.get(p["symbol"], {})
+        if c.get("_dossier_dead"):             # Phase-0 deep dossier: catalyst FIRED/BROKEN
+            v.append(f"{p['symbol']} BLOCKED by deep dossier: catalyst {c['_dossier_dead']} — edge spent/invalidated")
         w = p.get("weight_pct") or 0
         exp = (p.get("expression") or {}).get("type")
         vm, staging = c.get("valuation_method"), c.get("staging")
@@ -436,9 +438,26 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     passed = list(director.get("passed") or [])
     memo = director.get("memo", "")
     cro_by = {v["symbol"]: v for v in (res.get("cro") or []) if v.get("symbol")}
+    dossier_by = {d["symbol"]: d for d in (res.get("dossiers") or []) if d.get("symbol")}
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
     bysym = {c["symbol"]: c for c in cands}
     stamp_date = entry_date or datetime.date.today().isoformat()
+
+    # DEEP-DOSSIER OVERRIDES (2026-07-03): the workflow's Phase 0 re-underwrites each candidate's
+    # load-bearing fields from live sources before the CRO/Director consume them. Validation and
+    # the stamped entries must use the SAME corrected numbers the Director sized on — not the
+    # stale board dossier in _basket13_candidates.json. A FIRED/BROKEN dossier is a hard kill.
+    for d in (res.get("dossiers") or []):
+        c = bysym.get(d.get("symbol"))
+        if not c:
+            continue
+        if d.get("catalyst_live") is False:
+            c["_dossier_dead"] = d.get("catalyst_status")
+        for k in ("fair_value_target", "downside_floor", "dated_milestone",
+                  "valuation_method", "resolution_driver", "staging", "win_prob"):
+            if d.get(k) is not None and d.get(k) != c.get(k):
+                c["board_" + k] = c.get(k)
+                c[k] = d[k]
 
     # explicit stamp-time exclusions (e.g. an unverifiable blocking condition) -> counterfactuals
     picks, excluded = [], []
@@ -553,6 +572,12 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                            ("live_edge_check", "tradeability_note", "window_note", "driver_confirmed", "conditions")},
             "resolution": None,
         }
+        # Phase-0 deep-dossier provenance (compact): what the same-day re-underwrite corrected
+        # vs the board dossier, so each seat's numbers are auditable without _basket13_out.json.
+        d = dossier_by.get(sym)
+        if d:
+            entry["dossier_refresh"] = {k: d.get(k) for k in
+                                        ("catalyst_status", "thesis_summary", "discrepancies", "kill_risk")}
         t["entries"].append(entry)
         (pending if is_pend else added).append(sym)
 

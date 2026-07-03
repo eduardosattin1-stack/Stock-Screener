@@ -3,11 +3,18 @@
 
 Writes _basket13_workflow.js (run it with the Workflow tool). Patterned on _valuation_gen.py.
 
+  Phase 0 — Deep-Dossier refresh (one agent per candidate): re-underwrites the board dossier's
+            LOAD-BEARING fields (catalyst status/milestone, fair_value_target, downside_floor,
+            driver, staging) from live sources BEFORE the trade stages consume them. The board
+            dossier is a single-pass Sonnet backend scan and can be stale/wrong; this phase is
+            the Claude-Code multi-agent replacement for trusting it. Corrected values REPLACE
+            the board fields (originals kept under board_*); _basket13_inject.py applies the
+            same overrides so validation + stamped entries match what the Director sized on.
   Phase 1 — Catalyst-CRO (one agent per candidate, batched ~5): attacks the TRADE on exactly
             FOUR surfaces — edge-at-entry, tradeability, window<->expression, driver-tag.
-            It NEVER re-litigates whether the event is real (the catalyst scan->deep->skeptic
-            tier already settled that, killing 40-50% of flags) and NEVER attacks value/quality
-            axes (a catalyst name is supposed to look bad on MoS/quality by construction).
+            It NEVER re-litigates whether the event is real (Phase 0 just settled that live)
+            and NEVER attacks value/quality axes (a catalyst name is supposed to look bad on
+            MoS/quality by construction).
   Phase 2 — Catalyst Director: selects + sizes from the CRO survivors under HARD caps.
 
 Both phases run on Fable 5 (model:'fable') — this greenfield leg is the first step of the
@@ -117,12 +124,42 @@ watchlist_ctx = {"n_on_deck": len(prior_wl), "names": prior_wl}
 JS = r'''export const meta = {
   name: 'basket13-catalyst-debate',
   description: 'Basket 13 catalyst sleeve — Catalyst-CRO trade attack (4 surfaces) then Director selection+sizing under hard caps',
-  phases: [ { title: 'CatalystCRO', model: '__MODEL__' }, { title: 'Director', model: '__MODEL__' } ],
+  phases: [ { title: 'DeepDossier', model: '__MODEL__' }, { title: 'CatalystCRO', model: '__MODEL__' }, { title: 'Director', model: '__MODEL__' } ],
 }
 const NAMES = __NAMES__
 const MODEL = '__MODEL__'
 const HELD = __HELD__
 const WATCHLIST = __WATCHLIST__
+
+const DOSSIER_SCHEMA = { type:'object', properties:{
+  symbol:{type:'string'},
+  catalyst_live:{type:'boolean'},
+  catalyst_status:{type:'string', enum:['PENDING_HARD','PENDING_SOFT','SLIPPED','FIRED','BROKEN']},
+  thesis_summary:{type:'string'},
+  dated_milestone:{type:['string','null']},
+  fair_value_target:{type:['number','null']},
+  downside_floor:{type:['number','null']},
+  valuation_method:{type:['string','null']},
+  win_prob:{type:['number','null']},
+  resolution_driver:{type:'string'},
+  staging:{type:'boolean'},
+  discrepancies:{type:'array', items:{type:'string'}},
+  kill_risk:{type:['string','null']},
+  dossier_note:{type:'string'}
+}, required:['symbol','catalyst_live','catalyst_status','thesis_summary','resolution_driver','staging','discrepancies','dossier_note'] }
+
+function dossierPrompt(n){ return `Today is __TODAY__. You are the DEEP-DOSSIER agent for "Basket 13", an event-driven special-situations sleeve. You handle ONE candidate. The board dossier below came from an older single-pass backend scan and may be stale or wrong; downstream, a CRO adjudicates the trade and a Director sizes seats ON YOUR NUMBERS — your corrected fields REPLACE the board's. Re-underwrite the load-bearing facts from LIVE sources (5-10 lookups via ToolSearch: FMP quote/news/press-releases/SEC filings/earnings calendar; WebSearch to confirm anything the feeds don't settle):
+
+1) CATALYST REALITY & STATUS. Confirm the resolving event is real, forward-dated, UNFIRED, and idiosyncratic (resolves on its own facts, not the tape). Emit catalyst_status: PENDING_HARD (dated + binding), PENDING_SOFT (real but undated/soft), SLIPPED (timeline pushed — name from->to in dossier_note), FIRED (already resolved — edge spent), BROKEN (deal dead / thesis invalidated). catalyst_live=false for FIRED/BROKEN.
+2) MILESTONE. Verify dated_milestone against the latest company/regulator communication; correct it if it slipped or firmed; null if genuinely undated (then staging=true).
+3) VALUATION AXES. Re-derive fair_value_target and downside_floor under the dossier's valuation_method — spread: live deal terms incl. FX; sop/recovery: name the components; binary_prob: win/lose prices and win_prob. If you cannot reproduce a board number from the live record, CORRECT it and show the arithmetic in dossier_note. Only emit numbers you can defend.
+4) DRIVER + STAGING. Confirm or correct resolution_driver and staging (dated hard event -> staging=false; soft/undated -> true).
+5) SKEPTIC PASS on yourself. Take the single most load-bearing claim in your thesis_summary — try to refute it from the live record; put the honest residual risk in kill_risk (null only if nothing credible).
+
+DO NOT: value/quality/moat opinions, trade verdicts, position sizing, or option-chain work — the CRO owns tradeability/window and the Director owns sizing. You own FACTS and VALUATION AXES only.
+List every field you changed in discrepancies[] as "field: board X -> live Y — why". Then emit ONE StructuredOutput per the schema.
+
+CANDIDATE (board dossier, may be stale): ${JSON.stringify(n)}` }
 
 const CRO_SCHEMA = { type:'object', properties:{ verdicts:{ type:'array', items:{ type:'object', properties:{
   symbol:{type:'string'},
@@ -153,7 +190,7 @@ const DIRECTOR_SCHEMA = { type:'object', properties:{
   memo:{type:'string'}
 }, required:['picks','passed'] }
 
-function croPrompt(batch){ return `Today is __TODAY__. You are the CATALYST-CRO for "Basket 13", an event-driven special-situations sleeve. The catalyst's REALITY is ALREADY SETTLED upstream — a 3-tier scan->deep->skeptic pipeline already verified each event is real, dated, forward and idiosyncratic (it kills 40-50% of flags). DO NOT re-litigate whether the event is real. You adjudicate exactly ONE question: IS THE TRADE GOOD? — on these FOUR surfaces and NOTHING else:
+function croPrompt(batch){ return `Today is __TODAY__. You are the CATALYST-CRO for "Basket 13", an event-driven special-situations sleeve. The catalyst's REALITY is ALREADY SETTLED upstream — each name below was re-underwritten TODAY by a deep-dossier agent (see its fresh_dossier field: live-verified catalyst status, milestone, valuation axes; corrected values already REPLACE the stale board numbers, originals under board_*). DO NOT re-litigate whether the event is real — but a fresh_dossier.catalyst_status of FIRED or BROKEN means the edge is GONE: verdict NO_TRADE citing the dossier, no further work on that name. You adjudicate exactly ONE question: IS THE TRADE GOOD? — on these FOUR surfaces and NOTHING else:
 
 1) EDGE AT ENTRY (perishable). Re-verify the spread / R:R against the LIVE price NOW (fetch the current quote via FMP/ToolSearch). The dossier built its edge at "valuation_asof"; a spread that was 8% last week can be 1% today. State the recomputed number + source in live_edge_check, AND emit the verified live underlying price as the NUMBER field live_price — the tracker stamps entries at YOUR verified price, so it must be exact. If the edge has compressed below ~half the dossier R:R, that alone is NO_TRADE or TRADE_WITH_CONDITIONS.
 2) TRADEABILITY. Does the expression exist at acceptable cost? Options: quoted bid/ask spread, open interest, strikes near the thesis levels (fair_value_target / downside_floor) — read-only via IBKR/FMP/ToolSearch. Equity: ADV vs a realistic position; borrow if any short leg. A correct thesis in an instrument with a 15%-wide spread or no OI is NOT a trade — say so in tradeability_note.
@@ -192,10 +229,37 @@ OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_
 
 SURVIVORS (${survivors.length}): ${JSON.stringify(survivors)}` }
 
+phase('DeepDossier')
+log(`Basket 13 — Deep-Dossier refresh: ${NAMES.length} candidates, one agent each (${MODEL})`)
+const DCONC=5   // rate-limit discipline: burst -> batch (same cap as the CRO groups)
+const dossiers=[]
+for(let i=0;i<NAMES.length;i+=DCONC){
+  const sub=NAMES.slice(i,i+DCONC)
+  const r=await parallel(sub.map(n=>()=>agent(dossierPrompt(n),{label:`dossier:${n.symbol}`,phase:'DeepDossier',schema:DOSSIER_SCHEMA,model:MODEL})))
+  r.filter(Boolean).forEach(d=>dossiers.push(d))
+  log(`dossier group ${Math.floor(i/DCONC)+1} done; ${dossiers.length}/${NAMES.length} refreshed`)
+}
+const dosBySym=Object.fromEntries(dossiers.map(d=>[d.symbol,d]))
+// Corrected load-bearing fields REPLACE the board's (originals kept under board_* for the audit
+// trail); the full dossier rides along as fresh_dossier. _basket13_inject.py applies the same
+// overrides from the returned dossiers[] so validation matches what the Director sized on.
+const OVERRIDE_KEYS=['fair_value_target','downside_floor','dated_milestone','valuation_method','resolution_driver','staging','win_prob']
+const REFRESHED=NAMES.map(n=>{
+  const d=dosBySym[n.symbol]
+  if(!d) return n
+  const out={...n, fresh_dossier:d}
+  for(const k of OVERRIDE_KEYS){
+    if(d[k]!==undefined && d[k]!==null && d[k]!==n[k]){ out['board_'+k]=n[k]; out[k]=d[k] }
+  }
+  return out
+})
+const dead=dossiers.filter(d=>!d.catalyst_live).map(d=>`${d.symbol}(${d.catalyst_status})`)
+if(dead.length) log(`dossier kills (catalyst FIRED/BROKEN): ${dead.join(', ')}`)
+
 const BATCH=5
-const batches=[]; for(let i=0;i<NAMES.length;i+=BATCH) batches.push(NAMES.slice(i,i+BATCH))
+const batches=[]; for(let i=0;i<REFRESHED.length;i+=BATCH) batches.push(REFRESHED.slice(i,i+BATCH))
 phase('CatalystCRO')
-log(`Basket 13 — Catalyst-CRO: ${NAMES.length} candidates in ${batches.length} batches of ${BATCH} (${MODEL})`)
+log(`Basket 13 — Catalyst-CRO: ${REFRESHED.length} candidates in ${batches.length} batches of ${BATCH} (${MODEL})`)
 const CONC=5
 const cro=[]
 for(let i=0;i<batches.length;i+=CONC){
@@ -204,7 +268,7 @@ for(let i=0;i<batches.length;i+=CONC){
   r.filter(Boolean).forEach(x=>{ if(x&&x.verdicts) cro.push(...x.verdicts) })
   log(`CRO group ${Math.floor(i/CONC)+1} done; ${cro.length} verdicts so far`)
 }
-const bySym=Object.fromEntries(NAMES.map(n=>[n.symbol,n]))
+const bySym=Object.fromEntries(REFRESHED.map(n=>[n.symbol,n]))
 const survivors=cro
   .filter(v=>v && bySym[v.symbol] && (v.verdict==='TRADE'||v.verdict==='TRADE_WITH_CONDITIONS'))
   .map(v=>({...bySym[v.symbol], cro_verdict:v.verdict, live_edge_check:v.live_edge_check,
@@ -217,7 +281,7 @@ if(survivors.length){
 }else{
   log('No CRO survivors — Director skipped.')
 }
-return { generated_for: NAMES.length, cro, survivors: survivors.map(s=>s.symbol), director }
+return { generated_for: NAMES.length, dossiers, cro, survivors: survivors.map(s=>s.symbol), director }
 '''
 
 assert JS.count("__WATCHLIST__") == 1, "expected exactly one __WATCHLIST__ token in the template"
@@ -226,7 +290,9 @@ js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
         .replace("__WATCHLIST__", json.dumps(watchlist_ctx, ensure_ascii=False))
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
-open(OUT, "w", encoding="utf-8").write(js)
+# newline="\n": Windows text-mode would write CRLF, which the Workflow tool's permission
+# layer rejects ("script contains control characters") — LF-only is mandatory.
+open(OUT, "w", encoding="utf-8", newline="\n").write(js)
 print(f"WROTE {OUT}  ({len(names)} candidates, {(len(names)+4)//5} CRO batches, model={MODEL}"
       + (f", {held_summary['n_seats']} held locked" if held_summary['n_seats'] else "") + ")"
       + (f" [filtered to {sorted(only)}]" if only else ""))
