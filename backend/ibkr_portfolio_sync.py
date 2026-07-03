@@ -4,16 +4,23 @@ ibkr_portfolio_sync.py — mirror the real Interactive Brokers account into the
 Portfolio page.
 
 Runs on the IB Gateway host (Bruno's always-on PC), exactly like
-ibkr_options_batch.py: it reaches OUT to GCS, reads the current
-portfolio/state.json, reconciles it against the live IBKR account
-(ib.portfolio() + account values), and writes the merged state back with an
-optimistic-concurrency (ifGenerationMatch) conditional write so it never
-clobbers monitor_prices.py's nightly enrichment.
+ibkr_options_batch.py: it reaches OUT to GCS, reads
+portfolio/ibkr_state.json (its OWN dedicated object — see below), reconciles
+it against the live IBKR account (ib.portfolio() + account values), and writes
+the merged state back with an optimistic-concurrency (ifGenerationMatch)
+conditional write.
 
-IBKR is the source of truth: positions that appear in IBKR are added, ones that
-vanish are closed to history. Manual (non-`ib_synced`) rows are left untouched,
-so paper/screener positions can coexist. Read-only throughout — `readonly=True`,
-no order API is ever imported.
+DEDICATED OBJECT (as of 2026-07-03): originally this wrote portfolio/state.json
+directly, but that object has ANOTHER writer (unidentified — possibly a
+parallel session, possibly a stray process) that periodically restores an old
+frozen snapshot unconditionally, clobbering every sync within seconds. Rather
+than keep fighting that race, the mirror now owns portfolio/ibkr_state.json
+exclusively — no other known writer touches it. The frontend reads this file
+and merges it with any manual rows still in portfolio/state.json.
+
+IBKR is the source of truth WITHIN this file: positions that appear in IBKR are
+added, ones that vanish are closed to history. Read-only throughout —
+`readonly=True`, no order API is ever imported.
 
 GCS auth: `gcloud auth print-access-token` (the PC is logged in via gcloud), with
 a GCE-metadata fallback so it also works if ever run on Cloud Run. Mirrors
@@ -38,7 +45,8 @@ log = logging.getLogger("ibkr_portfolio_sync")
 import ibkr_symbol_map as smap
 
 BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
-STATE_PATH = "portfolio/state.json"
+STATE_PATH = "portfolio/ibkr_state.json"   # dedicated object — see module docstring
+LEGACY_STATE_PATH = "portfolio/state.json"  # shared file; read-only here, for one-time seed
 HISTORY_KEEP = 100
 
 _MONTHS = {m: i for i, m in enumerate(
@@ -90,9 +98,16 @@ def _read_state_with_gen():
             return None, "0"
         if meta.status_code == 200:
             gen = meta.json().get("generation", "0")
+            # Pin the media fetch to THIS exact generation. An unpinned alt=media GET
+            # can be served from a cache keyed generation-agnostically — observed
+            # 2026-07-03: metadata correctly reported each new generation after every
+            # write, but the media body stayed frozen on an ~80-minute-old snapshot
+            # regardless (a write-then-read probe marker only became visible once
+            # generation-pinned). Matches the documented GCS read-after-write gotcha.
             media = requests.get(
                 f"https://storage.googleapis.com/storage/v1/b/{BUCKET}/o/{enc}",
-                headers={"Authorization": f"Bearer {tok}"}, params={"alt": "media"}, timeout=15)
+                headers={"Authorization": f"Bearer {tok}"},
+                params={"alt": "media", "generation": gen}, timeout=15)
             if media.status_code == 200:
                 return media.json(), gen
     except Exception as e:
@@ -161,7 +176,7 @@ def _row_from_ib_item(item) -> dict | None:
             "market_value": mkt_val, "unrealized_pnl": upnl, "multiplier": mult,
             "right": right, "strike": float(getattr(c, "strike", 0) or 0),
             "expiration": _fmt_exp(getattr(c, "lastTradeDateOrContractMonth", "")),
-            "unmapped": unmapped, "ib_symbol": under,
+            "unmapped": unmapped, "ib_symbol": under, "live_marks": True,
         }
     # stock / other -> treat as a stock row
     sym = getattr(c, "symbol", "") or ""
@@ -170,14 +185,17 @@ def _row_from_ib_item(item) -> dict | None:
         "ib_conid": conid, "symbol": app, "asset_type": "stock", "currency": currency,
         "position": pos, "avg_cost": avg, "market_price": mkt_px, "market_value": mkt_val,
         "unrealized_pnl": upnl, "multiplier": None, "right": None, "strike": None,
-        "expiration": None, "unmapped": unmapped, "ib_symbol": sym,
+        "expiration": None, "unmapped": unmapped, "ib_symbol": sym, "live_marks": True,
     }
 
 
 def _row_from_position(pos):
     """Fallback adapter: ib_async Position (no live marks) -> normalized row, by
     shimming it into the PortfolioItem shape (mark = avg cost, so pnl = 0). Used
-    only if portfolio() never populates — a marks-less mirror beats no mirror."""
+    only if portfolio() never populates — a marks-less mirror beats no mirror.
+    live_marks=False tells reconcile() NOT to overwrite an existing position's
+    last_price/unrealized_pnl with this degraded (mark==avg, pnl=0) placeholder —
+    shares/entry_price (from avgCost) are still reliable and DO get updated."""
     c = pos.contract
     mult = float(getattr(c, "multiplier", "") or (100 if getattr(c, "secType", "") == "OPT" else 1))
 
@@ -188,7 +206,10 @@ def _row_from_position(pos):
         marketPrice = (pos.avgCost / mult) if mult else pos.avgCost
         marketValue = pos.position * pos.avgCost
         unrealizedPNL = 0.0
-    return _row_from_ib_item(_Shim())
+    row = _row_from_ib_item(_Shim())
+    if row:
+        row["live_marks"] = False
+    return row
 
 
 def _account_summary_from_values(values) -> dict:
@@ -249,6 +270,22 @@ def fetch_account(client_id: int) -> tuple[list[dict], dict]:
         accounts = ib.managedAccounts() or [""]
         target_account, items = accounts[0], []
         for acct in accounts:
+            # Scoping reqAccountUpdates to ONE known account name (not the ambiguous
+            # '' default across now-3 linked accounts, which blocks/times out) usually
+            # populates portfolio() with live marks almost instantly, avoiding the
+            # degraded ib.positions() fallback. BUT it's itself a blocking call that
+            # waits for accountDownloadEnd and can occasionally time out (observed
+            # 2026-07-03 — likely gateway load from many reconnects). A hang/exception
+            # here must never crash the whole sync — catch it, use a short dedicated
+            # timeout, and fall through to the normal portfolio()-retry-loop either way
+            # (the subscription request was already sent even if the wait timed out).
+            prev_timeout, ib.RequestTimeout = ib.RequestTimeout, 10
+            try:
+                ib.reqAccountUpdates(acct)
+            except Exception as e:
+                log.warning("reqAccountUpdates(%s) timed out/failed (%s) — continuing without it", acct, e)
+            finally:
+                ib.RequestTimeout = prev_timeout
             rows_for_acct = ib.portfolio(account=acct)
             for _ in range(8):
                 if rows_for_acct:
@@ -368,7 +405,7 @@ def reconcile(state: dict, rows: list[dict], summary: dict | None, today: str) -
     state.setdefault("positions", [])
     state.setdefault("history", [])
     by_conid = {p["ib_conid"]: p for p in state["positions"] if p.get("ib_conid")}
-    counts = {"added": 0, "updated": 0, "closed": 0, "unmapped": 0, "ib_rows": len(rows)}
+    counts = {"added": 0, "updated": 0, "closed": 0, "unmapped": 0, "degraded": 0, "ib_rows": len(rows)}
     seen: set[int] = set()
 
     for r in rows:
@@ -376,15 +413,24 @@ def reconcile(state: dict, rows: list[dict], summary: dict | None, today: str) -
             continue
         if r.get("unmapped"):
             counts["unmapped"] += 1
+        if not r.get("live_marks", True):
+            counts["degraded"] += 1
         ex = by_conid.get(r["ib_conid"])
         if ex:
             ex["symbol"] = r["symbol"]            # refresh so a corrected CONID_OVERRIDE propagates
             ex["shares"] = r["position"]
-            ex["entry_price"] = round(r["avg_cost"], 4)
-            ex["last_price"] = round(r["market_price"], 4)
-            ex["last_updated"] = today
-            ex["ib_unrealized_pnl"] = round(r["unrealized_pnl"], 2)
-            ex["market_value"] = round(r["market_value"], 2)
+            ex["entry_price"] = round(r["avg_cost"], 4)   # avgCost is reliable via portfolio() OR positions()
+            # last_price/unrealized_pnl/market_value need LIVE market data (portfolio()),
+            # not just the position snapshot. When the fetch fell back to ib.positions()
+            # (no live marks — see _row_from_position), r["market_price"] is just avg_cost
+            # and unrealized_pnl is a fabricated 0 — writing that would flatten real P&L
+            # history to "no gain/loss" on a gateway hiccup. Preserve the prior values
+            # instead; the next live-marks sync corrects them.
+            if r.get("live_marks", True):
+                ex["last_price"] = round(r["market_price"], 4)
+                ex["last_updated"] = today
+                ex["ib_unrealized_pnl"] = round(r["unrealized_pnl"], 2)
+                ex["market_value"] = round(r["market_value"], 2)
             ex["currency"] = r["currency"]
             ex["asset_type"] = r["asset_type"]
             ex["ib_synced"] = True
@@ -503,7 +549,7 @@ def run_sync(dry_run: bool = False, from_json: str | None = None, client_id: int
 def main():
     logging.basicConfig(level=logging.WARNING, format="%(asctime)s %(levelname)s %(message)s")
     log.setLevel(logging.INFO)
-    ap = argparse.ArgumentParser(description="Mirror IBKR account into portfolio/state.json")
+    ap = argparse.ArgumentParser(description=f"Mirror IBKR account into {STATE_PATH}")
     ap.add_argument("--dry-run", action="store_true", help="print the diff, write nothing")
     ap.add_argument("--once", action="store_true", help="run one live sync")
     ap.add_argument("--from-json", metavar="FILE",
