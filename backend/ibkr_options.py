@@ -31,6 +31,20 @@ from typing import Optional
 
 log = logging.getLogger("ibkr_options")
 
+# Python 3.14 removed asyncio.get_event_loop()'s implicit "create one if none
+# exists in the main thread" fallback. eventkit (a dependency of both ib_async
+# and ib_insync) still relies on that at IMPORT time (eventkit/util.py calls
+# get_event_loop() at module scope), so on 3.14 the import itself raises
+# RuntimeError before we ever touch the gateway. This broke the scheduled sync
+# starting 2026-07-02 (silently misreported as "gateway not answering" by the
+# probe, since the crash happens inside the same try/except). Bootstrap a loop
+# first so eventkit's import-time call succeeds regardless of Python version.
+import asyncio
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
 try:
     from ib_async import IB, Stock, Option, util  # maintained fork
 except Exception:
