@@ -3509,6 +3509,16 @@ def catalyst_seed():
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "prep"
+    # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10). The weekly routine's STEP 3C
+    # still lists the disruptor-* commands; this guard makes every one of them a no-op so no fresh
+    # disruptor data is ever published again (the frontend card is a frozen record). Enforced HERE —
+    # the routine calls these modes directly, so this is the one path that actually runs.
+    # Escape hatch: ALLOW_DISRUPTOR=1 to force-run the archived pipeline.
+    if mode.replace("_", "-").startswith("disruptor") and os.environ.get("ALLOW_DISRUPTOR") != "1":
+        print(f"DISRUPTOR LENS RETIRED 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10) — mode '{mode}' is a "
+              "no-op. Skip STEP 3C and proceed to STEP 4. (set ALLOW_DISRUPTOR=1 to force-run the "
+              "archived pipeline.)")
+        sys.exit(0)
     if mode == "prep":
         prep()
     elif mode == "merge":
