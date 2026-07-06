@@ -1103,6 +1103,23 @@ export default function CatalystWatch() {
                                 <td style={{ padding: "4px 8px", color: T.light }}>{e.entry_price != null ? Number(e.entry_price).toFixed(2) : "?"} → {e.resolution.exit_price != null ? Number(e.resolution.exit_price).toFixed(2) : "?"}</td>
                                 <td style={{ padding: "4px 8px", color: (e.resolution.realized_return_pct ?? 0) >= 0 ? T.green : T.red }}>{e.resolution.realized_return_pct != null ? `${(e.resolution.realized_return_pct * 100).toFixed(1)}%` : "—"}</td>
                                 <td style={{ padding: "4px 8px", color: T.light }}>rr {e.resolution.realized_rr ?? "—"} (exp {fmtB13RR(e)})</td>
+                                {(() => {
+                                  // post-resolution conclusion tracking: the underlying is followed for 90d
+                                  // after exit so the exit itself gets graded — did the re-rate we exited
+                                  // half-way through finish, round-trip, or lapse unconcluded?
+                                  const pts = e.post_track || [];
+                                  const last = pts.length ? pts[pts.length - 1] : null;
+                                  const st = e.post_track_status;
+                                  if (!last && !st) return <td style={{ padding: "4px 8px", color: T.muted }} title="No post-resolution tracking (resolved before the tracking window, or window closed)">—</td>;
+                                  const sc = st === "RERATE_COMPLETED" ? T.green : st === "ROUND_TRIP" ? T.red : st === "WINDOW_CLOSED" ? T.muted : "#d97706";
+                                  const lbl = st === "RERATE_COMPLETED" ? "re-rate completed" : st === "ROUND_TRIP" ? "round-trip" : st === "WINDOW_CLOSED" ? "window closed" : "tracking";
+                                  return (
+                                    <td style={{ padding: "4px 8px", color: sc }}
+                                        title={`Tracking the thesis to conclusion for 90d after exit — did the exit leave money on the table?\nSince exit: ${last?.since_exit_pct != null ? (last.since_exit_pct >= 0 ? "+" : "") + last.since_exit_pct + "%" : "—"}${e.fair_value_target ? `\nOriginal target ${e.fair_value_target}` : ""}${e.downside_floor ? ` / floor ${e.downside_floor}` : ""}`}>
+                                      {lbl}{last?.since_exit_pct != null ? ` ${last.since_exit_pct >= 0 ? "+" : ""}${last.since_exit_pct}%` : ""}
+                                    </td>
+                                  );
+                                })()}
                                 <td style={{ padding: "4px 0", color: T.muted, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.resolution.notes || ""}>{e.resolution.notes || ""}</td>
                               </tr>
                             ))}
