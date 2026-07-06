@@ -41,11 +41,7 @@
     "driver_confirmed": "Deal_close_generic — confirmed; unique driver in this batch, no collision.",
     "conditions": []
    },
-   "entry_rationale": "Cleanest ratio carry in the pool: 11.6% gross spread to the $14.23 deal value over ~112 days (~38% annualized) with zero price drift since the dossier and the tightest floor in the basket (-7.5%). Top weight because the floor distance is smallest — 14% weight risks only ~1.04% NAV to floor.",
-   "resolution_due": {
-    "date": "2026-07-06",
-    "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   "entry_rationale": "Cleanest ratio carry in the pool: 11.6% gross spread to the $14.23 deal value over ~112 days (~38% annualized) with zero price drift since the dossier and the tightest floor in the basket (-7.5%). Top weight because the floor distance is smallest — 14% weight risks only ~1.04% NAV to floor."
   },
   {
    "symbol": "UNF",
@@ -280,7 +276,11 @@
     "driver_confirmed": "FDA_clinical_readout — confirmed. FLAG: same driver as AMLX and DFTX (three names, one driver) — Director cap applies; this is the strongest of the three on edge grade (H) and tradeability.",
     "conditions": []
    },
-   "entry_rationale": "Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's."
+   "entry_rationale": "Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's.",
+   "resolution_due": {
+    "date": "2026-07-06",
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   }
   },
   {
    "symbol": "VRDN",
@@ -316,7 +316,16 @@
    "invalidation": "CRL or negative FDA decision on 6/30 — premium is the full loss.",
    "review_trigger": "2026-06-30 FDA approval decision.",
    "cro_verdict": "TRADE",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-06",
+    "resolution_type": "FIRED_WIN",
+    "exit_price": 19.42,
+    "realized_return_pct": 0.1907,
+    "realized_rr": 0.374,
+    "days_held": 26,
+    "catalyst_fired": true,
+    "notes": "FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution."
+   },
    "cro_detail": {
     "live_edge_check": "Live $16.31 (FMP, +3.7% today) vs dossier $15.73 - edge intact; still far under 200d $24.25 and near 52w low $13.18. Binary EV unchanged: ~90% to $35 / $8 floor, payoff ~2.5x. No compression.",
     "tradeability_note": "Most tradeable binary in the batch: ~$46M ADV, stock spread $15.80/$16.25 (~2.8%), avg ~585 calls/day (today 631), IV ~91%. Options genuinely liquid; equity trivially so.",
@@ -370,7 +379,11 @@
     "driver_confirmed": "CONFIRMED: FDA_approval_decision (terminal driver is the FDA action on the Anaphylm resubmission; the 9/30 date is the resubmission gate on that path). FLAG: RARE in this same batch also resolves on FDA_approval_decision — Director same-driver cap applies to the pair.",
     "conditions": []
    },
-   "entry_rationale": "Strongest live edge in the batch per the CRO check (+69.8% EV, payoff 3.6x) into the Q3 Anaphylm resubmission. Staging-rule equity (the thin chain cannot offer the Apr-2027+ expiries the post-resubmission window requires); 4.5% weight is jointly bound by the half-weight rule and a 1.49% risk-to-floor."
+   "entry_rationale": "Strongest live edge in the batch per the CRO check (+69.8% EV, payoff 3.6x) into the Q3 Anaphylm resubmission. Staging-rule equity (the thin chain cannot offer the Apr-2027+ expiries the post-resubmission window requires); 4.5% weight is jointly bound by the half-weight rule and a 1.49% risk-to-floor.",
+   "resolution_due": {
+    "date": "2026-07-06",
+    "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   }
   },
   {
    "symbol": "WVE",
@@ -594,7 +607,16 @@
     "driver_confirmed": "US_antitrust (Modine/Gentherm RMT deal completion) — CONFIRMED. Unique driver in this batch (no cap conflict).",
     "conditions": []
    },
-   "resolution": null
+   "resolution": {
+    "resolution_date": "2026-07-06",
+    "resolution_type": "THESIS_BROKEN",
+    "exit_price": 34.13,
+    "realized_return_pct": 0.0074,
+    "realized_rr": 0.064,
+    "days_held": 4,
+    "catalyst_fired": true,
+    "notes": "Board dossier misread the RMT: stock-for-stock, THRM is the ACQUIRER, no consideration flows to holders - the 30% spread to $44 never existed. HSR fired 3/26 pre-valuation. Fable dossier + CRO NO_TRADE 7/06."
+   }
   },
   {
    "symbol": "ZYME",
@@ -612,7 +634,7 @@
    "computed_rr": null,
    "ev_pct": 0.1409,
    "lane_canon": "merger_arb",
-   "resolution_driver": "Deal_close_generic",
+   "resolution_driver": "FDA_approval_decision",
    "super_cluster": "Deal-completion",
    "valuation_method": "binary_prob",
    "downside_floor": 19.0,
@@ -638,7 +660,9 @@
     "driver_confirmed": "CORRECTED: Deal_close_generic is wrong — the resolving event is the FDA PDUFA action (which contractually triggers the $250M Jazz milestone), so the true driver is FDA_approval_decision. FLAG: this collides with GERN's FDA_approval_decision driver in this same batch — Director must apply the same-driver cap across ZYME/GERN.",
     "conditions": []
    },
-   "resolution": null
+   "resolution": null,
+   "board_resolution_driver": "Deal_close_generic",
+   "retag_note": "2026-07-06 Fable deep-dossier: the 8/25 event is Jazz's Ziihera 1L-GEA PDUFA (triggers ZYME's contractual $250M milestone) - ZYME is the Theravance ACQUIRER, not an arb target; board's Deal_close_generic/merger_arb tag corrected. Post-VRDN-resolution the driver count is a legal 2/2 (AQST+ZYME)."
   },
   {
    "symbol": "DDL",
@@ -771,7 +795,16 @@
     "driver_confirmed": "Supply_timing CONFIRMED. Unique in this batch — no driver-cap overlap.",
     "conditions": []
    },
-   "resolution": null
+   "resolution": {
+    "resolution_date": "2026-07-06",
+    "resolution_type": "EDGE_GONE",
+    "exit_price": 3.88,
+    "realized_return_pct": 0.0402,
+    "realized_rr": 0.133,
+    "days_held": 4,
+    "catalyst_fired": false,
+    "notes": "Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution."
+   }
   }
  ],
  "non_selections": [
@@ -1864,76 +1897,76 @@
   },
   {
    "date": "2026-07-06",
-   "nav": 103.244,
-   "basket_ret_pct": 3.244,
+   "nav": 102.952,
+   "basket_ret_pct": 2.952,
    "seats": {
     "GDOT": {
-     "price": 13.35,
-     "ret_pct": 4.71
+     "price": 13.155,
+     "ret_pct": 3.18
     },
     "UNF": {
-     "price": 273.56,
-     "ret_pct": 0.99
+     "price": 271.5,
+     "ret_pct": 1.15
     },
     "FIP": {
-     "price": 4.44,
-     "ret_pct": -2.63
+     "price": 4.485,
+     "ret_pct": -1.64
     },
     "FIG": {
-     "price": 21.34,
-     "ret_pct": 4.15
+     "price": 21.38,
+     "ret_pct": 4.34
     },
     "BLCO": {
-     "price": 17.16,
-     "ret_pct": 9.65
+     "price": 17.1,
+     "ret_pct": 9.27
     },
     "CELC": {
-     "price": 107.95,
-     "ret_pct": 16.59
+     "price": 109.39,
+     "ret_pct": 18.14
     },
     "VRDN": {
-     "price": 19.4,
-     "ret_pct": 18.95
+     "price": 19.42,
+     "ret_pct": 19.07
     },
     "AQST": {
-     "price": 4.18,
-     "ret_pct": 4.76
+     "price": 4.225,
+     "ret_pct": 5.89
     },
     "WVE": {
-     "price": 6.26,
-     "ret_pct": 8.3
+     "price": 6.36,
+     "ret_pct": 10.03
     },
     "AMLX": {
-     "price": 18.27,
-     "ret_pct": 25.22
+     "price": 17.98,
+     "ret_pct": 23.24
     },
     "AAUC": {
-     "price": 24.6,
-     "ret_pct": 5.13
+     "price": 23.95,
+     "ret_pct": 2.35
     },
     "FUN": {
-     "price": 20.99,
-     "ret_pct": 2.09
+     "price": 19.915,
+     "ret_pct": -3.14
     },
     "THRM": {
-     "price": 33.88,
-     "ret_pct": 0.0
+     "price": 34.13,
+     "ret_pct": 0.74
     },
     "ZYME": {
-     "price": 26.31,
-     "ret_pct": 0.0
+     "price": 25.6422,
+     "ret_pct": -2.54
     },
     "DDL": {
-     "price": 1.94,
-     "ret_pct": 0.0
+     "price": 2.015,
+     "ret_pct": 3.87
     },
     "LBTYK": {
-     "price": 10.9,
-     "ret_pct": 0.0
+     "price": 10.6548,
+     "ret_pct": -2.25
     },
     "LZM": {
-     "price": 3.73,
-     "ret_pct": 0.0
+     "price": 3.88,
+     "ret_pct": 4.02
     }
    }
   }
@@ -2692,45 +2725,45 @@
   },
   {
    "date": "2026-07-06",
-   "nav": 113.043,
-   "ret_pct": 13.043,
+   "nav": 113.288,
+   "ret_pct": 13.288,
    "n": 9,
    "seats": {
     "CLVT": {
-     "price": 2.59,
-     "ret_pct": 17.19
+     "price": 2.525,
+     "ret_pct": 14.25
     },
     "BBIO": {
-     "price": 77.19,
-     "ret_pct": 15.55
+     "price": 78.4353,
+     "ret_pct": 17.42
     },
     "EYPT": {
-     "price": 13.98,
-     "ret_pct": 7.29
+     "price": 14.0541,
+     "ret_pct": 7.86
     },
     "VIR": {
-     "price": 10.04,
-     "ret_pct": 16.61
+     "price": 9.9798,
+     "ret_pct": 15.91
     },
     "PVLA": {
-     "price": 146.76,
-     "ret_pct": 23.49
+     "price": 141.8598,
+     "ret_pct": 19.37
     },
     "AVIR": {
-     "price": 4.98,
-     "ret_pct": 13.44
+     "price": 5.0,
+     "ret_pct": 13.9
     },
     "DBVT": {
-     "price": 15.82,
-     "ret_pct": 0.76
+     "price": 15.48,
+     "ret_pct": -1.4
     },
     "MGNI": {
-     "price": 20.38,
-     "ret_pct": 16.79
+     "price": 20.835,
+     "ret_pct": 19.4
     },
     "GERN": {
-     "price": 1.36,
-     "ret_pct": 6.25
+     "price": 1.445,
+     "ret_pct": 12.89
     }
    }
   }

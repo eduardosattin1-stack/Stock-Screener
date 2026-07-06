@@ -37,9 +37,22 @@ def main():
         return
     unresolved = [e for e in entries if not e.get("resolution")]
     wl_state = t.get("watchlist_state", {})              # on-deck names tracked as a separate paper book
+    # resolved seats still inside their post-resolution CONCLUSION window get quoted too
+    POST_TRACK_DAYS = 90                                 # calendar days of "did the thesis finish?" tracking
+    def _in_post_window(e):
+        res = e.get("resolution")
+        if not res or e.get("post_track_status") in ("RERATE_COMPLETED", "ROUND_TRIP", "WINDOW_CLOSED"):
+            return False
+        try:
+            rd = datetime.date.fromisoformat(str(res.get("date"))[:10])
+        except Exception:
+            return False
+        return (datetime.date.today() - rd).days <= POST_TRACK_DAYS
+    post_tracked = [e for e in entries if _in_post_window(e)]
     syms = [e["symbol"] for e in unresolved]
     syms += [e["hedge"]["symbol"] for e in unresolved if e.get("hedge")]
     syms += [s for s in wl_state]                        # watchlist underlyings (one combined quote fetch)
+    syms += [e["symbol"] for e in post_tracked]
     quotes = fetch_live_quotes(list(dict.fromkeys(syms)))
     today = datetime.date.today().isoformat()
 
@@ -135,6 +148,44 @@ def main():
         if ret is not None:
             basket_ret += (w / 100.0) * ret
             seats[sym] = {"price": px, "ret_pct": round(ret * 100, 2)}
+
+    # 2b. POST-RESOLUTION CONCLUSION TRACKING (2026-07-06): a resolved seat leaves the NAV
+    # (frozen at exit) but its THESIS often hasn't finished — track the underlying for
+    # POST_TRACK_DAYS after resolution so the exit itself gets graded: did the re-rate we
+    # exited half-way through complete (RERATE_COMPLETED: close >= original fair_value_target),
+    # did the tape round-trip (ROUND_TRIP: close <= original downside_floor), or did the
+    # window close unconcluded (WINDOW_CLOSED)? Feeds the /catalysts "resolved — tracking to
+    # conclusion" card and, quarterly, the exit-discipline re-fit alongside the dial re-fits.
+    concluded = []
+    for e in post_tracked:
+        px = quotes.get(e["symbol"].upper())
+        if px is None:
+            continue
+        res = e["resolution"]
+        xp = res.get("exit_price")
+        pt = [m for m in e.get("post_track", []) if m.get("date") != today]   # idempotent per day
+        pt.append({"date": today, "price": px,
+                   "since_exit_pct": round((px / xp - 1) * 100, 2) if xp else None})
+        e["post_track"] = sorted(pt, key=lambda m: m["date"])
+        tgt, flr = e.get("fair_value_target"), e.get("downside_floor")
+        status = "TRACKING"
+        if isinstance(tgt, (int, float)) and px >= tgt:
+            status = "RERATE_COMPLETED"
+        elif isinstance(flr, (int, float)) and px <= flr:
+            status = "ROUND_TRIP"
+        elif not _in_post_window({**e, "post_track_status": None}):
+            status = "WINDOW_CLOSED"
+        e["post_track_status"] = status
+        if status != "TRACKING":
+            concluded.append(f"{e['symbol']}={status}")
+    # stamp WINDOW_CLOSED on any tracked seat whose window lapsed since the last mark
+    for e in entries:
+        if e.get("resolution") and e.get("post_track") and e.get("post_track_status") == "TRACKING" \
+           and not _in_post_window(e):
+            e["post_track_status"] = "WINDOW_CLOSED"
+            concluded.append(f"{e['symbol']}=WINDOW_CLOSED")
+    if concluded:
+        print(f"  post-resolution conclusions: {', '.join(concluded)}")
 
     mark = {"date": today, "nav": round(100 * (1 + basket_ret), 3),
             "basket_ret_pct": round(basket_ret * 100, 3), "seats": seats}

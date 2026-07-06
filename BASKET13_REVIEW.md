@@ -1,11 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-03 · 17 held seats (81.0% invested) · last run 2026-07-02 · paper basket, nothing executed*
+*Generated 2026-07-06 · 14 held seats (72.0% invested) + 3 resolved · last run 2026-07-02 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (17 held)
+## 1 · The basket (14 held)
 
 ### GDOT — Green Dot Corporation
 `14% · equity · merger_arb · Deal_close_generic (Deal-completion) · score 7.0 · edge M · entry 2026-06-10 @ 12.75 (cro_live_check)`
@@ -99,18 +99,6 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **3 · Window ↔ expression:** Milestone 2026-07-17, 37 days out. Equity has no expiry — window clears by construction. No slippage history concern for the expression.
 - **4 · Driver tag:** FDA_clinical_readout — confirmed. FLAG: same driver as AMLX and DFTX (three names, one driver) — Director cap applies; this is the strongest of the three on edge grade (H) and tradeability.
 
-### VRDN — 
-`2% · debit spread exp 2026-08-21 · bio_convergence · FDA_approval_decision (FDA/biotech) · score 6.0 · edge H · entry 2026-06-10 @ 16.31 (cro_live_check)`
-- **Expected:** EV 105.0% · milestone 2026-06-30 · review: 2026-06-30 FDA approval decision.
-- **Director — why this seat:** Nearest hard catalyst in the basket — 6/30 FDA decision in 20 days at p=0.9, EV ~+105%, with equity still near its 52-week low and the only genuinely liquid options chain among the dated binaries. Aug-21 expiry gives +1 monthly margin past the decision; 2% premium-at-risk.
-- **Director — what kills it:** CRL or negative FDA decision on 6/30 — premium is the full loss.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** Live $16.31 (FMP, +3.7% today) vs dossier $15.73 - edge intact; still far under 200d $24.25 and near 52w low $13.18. Binary EV unchanged: ~90% to $35 / $8 floor, payoff ~2.5x. No compression.
-- **2 · Tradeability:** Most tradeable binary in the batch: ~$46M ADV, stock spread $15.80/$16.25 (~2.8%), avg ~585 calls/day (today 631), IV ~91%. Options genuinely liquid; equity trivially so.
-- **3 · Window ↔ expression:** Milestone 6/30 (20d). Equity = clean expression, no window risk. Option route: July monthly (7/17) is only the first expiry past 6/30 - use Aug (8/21) for +1 monthly margin against an FDA date slip.
-- **4 · Driver tag:** FDA_approval_decision (veligrotug TED BLA, PDUFA 6/30). Confirmed. CLASH FLAG: ZYME in this same batch also resolves on FDA_approval_decision - flag the pair to the Director for the driver cap.
-
 ### AQST — Aquestive Therapeutics, Inc.
 `4.5% · equity · bio_convergence · FDA_approval_decision (FDA/biotech) · score 6.5 · edge H · STAGING · entry 2026-06-10 @ 3.99 (cro_live_check)`
 - **Expected:** EV 69.8% · milestone 2026-09-30 · review: Anaphylm resubmission by 2026-09-30; then re-stage for the FDA action window (Q1-2027).
@@ -184,21 +172,8 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **3 · Window ↔ expression:** Milestone 2027-03-31 (274d). Option expiries run monthly only through Jan-2027 then jump straight to Jan-2028 LEAP — there is NO expiry between Jan-2027 and Jan-2028, so no contract clears 2027-03-31 with the required +1-monthly margin except the illiquid Jan-2028 LEAP. Window does not fit options; staging=true soft activist process confirms equity. No date to slip (undated process), so equity carries no theta-decay risk.
 - **4 · Driver tag:** Activist_process (Jana sale push) confirmed; no new activist/sale headline in feed (recent news all operational), but process is the driver and reality is settled upstream. Idiosyncratic, no same-driver twin in this batch.
 
-### THRM — Gentherm Incorporated
-`5% · equity · merger_arb · US_antitrust (Deal-completion) · score 7.0 · edge M · entry 2026-07-02 @ 33.88 (cro_structured)`
-- **Expected:** R:R 2.87:1 · milestone 2026-12-31 · review: US antitrust clearance milestones and company close-timing updates toward the soft 2026-12-31 close estimate.
-- **Risk-to-floor (computed):** 0.573% of NAV (cap 1.5)
-- **Director — why this seat:** RMT acquirer-side stub with a ~30% gross spread to the $44 deal/FV value that exists purely because US antitrust timing risk is priced; CRO confirms spread intact with no compression. Soft ~182d close estimate means equity, not options, and the $30 floor keeps risk-to-floor at 0.54% NAV at this weight.
-- **Director — what kills it:** Deal break — a DOJ/FTC suit or Modine walking — or a decisive close below the $30 floor; the thesis is the combination completing, not standalone THRM.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** Live $33.88 (FMP quote, 2026-07-02) vs dossier valuation_asof $33.62 — +1%, merger spread intact: deal/FV $44 (~+30% gross) vs $30 floor (~-11%), computed_rr 2.87 preserved. News (2026-05/06) confirms the Modine RMT combination live. Wide 30% gross spread is the antitrust risk being priced — by construction, not a defect. No compression.
-- **2 · Tradeability:** Equity: ~289k sh/day x ~$33.9 = ~$9.8M ADV — sufficient for a moderate sleeve position with limits. Long acquirer-side stub (~60% pro forma ownership), no short leg/borrow. Do not confuse with 'Therma Bright' (TSXV:THRM/TBRIF) appearing in news — different issuer.
-- **3 · Window ↔ expression:** dated_milestone 2026-12-31 is a soft close-timing estimate (~182d) contingent on US antitrust clearance; not a hard option-expiry gate. Equity hold to deal completion; the wide spread signals the market assigns real close-timing/break risk, so size for a multi-month hold.
-- **4 · Driver tag:** US_antitrust (Modine/Gentherm RMT deal completion) — CONFIRMED. Unique driver in this batch (no cap conflict).
-
 ### ZYME — Zymeworks Inc.
-`2% · debit spread exp 2026-10-16 · merger_arb · Deal_close_generic (Deal-completion) · score 7.0 · edge M · entry 2026-07-02 @ 26.31 (cro_structured)`
+`2% · debit spread exp 2026-10-16 · merger_arb · FDA_approval_decision (Deal-completion) · score 7.0 · edge M · entry 2026-07-02 @ 26.31 (cro_structured)`
 - **Expected:** EV 12.4% · milestone 2026-08-25 · review: FDA PDUFA target action date 2026-08-25.
 - **Director — why this seat:** Fresh verdict-A/conviction-5 debate on a hard, binding 2026-08-25 PDUFA (RTOR, Priority Review, Breakthrough) with the $250M Jazz milestone still unpaid; live EV +12.4% with only mild compression. Binary_prob name, so defined-risk only: a 26/31 call debit spread capped at 2% NAV premium-at-risk, on the Oct-16 monthly to clear the PDUFA by a full monthly cycle and absorb the extension tail the Sep line would not.
 - **Director — what kills it:** CRL or a 3-month PDUFA extension pushing action past the Oct-16 expiry (skeptic flags a real RTOR-pushback/AdCom tail), or the Jazz milestone terms being disputed.
@@ -240,18 +215,11 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Limit <= $11.00 (do not chase above; the recomputed 5.07 R:R degrades below the dossier's 4.7 above ~$11.05)
 - ⚠ **Condition:** Respect the skeptic's conviction cap of 60 in sizing — the $9.50 floor is soft (SoP construct, not a deal-break price), so size to a realistic drawdown through the floor if the discount persists
 
-### LZM — Lifezone Metals Limited
-`2% · equity · supply_timing · Supply_timing (Idiosyncratic) · score 5.0 · edge H · STAGING · entry 2026-07-02 @ 3.73 (cro_structured)`
-- **Expected:** R:R 2.93:1 · milestone 2026-12-31 · review: The 2026-12-31 supply-timing milestone; interim project/funding announcements.
-- **Risk-to-floor (computed):** 0.606% of NAV (cap 1.5)
-- **Director — why this seat:** Supply-timing SoP name whose edge has improved ~10% since the dossier (live R:R 2.93 at $3.73 vs 2.66), H-grade with a clean TRADE and no conditions. Staging=true caps it at half a normal seat; equity carries no decay if the mining milestone slips, and even a $3.90 fill preserves ~91% of the dossier R:R.
-- **Director — what kills it:** The supply/funding milestone slipping beyond 2026 alongside SoP impairment — a partner exit or financing on dilutive terms that breaks the $2.60 floor.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** FMP live quote $3.73 vs dossier $3.815 (asof 2026-06-08). Recomputed SOP R:R = (7.04-3.73)/(3.73-2.60) = 3.31/1.13 = 2.93 vs dossier 2.66 — edge has IMPROVED ~10% since the dossier; nowhere near the half-R:R (1.33) kill line. Edge intact at entry.
-- **2 · Tradeability:** Equity (NYSE), ~303k sh / ~$1.1M notional today, $335M mkt cap. Thin-ish with a wide intraday range today (3.70-4.06, ~9%) — use limit orders and keep clips <=10-15% of daily volume; even a fill up at $3.90 preserves R:R 2.42 (~91% of dossier), so slippage does not break the trade. No short leg, no borrow issue.
-- **3 · Window ↔ expression:** Dated milestone 2026-12-31 (~182 days) is expressed in EQUITY, so there is no expiry to clear — the +1-monthly-past-milestone test is moot. Supply-timing milestones in mining do slip, but equity carries no decay penalty if it does.
-- **4 · Driver tag:** Supply_timing CONFIRMED. Unique in this batch — no driver-cap overlap.
+---
+## 1b · Resolved (3)
+- **VRDN** FIRED_WIN · 2026-06-10→2026-07-06 (26d) · 16.31→19.42 · realized +19.1% (exp EV 105.0%) · FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution.
+- **THRM** THESIS_BROKEN · 2026-07-02→2026-07-06 (4d) · 33.88→34.13 · realized +0.7% (exp R:R 2.87:1) · Board dossier misread the RMT: stock-for-stock, THRM is the ACQUIRER, no consideration flows to holders - the 30% spread to $44 never existed. HSR fired 3/26 pre-valuation. Fable dossier + CRO NO_TRADE 7/06.
+- **LZM** EDGE_GONE · 2026-07-02→2026-07-06 (4d) · 3.73→3.88 · realized +4.0% (exp R:R 2.93:1) · Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution.
 
 ---
 ## 2 · CRO kills this run — NO_TRADE (2)
