@@ -1,0 +1,353 @@
+{
+ "blind": {
+  "symbol": "LZM",
+  "catalyst_live": true,
+  "catalyst_status": "PENDING_SOFT",
+  "dated_milestone": "2026-12-31",
+  "thesis_summary": "Single-asset developer NAV re-rate on Kabanga Ni-sulfide (LZM 84%, Tanzania 16% free-carry) FID + financial close. Three live financing tracks: Taurus $60M bridge ($41.7M drawn by 4/29/26), SocGen-led project finance, StanChart-led strategic-partner process at term-sheet stage with multiple offers (Reuters bidder speculation 6/8/26; company no-comment). No binding agreements as of late June 2026; mid-2026 FID target is lapsing into H2, guidance outer bound remains 2026.",
+  "resolution_driver": "Supply_timing",
+  "staging": true,
+  "valuation_method": "sop",
+  "fair_value_target": 7.04,
+  "downside_floor": 2.3,
+  "win_prob": null,
+  "kill_risk": "Mid-2026 FID target is lapsing with zero binding agreements (company-confirmed 6/8/26); the StanChart strategic process has been 'very advanced' since Dec-2025 without closing, BHP already walked from this exact asset in 2025, cash was $15.3M at Q1 vs ~$10M/qtr burn with Taurus covenant waivers flagging fragility, and spot nickel ~10% below the FS deck weakens any partner's underwriting case. Residual risk: process drags into 2027 or resolves as a dilutive raise / below-NAV project divestiture instead of an FID re-rate.",
+  "discrepancies": [
+   "downside_floor: board 2.60 -> live 2.30 - board's own stated 0.18x attributable-NAV floor reproduces (0.18x1327 - 30)/89.9 = $2.32, not $2.60 (which implies 0.20x); corrected to the stated multiplier",
+   "live_price: board 3.815 -> live 3.84 - current NYSE quote 7/3/26 (52w 3.07-6.40, mcap $345M)",
+   "dossier_note: added spot-marked SoP variant FV $5.55-6.06 - LME nickel $16.4-17.2k/t ($7.45-7.80/lb) is ~8-12% below the July-2025 FS deck of $8.49/lb ($18.7k/t), so the board NAV deck no longer holds at spot",
+   "board basis net-debt/bridge detail: board '$60M bridge' -> live $41.7M drawn of $60M as of 4/29/26 plus April-2026 $25M equity raise at $4.40 (5.7M shs) - dilution already captured in the 89.9M share count (confirmed post-offering); net debt ~neutral today, board's ~$30M stands only as an at-FID estimate with the bridge fully drawn"
+  ],
+  "dossier_note": "Catalyst verified live and unfired: Kabanga FID/financial close, company-guided mid-2026 (Dec-11-25 PR; reaffirmed Q1-26 call 4/30/26) via 3 tracks - Taurus $60M senior secured bridge ($25M drawn at 3/31 + $16.7M on 4/29 = $41.7M), SocGen-led project finance, StanChart-led strategic process at term-sheet stage, multiple offers; Reuters 6/8/26 named-bidder speculation drew a company no-comment. No binding agreement as of 6/25/26, so mid-2026 is de facto slipping to H2-2026; milestone kept at 2026-12-31 as the outer bound of guided '2026 FID' (soft, not binding -> PENDING_SOFT, staging=true). FV reproduced under board method: 84% x $1.58B NPV8 = $1,327M; (0.5x1327 - 30)/89.9 = $7.05 ~ $7.04; 89.9M shares CONFIRMED post the April-26 $25M raise ($4.40, 5.7M shs). Deck check FAILS at spot: LME Ni ~$16.4-17.2k/t = $7.45-7.80/lb vs FS $8.49/lb; margin-scaling (P-AISC 3.36) gives NPV ~$1.26-1.37B, attributable ~$1.06-1.15B, spot-marked FV = (0.5xNAV - 30)/89.9 = $5.55-6.06. Floor corrected: (0.18x1327 - 30)/89.9 = $2.32 -> $2.30; spot-marked floor ~$1.78. Liquidity thin: Q1 cash $15.3M, ~$10M/qtr burn, Taurus waivers noted - bridge-dependent until close."
+ },
+ "verifications": [
+  {
+   "finding_id": 1,
+   "verdict": "CONFIRMED",
+   "fact_checks": [
+    {
+     "claim": "Kabanga FS marks NPV at $8.49/lb nickel (~$18,700/t)",
+     "checked": "Lifezone IR press release, July 18 2025 FS TRS filing: consensus pricing of $8.49/lb Ni ($4.30/lb Cu, $18.31/lb Co). $8.49 x 2,204.62 = $18,717/t.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "July-2025 FS after-tax NPV(8%) = $1.58B (IRR 23.3%)",
+     "checked": "Same FS press release: after-tax NPV8% $1.58B, after-tax IRR 23.3%, pre-production capex $942M, LZM 84% / Tanzania 16% free-carry — all match the board basis.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "AISC = $3.36/lb",
+     "checked": "FS press release: AISC $3.36/lb payable nickel net of by-product credits, first-quartile cost curve.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Spot nickel is $7.43/lb today",
+     "checked": "LME 3M close $16,424/t (Jul 5 2026) = $7.45/lb; TradingEconomics $16,304/t (Jul 6) = $7.40/lb, a 6-month low; June -14%. $7.43/lb sits inside the verified $7.40-7.45 band.",
+     "result": "APPROX"
+    },
+    {
+     "claim": "Deck sits ~14% above market",
+     "checked": "8.49 / 7.43 = 1.143 -> 14.3% premium. Arithmetic verified against confirmed deck and spot.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Spot only kissed the deck for a few weeks in May",
+     "checked": "TradingEconomics: rally above $19,600/t in early May 2026 (deck = $18,717/t), June -14%, late-June $17,200 (2-month low), early-July $16,300 (6-month low). Above-deck window was a few weeks centered on May; exact day boundaries not verifiable.",
+     "result": "APPROX"
+    },
+    {
+     "claim": "Margin $5.13/lb at deck, $4.07/lb at spot, ~21% haircut",
+     "checked": "8.49-3.36=5.13; 7.43-3.36=4.07; 1-(4.07/5.13)=20.7%. Inputs independently confirmed.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Spot-marked NAV plausibly 25-35% lower (NPV compresses faster than margin)",
+     "checked": "Company's OWN FS sensitivity: NPV $909M at $7.00/lb (-42.5%), $2.3B at $10.00/lb. Interpolated to spot $7.43/lb -> ~$1,103M = -30.2% vs $1.58B — dead center of the claimed band; leverage-to-price confirmed.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Spot deck drags $7.04 target toward ~$5-5.50 on the same 0.50x",
+     "checked": "Replicating board formula: (0.84 x $1,103M x 0.50 - $30M) / 89.9M sh = $4.82; band $4.47 (-35%) to $5.20 (-25%). Finding's $5-5.50 is directionally right but slightly generous — true figure ~$4.50-5.20, midpoint ~$4.80.",
+     "result": "APPROX"
+    },
+    {
+     "claim": "Taurus $68M / bridge facility",
+     "checked": "Taurus Mining Finance bridge = $60M (closed Sep 2 2025, 9.25% drawn, 2.25% arrangement fee). $68M = total liquidity Apr 29 2026 ($50M cash + $18.3M undrawn bridge). Board basis's '$60M bridge' is the correct facility size.",
+     "result": "APPROX"
+    },
+    {
+     "claim": "April 2026 equity raise priced at $4.40",
+     "checked": "Business Wire Apr 22/23 2026: $25M registered direct, 5.7M ordinary shares at $4.40. Proceeds earmarked for Burundi/Tanzania exploration + PGM recycling, not Kabanga capex.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Standard Chartered strategic process: multiple offers, change-of-control on table",
+     "checked": "Q1 2026 update (Apr 30) via Crux/StockTitan: SC-led strategic process with multiple offers received, potential asset-level change of control considered, conclusion expected 'shortly'; Jun 8 2026 company response to Reuters specific-bidder article (no comment). No binding agreement announced as of Jul 3 2026.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "DFC due-diligence status",
+     "checked": "Dec 11 2025 PR + Northern Miner: DFC Environmental & Social public consultation and due diligence COMPLETED; further workstreams progressing; explicitly 'no agreements have been reached'.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "July 31 Indonesia RKAB revision date",
+     "checked": "SMM/Mysteel/Indonesia Business Post: RKAB amendment requests due no later than July 31 of current year; 2026 base quota 260-270M wmt (vs 379M in 2025); revisions could add 25-30%, ministry privately floating ~360Mt — live bearish catalyst for spot into end-July.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "FID language drift mid-2026 -> late-2026",
+     "checked": "Dec 11 2025 PR verbatim: 'Mid-2026: Targeted FID for Kabanga Nickel Project and financial close'. 2026 communications (Q1 update, Crux Jun 2026 coverage) now say 'late-2026 FID' / 'funded execution readiness ahead of late-2026 FID'. Roughly two quarters of slippage within the card's window.",
+     "result": "TRUE"
+    }
+   ],
+   "implication_for_card": "The $7.04 target is deck-dependent and the deck is ~14% above a spot that just made a 6-month low ($16.3k/t, $7.40/lb) with a live bearish catalyst (Indonesia RKAB revision window closing July 31, potentially +25-30% quota). Marking the board's own formula to spot using Lifezone's published FS sensitivity (interpolated NPV ~$1.10B at $7.43/lb, -30%) gives a spot-deck target of ~$4.82 (band $4.47-5.20) — slightly BELOW the finding's $5-5.50, so the finding if anything understates the haircut. At live $3.84, computed RR collapses from 2.66 to ~0.8-0.9 on the spot deck; the card must carry a spot-deck variant and the H edge-grade/RR should not be quoted deck-only. The $2.60 floor is unaffected (already models an un-financed developer; 52-wk low $3.07 confirmed via FMP). The 2026-12-31 milestone still technically contains FID, but company language has slipped mid-2026 -> late-2026, leaving near-zero slack — flag slip-to-2027 risk. Partial offset the finding ignores: the SC process has multiple offers with asset-level change-of-control on the table and DFC DD is complete — a strategic buyer prices the asset on a long-term deck, not spot, so the spot-deck variant is a bear-case mark, not a replacement fair value.",
+   "notes": "Verification date 2026-07-03/06; nickel refs: LME 3M $16,424/t (Jul 5), TradingEconomics $16,304/t (Jul 6), May peak >$19,600/t. Company sensitivity anchors: $7.00/lb -> NPV $909M; $8.49 -> $1.58B; $10.00 -> $2.3B. Board share count 89.9M consistent with FMP mcap $345.2M / $3.84. One phrasing correction for the dossier: Taurus bridge facility is $60M; $68M is Apr-29-2026 total liquidity (cash $50M + $18.3M undrawn). Dec 11 2025 PR does NOT name Standard Chartered/SocGen (they are named in later comms) — minor sourcing nit on the board basis, not load-bearing."
+  },
+  {
+   "finding_id": 2,
+   "verdict": "CONFIRMED",
+   "fact_checks": [
+    {
+     "claim": "Spot nickel is weak into July (soft tape)",
+     "checked": "WebSearch of LME/tradingeconomics/westmetall data: LME 3M nickel ~$16,424/t (~$7.45/lb) at 2026-07-05 close, down from ~$17,200/t on June 24 — lowest in 2+ months, and ~12% BELOW the $8.49/lb ($18,718/t) FS deck. Note: at the Apr 30 Q1 call spot was ABOVE the FS deck (2-yr high, +37% off late-2025 low), so the softening is recent and real.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Kabanga AISC is $3.36/lb and first-quartile on the cost curve",
+     "checked": "July-2025 FS (company technical report summary filed 2025-07-18; Crux/discoveryalert corroboration): AISC $3.36/lb payable nickel net of Cu/Co credits; positioned in the lower/bottom quartile of the global nickel cost curve. Caveat: AISC is net of by-product credits, so a broad metals selloff raises effective AISC.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Robustly cash-generative even at $15k/t nickel",
+     "checked": "Arithmetic: $15,000/t = ~$6.80/lb vs AISC $3.36/lb → ~$3.4/lb margin (>100% over AISC). Spot ($16.4k/t) is still above the $15k stress case. Viability at $15k holds on FS costs.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "FS deck price $8.49/lb; after-tax NPV(8%) $1.58B; IRR 23.3%; capex $942M (July 2025 FS)",
+     "checked": "Company FS filing + Dec-11-2025 PR + Crux: all four figures verified verbatim ($8.49/lb long-term consensus deck, $1.58B NPV8 after-tax, 23.3% IRR, $942M pre-production capex).",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Q1 disclosures: StanChart process at term-sheet stage with multiple offers from major miners, sovereign investors, and private equity",
+     "checked": "Q1 2026 PR (Apr 30): 'multiple offers received' (non-binding), StanChart-led, no bidder types named in the PR itself. Q1 call (May 1): process 'very advanced', top priority, 'entertained offers for 100% of the project'. Crux write-up of company disclosures: 'non-binding indications of interest and term sheets from an international list of potential strategic partners, including major miners, sovereign investors, and private equity.' Substance verified; 'term sheet' wording and bidder trio are via the call/Crux, not verbatim in the Q1 PR; nothing binding exists.",
+     "result": "APPROX"
+    },
+    {
+     "claim": "Potential asset-level change of control is on the table",
+     "checked": "Company's own June 8, 2026 PR (response to Reuters bidder speculation): 'all strategic options considered, including a potential asset-level change of control' and the process 'to be concluded shortly.' Q1 call: 100%-of-project offers entertained. Attribution nuance: the explicit CoC wording is from the June 8 PR, not the Apr 30 Q1 PR.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "DFC due-diligence status (finding implies lender processes advanced)",
+     "checked": "Q1 2026 PR: 'The U.S. DFC completed its due diligence with further funding workstreams progressing.' SocGen process continuing (roadshows, pathfinder selection, site visits, independent-engineer reports). No committed debt package announced.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Taurus bridge facility is $68M (task checklist figure; finding text does not cite it)",
+     "checked": "Company PRs Aug 11/Sep 2 2025: facility is $60M senior secured bridge (9.25%, 2.5M warrants @$5.42). Q1 2026: $25M drawn by Mar 31 + $16.7M on Apr 29, $18.3M undrawn. $68M is wrong; $60M is right. Board card's '$60M bridge' is correct; no impact on the finding.",
+     "result": "FALSE"
+    },
+    {
+     "claim": "April 2026 equity raise priced at $4.40",
+     "checked": "Business Wire Apr 22/23 2026: $25M registered direct, 5,700,000 shares at $4.40, closed Apr 23. Proceeds for Burundi/Tanzania exploration + PGM recycling (i.e., NOT Kabanga equity cheque).",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Indonesia RKAB quota revision deadline July 31",
+     "checked": "SMM/Benchmark/ING coverage: 2026 RKAB set at ~260-270M wmt; revision-application window open to July 31, 2026; reported proposal to lift toward ~360M wmt (25-30% more supply). A live bearish nickel overhang exactly on the finding's 'weak nickel into July' axis.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "FID language drift: 'mid-2026' → 'late-2026'",
+     "checked": "Taurus PR (Sep 2025) and Dec 11 2025 PR: FID 'mid-2026'. FY-2025 results (Mar 19, 2026): 'execution readiness for a Final Investment Decision in late 2026.' Q1 2026 call: declined to give a date ('once we hit FID... maintain the timelines'). Drift is company-sourced and real.",
+     "result": "TRUE"
+    },
+    {
+     "claim": "If FID closes via selling 30-49% of the asset, the 84%-attributable NAV in the SoP is wrong on catalyst day",
+     "checked": "Logical implication given verified facts: card FV = 84% x $1.58B NPV less discounts; company has entertained 100% offers and says asset-level CoC is among options with the process concluding 'shortly'; Crux: equity cheque needed is ~mid-$300s-$500M vs LZM market cap ~$345M and $15.3M cash (Mar 31) — so a stake sell-down or CoC is a plausible/likely close structure the card does not model. The finding's 30-49% is a hypothetical scenario, not an asserted fact.",
+     "result": "TRUE"
+    }
+   ],
+   "implication_for_card": "The $7.04 target's structural basis (84% x $1.58B, 0.50x P/NAV re-rate) is at risk of being mis-specified on the very day the catalyst fires: the company itself says all options including an asset-level change of control are being considered, with the StanChart process expected to conclude 'shortly' (June 8 PR) — a partial sell-down (finding's 30-49% case) cuts attributable NAV to 0.84x(1-x)xNPV plus whatever cash/carry terms are struck, and a 100% sale converts LZM into cash+royalty/tech, so the card needs an explicit deal-structure scenario branch before the catalyst, not after. The equity hole is real: ~$340-500M equity cheque (60/40 structure) vs $345M market cap, $15.3M cash at Mar 31 and only $18.3M Taurus headroom, and spot nickel (~$16.4k/t, $7.45/lb) is now ~12% below the $8.49/lb FS deck with the RKAB July-31 revision window a live bearish overhang — supporting the finding's smaller-debt/bigger-equity-hole mechanics. The $2.60 floor is two-sided: financing-failure probability looks LOWER than at underwriting (DFC DD complete, multiple offers, process near conclusion), but weak nickel plus dilution overhang keeps the floor level itself defensible. The 2026-12-31 milestone survives but with zero slack: company language slid from mid-2026 (Dec 2025) to late-2026 (Mar 2026 FY results), and the near-term dated event is now the strategic-process conclusion, which the card does not separately date. Net: keep WATCH; re-underwrite the SoP conditional on announced deal structure; the finding stands with one attribution nuance (change-of-control wording came in the June 8 PR and term-sheet language via the call/Crux, not verbatim in the Apr 30 Q1 PR) and one checklist correction (Taurus is $60M, not $68M — the board card already had this right).",
+   "notes": "Verification date 2026-07-06 (task dated 2026-07-03). Primary sources: LZM Q1 2026 PR (ir.lifezonemetals.com, Apr 30 2026), June 8 2026 Business Wire response-to-media PR, Q1 call transcript (Investing.com), Dec 11 2025 FID PR, FY2025 results PR (Mar 19 2026), Taurus $60M PRs (Aug/Sep 2025), $25M@$4.40 raise PRs (Apr 22/23 2026), July 2025 FS filing, SMM/ING RKAB coverage, LME nickel quotes. FMP has no nickel commodity symbol; nickel price via web (LME 3M ~$16,424/t at Jul 5 close). LZM quote at check: $3.84 (card shows live 3.815). The only FALSE was the task checklist's $68M Taurus figure, which appears nowhere in the finding text; the finding's own load-bearing claims all verified TRUE or APPROX-TRUE."
+  },
+  {
+   "finding_id": 3,
+   "verdict": "CONFIRMED",
+   "fact_checks": [
+    {
+     "claim": "Spot nickel today ~$16,400/t (~$7.44/lb), after a June whipsaw",
+     "checked": "WebSearch LME/TradingEconomics/yesstainless: LME 3M closed ~$16,395-16,424/t in first days of July 2026 (= $7.44-7.45/lb); June futures fell ~14% MoM from May multi-year highs after quota-increase speculation, ESDM denied any increase June 24",
+     "result": "TRUE"
+    },
+    {
+     "claim": "June nickel whipsaw was administered by the Jakarta ministry (RKAB policy), demonstrating discretionary control of supply",
+     "checked": "MINING.com / ING / tiscoco / SMM coverage: May rally on 2026 RKAB cut (379M->260-270M wmt, ~-30%), June collapse on rumored expansion to 360M t, June 24 ESDM denial; USGS: Indonesia ~2.6Mt of 3.9Mt mined nickel 2025 = ~67% (so '60%+' is conservative-true)",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Kabanga FS deck price $8.49/lb Ni and AISC $3.36/lb",
+     "checked": "Lifezone FS Technical Report Summary press release (filed 2025-07-18, ir.lifezonemetals.com/businesswire): consensus pricing $8.49/lb Ni, $4.30/lb Cu, $18.31/lb Co; AISC $3.36/lb net of by-products, first-quartile",
+     "result": "TRUE"
+    },
+    {
+     "claim": "July-2025 FS after-tax NPV(8%) $1.58B, IRR 23.3%, initial capex $942M",
+     "checked": "Same FS filing PR + Seeking Alpha 2026-06-25 corroboration; all three figures match the board card exactly",
+     "result": "TRUE"
+    },
+    {
+     "claim": "$68M liquidity via the Taurus bridge plus April equity raise",
+     "checked": "Taurus facility is $60M (closed Sep 2025, 9.25% on drawn); Q1-2026 PR: $41.7M drawn by Apr 29 2026, $18.3M undrawn, cash $15.3M at Mar 31; ~$68M = April-2026 TOTAL LIQUIDITY (~$50M cash incl. $25M raise proceeds + $18.3M undrawn). Finding says 'liquidity' - correct framing; anyone reading $68M as the facility size would be wrong ($60M)",
+     "result": "APPROX"
+    },
+    {
+     "claim": "April 2026 equity raise at $4.40, stock now below the raise price",
+     "checked": "Business Wire Apr 22/23 2026: 5,700,000 ordinary shares at $4.40, ~$25M gross registered direct, closed Apr 23; FMP live quote LZM $3.84 (day range $3.75-3.91), below $4.40",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Standard Chartered strategic process: multiple offers received, no term sheets disclosed (term-sheet conversion is the awaited event)",
+     "checked": "Company Q1 2026 PR (Apr 30 2026): 'Negotiations progressed for a potential strategic investment into the Kabanga Nickel Project led by Standard Chartered Bank, with multiple offers received'; no term-sheet or binding-agreement disclosure anywhere; Dec 11 2025 PR caveat 'no agreements have been reached'; change-of-control not explicit but 'value accretive project divestiture' listed as an option and Reuters bidder speculation targeted the project",
+     "result": "TRUE"
+    },
+    {
+     "claim": "DFC due diligence completed",
+     "checked": "Company Q1 2026 PR: 'The U.S. DFC completed its due diligence with further funding workstreams progressing'; Dec 11 2025 PR: DFC E&S public consultation and due diligence completed. Note: completion = due diligence (esp. E&S), NOT a funding decision, which remains pending",
+     "result": "TRUE"
+    },
+    {
+     "claim": "Reuters-driven bidder-speculation episode LZM declined to comment on",
+     "checked": "LZM Business Wire PR 2026-06-08 'Lifezone Metals Response to Media Report': aware of Reuters article speculating on a specific bidder for Kabanga; 'does not comment on market speculation in relation to any specific parties'",
+     "result": "TRUE"
+    },
+    {
+     "claim": "July 31 Indonesia RKAB revision outcome is a dated decisive event",
+     "checked": "SMM / Benchmark / Indonesia Business Post / APNI: supplementary RKAB quota applications accepted only 1-31 July 2026, ministry review/decision at end-July; possible 25-30% quota uplift under review; ESDM denied a pre-decision increase June 24",
+     "result": "TRUE"
+    },
+    {
+     "claim": "'Mid-2026' FID is now, secondary coverage drifting to 'late-2026' language",
+     "checked": "Company Dec 11 2025 PR: 'Mid-2026: Targeted FID... and financial close of multi-source funding package'; Q1 2026 PR (Apr 30) drops explicit timing ('FID in 2026' / 'pre-FID activities' only); Crux Investor now headlines 'Ahead of Late-2026 FID' and discoveryalert says 'FID targeted for late 2026'. Drift confirmed - and arguably company-side too, not just secondary",
+     "result": "TRUE"
+    },
+    {
+     "claim": "FID negotiation elevated to presidential-level US-Tanzania talks",
+     "checked": "The Citizen / State House: June 8-9 2026 briefing of President Samia Suluhu Hassan (Liddell + Treasury Registrar), 'outstanding structural issues between institutional investors and the state have been resolved'; Dec 8 2025 President-to-acting-US-Ambassador talks on accelerating Kabanga agreements; Northern Miner: 'Washington and Dodoma deepen talks on political-risk backing'. Presidential on the TANZANIAN side only; US side is ambassador/DFC level - no verifiable US-president involvement",
+     "result": "APPROX"
+    },
+    {
+     "claim": "Kabanga is one of the only large high-grade development-ready sulfide sources outside the Indonesia/China complex",
+     "checked": "FS reserves 52.2Mt at 1.98% Ni (18-yr LOM), first-quartile AISC, FS complete + early works funded; qualitative superlative ('one of the only') not exhaustively checkable but consistent with the asset's widely-cited status as the largest development-ready Ni-sulfide deposit; treat the superlative itself as directional",
+     "result": "UNVERIFIABLE"
+    }
+   ],
+   "implication_for_card": "The finding survives adversarial review and the card's structure holds, with three calibration notes. (1) $7.04 target: the NAV inputs it rests on are verbatim-correct (NPV $1.58B @ $8.49/lb, 84% attributable, 89.9M shares confirmed by $345M mcap / $3.84), and the finding's core argument — that the catalyst is financing/policy-driven, not LME-driven — is factually supported (DFC dd complete Q1-26, StanChart multiple offers per company PR, June-26 State House resolution of investor-state structural issues, ~67% of mined supply quota-administered by Jakarta). But note spot Ni is $7.44/lb, ~12% below the FS deck; a spot-marked NAV would be materially lower, so the $7.04 is deck-price NAV cushioned only by the 0.50x haircut — the LME print prices the TERMS, as the finding says, and weaker terms at spot argue for keeping $7.04 as a cap, not raising it. (2) 2026-12-31 milestone: still the right date, now with less slack — the company's own 'mid-2026' financial-close target (Dec-11-25 PR) has effectively lapsed unannounced and coverage says late-2026, so Dec-31 is the operative window with early-2027 slip as a live tail risk; the two verifiable interim triggers are exactly as the finding states: the ~July-31 RKAB supplementary-quota outcome and any disclosed StanChart term-sheet conversion (offers exist, no term sheets disclosed — the G2 concrete-commitment fail stands, WATCH tier remains correct). (3) $2.60 floor: intact — it was built for financing-failure and is spot-independent; stock at $3.84 sits below the $4.40 April raise (real-money mark above market) and above the $3.07 52-wk low. One caution for the card text: cite Taurus as a $60M facility ($18.3M undrawn) with ~$68M April liquidity — not a '$68M facility' — and note DFC completion is due diligence, not a funding decision.",
+   "notes": "Verification run 2026-07-03 (adversarial). Primary sources: Lifezone Q1 2026 results PR (Apr 30 2026, Business Wire/financialcontent mirror of SEC ex-99.1), Dec 11 2025 'Advances Toward 2026 FID' PR (ir.lifezonemetals.com), FS filing PR Jul 18 2025, Apr 22/23 2026 offering PRs, Jun 8 2026 Response to Media Report, FMP live quote. Secondary: USGS MCS 2026 (Indonesia 2.6/3.9Mt = ~67%), SMM/Benchmark/APNI (RKAB 1-31 July window), MINING.com/ING/yesstainless (June -14% to ~$16,395/t, Jun 24 ESDM denial), Crux Investor ('late-2026 FID', '$68M liquidity', 'multiple offers'), The Citizen/State House (Jun 8-9 2026 presidential briefing). Could NOT refute any load-bearing claim. Two approximations found: '$68M' is liquidity not facility size (facility = $60M Taurus), and 'presidential-level US-Tanzania talks' overstates the US side (ambassador/DFC level; presidential only on the Tanzanian side). Neither reverses the finding's implication. Term sheets and change-of-control remain undisclosed/unverifiable — correctly treated by the finding as the conversion event to watch, not a current fact. Board-basis footnote: the card's 'no binding agreements, quarter-dated only' as of Dec 11 2025 remains true as of today; also the card's net-debt ~$30M estimate now looks conservative vs actual (~$50M cash vs $41.7M drawn Taurus ≈ net cash), a minor tailwind to FV, offset by 5.7M new shares (dilution already roughly in the 89.9M count)."
+  }
+ ],
+ "synthesis": {
+  "dossier": {
+   "symbol": "LZM",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_SOFT",
+   "dated_milestone": "2026-12-31",
+   "thesis_summary": "Single-asset developer NAV re-rate on Kabanga Ni-sulfide (LZM 84%, Tanzania 16% free-carry) FID + financial close. Three live financing tracks: Taurus $60M senior secured bridge ($41.7M drawn 4/29/26, $18.3M undrawn), SocGen-led project finance (DFC due diligence COMPLETE per Q1-26 PR — a DD milestone, not a funding decision), and a StanChart-led strategic process at multiple-offers stage with asset-level change of control explicitly on the table (6/8/26 PR) and conclusion guided 'shortly'. No binding agreements as of early July 2026; company FID language has slid mid-2026 (12/11/25 PR) to late-2026 (FY-25 results 3/19/26), so 2026-12-31 is the operative outer bound with zero slack. Target is DUAL-MARKED: $7.04 is a deck-price cap (FS deck $8.49/lb Ni, verified) conditional on FID/partner terms struck on a long-term deck; spot Ni ~$7.43/lb (6-mo low, ~14% below deck) marks the same formula at ~$4.82 (band $4.47-5.20 via Lifezone's own FS NPV sensitivity). Two dated interim triggers precede the milestone: Indonesia RKAB supplementary-quota decision ~Jul-31 (potential +25-30% supply, bearish deck overhang) and any StanChart process announcement.",
+   "resolution_driver": "Supply_timing",
+   "staging": true,
+   "valuation_method": "sop",
+   "fair_value_target": 7.04,
+   "downside_floor": 2.3,
+   "win_prob": null,
+   "kill_risk": "Mid-2026 FID target lapsed with zero binding agreements and company language now 'late-2026', leaving no slack inside the 12-31 window — slip-to-2027 is a live tail (BHP walked from this asset in 2025; the 'very advanced' StanChart process has run since Dec-2025 without closing). Deal-structure risk ON catalyst day: a 30-49% sell-down or 100% asset sale — both on the table per the 6/8/26 PR — restructures the 84%-attributable NAV the SoP target assumes at the moment it fires. Deck risk: spot Ni $16.3-16.4k/t ($7.40-7.45/lb) sits ~14% below the $8.49/lb FS deck at a 6-month low with the RKAB ~Jul-31 quota decision a dated bearish overhang; company FS sensitivity puts NPV at ~$1.10B at spot (-30% vs $1.58B), collapsing spot-marked R:R below the kill line. Balance sheet: Q1 cash $15.3M, ~$10M/qtr burn, $18.3M undrawn bridge, Taurus covenant waivers — bridge-dependent until close; residual resolution as a dilutive raise or below-NAV divestiture instead of an FID re-rate.",
+   "discrepancies": [
+    "downside_floor: board 2.60 -> 2.30 — board's own stated 0.18x attributable-NAV basis reproduces (0.18x1327-30)/89.9 = $2.32, not $2.60 (which implies 0.20x); level was defensible but the stated multiplier did not reproduce; spot-marked stress floor ~$1.78 noted, $2.60 retained only as the 0.20x variant",
+    "fair_value: $7.04 retained as DECK-PRICE CAP only — spot-marked variant $4.82 (band $4.47-5.20) computed from Lifezone's own FS sensitivity ($909M NPV @ $7.00/lb, $1.58B @ $8.49, $2.3B @ $10.00; interpolated ~$1,103M @ $7.43/lb, -30%), same 0.50x/net-debt/share formula; supersedes the prior dossier's margin-scaled $5.55-6.06, which understates the haircut because NPV compresses faster than margin",
+    "computed_rr at the 07-02 seat entry $3.73: deck 2.93 (floor 2.60) / 2.31 (floor 2.30), but SPOT-DECK 0.96 / 0.76 (band 0.52-1.30) — below the CRO's own 1.33 half-R:R kill line under every spot variant; the H edge-grade and RR 2.66/2.93 must not be quoted deck-only",
+    "structure branch missing from board SoP: 84% attributable is at risk of mis-specification on catalyst day given multiple offers incl. asset-level change of control (6/8/26 PR) — target must be re-underwritten on announced deal structure before being treated as fired",
+    "milestone: company-sourced drift 'mid-2026' (12/11/25 PR) -> 'late-2026' (FY-25 results 3/19/26); 2026-12-31 kept as outer bound (PENDING_SOFT); two dated interim triggers added: RKAB supplementary-quota decision ~2026-07-31 and StanChart process conclusion ('shortly')",
+    "sourcing corrections: Dec-11-25 PR does NOT name StanChart/SocGen (named in later comms); Taurus is a $60M facility ($68M = Apr-29-26 total liquidity: ~$50M cash + $18.3M undrawn); DFC 'completed' = due diligence only, not a funding decision",
+    "net debt: board ~$30M stands only as an at-FID estimate with bridge fully drawn; today ~net cash (~$50M cash vs $41.7M drawn) — minor FV tailwind, offset by the April-26 $25M raise at $4.40 (5.7M shs) already inside the confirmed 89.9M count",
+    "live_price: board 3.815 (asof 6/08) -> 3.84 (7/03; 52w 3.07-6.40; mcap $345M confirms 89.9M shares); stock trades below the $4.40 April raise price"
+   ],
+   "dossier_note": "SYNTHESIS 2026-07-03 (post-audit rebuild; integrates blind re-underwrite + three adversarially CONFIRMED external findings). Catalyst verified live and unfired: Kabanga FID/financial close, no binding agreement as of early July; PENDING_SOFT, staging=true, WATCH-tier G2 fail stands (offers exist, no disclosed term sheets — term-sheet conversion IS the awaited event). FV arithmetic reproduces exactly: 84% x $1.58B NPV8 (verified verbatim: $8.49/lb deck, IRR 23.3%, AISC $3.36/lb, capex $942M) -> (0.5x1327-30)/89.9 = $7.04, shares confirmed vs $345M mcap. But the deck FAILS at spot: LME Ni ~$16.4k/t = $7.43/lb, ~14% below deck, 6-mo low, June -14% on Indonesia RKAB politics (~67% of mined supply quota-administered; supplementary-quota window closes Jul-31, up to +25-30% floated). Spot-marked FV $4.82 (4.47-5.20) via the company's own sensitivity — carried as the bear-case/risk mark, NOT replacement fair value: the catalyst prices on TERMS, and a strategic acquirer (multiple offers, CoC on table, DFC DD complete, Tanzanian investor-state structural issues resolved at presidential level, June-26) underwrites a long-term deck. $7.04 therefore held as a cap; all R:R and kill-line tests must be dual-quoted. Floor corrected to $2.30 per the board's own 0.18x basis; financing-failure probability looks LOWER than at underwriting, but weak nickel + the ~$340-500M equity cheque vs $345M mcap keeps the floor level right. Liquidity thin: Q1 cash $15.3M, ~$10M/qtr burn, waivers — bridge-dependent until close."
+  },
+  "hallucination_audit": {
+   "redebate_claims": [
+    {
+     "claim": "(CRO) FMP live quote $3.73 vs dossier $3.815 (asof 2026-06-08)",
+     "verdict": "ACCURATE",
+     "why": "Consistent with the verified tape: $3.84 on 7/03 with day range 3.75-3.91, 52w low $3.07 FMP-confirmed; $3.73 on 7/02 sits inside that trajectory and nothing in the live record contradicts it."
+    },
+    {
+     "claim": "(CRO) Recomputed SOP R:R = (7.04-3.73)/(3.73-2.60) = 2.93; edge IMPROVED ~10% vs dossier 2.66",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "Arithmetic exact (3.31/1.13=2.93). But it is true arithmetic on unexamined inputs: the $7.04 numerator rests on an $8.49/lb deck verified to be ~14% above a spot at 6-month lows; on the spot-marked target ($4.82) the same formula gives ~0.96, and on the corrected $2.30 floor, 0.76. The 'improvement' is a price wiggle against stale axes."
+    },
+    {
+     "claim": "(CRO) 'nowhere near the half-R:R (1.33) kill line'",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "True on the build deck only. On the spot-marked deck the entry R:R (0.52-1.30 band, mid 0.76-0.96 depending on floor) is BELOW the CRO's own kill line — the single most consequential omission, though the CRO's mandate explicitly forbade re-underwriting the axes, so it is an architecture gap, not a fabrication."
+    },
+    {
+     "claim": "(CRO) Tradeability: ~303k sh / ~$1.1M notional, $335M mkt cap, intraday 3.70-4.06, limit-order guidance",
+     "verdict": "ACCURATE",
+     "why": "Mkt cap reproduces exactly (89.9M x $3.73 = $335M; share count independently confirmed by 7/03 $345M / $3.84). Volume and range figures are unverified externally but plausible and uncontradicted; the microstructure advice is sound."
+    },
+    {
+     "claim": "(CRO) 'even a fill up at $3.90 preserves R:R 2.42 (~91% of dossier)'",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "Arithmetic exact (3.14/1.30=2.42) — but deck-only; at $3.90 on the spot mark the R:R is ~0.58-0.71. Slippage tolerance was quoted against a target that no longer holds at spot."
+    },
+    {
+     "claim": "(CRO) Window: milestone 2026-12-31 (~182d), equity has no expiry, 'supply-timing milestones in mining do slip, but equity carries no decay penalty'",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "Day-count and no-expiry logic correct. But the slip was not hypothetical: company-sourced drift mid-2026 (12/11/25 PR) -> late-2026 (FY-25 results 3/19/26) was already in the public record on 07-02, leaving zero slack inside the window — a knowable fact the check did not surface."
+    },
+    {
+     "claim": "(CRO) 'Supply_timing CONFIRMED. Unique in this batch.'",
+     "verdict": "ACCURATE",
+     "why": "Driver matches the verified thesis (FID/financing timing, not commodity beta — though the deck dependence blurs this more than the card admits). Batch-uniqueness is internal bookkeeping, uncontradicted."
+    },
+    {
+     "claim": "(BOARD) FS anchors: NPV8 $1.58B @ $8.49/lb, IRR 23.3%, AISC $3.36/lb, capex $942M, 84%/16% split",
+     "verdict": "ACCURATE",
+     "why": "Every figure verified verbatim against the July-2025 FS TRS filing by all three adversarial checks. The board card's factual substrate is clean."
+    },
+    {
+     "claim": "(BOARD) FV $7.04 = (0.5 x 1327 - 30)/89.9 with 89.9M shares",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "Reproduces exactly and the share count is confirmed post the April-26 raise. Defensible at its 06-08 asof (spot then near/above deck). Consumed unexamined on 07-02 it was stale twice over: deck 14% above spot (spot-marked FV ~$4.82), and no deal-structure branch despite change-of-control being publicly on the table (6/8/26 PR predates the seat)."
+    },
+    {
+     "claim": "(BOARD) Floor $2.60 = 'stalled developer at ~0.18x attributable NAV with dilution'",
+     "verdict": "WRONG",
+     "why": "The stated basis does not reproduce: (0.18 x 1327 - 30)/89.9 = $2.32, not $2.60; $2.60 implies 0.20x. The LEVEL is defensible as judgment (verifications call it intact/defensible), but the arithmetic label is internally inconsistent — the one genuine numeric error in the pipeline, caught by the blind re-underwrite, not the external review."
+    },
+    {
+     "claim": "(BOARD) Net debt ~$30M (post $75M H2-25 raise + $60M bridge, less burn)",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "$60M bridge size correct (the external's $68M was liquidity, not facility). But ~$30M holds only as an at-FID estimate with the bridge fully drawn; actual position today is ~net cash (~$50M vs $41.7M drawn). The '$75M H2-25 raise' sub-detail appears nowhere in the verified record — unconfirmed, though not contradicted."
+    },
+    {
+     "claim": "(BOARD) Catalyst basis: 'named counterparties DFC, Standard Chartered, Societe Generale... as of Dec 11 2025 update, no binding agreements, quarter-dated only'",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "Counterparties are real and 'no binding agreements' remains true through 07-03. But the Dec-11-25 PR does not name StanChart/SocGen (they appear in later comms) — a sourcing misattribution — and the 'mid-2026' target it cites had already drifted to 'late-2026' in company language by March 2026."
+    },
+    {
+     "claim": "(BOARD) computed_rr 2.66 and edge_grade H",
+     "verdict": "ACCURATE_BUT_INCOMPLETE",
+     "why": "(7.04-3.815)/(3.815-2.60) = 2.65 reproduces. But both target and floor carry the defects above; on corrected axes the spot-deck R:R is sub-1, so grading the edge H deck-only overstated it as of the seat date."
+    },
+    {
+     "claim": "(BOARD) Floor sits below 52-wk low $3.07, embedding financing-failure de-rate",
+     "verdict": "ACCURATE",
+     "why": "52-wk low $3.07 FMP-confirmed; the floor concept (un-financed developer, spot-independent) survived all three adversarial reviews."
+    }
+   ],
+   "overall": "The user's 'full of hallucinations' suspicion is NOT supported: across 14 audited claims there are ZERO hallucinations — every fact asserted by the board card and the 07-02 CRO exists in the live record, and the FS substrate verified verbatim. There is exactly ONE wrong number (the board floor's stated 0.18x basis reproduces $2.32, not $2.60 — a label/arithmetic mismatch dating to 06-06, found by our own blind re-underwrite). What the user detected is real but is architectural, not epistemic: eight claims are ACCURATE_BUT_INCOMPLETE because the CRO's mandate explicitly forbade re-underwriting the target/floor, so exact arithmetic was run on a 24-day-old deck that a -14% nickel move (June RKAB whipsaw) had invalidated — the kill-line test passed on the build deck (2.93) while failing on the spot deck (0.76-0.96). No lane in the 07-02 pipeline owned re-marking commodity-linked SoP axes between board asof and seat date. Recommended fix: a deck-mark gate at CRO time for any commodity-deck SoP card (auto-recompute the target at spot via the issuer's own published sensitivity; kill-line must pass on BOTH decks or the seat blocks/escalates), plus a structure-branch requirement when change-of-control is publicly on the table.",
+   "convergence_with_external": "STRONG convergence — the blind same-day production dossier (D), which never saw the external findings, independently reached the external reviewer's substance on every major axis: (1) deck fails at spot (D: Ni 8-12% below deck, spot FV $5.55-6.06; external: 14% below, spot FV $4.47-5.20 — same direction/mechanism, D's margin-scaling method understates the haircut because NPV compresses faster than margin, so the adversarially-anchored company-sensitivity band supersedes it); (2) milestone drift mid-2026 -> H2/late-2026 with 12-31 as outer bound and PENDING_SOFT status — near-verbatim agreement; (3) financing fragility ($15.3M cash, ~$10M/qtr burn, $41.7M drawn Taurus, waivers) — identical; (4) StanChart multiple-offers/no-binding state — identical; (5) D additionally caught the $2.60->$2.32 floor arithmetic error that the external review missed entirely. Divergences are minor: D did not model the change-of-control/attributable-% scenario branch (external finding 2's core contribution) and its spot-FV band ran ~15% generous. CONCLUSION: the pipeline model demonstrably CAN re-underwrite this name correctly when asked — the 07-02 divergence the user saw was a MANDATE gap (nobody on 07-02 was tasked with re-marking the axes), not model unreliability or hallucination."
+  },
+  "seat_recommendation": "RECOMMEND (human's call to execute): HOLD the existing 2% staging seat but FREEZE it — no adds, no promotion to a full seat — and re-stamp its axes with the corrected dossier; this seat should NOT be opened fresh today on the corrected numbers. Recomputed R:R at the $3.73 entry: BUILD DECK (FV $7.04): 2.93 on the card's $2.60 floor, 2.31 on the corrected $2.30 floor — above the 1.33 kill line. SPOT-MARKED DECK (FV $4.82, band $4.47-5.20, from Lifezone's own FS sensitivity at ~$7.43/lb Ni): 0.96 on the $2.60 floor, 0.76 on the $2.30 floor, full band 0.52-1.30 — BELOW the CRO's own half-R:R kill line under every variant. Mechanical application of the sleeve's kill rule to corrected axes therefore says CLOSE (live ~$3.84, roughly +3% vs entry, cost-free exit); flag that option honestly. The case for the conditional hold instead: this catalyst prices on TERMS, not spot — verifications confirmed the StanChart process is at conclusion stage (multiple offers, asset-level change-of-control on the table per 6/8/26 PR, DFC due diligence complete, Tanzanian investor-state issues resolved at presidential level), and a strategic acquirer underwrites a long-term deck, making the spot mark a bear-case scenario rather than fair value; the floor is spot-independent and defined risk from entry is ~30-38%. Conditions on the hold: (1) hard block on scaling until a disclosed term sheet or binding agreement converts PENDING_SOFT -> PENDING_HARD and fixes the attributable % so the SoP can be re-underwritten on the ACTUAL deal structure (a 30-49% sell-down or 100% sale changes the target's basis on catalyst day); (2) add two dated interim triggers to the seat stamp: Indonesia RKAB supplementary-quota decision ~2026-07-31 (adverse quota lift = bearish deck overhang materializing) and any StanChart process announcement ('shortly'); (3) invalidation as stamped PLUS: FID language slipping past 2026, a dilutive raise, or a below-NAV divestiture -> close immediately; (4) nickel closing most of the gap to the $8.49 deck is the only condition that restores a promotable R:R. Pipeline follow-up regardless of the seat decision: institute the CRO deck-mark gate (dual-deck kill-line test) so a stale commodity deck can never again pass tradeability review unexamined."
+ }
+}
