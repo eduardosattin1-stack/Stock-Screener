@@ -1,0 +1,184 @@
+{
+ "generated_for": 5,
+ "dossiers": [
+  {
+   "symbol": "DDL",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_HARD",
+   "dated_milestone": "2027-02-05",
+   "staging": false,
+   "resolution_driver": "Foreign_regulator",
+   "valuation_method": "capital_return",
+   "fair_value_target": 3.9,
+   "downside_floor": 1.7,
+   "win_prob": 0.85,
+   "thesis_summary": "Definitive SPA (Feb 5, 2026) to sell Dingdong's China business to Meituan's Two Hearts unit for US$717M cash plus a right to sweep up to US$280M of BVI cash pre-close; shareholder approval done (AGM Mar 27); sole substantive open gate is SAMR anti-monopoly clearance. Company has committed (Feb 10 6-K) to return not less than 90% of post-close cash via buybacks/dividends — roughly $3.9/ADS returned against a $1.975 tape, with total post-close cash ~$4.3/ADS on 216.6M ADS. SPA carries a 12-month long-stop (~Feb 5, 2027, extendable) and a US$75M buyer break fee if antitrust clearance fails despite company cooperation. Deal verified unfired: Q1 6-K (May 22) states verbatim the transaction has not been completed; no clearance/closing announcement through Jul 6, 2026.",
+   "kill_risk": "Two-part residual: (1) SAMR review of dominant instant-retail player Meituan absorbing the #1 fresh-grocery e-tailer runs long or attaches conditions, pushing past the Feb-2027 long-stop where the deal becomes terminable (the $75M break fee ≈ only $0.35/ADS consolation); (2) the >=90% capital return is a stated INTENTION, not a binding covenant — terms are set post-close by a founder-controlled dual-class board, so even on a clean close the cash could be returned slowly/partially and the stock re-rate to a holdco-discount rather than the ~$3.9 cash value. Market pricing at $1.975 (below even consolidated net cash of $2.15/ADS) says the tape already charges for both.",
+   "discrepancies": [
+    "dated_milestone: board 2026-12-31 -> live 2027-02-05 — board date was a house-invented window (skeptic flagged it); the Feb 5 SPA 6-K in fact discloses a binding outer date the skeptic also missed: 'may be terminated if closing does not occur within 12 months' (extendable by mutual consent), i.e. long-stop ~2027-02-05 with tiered break fees ($150M buyer walk / $75M antitrust-fail / $75M seller)",
+    "fair_value_target: board 3.18 -> live 3.90 — board number matches consideration-only math (717/216.6=3.31 with haircut) and ignores the US$280M BVI cash sweep; live arithmetic: (717 consideration + 280 sweep + 6 pre-existing parent cash - ~70 tax/costs/interim burn) = ~$933M x 90% return commitment / 216.6M ADS (324,883,084 ordinary / 1.5; 2 ADS = 3 shares) = $3.88",
+    "downside_floor: board 1.90 -> live 1.70 — on a break the $2.15/ADS consolidated net-cash headline is not parent-accessible (Q1 6-K: RMB3,448.7M of the cash/ST-investments sits in held-for-sale BVI perimeter vs RMB371.2M ~ $54M at continuing ops); floor = 52-week-low zone $1.65 (~0.77x consolidated net cash, where the cash-box traded pre-deal-conviction) + up to $0.35/ADS from the US$75M buyer break fee in the SAMR-fail branch",
+    "resolution_driver: board Refi_restructuring -> live Foreign_regulator — there is no refinancing or restructuring anywhere in this situation; it is an M&A close gated solely by SAMR anti-monopoly clearance (Deal_close_generic would be the acceptable alternate tag)",
+    "live_price: board 1.965 -> live 1.975 (minor tape drift; 52wk range 1.65-3.41)",
+    "win_prob: board null -> 0.85 — SAMR domestic-deal clearance base rate high and current policy tape favors consolidation (post price-war M&A pivot); discount for Meituan-dominance Phase-2 risk; ~5 months elapsed since filing without decision is consistent with a normal extended review, not distress"
+   ],
+   "dossier_note": "All facts re-verified from primary SEC 6-Ks (Feb 5 SPA, Feb 10 proceeds, May 22 Q1) on 2026-07-06. UNFIRED: Q1 6-K verbatim 'the transaction has not been completed... including the receipt of anti-monopoly clearance from the SAMR'; no clearance/closing 6-K or PR through Jul 6 (latest filing May 26 Form 3; June news flow only passing mentions). Milestone correction: board's 2026-12-31 was a house window and the prior skeptic's 'genuinely undated' is ALSO wrong — the SPA has a 12-month termination right => long-stop ~2027-02-05 (extendable by mutual consent), backed by tiered break fees incl. US$75M payable BY Meituan if SAMR clearance fails despite company cooperation. That makes this dated+binding => PENDING_HARD, staging=false. TARGET ARITHMETIC (capital_return): ADS count 216.59M (324,883,084 Class A+B ordinary / 1.5; 2 ADS = 3 shares — matches live $427.7M mkt cap at $1.975). Parent gross = $717M consideration (90% at close, 10% after tax settlement) + up to $280M BVI sweep (right runs to Aug 31, 2026; Dec-31-25 BVI net cash ~RMB3,095M ~ $430-440M so 280 leaves ~$150-160M vs the $150M retention floor — sweep just fits, small shortfall-adjust risk; Q1 shows ~$48M already moved up) + ~$6M pre-existing parent cash = ~$1,003M; less ~$35M Bulletin-7 indirect-transfer tax est. (10% x gain; large historical basis; the 10% holdback exists for this), ~$20M deal costs, ~$15M overseas burn => ~$933M post-close cash ~ $4.31/ADS; company commits >=90% to buybacks/dividends => ~$3.88/ADS returned. fair_value_target 3.90 credits ZERO for the retained overseas business (Q1 overseas rev $20.2M +194% y/y) and the 10% retained cash (~$0.43/ADS) — upside beyond target if the stub gets any value. Board's 3.18 is consideration-only and stale. FLOOR: prior skeptic's correction CONFIRMED — consolidated net cash RMB3,210.6M = $2.15/ADS but cash+ST-inv inside the BVI (sold) perimeter is RMB3,448.7M vs only RMB371.2M (~$54M) at continuing ops; on a break the parent cash-box is mostly trapped onshore => floor 1.70 (52wk low 1.65 ~ 0.77x net cash, + up to $0.35/ADS break fee in the antitrust-fail branch). R:R at $1.975: up $1.93 vs down $0.28 ~ 6.9:1 (board's 18.7 R:R was computed off the stale floor/target pair). Consideration remains subject to net-cash/NWC adjustment and leakage deductions; transition-period P&L accrues to Buyer (China biz cash-generative, so adjustment risk skews small). Capital-return is an intention (board-set terms post-close), not a covenant — reflected in kill_risk, not the floor."
+  },
+  {
+   "symbol": "THRM",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_SOFT",
+   "dated_milestone": null,
+   "thesis_summary": "Stock-for-stock Reverse Morris Trust in which Gentherm ACQUIRES Modine's Performance Technologies (SpinCo): THRM issues new shares equal to 40% of the pro forma fully diluted count to former SpinCo holders; existing THRM holders retain 60% and receive NO cash and NO fixed consideration — there is no spread to clip. The live pending event is deal close itself, guided Q4 CY2026 (special-meeting date still blank in the July 2, 2026 S-4; Outside Date 2027-03-31, extendable to 2027-06-30 for regulatory only). HSR antitrust was already cleared via early termination 2026-03-26; remaining gates are the Gentherm shareholder vote (Share Issuance + Charter Amendment), the IRS private-letter ruling, and consummation of the Separation/Distribution with SpinCo financing (Gentherm's own $550M revolver was refinanced 2026-06-29). Upside is a post-close re-rating on pro forma ~$2.6B revenue / ~$322M EBITDA (incl. $25M synergies), not an event-clipped convergence.",
+   "resolution_driver": "Deal_close_generic",
+   "staging": true,
+   "valuation_method": "rerating_multiple",
+   "fair_value_target": 40,
+   "downside_floor": 27,
+   "win_prob": null,
+   "kill_risk": "Even if the merger closes on schedule, THRM common captures no contractual value at close — the entire payoff is a market re-rating of a bulked-up, lower-margin cyclical auto supplier, and at the live tape (~$33.91) the pro forma company already trades at ~6.8x gross EV/EBITDA on the $322M synergy-inclusive guide, roughly THRM's own standalone multiple — i.e., the re-rating is substantially priced. Residuals: (1) exchange-ratio adjustment risk — if the IRS ruling's Overlap Shareholder counting falls short of the ~50.5% Section 355(e) threshold, the ratio adjusts up toward 50.5% for SpinCo holders (economically offset by design via reduced SpinCo Cash Distribution / potential Gentherm Special Dividend, but a dilution-optics overhang); (2) the spent HSR clearance respawns if close slips past ~2027-03-26 (new filing required 12 months after early termination); (3) no floor — downside is the standalone cyclical trading range (52-wk low $27), market-dependent, with $470.7M pro forma debt post-close.",
+   "discrepancies": [
+    "resolution_driver: board US_antitrust -> live Deal_close_generic — HSR early termination was granted 11:25 a.m. ET 2026-03-26 per the S-4 (antitrust gate FIRED before the board's 2026-06-08 valuation date); the remaining gates are the THRM shareholder vote, IRS private-letter ruling, and Separation/Distribution + SpinCo financing",
+    "catalyst_status: board treated as dated/hard (milestone 2026-12-31) -> live PENDING_SOFT — close guided only 'fourth quarter of calendar year 2026'; special-meeting date literally blank in the July 2, 2026 S-4 (not yet effective); merger-agreement Outside Date 2027-03-31 (ext. 2027-06-30 regulatory-only)",
+    "dated_milestone: board 2026-12-31 -> null — Q4 CY2026 is guidance, not a binding date; no vote date set",
+    "staging: board false -> true — resolving event is real but undated/soft",
+    "valuation_method: board spread -> rerating_multiple — THRM is the RMT acquirer/issuer; THRM holders receive no cash or fixed consideration (S-4: SpinCo holders get new THRM shares = 40% FD; THRM holders retain 60%); no deal terms exist for THRM common to converge to, so a spread cannot be computed in kind",
+    "fair_value_target: board 44 -> live 40 — 44 is not reproducible from the live record; sell-side band is ~39.4 (Apr 2026 consensus, 7 brokers) to ~40.6; 40 = consensus re-rating anchor and implies ~7.8x pro forma gross EV/EBITDA vs ~6.8x at the tape",
+    "downside_floor: board 30 -> live 27 — no contractual floor exists (stock-for-stock, no collar, no cash); honest floor is the standalone trading range; live 52-week low = 27.00",
+    "implied R:R: board computed_rr 2.87 -> ~0.88 at live 33.91 with corrected axes (upside 6.09 vs downside 6.91)"
+   ],
+   "dossier_note": "Re-underwritten from the S-4 filed 2026-07-02 (joint proxy/prospectus), the 2026-06-29 credit-agreement 8-K, and the live tape. STRUCTURE: RMT — Modine spins PT into SpinCo, SpinCo merges into THRM merger sub; Exchange Ratio designed so former SpinCo holders own 40% FD post-close (THRM holders 60%); THRM holders receive nothing at close. Only the GENTHERM vote is required (Share Issuance + Charter Amendment proposals) — no Modine shareholder vote, contra the skeptic's 'dual votes' claim. Conditions: THRM vote (date blank), IRS PLR (pending; also gates the Overlap Shareholder determination), Separation/Distribution consummation, SpinCo financing; HSR done 2026-03-26 (early termination), but a new HSR filing is required if close slips ~12 months past it (~2027-03-26) — note Outside Date 2027-03-31 sits right at that boundary. ARITHMETIC: THRM ~30.7M shares ($1.040B mkt cap / $33.91) -> ~51.1M FD post-close (60% retention). Combined guide ~$2.6B rev / ~$322M EBITDA incl. $25M synergies; S-4 pro forma debt $470.7M (3/31/26 basis; up to $290M additional may be incurred incl. SpinCo Cash Distribution). Gross-EV check (ignoring PF cash): at tape 33.91 -> EV ~$2.20B = ~6.8x; at target 40 -> ~$2.52B = ~7.8x; board's 44 -> ~$2.72B = ~8.4x, above the sell-side band (~39.4-40.6) — corrected to 40. Floor 27 = 52-wk low; board's 30 had no contractual basis. Corrected R:R at tape = 6.09/6.91 = ~0.88 (board 2.87 reproduced arithmetically from 44/30/33.62 but both inputs fail live verification). Exchange-ratio adjustment mechanism (355(e) ~50.5% threshold incl. Overlap Shareholders) is disclosed as 'not expected to be triggered'; if triggered, SpinCo Cash Distribution shrinks and pre-merger THRM holders may receive a Gentherm Special Dividend preserving nominal economics. NET: deal alive and progressing (S-4 filed, financing done, HSR spent) but this is a re-rating equity bet, not a defined-risk arb — consistent with the weekly skeptic's REFUTED finding; corrected axes show sub-1 R:R at the current tape."
+  },
+  {
+   "symbol": "ZYME",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_HARD",
+   "thesis_summary": "Idiosyncratic single-agency FDA binary. Aug 25, 2026 PDUFA target action date on Jazz's Ziihera (zanidatamab-hrii) first-line HER2+ gastroesophageal adenocarcinoma sBLA — Priority Review, Breakthrough Therapy, Real-Time Oncology Review, pivotal HERIZON-GEA-01 positive (PFS 12.4 vs 8.1 mo, HR ~0.63, P<.0001). US GEA approval triggers a contractual, still-unpaid $250M milestone from Jazz to Zymeworks (~$3.40/sh on ~73.6M sh) plus royalty re-rating. Confirmed unfired at 2026-07-06 (50 days out), no CRL, no slip.",
+   "resolution_driver": "FDA_approval_decision",
+   "staging": false,
+   "dated_milestone": "2026-08-25",
+   "valuation_method": "binary_prob",
+   "fair_value_target": 31,
+   "downside_floor": 19,
+   "win_prob": 0.88,
+   "kill_risk": "Single FDA binary and it is the drug's FIRST-EVER GEA (new tumor type, NOT a label expansion — Ziihera's only prior US approval is 2L biliary tract cancer, Nov 2024). A CRL / RTOR pushback / label-restriction tail survives despite the strong Phase 3 + Breakthrough. On a CRL the $250M milestone is delayed (not lost), but the ~$19 floor is softer than a fortress-cash read: the approved-royalty leg it leans on is encumbered by a $250M Royalty Pharma royalty-backed note (executed 3/2/26, non-recourse, repaid from ~30% of worldwide Ziihera royalties). Added overlay: ZYME committed ~$929M cash + CVR to acquire Theravance (closing 2H26), so ZYME's own balance sheet is a moving target through the FDA window.",
+   "discrepancies": [
+    "resolution_driver: board Deal_close_generic -> live FDA_approval_decision — the Aug 25 milestone is Jazz's Ziihera GEA PDUFA (triggers a $250M milestone to ZYME), not a merger close; ZYME's only M&A is as the ACQUIRER of Theravance Biopharma, so ZYME equity is not an arb target",
+    "lane_canon: board merger_arb -> regulatory/FDA binary — mis-classified; ZYME is the Theravance acquirer (announced 6/29/26, $17.00/sh cash ~$929M + ampreloxetine CVR), not a takeover target",
+    "live_price: board 25.91 -> live 24.96 (quote 2026-07-06)",
+    "days_to_milestone: board 54 -> live 50 (recomputed 2026-07-06 to 2026-08-25)",
+    "ev_pct: board 0.1409 (@ $25.91) -> ~0.184 (@ live $24.96) — same binary (0.88x31 + 0.12x19 = $29.56 fair value), lower entry lifts EV; board's 14.1% reproduces exactly off the stale $25.91 price"
+   ],
+   "dossier_note": "CATALYST RE-TAGGED. Board called this Deal_close_generic/merger_arb, but the Aug 25, 2026 milestone is an FDA PDUFA decision on Jazz's Ziihera (zanidatamab-hrii) first-line HER2+ GEA sBLA — Priority Review + Breakthrough + RTOR; pivotal HERIZON-GEA-01 PFS 12.4 vs 8.1 mo, HR ~0.63, P<.0001. Verified unfired at 2026-07-06, ~50 days out, no CRL/slip. US GEA approval triggers a contractual, retained-and-unpaid $250M milestone from Jazz to ZYME (~$3.40/sh on ~73.6M sh) plus royalty re-rating. ZYME's only M&A is as the ACQUIRER of Theravance Biopharma ($17.00/sh cash, ~$929M equity value + a CVR for 80% of any future ampreloxetine monetization; announced 6/29/26, closing 2H26 subject to TBPH shareholder vote) — ZYME equity is NOT a merger-arb target, so the board's merger_arb/Deal_close_generic tag is wrong; correct canonical driver = FDA_approval_decision. VALUATION (binary_prob) reproduces cleanly: EV = 0.88x31 + 0.12x19 = $29.56 fair value; off the board's stale $25.91 that is +14.1% (= board ev_pct 0.1409, confirmed), and off live $24.96 it is +18.4%. R:R at $24.96: +$6.04 up (+24.2%) / -$5.96 down (-23.9%), ~symmetric, 0.88 win. Kept fair_value_target 31 / downside_floor 19 / win_prob 0.88. Context: sell-side consensus PT is $39.75 (median 41.5, range 28-48), so the $31 win-case is a conservative near-term post-approval mark, not a 12-month PT. Floor caveat (skeptic-confirmed): the $19 leans on a Ziihera royalty leg encumbered by a $250M Royalty Pharma royalty-backed note (3/2/26, non-recourse), so the CRL floor is softer than a clean-cash read implies. Not a commodity/deck-mark name — deck-mark gate N/A."
+  },
+  {
+   "symbol": "LBTYK",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_SOFT",
+   "dated_milestone": "2027-12-31",
+   "thesis_summary": "Two-stage Benelux self-restructuring against a chronic ~60% holdco discount: (1) binding, EC-cleared (unconditional, 25-Jun-2026) buy-in of Vodafone's 50% of VodafoneZiggo for EUR 1.0B cash + 10% of new Ziggo Group (VodafoneZiggo+Telenet), close guided July 2026, UNFIRED as of 07-06; (2) Ziggo Group Euronext-Amsterdam listing with ~90% distributed to Liberty Global holders, guided 'in 2027' (H2-2027 color on the 1-May call), leadership installed Sep 1 to prep it. The spin delivers Ziggo equity (~$12-14/sh gross by deal-implied math) directly into holders' hands, bypassing the holdco discount, with VMO2 50% + a $3.4B-FMV Liberty Growth book (alone ~93% of the $3.67B cap) left in the stub. Spin leg is voluntary and vote/window-contingent — a stage-in special situation, not a closed spread.",
+   "resolution_driver": "Spin_index_flow",
+   "staging": true,
+   "fair_value_target": 18,
+   "downside_floor": 9.5,
+   "win_prob": null,
+   "valuation_method": "sop",
+   "kill_risk": "The spin/listing is voluntary — subject to a not-yet-scheduled shareholder vote (6/23 AGM was routine only: directors/auditors/say-on-pay), SEC registration, and an open 2027 market window for a ~5x-levered Benelux telco (de-leverage roadmap only reaches ~4.5x by 2028). Nothing contractually compels it: Vodafone's remedy if no spin within 18 months of close is a right to sell its 10% to a third party — pressure, not compulsion. A weak listing tape pushes the event into 2028 with dead money at the holdco discount, and even on completion the retained stub (VMO2 + Growth) can keep trading at a deep discount, capping realized value well below $18. Floor $9.5 is a discount-persistence mark, not a cash backstop.",
+   "discrepancies": [
+    "catalyst_status: board PENDING_HARD -> live PENDING_SOFT — the tagged resolving event (2027 Ziggo spin/listing) is voluntary, undated beyond a target year, and shareholder-vote/SEC-registration/market-window contingent; the only dated+binding leg (VFZ buyout close, July 2026, EC-cleared 6/25, unfired as of 7/6) is a stepping stone that does not itself close the SoP gap",
+    "dated_milestone: board 2027-06-30 -> live 2027-12-31 — latest company communications (18-Feb PR, 1-May Q1 call, 1-Jun CEO-appointment PR) guide the Amsterdam listing as 'in 2027' with H2-2027 color; mid-2027 was stale framing; correction of the board's synthetic date, NOT a company slip",
+    "live_price: board 10.9907 (asof 2026-06-08) -> live 10.865 (2026-07-06); computed R:R at unchanged axes moves 4.7 -> ~5.2",
+    "company_name: board 'Liberty Global plc' -> live 'Liberty Global Ltd.' (Bermuda-domiciled since 2023)"
+   ],
+   "dossier_note": "VERIFIED LIVE 2026-07-06. Stage 1 (binding): definitive agreement 18-Feb-2026 — LG acquires Vodafone's 50% of VodafoneZiggo for EUR 1.0B cash + a 10% stake in Ziggo Group (new co holding 100% VodafoneZiggo + 100% Telenet); EC UNCONDITIONAL clearance 25-Jun-2026 (simplified procedure, last regulatory hurdle); close guided July 2026 (Fries, 1-May call); NO closing 8-K/PR as of 7-06 — unfired, on schedule, watch for close announcement any day and Q2 results 7/24. Stage 2 (the sleeve's catalyst, SOFT): Euronext-Amsterdam listing of Ziggo Group + ~90% distribution to LG holders 'in 2027'; Van Rooyen (CEO)/Fruytier (CFO) named 1-Jun, effective Sep 1 to prep the listing; still requires a shareholder vote (NOT held — 6/23 AGM was routine only), SEC registration, market window; Vodafone may sell its 10% to a third party if no spin within 18 months of close (~Jan-2028) — timing pressure, not compulsion. SOP ARITHMETIC (338M shs, EUR/USD ~1.17): deal-implied 0.5*VFZ = 1.0 + 0.1*(VFZ+Telenet); Telenet equity ~EUR 1.0-1.5B (~1.3B EBITDA, ~6.3B net debt, 5.5-6.0x) => VFZ equity ~EUR 2.8-2.9B, Ziggo Group equity ~EUR 3.8-4.4B => LG 90% ~$4.0-4.7B ~= $12-14/sh gross ($8.5-10.5 net of the EUR 1.0B cash out). Plus Liberty Growth $3.4B FMV (3/31/26; ~93% of the whole $3.67B cap alone; ~$0.3B already monetized YTD via ITV/EdgeConneX sales) and VMO2 50% (equity GBP 2-5B vs ~GBP 18B net debt; ~$8-20/sh gross, multiple-sensitive). Undiscounted SoP $25-30+; board FVT $18 = SoP less ~35-40% residual discount — REPRODUCED, kept. Floor $9.5 kept: ~4-5% under the 52-wk low (9.95) = status-quo holdco-discount mark; SOFT floor (voluntary restructuring, no deal-break cash backstop on LBTYK). Deck-mark gate: N/A (not commodity-linked). Board's PENDING_HARD downgraded to PENDING_SOFT and milestone moved to 2027-12-31 (outer bound of stated window); staging stays true — stage-in name until the spin vote/record dates are set, at which point it can graduate to PENDING_HARD."
+  },
+  {
+   "symbol": "LZM",
+   "catalyst_live": true,
+   "catalyst_status": "SLIPPED",
+   "dated_milestone": "2026-12-31",
+   "staging": true,
+   "resolution_driver": "Supply_timing",
+   "valuation_method": "sop",
+   "fair_value_target": 4.95,
+   "downside_floor": 2.6,
+   "win_prob": null,
+   "thesis_summary": "84%-owned, permitted, FS-complete Kabanga Ni-Cu-Co sulfide project (NPV8 $1.58B at the FS deck, ~$1.11B spot-marked) sits inside a ~$343M mcap; the resolving event is a Standard Chartered-run strategic-partner investment (term-sheet stage, multiple offers, Reuters-reported bidder, possible asset-level change of control) plus SocGen-led project debt culminating in FID/financial close, company-targeted within calendar 2026 (was mid-2026, now tracking late-2026). A binding partner cheque re-rates toward risked SoP — but at spot nickel the R:R is ~1:1 vs 2.7:1 on the deck.",
+   "kill_risk": "The \"concludes shortly\" strategic process may not produce a BINDING cheque in 2026: the mid-2026 FID target has already passed unfired, Seeking Alpha (6/25) and the Q1 6-K confirm no binding financing terms, Taurus bridge covenant waivers signal fragility, serial equity raises (~$4.00 Nov-25, $4.40 Apr-26) show the equity tranche is the crux, and spot nickel 12% below the FS deck weakens bidder pricing. A slip to 2027 and/or a punitive dilutive bridge or an asset-level change of control that strands holdco value would break both the timeline and the non-contractual $2.60 floor.",
+   "discrepancies": [
+    "catalyst_status: board PENDING_HARD -> live SLIPPED — company's 'targeted mid-2026' FID/financial close (Dec-11-2025 PR, Q1-2026 6-K) passed unfired as of 2026-07-06; live record (Crux; SA 2026-06-25 'binding financing terms have not arrived') tracks late-2026 within the calendar-2026 backstop",
+    "fair_value_target: board 7.04 -> live 4.95 — deck-mark gate triggered: FS deck $8.49/lb Ni -> NPV8 $1,580M, but LME spot ~$16,424/t = ~$7.45/lb (12% below deck); issuer's own sensitivity ($7.00/lb -> $909M) interpolates to ~$1,112M at spot; target scaled 7.04 x (1112/1580) = 4.95; deck 7.04 retained only as conditional cap",
+    "computed_rr: board 2.66 -> live ~0.94 at the spot-marked target ((4.95-3.81)/(3.81-2.60)); deck-conditional R:R 2.67 at live price",
+    "live_price: board 3.815 (asof 2026-06-08) -> 3.81 (NYSE 2026-07-06; mcap $342.5M, ~89.9M sh after +5.7M @ $4.40 Apr-2026 raise)"
+   ],
+   "dossier_note": "RE-UNDERWRITTEN 2026-07-06 from live sources. CATALYST: Kabanga FID + financial close via three tracks — Taurus $60M senior secured bridge (waivers granted; runway to late-2026, Jul-2027 maturity +6mo option), SocGen-led project debt (anchor EOIs DFC/JOGMEC, NO committed package), StanChart strategic-partner process at TERM-SHEET stage w/ multiple offers incl. possible asset-level change of control. Reuters (Jun-6) named a specific bidder; company declined comment (BW Jun-8) but confirms process live and expected to conclude shortly. STATUS = SLIPPED: from mid-2026 (company target per Dec-2025 PR + Q1-2026 6-K) -> to late-2026 (Crux; SA 6/25 confirms binding terms still absent); calendar-2026 backstop 2026-12-31 stands (178d), but it is a management target contingent on third-party cheques -> staging=true. DECK-MARK ARITHMETIC: FS (Jul-2025 TRS) deck $8.49/lb Ni -> NPV8 $1,580M (100% basis; LZM 84% via KNL post-BHP consolidation, TZ govt 16% of Tembo). LME spot ~$16,424/t = $7.45/lb, 12% below deck. Issuer sensitivity: $7.00/lb -> NPV8 $909M; linear interp at $7.45 -> ~$1,112M. Board target decomposes as 7.04 x 89.9M sh = $633M = ~0.48 x attributable deck NPV (0.84 x 1580 = $1,327M); same 0.48 risking on spot NPV: 0.48 x 0.84 x 1112 / 89.9M = $4.95. BOTH NUMBERS: spot-marked target $4.95 (emitted as fair_value_target); deck-conditional cap $7.04. Spot-deck R:R at $3.81 = (4.95-3.81)/(3.81-2.60) = 0.94x vs deck 2.67x — spot R:R is BELOW 1 on the board floor. FLOOR $2.60 unchanged but NON-CONTRACTUAL: mark-to-asset judgment (~0.25x spot attributable NPV; below Nov-25 ~$4.00 and Apr-26 $4.40 raise prices); breaks on a punitive dilutive bridge (Taurus waivers already signal covenant fragility per SA 6/25). DRIVER: kept Supply_timing (project-FID/new-supply lane); if the Reuters-reported bidder signs an asset-level change-of-control deal, retag Deal_close_generic. Dilution running: +5.7M sh @ $4.40 Apr-2026; ~90M sh out, mcap $343M."
+  }
+ ],
+ "cro": [
+  {
+   "symbol": "DDL",
+   "verdict": "TRADE",
+   "live_price": 1.975,
+   "live_edge_check": "FMP live quote $1.975 (NYSE, 2026-07-06 intraday; prev close $1.94). Fresh-dossier axes $3.90 target / $1.70 floor: upside $1.925 vs downside $0.275 = 6.9:1 R:R — identical to the dossier's 6.9:1 built at the same $1.975 tape today; zero compression. (Board computed_rr 18.7 was stale-axes and is not the reference; the fresh 6.9 is.) Not a commodity-deck name — dual-deck gate N/A.",
+   "tradeability_note": "Long equity ADS on NYSE, no options or borrow needed. 9-session ADV ~592k sh (~$1.2M/day, FMP EOD 6/22-7/02); penny-wide spread on a ~$2 stock is ~0.5%. Adequate for sleeve-size entry worked with limit orders over 1-2 sessions; do not sweep the offer on a name that prints 100k shares by mid-morning.",
+   "window_note": "Equity — no expiry to clear. Milestone now dated AND binding: SPA long-stop ~2027-02-05 (12-month termination right, extendable), with a $75M buyer break fee in the SAMR-fail branch. No true slip history: the only 'move' was the house-invented 2026-12-31 window correcting to the contractual long-stop. SAMR timing within the window is undated — equity holds through that fine.",
+   "driver_confirmed": "Foreign_regulator CONFIRMED (SAMR anti-monopoly clearance is the sole substantive open gate; dossier's correction of the board's nonsensical Refi_restructuring tag is right). Flag for Director: the acceptable alternate tag Deal_close_generic would collide with THRM's driver — as filed no duplicate exists in this batch, and THRM is NO_TRADE anyway.",
+   "conditions": []
+  },
+  {
+   "symbol": "THRM",
+   "verdict": "NO_TRADE",
+   "live_price": 33.9,
+   "live_edge_check": "FMP live quote $33.90 (2026-07-06). On the dossier's corrected axes ($40 target / $27 floor): upside $6.10 vs downside $6.90 = 0.88:1 — sub-1 and less than a third of the board's filed 2.87 R:R, failing the half-R:R kill-line on its own. Moot regardless: the fresh weekly skeptic (age 0 days) verdict is REFUTED.",
+   "tradeability_note": "Perfectly tradeable ($1.04B cap, liquid NASDAQ common) — irrelevant, because there is no event edge to express.",
+   "window_note": "No binding date exists: close is 'Q4 CY2026' guidance, the S-4 special-meeting date is literally blank, Outside Date 2027-03-31 — and the spent HSR clearance respawns if close slips past ~2027-03-26. Equity-only expression anyway.",
+   "driver_confirmed": "Deal_close_generic CONFIRMED (board's US_antitrust tag is wrong — HSR fired via early termination 2026-03-26, before the board's own valuation date; remaining gates are the THRM vote, IRS PLR, and Separation/Distribution). No other live name in this batch carries this driver.",
+   "conditions": []
+  },
+  {
+   "symbol": "ZYME",
+   "verdict": "TRADE",
+   "live_price": 24.9192,
+   "live_edge_check": "FMP live quote $24.92 (2026-07-06, −5.3% on the day; prev close $26.31). Binary EV = 0.88×$31 + 0.12×$19 = $29.56 fair value → +18.6% EV at the live tape vs the board's +14.1% at the stale $25.91 — the edge has WIDENED, not compressed. R:R to axes: +$6.08 up / −$5.92 down ≈ 1.03:1 symmetric with 0.88 win probability. Dual-deck gate N/A (not commodity-linked).",
+   "tradeability_note": "Filed instrument is equity: ADV ~696k sh ≈ $17M/day (9-session FMP EOD), $1.83B cap, cent-wide spreads — no expression problem at any sleeve size. Today's −5.3% drift (no catalyst change per the same-day dossier) is entry improvement, not signal.",
+   "window_note": "Equity through a dated, hard PDUFA 2026-08-25 (50 days out, recomputed) — no expiry to clear; RTOR means action could land EARLY, which equity holds through fine. No slip history on this PDUFA. If the Director prefers defined-risk options, the September monthly (9/18) is the first expiry clearing the milestone +1 — but OI/spread on that chain was not verified here; equity is the adjudicated expression.",
+   "driver_confirmed": "FDA_approval_decision CONFIRMED — the dossier's re-tag from the board's Deal_close_generic/merger_arb is correct (the Aug-25 event is Jazz's Ziihera 1L GEA PDUFA triggering ZYME's contractual $250M milestone; ZYME is the Theravance ACQUIRER, not an arb target). Sole FDA-driver name in the batch.",
+   "conditions": []
+  },
+  {
+   "symbol": "LBTYK",
+   "verdict": "TRADE_WITH_CONDITIONS",
+   "live_price": 10.795,
+   "live_edge_check": "FMP live quote $10.795 (2026-07-06; prev close $10.90). Axes $18 target / $9.50 floor: upside $7.21 vs downside $1.30 = 5.6:1 R:R — ABOVE the board's 4.7 (tape drifted down since 6/08); no compression. Dual-deck gate N/A (SoP but not commodity-linked). Caveat carried from the dossier: the $9.50 floor is a discount-persistence mark, not a cash backstop.",
+   "tradeability_note": "Long equity, no borrow. ADV ~1.2M sh ≈ $13M/day (9-session), $3.65B cap, tight NASDAQ spread — deep enough for any realistic sleeve position, LBTYA available if K-line liquidity ever thins.",
+   "window_note": "PENDING_SOFT / staging=true → the correct expression is EQUITY, which this is: no option exists to buy against a voluntary, shareholder-vote-and-market-window-contingent 2027 listing (outer bound 2027-12-31, 363+ days). The spin leg has not slipped (board's mid-2027 was a house date; company guidance is 'in 2027'), but nothing compels it — dead-money tail is real. Nearest dated confirmation leg: VFZ buy-in close, EC-cleared 6/25, guided July 2026, unfired as of 7/06.",
+   "driver_confirmed": "Spin_index_flow CONFIRMED (Ziggo Group Amsterdam listing + ~90% distribution). Unique in this batch — no driver collision.",
+   "conditions": [
+    "Equity only — no option expression against the undated 2027 listing event.",
+    "Stage-in tranche at WATCH sizing now; complete the position only when the Ziggo spin shareholder-vote/record date is actually scheduled (the dossier's own graduation trigger to PENDING_HARD).",
+    "Re-affirm the name if the VFZ buy-in close (guided July 2026) has not been announced by the Q2 print on 2026-07-24 — that would be the first genuine slip signal on the binding leg."
+   ]
+  },
+  {
+   "symbol": "LZM",
+   "verdict": "TRADE_WITH_CONDITIONS",
+   "live_price": 3.805,
+   "live_edge_check": "FMP live quote $3.805 (NYSE, 2026-07-06). DUAL-DECK TEST (commodity-deck SoP name, both variants run): SPOT-MARKED target $4.95 / floor $2.60 → +$1.145 vs −$1.205 = 0.95:1 — FAILS (sub-1, and far below half the board's 2.66). DECK target $7.04 → +$3.235 vs −$1.205 = 2.68:1 — passes deck-only. Nickel mark: FMP carries no nickel contract, so the dossier's same-day (2026-07-06) LME spot $16,424/t ≈ $7.45/lb — 12% under the $8.49/lb FS deck — stands as the live mark. Deck-pass/spot-fail = at best TRADE_WITH_CONDITIONS with an explicit deck condition per the kill-line; a clean TRADE is not available at this tape.",
+   "tradeability_note": "Long equity, no options or borrow. ADV ~673k sh ≈ $2.6M/day (9-session, incl. a 1.96M-share spike 6/26) — fine for a staged sleeve entry worked with limits; note the tape has bled from $4.25 to $3.80 over the window, so resting bids get filled.",
+   "window_note": "Catalyst HAS slipped once: the company's mid-2026 FID/financial-close target passed unfired; live record tracks late-2026 inside the 2026-12-31 backstop, which is a management target contingent on third-party cheques, not a binding date (staging=true). Equity expression means no expiry risk, but a 2027 tail plus a dilutive bridge in the gap is the live failure mode.",
+   "driver_confirmed": "Supply_timing CONFIRMED (Kabanga FID + financial close; project-FID/new-supply lane). Unique in this batch. Flag for Director: if the Reuters-named bidder signs an asset-level change-of-control, the dossier retags this Deal_close_generic — the same driver as THRM — so re-check the driver cap on any retag.",
+   "conditions": [
+    "Entry limit <= $3.20 — restores the SPOT-marked R:R to ~2.9:1 ((4.95-3.20)/(3.20-2.60)); do NOT lift the $3.80 offer, where spot R:R is 0.95:1.",
+    "Deck condition (alternative to the limit): entry at tape is valid only if LME nickel recovers toward the FS deck — >= ~$8.00/lb (~$17,600/t), which rescales the spot-marked target toward ~$6 and R:R above 2:1.",
+    "Void on any new dilutive financing priced below the Apr-2026 $4.40 raise before FID (Taurus covenant waivers already flag bridge fragility) — the $2.60 floor is non-contractual and breaks on a punitive bridge.",
+    "Equity only, stage-in sizing (staging=true, status SLIPPED); no adds on process headlines without a BINDING partner cheque."
+   ]
+  }
+ ],
+ "survivors": [
+  "DDL",
+  "ZYME",
+  "LBTYK",
+  "LZM"
+ ]
+}
