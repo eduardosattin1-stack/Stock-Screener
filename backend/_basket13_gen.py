@@ -38,11 +38,31 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--only", default="")
 ap.add_argument("--model", default="fable",
                 help="agent model alias for both phases; 'opus' is the documented fallback if 'fable' is unavailable")
+ap.add_argument("--held-dossiers", action="store_true", dest="held_dossiers",
+                help="HELD-BOOK REFRESH mode: candidates = the tracker's unresolved seats (rows built "
+                     "from their stamped fields), workflow = DeepDossier phase ONLY (no CRO/Director, "
+                     "no stamping). Feed the output to `_basket13_inject.py merge-dossiers` to update "
+                     "the store + surface FIRED/SLIPPED alerts on held seats.")
 args = ap.parse_args()
 MODEL = args.model   # • both phases; default fable (the Fable-5 migration leg), opus fallback
 
 only = {s.strip().upper() for s in args.only.split(",") if s.strip()}
-cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
+if args.held_dossiers:
+    # held seats aren't in the candidates file (--exclude-held); build rows from the tracker
+    _trk = json.load(open(os.path.join(BASE, "_basket13_tracker.json"), encoding="utf-8"))
+    cands = [{"symbol": e["symbol"], "company_name": None, "tier": "held_seat",
+              "staging": e.get("staging"), "lane_canon": e.get("lane_canon"),
+              "resolution_driver": e.get("resolution_driver"), "super_cluster": e.get("super_cluster"),
+              "edge_grade": e.get("edge_grade"), "valuation_method": e.get("valuation_method"),
+              "computed_rr": e.get("computed_rr"), "ev_pct": e.get("ev_pct"), "payoff": None,
+              "win_prob": None, "fair_value_target": e.get("fair_value_target"),
+              "downside_floor": e.get("downside_floor"), "live_price": e.get("entry_price"),
+              "dated_milestone": e.get("dated_milestone"), "days_to_milestone": None,
+              "instrument": (e.get("expression") or {}).get("type"),
+              "valuation_asof": e.get("entry_date"), "score": e.get("score")}
+             for e in _trk.get("entries", []) if not e.get("resolution")]
+else:
+    cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
 if only:
     cands = [c for c in cands if c["symbol"].upper() in only]
 
@@ -291,6 +311,14 @@ js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
         .replace("__WATCHLIST__", json.dumps(watchlist_ctx, ensure_ascii=False))
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
+if args.held_dossiers:
+    # dossier phase ONLY: cut everything from the CRO batching onward, return the dossiers
+    js = (js[:js.index("const BATCH=5")]
+          + "return { generated_for: NAMES.length, dossiers }\n")
+    js = js.replace(
+        "phases: [ { title: 'DeepDossier', model: '__MODEL' }, { title: 'CatalystCRO', model: '__MODEL' }, { title: 'Director', model: '__MODEL' } ],".replace("__MODEL", MODEL),
+        f"phases: [ {{ title: 'DeepDossier', model: '{MODEL}' }} ],")
+    js = js.replace("name: 'basket13-catalyst-debate'", "name: 'basket13-held-dossier-refresh'")
 # newline="\n": Windows text-mode would write CRLF, which the Workflow tool's permission
 # layer rejects ("script contains control characters") — LF-only is mandatory.
 open(OUT, "w", encoding="utf-8", newline="\n").write(js)

@@ -443,21 +443,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     # persist Phase-0 dossiers into the per-symbol store (most recent re-underwrite wins);
     # _basket13_export.py ships it to frontend/public for the /catalysts depth view.
     if dossier_by:
-        dstore_path = os.path.join(BASE, "_basket13_dossiers.json")
-        try:
-            dstore = json.load(open(dstore_path, encoding="utf-8"))
-        except Exception:
-            dstore = {"header": "Basket 13 Fable deep-dossiers — one entry per symbol, most recent "
-                                "re-underwrite wins. Written by _basket13_inject.py from each re-debate's "
-                                "Phase-0 dossiers[]; _basket13_export.py copies to "
-                                "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
-                      "dossiers": {}}
-        today = datetime.date.today().isoformat()
-        for sym, d in dossier_by.items():
-            dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-fable-5"}
-        json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
-                  indent=1, ensure_ascii=False)
-        print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
+        merge_dossier_store(dossier_by)
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
     bysym = {c["symbol"]: c for c in cands}
     stamp_date = entry_date or datetime.date.today().isoformat()
@@ -634,6 +620,47 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     print(f"  + {len(passed)} non-selections recorded; caps {'OK' if not viol else 'FORCED'}  -> {TRK}")
 
 
+# ------------------------------------------------------------- Fable dossier store
+def merge_dossier_store(dossier_by):
+    """Merge Phase-0 deep-dossiers into the per-symbol store (most recent re-underwrite
+    wins) and print resolution/slip alerts. Used by inject() and the merge-dossiers CLI
+    (the held-book refresh in the bi-weekly routine)."""
+    dstore_path = os.path.join(BASE, "_basket13_dossiers.json")
+    try:
+        dstore = json.load(open(dstore_path, encoding="utf-8"))
+    except Exception:
+        dstore = {"header": "Basket 13 Fable deep-dossiers — one entry per symbol, most recent "
+                            "re-underwrite wins. Written by _basket13_inject.py from each re-debate's "
+                            "Phase-0 dossiers[]; _basket13_export.py copies to "
+                            "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
+                  "dossiers": {}}
+    today = datetime.date.today().isoformat()
+    for sym, d in dossier_by.items():
+        dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-fable-5"}
+    json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
+              indent=1, ensure_ascii=False)
+    print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
+    held = {e["symbol"] for e in load_tracker().get("entries", []) if not e.get("resolution")}
+    for sym, d in sorted(dossier_by.items()):
+        st = (d.get("catalyst_status") or "").upper()
+        if st in ("FIRED", "BROKEN") and sym in held:
+            print(f"!! RESOLUTION DUE {sym}: dossier says catalyst {st} — "
+                  f"python _basket13_inject.py resolve {sym} --type FIRED_WIN|FIRED_LOSS|THESIS_BROKEN --price X")
+        elif st == "SLIPPED" and sym in held:
+            print(f"!  {sym}: dossier says SLIPPED — review the seat (no adds; consider resolve SLIPPED)")
+
+
+def merge_dossiers_cli(path):
+    """CLI: merge a workflow output file's dossiers[] into the store (held-book refresh)."""
+    out = json.load(open(path, encoding="utf-8"))
+    res = out.get("result", out)
+    dossier_by = {d["symbol"]: d for d in (res.get("dossiers") or []) if d.get("symbol")}
+    if not dossier_by:
+        print(f"no dossiers[] found in {path}")
+        sys.exit(1)
+    merge_dossier_store(dossier_by)
+
+
 # ---------------------------------------------------------------------- resolve
 def resolve(symbol, rtype, price, date=None, notes=""):
     t = load_tracker()
@@ -784,6 +811,11 @@ def main():
         ap.add_argument("--notes", default="")
         a = ap.parse_args(sys.argv[2:])
         resolve(a.symbol, a.rtype, a.price, a.date, a.notes)
+    elif mode == "merge-dossiers":
+        ap = argparse.ArgumentParser(prog="_basket13_inject.py merge-dossiers")
+        ap.add_argument("path", help="workflow output JSON carrying dossiers[] (held-book refresh)")
+        a = ap.parse_args(sys.argv[2:])
+        merge_dossiers_cli(a.path)
     elif mode == "wl-resolve":
         ap = argparse.ArgumentParser(prog="_basket13_inject.py wl-resolve")
         ap.add_argument("symbol")
