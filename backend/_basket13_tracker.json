@@ -43,7 +43,7 @@
    },
    "entry_rationale": "Cleanest ratio carry in the pool: 11.6% gross spread to the $14.23 deal value over ~112 days (~38% annualized) with zero price drift since the dossier and the tightest floor in the basket (-7.5%). Top weight because the floor distance is smallest — 14% weight risks only ~1.04% NAV to floor.",
    "resolution_due": {
-    "date": "2026-07-03",
+    "date": "2026-07-06",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -326,7 +326,7 @@
    },
    "entry_rationale": "Nearest hard catalyst in the basket — 6/30 FDA decision in 20 days at p=0.9, EV ~+105%, with equity still near its 52-week low and the only genuinely liquid options chain among the dated binaries. Aug-21 expiry gives +1 monthly margin past the decision; 2% premium-at-risk.",
    "resolution_due": {
-    "date": "2026-07-03",
+    "date": "2026-07-06",
     "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -1861,6 +1861,81 @@
      "ret_pct": 0.0
     }
    }
+  },
+  {
+   "date": "2026-07-06",
+   "nav": 103.244,
+   "basket_ret_pct": 3.244,
+   "seats": {
+    "GDOT": {
+     "price": 13.35,
+     "ret_pct": 4.71
+    },
+    "UNF": {
+     "price": 273.56,
+     "ret_pct": 0.99
+    },
+    "FIP": {
+     "price": 4.44,
+     "ret_pct": -2.63
+    },
+    "FIG": {
+     "price": 21.34,
+     "ret_pct": 4.15
+    },
+    "BLCO": {
+     "price": 17.16,
+     "ret_pct": 9.65
+    },
+    "CELC": {
+     "price": 107.95,
+     "ret_pct": 16.59
+    },
+    "VRDN": {
+     "price": 19.4,
+     "ret_pct": 18.95
+    },
+    "AQST": {
+     "price": 4.18,
+     "ret_pct": 4.76
+    },
+    "WVE": {
+     "price": 6.26,
+     "ret_pct": 8.3
+    },
+    "AMLX": {
+     "price": 18.27,
+     "ret_pct": 25.22
+    },
+    "AAUC": {
+     "price": 24.6,
+     "ret_pct": 5.13
+    },
+    "FUN": {
+     "price": 20.99,
+     "ret_pct": 2.09
+    },
+    "THRM": {
+     "price": 33.88,
+     "ret_pct": 0.0
+    },
+    "ZYME": {
+     "price": 26.31,
+     "ret_pct": 0.0
+    },
+    "DDL": {
+     "price": 1.94,
+     "ret_pct": 0.0
+    },
+    "LBTYK": {
+     "price": 10.9,
+     "ret_pct": 0.0
+    },
+    "LZM": {
+     "price": 3.73,
+     "ret_pct": 0.0
+    }
+   }
   }
  ],
  "watchlist": [
@@ -2573,6 +2648,50 @@
   },
   {
    "date": "2026-07-03",
+   "nav": 113.043,
+   "ret_pct": 13.043,
+   "n": 9,
+   "seats": {
+    "CLVT": {
+     "price": 2.59,
+     "ret_pct": 17.19
+    },
+    "BBIO": {
+     "price": 77.19,
+     "ret_pct": 15.55
+    },
+    "EYPT": {
+     "price": 13.98,
+     "ret_pct": 7.29
+    },
+    "VIR": {
+     "price": 10.04,
+     "ret_pct": 16.61
+    },
+    "PVLA": {
+     "price": 146.76,
+     "ret_pct": 23.49
+    },
+    "AVIR": {
+     "price": 4.98,
+     "ret_pct": 13.44
+    },
+    "DBVT": {
+     "price": 15.82,
+     "ret_pct": 0.76
+    },
+    "MGNI": {
+     "price": 20.38,
+     "ret_pct": 16.79
+    },
+    "GERN": {
+     "price": 1.36,
+     "ret_pct": 6.25
+    }
+   }
+  },
+  {
+   "date": "2026-07-06",
    "nav": 113.043,
    "ret_pct": 13.043,
    "n": 9,
