@@ -3236,7 +3236,21 @@ function ScoringMethodologyCard() {
   );
 }
 
-function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setHistIdx }: { debateData: any; debateHistory?: any[]; histIdx?: number; setHistIdx?: (i: number) => void }) {
+// One dated debate run in the history dropdown. `lane` names the rubric that graded the
+// entry (a lane containing "special_sit" was graded event-framed, not on the standard
+// value rubric); `carried === true` marks a change-detection restamp of a prior debate,
+// not a fresh run — so two adjacent entries may not be comparable grade-for-grade.
+type DebateHistoryEntry = {
+  date?: string;
+  verdict?: string;
+  conviction?: number;
+  transcript_source?: string;
+  lane?: string;
+  carried?: boolean;
+  [key: string]: any;
+};
+
+function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setHistIdx }: { debateData: any; debateHistory?: DebateHistoryEntry[]; histIdx?: number; setHistIdx?: (i: number) => void }) {
   if (!debateData) return null;
 
   const type = debateData.type || "methodology_pick";
@@ -3333,9 +3347,9 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
             <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Debate history</span>
             <select value={histIdx} onChange={(e) => setHistIdx && setHistIdx(Number(e.target.value))}
               style={{ fontSize: 11, fontFamily: T.mono, background: T.card, color: T.text, border: `1px solid ${T.divider}`, borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}>
-              {debateHistory.map((h: any, i: number) => (
+              {debateHistory.map((h: DebateHistoryEntry, i: number) => (
                 <option key={i} value={i}>
-                  {h.date}{i === 0 ? " · latest" : ""} — {h.verdict || "—"} / conv {h.conviction ?? "—"}{h.transcript_source === "web" ? " · web-sourced" : ""}
+                  {h.date}{i === 0 ? " · latest" : ""} — {h.verdict || "—"} / conv {h.conviction ?? "—"}{h.transcript_source === "web" ? " · web-sourced" : ""}{typeof h.lane === "string" && h.lane.includes("special_sit") ? " · event-framed" : ""}{h.carried === true ? " · carried" : ""}
                 </option>
               ))}
             </select>

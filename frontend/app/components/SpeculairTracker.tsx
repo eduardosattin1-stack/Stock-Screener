@@ -106,7 +106,8 @@ export function SpeculairTracker() {
     color: c >= 85 ? "var(--green)" : c >= 70 ? "#eab308" : "var(--text-muted)",
   });
 
-  // Apex track-record (paper-traded equal-weight NAV since basket inception).
+  // Apex track-record (paper-traded NAV since basket inception — Director-weighted chain
+  // when promoted above, equal-weight fallback otherwise).
   const navHist: { date: string; nav: number }[] = tracking?.history || [];
   const nav: number | null = tracking?.nav ?? null;
   const sinceInception = nav != null ? nav - 100 : null; // history is anchored to base 100
@@ -240,7 +241,7 @@ export function SpeculairTracker() {
 
       {/* Footnote */}
       <div style={{ padding: "10px 16px", fontSize: 8.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}>
-        Rows: live P&amp;L vs entry · 30s · Apex NAV: equal-weight, since inception{baskets.generated_at ? ` · gen ${new Date(baskets.generated_at).toLocaleDateString()}` : ""}
+        Rows: live P&amp;L vs entry · 30s · Apex NAV: {trackingIsWeighted ? "Director-weighted (conviction)" : "equal-weight"}, since inception{baskets.generated_at ? ` · gen ${new Date(baskets.generated_at).toLocaleDateString()}` : ""}
       </div>
     </div>
   );

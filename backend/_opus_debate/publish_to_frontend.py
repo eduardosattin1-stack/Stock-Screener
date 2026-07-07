@@ -337,7 +337,7 @@ def _apex_weights(es):
     bysym = {e["symbol"]: e for e in es}
     caps = {}
     for s, e in bysym.items():
-        if e.get("lane") == "equity_special_sit":
+        if "special_sit" in str(e.get("lane") or "").lower():   # normalized: any special-sit lane variant
             live, floor = e.get("live_price") or 0, e.get("downside_floor") or 0
             if live > 0 and 0 < floor < live:
                 caps[s] = min(w.get(s, 0), (SS_RTF_CAP_PCT / 100.0) * live / (live - floor))
@@ -429,6 +429,12 @@ baskets["macro_read"] = director.get("macro_read", "")
 baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"), "regime_detail": _macro.get("regime_detail", {})}
 baskets["book_expected_return_pct"] = round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None
 baskets["book_horizon_months"] = round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None
+# GOAL GATE (warn-only, never blocks): the Apex mandate is +30-50%/12mo — an under-goal book still
+# publishes, but the Director must own the shortfall explicitly in the memo.
+_ber = baskets["book_expected_return_pct"]
+if isinstance(_ber, (int, float)) and _ber < _goal["low_pct"]:
+    print(f"GOAL GATE WARN: book expected return {_ber:.1f}% < +30% mandate floor — "
+          f"Director must own an under-goal book in the memo")
 baskets["generated_at"] = datetime.now(timezone.utc).isoformat()
 baskets["director_last_run"] = baskets["generated_at"]
 baskets["rebalance_date"] = TODAY
@@ -483,8 +489,11 @@ print(f"\nwrote {len(entries)} apex names -> {BASKETS_LOCAL}")
 print(f"  new basket: {[e['symbol'] for e in entries]}")
 print(f"  held (entry preserved): {held or 'none'}")
 print(f"  rotated OUT (now closed in tracking): {rotated_out}")
-print(f"  apex_tracking: nav={track_summary.get('nav')} since_inception={track_summary.get('since_inception_pct')}% "
+print(f"tracking (equal-weight, legacy): nav={track_summary.get('nav')} since_inception={track_summary.get('since_inception_pct')}% "
       f"open={track_summary.get('n_open')} closed={track_summary.get('n_closed')}")
+_tsw = track_summary_w or {}
+print(f"tracking (DIRECTOR-WEIGHTED = the UI number): nav={_tsw.get('nav')} since_inception={_tsw.get('since_inception_pct')}% "
+      f"open={_tsw.get('n_open')} closed={_tsw.get('n_closed')}")
 print(f"  preserved: capitulation_watchlist({len(baskets.get('capitulation_watchlist', []))}), "
       f"per_methodology_baskets({len(baskets.get('per_methodology_baskets', {}))})")
 
@@ -499,7 +508,7 @@ RUN_TS = datetime.now(timezone.utc).isoformat()
 
 
 def _hist_entry(rec, dossier, date_str, ts):
-    return {
+    e = {
         "date": date_str, "timestamp": ts,
         "verdict": rec.get("verdict", ""), "conviction": int(rec.get("conviction", 0) or 0),
         "trajectory": rec.get("trajectory", ""),
@@ -514,6 +523,12 @@ def _hist_entry(rec, dossier, date_str, ts):
         "peer_comps_note": rec.get("peer_comps_note", ""),
         "interrogator_dossier": dossier, "engine": "opus-4.8-regime",
     }
+    # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
+    # Additive only — dedup key (date) and entry ordering are untouched.
+    for _k in ("lane", "carried"):
+        if rec.get(_k) is not None:
+            e[_k] = rec[_k]
+    return e
 
 
 hist_n = 0

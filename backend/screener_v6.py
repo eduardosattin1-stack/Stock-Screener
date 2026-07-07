@@ -6840,6 +6840,15 @@ def _mark_speculair_nav():
             # GCS (never re-upload a stale local fallback over production).
             if src_is_gcs and isinstance(book, dict) and s:
                 book[embed_key] = s
+                if label == "apex" and isinstance(book.get("weights"), dict) and book["weights"]:
+                    try:
+                        sw = _E._update_apex_tracking(picks, push_gcs=True, weights=book["weights"],
+                                                      gcs_path="scans/speculair_apex_tracking_weighted.json",
+                                                      local_name="speculair_apex_tracking_weighted.json")
+                        if sw:
+                            book["apex_tracking_weighted"] = sw
+                    except Exception as e:
+                        log.warning(f"Speculair weighted apex NAV mark failed: {e}")
                 if label == "value" and isinstance(book.get("weights"), dict) and book["weights"]:
                     try:
                         sw = _E._update_apex_tracking(picks, push_gcs=True, weights=book["weights"],
