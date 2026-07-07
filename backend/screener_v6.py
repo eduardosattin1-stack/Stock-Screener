@@ -1828,10 +1828,14 @@ def get_analyst(sym: str) -> dict:
     except Exception as e:
         log.debug(f"analyst-estimates failed for {sym}: {e}")
 
-    # PT revision velocity (v1.3 May 2026): compute from FMP's 
+    # PT revision velocity (v1.3 May 2026): compute from FMP's
     # stable price-target-summary endpoint. Removes need for 60d bootstrap.
+    # NOTE the metric compares lastQuarterAvgPriceTarget vs lastYearAvgPriceTarget — the historical
+    # "pt_velocity_60d" field name / "(60d)" UI label are legacy misnomers.
     result["pt_velocity_60d"] = None
     result["pt_velocity_score"] = None
+    result["target_analyst_count"] = None
+    result["target_year_avg"] = None
     if result["target"] > 0:
         try:
             pt_sum = fmp("price-target-summary", {"symbol": sym})
@@ -1839,7 +1843,18 @@ def get_analyst(sym: str) -> dict:
                 summary = pt_sum[0]
                 last_q = float(summary.get("lastQuarterAvgPriceTarget") or 0)
                 last_y = float(summary.get("lastYearAvgPriceTarget") or 0)
-                if last_q > 0 and last_y > 0:
+                q_n = int(summary.get("lastQuarterCount") or 0)
+                y_n = int(summary.get("lastYearCount") or 0)
+                # THIN-COVERAGE FUSE (2026-07-08, KBR incident): with a single PT in the quarter
+                # window, "consensus" degenerates to one analyst (FMP consensus=median=high=low) and
+                # the velocity reads a fake -29% "collapse" (n=1 qtr avg vs n=5 yr avg) that zeroed a
+                # 10%-weight factor AND armed the debate's bear case. Expose the counts + trailing-yr
+                # avg so downstream (UI marker, debate bundle) can label a thin consensus, and skip
+                # the velocity entirely below 2 quarter prints (coverage noise, not revision signal).
+                result["target_analyst_count"] = q_n
+                if last_y > 0 and y_n:
+                    result["target_year_avg"] = round(last_y, 2)
+                if last_q > 0 and last_y > 0 and q_n >= 2:
                     velocity = (last_q - last_y) / last_y
                     score = _ladder(
                         velocity,
@@ -5026,6 +5041,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # PT revision velocity (Smart Money v1.1)
         s.pt_velocity_60d = analyst.get("pt_velocity_60d")
         s.pt_velocity_score = analyst.get("pt_velocity_score")
+        # thin-consensus disclosure (2026-07-08): how many PTs the "consensus" actually contains
+        s.target_analyst_count = analyst.get("target_analyst_count")
+        s.target_year_avg = analyst.get("target_year_avg")
         s.revenue_cagr_3y = value["revenue_cagr_3y"]
         s.eps_cagr_3y = value["eps_cagr_3y"]
         s.roe_avg = value["roe_avg"]; s.roe_consistent = value["roe_consistent"]

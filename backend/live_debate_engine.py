@@ -959,15 +959,24 @@ def _live_corrections(sym: str) -> str:
             td = _n("totalDebt") or (_n("longTermDebt") + _n("shortTermDebt"))
             cash = _n("cashAndShortTermInvestments") or (_n("cashAndCashEquivalents") + _n("shortTermInvestments"))
             nd = td - cash
+            # 2026-07-08 (KBR incident): FMP totalDebt INCLUDES capitalized leases, but company 8-Ks
+            # usually present borrowings-only — an agent (or skeptic) comparing the two sees a phantom
+            # "overstatement" (~$228M of leases read as a $270M error). State the composition so both
+            # definitions are visible and the record says which one its SoP uses.
+            leases = _n("capitalLeaseObligations")
+            nd_exlease = nd - leases
 
             def _amt(x):
                 return f"{x/1e9:.2f}B" if abs(x) >= 1e9 else f"{x/1e6:.0f}M"
 
             if nd >= 0:
-                lab = (f"NET DEBT {_amt(nd)} (total debt {_amt(td)} minus cash {_amt(cash)}) — this is a LIABILITY; "
+                lab = (f"NET DEBT {_amt(nd)} (borrowings {_amt(td - leases)} + capitalized leases {_amt(leases)}, "
+                       f"minus cash {_amt(cash)}; ex-lease net debt ≈ {_amt(nd_exlease)} — filings often quote the "
+                       f"ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; "
                        f"in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'")
             else:
-                lab = (f"NET CASH {_amt(-nd)} (cash {_amt(cash)} exceeds total debt {_amt(td)}) — a genuine SoP add-back")
+                lab = (f"NET CASH {_amt(-nd)} (cash {_amt(cash)} exceeds total debt {_amt(td)}, "
+                       f"incl. capitalized leases {_amt(leases)}) — a genuine SoP add-back")
             out.append(f"Net debt/cash (recomputed from the balance sheet, {b.get('date','latest Q')}): {lab}; "
                        f"use this, not the scan's net_debt above")
     except Exception:
@@ -1133,7 +1142,17 @@ def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str
     if isinstance(tgt, (int, float)) and tgt > 0:
         ups = g("upside")
         ups_s = f" ({ups:+.0f}% upside)" if isinstance(ups, (int, float)) and not isinstance(ups, bool) else ""
-        lines.append(f"Analyst consensus target: {tgt:.2f}{ups_s}")
+        # thin-consensus disclosure (2026-07-08, KBR incident): FMP "consensus" can collapse to ONE
+        # analyst (consensus=median=high=low) — the debate must not read n=1 as "the Street".
+        n = g("target_analyst_count")
+        yavg = g("target_year_avg")
+        note = ""
+        if isinstance(n, (int, float)) and not isinstance(n, bool) and n < 3:
+            note = (f" [THIN CONSENSUS: only {int(n)} price target(s) in the last quarter — this is "
+                    f"NOT a street-wide view"
+                    + (f"; trailing-12mo avg {yavg:.2f} across more analysts" if isinstance(yavg, (int, float)) and not isinstance(yavg, bool) and yavg > 0 else "")
+                    + "; verify the wider consensus before citing it]")
+        lines.append(f"Analyst consensus target: {tgt:.2f}{ups_s}{note}")
 
     # Positioning / smart-money (stock page) — who's already in and which way the PT is revising.
     # NOT a thesis on its own; context for whether the committee is early or late.

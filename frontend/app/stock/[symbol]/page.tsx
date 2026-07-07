@@ -141,6 +141,8 @@ reversal_score?:number;
   cmp_global_opd_pct?:number|null;
   pt_velocity_60d?:number|null;
   pt_velocity_score?:number|null;
+  target_analyst_count?:number|null;  // PTs in FMP's last-quarter window — <3 = thin "consensus" (may be ONE analyst)
+  target_year_avg?:number|null;       // trailing-12mo avg PT across more analysts (context when thin)
   company_name?:string;
   exchange?:string;
   country?:string;
@@ -1613,7 +1615,7 @@ function PriceCompositeChart({symbol, mode}:{symbol:string, mode?:string}){
 // DCF and Buffett earnings-compounding intrinsic remain on the Stock dict
 // for diagnostics but no longer appear here. Keeping the chart simple
 // matches the new five-factor brief.
-function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps:number;currency?:string}){
+function TargetBar({price,target,bvps,currency,targetN,targetYearAvg}:{price:number;target:number;bvps:number;currency?:string;targetN?:number|null;targetYearAvg?:number|null}){
   const vs=[price,target,bvps].filter(v=>v>0);
   if(vs.length<2)return null;
   const mn=Math.min(...vs)*0.85,mx=Math.max(...vs)*1.10,rng=mx-mn||1,pos=(v:number)=>((v-mn)/rng*100);
@@ -1666,6 +1668,12 @@ function TargetBar({price,target,bvps,currency}:{price:number;target:number;bvps
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:T.amber}}/>
           <strong>Analyst:</strong> Wall Street 12-month consensus
+          {typeof targetN === "number" && targetN < 3 && (
+            <span style={{color:T.amber,fontWeight:600}}>
+              {" "}· THIN: {targetN} PT{targetN === 1 ? "" : "s"} last qtr
+              {typeof targetYearAvg === "number" && targetYearAvg > 0 ? ` (12mo avg $${targetYearAvg.toFixed(0)})` : ""}
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -1883,7 +1891,7 @@ function SmartMoneyCard({s}:{s:StockData}){
       }
       const tone:Tone = ptVelScore > 0.6 ? "good" : ptVelScore < 0.4 ? "bad" : "neutral";
       const sign = ptVelRaw >= 0 ? "+" : "";
-      const detail = `${sign}${(ptVelRaw*100).toFixed(1)}% (60d) · ${(ptVelScore*100).toFixed(0)}/100`;
+      const detail = `${sign}${(ptVelRaw*100).toFixed(1)}% (qtr vs yr avg) · ${(ptVelScore*100).toFixed(0)}/100`;
       return { key, weight, label, score:ptVelScore, detail, tone, tip };
     }
 
@@ -2812,7 +2820,7 @@ function QualityValueCard({s}:{s:StockData}){
       <Metric label="P/FCF" value={(s.p_fcf??0)>0?(s.p_fcf as number).toFixed(1)+"x":"—"} color={(s.p_fcf??0)>0&&(s.p_fcf as number)<25?"var(--green)":(s.p_fcf??0)>0&&(s.p_fcf as number)<40?T.amber:T.textMuted}/>
       <Metric label="Earnings Yield" value={fmtPct(s.earnings_yield)} color={(s.earnings_yield??0)>0.05?"var(--green)":(s.earnings_yield??0)>0.03?T.amber:T.textMuted}/>
       <BuffettBlock s={s}/>
-      <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency}/>
+      <TargetBar price={s.price} target={s.target} bvps={s.buffett_fair_value??0} currency={s.currency} targetN={s.target_analyst_count} targetYearAvg={s.target_year_avg}/>
     </Card>
   );
 }

@@ -279,6 +279,22 @@ def _fmp_segments(sym):
         return ""
     segs.sort(key=lambda kv: -abs(kv[1]))
     total = sum(abs(v) for _, v in segs) or 1.0
+    # COVERAGE GATE (2026-07-08, KBR incident): FMP's annual segmentation row can be an aggregation
+    # of INCOMPLETE quarters — for KBR FY2025 it returned MTS $1.34B vs its true $5.58B (segments
+    # summed to only 45% of revenue), silently INVERTING the mix and the whole SoP the debate built
+    # on it. If the segment sum doesn't cover ~80% of the company's annual revenue, the block is
+    # actively misleading — drop it (the debate falls back to whole-company intrinsic per its step 4).
+    try:
+        inc = requests.get("https://financialmodelingprep.com/stable/income-statement",
+                           params={"symbol": sym, "period": "annual", "limit": 1, "apikey": key},
+                           timeout=20).json()
+        rev = float(inc[0].get("revenue") or 0) if isinstance(inc, list) and inc else 0.0
+    except Exception:
+        rev = 0.0
+    if rev > 0 and total < 0.8 * rev:
+        print(f"  segments[{sym}]: DROPPED — cover only {total / rev * 100:.0f}% of revenue "
+              f"({total / 1e9:.2f}B of {rev / 1e9:.2f}B): incomplete FMP segmentation would invert the mix")
+        return ""
 
     def _a(v):
         a = abs(v)
