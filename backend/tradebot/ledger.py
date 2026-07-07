@@ -18,8 +18,19 @@ EMPTY_STATE = {
     "positions": [],        # filled, live positions
     "pending_entries": [],  # entry orders working (tonight's candidates)
     "equity_history": [],   # [{date, equity, cash}] one row per --eod run
+    "completed": {},        # phase -> US-session date it last completed (idempotency)
     "created": None,
 }
+
+
+def phase_done(state: dict, phase: str, trading_date: str) -> bool:
+    """True if `phase` already did its work for this session date — the guard
+    that lets the --watch loop re-fire safely all day without double-executing."""
+    return (state.get("completed") or {}).get(phase) == trading_date
+
+
+def mark_phase_done(state: dict, phase: str, trading_date: str) -> None:
+    state.setdefault("completed", {})[phase] = trading_date
 
 
 def now_iso() -> str:

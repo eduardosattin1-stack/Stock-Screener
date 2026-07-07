@@ -36,11 +36,20 @@ nightly scan (GCS) ──> signals.py ──> execution.py (ib_insync, gateway P
 - Runs on the **gateway PC** beside the existing IB Gateway. The bot account likely needs a
   **second IB Gateway instance** (own port, e.g. 4003) if it's a separate username — verify at
   deploy; if it's a linked account under the same login, pin orders to the bot account ID.
-- Windows Task Scheduler entries (same pattern as the portfolio mirror / SpeculairWeekly):
-  `--stage` **12:00 CET** (the nightly scan completes 04:05–04:30 UTC ≈ 06:30 CET with the prior
-  US session's closes — verified from GCS archive timestamps; noon gives >5h margin),
-  `--morning` 15:25 CET (09:25 ET, the scan's "next trading day open"), `--eod` 22:15 CET,
-  supervisor 23:00 CET.
+- **Self-healing scheduling (`--watch`).** ONE Task Scheduler job (`register_tasks.ps1`) fires
+  `run_tradebot.ps1 watch` every 15 min, MON–FRI 11:45–23:45 CET. Each cycle runs whichever phase is
+  due (stage window 12:00–21:30, morning 15:25–17:30, eod 22:05–23:55 CET) and **not yet done today**,
+  reaching IBKR only when a TCP probe of the gateway port succeeds. This is the answer to "run when I
+  log in / catch up if I wasn't logged in": a phase missed because the gateway was down runs on the
+  first cycle after you log in. Idempotency is per US-session date (`state.completed`), so re-firing
+  never double-executes (bars advance at most once/day; entries place at most once/day). Live
+  gateway-dependent phases **defer** (don't mark done) when IBKR is unreachable; dry-run phases run
+  standalone (paper book ages on a weekday check even with no login). Un-entered pendings from a
+  missed day are **expired** at the next stage (not entered at stale prices). Task settings:
+  StartWhenAvailable (run-if-missed after sleep/off), WakeToRun, restart-on-failure ×3.
+  GOTCHA: `--watch` connects to `cfg.ib_port` (4001) — whatever you log into (IB Gateway or TWS) must
+  listen there. For a truly unattended box, pair with IBKR **IBC** auto-login (the bot never handles
+  credentials). Legacy fixed `--stage/--morning/--eod` remain as manual one-shots.
 
 ## 3. Entry ladder (the close-vs-next-morning gap)
 

@@ -1,8 +1,14 @@
-"""TradeBot entrypoint — one of three phases per invocation (Task Scheduler).
+"""TradeBot entrypoint.
 
-  python -m tradebot.run_bot --stage      12:00 CET (scan completes ~06:30 CET)
-  python -m tradebot.run_bot --morning    15:25 CET (09:25 ET)
-  python -m tradebot.run_bot --eod        22:15 CET (after the US close)
+  python -m tradebot.run_bot --watch      SELF-HEALING driver (Task Scheduler runs
+                                          this every ~15 min): runs whichever phase
+                                          is due-and-not-done, reaching IBKR only
+                                          when it's up. This is the normal mode —
+                                          it makes the bot resilient to you not
+                                          being logged in at the scheduled time.
+  python -m tradebot.run_bot --stage      one-shot: stage today's D10 candidates
+  python -m tradebot.run_bot --morning    one-shot: place the day's entries
+  python -m tradebot.run_bot --eod        one-shot: reconcile + advance bars
   python -m tradebot.run_bot --show       print the book + recent orders (read-only)
   python -m tradebot.run_bot --reset      archive + wipe the ledger (dry-run only;
                                           run once before flipping live to clear
@@ -36,6 +42,7 @@ log = logging.getLogger("tradebot")
 def main() -> int:
     ap = argparse.ArgumentParser(description="D10 sleeve trading bot")
     phase = ap.add_mutually_exclusive_group(required=True)
+    phase.add_argument("--watch", action="store_true")
     phase.add_argument("--stage", action="store_true")
     phase.add_argument("--morning", action="store_true")
     phase.add_argument("--eod", action="store_true")
@@ -52,7 +59,9 @@ def main() -> int:
         return show(cfg)
     if args.reset:
         return reset(cfg)
-    if args.stage:
+    if args.watch:
+        out = execution.run_watch(cfg, gcs_impl)
+    elif args.stage:
         out = execution.run_stage(cfg, gcs_impl)
     elif args.morning:
         out = execution.run_morning(cfg, gcs_impl)

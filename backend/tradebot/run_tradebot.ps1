@@ -1,21 +1,17 @@
-# run_tradebot.ps1 <stage|morning|eod> — Task Scheduler wrapper for the bot phases.
+# run_tradebot.ps1 <watch|stage|morning|eod|show> — Task Scheduler wrapper.
+#
+# NORMAL MODE is "watch": a single self-healing task that fires every ~15 min and
+# runs whichever phase is due-and-not-done, reaching IBKR only when it's actually
+# logged in. So if you weren't logged into Trader Workstation / IB Gateway when a
+# phase was supposed to run, the next watch cycle after you log in runs it (each
+# phase is idempotent per session, so nothing double-fires). Register it with
+# register_tasks.ps1 (which also removes the old fixed Stage/Morning/EOD tasks).
 #
 # LIVE SWITCH: the bot trades real orders ONLY if the file LIVE.flag exists in
-# this directory. No flag file = dry-run (orders logged, never placed). To halt
-# everything instantly regardless: create TRADEBOT_HALT here, or the GCS blob
-# tradebot/HALT (the supervisor uses the latter).
-#
-# SCHEDULE (verified against GCS archive timestamps: the nightly scan completes
-# 04:05-04:30 UTC = ~06:30 CET with the PRIOR US session's closes; staging at
-# noon CET gives >5h margin, and the morning entry the same day IS the scan's
-# "next trading day open"). Times are LOCAL/CET — note US-EU DST misalignment
-# shifts the ET-anchored morning run by 1h for ~3 weeks/yr.
-# Task Scheduler registration (run once, elevated):
-#   schtasks /create /tn "TradeBot-Stage"   /tr "powershell -ExecutionPolicy Bypass -NoProfile -File C:\Users\Bruno\Stock-Screener\backend\tradebot\run_tradebot.ps1 stage"   /sc weekly /d MON,TUE,WED,THU,FRI /st 12:00 /rl HIGHEST /f
-#   schtasks /create /tn "TradeBot-Morning" /tr "powershell -ExecutionPolicy Bypass -NoProfile -File C:\Users\Bruno\Stock-Screener\backend\tradebot\run_tradebot.ps1 morning" /sc weekly /d MON,TUE,WED,THU,FRI /st 15:25 /rl HIGHEST /f
-#   schtasks /create /tn "TradeBot-EOD"     /tr "powershell -ExecutionPolicy Bypass -NoProfile -File C:\Users\Bruno\Stock-Screener\backend\tradebot\run_tradebot.ps1 eod"     /sc weekly /d MON,TUE,WED,THU,FRI /st 22:15 /rl HIGHEST /f
+# this directory. No flag file = dry-run (orders logged, never placed). Halt
+# instantly: create TRADEBOT_HALT here, or the GCS blob tradebot/HALT.
 
-param([Parameter(Mandatory = $true)][ValidateSet("stage", "morning", "eod")][string]$Phase)
+param([Parameter(Mandatory = $true)][ValidateSet("watch", "stage", "morning", "eod", "show")][string]$Phase)
 
 # "Continue", NOT "Stop": in Windows PowerShell 5.1, `2>&1` on a native command
 # wraps every stderr line in an ErrorRecord — under EAP=Stop the FIRST such line

@@ -34,6 +34,16 @@ def max_open_slots(cfg: BotConfig, today: str = "") -> int:
     return cfg.max_slots
 
 
+def is_halted(cfg: BotConfig, gcs) -> bool:
+    """Kill switch — GCS HALT blob (supervisor / remote) OR local HALT file
+    (Bruno at the gateway PC). Checked first everywhere; the --watch loop skips
+    every phase when this is true."""
+    if gcs["read_text"](cfg.halt_path, "") != "":
+        return True
+    return os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                       cfg.local_halt_file))
+
+
 def entry_gates(cfg: BotConfig, gcs, state: dict, summary: dict,
                 equity: float, day_start_equity: float,
                 n_open: int, n_pending: int, today: str = "",
@@ -44,8 +54,7 @@ def entry_gates(cfg: BotConfig, gcs, state: dict, summary: dict,
     so the morning only re-checks kill-switch / health / slots / daily-loss."""
     gates = []
 
-    halted = gcs["read_text"](cfg.halt_path, "") != "" or os.path.exists(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg.local_halt_file))
+    halted = is_halted(cfg, gcs)
     gates.append(("kill-switch", not halted, "HALT present" if halted else "clear"))
 
     hs = health_status(summary, cfg)

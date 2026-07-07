@@ -62,6 +62,28 @@ class BotConfig:
     cal_config_path: str = "calibration_tracking/v2/config.json"
     cal_summary_path: str = "calibration_tracking/v2/summary.json"
 
+    # ── resilience / self-healing catch-up (the --watch phase, fired every ~15
+    #    min by Task Scheduler) ─────────────────────────────────────────────────
+    # Each phase runs when its window (LOCAL CET HH:MM on the gateway PC) is open
+    # AND — for the live gateway-dependent phases — when IBKR is actually
+    # reachable + logged in. So if you weren't logged in at the scheduled time,
+    # the first --watch cycle after you log in runs the missed phase; every phase
+    # is idempotent per US-session date (ledger `completed`), so re-firing never
+    # double-executes. CET-anchored: for the ~2 weeks/yr the US springs forward
+    # before the EU, the US open is 14:30 CET and morning entries land ~1h late
+    # (bounded, captured in entry_slippage_pct).
+    stage_window: tuple = ((12, 0), (21, 30))
+    eod_window: tuple = ((22, 5), (23, 55))
+    # morning_window END is the one STRATEGY knob: how late will the bot still
+    # place the day's entries if you logged in late? The fill-timing study
+    # (2026-07-01) showed later entry is adverse-selected — by the close eventual
+    # winners have already run +2.6% and 59% get cap-skipped, so a very-late fill
+    # tends to buy the laggards. Default caps catch-up at ~2h past the open
+    # (17:30 CET). Widen toward the close to prioritize "always get exposure";
+    # narrow it toward "skip the day if I missed the open".
+    morning_window: tuple = ((15, 25), (17, 30))
+    probe_timeout_s: float = 3.0   # TCP reachability probe to the gateway socket
+
     # ── IBKR: same login as the portfolio mirror, one shared gateway instance.
     # The bot uses its own client id and pins every order to the linked bot
     # account. Verify ib_port against the gateway's configured socket port

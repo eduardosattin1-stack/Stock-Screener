@@ -2,6 +2,7 @@
 import os
 import sys
 import unittest
+from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -238,9 +239,9 @@ class TestExecution(unittest.TestCase):
         self.assertEqual(syms, {"AAA", "BBB"})
         self.assertEqual(state["pending_entries"][0]["limit_price"],
                          round(20.0 * 1.02, 2))
-        # staging is idempotent-ish: re-run stages nothing new (symbols pending)
+        # idempotent per session: a second run today short-circuits
         out2 = ex.run_stage(CFG, gcs)
-        self.assertEqual(out2["staged"], 0)
+        self.assertEqual(out2.get("skipped"), "stage done today")
 
     def test_stage_paper_equity_when_unfunded_dry_run(self):
         """No equity snapshot + dry-run -> sizes off paper_equity_usd and stages."""
@@ -257,11 +258,17 @@ class TestExecution(unittest.TestCase):
         # slot = 25k/20 = $1,250 at limit 20.40 -> 61 shares
         self.assertEqual(pend["qty"], 61)
         self.assertIn('"paper_equity": true', store[CFG.trades_path])
-        # but LIVE mode with no equity must still block
+        # LIVE mode with no equity must still block (fresh state — idempotency
+        # would otherwise short-circuit the second run)
         import dataclasses
         live_cfg = dataclasses.replace(CFG, dry_run=False)
-        out2 = ex.run_stage(live_cfg, gcs)
-        self.assertTrue(out2["blocked"])
+        store2 = {}
+        gcs2 = make_fake(store2)
+        gcs2["write"](CFG.cal_summary_path, HEALTHY)
+        gcs2["write"](CFG.cal_config_path, {"decile_thresholds": {"p20_60": EDGES}})
+        gcs2["write"](CFG.scan_path, {"stocks": [stock("AAA", p=0.70)]})
+        out2 = ex.run_stage(live_cfg, gcs2)
+        self.assertTrue(out2.get("blocked"))
 
     def test_stage_blocked_by_halt(self):
         from tradebot import execution as ex
@@ -297,6 +304,116 @@ class TestExecution(unittest.TestCase):
         self.assertEqual(pos["stop_price"], 7.0)
         # trade log carries the dry-run order specs (entry pair)
         self.assertIn("ORDER_DRY", store[CFG.trades_path])
+
+
+class TestIdempotencyHelpers(unittest.TestCase):
+    def test_phase_done_roundtrip(self):
+        state = dict(ledger.EMPTY_STATE, completed={})
+        self.assertFalse(ledger.phase_done(state, "stage", "2026-07-06"))
+        ledger.mark_phase_done(state, "stage", "2026-07-06")
+        self.assertTrue(ledger.phase_done(state, "stage", "2026-07-06"))
+        self.assertFalse(ledger.phase_done(state, "stage", "2026-07-07"))  # next session
+        self.assertFalse(ledger.phase_done(state, "morning", "2026-07-06"))
+
+    def test_in_window(self):
+        from tradebot import execution as ex
+        w = ((15, 25), (17, 30))
+        self.assertTrue(ex._in_window(datetime(2026, 7, 6, 15, 30), w))
+        self.assertTrue(ex._in_window(datetime(2026, 7, 6, 15, 25), w))
+        self.assertTrue(ex._in_window(datetime(2026, 7, 6, 17, 30, 30), w))
+        self.assertFalse(ex._in_window(datetime(2026, 7, 6, 15, 24), w))
+        self.assertFalse(ex._in_window(datetime(2026, 7, 6, 17, 31), w))
+
+
+class TestWatch(unittest.TestCase):
+    MON_MORNING = datetime(2026, 7, 6, 15, 30)   # Monday, inside the morning window
+    MON_EOD = datetime(2026, 7, 6, 22, 30)        # Monday, inside the eod window
+    SAT = datetime(2026, 7, 4, 15, 30)            # Saturday
+
+    def setUp(self):
+        from tradebot import execution as ex
+        self._c, self._p = ex._try_connect, ex._tcp_probe
+        ex._try_connect = lambda cfg: None          # never a real IB in tests
+        ex._tcp_probe = lambda *a, **k: True         # gateway "listening" by default
+        self.store = {}
+        self.gcs = make_fake(self.store)
+        self.gcs["write"](CFG.cal_summary_path, HEALTHY)
+        self.gcs["write"](CFG.cal_config_path, {"decile_thresholds": {"p20_60": EDGES}})
+        self.gcs["write"](CFG.scan_path, {"scan_date": "2026-07-06", "stocks": [
+            stock("AAA", p=0.70), stock("BBB", p=0.66, sector="Technology")]})
+
+    def tearDown(self):
+        from tradebot import execution as ex
+        ex._try_connect, ex._tcp_probe = self._c, self._p
+
+    def test_weekend_short_circuits(self):
+        from tradebot import execution as ex
+        self.assertEqual(ex.run_watch(CFG, self.gcs, now=self.SAT), {"skipped": "weekend"})
+
+    def test_halt_short_circuits(self):
+        from tradebot import execution as ex
+        self.gcs["write"](CFG.halt_path, "halted")
+        self.assertEqual(ex.run_watch(CFG, self.gcs, now=self.MON_MORNING), {"halted": True})
+        self.assertIn("WATCH_HALTED", self.store[CFG.trades_path])
+        self.assertEqual(ledger.read_state(self.gcs, CFG).get("completed", {}), {})
+
+    def test_dry_cycle_stages_enters_then_idempotent(self):
+        from tradebot import execution as ex
+        out = ex.run_watch(CFG, self.gcs, now=self.MON_MORNING)
+        self.assertEqual(set(out["ran"]), {"stage", "morning"})
+        state = ledger.read_state(self.gcs, CFG)
+        self.assertEqual(len(ledger.open_positions(state)), 2)
+        self.assertEqual(state["completed"]["stage"], "2026-07-06")
+        self.assertEqual(state["completed"]["morning"], "2026-07-06")
+        # a second cycle the same session does nothing
+        out2 = ex.run_watch(CFG, self.gcs, now=self.MON_MORNING)
+        self.assertEqual(out2["ran"], [])
+        self.assertEqual(len(ledger.open_positions(ledger.read_state(self.gcs, CFG))), 2)
+
+    def test_live_gateway_down_defers_morning_but_stages(self):
+        from tradebot import execution as ex
+        import dataclasses
+        live = dataclasses.replace(CFG, dry_run=False)
+        state = ledger.read_state(self.gcs, CFG)      # fund it so live stage can size
+        ledger.equity_snapshot(state, 25_000, 25_000, "2026-07-03")
+        ledger.write_state(self.gcs, CFG, state)
+        ex._tcp_probe = lambda *a, **k: False        # not listening
+        out = ex.run_watch(live, self.gcs, now=self.MON_MORNING)
+        self.assertEqual(out["ran"], ["stage"])       # stage needs no gateway
+        state = ledger.read_state(self.gcs, CFG)
+        self.assertEqual(state["completed"].get("stage"), "2026-07-06")
+        self.assertIsNone(state["completed"].get("morning"))   # deferred, not done
+        self.assertEqual(len(state["pending_entries"]), 2)      # held for retry
+        self.assertIn("WATCH", self.store[CFG.trades_path])     # logged the down-gateway window
+        # socket now open but full login still fails (test) -> morning still defers, no dupes
+        ex._tcp_probe = lambda *a, **k: True
+        out2 = ex.run_watch(live, self.gcs, now=self.MON_MORNING)
+        self.assertEqual(out2["ran"], [])
+        self.assertIsNone(ledger.read_state(self.gcs, CFG)["completed"].get("morning"))
+
+    def test_eod_advances_bars_exactly_once(self):
+        from tradebot import execution as ex
+        state = ledger.read_state(self.gcs, CFG)
+        ledger.stage_pending(state, {"symbol": "AAA", "sector": "Tech", "p": .7, "price": 20},
+                             10, 20.4, "2026-07-06")
+        ledger.record_fill(state, CFG, "AAA", 20.0, 10, "2026-07-06")
+        ledger.write_state(self.gcs, CFG, state)
+        ex.run_watch(CFG, self.gcs, now=self.MON_EOD)
+        b1 = ledger.open_positions(ledger.read_state(self.gcs, CFG))[0]["bar_count"]
+        ex.run_watch(CFG, self.gcs, now=self.MON_EOD)   # same session — must not double-count
+        b2 = ledger.open_positions(ledger.read_state(self.gcs, CFG))[0]["bar_count"]
+        self.assertEqual((b1, b2), (1, 1))
+
+    def test_stale_pending_expired_at_stage(self):
+        from tradebot import execution as ex
+        state = ledger.read_state(self.gcs, CFG)
+        ledger.stage_pending(state, {"symbol": "OLD", "sector": "Tech", "p": .7, "price": 9},
+                             5, 9.2, "2026-06-01")   # a prior session's un-entered pending
+        ledger.write_state(self.gcs, CFG, state)
+        ex.run_stage(CFG, self.gcs, today="2026-07-06")
+        syms = {p["symbol"] for p in ledger.read_state(self.gcs, CFG)["pending_entries"]}
+        self.assertNotIn("OLD", syms)
+        self.assertIn("ENTRY_EXPIRED", self.store[CFG.trades_path])
 
 
 if __name__ == "__main__":

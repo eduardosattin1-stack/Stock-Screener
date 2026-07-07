@@ -18,7 +18,8 @@ ib_insync; only _place/_connect touch the API.
 """
 import logging
 import math
-from datetime import date
+import socket
+from datetime import date, datetime
 
 from .config import BotConfig
 from . import ledger, risk, signals
@@ -79,6 +80,34 @@ def classify_exit(pos: dict, exec_price: float) -> str:
     if exec_price <= pos["stop_price"] * 1.05:
         return "DISASTER_STOP"
     return "TERMINAL"
+
+
+# ────────────────────────── scheduling / idempotency helpers ──────────────────────
+
+def _tcp_probe(host: str, port: int, timeout: float = 3.0) -> bool:
+    """Cheap check that SOMETHING is listening on the gateway socket. Does NOT
+    confirm IBKR login (the full connect in each live phase does that) — it just
+    avoids an IB handshake + clientId churn to decide whether a gateway-dependent
+    phase is even worth attempting this --watch cycle."""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+
+def trading_date() -> str:
+    """US-session date the bot keys idempotency off. The gateway PC runs on CET;
+    across the --watch active hours (12:00–23:45 CET) the CET and ET calendar
+    dates coincide, so date.today() is the session date."""
+    return date.today().isoformat()
+
+
+def _in_window(now: datetime, window) -> bool:
+    (sh, sm), (eh, em) = window
+    start = now.replace(hour=sh, minute=sm, second=0, microsecond=0)
+    end = now.replace(hour=eh, minute=em, second=59, microsecond=0)
+    return start <= now <= end
 
 
 # ────────────────────────── IB plumbing (thin, untested) ──────────────────────────
@@ -168,13 +197,27 @@ def _market_was_open_today(ib) -> bool:
 
 # ────────────────────────── the three entrypoints ──────────────────────────
 
-def run_stage(cfg: BotConfig, gcs) -> dict:
-    """22:35 CET — no orders, no IB. Gates on last-known equity."""
+def run_stage(cfg: BotConfig, gcs, today: str = None) -> dict:
+    """Data-only (no IB): expire yesterday's un-entered pendings, then stage
+    today's D10 candidates. Gates on last-known equity. Idempotent per session."""
+    today = today or trading_date()
     state = ledger.read_state(gcs, cfg)
+    if ledger.phase_done(state, "stage", today):
+        return {"skipped": "stage done today"}
+
+    # expire pendings that missed their entry window (a prior session's stage that
+    # never got entered) so they can't leak into today's morning at stale prices
+    stale = [p for p in state["pending_entries"] if str(p.get("scan_date", today)) < today]
+    for p in stale:
+        ledger.log_event(gcs, cfg, "ENTRY_EXPIRED", symbol=p["symbol"],
+                         reason=f"missed entry window (staged {p.get('scan_date')})")
+    if stale:
+        state["pending_entries"] = [p for p in state["pending_entries"]
+                                    if str(p.get("scan_date", today)) >= today]
+
     scan = gcs["read"](cfg.scan_path, {})
     summary = gcs["read"](cfg.cal_summary_path, {})
     edges = ((gcs["read"](cfg.cal_config_path, {}) or {}).get("decile_thresholds") or {}).get(cfg.regime)
-    today = date.today().isoformat()
     equity = ledger.day_start_equity(state, "9999") or 0.0  # latest snapshot
     paper = False
     if cfg.dry_run and equity <= 0:
@@ -187,6 +230,7 @@ def run_stage(cfg: BotConfig, gcs) -> dict:
     if not risk.all_pass(gates):
         ledger.log_event(gcs, cfg, "STAGE_BLOCKED",
                          gates=[f"{n}:{d}" for n, ok, d in gates if not ok])
+        ledger.mark_phase_done(state, "stage", today)
         ledger.write_state(gcs, cfg, state)
         return {"staged": 0, "blocked": True}
 
@@ -207,19 +251,27 @@ def run_stage(cfg: BotConfig, gcs) -> dict:
         staged += 1
     ledger.log_event(gcs, cfg, "STAGED", n=staged, slot_usd=slot, scan_date=scan_date,
                      paper_equity=paper)
+    ledger.mark_phase_done(state, "stage", today)
     ledger.write_state(gcs, cfg, state)
     return {"staged": staged, "blocked": False}
 
 
-def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900) -> dict:
-    """09:25 ET — entries + fill-window + OCA exits off actual fills."""
+def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900, today: str = None) -> dict:
+    """At the open — entries + fill-window + OCA exits off actual fills.
+    Idempotent per session; in LIVE, defers (does NOT mark done) if the gateway
+    is down so the next --watch cycle retries once you're logged in."""
+    today = today or trading_date()
     state = ledger.read_state(gcs, cfg)
+    if ledger.phase_done(state, "morning", today):
+        return {"skipped": "morning done today"}
     if not state["pending_entries"]:
+        ledger.mark_phase_done(state, "morning", today)  # nothing to enter — done
+        ledger.write_state(gcs, cfg, state)
         return {"placed": 0, "filled": 0}
     ib = _try_connect(cfg)
     if ib is None and not cfg.dry_run:
-        raise RuntimeError("LIVE mode but IB gateway unreachable — no orders placed")
-    today = date.today().isoformat()
+        ledger.log_event(gcs, cfg, "MORNING_DEFERRED", reason="gateway unreachable / login pending")
+        return {"skipped": "gateway unreachable"}  # NOT marked done -> --watch retries
     try:
         equity, _cash = _equity_and_cash(ib, cfg) if ib else (0.0, 0.0)
         if not equity:  # dry-run: latest snapshot, else unfunded-rehearsal paper equity
@@ -235,6 +287,7 @@ def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900) -> dict:
             ledger.log_event(gcs, cfg, "MORNING_BLOCKED",
                              gates=[f"{n}:{d}" for n, ok, d in gates if not ok])
             state["pending_entries"] = []
+            ledger.mark_phase_done(state, "morning", today)
             ledger.write_state(gcs, cfg, state)
             return {"placed": 0, "filled": 0, "blocked": True}
 
@@ -288,6 +341,7 @@ def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900) -> dict:
                                             pos["fill_price"], today.replace("-", "")):
                     _place(ib, cfg, gcs, spec, "exit-pair")
                 filled += 1
+        ledger.mark_phase_done(state, "morning", today)
         ledger.write_state(gcs, cfg, state)
         return {"placed": len(placed), "filled": filled}
     finally:
@@ -295,7 +349,7 @@ def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900) -> dict:
             ib.disconnect()
 
 
-def run_eod(cfg: BotConfig, gcs) -> dict:
+def run_eod(cfg: BotConfig, gcs, today: str = None) -> dict:
     """After the close — reconcile (live only), advance bars, terminals, snapshot.
 
     Dry-run WITH a reachable gateway is the full rehearsal: real equity
@@ -303,11 +357,14 @@ def run_eod(cfg: BotConfig, gcs) -> dict:
     detection, simulated positions aging normally — only orders are simulated.
     Reconciliation against IBKR positions is live-only (simulated positions
     don't exist at the broker and would all read as false exits)."""
+    today = today or trading_date()
     state = ledger.read_state(gcs, cfg)
+    if ledger.phase_done(state, "eod", today):
+        return {"skipped": "eod done today"}  # bars advance at most once per session
     ib = _try_connect(cfg)
     if ib is None and not cfg.dry_run:
-        raise RuntimeError("LIVE mode but IB gateway unreachable — cannot reconcile")
-    today = date.today().isoformat()
+        ledger.log_event(gcs, cfg, "EOD_DEFERRED", reason="gateway unreachable / login pending")
+        return {"skipped": "gateway unreachable"}  # NOT marked done -> --watch retries
     try:
         exits = terminals = 0
         if ib and not cfg.dry_run:
@@ -327,7 +384,12 @@ def run_eod(cfg: BotConfig, gcs) -> dict:
                 ledger.log_event(gcs, cfg, "EXIT", symbol=pos["symbol"], price=px,
                                  reason=reason, realized_pct=pos.get("realized_pct"))
                 exits += 1
-        if ib and _market_was_open_today(ib):
+        # advance bars once per session: live/dry-run-with-gateway use the real
+        # SPY-bar holiday check; dry-run WITHOUT a gateway falls back to a plain
+        # weekday check so the paper rehearsal still ages without a login
+        market_open = (_market_was_open_today(ib) if ib
+                       else (cfg.dry_run and date.fromisoformat(today).weekday() < 5))
+        if market_open:
             for pos in ledger.open_positions(state):
                 pos["bar_count"] = int(pos.get("bar_count") or 0) + 1
         for pos in [p for p in ledger.open_positions(state) if due_terminal(p, cfg)]:
@@ -356,9 +418,45 @@ def run_eod(cfg: BotConfig, gcs) -> dict:
                 ledger.equity_snapshot(state, equity, cash, today)
         ledger.log_event(gcs, cfg, "EOD", open=len(ledger.open_positions(state)),
                          exits=exits, terminals=terminals, dry_run=cfg.dry_run)
+        ledger.mark_phase_done(state, "eod", today)
         ledger.write_state(gcs, cfg, state)
         return {"exits": exits, "terminals": terminals,
                 "open": len(ledger.open_positions(state))}
     finally:
         if ib:
             ib.disconnect()
+
+
+def run_watch(cfg: BotConfig, gcs, now: datetime = None) -> dict:
+    """Self-healing scheduler — fired every ~15 min by Task Scheduler. Runs any
+    phase whose window is open and that hasn't completed for today's session,
+    reaching the gateway only when it's actually up. This is the whole answer to
+    "run when I log in / catch up if I wasn't logged in": a phase missed because
+    the gateway was down runs on the first cycle after login, and per-session
+    idempotency means nothing double-fires. Weekends and the kill switch short-
+    circuit the entire cycle."""
+    now = now or datetime.now()
+    if now.weekday() >= 5:
+        return {"skipped": "weekend"}
+    if risk.is_halted(cfg, gcs):
+        ledger.log_event(gcs, cfg, "WATCH_HALTED")
+        return {"halted": True}
+    td = now.date().isoformat()
+    gateway_up = _tcp_probe(cfg.ib_host, cfg.ib_port, cfg.probe_timeout_s)
+    ran = []
+    if _in_window(now, cfg.stage_window):
+        if not run_stage(cfg, gcs, today=td).get("skipped"):
+            ran.append("stage")
+    if _in_window(now, cfg.morning_window) and (cfg.dry_run or gateway_up):
+        if not run_morning(cfg, gcs, today=td).get("skipped"):
+            ran.append("morning")
+    if _in_window(now, cfg.eod_window) and (cfg.dry_run or gateway_up):
+        if not run_eod(cfg, gcs, today=td).get("skipped"):
+            ran.append("eod")
+    # keep the trade log quiet: only record a WATCH row when something ran, or
+    # when live + a trading window is open but the gateway is down (the case worth
+    # seeing — "we wanted to act but you weren't logged in")
+    window_wants_gateway = (_in_window(now, cfg.morning_window) or _in_window(now, cfg.eod_window))
+    if ran or (not cfg.dry_run and not gateway_up and window_wants_gateway):
+        ledger.log_event(gcs, cfg, "WATCH", gateway_up=gateway_up, ran=ran or None)
+    return {"gateway_up": gateway_up, "ran": ran}
