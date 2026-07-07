@@ -1897,72 +1897,72 @@
   },
   {
    "date": "2026-07-06",
-   "nav": 102.952,
-   "basket_ret_pct": 2.952,
+   "nav": 102.685,
+   "basket_ret_pct": 2.685,
    "seats": {
     "GDOT": {
-     "price": 13.155,
-     "ret_pct": 3.18
+     "price": 13.26,
+     "ret_pct": 4.0
     },
     "UNF": {
-     "price": 271.5,
-     "ret_pct": 1.15
+     "price": 270.36,
+     "ret_pct": 0.69
     },
     "FIP": {
-     "price": 4.485,
-     "ret_pct": -1.64
+     "price": 4.41,
+     "ret_pct": -3.29
     },
     "FIG": {
-     "price": 21.38,
-     "ret_pct": 4.34
+     "price": 21.08,
+     "ret_pct": 2.88
     },
     "BLCO": {
-     "price": 17.1,
-     "ret_pct": 9.27
+     "price": 17.11,
+     "ret_pct": 9.33
     },
     "CELC": {
-     "price": 109.39,
-     "ret_pct": 18.14
+     "price": 108.58,
+     "ret_pct": 17.27
     },
     "VRDN": {
      "price": 19.42,
      "ret_pct": 19.07
     },
     "AQST": {
-     "price": 4.225,
-     "ret_pct": 5.89
+     "price": 4.24,
+     "ret_pct": 6.27
     },
     "WVE": {
-     "price": 6.36,
-     "ret_pct": 10.03
+     "price": 6.32,
+     "ret_pct": 9.34
     },
     "AMLX": {
-     "price": 17.98,
-     "ret_pct": 23.24
+     "price": 17.97,
+     "ret_pct": 23.17
     },
     "AAUC": {
-     "price": 23.95,
-     "ret_pct": 2.35
+     "price": 24.06,
+     "ret_pct": 2.82
     },
     "FUN": {
-     "price": 19.915,
-     "ret_pct": -3.14
+     "price": 19.55,
+     "ret_pct": -4.91
     },
     "THRM": {
      "price": 34.13,
      "ret_pct": 0.74
     },
     "ZYME": {
-     "price": 25.6422,
-     "ret_pct": -2.54
+     "price": 25.33,
+     "ret_pct": -3.72
     },
     "DDL": {
-     "price": 2.015,
-     "ret_pct": 3.87
+     "price": 2.02,
+     "ret_pct": 4.12
     },
     "LBTYK": {
-     "price": 10.6548,
-     "ret_pct": -2.25
+     "price": 10.5,
+     "ret_pct": -3.67
     },
     "LZM": {
      "price": 3.88,
@@ -2725,45 +2725,45 @@
   },
   {
    "date": "2026-07-06",
-   "nav": 113.288,
-   "ret_pct": 13.288,
+   "nav": 112.706,
+   "ret_pct": 12.706,
    "n": 9,
    "seats": {
     "CLVT": {
-     "price": 2.525,
-     "ret_pct": 14.25
+     "price": 2.44,
+     "ret_pct": 10.41
     },
     "BBIO": {
-     "price": 78.4353,
-     "ret_pct": 17.42
+     "price": 77.75,
+     "ret_pct": 16.39
     },
     "EYPT": {
-     "price": 14.0541,
-     "ret_pct": 7.86
+     "price": 14.44,
+     "ret_pct": 10.82
     },
     "VIR": {
-     "price": 9.9798,
-     "ret_pct": 15.91
+     "price": 10.02,
+     "ret_pct": 16.38
     },
     "PVLA": {
-     "price": 141.8598,
-     "ret_pct": 19.37
+     "price": 140.31,
+     "ret_pct": 18.07
     },
     "AVIR": {
-     "price": 5.0,
-     "ret_pct": 13.9
+     "price": 4.87,
+     "ret_pct": 10.93
     },
     "DBVT": {
-     "price": 15.48,
-     "ret_pct": -1.4
+     "price": 15.61,
+     "ret_pct": -0.57
     },
     "MGNI": {
-     "price": 20.835,
-     "ret_pct": 19.4
+     "price": 20.84,
+     "ret_pct": 19.43
     },
     "GERN": {
-     "price": 1.445,
-     "ret_pct": 12.89
+     "price": 1.44,
+     "ret_pct": 12.5
     }
    }
   }
