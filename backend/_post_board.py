@@ -160,122 +160,18 @@ METHOD_FOR_LANE = {
     "bio_convergence": "binary_prob", "distressed": "recovery",
 }
 
+# 2026-07-10: fetch_live_quotes / _vf / rr_ratio_lane / grade_from_measure / MULT_BAND / _n /
+# sop_integrity moved to backend/_numeric_core.py (shared with the future numeric-integrity gate
+# in the weekly Speculair debate pipeline). Thin wrappers below preserve this module's exact
+# call signatures and behavior (FMP_KEY/FMP_BASE stay HERE — _numeric_core never hardcodes a key).
+from _numeric_core import (_vf, _n, rr_ratio_lane, grade_from_measure, MULT_BAND, sop_integrity,
+                            fetch_live_quotes as _fetch_live_quotes_core,
+                            THIN_FLOOR_PCT, TINY_FLOOR_PCT)
+
+
 def fetch_live_quotes(symbols, batch=80):
     """Fresh FMP REST batch quotes -> {SYMBOL: price}. {} on failure (caller flags stale)."""
-    out = {}
-    syms = sorted({str(x).upper() for x in symbols if x and isinstance(x, str)})
-    for i in range(0, len(syms), batch):
-        try:
-            r = requests.get(f"{FMP_BASE}/batch-quote",
-                             params={"symbols": ",".join(syms[i:i + batch]), "apikey": FMP_KEY}, timeout=25)
-            for q in (r.json() or []):
-                if q.get("symbol") and q.get("price") is not None:
-                    out[str(q["symbol"]).upper()] = float(q["price"])
-        except Exception:
-            continue
-    return out
-
-def _vf(row, key):
-    v = row.get(key)
-    if v is None or (isinstance(v, float) and pd.isna(v)):
-        return None
-    try:
-        return float(v)
-    except (TypeError, ValueError):
-        return v
-
-def rr_ratio_lane(method, live, f):
-    """Deterministic lane-aware R:R vs the fresh `live` price. f = dossier fields (dict).
-    Returns: float (clean ratio), dict (binary barbell), ('TINY', rr) (rr but <5% downside),
-    ('FLAG', reason) (edge L, stays on board), ('DROP', reason) (tier->NONE), or None (un-computable)."""
-    if method in RATIO_METHODS:
-        tgt, flr = _vf(f, "fair_value_target"), _vf(f, "downside_floor")
-        if tgt is None or flr is None: return None
-        up, dn = tgt - live, live - flr
-        if up <= 0: return ("FLAG", "NO_UPSIDE")        # target<=live: catalyst already played out
-        if dn <= 0: return ("FLAG", "FLOOR_GE_LIVE")    # floor>=live: no/inverted downside
-        return up / dn                                  # thin-floor handled in the overlay (needs dn)
-    if method == "spread":
-        dp, un = _vf(f, "deal_price"), _vf(f, "undisturbed_price")
-        if dp is None or un is None: return None
-        up, dn = dp - live, live - un
-        if up <= 0: return ("DROP", "TRADING_THROUGH_TERMS")   # negative spread
-        if dn <= 0: return ("FLAG", "NO_BREAK_DOWNSIDE")
-        return up / dn
-    if method == "binary_prob":                                # barbell, NOT a single ratio
-        p, tw, dl = _vf(f, "win_prob"), _vf(f, "target_on_win"), _vf(f, "downside_on_loss")
-        if p is None or tw is None or dl is None: return None
-        ev = p * (tw - live) + (1 - p) * (dl - live)
-        payoff = (tw - live) / max(live - dl, 1e-9)
-        return {"ev_pct": ev / live, "win_prob": p, "payoff": payoff,
-                "up_leg": tw - live, "down_leg": live - dl}
-    return None
-
-def grade_from_measure(method, res):
-    """edge_grade from the computed measure (calibratable starting thresholds)."""
-    if method == "binary_prob" and isinstance(res, dict):
-        if res["ev_pct"] >= 0.15 and res["payoff"] >= 2: return "H"
-        return "M" if res["ev_pct"] > 0 else "L"
-    if isinstance(res, (int, float)):
-        if res >= 2.5: return "H"
-        if res >= 1.5: return "M"
-        return "L"
-    return "?"
-
-MULT_BAND = {"EBITDA": (4, 25), "sales": (0.5, 12)}   # plausible EV/x bands; outliers flagged
-
-def _n(x):
-    try:
-        v = float(x)
-        return None if v != v else v   # drop NaN
-    except (TypeError, ValueError):
-        return None
-
-def sop_integrity(v, live, tol=0.05):
-    """Deterministic backstop (sop lanes only). Recompute the build from the components and run the
-    integrity checks that catch this run's failures MECHANICALLY: units chaos, per-row arithmetic,
-    out-of-band multiples, advocacy/premium stacked on the build, and absurd per-share values.
-    Returns (built_per_share|None, flags[list], quarantine_bool). R:R is ALWAYS driven off `built`;
-    a quarantined name shows NO number (its inputs are broken)."""
-    flags = []
-    comps = v.get("sop_components") or []
-    so = _n(v.get("shares_out"))
-    if not comps or not so:
-        return (None, flags, False)
-    nd = _n(v.get("net_debt")) or 0.0
-    adj = _n(v.get("adjustments")) or 0.0
-    tgt = _n(v.get("fair_value_target"))
-    # per-row arithmetic + multiple bands  (ev == metric x multiple, or metric x ownership for stakes)
-    for c in comps:
-        m = c.get("driver_metric"); mv = _n(c.get("metric_value")); ev = _n(c.get("ev_contribution"))
-        mult = _n(c.get("multiple")); own = _n(c.get("ownership"))
-        seg = str(c.get("segment", ""))[:18]
-        if mv is not None and ev is not None:
-            factor = own if (m == "stake_mv" and own is not None) else (mult if mult is not None else 1.0)
-            expect = mv * factor
-            if abs(expect) > 1e-9 and abs(expect - ev) / abs(expect) > 0.01:
-                flags.append("ROW_EV_MISMATCH:" + seg)
-        if m in MULT_BAND and mult is not None and not (MULT_BAND[m][0] <= mult <= MULT_BAND[m][1]):
-            flags.append("MULTIPLE_OUT_OF_BAND:%s(%gx)" % (seg, mult))
-    try:
-        built = (sum(_n(c.get("ev_contribution")) or 0.0 for c in comps) - nd - adj) / so
-    except ZeroDivisionError:
-        return (None, flags, True)
-    # units: declared+sane is clean; declared-insane or implausible build -> quarantine
-    u = v.get("units") or {}
-    units_ok = u.get("shares") == "millions" and u.get("money") == "usd_millions"
-    if not units_ok:
-        flags.append("UNITS_UNDECLARED")
-    # implausible per-share build = the unit-chaos signature (INIO -$2M/sh, B/BN built ~0 vs a real target)
-    absurd = (built < 0 or (live and abs(built) > 50 * live)
-              or (tgt and abs(tgt) > 1 and abs(built) < 0.1 * abs(tgt)))
-    quarantine = any(f.startswith("ROW_EV_MISMATCH") for f in flags) or absurd
-    if absurd:
-        flags.append("ABSURD_BUILD")
-    # reconcile asserted target to the build (MAT's $24-vs-$30 advocacy gap)
-    if tgt and built and abs(built - tgt) / abs(built) > tol:
-        flags.append("SOP_TARGET_MISMATCH")
-    return (built, flags, quarantine)
+    return _fetch_live_quotes_core(symbols, batch=batch, fmp_key=FMP_KEY, fmp_base=FMP_BASE)
 
 # ---------------------------------------------------------------------------
 def process(df: pd.DataFrame, tilt: float, live_prices=None):
@@ -408,8 +304,8 @@ def process(df: pd.DataFrame, tilt: float, live_prices=None):
                 # (catches MAT-class: a chart-low floor manufactures a thin denominator and inflates the ratio.)
                 flr = _vf(row, "undisturbed_price") if method == "spread" else _vf(row, "downside_floor")
                 dn = (px - flr) if flr is not None else None
-                if dn is not None and dn < 0.15 * px:
-                    df.at[i, "edge_flags"].append("TINY_FLOOR" if dn < 0.05 * px else "THIN_FLOOR")
+                if dn is not None and dn < THIN_FLOOR_PCT * px:
+                    df.at[i, "edge_flags"].append("TINY_FLOOR" if dn < TINY_FLOOR_PCT * px else "THIN_FLOOR")
                     if g == "H":
                         g = "M"
                 df.at[i, "edge_grade"] = g
