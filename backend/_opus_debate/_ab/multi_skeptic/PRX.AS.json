@@ -1,0 +1,19 @@
+{
+  "symbol": "PRX.AS",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "The bear's core structural claim holds: Tencent is ~76% of gross asset value (derived from Prosus's own 2026-04-17 NAV split — other listed 4.2%, unlisted 19.6%, remainder ~76.2% Tencent at a 22.8% stake), and there is no contractual mechanism (tender/wind-up/fixed payout) forcing the ~35% holding-company discount to close. Tencent has fallen from a 52-wk high of HKD 683 to 460.2, sits below its 200-day (549.6), and can leg toward its 411 low — dropping Prosus fair value irrespective of management action. The Just Eat Takeaway deal + buybacks swung Prosus from net cash to ~$5.3B net debt. Bear thesis is factually sound; downside case (~EUR 33, below the current 36.875 52-wk low) is coherent.",
+  "corrections": [
+    "Just Eat Takeaway: bear cites 'roughly 4.1 billion euros' (the Feb-2025 announced deal value, correct); the transaction actually CLOSED in October 2025 at ~EUR 4.2bn (US$4.9bn) including settlement arrangements. Minor rounding/timing nuance, not thesis-altering.",
+    "Net-debt magnitude: bear calls it a 'modest net-debt position'; primary pro-forma marks show ~-$5.3B (US$10.4B cash minus US$15.7B debt), i.e. real net debt of ~$5.3B — arguably understated by 'modest', though the SoP breakdown correctly cites ~$5B. Directionally correct (net cash a year ago -> net debt now).",
+    "PRX.AS trades 39.545 vs 52-wk low 36.875 (~7% above the low) and below its 200-day (47.49); the co-authored bull line '~2% off 52-week low' overstated proximity, but the bear's own framing (near lows, below 200-day) is accurate."
+  ],
+  "correction_severity": "minor",
+  "kill_scope": "numbers",
+  "evidence": [
+    "FMP quote 2026-07-10: PRX.AS 39.545 EUR, yearHigh 63.94, yearLow 36.875, priceAvg200 47.49, marketCap EUR 84.2B; 0700.HK Tencent 460.2 HKD, yearHigh 683, yearLow 411, priceAvg200 549.6, marketCap HKD 4.15T; NPN.JO Naspers below its 200-day.",
+    "Prosus NAV disclosure (as of 2026-04-17): 2,066m Tencent shares = 22.8% stake; other listed assets 4.2% of gross asset value, unlisted assets 19.6% -> Tencent ~76.2% of GAV (prosus.com/investors NAV page).",
+    "Prosus press release (2025-02-24): agreement to acquire Just Eat Takeaway.com for ~EUR 4.1bn (US$4.3bn); deal CLOSED Oct 2025 at ~EUR 4.2bn / US$4.9bn incl. settlement (prosus.com news; HY2026 interim statements).",
+    "Prosus pro-forma balance sheet 2026: net cash position -US$5.3B (US$10.4B cash minus US$15.7B debt), a swing from prior net-cash after Just Eat + buybacks (equities123 / interim financials).",
+    "Discount to NAV ~35% persistent for years, no contractual close mechanism; Morgan Stanley upgraded to overweight (~29% upside, 'discount peaked') — a bull counter, not a hard catalyst (investing.com, 2026)."
+  ]
+}

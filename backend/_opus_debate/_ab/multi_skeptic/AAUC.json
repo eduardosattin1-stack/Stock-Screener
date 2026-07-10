@@ -1,0 +1,22 @@
+{
+  "symbol": "AAUC",
+  "verdict": "CONFIRMED",
+  "kill_fact": "No kill. The bear side's load-bearing claim — this is a binary merger-arb where the ONLY outstanding gate is China's NDRC, which has openly objected to both the premium and Mali stability — is independently verified against primary/secondary sources. As of 2026-07-10 the deal is neither closed nor broken (outside date July 29, 2026), so the spread and the break-risk described remain live and accurate.",
+  "corrections": [
+    "AISC ~US$2,092/oz cited in the bear thesis was NOT independently re-verified from the Q1-2026 MD&A (secondary color, not load-bearing); treat as approximate. It does not affect the verdict — the thesis rests on the NDRC gate, not the cost structure.",
+    "bear_px / downside_floor of US$16.5 (~30% break re-rate) is a scenario estimate, not a verifiable fact. It is plausible and conservative: the 52-week low is US$11.40 and priceAvg200 is ~US$25.4, so a mid-teens break floor is reasonable rather than aggressive."
+  ],
+  "correction_severity": "minor",
+  "kill_scope": "catalyst",
+  "evidence": [
+    "FMP quote 2026-07-10: AAUC US$23.39 (NYSE), day 23.07-23.80, 52wk 11.40-32.20, priceAvg50 26.51, priceAvg200 25.45 — matches the debate's US$23.36 anchor and the ~1/3 gap to the C$44.00 (~US$31.1) offer.",
+    "MINING.COM / Financial Times (2026): 'Zijin's $4B acquisition of Allied Gold faces delay in China' — NDRC questioning the transaction premium and the political risk of Mali operations. Confirms both prongs of the bear objection.",
+    "InvestingNews (INN) 2026: 'Chinese Regulator Delays Zijin Gold's US$4 Billion Allied Gold Takeover' — NDRC is the sole outstanding outbound-investment gate; raised premium + Mali (~half of output) concerns; Mali April rebel attacks killed senior officials.",
+    "Ecofin Agency 2026: 'China Delays Zijin Mining's $4 Billion African Gold Expansion' — corroborates NDRC premium + Mali-stability impasse forcing the two-month deadline extension.",
+    "Allied Gold press release (GlobeNewsWire) 2026-05-29: Investment Canada Act approval received (completes Canada); ECOWAS + COMESA merger clearances obtained; outside date extended to July 29, 2026 (possible mutually-agreed extension to Sept 29). Confirms Canada + Africa done, China last.",
+    "Allied Gold press release (GlobeNewsWire) 2026-06-10: both parties 'remain fully committed' to closing by the July 29, 2026 outside date — confirms deal live and not repriced/broken as of the last disclosure.",
+    "FMP income-statements-ttm (period ending 2026-03-31, filed 2026-05-14): TTM diluted EPS = -1.05, net income -US$124.5M on 125.3M wtd shares — exactly matches the bear thesis's 'TTM ~ -US$1.05/share' accounting-loss claim.",
+    "Allied Gold Q1-2026 release 2026-05-14: Q1 production 96,016 oz — consistent with the ramp both sides cite; confirms operating facts underlying the deal-break standalone case.",
+    "No AAUC news after 2026-06-10 in FMP press-release/stock-news feeds and no web report of NDRC decision, closing, or repricing as of 2026-07-10 — the event remains unresolved, so the binary framing holds."
+  ]
+}

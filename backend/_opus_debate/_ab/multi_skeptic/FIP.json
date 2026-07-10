@@ -1,0 +1,22 @@
+{
+  "symbol": "FIP",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "The bear's quantitative core is fully verified against primary sources (net debt $3.682B, total debt $3.910B, cash $227.4M, preferred $1.123B ahead of common, TTM FCF -$362.9M, $0.03/qtr token dividend, stock $4.495 down 43% from a $7.935 high with no re-rate after the Long Ridge announcement, and the $1.52B MARA sale still pending a Q3-2026 close). The ONE load-bearing claim that fails is the governance 'tell': the bear says 'insiders sold far more than they bought,' but Form 4s show the opposite in the relevant window. The cited ~3.4M 'sale' was FIG Buyer GP (a Fortress 10%-owner vehicle) monetizing part of an Aug-2024 cashless option exercise (8,695,652 shares acquired @ $2.61) that NET-INCREASED its position, at $9.04 nearly two years ago; the genuine recent open-market transactions are all BUYS by named insiders (CEO Nicholson +500,000 @ $5.22 on 2025-05-20; CFO Fletcher +20K/+10K/+10K, most recently 10,000 @ $4.58 on 2026-05-28). Recent insider signal is net buying, which cuts against the bear rather than for it.",
+  "corrections": [
+    "Insider 'tell' reversed: no net open-market insider selling. The ~3.4M-share 'sale' was FIG Buyer GP's Aug-2024 exercise-and-sell that net-increased its stake at $9.04; the only real open-market P-Purchases are by the CEO (+500,000 @ $5.22, 2025-05-20) and CFO (+40,000 total, incl. 10,000 @ $4.58 on 2026-05-28). The recent signal is insider BUYING near the current price, not selling.",
+    "'Four buyers of 540,000 shares' is really two distinct insiders (CEO Nicholson + CFO Fletcher) across four buy transactions; the ~540K aggregate buy figure is otherwise accurate.",
+    "'Sits near its 52-week low of $3.90' is slightly generous: at $4.495 the stock is ~15% above the low, though correctly below the 200-day average ($5.12) with no post-announcement re-rate. Minor."
+  ],
+  "correction_severity": "material",
+  "kill_scope": "thesis",
+  "evidence": [
+    "FMP balance sheet, FY2026 Q1 (filed 2026-05-08, as-of 2026-03-31): totalDebt $3,909,724,000; netDebt $3,682,293,000; cash $227,431,000; preferredStock $1,123,158,000 — confirms levered-stub / preferred-ahead-of-common facts.",
+    "FMP cash flow (2026-03-31): freeCashFlow -$362,934,000, operating CF negative, capex-heavy — confirms bear's -$363M FCF.",
+    "Company press release 2026-04-30 (GlobeNewswire): 'MARA to purchase Long Ridge for total transaction value of approximately $1.52 billion... Transaction expected to close in the third quarter of 2026 following receipt of necessary regulatory approvals... FIP plans to use net proceeds to repay corporate debt' — confirms the dated hard catalyst and PENDING_HARD status.",
+    "Long Ridge Energy PR 2026-06-08 (Q1-2026 call, 'wholly owned portfolio company of FTAI Infrastructure') — confirms the sale had NOT closed as of mid-June 2026.",
+    "Company press release 2026-05-07: 'Declares Dividend of $0.03 per Share of Common Stock' — confirms token dividend.",
+    "FMP quote 2026-07-10: price $4.495; yearLow $3.90; yearHigh $7.935 (down ~43%); priceAvg200 $5.12 — confirms near-low, no re-rate post-announcement.",
+    "Company press release 2026-06-29: completed $45M acquisition of Tidewater Logistics, funded via term-loan upsizing — confirms bolt-on rail/logistics program (and continued debt-funded growth).",
+    "SEC Form 4s (primary): FIG Buyer GP, LLC (10% owner) 2024-08-09 X-InTheMoney 8,695,652 @ $2.61 (A) then S-Sale 3,399,501 @ $9.04 (D), ending 8,418,561 held — a net acquisition, NOT a bearish insider sale; CEO Nicholson 2025-05-20 P-Purchase 500,000 @ $5.22; CFO Fletcher P-Purchases 20,000 @ $5.33 (2025-05-23), 10,000 @ $4.48 (2025-08-21), 10,000 @ $4.58 (2026-05-28) — refutes the 'insiders sold far more than they bought' governance tell."
+  ]
+}

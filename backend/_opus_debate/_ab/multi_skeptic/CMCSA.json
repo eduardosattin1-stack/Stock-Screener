@@ -1,0 +1,18 @@
+{
+  "symbol": "CMCSA",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "The bear's load-bearing facts hold: net debt is ~$85B (FMP Q1 2026 balance sheet netDebt = $85.14B, exact match), the debt split between the two future companies is genuinely undisclosed (Forbes 'Three Takeaway Questions', 2026-07-07), and the structural-squeeze/melting-core case is validated by the market's own behavior — the Versant spin already completed and the June 29 NBCU+Sky spin announcement both failed to re-rate the stock, which sits at a fresh 52-week low of ~$22.13 after the announcement pop faded (MarketBeat, 2026-07-03). The bear thesis is not refuted; only two secondary numbers are slightly off.",
+  "corrections": "ROIC: bear cites 6.8%; FMP TTM returnOnInvestedCapital = 6.3% (return-on-capital-employed 8.4%). The directional claim (thin, ~6-7% ROIC) stands. Downside floor: bear_px is $21 and is described as 'roughly the 52-week low,' but the actual 52-week low is $22.13 (FMP quote 2026-07-10); the $21 floor sits slightly below the observed low, so it is a modest extrapolation, not an observed level. Neither correction alters the bear conclusion (structurally challenged connectivity stub, undisclosed/adverse-risk debt split, spin already faded).",
+  "correction_severity": "minor",
+  "kill_scope": "numbers",
+  "evidence": [
+    "FMP quote 2026-07-10: CMCSA $23.635, 52-week low $22.13, 52-week high $33.76, marketCap $84.4B, priceAvg200 $27.42 (stock near lows, ~30% off high).",
+    "FMP balance sheet Q1 2026 (filed 2026-04-23): totalDebt $94.6B, cash $9.47B, netDebt $85.14B — confirms bear's ~$85B net debt exactly.",
+    "FMP key-metrics-TTM 2026-07-10: returnOnInvestedCapital 6.3% (bear says 6.8%), netDebt/EBITDA 1.9x, FCF yield ~24% — corrects ROIC figure, confirms thin-returns point.",
+    "FMP analyst price-target-consensus 2026-07-10: consensus $31.2, median $32, high $37, low $26 — confirms bear/consensus_delta '~$31 street target' framing.",
+    "FMP earnings calendar: next report 2026-07-23 (EPS est $0.97) — confirms the July 23 2026 Q2 hard date the catalyst hinges on.",
+    "Forbes 2026-07-07 'Comcast Spins Off NBCUniversal: Three Takeaway Questions' and Forbes 2026-07-01: Brian Roberts announced June 29 2026 spin of NBCUniversal and Sky into a separate public company; debt allocation still an open question — confirms catalyst date and undisclosed debt split.",
+    "MarketBeat 2026-07-03 'Why the Comcast Spin-Off Won't Fix What's Actually Broken' and 2026-07-01 'NBCUniversal Split Puts Broadband Back in Focus': after an initial pop CMCSA drifted back to pre-announcement levels; connectivity/broadband structural squeeze back in focus — confirms bear 'spin doesn't fix the core' and 'pop faded' claims.",
+    "News flow 2026-06-30 to 2026-07-06 (Benzinga, MarketWatch, Investopedia) confirms Versant already spun earlier in 2026 and stock remains at 52-week lows post-announcement."
+  ]
+}

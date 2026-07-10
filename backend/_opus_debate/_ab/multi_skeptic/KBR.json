@@ -1,0 +1,21 @@
+{
+  "symbol": "KBR",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "The bear's core factual scaffolding holds: net debt is $2.49B and leverage is 2.9x EBITDA (both confirmed to the dollar against the Q1-FY2026 balance sheet, filed 2026-05-05, and TTM key metrics), Q1 revenue did fall ~5% on European contingency (EUCOM) runoff, and the debt-loaded MTS spin-off is real and on schedule (SpinCo CEO/CFO named 2026-06-25, targeted 2H26). The bear side survives — but two framing figures are imprecise: the -5% decline is a TOTAL-company number driven by the government side, not a discrete 'MTS revenue fell 5%' segment print, and the '+0.6% YoY revenue' growth claim is stale versus the latest quarter's -5%.",
+  "corrections": [
+    "Bear says 'MTS revenue actually fell 5% in Q1 2026' — the 5% decline is TOTAL KBR revenue ($1.9B, down 5%), attributed by management to expected EUCOM (European) contingency runoff on the government side; substantively correct that the government/MTS side drove it, but stated as a segment figure it overstates precision.",
+    "Bear's '+0.6% year over year' revenue-growth figure is stale/trailing framing; the most recent print (Q1 FY2026) was DOWN 5%, so if anything the top-line weakness argument is stronger than the bear states, not weaker.",
+    "Context that cuts AGAINST the bear (not a kill, but weakens the 'awards never convert' sub-claim): since the thesis, KBR booked an $8B NSF Antarctic IDIQ (2026-06-03), a $95M Space Force DEEDS award (2026-06-09), multiple PureSAF licensing wins (NorSAF, Keppel/Aster Singapore), Q1 book-to-bill 1.1x, Q1 adjusted EPS $0.96 beat consensus $0.92, and FY26 guidance was reaffirmed — real conversion is occurring."
+  ],
+  "correction_severity": "minor",
+  "kill_scope": "numbers",
+  "evidence": [
+    "FMP quote 2026-07-10: KBR $35.65, mktcap $4.52B, 52w range $29.94-$52.23, ~127M shares — matches thesis live_price $35.71 and share count.",
+    "FMP balance sheet Q1 FY2026 (date 2026-04-03, filed 2026-05-05): totalDebt $2.811B, cash $321M, netDebt $2.490B — confirms bear's ~$2.49B net debt exactly.",
+    "FMP key-metrics-TTM: netDebtToEBITDA 2.905x, EV/EBITDA 8.18x — confirms bear's ~2.9x leverage; EV/EBITDA slightly above the thesis's 7.5x 'blended' but same order.",
+    "KBR Q1 FY2026 results press release (GlobeNewsWire 2026-05-05): 'Revenues of $1.9 billion, down 5% due to expected EUCOM contingency runoff'; Adjusted EBITDA $251M (+1%), margin 13.1%; book-to-bill 1.1x — confirms revenue-decline fact, but it is total-company not MTS-segment.",
+    "KBR press release 2026-06-25: named Michael LaRouche CEO-designate and Nicholas Veasey CFO-designate of MTS SpinCo — confirms bear/catalyst that the spin is real and scheduled for 2H26.",
+    "KBR press release 2026-07-06: Q2 FY2026 earnings call set for 2026-07-30 — confirms the near-term binary event the bear flags.",
+    "Countervailing bookings: $8B NSF Antarctic contract (2026-06-03), $95M Space Force DEEDS (2026-06-09), PureSAF wins NorSAF (2026-05-28) and Keppel/Aster Singapore (2026-06-29) — real award conversion partially undercuts the 'converts next year' bear refrain."
+  ]
+}
