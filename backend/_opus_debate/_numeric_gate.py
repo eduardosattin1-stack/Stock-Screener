@@ -61,22 +61,34 @@ def check_record(rec, live_quotes=None):
     val = rec.get("valuation") or {}
     sym = rec.get("symbol") or "?"
 
-    # G0 — schema presence
-    live = val.get("live_price")
+    # G0 — schema presence, with a FETCH RESCUE before rejecting. A record missing live_price is not
+    # necessarily a bad pick — the debate agent may simply have skipped the quote step (the exact
+    # failure mode step 1b's "mandatory FMP quote" instruction exists to prevent, but a prompt
+    # instruction is not a guarantee). Reject only once an independent source ALSO has nothing —
+    # never discard a name just because ITS OWN record forgot to state a price we can fetch ourselves.
     ccy = val.get("price_currency")
     base_fv = val.get("base_fv_px")
     bear = val.get("bear_px")
     bull = val.get("bull_px")
+    computed = {}
+    live = val.get("live_price")
+    fmp_px = live_quotes.get(str(sym).upper())
     if not isinstance(live, (int, float)):
-        return {"gate": "REJECT", "reasons": ["G0_NO_LIVE_PRICE"], "computed": {}}
+        if isinstance(fmp_px, (int, float)) and fmp_px > 0:
+            live = fmp_px
+            computed["live_price"] = live
+            computed["price_source"] = "fetched_fallback"
+            reasons.append("G0_PRICE_FETCHED_FALLBACK")
+        else:
+            return {"gate": "REJECT", "reasons": ["G0_NO_LIVE_PRICE", "G0_FETCH_ALSO_FAILED"], "computed": {}}
+    else:
+        computed["price_source"] = "record"
     if not ccy:
         reasons.append("G0_NO_CURRENCY")
 
-    computed = {}
-
-    # G1a — price reconcile vs an independent quote (when supplied)
-    fmp_px = live_quotes.get(str(sym).upper())
-    if isinstance(fmp_px, (int, float)) and fmp_px > 0:
+    # G1a — price reconcile vs an independent quote (skip when G0 just fetched FROM that same quote —
+    # comparing a number to itself is a no-op, not a check)
+    if computed["price_source"] == "record" and isinstance(fmp_px, (int, float)) and fmp_px > 0:
         drift = abs(live / fmp_px - 1)
         computed["price_drift_pct"] = round(drift * 100, 2)
         if drift > PRICE_REJECT_PCT:
@@ -224,13 +236,16 @@ def synthesize_legacy_valuation(rec):
     return val
 
 
-def run(dry_run=True, legacy=True, only_symbol=None, use_live_quotes=False):
+def run(dry_run=True, legacy=True, only_symbol=None, offline=False):
     if not RES_DIR.exists():
         print("numeric-gate: no results_regime/ — nothing to check.")
         return
     files = sorted(RES_DIR.glob(f"{only_symbol}.json" if only_symbol else "*.json"))
     live_quotes = {}
-    if use_live_quotes:
+    # Fetching live quotes is the DEFAULT (resilience: a record missing live_price gets rescued via
+    # FMP before G0 rejects it, and every record gets an independent G1a reconcile) — --offline opts
+    # OUT, matching _value_post.py's convention, for when network isn't available.
+    if not offline:
         import live_debate_engine as E  # noqa
         key = E.get_key("FMP_API_KEY")
         syms = []
@@ -263,6 +278,11 @@ def run(dry_run=True, legacy=True, only_symbol=None, use_live_quotes=False):
           f"{' --dry-run' if dry_run and not legacy else ''} | {len(rows)} records checked\n{'='*72}")
     print(f"gate outcomes: {counts}")
     print(f"reason frequency: {dict(sorted(reason_counts.items(), key=lambda kv: -kv[1]))}")
+    rescued = sum(1 for _, res in rows if any("FETCHED_FALLBACK" in r for r in res["reasons"]))
+    fetch_dead = sum(1 for _, res in rows if "G0_FETCH_ALSO_FAILED" in res["reasons"])
+    print(f"\n--- price rescue: {rescued} record(s) had no record-stated live_price but WERE fetched "
+          f"live via FMP and proceeded; {fetch_dead} had no price ANYWHERE (record AND FMP both empty "
+          f"— likely delisted/invalid ticker, not a fixable gap) ---")
     print("\n--- REJECT / EXCLUDE_ELIGIBILITY (would-be seat-blocking) ---")
     blocked = [r for r in rows if r[1]["gate"] in ("REJECT", "EXCLUDE_ELIGIBILITY")]
     for sym, res in blocked[:40]:
@@ -290,10 +310,12 @@ if __name__ == "__main__":
     p.add_argument("--legacy", action="store_true", help="synthesize valuation from today's prose fields")
     p.add_argument("--dry-run", action="store_true", help="print only; write nothing (REQUIRED — enforcement isn't built yet)")
     p.add_argument("--symbol", default=None, help="check a single symbol")
-    p.add_argument("--live-quotes", action="store_true", help="fetch independent FMP quotes for G1a (network)")
+    p.add_argument("--offline", action="store_true",
+                    help="skip the FMP fetch (no G0 rescue, no G1a reconcile) — network unavailable only; "
+                         "fetching is the DEFAULT because a missing price should be rescued, not just rejected")
     args = p.parse_args()
     if not args.dry_run:
         print("numeric-gate: enforcement (writing numeric_gate onto records, REJECT/EXCLUDE eligibility) "
               "is a Week 2 activity and is NOT implemented — pass --dry-run to run the calibration check.")
         sys.exit(1)
-    run(dry_run=True, legacy=args.legacy, only_symbol=args.symbol, use_live_quotes=args.live_quotes)
+    run(dry_run=True, legacy=args.legacy, only_symbol=args.symbol, offline=args.offline)

@@ -58,17 +58,31 @@ def test_hnr1_de_legacy_synthesis_recovers_base_fv():
     print(f"PASS hnr1_de legacy synthesis: base_fv_px={val['base_fv_px']} | confidence={val['legacy_confidence']}")
 
 
-def test_kbr_missing_price_rejects_at_g0():
-    """KBR's REAL 2026-07-10 record has live_price:None -- G0 must REJECT before ANY downstream
-    check (segment split, net debt, R:R) gets a chance to run on unverified numbers."""
+def test_kbr_missing_price_rejects_only_when_fetch_also_fails():
+    """KBR's REAL 2026-07-10 record has live_price:None. The gate must NOT just discard a possibly-
+    good pick because ITS OWN record forgot to state a price -- it should try to rescue via an
+    independent FMP quote first (Bruno's point: 'does it fetch live data from somewhere else instead
+    of just discarding a good pick?'). Two scenarios:
+    (a) FMP also has nothing for this symbol (delisted/bad ticker) -> genuinely un-rescuable -> REJECT.
+    (b) FMP has a quote -> RESCUED, proceeds with the rest of the checks using the fetched price."""
     rec = _load_fixture("kbr.json")
     assert rec["live_price"] is None, "fixture must reproduce the real null-price incident"
     rec["valuation"] = G.synthesize_legacy_valuation(rec)
-    res = G.check_record(rec)
-    assert res["gate"] == "REJECT", f"expected REJECT, got {res}"
-    assert res["reasons"] == ["G0_NO_LIVE_PRICE"], res["reasons"]
-    print(f"PASS kbr: {res['gate']} | reasons={res['reasons']} (correctly blocks BEFORE any "
-          f"segment/net-debt analysis runs on unverified data)")
+
+    # (a) no fallback available anywhere -> true reject
+    res_dead = G.check_record(rec, live_quotes={})
+    assert res_dead["gate"] == "REJECT", f"expected REJECT, got {res_dead}"
+    assert res_dead["reasons"] == ["G0_NO_LIVE_PRICE", "G0_FETCH_ALSO_FAILED"], res_dead["reasons"]
+    print(f"PASS kbr (no fallback anywhere): {res_dead['gate']} | {res_dead['reasons']} "
+          f"(correctly blocks BEFORE any segment/net-debt analysis runs on unverified data)")
+
+    # (b) FMP has a real quote -> RESCUED, not discarded
+    res_rescued = G.check_record(rec, live_quotes={"KBR": 36.41})
+    assert res_rescued["gate"] != "REJECT", f"a fetchable price must rescue the record, got {res_rescued}"
+    assert "G0_PRICE_FETCHED_FALLBACK" in res_rescued["reasons"], res_rescued["reasons"]
+    assert res_rescued["computed"]["price_source"] == "fetched_fallback"
+    print(f"PASS kbr (FMP rescue): {res_rescued['gate']} | price_source=fetched_fallback | "
+          f"reasons={res_rescued['reasons']} -- the record was RESCUED, not discarded")
 
 
 def test_aauc_fabricated_price_rejects_on_reconcile():
@@ -144,7 +158,7 @@ def test_clean_record_passes():
 
 def main():
     tests = [test_hnr1_de_thin_floor_excludes, test_hnr1_de_legacy_synthesis_recovers_base_fv,
-             test_kbr_missing_price_rejects_at_g0, test_aauc_fabricated_price_rejects_on_reconcile,
+             test_kbr_missing_price_rejects_only_when_fetch_also_fails, test_aauc_fabricated_price_rejects_on_reconcile,
              test_implied_currency_dual_listing_mismatch, test_ordering_and_plausibility_bands,
              test_clean_record_passes]
     failed = 0
