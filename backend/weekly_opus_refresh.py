@@ -9,13 +9,13 @@
 
 The scheduled SKILL.md runs:
   python weekly_opus_refresh.py prep            (raw-screen universe + bundles + ledger re-check routing)
-  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [fable])
-  -> python weekly_opus_refresh.py regime-skeptic -> Workflow(...)    (APEX kill-tier, fable; moat-aware, default REFUTED)
+  -> Workflow({scriptPath: <printed>})          (Radar [sonnet] -> Debate [opus] -> Director [opus])
+  -> python weekly_opus_refresh.py regime-skeptic -> Workflow(...)    (APEX kill-tier, opus; moat-aware, default REFUTED)
   -> python weekly_opus_refresh.py regime-post                        (apex: consume skeptic + moat-erosion + secular-theme caps)
   -> python _opus_debate/publish_to_frontend.py --gcs                 (regime/catalyst book; reads post-skeptic, capped apex)
   -> python weekly_opus_refresh.py value-input                        (value signals + funnel stats + ledger)
-  -> [value Director agent, fable]
-  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, fable)
+  -> [value Director agent, opus]
+  -> python weekly_opus_refresh.py value-skeptic -> Workflow(...)     (independent kill-tier, opus)
   -> python weekly_opus_refresh.py value-post                         (deterministic safety layer; consumes skeptic)
   -> python weekly_opus_refresh.py value-csv / baskets-csv
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
@@ -55,17 +55,19 @@ for d in (INP, TXT, RES, ROOT / "dossiers"):
     d.mkdir(parents=True, exist_ok=True)
 
 # ── Model seats (single source of truth; every workflow/agent pin reads these) ──
-# Fable 5 REVIVED (2026-07-01, Bruno's call) — back in the model family after the
-# 2026-06-13 retirement. The Director + Skeptic seats — capability-bound, calibration-
-# free — run on Fable again (original pinned architecture); Radar stays Sonnet (cheap
-# sorting); the per-name Debate stays Opus. If Fable retires again, set these back to
-# "opus" — nothing else needs to change (templates substitute these at render time).
+# Fable RETIRED 2026-07-10 (pipeline-v3 plan, Week 1) — this is the second and, per Bruno's
+# directive ("Fable needs to be retired from the multi-agent debate"), the durable retirement:
+# every reasoning seat in the weekly pipeline is now Opus/Sonnet/Haiku, no Fable seat anywhere.
+# (History: Fable was retired once already 2026-06-13, revived 2026-07-01, and is retired again
+# here — this time by explicit instruction, not an availability fallback, so it should stay put.)
+# Director + Skeptic seats are Opus (money moves through these decisions — highest-scrutiny model);
+# Radar stays Sonnet (cheap peer-comp sorting); the per-name Debate stays Opus.
 # NOTE: the two Director self-descriptions (VALUE_DIRECTOR_PROMPT + the weekly workflow
 # template) name the seat model in prose — keep them in sync when flipping these.
 RADAR_MODEL = "sonnet"
 DEBATE_MODEL = "opus"
-DIRECTOR_MODEL = "fable"   # Fable 5 (revived 2026-07-01; was opus fallback 06-13→07-01)
-SKEPTIC_MODEL = "fable"    # Fable 5 (revived 2026-07-01; was opus fallback 06-13→07-01)
+DIRECTOR_MODEL = "opus"    # Fable retired 2026-07-10 (pipeline-v3 Week 1) — was fable 07-01→07-10
+SKEPTIC_MODEL = "opus"     # Fable retired 2026-07-10 (pipeline-v3 Week 1) — was fable 07-01→07-10
 
 # ── Director rotation discipline: the prior-decision ledger (continuity + anti-whipsaw) ──
 # Each book persists every Director keep/drop/add for the YEAR in _decision_history.json so the
@@ -535,7 +537,7 @@ def _funded_solvency(sector, ndE, icov):
 from _moat import moat_features as _moat_features  # noqa: E402
 
 
-VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Fable 5), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
+VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Opus 4.8), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
 
 SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
   - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT — trust sop_mos_pct.
@@ -2133,7 +2135,7 @@ await agent(
 
 phase('Director')
 await agent(
-  'You are the SPECULAIR APEX DIRECTOR (Claude Fable 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
+  'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
   'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact — treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +

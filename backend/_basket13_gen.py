@@ -17,9 +17,9 @@ Writes _basket13_workflow.js (run it with the Workflow tool). Patterned on _valu
             MoS/quality by construction).
   Phase 2 — Catalyst Director: selects + sizes from the CRO survivors under HARD caps.
 
-Both phases run on Fable 5 (model:'fable') — this greenfield leg is the first step of the
-staged Fable-5 migration; the v6 value debate stays on Opus 4.8 untouched. If the runner
-rejects the 'fable' alias, set MODEL='opus' below and note it in the run log.
+Both phases run on Opus 4.8 (model:'opus') — Fable was retired from this seat 2026-07-10
+(pipeline-v3 plan, Week 1: Fable retired from every seat in both the weekly Speculair
+pipeline and B13). It ran on Fable 5 from 2026-06-xx to 2026-07-10; that leg is done.
 
 The deterministic cap enforcement is NOT here — the Director does its best and
 _basket13_inject.py re-asserts every cap before stamping (the LLM proposes, the inject
@@ -36,15 +36,15 @@ CAND = os.path.join(BASE, "_basket13_candidates.json")
 OUT  = os.path.join(BASE, "_basket13_workflow.js")
 ap = argparse.ArgumentParser()
 ap.add_argument("--only", default="")
-ap.add_argument("--model", default="fable",
-                help="agent model alias for both phases; 'opus' is the documented fallback if 'fable' is unavailable")
+ap.add_argument("--model", default="opus",
+                help="agent model alias for both phases (Fable retired from this seat 2026-07-10)")
 ap.add_argument("--held-dossiers", action="store_true", dest="held_dossiers",
                 help="HELD-BOOK REFRESH mode: candidates = the tracker's unresolved seats (rows built "
                      "from their stamped fields), workflow = DeepDossier phase ONLY (no CRO/Director, "
                      "no stamping). Feed the output to `_basket13_inject.py merge-dossiers` to update "
                      "the store + surface FIRED/SLIPPED alerts on held seats.")
 args = ap.parse_args()
-MODEL = args.model   # • both phases; default fable (the Fable-5 migration leg), opus fallback
+MODEL = args.model   # both phases; default opus (Fable retired from this seat 2026-07-10)
 
 only = {s.strip().upper() for s in args.only.split(",") if s.strip()}
 if args.held_dossiers:

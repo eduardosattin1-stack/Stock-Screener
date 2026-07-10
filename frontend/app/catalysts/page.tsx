@@ -202,8 +202,9 @@ export default function CatalystWatch() {
   const [liveQuotes, setLiveQuotes] = useState<Record<string, any>>({}); // live ticker for the basket seats
   const [fableDossiers, setFableDossiers] = useState<Record<string, any>>({}); // Phase-0 deep-dossier store (per-symbol, most recent re-underwrite)
 
-  // Fable deep-dossier store — written by the bi-weekly re-debate (backend/_basket13_dossiers.json
+  // Deep-dossier store (written by the bi-weekly re-debate's DeepDossier phase, backend/_basket13_dossiers.json
   // → public/basket13_dossiers.json); rendered above the legacy board/backend dossier when present.
+  // Variable name kept as "fableDossiers" for now (non-user-facing) though the seat is Opus since 2026-07-10.
   useEffect(() => {
     fetch("/basket13_dossiers.json")
       .then((r) => (r.ok ? r.json() : null))
@@ -1512,7 +1513,7 @@ export default function CatalystWatch() {
                       <span>Price: <strong style={{ color: T.text }}>${(((report as any).live_price ?? report.price))?.toFixed(2) || "N/A"}</strong>{(report as any).live_price != null ? <span style={{ color: T.muted, fontSize: 9 }}> live</span> : null}</span>
                       <span>Market Cap: <strong style={{ color: T.text }}>{formatMarketCap(report.market_cap)}</strong></span>
                       {report.cache_timestamp && (
-                        <span title="Date of the full AI deep-scan; price is live. Dossiers refresh via the bi-weekly re-debate (Fable deep-dossier phase), not on demand.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
+                        <span title="Date of the full AI deep-scan; price is live. Dossiers refresh via the bi-weekly re-debate (deep-dossier phase), not on demand.">Deep-scanned: <strong style={{ color: T.text }}>{formatCacheDate(report.cache_timestamp)}</strong></span>
                       )}
                     </div>
                   </div>
@@ -1555,7 +1556,8 @@ export default function CatalystWatch() {
                   </div>
                 </div>
 
-                {/* FABLE DEEP-DOSSIER — Phase-0 re-underwrite from the bi-weekly re-debate; supersedes the legacy dossier below */}
+                {/* DEEP-DOSSIER — Phase-0 re-underwrite from the bi-weekly re-debate; supersedes the legacy dossier below.
+                    Model name is shown dynamically via fd.model (Fable retired from this seat 2026-07-10, now opus). */}
                 {(() => {
                   const fd = fableDossiers[report.symbol?.toUpperCase?.().trim()];
                   if (!fd) return null;
@@ -1565,7 +1567,7 @@ export default function CatalystWatch() {
                   return (
                     <div style={{ marginBottom: 16, padding: "12px 14px", background: dead ? "rgba(239,68,68,0.05)" : "rgba(45,122,79,0.05)", border: `1px solid ${dead ? "rgba(239,68,68,0.35)" : "rgba(45,122,79,0.35)"}`, borderRadius: 8 }}>
                       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 8 }}>
-                        <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: T.green, letterSpacing: "0.08em" }}>⬢ Fable deep-dossier</span>
+                        <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: T.green, letterSpacing: "0.08em" }}>⬢ Deep-dossier</span>
                         <span style={{ fontSize: 9, fontWeight: 800, fontFamily: T.mono, padding: "1px 7px", borderRadius: 3, color: sc, border: `1px solid ${sc}`, background: "transparent" }}>{fd.catalyst_status}</span>
                         <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>re-underwritten {fd.asof} · {fd.model}</span>
                       </div>

@@ -383,7 +383,7 @@ baskets["runner_ups"] = [r for r in (director.get("runner_ups") or []) if isinst
 baskets["runner_ups_as_of"] = TODAY
 baskets["regime_changes"] = director.get("regime_changes", "")
 baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
-baskets["engine"] = "opus-4.8-debate+fable-5-directors"  # Fable 5 revived in the Director/Skeptic seats 2026-07-01; per-name debates stay Opus
+baskets["engine"] = "opus-4.8"  # Fable retired from the Director/Skeptic seats 2026-07-10 (pipeline-v3 Week 1) -- all-Opus again
 if track_summary:
     baskets["apex_tracking"] = track_summary
 baskets["weights"] = apex_weights

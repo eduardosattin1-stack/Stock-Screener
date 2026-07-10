@@ -620,7 +620,7 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     print(f"  + {len(passed)} non-selections recorded; caps {'OK' if not viol else 'FORCED'}  -> {TRK}")
 
 
-# ------------------------------------------------------------- Fable dossier store
+# ------------------------------------------------------------- deep-dossier store
 def merge_dossier_store(dossier_by):
     """Merge Phase-0 deep-dossiers into the per-symbol store (most recent re-underwrite
     wins) and print resolution/slip alerts. Used by inject() and the merge-dossiers CLI
@@ -629,14 +629,18 @@ def merge_dossier_store(dossier_by):
     try:
         dstore = json.load(open(dstore_path, encoding="utf-8"))
     except Exception:
-        dstore = {"header": "Basket 13 Fable deep-dossiers — one entry per symbol, most recent "
+        dstore = {"header": "Basket 13 deep-dossiers — one entry per symbol, most recent "
                             "re-underwrite wins. Written by _basket13_inject.py from each re-debate's "
                             "Phase-0 dossiers[]; _basket13_export.py copies to "
                             "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
                   "dossiers": {}}
     today = datetime.date.today().isoformat()
+    # NOTE: "model" is a static label, not dynamically read from the actual agent run (this script
+    # has no --model flag of its own; it only ingests _basket13_gen.py's workflow output). Fable
+    # retired from this seat 2026-07-10 (pipeline-v3 Week 1) -- _basket13_gen.py's --model now
+    # defaults to opus, so this label follows suit. Keep them in sync if that default ever changes.
     for sym, d in dossier_by.items():
-        dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-fable-5"}
+        dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-opus-4-8"}
     json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
               indent=1, ensure_ascii=False)
     print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
