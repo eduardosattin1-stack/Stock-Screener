@@ -1,0 +1,21 @@
+{
+  "symbol": "KBR",
+  "sector": "Industrials",
+  "signal_type": "catalyst",
+  "live_price": null,
+  "price_currency": null,
+  "verdict": "B",
+  "conviction": 3,
+  "value_conviction": 3,
+  "catalyst_status": "PENDING_HARD",
+  "sop_fair_value": 47,
+  "bull_thesis": "On January 4, 2027 it plans to spin off Mission Technology Solutions (its government, defense and space services arm, about 38% of revenue) from Sustainable Technology Solutions (process-technology licensing plus LNG and ammonia plant engineering, about 62%).",
+  "sop_bull": "Mission Technology Solutions ~$0.42B EBITDA at 11x = ~$4.6B; Sustainable Technology Solutions ~$0.58B EBITDA at 10x = ~$5.8B. Enterprise value ~$10.4B, less ~$2.49B net debt = ~$7.9B of equity across ~129M shares = $61 per share.",
+  "sop_bear": "Mission Technology Solutions ~$0.40B EBITDA at 8x = ~$3.2B; Sustainable Technology Solutions ~$0.55B EBITDA at 7x = ~$3.85B. Enterprise value ~$7.05B, less ~$2.49B net debt = ~$4.56B of equity across ~129M shares = $35 per share.",
+  "risk_reward": "Downside-to-break roughly $35 (about -4% from ~$36, the price at which the sum-of-the-parts discount vanishes under trough multiples and full debt), upside to the base-case $47 (about +31%), consensus price target ~$36, essentially at the market, with analyst-target velocity down 29%.",
+  "moderator_conclusion": "The segment split (MTS ~38% of revenue) inverts the actual FY2025 filing (MTS ~67-70%, ~$5.5-5.6B of ~$7.8B revenue) -- the skeptic REFUTED this record on exactly that mismatch, plus an overstated net-debt framing.",
+  "moat": "NARROW", "moat_trend": "STABLE", "secular_threat": "none", "secular_theme": "",
+  "interrogator_score": 3, "trajectory": "PIVOTING",
+  "source": "opus_regime_mod", "transcript_source": "fmp",
+  "_fixture_note": "Frozen 2026-07-10 reproduction of the real Speculair record. live_price:None, price_currency:None is the ACTUAL state of the real backend/_opus_debate/results_regime/KBR.json record on 2026-07-10 -- G0 must REJECT this before any of the downstream (inverted segment split, net-debt framing) analysis even gets a chance to run. The segment-split inversion and net-debt lease-composition gap were traced and fixed separately in commit 8571148a (FMP input hygiene) -- this fixture is specifically for the numeric gate's G0 schema-presence check, not the segment/net-debt fixes."
+}

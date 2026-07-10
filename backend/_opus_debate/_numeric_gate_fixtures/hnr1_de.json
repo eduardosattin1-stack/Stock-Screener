@@ -1,0 +1,20 @@
+{
+  "symbol": "HNR1.DE",
+  "sector": "Financial Services",
+  "signal_type": "deep_value",
+  "live_price": 235.0,
+  "price_currency": "EUR",
+  "verdict": "B",
+  "conviction": 3,
+  "value_conviction": 4,
+  "catalyst_status": "SOFT_EXTENDED",
+  "sop_fair_value": 265,
+  "sop_bull": "Favorable case: on ~2.7 billion euros of guided 2026 net income (about 22-23 euros per share) at a peer-appropriate ~13-14x earnings -- still a discount to Swiss Re's ~12x forward but crediting Hannover Re's superior cost ratio and lower cat-loss volatility -- fair value reaches roughly 300 euros per share.",
+  "sop_bear": "Adverse case: the softening cycle bites, underwriting margin normalizes, and net income flattens near 2.5 billion euros (~20-21 euros per share). Apply a de-rated ~10-11x -- roughly where the market is paying today -- and the equity is worth about 220 euros per share, cushioned by the ~5% dividend and the over-capitalized balance sheet.",
+  "risk_reward": "Downside-to-break ~220 euros (about -6% from ~235, and cushioned by a ~5% dividend that effectively floors total return near break-even) versus upside-to-fair-value ~265 euros (about +13%), with a favorable path to ~300 (+28%). Roughly 2:1 reward-to-risk on the base case, ~4-5:1 to the bull case -- but the upside is realized only through a voluntary multiple re-rating, with no dated catalyst to force it and the dividend doing the heavy lifting where a hard forcing function would normally sit.",
+  "moderator_conclusion": "Base-case fair value ~265 euros against ~235, roughly 2:1 reward-to-risk with the dividend as the floor and ~300 on the bull path. High-conviction on the VALUE (4), moderate on the timing/catalyst (3) precisely because nothing forces the re-rating on a clock.",
+  "moat": "WIDE", "moat_trend": "STABLE", "secular_threat": "none", "secular_theme": "",
+  "interrogator_score": 4, "trajectory": "STABLE",
+  "source": "opus_regime_mod", "transcript_source": "fmp",
+  "_fixture_note": "Frozen 2026-07-10 reproduction of the real Speculair record (Bruno's specimen: 'roughly 2:1 reward-to-risk' asserted while the floor is only ~6.4% below spot and the catalyst is SOFT_EXTENDED -- the gate's job is to demote a thin, undated floor even when the prose arithmetic checks out). valuation block added here as the TYPED schema fields the real 2026-07-10 record lacked (it had live_price:None, price_currency:None) -- the real record fails at G0; this fixture isolates the DOWNSTREAM defect (thin floor + soft catalyst) the gate is designed to catch once G0 passes."
+}

@@ -21,6 +21,7 @@ name). `compute_ratios()` (stamping the typed `valuation` block once it exists) 
 deferred to when the numeric-gate ships alongside real fixtures to test it against.
 """
 from __future__ import annotations
+import re
 import requests
 
 # ── R:R lane methods ─────────────────────────────────────────────────────────────────────────────
@@ -192,6 +193,38 @@ EXCHANGE_CURRENCY = {
     ".MX": "MXN",
     ".NS": "INR", ".BO": "INR",
 }
+
+
+def parse_money_prose(s):
+    """Best-effort single-number extraction from a CRO fair-value/target prose string
+    ('~$12-13', '$78-88 (base case ~$82)', '$12.5'). Prefers an explicit 'base case' figure, else the
+    midpoint of a lo-hi range, else the first number found. None on unparseable/empty input.
+
+    Canonical version (new 2026-07-10, for the numeric gate's --legacy prose synthesis) of a pattern
+    that already exists twice, independently, in the codebase — weekly_opus_refresh._val_money and
+    publish_to_frontend.target_px are near-duplicates of this logic. NOT yet consolidated onto this
+    copy (those two call sites are live pipeline code; changing them is a separate, deliberately
+    deferred follow-up, not bundled into this additive extraction)."""
+    if s is None:
+        return None
+    txt = str(s)
+    m = re.search(r'base[^$0-9]{0,14}\$?\s*([0-9]+(?:\.[0-9]+)?)', txt, re.I)
+    if m:
+        try:
+            return float(m.group(1))
+        except Exception:
+            pass
+    vals = []
+    for n in re.findall(r'([0-9]+(?:\.[0-9]+)?)', txt):
+        try:
+            vals.append(float(n))
+        except Exception:
+            pass
+    if not vals:
+        return None
+    if len(vals) >= 2 and vals[1] <= vals[0] * 3:   # 'lo-hi' range -> midpoint
+        return round((vals[0] + vals[1]) / 2, 2)
+    return vals[0]
 
 
 def implied_currency(symbol: str) -> str:

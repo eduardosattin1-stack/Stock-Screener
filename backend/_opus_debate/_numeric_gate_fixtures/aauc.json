@@ -1,0 +1,19 @@
+{
+  "symbol": "AAUC",
+  "sector": "Basic Materials",
+  "signal_type": "catalyst",
+  "live_price": 42.5,
+  "price_currency": null,
+  "verdict": "C",
+  "conviction": 2,
+  "value_conviction": 2,
+  "catalyst_status": "ARB",
+  "sop_fair_value": 44,
+  "bear_thesis": "With the stock trading close to the C$44 offer, the upside to a successful close is small (low-single-digit percent).",
+  "risk_reward": "Upside-to-fair-value: roughly C$1.5-2 per share. Downside-to-break: roughly C$10-12 per share (about 25-30%). Downside-to-upside ratio on the order of 6:1 against the arb.",
+  "moderator_conclusion": "You are paying near-C$44 for a deal already priced in; this month's regime read explicitly demotes crowded merger-arb (leaderless-DOJ extension risk, spreads 'safe and tight'). Pass for now.",
+  "moat": "NONE", "moat_trend": "STABLE", "secular_threat": "none", "secular_theme": "",
+  "interrogator_score": 3, "trajectory": "STABLE",
+  "source": "opus_regime_mod", "transcript_source": "fmp",
+  "_fixture_note": "Frozen reproduction of the real 2026-07-07 Speculair record's fabricated-price incident (verified via an 8-agent forensic workflow that week): the CRO asserted the stock 'trades close to the C$44 offer' (implying ~C$42-43, approximated here as live_price=42.5) with price_currency never stated. The TRUE price that day (FMP batch-quote) was US$23.68 (NYSE) / C$33.59 (TSX) -- ~31% BELOW the assumed terms, not near them; the same-day catalyst-lane debate with the correct price reaffirmed A/4 ('roughly 30% upside to terms'). This fixture tests G1a (price reconcile vs an independent quote) with live_quotes={'AAUC': 23.68} mocked in test_numeric_gate.py -- NOT a currency-suffix mismatch (the bare 'AAUC' ticker correctly implies USD; the defect was an assumed price, not a wrong exchange mapping). The real record was manually repaired in-place during the same session (restored to the correct catalyst-framed A/4 data) -- this fixture preserves the ORIGINAL defect for regression testing."
+}

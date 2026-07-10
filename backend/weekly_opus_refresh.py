@@ -2558,6 +2558,12 @@ if __name__ == "__main__":
     elif mode in ("regime-post", "regime_post"):
         import subprocess
         subprocess.run([sys.executable, str(ROOT / "_regime_post.py")], check=True)
+    elif mode in ("numeric-gate", "numeric_gate"):
+        import subprocess
+        extra = [a for a in ("--legacy", "--dry-run", "--live-quotes") if a in sys.argv]
+        if "--dry-run" not in extra:
+            extra.append("--dry-run")   # enforcement isn't built yet — always dry-run for now
+        subprocess.run([sys.executable, str(ROOT / "_numeric_gate.py")] + extra, check=True)
     elif mode in ("value-revalidate", "value_revalidate"):
         value_revalidate()
     elif mode in ("fr-universe", "fr_universe"):
