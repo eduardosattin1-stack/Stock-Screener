@@ -2228,23 +2228,13 @@ def fr_map_merge():
         print("GUARD: Lane A members present but no FMP_API_KEY — torque metrics need live chart/"
               "income-statement data. STOP (chain_map/<SYM>.json already written; re-run once a key is set).")
         raise SystemExit(1)
-    base = "https://financialmodelingprep.com/stable"
 
     def _get_chart(sym, days):
-        try:
-            r = requests.get(base.replace("/stable", "") + "/api/v3/historical-price-full/" + sym,
-                              params={"timeseries": days, "apikey": key}, timeout=20).json()
-            return (r or {}).get("historical")
-        except Exception:
-            return None
+        return get_chart(sym, days=days)
 
     def _income4(sym):
-        try:
-            r = requests.get(base + "/income-statement", params={"symbol": sym, "period": "annual",
-                              "limit": 4, "apikey": key}, timeout=20).json()
-            return r if isinstance(r, list) else None
-        except Exception:
-            return None
+        r = fmp("income-statement", {"symbol": sym, "period": "annual", "limit": 4})
+        return r if isinstance(r, list) else None
 
     # cohort EBITDA margins per primary chain, for the percentile/band calc — Lane A only
     primary_chain = {s: (keep[s].get("chains") or [None])[0] for s in lane_a_syms}
@@ -3838,6 +3828,8 @@ if __name__ == "__main__":
         disruptor_universe()
     elif mode in ("fr-universe", "fr_universe"):
         fr_universe()
+    elif mode in ("fr-map-merge", "fr_map_merge"):
+        fr_map_merge()
     elif mode in ("disruptor-map-merge", "disruptor_map_merge"):
         disruptor_map_merge()
     elif mode in ("disruptor-prep", "disruptor_prep"):
