@@ -46,6 +46,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import live_debate_engine as E  # noqa: E402
 import gcs_io  # noqa: E402
 import requests  # noqa: E402
+import _numeric_core  # noqa: E402  shared valuation arithmetic (2026-07-10 extraction)
 from agent_voice import AGENT_VOICE  # noqa: E402  # house-voice preamble for the director prompts (prose only)
 
 ROOT = Path("_opus_debate")
@@ -2296,6 +2297,233 @@ def continuity_gate():
           + (f": {flags}" if flags else " — all changes carry dated facts or are within tolerance"))
 
 
+# ── COHORT LEDGER (2026-07-10) — the accountability mechanism: does conviction/verdict/a skeptic
+# kill actually predict forward returns? Local-only (NEVER Cloud Run, per standing rule); run as the
+# LAST step of the weekly SKILL (after value-publish), so results_regime/ + both apex baskets +
+# skeptic shards are this run's settled state (prep's self-clean archives them before the next run).
+# "tier"/"mode" record TODAY's carry-vs-debate distinction (carried/debated/recheck); once the
+# two-tier restructure ships they start writing underwrite/delta/coverage into the SAME fields —
+# no ledger schema change needed.
+COHORT_LEDGER = ROOT / "_cohort_ledger.jsonl"
+COHORT_HORIZONS = {"4w": 28, "12w": 84, "26w": 182}   # trading-calendar-agnostic; deliberately simple
+
+
+def _cohort_load():
+    rows = []
+    if COHORT_LEDGER.exists():
+        for line in COHORT_LEDGER.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except Exception:
+                continue
+    return rows
+
+
+def _cohort_write(rows):
+    rows = sorted(rows, key=lambda r: (r.get("run_date") or "", r.get("symbol") or ""))
+    COHORT_LEDGER.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    return rows
+
+
+def _cohort_seat_map():
+    """symbol -> seat label (regime_apex/regime_runner/value_apex/value_runner/none), from both
+    published apex baskets. A name in both books gets a combined label (e.g. 'regime_apex+value_apex')."""
+    seat = {}
+
+    def _add(path, apex_lbl, runner_lbl):
+        try:
+            d = json.load(open(ROOT / path, encoding="utf-8"))
+        except Exception:
+            return
+        for p in (d.get("apex_basket") or []):
+            s = p.get("symbol") if isinstance(p, dict) else p
+            if s:
+                seat[s] = apex_lbl if s not in seat else seat[s] + "+" + apex_lbl
+        for p in (d.get("runner_ups") or []):
+            s = p.get("symbol") if isinstance(p, dict) else p
+            if s and s not in seat:
+                seat[s] = runner_lbl
+    _add("apex_basket_opus_regime.json", "regime_apex", "regime_runner")
+    _add("apex_basket_value.json", "value_apex", "value_runner")
+    return seat
+
+
+def _cohort_skeptic_map():
+    """symbol -> (verdict, kill_scope), regime shard preferred over value shard when both exist
+    (the cross-book dedupe means a value finalist's shard is often just a carried copy of regime's)."""
+    out = {}
+    for d in ("_skeptic_regime", "_skeptic"):
+        p = ROOT / d
+        if not p.exists():
+            continue
+        for f in p.glob("*.json"):
+            try:
+                r = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                continue
+            sym = r.get("symbol") or f.stem
+            if sym not in out:
+                out[sym] = (r.get("verdict") or "none", r.get("kill_scope") or "")
+    return out
+
+
+def cohort_mark():
+    """Append this run's per-name snapshot (idempotent per run-date+symbol), fill any NOW-due forward-
+    return horizon on existing rows using fresh FMP quotes, then print + write cohort_report.md."""
+    import datetime as _dt
+    today = _dt.date.today().isoformat()
+    ledger = _cohort_load()
+    already = {(r.get("run_date"), r.get("symbol")) for r in ledger}
+    seat_map = _cohort_seat_map()
+    skeptic_map = _cohort_skeptic_map()
+    fmp_key = E.get_key("FMP_API_KEY")
+    spy0 = (_numeric_core.fetch_live_quotes(["SPY"], fmp_key=fmp_key) or {}).get("SPY")
+
+    new_rows = 0
+    res_dir = ROOT / "results_regime"
+    if res_dir.exists():
+        for f in sorted(res_dir.glob("*.json")):
+            sym = f.stem
+            if (today, sym) in already:
+                continue
+            try:
+                rec = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                continue
+            skv, sksc = skeptic_map.get(sym, ("none", ""))
+            carried = bool(rec.get("carried"))
+            ledger.append({
+                "run_date": today, "symbol": sym,
+                "tier": "carried" if carried else "debated",
+                "mode": "carry" if carried else ("recheck" if rec.get("source") == "ledger_recheck" else "full"),
+                "verdict": rec.get("verdict"), "conviction": rec.get("conviction"),
+                "value_conviction": rec.get("value_conviction"),
+                "seat": seat_map.get(sym, "none"), "skeptic": skv, "kill_scope": sksc,
+                "continuity_flag": bool(rec.get("continuity_flag")),
+                "numeric_flag": None,          # populated once the numeric-integrity gate ships (Week 0.4+)
+                "price0": rec.get("live_price"), "spy0": spy0,
+                "px_4w": None, "r_4w": None, "px_12w": None, "r_12w": None, "px_26w": None, "r_26w": None,
+                "xs_4w": None, "xs_12w": None, "xs_26w": None,
+                "backfilled": False,
+            })
+            new_rows += 1
+
+    # ---- fill any horizon that's now due, using fresh quotes (skip backfilled/price-less rows) ----
+    due_syms = set()
+    for r in ledger:
+        if r.get("backfilled") or not isinstance(r.get("price0"), (int, float)):
+            continue
+        try:
+            age_d = (_dt.date.today() - _dt.date.fromisoformat(r["run_date"])).days
+        except Exception:
+            continue
+        if any(age_d >= days and r.get(f"r_{hz}") is None for hz, days in COHORT_HORIZONS.items()):
+            due_syms.add(r["symbol"])
+    quotes = _numeric_core.fetch_live_quotes(sorted(due_syms), fmp_key=fmp_key) if due_syms else {}
+    spy_curr = (_numeric_core.fetch_live_quotes(["SPY"], fmp_key=fmp_key) or {}).get("SPY") if due_syms else None
+    filled = 0
+    for r in ledger:
+        if r["symbol"] not in due_syms:
+            continue
+        px_now = quotes.get(str(r["symbol"]).upper())
+        if px_now is None:
+            continue
+        try:
+            age_d = (_dt.date.today() - _dt.date.fromisoformat(r["run_date"])).days
+        except Exception:
+            continue
+        for hz, days in COHORT_HORIZONS.items():
+            if age_d >= days and r.get(f"r_{hz}") is None:
+                r[f"px_{hz}"] = px_now
+                r[f"r_{hz}"] = round((px_now / r["price0"] - 1) * 100, 2)
+                if r.get("spy0") and spy_curr:
+                    r[f"xs_{hz}"] = round(r[f"r_{hz}"] - (spy_curr / r["spy0"] - 1) * 100, 2)
+                filled += 1
+
+    ledger = _cohort_write(ledger)
+    print(f"cohort-mark: {new_rows} new row(s) appended | {filled} horizon(s) filled | "
+          f"ledger={len(ledger)} rows -> {COHORT_LEDGER.name}")
+    _cohort_report(ledger)
+
+
+def _cohort_report(ledger):
+    """forward return by conviction bucket / verdict / tier, and the KILL LEDGER (skeptic REFUTED vs
+    CONFIRMED forward returns) — the pre-registered accountability check (see the pipeline-v3 plan):
+    after ~12 weeks, if conviction 4-5 doesn't beat 1-2 on excess return AND kills don't underperform
+    confirms, the debate layer is not earning its cost."""
+    def _bucket(c):
+        return "4-5" if isinstance(c, (int, float)) and c >= 4 else ("3" if c == 3 else ("1-2" if isinstance(c, (int, float)) else "?"))
+
+    def _stats(rows, key):
+        vals = [r[key] for r in rows if isinstance(r.get(key), (int, float))]
+        if not vals:
+            return "n=0 (not yet due)"
+        vals.sort()
+        return f"n={len(vals)} median={vals[len(vals) // 2]:+.1f}% mean={sum(vals) / len(vals):+.1f}%"
+
+    lines = ["# Speculair Cohort Report", f"Generated from {len(ledger)} ledger rows "
+             f"({sum(1 for r in ledger if r.get('backfilled'))} backfilled, no price/return data).\n"]
+    for hz in ("4w", "12w", "26w"):
+        lines.append(f"## {hz} excess return by conviction bucket")
+        for b in ("1-2", "3", "4-5"):
+            lines.append(f"  conviction {b}: {_stats([r for r in ledger if _bucket(r.get('conviction')) == b], f'xs_{hz}')}")
+        lines.append(f"## {hz} excess return by verdict")
+        for v in ("A", "B", "C"):
+            lines.append(f"  verdict {v}: {_stats([r for r in ledger if r.get('verdict') == v], f'xs_{hz}')}")
+        lines.append(f"## {hz} KILL LEDGER — skeptic verdict vs forward excess return")
+        for sk in ("CONFIRMED", "CONFIRMED_WITH_CORRECTIONS", "REFUTED"):
+            lines.append(f"  {sk}: {_stats([r for r in ledger if r.get('skeptic') == sk], f'xs_{hz}')}")
+        lines.append("")
+    out = ROOT / "cohort_report.md"
+    out.write_text("\n".join(lines), encoding="utf-8")
+    print("\n".join(lines))
+    print(f"-> {out.name}")
+
+
+def cohort_backfill():
+    """Seed HISTORICAL verdict/conviction/tier rows from GCS speculair_debate_history/<SYM>.json
+    (each carries up to 12 dated entries already, per the weekly append). These entries do NOT carry
+    a price, so backfilled rows get price0=None + all forward-returns=None + backfilled=True — they
+    feed the verdict/conviction distribution in the report but NEVER the return statistics (which
+    would require fabricating a historical price). Idempotent on (run_date, symbol)."""
+    ledger = _cohort_load()
+    already = {(r.get("run_date"), r.get("symbol")) for r in ledger}
+    hist_dir = E.FRONTEND_DIR / "public" / "speculair_debate_history"
+    added = 0
+    if hist_dir.exists():
+        for f in hist_dir.glob("*.json"):
+            sym = f.stem
+            try:
+                entries = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                continue
+            if not isinstance(entries, list):
+                continue
+            for e in entries:
+                d = e.get("date")
+                if not d or (d, sym) in already:
+                    continue
+                ledger.append({
+                    "run_date": d, "symbol": sym, "tier": "n/a", "mode": "n/a",
+                    "verdict": e.get("verdict"), "conviction": e.get("conviction"),
+                    "value_conviction": e.get("value_conviction"),
+                    "seat": "unknown", "skeptic": "none", "kill_scope": "",
+                    "continuity_flag": False, "numeric_flag": None,
+                    "price0": None, "spy0": None,
+                    "px_4w": None, "r_4w": None, "px_12w": None, "r_12w": None, "px_26w": None, "r_26w": None,
+                    "xs_4w": None, "xs_12w": None, "xs_26w": None,
+                    "backfilled": True,
+                })
+                already.add((d, sym))
+                added += 1
+    ledger = _cohort_write(ledger)
+    print(f"cohort-backfill: {added} historical row(s) seeded from speculair_debate_history/ "
+          f"(verdict/conviction only, no price/return data) -> {len(ledger)} total ledger rows")
+
+
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "prep"
     # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10); its code was DELETED 2026-07-10
@@ -2346,6 +2574,10 @@ if __name__ == "__main__":
         continuity_gate()
     elif mode in ("control-sample", "control_sample"):
         control_sample()
+    elif mode in ("cohort-mark", "cohort_mark"):
+        cohort_mark()
+    elif mode in ("cohort-backfill", "cohort_backfill"):
+        cohort_backfill()
     elif mode == "value-publish":
         value_publish(push_gcs=("--gcs" in sys.argv))
     else:
