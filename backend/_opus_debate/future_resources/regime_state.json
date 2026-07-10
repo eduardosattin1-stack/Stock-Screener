@@ -1,0 +1,50 @@
+{
+  "uranium_fuel_cycle": {
+    "state": "TAILWIND",
+    "spot": "~$85.85/lb U3O8 (Trading Economics, Jul 6 2026; not on FMP - see doc); term $93-94/lb, 18-yr high (TradeTech Mar 31 2026 / INN)",
+    "vs_incentive_pct": null,
+    "one_liner": "The uranium fuel-cycle regime is a fundamental TAILWIND with an equity-market caveat: spot (~$85/lb) has consolidated ~15% below its January 2026 spike above $101, but the term price is at 18-year highs (~$93-94/lb), Kazatomprom has cut 2026 supply ~10%, and Western enrichment is getting $2.7B of DOE money ahead of the 2028 hard Russian import ban - yet uranium equities have corrected 20-50% from highs on valuation, so the tailwind currently favors contracted producers and enrichers over spot-levered developers.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  },
+  "copper_electrification": {
+    "state": "TAILWIND",
+    "spot": "COMEX $6.29/lb (FMP live); LME cash ~$13,090/t (Jul 8 2026, Westmetall via search) vs ~$12,000/t JPM/UBS incentive",
+    "vs_incentive_pct": 9.1,
+    "one_liner": "Copper is in a structurally tight, policy-distorted bull regime: COMEX spot ~$6.29/lb (~$13,870/t) and LME cash ~$13,090/t sit at or above the ~$12,000/t consensus incentive price for new supply, propped up by the Grasberg supply shock and a pending US refined-copper tariff decision - a TAILWIND for the chain, though softening Chinese physical demand and record US stockpiles make the rally vulnerable to a tariff 'no' or de-stocking event.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  },
+  "rare_earth_strategic": {
+    "state": "TAILWIND",
+    "spot": "SMM NdPr alloy $133.02/kg, Nd metal $145.88/kg (Jul 1 2026 print via secondary trackers citing SMM; oxide $90.32/kg Jun 1); not on FMP - see doc; oxide-vs-metal basis caveat",
+    "vs_incentive_pct": null,
+    "one_liner": "The rare earths/strategic metals chain is in a strong policy-and-price tailwind: NdPr has rallied back to 2026 highs (SMM NdPr alloy $133/kg, Nd metal ~$146/kg at the July 1 print) well above MP's $110/kg DoD floor, China is actively weaponizing export controls (including blacklisting MP and USAR on June 22, 2026), and Washington is deploying capital at unprecedented scale ($10B EXIM 'Project Vault', $725M OSC loan to Energy Fuels, $1.6B LOI to USA Rare Earth). The main risk is a China easing/flood scenario, not demand.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  },
+  "power_for_ai": {
+    "state": "TAILWIND",
+    "spot": "not on FMP - see doc; scarcity proxies: PJM 2026/27 capacity cleared at FERC cap $329.17/MW-day (right-censored); power-transformer lead times ~128-160 wks (Wood Mackenzie)",
+    "vs_incentive_pct": null,
+    "one_liner": "The physical bottleneck regime is intact and hardening: gas turbines are effectively sold out into 2029-30, transformer lead times are still 2.5-4 years, and PJM capacity just cleared at its price cap - while the four big hyperscalers guide ~$630-725B of 2026 capex (+~77% y/y). TAILWIND - strongest for scarce-capacity equipment producers and EPC (GEV, ETN, PWR); the nuclear-IPP leg (CEG, VST, TLN) remains fundamentally supported but its equities have already corrected 25-40% off highs on PPA-pricing opacity and transmission-delivery risk, so it is a tailwind mid-way through digesting an overshoot.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  },
+  "robotics_automation": {
+    "state": "TAILWIND",
+    "spot": "not on FMP - see doc; cycle proxies: ISM Mfg PMI 53.3 Jun-2026 (6th month >50), JMTBA machine-tool orders +37.4% YoY May-2026 (MoM rolling over)",
+    "vs_incentive_pct": null,
+    "one_liner": "The industrial automation capex cycle has decisively turned up - ISM manufacturing in its sixth month of expansion, Japanese machine-tool orders +37% YoY, and all four anchor names (ISRG, TER, ROK, CGNX) beating and raising - while humanoid robotics has entered a genuine capital-formation phase (Figure at $39B, Agility SPAC, Unitree IPO approved). Verdict: TAILWIND, with the caveat that the humanoid leg is funding-driven and vulnerable to a hype unwind that the industrial leg is not.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  },
+  "quantum": {
+    "state": "NEUTRAL",
+    "spot": "not on FMP - see doc; sentiment proxies: IONQ -49% / RGTI -71% / QBTS -57% off 52wk highs (FMP), P/S ~109/836/791 (May-2026 vintage); QNT IPO $60 flat debut Jun 4 2026",
+    "vs_incentive_pct": null,
+    "one_liner": "Quantum's fundamental drivers - government money, defense contracts, and error-correction milestones - are the strongest they have ever been, but the equity froth of 2025 has decisively cooled: pure-plays are 50-70% off their 52-week highs on triple-digit-to-800x P/S ratios, insider selling, and a $15B Quantinuum IPO that soaked up sector capital. Net regime: NEUTRAL - improving substance, deflating sentiment.",
+    "tripwires_breached": [],
+    "as_of": "2026-07-10"
+  }
+}
