@@ -29,6 +29,7 @@ sys.path.insert(0, str(BACKEND / "alpha_compounder"))
 
 import gcs_io  # noqa: E402
 import live_debate_engine as E  # noqa: E402
+from _ledger import append_decision_history  # noqa: E402  shared with weekly_opus_refresh.py (2026-07-10)
 sys.path.insert(0, str(BK))  # so the sibling _wheel module resolves
 from _wheel import stamp_wheel  # noqa: E402  CSP->CC wheel suggestion
 
@@ -369,30 +370,11 @@ except Exception as e:
 baskets["apex_basket"] = entries
 
 # Capture this run's Director decisions into the year ledger (continuity trail for next week's
-# Director + the UI rotation panel). Inline copy of weekly_opus_refresh.append_decision_history,
-# to avoid importing that module (its os.chdir side-effect would move this script's cwd). Best-effort.
-try:
-    import datetime as _dt
-    _dhp = BK / "_decision_history.json"
-    _dh = json.loads(_dhp.read_text(encoding="utf-8")) if _dhp.exists() else {}
-    if not isinstance(_dh, dict):
-        _dh = {}
-    _today = _dt.date.today().isoformat()
-    _rb = _dh.setdefault("regime", {})
-    for _p in entries:
-        _s = _p.get("symbol")
-        if not _s:
-            continue
-        _ev = {"date": _today, "decision": str(_p.get("decision") or "KEEP").upper(),
-               "conviction": _p.get("conviction"),
-               "rationale": (_p.get("decision_rationale") or _p.get("whats_changed") or _p.get("director_rationale") or "")[:200]}
-        _lst = _rb.setdefault(_s, [])
-        if not (_lst and _lst[-1].get("date") == _today):
-            _lst.append(_ev)
-        _rb[_s] = _lst[-24:]
-    _dhp.write_text(json.dumps(_dh, indent=2, ensure_ascii=False), encoding="utf-8")
-except Exception as _e:
-    print(f"WARN: regime decision-history capture failed ({_e})")
+# Director + the UI rotation panel). Shared with weekly_opus_refresh.py via _ledger.py (2026-07-10) —
+# entries already carry "conviction" normalized from the raw director_conviction field, and
+# append_decision_history's fallback chain (director_conviction -> value_score -> conviction) resolves
+# to the same value, so this is a behavior-neutral consolidation of the two prior copies.
+append_decision_history("regime", {"apex_basket": entries})
 baskets["director_memo"] = director.get("director_memo", baskets.get("director_memo", ""))
 # Director runner_ups (incl skeptic demotions, verdicts already stamped by consume_skeptic) never
 # reached the frontend — the UI "Watch & Wait" list froze at its 2026-06-06 capitulation_watchlist.
