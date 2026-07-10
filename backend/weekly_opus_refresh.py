@@ -1708,11 +1708,18 @@ CARRY_MAX_AGE_D = 21          # hard staleness ceiling (synthesis tightened the 
 CARRY_PRICE_MOVE = 0.10       # |move| beyond this since the prior debate -> re-debate
 
 
+FULL_REFRESH_D = 91           # T4: a seat gets a full re-underwrite at least quarterly (last_full_debate)
+
+
 def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
     embed it in the input bundle — a re-debated name must know what it said last week.
-    Deterministic; fail-open to debate."""
+    2026-07-10 (two-tier, Week 2): seat-relevant names NO LONGER short-circuit — the gate keeps
+    evaluating the REAL triggers first, so prep can route: seat WITH a trigger -> FULL re-debate;
+    seat with NO trigger -> reason "seat-relevant-only" -> DELTA mode (anchored weekly update — the
+    fix for the memoryless-re-roll churn the 2026-07-07 forensics identified). Non-seat behavior is
+    unchanged (trigger -> debate, no trigger -> carry). Deterministic; fail-open to debate."""
     if os.environ.get("FORCE_FULL_DEBATE"):
         return "debate", "FORCE_FULL_DEBATE", None
     pf = prior_dir / f"{sym}.json"
@@ -1722,11 +1729,14 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
         pr = json.load(open(pf, encoding="utf-8"))
     except Exception:
         return "debate", "prior record unreadable", None
-    if sym in seat_relevant:
-        return "debate", "seat-relevant (apex/runner in a book)", pr
+    is_seat = sym in seat_relevant
     cs = (pr.get("catalyst_status") or "").upper()
     if cs.startswith("PENDING_HARD"):
         return "debate", "prior catalyst PENDING_HARD (dated events move weekly)", pr
+    # T6 — an escalation raised last cycle (a delta agent that wanted to flip the verdict, or a
+    # coverage refresh that found something material) forces the full debate it asked for.
+    if pr.get("escalate_full_debate") or (pr.get("coverage_update") or {}).get("escalate"):
+        return "debate", "escalated last cycle (delta/coverage flagged a material change)", pr
     # age ceiling: prior debated_at (fallback: file mtime)
     import time as _t
     age_d = None
@@ -1740,6 +1750,18 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
         age_d = (_t.time() - pf.stat().st_mtime) / 86400
     if age_d > CARRY_MAX_AGE_D:
         return "debate", f"record {age_d:.0f}d old (> {CARRY_MAX_AGE_D}d ceiling)", pr
+    # T4 — quarterly full refresh for seats: delta mode restamps the record weekly so the age ceiling
+    # never fires on a held name; last_full_debate (stamped by every FULL underwrite) is the honest
+    # age of the actual thesis work. Absent on pre-two-tier records -> skipped gracefully (the first
+    # full debate under the new schema starts the clock).
+    lfd = pr.get("last_full_debate")
+    if is_seat and lfd:
+        try:
+            lfd_age = (_t.time() - datetime.fromisoformat(str(lfd)[:19]).timestamp()) / 86400
+            if lfd_age > FULL_REFRESH_D:
+                return "debate", f"quarterly full refresh (last full underwrite {lfd_age:.0f}d ago)", pr
+        except Exception:
+            pass
     # new transcript since the prior debate
     if real_tx:
         latest = max((t.get("date") or "") for t in real_tx)
@@ -1753,6 +1775,8 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
         mv = abs(now_px / old_px - 1)
         if mv > CARRY_PRICE_MOVE:
             return "debate", f"price moved {mv * 100:.0f}% (> {CARRY_PRICE_MOVE * 100:.0f}%)", pr
+    if is_seat:
+        return "debate", "seat-relevant-only", pr    # no real trigger -> DELTA mode under tiering
     return "carry", "no debate-relevant change", pr
 
 
@@ -1884,6 +1908,30 @@ def prep():
     prior_doss_dir = ROOT / "_archive_prev" / "dossiers"
     _carry_reasons = {}
 
+    # ── TWO-TIER (2026-07-10, pipeline-v3 Week 2) ────────────────────────────────────────────────
+    # SPECULAIR_TIERING=off restores the legacy single-tier flow (every debate name gets a full
+    # Opus debate, no delta/coverage phases, skeptic stays a separate post-Director verb).
+    tiering = os.environ.get("SPECULAIR_TIERING", "on").lower() != "off"
+    # B13 SEPARATION at the tier level: names in the Basket-13 universe are underwritten in the
+    # catalyst workflow under the event rubric — they never enter Tier-U here (the tier-selection
+    # enforcement of the 2026-07-08 rule; the old catalyst-seed write collision is structurally
+    # impossible when the name never debates in this lane at all).
+    b13set = set()
+    if tiering:
+        try:
+            b13set = {c.get("symbol") for c in _b13_universe() if c.get("symbol")}
+        except Exception as _e:
+            print(f"WARN: _b13_universe unreadable ({_e}) — no B13 tier exclusion this run")
+    debate_info = {}                                  # sym -> {reason, seat, has_tx, prior_exists, meths}
+    b13_carried, b13_skipped = [], []
+    COV_UPD = ROOT / "_coverage_updates"
+    COV_UPD.mkdir(parents=True, exist_ok=True)
+    for _f in COV_UPD.glob("*.json"):                 # clear stale updates from the prior run
+        try:
+            _f.unlink()
+        except OSError:
+            pass
+
     syms, no_tx, radar_universe, carried, _no_price = [], [], [], [], []
     for sym in sorted(sym_meths):
         sc = scan_by_sym.get(sym, {})
@@ -1921,6 +1969,17 @@ def prep():
         # (live price + as_of + provenance) — downstream (Director/skeptic/value re-grade/
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
         _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant)
+        # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
+        # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
+        # skipped outright — their underwriting lives in _catalyst_weekly.mjs, and their stock-page
+        # depth view renders the B13 deep-dossier instead.
+        if tiering and sym in b13set and _decision == "debate":
+            if isinstance(_prior, dict):
+                _decision, _reason = "carry", "b13-separated (underwritten in the catalyst workflow)"
+                b13_carried.append(sym)
+            else:
+                b13_skipped.append(sym)
+                continue
         # CONTINUITY (2026-07-08): a re-debated name gets a compact summary of its own prior record
         # so the fresh agent is a committee CONTINUING coverage, not re-rolling from scratch — the
         # debate-layer analog of the Director's rotation ledger (the 07-07 forensics: FIP A/5->B/3,
@@ -1947,7 +2006,9 @@ def prep():
             _pr = _prior
             _pr["carried"] = True
             _pr["carried_from"] = str(_pr.get("debated_at") or "")[:10]
-            _pr["carry_reason"] = "no debate-relevant change"
+            _pr["carry_reason"] = _reason
+            _pr["tier"] = "coverage"
+            _pr["update_mode"] = "carry"
             if isinstance(sc.get("price"), (int, float)):
                 _pr["live_price"] = sc.get("price")
             _pr["as_of"] = datetime.now().strftime("%Y-%m-%d")
@@ -1958,6 +2019,8 @@ def prep():
             carried.append(sym)
             continue
         _carry_reasons[_reason] = _carry_reasons.get(_reason, 0) + 1
+        debate_info[sym] = {"reason": _reason, "seat": sym in seat_relevant, "has_tx": bool(real),
+                            "prior_exists": isinstance(_prior, dict), "meths": meths}
         if real:
             real.sort(key=lambda t: t["date"])
             # Cap to the last 5 quarters: 8 × 18k chars ~= 36k tokens, over the 25k Read cap an agent
@@ -2037,6 +2100,82 @@ def prep():
     syms = [s for s in syms if s not in recheck]
     no_tx = [s for s in no_tx if s not in recheck]
 
+    # ── TIER PARTITION (two-tier, Week 2) ────────────────────────────────────────────────────────
+    # syms/no_tx currently hold EVERY name the change-detection gate routed to "debate". Under
+    # tiering they split into: DELTA (untriggered seats — anchored Sonnet update, the churn fix),
+    # FULL/UNDERWRITE (triggered seats + ranked new-candidate intake, Opus, hard cap U_CAP),
+    # COVERAGE-REFRESH (trigger names that missed the cap but have a prior record — Sonnet update,
+    # verdict INHERITED by code), and UNCOVERED (missed the cap, no prior record — skipped, printed).
+    U_CAP = 40
+    VD_U_CAP = 3                                       # value-drawdown names admitted to Tier-U per week
+    delta_syms, coverage_syms, uncovered = [], [], []
+    if tiering:
+        debate_all = list(syms) + list(no_tx)
+        delta_syms = [s for s in debate_all
+                      if debate_info.get(s, {}).get("reason") == "seat-relevant-only"
+                      and debate_info.get(s, {}).get("prior_exists")
+                      and (prior_res_dir / f"{s}.json").exists()]
+        seat_triggered = [s for s in debate_all
+                          if s not in delta_syms and debate_info.get(s, {}).get("seat")]
+        nonseat = [s for s in debate_all if s not in delta_syms and s not in seat_triggered]
+
+        def _intake_rank(s):
+            info = debate_info.get(s, {})
+            r, meths = info.get("reason", ""), info.get("meths", [])
+            score = 0
+            if r == "new to universe":
+                score += 3
+            if len([m for m in meths if m not in ("apex", "value_drawdown")]) >= 2:
+                score += 2
+            if r.startswith("prior catalyst PENDING_HARD") or r.startswith("escalated"):
+                score += 2
+            if "value_drawdown" in meths:
+                score += 1
+            return (-score, -len(meths), s)            # deterministic: score desc, breadth desc, alpha
+
+        room = max(0, U_CAP - len(delta_syms) - len(seat_triggered))
+        ranked = sorted(nonseat, key=_intake_rank)
+        intake, vd_used = [], 0
+        for s in ranked:
+            if len(intake) >= room:
+                break
+            is_vd = "value_drawdown" in debate_info.get(s, {}).get("meths", [])
+            if is_vd and vd_used >= VD_U_CAP:
+                continue
+            intake.append(s)
+            vd_used += 1 if is_vd else 0
+        overflow = [s for s in nonseat if s not in intake]
+        coverage_syms = [s for s in overflow if debate_info.get(s, {}).get("prior_exists")
+                         and (prior_res_dir / f"{s}.json").exists()]
+        uncovered = [s for s in overflow if s not in coverage_syms]
+        full_set = set(seat_triggered) | set(intake)
+        syms = [s for s in syms if s in full_set]
+        no_tx = [s for s in no_tx if s in full_set]
+        n_u = len(delta_syms) + len(full_set)
+        print(f"tier-select: universe={len(sym_meths)} | U={n_u}/{U_CAP} [seats-delta={len(delta_syms)}, "
+              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} (vd={vd_used})] "
+              f"| C-refresh={len(coverage_syms)} | b13-excluded={len(b13_carried)} carried "
+              f"+{len(b13_skipped)} skipped-new{' ' + str(b13_skipped) if b13_skipped else ''} "
+              f"| uncovered-overflow={len(uncovered)}{' ' + str(uncovered) if uncovered else ''}")
+        if n_u < 15:
+            print(f"GUARD tier-select: Tier-U only {n_u} names (<15) — thin underwriting week; "
+                  f"verify the screen/seat inputs before trusting the Director's pool")
+
+    # Skeptic phase context (skeptic now runs BEFORE the Director, inside the same workflow, over all
+    # of Tier-U). Lanes/hints computed at prep from prior records + the scan (same helpers the
+    # standalone skeptic_gen uses); B13 is tier-excluded so every Tier-U lane is value/compounder.
+    tier_u = delta_syms + syms + no_tx
+    skeptic_lanes, skeptic_hints = {}, {}
+    if tiering and tier_u:
+        for s in tier_u:
+            skeptic_lanes[s] = {"lane": "value", "res": f"results_regime/{s}.json",
+                                "doss": f"dossiers/{s}.md", "attack": _SKEPTIC_ATTACKS["value"]}
+        try:
+            skeptic_hints = _moat_hints(tier_u)
+        except Exception as _e:
+            print(f"WARN: skeptic moat hints failed ({_e}) — skeptic runs without the moat alert")
+            skeptic_hints = {}
+
     # Director rotation discipline: render the regime prior-decision ledger (the live apex book + its
     # tracking) that the Director must reconcile its new basket against. Best-effort — never blocks prep.
     try:
@@ -2051,26 +2190,40 @@ def prep():
           .replace("__ONLINE_SYMS__", json.dumps(no_tx))
           .replace("__RECHECK_SYMS__", json.dumps(recheck))
           .replace("__RECHECK_INFO__", json.dumps(recheck_info))
+          .replace("__DELTA_SYMS__", json.dumps(delta_syms))
+          .replace("__COVERAGE_SYMS__", json.dumps(coverage_syms))
+          .replace("__SKEPTIC_SYMS__", json.dumps(tier_u if tiering else []))
+          .replace("__SKEPTIC_LANES__", json.dumps(skeptic_lanes))
+          .replace("__SKEPTIC_HINTS__", json.dumps(skeptic_hints))
+          .replace("__PRIOR_SEATS__", json.dumps(sorted(seat_relevant)))
           .replace("__DIRECTOR_MODEL__", DIRECTOR_MODEL)
+          .replace("__SKEPTIC_MODEL__", SKEPTIC_MODEL)
           .replace("__N_RADAR__", str(len(radar_groups))))
     out = ROOT / "_weekly_debate.js"
     out.write_text(js, encoding="utf-8", newline="\n")
-    print(f"PREP OK: {len(syms)} with FMP transcripts + {len(no_tx)} via online fetch "
-          f"+ {len(recheck)} ledger re-checks = {len(syms) + len(no_tx) + len(recheck)} total candidates "
-          f"+ {len(carried)} CARRIED forward = {len(syms) + len(no_tx) + len(recheck) + len(carried)} COVERED "
+    print(f"PREP OK: {len(syms)} full-debate w/ FMP transcripts + {len(no_tx)} full-debate online "
+          f"+ {len(delta_syms)} DELTA seats + {len(coverage_syms)} coverage-refresh "
+          f"+ {len(recheck)} ledger re-checks + {len(carried)} CARRIED "
+          f"= {len(syms) + len(no_tx) + len(delta_syms) + len(coverage_syms) + len(recheck) + len(carried)} COVERED "
           f"(online: {no_tx}{'; recheck: ' + str(recheck) if recheck else ''})")
     print(f"WORKFLOW_SCRIPT={out.resolve()}")
 
 
 _WORKFLOW_TEMPLATE = r"""export const meta = {
   name: 'speculair-opus-weekly',
-  description: 'Weekly all-Opus regime debate (Radar peer-comps + Sum-of-Parts) over the per-methodology universe, then Director picks the apex basket',
-  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Debate', model: 'opus' }, { title: 'Director', model: '__DIRECTOR_MODEL__' }],
+  description: 'Two-tier weekly Speculair: Radar -> Coverage/Delta/Underwrite -> deterministic Gates -> Skeptic (pre-Director) -> Director',
+  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Coverage', model: 'sonnet' }, { title: 'Delta', model: 'sonnet' }, { title: 'Underwrite', model: 'opus' }, { title: 'Gates', model: 'haiku' }, { title: 'Skeptic', model: '__SKEPTIC_MODEL__' }, { title: 'Director', model: '__DIRECTOR_MODEL__' }],
 }
 const DIR = 'backend/_opus_debate'
 const RES = DIR + '/results_regime'
-const SYMS = __SYMS__               // have a bundled FMP transcript (read local file)
-const ONLINE_SYMS = __ONLINE_SYMS__ // no FMP transcript — agent fetches the latest one online
+const SYMS = __SYMS__               // full Opus underwrite, bundled FMP transcript
+const ONLINE_SYMS = __ONLINE_SYMS__ // full Opus underwrite, no FMP transcript — agent fetches online
+const DELTA_SYMS = __DELTA_SYMS__       // held seats, no trigger — anchored Sonnet delta update
+const COVERAGE_SYMS = __COVERAGE_SYMS__ // Tier-C refresh — Sonnet update, verdict INHERITED by code
+const SKEPTIC_SYMS = __SKEPTIC_SYMS__   // all of Tier-U — kill-tier runs BEFORE the Director
+const SKEPTIC_LANES = __SKEPTIC_LANES__
+const SKEPTIC_HINTS = __SKEPTIC_HINTS__
+const PRIOR_SEATS = __PRIOR_SEATS__     // last week's apex+runners (both books) — skeptic never skips these
 const BRIEF = "Read CATALYST_WATCH_REGIME.md (repo root) for the current market regime, then APPLY it: reward hard-dated catalysts inside the favorable window; PENALIZE Fed-cut/rate-rescue or past/out-of-window catalysts; favor structural special-sits in fat thin-coverage lanes (distressed/deleveraging > spinoffs > forced-sellers), deprioritize hard-binary/PDUFA; prize resolution-driver independence (wary of theses hinging on one shared macro factor like oil or AI-capex). Let this MOVE the conviction/verdict."
 
 // ── PHASE 0 — RADAR (Sonnet, cheaper), CHUNKED by sector. A single agent over the full universe
@@ -2103,8 +2256,30 @@ function debatePrompt(sym, online) {
     '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
     '5. CATALYST VERIFICATION (MANDATORY for every name): identify the load-bearing catalyst(s) and verify their CURRENT status as of today — FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP news\", \"FMP earnings transcript\", \"FMP statements\", \"FMP quote\") since it is structured, licensed and reliable, then WebSearch/WebFetch only for what FMP lacks (do NOT scrape press-release PDFs by shell). catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
     '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. ALSO emit moat (WIDE|NARROW|ERODING|NONE — a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number — the price you actually used), price_currency, whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6b. TYPED VALUATION BLOCK (MANDATORY — the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case — ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor — deal terms, net cash/share, tender; else null — a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers — any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values (the 2026-07-07 HNR1.DE record asserted "2:1" on a 6% dividend-"floor"; the pipeline now does this math).\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
+}
+
+// ── DELTA (Sonnet): held seats with NO trigger — an ANCHORED weekly update, not a re-debate. ──
+// This is the churn fix: the committee that underwrote the seat updates its own record; a
+// deterministic gate (continuity-gate v2) REVERTS any un-justified change, and a verdict flip is
+// structurally impossible here (escalate_full_debate routes it to a full re-debate next cycle).
+function deltaPrompt(sym) {
+  return 'DELTA REVIEW for ' + sym + ' — you are the SAME committee that underwrote this seat. Your ANCHOR is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json — READ IT FIRST, in full. This is a weekly anchored update, NOT a re-debate.\n' +
+    '1. Also read ' + DIR + '/inputs/' + sym + '.json (fresh metrics + prior_record) and, if they exist, ' + DIR + '/transcripts/' + sym + '.txt and ' + DIR + '/peer_groups/' + sym + '.json.\n' +
+    '2. Fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"); check the load-bearing catalyst status (FMP news first, WebSearch only for what FMP lacks).\n' +
+    '3. RULES: you may freely update live_price / price_currency / as_of, the valuation block prices restated off the new quote, and catalyst_status (with a dated fact). You may move sop_fair_value / bear_px / base_fv_px / bull_px / conviction (max ±1) ONLY on a dated fact that emerged since the anchor date — every such move MUST appear in deltas:[{field, old, new, dated_fact}]. You may NOT flip the verdict: if you now believe the anchor verdict is wrong, KEEP it and set escalate_full_debate=true + escalate_reason (a full re-debate runs next cycle). Unjustified changes are REVERTED by a deterministic gate — do not waste them.\n' +
+    '4. Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json = the FULL anchor schema updated per the rules (keep every field the anchor carries, incl. the typed valuation block with point numbers and NO asserted ratios), PLUS: update_mode="delta", tier="underwrite", deltas:[...], whats_changed_since_prior, escalate_full_debate(bool), escalate_reason(""), last_full_debate(copy from the anchor if present, else the anchor debated_at/as_of date), source(keep the anchor source). Reply exactly: DONE'
+}
+
+// ── COVERAGE (Sonnet): Tier-C refresh — a structured update with NO grade fields at all. ──
+// The verdict/conviction are INHERITED verbatim by code (coverage-merge); the agent physically
+// cannot re-roll them because its output schema has no place for them.
+function coveragePrompt(sym) {
+  return 'COVERAGE REFRESH for ' + sym + ' (Tier-C — NOT a debate, NOT a grade). The standing record is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json — read it and ' + DIR + '/inputs/' + sym + '.json.\n' +
+    '1. Fetch the live quote via the FMP MCP tools (ToolSearch "FMP quote"); check the catalyst status via FMP news; scan for material dated developments since the standing record.\n' +
+    '2. Write (Write tool) VALID JSON to ' + DIR + '/_coverage_updates/' + sym + '.json = {symbol:"' + sym + '", as_of(today YYYY-MM-DD), live_price(number), price_currency, whats_new:[{date:"YYYY-MM-DD", fact:"..."}], catalyst_status_check(one line: does the standing catalyst_status still hold?), thesis_update(<=80 words), escalate(bool — true ONLY if something material demands a full re-debate next cycle), escalate_reason("")}. There are NO verdict/conviction/sop fields in this schema — do not add any. Reply exactly: DONE'
 }
 
 // ── LEDGER RE-CHECKS: unexpired forensic-EXCLUDE names get a SHORT re-affirm pass, not a full debate ──
@@ -2116,35 +2291,77 @@ function recheckPrompt(sym) {
     'Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, verdict(="C" unless materially changed), conviction(int, keep 1-2 unless changed), value_conviction(int), catalyst_status(="UNVERIFIABLE" unless verified), interrogator_score(int, keep <=2 unless the forensic picture genuinely changed), trajectory, moderator_conclusion(the one-paragraph re-affirmation or the change note), bull_thesis(""), bear_thesis(""), sop_bull(""), sop_bear(""), sop_fair_value(""), sop_breakdown(""), risk_reward(""), peer_comps_note(""), consensus_delta(""), valley_of_death(""), positioning_washout(""), forcing_function(""), source(="ledger_recheck"), transcript_source(="web"). Reply exactly: DONE'
 }
 
+const BATCH = 8   // rate-limit safety: run 8 web-heavy agents at a time, not the full universe burst (429s).
+
+// ── PHASE 1 — COVERAGE (Sonnet): Tier-C names whose trigger fired but who missed the U_CAP. ──
+phase('Coverage')
+if (COVERAGE_SYMS.length) log(`Coverage refresh over ${COVERAGE_SYMS.length} Tier-C names (verdicts inherited by code).`)
+for (let b = 0; b < COVERAGE_SYMS.length; b += BATCH) {
+  await parallel(COVERAGE_SYMS.slice(b, b + BATCH).map(sym => () => agent(
+    coveragePrompt(sym), { label: 'coverage:' + sym, phase: 'Coverage', agentType: 'general-purpose', model: 'sonnet' })))
+}
+
+// ── PHASE 2 — DELTA (Sonnet): held seats, anchored weekly update. ──
+phase('Delta')
+if (DELTA_SYMS.length) log(`Delta review over ${DELTA_SYMS.length} held seats (anchored on last week's records).`)
+for (let b = 0; b < DELTA_SYMS.length; b += BATCH) {
+  await parallel(DELTA_SYMS.slice(b, b + BATCH).map(sym => () => agent(
+    deltaPrompt(sym), { label: 'delta:' + sym, phase: 'Delta', agentType: 'general-purpose', model: 'sonnet' })))
+}
+
+// ── PHASE 3 — UNDERWRITE (Opus): full debates — triggered seats + ranked new-candidate intake. ──
 const ALL = SYMS.map(s => ({ sym: s, online: false, recheck: false }))
   .concat(ONLINE_SYMS.map(s => ({ sym: s, online: true, recheck: false })))
   .concat(RECHECK_SYMS.map(s => ({ sym: s, online: true, recheck: true })))
-log(`Radar done. Weekly Opus debate over ${ALL.length} names (${SYMS.length} FMP + ${ONLINE_SYMS.length} online-fetch + ${RECHECK_SYMS.length} ledger re-checks), then Director.`)
-phase('Debate')
-const BATCH = 8   // rate-limit safety: run 8 web-heavy agents at a time, not the full universe burst (429s).
+phase('Underwrite')
+log(`Underwrite: ${ALL.length} full debates (${SYMS.length} FMP + ${ONLINE_SYMS.length} online + ${RECHECK_SYMS.length} ledger re-checks).`)
 for (let b = 0; b < ALL.length; b += BATCH) {
-  log(`Debate batch ${Math.floor(b / BATCH) + 1}/${Math.ceil(ALL.length / BATCH)} (names ${b + 1}-${Math.min(b + BATCH, ALL.length)} of ${ALL.length})`)
+  log(`Underwrite batch ${Math.floor(b / BATCH) + 1}/${Math.ceil(ALL.length / BATCH)} (names ${b + 1}-${Math.min(b + BATCH, ALL.length)} of ${ALL.length})`)
   await parallel(ALL.slice(b, b + BATCH).map(it => () => agent(
     it.recheck ? recheckPrompt(it.sym) : debatePrompt(it.sym, it.online),
-    { label: (it.recheck ? 'recheck:' : 'debate:') + it.sym + (it.online && !it.recheck ? '(web)' : ''), phase: 'Debate', agentType: 'general-purpose', model: 'opus' })))
+    { label: (it.recheck ? 'recheck:' : 'debate:') + it.sym + (it.online && !it.recheck ? '(web)' : ''), phase: 'Underwrite', agentType: 'general-purpose', model: 'opus' })))
 }
 
+// ── PHASE 4 — GATES (Haiku runner): deterministic checks between the records and the money. ──
+phase('Gates')
 await agent(
-  'Run this exact command (deterministic continuity gate — it diffs every fresh debate record against last week\'s archived record and stamps continuity_flag on any verdict/conviction flip that cites no dated fact): python backend/weekly_opus_refresh.py continuity-gate\nReport its summary line verbatim. Reply exactly: DONE',
-  { label: 'continuity-gate', phase: 'Debate', model: 'sonnet' })
+  'Run these exact commands IN ORDER (each is a deterministic gate) and report each summary line verbatim:\n' +
+  'python backend/weekly_opus_refresh.py coverage-merge\n' +
+  'python backend/weekly_opus_refresh.py continuity-gate\n' +
+  'python backend/weekly_opus_refresh.py numeric-gate --legacy --dry-run\n' +
+  'Reply with the three summary lines, then exactly: DONE',
+  { label: 'gates', phase: 'Gates', model: 'haiku' })
+
+// ── PHASE 5 — SKEPTIC (Opus, BEFORE the Director): kill-tier over all of Tier-U, so demotion ──
+// evidence informs seating instead of vaporizing seats after the fact. Self-gate: a conviction<=2
+// record that is NOT a current seat cannot seat anyway (eligibility floor is 3) — skip cheaply.
+phase('Skeptic')
+if (SKEPTIC_SYMS.length) log(`Skeptic kill-tier over ${SKEPTIC_SYMS.length} Tier-U names (pre-Director).`)
+const SK_BATCH = 6
+for (let b = 0; b < SKEPTIC_SYMS.length; b += SK_BATCH) {
+  await parallel(SKEPTIC_SYMS.slice(b, b + SK_BATCH).map(sym => () => agent(
+    'SKEPTIC tier for ' + sym + ' (regime Tier-U; lane ' + (SKEPTIC_LANES[sym] || {}).lane + '). Your job is to KILL this thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side - do NOT read or reconstruct the bull case.\n' +
+    'SELF-GATE FIRST: read ' + DIR + '/results_regime/' + sym + '.json — if its conviction <= 2 AND ' + JSON.stringify(PRIOR_SEATS) + '.indexOf("' + sym + '") === -1, write ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict:"SKIPPED_LOW_CONVICTION"} and reply DONE (a conviction-2 non-seat cannot seat; no kill needed).\n' +
+    (((SKEPTIC_HINTS[sym] || {}).refute_candidate) ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate - erosion=' + (SKEPTIC_HINTS[sym] || {}).erosion + ', severity=' + (SKEPTIC_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (SKEPTIC_HINTS[sym] || {}).roic_below + ', returns ' + (SKEPTIC_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (SKEPTIC_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\n' : '') +
+    '1. From that record USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status, valuation.bear_px/downside_floor_px. Read the forensic dossier ' + DIR + '/' + (SKEPTIC_LANES[sym] || {}).doss + ' if it exists.\n' +
+    '2. Verify the CURRENT facts. FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news", "FMP quote") for the latest transcript / quarterly numbers / news / price - it is structured, licensed and reliable; fall back to WebSearch/WebFetch only for what FMP lacks, and do NOT scrape press-release PDFs by shell. Attack: ' + (SKEPTIC_LANES[sym] || {}).attack + '\n' +
+    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: "minor" (footnote-level, thesis arithmetic intact) or "material" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - "thesis" | "numbers" | "catalyst" | "moat". Do NOT emit any numeric conviction cap - verdicts and severity only.\n' +
+    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, correction_severity, kill_scope, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
+    { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
+}
 
 phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 4.8). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + growth/inflation/rates/credit detail). RETURN GOAL: this book targets +30-50% over ~12 months. Set the book RISK_STANCE from the macro read: RISK_ON / accelerating-growth => REACH for the goal (favor names with a credible 12-month re-rate DRIVER — a dated catalyst, an earnings inflection, a live trend/momentum — and accept more demand-cycle/AI-capex beta); RISK_OFF / decelerating / sticky-inflation => play DEFENSE (prefer downside-protected names — carry, balance sheet, FCF — even if the +30-50% becomes an 18-24mo story, and SIZE DOWN the high-beta reaches). State the risk_stance and a one-line macro read in the memo.\n' +
-  'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact — treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
+  'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact — treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat — the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json — a REFUTED verdict is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 — Eligible = conviction >= 3. Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS: a FIRED catalyst is NOT an asymmetric special-sit (re-rate it to a sized-to-spread ARB or a defensive anchor — do NOT size as conviction-4); a SOFT_EXTENDED catalyst is mid-conviction at best; prefer the widest risk_reward to a credible SoP fair value. Then regime fit, forcing-function datedness, consensus-delta width. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 3b — BASKET-13 SEPARATION (HARD RULE, 2026-07-08): the Basket-13 catalyst book (merger-arb spreads, forced-seller recovery, SoP breakups, spins, FDA binaries — anything whose thesis is a dated EVENT rather than a franchise) is a FULLY SEPARATE book with its own funnel, debate, sizing and tracker. You may NOT seat any equity special-sit / event-driven name in this apex basket — no exceptions, no "sleeve". If a name in results_regime carries lane/source values like equity_special_sit / special_sit / opus_catalyst, or its thesis is primarily a dated corporate event, it is INELIGIBLE for a seat here (it may be a runner_up with an explicit note that it belongs to B13). This book seats COMPOUNDERS and value re-rates only: durable franchises where the value case stands without the event.\n' +
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed 10 (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) — INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha — discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget — a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
   'STEP 5 — FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a FIRED/elapsed catalyst with no fresh driver, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat — do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) — override allowed but you must OWN it in whats_changed. Then for each pick: symbol, sector, director_conviction (0-100), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST include a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive"), macro_read (one sentence interpreting macro_regime.json + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
-log('Radar + debate + director complete.')
+log('Radar + coverage + delta + underwrite + gates + skeptic + director complete.')
 return 'DONE'
 """
 
@@ -2276,6 +2493,34 @@ def continuity_gate():
         except Exception:
             continue
         checked += 1
+        # ── v2 (Week 2, 2026-07-10): DELTA records enforce their own contract by REVERSION, not by
+        # flag. A delta update may only move a guarded field with a dated fact recorded in deltas[];
+        # any other change is reverted to the anchor value (a delta that re-rolled is a bug, and
+        # reverting it merely enforces what the prompt promised). A verdict change ALWAYS reverts —
+        # the contract says flips escalate to a full re-debate instead. Full-debate records keep the
+        # v1 flag-only behavior (reverting a fresh debate would hide real information).
+        if cur.get("update_mode") == "delta":
+            GUARDED = ("verdict", "conviction", "value_conviction", "catalyst_status", "sop_fair_value")
+            justified = set()
+            for d in (cur.get("deltas") or []):
+                if isinstance(d, dict) and d.get("field") and dated.search(str(d.get("dated_fact") or "")):
+                    justified.add(str(d["field"]))
+            reverted = []
+            for fld in GUARDED:
+                if cur.get(fld) == pr.get(fld):
+                    continue
+                if fld == "verdict" or fld not in justified:
+                    cur[fld] = pr.get(fld)
+                    reverted.append(fld)
+            if reverted:
+                cur["delta_inherited"] = reverted
+                cur["continuity_flag"] = (f"DELTA_REVERTED: {reverted} changed without a dated fact in "
+                                          f"deltas[] (verdict changes always revert — escalate_full_debate "
+                                          f"is the flip path) — anchor values restored")
+                f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
+                flagged += 1
+                flags.append(f"{f.stem} (delta-reverted: {','.join(reverted)})")
+            continue
         cv, pv = _rank.get(str(cur.get("verdict") or "").strip()[:1].upper()), _rank.get(str(pr.get("verdict") or "").strip()[:1].upper())
         try:
             dconv = abs(int(cur.get("conviction")) - int(pr.get("conviction")))
@@ -2297,6 +2542,52 @@ def continuity_gate():
         flags.append(f"{f.stem} ({pr.get('verdict')}/{pr.get('conviction')}->{cur.get('verdict')}/{cur.get('conviction')})")
     print(f"continuity-gate: {checked} diffed vs prior week | {flagged} FLAGGED unjustified flips"
           + (f": {flags}" if flags else " — all changes carry dated facts or are within tolerance"))
+
+
+def coverage_merge():
+    """DETERMINISTIC Tier-C merge (Week 2): fold each _coverage_updates/<SYM>.json into
+    results_regime/<SYM>.json by COPYING the standing record verbatim (verdict/conviction/sop are
+    INHERITED — the coverage agent's schema has no grade fields, and this merge is the enforcement),
+    restamping the live price/as_of, and appending the structured update block. escalate=true rides
+    into the record so next week's change-detection gate (T6) routes the name to a full debate."""
+    prior_dir = ROOT / "_archive_prev" / "results_regime"
+    upd_dir = ROOT / "_coverage_updates"
+    if not upd_dir.exists():
+        print("coverage-merge: no _coverage_updates/ — nothing to merge.")
+        return
+    merged, escal, orphans = [], [], []
+    for f in sorted(upd_dir.glob("*.json")):
+        sym = f.stem
+        try:
+            upd = json.load(open(f, encoding="utf-8"))
+        except Exception as e:
+            print(f"WARN coverage-merge: {f.name} unreadable ({e})")
+            continue
+        pf = prior_dir / f"{sym}.json"
+        if not pf.exists():
+            orphans.append(sym)                    # no standing record to inherit from — nothing to publish
+            continue
+        try:
+            rec = json.load(open(pf, encoding="utf-8"))
+        except Exception:
+            orphans.append(sym)
+            continue
+        if isinstance(upd.get("live_price"), (int, float)):
+            rec["live_price"] = upd["live_price"]
+        rec["as_of"] = upd.get("as_of") or datetime.now().strftime("%Y-%m-%d")
+        rec["tier"] = "coverage"
+        rec["update_mode"] = "refresh"
+        rec["carried_from"] = str(rec.get("debated_at") or rec.get("as_of") or "")[:10]
+        rec["coverage_update"] = {k: upd.get(k) for k in
+                                  ("as_of", "live_price", "price_currency", "whats_new",
+                                   "catalyst_status_check", "thesis_update", "escalate", "escalate_reason")}
+        (RES / f"{sym}.json").write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+        merged.append(sym)
+        if upd.get("escalate"):
+            escal.append(sym)
+    print(f"coverage-merge: {len(merged)} Tier-C records merged (grades inherited verbatim) | "
+          f"escalations={escal or 'none'}"
+          + (f" | orphans (no standing record, skipped): {orphans}" if orphans else ""))
 
 
 # ── COHORT LEDGER (2026-07-10) — the accountability mechanism: does conviction/verdict/a skeptic
@@ -2580,6 +2871,8 @@ if __name__ == "__main__":
         catalyst_seed()
     elif mode in ("continuity-gate", "continuity_gate"):
         continuity_gate()
+    elif mode in ("coverage-merge", "coverage_merge"):
+        coverage_merge()
     elif mode in ("control-sample", "control_sample"):
         control_sample()
     elif mode in ("cohort-mark", "cohort_mark"):

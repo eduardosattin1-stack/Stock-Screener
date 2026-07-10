@@ -25,11 +25,17 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     if not skep_dir.is_dir():
         return apx
     apex_mtime = apex_file.stat().st_mtime if apex_file.exists() else 0
+    # Freshness window (2026-07-10, two-tier restructure): the skeptic phase now runs BEFORE the
+    # Director inside the same weekly workflow, so a same-run shard is legitimately a few minutes-to-
+    # hours OLDER than the apex file. The old strict `< apex_mtime - 1` guard would discard every
+    # pre-Director shard as stale. A 24h window cleanly separates same-run shards (minutes/hours old)
+    # from genuinely stale prior-week shards (~7 days old on the weekly cadence).
+    SKEPTIC_FRESH_WINDOW_S = 24 * 3600
     merged, stale, stale_verdicts = {}, [], {}
     for f in sorted(skep_dir.glob("*.json")):
         try:
             d = json.load(open(f, encoding="utf-8"))
-            if f.stat().st_mtime < apex_mtime - 1:
+            if f.stat().st_mtime < apex_mtime - SKEPTIC_FRESH_WINDOW_S:
                 stale.append(f.stem)
                 if d.get("symbol"):                      # remember stale verdicts — a stale REFUTED
                     stale_verdicts[d["symbol"]] = d       # on a still-held name must not vanish (HRMY)
