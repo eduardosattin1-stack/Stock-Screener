@@ -2354,7 +2354,7 @@ await agent(
   'Run these exact commands IN ORDER (each is a deterministic gate) and report each summary line verbatim:\n' +
   'python backend/weekly_opus_refresh.py coverage-merge\n' +
   'python backend/weekly_opus_refresh.py continuity-gate\n' +
-  'python backend/weekly_opus_refresh.py numeric-gate --legacy --dry-run\n' +
+  'python backend/weekly_opus_refresh.py numeric-gate --legacy --enforce\n' +   // enforcement flipped 2026-07-11 after the dry-run calibration week (Task: pipeline-v3 Weeks 3-4)
   'Reply with the three summary lines, then exactly: DONE',
   { label: 'gates', phase: 'Gates', model: 'haiku' })
 
