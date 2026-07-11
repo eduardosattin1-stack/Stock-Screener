@@ -1,13 +1,58 @@
 {
- "_note": "SKELETON (Phase 2) — every chain ships NEUTRAL and tilts nothing until the first bi-weekly research run (FUTURE_RESOURCES_REGIME.md §2) overwrites this. Schema per chain id: {state: TAILWIND|NEUTRAL|HEADWIND, spot (cited string or null — uranium/NdPr carry a citation or stay null, Do-NOT #8), vs_incentive_pct, one_liner, tripwires_breached[], as_of}. The grade-input builder stamps state onto chain_regime so the FR Director enforces HEADWIND => size_units <= 0.5 deterministically.",
- "version": "v0-skeleton",
- "as_of": null,
- "chains": {
-  "uranium_fuel_cycle": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
-  "copper_electrification": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
-  "rare_earth_strategic": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
-  "power_for_ai": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
-  "robotics_automation": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
-  "quantum": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null}
+ "copper_electrification": {
+  "state": "NEUTRAL",
+  "spot": 6.28,
+  "vs_incentive_pct": -30.8,
+  "one_liner": "Tariff/flow-driven highs, not scarcity: visible stocks building (COMEX record 652kt), Macquarie sees surpluses thru 2028, and spot sits ~31% below the cited $20k/t greenfield incentive.",
+  "tripwires_breached": [],
+  "as_of": "2026-07-11"
+ },
+ "power_for_ai": {
+  "state": "TAILWIND",
+  "spot": 2.94,
+  "vs_incentive_pct": null,
+  "one_liner": "Queue-bound AI load meets record capacity prices and cheap gas: PJM cleared at its $329/MW-day cap, hyperscaler PPAs run gigawatt-scale, NG $2.94 keeps spark spreads wide.",
+  "tripwires_breached": [],
+  "as_of": "2026-07-11"
+ },
+ "quantum": {
+  "state": "TAILWIND",
+  "spot": null,
+  "vs_incentive_pct": null,
+  "one_liner": "Funding cycle cresting up: June-22 quantum EOs (QC-ADDS/DOE Genesis), ~$2B CHIPS awards incl. $100M LOIs to QBTS/RGTI, NQI reauth advancing, first peer-reviewed EC demo (Nature 06-10); much is priced.",
+  "tripwires_breached": [
+   "quantum_funding_ec_milestone (TAILWIND direction): BOTH flip-up conditions fired — funding renewal flow (Trump EOs 2026-06-22 establishing QC-ADDS + DOE Quantum Genesis, whitehouse.gov/energy.gov; ~$2B Commerce/CHIPS quantum funding May 2026 incl. $100M LOIs to D-Wave (8-K 2026-05-21) and Rigetti) AND a real error-correction demo (Microsoft+Quantinuum 800x logical-vs-physical error-rate reduction, peer-reviewed in Nature 2026-06-10)"
+  ],
+  "as_of": "2026-07-11"
+ },
+ "rare_earth_strategic": {
+  "state": "TAILWIND",
+  "spot": 90.32,
+  "vs_incentive_pct": -17.9,
+  "one_liner": "DoD $110/kg floor + $12B Project Vault + China entity-lists MP/USAR (2026-06-22); NdPr alloy +21.4% m/m to 2026 high; June oxide $90.32 still -17.9% vs floor - TAILWIND on policy, not spot.",
+  "tripwires_breached": [
+   "rare_earth_policy_repricing (TAILWIND direction): forced-buyer actions live - DoD $110/kg NdPr-oxide floor (2025-07), Project Vault $12B US Strategic Critical Minerals Reserve (2026-02-02), 15-yr 100% offtakes with Nd/Pr/Dy/Tb price floors (USA Rare Earth govt-backed SPV; Serra Verde 2026-04) - PLUS China MOFCOM entity-listing MP Materials & USA Rare Earth among 10 US firms with a dual-use export ban (2026-06-22)"
+  ],
+  "as_of": "2026-07-11"
+ },
+ "robotics_automation": {
+  "state": "TAILWIND",
+  "spot": null,
+  "vs_incentive_pct": null,
+  "one_liner": "Industrial capex up-cycle (ISM 53.3, new orders 56.0, 6th month expanding; Japan machine tools +37% YoY) plus first dated humanoid production starts Q2 2026; flat NA robot orders the only soft dial.",
+  "tripwires_breached": [
+   "industrial_capex_humanoid_cycle: TAILWIND condition fired — ISM new orders in a 6-month expansion streak (56.0, Jun-2026) + dated humanoid production starts (Optimus V3 Fremont summer-2026; Optimus/Figure 02/Apollo pilot shipments Q2-2026); moves skeleton NEUTRAL -> TAILWIND"
+  ],
+  "as_of": "2026-07-11"
+ },
+ "uranium_fuel_cycle": {
+  "state": "TAILWIND",
+  "spot": 85.75,
+  "vs_incentive_pct": 3.9,
+  "one_liner": "Term cycle re-opened: LT $95.50 > spot $85.75 (+12% premium, 18-yr term highs), spot at cited $75-90 incentive band, supply cuts + US policy (Sec-232, DOE $2.7B, Centrus $1B) = forced buyers.",
+  "tripwires_breached": [
+   "uranium_term_cycle: FIRED in TAILWIND direction (flips skeleton NEUTRAL) — term re-opened at term > spot: LT $95.50 vs spot $85.00 (UxC/TradeTech month-end avg via Cameco, 2026-06-30), term price rising every month of 2026 ($89.00 Jan -> $95.50 Jun)"
+  ],
+  "as_of": "2026-07-11"
  }
 }
