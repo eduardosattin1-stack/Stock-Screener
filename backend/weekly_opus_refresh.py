@@ -1281,9 +1281,13 @@ def skeptic_gen(book):
     if book == "value":
         reg_apex = ROOT / _SKEPTIC_BOOKS["regime"]["apex"]
         reg_mtime = reg_apex.stat().st_mtime if reg_apex.exists() else 0
+        # 24h window matching _post_common.SKEPTIC_FRESH_WINDOW_S (the strict mtime-1 rule broke
+        # every run: regime-post re-stamps the apex AFTER the skeptics write, so same-run shards
+        # always looked "stale" and the dedupe carried 0)
+        _fresh_win = 24 * 3600
         for s in list(finalists):
             sh = ROOT / _SKEPTIC_BOOKS["regime"]["shards"] / (s + ".json")
-            if sh.exists() and sh.stat().st_mtime >= reg_mtime - 1:
+            if sh.exists() and sh.stat().st_mtime >= reg_mtime - _fresh_win:
                 try:
                     d = json.load(open(sh, encoding="utf-8"))
                     d["carried_from_book"] = "regime"
