@@ -1774,12 +1774,22 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
                 return "debate", f"quarterly full refresh (last full underwrite {lfd_age:.0f}d ago)", pr
         except Exception:
             pass
-    # new transcript since the prior debate
+    # new transcript since the prior debate. FIX 2026-07-11 (first tier-select run: seats-delta=0):
+    # prior records never carry transcript_date (the debate schema doesn't write it), so the old
+    # `latest > prior_tx=""` comparison fired for EVERY name with any transcript at all — spurious
+    # full re-debates that defeated delta mode on its maiden run. Correct semantic: a transcript is
+    # only NEW if it postdates the prior DEBATE — the prior debate already read anything older.
     if real_tx:
         latest = max((t.get("date") or "") for t in real_tx)
-        prior_tx = str(pr.get("transcript_date") or "")
-        if latest and latest > prior_tx:
-            return "debate", f"new transcript {latest} (prior {prior_tx or 'none'})", pr
+        prior_ref = str(pr.get("transcript_date") or "")[:10] \
+            or str(pr.get("debated_at") or pr.get("as_of") or pr.get("date") or "")[:10] \
+            or str((pr.get("valuation") or {}).get("as_of") or "")[:10]
+        if not prior_ref:
+            # pre-two-tier records carry NO date field at all — the file mtime is when the record
+            # was written, and the prior debate had access to anything published before then
+            prior_ref = datetime.fromtimestamp(pf.stat().st_mtime).strftime("%Y-%m-%d")
+        if latest and prior_ref and latest > prior_ref:
+            return "debate", f"new transcript {latest} (prior debate {prior_ref})", pr
     # price move vs the price the prior debate saw
     now_px = sc.get("price")
     old_px = pr.get("price") or pr.get("current_price") or pr.get("live_price") or pr.get("entry_price")
