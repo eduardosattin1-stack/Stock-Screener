@@ -1,6 +1,6 @@
 {
- "version": "1.2",
- "updated": "2026-07-08",
+ "version": "1.3",
+ "updated": "2026-07-11",
  "exchanges": [
   "NYSE",
   "NASDAQ",
@@ -243,6 +243,7 @@
     "CGNX",
     "SYM"
    ],
+   "torque_metrics": false,
    "commodity": {
     "fmp_symbol": null,
     "proxy_etf": "BOTZ",
@@ -289,6 +290,7 @@
     "FORM",
     "COHR"
    ],
+   "torque_metrics": false,
    "commodity": {
     "fmp_symbol": null,
     "proxy_etf": "QTUM",
@@ -297,5 +299,6 @@
    "notes": "The broadest industry filters in the taxonomy — this chain leans hardest on keyword hints + the chain map's physical-anchor rule; expect a high drop rate (generic hardware/semis names map low-confidence and are dropped WITH printed symbols). Pure-play platforms (IONQ/RGTI/QBTS-class) are pre-FCF -> lane_b via dated milestones (signed government awards, named enterprise/defense contracts, dated error-correction demos); an honestly tiny lane_a (FORM/COHR-class toll-takers) is the expected outcome, not a failure."
   }
  ],
- "vocab_note": "industry strings verified 2026-07-08 against /stable/profile anchors (MP, GEV, VST, ROK, KEYS, ALB, ISRG) — the stable API vocabulary differs from the legacy screener strings the 1.1 (verify) list guessed ('Other Industrial Metals & Mining'->'Industrial Materials', 'Specialty Chemicals'->'Chemicals - Specialty', 'Utilities - Independent Power Producers'->'Independent Power Producers', 'Specialty Industrial Machinery'->'Industrial - Machinery', 'Scientific & Technical Instruments'->'Hardware, Equipment & Parts'; GEV lives in 'Renewable Utilities'; ISRG in 'Medical - Devices')"
+ "vocab_note": "industry strings verified 2026-07-08 against /stable/profile anchors (MP, GEV, VST, ROK, KEYS, ALB, ISRG) — the stable API vocabulary differs from the legacy screener strings the 1.1 (verify) list guessed ('Other Industrial Metals & Mining'->'Industrial Materials', 'Specialty Chemicals'->'Chemicals - Specialty', 'Utilities - Independent Power Producers'->'Independent Power Producers', 'Specialty Industrial Machinery'->'Industrial - Machinery', 'Scientific & Technical Instruments'->'Hardware, Equipment & Parts'; GEV lives in 'Renewable Utilities'; ISRG in 'Medical - Devices')",
+ "torque_note": "1.3 (2026-07-11, Phase-2 sanctioned fix): robotics_automation + quantum carry torque_metrics=false — there is no spot price to be leveraged to, so _resource_metrics.py switches them to the non-commodity set (gm_trajectory/rev_yoy/fcf_margin/ndebt_ebitda) and computes commodity_beta_2y vs the proxy_etf (BOTZ/QTUM) purely as a labeled factor-exposure read. All other chains default torque_metrics=true (never hardcode the chain list in Python — Do-NOT #9)."
 }

@@ -20,8 +20,16 @@ The scheduled SKILL.md runs:
   -> python weekly_opus_refresh.py value-csv / baskets-csv
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
 Periodic verbs: control-sample (monthly funnel miss-rate), value-revalidate (stale-anchor pro-forma
-re-debate — pending fold into a delta-mode trigger, see the pipeline-v3 plan),
-fr-universe (monthly Future Resources two-lane Stage A/B build — FUTURE_RESOURCES_SPEC.md).
+re-debate — pending fold into a delta-mode trigger, see the pipeline-v3 plan).
+FUTURE RESOURCES (FUTURE_RESOURCES_SPEC.md — separate two-lane commodity/power/machine book, NOT in
+the weekly auto-run yet; monthly + Lane-A weekly, launched by hand until Bruno wires the cadence):
+  fr-universe   (monthly Stage A/B two-lane screen -> future_resources/_candidates.json)
+  fr-map        (Phase 2: emit the chunked Sonnet chain-map workflow -> future_resources/_fr_map.js)
+  fr-map-merge  (Phase 2: merge chain-map shards -> chain_map/<SYM>.json + universe.json; royalty
+                 bypass, physical-anchor + zero-map guards)
+  fr-prep / fr-input / [FR Director agent] / fr-post / fr-csv / fr-publish
+                (Phase 3: Lane A debate -> grade input -> Director -> deterministic post -> CSV/publish)
+  torque metrics live in backend/_opus_debate/_resource_metrics.py (stamped by fr-input).
 (shadow-debate/shadow-diff and the Disruptor Lens Phases 1-5 were deleted 2026-07-10 — dead since the
 2026-06-13 Fable retirement and the 2026-07-02 Disruptor retirement respectively; see git history.)
 
@@ -1422,6 +1430,13 @@ def control_sample():
 
 
 FR_DIR = ROOT / "future_resources"
+# Lane A debate subtree (Phase 3, clone of the disruptor D_* layout) — isolated so the FR chain never
+# touches results_regime / the value or B13 surfaces (Do-NOT: never mutate other books' surfaces).
+FR_INP = FR_DIR / "inputs"
+FR_TXT = FR_DIR / "transcripts"
+FR_RES = FR_DIR / "results"
+FR_DOSS = FR_DIR / "dossiers"
+FR_ARCH = FR_DIR / "_archive_prev"
 
 
 def fr_universe():
@@ -1631,6 +1646,192 @@ def fr_universe():
           f"lane_a={len(lane_a)} lane_b={len(lane_b)} -> {FR_DIR / '_candidates.json'}")
     print("Next (Phase 2): fr chain-map workflow + fr-map-merge (business_model, commodity_revenue_share).")
     return len(lane_a) + len(lane_b)
+
+
+def fr_map():
+    """FUTURE RESOURCES Stage C — emit the chunked Sonnet CHAIN-MAP workflow (spec §2, monthly, Phase 2).
+    Clone of the disruptor theme-map emitter (_dt_map.js): chunk _candidates.json <=20/agent into
+    future_resources/_map_chunk_<i>.json and render future_resources/_fr_map.js (Sonnet seat). Two NEW
+    required fields per symbol vs the disruptor pass — business_model (drives the royalty gate bypass +
+    the developer-in-lane-A sanity check) and commodity_revenue_share (0-1, an LLM estimate feeding the
+    deterministic fcf_torque formula). The PHYSICAL-ANCHOR rule is enforced HERE: each agent must state
+    in one line the physical thing the company makes/moves/powers/instruments for its chain; no answer =>
+    chain_fit_confidence=low regardless of industry (the anti-Visa gate). Run the Workflow, then fr-map-merge."""
+    cand_f = FR_DIR / "_candidates.json"
+    if not cand_f.exists():
+        print("GUARD: no future_resources/_candidates.json — run fr-universe first. STOP")
+        raise SystemExit(1)
+    cd = json.load(open(cand_f, encoding="utf-8"))
+    cands = [c for c in cd.get("candidates", []) if c.get("symbol")]
+    if not cands:
+        print("GUARD: _candidates.json has 0 candidates — STOP")
+        raise SystemExit(1)
+    FR_DIR.mkdir(exist_ok=True)
+    (FR_DIR / "chain_map").mkdir(exist_ok=True)
+    # slim per-symbol rows for the map agents (symbol/name/sector/industry/mcap + lane + gates)
+    slim = [{"symbol": c["symbol"], "name": c.get("name", ""), "sector": c.get("sector", ""),
+             "industry": c.get("industry", ""), "mcap": c.get("mcap"), "lane": c.get("lane", ""),
+             "chains_hint": c.get("chains_hint", []), "gates": c.get("gates", {})} for c in cands]
+    CH = 20
+    chunks = [slim[i:i + CH] for i in range(0, len(slim), CH)]
+    for i, ch in enumerate(chunks):
+        (FR_DIR / f"_map_chunk_{i}.json").write_text(json.dumps(ch, ensure_ascii=False, indent=1), encoding="utf-8")
+    n = len(chunks)
+    # NB: apostrophe-free inside the JS single-quoted agent string (a stray ' breaks the generated JS).
+    js = """export const meta = {
+  name: 'future-resources-chain-map',
+  description: 'Sonnet chain-mapping over the gated Future Resources candidates (Radar-style, chunked; physical-anchor enforced)',
+  phases: [{ title: 'ChainMap', model: '__RADAR_MODEL__' }],
+}
+const N = __N__
+phase('ChainMap')
+await parallel(Array.from({ length: N }, (_, i) => () => agent(
+  'You are the FUTURE RESOURCES CHAIN RADAR (chain-mapping + physical-anchor pass). Read backend/_opus_debate/future_resources_chains.json (the versioned chain taxonomy: ids, theses, value-chain layers, notes) and backend/_opus_debate/future_resources/_map_chunk_' + i + '.json (your candidate chunk: symbol/name/sector/industry/mcap + lane + Stage-B gates). For EACH symbol decide, skeptically:\\n' +
+  '- physical_anchor: ONE line naming the PHYSICAL thing this company makes, moves, powers, or directly instruments for its chain (quantum hardware counts; a payments network never does). If you CANNOT name one, set chain_fit_confidence=low REGARDLESS of the industry or keyword hints (the anti-Visa rule; it binds hardest on the broad quantum and robotics filters).\\n' +
+  '- chains: array of taxonomy ids this company GENUINELY rides (max 2; a name like UUUU legitimately carries uranium_fuel_cycle AND rare_earth_strategic; [] if none — an industry filter catches many non-chain names).\\n' +
+  '- business_model: exactly one of producer | royalty_streamer | developer | equipment_services (royalty_streamer auto-passes the cash gates; a pre-FCF developer belongs in lane B, never lane A; equipment_services = the toll-taker selling into the chain).\\n' +
+  '- commodity_revenue_share: a number 0-1 = the fraction of revenue exposed to the chain commodity (1.0 for a pure producer; a diversified miner like TECK gets your best estimate; an equipment/services or utility name is lower). This feeds a deterministic torque formula, so estimate it honestly.\\n' +
+  '- value_chain_position: one line — which value-chain layer it occupies and what it sells.\\n' +
+  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT — include foreign listings and private-adjacent public proxies).\\n' +
+  '- chain_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really in this chain — a chemical company in the rare-earth screen, a generic hardware or software name in quantum, a non-chain royalty company, a legacy industrial). LOW-confidence names are DROPPED at merge, printed, never silent.\\n' +
+  'Write (Write tool) VALID JSON to backend/_opus_debate/future_resources/_fr_' + i + '.json as {\"<SYM>\": {physical_anchor, chains, business_model, commodity_revenue_share, value_chain_position, true_competitors, chain_fit_confidence}, ...} covering EVERY symbol in your chunk. Reply exactly: DONE',
+  { label: 'frmap:' + i, phase: 'ChainMap', model: '__RADAR_MODEL__' })))
+return 'DONE'
+"""
+    js = js.replace("__N__", str(n)).replace("__RADAR_MODEL__", RADAR_MODEL)
+    out = FR_DIR / "_fr_map.js"
+    out.write_text(js, encoding="utf-8", newline="\n")
+    print(f"FR CHAIN-MAP EMIT OK: {len(cands)} candidates -> {n} {RADAR_MODEL} map chunks")
+    print(f"MAP_WORKFLOW={out.resolve()}")
+    print("Next: run the Workflow, then: python backend/weekly_opus_refresh.py fr-map-merge")
+    return n
+
+
+def fr_map_merge():
+    """FUTURE RESOURCES Stage C-merge (spec §2 + §1.3, monthly, Phase 2): merge the Sonnet chain-map
+    shards, DROP chain_fit_confidence=low / chain-less / physical-anchor-less names (printed, never
+    silent), explode per-symbol chain_map/<SYM>.json, apply the royalty_streamer Stage-B cash-gate
+    bypass, and write future_resources/universe.json (built_at, taxonomy_version, funnel, by_chain x
+    lane, members with gates blocks). GUARDS: a developer mapped into lane A is a printed mapping
+    error; a chain with historically >=3 candidates that maps to 0 members STOPs (a systematic mapper
+    failure, spec §1.3). The pre-rank cut to the debated set happens LATER in fr-prep, never here
+    (deterministic code never picks members, Do-NOT #2)."""
+    import glob as _g
+    from datetime import datetime as _dt
+    tax = json.load(open(ROOT / "future_resources_chains.json", encoding="utf-8"))
+    cand_f = FR_DIR / "_candidates.json"
+    if not cand_f.exists():
+        print("GUARD: no future_resources/_candidates.json — run fr-universe first. STOP")
+        raise SystemExit(1)
+    cd = json.load(open(cand_f, encoding="utf-8"))
+    cands = {c["symbol"]: c for c in cd.get("candidates", []) if c.get("symbol")}
+    fa = tax["floors"]["lane_a"]
+    valid_chain_ids = {ch["id"] for ch in tax["chains"]}
+    shards = sorted(_g.glob(str(FR_DIR / "_fr_*.json")))
+    mapped = {}
+    for f in shards:
+        try:
+            mapped.update(json.load(open(f, encoding="utf-8")))
+        except Exception as e:
+            print(f"WARN: shard {os.path.basename(f)} unreadable ({e})")
+    if not mapped:
+        print("GUARD: no chain-map shards (_fr_*.json) — run the _fr_map.js workflow first. STOP")
+        raise SystemExit(1)
+    # DROP low-confidence / chain-less / physical-anchor-less (printed, never silent — spec §2)
+    def _bad(m):
+        conf = (m.get("chain_fit_confidence") or "").lower()
+        chains = [c for c in (m.get("chains") or []) if c in valid_chain_ids]
+        return conf == "low" or not chains or not (str(m.get("physical_anchor") or "").strip())
+    low = sorted(s for s, m in mapped.items() if s in cands and _bad(m))
+    keep = {s: m for s, m in mapped.items() if s in cands and s not in set(low)}
+    print(f"fr-map-merge: {len(mapped)} mapped from {len(shards)} shards | "
+          f"DROPPED low-confidence/chain-less/anchor-less ({len(low)}): {low}")
+    # explode per-symbol chain_map/<SYM>.json
+    for s, m in keep.items():
+        chains = [c for c in (m.get("chains") or []) if c in valid_chain_ids][:2]
+        (FR_DIR / "chain_map" / f"{s}.json").write_text(
+            json.dumps({"symbol": s, **m, "chains": chains}, ensure_ascii=False, indent=1), encoding="utf-8")
+    # ── build members: cand (lane/gates) + chain-map (chains/business_model/commodity_revenue_share/…) ──
+    def _n(v):
+        return v if isinstance(v, (int, float)) else 0
+    members, mapping_errors, royalty_flips = [], [], []
+    for s in sorted(keep):
+        m, c = keep[s], cands[s]
+        g = c.get("gates", {})
+        bm = (m.get("business_model") or "").strip().lower()
+        lane = c.get("lane", "")
+        chains = [ci for ci in (m.get("chains") or []) if ci in valid_chain_ids][:2]
+        # royalty_streamer bypass (spec §1.2): a streamer that fell to lane B on the FCF-light cash
+        # gate flips to lane A if it clears the lane-A floors (royalty cos are structurally clean).
+        royalty_bypass = False
+        if bm == "royalty_streamer" and lane == "b" \
+                and _n(c.get("mcap")) >= fa["market_cap_usd"] and _n(c.get("price")) >= fa["price_min"] \
+                and _n(g.get("adv_usd")) >= fa["adv_usd"]:
+            lane = "a"
+            royalty_bypass = True
+            royalty_flips.append(s)
+        # GUARD: a developer mapped into lane A is a mapping error (a pre-FCF dev cannot be a producer);
+        # print it loudly + flag it — the deterministic gates set the lane, so we surface, never silently move.
+        mapping_error = bool(bm == "developer" and lane == "a")
+        if mapping_error:
+            mapping_errors.append(s)
+        crs = m.get("commodity_revenue_share")
+        try:
+            crs = round(float(crs), 3) if crs is not None else None
+        except (TypeError, ValueError):
+            crs = None
+        members.append({
+            "symbol": s, "name": c.get("name", ""), "sector": c.get("sector", ""),
+            "industry": c.get("industry", ""), "mcap": c.get("mcap"), "lane": lane,
+            "chains": chains, "business_model": bm,
+            "commodity_revenue_share": crs,
+            "physical_anchor": (m.get("physical_anchor") or "").strip(),
+            "value_chain_position": m.get("value_chain_position", ""),
+            "true_competitors": m.get("true_competitors") or [],
+            "chain_fit_confidence": (m.get("chain_fit_confidence") or "").lower(),
+            "royalty_bypass": royalty_bypass, "mapping_error": mapping_error,
+            "gates": g})
+    if royalty_flips:
+        print(f"royalty_streamer bypass: flipped lane B->A on cash-gate exempt streamers: {royalty_flips}")
+    if mapping_errors:
+        print(f"!!! MAPPING ERROR: developer(s) mapped into lane A (a pre-FCF dev is not a producer) — "
+              f"surfaced, review the chain map: {mapping_errors}")
+    # by_chain x lane counts + the zero-map STOP guard (spec §1.3)
+    by_chain = {ch["id"]: {"a": 0, "b": 0} for ch in tax["chains"]}
+    for mm in members:
+        for cid in mm["chains"]:
+            if mm["lane"] in ("a", "b"):
+                by_chain[cid][mm["lane"]] += 1
+    pre_by_chain = cd.get("by_chain") or {}              # candidate counts BEFORE the map
+    zero_stops = []
+    for ch in tax["chains"]:
+        cid = ch["id"]
+        pre = (pre_by_chain.get(cid) or {})
+        pre_total = _n(pre.get("a")) + _n(pre.get("b"))
+        post_total = by_chain[cid]["a"] + by_chain[cid]["b"]
+        if pre_total >= 3 and post_total == 0:
+            zero_stops.append(f"{cid} ({pre_total} candidates -> 0 mapped)")
+    n_a = sum(1 for mm in members if mm["lane"] == "a")
+    n_b = sum(1 for mm in members if mm["lane"] == "b")
+    funnel = {**(cd.get("funnel_partial") or {}), "mapped": len(members),
+              "mapped_lane_a": n_a, "mapped_lane_b": n_b}
+    print(f"FUNNEL: screened={funnel.get('screened')} liquid={funnel.get('liquid')} "
+          f"gated_a={funnel.get('lane_a')} gated_b={funnel.get('lane_b')} mapped={len(members)} "
+          f"(lane_a={n_a} lane_b={n_b})")
+    print(f"by_chain x lane: {by_chain}")
+    if zero_stops:
+        print(f"GUARD (spec §1.3): chain(s) with >=3 candidates mapped to 0 members {zero_stops} — a "
+              f"systematic mapper failure. universe.json NOT written. STOP (do not reuse a prior month).")
+        raise SystemExit(1)
+    if n_a < 8:
+        print(f"NOTE: only {n_a} lane-A members mapped — fr-prep will STOP if <25 mappable; a thin lane-A "
+              f"is expected on the current small commodity cohorts, not a bug.")
+    uni = {"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
+           "funnel": funnel, "by_chain": by_chain, "members": members}
+    (FR_DIR / "universe.json").write_text(json.dumps(uni, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"FR UNIVERSE OK: {len(members)} mapped members (lane_a={n_a} lane_b={n_b}) -> {FR_DIR / 'universe.json'}")
+    print("Next (Phase 3): fr-prep (Lane A pre-rank + debate workflow), then fr-input / FR Director / fr-post.")
+    return len(members)
 
 
 def export_debate_csv():
@@ -2887,6 +3088,10 @@ if __name__ == "__main__":
         value_revalidate()
     elif mode in ("fr-universe", "fr_universe"):
         fr_universe()
+    elif mode in ("fr-map", "fr_map"):
+        fr_map()
+    elif mode in ("fr-map-merge", "fr_map_merge"):
+        fr_map_merge()
     elif mode in ("value-skeptic", "value_skeptic"):
         value_skeptic()
     elif mode in ("regime-skeptic", "regime_skeptic"):

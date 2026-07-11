@@ -1,0 +1,13 @@
+{
+ "_note": "SKELETON (Phase 2) — every chain ships NEUTRAL and tilts nothing until the first bi-weekly research run (FUTURE_RESOURCES_REGIME.md §2) overwrites this. Schema per chain id: {state: TAILWIND|NEUTRAL|HEADWIND, spot (cited string or null — uranium/NdPr carry a citation or stay null, Do-NOT #8), vs_incentive_pct, one_liner, tripwires_breached[], as_of}. The grade-input builder stamps state onto chain_regime so the FR Director enforces HEADWIND => size_units <= 0.5 deterministically.",
+ "version": "v0-skeleton",
+ "as_of": null,
+ "chains": {
+  "uranium_fuel_cycle": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
+  "copper_electrification": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
+  "rare_earth_strategic": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
+  "power_for_ai": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
+  "robotics_automation": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null},
+  "quantum": {"state": "NEUTRAL", "spot": null, "vs_incentive_pct": null, "one_liner": "no live run yet", "tripwires_breached": [], "as_of": null}
+ }
+}
