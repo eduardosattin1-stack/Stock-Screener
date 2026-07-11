@@ -20,7 +20,7 @@
 > Updated 2026-07-10 (later, same day — pipeline-v3 Week 2): TWO-TIER restructure live. STEP 2's
 > workflow is now Radar → Coverage(Sonnet) → Delta(Sonnet, anchored seat updates) →
 > Underwrite(Opus, ≤40 Tier-U cap, typed `valuation` block) → Gates(Haiku: coverage-merge +
-> continuity-gate v2 + numeric-gate dry-run) → Skeptic(Opus, BEFORE the Director) → Director(Opus).
+> continuity-gate v2 + numeric-gate --enforce) → Skeptic(Opus, BEFORE the Director) → Director(Opus).
 > STEP 2B's standalone skeptic is gap-fill only. Rollback: `SPECULAIR_TIERING=off`.
 
 <!-- ROUTINE BODY BEGIN -->
@@ -52,7 +52,7 @@ STEP 2 — TWO-TIER WORKFLOW (Radar → Coverage → Delta → Underwrite → Ga
 - **Coverage** (Sonnet): structured updates -> `_coverage_updates/`, merged by the Gates phase.
 - **Delta** (Sonnet): each held seat updates its OWN anchor record (`_archive_prev/`); may move prices/status freely, sop/conviction(±1) ONLY with a dated fact recorded in `deltas[]`; may NOT flip the verdict (sets `escalate_full_debate` instead — next cycle's T6 trigger). The churn fix: unjustified changes are REVERTED deterministically.
 - **Underwrite** (Opus): full debates — same Interrogator→Architect→CRO pass as before, now ALSO emitting the TYPED `valuation` block (bear_px/base_fv_px/bull_px point numbers; agents state LEVELS, the pipeline computes every ratio) + `last_full_debate` stamp. Online names fetch transcripts FMP-first.
-- **Gates** (Haiku runner): `coverage-merge` (inherit grades verbatim) → `continuity-gate` (v2: flags full-record flips, REVERTS unjustified delta changes) → `numeric-gate --legacy --dry-run` (calibration only this week; enforcement flips on after a clean cycle). Quote all three summary lines in the final report.
+- **Gates** (Haiku runner): `coverage-merge` (inherit grades verbatim) → `continuity-gate` (v2: flags full-record flips, REVERTS unjustified delta changes) → `numeric-gate --legacy --enforce` (ENFORCED since 2026-07-11 after the clean calibration cycle: REJECT/EXCLUDE stamp records, diverging prose R:R is rewritten w/ _orig kept, and _regime_post demotes gated names from seats). If regime-post later prints a skeptic-coverage WARN (a workflow skeptic returned DONE without writing its shard — seen 2026-07-11), gap-fill: run `regime-skeptic`, trim the generated workflow SYMS to the missing names, run it, re-run `regime-post`. Quote all three summary lines in the final report.
 - **Skeptic** (Opus, BEFORE the Director — new): kill-tier over all of Tier-U; conviction≤2 non-seats self-skip cheaply; shards land in `_skeptic_regime/` where the Director reads them PRE-seat (a REFUTED is a hard no-seat, cited in the memo — demotion evidence now informs seating instead of vaporizing seats after the fact).
 - **Director** (Opus): unchanged rubric + reads the skeptic shards + continuity flags. Writes `apex_basket_opus_regime.json`.
 ROLLBACK LEVER: `SPECULAIR_TIERING=off` before prep restores the legacy single-tier flow (every debate name full-Opus, empty Delta/Coverage/Skeptic phases; run STEP 2B's standalone skeptic as before). RATE-LIMIT POLICY unchanged: transient server limit → resume once; HARD session limit → STOP until the printed reset, THEN resume (cached agents replay free).
