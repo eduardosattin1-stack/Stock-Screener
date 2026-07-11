@@ -11,8 +11,18 @@ Design notes carried over from _value_post.py:
   - build_weights enforces Director `combined_caps` + any `extra_caps` (correlation breaches, secular
     themes) by scaling the named cluster's units down to max_units; per_name_cap applies the half-size
     teeth (cro_only / stale_anchor / moat_erosion).
+  - 2026-07-11: the SHARED MARKET BLOCKS moved here from _value_post.py so the regime book gets the
+    same guards (value-book parity): get_market (live quotes + 2y weekly log-returns w/ on-disk cache
+    + --offline reuse), stress_block (weighted downside to 52w lows / recession / caller-supplied bear
+    px), corr_block (pairwise 2y weekly Pearson + beta vs a caller-supplied benchmark), exits_block
+    (thesis-break sanity). All are pure functions parameterized on the book specifics (quotes/charts
+    providers, cache path, bear-px getter, benchmark symbol) — this module stays free of import side
+    effects (no FMP/screener_v6 import; the caller injects its fetchers).
 """
 import json
+import math
+import statistics
+from datetime import datetime as _dt
 from pathlib import Path
 
 
@@ -190,3 +200,192 @@ def moat_per_name_cap(p, u, extra_flags=()):
             or any(p.get(k) for k in extra_flags):
         return min(u, 0.5)
     return u
+
+
+def banded_units(conv):
+    """Director conviction (0-100) -> coarse size-unit BANDS (2026-07-11, Weeks 3-4 anchoring).
+    Replaces the continuous conviction/100 knob, where 3 points of weekly conviction wiggle moved
+    real weight — banded steps make small re-grades weight-invisible; only a band CROSSING (a
+    genuine re-rating) resizes the seat. Shared by _regime_post (memo units) and
+    publish_to_frontend._apex_weights (fallback) so the two sizing paths can never diverge."""
+    try:
+        c = float(conv or 0)
+    except (TypeError, ValueError):
+        c = 0.0
+    if c >= 90:
+        return 1.4
+    if c >= 70:
+        return 1.1
+    if c >= 50:
+        return 0.8
+    return 0.5
+
+
+# ═════════════════════ SHARED MARKET BLOCKS (moved verbatim from _value_post.py, 2026-07-11) ═════════════════════
+# Book-agnostic machinery: the caller injects its fetchers (quotes_fn/chart_fn), cache file, bear-px
+# getter, thesis-break getter and beta benchmark. No network / FMP import at module scope.
+
+def live_quotes(fmp_fn, symbols):
+    """Batch quotes incl. yearHigh/yearLow (FMP stable batch-quote, comma symbols, chunked 50).
+    fmp_fn(endpoint, params) -> list is the caller's FMP REST fetcher (e.g. screener_v6.fmp)."""
+    out = {}
+    for i in range(0, len(symbols), 50):
+        rows = fmp_fn("batch-quote", {"symbols": ",".join(symbols[i:i + 50])}) or []
+        for q in rows:
+            s = q.get("symbol")
+            if s:
+                out[s] = {"price": q.get("price"), "yearHigh": q.get("yearHigh"), "yearLow": q.get("yearLow")}
+    return out
+
+
+def weekly_logrets(chart):
+    """Resample an ascending OHLCV chart to the last close of each ISO week; return {YYYY-WW: logret}."""
+    byweek = {}
+    for row in chart or []:
+        d, c = row.get("date"), (row.get("adjClose") or row.get("close"))
+        if not d or not isinstance(c, (int, float)) or c <= 0:
+            continue
+        try:
+            y, w, _ = _dt.strptime(d[:10], "%Y-%m-%d").isocalendar()
+        except Exception:
+            continue
+        byweek[f"{y}-{w:02d}"] = c                       # ascending chart -> last close in the week wins
+    keys = sorted(byweek)
+    return {keys[i]: math.log(byweek[keys[i]] / byweek[keys[i - 1]])
+            for i in range(1, len(keys)) if byweek[keys[i - 1]] > 0}
+
+
+def get_market(quote_syms, corr_syms, offline, cache_path, quotes_fn, chart_fn):
+    """Fetch (or, --offline, reuse cached) live quotes + 2y weekly log-returns. Caches once for idempotency.
+    quotes_fn(symbols) -> {sym: {price, yearHigh, yearLow}}; chart_fn(sym) -> ascending OHLCV rows
+    (the caller pins the window, e.g. lambda s: get_chart(s, days=760)); cache_path = the book's cache file."""
+    cache_path = Path(cache_path)
+    if offline and cache_path.exists():
+        c = json.load(open(cache_path, encoding="utf-8"))
+        return c.get("quotes", {}), c.get("weekly_rets", {}), c.get("asof", "")
+    quotes = quotes_fn(quote_syms)
+    wr = {}
+    for s in corr_syms:
+        r = weekly_logrets(chart_fn(s))
+        if r:
+            wr[s] = r
+    asof = _dt.now().strftime("%Y-%m-%d")
+    json.dump({"asof": asof, "quotes": quotes, "weekly_rets": wr}, open(cache_path, "w", encoding="utf-8"))
+    return quotes, wr, asof
+
+
+def stress_block(picks, weights, quotes, asof, bear_px, bear_label="bear_fv_px"):
+    """Market-based stress: weighted basket return to the 52w lows, recession = 52w-low -15%, plus the
+    agents' own adverse leg from the CALLER-SUPPLIED bear_px(p) getter (value: p['bear_fv_px']; regime:
+    rec['valuation']['bear_px']). bear_case_invalid flags a missing/above-spot bear case; the published
+    downside then falls back to the market-based recession stress. bear_label only names the getter in
+    the note text."""
+    rows, w_lo, w_rec, w_bear, any_bear = [], 0.0, 0.0, 0.0, False
+    for p in picks:
+        s = p["symbol"]
+        q = quotes.get(s) or {}
+        px, lo, bear = q.get("price"), q.get("yearLow"), bear_px(p)
+        ok = isinstance(px, (int, float)) and isinstance(lo, (int, float)) and px > 0
+        w = weights.get(s, 0)
+        r_lo = (lo / px - 1) if ok else 0.0
+        r_rec = (lo * 0.85 / px - 1) if ok else 0.0
+        r_bear = (bear / px - 1) if (isinstance(px, (int, float)) and isinstance(bear, (int, float)) and px > 0) else None
+        w_lo += w * r_lo
+        w_rec += w * r_rec
+        if r_bear is not None:
+            w_bear += w * r_bear
+            any_bear = True
+        rows.append({"symbol": s, "price": px, "yr_low": lo,
+                     "to_52w_low_pct": round(r_lo * 100, 1), "recession_pct": round(r_rec * 100, 1),
+                     "cro_bear_pct": round(r_bear * 100, 1) if r_bear is not None else None})
+    bear_invalid = (not any_bear) or (w_bear > 0)         # no bear FVs yet, or a "bear case" above spot
+    published = w_rec if bear_invalid else min(w_rec, w_bear)
+    return {"asof": asof, "basket_to_52w_lows_pct": round(w_lo * 100, 1),
+            "recession_stress_pct": round(w_rec * 100, 1),
+            "cro_bear_weighted_pct": round(w_bear * 100, 1) if any_bear else None,
+            "bear_case_invalid": bool(bear_invalid),
+            "published_downside_pct": round(published * 100, 1),
+            "per_name": rows,
+            "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% "
+                    f"(recession). cro_bear is the agents' own adverse SoP ({bear_label}); when missing or "
+                    "implying upside it is flagged invalid and the published downside is the market-based "
+                    "recession stress."}
+
+
+def _pearson(ra, rb):
+    common = sorted(set(ra) & set(rb))
+    if len(common) < 60:
+        return None
+    try:
+        return statistics.correlation([ra[k] for k in common], [rb[k] for k in common])
+    except Exception:
+        return None
+
+
+def _beta(rs, rm):
+    if not rs or not rm:
+        return None
+    common = sorted(set(rs) & set(rm))
+    if len(common) < 60:
+        return None
+    try:
+        vm = statistics.variance([rm[k] for k in common])
+        return statistics.covariance([rs[k] for k in common], [rm[k] for k in common]) / vm if vm > 0 else None
+    except Exception:
+        return None
+
+
+def corr_block(syms, weekly_rets, weights, beta_symbol, beta_key=None, thresh=0.6, hard=0.7):
+    """Pairwise 2y weekly-log-return Pearson: flag pairs >= thresh; breach = corr >= hard AND combined
+    weight > 16% (consumed by corr_breach_caps -> extra_caps). Betas vs the CALLER-SUPPLIED benchmark
+    (value: XLY under key 'consumer_beta_xly'; regime: SPY). beta_key defaults to beta_<symbol>."""
+    beta_key = beta_key or f"beta_{beta_symbol.lower()}"
+    pairs, flagged = [], []
+    for i, a in enumerate(syms):
+        for b in syms[i + 1:]:
+            c = _pearson(weekly_rets.get(a) or {}, weekly_rets.get(b) or {})
+            if c is None:
+                continue
+            pairs.append({"a": a, "b": b, "corr": round(c, 2)})
+            if c >= thresh:
+                cw = weights.get(a, 0) + weights.get(b, 0)
+                flagged.append({"a": a, "b": b, "corr": round(c, 2),
+                                "combined_weight_pct": round(cw * 100, 1),
+                                "breach": bool(c >= hard and cw > 0.16)})
+    mkt = weekly_rets.get(beta_symbol)
+    betas = {}
+    for s in syms:
+        b = _beta(weekly_rets.get(s), mkt)
+        if b is not None:
+            betas[s] = round(b, 2)
+    avg = round(sum(p["corr"] for p in pairs) / len(pairs), 2) if pairs else None
+    return {"window": "2y weekly log returns", "avg_pairwise": avg, "n_pairs": len(pairs),
+            "max_pair": max(pairs, key=lambda p: p["corr"]) if pairs else None,
+            "flagged_pairs": flagged, beta_key: betas,
+            "correlation_breach": any(f.get("breach") for f in flagged),
+            "fx_note": "EU names in local ccy; correlations unadjusted for FX."}
+
+
+def corr_breach_caps(corr, max_units=1.5):
+    """Turn corr_block breaches (corr >= hard AND combined weight > 16%) into extra_caps entries for
+    build_weights, printing the WARN per breach (moved from _value_post.main so both books share it)."""
+    caps = [{"names": [f["a"], f["b"]], "max_units": max_units, "axis": "correlation"}
+            for f in corr.get("flagged_pairs", []) if f.get("breach")]
+    for bc in caps:
+        print(f"WARN correlation breach: {bc['names']} -> combined units capped at {max_units}")
+    return caps
+
+
+def exits_block(picks, quotes, thesis_break):
+    """Thesis-break exit levels, sanity-checked against live price (0 < tb < px). thesis_break(p) is the
+    CALLER-SUPPLIED getter (value: p['thesis_break_px']; regime books map their own field)."""
+    out = {}
+    for p in picks:
+        px = (quotes.get(p["symbol"]) or {}).get("price")
+        tb = thesis_break(p)
+        valid = isinstance(tb, (int, float)) and isinstance(px, (int, float)) and 0 < tb < px
+        out[p["symbol"]] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
+                            "review_trigger": "weekly refresh OR close < thesis_break_px"}
+        if tb and not valid:
+            print(f"WARN exits: {p['symbol']} thesis_break_px={tb} fails sanity vs px={px}")
+    return out

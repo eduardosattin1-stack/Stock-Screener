@@ -11,21 +11,33 @@ CAD, and a hallucinated price inverted a valid arb.
 DESIGN: agents write LEVELS (a live price, a bear/base/bull per-share estimate) and narratives; this
 module computes every RATIO. No prose-asserted "N:1" or "X% upside vs Y% downside" is trusted.
 
-TWO OPERATING MODES:
-  --legacy   Today's results_regime/<SYM>.json records predate the typed `valuation` block this gate
-             is designed to check (that block ships when the debate schema changes, Week 2 of the
-             pipeline-v3 plan). --legacy synthesizes a best-effort valuation dict from the EXISTING
-             prose fields (sop_fair_value/sop_bear/sop_bull) via _numeric_core.parse_money_prose, so
-             today's real records can be scored NOW, for calibration — clearly marked low-confidence
-             wherever the prose-parse produces an insane bracket (bear/bull inverted, way off base).
+OPERATING MODES (--dry-run and --enforce are mutually exclusive; one is required):
+  --legacy   Records that predate the typed `valuation` block get a best-effort valuation dict
+             synthesized from the EXISTING prose fields (sop_fair_value/sop_bear/sop_bull) via
+             _numeric_core.parse_money_prose — clearly marked low-confidence wherever the prose-parse
+             produces an insane bracket (bear/bull inverted, way off base). A record that ALREADY
+             carries a typed `valuation` block is checked against that block as-is (typed PREFERRED;
+             synthesis is a fallback only, never an override).
   --dry-run  Print a _post_board.py-style report table; write NOTHING (no numeric_gate field is
-             stamped on any record, no REJECT/EXCLUDE takes effect). This is the ONLY mode wired into
-             the dispatcher today — enforcement (writing numeric_gate: REJECT/EXCLUDE_ELIGIBILITY
-             into records, gating the Director's eligibility) is a Week 2 activity per the plan, after
-             this dry-run has calibrated the thresholds below against real data.
+             stamped on any record, no REJECT/EXCLUDE takes effect). The calibration mode.
+  --enforce  ENFORCEMENT: stamp each record in results_regime/<SYM>.json with the gate verdict —
+             `numeric_gate` (PASS|WARN|REJECT|EXCLUDE_ELIGIBILITY), `numeric_gate_reasons[]`, and a
+             `computed{}` block (rr_ratio / expected_return_pct / floor_distance_pct /
+             price_drift_pct, where available). When the prose `risk_reward` asserts a ratio
+             diverging >25% from the computed one (PROSE_RR_KILLED), the prose is REWRITTEN to a
+             computed display string ("+X% to base B vs -Y% to bear b => N:1 [flags]") and the
+             original preserved under `risk_reward_prose_orig`. Records with rec["carried"] keep
+             their vintage prose (only computed{} is restamped, from the fresh price) — a carried
+             narrative written at an older price is expected to drift; clobbering it would destroy
+             the vintage record without adding information.
+  --final    Enforcement modifier for AFTER the one repair re-debate batch: any record still REJECT
+             downgrades to EXCLUDE_ELIGIBILITY (+"FINAL_DOWNGRADE_AFTER_REPAIR") so the downstream
+             pipeline (Director/publish) never wedges on an un-repairable record.
 
 Usage: python backend/_opus_debate/_numeric_gate.py --legacy --dry-run
        python backend/_opus_debate/_numeric_gate.py --legacy --dry-run --symbol HNR1.DE   (one name)
+       python backend/_opus_debate/_numeric_gate.py --legacy --enforce            (stamp records)
+       python backend/_opus_debate/_numeric_gate.py --legacy --enforce --final    (post-repair sweep)
 """
 from __future__ import annotations
 import argparse
@@ -198,6 +210,25 @@ def _parse_asserted_ratio(prose):
     return None
 
 
+COMPUTED_STAMP_KEYS = ("rr_ratio", "expected_return_pct", "floor_distance_pct", "price_drift_pct")
+
+
+def _rr_display(val, computed, reasons):
+    """Computed replacement for a prose risk_reward whose asserted ratio diverged from arithmetic.
+    Only called when PROSE_RR_KILLED fired, which guarantees rr_ratio/expected_return_pct/
+    floor_distance_pct and the bear/base legs all exist."""
+    er = computed.get("expected_return_pct")
+    fd = computed.get("floor_distance_pct")
+    rr = computed.get("rr_ratio")
+    base_fv, bear = val.get("base_fv_px"), val.get("bear_px")
+    s = f"+{er:.0f}% to base {base_fv:g} vs -{fd:.0f}% to bear {bear:g} => {rr:g}:1"
+    flags = [r.split("(")[0] for r in reasons
+             if r.split("(")[0] in ("TINY_FLOOR", "THIN_FLOOR", "NO_UPSIDE", "G4_BEAR_ABOVE_SPOT")]
+    if flags:
+        s += " [" + ", ".join(flags) + "]"
+    return s
+
+
 def synthesize_legacy_valuation(rec):
     """--legacy: best-effort `valuation` block from today's PROSE fields, for records that predate
     the typed schema. base_fv_px (from sop_fair_value) is fairly reliable — the same pattern already
@@ -236,46 +267,88 @@ def synthesize_legacy_valuation(rec):
     return val
 
 
-def run(dry_run=True, legacy=True, only_symbol=None, offline=False):
-    if not RES_DIR.exists():
+def run(dry_run=True, legacy=True, only_symbol=None, offline=False, enforce=False, final=False,
+        res_dir=None, live_quotes=None):
+    """dry_run and enforce are mutually exclusive (CLI enforces it; programmatic callers must pick one).
+    res_dir/live_quotes are injection points for tests — production always runs against RES_DIR with
+    freshly fetched FMP quotes (unless --offline)."""
+    res_dir = Path(res_dir) if res_dir else RES_DIR
+    if not res_dir.exists():
         print("numeric-gate: no results_regime/ — nothing to check.")
         return
-    files = sorted(RES_DIR.glob(f"{only_symbol}.json" if only_symbol else "*.json"))
-    live_quotes = {}
+    files = sorted(res_dir.glob(f"{only_symbol}.json" if only_symbol else "*.json"))
     # Fetching live quotes is the DEFAULT (resilience: a record missing live_price gets rescued via
     # FMP before G0 rejects it, and every record gets an independent G1a reconcile) — --offline opts
-    # OUT, matching _value_post.py's convention, for when network isn't available.
-    if not offline:
-        import live_debate_engine as E  # noqa
-        key = E.get_key("FMP_API_KEY")
-        syms = []
-        for f in files:
-            try:
-                syms.append(json.load(open(f, encoding="utf-8")).get("symbol") or f.stem)
-            except Exception:
-                continue
-        live_quotes = _nc.fetch_live_quotes(syms, fmp_key=key)
+    # OUT, matching _value_post.py's convention, for when network isn't available. A caller-supplied
+    # live_quotes dict (tests) skips the fetch entirely.
+    if live_quotes is None:
+        live_quotes = {}
+        if not offline:
+            import live_debate_engine as E  # noqa
+            key = E.get_key("FMP_API_KEY")
+            syms = []
+            for f in files:
+                try:
+                    syms.append(json.load(open(f, encoding="utf-8")).get("symbol") or f.stem)
+                except Exception:
+                    continue
+            live_quotes = _nc.fetch_live_quotes(syms, fmp_key=key)
 
     counts = {"PASS": 0, "WARN": 0, "REJECT": 0, "EXCLUDE_ELIGIBILITY": 0}
     reason_counts = {}
     rows = []
+    rewritten = stamped = 0
+    reject_syms, excl_syms = [], []
     for f in files:
         try:
             rec = json.load(open(f, encoding="utf-8"))
         except Exception:
             continue
+        work = rec
         if legacy and "valuation" not in rec:
-            rec = dict(rec)
-            rec["valuation"] = synthesize_legacy_valuation(rec)
-        result = check_record(rec, live_quotes)
+            work = dict(rec)
+            work["valuation"] = synthesize_legacy_valuation(rec)
+        result = check_record(work, live_quotes)
+        # --final: post-repair sweep — a record STILL rejecting after its one repair re-debate batch
+        # downgrades to EXCLUDE_ELIGIBILITY so the pipeline (Director/publish) never wedges on it.
+        if final and result["gate"] == "REJECT":
+            result = {"gate": "EXCLUDE_ELIGIBILITY",
+                      "reasons": list(result["reasons"]) + ["FINAL_DOWNGRADE_AFTER_REPAIR"],
+                      "computed": result["computed"]}
+        sym = rec.get("symbol") or f.stem
         counts[result["gate"]] = counts.get(result["gate"], 0) + 1
         for r in result["reasons"]:
             key_r = r.split("(")[0]
             reason_counts[key_r] = reason_counts.get(key_r, 0) + 1
-        rows.append((rec.get("symbol") or f.stem, result))
+        rows.append((sym, result))
+        if result["gate"] == "REJECT":
+            reject_syms.append(sym)
+        elif result["gate"] == "EXCLUDE_ELIGIBILITY":
+            excl_syms.append(sym)
 
-    print(f"{'='*72}\nNUMERIC GATE — {'--legacy --dry-run' if legacy and dry_run else ('--legacy' if legacy else '')}"
-          f"{' --dry-run' if dry_run and not legacy else ''} | {len(rows)} records checked\n{'='*72}")
+        if enforce:
+            # STAMP the verdict into the record. The synthesized --legacy valuation is a working
+            # artifact and is deliberately NOT persisted (low-confidence prose-mining must never
+            # masquerade as a typed block on disk).
+            rec["numeric_gate"] = result["gate"]
+            rec["numeric_gate_reasons"] = list(result["reasons"])
+            rec["computed"] = {k: v for k, v in result["computed"].items()
+                               if k in COMPUTED_STAMP_KEYS and v is not None}
+            # Prose-ratio kill: rewrite the asserted risk_reward with the computed display string.
+            # Carried records keep their vintage prose (a narrative written at an older price is
+            # EXPECTED to drift; computed{} above already carries the fresh-price arithmetic).
+            if any(r.startswith("PROSE_RR_KILLED") for r in result["reasons"]) and not rec.get("carried"):
+                if "risk_reward_prose_orig" not in rec:   # idempotent: never clobber the true original
+                    rec["risk_reward_prose_orig"] = rec.get("risk_reward")
+                rec["risk_reward"] = _rr_display(work.get("valuation") or {}, result["computed"],
+                                                 result["reasons"])
+                rewritten += 1
+            json.dump(rec, open(f, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+            stamped += 1
+
+    mode_bits = [b for b, on in (("--legacy", legacy), ("--dry-run", dry_run),
+                                 ("--enforce", enforce), ("--final", final)) if on]
+    print(f"{'='*72}\nNUMERIC GATE — {' '.join(mode_bits)} | {len(rows)} records checked\n{'='*72}")
     print(f"gate outcomes: {counts}")
     print(f"reason frequency: {dict(sorted(reason_counts.items(), key=lambda kv: -kv[1]))}")
     rescued = sum(1 for _, res in rows if any("FETCHED_FALLBACK" in r for r in res["reasons"]))
@@ -299,23 +372,37 @@ def run(dry_run=True, legacy=True, only_symbol=None, offline=False):
               f"valuation block replaces prose-mining")
     if dry_run:
         print("\nDRY-RUN: nothing written. No record was stamped, no seat eligibility changed.")
-    else:
-        print("\nWARNING: --dry-run not set but enforcement write-back is NOT YET IMPLEMENTED "
-              "(Week 2 activity) — this run was read-only regardless.")
+    if enforce:
+        print(f"\nnumeric-gate ENFORCE: {len(rows)} checked | {counts['REJECT']} REJECT "
+              f"[{', '.join(reject_syms)}] | {counts['EXCLUDE_ELIGIBILITY']} EXCLUDED "
+              f"[{', '.join(excl_syms)}] | {counts['WARN']} WARN | {rewritten} prose-ratios rewritten "
+              f"| {stamped} stamped")
     return rows
 
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--legacy", action="store_true", help="synthesize valuation from today's prose fields")
-    p.add_argument("--dry-run", action="store_true", help="print only; write nothing (REQUIRED — enforcement isn't built yet)")
+    g = p.add_mutually_exclusive_group()
+    g.add_argument("--dry-run", action="store_true", help="print only; write nothing (calibration mode)")
+    g.add_argument("--enforce", action="store_true",
+                    help="stamp numeric_gate/numeric_gate_reasons/computed{} onto results_regime records "
+                         "and rewrite divergent prose risk_reward ratios (original kept as _prose_orig)")
+    p.add_argument("--final", action="store_true",
+                    help="with --enforce, after the repair batch: downgrade any surviving REJECT to "
+                         "EXCLUDE_ELIGIBILITY so the pipeline never wedges")
     p.add_argument("--symbol", default=None, help="check a single symbol")
     p.add_argument("--offline", action="store_true",
                     help="skip the FMP fetch (no G0 rescue, no G1a reconcile) — network unavailable only; "
                          "fetching is the DEFAULT because a missing price should be rescued, not just rejected")
     args = p.parse_args()
-    if not args.dry_run:
-        print("numeric-gate: enforcement (writing numeric_gate onto records, REJECT/EXCLUDE eligibility) "
-              "is a Week 2 activity and is NOT implemented — pass --dry-run to run the calibration check.")
+    if args.final and not args.enforce:
+        print("numeric-gate: --final is an enforcement modifier (downgrades surviving REJECTs after the "
+              "repair batch) — pass it WITH --enforce.")
         sys.exit(1)
-    run(dry_run=True, legacy=args.legacy, only_symbol=args.symbol, offline=args.offline)
+    if not args.dry_run and not args.enforce:
+        print("numeric-gate: pass --dry-run (report only, writes nothing) or --enforce (stamp the gate "
+              "verdicts onto results_regime records).")
+        sys.exit(1)
+    run(dry_run=args.dry_run, legacy=args.legacy, only_symbol=args.symbol, offline=args.offline,
+        enforce=args.enforce, final=args.final)

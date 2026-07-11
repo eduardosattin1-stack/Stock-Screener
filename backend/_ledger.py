@@ -45,6 +45,21 @@ def append_decision_history(book, basket):
                   "conviction": p.get("director_conviction") or p.get("value_score") or p.get("conviction"),
                   "rationale": (p.get("decision_rationale") or p.get("whats_changed") or p.get("thesis")
                                 or p.get("director_rationale") or "")[:200]}
+            # 2026-07-11 (pipeline-v3 Weeks 3-4, Director anchoring): the ledger now carries the
+            # NUMBERS, not just the verbs — next week's Director is anchored against its own prior
+            # conviction/size/ER, and the deterministic clamp in _regime_post reads conviction here.
+            # All best-effort: absent fields are simply omitted (older baskets lack them).
+            for src_key, dst_key in (("size_units", "size_units"), ("expected_return_pct", "expected_return_pct"),
+                                     ("sop_fair_value", "sop_fair_value"), ("entry_price", "live_price"),
+                                     ("conviction_delta", "conviction_delta")):
+                v = p.get(src_key)
+                if isinstance(v, (int, float)) and not isinstance(v, bool):
+                    ev[dst_key] = v
+            comp = p.get("computed") or {}
+            if isinstance(comp.get("rr_ratio"), (int, float)):
+                ev["rr_ratio"] = comp["rr_ratio"]
+            if p.get("numeric_gate") and p.get("numeric_gate") != "PASS":
+                ev["numeric_gate"] = p.get("numeric_gate")
             lst = bh.setdefault(s, [])
             if not (lst and lst[-1].get("date") == today):
                 lst.append(ev)

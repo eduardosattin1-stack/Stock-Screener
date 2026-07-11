@@ -1,39 +1,56 @@
 #!/usr/bin/env python3
 """Deterministic post-processing for the REGIME / APEX book (apex_basket_opus_regime.json).
 
-The mirror of _value_post.py for the catalyst/apex book, which until now had NO kill-tier and NO
-post-processor (publish_to_frontend.py stamped weights straight from the Director's size_units). This:
+The mirror of _value_post.py for the catalyst/apex book. 2026-07-11 (pipeline-v3 Weeks 3-4) brings
+the apex book to VALUE-BOOK GUARD PARITY — the forensics found the flagship published book was the
+least numerically validated of the three. This now:
   1. consumes the APEX skeptic (_skeptic_regime/<SYM>.json) — REFUTED demotes to runner_ups;
-  2. stamps the deterministic moat terminal-erosion teeth (moat_erosion=='CAP' -> 0.5 size cap);
-  3. enforces the secular-theme concentration cap + any Director combined_caps;
-  4. stamps size_units_effective + weight_pct (the Director's raw size_units is left UNTOUCHED, so the
-     step is idempotent and publish_to_frontend can prefer the effective units).
-
-Runs AFTER the Director and the regime skeptic, BEFORE publish_to_frontend.py. Pure file I/O +
-computation — no FMP fetch, no API key. Shares ONE implementation with the value book via _post_common
-+ _moat, so a skeptic that demotes and a cap loop that sizes behave identically across both surfaces.
+  2. NUMERIC-GATE DEMOTE: an apex member whose debate record is stamped numeric_gate REJECT /
+     EXCLUDE_ELIGIBILITY is demoted to runner_ups (a gate that cannot demote is decoration);
+  3. CONVICTION CLAMP: |director_conviction - prior ledger conviction| > 10 without a dated fact in
+     delta_justification -> conviction_eff = prior ± 10 (flags + clamps, never rewrites the prose);
+  4. stamps the deterministic moat terminal-erosion teeth (moat_erosion=='CAP' -> 0.5 size cap);
+  5. enforces the secular-theme concentration cap + Director combined_caps + measured-correlation
+     breach caps;
+  6. sizing memo = Director size_units when present, else BANDED conviction map (shared
+     _post_common.banded_units — coarse steps, so conviction wiggle is weight-invisible);
+  7. MARKET LAYER (value parity, network w/ _regime_post_cache.json + --offline): measured 2y weekly
+     Pearson correlation matrix (beta vs SPY — the apex is a broad book, not the value book's
+     consumer tilt), market stress (52w-low / recession / the record's typed valuation.bear_px), and
+     thesis-break exits (Director thesis_break_px, fallback = valuation.bear_px). Fail-SOFT: a
+     network blip skips the market layer with a WARN, never wedges the weekly publish;
+  8. stamps size_units_effective + weight_pct + numeric_post_applied (publish gate requires it).
 
 Pipeline order:
-    Director -> apex_basket_opus_regime.json -> [regime-skeptic Workflow] -> _regime_post (THIS)
-    -> publish_to_frontend.py
+    Director -> apex_basket_opus_regime.json -> [skeptic shards, same-run pre-Director] ->
+    _regime_post (THIS) -> publish_to_frontend.py
 
-Usage: python backend/_opus_debate/_regime_post.py
+Usage: python backend/_opus_debate/_regime_post.py [--offline]
 """
 import json
+import re
 import sys
+from datetime import date
 from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent          # .../backend/_opus_debate
 BK = _HERE.parent                                 # .../backend
 ROOT = _HERE
-sys.path.insert(0, str(BK))                       # backend on path for _moat (pure, no API key)
+sys.path.insert(0, str(BK))                       # backend on path for _moat / screener_v6 / _ledger
 sys.path.insert(0, str(_HERE))                    # _opus_debate on path for _post_common
 from _moat import moat_features                    # noqa: E402
 import _post_common as _pc                          # noqa: E402
+from _ledger import load_decision_history           # noqa: E402
 
 REGIME_F = ROOT / "apex_basket_opus_regime.json"
 SKEP_DIR = ROOT / "_skeptic_regime"
 RES_DIR = ROOT / "results_regime"
+CACHE_F = ROOT / "_regime_post_cache.json"
+
+CONV_CLAMP_PTS = 10                                # |Δ conviction| beyond this needs a dated fact
+_DATED_RE = re.compile(
+    r"\b20\d\d-\d\d(-\d\d)?\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s*20\d\d\b"
+    r"|\b(Q[1-4])\s*(FY)?\s*20\d\d\b", re.IGNORECASE)
 
 
 def _load(p, default=None):
@@ -71,41 +88,187 @@ def stamp_moat(picks, uni, scan_by):
             p["secular_theme"] = r.get("secular_theme", "")
 
 
-def process(apx, uni, scan_by):
-    """Consume the apex skeptic, stamp the moat teeth, enforce the secular-theme + Director combined
-    caps, and build weights. Mutates + returns (apx, picks, extra). Pure — safe on an in-memory copy."""
+def numeric_demote(apx):
+    """Weeks-3/4 teeth for the numeric gate: an apex member whose results_regime record is stamped
+    numeric_gate REJECT / EXCLUDE_ELIGIBILITY is DEMOTED to the front of runner_ups (mirrors the
+    skeptic demote). Inert until `numeric-gate --enforce` runs (records without the stamp pass)."""
+    keep, demoted = [], []
+    for p in apx.get("apex_basket", []):
+        sym = p.get("symbol")
+        rec = _load(RES_DIR / f"{sym}.json", {}) or {}
+        ng = rec.get("numeric_gate")
+        if ng in ("REJECT", "EXCLUDE_ELIGIBILITY"):
+            p["numeric_gate"] = ng
+            p["numeric_gate_reasons"] = rec.get("numeric_gate_reasons", [])
+            p["numeric_demoted"] = True
+            demoted.append(p)
+            print(f"WARN numeric-gate: {sym} {ng} -> DEMOTED to runner_ups | {rec.get('numeric_gate_reasons')}")
+        else:
+            if ng:                                            # PASS/WARN ride along for visibility
+                p["numeric_gate"] = ng
+            if isinstance(rec.get("computed"), dict):
+                p["computed"] = rec["computed"]               # computed rr/ER onto the pick (ledger reads it)
+            keep.append(p)
+    if demoted:
+        dsyms = {d.get("symbol") for d in demoted}
+        apx["apex_basket"] = keep
+        apx["runner_ups"] = demoted + [r for r in (apx.get("runner_ups") or [])
+                                       if (r.get("symbol") if isinstance(r, dict) else r) not in dsyms]
+    return apx
+
+
+def conviction_clamp(picks):
+    """Weeks-3/4 Director anchoring, the deterministic backstop: a director_conviction moving more
+    than CONV_CLAMP_PTS vs the prior ledger conviction WITHOUT a dated fact in delta_justification is
+    clamped to prior ± CONV_CLAMP_PTS (conviction_eff; the Director's raw number is preserved under
+    director_conviction_orig). Flags-and-clamps only — prose untouched."""
+    hist = (load_decision_history() or {}).get("regime", {})
+    today = date.today().isoformat()
+    clamped = []
+    for p in picks:
+        sym = p.get("symbol")
+        try:
+            conv = float(p.get("director_conviction"))
+        except (TypeError, ValueError):
+            continue
+        prior_evs = [e for e in hist.get(sym, []) if e.get("date") != today
+                     and isinstance(e.get("conviction"), (int, float))]
+        if not prior_evs:
+            continue
+        prior = float(prior_evs[-1]["conviction"])
+        delta = conv - prior
+        p.setdefault("conviction_prior", prior)
+        p.setdefault("conviction_delta", round(delta, 1))
+        if abs(delta) <= CONV_CLAMP_PTS:
+            continue
+        just = str(p.get("delta_justification") or "")
+        if _DATED_RE.search(just):
+            continue                                          # big move, dated fact -> legitimate
+        eff = prior + (CONV_CLAMP_PTS if delta > 0 else -CONV_CLAMP_PTS)
+        p["director_conviction_orig"] = conv
+        p["director_conviction"] = eff
+        p["conviction_clamped"] = True
+        p["conviction_clamp_note"] = (f"|Δ|={abs(delta):.0f}>{CONV_CLAMP_PTS} vs prior {prior:.0f} with no "
+                                      f"dated fact in delta_justification -> clamped to {eff:.0f}")
+        clamped.append(f"{sym} ({prior:.0f}->{conv:.0f} clamped {eff:.0f})")
+    if clamped:
+        print(f"WARN conviction-clamp: {clamped}")
+    return picks
+
+
+def stamp_valuation(picks):
+    """Pull the typed valuation numbers off each pick's debate record onto the pick, so the market
+    layer's getters (bear px, thesis break) and the ledger see them without re-reading records."""
+    for p in picks:
+        rec = _load(RES_DIR / f"{p.get('symbol')}.json", {}) or {}
+        val = rec.get("valuation") or {}
+        if isinstance(val.get("bear_px"), (int, float)) and not isinstance(p.get("bear_fv_px"), (int, float)):
+            p["bear_fv_px"] = val["bear_px"]
+        if not isinstance(p.get("thesis_break_px"), (int, float)):
+            tb = val.get("bear_px")
+            if isinstance(tb, (int, float)):
+                p["thesis_break_px"] = tb
+                p["thesis_break_source"] = "bear_px_fallback"
+
+
+def process(apx, uni, scan_by, market=None):
+    """Consume the apex skeptic + numeric gate, clamp conviction, stamp the moat teeth, enforce the
+    secular-theme + Director combined caps (+ measured correlation caps when `market` is supplied),
+    and build weights. Mutates + returns (apx, picks, extra). Pure when market=None — safe on an
+    in-memory copy with no network (test_regime_post baseline unchanged)."""
     apx = _pc.consume_skeptic(apx, REGIME_F, SKEP_DIR)        # REFUTED -> demote BEFORE weights
+    apx = numeric_demote(apx)                                 # numeric-gate teeth (inert pre-enforce)
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     stamp_moat(picks, uni, scan_by)
     stamp_moat([r for r in apx.get("runner_ups", []) if isinstance(r, dict)], uni, scan_by)  # visibility only
+    stamp_valuation(picks)
+    conviction_clamp(picks)
     extra = _pc.secular_theme_caps(picks)                    # don't put all eggs in one secular tail
-    # Base unit = Director size_units when present, else director_conviction/100 — the SAME fallback
-    # publish_to_frontend._apex_weights uses — so the moat/theme caps apply ON TOP of the Director's
-    # sizing rather than flattening it.
-    memo = {p["symbol"]: max(0.1, (p.get("director_conviction") or p.get("conviction") or 0) / 100.0)
+    # Base unit = Director size_units when present, else the shared BANDED conviction map — coarse
+    # steps shared with publish_to_frontend._apex_weights so the two sizing paths can never diverge.
+    memo = {p["symbol"]: _pc.banded_units(p.get("director_conviction") or p.get("conviction"))
             for p in picks}
+    if market:                                                # measured-correlation caps (value parity)
+        quotes, weekly_rets, asof = market
+        prov = _pc.build_weights(apx, picks, extra_caps=extra, memo_units=memo,
+                                 per_name_cap=_pc.moat_per_name_cap)
+        corr = _pc.corr_block([p["symbol"] for p in picks], weekly_rets, prov, beta_symbol="SPY")
+        extra = extra + _pc.corr_breach_caps(corr, max_units=1.5)
+        apx["correlation"] = corr
     weights = _pc.build_weights(apx, picks, extra_caps=extra, memo_units=memo, per_name_cap=_pc.moat_per_name_cap)
     apx["weights"] = weights
     apx["secular_theme_caps"] = extra
+    if market:
+        quotes, weekly_rets, asof = market
+        apx["stress_test"] = _pc.stress_block(picks, weights, quotes, asof,
+                                              bear_px=lambda p: p.get("bear_fv_px"),
+                                              bear_label="valuation.bear_px")
+        apx["exits"] = _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"))
     apx["moat_post_applied"] = True
+    apx["numeric_post_applied"] = True
     return apx, picks, extra
 
 
+def _get_market(picks, offline):
+    """Value-parity market layer inputs: live quotes + 2y weekly log-returns for the picks + SPY,
+    cached at _regime_post_cache.json (--offline reuses). Fail-SOFT: any failure returns None with a
+    WARN — a network blip must never wedge the weekly publish; the market blocks are simply skipped
+    (and the correlation stress falls back to the Director's asserted version for that week)."""
+    try:
+        # screener_v6 freezes FMP_KEY from the env AT IMPORT — load the real key (frontend/.env.local
+        # via the engine's loader) BEFORE the import; fall back to the demo key like _value_post does.
+        import os as _os
+        if not _os.environ.get("FMP_API_KEY"):
+            try:
+                import live_debate_engine as _E
+                _E.load_api_keys()
+            except Exception:
+                pass
+        if not _os.environ.get("FMP_API_KEY"):
+            _os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"   # match _value_post fallback
+        from screener_v6 import fmp, get_chart               # deferred: heavy import, network-capable
+
+        def quotes_fn(symbols):
+            return _pc.live_quotes(fmp, symbols)
+
+        syms = [p["symbol"] for p in picks if p.get("symbol")]
+        market = _pc.get_market(syms, syms + ["SPY"], offline, CACHE_F,
+                                quotes_fn=quotes_fn, chart_fn=lambda s: get_chart(s, days=760))
+        quotes = market[0] if market else {}
+        if not quotes:                                    # e.g. missing FMP key (401s) — same as no network
+            print("WARN _regime_post: market layer returned NO quotes (missing FMP key / network?) — "
+                  "stress/correlation/exits skipped this run (weights/caps/clamps still applied)")
+            return None
+        return market
+    except Exception as e:
+        print(f"WARN _regime_post: market layer unavailable ({e}) — stress/correlation/exits skipped "
+              f"this run (weights/caps/clamps still applied)")
+        return None
+
+
 def main():
+    offline = "--offline" in sys.argv
     apx = _load(REGIME_F)
     if not apx or not apx.get("apex_basket"):
         print(f"_regime_post: {REGIME_F} missing or empty — nothing to do.")
         return
     uni = {x["symbol"]: x for x in (_load(ROOT / "_radar_universe.json", []) or [])}
     scan_by = _scan_by_sym()
-    apx, picks, extra = process(apx, uni, scan_by)
+    market = _get_market([p for p in apx.get("apex_basket", []) if p.get("symbol")], offline)
+    apx, picks, extra = process(apx, uni, scan_by, market=market)
     json.dump(apx, open(REGIME_F, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     capped = [p["symbol"] for p in picks if p.get("moat_erosion") == "CAP"]
     refute = [p["symbol"] for p in picks
               if p.get("erosion_severity") == "value-destroying"
               or (p.get("moat_erosion") == "CAP" and p.get("roic_below_hurdle"))]
+    clamped = [p["symbol"] for p in picks if p.get("conviction_clamped")]
+    ngd = [r.get("symbol") for r in apx.get("runner_ups", []) if isinstance(r, dict) and r.get("numeric_demoted")]
+    st = apx.get("stress_test") or {}
     print(f"_regime_post: {len(picks)} apex | moat-capped={capped} | skeptic-REFUTE-candidates={refute} "
-          f"| secular-theme caps={[c['axis'] for c in extra]}")
+          f"| secular-theme caps={[c['axis'] for c in extra]} | conviction-clamped={clamped or 'none'} "
+          f"| numeric-demoted={ngd or 'none'} | market-layer={'ON' if market else 'SKIPPED'}"
+          + (f" | stress 52w-low={st.get('basket_to_52w_lows_pct')}% recession={st.get('recession_stress_pct')}% "
+             f"published-downside={st.get('published_downside_pct')}%" if st else ""))
 
 
 if __name__ == "__main__":

@@ -119,6 +119,18 @@ if not director.get("moat_post_applied"):
     else:
         print(f"{msg} Aborting (override with --force).")
         sys.exit(1)
+# 2026-07-11 (Weeks 3-4): _regime_post now also runs the numeric layer (stress/correlation/exits
+# parity + the conviction clamp + banded sizing) and stamps numeric_post_applied. Same hard gate,
+# same --force override — publishing without it means unclamped conviction sized the book.
+if not director.get("numeric_post_applied"):
+    msg = ("GUARD publish gate: apex_basket_opus_regime.json has NO numeric_post_applied stamp — "
+           "run `python backend/weekly_opus_refresh.py regime-post` (the Weeks-3/4 numeric layer) "
+           "before publishing.")
+    if args.force:
+        print(f"WARN --force: {msg} — PUBLISHING ANYWAY (unclamped/unstressed weights).")
+    else:
+        print(f"{msg} Aborting (override with --force).")
+        sys.exit(1)
 # Coverage from the STAMPED verdicts (consume_skeptic writes them into the picks), NOT shard
 # mtimes — regime-post rewrites the apex file after consuming, so every shard then looks older
 # than the apex and an mtime check reads 0-coverage on a fully-vetted book (observed 2026-07-02).
@@ -318,6 +330,9 @@ SS_RTF_CAP_PCT = 1.5      # equity special-sit: weight_pct * (live-floor)/live <
 SS_LANE_CAP = 0.15        # the equity special-sit lane in aggregate <= 15% of the book
 
 
+from _post_common import banded_units as _banded_units  # noqa: E402  shared with _regime_post (one sizing map)
+
+
 def _apex_weights(es):
     units = {}
     for e in es:
@@ -328,7 +343,7 @@ def _apex_weights(es):
         elif isinstance(su, (int, float)) and 0.1 <= su <= 1.5:
             units[e["symbol"]] = float(su)
         else:
-            units[e["symbol"]] = max(0.1, (e.get("conviction") or 0) / 100.0)
+            units[e["symbol"]] = _banded_units(e.get("conviction"))
     tot = sum(units.values()) or 1.0
     w = {s: u / tot for s, u in units.items()}
 

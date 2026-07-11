@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Golden tests for _numeric_gate against FROZEN fixtures reproducing the 2026-07 forensics'
 documented defects (HNR1.DE thin-floor-masquerading-as-2:1, KBR live_price:null, AAUC fabricated
-price on a dual-listed name). Plain asserts, no pytest dependency (matches test_regime_post.py's
-convention). Non-mutating: reads _numeric_gate_fixtures/*.json, never touches results_regime/.
+price on a dual-listed name) plus ENFORCEMENT tests (stamp write-back, prose rewrite + _orig
+preservation, --final downgrade, carried-record prose immunity). Plain asserts, no pytest dependency
+(matches test_regime_post.py's convention). Non-mutating toward production data: check tests read
+_numeric_gate_fixtures/*.json; enforcement tests write ONLY to throwaway temp dirs — the real
+results_regime/ is never touched.
 
 Usage: python backend/_opus_debate/test_numeric_gate.py
 """
@@ -156,11 +159,128 @@ def test_clean_record_passes():
     print(f"PASS clean record: {res['gate']} | rr_ratio={res['computed']['rr_ratio']} | no flags")
 
 
+# ── Enforcement tests: ALWAYS against a TEMP copy of a synthetic results dir — never the real
+# results_regime/ (run() takes res_dir/live_quotes injection points precisely for this). ──────────
+
+def _tmp_resdir(records):
+    """Write {sym: rec} dicts into a fresh temp dir shaped like results_regime/. Returns its Path."""
+    import tempfile
+    tmp = Path(tempfile.mkdtemp(prefix="numgate_enforce_test_"))
+    for sym, rec in records.items():
+        json.dump(rec, open(tmp / f"{sym}.json", "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+    return tmp
+
+
+def _reload(tmp, sym):
+    return json.load(open(tmp / f"{sym}.json", encoding="utf-8"))
+
+
+def test_enforce_stamps_records():
+    """--enforce must write numeric_gate / numeric_gate_reasons / computed{} back into the record
+    file; --dry-run over the same dir must write NOTHING (the safety contract the dispatcher's
+    default relies on)."""
+    clean = {"symbol": "CLEAN", "valuation": {"live_price": 100.0, "price_currency": "USD",
+                                               "base_fv_px": 140.0, "bear_px": 80.0, "bull_px": 170.0,
+                                               "valuation_method": "sop"},
+             "catalyst_status": "PENDING_HARD", "risk_reward": "roughly 2:1"}
+    tmp = _tmp_resdir({"CLEAN": dict(clean)})
+
+    # dry-run first: must not stamp
+    G.run(dry_run=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    rec = _reload(tmp, "CLEAN")
+    assert "numeric_gate" not in rec and "computed" not in rec, \
+        f"dry-run wrote fields into the record: {sorted(rec)}"
+
+    # enforce: must stamp gate + reasons + the computed block
+    G.run(dry_run=False, enforce=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    rec = _reload(tmp, "CLEAN")
+    assert rec.get("numeric_gate") == "PASS", rec.get("numeric_gate")
+    assert rec.get("numeric_gate_reasons") == [], rec.get("numeric_gate_reasons")
+    comp = rec.get("computed") or {}
+    assert comp.get("rr_ratio") == 2.0 and comp.get("expected_return_pct") == 40.0 \
+        and comp.get("floor_distance_pct") == 20.0, comp
+    assert rec.get("risk_reward") == "roughly 2:1", "a NON-divergent prose ratio must NOT be rewritten"
+    assert "risk_reward_prose_orig" not in rec
+    print(f"PASS enforce stamp: numeric_gate={rec['numeric_gate']} | computed={comp} | prose untouched")
+
+
+def test_enforce_prose_rewrite_preserves_orig():
+    """PROSE_RR_KILLED (asserted 7:1 vs computed 2:1) must rewrite risk_reward to the computed
+    display string and preserve the original under risk_reward_prose_orig — idempotently (a second
+    enforce pass must not clobber the true original)."""
+    orig_prose = "a compelling 7:1 reward-to-risk skew"
+    rec = {"symbol": "PROSY", "valuation": {"live_price": 100.0, "price_currency": "USD",
+                                             "base_fv_px": 140.0, "bear_px": 80.0, "bull_px": 170.0},
+           "catalyst_status": "PENDING_HARD", "risk_reward": orig_prose}
+    tmp = _tmp_resdir({"PROSY": rec})
+    G.run(dry_run=False, enforce=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    out = _reload(tmp, "PROSY")
+    assert out.get("numeric_gate") == "WARN", out.get("numeric_gate")
+    assert any(r.startswith("PROSE_RR_KILLED") for r in out["numeric_gate_reasons"]), out["numeric_gate_reasons"]
+    assert out.get("risk_reward_prose_orig") == orig_prose, out.get("risk_reward_prose_orig")
+    assert out["risk_reward"] == "+40% to base 140 vs -20% to bear 80 => 2:1", out["risk_reward"]
+
+    # second pass: the rewritten string parses as 2:1 == computed -> no re-kill, orig stays the ORIGINAL
+    G.run(dry_run=False, enforce=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    out2 = _reload(tmp, "PROSY")
+    assert out2.get("risk_reward_prose_orig") == orig_prose, \
+        f"second enforce pass clobbered the preserved original: {out2.get('risk_reward_prose_orig')}"
+    assert out2["risk_reward"] == out["risk_reward"]
+    print(f"PASS prose rewrite: '{out['risk_reward']}' | _orig preserved verbatim across re-runs")
+
+
+def test_final_downgrades_reject_to_exclude():
+    """--final (the post-repair-batch sweep): a record STILL REJECTing downgrades to
+    EXCLUDE_ELIGIBILITY with FINAL_DOWNGRADE_AFTER_REPAIR appended — the pipeline never wedges on
+    an un-repairable record. Without --final the same record must stay a plain REJECT."""
+    bad = {"symbol": "BROKEN", "valuation": {"live_price": 10.0, "price_currency": "USD",
+                                              "base_fv_px": 600.0}}   # 60x live -> G3_FV_IMPLAUSIBLE
+    tmp = _tmp_resdir({"BROKEN": dict(bad)})
+    G.run(dry_run=False, enforce=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    out = _reload(tmp, "BROKEN")
+    assert out.get("numeric_gate") == "REJECT", out.get("numeric_gate")
+    assert "FINAL_DOWNGRADE_AFTER_REPAIR" not in out["numeric_gate_reasons"]
+
+    G.run(dry_run=False, enforce=True, final=True, legacy=True, offline=True, res_dir=tmp, live_quotes={})
+    out = _reload(tmp, "BROKEN")
+    assert out.get("numeric_gate") == "EXCLUDE_ELIGIBILITY", out.get("numeric_gate")
+    assert "FINAL_DOWNGRADE_AFTER_REPAIR" in out["numeric_gate_reasons"], out["numeric_gate_reasons"]
+    print(f"PASS final downgrade: REJECT -> {out['numeric_gate']} | reasons={out['numeric_gate_reasons']}")
+
+
+def test_enforce_carried_record_keeps_prose():
+    """A carried record keeps its vintage prose even when the asserted ratio diverges (the narrative
+    was written at an OLDER price — drift is expected, not a defect); computed{} is still restamped
+    from the fresh price (here: rescued via the live-quotes injection, like the FMP fetch would)."""
+    rec = {"symbol": "CARR", "carried": True, "carried_from": "2026-06-28",
+           "valuation": {"live_price": None, "price_currency": "USD",
+                          "base_fv_px": 140.0, "bear_px": 80.0, "bull_px": 170.0},
+           "catalyst_status": "PENDING_HARD",
+           "risk_reward": "a compelling 7:1 reward-to-risk skew"}
+    tmp = _tmp_resdir({"CARR": rec})
+    G.run(dry_run=False, enforce=True, legacy=True, offline=True, res_dir=tmp,
+          live_quotes={"CARR": 100.0})   # the fresh price the FMP fetch would supply
+    out = _reload(tmp, "CARR")
+    assert out["risk_reward"] == "a compelling 7:1 reward-to-risk skew", \
+        f"carried prose was rewritten: {out['risk_reward']}"
+    assert "risk_reward_prose_orig" not in out
+    comp = out.get("computed") or {}
+    assert comp.get("rr_ratio") == 2.0 and comp.get("expected_return_pct") == 40.0, \
+        f"computed{{}} must be restamped from the FRESH price (100.0): {comp}"
+    assert out.get("numeric_gate") is not None   # the verdict itself is still stamped
+    assert any(r.startswith("PROSE_RR_KILLED") for r in out["numeric_gate_reasons"]), \
+        "the divergence is still RECORDED in reasons — only the rewrite is skipped"
+    print(f"PASS carried record: prose kept verbatim | computed restamped from fresh px "
+          f"(rr={comp['rr_ratio']}) | gate={out['numeric_gate']}")
+
+
 def main():
     tests = [test_hnr1_de_thin_floor_excludes, test_hnr1_de_legacy_synthesis_recovers_base_fv,
              test_kbr_missing_price_rejects_only_when_fetch_also_fails, test_aauc_fabricated_price_rejects_on_reconcile,
              test_implied_currency_dual_listing_mismatch, test_ordering_and_plausibility_bands,
-             test_clean_record_passes]
+             test_clean_record_passes,
+             test_enforce_stamps_records, test_enforce_prose_rewrite_preserves_orig,
+             test_final_downgrades_reject_to_exclude, test_enforce_carried_record_keeps_prose]
     failed = 0
     for t in tests:
         try:

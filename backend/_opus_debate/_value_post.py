@@ -16,9 +16,6 @@ Usage:
 import json
 import os
 import sys
-import math
-import statistics
-from datetime import datetime as _dt
 from pathlib import Path
 
 _HERE = os.path.dirname(os.path.abspath(__file__))      # .../backend/_opus_debate
@@ -50,49 +47,26 @@ def load():
     return apx, gin
 
 
+# ───────────────────────── shared market blocks (moved to _post_common 2026-07-11) ─────────────────────────
+# live_quotes / weekly_logrets / get_market / stress_block / corr_block / exits_block now live in
+# _post_common as book-agnostic pure functions (value-book-parity guards for the regime book). The
+# wrappers below bind THIS book's specifics — FMP fetcher, 760d chart window, _value_post_cache.json,
+# bear_fv_px getter, XLY consumer beta, thesis_break_px getter — so behavior is byte-identical.
+
 def live_quotes(symbols):
     """Batch quotes incl. yearHigh/yearLow (FMP stable batch-quote, comma symbols, chunked 50)."""
-    out = {}
-    for i in range(0, len(symbols), 50):
-        rows = fmp("batch-quote", {"symbols": ",".join(symbols[i:i + 50])}) or []
-        for q in rows:
-            s = q.get("symbol")
-            if s:
-                out[s] = {"price": q.get("price"), "yearHigh": q.get("yearHigh"), "yearLow": q.get("yearLow")}
-    return out
+    return _pc.live_quotes(fmp, symbols)
 
 
 def weekly_logrets(chart):
     """Resample an ascending OHLCV chart to the last close of each ISO week; return {YYYY-WW: logret}."""
-    byweek = {}
-    for row in chart or []:
-        d, c = row.get("date"), (row.get("adjClose") or row.get("close"))
-        if not d or not isinstance(c, (int, float)) or c <= 0:
-            continue
-        try:
-            y, w, _ = _dt.strptime(d[:10], "%Y-%m-%d").isocalendar()
-        except Exception:
-            continue
-        byweek[f"{y}-{w:02d}"] = c                       # ascending chart -> last close in the week wins
-    keys = sorted(byweek)
-    return {keys[i]: math.log(byweek[keys[i]] / byweek[keys[i - 1]])
-            for i in range(1, len(keys)) if byweek[keys[i - 1]] > 0}
+    return _pc.weekly_logrets(chart)
 
 
 def get_market(quote_syms, corr_syms, offline):
     """Fetch (or, --offline, reuse cached) live quotes + 2y weekly log-returns. Caches once for idempotency."""
-    if offline and CACHE_F.exists():
-        c = json.load(open(CACHE_F, encoding="utf-8"))
-        return c.get("quotes", {}), c.get("weekly_rets", {}), c.get("asof", "")
-    quotes = live_quotes(quote_syms)
-    wr = {}
-    for s in corr_syms:
-        r = weekly_logrets(get_chart(s, days=760))
-        if r:
-            wr[s] = r
-    asof = _dt.now().strftime("%Y-%m-%d")
-    json.dump({"asof": asof, "quotes": quotes, "weekly_rets": wr}, open(CACHE_F, "w", encoding="utf-8"))
-    return quotes, wr, asof
+    return _pc.get_market(quote_syms, corr_syms, offline, CACHE_F,
+                          quotes_fn=live_quotes, chart_fn=lambda s: get_chart(s, days=760))
 
 
 # ───────────────────────── 8b — skeptic kill-tier consumption (fork b: REFUTED demotes) ─────────────────────────
@@ -191,102 +165,22 @@ def stamp_entry_plans(picks, quotes):
 
 
 def exits_block(picks, quotes):
-    """Fix 5d — thesis-break exit levels, sanity-checked against live price."""
-    out = {}
-    for p in picks:
-        px = (quotes.get(p["symbol"]) or {}).get("price")
-        tb = p.get("thesis_break_px")
-        valid = isinstance(tb, (int, float)) and isinstance(px, (int, float)) and 0 < tb < px
-        out[p["symbol"]] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
-                            "review_trigger": "weekly refresh OR close < thesis_break_px"}
-        if tb and not valid:
-            print(f"WARN exits: {p['symbol']} thesis_break_px={tb} fails sanity vs px={px}")
-    return out
+    """Fix 5d — thesis-break exit levels, sanity-checked against live price (shared; tb = thesis_break_px)."""
+    return _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"))
 
 
 # ───────────────────────── Fix 1 — market-based stress ─────────────────────────
 def stress_block(picks, weights, quotes, asof):
-    rows, w_lo, w_rec, w_bear, any_bear = [], 0.0, 0.0, 0.0, False
-    for p in picks:
-        s = p["symbol"]
-        q = quotes.get(s) or {}
-        px, lo, bear = q.get("price"), q.get("yearLow"), p.get("bear_fv_px")
-        ok = isinstance(px, (int, float)) and isinstance(lo, (int, float)) and px > 0
-        w = weights.get(s, 0)
-        r_lo = (lo / px - 1) if ok else 0.0
-        r_rec = (lo * 0.85 / px - 1) if ok else 0.0
-        r_bear = (bear / px - 1) if (isinstance(px, (int, float)) and isinstance(bear, (int, float)) and px > 0) else None
-        w_lo += w * r_lo
-        w_rec += w * r_rec
-        if r_bear is not None:
-            w_bear += w * r_bear
-            any_bear = True
-        rows.append({"symbol": s, "price": px, "yr_low": lo,
-                     "to_52w_low_pct": round(r_lo * 100, 1), "recession_pct": round(r_rec * 100, 1),
-                     "cro_bear_pct": round(r_bear * 100, 1) if r_bear is not None else None})
-    bear_invalid = (not any_bear) or (w_bear > 0)         # no bear FVs yet, or a "bear case" above spot
-    published = w_rec if bear_invalid else min(w_rec, w_bear)
-    return {"asof": asof, "basket_to_52w_lows_pct": round(w_lo * 100, 1),
-            "recession_stress_pct": round(w_rec * 100, 1),
-            "cro_bear_weighted_pct": round(w_bear * 100, 1) if any_bear else None,
-            "bear_case_invalid": bool(bear_invalid),
-            "published_downside_pct": round(published * 100, 1),
-            "per_name": rows,
-            "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% "
-                    "(recession). cro_bear is the agents' own adverse SoP (bear_fv_px); when missing or "
-                    "implying upside it is flagged invalid and the published downside is the market-based "
-                    "recession stress."}
+    """Shared market-based stress; THIS book's bear leg is the CRO's adverse SoP (bear_fv_px)."""
+    return _pc.stress_block(picks, weights, quotes, asof,
+                            bear_px=lambda p: p.get("bear_fv_px"), bear_label="bear_fv_px")
 
 
 # ───────────────────────── Fix 4 — measured correlation ─────────────────────────
-def _pearson(ra, rb):
-    common = sorted(set(ra) & set(rb))
-    if len(common) < 60:
-        return None
-    try:
-        return statistics.correlation([ra[k] for k in common], [rb[k] for k in common])
-    except Exception:
-        return None
-
-
-def _beta(rs, rm):
-    if not rs or not rm:
-        return None
-    common = sorted(set(rs) & set(rm))
-    if len(common) < 60:
-        return None
-    try:
-        vm = statistics.variance([rm[k] for k in common])
-        return statistics.covariance([rs[k] for k in common], [rm[k] for k in common]) / vm if vm > 0 else None
-    except Exception:
-        return None
-
-
 def corr_block(syms, weekly_rets, weights, thresh=0.6, hard=0.7):
-    pairs, flagged = [], []
-    for i, a in enumerate(syms):
-        for b in syms[i + 1:]:
-            c = _pearson(weekly_rets.get(a) or {}, weekly_rets.get(b) or {})
-            if c is None:
-                continue
-            pairs.append({"a": a, "b": b, "corr": round(c, 2)})
-            if c >= thresh:
-                cw = weights.get(a, 0) + weights.get(b, 0)
-                flagged.append({"a": a, "b": b, "corr": round(c, 2),
-                                "combined_weight_pct": round(cw * 100, 1),
-                                "breach": bool(c >= hard and cw > 0.16)})
-    mkt = weekly_rets.get("XLY")
-    betas = {}
-    for s in syms:
-        b = _beta(weekly_rets.get(s), mkt)
-        if b is not None:
-            betas[s] = round(b, 2)
-    avg = round(sum(p["corr"] for p in pairs) / len(pairs), 2) if pairs else None
-    return {"window": "2y weekly log returns", "avg_pairwise": avg, "n_pairs": len(pairs),
-            "max_pair": max(pairs, key=lambda p: p["corr"]) if pairs else None,
-            "flagged_pairs": flagged, "consumer_beta_xly": betas,
-            "correlation_breach": any(f.get("breach") for f in flagged),
-            "fx_note": "EU names in local ccy; correlations unadjusted for FX."}
+    """Shared pairwise correlation + betas; THIS book's benchmark is XLY (consumer_beta_xly)."""
+    return _pc.corr_block(syms, weekly_rets, weights, beta_symbol="XLY",
+                          beta_key="consumer_beta_xly", thresh=thresh, hard=hard)
 
 
 # ───────────────────────── Fix 7 — cross-surface forensic gate sync ─────────────────────────
@@ -334,10 +228,7 @@ def main():
     stamp_moat_erosion(picks, gin)                          # moat terminal-erosion teeth (additive)
     w_prov = build_weights(apx, picks)                      # provisional (no corr caps)
     corr = corr_block(syms, weekly_rets, w_prov)            # fix 4 (provisional, for breach detection)
-    breach_caps = [{"names": [f["a"], f["b"]], "max_units": 1.5, "axis": "correlation"}
-                   for f in corr.get("flagged_pairs", []) if f.get("breach")]
-    for bc in breach_caps:
-        print(f"WARN correlation breach: {bc['names']} -> combined units capped at 1.5")
+    breach_caps = _pc.corr_breach_caps(corr, max_units=1.5)   # shared: breach pairs -> extra_caps (+ WARN print)
     weights = build_weights(apx, picks, extra_caps=breach_caps)   # fix 5 (final, honors breaches)
     corr = corr_block(syms, weekly_rets, weights)                 # recompute combined-weight w/ final weights
     _flagged = {s for f in corr.get("flagged_pairs", []) for s in (f["a"], f["b"])}
