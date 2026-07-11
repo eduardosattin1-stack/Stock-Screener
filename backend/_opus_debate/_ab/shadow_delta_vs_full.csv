@@ -1,0 +1,9 @@
+symbol,verdict_delta,verdict_full,conv_delta,conv_full,vconv_delta,vconv_full,catalyst_delta,catalyst_full,base_fv_delta,base_fv_full,bear_delta,bear_full,fv_divergence_pct,escalate_delta
+1698.HK,B,B,3,3,4,4,FIRED,FIRED,46,46,34,30,0.0,False
+BAH,B,B,3,3,3,3,SOFT_EXTENDED,SOFT_EXTENDED,,73,,50,,False
+CTSH,B,B,3,3,3,3,FIRED,FIRED,,54,,37,,False
+HNR1.DE,B,B,3,3,4,4,SOFT_EXTENDED,SOFT_EXTENDED,265,260,220,210,1.9,False
+NTES,B,B,3,3,4,4,SOFT_EXTENDED,SOFT_EXTENDED,,155,,110,,False
+THC,B,B,3,3,3,3,SOFT_EXTENDED,SOFT_EXTENDED,,228,,186,,False
+UHS,B,B,3,3,3,3,SOFT_EXTENDED,SOFT_EXTENDED,,208,,138,,False
+ZTS,B,B,3,3,3,3,SOFT_EXTENDED,SOFT_EXTENDED,,96,,65,,False
