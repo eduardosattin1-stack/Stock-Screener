@@ -61,14 +61,15 @@ Set-Location $repo
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { "FATAL: claude CLI not on PATH" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "claude CLI not on PATH"; exit 1 }
 if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "SKILL.md missing"; exit 1 }
 
-# FRESHNESS GUARD (2026-07-11): a manual mid-week run counts as that week's refresh — if the
+# FRESHNESS GUARD (2026-07-11): a manual mid-week run counts as that week's refresh - if the
 # regime apex was published fewer than 4 days ago, skip instead of double-charging the week
 # (the 2026-07-11 Friday run would otherwise re-run on Sunday for zero new information).
-# Override: set SPECULAIR_FORCE=1 to run regardless.
+# Override: set SPECULAIR_FORCE=1 to run regardless. ASCII ONLY in this file: it has no BOM,
+# so PowerShell 5.1 reads it as ANSI and UTF-8 punctuation decodes into string-breaking quotes.
 if ((Test-Path $apex) -and ($env:SPECULAIR_FORCE -ne "1")) {
     $ageDays = ((Get-Date) - (Get-Item $apex).LastWriteTime).TotalDays
     if ($ageDays -lt 4) {
-        "SKIPPED: regime apex is only {0:N1} days old (< 4d) — this week's refresh already ran. Set SPECULAIR_FORCE=1 to override." -f $ageDays | Tee-Object -FilePath $log -Append
+        "SKIPPED: regime apex is only {0:N1} days old (under 4d) - this week's refresh already ran. Set SPECULAIR_FORCE=1 to override." -f $ageDays | Tee-Object -FilePath $log -Append
         exit 0
     }
 }
