@@ -61,6 +61,18 @@ Set-Location $repo
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { "FATAL: claude CLI not on PATH" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "claude CLI not on PATH"; exit 1 }
 if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Object -FilePath $log -Append; Set-Content -Path $flag -Value "SKILL.md missing"; exit 1 }
 
+# FRESHNESS GUARD (2026-07-11): a manual mid-week run counts as that week's refresh — if the
+# regime apex was published fewer than 4 days ago, skip instead of double-charging the week
+# (the 2026-07-11 Friday run would otherwise re-run on Sunday for zero new information).
+# Override: set SPECULAIR_FORCE=1 to run regardless.
+if ((Test-Path $apex) -and ($env:SPECULAIR_FORCE -ne "1")) {
+    $ageDays = ((Get-Date) - (Get-Item $apex).LastWriteTime).TotalDays
+    if ($ageDays -lt 4) {
+        "SKIPPED: regime apex is only {0:N1} days old (< 4d) — this week's refresh already ran. Set SPECULAIR_FORCE=1 to override." -f $ageDays | Tee-Object -FilePath $log -Append
+        exit 0
+    }
+}
+
 # One-time retirement hygiene (idempotent, best-effort): strip the retired STEP 3C
 # DISRUPTOR block from the local SKILL.md BEFORE the agent reads it (writes a .bak_*
 # beside it; no-op once clean). The prompt's disruptor-skip line below is the safety
