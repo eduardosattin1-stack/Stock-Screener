@@ -2222,6 +2222,28 @@ def fr_map_merge():
     if promoted:
         print(f"royalty/streamer promotion (lane_b -> lane_a, cash-gate bypass): {sorted(promoted)}")
 
+    # held-name union (anti-shrink-loop, clone of the disruptor's): a name in the LIVE published
+    # basket is never dropped from the debate pool by a re-screen — force lane "a" so it re-debates
+    # (exits/rotation are evaluated there, and ONLY the Director's ledger governs a drop). A held
+    # name the chain map itself dropped is WARNED, never silently vanished.
+    held = []
+    apx_pub = E.FRONTEND_DIR / "public" / "speculair_future_resources.json"
+    if apx_pub.exists():
+        try:
+            held = [p.get("symbol") for p in json.load(open(apx_pub, encoding="utf-8")).get("apex_basket", [])
+                    if isinstance(p, dict) and p.get("symbol")]
+        except Exception:
+            held = []
+    for s in held:
+        if s in keep:
+            if cands[s].get("lane") != "a":
+                cands[s]["lane"] = "a"
+                cands[s]["gates"].setdefault("funded_solvency", "not_computed_held_union")
+                print(f"held-name union: {s} forced lane_b -> lane_a (held names always re-debate)")
+        else:
+            print(f"WARN held-name union: HELD name {s} fell out of the mapped universe (dropped or "
+                  f"unscreened) — it will NOT re-debate this cycle; review it via the ledger/exits")
+
     for s, m in keep.items():
         (FR_DIR / "chain_map" / f"{s}.json").write_text(
             json.dumps({"symbol": s, **m}, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -2296,6 +2318,8 @@ def fr_map_merge():
         for cid in m.get("chains") or []:
             by_chain.setdefault(cid, {"a": 0, "b": 0})[c.get("lane", "b")] += 1
         members.append({"symbol": s, "name": c.get("name", ""), "lane": c.get("lane"),
+                        "sector": c.get("sector", ""), "industry": c.get("industry", ""),
+                        "mcap": c.get("mcap"), "price": c.get("price"), "held": s in held,
                         "chains": m.get("chains") or [], "business_model": m.get("business_model"),
                         "commodity_revenue_share": m.get("commodity_revenue_share"),
                         "physical_anchor": m.get("physical_anchor"),
@@ -2344,10 +2368,10 @@ PHYSICAL-ANCHOR RULE (the anti-Visa gate — re-verify even though the chain map
 CHAIN REGIME GATE: each row carries `chain_regime` (TAILWIND/NEUTRAL/HEADWIND from regime_state.json). A name whose PRIMARY chain is HEADWIND takes size_units <= 0.5 UNLESS you write a non-empty `headwind_justification` (why this specific name gets paid even against its chain's cycle — e.g. contracted volumes, a fixed-price offtake book, an idiosyncratic cost position). The justification is deterministically checked downstream — prose in the memo does not count, the FIELD must be non-empty.
 
 RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear ALL gates:
-1. COST-CURVE POSITION & TORQUE QUALITY — from `ebitda_margin_ttm`/`ebitda_margin_band` (cohort cost-curve proxy), `fcf_torque_10pct`, `commodity_beta_2y` and the debate's web-verified cost facts (company-reported AISC/unit-cost guidance where published — the metrics are PROXIES; when the debate found they disagree with reported costs, the debate wins). Reward: low-cost-quartile producers whose margin survives the bottom of the cycle; torque that is OPTIONALITY on top of a solvent base. Penalize: high torque that is really survival leverage (the torque x leverage quadrant); "low cost" claims the debate could not verify. TORQUE IS SYMMETRIC — a name scored up for +10% commodity torque must be survivable at -10%; say so in torque_note. For the two machine chains (robotics, quantum) this pillar reads `gm_trajectory` (the pricing-power lie detector) instead of commodity torque.
-2. CONTRACTING CYCLE & RESERVE LIFE — contract book vs spot exposure (uranium term-contract cover, IPP PPA books, equipment order backlogs — from the debate's verified facts, not narrative), reserve/resource life for producers (short-reserve names are melting assets whatever the margin), offtake counterparty quality. Reward: contracted revenue that monetizes the chain's TAILWIND regime NOW; multi-decade reserve life at low cost. Penalize: pure spot exposure dressed as a contracting story; reserve life under ~8 years without a credible replacement pipeline.
-3. CAPITAL DISCIPLINE & BALANCE SHEET — the resource sector's besetting sin. Capex history through the last cycle (did they build at the top?), buyback/dividend behavior vs the cycle, `net_funded_debt_ebitda` + `interest_coverage`, dilution history (from the dossier). Reward: countercyclical capital allocators; fortress balance sheets in the volatile chains. Penalize: serial diluters, top-of-cycle empire builders, torque-on-leverage.
-4. GROWTH-ADJUSTED VALUATION GUARD — a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. Inputs: `sop_mos_pct`, `peak_flag`/`freshness_stale` (CYCLICAL-PEAK CHEAPNESS IS THE TRAP HERE: a commodity producer on peak-cycle earnings ALWAYS screens cheap — peak_flag + a TAILWIND-regime chain near its tripwires means the cheapness is the cycle top, treat multiple compression as the base case), `ev_gp` where present. sop_mos_pct <= -40% => VETO or size_units <= 0.5 with justification. The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
+1. COST-CURVE POSITION & TORQUE QUALITY — from `ebitda_margin_ttm`/`ebitda_margin_band` (cohort cost-curve proxy), `fcf_torque_10pct`, `commodity_beta_2y` and the debate's web-verified `cost_curve_note` (company-reported AISC/unit-cost guidance where published — the metrics are PROXIES; when the note says they disagree with reported costs, the debate wins). Reward: low-cost-quartile producers whose margin survives the bottom of the cycle; torque that is OPTIONALITY on top of a solvent base. Penalize: high torque that is really survival leverage (the torque x leverage quadrant); "low cost" claims the debate could not verify. TORQUE IS SYMMETRIC — a name scored up for +10% commodity torque must be survivable at -10%; say so in torque_note. For the two machine chains (robotics, quantum) this pillar reads `gm_trajectory` (the pricing-power lie detector) instead of commodity torque.
+2. CONTRACTING CYCLE & RESERVE LIFE — contract book vs spot exposure from the row's `contract_cover` (uranium term-contract cover, IPP PPA books, equipment order backlogs — debate-verified, not narrative), the row's `reserve_life` for producers (short-reserve names are melting assets whatever the margin), offtake counterparty quality. Reward: contracted revenue that monetizes the chain's TAILWIND regime NOW; multi-decade reserve life at low cost. Penalize: pure spot exposure dressed as a contracting story; reserve life under ~8 years without a credible replacement pipeline.
+3. CAPITAL DISCIPLINE & BALANCE SHEET — the resource sector's besetting sin. The row's `capital_discipline` (capex history through the last cycle — did they build at the top?), buyback/dividend behavior vs the cycle, `net_funded_debt_ebitda` + `interest_coverage`, dilution history (from the dossier). Reward: countercyclical capital allocators; fortress balance sheets in the volatile chains. Penalize: serial diluters, top-of-cycle empire builders, torque-on-leverage.
+4. GROWTH-ADJUSTED VALUATION GUARD — a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. Inputs: `sop_mos_pct`, `peak_flag`/`freshness_stale` (CYCLICAL-PEAK CHEAPNESS IS THE TRAP HERE: a commodity producer on peak-cycle earnings ALWAYS screens cheap — peak_flag + a TAILWIND-regime chain near its tripwires means the cheapness is the cycle top, treat multiple compression as the base case). sop_mos_pct <= -40% => VETO or size_units <= 0.5 with justification. The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
 
 HARD CONSTRAINTS:
   - EXACTLY 8 apex picks, ~5 runner_ups.
@@ -2417,7 +2441,9 @@ def _fr_redebate_triggers(members):
             except Exception:
                 pass
         px_now = quotes.get(sym)
-        px_then = r.get("price") or r.get("stamped_price")
+        # fallback chain: debate-stamped price -> universe screen price (a result without a stamped
+        # price must not silently disable the +/-15% trigger for that name)
+        px_then = r.get("price") or r.get("stamped_price") or m.get("price")
         if isinstance(px_now, (int, float)) and isinstance(px_then, (int, float)) and px_then > 0:
             if abs(px_now / px_then - 1) >= 0.15:
                 redebate.add(sym); why[sym] = f"|move|>=15% ({round((px_now/px_then-1)*100)}%)"; continue
@@ -2493,6 +2519,15 @@ def fr_prep():
         g = m.get("gates", {})
         if sc:
             scan_fin = {k: sc.get(k) for k in E._SCAN_FIN_FIELDS if sc.get(k) is not None}
+            # through-cycle history rows/CAGRs (pillar 3's capex-through-the-cycle evidence — the
+            # debate can't judge "did they build at the top?" from TTM alone)
+            bh = sc.get("buffett_history") or {}
+            rows = bh.get("rows")
+            if isinstance(rows, list) and rows:
+                scan_fin["history_rows"] = [{"year": r.get("year"), "revenue_mm": r.get("revenue_mm"),
+                                             "net_income_mm": r.get("net_income_mm"), "eps": r.get("eps")} for r in rows[-6:]]
+                if isinstance(bh.get("cagrs"), dict):
+                    scan_fin["history_cagrs"] = bh["cagrs"]
         else:
             scan_fin = {}
             for src_k, dst_k in (("rev_yoy", "revenue_yoy"), ("net_funded_debt_ebitda", "net_debt")):
@@ -2697,6 +2732,12 @@ def fr_input():
             "sop_fair_value": r.get("sop_fair_value", ""), "sop_mos_pct": sop_mos,
             "price": price,
             "risk_reward": (r.get("risk_reward", "") or "")[:220],
+            # the four debate-verified resource facts (CRO step 6 of _FR_WORKFLOW_TEMPLATE) — the
+            # rubric's pillars 1-3 score from THESE, not from narrative
+            "cost_curve_note": (r.get("cost_curve_note", "") or "")[:220],
+            "contract_cover": (r.get("contract_cover", "") or "")[:220],
+            "reserve_life": (r.get("reserve_life", "") or "")[:120],
+            "capital_discipline": (r.get("capital_discipline", "") or "")[:220],
             "debate_verdict": (r.get("verdict") or "").upper(), "debate_conviction": r.get("conviction"),
             "value_conviction": r.get("value_conviction"),
             "interrogator_score": iscore, "trajectory": r.get("trajectory", ""),
@@ -2852,11 +2893,13 @@ def fr_publish(push_gcs=False):
     PUB = E.FRONTEND_DIR / "public"
     apx = json.load(open(FR_DIR / "apex_basket_fr.json", encoding="utf-8"))
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
+    track_in = [{**p, "conviction": p.get("conviction", p.get("fr_score", 0))} for p in picks]
     try:
-        append_decision_history("fr", apx)
+        # conviction-mapped picks: the history ledger reads `conviction`, the Director emits
+        # `fr_score` — passing raw picks would log conviction=None on every FR row
+        append_decision_history("fr", {**apx, "apex_basket": track_in})
     except Exception as _e:
         print(f"WARN: fr decision-history capture failed ({_e})")
-    track_in = [{**p, "conviction": p.get("fr_score", 0)} for p in picks]
     scan = gcs_io.gcs_read_json("scans/latest_global.json") or {}
     scan_syms = {s.get("symbol") for s in scan.get("stocks", []) if s.get("symbol")}
     off_scan = [p["symbol"] for p in picks if p["symbol"] not in scan_syms]
@@ -2941,21 +2984,27 @@ def fr_publish(push_gcs=False):
         "book_expected_return_pct": round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None,
         "book_horizon_months": round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None,
     }
-    # BENCHMARK LINE: the null hypothesis is a closet XME/URA basket — measure it (anchors persist
-    # in the tracking file, measured from first-stamp forward, no back-fill; label is honest).
+    # BENCHMARK LINE: the null hypothesis is a closet XME/URA basket — measure it. Anchors persist
+    # in a SIDECAR (never the tracking file: _update_apex_tracking rewrites that file and wipes
+    # foreign keys, which would silently re-anchor the benchmark to "today" on every publish).
+    # Measured from first-stamp forward, no back-fill; label is honest.
     bench = {}
     try:
-        _tr = json.load(open(tp, encoding="utf-8")) if tp.exists() else {}
+        anch_f = FR_DIR / "_benchmark_anchors.json"
         _bpx = E._current_prices({"XME", "URA"})
-        _anch = _tr.get("benchmark_anchors")
+        _anch = None
+        if anch_f.exists():
+            try:
+                _anch = json.load(open(anch_f, encoding="utf-8"))
+            except Exception:
+                _anch = None
         if not _anch and _bpx.get("XME") and _bpx.get("URA"):
             _anch = {"XME": _bpx["XME"], "URA": _bpx["URA"], "date": _dt.date.today().isoformat()}
-            _tr["benchmark_anchors"] = _anch
-            tp.write_text(json.dumps(_tr, indent=2), encoding="utf-8")
+            anch_f.write_text(json.dumps(_anch, indent=2), encoding="utf-8")
             print(f"benchmark anchors stamped (measured from {_anch['date']} forward): XME {_anch['XME']} URA {_anch['URA']}")
         if _anch and _bpx.get("XME") and _bpx.get("URA"):
             _bret = 50 * (_bpx["XME"] / _anch["XME"] - 1) + 50 * (_bpx["URA"] / _anch["URA"] - 1)
-            _book = _tr.get("since_inception_pct")
+            _book = ft.get("since_inception_pct")           # the returned summary carries it; the state file does not
             bench = {"blend": "50/50 XME+URA", "measured_from": _anch.get("date"),
                      "benchmark_return_pct": round(_bret, 2),
                      "active_return_pct": round(_book - _bret, 2) if isinstance(_book, (int, float)) else None}

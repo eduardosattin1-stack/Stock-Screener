@@ -131,16 +131,26 @@ def stamp_gate_caps(picks, gin):
             regime = json.load(open(REGIME_STATE_F, encoding="utf-8"))
         except Exception:
             regime = {}
+    if not regime:
+        # fail LOUD, not open: without the regime read the HEADWIND backstop is disabled for the run
+        print("WARN regime cap: regime_state.json missing/unreadable — the HEADWIND size backstop is "
+              "DISABLED this run (refresh FUTURE_RESOURCES_REGIME.md per its protocol)")
     for p in picks:
         g = gin.get(p["symbol"], {})
         chains = p.get("chains") or g.get("chains") or []
-        states = [(regime.get(c) or {}).get("state") for c in chains]
-        headwind = "HEADWIND" in states
+        # PRIMARY-chain scope — the same contract the Director operates under (FR_DIRECTOR_PROMPT
+        # gates on the PRIMARY chain; fr_grade_input's chain_regime is primary-only). An any-chain
+        # cap would silently halve a 2-chain pick the Director sized correctly (and was told to
+        # leave headwind_justification empty for). Secondary-chain headwinds are surfaced as a
+        # non-capping flag for the card.
+        prim = p.get("chain") or (chains[0] if chains else None)
+        headwind = (regime.get(prim) or {}).get("state") == "HEADWIND"
+        any_headwind = any((regime.get(c) or {}).get("state") == "HEADWIND" for c in chains)
         justified = bool(str(p.get("headwind_justification") or "").strip())
-        p["headwind_flag"] = bool(headwind)
+        p["headwind_flag"] = bool(any_headwind)
         p["headwind_capped"] = bool(headwind and not justified)
         if headwind and not justified:
-            print(f"WARN regime cap: {p['symbol']} sits in a HEADWIND chain with no written "
+            print(f"WARN regime cap: {p['symbol']} primary chain {prim} is HEADWIND with no written "
                   f"justification -> size_units clamped to 0.5")
         p["growth_capex_fcf_negative"] = bool(p.get("growth_capex_fcf_negative",
                                                     g.get("growth_capex_fcf_negative")))
@@ -210,43 +220,65 @@ def build_weights(apx, picks, extra_caps=None):
 
 
 # ───────────────────────── chain caps (deterministic backstop, clone of enforce_theme_caps) ─────────────────────────
-def enforce_chain_caps(apx, picks):
-    """From each pick's chains[], deterministically verify <=3 names AND <=30% weight per chain.
-    On breach append {names, max_units, axis:"chain:<id>"} to extra_caps and let build_weights
-    rebuild — the deterministic backstop to the Director's chain-concentration promise. A 2-chain
-    name (e.g. UUUU uranium+rare-earth) counts toward BOTH. Returns the extra caps list.
+def _pick_chains(p, gin):
+    """A pick's chains, with the grade-input fallback — the Director dropping the field is exactly
+    the misbehavior the deterministic backstop exists to catch, so the backstop must see it."""
+    return p.get("chains") or ((gin.get(p.get("symbol"), {}) or {}).get("chains")) or []
 
-    FIXED-POINT CAP (improves on _disruptor_post's one-shot version, which capped to 30% of the OLD
-    total — but capping shrinks the denominator, so the chain could still exceed 30% after
-    renormalization): the post-normalization share equals the target exactly when
-        cap_units = MAX_W/(1-MAX_W) * units_OUTSIDE_the_chain
-    (x/(x+other) = MAX_W  =>  x = MAX_W/(1-MAX_W)*other). The caller iterates for the
-    overlapping-chain case (capping chain A changes 'other' for chain B)."""
+
+def _chain_breaches(picks, gin, tol=1e-9):
+    """Detect chains breaching <=MAX_NAMES / <=MAX_WEIGHT on the CURRENT effective units.
+    Returns ({chain: {names, share, n}}, units, total). Detection only — no prints, no caps."""
     units = {p["symbol"]: p.get("size_units_effective", p.get("size_units") or 1.0) for p in picks}
-    total_units = sum(units.values()) or 1.0
+    total = sum(units.values()) or 1.0
     members_by_chain = {}
     for p in picks:
-        for c in (p.get("chains") or []):
+        for c in _pick_chains(p, gin):
             members_by_chain.setdefault(c, []).append(p["symbol"])
-    extra = []
+    out = {}
     for c, names in members_by_chain.items():
         names = [s for s in names if s in units]
         if not names:
             continue
-        chain_units = sum(units[s] for s in names)
-        other_units = total_units - chain_units
-        chain_w = chain_units / total_units
-        cap_units = round(MAX_WEIGHT_PER_CHAIN / (1 - MAX_WEIGHT_PER_CHAIN) * other_units, 3)
-        breach_weight = chain_w > MAX_WEIGHT_PER_CHAIN + 1e-9
-        breach_count = len(names) > MAX_NAMES_PER_CHAIN
-        if breach_weight or breach_count:
-            why = []
-            if breach_count:
-                why.append(f"{len(names)} names (>{MAX_NAMES_PER_CHAIN})")
-            if breach_weight:
-                why.append(f"{round(chain_w*100,1)}% weight (>{int(MAX_WEIGHT_PER_CHAIN*100)}%)")
-            print(f"WARN chain cap: chain:{c} carries {names} — {', '.join(why)} -> combined units capped at {cap_units}")
-            extra.append({"names": names, "max_units": cap_units, "axis": f"chain:{c}"})
+        cu = sum(units[s] for s in names)
+        if cu / total > MAX_WEIGHT_PER_CHAIN + tol or len(names) > MAX_NAMES_PER_CHAIN:
+            out[c] = {"names": names, "share": cu / total, "n": len(names)}
+    return out, units, total
+
+
+def enforce_chain_caps(apx, picks, gin):
+    """Deterministic backstop to the Director's chain-concentration promise (<=3 names AND <=30%
+    weight per chain; a 2-chain name counts toward BOTH). Solves all breaching chains JOINTLY:
+    with k breaching chains, every capped chain lands at exactly MAX_W post-normalization when
+        cap_i = MAX_W * outside_units / (1 - k*MAX_W)
+    where outside_units = units of picks in NO breaching chain (exact for disjoint chains; the
+    caller re-checks once for the overlapping case). Independently-solved caps under-tighten —
+    each treats the other breaching chain as 'outside' — leaving both above 30% after rebuild.
+    Genuinely infeasible geometry (k*MAX_W >= 1, or zero outside units) is WARNED, never capped:
+    a cap of 0 would zero-collapse every weight in the book."""
+    breaching, units, total = _chain_breaches(picks, gin)
+    if not breaching:
+        return []
+    k = len(breaching)
+    in_breach = {s for b in breaching.values() for s in b["names"]}
+    outside_units = sum(u for s, u in units.items() if s not in in_breach)
+    denom = 1 - k * MAX_WEIGHT_PER_CHAIN
+    if denom <= 1e-9 or outside_units <= 1e-9:
+        print(f"WARN chain cap: {k} chain(s) breach {sorted(breaching)} but the geometry makes "
+              f"<={int(MAX_WEIGHT_PER_CHAIN*100)}%-per-chain INFEASIBLE (k*cap >= 100%, or no "
+              f"outside names) — NOT capped (a zero cap would collapse the book); operator review")
+        return []
+    extra = []
+    for c, b in sorted(breaching.items()):
+        cap_units = round(MAX_WEIGHT_PER_CHAIN * outside_units / denom, 3)
+        why = []
+        if b["n"] > MAX_NAMES_PER_CHAIN:
+            why.append(f"{b['n']} names (>{MAX_NAMES_PER_CHAIN})")
+        if b["share"] > MAX_WEIGHT_PER_CHAIN + 1e-9:
+            why.append(f"{round(b['share']*100,1)}% weight (>{int(MAX_WEIGHT_PER_CHAIN*100)}%)")
+        print(f"WARN chain cap: chain:{c} carries {b['names']} — {', '.join(why)} -> combined units "
+              f"capped at {cap_units} (joint solve, k={k})")
+        extra.append({"names": b["names"], "max_units": cap_units, "axis": f"chain:{c}"})
     return extra
 
 
@@ -435,26 +467,35 @@ def main():
     for bc in breach_caps:
         print(f"WARN correlation breach: {bc['names']} -> combined units capped at 1.5")
     build_weights(apx, picks, extra_caps=breach_caps)
-    # Deterministic chain backstop — TWO bounded passes, never a convergence loop: with few chains
-    # the constraint set is GEOMETRICALLY INFEASIBLE (three one-chain groups cannot all hold <=30%
-    # of 100%), and iterating would spiral every cap toward zero. Pass 1 caps the chains that breach
-    # on the PROVISIONAL weights at the exact fixed point; pass 2 may only TIGHTEN a pass-1 cap
-    # (two simultaneously-capped chains shift each other's outside-units). A chain that breaches
-    # ONLY as a consequence of another chain's cap is geometry, not concentration — WARN, never cap.
-    chain_caps = enforce_chain_caps(apx, picks)
-    capped_axes = {c["axis"] for c in chain_caps}
+    # Deterministic chain backstop — joint closed-form solve, never a convergence loop: all chains
+    # breaching on the provisional weights are capped TOGETHER (independently-solved caps each treat
+    # the other breaching chain as "outside" and under-tighten — both land above 30% after rebuild).
+    # The solve is exact for disjoint chains; ONE bounded re-check handles overlap (a 2-chain name
+    # shifts another cap's outside-units) and may only TIGHTEN an already-capped axis. A chain that
+    # breaches ONLY as a consequence of other chains' caps is geometry, not concentration — WARN,
+    # never cap (with few chains <=30%-per-chain is infeasible; iterating would spiral caps to zero).
+    chain_caps = enforce_chain_caps(apx, picks, gin)
     if chain_caps:
         build_weights(apx, picks, extra_caps=breach_caps + chain_caps)
         by_axis = {c["axis"]: c for c in chain_caps}
-        for c in enforce_chain_caps(apx, picks):
-            if c["axis"] in capped_axes and c["max_units"] < by_axis[c["axis"]]["max_units"]:
-                by_axis[c["axis"]] = c                     # tighten a pass-1 cap once
-            elif c["axis"] not in capped_axes:
+        for c in enforce_chain_caps(apx, picks, gin):
+            if c["axis"] in by_axis and c["max_units"] < by_axis[c["axis"]]["max_units"]:
+                by_axis[c["axis"]] = c                     # overlap re-check: tighten capped axes only
+            elif c["axis"] not in by_axis:
                 print(f"WARN chain cap: {c['axis']} exceeds the cap only AFTER other chains were "
                       f"capped (few-chain geometry makes <=30%-per-chain infeasible) — operator "
                       f"review; NOT capped to avoid a spiral to zero")
         chain_caps = sorted(by_axis.values(), key=lambda c: c["axis"])
     weights = build_weights(apx, picks, extra_caps=breach_caps + chain_caps)   # final (honors all caps)
+    # residual audit on the FINAL weights — a share still above the cap means overlapping or
+    # infeasible geometry survived the bounded passes; loud, distinct from the cap WARNs above.
+    # Tolerance 0.2pp: caps and per-name units round to 3 decimals (~0.05pp share noise); the
+    # failure this audit exists for (an under-tightened joint breach) sits whole points above.
+    residual = {c: b for c, b in _chain_breaches(picks, gin)[0].items()
+                if b["share"] > MAX_WEIGHT_PER_CHAIN + 2e-3}
+    for c, b in sorted(residual.items()):
+        print(f"WARN chain cap RESIDUAL: chain:{c} still at {round(b['share']*100, 1)}% "
+              f"({b['n']} names) on FINAL weights — overlapping/infeasible geometry; operator review")
     corr = corr_block(syms, weekly_rets, weights)          # recompute combined-weight w/ final weights
     _flagged = {s for f in corr.get("flagged_pairs", []) for s in (f["a"], f["b"])}
     for p in picks:
@@ -462,10 +503,14 @@ def main():
     stamp_entry_plans(picks, quotes)
     stamp_entry_posture(picks)
     stamp_wheel(picks, "fr", quotes)
-    # chain_exposure (final weights by chain; a 2-chain name counts toward both)
+    for p in picks:
+        p.setdefault("conviction", p.get("fr_score"))      # ledger/decision-history conviction key
+    # chain_exposure (final weights by chain; a 2-chain name counts toward both) — same chain
+    # resolution as the cap enforcement (grade-input fallback), so the published exposure can never
+    # disagree with what the backstop capped.
     chain_exposure = {}
     for p in picks:
-        for c in (p.get("chains") or []):
+        for c in _pick_chains(p, gin):
             chain_exposure[c] = round(chain_exposure.get(c, 0.0) + weights.get(p["symbol"], 0) * 100, 2)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)
