@@ -78,7 +78,19 @@ def live_price_of(r):
 
 
 def main(exclude_held=False):
-    board = json.load(open(SRC, encoding="utf-8"))["candidates"]
+    src_doc = json.load(open(SRC, encoding="utf-8"))
+    board = src_doc["candidates"]
+    # freshness check (warn-only, never fatal): the board is swept bi-weekly; a stale source
+    # usually means the Monday catalyst-watch sweep was missed or rolled back
+    src_generated = src_doc.get("generated")
+    try:
+        src_age_days = (datetime.date.today() - datetime.date.fromisoformat(src_generated)).days
+    except (TypeError, ValueError):
+        src_age_days = round((datetime.datetime.now() - datetime.datetime.fromtimestamp(
+            os.path.getmtime(SRC))).total_seconds() / 86400)
+    if src_age_days > 4:
+        print(f"WARN: {os.path.basename(SRC)} is {src_age_days} days old "
+              f"(generated={src_generated}) — sweep missed or rolled back; trading the prior board")
     window_days = round(MILESTONE_WINDOW_MONTHS * 30.4)
     entries, staging, excluded = [], [], []
 
@@ -133,6 +145,7 @@ def main(exclude_held=False):
     cands = entries + staging
 
     out = {"generated": datetime.date.today().isoformat(), "source": os.path.basename(SRC),
+           "source_generated": src_generated, "source_age_days": src_age_days,
            "count": len(cands), "entry_count": len(entries), "staging_count": len(staging),
            "milestone_window_months": MILESTONE_WINDOW_MONTHS, "tightened": tightened,
            "candidates": cands}

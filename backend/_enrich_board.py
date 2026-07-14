@@ -97,9 +97,12 @@ def main():
         rep["valuation"] = val.get(str(rep["symbol"]).upper())   # full build incl sop_components
 
     # write corrected deliverables (JSON nested + CSV flat)
-    json.dump({"count": len(nested), "generated": __import__("datetime").date.today().isoformat(), "tilt": args.tilt,
-               "candidates": nested},
-              open(DELIV_JSON, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    # atomic write (tmp + os.replace): _basket13_candidates.py reads this file the next
+    # afternoon — a reader must never see a half-written deliverable
+    with open(DELIV_JSON + ".tmp", "w", encoding="utf-8") as fh:
+        json.dump({"count": len(nested), "generated": __import__("datetime").date.today().isoformat(), "tilt": args.tilt,
+                   "candidates": nested}, fh, indent=1, ensure_ascii=False)
+    os.replace(DELIV_JSON + ".tmp", DELIV_JSON)
     df.to_csv(DELIV_CSV, index=False, encoding="utf-8-sig")
 
     # ---- generate the single-source frontend module ----
@@ -145,7 +148,10 @@ def main():
           f"export const CATALYST_DRIVER_CONCENTRATION: Record<string, number> = {json.dumps(conc_pct)};\n"
           f"export const CATALYST_BOARD_ENRICHED: Record<string, any> = {json.dumps(board, ensure_ascii=False)};\n"
           f"export const CATALYST_CANDIDATES_ENRICHED: any[] = {json.dumps(cand, ensure_ascii=False)};\n")
-    open(TS_OUT, "w", encoding="utf-8").write(ts)
+    # atomic for the same reason — the dev server may re-read the module mid-write
+    with open(TS_OUT + ".tmp", "w", encoding="utf-8") as fh:
+        fh.write(ts)
+    os.replace(TS_OUT + ".tmp", TS_OUT)
 
     n_none = sum(1 for r in nested if r.get("tier") == "NONE")
     print(f"ENRICHED {len(nested)} reports | board(non-NONE)={len(cand)} | NONE-excluded={n_none} | corrections={len(deltas)}")

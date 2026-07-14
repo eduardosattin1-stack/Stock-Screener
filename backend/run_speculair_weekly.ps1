@@ -1,13 +1,16 @@
 # run_speculair_weekly.ps1 - durable launcher for the weekly all-Opus Speculair refresh.
 #
 # WHY THIS EXISTS
-#   The Claude scheduled-task "speculair-opus-weekly" fires Sun 01:09, but the
-#   scheduled-task runtime caps each run at ~20 min of wall-clock - far short of the
-#   multi-hour debate+publish pipeline. On 2026-06-21 the run died at 01:29, right
-#   after PREP completed (141 candidates staged) but BEFORE the debate Workflow ran,
-#   so no fresh basket was published that week. This launcher runs the SAME runbook
-#   as a headless `claude -p` (print mode has no turn/time cap), so the full pipeline
-#   completes unattended - the same pattern as opus_strategist.ps1 on the gateway PC.
+#   The in-app Claude scheduled-task "speculair-opus-weekly" historically capped each
+#   run at ~20 min of wall-clock - far short of the multi-hour debate+publish pipeline.
+#   On 2026-06-21 the run died at 01:29, right after PREP completed (141 candidates
+#   staged) but BEFORE the debate Workflow ran, so no fresh basket was published that
+#   week. This launcher runs the SAME runbook as a headless `claude -p` (print mode has
+#   no turn/time cap), so the full pipeline completes unattended - the same pattern as
+#   opus_strategist.ps1 on the gateway PC.
+#   SINCE 2026-07-14 this WTS job (Sun 01:00) is the PRIMARY trigger; the in-app task
+#   was rescheduled to Tue 08:00 as a self-gated FALLBACK (same SKILL.md, same 4-day
+#   freshness gate in its STEP 0-GATE) that only runs if this Sunday job died.
 #
 # HARDENED 2026-07-01 (after the 06-28 run died at birth with a 162-byte log):
 #   1. NO `2>&1` on the native `claude` call and $ErrorActionPreference=Continue for the
@@ -86,7 +89,7 @@ catch { "WARN: skill patcher failed - relying on the prompt's disruptor-skip ins
 $basePrompt = @"
 You are running the weekly all-Opus Speculair refresh, fully unattended, in the Stock-Screener repo at $repo. You have NO memory of prior conversations.
 Read the runbook at $skill IN FULL, then execute EVERY step end-to-end:
-  STEP 1 PREP  ->  STEP 1B APEX SPECIAL-SIT LANE (catalyst-prep -> Workflow -> catalyst-seed; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 2B REGIME SKEPTIC + REGIME-POST  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 4 VERIFY + REPORT.
+  STEP 1 PREP  ->  STEP 1B B13 CATALYST DEBATE (catalyst-prep -> Workflow; catalyst-seed is RETIRED, never run it; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 2B REGIME SKEPTIC + REGIME-POST  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 4 VERIFY + REPORT.
 The DISRUPTOR LENS (old STEP 3C) is RETIRED — do NOT run any disruptor-* mode even if the runbook still mentions it; skip it silently and note the skip in the report.
 Honor every GUARD exactly: if a GUARD trips, STOP that book and report rather than publishing degraded data. Do not skip steps. Do not edit screener_v6.py / the Cloud Run scan / the frontend. When finished, print the STEP 4 summary (regime apex 10 + value apex 10 + cross-lens names + any caveats).
 MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' if every step ran (guard-stopped side books are still COMPLETED if the regime apex published), or 'RUN_OUTCOME: GUARD_STOP <one-line reason>' if a GUARD stopped the MAIN regime pipeline before publish.
@@ -120,6 +123,15 @@ try {
   }
 }
 finally {
+  if ($outcome -eq "COMPLETED") {
+    # auto-clear stale failure flags from PRIOR runs (this run recovered the cadence);
+    # only flags older than this launch - never the one this run might have just written
+    Get-ChildItem -Path $repo -Filter "FAILED_SPECULAIR_*.flag" -ErrorAction SilentlyContinue |
+      Where-Object { $_.LastWriteTime -lt $launchTime } |
+      ForEach-Object {
+        try { Remove-Item $_.FullName -Force -ErrorAction Stop; "cleared stale flag: $($_.Name)" | Tee-Object -FilePath $log -Append } catch {}
+      }
+  }
   if ($outcome -eq "GUARD_STOP") {
     $reason = if ($txt -match "RUN_OUTCOME:\s*GUARD_STOP\s*(.*)") { $Matches[1] } else { "(reason not captured)" }
     Set-Content -Path $flag -Value "GUARD_STOP: $reason`nlog: $log"
