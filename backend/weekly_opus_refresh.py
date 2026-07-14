@@ -2488,20 +2488,28 @@ def fr_publish(push_gcs=False):
         except Exception:
             pool_stats = {}
     # XME/URA BENCHMARK LINE (disruptor SMH/QQQ precedent, benchmarks swapped to the chain betas):
-    # anchors persist in the tracking file, measured from first-stamp forward — no back-fill.
+    # anchors persist in a SIDECAR, measured from first-stamp forward — no back-fill. NOT the
+    # tracking file: _update_apex_tracking rebuilds that file from a fresh state dict earlier in
+    # THIS function, so an anchor stored there is wiped and re-stamped at today's prices on every
+    # publish (benchmark pinned at ~0% forever). The book return comes from the RETURNED tracking
+    # summary — the state file carries nav/positions/history but never since_inception_pct.
     bench = {}
     try:
-        _tr = json.load(open(tp, encoding="utf-8")) if tp.exists() else {}
+        anch_f = FR_DIR / "_benchmark_anchors.json"
         _bpx = E._current_prices({"XME", "URA"})
-        _anch = _tr.get("benchmark_anchors")
+        _anch = None
+        if anch_f.exists():
+            try:
+                _anch = json.load(open(anch_f, encoding="utf-8"))
+            except Exception:
+                _anch = None
         if not _anch and _bpx.get("XME") and _bpx.get("URA"):
             _anch = {"XME": _bpx["XME"], "URA": _bpx["URA"], "date": _dt.date.today().isoformat()}
-            _tr["benchmark_anchors"] = _anch
-            tp.write_text(json.dumps(_tr, indent=2), encoding="utf-8")
+            anch_f.write_text(json.dumps(_anch, indent=2), encoding="utf-8")
             print(f"benchmark anchors stamped (measured from {_anch['date']} forward): XME {_anch['XME']} URA {_anch['URA']}")
         if _anch and _bpx.get("XME") and _bpx.get("URA"):
             _bret = 50 * (_bpx["XME"] / _anch["XME"] - 1) + 50 * (_bpx["URA"] / _anch["URA"] - 1)
-            _book = _tr.get("since_inception_pct")
+            _book = dt.get("since_inception_pct")
             bench = {"blend": "50/50 XME+URA", "measured_from": _anch.get("date"),
                      "benchmark_return_pct": round(_bret, 2),
                      "active_return_pct": round(_book - _bret, 2) if isinstance(_book, (int, float)) else None}
