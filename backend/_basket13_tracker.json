@@ -186,7 +186,11 @@
      "Thesis is mean-reversion after supply clears, not a fundamental re-rate — exit near FV 32, not open-ended"
     ]
    },
-   "entry_rationale": "Post-IPO lockup supply-clearing mean-reversion: live R:R improved to ~3.85 at $20.49 vs the $17.50 floor, and at ~$340M/day ADV it is the most executable flow trade in the pool. Staging half-weight equity; thesis is supply clearing, so exit near FV $32, not an open-ended re-rate."
+   "entry_rationale": "Post-IPO lockup supply-clearing mean-reversion: live R:R improved to ~3.85 at $20.49 vs the $17.50 floor, and at ~$340M/day ADV it is the most executable flow trade in the pool. Staging half-weight equity; thesis is supply clearing, so exit near FV $32, not an open-ended re-rate.",
+   "resolution_due": {
+    "date": "2026-07-13",
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   }
   },
   {
    "symbol": "BLCO",
@@ -232,7 +236,11 @@
      "Director must adjudicate the Forced_divest_flow dupe with MGNI"
     ]
    },
-   "entry_rationale": "BHC's 88% stake suppresses a $26.97 SOP value vs $15.65 live — R:R 2.94 with 84% of dossier edge retained. Takes the second Forced_divest seat after MGNI was passed on edge compression; staging half-weight equity, accumulation-only with limits per CRO (covered-call overlay dropped — the chain is near-dead)."
+   "entry_rationale": "BHC's 88% stake suppresses a $26.97 SOP value vs $15.65 live — R:R 2.94 with 84% of dossier edge retained. Takes the second Forced_divest seat after MGNI was passed on edge compression; staging half-weight equity, accumulation-only with limits per CRO (covered-call overlay dropped — the chain is near-dead).",
+   "resolution_due": {
+    "date": "2026-07-13",
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   }
   },
   {
    "symbol": "CELC",
@@ -276,11 +284,7 @@
     "driver_confirmed": "FDA_clinical_readout — confirmed. FLAG: same driver as AMLX and DFTX (three names, one driver) — Director cap applies; this is the strongest of the three on edge grade (H) and tradeability.",
     "conditions": []
    },
-   "entry_rationale": "Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's.",
-   "resolution_due": {
-    "date": "2026-07-10",
-    "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   "entry_rationale": "Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's."
   },
   {
    "symbol": "VRDN",
@@ -381,7 +385,7 @@
    },
    "entry_rationale": "Strongest live edge in the batch per the CRO check (+69.8% EV, payoff 3.6x) into the Q3 Anaphylm resubmission. Staging-rule equity (the thin chain cannot offer the Apr-2027+ expiries the post-resubmission window requires); 4.5% weight is jointly bound by the half-weight rule and a 1.49% risk-to-floor.",
    "resolution_due": {
-    "date": "2026-07-10",
+    "date": "2026-07-13",
     "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -523,7 +527,11 @@
      "Tolerate a possible second extension past the July 29 2026 outside date (one slip already occurred)"
     ]
    },
-   "resolution": null
+   "resolution": null,
+   "resolution_due": {
+    "date": "2026-07-13",
+    "reason": "close 22.46 <= floor 23.0"
+   }
   },
   {
    "symbol": "FUN",
@@ -2119,6 +2127,81 @@
      "ret_pct": 4.02
     }
    }
+  },
+  {
+   "date": "2026-07-13",
+   "nav": 102.452,
+   "basket_ret_pct": 2.452,
+   "seats": {
+    "GDOT": {
+     "price": 13.41,
+     "ret_pct": 5.18
+    },
+    "UNF": {
+     "price": 272.93,
+     "ret_pct": 0.06
+    },
+    "FIP": {
+     "price": 4.49,
+     "ret_pct": -1.54
+    },
+    "FIG": {
+     "price": 23.65,
+     "ret_pct": 15.42
+    },
+    "BLCO": {
+     "price": 16.21,
+     "ret_pct": 3.58
+    },
+    "CELC": {
+     "price": 103.79,
+     "ret_pct": 12.1
+    },
+    "VRDN": {
+     "price": 19.42,
+     "ret_pct": 19.07
+    },
+    "AQST": {
+     "price": 4.06,
+     "ret_pct": 1.75
+    },
+    "WVE": {
+     "price": 5.95,
+     "ret_pct": 2.94
+    },
+    "AMLX": {
+     "price": 17.41,
+     "ret_pct": 19.33
+    },
+    "AAUC": {
+     "price": 22.46,
+     "ret_pct": -4.02
+    },
+    "FUN": {
+     "price": 18.92,
+     "ret_pct": -7.98
+    },
+    "THRM": {
+     "price": 34.13,
+     "ret_pct": 0.74
+    },
+    "ZYME": {
+     "price": 24.94,
+     "ret_pct": -5.21
+    },
+    "DDL": {
+     "price": 2.24,
+     "ret_pct": 15.46
+    },
+    "LBTYK": {
+     "price": 10.54,
+     "ret_pct": -3.3
+    },
+    "LZM": {
+     "price": 3.88,
+     "ret_pct": 4.02
+    }
+   }
   }
  ],
  "watchlist": [
@@ -3002,6 +3085,50 @@
     "GERN": {
      "price": 1.56,
      "ret_pct": 21.88
+    }
+   }
+  },
+  {
+   "date": "2026-07-13",
+   "nav": 112.335,
+   "ret_pct": 12.335,
+   "n": 9,
+   "seats": {
+    "CLVT": {
+     "price": 2.29,
+     "ret_pct": 3.62
+    },
+    "BBIO": {
+     "price": 83.08,
+     "ret_pct": 24.37
+    },
+    "EYPT": {
+     "price": 14.28,
+     "ret_pct": 9.59
+    },
+    "VIR": {
+     "price": 9.72,
+     "ret_pct": 12.89
+    },
+    "PVLA": {
+     "price": 146.03,
+     "ret_pct": 22.88
+    },
+    "AVIR": {
+     "price": 4.74,
+     "ret_pct": 7.97
+    },
+    "DBVT": {
+     "price": 15.98,
+     "ret_pct": 1.78
+    },
+    "MGNI": {
+     "price": 20.41,
+     "ret_pct": 16.96
+    },
+    "GERN": {
+     "price": 1.42,
+     "ret_pct": 10.94
     }
    }
   }
