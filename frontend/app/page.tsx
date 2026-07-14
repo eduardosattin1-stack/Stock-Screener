@@ -2487,6 +2487,9 @@ export default function Dashboard(){
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
   const [disruptorApex, setDisruptorApex] = useState<any>({});
   const [expandedDisruptor, setExpandedDisruptor] = useState<Set<string>>(new Set());
+  const [frApex, setFrApex] = useState<any>({});
+  const [expandedFr, setExpandedFr] = useState<Set<string>>(new Set());
+  const [frPrices, setFrPrices] = useState<Record<string, number>>({});
   const [disruptorPrices, setDisruptorPrices] = useState<Record<string, number>>({});
 
   // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
@@ -2529,6 +2532,36 @@ export default function Dashboard(){
           .catch((e) => console.error("Error loading disruptor apex:", e));
       });
   }, []);
+
+  useEffect(() => {
+    fetch("/api/gcs/scans/speculair_future_resources.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS future-resources fetch failed"); })
+      .then((d) => { if (d) setFrApex(d); })
+      .catch(() => {
+        fetch("/speculair_future_resources.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d) setFrApex(d); })
+          .catch((e) => console.error("Error loading future resources apex:", e));
+      });
+  }, []);
+
+  // Future Resources members are commodity/AMEX names usually NOT in the loaded scan — batch-quote them.
+  useEffect(() => {
+    const syms = (frApex.apex_basket || []).map((p: any) => p && p.symbol).filter(Boolean) as string[];
+    if (!syms.length) return;
+    let cancelled = false;
+    const chunks: string[][] = [];
+    for (let i = 0; i < syms.length; i += 50) chunks.push(syms.slice(i, i + 50));
+    Promise.all(chunks.map((c) =>
+      fetch(`/api/fmp?e=batch-quote&symbols=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
+    )).then((results) => {
+      if (cancelled) return;
+      const m: Record<string, number> = {};
+      (results.flat() as any[]).forEach((q: any) => { if (q && q.symbol && typeof q.price === "number") m[String(q.symbol).toUpperCase()] = q.price; });
+      setFrPrices(m);
+    });
+    return () => { cancelled = true; };
+  }, [frApex]);
 
   // Disruptor members are usually NOT in the loaded scan (different universe) — batch-quote them.
   useEffect(() => {
@@ -3455,6 +3488,224 @@ export default function Dashboard(){
                           {Object.entries(valueApex.value_memo).map(([k, v]: [string, any]) => (
                             <div key={k}>
                               <div style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
+                              {typeof v === "string" ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
+                              ) : Array.isArray(v) ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
+                              ) : v && typeof v === "object" ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
+                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </details>
+                  )}
+
+                  {/* Speculair Future Resources — Lane A producers/royalties across six physical value chains (replaces the retired Disruptor Lens; FUTURE_RESOURCES_SPEC.md). Reads GCS live; renders an awaiting state until the first fr-publish --gcs lands. */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Future Resources
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(frApex.apex_basket || []).length} names · Lane A producers/royalties · physical-anchor rule
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The physical build-out of the future: profitable producers, royalty/streamers and equipment toll-takers across six value chains — uranium fuel cycle, copper/electrification, rare earths &amp; strategic metals, power-for-AI, robotics, quantum. Cost-curve position and symmetric commodity torque drive the score; valuation is a guard, never the driver. Every seat names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). Own NAV chain — never blended with the Apex or Value books; Lane B developers are a separate event tracker, not part of this NAV.
+                    </div>
+                    {(frApex.apex_basket || []).length === 0 && (
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
+                        Awaiting the first Lane A publish. The chain runs locally on the operator box (fr-universe → chain map → debates → Director → fr-publish --gcs); this card lights up the moment the payload lands on GCS.
+                      </div>
+                    )}
+                    {(frApex.fr_tracking_weighted || frApex.fr_tracking) && (() => {
+                      const _ftw = frApex.fr_tracking_weighted;
+                      const weighted = !!(_ftw && (_ftw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
+                      const ft = weighted ? _ftw : frApex.fr_tracking;
+                      return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (ft.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(ft.since_inception_pct || 0) >= 0 ? "+" : ""}{ft.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {ft.inception_date}</div>
+                        </div>
+                        {(ft.history || []).length > 1 && (() => {
+                          const _n = ft.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {ft.nav} · {ft.n_open} held · {ft.n_closed} closed{ft.win_rate != null ? ` · ${ft.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
+                        </div>
+                      </div>
+                      );
+                    })()}
+                    {frApex.benchmark && frApex.benchmark.benchmark_return_pct != null && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Benchmark: {frApex.benchmark.blend || "50/50 XME+URA"} <span style={{ fontWeight: 600, color: (frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>{(frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "+" : ""}{frApex.benchmark.benchmark_return_pct}%</span> since {frApex.benchmark.measured_from}{frApex.benchmark.active_return_pct != null ? <> · active <span style={{ fontWeight: 700, color: frApex.benchmark.active_return_pct >= 0 ? "var(--green)" : "var(--red)" }}>{frApex.benchmark.active_return_pct >= 0 ? "+" : ""}{frApex.benchmark.active_return_pct}%</span></> : ""} <span style={{ color: "var(--text-light)" }}>(the null hypothesis: a closet metals/uranium ETF basket)</span>
+                      </div>
+                    )}
+                    {frApex.stress_test && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{frApex.stress_test.published_downside_pct}%</span> recession · {frApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{frApex.correlation ? ` · avg pairwise corr ${frApex.correlation.avg_pairwise} (${frApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                      </div>
+                    )}
+                    {frApex.chain_exposure && Object.keys(frApex.chain_exposure).length > 0 && (
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
+                        {Object.entries(frApex.chain_exposure).sort((a: any, b: any) => (b[1] || 0) - (a[1] || 0)).map(([ch, pct]: [string, any]) => (
+                          <span key={ch} style={{ fontSize: 8.5, padding: "2px 6px", borderRadius: 4, fontFamily: "var(--font-mono)", fontWeight: 600, background: (pct || 0) > 25 ? "var(--amber-light)" : "rgba(148,163,184,0.12)", color: (pct || 0) > 25 ? "var(--amber)" : "var(--text-muted)" }}>
+                            {String(ch).replace(/_/g, " ")} {pct}%
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {frApex.pool_stats && frApex.pool_stats.banner && (
+                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
+                        {frApex.pool_stats.banner}
+                      </div>
+                    )}
+                    {rotationLog(frApex.fr_tracking || frApex.fr_tracking_weighted)}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+                      {(frApex.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : (frPrices[String(pick.symbol).toUpperCase()] || 0);
+                        const solv = String(pick.funded_solvency || "");
+                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
+                        const mos = pick.sop_mos_pct;
+                        const prim = pick.chain || (Array.isArray(pick.chains) ? pick.chains[0] : "") || "";
+                        // chain_regime arrives as a string verdict or a per-chain dict — normalize to the primary chain's verdict
+                        const crRaw = pick.chain_regime;
+                        const cr = String(crRaw && typeof crRaw === "object" ? (crRaw[prim] ?? Object.values(crRaw)[0] ?? "") : (crRaw || "")).toUpperCase();
+                        const crColor = cr.includes("TAILWIND") ? "var(--green)" : cr.includes("HEADWIND") ? "var(--red)" : "var(--text-muted)";
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.fr_score >= 80 ? "rgba(20,184,122,0.2)" : pick.fr_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.fr_score >= 80 ? "var(--green)" : pick.fr_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  fr {pick.fr_score}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                                {pick.weight_pct != null && (
+                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
+                                )}
+                                {prim && (
+                                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(217,119,6,0.14)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{String(prim).replace(/_/g, " ")}</span>
+                                )}
+                                {cr && (
+                                  <span title="chain commodity-cycle regime" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(148,163,184,0.12)", color: crColor, fontFamily: "var(--font-mono)", fontWeight: 700 }}>{cr}</span>
+                                )}
+                                {pick.growth_capex_fcf_negative && (
+                                  <span title="OCF-positive / FCF-negative build-cycle producer — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>capex ¾</span>
+                                )}
+                                {pick.torque_leverage_quadrant && (
+                                  <span title="high commodity torque on a levered balance sheet — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>torque×lev ¾</span>
+                                )}
+                                {(pick.headwind_unjustified || pick.headwind_capped) && (
+                                  <span title="HEADWIND chain with no written justification — size clamped to 0.5" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(239,68,68,0.14)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>headwind ½</span>
+                                )}
+                                {pick.stale_anchor && (
+                                  <span title="stale anchor — half-sized" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
+                                )}
+                                {pick.corr_flag && (
+                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
+                                )}
+                                {entryPostureChip(pick.entry_posture)}
+                              </div>
+                              {typeof mos === "number" && (
+                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
+                                </span>
+                              )}
+                            </div>
+                            {wheelLine(pick.wheel)}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              {pick.physical_anchor && (
+                                <div title="the physical thing this seat makes/moves/powers/instruments (the anti-Visa rule)" style={{ fontSize: 9.5, color: "var(--text-muted)", fontStyle: "italic" }}>
+                                  ⚓ {String(pick.physical_anchor)}
+                                </div>
+                              )}
+                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                <span>Solvency:</span>
+                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
+                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : (pick.ndebt_ebitda != null ? ` · ${pick.ndebt_ebitda}x nd/EBITDA` : "")}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
+                                </span>
+                              </div>
+                              {(pick.reserve_life || pick.contract_cover) && (
+                                <div style={{ fontSize: 9, color: "var(--text-muted)", lineHeight: 1.45 }}>
+                                  {pick.contract_cover ? <>Contract: {String(pick.contract_cover)}</> : null}{pick.contract_cover && pick.reserve_life ? " · " : ""}{pick.reserve_life ? <>Reserve: {String(pick.reserve_life)}</> : null}
+                                </div>
+                              )}
+                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
+                            </div>
+                            {pick.thesis && (() => {
+                              const _txt = String(pick.thesis);
+                              const _exp = expandedFr.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>FR </span>{_txt}
+                                  </div>
+                                  {pick.torque_note && (
+                                    <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.9,
+                                                  ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
+                                         title="symmetric torque: the +10% AND the -10% commodity cases">
+                                      <span style={{ fontWeight: 700 }}>TORQUE </span>{String(pick.torque_note)}
+                                    </div>
+                                  )}
+                                  {_txt.length > 200 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedFr(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--amber)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {(frApex.runner_ups || []).length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
+                        {(frApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* FR Director Memo — the Future Resources Director's reasoning (gates, chain-concentration stress, rotation, sizing) */}
+                  {frApex.fr_memo && (
+                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
+                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Future Resources Director Memo</summary>
+                      {typeof frApex.fr_memo === "string" ? (
+                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{frApex.fr_memo}</pre>
+                      ) : (
+                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                          {Object.entries(frApex.fr_memo).map(([k, v]: [string, any]) => (
+                            <div key={k}>
+                              <div style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
                               {typeof v === "string" ? (
                                 <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
                               ) : Array.isArray(v) ? (
