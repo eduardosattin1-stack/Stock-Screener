@@ -194,6 +194,36 @@
    "dossier_note": "VERIFIED LIVE 2026-07-06. Stage 1 (binding): definitive agreement 18-Feb-2026 — LG acquires Vodafone's 50% of VodafoneZiggo for EUR 1.0B cash + a 10% stake in Ziggo Group (new co holding 100% VodafoneZiggo + 100% Telenet); EC UNCONDITIONAL clearance 25-Jun-2026 (simplified procedure, last regulatory hurdle); close guided July 2026 (Fries, 1-May call); NO closing 8-K/PR as of 7-06 — unfired, on schedule, watch for close announcement any day and Q2 results 7/24. Stage 2 (the sleeve's catalyst, SOFT): Euronext-Amsterdam listing of Ziggo Group + ~90% distribution to LG holders 'in 2027'; Van Rooyen (CEO)/Fruytier (CFO) named 1-Jun, effective Sep 1 to prep the listing; still requires a shareholder vote (NOT held — 6/23 AGM was routine only), SEC registration, market window; Vodafone may sell its 10% to a third party if no spin within 18 months of close (~Jan-2028) — timing pressure, not compulsion. SOP ARITHMETIC (338M shs, EUR/USD ~1.17): deal-implied 0.5*VFZ = 1.0 + 0.1*(VFZ+Telenet); Telenet equity ~EUR 1.0-1.5B (~1.3B EBITDA, ~6.3B net debt, 5.5-6.0x) => VFZ equity ~EUR 2.8-2.9B, Ziggo Group equity ~EUR 3.8-4.4B => LG 90% ~$4.0-4.7B ~= $12-14/sh gross ($8.5-10.5 net of the EUR 1.0B cash out). Plus Liberty Growth $3.4B FMV (3/31/26; ~93% of the whole $3.67B cap alone; ~$0.3B already monetized YTD via ITV/EdgeConneX sales) and VMO2 50% (equity GBP 2-5B vs ~GBP 18B net debt; ~$8-20/sh gross, multiple-sensitive). Undiscounted SoP $25-30+; board FVT $18 = SoP less ~35-40% residual discount — REPRODUCED, kept. Floor $9.5 kept: ~4-5% under the 52-wk low (9.95) = status-quo holdco-discount mark; SOFT floor (voluntary restructuring, no deal-break cash backstop on LBTYK). Deck-mark gate: N/A (not commodity-linked). Board's PENDING_HARD downgraded to PENDING_SOFT and milestone moved to 2027-12-31 (outer bound of stated window); staging stays true — stage-in name until the spin vote/record dates are set, at which point it can graduate to PENDING_HARD.",
    "asof": "2026-07-06",
    "model": "claude-fable-5"
+  },
+  "VIR": {
+   "symbol": "VIR",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_HARD",
+   "thesis_summary": "Vir Biotechnology's resolving catalyst is the registrational Phase 3 ECLIPSE 1 chronic-hepatitis-delta topline (tobevibart + elebsiran) — a dated, binding, idiosyncratic clinical binary due Q4 2026 (fully enrolled ~120 pts; Breakthrough/Fast Track/PRIME/Orphan). Downside is anchored by ~$5/sh net cash (pro forma the $315M Astellas payment; runway into 2H 2028) plus an Astellas-validated oncology option (VIR-5500 PSMA); a win re-rates toward the ~$20 Street franchise value. Asymmetry is live pipeline option value, NOT a contractual arbitrage.",
+   "resolution_driver": "FDA_clinical_readout",
+   "staging": false,
+   "valuation_method": "binary_prob",
+   "fair_value_target": 20,
+   "downside_floor": 5,
+   "win_prob": 0.6,
+   "dated_milestone": "ECLIPSE 1 Phase 3 chronic hepatitis delta topline expected Q4 2026 (tobevibart + elebsiran; fully enrolled ~120 pts). Secondary: ECLIPSE 2/3 topline Q1 2027; VIR-5818 HER2 Phase 1 dose-escalation data 2H 2026.",
+   "kill_risk": "Pure clinical binary with NO contractual downside protection — no CVR, deal-break price, or financing backstop. An ECLIPSE 1 Phase 3 miss drops the stock toward, and could briefly overshoot below, ~$5/sh net cash (~-48% from $9.67), so the downside floor is SOFT, not hard. Single-readout risk: positive Phase 2 SOLSTICE (Week 96, presented EASL May 2026) de-risks but does not guarantee registrational success. Also, the biggest validation catalyst (Astellas oncology deal) already fired and drove the ~+130% run off the 52wk low, so a large part of the pipeline optionality is already in the tape.",
+   "discrepancies": [
+    "live_price: board $8.61 (asof 2026-06-13) -> live $9.67 (2026-07-14); also supersedes skeptic's stale $10.36 - stock pulled back ~7% since the skeptic pass",
+    "company_name: null -> Vir Biotechnology, Inc. - populated",
+    "catalyst_status: null at top level (weekly debate had PENDING_HARD) -> PENDING_HARD confirmed - dated Q4 2026 registrational Phase 3, unfired as of 2026-07-14",
+    "dated_milestone: null at top level -> ECLIPSE 1 Phase 3 hep-delta topline Q4 2026 - CONFIRMED Q4 2026 (Jan 12 2026 IR update AND May 6 2026 Q1 release), superseding the stale Nov 3 2025 'topline Q1 2027' language; NOT slipped",
+    "resolution_driver: null -> FDA_clinical_readout - resolving event is a registrational Phase 3 topline readout",
+    "valuation_method: null -> binary_prob - resolving event is a binary clinical readout",
+    "fair_value_target: null -> $20 - anchored to Street median PT $20 (consensus $21.71, range $18-30, 10 Buy/2 Hold), i.e. the success-case franchise value",
+    "downside_floor: null -> $5.0 - net cash per share; central of $4.4 (strict Mar-31 basis) to ~$5.4 (pro forma $315M Astellas)",
+    "win_prob: null -> 0.60 - Phase 3 success probability given positive Phase 2 SOLSTICE + Breakthrough/Fast Track/PRIME/Orphan vs deferred-treatment comparator",
+    "staging: false -> false confirmed - dated hard event (Q4 2026 topline)",
+    "skeptic 'spread substantially closed' claim: CORRECTED - skeptic said price sat 'above' the $11.5 base case, but $10.36 (and now $9.67) is BELOW both the $11.5 base case and Street $20; the spread is open, not closed"
+   ],
+   "dossier_note": "DUPLICATE_KEY_PLACEHOLDER",
+   "asof": "2026-07-14",
+   "model": "claude-opus-4-8"
   }
  }
 }

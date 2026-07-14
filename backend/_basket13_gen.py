@@ -43,10 +43,20 @@ ap.add_argument("--held-dossiers", action="store_true", dest="held_dossiers",
                      "from their stamped fields), workflow = DeepDossier phase ONLY (no CRO/Director, "
                      "no stamping). Feed the output to `_basket13_inject.py merge-dossiers` to update "
                      "the store + surface FIRED/SLIPPED alerts on held seats.")
+ap.add_argument("--promote", default="",
+                help="SYM — EVENT-TRIGGERED single-seat promotion (2026-07-14): a resolve freed cap "
+                     "headroom and _basket13_inject.py's headroom scan named this on-deck first-in-line. "
+                     "Same 3-phase workflow restricted to the one name; the Director is told it is a "
+                     "promotion and re-nominates the rest of the on-deck book unchanged; inject "
+                     "re-asserts every combined cap before stamping. Falls back to the persistent "
+                     "on-deck cache when the name has rotated off the current board extract.")
 args = ap.parse_args()
 MODEL = args.model   # both phases; default opus (Fable retired from this seat 2026-07-10)
 
 only = {s.strip().upper() for s in args.only.split(",") if s.strip()}
+PROMOTE = args.promote.strip().upper()
+if PROMOTE:
+    only = {PROMOTE}
 if args.held_dossiers:
     # held seats aren't in the candidates file (--exclude-held); build rows from the tracker
     _trk = json.load(open(os.path.join(BASE, "_basket13_tracker.json"), encoding="utf-8"))
@@ -65,6 +75,30 @@ else:
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
 if only:
     cands = [c for c in cands if c["symbol"].upper() in only]
+
+if PROMOTE:
+    _trk_p = json.load(open(os.path.join(BASE, "_basket13_tracker.json"), encoding="utf-8"))
+    if any(e["symbol"] == PROMOTE and not e.get("resolution") for e in _trk_p.get("entries", [])):
+        raise SystemExit(f"--promote {PROMOTE}: already a live held seat — nothing to promote")
+    _stp = (_trk_p.get("watchlist_state") or {}).get(PROMOTE)
+    if not _stp:
+        raise SystemExit(f"--promote {PROMOTE}: not on the on-deck watchlist — promotion is only for "
+                         "the Director's prior nominations (run `_basket13_inject.py headroom` for the queue)")
+    if not cands:
+        # rotated off the current board extract — synthesize the row from the persistent on-deck
+        # cache (same pattern as --held-dossiers; the DeepDossier phase re-underwrites the
+        # load-bearing fields from live sources anyway, so cache staleness is self-correcting)
+        _wlp = next((w for w in _trk_p.get("watchlist", []) if w.get("symbol") == PROMOTE), {})
+        cands = [{"symbol": PROMOTE, "company_name": None, "tier": "on_deck_promotion",
+                  "staging": bool(_stp.get("staging")), "lane_canon": _stp.get("lane_canon"),
+                  "resolution_driver": _stp.get("resolution_driver") or _wlp.get("resolution_driver"),
+                  "super_cluster": _stp.get("super_cluster") or _wlp.get("super_cluster"),
+                  "edge_grade": _wlp.get("edge_grade"), "valuation_method": _stp.get("valuation_method"),
+                  "computed_rr": _stp.get("computed_rr"), "ev_pct": _stp.get("ev_pct"), "payoff": None,
+                  "win_prob": None, "fair_value_target": None, "downside_floor": None,
+                  "live_price": _stp.get("entry_price"), "dated_milestone": _stp.get("dated_milestone"),
+                  "days_to_milestone": None, "instrument": (_stp.get("expression") or {}).get("type"),
+                  "valuation_asof": _stp.get("entry_date"), "score": None}]
 
 # compact field set the agents read
 FIELDS = ["symbol", "company_name", "tier", "staging", "lane_canon", "resolution_driver",
@@ -245,7 +279,7 @@ EXPRESSION:
   - 6-12 months / structural / staging -> equity (or leaps if liquid).
   - binaries -> debit_spread (or defined_risk_option); never naked.
   - STAGING names (staging=true): equity ONLY, weight <= HALF a normal weight (~ (100/N)/2) — no options on an undated catalyst (theta with no timeline).
-OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver / a super-cluster / the 12-seat count), would_enter_if (what frees a seat, e.g. "an FDA_clinical_readout seat opens when CELC or AMLX resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap FRESH watchlist nominations at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. ACCOUNTABILITY: for ANY name whose stance CHANGES vs the PRIOR ON-DECK WATCHLIST above — newly added, de-prioritized, or re-championed after being de-prioritized — emit a one-sentence stance_change_rationale (unchanged names leave it null); to remove a carried name on merit, route it to passed[] with a passed_because (never just omit it — a resolved catalyst or graduation is the only silent exit). Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
+__PROMO__OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver / a super-cluster / the 12-seat count), would_enter_if (what frees a seat, e.g. "an FDA_clinical_readout seat opens when CELC or AMLX resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap FRESH watchlist nominations at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. ACCOUNTABILITY: for ANY name whose stance CHANGES vs the PRIOR ON-DECK WATCHLIST above — newly added, de-prioritized, or re-championed after being de-prioritized — emit a one-sentence stance_change_rationale (unchanged names leave it null); to remove a carried name on merit, route it to passed[] with a passed_because (never just omit it — a resolved catalyst or graduation is the only silent exit). Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
 
 SURVIVORS (${survivors.length}): ${JSON.stringify(survivors)}` }
 
@@ -306,11 +340,33 @@ return { generated_for: NAMES.length, dossiers, cro, survivors: survivors.map(s=
 '''
 
 assert JS.count("__WATCHLIST__") == 1, "expected exactly one __WATCHLIST__ token in the template"
+assert JS.count("__PROMO__") == 1, "expected exactly one __PROMO__ token in the template"
+promo_note = ""
+if PROMOTE:
+    _iw = next((w.get("intended_weight_pct") for w in _trk_p.get("watchlist", [])
+                if w.get("symbol") == PROMOTE), None)
+    promo_note = (
+        f"PROMOTION MODE (event-triggered, single seat): a held seat resolved and freed combined-cap "
+        f"headroom; {PROMOTE} is the on-deck FIRST-IN-LINE (your own prior nomination"
+        + (f", intended ~{_iw}%" if _iw else "") + "). Seat it ONLY if it still deserves the capital at "
+        "TODAY's price and window (the dossier + CRO above just re-checked it live) and it fits every "
+        "combined cap of the LOCKED HELD BOOK; otherwise keep it in watchlist[] with a "
+        "stance_change_rationale, or demote it to passed[] with a passed_because. This run is a "
+        "PROMOTION, not a full re-debate: re-nominate every OTHER carried name from the PRIOR ON-DECK "
+        "WATCHLIST unchanged in watchlist[] (stance_change_rationale null) — you were given no fresh "
+        "dossiers on them, so you have no basis to change their stances. ")
 js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
         .replace("__HELD__", json.dumps(held_summary, ensure_ascii=False))
         .replace("__WATCHLIST__", json.dumps(watchlist_ctx, ensure_ascii=False))
+        .replace("__PROMO__", promo_note)
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
+if PROMOTE:
+    js = js.replace("name: 'basket13-catalyst-debate'", "name: 'basket13-promotion'")
+    _ret_old = "return { generated_for: NAMES.length, dossiers, cro, survivors: survivors.map(s=>s.symbol), director }"
+    assert _ret_old in js, "promotion return-marker patch failed — template drifted"
+    js = js.replace(_ret_old, "return { promotion: true, generated_for: NAMES.length, dossiers, cro, "
+                              "survivors: survivors.map(s=>s.symbol), director }")
 if args.held_dossiers:
     # dossier phase ONLY: cut everything from the CRO batching onward, return the dossiers
     js = (js[:js.index("const BATCH=5")]

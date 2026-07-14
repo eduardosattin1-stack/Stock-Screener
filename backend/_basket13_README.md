@@ -30,6 +30,33 @@ _basket13_tracker.json   (append-only)
    │  python _basket13_inject.py report                                      # calibration analytics
 ```
 
+### Event-triggered promotion (2026-07-14, Bruno's directive)
+
+A `resolve` frees combined-cap headroom that used to sit idle until the next bi-weekly re-debate
+(up to ~13 days — the on-deck names kept running while the freed caps went unused). Now `resolve`
+(and pending-limit cancels) automatically runs `headroom_scan()`: it walks the on-deck watchlist in
+the Director's stored priority order, skips de-prioritized names, and validates a hypothetical seat
+for each against EVERY combined cap of the now-freed held book — the first clean fit is
+FIRST-IN-LINE and the exact promotion commands are printed. Standalone check: `python
+_basket13_inject.py headroom`.
+
+The promotion itself re-runs the FULL gate chain on the one name:
+```
+python _basket13_gen.py --promote SYM --model opus    # 1-candidate workflow; falls back to the
+                                                      # on-deck cache if SYM fell off the board file
+Workflow(_basket13_workflow.js)                       # DeepDossier (live re-underwrite; FIRED/BROKEN
+                                                      # = hard kill) -> CRO (trade attack at TODAY's
+                                                      # price) -> Director (seats-or-declines; told it
+                                                      # is a promotion; re-nominates the rest of the
+                                                      # on-deck book unchanged)
+python _basket13_inject.py _basket13_out.json --entry-date <today>   # every cap re-asserted
+python _basket13_mark.py && python _basket13_export.py
+```
+A promotion stamp appends to `promotions[]`, NOT `runs[]` — it must never reset the bi-weekly
+re-debate self-gate. The Director may decline (name stays on-deck with a stance rationale); the
+scan choosing by stored priority order means an unknown-driver name can be first-in-line — safe,
+because the DeepDossier re-stamps the real driver and inject re-validates the caps with it.
+
 ## Files
 
 | File | Role |

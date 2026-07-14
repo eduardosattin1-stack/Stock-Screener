@@ -194,6 +194,13 @@ def build_watchlist(t, director, passed, bysym, cro_by, stamp_date):
     old_syms = set(old_state)
     was_deprio = {s: bool(old_state[s].get("de_prioritized")) for s in old_state}   # PRIOR-STATE snapshot
 
+    # driver lookup for cap_watchlist: a re-nominated name that fell off the current board file
+    # (bysym miss) must keep its REAL driver from the persistent display cache — otherwise every
+    # off-board re-nomination lands in one shared "?" bucket and gets spuriously CAP_TRIMMED
+    # (bites single-name promotion runs, where 8 of 9 re-nominations are off-board by design).
+    bysym = {**{s: {"resolution_driver": (old_state.get(s) or {}).get("resolution_driver")}
+                for s in old_state}, **bysym}
+
     # most-recent entry per symbol -> resolved / held / pending (append order => last wins)
     last = {}
     for e in t.get("entries", []):
@@ -428,6 +435,84 @@ def _diag_gate(sym):
     return None
 
 
+# -------------------------------------------------- event-triggered promotion (headroom scan)
+def headroom_scan(quiet=False):
+    """After a seat resolves (the EVENT), deterministically find the first on-deck name whose
+    hypothetical seat clears EVERY combined cap against the now-freed held book — the Director's
+    stored priority order (t['watchlist'] array order) is the queue; de-prioritized names are
+    skipped. Prints the freed-headroom picture + the exact promotion commands. Pure read — the
+    seat itself is only ever stamped through the standard gen --promote SYM workflow -> inject
+    path (DeepDossier -> CRO -> Director -> validate), so every gate still runs at live prices.
+    Returns the first-in-line symbol (or None). 2026-07-14, Bruno's event-triggered promotion."""
+    t = load_tracker()
+    held = [e for e in t.get("entries", []) if not e.get("resolution")]
+    held_syms = {e["symbol"] for e in held}
+    held_pseudo = [{"symbol": e["symbol"], "weight_pct": e.get("weight_pct"),
+                    "resolution_driver": e.get("resolution_driver"), "super_cluster": e.get("super_cluster"),
+                    "expression": e.get("expression") or {}} for e in held]
+    bysym_v, live_v = {}, {}
+    for e in held:
+        bysym_v[e["symbol"]] = {"valuation_method": e.get("valuation_method"), "staging": e.get("staging"),
+                                "downside_floor": e.get("downside_floor"), "super_cluster": e.get("super_cluster"),
+                                "lane_canon": e.get("lane_canon"), "live_price": e.get("entry_price")}
+        live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
+    # candidate display rows: fresh board file when present, else the persistent on-deck cache
+    board = {}
+    if os.path.exists(CAND):
+        try:
+            board = {c["symbol"]: c for c in json.load(open(CAND, encoding="utf-8"))["candidates"]}
+        except Exception:
+            pass
+    wl_state = t.get("watchlist_state", {})
+    invested = round(sum(e.get("weight_pct") or 0 for e in held), 1)
+    by_drv = {}
+    for e in held:
+        by_drv[e.get("resolution_driver")] = by_drv.get(e.get("resolution_driver"), 0) + 1
+    if not quiet:
+        print(f"HEADROOM: {len(held)}/{MAX_NAMES} seats | invested {invested}% | by_driver {by_drv}")
+    first, also_fit = None, []
+    for w in t.get("watchlist", []):
+        sym = w.get("symbol")
+        if not sym or w.get("de_prioritized"):
+            continue
+        if sym in held_syms or open_entry(t, sym) is not None:
+            continue
+        st = wl_state.get(sym, {})
+        row = board.get(sym) or {k: st.get(k) for k in _WL_DISPLAY_KEYS}
+        weight = w.get("intended_weight_pct") or st.get("intended_weight_pct") or 4.0
+        hypo = {"symbol": sym, "weight_pct": weight,
+                "resolution_driver": w.get("resolution_driver") or row.get("resolution_driver"),
+                "super_cluster": w.get("super_cluster") or row.get("super_cluster"),
+                "expression": st.get("expression") or {"type": "equity"}}
+        bysym_h = dict(bysym_v)
+        bysym_h[sym] = {"valuation_method": row.get("valuation_method"), "staging": row.get("staging"),
+                        "downside_floor": row.get("downside_floor"), "super_cluster": hypo["super_cluster"],
+                        "lane_canon": row.get("lane_canon"), "live_price": row.get("live_price") or st.get("entry_price")}
+        live_h = dict(live_v)
+        live_h[sym] = row.get("live_price") or st.get("entry_price")
+        viol = validate(held_pseudo + [hypo], bysym_h, live_px=live_h, held_syms=held_syms)
+        if not viol:
+            if first is None:
+                first = (sym, weight, hypo["resolution_driver"])
+            else:
+                also_fit.append(sym)
+        elif not quiet:
+            print(f"  blocked {sym:6} -> {viol[0]}")
+    if not quiet:
+        if first:
+            sym, weight, drv = first
+            print(f"FIRST-IN-LINE: {sym} (driver {drv}, intended {weight}%) fits ALL caps"
+                  + (f" | also fit: {', '.join(also_fit)}" if also_fit else ""))
+            print(f"Next (event-triggered promotion - full gates re-run at live prices):")
+            print(f"  python backend/_basket13_gen.py --promote {sym} --model opus")
+            print(f"  -> Workflow(_basket13_workflow.js) -> write out to _basket13_out.json")
+            print(f"  -> python backend/_basket13_inject.py _basket13_out.json --entry-date <today>")
+            print(f"  -> python backend/_basket13_mark.py && python backend/_basket13_export.py")
+        else:
+            print("no on-deck name fits the current headroom (or none active) - nothing to promote")
+    return first[0] if first else None
+
+
 # ----------------------------------------------------------------------- inject
 def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     excludes = dict(excludes or [])
@@ -447,6 +532,33 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     cands = json.load(open(CAND, encoding="utf-8"))["candidates"]
     bysym = {c["symbol"]: c for c in cands}
     stamp_date = entry_date or datetime.date.today().isoformat()
+
+    # PROMOTION SUPPORT (2026-07-14): a promoted on-deck name may be absent from the board file
+    # (the --exclude-held extract rotates names out). Build its gate row from THIS run's fresh
+    # dossier + the persistent on-deck cache so every per-seat gate (dossier-kill via the override
+    # loop below, binary expression/premium, risk-to-floor, staging) still bites — an empty bysym
+    # row would silently skip them all. Cover EVERY dossier'd symbol, not just picks: a DECLINED
+    # promotion has zero picks but its fresh dossier must still refresh the on-deck display cache
+    # (build_watchlist only refreshes when bysym has the name — the VIR maiden-run lesson).
+    _wls_cache = load_tracker().get("watchlist_state", {})
+    _gate_rows = list(picks_all) + [{"symbol": s} for s in dossier_by if not any(
+        p.get("symbol") == s for p in picks_all)]
+    for p in _gate_rows:
+        s = p.get("symbol")
+        if s and s not in bysym:
+            d = dossier_by.get(s) or {}
+            st = _wls_cache.get(s) or {}
+            bysym[s] = {"symbol": s,
+                        "valuation_method": d.get("valuation_method") or st.get("valuation_method"),
+                        "staging": bool(d.get("staging")),
+                        "downside_floor": d.get("downside_floor"),
+                        "fair_value_target": d.get("fair_value_target"),
+                        "resolution_driver": d.get("resolution_driver") or st.get("resolution_driver"),
+                        "super_cluster": st.get("super_cluster"),
+                        "lane_canon": st.get("lane_canon"),
+                        "live_price": st.get("entry_price"),
+                        "ev_pct": st.get("ev_pct"), "computed_rr": st.get("computed_rr"),
+                        "dated_milestone": d.get("dated_milestone") or st.get("dated_milestone")}
 
     # DEEP-DOSSIER OVERRIDES (2026-07-03): the workflow's Phase 0 re-underwrites each candidate's
     # load-bearing fields from live sources before the CRO/Director consume them. Validation and
@@ -599,12 +711,21 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
     # See build_watchlist() for the full contract. wl_state persists each name's marking basis +
     # de-prioritized flag + the display cache across re-debates; watchlist_history is the audit ledger.
     wl_delta = build_watchlist(t, director, passed, bysym, cro_by, stamp_date)
-    t["runs"].append({"run_date": stamp_date, "stamped_at": datetime.date.today().isoformat(),
-                      "restamp": bool(restamp),
-                      "n_picks": len(picks), "n_passed": len(passed), "n_added": len(added),
-                      "n_pending": len(pending), "n_excluded_at_stamp": len(excluded),
-                      "n_skipped_open": len(skipped), "cap_violations": len(viol),
-                      "retags": retags, "watchlist_delta": wl_delta, "memo": memo})
+    # EVENT-TRIGGERED PROMOTION (2026-07-14): a single-seat promotion stamp is NOT a re-debate —
+    # it must not touch the runs[] ledger, or it would reset the bi-weekly 13-day self-gate and
+    # silently push the next FULL re-debate out a week. The workflow marks itself promotion:true.
+    is_promotion = bool(res.get("promotion"))
+    if not is_promotion:
+        t["runs"].append({"run_date": stamp_date, "stamped_at": datetime.date.today().isoformat(),
+                          "restamp": bool(restamp),
+                          "n_picks": len(picks), "n_passed": len(passed), "n_added": len(added),
+                          "n_pending": len(pending), "n_excluded_at_stamp": len(excluded),
+                          "n_skipped_open": len(skipped), "cap_violations": len(viol),
+                          "retags": retags, "watchlist_delta": wl_delta, "memo": memo})
+    else:
+        t.setdefault("promotions", []).append({"date": stamp_date, "added": added, "pending": pending,
+                                               "cap_violations": len(viol), "memo": memo})
+        print("  (promotion stamp: runs[] ledger untouched — bi-weekly re-debate cadence unaffected)")
     save_tracker(t)
     print(f"INJECTED {len(added)} held {added}"
           + (f" + {len(pending)} PENDING_LIMIT {pending}" if pending else "")
@@ -679,6 +800,10 @@ def resolve(symbol, rtype, price, date=None, notes=""):
                            "catalyst_fired": False, "notes": f"(never filled — resting limit cancelled) {notes}"}
         save_tracker(t)
         print(f"CANCELLED pending {symbol}: {rtype} (never filled)  -> {TRK}")
+        try:                       # a cancelled pending seat counted toward caps as-if-filled -> headroom freed
+            headroom_scan()
+        except Exception as ex:
+            print(f"WARN headroom scan failed (resolve unaffected): {ex}")
         return
     rdate = date or datetime.date.today().isoformat()
     ep, fl = e.get("entry_price"), e.get("downside_floor")
@@ -700,6 +825,10 @@ def resolve(symbol, rtype, price, date=None, notes=""):
     save_tracker(t)
     tail = f"  (ret={ret:+.1%} rr={rr} days={days})" if ret is not None else ""
     print(f"RESOLVED {symbol}: {rtype} @ {price}{tail}  -> {TRK}")
+    try:                           # THE EVENT: a freed seat -> scan the on-deck queue immediately
+        headroom_scan()
+    except Exception as ex:
+        print(f"WARN headroom scan failed (resolve unaffected): {ex}")
 
 
 # -------------------------------------------------------- resolve an ON-DECK-ONLY watchlist name
@@ -806,6 +935,8 @@ def main():
     mode = sys.argv[1]
     if mode == "report":
         report()
+    elif mode == "headroom":
+        headroom_scan()
     elif mode == "resolve":
         ap = argparse.ArgumentParser(prog="_basket13_inject.py resolve")
         ap.add_argument("symbol")
