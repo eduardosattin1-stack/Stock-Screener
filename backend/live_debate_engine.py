@@ -1002,6 +1002,106 @@ def _live_corrections(sym: str) -> str:
     return "\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\n" + "\n".join(out)
 
 
+def _analyst_targets_block(sym: str) -> str:
+    """Analyst price targets, as-of dated (2026-07-15). The scan hands the debate a single
+    consensus number (`target`) whose breadth/freshness the agents can't judge — the KBR
+    incident showed an n=1 'consensus' arming a fake bear case. Give them the dated tape:
+    price-target-consensus (levels), price-target-summary (counts + period averages, the
+    thin-consensus fuse's source), price-target-news (newest individual PTs with analyst,
+    date, and price-when-posted — the only FRESH per-analyst source; never previously used
+    in this codebase). FMP PT coverage is US-centric: every endpoint returns empty for
+    non-US listings, so in that case emit an explicit WebSearch instruction instead of
+    silence (debate agents run with WebSearch + FMP MCP tools). '' only when sym/key
+    missing or the request layer itself fails."""
+    if not sym:
+        return ""
+    key = get_key("FMP_API_KEY")
+    if not key:
+        return ""
+    base = "https://financialmodelingprep.com/stable"
+
+    def _get(ep: str, **params):
+        try:
+            r = requests.get(base + "/" + ep,
+                             params={**params, "symbol": sym, "apikey": key}, timeout=20).json()
+            return r if isinstance(r, (list, dict)) else None
+        except Exception:
+            return None
+
+    def _n(d, *ks):
+        for k in ks:
+            v = d.get(k) if isinstance(d, dict) else None
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                return v
+        return None
+
+    cons = _get("price-target-consensus")
+    summ = _get("price-target-summary")
+    news = _get("price-target-news", limit=10)
+    cons = cons[0] if isinstance(cons, list) and cons else (cons if isinstance(cons, dict) else None)
+    summ = summ[0] if isinstance(summ, list) and summ else (summ if isinstance(summ, dict) else None)
+    news = [r for r in news if isinstance(r, dict)] if isinstance(news, list) else []
+
+    lines = []
+    bits = []
+    for lbl, k in (("consensus", "targetConsensus"), ("median", "targetMedian"),
+                   ("high", "targetHigh"), ("low", "targetLow")):
+        v = _n(cons, k)
+        if v:
+            bits.append(f"{lbl} {v:.2f}")
+    if bits:
+        lines.append("Street targets: " + " | ".join(bits))
+
+    q_n = _n(summ, "lastQuarterCount")
+    if summ:
+        cnt = []
+        for lbl, ck, ak in (("last month", "lastMonthCount", "lastMonthAvgPriceTarget"),
+                            ("last quarter", "lastQuarterCount", "lastQuarterAvgPriceTarget"),
+                            ("last year", "lastYearCount", "lastYearAvgPriceTarget")):
+            c, a = _n(summ, ck), _n(summ, ak)
+            if c is not None:
+                cnt.append(f"{lbl}: {int(c)} PTs" + (f" avg {a:.2f}" if a else ""))
+        if cnt:
+            lines.append("Breadth: " + " | ".join(cnt))
+        if q_n is not None and q_n < 3:
+            lines.append(f"[THIN CONSENSUS: only {int(q_n)} price target(s) printed last quarter — "
+                         f"this is NOT a street-wide view; weigh individual PTs below accordingly]")
+
+    fresh = []
+    newest_days = None
+    for r in news[:5]:
+        pt = _n(r, "priceTarget", "adjPriceTarget")
+        d = str(r.get("publishedDate") or "")[:10]
+        who = r.get("analystName") or r.get("analystCompany") or r.get("newsPublisher") or "unnamed"
+        pw = _n(r, "priceWhenPosted")
+        if pt and d:
+            fresh.append(f"  {d} {who}: {pt:.2f}" + (f" (stock was {pw:.2f})" if pw else ""))
+            try:
+                age = (datetime.now(timezone.utc).date() - datetime.strptime(d, "%Y-%m-%d").date()).days
+                newest_days = age if newest_days is None else min(newest_days, age)
+            except Exception:
+                pass
+    if fresh:
+        lines.append("Newest individual targets (dated — judge freshness yourself):")
+        lines.extend(fresh)
+    if newest_days is not None:
+        lines.append(f"Newest PT is {newest_days} day(s) old"
+                     + (" — STALE (>120d): the 'consensus' above predates current fundamentals; "
+                        "verify before citing" if newest_days > 120 else ""))
+
+    if not lines:
+        # Non-US listing (or zero coverage): every FMP PT endpoint is empty. Instruct
+        # rather than stay silent — the agents have WebSearch and must anchor on dated
+        # sources, not invent a consensus.
+        return ("\n\n=== ANALYST PRICE TARGETS ===\n"
+                "No FMP analyst price-target coverage for this listing (FMP PT data is "
+                "US-centric). WebSearch the current analyst consensus / recent price "
+                "targets and cite dated sources before using ANY target figure; if none "
+                "can be found, say so explicitly rather than assuming one.")
+    return ("\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, "
+            "not to defer to) ===\n" + "\n".join(lines))
+
+
 def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str:
     """Forensic-grounding metrics block for Interrogator/Architect/Moderator.
 
@@ -1198,7 +1298,7 @@ def _build_debate_metrics(financials: dict = None, scan_fin: dict = None) -> str
 
     _sym = (financials or {}).get("symbol")
     return ("=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\n"
-            + "\n".join(lines)) + _ttm_block(_sym) + _live_corrections(_sym)
+            + "\n".join(lines)) + _ttm_block(_sym) + _live_corrections(_sym) + _analyst_targets_block(_sym)
 
 
 def debate_candidate(symbol: str, transcript: dict, financials: dict = None,

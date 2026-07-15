@@ -566,32 +566,14 @@ function factorDetail(k:string,s:StockData,mode:string):string{
 // time_model_v2 ensemble) and shows calibrated decile + spread edge.
 
 // ── Catalyst Timeline ──────────────────────────────────────────────────────────
-function CatalystTimeline({s}:{s:StockData}){
-  const items:(string|null)[] = [];
-  if(s.days_to_earnings!=null&&s.days_to_earnings>=0) items.push(`Earnings in ${s.days_to_earnings} days${s.eps_beats!=null?` (${s.eps_beats}/${s.eps_total} beat streak)`:""}`);
-  if(s.catalyst_flags) s.catalyst_flags.forEach(f=>items.push(f));
-  if(!items.filter(Boolean).length) return null;
-  return(
-    <Card>
-      <SH title="Catalyst Timeline" icon={<Zap size={12}/>}/>
-      <div style={{display:"flex",flexDirection:"column",gap:8}}>
-        {items.filter(Boolean).map((item,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:8,height:8,borderRadius:"50%",background:T.purple,flexShrink:0}}/>
-            <span style={{fontSize:11,fontFamily:T.mono,color:T.text}}>{item}</span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
+// CatalystTimeline (2-line card) folded into the header badges 2026-07-15:
+// earnings countdown + catalyst_flags render as chips next to the classification.
 
-// ── Composite History Chart ────────────────────────────────────────────────────
-// ── SentimentCard — market positioning snapshot from data we already fetch ──
-// This is NOT an options/IV card. It reads insider + institutional flows, price
-// position in 52wk range, and short-term momentum to produce a plain-language
-// read on "what does positioning look like right now". Labeled honestly.
-function SentimentCard({s}:{s:StockData}){
+// ── positioningRead — insider/institutional posture + plain-language synthesis ──
+// Extracted from the retired SentimentCard: its technical / 52w-range / RSI
+// chips duplicated MomentumPanel on the same screen, so only the unique reads
+// survive. Rendered inside SmartMoneyCard.
+function positioningRead(s:StockData){
   // ─── Inputs (all from existing scan data) ───
   const rsi = s.rsi ?? 50;
   const prox = s.proximity_52wk ?? 0.5;              // 0 = at low, 1 = at high
@@ -635,27 +617,6 @@ function SentimentCard({s}:{s:StockData}){
   else if(bull<=3) {techLabel="Bearish"; techColor=T.red;}
   else if(bull<=4) {techLabel="Weak"; techColor=T.amber;}
 
-  // 4. Range positioning — where in 52w range
-  let rangeLabel="Mid-range", rangeColor=T.textMuted;
-  if(prox>=0.85) {rangeLabel="Near highs"; rangeColor=T.amber;}
-  else if(prox>=0.65) {rangeLabel="Upper range"; rangeColor=T.green;}
-  else if(prox<=0.15) {rangeLabel="Near lows"; rangeColor=T.red;}
-  else if(prox<=0.35) {rangeLabel="Lower range"; rangeColor=T.amber;}
-
-  // 5. RSI overbought/oversold
-  let rsiLabel="—", rsiColor=T.textMuted;
-  if(rsi>=70) {rsiLabel="Overbought"; rsiColor=T.amber;}
-  else if(rsi<=30) {rsiLabel="Oversold"; rsiColor=T.amber;}
-  else if(rsi>=55) {rsiLabel="Strong"; rsiColor=T.green;}
-  else if(rsi<=45) {rsiLabel="Weak"; rsiColor=T.red;}
-  else rsiLabel="Balanced";
-
-  // 6. Trend strength (ADX)
-  let trendLabel="—";
-  if(adx>=35) trendLabel="Strong trend";
-  else if(adx>=25) trendLabel="Defined trend";
-  else if(adx>0) trendLabel="Choppy";
-
   // ─── Plain-language synthesis ───
   // Build a one-line read: which way do the flows + price agree, and which
   // don't. The goal is helping the user pattern-match, not prescriptive calls.
@@ -691,34 +652,11 @@ function SentimentCard({s}:{s:StockData}){
     synthesis = "Oversold at lows. Reflex bounce is common here but confirmation from flows would de-risk re-entry.";
   }
 
-  const chip=(label:string,value:string,color:string,detail?:string)=>{
-    const tip=TOOLTIPS[label]||"";
-    return(
-    <div style={{padding:"8px 10px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:T.card}}>
-      <div title={tip} style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",cursor:tip?"help":"default",borderBottom:tip?`1px dotted ${T.textLight}`:"none"}}>{label}</div>
-      <div style={{fontSize:12,color:color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
-      {detail && <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1,lineHeight:1.3}}>{detail}</div>}
-    </div>
-  );};
-
-  return(
-    <Card>
-      <SH title="Sentiment Snapshot" icon={<Activity size={12}/>} sub="Positioning, not IV"/>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:10}}>
-        {chip("INSIDERS", insiderLabel, insiderColor, insiderDetail)}
-        {chip("INSTITUTIONS", instLabel, instColor, instDetail)}
-        {chip("TECHNICAL", techLabel, techColor, `Bull ${bull}/10 · ${trendLabel}${adx>0?` (ADX ${adx.toFixed(0)})`:""}`)}
-        {chip("52W RANGE", rangeLabel, rangeColor, `At ${(prox*100).toFixed(0)}% of range · RSI ${rsi.toFixed(0)} ${rsiLabel}`)}
-      </div>
-      <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55}}>
-        <span style={{fontWeight:600,color:T.green,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",display:"block",marginBottom:4}}>READ</span>
-        {synthesis}
-      </div>
-      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
-        Built from insider transactions, 13F flows, and price technicals. Does not include options IV or short interest — FMP stable REST doesn't expose those.
-      </div>
-    </Card>
-  );
+  return {
+    insider: { label: insiderLabel, color: insiderColor, detail: insiderDetail },
+    inst: { label: instLabel, color: instColor, detail: instDetail },
+    synthesis,
+  };
 }
 
 // ── CompanyProfileCard — business description + share structure + top holders ──
@@ -866,7 +804,7 @@ function CompanyProfileCard({symbol}:{symbol:string}){
       )}
 
       {/* Share structure */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         {metricBox("MARKET CAP", fmtBn(profile.marketCap))}
         {metricBox("SHARES OUT", fmtShares(floatData?.outstandingShares))}
         {metricBox(
@@ -891,7 +829,7 @@ function CompanyProfileCard({symbol}:{symbol:string}){
 
       {/* Institutional ownership summary */}
       {positions && (
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))",gap:14,marginBottom:14}}>
           {metricBox("13F HOLDERS", String(positions.investorsHolding??"—"),
             positions.investorsHoldingChange!==undefined && positions.investorsHoldingChange!==null
               ?`${positions.investorsHoldingChange>0?"+":""}${positions.investorsHoldingChange} QoQ`
@@ -1064,7 +1002,7 @@ function OpusStrategyCard({st,symbol,price}:{st:OpusStrategy;symbol:string;price
       )}
 
       {/* headline metrics — fill-aware (entry crosses the bid/ask) */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(105px, 1fr))",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
         {m("EV / CONTRACT",ev==null?"—":`${ev>=0?"+":"−"}$${Math.abs(ev).toFixed(0)}`,st.pop!=null?`P(win) ${(st.pop*100).toFixed(0)}%`:"fill-aware",evColor)}
         {m("NET",net==null?"—":`${isCredit?"+":"-"}$${Math.abs(net).toFixed(2)}`,isCredit?"credit / share":"debit / share",isCredit?T.green:T.text)}
         {m("MAX GAIN",maxG==null?"—":`+${fmt(maxG)}`,"per share",T.green)}
@@ -1649,6 +1587,25 @@ function SmartMoneyCard({s}:{s:StockData}){
           <div style={{height:"100%",width:`${sm*100}%`,borderRadius:3,background:scoreColor,transition:"width 0.4s"}}/>
         </div>
       )}
+      {/* Positioning read — absorbed from the retired SentimentCard (only its
+          non-duplicated content: insider/institutional posture + synthesis). */}
+      {(()=>{const pr=positioningRead(s);return(
+        <div style={{marginTop:10}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:8}}>
+            {([["INSIDERS",pr.insider],["INSTITUTIONS",pr.inst]] as const).map(([lbl,d])=>(
+              <div key={lbl} style={{padding:"7px 9px",borderRadius:5,border:`1px solid ${T.cardBorder}`,background:T.card}}>
+                <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{lbl}</div>
+                <div style={{fontSize:11,color:d.color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{d.label}</div>
+                <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1,lineHeight:1.3}}>{d.detail}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:"9px 11px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.5}}>
+            <span style={{fontWeight:600,color:T.green,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",display:"block",marginBottom:3}}>POSITIONING READ</span>
+            {pr.synthesis}
+          </div>
+        </div>
+      );})()}
       <div style={{marginTop:8,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.4}}>
         LTR-derived 7-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. PT velocity (10%) = analyst price-target revision (last-quarter vs last-year avg, FMP, US names only). No weight redistribution: missing factors lower the ceiling.
       </div>
@@ -1927,7 +1884,7 @@ function LiquidityProfileCard({
   return (
     <Card>
       <SH title="Liquidity & Debt Profile" icon={<Activity size={12}/>} sub={latestBs.period ? `${latestBs.calendarYear} ${latestBs.period}` : `FY ${latestBs.calendarYear}`} />
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1.5fr 1fr", gap:20, marginTop:10}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(260px, 1fr))", gap:20, marginTop:10}}>
         
         <div style={{display:"flex", gap:16, height:180, alignItems:"flex-end", paddingBottom:20}}>
           <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%"}}>
@@ -2397,31 +2354,32 @@ function PeersPanel({symbol,companyName,radarPeers,radarReady}:{symbol:string;co
   </Card>;
 }
  // ── Helpers for the Side-by-Side Comparison tab ──────────────────────────────
-// Loads a stock's scan data from the global scan (the only scan we run).
-// Returns null if the symbol isn't present in the current scan — typical
-// for tickers outside the scanning universe (e.g. ONTO, ALAB at time of writing).
+// Loads one stock's scan row. Primary path: /api/stock/{sym}/row (server-side
+// cached parse of the global scan — the client no longer downloads the ~28MB
+// latest_global.json per view). {stock:null} from the route is a REAL answer
+// (symbol not in the scan universe) — do NOT fall back on it. The legacy
+// full-download path runs only when the route itself fails (502 / network).
 async function loadStockFromScans(symbol:string):Promise<StockData|null>{
   const sym=symbol.toUpperCase();
-  const regions=["global"] as const;
-  const results=await Promise.all(regions.map(async r=>{
+  try {
+    const res = await fetch(`/api/stock/${encodeURIComponent(sym)}/row`);
+    if (res.ok) {
+      const d = await res.json();
+      return (d?.stock as StockData) ?? null;
+    }
+  } catch(e){}
+  // Legacy fallback: GCS proxy, then the /public copy.
+  for (const url of [`${GCS_SCANS}/latest_global.json`, `/latest_global.json`]) {
     try {
-      const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });
-      if (res.ok) return await res.json();
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const d = await res.json();
+      const f = d?.stocks?.find((x:StockData)=>x.symbol===sym);
+      if (f) return f;
+      if (d?.stocks) return null;   // valid scan, symbol absent
     } catch(e){}
-    try {
-      const res = await fetch(`/latest_${r}.json`, { cache: 'no-store' });
-      if (res.ok) return await res.json();
-    } catch(e){}
-    return null;
-  }));
-  let best:StockData|null=null;
-  let bestDate="";
-  results.forEach(d=>{
-    if(!d?.stocks) return;
-    const f=d.stocks.find((x:StockData)=>x.symbol===sym);
-    if(f && (d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
-  });
-  return best;
+  }
+  return null;
 }
  
 // Fetches the 10-year financial history bundle for one symbol — same calls
@@ -3217,7 +3175,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
       </Card>
 
       {/* ── Expectations Arbitrage & Forcing Function ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
         {/* Consensus Delta */}
         <Card style={{ flex: 1, minWidth: 280, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           <div>
@@ -3258,7 +3216,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
       {/* ── Multi-Agent Barbell Debate ── */}
       <Card style={{ padding: "20px 24px" }}>
         <SH title="The Bull-and-Bear Debate" icon={<Activity size={12} />} sub="How the upside and downside cases stack up" />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, marginTop: 16 }}>
           {/* Bull Thesis */}
           <div style={{ background: "rgba(20, 184, 122, 0.02)", border: `1px solid rgba(20, 184, 122, 0.15)`, padding: 16, borderRadius: 8 }}>
             <h4 style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, fontFamily: T.mono, color: T.green, textTransform: "uppercase", letterSpacing: "0.05em" }}>
@@ -3832,15 +3790,15 @@ function MultiValuationCard({s}:{s:StockData}){
             const fvPos = hasVal ? ((fvVal - minVal) / range) * 100 : 0;
             
             return (
-              <div key={m.key} style={{ display: "grid", gridTemplateColumns: "220px 100px 100px 1fr", alignItems: "center", gap: 14, padding: "10px 0", borderBottom: `1px solid ${T.divider}` }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>{m.name}</span>
-                <span style={{ fontSize: 12, fontFamily: T.mono, fontWeight: 700, color: hasVal ? T.text : T.textLight, textAlign: "right" }}>
+              <div key={m.key} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 14px", padding: "10px 0", borderBottom: `1px solid ${T.divider}` }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: T.text, flex: "0 1 220px", minWidth: 150 }}>{m.name}</span>
+                <span style={{ fontSize: 12, fontFamily: T.mono, fontWeight: 700, color: hasVal ? T.text : T.textLight, textAlign: "right", width: 90 }}>
                   {hasVal ? fmtPrice(fvVal, s.currency) : "—"}
                 </span>
-                <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: hasVal ? mosColor : T.textLight, textAlign: "right" }}>
+                <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: hasVal ? mosColor : T.textLight, textAlign: "right", width: 76 }}>
                   {hasVal ? `${mosPct >= 0 ? "+" : ""}${mosPct.toFixed(1)}%` : "—"}
                 </span>
-                <div style={{ position: "relative", height: 16, background: T.divider, borderRadius: 4, overflow: "hidden", margin: "0 8px" }}>
+                <div style={{ position: "relative", height: 16, background: T.divider, borderRadius: 4, overflow: "hidden", flex: "1 1 180px", minWidth: 160 }}>
                   {hasVal ? (
                     <>
                       {/* Highlight area */}
@@ -4058,50 +4016,15 @@ export default function StockDetail(){
 
   const hasDebate = !!debateData;
 
+  // Stock row via /api/stock/{sym}/row (server-cached parse of the global scan;
+  // legacy 28MB-download fallback lives inside loadStockFromScans). Replaced the
+  // vestigial regions loop + duplicated GCS/public fallback chain (2026-07-15).
   useEffect(()=>{
     if(!symbol)return;
-    const sym=symbol.toUpperCase();
-    const regions=["global"] as const;
-    Promise.all(regions.map(async r=>{
-      try {
-        const res = await fetch(`${GCS_SCANS}/latest_${r}.json`, { cache: 'no-store' });
-        if (res.ok) return await res.json();
-      } catch(e){}
-      try {
-        const res = await fetch(`/latest_${r}.json`, { cache: 'no-store' });
-        if (res.ok) return await res.json();
-      } catch(e){}
-      return null;
-    })).then(results=>{
-      let best:StockData|null=null, bestDate="";
-      results.forEach(d=>{
-        if(!d?.stocks)return;
-        const f=d.stocks.find((x:StockData)=>x.symbol===sym);
-        if(f&&(d.scan_date||"")>bestDate){best=f; bestDate=d.scan_date||"";}
-      });
-      if(!best){
-        fetch(`${GCS_SCANS}/latest_global.json`, { cache: 'no-store' })
-          .then(r=>{
-            if (r.ok) return r.json();
-            throw new Error("GCS fetch failed");
-          })
-          .then(d=>{
-            const f=d.stocks?.find((s:StockData)=>s.symbol===sym);
-            setStock(f||null); setLoading(false);
-          })
-          .catch(()=>{
-            fetch("/latest_global.json")
-              .then(r=>r.ok?r.json():null)
-              .then(d=>{
-                const f=d?.stocks?.find((s:StockData)=>s.symbol===sym);
-                setStock(f||null); setLoading(false);
-              })
-              .catch(()=>{setStock(null); setLoading(false);});
-          });
-      } else {
-        setStock(best); setLoading(false);
-      }
-    }).catch(()=>{setStock(null); setLoading(false);});
+    setLoading(true);
+    loadStockFromScans(symbol)
+      .then(f=>{setStock(f); setLoading(false);})
+      .catch(()=>{setStock(null); setLoading(false);});
   },[symbol]);
   // Opus 4.8 nightly option-strategy (D9/D10 picks) pushed to GCS by opus_strategist.ps1.
   useEffect(()=>{
@@ -4204,12 +4127,21 @@ export default function StockDetail(){
     <div style={{minHeight:"100vh",padding:"16px 24px",maxWidth:1320,margin:"0 auto"}}>
       <button onClick={()=>router.push("/")} style={{background:"none",border:"none",color:T.green,cursor:"pointer",display:"flex",alignItems:"center",gap:5,fontFamily:T.mono,fontSize:11,marginBottom:16,padding:0}}><ArrowLeft size={13}/> SCREENER</button>
 
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,paddingBottom:16,borderBottom:`1px solid ${T.divider}`}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:12,marginBottom:20,paddingBottom:16,borderBottom:`1px solid ${T.divider}`}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6,flexWrap:"wrap"}}>
             <h1 style={{fontSize:26,fontWeight:700,color:T.text,fontFamily:T.mono,margin:0}}>{s.symbol}</h1>
             <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${clsColor}30`,color:clsColor,fontFamily:T.mono,fontWeight:600,background:`${clsColor}08`}}><Term k={s.classification} /></span>
             {s.has_catalyst&&<Zap size={14} color={T.purple} fill={T.purple}/>}
+            {/* Earnings countdown + catalyst flags — the retired CatalystTimeline card, as chips */}
+            {s.days_to_earnings!=null&&s.days_to_earnings>=0&&(
+              <span style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${T.purple}40`,color:T.purple,fontFamily:T.mono,fontWeight:600,background:`${T.purple}0d`,display:"inline-flex",alignItems:"center",gap:4}}>
+                <Clock size={11}/> EARNINGS IN {s.days_to_earnings}D{s.eps_beats!=null?` · ${s.eps_beats}/${s.eps_total} BEATS`:""}
+              </span>
+            )}
+            {(s.catalyst_flags||[]).map((f,i)=>(
+              <span key={i} style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${T.purple}30`,color:T.purple,fontFamily:T.mono,background:`${T.purple}08`}}>{f}</span>
+            ))}
             {/* Scale-out tier badge — set by the Scale-Director AFTER the multi-agent debate (see speculair_debate_history scale block) */}
             {debateData?.scale?.tier && (()=>{const sc=debateData.scale;const tc=sc.tier==="CORE"?"#2d7a4f":sc.tier==="LEVER"?"#8b5cf6":sc.tier==="TACTICAL"?"#d97706":"#9ca3af";return(
               <span title={[sc.role,sc.rationale].filter(Boolean).join(" — ")} style={{fontSize:10,padding:"3px 8px",borderRadius:4,border:`1px solid ${tc}66`,color:tc,fontFamily:T.mono,fontWeight:700,background:`${tc}14`,display:"inline-flex",alignItems:"center",gap:5,cursor:"help"}}>
@@ -4224,6 +4156,28 @@ export default function StockDetail(){
             );})()}
           </div>
           <div style={{display:"flex",alignItems:"baseline",gap:12}}><span style={{fontSize:30,fontWeight:600,color:T.text,fontFamily:T.mono}}>{fmtPrice(s.price,s.currency)}</span><span style={{fontSize:13,color:T.textMuted,fontFamily:T.mono}}>{s.currency}</span></div>
+          {/* v8 composite at-a-glance — the overview previously showed no score at all.
+              The composite itself is pass-2-only (null for ~98% of the scan), so the
+              number renders only when the scan computed it; the factor bars are
+              populated for every scanned name. */}
+          <div style={{display:"flex",alignItems:"flex-end",gap:14,marginTop:10,flexWrap:"wrap"}}>
+            {(()=>{const comp=(s.composite??s.composite_momentum) as number|null|undefined;return comp!=null?(
+            <div title="v8 composite (momentum mode) — weighted blend of the five factors" style={{display:"flex",alignItems:"baseline",gap:6,cursor:"help"}}>
+              <span style={{fontSize:9,fontFamily:T.mono,color:T.textMuted,letterSpacing:"0.08em"}}>V8 SCORE</span>
+              <span style={{fontSize:18,fontWeight:700,fontFamily:T.mono,color:comp>0.6?T.green:comp>0.4?T.text:T.red}}>{comp.toFixed(2)}</span>
+            </div>
+            ):(
+            <span style={{fontSize:9,fontFamily:T.mono,color:T.textLight,letterSpacing:"0.08em",alignSelf:"center"}}>V8 FACTORS</span>
+            );})()}
+            {(()=>{const f=readFactorsV8(s,"momentum");return FACTOR_ORDER.map(k=>{const v=(f as any)[k] as number|null;return(
+              <div key={k} style={{width:64}} title={`${FL[k]} (${FW[k]}%) — ${v==null?"no data (weight redistributed)":(v*100).toFixed(0)+"/100"}`}>
+                <div style={{fontSize:8,fontFamily:T.mono,color:T.textLight,letterSpacing:"0.05em",marginBottom:2,textTransform:"uppercase",whiteSpace:"nowrap"}}>{FL[k]}</div>
+                <div style={{height:4,borderRadius:2,background:T.divider,overflow:"hidden"}}>
+                  {v!=null&&<div style={{width:`${Math.max(0,Math.min(1,v))*100}%`,height:"100%",background:v>0.6?T.green:v>0.4?T.amber:T.red}}/>}
+                </div>
+              </div>
+            );});})()}
+          </div>
         </div>
         <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
           <AddToPortfolioStock stock={s}/>
@@ -4241,15 +4195,15 @@ export default function StockDetail(){
          </Card>
       )}
 
-      {/* Tab bar */}
-      <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
+      {/* Tab bar — horizontally scrollable so all 8 tabs stay reachable on mobile */}
+      <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`,overflowX:"auto"}}>
         {(hasDebate
           ? (["overview","story","transcript","track","compare","chart","debate","methodology"] as const)
           : (["overview","story","transcript","track","compare","chart","methodology"] as const)
         ).map((tab) => (
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
-              padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",
+              padding:"10px 20px",border:"none",cursor:"pointer",background:"transparent",whiteSpace:"nowrap",flexShrink:0,
               fontFamily:T.mono,fontSize:11,fontWeight:600,letterSpacing:"0.05em",textTransform:"uppercase",
               color:activeTab===tab?T.green:T.textMuted,
               borderBottom:activeTab===tab?`2px solid ${T.green}`:"2px solid transparent",
@@ -4294,12 +4248,6 @@ export default function StockDetail(){
       {/* Multi-Valuation Comparison Card */}
       <MultiValuationCard s={s} />
 
-      {/* Catalyst + Sentiment */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
-        <CatalystTimeline s={s}/>
-        <SentimentCard s={s}/>
-      </div>
-
       {/* P20 Move Probability Card — full width, shows probability ladder + spread edge */}
       {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
@@ -4309,7 +4257,7 @@ export default function StockDetail(){
         <div style={{marginBottom:16}}><OpusStrategyCard st={opusStrategy} symbol={s.symbol} price={s.price}/></div>}
 
       {/* ═══ v8: Quality / Growth / Value+Smart Money — 3 columns of factor detail ═══ */}
-       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
+       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(340px, 1fr))",gap:14,marginBottom:16}}>
         <div>
           <QualityValueCard s={s}/>
         </div>
@@ -4344,11 +4292,11 @@ export default function StockDetail(){
 
       {/* FMP Panels — multi-year tables (separate from v8 scoring; pure historical context) */}
       <GrowthPanel incomes={incomes} loading={fmpLoading} ratios={ratios}/>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
       {peerGroup && <RadarPeersCard pg={peerGroup} />}
-      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14,margin:"16px 0"}}>
-        <PeersPanel symbol={s.symbol} companyName={s.symbol} radarPeers={Array.isArray(peerGroup?.peers)?peerGroup.peers:null} radarReady={peerGroupReady}/>
-        <NewsFeed symbol={s.symbol}/>
+      <div style={{display:"flex",flexWrap:"wrap",gap:14,margin:"16px 0"}}>
+        <div style={{flex:"2 1 400px",minWidth:0}}><PeersPanel symbol={s.symbol} companyName={s.symbol} radarPeers={Array.isArray(peerGroup?.peers)?peerGroup.peers:null} radarReady={peerGroupReady}/></div>
+        <div style={{flex:"1 1 280px",minWidth:0}}><NewsFeed symbol={s.symbol}/></div>
       </div>
 
 {/* Active signals */}
