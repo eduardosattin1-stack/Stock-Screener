@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Compass, Calendar, AlertCircle, PlayCircle, Star, Trash2, ExternalLink, AlertTriangle, Clock, Sparkles, Layers } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Activity, Brain, RefreshCw, Loader2, Newspaper, BarChart2, Zap, Shield, ChevronUp, ChevronDown, Trash, Star, AlertTriangle, Clock, Sparkles, Layers } from "lucide-react";
 import { ReactFinancialChartTab } from "./ReactFinancialChartTab";
 import { Tip, Term, rrDisplay, toneColor } from "../../components/Tip";
 import { termLabel } from "../../data/voice";
@@ -34,6 +34,32 @@ interface StockData{
   graham_revised_mos?:number;
   iv15_deep_value?:number;
   iv15_deep_value_mos?:number;
+  // ── Methodology-basket per-stock outputs (Methodologies tab) ──
+  // Rank baskets: centered cross-sectional rank MoS (±band) + the raw metric.
+  earnings_yield_gap_mos?:number;   // ±0.125 centered rank of ey_gap
+  ev_gross_profit_mos?:number;      // ±0.15 centered rank of gp_ta (Novy-Marx quality)
+  acquirers_multiple_mos?:number;   // ±0.20 centered rank of EV/EBIT
+  ev_gp_mos?:number;                // ±0.20 centered rank of EV/gross profit
+  ey_gap?:number;                   // earnings yield − local 10y sovereign
+  gp_ta?:number;                    // gross profit / total assets
+  acquirers_multiple?:number;       // EV / EBIT (999 = missing)
+  ev_gp?:number;                    // (mcap + net debt) / gross profit (999 = missing)
+  // Composite baskets — serialized by scans from 2026-07-15+; absent on older scans:
+  consensus_fv?:number;             // convergence: median of up to 11 FV estimates
+  consensus_mos?:number;            // -1 = did not qualify
+  momentum_mos?:number;             // fundamental-momentum composite score (NOT a MoS); -1 = out of scope/gated
+  momentum_fv?:number;              // analyst target used as momentum FV
+  // Gate context (G1-G4) for the basket entry gates:
+  cycle_flag?:string;               // NORMAL | PEAK_CYCLE | TROUGH_CYCLE | INSUFFICIENT_HISTORY
+  peak_margin_sigma?:number;
+  norm_scale?:number;
+  years_history?:number;
+  structural_break?:boolean;
+  structural_break_reason?:string;
+  forward_eps_growth?:number;
+  iv15_nogrowth_agreement?:boolean;
+  iv15_saturated?:boolean;
+  sector_class?:string;             // operating | financial | insurance | reit | utility
   // signal?:string;  // REMOVED v1.2 (May 2026) — BUY/HOLD/SELL semantics gone
   factor_scores?:FactorScores;
   quality_score?:number;catalyst_score?:number;catalyst_flags?:string[];
@@ -55,27 +81,6 @@ interface StockData{
   smart_money_components?:Record<string,number>;
   smart_money_weight?:number;
   factor_coverage?:number;factors_evaluated?:string[];factors_missing?:string[];
-  // v7.2.1 Massive options enrichment
-  options_iv_current?:number|null;
-  options_iv_rank?:number|null;
-  options_iv_samples?:number;
-  options_spread?:{
-    strategy:string;spot:number;expiration:string;dte:number;
-    long_strike:number;short_strike:number;long_mid:number;short_mid:number;
-    net_debit:number;max_gain_per_contract:number;max_loss_per_contract:number;
-    break_even_price:number;break_even_move_pct:number;risk_reward:number;
-    description:string;
-  }|null;
-  // v7.2.3 expanded Massive signals
-  options_pc_ratio?:number|null;
-  options_iv_30d?:number|null;
-  options_iv_60d?:number|null;
-  options_iv_90d?:number|null;
-  options_term_structure?:string|null;
-  options_implied_earnings_move?:{
-    pct:number;call_mid:number;put_mid:number;straddle:number;strike:number;
-    expiration:string;earnings_date:string;
-  }|null;
   // ── v8 (Apr 2026) — 5-factor composite, dual-mode ──
   net_margin?:number;
   fcf_margin?:number;
@@ -397,75 +402,6 @@ function AddToPortfolioStock({stock:s}:{stock:StockData}){
         style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
       <div style={{display:"flex",alignItems:"center",gap:6}}>
         <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"var(--green)":status==="error"?T.red:T.green,color:"var(--bg-surface)",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Added":status==="error"?"! Retry":"Save"}</button>
-        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
-      </div>
-      {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
-    </div>
-  );
-}
-
-function AddOptionToPortfolio({stock:s, sp, ev, iv}:{stock:StockData, sp:any, ev:number, iv:number}){
-  const [open,setOpen]=useState(false);
-  const [contracts,setContracts]=useState("1");
-  const [debit,setDebit]=useState(sp?.net_debit?.toFixed(2)||"");
-  const [longStrike,setLongStrike]=useState(sp?.long_strike?.toString()||"");
-  const [shortStrike,setShortStrike]=useState(sp?.short_strike?.toString()||"");
-  const [notes,setNotes]=useState("");
-  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
-  const [err,setErr]=useState("");
-  
-  async function handleSave(){
-    const c=parseInt(contracts),d=parseFloat(debit);
-    if(!c||c<=0){setErr("Contracts required");return;}
-    if(!d||d<=0){setErr("Debit required");return;}
-    setStatus("saving");setErr("");
-    try{
-      const payload = {
-        asset_type: "option",
-        symbol: s.symbol,
-        entry_price: d, // net debit
-        shares: c * 100, // equivalent shares exposure
-        notes,
-        strategy: sp.strategy,
-        expiration: sp.expiration,
-        strikes: `${longStrike}/${shortStrike}`,
-        ev,
-        risk: sp.max_loss_per_contract,
-        iv,
-        contracts: c
-      };
-      const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      if(!r.ok){
-        const text=await r.text().catch(()=>"");
-        throw new Error(`HTTP ${r.status}`);
-      }
-      setStatus("saved");setTimeout(()=>{setOpen(false);setStatus("idle");setContracts("1");setNotes("");},1500);
-    } catch(e:any){setStatus("error");setErr((e?.message||"Failed").slice(0,160));}
-  }
-  if(!open){
-    return(
-      <button onClick={()=>setOpen(true)} style={{fontSize:10,fontFamily:T.mono,fontWeight:600,padding:"4px 10px",borderRadius:4,border:`1px solid ${T.purple}60`,background:`${T.purple}10`,color:T.purple,cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}>+ Track Option</button>
-    );
-  }
-  return(
-    <div style={{marginTop: 10, padding:"10px 12px",borderRadius:6,background:"var(--bg-surface)",border:`1px solid ${T.purple}`,display:"flex",flexDirection:"column",gap:6}}>
-      <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
-        <span style={{color:T.textMuted,fontWeight:600}}>{sp.strategy.replace(" (estimated)", "")}</span>
-        <input type="text" placeholder="Long" value={longStrike} onChange={e=>{setLongStrike(e.target.value);setErr("");}} 
-          style={{width:40,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono,textAlign:"center"}}/>
-        <span style={{color:T.textLight}}>/</span>
-        <input type="text" placeholder="Short" value={shortStrike} onChange={e=>{setShortStrike(e.target.value);setErr("");}} 
-          style={{width:40,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono,textAlign:"center"}}/>
-        <input type="number" placeholder="contracts" value={contracts} onChange={e=>{setContracts(e.target.value);setErr("");}} autoFocus
-          style={{width:50,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-        <span style={{color:T.textLight}}>@ $</span>
-        <input type="number" step="0.01" placeholder="debit" value={debit} onChange={e=>{setDebit(e.target.value);setErr("");}}
-          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-      </div>
-      <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
-        style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-      <div style={{display:"flex",alignItems:"center",gap:6}}>
-        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"var(--green)":status==="error"?T.red:T.purple,color:"var(--bg-surface)",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Tracked":status==="error"?"! Retry":"Track"}</button>
         <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
       </div>
       {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
@@ -1092,267 +1028,6 @@ function P20Card({s}:{s:StockData}){
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// MassiveOptionsCard v3 — Always proposes a spread (live or estimated).
-// EV calculation drives the signal: green = edge, red = no edge.
-// ═══════════════════════════════════════════════════════════════════════
-
-function MassiveOptionsCard({s}:{s:StockData}){
-  const hasIV=s.options_iv_current!=null||s.options_iv_rank!=null;
-  const hasPositioning=s.options_pc_ratio!=null||s.options_term_structure!=null||s.options_implied_earnings_move!=null;
-  const p20=s.hit_prob||0;
-  // Require REAL options data to render. Non-US names are not options-enriched
-  // (backend gates on country=="US"), so they get NO options card at all — never
-  // a synthesized/mock spread. The ML move-probability lives in its own P20Card.
-  if(!hasIV&&!hasPositioning) return null;
-
-  const ivr=s.options_iv_rank;
-  const iv=s.options_iv_current;
-  const samples=s.options_iv_samples||0;
-  // Theta-backed = real IV present AND enough samples for a reliable IV rank
-  // (backend MIN_IV_SAMPLES_FOR_RANK=20). Only then is an "edge" claim legit.
-  // Non-US names are not options-enriched (backend gates on country=="US"), so
-  // iv is null and any synthesized spread/EV here is illustrative, NOT a tradable edge.
-  const thetaBacked = iv!=null && samples>=20;
-  const ivrColor=ivr==null?T.textMuted:ivr<=30?T.green:ivr<=60?T.amber:T.red;
-  const ivrLabel=ivr==null?"Not enough data":ivr<=25?"Cheap premium":ivr<=40?"Normal":ivr<=60?"Elevated":"Rich — options expensive";
-  const p20pct=p20*100;
-
-  const p5close  = Math.min(p20 * 3.41, 0.80);
-  const p10close = Math.min(p20 * 2.29, 0.65);
-  const p15close = Math.min(p20 * 1.49, 0.50);
-
-  const optionsSp = s.options_spread;
-  const isLive = optionsSp != null;
-
-  const roundStrike = (v:number):number => {
-    const inc = s.price>=50?5:s.price>=10?2.5:1;
-    return Math.round(v/inc)*inc;
-  };
-
-  // Synthesize estimated spread when Massive doesn't provide one
-  const sp = optionsSp ?? (()=>{
-    const spot = s.price;
-    if(spot<=0 || p20<=0 || iv==null) return null;  // never invent a spread without real IV
-    const long_strike = roundStrike(spot);
-    const short_strike = roundStrike(spot*1.10);
-    if(short_strike <= long_strike) return null;
-    const width = short_strike - long_strike;
-    const ivAnn = iv ?? 0.30;
-    const ivFactor = Math.min(0.50, Math.max(0.15, ivAnn * 0.65));
-    const net_debit = Math.round(width * ivFactor * 100) / 100;
-    const max_gain = (width - net_debit) * 100;
-    const max_loss = net_debit * 100;
-    const break_even_price = long_strike + net_debit;
-    const break_even_move_pct = spot > 0 ? ((break_even_price - spot) / spot) * 100 : 0;
-    const risk_reward = max_loss > 0 ? max_gain / max_loss : 0;
-    const exp = new Date(); exp.setDate(exp.getDate() + 30);
-    while(exp.getDay() !== 5) exp.setDate(exp.getDate() + 1);
-    const expStr = exp.toISOString().slice(0,10);
-    return {
-      strategy:"Bull Call Spread (estimated)", spot, expiration:expStr, dte:30,
-      long_strike, short_strike, long_mid:net_debit*0.65, short_mid:net_debit*0.35,
-      net_debit, max_gain_per_contract:max_gain, max_loss_per_contract:max_loss,
-      break_even_price, break_even_move_pct, risk_reward,
-      description:"Estimated from current price + IV. Verify with broker.",
-    };
-  })();
-
-  function interpolateP(movePct:number):number{
-    if(movePct<=0) return 0.85;
-    const pts:[number,number][] = [[5,p5close],[10,p10close],[15,p15close],[20,p20]];
-    if(movePct<=pts[0][0]) return Math.min(pts[0][1] + (pts[0][0]-movePct)*0.02, 0.90);
-    if(movePct>=pts[pts.length-1][0]) return Math.max(pts[pts.length-1][1] - (movePct-pts[pts.length-1][0])*0.01, 0.01);
-    for(let i=0;i<pts.length-1;i++){
-      if(movePct>=pts[i][0]&&movePct<=pts[i+1][0]){
-        const frac=(movePct-pts[i][0])/(pts[i+1][0]-pts[i][0]);
-        return pts[i][1]+(pts[i+1][1]-pts[i][1])*frac;
-      }
-    }
-    return p20;
-  }
-
-  const bePct = sp?.break_even_move_pct||0;
-  const shortPct = sp ? ((sp.short_strike-sp.spot)/sp.spot*100) : 0;
-  const pBreakeven = sp && p20>0 ? interpolateP(bePct) : 0;
-  const pMaxProfit = sp && p20>0 ? interpolateP(shortPct) : 0;
-  const ev = sp ? (pMaxProfit * sp.max_gain_per_contract - (1-pBreakeven) * sp.max_loss_per_contract) : 0;
-  const evPositive = ev > 0;
-  const evPerDollar = sp && sp.max_loss_per_contract > 0 ? ev / sp.max_loss_per_contract : 0;
-
-  const showEdge = thetaBacked;   // only claim an edge when IV is real & rank reliable
-  const assessment = !sp ? "NO DATA"
-    : p20<=0 ? "NO MODEL"
-    : !showEdge ? "EST. ONLY"
-    : evPerDollar > 0.15 ? "★ STRONG EDGE"
-    : evPerDollar > 0.05 ? "MODERATE EDGE"
-    : evPerDollar > 0 ? "MARGINAL EDGE"
-    : evPerDollar > -0.10 ? "SLIGHT NEGATIVE"
-    : "NO EDGE";
-  const assessColor = assessment==="EST. ONLY" ? T.textMuted
-    : assessment.includes("STRONG") ? "var(--purple)"
-    : assessment.includes("MODERATE") ? T.green
-    : assessment.includes("MARGINAL") ? T.amber
-    : T.red;
-  const evColor = showEdge ? (evPositive?T.green:T.red) : T.textMuted;
-
-  const metric=(label:string,value:string,sub?:string,color?:string)=>(
-    <div>
-      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
-      <div style={{fontSize:14,color:color||T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{value}</div>
-      {sub&&<div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{sub}</div>}
-    </div>
-  );
-
-  return(
-    <Card>
-      <SH title="Options Intelligence" icon={<Zap size={12}/>}
-        sub={sp ? (showEdge ? `${assessment} · EV ${ev>=0?"+":""}$${ev.toFixed(0)}/contract${!isLive?" · estimated":""}` : "rough estimate · no live options data") : "IV data only"}/>
-
-      {/* IV strip */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-        {metric("IV RANK",ivr!=null?ivr.toFixed(0):"—",samples<20?`${samples}/20 samples`:ivrLabel,ivrColor)}
-        {metric("CURRENT IV",iv!=null?`${(iv*100).toFixed(0)}%`:"—","ATM 30d annualized")}
-        {metric("P20 (MODEL)",p20>0?`${p20pct.toFixed(0)}%`:"—",p20>=0.15?"D9-D10":p20>=0.08?"D7-D8":p20>=0.03?"D5-D6":"low signal",p20>=0.15?T.green:p20>=0.08?T.amber:T.textMuted)}
-        {metric("ASSESSMENT",assessment.replace("★ ",""),sp?(showEdge?`EV/risk: ${evPerDollar>=0?"+":""}${(evPerDollar*100).toFixed(0)}%`:"no live IV — est. only"):"",assessColor)}
-      </div>
-
-      {/* Market positioning */}
-      {(s.options_pc_ratio!=null||s.options_term_structure!=null||s.options_implied_earnings_move!=null)&&(
-        <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>MARKET POSITIONING</div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14}}>
-            <div>
-              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>P/C VOL RATIO</div>
-              {s.options_pc_ratio!=null?(()=>{const pc=s.options_pc_ratio;const label=pc<0.5?"Heavy call buying":pc<1.0?"Mild bullish":pc<1.5?"Neutral/mild hedging":pc<2.5?"Elevated put buying":"Extreme fear";const color=pc<0.5?T.green:pc<1.5?T.textMuted:pc<2.5?T.amber:T.red;return(<><div style={{fontSize:16,color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{pc.toFixed(2)}</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{label}</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
-            </div>
-            <div>
-              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IV TERM STRUCTURE</div>
-              {(s.options_iv_30d!=null||s.options_iv_60d!=null||s.options_iv_90d!=null)?(()=>{const ts=s.options_term_structure;const tsLabel=ts==="backwardation"?"⚠ Near-term event priced":ts==="contango"?"✓ Normal calm market":ts==="flat"?"→ Flat curve":"—";const tsColor=ts==="backwardation"?T.amber:ts==="contango"?T.green:T.textMuted;const iv30=s.options_iv_30d,iv60=s.options_iv_60d,iv90=s.options_iv_90d;return(<><div style={{display:"flex",alignItems:"baseline",gap:6,marginTop:2,fontFamily:T.mono}}><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv30!=null?`${(iv30*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv60!=null?`${(iv60*100).toFixed(0)}%`:"—"}</span><span style={{fontSize:9,color:T.textLight}}>→</span><span style={{fontSize:12,fontWeight:700,color:T.text}}>{iv90!=null?`${(iv90*100).toFixed(0)}%`:"—"}</span></div><div style={{fontSize:9,color:tsColor,fontFamily:T.mono,marginTop:2,fontWeight:600}}>{tsLabel}</div><div style={{fontSize:8,color:T.textLight,fontFamily:T.mono,marginTop:1}}>30d · 60d · 90d</div></>);})():(<div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div>)}
-            </div>
-            <div>
-              <div style={{fontSize:10,color:T.textMuted,fontFamily:T.mono,fontWeight:600}}>IMPLIED EARNINGS MOVE</div>
-              {s.options_implied_earnings_move?(()=>{const iem=s.options_implied_earnings_move;return(<><div style={{fontSize:16,color:T.text,fontFamily:T.mono,fontWeight:700,marginTop:2}}>±{iem.pct.toFixed(1)}%</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>ATM straddle ${iem.straddle.toFixed(2)} · {iem.earnings_date}</div></>);})():(<><div style={{fontSize:16,color:T.textLight,fontFamily:T.mono,marginTop:2}}>—</div><div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>No earnings in next 60d</div></>)}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ SPREAD PROPOSAL ═══ */}
-      {sp&&p20>0&&(<>
-        {!isLive&&(
-          <div style={{padding:"6px 10px",borderRadius:4,background:T.amberLight,border:"1px solid var(--amber)",fontSize:10,fontFamily:T.mono,color:T.amber,fontWeight:600,marginBottom:10,display:"inline-block"}}>
-            ⚠ ESTIMATED SPREAD — {showEdge ? "verify strikes and premiums with your broker before trading" : "IV rank unreliable (<20 samples) — spread estimated from live IV; verify with your broker, not yet a tradable edge"}
-          </div>
-        )}
-        <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:8}}>
-          BULL CALL SPREAD {isLive?"(LIVE CHAIN)":"(ESTIMATED)"}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(6, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-          {metric("SPOT",`$${sp.spot.toFixed(2)}`)}
-          {metric("LONG CALL",`$${sp.long_strike.toFixed(0)}`,isLive?`mid $${sp.long_mid.toFixed(2)}`:"ATM est.",T.green)}
-          {metric("SHORT CALL",`$${sp.short_strike.toFixed(0)}`,isLive?`mid $${sp.short_mid.toFixed(2)}`:"~+10% est.",T.red)}
-          {metric("EXPIRATION",sp.expiration,`~${sp.dte}d to expiry`)}
-          {metric("NET DEBIT",`$${sp.net_debit.toFixed(2)}`,isLive?"per share (×100)":"estimated from IV")}
-          {metric("BREAK-EVEN",`$${sp.break_even_price.toFixed(2)}`,`+${bePct.toFixed(1)}% from spot`)}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:14,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-          {metric("MAX GAIN",`+$${sp.max_gain_per_contract.toFixed(0)}`,"stock ≥ short strike",T.green)}
-          {metric("MAX LOSS",`-$${sp.max_loss_per_contract.toFixed(0)}`,"stock ≤ long strike",T.red)}
-          {metric("RISK / REWARD",`${sp.risk_reward.toFixed(2)} : 1`,sp.risk_reward>=1.5?"favorable":sp.risk_reward>=1.0?"even":"unfavorable",sp.risk_reward>=1.5?T.green:sp.risk_reward>=1.0?T.amber:T.red)}
-          {metric("P(BREAKEVEN)",`~${Math.round(pBreakeven*100)}%`,`close ≥ +${bePct.toFixed(0)}%`,pBreakeven>=0.50?T.green:pBreakeven>=0.35?T.amber:T.red)}
-          {metric("P(MAX PROFIT)",`~${Math.round(pMaxProfit*100)}%`,`close ≥ +${shortPct.toFixed(0)}%`,pMaxProfit>=0.25?T.green:pMaxProfit>=0.15?T.amber:T.red)}
-        </div>
-
-        {/* EV block */}
-        <div style={{padding:"12px 14px",borderRadius:6,background:showEdge?(evPositive?"var(--green-light)":"var(--red-light)"):"var(--bg-elevated)",border:`1px solid ${showEdge?(evPositive?"var(--green-border)":"var(--red)"):T.divider}`,marginBottom:14}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-            <div>
-              <div style={{fontWeight:600,color:evColor,fontSize:9,fontFamily:T.mono,letterSpacing:"0.08em",marginBottom:4}}>EXPECTED VALUE{!showEdge?" (ILLUSTRATIVE)":!isLive?" (ESTIMATED)":""}</div>
-              <div style={{fontSize:22,fontWeight:700,fontFamily:T.mono,color:evColor}}>
-                {ev>=0?"+":""}${ev.toFixed(0)} <span style={{fontSize:11,fontWeight:500,color:T.textMuted}}>/ contract</span>
-              </div>
-            </div>
-            <div style={{textAlign:"right"}}>
-              <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,marginBottom:2}}>EV / RISK</div>
-              <div style={{fontSize:16,fontWeight:700,fontFamily:T.mono,color:evColor}}>
-                {evPerDollar>=0?"+":""}{(evPerDollar*100).toFixed(0)}%
-              </div>
-            </div>
-          </div>
-          <div style={{fontSize:10,fontFamily:T.mono,color:T.textMuted,lineHeight:1.6}}>
-            {Math.round(pMaxProfit*100)}% × ${sp.max_gain_per_contract.toFixed(0)} − {Math.round((1-pBreakeven)*100)}% × ${sp.max_loss_per_contract.toFixed(0)} = <b style={{color:evColor}}>{ev>=0?"+":""}${ev.toFixed(0)}</b>
-            <span style={{fontSize:9,color:T.textLight,display:"block",marginTop:2}}>Note: EV calculation is an approximation using binary outcomes. The remaining {100 - Math.round(pMaxProfit*100) - Math.round((1-pBreakeven)*100)}% probability represents the area of partial gain or loss between strikes.</span>
-          </div>
-          <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
-            {[
-              {label:"P(BE) > 50%", ok:pBreakeven>=0.50},
-              {label:"P(BE) > 60%", ok:pBreakeven>=0.60},
-              {label:"EV/risk > +10%", ok:evPerDollar>0.10},
-              {label:"IVR ≤ 30", ok:ivr!=null&&ivr<=30},
-            ].map((t,i)=>(
-              <div key={i} style={{
-                padding:"3px 8px",borderRadius:4,fontSize:9,fontFamily:T.mono,fontWeight:600,
-                background:t.ok?"var(--green-light)":"var(--bg-elevated)",color:t.ok?T.green:T.textLight,
-                border:`1px solid ${t.ok?"var(--green-border)":T.divider}`,
-              }}>{t.ok?"✓":"○"} {t.label}</div>
-            ))}
-          </div>
-        </div>
-
-        {/* IBKR template for live spreads */}
-        {isLive&&(
-          <div style={{padding:"10px 12px",borderRadius:5,background:T.greenLight,border:`1px solid ${T.greenBorder}`,fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
-            <div style={{fontWeight:600,color:T.green,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>IBKR EXECUTION</div>
-            <div>Order type: <b>Debit Spread (Bull Call)</b></div>
-            <div>Leg 1: BUY {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.long_strike} C @ LMT ≤ ${sp.long_mid.toFixed(2)}</div>
-            <div>Leg 2: SELL {s.symbol} {sp.expiration.replace(/-/g,"")} {sp.short_strike} C @ LMT ≥ ${sp.short_mid.toFixed(2)}</div>
-            <div>Net: pay no more than <b>${sp.net_debit.toFixed(2)}/spread</b> (×100 = ${(sp.net_debit*100).toFixed(0)}/contract)</div>
-          </div>
-        )}
-
-        {/* Broker lookup for estimated spreads */}
-        {!isLive&&(
-          <div style={{padding:"10px 12px",borderRadius:5,background:"var(--purple-light)",border:"1px solid var(--purple)",fontSize:11,fontFamily:T.mono,color:T.text,lineHeight:1.6,marginBottom:10}}>
-            <div style={{fontWeight:600,color:"var(--purple)",fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>VERIFY WITH BROKER</div>
-            Look up: <b>{s.symbol} {sp.long_strike}/{sp.short_strike} call spread</b>, ~30 DTE.
-            Actual premiums will differ — the EV above uses IV-estimated costs.
-            If real net debit is lower, EV improves; if higher, EV worsens.
-          </div>
-        )}
-
-        {/* Sizing */}
-        <div style={{padding:"10px 12px",borderRadius:5,background:T.amberLight,border:"1px solid var(--amber)",fontSize:11,fontFamily:T.sans,color:T.text,lineHeight:1.55,marginBottom:8}}>
-          <div style={{fontWeight:600,color:T.amber,fontFamily:T.mono,fontSize:9,letterSpacing:"0.08em",marginBottom:4}}>⚠ SIZING</div>
-          Speculative overlay: <b>1-2% of portfolio per spread, max 5% total</b>. Probabilities are model estimates (AUC 0.78). Spreads can lose 100% of debit. {!evPositive && <><b style={{color:T.red}}>EV is negative — no statistical edge at current premiums.</b></>}
-        </div>
-
-        <div style={{marginTop: 10, display:"flex", justifyContent:"flex-end"}}>
-          <AddOptionToPortfolio stock={s} sp={sp} ev={ev} iv={iv||0} />
-        </div>
-      </>)}
-
-      {/* No spread possible (no P20 or can't construct) */}
-      {(!sp || p20<=0)&&hasIV&&(
-        <div style={{padding:"8px 12px",borderRadius:5,background:"var(--bg)",border:`1px solid ${T.divider}`,fontSize:10,fontFamily:T.mono,color:T.textMuted,marginTop:8}}>
-          {p20<=0
-            ? "ML model probability not available — spread EV cannot be calculated. IV data shown above for reference."
-            : "Spread estimation requires stock price > $0 and P20 > 0%."}
-        </div>
-      )}
-
-      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:8,lineHeight:1.4}}>
-        Probabilities from time_model_v2 (OOS AUC 0.7836), calibrated against 21,650 OOS samples.
-        {isLive?" IV/Greeks from Massive (ORATS-sourced).":" Spread estimated from price + IV; verify with broker."}
-        {" "}EV = P(max profit) × gain − P(miss) × loss. Not investment advice.
-      </div>
-    </Card>
-  );
-}
-
-// Keep old name as alias so the existing render block doesn't break
-const MassiveSpreadCard=MassiveOptionsCard;
-
-// ═══════════════════════════════════════════════════════════════════════
 // OpusStrategyCard — Opus 4.8's chosen option strategy for a D9/D10 ML pick.
 // Designed nightly on the gateway PC from REAL IBKR chains (greeks + IV-rank)
 // against the model view; pushed to GCS scans/options_strategies.json. Only
@@ -1865,7 +1540,7 @@ function SmartMoneyCard({s}:{s:StockData}){
     ["institutional_flow", 25, "Inst flow",      "US-only · pass-2 only",    "Inst Flow"],
     ["trend_strength",     23, "Trend",          "missing SMA data",         "Trend"],
     ["institutional",      20, "Inst accum",     "US-only · pass-2 only",    "Inst Accum"],
-    ["pt_velocity",        10, "PT velocity",    "60d bootstrap pending",    "PT Velocity"],
+    ["pt_velocity",        10, "PT velocity",    "no analyst PT coverage (FMP is US-centric)", "PT Velocity"],
     ["quality",            10, "Quality",        "Piotroski/Altman missing", "Quality SM"],
     ["sector_momentum",     7, "Sector mom",     "non-NASDAQ stock",         "Sector Mom"],
     ["congressional",       5, "Congress",       "no recent trades",         "Congress"],
@@ -1876,8 +1551,10 @@ function SmartMoneyCard({s}:{s:StockData}){
 
   // PT velocity reads from the top-level row, not from smart_money_components
   // (the backend exposes pt_velocity_60d / pt_velocity_score separately on
-  // the stock row for direct frontend access). Bootstrap fallback: when
-  // pt_velocity_60d is null the rolling cache hasn't matured yet (60d window).
+  // the stock row for direct frontend access). null is PERMANENT, not pending:
+  // FMP price-target data barely exists outside US listings, and thin US names
+  // print no PTs in the trailing-quarter window. (The old "bootstrap" wording
+  // described a 60d rolling-cache design removed in May 2026.)
   const ptVelRaw = s.pt_velocity_60d;
   const ptVelScore = s.pt_velocity_score;
 
@@ -1973,7 +1650,7 @@ function SmartMoneyCard({s}:{s:StockData}){
         </div>
       )}
       <div style={{marginTop:8,fontSize:9,fontFamily:T.mono,color:T.textLight,lineHeight:1.4}}>
-        LTR-derived 7-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. PT velocity (10%) added v1.2 (May 2026) — bootstrap ~60 days. No weight redistribution: missing factors lower the ceiling.
+        LTR-derived 7-factor weighted score. Trend × min(1, inst_flow×2) — strong distribution kills trend credit. PT velocity (10%) = analyst price-target revision (last-quarter vs last-year avg, FMP, US names only). No weight redistribution: missing factors lower the ceiling.
       </div>
     </Card>
   );
@@ -2601,13 +2278,16 @@ function FinancialChartsPanel({
 // median * 1.05 (richer), neutral inside ±5% band.
 //
 // Data flow:
-//   FMP peers       → GET /api/peers/{symbol} (server fan-out, cached 1h)
+//   Radar peers     → GET /api/peers/{symbol}?peers=A,B,C (business-model group
+//                     from scans/peer_groups.json — same list as the
+//                     "Comparable Peers — Radar" card, so the two cards agree)
+//   FMP peers       → GET /api/peers/{symbol} (fallback when no radar group)
 //   User additions  → fmpFetch("ratios-ttm",...) per ticker (client)
 // Multiples are unitless ratios so cross-currency peers compare directly.
 interface PeerRow{symbol:string;companyName:string;mktCap:number;pe:number|null;ps:number|null;pb:number|null;pfcf:number|null;evEbitda:number|null;}
-function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
+function PeersPanel({symbol,companyName,radarPeers,radarReady}:{symbol:string;companyName:string;radarPeers?:string[]|null;radarReady?:boolean}){
   const router=useRouter();
-  const[data,setData]=useState<{target:PeerRow|null;peers:PeerRow[]}|null>(null);
+  const[data,setData]=useState<{target:PeerRow|null;peers:PeerRow[];source?:string}|null>(null);
   const[loading,setLoading]=useState(true);
   // User-added comparisons. Session-only — resets on page reload by design.
   const[extras,setExtras]=useState<PeerRow[]>([]);
@@ -2615,7 +2295,10 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
   const[input,setInput]=useState("");
   const[addLoading,setAddLoading]=useState(false);
   const[addError,setAddError]=useState("");
-  useEffect(()=>{if(!symbol)return;setLoading(true);setExtras([]);fetch(`/api/peers/${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():null).then(d=>{if(d?.target&&Array.isArray(d.peers))setData({target:d.target,peers:d.peers});setLoading(false);}).catch(()=>setLoading(false));},[symbol]);
+  // Wait for the radar peer-group lookup to settle before fetching, so we
+  // don't fetch the FMP list only to swap it for the radar list a beat later.
+  const radarKey=(radarPeers||[]).join(",");
+  useEffect(()=>{if(!symbol||!radarReady)return;setLoading(true);setExtras([]);const qs=radarKey?`?peers=${encodeURIComponent(radarKey)}`:"";fetch(`/api/peers/${encodeURIComponent(symbol)}${qs}`).then(r=>r.ok?r.json():null).then(d=>{if(d?.target&&Array.isArray(d.peers))setData({target:d.target,peers:d.peers,source:d.source});setLoading(false);}).catch(()=>setLoading(false));},[symbol,radarReady,radarKey]);
   // FMP sometimes returns 0 for an undefined multiple (e.g. negative
   // earnings → P/E should be "n/a", not "0"). Treat ≤0 as null.
   const safeNum=(v:any):number|null=>{const n=typeof v==="number"?v:parseFloat(v);return isFinite(n)&&n>0?n:null;};
@@ -2675,7 +2358,8 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
     </tr>;
   };
   const medianRow:PeerRow={symbol:"__median__",companyName:"",mktCap:0,pe:medians.pe,ps:medians.ps,pb:medians.pb,pfcf:medians.pfcf,evEbitda:medians.evEbitda};
-  const subText=peers.length?`TTM multiples · ${peers.length} peers${extras.length?` + ${extras.length} added`:""}`:"TTM multiples · no FMP peers, add manually";
+  const srcLabel=data.source==="radar"?"business-model peers (radar)":"FMP peers";
+  const subText=peers.length?`TTM multiples · ${peers.length} ${srcLabel}${extras.length?` + ${extras.length} added`:""}`:"TTM multiples · no peers found, add manually";
   return<Card>
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
       <SH title="Peer Comparison" sub={subText}/>
@@ -2708,7 +2392,7 @@ function PeersPanel({symbol,companyName}:{symbol:string;companyName:string}){
       <span style={{color:"var(--green)",fontWeight:600}}>Green</span> = cheaper than peer median (&gt;5% below)
       &nbsp;·&nbsp;
       <span style={{color:"var(--amber)",fontWeight:600}}>Amber</span> = richer than peer median (&gt;5% above)
-      &nbsp;·&nbsp; Peer median uses FMP peers only. Manual additions are scored against it but don't change it. Multiples are unitless so cross-currency comparison is meaningful.
+      &nbsp;·&nbsp; Peer median uses the listed {srcLabel} only. Manual additions are scored against it but don't change it. Multiples are unitless so cross-currency comparison is meaningful.
     </div>
   </Card>;
 }
@@ -3170,75 +2854,216 @@ function TrackRecordTable({s}:{s:StockData}){
   );
 }
 
-function ScoringMethodologyCard() {
+// ── Methodologies tab — how each of the 12 baskets values THIS stock ───────────
+// Replaces the retired-engine prose card (momentum-composite / compounder /
+// fallen-angel / smart-money descriptions). One row per methodology basket,
+// mirroring backend/screener_v6.py: absolute models :2726-2826, centered ranks
+// :6184-6309, convergence :6395-6457, fundamental momentum :6459-6509, sector
+// applicability METHOD_SECTOR_APPLICABILITY :813-830. Membership / entry data
+// come from GCS scans/methodology_picks.json — deliberately NO /public
+// fallback: that copy is stale (2026-06-01) and would show wrong entries.
+const METH_SECTOR_APPLIC: Record<string, Record<string, boolean>> = {
+  dcf_fcff:            { operating: true, financial: false, insurance: false, reit: false, utility: true },
+  rd_capitalized_dcf:  { operating: true, financial: false, insurance: false, reit: false, utility: false },
+  owner_earnings:      { operating: true, financial: false, insurance: false, reit: true,  utility: true },
+  epv:                 { operating: true, financial: false, insurance: false, reit: false, utility: true },
+  iv15_deep_value:     { operating: true, financial: false, insurance: false, reit: false, utility: false },
+  graham_revised:      { operating: true, financial: false, insurance: false, reit: true,  utility: true },
+  earnings_yield_gap:  { operating: true, financial: true,  insurance: true,  reit: true,  utility: true },
+  acquirers_multiple:  { operating: true, financial: false, insurance: false, reit: true,  utility: true },
+  ev_gp:               { operating: true, financial: false, insurance: false, reit: true,  utility: true },
+  ev_gross_profit:     { operating: true, financial: true,  insurance: true,  reit: true,  utility: true },
+  convergence:         { operating: true, financial: true,  insurance: true,  reit: true,  utility: true },
+  fundamental_momentum:{ operating: true, financial: true,  insurance: true,  reit: true,  utility: true },
+};
+interface MethRowDef {
+  key: string; name: string; kind: "absolute" | "rank" | "composite";
+  formula: string;
+  fv?: string; mos: string;                 // StockData field names
+  raw?: string; rawLabel?: string; rawFmt?: (v: number) => string;
+}
+const METH_ROWS: MethRowDef[] = [
+  { key: "dcf_fcff", name: "DCF-FCFF", kind: "absolute", fv: "dcf_value", mos: "dcf_fcff_mos",
+    formula: "5-yr free-cash-flow-to-firm projection — growth = ROE × 0.5 (bounded 3–25%, decaying 0.85×/yr), WACC 10%, terminal growth 2.5%, minus net debt." },
+  { key: "rd_capitalized_dcf", name: "R&D-Capitalized DCF", kind: "absolute", fv: "rd_capitalized_dcf", mos: "rd_capitalized_dcf_mos",
+    formula: "DCF on R&D-adjusted earnings: NI + R&D − R&D/5 amortization (capitalizes research the income statement expenses), 7-yr projection." },
+  { key: "owner_earnings", name: "Owner Earnings", kind: "absolute", fv: "owner_earnings", mos: "owner_earnings_mos",
+    formula: "Buffett owner earnings (NI + D&A − maintenance capex) projected 10 yrs at ROE × 0.4." },
+  { key: "epv", name: "EPV (Greenwald)", kind: "absolute", fv: "epv_value", mos: "epv_mos",
+    formula: "No-growth earnings power: NOPAT / WACC minus net debt, on normalized EBIT + D&A − maintenance capex (2026-06 epv2 maint-capex fix)." },
+  { key: "graham_revised", name: "Graham Revised", kind: "absolute", fv: "graham_revised", mos: "graham_revised_mos",
+    formula: "Normalized EPS × (8.5 + 2g), g = 3-yr EPS CAGR capped at 0–20%." },
+  { key: "iv15_deep_value", name: "IV15 Deep Value", kind: "absolute", fv: "iv15_deep_value", mos: "iv15_deep_value_mos",
+    formula: "15-yr intrinsic value from the de-peaked revenue/share trend (CAGR capped 20%), terminal multiple 8–20×, discounted at 1.15¹⁵." },
+  { key: "earnings_yield_gap", name: "Earnings-Yield Gap", kind: "rank", mos: "earnings_yield_gap_mos",
+    raw: "ey_gap", rawLabel: "EY − local 10y sovereign", rawFmt: (v) => `${(v * 100).toFixed(1)}pp`,
+    formula: "Earnings yield minus the LOCAL 10-yr sovereign yield, ranked cross-sectionally across the scan; centered rank scaled to ±12.5%." },
+  { key: "ev_gross_profit", name: "GP / Assets (Novy-Marx)", kind: "rank", mos: "ev_gross_profit_mos",
+    raw: "gp_ta", rawLabel: "gross profit / total assets", rawFmt: (v) => `${(v * 100).toFixed(1)}%`,
+    formula: "Novy-Marx gross profitability (gross profit / total assets) QUALITY rank — despite the legacy key it is not an EV multiple; centered rank ±15%. Applies to every sector." },
+  { key: "acquirers_multiple", name: "Acquirer's Multiple", kind: "rank", mos: "acquirers_multiple_mos",
+    raw: "acquirers_multiple", rawLabel: "EV / EBIT", rawFmt: (v) => `${v.toFixed(1)}×`,
+    formula: "EV / EBIT ranked cheapest-first across the scan; centered rank ±20%." },
+  { key: "ev_gp", name: "EV / Gross Profit", kind: "rank", mos: "ev_gp_mos",
+    raw: "ev_gp", rawLabel: "(mcap + net debt) / gross profit", rawFmt: (v) => `${v.toFixed(1)}×`,
+    formula: "(Market cap + net debt) / gross profit ranked cheapest-first; centered rank ±20%." },
+  { key: "convergence", name: "Convergence", kind: "composite", fv: "consensus_fv", mos: "consensus_mos",
+    formula: "Median of up to 11 independent fair-value estimates (6 absolute models + Buffett intrinsic + analyst target + 3 rank-derived). Qualifies at ≥6 estimates, ≥60% within ±25% of the median, consensus MoS ≥15%, ≥5 yrs history." },
+  { key: "fundamental_momentum", name: "Fundamental Momentum", kind: "composite", fv: "momentum_fv", mos: "momentum_mos",
+    formula: "Physical hard-tech only. Score = 0.28·growth + 0.16·sustained + 0.24·quality(ROIC) + 0.18·analyst-revision + 0.14·margin, × analyst-target support (0.7–1.3). A growth score, NOT a margin of safety. Gates: rev YoY ≥15%, 3-yr CAGR ≥10%, GM ≥30%, ROIC > 0." },
+];
+const METH_KIND_META: Record<string, { label: string; color: string; note: string }> = {
+  absolute:  { label: "intrinsic FV",  color: "var(--blue)",   note: "Intrinsic fair value in the price currency — MoS is (FV − price) / price, capped [−100%, +95%]." },
+  rank:      { label: "cross-sectional rank", color: "var(--purple)", note: "Centered rank vs the whole scan mapped to a ±band — a relative-cheapness score, NOT an intrinsic fair value." },
+  composite: { label: "composite",     color: "var(--amber)",  note: "Cross-method / growth composites with their own qualification gates." },
+};
+
+// FV-vs-price bar, same geometry as MultiValuationCard's rows.
+function MethFvBar({ price, fv, mosColor }: { price: number; fv: number; mosColor: string }) {
+  const minVal = Math.min(price, fv) * 0.8;
+  const maxVal = Math.max(price, fv) * 1.2;
+  const range = maxVal - minVal || 1;
+  const pricePos = ((price - minVal) / range) * 100;
+  const fvPos = ((fv - minVal) / range) * 100;
+  return (
+    <div style={{ position: "relative", height: 14, background: T.divider, borderRadius: 4, overflow: "hidden", flex: 1, minWidth: 120 }}>
+      {fv > price
+        ? <div style={{ position: "absolute", left: `${pricePos}%`, width: `${fvPos - pricePos}%`, height: "100%", background: "var(--green)20" }} />
+        : <div style={{ position: "absolute", left: `${fvPos}%`, width: `${pricePos - fvPos}%`, height: "100%", background: "var(--red)10" }} />}
+      <div style={{ position: "absolute", left: `${pricePos}%`, width: 2, height: "100%", background: T.text, zIndex: 3 }} title="Current price" />
+      <div style={{ position: "absolute", left: `${fvPos}%`, width: 7, height: 7, borderRadius: "50%", background: mosColor, top: 3.5, transform: "translateX(-3.5px)", border: "1.5px solid white", zIndex: 4 }} title="Fair value" />
+    </div>
+  );
+}
+
+function MethodologyBasketsTab({ s }: { s: StockData }) {
+  // methodology_picks.json — membership, entry data, per-basket YTD.
+  const [mp, setMp] = useState<any>(null);
+  useEffect(() => {
+    fetch(`${GCS_SCANS}/methodology_picks.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.methodologies) setMp(d); })
+      .catch(() => {});
+  }, []);
+
+  const secClass = s.sector_class || "operating";
+  const chip = (txt: string, color: string) => (
+    <span key={txt} style={{ fontSize: 9, fontFamily: T.mono, padding: "2px 7px", borderRadius: 4, background: color + "18", color, border: `1px solid ${color}44`, whiteSpace: "nowrap" }}>{txt}</span>
+  );
+
+  // Stock-level basket-entry gate flags (G1-G3) — shown once, they apply to
+  // basket qualification across methods (display only; the backend already
+  // applied them when building the baskets).
+  const gateChips: React.ReactNode[] = [];
+  if ((s.years_history ?? 99) < 5) gateChips.push(chip(`history ${s.years_history}y < 5y`, "var(--amber)"));
+  if (s.structural_break) gateChips.push(chip(`structural break${s.structural_break_reason ? ` · ${s.structural_break_reason}` : ""}`, "var(--amber)"));
+  if (s.cycle_flag && s.cycle_flag !== "NORMAL") gateChips.push(chip(`${s.cycle_flag.toLowerCase().replace(/_/g, " ")}${s.norm_scale != null && s.norm_scale !== 1 ? ` · EBIT normalized ×${s.norm_scale.toFixed(2)}` : ""}`, "var(--amber)"));
+  if ((s.forward_eps_growth ?? 0) <= -0.25) gateChips.push(chip("fwd EPS decline ≥ 25%", "var(--red)"));
+
+  const memberOf = (key: string) => {
+    const b = mp?.methodologies?.[key];
+    const pick = (b?.picks || []).find((p: any) => p.symbol === s.symbol);
+    return { basket: b, pick };
+  };
+  const inCount = METH_ROWS.filter((r) => memberOf(r.key).pick).length;
+  const mosColor = (m: number) => (m > 0.15 ? T.green : m > 0 ? "#5a9e7a" : m > -0.15 ? T.amber : T.red);
+  const fmtMos = (m: number) => `${m >= 0 ? "+" : ""}${(m * 100).toFixed(1)}%`;
+
+  const renderRow = (row: MethRowDef) => {
+    const applic = METH_SECTOR_APPLIC[row.key]?.[secClass] ?? true;
+    const kindMeta = METH_KIND_META[row.kind];
+    const mos = (s as any)[row.mos] as number | undefined;
+    const fv = row.fv ? ((s as any)[row.fv] as number | undefined) : undefined;
+    const raw = row.raw ? ((s as any)[row.raw] as number | undefined) : undefined;
+    const { basket, pick } = memberOf(row.key);
+    const published = mos !== undefined && mos !== null;
+    const qualified = published && (mos as number) > -1;
+
+    // Per-stock numbers line, by kind.
+    let numbers: React.ReactNode;
+    if (!published) {
+      numbers = <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>not in the current scan output</span>;
+    } else if (row.kind === "rank") {
+      const rawOk = raw != null && raw !== 999;
+      numbers = (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>{row.rawLabel}: <strong style={{ color: rawOk ? T.text : T.textLight }}>{rawOk && row.rawFmt ? row.rawFmt(raw as number) : "—"}</strong></span>
+          {qualified
+            ? <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: mosColor(mos as number) }}>rank MoS {fmtMos(mos as number)}</span>
+            : <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>not ranked in this scan</span>}
+        </div>
+      );
+    } else if (row.key === "fundamental_momentum") {
+      numbers = qualified ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: T.green }}>score {(mos as number).toFixed(2)}</span>
+          {(fv ?? 0) > 0 && <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>analyst target {fmtPrice(fv as number, s.currency)}</span>}
+        </div>
+      ) : <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>did not qualify — outside the physical hard-tech scope or below the growth gates</span>;
+    } else {
+      // absolute + convergence: FV / MoS / bar
+      const hasFv = (fv ?? 0) > 0;
+      numbers = (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>FV <strong style={{ color: hasFv ? T.text : T.textLight }}>{hasFv ? fmtPrice(fv as number, s.currency) : "—"}</strong></span>
+          {hasFv && qualified && <span style={{ fontSize: 11, fontFamily: T.mono, fontWeight: 700, color: mosColor(mos as number) }}>MoS {fmtMos(mos as number)}</span>}
+          {hasFv && <MethFvBar price={s.price} fv={fv as number} mosColor={mosColor(qualified ? (mos as number) : ((fv as number) - s.price) / s.price)} />}
+          {!hasFv && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>valuation unavailable{applic ? "" : " (sector not applicable)"}</span>}
+          {row.key === "convergence" && hasFv && !qualified && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>did not qualify (agreement / MoS / history floors)</span>}
+        </div>
+      );
+    }
+
+    const rowChips: React.ReactNode[] = [];
+    if (!applic) rowChips.push(chip(`n/a for ${secClass}`, "var(--red)"));
+    if (row.key === "iv15_deep_value" && s.iv15_saturated) rowChips.push(chip("MoS pegged at 0.95 cap", "var(--amber)"));
+    if (row.key === "iv15_deep_value" && s.iv15_nogrowth_agreement === false) rowChips.push(chip("no-growth check disagrees", "var(--amber)"));
+    if (pick) rowChips.push(chip(`IN BASKET · ${(pick.weight * 100).toFixed(1)}% · entry ${fmtPrice(pick.entry_price, s.currency)} (${pick.entry_date})`, "var(--green)"));
+
+    return (
+      <div key={row.key} style={{ padding: "12px 0", borderBottom: `1px solid ${T.divider}`, opacity: applic ? 1 : 0.55 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{row.name}</span>
+          <span style={{ fontSize: 8, fontFamily: T.mono, padding: "2px 6px", borderRadius: 4, background: kindMeta.color + "18", color: kindMeta.color, border: `1px solid ${kindMeta.color}44`, textTransform: "uppercase", letterSpacing: "0.05em" }}>{kindMeta.label}</span>
+          {rowChips}
+          {basket?.ytd_return != null && <span style={{ marginLeft: "auto", fontSize: 9, fontFamily: T.mono, color: basket.ytd_return >= 0 ? T.green : T.red }}>basket YTD {fmtMos(basket.ytd_return)}</span>}
+        </div>
+        <p style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.55, fontFamily: T.sans, margin: "0 0 8px" }}>{row.formula}</p>
+        {numbers}
+      </div>
+    );
+  };
+
+  const sections: [string, MethRowDef[]][] = [
+    ["Absolute fair-value models", METH_ROWS.filter((r) => r.kind === "absolute")],
+    ["Cross-sectional rank baskets", METH_ROWS.filter((r) => r.kind === "rank")],
+    ["Composite baskets", METH_ROWS.filter((r) => r.kind === "composite")],
+  ];
+
   return (
     <Card style={{ marginBottom: 16 }}>
-      <SH title="Scoring Analysis & Methodology" icon={<Activity size={12} />} />
-      <div style={{ fontSize: 11, color: T.textMuted, lineHeight: 1.6, marginTop: 12, padding: "10px 14px", borderRadius: 6, background: T.bg, border: `1px solid ${T.cardBorder}`, fontFamily: T.mono }}>
-        Reference — how the per-stock <strong style={{ color: T.text }}>scoring engines</strong> are built. The live, tradeable books (Apex / Value / Disruptor + the Catalyst sleeve) are explained under <strong style={{ color: T.text }}>Discover → Speculair → “How the baskets work”</strong>. Of the factors below, <strong style={{ color: T.text }}>Smart Money</strong> remains a live 15% sub-factor of the v8 composite; the others are historical engine descriptions.
+      <SH title="Basket Methodologies" icon={<Activity size={12} />} sub={`How each of the 12 methodology baskets values ${s.symbol}`} />
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 12, padding: "8px 12px", background: T.bg, borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
+        <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>PRICE <strong style={{ color: T.text }}>{fmtPrice(s.price, s.currency)} {s.currency}</strong></span>
+        <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>SECTOR CLASS <strong style={{ color: T.text }}>{secClass}</strong></span>
+        {mp && <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMuted }}>IN <strong style={{ color: inCount > 0 ? T.green : T.text }}>{inCount}</strong> OF 12 BASKETS</span>}
+        {mp?.last_updated && <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textLight, marginLeft: "auto" }}>picks as of {String(mp.last_updated).slice(0, 10)}{mp.methodology_version ? ` · ${mp.methodology_version}` : ""}</span>}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 30, marginTop: 16 }}>
-        <div>
-          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>MOMENTUM COMPOSITE</h4>
-          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
-            Our default engine. A balanced 5-factor model designed to identify established market leaders currently exhibiting strong uptrends. It blends technical price action with fundamental quality and smart money footprints to capture sustainable momentum while mitigating downside risk.
-          </p>
-          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
-            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-              <li><strong>Technical Momentum (25%):</strong> RSI between 55-70 (strong but not overbought), MACD bullish crossover, strong ADX (&gt;25).</li>
-              <li><strong>Quality (20%):</strong> High Piotroski F-Score (7-9), safe Altman Z-Score (&gt;3.0), strong and expanding Gross Margins.</li>
-              <li><strong>Growth (20%):</strong> Revenue and EPS CAGR &gt; 15% over 3 years, accelerating YoY free cash flow.</li>
-              <li><strong>Value (20%):</strong> High Owner Earnings Yield (&gt;4.5%), trading below historical P/FCF medians.</li>
-              <li><strong>Smart Money (15%):</strong> Rising institutional concentration, net positive insider transactions, and bullish management transcripts.</li>
-            </ul>
-          </div>
+      {gateChips.length > 0 && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+          <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textLight, textTransform: "uppercase", letterSpacing: "0.05em" }}>Basket entry gates on this stock:</span>
+          {gateChips}
         </div>
-        <div>
-          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>COMPOUNDER (US/GLOBAL)</h4>
-          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
-            A precision quality-first engine focused on long-term capital appreciation. It filters for businesses with dominant market positions, robust pricing power, and impenetrable balance sheets. This model systematically rejects high-leverage and commodity-driven businesses to focus on sustainable compounders.
-          </p>
-          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
-            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-              <li><strong>Return on Equity (ROE):</strong> Consistent 3-year average ROE &gt; 15%, indicating efficient compounding of shareholder capital.</li>
-              <li><strong>Pricing Power:</strong> Expanding Gross Margins and Operating Margins (OpMargin Δ &gt; 0) over a 3-year period.</li>
-              <li><strong>Capital Efficiency:</strong> Low Price-to-Book (P/B) relative to ROE, indicating the market has not fully priced in the compounding potential.</li>
-              <li><strong>Balance Sheet:</strong> Low debt-to-equity and strong interest coverage, ensuring survival through macroeconomic cycles.</li>
-            </ul>
-          </div>
+      )}
+      {sections.map(([title, rows]) => (
+        <div key={title} style={{ marginTop: 18 }}>
+          <h4 style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 2px", borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>{title}</h4>
+          <p style={{ fontSize: 9, color: T.textLight, fontFamily: T.mono, margin: "4px 0 0", lineHeight: 1.5 }}>{METH_KIND_META[rows[0].kind].note}</p>
+          {rows.map(renderRow)}
         </div>
-        <div>
-          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>FALLEN ANGEL</h4>
-          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
-            A contrarian mean-reversion engine designed to identify fundamentally sound businesses that have suffered severe short-term price dislocations. It seeks out "babies thrown out with the bathwater"—companies whose operational health remains intact despite negative market sentiment.
-          </p>
-          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
-            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-              <li><strong>Price Dislocation:</strong> Trading near 52-week lows (0-20% of range) with deeply oversold RSI (&lt;30).</li>
-              <li><strong>Fundamental Floor:</strong> Piotroski F-Score &gt; 6, ensuring the business is not structurally failing.</li>
-              <li><strong>Valuation Compression:</strong> Price-to-Sales (P/S) and P/E ratios trading significantly below their 5-year historical medians.</li>
-              <li><strong>Reversal Catalysts:</strong> Bullish divergence in MACD or stabilization in On-Balance Volume (OBV) amidst price weakness.</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <h4 style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8, borderBottom: `1px solid ${T.divider}`, paddingBottom: 6 }}>V8 SMART MONEY</h4>
-          <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.6, marginBottom: 8 }}>
-            A sophisticated alternative-data engine that tracks institutional footprints. It ignores retail noise and focuses entirely on where the most informed capital is flowing, analyzing regulatory filings, congressional trades, and management sentiment.
-          </p>
-          <div style={{ fontSize: 11, color: T.text, lineHeight: 1.5, background: T.bg, padding: "10px 14px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-            <strong style={{ color: T.green }}>High-Scoring Signals:</strong>
-            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-              <li><strong>13F Accumulation:</strong> High velocity of new institutional positions and increasing ownership percentage Quarter-over-Quarter.</li>
-              <li><strong>Congressional Trading:</strong> Net buying activity by House and Senate members (recency-weighted).</li>
-              <li><strong>Management Tone:</strong> High positive sentiment scores extracted from earnings call transcripts via NLP.</li>
-              <li><strong>Insider Conviction:</strong> Cluster buying by multiple C-level executives or directors on the open market.</li>
-            </ul>
-          </div>
-        </div>
+      ))}
+      <div style={{ fontSize: 10, color: T.textLight, fontFamily: T.mono, marginTop: 14, lineHeight: 1.6 }}>
+        These 12 baskets are the tracked methodology books (weekly rebalance, entries preserved). The live tradeable books (Apex / Value + the Catalyst sleeve) select from them via the Speculair debate — see the Speculair Debate tab when available. The v8 screener composite (momentum 25 / quality 20 / growth 20 / value 20 / smart money 15) is separate and unrelated to these valuations.
       </div>
     </Card>
   );
@@ -3971,929 +3796,6 @@ function AdvancedChartTab({ s }: { s: StockData }) {
   );
 }
 
-interface BloomCatalyst {
-  title: string;
-  detected: boolean;
-  description: string;
-  evidence: string;
-}
-
-interface LoebCriterion {
-  rating?: string;
-  ratio?: string;
-  detected?: boolean;
-  analysis: string;
-}
-
-interface OptionsSignals {
-  iv_current: number | null;
-  skew_25d: number | null;
-  term_structure: string;
-  pc_oi_ratio: number | null;
-  total_oi: number | null;
-  implied_earnings_move_pct: number | null;
-  market_sentiment_flag: string;
-  overall_interpretation: string;
-}
-
-interface RecentEvent {
-  date: string;
-  type: "filing" | "news" | "transcript";
-  title: string;
-  link: string;
-}
-
-interface ScoreAdjustment {
-  factor: string;
-  adjustment: number;
-  reason: string;
-}
-
-interface CatalystScanReport {
-  symbol: string;
-  company_name: string;
-  price: number;
-  market_cap: number;
-  catalyst_density_score: number;
-  upside_downside_ratio: number;
-  analysis_summary: string;
-  recommendation: "BUY" | "WATCH" | "HOLD" | "SELL";
-  bloom_catalysts: {
-    catalyst_1: BloomCatalyst;
-    catalyst_2: BloomCatalyst;
-    catalyst_3: BloomCatalyst;
-  };
-  loeb_criteria: {
-    catalyst_density: LoebCriterion;
-    sum_of_parts: LoebCriterion;
-    activism_potential: LoebCriterion;
-    risk_reward: LoebCriterion;
-  };
-  options_signals: OptionsSignals;
-  recent_events: RecentEvent[];
-  cache_timestamp?: string;
-  is_merger_arb?: boolean;
-  catalyst_nature?: "mechanical_execution" | "pricing_dislocation";
-  catalyst_nature_rationale?: string;
-  re_rate_status?: "pending" | "partial" | "complete";
-  merger_arb_data?: {
-    acquirer_symbol?: string;
-    acquirer_name?: string;
-    acquirer_price?: number;
-    cash_component?: number;
-    stock_component_ratio?: number;
-    implied_deal_value?: number;
-    gross_spread_val?: number;
-    gross_spread_pct?: number;
-    expected_close?: string;
-    unhedged_downside?: number;
-    unhedged_rr_asymmetry?: string;
-    pre_announce_price?: number;
-    deal_status?: string;
-  } | null;
-  convergence_score?: number;
-  independent_track_count?: number;
-  unfired_independent_track_count?: number;
-  is_dher_pattern?: boolean;
-  tracks?: Array<{
-    track_type: string;
-    evidence: string;
-    counterparty: string | null;
-    dated_event: boolean;
-    event_date: string | null;
-    fired: boolean;
-    independence_score?: number;
-  }>;
-  options_confirmation_score?: number;
-  credit_health?: {
-    grade?: string;
-    net_debt_ebitda?: number;
-    distress_flags?: string[];
-  };
-  adjusted_loeb_score?: number;
-  final_adjusted_loeb?: number;
-  score_adjustments?: ScoreAdjustment[];
-  distressed_setup_flag?: boolean;
-  credit_event_risk_flag?: boolean;
-  credit_health_layer3_adjustment_applied?: boolean;
-}
-
-function CatalystTabContent({ symbol }: { symbol: string }) {
-  const [report, setReport] = useState<CatalystScanReport | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [customAcquirerPrice, setCustomAcquirerPrice] = useState<number | "">("");
-
-  const fetchReport = useCallback((forceRefresh: boolean = false) => {
-    if (!symbol) return;
-    setLoading(true);
-    setError(null);
-    fetch(`/api/catalysts/scan?symbol=${symbol}${forceRefresh ? "&refresh=true" : ""}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
-        return r.json();
-      })
-      .then((data: CatalystScanReport) => {
-        setReport(data);
-        setCustomAcquirerPrice(data.merger_arb_data?.acquirer_price ?? "");
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Failed to load catalyst scan report.");
-        setLoading(false);
-      });
-  }, [symbol]);
-
-  useEffect(() => {
-    fetchReport(false);
-  }, [fetchReport]);
-
-  const handleForceRefresh = () => {
-    fetchReport(true);
-  };
-
-  if (loading) {
-    return (
-      <Card style={{ padding: 40, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
-        <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: T.green }} />
-        <div style={{ fontSize: 12, fontFamily: T.mono, color: T.textLight }}>
-          Running multi-strategy cognitive extraction pipeline for {symbol}...
-        </div>
-      </Card>
-    );
-  }
-
-  if (error || !report) {
-    return (
-      <Card style={{ padding: 40, textAlign: "center", color: T.red }}>
-        <AlertCircle size={24} style={{ margin: "0 auto 8px" }} />
-        <div style={{ fontSize: 12, fontFamily: T.mono }}>{error || "No catalyst report found"}</div>
-      </Card>
-    );
-  }
-
-  const getRecommendationStyle = (rec?: string) => {
-    switch (rec) {
-      case "BUY":
-        return { color: T.green, backgroundColor: T.greenLight, borderColor: T.greenBorder };
-      case "WATCH":
-        return { color: T.amber, backgroundColor: T.amberLight, borderColor: T.amber };
-      case "HOLD":
-        return { color: T.textMuted, backgroundColor: T.card, borderColor: T.cardBorder };
-      case "SELL":
-        return { color: T.red, backgroundColor: T.redLight, borderColor: T.red };
-      default:
-        return { color: T.text, backgroundColor: T.card, borderColor: T.cardBorder };
-    }
-  };
-
-  // Dynamic merger arb math calculation based on customAcquirerPrice input
-  const mergerArbComputed = useMemo(() => {
-    if (!report || (!report.is_merger_arb && !report.merger_arb_data) || !report.merger_arb_data) return null;
-    
-    const data = report.merger_arb_data;
-    const isPE = !data.acquirer_symbol || data.acquirer_symbol === "CASH" || data.acquirer_symbol === "NONE";
-    
-    const acquirerPriceToUse = customAcquirerPrice !== "" ? customAcquirerPrice : (data.acquirer_price || 0);
-    const cashComponent = data.cash_component || 0;
-    const stockComponentRatio = data.stock_component_ratio || 0;
-    const targetPrice = report.price || 0;
-    const preAnnouncePrice = data.pre_announce_price || (targetPrice * 0.85);
-
-    const impliedDealValue = cashComponent + (stockComponentRatio * acquirerPriceToUse);
-    const grossSpreadVal = impliedDealValue - targetPrice;
-    const grossSpreadPct = targetPrice > 0 ? (grossSpreadVal / targetPrice) * 100 : 0;
-    const unhedgedDownside = targetPrice - preAnnouncePrice;
-    const unhedgedRRVal = grossSpreadVal > 0 ? -(unhedgedDownside / grossSpreadVal) : -99.9;
-    const unhedgedRRString = grossSpreadVal > 0 ? `${unhedgedRRVal.toFixed(1)}:1` : "N/A (Negative Spread)";
-    
-    // Dynamic rounded strikes for options suggestion builder
-    const roundStrike = (val: number, step = 2.5) => Math.round(val / step) * step;
-    
-    const longPutStrike = roundStrike(targetPrice, targetPrice < 50 ? 2.5 : 5.0);
-    let shortPutStrike = roundStrike(preAnnouncePrice, preAnnouncePrice < 50 ? 2.5 : 5.0);
-    if (longPutStrike <= shortPutStrike) {
-      shortPutStrike = longPutStrike - (targetPrice < 50 ? 2.5 : 5.0);
-    }
-    
-    const dealValStrike = roundStrike(impliedDealValue, impliedDealValue < 50 ? 2.5 : 5.0);
-    
-    const targetHedges = [
-      {
-        strategy: "Bear Put Spread (Downside Protection)",
-        description: `Buy ${longPutStrike} Put / Sell ${shortPutStrike} Put on ${report.symbol} to hedge drop to pre-announce reference ($${preAnnouncePrice.toFixed(2)}).`,
-        legs: `Buy $${longPutStrike} P / Sell $${shortPutStrike} P`
-      },
-      {
-        strategy: "Covered Call (Yield Enhancement)",
-        description: `Buy ${report.symbol} stock and Sell ${dealValStrike} Call to collect premium and buffer downside, capping upside at deal price.`,
-        legs: `Buy Stock / Sell $${dealValStrike} C`
-      }
-    ];
-    
-    const acquirerHedges = [];
-    if (stockComponentRatio > 0 && data.acquirer_symbol && data.acquirer_symbol !== "CASH") {
-      const acqSpot = acquirerPriceToUse;
-      if (acqSpot > 0) {
-        const acqShortStrike = roundStrike(acqSpot, acqSpot < 50 ? 2.5 : 5.0);
-        const acqLongStrike = roundStrike(acqSpot * 1.10, acqSpot < 50 ? 2.5 : 5.0);
-        acquirerHedges.push({
-          strategy: "Bear Call Spread (Short Protection)",
-          description: `Sell $${acqShortStrike} Call / Buy $${acqLongStrike} Call on ${data.acquirer_symbol} to hedge long target exposure if acquirer shares plummet.`,
-          legs: `Sell $${acqShortStrike} C / Buy $${acqLongStrike} C`
-        });
-        
-        const acqLongPut = roundStrike(acqSpot, acqSpot < 50 ? 2.5 : 5.0);
-        const acqShortPut = roundStrike(acqSpot * 0.85, acqSpot < 50 ? 2.5 : 5.0);
-        acquirerHedges.push({
-          strategy: "Bear Put Spread (Synthetic Short)",
-          description: `Buy $${acqLongPut} Put / Sell $${acqShortPut} Put on ${data.acquirer_symbol} to gain short exposure to the acquirer component without borrow cost.`,
-          legs: `Buy $${acqLongPut} P / Sell $${acqShortPut} P`
-        });
-      }
-    }
-
-    return {
-      impliedDealValue,
-      grossSpreadVal,
-      grossSpreadPct,
-      unhedgedDownside,
-      unhedgedRRString,
-      acquirerPriceToUse,
-      isPE,
-      targetHedges,
-      acquirerHedges
-    };
-  }, [report, customAcquirerPrice]);
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* Detail dashboard layout */}
-      <Card>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.divider}`, paddingBottom: 12, marginBottom: 16, gap: 12 }}>
-          <SH title={`${report.company_name} Catalyst Overview`} icon={<Zap size={14} color={T.green} />} sub={`Loeb & Bloom Cognitive Catalyst Scan`} />
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {report.cache_timestamp && (
-              <span style={{ fontSize: 10, color: T.textLight, fontFamily: T.mono }}>
-                Last Scan: <strong style={{ color: T.text }}>{new Date(report.cache_timestamp).toLocaleString()}</strong>
-              </span>
-            )}
-            <button
-              onClick={() => handleForceRefresh()}
-              disabled={loading}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                background: "transparent",
-                border: `1px solid ${T.cardBorder}`,
-                borderRadius: 6,
-                padding: "3px 8px",
-                fontSize: 10,
-                fontWeight: 700,
-                color: T.green,
-                cursor: "pointer",
-                transition: "all 0.15s",
-                fontFamily: T.mono,
-              }}
-            >
-              <RefreshCw size={11} className={loading ? "animate-spin" : ""} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
-              RE-SCAN
-            </button>
-            {report.recommendation && (
-              <span style={{ 
-                fontSize: 10, fontWeight: 800, padding: "3px 9px", borderRadius: 6,
-                borderWidth: 1, borderStyle: "solid",
-                ...getRecommendationStyle(report.recommendation)
-              }}>
-                {report.recommendation}
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(168,85,247,0.06)", borderRadius: 6, border: `1px solid ${T.purple || "var(--purple)"}` }}>
-            <div>
-              <Tip k="CATALYST_SCORE"><div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Loeb Catalyst Score</div></Tip>
-              <div style={{ fontSize: 9, color: T.textLight }}>Refined Catalyst Density</div>
-            </div>
-            <div style={{ marginLeft: "auto", fontSize: 24, fontWeight: 800, color: T.purple || "var(--purple)", fontFamily: T.mono }}>
-              {(report.adjusted_loeb_score ?? report.catalyst_density_score)?.toFixed(1) || "N/A"}
-            </div>
-          </div>
-          
-          {(() => { const rr = rrDisplay(report as any); return (
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 6, border: `1px solid ${toneColor(rr.tone)}` }}>
-            <div>
-              <Tip k="RR" extra={rr.rawForTooltip}><div style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, letterSpacing: "0.05em", textTransform: "uppercase" }}>Risk / Reward</div></Tip>
-              <div style={{ fontSize: 9, color: T.textLight }}>vs live price</div>
-            </div>
-            <div style={{ marginLeft: "auto", fontSize: 17, fontWeight: 800, color: toneColor(rr.tone), fontFamily: T.mono }}>
-              {rr.text}
-            </div>
-          </div>
-          ); })()}
-        </div>
-
-        <div>
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.textMuted, letterSpacing: "0.08em", marginBottom: 6 }}>
-            Opportunistic AI Thesis Summary
-          </div>
-          <p style={{ fontSize: 13, color: T.text, lineHeight: 1.6, margin: 0, fontFamily: T.sans }}>
-            {report.analysis_summary}
-          </p>
-
-          {/* Skeptic correction — reconciles a thesis whose prose argues a higher score than the skeptic's final */}
-          {(report as any).verify_verdict === "CONFIRMED_WITH_CORRECTIONS" && report.bloom_catalysts?.catalyst_3?.evidence && (
-            <div style={{ marginTop: 10, padding: "9px 12px", background: "rgba(217,151,6,0.06)", border: "1px solid rgba(217,151,6,0.25)", borderRadius: 6 }}>
-              <Tip k="CONFIRMED_WITH_CORRECTIONS"><span style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: "#d97706", letterSpacing: "0.05em" }}>⚠ Skeptic correction</span></Tip>
-              <div style={{ fontSize: 10.5, color: T.textLight, lineHeight: 1.5, marginTop: 4 }}>{report.bloom_catalysts.catalyst_3.evidence}</div>
-            </div>
-          )}
-
-          {/* Post-board enforcement audit (manual §6/§9): driver tag + corrections trail */}
-          {((report as any).resolution_driver || ((report as any).corrections?.length > 0)) && (
-            <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(196,181,253,0.05)", border: `1px solid rgba(196,181,253,0.18)`, borderRadius: 6 }}>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: (report as any).corrections?.length ? 6 : 0 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.purple || "var(--purple)", letterSpacing: "0.06em" }}>Post-board pass</span>
-                {(report as any).resolution_driver && (
-                  <span style={{ fontSize: 9, fontFamily: T.mono, padding: "1px 6px", borderRadius: 3, background: "rgba(196,181,253,0.14)", color: T.purple || "var(--purple)", border: "1px solid rgba(196,181,253,0.20)" }}>
-                    ⛓ driver: {String((report as any).resolution_driver).replace(/_/g, " ")}
-                  </span>
-                )}
-                {(report as any).lane_canon && (
-                  <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textLight }}>lane: {String((report as any).lane_canon).replace(/_/g, " ")}</span>
-                )}
-              </div>
-              {(report as any).corrections?.length > 0 && (
-                <div style={{ fontSize: 10, color: T.textLight, lineHeight: 1.5 }}>
-                  <span style={{ color: T.textMuted, fontWeight: 700 }}>Corrections applied: </span>
-                  {(report as any).corrections.join(" · ")}
-                  {(report as any).adjusted_loeb_score_orig != null && (report as any).adjusted_loeb_score_orig !== report.adjusted_loeb_score && (
-                    <span> · score {(report as any).adjusted_loeb_score_orig} → {report.adjusted_loeb_score}</span>
-                  )}
-                  {(report as any).tier_orig && (report as any).tier_orig !== (report as any).tier && (
-                    <span> · tier {(report as any).tier_orig} → {(report as any).tier}</span>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Phase-2 computed edge / valuation build (the EDGE axis, with the work shown) */}
-          {(report as any).valuation_method && (
-            <div style={{ marginTop: 12, padding: "12px 14px", background: "rgba(20,184,122,0.04)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: T.green, letterSpacing: "0.06em" }}>Edge · computed R:R</span>
-                <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textMuted }}>({(report as any).valuation_method})</span>
-                {(report as any).edge_grade && (report as any).edge_grade !== "?" && (
-                  <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 6px", borderRadius: 3, background: (report as any).edge_grade === "H" ? "rgba(20,184,122,0.18)" : (report as any).edge_grade === "M" ? "rgba(217,151,6,0.18)" : "rgba(239,68,68,0.16)", color: (report as any).edge_grade === "H" ? T.green : (report as any).edge_grade === "M" ? "#d97706" : "#ef4444" }}>EDGE {(report as any).edge_grade}</span>
-                )}
-                {((report as any).edge_flags || []).map((f: string) => (<Tip key={f} k={f.split(":")[0]}><span style={{ fontSize: 8, fontFamily: T.mono, color: "#d97706", border: "1px solid rgba(217,151,6,0.3)", borderRadius: 3, padding: "1px 4px" }}>{f}</span></Tip>))}
-              </div>
-              {(report as any).valuation_method === "binary_prob" ? (
-                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
-                  <span>P(win) <b>{(((report as any).win_prob || 0) * 100).toFixed(0)}%</b></span>
-                  <span style={{ color: T.green }}>up-leg <b>+${((report as any).up_leg || 0).toFixed(2)}</b></span>
-                  <span style={{ color: "#ef4444" }}>down-leg <b>−${((report as any).down_leg || 0).toFixed(2)}</b></span>
-                  <span>payoff <b>{((report as any).payoff || 0).toFixed(2)}×</b></span>
-                  <span>EV <b style={{ color: ((report as any).ev_pct || 0) >= 0 ? T.green : "#ef4444" }}>{((report as any).ev_pct || 0) >= 0 ? "+" : ""}{(((report as any).ev_pct || 0) * 100).toFixed(1)}%</b></span>
-                  <span style={{ color: T.textMuted }}>(barbell — not a single R:R)</span>
-                </div>
-              ) : (
-                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, fontFamily: T.mono, color: T.text }}>
-                  <Tip k="RR" extra={rrDisplay(report as any).rawForTooltip}><span>R:R <b style={{ color: toneColor(rrDisplay(report as any).tone) }}>{rrDisplay(report as any).text}</b></span></Tip>
-                  <span style={{ color: T.green }}>target <b>${(((report as any).sop_built ?? (report as any).fair_value_target) || 0).toFixed(2)}</b>{(report as any).sop_built != null ? <span style={{ color: T.textMuted, fontWeight: 400 }}> (build)</span> : null}</span>
-                  <span>live <b>${((report as any).live_price || report.price || 0).toFixed(2)}</b></span>
-                  <span style={{ color: "#ef4444" }}>floor <b>${((report as any).downside_floor || 0).toFixed(2)}</b></span>
-                  {(report as any).drift != null && (<span style={{ color: T.textMuted }}>drift {((report as any).drift * 100).toFixed(1)}%</span>)}
-                </div>
-              )}
-              {((report as any).edge_flags || []).includes("SOP_TARGET_MISMATCH") && (
-                <div style={{ fontSize: 9, color: "#d97706", marginTop: 4 }}>⚠ asserted target ${((report as any).fair_value_target || 0).toFixed(2)} ≠ reconciled build ${((report as any).sop_built || 0).toFixed(2)} — R:R uses the build (premium/advocacy stripped)</div>
-              )}
-              {(report as any).valuation?.advocacy_target != null && (
-                <div style={{ fontSize: 9, color: T.textMuted, marginTop: 2 }}>advocacy ceiling ${Number((report as any).valuation.advocacy_target).toFixed(2)} — activist target, displayed only (never in the R:R)</div>
-              )}
-              {(report as any).valuation?.valuation_basis && (
-                <div style={{ fontSize: 10, color: T.textLight, marginTop: 6, lineHeight: 1.5 }}><span style={{ color: T.textMuted, fontWeight: 700 }}>Basis: </span>{(report as any).valuation.valuation_basis}</div>
-              )}
-              {(report as any).valuation?.sop_components?.length > 0 && (
-                <div style={{ marginTop: 8 }}>
-                  <div style={{ fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: T.textMuted, marginBottom: 4 }}>Sum-of-parts build</div>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, fontFamily: T.mono }}>
-                    <thead><tr style={{ color: T.textMuted }}><th style={{ textAlign: "left", padding: "2px 4px" }}>Segment</th><th style={{ textAlign: "right" }}>Metric</th><th style={{ textAlign: "right" }}>×</th><th style={{ textAlign: "right", padding: "2px 4px" }}>EV</th></tr></thead>
-                    <tbody>
-                      {(report as any).valuation.sop_components.map((s: any, idx: number) => (
-                        <tr key={idx} style={{ borderTop: `1px solid ${T.cardBorder || "var(--border)"}` }}>
-                          <td style={{ padding: "2px 4px", color: T.text }} title={s.basis}>{s.segment}</td>
-                          <td style={{ textAlign: "right", color: T.textLight }}>{s.metric_value != null ? `${s.metric_value} ${s.driver_metric || ""}` : "—"}</td>
-                          <td style={{ textAlign: "right", color: T.textLight }}>{s.multiple != null ? `${s.multiple}×` : "—"}</td>
-                          <td style={{ textAlign: "right", padding: "2px 4px", color: T.text }}>{s.ev_contribution != null ? `$${Number(s.ev_contribution).toLocaleString()}` : "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <div style={{ fontSize: 9, color: T.textMuted, marginTop: 4 }}>− net debt ${Number((report as any).valuation.net_debt || 0).toLocaleString()} − adj ${Number((report as any).valuation.adjustments || 0).toLocaleString()} ÷ {Number((report as any).valuation.shares_out || 0).toLocaleString()} sh = <b style={{ color: T.green }}>${((report as any).fair_value_target || 0).toFixed(2)}</b></div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Catalyst Nature Timing & Re-rate Distinction */}
-          {(report.catalyst_nature || report.re_rate_status) && (
-            <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6 }}>
-              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 6 }}>
-                {report.catalyst_nature && (
-                  <span style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: 4,
-                    background: report.catalyst_nature === "pricing_dislocation" ? "rgba(20, 184, 122, 0.12)" : "rgba(59, 130, 246, 0.12)",
-                    color: report.catalyst_nature === "pricing_dislocation" ? T.green || "var(--green)" : T.blue || "var(--blue)",
-                    border: `1px solid ${report.catalyst_nature === "pricing_dislocation" ? T.green || "var(--green)" : T.blue || "var(--blue)"}`
-                  }}>
-                    {report.catalyst_nature === "pricing_dislocation" ? "ALPHA-BEARING DISLOCATION" : "MECHANICAL EXECUTION"}
-                  </span>
-                )}
-                {report.re_rate_status && (
-                  <span style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: 4,
-                    background: report.re_rate_status === "complete" ? "rgba(239, 68, 68, 0.12)" : (report.re_rate_status === "partial" ? "rgba(245, 158, 11, 0.12)" : "rgba(20, 184, 122, 0.12)"),
-                    color: report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)"),
-                    border: `1px solid ${report.re_rate_status === "complete" ? T.red || "var(--red)" : (report.re_rate_status === "partial" ? T.amber || "var(--amber)" : T.green || "var(--green)")}`
-                  }}>
-                    Re-rate: {termLabel(report.re_rate_status)}
-                  </span>
-                )}
-              </div>
-              {report.catalyst_nature_rationale && (
-                <div style={{ fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.4 }}>
-                  <strong style={{ color: T.text || "var(--text)" }}>Trade Timing Insight:</strong> {report.catalyst_nature_rationale}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
-
-      {/* MERGER ARBITRAGE CARD (DYNAMIC MATH & RISK) */}
-      {report.merger_arb_data && mergerArbComputed && (
-        <Card style={{ 
-          background: "linear-gradient(135deg, rgba(20,184,122,0.04) 0%, rgba(59,130,246,0.04) 100%)", 
-          border: `1px solid ${T.cardBorder || "var(--border)"}`, 
-          borderRadius: 8, 
-          padding: 20,
-          boxShadow: "var(--shadow-md)"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.blue || "var(--blue)", textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.blue || "var(--blue)"}` }}>
-            <TrendingUp size={12} /> Active Merger Arbitrage Deal & Spread Analysis
-          </div>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr 1.5fr", gap: 20, marginBottom: 16 }}>
-            
-            {/* Deal Terms column */}
-            <div>
-              <div style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 8 }}>Deal Terms</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ fontSize: 11 }}>
-                  Acquirer: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.acquirer_name || "Private Equity"}</strong> {report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" && <span style={{ color: T.textMuted || "var(--text-muted)" }}>({report.merger_arb_data.acquirer_symbol})</span>}
-                </div>
-                <div style={{ fontSize: 11 }}>
-                  Cash Component: <strong style={{ color: T.text || "var(--text)" }}>${report.merger_arb_data.cash_component?.toFixed(2) || "0.00"}</strong>
-                </div>
-                <div style={{ fontSize: 11 }}>
-                  Stock Component: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.stock_component_ratio ? `${report.merger_arb_data.stock_component_ratio.toFixed(4)} shares` : "None (All-Cash)"}</strong>
-                </div>
-                
-                {report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" && (
-                  <div style={{ marginTop: 6 }}>
-                    <label style={{ fontSize: 8, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: 2 }}>
-                      Acquirer Price Input
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={customAcquirerPrice}
-                      onChange={(e) => setCustomAcquirerPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
-                      style={{
-                        background: "rgba(0,0,0,0.2)",
-                        border: `1px solid ${T.cardBorder || "var(--border)"}`,
-                        borderRadius: 4,
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        color: T.text || "var(--text)",
-                        fontFamily: T.mono || "var(--font-mono)",
-                        width: "100%",
-                        outline: "none"
-                      }}
-                    />
-                    {customAcquirerPrice !== "" && (
-                      <button
-                        type="button"
-                        onClick={() => setCustomAcquirerPrice("")}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: T.textMuted || "var(--text-muted)",
-                          fontSize: 8,
-                          textTransform: "uppercase",
-                          cursor: "pointer",
-                          padding: 0,
-                          marginTop: 4,
-                          display: "block"
-                        }}
-                      >
-                        Reset to Live (${report.merger_arb_data.acquirer_price?.toFixed(2)})
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Spread Valuation column */}
-            <div style={{ borderLeft: `1px solid ${T.cardBorder || "var(--border)"}`, paddingLeft: 20 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 8 }}>Live Spread Math</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div>
-                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Implied Deal Value</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: T.text || "var(--text)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    ${mergerArbComputed.impliedDealValue.toFixed(2)}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Gross Deal Spread</div>
-                  <div style={{ 
-                    fontSize: 16, 
-                    fontWeight: 800, 
-                    color: mergerArbComputed.grossSpreadVal >= 0 ? T.green || "var(--green)" : T.red || "var(--red)", 
-                    marginTop: 2, 
-                    fontFamily: T.mono || "var(--font-mono)" 
-                  }}>
-                    {mergerArbComputed.grossSpreadVal >= 0 ? "+" : ""}${mergerArbComputed.grossSpreadVal.toFixed(2)} ({mergerArbComputed.grossSpreadPct.toFixed(1)}%)
-                  </div>
-                </div>
-              </div>
-              <div style={{ fontSize: 10, color: T.textLight || "var(--text-light)", marginTop: 8 }}>
-                Expected Close: <strong style={{ color: T.text || "var(--text)" }}>{report.merger_arb_data.expected_close || "N/A"}</strong>
-              </div>
-            </div>
-
-            {/* Risk & Hedging column */}
-            <div style={{ borderLeft: `1px solid ${T.cardBorder || "var(--border)"}`, paddingLeft: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase" }}>Unhedged Risk Profile</span>
-                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: T.redLight || "var(--red-light)", color: T.red || "var(--red)", fontWeight: 700 }}>NEGATIVE ASYMMETRY</span>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 12 }}>
-                <div>
-                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Downside if Break</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    -${mergerArbComputed.unhedgedDownside.toFixed(2)}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)" }}>Unhedged R/R</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: T.red || "var(--red)", marginTop: 2, fontFamily: T.mono || "var(--font-mono)" }}>
-                    {mergerArbComputed.unhedgedRRString}
-                  </div>
-                </div>
-              </div>
-              <div style={{ fontSize: 10, color: T.textLight || "var(--text-light)", marginTop: 8 }}>
-                Pre-Announce Reference: <span style={{ color: T.text || "var(--text)" }}>${report.merger_arb_data.pre_announce_price?.toFixed(2) || "N/A"}</span>
-              </div>
-            </div>
-
-          </div>
-
-          <div style={{ display: "flex", gap: 8, background: "rgba(239, 68, 68, 0.05)", border: `1px solid rgba(239, 68, 68, 0.2)`, borderRadius: 6, padding: "10px 12px", fontSize: 11, color: T.textLight || "var(--text-light)", lineHeight: 1.5, marginBottom: 16 }}>
-            <AlertTriangle size={16} color={T.red || "var(--red)"} style={{ flexShrink: 0, marginTop: 1 }} />
-            <div>
-              <strong style={{ color: T.red || "var(--red)" }}>Risk Warning:</strong> Entering an unhedged long position in {report.symbol} at current levels has a negative unhedged risk/reward of {mergerArbComputed.unhedgedRRString}. To execute a standard risk-arbitrage trade, investors typically buy the target ({report.symbol}) and short the acquirer ({report.merger_arb_data.acquirer_symbol && report.merger_arb_data.acquirer_symbol !== "CASH" ? report.merger_arb_data.acquirer_symbol : "PE"}) at the exchange ratio of {report.merger_arb_data.stock_component_ratio || 0} to lock in the spread.
-            </div>
-          </div>
-
-          {/* Hedged Option Builder Suggestions */}
-          <div style={{ borderTop: `1px dashed ${T.cardBorder || "var(--border)"}`, paddingTop: 16 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: T.green || "var(--green)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>
-              Hedged Option Builder Suggestions
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div>
-                <div style={{ fontSize: 9, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>Target Hedges ({report.symbol})</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {mergerArbComputed.targetHedges.map((hedge, idx) => (
-                    <div key={idx} style={{ background: "rgba(255,255,255,0.01)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: "8px 10px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: T.text || "var(--text)" }}>{hedge.strategy}</span>
-                        <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.1)", color: T.green || "var(--green)", fontFamily: T.mono || "var(--font-mono)" }}>{hedge.legs}</span>
-                      </div>
-                      <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)", lineHeight: 1.3 }}>{hedge.description}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <div style={{ fontSize: 9, color: T.textMuted || "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>
-                  Acquirer Hedges {report.merger_arb_data.acquirer_symbol ? `(${report.merger_arb_data.acquirer_symbol})` : ""}
-                </div>
-                {mergerArbComputed.acquirerHedges.length > 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {mergerArbComputed.acquirerHedges.map((hedge, idx) => (
-                      <div key={idx} style={{ background: "rgba(255,255,255,0.01)", border: `1px solid ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: "8px 10px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: T.text || "var(--text)" }}>{hedge.strategy}</span>
-                          <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(59,130,246,0.15)", color: T.blue || "var(--blue)", fontFamily: T.mono || "var(--font-mono)" }}>{hedge.legs}</span>
-                        </div>
-                        <div style={{ fontSize: 9, color: T.textLight || "var(--text-light)", lineHeight: 1.3 }}>{hedge.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", border: `1px dashed ${T.cardBorder || "var(--border)"}`, borderRadius: 6, padding: 16, fontSize: 10, color: T.textMuted || "var(--text-muted)", minHeight: 90 }}>
-                    No stock component (All-Cash transaction) - no acquirer hedge required.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Bloom timeline stages */}
-      <Card>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
-          <Compass size={12} /> Bloom Catalyst Timeline Stages
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-          {/* Catalyst 1 */}
-          {report.bloom_catalysts?.catalyst_1 && (
-            <div style={{ 
-              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
-              border: `1px solid ${report.bloom_catalysts.catalyst_1.detected ? T.purple || "var(--purple)" : T.cardBorder}`,
-              opacity: report.bloom_catalysts.catalyst_1.detected ? 1 : 0.45
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 1</span>
-                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_1.detected ? "rgba(168,85,247,0.18)" : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_1.detected ? T.purple || "var(--purple)" : T.textMuted }}>
-                  {report.bloom_catalysts.catalyst_1.detected ? "DETECTED" : "INACTIVE"}
-                </span>
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_1.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                <Tip k="STAGE_CATALYST">{report.bloom_catalysts.catalyst_1.title}</Tip>
-              </div>
-              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
-                {report.bloom_catalysts.catalyst_1.description}
-              </div>
-              {report.bloom_catalysts.catalyst_1.detected && (
-                <div style={{ fontSize: 9, color: T.purple || "var(--purple)", background: "rgba(168,85,247,0.06)", padding: "6px 8px", borderRadius: 4 }}>
-                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_1.evidence}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Catalyst 2 */}
-          {report.bloom_catalysts?.catalyst_2 && (
-            <div style={{ 
-              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
-              border: `1px solid ${report.bloom_catalysts.catalyst_2.detected ? T.green : T.cardBorder}`,
-              opacity: report.bloom_catalysts.catalyst_2.detected ? 1 : 0.45
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 2</span>
-                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_2.detected ? T.greenLight : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_2.detected ? T.green : T.textMuted }}>
-                  {report.bloom_catalysts.catalyst_2.detected ? "ACTIVE" : "INACTIVE"}
-                </span>
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_2.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                <Tip k="STAGE_MILESTONE">{report.bloom_catalysts.catalyst_2.title}</Tip>
-              </div>
-              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
-                {report.bloom_catalysts.catalyst_2.description}
-              </div>
-              {report.bloom_catalysts.catalyst_2.detected && (
-                <div style={{ fontSize: 9, color: T.green, background: "rgba(20,184,122,0.06)", padding: "6px 8px", borderRadius: 4 }}>
-                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_2.evidence}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Catalyst 3 */}
-          {report.bloom_catalysts?.catalyst_3 && (
-            <div style={{ 
-              background: "rgba(0,0,0,0.15)", borderRadius: 6, padding: 14, 
-              border: `1px solid ${report.bloom_catalysts.catalyst_3.detected ? T.blue || "var(--blue)" : T.cardBorder}`,
-              opacity: report.bloom_catalysts.catalyst_3.detected ? 1 : 0.45
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, color: T.textMuted, textTransform: "uppercase" }}>Stage 3</span>
-                <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: report.bloom_catalysts.catalyst_3.detected ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.03)", color: report.bloom_catalysts.catalyst_3.detected ? T.blue || "var(--blue)" : T.textMuted }}>
-                  {report.bloom_catalysts.catalyst_3.detected ? "TRIGGERED" : "INACTIVE"}
-                </span>
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: report.bloom_catalysts.catalyst_3.detected ? T.text : T.textLight, marginBottom: 6 }}>
-                <Tip k="STAGE_VERIFY">{report.bloom_catalysts.catalyst_3.title}</Tip>
-              </div>
-              <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, marginBottom: 8, fontFamily: T.sans }}>
-                {report.bloom_catalysts.catalyst_3.description}
-              </div>
-              {report.bloom_catalysts.catalyst_3.detected && (
-                <div style={{ fontSize: 9, color: T.blue || "var(--blue)", background: "rgba(59,130,246,0.06)", padding: "6px 8px", borderRadius: 4 }}>
-                  <strong>Evidence:</strong> {report.bloom_catalysts.catalyst_3.evidence}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
-
-      {/* Loeb criteria & activism */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card>
-          {report.loeb_criteria?.catalyst_density && (
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Catalyst Density (12-24M)</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.purple || "var(--purple)" }}>
-                  {report.loeb_criteria.catalyst_density.rating} Density
-                </span>
-              </div>
-              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
-                {report.loeb_criteria.catalyst_density.analysis}
-              </div>
-            </div>
-          )}
-          {report.loeb_criteria?.sum_of_parts?.analysis && !["N/A.", "N/A", "-"].includes(report.loeb_criteria.sum_of_parts.analysis) && (
-            <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Sum-of-Parts Discount</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: report.loeb_criteria.sum_of_parts.detected ? T.green : T.textMuted }}>
-                  {report.loeb_criteria.sum_of_parts.detected ? "SoP Dislocation Detected" : "No Dislocation"}
-                </span>
-              </div>
-              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
-                {report.loeb_criteria.sum_of_parts.analysis}
-              </div>
-            </div>
-          )}
-        </Card>
-
-        <Card>
-          {report.loeb_criteria?.activism_potential?.analysis && !["-", "N/A.", "N/A"].includes(report.loeb_criteria.activism_potential.analysis) && (
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Activism Footprint</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.purple || "var(--purple)" }}>
-                  {report.loeb_criteria.activism_potential.rating}
-                </span>
-              </div>
-              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
-                {report.loeb_criteria.activism_potential.analysis}
-              </div>
-            </div>
-          )}
-          {report.loeb_criteria?.risk_reward?.analysis && (
-            <div style={{ borderTop: `1px solid ${T.divider}`, paddingTop: 14 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: "uppercase" }}>Asymmetric Risk/Reward</span>
-              </div>
-              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5, fontFamily: T.sans }}>
-                {report.loeb_criteria.risk_reward.analysis}
-              </div>
-            </div>
-          )}
-        </Card>
-      </div>
-
-      {/* Options signals — render ONLY when real options data exists. Sweep/enriched dossiers
-          carry a NO_OPTIONS sentinel (all-null + "N/A"); the ThetaData feed is retired, so a
-          dead all-N/A panel is just noise (the live IBKR options card above is the real source). */}
-      {report.options_signals && (
-        report.options_signals.iv_current != null ||
-        report.options_signals.skew_25d != null ||
-        report.options_signals.pc_oi_ratio != null ||
-        report.options_signals.total_oi != null ||
-        report.options_signals.implied_earnings_move_pct != null ||
-        (!!report.options_signals.term_structure && report.options_signals.term_structure !== "N/A")
-      ) && (
-        <Card>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
-            <TrendingUp size={12} /> Options Market Catalyst Signals
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 16 }}>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>ATM IV</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
-                {report.options_signals.iv_current != null ? `${(report.options_signals.iv_current * 100).toFixed(1)}%` : "N/A"}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Skew (25d)</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: report.options_signals.skew_25d && report.options_signals.skew_25d < 0 ? T.green : T.text }}>
-                {report.options_signals.skew_25d != null ? `${report.options_signals.skew_25d.toFixed(2)}` : "N/A"}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Structure</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: report.options_signals.term_structure === "backwardation" ? T.purple || "var(--purple)" : T.text }}>
-                {report.options_signals.term_structure || "N/A"}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>P/C Ratio</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
-                {report.options_signals.pc_oi_ratio != null ? report.options_signals.pc_oi_ratio.toFixed(2) : "N/A"}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Total OI</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono }}>
-                {report.options_signals.total_oi != null ? report.options_signals.total_oi.toLocaleString() : "N/A"}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>
-              <div style={{ fontSize: 8, color: T.textMuted, textTransform: "uppercase" }}>Implied Move</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, fontFamily: T.mono, color: T.purple || "var(--purple)" }}>
-                {report.options_signals.implied_earnings_move_pct != null ? `±${report.options_signals.implied_earnings_move_pct.toFixed(1)}%` : "N/A"}
-              </div>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 10, background: "rgba(0, 0, 0, 0.12)", border: `1px solid ${T.cardBorder}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", background: "rgba(20,184,122,0.18)", color: T.green, padding: "2px 6px", borderRadius: 4, height: "fit-content", whiteSpace: "nowrap" }}>
-              {report.options_signals.market_sentiment_flag}
-            </div>
-            <div style={{ fontSize: 11, color: T.textLight, lineHeight: 1.5, fontFamily: T.sans }}>
-              {report.options_signals.overall_interpretation}
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Evidence Feed */}
-      {report.recent_events && report.recent_events.length > 0 && (
-        <Card>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.green, textTransform: "uppercase", marginBottom: 16, paddingBottom: 6, borderBottom: `2px solid ${T.greenLight || "var(--green-light)"}` }}>
-            <Calendar size={12} /> Catalyst Evidence Feed (Filings & News Context)
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {report.recent_events.map((ev, idx) => (
-              <div 
-                key={idx} 
-                style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: 12, 
-                  padding: "8px 12px", 
-                  background: "rgba(255,255,255,0.02)", 
-                  border: `1px solid ${T.cardBorder}`, 
-                  borderRadius: 6 
-                }}
-              >
-                <span style={{ fontSize: 9, fontFamily: T.mono, color: T.textMuted, width: 80, flexShrink: 0 }}>
-                  {ev.date.split(" ")[0]}
-                </span>
-                <span style={{ 
-                  fontSize: 8, fontWeight: 700, padding: "2px 6px", borderRadius: 4, 
-                  background: ev.type === "filing" ? "rgba(59,130,246,0.12)" : "rgba(168,85,247,0.12)",
-                  color: ev.type === "filing" ? T.blue || "var(--blue)" : T.purple || "var(--purple)",
-                  textTransform: "uppercase",
-                  width: 50,
-                  textAlign: "center"
-                }}>
-                  {ev.type}
-                </span>
-                <span style={{ fontSize: 12, color: T.text, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: T.sans }}>
-                  {ev.title}
-                </span>
-                {ev.link && (
-                  <a 
-                    href={ev.link} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    style={{ color: T.green, display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, fontFamily: T.mono }}
-                  >
-                    link <ExternalLink size={10} />
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-    </div>
-  );
-}
-
 function MultiValuationCard({s}:{s:StockData}){
   const price = s.price;
   
@@ -4998,8 +3900,6 @@ function RadarPeersCard({ pg }: { pg: any }) {
 export default function StockDetail(){
   const params=useParams();const router=useRouter();const symbol=typeof params?.symbol==="string"?params.symbol:"";
   const[stock,setStock]=useState<StockData|null>(null);const[loading,setLoading]=useState(true);
-  // Live options from IBKR (pushed to GCS by ibkr_options_batch on the gateway host).
-  const[liveOptions,setLiveOptions]=useState<any>(null);
   const[opusStrategy,setOpusStrategy]=useState<OpusStrategy|null>(null);
   const[incomes,setIncomes]=useState<IncomeRow[]>([]);const[ratios,setRatios]=useState<RatioYear[]>([]);
   const[balanceSheets,setBalanceSheets]=useState<BalanceSheetRow[]>([]);const[cashFlows,setCashFlows]=useState<CashFlowRow[]>([]);
@@ -5008,7 +3908,7 @@ export default function StockDetail(){
   const[fmpLoading,setFmpLoading]=useState(true);
   // May 2026: stock-page tab system. "overview" = existing dashboard,
   // "track" = Buffett 10y track record table.
-  const [activeTab, setActiveTab] = useState<"overview"|"story"|"catalyst"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"story"|"transcript"|"track"|"compare"|"chart"|"methodology"|"debate">("overview");
   const [speculairBaskets, setSpeculairBaskets] = useState<any>(null);
   // Per-symbol Opus debate HISTORY (dated). Drives the debate-panel time-travel dropdown.
   const [debateHistory, setDebateHistory] = useState<any[]>([]);
@@ -5051,18 +3951,30 @@ export default function StockDetail(){
   }, [symbol]);
 
   // Radar peer-comps: intelligent business-model peer grouping (better than the GICS "similar stocks").
+  // peerGroupReady gates PeersPanel so it fetches once with the radar list (or
+  // once without, if this symbol has no group) instead of FMP-then-radar twice.
   const [peerGroup, setPeerGroup] = useState<any>(null);
+  const [peerGroupReady, setPeerGroupReady] = useState(false);
   useEffect(() => {
     if (!symbol) return;
     const sym = symbol.toUpperCase();
     setPeerGroup(null);
+    setPeerGroupReady(false);
     const pick = (d: any) => { if (d && typeof d === "object") setPeerGroup(d[sym] || d[symbol] || null); };
-    fetch(`${GCS_SCANS}/peer_groups.json`)
-      .then((r) => { if (r.ok) return r.json(); throw new Error("no gcs peers"); })
-      .then(pick)
-      .catch(() => {
-        fetch(`/peer_groups.json`).then((r) => (r.ok ? r.json() : null)).then(pick).catch(() => {});
-      });
+    (async () => {
+      try {
+        const r = await fetch(`${GCS_SCANS}/peer_groups.json`);
+        if (!r.ok) throw new Error("no gcs peers");
+        pick(await r.json());
+      } catch {
+        try {
+          const r = await fetch(`/peer_groups.json`);
+          if (r.ok) pick(await r.json());
+        } catch {}
+      } finally {
+        setPeerGroupReady(true);
+      }
+    })();
   }, [symbol]);
 
   // Deep-link: ?tab=debate (from a Speculair pick's "View full analysis →") opens the
@@ -5190,15 +4102,6 @@ export default function StockDetail(){
         setStock(best); setLoading(false);
       }
     }).catch(()=>{setStock(null); setLoading(false);});
-  },[symbol]);
-  // Live IBKR options (US + EU) pushed to GCS by the gateway host's batch job.
-  useEffect(()=>{
-    if(!symbol)return;
-    setLiveOptions(null);
-    fetch(`${GCS_SCANS}/options_latest.json`,{cache:'no-store'})
-      .then(r=>r.ok?r.json():null)
-      .then(d=>{const o=d?.options?.[symbol.toUpperCase()]; if(o)setLiveOptions(o);})
-      .catch(()=>{});
   },[symbol]);
   // Opus 4.8 nightly option-strategy (D9/D10 picks) pushed to GCS by opus_strategist.ps1.
   useEffect(()=>{
@@ -5341,8 +4244,8 @@ export default function StockDetail(){
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:`1px solid ${T.cardBorder}`}}>
         {(hasDebate
-          ? (["overview","story","catalyst","transcript","track","compare","chart","debate","methodology"] as const)
-          : (["overview","story","catalyst","transcript","track","compare","chart","methodology"] as const)
+          ? (["overview","story","transcript","track","compare","chart","debate","methodology"] as const)
+          : (["overview","story","transcript","track","compare","chart","methodology"] as const)
         ).map((tab) => (
           <button key={tab} onClick={()=>setActiveTab(tab)}
             style={{
@@ -5354,13 +4257,12 @@ export default function StockDetail(){
             }}>
             {tab==="overview"?"Overview"
              :tab==="story"?"Investor Personas"
-             :tab==="catalyst"?"Catalyst Watch"
              :tab==="transcript"?"Transcript"
              :tab==="track"?"Track Record"
              :tab==="compare"?"Compare"
              :tab==="chart"?"Chart"
              :tab==="debate"?"Speculair Debate"
-             :"Scoring Methodology"}
+             :"Valuation Methods"}
           </button>
         ))}
       </div>
@@ -5373,12 +4275,10 @@ export default function StockDetail(){
         <div style={{display:"flex",flexDirection:"column",gap:16}}>
           <StockStoryCard s={s} incomes={incomes} ratios={ratios} />
         </div>
-      ) : activeTab==="catalyst" ? (
-        <CatalystTabContent symbol={s.symbol} />
       ) : activeTab==="debate" ? (
         <SpeculairDebateCard debateData={debateData} debateHistory={debateHistory} histIdx={histIdx} setHistIdx={setHistIdx} />
       ) : activeTab==="methodology" ? (
-        <ScoringMethodologyCard />
+        <MethodologyBasketsTab s={s} />
       ) : activeTab==="transcript" ? (
         <TranscriptInsights symbol={s.symbol} dossier={debateData?.interrogator_dossier} />
       ) : activeTab==="chart" ? (
@@ -5403,18 +4303,6 @@ export default function StockDetail(){
       {/* P20 Move Probability Card — full width, shows probability ladder + spread edge */}
       {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
-      {/* Massive options card — spread suggestion + IV data */}
-      {(()=>{
-        // Merge live IBKR options (from GCS) into the stock for the card.
-        const so:StockData = liveOptions ? {...s,
-          options_iv_current: liveOptions.iv_current ?? s.options_iv_current,
-          options_iv_rank: liveOptions.iv_rank ?? s.options_iv_rank,
-          options_iv_samples: liveOptions.iv_samples ?? s.options_iv_samples,
-          options_spread: liveOptions.spread ?? s.options_spread,
-        } : s;
-        const show = so.options_iv_current!=null||so.options_iv_rank!=null||so.options_spread||so.options_pc_ratio!=null||so.options_term_structure||so.options_implied_earnings_move;
-        return show ? <div style={{marginBottom:16}}><MassiveOptionsCard s={so}/></div> : null;
-      })()}
 
       {/* Opus 4.8 nightly option-strategy (D9/D10 picks only) */}
       {opusStrategy && (opusStrategy.structure||"").toLowerCase()!=="skip" &&
@@ -5459,7 +4347,7 @@ export default function StockDetail(){
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,margin:"16px 0"}}><ProfitPanel ratios={ratios} loading={fmpLoading}/><ValPanel ratios={ratios} loading={fmpLoading}/></div>
       {peerGroup && <RadarPeersCard pg={peerGroup} />}
       <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14,margin:"16px 0"}}>
-        <PeersPanel symbol={s.symbol} companyName={s.symbol}/>
+        <PeersPanel symbol={s.symbol} companyName={s.symbol} radarPeers={Array.isArray(peerGroup?.peers)?peerGroup.peers:null} radarReady={peerGroupReady}/>
         <NewsFeed symbol={s.symbol}/>
       </div>
 

@@ -1009,6 +1009,16 @@ class Stock:
     iv15_deep_value_mos: float = -1.0
     ev_gp_mos: float = -1.0     # Phase 10a-2: TRUE EV/Gross Profit (12th basket)
 
+    # 10th/11th baskets (convergence + fundamental momentum). These were assigned
+    # as dynamic attrs in save_methodology_picks, which asdict() silently drops —
+    # declared here so the per-stock values reach latest_global.json (the stock
+    # page's Methodologies tab reads them). Assignment happens in
+    # save_methodology_picks BEFORE save_scan_to_gcs serializes the rows.
+    consensus_fv: float = 0.0     # convergence: median of up to 11 FV estimates
+    consensus_mos: float = -1.0   # -1.0 = did not qualify (agreement/MoS/history floors)
+    momentum_mos: float = -1.0    # fundamental-momentum composite score (NOT a MoS); -1.0 = out of scope/gated
+    momentum_fv: float = 0.0      # analyst target used as the momentum basket's FV
+
     net_debt_local: float = 0.0
     ebit_local: float = 0.0
     depreciation_local: float = 0.0
@@ -5263,7 +5273,10 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             congressional=cong,
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
-            pt_velocity_score=analyst.get("pt_velocity_score"),
+            # THIS stock's pass-1 analyst data. `analyst` (bare) here would be
+            # the variable leaked from the LAST pass-1 loop iteration — that bug
+            # zeroed the pt_velocity component for every enriched stock.
+            pt_velocity_score=raw["analyst"].get("pt_velocity_score"),
         )
         s.smart_money_score = sm["score"]
         s.smart_money_components = sm["components"]
@@ -5363,7 +5376,9 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             congressional=raw["cong"],
             sma50=raw["tech"].get("sma50", 0),
             sma200=raw["tech"].get("sma200", 0),
-            pt_velocity_score=None,  # pass-1: no get_analyst() call; PT velocity unavailable
+            # get_analyst() DOES run in pass-1 (the old None + "no get_analyst()
+            # call" comment was wrong) — use the stashed per-stock value.
+            pt_velocity_score=raw["analyst"].get("pt_velocity_score"),
         )
         s.smart_money_score = sm["score"]      # None — core-4 not met
         s.smart_money_components = sm["components"]

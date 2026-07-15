@@ -13,9 +13,16 @@
 // Always verify endpoints by fetching the docs page directly rather than
 // trusting MCP parameter names.
 //
-// Called from PeersPanel as: GET /api/peers/{symbol}
+// Called from PeersPanel as: GET /api/peers/{symbol}[?peers=A,B,C]
 //
-// Returns: { symbol, target: PeerRow|null, peers: PeerRow[], errors? }
+// When ?peers= is present (the radar business-model peer group from
+// scans/peer_groups.json) we use THAT list instead of FMP stock-peers, so the
+// "Peer Comparison" table matches the "Comparable Peers — Radar" card. Names
+// come from /stable/profile per peer. If none of the requested peers yield
+// TTM metrics we fall back to the FMP stock-peers path rather than render an
+// empty table.
+//
+// Returns: { symbol, source: "radar"|"fmp", target: PeerRow|null, peers: PeerRow[], errors? }
 //   PeerRow = { symbol, companyName, mktCap, pe, ps, pb, pfcf, evEbitda }
 //
 // Caching: 1h browser/edge cache. Peer list is stable; TTM ratios update at
@@ -109,25 +116,20 @@ function toRow(symbol: string, name: string, mktCap: number, ttm: TtmRow | null)
   };
 }
 
-export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string }> }) {
-  const { symbol } = await ctx.params;
-  const sym = (symbol || "").toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
-  if (!sym) return new Response("symbol required", { status: 400 });
+// Profile rows: only need name + market cap for display/context.
+type ProfileRow = {
+  symbol?: string;
+  companyName?: string;
+  marketCap?: number;
+  mktCap?: number;
+};
 
-  // 1. Get peer list. If this fails the whole panel gracefully degrades.
-  const peersRes = await fmpGet<PeerListRow>("stock-peers", { symbol: sym });
-  const errors: Record<string, string> = {};
-  if (peersRes.error) errors.peers = peersRes.error;
+const hasMetrics = (p: PeerRow) =>
+  p.pe != null || p.ps != null || p.pb != null || p.pfcf != null || p.evEbitda != null;
 
-  // Top-N peers by market cap. peers endpoint already returns mktCap so we
-  // can sort here without additional calls. Filter out entries with missing
-  // symbol or non-positive mktCap (FMP occasionally returns delisted shells).
-  const rawPeers = (peersRes.data ?? [])
-    .filter((p) => p.symbol && (p.mktCap ?? 0) > 0)
-    .sort((a, b) => (b.mktCap ?? 0) - (a.mktCap ?? 0))
-    .slice(0, MAX_PEERS);
-
-  // 2. Fetch TTM ratios for target + all peers in parallel.
+// Resolve a list of peer stubs {symbol, companyName, mktCap} into full rows
+// with TTM multiples (+ target row), dropping peers with no metrics at all.
+async function buildRows(sym: string, rawPeers: PeerListRow[]) {
   const allSymbols = [sym, ...rawPeers.map((p) => p.symbol!)];
   const ttmResults = await Promise.all(
     allSymbols.map((s) => fmpGet<TtmRow>("ratios-ttm", { symbol: s })),
@@ -139,26 +141,82 @@ export async function GET(_req: Request, ctx: { params: Promise<{ symbol: string
     if (row) ttmBySymbol.set(s, row);
   });
 
-  // 3. Build target row. We need the company name + mktCap. peers endpoint
-  // doesn't give those for the target itself, but the panel doesn't strictly
-  // need them — page already shows the company name. We pass an empty name
-  // and 0 mktCap; the client can fill in from its existing stock state.
+  // Target row: empty name + 0 mktCap — the panel fills the name from its
+  // existing stock state.
   const target: PeerRow = toRow(sym, "", 0, ttmBySymbol.get(sym) ?? null);
 
-  // 4. Build peer rows. Drop peers that returned no TTM data at all (no point
-  // showing a row of dashes — usually means the peer is too small or thinly
-  // traded for FMP to compute multiples).
+  // Drop peers that returned no TTM data at all (no point showing a row of
+  // dashes — usually means the peer is too small or thinly traded for FMP).
   const peers: PeerRow[] = rawPeers
     .map((p) =>
       toRow(p.symbol!, p.companyName || p.symbol!, p.mktCap ?? 0, ttmBySymbol.get(p.symbol!) ?? null),
     )
-    .filter((p) => p.pe != null || p.ps != null || p.pb != null || p.pfcf != null || p.evEbitda != null);
+    .filter(hasMetrics);
+  return { target, peers };
+}
+
+export async function GET(req: Request, ctx: { params: Promise<{ symbol: string }> }) {
+  const { symbol } = await ctx.params;
+  const sym = (symbol || "").toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
+  if (!sym) return new Response("symbol required", { status: 400 });
+
+  const errors: Record<string, string> = {};
+
+  // Explicit peer list (radar business-model group). Sanitized, deduped,
+  // target excluded. Cap slightly above MAX_PEERS — radar groups are curated
+  // and small, keep them intact in their curated order.
+  const peersParam = new URL(req.url).searchParams.get("peers") || "";
+  const requested = [...new Set(
+    peersParam
+      .split(",")
+      .map((p) => p.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g, ""))
+      .filter((p) => p && p !== sym),
+  )].slice(0, 12);
+
+  let source: "radar" | "fmp" = "fmp";
+  let result: { target: PeerRow; peers: PeerRow[] } | null = null;
+
+  if (requested.length) {
+    // Names via /stable/profile (parallel, 1h-cached like everything else).
+    const profiles = await Promise.all(
+      requested.map((s) => fmpGet<ProfileRow>("profile", { symbol: s })),
+    );
+    const stubs: PeerListRow[] = requested.map((s, i) => {
+      const prof = profiles[i].data?.[0];
+      return {
+        symbol: s,
+        companyName: prof?.companyName || s,
+        mktCap: prof?.marketCap ?? prof?.mktCap ?? 0,
+      };
+    });
+    const built = await buildRows(sym, stubs);
+    if (built.peers.length) {
+      source = "radar";
+      result = built;
+    } else {
+      errors.radar = "no TTM metrics for any radar peer — fell back to FMP peers";
+    }
+  }
+
+  if (!result) {
+    // FMP stock-peers path: top-N by market cap. Filter out entries with
+    // missing symbol or non-positive mktCap (FMP occasionally returns
+    // delisted shells).
+    const peersRes = await fmpGet<PeerListRow>("stock-peers", { symbol: sym });
+    if (peersRes.error) errors.peers = peersRes.error;
+    const rawPeers = (peersRes.data ?? [])
+      .filter((p) => p.symbol && (p.mktCap ?? 0) > 0)
+      .sort((a, b) => (b.mktCap ?? 0) - (a.mktCap ?? 0))
+      .slice(0, MAX_PEERS);
+    result = await buildRows(sym, rawPeers);
+  }
 
   return new Response(
     JSON.stringify({
       symbol: sym,
-      target,
-      peers,
+      source,
+      target: result.target,
+      peers: result.peers,
       ...(Object.keys(errors).length ? { errors } : {}),
     }),
     {
