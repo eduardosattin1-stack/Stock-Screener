@@ -88,6 +88,7 @@ catch { "WARN: skill patcher failed - relying on the prompt's disruptor-skip ins
 # RUN_OUTCOME is the machine sentinel this launcher keys on - keep it in sync with the loop below.
 $basePrompt = @"
 You are running the weekly all-Opus Speculair refresh, fully unattended, in the Stock-Screener repo at $repo. You have NO memory of prior conversations.
+EXECUTION MODE (print-mode constraint, 2026-07-16 incident): you are a headless print-mode session - the instant your final message ends, the process EXITS and every background child is KILLED. Run EVERY command in the FOREGROUND and wait for it to complete (long timeouts are fine; PREP alone can take 30+ minutes). NEVER use run_in_background, Monitor, watchers, scheduled wakeups, or any 'it will notify me when it lands' pattern - two attempts died mid-PREP exactly this way. The Workflow tool is the ONE exception: invoke it, then poll/block on its task output until it completes before moving on.
 Read the runbook at $skill IN FULL, then execute EVERY step end-to-end:
   STEP 1 PREP  ->  STEP 1B B13 CATALYST DEBATE (catalyst-prep -> Workflow; catalyst-seed is RETIRED, never run it; OPTIONAL, skip silently if catalyst-prep reports no candidates)  ->  STEP 2 DEBATE + DIRECTOR (use the Workflow tool on the printed WORKFLOW_SCRIPT)  ->  STEP 2B REGIME SKEPTIC + REGIME-POST  ->  STEP 3 PUBLISH --gcs  ->  STEP 3B VALUE LENS  ->  STEP 4 VERIFY + REPORT.
 The DISRUPTOR LENS (old STEP 3C) is RETIRED — do NOT run any disruptor-* mode even if the runbook still mentions it; skip it silently and note the skip in the report.
@@ -97,6 +98,7 @@ MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' i
 
 $resumePrompt = @"
 You are RESUMING a partially-complete weekly all-Opus Speculair refresh in $repo (the prior headless attempt died mid-run; its log is at $log). You have NO memory of it.
+EXECUTION MODE (print-mode constraint, 2026-07-16 incident): headless print-mode - your process EXITS when your final message ends, killing background children. Run EVERY command in the FOREGROUND and wait for completion. NEVER use run_in_background, Monitor, watchers, or 'notify me later' patterns - the prior attempts died mid-PREP exactly this way. The Workflow tool is the ONE exception: invoke it, then block on its task output until done.
 Read the runbook at $skill IN FULL. Determine which steps already completed THIS run (fresh mtimes on backend/_opus_debate/results_regime/, apex_basket_opus_regime.json, the publish readback in the log) and CONTINUE from the first unfinished step. Re-invoking the SAME Workflow script is safe and cheap - cached agents return instantly, only gaps re-run. Honor every GUARD.
 The DISRUPTOR LENS (old STEP 3C) is RETIRED — do NOT run any disruptor-* mode even if the runbook still mentions it; skip it silently and note the skip in the report.
 MANDATORY LAST LINE (machine sentinel): print exactly 'RUN_OUTCOME: COMPLETED' or 'RUN_OUTCOME: GUARD_STOP <one-line reason>'.
