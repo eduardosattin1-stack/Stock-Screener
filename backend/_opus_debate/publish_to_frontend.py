@@ -176,6 +176,21 @@ def derive_entry_posture(p, rec=None):
 
 _SKEPTIC_OK = ("CONFIRMED", "CONFIRMED_WITH_CORRECTIONS")
 
+_SKEP_DIR = BK / "_skeptic_regime"
+
+
+def skeptic_shard(sym):
+    """Skeptic verdict for a symbol from the raw shard, keyed to risk_badge's p-field names.
+    Lets the badge fire on debated-but-not-seated names (overlay / history paths) — the full
+    sweep found e.g. VNT eligible while off-board. {} when no shard (badge then stays None)."""
+    try:
+        d = load(_SKEP_DIR / f"{sym}.json", {}) or {}
+    except Exception:
+        d = {}
+    return {"skeptic_verdict": d.get("verdict"),
+            "correction_severity": d.get("correction_severity"),
+            "skeptic_kill_scope": d.get("kill_scope")}
+
 
 def risk_badge(rec, p=None):
     """Publish-time 'bounded downside' / 'dated catalyst' badge — computed HERE, once, from the
@@ -514,9 +529,9 @@ def _opus_overlay(sym):
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
-        # rec-only badge: fires only if the record itself carries a skeptic verdict + gate PASS
-        # (Director-pick skeptic fields aren't available here) — usually None, never wrong.
-        "risk_badge": risk_badge(rec),
+        # badge for debated-but-not-seated names: skeptic joined from the raw shard
+        # (Director-pick skeptic fields don't exist off-board)
+        "risk_badge": risk_badge(rec, skeptic_shard(sym)),
     }
 
 overlaid, pm_missing = 0, []
@@ -580,7 +595,7 @@ def _hist_entry(rec, dossier, date_str, ts):
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
         "interrogator_dossier": dossier, "engine": "opus-4.8-regime",
-        "risk_badge": risk_badge(rec),
+        "risk_badge": risk_badge(rec, skeptic_shard(rec.get("symbol") or "")),
     }
     # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
     # Additive only — dedup key (date) and entry ordering are untouched.
