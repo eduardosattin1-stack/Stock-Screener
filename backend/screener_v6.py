@@ -6346,26 +6346,44 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                     return portfolio
         return None
 
-    # Load previous picks to maintain entry_price, entry_date, and entry_metric
+    # Load previous picks to maintain entry_price, entry_date, and entry_metric.
+    # Local repo copy first, GCS fallback — the SAME dual path _load_tracking_state
+    # uses. The Cloud Run container has no frontend/ directory, so the local-only
+    # read left prev_picks_map empty on every nightly scan: incumbent hysteresis
+    # never applied, entry_price/date reset to the scan day for all ~240 picks,
+    # and the exits list never populated (found 2026-07-16 — every entry_date in
+    # the live file was that day's date).
     prev_picks_map = {} # methodology_path -> ticker -> {entry_price, entry_date, entry_metric}
     local_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "public", "methodology_picks.json")
+    old_data = None
     try:
         if os.path.exists(local_path):
             with open(local_path, "r", encoding="utf-8") as f:
                 old_data = json.load(f)
-                if old_data and "methodologies" in old_data:
-                    for meth_path, meth_val in old_data["methodologies"].items():
-                        prev_picks_map[meth_path] = {}
-                        for p in meth_val.get("picks", []):
-                            if "symbol" in p:
-                                prev_picks_map[meth_path][p["symbol"]] = {
-                                    "entry_price": p.get("entry_price"),
-                                    "entry_date": p.get("entry_date"),
-                                    "entry_metric": p.get("entry_metric")
-                                }
-
+            if old_data:
+                log.info("Loaded previous methodology picks from local file")
     except Exception as e:
-        log.warning(f"Failed to read previous picks: {e}")
+        log.warning(f"Failed to read local previous picks: {e}")
+    if not (old_data and "methodologies" in old_data):
+        try:
+            old_data = gcs_download("scans/methodology_picks.json")
+            if old_data and "methodologies" in old_data:
+                log.info("Loaded previous methodology picks from GCS")
+        except Exception as e:
+            log.warning(f"GCS previous picks not available: {e}")
+    if old_data and "methodologies" in old_data:
+        for meth_path, meth_val in old_data["methodologies"].items():
+            prev_picks_map[meth_path] = {}
+            for p in meth_val.get("picks", []):
+                if "symbol" in p:
+                    prev_picks_map[meth_path][p["symbol"]] = {
+                        "entry_price": p.get("entry_price"),
+                        "entry_date": p.get("entry_date"),
+                        "entry_metric": p.get("entry_metric")
+                    }
+    else:
+        log.warning("No previous methodology picks found (local or GCS) — entry "
+                    "preservation, incumbent hysteresis, and exits will all reset this run")
 
     methodology_fields = {
         "dcf_fcff": ("dcf_fcff_mos", "dcf_value"),

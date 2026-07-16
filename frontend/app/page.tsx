@@ -1590,7 +1590,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "Stage 1 projects FCFF for 5 years with growth from ROE × 0.5 (bounded 3-25%), decaying by 0.85^year. Stage 2 perpetual growth 2.5%. WACC derived from CAPM (4.5% risk-free + beta × 5.5% market premium). Enterprise value is adjusted for net debt.",
+    description: "Projects free cash flow to the firm for 5 years — growth = ROE × 0.5 (5-yr-median ROE when available; bounded 3-25%, decaying 0.85^yr) — plus a 2.5% perpetuity, all discounted at a flat 10% WACC; net debt subtracted. Local-currency accounts, FX-converted to the price currency.",
 
     annualReturns: [
 
@@ -1626,7 +1626,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "Yield spread of Earnings Yield (EY = EPS / Price) over the LOCAL 10-year sovereign yield by listing country (quarterly-static table, 2026-06; was a flat 4.5% US baseline). Centered and scaled margin of safety.",
+    description: "Yield spread of Earnings Yield (EY = EPS / Price) over the LOCAL 10-year sovereign yield by listing country (quarterly-static table, 2026-06; was a flat 4.5% US baseline). Cross-sectional rank of the spread, centered and scaled to a ±12.5% margin of safety. Applies to every sector class — banks and insurers included.",
 
     annualReturns: [
 
@@ -1662,7 +1662,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "Ranks by Gross Profitability (Gross Profit / Total Assets) based on Robert Novy-Marx's research — a QUALITY factor, not an EV multiple. Centered and scaled rank. (Relabeled 2026-06; legacy key ev_gross_profit kept for tracking continuity. The true multiple is the separate EV / Gross Profit basket.)",
+    description: "Ranks by Gross Profitability (Gross Profit / Total Assets) based on Robert Novy-Marx's research — a QUALITY factor, not an EV multiple. Centered rank scaled to ±15%; applies to every sector class. (Relabeled 2026-06; legacy key ev_gross_profit kept for tracking continuity. The true multiple is the separate EV / Gross Profit basket.)",
 
     metrics: {
 
@@ -1684,7 +1684,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "Capitalizes R&D expenditures (2.5x multiplier amortized over 5 years). Net income is adjusted by adding back R&D and subtracting amortization. 7-year DCF at WACC.",
+    description: "Capitalizes the research the income statement expenses: adjusted earnings = NI + R&D − R&D/5 amortization, with the balance sheet carrying R&D × 2.5 for the adjusted-ROE base. Growth = adjusted ROE × 0.4 (bounded 3-20%, decaying 0.9^yr), 7-yr projection at a flat 10% WACC plus a 2.5% perpetuity.",
 
     metrics: {
 
@@ -1706,7 +1706,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "SIDEWAYS",
 
-    description: "Owner Earnings calculated as Net Income + D&A - Maintenance Capex (using revenue growth proxy). Projected 10 years at ROE × 0.4, discounted using flat 10% hurdle rate.",
+    description: "Buffett owner earnings: NI + D&A − maintenance capex (capex de-rated by the revenue-growth proxy, floored at 0.7× capex). Projected 10 years at ROE × 0.4 (bounded 2-15%, decaying 0.9^yr), discounted at a flat 10% hurdle plus a 2.5% perpetuity.",
 
     annualReturns: [
 
@@ -1742,7 +1742,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "SIDEWAYS",
 
-    description: "Bruce Greenwald's Earnings Power Value model assuming zero future growth. Calculates normalized NOPAT as (EBIT - Maintenance Capex) × (1 - 21% tax). Equity EPV is (NOPAT / WACC) - Net Debt.",
+    description: "Bruce Greenwald's Earnings Power Value, zero future growth. Adjusted earnings = EBIT + D&A − maintenance capex (2026-06 epv2 fix — the old EBIT − maint-capex form left D&A inside EBIT and charged capital twice, structurally punishing D&A-heavy names); NOPAT at 21% tax, divided by 10% WACC, minus net debt.",
 
     metrics: {
 
@@ -1764,7 +1764,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BEAR",
 
-    description: "Benjamin Graham's growth formula: V = EPS × (8.5 + 2g) × 4.4 / Y_AAA, where g is the 3-year EPS CAGR (bounded 0-20%) and Y_AAA is AAA corporate bond yield.",
+    description: "Benjamin Graham's growth formula V = EPS × (8.5 + 2g), on NORMALIZED EPS so one peak year can't inflate the value; g = 3-yr EPS CAGR bounded 0-20 and set to 0 when earnings are shrinking (no growth premium for decliners). The classic 4.4/AAA-yield term is not applied.",
 
     annualReturns: [
 
@@ -1800,7 +1800,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BEAR",
 
-    description: "Ranks by Tobias Carlisle's Acquirer's Multiple (Enterprise Value / EBIT) where Enterprise Value is Market Cap + Net Debt.",
+    description: "Tobias Carlisle's Acquirer's Multiple: EV / EBIT with EV = market cap + net debt, ranked cheapest-first; centered rank scaled to ±20%. Financials and insurers excluded — EV is ill-defined where deposits and float aren't acquisition debt.",
 
     metrics: {
 
@@ -1822,7 +1822,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BEAR",
 
-    description: "Michael Burry deep-value approach. Projects FCF 15 years forward based on 3-year EPS CAGR (bounded 0-20%). Applies terminal multiple of 2 × growth rate (bounded 8-20x) and discounts at a high 15% hurdle rate.",
+    description: "Deep-value 15-year compounding test. FCF grown 15 years at the DE-PEAKED mid-cycle growth rate (bounded 2-20%; 2026-06 iv15trend — raw 3-yr EPS CAGR let peak earnings buy top slots), terminal multiple = 2× growth (bounded 8-20×), discounted at a 15% hurdle (÷1.15¹⁵). Gated on agreeing with the no-growth EPV check; names pegged at the MoS cap are held to a 0.50 ceiling.",
 
     metrics: {
 
@@ -1844,7 +1844,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BEAR",
 
-    description: "10th basket. Rewards names where INDEPENDENT valuation methods CLUSTER on a fair value (≥6 estimates within ±25% of the median, consensus MoS ≥ 15%, ≥5yr history) — a far more robust signal than one outsized single-method discount.",
+    description: "10th basket. Rewards names where INDEPENDENT valuation methods CLUSTER on a fair value — up to 11 estimates (6 absolute models + Buffett intrinsic + analyst target + 3 rank-derived). Qualifies at ≥6 estimates, ≥60% agreement within ±25% of the median, consensus MoS ≥15%, ≥5yr history; ranked by capped-MoS × agreement² so tight clustering beats one outsized single-method discount.",
 
     metrics: {
 
@@ -1866,7 +1866,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BULL",
 
-    description: "11th basket. Physical hard-tech growth (AI/datacenter, nuclear, robotics, rare-earth, defence, electrification): rev YoY ≥ 15%, 3-yr CAGR ≥ 10%, gross margin ≥ 30%, positive ROIC, analyst-covered — ranked by a growth + acceleration + analyst-revision + margin composite, NOT margin of safety.",
+    description: "11th basket. Physical hard-tech growth (AI/datacenter, nuclear, robotics, rare-earth, defence, electrification): rev YoY ≥ 15%, 3-yr CAGR ≥ 10%, gross margin ≥ 30%, positive ROIC, analyst-covered. Score = 0.28 growth + 0.16 sustained + 0.24 ROIC quality + 0.18 analyst-revision + 0.14 margin, × analyst-target support (0.7-1.3). A growth composite, NOT a margin of safety.",
 
     metrics: {
 
@@ -1888,7 +1888,7 @@ const METHODOLOGIES_CONFIG = [
 
     regime: "BEAR",
 
-    description: "12th basket. The TRUE EV / Gross Profit multiple: (Market Cap + Net Debt) / Gross Profit, ranked cheapest-first. Requires positive gross profit and market cap and a KNOWN net debt (null is ineligible, never treated as 0). Financials/insurers excluded — EV is ill-defined where float ≠ debt.",
+    description: "12th basket. The TRUE EV / Gross Profit multiple: (Market Cap + Net Debt) / Gross Profit, ranked cheapest-first; centered rank scaled to ±20%. Requires positive gross profit and market cap and a KNOWN net debt (null is ineligible, never treated as 0). Financials/insurers excluded — EV is ill-defined where float ≠ debt.",
 
     metrics: {
 
@@ -4132,7 +4132,7 @@ export default function Dashboard(){
             <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 20px" }}>
               <summary style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
                 How the baskets work
-                <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 400, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>3 live books · catalyst sleeve · 9 reference baselines</span>
+                <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 400, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>3 live books · catalyst sleeve · 12 tracked methodology baskets</span>
               </summary>
               <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14, fontSize: 11, lineHeight: 1.55, fontFamily: "var(--font-sans)", color: "var(--text-secondary)" }}>
                 <div>
@@ -4152,8 +4152,12 @@ export default function Dashboard(){
                   A paper sleeve of dated, binary / structured catalyst plays (the “13th basket”), with explicit entry → resolution → mark mechanics. Resolutions re-fit the dials each quarter. See the Catalyst Watch tab.
                 </div>
                 <div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>METHODOLOGY BASELINES — benchmarks</div>
-                  The cards below are 9 deterministic, point-in-time 5-yr valuation backtests (DCF-FCFF, EPV / Greenwald, Graham-revised, Owner-Earnings, IV15, Convergence …). These are REFERENCE benchmarks, not live operational baskets.
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>METHODOLOGY BASKETS — tracked benchmarks</div>
+                  The 12 cards below are deterministic valuation screens (6 intrinsic fair-value models, 4 cross-sectional ranks, 2 composites) tracked as paper books. The 9 pre-2026-06 baskets also carry point-in-time 5-yr backtests as their Baseline row; the June additions (Convergence, Fundamental Momentum, EV/GP) are live-forward only. Reference benchmarks, not live operational books.
+                </div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", marginBottom: 4 }}>ROTATION & GATES — how picks turn over</div>
+                  Each nightly scan re-ranks the whole universe and keeps the top 20 per method, with an incumbent hysteresis boost (10% of the method's MoS band) so names don't churn at the #20 boundary; entry price/date persist while a name stays in. The tracked paper book rebalances on the FIRST scan of each calendar month — every other day only marks prices, so the Active YTD moves daily but holdings turn over monthly. Value baskets share the entry gates: sector applicability, ≥5y history / no structural break, forward-EPS-decline drop (≤−25%), leverage + Piotroski ≥3 floor, and peak-cycle EBIT normalization.
                 </div>
               </div>
             </details>
