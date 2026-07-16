@@ -411,6 +411,29 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
               </div>
             </div>
           )}
+          {/* Bounded-risk setups — relayed from the publish-time risk_badge stamp (numeric-gate-
+              checked bear floor + asymmetry, or a dated hard catalyst). Hidden until a weekly
+              publish stamps the field. ·off-board = debated and eligible but not seated. */}
+          {debate.bounded?.length > 0 && (
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginBottom: 6 }}>
+                Bounded-risk setups — the debate's own bear case, gate-checked · tap to read why
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+                {debate.bounded.map((b: any) => {
+                  const hard = b.kind === "dated_catalyst_floor";
+                  const c = hard ? "#2563eb" : "var(--green)";
+                  const tip = `${hard ? "Dated catalyst · checked floor" : "Bounded downside · modeled"}: bear −${Math.abs(b.floor ?? 0).toFixed(0)}% vs base +${(b.upside ?? 0).toFixed(0)}% = ${b.rr}:1, recomputed by the numeric gate at a verified price. The debate's MODEL of the adverse case — not a guarantee.${b.seated ? "" : " Debated and eligible, but not seated in the apex."}`;
+                  return (
+                    <button key={b.symbol} title={tip} onClick={() => router.push(`/stock/${encodeURIComponent(b.symbol)}?tab=debate`)}
+                      style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: c, background: hard ? "rgba(37,99,235,0.12)" : "var(--green-light)", border: `1px solid ${hard ? "rgba(37,99,235,0.35)" : "var(--green-border)"}`, borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}>
+                      {hard ? "◆" : "▣"} {b.symbol}{b.rr != null ? ` ${b.rr}:1` : ""}{b.seated ? "" : " · off-board"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <div style={{ display: "flex", gap: 12 }}>
             <div style={{ flex: 1, paddingRight: 16, borderRight: "1px solid var(--border-subtle)" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--green)", marginRight: 8 }}>ACT</span>

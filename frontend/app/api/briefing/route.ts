@@ -246,8 +246,35 @@ export async function GET(req: Request) {
         .map((p: any) => p.symbol);
     }
   }
+  // ── Bounded-risk setups — picks whose debate math (numeric-gate-checked, stamped at
+  //    publish time by publish_to_frontend.risk_badge) shows a modest bear floor with
+  //    real asymmetry, or a dated hard catalyst with a checked floor. We only relay the
+  //    stamp, never compute it here. Union of the apex board and the per-methodology
+  //    overlay — the overlay catches names the debate cleared but the Director didn't
+  //    seat (e.g. carried records like VNT). Empty until a publish stamps the field. ──
+  const boundedMap = new Map<string, any>();
+  const addBadge = (p: any, seated: boolean) => {
+    const b = p?.risk_badge;
+    if (!b?.kind || !p.symbol || boundedMap.has(p.symbol)) return;
+    boundedMap.set(p.symbol, {
+      symbol: p.symbol,
+      kind: b.kind,
+      rr: b.rr_ratio ?? null,
+      floor: b.floor_distance_pct ?? null,
+      upside: b.upside_pct ?? null,
+      seated,
+    });
+  };
+  apexMembers.forEach((p: any) => addBadge(p, true));
+  Object.values(spec?.per_methodology_baskets || {}).forEach((mb: any) => {
+    const picks = Array.isArray(mb) ? mb : mb?.picks;
+    (Array.isArray(picks) ? picks : []).forEach((p: any) => addBadge(p, false));
+  });
+  const bounded = [...boundedMap.values()].sort((a, b) => (b.rr ?? 0) - (a.rr ?? 0)).slice(0, 6);
+
   const debate = {
     new_tickers,
+    bounded,
     act:
       ds.apex_selected != null
         ? `${ds.apex_selected} names cleared the full multi-agent debate into the apex${ds.fully_debated != null ? ` (of ${ds.fully_debated} debated)` : ""}.`
