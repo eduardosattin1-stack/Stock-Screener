@@ -364,6 +364,35 @@ def classify_regime(macro_score: float) -> str:
 # LIVE: Fetch current macro data (for screener_v6.py)
 # ---------------------------------------------------------------------------
 
+def growth_inflation_quadrant(sub_scores: dict) -> dict:
+    """JPM-style growth x inflation 2x2 over the classifier's own sub-scores (2026-07-16,
+    after JPM's agentic regime work): the single risk-axis `regime` label cannot distinguish
+    STAGFLATION (growth down, inflation hot -> pricing power / real assets) from a
+    disinflationary RISK_OFF slowdown (both down -> quality / duration / floors), nor
+    GOLDILOCKS from REFLATION on the way up — and those quadrants want different books.
+    Both axes were always measured (gdp_momentum, cpi_trend); this just stops collapsing
+    them onto one line. cpi_trend is scored good-is-high, so >= 0.5 = inflation cooling.
+    The basis string carries the raw scores so a mid-band read (e.g. 'sticky' label with
+    cpi 0.55) stays transparent."""
+    g = sub_scores.get("gdp_momentum")
+    c = sub_scores.get("cpi_trend")
+    if not isinstance(g, (int, float)) or not isinstance(c, (int, float)):
+        return {"quadrant": "UNKNOWN", "quadrant_basis": "missing growth/inflation sub-scores"}
+    growth_up = g >= 0.5
+    inflation_cooling = c >= 0.5
+    if growth_up and inflation_cooling:
+        q = "GOLDILOCKS"
+    elif growth_up:
+        q = "REFLATION"
+    elif inflation_cooling:
+        q = "RISK_OFF"   # disinflationary slowdown — JPM's risk-off quadrant
+    else:
+        q = "STAGFLATION"
+    basis = (f"growth {'up' if growth_up else 'down'} (gdp {g:.2f}) x "
+             f"inflation {'cooling' if inflation_cooling else 'hot/sticky'} (cpi {c:.2f})")
+    return {"quadrant": q, "quadrant_basis": basis}
+
+
 def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
     """
     Fetch LIVE macro data and compute regime.
@@ -651,6 +680,9 @@ def _compute_regime(rates: dict, vix_price: float, vix_sma200: float,
         "score":      round(macro_score, 4),
         "sub_scores": sub_scores,
         "regime_detail": regime_detail,
+        # growth x inflation 2x2 — the risk-axis regime label collapses two measured axes;
+        # the quadrant keeps them apart (GOLDILOCKS | REFLATION | STAGFLATION | RISK_OFF).
+        **growth_inflation_quadrant(sub_scores),
         "features":   features,
         "tilts":      REGIME_TILTS[regime],
         "rates":      rates,

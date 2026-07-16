@@ -89,9 +89,26 @@ export async function GET(req: Request) {
     : regime === "RISK_OFF" ? "Risk-off — prioritise quality and downside protection."
     : regime === "CAUTIOUS" ? "Cautious — debate-backed, high-conviction names only."
     : "Balanced — hold the apex; let the director gate new entries.";
+  // Growth x inflation quadrant (JPM-style 2x2) — from the weekly classifier snapshot
+  // published with the baskets (the /api/macro lite mirror carries no growth/inflation).
+  // The backend publishes `quadrant` directly from the next weekly run; the label-derived
+  // fallback keeps the chip alive until then. Display-labeling of published fields only —
+  // no signal is computed here.
+  const mrFull = spec?.macro_regime || {};
+  const mrd = mrFull.regime_detail || {};
+  const g = String(mrd.growth || ""), inf = String(mrd.inflation || "");
+  const quadrantFallback = (g && inf && !g.startsWith("Unknown"))
+    ? (g !== "decelerating"
+        ? (inf === "decelerating" ? "GOLDILOCKS" : "REFLATION")
+        : (inf === "decelerating" ? "RISK_OFF" : "STAGFLATION"))
+    : null;
+  const quadrant = mrFull.quadrant && mrFull.quadrant !== "UNKNOWN" ? mrFull.quadrant : quadrantFallback;
   const regime_pulse = {
     regime,
     score: r2(score),
+    quadrant,
+    quadrant_detail: quadrant ? `growth ${g || "?"} × inflation ${inf || "?"}` : null,
+    regime_read: spec?.regime_read || null,
     summary: `Macro regime ${regime}. ${sentiment}`,
     action: `Rates ${rd.rates || "neutral"}, credit ${rd.credit || "stable"}, VIX ${vix ?? "—"}. ${stance}`,
   };

@@ -296,9 +296,28 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
             <Activity size={14} color="var(--amber)" />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Regime Pulse</span>
           </div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: regime_pulse.regime === "RISK_ON" ? "var(--green)" : regime_pulse.regime === "RISK_OFF" ? "var(--red)" : "var(--amber)", marginBottom: 8 }}>
-            {regime_pulse.regime} <span style={{ color: "var(--text-light)", fontWeight: 400 }}>{regime_pulse.score}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: regime_pulse.regime === "RISK_ON" ? "var(--green)" : regime_pulse.regime === "RISK_OFF" ? "var(--red)" : "var(--amber)" }}>
+              {regime_pulse.regime} <span style={{ color: "var(--text-light)", fontWeight: 400 }}>{regime_pulse.score}</span>
+            </span>
+            {/* Growth x inflation quadrant (JPM 2x2, weekly classifier snapshot) — the risk-axis
+                label above can't tell stagflation from a disinflationary slowdown; this can. */}
+            {regime_pulse.quadrant && (() => {
+              const q = regime_pulse.quadrant;
+              const qc = q === "GOLDILOCKS" ? "var(--green)" : q === "REFLATION" ? "var(--amber)" : q === "STAGFLATION" ? "#f97316" : "var(--red)";
+              const tip = `Growth × inflation quadrant (${regime_pulse.quadrant_detail || "weekly classifier"}). GOLDILOCKS = growth up / inflation cooling · REFLATION = growth up / inflation hot · STAGFLATION = growth down / inflation hot · RISK_OFF = disinflationary slowdown.${regime_pulse.regime_read?.agent_view ? ` Agent regime read: ${regime_pulse.regime_read.agent_view}${regime_pulse.regime_read.stance_note ? " — " + regime_pulse.regime_read.stance_note : ""}` : ""}`;
+              return (
+                <span title={tip} style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 4, color: qc, background: "color-mix(in srgb, currentColor 12%, transparent)", border: `1px solid color-mix(in srgb, ${qc} 40%, transparent)`, cursor: "help", letterSpacing: "0.06em" }}>
+                  {q}{regime_pulse.regime_read?.agent_view === "CONTRADICT" ? " · agent disputes" : ""}
+                </span>
+              );
+            })()}
           </div>
+          {regime_pulse.quadrant_detail && (
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -4, marginBottom: 8 }}>
+              {regime_pulse.quadrant_detail}
+            </div>
+          )}
           <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>
             {regime_pulse.summary}
           </div>

@@ -496,7 +496,40 @@ _stance_map = {"RISK_ON": "aggressive", "NEUTRAL": "balanced", "CAUTIOUS": "bala
 baskets["return_goal"] = _goal
 baskets["risk_stance"] = director.get("risk_stance") or _stance_map.get(_macro.get("regime"), "balanced")
 baskets["macro_read"] = director.get("macro_read", "")
-baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"), "regime_detail": _macro.get("regime_detail", {})}
+baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"),
+                           "regime_detail": _macro.get("regime_detail", {}),
+                           # growth x inflation 2x2 (2026-07-16) — the briefing's quadrant chip
+                           "quadrant": _macro.get("quadrant"), "quadrant_basis": _macro.get("quadrant_basis", "")}
+# Agent regime read (RegimeRead phase, weekly) — AGREE/CONTRADICT vs the dials + dated
+# falsifiers. Published for the UI; the dials stay authoritative.
+_rr = load(BK / "regime_read.json", {}) or {}
+if _rr.get("agent_view"):
+    baskets["regime_read"] = {k: _rr.get(k) for k in
+                              ("asof", "quadrant_per_dials", "agent_view", "evidence",
+                               "falsifiers", "stance_note", "confidence")}
+
+# ── Regime-call ledger (2026-07-16, JPM-article adoption) — append-only record of every
+# published run's macro read, so the regime dial earns a live-forward track record like every
+# other paper book (score quarterly: did defensive stances precede drawdowns? did the agent's
+# CONTRADICT calls beat the dials? did falsifiers fire?). One row per publish. ──
+try:
+    _ledger_row = {
+        "date": TODAY, "book": "regime",
+        "regime": _macro.get("regime"), "score": _macro.get("score"),
+        "quadrant": _macro.get("quadrant"), "quadrant_basis": _macro.get("quadrant_basis"),
+        "agent_view": _rr.get("agent_view"), "agent_confidence": _rr.get("confidence"),
+        "falsifiers": _rr.get("falsifiers"),
+        "risk_stance": baskets.get("risk_stance"),
+        "regime_quadrant_applied": director.get("regime_quadrant"),
+        "macro_read": baskets.get("macro_read"),
+        "book_expected_return_pct": baskets.get("book_expected_return_pct"),
+    }
+    with open(BK / "_regime_ledger.jsonl", "a", encoding="utf-8") as _lf:
+        _lf.write(json.dumps(_ledger_row, ensure_ascii=False) + "\n")
+    print(f"  regime ledger += {TODAY} {_ledger_row.get('quadrant')} / {_ledger_row.get('risk_stance')}"
+          f" / agent {_ledger_row.get('agent_view') or 'n/a'}")
+except Exception as _e:
+    print(f"WARN: regime ledger append failed ({_e})")
 baskets["book_expected_return_pct"] = round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None
 baskets["book_horizon_months"] = round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None
 # GOAL GATE (warn-only, never blocks): the Apex mandate is +30-50%/12mo — an under-goal book still
