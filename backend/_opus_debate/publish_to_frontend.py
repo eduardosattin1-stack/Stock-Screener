@@ -174,6 +174,53 @@ def derive_entry_posture(p, rec=None):
     return "scale_in"
 
 
+_SKEPTIC_OK = ("CONFIRMED", "CONFIRMED_WITH_CORRECTIONS")
+
+
+def risk_badge(rec, p=None):
+    """Publish-time 'bounded downside' / 'dated catalyst' badge — computed HERE, once, from the
+    numeric gate's machine-checked levels (rec['computed'], stamped by numeric-gate --enforce at an
+    FMP-verified live price). Never from prose, never client-side. Returns None whenever the pick
+    doesn't qualify OR the gate hasn't stamped computed{} (pre-v3 records, value/disruptor books):
+    the badge simply doesn't render — honest default-off.
+
+    PRIMARY (bounded_downside): gate PASS (excludes bear-above-spot/G4, price drift, FV outliers);
+    asymmetry real but plausible (2 <= rr <= 5 — an rr>5 on a SOFT_EXTENDED name signals a
+    mis-modeled base FV, not a gift); bear floor modest yet not manufactured (5% <= floor <= 20%,
+    matching the gate's own TINY/THIN-floor philosophy); skeptic confirmed with NO material
+    correction (on the 2026-07 board the one material correction was precisely the bear floor
+    being restated); catalyst not already FIRED.
+
+    SECONDARY (dated_catalyst_floor, supersedes — rarer by design, 0/10 on the current all-
+    SOFT_EXTENDED board): a dated+binding catalyst (PENDING_HARD exact enum; ARB excluded —
+    deal-break downside is bimodal, not bounded) with gate PASS, floor <= 15% and rr >= 1.5,
+    unless the skeptic materially challenged the catalyst itself."""
+    p = p or {}
+    comp = rec.get("computed") or {}
+    gate = rec.get("numeric_gate")
+    rr, fd = comp.get("rr_ratio"), comp.get("floor_distance_pct")
+    if gate != "PASS" or not isinstance(rr, (int, float)) or not isinstance(fd, (int, float)):
+        return None
+    sk = str(p.get("skeptic_verdict") or rec.get("skeptic_verdict") or "")
+    if sk not in _SKEPTIC_OK:
+        return None
+    sev = str(p.get("correction_severity") or rec.get("correction_severity") or "")
+    scope = str(p.get("skeptic_kill_scope") or rec.get("skeptic_kill_scope") or "")
+    cat = str(rec.get("catalyst_status") or p.get("catalyst_status") or "").upper()
+    base = {
+        "downside_pct": comp.get("bear_return_pct"),
+        "upside_pct": comp.get("expected_return_pct"),
+        "rr_ratio": rr, "floor_distance_pct": fd,
+        "numeric_gate": gate, "skeptic_verdict": sk,
+    }
+    if (cat.startswith("PENDING_HARD") and fd <= 15.0 and rr >= 1.5
+            and not (sev == "material" and scope == "catalyst")):
+        return {"kind": "dated_catalyst_floor", **base}
+    if 2.0 <= rr <= 5.0 and 5.0 <= fd <= 20.0 and sev != "material" and not cat.startswith("FIRED"):
+        return {"kind": "bounded_downside", **base}
+    return None
+
+
 def target_px(sop_fv):
     """Parse the CRO/Director fair-value prose ('~$44', '$78-88 (base ~$82)') to ONE number so the
     UI can draw expected-vs-realized per seat (the basket-13 convention). Base-case > range-midpoint."""
@@ -274,9 +321,20 @@ for p in picks:
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
         "size_units": p.get("size_units"),
         "size_units_effective": p.get("size_units_effective"),
-        # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor sizing
-        "downside_floor": rec.get("downside_floor") or p.get("downside_floor"),
+        # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor
+        # sizing. The typed debate schema nests it as valuation.downside_floor_px (the top-level key
+        # was only ever written by the retired B13 catalyst-seed) — fall back to the nested field,
+        # which is why this was null on every pick until 2026-07-16.
+        "downside_floor": (rec.get("downside_floor") or p.get("downside_floor")
+                           or (rec.get("valuation") or {}).get("downside_floor_px")),
         "live_price": rec.get("live_price") or sc.get("price"),
+        # gate-checked asymmetry (numeric-gate --enforce stamps computed{} at an FMP-verified price;
+        # absent on pre-v3 records → fields null, badge None — honest default-off)
+        "downside_pct": (rec.get("computed") or {}).get("bear_return_pct"),
+        "upside_pct": (rec.get("computed") or {}).get("expected_return_pct"),
+        "rr_ratio": (rec.get("computed") or {}).get("rr_ratio"),
+        "numeric_gate": rec.get("numeric_gate"),
+        "risk_badge": risk_badge(rec, p),
         # apex skeptic + moat terminal-erosion (stamped by _regime_post) — surfaced per seat for the UI
         "skeptic_verdict": p.get("skeptic_verdict", ""),
         "skeptic_kill_fact": p.get("skeptic_kill_fact", ""),
@@ -456,6 +514,9 @@ def _opus_overlay(sym):
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
+        # rec-only badge: fires only if the record itself carries a skeptic verdict + gate PASS
+        # (Director-pick skeptic fields aren't available here) — usually None, never wrong.
+        "risk_badge": risk_badge(rec),
     }
 
 overlaid, pm_missing = 0, []
@@ -519,6 +580,7 @@ def _hist_entry(rec, dossier, date_str, ts):
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
         "interrogator_dossier": dossier, "engine": "opus-4.8-regime",
+        "risk_badge": risk_badge(rec),
     }
     # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
     # Additive only — dedup key (date) and entry ordering are untouched.

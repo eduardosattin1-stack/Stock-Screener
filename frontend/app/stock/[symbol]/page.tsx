@@ -3081,6 +3081,29 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
           </div>
         </div>
 
+        {/* ── Risk badge — stamped at publish time from the numeric gate's machine-checked levels
+             (publish_to_frontend.risk_badge). bounded_downside = modest gate-verified bear floor +
+             real asymmetry, skeptic-confirmed; dated_catalyst_floor = PENDING_HARD catalyst with a
+             checked floor. Absent field = no badge; never computed client-side. ── */}
+        {debateData.risk_badge?.kind && (()=>{const b=debateData.risk_badge;const hard=b.kind==="dated_catalyst_floor";const tc=hard?"#2563eb":"#2d7a4f";
+          const dn=typeof b.downside_pct==="number"?Math.abs(b.downside_pct).toFixed(0):(typeof b.floor_distance_pct==="number"?b.floor_distance_pct.toFixed(0):"?");
+          const up=typeof b.upside_pct==="number"?b.upside_pct.toFixed(0):"?";return(
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 4, border: `1px solid ${tc}66`, color: tc, background: `${tc}14`, fontFamily: T.mono, fontWeight: 800, letterSpacing: "0.05em", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Shield size={12} /> {hard ? "DATED CATALYST · CHECKED FLOOR" : "BOUNDED DOWNSIDE · MODELED"}
+              </span>
+              <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted }}>
+                bear −{dn}% vs base +{up}% = {b.rr_ratio}:1 · numeric gate PASS · skeptic {String(b.skeptic_verdict).toLowerCase().replace(/_/g, " ")}
+              </span>
+            </div>
+            <p style={{ margin: "6px 0 0", fontSize: 9, fontFamily: T.mono, color: T.textLight, lineHeight: 1.5 }}>
+              {hard
+                ? "The debate judged the forcing event dated and binding; the floor is its own adverse case, recomputed by the numeric gate at a verified price. Catalyst dates can slip — re-judged every weekly run."
+                : "The debate's own model of the adverse case, recomputed by the numeric gate at a verified price — a modeled floor, not a guarantee; the stock can fall below it."}
+            </p>
+          </div>);})()}
+
         {/* ── Skeptic kill-tier (general debate names) — scale/catalyst names already show it in their strip ── */}
         {debateData.skeptic_verdict && !debateData.scale && !debateData.catalyst && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>

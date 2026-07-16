@@ -2352,6 +2352,31 @@ export default function Dashboard(){
     );
   };
 
+  // Risk badge — stamped at publish time by publish_to_frontend.risk_badge from the numeric
+  // gate's machine-checked levels (never derived client-side, never from prose). Two kinds:
+  // bounded_downside (modest, gate-verified bear floor + real asymmetry, skeptic-confirmed)
+  // and dated_catalyst_floor (PENDING_HARD catalyst + checked floor). Absent = no badge.
+  const riskBadge = (pick?: any) => {
+    const b = pick?.risk_badge;
+    if (!b || !b.kind) return null;
+    const hard = b.kind === "dated_catalyst_floor";
+    const dn = typeof b.downside_pct === "number" ? Math.abs(b.downside_pct).toFixed(0) : (typeof b.floor_distance_pct === "number" ? b.floor_distance_pct.toFixed(0) : "?");
+    const up = typeof b.upside_pct === "number" ? b.upside_pct.toFixed(0) : "?";
+    const tip = hard
+      ? `The debate judged the forcing event dated and binding (PENDING_HARD) with the adverse case ${dn}% below the run price — numbers recomputed by the numeric gate (PASS) at a verified live price; skeptic ${b.skeptic_verdict}. Catalyst dates can slip — re-judged every weekly run.`
+      : `By the debate's own math: bear case −${dn}% vs base case +${up}% = ${b.rr_ratio}:1 — recomputed by the numeric gate (PASS) at a verified live price, not quoted from prose; skeptic ${b.skeptic_verdict}. This is the debate's MODEL of the adverse case — the stock can fall below it.`;
+    return (
+      <span title={tip}
+            style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3,
+                     background: hard ? "rgba(37,99,235,0.15)" : "rgba(20,184,122,0.15)",
+                     color: hard ? "#2563eb" : "var(--green)",
+                     border: `1px solid ${hard ? "rgba(37,99,235,0.4)" : "rgba(20,184,122,0.4)"}`,
+                     fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+        {hard ? `◆ dated catalyst · floor −${dn}%` : `▣ bounded downside · ${b.rr_ratio}:1`}
+      </span>
+    );
+  };
+
   // Moat durability + terminal-erosion (½-size cap) + secular-decline theme — for both books.
   const moatChips = (pick?: any) => {
     if (!pick) return null;
@@ -3267,9 +3292,9 @@ export default function Dashboard(){
                               </span>
                             </div>
                             {wheelLine(pick.wheel)}
-                            {(pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
+                            {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
                               <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
-                                {skepticChip(pick)}{moatChips(pick)}
+                                {riskBadge(pick)}{skepticChip(pick)}{moatChips(pick)}
                               </div>
                             )}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>

@@ -210,7 +210,9 @@ def _parse_asserted_ratio(prose):
     return None
 
 
-COMPUTED_STAMP_KEYS = ("rr_ratio", "expected_return_pct", "floor_distance_pct", "price_drift_pct")
+# bear_return_pct added 2026-07-16: the signed bear-case % (negative = downside) was computed
+# at G4 but dropped at stamp time — publish_to_frontend's risk badge needs it as downside_pct.
+COMPUTED_STAMP_KEYS = ("rr_ratio", "expected_return_pct", "floor_distance_pct", "price_drift_pct", "bear_return_pct")
 
 
 def _rr_display(val, computed, reasons):
