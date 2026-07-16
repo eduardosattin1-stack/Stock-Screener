@@ -287,50 +287,59 @@ function HeadlineCard({ label, h, model }: { label: string; h: HorizonBlock; mod
 // SECTION 2 — Per-decile calibration bars (server-computed; honest empty state)
 // ══════════════════════════════════════════════════════════════════════════════
 function DecileBars({ label, deciles }: { label: string; deciles: DecileRow[] }) {
+  // HONEST-UNDER-CENSORING redesign (2026-07-16). The old bars showed touch
+  // rate over MATURED rows only — but until the first windows complete,
+  // matured == touched by construction, so EVERY decile read 100% and D1
+  // looked identical to D10. Now: bar = touches to date over ALL staged picks
+  // (a floor that rises as windows age), white tick = censoring-aware expected
+  // to date (the fair mid-flight benchmark), purple tick = predicted final
+  // touch rate (where the bar should land by window end).
   const rows = [...deciles].sort((a, b) => a.decile - b.decile);
-  const scaleMax = Math.max(0.1, ...rows.flatMap(r => [r.matured_observed_rate ?? 0, r.predicted_mean_p ?? 0])) * 1.15;
+  const rateOf = (r: DecileRow) => (r.n_total > 0 ? r.observed_touches_to_date / r.n_total : null);
+  const expOf = (r: DecileRow) => (r.n_total > 0 ? r.expected_touches_to_date / r.n_total : null);
+  const scaleMax = Math.max(0.1, ...rows.flatMap(r => [rateOf(r) ?? 0, expOf(r) ?? 0, r.predicted_mean_p ?? 0])) * 1.15;
   const H = 84;
-  const totalMatured = rows.reduce((s, r) => s + r.n_matured, 0);
+  const totalTouched = rows.reduce((s, r) => s + r.n_touched, 0);
   const totalN = rows.reduce((s, r) => s + r.n_total, 0);
   return (
     <div style={{ marginBottom: 16 }}>
       <div style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: T.text, marginBottom: 6 }}>
-        {label}<span style={{ color: T.light, fontWeight: 400 }}> · {totalMatured} matured / {totalN} total</span>
+        {label}<span style={{ color: T.light, fontWeight: 400 }}> · {totalTouched} touched / {totalN} staged</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 5, alignItems: "end" }}>
         {rows.map(r => {
-          const o = r.matured_observed_rate;
+          const o = rateOf(r);
+          const e = expOf(r);
           const pr = r.predicted_mean_p;
-          const empty = r.n_matured === 0;
-          // Color by |observed − predicted| only once n_matured ≥ 5; below
-          // that always muted. Never a red 0% on an empty decile.
-          let barColor = T.light;
-          if (!empty && o != null) {
-            if (r.n_matured >= 5 && pr != null) {
-              const gap = Math.abs(o - pr);
-              barColor = gap <= 0.10 ? T.greenPos : gap <= 0.20 ? T.amber : T.red;
-            } else {
-              barColor = T.muted;
-            }
+          const empty = r.n_total === 0;
+          // Color = observed touches vs the decile's censoring-aware 95% band:
+          // below band red (under-delivering), above band green (over-delivering),
+          // inside band muted (tracking the model). Small deciles stay muted.
+          let barColor = T.muted;
+          if (!empty && r.n_total >= 5) {
+            if (r.observed_touches_to_date < r.ci_low) barColor = T.red;
+            else if (r.observed_touches_to_date > r.ci_high) barColor = T.greenPos;
           }
           return (
             <div key={r.decile} style={{ textAlign: "center", fontFamily: T.mono }}>
               <div
                 style={{ position: "relative", height: H, background: "var(--bg)", borderRadius: 3, border: `1px solid ${T.border}` }}
-                title={empty ? "no matured rows yet" : `observed ${(o! * 100).toFixed(0)}% over ${r.n_matured} matured`}>
+                title={empty ? "no staged picks yet"
+                  : `touched ${r.n_touched} of ${r.n_total} staged (${(o! * 100).toFixed(0)}% so far — a floor while windows are open) · expected to date ${r.expected_touches_to_date.toFixed(1)} · predicted final ${pr != null ? (pr * 100).toFixed(0) + "%" : "—"}`}>
                 {empty ? (
                   <div style={{ position: "absolute", inset: 2, borderRadius: 2, background: `repeating-linear-gradient(45deg, ${T.divider}, ${T.divider} 3px, transparent 3px, transparent 7px)`, opacity: 0.6 }} />
                 ) : (
                   o != null && <div style={{ position: "absolute", bottom: 0, left: 2, right: 2, height: Math.min(H - 2, (o / scaleMax) * H), background: barColor, opacity: 0.55, borderRadius: "0 0 2px 2px" }} />
                 )}
-                {pr != null && <div style={{ position: "absolute", bottom: Math.min(H - 2, (pr / scaleMax) * H), left: 0, right: 0, height: 2, background: T.purple }} title={`predicted ${(pr * 100).toFixed(0)}%`} />}
+                {e != null && <div style={{ position: "absolute", bottom: Math.min(H - 3, (e / scaleMax) * H), left: 2, right: 2, height: 2, background: T.text, opacity: 0.8 }} title={`censoring-aware expected to date ${(e * 100).toFixed(0)}%`} />}
+                {pr != null && <div style={{ position: "absolute", bottom: Math.min(H - 2, (pr / scaleMax) * H), left: 0, right: 0, height: 2, background: T.purple }} title={`predicted FINAL touch rate ${(pr * 100).toFixed(0)}%`} />}
               </div>
               <div style={{ fontSize: 9, color: T.muted, marginTop: 3, fontWeight: 600 }}>D{r.decile}</div>
-              <div style={{ fontSize: 10, color: empty ? T.light : barColor, fontWeight: 700 }} title={empty ? "no matured rows yet" : undefined}>
+              <div style={{ fontSize: 10, color: empty ? T.light : barColor === T.muted ? T.text : barColor, fontWeight: 700 }}>
                 {empty || o == null ? "—" : `${(o * 100).toFixed(0)}%`}
               </div>
               <div style={{ fontSize: 8, color: T.purple }}>{pr != null ? `p${(pr * 100).toFixed(0)}` : "·"}</div>
-              <div style={{ fontSize: 8, color: T.light }}>n {r.n_matured}/{r.n_total}</div>
+              <div style={{ fontSize: 8, color: T.light }}>n {r.n_touched}/{r.n_total}</div>
               <div style={{ fontSize: 8, color: T.light }} title="observed / expected touches to date (censoring-aware)">
                 {r.observed_touches_to_date.toFixed(0)}/{r.expected_touches_to_date.toFixed(1)}
               </div>
@@ -1342,7 +1351,7 @@ function CalibrationView({ data }: { data: CalibrationV2 }) {
 
       <Card style={{ marginBottom: 20 }}>
         <SH title="Decile calibration" icon={<BarChart3 size={12} />}
-            sub="Bars = observed touch rate over MATURED rows only · purple line = predicted mean p · hatched = no matured rows yet" />
+            sub="Bars = touches to date over ALL staged picks (a floor while windows run) · white tick = censoring-aware expected to date · purple tick = predicted FINAL touch rate · color = observed vs 95% band (green above / red below)" />
         <div style={{ padding: "4px 14px 14px" }}>
           <DecileBars label="30d · +10%" deciles={h30.deciles} />
           <DecileBars label="60d · +20%" deciles={h60.deciles} />
