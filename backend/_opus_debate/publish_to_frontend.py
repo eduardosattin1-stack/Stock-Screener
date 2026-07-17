@@ -288,6 +288,9 @@ for p in picks:
         "symbol": sym,
         "conviction": int(p.get("director_conviction", 0)),
         "debate_conviction": int(rec.get("conviction", 0) or 0),
+        # catalyst-blind CRO value score (1-5) — the number the VALUE Director ranks on;
+        # published so the UI can show it next to the regime-tilted debate conviction
+        "value_conviction": rec.get("value_conviction"),
         # NEW names: leave entry_price 0 here so _update_apex_tracking stamps the LIVE quote
         # (it uses the current price when entry_price is falsy). The scan price is stale for
         # EU names (FRVIA/SCR.PA/CTSH all showed a spurious day-1 P&L), so it is NOT a fallback.
@@ -545,7 +548,10 @@ baskets["rebalance_date"] = TODAY
 # ── Overlay Opus debates onto every per-methodology basket pick (so all stock pages show Opus) ──
 def _opus_overlay(sym):
     rec = load(RES / f"{sym}.json")
-    if not rec or not rec.get("bull_thesis"):
+    # Accept graded-but-narrative-less records too (change-detection CARRY restamps have valid
+    # verdict/conviction/value_conviction with an empty bull_thesis) — before 2026-07-17 those
+    # 20+ picks published with NO grades at all and the UI rendered a blank "· /5" chip.
+    if not rec or not (rec.get("bull_thesis") or rec.get("verdict")):
         return None
     d = dossier_for(sym)
     mm = re.search(r"CREDIBILITY_SCORE:\s*(\d+)", d)
@@ -556,6 +562,7 @@ def _opus_overlay(sym):
         "consensus_delta": rec.get("consensus_delta", ""), "valley_of_death": rec.get("valley_of_death", ""),
         "positioning_washout": rec.get("positioning_washout", ""), "moderator_conclusion": rec.get("moderator_conclusion", ""),
         "forcing_function": rec.get("forcing_function", ""), "conviction": int(rec.get("conviction", 0) or 0),
+        "value_conviction": rec.get("value_conviction"),
         "verdict": rec.get("verdict", ""), "interrogator_dossier": d, "interrogator_score": sc_i,
         "trajectory": (tj.group(1) if tj else rec.get("trajectory", "")), "engine": "opus-4.8-regime",
         "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
@@ -617,6 +624,7 @@ def _hist_entry(rec, dossier, date_str, ts):
     e = {
         "date": date_str, "timestamp": ts,
         "verdict": rec.get("verdict", ""), "conviction": int(rec.get("conviction", 0) or 0),
+        "value_conviction": rec.get("value_conviction"),
         "trajectory": rec.get("trajectory", ""),
         "interrogator_score": int(rec.get("interrogator_score", 0) or 0),
         "transcript_source": rec.get("transcript_source", "fmp"), "source": rec.get("source", ""),

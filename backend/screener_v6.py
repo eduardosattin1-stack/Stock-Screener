@@ -881,6 +881,12 @@ class Stock:
     # 0..1 for Smart Money composite.
     pt_velocity_60d: Optional[float] = None
     pt_velocity_score: Optional[float] = None
+    # Analyst PT breadth (2026-07-08 thin-consensus fuse). Declared 2026-07-17 — these were
+    # assigned as dynamic attrs (asdict() silently drops those, same bug class as consensus_fv),
+    # so the fuse's disclosure fields never reached latest_global.json. The neglect-orphan
+    # intake's coverage-desert leg keys off target_analyst_count == 0.
+    target_analyst_count: Optional[int] = None
+    target_year_avg: Optional[float] = None
 
     # Value / Buffett
     revenue_cagr_3y: float = 0.0

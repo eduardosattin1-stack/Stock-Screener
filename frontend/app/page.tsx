@@ -5660,7 +5660,7 @@ export default function Dashboard(){
                               {method.replace(/_/g, " ").toUpperCase()}
                             </h4>
                             <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                              {(data.picks || []).length} picks · {data.total_candidates || 0} scanned · {data.radar_filtered || 0} filtered
+                              {(data.picks || []).length} picks · {(data.picks || []).filter((p: any) => p.verdict).length} debated
                             </span>
                           </div>
                           {data.moderator_memo && (
@@ -5678,11 +5678,26 @@ export default function Dashboard(){
                                 onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                                 title={pick.forcing_function || pick.consensus_delta || ""}
                               >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 4 }}>
                                   <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
-                                  <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                                    {pick.verdict} · {pick.conviction}/5
-                                  </span>
+                                  {/* Two harmonized scores, both straight from the debate record (the numbers the
+                                      Directors consume): the regime/catalyst-tilted debate grade, and the CRO's
+                                      catalyst-blind value score the VALUE Director ranks on. No fabricated defaults —
+                                      picks without a debate show "not debated" instead of an empty chip. */}
+                                  {pick.verdict ? (
+                                    <span style={{ display: "inline-flex", gap: 4, alignItems: "center" }}>
+                                      <span title="Debate grade (regime/catalyst-tilted): the CRO down-rates FIRED/SOFT catalysts — 4+ needs a dated driver" style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)", cursor: "help" }}>
+                                        {pick.verdict} · {pick.conviction}/5
+                                      </span>
+                                      {pick.value_conviction != null && (
+                                        <span title="Value score (catalyst-blind): valuation vs the reconciled SoP fair value + forensic quality only — the number the VALUE Director ranks on. Capped at 3 when the moat is eroding." style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.value_conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.value_conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+                                          val {pick.value_conviction}/5
+                                        </span>
+                                      )}
+                                    </span>
+                                  ) : (
+                                    <span style={{ fontSize: 8, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>not debated</span>
+                                  )}
                                 </div>
                               </div>
                             ))}

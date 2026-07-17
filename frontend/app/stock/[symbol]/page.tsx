@@ -3045,7 +3045,10 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
   if (!debateData) return null;
 
   const type = debateData.type || "methodology_pick";
-  const conviction = debateData.conviction || 3;
+  // No fabricated defaults (the old `|| 3` invented a 3/5 for never-debated picks): show the
+  // real score or an honest em-dash. valConv = the CRO's catalyst-blind value score (1-5).
+  const conviction = debateData.conviction ?? null;
+  const valConv = debateData.value_conviction ?? null;
   const sourceMethodologies = debateData.source_methodologies || [];
 
   // Colors & Header configurations
@@ -3053,20 +3056,20 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
   let bannerBorder = `2px solid ${T.purple}`;
   let bannerTitle = "SPECULAIR DEBATE CANDIDATE";
   let bannerIcon = <Brain size={18} color={T.purple} />;
-  let bannerSub = `Debated Methodology Pick · Conviction Score: ${conviction}/5`;
+  let bannerSub = `Debated Methodology Pick · Debate: ${conviction ?? "—"}/5 (regime-tilted)${valConv != null ? ` · Value: ${valConv}/5 (catalyst-blind)` : ""}`;
 
   if (type === "apex") {
     bannerBg = "rgba(20, 184, 122, 0.05)";
     bannerBorder = `2px solid ${T.green}`;
     bannerTitle = "SPECULAIR APEX ALLOCATION";
     bannerIcon = <Star size={18} color={T.amber} fill={T.amber} style={{ filter: "drop-shadow(0 0 4px var(--amber))" }} />;
-    bannerSub = `Apex Basket Position · Director Conviction: ${conviction}/100`;
+    bannerSub = `Apex Basket Position · Director Conviction: ${conviction ?? "—"}/100${valConv != null ? ` · CRO Value: ${valConv}/5` : ""}`;
   } else if (type === "watchlist") {
     bannerBg = "rgba(249, 115, 22, 0.05)";
     bannerBorder = `2px solid var(--orange)`;
     bannerTitle = "CAPITULATION WATCHLIST SETUP";
     bannerIcon = <AlertTriangle size={18} color="var(--orange)" />;
-    bannerSub = `Watch & Wait Setup · Director Conviction: ${conviction}/100`;
+    bannerSub = `Watch & Wait Setup · Director Conviction: ${conviction ?? "—"}/100`;
   }
 
   return (
@@ -4027,7 +4030,7 @@ export default function StockDetail(){
       return {
         ...(basketPick || {}), ...sel,
         type: (basketPick && basketPick.type) || "methodology_pick",
-        conviction: (basketPick && basketPick.conviction != null) ? basketPick.conviction : (sel.conviction ?? 3),
+        conviction: (basketPick && basketPick.conviction != null) ? basketPick.conviction : (sel.conviction ?? null),
         entry_price: basketPick ? basketPick.entry_price : undefined,
         entry_date: basketPick ? basketPick.entry_date : undefined,
         source_methodologies: (basketPick && basketPick.source_methodologies) || [],

@@ -191,7 +191,7 @@ DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
 # 8e: convergence (multi-model agreement — the purest value signal in the system) and the true
 # EV/GP basket are VALUE signals too; without this they were branded "catalyst" and routed down
 # the Moderator's catalyst lens.
-VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown"}
+VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown", "neglect_orphan"}
 
 REGIME_FILE = "CATALYST_WATCH_REGIME.md"  # repo root; read live each run for the current regime
 
@@ -1304,6 +1304,9 @@ _SKEPTIC_ATTACKS = {
     "value": "(a) STALE-ANCHOR - is the fair value built on pre-event financials (spin/divestiture/peak quarter)? (b) NUMBER TRUTH - do the load-bearing figures (segment EBITDA, net debt, share count, preferred stack) verify against the latest primary filing? (c) THESIS WEAKNESS / TERMINAL MOAT - is the claimed cheapness real edge, or priced/structural (melting business, AI/fintech/cord-cutting disruption, terminal multiple, returns BELOW cost of capital)? (d) HIDDEN DISQUALIFIER - litigation, covenant, dilution, regulatory action, a binary/soft catalyst dressed as hard.",
     "event": "(a) IS THE CATALYST GENUINELY LIVE + DATED + BINDING - or already fired / slipped / priced (the spread closed)? Confirm the exact date/terms from a primary source (8-K, merger agreement, FDA/regulator page). (b) IS THE TARGET REAL (deal terms / event-resolved value) or fantasy? (c) IS THE DOWNSIDE FLOOR REAL - what actually backstops the price if the event fails (deal-break, cash, recovery value), or does the floor break (going-concern, ATM/dilution, financing contingency)? (d) HIDDEN DISQUALIFIER - trading through terms, a second-request, single-binary with no floor.",
     "disruptor": "(a) STALE-ANCHOR - are the growth/backlog/design-win figures from an old quarter? Re-verify against the LATEST filing/release. (b) NUMBER TRUTH - do revenue growth, gross-margin trajectory, backlog/orders and the named customer wins verify against primary sources? (c) THESIS WEAKNESS - is the theme demand actually flowing to THIS name (share shifts, competitive entry, customer concentration, in-sourcing risk), or is the multiple pricing a steeper S-curve than the verified evidence supports? (d) HIDDEN DISQUALIFIER - dilution/SBC waves, channel stuffing, one-customer dependence, insider distribution. DATED-CALL GUIDANCE: attack DATED claims against DATED sources; an undated secular growth story is NOT auto-REFUTED for lacking a date - demand the CURRENT evidence verifies, and kill only on contradiction or unverifiable load-bearing claims.",
+    # neglect lane (2026-07-17): the name reached the debate BECAUSE nobody is looking at it -
+    # so the strongest bear case is that the neglect is deserved.
+    "neglect_orphan": "(a) THE NEGLECT IS DESERVED - this name is here because the market stopped looking; hunt for the disqualifier the market already knows: controlled/dual-class governance, a fading end-market, a litigation/liability tail, delisting or index-mechanics overhang, controlling-holder overhang. (b) POST-EVENT NUMBER TRUTH - the headline financials are event-noised (IFRS-5 reclassification, stranded costs, carve-out allocations); rebuild the CLEAN continuing-operations numbers from the actual filings and verify the debate's normalized figures against them - do NOT accept 'one-off' labels for costs that recur. (c) STANDALONE VIABILITY - post-spin/post-event, does the remaining business have its own customers, systems and balance sheet, or is it a stub of stranded costs and dis-synergies dressed as a compounder? (d) HIDDEN DISQUALIFIER - parent retained-stake overhang, TSA cliffs, debt pushed onto the SpinCo, insider selling into the void.",
 }
 
 
@@ -1358,6 +1361,8 @@ def skeptic_gen(book):
                 rec = json.load(open(ROOT / "results_regime" / (s + ".json"), encoding="utf-8"))
                 if rec.get("lane") == "equity_special_sit" or rec.get("source") == "opus_catalyst":
                     lane = "event"
+                elif rec.get("lane") == "neglect_orphan":
+                    lane = "neglect_orphan"
             except Exception:
                 pass
         lanes[s] = {"lane": lane, "res": res, "doss": doss, "attack": _SKEPTIC_ATTACKS[lane]}
@@ -2939,6 +2944,94 @@ def prep():
     else:
         print("value-drawdown intake: 0 qualified (no quality names >=25% down at the range bottom this week)")
 
+    # ── NEGLECT-ORPHAN INTAKE (2026-07-17, funnel-gap fix) ──────────────────────────────────────
+    # The 12 methodology screens rank on REPORTED fundamentals and the G2a gate (correctly) drops
+    # structural breaks from the earnings baskets — so the neglect archetype (a recent spin/IPO
+    # orphan with IFRS-5-noised headlines, a resolved B13 event name the crowd abandoned, or a
+    # zero-coverage US business) had literally NEVER reached the debate: 0 of 366 input bundles
+    # carried structural_break before this lane. The lane bypasses the RANKINGS only — the
+    # debate/interrogator does the underwriting the screens can't, and every downstream gate
+    # (skeptic w/ its own neglect attack, numeric gate, forensics, moat teeth) applies in full.
+    # Three deterministic sources, priority-ordered; hard cap in CODE on FRESH underwrites only
+    # (already-debated lane names re-enter as ~free carries, so the backlog drains ~NG_CAP/week
+    # and names graduate out as the orphan window closes or a methodology basket adopts them):
+    #   1. resolved B13 seats (resolution_type FIRED_*, <=90d) — post-event orphans the system
+    #      already knows; the value window opens exactly when the event crowd leaves;
+    #   2. dated-IPO/spin orphans: structural_break with an ipo_YYYY-MM reason 6-18 months old,
+    #      USD mcap $300M-$15B (megacaps are not neglected; share_count_jump reasons are
+    #      buyback/split artifacts and deliberately NOT used), positive gross profit;
+    #   3. US coverage deserts: target_analyst_count == 0 (zero PTs printed last quarter —
+    #      None = the scan didn't measure it, SKIPPED never guessed; self-activates once the
+    #      field serializes), real fundamentals, share-class tickers excluded ('-' suffix:
+    #      BF-B-style false deserts where FMP tracks the other class).
+    import re as _ng_re
+    NG_CAP = 3
+    _ng, _ng_seen = [], set()
+    _now = datetime.now()
+
+    def _ng_add(sym, prio, why):
+        if sym and sym not in sym_meths and sym not in _ng_seen:
+            _ng_seen.add(sym)
+            _ng.append((prio, sym, why))
+
+    try:  # 1. B13-resolution handoff
+        _trk = json.load(open(ROOT.parent / "_basket13_tracker.json", encoding="utf-8"))
+        for _e in _trk.get("entries", []):
+            _r = _e.get("resolution") or {}
+            if not str(_r.get("resolution_type") or "").startswith("FIRED"):
+                continue
+            try:
+                _age_d = (_now - datetime.strptime(_r["resolution_date"], "%Y-%m-%d")).days
+            except Exception:
+                continue
+            if 0 <= _age_d <= 90:
+                _ng_add(_e.get("symbol"), (0, _age_d, 0), f"b13-resolved {_r.get('resolution_type')} {_age_d}d")
+    except Exception as _e:
+        print(f"WARN: neglect intake could not read the B13 tracker ({_e}) — handoff leg skipped")
+
+    for _s0 in scan.get("stocks", []):  # 2. dated-IPO/spin orphans
+        _sym0 = _s0.get("symbol")
+        if not _sym0 or not _s0.get("structural_break"):
+            continue
+        _m = _ng_re.search(r"ipo_(\d{4})-(\d{2})$", str(_s0.get("structural_break_reason") or ""))
+        if not _m:
+            continue
+        _age_mo = (_now.year - int(_m.group(1))) * 12 + (_now.month - int(_m.group(2)))
+        if not (6 <= _age_mo <= 18):
+            continue
+        _mc_usd = (_s0.get("market_cap") or 0) * (_s0.get("fx_to_price") or 1)  # scan mcap is LOCAL ccy
+        if not (300e6 <= _mc_usd <= 15e9):
+            continue
+        if (_s0.get("gross_profit") or 0) <= 0:
+            continue
+        _profitable = 1 if ((_s0.get("fcf_margin") or 0) > 0 or (_s0.get("piotroski") or 0) >= 5) else 0
+        _ng_add(_sym0, (1, -_profitable, -_mc_usd), f"ipo-orphan {_age_mo}mo")
+
+    for _s0 in scan.get("stocks", []):  # 3. US coverage deserts (inert until target_analyst_count ships)
+        _sym0 = _s0.get("symbol")
+        if not _sym0 or _s0.get("country") != "US" or "-" in _sym0:
+            continue
+        if _s0.get("target_analyst_count") != 0:
+            continue
+        _mc = _s0.get("market_cap") or 0
+        if not (500e6 <= _mc <= 20e9):
+            continue
+        if not ((_s0.get("fcf_margin") or 0) > 0 and (_s0.get("piotroski") or 0) >= 5):
+            continue
+        _ng_add(_sym0, (2, -_mc, 0), "coverage-desert 0 PTs")
+
+    _ng.sort()
+    _ng_old = [t for t in _ng if (RES / f"{t[1]}.json").exists()]      # carries: ~free, no cap
+    _ng_new = [t for t in _ng if not (RES / f"{t[1]}.json").exists()][:NG_CAP]
+    for _prio, _sym0, _why in _ng_old + _ng_new:
+        sym_meths.setdefault(_sym0, []).append("neglect_orphan")
+    if _ng_old or _ng_new:
+        print(f"neglect-orphan intake: {len(_ng_new)} fresh (cap {NG_CAP}, {len(_ng)} qualified) "
+              f"+ {len(_ng_old)} carried: "
+              + ", ".join(f"{s} [{w}]" for _, s, w in (_ng_new + _ng_old)))
+    else:
+        print("neglect-orphan intake: 0 qualified this week")
+
     # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate — the money layer stays weekly.
     seat_relevant = set()
     for p in list(baskets.get("apex_basket") or []) + list(baskets.get("runner_ups") or []):
@@ -3154,6 +3247,7 @@ def prep():
     # verdict INHERITED by code), and UNCOVERED (missed the cap, no prior record — skipped, printed).
     U_CAP = 40
     VD_U_CAP = 3                                       # value-drawdown names admitted to Tier-U per week
+    NG_U_CAP = 3                                       # neglect-orphan names admitted to Tier-U per week
     delta_syms, coverage_syms, uncovered = [], [], []
     if tiering:
         debate_all = list(syms) + list(no_tx)
@@ -3177,19 +3271,26 @@ def prep():
                 score += 2
             if "value_drawdown" in meths:
                 score += 1
+            if "neglect_orphan" in meths:
+                score += 1
             return (-score, -len(meths), s)            # deterministic: score desc, breadth desc, alpha
 
         room = max(0, U_CAP - len(delta_syms) - len(seat_triggered))
         ranked = sorted(nonseat, key=_intake_rank)
-        intake, vd_used = [], 0
+        intake, vd_used, ng_used = [], 0, 0
         for s in ranked:
             if len(intake) >= room:
                 break
-            is_vd = "value_drawdown" in debate_info.get(s, {}).get("meths", [])
+            _meths_s = debate_info.get(s, {}).get("meths", [])
+            is_vd = "value_drawdown" in _meths_s
+            is_ng = "neglect_orphan" in _meths_s
             if is_vd and vd_used >= VD_U_CAP:
+                continue
+            if is_ng and ng_used >= NG_U_CAP:
                 continue
             intake.append(s)
             vd_used += 1 if is_vd else 0
+            ng_used += 1 if is_ng else 0
         overflow = [s for s in nonseat if s not in intake]
         coverage_syms = [s for s in overflow if debate_info.get(s, {}).get("prior_exists")
                          and (prior_res_dir / f"{s}.json").exists()]
@@ -3199,7 +3300,7 @@ def prep():
         no_tx = [s for s in no_tx if s in full_set]
         n_u = len(delta_syms) + len(full_set)
         print(f"tier-select: universe={len(sym_meths)} | U={n_u}/{U_CAP} [seats-delta={len(delta_syms)}, "
-              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} (vd={vd_used})] "
+              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} (vd={vd_used}, ng={ng_used})] "
               f"| C-refresh={len(coverage_syms)} | b13-excluded={len(b13_carried)} carried "
               f"+{len(b13_skipped)} skipped-new{' ' + str(b13_skipped) if b13_skipped else ''} "
               f"| uncovered-overflow={len(uncovered)}{' ' + str(uncovered) if uncovered else ''}")
@@ -3214,8 +3315,12 @@ def prep():
     skeptic_lanes, skeptic_hints = {}, {}
     if tiering and tier_u:
         for s in tier_u:
-            skeptic_lanes[s] = {"lane": "value", "res": f"results_regime/{s}.json",
-                                "doss": f"dossiers/{s}.md", "attack": _SKEPTIC_ATTACKS["value"]}
+            # neglect-lane names get the dedicated "the neglect is deserved" attack rubric;
+            # everything else in Tier-U is value/compounder (B13 is tier-excluded above).
+            _lane0 = ("neglect_orphan" if "neglect_orphan" in (debate_info.get(s, {}).get("meths") or [])
+                      else "value")
+            skeptic_lanes[s] = {"lane": _lane0, "res": f"results_regime/{s}.json",
+                                "doss": f"dossiers/{s}.md", "attack": _SKEPTIC_ATTACKS[_lane0]}
         try:
             skeptic_hints = _moat_hints(tier_u)
         except Exception as _e:
@@ -3374,8 +3479,9 @@ await agent(
   'Run these exact commands IN ORDER (each is a deterministic gate) and report each summary line verbatim:\n' +
   'python backend/weekly_opus_refresh.py coverage-merge\n' +
   'python backend/weekly_opus_refresh.py continuity-gate\n' +
+  'python backend/weekly_opus_refresh.py lane-stamp\n' +   // neglect-lane provenance onto fresh records (2026-07-17)
   'python backend/weekly_opus_refresh.py numeric-gate --legacy --enforce\n' +   // enforcement flipped 2026-07-11 after the dry-run calibration week (Task: pipeline-v3 Weeks 3-4)
-  'Reply with the three summary lines, then exactly: DONE',
+  'Reply with the four summary lines, then exactly: DONE',
   { label: 'gates', phase: 'Gates', model: 'haiku' })
 
 // ── PHASE 5 — SKEPTIC (Opus, BEFORE the Director): kill-tier over all of Tier-U, so demotion ──
@@ -3872,6 +3978,35 @@ def cohort_backfill():
           f"(verdict/conviction only, no price/return data) -> {len(ledger)} total ledger rows")
 
 
+def lane_stamp():
+    """Deterministic post-debate lane stamp (2026-07-17, neglect lane). Fresh debate records are
+    written by the agents against the step-7 schema, which carries no lane field — so after the
+    debate, stamp lane="neglect_orphan" onto results_regime/<SYM>.json wherever the prep bundle
+    carried the tag. Zero prompt changes: value_input() and skeptic_gen() read the stamped field,
+    and carries preserve it automatically (the carry-restamp copies the whole prior record).
+    Idempotent; runs in the Gates phase alongside coverage-merge/continuity-gate."""
+    n = 0
+    for f in sorted(INP.glob("*.json")):
+        try:
+            b = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        if "neglect_orphan" not in (b.get("methodologies") or []):
+            continue
+        rp = RES / f"{b.get('symbol')}.json"
+        if not rp.exists():
+            continue
+        try:
+            rec = json.load(open(rp, encoding="utf-8"))
+        except Exception:
+            continue
+        if rec.get("lane") != "neglect_orphan":
+            rec["lane"] = "neglect_orphan"
+            rp.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+            n += 1
+    print(f"lane-stamp: {n} results_regime record(s) stamped lane=neglect_orphan")
+
+
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "prep"
     # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10); its code was DELETED 2026-07-10
@@ -3912,6 +4047,8 @@ if __name__ == "__main__":
         if "--dry-run" not in extra and "--enforce" not in extra:
             extra.append("--dry-run")   # safe default: report-only unless enforcement is explicitly asked for
         subprocess.run([sys.executable, str(ROOT / "_numeric_gate.py")] + extra, check=True)
+    elif mode in ("lane-stamp", "lane_stamp"):
+        lane_stamp()
     elif mode in ("value-revalidate", "value_revalidate"):
         value_revalidate()
     elif mode in ("fr-universe", "fr_universe"):
