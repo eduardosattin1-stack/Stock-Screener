@@ -3162,845 +3162,14 @@ export default function Dashboard(){
              </p>
 
           ) : viewMode === "speculair" ? (
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-
-              <div>
-
-                <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
-
-                  Speculair Portfolio
-
-                </p>
-
-                <p style={{fontSize:11,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
-
-                  Multi-agent debate pipeline · 4-Agent Barbell Architecture · Apex PM Director
-
-                </p>
-
-              </div>
-
-
-              {!speculairBaskets ? (
-                <div style={{textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)"}}>
-                  Loading Speculair Data...
-                </div>
-              ) : (
-                <>
-                  {/* Live-forward tracking disclaimer (§5) */}
-                  <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, padding: "8px 12px", fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                    <strong style={{ color: "var(--blue)" }}>Live-forward tracked.</strong> The Apex Basket accrues a real track record from go-live — it is <strong>not</strong> back-filled. The Speculair director is an LLM (not replayed historically), so its return is <strong>not</strong> a comparable-vintage number to the 9 methodology baselines (deterministic 5-yr PIT replay).
-                  </div>
-                  {/* Debate Stats Funnel */}
-                  {speculairBaskets.debate_stats && (
-                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                      {[
-                        { label: "Total Picks", value: speculairBaskets.debate_stats.total_picks, color: "var(--text-light)" },
-                        { label: "Unique Symbols", value: speculairBaskets.debate_stats.unique_symbols, color: "var(--text-light)" },
-                        { label: "Cache Hits", value: speculairBaskets.debate_stats.cache_hits, color: "var(--blue)" },
-                        { label: "No Transcript", value: speculairBaskets.debate_stats.no_transcript, color: "var(--amber)" },
-                        { label: "Fully Debated", value: speculairBaskets.debate_stats.fully_debated, color: "var(--blue)" },
-                        { label: "Radar Filtered", value: speculairBaskets.debate_stats.radar_filtered, color: "var(--amber)" },
-                        { label: "Auto-Vetoed", value: speculairBaskets.debate_stats.auto_vetoed, color: "var(--red)" },
-                        { label: "Apex Selected", value: speculairBaskets.debate_stats.apex_selected, color: "var(--green)" },
-                      ].map(s => (
-                        <div key={s.label} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px 16px", minWidth: 100, textAlign: "center" }}>
-                          <div style={{ fontSize: 20, fontWeight: 800, color: s.color, fontFamily: "var(--font-mono)" }}>{s.value ?? "—"}</div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Apex Basket */}
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-                        Speculair Apex Basket
-                      </h3>
-                      <span style={{ fontSize: 10, color: "var(--green)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
-                      The headline book: a weekly multi-agent debate (radar → analyst seats → skeptic → Director) blends deep value with catalysts, gated by moat / terminal-erosion and the apex skeptic. Director-weighted, live-forward NAV — never back-filled.
-                    </div>
-                    {goalBanner(speculairBaskets)}
-                    {(speculairBaskets.apex_tracking_weighted || speculairBaskets.apex_tracking) && (() => {
-                      // Director-weighted NAV primary: the Director risk-sizes the book in his memo
-                      // (his size_units, or his director_conviction as the basis). Equal-weight = fallback.
-                      const _atw = speculairBaskets.apex_tracking_weighted;
-                      const weighted = !!(_atw && (_atw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history (not a back-dated start)
-                      const at = weighted ? _atw : speculairBaskets.apex_tracking;
-                      const basis = speculairBaskets.weights_basis === "size_units" ? "size_units" : "conviction";
-                      return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
-                        <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (at.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(at.since_inception_pct || 0) >= 0 ? "+" : ""}{at.since_inception_pct}%
-                          </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {at.inception_date}</div>
-                        </div>
-                        {(at.history || []).length > 1 && (() => {
-                          const _n = at.history.map((p: any) => p.nav);
-                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
-                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
-                          const _up = _n[_n.length - 1] >= _n[0];
-                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
-                        })()}
-                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {at.nav} · {at.n_open} held · {at.n_closed} closed{at.win_rate != null ? ` · ${at.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? `Director-weighted NAV (${basis})` : "equal-weight NAV"} · live-forward, not back-filled</div>
-                        </div>
-                      </div>
-                      );
-                    })()}
-                    {rotationLog(speculairBaskets.apex_tracking || speculairBaskets.apex_tracking_weighted)}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(speculairBaskets.apex_basket || []).map((pick: any) => {
-                        const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : 0;
-                        const entryPrice = pick.entry_price || 0;
-                        const perf = entryPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
-                        const _basis = entryPrice > 0 ? entryPrice : currPrice;
-                        const apexUpside = typeof pick.expected_return_pct === "number" ? pick.expected_return_pct
-                          : (typeof pick.target_px === "number" && pick.target_px > 0 && _basis > 0 ? (pick.target_px / _basis - 1) * 100 : null);
-                        return (
-                          <div
-                            key={pick.symbol}
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                          >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.conviction >= 85 ? "rgba(20,184,122,0.2)" : pick.conviction >= 70 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.conviction >= 85 ? "var(--green)" : pick.conviction >= 70 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  ★ {pick.conviction}<span style={{ opacity: 0.55 }}>/100</span>
-                                </span>
-                                {pick.weight_pct != null && (
-                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
-                                )}
-                                {entryPostureChip(pick.entry_posture)}
-                                {goalTag(pick)}
-                              </div>
-                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
-                              </span>
-                            </div>
-                            {wheelLine(pick.wheel)}
-                            {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
-                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
-                                {riskBadge(pick)}{skepticChip(pick)}{moatChips(pick)}
-                              </div>
-                            )}
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              {pickVitals(pick, currPrice, { upsidePct: apexUpside, upsideLabel: "target upside", currency: stock?.currency })}
-                              {pick.source_methodologies && pick.source_methodologies.length > 0 && (
-                                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
-                                  {pick.source_methodologies.map((m: string) => (
-                                    <span key={m} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>
-                                      {m.replace(/_/g, " ")}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            {(pick.director_rationale || pick.consensus_delta) && (() => {
-                              const _txt = pick.director_rationale || pick.consensus_delta;
-                              const _exp = expandedApex.has(pick.symbol);
-                              return (
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
-                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 6, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
-                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>PM </span>
-                                    {_txt}
-                                  </div>
-                                  {_txt.length > 220 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedApex(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
-                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                      {_exp ? "▴ less" : "▾ more"}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        );
-                      })}
-                      {(speculairBaskets.apex_basket || []).length === 0 && (
-                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Apex candidates yet. Run the debate pipeline to populate.</div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Apex Director Memo — directly under its basket, parallel to the Value/Disruptor memos */}
-                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Apex Director Memo</summary>
-                    <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>
-                      {speculairBaskets.director_memo || "No memo available. Run the debate pipeline to generate."}
-                    </pre>
-                  </details>
-
-                  {/* Value Lens — pure-value re-grade of the same debate (catalyst overlay stripped) */}
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-                        Speculair Value Lens
-                      </h3>
-                      <span style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(valueApex.apex_basket || []).length} names · regime-stripped · funded-leverage solvency
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
-                      The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Tracked live-forward on its own NAV chain — independent of the catalyst Apex book above.
-                    </div>
-                    {(valueApex.value_tracking_weighted || valueApex.value_tracking) && (() => {
-                      // Director-weighted NAV is primary: the size_units the Director justified in the memo
-                      // (risk-weighting the basket) ARE the book's sizing. Equal-weight kept as fallback only.
-                      const _vtw = valueApex.value_tracking_weighted;
-                      const weighted = !!(_vtw && (_vtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
-                      const vt = weighted ? _vtw : valueApex.value_tracking;
-                      return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
-                        <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (vt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(vt.since_inception_pct || 0) >= 0 ? "+" : ""}{vt.since_inception_pct}%
-                          </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {vt.inception_date}</div>
-                        </div>
-                        {(vt.history || []).length > 1 && (() => {
-                          const _n = vt.history.map((p: any) => p.nav);
-                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
-                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
-                          const _up = _n[_n.length - 1] >= _n[0];
-                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
-                        })()}
-                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {vt.nav} · {vt.n_open} held · {vt.n_closed} closed{vt.win_rate != null ? ` · ${vt.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
-                        </div>
-                      </div>
-                      );
-                    })()}
-                    {valueApex.stress_test && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
-                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{valueApex.stress_test.published_downside_pct}%</span> recession · {valueApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{valueApex.correlation ? ` · avg pairwise corr ${valueApex.correlation.avg_pairwise} (${valueApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
-                      </div>
-                    )}
-                    {typeof valueApex.book_secular_load_pct === "number" && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8 }}>
-                        Secular-decline load: <span style={{ color: valueApex.book_secular_load_pct > 60 ? "var(--amber)" : "var(--text)", fontWeight: 700 }}>{valueApex.book_secular_load_pct}%</span> of book <span style={{ color: "var(--text-light)" }}>(material-threat / eroding moat)</span>{typeof valueApex.clean_anchor_count === "number" ? ` · ${valueApex.clean_anchor_count} clean anchor${valueApex.clean_anchor_count === 1 ? "" : "s"}` : ""}
-                      </div>
-                    )}
-                    {valueApex.pool_stats && valueApex.pool_stats.banner && (
-                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
-                        {valueApex.pool_stats.banner}
-                      </div>
-                    )}
-                    {rotationLog(valueApex.value_tracking || valueApex.value_tracking_weighted)}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(valueApex.apex_basket || []).map((pick: any) => {
-                        const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : 0;
-                        const solv = String(pick.funded_solvency || "");
-                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
-                        const mos = pick.sop_mos_pct;
-                        return (
-                          <div
-                            key={pick.symbol}
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                          >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.value_score >= 80 ? "rgba(20,184,122,0.2)" : pick.value_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.value_score >= 80 ? "var(--green)" : pick.value_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  val {pick.value_score}<span style={{ opacity: 0.55 }}>/100</span>
-                                </span>
-                                {pick.weight_pct != null && (
-                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
-                                )}
-                                {(pick.cro_only || pick.stale_anchor) && (
-                                  <span title={pick.cro_only ? "CRO-only leg" : "stale anchor"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
-                                )}
-                                {pick.corr_flag && (
-                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
-                                )}
-                                {skepticChip(pick)}
-                                {entryPostureChip(pick.entry_posture)}
-                              </div>
-                              {typeof mos === "number" && (
-                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
-                                </span>
-                              )}
-                            </div>
-                            {wheelLine(pick.wheel)}
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                                <span>Solvency:</span>
-                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
-                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : ""}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
-                                </span>
-                              </div>
-                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
-                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
-                                {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
-                                {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
-                                {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
-                                {moatChips(pick)}
-                              </div>
-                            </div>
-                            {pick.thesis && (() => {
-                              const _txt = String(pick.thesis);
-                              const _exp = expandedValue.has(pick.symbol);
-                              return (
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
-                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
-                                    <span style={{ color: "var(--blue)", fontWeight: 600 }}>VALUE </span>{_txt}
-                                  </div>
-                                  {(() => {
-                                    const vm: any = valueApex.value_memo;
-                                    const bear = vm && typeof vm === "object" && vm.bear_rebuttal ? vm.bear_rebuttal[pick.symbol] : null;
-                                    return bear ? (
-                                      <div style={{ fontSize: 9, color: "var(--red)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.85,
-                                                    ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
-                                           title="Director's bear rebuttal — the strongest reason this pick is wrong, written before sizing">
-                                        <span style={{ fontWeight: 700 }}>BEAR </span>{String(bear)}
-                                      </div>
-                                    ) : null;
-                                  })()}
-                                  {_txt.length > 200 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedValue(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
-                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                      {_exp ? "▴ less" : "▾ more"}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        );
-                      })}
-                      {(valueApex.apex_basket || []).length === 0 && (
-                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Value lens not loaded.</div>
-                      )}
-                    </div>
-                    {(valueApex.runner_ups || []).length > 0 && (
-                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
-                        {(valueApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Value Director Memo — the pure-value Director's reasoning (rubric weighting, gates, correlation stress, sizing, per-seat bear rebuttal) */}
-                  {valueApex.value_memo && (
-                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
-                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Value Director Memo</summary>
-                      {typeof valueApex.value_memo === "string" ? (
-                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{valueApex.value_memo}</pre>
-                      ) : (
-                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                          {Object.entries(valueApex.value_memo).map(([k, v]: [string, any]) => (
-                            <div key={k}>
-                              <div style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
-                              {typeof v === "string" ? (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
-                              ) : Array.isArray(v) ? (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
-                              ) : v && typeof v === "object" ? (
-                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
-                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </details>
-                  )}
-
-                  {/* Speculair Future Resources — Lane A producers/royalties across six physical value chains (replaces the retired Disruptor Lens; FUTURE_RESOURCES_SPEC.md). Reads GCS live; renders an awaiting state until the first fr-publish --gcs lands. */}
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-                        Speculair Future Resources
-                      </h3>
-                      <span style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(frApex.apex_basket || []).length} names · Lane A producers/royalties · physical-anchor rule
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
-                      The physical build-out of the future: profitable producers, royalty/streamers and equipment toll-takers across six value chains — uranium fuel cycle, copper/electrification, rare earths &amp; strategic metals, power-for-AI, robotics, quantum. Cost-curve position and symmetric commodity torque drive the score; valuation is a guard, never the driver. Every seat names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). Own NAV chain — never blended with the Apex or Value books; Lane B developers are a separate event tracker, not part of this NAV.
-                    </div>
-                    {(frApex.apex_basket || []).length === 0 && (
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
-                        Awaiting the first Lane A publish. The chain runs locally on the operator box (fr-universe → chain map → debates → Director → fr-publish --gcs); this card lights up the moment the payload lands on GCS.
-                      </div>
-                    )}
-                    {(frApex.fr_tracking_weighted || frApex.fr_tracking) && (() => {
-                      const _ftw = frApex.fr_tracking_weighted;
-                      const weighted = !!(_ftw && (_ftw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
-                      const ft = weighted ? _ftw : frApex.fr_tracking;
-                      return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
-                        <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (ft.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(ft.since_inception_pct || 0) >= 0 ? "+" : ""}{ft.since_inception_pct}%
-                          </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {ft.inception_date}</div>
-                        </div>
-                        {(ft.history || []).length > 1 && (() => {
-                          const _n = ft.history.map((p: any) => p.nav);
-                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
-                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
-                          const _up = _n[_n.length - 1] >= _n[0];
-                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
-                        })()}
-                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {ft.nav} · {ft.n_open} held · {ft.n_closed} closed{ft.win_rate != null ? ` · ${ft.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
-                        </div>
-                      </div>
-                      );
-                    })()}
-                    {frApex.benchmark && frApex.benchmark.benchmark_return_pct != null && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
-                        Benchmark: {frApex.benchmark.blend || "50/50 XME+URA"} <span style={{ fontWeight: 600, color: (frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>{(frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "+" : ""}{frApex.benchmark.benchmark_return_pct}%</span> since {frApex.benchmark.measured_from}{frApex.benchmark.active_return_pct != null ? <> · active <span style={{ fontWeight: 700, color: frApex.benchmark.active_return_pct >= 0 ? "var(--green)" : "var(--red)" }}>{frApex.benchmark.active_return_pct >= 0 ? "+" : ""}{frApex.benchmark.active_return_pct}%</span></> : ""} <span style={{ color: "var(--text-light)" }}>(the null hypothesis: a closet metals/uranium ETF basket)</span>
-                      </div>
-                    )}
-                    {frApex.stress_test && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
-                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{frApex.stress_test.published_downside_pct}%</span> recession · {frApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{frApex.correlation ? ` · avg pairwise corr ${frApex.correlation.avg_pairwise} (${frApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
-                      </div>
-                    )}
-                    {frApex.chain_exposure && Object.keys(frApex.chain_exposure).length > 0 && (
-                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
-                        {Object.entries(frApex.chain_exposure).sort((a: any, b: any) => (b[1] || 0) - (a[1] || 0)).map(([ch, pct]: [string, any]) => (
-                          <span key={ch} style={{ fontSize: 8.5, padding: "2px 6px", borderRadius: 4, fontFamily: "var(--font-mono)", fontWeight: 600, background: (pct || 0) > 25 ? "var(--amber-light)" : "rgba(148,163,184,0.12)", color: (pct || 0) > 25 ? "var(--amber)" : "var(--text-muted)" }}>
-                            {String(ch).replace(/_/g, " ")} {pct}%
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {frApex.pool_stats && frApex.pool_stats.banner && (
-                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
-                        {frApex.pool_stats.banner}
-                      </div>
-                    )}
-                    {rotationLog(frApex.fr_tracking || frApex.fr_tracking_weighted)}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(frApex.apex_basket || []).map((pick: any) => {
-                        const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : (frPrices[String(pick.symbol).toUpperCase()] || 0);
-                        const solv = String(pick.funded_solvency || "");
-                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
-                        const mos = pick.sop_mos_pct;
-                        const prim = pick.chain || (Array.isArray(pick.chains) ? pick.chains[0] : "") || "";
-                        // chain_regime arrives as a string verdict or a per-chain dict — normalize to the primary chain's verdict
-                        const crRaw = pick.chain_regime;
-                        const cr = String(crRaw && typeof crRaw === "object" ? (crRaw[prim] ?? Object.values(crRaw)[0] ?? "") : (crRaw || "")).toUpperCase();
-                        const crColor = cr.includes("TAILWIND") ? "var(--green)" : cr.includes("HEADWIND") ? "var(--red)" : "var(--text-muted)";
-                        return (
-                          <div
-                            key={pick.symbol}
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                          >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.fr_score >= 80 ? "rgba(20,184,122,0.2)" : pick.fr_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.fr_score >= 80 ? "var(--green)" : pick.fr_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  fr {pick.fr_score}<span style={{ opacity: 0.55 }}>/100</span>
-                                </span>
-                                {pick.weight_pct != null && (
-                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
-                                )}
-                                {prim && (
-                                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(217,119,6,0.14)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{String(prim).replace(/_/g, " ")}</span>
-                                )}
-                                {cr && (
-                                  <span title="chain commodity-cycle regime" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(148,163,184,0.12)", color: crColor, fontFamily: "var(--font-mono)", fontWeight: 700 }}>{cr}</span>
-                                )}
-                                {pick.growth_capex_fcf_negative && (
-                                  <span title="OCF-positive / FCF-negative build-cycle producer — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>capex ¾</span>
-                                )}
-                                {pick.torque_leverage_quadrant && (
-                                  <span title="high commodity torque on a levered balance sheet — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>torque×lev ¾</span>
-                                )}
-                                {(pick.headwind_unjustified || pick.headwind_capped) && (
-                                  <span title="HEADWIND chain with no written justification — size clamped to 0.5" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(239,68,68,0.14)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>headwind ½</span>
-                                )}
-                                {pick.stale_anchor && (
-                                  <span title="stale anchor — half-sized" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
-                                )}
-                                {pick.corr_flag && (
-                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
-                                )}
-                                {entryPostureChip(pick.entry_posture)}
-                              </div>
-                              {typeof mos === "number" && (
-                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
-                                </span>
-                              )}
-                            </div>
-                            {wheelLine(pick.wheel)}
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              {pick.physical_anchor && (
-                                <div title="the physical thing this seat makes/moves/powers/instruments (the anti-Visa rule)" style={{ fontSize: 9.5, color: "var(--text-muted)", fontStyle: "italic" }}>
-                                  ⚓ {String(pick.physical_anchor)}
-                                </div>
-                              )}
-                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                                <span>Solvency:</span>
-                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
-                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : (pick.ndebt_ebitda != null ? ` · ${pick.ndebt_ebitda}x nd/EBITDA` : "")}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
-                                </span>
-                              </div>
-                              {(pick.reserve_life || pick.contract_cover) && (
-                                <div style={{ fontSize: 9, color: "var(--text-muted)", lineHeight: 1.45 }}>
-                                  {pick.contract_cover ? <>Contract: {String(pick.contract_cover)}</> : null}{pick.contract_cover && pick.reserve_life ? " · " : ""}{pick.reserve_life ? <>Reserve: {String(pick.reserve_life)}</> : null}
-                                </div>
-                              )}
-                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
-                            </div>
-                            {pick.thesis && (() => {
-                              const _txt = String(pick.thesis);
-                              const _exp = expandedFr.has(pick.symbol);
-                              return (
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
-                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
-                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>FR </span>{_txt}
-                                  </div>
-                                  {pick.torque_note && (
-                                    <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.9,
-                                                  ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
-                                         title="symmetric torque: the +10% AND the -10% commodity cases">
-                                      <span style={{ fontWeight: 700 }}>TORQUE </span>{String(pick.torque_note)}
-                                    </div>
-                                  )}
-                                  {_txt.length > 200 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedFr(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
-                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--amber)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                      {_exp ? "▴ less" : "▾ more"}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {(frApex.runner_ups || []).length > 0 && (
-                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
-                        {(frApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* FR Director Memo — the Future Resources Director's reasoning (gates, chain-concentration stress, rotation, sizing) */}
-                  {frApex.fr_memo && (
-                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
-                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Future Resources Director Memo</summary>
-                      {typeof frApex.fr_memo === "string" ? (
-                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{frApex.fr_memo}</pre>
-                      ) : (
-                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                          {Object.entries(frApex.fr_memo).map(([k, v]: [string, any]) => (
-                            <div key={k}>
-                              <div style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
-                              {typeof v === "string" ? (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
-                              ) : Array.isArray(v) ? (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
-                              ) : v && typeof v === "object" ? (
-                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
-                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </details>
-                  )}
-
-                  {/* Speculair Disruptor Lens — RETIRED 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10): frozen record, never deleted, never back-filled */}
-                  {(disruptorApex.apex_basket || []).length > 0 && (
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, padding: "20px 24px", opacity: 0.92 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Speculair Disruptor Lens <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)" }}>· retired</span></h3>
-                      <span style={{ fontSize: 10, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(disruptorApex.apex_basket || []).length} names · final holdings · frozen record
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 12 }}>
-                      A separate ~40-name thematic screen (NOT the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway — valuation as a guard. Own NAV chain; never blended with the Apex or Value books.
-                    </div>
-                    <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
-                      ⚠ RETIRED 2026-07-02. This book no longer rotates — the chart below is its final live-forward record, wins and losses included, and will never move again. Its rules drifted into generic quality compounders (the Visa pick); robotics and quantum coverage continues in the Future Resources basket under a physical-anchor rule.
-                    </div>
-                    {disruptorApex.pool_stats && disruptorApex.pool_stats.banner && (
-                      <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
-                        ⚠ {disruptorApex.pool_stats.banner}
-                      </div>
-                    )}
-                    {goalBanner(disruptorApex)}
-                    {(disruptorApex.disruptor_tracking_weighted || disruptorApex.disruptor_tracking) && (() => {
-                      const _dtw = disruptorApex.disruptor_tracking_weighted;
-                      const weighted = !!(_dtw && (_dtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
-                      const dt = weighted ? _dtw : disruptorApex.disruptor_tracking;
-                      return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
-                        <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Final track record · retired</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (dt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(dt.since_inception_pct || 0) >= 0 ? "+" : ""}{dt.since_inception_pct}%
-                          </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {dt.inception_date}</div>
-                        </div>
-                        {(dt.history || []).length > 1 && (() => {
-                          const _n = dt.history.map((p: any) => p.nav);
-                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
-                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
-                          const _up = _n[_n.length - 1] >= _n[0];
-                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
-                        })()}
-                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {dt.nav} · {dt.n_open} held · {dt.n_closed} closed{dt.win_rate != null ? ` · ${dt.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units)" : "equal-weight NAV"} · live-forward while it ran, frozen at retirement, never back-filled</div>
-                        </div>
-                      </div>
-                      );
-                    })()}
-                    {disruptorApex.stress_test && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 12, lineHeight: 1.5 }}>
-                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{disruptorApex.stress_test.published_downside_pct}%</span> recession · {disruptorApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{disruptorApex.correlation ? ` · avg pairwise corr ${disruptorApex.correlation.avg_pairwise} (${disruptorApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
-                        {disruptorApex.theme_exposure && (() => {
-                          const te = Object.entries(disruptorApex.theme_exposure as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
-                          return te ? <span> · top theme <span style={{ color: "var(--purple)", fontWeight: 600 }}>{String(te[0]).replace(/_/g, " ")} {te[1]}%</span> (cap 30%)</span> : null;
-                        })()}
-                      </div>
-                    )}
-                    {rotationLog(disruptorApex.disruptor_tracking || disruptorApex.disruptor_tracking_weighted)}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(disruptorApex.apex_basket || []).map((pick: any) => {
-                        const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : (disruptorPrices[String(pick.symbol).toUpperCase()] || 0);
-                        const entryPrice = pick.entry_price || 0;
-                        const perf = entryPrice > 0 && currPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
-                        const ro40 = pick.rule_of_40;
-                        return (
-                          <div
-                            key={pick.symbol}
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                          >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.disruptor_score >= 80 ? "rgba(147,112,219,0.25)" : pick.disruptor_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.disruptor_score >= 80 ? "var(--purple)" : pick.disruptor_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  dis {pick.disruptor_score}<span style={{ opacity: 0.55 }}>/100</span>
-                                </span>
-                                {pick.weight_pct != null && <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>}
-                                {(pick.fcf_inflecting || pick.hype_flag) && (
-                                  <span title={pick.hype_flag ? "hype flag — price embeds a more aggressive S-curve than the evidence" : "FCF inflecting — not yet TTM-FCF-positive (half-sized)"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
-                                )}
-                                {pick.corr_flag && <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>}
-                                {entryPostureChip(pick.entry_posture)}
-                                {goalTag(pick)}
-                              </div>
-                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
-                              </span>
-                            </div>
-                            {wheelLine(pick.wheel)}
-                            <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
-                              {pick.theme && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(147,112,219,0.18)", color: "var(--purple)", fontFamily: "var(--font-mono)" }}>{String(pick.theme).replace(/_/g, " ")}</span>}
-                              {pick.value_chain_position && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(148,163,184,0.15)", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{String(pick.value_chain_position).replace(/_/g, " ")}</span>}
-                              {typeof ro40 === "number" && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: ro40 >= 40 ? "rgba(20,184,122,0.12)" : "var(--amber-light)", color: ro40 >= 40 ? "var(--green)" : "var(--amber)", fontFamily: "var(--font-mono)" }}>rule-of-40 {ro40}</span>}
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              {pickVitals(pick, currPrice, { upsidePct: null, upsideLabel: "exit below", currency: stock?.currency })}
-                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span>Solvency:</span><span style={{ textAlign: "right", color: pick.funded_solvency === "weak" ? "var(--red)" : "var(--green)" }}>{pick.funded_solvency || "—"}{pick.ev_gp != null ? ` · EV/GP ${pick.ev_gp}x` : ""}</span></div>
-                              {pick.moat_evidence && <div style={{ fontSize: 8.5, color: "var(--text-light)", lineHeight: 1.4 }}><span style={{ color: "var(--text-muted)" }}>moat: </span>{pick.moat_evidence}</div>}
-                            </div>
-                            {pick.thesis && (() => {
-                              const _txt = String(pick.thesis) + (pick.theme_durability ? "  ·  " + pick.theme_durability : "");
-                              const _exp = expandedDisruptor.has(pick.symbol);
-                              return (
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
-                                    <span style={{ color: "var(--purple)", fontWeight: 600 }}>DISRUPTOR </span>{_txt}
-                                  </div>
-                                  {_txt.length > 160 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedDisruptor(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
-                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--purple)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                      {_exp ? "less ▲" : "more ▼"}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {(disruptorApex.runner_ups || []).length > 0 && (
-                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
-                        {(disruptorApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
-                      </div>
-                    )}
-                    {disruptorApex.disruptor_memo && (
-                      <details style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
-                        <summary style={{ fontSize: 12, fontWeight: 700, color: "var(--purple)", fontFamily: "var(--font-mono)", cursor: "pointer", outline: "none" }}>Disruptor Director Memo</summary>
-                        {typeof disruptorApex.disruptor_memo === "string" ? (
-                          <pre style={{ whiteSpace: "pre-wrap", fontSize: 10.5, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 12, lineHeight: 1.6 }}>{disruptorApex.disruptor_memo}</pre>
-                        ) : (
-                          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-                            {Object.entries(disruptorApex.disruptor_memo).map(([k, v]: [string, any]) => (
-                              <div key={k}>
-                                <div style={{ fontSize: 9.5, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 3 }}>{k.replace(/_/g, " ")}</div>
-                                <div style={{ fontSize: 10.5, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{typeof v === "string" ? v : JSON.stringify(v, null, 1)}</div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </details>
-                    )}
-                  </div>
-                  )}
-
-                  {/* Watch & Wait — Director runner_ups (fresh, incl skeptic demotions) when published;
-                      falls back to the legacy capitulation_watchlist (frozen at 2026-06-06) otherwise */}
-                  {(() => { const wl = (speculairBaskets.runner_ups?.length ? speculairBaskets.runner_ups : speculairBaskets.capitulation_watchlist) || []; const live = !!speculairBaskets.runner_ups?.length; return (
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Beaten-Down Watchlist <span style={{ fontSize: 11, fontWeight: 500, color: "var(--text-light)" }}>({live ? "Director runner-ups" : "capitulation · legacy list"})</span></h3>
-                      <span style={{ fontSize: 10, color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {wl.length} setups · Watch & Wait{live && speculairBaskets.runner_ups_as_of ? ` · ${speculairBaskets.runner_ups_as_of}` : ""}
-                      </span>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
-                      {wl.map((pick: any) => (
-                        <div
-                          key={pick.symbol}
-                          style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
-                          onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                        >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                            <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
-                            <span style={{ display: "inline-flex", gap: 4, alignItems: "center" }}>
-                              {pick.skeptic_verdict === "REFUTED" && (
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(239,68,68,0.12)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }} title={pick.skeptic_kill_fact || ""}>SKEPTIC DEMOTED</span>
-                              )}
-                              <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                Conv {pick.conviction}
-                              </span>
-                            </span>
-                          </div>
-                          {pick.trigger_event && (
-                            <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}>
-                              <span style={{ color: "var(--orange)", fontWeight: 600 }}>Trigger: </span>
-                              {pick.trigger_event.slice(0, 150)}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {wl.length === 0 && (
-                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Watch & Wait candidates.</div>
-                      )}
-                    </div>
-                  </div>
-                  );})()}
-
-                  {/* Per-Methodology Baskets */}
-                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Per-Methodology Debate Baskets</summary>
-                    <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 24 }}>
-                      {Object.entries(speculairBaskets.per_methodology_baskets || {}).map(([method, data]: [string, any]) => (
-                        <div key={method}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                            <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
-                              {method.replace(/_/g, " ").toUpperCase()}
-                            </h4>
-                            <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                              {(data.picks || []).length} picks · {data.total_candidates || 0} scanned · {data.radar_filtered || 0} filtered
-                            </span>
-                          </div>
-                          {data.moderator_memo && (
-                            <p style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8, lineHeight: 1.4 }}>
-                              {data.moderator_memo}
-                            </p>
-                          )}
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
-                            {(data.picks || []).map((pick: any) => (
-                              <div
-                                key={pick.symbol}
-                                style={{ border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer", transition: "background 0.2s" }}
-                                onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                                title={pick.forcing_function || pick.consensus_delta || ""}
-                              >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                  <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
-                                  <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                                    {pick.verdict} · {pick.conviction}/5
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-
-                  {/* Generated timestamp */}
-                  {speculairBaskets.generated_at && (
-                    <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textAlign: "right" }}>
-                      Generated: {new Date(speculairBaskets.generated_at).toLocaleString()} · Rebalance: {speculairBaskets.rebalance_date || "—"}
-                    </div>
-                  )}
-                </>
-              )}
-
-            </div>
-
+            <>
+             <p style={{fontSize:18,color:"var(--text)",fontFamily:"var(--font-sans)",fontWeight:800,letterSpacing:"-0.02em",marginBottom:2}}>
+               Speculair Portfolio
+             </p>
+             <p style={{fontSize:11,color:"var(--text-light)",fontFamily:"var(--font-mono)"}}>
+               Multi-agent debate pipeline · 4-Agent Barbell Architecture · Apex PM Director
+             </p>
+            </>
           ) : (
 
             <>
@@ -5892,6 +5061,831 @@ export default function Dashboard(){
           </div>
 
         </div>
+
+      ) : viewMode === "speculair" ? (
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
+
+
+              {!speculairBaskets ? (
+                <div style={{textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13, fontFamily: "var(--font-mono)"}}>
+                  Loading Speculair Data...
+                </div>
+              ) : (
+                <>
+                  {/* Live-forward tracking disclaimer (§5) */}
+                  <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, padding: "8px 12px", fontSize: 10, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                    <strong style={{ color: "var(--blue)" }}>Live-forward tracked.</strong> The Apex Basket accrues a real track record from go-live — it is <strong>not</strong> back-filled. The Speculair director is an LLM (not replayed historically), so its return is <strong>not</strong> a comparable-vintage number to the 9 methodology baselines (deterministic 5-yr PIT replay).
+                  </div>
+                  {/* Debate Stats Funnel */}
+                  {speculairBaskets.debate_stats && (
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                      {[
+                        { label: "Total Picks", value: speculairBaskets.debate_stats.total_picks, color: "var(--text-light)" },
+                        { label: "Unique Symbols", value: speculairBaskets.debate_stats.unique_symbols, color: "var(--text-light)" },
+                        { label: "Cache Hits", value: speculairBaskets.debate_stats.cache_hits, color: "var(--blue)" },
+                        { label: "No Transcript", value: speculairBaskets.debate_stats.no_transcript, color: "var(--amber)" },
+                        { label: "Fully Debated", value: speculairBaskets.debate_stats.fully_debated, color: "var(--blue)" },
+                        { label: "Radar Filtered", value: speculairBaskets.debate_stats.radar_filtered, color: "var(--amber)" },
+                        { label: "Auto-Vetoed", value: speculairBaskets.debate_stats.auto_vetoed, color: "var(--red)" },
+                        { label: "Apex Selected", value: speculairBaskets.debate_stats.apex_selected, color: "var(--green)" },
+                      ].map(s => (
+                        <div key={s.label} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px 16px", minWidth: 100, textAlign: "center" }}>
+                          <div style={{ fontSize: 20, fontWeight: 800, color: s.color, fontFamily: "var(--font-mono)" }}>{s.value ?? "—"}</div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Apex Basket */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Apex Basket
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--green)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(speculairBaskets.apex_basket || []).length} positions · Director free 2–20 · conviction 0–100
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The headline book: a weekly multi-agent debate (radar → analyst seats → skeptic → Director) blends deep value with catalysts, gated by moat / terminal-erosion and the apex skeptic. Director-weighted, live-forward NAV — never back-filled.
+                    </div>
+                    {goalBanner(speculairBaskets)}
+                    {(speculairBaskets.apex_tracking_weighted || speculairBaskets.apex_tracking) && (() => {
+                      // Director-weighted NAV primary: the Director risk-sizes the book in his memo
+                      // (his size_units, or his director_conviction as the basis). Equal-weight = fallback.
+                      const _atw = speculairBaskets.apex_tracking_weighted;
+                      const weighted = !!(_atw && (_atw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history (not a back-dated start)
+                      const at = weighted ? _atw : speculairBaskets.apex_tracking;
+                      const basis = speculairBaskets.weights_basis === "size_units" ? "size_units" : "conviction";
+                      return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (at.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(at.since_inception_pct || 0) >= 0 ? "+" : ""}{at.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {at.inception_date}</div>
+                        </div>
+                        {(at.history || []).length > 1 && (() => {
+                          const _n = at.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {at.nav} · {at.n_open} held · {at.n_closed} closed{at.win_rate != null ? ` · ${at.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? `Director-weighted NAV (${basis})` : "equal-weight NAV"} · live-forward, not back-filled</div>
+                        </div>
+                      </div>
+                      );
+                    })()}
+                    {rotationLog(speculairBaskets.apex_tracking || speculairBaskets.apex_tracking_weighted)}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+                      {(speculairBaskets.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : 0;
+                        const entryPrice = pick.entry_price || 0;
+                        const perf = entryPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
+                        const _basis = entryPrice > 0 ? entryPrice : currPrice;
+                        const apexUpside = typeof pick.expected_return_pct === "number" ? pick.expected_return_pct
+                          : (typeof pick.target_px === "number" && pick.target_px > 0 && _basis > 0 ? (pick.target_px / _basis - 1) * 100 : null);
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.conviction >= 85 ? "rgba(20,184,122,0.2)" : pick.conviction >= 70 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.conviction >= 85 ? "var(--green)" : pick.conviction >= 70 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  ★ {pick.conviction}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                                {pick.weight_pct != null && (
+                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
+                                )}
+                                {entryPostureChip(pick.entry_posture)}
+                                {goalTag(pick)}
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
+                              </span>
+                            </div>
+                            {wheelLine(pick.wheel)}
+                            {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
+                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
+                                {riskBadge(pick)}{skepticChip(pick)}{moatChips(pick)}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              {pickVitals(pick, currPrice, { upsidePct: apexUpside, upsideLabel: "target upside", currency: stock?.currency })}
+                              {pick.source_methodologies && pick.source_methodologies.length > 0 && (
+                                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                                  {pick.source_methodologies.map((m: string) => (
+                                    <span key={m} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>
+                                      {m.replace(/_/g, " ")}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            {(pick.director_rationale || pick.consensus_delta) && (() => {
+                              const _txt = pick.director_rationale || pick.consensus_delta;
+                              const _exp = expandedApex.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 6, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>PM </span>
+                                    {_txt}
+                                  </div>
+                                  {_txt.length > 220 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedApex(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                      {(speculairBaskets.apex_basket || []).length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Apex candidates yet. Run the debate pipeline to populate.</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Apex Director Memo — directly under its basket, parallel to the Value/Disruptor memos */}
+                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Apex Director Memo</summary>
+                    <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>
+                      {speculairBaskets.director_memo || "No memo available. Run the debate pipeline to generate."}
+                    </pre>
+                  </details>
+
+                  {/* Value Lens — pure-value re-grade of the same debate (catalyst overlay stripped) */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Value Lens
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(valueApex.apex_basket || []).length} names · regime-stripped · funded-leverage solvency
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The same 161-name debate graded on a pure-value rubric (catalyst overlay removed): CRO-normalized margin of safety, cyclical-peak normalization, a forensic-credibility gate, and a net-funded-debt/EBITDA + interest-coverage solvency test. Tracked live-forward on its own NAV chain — independent of the catalyst Apex book above.
+                    </div>
+                    {(valueApex.value_tracking_weighted || valueApex.value_tracking) && (() => {
+                      // Director-weighted NAV is primary: the size_units the Director justified in the memo
+                      // (risk-weighting the basket) ARE the book's sizing. Equal-weight kept as fallback only.
+                      const _vtw = valueApex.value_tracking_weighted;
+                      const weighted = !!(_vtw && (_vtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
+                      const vt = weighted ? _vtw : valueApex.value_tracking;
+                      return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (vt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(vt.since_inception_pct || 0) >= 0 ? "+" : ""}{vt.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {vt.inception_date}</div>
+                        </div>
+                        {(vt.history || []).length > 1 && (() => {
+                          const _n = vt.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {vt.nav} · {vt.n_open} held · {vt.n_closed} closed{vt.win_rate != null ? ` · ${vt.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
+                        </div>
+                      </div>
+                      );
+                    })()}
+                    {valueApex.stress_test && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{valueApex.stress_test.published_downside_pct}%</span> recession · {valueApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{valueApex.correlation ? ` · avg pairwise corr ${valueApex.correlation.avg_pairwise} (${valueApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                      </div>
+                    )}
+                    {typeof valueApex.book_secular_load_pct === "number" && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8 }}>
+                        Secular-decline load: <span style={{ color: valueApex.book_secular_load_pct > 60 ? "var(--amber)" : "var(--text)", fontWeight: 700 }}>{valueApex.book_secular_load_pct}%</span> of book <span style={{ color: "var(--text-light)" }}>(material-threat / eroding moat)</span>{typeof valueApex.clean_anchor_count === "number" ? ` · ${valueApex.clean_anchor_count} clean anchor${valueApex.clean_anchor_count === 1 ? "" : "s"}` : ""}
+                      </div>
+                    )}
+                    {valueApex.pool_stats && valueApex.pool_stats.banner && (
+                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
+                        {valueApex.pool_stats.banner}
+                      </div>
+                    )}
+                    {rotationLog(valueApex.value_tracking || valueApex.value_tracking_weighted)}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+                      {(valueApex.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : 0;
+                        const solv = String(pick.funded_solvency || "");
+                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
+                        const mos = pick.sop_mos_pct;
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.value_score >= 80 ? "rgba(20,184,122,0.2)" : pick.value_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.value_score >= 80 ? "var(--green)" : pick.value_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  val {pick.value_score}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                                {pick.weight_pct != null && (
+                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
+                                )}
+                                {(pick.cro_only || pick.stale_anchor) && (
+                                  <span title={pick.cro_only ? "CRO-only leg" : "stale anchor"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
+                                )}
+                                {pick.corr_flag && (
+                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
+                                )}
+                                {skepticChip(pick)}
+                                {entryPostureChip(pick.entry_posture)}
+                              </div>
+                              {typeof mos === "number" && (
+                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
+                                </span>
+                              )}
+                            </div>
+                            {wheelLine(pick.wheel)}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                <span>Solvency:</span>
+                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
+                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : ""}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
+                                </span>
+                              </div>
+                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
+                              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                                {pick.peer_verdict && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(99,102,241,0.15)", color: "var(--purple)" }}>{String(pick.peer_verdict).replace(/_/g, " ")}</span>}
+                                {pick.peak_normalized && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(234,179,8,0.15)", color: "#eab308" }}>peak-normalized</span>}
+                                {pick.growth_durability && <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(20,184,122,0.12)", color: "var(--green)" }}>{String(pick.growth_durability).replace(/_/g, " ")}</span>}
+                                {moatChips(pick)}
+                              </div>
+                            </div>
+                            {pick.thesis && (() => {
+                              const _txt = String(pick.thesis);
+                              const _exp = expandedValue.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--blue)", fontWeight: 600 }}>VALUE </span>{_txt}
+                                  </div>
+                                  {(() => {
+                                    const vm: any = valueApex.value_memo;
+                                    const bear = vm && typeof vm === "object" && vm.bear_rebuttal ? vm.bear_rebuttal[pick.symbol] : null;
+                                    return bear ? (
+                                      <div style={{ fontSize: 9, color: "var(--red)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.85,
+                                                    ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
+                                           title="Director's bear rebuttal — the strongest reason this pick is wrong, written before sizing">
+                                        <span style={{ fontWeight: 700 }}>BEAR </span>{String(bear)}
+                                      </div>
+                                    ) : null;
+                                  })()}
+                                  {_txt.length > 200 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedValue(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--blue)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                      {(valueApex.apex_basket || []).length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Value lens not loaded.</div>
+                      )}
+                    </div>
+                    {(valueApex.runner_ups || []).length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
+                        {(valueApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Value Director Memo — the pure-value Director's reasoning (rubric weighting, gates, correlation stress, sizing, per-seat bear rebuttal) */}
+                  {valueApex.value_memo && (
+                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--blue)", borderRadius: 12, padding: "20px 24px" }}>
+                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Value Director Memo</summary>
+                      {typeof valueApex.value_memo === "string" ? (
+                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{valueApex.value_memo}</pre>
+                      ) : (
+                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                          {Object.entries(valueApex.value_memo).map(([k, v]: [string, any]) => (
+                            <div key={k}>
+                              <div style={{ fontSize: 10, color: "var(--blue)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
+                              {typeof v === "string" ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
+                              ) : Array.isArray(v) ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
+                              ) : v && typeof v === "object" ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
+                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </details>
+                  )}
+
+                  {/* Speculair Future Resources — Lane A producers/royalties across six physical value chains (replaces the retired Disruptor Lens; FUTURE_RESOURCES_SPEC.md). Reads GCS live; renders an awaiting state until the first fr-publish --gcs lands. */}
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
+                        Speculair Future Resources
+                      </h3>
+                      <span style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(frApex.apex_basket || []).length} names · Lane A producers/royalties · physical-anchor rule
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
+                      The physical build-out of the future: profitable producers, royalty/streamers and equipment toll-takers across six value chains — uranium fuel cycle, copper/electrification, rare earths &amp; strategic metals, power-for-AI, robotics, quantum. Cost-curve position and symmetric commodity torque drive the score; valuation is a guard, never the driver. Every seat names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). Own NAV chain — never blended with the Apex or Value books; Lane B developers are a separate event tracker, not part of this NAV.
+                    </div>
+                    {(frApex.apex_basket || []).length === 0 && (
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
+                        Awaiting the first Lane A publish. The chain runs locally on the operator box (fr-universe → chain map → debates → Director → fr-publish --gcs); this card lights up the moment the payload lands on GCS.
+                      </div>
+                    )}
+                    {(frApex.fr_tracking_weighted || frApex.fr_tracking) && (() => {
+                      const _ftw = frApex.fr_tracking_weighted;
+                      const weighted = !!(_ftw && (_ftw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
+                      const ft = weighted ? _ftw : frApex.fr_tracking;
+                      return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Live track record</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (ft.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(ft.since_inception_pct || 0) >= 0 ? "+" : ""}{ft.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {ft.inception_date}</div>
+                        </div>
+                        {(ft.history || []).length > 1 && (() => {
+                          const _n = ft.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {ft.nav} · {ft.n_open} held · {ft.n_closed} closed{ft.win_rate != null ? ` · ${ft.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
+                        </div>
+                      </div>
+                      );
+                    })()}
+                    {frApex.benchmark && frApex.benchmark.benchmark_return_pct != null && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Benchmark: {frApex.benchmark.blend || "50/50 XME+URA"} <span style={{ fontWeight: 600, color: (frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>{(frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "+" : ""}{frApex.benchmark.benchmark_return_pct}%</span> since {frApex.benchmark.measured_from}{frApex.benchmark.active_return_pct != null ? <> · active <span style={{ fontWeight: 700, color: frApex.benchmark.active_return_pct >= 0 ? "var(--green)" : "var(--red)" }}>{frApex.benchmark.active_return_pct >= 0 ? "+" : ""}{frApex.benchmark.active_return_pct}%</span></> : ""} <span style={{ color: "var(--text-light)" }}>(the null hypothesis: a closet metals/uranium ETF basket)</span>
+                      </div>
+                    )}
+                    {frApex.stress_test && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{frApex.stress_test.published_downside_pct}%</span> recession · {frApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{frApex.correlation ? ` · avg pairwise corr ${frApex.correlation.avg_pairwise} (${frApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                      </div>
+                    )}
+                    {frApex.chain_exposure && Object.keys(frApex.chain_exposure).length > 0 && (
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
+                        {Object.entries(frApex.chain_exposure).sort((a: any, b: any) => (b[1] || 0) - (a[1] || 0)).map(([ch, pct]: [string, any]) => (
+                          <span key={ch} style={{ fontSize: 8.5, padding: "2px 6px", borderRadius: 4, fontFamily: "var(--font-mono)", fontWeight: 600, background: (pct || 0) > 25 ? "var(--amber-light)" : "rgba(148,163,184,0.12)", color: (pct || 0) > 25 ? "var(--amber)" : "var(--text-muted)" }}>
+                            {String(ch).replace(/_/g, " ")} {pct}%
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {frApex.pool_stats && frApex.pool_stats.banner && (
+                      <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
+                        {frApex.pool_stats.banner}
+                      </div>
+                    )}
+                    {rotationLog(frApex.fr_tracking || frApex.fr_tracking_weighted)}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+                      {(frApex.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : (frPrices[String(pick.symbol).toUpperCase()] || 0);
+                        const solv = String(pick.funded_solvency || "");
+                        const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
+                        const mos = pick.sop_mos_pct;
+                        const prim = pick.chain || (Array.isArray(pick.chains) ? pick.chains[0] : "") || "";
+                        // chain_regime arrives as a string verdict or a per-chain dict — normalize to the primary chain's verdict
+                        const crRaw = pick.chain_regime;
+                        const cr = String(crRaw && typeof crRaw === "object" ? (crRaw[prim] ?? Object.values(crRaw)[0] ?? "") : (crRaw || "")).toUpperCase();
+                        const crColor = cr.includes("TAILWIND") ? "var(--green)" : cr.includes("HEADWIND") ? "var(--red)" : "var(--text-muted)";
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.fr_score >= 80 ? "rgba(20,184,122,0.2)" : pick.fr_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.fr_score >= 80 ? "var(--green)" : pick.fr_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  fr {pick.fr_score}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                                {pick.weight_pct != null && (
+                                  <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
+                                )}
+                                {prim && (
+                                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(217,119,6,0.14)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{String(prim).replace(/_/g, " ")}</span>
+                                )}
+                                {cr && (
+                                  <span title="chain commodity-cycle regime" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(148,163,184,0.12)", color: crColor, fontFamily: "var(--font-mono)", fontWeight: 700 }}>{cr}</span>
+                                )}
+                                {pick.growth_capex_fcf_negative && (
+                                  <span title="OCF-positive / FCF-negative build-cycle producer — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>capex ¾</span>
+                                )}
+                                {pick.torque_leverage_quadrant && (
+                                  <span title="high commodity torque on a levered balance sheet — size capped at 0.75" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>torque×lev ¾</span>
+                                )}
+                                {(pick.headwind_unjustified || pick.headwind_capped) && (
+                                  <span title="HEADWIND chain with no written justification — size clamped to 0.5" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "rgba(239,68,68,0.14)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>headwind ½</span>
+                                )}
+                                {pick.stale_anchor && (
+                                  <span title="stale anchor — half-sized" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
+                                )}
+                                {pick.corr_flag && (
+                                  <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
+                                )}
+                                {entryPostureChip(pick.entry_posture)}
+                              </div>
+                              {typeof mos === "number" && (
+                                <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                  {mos >= 0 ? "+" : ""}{mos.toFixed(0)}% MoS
+                                </span>
+                              )}
+                            </div>
+                            {wheelLine(pick.wheel)}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              {pick.physical_anchor && (
+                                <div title="the physical thing this seat makes/moves/powers/instruments (the anti-Visa rule)" style={{ fontSize: 9.5, color: "var(--text-muted)", fontStyle: "italic" }}>
+                                  ⚓ {String(pick.physical_anchor)}
+                                </div>
+                              )}
+                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                <span>Solvency:</span>
+                                <span style={{ color: solvColor, fontWeight: 600, textAlign: "right" }}>
+                                  {solv || "—"}{pick.net_funded_debt_ebitda != null ? ` · ${pick.net_funded_debt_ebitda}x nd/EBITDA` : (pick.ndebt_ebitda != null ? ` · ${pick.ndebt_ebitda}x nd/EBITDA` : "")}{pick.interest_coverage != null ? ` · ${pick.interest_coverage}x cov` : ""}
+                                </span>
+                              </div>
+                              {(pick.reserve_life || pick.contract_cover) && (
+                                <div style={{ fontSize: 9, color: "var(--text-muted)", lineHeight: 1.45 }}>
+                                  {pick.contract_cover ? <>Contract: {String(pick.contract_cover)}</> : null}{pick.contract_cover && pick.reserve_life ? " · " : ""}{pick.reserve_life ? <>Reserve: {String(pick.reserve_life)}</> : null}
+                                </div>
+                              )}
+                              {pickVitals(pick, currPrice, { upsidePct: typeof mos === "number" ? mos : null, upsideLabel: "FV upside", currency: stock?.currency })}
+                            </div>
+                            {pick.thesis && (() => {
+                              const _txt = String(pick.thesis);
+                              const _exp = expandedFr.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
+                                                ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>FR </span>{_txt}
+                                  </div>
+                                  {pick.torque_note && (
+                                    <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.45, marginTop: 4, opacity: 0.9,
+                                                  ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}
+                                         title="symmetric torque: the +10% AND the -10% commodity cases">
+                                      <span style={{ fontWeight: 700 }}>TORQUE </span>{String(pick.torque_note)}
+                                    </div>
+                                  )}
+                                  {_txt.length > 200 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedFr(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--amber)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "▴ less" : "▾ more"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {(frApex.runner_ups || []).length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
+                        {(frApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* FR Director Memo — the Future Resources Director's reasoning (gates, chain-concentration stress, rotation, sizing) */}
+                  {frApex.fr_memo && (
+                    <details style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
+                      <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Future Resources Director Memo</summary>
+                      {typeof frApex.fr_memo === "string" ? (
+                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{frApex.fr_memo}</pre>
+                      ) : (
+                        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                          {Object.entries(frApex.fr_memo).map(([k, v]: [string, any]) => (
+                            <div key={k}>
+                              <div style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
+                              {typeof v === "string" ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{v}</div>
+                              ) : Array.isArray(v) ? (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>{v.map((x: any) => (typeof x === "string" ? x : JSON.stringify(x))).join(" · ")}</div>
+                              ) : v && typeof v === "object" ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                  {Object.entries(v).map(([sk, sv]: [string, any]) => (
+                                    <div key={sk} style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                                      {sk !== "note" && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{sk}: </span>}{typeof sv === "string" ? sv : JSON.stringify(sv)}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div style={{ fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>{String(v)}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </details>
+                  )}
+
+                  {/* Speculair Disruptor Lens — RETIRED 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10): frozen record, never deleted, never back-filled */}
+                  {(disruptorApex.apex_basket || []).length > 0 && (
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, padding: "20px 24px", opacity: 0.92 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Speculair Disruptor Lens <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)" }}>· retired</span></h3>
+                      <span style={{ fontSize: 10, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {(disruptorApex.apex_basket || []).length} names · final holdings · frozen record
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 12 }}>
+                      A separate ~40-name thematic screen (NOT the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway — valuation as a guard. Own NAV chain; never blended with the Apex or Value books.
+                    </div>
+                    <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
+                      ⚠ RETIRED 2026-07-02. This book no longer rotates — the chart below is its final live-forward record, wins and losses included, and will never move again. Its rules drifted into generic quality compounders (the Visa pick); robotics and quantum coverage continues in the Future Resources basket under a physical-anchor rule.
+                    </div>
+                    {disruptorApex.pool_stats && disruptorApex.pool_stats.banner && (
+                      <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
+                        ⚠ {disruptorApex.pool_stats.banner}
+                      </div>
+                    )}
+                    {goalBanner(disruptorApex)}
+                    {(disruptorApex.disruptor_tracking_weighted || disruptorApex.disruptor_tracking) && (() => {
+                      const _dtw = disruptorApex.disruptor_tracking_weighted;
+                      const weighted = !!(_dtw && (_dtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
+                      const dt = weighted ? _dtw : disruptorApex.disruptor_tracking;
+                      return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Final track record · retired</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (dt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                            {(dt.since_inception_pct || 0) >= 0 ? "+" : ""}{dt.since_inception_pct}%
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {dt.inception_date}</div>
+                        </div>
+                        {(dt.history || []).length > 1 && (() => {
+                          const _n = dt.history.map((p: any) => p.nav);
+                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
+                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
+                          const _up = _n[_n.length - 1] >= _n[0];
+                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
+                        })()}
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
+                          NAV {dt.nav} · {dt.n_open} held · {dt.n_closed} closed{dt.win_rate != null ? ` · ${dt.win_rate}% win` : ""}
+                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units)" : "equal-weight NAV"} · live-forward while it ran, frozen at retirement, never back-filled</div>
+                        </div>
+                      </div>
+                      );
+                    })()}
+                    {disruptorApex.stress_test && (
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 12, lineHeight: 1.5 }}>
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{disruptorApex.stress_test.published_downside_pct}%</span> recession · {disruptorApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{disruptorApex.correlation ? ` · avg pairwise corr ${disruptorApex.correlation.avg_pairwise} (${disruptorApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                        {disruptorApex.theme_exposure && (() => {
+                          const te = Object.entries(disruptorApex.theme_exposure as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
+                          return te ? <span> · top theme <span style={{ color: "var(--purple)", fontWeight: 600 }}>{String(te[0]).replace(/_/g, " ")} {te[1]}%</span> (cap 30%)</span> : null;
+                        })()}
+                      </div>
+                    )}
+                    {rotationLog(disruptorApex.disruptor_tracking || disruptorApex.disruptor_tracking_weighted)}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+                      {(disruptorApex.apex_basket || []).map((pick: any) => {
+                        const stock = findStock(pick.symbol);
+                        const currPrice = stock ? stock.price : (disruptorPrices[String(pick.symbol).toUpperCase()] || 0);
+                        const entryPrice = pick.entry_price || 0;
+                        const perf = entryPrice > 0 && currPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
+                        const ro40 = pick.rule_of_40;
+                        return (
+                          <div
+                            key={pick.symbol}
+                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
+                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.disruptor_score >= 80 ? "rgba(147,112,219,0.25)" : pick.disruptor_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.disruptor_score >= 80 ? "var(--purple)" : pick.disruptor_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                                  dis {pick.disruptor_score}<span style={{ opacity: 0.55 }}>/100</span>
+                                </span>
+                                {pick.weight_pct != null && <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>}
+                                {(pick.fcf_inflecting || pick.hype_flag) && (
+                                  <span title={pick.hype_flag ? "hype flag — price embeds a more aggressive S-curve than the evidence" : "FCF inflecting — not yet TTM-FCF-positive (half-sized)"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
+                                )}
+                                {pick.corr_flag && <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>}
+                                {entryPostureChip(pick.entry_posture)}
+                                {goalTag(pick)}
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
+                              </span>
+                            </div>
+                            {wheelLine(pick.wheel)}
+                            <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
+                              {pick.theme && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(147,112,219,0.18)", color: "var(--purple)", fontFamily: "var(--font-mono)" }}>{String(pick.theme).replace(/_/g, " ")}</span>}
+                              {pick.value_chain_position && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(148,163,184,0.15)", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{String(pick.value_chain_position).replace(/_/g, " ")}</span>}
+                              {typeof ro40 === "number" && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: ro40 >= 40 ? "rgba(20,184,122,0.12)" : "var(--amber-light)", color: ro40 >= 40 ? "var(--green)" : "var(--amber)", fontFamily: "var(--font-mono)" }}>rule-of-40 {ro40}</span>}
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+                              {pickVitals(pick, currPrice, { upsidePct: null, upsideLabel: "exit below", currency: stock?.currency })}
+                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span>Solvency:</span><span style={{ textAlign: "right", color: pick.funded_solvency === "weak" ? "var(--red)" : "var(--green)" }}>{pick.funded_solvency || "—"}{pick.ev_gp != null ? ` · EV/GP ${pick.ev_gp}x` : ""}</span></div>
+                              {pick.moat_evidence && <div style={{ fontSize: 8.5, color: "var(--text-light)", lineHeight: 1.4 }}><span style={{ color: "var(--text-muted)" }}>moat: </span>{pick.moat_evidence}</div>}
+                            </div>
+                            {pick.thesis && (() => {
+                              const _txt = String(pick.thesis) + (pick.theme_durability ? "  ·  " + pick.theme_durability : "");
+                              const _exp = expandedDisruptor.has(pick.symbol);
+                              return (
+                                <div style={{ marginTop: 8 }}>
+                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
+                                    <span style={{ color: "var(--purple)", fontWeight: 600 }}>DISRUPTOR </span>{_txt}
+                                  </div>
+                                  {_txt.length > 160 && (
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedDisruptor(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--purple)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                      {_exp ? "less ▲" : "more ▼"}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {(disruptorApex.runner_ups || []).length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
+                        {(disruptorApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                    {disruptorApex.disruptor_memo && (
+                      <details style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+                        <summary style={{ fontSize: 12, fontWeight: 700, color: "var(--purple)", fontFamily: "var(--font-mono)", cursor: "pointer", outline: "none" }}>Disruptor Director Memo</summary>
+                        {typeof disruptorApex.disruptor_memo === "string" ? (
+                          <pre style={{ whiteSpace: "pre-wrap", fontSize: 10.5, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 12, lineHeight: 1.6 }}>{disruptorApex.disruptor_memo}</pre>
+                        ) : (
+                          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+                            {Object.entries(disruptorApex.disruptor_memo).map(([k, v]: [string, any]) => (
+                              <div key={k}>
+                                <div style={{ fontSize: 9.5, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 3 }}>{k.replace(/_/g, " ")}</div>
+                                <div style={{ fontSize: 10.5, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{typeof v === "string" ? v : JSON.stringify(v, null, 1)}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </details>
+                    )}
+                  </div>
+                  )}
+
+                  {/* Watch & Wait — Director runner_ups (fresh, incl skeptic demotions) when published;
+                      falls back to the legacy capitulation_watchlist (frozen at 2026-06-06) otherwise */}
+                  {(() => { const wl = (speculairBaskets.runner_ups?.length ? speculairBaskets.runner_ups : speculairBaskets.capitulation_watchlist) || []; const live = !!speculairBaskets.runner_ups?.length; return (
+                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--orange)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Beaten-Down Watchlist <span style={{ fontSize: 11, fontWeight: 500, color: "var(--text-light)" }}>({live ? "Director runner-ups" : "capitulation · legacy list"})</span></h3>
+                      <span style={{ fontSize: 10, color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                        {wl.length} setups · Watch & Wait{live && speculairBaskets.runner_ups_as_of ? ` · ${speculairBaskets.runner_ups_as_of}` : ""}
+                      </span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+                      {wl.map((pick: any) => (
+                        <div
+                          key={pick.symbol}
+                          style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 12, cursor: "pointer", transition: "background 0.2s" }}
+                          onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                            <strong style={{ fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                            <span style={{ display: "inline-flex", gap: 4, alignItems: "center" }}>
+                              {pick.skeptic_verdict === "REFUTED" && (
+                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(239,68,68,0.12)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700 }} title={pick.skeptic_kill_fact || ""}>SKEPTIC DEMOTED</span>
+                              )}
+                              <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(249,115,22,0.15)", color: "var(--orange)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                                Conv {pick.conviction}
+                              </span>
+                            </span>
+                          </div>
+                          {pick.trigger_event && (
+                            <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.4 }}>
+                              <span style={{ color: "var(--orange)", fontWeight: 600 }}>Trigger: </span>
+                              {pick.trigger_event.slice(0, 150)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {wl.length === 0 && (
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>No Watch & Wait candidates.</div>
+                      )}
+                    </div>
+                  </div>
+                  );})()}
+
+                  {/* Per-Methodology Baskets */}
+                  <details style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+                    <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Per-Methodology Debate Baskets</summary>
+                    <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 24 }}>
+                      {Object.entries(speculairBaskets.per_methodology_baskets || {}).map(([method, data]: [string, any]) => (
+                        <div key={method}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                            <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
+                              {method.replace(/_/g, " ").toUpperCase()}
+                            </h4>
+                            <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                              {(data.picks || []).length} picks · {data.total_candidates || 0} scanned · {data.radar_filtered || 0} filtered
+                            </span>
+                          </div>
+                          {data.moderator_memo && (
+                            <p style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 8, lineHeight: 1.4 }}>
+                              {data.moderator_memo}
+                            </p>
+                          )}
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
+                            {(data.picks || []).map((pick: any) => (
+                              <div
+                                key={pick.symbol}
+                                style={{ border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer", transition: "background 0.2s" }}
+                                onClick={() => setChartCard({ symbol: pick.symbol, name: pick.symbol, price: null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                title={pick.forcing_function || pick.consensus_delta || ""}
+                              >
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <strong style={{ fontSize: 12, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}
+                                  <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                                    {pick.verdict} · {pick.conviction}/5
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+
+                  {/* Generated timestamp */}
+                  {speculairBaskets.generated_at && (
+                    <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textAlign: "right" }}>
+                      Generated: {new Date(speculairBaskets.generated_at).toLocaleString()} · Rebalance: {speculairBaskets.rebalance_date || "—"}
+                    </div>
+                  )}
+                </>
+              )}
+
+            </div>
 
       ) : viewMode === "table" ? (
 
