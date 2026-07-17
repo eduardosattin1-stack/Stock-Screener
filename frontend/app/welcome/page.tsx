@@ -6,6 +6,7 @@
 // Design reference: hebbia.com. Warm ivory on near-black, huge uppercase display
 // serif, hairline dividers, small letterspaced uppercase labels, almost no color.
 import type { Metadata } from "next";
+import { HeroGapChart, ConvergenceStrip, CatalystTimeline, ReviewFlow } from "./visuals";
 
 export const metadata: Metadata = {
   title: "Speculair | AI equity research",
@@ -39,9 +40,70 @@ const SCREEN_ROWS = [
   { name: "Consumer, US", price: "42.30", fv: "61.90", agree: "7 / 12", catalyst: "Spin-off record date" },
 ];
 
+// Live anonymized basket returns for the track-record teaser. Fetched server-side
+// with ISR; on any failure the teaser section is simply omitted so the page never
+// depends on the backend being up. Numbers only, no basket names, no holdings.
+async function fetchBasketReturns(): Promise<{ returns: number[]; asOf: string } | null> {
+  try {
+    const res = await fetch(
+      "https://storage.googleapis.com/screener-signals-carbonbridge/scans/speculair_baskets.json",
+      { next: { revalidate: 1800 } },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const baskets = data?.per_methodology_baskets;
+    if (!baskets || typeof baskets !== "object") return null;
+    const returns = (Object.values(baskets) as { ytd_return?: unknown }[])
+      .map((b) => (typeof b?.ytd_return === "number" && isFinite(b.ytd_return) ? b.ytd_return : null))
+      .filter((v): v is number => v !== null)
+      .sort((a, b) => b - a);
+    if (returns.length < 6) return null;
+    const asOf = typeof data?.generated_at === "string" ? data.generated_at.slice(0, 10) : "";
+    return { returns, asOf };
+  } catch {
+    return null;
+  }
+}
+
+const fmtPct = (v: number) => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%`;
+
+function RecordBars({ returns }: { returns: number[] }) {
+  const maxPos = Math.max(...returns, 0);
+  const maxNeg = Math.abs(Math.min(...returns, 0));
+  const span = maxPos + maxNeg || 1;
+  const zeroPct = (maxNeg / span) * 100;
+  const median = [...returns].sort((a, b) => a - b)[Math.floor(returns.length / 2)];
+  return (
+    <div style={{ maxWidth: 820 }}>
+      {returns.map((v, i) => {
+        const w = (Math.abs(v) / span) * 100;
+        const left = v >= 0 ? zeroPct : zeroPct - w;
+        return (
+          <div key={i} style={{ display: "grid", gridTemplateColumns: "92px 1fr 64px", alignItems: "center", gap: 14, padding: "7px 0" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", color: "var(--lp-faint)" }}>
+              BASKET {String(i + 1).padStart(2, "0")}
+            </span>
+            <div style={{ position: "relative", height: 10 }}>
+              <div style={{ position: "absolute", top: -4, bottom: -4, left: `${zeroPct}%`, width: 1, background: "var(--lp-line)" }} />
+              <div style={{ position: "absolute", top: 0, height: 10, left: `${left}%`, width: `${w}%`, borderRadius: 4, background: v >= 0 ? "var(--green)" : "var(--red)", opacity: 0.88 }} />
+            </div>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, textAlign: "right", color: v >= 0 ? "var(--lp-ink)" : "var(--red)" }}>
+              {fmtPct(v)}
+            </span>
+          </div>
+        );
+      })}
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginTop: 22, paddingTop: 18, borderTop: "1px solid var(--lp-line-soft)" }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", color: "var(--lp-faint)" }}>MEDIAN</span>
+        <span style={{ fontFamily: "var(--font-serif)", fontSize: 26, color: median >= 0 ? "var(--green)" : "var(--red)" }}>{fmtPct(median)}</span>
+      </div>
+    </div>
+  );
+}
+
 function Kicker({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--lp-muted)", marginBottom: 20 }}>
+    <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--lavender)", marginBottom: 20 }}>
       {children}
     </div>
   );
@@ -55,20 +117,21 @@ function Wordmark({ size = 15 }: { size?: number }) {
   );
 }
 
-export default function Welcome() {
+export default async function Welcome() {
+  const record = await fetchBasketReturns();
   return (
     <div id="top" className="lp" style={{ background: "var(--lp-bg)", color: "var(--lp-ink)", minHeight: "100vh", overflowX: "hidden", fontFamily: "var(--font-sans)" }}>
       <style>{`
         .lp {
-          --lp-bg: #111211;
-          --lp-ink: #f4f1ea;
-          --lp-muted: rgba(244, 241, 234, 0.58);
-          --lp-faint: rgba(244, 241, 234, 0.38);
-          --lp-line: rgba(244, 241, 234, 0.14);
-          --lp-line-soft: rgba(244, 241, 234, 0.08);
-          --lp-panel: #171817;
+          --lp-bg: #0a1817;
+          --lp-ink: #f3ede4;
+          --lp-muted: #b4c1be;
+          --lp-faint: #6b7d7a;
+          --lp-line: #1f3a35;
+          --lp-line-soft: #16302b;
+          --lp-panel: #101f1d;
         }
-        .lp ::selection { background: rgba(244,241,234,0.2); }
+        .lp ::selection { background: rgba(20,184,122,0.28); }
         .lp-container { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
         .lp-section { padding: 104px 0; border-top: 1px solid var(--lp-line-soft); }
         .lp-display {
@@ -84,22 +147,22 @@ export default function Welcome() {
           padding: 14px 26px; border-radius: 6px; cursor: pointer;
           transition: opacity .15s ease, border-color .15s ease;
         }
-        .lp-btn-solid { background: var(--lp-ink); color: #141514; border: 1px solid var(--lp-ink); }
-        .lp-btn-solid:hover { opacity: 0.85; }
+        .lp-btn-solid { background: var(--green); color: #08201b; border: 1px solid var(--green); box-shadow: 0 0 36px rgba(20,184,122,0.16); }
+        .lp-btn-solid:hover { opacity: 0.88; }
         .lp-btn-line { background: transparent; color: var(--lp-ink); border: 1px solid var(--lp-line); }
-        .lp-btn-line:hover { border-color: var(--lp-muted); }
+        .lp-btn-line:hover { border-color: var(--green); color: var(--green); }
         .lp-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--lp-line); }
         .lp-stat { padding: 34px 28px 6px 0; border-right: 1px solid transparent; }
         .lp-stat-n { font-family: var(--font-serif); font-weight: 340; font-size: clamp(34px, 4.5vw, 54px); line-height: 1; }
         .lp-stat-l { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--lp-faint); margin-top: 14px; line-height: 1.6; }
         .lp-cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
         .lp-feature { border-top: 1px solid var(--lp-line); padding-top: 26px; }
-        .lp-feature-n { font-family: var(--font-mono); font-size: 11px; color: var(--lp-faint); margin-bottom: 18px; }
+        .lp-feature-n { font-family: var(--font-mono); font-size: 11px; color: var(--green); margin-bottom: 18px; }
         .lp-feature-t { font-size: 17px; font-weight: 700; letter-spacing: 0.01em; margin-bottom: 12px; color: var(--lp-ink); }
         .lp-feature-d { font-size: 14px; line-height: 1.7; color: var(--lp-muted); }
         .lp-methods { display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; }
         .lp-method { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 20px 0; border-top: 1px solid var(--lp-line-soft); }
-        .lp-method-n { font-family: var(--font-mono); font-size: 11px; color: var(--lp-faint); padding-top: 3px; }
+        .lp-method-n { font-family: var(--font-mono); font-size: 11px; color: var(--green); padding-top: 3px; }
         .lp-method-name { font-size: 14.5px; font-weight: 700; color: var(--lp-ink); margin-bottom: 5px; }
         .lp-method-blurb { font-size: 13px; line-height: 1.6; color: var(--lp-muted); }
         .lp-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12.5px; }
@@ -117,7 +180,9 @@ export default function Welcome() {
         }
         @media (max-width: 560px) {
           .lp-stats { grid-template-columns: 1fr; }
+          .lp-viz svg text { display: none; }
         }
+        @keyframes lp-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
       `}</style>
 
       {/* ── Header ─────────────────────────────────────────────── */}
@@ -129,8 +194,9 @@ export default function Welcome() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────── */}
-      <section style={{ padding: "120px 0 96px" }}>
-        <div className="lp-container">
+      <section style={{ position: "relative", padding: "120px 0 96px" }}>
+        <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(640px 340px at 18% 0%, rgba(20,184,122,0.10), transparent 70%), radial-gradient(720px 400px at 85% 8%, rgba(196,181,253,0.07), transparent 70%)" }} />
+        <div className="lp-container" style={{ position: "relative" }}>
           <Kicker>AI research for public equities</Kicker>
           <h1 className="lp-display" style={{ fontSize: "clamp(52px, 9vw, 118px)", maxWidth: 980 }}>
             Fair value,<br />verified.
@@ -145,15 +211,19 @@ export default function Welcome() {
             <a href="#how" className="lp-btn lp-btn-line">How it works</a>
           </div>
 
-          <div className="lp-stats" style={{ marginTop: 100 }}>
+          <div className="lp-viz" style={{ marginTop: 80 }}>
+            <HeroGapChart />
+          </div>
+
+          <div className="lp-stats" style={{ marginTop: 64 }}>
             {[
-              { n: "12", l: "Valuation methods on every company" },
-              { n: "13", l: "Baskets tracked live" },
-              { n: "2,500+", l: "Companies screened" },
-              { n: "Nightly", l: "Every position marked" },
+              { n: "12", l: "Valuation methods on every company", c: "var(--green)" },
+              { n: "13", l: "Baskets tracked live", c: "var(--lavender)" },
+              { n: "2,500+", l: "Companies screened", c: "var(--lp-ink)" },
+              { n: "Nightly", l: "Every position marked", c: "var(--amber)" },
             ].map((s) => (
               <div key={s.l} className="lp-stat">
-                <div className="lp-stat-n">{s.n}</div>
+                <div className="lp-stat-n" style={{ color: s.c }}>{s.n}</div>
                 <div className="lp-stat-l">{s.l}</div>
               </div>
             ))}
@@ -175,7 +245,10 @@ export default function Welcome() {
 
           <div style={{ border: "1px solid var(--lp-line)", borderRadius: 10, background: "var(--lp-panel)", overflow: "hidden", marginBottom: 64 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--lp-line)" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--lp-muted)" }}>screen output</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--lp-muted)" }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)", animation: "lp-pulse 2.4s ease-in-out infinite" }} />
+                screen output
+              </span>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--lp-faint)" }}>Illustrative</span>
             </div>
             <div style={{ overflowX: "auto" }}>
@@ -190,9 +263,9 @@ export default function Welcome() {
                     <tr key={r.name}>
                       <td>{r.name}</td>
                       <td className="muted">{r.price}</td>
-                      <td>{r.fv}</td>
+                      <td style={{ color: "var(--green)" }}>{r.fv}</td>
                       <td>{r.agree}</td>
-                      <td className="muted">{r.catalyst}</td>
+                      <td style={{ color: "var(--amber)" }}>{r.catalyst}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -226,6 +299,9 @@ export default function Welcome() {
             approaches the business from a different angle, and no single one is trusted on
             its own. When they disagree, we move on. When they agree, we look closer.
           </p>
+          <div className="lp-viz" style={{ margin: "0 0 56px" }}>
+            <ConvergenceStrip />
+          </div>
           <div className="lp-methods">
             {METHODOLOGIES.map((m, i) => (
               <div key={m.name} className="lp-method">
@@ -255,15 +331,43 @@ export default function Welcome() {
             inside a set window. The thesis, the deadline and the exit rules are written down
             before the position opens, and the basket is marked every night like the rest.
           </p>
+          <div className="lp-viz" style={{ marginTop: 52 }}>
+            <CatalystTimeline />
+          </div>
         </div>
       </section>
+
+      {/* ── Track record teaser ────────────────────────────────── */}
+      {record && (
+        <section className="lp-section">
+          <div className="lp-container">
+            <Kicker>Track record</Kicker>
+            <h2 className="lp-display lp-h2" style={{ maxWidth: 780 }}>The baskets are already running</h2>
+            <p className="lp-body" style={{ maxWidth: 600, margin: "28px 0 48px" }}>
+              These are the live returns of the methodology baskets, updated as the market
+              moves. Names withheld here. Subscribers see what is inside every basket, each
+              pick, and the history behind each number.
+            </p>
+            <RecordBars returns={record.returns} />
+            <p style={{ fontSize: 12, color: "var(--lp-faint)", marginTop: 26, maxWidth: 620, lineHeight: 1.7 }}>
+              Equal-weight, time-weighted returns since each basket started tracking in May
+              and June 2026, marked nightly against live prices.
+              {record.asOf ? ` As of ${record.asOf}.` : ""} Model portfolios, not managed
+              accounts. Past performance does not predict future results.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* ── Built by AI ────────────────────────────────────────── */}
       <section className="lp-section">
         <div className="lp-container">
           <Kicker>How it is built</Kicker>
           <h2 className="lp-display lp-h2" style={{ maxWidth: 820 }}>Built by AI, judged on results</h2>
-          <div className="lp-cols3" style={{ marginTop: 56 }}>
+          <div className="lp-viz" style={{ margin: "52px 0 4px" }}>
+            <ReviewFlow />
+          </div>
+          <div className="lp-cols3" style={{ marginTop: 40 }}>
             {[
               { n: "01", t: "Run by AI, ruled by people", d: "The screening, the valuation work and the research notes are produced by AI, working to rules and risk limits set by people. It reads filings and prices companies the same way every day, at a scale no analyst team can." },
               { n: "02", t: "Reviewed before published", d: "AI tends to agree with itself, so the system is built to push back. Independent agents review every thesis, and one of them exists purely to break it. An idea that fails the review never reaches the site." },
