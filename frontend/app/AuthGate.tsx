@@ -2,8 +2,12 @@
 // Whole-app gate. States: not-configured (fail OPEN → render app, as pre-auth) ·
 // loading · signed-out (Google button) · signed-in-but-not-allowlisted · allowed (render app).
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { firebaseEnabled } from "./firebase";
+
+// Marketing pages stay public even once Firebase auth is live.
+const PUBLIC_PATHS = ["/welcome"];
 
 function Shell({ children }: { children: ReactNode }) {
   return (
@@ -17,6 +21,10 @@ function Shell({ children }: { children: ReactNode }) {
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const { user, loading, allowed, signIn, logout } = useAuth();
+  const pathname = usePathname();
+
+  // Public marketing pages bypass the gate entirely.
+  if (pathname && PUBLIC_PATHS.includes(pathname)) return <>{children}</>;
 
   // Not configured yet → stay public (no regression, no brick) until env vars land.
   if (!firebaseEnabled) return <>{children}</>;

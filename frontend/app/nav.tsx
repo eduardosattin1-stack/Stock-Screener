@@ -6,6 +6,8 @@ import SymbolSearch from "./components/SymbolSearch";
 export default function Nav() {
   const pathname = usePathname();
   const router = useRouter();
+  // /welcome is the public marketing page — it renders its own header, no app chrome.
+  if (pathname === "/welcome") return null;
   const links = [
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
     { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
