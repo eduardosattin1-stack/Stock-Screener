@@ -191,7 +191,8 @@ DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
 # 8e: convergence (multi-model agreement — the purest value signal in the system) and the true
 # EV/GP basket are VALUE signals too; without this they were branded "catalyst" and routed down
 # the Moderator's catalyst lens.
-VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown", "neglect_orphan"}
+VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown", "neglect_orphan",
+                                 "quality_discount", "fresh_crash"}
 
 REGIME_FILE = "CATALYST_WATCH_REGIME.md"  # repo root; read live each run for the current regime
 
@@ -1307,6 +1308,9 @@ _SKEPTIC_ATTACKS = {
     # neglect lane (2026-07-17): the name reached the debate BECAUSE nobody is looking at it -
     # so the strongest bear case is that the neglect is deserved.
     "neglect_orphan": "(a) THE NEGLECT IS DESERVED - this name is here because the market stopped looking; hunt for the disqualifier the market already knows: controlled/dual-class governance, a fading end-market, a litigation/liability tail, delisting or index-mechanics overhang, controlling-holder overhang. (b) POST-EVENT NUMBER TRUTH - the headline financials are event-noised (IFRS-5 reclassification, stranded costs, carve-out allocations); rebuild the CLEAN continuing-operations numbers from the actual filings and verify the debate's normalized figures against them - do NOT accept 'one-off' labels for costs that recur. (c) STANDALONE VIABILITY - post-spin/post-event, does the remaining business have its own customers, systems and balance sheet, or is it a stub of stranded costs and dis-synergies dressed as a compounder? (d) HIDDEN DISQUALIFIER - parent retained-stake overhang, TSA cliffs, debt pushed onto the SpinCo, insider selling into the void.",
+    # fresh-crash lane (2026-07-17): the name reached the debate BECAUSE it just broke hard -
+    # so the strongest bear case is that the market is right and the knife keeps falling.
+    "fresh_crash": "(a) THE CRASH IS DESERVED - this name is here because it broke 20%+ in weeks; find WHAT broke it (the specific print, guide-down, loss, ruling) from primary sources and attack the debate's framing of it as temporary: is the cause actually STRUCTURAL (demand reset, share loss, pricing regime change) dressed as a one-quarter miss? (b) TRAILING-METRIC ILLUSION - every quality metric in the bundle (ROIC, margins, Piotroski) is PRE-crash trailing data; rebuild the forward picture from the newest guidance/estimates - does the quality survive the event, or is the screen crediting a business that no longer exists? (c) FALLING-KNIFE MECHANICS - estimate-revision momentum, insider/institutional selling since the break, index/fund forced supply still overhanging; a fresh break with revisions still falling has no washout. (d) HIDDEN DISQUALIFIER - covenant proximity at the new run-rate, guidance withdrawn, auditor/CFO changes around the event.",
 }
 
 
@@ -1361,8 +1365,8 @@ def skeptic_gen(book):
                 rec = json.load(open(ROOT / "results_regime" / (s + ".json"), encoding="utf-8"))
                 if rec.get("lane") == "equity_special_sit" or rec.get("source") == "opus_catalyst":
                     lane = "event"
-                elif rec.get("lane") == "neglect_orphan":
-                    lane = "neglect_orphan"
+                elif rec.get("lane") in ("neglect_orphan", "fresh_crash"):
+                    lane = rec.get("lane")
             except Exception:
                 pass
         lanes[s] = {"lane": lane, "res": res, "doss": doss, "attack": _SKEPTIC_ATTACKS[lane]}
@@ -3032,6 +3036,94 @@ def prep():
     else:
         print("neglect-orphan intake: 0 qualified this week")
 
+    # ── FRESH-CRASH INTAKE (2026-07-17, screen-ceiling fix pt 1) ────────────────────────────────
+    # The value-drawdown intake requires the 52w-range BOTTOM (prox<=0.15) — i.e. late-stage
+    # grinds. A quality name that just BROKE 20%+ off its high but hasn't reached range-bottom is
+    # invisible to it, and the dislocation window (washout, pain trade) is exactly when value-5
+    # setups price. Trigger: quality floor + >=20% off the high + >=15% below its OWN 50d (a
+    # fresh break, not a long grind) + NOT at range bottom (VD owns that). Empty most weeks by
+    # construction — it exists for the weeks that matter.
+    FC_CAP = 2
+    _fc = []
+    for _s0 in scan.get("stocks", []):
+        _sym0 = _s0.get("symbol")
+        if not _sym0 or _sym0 in sym_meths:
+            continue
+        _px, _yh, _s50 = _s0.get("price"), _s0.get("year_high"), _s0.get("sma50")
+        if not (isinstance(_px, (int, float)) and isinstance(_yh, (int, float)) and _yh > 0
+                and isinstance(_s50, (int, float)) and _s50 > 0):
+            continue
+        _dd = _px / _yh - 1
+        if _dd > -0.20 or (_px / _s50 - 1) > -0.15:
+            continue
+        _prox = _s0.get("proximity_52wk")
+        if isinstance(_prox, (int, float)) and _prox <= 0.15:
+            continue                                   # range-bottom = the VD intake's territory
+        if (_s0.get("roic_avg") or 0) < 0.12 or (_s0.get("piotroski") or 0) < 5:
+            continue
+        if (_s0.get("years_history") or 0) < 5 or _s0.get("structural_break"):
+            continue
+        if ((_s0.get("market_cap") or 0) * (_s0.get("fx_to_price") or 1)) < 300e6:
+            continue
+        _fc.append((_dd, _sym0, f"{_dd:.0%} off high, {(_px / _s50 - 1):.0%} vs 50d"))
+    _fc.sort()                                         # deepest fresh break first
+    _fc_old = [t for t in _fc if (RES / f"{t[1]}.json").exists()]
+    _fc_new = [t for t in _fc if not (RES / f"{t[1]}.json").exists()][:FC_CAP]
+    for _, _sym0, _w in _fc_old + _fc_new:
+        sym_meths.setdefault(_sym0, []).append("fresh_crash")
+    if _fc_old or _fc_new:
+        print(f"fresh-crash intake: {len(_fc_new)} fresh (cap {FC_CAP}, {len(_fc)} qualified) "
+              f"+ {len(_fc_old)} carried: "
+              + ", ".join(f"{s} [{w}]" for _, s, w in (_fc_new + _fc_old)))
+    else:
+        print("fresh-crash intake: 0 qualified (no quality name freshly broken this week)")
+
+    # ── COMPOUNDER-DISCOUNT INTAKE (2026-07-17, screen-ceiling fix pt 2) ────────────────────────
+    # The 12 screens rank on MAXIMUM cheapness — which correlates with eroding moats the CRO's
+    # moat-cap then (correctly) disqualifies. We select for the thing we later veto, and never
+    # select for the INTERSECTION a value-5 requires: durable quality AT a real-but-moderate
+    # discount. This lane inverts the ordering: quality first (sustained ROIC, non-contracting
+    # margins, clean operations/history), then a 15-50% band on >=2 INDEPENDENT valuation models
+    # (extreme cheapness is the trap signature and is deliberately NOT rewarded). The grader is
+    # untouched — this changes what reaches the judges, never how they judge.
+    CD_CAP = 3
+    _CD_MODELS = ("dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
+                  "rd_capitalized_dcf_mos", "iv15_deep_value_mos")
+    _cd = []
+    for _s0 in scan.get("stocks", []):
+        _sym0 = _s0.get("symbol")
+        if not _sym0 or _sym0 in sym_meths:
+            continue
+        _roic = _s0.get("roic_avg") or 0
+        if _roic < 0.15:
+            continue
+        if (_s0.get("gross_margin_trend") or "") == "contracting":
+            continue
+        if (_s0.get("piotroski") or 0) < 6:
+            continue
+        if (_s0.get("years_history") or 0) < 5 or _s0.get("structural_break"):
+            continue
+        if (_s0.get("forward_eps_growth") or 0) <= -0.25:
+            continue
+        _nb = sum(1 for _f in _CD_MODELS
+                  if isinstance(_s0.get(_f), (int, float)) and 0.15 <= _s0.get(_f) <= 0.50)
+        if _nb < 2:
+            continue
+        if ((_s0.get("market_cap") or 0) * (_s0.get("fx_to_price") or 1)) < 300e6:
+            continue
+        _cd.append((-_nb, -_roic, _sym0, f"roic {_roic:.0%}, {_nb} models 15-50%"))
+    _cd.sort()                                         # most model agreement, then highest ROIC
+    _cd_old = [t for t in _cd if (RES / f"{t[2]}.json").exists()]
+    _cd_new = [t for t in _cd if not (RES / f"{t[2]}.json").exists()][:CD_CAP]
+    for _t in _cd_old + _cd_new:
+        sym_meths.setdefault(_t[2], []).append("quality_discount")
+    if _cd_old or _cd_new:
+        print(f"compounder-discount intake: {len(_cd_new)} fresh (cap {CD_CAP}, {len(_cd)} qualified) "
+              f"+ {len(_cd_old)} carried: "
+              + ", ".join(f"{t[2]} [{t[3]}]" for t in (_cd_new + _cd_old)))
+    else:
+        print("compounder-discount intake: 0 qualified this week")
+
     # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate — the money layer stays weekly.
     seat_relevant = set()
     for p in list(baskets.get("apex_basket") or []) + list(baskets.get("runner_ups") or []):
@@ -3248,6 +3340,8 @@ def prep():
     U_CAP = 40
     VD_U_CAP = 3                                       # value-drawdown names admitted to Tier-U per week
     NG_U_CAP = 3                                       # neglect-orphan names admitted to Tier-U per week
+    CD_U_CAP = 3                                       # compounder-discount names admitted to Tier-U per week
+    FC_U_CAP = 2                                       # fresh-crash names admitted to Tier-U per week
     delta_syms, coverage_syms, uncovered = [], [], []
     if tiering:
         debate_all = list(syms) + list(no_tx)
@@ -3273,24 +3367,36 @@ def prep():
                 score += 1
             if "neglect_orphan" in meths:
                 score += 1
+            if "quality_discount" in meths:
+                score += 1
+            if "fresh_crash" in meths:
+                score += 2                             # dislocation entries are time-critical
             return (-score, -len(meths), s)            # deterministic: score desc, breadth desc, alpha
 
         room = max(0, U_CAP - len(delta_syms) - len(seat_triggered))
         ranked = sorted(nonseat, key=_intake_rank)
-        intake, vd_used, ng_used = [], 0, 0
+        intake, vd_used, ng_used, cd_used, fc_used = [], 0, 0, 0, 0
         for s in ranked:
             if len(intake) >= room:
                 break
             _meths_s = debate_info.get(s, {}).get("meths", [])
             is_vd = "value_drawdown" in _meths_s
             is_ng = "neglect_orphan" in _meths_s
+            is_cd = "quality_discount" in _meths_s
+            is_fc = "fresh_crash" in _meths_s
             if is_vd and vd_used >= VD_U_CAP:
                 continue
             if is_ng and ng_used >= NG_U_CAP:
                 continue
+            if is_cd and cd_used >= CD_U_CAP:
+                continue
+            if is_fc and fc_used >= FC_U_CAP:
+                continue
             intake.append(s)
             vd_used += 1 if is_vd else 0
             ng_used += 1 if is_ng else 0
+            cd_used += 1 if is_cd else 0
+            fc_used += 1 if is_fc else 0
         overflow = [s for s in nonseat if s not in intake]
         coverage_syms = [s for s in overflow if debate_info.get(s, {}).get("prior_exists")
                          and (prior_res_dir / f"{s}.json").exists()]
@@ -3300,7 +3406,8 @@ def prep():
         no_tx = [s for s in no_tx if s in full_set]
         n_u = len(delta_syms) + len(full_set)
         print(f"tier-select: universe={len(sym_meths)} | U={n_u}/{U_CAP} [seats-delta={len(delta_syms)}, "
-              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} (vd={vd_used}, ng={ng_used})] "
+              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} "
+              f"(vd={vd_used}, ng={ng_used}, cd={cd_used}, fc={fc_used})] "
               f"| C-refresh={len(coverage_syms)} | b13-excluded={len(b13_carried)} carried "
               f"+{len(b13_skipped)} skipped-new{' ' + str(b13_skipped) if b13_skipped else ''} "
               f"| uncovered-overflow={len(uncovered)}{' ' + str(uncovered) if uncovered else ''}")
@@ -3315,9 +3422,12 @@ def prep():
     skeptic_lanes, skeptic_hints = {}, {}
     if tiering and tier_u:
         for s in tier_u:
-            # neglect-lane names get the dedicated "the neglect is deserved" attack rubric;
-            # everything else in Tier-U is value/compounder (B13 is tier-excluded above).
-            _lane0 = ("neglect_orphan" if "neglect_orphan" in (debate_info.get(s, {}).get("meths") or [])
+            # Intake-lane names get their dedicated attack rubric ("the neglect/crash is
+            # deserved"); quality_discount and everything else in Tier-U use the standard
+            # value/compounder attack (B13 is tier-excluded above).
+            _meths0 = debate_info.get(s, {}).get("meths") or []
+            _lane0 = ("neglect_orphan" if "neglect_orphan" in _meths0
+                      else "fresh_crash" if "fresh_crash" in _meths0
                       else "value")
             skeptic_lanes[s] = {"lane": _lane0, "res": f"results_regime/{s}.json",
                                 "doss": f"dossiers/{s}.md", "attack": _SKEPTIC_ATTACKS[_lane0]}
@@ -3406,9 +3516,9 @@ function debatePrompt(sym, online) {
     '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples — use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount — e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha — say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
     '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
     '5. CATALYST VERIFICATION (MANDATORY for every name): identify the load-bearing catalyst(s) and verify their CURRENT status as of today — FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP news\", \"FMP earnings transcript\", \"FMP statements\", \"FMP quote\") since it is structured, licensed and reliable, then WebSearch/WebFetch only for what FMP lacks (do NOT scrape press-release PDFs by shell). catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
-    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. ALSO emit moat (WIDE|NARROW|ERODING|NONE — a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
+    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); DOWN-RATE conviction for FIRED/SOFT catalysts and size ARB to the spread; sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. Whenever value_conviction == 4, ALSO emit value_conviction_blocker: the SINGLE ingredient that withheld the 5 — DISCOUNT_TOO_SMALL | MOAT | FORENSICS | PEAK_ARTIFACT | OTHER: <one line> (empty string for any other score; this is ledger instrumentation, not a grade). ALSO emit moat (WIDE|NARROW|ERODING|NONE — a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
     '6b. TYPED VALUATION BLOCK (MANDATORY — the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case — ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor — deal terms, net cash/share, tender; else null — a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers — any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values (the 2026-07-07 HNR1.DE record asserted "2:1" on a 6% dividend-"floor"; the pipeline now does this math).\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status, peer_comps_note, verdict, conviction, value_conviction(int), value_conviction_blocker(str; "" unless value_conviction==4), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
@@ -3855,6 +3965,7 @@ def cohort_mark():
                 "mode": "carry" if carried else ("recheck" if rec.get("source") == "ledger_recheck" else "full"),
                 "verdict": rec.get("verdict"), "conviction": rec.get("conviction"),
                 "value_conviction": rec.get("value_conviction"),
+                "value_blocker": rec.get("value_conviction_blocker") or None,
                 "seat": seat_map.get(sym, "none"), "skeptic": skv, "kill_scope": sksc,
                 "continuity_flag": bool(rec.get("continuity_flag")),
                 "numeric_flag": None,          # populated once the numeric-integrity gate ships (Week 0.4+)
@@ -3978,12 +4089,16 @@ def cohort_backfill():
           f"(verdict/conviction only, no price/return data) -> {len(ledger)} total ledger rows")
 
 
+_INTAKE_LANE_TAGS = ("neglect_orphan", "fresh_crash", "quality_discount")   # priority order
+
+
 def lane_stamp():
-    """Deterministic post-debate lane stamp (2026-07-17, neglect lane). Fresh debate records are
+    """Deterministic post-debate lane stamp (2026-07-17, intake lanes). Fresh debate records are
     written by the agents against the step-7 schema, which carries no lane field — so after the
-    debate, stamp lane="neglect_orphan" onto results_regime/<SYM>.json wherever the prep bundle
-    carried the tag. Zero prompt changes: value_input() and skeptic_gen() read the stamped field,
-    and carries preserve it automatically (the carry-restamp copies the whole prior record).
+    debate, stamp the intake lane onto results_regime/<SYM>.json wherever the prep bundle carried
+    a lane tag (first match in _INTAKE_LANE_TAGS priority order when a name qualified for more
+    than one). Zero prompt changes: value_input() and skeptic_gen() read the stamped field, and
+    carries preserve it automatically (the carry-restamp copies the whole prior record).
     Idempotent; runs in the Gates phase alongside coverage-merge/continuity-gate."""
     n = 0
     for f in sorted(INP.glob("*.json")):
@@ -3991,7 +4106,9 @@ def lane_stamp():
             b = json.load(open(f, encoding="utf-8"))
         except Exception:
             continue
-        if "neglect_orphan" not in (b.get("methodologies") or []):
+        _meths = b.get("methodologies") or []
+        _tag = next((t for t in _INTAKE_LANE_TAGS if t in _meths), None)
+        if not _tag:
             continue
         rp = RES / f"{b.get('symbol')}.json"
         if not rp.exists():
@@ -4000,11 +4117,11 @@ def lane_stamp():
             rec = json.load(open(rp, encoding="utf-8"))
         except Exception:
             continue
-        if rec.get("lane") != "neglect_orphan":
-            rec["lane"] = "neglect_orphan"
+        if rec.get("lane") != _tag:
+            rec["lane"] = _tag
             rp.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
             n += 1
-    print(f"lane-stamp: {n} results_regime record(s) stamped lane=neglect_orphan")
+    print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane")
 
 
 if __name__ == "__main__":
