@@ -2510,12 +2510,9 @@ export default function Dashboard(){
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
-  const [disruptorApex, setDisruptorApex] = useState<any>({});
-  const [expandedDisruptor, setExpandedDisruptor] = useState<Set<string>>(new Set());
   const [frApex, setFrApex] = useState<any>({});
   const [expandedFr, setExpandedFr] = useState<Set<string>>(new Set());
   const [frPrices, setFrPrices] = useState<Record<string, number>>({});
-  const [disruptorPrices, setDisruptorPrices] = useState<Record<string, number>>({});
 
   // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
   // in place (cheaper than threading enriched copies through 10+ render sites),
@@ -2543,18 +2540,6 @@ export default function Dashboard(){
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => { if (d) setValueApex(d); })
           .catch((e) => console.error("Error loading value apex:", e));
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/gcs/scans/speculair_disruptor_apex.json")
-      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS disruptor fetch failed"); })
-      .then((d) => { if (d) setDisruptorApex(d); })
-      .catch(() => {
-        fetch("/speculair_disruptor_apex.json")
-          .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d) setDisruptorApex(d); })
-          .catch((e) => console.error("Error loading disruptor apex:", e));
       });
   }, []);
 
@@ -2587,26 +2572,6 @@ export default function Dashboard(){
     });
     return () => { cancelled = true; };
   }, [frApex]);
-
-  // Disruptor members are usually NOT in the loaded scan (different universe) — batch-quote them.
-  useEffect(() => {
-    const syms = (disruptorApex.apex_basket || []).map((p: any) => p && p.symbol).filter(Boolean) as string[];
-    if (!syms.length) return;
-    let cancelled = false;
-    const chunks: string[][] = [];
-    for (let i = 0; i < syms.length; i += 50) chunks.push(syms.slice(i, i + 50));
-    Promise.all(chunks.map((c) =>
-      // batch-quote (not quote) — FMP's quote endpoint is single-symbol; a comma list returns []
-      // so off-scan Speculair members (e.g. Visa "V", TSM, CCJ) showed no Current price.
-      fetch(`/api/fmp?e=batch-quote&symbols=${encodeURIComponent(c.join(","))}`).then((r) => (r.ok ? r.json() : [])).catch(() => [])
-    )).then((results) => {
-      if (cancelled) return;
-      const m: Record<string, number> = {};
-      (results.flat() as any[]).forEach((q: any) => { if (q && q.symbol && typeof q.price === "number") m[String(q.symbol).toUpperCase()] = q.price; });
-      setDisruptorPrices(m);
-    });
-    return () => { cancelled = true; };
-  }, [disruptorApex]);
 
   useEffect(() => {
 
@@ -5637,155 +5602,6 @@ export default function Dashboard(){
                         </div>
                       )}
                     </details>
-                  )}
-
-                  {/* Speculair Disruptor Lens — RETIRED 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10): frozen record, never deleted, never back-filled */}
-                  {(disruptorApex.apex_basket || []).length > 0 && (
-                  <div style={{ background: "var(--bg-surface)", border: "1px solid var(--purple)", borderRadius: 12, padding: "20px 24px", opacity: 0.92 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>Speculair Disruptor Lens <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)" }}>· retired</span></h3>
-                      <span style={{ fontSize: 10, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(disruptorApex.apex_basket || []).length} names · final holdings · frozen record
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 12 }}>
-                      A separate ~40-name thematic screen (NOT the value universe): FCF-positive secular-theme toll-takers, graded on theme position, moat and reinvestment runway — valuation as a guard. Own NAV chain; never blended with the Apex or Value books.
-                    </div>
-                    <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
-                      ⚠ RETIRED 2026-07-02. This book no longer rotates — the chart below is its final live-forward record, wins and losses included, and will never move again. Its rules drifted into generic quality compounders (the Visa pick); robotics and quantum coverage continues in the Future Resources basket under a physical-anchor rule.
-                    </div>
-                    {disruptorApex.pool_stats && disruptorApex.pool_stats.banner && (
-                      <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
-                        ⚠ {disruptorApex.pool_stats.banner}
-                      </div>
-                    )}
-                    {goalBanner(disruptorApex)}
-                    {(disruptorApex.disruptor_tracking_weighted || disruptorApex.disruptor_tracking) && (() => {
-                      const _dtw = disruptorApex.disruptor_tracking_weighted;
-                      const weighted = !!(_dtw && (_dtw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
-                      const dt = weighted ? _dtw : disruptorApex.disruptor_tracking;
-                      return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
-                        <div>
-                          <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Final track record · retired</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-mono)", color: (dt.since_inception_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {(dt.since_inception_pct || 0) >= 0 ? "+" : ""}{dt.since_inception_pct}%
-                          </div>
-                          <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {dt.inception_date}</div>
-                        </div>
-                        {(dt.history || []).length > 1 && (() => {
-                          const _n = dt.history.map((p: any) => p.nav);
-                          const _mn = Math.min(..._n), _mx = Math.max(..._n), _r = (_mx - _mn) || 1, _W = 130, _H = 34;
-                          const _pts = _n.map((v: number, i: number) => `${(i / (_n.length - 1)) * _W},${_H - ((v - _mn) / _r) * _H}`).join(" ");
-                          const _up = _n[_n.length - 1] >= _n[0];
-                          return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
-                        })()}
-                        <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {dt.nav} · {dt.n_open} held · {dt.n_closed} closed{dt.win_rate != null ? ` · ${dt.win_rate}% win` : ""}
-                          <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units)" : "equal-weight NAV"} · live-forward while it ran, frozen at retirement, never back-filled</div>
-                        </div>
-                      </div>
-                      );
-                    })()}
-                    {disruptorApex.stress_test && (
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 12, lineHeight: 1.5 }}>
-                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{disruptorApex.stress_test.published_downside_pct}%</span> recession · {disruptorApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{disruptorApex.correlation ? ` · avg pairwise corr ${disruptorApex.correlation.avg_pairwise} (${disruptorApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
-                        {disruptorApex.theme_exposure && (() => {
-                          const te = Object.entries(disruptorApex.theme_exposure as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
-                          return te ? <span> · top theme <span style={{ color: "var(--purple)", fontWeight: 600 }}>{String(te[0]).replace(/_/g, " ")} {te[1]}%</span> (cap 30%)</span> : null;
-                        })()}
-                      </div>
-                    )}
-                    {rotationLog(disruptorApex.disruptor_tracking || disruptorApex.disruptor_tracking_weighted)}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(disruptorApex.apex_basket || []).map((pick: any) => {
-                        const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : (disruptorPrices[String(pick.symbol).toUpperCase()] || 0);
-                        const entryPrice = pick.entry_price || 0;
-                        const perf = entryPrice > 0 && currPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
-                        const ro40 = pick.rule_of_40;
-                        return (
-                          <div
-                            key={pick.symbol}
-                            style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, cursor: "pointer", transition: "background 0.2s" }}
-                            onClick={() => setChartCard({ symbol: pick.symbol, name: stock?.company_name || pick.symbol, price: currPrice || null, day: null, href: `/stock/${pick.symbol}?tab=debate` })}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                          >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <strong style={{ fontSize: 15, color: "var(--text)", fontFamily: "var(--font-mono)" }}>{pick.symbol}</strong>{debateBadge(pick.symbol)}{decisionBadge(pick)}
-                                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: pick.disruptor_score >= 80 ? "rgba(147,112,219,0.25)" : pick.disruptor_score >= 65 ? "rgba(234,179,8,0.2)" : "rgba(148,163,184,0.18)", color: pick.disruptor_score >= 80 ? "var(--purple)" : pick.disruptor_score >= 65 ? "#eab308" : "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                                  dis {pick.disruptor_score}<span style={{ opacity: 0.55 }}>/100</span>
-                                </span>
-                                {pick.weight_pct != null && <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>}
-                                {(pick.fcf_inflecting || pick.hype_flag) && (
-                                  <span title={pick.hype_flag ? "hype flag — price embeds a more aggressive S-curve than the evidence" : "FCF inflecting — not yet TTM-FCF-positive (half-sized)"} style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>½ size</span>
-                                )}
-                                {pick.corr_flag && <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>}
-                                {entryPostureChip(pick.entry_posture)}
-                                {goalTag(pick)}
-                              </div>
-                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
-                              </span>
-                            </div>
-                            {wheelLine(pick.wheel)}
-                            <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
-                              {pick.theme && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(147,112,219,0.18)", color: "var(--purple)", fontFamily: "var(--font-mono)" }}>{String(pick.theme).replace(/_/g, " ")}</span>}
-                              {pick.value_chain_position && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(148,163,184,0.15)", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{String(pick.value_chain_position).replace(/_/g, " ")}</span>}
-                              {typeof ro40 === "number" && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: ro40 >= 40 ? "rgba(20,184,122,0.12)" : "var(--amber-light)", color: ro40 >= 40 ? "var(--green)" : "var(--amber)", fontFamily: "var(--font-mono)" }}>rule-of-40 {ro40}</span>}
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
-                              {pickVitals(pick, currPrice, { upsidePct: null, upsideLabel: "exit below", currency: stock?.currency })}
-                              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span>Solvency:</span><span style={{ textAlign: "right", color: pick.funded_solvency === "weak" ? "var(--red)" : "var(--green)" }}>{pick.funded_solvency || "—"}{pick.ev_gp != null ? ` · EV/GP ${pick.ev_gp}x` : ""}</span></div>
-                              {pick.moat_evidence && <div style={{ fontSize: 8.5, color: "var(--text-light)", lineHeight: 1.4 }}><span style={{ color: "var(--text-muted)" }}>moat: </span>{pick.moat_evidence}</div>}
-                            </div>
-                            {pick.thesis && (() => {
-                              const _txt = String(pick.thesis) + (pick.theme_durability ? "  ·  " + pick.theme_durability : "");
-                              const _exp = expandedDisruptor.has(pick.symbol);
-                              return (
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5, ...(_exp ? {} : { display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" }) }}>
-                                    <span style={{ color: "var(--purple)", fontWeight: 600 }}>DISRUPTOR </span>{_txt}
-                                  </div>
-                                  {_txt.length > 160 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedDisruptor(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
-                                          style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--purple)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                                      {_exp ? "less ▲" : "more ▼"}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {(disruptorApex.runner_ups || []).length > 0 && (
-                      <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-                        <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
-                        {(disruptorApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
-                      </div>
-                    )}
-                    {disruptorApex.disruptor_memo && (
-                      <details style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
-                        <summary style={{ fontSize: 12, fontWeight: 700, color: "var(--purple)", fontFamily: "var(--font-mono)", cursor: "pointer", outline: "none" }}>Disruptor Director Memo</summary>
-                        {typeof disruptorApex.disruptor_memo === "string" ? (
-                          <pre style={{ whiteSpace: "pre-wrap", fontSize: 10.5, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 12, lineHeight: 1.6 }}>{disruptorApex.disruptor_memo}</pre>
-                        ) : (
-                          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-                            {Object.entries(disruptorApex.disruptor_memo).map(([k, v]: [string, any]) => (
-                              <div key={k}>
-                                <div style={{ fontSize: 9.5, color: "var(--purple)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 3 }}>{k.replace(/_/g, " ")}</div>
-                                <div style={{ fontSize: 10.5, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{typeof v === "string" ? v : JSON.stringify(v, null, 1)}</div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </details>
-                    )}
-                  </div>
                   )}
 
                   {/* Watch & Wait — Director runner_ups (fresh, incl skeptic demotions) when published;
