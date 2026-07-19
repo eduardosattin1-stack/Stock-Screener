@@ -222,7 +222,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
     return null;
   }
 
-  const { headline, generated_at, regime_pulse, model_focus, basket_pulse, system_pulse, thermometer, debate, congress } = briefing;
+  const { headline, generated_at, regime_pulse, model_focus, basket_pulse, system_pulse, thermometer, debate, congress, target_watch } = briefing;
 
   const asOf = (() => {
     if (!generated_at) return null;
@@ -561,6 +561,48 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
             <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--text-light)", fontStyle: "italic" }}>
               STOCK Act disclosures lag trades by up to 45d — context, not signal
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* ── TARGET WATCH — most substantial analyst price-target changes (30d) ──
+          Server-aggregated in /api/briefing from FMP price-target-latest-news;
+          deltas are real prior→new moves parsed from the analyst note titles.
+          Hidden when the pull fails or parses nothing. */}
+      {target_watch && (target_watch.raises?.length > 0 || target_watch.cuts?.length > 0) && (
+        <div style={{ marginTop: 24, background: "var(--bg)", padding: 20, borderRadius: 8, border: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Target size={14} color="var(--lavender)" />
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Target Watch</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>
+              {target_watch.raises_count} raises · {target_watch.cuts_count} cuts · since {target_watch.coverage_from}
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 28px" }}>
+            {([["BIGGEST RAISES", target_watch.raises, "var(--green)"], ["BIGGEST CUTS", target_watch.cuts, "var(--red)"]] as [string, any[], string][]).map(([label, rows, color]) => (
+              <div key={label}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em", color, marginBottom: 8 }}>{label}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {rows.map((t: any) => (
+                    <div key={`${t.symbol}-${t.date}`} onClick={() => router.push(`/stock/${encodeURIComponent(t.symbol)}`)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", minWidth: 0 }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)", flexShrink: 0 }}>{t.symbol}</span>
+                      {t.apex && <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.08em", color: "var(--lavender)", background: "var(--purple-light)", padding: "1px 5px", borderRadius: 3, flexShrink: 0 }}>APEX</span>}
+                      {t.n > 1 && <span title={`${t.n} same-direction target changes on ${t.symbol} in the window — showing the largest`} style={{ fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--text-muted)", background: "var(--bg-elevated)", padding: "1px 5px", borderRadius: 3, flexShrink: 0, cursor: "help" }}>×{t.n}</span>}
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.firm}</span>
+                      <span title={`$${t.prior} → $${t.target}${t.implied != null ? ` · implied ${t.implied >= 0 ? "+" : ""}${t.implied}% vs price at publication` : ""} · ${t.date}`} style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color, flexShrink: 0, cursor: "help" }}>
+                        ${t.prior}→${t.target} ({t.delta >= 0 ? "+" : ""}{t.delta}%)
+                      </span>
+                    </div>
+                  ))}
+                  {!rows.length && <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-sans)" }}>None in the window.</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 10, marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--text-light)", fontStyle: "italic" }}>
+            {target_watch.total_changes} parseable target changes in the window · deltas are each analyst&apos;s own prior → new target
           </div>
         </div>
       )}
