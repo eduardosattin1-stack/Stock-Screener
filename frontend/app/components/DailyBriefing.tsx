@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from "next/navigation";
-import { Activity, RefreshCw, BarChart2, Target, Radar, Calendar, TrendingUp, TrendingDown, Award, Zap } from 'lucide-react';
+import { Activity, RefreshCw, BarChart2, Target, Radar, Calendar, TrendingUp, TrendingDown, Award, Zap, Landmark } from 'lucide-react';
 import { useAuth } from "../AuthProvider";
 import { getPortfolio } from "../portfolioStore";
 
@@ -222,7 +222,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
     return null;
   }
 
-  const { headline, generated_at, regime_pulse, model_focus, basket_pulse, system_pulse, thermometer, debate } = briefing;
+  const { headline, generated_at, regime_pulse, model_focus, basket_pulse, system_pulse, thermometer, debate, congress } = briefing;
 
   const asOf = (() => {
     if (!generated_at) return null;
@@ -510,6 +510,60 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
         </div>
 
       </div>
+
+      {/* ── CONGRESS WATCH — big STOCK Act filings (Senate + House, last 30d) ──
+          Server-aggregated in /api/briefing from the FMP senate-latest/house-latest
+          feeds. Renders only when the pull produced data, so an FMP outage or an
+          endpoint change degrades to "no card", never to a broken briefing. */}
+      {congress && congress.top?.length > 0 && (
+        <div style={{ marginTop: 24, background: "var(--bg)", padding: 20, borderRadius: 8, border: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Landmark size={14} color="var(--amber)" />
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Congress Watch</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>
+              {congress.big_count} big of {congress.total} filings · since {congress.coverage_from}
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 28px" }}>
+            {congress.top.map((t: any, i: number) => (
+              <div key={`${t.symbol}-${t.who}-${i}`} onClick={() => router.push(`/stock/${encodeURIComponent(t.symbol)}`)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", minWidth: 0 }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)", flexShrink: 0 }}>{t.symbol}</span>
+                <span title={t.chamber === "S" ? "Senate" : "House"} style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.08em", color: "var(--text-muted)", background: "var(--bg-elevated)", padding: "1px 5px", borderRadius: 3, flexShrink: 0 }}>{t.chamber === "S" ? "SEN" : "HSE"}</span>
+                {t.apex && <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.08em", color: "var(--lavender)", background: "var(--purple-light)", padding: "1px 5px", borderRadius: 3, flexShrink: 0 }}>APEX</span>}
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.who}</span>
+                <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: t.side === "BUY" ? "var(--green)" : "var(--red)", flexShrink: 0 }}>
+                  {t.side} {t.range}
+                </span>
+                <span title={`traded ${t.tx || "—"} · filed ${t.filed}`} style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", flexShrink: 0, cursor: "help" }}>
+                  filed {t.filed?.slice(5)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 14 }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+              ≥$100K skew: <b style={{ color: "var(--green)" }}>{congress.big_buys} buys</b> · <b style={{ color: "var(--red)" }}>{congress.big_sells} sells</b>
+            </span>
+            {congress.hot?.length > 0 && (
+              <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+                Most filed:
+                {congress.hot.map((h: any) => (
+                  <button key={h.symbol} onClick={() => router.push(`/stock/${encodeURIComponent(h.symbol)}`)}
+                    title={`${h.buys} buys · ${h.sells} sells in the last 30d${h.apex ? " · in the apex basket" : ""}`}
+                    style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, color: h.buys >= h.sells ? "var(--green)" : "var(--red)", background: h.buys >= h.sells ? "var(--green-light)" : "rgba(239,68,68,0.1)", border: "none", borderRadius: 4, padding: "2px 7px", cursor: "pointer" }}>
+                    {h.symbol} {h.buys}B/{h.sells}S
+                  </button>
+                ))}
+              </span>
+            )}
+            <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--text-light)", fontStyle: "italic" }}>
+              STOCK Act disclosures lag trades by up to 45d — context, not signal
+            </span>
+          </div>
+        </div>
+      )}
 
     </div>
   );
