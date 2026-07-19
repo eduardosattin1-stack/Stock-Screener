@@ -3,6 +3,11 @@
 name: FMP congress check
 on:
   workflow_dispatch:
+  push:
+    branches: [claude/congress-filings-fmp-review-nh3zkd]
+    paths:
+      - ".github/workflows/fmp-congress-check.yml"
+      - ".github/scripts/fmp_congress_check.py"
 
 jobs:
   check:
