@@ -1,0 +1,16 @@
+# Temporary: verifies which FMP senate/house endpoints this plan serves and
+# summarizes 30d of filings. Delete once Congress Watch is confirmed live.
+name: FMP congress check
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe FMP congress endpoints and summarize 30d filings
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python3 .github/scripts/fmp_congress_check.py
