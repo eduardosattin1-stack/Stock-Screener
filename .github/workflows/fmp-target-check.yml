@@ -1,0 +1,21 @@
+# Temporary: verifies which FMP price-target endpoints this plan serves, their
+# row schema, and feed depth. Delete once Target Watch is confirmed live.
+name: FMP price-target check
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/congress-filings-fmp-review-nh3zkd]
+    paths:
+      - ".github/workflows/fmp-target-check.yml"
+      - ".github/scripts/fmp_target_check.py"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe FMP price-target endpoints
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python3 .github/scripts/fmp_target_check.py
