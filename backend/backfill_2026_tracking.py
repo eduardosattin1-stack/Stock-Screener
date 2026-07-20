@@ -743,6 +743,25 @@ def main():
         "baseline_history": baseline_history,
     }
 
+    # ── Preserve live-forward-only fields from any existing state (2026-07-20) ──
+    # nav_history is appended nightly by screener_v6 from LIVE prices and cannot be
+    # rebuilt from history — a from-scratch rebuild silently erasing it would destroy
+    # the per-basket NAV charts. Carry it (and the cadence stamps) forward verbatim.
+    if OUTPUT_PATH.exists():
+        try:
+            with open(OUTPUT_PATH, encoding="utf-8") as f:
+                _prev = json.load(f)
+            for _k, _pm in (_prev.get("methodologies") or {}).items():
+                if _pm.get("nav_history") and _k in methodologies_output:
+                    methodologies_output[_k]["nav_history"] = _pm["nav_history"]
+            for _fld in ("rebalance_cadence", "rebalance_cadence_days"):
+                if _fld in _prev:
+                    output[_fld] = _prev[_fld]
+            log.info("Preserved nav_history for %d methodologies from existing state",
+                     sum(1 for m in methodologies_output.values() if m.get("nav_history")))
+        except Exception as _e:  # never let preservation break the backfill itself
+            log.warning("Could not preserve nav_history from existing state: %s", _e)
+
     # ── Summary table ──
     log.info("")
     log.info("=" * 78)

@@ -5927,12 +5927,15 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                                    stock_map: Optional[dict] = None):
     """Update paper-tracking state for each methodology.
 
-    Rebalances are booked on a MONTHLY cadence — the first screener run of each
-    calendar month, plus the first run ever for a methodology. On every other
-    day the tracked book is frozen; daily runs only mark the open period to
-    market so the live YTD keeps moving with prices. This matches the ~monthly
-    PIT cadence the 2021-2025 baselines were replayed on, instead of churning
-    the 20-name book on every daily ranking wobble at the #20 boundary.
+    Rebalances are booked on a BI-WEEKLY cadence (since 2026-07-20, Bruno's
+    call; calendar-month first-scan before) — the first run >=14 days after the
+    last BOOKED rebalance, plus the first run ever for a methodology. On every
+    other day the tracked book is frozen; daily runs only mark the open period
+    to market so the live YTD keeps moving with prices. The daily ranking
+    wobble at the #20 boundary still never churns the book between rebalances.
+    NOTE: the 2021-2025 baselines were replayed on a ~monthly PIT cadence, so
+    live-vs-baseline comparisons straddle a cadence change at 2026-07-20 (the
+    tracking JSON's rebalance_cadence field records this).
 
     Args:
         stock_map: {symbol: Stock} map from all scanned stocks (not just picks).
@@ -5950,7 +5953,7 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
 
     # Current prices for YTD marks + exit pricing
     price_map = {sym: s.price for sym, s in (stock_map or {}).items()}
-    reb_month = rebalance_date[:7]   # 'YYYY-MM'
+    REBALANCE_CADENCE_DAYS = 14   # bi-weekly since 2026-07-20 (was calendar-month first-scan)
 
     methodology_metrics = {
         "dcf_fcff":            "dcf_fcff_mos",
@@ -5987,13 +5990,23 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
         meth_track.setdefault("realized_ytd", 0.0)
         metric_field = methodology_metrics.get(key, "mos")
 
-        # ── Monthly cadence gate ──
+        # ── Bi-weekly cadence gate: rebalance once >=14 days have passed since the
+        #    last BOOKED rebalance (self-healing across skipped scans/holidays).
+        #    Cadence changed 2026-07-20 from calendar-month first-scan (Bruno). ──
         rebs = meth_track.get("rebalances", [])
         existing_dates = {r["date"] for r in rebs}
-        last_reb_month = rebs[-1]["date"][:7] if rebs else None
-        is_rebalance_day = (not rebs) or (reb_month != last_reb_month)
+        if not rebs:
+            is_rebalance_day = True
+        else:
+            try:
+                _days_since = (datetime.strptime(rebalance_date, "%Y-%m-%d")
+                               - datetime.strptime(rebs[-1]["date"], "%Y-%m-%d")).days
+            except (ValueError, KeyError):
+                _days_since = REBALANCE_CADENCE_DAYS   # unparseable legacy date: rebalance rather than freeze
+            is_rebalance_day = _days_since >= REBALANCE_CADENCE_DAYS
         # Operator override: FORCE_REBALANCE=1 books an OFF-CADENCE rebalance (e.g. to adopt a
-        # mid-month methodology fix immediately instead of waiting for the calendar-month boundary).
+        # methodology fix immediately instead of waiting out the 14-day window). A forced
+        # rebalance appends to rebalances[], so it RESTARTS the 14-day clock from its date.
         # Still subject to the same-date double-book guard below, so re-running it is idempotent.
         if os.environ.get("FORCE_REBALANCE", "").strip().lower() in ("1", "true", "yes"):
             is_rebalance_day = True
@@ -6119,21 +6132,38 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
 
         # Backfill period_start_price on legacy holdings (pre-fix it was null, which froze the
         # open-period YTD mark AND the frontend per-pick performance at +0.0%). entry_price is the
-        # best proxy when the field was never snapshotted; the monthly gate won't rebuild these
-        # holdings until the 1st of next month, so do it on every run.
+        # best proxy when the field was never snapshotted; the cadence gate won't rebuild these
+        # holdings until the next bi-weekly rebalance, so do it on every run.
         for _h in meth_track.get("current_holdings", []):
             if _h.get("period_start_price") is None and _h.get("entry_price"):
                 _h["period_start_price"] = round(float(_h["entry_price"]), 4)
         # 4. Always refresh the live YTD mark (open period since last rebalance).
         meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map)
+        # 4b. Persist the nightly NAV point (base-100 on the tracking year) — the
+        #     per-basket pages chart this series. A same-date re-run replaces the
+        #     point instead of duplicating it; capped at ~3 years of dailies.
+        _hist = meth_track.setdefault("nav_history", [])
+        _pt = {"date": rebalance_date,
+               "nav": round(100.0 * (1.0 + meth_track["ytd_return"]), 3),
+               "ytd": meth_track["ytd_return"],
+               "rebalanced": rebalance_date in {r["date"] for r in meth_track.get("rebalances", [])}}
+        if _hist and _hist[-1].get("date") == rebalance_date:
+            _hist[-1] = _pt
+        else:
+            _hist.append(_pt)
+        del _hist[:-800]
 
     tracking["holdings_status"] = "live"   # clear the stale 'pre_fix_a_fallback' flag once backfilled
     # Phase 10b: tracking-level spec version + human-readable rebalance note, so
     # the audit trail records WHEN the EPV spec changed and what it means.
     tracking["methodology_version"] = METHODOLOGY_VERSION
     tracking.setdefault("version_notes", {})[METHODOLOGY_VERSION] = METHODOLOGY_VERSION_NOTE
+    tracking["rebalance_cadence"] = "biweekly-14d since 2026-07-20 (calendar-month before)"
+    # Machine-readable twin of the prose stamp — the /basket pages read this for
+    # their "rotates every N days" copy + next-rebalance estimate.
+    tracking["rebalance_cadence_days"] = REBALANCE_CADENCE_DAYS
     log.info(f"Tracking: {rebalanced_keys}/{len(methodology_picks)} methodologies "
-             f"rebalanced on {rebalance_date} (monthly cadence); YTD marks refreshed for all")
+             f"rebalanced on {rebalance_date} (bi-weekly 14d cadence); YTD marks refreshed for all")
 
 
 def _compute_ytd_return(meth_track: dict, price_map: Optional[dict] = None) -> float:
@@ -6196,6 +6226,9 @@ def _rollover_tracking_year(tracking: dict, new_year: int):
         meth["realized_ytd"] = 0.0
         meth["tracking_start"] = ""
         meth["rebalance_count"] = 0
+        # nav_history is base-100 on the tracking YEAR — stale points would chart
+        # a false cliff across the rollover, so the series restarts with the year
+        meth["nav_history"] = []
         # current_holdings carry forward as the starting portfolio; their
         # period_start_price is re-based on the first rebalance of the new year
 
