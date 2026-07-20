@@ -1,6 +1,6 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-06 · 14 held seats (72.0% invested) + 3 resolved · last run 2026-07-02 · paper basket, nothing executed*
+*Generated 2026-07-20 · 14 held seats (72.0% invested) + 3 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
@@ -20,7 +20,7 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **3 · Window ↔ expression:** Milestone 2026-09-30 (112 days). Expression is common stock held through close — no expiry to clear, window satisfied by construction. If close slips past Q3 the position simply carries; only cost is annualized-return decay, not a structural loss.
 - **4 · Driver tag:** Deal_close_generic — confirmed; unique driver in this batch, no collision.
 
-### UNF — 
+### UNF — UniFirst Corporation
 `8% · equity · merger_arb · US_antitrust (Deal-completion) · score 7.0 · edge M · entry 2026-06-13 @ 267.0 (cro_live_check)`
 - **Expected:** R:R 1.86:1 · milestone 2026-11-30 · review: Antitrust clearance checkpoints into the 2026-11-30 expected close; re-confirm timeline before any size-up.
 - **Hedge leg:** -0.772 CTAS per share, ref $176.28
@@ -87,7 +87,7 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Size to <= ~5-10% of the $7.4M/day ADV (float is ~12% of shares out); accumulate with limits, no market orders
 - ⚠ **Condition:** Director must adjudicate the Forced_divest_flow dupe with MGNI
 
-### CELC — Celcuity Inc.
+### CELC — 
 `1.5% · debit spread exp 2026-09-18 · bio_convergence · FDA_clinical_readout (FDA/biotech) · score 8.0 · edge H · entry 2026-06-10 @ 92.59 (cro_live_check)`
 - **Expected:** EV 50.1% · milestone 2026-07-17 · review: 2026-07-17 clinical readout.
 - **Director — why this seat:** Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's.
@@ -184,7 +184,7 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **3 · Window ↔ expression:** PDUFA 2026-08-25 is 54 days out; instrument is equity so no expiry to clear. Weekly diagnosis is FRESH (3.4d): catalyst PENDING_HARD, skeptic CONFIRMED_WITH_CORRECTIONS (not fired, $250M Jazz milestone unpaid), conviction cap 60. RTOR review reduces slip risk but a 3-month extension tail exists — irrelevant for equity.
 - **4 · Driver tag:** CORRECTED: Deal_close_generic is wrong — the resolving event is the FDA PDUFA action (which contractually triggers the $250M Jazz milestone), so the true driver is FDA_approval_decision. FLAG: this collides with GERN's FDA_approval_decision driver in this same batch — Director must apply the same-driver cap across ZYME/GERN.
 
-### DDL — Dingdong (Cayman) Limited
+### DDL — 
 `3% · equity · distressed · Refi_restructuring (Idiosyncratic) · score 7.0 · edge M · entry 2026-07-02 @ 1.94 (cro_structured)`
 - **Expected:** R:R 18.69:1 · milestone 2026-12-31 · review: The refi print itself (event-driven, undated); formal re-check at the 2026-12-31 placeholder milestone or any capital-structure 8-K/6-K.
 - **Risk-to-floor (computed):** 0.062% of NAV (cap 1.5)
@@ -222,26 +222,31 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **LZM** EDGE_GONE · 2026-07-02→2026-07-06 (4d) · 3.73→3.88 · realized +4.0% (exp R:R 2.93:1) · Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution.
 
 ---
-## 2 · CRO kills this run — NO_TRADE (2)
+## 2 · CRO kills this run — NO_TRADE (3)
 
 *Killed on trade grounds only (edge gone / untradeable / window fails) — catalyst reality was settled upstream.*
 
+### EYPT — EyePoint Pharmaceuticals, Inc.
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** Live EYPT 13.35 (bid/ask 13.33/13.39, IBKR SMART; prior close 13.30). WEEKLY DIAGNOSIS OVERRIDE controls: the fresh (age 3.6d) adversarial skeptic verdict is REFUTED. It kills the ONLY reason the file recommends the bet — the 'strictly more favorable Phase 3' odds anchor is false (LUGANO enrolls treatment-naive AND previously-treated eyes; the enabling DAVIO-2 Phase 2 was previously-treated ONLY, so DURAVYU has zero Phase 2 NI evidence in the naive/higher-VEGF-burden segment — exactly where Kodiak's KSI-301 missed NI in DAZZLE), and the bull's single confidence tell is backwards (Q1-26 10-Q Note 8: management DREW ~$5.7M on a live ATM at $14.75 into its own binary). Honest p collapses toward the market-implied ~0.30-0.35, at which the ~+6% EV is noise on an unfloored overnight-gap binary. The catalyst is real and unfired, but the EDGE is refuted. The inject layer hard-rejects a REFUTED name; do not spend a nomination.
+- **3 · Window ↔ expression:** Board's 2026-07-31 'hard' date is unsourced/fabricated per the dossier; realistic LUGANO topline is a soft Aug-Oct 2026 window. Moot given the REFUTED verdict.
+- **4 · Driver tag:** FDA_clinical_readout — confirmed. NOTE FOR DIRECTOR: shares this driver (and bio_convergence lane / FDA-biotech cluster) with OLMA in this batch; here it is moot since EYPT is NO_TRADE.
+
 ### PRX.AS — Prosus N.V. (forced seller of Delivery Hero)
 **CRO verdict: NO_TRADE**
-- **1 · Edge at entry (live re-check):** FMP real-time quote 2026-07-02 (Euronext AMS): EUR 37.33, -2.9% today — now BELOW the EUR 37.365 downside floor the dossier's 135:1 computed_rr was built on. The R:R denominator has gone negative; the 'edge to floor' is gone arithmetically, independent of the skeptic.
-- **2 · Tradeability:** PRX.AS itself is highly liquid (3.3M shares/day, EUR 79bn cap) — tradeability was never the problem; the trade itself is.
-- **3 · Window ↔ expression:** No dated forcing function for a PROSUS re-rate exists: the EU divestiture deadline (11 Oct 2026) forces DHER share sales, not anything on Prosus; the Uber EUR33 bid is indicative/non-binding and rejected. Instrument field itself concedes the re-rate is on the underlying and already fired.
-- **4 · Driver tag:** Forced_divest_flow label is WRONG as applied: the forced selling is OF Delivery Hero shares, not of/into Prosus — the flow event lives on DHER's ticker. On Prosus this is a Tencent-discount value story wearing a borrowed catalyst label (skeptic's finding, independently consistent with the live tape: floor floats with Tencent beta).
+- **1 · Edge at entry (live re-check):** Live PRX.AS EUR39.78 (bid/ask 39.78/39.785, IBKR AEB; prior close 38.505). fresh_dossier catalyst_status = FIRED and the weekly skeptic is REFUTED (both age 3.6d). The forced-seller premise resolved 2026-07-16 when Uber launched its EUR41.50/sh cash offer for Delivery Hero and Prosus gave an irrevocable undertaking to tender its residual ~16.8%. The event is spent AND was never a needle-mover: the incremental NAV contribution above the live DH mark is ~EUR0.07/sh (~0.1% of NAV) on a ~EUR40 stock. What remains is wrong-signed (the irrevocable binds Prosus, not Uber; Uber's H2-2027 close is conditional) and a structural ~39% discount-to-NAV that is ~79% Tencent beta — a value case, not an event. Edge GONE.
+- **3 · Window ↔ expression:** The 2026-10-11 EC divestment deadline and Uber's H2-2027 close are risk/compliance dates, not opportunity dates — the load-bearing milestone (irrevocable undertaking) already fired 2026-07-16.
+- **4 · Driver tag:** Forced_divest_flow tag retained but MISAPPLIED — the archetype rewards a register absorbing forced supply, whereas Prosus IS the seller (and its own largest buyer). The live merger-arb sits on Delivery Hero's register (DHER.DE vs EUR41.50), not on this ticker.
 
-### MSGS — Madison Square Garden Sports Corp.
+### DBVT — DBV Technologies S.A.
 **CRO verdict: NO_TRADE**
-- **1 · Edge at entry (live re-check):** FMP real-time quote 2026-07-02: $395.16. There is NO edge to verify: the dossier carries no fair_value_target, no downside_floor, no computed_rr, no ev_pct, no valuation_asof. Gate 1 cannot pass on an unquantified edge — and the tape argues it is largely pre-fired: $395 vs a $188.60 52-week low (+109%), 37% above the 200-dma ($288.62), within 4% of the 52-week high. The spin re-rate the flow thesis targets has substantially happened at unknown remaining spread.
-- **2 · Tradeability:** MSGS equity is tradeable (177k shares/day at $395 = ~$70M notional ADV) — tradeability is not the blocker; the absence of any quantified entry edge is.
-- **3 · Window ↔ expression:** Undated/soft (staging) -> equity expression is at least correct in kind, and no weekly diagnosis exists to override. But an undated spin nomination with zero valuation work is a watch-list item, not a trade. Re-nominate only after a SoP with target/floor is built and shows the spread survived the +109% run.
-- **4 · Driver tag:** Spin_index_flow as labeled. FLAG: LBTYK in this same batch resolves on the identical Spin_index_flow driver — second name on one driver; Director cap applies if both are ever live simultaneously.
+- **1 · Edge at entry (live re-check):** Live $14.30 (IBKR bid/ask 14.21/14.38, ~$3.7M/day ADV). At defensible axes (floor ~$5, approval-case ~$25) the tape implies (14.30-5)/(25-5)=46.5% odds vs the dossier's ~49% win_prob -- essentially FAIR, no spread. The board's payoff=3.71/ev=+56% was an artifact of the phantom $9.50 floor (~3.2x the verified ~$2.95/ADS net cash). No edge at entry.
+- **2 · Tradeability:** IBKR lists STK/CFD only for DBVT -- NO listed equity options, so the instrument note's 'long-dated Q4-26/Q1-27 calls' leg does not exist here. Equity spread ~1.2% on thin ~$3.7M/day ADV. Moot given the kill.
+- **3 · Window ↔ expression:** No dated approval milestone exists: no BLA filed -> no acceptance, no PDUFA clock. Nearest gate is a company-controlled BLA filing now guided Q3 2026 (slipped from 1H 2026), then ~60d to acceptance (~Nov-Dec 2026), then ~10mo review => approval decision ~Q3-Q4 2027, >1yr out. Runway only 'into Q3 2027' so a dilutive raise ahead of resolution is near-arithmetic.
+- **4 · Driver tag:** FDA_approval_decision (confirmed). Distinct from KDP's Spin_index_flow -- no same-driver cap conflict in this batch.
 
 ---
-## 3 · Non-selections (41) — recorded counterfactuals
+## 3 · Non-selections (45) — recorded counterfactuals
 
 *CRO survivors the Director passed on, plus stamp-time exclusions; recorded for selection-calibration.*
 
@@ -288,11 +293,15 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 | **DBVT** | bio_convergence | FDA_approval_decision | H | Undated AND just-slipped milestone (VIASKIN Peanut BLA not yet filed, now anticipated Q3 2026+, review clock starts only at filing) on a deteriorating timeline, plus a thin ~$8M/day small-cap ADR. A demonstrably lengthening, dateless catalyst is a merit skip irrespective of cap headroom. |
 | **ANNX** | bio_convergence | FDA_clinical_readout | M | The FDA_clinical_readout watchlist is already at its 5-name cap with strictly stronger carried claims (EYPT +77% EV, BBIO, VIR, PVLA, AVIR all above it), and ANNX's +13.6% EV at 0.45 win-prob against a -63% floor and a soft placeholder date is the weakest of the cohort — passed on relative merit, not headroom alone. |
 | **ALTI** | forced_seller | Forced_divest_flow | M | No quantified edge exists (fair_value_target, downside_floor, and R:R all null; score 5), so it is unsizeable under Kelly-lite even if the full Forced_divest_flow driver opened — and CLVT and MGNI are strictly stronger, quantified claims on that same driver's queue. Re-submit once the deep pass produces a target/floor. |
+| **AXTA** | merger_arb | Foreign_regulator | M | Merger-arb whose only real edge is the hedged pair (long AXTA / short 0.6539 AKZO). The fresh dossier debunked the board's $42.64 target to $34.80 (netting AkzoNobel's EUR2.5B pre-completion distribution AXTA holders don't receive), collapsing R:R from a claimed 2.48 to ~0.61 as a naked long, and the CRO confirms this. Basket 13 cannot record the short-AKZO leg, so the expressible position is a sub-1 R:R euro/coatings-beta long into ~30-country antitrust with a possible 2027 slip. Foreign_regulator seat is open, but the edge as expressible fails on merit. |
+| **MP** | supply_timing | Supply_timing | H | Hard idiosyncratic catalyst (DoD public-private partnership) already FIRED and closed July 11, 2025; the residual is an undated, long-dated (~2028 10X-campus commissioning) commodity / China-export-policy tape proxy that the CRO itself flags as 'not a Basket-13 idiosyncratic special situation.' EV is intact at the live ~$44.61 tape (+25.9%), but it is macro/tape EV rather than bounded-catalyst edge — wrong kind of edge for an event-driven calibration sleeve despite the open Supply_timing driver and cluster room. |
+| **KDP** | spinoff | Spin_index_flow | M | Undated, board-discretionary spin: no Form 10, no record/effective date, already slipped late-2026 to early-2027 (Jun 23 8-K), explicitly gated on 'appropriate leverage levels' AND 'supportive market conditions,' with the hard JDE Peet's leg already fired (no live deal spread). Fresh skeptic verdict CONFIRMED the kill (no forcing function, sub-1:1 R:R on a breakable staples-valuation 'floor,' coffee-unit CEO departing end-July). Spin_index_flow seat is open, but the asymmetry does not survive on merit — a watch item, not a dated special situation. |
+| **OLMA** | bio_convergence | FDA_clinical_readout | H | Strong single-date binary (H-grade, EV +18.3% at live $11.41; win $24 / lose $6.50 / p=0.40) but routed to passed by queue discipline, not weakness: FDA_clinical_readout is 2/2 in the held book (CELC + AMLX) and its watchlist queue is already at the 5-name cap with carried on-deck names ahead of it (VIR/EYPT/BBIO/PVLA/AVIR), plus the bio_convergence lane is full. Kept off the queue so one abundant driver cannot monopolize it; first to reconsider if an FDA_clinical_readout/bio slot frees ahead of the carried queue. Staging=true, so equity-only if it ever seats. |
 
 ---
 ## 4 · Latest Director memo (verbatim)
 
-Added 5 seats (14.5 pts) across five DIFFERENT drivers, taking the book to 17/20 seats and ~81% invested. Every FDA driver and the bio_convergence lane are full from the held book, so all new risk is deliberately non-bio: two Deal-completion adds (THRM antitrust spread at 5, ZYME as a 2% defined-risk Oct call spread after the board reclassified its Jazz-milestone catalyst out of the bio lane — a carried watchlist name graduating) bring that cluster to 36/40; three Idiosyncratic adds (DDL refi at 3 sized to its thin tape, LBTYK spin and LZM supply-timing at staging half-weights of 2.5 and 2 per their staging flags and the LBTYK skeptic's soft-floor cap) bring that cluster to 31.5/40. FDA/biotech stays at 13.5/40. Driver caps after adds: US_antitrust 2/2, Deal_close_generic 2/2, Refi_restructuring 2/2 — all at, none over. Risk-to-floor is 0.10-0.61% NAV per ratio name (max THRM 0.54) and the single binary carries exactly 2% premium-at-risk. The watchlist is a bio queue by construction: five clinical-readout binaries (EYPT first at +77% EV) and two approval-decision names stack up behind CELC/AMLX/VRDN/AQST resolutions, with CLVT ahead of MGNI for the first Forced_divest_flow seat — pending verification that today's unexplained +17% CLVT spike is not the catalyst firing. ANNX and ALTI passed on merit; all nine prior on-deck names are accounted for (7 re-nominated unchanged, ZYME graduated, none dropped).
+No new seats this run — picks:[]. All four CRO survivors fail either on merit or on combined caps, and forcing a seat would either breach queue/cap discipline or record a sub-threshold edge. AXTA, MP and KDP are merit passes despite having open drivers: AXTA's real edge lives in a short-AKZO leg the basket can't record (naked-long R:R ~0.61 after the target was debunked); MP's hard catalyst fired a year ago leaving an undated ~2028 commodity tape proxy the CRO itself disowns as a Basket-13 fit; KDP is an undated, twice-slipped, discretionary spin the fresh skeptic CONFIRMED as sub-1:1 with no forcing function. OLMA is the only cap/queue casualty — a genuinely strong binary blocked by a 2/2 FDA_clinical_readout driver and a full bio lane, and bumped to passed only because that driver's 5-name watchlist queue is already occupied by carried names. The held book stays 14/20 seats, clusters unchanged (Deal-completion 31 / Idiosyncratic 29.5 / FDA-biotech 11.5), all combined caps intact. The on-deck book carries all 9 prior nominations forward unchanged (5 FDA_clinical_readout, 2 FDA_approval_decision, 2 Forced_divest_flow) — every one still blocked solely by a full held driver, first-in-line the moment CELC/AMLX, AQST/ZYME, or FIG/BLCO resolves and frees its cap.
 
 ---
-*Caps at last stamp: 0 violations · 5 added · 0 pending · 0 excluded-at-stamp. Auto-generated by backend/_basket13_review.py.*
+*Caps at last stamp: 0 violations · 0 added · 0 pending · 0 excluded-at-stamp. Auto-generated by backend/_basket13_review.py.*
