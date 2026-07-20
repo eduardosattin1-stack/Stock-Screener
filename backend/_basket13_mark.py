@@ -84,6 +84,45 @@ def main():
     GRACE_DAYS = 7                                       # ~5 trading days
     cat_res = os.path.join(BASE, "_opus_debate", "_catalyst_results")
     cat_skp = os.path.join(BASE, "_opus_debate", "_catalyst_skeptic")
+    # (d) EDGE-GONE RADAR (2026-07-20, Bruno): the held-book dossier refresh re-derives
+    #     fair_value_target / downside_floor / win_prob from live sources; when those
+    #     CORRECTED numbers say the remaining edge at the live mark is gone, flag the seat
+    #     for an EDGE_GONE resolve. (This is what caught GDOT at 0.02:1 and UNF at 0.17:1
+    #     on 2026-07-20 — but only because a human read the dossiers; automate the read.)
+    #       ratio names (spread/sop/recovery): rr = (fv - px)/(px - floor) < 1.0 -> flag
+    #       binaries (binary_prob w/ win_prob): EV = p*fv + (1-p)*floor <= px    -> flag
+    #     Uses the dossier store's corrected axes, NEVER the stamped entry fields, and only
+    #     when the dossier is fresh (asof <= DIAG_FRESH_DAYS): a stale re-underwrite must
+    #     not kill a seat. Floor-breach stays a separate (human) alert.
+    EDGE_GONE_MIN_RR = 1.0
+    _doss = {}
+    try:
+        _doss = (json.load(open(os.path.join(BASE, "_basket13_dossiers.json"),
+                                encoding="utf-8")).get("dossiers") or {})
+    except Exception:
+        pass
+    def _edge_gone(sym, px):
+        d = _doss.get(sym)
+        if not d or not isinstance(px, (int, float)):
+            return None
+        try:
+            asof = datetime.date.fromisoformat(str(d.get("asof"))[:10])
+            if (datetime.date.today() - asof).days > DIAG_FRESH_DAYS:
+                return None
+        except Exception:
+            return None
+        fv, flr, p = d.get("fair_value_target"), d.get("downside_floor"), d.get("win_prob")
+        if not isinstance(fv, (int, float)) or not isinstance(flr, (int, float)):
+            return None
+        if d.get("valuation_method") == "binary_prob" and isinstance(p, (int, float)):
+            ev = p * fv + (1 - p) * flr
+            if ev <= px:
+                return f"dossier edge-gone: EV {ev:.2f} <= live {px} (p={p}, fv={fv}, floor={flr})"
+        elif px > flr:                                    # px <= floor is the floor-breach alert's job
+            rr = (fv - px) / (px - flr)
+            if rr < EDGE_GONE_MIN_RR:
+                return f"dossier edge-gone: rr {rr:.2f} < {EDGE_GONE_MIN_RR} (fv {fv}, floor {flr}, live {px})"
+        return None
     due = []
     for e in unresolved:
         if e.get("status") == "PENDING_LIMIT":
@@ -104,6 +143,9 @@ def main():
                 reasons.append(f"close {px} >= target {tgt}")
             if isinstance(flr, (int, float)) and px <= flr:
                 reasons.append(f"close {px} <= floor {flr}")
+        eg = _edge_gone(sym, px)
+        if eg:
+            reasons.append(eg)
         import time as _t
         for d, key, tag in ((cat_res, "catalyst_status", "FIRED"), (cat_skp, "verdict", "REFUTED")):
             f = os.path.join(d, f"{sym}.json")

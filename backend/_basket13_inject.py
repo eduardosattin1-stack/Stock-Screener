@@ -51,9 +51,12 @@ RES_TYPES = ["FIRED_WIN", "FIRED_LOSS", "SLIPPED", "THESIS_BROKEN", "EDGE_GONE",
 
 # ---- cap dials (•) — re-fit from realized outcomes (see `report`); NOT constants ----
 MAX_PER_DRIVER     = 2
+UNCAPPED_DRIVERS   = {"FDA_clinical_readout", "FDA_approval_decision", "FDA_pathway_feedback"}
+                               # • 2026-07-20 (Bruno): bio/FDA drivers exempt from the per-driver cap —
+                               #   quality gates (dossier/CRO/skeptic) remain the only bio gate
 MAX_SUPER_PTS      = 40.0    # weight-POINTS of NAV per super-cluster (pinned basis — see header)
 MIN_NAMES, MAX_NAMES = 8, 20   # • basket head-count cap
-MAX_PER_LANE       = {"bio_convergence": 5}   # • hard per-lane NAME cap (bio binaries are abundant; cap the lane)
+MAX_PER_LANE       = {}        # • 2026-07-20 (Bruno): bio_convergence 5-name lane cap LIFTED (was {"bio_convergence": 5})
 MAX_WATCHLIST      = 10        # • on-deck watchlist length (shown below the basket)
 MAX_WATCHLIST_PER_DRIVER = 5   # • per-driver diversity cap on the on-deck watchlist — one abundant
                                #   driver (e.g. FDA_clinical_readout) can't crowd out the queue
@@ -346,7 +349,7 @@ def validate(picks, bysym, live_px=None, held_syms=None):
     for p in picks:
         bydrv.setdefault(p.get("resolution_driver"), []).append(p["symbol"])
     for drv, syms in bydrv.items():
-        if len(syms) > MAX_PER_DRIVER:
+        if drv not in UNCAPPED_DRIVERS and len(syms) > MAX_PER_DRIVER:
             v.append(f"DRIVER {drv}: {len(syms)} names ({','.join(syms)}) > {MAX_PER_DRIVER}")
     bysc = {}
     for p in picks:

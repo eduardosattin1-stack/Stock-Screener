@@ -1,11 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-20 · 11 held seats (45.5% invested) + 7 resolved · last run 2026-07-20 · paper basket, nothing executed*
+*Generated 2026-07-20 · 13 held seats (49.5% invested) + 7 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (11 held)
+## 1 · The basket (13 held)
 
 ### FIP — FTAI Infrastructure Inc.
 `10% · equity · distressed · Refi_restructuring (Idiosyncratic) · score 8.0 · edge M · entry 2026-06-10 @ 4.56 (cro_live_check)`
@@ -169,6 +169,38 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **3 · Window ↔ expression:** Equity expression => no option expiry, no theta decay, no need to clear the milestone with an expiry. ECLIPSE 1 HDV topline dated Q4 2026 (~4-5 months out), ECLIPSE 2/3 Q1 2027 as follow-on optionality. Prior Q4'26-vs-Q1'27 date confusion is resolved in the fresh dossier via the May 6 2026 Q1 earnings + Jan 12 2026 update (both state Q4 2026); holding equity absorbs any modest slip at no decay cost.
 - **4 · Driver tag:** FDA_clinical_readout — confirmed (ECLIPSE 1 Phase 3 chronic hepatitis delta topline, tobevibart + elebsiran). Sole name in this batch; no same-driver collision to flag.
 
+### OLMA — Olema Pharmaceuticals, Inc.
+`2% · equity · bio_convergence · FDA_clinical_readout (FDA/biotech) · score 6.0 · edge H · STAGING · entry 2026-07-20 @ 11.57 (cro_structured)`
+- **Expected:** EV 17.7% · milestone soft/undated · review: OPERA-01 monotherapy topline, guided fall 2026 (soft, PFS-event-accrual — confirm no slip past Q4).
+- **Risk-to-floor (computed):** 0.876% of NAV (cap 1.5)
+- **Director — why this seat:** Single-asset Phase 3 OPERA-01 PFS binary (palazestrant, 2L/3L ER+/HER2- MBC) with edge-grade H and reproduced EV ~+17%; win $24 / floor $6.5 (~cash+pipeline) at ~$11.57. Staging=true undated 'fall 2026' window forces equity, not options — no dated expiry to clear and open-ended IV bleed.
+- **Director — what kills it:** OPERA-01 fails or delivers only a marginal/ESR1-subgroup PFS win (far short of the $24 clean-win node), or an equity raise dilutes the cash floor before readout.
+
+**CRO verdict: TRADE_WITH_CONDITIONS**
+- **1 · Edge at entry (live re-check):** Live $11.57 (bid 11.56/ask 11.58, IBKR snapshot 2026-07-20) vs board asof $11.47 — essentially unchanged, edge NOT compressed. EV reproduces from live: 0.40*(24/11.57-1) + 0.60*(6.5/11.57-1) = +0.43 - 0.263 = +16.7%, matching dossier ev_pct 0.177. Binary win node $24 / loss floor $6.5 (-44% overnight-gap leg, no stop catches it). Edge intact and entirely a win_prob (0.40) disagreement — inherent to a binary_prob name.
+- **2 · Tradeability:** OLMA equity liquid enough for a sized single-asset binary: 1c-wide (11.56/11.58, 200x300), ~$16.8M/day 90d ADV. Listed options exist but the undated window makes pre-event IV the wrong lever (open-ended theta bleed) — equity is the correct expression.
+- **3 · Window ↔ expression:** OPERA-01 topline is an UNDATED soft 'fall 2026' window (dated_milestone null, staging=true; PFS-event-accrual timing can slip a quarter). No fixed date means there is no option expiry to clear +1 monthly past a milestone — so this must be an EQUITY hold through the window, not an option structure. Guidance reaffirmed, no slip as of 2026-07-20.
+- **4 · Driver tag:** FDA_clinical_readout — confirmed (Phase 3 PFS readout, not an approval decision). FLAG for the Director's <=2-per-driver cap: shares this driver with EYPT (both bio_convergence, FDA/biotech). EYPT is NO_TRADE here, so OLMA is the sole survivor on this driver.
+- ⚠ **Condition:** Express as equity, NOT options — the undated 'fall 2026' window has no dated milestone for an option expiry to clear, and pre-event IV bleeds over an open-ended window
+- ⚠ **Condition:** Entry limit near current ~$11.60; the +17% edge is EV-based, chasing materially higher erodes it
+- ⚠ **Condition:** Confirm no slip past fall 2026 and no equity raise / guidance change before entry (event-accrual readouts drift)
+
+### AVIR — Atea Pharmaceuticals, Inc.
+`2% · equity · None · FDA_clinical_readout (Idiosyncratic) · score None · edge None · STAGING · entry 2026-07-20 @ 4.83 (cro_structured)`
+- **Expected:** R:R 1.79:1 · milestone 2026-mid (C-BEYOND Phase 3 HCV topline / SVR12; reaffirmed on-track June 2026) · review: C-BEYOND Phase 3 SVR12 topline (mid-2026, reaffirmed on-track June 2026; watch for H2 slippage flipping it toward SLIPPED)
+- **Risk-to-floor (computed):** 0.965% of NAV (cap 1.5)
+- **Director — why this seat:** On-deck first-in-line promoted into freed headroom: cash-anchored Phase 3 C-BEYOND HCV binary with a hard ~$2.50 net-cash floor and imminent, reaffirmed mid-2026 SVR12 readout; enter via limit <= $5.00 to preserve R:R >= ~1.6:1 given the thin ~$1.59M/day ADV. FDA_clinical_readout is uncapped as of 2026-07-20 and idiosyncratic-cluster headroom is ample, so it clears every combined cap of the locked held book.
+- **Director — what kills it:** C-BEYOND misses non-inferiority vs the ~95-99%-cure sofosbuvir SOC or shows a safety signal, pinning the stock at/below net cash; a statistically clean readout that fails to re-rate (mature genericizing HCV market) is the softer kill.
+
+**CRO verdict: TRADE_WITH_CONDITIONS**
+- **1 · Edge at entry (live re-check):** Live $4.83 (bid 4.82/ask 4.83, last 4.83; IBKR realtime 2026-07-20) vs dossier asof $4.39. Recomputed R:R = +$4.17 upside to $9.00 FV / -$2.33 downside to $2.50 net-cash floor = 1.79:1, compressed from the dossier's ~2.4:1 by the run-up but still well above the half-R:R kill line (1.2:1). Crude EV = 0.55*9.00 + 0.45*2.50 = $6.08 (+25.8% vs spot). binary_prob, no commodity deck -> dual-deck kill-line N/A. Edge survives but is thinner at $4.83 than at $4.39.
+- **2 · Tradeability:** Equity expression (per dossier). Bid/ask spread $0.01 (~0.2%) is tight. BUT 90d avg dollar volume is only ~$1.59M/day (~330K sh; today 123K sh) -- thin. Fine for a modest paper-sleeve position; a sizeable clip would move the tape and erode fills. Options chain endpoint erroring on repeated calls so OI/quotes unverified, but equity is the intended instrument so options liquidity is not the binding constraint.
+- **3 · Window ↔ expression:** Equity, so no expiry to clear -- holds through the readout with no time decay. C-BEYOND Phase 3 SVR12 topline guided mid-2026, reaffirmed on-track June 2026, enrollment complete Dec 2025 -> readout is essentially imminent as of 2026-07-20. 'mid-2026' is a window not a fixed day; H2 slippage is possible but harmless to an equity holder. If ever expressed via options, Sep(0918) or Oct(1016) monthly would clear a mid-2026 readout with +1 month margin.
+- **4 · Driver tag:** FDA_clinical_readout -- Phase 3 C-BEYOND bemnifosbuvir+ruzasvir topline / SVR12 non-inferiority vs sofosbuvir SOC. Confirmed. Sole name in batch; no same-driver cap to flag.
+- ⚠ **Condition:** Equity only; enter via limit <= $5.00 to keep R:R >= ~1.6:1 (a higher entry compresses the edge below the sleeve threshold)
+- ⚠ **Condition:** Size to respect the thin ~$1.59M/day ADV -- modest position, no market orders
+- ⚠ **Condition:** Idiosyncratic clinical binary: net-cash floor ~$2.50 is a Phase-3-miss floor, not a stop; size for a full ~48% drawdown to floor on a negative SVR12 readout
+
 ---
 ## 1b · Resolved (7)
 - **GDOT** EDGE_GONE · 2026-06-10→2026-07-20 (40d) · 12.75→13.43 · realized +5.3% (exp R:R 1.56:1) · 
@@ -185,7 +217,7 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 *Killed on trade grounds only (edge gone / untradeable / window fails) — catalyst reality was settled upstream.*
 
 ---
-## 3 · Non-selections (45) — recorded counterfactuals
+## 3 · Non-selections (46) — recorded counterfactuals
 
 *CRO survivors the Director passed on, plus stamp-time exclusions; recorded for selection-calibration.*
 
@@ -236,6 +268,7 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 | **MP** | supply_timing | Supply_timing | H | Hard idiosyncratic catalyst (DoD public-private partnership) already FIRED and closed July 11, 2025; the residual is an undated, long-dated (~2028 10X-campus commissioning) commodity / China-export-policy tape proxy that the CRO itself flags as 'not a Basket-13 idiosyncratic special situation.' EV is intact at the live ~$44.61 tape (+25.9%), but it is macro/tape EV rather than bounded-catalyst edge — wrong kind of edge for an event-driven calibration sleeve despite the open Supply_timing driver and cluster room. |
 | **KDP** | spinoff | Spin_index_flow | M | Undated, board-discretionary spin: no Form 10, no record/effective date, already slipped late-2026 to early-2027 (Jun 23 8-K), explicitly gated on 'appropriate leverage levels' AND 'supportive market conditions,' with the hard JDE Peet's leg already fired (no live deal spread). Fresh skeptic verdict CONFIRMED the kill (no forcing function, sub-1:1 R:R on a breakable staples-valuation 'floor,' coffee-unit CEO departing end-July). Spin_index_flow seat is open, but the asymmetry does not survive on merit — a watch item, not a dated special situation. |
 | **OLMA** | bio_convergence | FDA_clinical_readout | H | Strong single-date binary (H-grade, EV +18.3% at live $11.41; win $24 / lose $6.50 / p=0.40) but routed to passed by queue discipline, not weakness: FDA_clinical_readout is 2/2 in the held book (CELC + AMLX) and its watchlist queue is already at the 5-name cap with carried on-deck names ahead of it (VIR/EYPT/BBIO/PVLA/AVIR), plus the bio_convergence lane is full. Kept off the queue so one abundant driver cannot monopolize it; first to reconsider if an FDA_clinical_readout/bio slot frees ahead of the carried queue. Staging=true, so equity-only if it ever seats. |
+| **KDP** | spinoff | Spin_index_flow | M | Undated, board-discretionary spin with an explicit out-clause ('appropriate leverage' + 'supportive market conditions'), no Form 10 / record date / effective date, already slipped once (late-2026 -> early-2027), and the hard JDE Peet's leg already fired 4/1/2026 leaving no live spread; the fresh skeptic CONFIRMED the kill and concluded 'watch-list, not a dated special situation.' No forcing function = dead-money risk. Skipped on merit (not headroom-blocked: Spin_index_flow has 1 open slot and Idiosyncratic cluster has 15.5pt headroom). |
 
 ---
 ## 4 · Latest Director memo (verbatim)
