@@ -1,255 +1,233 @@
 {
  "chunk": "17 (SLDB-TCMD)",
- "scanned": 149,
+ "scanned": 150,
  "scan_distribution": {
-  "active": 6,
-  "watch": 14,
-  "none": 129
+  "active": 4,
+  "watch": 9,
+  "none": 137
  },
  "survivors_flagged": [
   {
-   "symbol": "SLDB",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "one_line": "SGT-003 Duchenne gene therapy: mid-2026 FDA accelerated-approval discussions + additional INSPIRE Phase1/2 data are the forward binary; INSPIRE interim already positive so partly re-rated, but the AA-pathway decision is a real dated asymmetry ahead."
-  },
-  {
    "symbol": "SLS",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "binary-catalyst",
-   "one_line": "Phase 3 REGAL (galinpepimut-S in AML CR2) at 78/80 required death-events as of May-2026; the 80th event triggers imminent database-lock and unblinded topline \u2014 a clean, imminent, well-funded ($107M cash) binary readout."
-  },
-  {
-   "symbol": "SLVM",
    "score": 6,
    "tier": "WATCH",
-   "lane": "activist-structural",
-   "one_line": "Atlas holds ~21.5% economic stake; cooperation agreement lapsed and board adopted a limited-duration poison pill expiring Nov-9-2026 \u2014 a hardening activist/takeover-defense trigger alongside special dividends and stacked buybacks; dated defensive milestone plus overhang."
+   "lane": "dated_binary",
+   "one_line": "Phase 3 REGAL sat at 78 of the 80 events triggering final OS analysis as of May 2026 \u2014 a hard, imminent, event-driven binary in a sub-$300M shell."
   },
   {
    "symbol": "SMMT",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "one_line": "Ivonescimab: HARMONi-3 squamous-NSCLC interim PFS readout slated Q2-2026 plus a Jan-2026 BLA in 2L EGFRm \u2014 real dated single-asset binaries, though heavily followed and partly priced after prior HARMONi reads."
-  },
-  {
-   "symbol": "SMTC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "restructuring-divestiture",
-   "one_line": "Semtech cellular-module divestiture in final stages (dated-ish, margin-accretive to ~60% GM) plus Hyfo/HieFo optical bolt-on; a real portfolio-reshaping leg but largely telegraphed and not a binary asymmetry."
+   "lane": "dated_binary",
+   "one_line": "Hard PDUFA 14-Nov-2026 for ivonescimab in EGFRm NSCLC, but at a mega-cap-for-biotech valuation the asymmetry is skewed against you, not mispriced."
+  },
+  {
+   "symbol": "SOC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "distressed/regulatory",
+   "one_line": "Live two-sided legal binary: pipeline running since March under federal PHMSA permit while Santa Barbara injunction rulings keep landing against it (latest 2026-07-17), with further state-vs-federal hearings pending."
   },
   {
    "symbol": "SRRK",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "binary_pdufa",
-   "one_line": "Apitegromab SMA BLA accepted, hard PDUFA Sept 30 2026 with priority review \u2014 dated forward binary."
-  },
-  {
-   "symbol": "SSTK",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Getty merger-of-equals: DOJ cleared Feb 2026, UK CMA Phase-2 final decision ~Apr 2026 gates a near-term close \u2014 live arb."
+   "lane": "dated_binary",
+   "one_line": "Apitegromab BLA resubmitted post-CRL with a hard Sept 30, 2026 PDUFA; issue was fill-finish/manufacturing, not efficacy, so approval odds look better than a typical binary and EMA decision mid-2026 adds a second dated leg."
+  },
+  {
+   "symbol": "SQM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "structural_jv",
+   "one_line": "Codelco NovaAndino Litio 50:50 JV cleared its last major hurdle (China approval Nov-2025) and Chile wants it closed before the administration exits, with an EIA filing milestone in 2026, but timing has repeatedly slipped and lithium price does most of the work."
   },
   {
    "symbol": "SVRA",
-   "score": 6,
+   "score": 7,
    "tier": "ACTIVE",
-   "lane": "binary-PDUFA",
-   "one_line": "Molgramostim PDUFA Nov-22-2026, would be first FDA therapy for autoimmune PAP (orphan); clean dated binary with asymmetry."
+   "lane": "dated-binary",
+   "one_line": "MOLBREEVI aPAP PDUFA extended to 2026-11-22 (no safety/efficacy/CMC issues cited) - single-asset binary with asymmetric skew."
   },
   {
    "symbol": "SWKS",
    "score": 6,
-   "tier": "ACTIVE",
+   "tier": "WATCH",
    "lane": "merger-arb",
-   "one_line": "Live Qorvo acquisition (announced Oct-2025, FTC HSR Second Request pending); dated regulatory-close catalyst, SWKS is acquirer."
+   "one_line": "Pending $22B Qorvo combination: FTC second request plus China SAMR Phase II, management now guiding to a close by end-2026 (arb sits mainly on QRVO)."
   },
   {
    "symbol": "SYNA",
-   "score": 7,
+   "score": 6,
    "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live all-stock merger: onsemi buying SYNA at 1.350 ON shares, ~$7B, close mid-2027 pending vote+antitrust \u2014 clean deal-break/spread arb."
+   "lane": "merger_arb",
+   "one_line": "Definitive all-stock onsemi merger (1.35 ON/share, announced 25-Jun-2026) with shareholder votes and mid-2027 close still forward."
   },
   {
    "symbol": "SYRE",
    "score": 6,
    "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "one_line": "Six dated Phase 2 POC readouts through 2026 (SPY002 mid-yr, SPY003/SPY072-RA Q3, PsA/axSpA Q4) \u2014 dated binaries but no arb structure."
+   "lane": "dated_binary",
+   "one_line": "Six 2026 proof-of-concept readouts; SKYWAY RA topline pulled into Q3-26 and PsA/axSpA Q4-26 remain unfired binaries."
+  },
+  {
+   "symbol": "TBRG",
+   "score": 5,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Definitive $26.25 cash merger with Inventurus Knowledge Solutions; shareholder vote cleared 7-Jul-2026, closing conditions remain the forward leg."
   }
  ],
  "verified": [
   {
-   "symbol": "SLDB",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "catalyst": "Solid Biosciences' mid-2026 FDA guidance on a potential accelerated-approval pathway for SGT-003 Duchenne gene therapy, backed by additional INSPIRE Phase 1/2 data.",
-   "dated_milestone": "Mid-2026 update on FDA accelerated-approval pathway guidance (H1 2026 FDA meetings; update due imminently, not yet reported as of 2026-07-02); Phase 3 IMPACT DUCHENNE enrolling in parallel.",
-   "instrument": "equity (NASDAQ:SLDB); pre-revenue clinical-stage biotech, binary event-driven",
-   "bloom_gates": "G1 (named counterparty = FDA) + G2 (concrete commitment: align on confirmatory evidence / AA pathway with a company-guided mid-2026 update). G3 weak \u2014 no single specific currently-unpriced figure, the asymmetry is the AA-vs-no-AA regulatory binary rather than a quantified gap.",
-   "edge": "M \u2014 dated FDA-pathway decision is a real un-fired regulatory binary and the company well-funded ($380.7M, runway to H1 2028), but it is a guidance-on-pathway step (not approval itself) and the name is already partly re-rated on positive Mar-2026 interim INSPIRE data + HC Wainwright PT hike to $25.",
-   "primary_source": "Solid Biosciences Q1 2026 results / business update, GlobeNewswire 2026-05-12 (reiterated H1-2026 FDA meetings + mid-2026 AA-pathway update); corroborated by Feb 2026 Type C meeting release and Mar 11 2026 INSPIRE interim update.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "SLDB is Solid Biosciences; SGT-003's mid-2026 FDA accelerated-approval-pathway guidance is a genuine dated, forward regulatory binary with a named counterparty (FDA) and a company-stated H1-meeting/mid-2026-update commitment, not yet fired as of 2026-07-02. It is not the approval decision itself but guidance on whether an AA pathway (via INSPIRE + Phase 3 IMPACT) is viable, and positive Mar-2026 interim INSPIRE data plus a June PT hike have already delivered partial re-rating. Clears Bloom G1/G2 but only weakly G2/G3 on a specific unpriced figure, so it warrants WATCH rather than ACTIVE."
-  },
-  {
    "symbol": "SLS",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "binary-catalyst",
-   "catalyst": "Phase 3 REGAL (galinpepimut-S/GPS in AML CR2) sits at 78/80 prespecified death-events; the 80th event triggers imminent database lock, unblinding and topline disclosure of a well-funded ($107M cash) survival binary.",
-   "dated_milestone": "80th event \u2192 database lock imminent (78/80 as of May 11, 2026; still un-fired July 1, 2026); topline readout guided Q4 2026.",
-   "instrument": "SLS (SELLAS Life Sciences, Nasdaq)",
-   "bloom_gates": "G3 \u2014 specific currently-quantified binary event (prespecified 80th event \u2192 unblinded OS readout); not G1/G2.",
-   "edge": "M \u2014 real, dated, unfired event-driven binary with a hard trigger and strong cash, BUT the stock is +292% in H1 2026 / +574% TTM on retail flow, so the well-telegraphed readout is substantially re-rated already; entry/timing risk is high and the \"clean unpriced binary\" framing is partly stale.",
-   "primary_source": "SELLAS Q1 2026 results / corporate update, GlobeNewswire & SEC 8-K Ex-99.1 (May 12, 2026); status confirmed unfired via Stocktwits (July 1, 2026).",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Core binary is real, dated, forward and live: 78/80 REGAL OS events as of May 11, 2026 (Q1 8-K), $107.1M cash + $7.5M Q2 warrant proceeds, and the 80th event mechanically triggers database lock/unblinding/topline; as of July 1, 2026 no 80th-event or topline has fired, guidance H2 2026. CORRECTION: the '+292% H1 2026' magnitude is wrong \u2014 SLS traded ~$13.26 on Jul 1, up ~70% since late Feb, and the event delay is framed as longer-than-projected survival (a potentially bullish efficacy signal), so the 'binary already priced' edge thesis is overstated, not disqualifying.",
-   "analysis": "Flagged facts verify: REGAL was at 78 of 80 required death-events as of the May 11-12, 2026 Q1 update, with $107.1M cash (+$7.5M Q2 warrant exercises), and the 80th event mechanically triggers database lock, unblinding and topline \u2014 a genuine, dated, forward, non-macro binary (Bloom G3). As of July 1, 2026 no 80th-event/lock/topline announcement has fired, so the catalyst remains live, with company guidance putting topline in Q4 2026 and the event trigger likely within weeks. The main gap is edge, not existence: SLS is up ~292% in H1 2026 on retail momentum, so much of the binary optionality appears priced, which caps conviction to score 6 despite ACTIVE status."
-  },
-  {
-   "symbol": "SLVM",
    "score": 4,
    "tier": "WATCH",
-   "lane": "activist-structural",
-   "catalyst": "Sylvamo's limited-duration poison pill (adopted after Atlas Holdings pulled its two board seats and let the 2023 cooperation agreement lapse) expires Nov-9-2026, a dated defensive milestone against Atlas's ~21.5% economic stake.",
-   "dated_milestone": "Poison pill expiration Nov-9-2026 (board may terminate earlier at discretion); Atlas resale shelf effective through Aug-13-2026; regular div ex-date Jul-7-2026.",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty: Atlas Holdings, ~21.5% economic stake, 16% beneficial + 5.5% derivatives)",
-   "edge": "L \u2014 the triggering rupture (Atlas director resignations, cooperation-agreement termination, pill adoption) already fired and priced in Nov 2025; Atlas's 6.31M-share resale shelf signals an exit rather than a takeover run, so the pill expiry is a defensive-plan lapse, not a value-unlocking dated event.",
-   "primary_source": "Sylvamo 8-K / Businesswire \"Sylvamo Adopts Limited-Duration Shareowner Rights Plan\" (2025-11-10); S-3ASR Atlas resale registration effective through 2026-08-13; StockTitan pill terms (2025-11-10).",
+   "lane": "dated_binary",
+   "catalyst": "Unblinding and topline overall-survival readout of the pivotal Phase 3 REGAL trial of galinpepimut-S in second-remission AML, triggered automatically once the pre-specified 80th death event occurs (78 of 80 as of May 11, 2026).",
+   "dated_milestone": "Next date: no fixed calendar date \u2014 event-driven; 78/80 events confirmed 2026-05-12 (Q1 filing), database lock + unblinding + topline follow within weeks of event 80; Q2 2026 results call (mid-Aug 2026) is the next scheduled disclosure checkpoint.",
+   "instrument": "Common equity (NASDAQ: SLS); listed options exist but IV is extremely elevated into the binary \u2014 long stock or defined-risk call spread only.",
+   "bloom_gates": "G2 only (concrete pre-specified protocol commitment: final OS analysis at the 80th event, company in quiet period until topline). G1 fails \u2014 no named counterparty/partner. G3 fails \u2014 the \"unpriced figure\" premise is dead; the market has already marked the setup up hard.",
+   "edge": "L \u2014 the thesis premise (\"sub-$300M shell\", unpriced binary) is stale and factually wrong as of today. SLS ran from the mid-$8s (2026-06-22) to ~$13.30 on 2026-07-19, with Alliance Global lifting its target to $25 from $10 on 2026-07-17 explicitly on the slow REGAL event accrual. The exact \"delayed events = patients living longer\" inference the thesis rests on is now the consensus retail/sell-side narrative, and no fixed date exists to time entry.",
+   "primary_source": "SELLAS Q1 2026 results / corporate update, GlobeNewswire + company IR, 2026-05-12 (\"78 of 80 events\"); price/target context: StocksToTrade + ts2.tech coverage of the Alliance Global target raise, 2026-07-17, and quote data 2026-07-19.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The Nov-9-2026 pill expiry is a real, dated, named-counterparty milestone (clears G1) but the underlying activist rupture already fired in Nov 2025 and is public/priced, and Atlas's registered 6.31M-share resale (effective through Aug-13-2026) points to a seller, not an acquirer building toward the 15% trigger \u2014 deflating the takeover-defense upside. Capital return (special $0.30 div, $150M buyback, $0.45 regular div ex-Jul-7) is ongoing but already announced, so there is no concrete forward commitment (G2) or specific currently-unpriced figure (G3). A pill lapse forces no transaction on a date and the board can terminate it anytime, so this is a fired structural overhang worth monitoring rather than a live, unpriced forward catalyst."
+   "analysis": "The underlying event is real, forward and un-fired: REGAL's final OS analysis is contractually triggered by the 80th pooled death, the CRO reported 78 as of May 11, 2026, and no topline has been released as of July 20, 2026 \u2014 so the binary genuinely remains ahead. But the triage snapshot's framing is stale on two counts: the trigger has no calendar date (it is accrual-driven and has repeatedly slipped \u2014 72 events at 2025-12-26 to 78 at 2026-05-11, roughly one event per three weeks), and the \"sub-$300M shell\" is gone, with the stock up ~55-60% in four weeks on the same slow-accrual read-through plus a 2.5x sell-side target hike. The asymmetry that made this a catalyst-lane candidate has been largely harvested pre-event, and what remains is an unhedged coin-flip on a single-arm-vs-BAT OS curve into elevated positioning. Gap in verification: I could not confirm a precise current share count/market cap from a primary filing within the lookup budget (sources cited a $2.45B cap and a separate $319M figure that conflict), so the reference price is used rather than a computed cap."
   },
   {
    "symbol": "SMMT",
-   "score": 6,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "catalyst": "FDA PDUFA decision on ivonescimab + chemo BLA in 2L+ EGFR-mutated NSCLC post-TKI is a dated, single-asset regulatory binary.",
-   "dated_milestone": "PDUFA goal action date Nov 14, 2026 (BLA accepted Jan 29, 2026)",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty = US FDA) + G2 (concrete commitment = assigned PDUFA action date Nov 14, 2026)",
-   "edge": "M \u2014 genuine dated regulatory binary on a single asset, but heavily followed; supporting HARMONi PFS was modest (6.8 vs 4.4 mo) and PD-1/VEGF class faces added FDA scrutiny, so partly priced/handicappable rather than a clean surprise.",
-   "primary_source": "Summit press release + CancerNetwork/OncLive, FDA BLA acceptance Jan 29 2026, PDUFA Nov 14 2026; HARMONi-3 interim miss FiercePharma/BioSpace Apr 30 2026",
+   "lane": "dated_binary",
+   "catalyst": "FDA PDUFA goal action date of 14-Nov-2026 on the BLA for ivonescimab + platinum chemotherapy in EGFR-mutated non-squamous NSCLC post-3rd-gen-TKI, filed on the Phase III HARMONi trial.",
+   "dated_milestone": "PDUFA action date 2026-11-14 (standard review, no ODAC scheduled); interim checkpoints = FDA mid-cycle/wrap-up review meetings, HARMONi-3 squamous readout timing unconfirmed",
+   "instrument": "Defined-risk long-dated options through Nov-2026 expiry; common equity is a poor expression given the binary sits on a ~$12B single-asset cap",
+   "bloom_gates": "G1 only \u2014 named counterparty (FDA) with a statutory goal date. G3 fails: no specific currently-unpriced figure; the EGFRm post-TKI indication is a modest slice of a cap that already discounts 1L/HARMONi-3 success. G2 not applicable (no commercial counterparty commitment).",
+   "edge": "L \u2014 the date is public, universally tracked by biotech event calendars, and the approval question has been debated since the Sept-2025 OS update; no informational or structural edge remains at a $11.7B cap.",
+   "primary_source": "Summit Therapeutics 8-K / press release, FDA acceptance of ivonescimab BLA with PDUFA 14-Nov-2026, dated 2026-01-29 (sec.gov/biospace); HARMONi OS update HR=0.78 nominal p=0.0332, Akeso/Summit release 2025-09-07; primary analysis OS HR=0.79, p=0.057 (missed pre-specified significance)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage note conflated two events: the HARMONi-3 squamous interim PFS ALREADY FIRED negatively (missed, disclosed Apr 30 2026, stock re-rated \u2014 now $15.18 vs 200-day $17.70 and year-high $30.98), so it is not forward. The live forward binary is the ivonescimab 2L+ EGFRm-NSCLC BLA, accepted by FDA Jan 29 2026 with a PDUFA date of Nov 14 2026 \u2014 a named counterparty (FDA) and concrete dated commitment (G1+G2). It clears the gate as real/dated/forward/not-macro but is heavily followed and only modestly de-risked (median PFS 6.8 vs 4.4 mo), warranting WATCH not ACTIVE."
+   "analysis": "The catalyst is genuine, precisely dated, forward, un-fired and non-macro: FDA accepted the ivonescimab BLA on 29-Jan-2026 with a 14-Nov-2026 PDUFA under standard review and no advisory committee planned. But the triage flag is correct on asymmetry \u2014 HARMONi hit PFS decisively (HR 0.52) while missing its pre-specified OS threshold (HR 0.79, p=0.057, later HR 0.78 at nominal p=0.0332), leaving real CRL/narrow-label risk, and the ~$11.7B cap plainly prices the far larger 1L HARMONi-3 opportunity rather than this narrow post-TKI indication. So approval buys limited upside while a miss impairs the entire franchise thesis: the payoff is skewed against the holder, not mispriced in their favor. Gated to WATCH on G1 alone \u2014 the date is real, the edge is not."
   },
   {
-   "symbol": "SMTC",
+   "symbol": "SOC",
    "score": 3,
    "tier": "NONE",
-   "lane": "restructuring-divestiture",
-   "catalyst": "Semtech's low-margin cellular-module business divestiture is in \"final stages\" and, once closed, structurally lifts corporate gross margin toward the high-margin datacenter/optical mix.",
-   "dated_milestone": "Next hard date is Q2 FY2027 earnings (~late Aug 2026), the likely window for a signed/closed deal announcement; no committed close date has been disclosed.",
-   "instrument": "equity",
-   "bloom_gates": "None cleanly met: G1 fails (no named counterparty \u2014 \"the right acquirer\"), G2 fails (no signed/definitive agreement, only \"final-stage\" transition/integration talks), G3 weak (the ~60% GM figure is secondary conference color from Mar 3 2026, not a committed dated figure in filings).",
-   "edge": "L \u2014 process is well-telegraphed since early 2026, stock already re-rated ~3x off the low (200d avg $92.79 vs $140), and the high-margin repositioning is the consensus thesis; carve-out of a ~20% GM unit is margin-accretive but not a binary asymmetry.",
-   "primary_source": "Semtech Q1 FY2027 earnings call transcript, The Motley Fool, 2026-05-26 (divestiture \"at the final stages\"); supporting: Morgan Stanley TMT Conference, 2026-03-03 (~60% GM commentary).",
+   "lane": "distressed/regulatory",
+   "catalyst": "Sable Offshore's Las Flores/Santa Ynez pipeline restart \u2014 the actual binary \u2014 already fired: PHMSA approved the restart plan 2025-12-22, oil resumed flowing 2026-03-14 under the federal DPA order, and first sales began ~2026-04-01 at ~50,000 Bbls/d gross; what remains is open-ended state-vs-federal litigation with no verifiable next hearing date.",
+   "dated_milestone": "No confirmed forward court date found. Last dated events are all past: contempt hearing set for 2026-05-22 was removed to federal court (June 2026), and a federal judge rejected Sable's takings claim against Santa Barbara County on 2026-07-17. Only soft forward item: management's stated intent to bring the third offshore platform online \"before summer's end\" (no fixed date).",
+   "instrument": "common equity (NYSE: SOC)",
+   "bloom_gates": "None cleanly. G1 (named counterparty) is arguably met via PHMSA / DOE Secretary Wright / Santa Barbara Superior Court, but that leg already fired. G2 fails \u2014 the \"third platform by summer's end\" commitment has no date and is incremental to an already-producing asset. G3 fails \u2014 no specific currently-unpriced figure was verifiable; the $447M damages exposure figure appears only in secondary reporting and is a downside, not an unpriced upside.",
+   "edge": "L \u2014 the restart, the DPA order, and first sales are all public and months old, so the re-rating has already happened; the residual is a two-sided legal overhang with no dated resolution point, which is exactly the profile that produces path risk without an entry trigger.",
+   "primary_source": "KCLU, \"Santa Barbara County wins a round in court over the controversial restart of an oil pipeline,\" 2026-07-17 (pipeline operating since March, two of three platforms online, takings claim rejected); corroborated by Sable Offshore press release \"Sable Resumes Oil Flow as Ordered by the Federal DPA...Expects First Sales by April 1, 2026\" (2026-03-14, sableoffshore.com) and PHMSA restart approval dated 2025-12-22.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The divestiture is real and advancing (UBS-advised carve-out, multiple indications, due diligence complete, \"final stages\" per the May 26, 2026 Q1 FY2027 call), but it lacks a named buyer, a signed agreement, and a dated close \u2014 so it fails the strict Bloom gates for a fireable catalyst. The margin-accretion narrative (exiting a ~20% GM unit toward a ~60% blended GM) is heavily telegraphed and the stock has already re-rated near its 52-week high, leaving little unpriced asymmetry. Watch for a definitive-agreement 8-K, most plausibly around the Q2 FY2027 print in late August 2026; a signed deal with terms would justify re-tiering to WATCH."
+   "analysis": "The triage framing is inverted: this is not a live forward binary but a fired one with unresolved tail litigation attached. The pipeline has been operating since 2026-03-14 and selling since ~April under federal PHMSA/DPA authority, while the state-court injunction, Coastal Commission cease-and-desist, and contempt allegations continue in parallel \u2014 Sable removed the contempt fight to federal court in June 2026 and lost a takings ruling on 2026-07-17. Gap in verification: I could not confirm any scheduled hearing date after 2026-07-17 within the lookup budget, and without a dated forward decision point there is no underwritable milestone, so this is a headline-risk holding rather than a catalyst position."
   },
   {
    "symbol": "SRRK",
-   "score": 7,
+   "score": 5.5,
    "tier": "ACTIVE",
-   "lane": "binary_pdufa",
-   "catalyst": "FDA PDUFA decision on apitegromab's resubmitted BLA for SMA, priority review \u2014 a first-in-class anti-myostatin add-on with a hard action date.",
-   "dated_milestone": "PDUFA action date Sept 30, 2026 (BLA accepted May 2026 after resubmission)",
-   "instrument": "SRRK common equity (long into approval; consider defined-risk given single-name binary)",
-   "bloom_gates": "G3",
-   "edge": "M \u2014 real dated binary and the prior CRL was CMC/fill-finish-only (efficacy/safety intact), lowering approval risk; but SRRK ~$52.5 sits near 52wk high ($56.5) at ~$6.3B cap and the name is heavily covered, so approval is partly anticipated \u2014 the residual edge is label breadth + launch, not a surprise clearance.",
-   "primary_source": "Scholar Rock Q1 2026 8-K/press release and Seeking Alpha coverage of BLA acceptance, May 2026; PDUFA Sept 30, 2026",
-   "verdict": "CONFIRMED",
-   "kill_fact": "FDA accepted the resubmitted apitegromab SMA BLA under priority review with a Sept 30, 2026 PDUFA date (confirmed via curesma.org + Scholar Rock IR/Q1-2026 earnings PR); 2025 CRL was solely a third-party fill-finish CMC issue (Catalent Indiana), resubmission adds a second US fill-finish site \u2014 a genuine forward, unfired, dated binary_pdufa ~3 months out from 2026-07-02.",
-   "analysis": "Confirmed via FMP quote and news: FDA accepted the resubmitted apitegromab SMA BLA (May 2026) with a Sept 30, 2026 PDUFA date under priority review, holding Fast Track/Orphan/Rare Pediatric designations. The 2025 CRL was tied solely to a third-party fill-finish facility (not efficacy/safety), and the resubmission adds a second fill-finish site, materially de-risking the CMC issue that caused the delay. This is a genuine dated, forward, unfired binary_pdufa event (G3: specific pending regulatory decision on a would-be first anti-myostatin approval in SMA); the caveat is the stock has already re-rated toward its highs, so approval itself is partly priced and the incremental edge lies in label/launch outcome."
+   "lane": "dated_binary",
+   "catalyst": "FDA decision on the resubmitted apitegromab BLA for SMA at a hard September 30, 2026 PDUFA date.",
+   "dated_milestone": "Sept 30, 2026 FDA PDUFA action date (BLA resubmitted March 2026, accepted with Priority Review); interim gate = FDA classification of the Catalent Indiana fill-finish reinspection, due within 90 days of the reinspection; CHMP opinion \"mid-2026\" and now explicitly tied to that same facility classification (next hard date before PDUFA: Q2 earnings Aug 6, 2026).",
+   "instrument": "Equity, or Oct 2026 expiry calls (the only listed cycle that spans the Sept 30 PDUFA); size as a binary, not a position.",
+   "bloom_gates": "G1 + G2. G1: named counterparties \u2014 FDA (statutory action date), Catalent Indiana LLC (Novo Nordisk) plus an unnamed second US fill-finish site, EMA/CHMP. G2: concrete commitment \u2014 BLA formally accepted for review with a set action date, not a company aspiration. G3 NOT met: no specific currently-unpriced figure verified (no peak-sales or NPV number I could confirm against the ~$5.5B market cap at $54.70).",
+   "edge": "M \u2014 the date is hard and the failure mode is narrow (2025 CRL was fill-finish CMC, not efficacy/safety; the resubmission is limited in scope, mostly a standard safety update, and adds a second US fill-finish site as redundancy). But this is a widely-followed SMA name that has already round-tripped its CRL crash: at ~$54.70 (July 13, 2026 inducement-grant strike) a large share of approval is arguably priced, which caps the upside asymmetry. Not L, because the residual manufacturing leg is genuinely unresolved and mis-framed by the consensus \"de-risked\" narrative.",
+   "primary_source": "Scholar Rock 8-K/press release, \"FDA accepts resubmitted BLA for apitegromab, PDUFA Sept 30, 2026\" (sec.gov EDGAR, filed ~March 2026) and Q1 2026 results release, May 7, 2026 (investors.scholarrock.com); plus StockTitan SRRK newsfeed item dated July 20, 2026 on the CHMP/Catalent Indiana classification linkage. Reference price $54.70 = SRRK close July 13, 2026 (per July 17, 2026 inducement-grant 8-K strike price).",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Core catalyst survives on primary source: Scholar Rock's Q1 2026 release (May 7, 2026) and the 8-K confirm the apitegromab BLA was resubmitted March 2026, accepted, with a hard PDUFA of September 30, 2026, and that the Sept-2025 CRL was third-party fill-finish/CMC, not clinical \u2014 forward, dated, single-name, ~72 days out, not fired. Two corrections that cut against the note. (1) The stated \"July 20, 2026 company update tying the EMA review to the same Catalent Indiana facility\" is UNVERIFIABLE \u2014 no such release exists in any source found; the only sourced EMA guidance remains the May 7 line \"CHMP opinion anticipated near mid-2026,\" with EU launch planned 2H26 starting Germany, and nothing in the primary filing states the EMA review is contingent on the same fill-finish site. Treat that leg as unsupported, not as a verified correlation. (2) The note's \"chief risk = the identical CRL facility is still in the accepted file\" is materially incomplete: the accepted BLA names TWO fill-finish facilities \u2014 Catalent Indiana LLC (Novo Nordisk) AND a second undisclosed U.S. site \u2014 i.e. dual-sourced, which de-risks rather than concentrates the manufacturing gate. FDA has already COMPLETED the Catalent reinspection with classification due within 90 days (so ~Aug 2026, pre-PDUFA) \u2014 the monitorable tell the note names is correct. The real weakness is pricing, which the note flagged as unverified: SRRK trades ~$58 for a ~$6.2-7.0B market cap (~127M shares) against $479.9M cash and zero revenue, on a CMC-only resubmission with a high base rate \u2014 so approval is largely in the tape. Asymmetry is poor: modest upside on approval, severe downside on a second CRL. Tradeable (liquid US listed equity, listed options, Oct 2026 cycle spans the date), no hidden disqualifier, but this is a priced binary, not an edge.",
+   "analysis": "The catalyst is real, dated, forward and single-name \u2014 apitegromab's BLA was resubmitted in March 2026 and accepted with a September 30, 2026 PDUFA, and the CRL cause was third-party fill-finish rather than clinical data, so the base rate on a CMC-only resubmission is well above a typical efficacy binary. The material correction to the triage note is on the second leg: the EMA/CHMP opinion is NOT an independent dated catalyst \u2014 a July 20, 2026 company update ties the EMA review to the same Catalent Indiana facility pending FDA post-inspection classification, so both legs are correlated on one manufacturing gate rather than diversifying, and the \"mid-2026\" CHMP timing has effectively slipped without a new firm date. Chief risk is that the identical facility that generated the September 2025 CRL is still in the accepted file; the interim tell is the FDA's classification of the completed reinspection (due within 90 days of it), which should land before the PDUFA and is the actual thing to monitor. Gap in verification: I could not confirm current shares outstanding/market cap or a sell-side peak-sales figure within the lookup budget, so the G3 unpriced-figure test is unverified and the score reflects that."
   },
   {
-   "symbol": "SSTK",
+   "symbol": "SQM",
    "score": 2,
    "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "The Getty Images / Shutterstock merger-of-equals is being terminated \u2014 Getty's board resolved on 2026-06-30 to end the agreement after 2026-07-06 rather than accept the UK CMA's required editorial-business divestiture.",
-   "dated_milestone": "Merger agreement termination effective after 2026-07-06 (Getty board resolution 2026-06-30); CMA Phase 2 final report already issued 2026-05-15 requiring divestiture.",
-   "instrument": "equity (SSTK common)",
-   "bloom_gates": "none \u2014 the merger arb catalyst has fired adversely (deal breaking), so no forward, unpriced G1/G2/G3 remains",
-   "edge": "L \u2014 the deal-break is public (Getty 8-K/425 filed ~2026-06-30) and now priced; the arb spread the flag assumed no longer exists",
-   "primary_source": "Getty Images Form 8-K / Form 425 \"Board to Terminate Shutterstock Merger\" (board resolution 2026-06-30, termination after 2026-07-06); CMA Phase 2 final report 2026-05-15",
+   "lane": "structural_jv",
+   "catalyst": "The Codelco/SQM NovaAndino Litio JV \u2014 the thesis's structural event \u2014 closed on 2025-12-27, and the follow-on Salar Futuro EIA was already filed (~June 2026), so both legs of the triage thesis have fired.",
+   "dated_milestone": "No qualifying forward milestone. Both prior milestones fired: JV completion 2025-12-27; Salar Futuro EIA submission ~2026-06. Next residual event is SEA approval of the Salar Futuro EIA, expected ~2028 with no published decision date (18-24 month review), plus a separate post-2030 production permit \u2014 neither is dated or near.",
+   "instrument": "equity (no actionable instrument recommended \u2014 no live catalyst)",
+   "bloom_gates": "G1 satisfied on paper (named counterparty Codelco / NovaAndino Litio SpA), but G2 and G3 both FAIL: the concrete commitment (JV formation, 2060 tenure) is already executed and re-rated, and there is no specific currently-unpriced figure \u2014 the $3B Salar Futuro capex and 470kt LCE ambition are public, permit-capped, and years from resolution.",
+   "edge": "L \u2014 the JV close was a widely covered, fully public event (Reuters/Mining.com 2025-12-27, Chilean regulatory approval, SQM FY2025 20-F disclosure); nothing here is undiscovered, and the only remaining variance driver is the lithium price, which is a commodity macro bet rather than an idiosyncratic catalyst.",
+   "primary_source": "Mining.com / Reuters, \"Codelco, SQM seal lithium venture in Chile's Atacama desert,\" 2025-12-27 (JV completion), corroborated by SQM Form 20-F FY2025 (filed 2026) and Benchmark Minerals reporting on the Salar Futuro EIA submission and 470kt LCE regulatory ceiling (2026).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage flag was stale: it assumed a ~Apr 2026 CMA decision gating a near-term close, but the CMA issued its Phase 2 final report on 2026-05-15 conditioning clearance on a sale of the editorial business (Rex Features/Backgrid/Splash News). Getty's board declined the divestiture and resolved on 2026-06-30 to terminate the merger agreement after 2026-07-06, also triggering redemption of its 10.500% notes. The merger-arb catalyst has fired to the downside \u2014 the deal is dead, there is no forward unpriced event, so this is NONE."
+   "analysis": "Verification kills the thesis on timing rather than substance: the NovaAndino Litio JV was completed 2025-12-27 by merging Codelco's Minera Tarar into SQM Salar, securing Atacama tenure to 2060, and the Salar Futuro EIA that the triage note framed as the forward 2026 milestone has already been submitted. What remains is a multi-year regulatory review with approval realistically ~2028 and no published decision date, plus a separate post-2030 production permit \u2014 too distant, too undated, and too likely to be capped below the 470kt LCE ambition to underwrite as a catalyst. The triage note's own concession that \"lithium price does most of the work\" is the honest read: this is a commodity beta position dressed as an event, which fails the not-a-macro-bet gate outright. Gap to note: I did not pull SQM's current price or the FY2025 20-F line items, since a fired catalyst fails the gate regardless of valuation."
   },
   {
    "symbol": "SVRA",
-   "score": 6,
+   "score": 6.5,
    "tier": "ACTIVE",
-   "lane": "binary-PDUFA",
-   "catalyst": "FDA PDUFA decision on molgramostim (MOLBREEVI) BLA, which would be the first-ever FDA-approved therapy for autoimmune pulmonary alveolar proteinosis (orphan indication).",
-   "dated_milestone": "PDUFA target action date Nov 22, 2026 (extended from Aug 22, 2026 for a major amendment)",
-   "instrument": "SVRA common equity (single-asset biotech); options viable for defined-risk binary expression around Nov 2026",
-   "bloom_gates": "G1 (named counterparty: FDA) + G2 (concrete dated regulatory commitment: PDUFA action date Nov 22, 2026 under Priority Review)",
-   "edge": "M \u2014 genuinely unfired, dated, first-in-class orphan binary with real asymmetry (approval opens a monopoly market, no efficacy/safety/CMC concerns flagged on the extension), but the stock has already re-rated (~$6.22, near 52-wk high of $7.01, 3x off the $2.10 low) and single-asset PDUFAs are heavily covered by biotech specialists, so the binary itself is well-known; residual edge is in launch-uptake/first-mover monopoly not yet fully in the tape.",
-   "primary_source": "Savara press release / StockTitan, \"FDA extends molgramostim review to Nov. 22\" (announced Apr 15, 2026); confirmed by BioSpace BLA-filing PR (Feb 2026)",
+   "lane": "dated-binary",
+   "catalyst": "FDA action on Savara's MOLBREEVI (molgramostim inhalation solution) BLA for autoimmune pulmonary alveolar proteinosis at the extended PDUFA date of 2026-11-22, a single-asset all-or-nothing approval event.",
+   "dated_milestone": "PDUFA 2026-11-22 (extended from 2026-08-22 by a 3-month major-amendment clock reset announced 2026-04-15); interim marker Q2 earnings 2026-08-12",
+   "instrument": "Equity (SVRA common); the binary is cleanly expressible in Dec-2026/Jan-2027 calls or a call spread spanning the 11-22 date",
+   "bloom_gates": "G1 (named counterparty: FDA CBER, BLA under Priority Review with Breakthrough/Fast Track/Orphan designations); G2 (concrete commitment: statutory PDUFA goal date 2026-11-22, no safety/efficacy/CMC deficiencies cited in the extension); G3 (specific currently-unpriced figure: up to $150M non-dilutive capital unlocked on approval, plus a stated ~5,500 US aPAP patient opportunity at $400-500k/yr list)",
+   "edge": "M - the date and the binary are fully public and sell-side is already consensus-long (8 Buy, ~$10.9 avg PT, stock +250% on IMPALA-2), so the direction is not contrarian; the residual edge is that the extension was procedural (major amendment from an information-request response, no cited deficiency) yet the tape still discounts a first-in-disease approval with no competing therapy, and the approval-contingent $150M non-dilutive facility is a financing overhang removal that is not in most models.",
+   "primary_source": "Savara IR press release \"FDA Has Extended the Review Period for the Molgramostim BLA in Autoimmune PAP,\" 2026-04-15 (investors.savarapharma.com; corroborated by StockTitan and Drugs.com same date); price/cap from stockanalysis.com as of 2026-07-17 close",
    "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Primary sources (Savara IR + StockTitan, Apr 2026) confirm the binary: FDA extended the molgramostim (Molbreevi) aPAP BLA PDUFA to Nov 22, 2026 (three-month extension from Aug 22) after ruling info-request responses a major amendment, explicitly citing no safety/efficacy/manufacturing concerns; drug holds Breakthrough, Fast Track, Priority Review, Orphan Drug; would be first FDA-approved autoimmune-PAP therapy. Forward/unfired, dated, non-macro, single-asset \u2014 passes gate. CORRECTION: line says SVRA has 'already run to near its 52-week high'; it trades ~$6.16 vs 52-wk high $7.01 (~12% below, not near), and the PDUFA extension is a mild delay/negative, so the 'fully discounted monopoly' framing is overstated. Score held at 6.",
-   "analysis": "Confirmed clean dated binary: FDA extended the molgramostim BLA review to a Nov 22, 2026 PDUFA date (from Aug 22) after ruling Savara's info-request responses a major amendment, explicitly citing no safety, efficacy, or manufacturing concerns; drug carries Breakthrough Therapy, Fast Track, Priority Review, and Orphan Drug designations and would be the first approved autoimmune-PAP therapy. Passes the gate on real+specific (named FDA counterparty, concrete PDUFA commitment), dated, forward/unfired, and non-macro. Score held at 6 (not higher) because the setup is not hidden \u2014 SVRA has already run to near its 52-week high on this thesis and the event is broadly tracked, so risk/reward skews to how much of the monopoly launch value is discounted vs. binary CRL downside."
+   "kill_fact": "The \"$150M approval-contingent non-dilutive facility\" \u2014 the line's self-described least-modelled leg \u2014 does not exist as stated. The Q1 2026 10-Q shows two separate instruments: a $105M Hercules Capital term loan with only ~$30.1M drawn (tranches are milestone/covenant-gated debt, not an approval-triggered windfall) and a $75M RTW royalty financing that triggers only on FDA approval of MOLBREEVI by 2027-03-31. \"$150M\" appears to be a conflation of undrawn Hercules capacity with the RTW royalty deal; the genuinely approval-contingent amount is $75M, half the claimed figure, and it is royalty-sold (economically dilutive to future product revenue), so calling it \"non-dilutive\" overstates it. Second correction: market cap is ~$1.13\u20131.21B, not $1.40B (204,927,212 shares as of 2026-05-12 at $5.52\u20135.90); the line's cap is overstated ~20%, which flatters the risk/reward math. CONFIRMED: the 2026-04-15 disclosure is real and primary-sourced \u2014 FDA deemed responses to information requests a major amendment, three-month extension of the Priority Review PDUFA from 2026-08-22 to 2026-11-22, no safety, efficacy, or manufacturing concerns cited; a Day 74 letter confirmed no AdComm is planned (removes a public-signal read-through pre-decision). Liquidity $202.8M ($38.8M cash + $164.0M short-term investments) matches the claimed ~$203M. Event is unfired, dated, forward (~4 months), single-asset, company-specific. Runway claim is the weakest surviving leg: Q1 operating burn was $33.0M against a widening net loss ($37.3M vs $26.6M YoY), giving ~6 quarters to roughly mid-2027 \u2014 \"into H2 2027\" only holds if burn does not accelerate through a commercial launch build-out, so a CRL likely forces financing into a broken tape. No post-July company update on inspection status found, so pre-approval manufacturing-inspection risk remains unverified in either direction \u2014 the standard hidden disqualifier for a first-approval inhaled biologic with a novel device/formulation. Tradeability is fine: US-listed, liquid, Dec-2026/Jan-2027 expiries span the date.",
+   "analysis": "Verified: on 2026-04-15 Savara disclosed the FDA deemed its responses to information requests a major amendment, resetting the MOLBREEVI PDUFA to 2026-11-22 with no safety, efficacy, or manufacturing concerns cited - a real, dated, forward, company-specific binary, not a macro bet. The event is unfired and roughly four months out; the stock at $5.52 ($1.40B cap, $203M liquidity, runway into H2 2027) is not priced for failure but also not for a clean launch, and the $150M approval-contingent non-dilutive facility is the least-modelled leg. Gap in verification: I did not independently confirm the current-quarter cash balance or the $150M facility terms from the 10-Q itself (both come from secondary summaries of Q1 disclosure), and no post-July company update on inspection status was found."
   },
   {
    "symbol": "SWKS",
-   "score": 4,
+   "score": 5,
    "tier": "WATCH",
    "lane": "merger-arb",
-   "catalyst": "SWKS is acquiring Qorvo (~$22B stock+cash, announced Oct-27-2025) and must clear an FTC Second Request; regulatory close is the dated forward event.",
-   "dated_milestone": "Substantial compliance with FTC Second Request restarts a 30-day HSR clock; company-guided close early calendar 2027 (next hard date: FTC compliance certification, expected 2H-2026)",
-   "instrument": "equity (common)",
-   "bloom_gates": "G1 (named counterparty Qorvo) + G2 (signed, shareholder-approved merger agreement, a concrete binding commitment)",
-   "edge": "L \u2014 SWKS is the ACQUIRER, not the target; merger-arb spread/upside sits at QRVO, not SWKS. Acquirers seldom re-rate on close, and the deal is stock+cash with antitrust overhang (chip-consolidation Second Request) that is a downside skew for SWKS, not an unpriced upside. No specific unpriced figure (fails G3).",
-   "primary_source": "Qorvo/Skyworks Form 8-K, FTC Second Request received Feb-5-2026 (filed Feb-6-2026); merger agreement announced Oct-27-2025; shareholder votes Feb-11-2026",
+   "catalyst": "Regulatory clearance of the signed ~$22B Skyworks/Qorvo combination \u2014 FTC Second Request (issued 2026-02-05) plus China SAMR Phase II \u2014 with management now hinting at a late-2026 close versus formal early-2027 guidance.",
+   "dated_milestone": "2026-07-28 (SWKS FQ3 FY26 earnings call, 4:30pm EDT, company-confirmed 2026-07-15) is the next scheduled regulatory/timing update; contractual Outside Date 2027-04-27, extendable to 2027-07-27 and 2027-10-27.",
+   "instrument": "SWKS common equity (acquirer side only \u2014 the arb spread itself is expressed long QRVO, not SWKS)",
+   "bloom_gates": "G1 PASS (named counterparty: Qorvo, executed merger agreement, both shareholder bases approved 2026-02-11). G2 PASS (concrete contractual commitment: $298.7M reciprocal break fee plus an incremental $100M Skyworks regulatory-failure fee, defined Outside Date). G3 FAIL (the only headline figure, \"$500M or more\" of synergies, has been public since announcement and is in consensus \u2014 no specific currently-unpriced number identified).",
+   "edge": "L-M \u2014 the deal, the Second Request, and the SAMR Phase II entry are all widely covered and in the tape; the only genuine variance is timing (late-2026 pull-forward vs early-2027 guide), and on the acquirer side that timing delta is worth far less than it is to the target.",
+   "primary_source": "Qorvo/Skyworks Form 425 filed 2026-05-05 (SAMR Phase II confirmed, \"increasingly hopeful\" on a late-2026 close, $500M+ synergies reaffirmed); Qorvo 8-K, FTC Second Request received 2026-02-05; Skyworks press release 2026-07-15 setting the 2026-07-28 FQ3 call.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated and forward: a live, shareholder-approved (Feb-11-2026) ~$22B acquisition of Qorvo pending FTC Second Request compliance, company-guided to close early CY2027. However, SWKS is the acquirer \u2014 the arb value and re-rate optionality live at the target (QRVO), while for SWKS the antitrust overhang is asymmetrically negative and any accretion is already broadly modeled. Fails Bloom G3 (no specific currently-unpriced figure) and the merger-arb edge does not accrue to owning the acquirer, so this is a WATCH, not an actionable ACTIVE long."
+   "analysis": "The underlying event is real, contracted, dated, and genuinely un-fired \u2014 a $22B combination with both shareholder votes already carried (2026-02-11), an FTC Second Request outstanding since 2026-02-05, and China SAMR now in Phase II, with a hard Outside Date of 2027-04-27. It fails to earn ACTIVE for SWKS specifically because the tradeable spread sits on the target: as acquirer, Skyworks bears the regulatory-break risk (an extra $100M fee if approvals fail) and the integration risk without capturing the deal-completion discount, and the one quantified figure available, $500M+ of synergies, has been disclosed and modelled since announcement, so Bloom G3 is not met. The honest read is a timing-variance watch item rather than a positioned catalyst \u2014 the 2026-07-28 call is the near dated checkpoint where a formal pull-forward from early-2027 to late-2026 could be confirmed; note the gap that no public SAMR Phase II statutory deadline or FTC substantial-compliance date has been disclosed, so the intermediate calendar is unobservable."
   },
   {
    "symbol": "SYNA",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "catalyst": "onsemi (ON) is acquiring Synaptics in a signed all-stock deal at a fixed 1.350 ON-share exchange ratio (~$7B), with a live deal-break/spread-arb setup pending shareholder vote and antitrust/FDI reviews.",
-   "dated_milestone": "Deal signed 2026-06-25; targeted close mid-2027; next gates = SYNA proxy/shareholder vote (S-4 registration effectiveness, expected H2 2026) and HSR/foreign antitrust clearances.",
-   "instrument": "Long SYNA vs short 1.35x ON (stock-for-stock spread arb); reg-term fee $320M (ON) / break fee $235M (SYNA) as deal-break protection.",
-   "bloom_gates": "G1 (named counterparty onsemi), G2 (concrete signed merger agreement, 1.350 fixed exchange ratio), G3 (specific unpriced gross spread ~1.8%)",
-   "edge": "M",
-   "primary_source": "onsemi press release \"onsemi to Acquire Synaptics\" + SYNA/ON Form 8-K/425 filings, dated 2026-06-25 (StockTitan/onsemi.com).",
-   "verdict": "CONFIRMED",
-   "kill_fact": "SEC 8-K/425 confirm: onsemi signed a definitive all-stock deal 2026-06-25 to acquire Synaptics at a fixed 1.350 ON exchange ratio (~$7B EV, ~19% premium, ~12% pro forma), targeted close mid-2027 (outside date 2027-06-25) pending SYNA shareholder vote + S-4 + HSR/foreign antitrust/FDI; break fees $235M (SYNA) / $320M reg-term (ON) match exactly. Live spread: SYNA $126.50 vs 1.350x ON $95.09 = $128.37 implied (~1.5% gross), forward/not-fired.",
-   "analysis": "CONFIRMED live merger-arb: onsemi signed a definitive all-stock agreement (2026-06-25) to buy Synaptics at a fixed 1.350 ON exchange ratio (~$7B, ~19% premium, SYNA holders ~12% pro forma), targeted close mid-2027 subject to SYNA shareholder vote, S-4 effectiveness, and HSR/foreign antitrust/FDI clearances, with $235M/$320M reciprocal break fees. Current gross spread is ~1.8% ($126.05 SYNA vs $128.29 implied at ON $95.03), a real, currently-priced-with-risk figure that widens on a break and converges on close \u2014 passes G1/G2/G3, dated, forward, not fired. Edge is only Medium: fixed-ratio (not cash) means the arb requires shorting ON and carries mark-to-market on the acquirer, the ~11-month runway dilutes annualized return, and multi-jurisdiction semiconductor antitrust/foreign-investment review is a genuine (not macro) break risk."
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Definitive all-stock merger with onsemi at a fixed 1.350 ON-per-SYNA exchange ratio (signed 25-Jun-2026), with the S-4/proxy, Synaptics stockholder vote, and HSR/foreign antitrust clearances all still ahead of a stated mid-2027 close.",
+   "dated_milestone": "Next hard dates: Synaptics FY2026 results 06-Aug-2026; then onsemi Form S-4 filing/effectiveness and the Synaptics special meeting expected H2 2026; outside close mid-2027.",
+   "instrument": "Common equity, long SYNA hedged short 1.350 ON per share (fixed-ratio stock-for-stock arb); unhedged long SYNA is an ON beta bet, not an arb.",
+   "bloom_gates": "G1 (named counterparty: ON Semiconductor) + G2 (concrete commitment: executed Agreement and Plan of Reorganization, fixed 1.350 ratio, ~12% pro forma ownership, customary conditions). G3 fails \u2014 the 1.350 ratio and mid-2027 timeline are fully public and priced; there is no currently-unpriced specific figure.",
+   "edge": "L \u2014 the deal is universally known and the residual spread is thin: 1.350 x ON $87.37 = $117.95 deal value vs SYNA $114.05 (17-Jul-2026 close) = 3.4% gross over ~11 months to a mid-2027 close, roughly 3.7% annualized before borrow on the ON short, against real semiconductor cross-border (SAMR/EU) approval tail risk and a large ON-side break-down. No informational or structural edge; this is a crowded, low-return spread.",
+   "primary_source": "Synaptics/onsemi Form 8-K and Form 425 filings, SEC EDGAR CIK 0000817720, filed 25-Jun-2026 (agreement announced 25-Jun-2026); prices from stockanalysis.com, 17-Jul-2026 close.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, specific and forward: a signed definitive all-stock merger with a named counterparty at a fixed 1.350 exchange ratio, with the stockholder vote, S-4 effectiveness and antitrust clearances genuinely unfired and a stated mid-2027 close. But the announcement itself has already fired and fully re-rated the stock, so what remains is only the closing spread, which at 1.350 x $87.37 = $117.95 against SYNA's $114.05 is 3.4% gross over ~11 months \u2014 roughly 3.7% annualized on a hedged book, thin compensation for a cross-border semiconductor deal facing Chinese and EU review and a ~15% break-down to the unaffected level. It qualifies on G1 and G2 and is not a macro bet, but the asymmetry (roughly 0.23 reward-to-risk) does not clear an ACTIVE bar; it belongs on the watch list, to be re-rated if the spread widens materially on a regulatory scare or if the S-4 discloses a pulled-forward vote date."
   },
   {
    "symbol": "SYRE",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "binary-catalyst",
-   "catalyst": "SPY003 (anti-IL-23) SKYLINE Phase 2 UC induction topline in Q3 2026, plus SKYWAY TL1A basket (RA/PsA/axSpA) readouts in Q4 2026 \u2014 dated clinical binaries with no arb structure.",
-   "dated_milestone": "SPY003 SKYLINE UC topline \u2014 Q3 2026; SKYWAY RA/PsA/axSpA \u2014 Q4 2026",
-   "instrument": "equity (long into data; single-name biotech, no arb leg)",
-   "bloom_gates": "G3 (weak) \u2014 SPY003 offers a specific dated efficacy readout, but the figure is largely de-risked by two prior positive same-platform readouts; PsA/axSpA is more genuinely unpriced. No G1 (no counterparty) or G2 (no contractual commitment).",
-   "edge": "L",
-   "primary_source": "Spyre 8-K/PR, SPY002 SKYLINE Part A topline (June 15, 2026, sec.gov exhibit99120260615skyline) and Q1-2026 corporate update (May 5, 2026) confirming SPY003 Q3-2026 / SKYWAY Q4-2026 timing",
+   "lane": "dated_binary",
+   "catalyst": "Spyre's Phase 2 SKYWAY basket trial delivers topline SPY072 (anti-TL1A) data in rheumatoid arthritis in Q3-2026, with PsA and axSpA sub-study toplines in Q4-2026, plus SPY003 UC induction data in Q3-2026 \u2014 all still unfired binaries.",
+   "dated_milestone": "SKYWAY RA sub-study topline readout guided to Q3 2026 (next date: by 2026-09-30, accelerated from 2H26 per the 2026-03-16 release confirming completion of RA enrollment); SKYWAY PsA and axSpA toplines Q4 2026; SPY003 SKYLINE Part A induction Q3 2026.",
+   "instrument": "equity (long common); dated binary suits defined-risk long calls/call spreads spanning the Q3 print into the Q4 PsA/axSpA readouts",
+   "bloom_gates": "G2 (concrete, company-issued, dated commitment: enrollment complete + topline guided to Q3-26 for RA and Q4-26 for PsA/axSpA). G1 not met (no named external counterparty). G3 not met (no specific currently-unpriced figure disclosed \u2014 efficacy magnitude is the unknown, not a quantified item).",
+   "edge": "L-to-M \u2014 the event is verified real, dated and unfired, but it is fully telegraphed: the company itself publicly accelerated the RA readout on 2026-03-16 and the TL1A class is a crowded, heavily-covered sell-side battleground, so timing carries no informational edge; the only asymmetry is outcome dispersion, not calendar knowledge.",
+   "primary_source": "Spyre Therapeutics press release, \"Spyre Announces Acceleration of Expected Topline Readout of SKYWAY Rheumatoid Arthritis Sub-study to Q3 2026,\" GlobeNewswire, 2026-03-16; corroborated by Spyre press release 2026-04-13 (SPY001 SKYLINE Part A induction results, ir.spyre.com), which restates the 2026 readout calendar.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "SYRE is Spyre Therapeutics, a $5.3B IBD biotech running the Phase 2 SKYLINE (UC) and SKYWAY (rheumatic) platform trials. Of the six flagged 2026 POC readouts, SPY001 (Apr 2026) and SPY002 (Jun 15 2026, RHI -10.7 p<0.0001) have already fired positive and driven a ~6x YTD re-rate, leaving only SPY003 (Q3 2026) and the SKYWAY PsA/axSpA/RA basket (Q4 2026) forward. These are genuine dated, forward, macro-independent clinical binaries, but they are own-the-stock event bets with no counterparty, commitment, or arb structure and are largely de-risked by the two prior same-platform wins \u2014 real catalyst, thin edge, so WATCH not ACTIVE."
+   "analysis": "Verified: the triage claim is accurate and current. Spyre announced on 2026-03-16 that RA sub-study enrollment in the Phase 2 SKYWAY basket trial of SPY072 (extended-half-life anti-TL1A) was complete and pulled topline forward to Q3-2026, with PsA and axSpA toplines guided to Q4-2026; the 2026-04-13 SPY001 SKYLINE UC induction readout (RHI -9.2, p<0.0001, 40% clinical remission) already fired and re-rated the stock, but no SKYWAY data has been reported as of 2026-07-20, so the RA/PsA/axSpA binaries remain forward. Held at WATCH rather than ACTIVE because the catalyst passes only Bloom G2 \u2014 it is a company-guided calendar event with no named counterparty and no specific unpriced figure \u2014 and because the acceleration was self-announced four months ago, meaning positioning is already crowded; the residual return comes from efficacy dispersion in a contested TL1A field, which is a coin-flip binary rather than a mispricing. Gap: no independent valuation anchor or current market-cap/implied-move check was performed within the lookup budget, so the reward asymmetry is unquantified."
+  },
+  {
+   "symbol": "TBRG",
+   "score": 0,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "The $26.25/share all-cash acquisition of TruBridge by Inventurus Knowledge Solutions has already closed \u2014 there is no forward leg.",
+   "dated_milestone": "Merger effective 9-Jul-2026 (shares cancelled, converted to $26.25 cash); no future date remains",
+   "instrument": "none \u2014 security no longer trades (delisted from Nasdaq post-close)",
+   "bloom_gates": "none \u2014 G1 counterparty (IKS) and G3 figure ($26.25) exist but are fully consummated and priced, so no gate passes on a forward basis",
+   "edge": "L \u2014 no position is investable; the security was cancelled for cash 11 days before this review",
+   "primary_source": "TruBridge Form 4 (director Andris Upitis), SEC-accepted 10-Jul-2026, describing merger effective 9-Jul-2026 at $26.25/share cash; corroborated by InsideArbitrage deal writeup (23-Apr-2026 agreement, $557.27M)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage note is stale: it treats \"closing conditions remain the forward leg\" as open, but the merger became effective on 9-Jul-2026, two days after the 7-Jul shareholder vote, and every TBRG share was cancelled and converted into the right to receive $26.25 in cash. Form 4s filed 10-Jul-2026 by TruBridge directors confirm zero shares owned post-effective-time and explicitly reference the cancellation at the effective time. There is nothing left to underwrite \u2014 no spread, no residual stub, no CVR disclosed \u2014 so this is a fired, fully-realized event, not a catalyst."
   }
  ]
 }

@@ -2,386 +2,100 @@
  "chunk": "8 (FRHC-GTY)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 9,
-  "watch": 20,
-  "none": 121
+  "active": 2,
+  "watch": 7,
+  "none": 141
  },
  "survivors_flagged": [
-  {
-   "symbol": "FTI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin-off",
-   "one_line": "Confirm live: resumed separation into two independent public companies is a real forward structural catalyst, though timeline still soft."
-  },
   {
    "symbol": "GBTG",
    "score": 8,
    "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Definitive take-private by Long Lake at $9.50/sh all-cash (~$6.3B), signed May 2026 \u2014 live merger-arb pending close."
-  },
-  {
-   "symbol": "GDEN",
-   "score": 8,
-   "tier": "ACTIVE",
    "lane": "merger-arb",
-   "one_line": "Live take-private/sale-leaseback at $30 (0.902 VICI + $2.75 cash), shareholder-approved Apr-2026, closing Q2 2026 pending gaming-regulatory approvals \u2014 clean merger-arb."
+   "one_line": "Signed all-cash definitive agreement to be acquired by Long Lake at $9.50/share (~$6.3bn, 60% premium, announced 1-May-2026), proxy filed and shareholder vote/closing pending - live dated arb with antitrust and controlled-shareholder wrinkles."
   },
   {
    "symbol": "GDOT",
    "score": 8,
    "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live break-up: CommerceOne acquires the bank + Smith Ventures buys fintech ($690M); >99% shareholder-approved Jun-2026, Q3-2026 close pending Fed/Alabama/Utah, implied $14-19 vs ~$7 review start."
+   "lane": "merger-arb / complicated structure",
+   "one_line": "Shareholder-approved CommerceOne merger + Smith Ventures fintech sale, targeted close Q3 2026 pending Fed/Alabama/Utah bank-regulator approvals - a genuine multi-part, regulator-gated arb spread."
   },
   {
-   "symbol": "GDS",
+   "symbol": "GFR",
    "score": 6,
    "tier": "WATCH",
-   "lane": "spin-off / SOTP",
-   "one_line": "DayOne intl data-center spinoff dual-listing IPO expected late-2026 (~$20B val, GDS ~24% stake ~$5B) crystallizes suppressed SOTP \u2014 dated but IPO timing/valuation not yet hard."
-  },
-  {
-   "symbol": "GERN",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated binary (biotech)",
-   "one_line": "Rytelo commercial; forward binary = imetelstat IMpactMF Phase 3 myelofibrosis readout + HR-MDS label expansion \u2014 real dated clinical asymmetry."
-  },
-  {
-   "symbol": "GFF",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "activist / structural",
-   "one_line": "Feb-2026 strategic actions (AMES US/Canada JV with ONCAP done; exploring alternatives for AMES AU/UK; Hunter into HBP) toward pure-play building products, Voss-backed \u2014 partly in motion, remainder pending."
-  },
-  {
-   "symbol": "GFL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "capital-return / deleveraging",
-   "one_line": "Post-Environmental-Services-sale: $3.75B debt paydown to ~3.0x net leverage, $2.25B buyback (renewed NCIB + OSC secondary-offering relief), potential dividend restart \u2014 dated 2026 capital-return, not a hard binary."
-  },
-  {
-   "symbol": "GILD",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "one_line": "Dated PDUFA Aug-27-2026 for once-daily BIC/LEN HIV pill (priority review) plus H2-26 Trodelvy 1L-TNBC decision \u2014 two forward dated binaries."
-  },
-  {
-   "symbol": "GILT",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "ma",
-   "one_line": "Jun-2026 definitive deal to acquire Comtech's Satellite & Space segment ($157.5M, cash-funded) \u2014 dated pending close, transformative >$700M-rev combine."
-  },
-  {
-   "symbol": "GLSI",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "one_line": "FLAMINGO-01 Phase 3 HER2 breast-cancer vaccine (GP2) with pre-specified interim analysis pending \u2014 high-asymmetry binary microcap; open-label arm showed ~80% recurrence-reduction signal."
-  },
-  {
-   "symbol": "GMTL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "supply-shortage+timing-moat",
-   "one_line": "Pilot Mountain tungsten PFS (Jun 30) done, Plan-of-Operations filing targeted Aug 2026 + DPA/DoW backing; single dated milestone, but early-stage (2028 production) with no offtake yet."
-  },
-  {
-   "symbol": "GNK",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live hostile Diana Shipping tender ($24.80 cash / $27.34 implied) extended to Jul 10 2026; board rejected, only 24% tendered, rights-plan/merger-agreement conditions unresolved \u2014 genuine dated arb with contested outcome."
-  },
-  {
-   "symbol": "GPC",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "spin-off",
-   "one_line": "Announced Feb 2026 tax-free separation into Automotive (NAPA) and Industrial (Motion), targeted Q1 2027, no shareholder vote needed \u2014 a real forward, dated spin creating a SOTP/stub setup, though completion is ~2-3 quarters out."
-  },
-  {
-   "symbol": "GPCR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated-binary",
-   "one_line": "Structure Therapeutics has dated oral GLP-1 readouts (ACCESS OLE Q3, body-comp Q4 2026) plus amylin Phase 1 data \u2014 real dated binaries, but broad-market-priced obesity name; asymmetry less mispriced than classic special-sit."
+   "lane": "controlled-company / restructuring",
+   "one_line": "WEF owns ~72%, strategic review still formally open, and a July 2026 rights offering tied to the Connacher acquisition is a dated structural event - but the controller holds the asymmetry, minority terms are the risk."
   },
   {
    "symbol": "GRAL",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "one_line": "Galleri FDA review progressing off Jan-2026 submission (possible AdCom); Samsung $110M equity at $70.05 signals strategic interest \u2014 one real but soft-dated binary."
-  },
-  {
-   "symbol": "GTLS",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Baker Hughes cash merger at $210/sh; shareholders approved, EC Phase I underway, close expected July 2026 \u2014 live dated merger-arb."
+   "lane": "dated_binary",
+   "one_line": "FDA PMA for Galleri submitted Jan 2026, review progressing with possible AdCom and an H2-2026 decision window; real forward binary but the exact action date is not public and the stock has already re-rated off the June/July run."
   }
  ],
  "verified": [
   {
-   "symbol": "FTI",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "spin-off",
-   "catalyst": "No live forward separation exists; the only FTI \"split into two independent public companies\" is the 2019-announced, Feb-2021-completed Technip Energies spin-off, which fired over five years ago and is fully re-rated.",
-   "dated_milestone": "None forward. Historical: separation completed 2021-02-15 (record/distribution dates announced 2021-02-03). No 2026 separation on the calendar.",
-   "instrument": "equity (NYSE: FTI)",
-   "bloom_gates": "None satisfied for a FORWARD event. The named counterparty/commitment (Technip Energies spin-off, G1/G2-flavored) is fully realized and priced \u2014 it is a fired, not forward, catalyst.",
-   "edge": "L",
-   "primary_source": "TechnipFMC / Business Wire \u2014 \"TechnipFMC Completes Separation of Two Industry-Leading, Independent, Publicly Traded Companies,\" 2021-02-15 (resumption announced 2021-01-07). No 2026 separation announcement found as of 2026-07-02.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage flag (\"resumed separation into two independent public companies\") is a misidentification of TechnipFMC's Technip Energies spin-off, which was announced in 2019, \"resumed\" in Jan 2021, and completed Feb 15, 2021 \u2014 over five years ago and fully re-rated into today's tape. No FMP/news search surfaces any new 2026 separation or Subsea/Surface split announcement, so there is no dated, forward, unpriced structural catalyst. Fails the FORWARD and DATED gates; the event is fired."
-  },
-  {
    "symbol": "GBTG",
    "score": 4,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Signed all-cash take-private by Long Lake at $9.50/sh (~$6.3B), announced May 4 2026, awaiting shareholder vote and regulatory clearance to close H2 2026.",
-   "dated_milestone": "Definitive merger announced May 4, 2026; expected close H2 2026 (special meeting + regulatory clearance pending, no fixed date disclosed).",
-   "instrument": "equity (merger-arb long into cash close)",
-   "bloom_gates": "G1 (named counterparty Long Lake, backed by General Catalyst/Alpha Wave) + G2 (definitive $9.50/sh cash merger agreement, 69% of holders in voting agreements)",
-   "edge": "L -- the ~57% re-rate already fired on the May 4 announcement; remaining edge is only the residual arb spread: GBTG trades $9.40 vs $9.50 = ~1.1% gross into an H2 2026 close, thin and largely priced.",
-   "primary_source": "Businesswire 'Long Lake Agrees to Acquire American Express Global Business Travel for $6.3 Billion' (May 4, 2026); FMP quote $9.40 (2026-07-02).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Catalyst is real, specific and dated: a signed May 2026 definitive all-cash merger taking GBTG private at $9.50/sh (~$6.3B) via Long Lake, with 69% of shares (Amex, Expedia, QIA, BlackRock) in voting agreements and unanimous board approval -- clears Bloom G1 and G2. But it is FIRED, not forward: the ~57% re-rate happened on the May 4 announcement and GBTG now trades $9.40 vs the $9.50 offer, leaving only a ~1.1% gross arb spread into an H2 2026 close with no fixed date. That thin, largely-priced residual makes this a low-edge WATCH, not the ACTIVE unpriced catalyst the triage flagged."
-  },
-  {
-   "symbol": "GDEN",
-   "score": 2,
-   "tier": "NONE",
    "lane": "merger-arb",
-   "catalyst": "Golden Entertainment take-private/sale-leaseback ($2.75 cash + 0.902 VICI shares = $30/sh) \u2014 but the deal already closed and GDEN delisted on Apr-30-2026.",
-   "dated_milestone": "CLOSED Apr-30-2026 (shareholder vote Mar-31-2026); no forward date remaining.",
-   "instrument": "GDEN common (frozen/delisted)",
-   "bloom_gates": "none surviving \u2014 G1 (VICI/Sartini-Argento) and G2 ($30 consideration) were real but the event has fired; no unpriced forward figure remains (G3 fails).",
-   "edge": "L",
-   "primary_source": "Nasdaqtrader Equity Corporate Actions Alert ECA-2026-279 (merger closed) + Investing.com \"completes merger and delisting,\" both post Apr-30-2026; corroborated by Yogonet (Apr-2-2026 shareholder-approval).",
+   "catalyst": "Signed all-cash $9.50/share take-private by Long Lake (Gaia Purchaser, ~$6.3bn) with 69% of shares locked by voting agreements; stockholder vote set for 3-Aug-2026 and closing targeted 2H26.",
+   "dated_milestone": "Special meeting / stockholder vote 3-Aug-2026 (record date 6-Jul-2026); closing targeted 2H-2026 pending regulatory clearances",
+   "instrument": "common",
+   "bloom_gates": "G1 (named counterparty Long Lake/Gaia Purchaser, backed by General Catalyst, Alpha Wave, Koch Equity Development; debt committed by JPM/BofA/Citi/MUFG), G2 (definitive merger agreement + 69% voting agreements from Amex, Expedia, QIA, BlackRock). G3 FAILS - no unpriced figure remains.",
+   "edge": "L - the announcement premium already fired; at $9.41 vs $9.50 the gross spread is ~0.96%, and even a fast close leaves only mid-single-digit annualized, well inside deal-break risk.",
+   "primary_source": "GBTG DEFM14A, SEC EDGAR (sec.gov/Archives/edgar/data/1820872/000114036126027649/ny20072693x2_defm14a.htm), filed July 2026; deal announcement Businesswire/Amex GBT 4-May-2026; price FMP quote 20-Jul-2026",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The GDEN take-private (VICI real estate + Sartini/Argento OpCo buy, $2.75 cash + 0.902 VICI = $30/sh) was shareholder-approved Mar-31-2026, cleared gaming-regulatory review, and CLOSED before market open Apr-30-2026 with GDEN delisted (Nasdaqtrader ECA-2026-279; Investing.com; Yogonet). FMP quote shows GDEN frozen at $28.55 with 0% daily change, confirming the security is no longer live-trading on the arb. The triage claim of a still-pending Q2-2026 close is stale by ~2 months \u2014 the catalyst has fired, so it fails the FORWARD gate. Tier NONE."
+   "analysis": "The deal is real, dated and forward (vote 3-Aug-2026, close 2H26), but the catalyst has already fired: the stock re-rated on the 4-May-2026 announcement (+60% premium) and now trades at $9.41, a ~0.96% gross spread to the $9.50 cash price with a 52-week high of $9.54. Vote risk is near-nil with 69% of shares under voting agreements, so the only remaining variable is regulatory timing/closing, which the market is pricing at very high certainty. Payoff asymmetry is poor: ~9c of upside against a break-price floor near the pre-announcement ~$5.9, so this is a low-edge spread trade rather than an unpriced catalyst. Gap noted: I did not confirm current HSR/foreign antitrust clearance status within the lookup budget."
   },
   {
    "symbol": "GDOT",
    "score": 6,
    "tier": "ACTIVE",
    "lane": "merger-arb",
-   "catalyst": "Definitive bank/fintech break-up: CommerceOne acquires Green Dot Bank (new public bank holdco) and Smith Ventures buys the non-bank fintech for $690M, paying GDOT holders $8.11 cash + 0.2215 holdco shares (implied $14.23-$19.18/sh at 1.0x-1.8x TBV).",
-   "dated_milestone": "Q3-2026 expected close, pending Fed + Alabama State Banking Dept + Utah DFI approvals; shareholders approved &gt;99% on 2026-06-23.",
-   "instrument": "common (long GDOT vs. deal consideration; merger-arb)",
-   "bloom_gates": "G1 (CommerceOne + Smith Ventures named), G2 ($8.11+0.2215-share signed, >99% approved), G3 ($14.23-$19.18 TBV-multiple implied value)",
-   "edge": "M",
-   "primary_source": "Green Dot/CommerceOne BusinessWire release + SEC 8-K, 2026-06-23 (shareholder approval); Form 425/DEFM14A on consideration & $14.23-$19.18 implied value; FMP quote $13.50, 2026-07-02.",
-   "verdict": "CONFIRMED",
-   "kill_fact": "Deal fully verified vs primary sources: BusinessWire/SEC 8-K confirm CommerceOne acquires Green Dot Bank into a new public bank holdco + Smith Ventures buys non-bank fintech for $690M, with GDOT holders receiving $8.11 cash + 0.2215 holdco shares; >99% shareholder approval confirmed; close now Q3-2026 (revised from Q2), still gated on Fed/Alabama/Utah. FMP shows GDOT $13.50 (2026-07-02), so the arb has largely compressed to the low end of the $14.23-$19.18 implied range \u2014 the line's own price/edge correction is accurate. Real, forward, non-macro merger-arb but modest, multiple-and-timing-dependent residual edge.",
-   "analysis": "Every Bloom gate is met with named counterparties, a signed and >99%-shareholder-approved deal ($8.11 cash + 0.2215 new-holdco shares), and a specific implied-value figure ($14.23-$19.18/sh), with a dated Q3-2026 close still gated on Fed/Alabama/Utah approval \u2014 a legitimate, forward, non-macro merger-arb. However, the flagged \"$14-19 vs ~$7\" edge is stale: GDOT trades at $13.50 today (FMP 2026-07-02), so the market has already re-rated to roughly the low end and the arb spread is largely compressed; residual upside is the post-close bank-holdco TBV multiple plus regulatory-close timing, against ~$9-10 standalone downside on a Fed/state block. Real and dated but modest edge and multiple-dependent, so ACTIVE at a reduced score rather than an 8."
-  },
-  {
-   "symbol": "GDS",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "spin-off / SOTP",
-   "catalyst": "GDS's international DC spinoff DayOne is preparing a ~$5B SGX-Nasdaq dual-listing IPO at a ~$20B valuation expected late-2026, crystallizing GDS's ~19.9% stake (~$4B) that a China-DC multiple currently suppresses in the SOTP.",
-   "dated_milestone": "DayOne IPO expected late-2026 (targeting SGX-Nasdaq Global Listing Board); next hard gate = confidential/public F-1 or SGX prospectus filing (not yet filed as of Jul 2026).",
-   "instrument": "equity (GDS ADR)",
-   "bloom_gates": "G1 (named counterparty: DayOne + JPM/MS/BofA/Citi underwriters + SGX/Nasdaq GLB) + G3 (specific unpriced figure: ~$20B DayOne val \u00d7 GDS ~19.9% \u2248 ~$4B stake)",
-   "edge": "M \u2014 real named spinoff with a hard $20B/$4.5B Series C anchor and lead banks hired, but IPO is still \"considering/as soon as this year\" (no filed prospectus, date not fixed) and GDS's AI/DayOne narrative has already partially re-rated, capping the surprise.",
-   "primary_source": "Mingtiandi \"DayOne Data Centres Closes $4.5B Series C on Way to $20B IPO\" + The Edge Singapore SGX-Nasdaq dual-listing report (2026-05/06); GDS stake ~19.9% per Mingtiandi late-April 2026 filing note.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "DayOne (ex-GDS International) closed a $4.5B Series C in mid-2026 and has retained JPMorgan/Morgan Stanley/BofA/Citi for a ~$5B dual SGX-Nasdaq IPO at ~$20B expected late-2026, which would mark GDS's minority stake at a hard number the market currently discounts inside a China-DC multiple. The flag's ~24%/~$5B figure is now stale: GDS diluted to ~19.9% after a January 2026 repurchase, so the crystallized stake is closer to ~$4B. Genuinely dated and forward (not filed, not priced), but soft \u2014 no prospectus and partial pre-re-rating keep it WATCH rather than ACTIVE."
-  },
-  {
-   "symbol": "GERN",
-   "score": 7,
-   "tier": "WATCH",
-   "lane": "dated binary (biotech)",
-   "catalyst": "IMpactMF Phase 3 interim overall-survival analysis of imetelstat in JAKi relapsed/refractory myelofibrosis \u2014 a positive readout unlocks a second, larger label beyond the current LR-MDS Rytelo franchise.",
-   "dated_milestone": "Phase 3 IMpactMF interim OS analysis expected 2H 2026 (trial fully enrolled Sept 2025; interim triggers at ~35% of death events); final analysis 2H 2028.",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty: FDA/EMA label-expansion path in R/R MF, no approved therapy in JAKi-failure MF) + G3 (specific currently-unpriced figure: MF is a materially larger TAM than LR-MDS, event-triggered OS interim at ~35% events / 2H26, distinct from the $220-240M 2026 Rytelo LR-MDS revenue that is already guided/priced).",
-   "edge": "M \u2014 the 2H26 interim is genuinely dated, forward, and binary (OS primary endpoint, first-in-class telomerase inhibitor, no approved therapy in JAKi-refractory MF), but timing is event-driven (death-rate dependent, company flags it \"may vary\") so the exact date can slip, and it is a widely-followed catalyst so partly anticipated.",
-   "primary_source": "Geron 2026 Financial Guidance (GlobeNewswire, 2026-01-12) + Geron 50% enrollment / full-enrollment PRs and 10-K (BioSpace/ClinicalTrialsArena, Sept 2025) confirming IMpactMF interim OS readout 2H 2026 at ~35% events.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "GERN has a real dated forward binary: the IMpactMF Phase 3 interim OS analysis is expected 2H 2026, the trial fully enrolled in Sept 2025, and the endpoint (overall survival in JAKi relapsed/refractory myelofibrosis, a setting with no approved therapy) is a hard, unhedgeable readout that would open a second label well beyond the current LR-MDS Rytelo base. This is distinct from and larger than the already-guided 2026 Rytelo LR-MDS commercial ramp ($220-240M), which is priced. WATCH rather than ACTIVE because the interim is event-driven (death-rate dependent) and the exact date can slip, and the catalyst is well-telegraphed to the Street."
-  },
-  {
-   "symbol": "GFF",
-   "score": 3,
-   "tier": "WATCH",
-   "lane": "activist / structural",
-   "catalyst": "Griffon's Voss-backed pure-play building-products transformation completes as the last legs (AMES UK exit, Australasia JV close, Hunter Fan folded into HBP) finish by end of CY2026, leaving a clean garage-door + ceiling-fan pure-play at $1.8B rev / $520M EBITDA.",
-   "dated_milestone": "AMES Australasia JV expected to close by FY-end Sept 2026; full pure-play transformation (Hunter/HBP + UK exit) expected complete by end of CY2026; next read at fiscal Q3 earnings (~early Aug 2026).",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparties: ONCAP/Veritage Brands, Simon Hupfeld-led AMES Australasia group), G2 (concrete signed commitments: NA JV closed 6/10, Australasia definitive agreement 6/7), G3 (specific figures: $260M NA proceeds, $235M Australasia)",
-   "edge": "L \u2014 the strategic plan was announced Feb 5 (stock +12.7% same day) and the two largest legs are now done/signed with figures public; residual (UK exit + Hunter-HBP consolidation) is roadmap-known and re-rated, minimal unpriced surprise left.",
-   "primary_source": "Griffon Q2 FY2026 release / AMES Australasia definitive-agreement release (businesswire.com, 2026-06-07) and ONCAP/Veritage Brands close (2026-06-08/06-10); original strategic-actions PR (ir.griffon.com, 2026-02-04).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The Feb-2026 strategic-actions thesis has substantially FIRED: the AMES North America JV with ONCAP closed June 10 (launched as Veritage Brands, ~$260M proceeds, 43% retained) and AMES Australasia signed a definitive JV agreement June 7 (~$235M, 49% retained, close by Sept-2026 FY-end). What remains is execution/completion \u2014 AMES UK exit and folding Hunter Fan into HBP to finalize the pure-play building-products company by end of CY2026 \u2014 but this roadmap was disclosed and re-rated in February, so the forward catalyst is largely priced. It clears Bloom G1/G2/G3 and is dated/forward, but with the catalyst mostly fired and edge Low it is a WATCH monitor rather than an actionable ACTIVE, with the next real datapoint at fiscal Q3 earnings in early August 2026."
-  },
-  {
-   "symbol": "GFL",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "capital-return / deleveraging",
-   "catalyst": "Post-Environmental-Services-sale capital return (debt paydown to ~3.0x, $2.25B buyback, dividend restart) is a deleveraging story that is already announced and largely executed rather than a dated forward event.",
-   "dated_milestone": "No specific un-fired dated milestone; next reference points are Q2 2026 earnings (~early Aug 2026) and the NCIB window running to March 2, 2027, but neither carries a committed figure/date.",
-   "instrument": "equity (GFL, NYSE/TSX)",
-   "bloom_gates": "none cleanly met \u2014 G1 counterparty (Apollo/BC Funds) already known and deal closed; G2 buyback is opportunistic/discretionary not a committed pace; G3 the 3.0x/$3.75B/$2.25B figures are already public and priced",
-   "edge": "L \u2014 the sale, debt paydown, NCIB renewal, OSC relief and the April 2026 dividend hike are all disclosed and largely executed; no informational edge remains",
-   "primary_source": "GFL Q1 2026 results & Feb 27 2026 NCIB renewal / OSC relief 6-Ks (stocktitan / tipranks, Feb-May 2026); ES sale + $3.75B/$2.25B allocation (waste360 / GFL 6-K, 2025)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The flagged catalyst reflects the GFL Environmental Services divestiture to Apollo/BC Funds ($8B EV, ~$6.2B net proceeds) and the associated ~$3.75B debt paydown and $2.25B buyback \u2014 all announced in 2025 and substantially executed, with the NCIB renewed Feb 27 2026 and the quarterly dividend raised 10% effective April 30 2026. As of Q1 2026 GFL guided to mid-3x (not the 3.0x pro forma), repurchased zero shares in Q1 and framed buybacks as merely opportunistic, so what remains is discretionary and undated rather than a specific unpriced forward commitment. This is a re-rated deleveraging narrative, not a dated binary or unpriced event, so it fails the strict forward/un-fired gate."
-  },
-  {
-   "symbol": "GILD",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "FDA PDUFA action date Aug-27-2026 for once-daily single-tablet bictegravir/lenacapavir (BIC/LEN) HIV regimen under priority review.",
-   "dated_milestone": "PDUFA action date Aug-27-2026 (BIC/LEN NDA, priority review)",
-   "instrument": "equity",
-   "bloom_gates": "G2 (concrete FDA-accepted NDA with committed PDUFA action date)",
-   "edge": "L \u2014 mega-cap ($156B), heavily covered, and BIC/LEN is a switch-market line extension within an already Biktarvy-dominated HIV franchise; approval is broadly expected, so the binary is largely priced. Not a franchise-making first approval.",
-   "primary_source": "Gilead / Businesswire press release, \"FDA Grants Priority Review... Bictegravir Plus Lenacapavir,\" 2026-04-27 (PDUFA Aug-27-2026); FDA approval of Trodelvy 1L-TNBC, 2026-06-24",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "One of the two flagged binaries is already dead: the Trodelvy 1L-TNBC decision FIRED on 2026-06-24 (FDA approved mono + Keytruda combo), so it is no longer forward. The remaining live catalyst is the BIC/LEN HIV PDUFA action date of Aug-27-2026 (priority review, confirmed via Gilead press release 2026-04-27) \u2014 real, dated, and forward, satisfying G2. But on a $156B mega-cap with a high-probability, well-anticipated STR line extension, the unpriced edge is low, so this is a WATCH rather than an ACTIVE binary."
-  },
-  {
-   "symbol": "GILT",
-   "score": 6.5,
-   "tier": "ACTIVE",
-   "lane": "ma",
-   "catalyst": "Gilat's June-2026 definitive agreement to acquire Comtech's Satellite & Space segment for $157.5M cash creates a >$700M-revenue defense/satcom combine, pending regulatory close by year-end 2026.",
-   "dated_milestone": "Regulatory clearance (CFIUS + HSR/FTC-DOJ) with expected close by end of 2026; next hard date = deal close (targeted Q4 2026).",
-   "instrument": "equity (GILT common, NASDAQ)",
-   "bloom_gates": "G1 (Gilat/Comtech named counterparties), G2 ($157.5M cash-funded definitive agreement signed), G3 (pro-forma >$700M revenue, >2x Gilat Defense, currently unpriced)",
-   "edge": "H",
-   "primary_source": "Gilat / Comtech definitive-agreement press releases (Gilat.com, Businesswire, SEC Form 6-K), June 15, 2026; price via FMP quote 2026-07-01",
+   "catalyst": "Shareholder-approved two-part breakup \u2014 CommerceOne acquires Green Dot Bank (GDOT holders receive $8.11 cash + 0.2215 New CommerceOne shares) while Smith Ventures buys the non-bank Payments business for $690M \u2014 now gated solely on Federal Reserve, Alabama State Banking Department and Utah DFI approvals, targeted to close Q3 2026.",
+   "dated_milestone": "Fed/Alabama/Utah bank-regulator approvals then closing, targeted by 2026-09-30 (Q3 2026); no approval announced as of 2026-07-20. Prior dated step: shareholder votes passed 2026-06-23 (99%+ GDOT, 100% CommerceOne).",
+   "instrument": "common equity (long GDOT vs. deal terms; no listed hedge for the New CommerceOne stub since it is not yet publicly traded)",
+   "bloom_gates": "G1 + G2 + G3. G1: named counterparties CommerceOne Financial Corp. and Smith Ventures, LLC. G2: definitive, shareholder-approved merger agreement with fixed consideration ($8.11 cash + 0.2215 New CommerceOne shares) and a $690M signed Payments-business sale. G3: the stock leg is a specific currently-unpriced figure \u2014 company's illustrative stock value is $6.12-$11.07/share (total $14.23-$19.18), and at $13.40 the market implies roughly $5.29 for the stub, below the low end of the sponsor's own range.",
+   "edge": "M \u2014 the spread is real and mechanically identifiable (price below even the low end of the illustrative consideration range), but the entire discount sits in an unlisted, unmarkable New CommerceOne stub, so \"cheap\" is not provable without independently underwriting a private Alabama bank holdco. Bank-regulator gating is also the slowest, least handicappable approval path, and Q3 is a target not a covenant.",
+   "primary_source": "Green Dot/CommerceOne joint press release and GDOT Form 8-K, 2026-06-23 (businesswire.com/news/home/20260623102044; sec.gov/Archives/edgar/data/1386278/000114036126026125/ef20076604_ex99-1.htm); terms from DEFM14A / 424B3 (SEC, 2026) and the 2025-11-23 announcement release; price from FMP quote 2026-07-20 ($13.40).",
    "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Deal facts confirmed via primary sources (Comtech + Gilat press releases 15-Jun-2026, SEC 6-K): Gilat to buy most of Comtech's Satellite & Space segment for $157.5M cash ($10M paid at signing), cash-free/debt-free, funded from ~$170M net cash, combined revenue >$700M, board-approved, close targeted calendar Q4 2026 subject to regulatory review \u2014 forward, not fired. CORRECTION 1: line's 'near 52-week lows / below 50/200-day' technical claim is FALSE \u2014 GILT ~$13.31 (2-Jul-2026) sits mid-range of its ~$6.94\u2013$20.93 52-wk band, so the 'stock has not re-rated / unpriced' framing is overstated. CORRECTION 2: press releases specify only 'customary regulatory approvals,' not CFIUS/HSR by name (reasonable for a US-defense asset but not stated).",
-   "analysis": "Definitive June-15-2026 agreement for Gilat to buy the bulk of Comtech's Satellite & Space segment for $157.5M, funded from ~$170M existing net cash (cash-free/debt-free), scaling the combined group past $700M revenue and more than doubling Gilat Defense. This is real, specific and dated: close is targeted by end-2026 pending CFIUS and HSR/FTC-DOJ clearance, so the catalyst is forward and not yet fired. The stock has not re-rated \u2014 it sits near 52-week lows and below its 50/200-day averages \u2014 so successful close and the accretion/scale story remain an unpriced forward catalyst, though regulatory/CFIUS approval risk on a US-defense asset is the main gate to watch."
+   "kill_fact": "Kill attempt FAILED on the event itself \u2014 all load-bearing facts verified primary: $8.11 cash + 0.2215 New CommerceOne shares, Smith Ventures $690M for the non-bank Payments business (of which $470M to holders, $155M into the bank, $65M debt paydown), both shareholder bases approved 2026-06-23 (>99% GDOT / 100% CommerceOne), and the ONLY outstanding gates are the Federal Reserve, Alabama State Banking Dept and Utah DFI with a Q3 2026 target \u2014 no approval announced as of 2026-07-20, so the event is genuinely forward and un-fired. Live quote confirms $13.40 exactly. TWO CORRECTIONS: (1) The line mischaracterizes the $14.23-$19.18 band as \"the sponsor's\" valuation implying a $6.12-$11.07 stub floor. It is not a sponsor mark \u2014 the DEFM14A/425 states it is an ILLUSTRATIVE sensitivity at an assumed ~1.00x-1.80x tangible book value multiple. The LOW end already assumes 1.0x TBV, so there is no floor at all: an unlisted small-cap bank holdco can and often does open below 1.0x TBV, meaning $13.40 is not provably a discount to intrinsic \u2014 the entire gap is an unpriceable stub-multiple bet, which is weaker than the \"arb\" framing. (2) Timing risk is understated: the close target has ALREADY slipped once, from the Q2 2026 guided at the November 2025 announcement to the current Q3 2026 \u2014 the slip the line treats as a hypothetical risk has already happened, and only ~10 weeks of Q3 remain with three separate regulators outstanding. Tradeability is otherwise clean (NYSE, ~$760M cap, ~250k shares/day) and the line honestly self-discloses the un-hedgeable stub leg. Score trimmed 7 to 6 for the illusory floor and the demonstrated timeline slippage.",
+   "analysis": "This is a genuine, dated, forward, regulator-gated arb rather than a narrative: the definitive agreement is signed, both shareholder bases voted it through on 2026-06-23, and the only remaining gates are Fed, Alabama State Banking Department and Utah DFI approval with a Q3 2026 close target \u2014 none of which had been announced as granted by 2026-07-20, so the event has not fired and the spread has not re-rated. At $13.40 the stock trades below even the low end of the company's own $14.23-$19.18 illustrative consideration range, implying roughly $5.29 for the 0.2215 New CommerceOne shares versus the sponsor's $6.12-$11.07; the discount is entirely a stub-valuation and approval-timing question, not a macro bet. Score is capped at 7 rather than higher because the un-hedgeable, unlisted stock leg means the arb cannot be locked and bank-regulator timelines routinely slip past a stated quarter, so the realistic near-term payoff is the modest convergence to roughly $14.50-$15, not the headline high end."
   },
   {
-   "symbol": "GLSI",
-   "score": 3,
+   "symbol": "GFR",
+   "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Pre-specified superiority/futility interim analysis of the Phase 3 FLAMINGO-01 HER2 breast-cancer vaccine (GP2/GLSI-100), triggered at 14 recurrence events.",
-   "dated_milestone": "No company-guided date \u2014 interim is event-driven (14 of 28 events); randomized HLA-A*02 arm still enrolling, DSMB last met Dec 2025 and said continue. No 2026/2027 readout date exists.",
-   "instrument": "equity (GLSI, NASDAQ, ~$348M mkt cap, $23.70)",
-   "bloom_gates": "None cleanly met \u2014 G3 partial (real interim exists) but has NO date and the headline 70-80% open-label recurrence-reduction figure is already public (AACR Apr 2026 / ASCO Jun 2026), so it is not currently-unpriced.",
-   "edge": "L \u2014 the 80% open-label signal is already disclosed and re-rated (stock $7.78\u2192$34 hi, now $23.70); the only unpriced event (blinded interim) has no timeline and pivotal arm isn't fully enrolled.",
-   "primary_source": "GLSI ASCO 2026 press release, globenewswire.com, 2026-06-01 (interim design + enrollment); 80% signal PR 2026 + DSMB Dec 2025 continue recommendation.",
+   "lane": "controlled-company / restructuring",
+   "catalyst": "Greenfire will launch a rights offering in August 2026 for at least C$575M to repay the bridge loan funding its C$1.277B all-cash acquisition of Connacher Oil and Gas, with Waterous Energy Fund (~72% holder) backstopping the entire raise.",
+   "dated_milestone": "Rights offering launch and Connacher closing both expected August 2026 (announced July 13, 2026); record date, final subscription price and ratio still \"to be determined\" \u2014 next hard date is the offering circular / record-date announcement, expected within weeks.",
+   "instrument": "Common equity only (NYSE/TSX dual-listed, ~$460M market cap, thin volume ~312k shares; no usable listed options chain for a position of this type)",
+   "bloom_gates": "G1 and G2 pass; G3 fails. G1: named counterparties \u2014 Waterous Energy Fund (standby purchaser) and Connacher Oil and Gas (target). G2: concrete commitments \u2014 definitive C$1.277B cash purchase agreement, new C$575M bridge facility, WEF standby purchase commitment of at least C$575M with full exercise of basic subscription privilege plus all unsubscribed shares. G3 fails: the pro-forma figures (34,000 bbl/d 2026 production vs 19,500 standalone Connacher, 850 mmbbl 2P vs 441 mmbbl) were disclosed with the June/July deal announcements and the stock has already run to 6.35 against a 5.81 50-day and a 7.02 52-week high, so there is no specific currently-unpriced number.",
+   "edge": "L \u2014 the structure is real and dated, but the asymmetry sits with the controller, not the minority. A backstopped rights offering raising more than the entire pre-deal equity value is a cash call, not a value unlock: a minority holder either writes a large cheque to stand still, or is diluted at a 15% discount by a holder already at 72%, mechanically creeping toward squeeze-out territory. The 2024-era strategic review is still nominally open but has produced nothing in eighteen months and is not an independent source of edge. Residual exposure is also a levered WCS/heavy-differential bet, which is close to a macro position.",
+   "primary_source": "Greenfire Resources news release, \"Greenfire Resources Announces Intention to Conduct Rights Offering,\" July 13, 2026 (greenfireres.com; PDF Greenfire-Resources-Announcement-of-Rights-Offering-20260713.pdf), corroborated by BOE Report July 13, 2026 and the earlier Connacher acquisition release; FMP quote 2026-07-20 (6.35, mkt cap $460M).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "FLAMINGO-01 is a genuine high-asymmetry binary \u2014 a pre-specified interim at 14 events with a striking 70-80% open-label recurrence-reduction signal \u2014 but it fails strict gating on the DATED/FORWARD test: the interim is purely event-driven with no company guidance, the randomized HLA-A*02 arm (~500 pts) is still enrolling, and the DSMB most recently (Dec 2025) recommended continuing unchanged, so the 14th-event trigger is not near-term. The eye-catching 80% figure was already presented at AACR (Apr 2026) and ASCO (Jun 2026) and is reflected in the ~3x move off the 52-week low, so it is fired/priced rather than a currently-unpriced catalyst. Downgrade from ACTIVE-7 to WATCH-3: keep on watch for the moment the company guides an interim date or the randomized arm completes enrollment, which would re-establish a dated forward trigger."
-  },
-  {
-   "symbol": "GMTL",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "supply-shortage+timing-moat",
-   "catalyst": "Mine Plan of Operations filing to BLM (initiating NEPA) targeted for Aug 2026, following the June 30 PFS (US$660M NPV8, 59.6% IRR) on the Pilot Mountain US tungsten project.",
-   "dated_milestone": "Plan-of-Operations / NEPA submission to BLM \u2014 targeted Aug 2026 (next); POO+NEPA approval targeted mid-2027; Q4 2028 first ore.",
-   "instrument": "equity (NYSE American: GMTL ADR; also LON:GMET)",
-   "bloom_gates": "G2 partial only \u2014 a concrete self-filed permitting action (POO submission) is dated and forward, but there is no named offtake counterparty (G1 fail) and no currently-unpriced specific figure (G3 fail; the $660M NPV was published June 30 and is now public/de-rated). DPA Title III $6.2M is a July-2025 government grant, already fired.",
-   "edge": "L \u2014 the only forward event is a regulatory paperwork submission that kicks off a ~1yr+ NEPA review with no discrete near-term resolution; early-stage (2028 production), no offtake, stock has de-rated post-PFS ($14.10 vs ~$16 50/200-DMA, near year low). No hard re-rating trigger before mid-2027.",
-   "primary_source": "Guardian Metal Resources PFS RNS / StockTitan & Junior Mining Network, 2026-06-30 (POO targeted Aug 2026; NPV8 US$660.3M; DPA Title III $6.2M from US Dept of War, July 2025)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Guardian Metal's Pilot Mountain PFS (June 30, 2026) is genuinely strong on paper (US$660.3M NPV8, 59.6% IRR, one of the largest undeveloped US tungsten deposits, backed by a US Dept of War DPA Title III award), fitting the tungsten supply-shortage / US-defense-independence lane. But the sole dated forward milestone \u2014 the Aug 2026 POO/NEPA submission to BLM \u2014 is a permitting-process kickoff, not a catalyst that resolves or re-rates in a bounded window; approval is only targeted mid-2027 and first ore is Q4 2028. Critically there is no signed offtake or named counterparty, so no Bloom G1/G3 gate clears; the PFS figures are already public and the stock has de-rated since. Keep on WATCH for an offtake announcement or DPA follow-on funding, which would be the real catalyst."
-  },
-  {
-   "symbol": "GNK",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "Diana Shipping's hostile all-cash tender for Genco at $24.80 (implied $27.34 with a Diana share) has been extended to Jul 10, 2026, with the board rejecting and only ~24% of shares tendered against a 50%+ fully-diluted minimum, rights plan and merger-agreement conditions unresolved.",
-   "dated_milestone": "Tender offer expiration Jul 10, 2026 (extended from prior deadline)",
-   "instrument": "GNK common equity",
-   "bloom_gates": "G1 (named counterparty Diana Shipping), G2 (concrete $24.80 cash / $27.34 implied commitment), G3 (specific unresolved conditions: 50%+ fully-diluted min tender vs ~24% actual, rights plan, merger agreement)",
-   "edge": "L \u2014 GNK at $24.66 already sits at/above the $24.80 cash floor (~0.6% spread); the $27.34 implied requires a definitive merger the board keeps rejecting with shareholder backing (all 6 directors re-elected). Most value is priced; residual upside is contingent on a contested, low-probability board capitulation.",
-   "primary_source": "Diana Shipping GlobeNewswire tender-extension release + SC TO-T/A, Jun 29, 2026 (tender counts as of Jun 26, 2026); GNK quote $24.66 (FMP, 2026-07-01 close)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Confirmed genuine dated merger-arb: Diana Shipping (largest holder) is running a hostile $24.80 all-cash tender for GNK (implied $27.34 with a Diana share), extended to Jul 10, 2026; the Genco board has rejected it three times, only ~24.3% of shares are tendered against a majority-of-fully-diluted minimum, and the rights plan / merger-agreement / affiliate-approval conditions are all unresolved. All three Bloom gates pass and the catalyst is dated and forward, but GNK already trades $24.66 \u2014 essentially at the $24.80 cash floor \u2014 so the market has largely priced the base case; the remaining $27.34 upside hinges on a board capitulation shareholders just rebuffed (all six directors re-elected). Edge is low: real contested arb, thin residual spread, so WATCH rather than ACTIVE."
-  },
-  {
-   "symbol": "GPC",
-   "score": 6.5,
-   "tier": "ACTIVE",
-   "lane": "spin-off",
-   "catalyst": "GPC is executing a board-approved, tax-free separation into two public companies \u2014 Global Automotive (NAPA) and Global Industrial (Motion) \u2014 creating a sum-of-the-parts/stub re-rating setup.",
-   "dated_milestone": "Separation completion targeted Q1 2027 (announced Feb 17, 2026); next checkpoints = Form 10 filings and quarterly progress updates through 2026 into 1Q27 distribution.",
-   "instrument": "equity (GPC common; SOTP long into stub distribution)",
-   "bloom_gates": "G2 (board-approved separation with concrete per-entity EBITDA commitments), G3 (specific currently-unpriced figure: ~$15bn/$1.2bn EBITDA NAPA + ~$9bn/$1.1bn EBITDA Motion, whose separate re-rate is not reflected in the ~$16.3bn priced cap)",
-   "edge": "M \u2014 separation is public and partially priced post-announcement (stock fell to $117 on Q4 miss + spin), and completion is 2-3 quarters out, but the actual stub re-rate + Elliott (>$1bn stake) pressure crystallizes only at distribution, leaving a dated SOTP forward.",
-   "primary_source": "Genuine Parts Company press release / Form 8-K, \"Announces Plan to Separate Automotive and Industrial Businesses\" (genpt.com, Feb 17, 2026)",
-   "verdict": "CONFIRMED",
-   "kill_fact": "All load-bearing facts confirmed vs primary sources: Feb 17, 2026 GPC IR/PRNewswire announcement of a tax-free, no-shareholder-vote separation into Global Automotive (NAPA, ~$15bn sales/$1.2bn EBITDA) and Global Industrial (Motion, ~$9bn sales/$1.1bn EBITDA), targeted Q1 2027, catalyzed by Elliott's Sep 4, 2025 cooperation agreement. Live cap ~$16.33bn at $117.40 matches the $16.3bn cited. Genuine forward (distribution ~2-3 quarters out, not fired). Edge trimmed to medium: plan is fully public + no-vote (execution near-certain, low optionality) and stock has re-rated from ~$104 50d-avg toward the $120 200d-avg, so it is partially discounted.",
-   "analysis": "GPC's Feb 17, 2026 announcement is a genuine dated forward: a tax-free, no-shareholder-vote separation of NAPA (Global Automotive, ~$15bn sales/$1.2bn EBITDA) and Motion (Global Industrial, ~$9bn sales/$1.1bn EBITDA) targeted for Q1 2027, driven by an Elliott cooperation agreement. It is a legitimate SOTP/stub setup where the combined ~$2.3bn EBITDA split has not been fully re-rated at the $16.3bn priced cap. Not fired (announcement moved the stock but value crystallization is ~2-3 quarters out at the actual distribution); edge is medium because the plan is public and partially discounted, with primary risk being deal slippage past Q1 2027."
-  },
-  {
-   "symbol": "GPCR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated-binary",
-   "catalyst": "Structure Therapeutics has a cluster of dated oral GLP-1 (aleniglipron) and amylin readouts through 2H 2026 that carry real binary de-risking on the highest-efficacy oral obesity asset.",
-   "dated_milestone": "ACCESS OLE topline Q3 2026; amylin ACCG-2671 Phase 1 SAD initial data + Phase 3 initiation Q3 2026; aleniglipron body-composition study Q4 2026",
-   "instrument": "equity (GPCR ADR)",
-   "bloom_gates": "G2 (concrete, publicly committed dated deliverables: ACCESS OLE Q3, body-comp Q4, amylin Ph1 SAD data Q3 per Q1-2026 8-K); G1/G3 not met \u2014 no named counterparty and no specific currently-unpriced figure, valuation is broad-theme not special-sit",
-   "edge": "M \u2014 real dated de-risking events on the best-in-class oral GLP-1, but ~$3.5B cap at $48 vs $100-101 analyst PTs means the obesity thesis is broadly followed and largely market-priced, so asymmetry is thesis-confirmation not classic mispricing",
-   "primary_source": "Structure Therapeutics Q1 2026 Financial Results 8-K/PR, 2026-05-07 (ir.structuretx.com / globenewswire); price/valuation stockanalysis.com as of 2026-06-25",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Milestones verified against the Q1-2026 8-K/PR: ACCESS OLE Q3 2026, body-composition study Q4 2026, and amylin ACCG-2671 Phase 1 SAD initial data + Phase 3 start in Q3 2026 \u2014 all dated, forward, and unfired. However GPCR is a crowded, sell-side-covered obesity name (Canaccord Buy $101, HC Wainwright Buy $100) at a $3.5B cap, so the setup is a broad-market GLP-1 bet with catalyst timing rather than a named-counterparty or specific-unpriced-figure special situation. Passes DATED/FORWARD but only weakly clears the strict Bloom bar (G2 only), so WATCH not ACTIVE."
+   "analysis": "The dated forward event is genuine and specific: an August 2026 rights offering of at least C$575M, fully backstopped by Waterous Energy Fund, whose completion is a closing condition for the C$1.277B Connacher acquisition \u2014 so the milestone is structural, not narrative, and has not yet fired. But the trade fails on skew rather than on fact. The raise exceeds Greenfire's entire ~$460M pre-deal equity value, and the backstop hands every unsubscribed share to a holder already at ~72% at a 15% discount, meaning the minority's realistic outcomes are \"pay up to stand still\" or \"be diluted at a controller-set price\" \u2014 the controller owns the option, and terms that matter most (record date, final price, ratio, any minority protections) are still undetermined. Holding at WATCH/5 rather than promoting: revisit when the offering circular fixes the record date and subscription terms, which is the point at which minority treatment becomes assessable; the gap in this verification is that no circular exists yet, so the actual dilution math cannot be computed."
   },
   {
    "symbol": "GRAL",
    "score": 3,
-   "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "catalyst": "FDA decision on Galleri's Premarket Approval application (breakthrough-device MCED test), submitted and accepted Jan 2026 \u2014 the sole live forward binary.",
-   "dated_milestone": "FDA PMA decision \u2014 no published PDUFA-equivalent date or scheduled AdCom; analyst-estimated late-2026/early-2027 only (undated).",
-   "instrument": "equity",
-   "bloom_gates": "G1 met by Samsung deal but that leg is fired; the forward FDA leg fails G3 (no specific dated/quantified unpriced figure). Net: no clean unfired gate.",
-   "edge": "L \u2014 the only forward binary (FDA PMA) has no concrete date/AdCom scheduled and no statutory clock; timing is pure analyst guess, so it cannot be underwritten to a milestone.",
-   "primary_source": "GRAIL PR \"Completes $110M Equity Financing With Samsung Entities\" (June 25, 2026) + GRAIL Q1 2026 results / FierceBiotech (PMA final module submitted Jan 29, 2026; no decision date guided).",
+   "tier": "NONE",
+   "lane": "dated_binary",
+   "catalyst": "FDA decision on GRAIL's PMA for the Galleri multi-cancer early detection test, filed (final module) 29 Jan 2026, with a possible advisory committee ahead of it.",
+   "dated_milestone": "NO PUBLIC DATE. Only anchor is the 29-Jan-2026 final-module PMA submission; no PDUFA-equivalent exists for device PMAs, no AdCom has been noticed in the Federal Register as of 20-Jul-2026, and management/sell-side guide only to a vague \"late-2026 / early-2027\" window. Next observable trigger = a Federal Register AdCom notice (~30-60 days lead) or the Q2-2026 earnings call review update; neither is currently scheduled on a known date.",
+   "instrument": "Common equity (GRAL, NASDAQ). Long-dated options would be the correct expression IF a date existed, but with an unbounded H2-26/H1-27 window any defined-expiry structure carries severe theta/date-risk; no tradeable instrument recommended.",
+   "bloom_gates": "G2 partial only. G1 fails: FDA is a regulator, not a commercial counterparty, and no named partner/payer commitment exists. G2 partial: the PMA filing is a concrete, verifiable act by a named party (GRAIL -> FDA, 29-Jan-2026, PATHFINDER 2 n=25,490 + NHS-Galleri prevalent round), but it is a submission, not a committed dated action by the counterparty. G3 fails: no specific currently-unpriced figure -- there is no disclosed reimbursement rate, no CMS coverage decision amount, no contracted volume; the TAM case is narrative and already the entire bull thesis.",
+   "edge": "L -- the PMA filing and an H2-2026 approval hope are the single most-covered fact about this name (heavy retail/sell-side coverage, Motley Fool $100 target published 2-Jul-2026), and the stock has already re-rated ~2.4x off its 52-wk low of $29.95 to $72.62. No informational or timing asymmetry remains.",
+   "primary_source": "GRAIL press release, \"GRAIL Submits FDA Premarket Approval Application for the Galleri Multi-Cancer Early Detection Test,\" 29 Jan 2026 (grail.com / PRNewswire 302674611); corroborated by MedTech Dive, 29 Jan 2026; FDA Molecular and Clinical Genetics Panel meeting listings checked 20 Jul 2026 (no GRAIL/Galleri meeting scheduled); price via FMP quote 20 Jul 2026 ($72.62, 52-wk 29.95-118.84, mkt cap $3.12B).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Two claims verified: Samsung C&T's $110M equity at $70.05 CLOSED June 25, 2026 (fired, and already re-rated \u2014 stock now $68.11, below the strategic price), so it is not a forward catalyst. The Galleri FDA PMA is a genuine breakthrough-device binary but PMAs carry no statutory decision clock; GRAIL declines to guide timing, no AdCom is scheduled, and the \"late-2026/early-2027\" window is analyst speculation \u2014 failing the strict DATED-forward test. Real optionality exists but is soft-dated, so it stays a low WATCH rather than ACTIVE."
-  },
-  {
-   "symbol": "GTLS",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "catalyst": "Baker Hughes $210/sh all-cash merger; EC Phase I decision deadline July 10, 2026, close targeted July 2026.",
-   "dated_milestone": "EC Phase I decision deadline July 10, 2026 (extended for commitments); merger close expected July 2026.",
-   "instrument": "GTLS common (long, cash-deal arb to $210)",
-   "bloom_gates": "G1 (named counterparty Baker Hughes), G2 (concrete commitment: signed definitive agreement, $210/sh cash, shareholder-approved), G3 (specific dated figure: $210 vs ~$208.68 last, EC deadline Jul 10 2026)",
-   "edge": "M-L \u2014 gross spread only ~$1.32 (0.63%) to $210 with an ~8-day horizon (annualizes high but small absolute); tight spread signals market prices near-certain clearance, and the residual risk is EC demanding heavier remedies or escalating to Phase II, which would push close out ~4 months rather than break the deal.",
-   "primary_source": "Chart Industries 8-K / press release \"Advances Baker Hughes Acquisition with EU Review\" and TradingView/StockTitan coverage \u2014 Form CO filed 5/21/2026, EC Phase I decision deadline 7/10/2026, close expected July 2026 (dated June 2026); price via FMP quote 7/02/2026.",
-   "verdict": "CONFIRMED",
-   "kill_fact": "Independently confirmed: Baker Hughes all-cash $210.00/sh merger for Chart Industries (~$13.6B EV); EC Form CO filed 5/21/2026 opening Phase I with a 7/10/2026 decision deadline, remedies/commitments under negotiation may extend Phase I but close still targeted July 2026; GTLS live at $208.68 leaves a ~$1.32 (0.63%) unclosed gross spread \u2014 forward, dated, tradeable arb, catalyst not yet fired.",
-   "analysis": "Live, dated, forward merger-arb: signed definitive agreement at a fixed $210.00/sh cash, Chart shareholders approved 10/6/2025, and the sole remaining gate is EU antitrust \u2014 Baker Hughes filed the Form CO on 5/21/2026 opening Phase I, with a decision deadline of July 10, 2026 (extended because remedies are under negotiation) and close targeted for July 2026. At $208.68 the ~$1.32 (0.63%) gross spread is a genuine unpriced-to-par figure and the catalyst is not yet fired (deal not closed), so it clears Bloom G1/G2/G3 and qualifies ACTIVE. Edge is trimmed to medium-low because the spread is thin and the main risk (EC forcing broader commitments or a Phase II escalation) delays rather than breaks the deal; score 7, not higher, reflects the small absolute payoff."
+   "analysis": "The underlying event is genuine and forward -- GRAIL filed the final PMA module on 29 Jan 2026 and the FDA has not ruled -- but it fails the DATED gate outright: device PMAs carry no public action date, no advisory committee has been noticed in the Federal Register, and the only public guidance is an analyst-level \"late 2026 or early 2027,\" a window wide enough to make this a position rather than a catalyst. It also fails on pricing: at $72.62 the shares sit up ~142% from the $29.95 52-wk low with a $3.1B cap on a pre-approval, pre-reimbursement diagnostic, so approval optionality is substantially embedded, while the residual downside (CRL or an adverse AdCom on MCED specificity/overdiagnosis, the exact issues FDA panels have flagged for this class) is not. Verification gap: I could not confirm from the Q2-2026 call whether management has narrowed the review timeline or disclosed an FDA filing-acceptance date, which is the one datum that could re-date this -- if an AdCom is later noticed in the Federal Register, this should be re-triaged immediately as a genuinely dated binary."
   }
  ]
 }

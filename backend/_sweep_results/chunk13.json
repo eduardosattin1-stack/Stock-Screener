@@ -2,254 +2,166 @@
  "chunk": "13 (NBN-OLN)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 5,
-  "watch": 16,
-  "none": 129
+  "active": 2,
+  "watch": 11,
+  "none": 137
  },
  "survivors_flagged": [
   {
    "symbol": "NEOG",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
    "lane": "capital_return",
-   "one_line": "Post-3M-merger cleanup: Zoetis to buy animal-genomics unit for $160M closing 2H2026 + 10% restructuring; real but modest dated divestiture."
+   "one_line": "Genomics sale to Zoetis ($160M) signed Apr-2026, closing by H1 FY27 with proceeds to cut net debt below 3x by YE26."
+  },
+  {
+   "symbol": "NFBK",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "ma_arb",
+   "one_line": "Signed $597M Columbia Financial merger (Jan-31 2026) with DEFM14A filed, tied to an MHC second-step conversion and Q3-2026 expected close."
   },
   {
    "symbol": "NGNE",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "one_line": "NGN-401 Rett gene therapy: FDA Breakthrough Therapy granted, registrational Embolden dosing completes Q2'26 + additional interim Ph1/2 data mid-2026 \u2014 dated binary with asymmetry."
-  },
-  {
-   "symbol": "NGVT",
-   "score": 6,
+   "score": 5,
    "tier": "WATCH",
-   "lane": "activist+capital-return",
-   "one_line": "Post-portfolio-review 'New Ingevity' with Vision One board seat, two more business reviews underway and ~$1B/2yr capital return incl. >=$300M buybacks \u2014 real activist+structural situation, but pieces partially priced."
-  },
-  {
-   "symbol": "NKTR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary-readout",
-   "one_line": "Rezpeg has dated near-term reads (REZOLVE-AA 24-wk Q4-2026, REZOLVE-AD 52-wk Q1-2027) though the pivotal ZENITH-AD Phase 3 readout is not until mid-2028."
+   "lane": "dated_binary",
+   "one_line": "Mid-2026 interim Ph1/2 Rett data plus BTD-backed BLA path, but the readout window is upon us and topline Embolden slips to H2-2027."
   },
   {
    "symbol": "NPAC",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "merger-arb",
-   "one_line": "Signed deSPAC with Abra ($750M, outside date 10/15/26); real dated deal but trust-floor arb with thin asymmetry and crypto-RIA regulatory hair."
-  },
-  {
-   "symbol": "NSA",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Definitive all-stock merger into Public Storage (announced 3/16/26, 0.14 PSA/sh, ~35% premium); live, dated stub-arb still pending close."
+   "lane": "spac_arb",
+   "one_line": "Signed $750M de-SPAC with Abra Financial (ABRX) - dated Oct 15 2026 outside date, trust-value floor, but closing gated on $40M net cash and financing."
   },
   {
    "symbol": "NSC",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "merger-arb",
-   "one_line": "Union Pacific transcontinental merger; hard STB timeline (supplemental due 7/27/26, close early 2027) but heavily covered and spread largely priced."
-  },
-  {
-   "symbol": "NUVL",
-   "score": 9,
-   "tier": "ACTIVE",
-   "lane": "M&A / merger-arb",
-   "one_line": "GSK cash tender offer under June 9, 2026 merger agreement; tender live, HSR/min-tender conditions pending \u2014 clean dated merger-arb spread."
-  },
-  {
-   "symbol": "OCGN",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Gene-therapy binaries this year: OCU400 RP Phase-3 topline Q4-2026 + BLA rolling start H2, OCU410ST interim mid-2026 \u2014 real dated readouts but classic high-risk clinical, not mispriced-asymmetry deep enough for ACTIVE."
-  },
-  {
-   "symbol": "OGN",
    "score": 8,
    "tier": "ACTIVE",
-   "lane": "m&a",
-   "one_line": "Definitive all-cash merger: Sun Pharma to acquire Organon at $14.00/sh ($11.75B), announced 4/26/26, expected close early 2027 \u2014 live merger-arb spread."
+   "lane": "merger_arb",
+   "one_line": "Union Pacific all-stock merger live at the STB - revised application accepted May 28 2026, supplemental filings due July 27 2026, statutory evidentiary clock runs to a ~May 2027 decision; classic long-dated regulated rail arb with a real spread."
+  },
+  {
+   "symbol": "OCUL",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "AXPAXLI NDA submission guided Q4 2026 under 505(b)(2); SOL-1 superiority already fired Feb-2026 and SOL-R efficacy pushed to 1Q28, so the remaining dated event is a filing, not an approval."
   },
   {
    "symbol": "OLMA",
    "score": 6,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "one_line": "Palazestrant Ph3 OPERA-01 (2/3L ER+/HER2- mBC) topline expected Fall 2026, FDA Fast Track, Novartis frontline collab \u2014 dated binary with NDA 2027."
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Pivotal Phase 3 OPERA-01 palazestrant topline guided fall 2026 - a genuine forward, un-fired dated binary with binary asymmetry, though single-asset risk is high."
   }
  ],
  "verified": [
   {
    "symbol": "NEOG",
-   "score": 3,
-   "tier": "NONE",
+   "score": 5,
+   "tier": "WATCH",
    "lane": "capital_return",
-   "catalyst": "Zoetis to acquire Neogen's animal genomics (GeneSeek) business for $160M, expected to close 2H2026, alongside a 10% workforce restructuring.",
-   "dated_milestone": "Deal close expected 2H2026 (pending regulatory/consent approvals); no specific date set.",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty Zoetis), G2 (definitive agreement), G3 ($160M figure) all met \u2014 but not forward/un-fired.",
-   "edge": "L \u2014 the value event (definitive-agreement announcement) already fired Mar 2, 2026 and is fully public/re-rated; only the mechanical 2H2026 close remains, a modest ~$160M divestiture on a ~$2B name.",
-   "primary_source": "Zoetis press release, March 2, 2026 (news.zoetis.com); NEOG Q1 FY2026 earnings call, Oct 9, 2025 (restructuring).",
+   "catalyst": "Closing of the signed $160M sale of Neogen's animal Genomics business to Zoetis, with net proceeds applied to debt paydown to take net leverage below 3x by calendar year-end 2026.",
+   "dated_milestone": "Q4 FY26 results ~late July 2026 (FY27 guide + updated leverage bridge); deal close expected by end of H1 FY27, i.e. by ~Nov 30 2026 (Neogen FY ends May 31)",
+   "instrument": "common equity",
+   "bloom_gates": "G1 (named counterparty: Zoetis Inc., definitive agreement) + G2 (concrete commitment: $160.0M cash, signed definitive agreement, proceeds earmarked for debt reduction). G3 NOT met \u2014 the sub-3x leverage figure is management-guided and widely disseminated since the March/April 2026 calls, so it is not a currently-unpriced number.",
+   "edge": "L-to-M \u2014 announcement already re-rated the stock on 2026-03-02; only the mechanical close and a well-telegraphed deleveraging leg remain, and consensus already models it. Residual edge is only if the market still discounts execution risk on the debt paydown or the FY27 guide reframes the stripped-down (Food Safety + Animal Safety) business.",
+   "primary_source": "Neogen 8-K/press release \"Neogen Announces Sale of Genomics Business to Zoetis,\" Businesswire/investors.neogen.com, 2026-03-02; corroborated by Zoetis press release same date and NEOG Form 10-Q for the period ended 2026-02-28 (SEC, filed Apr 2026); leverage guidance from NEOG Q3 FY26 materials (Apr 2026)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The divestiture is real and specific (Zoetis, $160M, GeneSeek ~$90M FY25 sales, 2H2026 close) with a concurrent $20M/10%-headcount restructuring, but it was announced March 2, 2026 and disclosed through Q3 FY2026 earnings \u2014 it is already fired and re-rated, not a forward un-priced catalyst. The only remaining event is the mechanical regulatory close in 2H2026, which is low-edge for a small divestiture and adds no new information. Fails the FORWARD/not-fired gate despite meeting the Bloom specificity gates."
+   "analysis": "Triage's core fact checks out but with a date error: the definitive agreement with Zoetis was signed and announced 2026-03-02, not April 2026; $160.0M for a business that did ~$90M of FY25 sales, closing expected by end of H1 FY27, proceeds primarily to debt reduction. Management's sub-3x-by-CY26 leverage path is on the record (prior cleaners/disinfectants sale already paid down $100M of the ~$900M gross debt). This is a real, dated, forward, non-macro event, but the signing is the part that carried the information \u2014 the remaining close is customary-conditions/regulatory and largely priced, and deleveraging does not address Neogen's underlying organic-growth and post-3M-integration problem. WATCH, not ACTIVE; note I did not independently verify the exact Q4 FY26 report date (one search result conflated NEOG with NeoGenomics/NEO's July 28 date) \u2014 treat \"late July 2026\" as approximate, anchored on the July 29 2025 prior-year print."
+  },
+  {
+   "symbol": "NFBK",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "ma_arb",
+   "catalyst": "Columbia Financial/Northfield Bancorp merger and MHC second-step conversion, but it closes TODAY (2026-07-20) with final consideration already fixed and both shareholder votes passed \u2014 the event is fired, not forward.",
+   "dated_milestone": "Closing 2026-07-20 (today); combined CLBK shares begin trading 2026-07-21 \u2014 NFBK ceases to exist as a listed security. No forward-dated milestone remains.",
+   "instrument": "none (equity delisting at close; no residual arb spread worth expressing)",
+   "bloom_gates": "G1 satisfied historically (named counterparty Columbia Financial), G2 satisfied (definitive merger agreement, $580M final consideration: $14.25 cash or 1.425 CLBK shares per share), G3 FAILS \u2014 the figure is fully priced: NFBK at $14.86 vs the $14.25 cash leg, i.e. the market already marks the stock-election value above terms with zero days to close.",
+   "edge": "L \u2014 no informational or timing edge; every gating condition (both special meetings 2026-06-25, the 142.375M-share firm-commitment offering, final appraisal, final merger consideration) was cleared and publicly announced 2026-07-17, and settlement is same-day.",
+   "primary_source": "Columbia Financial, Inc., \"Announces the Results of Its Offering; Final Merger Consideration; and Anticipated Closing Date,\" GlobeNewswire, 2026-07-17; corroborated by Columbia Financial DEFM14A (SEC CIK 1723596) and FMP quote for NFBK dated 2026-07-20.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage note is factually accurate on the deal but stale on timing: what it calls a \"Q3-2026 expected close\" resolved to a hard close date of 2026-07-20, announced by Columbia Financial on 2026-07-17 alongside completed offering results and final merger consideration of $14.25 cash / 1.425 CLBK shares ($580M aggregate, down from the $597M January headline). Both shareholder votes passed on 2026-06-25 and the stock has already re-rated \u2014 NFBK trades $14.86 (FMP quote 2026-07-20) versus a $52-week low of $9.91 and a 200-day average of $12.81, i.e. the entire merger premium plus the stock-election kicker is in the price. There is no un-fired, unpriced, forward-dated milestone left; the only remaining \"event\" is mechanical settlement and CLBK relisting on 2026-07-21, so this fails the FORWARD gate outright. Gap noted: I did not independently confirm final regulatory sign-off documentation beyond the issuer's 2026-07-17 release, but that does not change the verdict since even a same-day slip leaves no exploitable spread."
   },
   {
    "symbol": "NGNE",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Additional interim Phase 1/2 data readout for NGN-401 in Rett syndrome expected mid-2026, building on the Oct-30-2025 interim cut that drove FDA Breakthrough Therapy designation.",
-   "dated_milestone": "Additional interim Ph1/2 data \u2014 mid-2026 (imminent/possibly slipping as of July 2, 2026); Embolden registrational topline 2H 2027",
-   "instrument": "equity (NGNE common)",
-   "bloom_gates": "G2 (concrete company commitment to a dated interim readout) + G3 (specific unpriced figure: new interim response/durability data beyond the 8-of-24 / 33% Embolden success bar, on a defined patient cohort)",
-   "edge": "L",
-   "primary_source": "Neurogene BTD press release / FDA review basis (Feb 26, 2026) and Embolden dosing-completion 8-K/PR (Jun 8, 2026); \"additional interim data planned for release in mid-2026\" per company disclosures (businesswire.com / ir.neurogene.com).",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "dated_binary",
+   "catalyst": "Embolden registrational topline for NGN-401 in Rett syndrome, expected H2-2027, followed by a BLA submission \u2014 but the near-term interim readout the triage flagged has already fired.",
+   "dated_milestone": "Next hard date: Embolden topline, H2-2027 (~13-18 months out). Interim Ph1/2 30-month data already released 2026-06-29; BTD granted 2026-02; dosing completed 2026-06-08.",
+   "instrument": "Common equity (no tradeable dated-binary structure at this horizon; any option expression would require LEAPS into H2-2027 with ~15 months of theta and financing/dilution overhang)",
+   "bloom_gates": "None cleanly passed. G1 fails (no named counterparty \u2014 no partner, licensee, or acquirer). G2 partially arguable (FDA-aligned single-arm registrational design + BTD/RMAT is a concrete regulatory commitment) but it is already granted and public since Feb 2026, so it is backward-looking. G3 fails outright \u2014 the 33% (8/24) response threshold, the 47-milestone interim dataset, and the H2-2027 topline date are all fully disclosed and consensus-known, so there is no specific currently-unpriced figure.",
+   "edge": "L \u2014 every element of the thesis is public and re-rated. BTD (Feb 2026), dosing completion (Jun 8), and the 30-month interim data (Jun 29) all landed before this scan date, and the company followed with a ~$134.8M equity + pre-funded warrant raise in Jun-Jul 2026 that both removed the financing catalyst and added dilution. Sell-side is already at Hold on precisely this setup.",
+   "primary_source": "Neurogene press release via BioSpace, 2026-06-29 (\"Neurogene Reports Positive Long-term Clinical Data from Phase 1/2 Trial of NGN-401\"), data cutoff 2026-06-16; corroborated by Neurogene/BusinessWire 2026-06-08 dosing-completion release (topline guided H2-2027) and Neurogene 8-K 2026-02 (BTD grant).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Two of the three flag milestones are already fired and re-rated: FDA Breakthrough Therapy was granted Feb 26, 2026 and Embolden registrational dosing completed June 8, 2026 (25 vs 24 target). The sole surviving forward catalyst is the additional interim Phase 1/2 data guided to \"mid-2026,\" which is genuinely dated, forward and data-driven (new efficacy/durability beyond the Oct-30-2025 cut), but the window is closing/at risk of slipping and the registrational topline that carries the real binary is not until 2H 2027. With NGNE near its 52-week high after a ~2x run off BTD and dosing news, the near-term edge is limited \u2014 clears the gate as a WATCH, not an ACTIVE."
-  },
-  {
-   "symbol": "NGVT",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "activist+capital-return",
-   "catalyst": "APT (Advanced Polymer Technologies) segment sale process, targeted to advance before year-end 2026, alongside a $300M buyback authorization to complete by 2027.",
-   "dated_milestone": "APT divestiture update expected before YE2026; next hard date = Q2 2026 earnings Aug 3, 2026.",
-   "instrument": "equity",
-   "bloom_gates": "G2 (concrete $300M-by-2027 buyback + APT sale process); G1 partial (Vision One / F. David Segal board seat, but that seat was seated ~Mar 2025 and is already fired). G3 fails \u2014 no specific currently-unpriced figure.",
-   "edge": "L \u2014 the activist board seat (Mar 2025) is already fired and the turnaround is largely re-rated: stock ~$73 vs 52wk low $39.74, above P200 ($64), near high $79. Remaining catalysts (routine $300M buyback, single APT sale) are modest and partially priced.",
-   "primary_source": "Ingevity Q1 2026 earnings transcript (Motley Fool, 2026-06-01) + FMP quote 2026-07-02 ($73.16); Vision One cooperation agreement 8-K (effective 2025-03-30).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The situation is real but the flagged framing is inflated: the Q1 2026 transcript corroborates only a $300M-by-2027 buyback and a single APT segment sale process, not a \"~$1B/2yr capital return\" or \"two more business reviews underway\" \u2014 those specifics are unverified. The Vision One board seat (F. David Segal) was added ~March 2025 and is already fired, and NGVT has re-rated from ~$40 to ~$73 (near 52wk high), so the activist/simplification thesis is substantially priced. A genuine but modest forward event exists (APT divestiture before YE2026), keeping it on WATCH rather than NONE, but there is no specific currently-unpriced (G3) figure to underwrite an ACTIVE tier."
-  },
-  {
-   "symbol": "NKTR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary-readout",
-   "catalyst": "Rezpeg (rezpegaldesleukin) has dated near-term off-treatment durability reads in dermatology/alopecia ahead of the operational Phase 3 launch, though the pivotal ZENITH-AD Phase 3 primary readout is not until mid-2028.",
-   "dated_milestone": "REZOLVE-AA 24-week off-treatment data \u2014 Q4 2026 (next); REZOLVE-AD 52-week off-treatment data \u2014 Q1 2027; ZENITH-AD Phase 3 initiation by July 2026; pivotal ZENITH-AD readout mid-2028",
-   "instrument": "equity (options liquid; binary event structure available)",
-   "bloom_gates": "G3 (specific currently-unpriced clinical figures: off-treatment durability SALT<=20 / EASI response persistence in Q4-2026 / Q1-2027 reads); partial G2 (committed dated Phase 3 program launch by July 2026)",
-   "edge": "M \u2014 dated forward binary reads are real, but near-term Q4-2026/Q1-2027 events are secondary off-treatment DURABILITY signals, not registrational primary endpoints; the REZOLVE-AA Phase 2b primary endpoint already narrowly MISSED at Week 36 (Dec 2026), de-rating the alopecia binary; the truly pivotal ZENITH-AD Phase 3 readout is ~2yrs out (mid-2028), so high-impact catalyst is not near-term.",
-   "primary_source": "Nektar Therapeutics 8-K / corporate milestone guidance and REZOLVE-AA Phase 2b topline PR (PRNewswire 302643167, Dec 2026); AAD 2026 data PR (302727838); ir.nektar.com press releases \u2014 accessed 2026-07-02",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Triage flag verified as accurate: NKTR's lead asset rezpeg has genuinely dated, forward, un-fired catalysts \u2014 REZOLVE-AA 24-week off-treatment data (Q4 2026), REZOLVE-AD 52-week off-treatment data (Q1 2027), and ZENITH-AD Phase 3 initiation by July 2026 \u2014 with the pivotal ZENITH-AD Phase 3 readout not until mid-2028 and a BLA targeted 2029. The already-reported Phase 2b topline (Dec 2026, AA primary endpoint narrowly missed but POC established) and 52-week extension (April 2026) have fired, so the remaining near-term reads are incremental durability confirmations rather than transformative binaries. Qualifies as WATCH: real+dated+forward binary-readout catalysts (G3), but the high-conviction, price-moving event sits ~2 years out, and the nearest reads are lower-impact off-treatment durability signals on an indication whose primary endpoint already missed."
+   "analysis": "The triage premise is factually inverted: it claims \"the readout window is upon us,\" but the mid-2026 interim Phase 1/2 Rett data fired on 2026-06-29 at the IRSF Scientific Meeting (47 milestones across 10 participants, 100% CGI-I improvement, durable through 30 months), and BTD was granted back in February 2026. What remains is Embolden topline in H2-2027 \u2014 dated, but roughly 13-18 months forward, far outside a tradeable dated-binary window, and the company de-risked its balance sheet with a ~$134.8M raise in Jun-Jul 2026 that extends runway into early 2029 while diluting holders. The science may well be good and the 33% response bar is genuinely low, but a known date, a known bar, a known dataset, and a freshly-funded balance sheet leave no unpriced figure to underwrite. Gap to note: I did not price the current option surface or check whether H2-2027 LEAPS exist at reasonable IV, but no instrument choice rescues a catalyst that has already fired."
   },
   {
    "symbol": "NPAC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "NPAC's signed $750M deSPAC with crypto-RIA Abra (ticker ABRX) closing by the 10/15/26 outside date, with S-4 effectiveness and a shareholder vote the near-term gates.",
-   "dated_milestone": "S-4 declared effective / shareholder vote (TBD, mgmt guides \"this summer\"); hard outside date 2026-10-15",
-   "instrument": "NPAC common (trust-backed SPAC shares)",
-   "bloom_gates": "G1 (named counterparty Abra) + G2 (signed definitive BCA, $750M / up to $300M cash, 100% sponsor rollover)",
-   "edge": "L",
-   "primary_source": "CoinDesk / InvestmentNews / NPAC Form 8-K & 425 filings, 2026-03-16; NPAC quote $10.36 (FMP, 2026-07-01)",
+   "lane": "spac_arb",
+   "catalyst": "New Providence Acquisition Corp. III's definitive business combination with Abra Financial Holdings ($750M pre-money, Nasdaq ticker ABRX) must close by the Oct 15, 2026 outside date, gated on S-4 effectiveness, a shareholder vote, and a $40M minimum net-cash condition.",
+   "dated_milestone": "S-4 declared effective + shareholder vote (not yet scheduled as of 2026-07-20); hard outside date Oct 15, 2026",
+   "instrument": "common (NPAC); rights/warrants only as a lottery overlay",
+   "bloom_gates": "G1 (named counterparty: Abra Financial Holdings / Aether Merger Sub I), G2 (signed definitive BCA with $40M net-cash close condition and $150M transaction-financing target)",
+   "edge": "L - deal is public since March 16, 2026 and shares trade at ~$10.40, i.e. at or slightly above accreted trust, so the redemption floor is intact but the arb spread is essentially zero; the only real payoff is a de-SPAC re-rate, which is a bet on crypto-wealth-management sentiment, not on the dated mechanic.",
+   "primary_source": "NPAC Form 8-K / Form 425, filed 2026-03-16 (SEC EDGAR CIK 0002048948), plus subsequent S-4 announcement 425; price via FMP quote 2026-07-17 close $10.3952",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Real, dated, forward merger-arb: NPAC signed a definitive $750M business combination with crypto wealth RIA Abra on 3/16/26, sponsors rolling 100%, listing as ABRX, outside date 10/15/26 \u2014 S-4 filed but not yet effective and no vote date set. But the asymmetry is thin: at $10.36 the stock trades at (not below) its ~$10.30-10.50 trust value, so there is no arb discount to harvest \u2014 the only reward is speculative post-close re-rating of a crypto-RIA carrying settlement/regulatory hair, atop a SPAC that flagged going-concern in its Q1 10-Q. Clears NONE (specific dated deal) but the negligible spread and soft/undated near-term catalyst keep it WATCH at low edge, not actionable."
-  },
-  {
-   "symbol": "NSA",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger-arb",
-   "catalyst": "All-stock acquisition of National Storage Affiliates by Public Storage at 0.14 PSA/share; NSA holder vote July 14, 2026, Q3 2026 close.",
-   "dated_milestone": "NSA special shareholder meeting July 14, 2026 (10:00 MDT, virtual); expected close Q3 2026",
-   "instrument": "NSA common (vs PSA)",
-   "bloom_gates": "G1 (named counterparty Public Storage) + G2 (definitive merger agreement dated 3/16/26)",
-   "edge": "L",
-   "primary_source": "NSA DEFM14A + PSA 424B3 (SEC, filed ~June 2026); merger announced 3/16/26; special meeting July 14, 2026",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The merger is real, definitive, and dated (announced 3/16/26; NSA vote July 14, 2026; Q3 2026 close), satisfying Bloom G1/G2. But the stub-arb edge is gone: NSA trades at $45.47 versus the implied 0.14\u00d7PSA($324.83)=$45.48 deal value \u2014 a ~0.02% gross spread with the friendly, board-recommended vote only 12 days out and no antitrust overhang flagged. The ~35% premium was captured on announcement and the name is fully re-rated; this is a fired/priced catalyst offering no forward risk-adjusted return, so tier NONE."
+   "analysis": "Verified: the 8-K/425 of March 16, 2026 confirms a signed BCA valuing Abra at $750M with up to ~$300M of trust cash, an Oct 15, 2026 outside date, a $40M minimum net-cash condition, and a stated $150M transaction-financing target; the S-4 has been filed but is not yet effective and no record/vote date is public as of 2026-07-20. The catalyst is real, dated, forward and not fired, so it clears the specificity and timing gates, but it fails the unpriced test (G3): at $10.40 versus accreted trust the market already prices near-certain redemption value, leaving no measurable spread. Gap: I could not confirm the exact current trust-per-share or whether any of the $150M financing has been committed, which is the actual swing factor on the $40M gate."
   },
   {
    "symbol": "NSC",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "Union Pacific's $88.82-cash-plus-1.0-UNP-share acquisition of Norfolk Southern (first US transcontinental railroad) faces STB review, with a supplemental-information filing due before proceedings resume.",
-   "dated_milestone": "2026-07-27 STB supplemental filing",
-   "instrument": "NSC common (merger-arb long vs UNP short 1.0x hedge)",
-   "bloom_gates": "G1 (named counterparty: Union Pacific) + G2 (concrete commitment: signed $88.82 cash + 1.0 UNP/share, $2.5B reverse termination fee, NS shareholders already approved)",
-   "edge": "M",
-   "primary_source": "STB Press Release PR-26-13 \"STB Accepts UP-NS Merger Application... Holds Proceedings in Abeyance\" (supplemental due 7/27/26), 2026-04-30; deal terms UP/NS 8-K 2025-07-29; NSC/UNP quotes 2026-07-02",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Real, dated, forward, single-name merger-arb: signed UP-NS deal ($88.82 cash + 1.0 UNP/share, NS holders already approved, $2.5B break fee), gross spread ~14.9% ($47.99) reflecting live STB approval risk with proceedings held in abeyance pending a 7/27/26 supplemental filing and expected early-2027 close. Passes gates G1/G2 and is not fired/not a macro bet, but the triage read is correct that it is heavily covered and the spread's width is regulatory deal-break risk rather than mispricing \u2014 so it is a WATCH, not ACTIVE. The 7/27 filing is procedural (not a binary approve/deny), so it likely re-rates the spread only modestly; the real binary is the STB final decision late-2026/2027."
-  },
-  {
-   "symbol": "NUVL",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "M&A / merger-arb",
-   "catalyst": "GSK $124/sh cash tender for Nuvalent, live, HSR + min-tender pending",
-   "dated_milestone": "Tender offer expires 11:59pm ET July 14, 2026 (next date; extendable if HSR not yet cleared)",
-   "instrument": "NUVL common",
-   "bloom_gates": "G1 (named counterparty GSK/GSK LLC/Harmony Row Acquisition Co.), G2 (concrete commitment: signed merger agreement + tender & support agreements ~28% of Class A)",
-   "edge": "L",
-   "primary_source": "SC TO-T / Offer to Purchase dated June 24, 2026 (merger agreement dated June 9, 2026); SC 14D9 board recommendation \u2014 SEC EDGAR CIK 0001861560, verified 2026-07-02",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is real, dated, and specific: GSK LLC (via Harmony Row Acquisition Co.) launched a $124.00/share all-cash tender for Nuvalent on June 24, 2026 under a June 9, 2026 merger agreement, closing via DGCL 251(h) with tender/support agreements covering ~28% of Class A; the offer expires July 14, 2026 subject to HSR expiration and a minimum-tender condition \u2014 both standard and pending. However, the catalyst has effectively fired: at $123.65 vs the $124.00 offer the gross spread is only ~0.28%, so the announcement value is fully priced and there is no unpriced figure (G3 fails). What remains is a low-edge rate-of-return play on a near-certain, low-break-risk close \u2014 hence WATCH, not ACTIVE."
-  },
-  {
-   "symbol": "OCGN",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Ocugen has a cluster of dated gene-therapy clinical readouts \u2014 OCU410ST GARDian3 interim data (Q3-2026), OCU400 rolling BLA initiation (Q3-2026), and OCU400 Phase 3 liMeliGhT topline (Q1-2027) \u2014 but these are unpartnered high-risk clinical binaries, not mispriced-asymmetry setups.",
-   "dated_milestone": "OCU410ST GARDian3 interim data \u2014 Q3-2026 (nearest); OCU400 rolling BLA start Q3-2026; OCU400 Phase 3 topline Q1-2027",
-   "instrument": "equity (OCGN, ~$1.58, mkt cap ~$533M)",
-   "bloom_gates": "None \u2014 fails G1 (no named counterparty/partner), G2 (no concrete external commitment/deal), G3 (no specific currently-unpriced figure; Phase-3 gene-therapy topline is a market-priced binary, not a discrete mispriced number)",
-   "edge": "L \u2014 heavily-covered clinical-stage name (1B+ float, high volume), option-market and analysts already price the binary; success/failure distribution is scientific risk, not an informational/structural mispricing edge",
-   "primary_source": "Ocugen IR / Q1-2026 business update & 8-K, and enrollment-completion PR dated March 2, 2026 (ir.ocugen.com; globenewswire.com)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalysts are real, specific, and dated (company-disclosed via 8-K/IR: OCU410ST interim Q3-2026, OCU400 rolling BLA Q3-2026, OCU400 topline Q1-2027), and none have fired. But the triage's Q4-2026 OCU400 topline is incorrect \u2014 the company guides Q1-2027 topline. More importantly this is a textbook unpartnered Phase-3 gene-therapy binary: no named counterparty, no concrete external commitment, and no discrete currently-unpriced figure, so no Bloom gate is met. It clears the floor for WATCH (dated forward readouts exist) but the asymmetry is not deep or mispriced enough for ACTIVE."
-  },
-  {
-   "symbol": "OGN",
-   "score": 7,
+   "score": 5.5,
    "tier": "ACTIVE",
-   "lane": "m&a",
-   "catalyst": "Definitive all-cash merger: Sun Pharma acquiring Organon at $14.00/share ($11.75B EV), announced 4/26/26, with a live ~3.1% gross arb spread to close.",
-   "dated_milestone": "Special-meeting stockholder vote on July 23, 2026 (record date 6/15/26); expected close early 2027",
-   "instrument": "OGN common (merger-arb long; ~3.1% gross to $14.00)",
-   "bloom_gates": "G1 (named counterparty Sun Pharma) + G2 (concrete commitment: signed definitive agreement, $14.00 cash, $12B committed bridge, $120M break fee)",
-   "edge": "M \u2014 spread is real and definitive, but thin at ~3.1% gross over a ~6mo+ close (early-2027) = modest annualized; HSR/global-antitrust + shareholder litigation noise are the residual risks, and OGN is a B13 held seat so this confirms an existing position.",
-   "primary_source": "Organon PR / BusinessWire / FiercePharma \"Sun Pharma signs Definitive Agreement to Acquire Organon $14.00/sh $11.75B\" (4/26-27/26); DEFM14A special-meeting vote set 7/23/26 (record 6/15/26), expected close early 2027",
-   "verdict": "CONFIRMED",
-   "kill_fact": "Primary sources (SEC PREM14A/DEFM14A + 8-K) confirm definitive all-cash merger: Sun Pharmaceutical acquiring Organon at $14.00/share, $11.75B EV, ~103% premium to unaffected 4/9/26 close, $12B committed bridge; special stockholder meeting 7/23/26 (record date 6/15/26), board recommends FOR, expected close early 2027 subject to HSR/global antitrust. Live quote $13.575 \u2192 gross spread (14.00-13.575)/13.575 = 3.13%, matching the ~3.1% claim. Genuine dated forward merger-arb catalyst (not fired); thin spread + long duration = medium edge; OGN already a B13 held seat (confirmatory).",
-   "analysis": "Confirmed: definitive all-cash merger, Sun Pharmaceutical acquiring Organon at $14.00/share ($11.75B EV), signed ~4/26/26 with committed $12B bridge financing and a $120M termination fee \u2014 a genuine dated forward merger-arb catalyst (G1 named counterparty + G2 concrete commitment). The next hard milestone is the stockholder vote on 7/23/26; expected close early 2027, subject to HSR and global antitrust. Spread is thin (~3.1% gross at $13.575 last) so it is partially priced, and multiple plaintiff-firm \"adequacy of price\" investigations are circulating; ACTIVE but Medium edge given the compressed spread and long duration, and OGN is already a B13 held seat (off-board, confirmatory rather than new)."
+   "lane": "merger_arb",
+   "catalyst": "Union Pacific's definitive cash-and-stock acquisition of Norfolk Southern ($88.82 cash + 1.0 UNP share per NSC share) is live at the STB, with the revised application accepted May 28 2026 and the statutory clock running to a Q1-Q2 2027 final decision and mid-2027 close.",
+   "dated_milestone": "Next hard date: July 27 2026 \u2014 remaining supplemental information responses due to the STB (first tranche filed July 7 2026); proceedings and environmental review are held in abeyance until then, after which the STB issues the procedural schedule. Statutory evidentiary window runs 12 months from the May 28 2026 acceptance; final decision due within 90 days of record close, i.e. Q1-Q2 2027; targeted close mid-2027.",
+   "instrument": "Long NSC common, optionally hedged 1:1 short UNP to isolate the $88.82 cash stub plus spread",
+   "bloom_gates": "G1 (named counterparty: Union Pacific, signed definitive merger agreement, shareholder votes already passed) + G2 (concrete commitment: fixed, non-adjusting consideration of $88.82 cash + 1.0 UNP share per NSC share). G3 not met \u2014 the spread is the market's explicit priced view of approval odds, not an unpriced figure.",
+   "edge": "M \u2014 the dates and terms are public and heavily covered, so there is no informational edge; the edge is structural (willingness to underwrite an 11-month regulatory hold at a wide spread most equity mandates will not carry). Not a differentiated-insight setup.",
+   "primary_source": "STB press release PR-26-13, \"STB Accepts UP-NS Merger Application for Consideration; Requires Supplemental Information and Holds Proceedings in Abeyance\" (May 28 2026, stb.gov); UP/NSC joint release on first-round supplemental responses (July 7 2026, norfolksouthern.com / up.com); merger consideration per UNP S-4/424(b)(3) and NSC DEFM14A (2025, sec.gov). Prices via FMP batch-quote, July 20 2026.",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Terms and dates check out against primary sources (STB PR-26-13: unanimous acceptance of the REVISED application May 28 2026, supplemental information due July 27 2026; NSC/UNP 8-Ks: $88.82 cash + 1.0 UNP share, shareholder approvals Nov 14 2025 at ~99%/99.5%; NSC $327.47 vs UNP $286.96 = $375.78 package, $48.31 / ~14.8% gross spread). The line's self-flagged 'cash-and-stock not all-stock' correction is itself correct. But the load-bearing timing claim is WRONG: the same STB decision that accepted the application HELD THE PROCEEDINGS IN ABEYANCE \u2014 including the environmental review \u2014 and expressly DECLINED to set a procedural schedule, saying it will establish one only in a future decision after reviewing the nine categories of supplemental material. So no evidentiary clock is 'concretely running' to a Q1-Q2 2027 decision; the 12-month evidentiary window is not ticking while the case sits in abeyance, and the mid-2027 close is an issuer aspiration ('early 2027' per the companies), not a statutory date. Also note the original application was outright REJECTED Jan 16 2026 \u2014 a completed precedent for further delay, and the reason the spread is 14.8% rather than a normal deal spread. Trade is real, liquid, and hedgeable, but the edge is duration + coin-flip public-interest risk with an INDETERMINATE clock, not a dated catalyst; ~0.74:1 reference R:R does not compensate for open-ended abeyance. Score cut from 6.5 to 5.5 for the timeline misstatement.",
+   "analysis": "This is a genuine, dated, forward regulatory arb rather than a macro bet: the merger agreement is signed with fixed non-adjusting consideration, shareholder approvals are done, and the only remaining gate is the STB, whose clock is now concretely dated (supplemental filings July 27 2026, evidentiary record closing within 12 months of the May 28 2026 acceptance, decision Q1-Q2 2027). The ~14.8% gross spread is wide precisely because the public-interest test for the first true transcontinental Class I is a real coin-flip-plus risk, and a denial likely returns NSC toward the high-$260s/low-$270s \u2014 giving roughly 0.74:1 reference reward-to-risk unhedged, which improves materially on a 1:1 UNP hedge that strips out rail-sector beta. One correction to triage: the deal is cash-and-stock ($88.82 cash + 1.0 UNP), not all-stock, which changes the hedge construction and the downside math. Sized as a hedged position rather than an outright directional bet; edge is structural duration tolerance, not information."
+  },
+  {
+   "symbol": "OCUL",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "AXPAXLI (axitinib intravitreal implant) NDA in wet AMD to be submitted 4Q 2026 under 505(b)(2), on an FDA-aligned single-trial (SOL-1 Wk52) path, bundled with the SOL-R interim safety analysis due 4Q 2026.",
+   "dated_milestone": "Pre-NDA meeting 3Q 2026; SOL-R interim safety analysis 4Q 2026; NDA submission 4Q 2026 (next hard date: Q3 2026 pre-NDA meeting). SOL-R topline efficacy not until 1Q 2028.",
+   "instrument": "equity (common); Q4-dated calls only if pricing the interim-safety/filing window, not an approval",
+   "bloom_gates": "G1 (named counterparty: FDA, via the May-2026 Type C meeting alignment) and G2 (concrete commitment: FDA agreed to review on SOL-1 Wk52 alone with confirmatory evidence; company committed to a complete 4Q-2026 NDA package and a >300-patient safety database). G3 fails \u2014 no specific currently-unpriced figure is disclosed.",
+   "edge": "L-M \u2014 the triage read is correct: the efficacy binary (SOL-1, p=0.0006 maintenance-of-vision) already fired 27-Feb-2026 and the confirmatory efficacy readout is pushed to 1Q 2028, so the only near-dated events are a regulatory filing and an interim safety look. A submission is low-information; the actual approval decision sits in 2027 beyond a normal catalyst window. Mild offsetting edge: the stock is at $8.97 vs a $16.44 52-wk high and below both 50d ($9.22) and 200d ($10.25), so the post-SOL-1 tape shows de-rating rather than a priced-in win.",
+   "primary_source": "Ocular Therapeutix press release, \"Investor Day to Highlight U.S. FDA Alignment on AXPAXLI NDA with Submission Planned for Fourth Quarter 2026,\" 17-Jun-2026 (globenewswire / stocktitan); price data FMP quote 20-Jul-2026.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Verified as real and specific: FDA alignment from a May-2026 Type C meeting lets OCUL file a 505(b)(2) NDA on SOL-1 Week-52 data alone, with the complete package guided to 4Q 2026 and a pre-NDA meeting in 3Q 2026; SOL-R interim safety lands in the same quarter and feeds the >300-patient safety database. It is dated and forward and not macro, but it is a filing plus a safety interim, not an efficacy or approval binary \u2014 the efficacy event fired in Feb-2026 and confirmatory SOL-R efficacy slipped to 1Q 2028, so the payoff distribution around Q4 is narrow and the re-rating event (approval) is out beyond 2027. Gap: no priority-review/PDUFA target disclosed and no quantified unpriced figure (G3 unmet), so this stays WATCH rather than ACTIVE."
   },
   {
    "symbol": "OLMA",
    "score": 6,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "catalyst": "Pivotal Ph3 OPERA-01 topline for palazestrant monotherapy in 2L/3L ER+/HER2- metastatic breast cancer, a dated single-name binary de-risking an NDA 2027 / launch path with Novartis frontline partnership behind it.",
-   "dated_milestone": "OPERA-01 PFS topline readout \u2014 expected Fall 2026 (next ~Q3-Q4 2026); NDA filing 2027 if positive",
-   "instrument": "equity (OLMA common; long-dated calls viable given clean binary but high IV)",
-   "bloom_gates": "G1 (Novartis named counterparty via frontline collab + supply agreement), G2 (concrete commitment: OPERA-01 topline dated Fall 2026, OPERA-02 ~1,000-pt trial enrolling, NDA 2027), G3 (specific currently-unpriced figure: >$1B peak-sales opportunity vs stock at $12.33 near 52wk-low $4.37, de-rated from $36 high)",
-   "edge": "M \u2014 genuine dated de-risking event with stock trading below 50d/200d MAs (not re-rated up), fully funded ($505M cash), Novartis validation; capped at M not H because Ph3 SERD monotherapy in 2L/3L is a competitive/mixed-precedent readout (elacestrant benchmark) and outcome is genuinely uncertain, not an obvious win.",
-   "primary_source": "Olema Q1 2026 results, GlobeNewswire/ir.olema.com, 2026-05-12 (OPERA-01 topline Fall 2026); Novartis collab + $250M PIPE PR, 2025 (BioSpace/StockTitan); FMP quote 2026-07-02 ($12.33)",
-   "verdict": "CONFIRMED",
-   "kill_fact": "OPERA-01 palazestrant-monotherapy Ph3 topline in 2L/3L ER+/HER2- mBC is expected fall 2026 (confirmed via Olema Q1-2026 release + multiple sources) \u2014 forward, dated, UNFIRED. Stock $12.39 sits near 52w low $4.37, far below 52w high $36.26 and below 50d/200d MAs ($12.70/$17.21), so it is not re-rated. Cash $505.3M (Q1 2026), Novartis $250M PIPE (Dec 2024) + frontline OPERA-02 ribociclib combo ~1,000 pts, NDA 2027 path \u2014 all confirmed. Elacestrant oral-SERD precedent makes it a genuine coin-flip, so 6 (not higher) holds.",
-   "analysis": "OLMA has a clean, dated, forward binary: OPERA-01 palazestrant-monotherapy Ph3 topline in 2L/3L ER+/HER2- mBC is expected Fall 2026, with an NDA 2027 path and a Novartis-backed frontline OPERA-02 combo (~1,000 patients) plus a $250M PIPE providing validation and a $505M cash runway through the event. The stock at $12.33 sits near its 52-week low ($4.37) and well below its $36 high and both moving averages, so the catalyst is unfired and not re-rated \u2014 the binary is live, not priced. Score held at 6 (not higher) because a Ph3 oral-SERD monotherapy readout carries real efficacy risk against the elacestrant precedent, so this is a genuine coin-flip rather than a high-conviction win."
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "OPERA-01 Phase 3 palazestrant monotherapy topline, guided fall 2026 - forward, un-fired, single dated binary.",
+   "dated_milestone": "OPERA-01 topline readout guided \"fall 2026\" (2H26); next hard checkpoint = Q2 2026 earnings (~mid-Aug 2026) reaffirming/refining the window; potential NDA filing 2027",
+   "instrument": "Common equity (NASDAQ: OLMA); listed options exist and pre-event IV is the main structuring lever for a single-date binary \u2014 no recommendation implied",
+   "bloom_gates": "G2 (concrete, company-committed milestone: pivotal Phase 3 topline, dose already selected at 90mg, guided fall 2026) and partially G3 (~$1.0B mkt cap less ~$505M cash = ~$500M EV against a potential multi-hundred-million oral-SERD franchise). G1 partially present but already fired (Novartis clinical-supply collaboration + $250M private placement, disclosed 2025) and applies to OPERA-02, not the OPERA-01 readout.",
+   "edge": "M",
+   "primary_source": "Olema Oncology Q1 2026 Financial and Operating Results, ir.olema.com / GlobeNewswire, 2026-05-12 (OPERA-01 topline \"expected in fall 2026\"); FMP quote 2026-07-20 ($11.47, $1.00B mkt cap)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "OPERA-01 is a real, dated, un-fired forward binary: palazestrant monotherapy Phase 3 topline in 2L/3L ER+/HER2- mBC, dose locked at 90mg, company-guided to fall 2026, with ~$505M cash at Q1-26 removing financing risk into the print. The setup screens attractively because the tape has already de-rated the name hard (~$11.47 vs $36.26 52-week high; ~$500M EV net of cash), so a win is plausibly not priced while a miss is substantially discounted. It stays WATCH rather than ACTIVE because the milestone is quarter-vague (\"fall\") not day-specific, the readout is single-asset with an unfavorable base rate for oral SERD monotherapy in this setting (elacestrant's modest bar), and the residual value floor rests on cash plus an unpartnered OP-3136 pipeline rather than any contracted payment."
   }
  ]
 }

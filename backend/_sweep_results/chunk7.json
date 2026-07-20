@@ -2,144 +2,166 @@
  "chunk": "7 (ENPH-FR)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 3,
-  "watch": 12,
-  "none": 135
+  "active": 6,
+  "watch": 3,
+  "none": 141
  },
  "survivors_flagged": [
   {
-   "symbol": "EPC",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "activist/M&A",
-   "one_line": "Rejected $30/sh Yellow Wood bid Jun-23-2026 post feminine-care divestiture; live take-out/activist situation, bid could be revised or others emerge \u2014 forward, not fired."
-  },
-  {
-   "symbol": "ERAS",
+   "symbol": "EQPT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary/data",
-   "one_line": "ERAS-4001 BOREALIS-1 Phase 1 pan-KRAS readout H2-2026 (dated forward binary); ERAS-0015 mid-May data likely already out; small-cap RAS-franchise catalyst clock."
+   "lane": "forced-seller overhang",
+   "one_line": "Jan-2026 IPO ($24.50) lockup expires 2026-07-22 \u2014 a hard-dated forced-supply event; the setup is owning the flush, not the flush itself."
   },
   {
-   "symbol": "EVH",
+   "symbol": "ESI",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "M&A / merger-arb",
-   "one_line": "Live sale process (started months ago, initial bids in from TPG/CD&R/KKR + Elevance, ~$3.8B mcap); forward, un-fired, mispriced-asymmetry M&A situation."
+   "lane": "merger_arb",
+   "one_line": "Definitive $14.5B Solstice deal signed 07/06/26 ($10 cash + 0.500 SLS), S-4 plus dual shareholder votes and antitrust ahead of a 1H-2027 close \u2014 a live cash-and-stock arb with a stub-equity leg."
+  },
+  {
+   "symbol": "ESPR",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Pending cash merger at $3.16/sh plus one CVR; holder vote cleared 07/08/26 and closing is the near-term step, with CVR milestones as the residual optionality."
+  },
+  {
+   "symbol": "EVMN",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "EVO756 CSU Phase 2b missed (Jun 2026, fired/de-rated); forward dated readout is EVO756 atopic dermatitis Phase 2b topline in Q3 2026 with ~$307M cash vs beaten-down cap \u2014 real but single-shot binary."
   },
   {
    "symbol": "EWTX",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Sevasemten sold to Servier (fired), but retains GRAND CANYON pivotal Becker MD topline in 4Q-2026 \u2014 a real dated binary."
+   "lane": "capital_return_asset_sale",
+   "one_line": "Servier asset purchase of sevasemten ($1.55B upfront + $1.1B milestones) slated to close Q3 2026, leaving a cash-heavy cardiovascular stub, with GRAND CANYON Becker topline dated Q4 2026 \u2014 announced and partly re-rated, but the close and the stub-revaluation are still forward."
   },
   {
    "symbol": "EYPT",
-   "score": 6,
-   "tier": "WATCH",
+   "score": 7,
+   "tier": "ACTIVE",
    "lane": "dated_binary",
-   "one_line": "DURAVYU Phase 3 wet-AMD LUGANO topline ~Aug-2026 with LUCIA ~2mo later; clean dated binary with three positive DSMC reads de-risking into readout."
+   "one_line": "DURAVYU Phase 3 LUGANO 56-week topline in wet AMD guided mid/2H-2026 with identical LUCIA to follow shortly, third consecutive positive DSMC recommendation and enrollment complete \u2014 an imminent, hard-dated, binary re-rate against a heavily debated single-asset cap."
   },
   {
    "symbol": "FIP",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "restructuring/deleveraging",
-   "one_line": "$1.52B Long Ridge sale to MARA closing Q3 2026 eliminates $1.16B asset debt + $300M parent debt \u2014 dated, forward, transformational deleveraging on a highly-levered stub."
+   "lane": "asset_sale_deleveraging",
+   "one_line": "Definitive $1.52B Long Ridge sale to MARA closing Q3 2026 (FERC/HSR/STB pending), wiping $1.16B asset debt plus ~$300M parent debt \u2014 forward, dated, structural deleveraging."
   }
  ],
  "verified": [
   {
-   "symbol": "EPC",
+   "symbol": "EQPT",
    "score": 3,
-   "tier": "WATCH",
-   "lane": "activist/M&A",
-   "catalyst": "Edgewell rejected Yellow Wood Partners' unsolicited $30/share take-private bid (Jun-22-23-2026) as too low; a revised/higher bid or a competing suitor could emerge post feminine-care divestiture.",
-   "dated_milestone": "No dated forward milestone confirmed; next natural checkpoint is FQ3 FY2026 earnings (~early Aug 2026) for any strategic-review / process commentary.",
-   "instrument": "EPC common (NYSE)",
-   "bloom_gates": "G1 (named counterparty: Yellow Wood Partners) + G3 (specific $30/sh figure) satisfied; but NOT forward-dated and largely already re-rated.",
-   "edge": "L",
-   "primary_source": "Bloomberg, \"Schick Razor Maker Edgewell's Shares Leap on Rejected Offer\" (Jun-23-2026); SEC 8-K feminine-care divestiture press release (FY2026); FMP quote $27.51 (2026-07-02).",
+   "tier": "NONE",
+   "lane": "forced-seller overhang",
+   "catalyst": "EquipmentShare's IPO lock-up expires 2026-07-22, freeing roughly 220M of ~252M shares (only 30.5M floated at the $24.50 January IPO) into a tape already down 32% from IPO and 53% from its $35.50 high.",
+   "dated_milestone": "2026-07-22 lock-up expiration (2 trading days out); next scheduled fundamental event is Q2 2026 earnings (early August, date not yet confirmed)",
+   "instrument": "common equity (post-flush accumulation); no options structure justified \u2014 IV into a known supply date is expensive and the direction of the flush is not the thesis",
+   "bloom_gates": "None cleanly passed. G1 fail \u2014 no named selling counterparty disclosed (no announced secondary, no identified sponsor distribution). G2 partial-fail \u2014 the 2026-07-09 board authorization of a $500M buyback through 2028 is discretionary capacity, not a concrete commitment to buy, and it was already announced (stock fell anyway). G3 fail \u2014 the locked share count and expiry date are public and telegraphed (MarketBeat flagged it 2026-07-15), so the overhang figure is not currently-unpriced.",
+   "edge": "L \u2014 the date is public, the pre-positioning is visible in the price (-32% vs IPO, -20% vs 50-day avg of $20.73), and the trade as framed (\"own the flush\") requires post-hoc discretion rather than a pre-dated edge.",
+   "primary_source": "EquipmentShare IPO pricing release, equipmentshare.com (2026-01-22, $24.50 / 30.5M shares); MarketBeat lock-up alert (2026-07-15, expiry 2026-07-22); GlobeNewswire buyback + guidance raise (2026-07-09); FMP quote $16.615 (2026-07-20)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The core facts verify (Bloomberg/Reuters/SEC: Edgewell rejected Yellow Wood's unsolicited $30/share bid on Jun-22-23-2026, feminine-care sold to Essity ~$340M closed Feb-2026). But the initiating catalyst has already FIRED \u2014 the rejection drove an ~18% re-rate and EPC now trades $27.51 near its 52-wk high, so the M&A optionality is substantially priced in. As of July 2026 there is no confirmed revised bid, no formal dated strategic review, and no activist 13D (only a Brandes passive 13G/A), so the \"could be revised or others emerge\" thesis is open-ended and undated rather than a specific forward catalyst \u2014 fails the STRICT forward/dated gate, downgrade ACTIVE\u2192WATCH."
+   "analysis": "The dated fact checks out: EquipmentShare IPO'd 2026-01-23 at $24.50 with only 30.5M shares floated, and the lock-up expires 2026-07-22 \u2014 hard-dated, forward, not yet fired. But the mechanism fails strict gating: this is a supply/technical event, not a value-unlock with a named counterparty or an unpriced commitment, and it has been broadly telegraphed while the stock already de-rated to $16.62 (yearLow $15.95), which is the market pre-discounting the overhang rather than ignoring it. The $500M buyback authorized 2026-07-09 alongside a raised FY26 outlook (revenue $5.25-5.68B, adj. core EBITDA $1.95-2.06B) is the only real company-side offset, and it is discretionary capacity already announced and already sold into \u2014 so the residual forward edge is a reflexive timing bet on the shape of the flush, which is exactly what the triage note concedes. Gap: I did not confirm the exact releasable share count or any early-release/staged-tranche provisions from the S-1 lock-up language, which would be the one thing that could reintroduce a genuine G3 figure."
   },
   {
-   "symbol": "ERAS",
+   "symbol": "ESI",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary/data",
-   "catalyst": "First-in-human Phase 1 monotherapy data for pan-KRAS inhibitor ERAS-4001 (BOREALIS-1 trial) in KRAS-mutant solid tumors \u2014 a discrete, un-fired efficacy readout for a mechanism with zero clinical validation to date.",
-   "dated_milestone": "ERAS-4001 BOREALIS-1 initial Ph1 monotherapy data: H2 2026 (guided 2026-01-12, reaffirmed Q1 FY26 update)",
-   "instrument": "equity (ERAS); pre-catalyst call spread viable given binary structure and elevated biotech IV",
-   "bloom_gates": "G3 (specific, currently-unpriced figure): ERAS-4001 has NO human efficacy data yet, so first-in-human ORR/dose-escalation results are a discrete un-priced binary distinct from the already-fired ERAS-0015 franchise re-rating. Weakly G1 (named asset/trial). Not a macro bet.",
-   "edge": "M \u2014 the H2-2026 4001 pan-KRAS readout is a genuine un-fired dated binary on an unvalidated mechanism (KRAS-selective, spares HRAS/NRAS wildtype), but the RAS-franchise thesis has already re-rated hard (stock ~$1.33\u2192$17.92 in 12mo, 50d $13.47 vs 200d $9.14, ~$5.6B cap) on ERAS-0015's April data, so much upside is priced and 4001 optionality is partly embedded.",
-   "primary_source": "Erasca press release \"Promising Early Clinical Data for ERAS-0015 and 2026-2027 Milestones,\" GlobeNewswire/investors.erasca.com, 2026-01-12; ERAS-0015 positive Ph1 data 2026-04-27; FMP quote 2026-07-02 ($17.92, mktcap $5.57B)",
+   "lane": "merger_arb",
+   "catalyst": "Signed definitive merger agreement (07/06/26) for Solstice Advanced Materials (NASDAQ: SOLS) to acquire Element Solutions for $10.00 cash + 0.500 SOLS shares per ESI share (~$14.5B incl. net debt), pending S-4 effectiveness, dual shareholder votes, HSR/foreign antitrust, and Nasdaq listing.",
+   "dated_milestone": "Form S-4/joint proxy filing by Solstice (announced as forthcoming, not yet on EDGAR as of 07/20/26) -> effectiveness, then ESI + SOLS special meetings (likely 4Q26) and HSR expiration; stated close 1H-2027",
+   "instrument": "common",
+   "bloom_gates": "G1 (named counterparty: Solstice Advanced Materials, NASDAQ: SOLS), G2 (concrete commitment: signed definitive merger agreement, fixed consideration $10.00 + 0.500 SOLS, $376M ESI / $385M-$513M SOLS break fees, $4.7B committed Goldman bridge)",
+   "edge": "L-M \u2014 deal facts are fully public and priced; gross spread is thin and the residual return is dominated by SOLS equity risk, not deal-process edge. No G3 (no specific currently-unpriced figure identified).",
+   "primary_source": "Element Solutions 8-K and Solstice Form 425 / joint press release, SEC EDGAR + investor.solstice.com, dated 07/06/2026; live quotes ESI $37.40 / SOLS $58.38 via FMP batch-quote 07/20/2026",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "ERAS-4001 (BOREALIS-1) initial Phase 1 monotherapy data in KRAS-mutant solid tumors is guided for H2 2026 \u2014 a dated, forward, un-fired first-in-human efficacy readout for a differentiated pan-KRAS inhibitor with no clinical data yet, which qualifies as a real specific catalyst. However, the companion asset ERAS-0015 already printed strong Phase 1 data on 2026-04-27 (62%/75% NSCLC uORR) and drove a ~13x re-rating, so the broad RAS-franchise catalyst is largely fired and priced; ERAS-0015's own next milestones (H2-2026 expansion/combination cohort initiation) are process steps, not discrete data prints. Net: keep on WATCH for the 4001 print as the clean forward binary, but edge is diluted by the run-up and a stretched valuation, hence a mid score rather than ACTIVE."
+   "analysis": "The catalyst is real, specific, dated and forward: a signed definitive agreement (07/06/26) with fixed consideration and remaining hard gates (S-4 effectiveness, two shareholder votes, HSR and foreign antitrust) targeting a 1H-2027 close, so the process milestones have not fired. The problem is economics, not existence: 75% of the consideration is SOLS stock and SOLS has fallen from a $90.80 52-week high to $58.38 (26% below its 50d average), so unhedged ESI is effectively a levered directional bet on Solstice rather than a spread capture, while the hedged spread is only ~4.8% gross over roughly ten months. Gap to note: I could not confirm the S-4 is on file or any special-meeting date, so the next hard dated checkpoint is inferred rather than sourced, and no unpriced G3 figure (e.g., synergy or divestiture detail beyond the disclosed >$180M run-rate) was verifiable in this budget - hence WATCH pending S-4 filing."
   },
   {
-   "symbol": "EVH",
-   "score": 2,
+   "symbol": "ESPR",
+   "score": 1,
    "tier": "NONE",
-   "lane": "M&A / merger-arb",
-   "catalyst": "The 2024 whole-company sale process (TPG/CD&R/KKR + Elevance) never produced a deal and is stale/dead; no active, dated forward sale process exists in 2026.",
-   "dated_milestone": "None. No live process or dated milestone. Next scheduled event is Q2 2026 earnings (~early Aug 2026), not an M&A catalyst.",
-   "instrument": "equity",
-   "bloom_gates": "FAILS all. The G1 named counterparties (TPG/CD&R/KKR/Elevance) date to Aug-2024 and Elevance withdrew; no G2 concrete current commitment; no G3 dated, currently-unpriced figure. Premise is stale, not forward.",
-   "edge": "L",
-   "primary_source": "Reuters/Investing.com \"Evolent Health in sale talks after takeover interest\" (Aug 2024, original flag) vs FMP EVH quote 2026-07-02 (mcap $646M, $5.74) + FMP EVH news through 2026-06-29 showing no active M&A; Privia divestiture PRNewswire (Sep 2025)",
+   "lane": "merger_arb",
+   "catalyst": "The ARCHIMED take-private at $3.16/sh cash plus one CVR already closed on 2026-07-13, so there is no forward merger-arb event left.",
+   "dated_milestone": "Merger closed 2026-07-13 (holder vote 2026-07-08); no next dated forward date \u2014 CVR sales milestones are undated/multi-year",
+   "instrument": "none \u2014 common delisted from Nasdaq at closing; CVRs are contractual, non-listed and were distributed only to record-date holders",
+   "bloom_gates": "G1 only (named counterparty ARCHIMED / Essence Parent Inc.); G2 and G3 fail \u2014 the commitment has been consummated and there is no unpriced forward figure available to a new buyer",
+   "edge": "L \u2014 the entire spread was realized at the 07/13 close; the triage note was written off stale pre-close state and the residual CVR optionality is not purchasable in the market",
+   "primary_source": "Sahm Capital / Reuters wire, \"Archimed completes take-private of Esperion in deal valued up to $1.1 billion\", 2026-07-13; corroborated by Esperion DEFM14A (SEC, filed 2026-06, special meeting 2026-07-08)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage premise (~$3.8B mcap, live PE + Elevance bids) is stale August-2024 news that never resulted in a transaction; Elevance exited the process and the stock has since fallen ~83% to a ~$646M mcap ($5.74, vs a $12 52-wk high). In 2026 the company is divesting pieces (Evolent Care Partners sold to Privia for ~$100M, Sep-2025) rather than selling the whole company, and 2026 catalysts are ordinary earnings (Q1 May 7; a June 29 pop tied to estimate revisions, not M&A). There is no active, dated, forward whole-company sale catalyst \u2014 the situation is fired/dead, so it gates to NONE."
+   "analysis": "Verified in two lookups: ARCHIMED (via Essence Parent Inc./Essence MergerCo Inc., MED Platform II, Pharmakon unitranche debt) completed the take-private of Esperion on 2026-07-13 at $3.16/share cash plus one CVR worth up to $100M in aggregate ($40M bempedoic acid, $60M enbumyst U.S. sales milestones), and ESPR stopped trading and was delisted from Nasdaq at closing. The triage thesis was correct as of the 07/08 vote but is now fully fired \u2014 there is no tradable instrument and therefore no arb spread to capture. The CVR residual is real but is a non-listed contractual right held only by pre-close record holders, undated and unavailable to new capital, so it cannot support an ACTIVE tier."
+  },
+  {
+   "symbol": "EVMN",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "EVO756 (oral MRGPRX2 antagonist) Phase 2b topline in moderate-to-severe atopic dermatitis, guided to Q3 2026, with the stock trading at roughly half its cash balance after the June 2026 CSU miss.",
+   "dated_milestone": "Phase 2b AD topline (NCT07150845, primary completion July 2026) \u2014 company reaffirmed \"third quarter of 2026\" on 2026-06-29; next date = by 2026-09-30",
+   "instrument": "common equity (below-cash floor makes equity preferable to premium-rich short-dated calls)",
+   "bloom_gates": "G3 (specific currently-unpriced figure: market cap ~$172M vs cash guided to fund operations through 2028, i.e. negative enterprise value); partial G2 (concrete company-committed Q3 2026 readout date). No G1 \u2014 no named counterparty.",
+   "edge": "M",
+   "primary_source": "Evommune press release, \"Announces Top-line Results from EVO756 Phase 2b Trial in Moderate-to-Severe Chronic Spontaneous Urticaria,\" ir.evommune.com / Business Wire, 2026-06-29; ClinicalTrials.gov NCT07150845; FMP quote 2026-07-20 ($12.14, cap $172M)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Verified: the CSU Phase 2b missed UAS7 at all doses (2026-06-29, already fired and de-rated \u2014 stock $12.14 vs $33.20 52w high), but the same PR reaffirms an on-track Q3 2026 AD Phase 2b topline, so the forward catalyst is real, dated, un-fired and non-macro. The setup is a genuine negative-enterprise-value binary \u2014 cash guided through 2028 against a ~$172M cap \u2014 which caps downside if the read fails, but MRGPRX2 antagonism just failed in the indication where mast-cell degranulation biology is cleanest, which is a meaningful negative prior for AD rather than a neutral one. Gap in verification: I confirmed \"cash through 2028\" qualitatively but did not independently reconcile the triage's ~$307M figure or the FMP share count (14.2M implied shares looks low for a recent IPO), so the exact cash-per-share discount is unconfirmed \u2014 WATCH rather than ACTIVE until that is checked against the Q2 10-Q."
   },
   {
    "symbol": "EWTX",
    "score": 2,
    "tier": "NONE",
-   "lane": "dated_binary",
-   "catalyst": "GRAND CANYON pivotal Becker topline is expected Q4-2026, but the entire sevasemten/muscular-dystrophy business including GRAND CANYON was sold to Servier, so the readout now accrues to the acquirer, not EWTX shareholders.",
-   "dated_milestone": "GRAND CANYON Becker topline Q4-2026 (belongs to Servier post-close); deal closes Q3-2026",
-   "instrument": "equity",
-   "bloom_gates": "none (fails FORWARD gate; premise falsified)",
-   "edge": "L \u2014 the flagged catalyst was divested; EWTX has no direct exposure to GRAND CANYON outcome after Q3-2026 close, and the deal already re-rated the stock (record high on announcement).",
-   "primary_source": "Edgewise/PRNewswire \"Announces Sale of Sevasemten for Up to $2.65 Billion\" and Servier newsroom (deal announced 2026, includes GRAND CANYON; close Q3-2026); Q1-2026 results confirm Becker topline Q4-2026",
+   "lane": "capital_return_asset_sale",
+   "catalyst": "The Servier purchase of sevasemten ($1.55B upfront + up to $1.1B milestones) already CLOSED on 2026-07-13, so the flagged \"slated to close Q3 2026\" event has fired.",
+   "dated_milestone": "Closed 2026-07-13 (fired). Remaining forward items are soft: pivotal Phase 3 EDG-7500 initiation targeted Q4 2026 (a trial start, not a readout); GRAND CANYON Becker topline Q4 2026 now sits with Servier, not EWTX.",
+   "instrument": "common equity",
+   "bloom_gates": "G1 satisfied historically (named counterparty Servier, concrete $1.55B upfront) but the gate now fails on FORWARD \u2014 the commitment converted to cash a week ago. G3 fails: the stub cash is fully disclosed and the $4.28B market cap has re-rated (price $39.76 vs 200d avg $28.50, near 52w high $48.40).",
+   "edge": "L - the transaction is closed, announced, and visibly re-rated; the residual \"stub revaluation\" is a valuation opinion on a still-clinical cardiovascular pipeline, not an unpriced dated event.",
+   "primary_source": "PRNewswire, \"Edgewise Therapeutics Completes Sale of Sevasemten for Up to $2.65 Billion...\" and Servier's parallel completion release, plus SEC 8-K (CIK 0001710072) \u2014 transaction closed 2026-07-13; deal announced 2026-06-01. Price data FMP quote 2026-07-20 ($39.76, mkt cap $4.28B).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Triage premise is falsified: Servier is acquiring ALL rights to sevasemten and the muscular dystrophy business \u2014 including the GRAND CANYON pivotal Becker study, its clinical data and regulatory filings \u2014 for $1.55B upfront + up to $1.1B milestones, closing Q3-2026, ahead of the Q4-2026 topline. GRAND CANYON is therefore no longer an EWTX shareholder catalyst; its benefit accrues to Servier, and EWTX shares already re-rated to a record high on the deal. Any residual EWTX forward catalyst is the retained cardiovascular pipeline (EDG-7500 HCM Phase 3 initiation 2H-2026, Part D data), which is a different, undated-in-this-flag thesis \u2014 so the flagged dated binary fails the FORWARD/not-fired gate."
+   "analysis": "The triage premise is stale: Servier completed the acquisition of Edgewise's muscular dystrophy business on 2026-07-13 (PRNewswire/8-K), so the close is no longer forward. Critically, the GRAND CANYON Becker topline the thesis leans on is now Servier's asset \u2014 it can at most trigger part of the contingent $1.1B milestone stream to EWTX, an indefinite, undated, probability-weighted tail rather than a dated EWTX catalyst. What remains is a ~$2B-cash biotech stub whose next real value event is EDG-7500 Phase 3 data years out, with only a Q4 2026 trial *initiation* in between; the stock has already run to near 52-week highs on the deal, leaving no unpriced dated forward edge."
   },
   {
    "symbol": "EYPT",
-   "score": 8.5,
+   "score": 7,
    "tier": "ACTIVE",
    "lane": "dated_binary",
-   "catalyst": "DURAVYU pivotal Phase 3 LUGANO topline (non-inferiority vs aflibercept, 6-month redosing in wet AMD) reads out ~Aug-2026 with identical LUCIA trial ~2 months later.",
-   "dated_milestone": "LUGANO topline ~August 2026; LUCIA topline ~October 2026 (both \"mid-2026, LUCIA shortly after\" per company; sell-side pins first read to Aug-2026)",
-   "instrument": "EYPT common equity (single-name binary; long-dated options viable given clean dated event)",
-   "bloom_gates": "G3 (specific currently-unpriced figure: the LUGANO/LUCIA non-inferiority topline BCVA result vs aflibercept control, unresolved until readout); dated + forward",
-   "edge": "M",
-   "primary_source": "EyePoint press release \"Third Consecutive Positive DSMC Recommendation... Ahead of Mid-2026 Topline Data,\" globenewswire.com, 2026-05-14; Aug-2026 first-readout timing corroborated by sell-side (Chardan/Guggenheim notes, late Jun\u20131 Jul 2026)",
+   "catalyst": "LUGANO Phase 3 56-week topline for DURAVYU (vorolanib insert) in wet AMD, company-guided to mid-2026/\"this summer,\" with the sister LUCIA readout to follow shortly after.",
+   "dated_milestone": "LUGANO topline readout guided mid-2026 (reiterated \"this summer\" / as early as Q3 on the 2026-05-06 Q1 call); next hard date = topline release expected between now and ~2026-09-30, LUCIA \"shortly after\"",
+   "instrument": "Common equity (NASDAQ: EYPT, $13.30, ~$1.12B mkt cap as of 2026-07-20); a defined-risk long-dated call structure is the natural expression of a single-asset binary but was not modeled here.",
+   "bloom_gates": "G2 (concrete, repeated company commitment: enrollment complete >900 patients, all active treatment-arm patients past Week 32 as of 2026-05-02, >35% dosed at Week 56, third consecutive DSMC \"continue as planned\" \u2014 topline guided mid-2026). G1 partial only (DSMC is independent but unnamed; no external counterparty). G3 not met \u2014 no specific currently-unpriced figure verified.",
+   "edge": "M \u2014 the event itself is fully consensus (widely covered, heavily debated, sell-side modeled) so there is no informational edge on existence or timing; the edge is structural: a genuinely binary non-inferiority readout on a ~$1.1B single-asset cap trading near the low end of its 52-week range ($9.40-$19.11, 200dma $14.15), i.e. the payoff is asymmetric even though the calendar is not secret.",
+   "primary_source": "EyePoint press release, \"EyePoint Announces Third Consecutive Positive DSMC Recommendation for Phase 3 Wet AMD Trials for DURAVYU, Building Confidence Ahead of Mid-2026 Topline Data,\" GlobeNewswire 2026-05-14; corroborated by Q1 2026 results release 2026-05-06 and FMP press-release scan through 2026-07-20 (no topline announced).",
    "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Core binary confirmed vs primary sources: LUGANO/LUCIA are fully enrolled (>900 pts), randomized double-masked aflibercept-controlled non-inferiority Phase 3s testing DURAVYU 2.7mg q6-month dosing, with 3 consecutive positive DSMC recs (latest May 14, 2026) and topline UNFIRED and forward. CORRECTION 1: company guides topline 'beginning mid-2026' (LUGANO first, LUCIA 'to follow shortly after') \u2014 NOT specifically '~Aug-2026' with a fixed '~2 months later' gap; those are inferences, not company statements. CORRECTION 2: PT hikes are real (Chardan $29->$65 Jul-1; Guggenheim $68 Jun-24) but Chardan's $65 implies ~355% upside from a ~$14 close, so the event is NOT meaningfully priced-in \u2014 the line's rationale for downgrading from 9/10 ('market pricing optimism, compressing edge') is inverted; the edge is largely intact.",
-   "analysis": "EYPT has a genuine dated forward binary: LUGANO Phase 3 wet-AMD topline expected to begin ~Aug-2026 with the identical LUCIA trial reading out ~2 months later, both fully enrolled (~900 patients) and de-risked by three consecutive positive independent DSMC recommendations (latest 2026-05-14). The catalyst is unfired and forward; success (non-inferiority to aflibercept with 6-month dosing) would validate the lead asset and support the recent sharp PT hikes, while failure is a step-function downside \u2014 a textbook dated_binary. Downgraded from a 9/10 only because late-June/July sell-side PT raises to $65-68 indicate the market has started pricing optimism ahead of data, compressing but not eliminating the edge."
+   "kill_fact": "Kill attempt failed on the core claim: the 2026-05-14 EyePoint release (primary source) states verbatim \"LUGANO topline data on track for mid-2026, with LUCIA readout to follow shortly after,\" DSMC third consecutive positive with \"both the LUGANO and LUCIA trials continue as planned with no protocol modifications,\" enrollment complete >900 patients, randomized double-masked aflibercept-controlled non-inferiority design, all treatment-arm patients past Week 32 second dose and >35% dosed at Week 56. Event has NOT fired: the only EYPT news between 2026-06-01 and 2026-07-20 is the 2026-07-13 Chief Strategic Science Officer appointment (Tarek S. Hassan, M.D.) and 2026-07-15/16 inducement grants ($13.85 strike). Live quote confirms no re-rate: $13.30, mkt cap $1.115B, 200dma $14.15, 52wk 9.40-19.11. CORRECTIONS: (1) the control arm is specified only as \"on-label aflibercept\" in the primary source \u2014 the line's \"2mg\" specificity is not confirmed by the release; (2) the \"56-week topline\" framing is inferred from the Week-56 third-dose milestone, not from an independently confirmed primary-endpoint timepoint; (3) MATERIAL OMISSION the line misses \u2014 EyePoint disclosed a DOJ Settlement Agreement for DEXYCU sales/marketing/sampling practices 2019-2023 totaling $4,678,981.86 plus 4.25% interest AND a five-year OIG-HHS Corporate Integrity Agreement effective 2026-07-13, i.e. a compliance overhang landing the same week as the CSSO hire. Small in dollars against $223M cash (Q1 2026, runway into Q4 2027) but a real un-modeled governance/compliance cost the thesis did not account for. Tradeability holds: NASDAQ common, ~1.28M shares/day, liquid listed options. Score stays 7 \u2014 G3 unmet (no verified unpriced revenue/valuation figure) and timing is a guidance window, not a fixed date.",
+   "analysis": "Verified and forward: EyePoint's 2026-05-14 release confirms the third consecutive positive DSMC recommendation with both LUGANO and LUCIA continuing unmodified and topline \"beginning in mid-2026,\" and a scan of all EYPT press releases from 2026-06-01 to 2026-07-20 shows nothing but inducement grants and a Chief Strategic Science Officer appointment (2026-07-13) \u2014 the readout has NOT fired and the stock has not re-rated (price $13.30 vs 200dma $14.15). This is a company-specific, hard-dated, single-asset binary against a ~$1.1B cap, not a macro bet, and it clears G2 on concrete commitment (enrollment complete, dosing milestones disclosed, non-inferiority design vs on-label 2mg aflibercept). Gap in verification: the exact readout date is a guidance window (\"mid-2026\"/\"this summer\"), not a fixed calendar date, and I did not verify a specific unpriced revenue/valuation figure (G3 unmet), so the score is capped at 7 rather than 8+."
   },
   {
    "symbol": "FIP",
-   "score": 7,
+   "score": 6.5,
    "tier": "ACTIVE",
-   "lane": "restructuring/deleveraging",
-   "catalyst": "FIP's definitive $1.52B sale of Long Ridge Energy to MARA Holdings closes Q3 2026, eliminating $1.16B of asset debt plus ~$300M of parent debt on a highly-levered ~$533M-equity stub.",
-   "dated_milestone": "Deal closing expected Q3 2026 (announced 2026-04-30); pending FERC / HSR antitrust / STB approvals \u2014 next milestone = close by end-Sept 2026.",
-   "instrument": "common equity (FIP)",
-   "bloom_gates": "G1 (named counterparty: MARA Holdings), G2 (concrete commitment: signed definitive agreement, $1.52B), G3 (specific figure: $1.16B asset + ~$300M parent debt elimination vs ~$533M equity cap)",
-   "edge": "H \u2014 a combined ~$1.46B deleveraging against a ~$533M equity cap is materially transformative for a levered stub, and FIP trades at $4.51 (down 43% from $7.94 high, below 50/200DMA) with the stock DECLINING since the 4/30 announcement, implying the market is discounting closing risk rather than pricing the post-close capital structure.",
-   "primary_source": "FTAI Infrastructure 8-K / press release \"Announces Agreement to Sell Long Ridge Energy and Power to MARA Holdings\" (globenewswire.com & SEC EDGAR), dated 2026-04-30; corroborated by MARA IR release same date.",
+   "lane": "asset_sale_deleveraging",
+   "catalyst": "Closing of the definitive $1.52B sale of Long Ridge Energy & Power to MARA Holdings, which extinguishes $1.16B of asset-level debt and funds ~$300M of parent debt repayment (~$30M/yr interest savings).",
+   "dated_milestone": "FERC Section 203 / HSR / STB clearances then close, management-guided to \"middle of Q3 2026\" \u2014 next date: mid-to-late August 2026 FERC order, close by 2026-09-30",
+   "instrument": "common equity (NASDAQ: FIP)",
+   "bloom_gates": "G1 (named counterparty: MARA Holdings, definitive agreement signed 2026-04-30) + G2 (concrete commitment: signed SPA, regulatory filings underway) + G3 (specific unpriced figures: $1.52B EV, $1.16B asset debt eliminated, >$300M net proceeds to parent, corporate leverage 9.5x to 7.4x, ~$30M/yr interest reduction against a $492M market cap)",
+   "edge": "H \u2014 announcement dated 2026-04-30 has visibly NOT re-rated the equity: FIP trades $4.16 vs 52wk high $7.94 and 52wk low $3.90, below the 50d ($4.57) and 200d ($5.11) averages, i.e. the market is discounting closing/regulatory risk and residual rail-segment weakness rather than pricing >$300M of net proceeds against a $492M cap.",
+   "primary_source": "FTAI Infrastructure press release / 8-K, \"FTAI Infrastructure Inc. Announces Agreement to Sell Long Ridge Energy and Power to MARA Holdings, Inc.\", ir.fipinc.com and GlobeNewswire, 2026-04-30; plus Q1 2026 earnings call commentary (2026-05-08) guiding FERC approval to mid-Q3 2026; price data FMP quote 2026-07-20 ($4.16, mcap $492M)",
    "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Primary sources (GlobeNewswire/SEC 8-K, 2026-04-30 + FMP quote) confirm every load-bearing fact: definitive signed agreement to sell Long Ridge to MARA for ~$1.52B, eliminating $1.16B Long Ridge asset debt and repaying ~$300M parent debt, close expected Q3 2026 (forward, still pending \u2014 NOT fired); FIP marketCap $532.9M = ~$533M stub; price $4.51 vs $4.64 prev close, below 50d ($4.83) and 200d ($5.13). CORRECTION: the specific 'FERC/HSR/STB approvals' are NOT named in the primary release, which states only 'customary closing conditions, including regulatory approvals' \u2014 an unsupported specificity, not a material error.",
-   "analysis": "FIP signed a definitive agreement on 2026-04-30 to sell Long Ridge Energy & Power to MARA Holdings for ~$1.52B, immediately eliminating $1.16B of Long Ridge asset debt and using net proceeds to repay ~$300M of parent debt, with close expected Q3 2026 subject to FERC/HSR/STB approvals. This clears all three Bloom gates (named counterparty, signed commitment, specific unpriced figures) and is dated, forward, and not yet fired \u2014 the deal is still pending regulatory clearance. FIP has actually fallen since announcement (now $4.51 vs ~$4.64 area, below both moving averages), so the transformational deleveraging on the remaining stub does not appear priced in; primary risk is regulatory/closing timing slippage on a small-cap with a controlling sponsor (Fortress) structure."
+   "kill_fact": "Core catalyst survives primary-source check and is still FORWARD: FTAI Infrastructure's 2026-04-30 press release (globenewswire/ir.fipinc, Skadden confirmation) states a definitive agreement to sell Long Ridge Energy & Power to a MARA Holdings subsidiary for ~$1.52B ($1.512B pre-adjustment), eliminating $1.16B of Long Ridge debt and using net proceeds to repay ~$300M of parent debt, expected to close in Q3 2026 subject to regulatory approvals; no closing announcement exists as of 2026-07-20, so the event has not fired. Tape is consistent with an unpriced event: FIP $4.16, mkt cap $492M, 52wk low $3.90 / high $7.94, below 50d ($4.57) and 200d ($5.11). CORRECTIONS: (1) the condition set is overstated \u2014 the filings name FERC Section 203 change-of-control as the operative approval plus customary conditions; STB (Surface Transportation Board) clearance is NOT a condition of this power/gas asset sale and appears fabricated (STB relates to the retained Transtar rail business, not Long Ridge), and HSR is not separately confirmed; (2) 'mid-Q3 2026', the ~$30M/yr interest savings, and the 9.5x-to-7.4x leverage step with a 5.1x target are management commentary from the Q1 call, not press-release facts, and could not be independently re-verified; (3) FERC 203 timing is the live risk \u2014 no docket outcome confirmable, and a Q3 slip is the base failure mode. Residual thesis weakness stands as stated: post-close equity is a levered, still-lossmaking Transtar/Jefferson/Repauno story, so the sale de-risks the balance sheet without proving the remainco earns its cost of capital.",
+   "analysis": "The catalyst is verified real, specific, dated and still forward: a signed definitive agreement (2026-04-30) with a named public counterparty, with closing conditioned on FERC 203, HSR and STB clearances and guided to mid-Q3 2026, so the structural deleveraging event has not yet occurred. The unpriced element is the capital-structure step change \u2014 $1.16B of Long Ridge debt leaves the balance sheet, >$300M of net proceeds retires parent debt, corporate leverage drops 9.5x to 7.4x with a 5.1x target \u2014 set against a market cap of only ~$492M and a share price sitting near its 52-week low, which is not the tape of a re-rated event. Main gaps in this focused check: I could not confirm from public sources whether the FERC/HSR filings have already cleared as of 2026-07-20, and the residual entity is a leveraged, still-loss-making freight-rail/terminal business, so the post-close equity value depends on Transtar/Jefferson/Repauno execution rather than on the sale alone."
   }
  ]
 }

@@ -2,210 +2,122 @@
  "chunk": "20 (WF-ZYME)",
  "scanned": 111,
  "scan_distribution": {
-  "active": 6,
-  "watch": 10,
-  "none": 95
+  "active": 1,
+  "watch": 7,
+  "none": 103
  },
  "survivors_flagged": [
   {
-   "symbol": "WFRD",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "activist+structural",
-   "one_line": "Texas redomestication failed the 75% bar (Jun-2026); management to bring an updated Delaware re-domicile proposal \u2014 a real dated forward corporate action but modest asymmetry."
-  },
-  {
-   "symbol": "WSR",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Definitive all-cash merger with Ares at $19.00/share (~$1.7B), DEFM14A filed Apr-2026; live arb pending close, activist campaign resolved into the deal."
-  },
-  {
-   "symbol": "WTRG",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Target in all-stock merger with American Water (AWK); shareholders approved, multiple state regulatory approvals accumulating (KY/OH/VA), live arb pending close."
-  },
-  {
    "symbol": "WVE",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "one_line": "Dated clinical binaries: WVE-007 obesity INLIGHT higher-dose data + WVE-006 AATD RestorAATion-2 cohort (Q1/mid-2026) with FDA accelerated-approval feedback."
-  },
-  {
-   "symbol": "XOMA",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Ligand definitive cash deal $39/share + litigation CVR (announced Apr 27, 2026); shareholder vote + reg approvals, expected close Q3 2026 \u2014 live merger-arb, unclosed."
+   "lane": "binary-catalyst",
+   "one_line": "Stacked 2026 dated binaries: WVE-N531 DMD NDA submission, mid-26 FDA accelerated-approval feedback on WVE-006, and INLIGHT obesity multi-dose data."
   },
   {
    "symbol": "XIFR",
    "score": 5,
    "tier": "WATCH",
    "lane": "restructuring",
-   "one_line": "Distribution suspension already fired Jan-2025, but ongoing capital-structure simplification with 2026 repowering/battery milestones is a live restructuring \u2014 forced-seller overhang partly clearing."
+   "one_line": "Post-distribution-suspension YieldCo working through dated CEPF buyout/repowering milestones into 2027; partly re-rated (+42%) but the deleveraging path is still forward and datable."
   },
   {
-   "symbol": "ZIM",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live cash merger-arb: Hapag-Lloyd $35.00/sh cash (~$4.2B), shareholder vote Apr 30 2026, close by late 2026; shares trade ~$7 below offer + New ZIM Israeli carve-out \u2014 dated with a wide, mispriced spread."
+   "symbol": "YUM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "divestiture",
+   "one_line": "Definitive $2.7B Pizza Hut sale to LongRange and Yum China slated to close Q3 2026, but the re-rating is largely in and the spread sits at the buyers."
   },
   {
-   "symbol": "ZLAB",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "binary",
-   "one_line": "Multiple dated FDA events incl. AChR-Ab sBLA priority review PDUFA May 10, 2026 plus China launch catalysts \u2014 real forward dated-binary stack."
+   "symbol": "ZBIO",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_catalyst",
+   "one_line": "Obexelimab BLA filed Q2 2026 (FDA acceptance/PDUFA to be set) plus dated SLE Phase 2 topline in Q4 2026 \u2014 a genuine forward binary in a small cap."
   },
   {
    "symbol": "ZYME",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "ma",
-   "one_line": "Definitive deal to acquire Theravance (YUPELRI) plus zanidatamab US PDUFA Aug 25, 2026 and $440M milestone stream \u2014 real dated M&A + binary combo."
+   "lane": "binary",
+   "one_line": "Hard PDUFA Aug 25, 2026 for zanidatamab 1L HER2+ GEA triggering a $250M milestone (of up to $440M) into a small cap - dated, forward, asymmetric."
   }
  ],
  "verified": [
   {
-   "symbol": "WFRD",
-   "score": 3,
-   "tier": "WATCH",
-   "lane": "activist+structural",
-   "catalyst": "After the Texas redomestication failed the 75%-of-value bar on Jun-11-2026, management intends to re-file an updated Delaware re-domicile proposal for a future shareholder meeting.",
-   "dated_milestone": "No firm date yet; company said updated Delaware proposal would come \"in the coming weeks\" (from Jun-11-2026) at a \"future meeting, details in due course\" \u2014 no proxy filed or meeting scheduled as of Jul-2-2026. Watch for a PRE 14A / DEFM14A filing.",
-   "instrument": "equity",
-   "bloom_gates": "G2 partial (soft \"intends to present\" commitment, not firm/dated); G3 partial ($20-30M annual cash savings from 2027, but already disclosed in the failed proxy, not currently-unpriced, and ~0.5% of $5.9B cap = immaterial). G1 fails (internal re-domicile, no external counterparty).",
-   "edge": "L \u2014 the value figure ($20-30M/yr) is small, already public/priced from the June proxy, and re-domicile is a wrapper simplification not a value unlock; the primary vote already fired, and the re-file has no date or record.",
-   "primary_source": "Weatherford press release \"Announces Results of Shareholder Meeting and Redomestication Proposals,\" GlobeNewswire, Jun-11-2026 (corroborated by June-01-2026 value-case release citing $20-30M savings).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Confirmed: Weatherford's Ireland-to-Texas redomestication got over 60% but missed the 75%-by-value threshold on Jun-11-2026, and management publicly committed to re-file an updated Delaware proposal \"in the coming weeks\" for a future meeting. This is a genuine forward corporate action but fails strict gating on two counts \u2014 no dated milestone exists yet (no proxy filed, no meeting scheduled as of Jul-2-2026), and the only quantified figure ($20-30M annual cash savings from 2027) is modest, already disclosed in the failed proxy, and immaterial versus the $5.9B market cap. Asymmetry is thin: a tax-domicile wrapper change is not a re-rating catalyst, so this holds a low WATCH pending an actual dated Delaware proxy, not ACTIVE."
-  },
-  {
-   "symbol": "WSR",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Whitestone REIT is being acquired by Ares Real Estate funds for $19.00/share all-cash (~$1.7B), definitive agreement signed Apr-9-2026, with a live shareholder vote pending.",
-   "dated_milestone": "Special shareholder meeting to approve the merger on July 9, 2026 (9:00am CT, virtual); expected close Q3 2026.",
-   "instrument": "equity (common)",
-   "bloom_gates": "G1 (named counterparty: Ares Real Estate); G2 (concrete commitment: definitive all-cash merger agreement at $19.00/share); G3 largely FAILS \u2014 the $19.00 figure is essentially fully priced.",
-   "edge": "L \u2014 at $18.965 vs $19.00 offer the gross spread is only ~0.18% for a ~2-month hold; the catalyst is effectively re-rated/near-fired, minimal residual arb and no unpriced upside.",
-   "primary_source": "Whitestone REIT DEFM14A, SEC EDGAR (filed ~2026, vote set July 9 2026); deal announced Apr-9-2026 (Kirkland & Ellis / Globe and Mail); quote $18.965 as of 2026-07-02 (FMP).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Real, dated, forward merger arb \u2014 named acquirer (Ares), definitive all-cash agreement at $19.00/share (~$1.7B), DEFM14A filed, shareholder vote July 9 2026 (7 days out), expected close Q3 2026. But WSR at $18.965 has essentially fully closed the arb: ~0.18% gross to deal price, an annualized IRR in the low single digits entirely dependent on close mechanics, not a catalyst edge \u2014 the money was made pre-April. G3 fails because the $19.00 figure is no longer an unpriced number; the market treats approval as near-certain (board unanimous, cash deal, no visible antitrust hurdle). Legitimate live arb but no meaningful overlay edge, so WATCH not ACTIVE."
-  },
-  {
-   "symbol": "WTRG",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "catalyst": "Essential Utilities (WTRG) is the target in an all-stock acquisition by American Water (AWK) at a fixed 0.305 AWK/WTRG exchange ratio; shareholders approved Feb 2026 and state PUC approvals are accumulating (KY, OH, VA done) with PA/NJ and HSR still pending ahead of an expected close.",
-   "dated_milestone": "Remaining approvals: Pennsylvania PUC (active docket, protests filed by OCA/PULP) + New Jersey + HSR; expected close end of Q1 2027 (by ~2027-03-31).",
-   "instrument": "Long WTRG common vs. optional short AWK hedge (0.305 ratio); definitive stock-for-stock merger arb.",
-   "bloom_gates": "G1 (named counterparty American Water/AWK) + G2 (concrete commitment: signed definitive all-stock merger agreement, fixed 0.305 exchange ratio, shareholder-approved) + G3 (specific unpriced figure: ~$2.15 gross spread = ~5.5% to $41.42 deal value at 0.305\u00d7$135.81, ~7-8% annualized over ~9 months to close).",
-   "edge": "M",
-   "primary_source": "American Water/Essential Utilities merger releases: Ohio PUCO approval (newsroom.amwater.com, 2026-05-14) and Kentucky PSC approval (businesswire, 2026-04-22); shareholder approval (prnewswire, 2026-02); FMP quotes 2026-07-02 (WTRG $39.27 / AWK $135.81).",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Definitive all-stock merger (announced Oct 27 2025) confirmed at 0.305 AWK/WTRG; shareholder approval ~94.8% Feb 2026 and KY/OH/VA PUC approvals all verified against AWK IR/SEC; HSR + remaining state commissions (incl. PA/NJ) still pending ahead of expected end-Q1-2027 close. Live spread real: WTRG $39.27 vs 0.305x$135.81=$41.42 implied = ~$2.15 (~5.5%) gross. Minor date slips only: KY approval was 4/21 (not 4/22) and OH 5/13 (not 5/14). Forward, dated, non-macro, not fully fired.",
-   "analysis": "Definitive all-stock merger (announced Oct 27 2025) with WTRG receiving 0.305 AWK shares; at current prices ($39.27 WTRG vs 0.305\u00d7$135.81=$41.42 AWK-implied) the gross spread is ~$2.15 (~5.5%), a live arb to an expected end-Q1-2027 close. Shareholder votes cleared (94.8% support, Feb 2026) and three state PUCs (KY 4/22, OH 5/14, VA) have approved; the forward, unresolved catalyst is the remaining PA (contested docket) and NJ commission approvals plus HSR clearance. Real, dated, forward, non-macro and not fully fired \u2014 the spread persists precisely because regulatory approval timing/conditioning in PA/NJ is unresolved."
-  },
-  {
    "symbol": "WVE",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "catalyst": "Wave awaits FDA accelerated-approval pathway feedback for WVE-006 (RNA-editing therapy for Alpha-1 antitrypsin deficiency), expected mid-2026, which could open a registrational path years ahead of a full outcomes trial.",
-   "dated_milestone": "FDA accelerated-approval pathway feedback for WVE-006 \u2014 expected mid-2026 (i.e., due now/imminent as of 2026-07-02). Phase 2a multidose initiation of WVE-007 obesity also on track 2Q 2026.",
-   "instrument": "equity",
-   "bloom_gates": "G2 (concrete company commitment to seek accelerated-approval FDA feedback by a dated window) + partial G3 (an accelerated-approval green light is a specific, not-yet-priced optionality on WVE-006's registrational timeline).",
-   "edge": "M \u2014 the flagged Q1/Q2 higher-dose INLIGHT and RestorAATion-2 readouts largely already FIRED (Dec 2025 240mg interim; 400mg/600mg presented at ATS May 2026), so those binaries are stale; the still-forward, unpriced item is the mid-2026 FDA accel-approval feedback, but 'mid-2026' is now due/soft-dated, capping conviction.",
-   "primary_source": "Wave Life Sciences 2026 strategic-priorities release / IR milestone guidance (Jan 12, 2026) + WVE-006 accelerated-approval plan release (Feb 2, 2026, globenewswire) + Q1 8-K reiterating mid-2026 FDA feedback and ATS May 2026 data (June 2026 8-K, sec.gov acc. 000119312526229076).",
+   "lane": "binary-catalyst",
+   "catalyst": "Three unfired 2026 regulatory/clinical binaries: FDA feedback on an accelerated-approval path for WVE-006 (AATD) guided \"mid-2026\", a WVE-N531 DMD NDA submission guided for 2026 under the dystrophin surrogate, and multidose readouts from the Phase 2a INLIGHT obesity trial dosed since June 2026.",
+   "dated_milestone": "Next: FDA accelerated-approval-pathway feedback on WVE-006 guided \"mid-2026\" (i.e., due now / imminent as of 2026-07-20); then WVE-N531 NDA submission during 2026; INLIGHT Phase 2a multidose data following the 2026-06-24 initiation.",
+   "instrument": "Common equity (WVE, Nasdaq); note pending Singapore-to-US redomiciliation scheme (court hearing 2026-07-14) \u2014 confirm share-line continuity before sizing. Long-dated calls straddling the WVE-006 feedback window are the cleaner convex expression given binary event vol.",
+   "bloom_gates": "G1 (named counterparty: FDA, on a specific pathway question for a specific asset) and G2 (concrete company commitment: NDA submission in 2026 on all FORWARD-53 data supporting monthly dosing; Phase 2a multidose already initiated). G3 fails \u2014 no specific currently-unpriced figure was identified; WVE-006's MZ-like phenotype data (64% M-AAT, 71% Z-AAT reduction) is already public and re-rated.",
+   "edge": "M \u2014 the events are company-guided and widely covered by sell-side, so the calendar itself is not proprietary; residual edge is that the WVE-006 accelerated-approval decision is a genuine step-function (a surrogate-endpoint path in AATD would be a first) and the exact FDA answer is unknowable from the tape. Not differentiated information, only differentiated conviction on an unpriced regulatory branch.",
+   "primary_source": "Wave Life Sciences Q1 2026 results/business update, 2026-04-28 (ir.wavelifesciences.com / GlobeNewswire) and \"Plans to Accelerate Regulatory Engagement with Full Control of WVE-006\", 2026-02-02; INLIGHT Phase 2a multidose initiation reported 2026-06-24 (StockTitan aggregation of WVE 8-K).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage's specific clinical binaries (WVE-007 INLIGHT 400mg/600mg higher-dose data and WVE-006 RestorAATion-2 cohorts) have largely already read out \u2014 240mg interim in Dec 2025 (fat loss similar to GLP-1 without muscle loss) and the 400mg/600mg AATD data presented at the ATS conference in May 2026 (Z-AAT reductions ~59-70%, MZ-like phenotype) \u2014 so those catalysts are no longer forward. The one genuinely forward, dated, company-committed catalyst is FDA feedback on a potential accelerated-approval pathway for WVE-006, which the June 2026 8-K still lists as 'expected mid-2026' and not yet received; a positive outcome is a real unpriced registrational-timeline unlock. It stays WATCH (not ACTIVE) because 'mid-2026' is imminent/soft-dated and the largest data re-ratings already occurred in May, and it is not a macro bet."
-  },
-  {
-   "symbol": "XOMA",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger-arb",
-   "catalyst": "Ligand's definitive $39.00 cash + one Janssen-litigation CVR acquisition of XOMA closes on/around July 14, 2026, but the stock already trades through cash and the CVR is undated/uncapped.",
-   "dated_milestone": "Shareholder vote July 13, 2026; expected close ~July 14, 2026",
-   "instrument": "common equity (XOMA)",
-   "bloom_gates": "G1 (named counterparty Ligand, definitive merger agreement) satisfied; G2/G3 fail \u2014 no specific currently-unpriced figure and the forward piece (CVR) is uncapped and undated.",
-   "edge": "L \u2014 XOMA trades $42.61 vs $39.00 cash (+$3.61 premium to cash), so no cash-spread edge remains; deal closes in ~11 days and the market has already re-rated the stock to embed CVR value.",
-   "primary_source": "XOMA Form 425 / DEFM14A merger proxy (SEC, Apr 27\u2013Jun 2026) via StockTitan; live quote $42.61 (2026-07-02, FMP)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The Ligand/XOMA deal is a real, definitive, dated merger (signed Apr 27, 2026; vote July 13; close ~July 14, 2026; 47% voting support, no financing condition), but it is effectively closed next week and the cash consideration is fully priced \u2014 XOMA trades at $42.61, $3.61 ABOVE the $39.00 cash, so there is no positive arb spread. The only forward-looking element is the Janssen-litigation CVR, which the merger filing states has no dollar cap, no minimum, no payout timeline, is non-transferable, and \"may have no value\" \u2014 failing the DATED and specific-unpriced-figure gates while the market already ascribes ~$3.60/share to it. This is a re-rated / near-closed situation, not a live unpriced forward catalyst."
+   "analysis": "All three flagged legs verify as real, forward, and unfired: Wave reaffirmed the WVE-N531 NDA filing for 2026 with the FDA confirming the dystrophin accelerated-approval surrogate remains open, guided FDA feedback on a WVE-006 accelerated-approval path for mid-2026 after regaining full rights from GSK (2026-02-02), and initiated the INLIGHT Phase 2a multidose obesity portion on 2026-06-24. The weakness is date precision \u2014 \"2026\" and \"mid-2026\" are guidance windows, not PDUFA or a scheduled data day, so the milestone cannot be sized to a specific week, and the WVE-006 window is arguably already open, raising slip risk into 2H. Gap in verification: I could not retrieve the June/July 8-K primary text (SEC.gov returned 403) to confirm no post-Q1 guidance change, so the timing rests on Q1-2026 and May-2026 company statements plus a secondary aggregator; that plus failed G3 caps this at WATCH rather than ACTIVE."
   },
   {
    "symbol": "XIFR",
    "score": 4,
    "tier": "WATCH",
    "lane": "restructuring",
-   "catalyst": "XPLR intends to exercise its first CEPF 5 partial-buyout call option \"later in 2026\" (~$150M), retiring third-party convertible equity and incrementally clearing the unit-conversion (forced-seller) overhang as part of ongoing capital-structure simplification.",
-   "dated_milestone": "CEPF 5 first partial buyout call exercise, guided \"later in 2026\" (soft date; ~$150M in 2026, ~$470M in 2027); next hard checkpoint = Q3 2026 earnings update",
-   "instrument": "XIFR common units",
-   "bloom_gates": "G2 (concrete company commitment: CEPF 5 call option with ~$150M 2026 sizing) \u2014 partial only; no specific date (fails the DATED bar) and no G1 named counterparty / G3 unpriced figure",
-   "edge": "L \u2014 the distribution-suspension leg already fired Jan-2025 and re-rated; the CEPF simplification schedule has been repeatedly telegraphed (Q4'25 and Q1'26 guidance, >$1.1B NCI already retired), so overhang-clearing is the consensus thesis, not an unpriced surprise. No discrete unpriced counterparty event.",
-   "primary_source": "XPLR Q1 2026 8-K / earnings call (filed ~May 2026) and Q4 2025 earnings call \u2014 CEPF 5 call \"later in 2026\", ~$150M 2026 / ~$470M 2027; corroborated via StockTitan/Yahoo/GuruFocus summaries (2026-05)",
+   "catalyst": "XPLR expects to exercise the call option on the first partial buyout of CEPF 5 later in 2026 (~$150M in 2026, ~$470M in 2027), continuing the self-funded removal of the convertible-equity overhang that forced the distribution suspension.",
+   "dated_milestone": "First partial CEPF 5 buyout call expected H2 2026; next hard checkpoint is the Q2 2026 earnings call (late July 2026), then the CEPF 3 call-option/asset-sale decision in 2027.",
+   "instrument": "common equity",
+   "bloom_gates": "G2 (concrete committed partial-buyout of CEPF 5 with sized $150M/2026 + $470M/2027 spend), partial G3 (sized figure) \u2014 G1 fails: the CEPF counterparties are unnamed institutional holders; the one named counterparty (NextEra Energy Resources battery co-investment, up to 200 net MW) has COD end-2027 and no cash flow until 2028+.",
+   "edge": "L \u2014 the buyout schedule, 2026 guidance ($1.75-1.95B EBITDA, $600-700M FCFBG) and the 2.1GW-through-2030 repowering plan were all laid out at the Feb 10, 2026 Q4 call and are in consensus; the stock has already re-rated +42%, and management explicitly declined to commit to buybacks or restarting distributions \"over the next five years,\" removing the single event that would force a re-rate.",
+   "primary_source": "XPLR Infrastructure Q4 2025 earnings call, Feb 10, 2026 (via Investing.com/GuruFocus transcript highlights) + Q4 2025 8-K exhibit 99, filed Feb 2026; CEPF 5 partial-buyout sizing from Q4 2025 call coverage.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The flagged distribution suspension fired Jan-2025 and is fully re-rated, so it is not a live catalyst. The genuinely forward element is CEPF 5's first partial-buyout call (~$150M) guided for \"later in 2026\" plus ~$470M in 2027, which incrementally retires convertible equity and clears the forced-seller overhang \u2014 a real management commitment (G2) but with only a soft date and heavily pre-telegraphed across multiple quarters, so it is execution-of-a-known-plan rather than a discrete unpriced event. Repowering (2.1 GW to 2030) and battery storage (200 MW by YE2027) are ongoing operational programs, not dated binary catalysts. Net: a slow-burn restructuring worth watching but lacking a hard-dated, unpriced trigger \u2014 WATCH, not ACTIVE."
+   "analysis": "There is a genuine dated, forward, sized deleveraging step \u2014 the first partial CEPF 5 call in H2 2026 at roughly $150M, followed by ~$470M in 2027 and the CEPF 3 call/asset-sale decision in 2027 \u2014 so this clears the \"real and datable\" bar but only barely. The problem is edge: every one of these figures came from the company's own February 2026 guidance, the milestone is a routine self-funded capital-structure step rather than a discrete surprise, and with the units already up 42% the deleveraging narrative is at least partly in the price. Critically, the terminal catalyst (distribution restart) has been explicitly disowned for five years, so the equity has no dated event that converts deleveraging into a payout \u2014 it is a slow grind, not a catalyst trade. Gap: I could not confirm from the primary 8-K/10-Q (SEC fetch 403'd) whether a precise calendar date for the CEPF 5 call has been disclosed; the H2-2026 timing is from Q4-call reporting."
   },
   {
-   "symbol": "ZIM",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "catalyst": "Hapag-Lloyd's binding $35.00/sh all-cash acquisition (~$4.2B, 97% shareholder-approved Apr 30 2026) is pending final Israeli government/Special-State-Share and antitrust clearance with a rival $37.50 Sakal counter-bid live, leaving ZIM trading ~$9 (36%) below the approved deal.",
-   "dated_milestone": "Israeli regulatory / Special State Share approvals pending; expected close \"by late 2026\" (next hard date is completion; shareholder vote already cleared Apr 30 2026)",
-   "instrument": "ZIM common (NYSE) \u2014 cash-merger-arb long; deal spread",
-   "bloom_gates": "G1 (named counterparty Hapag-Lloyd/FIMI + rival bidder Haim Sakal) + G2 (concrete binding merger agreement, $35.00/sh cash, 97% shareholder approval) + G3 (specific unpriced figure: ~$9.28/36% gross spread vs approved $35 deal, ZIM at $25.72)",
-   "edge": "H \u2014 a 36% gross spread on a signed, 97%-shareholder-approved cash deal is extraordinary; the market is heavily discounting Israeli Special-State-Share/government-approval risk and deal-break scenarios, and a competing $37.50 bid caps downside; genuine, event-driven mispricing rather than a re-rated momentum name.",
-   "primary_source": "ZIM IR press release + Calcalist/Journal of Commerce shareholder-vote coverage (Apr 30 2026); Ynetnews rival Sakal $37.50 bid (May 6 2026); FMP quote $25.72 (2026-07-02)",
-   "verdict": "CONFIRMED",
-   "kill_fact": "All load-bearing facts verified against primary/reputable sources: Hapag-Lloyd binding $35.00/sh cash (~$4.2B) with FIMI New-ZIM carve-out; 97% shareholder approval Apr 30 2026 (Calcalist/StockTitan/investors.zim.com); close targeted late 2026 pending State of Israel Special-State-Share + antitrust (Australia ACCC review confirmed via MLex); rival ~$37.50/sh (~$4.5B) Sakal bid confirmed live May 6 (Ynetnews/Maritime Executive), board holding it off as binding. FMP quote $25.72 (2026-07-02) vs $35 approved deal = ~$9.28/36% gross spread \u2014 genuinely wide due to real State-of-Israel/national-security block risk, not a free lunch. Forward not fired (deal not closed, spread intact), discrete event, named counterparties, unpriced spread \u2014 clears all gates.",
-   "analysis": "ZIM is a live, binding cash merger-arb: Hapag-Lloyd (with FIMI's New ZIM Israeli carve-out) agreed to $35.00/sh cash (~$4.2B), and 97% of shareholders approved on Apr 30 2026, with close targeted \"by late 2026\" pending Israeli government/Special-State-Share and antitrust clearances. The tape at $25.72 leaves a ~36% gross spread \u2014 far too wide for an approved deal \u2014 because of genuine Israeli regulatory/national-security approval risk, union opposition, and a competing $37.50 all-cash bid from Haim Sakal's group (which ZIM's board has so far rejected as the Hapag agreement is binding). This clears all three Bloom gates (named counterparties, concrete binding agreement, specific unpriced ~$9/36% spread), is dated and forward (not fired \u2014 deal not closed, spread not collapsed), and is a discrete event, not a macro bet; principal risk is a State-of-Israel block, which is why the spread is wide rather than a free lunch. Primary source: ZIM investor-relations / Calcalist / Journal of Commerce (Apr 30 2026 vote approval) and Ynetnews/Maritime Executive (May 6 2026 rival $37.50 Sakal bid); FMP quote $25.72 (2026-07-02)."
-  },
-  {
-   "symbol": "ZLAB",
-   "score": 3,
+   "symbol": "YUM",
+   "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Zai's owned near-term binary is the zocilurtatug (DLL3 ADC) Phase 1 combination data readout expected H2 2026 with advance into a registrational study, but the headline AChR-Ab/VYVGART SERON PDUFA is argenx's US decision (Zai holds only Greater China rights) and that date has already passed.",
-   "dated_milestone": "Zoci Phase 1 combo (atezo/chemo) data readout + registrational-study advance \u2014 soft-dated H2 2026 (no fixed date)",
-   "instrument": "equity",
-   "bloom_gates": "none clearly met \u2014 no G1 named-counterparty deal, no G2 concrete dated commitment, no G3 specific currently-unpriced figure; the zoci readout is a soft-dated proprietary data event",
-   "edge": "L \u2014 the flagged May 10 2026 AChR-Ab PDUFA is misattributed (argenx's US event, not Zai's; Zai = China-only) and is already past; remaining Zai catalysts (KarXT China launch Q2 2026, Elegrobart REVEAL Q1/Q2 2026) have fired or soft-date, and zoci H2 2026 is a pipeline data readout not a hard binary.",
-   "primary_source": "Zai Lab Q4/FY2025 results, businesswire/stocktitan, 2026-02-26 (China launches + zoci H2 2026 readouts); argenx VYVGART SERON PDUFA May 10 2026 via NeurologyLive FDA Action Update May 2026",
+   "lane": "divestiture",
+   "catalyst": "Definitive $2.7B Pizza Hut sale (ex-China to LongRange Capital ~$1.5B; Mainland China to Yum China ~$1.2B) closing Q3 2026, with ~$2.3B net after-tax proceeds and a concurrent incremental $4B buyback authorization to be sized on the July 30 Q2 call.",
+   "dated_milestone": "2026-07-30 Q2 2026 earnings call (management to give transaction financial impact + updated 2026 outlook); then regulatory close in Q3 2026.",
+   "instrument": "common equity",
+   "bloom_gates": "G1 (named counterparties: LongRange Capital, Yum China Holdings) + G2 (definitive agreements signed, $4B incremental buyback authorization approved by the board)",
+   "edge": "L \u2014 announcement already fired 2026-06-16 on a widely covered ~$80B+ mega-cap; the deal spread accrues to LongRange/Yum China, not YUM holders, and the remaining YUM-side legs (outlook reset, buyback pace) are consensus-modeled. Shares fell 3.9% on 2026-07-14 as investors reassessed, so the re-rating is not one-directionally spent, but there is no proprietary unpriced figure.",
+   "primary_source": "Yum! Brands press release / 8-K Ex-99.1, \"Yum! Brands, Inc. Enters into Agreements to Sell Pizza Hut for $2.7 Billion,\" 2026-06-16 (investors.yum.com; SEC EDGAR CIK 0001041061); Q2 call date and post-announcement fade via StockTitan and QuiverQuant, 2026-07-14.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage's core dated binary \u2014 AChR-Ab sBLA priority review with a May 10, 2026 PDUFA \u2014 is argenx's US regulatory decision; Zai Lab only licenses VYVGART/efgartigimod in Greater China, so the US approval is not Zai's binary, and that date is now in the past relative to today (2026-07-02), meaning it has already fired/re-rated. Zai's genuinely owned forward events are pipeline data readouts (zoci DLL3 ADC combo data H2 2026; ZL-1503 first-in-human H2 2026) and China commercial launches (KarXT approved Dec 2025, launching Q2 2026), none of which is a hard-dated binary with a specific currently-unpriced figure or named-counterparty commitment clearing the strict Bloom gate. Net: real pipeline but no clean forward dated-binary that qualifies \u2014 downgrade from ACTIVE-7 to WATCH-3."
+   "analysis": "The catalyst is real, specific and dated: signed definitive agreements with two named buyers, $2.7B aggregate, ~$2.3B net proceeds, ~$85M one-time separation cost, closing Q3 2026, with the financial-impact reveal pinned to the July 30, 2026 Q2 call. It clears G1 and G2 but fails G3 \u2014 there is no currently-unpriced figure; the sale price, buyback authorization and margin-mix uplift were all disclosed on 2026-06-16 and are in sell-side models. The tape confirms the announcement pop is spent (shares -3.9% on 2026-07-14 on near-term operating-profit dilution worries), so the residual tradable event is the narrow July 30 outlook/buyback-cadence reset rather than the divestiture itself \u2014 WATCH-grade, not ACTIVE. Gap: I did not pull a current price/consensus print, so the degree to which the July 30 guide is already discounted is inferred from the price action, not measured."
+  },
+  {
+   "symbol": "ZBIO",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "binary_catalyst",
+   "catalyst": "Obexelimab BLA for IgG4-RD filed 28-May-2026 (FDA filing decision/PDUFA date still to be announced) paired with a company-guided Phase 2 SunStone SLE topline in Q4 2026 \u2014 the SLE readout is the genuine unpriced binary, and FDA approval mechanically triggers $75M Royalty Pharma milestone plus a $75M Pharmakon debt draw.",
+   "dated_milestone": "Next dated events: FDA 60-day filing/acceptance decision with PDUFA date, expected ~late July\u2013Aug 2026 (BLA submitted 2026-05-28); EMA MAA submission H2 2026; Phase 2 SunStone SLE topline incl. biomarkers Q4 2026.",
+   "instrument": "common equity (NASDAQ: ZBIO); optionality via Q4-2026-expiry calls if liquid, given SLE topline timing",
+   "bloom_gates": "G1 (named counterparties: FDA, Royalty Pharma, Pharmakon), G2 (concrete commitments: BLA under review, guided Q4-2026 SLE topline, contractual milestone/debt triggers on approval), G3 (specific figures: $75M Royalty Pharma milestone + $75M Pharmakon draw = $150M contingent, non-dilutive capital on approval)",
+   "edge": "M \u2014 the IgG4-RD approval leg is largely priced after INDIGO hit (HR 0.44, p=0.0005) and is high-probability, so limited upside there; the real edge is the Q4 2026 SLE Phase 2, an undiscounted two-sided binary in a large indication on a ~$1.9B cap with $719M cash (runway to 2029), which caps downside but also means a miss does not threaten solvency.",
+   "primary_source": "Zenas BioPharma PR, \"Announces Submission of BLA to U.S. FDA for Obexelimab in IgG4-RD,\" 2026-05-28 (GlobeNewswire/investors.zenasbio.com); plus Q1 2026 Financial Results & Corporate Update, 2026-05-13 (SEC 8-K Ex-99.1) for the Q4 2026 SLE topline guidance, $718.55M cash and the $75M+$75M approval-contingent financing.",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Financing leg is inert, not a catalyst: Zenas held $718.5M cash at 2026-03-31 with runway guided \"at least through Q2 2029\" \u2014 and that guidance ALREADY factors in both the $75M Royalty Pharma approval milestone and the $75M Pharmakon approval tranche (Q1 2026 corporate update, 2026-05-13). The $150M is ~20% of cash on hand at a company funded three years out and is in management's own base case, so it moves nothing. Separately, the line understates fired content: the actual de-risking event was the positive Phase 3 INDIGO readout in Jan 2026 (56% flare-risk reduction, HR 0.44, p=0.0005), which is priced and already triggered the first RP milestone, making IgG4-RD approval near-consensus. Facts that DO hold: BLA submitted 2026-05-28 (confirmed, company PR); SunStone Ph2 SLE fully enrolled, topline guided Q4 2026 (confirmed); both $75M amounts and their FDA-approval triggers confirmed exactly; no FDA acceptance/PDUFA announcement found as of 2026-07-20, with the ~60-day filing decision due ~late July, so that leg is genuinely forward. Unflagged risk: the SLE topline already slipped once from mid-2026 to Q4 2026, and it is a Phase 2 in an indication with a long failure history \u2014 it is the only real unpriced binary, and it carries both slip and base-rate risk.",
+   "analysis": "Verified: BLA submitted 2026-05-28 for obexelimab in IgG4-RD (company PR/GlobeNewswire), with EMA MAA guided H2 2026 and Phase 2 SunStone SLE fully enrolled with topline guided Q4 2026 (Q1 2026 corporate update, 2026-05-13). Both remaining legs are forward, dated and unfired; the filing itself is the only fired component, and the FDA acceptance/PDUFA assignment (~60 days from submission, so due imminently) has not been announced as of 2026-07-20 \u2014 that is the near-term catalyst. Not a macro bet: outcomes are drug-specific and the $150M approval-contingent capital from Royalty Pharma/Pharmakon is a concrete, mechanically-triggered figure. Gap in verification: I could not confirm from the investor-relations page (fetch timed out) whether an acceptance/priority-review press release landed in the last few days, so treat the PDUFA date as unassigned-but-imminent rather than confirmed absent."
   },
   {
    "symbol": "ZYME",
-   "score": 7,
+   "score": 6,
    "tier": "ACTIVE",
-   "lane": "ma",
-   "catalyst": "Zymeworks' pending $929M ($17/sh cash) acquisition of Theravance Biopharma (YUPELRI cash flows) closing 2H26, stacked with a dated zanidatamab 1L HER2+ GEA FDA decision (Aug 25, 2026) that unlocks Jazz-partnered milestone/royalty economics.",
-   "dated_milestone": "zanidatamab (Ziihera) 1L HER2+ GEA PDUFA target action date Aug 25, 2026; Theravance deal close expected 2H 2026 (announced Jun 29, 2026)",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty Theravance/TBPH, $929M/$17-sh definitive deal), G2 (concrete dated commitment to close 2H26), G3 (currently-unpriced binary: Aug 25 2026 zanidatamab 1L GEA approval unlocking Jazz milestone/royalty stream)",
-   "edge": "M \u2014 deal is signed/announced so M&A leg is partly re-rated, but the transformational thesis (COPD cash-flow pivot + the Aug 25 zanidatamab binary) remains forward and dated; execution/financing (OMERS $350M non-recourse note) and vote add uncertainty markets haven't fully priced.",
-   "primary_source": "Theravance/Zymeworks definitive-agreement press releases, Jun 29, 2026 (globenewswire.com / prnewswire.com); Jazz PDUFA Aug 25, 2026 (prnewswire.com/jazzpharma, ~Apr 2026)",
-   "verdict": "CONFIRMED",
-   "kill_fact": "Both legs confirmed vs primary sources: (1) Theravance Biopharma press release + SEC 8-K confirm a definitive agreement signed Jun 29, 2026 for Zymeworks to acquire TBPH at $17.00/share cash (~$929M equity) plus a CVR (80% of ampreloxetine monetization proceeds), close expected 2H 2026 pending TBPH shareholder + regulatory approval \u2014 forward, dated, correct magnitude; YUPELRI is TBPH's marketed cash-flow asset. (2) Jazz Pharmaceuticals press release confirms FDA accepted with Priority Review the sBLA for Ziihera (zanidatamab) in 1L HER2+ GEA with PDUFA Aug 25, 2026 \u2014 a genuine dated binary that triggers Jazz-partnered milestone/royalty economics. Minor corrections not affecting verdict: the CVR references ampreloxetine (not YUPELRI), and the '$440M milestone stream' / OMERS $350M note figures could not be verbatim-confirmed in primary sources \u2014 hence score held at 7.",
-   "analysis": "ZYME signed a definitive agreement Jun 29, 2026 to acquire Theravance Biopharma for ~$929M ($17.00/share cash plus a CVR referenced in the TBPH release), adding YUPELRI COPD cash flows, financed largely by a $350M non-recourse OMERS note; close is expected 2H 2026 subject to TBPH shareholder and regulatory approval. Independently, the FDA accepted with Priority Review the sBLA for zanidatamab (Ziihera) in 1L HER2+ GEA with a PDUFA date of Aug 25, 2026, a genuine dated binary that would trigger Jazz-partnered milestone/royalty economics. Both legs are real, named, dated, and forward; I could not confirm the exact \"$440M milestone stream\" figure verbatim, so I hold score at 7 rather than higher."
+   "lane": "binary",
+   "catalyst": "FDA PDUFA decision Aug 25, 2026 on Jazz's sBLA for Ziihera (zanidatamab) in 1L HER2+ gastroesophageal adenocarcinoma, which contractually triggers a $250M cash milestone from Jazz to Zymeworks.",
+   "dated_milestone": "Aug 25, 2026 PDUFA target action date (1L GEA sBLA, priority review); secondary: HERIZON-GEA-01 second interim OS analysis expected mid-2026; BeOne China approval carries a further $15M.",
+   "instrument": "equity (common, NASDAQ: ZYME); Aug/Sep 2026 calls are the leveraged expression of the dated binary",
+   "bloom_gates": "G1, G2, G3",
+   "edge": "M \u2014 the date and the milestone size are company-disclosed and sell-side-known, and approval odds are high after positive Phase 3 OS (26.4 vs 19.2 months, HR ~0.72) under priority review, so much of the probability is priced. Residual edge is in the balance-sheet mechanics: a non-dilutive $250M inflow into a $1.76B cap on a single dated day, which screens and generalist models under-weight relative to the clinical binary itself.",
+   "primary_source": "Zymeworks Q1 2026 corporate update / earnings release, GlobeNewswire, May 7, 2026 (\"PDUFA target action date of August 25, 2026\"; $250M Jazz milestone; $403.8M cash at 3/31/26; $440M total regulatory milestones) \u2014 https://www.globenewswire.com/news-release/2026/05/07/3290579/0/en/Zymeworks-Provides-Corporate-Update-and-Reports-First-Quarter-2026-Financial-Results.html",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "All load-bearing facts survive primary-source check: FDA accepted Jazz's sBLA for Ziihera (zanidatamab-hrii) combinations in 1L HER2+ locally advanced/metastatic GEA under priority review with a PDUFA target action date of Aug 25, 2026 (Jazz PRNewswire release; Zymeworks Q1-2026 8-K/10-Q), and Zymeworks discloses a $250.0M milestone from Jazz on US GEA approval, part of up to $440.0M tied to US/EU/Japan/China GEA approvals. Not fired: as of Jul 20, 2026 no approval or CRL; date is ~5 weeks forward. Price/cap reference is accurate and fresher than claimed \u2014 $24.19 / ~$1.73B as of Jul 17, 2026 (71.6M shares), so the $24.11/$1.76B figure is materially correct (call it a July, not June, datapoint). CORRECTIONS: (1) the sBLA is a COMBINATION filing (zanidatamab + tislelizumab/BeOne's TEVIMBRA + chemo as well as chemo-only regimens), not a single-agent 1L filing \u2014 a partner-dependent, multi-regimen label adds label-scope risk the line does not price; (2) MATERIAL OMISSION / hidden disqualifier: on Jun 29, 2026 Zymeworks agreed to acquire Theravance Biopharma for $17.00/sh cash (~$929M, plus ampreloxetine CVR), closing expected 2H26. That is roughly 54% of ZYME's own market cap in cash, announced three weeks before this line was written, and it (a) re-purposes the $250M milestone as deal funding rather than incremental optionality, (b) injects a competing, non-catalyst narrative (COPD/YUPELRI diversification, which the sell-side received poorly as a pivot away from oncology), and (c) means post-PDUFA price action will be contaminated by deal-arb/financing flow. (3) Thesis weakness stands and is worse than stated: HERIZON-GEA-01 was positive, priority review was granted, the stock is already ~+84% and 12 analysts sit at Strong Buy / $39 PT \u2014 the approval is consensus, so the payoff is asymmetric to the downside on a CRL or narrow label, not a coin-flip binary. Tradeable (NASDAQ, liquid, listed options), but this is a de-risked, partly-priced regulatory date sitting inside an unclosed $929M acquisition \u2014 a 7 overstates the edge.",
+   "analysis": "This clears the gate cleanly: a hard, regulator-set date (Aug 25, 2026, ~5 weeks forward), a named counterparty with a contractual dollar commitment ($250M from Jazz on US GEA approval, part of up to $440M), and a figure material against the ~$1.76B cap \u2014 not a macro bet and not yet fired. The main discount is that it is a high-probability rather than a true coin-flip binary: the Phase 3 HERIZON-GEA-01 OS readout was already positive and the sBLA already accepted under priority review, so the equity has partially re-rated and the asymmetry is skewed toward downside on a CRL/label surprise rather than upside on approval. Gap in verification: I did not pull a live intraday quote or current options surface \u2014 the $24.11 / $1.76B reference is a June 2026 datapoint, so sizing and any options structure should be re-priced off a fresh quote before acting."
   }
  ]
 }
