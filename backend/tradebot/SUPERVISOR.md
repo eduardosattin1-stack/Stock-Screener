@@ -41,14 +41,31 @@ b = storage.Client().bucket('screener-signals-carbonbridge')`.
 7. **Performance vs model** — realized+open P&L vs what the calibration tracker
    implies for the same picks; growing divergence = execution problem, flag.
 
-## HALT criteria (write `tradebot/HALT` when ANY is true)
+## Two brakes — use the right one (doctrine amended 2026-07-20 after HALT #5)
 
-- Equity (latest equity_history row) down **> 8% from its peak** row.
-- Realized losses today exceed **5% of equity**.
+HALT stops the running process; GOLIVE_BLOCK stops the transition to real
+money. Halting a dry-run rehearsal over live-readiness concerns destroys test
+data while protecting nothing — that mistake is why this section exists.
+
+### `tradebot/HALT` — stop new entries NOW (Bruno alone clears it)
+
+Write it only for **test/book integrity** failures — things that make the
+running process itself untrustworthy, in ANY mode:
 - **Reconciliation break**: state.json positions disagree with the trade log in
   a way you cannot explain (phantom position, double fill, negative qty).
 - A corp-action-broken position is OPEN (bad basis → bot decisions are garbage).
-- Three consecutive nightly reports flagged the same unresolved issue.
+- LIVE mode only: equity down **> 8% from peak**, or realized losses today
+  **> 5% of equity**.
+
+### `tradebot/GOLIVE_BLOCK` — unsafe to go live; rehearsal continues
+
+Write it (one line: reason + date) for **live-readiness** concerns: inert
+safety gates, unguarded execution paths, disabled ramps, dark halt criteria,
+or three consecutive reports flagging the same unresolved go-live issue.
+`run_bot` refuses to start in LIVE mode while this blob exists — that is the
+enforcement; the dry-run is never interrupted by it. Unlike HALT, you own this
+blob's lifecycle: clear it yourself once you re-verify every cited issue is
+fixed, and say so in that night's report.
 
 ## Report format (write even when all is well)
 

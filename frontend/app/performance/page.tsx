@@ -1121,6 +1121,8 @@ function TradeBotSection() {
   const [bot, setBot] = useState<BotState | null>(null);
   const [events, setEvents] = useState<BotEvent[]>([]);
   const [halted, setHalted] = useState(false);
+  const [goliveBlock, setGoliveBlock] = useState<string>("");
+  const [supRep, setSupRep] = useState<{ date: string; verdict: string } | null>(null);
   const [absent, setAbsent] = useState(false);   // 404: bot namespace not created — hide
   const [loadErr, setLoadErr] = useState(false); // 5xx/transient: keep the section, say so
   const [tick, setTick] = useState(0);           // ledger refresh cycle (state changes 3×/day)
@@ -1153,6 +1155,26 @@ function TradeBotSection() {
     fetch(`/api/gcs/tradebot/HALT`, { cache: "no-store" })
       .then(r => setHalted(r.ok))
       .catch(() => { /* proxy error ≠ halted */ });
+    fetch(`/api/gcs/tradebot/GOLIVE_BLOCK`, { cache: "no-store" })
+      .then(r => r.ok ? r.text() : "")
+      .then(t => setGoliveBlock(t || ""))
+      .catch(() => { /* absent -> no block */ });
+    // latest supervisor report: walk back up to 8 days (reports are nightly,
+    // weekdays only) — surfacing these is what makes a supervisor warning a
+    // warning instead of a note in a bucket nobody reads
+    (async () => {
+      for (let i = 0; i < 8; i++) {
+        const d = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10);
+        try {
+          const r = await fetch(`/api/gcs/tradebot/reports/${d}.md`, { cache: "no-store" });
+          if (!r.ok) continue;
+          const text = await r.text();
+          const v = text.split("\n").find(l => l.startsWith("VERDICT:")) || "VERDICT: (unparsed)";
+          setSupRep({ date: d, verdict: v.replace("VERDICT:", "").trim().slice(0, 160) });
+          return;
+        } catch { /* keep walking */ }
+      }
+    })();
   }, [tick]);
 
   const opens = useMemo(() => (bot?.positions ?? []).filter(p => p.status === "OPEN" || p.status === "TERMINAL_PENDING"), [bot]);
@@ -1222,6 +1244,27 @@ function TradeBotSection() {
         {botStat("Total return", `${totalRet >= 0 ? "+" : ""}${(totalRet * 100).toFixed(2)}%`, totalRet >= 0 ? T.greenPos : T.red,
                  paper ? "on paper basis" : "on equity")}
       </div>
+
+      {(supRep || goliveBlock) && (
+        <div style={{ padding: "7px 14px", borderBottom: `1px solid ${T.divider}`, fontFamily: T.mono, fontSize: 10, display: "flex", gap: 10, alignItems: "baseline", flexWrap: "wrap" }}>
+          {supRep && (
+            <span title="latest nightly supervisor report (tradebot/reports/)">
+              <span style={{ color: T.muted, letterSpacing: "0.08em", fontWeight: 600 }}>SUPERVISOR {supRep.date}: </span>
+              <span style={{
+                color: supRep.verdict.startsWith("OK") ? T.greenPos
+                  : supRep.verdict.includes("HALT") ? T.red : T.amber, fontWeight: 600 }}>
+                {supRep.verdict}
+              </span>
+            </span>
+          )}
+          {goliveBlock && (
+            <span title={goliveBlock.slice(0, 400)}
+                  style={{ padding: "2px 8px", borderRadius: 4, background: T.amberLight, color: T.amber, fontWeight: 700, fontSize: 9, letterSpacing: "0.06em" }}>
+              GO-LIVE BLOCKED (rehearsal unaffected)
+            </span>
+          )}
+        </div>
+      )}
 
       {opens.length > 0 && (
         <div style={{ overflowX: "auto" }}>

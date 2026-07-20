@@ -56,7 +56,10 @@ class BotConfig:
     gcs_bucket: str = "screener-signals-carbonbridge"
     state_path: str = "tradebot/state.json"
     trades_path: str = "tradebot/trades.jsonl"
-    halt_path: str = "tradebot/HALT"          # supervisor/manual kill switch (GCS blob)
+    halt_path: str = "tradebot/HALT"          # stop new entries NOW (Bruno clears)
+    golive_block_path: str = "tradebot/GOLIVE_BLOCK"  # unsafe to go LIVE; rehearsal
+                                              # unaffected — run_bot refuses LIVE
+                                              # while it exists (supervisor owns it)
     local_halt_file: str = "TRADEBOT_HALT"    # kill switch on the gateway PC (same dir as bot)
     scan_path: str = "scans/latest_global.json"
     cal_config_path: str = "calibration_tracking/v2/config.json"

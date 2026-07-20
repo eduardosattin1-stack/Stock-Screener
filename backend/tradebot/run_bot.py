@@ -59,6 +59,13 @@ def main() -> int:
         # ramp_until in config.py (~today+14d) before creating LIVE.flag.
         log.error("REFUSING LIVE: cfg.ramp_until is empty — set the half-book ramp end date first")
         return 1
+    if not cfg.dry_run:
+        block = gcs_impl["read_text"](cfg.golive_block_path, "")
+        if block:
+            # the supervisor's live-readiness veto: rehearsal runs free, but
+            # LIVE cannot start until the supervisor clears the blob.
+            log.error(f"REFUSING LIVE: {cfg.golive_block_path} present — {block[:200]}")
+            return 1
     log.info(f"mode={'LIVE' if not cfg.dry_run else 'DRY-RUN'} account={cfg.ib_account}")
 
     if args.show:
