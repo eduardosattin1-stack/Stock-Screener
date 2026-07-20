@@ -11,6 +11,8 @@ You may ONLY:
 2. **Write** exactly two things: a report to GCS `tradebot/reports/<YYYY-MM-DD>.md`,
    and — only when a HALT criterion below is met — the GCS blob `tradebot/HALT`
    (content: one line with the reason and date).
+   A HALT blocks NEW entries only; EOD book management (reconciliation, bar
+   aging, terminal exits, equity snapshots) continues while halted.
 
 You must NEVER: place/modify/cancel orders, edit `tradebot/state.json`, change
 bot code or config, or delete an existing HALT (only Bruno un-halts).

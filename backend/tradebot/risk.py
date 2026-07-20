@@ -60,6 +60,21 @@ def entry_gates(cfg: BotConfig, gcs, state: dict, summary: dict,
     hs = health_status(summary, cfg)
     gates.append(("calibration-health", hs == cfg.require_health, f"{cfg.regime}={hs}"))
 
+    # HEALTHY certified on fully-censored, touch-only data is NOT validation
+    # (supervisor blocker F1, 2026-07-17): until at least one window has run to
+    # terminal, z is structurally pinned positive and the health gate cannot
+    # fail. Require terminal evidence before ANY new entry (self-clears when the
+    # first windows complete, ~2026-07-24 for 30d / early Sept for 60d).
+    try:
+        from .config import HORIZON_LABEL
+        cyc = summary["horizons"][HORIZON_LABEL[cfg.regime]]["cycle"]
+        validated = int(cyc["n_matured"]) > int(cyc["n_touched"])
+        detail = f"terminal outcomes={int(cyc['n_matured']) - int(cyc['n_touched'])}"
+    except (KeyError, TypeError, ValueError):
+        validated, detail = False, "summary missing cycle block"
+    gates.append(("calibration-validated", validated,
+                  detail if validated else f"{detail} — health gate has no teeth yet"))
+
     slots = max_open_slots(cfg, today)
     free = slots - n_open - n_pending
     gates.append(("slots", free > 0, f"open={n_open} pending={n_pending} max={slots}"))

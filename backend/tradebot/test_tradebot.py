@@ -21,8 +21,12 @@ def stock(sym, p=0.66, price=20.0, sector="Healthcare", volume=1_000_000, **kw):
     return s
 
 
-HEALTHY = {"horizons": {"60d": {"health": {"status": "HEALTHY"}}}}
-DEGRADED = {"horizons": {"60d": {"health": {"status": "DEGRADED"}}}}
+HEALTHY = {"horizons": {"60d": {"health": {"status": "HEALTHY"},
+                                "cycle": {"n_matured": 30, "n_touched": 22}}}}  # 8 terminals -> validated
+DEGRADED = {"horizons": {"60d": {"health": {"status": "DEGRADED"},
+                                 "cycle": {"n_matured": 30, "n_touched": 22}}}}
+CENSORED = {"horizons": {"60d": {"health": {"status": "HEALTHY"},
+                                 "cycle": {"n_matured": 255, "n_touched": 255}}}}  # touch-only: gate has no teeth
 
 
 class TestSignals(unittest.TestCase):
@@ -92,6 +96,17 @@ class TestRisk(unittest.TestCase):
 
     def test_health_gate_blocks(self):
         self.assertFalse(risk.all_pass(self.gates(summary=DEGRADED)))
+
+    def test_censored_healthy_blocks_entries(self):
+        """Supervisor blocker F1: HEALTHY certified on touch-only (fully
+        censored) data must NOT pass — terminal evidence is required."""
+        gates = self.gates(summary=CENSORED)
+        self.assertFalse(risk.all_pass(gates))
+        d = dict((g[0], g[1]) for g in gates)
+        self.assertTrue(d["calibration-health"])        # nominal health says HEALTHY
+        self.assertFalse(d["calibration-validated"])    # but the gate has no teeth
+        # missing cycle block is also not validated
+        self.assertFalse(risk.all_pass(self.gates(summary={"horizons": {"60d": {"health": {"status": "HEALTHY"}}}})))
 
     def test_slots_gate(self):
         self.assertFalse(risk.all_pass(self.gates(n_open=18, n_pending=2)))
@@ -350,12 +365,33 @@ class TestWatch(unittest.TestCase):
         from tradebot import execution as ex
         self.assertEqual(ex.run_watch(CFG, self.gcs, now=self.SAT), {"skipped": "weekend"})
 
-    def test_halt_short_circuits(self):
+    def test_halt_blocks_entries_but_eod_continues(self):
+        """Refined halt scope: entries stop, book management never does."""
         from tradebot import execution as ex
         self.gcs["write"](CFG.halt_path, "halted")
-        self.assertEqual(ex.run_watch(CFG, self.gcs, now=self.MON_MORNING), {"halted": True})
+        # morning window: nothing runs, notice logged once
+        out = ex.run_watch(CFG, self.gcs, now=self.MON_MORNING)
+        self.assertEqual((out["halted"], out["ran"]), (True, []))
         self.assertIn("WATCH_HALTED", self.store[CFG.trades_path])
-        self.assertEqual(ledger.read_state(self.gcs, CFG).get("completed", {}), {})
+        self.assertNotIn("STAGED", self.store[CFG.trades_path])
+        # eod window with an open position: EOD still runs and ages the book
+        state = ledger.read_state(self.gcs, CFG)
+        ledger.stage_pending(state, {"symbol": "AAA", "sector": "Tech", "p": .7, "price": 20},
+                             10, 20.4, "2026-07-06")
+        ledger.record_fill(state, CFG, "AAA", 20.0, 10, "2026-07-06")
+        ledger.write_state(self.gcs, CFG, state)
+        out2 = ex.run_watch(CFG, self.gcs, now=self.MON_EOD)
+        self.assertIn("eod", out2["ran"])
+        pos = ledger.open_positions(ledger.read_state(self.gcs, CFG))[0]
+        self.assertEqual(pos["bar_count"], 1)
+
+    def test_market_open_from_hours(self):
+        from tradebot import execution as ex
+        hrs = "20260720:0930-20260720:1600;20260721:CLOSED"
+        self.assertTrue(ex.market_open_from_hours(hrs, "20260720"))
+        self.assertFalse(ex.market_open_from_hours(hrs, "20260721"))
+        self.assertTrue(ex.market_open_from_hours(hrs, "20260722"))  # absent -> fail open
+        self.assertTrue(ex.market_open_from_hours("", "20260720"))
 
     def test_dry_cycle_stages_enters_then_idempotent(self):
         from tradebot import execution as ex

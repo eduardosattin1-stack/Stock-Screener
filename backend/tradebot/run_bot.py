@@ -53,6 +53,12 @@ def main() -> int:
     cfg = BotConfig()
     if os.environ.get("TRADEBOT_LIVE") == "1":
         cfg = dataclasses.replace(cfg, dry_run=False)
+    if not cfg.dry_run and not cfg.ramp_until:
+        # supervisor flag F6 made mechanical: LIVE without a ramp date would
+        # start at the full 20 slots instead of the 2-week half book. Set
+        # ramp_until in config.py (~today+14d) before creating LIVE.flag.
+        log.error("REFUSING LIVE: cfg.ramp_until is empty — set the half-book ramp end date first")
+        return 1
     log.info(f"mode={'LIVE' if not cfg.dry_run else 'DRY-RUN'} account={cfg.ib_account}")
 
     if args.show:

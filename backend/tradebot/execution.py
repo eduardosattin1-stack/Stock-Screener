@@ -96,6 +96,21 @@ def _tcp_probe(host: str, port: int, timeout: float = 3.0) -> bool:
         return False
 
 
+def market_open_from_hours(trading_hours: str, ymd: str) -> bool:
+    """Parse an IB contractDetails.tradingHours string for date ymd (YYYYMMDD).
+    Format: '20260720:0930-20260720:1600;20260721:CLOSED;...'. Returns False on
+    an explicit CLOSED segment; True when an open segment exists; True (fail-
+    open, so a parse quirk can't deadlock the bot — the unfilled-order path
+    still protects it) when the date is absent/unparseable."""
+    if not trading_hours:
+        return True
+    for seg in trading_hours.split(";"):
+        seg = seg.strip()
+        if seg.startswith(ymd):
+            return not seg.endswith("CLOSED")
+    return True
+
+
 def trading_date() -> str:
     """US-session date the bot keys idempotency off. The gateway PC runs on CET;
     across the --watch active hours (12:00–23:45 CET) the CET and ET calendar
@@ -187,6 +202,20 @@ def _live_positions(ib, cfg: BotConfig) -> dict:
             if p.position != 0}
 
 
+def _entry_market_open_today(ib) -> bool:
+    """PRE-open holiday guard for the entry path (supervisor blocker F2): the
+    EOD guard can't be used at 09:25 ET (today's daily bar doesn't exist yet),
+    so read SPY's trading calendar from contractDetails instead."""
+    from ib_insync import Stock
+    try:
+        cds = ib.reqContractDetails(Stock("SPY", "SMART", "USD"))
+        hours = cds[0].tradingHours if cds else ""
+        return market_open_from_hours(hours, date.today().strftime("%Y%m%d"))
+    except Exception as e:
+        log.warning(f"holiday check failed ({e}); failing open")
+        return True
+
+
 def _market_was_open_today(ib) -> bool:
     """One SPY daily bar — guards bar_count against holidays."""
     from ib_insync import Stock
@@ -272,6 +301,16 @@ def run_morning(cfg: BotConfig, gcs, fill_wait_s: int = 900, today: str = None) 
     if ib is None and not cfg.dry_run:
         ledger.log_event(gcs, cfg, "MORNING_DEFERRED", reason="gateway unreachable / login pending")
         return {"skipped": "gateway unreachable"}  # NOT marked done -> --watch retries
+    if ib and not _entry_market_open_today(ib):
+        # US market holiday (F2): never fire DAY limits into a closed market.
+        # Mark done — there is no session today to catch up to; the pendings
+        # expire at the next stage rather than filling at stale prices.
+        ib.disconnect()
+        ledger.log_event(gcs, cfg, "MORNING_SKIPPED", reason="market holiday")
+        state = ledger.read_state(gcs, cfg)
+        ledger.mark_phase_done(state, "morning", today)
+        ledger.write_state(gcs, cfg, state)
+        return {"skipped": "market holiday"}
     try:
         equity, _cash = _equity_and_cash(ib, cfg) if ib else (0.0, 0.0)
         if not equity:  # dry-run: latest snapshot, else unfunded-rehearsal paper equity
@@ -438,18 +477,28 @@ def run_watch(cfg: BotConfig, gcs, now: datetime = None) -> dict:
     now = now or datetime.now()
     if now.weekday() >= 5:
         return {"skipped": "weekend"}
-    if risk.is_halted(cfg, gcs):
-        ledger.log_event(gcs, cfg, "WATCH_HALTED")
-        return {"halted": True}
     td = now.date().isoformat()
+    # A HALT stops NEW entries (stage/morning) but never the management of the
+    # existing book — EOD reconciliation, bar aging, terminal exits and equity
+    # snapshots keep running (refined 2026-07-20 after supervisor HALT #5: the
+    # original all-phase halt would have frozen the open book's clocks too).
+    halted = risk.is_halted(cfg, gcs)
     gateway_up = _tcp_probe(cfg.ib_host, cfg.ib_port, cfg.probe_timeout_s)
     ran = []
-    if _in_window(now, cfg.stage_window):
-        if not run_stage(cfg, gcs, today=td).get("skipped"):
-            ran.append("stage")
-    if _in_window(now, cfg.morning_window) and (cfg.dry_run or gateway_up):
-        if not run_morning(cfg, gcs, today=td).get("skipped"):
-            ran.append("morning")
+    if not halted:
+        if _in_window(now, cfg.stage_window):
+            if not run_stage(cfg, gcs, today=td).get("skipped"):
+                ran.append("stage")
+        if _in_window(now, cfg.morning_window) and (cfg.dry_run or gateway_up):
+            if not run_morning(cfg, gcs, today=td).get("skipped"):
+                ran.append("morning")
+    elif _in_window(now, cfg.stage_window) or _in_window(now, cfg.morning_window):
+        # log once per session (piggyback the stage idempotency marker)
+        state = ledger.read_state(gcs, cfg)
+        if not ledger.phase_done(state, "halt_notice", td):
+            ledger.log_event(gcs, cfg, "WATCH_HALTED", note="entries blocked; eod continues")
+            ledger.mark_phase_done(state, "halt_notice", td)
+            ledger.write_state(gcs, cfg, state)
     if _in_window(now, cfg.eod_window) and (cfg.dry_run or gateway_up):
         if not run_eod(cfg, gcs, today=td).get("skipped"):
             ran.append("eod")
@@ -458,5 +507,6 @@ def run_watch(cfg: BotConfig, gcs, now: datetime = None) -> dict:
     # seeing — "we wanted to act but you weren't logged in")
     window_wants_gateway = (_in_window(now, cfg.morning_window) or _in_window(now, cfg.eod_window))
     if ran or (not cfg.dry_run and not gateway_up and window_wants_gateway):
-        ledger.log_event(gcs, cfg, "WATCH", gateway_up=gateway_up, ran=ran or None)
-    return {"gateway_up": gateway_up, "ran": ran}
+        ledger.log_event(gcs, cfg, "WATCH", gateway_up=gateway_up, ran=ran or None,
+                         halted=halted or None)
+    return {"gateway_up": gateway_up, "ran": ran, "halted": halted}
