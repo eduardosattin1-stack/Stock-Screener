@@ -53,13 +53,58 @@ export async function GET(req: Request) {
     return get(`/${suffix}`, fb);
   };
 
-  const [macro, sectors, methodTracks, spec, apexTrkEqual, apexTrkWeighted] = await Promise.all([
+  // ── Congress Watch raw pull — Senate + House STOCK Act filings via the /api/fmp
+  //    proxy (FMP stable `senate-latest` / `house-latest`, the all-symbol feeds; the
+  //    per-symbol variants are `senate-trades`/`house-trades`, see screener_v6
+  //    compute_congressional). Paged newest-first; 4×100 per chamber is ~2-4 weeks of
+  //    House volume — enough for a 30d big-trade sweep. Any failure → [] and the
+  //    card simply doesn't render. Cached 30 min (revalidate) to spare the FMP quota. ──
+  const pullCongress = async (endpoint: string) => {
+    const out: any[] = [];
+    try {
+      for (let p = 0; p < 4; p++) {
+        const res = await fetch(`${origin}/api/fmp?e=${endpoint}&page=${p}&limit=100`, {
+          next: { revalidate: 1800 },
+        });
+        if (!res.ok) break;
+        const d = await res.json();
+        if (!Array.isArray(d) || !d.length) break;
+        out.push(...d);
+        if (d.length < 100) break;
+      }
+    } catch { /* card hides */ }
+    return out;
+  };
+
+  // ── Target Watch raw pull — analyst price-target changes via FMP stable
+  //    `price-target-latest-news` (all-symbol, newest-first). Verified against the
+  //    live plan 2026-07-19: ~1000 rows ≈ 4-5 trading days, so 8×1000 spans ~30d;
+  //    rows carry no prior-target field but ~80% of titles embed it ("raised to
+  //    $32 from $30"), which the aggregation below parses. Same failure posture
+  //    as Congress Watch: any error → [] → no card. ──
+  const pullTargets = async () => {
+    const pages = await Promise.all(
+      Array.from({ length: 8 }, (_, p) =>
+        fetch(`${origin}/api/fmp?e=price-target-latest-news&page=${p}&limit=1000`, {
+          next: { revalidate: 1800 },
+        })
+          .then((r) => (r.ok ? r.json() : []))
+          .catch(() => []),
+      ),
+    );
+    return pages.flatMap((d) => (Array.isArray(d) ? d : []));
+  };
+
+  const [macro, sectors, methodTracks, spec, apexTrkEqual, apexTrkWeighted, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/method-tracks", { regimes: {} }),
     getGcsFirst("speculair_baskets.json", {}),
     getGcsFirst("speculair_apex_tracking.json", {}),
     getGcsFirst("speculair_apex_tracking_weighted.json", {}),
+    pullCongress("senate-latest"),
+    pullCongress("house-latest"),
+    pullTargets(),
   ]);
 
   // ── Index thermometer + market sentiment (from /api/sectors) ──
@@ -299,6 +344,128 @@ export async function GET(req: Request) {
     wait: `${watch} on the capitulation watchlist${ds.radar_filtered != null ? ` · ${ds.radar_filtered} filtered pre-debate` : ""}${ds.auto_vetoed != null ? ` · ${ds.auto_vetoed} auto-vetoed` : ""}.`,
   };
 
+  // ── Congress Watch — big STOCK Act filings (last 30 days, both chambers) ──
+  // Filed-date window (disclosureDate), not trade-date: the briefing tracks what
+  // just became public. "Big" = range lower bound ≥ $100,001 (the FMP `amount` is
+  // a STOCK Act band like "$100,001 - $250,000"). Exchanges are dropped; only
+  // rows with a real ticker survive (many filings are bonds/funds with no symbol).
+  const amtBounds = (a: any): [number, number] => {
+    const nums = String(a || "").replace(/,/g, "").match(/\d+/g)?.map(Number) || [];
+    return [nums[0] || 0, nums[1] || nums[0] || 0];
+  };
+  const amtFmt = (v: number) =>
+    v >= 1e6 ? `$${r2(v / 1e6)}M` : v >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${v}`;
+  const cutoffIso = new Date(NOW - 30 * 86400000).toISOString().slice(0, 10);
+  const apexSyms = new Set(apexMembers.map((p: any) => String(p.symbol || "").toUpperCase()));
+  const seenTrade = new Set<string>();
+  const trades: any[] = [];
+  const ingest = (rows: any[], chamber: "S" | "H") => {
+    for (const t of rows) {
+      const sym = String(t.symbol || "").trim().toUpperCase();
+      const filed = String(t.disclosureDate || "").slice(0, 10);
+      const rawType = String(t.type || "");
+      if (!sym || sym.includes(" ") || filed < cutoffIso) continue;
+      const side = /purchase|buy/i.test(rawType) ? "BUY" : /sale|sold/i.test(rawType) ? "SELL" : null;
+      if (!side) continue; // exchanges / received / options exercises
+      const [lo, hi] = amtBounds(t.amount);
+      const who = `${t.firstName || ""} ${t.lastName || ""}`.trim() || t.office || "—";
+      const key = `${sym}|${who}|${t.transactionDate}|${side}|${lo}`;
+      if (seenTrade.has(key)) continue;
+      seenTrade.add(key);
+      trades.push({
+        symbol: sym, side, lo,
+        range: hi > lo ? `${amtFmt(lo)}–${amtFmt(hi)}` : `${amtFmt(lo)}+`,
+        who, chamber,
+        tx: String(t.transactionDate || "").slice(0, 10),
+        filed,
+        apex: apexSyms.has(sym),
+      });
+    }
+  };
+  ingest(senateRaw, "S");
+  ingest(houseRaw, "H");
+  const bigTrades = trades.filter((t) => t.lo >= 100001).sort((a, b) => b.lo - a.lo);
+  // Hot names — most-filed tickers across ALL 30d trades (any size), with the buy/sell split.
+  const bySym = new Map<string, { buys: number; sells: number }>();
+  for (const t of trades) {
+    const s = bySym.get(t.symbol) || { buys: 0, sells: 0 };
+    if (t.side === "BUY") s.buys++; else s.sells++;
+    bySym.set(t.symbol, s);
+  }
+  const hotNames = [...bySym.entries()]
+    .map(([symbol, s]) => ({ symbol, ...s, n: s.buys + s.sells, apex: apexSyms.has(symbol) }))
+    .filter((h) => h.n >= 3)
+    .sort((a, b) => b.n - a.n)
+    .slice(0, 6);
+  const congress = trades.length
+    ? {
+        window_days: 30,
+        total: trades.length,
+        big_count: bigTrades.length,
+        big_buys: bigTrades.filter((t) => t.side === "BUY").length,
+        big_sells: bigTrades.filter((t) => t.side === "SELL").length,
+        top: bigTrades.slice(0, 8),
+        hot: hotNames,
+        // Newest-first feeds: the oldest filed date actually fetched. If this is
+        // later than the 30d cutoff, the window is coverage-truncated (House volume
+        // can exceed the 400-row pull) — the card shows it as "since <date>".
+        coverage_from: trades.reduce((m, t) => (t.filed < m ? t.filed : m), "9999-12-31"),
+      }
+    : null;
+
+  // ── Target Watch — most substantial analyst price-target changes (last 30d) ──
+  // Real deltas only: the prior target is parsed from the news title ("raised to
+  // $250 from $220 at Firm"); rows without a parseable prior are dropped, never
+  // approximated from priceWhenPosted. One row per symbol per direction — the
+  // largest move wins, `n` counts that symbol's other same-direction changes.
+  const PRIOR_RE = /from\s+\$([0-9][0-9,.]*)/i;
+  const tRows: any[] = [];
+  const seenTarget = new Set<string>();
+  for (const r of targetsRaw) {
+    const sym = String(r.symbol || "").trim().toUpperCase();
+    const date = String(r.publishedDate || "").slice(0, 10);
+    const pt = num(r.priceTarget);
+    if (!sym || sym.includes(" ") || !pt || date < cutoffIso) continue;
+    const m = PRIOR_RE.exec(String(r.newsTitle || ""));
+    if (!m) continue;
+    const prior = Number(m[1].replace(/,/g, "").replace(/\.$/, ""));
+    if (!Number.isFinite(prior) || prior <= 0 || prior === pt) continue;
+    const firm = String(r.analystCompany || r.analystName || "—");
+    const key = `${sym}|${firm}|${date}|${pt}`;
+    if (seenTarget.has(key)) continue;
+    seenTarget.add(key);
+    const px = num(r.priceWhenPosted);
+    tRows.push({
+      symbol: sym, firm, prior, target: pt,
+      delta: r2(((pt - prior) / prior) * 100),
+      implied: px > 0 ? r2((pt / px - 1) * 100) : null,
+      date,
+      apex: apexSyms.has(sym),
+    });
+  }
+  const bestByDir = new Map<string, any>();
+  for (const t of tRows) {
+    const k = `${t.symbol}|${t.delta >= 0 ? "up" : "down"}`;
+    const cur = bestByDir.get(k);
+    if (!cur) bestByDir.set(k, { ...t, n: 1 });
+    else if (Math.abs(t.delta) > Math.abs(cur.delta)) bestByDir.set(k, { ...t, n: cur.n + 1 });
+    else cur.n++;
+  }
+  const tBest = [...bestByDir.values()];
+  const target_watch = tRows.length
+    ? {
+        window_days: 30,
+        total_changes: tRows.length,
+        raises_count: tRows.filter((t) => t.delta > 0).length,
+        cuts_count: tRows.filter((t) => t.delta < 0).length,
+        raises: tBest.filter((t) => t.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, 6),
+        cuts: tBest.filter((t) => t.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, 6),
+        // Oldest published date actually fetched — if later than the 30d cutoff,
+        // the window is truncated by feed depth (8×1000 rows) and the card says so.
+        coverage_from: tRows.reduce((m, t) => (t.date < m ? t.date : m), "9999-12-31"),
+      }
+    : null;
+
   // ── Headline ──
   const headline = `${sentiment} Apex basket ${sign(sinceInc)}${r2(sinceInc)}% since inception, ${nOpen} names live.`;
 
@@ -311,5 +478,7 @@ export async function GET(req: Request) {
     system_pulse,
     thermometer,
     debate,
+    congress,
+    target_watch,
   });
 }
