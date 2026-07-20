@@ -1,11 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-20 · 14 held seats (72.0% invested) + 3 resolved · last run 2026-07-20 · paper basket, nothing executed*
+*Generated 2026-07-20 · 13 held seats (67.5% invested) + 5 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (14 held)
+## 1 · The basket (13 held)
 
 ### GDOT — Green Dot Corporation
 `14% · equity · merger_arb · Deal_close_generic (Deal-completion) · score 7.0 · edge M · entry 2026-06-10 @ 12.75 (cro_live_check)`
@@ -70,34 +70,6 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Entry limit <= ~$21 to keep R:R >= ~3:1 (do not chase post-unlock bounce)
 - ⚠ **Condition:** Verify the final-unlock date and remaining lock-up share count before sizing; if unlock slips materially, re-adjudicate window
 - ⚠ **Condition:** Thesis is mean-reversion after supply clears, not a fundamental re-rate — exit near FV 32, not open-ended
-
-### BLCO — Bausch + Lomb (BHC 88% overhang)
-`5% · equity · forced_seller · Forced_divest_flow (Idiosyncratic) · score 5.0 · edge H · STAGING · entry 2026-06-10 @ 15.65 (cro_live_check)`
-- **Expected:** R:R 2.94:1 · milestone soft/undated · review: Any BHC stake-disposition or strategic-review announcement; quarterly re-check of the overhang status.
-- **Risk-to-floor (computed):** 1.23% of NAV (cap 1.5)
-- **Director — why this seat:** BHC's 88% stake suppresses a $26.97 SOP value vs $15.65 live — R:R 2.94 with 84% of dossier edge retained. Takes the second Forced_divest seat after MGNI was passed on edge compression; staging half-weight equity, accumulation-only with limits per CRO (covered-call overlay dropped — the chain is near-dead).
-- **Director — what kills it:** BHC restructures around the stake with no disposition path (overhang becomes permanent), or the $11.80 floor breaks.
-
-**CRO verdict: TRADE_WITH_CONDITIONS**
-- **1 · Edge at entry (live re-check):** Live $15.65 (FMP/IBKR 6/9 close) vs dossier mark $15.18 (asof 6/8). Recomputed SOP R:R = (26.97-15.65)/(15.65-11.80) = 2.94 vs dossier 3.49 — 84% of dossier R:R retained, well above the half line. Edge intact; R:R stays >= 3.0 at entries <= $15.55.
-- **2 · Tradeability:** Equity leg: only $7.4M avg 90d USD volume (IBKR) — thin for a $5.6B name because BHC holds 88% and the public float is ~12%; cap the position so it's <= ~5-10% of ADV and expect poor off-hours depth (pre-market quote was 14.71/15.98). Covered-call leg FAILS the cost test: avg option volume is 90 calls / 1 put per DAY — the chain is near-dead, spreads will be a large fraction of premium. The 'sell covered calls while waiting' overlay does not exist at acceptable cost.
-- **3 · Window ↔ expression:** Undated milestone — BHC's 88% stake disposition has no fixed date (it's an overhang-resolution flow trade). Staging rule maps to equity; no expiry to clear. The CC overlay, if ever written, has no window constraint but fails on liquidity regardless.
-- **4 · Driver tag:** CONFIRMED: Forced_divest_flow — BHC's 88% stake disposition/distribution is genuine forced-divest flow in BLCO shares. FLAG: MGNI in this batch carries the same tag — Director cap applies as-tagged, though MGNI is arguably mistagged (antitrust remedy, not seller flow), in which case the true overlap dissolves.
-- ⚠ **Condition:** Equity-only expression: drop the covered-call overlay (avg OI/volume ~90 calls/day cannot fill at acceptable cost); if a CC is ever written, limit-at-mid only and only where strike OI > 100
-- ⚠ **Condition:** Size to <= ~5-10% of the $7.4M/day ADV (float is ~12% of shares out); accumulate with limits, no market orders
-- ⚠ **Condition:** Director must adjudicate the Forced_divest_flow dupe with MGNI
-
-### CELC — 
-`1.5% · debit spread exp 2026-09-18 · bio_convergence · FDA_clinical_readout (FDA/biotech) · score 8.0 · edge H · entry 2026-06-10 @ 92.59 (cro_live_check)`
-- **Expected:** EV 50.1% · milestone 2026-07-17 · review: 2026-07-17 clinical readout.
-- **Director — why this seat:** Highest-score H-grade unconditional TRADE in the batch: p=0.85 to $153 on the 7/17 readout, live EV +50% after the pop. The Sep-18 95/155 call spread defines risk and sells back the ~80% event IV the CRO flagged on outright calls, clearing the milestone with +1 monthly margin; premium sized at 1.5% because its EV is roughly half EYPT/VRDN's.
-- **Director — what kills it:** Primary-endpoint miss on the 7/17 readout — spread premium is the full and only loss.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** Live $92.59 (FMP batch-quote 2026-06-10, +5.9% on the day; IBKR real-time last $92.70) vs dossier $87.43. Recomputed: upside to $153 = +65.2%, downside to $60 = -35.2%, payoff 1.85 (dossier 2.39), EV = 0.85*0.652 - 0.15*0.352 = +50.1% (dossier +59.0%). ~15% EV compression after today's pop — still far above the half-R:R kill line. Edge intact.
-- **2 · Tradeability:** Equity expression, and it is the most liquid name in the batch: $110M/day 90d USD ADV (IBKR), 1.37M shares today. Any realistic sleeve position is a rounding error vs ADV. Options are active (avg ~2,337 calls / 1,177 puts daily) but annual IV ~80% — dossier's own note that July/Aug calls carry rich event IV is confirmed; equity is the right expression.
-- **3 · Window ↔ expression:** Milestone 2026-07-17, 37 days out. Equity has no expiry — window clears by construction. No slippage history concern for the expression.
-- **4 · Driver tag:** FDA_clinical_readout — confirmed. FLAG: same driver as AMLX and DFTX (three names, one driver) — Director cap applies; this is the strongest of the three on edge grade (H) and tradeability.
 
 ### AQST — Aquestive Therapeutics, Inc.
 `4.5% · equity · bio_convergence · FDA_approval_decision (FDA/biotech) · score 6.5 · edge H · STAGING · entry 2026-06-10 @ 3.99 (cro_live_check)`
@@ -215,35 +187,30 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Limit <= $11.00 (do not chase above; the recomputed 5.07 R:R degrades below the dossier's 4.7 above ~$11.05)
 - ⚠ **Condition:** Respect the skeptic's conviction cap of 60 in sizing — the $9.50 floor is soft (SoP construct, not a deal-break price), so size to a realistic drawdown through the floor if the discount persists
 
+### VIR — 
+`2% · defined risk option exp 2027-01-15 · None · FDA_clinical_readout (FDA/biotech) · score None · edge None · entry 2026-07-20 @ 9.26 (cro_structured)`
+- **Expected:** EV 3600% · milestone ECLIPSE 1 Phase 3 chronic hepatitis delta topline expected Q4 2026 (ECLIPSE 2/3 topline Q1 2027; VIR-5818 HER2 oncology response data H2 2026) · review: ECLIPSE 1 Phase 3 HDV topline expected Q4 2026 (ECLIPSE 2/3 topline Q1 2027 as follow-on).
+- **Director — why this seat:** On-deck first-in-line promoted into the FDA_clinical_readout slot freed by CELC's exit; live $9.26 sits below the ~$11.5 base case, re-opening a binary with EV $12.6 vs live (+36%) into the dated Q4-2026 ECLIPSE 1 HDV topline. Defined-risk debit structure caps premium-at-risk <=2% NAV on a soft ~$4.8 net-cash floor (no CVR/backstop) where a Phase 3 miss can overshoot below cash.
+- **Director — what kills it:** ECLIPSE 1 Phase 3 chronic hepatitis delta miss (drops toward/below ~$4.6-4.8 net cash); a fresh skeptic REFUTED or the catalyst firing before entry; material slip of ECLIPSE 1 beyond the Jan-2027 expiry window.
+
+**CRO verdict: TRADE**
+- **1 · Edge at entry (live re-check):** Live $9.26 (IBKR bid/ask 9.25/9.27, mid 9.26) is effectively identical to the fresh dossier's same-day build price ($9.25, 2026-07-20) — ZERO edge compression. Binary_prob EV = 0.55*19 + 0.45*4.8 = $12.61 vs $9.26 live => ~+36% expected value. R:R = reward $9.74 (to $19) / risk $4.46 (to $4.8 floor) = ~2.2:1. The ~21-day-old weekly skeptic's 'arbitrage spread substantially closed at $10.36' note is SUPERSEDED by today's dossier: the stock pulled back below the ~$11.5 base case, re-opening the spread. Catalyst PENDING_HARD/unfired; skeptic CONFIRMED_WITH_CORRECTIONS (not REFUTED / not FIRED / not ARB) => no hard-reject. Source: IBKR live snapshot.
+- **2 · Tradeability:** Highly liquid US equity — 2c spread (~0.2%) on $9.26, ADV ~$17.3M/day (563k sh today) — ample for a sleeve position with negligible impact. No options expression needed. Caveat (sizing, not tradeability): pure clinical binary with a SOFT ~$4.8 floor (no CVR / deal-break / financing backstop), so a Phase 3 miss can overshoot below net cash — size for a real chance of >48% loss.
+- **3 · Window ↔ expression:** Equity expression => no option expiry, no theta decay, no need to clear the milestone with an expiry. ECLIPSE 1 HDV topline dated Q4 2026 (~4-5 months out), ECLIPSE 2/3 Q1 2027 as follow-on optionality. Prior Q4'26-vs-Q1'27 date confusion is resolved in the fresh dossier via the May 6 2026 Q1 earnings + Jan 12 2026 update (both state Q4 2026); holding equity absorbs any modest slip at no decay cost.
+- **4 · Driver tag:** FDA_clinical_readout — confirmed (ECLIPSE 1 Phase 3 chronic hepatitis delta topline, tobevibart + elebsiran). Sole name in this batch; no same-driver collision to flag.
+
 ---
-## 1b · Resolved (3)
+## 1b · Resolved (5)
+- **BLCO** THESIS_BROKEN · 2026-06-10→2026-07-20 (40d) · 15.65→15.88 · realized +1.5% (exp R:R 2.94:1) · 
+- **CELC** FIRED_LOSS · 2026-06-10→2026-07-20 (40d) · 92.59→90.45 · realized -2.3% (exp EV 50.1%) · 
 - **VRDN** FIRED_WIN · 2026-06-10→2026-07-06 (26d) · 16.31→19.42 · realized +19.1% (exp EV 105.0%) · FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution.
 - **THRM** THESIS_BROKEN · 2026-07-02→2026-07-06 (4d) · 33.88→34.13 · realized +0.7% (exp R:R 2.87:1) · Board dossier misread the RMT: stock-for-stock, THRM is the ACQUIRER, no consideration flows to holders - the 30% spread to $44 never existed. HSR fired 3/26 pre-valuation. Fable dossier + CRO NO_TRADE 7/06.
 - **LZM** EDGE_GONE · 2026-07-02→2026-07-06 (4d) · 3.73→3.88 · realized +4.0% (exp R:R 2.93:1) · Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution.
 
 ---
-## 2 · CRO kills this run — NO_TRADE (3)
+## 2 · CRO kills this run — NO_TRADE (0)
 
 *Killed on trade grounds only (edge gone / untradeable / window fails) — catalyst reality was settled upstream.*
-
-### EYPT — EyePoint Pharmaceuticals, Inc.
-**CRO verdict: NO_TRADE**
-- **1 · Edge at entry (live re-check):** Live EYPT 13.35 (bid/ask 13.33/13.39, IBKR SMART; prior close 13.30). WEEKLY DIAGNOSIS OVERRIDE controls: the fresh (age 3.6d) adversarial skeptic verdict is REFUTED. It kills the ONLY reason the file recommends the bet — the 'strictly more favorable Phase 3' odds anchor is false (LUGANO enrolls treatment-naive AND previously-treated eyes; the enabling DAVIO-2 Phase 2 was previously-treated ONLY, so DURAVYU has zero Phase 2 NI evidence in the naive/higher-VEGF-burden segment — exactly where Kodiak's KSI-301 missed NI in DAZZLE), and the bull's single confidence tell is backwards (Q1-26 10-Q Note 8: management DREW ~$5.7M on a live ATM at $14.75 into its own binary). Honest p collapses toward the market-implied ~0.30-0.35, at which the ~+6% EV is noise on an unfloored overnight-gap binary. The catalyst is real and unfired, but the EDGE is refuted. The inject layer hard-rejects a REFUTED name; do not spend a nomination.
-- **3 · Window ↔ expression:** Board's 2026-07-31 'hard' date is unsourced/fabricated per the dossier; realistic LUGANO topline is a soft Aug-Oct 2026 window. Moot given the REFUTED verdict.
-- **4 · Driver tag:** FDA_clinical_readout — confirmed. NOTE FOR DIRECTOR: shares this driver (and bio_convergence lane / FDA-biotech cluster) with OLMA in this batch; here it is moot since EYPT is NO_TRADE.
-
-### PRX.AS — Prosus N.V. (forced seller of Delivery Hero)
-**CRO verdict: NO_TRADE**
-- **1 · Edge at entry (live re-check):** Live PRX.AS EUR39.78 (bid/ask 39.78/39.785, IBKR AEB; prior close 38.505). fresh_dossier catalyst_status = FIRED and the weekly skeptic is REFUTED (both age 3.6d). The forced-seller premise resolved 2026-07-16 when Uber launched its EUR41.50/sh cash offer for Delivery Hero and Prosus gave an irrevocable undertaking to tender its residual ~16.8%. The event is spent AND was never a needle-mover: the incremental NAV contribution above the live DH mark is ~EUR0.07/sh (~0.1% of NAV) on a ~EUR40 stock. What remains is wrong-signed (the irrevocable binds Prosus, not Uber; Uber's H2-2027 close is conditional) and a structural ~39% discount-to-NAV that is ~79% Tencent beta — a value case, not an event. Edge GONE.
-- **3 · Window ↔ expression:** The 2026-10-11 EC divestment deadline and Uber's H2-2027 close are risk/compliance dates, not opportunity dates — the load-bearing milestone (irrevocable undertaking) already fired 2026-07-16.
-- **4 · Driver tag:** Forced_divest_flow tag retained but MISAPPLIED — the archetype rewards a register absorbing forced supply, whereas Prosus IS the seller (and its own largest buyer). The live merger-arb sits on Delivery Hero's register (DHER.DE vs EUR41.50), not on this ticker.
-
-### DBVT — DBV Technologies S.A.
-**CRO verdict: NO_TRADE**
-- **1 · Edge at entry (live re-check):** Live $14.30 (IBKR bid/ask 14.21/14.38, ~$3.7M/day ADV). At defensible axes (floor ~$5, approval-case ~$25) the tape implies (14.30-5)/(25-5)=46.5% odds vs the dossier's ~49% win_prob -- essentially FAIR, no spread. The board's payoff=3.71/ev=+56% was an artifact of the phantom $9.50 floor (~3.2x the verified ~$2.95/ADS net cash). No edge at entry.
-- **2 · Tradeability:** IBKR lists STK/CFD only for DBVT -- NO listed equity options, so the instrument note's 'long-dated Q4-26/Q1-27 calls' leg does not exist here. Equity spread ~1.2% on thin ~$3.7M/day ADV. Moot given the kill.
-- **3 · Window ↔ expression:** No dated approval milestone exists: no BLA filed -> no acceptance, no PDUFA clock. Nearest gate is a company-controlled BLA filing now guided Q3 2026 (slipped from 1H 2026), then ~60d to acceptance (~Nov-Dec 2026), then ~10mo review => approval decision ~Q3-Q4 2027, >1yr out. Runway only 'into Q3 2027' so a dilutive raise ahead of resolution is near-arithmetic.
-- **4 · Driver tag:** FDA_approval_decision (confirmed). Distinct from KDP's Spin_index_flow -- no same-driver cap conflict in this batch.
 
 ---
 ## 3 · Non-selections (45) — recorded counterfactuals
