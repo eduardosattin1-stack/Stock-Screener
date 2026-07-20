@@ -1,41 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-20 · 13 held seats (67.5% invested) + 5 resolved · last run 2026-07-20 · paper basket, nothing executed*
+*Generated 2026-07-20 · 11 held seats (45.5% invested) + 7 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (13 held)
-
-### GDOT — Green Dot Corporation
-`14% · equity · merger_arb · Deal_close_generic (Deal-completion) · score 7.0 · edge M · entry 2026-06-10 @ 12.75 (cro_live_check)`
-- **Expected:** R:R 1.56:1 · milestone 2026-09-30 · review: Expected close 2026-09-30; review on close or any delay/regulatory notice before then.
-- **Risk-to-floor (computed):** 1.043% of NAV (cap 1.5)
-- **Director — why this seat:** Cleanest ratio carry in the pool: 11.6% gross spread to the $14.23 deal value over ~112 days (~38% annualized) with zero price drift since the dossier and the tightest floor in the basket (-7.5%). Top weight because the floor distance is smallest — 14% weight risks only ~1.04% NAV to floor.
-- **Director — what kills it:** Deal termination or a material regulatory objection; price through the $11.80 floor signals the market pricing a break.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** Live $12.75 (FMP batch-quote 2026-06-10) — unchanged from the dossier price, zero drift since valuation_asof 2026-06-08. Spread to $14.23 deal value = +11.6% gross; downside to $11.80 floor = -7.5%; R:R = 1.48/0.95 = 1.56, identical to the dossier's computed_rr. Edge fully intact; ~11.6% over ~112 days is ~38% annualized on the spread.
-- **2 · Tradeability:** Stock expression on a NYSE name: ~438k shares / ~$5.6M traded today, $723M market cap, listed options also available if a collar is ever wanted. Standard arb size executes without friction. No short leg, no borrow question.
-- **3 · Window ↔ expression:** Milestone 2026-09-30 (112 days). Expression is common stock held through close — no expiry to clear, window satisfied by construction. If close slips past Q3 the position simply carries; only cost is annualized-return decay, not a structural loss.
-- **4 · Driver tag:** Deal_close_generic — confirmed; unique driver in this batch, no collision.
-
-### UNF — UniFirst Corporation
-`8% · equity · merger_arb · US_antitrust (Deal-completion) · score 7.0 · edge M · entry 2026-06-13 @ 267.0 (cro_live_check)`
-- **Expected:** R:R 1.86:1 · milestone 2026-11-30 · review: Antitrust clearance checkpoints into the 2026-11-30 expected close; re-confirm timeline before any size-up.
-- **Hedge leg:** -0.772 CTAS per share, ref $176.28
-- **Risk-to-floor (computed):** 0.272% of NAV (cap 1.5)
-- **Director — why this seat:** Cash + 0.7720 CTAS deal worth ~$293.86 vs $270.48 leaves an 8.6% gross spread to the 11/30 close; recorded with the CRO entry limit <= $267 and the 0.7720 CTAS short hedge to isolate the spread. Held to 8% (well under the floor-math cap) because live R:R compressed to 1.86 after the pop and a break would overshoot the $257.91 standalone floor.
-- **Director — what kills it:** HSR second request that materially derails the timeline, or deal repriced/terminated — a break trades well below the symmetric floor (200d avg $209).
-
-**CRO verdict: TRADE_WITH_CONDITIONS**
-- **1 · Edge at entry (live re-check):** Deal = $155 cash + 0.7720 CTAS. CTAS live $179.87 (FMP) -> deal value $293.86. UNF live $270.48 (FMP, +2.4% today). Gross spread $23.38 = 8.6% to the 11/30 close (~18% annualized). Vs dossier 6/08 the spread was ~10.2% ($27 on $264) - modest compression. But the symmetric live R:R to the standalone floor $257.91 = 23.38/12.57 = 1.86 vs dossier 4.38 (below half), driven by today's UNF pop against a close floor.
-- **2 · Tradeability:** Both legs deeply liquid: UNF ADV ~297k sh (~$80M/day) tight-spread, CTAS very liquid. Caution: the $257.91 floor is generous - a deal break likely overshoots well below it (UNF 200d avg $209, 52w low $148), so size for break risk larger than the symmetric R:R implies.
-- **3 · Window ↔ expression:** Stock / merger-arb expression - no option expiry to clear. 11/30 expected close (173d); an antitrust second-request slip only erodes annualized return, it does not break the position. Tradeable as equity.
-- **4 · Driver tag:** US_antitrust (Cintas-UniFirst HSR review). Confirmed; sole name on this driver in the batch - no clash.
-- ⚠ **Condition:** Use a limit; do not chase today's +2.4% pop - enter UNF <= ~$267 to keep gross spread >=~10% and lift live R:R back toward the dossier
-- ⚠ **Condition:** Hedge the share-ratio leg: short 0.7720 CTAS per UNF to isolate the ~$23/sh cash+spread
-- ⚠ **Condition:** Re-confirm the HSR/antitrust timeline still supports the 11/30 close before sizing
+## 1 · The basket (11 held)
 
 ### FIP — FTAI Infrastructure Inc.
 `10% · equity · distressed · Refi_restructuring (Idiosyncratic) · score 8.0 · edge M · entry 2026-06-10 @ 4.56 (cro_live_check)`
@@ -200,7 +170,9 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **4 · Driver tag:** FDA_clinical_readout — confirmed (ECLIPSE 1 Phase 3 chronic hepatitis delta topline, tobevibart + elebsiran). Sole name in this batch; no same-driver collision to flag.
 
 ---
-## 1b · Resolved (5)
+## 1b · Resolved (7)
+- **GDOT** EDGE_GONE · 2026-06-10→2026-07-20 (40d) · 12.75→13.43 · realized +5.3% (exp R:R 1.56:1) · 
+- **UNF** EDGE_GONE · 2026-06-13→2026-07-20 (37d) · 267.0→290.11 · realized +8.7% (exp R:R 1.86:1) · 
 - **BLCO** THESIS_BROKEN · 2026-06-10→2026-07-20 (40d) · 15.65→15.88 · realized +1.5% (exp R:R 2.94:1) · 
 - **CELC** FIRED_LOSS · 2026-06-10→2026-07-20 (40d) · 92.59→90.45 · realized -2.3% (exp EV 50.1%) · 
 - **VRDN** FIRED_WIN · 2026-06-10→2026-07-06 (26d) · 16.31→19.42 · realized +19.1% (exp EV 105.0%) · FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution.

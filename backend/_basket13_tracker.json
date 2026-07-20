@@ -33,7 +33,16 @@
    "invalidation": "Deal termination or a material regulatory objection; price through the $11.80 floor signals the market pricing a break.",
    "review_trigger": "Expected close 2026-09-30; review on close or any delay/regulatory notice before then.",
    "cro_verdict": "TRADE",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-20",
+    "resolution_type": "EDGE_GONE",
+    "exit_price": 13.43,
+    "realized_return_pct": 0.0533,
+    "realized_rr": 0.716,
+    "days_held": 40,
+    "catalyst_fired": false,
+    "notes": ""
+   },
    "cro_detail": {
     "live_edge_check": "Live $12.75 (FMP batch-quote 2026-06-10) — unchanged from the dossier price, zero drift since valuation_asof 2026-06-08. Spread to $14.23 deal value = +11.6% gross; downside to $11.80 floor = -7.5%; R:R = 1.48/0.95 = 1.56, identical to the dossier's computed_rr. Edge fully intact; ~11.6% over ~112 days is ~38% annualized on the spread.",
     "tradeability_note": "Stock expression on a NYSE name: ~438k shares / ~$5.6M traded today, $723M market cap, listed options also available if a collar is ever wanted. Standard arb size executes without friction. No short leg, no borrow question.",
@@ -84,7 +93,16 @@
    "invalidation": "HSR second request that materially derails the timeline, or deal repriced/terminated — a break trades well below the symmetric floor (200d avg $209).",
    "review_trigger": "Antitrust clearance checkpoints into the 2026-11-30 expected close; re-confirm timeline before any size-up.",
    "cro_verdict": "TRADE_WITH_CONDITIONS",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-20",
+    "resolution_type": "EDGE_GONE",
+    "exit_price": 290.11,
+    "realized_return_pct": 0.0866,
+    "realized_rr": 2.542,
+    "days_held": 37,
+    "catalyst_fired": false,
+    "notes": ""
+   },
    "cro_detail": {
     "live_edge_check": "Deal = $155 cash + 0.7720 CTAS. CTAS live $179.87 (FMP) -> deal value $293.86. UNF live $270.48 (FMP, +2.4% today). Gross spread $23.38 = 8.6% to the 11/30 close (~18% annualized). Vs dossier 6/08 the spread was ~10.2% ($27 on $264) - modest compression. But the symmetric live R:R to the standalone floor $257.91 = 23.38/12.57 = 1.86 vs dossier 4.38 (below half), driven by today's UNF pop against a close floor.",
     "tradeability_note": "Both legs deeply liquid: UNF ADV ~297k sh (~$80M/day) tight-spread, CTAS very liquid. Caution: the $257.91 floor is generous - a deal break likely overshoots well below it (UNF 200d avg $209, 52w low $148), so size for break risk larger than the symmetric R:R implies.",
@@ -564,7 +582,7 @@
    "resolution": null,
    "resolution_due": {
     "date": "2026-07-20",
-    "reason": "close 20.445 <= floor 23.0; weekly diagnosis: verdict=REFUTED"
+    "reason": "close 20.4 <= floor 23.0; weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -2529,24 +2547,24 @@
   },
   {
    "date": "2026-07-20",
-   "nav": 100.4,
-   "basket_ret_pct": 0.4,
+   "nav": 101.036,
+   "basket_ret_pct": 1.036,
    "seats": {
     "GDOT": {
-     "price": 13.435,
-     "ret_pct": 5.37
+     "price": 13.43,
+     "ret_pct": 5.33
     },
     "UNF": {
-     "price": 290.1,
-     "ret_pct": 1.32
+     "price": 290.11,
+     "ret_pct": 8.66
     },
     "FIP": {
-     "price": 4.025,
-     "ret_pct": -11.73
+     "price": 4.035,
+     "ret_pct": -11.51
     },
     "FIG": {
-     "price": 24.6503,
-     "ret_pct": 20.3
+     "price": 24.635,
+     "ret_pct": 20.23
     },
     "BLCO": {
      "price": 15.88,
@@ -2561,36 +2579,36 @@
      "ret_pct": 19.07
     },
     "AQST": {
-     "price": 4.03,
-     "ret_pct": 1.0
+     "price": 4.055,
+     "ret_pct": 1.63
     },
     "WVE": {
-     "price": 5.765,
-     "ret_pct": -0.26
+     "price": 5.785,
+     "ret_pct": 0.09
     },
     "AMLX": {
-     "price": 17.79,
-     "ret_pct": 21.93
+     "price": 17.885,
+     "ret_pct": 22.58
     },
     "AAUC": {
-     "price": 20.445,
-     "ret_pct": -12.63
+     "price": 20.4,
+     "ret_pct": -12.82
     },
     "FUN": {
-     "price": 17.525,
-     "ret_pct": -14.76
+     "price": 17.46,
+     "ret_pct": -15.08
     },
     "THRM": {
      "price": 34.13,
      "ret_pct": 0.74
     },
     "ZYME": {
-     "price": 24.0605,
-     "ret_pct": -8.55
+     "price": 24.125,
+     "ret_pct": -8.3
     },
     "DDL": {
-     "price": 2.29,
-     "ret_pct": 18.04
+     "price": 2.295,
+     "ret_pct": 18.3
     },
     "LBTYK": {
      "price": 10.005,
@@ -2601,8 +2619,8 @@
      "ret_pct": 4.02
     },
     "VIR": {
-     "price": 9.25,
-     "ret_pct": -0.11
+     "price": 9.235,
+     "ret_pct": -0.27
     }
    }
   }
@@ -3594,41 +3612,41 @@
   },
   {
    "date": "2026-07-20",
-   "nav": 107.369,
-   "ret_pct": 7.369,
+   "nav": 107.356,
+   "ret_pct": 7.356,
    "n": 8,
    "seats": {
     "CLVT": {
-     "price": 2.33,
-     "ret_pct": 5.43
+     "price": 2.335,
+     "ret_pct": 5.66
     },
     "BBIO": {
-     "price": 81.47,
-     "ret_pct": 21.96
+     "price": 81.7,
+     "ret_pct": 22.31
     },
     "EYPT": {
-     "price": 12.79,
-     "ret_pct": -1.84
+     "price": 12.843,
+     "ret_pct": -1.44
     },
     "PVLA": {
-     "price": 129.57,
-     "ret_pct": 9.03
+     "price": 130.045,
+     "ret_pct": 9.43
     },
     "AVIR": {
-     "price": 4.825,
-     "ret_pct": 9.91
+     "price": 4.82,
+     "ret_pct": 9.79
     },
     "DBVT": {
-     "price": 14.3427,
-     "ret_pct": -8.65
+     "price": 14.26,
+     "ret_pct": -9.17
     },
     "MGNI": {
-     "price": 19.37,
-     "ret_pct": 11.0
+     "price": 19.36,
+     "ret_pct": 10.95
     },
     "GERN": {
-     "price": 1.435,
-     "ret_pct": 12.11
+     "price": 1.425,
+     "ret_pct": 11.33
     }
    }
   }
@@ -3929,6 +3947,70 @@
    "prior_status": "watchlisted",
    "new_status": "held",
    "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "EYPT",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "BBIO",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "PVLA",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "AVIR",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "DBVT",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "GERN",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "CLVT",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-20",
+   "symbol": "MGNI",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
   }
  ],
  "promotions": [
@@ -3944,6 +4026,13 @@
    "added": [
     "VIR"
    ],
+   "pending": [],
+   "cap_violations": 0,
+   "memo": "Event-triggered promotion run, single survivor. A held FDA_clinical_readout seat (CELC) resolved and freed both its driver slot and a bio_convergence lane slot, triggering VIR — my own prior first-in-line nomination. VIR clears every combined cap of the locked held book: FDA_clinical_readout goes 1/2 (AMLX) -> 2/2, FDA/biotech cluster 10 -> 12 of 40 pts, bio lane back within 5, seats 12 -> 13 of 20. Live $9.26 sits below the ~$11.5 base case (a ~21-day pullback re-opened the spread the funnel targets), EV $12.6 vs live = +36%, CRO=TRADE, skeptic CONFIRMED_WITH_CORRECTIONS (not REFUTED/FIRED). Because valuation_method=binary_prob with a SOFT ~$4.8 net-cash floor (no CVR/backstop, real >48%-loss tail), the hard sizing rule forces DEFINED-RISK not naked equity: a Jan-2027 call debit spread clears the Q4-2026 ECLIPSE 1 topline by +1 monthly and caps premium-at-risk <=2% NAV at weight 2. This is a promotion not a re-debate, so the other 8 carried on-deck names are re-nominated unchanged (stance_change_rationale null) — no fresh dossiers, no basis to move them; all remain headroom-blocked (bio-lane / FDA-driver saturation, Forced_divest_flow for CLVT/MGNI). Nothing demoted to passed[]. Cluster mix stays FDA/biotech-light (12/40) with the queue dominated by bio binaries awaiting a freed driver or lane slot."
+  },
+  {
+   "date": "2026-07-20",
+   "added": [],
    "pending": [],
    "cap_violations": 0,
    "memo": "Event-triggered promotion run, single survivor. A held FDA_clinical_readout seat (CELC) resolved and freed both its driver slot and a bio_convergence lane slot, triggering VIR — my own prior first-in-line nomination. VIR clears every combined cap of the locked held book: FDA_clinical_readout goes 1/2 (AMLX) -> 2/2, FDA/biotech cluster 10 -> 12 of 40 pts, bio lane back within 5, seats 12 -> 13 of 20. Live $9.26 sits below the ~$11.5 base case (a ~21-day pullback re-opened the spread the funnel targets), EV $12.6 vs live = +36%, CRO=TRADE, skeptic CONFIRMED_WITH_CORRECTIONS (not REFUTED/FIRED). Because valuation_method=binary_prob with a SOFT ~$4.8 net-cash floor (no CVR/backstop, real >48%-loss tail), the hard sizing rule forces DEFINED-RISK not naked equity: a Jan-2027 call debit spread clears the Q4-2026 ECLIPSE 1 topline by +1 monthly and caps premium-at-risk <=2% NAV at weight 2. This is a promotion not a re-debate, so the other 8 carried on-deck names are re-nominated unchanged (stance_change_rationale null) — no fresh dossiers, no basis to move them; all remain headroom-blocked (bio-lane / FDA-driver saturation, Forced_divest_flow for CLVT/MGNI). Nothing demoted to passed[]. Cluster mix stays FDA/biotech-light (12/40) with the queue dominated by bio binaries awaiting a freed driver or lane slot."
