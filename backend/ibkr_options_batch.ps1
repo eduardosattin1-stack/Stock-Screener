@@ -1,5 +1,13 @@
 # ibkr_options_batch.ps1 - nightly IBKR IV/spread enrichment -> GCS scans/options_latest.json.
 #
+# RETIRED 2026-07-21 (Bruno): scheduled task "IbkrOptionsBatch" DISABLED, do not re-register.
+# The consumer (stock-page Options Intelligence card + options_latest.json fetch) was removed
+# 2026-07-15 (commit 42392b5c), so this full-universe enrichment produced data nothing reads,
+# while spamming Error 354 (EU market-data not subscribed) for ~40 min/day against the gateway.
+# ibkr_options_batch.py STAYS - opus_strategist_*/opus_paper_tracker import its _gcs_read/
+# _gcs_write/_map_contract helpers; only the batch RUN is retired. IbkrPortfolioSync and
+# OpusOptionStrategies (OpusStrategyCard is still live) are unaffected and stay scheduled.
+#
 # This is the FIRST half of the options pipeline (the per-symbol IV-rank + spread the stock card
 # reads); opus_strategist.ps1 (the Opus strategy half) runs AFTER it. It had NO scheduled task,
 # so options_latest.json went stale (last manual run 06-19). Schedule this at ~09:00 (before the
