@@ -1034,7 +1034,14 @@ export default function CatalystWatch() {
                               <td style={{ padding: "5px 8px", color: T.text, fontWeight: 700 }}>{e.weight_pct}%</td>
                               <td style={{ padding: "5px 8px", color: T.light }}>{fmtB13Expr(e)}</td>
                               <td style={{ padding: "5px 8px", color: T.light }}>{termLabel(e.lane_canon)}</td>
-                              <td style={{ padding: "5px 8px", color: T.purple }}>{termLabel(e.resolution_driver)}</td>
+                              <td style={{ padding: "5px 8px", color: T.purple }}>{termLabel(e.resolution_driver)}
+                                {e.dossier_refresh?.thesis_summary && (
+                                  <span
+                                    title={`Re-underwritten ${e.dossier_refresh.asof || ""}${e.stamped?.resolution_driver && e.stamped.resolution_driver !== e.resolution_driver ? ` — driver was ${termLabel(e.stamped.resolution_driver)} at seating` : ""}:\n\n${e.dossier_refresh.thesis_summary}`}
+                                    style={{ marginLeft: 4, fontSize: 8, color: e.stamped?.resolution_driver && e.stamped.resolution_driver !== e.resolution_driver ? "#d97706" : T.muted, cursor: "help" }}
+                                  >↻</span>
+                                )}
+                              </td>
                               <td style={{ padding: "5px 8px", color: T.green }}>{fmtB13RR(e)}</td>
                               <td style={{ padding: "5px 8px", color: e.status === "PENDING_LIMIT" ? "#d97706" : T.light }} title={e.status === "PENDING_LIMIT" ? `Resting limit since ${e.order_date} — live price at stamp exceeded the CRO entry limit; fills when the close trades ≤ ${e.limit_price}. Not held; no NAV impact.` : `edge ${e.edge_grade} · score ${e.score} · floor ${e.downside_floor ?? "—"} · risk-to-floor ${e.risk_to_floor_pct ?? "—"}%${e.hedge ? ` · hedge ${e.hedge.ratio} ${e.hedge.symbol}` : ""}`}>{e.status === "PENDING_LIMIT" ? `⏳ RESTING ≤ ${e.limit_price}` : `${e.entry_date} @ ${e.entry_price != null ? Number(e.entry_price).toFixed(2) : "n/a"}`}{e.hedge ? <span style={{ marginLeft: 4, fontSize: 8, color: T.muted }}>hedged</span> : null}</td>
                               <td style={{ padding: "5px 8px", color: T.light, maxWidth: 230, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.review_trigger || ""}>{e.review_trigger || "—"}</td>

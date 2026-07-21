@@ -193,21 +193,21 @@
    "score": 4.0,
    "board_priority": 4.0,
    "edge_grade": "H",
-   "computed_rr": 3.02,
+   "computed_rr": 2.85,
    "ev_pct": null,
    "lane_canon": "forced_seller",
    "resolution_driver": "Forced_divest_flow",
    "super_cluster": "Idiosyncratic",
-   "valuation_method": "sop",
+   "valuation_method": "multiple",
    "downside_floor": 17.5,
-   "fair_value_target": 32.0,
-   "dated_milestone": null,
+   "fair_value_target": 29.0,
+   "dated_milestone": "2026-08-07 final extended-lockup tranche (~77.7M sh) unlocks (2nd trading day after 08-05 AMC earnings); review 2026-08-21 post-absorption",
    "staging": true,
    "expression": {
     "type": "equity"
    },
    "hedge": null,
-   "expected_rr": 3.85,
+   "expected_rr": 2.85,
    "expected_ev": null,
    "invalidation": "Final-unlock date slips materially or remaining locked supply is larger than modeled; close below the $17.50 floor kills the mean-reversion setup.",
    "review_trigger": "Verify and review at the final lockup expiration date (per CRO condition, confirm the exact date and remaining share count).",
@@ -234,6 +234,35 @@
     "until": "2026-08-21",
     "set_by": "Bruno 2026-07-20",
     "reason": "Thesis IS hold-through the 2026-08-07 final lockup tranche (~77.7M sh, ~$1.8B) — the washout is the catalyst, not a kill. Do NOT auto-exit on the edge-gone radar: its rr 0.24 rests on the refreshed dossier's $3.10 trough-multiple floor, which is disputed. Review post-unlock absorption (~2 weeks after 08-07)."
+   },
+   "stamped": {
+    "resolution_driver": "Forced_divest_flow",
+    "valuation_method": "sop",
+    "staging": true,
+    "dated_milestone": null,
+    "downside_floor": 17.5,
+    "fair_value_target": 32.0,
+    "win_prob": null,
+    "super_cluster": "Idiosyncratic"
+   },
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_SOFT",
+    "thesis_summary": "FIG (Figma) is a lockup-unlock / forced-seller situation, not a sum-of-parts. The final Extended Lock-Up tranche — the ~77.7M-share Class A remainder held by ~54.1%-of-Class-A holders — releases at the open on Fri 2026-08-07, triggered by Q2 earnings after close Wed 2026-08-05 (contractual: earlier of the 2nd trading day post-earnings or 2026-08-31). This is a real, dated, unfired, idiosyncratic event, but it adds supply against a long; the favorable resolution the seat needs (overhang absorbed, multiple re-rates) is undated and soft — venture distribution runs for weeks/quarters after release. Financially this is a single high-multiple SaaS equity (~7.6x EV/2026 rev), not a recovery/SoP claim: Q1 FY26 rev $333.4M (+46%, guiding 40% Q2 / 35% FY), GAAP op loss $137.4M, SBC $169M (50.7% of rev). The only structural floor is net cash: $1.638B cash+securities, no debt, /528.4M sh = ~$3.10/sh — the board's $17.5 floor and $32 target are revenue-multiple assumptions, not structural anchors.",
+    "discrepancies": [
+     "live_price: board 20.49 -> live ~23.48 (2026-07-20; mkt cap $12.4B, 528.4M sh) -- stale June mark",
+     "dated_milestone: board null -> live 2026-08-05 Q2 earnings / 2026-08-07 lockup release -- date firmed by company 2026-07-15, was genuinely dated all along",
+     "catalyst_status: board SOFT_EXTENDED -> PENDING_SOFT -- the one dated hard event (Aug-7 lockup release) is ADVERSE supply; the favorable resolution (absorption + re-rate) is real but undated/soft",
+     "valuation_method: board sop -> multiple -- there is no sum-of-parts (no deal price, cash shell, or recovery claim); it is one operating SaaS priced on a revenue multiple",
+     "fair_value_target: board 32 -> 30 -- $32 was a bull multiple re-rate; live consensus 12mo PT ~$30.56, dossier base case ~$26; not an SoP-defensible number",
+     "downside_floor: board 17.5 -> 3.1 -- $17.5 (and the structured 15.0) is a ~4.5x revenue multiple with nothing structural beneath it and was already breached at the ~$16.6-16.8 June low; the only hard floor is net cash $1.638B/528.4M = $3.10/sh",
+     "win_prob: board null -> null (kept) -- not a binary_prob situation, no discrete win/lose payoff"
+    ],
+    "kill_risk": "The entry is into supply, not out of it: the largest tranche (~77.7M sh, ~$1.8B at current price) is still AHEAD, releasing 2026-08-07 — peak forced selling has not happened, so the \"overhang cleared, buy the washout\" premise is false. The ~41% bounce off the June $16.6–16.8 low sits on ~42% short float and reads as short-covering (e.g. the 13-Jul +11.9% pop on covering + one small institutional disclosure), i.e. a squeezed price not a cleared one. There is no dated, contracted, obligated re-rate to $30; SBC-driven dilution (weighted shares 523.5M and rising) means there is no post-overhang steady state to buy. The one hard dated event fires against the position.",
+    "dated_milestone": "2026-08-07 final extended-lockup tranche (~77.7M sh) unlocks (2nd trading day after 08-05 AMC earnings); review 2026-08-21 post-absorption",
+    "resolution_driver": "Forced_divest_flow",
+    "fair_value_target": 29.0,
+    "downside_floor": 17.5,
+    "asof": "2026-07-21"
    }
   },
   {
@@ -449,7 +478,36 @@
     "driver_confirmed": "CONFIRMED: FDA_approval_decision (terminal driver is the FDA action on the Anaphylm resubmission; the 9/30 date is the resubmission gate on that path). FLAG: RARE in this same batch also resolves on FDA_approval_decision — Director same-driver cap applies to the pair.",
     "conditions": []
    },
-   "entry_rationale": "Strongest live edge in the batch per the CRO check (+69.8% EV, payoff 3.6x) into the Q3 Anaphylm resubmission. Staging-rule equity (the thin chain cannot offer the Apr-2027+ expiries the post-resubmission window requires); 4.5% weight is jointly bound by the half-weight rule and a 1.49% risk-to-floor."
+   "entry_rationale": "Strongest live edge in the batch per the CRO check (+69.8% EV, payoff 3.6x) into the Q3 Anaphylm resubmission. Staging-rule equity (the thin chain cannot offer the Apr-2027+ expiries the post-resubmission window requires); 4.5% weight is jointly bound by the half-weight rule and a 1.49% risk-to-floor.",
+   "stamped": {
+    "resolution_driver": "FDA_approval_decision",
+    "valuation_method": "binary_prob",
+    "staging": true,
+    "dated_milestone": "2026-09-30",
+    "downside_floor": 2.75,
+    "fair_value_target": 8.5,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.72,
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_SOFT",
+    "thesis_summary": "Aquestive Therapeutics (AQST): Anaphylm (dibutepinephrine sublingual epinephrine film) NDA resubmission after a Jan-30-2026 CRL that was limited to human-factors validation + one new PK study, with NO clinical, safety, or CMC deficiencies. Type A meeting (Mar 30 2026) aligned the agency on both study designs; resubmission guided to Q3 2026 (reaffirmed on the Q1 call, NOT yet filed as of Jul 16 2026). The resolving event is the FDA approval decision on the resubmitted NDA. No agency-set date exists yet — a new PK study almost certainly forces a Class 2 (6-month) review, implying a decision ~Q1/Q2 2027. A relatively de-risked (HF+PK-only) resubmission path underpins an approval-weighted binary payoff.",
+    "discrepancies": [
+     "dated_milestone: board 2026-09-30 -> live null -- 2026-09-30 was the Q3-2026 resubmission-FILING target (quarter-end), not the resolving catalyst; no FDA agency-set decision date exists because the resubmission was not yet filed as of Jul 16 2026. Genuinely undated -> staging=true.",
+     "catalyst_status: board (top-level PENDING / weekly SOFT_EXTENDED) -> live PENDING_SOFT -- real, forward-dated, unfired, idiosyncratic; the original Jan-31-2026 PDUFA already fired as a CRL, and the current resubmission cycle is soft/undated pending FDA acceptance + review-class assignment.",
+     "win_prob: board null -> live ~0.72 -- reconciled from board EV (ev_pct 0.7327 on live price implies EV price ~6.9; solving 8.5*p + 2.75*(1-p) = 6.9 gives p~0.72). Independently defensible: HF+PK-only CRL with no clinical/safety/CMC findings and agency alignment on both study designs is a relatively high-probability resubmission approval path.",
+     "company_name: board null -> Aquestive Therapeutics, Inc.",
+     "live_price: board 3.99 -> ~3.94 (Jul 16 2026 close; range $4.00-4.03 on CEO insider sales Jul 15-16) -- minor drift.",
+     "downside_floor: board 2.75 retained as a soft/price-memory floor, but flagged unsupported as fundamental value -- true asset-based floor is ~$1.15; $2.75 sits just above the $2.93 52-wk low and can break on a financing/dilution event tied to the 30 Jun 2027 RTW deadline."
+    ],
+    "kill_risk": "Duration + financing tripwire, not a binary-readout risk. Resubmission is still unfiled; one quarter of slippage (Q3->Q4 2026) pushes acceptance to ~Nov 2026-Jan 2027, a 6-month Class 2 clock to ~May-Jul 2027, colliding with the renegotiated RTW Marketing-Approval Deadline of 30 Jun 2027 that gates the $75M launch financing (RTW Amendment 3 Mar 2026, per Q1 10-Q). A decision that lands after that deadline puts launch capital at a coin-flip and makes dilution the answer at the equity's weakest point — a scenario the $2.75 'floor' (a price-memory level; true fundamental asset floor ~$1.15) does not price. Secondary: the new PK study reintroduces a fresh PK/clinical review element absent from the original filing, and the whole event is undated with a ~9-12 month wait.",
+    "dated_milestone": null,
+    "resolution_driver": "FDA_approval_decision",
+    "fair_value_target": 8.5,
+    "downside_floor": 2.75,
+    "asof": "2026-07-21"
+   }
   },
   {
    "symbol": "WVE",
@@ -470,8 +528,8 @@
    "resolution_driver": "FDA_pathway_feedback",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "downside_floor": 3.5,
-   "fair_value_target": 11.0,
+   "downside_floor": 3.3,
+   "fair_value_target": 10.37,
    "dated_milestone": "2026-07-31",
    "staging": true,
    "expression": {
@@ -495,7 +553,38 @@
      "Given real put liquidity, a long call to cap the micro-cap binary downside is acceptable here"
     ]
    },
-   "entry_rationale": "Mid-2026 FDA feedback on the WVE-006 accelerated-approval pathway — re-tagged FDA_pathway_feedback per the CRO's explicit condition (regulatory inflection, not an approval verdict), which adds a distinct driver lane to the FDA cluster. The soft date forces staging-equity treatment despite usable option liquidity; 3.5% weight risks 1.38% NAV to the $3.50 floor."
+   "entry_rationale": "Mid-2026 FDA feedback on the WVE-006 accelerated-approval pathway — re-tagged FDA_pathway_feedback per the CRO's explicit condition (regulatory inflection, not an approval verdict), which adds a distinct driver lane to the FDA cluster. The soft date forces staging-equity treatment despite usable option liquidity; 3.5% weight risks 1.38% NAV to the $3.50 floor.",
+   "stamped": {
+    "resolution_driver": "FDA_pathway_feedback",
+    "valuation_method": "binary_prob",
+    "staging": true,
+    "dated_milestone": "2026-07-31",
+    "downside_floor": 3.5,
+    "fair_value_target": 11.0,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.46,
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_SOFT",
+    "thesis_summary": "WVE is a special-situation on a live, unfired, idiosyncratic catalyst: FDA feedback on a potential accelerated-approval pathway for WVE-006 (alpha-1 antitrypsin deficiency), self-guided \"mid-2026,\" reaffirmed in the 04-28 Q1 release and the 05-18 RestorAATion-2 update, and still undisclosed as of 2026-07-20 (latest 8-K is 06-26, the administrative Singapore-scheme redomiciliation, not the feedback). Downside is a hard, auditable cash floor: $544.6M cash at 3/31/26, runway into 3Q-2028 excluding GSK milestones, only $15.7M leases, no covenant, no going-concern. Binary axes re-derived ~6% lower than the board after correcting the share base to include 11.6M vested pre-funded warrants excluded from the 192.34M ordinary-share line.",
+    "discrepancies": [
+     "company_name: board null -> Wave Life Sciences Ltd. (NASDAQ: WVE)",
+     "catalyst_status: board staging-proxy / debate SOFT_EXTENDED -> PENDING_SOFT -- real but undated, non-binding pre-filing FDA feedback; no scheduled meeting, no PDUFA applies pre-filing",
+     "dated_milestone: board 2026-07-31 -> null -- the resolving FDA event is genuinely undated; the board date was a proxy for the Q2 print, and even that was off by a day (actual Q2 report 2026-07-30, call 07-29)",
+     "fair_value_target: board 11 -> 10.37 -- ~6% haircut for 11,600,257 vested pre-funded warrants (struck $0.0001, economically shares) excluded from the 192,337,566 ordinary-share base per the Q1 10-Q; true base ~203.94M, ratio 0.9431",
+     "downside_floor: board 3.5 -> 3.30 -- same ~6% share-base correction; note this floor still sits above net cash/sh of ~$2.67 at 3/31 (marked-forward ~$2.30), i.e. it embeds pipeline residual, not pure cash",
+     "win_prob: board null -> ~0.46 -- surfaced from board ev_pct 0.2061 at $5.78 (EV 6.97 = 3.5 + w*7.5 => w=0.463)",
+     "resolution_driver: FDA_pathway_feedback -- confirmed, unchanged",
+     "staging: true -- confirmed (undated/soft catalyst)"
+    ],
+    "kill_risk": "The load-bearing claim is that FDA accelerated-approval-pathway feedback is a live catalyst that will crystallize the spread. Residual risk: it is pre-filing feedback with NO published date and NO PDUFA — it can slip indefinitely, and management can stay silent at the 07-30 Q2 print without triggering resolution, so the \"edge\" may never mark to a date. Even a favorable outcome is qualitative, non-binding guidance to pursue a pathway (not approval), and the AATD accelerated path hinges on the FDA accepting a serum-AAT biomarker surrogate that is not settled — so a \"win\" may re-rate the stock less than the $10.37 win-price assumes.",
+    "dated_milestone": null,
+    "resolution_driver": "FDA_pathway_feedback",
+    "fair_value_target": 10.37,
+    "downside_floor": 3.3,
+    "asof": "2026-07-21"
+   }
   },
   {
    "symbol": "AMLX",
@@ -547,6 +636,34 @@
    "resolution_due": {
     "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_clinical_readout",
+    "valuation_method": "binary_prob",
+    "staging": false,
+    "dated_milestone": "2026-09-30",
+    "downside_floor": 4.0,
+    "fair_value_target": 28.0,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.6,
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_HARD",
+    "thesis_summary": "Binary Phase 3 LUCIDITY topline readout (avexitide in post-bariatric hypoglycemia), guided Q3 2026 and unfired. Avexitide is a first-in-class GLP-1 receptor antagonist with FDA Breakthrough Therapy Designation testing an FDA-agreed composite (Level 2+3 hypoglycemic event) endpoint in a 16-wk, n=78, randomized double-blind trial; enrollment completed 24-Mar-2026. Success (~$28) vs failure (~$4) resolves overnight on ~78 participants.",
+    "discrepancies": [
+     "live_price: board 14.59 (asof 2026-06-13) -> live 17.90 (2026-07-20, last; prior close 17.75) -- stock rerated +23% into the readout, compressing the setup",
+     "win_prob: board null/implied ~0.715 (EV 0.4512 at 14.59 back-solves to 71.5% PoS; matches file's 70-75% claim) -> live 0.60 -- that PoS rests on open-label IIT data the skeptic refuted; cannot defend an edge above market-implied ~58%",
+     "ev_pct: board 0.4512 -> ~+0.028 at live spot 17.90 with defensible win_prob 0.60 = (0.60*28+0.40*4)/17.90-1 -- old +45% edge was mostly a 14.59 entry plus aggressive PoS, both gone",
+     "computed_rr/payoff: board null -> raw R:R at spot 0.73:1 (up +10.10/+56% to 28 vs down -13.90/-78% to 4) -- negative asymmetry now that price is 17.90",
+     "company_name: board null -> Amylyx Pharmaceuticals, Inc."
+    ],
+    "kill_risk": "The pivotal 90mg QD dose has NEVER been tested blinded vs placebo on the LUCIDITY composite endpoint. The supporting 64% composite reduction came from open-label investigator-initiated crossover NCT04652479 (n=16, no placebo, no blinding); the only blinded placebo-controlled data (PREVENT, n=18) measured a different primary endpoint (post-meal glucose nadir) at different doses. So a PoS above the market-implied ~58% is not defensible — open-label, symptom-logged event counts are exactly where effect sizes decay under blinding, and win_prob 0.60 is barely above market (no real edge). Secondary: the $4 downside floor is soft, not hard — it credits ~$1.5-2/sh above net cash, and this same team's PHOENIX ALS failure (Mar-2024) drove the stock THROUGH net cash on continued-burn fears, so a miss could break toward ~$2.50/sh gross cash.",
+    "dated_milestone": "2026-09-30",
+    "resolution_driver": "FDA_clinical_readout",
+    "fair_value_target": 28,
+    "downside_floor": 4,
+    "asof": "2026-07-21"
    }
   },
   {
@@ -562,21 +679,21 @@
    "score": 7.0,
    "board_priority": 6.4,
    "edge_grade": "M",
-   "computed_rr": 20.35,
+   "computed_rr": 1.27,
    "ev_pct": null,
    "lane_canon": "merger_arb",
    "resolution_driver": "Foreign_regulator",
    "super_cluster": "Deal-completion",
    "valuation_method": "spread",
-   "downside_floor": 23.0,
-   "fair_value_target": 31.54,
+   "downside_floor": 17,
+   "fair_value_target": 31.5,
    "dated_milestone": "2026-07-29",
-   "staging": false,
+   "staging": true,
    "expression": {
     "type": "equity"
    },
    "hedge": null,
-   "expected_rr": 20.35,
+   "expected_rr": 1.27,
    "expected_ev": null,
    "entry_rationale": "Clean cash-merger arb at ~US$23.40 vs C$44.00 (~US$30.98 at live FX) = +32% gross spread on the only non-bio, non-FDA driver available (Foreign_regulator, brand-new to the basket), resolving on host-country regulatory approval rather than the tape. Sized moderate, not hero, because the downside floor cushion is ~zero (pure deal-break risk) and ADV is thin at ~$3.8M/day.",
    "invalidation": "Deal breaks (financing/regulatory failure) or a definitive termination — price collapses toward standalone gold-tape value below the ~$23 floor with no cushion.",
@@ -596,7 +713,36 @@
    "resolution": null,
    "resolution_due": {
     "date": "2026-07-21",
-    "reason": "close 20.41 <= floor 23.0; weekly diagnosis: verdict=REFUTED"
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   },
+   "stamped": {
+    "resolution_driver": "Foreign_regulator",
+    "valuation_method": "spread",
+    "staging": false,
+    "dated_milestone": "2026-07-29",
+    "downside_floor": 23.0,
+    "fair_value_target": 31.54,
+    "win_prob": null,
+    "super_cluster": "Deal-completion"
+   },
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_SOFT",
+    "thesis_summary": "Merger-arb: Zijin Gold International to acquire Allied Gold for C$44.00/share all-cash (C$5.5B, ~27% premium to Jan-23 30-day TSX VWAP); ~US$31.5 on the US line at current FX. Real, live, unfired, idiosyncratic catalyst — the sole outstanding gate is China's NDRC approval; every other clearance is obtained (shareholders, Canadian court, ICA, ECOWAS, COMESA, Ethiopia). But the gate is SOFT and UNDATED: the July 29 Outside Date is a deal-expiry, not an NDRC decision date; timeline has slipped twice (late-April→May 29→July 29); NDRC has no decision clock and has objected to price and Mali risk. No contractual reverse break fee exists, so there is no asset/contractual floor.",
+    "discrepancies": [
+     "live_price: board 23.40 -> live ~20.82 (Jul 20) — board mark is ~Jul-11 stale; stock has since fallen THROUGH the board's own 23 'floor'",
+     "staging: board false -> true — the resolving NDRC decision is undated/soft; July 29 is a deal-expiry (extendable by mutual agreement), not a binding decision date",
+     "catalyst_status: board PENDING (staging=false, treated as hard-dated) -> PENDING_SOFT — real/live/unfired but a serially-extendable discretionary sovereign gate with no decision clock and two prior slips",
+     "downside_floor: board 23 -> 17 — board floor is circular (~at-market) and now ABOVE the live price, so falsified; NO contractual reverse break fee exists (C$220M is payable BY Allied TO Zijin), so no asset/contractual floor; 17 is an estimated unaffected/break value, not a protected stop",
+     "fair_value_target: board 31.54 -> 31.5 CONFIRMED against live deal terms (C$44.00 all-cash x CADUSD ~0.716) — unchanged in substance but FX-sensitive, not a fixed USD number",
+     "computed_rr: board 20.35 -> ~2.8:1 recomputed — the 20:1 was an artifact of a floor set at the then-current price; on floor 17 / live 20.82 / target 31.5, upside 10.68 vs downside 3.82",
+     "company_name: board null -> Allied Gold Corporation"
+    ],
+    "kill_risk": "NDRC's two stated objections — the 27% premium and Mali security risk — cannot be cured by time and have worsened (SCMP Jun 23: Sadiola under increasing jihadist attack). With no reverse break fee, Zijin can walk cheaply, dulling its incentive to fight for approval or defend price; NDRC is under no obligation to ever decide. On a break there is zero contractual protection and the stock reverts toward unaffected/standalone value (~US$16-20), a ~15-25% drop from ~US$20.82 with no floor. Even the good path is dead-money: the gate is serially extendable, so capital can be tied up indefinitely at a thin spread. The tape is the tell — the stock fell as non-Chinese approvals cleared, and market-implied completion is only ~30%, putting EV roughly at the live price (no edge).",
+    "dated_milestone": "2026-07-29",
+    "resolution_driver": "Foreign_regulator",
+    "fair_value_target": 31.5,
+    "downside_floor": 17,
+    "asof": "2026-07-21"
    }
   },
   {
@@ -722,10 +868,10 @@
    "ev_pct": 0.1409,
    "lane_canon": "merger_arb",
    "resolution_driver": "FDA_approval_decision",
-   "super_cluster": "Deal-completion",
+   "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "downside_floor": 19.0,
-   "fair_value_target": 31.0,
+   "downside_floor": 18,
+   "fair_value_target": 27,
    "dated_milestone": "2026-08-25",
    "staging": false,
    "expression": {
@@ -753,6 +899,33 @@
    "resolution_due": {
     "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_approval_decision",
+    "valuation_method": "binary_prob",
+    "staging": false,
+    "dated_milestone": "2026-08-25",
+    "downside_floor": 19.0,
+    "fair_value_target": 31.0,
+    "win_prob": null,
+    "super_cluster": "Deal-completion"
+   },
+   "win_prob": 0.85,
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_HARD",
+    "thesis_summary": "Binary FDA-approval event: Aug 25 2026 PDUFA on Jazz's sBLA to expand Ziihera (zanidatamab) into first-line HER2+ gastric/GEJ/GEA (HERIZON-GEA-01 met both endpoints, +7mo OS, NEJM, priority review, no AdCom). Approval obliges Jazz to pay ZYME a contractual $250M milestone (+$15M BeOne on China approval) and de-risks the Ziihera royalty. This is a label expansion of an already-approved drug, so approval odds are high (~0.85). Event-win value re-derived down to ~$27 after removing a royalty-note double-count; CRL floor ~$18. Against a live $23.91 the asymmetry is modest and largely priced.",
+    "discrepancies": [
+     "live_price: board 26.31 (asof 2026-07-02) -> live 23.91 (2026-07-20, prior close 24.19) -- stock fell ~9%, board mark is stale",
+     "fair_value_target: board 31 -> 27 -- board win-value banks the $250M Royalty Pharma note proceeds in cash while valuing the Ziihera royalty block GROSS of the 30% worldwide royalty diversion that repays the same note; netting the pledge in the early 2030-32 ramp cuts the royalty block ~$2-3/sh at the file's 12% discount, pulling event-win value to ~$27",
+     "downside_floor: board 19 -> 18 -- corrected CRL/no-approval floor (net cash + un-diverted royalty optionality), rounding the board figure down consistent with the note liability",
+     "win_prob: board null -> 0.85 -- set; label expansion of an already-FDA-approved drug (Ziihera 2L biliary), priority review, both pivotal endpoints met, NEJM, no AdCom, no CRL signal 36 days out"
+    ],
+    "kill_risk": "My load-bearing claim is that the corrected event-win value is ~$27, not $31, which shrinks the spread. That $27 mark is a static NPV point-estimate, not a distribution: a clean first-line HER2+ GEA approval with +7mo OS could re-rate the royalty block above my block if the Street lifts peak-sales/consensus (ZYME retains up to ~$1.5B of remaining Ziihera milestones plus 70% of royalties), so I may be marking the center of the win outcome and understating its right tail. Symmetrically, the $27 haircut assumes the board SoP did NOT already net the 30% Royalty Pharma pledge; if it did, $31 could stand. Residual downside: a surprise CRL (no AdCom does not guarantee approval) takes it below the $18 floor.",
+    "dated_milestone": "2026-08-25",
+    "resolution_driver": "FDA_approval_decision",
+    "fair_value_target": 27,
+    "downside_floor": 18,
+    "asof": "2026-07-21"
    }
   },
   {
@@ -768,21 +941,21 @@
    "score": 7.0,
    "board_priority": 6.76,
    "edge_grade": "M",
-   "computed_rr": 18.69,
+   "computed_rr": 4.28,
    "ev_pct": null,
-   "lane_canon": "distressed",
-   "resolution_driver": "Refi_restructuring",
-   "super_cluster": "Idiosyncratic",
+   "lane_canon": "merger_arb",
+   "resolution_driver": "Foreign_regulator",
+   "super_cluster": "Deal-completion",
    "valuation_method": "capital_return",
-   "downside_floor": 1.9,
+   "downside_floor": 1.65,
    "fair_value_target": 3.18,
-   "dated_milestone": "2026-12-31",
+   "dated_milestone": "2027-02-05",
    "staging": false,
    "expression": {
     "type": "equity"
    },
    "hedge": null,
-   "expected_rr": 18.69,
+   "expected_rr": 4.28,
    "expected_ev": null,
    "entry_rationale": "Capital-return/refi name where the $1.90 floor sits ~2% below live — an 18.7 R:R by construction, so risk-to-floor is only 0.10% NAV even at 3%. Weight deliberately held below what the floor allows because the ~$0.5M/day ADV is the binding constraint; entry recorded at limit <= $1.97 per CRO conditions.",
    "invalidation": "A refi/restructuring executed on terms that impair the ADS (dilution or subordination), a break and hold below the $1.90 floor, or no refi print materializing by the year-end placeholder.",
@@ -798,7 +971,34 @@
      "Limit entry <= ~$1.97 (floor $1.90 leaves only ~2% downside cushion — entering above ~$2.00 erodes the asymmetry)."
     ]
    },
-   "resolution": null
+   "resolution": null,
+   "stamped": {
+    "resolution_driver": "Refi_restructuring",
+    "valuation_method": "capital_return",
+    "staging": false,
+    "dated_milestone": "2026-12-31",
+    "downside_floor": 1.9,
+    "fair_value_target": 3.18,
+    "win_prob": null,
+    "super_cluster": "Idiosyncratic"
+   },
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_HARD",
+    "thesis_summary": "DDL (Dingdong Cayman) is selling its entire China business to Two Hearts Investments (wholly-owned Meituan subsidiary) for $717M cash under a definitive SPA signed 5 Feb 2026. Shareholders approved on 27 Mar 2026, including authority to apply at least 90% of post-closing cash to buybacks/dividends. No financing condition; the sole open gate is China SAMR anti-monopoly clearance. The event resolves to a capital-return distribution of net cash (retained >=$150M plus up to $280M pre-close sweep plus consideration), well above the current $2.27. Deal binding via no-shop, punitive reverse break fees ($150M/$75M), and a 5 Feb 2027 outside date. Unfired as of 20 Jul 2026 — no filing or clearance announcement since 22 May 2026.",
+    "discrepancies": [
+     "live_price: board 1.94 (asof 2026-07-02) -> live 2.27 (2026-07-20, ~10am ET, finviz) -- stock recovered off the late-June drawdown; debate had used 2.32",
+     "downside_floor: board 1.90 -> live 1.65 -- the $1.90 'net cash floor' is empirically falsified: DDL closed $1.86 on 25 Jun 2026 (and sub-$2.00 on 7 sessions 23 Jun-2 Jul) with signed SPA, cleared vote, $75M break fee and net cash all public and NO SAMR block; a genuine break plausibly prints toward the $1.65 52-week low, so $1.65 is the defensible break-scenario floor, not $1.90",
+     "resolution_driver: board Refi_restructuring -> live Foreign_regulator -- there is no debt refinancing/restructuring; the sole open condition gating this definitive asset sale is China SAMR anti-monopoly clearance (a foreign regulator)",
+     "dated_milestone: board 2026-12-31 -> live 2027-02-05 -- the 12/31 date ties to no company/regulator communication; the binding contractual backstop is the 5 Feb 2027 outside date. SAMR clearance itself is unscheduled; nearest checkpoints are Q2 results ~20 Aug 2026 and the up-to-$280M cash sweep permitted no later than 31 Aug 2026",
+     "computed_rr: board 18.69 -> unreproducible/stale -- off live 2.27, upside to 3.18 = +40%, downside to 1.65 break floor = -27%, so R:R ~1.5:1 (or ~2.2:1 to the observed 1.86 drift low); the 18.69 figure cannot be reconstructed from any live axis"
+    ],
+    "kill_risk": "SAMR can block or condition the sale (China has blocked/conditioned tech deals since 2021); a genuine block breaks the thesis and plausibly prints toward or below the $1.65 52-week low — the market already proved it will NOT capitalize the \"net cash floor\" on mere regulatory drift, trading to $1.86 (25 Jun 2026) with every floor ingredient public and no block. Secondary: capital return is authorized (90% of post-close cash), not contractually owed — a founder-controlled Cayman board holds discretion, and the retained overseas stub is burning cash (~RMB70M/qtr, up ~242% YoY), so even a clean close leaves per-share distribution dependent on board execution.",
+    "dated_milestone": "2027-02-05",
+    "resolution_driver": "Foreign_regulator",
+    "fair_value_target": 3.18,
+    "downside_floor": 1.65,
+    "asof": "2026-07-21"
+   }
   },
   {
    "symbol": "LBTYK",
@@ -968,8 +1168,24 @@
      "resolution_driver: FDA_clinical_readout confirmed",
      "staging: false confirmed (dated hard clinical event)"
     ],
-    "kill_risk": "The Q4-2026 ECLIPSE 1 readout is a pure clinical binary with NO contractual payout — no CVR, no deal-break price, no financing backstop — so the ~$4.8 downside is a SOFT net-cash level (discretionary market re-rate), not a hard floor; a Phase 3 miss can overshoot below net cash for a cash-burning biotech. Secondary risk: HDV commercial TAM is contested by Gilead's already-approved bulevirtide (ECLIPSE 1 is scoped to the US/regions where bulevirtide use is limited), and win_prob is a P2-informed estimate, not a contractually derived number."
-   }
+    "kill_risk": "The Q4-2026 ECLIPSE 1 readout is a pure clinical binary with NO contractual payout — no CVR, no deal-break price, no financing backstop — so the ~$4.8 downside is a SOFT net-cash level (discretionary market re-rate), not a hard floor; a Phase 3 miss can overshoot below net cash for a cash-burning biotech. Secondary risk: HDV commercial TAM is contested by Gilead's already-approved bulevirtide (ECLIPSE 1 is scoped to the US/regions where bulevirtide use is limited), and win_prob is a P2-informed estimate, not a contractually derived number.",
+    "dated_milestone": "ECLIPSE 1 Phase 3 chronic hepatitis delta topline expected Q4 2026 (ECLIPSE 2/3 topline Q1 2027; VIR-5818 HER2 oncology response data H2 2026)",
+    "resolution_driver": "FDA_clinical_readout",
+    "fair_value_target": 19,
+    "downside_floor": 4.8,
+    "asof": "2026-07-21"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_clinical_readout",
+    "valuation_method": "binary_prob",
+    "staging": false,
+    "dated_milestone": "ECLIPSE 1 Phase 3 chronic hepatitis delta topline expected Q4 2026 (ECLIPSE 2/3 topline Q1 2027; VIR-5818 HER2 oncology response data H2 2026)",
+    "downside_floor": 4.8,
+    "fair_value_target": 19,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.55
   },
   {
    "symbol": "OLMA",
@@ -1026,8 +1242,24 @@
      "resolution_driver: FDA_clinical_readout confirmed (Phase 3 PFS data readout, not an approval decision)",
      "valuation axes (fv 24 / floor 6.5 / win_prob 0.40): reproduced and left unchanged -- internally consistent EV check gives ~+17.8% matching board ev_pct 0.177"
     ],
-    "kill_risk": "OPERA-01 is an event-driven (PFS-event-accrual) readout with only a soft \"fall 2026\" window, so timing can slip a quarter; and the win-case $24 assumes a clean, broad PFS win — in a crowded post-elacestrant SERD field a marginal or ESR1-subgroup-only result (EMERALD-style) would deliver far less than the full win price even if statistically positive."
-   }
+    "kill_risk": "OPERA-01 is an event-driven (PFS-event-accrual) readout with only a soft \"fall 2026\" window, so timing can slip a quarter; and the win-case $24 assumes a clean, broad PFS win — in a crowded post-elacestrant SERD field a marginal or ESR1-subgroup-only result (EMERALD-style) would deliver far less than the full win price even if statistically positive.",
+    "dated_milestone": null,
+    "resolution_driver": "FDA_clinical_readout",
+    "fair_value_target": 24,
+    "downside_floor": 6.5,
+    "asof": "2026-07-21"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_clinical_readout",
+    "valuation_method": "binary_prob",
+    "staging": true,
+    "dated_milestone": null,
+    "downside_floor": 6.5,
+    "fair_value_target": 24.0,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.4
   },
   {
    "symbol": "AVIR",
@@ -1046,7 +1278,7 @@
    "ev_pct": null,
    "lane_canon": null,
    "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": "Idiosyncratic",
+   "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
    "downside_floor": 2.5,
    "fair_value_target": 9,
@@ -1088,8 +1320,24 @@
      "win_prob: board null -> 0.55 (completed-enrollment Phase 3 w/ decent Phase 2 support, offset by non-inferiority bar vs ~95-99% SOC and Atea's mixed HCV history)",
      "staging: board false -> false (confirmed; dated hard binary, imminent)"
     ],
-    "kill_risk": "The load-bearing claim is \"a positive C-BEYOND readout re-rates the equity.\" Two residual risks: (1) data risk — the regimen must hit non-inferiority vs a sofosbuvir SOC that already cures ~95-99%, and Atea's HCV history includes earlier bemnifosbuvir monotherapy/combo disappointments, so a clinical miss or safety signal is live and would pin the stock at/below net cash; (2) commercial-de-rate risk — even a statistically successful non-inferiority readout may NOT re-rate much, because HCV is a mature, shrinking, genericizing market (Gilead/AbbVie) where \"best-in-class short-duration\" carries uncertain commercial value. So a data \"win\" can still be a stock non-event, compressing realized upside below the modeled $9."
-   }
+    "kill_risk": "The load-bearing claim is \"a positive C-BEYOND readout re-rates the equity.\" Two residual risks: (1) data risk — the regimen must hit non-inferiority vs a sofosbuvir SOC that already cures ~95-99%, and Atea's HCV history includes earlier bemnifosbuvir monotherapy/combo disappointments, so a clinical miss or safety signal is live and would pin the stock at/below net cash; (2) commercial-de-rate risk — even a statistically successful non-inferiority readout may NOT re-rate much, because HCV is a mature, shrinking, genericizing market (Gilead/AbbVie) where \"best-in-class short-duration\" carries uncertain commercial value. So a data \"win\" can still be a stock non-event, compressing realized upside below the modeled $9.",
+    "dated_milestone": "2026-mid (C-BEYOND Phase 3 HCV topline / SVR12; reaffirmed on-track June 2026)",
+    "resolution_driver": "FDA_clinical_readout",
+    "fair_value_target": 9,
+    "downside_floor": 2.5,
+    "asof": "2026-07-21"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_clinical_readout",
+    "valuation_method": "binary_prob",
+    "staging": true,
+    "dated_milestone": "2026-mid (C-BEYOND Phase 3 HCV topline / SVR12; reaffirmed on-track June 2026)",
+    "downside_floor": 2.5,
+    "fair_value_target": 9,
+    "win_prob": null,
+    "super_cluster": "Idiosyncratic"
+   },
+   "win_prob": 0.55
   },
   {
    "symbol": "CAPR",
@@ -1146,8 +1394,24 @@
      "win_prob: board 0.70 -> live 0.60 -- prices in the newly-scheduled 7/29 CTGTAC AdCom binary risk + the contested effectiveness basis (PUL v2.0 skeletal primary for a cardiomyopathy label) + the prior-CRL history; still well above the ~0.28 implied by the tape at the $52/$7 goalposts.",
      "valuation_asof: board 2026-06-08 -> live 2026-07-21 -- refreshed; live_price re-confirmed ~$19.5 (7/20 close, board $19.44 essentially unchanged, 57.9M sh, ~$1.13B cap, ~$279M cash ~= $4.8/sh). fair_value_target $52 and downside_floor $7 re-validated and retained."
     ],
-    "kill_risk": "The FDA convened the 7/29 CTGTAC panel precisely because effectiveness is contested: the pivotal HOPE-3 primary was PUL v2.0 (a skeletal/upper-limb endpoint) underpinning a *cardiomyopathy* indication, and the asset already drew one CRL. A No panel vote or a second CRL drops the stock to the ~$5-7 floor (about -65%); even an approval is capped below the $52 Street high by the active NS Pharma / Nippon Shinyaku commercialization litigation (Capricor is suing its own distributor and pivoting to self-commercialization). The market's ~28% implied approval prob is not obviously wrong, so the 0.60 underwrite is the single most refutable assumption in the thesis."
-   }
+    "kill_risk": "The FDA convened the 7/29 CTGTAC panel precisely because effectiveness is contested: the pivotal HOPE-3 primary was PUL v2.0 (a skeletal/upper-limb endpoint) underpinning a *cardiomyopathy* indication, and the asset already drew one CRL. A No panel vote or a second CRL drops the stock to the ~$5-7 floor (about -65%); even an approval is capped below the $52 Street high by the active NS Pharma / Nippon Shinyaku commercialization litigation (Capricor is suing its own distributor and pivoting to self-commercialization). The market's ~28% implied approval prob is not obviously wrong, so the 0.60 underwrite is the single most refutable assumption in the thesis.",
+    "dated_milestone": "2026-08-22",
+    "resolution_driver": "FDA_approval_decision",
+    "fair_value_target": 52,
+    "downside_floor": 7,
+    "asof": "2026-07-21"
+   },
+   "stamped": {
+    "resolution_driver": "FDA_approval_decision",
+    "valuation_method": "binary_prob",
+    "staging": false,
+    "dated_milestone": "2026-08-22",
+    "downside_floor": 7.0,
+    "fair_value_target": 52.0,
+    "win_prob": null,
+    "super_cluster": "FDA/biotech"
+   },
+   "win_prob": 0.6
   }
  ],
  "non_selections": [

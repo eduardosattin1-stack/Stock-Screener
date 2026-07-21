@@ -754,7 +754,90 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
 
 
 # ------------------------------------------------------------- deep-dossier store
-def merge_dossier_store(dossier_by):
+# driver -> super-cluster (mirror of _basket13_candidates.SUPER; kept local to avoid a cross-import)
+_SUPER = {
+    "FDA_approval_decision": "FDA/biotech", "FDA_clinical_readout": "FDA/biotech",
+    "FDA_pathway_feedback": "FDA/biotech",
+    "US_antitrust": "Deal-completion", "US_sector_regulator": "Deal-completion",
+    "CFIUS_FDI": "Deal-completion", "Foreign_regulator": "Deal-completion",
+    "Deal_close_generic": "Deal-completion", "Shareholder_vote": "Deal-completion",
+}
+def _super_cluster_of(driver):
+    return _SUPER.get(driver, "Idiosyncratic")
+
+# driver -> lane, ONLY where unambiguous (the deal-completion drivers are all merger-arb-shaped);
+# idiosyncratic/bio drivers map to several lanes, so they are intentionally absent (lane left as-is).
+_DRIVER_LANE = {
+    "US_antitrust": "merger_arb", "US_sector_regulator": "merger_arb", "CFIUS_FDI": "merger_arb",
+    "Foreign_regulator": "merger_arb", "Deal_close_generic": "merger_arb", "Shareholder_vote": "merger_arb",
+}
+
+# descriptive fields that TRACK the latest dossier (facts about the seat); NEVER the frozen
+# economics (entry_price/weight_pct/entry_date/order_date/limit_price/expression/entry_rationale).
+_PROPAGATE_FIELDS = ("resolution_driver", "valuation_method", "staging",
+                     "dated_milestone", "downside_floor", "fair_value_target", "win_prob")
+
+def propagate_dossiers_to_entries(dossier_by):
+    """Held seats are NEVER re-stamped — but their DESCRIPTIVE fields must track the latest
+    re-underwrite, or the /catalysts card + the mark radars show stale facts. (DDL's card read
+    'Refi_restructuring' with a $1.90 floor and no mention of its $717M Meituan sale, while the
+    refreshed dossier had Foreign_regulator / floor 1.65 / the deal — because the correction sat
+    buried in the dossier store and never reached the entry.) This propagates the corrected
+    descriptive axes to each OPEN entry (freezing entry_price/weight/date/expression/rationale),
+    recomputes super_cluster from any new driver, stamps a dossier_refresh block the card renders,
+    and preserves the ORIGINAL stamp once under entry['stamped']. Returns the list of changes."""
+    t = load_tracker()
+    today = datetime.date.today().isoformat()
+    changed = []
+    for e in t.get("entries", []):
+        if e.get("resolution"):
+            continue
+        d = dossier_by.get(e["symbol"])
+        if not d:
+            continue
+        e.setdefault("stamped", {k: e.get(k) for k in (*_PROPAGATE_FIELDS, "super_cluster")})
+        diffs = {}
+        for k in _PROPAGATE_FIELDS:
+            nv = d.get(k)
+            if nv is not None and nv != e.get(k):
+                diffs[k] = (e.get(k), nv)
+                e[k] = nv
+        # Reconcile fields DERIVED from the propagated axes (idempotent — kept in sync with the
+        # CURRENT driver/floor/target every merge, not only when this run moved them):
+        #  - super_cluster + lane_canon follow the driver (a corrected Foreign_regulator name must
+        #    not keep rendering its stamp-time 'distressed' lane / 'Idiosyncratic' cluster).
+        nsc = _super_cluster_of(e["resolution_driver"])
+        if nsc != e.get("super_cluster"):
+            diffs["super_cluster"] = (e.get("super_cluster"), nsc)
+            e["super_cluster"] = nsc
+        nlane = _DRIVER_LANE.get(e["resolution_driver"])   # only the unambiguous deal-completion drivers
+        if nlane and nlane != e.get("lane_canon"):
+            diffs["lane_canon"] = (e.get("lane_canon"), nlane)
+            e["lane_canon"] = nlane
+        #  - displayed R:R off the corrected axes (a stale floor left DDL showing 18.69:1 vs ~1.4:1).
+        #    Ratio methods only; binaries carry EV, not R:R.
+        if e.get("valuation_method") != "binary_prob":
+            ep, fv, fl = e.get("entry_price"), e.get("fair_value_target"), e.get("downside_floor")
+            if all(isinstance(x, (int, float)) for x in (ep, fv, fl)) and ep > fl:
+                rr = round((fv - ep) / (ep - fl), 2)
+                for rk in ("computed_rr", "expected_rr"):
+                    if e.get(rk) is not None and e.get(rk) != rr:
+                        diffs[rk] = (e.get(rk), rr)
+                        e[rk] = rr
+        # always refresh the dossier_refresh block (the card's "current thesis" source)
+        e["dossier_refresh"] = {kk: d.get(kk) for kk in
+            ("catalyst_status", "thesis_summary", "discrepancies", "kill_risk",
+             "dated_milestone", "resolution_driver", "fair_value_target", "downside_floor")}
+        e["dossier_refresh"]["asof"] = today
+        if diffs:
+            changed.append((e["symbol"], diffs))
+    save_tracker(t)
+    for sym, diffs in changed:
+        print(f"  entry refreshed {sym}: "
+              + "; ".join(f"{k} {ov!r}->{nv!r}" for k, (ov, nv) in diffs.items()))
+    return changed
+
+def merge_dossier_store(dossier_by, model="claude-opus-4-8"):
     """Merge Phase-0 deep-dossiers into the per-symbol store (most recent re-underwrite
     wins) and print resolution/slip alerts. Used by inject() and the merge-dossiers CLI
     (the held-book refresh in the bi-weekly routine)."""
@@ -768,12 +851,14 @@ def merge_dossier_store(dossier_by):
                             "frontend/public/basket13_dossiers.json for the /catalysts depth view.",
                   "dossiers": {}}
     today = datetime.date.today().isoformat()
-    # NOTE: "model" is a static label, not dynamically read from the actual agent run (this script
-    # has no --model flag of its own; it only ingests _basket13_gen.py's workflow output). Fable
-    # retired from this seat 2026-07-10 (pipeline-v3 Week 1) -- _basket13_gen.py's --model now
-    # defaults to opus, so this label follows suit. Keep them in sync if that default ever changes.
+    # "model" is the label for which agent produced this re-underwrite. It is passed in (the
+    # merge-dossiers CLI takes --model) rather than hardcoded — the held-book review model is a
+    # routine choice (Fable as of 2026-07-20), and a wrong label would misattribute the analysis.
+    _MODEL_ALIAS = {"fable": "claude-fable-5", "opus": "claude-opus-4-8",
+                    "sonnet": "claude-sonnet-5", "haiku": "claude-haiku-4-5-20251001"}
+    model_id = _MODEL_ALIAS.get(model, model)
     for sym, d in dossier_by.items():
-        dstore["dossiers"][sym] = {**d, "asof": today, "model": "claude-opus-4-8"}
+        dstore["dossiers"][sym] = {**d, "asof": today, "model": model_id}
     json.dump(dstore, open(dstore_path, "w", encoding="utf-8", newline="\n"),
               indent=1, ensure_ascii=False)
     print(f"dossier store: {len(dossier_by)} refreshed -> {dstore_path}")
@@ -787,15 +872,18 @@ def merge_dossier_store(dossier_by):
             print(f"!  {sym}: dossier says SLIPPED — review the seat (no adds; consider resolve SLIPPED)")
 
 
-def merge_dossiers_cli(path):
-    """CLI: merge a workflow output file's dossiers[] into the store (held-book refresh)."""
+def merge_dossiers_cli(path, model="claude-opus-4-8"):
+    """CLI: merge a workflow output file's dossiers[] into the store (held-book refresh),
+    then propagate the corrected descriptive fields onto the held tracker entries so the
+    /catalysts card + radars never show stale facts (see propagate_dossiers_to_entries)."""
     out = json.load(open(path, encoding="utf-8"))
     res = out.get("result", out)
     dossier_by = {d["symbol"]: d for d in (res.get("dossiers") or []) if d.get("symbol")}
     if not dossier_by:
         print(f"no dossiers[] found in {path}")
         sys.exit(1)
-    merge_dossier_store(dossier_by)
+    merge_dossier_store(dossier_by, model=model)
+    propagate_dossiers_to_entries(dossier_by)
 
 
 # ---------------------------------------------------------------------- resolve
@@ -961,8 +1049,10 @@ def main():
     elif mode == "merge-dossiers":
         ap = argparse.ArgumentParser(prog="_basket13_inject.py merge-dossiers")
         ap.add_argument("path", help="workflow output JSON carrying dossiers[] (held-book refresh)")
+        ap.add_argument("--model", default="opus",
+                        help="model that produced this refresh (label for the store; fable|opus|...)")
         a = ap.parse_args(sys.argv[2:])
-        merge_dossiers_cli(a.path)
+        merge_dossiers_cli(a.path, model=a.model)
     elif mode == "wl-resolve":
         ap = argparse.ArgumentParser(prog="_basket13_inject.py wl-resolve")
         ap.add_argument("symbol")
