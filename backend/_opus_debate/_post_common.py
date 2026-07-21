@@ -196,9 +196,15 @@ def moat_per_name_cap(p, u, extra_flags=()):
     # (1.5% risk-to-floor). Applying the moat half-cap here would contradict that contract.
     if p.get("lane") == "equity_special_sit":
         return u
-    if p.get("cro_only") or p.get("stale_anchor") or p.get("moat_erosion") == "CAP" \
+    # 2026-07-21 #4: the value post stamps washout_moat_exception (deep drawdown + NARROW/WIDE moat
+    # + non-eroding trend) — it relaxes ONLY the moat CAP half-size to 0.75; cro_only/stale_anchor
+    # and extra_flags still force 0.5. Books that never stamp the flag (regime) are unchanged.
+    _moat_cap = p.get("moat_erosion") == "CAP" and not p.get("washout_moat_exception")
+    if p.get("cro_only") or p.get("stale_anchor") or _moat_cap \
             or any(p.get(k) for k in extra_flags):
         return min(u, 0.5)
+    if p.get("moat_erosion") == "CAP" and p.get("washout_moat_exception"):
+        return min(u, 0.75)
     return u
 
 

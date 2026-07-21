@@ -122,6 +122,17 @@ def stamp_moat_erosion(picks, gin):
             p["moat"] = g.get("moat", "")
         if not p.get("secular_theme"):
             p["secular_theme"] = g.get("secular_theme", "")
+        # WASHOUT EXCEPTION (2026-07-21 apex-reassessment #4, deliberately NARROW): a deep-drawdown
+        # entry (>=35% off the 52w high) on a NARROW/WIDE moat whose TREND is stable/widening (never
+        # ERODING) relaxes the moat_erosion=='CAP' half-size to 0.75 in moat_per_name_cap. The CAP
+        # flag often fires on cyclically-falling returns during exactly the drawdown that creates the
+        # value entry; the trend gate keeps genuine eroders fully half-capped. Value book only.
+        _off = g.get("pct_off_52w_high")
+        p["washout_moat_exception"] = bool(
+            p.get("moat_erosion") == "CAP"
+            and isinstance(_off, (int, float)) and _off >= 0.35
+            and str(p.get("moat") or "").upper() in ("WIDE", "NARROW")
+            and str(g.get("moat_trend") or "").upper() in ("STABLE", "WIDENING"))
 
 
 # ───────────────────────── Fix 5 — weight vector ─────────────────────────

@@ -74,7 +74,23 @@ try:
     _meth_src = _mp.get("methodologies", {})
     if _meth_src and _debated:
         _rebuilt = {}
+        # RETIRED SCREENS (2026-07-21 apex-reassessment, Bruno's decision): fundamental_momentum
+        # (-14.1% YTD vs +10-17% for the cash-earnings families) no longer refreshes — the basket
+        # FREEZES at its last published state (terminal membership + banked ytd_return/exits) with
+        # a retired stamp, so the track record stays honest and visible but nothing more accrues.
+        # The production scan's own methodology_picks.json is untouched.
+        _RETIRED_METHS = {"fundamental_momentum"}
         for _meth, _b in _meth_src.items():
+            if _meth in _RETIRED_METHS:
+                _old = (baskets.get("per_methodology_baskets") or {}).get(_meth)
+                if isinstance(_old, dict):
+                    _frozen = dict(_old)
+                    _frozen["retired"] = True
+                    _frozen.setdefault("retired_date", TODAY)
+                    _rebuilt[_meth] = _frozen
+                    print(f"  retired screen kept frozen: {_meth} (retired_date={_frozen['retired_date']}, "
+                          f"final ytd={_frozen.get('ytd_return')})")
+                continue
             _bd = _b if isinstance(_b, dict) else {"picks": _b}
             _picks = [p for p in (_bd.get("picks") or [])
                       if isinstance(p, dict) and p.get("symbol") and p["symbol"].upper() in _debated]

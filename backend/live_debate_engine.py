@@ -773,18 +773,18 @@ You must also perform Activist & Catalyst Detection by merging:
 - Loeb's Third Point criteria (catalyst density, sum-of-parts discount, activism potential, asymmetric risk/reward).
 - The Bloom template (governance reset, strategic process, premium scenario).
 
-SUM-OF-PARTS RECONCILIATION + CATALYST STATUS (mandatory): reconcile the Architect's sop_bull and sop_bear into ONE base-case sop_fair_value (with the parts breakdown) and a risk_reward (downside-to-break vs upside-to-fair-value). Judge the load-bearing catalyst's status FROM THE PROVIDED MATERIALS ONLY — FIRED (already happened, re-rate spent) / ARB (deal terms fixed, capped at the offer) / PENDING_HARD (dated, binding, real asymmetry) / SOFT_EXTENDED (non-binding, serially-extended, third-party, single-binary) / UNVERIFIABLE. If the materials cannot establish the CURRENT status (e.g. they predate the catalyst window), output catalyst_status=UNVERIFIABLE — NEVER assert a live status you cannot source from the inputs. Let the status MOVE the verdict: a FIRED catalyst is NOT an asymmetric special-sit (treat as arb/defensive), a SOFT_EXTENDED one is mid-conviction at best, and apply this UNIFORMLY (do not exempt a name just because it had a bundled transcript). Sanity-check the implied multiple against any peer comps you are given.
+SUM-OF-PARTS RECONCILIATION + CATALYST STATUS (mandatory): reconcile the Architect's sop_bull and sop_bear into ONE base-case sop_fair_value (with the parts breakdown) and a risk_reward (downside-to-break vs upside-to-fair-value). Judge the load-bearing catalyst's status FROM THE PROVIDED MATERIALS ONLY — FIRED (already happened, re-rate spent) / ARB (deal terms fixed, capped at the offer) / PENDING_HARD (dated, binding, real asymmetry) / SOFT_EXTENDED (non-binding, serially-extended, third-party, single-binary) / UNVERIFIABLE. If the materials cannot establish the CURRENT status (e.g. they predate the catalyst window), output catalyst_status=UNVERIFIABLE — NEVER assert a live status you cannot source from the inputs. CATALYST NEUTRALITY (2026-07-21 apex-reassessment): the status is DESCRIPTIVE, not a conviction lever — the dated-event asymmetry book is Basket-13, so in THIS lane a FIRED or SOFT_EXTENDED catalyst on a clean-forensic franchise is NEITHER a plus NOR a penalty. Judge the RESIDUAL value case (upside to sop_fair_value, risk_reward, forensic quality); do NOT down-rate merely because the event is spent or undated (the 2026-07 study: that clause discarded the basket winners — post-catalyst re-rates keep running), and do NOT up-rate for event heat. An ARB is still sized to the spread. Apply this UNIFORMLY (do not exempt a name just because it had a bundled transcript). Sanity-check the implied multiple against any peer comps you are given.
 
 Your final execution verdict MUST be one of:
-- "A": AGGRESSIVE ENTRY (Catalyst imminent, market offside, pain trade is primed).
-- "B": WATCHLIST FOR CAPITULATION (The thesis is real, but wait for a specific flush/headwind to clear the decks—specify the exact event to wait for).
+- "A": ENTER (the value case is live NOW — an imminent catalyst qualifies, but so does a clean-forensic franchise at a real discount whose re-rate is already underway or needs no event; do NOT withhold an A solely because no dated event exists).
+- "B": WATCHLIST (the thesis is real but the price/setup is not there yet — name the SPECIFIC level or development you are waiting for; "wait for a flush" is only valid if you name the flush).
 - "C": PASS (The narrative is saturated, multiple expanded, or alpha is dead).
 
 The conviction score MUST be an integer between 1 and 5 matching the verdict:
-- 5: Strong Buy (Aggressive Entry, high conviction catalysts, activism/governance resets)
-- 4: Buy (Watchlist for Capitulation with clear timing/catalysts)
+- 5: Strong Buy (Enter, exceptional asymmetry — catalyst-driven OR a deep clean-franchise discount with a credible re-rate path)
+- 4: Buy (Enter or near-trigger Watchlist with clear timing/level)
 - 3: Hold / Neutral (Moderate watchlist / stable profile)
-- 2: Sell (Pass, challenged fundamentals, lack of catalysts, or priced in)
+- 2: Sell (Pass, challenged fundamentals, or priced in — "no catalyst" alone is NOT a reason to score 2)
 - 1: Strong Sell (Pass, value trap, or capital destruction risk)
 
 You must return a valid JSON object:
@@ -800,7 +800,8 @@ You must return a valid JSON object:
   "sop_fair_value": "string/number — the reconciled base-case Sum-of-Parts per-share fair value (a number or tight range).",
   "sop_breakdown": "string — the parts and what each contributes to the value.",
   "risk_reward": "string — downside-to-break vs upside-to-fair-value, as a ratio or a clear statement.",
-  "catalyst_status": "string — FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE, with the dated evidence.",
+  "catalyst_status": "string — EXACTLY ONE bare enum token: FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE. NO prose, NO explanation in this field (downstream code does exact-match on it).",
+  "catalyst_status_note": "string — the dated evidence for catalyst_status: WHICH event, WHEN, and how verified. All catalyst prose goes HERE, never in catalyst_status.",
   "consensus_delta": "string — the full expectations-arbitrage analysis; quote the exact street assumptions that are wrong and why. No length limit.",
   "valley_of_death": "string — the full near-term (3-9 month) risk analysis: cash-burn humps, maturities, macro headwinds that hit before the catalyst. No length limit.",
   "positioning_washout": "string — the full analysis of forced/mechanical selling dynamics in the shareholder base. No length limit.",
