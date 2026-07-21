@@ -167,7 +167,7 @@
    },
    "entry_rationale": "Highest ratio edge among survivors — live R:R 6.73 to the $9 de-levering target against a market-tested $3.90 floor (the 52-week low), on a dated Q3-2026 refi milestone. Equity-only per CRO (options chain is dead); live $4.56 sits comfortably under the $4.80 entry limit, and 10% weight risks 1.45% NAV to floor.",
    "resolution_due": {
-    "date": "2026-07-20",
+    "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -218,8 +218,13 @@
    },
    "entry_rationale": "Post-IPO lockup supply-clearing mean-reversion: live R:R improved to ~3.85 at $20.49 vs the $17.50 floor, and at ~$340M/day ADV it is the most executable flow trade in the pool. Staging half-weight equity; thesis is supply clearing, so exit near FV $32, not an open-ended re-rate.",
    "resolution_due": {
-    "date": "2026-07-20",
-    "reason": "dossier edge-gone: rr 0.25 < 1.0 (fv 30, floor 3.1, live 24.695); weekly diagnosis: verdict=REFUTED"
+    "date": "2026-07-21",
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   },
+   "manual_hold": {
+    "until": "2026-08-21",
+    "set_by": "Bruno 2026-07-20",
+    "reason": "Thesis IS hold-through the 2026-08-07 final lockup tranche (~77.7M sh, ~$1.8B) — the washout is the catalyst, not a kill. Do NOT auto-exit on the edge-gone radar: its rr 0.24 rests on the refreshed dossier's $3.10 trough-multiple floor, which is disputed. Review post-unlock absorption (~2 weeks after 08-07)."
    }
   },
   {
@@ -531,7 +536,7 @@
    },
    "entry_rationale": "Only FDA_clinical_readout survivor that is hard-dated (Q3-2026 LUCIDITY avexitide topline, 109d) AND non-staging, so the mandated defined-risk option for a dated binary is actually constructible; ev_pct 0.4512 at win 0.62 with edge surviving the +12% run-up (payoff still >half-dossier).",
    "resolution_due": {
-    "date": "2026-07-20",
+    "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -581,8 +586,8 @@
    },
    "resolution": null,
    "resolution_due": {
-    "date": "2026-07-20",
-    "reason": "close 20.455 <= floor 23.0; weekly diagnosis: verdict=REFUTED"
+    "date": "2026-07-21",
+    "reason": "close 20.41 <= floor 23.0; weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -625,7 +630,16 @@
     "driver_confirmed": "Activist_process (Jana sale push) confirmed; no new activist/sale headline in feed (recent news all operational), but process is the driver and reality is settled upstream. Idiosyncratic, no same-driver twin in this batch.",
     "conditions": []
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-21",
+    "resolution_type": "THESIS_BROKEN",
+    "exit_price": 17.39,
+    "realized_return_pct": -0.1542,
+    "realized_rr": -0.781,
+    "days_held": 21,
+    "catalyst_fired": true,
+    "notes": ""
+   },
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "dossier edge-gone: rr 0.20 < 1.0 (fv 19, floor 10, live 17.48); weekly diagnosis: verdict=REFUTED"
@@ -728,7 +742,7 @@
    "board_resolution_driver": "Deal_close_generic",
    "retag_note": "2026-07-06 Fable deep-dossier: the 8/25 event is Jazz's Ziihera 1L-GEA PDUFA (triggers ZYME's contractual $250M milestone) - ZYME is the Theravance ACQUIRER, not an arb target; board's Deal_close_generic/merger_arb tag corrected. Post-VRDN-resolution the driver count is a legal 2/2 (AQST+ZYME).",
    "resolution_due": {
-    "date": "2026-07-20",
+    "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -821,7 +835,16 @@
      "Respect the skeptic's conviction cap of 60 in sizing — the $9.50 floor is soft (SoP construct, not a deal-break price), so size to a realistic drawdown through the floor if the discount persists"
     ]
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-21",
+    "resolution_type": "THESIS_BROKEN",
+    "exit_price": 9.995,
+    "realized_return_pct": -0.083,
+    "realized_rr": -0.646,
+    "days_held": 19,
+    "catalyst_fired": true,
+    "notes": ""
+   },
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: verdict=REFUTED"
@@ -2760,6 +2783,93 @@
      "ret_pct": -0.21
     }
    }
+  },
+  {
+   "date": "2026-07-21",
+   "nav": 100.68,
+   "basket_ret_pct": 0.68,
+   "seats": {
+    "GDOT": {
+     "price": 13.43,
+     "ret_pct": 5.33
+    },
+    "UNF": {
+     "price": 290.11,
+     "ret_pct": 8.66
+    },
+    "FIP": {
+     "price": 4.09,
+     "ret_pct": -10.31
+    },
+    "FIG": {
+     "price": 24.02,
+     "ret_pct": 17.23
+    },
+    "BLCO": {
+     "price": 15.88,
+     "ret_pct": 1.47
+    },
+    "CELC": {
+     "price": 90.45,
+     "ret_pct": -2.31
+    },
+    "VRDN": {
+     "price": 19.42,
+     "ret_pct": 19.07
+    },
+    "AQST": {
+     "price": 3.945,
+     "ret_pct": -1.13
+    },
+    "WVE": {
+     "price": 5.73,
+     "ret_pct": -0.87
+    },
+    "AMLX": {
+     "price": 17.45,
+     "ret_pct": 19.6
+    },
+    "AAUC": {
+     "price": 20.41,
+     "ret_pct": -12.78
+    },
+    "FUN": {
+     "price": 17.39,
+     "ret_pct": -15.42
+    },
+    "THRM": {
+     "price": 34.13,
+     "ret_pct": 0.74
+    },
+    "ZYME": {
+     "price": 23.76,
+     "ret_pct": -9.69
+    },
+    "DDL": {
+     "price": 2.29,
+     "ret_pct": 18.04
+    },
+    "LBTYK": {
+     "price": 9.995,
+     "ret_pct": -8.3
+    },
+    "LZM": {
+     "price": 3.88,
+     "ret_pct": 4.02
+    },
+    "VIR": {
+     "price": 9.23,
+     "ret_pct": -0.32
+    },
+    "OLMA": {
+     "price": 11.35,
+     "ret_pct": -1.9
+    },
+    "AVIR": {
+     "price": 4.775,
+     "ret_pct": -1.14
+    }
+   }
   }
  ],
  "watchlist": [
@@ -3729,6 +3839,42 @@
     "GERN": {
      "price": 1.4442,
      "ret_pct": 12.83
+    }
+   }
+  },
+  {
+   "date": "2026-07-21",
+   "nav": 105.996,
+   "ret_pct": 5.996,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.33,
+     "ret_pct": 5.43
+    },
+    "BBIO": {
+     "price": 80.76,
+     "ret_pct": 20.9
+    },
+    "EYPT": {
+     "price": 12.66,
+     "ret_pct": -2.84
+    },
+    "PVLA": {
+     "price": 124.15,
+     "ret_pct": 4.47
+    },
+    "DBVT": {
+     "price": 14.57,
+     "ret_pct": -7.2
+    },
+    "MGNI": {
+     "price": 18.97,
+     "ret_pct": 8.71
+    },
+    "GERN": {
+     "price": 1.44,
+     "ret_pct": 12.5
     }
    }
   }

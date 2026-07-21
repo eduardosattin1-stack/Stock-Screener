@@ -62,6 +62,9 @@ MAX_WATCHLIST_PER_DRIVER = 5   # • per-driver diversity cap on the on-deck wat
                                #   driver (e.g. FDA_clinical_readout) can't crowd out the queue
 RISK_TO_FLOOR_PCT  = 1.5     # weight_pct * (live-floor)/live <= this, per ratio name
 BINARY_PREMIUM_PCT = 2.0     # weight_pct <= this for a binary defined-risk structure
+MAX_MILESTONE_YEAR = 2026    # • 2026-07-20 (Bruno): fast-return sleeve — a NEW seat's dated
+                             #   milestone must resolve within 2026; 2027+ stories (e.g. LBTYK's
+                             #   maybe-2027 spin) are passes, not seats. Applies to NEW picks only.
 TOL = 1e-3                   # float tolerance on cap checks
 
 HEADER = ("Basket 13 catalyst sleeve — append-only event-resolution tracker. Positions RESOLVE, "
@@ -391,6 +394,12 @@ def validate(picks, bysym, live_px=None, held_syms=None):
                 v.append(f"{p['symbol']} STAGING must be equity, got '{exp}'")
             if w > half + 0.5:
                 v.append(f"{p['symbol']} STAGING weight {w:.1f}% > half-normal {half:.1f}%")
+        # FAST-RETURN HORIZON (2026-07-20, Bruno): new seats must resolve within MAX_MILESTONE_YEAR.
+        # Lenient parse — dated_milestone formats vary ("2026-09-30", "2026-mid", "2027-03-31").
+        dm = str(c.get("dated_milestone") or "")
+        m_yr = re.match(r"\s*(\d{4})", dm)
+        if m_yr and int(m_yr.group(1)) > MAX_MILESTONE_YEAR:
+            v.append(f"{p['symbol']} HORIZON: milestone {dm} beyond {MAX_MILESTONE_YEAR} — fast-return sleeve")
         # WEEKLY-DIAGNOSIS ENTRY GATE (2026-07-01): the weekly full-stack catalyst debate + skeptic
         # runs over this whole book — consuming it here would have BLOCKED ~27 NAV-pts of dead seats
         # (GDOT Skeptic-REFUTED at 14%, AQST SOFT->FIRED-adjacent at 4.5%, UNF trading-through).

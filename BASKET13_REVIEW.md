@@ -1,11 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-20 · 13 held seats (49.5% invested) + 7 resolved · last run 2026-07-20 · paper basket, nothing executed*
+*Generated 2026-07-21 · 11 held seats (43.0% invested) + 9 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (13 held)
+## 1 · The basket (11 held)
 
 ### FIP — FTAI Infrastructure Inc.
 `10% · equity · distressed · Refi_restructuring (Idiosyncratic) · score 8.0 · edge M · entry 2026-06-10 @ 4.56 (cro_live_check)`
@@ -101,19 +101,6 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Accept near-zero downside cushion (floor -1.7%) - this is deal-break/gold-tape risk, size accordingly
 - ⚠ **Condition:** Tolerate a possible second extension past the July 29 2026 outside date (one slip already occurred)
 
-### FUN — Six Flags Entertainment (Jana sale push)
-`4% · equity · activist · Activist_process (Idiosyncratic) · score 5.0 · edge H · STAGING · entry 2026-06-30 @ 20.56 (cro_structured)`
-- **Expected:** R:R 2.57:1 · milestone 2027-03-31 · review: 2027-03-31 process milestone (274d); interim — any board strategic-review update or formal sale-process announcement.
-- **Risk-to-floor (computed):** 0.79% of NAV (cap 1.5)
-- **Director — why this seat:** High-grade activist/sale-process bet (Jana) at $20.56 with +50.8% to FV $31 vs -19.7% to the $16.50 floor (R:R 2.57), a brand-new Activist_process driver in Idiosyncratic that diversifies away from the FDA-heavy held book. Staging=true (undated process) forces equity-only at half a normal weight; entry is if anything cheaper than dossier asof after today's -6.6%.
-- **Director — what kills it:** Jana stands down / board rejects a sale and reaffirms standalone, or a leveraged-balance-sheet stress event re-rates the equity toward/through the $16.50 floor.
-
-**CRO verdict: TRADE**
-- **1 · Edge at entry (live re-check):** Live $20.56 (FMP batch-quote, 2026-06-30) == dossier live_price $20.56; edge fully intact. R:R from $20.56: upside to FV $31 = +$10.44 (+50.8%), downside to floor $16.50 = -$4.06 (-19.7%), R:R = 2.57x, matching dossier computed_rr 2.57. No compression. Note stock -6.6% today and below 50d avg ($20.74), so entry is if anything cheaper than dossier asof.
-- **2 · Tradeability:** Equity is the correct expression and is highly tradeable: ADV ~3.3M sh x $20.56 = ~$66M/day, ample for any realistic sleeve position, no borrow leg. Options route is NOT viable: Jan-2027 $25 call shows OI 169 / 2 contracts today / no live two-sided bid-ask; $20 call OI 1,623 but zero volume and empty bid-ask. Thin, no usable quotes near thesis strikes.
-- **3 · Window ↔ expression:** Milestone 2027-03-31 (274d). Option expiries run monthly only through Jan-2027 then jump straight to Jan-2028 LEAP — there is NO expiry between Jan-2027 and Jan-2028, so no contract clears 2027-03-31 with the required +1-monthly margin except the illiquid Jan-2028 LEAP. Window does not fit options; staging=true soft activist process confirms equity. No date to slip (undated process), so equity carries no theta-decay risk.
-- **4 · Driver tag:** Activist_process (Jana sale push) confirmed; no new activist/sale headline in feed (recent news all operational), but process is the driver and reality is settled upstream. Idiosyncratic, no same-driver twin in this batch.
-
 ### ZYME — Zymeworks Inc.
 `2% · debit spread exp 2026-10-16 · merger_arb · FDA_approval_decision (Deal-completion) · score 7.0 · edge M · entry 2026-07-02 @ 26.31 (cro_structured)`
 - **Expected:** EV 12.4% · milestone 2026-08-25 · review: FDA PDUFA target action date 2026-08-25.
@@ -140,22 +127,6 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - **4 · Driver tag:** Refi_restructuring — CONFIRMED. Unique driver in this batch (no cap conflict).
 - ⚠ **Condition:** Cap position to a small fraction of the ~$0.5M/day ADV; accumulate with limit orders, do not use market orders.
 - ⚠ **Condition:** Limit entry <= ~$1.97 (floor $1.90 leaves only ~2% downside cushion — entering above ~$2.00 erodes the asymmetry).
-
-### LBTYK — Liberty Global plc
-`2.5% · equity · spinoff · Spin_index_flow (Idiosyncratic) · score 7.0 · edge M · STAGING · entry 2026-07-02 @ 10.9 (cro_structured)`
-- **Expected:** R:R 5.07:1 · milestone 2027-06-30 · review: VodafoneZiggo 50% buy-in close, targeted July 2026 — the near-term confirming step and the add-tranche trigger.
-- **Risk-to-floor (computed):** 0.321% of NAV (cap 1.5)
-- **Director — why this seat:** SoP special-sit with the R:R having WIDENED to ~5.1 at live $10.90, a fresh verdict-A debate, and a committed Ziggo listing/spin path — but the skeptic is right that the $9.50 floor is a holdco-discount construct, so this enters at staging size (half a normal seat) per the CRO's stage-in condition and the conviction cap of 60. Second tranche only after the VodafoneZiggo 50% buy-in actually closes.
-- **Director — what kills it:** VodafoneZiggo buy-in failing regulatory approval, or management walking back the committed H2-2027 Ziggo Euronext listing/spin — without the forcing function this reverts to a chronic holdco discount.
-
-**CRO verdict: TRADE_WITH_CONDITIONS**
-- **1 · Edge at entry (live re-check):** FMP real-time quote 2026-07-02: $10.90 (dossier $10.99). Recomputed SoP R:R = ($18.00-$10.90)/($10.90-$9.50) = 7.10/1.40 = 5.07 vs dossier 4.70 — the edge has WIDENED slightly. No compression issue.
-- **2 · Tradeability:** LBTYK common, ~734k shares/day (~$8M notional) — fine for the sleeve. Equity is the right expression: no listed option chain reaches the H2-2027 spin with acceptable liquidity, and the fresh skeptic confirms the $9.50 floor is a holdco-discount SoP construct, NOT a hard cash backstop — so defined-risk option structures would be built on a fictional floor anyway.
-- **3 · Window ↔ expression:** Milestone 2027-06-30 is ~363 days out; equity clears any window by construction. Fresh weekly diagnosis (3.4d): PENDING_HARD, verdict A, skeptic CONFIRMED_WITH_CORRECTIONS with conviction cap 60 — catalyst live and NOT fired, but it is a voluntary self-restructuring with slip risk (regulatory close July/H2 2026, listing H2 2027) and no mechanical forcing function if the holdco discount persists.
-- **4 · Driver tag:** Spin_index_flow confirmed (Ziggo Euronext listing + 90% spin creates the index/flow event). FLAG: MSGS in this same batch carries the identical Spin_index_flow driver — second name on one driver; Director cap applies (moot if MSGS stays NO_TRADE, but flagging per protocol).
-- ⚠ **Condition:** Stage-in only: open at no more than half target weight now; add the second tranche only AFTER the VodafoneZiggo 50% buy-in actually closes (targeted July 2026) — that is the near-term confirming step that hardens the 2027 spin
-- ⚠ **Condition:** Limit <= $11.00 (do not chase above; the recomputed 5.07 R:R degrades below the dossier's 4.7 above ~$11.05)
-- ⚠ **Condition:** Respect the skeptic's conviction cap of 60 in sizing — the $9.50 floor is soft (SoP construct, not a deal-break price), so size to a realistic drawdown through the floor if the discount persists
 
 ### VIR — 
 `2% · defined risk option exp 2027-01-15 · None · FDA_clinical_readout (FDA/biotech) · score None · edge None · entry 2026-07-20 @ 9.26 (cro_structured)`
@@ -202,19 +173,56 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Idiosyncratic clinical binary: net-cash floor ~$2.50 is a Phase-3-miss floor, not a stop; size for a full ~48% drawdown to floor on a negative SVR12 readout
 
 ---
-## 1b · Resolved (7)
+## 1b · Resolved (9)
 - **GDOT** EDGE_GONE · 2026-06-10→2026-07-20 (40d) · 12.75→13.43 · realized +5.3% (exp R:R 1.56:1) · 
 - **UNF** EDGE_GONE · 2026-06-13→2026-07-20 (37d) · 267.0→290.11 · realized +8.7% (exp R:R 1.86:1) · 
 - **BLCO** THESIS_BROKEN · 2026-06-10→2026-07-20 (40d) · 15.65→15.88 · realized +1.5% (exp R:R 2.94:1) · 
 - **CELC** FIRED_LOSS · 2026-06-10→2026-07-20 (40d) · 92.59→90.45 · realized -2.3% (exp EV 50.1%) · 
 - **VRDN** FIRED_WIN · 2026-06-10→2026-07-06 (26d) · 16.31→19.42 · realized +19.1% (exp EV 105.0%) · FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution.
+- **FUN** THESIS_BROKEN · 2026-06-30→2026-07-21 (21d) · 20.56→17.39 · realized -15.4% (exp R:R 2.57:1) · 
 - **THRM** THESIS_BROKEN · 2026-07-02→2026-07-06 (4d) · 33.88→34.13 · realized +0.7% (exp R:R 2.87:1) · Board dossier misread the RMT: stock-for-stock, THRM is the ACQUIRER, no consideration flows to holders - the 30% spread to $44 never existed. HSR fired 3/26 pre-valuation. Fable dossier + CRO NO_TRADE 7/06.
+- **LBTYK** THESIS_BROKEN · 2026-07-02→2026-07-21 (19d) · 10.9→9.995 · realized -8.3% (exp R:R 5.07:1) · 
 - **LZM** EDGE_GONE · 2026-07-02→2026-07-06 (4d) · 3.73→3.88 · realized +4.0% (exp R:R 2.93:1) · Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution.
 
 ---
-## 2 · CRO kills this run — NO_TRADE (0)
+## 2 · CRO kills this run — NO_TRADE (5)
 
 *Killed on trade grounds only (edge gone / untradeable / window fails) — catalyst reality was settled upstream.*
+
+### AXTA — Axalta Coating Systems Ltd.
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** Live $32.25 (bid 32.24/ask 32.26, IBKR snapshot 2026-07-20). Merger-arb spread on the AkzoNobel MOE (0.6539 AKZO/AXTA): upside to corrected FV $34.10 = +$1.85 (+5.7%); downside to standalone-break floor $28.18 = -$4.07 (-12.6%). R:R = 1.85/4.07 = 0.45 — INVERTED, tracks the dossier's honest ~0.42 and refutes the board's 2.48 (which valued the cum-dividend AKZO before the EUR2.5bn special dividend that accrues to AkzoNobel holders only). Thin 5.7% gross merger-arb carry, asymmetric against a break. Not a compression story — the edge was already inverted at the dossier's spot mark; live confirms it.
+- **2 · Tradeability:** Not the constraint. AXTA is deeply liquid: 1c-wide top of book (32.24/32.26, 1000x100), ~$76M/day 90d ADV — an equity merger-arb position fills at trivial cost. The expression exists cheaply; the payoff does not justify it.
+- **3 · Window ↔ expression:** Both shareholder votes 5-Aug-2026; close guided 'late 2026 to early 2027' (milestone 2026-12-31, ~164d), gated on ~30-jurisdiction antitrust (EU Commission remedies in active dialogue). Equity arb held to close — window is fine, but genuine slip risk into 2027 lengthens the carry against a 5.7% gross spread.
+- **4 · Driver tag:** Foreign_regulator — confirmed. Binding gate is multi-jurisdiction antitrust (EU Commission + ~30 jurisdictions); signed friendly deal, so resolution turns on regulator clearance, not counterparty.
+
+### EYPT — EyePoint Pharmaceuticals, Inc.
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** WEEKLY-DIAGNOSIS OVERRIDE: fresh skeptic verdict = REFUTED (age 3.8d) — the bull's load-bearing 'strictly-more-favorable design' anchor is false on population (LUGANO adds treatment-naive eyes where DURAVYU has zero Phase 2 data and KSI-301 missed NI), and management drew the ATM into the print (Q1 10-Q Note 8). Not re-litigating; the inject layer hard-rejects a REFUTED name. Live $12.86 (bid 12.84/ask 12.87, 2026-07-20) stamped for reference only — no edge to verify.
+- **2 · Tradeability:** N/A — refuted weekly diagnosis; do not waste a nomination.
+- **3 · Window ↔ expression:** Soft ~2026-08 registry-anchored window (board's 2026-07-31 hard date is unsourced/early). Moot — event edge refuted.
+- **4 · Driver tag:** FDA_clinical_readout — would have collided with OLMA under the <=2 cap; moot given NO_TRADE.
+
+### PRX.AS — Prosus N.V. (forced seller of Delivery Hero)
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** CATALYST FIRED per fresh_dossier AND weekly skeptic REFUTED. The forced-seller overhang resolved 16-Jul-2026 when Prosus gave an irrevocable undertaking to tender its residual ~17% Delivery Hero stake into Uber's recommended EUR41.50/sh cash offer. Edge spent; incremental event contribution is ~EUR0.07/sh (~0.1% of NAV) and the gross DH stake is already inside the NAV anchor (double-count). No live lookup — there is no un-fired event left.
+- **2 · Tradeability:** N/A — catalyst fired. Any live arb (DHER.DE ~EUR38.2 vs EUR41.50, ~8.6% gross) sits on Delivery Hero's register, not PRX.AS; nothing forces anyone to sell Prosus (it is its own largest buyer via buybacks).
+- **3 · Window ↔ expression:** Residual dates are RISK, not opportunity: EC divestment deadline 11-Oct-2026 (already extended once) and Uber close guided H2-2027 — the irrevocable binds Prosus but not Uber, leaving wrong-signed deal-break risk.
+- **4 · Driver tag:** Forced_divest_flow — tag retained but archetype misapplied: it rewards a register ABSORBING forced supply, whereas Prosus IS the seller. Moot given FIRED.
+
+### MP — MP Materials (rare-earth magnets, DoD floor)
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** CATALYST FIRED per fresh_dossier. The idiosyncratic re-rating event — DoD public-private partnership ($110/kg NdPr contract-for-difference, $400M convertible preferred at $30.03, 100% 10X-magnet offtake) plus the parallel Apple offtake — closed Jul 10-11, 2025, ~13 months before the board dossier. Stock already re-rated from ~$25-30 to a ~$60 peak and faded to ~$44.62; the board's binary $82-win/$35-loss @ 0.45 prices a spent catalyst. No live edge to recompute.
+- **2 · Tradeability:** N/A — catalyst fired; no live dated event to express.
+- **3 · Window ↔ expression:** No live dated catalyst. Q2 print Aug-6-2026 is recurring (not a special-sit); 10X commissioning is 2028 and non-binary.
+- **4 · Driver tag:** Supply_timing — tag retained but flagged: the name now moves on the NdPr commodity tape + US-China geopolitics (the Jul-2026 slide was detente + cooling NdPr + insider selling), failing B13's own-facts test. Moot given FIRED.
+
+### DBVT — DBV Technologies S.A.
+**CRO verdict: NO_TRADE**
+- **1 · Edge at entry (live re-check):** Live $14.41 (IBKR, bid 14.36/ask 14.42, ~$3.7M/day 90d ADV), down from dossier $14.86. Moot: the weekly-diagnosis skeptic verdict is REFUTED and FRESH (age 3.8d), which hard-kills the event edge per the override. For reference only, at $14.41 vs the corrected ~$5 floor / $34 target R:R is ~2.1:1 with win_prob 0.45 — a 15-month undated single-binary with a mandatory dilutive raise in front and no contractual floor, not a defined-risk special situation.
+- **2 · Tradeability:** DBVT ADR is liquid enough (~$3.7M/day 90d ADV, 6-cent spread 14.36/14.42), but moot given NO_TRADE on the REFUTED fresh skeptic.
+- **3 · Window ↔ expression:** No dated milestone; the resolving approval decision sits >1yr out (~Q3-Q4 2027). Cash of $174.9M funds ops only into Q3 2027, so a dilutive raise arithmetically precedes resolution. No tradeable dated expression can clear a milestone that does not yet exist.
+- **4 · Driver tag:** FDA_approval_decision — but per fresh_dossier the resolving approval decision is NOT a scheduled event: no BLA filed, so no acceptance, no PDUFA clock. Nearest milestone is a company-controlled BLA filing that already slipped 1H 2026 -> Q3 2026.
 
 ---
 ## 3 · Non-selections (46) — recorded counterfactuals

@@ -101,7 +101,17 @@ def main():
                                 encoding="utf-8")).get("dossiers") or {})
     except Exception:
         pass
-    def _edge_gone(sym, px):
+    def _edge_gone(sym, px, entry=None):
+        # manual_hold (2026-07-20, Bruno/FIG): an un-expired hold on the tracker entry SUPPRESSES
+        # the edge-gone flag entirely — the human has already adjudicated this seat (e.g. FIG's
+        # thesis is hold-THROUGH the 08-07 unlock; the radar's rr rested on a disputed floor).
+        hold = (entry or {}).get("manual_hold")
+        if hold:
+            try:
+                if datetime.date.today() <= datetime.date.fromisoformat(str(hold.get("until"))[:10]):
+                    return None
+            except Exception:
+                return None                               # malformed hold = fail safe (hold stands)
         d = _doss.get(sym)
         if not d or not isinstance(px, (int, float)):
             return None
@@ -143,7 +153,7 @@ def main():
                 reasons.append(f"close {px} >= target {tgt}")
             if isinstance(flr, (int, float)) and px <= flr:
                 reasons.append(f"close {px} <= floor {flr}")
-        eg = _edge_gone(sym, px)
+        eg = _edge_gone(sym, px, e)
         if eg:
             reasons.append(eg)
         import time as _t
