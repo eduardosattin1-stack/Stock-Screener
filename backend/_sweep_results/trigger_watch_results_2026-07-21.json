@@ -1,0 +1,77 @@
+{
+ "checked": 9,
+ "results": [
+  {
+   "symbol": "WBD",
+   "still_forward": false,
+   "fired": true,
+   "outcome": "SLIPPED",
+   "new_date": "2026-08-03",
+   "note": "(reclassified SLIPPED per terminal-only rule) Judge Martinez-Olguin GRANTED the 12-state TRO on 2026-07-20, pausing the Paramount Skydance/WBD close for 14 days (\"serious questions going to the merits\" on antitrust); preliminary-injunction hearing set for 2026-08-03 (CNBC/Bloomberg, 2026-07-20). Adverse fire: the thesis required a denial to clear the Q3 close path."
+  },
+  {
+   "symbol": "ANAB",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "No post-trial verdict as of 2026-07-21: web searches and AnaptysBio IR/StockTitan coverage show nothing newer than the Apr 24, 2026 pre-trial win (Tesaro anticipatory-breach claim dismissed) and forward references to the Jul 14-17 trial. Verdict remains pending on the Chancery court's weeks-to-months post-trial timeline; catalyst still live."
+  },
+  {
+   "symbol": "LBTYK",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "Q2-2026 results remain scheduled for pre-market Fri 2026-07-24 (investor call 9:00 a.m. ET), confirmed by Liberty Global's 8-K/press release dated 2026-06-02 (SEC/GlobeNewswire). As of 2026-07-21 the event has not fired and the date is unchanged."
+  },
+  {
+   "symbol": "RCI",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "2026-07-22",
+   "note": "Q2 2026 results/call confirmed still on for July 22, 2026, 8:00 a.m. ET pre-market (GlobeNewswire notice 2026-06-29; about.rogers.com); as of 2026-07-21 the call has not yet occurred, Rogers is in quiet period, MLSE buy-in still expected to close Q4 2026 and minority stake sale plan reiterated unchanged. Event is imminent (tomorrow), not fired."
+  },
+  {
+   "symbol": "CZR",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "NGC 2026-07-23 hearing still on and not yet held (checked 2026-07-21); NGCB unanimously approved Fertitta execs Scheinthal/Liem 07-08 (Review-Journal, iGaming Business, PlayUSA, Jul 8-15 2026), a favorable lead-in. Caveat: the 07-23 item is exec licensure tied to the deal, not the final deal vote \u2014 execs testified full approvals take ~9-10 months."
+  },
+  {
+   "symbol": "AVNS",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "Vote has not occurred yet: special meeting remains on for 2026-07-22 9:00am ET with close expected by 2026-07-27; all regulatory approvals received per company PR 2026-07-02 (avanos.investorroom.com), and no delay/adjournment/completion news found as of 2026-07-21."
+  },
+  {
+   "symbol": "DSX",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "Tender still live and unresolved: latest news remains the 2026-07-13 GlobeNewswire/6-K extension to 2026-07-24 17:00 ET (29.7% of non-Diana shares tendered as of 07-10, Genco board still opposed); no further extension, agreement, or lapse reported as of 2026-07-21. Binary resolves at Friday's deadline."
+  },
+  {
+   "symbol": "EA",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "FORWARD",
+   "new_date": "",
+   "note": "EU merger decision has not yet issued as of 2026-07-21: Reuters-sourced reports (Yahoo/Euronext, Jul 17-20) say the deal is set to win UNCONDITIONAL Phase 1 clearance when the review ends Jul 22, with FSR (subsidy) clearance following at the Jul 30 preliminary-window close and some outlets flagging Jul 30 as a possible close date. CFIUS remains the gating item, running to late September against the Sept 28 outside date \u2014 milestone still forward with a strongly favorable expected outcome tomorrow."
+  },
+  {
+   "symbol": "PSKY",
+   "still_forward": true,
+   "fired": false,
+   "outcome": "SLIPPED",
+   "new_date": "2026-08-03",
+   "note": "No PI ruling by 07-22: on 2026-07-20 Judge Martinez-Olguin instead granted the state AGs a 14-day TRO (extendable to 28) blocking the WBD close and set the PI hearing for 2026-08-03, writing she can presume the merger is likely to violate antitrust law (CNN/Variety/Deadline, 2026-07-20) \u2014 an adverse interim tilt that pressures the end-September close. The separate consumer-suit PI was denied 07-16 (Deadline)."
+  }
+ ]
+}
