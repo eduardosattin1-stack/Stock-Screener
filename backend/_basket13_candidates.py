@@ -23,7 +23,7 @@ All `•` values are STARTING DIALS, re-fit from _basket13_tracker.json realized
 
 Usage: python _basket13_candidates.py
 """
-import json, os, datetime, argparse
+import json, os, datetime, argparse, re
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
@@ -56,17 +56,71 @@ def super_cluster_of(driver):
     return SUPER.get(driver, "Idiosyncratic")
 
 
+# --- prose-date fallback (2026-07-21) ---------------------------------------
+# BUG this fixes: `valuation.expected_close_date` is the board's ONLY structured date,
+# and it holds M&A CLOSE dates — FDA catalysts (PDUFA/AdCom/readout) never populate it,
+# their dates live only in the bloom_catalysts/analysis PROSE. So hard-dated FDA binaries
+# (CAPR: AdCom Jul-29 + PDUFA Aug-22) were bucketed "undated" and dropped before the debate.
+# 82 ACTIVE board names had a null expected_close_date but a dated event in prose.
+_MONTHS = {m.lower(): i for i, m in enumerate(
+    ["january", "february", "march", "april", "may", "june", "july",
+     "august", "september", "october", "november", "december"], 1)}
+_CATALYST_KW = re.compile(
+    r"PDUFA|AdCom|advisory committee|action date|readout|topline|CHMP|outside date|"
+    r"decision date|approval decision|target action", re.I)
+_DATE_MDY = re.compile(r"\b([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(20\d\d)\b")   # "August 22, 2026"
+_DATE_ISO = re.compile(r"\b(20\d\d)-(\d{2})-(\d{2})\b")                       # "2026-08-22"
+
+def _prose_milestone(r, today):
+    """Earliest FUTURE catalyst date parsed from board prose, used ONLY when the structured
+    expected_close_date is null. Conservative: a date counts only if it sits in the SAME
+    keyword-bearing segment as a catalyst keyword (so an unrelated date — a filing date, a
+    52-week-low date — is not mistaken for the milestone). Returns (iso, days, snippet)."""
+    bc = r.get("bloom_catalysts") or {}
+    texts = []
+    for v in bc.values():
+        if isinstance(v, dict):
+            texts += [str(v.get("description") or ""), str(v.get("evidence") or "")]
+    texts += [str(r.get("analysis_summary") or ""),
+              str((r.get("valuation") or {}).get("valuation_basis") or "")]
+    found = []                                        # (date, snippet)
+    for t in texts:
+        for seg in re.split(r"[;.]", t):
+            if not _CATALYST_KW.search(seg):
+                continue
+            for m in _DATE_MDY.finditer(seg):
+                mon = _MONTHS.get(m.group(1).lower())
+                if not mon:
+                    continue
+                try:
+                    found.append((datetime.date(int(m.group(3)), mon, int(m.group(2))), seg.strip()[:80]))
+                except ValueError:
+                    pass
+            for m in _DATE_ISO.finditer(seg):
+                try:
+                    found.append((datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3))), seg.strip()[:80]))
+                except ValueError:
+                    pass
+    fut = sorted((d for d in found if d[0] >= today), key=lambda x: x[0])
+    if not fut:
+        return None, None, None
+    d, snip = fut[0]
+    return d.isoformat(), (d - today).days, snip
+
 def milestone_of(r):
-    """Dated milestone = valuation.expected_close_date (the only structured date on the board).
-    Returns (iso_str|None, days_from_today|None)."""
+    """Dated milestone. Prefers the structured valuation.expected_close_date; falls back to
+    the earliest future catalyst date parsed from prose (FDA/readout names). Returns
+    (iso_str|None, days_from_today|None, source) where source in
+    {"expected_close_date", "prose", None}."""
     iso = (r.get("valuation") or {}).get("expected_close_date") or None
-    if not iso:
-        return None, None
-    try:
-        d = datetime.date.fromisoformat(str(iso)[:10])
-    except ValueError:
-        return iso, None
-    return iso, (d - datetime.date.today()).days
+    if iso:
+        try:
+            d = datetime.date.fromisoformat(str(iso)[:10])
+            return iso, (d - datetime.date.today()).days, "expected_close_date"
+        except ValueError:
+            return iso, None, "expected_close_date"
+    iso2, days2, _snip = _prose_milestone(r, datetime.date.today())
+    return iso2, days2, ("prose" if iso2 else None)
 
 
 def live_price_of(r):
@@ -92,7 +146,7 @@ def main(exclude_held=False):
         print(f"WARN: {os.path.basename(SRC)} is {src_age_days} days old "
               f"(generated={src_generated}) — sweep missed or rolled back; trading the prior board")
     window_days = round(MILESTONE_WINDOW_MONTHS * 30.4)
-    entries, staging, excluded = [], [], []
+    entries, staging, excluded, prose_rescued = [], [], [], []
 
     # "holds run to resolution": drop names already in the book (any UNRESOLVED entry) so a
     # re-debate only considers names NOT currently held/pending.
@@ -109,7 +163,9 @@ def main(exclude_held=False):
         flags = set(r.get("edge_flags") or [])
         blocked = flags & BLOCKING
         lane_pri = r.get("lane_priority") or 9
-        iso, days = milestone_of(r)
+        iso, days, msrc = milestone_of(r)
+        if msrc == "prose" and days is not None and 0 <= days <= window_days:
+            prose_rescued.append((r.get("symbol"), iso, days))
         lp = live_price_of(r)
 
         def rec(staging_flag):
@@ -162,6 +218,10 @@ def main(exclude_held=False):
                  for s, iso, d, rr in excluded if rr == reason]
         if names:
             print(f"  excluded ACTIVE [{reason}]: {', '.join(names)}")
+    if prose_rescued:
+        print(f"  prose-date rescued ({len(prose_rescued)} — dated via bloom_catalysts/analysis, "
+              f"not expected_close_date): "
+              + ", ".join(f"{s}({iso},{d}d)" for s, iso, d in prose_rescued))
     print(f"-> {OUT}")
 
 
