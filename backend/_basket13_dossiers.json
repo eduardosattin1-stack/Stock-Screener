@@ -671,6 +671,28 @@
    "_staging_correction": "2026-07-20: flipped staging false->true; dated_milestone is a mid-2026 WINDOW (not a bound day) with acknowledged H2 slip risk + unverifiable thin options chain -> equity, half-weight (precedent: AQST/WVE).",
    "asof": "2026-07-20",
    "model": "claude-opus-4-8"
+  },
+  "CAPR": {
+   "symbol": "CAPR",
+   "catalyst_live": true,
+   "catalyst_status": "PENDING_HARD",
+   "thesis_summary": "Event-driven long into a mispriced FDA binary. Deramiocel (cell therapy for DMD cardiomyopathy) has positive pivotal HOPE-3 Ph3 data; the Jul-2025 CRL was lifted 3/10/2026, the Class 2 resubmission was accepted with \"no potential review issues identified,\" a CTGTAC advisory panel votes 7/29 and the PDUFA approval decision lands 8/22. At the $52 (approve) / $7 (reject) goalposts and price ~$19.5, the tape implies only ~28% approval odds vs ~60% underwritten -- the edge is the gap. Approve -> ~$52 (Street-high); reject -> ~$7 (near net cash).",
+   "resolution_driver": "FDA_approval_decision",
+   "staging": false,
+   "dated_milestone": "2026-08-22",
+   "valuation_method": "binary_prob",
+   "win_prob": 0.6,
+   "fair_value_target": 52,
+   "downside_floor": 7,
+   "kill_risk": "The FDA convened the 7/29 CTGTAC panel precisely because effectiveness is contested: the pivotal HOPE-3 primary was PUL v2.0 (a skeletal/upper-limb endpoint) underpinning a *cardiomyopathy* indication, and the asset already drew one CRL. A No panel vote or a second CRL drops the stock to the ~$5-7 floor (about -65%); even an approval is capped below the $52 Street high by the active NS Pharma / Nippon Shinyaku commercialization litigation (Capricor is suing its own distributor and pivoting to self-commercialization). The market's ~28% implied approval prob is not obviously wrong, so the 0.60 underwrite is the single most refutable assumption in the thesis.",
+   "discrepancies": [
+    "dated_milestone: board 2026-07-29 -> live 2026-08-22 -- 7/29 is the CTGTAC (Cellular/Tissue/Gene Therapies) advisory-committee vote, NOT the approval decision; the PDUFA target action date (the true resolving event for the binary, matching resolution_driver=FDA_approval_decision) is 2026-08-22. Board conflated the AdCom with the PDUFA. Not a slip -- both events remain scheduled/unfired.",
+    "win_prob: board 0.70 -> live 0.60 -- prices in the newly-scheduled 7/29 CTGTAC AdCom binary risk + the contested effectiveness basis (PUL v2.0 skeletal primary for a cardiomyopathy label) + the prior-CRL history; still well above the ~0.28 implied by the tape at the $52/$7 goalposts.",
+    "valuation_asof: board 2026-06-08 -> live 2026-07-21 -- refreshed; live_price re-confirmed ~$19.5 (7/20 close, board $19.44 essentially unchanged, 57.9M sh, ~$1.13B cap, ~$279M cash ~= $4.8/sh). fair_value_target $52 and downside_floor $7 re-validated and retained."
+   ],
+   "dossier_note": "CATALYST -- two distinct hard events, not one (board's core error). (1) 7/29/2026 CTGTAC advisory-committee vote (non-binding recommendation, 8 days out) -- the dominant NEAR-TERM re-rating/vol event where most variance resolves. (2) 8/22/2026 PDUFA -- the statutory approve/reject decision that actually resolves the binary (~32 days out; used as dated_milestone). Deramiocel BLA for DMD cardiomyopathy; FDA lifted the Jul-2025 CRL on 3/10/2026, accepted the Class 2 resubmission, stated \"no potential review issues identified.\" Supported by positive HOPE-3 Ph3 (primary PUL v2.0 p=0.029; LVEF cardiac secondary; Type-I-error-controlled secondaries) + HOPE-2/HOPE-2-OLE. Forward-dated, unfired, idiosyncratic. PRV eligibility on approval.\n\nVALUATION (binary_prob) -- price ~$19.5. WIN $52 = Street approval-case (12-mo consensus ~$53.6, range $43-63; note a bear cohort -- H.C. Wainwright $24, Cantor $22, Roth $38 -- embeds rejection/commercial risk). The NS Pharma/Nippon Shinyaku litigation (Capricor suing its distributor, transitioning to self-commercialization) is a real overhang that argues a more conservative approval value of ~$40-45; $52 kept as the approval ceiling, not base case. LOSE $7 = supported by ~$4.8/sh net cash (~$279M / 57.9M sh) + exosome/StealthX pipeline + ex-US value; the $4.30 52-wk low was the first-CRL trough. R:R to goalposts = (52-19.5)/(19.5-7) = 2.6x. Market-implied approval prob = (19.5-7)/(52-7) = ~0.28 vs 0.60 underwritten. EV@0.60 = 0.6*52 + 0.4*7 = ~$34 (+74% to price).\n\nTAKEOUT LENS (bio) -- DMD cardiomyopathy has NO approved therapy = genuine strategic scarcity with pivotal data in hand; plausible acquirer = Nippon Shinyaku (existing ex-US/Japan partner, though the active litigation muddies it) or a rare-disease consolidator. Treated as UNDATED optionality on top of the dated FDA event only -- no comp-provenance lift applied, target NOT raised.\n\nREGIME -- XBI near 5-yr highs: the $4.30 first-CRL panic low is likely stale-low; with $279M cash a second rejection more plausibly floors ~$6-7 than ~$4, so the $7 downside_floor is fair (not conservative-stale). Conversely the richer tape means the ~28% market-implied win prob already reflects real, unresolved AdCom/effectiveness risk -- do not read the price purely as complacency.",
+   "asof": "2026-07-21",
+   "model": "claude-opus-4-8"
   }
  }
 }

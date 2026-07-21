@@ -1090,6 +1090,64 @@
     ],
     "kill_risk": "The load-bearing claim is \"a positive C-BEYOND readout re-rates the equity.\" Two residual risks: (1) data risk — the regimen must hit non-inferiority vs a sofosbuvir SOC that already cures ~95-99%, and Atea's HCV history includes earlier bemnifosbuvir monotherapy/combo disappointments, so a clinical miss or safety signal is live and would pin the stock at/below net cash; (2) commercial-de-rate risk — even a statistically successful non-inferiority readout may NOT re-rate much, because HCV is a mature, shrinking, genericizing market (Gilead/AbbVie) where \"best-in-class short-duration\" carries uncertain commercial value. So a data \"win\" can still be a stock non-event, compressing realized upside below the modeled $9."
    }
+  },
+  {
+   "symbol": "CAPR",
+   "status": "OPEN",
+   "order_date": "2026-07-21",
+   "entry_date": "2026-07-21",
+   "entry_price": 19.21,
+   "entry_price_source": "cro_structured",
+   "limit_price": null,
+   "weight_pct": 2,
+   "risk_to_floor_pct": null,
+   "score": 8.0,
+   "board_priority": 7.04,
+   "edge_grade": "H",
+   "computed_rr": null,
+   "ev_pct": 0.9805,
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision",
+   "super_cluster": "FDA/biotech",
+   "valuation_method": "binary_prob",
+   "downside_floor": 7.0,
+   "fair_value_target": 52.0,
+   "dated_milestone": "2026-08-22",
+   "staging": false,
+   "expression": {
+    "type": "debit_spread",
+    "expiry": "2026-09-18",
+    "strikes": "Sep 18 '26 $20/$50 call debit spread — long ~ATM $20, short $50 at the approval goalpost; clears the 8/22 PDUFA (the Aug 21 monthly expires one day early = window trap). Premium-at-risk capped at 2% NAV."
+   },
+   "hedge": null,
+   "expected_rr": null,
+   "expected_ev": 0.98,
+   "entry_rationale": "Mispriced FDA binary: deramiocel's CRL was lifted 3/10/26, the Class-2 resubmission accepted 'no review issues,' and the 8/22/26 PDUFA is 8 days out, yet at ~$19.4 the tape implies only ~27% approval vs ~60% underwritten ($52 approve / $7 reject goalposts) — CRO confirms edge intact, no compression. Seated defined-risk (Sep 18 '26 debit call spread) so the ~-65% reject/second-CRL gap-to-floor is bounded at premium.",
+   "invalidation": "A 'No' vote at the 7/29 CTGTAC AdCom or a second CRL at the 8/22 PDUFA drops the stock to the ~$7 net-cash floor (~-65%); entry above $21 erodes R:R below ~2.5x — do not chase.",
+   "review_trigger": "7/29/2026 CTGTAC advisory-committee vote (dominant near-term vol event), then the resolving 8/22/2026 PDUFA decision.",
+   "cro_verdict": "TRADE_WITH_CONDITIONS",
+   "cro_detail": {
+    "live_edge_check": "Edge INTACT / marginally improved vs dossier. Live IBKR snapshot: last $19.21, bid 19.05 / ask 19.50, prior close 19.50 (essentially unchanged from dossier's $19.44/$19.5 built at valuation_asof 2026-07-21). Recomputed R:R to goalposts = (52 - 19.21)/(19.21 - 7) = 2.69x (dossier 2.6x). Market-implied approval prob = (19.21 - 7)/(52 - 7) = 27.1% vs 60% underwritten. The gap the thesis monetizes is fully intact; no edge compression. catalyst_status = PENDING_HARD (not FIRED/BROKEN), edge is live.",
+    "tradeability_note": "Equity is the clean expression and highly liquid: avg 90d USD volume ~$24.1M, avg underlying option vol ~1863 call / 3345 put; any realistic sleeve position fills with negligible impact, no short leg/borrow. Listed monthly options exist; Sep 18 '26 $50 call OI ~3665 (approval lottery), Sep $20 (ATM) call OI only ~192, Sep $10 put OI ~0. Live two-sided option bid/ask were unavailable at this check (post-close, option prints marked is_close), so option spread QUALITY is unconfirmed; equity remains the reliable expression pending an open-hours spread check.",
+    "window_note": "Two distinct hard events. Resolving binary = PDUFA 8/22/26 (~32d). Dominant near-term vol event = 7/29 CTGTAC AdCom (~8d). WINDOW TRAP: nearest monthly Aug 21 '26 expires the day BEFORE the 8/22 PDUFA and does NOT clear the binary (captures the AdCom but dies before the decision). First clearing monthly = Sep 18 '26 (+1 monthly past milestone, correct minimum); Dec 18 '26 for more margin. No PDUFA slip on record; CRL lifted 3/10/26, Class 2 resubmission accepted 'no potential review issues,' date firm.",
+    "driver_confirmed": "FDA_approval_decision confirmed (statutory PDUFA approve/reject 8/22 is the resolving event; 7/29 AdCom is advisory/non-binding). Sole name in batch; no same-driver cluster to flag.",
+    "conditions": [
+     "Options expression MUST use the Sep 18 '26 expiry or later; the Aug 21 '26 monthly expires 1 day BEFORE the 8/22 PDUFA and does NOT clear the catalyst, turning a correct thesis into a guaranteed miss.",
+     "Entry limit <= $21 to preserve >=2.5x R:R (edge erodes toward EV ~$34 as price rises; do not chase).",
+     "If expressing via options, confirm the Sep 18 '26 bid/ask spread and OI are acceptable at market open (live two-sided quotes were unavailable post-close at this check); otherwise default to the liquid equity, which clears all four surfaces cleanly."
+    ]
+   },
+   "resolution": null,
+   "dossier_refresh": {
+    "catalyst_status": "PENDING_HARD",
+    "thesis_summary": "Event-driven long into a mispriced FDA binary. Deramiocel (cell therapy for DMD cardiomyopathy) has positive pivotal HOPE-3 Ph3 data; the Jul-2025 CRL was lifted 3/10/2026, the Class 2 resubmission was accepted with \"no potential review issues identified,\" a CTGTAC advisory panel votes 7/29 and the PDUFA approval decision lands 8/22. At the $52 (approve) / $7 (reject) goalposts and price ~$19.5, the tape implies only ~28% approval odds vs ~60% underwritten -- the edge is the gap. Approve -> ~$52 (Street-high); reject -> ~$7 (near net cash).",
+    "discrepancies": [
+     "dated_milestone: board 2026-07-29 -> live 2026-08-22 -- 7/29 is the CTGTAC (Cellular/Tissue/Gene Therapies) advisory-committee vote, NOT the approval decision; the PDUFA target action date (the true resolving event for the binary, matching resolution_driver=FDA_approval_decision) is 2026-08-22. Board conflated the AdCom with the PDUFA. Not a slip -- both events remain scheduled/unfired.",
+     "win_prob: board 0.70 -> live 0.60 -- prices in the newly-scheduled 7/29 CTGTAC AdCom binary risk + the contested effectiveness basis (PUL v2.0 skeletal primary for a cardiomyopathy label) + the prior-CRL history; still well above the ~0.28 implied by the tape at the $52/$7 goalposts.",
+     "valuation_asof: board 2026-06-08 -> live 2026-07-21 -- refreshed; live_price re-confirmed ~$19.5 (7/20 close, board $19.44 essentially unchanged, 57.9M sh, ~$1.13B cap, ~$279M cash ~= $4.8/sh). fair_value_target $52 and downside_floor $7 re-validated and retained."
+    ],
+    "kill_risk": "The FDA convened the 7/29 CTGTAC panel precisely because effectiveness is contested: the pivotal HOPE-3 primary was PUL v2.0 (a skeletal/upper-limb endpoint) underpinning a *cardiomyopathy* indication, and the asset already drew one CRL. A No panel vote or a second CRL drops the stock to the ~$5-7 floor (about -65%); even an approval is capped below the $52 Street high by the active NS Pharma / Nippon Shinyaku commercialization litigation (Capricor is suing its own distributor and pivoting to self-commercialization). The market's ~28% implied approval prob is not obviously wrong, so the 0.60 underwrite is the single most refutable assumption in the thesis."
+   }
   }
  ],
  "non_selections": [
@@ -1506,6 +1564,42 @@
    "edge_grade": "M",
    "lane_canon": "spinoff",
    "resolution_driver": "Spin_index_flow"
+  },
+  {
+   "symbol": "BBIO",
+   "date": "2026-07-21",
+   "passed_because": "Load-bearing catalyst already FIRED — PROPEL 3 (infigratinib) published July 2026 and the stock took its ~+17% pop to an all-time high (~$80-90). The only remaining dated event, the BBP-418 PDUFA on 11/27/26, serves ~7,000 patients and moves a ~$15.7B company just ~+7% (approve) / ~-10% (reject), is ~80-85% priced, has no floor, and fair value (~$82) sits on top of the live price and consensus. No edge for a catalyst seat — own the franchise on a wash-out, not here. Removed from on-deck on merit.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null
+  },
+  {
+   "symbol": "DBVT",
+   "date": "2026-07-21",
+   "passed_because": "No application even filed — the VIASKIN BLA is only GUIDED to Q3 2026 (the 5th timing reset in 8 years), so any FDA approval decision lands Q3-Q4 2027, beyond the 2026 fast-return horizon (validator hard-rejects >2026 milestones). Catalyst undated/serially-slipping on the same manufacturing axis that broke it twice; no verified floor (~$5 vs $14.86, net cash only ~$2.95/sh and burning); forced dilutive raise before resolution; Palforzia read-through caps the win. Interrogator verdict C / conviction 2 / 'No capital.' Removed on merit.",
+   "score": 5.0,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision"
+  },
+  {
+   "symbol": "GERN",
+   "date": "2026-07-21",
+   "passed_because": "The board's driver (FDA approval) already fired in 2024 (RYTELO US/EU). The genuinely live catalyst — the IMpactMF interim OS analysis — is soft and undated (death-count-triggered, already slipped 4x), and management's own modal case is a 'keep going' NON-EVENT that defers the real answer to the 2H-2028 final analysis, beyond the 2026 fast-return horizon. Real floor (~$1.00) but no dated forcing function; a seat is only justified on an efficacy stop or near ~$1.05. Removed on merit.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null
+  },
+  {
+   "symbol": "CLVT",
+   "date": "2026-07-21",
+   "passed_because": "Catalyst FIRED on both legs — the Russell 2000 migration (6/27/26) absorbed any index flow and the $600M Altaris Life Sciences divestiture was announced 7/6/26 with the ~+16% pop already taken. The sale is leverage-DILUTIVE in turns (~4.08x→~4.19x), there was no forcing agent (management chose to sell), and no floor sits behind $4.08B net debt / $1.57B goodwill. Residual thesis is a multi-year deleveraging value play, not a live catalyst — belongs in a value book. Demotion also frees the Forced_divest_flow driver (FIG now sole holder). Removed on merit.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null
   }
  ],
  "runs": [
@@ -2795,8 +2889,8 @@
   },
   {
    "date": "2026-07-21",
-   "nav": 100.679,
-   "basket_ret_pct": 0.679,
+   "nav": 100.71,
+   "basket_ret_pct": 0.71,
    "seats": {
     "GDOT": {
      "price": 13.43,
@@ -2877,6 +2971,10 @@
     "AVIR": {
      "price": 4.775,
      "ret_pct": -1.14
+    },
+    "CAPR": {
+     "price": 19.5,
+     "ret_pct": 1.51
     }
    }
   }
@@ -2884,10 +2982,10 @@
  "watchlist": [
   {
    "symbol": "EYPT",
-   "blocked_by": "12-seat count / driver diversity (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged from prior on-deck watchlist; no fresh dossier this promotion run.",
+   "blocked_by": "No fresh CRO survivor trade this promotion run (only CAPR cleared the CRO). No combined cap blocks it — FDA_clinical_readout is uncapped and FDA/biotech has room (16/40).",
+   "would_enter_if": "CRO surfaces a defined-risk options expression (as with CAPR) clearing the Aug-Oct 2026 LUGANO topline window; must be seated defined-risk given no balance-sheet floor.",
+   "intended_weight_pct": 2,
+   "note": "Fresh web-verified dossier corrects the floor to ~$2.75 (not the $5.50 the board carried) and reframes EYPT as a positive-EV (~+49%) but NO-FLOOR coin flip; catalyst is a guided window (Aug-Oct 2026), mechanically forced, within the 2026 fast-return horizon. Strongest live bio readout on the deck.",
    "score": 7.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
@@ -2908,42 +3006,14 @@
    "expression_intended": true,
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "stance_change_rationale": null
-  },
-  {
-   "symbol": "BBIO",
-   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged; FDA_clinical_readout driver cap now lifted but no fresh dossier to re-underwrite this run.",
-   "score": null,
-   "edge_grade": null,
-   "lane_canon": null,
-   "resolution_driver": "FDA_clinical_readout",
-   "super_cluster": null,
-   "valuation_method": null,
-   "ev_pct": null,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 66.8,
-   "entry_date": "2026-06-13",
-   "first_seen_date": "2026-06-13",
-   "expected_pct": 46.6,
-   "cro_conditions": [],
-   "expression": {
-    "type": "equity"
-   },
-   "expression_intended": true,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
-   "stance_change_rationale": null
+   "stance_change_rationale": "View refined, not cooled: kept active on-deck, but the fresh dossier lowered the floor to ~$2.75 and downgraded the prior 89.6% expectation to a ~+49% EV coin flip, so any seat must be defined-risk (options) rather than equity."
   },
   {
    "symbol": "PVLA",
-   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "blocked_by": "No fresh CRO survivor trade / dossier this promotion run; the prior 12-seat blocker no longer binds (11/20 seats used).",
+   "would_enter_if": "CRO surfaces a fresh, horizon-compliant PVLA trade; the stale ~59.1%-expected entry should be re-underwritten first.",
+   "intended_weight_pct": 3,
+   "note": "Carried forward on the prior ~59.1% expected; no fresh dossier this run to re-underwrite. Tracked to resolution.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -2967,52 +3037,24 @@
    "stance_change_rationale": null
   },
   {
-   "symbol": "DBVT",
-   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
+   "symbol": "MGNI",
+   "blocked_by": "No fresh CRO survivor trade this run; the prior Forced_divest_flow cap (2/2) is now RELIEVED — FIG is the sole held Forced_divest_flow name (1/2) after CLVT's demotion.",
+   "would_enter_if": "CRO surfaces a fresh MGNI trade — a Forced_divest_flow slot is now open; re-underwrite given the thin prior ~8% edge.",
    "intended_weight_pct": null,
-   "note": "Carried forward unchanged; FDA_approval_decision driver cap now lifted but no fresh dossier this run.",
-   "score": 5.0,
-   "edge_grade": "H",
-   "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision",
-   "super_cluster": "FDA/biotech",
-   "valuation_method": "binary_prob",
-   "ev_pct": 0.5629,
-   "computed_rr": null,
-   "dated_milestone": null,
-   "entry_price": 15.7,
-   "entry_date": "2026-06-23",
-   "first_seen_date": "2026-06-23",
-   "expected_pct": 43.6,
-   "cro_conditions": [],
-   "expression": {
-    "type": "debit_spread"
-   },
-   "expression_intended": true,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
-   "stance_change_rationale": null
-  },
-  {
-   "symbol": "GERN",
-   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "note": "Prior edge was thin (~8% expected). No fresh dossier; carried pending refresh. Its original blocker (a second Forced_divest_flow name filling the driver) has cleared.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
-   "resolution_driver": "FDA_approval_decision",
+   "resolution_driver": null,
    "super_cluster": null,
    "valuation_method": null,
    "ev_pct": null,
    "computed_rr": null,
    "dated_milestone": null,
-   "entry_price": 1.28,
-   "entry_date": "2026-07-02",
-   "first_seen_date": "2026-07-02",
-   "expected_pct": 45.7,
+   "entry_price": 17.45,
+   "entry_date": "2026-06-23",
+   "first_seen_date": "2026-06-23",
+   "expected_pct": 8.0,
    "cro_conditions": [],
    "expression": {
     "type": "equity"
@@ -3046,36 +3088,92 @@
     "type": "equity"
    },
    "expression_intended": true,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "Catalyst FIRED on both legs — the Russell 2000 migration (6/27/26) absorbed any index flow and the $600M Altaris Life Sciences divestiture was announced 7/6/26 with the ~+16% pop already taken. The sale is leverage-DILUTIVE in turns (~4.08x→~4.19x), there was no forcing agent (management chose to sell), and no floor sits behind $4.08B net debt / $1.57B goodwill. Residual thesis is a multi-year deleveraging value play, not a live catalyst — belongs in a value book. Demotion also frees the Forced_divest_flow driver (FIG now sole holder). Removed on merit.",
    "stance_change_rationale": null
   },
   {
-   "symbol": "MGNI",
-   "blocked_by": "Forced_divest_flow driver (2/2 with FIG held)",
-   "would_enter_if": "a Forced_divest_flow seat opens when FIG resolves",
-   "intended_weight_pct": 8,
-   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "symbol": "BBIO",
+   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
+   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
+   "intended_weight_pct": null,
+   "note": "Carried forward unchanged; FDA_clinical_readout driver cap now lifted but no fresh dossier to re-underwrite this run.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
-   "resolution_driver": null,
+   "resolution_driver": "FDA_clinical_readout",
    "super_cluster": null,
    "valuation_method": null,
    "ev_pct": null,
    "computed_rr": null,
    "dated_milestone": null,
-   "entry_price": 17.45,
-   "entry_date": "2026-06-23",
-   "first_seen_date": "2026-06-23",
-   "expected_pct": 8.0,
+   "entry_price": 66.8,
+   "entry_date": "2026-06-13",
+   "first_seen_date": "2026-06-13",
+   "expected_pct": 46.6,
    "cro_conditions": [],
    "expression": {
     "type": "equity"
    },
    "expression_intended": true,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "Load-bearing catalyst already FIRED — PROPEL 3 (infigratinib) published July 2026 and the stock took its ~+17% pop to an all-time high (~$80-90). The only remaining dated event, the BBP-418 PDUFA on 11/27/26, serves ~7,000 patients and moves a ~$15.7B company just ~+7% (approve) / ~-10% (reject), is ~80-85% priced, has no floor, and fair value (~$82) sits on top of the live price and consensus. No edge for a catalyst seat — own the franchise on a wash-out, not here. Removed from on-deck on merit.",
+   "stance_change_rationale": null
+  },
+  {
+   "symbol": "DBVT",
+   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
+   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
+   "intended_weight_pct": null,
+   "note": "Carried forward unchanged; FDA_approval_decision driver cap now lifted but no fresh dossier this run.",
+   "score": 5.0,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision",
+   "super_cluster": "FDA/biotech",
+   "valuation_method": "binary_prob",
+   "ev_pct": 0.5629,
+   "computed_rr": null,
+   "dated_milestone": null,
+   "entry_price": 15.7,
+   "entry_date": "2026-06-23",
+   "first_seen_date": "2026-06-23",
+   "expected_pct": 43.6,
+   "cro_conditions": [],
+   "expression": {
+    "type": "debit_spread"
+   },
+   "expression_intended": true,
+   "de_prioritized": true,
+   "deprioritization_rationale": "No application even filed — the VIASKIN BLA is only GUIDED to Q3 2026 (the 5th timing reset in 8 years), so any FDA approval decision lands Q3-Q4 2027, beyond the 2026 fast-return horizon (validator hard-rejects >2026 milestones). Catalyst undated/serially-slipping on the same manufacturing axis that broke it twice; no verified floor (~$5 vs $14.86, net cash only ~$2.95/sh and burning); forced dilutive raise before resolution; Palforzia read-through caps the win. Interrogator verdict C / conviction 2 / 'No capital.' Removed on merit.",
+   "stance_change_rationale": null
+  },
+  {
+   "symbol": "GERN",
+   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
+   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
+   "intended_weight_pct": null,
+   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA_approval_decision",
+   "super_cluster": null,
+   "valuation_method": null,
+   "ev_pct": null,
+   "computed_rr": null,
+   "dated_milestone": null,
+   "entry_price": 1.28,
+   "entry_date": "2026-07-02",
+   "first_seen_date": "2026-07-02",
+   "expected_pct": 45.7,
+   "cro_conditions": [],
+   "expression": {
+    "type": "equity"
+   },
+   "expression_intended": true,
+   "de_prioritized": true,
+   "deprioritization_rationale": "The board's driver (FDA approval) already fired in 2024 (RYTELO US/EU). The genuinely live catalyst — the IMpactMF interim OS analysis — is soft and undated (death-count-triggered, already slipped 4x), and management's own modal case is a 'keep going' NON-EVENT that defers the real answer to the 2H-2028 final analysis, beyond the 2026 fast-return horizon. Real floor (~$1.00) but no dated forcing function; a seat is only justified on an efficacy stop or near ~$1.05. Removed on merit.",
    "stance_change_rationale": null
   }
  ],
@@ -3085,8 +3183,8 @@
    "entry_date": "2026-06-13",
    "expected_pct": null,
    "first_seen_date": "2026-06-13",
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "Catalyst FIRED on both legs — the Russell 2000 migration (6/27/26) absorbed any index flow and the $600M Altaris Life Sciences divestiture was announced 7/6/26 with the ~+16% pop already taken. The sale is leverage-DILUTIVE in turns (~4.08x→~4.19x), there was no forcing agent (management chose to sell), and no floor sits behind $4.08B net debt / $1.57B goodwill. Residual thesis is a multi-year deleveraging value play, not a live catalyst — belongs in a value book. Demotion also frees the Forced_divest_flow driver (FIG now sole holder). Removed on merit.",
    "lane_canon": null,
    "resolution_driver": "Forced_divest_flow",
    "super_cluster": null,
@@ -3108,8 +3206,8 @@
    "entry_date": "2026-06-13",
    "expected_pct": 46.6,
    "first_seen_date": "2026-06-13",
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "Load-bearing catalyst already FIRED — PROPEL 3 (infigratinib) published July 2026 and the stock took its ~+17% pop to an all-time high (~$80-90). The only remaining dated event, the BBP-418 PDUFA on 11/27/26, serves ~7,000 patients and moves a ~$15.7B company just ~+7% (approve) / ~-10% (reject), is ~80-85% priced, has no floor, and fair value (~$82) sits on top of the live price and consensus. No edge for a catalyst seat — own the franchise on a wash-out, not here. Removed from on-deck on merit.",
    "lane_canon": null,
    "resolution_driver": "FDA_clinical_readout",
    "super_cluster": null,
@@ -3144,10 +3242,10 @@
    "expression": {
     "type": "debit_spread"
    },
-   "blocked_by": "12-seat count / driver diversity (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged from prior on-deck watchlist; no fresh dossier this promotion run."
+   "blocked_by": "No fresh CRO survivor trade this promotion run (only CAPR cleared the CRO). No combined cap blocks it — FDA_clinical_readout is uncapped and FDA/biotech has room (16/40).",
+   "would_enter_if": "CRO surfaces a defined-risk options expression (as with CAPR) clearing the Aug-Oct 2026 LUGANO topline window; must be seated defined-risk given no balance-sheet floor.",
+   "intended_weight_pct": 2,
+   "note": "Fresh web-verified dossier corrects the floor to ~$2.75 (not the $5.50 the board carried) and reframes EYPT as a positive-EV (~+49%) but NO-FLOOR coin flip; catalyst is a guided window (Aug-Oct 2026), mechanically forced, within the 2026 fast-return horizon. Strongest live bio readout on the deck."
   },
   "PVLA": {
    "entry_price": 118.84,
@@ -3156,10 +3254,10 @@
    "first_seen_date": "2026-06-23",
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "blocked_by": "12-seat count (no fresh dossier this promotion run)",
-   "would_enter_if": "a full re-debate re-checks it live and a seat opens",
-   "intended_weight_pct": null,
-   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "blocked_by": "No fresh CRO survivor trade / dossier this promotion run; the prior 12-seat blocker no longer binds (11/20 seats used).",
+   "would_enter_if": "CRO surfaces a fresh, horizon-compliant PVLA trade; the stale ~59.1%-expected entry should be re-underwritten first.",
+   "intended_weight_pct": 3,
+   "note": "Carried forward on the prior ~59.1% expected; no fresh dossier this run to re-underwrite. Tracked to resolution.",
    "lane_canon": null,
    "resolution_driver": null,
    "super_cluster": null,
@@ -3177,8 +3275,8 @@
    "entry_date": "2026-06-23",
    "expected_pct": 43.6,
    "first_seen_date": "2026-06-23",
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "No application even filed — the VIASKIN BLA is only GUIDED to Q3 2026 (the 5th timing reset in 8 years), so any FDA approval decision lands Q3-Q4 2027, beyond the 2026 fast-return horizon (validator hard-rejects >2026 milestones). Catalyst undated/serially-slipping on the same manufacturing axis that broke it twice; no verified floor (~$5 vs $14.86, net cash only ~$2.95/sh and burning); forced dilutive raise before resolution; Palforzia read-through caps the win. Interrogator verdict C / conviction 2 / 'No capital.' Removed on merit.",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
@@ -3202,10 +3300,10 @@
    "first_seen_date": "2026-06-23",
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "blocked_by": "Forced_divest_flow driver (2/2 with FIG held)",
-   "would_enter_if": "a Forced_divest_flow seat opens when FIG resolves",
-   "intended_weight_pct": 8,
-   "note": "Carried forward unchanged; no fresh dossier this promotion run.",
+   "blocked_by": "No fresh CRO survivor trade this run; the prior Forced_divest_flow cap (2/2) is now RELIEVED — FIG is the sole held Forced_divest_flow name (1/2) after CLVT's demotion.",
+   "would_enter_if": "CRO surfaces a fresh MGNI trade — a Forced_divest_flow slot is now open; re-underwrite given the thin prior ~8% edge.",
+   "intended_weight_pct": null,
+   "note": "Prior edge was thin (~8% expected). No fresh dossier; carried pending refresh. Its original blocker (a second Forced_divest_flow name filling the driver) has cleared.",
    "lane_canon": null,
    "resolution_driver": null,
    "super_cluster": null,
@@ -3223,8 +3321,8 @@
    "entry_date": "2026-07-02",
    "first_seen_date": "2026-07-02",
    "expected_pct": 45.7,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
+   "de_prioritized": true,
+   "deprioritization_rationale": "The board's driver (FDA approval) already fired in 2024 (RYTELO US/EU). The genuinely live catalyst — the IMpactMF interim OS analysis — is soft and undated (death-count-triggered, already slipped 4x), and management's own modal case is a 'keep going' NON-EVENT that defers the real answer to the 2H-2028 final analysis, beyond the 2026 fast-return horizon. Real floor (~$1.00) but no dated forcing function; a seat is only justified on an efficacy stop or near ~$1.05. Removed on merit.",
    "lane_canon": null,
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": null,
@@ -4376,6 +4474,62 @@
    "prior_status": "watchlisted",
    "new_status": "held",
    "rationale": null
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "EYPT",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "PVLA",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "MGNI",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "CLVT",
+   "event": "PASSED_OFF_DECK",
+   "prior_status": "watchlisted",
+   "new_status": "deprioritized",
+   "rationale": "Catalyst FIRED on both legs — the Russell 2000 migration (6/27/26) absorbed any index flow and the $600M Altaris Life Sciences divestiture was announced 7/6/26 with the ~+16% pop already taken. The sale is leverage-DILUTIVE in turns (~4.08x→~4.19x), there was no forcing agent (management chose to sell), and no floor sits behind $4.08B net debt / $1.57B goodwill. Residual thesis is a multi-year deleveraging value play, not a live catalyst — belongs in a value book. Demotion also frees the Forced_divest_flow driver (FIG now sole holder). Removed on merit."
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "BBIO",
+   "event": "PASSED_OFF_DECK",
+   "prior_status": "watchlisted",
+   "new_status": "deprioritized",
+   "rationale": "Load-bearing catalyst already FIRED — PROPEL 3 (infigratinib) published July 2026 and the stock took its ~+17% pop to an all-time high (~$80-90). The only remaining dated event, the BBP-418 PDUFA on 11/27/26, serves ~7,000 patients and moves a ~$15.7B company just ~+7% (approve) / ~-10% (reject), is ~80-85% priced, has no floor, and fair value (~$82) sits on top of the live price and consensus. No edge for a catalyst seat — own the franchise on a wash-out, not here. Removed from on-deck on merit."
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "DBVT",
+   "event": "PASSED_OFF_DECK",
+   "prior_status": "watchlisted",
+   "new_status": "deprioritized",
+   "rationale": "No application even filed — the VIASKIN BLA is only GUIDED to Q3 2026 (the 5th timing reset in 8 years), so any FDA approval decision lands Q3-Q4 2027, beyond the 2026 fast-return horizon (validator hard-rejects >2026 milestones). Catalyst undated/serially-slipping on the same manufacturing axis that broke it twice; no verified floor (~$5 vs $14.86, net cash only ~$2.95/sh and burning); forced dilutive raise before resolution; Palforzia read-through caps the win. Interrogator verdict C / conviction 2 / 'No capital.' Removed on merit."
+  },
+  {
+   "date": "2026-07-21",
+   "symbol": "GERN",
+   "event": "PASSED_OFF_DECK",
+   "prior_status": "watchlisted",
+   "new_status": "deprioritized",
+   "rationale": "The board's driver (FDA approval) already fired in 2024 (RYTELO US/EU). The genuinely live catalyst — the IMpactMF interim OS analysis — is soft and undated (death-count-triggered, already slipped 4x), and management's own modal case is a 'keep going' NON-EVENT that defers the real answer to the 2H-2028 final analysis, beyond the 2026 fast-return horizon. Real floor (~$1.00) but no dated forcing function; a seat is only justified on an efficacy stop or near ~$1.05. Removed on merit."
   }
  ],
  "promotions": [
@@ -4419,6 +4573,15 @@
    "pending": [],
    "cap_violations": 0,
    "memo": "Promotion run: single seat. AVIR — my prior first-in-line on-deck nomination — graduates from watchlist into picks at 2% equity, the intended size. It clears every combined cap of the locked held book: FDA_clinical_readout is uncapped as of 2026-07-20, idiosyncratic-cluster weight sits at 24.5/40 (ample), and seats go 11→12 of 20. Sized as a floor-anchored binary (net-cash $2.50 is a real floor, not a stop): risk-to-floor at $4.83 = 48%, so 2% weight risks ~0.96% NAV, under the 1.5% cap; the CRO prescribes equity over options given thin ~$1.59M/day ADV and an erroring options chain, and equity carries no theta into an imminent, windowed mid-2026 readout. Entry gated to a <=$5.00 limit to hold R:R >= ~1.6:1. The other seven carried on-deck names are re-nominated unchanged with null stance rationale — no fresh dossiers were provided this promotion run, so I have no basis to move their stances. No survivor is demoted to passed. Cluster mix stays tilted Idiosyncratic-heavy with a single small clinical-binary add."
+  },
+  {
+   "date": "2026-07-21",
+   "added": [
+    "CAPR"
+   ],
+   "pending": [],
+   "cap_violations": 0,
+   "memo": "Thin slate: the CRO passed only one survivor (CAPR), so the basket adds a single new seat and stays deliberately ~35% invested (33% held + 2% CAPR) rather than force-filling toward 100 — no seat is manufactured to hit a weight target. CAPR is a textbook mispriced FDA binary: deramiocel's CRL lifted 3/10/26, resubmission accepted 'no review issues,' PDUFA 8 days out (8/22/26), tape implying ~27% approval vs ~60% underwritten, edge CRO-confirmed intact. Because it is binary_prob with only a ~$7 net-cash floor (~-65% on a reject/second-CRL), it is seated DEFINED-RISK only — a Sep 18 '26 debit call spread (the Aug 21 monthly expires one day before the PDUFA, a window trap) with premium-at-risk capped at 2% NAV, sized off EV not payoff. Caps re-checked and clear: FDA_approval_decision uncapped (2026-07-20 bio-gate lift), FDA/biotech cluster 14→16 of 40, seats 10→11 of 20, all clusters under 40. On the carried on-deck book I demoted four names on merit: CLVT (catalyst fired both legs, leverage-dilutive, no floor, value-book story), BBIO (load-bearing PROPEL 3 readout already fired and popped; residual 11/27 PDUFA too small and fully priced, no margin), DBVT (no BLA filed, decision slips to 2027+ beyond horizon, no floor), and GERN (live IMpactMF readout soft/undated with a modal keep-going non-event resolving only in 2028). Kept on-deck (watchlist, tracked to resolution): EYPT — the strongest live bio readout (Aug-Oct 2026) but re-underwritten as a no-floor coin flip needing defined-risk expression — plus carried PVLA and MGNI pending fresh dossiers (MGNI's old Forced_divest_flow cap has cleared, FIG now sole holder). Cluster mix stays FDA/biotech-heavy by construction, which the lifted bio gate and the hot 2026 biotech-M&A regime both tolerate; CAPR's takeout optionality (DMD cardiomyopathy, no approved therapy) is noted but NOT sized into the target. Entry discipline held throughout — defined-risk, entry <=$21, no chase."
   }
  ]
 }
