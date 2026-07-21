@@ -1,28 +1,11 @@
 # Basket 13 — Catalyst Sleeve · Agent Comments for Review
 
-*Generated 2026-07-21 · 11 held seats (43.0% invested) + 9 resolved · last run 2026-07-20 · paper basket, nothing executed*
+*Generated 2026-07-21 · 10 held seats (33.0% invested) + 10 resolved · last run 2026-07-20 · paper basket, nothing executed*
 
 Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks ONLY the trade — live edge / tradeability / window↔expression / driver tag; catalyst reality settled upstream by the scan→deep→skeptic tier; value/quality attacks forbidden) → **Director** (selection + sizing under HARD caps: ≤2/driver, ≤40 NAV weight-points/super-cluster, 8–12 names, risk-to-floor ≤1.5% NAV, binaries defined-risk ≤2%, staging equity-only half-weight; held seats run to resolution and consume combined-cap headroom) → deterministic cap validator → tracker stamps at CRO-verified live prices.
 
 ---
-## 1 · The basket (11 held)
-
-### FIP — FTAI Infrastructure Inc.
-`10% · equity · distressed · Refi_restructuring (Idiosyncratic) · score 8.0 · edge M · entry 2026-06-10 @ 4.56 (cro_live_check)`
-- **Expected:** R:R 6.73:1 · milestone 2026-09-30 · review: 2026-09-30 refi/de-levering milestone; interim review on any debt-removal announcement.
-- **Risk-to-floor (computed):** 1.447% of NAV (cap 1.5)
-- **Director — why this seat:** Highest ratio edge among survivors — live R:R 6.73 to the $9 de-levering target against a market-tested $3.90 floor (the 52-week low), on a dated Q3-2026 refi milestone. Equity-only per CRO (options chain is dead); live $4.56 sits comfortably under the $4.80 entry limit, and 10% weight risks 1.45% NAV to floor.
-- **Director — what kills it:** Refi/de-levering fails to materialize in Q3, or price loses the $3.90 floor — the one market-tested level in the thesis; the $0.66 denominator makes the edge hypersensitive above ~$4.80.
-
-**CRO verdict: TRADE_WITH_CONDITIONS**
-- **1 · Edge at entry (live re-check):** Live $4.56 (FMP batch-quote 2026-06-10, +0.9%; IBKR last $4.56 at close) vs dossier $4.52. Recomputed recovery R:R = (9 - 4.56) / (4.56 - 3.90) = 6.73 (dossier 7.23). Edge intact. Caution: the floor $3.90 is exactly the 52-week low and the R:R denominator is only $0.66, so the ratio is hypersensitive to entry price — at $4.85 it is already down to ~4.3.
-- **2 · Tradeability:** Equity ADV is the constraint: only $4.6M/day 90d USD volume (IBKR), and the resting book is thin (last quote $4.44 x $4.76, 7% wide off-hours). A position must be worked over multiple sessions on limits. The dossier's optional Q3/Q4-2026 call overlay is NOT tradeable: avg option volume is ~32 calls / 42 puts per day — a dead chain. Equity-only.
-- **3 · Window ↔ expression:** Milestone 2026-09-30 (112 days), refi/de-levering event. Expression is common equity — no expiry, window clears by construction. The call-overlay window question is moot since the chain fails tradeability.
-- **4 · Driver tag:** Refi_restructuring — confirmed; unique driver in this batch, no collision.
-- ⚠ **Condition:** Equity only — drop the Q3/Q4 call overlay entirely (avg ~74 option contracts/day total, no executable OI)
-- ⚠ **Condition:** Entry limit <= $4.80; above that the recomputed R:R falls below ~4.4 (versus 7.23 dossier) and the denominator sensitivity bites
-- ⚠ **Condition:** Size <= ~10-15% of ADV per day (~$500-700k/day max working rate against $4.6M ADV); no market orders
-- ⚠ **Condition:** Re-check the floor if price approaches $3.90 — floor equals the 52-week low, the one market-tested level in the thesis
+## 1 · The basket (10 held)
 
 ### FIG — 
 `5% · equity · forced_seller · Forced_divest_flow (Idiosyncratic) · score 4.0 · edge H · STAGING · entry 2026-06-10 @ 20.49 (cro_live_check)`
@@ -173,9 +156,10 @@ Pipeline: enriched board → entry/staging filter → **Catalyst-CRO** (attacks 
 - ⚠ **Condition:** Idiosyncratic clinical binary: net-cash floor ~$2.50 is a Phase-3-miss floor, not a stop; size for a full ~48% drawdown to floor on a negative SVR12 readout
 
 ---
-## 1b · Resolved (9)
+## 1b · Resolved (10)
 - **GDOT** EDGE_GONE · 2026-06-10→2026-07-20 (40d) · 12.75→13.43 · realized +5.3% (exp R:R 1.56:1) · 
 - **UNF** EDGE_GONE · 2026-06-13→2026-07-20 (37d) · 267.0→290.11 · realized +8.7% (exp R:R 1.86:1) · 
+- **FIP** THESIS_BROKEN · 2026-06-10→2026-07-21 (41d) · 4.56→4.09 · realized -10.3% (exp R:R 6.73:1) · Forensic re-underwrite (wf_8505b94f, 2026-07-21, 10 agents/174 source pulls, bear+bull adversarially confirmed): the seated $9 target is mechanically unreachable EVEN ON A CLEAN CLOSE. Q1-2026 10-Q confirms $1,599.5M pref redemption value ahead of common (RailCo Series A $1,417.5M w/ ~10% PIK stepping to 12/14% + Series B change-of-control $182.0M) vs balance-sheet carrying value $1,123.2M - invisible to casual SoP. Clean-close mechanical common equity ~-$744.5M (-$6.30/sh) at generous multiples; $9 requires +$1,063M. The MARA deal itself is SOLID (Bruno's cancel worry inverted): no financing condition, $75M reverse termination fee guaranteed by MARA parent, Barclays $785M committed bridge, specific performance, notes consent done, 5/6 FERC 203 precedents approved, FERC clock ~2026-11-04, outside date 2026-11-30 (regulatory tail to 2027-06-30 - also fails the 2026 fast-return rule). Deal fires -> sentiment re-rate ~$4.80-5.60 cap, 40% branch = proceeds redeployed into acquisitions (PR verbatim; Fortress external-manager incentives). EV ~$4.56-4.72 vs $4.09 exit: thin, not the seated 6.73 R:R. Full record: backend/_basket13_forensics/2026-07-20_fip_fig_forensic.json
 - **BLCO** THESIS_BROKEN · 2026-06-10→2026-07-20 (40d) · 15.65→15.88 · realized +1.5% (exp R:R 2.94:1) · 
 - **CELC** FIRED_LOSS · 2026-06-10→2026-07-20 (40d) · 92.59→90.45 · realized -2.3% (exp EV 50.1%) · 
 - **VRDN** FIRED_WIN · 2026-06-10→2026-07-06 (26d) · 16.31→19.42 · realized +19.1% (exp EV 105.0%) · FDA approved Lumvoa (veligrotug) 6/26/26, 4 days ahead of the 6/30 PDUFA; immediate launch. Captured +19.1% of the modeled re-rate; residual to the $35 win-leg is launch-execution, tracked post-resolution.

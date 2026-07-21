@@ -152,7 +152,16 @@
    "invalidation": "Refi/de-levering fails to materialize in Q3, or price loses the $3.90 floor — the one market-tested level in the thesis; the $0.66 denominator makes the edge hypersensitive above ~$4.80.",
    "review_trigger": "2026-09-30 refi/de-levering milestone; interim review on any debt-removal announcement.",
    "cro_verdict": "TRADE_WITH_CONDITIONS",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-07-21",
+    "resolution_type": "THESIS_BROKEN",
+    "exit_price": 4.09,
+    "realized_return_pct": -0.1031,
+    "realized_rr": -0.712,
+    "days_held": 41,
+    "catalyst_fired": true,
+    "notes": "Forensic re-underwrite (wf_8505b94f, 2026-07-21, 10 agents/174 source pulls, bear+bull adversarially confirmed): the seated $9 target is mechanically unreachable EVEN ON A CLEAN CLOSE. Q1-2026 10-Q confirms $1,599.5M pref redemption value ahead of common (RailCo Series A $1,417.5M w/ ~10% PIK stepping to 12/14% + Series B change-of-control $182.0M) vs balance-sheet carrying value $1,123.2M - invisible to casual SoP. Clean-close mechanical common equity ~-$744.5M (-$6.30/sh) at generous multiples; $9 requires +$1,063M. The MARA deal itself is SOLID (Bruno's cancel worry inverted): no financing condition, $75M reverse termination fee guaranteed by MARA parent, Barclays $785M committed bridge, specific performance, notes consent done, 5/6 FERC 203 precedents approved, FERC clock ~2026-11-04, outside date 2026-11-30 (regulatory tail to 2027-06-30 - also fails the 2026 fast-return rule). Deal fires -> sentiment re-rate ~$4.80-5.60 cap, 40% branch = proceeds redeployed into acquisitions (PR verbatim; Fortress external-manager incentives). EV ~$4.56-4.72 vs $4.09 exit: thin, not the seated 6.73 R:R. Full record: backend/_basket13_forensics/2026-07-20_fip_fig_forensic.json"
+   },
    "cro_detail": {
     "live_edge_check": "Live $4.56 (FMP batch-quote 2026-06-10, +0.9%; IBKR last $4.56 at close) vs dossier $4.52. Recomputed recovery R:R = (9 - 4.56) / (4.56 - 3.90) = 6.73 (dossier 7.23). Edge intact. Caution: the floor $3.90 is exactly the 52-week low and the R:R denominator is only $0.66, so the ratio is hypersensitive to entry price — at $4.85 it is already down to ~4.3.",
     "tradeability_note": "Equity ADV is the constraint: only $4.6M/day 90d USD volume (IBKR), and the resting book is thin (last quote $4.44 x $4.76, 7% wide off-hours). A position must be worked over multiple sessions on limits. The dossier's optional Q3/Q4-2026 call overlay is NOT tradeable: avg option volume is ~32 calls / 42 puts per day — a dead chain. Equity-only.",
@@ -2786,8 +2795,8 @@
   },
   {
    "date": "2026-07-21",
-   "nav": 100.68,
-   "basket_ret_pct": 0.68,
+   "nav": 100.679,
+   "basket_ret_pct": 0.679,
    "seats": {
     "GDOT": {
      "price": 13.43,

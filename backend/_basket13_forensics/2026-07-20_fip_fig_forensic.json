@@ -1,0 +1,782 @@
+{
+  "summary": "Primary-source forensic re-underwrite: FIP (Long Ridge sale to MARA) and FIG (final lockup unlock)",
+  "agentCount": 10,
+  "logs": [
+    "FIP forensic: contract + capital structure + regulatory/MARA; FIG: unlock mechanics"
+  ],
+  "result": {
+    "fip": {
+      "evidence": {
+        "contract": {
+          "symbol": "FIP",
+          "facts": [
+            {
+              "claim": "PARTIES/STRUCTURE: Equity Purchase Agreement dated April 29, 2026. Buyer = MARA USA Corporation (Delaware corp, subsidiary of MARA Holdings, Inc.). Sellers = Ohio River Partners Holdco LLC ('ORPH', direct wholly-owned sub of FIP) and Ohio River Partners Finance LLC ('ORPF', direct wholly-owned sub of ORPH). MARA Holdings is a party solely for Articles V, IX and X; FTAI Infrastructure Inc. (FIP) is a party solely for Articles V, IX and X and Sections 2.5, 6.10, 6.16 and 6.20. It is an EQUITY sale: Buyer purchases 100% of the issued and outstanding LLC membership interests of Long Ridge Energy & Power LLC ('LRE&P'), a Delaware LLC and indirect wholly-owned subsidiary of FIP.",
+              "source": "FIP 8-K Item 1.01, https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm ; corroborated by MARA 8-K https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802d8k.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "ASSETS SOLD: Long Ridge is a vertically integrated power and gas company: 485 MW combined-cycle gas plant in Hannibal, Ohio (MARA 8-K: 'expected to increase to 505 MW nameplate capacity in H2 2026'; MARA PR footnote: 'Currently authorized to sell 485 MW'; the PJM IMM describes it as a 522 MW CCGT), working interests in natural gas production wells, and ~1,600 acres along the Ohio River. MARA already operates a co-located data center at the Long Ridge site (Hannibal campus, acquired from Arkon Energy Nov 2024).",
+              "source": "FIP PR Ex-99.1 https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_ex99-1.htm ; MARA 8-K https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802d8k.htm ; IMM comment https://www.monitoringanalytics.com/filings/2026/IMM_Comment_Docket_No_EC26-92_20260529.pdf",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "PRICE/CONSIDERATION: Base purchase price $1.512 billion per FIP's 8-K ('base purchase price of $1.512 billion, subject to certain customary adjustments'); FIP PR headlines 'approximately $1.52 billion before closing adjustments'; MARA states 'approximately $1.5 billion' total transaction value 'including the assumption of at least $785 million of debt, backstopped by a bridge loan from Barclays'. All-cash equity purchase; no stock consideration, no earnout. At closing $20 million goes into escrow 'to secure and serve as the sole course of recovery for any post-closing purchase price adjustments in favor of Buyer.'",
+              "source": "FIP 8-K https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm ; FIP PR Ex-99.1 (same accession) ; MARA PR Ex-99.1 https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802dex991.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "CLOSING CONDITIONS (FIP 8-K narrative): '(a) the absence of any law, regulation, order, or injunction that makes the Transaction illegal...; (b) the making or obtaining of all required filings, consents and approvals under applicable law, including (i) the receipt of authorization from the Federal Energy Regulatory Commission under Section 203 of the Federal Power Act, as amended, (ii) the expiration of the applicable waiting period under the Hart-Scott-Rodino Antitrust Improvements Act of 1976, as amended and (iii) solely with respect to the Railroad Agreements, authorization by the Surface Transportation Board pursuant to 49 C.F.R. § 1180; and (c) in the case of Buyer's obligations..., (i) no Material Adverse Effect... having occurred and that is continuing as of the closing...; and receipt of consents from certain counterparties under certain material contracts.' Plus reps-accuracy and covenant-performance conditions.",
+              "source": "FIP 8-K Item 1.01, https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "CLOSING CONDITIONS (EPA text, Art. VII): Sec 7.1(a) No Order; Sec 7.1(b): '(i) The filings, consents and approvals required to be made or obtained under applicable Laws in order to consummate the Closing as set forth in Section 7.1(b) of the Disclosure Letter, shall have been made or obtained, and (ii) the waiting period under the HSR Act shall have expired or been terminated.' Buyer-only conditions (Sec 7.2): reps true (MAE standard), covenants performed, 'No Material Adverse Effect... occurred and be continuing', officer certificates, and 7.2(e): 'The COC Amendment shall have been obtained and shall be in full force and effect, and the lenders under the EB-5 Loan Agreement shall have waived any default... resulting from any change of control' ('COC Conditions'). NO financing condition: FIP 8-K states verbatim 'Buyer's obligation to consummate the Transaction is not subject to a financing condition.' PJM appears ZERO times in the agreement — there is no PJM approval condition.",
+              "source": "Equity Purchase Agreement, Exhibit 10.1, https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802dex101.htm (also filed as Ex-10.1 to FIP 8-K: https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_ex10-1.htm)",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "TERMINATION (EPA Art. VIII): (a) mutual consent; (b) either party on a final non-appealable order prohibiting the sale; (c)/(d) either Buyer or Sellers 'at any time after November 30, 2026 (the Outside Date)' if not consummated (not available to a party whose own covenant failure caused the delay) — BUT if on the Outside Date all conditions are satisfied EXCEPT the Sec 7.1(b) regulatory condition, neither may terminate 'until after June 30, 2027'; also tolled until 3 business days after the end of a commenced-but-incomplete debt-financing 'Marketing Period'; breach terminations with cure rights; and (e) Sellers may terminate if all conditions are met, Sellers give irrevocable ready-willing-able notice, and Buyer fails to close by the earlier of the Outside Date or 3 business days after the notice.",
+              "source": "Equity Purchase Agreement Sections 8.1-8.2, https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802dex101.htm",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "TERMINATION FEE: One-way, Buyer-pays-Sellers 'Reverse Termination Fee' (EPA Sec 8.3) of $75,000,000, payable within 5 business days, ONLY in financing-failure scenarios: termination by Sellers under 8.1(d)(ii)/8.1(e) 'in the circumstance where Buyer's failure to consummate the Closing is due solely to the fact that the Debt Financing or Alternative Debt Financing is not funded to Buyer in accordance with the Debt Commitment Letter', or by Buyer under 8.1(c)(i) when Sellers could then have so terminated. MARA Holdings (Buyer Parent) 'absolutely, unconditionally and irrevocably guarantees payment of the Termination Fee'. No termination fee is payable by Sellers/FIP in any direction. Otherwise post-termination liability only for willful and material breach or Fraud.",
+              "source": "Equity Purchase Agreement Sections 8.3 and Buyer Parent guarantee, https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802dex101.htm ; FIP 8-K https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "BUYER FINANCING: Concurrent with signing, MARA Holdings entered a debt commitment letter dated April 29, 2026 with Barclays Bank PLC for up to $785 million under a 364-day senior secured bridge term loan facility, to (a) refinance all debt under Long Ridge Energy LLC's Credit Agreement dated Feb 19, 2025 (Citizens Bank, N.A. admin agent; U.S. Bank Trust Co. collateral agent) and (b) fund repurchase of Long Ridge Energy LLC's 8.750% Senior Secured Notes due 2032 to the extent tendered in a tender/change-of-control offer.",
+              "source": "FIP 8-K https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm ; MARA 8-K https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802d8k.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "ANCILLARY: (i) FIP/Sellers side letter indemnifies MARA, its affiliates and representatives 'against certain losses... arising out of or relating to certain regulatory, legal and maintenance matters'; (ii) parties agreed to negotiate 'Railroad Agreements' for sale/operation of a portion of railroad assets of East Ohio Valley Railway, LLC (FIP indirect sub) closing concurrently with the Transaction (STB authorization under 49 C.F.R. § 1180 required solely for these); (iii) 2-year non-solicit/non-hire and non-interference covenants by Sellers/FIP; (iv) no-shop covenant on alternative proposals; (v) Long Ridge RSUs vest in full and cash out at fair market value (holders may elect FIP shares instead).",
+              "source": "FIP 8-K Item 1.01, https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_8k.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "USE OF PROCEEDS (April 30 PR, CEO Ken Nicholson verbatim): 'As a result of the sale, we will immediately eliminate $1.16 billion of Long Ridge debt and expect to use the net proceeds to repay approximately $300 million of debt at our parent level.' PR body: net proceeds 'after repayment of asset-level debt, to repay a portion of its outstanding corporate debt and for reinvestment in new growth opportunities, including potential acquisitions.' Specific parent-level instruments are not named in the PR. Advisors: Jefferies and Lazard (financial), Skadden Arps (legal) for FIP. Expected close: Q3 2026.",
+              "source": "FIP press release Ex-99.1, https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ef20071666_ex99-1.htm",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "PURCHASE AGREEMENT IS PUBLIC: the Equity Purchase Agreement is filed as Exhibit 10.1 to BOTH FIP's 8-K (accession 0001140361-26-018033) and MARA's 8-K (accession 0001193125-26-193982), both filed 2026-04-30. Schedules/Disclosure Letter omitted under Reg S-K Item 601(a)(5); MARA's copy additionally redacts certain portions under Item 601(b)(10)(iv) as confidential.",
+              "source": "Exhibit indexes: https://www.sec.gov/Archives/edgar/data/1899883/000114036126018033/ and https://www.sec.gov/Archives/edgar/data/1507605/000119312526193982/",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "STATUS UPDATE - NOTES CONSENT: On May 7, 2026 MARA USA Corporation launched a consent solicitation for Long Ridge Energy LLC's $600M 8.750% Senior Secured Notes due 2032 (consent fee $2.50 per $1,000, payable at Transaction close) to amend the indenture so the Transaction is not a 'Change of Control' and MARA becomes a Permitted Holder (avoiding a 101% change-of-control repurchase offer). On May 14, 2026 requisite majority consents were received and a supplemental indenture was executed with U.S. Bank Trust Company, N.A. as trustee; amendments become operative only upon consummation of the Transaction and payment of the consent fee (results announced May 15, 2026).",
+              "source": "MARA PRs: https://www.globenewswire.com/news-release/2026/05/07/3290003/0/en/MARA-Announces-Launch-of-Consent-Solicitation-for-the-8-750-Senior-Secured-Notes-due-2032-of-Long-Ridge-Energy-LLC.html and https://www.globenewswire.com/news-release/2026/05/15/3296172/0/en/MARA-Announces-Expiration-and-Results-of-the-Consent-Solicitation-for-the-8-750-Senior-Secured-Notes-due-2032-of-Long-Ridge-Energy-LLC.html",
+              "date": "2026-05-15"
+            },
+            {
+              "claim": "STATUS UPDATE - FERC: Long Ridge Energy Generation LLC and Long Ridge Retail Electric Supplier LLC filed the FPA Section 203 application on May 8, 2026, FERC Docket No. EC26-92-000. On May 29, 2026 the PJM Independent Market Monitor (Monitoring Analytics) filed comments: 'The transaction should not be approved without a commitment from Mara not to remove the Long Ridge capacity and energy from the PJM markets to serve data center load.' No FERC order granting Section 203 authorization appears in company filings or press through 2026-07-20; MARA guidance moved to close 'in the second half this year' (vs. FIP's Q3 2026).",
+              "source": "IMM comment https://www.monitoringanalytics.com/filings/2026/IMM_Comment_Docket_No_EC26-92_20260529.pdf ; Utility Dive 2026-06-01 https://www.utilitydive.com/news/pjm-market-monitor-mara-data-center-long-ridge/821574/",
+              "date": "2026-05-29"
+            },
+            {
+              "claim": "STATUS UPDATE - OTHER: (i) MARA 8-K of 2026-06-25 (Item 8.01) furnished an investor presentation on the Long Ridge Transaction, reiterating ~$1.5B base price and pending status. (ii) MARA's 8-K of 2026-07-09 (Item 2.01 completion) is a DIFFERENT deal (Volt Texas LLC acquiring MAT 1177 LLC from HIF USA LLC - a Texas data-center site), NOT Long Ridge. (iii) Neither FIP nor MARA filed any 8-K announcing Long Ridge closing, FERC approval, HSR clearance, or deal amendment through 2026-07-20 (FIP's last 8-K: 07-02; MARA's: 07-09). Deal remains signed-not-closed as of 2026-07-20.",
+              "source": "EDGAR submission lists CIK 1899883 (FIP) and CIK 1507605 (MARA) via https://data.sec.gov/submissions/ ; MARA 6/25 8-K https://www.sec.gov/Archives/edgar/data/1507605/000095014226001875/eh260796591_8k.htm ; MARA 7/9 8-K https://www.sec.gov/Archives/edgar/data/1507605/000095014226002012/eh260804074_8k.htm",
+              "date": "2026-07-20"
+            },
+            {
+              "claim": "RELATED FIP DELEVERAGING (context, not part of the EPA): On July 1, 2026 FIP subsidiary Jefferson 2020 Bond Borrower LLC entered a $230.0M Bridge Loan Credit Agreement (Jefferies Finance LLC admin agent, maturing June 30, 2027, SOFR+5.50% stepping +0.50%/90 days) and repaid in full the $217,870,000 Port of Beaumont Taxable Series 2024B Bonds at maturity; that bridge loan must be prepaid with net proceeds of 'certain asset sales' — consistent with FIP's stated plan to apply Long Ridge proceeds to parent-level debt.",
+              "source": "FIP 8-K filed 2026-07-02, https://www.sec.gov/Archives/edgar/data/1899883/000114036126027428/ef20077277_8k.htm",
+              "date": "2026-07-02"
+            }
+          ],
+          "unresolved": [
+            "The purchase agreement exhibit IS public (Ex-10.1 to both 8-Ks), but the Disclosure Letter and schedules are omitted (Reg S-K 601(a)(5)) — so the exact enumerated list of 'required filings, consents and approvals' in Section 7.1(b) of the Disclosure Letter is not publicly verifiable; FERC 203 / HSR / STB are confirmed only via the 8-K narratives. MARA's copy also has confidential redactions (601(b)(10)(iv)).",
+            "HSR status: no public confirmation found that the HSR waiting period has expired or been terminated as of 2026-07-20.",
+            "FERC Docket EC26-92-000 outcome: no order found through 2026-07-20; whether FERC will impose the PJM-market-commitment condition requested by the IMM is unresolved. FERC's eLibrary was not directly queried (fetched sources only).",
+            "Price reconciliation: FIP 8-K says base purchase price $1.512B; FIP PR says ~$1.52B 'transaction value'; MARA says ~$1.5B 'including the assumption of certain debt' (at least $785M). The precise equity-vs-enterprise bridge (how the $1.16B Long Ridge debt paydown nets against the base price) is not broken out in public documents.",
+            "Which specific FIP parent-level debt (~$300M) will be repaid is not named in the April 30 PR; the July 1 Jefferson bridge loan mandates prepayment from asset-sale proceeds but is not explicitly tied to Long Ridge in the filing.",
+            "Railroad Agreements (East Ohio Valley Railway) were signing-date term-sheet only ('negotiate and finalize in good faith'); no public update on their execution or the STB authorization status was found.",
+            "The 'Marketing Period' definition (which can toll outside-date termination) sits in redacted/undisclosed portions; its exact mechanics were not extracted.",
+            "MARA's Q2 2026 10-Q (not yet filed as of 2026-07-20) and FIP's Q2 filings would be the next authoritative status checkpoints."
+          ]
+        },
+        "balance": {
+          "symbol": "FIP",
+          "facts": [
+            {
+              "claim": "Total redeemable preferred stock (temporary equity, mezzanine) carrying value $1,123.158M at 2026-03-31 (vs $1,090.220M at 2025-12-31), sitting between total liabilities and equity on the balance sheet",
+              "source": "FIP Q1-2026 10-Q (acc. 0001899883-26-000025, filed 2026-05-08), Consolidated Balance Sheets — https://www.sec.gov/Archives/edgar/data/1899883/000189988326000025/fip-20260331.htm",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Series B Redeemable Convertible Preferred Stock (issuer: FTAI Infrastructure Inc. corporate): 160,000 shares issued 2025-02-26 at $1,000 face ($160.0M); aggregate liquidation preference $192.0M at 2026-03-31; $18.5M cumulative dividends added to liquidation preference; change-of-control redemption (102% of liquidation value) would be $182.0M at 2026-03-31; carrying value $152.642M (Corporate & Other segment)",
+              "source": "Q1-2026 10-Q Note 15 Redeemable Preferred Stock + balance sheet parenthetical + segment balance sheet (R23/R3/R77 of XBRL viewer, acc. 0001899883-26-000025)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Series B dividend terms: quarterly compounding, 9.00%/yr if paid cash, 10.00%/yr if paid-in-kind, at the Company's election; unpaid dividends accrete the liquidation preference; company optional redemption in first 2 years = 120% of initial liquidation preference in cash plus 43.75 warrants per share (each warrant = 1 common share at $8.18); thereafter 102% of liquidation value",
+              "source": "FY2025 10-K (acc. 0001899883-26-000015, filed 2026-03-16), Note 18 REDEEMABLE PREFERRED STOCK — https://www.sec.gov/Archives/edgar/data/1899883/000189988326000015/",
+              "date": "2025-12-31"
+            },
+            {
+              "claim": "Series B conversion: convertible any time at holder option at $8.18/share conversion price; would convert into 21,818,025 common shares at 2026-03-31; Share Cap of 22,237,370 shares (~19.5% of the 113,936,865 shares outstanding 2025-02-10) above which consideration is cash; 19.99% beneficial-ownership blocker",
+              "source": "Q1-2026 10-Q Note 15 + FY2025 10-K Note 18",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Series B holders are GCM Grosvenor-affiliated funds — LIF AIV 1, L.P. and Labor Impact Fund, L.P. (GCM Grosvenor/Michael Sacks reporting group) — NOT Fortress affiliates; documented by Schedule 13D filed 2025-03-05 (acc. 0000950170-25-033537) and recurring Form 4s (latest 2026-07-02, acc. 0000921895-26-001744)",
+              "source": "SEC EDGAR full-text search: Schedule 13D of LIF AIV 1, L.P. re FIP; Form 4 group filings GCM Grosvenor Inc./Labor Impact Fund/LIF AIV 1 — https://efts.sec.gov/LATEST/search-index?q=%22LIF+AIV+1%22+%22FTAI+Infrastructure%22 ; corroborated by https://www.stocktitan.net/sec-filings/FIP/form-4-ftai-infrastructure-inc-insider-trading-activity-4ae4641090a8.html",
+              "date": "2026-07-02"
+            },
+            {
+              "claim": "Series A Preferred Stock - RailCo (issuer entity: RR Holdings, the rail holdco for Transtar + Wheeling & Lake Erie; NCI mezzanine): 1,000,000 units + Series A Warrants sold 2025-08-25 for aggregate $1.0B to fund the Wheeling acquisition; preferred fair value at issuance $914.2M; $20.6M issuance costs; carrying value $970.516M at 2026-03-31 (Railroad segment); accreting to earliest redemption date 2032-08-25",
+              "source": "FY2025 10-K Note 18 + Q1-2026 10-Q Note 15 + segment balance sheet (R77)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "RailCo Series A redemption value: redemption price $1,417.49 per unit at 2026-03-31 → aggregate ~$1,417.5M for 1,000,000 units; balance-sheet parenthetical states aggregate liquidation preference $1.4B; $64.4M of PIK dividends accrued into the balance as of 2026-03-31; Q1-2026 charge: $27.0M PIK dividends + $5.2M accretion",
+              "source": "Q1-2026 10-Q Note 15 REDEEMABLE PREFERRED STOCK + balance sheet parenthetical (R3/R78)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "RailCo Series A dividend rate: 10.0%/yr years 1-3, stepping to 12.0% after year 3 and 14.0% after year 6; +2.0% if not cash-paid after year 5; +2.0% upon event of noncompliance; dividends auto-accrue (PIK) before the 5th anniversary, cash-pay mandatory after; liquidation preference = $1,000 stated + $50 preferred fee + compounded distributions per unit",
+              "source": "FY2025 10-K Note 18 REDEEMABLE PREFERRED STOCK",
+              "date": "2025-12-31"
+            },
+            {
+              "claim": "RailCo Series A redemption triggers: mandatory cash redemption on sale of company, drag-along sale, IPO, SPAC, direct listing, bankruptcy, or change of control; holder put for all units after 7th anniversary with right to force a sale of RR Holdings if not redeemed within 120 days; issuer optional redemption at the GREATER of liquidation value or a base return of 1.5x investment (=$1.5B); on noncompliance holders can seat a majority of the RR Holdings board",
+              "source": "FY2025 10-K Note 18 REDEEMABLE PREFERRED STOCK",
+              "date": "2025-12-31"
+            },
+            {
+              "claim": "RailCo Series A holders are Ares Management-affiliated (10-K conditions warrant board-designation rights on 'members of Ares Management LLC (Ares)' owning ≥5% of RR Holdings common units; same holders received Series A Warrants - RailCo: 172,500 RR Holdings common units at $857.75 strike, fair value $85.8M at issuance, exchangeable after year 6 into cash or FIP common) — not Fortress affiliates",
+              "source": "FY2025 10-K Note 18 REDEEMABLE PREFERRED STOCK (Series A Warrants - RailCo subsection)",
+              "date": "2025-12-31"
+            },
+            {
+              "claim": "Combined preferred redemption value ahead of common at 2026-03-31: ~$1,417.5M (RailCo Series A) + $182.0M (Series B change-of-control) ≈ $1.60B — consistent with (slightly above) the ~$1.59B claim; grows ~10%/yr via PIK; combined carrying value on the balance sheet is only $1,123.2M",
+              "source": "Computed from Q1-2026 10-Q Note 15 and balance sheet parenthetical figures cited above",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Precedent for holder economics: FIP's original corporate Series A preferred (300,000 sh, $300M face, issued 2022-08-01) was redeemed 2025-08-25 at ~$1,490/share — $447.1M cash on $291M net proceeds — with a $36.6M loss on extinguishment",
+              "source": "FY2025 10-K Note 18 REDEEMABLE PREFERRED STOCK",
+              "date": "2025-08-25"
+            },
+            {
+              "claim": "Total consolidated debt at 2026-03-31: $3,837.982M gross / $3,813.150M net of issuance costs (12/31/25: $3,796.031M/$3,774.173M); only $25.649M principal due within one year; weighted-average rate on short-term borrowings 11.0%",
+              "source": "Q1-2026 10-Q Note 7 DEBT, NET (schedule of debt, R59/R15)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Corporate-level debt: Term Loan Credit Agreement — $1.35B secured term loan entered 2026-02-25, fixed 9.75%, matures 2028-02-01, first-priority security interest in substantially all assets of the Company and certain subsidiaries; funded $1.3B on 2026-02-26 + $35.4M on 2026-03-10; carrying $1,315.014M at 2026-03-31 (Corporate & Other segment debt net $1,309.608M); proceeds repaid the $1.25B Bridge Loan (SOFR+4.00%, was due 2026-08-24; $39.5M extinguishment loss) and the $30M June 2025 Jefferson Credit Agreement ($6.4M loss); $5.6M issuance costs",
+              "source": "Q1-2026 10-Q Note 7 DEBT, NET narrative + segment balance sheet (R77)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Long Ridge (Power and Gas segment) debt, net = $1,145.879M at 2026-03-31 ($1,154.374M at 2025-12-31) — supports the ~$1.16B claim. Composition: Long Ridge Credit Agreement $396.0M (SOFR+4.50%/Base+3.50%, due 2032-02-19), Long Ridge CanAm Loan $115.2M (6.75%, due 2029-09-13), Long Ridge GCM Note $20.0M (12.00%, due 2028-02-26), Long Ridge Acquiom Loan $14.734M (15.75%, due 2026-06-07), and $600.0M 8.75% Senior Notes due 2032-02-15",
+              "source": "Q1-2026 10-Q Note 7 debt table + SEGMENT INFORMATION balance sheet (R77): segment debt ties to instrument sum within issuance costs",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Jefferson Terminal debt, net $920.322M: tax-exempt/taxable dock revenue bonds — Series 2020 $139.214M (3.625% due 2035 / 4.00% due 2050), Series 2021 $339.532M (1.875%-3.00% due 2026-2050; 4.10% taxable due 2028), Series 2024 $379.021M (5.00%-5.25% due 2039-2054; 10.00% taxable Series 2024B due 2026-07-01), plus EB-5 loan $63.8M (5.75%, due 2027); bonds include $51.446M unamortized discount",
+              "source": "Q1-2026 10-Q Note 7 debt table + segment balance sheet",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Jefferson refinancing pressure point: $255M Backstop (Senior Secured Bridge Facility commitment signed 2026-03-16, exercisable at FIP's option through 2026-07-01, 364-day maturity) exists solely to redeem the 10.00% Jefferson Taxable Series 2024B Bonds due 2026-07-01 if not refinanced long-term",
+              "source": "Q1-2026 10-Q Note 7 DEBT, NET — Jefferson Terminal Backstop Agreement",
+              "date": "2026-03-16"
+            },
+            {
+              "claim": "Repauno (Delaware River Partners) debt, net $389.383M: DRP DB Term Loan $108.342M (8.50%, due 2026-11-30) + Series 2025 tax-exempt bonds $297.125M (6.375% due 2035 / 6.625% due 2045); Railroad segment debt is just the RailCo Revolver $50.0M (SOFR+3.00%/Base+2.00%, due 2028-11-17), net $47.958M",
+              "source": "Q1-2026 10-Q Note 7 debt table + segment balance sheet (R77)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Share count: 118,163,555 common shares issued and outstanding at 2026-03-31 and unchanged as of 2026-05-06 (cover page); 2,000,000,000 authorized, $0.01 par",
+              "source": "Q1-2026 10-Q cover page + balance sheet parenthetical",
+              "date": "2026-05-06"
+            },
+            {
+              "claim": "Recent price: FIP last/prior close $4.09 (2026-07-20 close per IBKR real-time snapshot pulled 2026-07-21); 52-week range $3.85-$7.80; the ~$4.03 figure is consistent with the recent tape (13-week low $3.99); implied market cap ≈ $483M at $4.09 on 118.16M shares. Third-party quote: $4.43 on 2026-07-06 per MarketBeat/Yahoo (https://finance.yahoo.com/quote/FIP/ , https://www.marketbeat.com/stocks/NASDAQ/FIP/)",
+              "source": "IBKR market data snapshot (contract 573167031, NASDAQ), 2026-07-21; WebSearch corroboration",
+              "date": "2026-07-21"
+            },
+            {
+              "claim": "Five reportable segments at Q1-2026: Railroad (Transtar + Wheeling), Jefferson Terminal, Repauno, Power and Gas (Long Ridge), Sustainability and Energy Transition; plus Corporate and Other",
+              "source": "Q1-2026 10-Q SEGMENT INFORMATION (R74: number of reportable segments = 5)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Q1-2026 Adjusted EBITDA (company measure, $K): Total $70,592 (Q1-25: $155,219); Railroad $40,233; Jefferson Terminal $14,437; Repauno $(2,321); Power and Gas $26,411 (Q1-25 $138,090 incl. Long Ridge remeasurement-period effects); Sustainability $219; Corporate and Other $(8,387)",
+              "source": "Q1-2026 10-Q SEGMENT INFORMATION - Reconciliation of Adjusted EBITDA to Net Loss (R76)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Segment total assets at 2026-03-31 ($K): Railroad 2,091,370; Jefferson Terminal 1,184,811; Repauno 613,263; Power and Gas 1,693,332; Sustainability 49,499; Corporate and Other 56,257; consolidated 5,688,532. Mezzanine preferred by segment: Railroad 970,516 (RailCo Series A), Corporate 152,642 (Series B)",
+              "source": "Q1-2026 10-Q SEGMENT INFORMATION - Balance Sheet (R77)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Q1-2026 P&L markers: net loss attributable to stockholders (before Series B dividend) $(150.2)M; interest expense $82.5M; losses on debt extinguishment $45.9M; preferred dividends + accretion on redeemable NCI $(37.2)M — the RailCo preferred alone consumes ~$149M/yr annualized against ~$70M/qtr adjusted EBITDA",
+              "source": "Q1-2026 10-Q Adjusted EBITDA reconciliation (R76)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Cash and liquidity at 2026-03-31: unrestricted cash $37.860M; restricted cash $189.571M (restricted to construction projects and debt service); Corporate & Other segment current assets only $16.490M; Q1-2026 operating cash flow $(69.4)M; common equity is negative — stockholders' equity $(122.463)M, total equity $(303.096)M, NCI $(180.633)M; warrant liabilities $82.506M",
+              "source": "Q1-2026 10-Q Consolidated Balance Sheets + MD&A Liquidity and Capital Resources",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "MD&A liquidity language leans on asset sale: management's planned actions 'including the sale of Long Ridge, are considered probable to be implemented and to provide sufficient liquidity ... over the twelve months from the date the financial statements were issued'; company 'has significant remaining debt obligations'",
+              "source": "Q1-2026 10-Q MD&A — Liquidity and Capital Resources",
+              "date": "2026-05-08"
+            },
+            {
+              "claim": "Subsequent event: on 2026-04-29 FIP (via Ohio River Partners Holdco) agreed to sell 100% of Long Ridge Energy & Power LLC to MARA USA Corporation (MARA Holdings) for a base purchase price of $1.52B, subject to customary adjustments (8-K filed 2026-04-30); also 2026-04-29 Acquiom loan amendment adding $10M incremental; $0.03/share common dividend declared 2026-05-07",
+              "source": "Q1-2026 10-Q Note 18 SUBSEQUENT EVENTS (R26/R81)",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "Fortress relationship: FIP is externally managed by the Manager (Fortress affiliate) for a 1.50% management fee plus incentive allocations to Fortress Worldwide Transportation and Infrastructure Master GP LLP (income incentive above an 8% threshold; 10% capital-gains allocation); Q1-2026 management fee $4.092M; Manager holds options (10.9M granted, 8.7M exercised; strikes $2.76-$5.61). Fortress affiliates are the MANAGER, not the preferred holders — the preferred sits with GCM Grosvenor (Series B) and Ares-led holders (RailCo Series A)",
+              "source": "Q1-2026 10-Q Note 13 MANAGEMENT AGREEMENT AND AFFILIATE TRANSACTIONS (R21/R72/R73)",
+              "date": "2026-03-31"
+            }
+          ],
+          "unresolved": [
+            "Exact provenance of the '$1.59B' figure: computed aggregate redemption value at 2026-03-31 is ~$1.60B ($1,417.5M RailCo + $182.0M Series B change-of-control); at 2025-12-31 it was ~$1.55B; the figure compounds ~10%/yr via PIK, so $1.59B matches an early-2026 measurement date",
+            "Whether the $1.52B Long Ridge base purchase price is an enterprise-value construct (buyer assumes/repays the ~$1.146B Long Ridge debt) or equity proceeds to FIP — the 10-Q only says 'base purchase price of $1.52 billion, subject to certain customary adjustments'; the 2026-04-30 8-K / equity purchase agreement was not pulled",
+            "Status after the 10-Q filing date (2026-05-08) as of today 2026-07-21: whether the $255M Jefferson Backstop was drawn or the 10% Series 2024B bonds ($~104M within Series 2024) were refinanced by their 2026-07-01 maturity, and whether the Long Ridge/MARA sale has closed",
+            "Full holder list and split of the RailCo Series A preferred (Ares-led per 10-K board-designation language; individual fund allocations not disclosed in the filings pulled)",
+            "Reconciliation of Series B carrying value $152.6M vs $160.0M face (allocation of issuance costs/warrants) is not itemized in the Q1 10-Q; whether the RailCo 1.5x 'base return amount' ($1.5B) rather than $1,417.49/unit would govern in a negotiated take-out",
+            "Whether the MARA sale triggers any RailCo Series A mandatory-redemption or Series B change-of-control provision (sale of a subsidiary is not obviously a 'change of control' of FIP or RR Holdings, but the agreements were not read)"
+          ]
+        },
+        "reg_mara": {
+          "symbol": "FIP",
+          "facts": [
+            {
+              "claim": "Deal: FIP agreed to sell Long Ridge Energy & Power LLC (via subsidiaries Ohio River Partners Holdco/Finance) to MARA USA Corporation for ~$1.52B before closing adjustments; Equity Purchase Agreement dated April 29, 2026, announced April 30, 2026. Exact Base Purchase Price in the EPA: $1,512,000,000.",
+              "source": "FIP press release (globenewswire.com/news-release/2026/04/30/3284709) + MARA 8-K Ex-10.1 (sec.gov/Archives/edgar/data/1507605/000119312526193982/d54802dex101.htm)",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "Guided close: FIP PR says close expected Q3 2026; MARA consent-solicitation PR says 'second half of 2026, and could be as soon as the third quarter of 2026'; MARA Q1 letter says 'second half of the year' — all subject to HSR clearance, FERC Section 203 approval, and customary conditions.",
+              "source": "FIP PR (globenewswire), MARA consent results PR (stocktitan.net/news/MARA/mara-announces-expiration-and-results-of-the-consent-solicitation), MARA Q1 2026 shareholder letter (SEC 8-K)",
+              "date": "2026-05-15"
+            },
+            {
+              "claim": "Regulatory approvals required per the EPA: (i) HSR Act clearance, (ii) prior authorization of FERC under FPA Section 203, (iii) Surface Transportation Board approval under 49 U.S.C. 11323 / 49 CFR 1180 for the bundled railroad agreements ('STB Approval'), plus disclosure-letter consents. The STB piece is absent from most press coverage.",
+              "source": "EPA Ex-10.1 to MARA 8-K, sec.gov accession 0001193125-26-193982",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "FERC path: Joint Section 203 application of Long Ridge Energy Generation LLC + Long Ridge Retail Electric Supplier LLC filed 5/8/2026, Docket EC26-92-000, accession 20260508-5278; Federal Register combined notice published 5/18/2026; comment/intervention deadline 5 p.m. ET 5/29/2026.",
+              "source": "FERC eLibrary API docket EC26-92 + Federal Register 2026-09892 (govinfo.gov/content/pkg/FR-2026-05-18/html/2026-09892.htm)",
+              "date": "2026-05-08"
+            },
+            {
+              "claim": "Docket EC26-92 entries as of 2026-07-20 (7 total, ALL submittals, ZERO FERC issuances — no order, and notably no deficiency letter): 5/8 application; 5/14 Public Citizen intervention; 5/21 IMM intervention; 5/29 IMM comments (20260529-5342); 6/1 out-of-time interventions by AEP Service Corp and PJM Interconnection; 6/8 applicants' Answer to IMM comments (20260608-5061, Morgan Lewis).",
+              "source": "FERC eLibrary API sweep run 2026-07-21",
+              "date": "2026-07-20"
+            },
+            {
+              "claim": "IMM position (5/29/2026, Bowring/Monitoring Analytics): the transaction 'has not been shown to be consistent with the public interest' AS FILED and 'should not be approved without a commitment from MARA not to remove the Long Ridge capacity and energy from the PJM markets to serve data center load'; frames removal of the 522 MW as physical withholding/market power in a capacity market that cleared short in 2026/27 and 2027/28 BRAs; cites NEDC 'Statement of Principles Regarding PJM' (1/16/2026) and White House 'Ratepayer Protection Pledge' proclamation (3/4/2026) that new data-center load should be met by NEW generation. It asks for a condition, not rejection.",
+              "source": "monitoringanalytics.com/filings/2026/IMM_Comment_Docket_No_EC26-92_20260529.pdf",
+              "date": "2026-05-29"
+            },
+            {
+              "claim": "Timeline precedent — the IMM made analogous data-center comments in 6 prior 203 dockets; 5 of 6 were APPROVED: EC25-151 Carroll County (app ~10/17/2025 → order 1/30/2026, ~3.5 mo, consummated 2/19/2026); EC25-148 Hill Top (9/26/2025 → 3/19/2026, ~5.7 mo); EC26-13 Conetoe II (order 3/19/2026); EC26-31 Landrace (11/19/2025 → 3/31/2026, ~4.4 mo incl. deficiency letter); EC26-39 KMC Thermo/Brandywine (12/10/2025 → 5/1/2026, ~4.7 mo incl. deficiency letter). Applied to EC26-92 (filed 5/8/2026), the 3.5–6 month pattern puts a FERC order ~Sept–Nov 2026: the Q3-2026 guided close is tight; early Q4 more probable.",
+              "source": "FERC eLibrary API docket sweeps (order dates verified per docket)",
+              "date": "2026-07-20"
+            },
+            {
+              "claim": "The 6th precedent is the cautionary one: EC26-58 Morgantown Power LLC (TeraWulf-affiliated bitcoin/datacenter buyer restarting coal-fired units) — application filed 2/2/2026, Public Citizen et al. Joint Motion to Dismiss for material omission of affiliation 4/1/2026, TeraWulf answer 4/8/2026, extension of time 3/5/2026 — STILL PENDING 5.5+ months in, showing a heavily-protested crypto-buyer 203 can stall indefinitely. Public Citizen has also intervened in EC26-92.",
+              "source": "FERC eLibrary API docket EC26-58",
+              "date": "2026-07-20"
+            },
+            {
+              "claim": "No blocking precedent: FERC has never denied a Section 203 plant transfer to a crypto/datacenter buyer in this wave — all five resolved IMM-flagged dockets were authorized, and in EC26-39 FERC even ELIMINATED the PJM 5004/5005 submarket; the Chang/See/LaCerte concurrence (5/1/2026) discusses only submarket-analysis rigor and does not adopt the IMM's keep-capacity-in-PJM condition. Closest adverse analog is not a 203: FERC's 2-1 rejection (11/1/2024) of the Talen/AWS Susquehanna amended ISA (co-located load expansion 300→480 MW).",
+              "source": "ferc.gov concurrence page (news-events/news/commissioner-chang-commissioner-see-and-commissioner-lacerte-concurrence-regarding) + utilitydive.com/news/ferc-interconnection-isa-talen-amazon-data-center-susquehanna-exelon/731841/",
+              "date": "2026-05-01"
+            },
+            {
+              "claim": "MARA cannot easily walk on regulatory delay: EPA Outside Date is 11/30/2026, BUT if the only unsatisfied condition is Section 7.1(b) (regulatory approvals per the disclosure letter), Buyer may not terminate until after JUNE 30, 2027 — a built-in 7-month regulatory tail. Reverse Termination Fee is $75,000,000 payable by MARA essentially only where closing fails because the Debt Financing/Alternative Debt Financing is not funded; Sellers otherwise hold specific-performance rights (Sec. 10.11) and a MARA Holdings limited guarantee (Sec. 10.24).",
+              "source": "EPA Ex-10.1, Sections 8.1(c), 8.3, 10.11, 10.24 (sec.gov d54802dex101.htm)",
+              "date": "2026-04-29"
+            },
+            {
+              "claim": "MARA financing structure: Barclays committed a 364-day senior secured bridge term loan up to $785.0M backstopping assumption of Long Ridge debt (Debt Commitment Letter dated with the EPA). Pro forma Long Ridge debt ~$900M (down from $1.1B): $400M term loan repaid at closing, $600M 8.750% Senior Secured Notes due 2032 stay in place, $115M Can-Am facility stays, ~$185M tack-on secured notes to be issued.",
+              "source": "MARA 10-Q Q1 2026 (sec.gov mara-20260331.htm) + MARA Q1 2026 shareholder letter (8-K)",
+              "date": "2026-05-08"
+            },
+            {
+              "claim": "Change-of-control put risk removed: MARA obtained requisite consents from holders of Long Ridge's 8.750% Senior Secured Notes due 2032 to amend the indenture so the transaction is not a 'Change of Control' (no 101% put); consent fee $2.50 per $1,000 payable ONLY if the acquisition closes — bondholders are now economically aligned with closing.",
+              "source": "MARA consent solicitation results PR via stocktitan.net (announcement dated May 15, 2026)",
+              "date": "2026-05-15"
+            },
+            {
+              "claim": "MARA balance-sheet capacity as of 3/31/2026: cash $513.7M; 35,303 BTC (~$2.4B at $68,222 spot; 25,308 unrestricted, 5,742 loaned, 4,253 pledged); combined liquid assets ~$2.9B. Demonstrated willingness to monetize: in Q1 2026 sold 20,880 BTC (~$1.5B at avg $70,137) to retire >$1B face of 2030/2031 convertible notes at a 9% discount (~30% of convertible debt), cut its line of credit $200M, and refinanced $150M at 7% (from 10.5%). No ATM usage since September 2025. Caveat: Q1 net loss $(1.3)B including $(1.0)B BTC mark-to-market; BTC fell 22% in Q1.",
+              "source": "MARA Q1 2026 shareholder letter, 8-K (sec.gov q126shareholderletter.htm)",
+              "date": "2026-03-31"
+            },
+            {
+              "claim": "Strategic rationale — MARA calls Long Ridge 'a strategic extension of our existing Hannibal operations... and not as a utility investment': premier AI data center campus, >1 GW total potential capacity, path to 600 gross MW of AI/critical-IT load via grid expansions AND on-site generation; existing co-located 200 MW MARA bitcoin-mining site continues 'without interruption'; active tenant discussions with hyperscaler/enterprise prospects, tenant commitments possible 'soon after closing'. MARA has owned the co-located Hannibal + Hopedale, OH data centers since 11/5/2024 (bought from Arkon Energy) — the site is already the center of its strategy.",
+              "source": "MARA Q1 2026 shareholder letter + IMM comment fn.3-4 citing MARA 10-K (3/2/2026) and 8-K (4/30/2026)",
+              "date": "2026-05-08"
+            },
+            {
+              "claim": "Commitment signals vs the IMM condition: MARA Q1 letter states 'We expect Long Ridge will continue to supply power to the grid and generate cash flow and positive EBITDA upon closing'; CEO Fred Thiel publicly said MARA plans to keep selling Long Ridge output into PJM and to pair new data centers with newly developed generation rather than diverting existing plant output. The IMM counters that web/PR statements 'are not binding' and demands a binding commitment. Applicants filed an answer 6/8/2026 (contents not retrieved). No public signal of MARA wavering was found; all observed actions (Barclays commitment, consent solicitation completed, retained-team plans, Q1 letter framing) point toward closing.",
+              "source": "MARA Q1 2026 shareholder letter + utilitydive.com/news/pjm-market-monitor-mara-data-center-long-ridge/821574/ + FERC eLibrary (answer accession 20260608-5061)",
+              "date": "2026-06-08"
+            },
+            {
+              "claim": "Analyst framing of cancellation risk (TipRanks, citing MARA's own risk disclosure): closing is conditioned on regulatory/contractual approvals and timely bridge-financing access, 'with potential termination after late 2026 or mid-2027 and a $75 million reverse termination fee' — i.e., the walk-away window opens only after Nov 30, 2026 (or mid-2027 if only regulatory approval is outstanding), not before.",
+              "source": "tipranks.com/news/company-announcements/execution-risks-mount-for-mara-holdings-long-ridge-deal",
+              "date": "2026-06-30"
+            },
+            {
+              "claim": "Asset/market facts underpinning the review: 485 MW currently authorized for sale (uprate to 505 MW nameplate expected 2H 2026; IMM uses 522 MW ICAP), one of PJM's most efficient CCGTs, AEP zone, ~76% hedged capacity, <$0.015/kWh all-in cost, on 1,600 contiguous acres in Hannibal, OH; PJM capacity market cleared short in the 2026/27 and 2027/28 BRAs, which is what gives the withholding argument force.",
+              "source": "MARA Q1 2026 shareholder letter + IMM EC26-92 comment",
+              "date": "2026-05-29"
+            },
+            {
+              "claim": "FIP use of proceeds (context for FIP thesis): eliminate $1.16B of Long Ridge debt and repay ~$300M of FIP holdco corporate debt, per FIP's announcement.",
+              "source": "FIP 8-K / PR summaries (stocktitan.net/sec-filings/FIP/8-k-ftai-infrastructure-inc-reports-material-event-722fa7e662a2.html; globenewswire release 2026-04-30)",
+              "date": "2026-04-30"
+            },
+            {
+              "claim": "FPA Section 203 statutory clock: FERC must rule within 180 days of a complete application (extendable); 180 days from the 5/8/2026 filing is ~11/4/2026 — inside the EPA's Nov 30, 2026 Outside Date and well inside the June 30, 2027 regulatory extension, meaning even a full-length FERC review does not by itself give MARA a termination right.",
+              "source": "16 U.S.C. 824b(a)(5) (statutory framework) applied to eLibrary-verified filing date; EPA Outside Date per Ex-10.1",
+              "date": "2026-07-20"
+            }
+          ],
+          "unresolved": [
+            "HSR status: no public confirmation of clearance/early termination for MARA/Long Ridge was found; HSR waiting periods are usually 30 days but the actual status is unverified.",
+            "STB approval status for the bundled railroad agreements (49 U.S.C. 11323) — no STB docket was checked; unknown whether filed or granted, and whether it gates closing or only the rail carve-out.",
+            "Content of the applicants' 6/8/2026 Answer to the IMM (accession 20260608-5061) — FERC eLibrary file-download endpoint could not be reached programmatically; whether Long Ridge/MARA offered any binding capacity commitment in the answer is unknown and is the single biggest swing factor for conditions.",
+            "Whether the five approving precedent orders (EC25-148/151, EC26-13/31/39) explicitly REJECTED the IMM's keep-capacity-in-PJM condition or simply ignored it — order texts were not read; only the EC26-39 concurrence was reviewed.",
+            "Whether PJM's and AEP's out-of-time interventions (both doc-less) presage substantive opposition or are routine monitoring.",
+            "Deficiency-letter risk: two of five precedent dockets drew deficiency letters adding ~2 months; EC26-92 has none so far (positive at 2.4 months in), but one could still issue.",
+            "MARA Q2 2026 balance sheet (BTC price recovery/decline since 3/31, bridge facility status, any new capital raise) — Q2 results not yet released as of 2026-07-20.",
+            "Exact equity-check math: base price $1.512B less ~$900M rolled debt implies ~$600M+ cash/bridge need before adjustments; the precise cash-vs-bridge-vs-tack-on split at closing is not disclosed.",
+            "EC26-58 (Morgantown/TeraWulf) outcome — still pending; a FERC rejection or condition there before the EC26-92 order would be the first true adverse precedent and could spill over.",
+            "PJM market-participant/MBR transfer mechanics and capacity-obligation novation for Long Ridge Retail Electric Supplier — assumed ministerial (no PJM veto right identified), but not verified against PJM governing documents.",
+            "Minor date discrepancy: fetched consent-results article is dated May 15, 2026, while secondary coverage of 'deal clears key hurdle' clusters June 8-12, 2026 — possibly a second consent event or delayed coverage; unresolved."
+          ]
+        }
+      },
+      "synthesis": {
+        "symbol": "FIP",
+        "scenarios": [
+          {
+            "name": "A_CLEAN_CLOSE_RERATE",
+            "prob": 0.45,
+            "value_per_share": 5.6,
+            "math": "First the mechanical SoP under a CLEAN close, to test the $9 target. Post-close claims ahead of common: corporate term loan $1,350M - $300M announced paydown = $1,050M; Jefferson debt ~$920M (incl. the new $230M Jefferson bridge that replaced the 2024B bonds) - $230M mandatory prepay from asset-sale proceeds = $690M; Repauno debt $389M; rail revolver $50M; Series B pref redemption $182M; RailCo Series A pref redemption $1,417.5M. Total claims = 1,050+690+389+50+182+1,417.5 = $3,778.5M. Assets: Railroad EBITDA $40.233M x 4 = $160.9M/yr @ 10x = $1,609M; Jefferson $14.437M x 4 = $57.7M/yr @ 12x = $693M; Repauno at book assets $613M (dev credit, EBITDA negative); Sustainability $49M; residual cash: equity proceeds ~= $1,512M base - ~$900M rolled Long Ridge debt (per MARA pro forma: $600M notes + $115M CanAm + $185M tack-on) = ~$600M, less $300M corp paydown less $230M bridge prepay = $70M. Total assets = 1,609+693+613+49+70 = $3,034M. Mechanical residual common equity = 3,034 - 3,778.5 = -$744.5M = -$6.30/share on 118.164M shares. NEGATIVE: the $9 target ($9 x 118.164M = $1,063M required positive equity) never mechanically arrives - skeptic CONFIRMED. Scenario A value is therefore a market/option re-rate, not NAV: close removes the MD&A going-concern reliance ('sale of Long Ridge... probable... sufficient liquidity'), headlines $1.16B LR debt elimination + $530M holdco-level paydown, stock traded $4.43 on 07-06 and 52wk range $3.85-7.80 (midpoint $5.83). Assign re-rate to $5.60 = +39% from $4.03 tape, still 38% below the falsified $9. Prob 0.45: close is highly likely (no financing condition; $75M RTF only on financing failure w/ MARA Holdings guarantee; specific performance Sec 10.11; notes consent done 5/15 aligning bondholders; Barclays $785M committed; MARA $2.9B liquid and site is core strategy; 5 of 6 FERC precedent dockets approved in 3.5-5.7mo; 180-day statutory clock ends ~11/4/26 inside the 11/30/26 Outside Date) but the CLEAN+RERATE branch also requires the market to price sentiment over the -$6.30/sh mechanical NAV, and timing can slip Q4 (MARA guides H2, IMM condition pending, HSR unverified, Morgantown/EC26-58 shows a protested crypto-buyer 203 can stall)."
+          },
+          {
+            "name": "B_CLOSES_PROCEEDS_REDEPLOYED",
+            "prob": 0.4,
+            "value_per_share": 4.2,
+            "math": "Deal closes but beyond the two mandated uses ($230M Jefferson bridge prepay - contractually required from 'certain asset sales' per 7/1/26 credit agreement - and the announced ~$300M parent paydown), residual cash goes to 'reinvestment in new growth opportunities, including potential acquisitions' (FIP PR verbatim). Management history supports this branch heavily: externally managed by Fortress affiliate at 1.50% fee on assets + incentive allocations (fee structure rewards asset growth, not equity return); precedent = original Series A pref taken out at ~1.49x face ($447.1M on $291M net proceeds, $36.6M extinguishment loss). Meanwhile the RailCo pref compounds against the common: $27.0M PIK + $5.2M accretion in Q1 alone = ~$129-149M/yr = $1.09-1.26/share/yr of value transfer, stepping to 12% after year 3. Common equity already negative ($-122.5M) and ex-Power&Gas run-rate EBITDA is only (40.2+14.4-2.3+0.2-8.4) x 4 = $176.5M/yr against ~$149M/yr of pref accrual + ~$102M/yr corporate term-loan interest (9.75% x $1,050M). Stock stays near tape: value $4.20 (= recent $4.03-4.43 band). Prob 0.40 because the PR language is explicit and the manager's incentives point here."
+          },
+          {
+            "name": "C_BLOCKED_OR_CANCELLED",
+            "prob": 0.12,
+            "value_per_share": 2.9,
+            "math": "FERC denies/conditions-to-death, HSR problem, or MARA financing fails and pays the $75M RTF ($75M = $0.63/share gross to FIP, immaterial vs the hole). The MD&A 12-month liquidity conclusion depends on the sale; unrestricted cash only $37.9M; Q1 operating cash flow -$69.4M; Jefferson bridge $230M at SOFR+5.50% stepping +0.50%/90d matures 6/30/27 and must be repaid from asset sales; corporate $1.35B at 9.75% fixed. A break makes a new low below the $3.85 52wk low: value = ~0.75 x $3.85 = $2.90. Prob 0.12: low because there is no financing condition, specific performance + parent guarantee apply, FERC has NEVER denied a 203 in this wave (5/5 resolved IMM-flagged dockets approved, EC26-39 concurrence did not adopt the IMM condition), the statutory 180 days ends ~11/4/26, and the EPA regulatory tail bars MARA termination until 6/30/27 if only 7.1(b) is open - but nonzero: EC26-58 Morgantown (protested crypto-buyer) stalled 5.5+ months, Public Citizen has intervened here too, PJM+AEP filed out-of-time interventions, the IMM demands a binding keep-capacity-in-PJM commitment, and HSR status is publicly unverified."
+          },
+          {
+            "name": "D_TERMINAL_RESTRUCTURING",
+            "prob": 0.03,
+            "value_per_share": 0.5,
+            "math": "Deal breaks AND the 2026-27 refi wall fails (Jefferson bridge 6/30/27, DRP DB term loan 11/30/26 $108.3M, corporate wall 2/1/28). Common sits behind $3,838M gross debt + $1,599.5M pref redemption value with book equity of -$122.5M and total equity -$303.1M; in any restructuring or forced RR Holdings sale (holders can force after put) the RailCo pref alone takes the rail assets (redemption $1,417.5M vs Railroad segment assets $2,091M book less growth-case EV $1,609M). Common recovery ~= option-value scraps: $0.50. Prob 0.03 = C-branch (0.12) x ~25% conditional failure-to-refi."
+          }
+        ],
+        "ev_per_share": 4.56,
+        "recommendation": "EXIT_THESIS_BROKEN",
+        "rationale": "The skeptic's $1.59B pref claim is CONFIRMED by the Q1-2026 10-Q: RailCo Series A redemption value $1,417.5M (per-unit $1,417.49 x 1.0M units; $1.4B stated liquidation preference + $64.4M PIK) + Series B change-of-control redemption $182.0M = $1,599.5M at 2026-03-31 - the $1.59B figure matches an early-2026 measurement date and the stack PIKs ~10%/yr (stepping to 12%/14%). It is invisible to casual SoP work because balance-sheet carrying value is only $1,123.2M. Consequence: the recorded thesis mechanism (de-lever via Long Ridge sale -> $9 analyst SoP) cannot occur. Even a CLEAN close at generous multiples (Railroad 10x, Jefferson 12x, Repauno at full book) leaves mechanical common equity at -$744.5M (-$6.30/share); $9 requires +$1,063M. The catalyst is real and likely fires (no financing condition, $75M RTF + parent guarantee + specific performance, notes consent completed, 5/6 FERC precedents approved, 180-day clock ~11/4/26), but it delivers a sentiment re-rate to ~$5.60 at best - 38% below target - and the 40%-probability branch is a close followed by proceeds redeployment into acquisitions (PR says so verbatim; Fortress external-manager fee structure on assets rewards exactly that) while $149M/yr of pref PIK keeps transferring value away from a common that already has negative book equity. EV $4.56/share vs $4.03 tape is only +13% with 45% of that EV riding on the market ignoring negative mechanical NAV, and the EPA's regulatory tail (no termination until 6/30/2027 if only 7.1(b) is open) means an unresolved seat can be dragged past the sleeve's 2026 window with no exit ramp. The recorded floor ($3.90) is also falsified: 52wk low is now $3.85 and a deal-break trades to ~$2.90. This is a thesis-broken exit, not edge-gone: the event edge exists, but the underwritten payoff path was arithmetically impossible from day one.",
+        "review_date": "2026-11-04",
+        "corrected": {
+          "fair_value_target": 5.6,
+          "downside_floor": 2.9,
+          "staging": false,
+          "dated_milestone": "FERC order in Docket EC26-92-000 due by ~2026-11-04 (FPA 203 180-day statutory clock from 5/8/2026 filing); EPA Outside Date 2026-11-30, regulatory tail to 2027-06-30",
+          "win_prob": 0.45
+        }
+      },
+      "verdicts": [
+        {
+          "lens": "BEAR",
+          "holds": true,
+          "strongest_objection": "The Scenario A/B asset side rests on an unverified ~$600M net-cash bridge that the evidence pack itself flags as unresolved (\"Whether the $1.52B base purchase price is an enterprise-value construct (buyer assumes/repays the ~$1.146B Long Ridge debt) or equity proceeds to FIP\"). MARA's own PR language — \"approximately $1.5 billion... including the assumption of at least $785 million of debt\" — supports the enterprise reading, under which net cash to FIP is only ~$366M-$727M, short of the $530M of mandated uses ($230M Jefferson bridge prepay contractually required from asset sales per the 7/1/26 credit agreement + $300M announced parent paydown). That erases the $70M residual cash in Scenario A (deepening mechanical NAV deficit by up to ~$2/sh) and undercuts Scenario B's $4.20 (a cash-strapped close, not a redeploy-flush one). Second-order generosities all lean the same way: (1) the 0.45-weight re-rate to $5.60 is priced against a tape that FADED from $4.43 (07-06) to $4.09 (07-20 IBKR snapshot) as the close approaches — the market is discounting the deal, not building a re-rate, and the $5.83 52wk-midpoint anchor includes pre-9.75%-term-loan, pre-RailCo-pref periods; (2) claims are measured at 3/31 for a Q4 close while the RailCo pref PIKs $27.0M + $5.2M accretion per quarter (add ~$65-100M, another $0.55-0.85/sh of deficit; issuer take-out is at the GREATER of liquidation value or 1.5x = $1.5B per the 10-K); (3) the $2.90 floor (0.75x 52wk low) is high for a break that lands on the DRP DB $108.3M maturity 11/30/26 with $37.9M unrestricted cash, -$69.4M Q1 operating cash flow, and an MD&A whose 12-month liquidity conclusion explicitly depends on this sale — going-concern doubt argues $2.00-2.50, and no RTF is payable on a regulatory block (fee is financing-failure-only per EPA Sec 8.3); (4) the \"5 of 6 FERC precedent dockets approved\" close-probability support is asserted in the synthesis but appears nowhere in the evidence contract, and HSR status is explicitly unverified. Crucially, every one of these attacks makes the synthesis MORE bearish, not less: the load-bearing arithmetic is confirmed (claims $3,778.5M, assets $3,034M, residual -$744.5M = -$6.30/sh on 118.164M shares; pref stack $1,599.5M ties to the Q1-2026 10-Q; EV math 4.563 and probs sum 1.00 both check). The $9 target is arithmetically impossible under every reading, so EXIT_THESIS_BROKEN survives a fortiori — no load-bearing number fails in the direction that would rescue the seat.",
+          "adjustment": "Recommendation unchanged (EXIT_THESIS_BROKEN) — the bear attacks only harden it. Shade the corrected dials down: fair_value_target 5.6 → ~4.8 (re-rate cap ~mid-$4s given the fading tape and negative mechanical NAV; $5.60 requires the market to pay +37% for a headline it is currently selling), downside_floor 2.9 → ~2.4 (deal-break lands on the 11/30/26 DRP DB maturity with going-concern reliance on this sale and no RTF in a regulatory block), win_prob 0.45 → ~0.35 (close itself ~0.85 likely, but the clean-close+re-rate sub-branch is overweighted vs the redeploy branch given the enterprise-reading cash shortfall and Fortress fee incentives). Re-cut probabilities roughly A 0.30 / B 0.50 / C 0.14 / D 0.06 → EV ~$3.94/sh vs $4.09 tape, i.e. negative edge at the current price — exit stands with no reliance on the generous branches. Also true-up the claims stack to the expected close date (add ~2 quarters of RailCo PIK, ~$65M+) if the seat lingers past review_date 2026-11-04."
+        },
+        {
+          "lens": "BULL",
+          "holds": true,
+          "strongest_objection": "The price bridge is the synthesis's only soft joint: the evidence itself flags \"equity-vs-enterprise bridge... not broken out in public documents,\" and FIP's 8-K wording (\"base purchase price of $1.512 billion\" for 100% of the LLC interests) permits a maximal-bull reading where all $1.16B of Long Ridge debt is assumed on top and FIP nets ~$1.5B cash — lifting residual cash from $70M to ~$982M and flipping mechanical NAV from -$6.30/sh to +$1.42/sh, so \"-$744.5M residual\" is a construction, not a verified fact. The objection ultimately fails to break the recommendation because (a) that reading contradicts MARA's PR (\"~$1.5 billion including the assumption of at least $785 million of debt\"), the 5/15 notes consent keeping the $600M notes outstanding at LR, the CEO's modest \"$300 million\" parent-paydown guidance, and the MD&A going-concern reliance; and (b) even at its maximal extreme it produces $1.42/sh of mechanical equity versus the $9.00/sh ($1,063.5M) the recorded thesis requires — the $9 target is falsified under every evidence-consistent and even evidence-inconsistent bridge. Secondary hit that survives partially: Scenario B (prob 0.40) prices a CLOSED deal at $4.20, below the $4.43 tape of 07-06 when closing was less certain — too harsh for a branch where going-concern language dies and ~$530M of holdco-level debt is repaid; but bumping B to ~$4.80 only moves EV to ~$4.80 (+19%), nowhere near seat-revalidating.",
+          "adjustment": "Recommendation (EXIT_THESIS_BROKEN), corrected fair value ~$5.60, and win_prob 0.45 all stand. Two refinements: (1) raise Scenario B value from $4.20 to ~$4.60-4.80 (a closed deal should clear the $4.43 pre-close print; EV becomes ~$4.72-4.80, still only +17-19% vs tape); (2) annotate the SoP that the -$6.30/sh figure is bridge-dependent — the evidence-consistent range is -$6.30 to -$5.33/sh (MARA >=$785M-assumed reading), with a theoretical-maximum +$1.42/sh that still falsifies $9 — and that Jefferson post-close debt is ~$702.5M not $690M ($12.5M claims understatement, bull-favorable, immaterial). Neither changes the exit call: even prefs-at-carrying (-$2.27/sh) or rail+Jefferson-at-book (+$1.95/sh) bull variants leave the recorded $9 mechanism arithmetically unreachable, and the $128.8M/yr RailCo PIK verified from Q1 keeps compounding against a negative-book-equity common."
+        }
+      ]
+    },
+    "fig": {
+      "evidence": {
+        "symbol": "FIG",
+        "facts": [
+          {
+            "claim": "Extended Lock-Up Agreement dated 2025-08-30 covers holders of ~54.1% of outstanding Class A shares (~222.1M shares total) and runs until 2026-08-31 unless tranches release earlier; entered with 'Extended Lock-Up Holders' (not named in the filing).",
+            "source": "Figma 8-K filed 2025-09-03, Item 8.01 (SEC EDGAR: Archives/edgar/data/1579878/000157987825000026/fig-20250903.htm) — full text pulled directly",
+            "date": "2025-09-03"
+          },
+          {
+            "claim": "Tranche schedule (4 tranches, per the 8-K verbatim): T1 = up to 17.5% (~38.9M shares) releasing at commencement of trading on the 2nd trading day after Q3-2025 earnings; T2 = additional 20% (~44.4M) after FY-2025 earnings; T3 = additional 27.5% (~61.1M) after Q1-2026 (March-quarter) earnings; T4 = remainder (~77.7M, 35%) releasing on the EARLIER of (i) commencement of trading on the 2nd trading day after Q2-2026 (June-quarter) earnings and (ii) 2026-08-31.",
+            "source": "Figma 8-K filed 2025-09-03, Item 8.01 (fig-20250903.htm), corroborated by StockTitan 8-K summary",
+            "date": "2025-09-03"
+          },
+          {
+            "claim": "FOURTH/FINAL TRANCHE DATE CONFIRMED ~2026-08-07: Figma will report Q2-2026 results after market close Wednesday 2026-08-05; the 2nd trading day after is Friday 2026-08-07, which precedes the 2026-08-31 backstop — so ~77.7M Class A shares unlock at the open on/about Aug 7, 2026. At the 2026-07-20 close of $24.02 that is ~$1.87B of stock (~$1.8B claim CONFIRMED).",
+            "source": "Earnings date: Figma PR 'Figma to Announce Second Quarter 2026 Financial Results on August 5, 2026' (finance.yahoo.com/markets/stocks/articles/figma-announce-second-quarter-2026-200500600.html; also scanx.trade); trigger mechanics: 8-K fig-20250903.htm; price: stockanalysis.com/stocks/fig/statistics",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "Float vs locked today: shares outstanding 528.38M (all classes), free float 238.19M, price $24.02 (close 2026-07-20), market cap $12.69B, insider ownership 14.91%, institutional 34.16%. The only shares still under the extended lockup are the final ~77.7M tranche; tranches 1-3 (~144.4M) plus the entire non-extended standard IPO lockup population have already been released.",
+            "source": "stockanalysis.com/stocks/fig/statistics (page as of Jul 20-21, 2026); tranche accounting from 8-K fig-20250903.htm",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "Prior release timeline (all dates verified against primary earnings dates): early performance release 2025-09-05 (25% of eligible employee/service-provider shares, price-trigger met); standard IPO lockup + extended T1 (~38.9M) at open 2025-11-07 (2nd trading day after Q3 earnings on 2025-11-05); options/RSUs/warrants outer bound 2026-01-27 (181 days from 2025-07-30); T2 (~44.4M) 2026-02-20 (FY25 earnings 2026-02-18); T3 (~61.1M) 2026-05-18 (Q1 earnings 2026-05-14).",
+            "source": "Q3 date: Figma PR/BusinessWire 2025-10-15 'Figma to Announce Third Quarter 2025 Financial Results on November 5, 2025' + Q3 press release PDF dated Nov 5 (s206.q4cdn.com); FY25 date: CNBC 2026-02-18 (cnbc.com/2026/02/18/figma-fig-q4-earnings-report-2025.html); Q1-26 date: Figma Q1-2026 Prepared Remarks PDF dated May 14, 2026 (s206.q4cdn.com); Sep 5 early release: TipRanks 'Figma Announces Early Lock-Up Release Conditions' + S-1/A exhibit; Jan 27: MarketScreener lockup notices; Nov 7 confirmation: S3 Partners article + @jw Threads post citing the 10-Q",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "Tranche 1 price reaction (release 2025-11-07): earnings day 11/05 -3.9% to $44.01; release day 11/07 -3.8% to $44.25; then a waterfall — 11/13 -7.8%, 11/14 -5.0% to $38.53 (pre-earnings 11/04 -> 11/14 = -15.9%), $33.57 by 11/20. SEC Form 4s document heavy executive selling in the $43-48 range in Nov 2025. Short positioning had surged into the unlock: 15.4M shares/$900M short as of 2025-10-16, ~35% of then-float, borrow fee >12%, 98% utilization; the 11/07 unlock freed ~140M shares (S3 estimate).",
+            "source": "Daily OHLCV: IBKR price history, FIG NYSE contract 802794976 (pulled 2026-07-21); shorting/borrow: S3 Partners 'Figma: Short Build Ahead of Lockup Expiry' (s3partners.com); Form 4 selling: InvestorPlace/TradingView 'Why Figma Stock Crashed 81%' (Feb 2026)",
+            "date": "2025-11-07"
+          },
+          {
+            "claim": "Tranche 2 price reaction (release 2026-02-20): FY25 beat on 02/18 (+4.7% close $24.19, +18.4% after-hours to $28.65; Q4 rev $303.8M vs $293.15M est, FY26 guide $1.37B vs $1.29B est); 02/19 +6.9% to $25.86; release day 02/20 +0.9% to $26.09; 02/23 -5.1%, then 02/24 +10.8% and 02/25 +13.9% to $31.24. Net 02/17->02/27 = +27.2% — the 44.4M-share unlock was absorbed by post-earnings momentum.",
+            "source": "Daily OHLCV: IBKR price history (contract 802794976); earnings numbers/AH move: CNBC 2026-02-18/19 + Benzinga 'Figma Stock Rallies After Q4 Earnings'",
+            "date": "2026-02-20"
+          },
+          {
+            "claim": "Tranche 3 price reaction (release 2026-05-18): Q1-26 beat on 05/14 (+6.9% close $20.24; rev $333.4M +46% YoY re-accelerating from 40%, EPS $0.10 vs $0.06 est, NDR 139%, guidance raised ~$55M); 05/15 +13.2% to $22.92; release day 05/18 +6.3% to $24.36; then faded (05/21 $21.59, brief 05/28-29 pop to $25.50) into a June collapse of -29% for the month, driven by fear of AI-native competition ('Anthropic's Claude Design' commoditizing design work per the cited article), hitting the all-time low $16.60 intraday on 2026-06-25 (close $16.84). FIG lost 51.6% in H1-2026.",
+            "source": "Daily OHLCV: IBKR price history; earnings: Investing.com Q1-2026 transcript + TIKR 'Figma Stock Surges 13%...46% in Q1 2026'; June driver + H1 figure: Motley Fool via Yahoo 'Why Figma Stock Lost 52% in the First Half of 2026'; low $16.60: Motley Fool 2026-07-13",
+            "date": "2026-05-18"
+          },
+          {
+            "claim": "Short interest into the final unlock: 84.50M shares short = 35.48% of float / 15.99% of shares outstanding (latest report shown 2026-07-16-21); Motley Fool cited 42.4% of float short heading into 2026-07-13 (different float basis) and called FIG among the most heavily shorted tech stocks; S3 (Nov-2025 piece) flagged that ~200M extended-lockup VC shares unlocking through 2026 would keep supply pressure on and that shorts were positioned around unlock events.",
+            "source": "stockanalysis.com/stocks/fig/statistics (short interest updated ~Jul 16-21, 2026); fool.com/investing/2026/07/13/why-figma-stock-jumped-119-today; s3partners.com 'Figma: Short Build Ahead of Lockup Expiry'",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "Rally since mid-June is real and larger than 21% on closes: 06/15 close $18.51 -> 07/20 close $24.02 = +29.8% (+42.6% from the 06/25 close low $16.84). Dated drivers: (a) 2026-06-26 +10.6% — Russell 1000/2500/3000 inclusion effective after the June 26 close (reconstitution bid); (b) 2026-07-01 +7.7% and 07/02 +9.5% — Citi (Tyler Radke) initiated Buy, PT $36 (~100% upside), 'built for AI-driven design work', plus new AI tool launches; (c) 2026-07-07 +5.3% to $22.19 — Figma acqui-hired the team behind Bud (fka Orchids, YC-backed AI-agent/app-creation startup; terms undisclosed) AND Bank of America reinstated Buy, PT $30 (Tal Liani: 'AI is more likely a tailwind, not a headwind'); Goldman also at Buy/$30; (d) 2026-07-13 +12.0% to $23.65 — short squeeze after Citizens Financial Group disclosed a new ~162,000-share 13F position into ~42%-of-float short interest; (e) underlying AI-monetization proof point: 75% of Org/Enterprise users kept buying AI credits after hitting limits (credits enforced from March 18), per CFO Praveer Melwani.",
+            "source": "Daily OHLCV: IBKR price history; Russell: WebSearch result (reconstitution effective after June 26 close); Citi: parameter.io + gurufocus + moneycheck.com (Jul 1-7, 2026); Bud: parameter.io 'FIG Stock: Surge as Bud Acquisition Expands Design Tool AI Push' (2026-07-07); BofA/Goldman: moneycheck.com 'three major banks turn bullish' (2026-07-07); squeeze: fool.com 2026-07-13; AI credits: TIKR/parameter.io citing CFO",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "Also live into the unlock window: Dylan Field 10b5-1 diversification plan (adopted 2025-08-04, start 2025-11-24, terminates 2026-11-30) covering up to 3,067,662 Class-B-conversion shares (~3.3% of his holdings), price-threshold-gated — a separate, small, pre-scheduled insider supply source distinct from the extended lockup.",
+            "source": "Figma 8-K filed 2025-09-03, Item 8.01 (fig-20250903.htm)",
+            "date": "2025-09-03"
+          },
+          {
+            "claim": "No 8-K evidence of any waiver, amendment, or early-release consent for the extended lockup was found through 2026-07-20; Figma's consent would be required for early sales ('without the prior written consent of the Company'). The 8-K search surfaced only earnings and annual-meeting filings (fig-20260514, fig-20260602, fig-20260218).",
+            "source": "SEC EDGAR 8-K search via WebSearch (Figma FY2026 8-K filings list), 8-K fig-20250903.htm for the consent clause",
+            "date": "2026-07-20"
+          },
+          {
+            "claim": "IPO reference frame: priced $33, debut 2025-07-31 opened $85, closed $115.50 (peaked ~$143 intraday IPO day per Fool); stock at $24.02 on 2026-07-20 is ~84% below the IPO-day peak — the final unlock hits a tape already deeply de-rated, not a momentum top.",
+            "source": "IBKR OHLCV (2025-07-31 bar: open 85, close 115.50, high 124.63); S3 Partners (IPO +250% debut); fool.com 2026-07-13 ('84% below the $143 peak')",
+            "date": "2026-07-20"
+          }
+        ],
+        "unresolved": [
+          "Current borrow fee / utilization / days-to-cover as of July 2026 — Fintel returned HTTP 403 and no other source gave live borrow economics; the >12% fee / 98% utilization datapoints are from Nov 2025 (S3) and are stale.",
+          "Exact FINRA settlement date behind the 84.50M-share short-interest print (likely the 2026-06-30 settlement published early July; stockanalysis page only shows an 'updated Jul 16-21' note).",
+          "Short-%-of-float discrepancy: 35.48% (stockanalysis, 238.19M float) vs 42.4% (Motley Fool, Jul 13) — different float definitions; unclear whether either float already excludes the locked 77.7M tranche.",
+          "Identity of the Extended Lock-Up Holders: the 8-K does not name them; InvestorPlace describes them as Figma's five largest VC backers (commonly reported as Index, Greylock, Kleiner Perkins, Sequoia, a16z) but this attribution was not verified against a primary filing.",
+          "One InvestorPlace-derived summary claimed Q3-2025 earnings were Nov 12 with a Nov 14 release — contradicted by the primary sources (earnings PR and Q3 press-release PDF both dated Nov 5, 2025; unlock Nov 7); treated as an error but flagged.",
+          "The ~140M-share size of the Nov 7, 2025 standard-lockup release is S3 Partners' estimate, not a company-filed figure.",
+          "Whether the 77.7M figure has shrunk via permitted-exception transfers (e.g., distributions-in-kind to LPs who then hold restricted) — no post-Sep-2025 filing updates the tranche count.",
+          "The March 2026 securities-law investigation mentioned by the Motley Fool H1-recap as a headwind — not independently verified or dated precisely."
+        ]
+      },
+      "synthesis": {
+        "symbol": "FIG",
+        "scenarios": [
+          {
+            "name": "no_washout_supply_absorbed",
+            "prob": 0.4,
+            "value_per_share": 29,
+            "math": "Precedents: T2 2026-02-20 (44.4M sh) unlocked into FY25 beat, net +27.2% 02/17->02/27; T3 2026-05-18 (61.1M sh) absorbed, +6.3% ON release day. Final tranche 77.7M sh vs 84.5M sh short (35.5-42.4% of float) -> covering demand alone >= unlock supply, and Q2 earnings (08/05 AMC) land 2 days BEFORE the unlock, so a beat repeats the T2/T3 pattern (T2 AH move was +18.4%). Post-clear the LAST structural overhang is gone. FV = analyst cluster (Citi $36, BofA $30, Goldman $30) -> conservative $30 x 0.97 partial realization over the 2-6wk window = $29.00"
+          },
+          {
+            "name": "washout_then_recover",
+            "prob": 0.35,
+            "value_per_share": 27,
+            "math": "Precedent: T1 2025-11-07 (38.9M extended + ~140M standard) -> -15.9% by 11/14 and -27% to $33.57 by 11/20. Apply the -16% to -20% band (final tranche is bigger, 77.7M/$1.87B, but no simultaneous standard release and shorts must cover into it) to a ~$24.80 pre-unlock price: trough ~$19.85-20.85, midpoint $20.35 — inside the add zone above the $17.50 floor. Overhang then permanently cleared -> recovery leg toward $29 FV; at review+2-4wk assume ~93% of the path retraced: 0.93 x $29 = $27.00"
+          },
+          {
+            "name": "washout_and_stay_down",
+            "prob": 0.25,
+            "value_per_share": 18,
+            "math": "Evidence-based floor, NOT a trough multiple: max-fear June 2026 (AI-competition narrative + post-51.6% H1 loss) bottomed at $16.84 close / $16.60 intraday — and that print predates the Russell inclusion bid (06/26), three sell-side Buys at $30-36 (07/01-07/07), the Bud AI acqui-hire, and the 75% AI-credit repurchase datapoint. Adjust the demonstrated low up modestly for those still-standing supports: floor ~$17.50; scenario settles slightly above it at $18.00. The disputed $3.10 floor implies ~$1.6B mkt cap ~ 1.2x the company's OWN FY26 revenue guide of $1.37B for a 40%+ grower — the stock never traded below $16.60 through FOUR prior supply events and peak AI panic; $3.10 is rejected as absurd."
+          }
+        ],
+        "ev_per_share": 25.55,
+        "recommendation": "KEEP_WITH_REVIEW",
+        "review_date": "2026-08-21",
+        "corrected": {
+          "fair_value_target": 29,
+          "downside_floor": 17.5,
+          "win_prob": 0.7,
+          "dated_milestone": "Q2-2026 earnings 2026-08-05 AMC -> final extended-lockup tranche (~77.7M Class A sh, ~$1.87B at $24.02) unlocks at the open on 2026-08-07 (2nd trading day after earnings, ahead of the 2026-08-31 backstop); no waiver/early-release 8-K found through 2026-07-20",
+          "staging": true
+        },
+        "rationale": "(1) UNLOCK CONFIRMED: 8-K fig-20250903 T4 = remainder ~77.7M sh (35% of 222.1M extended-lockup pool), releasing the earlier of 2nd trading day after Q2-2026 earnings or 2026-08-31. Earnings confirmed 2026-08-05 AMC -> unlock ~2026-08-07, ~$1.87B at the 07/20 close. Tranches 1-3 (~144.4M) and the standard IPO lockup are already out. (2) PRIOR-TRANCHE BASE RATE: of three releases, exactly one produced a washout (T1, -16% to -27%, but it coincided with the ~140M standard-lockup release at a ~2x higher valuation with only 15.4M short); T2 was absorbed into earnings momentum (+27.2% net); T3 was absorbed on the day (+6.3%) with the later June collapse driven by the AI-competition narrative, not supply. The final tranche is the largest, but 84.5M shares short vs 77.7M unlocking is near 1:1 covering demand, the tape is 84% below the IPO-day peak (de-rated, not a momentum top), and earnings precede the unlock — so the no-washout branch gets the plurality (40%), washout-then-recover 35%, washout-stay-down 25%. (3) CORRECTED NUMBERS: floor $17.50 from where the stock ACTUALLY traded at maximum fear ($16.60-16.84, June 25) adjusted up for the four dated rally supports that postdate that low; the refreshed dossier's $3.10 trough-multiple floor is rejected — it implies ~1.2x Figma's own $1.37B FY26 revenue guide and sits 81% below a low the stock never breached through four supply events. FV $29 (analyst cluster $30/$30/$36, conservatively below the original $32). rr at $24.77: upside $4.23 / downside $7.27 = 0.58 — thin, versus rr 2.9 at the $20.49 entry. (4) EV = 0.40x29.00 + 0.35x27.00 + 0.25x18.00 = 11.60 + 9.45 + 4.50 = $25.55, i.e. +3.1% vs live $24.77 (+24.7% vs entry). HOLD-VS-EXIT-AND-RE-ENTER, answered honestly: on frictionless paper the trade-around wins the arithmetic — exit $24.77, re-enter ~$20.35 in the 60% washout branches (+$4.42 captured) vs re-entering ~$3 higher in the 40% no-washout branch (-$3.00): 0.60x4.42 - 0.40x3.00 = +$1.45/sh advantage. The offsets: (a) the miss-cost is understated if the 08/05 print gaps the stock T2-style (+18.4% AH precedent) into 42%-of-float short covering — the re-entry never fills near $24.77; (b) the owner's directive is explicit that the washout IS the catalyst and the seat holds through the tranche, and the sleeve's discipline is hold-through-dated-events. Net: KEEP_WITH_REVIEW with staging=true — the seat holds per directive, but a pre-unlock half-trim into strength (re-add in the $19.85-20.85 washout zone, hard floor $17.50) is flagged as EV-superior on paper and is the corrected posture for a fast-return sleeve carrying +21% into a known $1.87B supply date. Edge at $24.77 is thin (+3.1% EV), not gone, and the catalyst is 2.5 weeks out — not EXIT_EDGE_GONE while the dated event is still live and unfired. Review 2026-08-21 (~2 weeks post-unlock): if absorbed and >= $26, exit toward $29 FV; if washed out, confirm the recovery leg or resolve at floor discipline."
+      },
+      "verdicts": [
+        {
+          "lens": "bear",
+          "holds": true,
+          "strongest_objection": "75% of the EV sits on two generous dials the evidence only weakly supports. (1) Scenario 1's 40% weight rests on \"84.5M sh short vs 77.7M unlocking -> covering demand alone >= unlock supply\" — but the evidence's own unresolved list flags that print as likely the 2026-06-30 FINRA settlement, i.e. BEFORE the documented 07/13 +12.0% squeeze day and the +29.8% 06/15->07/20 rally that already consumed covering, and the borrow economics (>12% fee / 98% utilization) are stale Nov-2025 S3 data. Covering spent in July cannot absorb the August unlock a second time, and S3's framing (\"shorts positioned around unlock events\") implies shorts cover INTO post-unlock weakness — short interest dampens washout depth (supports scenarios 2-3) rather than preventing the washout (scenario 1). (2) Scenario 2's $27 assumes ~93% retrace to FV within 2-4 weeks of a ~-18% washout — a pattern with zero in-name precedent: the only observed washout (T1, 2025-11-07) was followed by seven months of lower lows ($44 -> $33.57 by 11/20 -> $24-31 Feb range -> $16.84 June close low), never a recovery leg; the \"last structural overhang gone\" argument is plausible but untested. Under a modest bear reweight (25/40/35) or scenario-2 value of ~$23, EV lands $24.15-$24.35 — below live $24.77, flipping the +3.1% edge negative. Secondary attacks: T3 is coded \"absorbed\" despite the evidence showing a -11.4% fade within 3 days (05/18 $24.36 -> 05/21 $21.59) into a -29% June, so the \"1-of-3 washouts\" base rate is charitably scored (arguably 2-of-3 with a lag); and the $17.50 floor is lifted above the demonstrated $16.60 intraday low by supports (three pre-Q2 sell-side Buys, one-time Russell flow, Bud acqui-hire) that scenario 3's own trigger — a miss or failed absorption — would remove, while the $16.60 low itself printed WITH a 35-42%-of-float short bid beneath it that will not exist post-covering.",
+          "adjustment": "Keep KEEP_WITH_REVIEW + staging=true, but treat the pre-unlock half-trim as the base action, not a flag: the synthesis's own arithmetic concedes the trade-around is +$1.45/sh EV-superior, and the residual hold edge (+3.1%) is inside the error bar of the two contestable dials above. Concretely: (a) reweight scenarios toward ~30/40/30 pending fresh data (EV ~$24.90, i.e. roughly fair at $24.77), which justifies trimming into strength; (b) refresh short interest at the next FINRA publication (~07/24) and pull live borrow fee/utilization — if the print falls materially below 84.5M, scenario 1's covering-demand pillar is gone and the trim becomes mandatory; (c) for sizing/add-zone purposes use the demonstrated $16.60 low as the hard floor instead of $17.50, since the floor's uplift supports are conditional on a tape that scenario 3 negates; (d) the $19.85-20.85 re-add zone stands. Verdict holds=true because no load-bearing number outright fails against the cited evidence: the T4 size/date (8-K + 08/05 AMC earnings PR), tranche price history (IBKR OHLCV), short-interest print, analyst cluster ($30/$30/$36), floor basis ($16.60-16.84), and every EV/rr arithmetic line (25.55 EV, 0.58 rr at $24.77, 2.9 rr at $20.49, +$1.45 trade-around) all check out, and the rejection of the $3.10 floor (~1.2x the company's own $1.37B FY26 revenue guide, 81% below a low never breached through four supply events) is sound. The synthesis is directionally generous on probabilities and the scenario-2 retrace, but it self-discloses the thin edge and already encodes the correct posture via staging."
+        },
+        {
+          "lens": "bull",
+          "holds": true,
+          "strongest_objection": "The scenario tree has no right-tail and its washout weighting inverts the documented base rate. Upside is capped at $29 — below the LOWEST of the three cited PTs (BofA $30, Goldman $30, Citi $36; evidence 07/01-07/07) — while the evidence pack documents the exact overshoot mechanics the tree never monetizes: 84.50M shares short (35.5-42.4% of float) vs only 77.7M unlocking, plus the T2 precedent of +18.4% after-hours and +27.2% net absorption into an earnings beat, with earnings (08/05 AMC) landing BEFORE the 08/07 unlock. Meanwhile the 60% cumulative washout probability contradicts the observed record: 2-of-3 tranches absorbed (T2 +27.2% net, T3 +6.3% on release day), and the sole washout (T1) carried three non-repeating confounds per the evidence — simultaneous ~140M standard-lockup release, a ~2x higher valuation ($44 tape), and only 15.4M shares short vs 84.5M today. Clean-tranche base rate is 0-for-2 washouts. This matters most for staging=true: the trade-around's own breakeven is p(washout) = 3.00/7.42 ≈ 0.40, so at anything near the evidence-supported base rate the flagged pre-unlock half-trim is EV-negative — by the synthesis's own cited gap-miss risk (T2 +18.4% AH into 42%-of-float covering, re-entry never fills).",
+          "adjustment": "Add a right-tail overshoot scenario (~$33-34, anchored to the T2 +18.4% AH precedent gapping into 42%-of-float short covering and Citi's $36; ~15% weight) and/or shift the no-washout branch toward the clean-tranche base rate (50-55%). Either lifts EV from $25.55 to roughly $26.3-27.6 vs live $24.77, reinforcing KEEP_WITH_REVIEW. Downgrade staging=true from \"corrected posture\" to conditional: the half-trim is only EV-positive if p(washout) > ~0.40 is affirmatively defended against the 2-of-3-absorbed record with the T1 confounds (concurrent ~140M standard release, 2x valuation, 15.4M short) stripped out. Core numbers all verify: floor $17.50 sits ABOVE the demonstrated $16.60/$16.84 max-fear low; the $3.10 floor rejection is correct; EV/rr/trade-around arithmetic checks; unlock date (~2026-08-07), size (77.7M/$1.87B), and short interest (84.5M) match the evidence. Both bull objections raise EV, so the KEEP recommendation cannot flip under this lens — holds."
+        }
+      ]
+    }
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Evidence"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Verify"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "FIP:contract",
+      "phaseIndex": 1,
+      "phaseTitle": "Evidence",
+      "agentId": "a83b2b5c0cc9e9ee3",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784619986704,
+      "queuedAt": 1784619981133,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIP",
+      "promptPreview": "Forensic evidence pull, FIP (FTAI Infrastructure, NYSE). Target: the DEFINITIVE AGREEMENT for the announced sale of the Long Ridge Energy facility/business to MARA Holdings (announced on or around 2026-04-30). Sources: SEC EDGAR (FIP 8-K filings Apr-Jul 2026 and any exhibit purchase/sale agreement; also MARA Holdings 8-K/10-Q for the same deal), company press releases, deal newswire coverage. Extr…",
+      "lastProgressAt": 1784620446068,
+      "tokens": 114028,
+      "toolCalls": 39,
+      "durationMs": 459364,
+      "resultPreview": "{\"symbol\":\"FIP\",\"facts\":[{\"claim\":\"PARTIES/STRUCTURE: Equity Purchase Agreement dated April 29, 2026. Buyer = MARA USA Corporation (Delaware corp, subsidiary of MARA Holdings, Inc.). Sellers = Ohio River Partners Holdco LLC ('ORPH', direct wholly-owned sub of FIP) and Ohio River Partners Finance LLC ('ORPF', direct wholly-owned sub of ORPH). MARA Holdings is a party solely for Articles V, IX and X…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "FIP:balance",
+      "phaseIndex": 1,
+      "phaseTitle": "Evidence",
+      "agentId": "a10ff40839206dd2f",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784619984186,
+      "queuedAt": 1784619981134,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIP",
+      "promptPreview": "Forensic evidence pull, FIP (FTAI Infrastructure, NYSE). Target: the CAPITAL STRUCTURE, especially the claim that ~$1.59B of redemption-value PREFERRED equity sits ahead of the common. Sources: FIP Q1-2026 10-Q (period ended 2026-03-31) on SEC EDGAR - balance sheet, redeemable preferred / mezzanine section, notes on preferred terms; FY2025 10-K if needed. Extract with citations: (1) each series of…",
+      "lastProgressAt": 1784620566798,
+      "tokens": 129071,
+      "toolCalls": 47,
+      "durationMs": 582612,
+      "resultPreview": "{\"symbol\":\"FIP\",\"facts\":[{\"claim\":\"Total redeemable preferred stock (temporary equity, mezzanine) carrying value $1,123.158M at 2026-03-31 (vs $1,090.220M at 2025-12-31), sitting between total liabilities and equity on the balance sheet\",\"source\":\"FIP Q1-2026 10-Q (acc. 0001899883-26-000025, filed 2026-05-08), Consolidated Balance Sheets — https://www.sec.gov/Archives/edgar/data/1899883/0001899883…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "FIP:reg+MARA",
+      "phaseIndex": 1,
+      "phaseTitle": "Evidence",
+      "agentId": "a5e0cc412b022b3d3",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784619983718,
+      "queuedAt": 1784619981134,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIP",
+      "promptPreview": "Forensic evidence pull, FIP (FTAI Infrastructure) / MARA Holdings - Long Ridge sale REGULATORY PATH and BUYER RELIABILITY as of 2026-07-20. Sources: FERC eLibrary / dockets (Section 203 application for Long Ridge transfer - docket number, filing date, intervention deadline, typical clearance timelines), PJM interconnection or market-participant transfer requirements, MARA Holdings public statement…",
+      "lastProgressAt": 1784620786317,
+      "tokens": 150741,
+      "toolCalls": 47,
+      "durationMs": 802599,
+      "resultPreview": "{\"symbol\":\"FIP\",\"facts\":[{\"claim\":\"Deal: FIP agreed to sell Long Ridge Energy & Power LLC (via subsidiaries Ohio River Partners Holdco/Finance) to MARA USA Corporation for ~$1.52B before closing adjustments; Equity Purchase Agreement dated April 29, 2026, announced April 30, 2026. Exact Base Purchase Price in the EPA: $1,512,000,000.\",\"source\":\"FIP press release (globenewswire.com/news-release/202…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "FIG:unlock",
+      "phaseIndex": 1,
+      "phaseTitle": "Evidence",
+      "agentId": "a80e0c0fdc819b913",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784619983833,
+      "queuedAt": 1784619981134,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIG",
+      "promptPreview": "Forensic evidence pull, FIG (Figma, NYSE). Target: the FINAL IPO LOCKUP UNLOCK mechanics as of 2026-07-20. Sources: Figma S-1/424B4 and the Extended Lock-Up Agreement (30 Aug 2025 per prior research), any 8-K/PR on lockup releases, exchange/float data providers, short-interest data. Extract with citations: (1) the tranche schedule of the extended lockup: how many tranches, release dates, share cou…",
+      "lastProgressAt": 1784620433340,
+      "tokens": 102124,
+      "toolCalls": 33,
+      "durationMs": 449507,
+      "resultPreview": "{\"symbol\":\"FIG\",\"facts\":[{\"claim\":\"Extended Lock-Up Agreement dated 2025-08-30 covers holders of ~54.1% of outstanding Class A shares (~222.1M shares total) and runs until 2026-08-31 unless tranches release earlier; entered with 'Extended Lock-Up Holders' (not named in the filing).\",\"source\":\"Figma 8-K filed 2025-09-03, Item 8.01 (SEC EDGAR: Archives/edgar/data/1579878/000157987825000026/fig-20250…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "FIP:synth",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a59ae9648ab6cd233",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620791437,
+      "queuedAt": 1784620789132,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIP",
+      "promptPreview": "You are re-underwriting a PAPER catalyst-sleeve seat from forensic evidence. Seat context: FIP (FTAI Infrastructure) held at entry $4.56 (2026-06-10), weight 10%, live ~$4.03, recorded thesis 'Refi_restructuring / de-levering by Q3-2026, target $9 (analyst SoP), floor $3.90 (52wk low)'. The REAL event: announced sale of Long Ridge to MARA (~2026-04-30). A skeptic claims even a clean close leaves t…",
+      "lastProgressAt": 1784620948602,
+      "tokens": 62482,
+      "toolCalls": 1,
+      "durationMs": 157164,
+      "resultPreview": "{\"symbol\":\"FIP\",\"scenarios\":[{\"name\":\"A_CLEAN_CLOSE_RERATE\",\"prob\":0.45,\"value_per_share\":5.6,\"math\":\"First the mechanical SoP under a CLEAN close, to test the $9 target. Post-close claims ahead of common: corporate term loan $1,350M - $300M announced paydown = $1,050M; Jefferson debt ~$920M (incl. the new $230M Jefferson bridge that replaced the 2024B bonds) - $230M mandatory prepay from asset-sa…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "FIG:synth",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a174f86cbe3523d6f",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620791975,
+      "queuedAt": 1784620789132,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "FIG",
+      "promptPreview": "You are re-underwriting a PAPER catalyst-sleeve seat from forensic evidence. Seat context: FIG (Figma) held at entry $20.49 (2026-06-10), weight 5%, live ~$24.77 (+21%), recorded thesis: 'post-IPO lockup supply-clearing mean-reversion - hold THROUGH the final unlock, exit near FV $32, floor $17.50'. A refreshed dossier claimed fv $30 / floor $3.10 (trough multiple) making rr 0.24; the $3.10 floor …",
+      "lastProgressAt": 1784620909353,
+      "tokens": 48169,
+      "toolCalls": 1,
+      "durationMs": 117378,
+      "resultPreview": "{\"symbol\":\"FIG\",\"scenarios\":[{\"name\":\"no_washout_supply_absorbed\",\"prob\":0.4,\"value_per_share\":29,\"math\":\"Precedents: T2 2026-02-20 (44.4M sh) unlocked into FY25 beat, net +27.2% 02/17->02/27; T3 2026-05-18 (61.1M sh) absorbed, +6.3% ON release day. Final tranche 77.7M sh vs 84.5M sh short (35.5-42.4% of float) -> covering demand alone >= unlock supply, and Q2 earnings (08/05 AMC) land 2 days BEFO…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 7,
+      "label": "verify-bear:FIP",
+      "phaseIndex": 3,
+      "phaseTitle": "Verify",
+      "agentId": "a8800540f8956b161",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620952429,
+      "queuedAt": 1784620948630,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "BEAR",
+      "promptPreview": "Adversarial BEAR verification of a seat re-underwrite for FIP. The synthesis: {\"symbol\":\"FIP\",\"scenarios\":[{\"name\":\"A_CLEAN_CLOSE_RERATE\",\"prob\":0.45,\"value_per_share\":5.6,\"math\":\"First the mechanical SoP under a CLEAN close, to test the $9 target. Post-close claims ahead of common: corporate term loan $1,350M - $300M announced paydown = $1,050M; Jefferson debt ~$920M (incl. the new $230M Jefferso…",
+      "lastProgressAt": 1784621093069,
+      "tokens": 69506,
+      "toolCalls": 2,
+      "durationMs": 140640,
+      "resultPreview": "{\"lens\":\"BEAR\",\"holds\":true,\"strongest_objection\":\"The Scenario A/B asset side rests on an unverified ~$600M net-cash bridge that the evidence pack itself flags as unresolved (\\\"Whether the $1.52B base purchase price is an enterprise-value construct (buyer assumes/repays the ~$1.146B Long Ridge debt) or equity proceeds to FIP\\\"). MARA's own PR language — \\\"approximately $1.5 billion... including t…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 8,
+      "label": "verify-bull:FIP",
+      "phaseIndex": 3,
+      "phaseTitle": "Verify",
+      "agentId": "a765cfe6c00fb7c13",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620951394,
+      "queuedAt": 1784620948630,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "BULL",
+      "promptPreview": "Adversarial BULL verification of a seat re-underwrite for FIP. The synthesis: {\"symbol\":\"FIP\",\"scenarios\":[{\"name\":\"A_CLEAN_CLOSE_RERATE\",\"prob\":0.45,\"value_per_share\":5.6,\"math\":\"First the mechanical SoP under a CLEAN close, to test the $9 target. Post-close claims ahead of common: corporate term loan $1,350M - $300M announced paydown = $1,050M; Jefferson debt ~$920M (incl. the new $230M Jefferso…",
+      "lastProgressAt": 1784621130002,
+      "tokens": 71460,
+      "toolCalls": 2,
+      "durationMs": 178608,
+      "resultPreview": "{\"lens\":\"BULL\",\"holds\":true,\"strongest_objection\":\"The price bridge is the synthesis's only soft joint: the evidence itself flags \\\"equity-vs-enterprise bridge... not broken out in public documents,\\\" and FIP's 8-K wording (\\\"base purchase price of $1.512 billion\\\" for 100% of the LLC interests) permits a maximal-bull reading where all $1.16B of Long Ridge debt is assumed on top and FIP nets ~$1.5…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 9,
+      "label": "verify-bear:FIG",
+      "phaseIndex": 3,
+      "phaseTitle": "Verify",
+      "agentId": "afab203351ffbf0f7",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620951890,
+      "queuedAt": 1784620948636,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "bear",
+      "promptPreview": "Adversarial BEAR verification of a seat re-underwrite for FIG. The synthesis: {\"symbol\":\"FIG\",\"scenarios\":[{\"name\":\"no_washout_supply_absorbed\",\"prob\":0.4,\"value_per_share\":29,\"math\":\"Precedents: T2 2026-02-20 (44.4M sh) unlocked into FY25 beat, net +27.2% 02/17->02/27; T3 2026-05-18 (61.1M sh) absorbed, +6.3% ON release day. Final tranche 77.7M sh vs 84.5M sh short (35.5-42.4% of float) -> coveri…",
+      "lastProgressAt": 1784621086473,
+      "tokens": 49844,
+      "toolCalls": 1,
+      "durationMs": 134582,
+      "resultPreview": "{\"lens\":\"bear\",\"holds\":true,\"strongest_objection\":\"75% of the EV sits on two generous dials the evidence only weakly supports. (1) Scenario 1's 40% weight rests on \\\"84.5M sh short vs 77.7M unlocking -> covering demand alone >= unlock supply\\\" — but the evidence's own unresolved list flags that print as likely the 2026-06-30 FINRA settlement, i.e. BEFORE the documented 07/13 +12.0% squeeze day and…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 10,
+      "label": "verify-bull:FIG",
+      "phaseIndex": 3,
+      "phaseTitle": "Verify",
+      "agentId": "ae5ccce00498a63c2",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1784620953416,
+      "queuedAt": 1784620948636,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "bull",
+      "promptPreview": "Adversarial BULL verification of a seat re-underwrite for FIG. The synthesis: {\"symbol\":\"FIG\",\"scenarios\":[{\"name\":\"no_washout_supply_absorbed\",\"prob\":0.4,\"value_per_share\":29,\"math\":\"Precedents: T2 2026-02-20 (44.4M sh) unlocked into FY25 beat, net +27.2% 02/17->02/27; T3 2026-05-18 (61.1M sh) absorbed, +6.3% ON release day. Final tranche 77.7M sh vs 84.5M sh short (35.5-42.4% of float) -> coveri…",
+      "lastProgressAt": 1784621034464,
+      "tokens": 49865,
+      "toolCalls": 1,
+      "durationMs": 81048,
+      "resultPreview": "{\"lens\":\"bull\",\"holds\":true,\"strongest_objection\":\"The scenario tree has no right-tail and its washout weighting inverts the documented base rate. Upside is capped at $29 — below the LOWEST of the three cited PTs (BofA $30, Goldman $30, Citi $36; evidence 07/01-07/07) — while the evidence pack documents the exact overshoot mechanics the tree never monetizes: 84.50M shares short (35.5-42.4% of floa…"
+    }
+  ],
+  "totalTokens": 847290,
+  "totalToolCalls": 174
+}
