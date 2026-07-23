@@ -52,6 +52,8 @@ export async function GET(req: Request) {
     if (gcs) return gcs;
     return get(`/${suffix}`, fb);
   };
+  const NOW = Date.now();
+  const isoDate = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
   // ── Congress Watch raw pull — Senate + House STOCK Act filings via the /api/fmp
   //    proxy (FMP stable `senate-latest` / `house-latest`, the all-symbol feeds; the
@@ -95,7 +97,7 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, methodTracks, calibV2, spec, apexTrkEqual, apexTrkWeighted, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, methodTracks, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/method-tracks", { regimes: {} }), // frozen v1 — system_pulse only now; Model Focus moved off this, see below
@@ -103,6 +105,12 @@ export async function GET(req: Request) {
     getGcsFirst("speculair_baskets.json", {}),
     getGcsFirst("speculair_apex_tracking.json", {}),
     getGcsFirst("speculair_apex_tracking_weighted.json", {}),
+    getGcsFirst("speculair_value_apex.json", {}),
+    // SPY (^GSPC) daily closes spanning both books' inception dates + the 30d MTD anchor,
+    // so "live tracking" can measure SPY over the SAME windows as each book below —
+    // never a mismatched MTD-vs-YTD comparison. 95d back is a safety margin past either
+    // book's inception (~50d old as of writing).
+    get(`/api/fmp?e=historical-price-eod/light&symbol=%5EGSPC&from=${isoDate(NOW - 95 * 86400000)}&to=${isoDate(NOW)}`, []),
     pullCongress("senate-latest"),
     pullCongress("house-latest"),
     pullTargets(),
@@ -209,7 +217,6 @@ export async function GET(req: Request) {
   //    this week + the week's hottest sector. D9+ only (the highest-conviction tier)
   //    and only fresh entries (≤7d) so the card reads as "what newly qualified",
   //    not a standing list. Apex/debate names move to the System Debate card. ──
-  const NOW = Date.now();
   const isFresh = (d: string | null) => { const t = Date.parse(d || ""); return Number.isFinite(t) ? NOW - t <= 7 * 86400000 : false; };
   const d9new = stockRows
     .filter((r) => r.decile >= 9 && r.outcome === "OPEN" && isFresh(r.entryDate))
@@ -279,11 +286,74 @@ export async function GET(req: Request) {
     worst_name: nameRets.length > 1 ? nameRets[nameRets.length - 1] : null,
   };
 
-  // ── System pulse footer (live tracking — from method-tracks 30d stock cycle) ──
+  // ── System pulse footer ──
   const stock30 = methodTracks?.regimes?.["30d_p10"]?.current_cycle?.by_method?.stock || {};
+
+  // Live tracking — Apex + Value Lens vs SPY, MATCHED windows. Previously this
+  // compared the apex book's trailing-30d return against SPY's calendar-YTD
+  // (two different spans dressed up as one comparison — the "MTD vs YTD" bug).
+  // Fixed by measuring BOTH books over the same two windows — their own
+  // trailing-30d ("MTD") and their own inception-to-date — and measuring SPY
+  // over those SAME windows instead of a fixed calendar YTD. No book gets a
+  // fabricated calendar-YTD either: both launched in June, so a Jan-1 baseline
+  // would silently claim performance for months the book didn't exist.
+  const navReturnSince = (history: any[] | undefined, sinceMs: number): number | null => {
+    if (!history?.length) return null;
+    const latest = history[history.length - 1];
+    let anchor = history[0];
+    for (const h of history) { if (Date.parse(h.date) >= sinceMs) { anchor = h; break; } }
+    if (!anchor?.nav || !latest?.nav) return null;
+    return ((latest.nav / anchor.nav) - 1) * 100;
+  };
+  const THIRTY_D_AGO = NOW - 30 * 86400000;
+  const apexMtdPct = navReturnSince(at.history, THIRTY_D_AGO);
+
+  const vtWeighted = valueApex?.value_tracking_weighted;
+  const vtIsWeighted = !!(vtWeighted && (vtWeighted.history || []).length >= 4);
+  const vt = vtIsWeighted ? vtWeighted : (valueApex?.value_tracking || {});
+  const valueMtdPct = navReturnSince(vt.history, THIRTY_D_AGO);
+
+  const spySeries: { date: string; price: number }[] = (Array.isArray(spyHistRaw) ? spyHistRaw : [])
+    .map((r: any) => ({ date: String(r.date || ""), price: num(r.price) }))
+    .filter((p) => p.date && p.price > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const spyPriceOn = (dateStr: string | null | undefined): number | null => {
+    if (!dateStr || !spySeries.length) return null;
+    const target = Date.parse(dateStr);
+    if (!Number.isFinite(target)) return null;
+    let anchor = spySeries[0];
+    for (const p of spySeries) { if (Date.parse(p.date) >= target) { anchor = p; break; } }
+    return anchor?.price ?? null;
+  };
+  const spyNow = num(spxR?.price, NaN);
+  const spyReturnSinceDate = (dateStr: string | null | undefined): number | null => {
+    const anchor = spyPriceOn(dateStr);
+    return Number.isFinite(spyNow) && anchor ? ((spyNow / anchor) - 1) * 100 : null;
+  };
+  const spyMtdPct = spyReturnSinceDate(isoDate(THIRTY_D_AGO));
+
+  const live_tracking = {
+    spy_mtd_pct: spyMtdPct != null ? r2(spyMtdPct) : null,
+    books: ([
+      at?.since_inception_pct != null ? {
+        key: "apex", label: "Apex",
+        mtd_pct: apexMtdPct != null ? r2(apexMtdPct) : null,
+        since_inception_pct: r2(sinceInc),
+        since_label: md(at.inception_date),
+        spy_since_inception_pct: (() => { const v = spyReturnSinceDate(at.inception_date); return v != null ? r2(v) : null; })(),
+      } : null,
+      vt?.since_inception_pct != null ? {
+        key: "value", label: "Value Lens",
+        mtd_pct: valueMtdPct != null ? r2(valueMtdPct) : null,
+        since_inception_pct: r2(num(vt.since_inception_pct)),
+        since_label: md(vt.inception_date),
+        spy_since_inception_pct: (() => { const v = spyReturnSinceDate(vt.inception_date); return v != null ? r2(v) : null; })(),
+      } : null,
+    ] as any[]).filter(Boolean),
+  };
+
   const system_pulse = {
-    live_mtd: `${sign(num(stock30.portfolio_return_pct))}${r2(num(stock30.portfolio_return_pct))}%`,
-    spy_mtd: spxR?.ytd != null ? `${sign(num(spxR.ytd))}${r2(num(spxR.ytd))}% YTD` : "—",
+    live_tracking,
     avg_coverage: `${Math.round(num(stock30.winning_trade_rate) * 100)}% win · ${num(stock30.n)} tracked (30d)`,
   };
 

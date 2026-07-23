@@ -463,11 +463,28 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
               <span style={{ fontSize: 13, color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>{debate.wait}</span>
             </div>
           </div>
-          {/* Live-tracking footer (system pulse) */}
-          <div style={{ display: "flex", gap: 20, borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 4 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-              <RefreshCw size={12} /> Live tracking: <strong style={{ color: "var(--green)" }}>{system_pulse.live_mtd} MTD</strong> vs SPY {system_pulse.spy_mtd}
-            </div>
+          {/* Live-tracking footer (system pulse) — each book's own MTD (trailing 30d) and
+              since-inception return, each paired against SPY over that SAME window (not a
+              mismatched MTD-vs-YTD comparison, and no fabricated YTD for books that only
+              launched in June). */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 4 }}>
+            {(system_pulse.live_tracking?.books || []).map((b: any) => (
+              <div key={b.key} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", flexWrap: "wrap" }}>
+                <RefreshCw size={12} style={{ flexShrink: 0 }} />
+                <span style={{ color: "var(--text)", fontWeight: 700 }}>{b.label}:</span>
+                {b.mtd_pct != null && (
+                  <span>
+                    MTD <strong style={{ color: b.mtd_pct >= 0 ? "var(--green)" : "var(--red)" }}>{b.mtd_pct >= 0 ? "+" : ""}{b.mtd_pct}%</strong>
+                    {system_pulse.live_tracking.spy_mtd_pct != null && <> (SPY {system_pulse.live_tracking.spy_mtd_pct >= 0 ? "+" : ""}{system_pulse.live_tracking.spy_mtd_pct}%)</>}
+                  </span>
+                )}
+                <span>·</span>
+                <span>
+                  Since {b.since_label} <strong style={{ color: b.since_inception_pct >= 0 ? "var(--green)" : "var(--red)" }}>{b.since_inception_pct >= 0 ? "+" : ""}{b.since_inception_pct}%</strong>
+                  {b.spy_since_inception_pct != null && <> (SPY {b.spy_since_inception_pct >= 0 ? "+" : ""}{b.spy_since_inception_pct}%)</>}
+                </span>
+              </div>
+            ))}
             <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
               <BarChart2 size={12} /> {system_pulse.avg_coverage}
             </div>
