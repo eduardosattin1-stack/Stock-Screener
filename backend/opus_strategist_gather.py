@@ -21,14 +21,33 @@ from ibkr_options_batch import _gcs_read, _map_contract   # reuse GCS read + exc
 log = logging.getLogger("opus_gather")
 IV_PREFIX = "options/iv_history"
 MIN_SAMPLES = 20
-EDGES = [0.103, 0.163, 0.229, 0.296, 0.345, 0.393, 0.445, 0.516, 0.577]  # p20_60 decile edges
+# Last-known p20_60 edges (2026-06-19 snapshot) — used ONLY if the live config
+# read below fails, so a GCS hiccup can't crash the nightly gather. This value
+# must never be trusted as current: the OOS thresholds get recalibrated, and a
+# hardcoded copy silently drifted out of sync with calibration_tracking/v2 was
+# found duplicated a THIRD time (frontend stock page) in the 2026-07-23 audit.
+_EDGES_FALLBACK = [0.103, 0.163, 0.229, 0.296, 0.345, 0.393, 0.445, 0.516, 0.577]
 MIN_DECILE = int(os.environ.get("OPUS_MIN_DECILE", "9"))   # 9 => D9+D10 only
 OUT = os.environ.get("OPUS_INPUT", "strategy_input.json")
 
 
-def _decile(p: float) -> int:
+def _load_edges() -> list:
+    """p20_60 decile edges, read live from calibration_tracking/v2/config.json —
+    the same document /performance and the TradeBot read. Falls back (with a
+    loud warning) only if the live read fails."""
+    cfg = _gcs_read("calibration_tracking/v2/config.json", {})
+    edges = (cfg.get("decile_thresholds") or {}).get("p20_60")
+    if isinstance(edges, list) and len(edges) == 9:
+        return edges
+    log.warning("could not read live p20_60 decile thresholds from "
+                "calibration_tracking/v2/config.json — falling back to the "
+                "2026-06-19 snapshot; deciles may be stale this run")
+    return _EDGES_FALLBACK
+
+
+def _decile(p: float, edges: list) -> int:
     d = 1
-    for t in EDGES:
+    for t in edges:
         if p >= t:
             d += 1
     return d
@@ -45,11 +64,12 @@ def _iv_rank(symbol: str):
 
 
 def main():
+    edges = _load_edges()
     scan = _gcs_read("scans/latest_global.json", {})
     stocks = scan.get("stocks") or (scan if isinstance(scan, list) else [])
     picks = [s for s in stocks
              if isinstance(s.get("hit_prob_60d"), (int, float)) and s["hit_prob_60d"] > 0
-             and _decile(s["hit_prob_60d"]) >= MIN_DECILE]
+             and _decile(s["hit_prob_60d"], edges) >= MIN_DECILE]
     picks.sort(key=lambda s: s["hit_prob_60d"], reverse=True)
     log.info("D%d+ picks: %d", MIN_DECILE, len(picks))
 
@@ -75,7 +95,7 @@ def main():
                     log.info("skip %s (no chain/options)", sym); continue
                 ivr, n = _iv_rank(sym)
                 out.append({
-                    "symbol": sym, "decile": _decile(s["hit_prob_60d"]),
+                    "symbol": sym, "decile": _decile(s["hit_prob_60d"], edges),
                     "hit_prob_60d": round(s["hit_prob_60d"], 3),
                     "hit_prob_30d": round(s.get("hit_prob_30d") or 0, 3),
                     "expected_dd_60d": round(s.get("expected_dd_60d") or 0, 3),

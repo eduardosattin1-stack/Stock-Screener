@@ -889,43 +889,61 @@ function CompanyProfileCard({symbol}:{symbol:string}){
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// P20Card v2 — Pure ML probability card. No options data.
+// P20Card v3 — ONE model, ONE calibration: the exact two regimes validated
+// on /performance (calibration_tracking/v2), nothing else. v2 conflated a
+// THIRD, untracked target (P(+20% in 30 bars), no OOS-validated decile system
+// of its own) with deciles computed from a different regime's thresholds —
+// and those thresholds were a hardcoded JS array frozen 2026-06-19, never
+// resynced with the live config the /performance page reads on every request.
+// Fixed 2026-07-23: fetch the real decile edges + this decile's live touch
+// stats from the same sources /performance uses, so this card can never
+// silently drift from the validated system again.
 // ═══════════════════════════════════════════════════════════════════════
 
 function P20Card({s}:{s:StockData}){
-  const p20 = s.hit_prob ?? 0;
-  if(p20 <= 0) return null;
+  const [edges,setEdges]=useState<{p10_30?:number[];p20_60?:number[]}|null>(null);
+  const [deciles,setDeciles]=useState<{p10_30?:any[];p20_60?:any[]}|null>(null);
 
-  const p20pct = p20 * 100;
+  useEffect(()=>{
+    let cancelled=false;
+    fetch("/api/gcs/calibration_tracking/v2/config.json",{cache:"no-store"})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{ if(!cancelled&&d?.decile_thresholds) setEdges(d.decile_thresholds); })
+      .catch(()=>{/* card still renders raw probabilities without a decile */});
+    fetch("/api/performance/calibration-v2",{cache:"no-store"})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{ if(!cancelled&&d?.horizons) setDeciles({p10_30:d.horizons["30d"]?.deciles,p20_60:d.horizons["60d"]?.deciles}); })
+      .catch(()=>{});
+    return ()=>{cancelled=true;};
+  },[]);
 
-  // Lower thresholds scaled from the v4 OOS distribution (model-pred baseline).
-  const p5  = Math.min(p20 * 3.41, 0.80);
-  const p10 = Math.min(p20 * 2.29, 0.65);
-  const p15 = Math.min(p20 * 1.49, 0.50);
+  const p30 = s.hit_prob_10pct_30d ?? null;   // real v4 output, the p10_30 regime
+  const p60 = s.hit_prob_60d ?? null;         // real v4 output, the p20_60 regime
+  if(p30==null && p60==null) return null;
 
-  // Decile = OOS-calibrated rank from the v4 holdout p20_60 thresholds
-  // (calibration_tracking/v2/config.json → decile_thresholds.p20_60), computed
-  // from the 60-bar +20% probability — the horizon the /performance calibration
-  // tracker validates. NOT a client-side relative rank.
-  const P20_60_DECILE_EDGES = [0.103,0.163,0.229,0.296,0.345,0.393,0.445,0.516,0.577];
-  const p60 = s.hit_prob_60d ?? null;
-  const decile = p60==null ? null : P20_60_DECILE_EDGES.reduce((d,t)=>p60>=t?d+1:d, 1);
-  const signal = decile!=null
-    ? (decile>=9?"STRONG":decile>=7?"MODERATE":decile>=5?"MILD":"WEAK")
-    : (p20>=0.15?"STRONG":p20>=0.08?"MODERATE":p20>=0.03?"MILD":"WEAK");
-  const signalColor = signal==="STRONG"?T.green:signal==="MODERATE"?T.amber:T.textMuted;
+  const decileOf=(p:number|null,e?:number[])=> (p==null||!e)?null:e.reduce((d,t)=>p>=t?d+1:d,1);
+  const d30 = decileOf(p30, edges?.p10_30);
+  const d60 = decileOf(p60, edges?.p20_60);
+  const rowFor=(rows:any[]|undefined,d:number|null)=> (rows&&d!=null)?rows.find((r:any)=>r.decile===d):null;
+  const r30 = rowFor(deciles?.p10_30, d30);
+  const r60 = rowFor(deciles?.p20_60, d60);
 
-  const pBar=(threshold:string, pct:number, isRaw:boolean)=>{
-    const w=Math.max(pct,2);
-    const color=pct>=40?T.green:pct>=20?"var(--green)":pct>=10?T.amber:T.textMuted;
+  const signalOf=(d:number|null)=> d==null?null:(d>=9?"STRONG":d>=7?"MODERATE":d>=5?"MILD":"WEAK");
+  const colorOf=(sig:string|null)=> sig==="STRONG"?T.green:sig==="MODERATE"?T.amber:T.textMuted;
+  const topSignal = signalOf(d60) ?? signalOf(d30);
+
+  const Stat=({label,prob,decile,row}:{label:string;prob:number|null;decile:number|null;row:any})=>{
+    if(prob==null) return null;
+    const sig = signalOf(decile);
+    const color = colorOf(sig);
     return(
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:`1px solid ${T.divider}`}}>
-        <div style={{width:50,fontSize:10,fontFamily:T.mono,color:T.textMuted,fontWeight:600,textAlign:"right"}}>{threshold}</div>
-        <div style={{flex:1,height:16,background:T.divider,borderRadius:3,overflow:"hidden",position:"relative"}}>
-          <div style={{width:`${w}%`,height:"100%",background:color,borderRadius:3,transition:"width 0.4s"}}/>
-          <span style={{position:"absolute",left:8,top:0,lineHeight:"16px",fontSize:10,fontFamily:T.mono,fontWeight:700,color:w>30?"var(--bg-surface)":T.text}}>{pct.toFixed(0)}%</span>
+      <div style={{flex:1,minWidth:150}}>
+        <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>{label}</div>
+        <div style={{fontSize:26,color,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{(prob*100).toFixed(0)}%</div>
+        <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>
+          {decile!=null?`D${decile}/10${sig?` · ${sig}`:""}`:"awaiting live thresholds…"}
+          {row&&row.n_total>0?` · ${row.n_touched}/${row.n_total} touched to date`:""}
         </div>
-        <div style={{width:36,fontSize:9,fontFamily:T.mono,color:T.textLight,textAlign:"right"}}>{isRaw?"model":"est."}</div>
       </div>
     );
   };
@@ -933,32 +951,14 @@ function P20Card({s}:{s:StockData}){
   return(
     <Card>
       <SH title="Move Probability (ML)" icon={<TrendingUp size={12}/>}
-        sub={decile!=null?`Decile ${decile}/10 · ${signal} signal`:`${signal} signal`}/>
-      <div style={{display:"flex",alignItems:"baseline",gap:12,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.divider}`}}>
-        <div>
-          <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em"}}>P(+20% IN 4W)</div>
-          <div style={{fontSize:28,color:signalColor,fontFamily:T.mono,fontWeight:700,marginTop:2}}>{p20pct.toFixed(0)}%</div>
-          <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,marginTop:1}}>{decile!=null?`D${decile}/10 · `:""}{(p20pct/5.3).toFixed(1)}x base rate</div>
-        </div>
-        <div style={{flex:1,fontSize:11,fontFamily:T.sans,color:T.textMuted,lineHeight:1.5,paddingLeft:16,borderLeft:`1px solid ${T.divider}`}}>
-          {signal==="STRONG"
-            ? "Top-decile ML signal — among the strongest move-probability names in the universe."
-            : signal==="MODERATE"
-            ? "Moderate ML move signal — mid-to-upper decile."
-            : "Below the actionable threshold. Model sees limited near-term move probability."}
-        </div>
+        sub={topSignal?`${topSignal} signal`:"awaiting live calibration"}/>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,marginBottom:10,paddingBottom:10,borderBottom:`1px solid ${T.divider}`}}>
+        <Stat label="P(+10% IN 30 BARS)" prob={p30} decile={d30} row={r30}/>
+        <Stat label="P(+20% IN 60 BARS)" prob={p60} decile={d60} row={r60}/>
       </div>
-      <div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>
-        P(CLOSE ABOVE THRESHOLD IN 4 WEEKS)
-      </div>
-      {pBar("+5%", p5*100, false)}
-      {pBar("+10%", p10*100, false)}
-      {pBar("+15%", p15*100, false)}
-      {pBar("+20%", p20*100, true)}
-      <div style={{marginTop:10,fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
-        time_model_v4 · TOP-3 ensemble · 48 features · OOS AUC 0.776.
-        P(+20% in 4w) is direct model output; lower thresholds scaled from the OOS distribution.
-        Decile = v4 OOS holdout thresholds (p20_60) — the same calibration shown on /performance. Not investment advice.
+      <div style={{fontSize:9,color:T.textLight,fontFamily:T.mono,lineHeight:1.5}}>
+        time_model_v4 · deciles + touch counts read live from calibration_tracking/v2 — the
+        exact system /performance validates. No separate/estimated thresholds. Not investment advice.
       </div>
     </Card>
   );
@@ -4274,8 +4274,8 @@ export default function StockDetail(){
       {/* Multi-Valuation Comparison Card */}
       <MultiValuationCard s={s} />
 
-      {/* P20 Move Probability Card — full width, shows probability ladder + spread edge */}
-      {(s.hit_prob??0)>0&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
+      {/* P20 Move Probability Card — the two validated calibration regimes only */}
+      {((s.hit_prob_10pct_30d??0)>0||(s.hit_prob_60d??0)>0)&&<div style={{marginBottom:16}}><P20Card s={s}/></div>}
 
 
       {/* Opus 4.8 nightly option-strategy (D9/D10 picks only) */}
