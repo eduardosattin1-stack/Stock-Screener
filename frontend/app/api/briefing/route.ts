@@ -98,7 +98,7 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, methodologyTracking, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/calibration-v2", { records: [] }),
@@ -106,6 +106,9 @@ export async function GET(req: Request) {
     getGcsFirst("speculair_apex_tracking.json", {}),
     getGcsFirst("speculair_apex_tracking_weighted.json", {}),
     getGcsFirst("speculair_value_apex.json", {}),
+    // Per-basket nav_history (uniform start 2026-07-20 across all 12 baskets, unlike
+    // their staggered tracking_start) — powers the basket_pulse MTD/week winner below.
+    getGcsFirst("methodology_tracking.json", {}),
     // SPY (^GSPC) daily closes spanning both books' inception dates + the 30d MTD anchor,
     // so "live tracking" can measure SPY over the SAME windows as each book below —
     // never a mismatched MTD-vs-YTD comparison. 95d back is a safety margin past either
@@ -303,10 +306,24 @@ export async function GET(req: Request) {
   radarItems.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
   const radar_watch = { total: radarItems.length, items: radarItems.slice(0, 5) };
 
+  // Shared NAV-window helper (reused below for basket MTD/week AND the Live
+  // Tracking section further down) — return from the earliest history point ON
+  // OR AFTER `sinceMs` to the latest. Never fabricates a window: with only a few
+  // days of history it returns whatever real window exists rather than a fake
+  // 30d/7d figure, and self-corrects as more nightly snapshots accumulate.
+  const navReturnSince = (history: any[] | undefined, sinceMs: number): number | null => {
+    if (!history?.length) return null;
+    const latest = history[history.length - 1];
+    let anchor = history[0];
+    for (const h of history) { if (Date.parse(h.date) >= sinceMs) { anchor = h; break; } }
+    if (!anchor?.nav || !latest?.nav) return null;
+    return ((latest.nav / anchor.nav) - 1) * 100;
+  };
+  const THIRTY_D_AGO = NOW - 30 * 86400000;
+  const SEVEN_D_AGO = NOW - 7 * 86400000;
+
   // ── 12-basket pulse ──
-  // Portfolio-level read across the 12 Speculair methodology baskets. Returns are
-  // real and time-referenced: basket-level since each basket's tracking_start;
-  // single-name compounder/loser from the apex book's live entry-vs-last prices.
+  // Portfolio-level read across the 12 Speculair methodology baskets.
   const BLABEL: Record<string, string> = {
     dcf_fcff: "DCF-FCFF", earnings_yield_gap: "Earnings Yield", ev_gross_profit: "Gross Profit.",
     rd_capitalized_dcf: "R&D DCF", owner_earnings: "Owner Earn.", epv: "EPV", graham_revised: "Graham",
@@ -316,10 +333,35 @@ export async function GET(req: Request) {
   const md = (d: any) => { const x = new Date(d); return Number.isNaN(x.getTime()) ? "" : x.toLocaleDateString("en-US", { month: "short", day: "numeric" }); };
   const pmb: Record<string, any> = spec?.per_methodology_baskets || {};
   const basketRets = Object.keys(pmb).map((k) => ({ key: k, label: BLABEL[k] || k, ret: r2(num(pmb[k]?.ytd_return) * 100), start: pmb[k]?.tracking_start }));
-  basketRets.sort((a, b) => b.ret - a.ret);
-  const leaderB = basketRets[0] || null;
-  const laggardB = basketRets[basketRets.length - 1] || null;
+  // Leader/Laggard: previously ranked ALL 12 by since-their-OWN-tracking_start
+  // return — but 3 of the 12 started weeks later (06-02/06-04/06-10 vs the
+  // majority's 05-27), so a later-started basket simply having had less time
+  // to compound (or less time to draw down) made the "race" unfair. Restrict
+  // the comparison to the cohort sharing the most common tracking_start (the
+  // real majority launch date) — apples-to-apples, never a fabricated
+  // since-May-27 return for a basket that didn't exist yet on May 27.
+  const startCounts = new Map<string, number>();
+  for (const b of basketRets) if (b.start) startCounts.set(b.start, (startCounts.get(b.start) || 0) + 1);
+  const commonStart = [...startCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  const comparableB = (commonStart ? basketRets.filter((b) => b.start === commonStart) : basketRets.slice())
+    .sort((a, b) => b.ret - a.ret);
+  const leaderB = comparableB[0] || null;
+  const laggardB = comparableB[comparableB.length - 1] || null;
   const greenB = basketRets.filter((b) => b.ret > 0).length;
+
+  // MTD/week basket winner — from methodology_tracking.json's nav_history, which
+  // (unlike tracking_start) begins on the SAME date for all 12 baskets, so this
+  // comparison is always apples-to-apples regardless of each basket's own launch
+  // date. The log only started 2026-07-20, so right now both windows fall back to
+  // that same short real span (week ≈ MTD) — honest given the real data, and it
+  // naturally differentiates as more nightly snapshots accumulate.
+  const methTrackMeths = methodologyTracking?.methodologies || {};
+  const basketWindows = Object.keys(pmb).map((k) => {
+    const hist = methTrackMeths[k]?.nav_history || [];
+    return { key: k, label: BLABEL[k] || k, mtd: navReturnSince(hist, THIRTY_D_AGO), week: navReturnSince(hist, SEVEN_D_AGO), since: md(hist[0]?.date) };
+  }).filter((b) => b.mtd != null).sort((a, b) => (b.mtd as number) - (a.mtd as number));
+  const mtdWinnerB = basketWindows[0] || null;
+
   const apos: Record<string, any> = apexTrk?.positions || {};
   const alp: Record<string, any> = apexTrk?.last_prices || {};
   const nameRets = Object.keys(apos).map((sym) => {
@@ -329,8 +371,10 @@ export async function GET(req: Request) {
   const basket_pulse = {
     total: basketRets.length,
     green: greenB,
-    leader: leaderB ? { label: leaderB.label, ret: leaderB.ret, since: md(leaderB.start) } : null,
-    laggard: laggardB ? { label: laggardB.label, ret: laggardB.ret, since: md(laggardB.start) } : null,
+    since_common: md(commonStart),
+    leader: leaderB ? { label: leaderB.label, ret: leaderB.ret } : null,
+    laggard: laggardB ? { label: laggardB.label, ret: laggardB.ret } : null,
+    mtd_winner: mtdWinnerB ? { label: mtdWinnerB.label, mtd: r2(mtdWinnerB.mtd as number), week: mtdWinnerB.week != null ? r2(mtdWinnerB.week) : null, since: mtdWinnerB.since } : null,
     top_name: nameRets[0] || null,
     worst_name: nameRets.length > 1 ? nameRets[nameRets.length - 1] : null,
   };
@@ -351,15 +395,6 @@ export async function GET(req: Request) {
   // over those SAME windows instead of a fixed calendar YTD. No book gets a
   // fabricated calendar-YTD either: both launched in June, so a Jan-1 baseline
   // would silently claim performance for months the book didn't exist.
-  const navReturnSince = (history: any[] | undefined, sinceMs: number): number | null => {
-    if (!history?.length) return null;
-    const latest = history[history.length - 1];
-    let anchor = history[0];
-    for (const h of history) { if (Date.parse(h.date) >= sinceMs) { anchor = h; break; } }
-    if (!anchor?.nav || !latest?.nav) return null;
-    return ((latest.nav / anchor.nav) - 1) * 100;
-  };
-  const THIRTY_D_AGO = NOW - 30 * 86400000;
   const apexMtdPct = navReturnSince(at.history, THIRTY_D_AGO);
 
   const vtWeighted = valueApex?.value_tracking_weighted;

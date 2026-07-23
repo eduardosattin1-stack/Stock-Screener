@@ -410,6 +410,17 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.laggard.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.laggard.ret >= 0 ? "+" : ""}{basket_pulse.laggard.ret}%</span>
                 </div>
               )}
+              {basket_pulse.mtd_winner && (
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><Activity size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--green)" }} />MTD: <b style={{ color: "var(--text)" }}>{basket_pulse.mtd_winner.label}</b></span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11 }}>
+                    <span style={{ fontWeight: 700, color: basket_pulse.mtd_winner.mtd >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.mtd_winner.mtd >= 0 ? "+" : ""}{basket_pulse.mtd_winner.mtd}%</span>
+                    {basket_pulse.mtd_winner.week != null && (
+                      <span style={{ color: "var(--text-light)", fontSize: 10 }}> · wk {basket_pulse.mtd_winner.week >= 0 ? "+" : ""}{basket_pulse.mtd_winner.week}%</span>
+                    )}
+                  </span>
+                </div>
+              )}
               {basket_pulse.top_name && (
                 <div onClick={() => router.push(`/stock/${encodeURIComponent(basket_pulse.top_name.sym)}`)} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, cursor: "pointer" }}>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><Award size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--amber)" }} />Top name: <b style={{ color: "var(--text)" }}>{basket_pulse.top_name.sym}</b></span>
@@ -417,7 +428,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                 </div>
               )}
               <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 10, marginTop: 2, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
-                {basket_pulse.green}/{basket_pulse.total} baskets green{basket_pulse.leader?.since ? ` · since ${basket_pulse.leader.since}` : ""}{basket_pulse.top_name?.since ? ` · top name since ${basket_pulse.top_name.since}` : ""}
+                {basket_pulse.green}/{basket_pulse.total} baskets green{basket_pulse.since_common ? ` · since ${basket_pulse.since_common}` : ""}{basket_pulse.top_name?.since ? ` · top name since ${basket_pulse.top_name.since}` : ""}
               </div>
             </div>
           ) : (
