@@ -356,7 +356,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
           )}
           {radar.status === "ready" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {radar.items.slice(0, 5).map((it, i) => (
+              {radar.items.slice(0, 8).map((it, i) => (
                 <div key={`${it.sym}-${it.kind}-${i}`} onClick={() => router.push(`/stock/${encodeURIComponent(it.sym)}`)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
                   {it.kind === "catalyst"
                     ? <Zap size={12} color={it.catalystWarn ? "var(--red)" : "var(--green)"} style={{ flexShrink: 0 }} />
@@ -368,8 +368,8 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
                   </span>
                 </div>
               ))}
-              {radar.items.length > 5 && (
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: 2 }}>+{radar.items.length - 5} more on your names</div>
+              {radar.items.length > 8 && (
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: 2 }}>+{radar.items.length - 8} more on your names</div>
               )}
             </div>
           )}
@@ -398,6 +398,9 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1 }}>{p.probLabel} {Math.round(p.prob * 100)}%{p.peak > 0.5 ? ` · peaked +${p.peak}%` : ""}{p.enteredDaysAgo != null ? ` · entered ${p.enteredDaysAgo === 0 ? "today" : `${p.enteredDaysAgo}d ago`}` : ""}</div>
                 </div>
               ))}
+              {model_focus.picks_total > model_focus.picks.length && (
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>+{model_focus.picks_total - model_focus.picks.length} more this week</div>
+              )}
             </div>
           ) : (
             <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
@@ -405,9 +408,19 @@ export function DailyBriefing({ macroRegime, macroScore, macro, stocks }: { macr
             </div>
           )}
 
-          {model_focus?.hot_sector && (
-            <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
-              Hot sector{model_focus.hot_sector.is_week ? " (1wk)" : ""}: <b style={{ color: "var(--text)" }}>{model_focus.hot_sector.name}</b> <span style={{ color: model_focus.hot_sector.neg ? "var(--red)" : "var(--green)" }}>{model_focus.hot_sector.neg ? "" : "+"}{model_focus.hot_sector.week}%</span>
+          {model_focus?.hot_sectors?.length > 0 && (
+            <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 6 }}>
+                Hot sectors{model_focus.hot_sectors[0].is_week ? " (1wk)" : ""}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {model_focus.hot_sectors.map((s: any) => (
+                  <div key={s.name} style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+                    <b style={{ color: "var(--text)", fontWeight: 600 }}>{s.name}</b>
+                    <span style={{ color: s.neg ? "var(--red)" : "var(--green)" }}>{s.neg ? "" : "+"}{s.week}%</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

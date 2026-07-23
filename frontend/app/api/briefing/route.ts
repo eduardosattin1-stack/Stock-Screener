@@ -229,10 +229,11 @@ export async function GET(req: Request) {
     .slice()
     .sort((a: any, b: any) => num(b.conviction) - num(a.conviction));
   const secs: any[] = (sectors?.sectors || []).filter((s: any) => s.week != null || s.day != null);
-  const hotSec = secs.slice().sort((a, b) => num(b.week ?? b.day) - num(a.week ?? a.day))[0];
+  const hotSecs = secs.slice().sort((a, b) => num(b.week ?? b.day) - num(a.week ?? a.day));
   const model_focus = {
     regime,
-    picks: picks.slice(0, 3).map((p: any) => ({
+    picks_total: picks.length,
+    picks: picks.slice(0, 6).map((p: any) => ({
       symbol: p.symbol,
       decile: p.decile,
       prob: r2(p.prob),
@@ -243,15 +244,13 @@ export async function GET(req: Request) {
       peak: r2(p.maxPlus),
       enteredDaysAgo: isFresh(p.entryDate) && p.entryDate ? Math.max(0, Math.floor((NOW - Date.parse(p.entryDate)) / 86400000)) : null,
     })),
-    hot_sector: hotSec
-      ? {
-          name: hotSec.name,
-          symbol: hotSec.symbol,
-          week: r2(num(hotSec.week ?? hotSec.day)),
-          is_week: hotSec.week != null,
-          neg: num(hotSec.week ?? hotSec.day) < 0,
-        }
-      : null,
+    hot_sectors: hotSecs.slice(0, 3).map((s) => ({
+      name: s.name,
+      symbol: s.symbol,
+      week: r2(num(s.week ?? s.day)),
+      is_week: s.week != null,
+      neg: num(s.week ?? s.day) < 0,
+    })),
   };
 
   // ── 12-basket pulse ──
