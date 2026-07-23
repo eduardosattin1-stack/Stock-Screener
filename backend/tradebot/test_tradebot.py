@@ -97,16 +97,30 @@ class TestRisk(unittest.TestCase):
     def test_health_gate_blocks(self):
         self.assertFalse(risk.all_pass(self.gates(summary=DEGRADED)))
 
-    def test_censored_healthy_blocks_entries(self):
-        """Supervisor blocker F1: HEALTHY certified on touch-only (fully
-        censored) data must NOT pass — terminal evidence is required."""
+    def test_censored_healthy_does_NOT_block_rehearsal_entries(self):
+        """Corrected 2026-07-23: HEALTHY certified on touch-only (fully
+        censored) data is a LIVE-readiness concern, not a rehearsal-integrity
+        one — entry_gates() (shared by dry-run staging) must NOT block on it.
+        The original fix (blocking entries) repeated the exact category error
+        HALT #5 made: stopping a costless test over a real-money concern."""
         gates = self.gates(summary=CENSORED)
-        self.assertFalse(risk.all_pass(gates))
+        self.assertTrue(risk.all_pass(gates))
         d = dict((g[0], g[1]) for g in gates)
-        self.assertTrue(d["calibration-health"])        # nominal health says HEALTHY
-        self.assertFalse(d["calibration-validated"])    # but the gate has no teeth
-        # missing cycle block is also not validated
-        self.assertFalse(risk.all_pass(self.gates(summary={"horizons": {"60d": {"health": {"status": "HEALTHY"}}}})))
+        self.assertTrue(d["calibration-health"])          # nominal health says HEALTHY
+        self.assertNotIn("calibration-validated", d)      # no longer a per-entry gate at all
+
+    def test_calibration_validated_standalone_for_live_startup_only(self):
+        """The real check still exists — just relocated to gate LIVE startup
+        (run_bot.py), not the shared entry path. Verified here as a pure
+        function; the LIVE-refusal wiring itself is smoke-tested via --watch."""
+        ok, detail = risk.calibration_validated(CENSORED, CFG)
+        self.assertFalse(ok)
+        self.assertIn("0 terminal outcomes", detail)
+        ok2, detail2 = risk.calibration_validated(HEALTHY, CFG)
+        self.assertTrue(ok2)
+        self.assertIn("terminal outcome", detail2)
+        ok3, detail3 = risk.calibration_validated({"horizons": {"60d": {"health": {"status": "HEALTHY"}}}}, CFG)
+        self.assertFalse(ok3)  # missing cycle block -> not validated, fails safe
 
     def test_slots_gate(self):
         self.assertFalse(risk.all_pass(self.gates(n_open=18, n_pending=2)))

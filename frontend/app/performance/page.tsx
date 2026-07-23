@@ -4,7 +4,6 @@ import { TrendingUp, BarChart3, Target, Clock, ChevronDown, ChevronRight, Search
 
 // ── Data sources ─────────────────────────────────────────────────────────────
 const CALIBRATION_V2 = "/api/performance/calibration-v2";
-const METHOD_TRACKS = "/api/performance/method-tracks"; // frozen v1 sim section only
 
 // ══════════════════════════════════════════════════════════════════════════════
 // /performance/calibration-v2 payload — contract C5 (verbatim)
@@ -107,44 +106,6 @@ interface CalibrationV2 {
   };
   horizons: { "30d": HorizonBlock; "60d": HorizonBlock };
   records: CalibRecord[];
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// Frozen v1 simulation types — trimmed read_method_tracks() contract
-// (SimBlock is NOT part of calibration-v2; this section keeps its own fetch.)
-// ══════════════════════════════════════════════════════════════════════════════
-interface MethodStats {
-  n: number;
-  barrier_hit_count: number; stopped_count: number; terminal_count: number;
-  barrier_hit_rate: number; winning_trade_rate: number | null;
-  mean_realized_return_pct: number; median_realized_return_pct: number;
-  tail_p5_return_pct: number; tail_p95_return_pct: number;
-  worst_drawdown_pct: number; best_runup_pct: number;
-  portfolio_return_pct: number | null;
-  underpowered: boolean;
-}
-interface SimCycleSummary {
-  cycle_id: string;
-  regime: string;
-  total_predictions: number; n_picks: number;
-  by_method: { stock: MethodStats; long_call: MethodStats };
-}
-interface SimRegimeBlock {
-  regime: string;
-  barrier_target_pct: number;
-  hit_window_days: number;
-  current_cycle: SimCycleSummary | null;
-  archived_cycles: SimCycleSummary[];
-}
-interface SimTracks {
-  regimes: Record<string, SimRegimeBlock>;
-  as_of: string;
-}
-interface MethodRow {
-  key: string;
-  method: "stock" | "long_call";
-  label: string;
-  stats: MethodStats;
 }
 
 // ── Theme ───────────────────────────────────────────────────────────────────
@@ -903,184 +864,6 @@ function OpusTrackRecord() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 5 — FROZEN V1 SIMULATION (collapsed; still fed by method-tracks)
-// ══════════════════════════════════════════════════════════════════════════════
-function FrozenSim() {
-  const [open, setOpen] = useState(false);
-  const [data, setData] = useState<SimTracks | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!open || data || err) return;
-    fetch(METHOD_TRACKS)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((d: SimTracks) => { setData(d); setLoading(false); })
-      .catch(e => { setErr(e.message || "Failed to load"); setLoading(false); });
-  }, [open, data, err]);
-
-  const { rows, cycleNotes } = useMemo(() => {
-    const out: MethodRow[] = [];
-    const notes: string[] = [];
-    if (!data?.regimes) return { rows: out, cycleNotes: notes };
-    for (const rname of ["30d_p10", "60d"]) {
-      const r = data.regimes[rname];
-      if (!r) continue;
-      // Frozen tracker: when the current cycle is null/empty (n_picks 0), fall
-      // back to the newest archived cycle so the section still shows history.
-      const summary = r.current_cycle?.n_picks ? r.current_cycle : (r.archived_cycles?.[0] ?? null);
-      if (!summary) continue;
-      if (summary !== r.current_cycle) {
-        notes.push(`${r.barrier_target_pct}%/${r.hit_window_days}d: archived cycle ${summary.cycle_id}`);
-      }
-      for (const m of ["stock", "long_call"] as const) {
-        const stats = summary.by_method[m];
-        if (!stats) continue;
-        out.push({
-          key: `${rname}-${m}`,
-          method: m,
-          label: `${m === "stock" ? "Stock" : "Long Call"} × ${r.barrier_target_pct}% / ${r.hit_window_days}d`,
-          stats,
-        });
-      }
-    }
-    return { rows: out, cycleNotes: notes };
-  }, [data]);
-
-  return (
-    <Card style={{ marginBottom: 20 }}>
-      <div onClick={() => setOpen(o => !o)}
-        style={{
-          display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
-          fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: T.amber,
-          fontFamily: T.mono, textTransform: "uppercase",
-          ...(open ? { marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${T.amberLight}` } : {}),
-        }}>
-        {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-        <FlaskConical size={12} />
-        FROZEN V1 SIMULATION — METHODOLOGY SUPERSEDED
-        <span style={{ marginLeft: "auto", fontSize: 9, color: T.light, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
-          {open ? "collapse" : "expand"}
-        </span>
-      </div>
-
-      {open && (
-        <>
-          <p style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, margin: "0 0 14px", lineHeight: 1.6 }}>
-            P&amp;L simulation of the legacy four exit/payoff methods on the same picks — calendar-day clock and
-            in-sample decile thresholds; superseded by the calibration tracker above. Open rows are marked-to-market.
-          </p>
-
-          {loading && <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>Loading frozen sim…</div>}
-          {err && <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>Failed to load: {err}</div>}
-
-          {!loading && !err && (
-            <>
-              <SH title="Method comparison" icon={<TrendingUp size={12} />} accent={T.amber}
-                  sub="Same picks, four exit/payoff structures tracked in parallel. Read tail_p5 + worst_DD before celebrating any win rate." />
-              {cycleNotes.length > 0 && (
-                <div style={{ fontSize: 9, color: T.light, fontFamily: T.mono, marginBottom: 10 }}>
-                  Current cycle empty — showing {cycleNotes.join(" · ")}
-                </div>
-              )}
-              {rows.length === 0 ? (
-                <div style={{ padding: 24, textAlign: "center", color: T.light, fontSize: 11, fontFamily: T.mono }}>
-                  No simulation data in the current cycle.
-                </div>
-              ) : (
-                <div style={{ overflowX: "auto", marginBottom: 18 }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono }}>
-                    <thead><tr>
-                      {["Method", "n", "Hit %", "Win %", "Mean ROI", "Median", "Tail p5", "Tail p95", "Worst DD", "Best Runup", "Port Ret", "Flag"].map((h, i) => (
-                        <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
-                      ))}
-                    </tr></thead>
-                    <tbody>
-                      {rows.map(r => {
-                        const s = r.stats;
-                        const meanC = s.mean_realized_return_pct >= 0 ? T.greenPos : T.red;
-                        const tailC = s.tail_p5_return_pct >= -10 ? T.greenPos : s.tail_p5_return_pct >= -25 ? T.muted : T.red;
-                        const portC = (s.portfolio_return_pct ?? 0) >= 0 ? T.greenPos : T.red;
-                        const winC = (s.winning_trade_rate ?? 0) >= 0.5 ? T.greenPos : T.red;
-                        return (
-                          <tr key={r.key}
-                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
-                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
-                            <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{r.label}</td>
-                            <td style={{ ...td, textAlign: "right", color: T.muted }}>{s.n}</td>
-                            <td style={{ ...td, textAlign: "right", color: T.text }}>{(s.barrier_hit_rate * 100).toFixed(0)}%
-                              <span style={{ color: T.light, fontSize: 9, marginLeft: 4 }}>
-                                ({s.barrier_hit_count}/{s.n})
-                              </span>
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: winC, fontWeight: 600 }}>
-                              {s.winning_trade_rate !== null ? `${(s.winning_trade_rate * 100).toFixed(0)}%` : "—"}
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: meanC, fontWeight: 700 }}>
-                              {s.mean_realized_return_pct >= 0 ? "+" : ""}{s.mean_realized_return_pct.toFixed(1)}%
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                              {s.median_realized_return_pct >= 0 ? "+" : ""}{s.median_realized_return_pct.toFixed(1)}%
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: tailC, fontWeight: 700 }}>
-                              {s.tail_p5_return_pct.toFixed(1)}%
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: T.muted }}>
-                              +{s.tail_p95_return_pct.toFixed(1)}%
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: T.red }}>{s.worst_drawdown_pct.toFixed(1)}%</td>
-                            <td style={{ ...td, textAlign: "right", color: T.greenPos }}>+{s.best_runup_pct.toFixed(1)}%</td>
-                            <td style={{ ...td, textAlign: "right", color: portC, fontWeight: 600 }}>
-                              {s.portfolio_return_pct !== null ? `${s.portfolio_return_pct >= 0 ? "+" : ""}${s.portfolio_return_pct.toFixed(1)}%` : "—"}
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: T.muted, fontSize: 9 }}>
-                              {s.underpowered ? <span style={{ color: T.red, fontWeight: 700 }}>n&lt;20</span> : "OK"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {rows.length > 0 && (
-                <>
-                  <SH title="Exit breakdown" icon={<Clock size={12} />} accent={T.amber}
-                      sub="How each method closed its rows" />
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono }}>
-                      <thead><tr>
-                        {["Method", "Sold at touch", "Stopped", "Window end", "Total"].map((h, i) => (
-                          <th key={h} style={{ ...th, textAlign: i === 0 ? "left" : "right" }}>{h}</th>
-                        ))}
-                      </tr></thead>
-                      <tbody>
-                        {rows.map(r => (
-                          <tr key={`exit-${r.key}`}>
-                            <td style={{ ...td, textAlign: "left", fontWeight: 600, color: T.text }}>{r.label}</td>
-                            <td style={{ ...td, textAlign: "right", color: T.greenPos }}>{r.stats.barrier_hit_count}</td>
-                            <td style={{ ...td, textAlign: "right", color: r.method === "long_call" ? T.light : T.red }}>
-                              {r.method === "long_call" ? "—" : r.stats.stopped_count}
-                            </td>
-                            <td style={{ ...td, textAlign: "right", color: T.muted }}>{r.stats.terminal_count}</td>
-                            <td style={{ ...td, textAlign: "right", color: T.text, fontWeight: 600 }}>{r.stats.n}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </Card>
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
 // SECTION 6 — TRADEBOT (automated IBKR execution of the D10 60d/+20% sleeve)
 // Reads gs://…/tradebot/state.json + trades.jsonl via the GCS proxy; live
 // prices via FMP batch quotes. Dry-run (paper $25k) until the account is
@@ -1474,8 +1257,6 @@ export default function Performance() {
       {!loading && <OpusTrackRecord />}
 
       {!loading && <OpusPaperBook />}
-
-      {!loading && <FrozenSim />}
     </div>
   );
 }

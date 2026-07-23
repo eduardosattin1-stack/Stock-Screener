@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 //                                   (keeps the briefing in sync with the footer regime)
 //   /api/macro                      fallback regime + rates/credit/VIX posture
 //   /api/sectors                    index thermometer + hottest GICS sector
-//   /api/performance/method-tracks  D8+ model-calibrated picks (decile, p20, EV) + worst miss
+//   /api/performance/calibration-v2 D9+ live model-calibrated picks (decile, p10/p20) for Model Focus
 //   /speculair_baskets.json         apex basket NAV, debate stats, top picks
 //
 // The personalized "On Your Radar" card (earnings + big moves on the user's held /
@@ -97,10 +97,9 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, methodTracks, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
-    get("/api/performance/method-tracks", { regimes: {} }), // frozen v1 — system_pulse only now; Model Focus moved off this, see below
     get("/api/performance/calibration-v2", { records: [] }),
     getGcsFirst("speculair_baskets.json", {}),
     getGcsFirst("speculair_apex_tracking.json", {}),
@@ -182,9 +181,12 @@ export async function GET(req: Request) {
   const apexTrk = atIsWeighted ? apexTrkWeighted : apexTrkEqual;
 
   // ── Model Focus source: calibration_tracking v2 — the SAME live decile system
-  //    the TradeBot trades. NOT the frozen/superseded four-method tracker
-  //    (methodTracks, still used below for system_pulse only): that tracker's
-  //    deciles can name a stock D9 that the live model no longer even scores
+  //    the TradeBot trades. The frozen/superseded four-method tracker
+  //    (methodTracks) is REMOVED from this app entirely as of 2026-07-23 (not
+  //    just routed around) — it can no longer be a data source for anything,
+  //    by construction, per [[feedback_no_hardcoded_decile_snapshots]]. That
+  //    tracker's deciles could name a stock D9 that the live model no longer
+  //    even scores
   //    (surfaced 2026-07-23 — Model Focus showed picks with hit_prob_60d=0 in
   //    that day's scan). One row per (record, horizon) so the D9/D10 filter can
   //    match either window; a symbol can appear from both regimes or from
@@ -285,8 +287,13 @@ export async function GET(req: Request) {
     worst_name: nameRets.length > 1 ? nameRets[nameRets.length - 1] : null,
   };
 
-  // ── System pulse footer ──
-  const stock30 = methodTracks?.regimes?.["30d_p10"]?.current_cycle?.by_method?.stock || {};
+  // ── System pulse footer — live calibration_tracking v2 coverage stat, NOT
+  //    the frozen four-method tracker's win-rate (removed 2026-07-23; see
+  //    [[feedback_no_hardcoded_decile_snapshots]]). matched_touch_pct is the
+  //    touch rate among MATURED (resolved) picks only — a real, live number,
+  //    not a fabricated one. ──
+  const cyc30 = calibV2?.horizons?.["30d"]?.cycle || {};
+  const matchedTouchPct = num(cyc30.n_matured) > 0 ? Math.round((num(cyc30.n_touched) / num(cyc30.n_matured)) * 100) : null;
 
   // Live tracking — Apex + Value Lens vs SPY, MATCHED windows. Previously this
   // compared the apex book's trailing-30d return against SPY's calendar-YTD
@@ -353,7 +360,9 @@ export async function GET(req: Request) {
 
   const system_pulse = {
     live_tracking,
-    avg_coverage: `${Math.round(num(stock30.winning_trade_rate) * 100)}% win · ${num(stock30.n)} tracked (30d)`,
+    avg_coverage: matchedTouchPct != null
+      ? `${matchedTouchPct}% touched of matured · ${num(cyc30.n_total)} tracked (30d live)`
+      : `${num(cyc30.n_total)} tracked (30d live)`,
   };
 
   // ── System Debate — surface the LAST names added to the apex as click-through chips

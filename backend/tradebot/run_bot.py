@@ -28,7 +28,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tradebot.config import BotConfig
-from tradebot import execution
+from tradebot import execution, risk
 from tradebot.gcs_io import impl as gcs_impl
 
 # stdout, not stderr: under Windows PowerShell 5.1 the scheduler wrapper's
@@ -65,6 +65,18 @@ def main() -> int:
             # the supervisor's live-readiness veto: rehearsal runs free, but
             # LIVE cannot start until the supervisor clears the blob.
             log.error(f"REFUSING LIVE: {cfg.golive_block_path} present — {block[:200]}")
+            return 1
+        # calibration proof gate — LIVE-readiness ONLY. Corrected 2026-07-23:
+        # this used to be enforced inside entry_gates() and blocked the dry-run
+        # rehearsal itself, which was the exact category error the supervisor
+        # made with HALT #5 (stopping a costless test over a real-money
+        # concern) — just committed the other direction this time. The
+        # rehearsal must keep staging/entering regardless; only a real LIVE
+        # startup needs terminal proof that the health gate has teeth.
+        summary = gcs_impl["read"](cfg.cal_summary_path, {})
+        ok, detail = risk.calibration_validated(summary, cfg)
+        if not ok:
+            log.error(f"REFUSING LIVE: calibration not yet validated — {detail}")
             return 1
     log.info(f"mode={'LIVE' if not cfg.dry_run else 'DRY-RUN'} account={cfg.ib_account}")
 
