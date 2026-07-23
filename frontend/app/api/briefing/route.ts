@@ -267,8 +267,11 @@ export async function GET(req: Request) {
   //    - Value Lens: deliberately catalyst-free by design (the pure-value re-grade
   //      strips the catalyst overlay) — its radar signal is MoS% + the thesis-break
   //      price level to watch instead.
-  //    - Basket13: the CRO/debate's own dated_milestone (falls back to the named
-  //      resolution_driver when no milestone text was captured). ──
+  //    - Basket13: the CRO/debate's own dated_milestone WHEN it's more than a bare
+  //      date (some entries' milestone is literally just "2026-09-30" with zero
+  //      context) — else the CRO's review_trigger sentence, which always pairs the
+  //      date with why it matters (e.g. "Antitrust clearance checkpoints into the
+  //      2026-11-30 expected close..."), else the named resolution_driver. ──
   const truncate = (s: any, n: number) => {
     const t = String(s || "").trim();
     return t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t;
@@ -289,7 +292,9 @@ export async function GET(req: Request) {
     radarSeen.add(sym);
     const milestone = e.dated_milestone;
     const hasDate = /^\d{4}-\d{2}-\d{2}/.test(String(milestone || ""));
-    radarItems.push({ symbol: e.symbol, source: "b13", urgent: hasDate, text: milestone ? truncate(milestone, 90) : truncate(String(e.resolution_driver || "").replace(/_/g, " "), 90) });
+    const isBareDate = /^\d{4}-\d{2}-\d{2}$/.test(String(milestone || "").trim());
+    const b13Text = milestone && !isBareDate ? milestone : (e.review_trigger || milestone || String(e.resolution_driver || "").replace(/_/g, " "));
+    radarItems.push({ symbol: e.symbol, source: "b13", urgent: hasDate, text: truncate(b13Text, 90) });
   }
   for (const p of (valueApex?.apex_basket || [])) {
     const sym = String(p?.symbol || "").toUpperCase();
