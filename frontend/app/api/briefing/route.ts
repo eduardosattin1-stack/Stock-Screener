@@ -95,10 +95,11 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, methodTracks, spec, apexTrkEqual, apexTrkWeighted, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, methodTracks, calibV2, spec, apexTrkEqual, apexTrkWeighted, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
-    get("/api/performance/method-tracks", { regimes: {} }),
+    get("/api/performance/method-tracks", { regimes: {} }), // frozen v1 — system_pulse only now; Model Focus moved off this, see below
+    get("/api/performance/calibration-v2", { records: [] }),
     getGcsFirst("speculair_baskets.json", {}),
     getGcsFirst("speculair_apex_tracking.json", {}),
     getGcsFirst("speculair_apex_tracking_weighted.json", {}),
@@ -172,34 +173,34 @@ export async function GET(req: Request) {
   // reflects entries from whichever book (weighted vs equal-weight) is authoritative.
   const apexTrk = atIsWeighted ? apexTrkWeighted : apexTrkEqual;
 
-  // ── Four-method tracker: collect stock prediction rows (decile/p20/EV, live state) ──
-  // decile is model-calibrated (OOS thresholds) — NOT a client-side relative rank.
-  // EV (edge_dollars_at_entry) lives on the long_call row; join by symbol.
+  // ── Model Focus source: calibration_tracking v2 — the SAME live decile system
+  //    the TradeBot trades. NOT the frozen/superseded four-method tracker
+  //    (methodTracks, still used below for system_pulse only): that tracker's
+  //    deciles can name a stock D9 that the live model no longer even scores
+  //    (surfaced 2026-07-23 — Model Focus showed picks with hit_prob_60d=0 in
+  //    that day's scan). One row per (record, horizon) so the D9/D10 filter can
+  //    match either window; a symbol can appear from both regimes or from
+  //    several entry dates — the pick-list dedup below already keeps the
+  //    highest-decile, most-recent one per symbol. No live-quote join here (v2
+  //    records carry no current price), so EV/liveRet are not available —
+  //    "peak" (maxPlus, from max_high_pct) covers the card's "peaked +X%" line.
+  const calibRecords: any[] = calibV2?.records || [];
   const stockRows: any[] = [];
-  for (const rg of ["60d", "30d_p10"]) {
-    const preds: any[] = methodTracks?.regimes?.[rg]?.current_cycle?.predictions || [];
-    const calls = new Map<string, any>();
-    for (const p of preds) if (p.method === "long_call") calls.set(p.symbol, p);
-    for (const p of preds) {
-      if (p.method !== "stock") continue;
-      const call = calls.get(p.symbol);
-      const ev = call && call.edge_dollars_at_entry != null ? num(call.edge_dollars_at_entry) : null;
-      const liveRet =
-        num(p.current_price) > 0 && num(p.entry_price) > 0
-          ? (num(p.current_price) / num(p.entry_price) - 1) * 100
-          : num(p.realized_return_pct);
+  for (const rg of ["60d", "30d"] as const) {
+    for (const r of calibRecords) {
+      const decile = rg === "60d" ? r.decile_60d : r.decile_30d;
+      if (decile == null) continue; // not priced for this horizon
       stockRows.push({
-        symbol: p.symbol,
-        decile: num(p.decile),
-        prob: num(p.p20),
+        symbol: r.symbol,
+        decile: num(decile),
+        prob: num(rg === "60d" ? r.p20 : r.p10),
         probLabel: rg === "60d" ? "P(+20%/60d)" : "P(+10%/30d)",
-        ev,
-        maxPlus: num(p.max_high_observed_pct),
-        liveRet,
-        outcome: p.outcome_tag || "OPEN",
-        sector: p.sector || "",
-        entryDate: p.entry_date || null,
-        daysOpen: num(p.days_observed),
+        ev: null,
+        maxPlus: num(r.max_high_pct),
+        outcome: (rg === "60d" ? r.state_60d : r.state_30d) || null,
+        sector: r.sector || "",
+        entryDate: r.entry_date || null,
+        daysOpen: num(rg === "60d" ? r.bars_elapsed_60d : r.bars_elapsed_30d),
       });
     }
   }
