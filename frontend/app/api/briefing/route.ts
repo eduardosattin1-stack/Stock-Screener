@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { BASKET13 } from "../../data/basket13";
 
 // Daily Briefing — assembled entirely from LIVE wired data. No dependency on the
 // (stale, composite-era) backend /briefing endpoint. Sources:
@@ -11,10 +10,52 @@ import { BASKET13 } from "../../data/basket13";
 //   /speculair_baskets.json         apex basket NAV, debate stats, top picks
 //
 // "On Your Radar" surfaces what's actually in the Speculair system's live books
-// (apex + value lens + basket13), not a signed-in user's personal holdings —
-// computed entirely server-side here, no Firestore/localStorage dependency.
+// (apex + value lens), not a signed-in user's personal holdings — computed
+// entirely server-side here, no Firestore/localStorage dependency.
 
 export const runtime = "nodejs";
+
+// Catalyst-flags overlay for "On Your Radar" — a short, scannable note per
+// symbol (screener_v6.compute_catalyst_score: earnings beat/miss streaks,
+// analyst upgrade/downgrade bursts, M&A/activist activity), e.g. "Earnings in
+// 13d, 6/7 beats" or "⚠ 7 downgrades in 7d · M&A/activist activity detected".
+// This is the SAME short-note style the old portfolio-based radar card used —
+// preferred over the apex book's own (much longer) forcing_function text,
+// which needs truncation to fit the card and reads worse for it. Fetched from
+// the public scan URL directly (not the authenticated GCS proxy — works
+// locally without credentials), mirroring /api/stock/[symbol]/row's own
+// 15-min in-memory cache + single-flight pattern so repeat briefing loads on a
+// warm instance don't re-download the ~28MB scan.
+const CATALYST_SCAN_URL = "https://storage.googleapis.com/screener-signals-carbonbridge/scans/latest_global.json";
+const CATALYST_TTL_MS = 15 * 60 * 1000;
+type CatalystCache = { at: number; bySymbol: Map<string, string[]> };
+const cg = globalThis as unknown as { __briefingCatalystCache?: CatalystCache | null; __briefingCatalystPromise?: Promise<CatalystCache> | null };
+async function loadCatalystFlags(): Promise<CatalystCache> {
+  const res = await fetch(CATALYST_SCAN_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`scan ${res.status}`);
+  const d = await res.json();
+  const bySymbol = new Map<string, string[]>();
+  for (const s of d?.stocks ?? []) {
+    if (s?.symbol && Array.isArray(s.catalyst_flags) && s.catalyst_flags.length) {
+      bySymbol.set(String(s.symbol).toUpperCase(), s.catalyst_flags);
+    }
+  }
+  return { at: Date.now(), bySymbol };
+}
+async function getCatalystFlags(): Promise<Map<string, string[]>> {
+  const c = cg.__briefingCatalystCache;
+  if (c && Date.now() - c.at < CATALYST_TTL_MS) return c.bySymbol;
+  if (!cg.__briefingCatalystPromise) {
+    cg.__briefingCatalystPromise = loadCatalystFlags()
+      .then((fresh) => { cg.__briefingCatalystCache = fresh; return fresh; })
+      .finally(() => { cg.__briefingCatalystPromise = null; });
+  }
+  try {
+    return (await cg.__briefingCatalystPromise).bySymbol;
+  } catch {
+    return c?.bySymbol || new Map();
+  }
+}
 
 const num = (v: any, d = 0) => (Number.isFinite(Number(v)) ? Number(v) : d);
 const r2 = (v: number) => Math.round(v * 100) / 100;
@@ -98,7 +139,7 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, methodologyTracking, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, methodologyTracking, catalystFlags, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/calibration-v2", { records: [] }),
@@ -109,6 +150,8 @@ export async function GET(req: Request) {
     // Per-basket nav_history (uniform start 2026-07-20 across all 12 baskets, unlike
     // their staggered tracking_start) — powers the basket_pulse MTD/week winner below.
     getGcsFirst("methodology_tracking.json", {}),
+    // Real market catalyst signal for the "On Your Radar" short-note overlay below.
+    getCatalystFlags().catch(() => new Map<string, string[]>()),
     // SPY (^GSPC) daily closes spanning both books' inception dates + the 30d MTD anchor,
     // so "live tracking" can measure SPY over the SAME windows as each book below —
     // never a mismatched MTD-vs-YTD comparison. 95d back is a safety margin past either
@@ -260,18 +303,19 @@ export async function GET(req: Request) {
   };
 
   // ── On Your Radar — what's actually in the Speculair system's live books, not a
-  //    signed-in user's personal holdings. Each source carries its own genuine
-  //    "why watch this" signal, already authored on the pick — no extra fetch:
-  //    - Apex: debate-authored catalyst_status/forcing_function (FIRED is already
-  //      resolved — not forward-looking, so it's excluded from the radar).
+  //    signed-in user's personal holdings. Basket13 is deliberately excluded here:
+  //    its event-driven special situations (merger arb, FDA decisions, lockups)
+  //    don't have short catalyst_flags-style notes for most names, and its own
+  //    long-form reasoning reads as clutter in this card — that reasoning already
+  //    lives on the 13th Basket page itself.
+  //    - Apex: real market catalyst_flags (earnings beat/miss streaks, analyst
+  //      upgrade/downgrade bursts, M&A/activist activity) when the scan covers
+  //      the symbol — a short, scannable note, e.g. "Earnings in 13d, 6/7 beats".
+  //      Falls back to the debate-authored forcing_function (FIRED is already
+  //      resolved — not forward-looking, so it's excluded from the radar either way).
   //    - Value Lens: deliberately catalyst-free by design (the pure-value re-grade
   //      strips the catalyst overlay) — its radar signal is MoS% + the thesis-break
-  //      price level to watch instead.
-  //    - Basket13: the CRO/debate's own dated_milestone WHEN it's more than a bare
-  //      date (some entries' milestone is literally just "2026-09-30" with zero
-  //      context) — else the CRO's review_trigger sentence, which always pairs the
-  //      date with why it matters (e.g. "Antitrust clearance checkpoints into the
-  //      2026-11-30 expected close..."), else the named resolution_driver. ──
+  //      price level to watch instead. ──
   const truncate = (s: any, n: number) => {
     const t = String(s || "").trim();
     return t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t;
@@ -283,18 +327,10 @@ export async function GET(req: Request) {
     if (!sym || radarSeen.has(sym)) continue;
     if (p.catalyst_status !== "PENDING_HARD" && p.catalyst_status !== "SOFT_EXTENDED") continue;
     radarSeen.add(sym);
-    radarItems.push({ symbol: p.symbol, source: "apex", urgent: p.catalyst_status === "PENDING_HARD", text: truncate(p.forcing_function, 90) });
-  }
-  for (const e of (BASKET13?.entries || [])) {
-    if (e?.status !== "OPEN") continue;
-    const sym = String(e?.symbol || "").toUpperCase();
-    if (!sym || radarSeen.has(sym)) continue;
-    radarSeen.add(sym);
-    const milestone = e.dated_milestone;
-    const hasDate = /^\d{4}-\d{2}-\d{2}/.test(String(milestone || ""));
-    const isBareDate = /^\d{4}-\d{2}-\d{2}$/.test(String(milestone || "").trim());
-    const b13Text = milestone && !isBareDate ? milestone : (e.review_trigger || milestone || String(e.resolution_driver || "").replace(/_/g, " "));
-    radarItems.push({ symbol: e.symbol, source: "b13", urgent: hasDate, text: truncate(b13Text, 90) });
+    const flags = catalystFlags.get(sym);
+    const text = flags?.length ? flags.slice(0, 2).join(" · ") : truncate(p.forcing_function, 90);
+    const urgent = p.catalyst_status === "PENDING_HARD" || Boolean(flags?.some((f: string) => f.includes("⚠")));
+    radarItems.push({ symbol: p.symbol, source: "apex", urgent, text });
   }
   for (const p of (valueApex?.apex_basket || [])) {
     const sym = String(p?.symbol || "").toUpperCase();

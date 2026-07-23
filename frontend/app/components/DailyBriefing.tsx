@@ -146,7 +146,6 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
   const SOURCE: Record<string, { label: string; color: string; bg: string }> = {
     apex: { label: "APEX", color: "var(--green)", bg: "var(--green-light)" },
     value: { label: "VALUE", color: "var(--blue)", bg: "var(--blue-light)" },
-    b13: { label: "B13", color: "var(--amber)", bg: "var(--amber-light)" },
   };
   const sourceChip = (source: string) => {
     const s = SOURCE[source] || { label: source.toUpperCase(), color: "var(--text-light)", bg: "var(--bg-elevated)" };
@@ -227,7 +226,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
           <RegimePulseDetail macro={macro} />
         </div>
 
-        {/* Card 2: On Your Radar — what's live in Apex / Value Lens / Basket13 */}
+        {/* Card 2: On Your Radar — what's live in Apex / Value Lens */}
         <div style={{ background: "var(--bg)", padding: 24, borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -256,7 +255,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
             </div>
           ) : (
             <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
-              Nothing dated right now — no near-term catalysts in Apex or Basket13, no thesis-break levels flagged in Value Lens.
+              Nothing dated right now — no near-term catalysts in Apex, no thesis-break levels flagged in Value Lens.
             </div>
           )}
         </div>
