@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { BASKET13 } from "../../data/basket13";
 
 // Daily Briefing — assembled entirely from LIVE wired data. No dependency on the
 // (stale, composite-era) backend /briefing endpoint. Sources:
@@ -9,9 +10,9 @@ import { NextResponse } from "next/server";
 //   /api/performance/calibration-v2 D9+ live model-calibrated picks (decile, p10/p20) for Model Focus
 //   /speculair_baskets.json         apex basket NAV, debate stats, top picks
 //
-// The personalized "On Your Radar" card (earnings + big moves on the user's held /
-// watched names) is computed CLIENT-SIDE in DailyBriefing.tsx — portfolio lives in
-// per-user Firestore and the watchlist in localStorage, neither reachable here.
+// "On Your Radar" surfaces what's actually in the Speculair system's live books
+// (apex + value lens + basket13), not a signed-in user's personal holdings —
+// computed entirely server-side here, no Firestore/localStorage dependency.
 
 export const runtime = "nodejs";
 
@@ -235,7 +236,7 @@ export async function GET(req: Request) {
   const model_focus = {
     regime,
     picks_total: picks.length,
-    picks: picks.slice(0, 6).map((p: any) => ({
+    picks: picks.slice(0, 4).map((p: any) => ({
       symbol: p.symbol,
       decile: p.decile,
       prob: r2(p.prob),
@@ -254,6 +255,53 @@ export async function GET(req: Request) {
       neg: num(s.week ?? s.day) < 0,
     })),
   };
+
+  // ── On Your Radar — what's actually in the Speculair system's live books, not a
+  //    signed-in user's personal holdings. Each source carries its own genuine
+  //    "why watch this" signal, already authored on the pick — no extra fetch:
+  //    - Apex: debate-authored catalyst_status/forcing_function (FIRED is already
+  //      resolved — not forward-looking, so it's excluded from the radar).
+  //    - Value Lens: deliberately catalyst-free by design (the pure-value re-grade
+  //      strips the catalyst overlay) — its radar signal is MoS% + the thesis-break
+  //      price level to watch instead.
+  //    - Basket13: the CRO/debate's own dated_milestone (falls back to the named
+  //      resolution_driver when no milestone text was captured). ──
+  const truncate = (s: any, n: number) => {
+    const t = String(s || "").trim();
+    return t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t;
+  };
+  const radarSeen = new Set<string>();
+  const radarItems: any[] = [];
+  for (const p of (spec?.apex_basket || [])) {
+    const sym = String(p?.symbol || "").toUpperCase();
+    if (!sym || radarSeen.has(sym)) continue;
+    if (p.catalyst_status !== "PENDING_HARD" && p.catalyst_status !== "SOFT_EXTENDED") continue;
+    radarSeen.add(sym);
+    radarItems.push({ symbol: p.symbol, source: "apex", urgent: p.catalyst_status === "PENDING_HARD", text: truncate(p.forcing_function, 90) });
+  }
+  for (const e of (BASKET13?.entries || [])) {
+    if (e?.status !== "OPEN") continue;
+    const sym = String(e?.symbol || "").toUpperCase();
+    if (!sym || radarSeen.has(sym)) continue;
+    radarSeen.add(sym);
+    const milestone = e.dated_milestone;
+    const hasDate = /^\d{4}-\d{2}-\d{2}/.test(String(milestone || ""));
+    radarItems.push({ symbol: e.symbol, source: "b13", urgent: hasDate, text: milestone ? truncate(milestone, 90) : truncate(String(e.resolution_driver || "").replace(/_/g, " "), 90) });
+  }
+  for (const p of (valueApex?.apex_basket || [])) {
+    const sym = String(p?.symbol || "").toUpperCase();
+    if (!sym || radarSeen.has(sym)) continue;
+    const mos = p.sop_mos_pct;
+    const breakPx = p.thesis_break_px;
+    if (mos == null && breakPx == null) continue;
+    radarSeen.add(sym);
+    const parts: string[] = [];
+    if (mos != null) parts.push(`MoS ${sign(num(mos))}${r2(num(mos))}%`);
+    if (breakPx != null) parts.push(`thesis breaks below $${num(breakPx)}`);
+    radarItems.push({ symbol: p.symbol, source: "value", urgent: false, text: parts.join(" · ") });
+  }
+  radarItems.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
+  const radar_watch = { total: radarItems.length, items: radarItems.slice(0, 5) };
 
   // ── 12-basket pulse ──
   // Portfolio-level read across the 12 Speculair methodology baskets. Returns are
@@ -553,6 +601,7 @@ export async function GET(req: Request) {
     generated_at: new Date().toISOString(),
     regime_pulse,
     model_focus,
+    radar_watch,
     basket_pulse,
     system_pulse,
     thermometer,

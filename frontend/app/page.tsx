@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "./AuthProvider";
 import { useSearch } from "./search-context";
-import { getPortfolio, addPosition as storeAddPosition, getRadar, setRadar, DEFAULT_RADAR } from "./portfolioStore";
+import { getPortfolio, getRadar, setRadar, DEFAULT_RADAR } from "./portfolioStore";
 
 import { TrendingUp, ChevronDown, ChevronRight, ChevronLeft, Target, Search, Zap, Copy, CheckCircle2, ArrowRight, Clock, Coins, Shield, Flame, Activity, Sliders, Database, Briefcase, Trash2, Info, Check, Plus, ExternalLink, HelpCircle, AlertTriangle } from "lucide-react";
 
@@ -1067,139 +1067,6 @@ function ScorePill({value}:{value:number}){const c=value>0.65?"#10b981":value>0.
 
 // ── Stock Row ───────────────────────────────────────────────────────────────
 
-// ── Add to Portfolio Button ─────────────────────────────────────────────────
-
-// Expands to an inline form when clicked. Price pre-fills from live scan but
-
-// is user-editable (real fill price may differ from scan price). Posts to
-
-// the user's per-user Firestore portfolio (portfolioStore.addPosition).
-
-function AddToPortfolioButton({stock:s}:{stock:StockData}){
-
-  const [open,setOpen]=useState(false);
-
-  const [shares,setShares]=useState("");
-
-  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
-
-  const [notes,setNotes]=useState("");
-
-  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
-  const { user } = useAuth();
-
-  const [err,setErr]=useState("");
-
-
-
-  async function handleSave(e:React.MouseEvent){
-
-    e.stopPropagation();
-
-    const p=parseFloat(price), sh=parseFloat(shares);
-
-    if(!p||p<=0){setErr("Price required");return;}
-
-    if(!sh||sh<=0){setErr("Shares required");return;}
-
-    setStatus("saving");setErr("");
-
-    try {
-
-      if(!user) throw new Error("Sign in to add positions");
-
-      await storeAddPosition(user.uid,{symbol:s.symbol,entry_price:p,shares:sh,notes});
-
-      setStatus("saved");
-
-      setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
-
-    } catch(e:any) {
-
-      setStatus("error");setErr((e?.message||"Failed").slice(0,160));
-
-    }
-
-  }
-
-
-
-  if(!open){
-
-    return(
-
-      <button onClick={e=>{e.stopPropagation();setOpen(true);}} style={{
-
-        fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,padding:"4px 10px",
-
-        borderRadius:4,border:"1px solid var(--green-border,#b8dcc8)",background:"var(--green-light,#e8f5ee)",
-
-        color:"var(--green,#2d7a4f)",cursor:"pointer",letterSpacing:"0.04em",textTransform:"uppercase",
-
-      }}>+ Portfolio</button>
-
-    );
-
-  }
-
-
-
-  return(
-
-    <div onClick={e=>e.stopPropagation()} style={{
-
-      display:"flex",alignItems:"center",gap:6,padding:"4px 8px",
-
-      borderRadius:6,background:"var(--bg-surface)",border:"1px solid var(--green-border,#b8dcc8)",
-
-      fontSize:10,fontFamily:"var(--font-mono)",
-
-    }}>
-
-      <span style={{color:"var(--text-muted,#6b7280)",fontWeight:600,marginRight:2}}>{s.symbol}</span>
-
-      <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}}
-
-        style={{width:52,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}} autoFocus/>
-
-      <span style={{color:"var(--text-light,#9ca3af)"}}>@</span>
-
-      <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
-
-        style={{width:62,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}}/>
-
-      <input type="text" placeholder="notes" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={40}
-
-        style={{width:100,padding:"3px 5px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,fontSize:10,fontFamily:"var(--font-mono)"}}/>
-
-      <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{
-
-        padding:"3px 8px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",
-
-        background:status==="saved"?"#10b981":status==="error"?"#ef4444":"var(--green,#2d7a4f)",
-
-        color:"#fff",fontSize:10,fontFamily:"var(--font-mono)",fontWeight:600,
-
-      }}>{status==="saving"?"...":status==="saved"?"✓":status==="error"?"!":"Save"}</button>
-
-      <button onClick={e=>{e.stopPropagation();setOpen(false);setStatus("idle");setErr("");}} style={{
-
-        padding:"3px 6px",border:"1px solid var(--border,#e5e7eb)",borderRadius:3,cursor:"pointer",
-
-        background:"var(--bg-surface)",color:"var(--text-muted,#6b7280)",fontSize:10,fontFamily:"var(--font-mono)",
-
-      }}>✕</button>
-
-      {err&&<span style={{color:"#ef4444",fontSize:9,marginLeft:4}}>{err}</span>}
-
-    </div>
-
-  );
-
-}
-
-
-
 function StockRow({stock:s,expanded,onToggle,rank,onTickerClick,selectedMethodology}:{stock:StockData;expanded:boolean;onToggle:()=>void;rank:number;onTickerClick?:(e:React.MouseEvent,symbol:string)=>void;selectedMethodology:string|null}){
 
   return(
@@ -1424,8 +1291,6 @@ function StockRow({stock:s,expanded,onToggle,rank,onTickerClick,selectedMethodol
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,paddingBottom:6,borderBottom:"2px solid var(--green-light,#e8f5ee)"}}>
 
               <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:"var(--green,#2d7a4f)",fontFamily:"var(--font-mono)",textTransform:"uppercase"}}>Actions & Analysis</div>
-
-              <AddToPortfolioButton stock={s}/>
 
             </div>
 
@@ -2775,8 +2640,6 @@ export default function Dashboard(){
 
             <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Watchlist</button>
 
-            <button onClick={()=>{ setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Add to Portfolio</button>
-
             <button onClick={()=>{ router.push(selectedMethodology ? `/stock/${tickerMenu.symbol}?selectedMethodology=${selectedMethodology}` : `/stock/${tickerMenu.symbol}`); setTickerMenu(null); }} style={{padding: "6px 12px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text)", borderRadius: 4}} onMouseEnter={e=>e.currentTarget.style.background="var(--bg-hover)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>Open Stock Page</button>
 
           </div>
@@ -2787,7 +2650,7 @@ export default function Dashboard(){
 
       <div style={{flex: 1, padding:"20px 24px",maxWidth:1440,margin:"0 auto", minWidth: 0}}>
 
-      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} macro={data?.macro} stocks={stocks} />
+      <DailyBriefing macroRegime={data?.macro?.regime} macroScore={data?.macro?.score} macro={data?.macro} />
 
       <div style={{fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginBottom: 16, display: "flex", alignItems: "center", gap: 6}}>
 

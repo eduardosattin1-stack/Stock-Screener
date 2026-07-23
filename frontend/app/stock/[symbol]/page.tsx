@@ -357,58 +357,6 @@ function Metric({label,value,color,sub}:{label:string;value:string;color?:string
 function ScoreRing({value,label,max,color}:{value:number;label:string;max:number;color:string}){const p=Math.min(value/max,1),r=26,ci=2*Math.PI*r,of=ci*(1-p);return<div style={{textAlign:"center"}}><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r={r} fill="none" stroke={T.divider} strokeWidth="4"/><circle cx="31" cy="31" r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={ci} strokeDashoffset={of} strokeLinecap="round" transform="rotate(-90 31 31)" style={{transition:"stroke-dashoffset 0.6s ease"}}/><text x="31" y="29" textAnchor="middle" fill={color} fontSize="13" fontFamily={T.mono} fontWeight="700">{value}</text><text x="31" y="41" textAnchor="middle" fill={T.textLight} fontSize="8" fontFamily={T.mono}>/{max}</text></svg><div style={{fontSize:9,color:T.textMuted,fontFamily:T.mono,marginTop:2}}>{label}</div></div>;}
 
 // ── v7 Factor Radar ────────────────────────────────────────────────────────────
-// ── Add to Portfolio (stock detail header) ───────────────────────────────────
-function AddToPortfolioStock({stock:s}:{stock:StockData}){
-  const [open,setOpen]=useState(false);
-  const [shares,setShares]=useState("");
-  const [price,setPrice]=useState(s.price?.toFixed(2)||"");
-  const [notes,setNotes]=useState("");
-  const [status,setStatus]=useState<"idle"|"saving"|"saved"|"error">("idle");
-  const [err,setErr]=useState("");
-  async function handleSave(){
-    const p=parseFloat(price),sh=parseFloat(shares);
-    if(!p||p<=0){setErr("Price required");return;}
-    if(!sh||sh<=0){setErr("Shares required");return;}
-    setStatus("saving");setErr("");
-    try{
-      const r=await fetch("/api/portfolio/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:s.symbol,entry_price:p,shares:sh,notes})});
-      if(!r.ok){
-        // Keep the error message short: detect HTML bodies (Next.js 404 pages, etc.)
-        // and substitute a concise message instead of dumping 10KB into the UI.
-        const text=await r.text().catch(()=>"");
-        const isHtml=text.trimStart().toLowerCase().startsWith("<!doctype")||text.trimStart().startsWith("<");
-        const shortBody=isHtml?"(server returned HTML page)":text.slice(0,120);
-        throw new Error(`HTTP ${r.status}${shortBody?` – ${shortBody}`:""}`);
-      }
-      setStatus("saved");setTimeout(()=>{setOpen(false);setStatus("idle");setShares("");setNotes("");},1500);
-    } catch(e:any){setStatus("error");setErr((e?.message||"Failed").slice(0,160));}
-  }
-  if(!open){
-    return(
-      <button onClick={()=>setOpen(true)} style={{fontSize:11,fontFamily:T.mono,fontWeight:600,padding:"6px 14px",borderRadius:5,border:`1px solid ${T.greenBorder}`,background:T.greenLight,color:T.green,cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}>+ Add to Portfolio</button>
-    );
-  }
-  return(
-    <div style={{padding:"10px 12px",borderRadius:6,background:"var(--bg-surface)",border:`1px solid ${T.greenBorder}`,display:"flex",flexDirection:"column",gap:6,minWidth:280}}>
-      <div style={{display:"flex",alignItems:"center",gap:6,fontSize:10,fontFamily:T.mono}}>
-        <span style={{color:T.textMuted,fontWeight:600}}>{s.symbol}</span>
-        <input type="number" placeholder="shares" value={shares} onChange={e=>{setShares(e.target.value);setErr("");}} autoFocus
-          style={{width:60,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-        <span style={{color:T.textLight}}>@</span>
-        <input type="number" step="0.01" placeholder="price" value={price} onChange={e=>{setPrice(e.target.value);setErr("");}}
-          style={{width:70,padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-      </div>
-      <input type="text" placeholder="notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)} maxLength={60}
-        style={{padding:"4px 6px",border:`1px solid ${T.cardBorder}`,borderRadius:3,fontSize:10,fontFamily:T.mono}}/>
-      <div style={{display:"flex",alignItems:"center",gap:6}}>
-        <button onClick={handleSave} disabled={status==="saving"||status==="saved"} style={{flex:1,padding:"5px 10px",border:"none",borderRadius:3,cursor:status==="saving"?"wait":"pointer",background:status==="saved"?"var(--green)":status==="error"?T.red:T.green,color:"var(--bg-surface)",fontSize:10,fontFamily:T.mono,fontWeight:600}}>{status==="saving"?"Saving...":status==="saved"?"✓ Added":status==="error"?"! Retry":"Save"}</button>
-        <button onClick={()=>{setOpen(false);setStatus("idle");setErr("");}} style={{padding:"5px 10px",border:`1px solid ${T.cardBorder}`,borderRadius:3,cursor:"pointer",background:"var(--bg-surface)",color:T.textMuted,fontSize:10,fontFamily:T.mono}}>Cancel</button>
-      </div>
-      {err&&<div style={{fontSize:9,color:T.red,fontFamily:T.mono}}>{err}</div>}
-    </div>
-  );
-}
-
 function FactorRadar({scores,size=260}:{scores:FactorsV8;size?:number}){
   const cx=size/2,cy=size/2,r=size/2-44;const raw=FACTOR_ORDER.map(k=>(scores as any)[k] as number|null);const vals=raw.map(v=>v??0);const n=vals.length;
   const ang=(i:number)=>(Math.PI*2*i)/n-Math.PI/2;const grid=[0.25,0.5,0.75,1.0];
@@ -4204,9 +4152,6 @@ export default function StockDetail(){
               </div>
             );});})()}
           </div>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
-          <AddToPortfolioStock stock={s}/>
         </div>
       </div>
 

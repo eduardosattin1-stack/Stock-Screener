@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Briefcase, TrendingUp, Compass, MessageCircle } from "lucide-react";
+import { BarChart3, TrendingUp, Compass, MessageCircle } from "lucide-react";
 import SymbolSearch from "./components/SymbolSearch";
 
 export default function Nav() {
@@ -10,7 +10,6 @@ export default function Nav() {
   if (pathname === "/welcome") return null;
   const links = [
     { href: "/", label: "Discover", icon: <BarChart3 size={13} /> },
-    { href: "/portfolio", label: "Portfolio", icon: <Briefcase size={13} /> },
     { href: "/performance", label: "System Performance", icon: <TrendingUp size={13} /> },
     { href: "/catalysts", label: "Catalyst Watch", icon: <Compass size={13} /> },
     { href: "/social", label: "Social Arb", icon: <MessageCircle size={13} /> },
