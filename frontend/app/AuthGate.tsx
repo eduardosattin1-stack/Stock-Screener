@@ -23,8 +23,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const { user, loading, allowed, signIn, logout } = useAuth();
   const pathname = usePathname();
 
-  // Public marketing pages bypass the gate entirely.
-  if (pathname && PUBLIC_PATHS.includes(pathname)) return <>{children}</>;
+  // Public marketing pages bypass the gate entirely — the root and anything beneath it.
+  if (pathname && PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return <>{children}</>;
+  }
 
   // Not configured yet → stay public (no regression, no brick) until env vars land.
   if (!firebaseEnabled) return <>{children}</>;

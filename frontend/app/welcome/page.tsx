@@ -189,7 +189,10 @@ export default async function Welcome() {
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(17,18,17,0.86)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--lp-line-soft)" }}>
         <div className="lp-container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
           <a href="#top"><Wordmark /></a>
-          <a href={MAILTO} className="lp-btn lp-btn-line" style={{ padding: "10px 18px", fontSize: 11 }}>Contact</a>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <a href="/welcome/pipeline" className="lp-btn lp-btn-line" style={{ padding: "10px 18px", fontSize: 11 }}>System map</a>
+            <a href={MAILTO} className="lp-btn lp-btn-line" style={{ padding: "10px 18px", fontSize: 11 }}>Contact</a>
+          </div>
         </div>
       </header>
 
