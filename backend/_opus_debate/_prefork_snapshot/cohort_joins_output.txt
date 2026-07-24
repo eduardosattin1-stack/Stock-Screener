@@ -1,0 +1,84 @@
+================================================================================================
+JOIN 1 — FIRED/SOFT-penalized cohort vs non-penalized (PENDING_HARD/ARB)
+================================================================================================
+
+-- fwd_now --
+  PENALIZED (FIRED/SOFT) : n=1867 mean= +1.64% med= +1.11% win%=  57
+  NON-PENALIZED (PH/ARB) : n= 121 mean= -2.14% med= -0.98% win%=  43
+  diff (pen - nonpen)    : +3.76pp   95% CI [+1.27, +6.34]  SIGNIFICANT
+
+-- fwd_21d --
+  PENALIZED (FIRED/SOFT) : n= 778 mean= +2.52% med= +2.34% win%=  60
+  NON-PENALIZED (PH/ARB) : n=  47 mean= -4.23% med= -4.15% win%=  40
+  diff (pen - nonpen)    : +6.70pp   95% CI [+2.09, +11.08]  SIGNIFICANT
+
+-- symbol-clustered (each symbol's FIRST entry only) --
+  PENALIZED     : n= 334 mean= +0.77% med= +1.23% win%=  54
+  NON-PENALIZED : n=  41 mean= -2.00% med= -0.71% win%=  49
+
+-- per catalyst_status --
+  FIRED         : n= 883 mean= +1.56% med= +1.13% win%=  58
+  SOFT_EXTENDED : n= 984 mean= +1.72% med= +1.01% win%=  56
+  PENDING_HARD  : n=  74 mean= -2.78% med= -2.23% win%=  35
+  ARB           : n=  47 mean= -1.14% med= +0.16% win%=  55
+  UNVERIFIABLE  : n=   2 mean= +8.22% med= +8.22% win%= 100
+
+-- does the (penalty-depressed) CONVICTION predict forward return? --
+  conviction 1: n=  11 mean= +1.36% med= +8.33% win%=  64
+  conviction 2: n=1238 mean= +1.48% med= +1.06% win%=  57
+  conviction 3: n= 857 mean= +1.94% med= +1.19% win%=  57
+  conviction 4: n=  34 mean= +1.22% med= -2.02% win%=  44
+  conviction 5: n=  10 mean= +1.69% med= +0.33% win%=  60
+
+-- verdict --
+  verdict A: n=  26 mean= -1.92% med= -2.66% win%=  38
+  verdict B: n= 874 mean= +2.08% med= +1.20% win%=  58
+  verdict C: n=1250 mean= +1.44% med= +1.07% win%=  57
+
+-- catalyst-blind value_conviction (where present) --
+  value_conviction 1: n=   4 mean=-17.45% med=-17.47% win%=  50
+  value_conviction 2: n= 149 mean= -2.04% med= -0.11% win%=  47
+  value_conviction 3: n= 169 mean= -1.60% med= -0.44% win%=  44
+  value_conviction 4: n=  62 mean= -0.49% med= -0.59% win%=  37
+  value_conviction 5: n=   1 mean=+10.93% med=+10.93% win%= 100
+
+================================================================================================
+JOIN 2 — valuation gate: implied upside (sop_fair_value vs price at debate) vs forward return
+================================================================================================
+
+  NO_UPSIDE (fv <= px)  : n= 811 mean= +0.43% med= +0.70% win%=  54
+  POSITIVE UPSIDE       : n=1179 mean= +2.10% med= +1.13% win%=  58
+  diff (noup - posup)   : -1.68pp   95% CI [-3.55, +0.14]  not significant (CI spans 0)
+
+-- forward return by implied-upside quintile (does the FV stack rank anything?) --
+  Q1 upside [  -83.3%..  -14.7%]: n= 398 mean= -2.29% med= -1.43% win%=  43
+  Q2 upside [  -14.6%..   -0.4%]: n= 398 mean= +3.04% med= +2.24% win%=  64
+  Q3 upside [   -0.4%..  +11.2%]: n= 398 mean= +2.13% med= +1.36% win%=  62
+  Q4 upside [  +11.3%..  +25.4%]: n= 398 mean= +1.32% med= +0.53% win%=  54
+  Q5 upside [  +25.5%.. +135.4%]: n= 398 mean= +2.91% med= +1.32% win%=  59
+
+  Spearman(implied upside, forward return) = +0.099  (n=1990)
+  symbol-clustered (first entry each)      = +0.252  (n=356)
+
+-- the 20 winners: what the FV stack said at their FIRST debate --
+  DAVE   2026-06-14: implied upside   -2.8%  ->  realized  +37.2%  NO_UPSIDE
+  SEZL   2026-06-08: implied upside  -42.2%  ->  realized  +43.8%  NO_UPSIDE
+  TDOC   2026-06-14: implied upside  +20.6%  ->  realized  +19.6%  
+  CORT   2026-06-08: implied upside  -59.1%  ->  realized  +23.9%  NO_UPSIDE
+  INSP   2026-06-08: implied upside   +4.9%  ->  realized  +20.2%  
+  WEX    2026-06-14: implied upside  +25.3%  ->  realized  +18.2%  
+  RVLV   2026-06-14: implied upside  +10.7%  ->  realized  +22.1%  
+  TNET   2026-06-10: implied upside  +29.5%  ->  realized  +25.4%  
+  LZ     2026-06-14: implied upside  +25.4%  ->  realized  +18.4%  
+  ANF    2026-06-14: implied upside  +18.6%  ->  realized   +5.4%  
+  HUBG   2026-06-08: implied upside  -26.0%  ->  realized  +13.9%  NO_UPSIDE
+  EEFT   2026-06-14: implied upside  +49.5%  ->  realized  +16.8%  
+  CALM   2026-06-14: implied upside   +6.8%  ->  realized  +10.4%  
+  INNV   2026-06-14: implied upside   -4.5%  ->  realized  +27.5%  NO_UPSIDE
+  CARG   2026-06-14: implied upside  +14.5%  ->  realized  +20.5%  
+  HRB    2026-06-10: implied upside  +23.6%  ->  realized   +6.3%  
+  UPBD   2026-06-14: implied upside   +1.5%  ->  realized  +14.4%  
+  MOH    2026-06-08: implied upside  -39.5%  ->  realized  +11.8%  NO_UPSIDE
+  YELP   2026-06-08: implied upside  +22.0%  ->  realized   +8.1%  
+  CTSH   2026-06-08: implied upside  +18.9%  ->  realized  -18.5%  
+  (6 of 20 winners were NO_UPSIDE at first debate)

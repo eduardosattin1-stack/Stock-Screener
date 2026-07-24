@@ -1222,6 +1222,7 @@ def recovery_sleeve(push_gcs=False):
       fundamental_momentum basket AND positive absolute. Not event-driven — the event is already
       OVER at entry, so B13 separation is untouched."""
     import datetime as _dt
+    E.load_api_keys()                                  # benchmark anchor needs the FMP key
     PUB = E.FRONTEND_DIR / "public"
     cand = []
     for f in sorted(RES.glob("*.json")):
@@ -1283,12 +1284,43 @@ def recovery_sleeve(push_gcs=False):
     except Exception as e:
         print(f"WARN: recovery tracking failed ({e})")
         rt = {}
+    # PINNED BENCHMARK (2026-07-21 review): the sleeve's original yardstick was the momentum basket,
+    # which the same review retired — a moving/expiring benchmark can't settle a bet. Anchor it ONCE,
+    # at inception, to two FIXED comparators and never re-stamp them (mirrors future_resources'
+    # _benchmark_anchors.json discipline): (a) the frozen momentum book's own 20 names marked forward
+    # from retirement — the honest "what that screen would have done" counterfactual; (b) SPY.
+    bench_p = PUB / "speculair_recovery_benchmark.json"
+    if bench_p.exists():
+        bench = json.load(open(bench_p, encoding="utf-8"))
+    else:
+        bench = {"anchored_at": _dt.date.today().isoformat(), "spy": None, "momentum_frozen": {}}
+        try:
+            bk = gcs_io.gcs_read_json("scans/speculair_baskets.json") or {}
+            fm = (bk.get("per_methodology_baskets") or {}).get("fundamental_momentum") or {}
+            scan0 = gcs_io.gcs_read_json("scans/latest_global.json") or {}
+            by0 = {s.get("symbol"): s for s in scan0.get("stocks", []) if s.get("symbol")}
+            for p in (fm.get("picks") or []):
+                s0 = p.get("symbol")
+                px0 = (by0.get(s0) or {}).get("price")
+                if s0 and isinstance(px0, (int, float)):
+                    bench["momentum_frozen"][s0] = px0
+            _q = requests.get("https://financialmodelingprep.com/stable/quote",
+                              params={"symbol": "SPY", "apikey": os.environ.get("FMP_API_KEY", "")},
+                              timeout=20)
+            if _q.status_code == 200 and isinstance(_q.json(), list) and _q.json():
+                bench["spy"] = _q.json()[0].get("price")
+        except Exception as _e:
+            print(f"WARN: benchmark anchor build failed ({_e})")
+        bench_p.write_text(json.dumps(bench, indent=1), encoding="utf-8")
+        print(f"  benchmark ANCHORED at {bench['anchored_at']}: {len(bench['momentum_frozen'])} frozen-momentum "
+              f"legs + SPY={bench['spy']} (never re-stamped)")
     out = {"sleeve": seats, "candidates_considered": len(cand), "tracking": rt,
            "generated_at": _dt.date.today().isoformat(), "paper_only": True,
-           "engine": "deterministic-recovery-v1",
+           "engine": "deterministic-recovery-v1", "benchmark": bench,
            "rule": "FIRED + interrogator>=3 + cash-earnings family + WIDE/NARROW non-eroding moat + "
-                   "skeptic-not-REFUTED + gate-pass; cap 10, <=2/sector, EW; success = beat retired "
-                   "fundamental_momentum over a quarter AND positive absolute"}
+                   "skeptic-not-REFUTED + gate-pass; cap 10, <=2/sector, EW. SUCCESS (one quarter from "
+                   "the PINNED anchor date): positive absolute AND beats BOTH the frozen-momentum "
+                   "counterfactual and SPY. Benchmark prices are anchored once at inception."}
     (PUB / "speculair_recovery_sleeve.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"recovery_sleeve: {len(seats)} seats (of {len(cand)} qualified) | "
           f"nav={rt.get('nav')} since={rt.get('since_inception_pct')}% | "

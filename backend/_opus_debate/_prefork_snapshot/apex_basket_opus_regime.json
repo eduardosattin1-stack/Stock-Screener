@@ -1,0 +1,778 @@
+{
+ "apex_basket": [
+  {
+   "symbol": "WKL.AS",
+   "sector": "Industrials",
+   "director_conviction": 70,
+   "conviction_prior": 70,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 1.1,
+   "thesis": "A wide-moat legal/tax/health workflow-information compounder de-rated ~31% on an AI-disintermediation fear the market is over-extrapolating, with the widest clean computed risk/reward on the board (rr 2.07, ER +32.7%) and a hard-dated 5 August H1 print as the disproof event.",
+   "sop_fair_value": "EUR 82 base (adverse ~EUR 52, favorable ~EUR 115) vs EUR 61.78",
+   "catalyst_status": "PENDING_HARD",
+   "lane": "compounder",
+   "regime_fit": "Quality recurring-revenue reach that fits a tempered-GOLDILOCKS stance: cash-generative, non-cyclical demand, dated 12-mo driver.",
+   "exposure_axes": [
+    "europe-listed",
+    "ai-narrative-sentiment"
+   ],
+   "secular_theme": "ai-displacement",
+   "moat": "WIDE",
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 32.7,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "5 Aug 2026 H1 results proving ~7% recurring growth is the dated driver; a clean print plus subsequent prints closes most of the 33% gap inside 12 months.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-13 at prior conviction 70; nothing broke, the skeptic's material correction moved the net-debt anchor IN the thesis's favour, and no falsifier fired.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 2.49,
+    "bear_return_pct": -15.83,
+    "floor_distance_pct": 15.83,
+    "rr_ratio": 2.07,
+    "expected_return_pct": 32.73
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 52,
+   "thesis_break_px": 52,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "The bear's kill case (melting ice cube / peak-earnings illusion / no durable edge) does not verify against primary filings. The Q1 2026 trading update (6 May 2026) shows recurring revenue — 83% of sales — still +7% organic and cloud +14% organic, with full-year guidance reaffirmed; the AI-displacement threat is real but forward and unresolved, not a present impairment of a base that is still growing. The value thesis (cheap on verified, growing recurring earnings; wide moat intact on ~18% ROIC and expanding 27.5% margins) survives. Two load-bearing corrections stand: (1) roughly half the ~40% discount to the de-rated peer cohort is shared-factor sector beta, not single-name alpha, so the idiosyncratic edge is thinner than a headline 11x-vs-18x gap implies; (2) FY2026 guidance is 'high single-digit adjusted EPS growth in CONSTANT currencies' — with ~60% USD revenue and a weak dollar, reported euro EPS will lag the ~EUR5.85 constant-currency anchor behind the EUR82 base FV, thinning the realized margin of safety. Neither breaks the arithmetic (still cheap, still growing), and the setup itself already discloses both and rates it wait-for-the-washout (conviction 3), so no structural mispricing edge is claimed.",
+   "skeptic_corrections": [
+    "Discount is only partly name-specific alpha: the entire professional-information cohort (RELX ~17-23x, Thomson Reuters ~22x, S&P Global re-rated ~35x to ~22x) de-rated on the same AI-displacement fear, so a large part of WKL's ~40-45% gap is cohort beta, not idiosyncratic mispricing.",
+    "Base FV EUR82 rests on ~EUR5.85 guided 2026 adjusted EPS, which is a CONSTANT-CURRENCY figure; with ~60% USD revenue and a weak dollar, reported euro EPS will print lower, so the realized fair value and margin of safety are somewhat thinner than the base implies (FCF cross-check ~EUR1.35B / ~227m shares still corroborates order of magnitude).",
+    "Catalyst (5 Aug 2026 H1 print) is a hard date but a widely-covered blue-chip earnings event, not a thin-coverage structural special situation — no forced seller, spin-off, divestiture clock or deal — so it carries little regime-specific edge; the take-private option is unfired and must be treated as a free option, not a thesis."
+   ],
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "moat",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "UHS",
+   "sector": "Healthcare",
+   "director_conviction": 63,
+   "conviction_prior": 63,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.9,
+   "thesis": "The market capitalizes a dated, partial (~12-13%, phased from 2028) Medicaid directed-payment haircut as terminal collapse, pricing a compounding hospital operator at $153.54 against a ~$199 base parts value while the buyback retires ~9% of shares a year.",
+   "sop_fair_value": "$199 base (adverse $118, favorable $267) vs $153.54",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "value_rerate",
+   "regime_fit": "Domestic-demand defensive with paid-to-wait carry; orthogonal to oil, AI-capex and the tariff hand-off.",
+   "exposure_axes": [
+    "us-medicaid-policy",
+    "reimbursement-regulation"
+   ],
+   "secular_theme": "reimbursement-compression",
+   "moat": "NARROW",
+   "entry_posture": "enter_now_carry",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 140,
+    "cc_strike": 180,
+    "tenor_days": 35,
+    "rationale": "An undated re-rate with a ~9%/yr share-retirement engine underneath - selling the 140 put monetizes the fear premium at a level materially below spot where we are happy to own more."
+   },
+   "expected_return_pct": 29.6,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "~30% to base parts value plus ~9%/yr buyback shrinkage; the driver is undated but the carry means time itself compounds the case toward the goal band.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-06-21 with the widest asymmetry among the holds; skeptic material corrections temper but find no kill, thesis intact.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 0.64,
+    "bear_return_pct": -22.16,
+    "floor_distance_pct": 22.16,
+    "rr_ratio": 1.41,
+    "expected_return_pct": 31.27
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 118.0,
+   "thesis_break_px": 118.0,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_corrections": [
+    "ANALYST-CUT CLAIM OVERSTATED: The bear leans on 'the analysts closest to the name are cutting,' citing Wells Fargo '$166 on 13 July 2026.' Verification shows Wells Fargo RAISED its target from $165 to $166 on 13 Jul 2026 (Equal Weight reiteration off a June 2026 initiation), not a cut. The directional claim survives only through Barclays' genuine 8 Jul 2026 downgrade to Equalweight / $179 (confirmed). Footnote-level; does not move the two-sided case.",
+    "LITIGATION AWARDS REDUCED POST-VERDICT: The sop_bear's $1.0B litigation overlay is anchored on 'a $535M Pavilion award and a $360M Richmond award.' Both were reduced after the jury verdict: the Champaign/Pavilion $535M (jury 2024) was cut to ~$180M and settled under NDA; the Cumberland/Richmond $360M (Sept 2024) was lowered to $323M with UHS itself removed as a named defendant by the judge. The thesis pre-flagged that 'such awards are routinely cut on appeal,' so this refines rather than breaks it; realized exposure is lower than the raw figures imply, which cuts slightly toward the long, not against it. The uncapped tail (30+ suits filed 2025, ~$895M cumulative cited) is independently confirmed and remains the load-bearing risk.",
+    "SUBSIDY-INFLATED BASE (structural, disclosed): The cheapness (approx 5.2x EV/EBITDA) rests on 2026 guided EBITDA of ~$2.7B that includes ~$1.2B of state-directed Medicaid benefit (~46% of EBITDA). OBBBA's SDP cap at 100/110% of Medicare (~$149B national cut) is confirmed real and legislates this down. The thesis openly prices this (sop_bear strips $400M to $118) and concludes 'wait/watchlist,' so the stale-anchor attack does not refute a thesis that already embeds it."
+   ],
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "numbers",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "INTU",
+   "sector": "Technology",
+   "director_conviction": 62,
+   "conviction_prior": 62,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.9,
+   "thesis": "A wide-moat SMB-software compounder priced as a melting asset near its 52-week low, where the feared gen-AI displacement is contained to the DIY-tax leg while QuickBooks compounds; the 20 Aug FY26 print with the first FY27 guide is the reset event.",
+   "sop_fair_value": "$358 base (adverse $224, favorable $436) vs ~$292",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "compounder",
+   "regime_fit": "Quality cash-generative growth at a value multiple - exactly what the tempered-GOLDILOCKS read favors over long-duration high-multiple names.",
+   "exposure_axes": [
+    "ai-narrative-sentiment",
+    "us-consumer-tax-season"
+   ],
+   "secular_theme": "ai-displacement",
+   "moat": "WIDE",
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 22.8,
+   "horizon_months": 13,
+   "meets_goal": false,
+   "goal_note": "Base ER +22.8% sits below the 30-50% band; the seat is earned as the highest-quality franchise on the board at ~10x forward EV/FCF with the Aug 20 guide as the re-rate trigger - the favorable case ($436) reaches the band if the FY27 guide lands clean.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-11; the fresh record carries a continuity_flag (DELTA_REVERTED on catalyst_status/sop_fair_value) so I anchored to the restored ledger values rather than the unjustified fresh drift, and the material skeptic corrections find no kill.",
+   "skeptic_verdict": "CONFIRMED",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 0.78,
+    "bear_return_pct": -23.17,
+    "floor_distance_pct": 23.17,
+    "rr_ratio": 0.98,
+    "expected_return_pct": 22.8
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 224.0,
+   "thesis_break_px": 224.0,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "No kill_fact survives verification. The bear's magnitude thesis - that the low-end TurboTax price loss is 'the leading edge of the bite' migrating into QuickBooks (59% of revenue) - is directly contradicted by the same 20 May 2026 primary print the bear relies on: QuickBooks Online Accounting revenue GREW 22% in the quarter, and Intuit RAISED full-year FY2026 revenue guidance to $21.341-21.374B (~13-14% growth), then guided Q4 to ~11-12% growth. The '10% growth' the bear leans on is the seasonally-largest tax quarter's print, not a company-wide run-rate; the crown-jewel engine the bear claims is 'next' is accelerating, not eroding. Every load-bearing fact (Q3 numbers, workforce cut, litigation docket, analyst targets, Q4 date/guide, share count) verifies exactly. The moat is WIDE and, on the mandated returns-and-margins test, rising - the terminal-decline / AI-displacement kill does not clear the bar of current evidence. Thesis survives; it remains a moderate long with a dated 20 Aug 2026 catalyst, correctly rated B / value_conviction 4 / SOFT_EXTENDED.",
+   "skeptic_corrections": "Minor, and it cuts AGAINST the bear rather than the long: the anchor and bear repeatedly headline 'revenue growth halved to 10%' as the wound without foregrounding that on the SAME 20 May 2026 print the company RAISED full-year guidance to $21.341-21.374B (~13-14%) and guided Q4 to ~11-12% growth, with QBO Accounting +22%. This corroborating fact strengthens the surviving thesis; no load-bearing long-side number required fixing. The peer-multiple staleness (Autodesk ~30x -> 16.8x, Workday 13.9x) was already self-corrected inside the anchor, honestly narrowing the edge to a ~23% residual discount vs the cheapest peer - not a defect. Share count 273.54M, price ~$293, near-zero net debt all verify.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "moat",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "VNT",
+   "sector": "Technology",
+   "director_conviction": 62,
+   "conviction_prior": 62,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.8,
+   "thesis": "The market prices Vontier as a melting fuel-pump maker when it owns a regulated, contractually-attached convenience-store infrastructure annuity paying an ~11% FCF yield that management spends retiring stock; the Teletrac Navman event has FIRED so the seat is held as a defensive carry anchor, not a special-sit.",
+   "sop_fair_value": "$41 base (adverse $23, favorable $52) vs $30.60",
+   "catalyst_status": "FIRED",
+   "lane": "value_rerate",
+   "regime_fit": "High-carry, low-multiple domestic cash machine; the FIRED-catalyst rule strips event framing, leaving the buyback arithmetic - fits the balanced stance.",
+   "exposure_axes": [
+    "us-fuel-retail-capex",
+    "energy-transition-narrative"
+   ],
+   "secular_theme": "energy-transition-loser",
+   "moat": "NARROW",
+   "entry_posture": "enter_now_carry",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 28,
+    "cc_strike": 37,
+    "tenor_days": 35,
+    "rationale": "A slow arithmetic re-rate with an 11% FCF yield - the 28 put is struck under the buyback's own accretion zone, so assignment just accelerates a position we want."
+   },
+   "expected_return_pct": 34.0,
+   "horizon_months": 18,
+   "meets_goal": false,
+   "goal_note": "The +34% base re-rate is an ~18-month slow fuse, not a 12-month event; the seat is justified by the 11% FCF-yield carry that pays the full wait (explicit carry justification, though conviction sits below 70).",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-17; the fresh record's catalyst_status flip carried a continuity_flag (DELTA_REVERTED) so the seat stands on the ledger anchor; skeptic is the cleanest in the book (minor).",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 1.91,
+    "bear_return_pct": -24.24,
+    "floor_distance_pct": 24.24,
+    "rr_ratio": 1.45,
+    "expected_return_pct": 35.05
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 23.0,
+   "thesis_break_px": 23.0,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "No fact breaks the value thesis, so it is not REFUTED. The bear's strongest attacks all verify against primary sources but are already discounted into the conviction-3 rating: revenue is flat ($3.1B FY2025 vs ~$2.99B 2021, GAAP EPS $2.76, adjusted-EPS growth of 11% is margin+buyback arithmetic on a stationary base); the Teletrac Navman sale is a live private-market test that the parts do not fetch SoP multiples ($220M headline but only $80M cash, rest a seller note + retained minority); and net debt (~$1.67B) leaves no net-cash floor. The cheapness is largely earned, not mispriced, but the narrow moat (contractual US payments attach, regulated Veeder-Root tank-gauge compliance) is not terminal and the value floor holds. However a LOAD-BEARING DATE is wrong: the entire entry-timing recommendation ('wait for the 30 July flush', valley_of_death 'the next two weeks') is anchored to a Q2 2026 earnings print on 30 July 2026 that does not exist -- Vontier scheduled its Q2 2026 release/call for 6 August 2026. The catalyst (a pre-guided-down soft quarter) is intact; its date is a week later than the thesis states.",
+   "skeptic_corrections": [
+    "Q2 2026 earnings date is 6 August 2026 (company scheduling announcement), NOT 30 July 2026 as stated throughout valley_of_death, forcing_function, moderator_conclusion and the timing call -- the single named catalyst / entry-timing event is misdated by a week.",
+    "Net leverage is 2.4x per the Q1 2026 (period ended 3 April 2026) company report, not the 2.2x asserted in bear_thesis/risk_reward; net debt of ~$1.67B (ex-leases) is confirmed, so the dollar figure netted in the SoP is fine but the leverage multiple is understated (a hair worse for the company, i.e. cuts the bear's way).",
+    "Q2 buybacks from Teletrac proceeds were ~$130M (already executed), exceeding the $80M cash received -- management is spending the $1.0B authorization aggressively, a mild offset to the bear's 'buyback has no clock' point, though the authorization remains discretionary policy.",
+    "Sell-side is less capitulatory than framed: KeyBanc's 13 July 2026 cut to $35 MAINTAINED an Overweight rating and explicitly called the selloff 'overdone,' rather than walking numbers toward the price."
+   ],
+   "correction_severity": "material",
+   "skeptic_kill_scope": "catalyst",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "DUE.DE",
+   "sector": "Industrials",
+   "director_conviction": 56,
+   "conviction_prior": 56,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.5,
+   "thesis": "A German paint-finishing and machinery maker whose intact cash engine is masked by a one-time-item-inflated headline, priced at ~7x normalized earnings with near-zero net debt and a 2026 Capital Markets Day strategy reset as the undated re-rate lever.",
+   "sop_fair_value": "EUR 24 base (adverse EUR 14, favorable EUR 34) vs EUR 18.20",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "value_rerate",
+   "regime_fit": "The book's one deliberate European-cyclical tail, held at half a unit precisely because the stress test says euro-cyclicals de-rate together in a recession.",
+   "exposure_axes": [
+    "european-cyclical-capex",
+    "small-cap-liquidity"
+   ],
+   "secular_theme": "",
+   "moat": "NARROW",
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 31.9,
+   "horizon_months": 12,
+   "meets_goal": true,
+   "goal_note": "The 2026 CMD plus H2 results can close most of the +32% base gap within 12 months, and the adverse fundamental SoP (~EUR 17) sits near the price so permanent-loss risk is a flush, not a break.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-13 as an orthogonal half-unit; the fresh record's catalyst drift was DELTA_REVERTED so the ledger anchor governs, and the skeptic's material correction found no kill (the divestiture is already excluded from the anchor).",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 0.66,
+    "bear_return_pct": -23.08,
+    "floor_distance_pct": 23.08,
+    "rr_ratio": 1.38,
+    "expected_return_pct": 31.87
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 14.0,
+   "thesis_break_px": 14.0,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "No kill fact found. The bear thesis's load-bearing numbers verify exactly against Durr Group's own FY2025 primary disclosure: continuing operations earnings after tax of -EUR 50.0M (bear said 'continuing operations actually lost about 50 million euros' — EXACT match), EUR 135.3M non-cash impairments concentrated in Industrial Automation battery-production technology + BBS Automation (bear said '135 million-euro write-down across the failed battery bet and BBS Automation' — EXACT match), group net income EUR 206.4M of which ~EUR 256M is the discontinued/sold environmental business (206.4 - (-50.0) = 256.4, so the bear's '256 million euros of 2025 net income came from selling the environmental business' is internally consistent — the pure after-tax book gain was EUR 227.4M and the divested unit's operating earnings make up the rest), net financial debt near zero at -EUR 65.7M ex-leases (bear: 'net debt toward zero'), FCF a ten-year-record EUR 192.8M full-group that Durr itself states 'included advance customer payments not originally expected until 2026' (bear: '~100 million euros of prepayments pulled forward out of 2026'), and Q1 2026 order intake EUR 957M / -11% YoY with FCF only +EUR 29M and EBIT margin 4.2% (bear: 'order intake ... down 11% in the first quarter of 2026'). The cycle has NOT turned and the value-unlock event (environmental sale, closed 2025-10-31) has already fired — the 'cheap-but-earned, wait-for-the-washout, no hard catalyst' thesis survives the attack intact. STALE-ANCHOR fails: the EUR 24 base FV is explicitly haircut below the screener's EUR 40 composite precisely to strip out the one-time gain and un-delivered normalization. TERMINAL-MOAT holds as the bear's own point: ROIC ~= cost of capital, one high-return Automotive franchise blended with two structurally weak divisions (Chinese-competed Industrial Automation, 3-year furniture downturn). No hidden disqualifier: convertible repaid Jan 2026, no covenant/maturity wall, balance sheet comfortable.",
+   "skeptic_corrections": "Minor imprecision, thesis arithmetic intact: (1) The bear prose says continuing ops lost ~50M 'after 204 million euros of impairments' — Durr's FY2025 disclosure quantifies EUR 135.3M of non-cash impairments (battery + BBS Automation); the EUR 204M figure is not corroborated by the primary and appears to conflate the battery/BBS write-down with other extraordinary charges. The load-bearing consequence (continuing-ops EAT of exactly -EUR 50.0M) verifies regardless, so this is footnote-level. (2) Bear cites '-29% order intake over the first nine months of 2025'; the audited full-year 2025 figure is -17.9% to EUR 3,894.8M (a 9M-only cut could plausibly be steeper, but only the full-year -17.9% and the Q1 2026 -11% are independently confirmed here). Neither correction moves a valuation input or the verdict — orders are still falling either way.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "numbers",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "7974.T",
+   "sector": "Technology",
+   "director_conviction": 50,
+   "conviction_prior": 50,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.5,
+   "thesis": "The wide-moat, net-cash Japanese console/IP franchise (Nintendo) whose depressed trailing FCF is a pre-launch capex/inventory trough, not a valuation, with ~26% of the price in net cash and the Switch 2 installed-base ramp as an 18-24 month re-rate driver.",
+   "sop_fair_value": "~8,200 yen base (adverse ~6,000, favorable ~10,500) vs 7,310 yen",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "compounder",
+   "regime_fit": "Orthogonal quality diversifier: yen-denominated, net-cash floor, consumer-IP demand uncorrelated to the book's oil, AI-capex, tariff and Medicaid axes.",
+   "exposure_axes": [
+    "jpy-fx",
+    "consumer-discretionary-cycle"
+   ],
+   "secular_theme": "",
+   "moat": "WIDE",
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 12.2,
+   "horizon_months": 20,
+   "meets_goal": false,
+   "goal_note": "A FY2028 software-attach story, not a 12-month +30%; it earns the seat as the book's only non-USD/EUR quality floor (net cash ~26% of price) under a WARN gate sized accordingly at half a unit.",
+   "decision": "KEEP",
+   "decision_rationale": "Seated 2026-07-17 as the orthogonal quality-diversifier; nothing changed, skeptic minor, WARN gate respected via the 0.5-unit size.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "WARN",
+   "computed": {
+    "price_drift_pct": 4.53,
+    "bear_return_pct": -17.92,
+    "floor_distance_pct": 17.92,
+    "rr_ratio": 0.68,
+    "expected_return_pct": 12.18
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 6000,
+   "thesis_break_px": 6000,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "The load-bearing facts survive independent primary-source verification (net cash, moat, guidance are all real and clean), so the thesis is not refuted -- but the value edge is manufactured. The base fair value of ~8,200 yen rests on a 'normalized mid-cycle operating profit ~450bn yen' anchor that is ~22% ABOVE the company's own FY2027 guided operating profit (370.0bn yen) and ~25% above trailing FY2026 actual (360.1bn yen). That normalization is a forward hope dependent on the unrevealed FY2028 first-party title cycle plus memory-cost relief, not a trailing fact. Re-strike the same 14-15x EV/EBIT core multiple on GUIDED 370bn OP and core-business value falls to ~4,650/share; add the verified ~1,906 net cash + ~900 IP credit and fair value is ~7,450 yen -- roughly the 7,294-7,310 yen price. The ~12% base-case discount collapses to ~2% (fair value), so on the company's own guided earnings there is no deep-value margin of safety, only a fortress balance sheet. Compounding this: the load-bearing catalyst (Switch 2 launch) already fired in June 2025 and the stock still fell ~34% YTD; catalyst_status is SOFT_EXTENDED with no hard dated forcing function, the re-rating is an unfalsifiable FY2028 title-reveal story, and computed risk/reward is unfavorable (rr_ratio 0.68, downside -17.9% vs modest upside). Structural ~100bn yen FY2027 component/tariff cost headwind (memory-chip inflation) is confirmed by the primary filing and caps near-term margin recovery.",
+   "skeptic_corrections": "Base fair value anchor (~450bn yen normalized OP) sits ~22% above guided FY2027 OP (370.0bn yen) and ~25% above FY2026 actual (360.1bn yen); on guided earnings the ~12% discount-to-FV shrinks to ~2% and the name is roughly fairly valued, not deep value. Net-cash figure verified: cash & equivalents 1,791.8bn + short-term investments 425.1bn = 2,216.9bn yen, zero debt (plus 501.5bn long-term investments uncounted), so the ~1,906 yen/share (~26% of price) downside cushion is real and if anything conservative. Live price ~7,294 yen (2026-07-19) is within ~0.2% of the 7,310 anchor -- no material drift. The 'deep_value' signal_type is a mislabel the debate already partly caught (value_conviction_blocker DISCOUNT_TOO_SMALL); this is a fairly-valued, wide-moat quality compounder with a fortress balance sheet and a soft, multi-year catalyst -- not a cheap special situation the dispersion regime rewards.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "DECK",
+   "sector": "Consumer Cyclical",
+   "director_conviction": 48,
+   "conviction_prior": 48,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.6,
+   "thesis": "A wide-moat, net-cash consumer-brand house (HOKA/UGG) de-rated to ~15x after a growth scare, where the fortress balance sheet backstops a ~$122 parts value and the buyback compounds the discount shut; the 23 July FQ1-27 print is the near test.",
+   "sop_fair_value": "$122 base (adverse ~$88, favorable ~$152) vs ~$109",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "compounder",
+   "regime_fit": "Quality ballast; sized small because the computed skew to base (rr 0.71) argues patience and it is one of the book's demand-cycle-beta carriers.",
+   "exposure_axes": [
+    "us-consumer-discretionary",
+    "demand-cycle-beta"
+   ],
+   "secular_theme": "",
+   "moat": "WIDE",
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 13.1,
+   "horizon_months": 15,
+   "meets_goal": false,
+   "goal_note": "Base ER +13% does not reach the band; the seat survives on rotation discipline (unbroken thesis, every structural anchor verified) with the favorable +39% case gated on the Jul 23 print confirming durable compounding.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-13; thesis unbroken and every structural anchor verified by the skeptic (material corrections hit earnings-quality numbers, not the thesis); WARN gate respected in the 0.6 sizing.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "WARN",
+   "computed": {
+    "price_drift_pct": 3.69,
+    "bear_return_pct": -18.43,
+    "floor_distance_pct": 18.43,
+    "rr_ratio": 0.71,
+    "expected_return_pct": 13.09
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 88,
+   "thesis_break_px": 88,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "No load-bearing kill survives. The bear's sharpest factual claim -- 'near-term earnings path is flat-to-down, not up' -- is contradicted by management's own FY2027 guidance (diluted EPS $7.30-$7.45, up ~4-6% off the $7.02 base), issued 2026-05-21. The bear correctly notes the seasonally tiny Q4 FY2026 EPS fell ($0.96 vs $1.00, ~-4% YoY) and that H1 FY2027 carries tariff/freight gross-margin compression to ~56.5%, but full-year earnings are guided UP, so this is deceleration, not decline. Every load-bearing number in the SoP verifies against the primary May 21, 2026 release (FY net sales $5.472B +9.8%, EPS $7.02 +11%, HOKA +16%/~$2.6B, UGG +8%/~$2.7B, GM 57.7%), and the balance sheet is stronger than the thesis states -- cash $1.907B with ZERO debt vs the $1.53B net cash used. No stale anchor (SoP sits on freshly reported FY2026 actuals; $122 base = ~16.5x the $7.4 FY27 EPS estimate, matching guidance midpoint $7.375), no number-truth failure, no terminal-moat erosion (WIDE moat, ~28% ROIC well above cost of capital, still growing), no hidden disqualifier (no debt, no dilution, catalyst honestly labeled SOFT_EXTENDED not dressed as hard). The bear attacked and the thesis survives.",
+   "skeptic_corrections": "(1) Price anchor drifted: risk/reward was framed off ~$109; live price is $104.37 (IBKR, 2026-07-17). At $104 the downside to the $88 adverse SoP is ~-15.5% and upside to the $122 base ~+17%, an improvement on the stated -19%/+12% -- favorable to the long. (2) Net cash is understated in the thesis: $1.53B used vs actual cash $1.907B and zero debt as of 3/31/2026 -- conservative, adds ~$3/sh of cushion. (3) Bear's 'flat-to-down earnings' framing is overstated given guided FY2027 EPS growth of +4-6%. All corrections are immaterial to the SoP levels or favorable to the long.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "thesis",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "CNX",
+   "sector": "Energy",
+   "director_conviction": 48,
+   "conviction_prior": 48,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.5,
+   "thesis": "A disciplined, low-cost Appalachian gas producer throwing off a ~12% FCF yield directed at aggressive buybacks, with a free call option on in-basin AI/data-center gas demand - held purely as an orthogonal carry half-unit.",
+   "sop_fair_value": "~$37 base (adverse ~$26, favorable ~$47) vs ~$34",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "value_rerate",
+   "regime_fit": "Domestic-energy carry that is the book's only positive-correlation offset to the breached oil/Hormuz tripwire (energy price strength helps, not hurts, this seat).",
+   "exposure_axes": [
+    "natgas-price",
+    "energy-transition-narrative"
+   ],
+   "secular_theme": "energy-transition-loser",
+   "moat": "NARROW",
+   "entry_posture": "enter_now_carry",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 30,
+    "cc_strike": 37,
+    "tenor_days": 35,
+    "rationale": "A buyback-carry name with an undated call option - the 30 put sells fear against the 52-week-low zone where the buyback gets more accretive and we are happy to add."
+   },
+   "expected_return_pct": 10.3,
+   "horizon_months": 12,
+   "meets_goal": false,
+   "goal_note": "Base ER ~10% plus ~12% FCF-yield carry; the +30-50% outcome needs the un-dated in-basin data-center demand catalyst, which is optionality not underwriting (carry justification explicit; conviction below 70 so no rubric breach).",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-11 as a deliberate half-unit orthogonality seat; no kill, material skeptic corrections do not touch the carry math.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 2.76,
+    "bear_return_pct": -22.53,
+    "floor_distance_pct": 22.53,
+    "rr_ratio": 0.46,
+    "expected_return_pct": 10.25
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 26.0,
+   "thesis_break_px": 26.0,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.5,
+   "weight_pct": 11.36,
+   "skeptic_kill_fact": "No outright kill: the bear attack lands two material number corrections but does not invert the thesis into an overvalued trap. CNX genuinely generates ~$525-550M FY2026 FCF (~10% yield) and buys back stock, and the finalist's operative call is already 'wait for washout, own cheaper, not here' (verdict B, conviction 3) - which the corrections reinforce rather than break.",
+   "skeptic_corrections": "TWO load-bearing valuation inputs are overstated against the company's own primary Q1 2026 update (April 30, 2026). (1) FCF ANCHOR STALE: the finalist bases FV on ~$560M and cites a '~$575M' 2026 guide; CNX's Q1 2026 update refined FY2026 FCF guidance DOWN to ~$525-550M (~$3.41/share). (2) SHARE COUNT UNDERSTATED: the finalist divides by '~141.5M diluted shares (post-convert)' as if the convert is fully settled; the primary source shows 141,477,594 shares as of 4/15/2026 PLUS 12.4M net shares still to be issued on the remaining convertible notes = ~153.9M fully diluted (the company's own $3.41/sh FCF = $525M / ~154M confirms the ~154M divisor, not 141.5M). Correcting both: base FV = ~$535M x 9.5x / ~154M = ~$33-35/share, versus the claimed $37.5 and the current price of $33.56 - the 'modest discount' essentially disappears and the FCF yield is ~10%, not the ~12% claimed. Net debt of $2,361M as of 3/31/2026 CONFIRMS the doc's $2.3-2.5B range (no correction). Directional bear thesis (modestly-cheap-to-fairly-valued commodity beta, undated AI/data-center catalyst, 2027 hedge roll-off risk, downside toward mid-$20s / analyst low $26) survives intact; sizing should be haircut on the material FV correction.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "forensic_cap": false
+  },
+  {
+   "symbol": "BAH",
+   "sector": "Industrials",
+   "director_conviction": 46,
+   "conviction_prior": 46,
+   "conviction_delta": 0,
+   "delta_justification": "",
+   "size_units": 0.4,
+   "thesis": "A de-rated federal-services franchise at ~$65 against a ~$72 base value, where confirmation of the civil-segment bottom flips a roughly 1:1 setup into a better one on an out-of-favor cash compounder that fills the federal-demand axis nothing else carries.",
+   "sop_fair_value": "$72 base (adverse $52) vs ~$65",
+   "catalyst_status": "SOFT_EXTENDED",
+   "lane": "value_rerate",
+   "regime_fit": "Federal-budget demand is orthogonal to every other axis in the book; smallest seat because the skeptic's material finding (base built on top-of-guide EBITDA mislabeled as midpoint) trims the base case.",
+   "exposure_axes": [
+    "us-federal-budget",
+    "labor-cost-model"
+   ],
+   "secular_theme": "labor-arbitrage-deflation",
+   "moat": "NARROW",
+   "entry_posture": "on_confirmation: civil-segment return-to-growth confirmed at the FQ1-2027 print (~2026-07-25)",
+   "wheel": {
+    "suits": false
+   },
+   "expected_return_pct": 10.6,
+   "horizon_months": 12,
+   "meets_goal": false,
+   "goal_note": "Base ER ~11% is below the band; the seat is a 0.4-unit axis-filler held on rotation discipline with the civil-bottom confirmation as the flip trigger for any resize.",
+   "decision": "KEEP",
+   "decision_rationale": "Held since 2026-07-07; nothing broken (skeptic found no kill, but its material top-of-guide correction is why the seat stays smallest in the book).",
+   "skeptic_verdict": "CONFIRMED",
+   "skeptic_missing": true,
+   "numeric_gate": "PASS",
+   "computed": {
+    "price_drift_pct": 0.93,
+    "bear_return_pct": -20.15,
+    "floor_distance_pct": 20.15,
+    "rr_ratio": 0.52,
+    "expected_return_pct": 10.57
+   },
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "bear_fv_px": 52,
+   "thesis_break_px": 52,
+   "thesis_break_source": "bear_px_fallback",
+   "size_units_effective": 0.4,
+   "weight_pct": 9.09,
+   "skeptic_kill_fact": "No kill_fact survives independent verification. I attacked the underwrite on all four vectors and it held. (a) STALE-ANCHOR FAILS: the $72 SoP is built on FY2027 GUIDED down-year adjusted EBITDA (~$1.29B midpoint of the $1.24-1.29B guide), not a pre-decline peak quarter, so the fair value already sits on the trough, not a stale anchor. (b) NUMBER-TRUTH holds: every load-bearing figure verifies against the FY2026 10-K/8-K and Q4 release -- FY2026 revenue -6.4% to $11.2B, Civil -23% YoY in Q4, and the FY2027 guide (revenue $11.2-11.7B, adjusted EBITDA $1.24-1.29B, adjusted EPS $6.00-6.35, FCF $825-925M) all match the filed guidance exactly. (c) The secular/terminal-moat threat the bear leans on (fixed-price + AI labor-arbitrage deflation, eroding civil moat) is real but is ALREADY fully priced into the debate -- moat NARROW/ERODING, secular_threat material, FV haircut from DCF $104 / Buffett $130 down to $72 -- so it breaks nothing new. (d) No HIDDEN DISQUALIFIER of kill magnitude: balance sheet sound (net leverage 2.6x, Altman-Z 3.6, no maturity wall), CFO exit was an orderly announced transition to an S&P Global spin-off with a named interim (career move, not distress), Treasury cuts are small-dollar. The soft, thrice-slipped civil-bottom catalyst is the genuine weakness, but the debate itself flags it SOFT_EXTENDED and adopts a 'wait for the wash-out', conviction-3, roughly balanced-risk posture rather than an aggressive buy -- so the bear's central point is already conceded inside the thesis, not a refutation of it.",
+   "skeptic_corrections": "Net debt: the debate uses $3.39B; the FY2026 10-K reports net debt ~$3.21B (total debt $3.94B less cash $0.73B, net leverage 2.6x). The debate figure is ~$0.18B too HIGH, i.e. it understates equity/FV by ~$1.5/share -- a conservative error that if corrected nudges the $72 base FV slightly UP, so it does not dent the long case. CFO framing: the bear's 'left mid-crisis' is coloring; Matthew Calderone's departure (last day 2026-02-01) was announced Dec 2025 as a move to become CFO of S&P Global's Mobility spin-off, with COO Kristine Martin Anderson named interim -- orderly, not a distress signal. Catalyst timing update since the 2026-07-17 as_of: the load-bearing Q1 FY2027 print is now ~3 days out (scheduled 2026-07-24), still un-reported as of 2026-07-21, so the civil-bottom claim remains untested -- SOFT_EXTENDED stands.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "catalyst",
+   "forensic_cap": false
+  }
+ ],
+ "runner_ups": [
+  {
+   "symbol": "IT",
+   "note": "Gartner: the best fresh computed setup on the board (rr 2.42, ER +33%, PENDING_HARD Aug 4 print, skeptic minor) - blocked twice over: it would be a third ai-displacement name against the 2-name theme cap, and it is a RE-ADD (dropped 2026-06-17) with no documented thesis change, only a lower price. First in line if WKL.AS or INTU vacates the theme budget.",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "moat": "NARROW",
+   "secular_theme": "ai-displacement"
+  },
+  {
+   "symbol": "ADBE",
+   "note": "Clean gate PASS and skeptic no-kill at rr 0.98/ER +20%, but its catalyst is FIRED, it would be a third ai-displacement name against the theme cap, and re-adding a 2026-06-17 drop requires a thesis change the record does not supply.",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "moat": "WIDE",
+   "secular_theme": "ai-displacement"
+  },
+  {
+   "symbol": "THC",
+   "note": "Thesis intact but the 36% rally since 4 June consumed the margin of safety (risking ~$3 to make ~$1 to base); dropped 2026-07-13 at +18.36% realized - re-enter on a flush toward ~$170, not here.",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 50,
+   "roic_below_hurdle": false,
+   "moat": "NARROW",
+   "secular_theme": "reimbursement-compression"
+  },
+  {
+   "symbol": "SLVM",
+   "note": "CONFIRMED-clean skeptic and a real 2027 story, but the next two prints are guided trough-level with oil-inflated recovery costs (rr 0.34); revisit after the Aug 7 trough print or on Atlas activity after the November pill expiry.",
+   "skeptic_verdict": "CONFIRMED",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 56,
+   "roic_below_hurdle": false,
+   "moat": "NARROW",
+   "secular_theme": "linear-media-decline"
+  },
+  {
+   "symbol": "IBOC",
+   "note": "Quality Texas bank at rr 0.74/ER +12% with a CONFIRMED skeptic - a balanced, entry-level-dependent setup that does not clear the goal band; watch for a pullback toward the high-$60s.",
+   "skeptic_verdict": "CONFIRMED",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 45,
+   "roic_below_hurdle": false,
+   "moat": "NARROW",
+   "secular_theme": "payments-disintermediation"
+  },
+  {
+   "symbol": "BZU.MI",
+   "note": "Net-cash-cushioned cement value (ER +12%, Aug 4 H1 date) but it would be a third energy-transition-loser name against the theme cap and near-term earnings direction is still down.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "moat_erosion": "",
+   "erosion_severity": "none",
+   "moat_score": 40,
+   "roic_below_hurdle": true,
+   "moat": "NARROW",
+   "secular_theme": "energy-transition-loser"
+  }
+ ],
+ "combined_caps": [
+  {
+   "names": [
+    "WKL.AS",
+    "INTU"
+   ],
+   "max_units": 2.0,
+   "axis": "secular-theme:ai-displacement"
+  },
+  {
+   "names": [
+    "VNT",
+    "CNX"
+   ],
+   "max_units": 1.3,
+   "axis": "secular-theme:energy-transition-loser"
+  }
+ ],
+ "risk_stance": "balanced",
+ "regime_quadrant": "GOLDILOCKS",
+ "macro_read": "The dials print NEUTRAL/GOLDILOCKS (growth up 0.65 x inflation cooling, VIX 17.75, HY stable) but the agent read CONTRADICTs the growth leg with dated evidence (+57k June payrolls with -74k revisions, participation 61.5%, four cooling surveys) and the Catalyst Watch oil/Hormuz tripwire is BREACHED with vol conspicuously cheap - so I temper the GOLDILOCKS reach exactly one notch to balanced: pursue the +30-50%/12mo goal through quality cash-generative re-rates with dated drivers rather than long-duration or demand-cycle beta, sized for overnight-gap regimes into the Jul 22-30 event cluster.",
+ "director_memo": "APEX DIRECTOR MEMO - 2026-07-21. RISK_STANCE: balanced (GOLDILOCKS per the authoritative dials, tempered one notch on the regime agent's CONTRADICT - decelerating payrolls/ISM with dated evidence - per the one-notch rule; the dials are not flipped). MACRO READ: disinflation is earned (core CPI 2.6%) and credit is intact, but the growth-accelerating leg is unproven and the oil/Hormuz tripwire is breached while VIX 18.5 refuses to confirm, so gap-risk is underpriced into the densest event cluster of the year (Jul 22 triple binary, Jul 24 tariff hand-off, Jul 28-30 FOMC + hyperscaler capex verdicts). BOOK SHAPE: 9 seats, 6.2 units - all KEEPs, no adds, no drops. The eligible pool topped out at conviction-3/verdict-B (72 records, zero verdict-A) - the priced-tape signature the conviction-ceiling note predicts; with every held thesis unbroken, rotation discipline forbids churn into a hair-higher grade, and no fresh candidate cleared both the skeptic and the theme caps. SKEPTIC KILL-TIER (cited, not seated): OKEA.OL REFUTED (no-moat mid-life commodity producer earning below its cost of capital with falling returns - the PENDING_HARD Bestla date does not cure a broken reserve ledger); SAM REFUTED (no durable pricing power against structural volume decline - terminal-erosion screen stands); WEX REFUTED (moat erosion confirmed, no primary proof of durable pricing power or rising returns); BCRX REFUTED (the ~$294M FCF anchor is a non-recurring divestiture window and the SoP does not survive re-basing). CONTINUITY FLAGS: the INTU, VNT and DUE.DE fresh records carried DELTA_REVERTED flags (catalyst/SoP drift without dated facts); per protocol those seats are anchored to the restored ledger values and the fresh drift treated as unreliable for seat decisions. CORRELATION/EXPOSURE STRESS (mandatory decomposition over the proposed book): (a) DEMAND-CYCLE beta - DECK, DUE.DE, and partially VNT/7974.T; the two pure cyclical-consumer tails (DECK 0.6, DUE.DE 0.5) are deliberately the smallest seats; no hidden factor carries >3 names. (b) REGULATORY JURISDICTION - UHS (US Medicaid) and BAH (US federal budget) answer to different appropriators; no shared-regulator cluster and no peer_override/convergence=sector_regulatory entries among seated names. (c) LIQUIDITY/POSITIONING - DUE.DE is the lone small-cap de-gross candidate, held at 0.5 units. (d) POSTURE - two wait_for_weakness entries (DECK, DUE.DE), a tolerable correlated-timing load; the carry anchors are enter_now so the book is not one big flush bet. (e) SECULAR THEMES - see the concentration subsection. EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS STRESS: PASS - the euro-cyclical tail is one half-unit (DUE.DE; WKL.AS is recurring-revenue defensive), the US demand-cycle tail is 1.1 units across DECK+the VNT c-store leg, and 2.2 units sit in carry names (UHS/VNT/CNX) paid to wait through a flush; sequencing assumes flushes arrive together, which is why both cyclical tails carry wait_for_weakness postures while the carry anchors are already in. SECULAR-THEME CONCENTRATION: [1] ai-displacement = WKL.AS + INTU (2 names) - KEPT-WITH-CAP: combined_caps {WKL.AS+INTU, max 2.0 units}; both are WIDE non-eroding moats counting HALF toward the theme budget (1.0 effective load), and this cap is the explicit reason IT and ADBE stay runner-ups despite IT posting the board's best fresh computed setup. [2] energy-transition-loser = VNT + CNX (2 names) - KEPT-WITH-CAP: combined_caps {VNT+CNX, max 1.3 units}; both NARROW, but their cash flows are anti-correlated to the same shock (CNX benefits from the energy re-spike the narrative punishes VNT for), and BZU.MI stays a runner-up rather than a third name. No theme exceeds 2 names; no hidden factor exceeds 3. REGIME FALSIFIERS CARRIED FOR NEXT WEEK: July payrolls <75k or unemployment >=4.4% by 2026-08-07 flips the call toward disinflationary slowdown (go defensive); payrolls >=150k with positive revisions validates GOLDILOCKS (untemper the notch); July core CPI >=0.3% m/m by 2026-08-12 against soft payrolls means STAGFLATION (cut demand-cycle beta further); ISM Manufacturing <50 by 2026-08-03 or HY OAS >400bp by 2026-08-15 invalidates GOLDILOCKS regardless of the CPI path. BEAR REBUTTAL (one sentence per seat, written before final sizing): WKL.AS - if the 5 Aug print shows recurring growth breaking below ~6%, the AI-disintermediation bear is being proven on the load-bearing number and there is no structural floor above EUR 52. UHS - a second, larger state-level directed-payment cut lands before 2028 and the $118 adverse case becomes the base while $5B of net debt removes the cushion. INTU - the Aug 20 FY27 guide confirms TurboTax unit decline is spreading into QuickBooks and Credit Karma attach, making the 7.9x-FCF bear multiple the market's considered verdict rather than an absurdity. VNT - EV adoption plus c-store consolidation shrinks the dispenser installed base faster than the 11% yield can retire the shares, the classic melting-ice-cube trap. DUE.DE - a European auto-capex recession hits order intake before the CMD and the EUR-14 flush arrives while we already hold the position. 7974.T - Switch 2 software attach disappoints and the yen strengthens, leaving a WARN-gated position dead money for two years. DECK - HOKA growth decelerates into the Jul 23 print and the 15x multiple compresses toward 11x before the buyback matters. CNX - natgas rolls over and the un-dated data-center optionality stays un-dated, leaving a 10% ER name that badly lags the book's goal. BAH - the civil-segment 'bottom' slips a third consecutive quarter and the skeptic's top-of-guide EBITDA correction means fair value is nearer $65 than $72, i.e. no upside at all.",
+ "correlation": {
+  "window": "2y weekly log returns",
+  "avg_pairwise": 0.1,
+  "n_pairs": 36,
+  "max_pair": {
+   "a": "VNT",
+   "b": "DUE.DE",
+   "corr": 0.39
+  },
+  "flagged_pairs": [],
+  "beta_spy": {
+   "WKL.AS": 0.47,
+   "UHS": 0.5,
+   "INTU": 0.51,
+   "VNT": 1.08,
+   "DUE.DE": 1.43,
+   "7974.T": 0.58,
+   "DECK": 1.36,
+   "CNX": 0.4,
+   "BAH": 0.48
+  },
+  "correlation_breach": false,
+  "fx_note": "EU names in local ccy; correlations unadjusted for FX."
+ },
+ "weights": {
+  "WKL.AS": 0.1136,
+  "UHS": 0.1136,
+  "INTU": 0.1136,
+  "VNT": 0.1136,
+  "DUE.DE": 0.1136,
+  "7974.T": 0.1136,
+  "DECK": 0.1136,
+  "CNX": 0.1136,
+  "BAH": 0.0909
+ },
+ "secular_theme_caps": [
+  {
+   "names": [
+    "VNT",
+    "CNX"
+   ],
+   "max_units": 1.5,
+   "axis": "secular-theme:energy-transition-loser"
+  }
+ ],
+ "stress_test": {
+  "asof": "2026-07-21",
+  "basket_to_52w_lows_pct": -11.2,
+  "recession_stress_pct": -24.5,
+  "cro_bear_weighted_pct": -19.4,
+  "bear_case_invalid": false,
+  "published_downside_pct": -24.5,
+  "per_name": [
+   {
+    "symbol": "WKL.AS",
+    "price": 60,
+    "yr_low": 54.64,
+    "to_52w_low_pct": -8.9,
+    "recession_pct": -22.6,
+    "cro_bear_pct": -13.3
+   },
+   {
+    "symbol": "UHS",
+    "price": 149.58,
+    "yr_low": 140.08,
+    "to_52w_low_pct": -6.4,
+    "recession_pct": -20.4,
+    "cro_bear_pct": -21.1
+   },
+   {
+    "symbol": "INTU",
+    "price": 290.365,
+    "yr_low": 252.84,
+    "to_52w_low_pct": -12.9,
+    "recession_pct": -26.0,
+    "cro_bear_pct": -22.9
+   },
+   {
+    "symbol": "VNT",
+    "price": 30.27,
+    "yr_low": 27.253,
+    "to_52w_low_pct": -10.0,
+    "recession_pct": -23.5,
+    "cro_bear_pct": -24.0
+   },
+   {
+    "symbol": "DUE.DE",
+    "price": 18.32,
+    "yr_low": 16.76,
+    "to_52w_low_pct": -8.5,
+    "recession_pct": -22.2,
+    "cro_bear_pct": -23.6
+   },
+   {
+    "symbol": "7974.T",
+    "price": 6993,
+    "yr_low": 6544,
+    "to_52w_low_pct": -6.4,
+    "recession_pct": -20.5,
+    "cro_bear_pct": -14.2
+   },
+   {
+    "symbol": "DECK",
+    "price": 103.37,
+    "yr_low": 78.91,
+    "to_52w_low_pct": -23.7,
+    "recession_pct": -35.1,
+    "cro_bear_pct": -14.9
+   },
+   {
+    "symbol": "CNX",
+    "price": 33.155,
+    "yr_low": 27.72,
+    "to_52w_low_pct": -16.4,
+    "recession_pct": -28.9,
+    "cro_bear_pct": -21.6
+   },
+   {
+    "symbol": "BAH",
+    "price": 64.11,
+    "yr_low": 59.5,
+    "to_52w_low_pct": -7.2,
+    "recession_pct": -21.1,
+    "cro_bear_pct": -18.9
+   }
+  ],
+  "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% (recession). cro_bear is the agents' own adverse SoP (valuation.bear_px); when missing or implying upside it is flagged invalid and the published downside is the market-based recession stress."
+ },
+ "exits": {
+  "WKL.AS": {
+   "thesis_break_px": 52,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "UHS": {
+   "thesis_break_px": 118.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "INTU": {
+   "thesis_break_px": 224.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "VNT": {
+   "thesis_break_px": 23.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "DUE.DE": {
+   "thesis_break_px": 14.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "7974.T": {
+   "thesis_break_px": 6000,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "DECK": {
+   "thesis_break_px": 88,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "CNX": {
+   "thesis_break_px": 26.0,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  },
+  "BAH": {
+   "thesis_break_px": 52,
+   "valid": true,
+   "review_trigger": "weekly refresh OR close < thesis_break_px"
+  }
+ },
+ "moat_post_applied": true,
+ "numeric_post_applied": true
+}

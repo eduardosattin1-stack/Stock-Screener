@@ -1,0 +1,3909 @@
+{
+ "snapshot_date": "2026-07-24",
+ "rubric": "pre-neutralization (as-run 2026-07-21)",
+ "n_records": 181,
+ "pool": [
+  {
+   "symbol": "0470.HK",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 28.2,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "1698.HK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 27.07,
+   "rr_ratio": 4.45,
+   "live_price": 36.2,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "1880.HK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=HKD)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 8.48,
+   "rr_ratio": 0.09,
+   "live_price": 50.7,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "1888.HK",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_MISMATCH(12%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 41.98,
+   "methodologies": [
+    "fresh_crash"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "2097.HK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(7%)",
+    "G1B_CURRENCY_UNSTATED(implied=HKD)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 5.82,
+   "rr_ratio": 0.2,
+   "live_price": 226.8,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "3969.HK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "G1B_CURRENCY_UNSTATED(implied=HKD)",
+    "G4_BEAR_ABOVE_SPOT"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 32.17,
+   "rr_ratio": null,
+   "live_price": 3.14,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "7974.T",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(5%)"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 12.18,
+   "rr_ratio": 0.68,
+   "live_price": 7310,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "81810.HK",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1B_CURRENCY_MISMATCH(stated=CNY,implied=HKD)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 23.72,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "9927.HK",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 14.07,
+   "rr_ratio": 0.59,
+   "live_price": 42.08,
+   "methodologies": [
+    "neglect_orphan"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "A2A.MI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 16.63,
+   "rr_ratio": null,
+   "live_price": 2.315,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ACA.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 13.79,
+   "rr_ratio": 0.82,
+   "live_price": 18.015,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ACMR",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 12.97,
+   "rr_ratio": 0.35,
+   "live_price": 84.09,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AD.AS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 35.92,
+   "methodologies": [
+    "dcf_fcff",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ADBE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 20.15,
+   "rr_ratio": 0.98,
+   "live_price": 233.04,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AEO",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 17.495,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AFX.DE",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_MISMATCH(8%)"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 30.0,
+   "methodologies": [
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ALHG.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)",
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 16.21,
+   "rr_ratio": 1.08,
+   "live_price": 1.764,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ALNY",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 283.15,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AMD",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G3_VALUATION_OUTLIER(0.37x live)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": -63.07,
+   "rr_ratio": null,
+   "live_price": 500.94,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AMR",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 145.22,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "AMS.MC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "PROSE_RR_KILLED(asserted=1.0, computed=0.15)"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 14.22,
+   "rr_ratio": 0.15,
+   "live_price": 50.78,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ANET",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 0.85,
+   "rr_ratio": 0.02,
+   "live_price": 168.56,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ANF",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "PROSE_RR_KILLED(asserted=1.5, computed=0.04)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 2.66,
+   "rr_ratio": 0.04,
+   "live_price": 97.41,
+   "methodologies": [
+    "ev_gross_profit",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "APA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "PROSE_RR_KILLED(asserted=1.1, computed=0.32)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 16.69,
+   "rr_ratio": 0.32,
+   "live_price": 34.28,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ARLP",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": -24.77,
+   "rr_ratio": null,
+   "live_price": 24.59,
+   "methodologies": [
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ARM",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 262.01,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ASAN",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 7.64,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ASML",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 3.65,
+   "rr_ratio": 0.08,
+   "live_price": 1784.87,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ATKR",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 5.31,
+   "rr_ratio": 0.26,
+   "live_price": 73.12,
+   "methodologies": [
+    "dcf_fcff",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "AVGO",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 374.45,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AXON",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 541.75,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "AXSM",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(7%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 237.04,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "BAH",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 10.57,
+   "rr_ratio": 0.52,
+   "live_price": 65.12,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "graham_revised",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BALL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 63.15,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BBWI",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 13.64,
+   "rr_ratio": null,
+   "live_price": 21.12,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "epv",
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BCRX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G4_BEAR_ABOVE_SPOT"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 86.4,
+   "rr_ratio": null,
+   "live_price": 9.12,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "BION.SW",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NONE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 4.56,
+   "rr_ratio": 0.29,
+   "live_price": 49.73,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BKE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 9.35,
+   "rr_ratio": 0.4,
+   "live_price": 42.98,
+   "methodologies": [
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BKNG",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 184.61,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "BMPS.MI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "ARB",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 11.38,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BOSS.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 4,
+   "catalyst_status": "ARB",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "G4_BEAR_ABOVE_SPOT"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 51.19,
+   "rr_ratio": null,
+   "live_price": 37.7,
+   "methodologies": [
+    "owner_earnings",
+    "epv",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BRBR",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 1,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 11.99,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BSX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 16.11,
+   "rr_ratio": 1.91,
+   "live_price": 44.62,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BTU",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 22.62,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BYD",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 11.4,
+   "rr_ratio": 1.17,
+   "live_price": 89.77,
+   "methodologies": [
+    "earnings_yield_gap",
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "BZU.MI",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 11.98,
+   "rr_ratio": 0.63,
+   "live_price": 41.97,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CA.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 16.535,
+   "methodologies": [
+    "dcf_fcff",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "CALM",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 88.28,
+   "methodologies": [
+    "earnings_yield_gap",
+    "acquirers_multiple",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "CARG",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 36.02,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "CHTR",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 49.16,
+   "rr_ratio": 1.8,
+   "live_price": 133.33,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CHWY",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 2.18,
+   "rr_ratio": 0.1,
+   "live_price": 21.53,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "CMCSA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 44.78,
+   "rr_ratio": 3.41,
+   "live_price": 24.1,
+   "methodologies": [
+    "earnings_yield_gap",
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "graham_revised",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "CNX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 10.25,
+   "rr_ratio": 0.46,
+   "live_price": 33.56,
+   "methodologies": [
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CNXC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(6%)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 16.41,
+   "rr_ratio": 0.29,
+   "live_price": 25.62,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CORT",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 1,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 89.72,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CRC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 0.02,
+   "rr_ratio": 0.0,
+   "live_price": 52.09,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CROX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 138.91,
+   "methodologies": [
+    "dcf_fcff"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "CTSH",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "TINY_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 30.11,
+   "rr_ratio": 7.29,
+   "live_price": 43.81,
+   "methodologies": [
+    "epv",
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DAL",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 86.7,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DAVE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 442.53,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "DECK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 13.09,
+   "rr_ratio": 0.71,
+   "live_price": 107.88,
+   "methodologies": [
+    "convergence",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DFH",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_MISMATCH(11%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 16.52,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "epv",
+    "acquirers_multiple",
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DMLP",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 27.11,
+   "methodologies": [
+    "dcf_fcff",
+    "owner_earnings"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DOCS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 17.06,
+   "rr_ratio": null,
+   "live_price": 22.21,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "DUE.DE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 31.87,
+   "rr_ratio": 1.38,
+   "live_price": 18.2,
+   "methodologies": [
+    "dcf_fcff",
+    "earnings_yield_gap",
+    "rd_capitalized_dcf",
+    "epv",
+    "graham_revised",
+    "ev_gp",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "EEFT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 10.93,
+   "rr_ratio": 0.54,
+   "live_price": 80.23,
+   "methodologies": [
+    "dcf_fcff",
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "EPAM",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)",
+    "G4_BEAR_ABOVE_SPOT"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 39.34,
+   "rr_ratio": null,
+   "live_price": 86.12,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FGR.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 10.38,
+   "rr_ratio": 1.03,
+   "live_price": 122.3,
+   "methodologies": [
+    "dcf_fcff",
+    "owner_earnings",
+    "epv",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "FNTN.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 23.92,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FOX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(5%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 6.67,
+   "rr_ratio": 0.37,
+   "live_price": 51.08,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FOXA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 56.81,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FR.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 13.115,
+   "methodologies": [
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FRVIA.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(6%)",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 9.282,
+   "methodologies": [
+    "dcf_fcff",
+    "epv"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FSLR",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(3%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 14.19,
+   "rr_ratio": 0.45,
+   "live_price": 211.93,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "FTAI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 203.7,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "GBX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(3%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 17.23,
+   "rr_ratio": 0.87,
+   "live_price": 51.18,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "GE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 345.73,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "GEF",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 76.1,
+   "methodologies": [
+    "earnings_yield_gap",
+    "owner_earnings",
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "GIII",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 35.9,
+   "methodologies": [
+    "dcf_fcff",
+    "epv",
+    "acquirers_multiple",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "HEI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 344.03,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "HNR1.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 252.0,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "HOG",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_MISMATCH(10%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 26.81,
+   "methodologies": [
+    "dcf_fcff",
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "HPQ",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 7.13,
+   "rr_ratio": 0.33,
+   "live_price": 24.14,
+   "methodologies": [
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "HRB",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 30.89,
+   "rr_ratio": 1.18,
+   "live_price": 42.02,
+   "methodologies": [
+    "dcf_fcff",
+    "rd_capitalized_dcf",
+    "owner_earnings"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "HRMY",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 4.38,
+   "rr_ratio": 0.12,
+   "live_price": 33.53,
+   "methodologies": [
+    "dcf_fcff",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "HUBG",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 1,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 51.41,
+   "methodologies": [
+    "ev_gross_profit",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "IBOC",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 11.71,
+   "rr_ratio": 0.74,
+   "live_price": 76.09,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "INNV",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 11.87,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "INSP",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 1,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 51.54,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "INTU",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 22.8,
+   "rr_ratio": 0.98,
+   "live_price": 291.54,
+   "methodologies": [
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "INVA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)",
+    "PROSE_RR_KILLED(asserted=1.0, computed=0.19)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 3.56,
+   "rr_ratio": 0.19,
+   "live_price": 22.21,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "IOS.DE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 12.66,
+   "rr_ratio": 0.47,
+   "live_price": 30.18,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "IT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "PENDING_HARD",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 33.09,
+   "rr_ratio": 2.42,
+   "live_price": 139.0,
+   "methodologies": [
+    "dcf_fcff",
+    "rd_capitalized_dcf",
+    "owner_earnings"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "KFRC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 58.42,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "KMB",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "PENDING_HARD",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 0.47,
+   "rr_ratio": 0.03,
+   "live_price": 109.49,
+   "methodologies": [
+    "quality_discount"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "KNIN.SW",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 210.6,
+   "methodologies": [
+    "quality_discount"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LEG",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "ARB",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 11.31,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LEN",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 1.27,
+   "rr_ratio": 0.03,
+   "live_price": 86.4,
+   "methodologies": [
+    "epv",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "LEU",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 1,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(6%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 147.07,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LHA.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 9.12,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LIGHT.AS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 16.45,
+   "methodologies": [
+    "dcf_fcff",
+    "earnings_yield_gap",
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "epv",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LYFT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 18.9,
+   "rr_ratio": 0.3,
+   "live_price": 15.98,
+   "methodologies": [
+    "earnings_yield_gap",
+    "rd_capitalized_dcf"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "LZ",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 7.88,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "M",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 24.12,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "MAT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 14.19,
+   "rr_ratio": 0.59,
+   "live_price": 14.45,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "MAU.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NONE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 7.85,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "MMS",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 22.3,
+   "rr_ratio": 1.02,
+   "live_price": 58.87,
+   "methodologies": [
+    "graham_revised",
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "MMT.PA",
+   "verdict": "B",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 1.18,
+   "rr_ratio": 0.04,
+   "live_price": 11.86,
+   "methodologies": [
+    "owner_earnings",
+    "epv",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "MOH",
+   "verdict": "C",
+   "conviction": 1,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 224.82,
+   "methodologies": [
+    "epv",
+    "acquirers_multiple",
+    "ev_gp",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "MPWR",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 1305.65,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "MTSI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G3_VALUATION_OUTLIER(0.40x live)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 275.49,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "NEM.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "THIN_FLOOR"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 10.42,
+   "rr_ratio": 0.82,
+   "live_price": 56.15,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "NEXI.MI",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 24.61,
+   "rr_ratio": 0.81,
+   "live_price": 4.173,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "NOG",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "NONE",
+   "moat_trend": "ERODING",
+   "expected_return_pct": -6.68,
+   "rr_ratio": null,
+   "live_price": 20.36,
+   "methodologies": [
+    "acquirers_multiple",
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "NVDA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 207.4,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "NXT",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(7%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 106.85,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "OKEA.OL",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "PENDING_HARD",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NONE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 27.76,
+   "rr_ratio": 1.33,
+   "live_price": 32.875,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "OTF",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 27.95,
+   "rr_ratio": 1.71,
+   "live_price": 10.16,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "PAH3.DE",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "G4_BEAR_ABOVE_SPOT"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 88.82,
+   "rr_ratio": null,
+   "live_price": 27.54,
+   "methodologies": [
+    "dcf_fcff",
+    "earnings_yield_gap",
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "PDD",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 27.75,
+   "rr_ratio": 1.98,
+   "live_price": 83.76,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "PLAB",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 29.02,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "PLX.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 9.01,
+   "rr_ratio": 0.45,
+   "live_price": 13.76,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "PODD",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 12.51,
+   "rr_ratio": null,
+   "live_price": 164.43,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "POOL",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 16.4,
+   "rr_ratio": 1.2,
+   "live_price": 206.18,
+   "methodologies": [
+    "quality_discount"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "PPC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": -0.03,
+   "rr_ratio": null,
+   "live_price": 29.01,
+   "methodologies": [
+    "earnings_yield_gap",
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "PST.MI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 27.505,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "PUB.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(5%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 5.06,
+   "rr_ratio": 0.32,
+   "live_price": 91.38,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "PVH",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 21.68,
+   "rr_ratio": 0.87,
+   "live_price": 77.25,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "RHM.DE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "WIDE",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 7.14,
+   "rr_ratio": 0.17,
+   "live_price": 980,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "RL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 388.11,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "RMBS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": -29.01,
+   "rr_ratio": null,
+   "live_price": 101.42,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "ROCK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 7.82,
+   "rr_ratio": 0.19,
+   "live_price": 43.59,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "RVLV",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": -10.02,
+   "rr_ratio": null,
+   "live_price": 25.56,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "SAM",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 19.05,
+   "rr_ratio": 0.62,
+   "live_price": 180.59,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SAN.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 15.67,
+   "rr_ratio": 1.21,
+   "live_price": 76.94,
+   "methodologies": [
+    "epv"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SAX.DE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 26.76,
+   "rr_ratio": 1.73,
+   "live_price": 35.5,
+   "methodologies": [
+    "owner_earnings"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SCR.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 18.16,
+   "rr_ratio": 0.72,
+   "live_price": 32.16,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SEZL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(6%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 180.44,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "SFD",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 4.57,
+   "rr_ratio": 0.24,
+   "live_price": 25.82,
+   "methodologies": [
+    "neglect_orphan"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SFM",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 3.18,
+   "rr_ratio": 0.11,
+   "live_price": 73.67,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SKHY",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_MISMATCH(10%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 165.78,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SLVM",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 12.84,
+   "rr_ratio": 0.34,
+   "live_price": 37.22,
+   "methodologies": [
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "SM",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 29.1,
+   "rr_ratio": 0.33,
+   "live_price": 30.21,
+   "methodologies": [
+    "earnings_yield_gap",
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SMCI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 3.05,
+   "rr_ratio": 0.08,
+   "live_price": 24.26,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SMPL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_PRICE_FETCHED_FALLBACK",
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": null,
+   "methodologies": [
+    "acquirers_multiple",
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SMTC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 127.65,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SPB",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "PROSE_RR_KILLED(asserted=1.5, computed=0.03)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 2.68,
+   "rr_ratio": 0.03,
+   "live_price": 89.6,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SREN.SW",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=CHF)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": -0.63,
+   "rr_ratio": null,
+   "live_price": 135.85,
+   "methodologies": [
+    "earnings_yield_gap"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SSRM",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "ARB",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(3%)",
+    "THIN_FLOOR",
+    "PROSE_RR_KILLED(asserted=1.0, computed=2.7)"
+   ],
+   "moat": "NONE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 19.74,
+   "rr_ratio": 2.7,
+   "live_price": 25.89,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "STRL",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 622.6,
+   "methodologies": [
+    "fresh_crash"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SWKS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": -2.83,
+   "rr_ratio": null,
+   "live_price": 57.63,
+   "methodologies": [
+    "dcf_fcff"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "SWON.SW",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 23.6,
+   "rr_ratio": 1.01,
+   "live_price": 8.165,
+   "methodologies": [
+    "epv",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "TDOC",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "PROSE_RR_KILLED(asserted=1.7, computed=0.12)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 10.88,
+   "rr_ratio": 0.12,
+   "live_price": 9.47,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "TE.PA",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 5.04,
+   "rr_ratio": 0.15,
+   "live_price": 33.32,
+   "methodologies": [
+    "epv"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "TEP.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 54.34,
+   "methodologies": [
+    "dcf_fcff",
+    "earnings_yield_gap",
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "epv",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "TFI.PA",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "EXCLUDE_ELIGIBILITY",
+   "numeric_gate_reasons": [
+    "THIN_FLOOR"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 22.13,
+   "rr_ratio": 1.49,
+   "live_price": 6.84,
+   "methodologies": [
+    "dcf_fcff",
+    "owner_earnings",
+    "epv",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "THC",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 8.8,
+   "rr_ratio": 0.36,
+   "live_price": 198.53,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "TKA.DE",
+   "verdict": "B",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NONE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 21.85,
+   "rr_ratio": 0.83,
+   "live_price": 11.9,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "TNET",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_MISMATCH(8%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 60.47,
+   "methodologies": [
+    "dcf_fcff",
+    "rd_capitalized_dcf",
+    "epv",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "TOL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 2.08,
+   "rr_ratio": 0.07,
+   "live_price": 146.94,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "TSCO",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 12.69,
+   "rr_ratio": 0.62,
+   "live_price": 30.17,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "TUI1.DE",
+   "verdict": "B",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 28.1,
+   "rr_ratio": 0.64,
+   "live_price": 7.104,
+   "methodologies": [
+    "earnings_yield_gap",
+    "acquirers_multiple"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "UAL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 5.21,
+   "rr_ratio": 0.14,
+   "live_price": 118.81,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "UHS",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 31.27,
+   "rr_ratio": 1.41,
+   "live_price": 151.6,
+   "methodologies": [
+    "earnings_yield_gap",
+    "ev_gross_profit",
+    "graham_revised",
+    "ev_gp",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "UI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 532.41,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "UPBD",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_DRIFT(5%)",
+    "NO_UPSIDE"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 22.76,
+   "methodologies": [
+    "owner_earnings",
+    "epv"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "UPWK",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 33.98,
+   "rr_ratio": 1.73,
+   "live_price": 9.33,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "VNT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 35.05,
+   "rr_ratio": 1.45,
+   "live_price": 30.36,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "VRSN",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "NO_UPSIDE"
+   ],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 275.22,
+   "methodologies": [
+    "ev_gross_profit"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": true
+  },
+  {
+   "symbol": "VRT",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 2.68,
+   "rr_ratio": 0.05,
+   "live_price": 294.11,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "VTOL",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 2.62,
+   "rr_ratio": 0.09,
+   "live_price": 43.85,
+   "methodologies": [
+    "graham_revised"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WBD.MI",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 29.51,
+   "rr_ratio": 1.14,
+   "live_price": 2.162,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WEN",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 13.78,
+   "rr_ratio": 0.5,
+   "live_price": 7.91,
+   "methodologies": [
+    "convergence"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WEX",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(4%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 9.21,
+   "rr_ratio": 0.39,
+   "live_price": 164.24,
+   "methodologies": [
+    "epv",
+    "iv15_deep_value"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "WHR",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1A_PRICE_MISMATCH(8%)"
+   ],
+   "moat": "ERODING",
+   "moat_trend": "ERODING",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 39.89,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WING",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "REJECT",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_MISMATCH(8%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "STABLE",
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": 140.93,
+   "methodologies": [
+    "value_drawdown"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WKL.AS",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "PENDING_HARD",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "WIDE",
+   "moat_trend": "STABLE",
+   "expected_return_pct": 32.73,
+   "rr_ratio": 2.07,
+   "live_price": 61.78,
+   "methodologies": [
+    "rd_capitalized_dcf",
+    "owner_earnings",
+    "apex"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": false
+  },
+  {
+   "symbol": "WLDN",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G1A_PRICE_DRIFT(3%)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 6.7,
+   "rr_ratio": 0.19,
+   "live_price": 74.98,
+   "methodologies": [
+    "fundamental_momentum"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  },
+  {
+   "symbol": "YELP",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 3,
+   "catalyst_status": "SOFT_EXTENDED",
+   "numeric_gate": "PASS",
+   "numeric_gate_reasons": [],
+   "moat": "NARROW",
+   "moat_trend": "ERODING",
+   "expected_return_pct": 47.23,
+   "rr_ratio": 2.1,
+   "live_price": 27.39,
+   "methodologies": [
+    "ev_gross_profit",
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ZAL.DE",
+   "verdict": "B",
+   "conviction": 3,
+   "value_conviction": 4,
+   "catalyst_status": "FIRED",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_NO_CURRENCY",
+    "G1B_CURRENCY_UNSTATED(implied=EUR)",
+    "PROSE_RR_KILLED(asserted=1.0, computed=0.68)"
+   ],
+   "moat": "NARROW",
+   "moat_trend": "WIDENING",
+   "expected_return_pct": 14.41,
+   "rr_ratio": 0.68,
+   "live_price": 27.97,
+   "methodologies": [
+    "ev_gp"
+   ],
+   "eligible_old_rubric": true,
+   "winning_profile": true
+  },
+  {
+   "symbol": "ZTS",
+   "verdict": "C",
+   "conviction": 2,
+   "value_conviction": 2,
+   "catalyst_status": "UNVERIFIABLE",
+   "numeric_gate": "WARN",
+   "numeric_gate_reasons": [
+    "G0_PRICE_FETCHED_FALLBACK",
+    "G0_NO_CURRENCY",
+    "NO_BASE_FV \u2014 cannot run G2-G8"
+   ],
+   "moat": null,
+   "moat_trend": null,
+   "expected_return_pct": null,
+   "rr_ratio": null,
+   "live_price": null,
+   "methodologies": [
+    "apex"
+   ],
+   "eligible_old_rubric": false,
+   "winning_profile": false
+  }
+ ]
+}
