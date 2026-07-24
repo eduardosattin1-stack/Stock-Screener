@@ -33,7 +33,7 @@
 #   DEBATE+DIRECTOR Workflow -> STEP 2B REGIME SKEPTIC + POST -> STEP 3 PUBLISH --gcs ->
 #   STEP 3B VALUE LENS -> STEP 4 REPORT), every GUARD honored. It only refreshes GCS
 #   data (no Cloud Run, no frontend deploy). Runs key-free on the Claude subscription
-#   (Opus 4.8 subagents).
+#   (Opus 5 subagents).
 #   (STEP 3C DISRUPTOR LENS retired 2026-07-02 — FUTURE_RESOURCES_SPEC.md sec 10; the
 #    Future Resources STEP takes this slot at its Phase 3. The local SKILL.md no longer
 #    needs a manual edit — this launcher self-patches it below via

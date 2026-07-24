@@ -539,10 +539,10 @@ def query_openai(model: str, system_prompt: str, user_prompt: str,
 
 # ── Model assignment (capital-allocation rebuild) ────────────────────────
 # Each step runs on the model best suited to it; no token caps on the output.
-INTERROGATOR_MODEL = "claude-opus-4-8"   # forensic transcript dossier (also user-facing)
-ARCHITECT_MODEL    = "gpt-5.5"           # probabilistic bull/bear
-MODERATOR_MODEL    = "gpt-5.5"           # risk / timing / expectations
-MACRO_MODEL        = "claude-opus-4-8"   # once-per-scan macro regime brief
+INTERROGATOR_MODEL = "claude-opus-5"     # forensic transcript dossier (also user-facing)
+ARCHITECT_MODEL    = "gpt-5.5"           # probabilistic bull/bear (cross-model by design)
+MODERATOR_MODEL    = "gpt-5.5"           # risk / timing / expectations (cross-model by design)
+MACRO_MODEL        = "claude-opus-5"     # once-per-scan macro regime brief
 ANTHROPIC_1M_BETA  = "context-1m-2025-08-07"
 DIRECTOR_CADENCE_DAYS = 30   # director re-reviews the basket at most ~monthly (plus on held-name earnings)
 

@@ -837,7 +837,7 @@ def propagate_dossiers_to_entries(dossier_by):
               + "; ".join(f"{k} {ov!r}->{nv!r}" for k, (ov, nv) in diffs.items()))
     return changed
 
-def merge_dossier_store(dossier_by, model="claude-opus-4-8"):
+def merge_dossier_store(dossier_by, model="claude-opus-5"):
     """Merge Phase-0 deep-dossiers into the per-symbol store (most recent re-underwrite
     wins) and print resolution/slip alerts. Used by inject() and the merge-dossiers CLI
     (the held-book refresh in the bi-weekly routine)."""
@@ -854,7 +854,7 @@ def merge_dossier_store(dossier_by, model="claude-opus-4-8"):
     # "model" is the label for which agent produced this re-underwrite. It is passed in (the
     # merge-dossiers CLI takes --model) rather than hardcoded — the held-book review model is a
     # routine choice (Fable as of 2026-07-20), and a wrong label would misattribute the analysis.
-    _MODEL_ALIAS = {"fable": "claude-fable-5", "opus": "claude-opus-4-8",
+    _MODEL_ALIAS = {"fable": "claude-fable-5", "opus": "claude-opus-5",
                     "sonnet": "claude-sonnet-5", "haiku": "claude-haiku-4-5-20251001"}
     model_id = _MODEL_ALIAS.get(model, model)
     for sym, d in dossier_by.items():
@@ -872,7 +872,7 @@ def merge_dossier_store(dossier_by, model="claude-opus-4-8"):
             print(f"!  {sym}: dossier says SLIPPED — review the seat (no adds; consider resolve SLIPPED)")
 
 
-def merge_dossiers_cli(path, model="claude-opus-4-8"):
+def merge_dossiers_cli(path, model="claude-opus-5"):
     """CLI: merge a workflow output file's dossiers[] into the store (held-book refresh),
     then propagate the corrected descriptive fields onto the held tracker entries so the
     /catalysts card + radars never show stale facts (see propagate_dossiers_to_entries)."""

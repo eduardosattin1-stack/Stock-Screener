@@ -108,6 +108,12 @@ def _local_risk_free(country: str) -> float:
 
 TOP_N = 15
 ENRICH_TOP_N = 30  # how many stocks get expensive enrichment (transcripts)
+# Seats per methodology basket in methodology_picks.json — the DEBATE UNIVERSE knob.
+# Raised 20 -> 30 on 2026-07-24 (Bruno) to widen the multi-agent debate funnel: at 20 the
+# 12 screens yielded 141 unique names; 30 lifts that to roughly 200-210. The diversification
+# search below walks DOWN from this number, so a basket that cannot fill 30 names under the
+# 30%/sector cap degrades gracefully to whatever it can build (iv15 already runs short).
+PICKS_PER_METHODOLOGY = 30
 SIGNAL_LOG = os.environ.get("SIGNAL_LOG", "signal_history.json")
 
 # Apr 2026: hard filter on stocks with insufficient annual statement history.
@@ -6694,10 +6700,10 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
             # diversification cap (built for value baskets) gutted it (20 qualifiers → 6,
             # dropping the AI/semis core: AVGO/ASML/AMD/ARM/MPWR…). Take the top names by
             # score, UNCAPPED — concentration in the leading wave is the strategy here.
-            portfolio = candidates[:20]
+            portfolio = candidates[:PICKS_PER_METHODOLOGY]
         else:
             portfolio = None
-            for target_T in range(min(20, len(candidates)), 0, -1):
+            for target_T in range(min(PICKS_PER_METHODOLOGY, len(candidates)), 0, -1):
                 portfolio = get_best_portfolio_of_size(candidates, target_T)
                 if portfolio:
                     break

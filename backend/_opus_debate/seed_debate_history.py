@@ -71,7 +71,7 @@ def entry(rec, dossier, date_str):
         "consensus_delta": rec.get("consensus_delta", ""), "forcing_function": rec.get("forcing_function", ""),
         "valley_of_death": rec.get("valley_of_death", ""), "positioning_washout": rec.get("positioning_washout", ""),
         "moderator_conclusion": rec.get("moderator_conclusion", ""),
-        "interrogator_dossier": d, "engine": "opus-4.8-regime",
+        "interrogator_dossier": d, "engine": "opus-5-regime",
     }
 
 

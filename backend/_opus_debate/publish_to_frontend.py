@@ -386,7 +386,7 @@ for p in picks:
         "meets_goal": p.get("meets_goal"),
         "goal_note": p.get("goal_note"),
         "wheel": p.get("wheel"),
-        "engine": "opus-4.8-regime",
+        "engine": "opus-5-regime",
     })
 
 # ── Wheel suggestions (CSP->CC) on the regime entries — Director-tag fallback + live CSP yield ──
@@ -490,7 +490,7 @@ baskets["runner_ups"] = [r for r in (director.get("runner_ups") or []) if isinst
 baskets["runner_ups_as_of"] = TODAY
 baskets["regime_changes"] = director.get("regime_changes", "")
 baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
-baskets["engine"] = "opus-4.8"  # Fable retired from the Director/Skeptic seats 2026-07-10 (pipeline-v3 Week 1) -- all-Opus again
+baskets["engine"] = "opus-5"  # Fable retired from the Director/Skeptic seats 2026-07-10 (pipeline-v3 Week 1) -- all-Opus again
 if track_summary:
     baskets["apex_tracking"] = track_summary
 baskets["weights"] = apex_weights
@@ -580,7 +580,7 @@ def _opus_overlay(sym):
         "forcing_function": rec.get("forcing_function", ""), "conviction": int(rec.get("conviction", 0) or 0),
         "value_conviction": rec.get("value_conviction"),
         "verdict": rec.get("verdict", ""), "interrogator_dossier": d, "interrogator_score": sc_i,
-        "trajectory": (tj.group(1) if tj else rec.get("trajectory", "")), "engine": "opus-4.8-regime",
+        "trajectory": (tj.group(1) if tj else rec.get("trajectory", "")), "engine": "opus-5-regime",
         "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
@@ -651,7 +651,7 @@ def _hist_entry(rec, dossier, date_str, ts):
         "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
-        "interrogator_dossier": dossier, "engine": "opus-4.8-regime",
+        "interrogator_dossier": dossier, "engine": "opus-5-regime",
         "risk_badge": risk_badge(rec, skeptic_shard(rec.get("symbol") or "")),
     }
     # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
